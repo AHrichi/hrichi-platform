@@ -606,7 +606,7 @@ libs/products/deutsch/feature-flashcards
 
 **Security headers:** CSP, HSTS, `X-Content-Type-Options`, `Referrer-Policy` and `Permissions-Policy`.
 
-- ✅ Verified policy in ADR-0006: hashed inline scripts plus `blob:` (es-module-shims runs modules from blob URLs) and the remote origins. Angular's `autoCsp` cannot be used with prerendering, so a post-build script will emit the header.
+- ✅ Verified policy in ADR-0006: hashed inline scripts plus `blob:` (es-module-shims runs modules from blob URLs) and the remote origins. Angular's `autoCsp` cannot be used with prerendering, so `tools/scripts/prepare-hosting.mjs` writes the header on every deploy (ADR-0007).
 
 **Secrets** live in GitHub Actions secrets and Render env vars, never in the repo. Each app has a `.env.example`.
 
@@ -726,6 +726,7 @@ The full records are in [`docs/adr`](adr/README.md). Proposed decisions get the 
 | [0004](adr/0004-zoneless.md)                | Zoneless everywhere; `pnpm check:zoneless` guard                                                 | Accepted |
 | [0005](adr/0005-pwa-with-federation.md)     | Service worker regenerated after the federation build                                            | Accepted |
 | [0006](adr/0006-content-security-policy.md) | CSP header with build-time hashes                                                                | Accepted |
+| [0007](adr/0007-cloudflare-hosting.md)      | Cloudflare Workers static assets, one Worker per app, affected deploys from CI                   | Accepted |
 | —                                           | State ladder: signals → SignalStore → Events plugin; no classic `@ngrx/store`                    | Proposed |
 | —                                           | Design tokens in DTCG + Style Dictionary; cascade layers; logical properties; Angular Aria + CDK | Proposed |
 | —                                           | Framework-agnostic Three.js engine + thin Angular adapter; progressive enhancement               | Proposed |

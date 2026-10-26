@@ -12,6 +12,7 @@ Each ADR records one decision, why it was made, and what a spike proved. New ADR
 | [0004](0004-zoneless.md)                | Zoneless everywhere, enforced by `pnpm check:zoneless`                         |
 | [0005](0005-pwa-with-federation.md)     | Service worker regenerated after the federation build                          |
 | [0006](0006-content-security-policy.md) | CSP header with build-time hashes; `autoCsp` is incompatible with prerendering |
+| [0007](0007-cloudflare-hosting.md)      | Cloudflare Workers static assets, one Worker per app, affected deploys from CI |
 
 ## Proposed (written when the area is built)
 

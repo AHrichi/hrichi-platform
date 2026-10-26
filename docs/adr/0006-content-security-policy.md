@@ -1,6 +1,6 @@
 # ADR-0006: Content Security Policy from host headers with build-time hashes
 
-- **Status:** Accepted (policy verified; generator script pending)
+- **Status:** Accepted (verified in production on 2026-10-26)
 - **Date:** 2026-10-26
 - **Milestone:** M0
 
@@ -32,5 +32,6 @@ base-uri 'self'
 ## Consequences
 
 - `blob:` in `script-src` is a known trade-off: a blob URL can only be created by script already running on the page, so it does not open a path for injected markup.
-- Hashes change with every build, so the deploy step must regenerate the header. Write `tools/scripts/csp-headers.mjs` (emits the host's `_headers` file) together with the Cloudflare deployment.
+- Hashes change with every build, so the header is regenerated on every deploy. `tools/scripts/prepare-hosting.mjs` hashes the inline scripts of every built HTML file and writes the `_headers` file, taking the remote origins from `tools/federation/remotes.json`. It fails the deploy if a line exceeds Cloudflare's 2,000-character limit.
+- Verified in production (`ahmed-hrichi.ah-source.workers.dev`): the policy arrives as a response header, and loading the home page, navigating to the remote and using it reported zero `securitypolicyviolation` events and no console errors.
 - Follow-up: test native import maps (`shimMode: false`), which would remove the need for `blob:`.

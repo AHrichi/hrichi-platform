@@ -4,6 +4,7 @@ Ahmed Hrichi's portfolio, built as the kind of platform it describes: an Nx mono
 
 - Architecture: [docs/architecture.md](docs/architecture.md)
 - Decisions and spike results: [docs/adr](docs/adr/README.md)
+- Live: [ahmed-hrichi.ah-source.workers.dev](https://ahmed-hrichi.ah-source.workers.dev) (shell) and [ahmed-hrichi-lab-hello.ah-source.workers.dev](https://ahmed-hrichi-lab-hello.ah-source.workers.dev) (remote)
 
 ## Projects
 
@@ -53,3 +54,23 @@ End-to-end tests (first run: `pnpm exec playwright install chromium`):
 ```bash
 pnpm nx e2e shell-e2e
 ```
+
+## Deploy
+
+CI deploys the apps that changed after every green push to `main` (ADR-0007). To deploy by hand after `pnpm exec wrangler login`, deploy remotes first, because the shell's manifest points at them:
+
+```bash
+pnpm nx deploy lab-hello
+```
+
+```bash
+pnpm nx deploy shell
+```
+
+Run a build on the local Cloudflare runtime, with the same routing and headers as production:
+
+```bash
+pnpm nx serve-cloudflare shell
+```
+
+A new remote needs its production origin in `tools/federation/remotes.json`.

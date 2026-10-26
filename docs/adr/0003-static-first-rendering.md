@@ -31,5 +31,5 @@ The portfolio must be fast, indexable and free to host. A Node server would add 
 
 - Prerendered pages live on a CDN at zero cost and never wait for a server.
 - Remote pages are not indexed. That is acceptable, because labs and app demos are interactive and the case-study content lives in the shell.
-- Unknown paths currently return `200` with the client-rendered not-found page (a soft 404). At deploy time the host should return a real `404` for paths outside the client route prefixes (e.g. Cloudflare `_redirects` for `/labs/*` plus a prerendered 404 page).
+- The local `serve-static.mjs` answers unknown paths with `200` (a soft 404). Production returns a real `404`: Cloudflare serves `404.html` (a copy of the CSR shell) for unknown paths, and `_redirects` sends only `/labs/*` to the CSR shell with `200` (ADR-0007).
 - Never re-enable `ssr: true` on the federation build target without moving to runtime SSR on purpose.
