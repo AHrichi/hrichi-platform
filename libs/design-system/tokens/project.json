@@ -1,0 +1,19 @@
+{
+  "name": "design-system-tokens",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/design-system/tokens/src",
+  "projectType": "library",
+  "tags": ["scope:design-system", "type:tokens", "runtime:agnostic"],
+  "// targets": "to see all targets run: nx show project design-system-tokens --web",
+  "targets": {
+    "build-tokens": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": ["{projectRoot}/tokens/**/*.json", "{projectRoot}/build.mjs"],
+      "outputs": ["{projectRoot}/src/generated"],
+      "options": {
+        "command": "node libs/design-system/tokens/build.mjs"
+      }
+    }
+  }
+}

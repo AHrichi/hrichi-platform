@@ -11,11 +11,17 @@ describe('App', () => {
     });
   });
 
-  it('renders the main navigation', async () => {
+  it('renders the main navigation and a skip link', async () => {
     const fixture = TestBed.createComponent(App);
     await fixture.whenStable();
-    const nav = (fixture.nativeElement as HTMLElement).querySelector('nav');
+    const element = fixture.nativeElement as HTMLElement;
+    const links = Array.from(element.querySelectorAll('nav a')).map((a) =>
+      a.textContent?.trim(),
+    );
 
-    expect(nav?.textContent).toContain('Hello lab');
+    expect(links).toEqual(['Work', 'Experience', 'Services', 'Contact', 'CV']);
+    expect(element.querySelector('.ah-skip-link')?.getAttribute('href')).toBe(
+      '#main',
+    );
   });
 });

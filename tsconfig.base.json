@@ -13,8 +13,27 @@
     "lib": ["es2022", "dom"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
+    "resolveJsonModule": true,
     "paths": {
-      "@ah/platform/federation": ["./libs/platform/federation/src/index.ts"]
+      "@ah/platform/federation": ["./libs/platform/federation/src/index.ts"],
+      "@ah/design-system/tokens": ["./libs/design-system/tokens/src/index.ts"],
+      "@ah/ui": ["./libs/design-system/ui/src/index.ts"],
+      "@ah/shared/content": ["./libs/shared/content/src/index.ts"],
+      "@ah/shared/state": ["./libs/shared/state/src/index.ts"],
+      "@ah/portfolio/util-seo": ["./libs/portfolio/util-seo/src/index.ts"],
+      "@ah/portfolio/feature-home": [
+        "./libs/portfolio/feature-home/src/index.ts"
+      ],
+      "@ah/portfolio/feature-work": [
+        "./libs/portfolio/feature-work/src/index.ts"
+      ],
+      "@ah/portfolio/feature-experience": [
+        "./libs/portfolio/feature-experience/src/index.ts"
+      ],
+      "@ah/portfolio/feature-services": [
+        "./libs/portfolio/feature-services/src/index.ts"
+      ],
+      "@ah/portfolio/feature-cv": ["./libs/portfolio/feature-cv/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

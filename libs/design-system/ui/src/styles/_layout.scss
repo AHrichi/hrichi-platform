@@ -1,0 +1,42 @@
+@layer layout {
+  /** Centred page column with fluid side gutters. */
+  .ah-container {
+    inline-size: 100%;
+    max-inline-size: calc(var(--layout-content) + 2 * var(--layout-gutter));
+    margin-inline: auto;
+    padding-inline: var(--layout-gutter);
+  }
+
+  /** Vertical rhythm: children separated by --gap (default space-4). */
+  .ah-stack {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap, var(--space-4));
+  }
+
+  /** Wrapping row of items (tags, buttons). */
+  .ah-cluster {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--gap, var(--space-3));
+  }
+
+  /** Responsive grid: as many --min wide columns as fit. */
+  .ah-grid {
+    display: grid;
+    grid-template-columns: repeat(
+      auto-fill,
+      minmax(min(100%, var(--min, 18rem)), 1fr)
+    );
+    gap: var(--gap, var(--space-5));
+  }
+
+  .ah-section {
+    padding-block: var(--space-9);
+  }
+
+  .ah-prose {
+    max-inline-size: var(--layout-prose);
+  }
+}

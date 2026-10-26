@@ -1,0 +1,87 @@
+<div class="ah-container cv-wrap">
+  <div class="ah-cluster actions ah-no-print">
+    <a ahButton [href]="pdfHref" download>Download PDF</a>
+    <button ahButton="secondary" type="button" (click)="print()">Print</button>
+  </div>
+
+  <article class="cv">
+    <header class="cv__header">
+      <h1>{{ profile.name }}</h1>
+      <p class="cv__role">{{ profile.role }}</p>
+      <ul class="cv__contact" role="list">
+        <li>{{ profile.location }} · {{ profile.workSetup }}</li>
+        <li>
+          <a [href]="'mailto:' + profile.email">{{ profile.email }}</a>
+        </li>
+        <li>
+          <a [href]="profile.linkedin">linkedin.com/in/a-hrichi</a>
+        </li>
+        <li>
+          <a [href]="profile.github">github.com/AHrichi</a>
+        </li>
+      </ul>
+    </header>
+
+    <section aria-labelledby="cv-summary">
+      <h2 id="cv-summary">Summary</h2>
+      <p>{{ profile.summary }}</p>
+    </section>
+
+    <section aria-labelledby="cv-skills">
+      <h2 id="cv-skills">Skills</h2>
+      <dl class="cv__skills">
+        @for (group of skills; track group.name) {
+          <div>
+            <dt>{{ group.name }}</dt>
+            <dd>{{ group.items.join(', ') }}</dd>
+          </div>
+        }
+      </dl>
+    </section>
+
+    <section aria-labelledby="cv-experience">
+      <h2 id="cv-experience">Experience</h2>
+      @for (role of roles; track role.company) {
+        <section class="cv__role-block">
+          <div class="cv__role-head">
+            <h3>{{ role.title }} · {{ role.company }}</h3>
+            <p class="cv__period">{{ role.period }}</p>
+          </div>
+          <p class="cv__muted">{{ role.location }}</p>
+          <p>{{ role.context }}</p>
+          <ul class="cv__bullets">
+            @for (item of role.highlights; track item.title) {
+              <li>
+                <strong>{{ item.title }}:</strong> {{ item.text }}
+              </li>
+            }
+          </ul>
+        </section>
+      }
+    </section>
+
+    <div class="cv__columns">
+      <section aria-labelledby="cv-education">
+        <h2 id="cv-education">Education</h2>
+        <ul class="cv__plain" role="list">
+          @for (item of education; track item.title) {
+            <li>
+              <strong>{{ item.title }}</strong> · {{ item.school }} ·
+              {{ item.period }}
+            </li>
+          }
+        </ul>
+      </section>
+      <section aria-labelledby="cv-languages">
+        <h2 id="cv-languages">Languages</h2>
+        <ul class="cv__plain" role="list">
+          @for (item of languages; track item.language) {
+            <li>
+              <strong>{{ item.language }}</strong> · {{ item.level }}
+            </li>
+          }
+        </ul>
+      </section>
+    </div>
+  </article>
+</div>

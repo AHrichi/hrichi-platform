@@ -1,15 +1,49 @@
-<header class="site-header">
-  <a class="brand" routerLink="/">Ahmed Hrichi</a>
-  <nav aria-label="Main">
-    <a
-      routerLink="/"
-      routerLinkActive="active"
-      [routerLinkActiveOptions]="{ exact: true }"
-      >Home</a
-    >
-    <a routerLink="/labs/hello" routerLinkActive="active">Hello lab</a>
-  </nav>
+<a class="ah-skip-link" href="#main">Skip to content</a>
+
+<header class="site-header ah-no-print">
+  <div class="ah-container site-header__inner">
+    <a class="brand" routerLink="/">{{ profile.name }}</a>
+    <nav aria-label="Main">
+      <ul class="ah-cluster" role="list">
+        @for (item of nav; track item.path) {
+          <li>
+            <a
+              [routerLink]="item.path"
+              routerLinkActive="active"
+              ariaCurrentWhenActive="page"
+              >{{ item.label }}</a
+            >
+          </li>
+        }
+        <li>
+          <a ahButton size="sm" routerLink="/cv">CV</a>
+        </li>
+      </ul>
+    </nav>
+  </div>
 </header>
-<main id="main">
+
+<main id="main" tabindex="-1">
   <router-outlet />
 </main>
+
+<footer class="site-footer ah-no-print">
+  <div class="ah-container site-footer__inner">
+    <p class="ah-muted">
+      © {{ year }} {{ profile.name }} · {{ profile.location }}
+    </p>
+    <ul class="ah-cluster" role="list">
+      <li><a [href]="'mailto:' + profile.email">Email</a></li>
+      <li>
+        <a [href]="profile.linkedin" target="_blank" rel="noopener">LinkedIn</a>
+      </li>
+      <li>
+        <a [href]="profile.github" target="_blank" rel="noopener">GitHub</a>
+      </li>
+      <li>
+        <a [href]="repository" target="_blank" rel="noopener">Source & ADRs</a>
+      </li>
+      <li><a routerLink="/labs/hello">Micro-frontend demo</a></li>
+    </ul>
+  </div>
+</footer>

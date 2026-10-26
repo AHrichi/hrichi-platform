@@ -1,0 +1,10 @@
+{
+  "name": "design-system-ui",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/design-system/ui/src",
+  "prefix": "ah",
+  "projectType": "library",
+  "tags": ["scope:design-system", "type:ui", "runtime:browser"],
+  "// targets": "to see all targets run: nx show project design-system-ui --web",
+  "targets": {}
+}

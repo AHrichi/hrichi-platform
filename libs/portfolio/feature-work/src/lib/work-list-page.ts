@@ -1,0 +1,45 @@
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { caseStudies } from '@ah/shared/content';
+import { Seo } from '@ah/portfolio/util-seo';
+import { LinkCard, SectionHeading } from '@ah/ui';
+
+@Component({
+  selector: 'ah-work-list-page',
+  imports: [LinkCard, SectionHeading],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: `
+    <div class="ah-section ah-container ah-stack" style="--gap: var(--space-7)">
+      <ah-section-heading
+        [level]="1"
+        eyebrow="Work"
+        heading="Case studies"
+        lead="The problem, the decisions I made and why, and what changed. Client work stays at the level of my CV: no client code or data."
+      />
+      <ul class="ah-grid" role="list">
+        @for (study of studies; track study.slug) {
+          <li>
+            <ah-link-card
+              [heading]="study.title"
+              [href]="'/work/' + study.slug"
+              [eyebrow]="study.client + ' · ' + study.period"
+              [summary]="study.summary"
+              [tags]="study.stack.slice(0, 4)"
+            />
+          </li>
+        }
+      </ul>
+    </div>
+  `,
+})
+export class WorkListPage {
+  protected readonly studies = caseStudies;
+
+  constructor() {
+    inject(Seo).update({
+      title: 'Case studies',
+      description:
+        'Case studies: instant 3D quoting, a schema-driven integration platform, a Three.js graphics library and this micro-frontend platform.',
+      path: '/work',
+    });
+  }
+}

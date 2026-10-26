@@ -1,0 +1,171 @@
+<section class="hero ah-container" aria-labelledby="hero-heading">
+  <div class="ah-stack hero__text" style="--gap: var(--space-5)">
+    <p class="ah-badge ah-badge--success">{{ profile.availability }}</p>
+    <h1 id="hero-heading">{{ preferences.copy().headline }}</h1>
+    <p class="ah-lead ah-prose">{{ preferences.copy().intro }}</p>
+    <div class="ah-cluster">
+      <ah-action-link [link]="preferences.copy().primaryCta" />
+      <ah-action-link
+        [link]="preferences.copy().secondaryCta"
+        variant="secondary"
+      />
+    </div>
+    <div class="ah-cluster audience">
+      <span class="ah-muted" aria-hidden="true">View as</span>
+      <ah-segmented-control
+        label="View this site as"
+        [options]="audienceOptions"
+        [value]="preferences.audience()"
+        (valueChange)="preferences.setAudience($event)"
+      />
+    </div>
+  </div>
+
+  <dl class="facts ah-card">
+    <div>
+      <dt>Name</dt>
+      <dd>{{ profile.name }}</dd>
+    </div>
+    <div>
+      <dt>Based in</dt>
+      <dd>{{ profile.location }}</dd>
+    </div>
+    <div>
+      <dt>Works</dt>
+      <dd>{{ profile.workSetup }}</dd>
+    </div>
+    <div>
+      <dt>Now</dt>
+      <dd>{{ currentRole.title }} at {{ currentRole.company }}</dd>
+    </div>
+  </dl>
+</section>
+
+@for (section of preferences.copy().sections; track section) {
+  @switch (section) {
+    @case ('work') {
+      <section class="ah-section ah-container" aria-labelledby="work-heading">
+        <div class="ah-stack" style="--gap: var(--space-6)">
+          <ah-section-heading
+            headingId="work-heading"
+            eyebrow="Selected work"
+            heading="Case studies"
+            lead="What I built, the decisions behind it and what changed."
+          />
+          <ul class="ah-grid" role="list">
+            @for (study of featuredWork(); track study.slug) {
+              <li>
+                <ah-link-card
+                  [heading]="study.title"
+                  [href]="'/work/' + study.slug"
+                  [eyebrow]="study.client"
+                  [summary]="study.summary"
+                  [tags]="study.stack.slice(0, 4)"
+                />
+              </li>
+            }
+          </ul>
+          <a routerLink="/work">All case studies</a>
+        </div>
+      </section>
+    }
+    @case ('services') {
+      <section
+        class="ah-section ah-container"
+        aria-labelledby="services-heading"
+      >
+        <div class="ah-stack" style="--gap: var(--space-6)">
+          <ah-section-heading
+            headingId="services-heading"
+            eyebrow="Freelance"
+            heading="How I can help"
+          />
+          <ul class="ah-grid" role="list">
+            @for (service of featuredServices; track service.id) {
+              <li class="ah-card">
+                <h3 class="card-title">{{ service.title }}</h3>
+                <p class="ah-muted">{{ service.summary }}</p>
+              </li>
+            }
+          </ul>
+          <a routerLink="/services">All services and how I work</a>
+        </div>
+      </section>
+    }
+    @case ('experience') {
+      <section
+        class="ah-section ah-container"
+        aria-labelledby="experience-heading"
+      >
+        <div class="ah-stack" style="--gap: var(--space-6)">
+          <ah-section-heading
+            headingId="experience-heading"
+            eyebrow="Experience"
+            heading="5+ years of Angular, from v12 to v22"
+            [lead]="profile.summary"
+          />
+          <article class="ah-card current-role">
+            <p class="ah-eyebrow">{{ currentPeriod }}</p>
+            <h3 class="card-title">
+              {{ currentRole.title }} · {{ currentRole.company }}
+            </h3>
+            <p class="ah-muted">{{ currentRole.context }}</p>
+          </article>
+          <div class="ah-cluster">
+            <a routerLink="/experience">Full experience</a>
+            <a routerLink="/cv">CV</a>
+          </div>
+        </div>
+      </section>
+    }
+    @case ('platform') {
+      <section
+        class="ah-section ah-container platform"
+        aria-labelledby="platform-heading"
+      >
+        <div class="ah-stack" style="--gap: var(--space-6)">
+          <ah-section-heading
+            headingId="platform-heading"
+            eyebrow="Open the hood"
+            heading="This site is the proof"
+            lead="Built the way I would build a client's platform, with every decision written down."
+          />
+          <ul class="ah-grid platform__facts" role="list" style="--min: 14rem">
+            <li class="ah-card">
+              <h3 class="card-title">Micro-frontends</h3>
+              <p class="ah-muted">
+                Native Federation remotes, deployed on their own, each with a
+                fallback if it's down.
+              </p>
+            </li>
+            <li class="ah-card">
+              <h3 class="card-title">Zoneless Angular 22</h3>
+              <p class="ah-muted">
+                Signals and NgRx SignalStore, no zone.js in any bundle.
+              </p>
+            </li>
+            <li class="ah-card">
+              <h3 class="card-title">Prerendered & offline</h3>
+              <p class="ah-muted">
+                Real HTML from a CDN, then a PWA that works offline.
+              </p>
+            </li>
+            <li class="ah-card">
+              <h3 class="card-title">Strict CSP, $0 hosting</h3>
+              <p class="ah-muted">
+                Hash-based security policy, deployed to Cloudflare by CI.
+              </p>
+            </li>
+          </ul>
+          <div class="ah-cluster">
+            <a routerLink="/work/this-platform">How it's built</a>
+            <a routerLink="/labs/hello">Try a micro-frontend</a>
+            <a [href]="repository" target="_blank" rel="noopener"
+              >Source and ADRs on GitHub</a
+            >
+          </div>
+        </div>
+      </section>
+    }
+  }
+}

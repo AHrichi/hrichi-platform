@@ -1,75 +1,55 @@
-/* Temporary globals for the M0 spike; replaced by @ah/design-system tokens. */
-:root {
-  color-scheme: light dark;
-  --surface: #ffffff;
-  --text: #1c1b1f;
-  --accent: #b3122e;
-  font-family:
-    system-ui,
-    -apple-system,
-    'Segoe UI',
-    Roboto,
-    sans-serif;
-  line-height: 1.6;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --surface: #121114;
-    --text: #ece9ef;
-    --accent: #ff5c74;
-  }
-}
-
-body {
-  margin: 0;
-  background: var(--surface);
-  color: var(--text);
-}
-
-a {
-  color: var(--accent);
-}
-
+/* Shell chrome only; everything else comes from @ah/ui styles and tokens. */
 .site-header {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 5;
+  background: color-mix(in srgb, var(--color-bg-canvas) 88%, transparent);
+  backdrop-filter: blur(8px);
+  border-block-end: 1px solid var(--color-border-default);
+}
+
+.site-header__inner {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
-  padding-block: 1rem;
-  padding-inline: 1.5rem;
-  border-block-end: 1px solid color-mix(in srgb, var(--text) 12%, transparent);
+  gap: var(--space-3) var(--space-5);
+  padding-block: var(--space-3);
+}
 
-  nav {
-    display: flex;
-    gap: 1rem;
-  }
+.brand {
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-default);
+  text-decoration: none;
+  letter-spacing: -0.01em;
+}
 
-  .brand {
-    font-weight: 600;
-    text-decoration: none;
-    color: inherit;
-  }
+.site-header nav a:not(.ah-button) {
+  color: var(--color-text-muted);
+  text-decoration: none;
+  font-size: var(--font-size-200);
+  font-weight: var(--font-weight-medium);
 
-  .active {
-    font-weight: 600;
+  &:hover,
+  &.active {
+    color: var(--color-text-default);
   }
 }
 
-main {
-  padding-inline: 1.5rem;
+main:focus {
+  outline: none;
 }
 
-.hero {
-  max-inline-size: 40rem;
-  margin-inline: auto;
-  padding-block: 3rem;
+.site-footer {
+  margin-block-start: var(--space-9);
+  padding-block: var(--space-6);
+  border-block-start: 1px solid var(--color-border-default);
+  font-size: var(--font-size-200);
 }
 
-.eyebrow {
-  font-size: 0.875rem;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  opacity: 0.7;
+.site-footer__inner {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--space-4);
 }

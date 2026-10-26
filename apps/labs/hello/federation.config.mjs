@@ -1,5 +1,10 @@
 import { withNativeFederation } from '@angular-architects/native-federation/config';
-import { features, shared, skip } from '../../../tools/federation/shared.mjs';
+import {
+  features,
+  shared,
+  sharedMappings,
+  skip,
+} from '../../../tools/federation/shared.mjs';
 
 export default withNativeFederation({
   name: 'lab-hello',
@@ -11,6 +16,7 @@ export default withNativeFederation({
   },
 
   shared,
+  sharedMappings,
   skip,
   features,
 });

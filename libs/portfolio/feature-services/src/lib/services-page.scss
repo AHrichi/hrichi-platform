@@ -1,0 +1,26 @@
+.service-title {
+  font-size: var(--font-size-400);
+}
+
+.label {
+  font-size: var(--font-size-100);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-text-muted);
+}
+
+.deliverables {
+  display: grid;
+  gap: var(--space-1);
+  padding-inline-start: var(--space-5);
+}
+
+.proof {
+  margin-block-start: auto;
+  font-size: var(--font-size-200);
+}
+
+.process {
+  padding: 0;
+}

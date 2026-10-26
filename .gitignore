@@ -47,3 +47,6 @@ vitest.config.*.timestamp*
 
 # Cloudflare wrangler local state
 .wrangler
+
+# Lighthouse CI local runs
+.lighthouseci

@@ -4,11 +4,13 @@
 //   2. Any other route falls back to index.csr.html (client-rendered routes).
 //   3. Every response allows cross-origin reads, so the shell can load remotes.
 //   4. Hashed assets are immutable; HTML and federation metadata are no-cache.
+//   5. Text responses are brotli/gzip compressed.
 //
 // Usage: node tools/scripts/serve-static.mjs <build/browser dir> <port>
 import { createServer } from 'node:http';
 import { readFile, stat } from 'node:fs/promises';
 import { extname, join, resolve, sep } from 'node:path';
+import { brotliCompressSync, gzipSync } from 'node:zlib';
 
 const [rootArg, portArg = '4200'] = process.argv.slice(2);
 if (!rootArg) {
@@ -75,11 +77,33 @@ const server = createServer(async (req, res) => {
     res.end('Not found');
     return;
   }
-  res.writeHead(200, {
-    'Content-Type': contentTypes[extname(file)] ?? 'application/octet-stream',
+  const contentType = contentTypes[extname(file)] ?? 'application/octet-stream';
+  const body = await readFile(file);
+  const headers = {
+    'Content-Type': contentType,
     'Cache-Control': cacheControl(file),
-  });
-  res.end(await readFile(file));
+    Vary: 'Accept-Encoding',
+  };
+  // Compress text like Cloudflare does, so local Lighthouse runs see
+  // production-sized transfers.
+  const accepts = String(req.headers['accept-encoding'] ?? '');
+  if (
+    /text|javascript|json|svg|manifest/.test(contentType) &&
+    body.length > 1024
+  ) {
+    if (accepts.includes('br')) {
+      res.writeHead(200, { ...headers, 'Content-Encoding': 'br' });
+      res.end(brotliCompressSync(body));
+      return;
+    }
+    if (accepts.includes('gzip')) {
+      res.writeHead(200, { ...headers, 'Content-Encoding': 'gzip' });
+      res.end(gzipSync(body));
+      return;
+    }
+  }
+  res.writeHead(200, headers);
+  res.end(body);
 }).listen(port, async () => {
   console.log(`Serving ${root} on http://localhost:${port}`);
   // Tell Nx the continuous task is ready (targets use readyWhen: { signal: true }).

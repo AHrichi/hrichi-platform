@@ -40,16 +40,24 @@ jobs:
       - name: Zoneless guard (ADR-0004)
         run: pnpm check:zoneless
       - run: pnpm nx format:check
+      - name: Design tokens are committed up to date (and pass the contrast gate)
+        run: |
+          pnpm nx run design-system-tokens:build-tokens --skip-nx-cache
+          git diff --exit-code libs/design-system/tokens/src/generated
       - run: pnpm nx affected -t lint test build
 
       - run: pnpm exec playwright install --with-deps chromium
       - name: End-to-end tests against production builds
         run: pnpm nx affected -t e2e
+      - name: Lighthouse budgets (performance, a11y 100, SEO 100)
+        run: pnpm nx affected -t lighthouse
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: playwright-report
-          path: dist/.playwright
+          name: test-reports
+          path: |
+            dist/.playwright
+            dist/.lighthouse
           if-no-files-found: ignore
 
   deploy:
@@ -72,6 +80,8 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - uses: nrwl/nx-set-shas@v4
+      # The shell's deploy prints the CV page to PDF with Chromium.
+      - run: pnpm exec playwright install --with-deps chromium
 
       # Each app deploys on its own; on push only the ones that changed are
       # redeployed. Deploy inputs include the remote registry and hosting script.

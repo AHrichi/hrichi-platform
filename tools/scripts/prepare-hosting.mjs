@@ -5,6 +5,8 @@
 //   --federation          Host only: write federation.manifest.json for --env
 //   --not-found <file>    Copy <file> to 404.html (served with a 404 status)
 //   --cors                Remote only: allow cross-origin reads of every asset
+//   --sitemap             Write sitemap.xml and robots.txt from Angular's
+//                         prerendered-routes.json and the site URL (site.json)
 //
 // It always writes `_headers` with security headers and a Content-Security-Policy
 // whose script hashes come from the inline scripts in the built HTML (ADR-0006).
@@ -27,6 +29,7 @@ const { positionals, values } = parseArgs({
     federation: { type: 'boolean', default: false },
     'not-found': { type: 'string' },
     cors: { type: 'boolean', default: false },
+    sitemap: { type: 'boolean', default: false },
   },
 });
 const [dir] = positionals;
@@ -63,6 +66,31 @@ if (values.federation) {
 
 if (values['not-found']) {
   copyFileSync(join(dir, values['not-found']), join(dir, '404.html'));
+}
+
+if (values.sitemap) {
+  const site = JSON.parse(
+    readFileSync('libs/shared/content/src/lib/site.json', 'utf8'),
+  );
+  // Angular writes the list next to the browser folder.
+  const { routes } = JSON.parse(
+    readFileSync(join(dir, '..', 'prerendered-routes.json'), 'utf8'),
+  );
+  const today = new Date().toISOString().slice(0, 10);
+  const urls = Object.keys(routes)
+    .sort()
+    .map(
+      (route) =>
+        `  <url><loc>${new URL(route, site.url).href}</loc><lastmod>${today}</lastmod></url>`,
+    );
+  writeFileSync(
+    join(dir, 'sitemap.xml'),
+    `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.join('\n')}\n</urlset>\n`,
+  );
+  writeFileSync(
+    join(dir, 'robots.txt'),
+    `User-agent: *\nAllow: /\n\nSitemap: ${new URL('/sitemap.xml', site.url).href}\n`,
+  );
 }
 
 /** Hashes of every executable inline <script> in every HTML file under dir. */
@@ -147,5 +175,5 @@ if (longest > 2000) {
   process.exit(1);
 }
 console.log(
-  `Prepared ${dir} for ${values.env}: _headers${values.federation ? ', federation.manifest.json' : ''}${values['not-found'] ? ', 404.html' : ''}`,
+  `Prepared ${dir} for ${values.env}: _headers${values.federation ? ', federation.manifest.json' : ''}${values['not-found'] ? ', 404.html' : ''}${values.sitemap ? ', sitemap.xml, robots.txt' : ''}`,
 );

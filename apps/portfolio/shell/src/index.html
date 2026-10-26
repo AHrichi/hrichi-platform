@@ -11,6 +11,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/x-icon" href="favicon.ico" />
     <link rel="manifest" href="manifest.webmanifest" />
+    <!-- Start the Latin font before the deferred stylesheet asks for it (LCP). -->
+    <link
+      rel="preload"
+      href="media/inter-latin-wght-normal.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
     <meta name="theme-color" content="#b3122e" />
   </head>
   <body>

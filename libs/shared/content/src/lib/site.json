@@ -1,0 +1,7 @@
+{
+  "$comment": "Read by the Angular app (canonical URLs, JSON-LD) and by tools/scripts/prepare-hosting.mjs (sitemap, robots.txt).",
+  "name": "Ahmed Hrichi",
+  "url": "https://portfolio.ahmed-hrichi.workers.dev",
+  "repository": "https://github.com/AHrichi/hrichi-platform",
+  "cvFile": "ahmed-hrichi-cv.pdf"
+}

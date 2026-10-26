@@ -1,0 +1,9 @@
+// Global styles of the design system. The cascade layer order
+// (reset, tokens, base, layout, components, utilities) is declared at the top
+// of the generated tokens.css, which apps load first, so later layers win
+// regardless of import order.
+@use 'reset';
+@use 'base';
+@use 'layout';
+@use 'components';
+@use 'utilities';

@@ -82,7 +82,12 @@
             "input": "apps/portfolio/shell/public"
           }
         ],
-        "styles": ["apps/portfolio/shell/src/styles.scss"],
+        "styles": [
+          "node_modules/@fontsource-variable/inter/index.css",
+          "libs/design-system/tokens/src/generated/tokens.css",
+          "libs/design-system/ui/src/styles/index.scss",
+          "apps/portfolio/shell/src/styles.scss"
+        ],
         "server": "apps/portfolio/shell/src/main.server.ts",
         "outputMode": "static",
         "polyfills": ["es-module-shims"]
@@ -101,7 +106,7 @@
               "maximumError": "8kb"
             }
           ],
-          "outputHashing": "all",
+          "outputHashing": "bundles",
           "serviceWorker": "apps/portfolio/shell/ngsw-config.json"
         },
         "development": {
@@ -136,7 +141,8 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "node tools/scripts/prepare-hosting.mjs dist/apps/portfolio/shell/browser --env development --federation --not-found index.csr.html",
+          "node tools/scripts/prepare-hosting.mjs dist/apps/portfolio/shell/browser --env development --federation --not-found index.csr.html --sitemap",
+          "node tools/scripts/cv-pdf.mjs dist/apps/portfolio/shell/browser",
           "wrangler dev --config apps/portfolio/shell/wrangler.jsonc --port 4200"
         ],
         "parallel": false
@@ -147,7 +153,8 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "node tools/scripts/prepare-hosting.mjs dist/apps/portfolio/shell/browser --env production --federation --not-found index.csr.html",
+          "node tools/scripts/prepare-hosting.mjs dist/apps/portfolio/shell/browser --env production --federation --not-found index.csr.html --sitemap",
+          "node tools/scripts/cv-pdf.mjs dist/apps/portfolio/shell/browser",
           "wrangler deploy --config apps/portfolio/shell/wrangler.jsonc"
         ],
         "parallel": false
@@ -156,8 +163,15 @@
         "production",
         "^production",
         "{workspaceRoot}/tools/scripts/prepare-hosting.mjs",
-        "{workspaceRoot}/tools/federation/remotes.json"
+        "{workspaceRoot}/tools/federation/remotes.json",
+        "{workspaceRoot}/tools/scripts/cv-pdf.mjs"
       ]
+    },
+    "lighthouse": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "lhci autorun --config=apps/portfolio/shell/lighthouserc.json"
+      }
     }
   }
 }

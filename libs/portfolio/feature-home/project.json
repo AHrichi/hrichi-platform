@@ -1,0 +1,10 @@
+{
+  "name": "portfolio-feature-home",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/portfolio/feature-home/src",
+  "prefix": "ah",
+  "projectType": "library",
+  "tags": ["scope:portfolio", "type:feature", "runtime:browser"],
+  "// targets": "to see all targets run: nx show project portfolio-feature-home --web",
+  "targets": {}
+}

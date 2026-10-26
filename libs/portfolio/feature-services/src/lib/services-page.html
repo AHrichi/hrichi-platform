@@ -1,0 +1,54 @@
+<div class="ah-section ah-container ah-stack" style="--gap: var(--space-8)">
+  <div class="ah-stack" style="--gap: var(--space-5)">
+    <ah-section-heading
+      [level]="1"
+      eyebrow="Freelance"
+      heading="Services"
+      [lead]="engagement"
+    />
+    <div class="ah-cluster">
+      <ah-action-link [link]="startProject" />
+    </div>
+  </div>
+
+  <ul class="ah-grid" role="list" style="--min: 20rem">
+    @for (service of services; track service.id) {
+      <li class="ah-card">
+        <h2 class="service-title">{{ service.title }}</h2>
+        <p class="ah-muted">{{ service.summary }}</p>
+        <h3 class="label">What you get</h3>
+        <ul class="deliverables">
+          @for (item of service.deliverables; track item) {
+            <li>{{ item }}</li>
+          }
+        </ul>
+        @if (service.proofStudies.length) {
+          <p class="proof">
+            Proof:
+            @for (
+              study of service.proofStudies;
+              track study.slug;
+              let last = $last
+            ) {
+              <a [routerLink]="['/work', study.slug]">{{ study.title }}</a
+              >{{ last ? '' : ', ' }}
+            }
+          </p>
+        }
+      </li>
+    }
+  </ul>
+
+  <section aria-labelledby="process-heading" class="ah-stack">
+    <h2 id="process-heading">How I work</h2>
+    <ol class="ah-grid process" role="list" style="--min: 14rem">
+      @for (step of process; track step.title; let i = $index) {
+        <li class="ah-card">
+          <p class="ah-eyebrow">Step {{ i + 1 }}</p>
+          <h3 class="service-title">{{ step.title }}</h3>
+          <p class="ah-muted">{{ step.text }}</p>
+        </li>
+      }
+    </ol>
+  </section>
+</div>

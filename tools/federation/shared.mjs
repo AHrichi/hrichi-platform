@@ -1,4 +1,7 @@
-import { fromPackageJson } from '@angular-architects/native-federation/config';
+import {
+  fromPackageJson,
+  mappingsFromWorkspace,
+} from '@angular-architects/native-federation/config';
 
 /**
  * One sharing policy for the shell and every remote (ADR-0002), so shared
@@ -11,6 +14,14 @@ export const shared = fromPackageJson({
   build: 'package',
 })
   .patch(['@angular/*'], { includeSecondaries: { keepAll: true } })
+  .get();
+
+/**
+ * Only libraries that remotes may use are federated; page-level feature libs
+ * stay inside the shell's own lazy chunks.
+ */
+export const sharedMappings = mappingsFromWorkspace({ singleton: true })
+  .filter(['@ah/platform/*', '@ah/shared/*', '@ah/ui', '@ah/design-system/*'])
   .get();
 
 export const skip = [

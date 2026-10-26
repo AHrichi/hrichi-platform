@@ -1,0 +1,10 @@
+{
+  "name": "shared-state",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/shared/state/src",
+  "prefix": "ah",
+  "projectType": "library",
+  "tags": ["scope:shared", "type:data-access", "runtime:browser"],
+  "// targets": "to see all targets run: nx show project shared-state --web",
+  "targets": {}
+}

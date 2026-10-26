@@ -1,0 +1,98 @@
+@if (study(); as study) {
+  <article class="ah-section ah-container case-study">
+    <header class="ah-stack" style="--gap: var(--space-4)">
+      <a routerLink="/work" class="back">All case studies</a>
+      <p class="ah-eyebrow">{{ study.client }} · {{ study.period }}</p>
+      <h1>{{ study.title }}</h1>
+      <p class="ah-lead ah-prose">{{ study.summary }}</p>
+      @if (study.confidentiality) {
+        <p class="note ah-prose">{{ study.confidentiality }}</p>
+      }
+    </header>
+
+    <dl class="meta">
+      <div>
+        <dt>Role</dt>
+        <dd>{{ study.role }}</dd>
+      </div>
+      <div>
+        <dt>Stack</dt>
+        <dd>
+          <ul class="ah-cluster" role="list" style="--gap: var(--space-2)">
+            @for (item of study.stack; track item) {
+              <li>
+                <ah-tag>{{ item }}</ah-tag>
+              </li>
+            }
+          </ul>
+        </dd>
+      </div>
+    </dl>
+
+    <div class="body ah-stack ah-prose" style="--gap: var(--space-7)">
+      <section aria-labelledby="context-heading" class="ah-stack">
+        <h2 id="context-heading">Context</h2>
+        <p>{{ study.context }}</p>
+      </section>
+
+      <section aria-labelledby="problem-heading" class="ah-stack">
+        <h2 id="problem-heading">The problem</h2>
+        <p>{{ study.problem }}</p>
+      </section>
+
+      <section aria-labelledby="approach-heading" class="ah-stack">
+        <h2 id="approach-heading">Decisions and why</h2>
+        <ol class="decisions" role="list">
+          @for (item of study.approach; track item.decision) {
+            <li class="ah-card">
+              <h3>{{ item.decision }}</h3>
+              <p class="ah-muted">{{ item.why }}</p>
+            </li>
+          }
+        </ol>
+      </section>
+
+      <section aria-labelledby="outcome-heading" class="ah-stack">
+        <h2 id="outcome-heading">Outcome</h2>
+        <ul>
+          @for (item of study.outcome; track item) {
+            <li>{{ item }}</li>
+          }
+        </ul>
+      </section>
+
+      @if (study.links?.length) {
+        <section aria-labelledby="links-heading" class="ah-stack">
+          <h2 id="links-heading">Links</h2>
+          <ul>
+            @for (link of study.links; track link.href) {
+              <li>
+                <a
+                  [href]="link.href"
+                  [attr.target]="link.external ? '_blank' : null"
+                  [attr.rel]="link.external ? 'noopener' : null"
+                  >{{ link.label }}</a
+                >
+              </li>
+            }
+          </ul>
+        </section>
+      }
+    </div>
+
+    @if (next(); as next) {
+      <nav class="next ah-card" aria-label="Next case study">
+        <p class="ah-eyebrow">Next case study</p>
+        <a [routerLink]="['/work', next.slug]">{{ next.title }}</a>
+      </nav>
+    }
+  </article>
+} @else {
+  <section class="ah-section ah-container ah-stack">
+    <h1>Case study not found</h1>
+    <p>
+      There's no case study at this address.
+      <a routerLink="/work">See all case studies</a>.
+    </p>
+  </section>
+}

@@ -1,0 +1,144 @@
+.cv-wrap {
+  padding-block: var(--space-7);
+}
+
+.actions {
+  margin-block-end: var(--space-6);
+}
+
+.cv {
+  display: grid;
+  gap: var(--space-6);
+  max-inline-size: 52rem;
+  font-size: var(--font-size-200);
+
+  h2 {
+    font-size: var(--font-size-100);
+    font-weight: var(--font-weight-bold);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-accent-default);
+    padding-block-end: var(--space-2);
+    margin-block-end: var(--space-3);
+    border-block-end: 1px solid var(--color-border-default);
+  }
+
+  h3 {
+    font-size: var(--font-size-300);
+  }
+}
+
+.cv__bullets {
+  display: grid;
+  gap: var(--space-1);
+  padding-inline-start: var(--space-5);
+}
+
+.cv__header h1 {
+  font-size: var(--font-size-600);
+}
+
+.cv__role {
+  font-size: var(--font-size-400);
+  color: var(--color-accent-default);
+  font-weight: var(--font-weight-semibold);
+}
+
+.cv__contact {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-4);
+  padding: 0;
+  margin-block-start: var(--space-3);
+  color: var(--color-text-muted);
+}
+
+.cv__skills {
+  display: grid;
+  gap: var(--space-2);
+
+  div {
+    display: grid;
+    gap: var(--space-3);
+    grid-template-columns: 11rem minmax(0, 1fr);
+  }
+
+  dt {
+    font-weight: var(--font-weight-semibold);
+  }
+
+  dd {
+    margin: 0;
+  }
+}
+
+.cv__role-block {
+  display: grid;
+  gap: var(--space-2);
+  margin-block-end: var(--space-5);
+}
+
+// Print: let long roles flow across pages, but never strand a heading or
+// split a bullet.
+.cv h2,
+.cv h3,
+.cv__role-head {
+  break-after: avoid;
+}
+
+.cv__bullets li,
+.cv__skills div {
+  break-inside: avoid;
+}
+
+.cv__role-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.cv__period,
+.cv__muted {
+  color: var(--color-text-muted);
+}
+
+.cv__columns {
+  display: grid;
+  gap: var(--space-6);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+}
+
+.cv__plain {
+  display: grid;
+  gap: var(--space-1);
+  padding: 0;
+}
+
+@media print {
+  @page {
+    size: A4;
+    margin: 14mm 14mm 16mm;
+  }
+
+  .cv-wrap {
+    padding: 0;
+  }
+
+  .cv {
+    max-inline-size: none;
+    gap: var(--space-4);
+    font-size: 9.5pt;
+    color: #18181b;
+  }
+
+  .cv a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .cv h2,
+  .cv__role {
+    color: #b3122e;
+  }
+}

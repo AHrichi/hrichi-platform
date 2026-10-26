@@ -1,0 +1,23 @@
+@layer utilities {
+  .ah-visually-hidden {
+    position: absolute !important;
+    inline-size: 1px !important;
+    block-size: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip-path: inset(50%) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+  }
+
+  .ah-muted {
+    color: var(--color-text-muted);
+  }
+
+  @media print {
+    .ah-no-print {
+      display: none !important;
+    }
+  }
+}

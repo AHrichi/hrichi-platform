@@ -67,7 +67,12 @@
             "input": "apps/labs/hello/public"
           }
         ],
-        "styles": ["apps/labs/hello/src/styles.scss"],
+        "styles": [
+          "node_modules/@fontsource-variable/inter/index.css",
+          "libs/design-system/tokens/src/generated/tokens.css",
+          "libs/design-system/ui/src/styles/index.scss",
+          "apps/labs/hello/src/styles.scss"
+        ],
         "polyfills": ["es-module-shims"]
       },
       "configurations": {

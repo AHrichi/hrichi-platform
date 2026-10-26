@@ -1,0 +1,85 @@
+<div class="ah-section ah-container ah-stack" style="--gap: var(--space-8)">
+  <div class="ah-stack" style="--gap: var(--space-5)">
+    <ah-section-heading
+      [level]="1"
+      eyebrow="Experience"
+      heading="Where I've worked"
+      [lead]="profile.summary"
+    />
+    <div class="ah-cluster">
+      <a routerLink="/cv">Printable CV</a>
+    </div>
+  </div>
+
+  <ol class="timeline" role="list">
+    @for (role of roles; track role.company) {
+      <li class="role">
+        <header class="role__header">
+          <p class="ah-eyebrow">{{ role.period }}</p>
+          <h2 class="role__title">{{ role.title }} · {{ role.company }}</h2>
+          <p class="ah-muted">{{ role.location }}</p>
+        </header>
+        <p>{{ role.context }}</p>
+        <ul class="highlights" role="list">
+          @for (item of role.highlights; track item.title) {
+            <li>
+              <h3>{{ item.title }}</h3>
+              <p class="ah-muted">{{ item.text }}</p>
+            </li>
+          }
+        </ul>
+        <ul class="ah-cluster" role="list" style="--gap: var(--space-2)">
+          @for (item of role.stack; track item) {
+            <li>
+              <ah-tag>{{ item }}</ah-tag>
+            </li>
+          }
+        </ul>
+      </li>
+    }
+  </ol>
+
+  <section aria-labelledby="skills-heading" class="ah-stack">
+    <h2 id="skills-heading">Skills</h2>
+    <div class="ah-grid" style="--min: 16rem">
+      @for (group of skills; track group.name) {
+        <section class="ah-card">
+          <h3 class="group-title">{{ group.name }}</h3>
+          <ul class="ah-cluster" role="list" style="--gap: var(--space-2)">
+            @for (item of group.items; track item) {
+              <li>
+                <ah-tag>{{ item }}</ah-tag>
+              </li>
+            }
+          </ul>
+        </section>
+      }
+    </div>
+  </section>
+
+  <div class="ah-grid" style="--min: 20rem">
+    <section aria-labelledby="education-heading" class="ah-stack">
+      <h2 id="education-heading">Education</h2>
+      <ul class="plain ah-stack" role="list">
+        @for (item of education; track item.title) {
+          <li>
+            <strong>{{ item.title }}</strong
+            ><br />
+            <span class="ah-muted">{{ item.school }} · {{ item.period }}</span>
+          </li>
+        }
+      </ul>
+    </section>
+    <section aria-labelledby="languages-heading" class="ah-stack">
+      <h2 id="languages-heading">Languages</h2>
+      <ul class="plain ah-stack" role="list">
+        @for (item of languages; track item.language) {
+          <li>
+            <strong>{{ item.language }}</strong>
+            <span class="ah-muted"> · {{ item.level }}</span>
+          </li>
+        }
+      </ul>
+    </section>
+  </div>
+</div>

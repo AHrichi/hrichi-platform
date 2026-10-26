@@ -1,0 +1,10 @@
+{
+  "name": "portfolio-util-seo",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/portfolio/util-seo/src",
+  "prefix": "ah",
+  "projectType": "library",
+  "tags": ["scope:portfolio", "type:util", "runtime:browser"],
+  "// targets": "to see all targets run: nx show project portfolio-util-seo --web",
+  "targets": {}
+}

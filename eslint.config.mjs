@@ -69,6 +69,7 @@ export default [
                 'type:platform',
                 'type:contracts',
                 'type:tokens',
+                'type:content',
               ],
             },
             {
@@ -84,6 +85,7 @@ export default [
             {
               sourceTag: 'type:feature',
               onlyDependOnLibsWithTags: [
+                'type:content',
                 'type:ui',
                 'type:data-access',
                 'type:domain',
@@ -98,10 +100,19 @@ export default [
             {
               sourceTag: 'type:data-access',
               onlyDependOnLibsWithTags: [
+                'type:content',
                 'type:domain',
                 'type:util',
                 'type:contracts',
               ],
+            },
+            {
+              sourceTag: 'type:content',
+              onlyDependOnLibsWithTags: ['type:content'],
+            },
+            {
+              sourceTag: 'type:util',
+              onlyDependOnLibsWithTags: ['type:util', 'type:content'],
             },
             {
               sourceTag: 'type:domain',

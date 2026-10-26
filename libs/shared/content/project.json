@@ -1,0 +1,9 @@
+{
+  "name": "shared-content",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/shared/content/src",
+  "projectType": "library",
+  "tags": ["scope:shared", "type:content", "runtime:agnostic"],
+  "// targets": "to see all targets run: nx show project shared-content --web",
+  "targets": {}
+}
