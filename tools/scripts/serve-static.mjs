@@ -4,13 +4,14 @@
 //   2. Any other route falls back to index.csr.html (client-rendered routes).
 //   3. Every response allows cross-origin reads, so the shell can load remotes.
 //   4. Hashed assets are immutable; HTML and federation metadata are no-cache.
-//   5. Text responses are brotli/gzip compressed.
+//   5. Text responses are brotli/gzip compressed, ahead of time like
+//      Cloudflare's edge, so Lighthouse never measures compression latency.
 //
 // Usage: node tools/scripts/serve-static.mjs <build/browser dir> <port>
 import { createServer } from 'node:http';
-import { readFile, stat } from 'node:fs/promises';
+import { readdir, readFile, stat } from 'node:fs/promises';
 import { extname, join, resolve, sep } from 'node:path';
-import { brotliCompressSync, gzipSync } from 'node:zlib';
+import { brotliCompressSync, constants, gzipSync } from 'node:zlib';
 
 const [rootArg, portArg = '4200'] = process.argv.slice(2);
 if (!rootArg) {
@@ -27,11 +28,49 @@ const contentTypes = {
   '.css': 'text/css; charset=utf-8',
   '.json': 'application/json; charset=utf-8',
   '.webmanifest': 'application/manifest+json; charset=utf-8',
+  '.xml': 'application/xml; charset=utf-8',
   '.ico': 'image/x-icon',
   '.png': 'image/png',
   '.svg': 'image/svg+xml',
   '.txt': 'text/plain; charset=utf-8',
+  '.woff2': 'font/woff2',
+  '.pdf': 'application/pdf',
 };
+
+const compressible = (contentType) =>
+  /text|javascript|json|svg|manifest|xml/.test(contentType);
+
+/** path -> { mtimeMs, body, br, gzip }; rebuilt when the file changes. */
+const cache = new Map();
+
+async function load(file) {
+  const { mtimeMs } = await stat(file);
+  const cached = cache.get(file);
+  if (cached?.mtimeMs === mtimeMs) {
+    return cached;
+  }
+  const body = await readFile(file);
+  const entry = { mtimeMs, body };
+  if (compressible(contentTypes[extname(file)] ?? '') && body.length > 1024) {
+    entry.br = brotliCompressSync(body, {
+      params: { [constants.BROTLI_PARAM_QUALITY]: 9 },
+    });
+    entry.gzip = gzipSync(body, { level: 9 });
+  }
+  cache.set(file, entry);
+  return entry;
+}
+
+async function warmUp(folder) {
+  for (const item of await readdir(folder, { withFileTypes: true })) {
+    const path = join(folder, item.name);
+    if (item.isDirectory()) {
+      await warmUp(path);
+    } else {
+      await load(path);
+    }
+  }
+}
 
 async function isFile(path) {
   try {
@@ -77,34 +116,27 @@ const server = createServer(async (req, res) => {
     res.end('Not found');
     return;
   }
-  const contentType = contentTypes[extname(file)] ?? 'application/octet-stream';
-  const body = await readFile(file);
+  const { body, br, gzip } = await load(file);
   const headers = {
-    'Content-Type': contentType,
+    'Content-Type': contentTypes[extname(file)] ?? 'application/octet-stream',
     'Cache-Control': cacheControl(file),
     Vary: 'Accept-Encoding',
   };
-  // Compress text like Cloudflare does, so local Lighthouse runs see
-  // production-sized transfers.
   const accepts = String(req.headers['accept-encoding'] ?? '');
-  if (
-    /text|javascript|json|svg|manifest/.test(contentType) &&
-    body.length > 1024
-  ) {
-    if (accepts.includes('br')) {
-      res.writeHead(200, { ...headers, 'Content-Encoding': 'br' });
-      res.end(brotliCompressSync(body));
-      return;
-    }
-    if (accepts.includes('gzip')) {
-      res.writeHead(200, { ...headers, 'Content-Encoding': 'gzip' });
-      res.end(gzipSync(body));
-      return;
-    }
+  if (br && accepts.includes('br')) {
+    res.writeHead(200, { ...headers, 'Content-Encoding': 'br' });
+    res.end(br);
+  } else if (gzip && accepts.includes('gzip')) {
+    res.writeHead(200, { ...headers, 'Content-Encoding': 'gzip' });
+    res.end(gzip);
+  } else {
+    res.writeHead(200, headers);
+    res.end(body);
   }
-  res.writeHead(200, headers);
-  res.end(body);
-}).listen(port, async () => {
+});
+
+await warmUp(root);
+server.listen(port, async () => {
   console.log(`Serving ${root} on http://localhost:${port}`);
   // Tell Nx the continuous task is ready (targets use readyWhen: { signal: true }).
   if (process.env['NX_READY_SIGNAL_SOCKET']) {

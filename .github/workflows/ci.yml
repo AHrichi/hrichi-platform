@@ -58,6 +58,9 @@ jobs:
           path: |
             dist/.playwright
             dist/.lighthouse
+            .lighthouseci
+          # All three report folders start with a dot.
+          include-hidden-files: true
           if-no-files-found: ignore
 
   deploy:
