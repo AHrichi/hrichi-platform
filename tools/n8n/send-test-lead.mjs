@@ -2,14 +2,17 @@
 // (N8nChannel in libs/api/leads), to check the workflow end to end.
 //
 //   N8N_WEBHOOK_URL     the workflow's production webhook URL
-//   N8N_WEBHOOK_SECRET  the shared secret (asked at a hidden prompt if unset)
+//   N8N_WEBHOOK_SECRET  the shared secret
+// Both default to .env.render (tools/scripts/lead-secrets.mjs); the secret is
+// asked at a hidden prompt if it is found nowhere.
 //   --to <email>        where the auto-reply goes (default: your own address)
 //   --bad-signature     sign with a wrong secret; the workflow must answer 401
 //
 // Usage: node tools/n8n/send-test-lead.mjs --to you@example.com
 import { createHmac, randomBytes } from 'node:crypto';
-import { createInterface } from 'node:readline';
 import { parseArgs } from 'node:util';
+import { readEnvFile } from '../scripts/env-file.mjs';
+import { ask } from '../scripts/prompt.mjs';
 
 const { values } = parseArgs({
   options: {
@@ -18,28 +21,16 @@ const { values } = parseArgs({
   },
 });
 
-function askHidden(question) {
-  const rl = createInterface({ input: process.stdin, output: process.stdout });
-  rl._writeToOutput = (text) => {
-    if (text.includes(question)) rl.output.write(text);
-  };
-  return new Promise((resolve) =>
-    rl.question(question, (answer) => {
-      rl.close();
-      process.stdout.write('\n');
-      resolve(answer.trim());
-    }),
-  );
-}
-
-const url = process.env.N8N_WEBHOOK_URL;
+const saved = readEnvFile();
+const url = process.env.N8N_WEBHOOK_URL || saved.N8N_WEBHOOK_URL;
 if (!url) {
   console.error('Set N8N_WEBHOOK_URL to the workflow webhook URL.');
   process.exit(1);
 }
 const secret =
   process.env.N8N_WEBHOOK_SECRET?.trim() ||
-  (await askHidden('Webhook secret (hidden): '));
+  saved.N8N_WEBHOOK_SECRET ||
+  (await ask('Webhook secret (hidden): ', { hidden: true }));
 
 const body = JSON.stringify({
   id: randomBytes(12).toString('hex'),

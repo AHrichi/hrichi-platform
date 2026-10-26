@@ -55,9 +55,15 @@ The API creates the `portfolio` database, the `leads` collection and its indexes
 
 Local development doesn't need a widget: it uses Cloudflare's public test keys, which always pass.
 
-## 4. The n8n shared secret
+## 4. Collect and check the secrets
 
-The API signs every webhook call with this secret and n8n checks the signature. Generate one:
+One script asks for everything from steps 1 to 3 at hidden prompts, checks each value against its service (an Atlas test write, a Telegram test message, Cloudflare's siteverify), generates the n8n shared secret, and saves it all to `.env.render`, which git ignores:
+
+```bash
+node tools/scripts/lead-secrets.mjs
+```
+
+Rerun it whenever a value changes; values that still pass are kept. To do it by hand instead, generate the n8n shared secret yourself. The API signs every webhook call with it and n8n checks the signature:
 
 ```bash
 node -e "console.log(require('node:crypto').randomBytes(32).toString('hex'))"
@@ -69,7 +75,7 @@ It goes in two places: Render (`N8N_WEBHOOK_SECRET`) and an n8n credential (step
 
 1. Sign up at [render.com](https://render.com) with GitHub, and allow it to read `AHrichi/hrichi-platform`.
 2. **New** → **Blueprint** → pick the repository. Render reads `render.yaml` and proposes the `ahmed-hrichi-api` service.
-3. Fill in the secrets it asks for:
+3. Fill in the secrets it asks for. With `.env.render`, open the service's **Environment** → **Add from .env** and paste the file instead:
 
    | Variable             | Value                                                       |
    | -------------------- | ----------------------------------------------------------- |
@@ -87,7 +93,15 @@ Telegram and n8n are optional: leave both variables of a pair empty and the API 
 
 ## 6. n8n
 
-Your n8n needs version 2.x (the workflow was tested on 2.44.7).
+Your n8n needs version 2.x (the workflow was tested on 2.43.7 and 2.44.7).
+
+**With n8n in Docker and `.env.render` filled in,** one command creates the Crypto and MongoDB credentials, points the auto-reply at the Gmail credential n8n already has, and imports the workflow (unpublished). The secrets are streamed straight into n8n's encrypted store and never printed:
+
+```bash
+node tools/n8n/install.mjs
+```
+
+Pass `--container <name>` if the container isn't called `n8n`. Then skip to step 4 below. **By hand:**
 
 1. **Credentials** → create three, with exactly these names so the workflow finds them:
 
@@ -100,10 +114,10 @@ Your n8n needs version 2.x (the workflow was tested on 2.44.7).
 2. **Workflows** → **Import from file** → `tools/n8n/workflows/lead-intake.json`.
 3. Open **Sign the body**, **Missed by the push**, **Mark delivered in Atlas** and **Auto-reply**. If a credential field is empty, pick the matching credential.
 4. **Publish** the workflow.
-5. Check it from your PC (the secret is asked at a hidden prompt):
+5. Check it from your PC. The script takes the URL and secret from `.env.render`, or from `N8N_WEBHOOK_URL` and a hidden prompt:
 
    ```bash
-   N8N_WEBHOOK_URL=https://<your ngrok static domain>/webhook/portfolio-lead node tools/n8n/send-test-lead.mjs --to you@example.com
+   node tools/n8n/send-test-lead.mjs --to you@example.com
    ```
 
    Expect `202` and an auto-reply at that address. With `--bad-signature` the answer must be `401`.

@@ -3,26 +3,11 @@
 // hidden prompt; it is only sent to api.telegram.org.
 //
 // Usage: node tools/scripts/telegram-chat-id.mjs
-import { createInterface } from 'node:readline';
-
-function askHidden(question) {
-  const rl = createInterface({ input: process.stdin, output: process.stdout });
-  // Echo nothing while the token is typed or pasted.
-  rl._writeToOutput = (text) => {
-    if (text.includes(question)) rl.output.write(text);
-  };
-  return new Promise((resolve) =>
-    rl.question(question, (answer) => {
-      rl.close();
-      process.stdout.write('\n');
-      resolve(answer.trim());
-    }),
-  );
-}
+import { ask } from './prompt.mjs';
 
 const token =
   process.env.TELEGRAM_BOT_TOKEN?.trim() ||
-  (await askHidden('Bot token from BotFather (hidden): '));
+  (await ask('Bot token from BotFather (hidden): ', { hidden: true }));
 if (!/^\d+:[\w-]+$/.test(token)) {
   console.error('That does not look like a bot token (123456:ABC-...).');
   process.exit(1);
