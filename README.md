@@ -4,6 +4,7 @@ Ahmed Hrichi's portfolio, built as the kind of platform it describes: an Nx mono
 
 - Architecture: [docs/architecture.md](docs/architecture.md)
 - Decisions and spike results: [docs/adr](docs/adr/README.md)
+- Lead pipeline setup (accounts, secrets, n8n): [docs/lead-pipeline.md](docs/lead-pipeline.md)
 - Live: [portfolio.ahmed-hrichi.workers.dev](https://portfolio.ahmed-hrichi.workers.dev) (shell) and [lab-hello.ahmed-hrichi.workers.dev](https://lab-hello.ahmed-hrichi.workers.dev) (remote)
 
 ## Projects
@@ -20,6 +21,9 @@ Ahmed Hrichi's portfolio, built as the kind of platform it describes: an Nx mono
 | `shared-state`         | `libs/shared/state`         | `PreferencesStore` (NgRx SignalStore): the `?for=` audience mode                           |
 | `portfolio-util-seo`   | `libs/portfolio/util-seo`   | Title, description, canonical, Open Graph and JSON-LD                                      |
 | `portfolio-feature-*`  | `libs/portfolio/feature-*`  | Pages: home, work, experience, services/contact, CV                                        |
+| `shared-contracts`     | `libs/shared/contracts`     | Types shared by the browser and the API (`LeadRequest`, field limits)                      |
+| `api`                  | `apps/api`                  | NestJS API for Render: config validation, health, CORS, rate limits                        |
+| `api-leads`            | `libs/api/leads`            | Lead intake: Turnstile, idempotency, Mongo outbox, Telegram and n8n delivery               |
 
 ## Commands
 
@@ -53,6 +57,12 @@ Serve production builds the way the static host will (prerendered routes, `index
 
 ```bash
 pnpm nx run-many -t serve-static -p shell lab-hello
+```
+
+Run the lead API locally (setup in [docs/lead-pipeline.md](docs/lead-pipeline.md#local-development)):
+
+```bash
+pnpm nx serve api
 ```
 
 End-to-end tests (first run: `pnpm exec playwright install chromium`):

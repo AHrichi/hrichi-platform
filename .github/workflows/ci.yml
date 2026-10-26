@@ -25,6 +25,12 @@ jobs:
   ci:
     name: Lint, test, build, e2e
     runs-on: ubuntu-latest
+    # For the leads repository's integration tests (libs/api/leads).
+    services:
+      mongo:
+        image: mongo:8.0
+        ports:
+          - 27017:27017
     steps:
       - uses: actions/checkout@v5
         with:
@@ -45,6 +51,8 @@ jobs:
           pnpm nx run design-system-tokens:build-tokens --skip-nx-cache
           git diff --exit-code libs/design-system/tokens/src/generated
       - run: pnpm nx affected -t lint test build
+        env:
+          MONGODB_TEST_URI: mongodb://localhost:27017
 
       - run: pnpm exec playwright install --with-deps chromium
       - name: End-to-end tests against production builds

@@ -141,7 +141,7 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "node tools/scripts/prepare-hosting.mjs dist/apps/portfolio/shell/browser --env development --federation --not-found index.csr.html --sitemap",
+          "node tools/scripts/prepare-hosting.mjs dist/apps/portfolio/shell/browser --env development --federation --not-found index.csr.html --sitemap --site-config",
           "node tools/scripts/cv-pdf.mjs dist/apps/portfolio/shell/browser",
           "wrangler dev --config apps/portfolio/shell/wrangler.jsonc --port 4200"
         ],
@@ -153,7 +153,7 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "node tools/scripts/prepare-hosting.mjs dist/apps/portfolio/shell/browser --env production --federation --not-found index.csr.html --sitemap",
+          "node tools/scripts/prepare-hosting.mjs dist/apps/portfolio/shell/browser --env production --federation --not-found index.csr.html --sitemap --site-config",
           "node tools/scripts/cv-pdf.mjs dist/apps/portfolio/shell/browser",
           "wrangler deploy --config apps/portfolio/shell/wrangler.jsonc"
         ],
@@ -164,6 +164,7 @@
         "^production",
         "{workspaceRoot}/tools/scripts/prepare-hosting.mjs",
         "{workspaceRoot}/tools/federation/remotes.json",
+        "{workspaceRoot}/tools/hosting/environments.json",
         "{workspaceRoot}/tools/scripts/cv-pdf.mjs"
       ]
     },

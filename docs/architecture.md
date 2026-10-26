@@ -531,7 +531,7 @@ Workflows are version-controlled in `tools/n8n/workflows/`, synced like your exi
    - → CRM row (Google Sheets or Notion)
    - → auto-reply in the visitor's language (Gmail)
    - → a rich Telegram card with Reply/Book buttons
-2. **`lead-backstop`:** every 30 min, claims any pending leads in Atlas.
+2. **`lead-backstop`:** every 30 min, claims any pending leads in Atlas. (Built as a second trigger in `lead-intake`; see ADR-0010.)
 3. **`weekly-digest`:** visits (Cloudflare Analytics API), leads and CV downloads, sent to Telegram.
 4. **`pipeline-lab-demo`:** a safe public demo for the Pipeline lab (no personal data).
 

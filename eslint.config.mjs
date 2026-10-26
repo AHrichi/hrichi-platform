@@ -57,6 +57,11 @@ export default [
               sourceTag: 'scope:shared',
               onlyDependOnLibsWithTags: ['scope:shared'],
             },
+            // The API shares only contracts with the browser apps (ADR-0010).
+            {
+              sourceTag: 'scope:api',
+              onlyDependOnLibsWithTags: ['scope:api', 'scope:shared'],
+            },
             // Layers: dependencies only point down.
             {
               sourceTag: 'type:app',
@@ -109,6 +114,10 @@ export default [
             {
               sourceTag: 'type:content',
               onlyDependOnLibsWithTags: ['type:content'],
+            },
+            {
+              sourceTag: 'type:contracts',
+              onlyDependOnLibsWithTags: ['type:contracts'],
             },
             {
               sourceTag: 'type:util',

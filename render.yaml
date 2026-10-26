@@ -1,0 +1,40 @@
+# Render Blueprint for the lead API (ADR-0010). Secrets are `sync: false`:
+# Render asks for them once, in its dashboard, when the Blueprint is created.
+# Setup steps: docs/lead-pipeline.md.
+services:
+  - type: web
+    name: ahmed-hrichi-api
+    runtime: docker
+    plan: free
+    region: frankfurt
+    dockerfilePath: ./apps/api/Dockerfile
+    dockerContext: .
+    healthCheckPath: /health
+    branch: main
+    # Deploy only after GitHub CI passes for the commit.
+    autoDeployTrigger: checksPass
+    buildFilter:
+      paths:
+        - apps/api/**
+        - libs/api/**
+        - libs/shared/contracts/**
+        - package.json
+        - pnpm-lock.yaml
+        - render.yaml
+    envVars:
+      - key: CORS_ORIGINS
+        value: https://portfolio.ahmed-hrichi.workers.dev,http://localhost:4200
+      - key: MONGODB_DB
+        value: portfolio
+      - key: MONGODB_URI
+        sync: false
+      - key: TURNSTILE_SECRET
+        sync: false
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false
+      - key: TELEGRAM_CHAT_ID
+        sync: false
+      - key: N8N_WEBHOOK_URL
+        sync: false
+      - key: N8N_WEBHOOK_SECRET
+        sync: false

@@ -33,7 +33,9 @@
       "@ah/portfolio/feature-services": [
         "./libs/portfolio/feature-services/src/index.ts"
       ],
-      "@ah/portfolio/feature-cv": ["./libs/portfolio/feature-cv/src/index.ts"]
+      "@ah/portfolio/feature-cv": ["./libs/portfolio/feature-cv/src/index.ts"],
+      "@ah/api/leads": ["./libs/api/leads/src/index.ts"],
+      "@ah/shared/contracts": ["./libs/shared/contracts/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

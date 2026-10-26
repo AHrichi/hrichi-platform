@@ -41,6 +41,16 @@
         "maxAge": "7d",
         "timeout": "3s"
       }
+    },
+    {
+      "name": "runtime-config",
+      "urls": ["/site-config.json"],
+      "cacheConfig": {
+        "strategy": "freshness",
+        "maxSize": 1,
+        "maxAge": "7d",
+        "timeout": "3s"
+      }
     }
   ]
 }

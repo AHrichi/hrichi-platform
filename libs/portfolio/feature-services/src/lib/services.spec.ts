@@ -2,6 +2,7 @@ import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { ContactPage } from './contact-page';
+import { SiteConfigService } from './contact/site-config';
 import { ServicesPage } from './services-page';
 
 beforeEach(() => {
@@ -30,18 +31,21 @@ describe('ServicesPage', () => {
 });
 
 describe('ContactPage', () => {
-  it('offers email links with an encoded subject for each intent', async () => {
+  it('lists direct ways to reach me beside the form', async () => {
+    TestBed.overrideProvider(SiteConfigService, {
+      useValue: {
+        load: async () => ({ apiUrl: null, turnstileSiteKey: null }),
+      },
+    });
     const fixture = TestBed.createComponent(ContactPage);
     await fixture.whenStable();
-    const mailtos = Array.from<HTMLAnchorElement>(
-      fixture.nativeElement.querySelectorAll('a[href^="mailto:"]'),
-    ).map((a) => a.getAttribute('href'));
+    const element = fixture.nativeElement as HTMLElement;
+    const aside = element.querySelector('aside');
 
-    expect(mailtos).toContain(
-      'mailto:ahmed.hrichi.web@gmail.com?subject=Opportunity%20for%20Ahmed%20Hrichi',
-    );
-    expect(mailtos).toContain(
-      'mailto:ahmed.hrichi.web@gmail.com?subject=Project%20enquiry',
-    );
+    expect(element.querySelector('ah-contact-form')).not.toBeNull();
+    expect(
+      aside?.querySelector('a[href^="mailto:"]')?.getAttribute('href'),
+    ).toBe('mailto:ahmed.hrichi.web@gmail.com');
+    expect(aside?.textContent).toContain('linkedin.com/in/a-hrichi');
   });
 });

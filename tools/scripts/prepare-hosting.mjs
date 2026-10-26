@@ -7,6 +7,9 @@
 //   --cors                Remote only: allow cross-origin reads of every asset
 //   --sitemap             Write sitemap.xml and robots.txt from Angular's
 //                         prerendered-routes.json and the site URL (site.json)
+//   --site-config         Write site-config.json (the contact form's API URL and
+//                         Turnstile key) from tools/hosting/environments.json,
+//                         and allow both origins in the CSP (ADR-0010)
 //
 // It always writes `_headers` with security headers and a Content-Security-Policy
 // whose script hashes come from the inline scripts in the built HTML (ADR-0006).
@@ -30,6 +33,7 @@ const { positionals, values } = parseArgs({
     'not-found': { type: 'string' },
     cors: { type: 'boolean', default: false },
     sitemap: { type: 'boolean', default: false },
+    'site-config': { type: 'boolean', default: false },
   },
 });
 const [dir] = positionals;
@@ -62,6 +66,33 @@ if (values.federation) {
     join(dir, 'federation.manifest.json'),
     `${JSON.stringify(manifest, null, 2)}\n`,
   );
+}
+
+const apiOrigins = [];
+const turnstileOrigins = [];
+if (values['site-config']) {
+  const environments = JSON.parse(
+    readFileSync('tools/hosting/environments.json', 'utf8'),
+  );
+  const environment = environments[values.env];
+  if (!environment) {
+    console.error(
+      `No "${values.env}" entry in tools/hosting/environments.json`,
+    );
+    process.exit(1);
+  }
+  const { apiUrl = null, turnstileSiteKey = null } = environment;
+  writeFileSync(
+    join(dir, 'site-config.json'),
+    `${JSON.stringify({ apiUrl, turnstileSiteKey }, null, 2)}
+`,
+  );
+  if (apiUrl) {
+    apiOrigins.push(new URL(apiUrl).origin);
+  }
+  if (turnstileSiteKey) {
+    turnstileOrigins.push('https://challenges.cloudflare.com');
+  }
 }
 
 if (values['not-found']) {
@@ -123,12 +154,14 @@ function inlineScriptHashes(root) {
 }
 
 const remotes = remoteOrigins.join(' ');
+const turnstile = turnstileOrigins.join(' ');
 const csp = [
   "default-src 'self'",
   // blob: is required by es-module-shims in shim mode (ADR-0006).
-  `script-src 'self' ${inlineScriptHashes(dir).join(' ')} blob: ${remotes}`,
+  `script-src 'self' ${inlineScriptHashes(dir).join(' ')} blob: ${remotes} ${turnstile}`,
   "style-src 'self' 'unsafe-inline'",
-  `connect-src 'self' ${remotes}`,
+  `connect-src 'self' ${remotes} ${apiOrigins.join(' ')}`,
+  `frame-src ${turnstile || "'none'"}`,
   "img-src 'self' data:",
   "font-src 'self'",
   "manifest-src 'self'",
@@ -175,5 +208,5 @@ if (longest > 2000) {
   process.exit(1);
 }
 console.log(
-  `Prepared ${dir} for ${values.env}: _headers${values.federation ? ', federation.manifest.json' : ''}${values['not-found'] ? ', 404.html' : ''}${values.sitemap ? ', sitemap.xml, robots.txt' : ''}`,
+  `Prepared ${dir} for ${values.env}: _headers${values.federation ? ', federation.manifest.json' : ''}${values['not-found'] ? ', 404.html' : ''}${values.sitemap ? ', sitemap.xml, robots.txt' : ''}${values['site-config'] ? ', site-config.json' : ''}`,
 );

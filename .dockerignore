@@ -1,0 +1,14 @@
+# Keep the API image build context small and free of local state.
+**/node_modules
+dist
+coverage
+.git
+.nx
+.angular
+.lighthouseci
+**/.wrangler
+**/.env
+**/.env.*
+.claude
+.vscode
+.idea

@@ -1,0 +1,13 @@
+{
+  "name": "api-leads",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/api/leads/src",
+  "projectType": "library",
+  "tags": ["scope:api", "type:feature", "runtime:node"],
+  "// targets": "to see all targets run: nx show project api-leads --web",
+  "targets": {
+    "test": {
+      "inputs": ["default", "^production", { "env": "MONGODB_TEST_URI" }]
+    }
+  }
+}

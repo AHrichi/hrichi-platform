@@ -1,0 +1,139 @@
+@if (status() === 'sent') {
+  <div class="ah-card result" role="status">
+    <h2 class="title">Thanks, your message is on its way</h2>
+    <p class="ah-muted">
+      It reached me directly. I'll answer at the email address you gave.
+    </p>
+    <div class="ah-cluster">
+      <button ahButton="secondary" type="button" (click)="startOver()">
+        Send another message
+      </button>
+    </div>
+  </div>
+}
+<!-- Hidden, not removed, after sending: it holds the Turnstile widget. -->
+<form
+  class="ah-card contact-form"
+  [formRoot]="form"
+  [hidden]="status() === 'sent'"
+>
+  <h2 class="title">Send a message</h2>
+
+  <!-- Disabled in the prerendered HTML: text typed before hydration would be lost. -->
+  <fieldset class="fields" [disabled]="status() === 'loading' || busy()">
+    <div class="field">
+      <label for="contact-intent">What is it about?</label>
+      <select id="contact-intent" [formField]="form.intent">
+        @for (intent of intents; track intent.value) {
+          <option [value]="intent.value">{{ intent.label }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="row">
+      <div class="field">
+        <label for="contact-name">Your name</label>
+        <input
+          id="contact-name"
+          type="text"
+          autocomplete="name"
+          [formField]="form.name"
+          [attr.aria-invalid]="form.name().touched() && form.name().invalid()"
+          aria-describedby="contact-name-error"
+        />
+        <p class="error" id="contact-name-error">
+          @if (form.name().touched() && form.name().invalid()) {
+            {{ form.name().errors()[0]?.message }}
+          }
+        </p>
+      </div>
+      <div class="field">
+        <label for="contact-email">Your email</label>
+        <input
+          id="contact-email"
+          type="email"
+          autocomplete="email"
+          [formField]="form.email"
+          [attr.aria-invalid]="form.email().touched() && form.email().invalid()"
+          aria-describedby="contact-email-error"
+        />
+        <p class="error" id="contact-email-error">
+          @if (form.email().touched() && form.email().invalid()) {
+            {{ form.email().errors()[0]?.message }}
+          }
+        </p>
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="contact-message">Message</label>
+      <textarea
+        id="contact-message"
+        rows="6"
+        [formField]="form.message"
+        [attr.aria-invalid]="
+          form.message().touched() && form.message().invalid()
+        "
+        aria-describedby="contact-message-error"
+      ></textarea>
+      <p class="error" id="contact-message-error">
+        @if (form.message().touched() && form.message().invalid()) {
+          {{ form.message().errors()[0]?.message }}
+        }
+      </p>
+    </div>
+
+    <!-- Honeypot: hidden from people, so only bots fill it in. -->
+    <div class="ah-visually-hidden" aria-hidden="true">
+      <label for="contact-website">Leave this field empty</label>
+      <input
+        id="contact-website"
+        type="text"
+        tabindex="-1"
+        autocomplete="off"
+        [formField]="form.website"
+      />
+    </div>
+  </fieldset>
+
+  <!-- The same space holds the spam check, or a note when it can't run. -->
+  <div class="turnstile" #turnstile>
+    @if (status() === 'unavailable') {
+      <p class="hint">
+        Sending from the site isn't available right now. Your email app will
+        open with this message.
+      </p>
+    }
+  </div>
+
+  <div class="actions">
+    @if (status() === 'unavailable') {
+      <a ahButton [href]="mailtoFallback()">Continue in your email app</a>
+    } @else {
+      <button
+        ahButton
+        type="submit"
+        [disabled]="busy() || status() === 'loading' || !token()"
+      >
+        {{ busy() ? 'Sending…' : 'Send message' }}
+      </button>
+    }
+    <p class="status" role="status" aria-live="polite">
+      @switch (status()) {
+        @case ('loading') {
+          Preparing the form…
+        }
+        @case ('waking') {
+          Waking up the free-tier server. This can take up to a minute.
+        }
+        @case ('rejected') {
+          The spam check failed. Please complete it again.
+        }
+        @case ('failed') {
+          The server couldn't be reached.
+          <a [href]="mailtoFallback()">Send the same message by email</a>.
+        }
+      }
+    </p>
+  </div>
+</form>

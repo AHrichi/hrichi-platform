@@ -1,0 +1,553 @@
+{
+  "id": "PortfolioLeads01",
+  "name": "Portfolio lead intake",
+  "active": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "portfolio-lead",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "a73d8aea-f048-5502-bf5d-d0de787585b5",
+      "name": "Lead pushed by the API",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [0, 0],
+      "webhookId": "7f3c2a9e-5b1d-4e8f-9a6c-0d2b4f6e8a10"
+    },
+    {
+      "parameters": {
+        "action": "hmac",
+        "type": "SHA256",
+        "value": "={{ $json.headers['x-lead-timestamp'] }}.{{ JSON.stringify($json.body) }}",
+        "dataPropertyName": "expectedSignature",
+        "encoding": "hex"
+      },
+      "id": "969db652-3d7e-50d0-b9ac-aed50cc674b8",
+      "name": "Sign the body",
+      "type": "n8n-nodes-base.crypto",
+      "typeVersion": 2,
+      "position": [220, 0],
+      "credentials": {
+        "crypto": {
+          "id": "LeadWebhookHmac1",
+          "name": "Lead webhook secret"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "ceaec2dd-6808-5c58-b5d9-f88e8d99cc12",
+              "leftValue": "={{ $json.headers['x-lead-signature'] }}",
+              "rightValue": "=sha256={{ $json.expectedSignature }}",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "73ff02d6-1178-58f0-9cf2-e204bfb4e717",
+              "leftValue": "={{ Math.abs(Date.now() - Number($json.headers['x-lead-timestamp'])) }}",
+              "rightValue": 300000,
+              "operator": {
+                "type": "number",
+                "operation": "lt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "a696993d-f8b3-5850-a6cb-1870520be256",
+      "name": "Signed in the last 5 minutes?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [440, 0]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { received: $json.body.id } }}",
+        "options": {
+          "responseCode": 202
+        }
+      },
+      "id": "f600d568-1a2a-5fb7-b963-58b33cd75f67",
+      "name": "Acknowledge",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [660, -100]
+    },
+    {
+      "parameters": {
+        "respondWith": "noData",
+        "options": {
+          "responseCode": 401
+        }
+      },
+      "id": "c91871df-5dfe-5970-aada-490c04aea0ae",
+      "name": "Reject",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [660, 100]
+    },
+    {
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "65c586b4-a093-5e14-83ef-788511bfa208",
+              "name": "id",
+              "value": "={{ $json.body.id }}",
+              "type": "string"
+            },
+            {
+              "id": "a434fa6a-0098-5af2-8f9f-6a6899ccc397",
+              "name": "name",
+              "value": "={{ $json.body.name }}",
+              "type": "string"
+            },
+            {
+              "id": "23487948-a284-57f2-b311-ad2452b60e22",
+              "name": "email",
+              "value": "={{ $json.body.email }}",
+              "type": "string"
+            },
+            {
+              "id": "b384e66f-1460-5e5b-84f8-c0c22db89ce5",
+              "name": "intent",
+              "value": "={{ $json.body.intent }}",
+              "type": "string"
+            },
+            {
+              "id": "63d230a3-ac35-550c-bc1e-3e2977d0cb1d",
+              "name": "audience",
+              "value": "={{ $json.body.audience ?? '' }}",
+              "type": "string"
+            },
+            {
+              "id": "3038f2fe-cd8e-51f3-8767-60f126c8167f",
+              "name": "humanCheck",
+              "value": "={{ $json.body.humanCheck }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": false,
+        "options": {}
+      },
+      "id": "17574535-99c8-5470-8c1e-f550a4a37327",
+      "name": "Pushed lead",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [880, -100]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 30
+            }
+          ]
+        }
+      },
+      "id": "df365fa2-6cff-5dac-a955-53f5c667ae3e",
+      "name": "Every 30 minutes",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 400]
+    },
+    {
+      "parameters": {
+        "operation": "aggregate",
+        "collection": "leads",
+        "query": "[\n  {\n    \"$match\": {\n      \"delivery.n8n.status\": \"pending\",\n      \"$expr\": {\n        \"$lt\": [\n          \"$delivery.n8n.nextAttemptAt\",\n          {\n            \"$subtract\": [\n              \"$$NOW\",\n              120000\n            ]\n          }\n        ]\n      },\n      \"$or\": [\n        {\n          \"delivery.n8n.leaseUntil\": {\n            \"$exists\": false\n          }\n        },\n        {\n          \"$expr\": {\n            \"$lt\": [\n              \"$delivery.n8n.leaseUntil\",\n              \"$$NOW\"\n            ]\n          }\n        }\n      ]\n    }\n  },\n  {\n    \"$sort\": {\n      \"createdAt\": 1\n    }\n  },\n  {\n    \"$limit\": 20\n  },\n  {\n    \"$project\": {\n      \"_id\": 0,\n      \"id\": {\n        \"$toString\": \"$_id\"\n      },\n      \"name\": 1,\n      \"email\": 1,\n      \"intent\": 1,\n      \"audience\": 1,\n      \"humanCheck\": 1\n    }\n  }\n]"
+      },
+      "id": "a18d4bd5-38e5-546e-b2da-2517459464bb",
+      "name": "Missed by the push",
+      "type": "n8n-nodes-base.mongoDb",
+      "typeVersion": 1.2,
+      "position": [220, 400],
+      "credentials": {
+        "mongoDb": {
+          "id": "PortfolioAtlas01",
+          "name": "Portfolio Atlas"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e4795816-f4b9-5386-b3ce-b84b23851742",
+              "name": "id",
+              "value": "={{ $json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "07b8216b-14fa-5252-9148-c539f8e5d5f1",
+              "name": "name",
+              "value": "={{ $json.name }}",
+              "type": "string"
+            },
+            {
+              "id": "cced04b4-fbb7-5ca8-a328-45489e99ba62",
+              "name": "email",
+              "value": "={{ $json.email }}",
+              "type": "string"
+            },
+            {
+              "id": "eadb4db9-daaf-5841-b954-1371de04dd83",
+              "name": "intent",
+              "value": "={{ $json.intent }}",
+              "type": "string"
+            },
+            {
+              "id": "6556fc92-5072-5ba1-9bdb-f88fb61de4fa",
+              "name": "audience",
+              "value": "={{ $json.audience ?? '' }}",
+              "type": "string"
+            },
+            {
+              "id": "221460b4-c52a-599a-8a1e-530498f9fd7b",
+              "name": "humanCheck",
+              "value": "={{ $json.humanCheck }}",
+              "type": "string"
+            },
+            {
+              "id": "c766b292-4919-5d6d-b874-ae863e610198",
+              "name": "_id",
+              "value": "={{ $json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "3a736ed7-a9dd-55da-898e-73989b5a017d",
+              "name": "delivery.n8n.status",
+              "value": "sent",
+              "type": "string"
+            },
+            {
+              "id": "2c9d66df-f3a6-5fe8-90bf-7fcf8f27ac93",
+              "name": "delivery.n8n.sentAt",
+              "value": "={{ $now.toISO() }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": false,
+        "options": {}
+      },
+      "id": "4652528e-5bef-56d5-9f40-0e1e9ba0dba9",
+      "name": "Pulled lead",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [440, 400]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "collection": "leads",
+        "updateKey": "_id",
+        "fields": "delivery.n8n.status,delivery.n8n.sentAt",
+        "options": {
+          "useDotNotation": true,
+          "dateFields": "delivery.n8n.sentAt"
+        }
+      },
+      "id": "1a10249d-6c88-5c1c-a4ea-abae649b81fb",
+      "name": "Mark delivered in Atlas",
+      "type": "n8n-nodes-base.mongoDb",
+      "typeVersion": 1.2,
+      "position": [660, 400],
+      "credentials": {
+        "mongoDb": {
+          "id": "PortfolioAtlas01",
+          "name": "Portfolio Atlas"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cfaf245c-013e-5f68-b420-54ca6394ae3d",
+              "name": "id",
+              "value": "={{ $('Pulled lead').item.json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "50ea6797-d362-5281-890e-a4037eff2b40",
+              "name": "name",
+              "value": "={{ $('Pulled lead').item.json.name }}",
+              "type": "string"
+            },
+            {
+              "id": "f0b61e52-988e-5f96-a5e9-800f991b81f0",
+              "name": "email",
+              "value": "={{ $('Pulled lead').item.json.email }}",
+              "type": "string"
+            },
+            {
+              "id": "997f49e4-de97-5130-8af8-a458c6e3085c",
+              "name": "intent",
+              "value": "={{ $('Pulled lead').item.json.intent }}",
+              "type": "string"
+            },
+            {
+              "id": "c0e97a16-6720-521f-88ae-335f02aa209e",
+              "name": "audience",
+              "value": "={{ $('Pulled lead').item.json.audience ?? '' }}",
+              "type": "string"
+            },
+            {
+              "id": "ba53dba1-dc0d-5cf1-9c28-e015813141a1",
+              "name": "humanCheck",
+              "value": "={{ $('Pulled lead').item.json.humanCheck }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": false,
+        "options": {}
+      },
+      "id": "c3921af4-9549-544f-b613-82905be3308e",
+      "name": "Delivered lead",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [880, 400]
+    },
+    {
+      "parameters": {
+        "operation": "removeItemsSeenInPreviousExecutions",
+        "logic": "removeItemsWithAlreadySeenKeyValues",
+        "dedupeValue": "={{ $json.id }}",
+        "options": {}
+      },
+      "id": "04466ba4-16cc-5ab8-8bc6-a435d7e40af7",
+      "name": "Once per lead",
+      "type": "n8n-nodes-base.removeDuplicates",
+      "typeVersion": 2,
+      "position": [1320, 0]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "5464ef26-fd2f-5a32-b3db-7123327bcfc7",
+              "leftValue": "={{ $json.humanCheck }}",
+              "rightValue": "passed",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "5464ef26-fd2f-5a32-b3db-7123327bcfc7",
+      "name": "Passed the human check?",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [1540, 0]
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "operation": "send",
+        "sendTo": "={{ $json.email }}",
+        "subject": "Thanks for your message",
+        "emailType": "text",
+        "message": "=Hello,\n\nThanks for getting in touch through my portfolio. {{ { role: 'I read every message about a role myself', project: 'I read every project enquiry myself' }[$json.intent] ?? 'I read every message myself' }} and will answer within two working days.\n\nMy CV is at https://portfolio.ahmed-hrichi.workers.dev/cv in the meantime.\n\nBest regards,\nAhmed Hrichi\n\n--\nThis is an automatic reply. This address was entered in the contact form at portfolio.ahmed-hrichi.workers.dev; if that wasn't you, please ignore this email.",
+        "options": {
+          "appendAttribution": false,
+          "senderName": "Ahmed Hrichi"
+        }
+      },
+      "id": "074a12fd-16dd-57cb-a27b-1f71c13682f3",
+      "name": "Auto-reply",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [1760, 0],
+      "webhookId": "2c8e4a6b-9d1f-4b3e-8a5c-7e9f1b3d5a20",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "PortfolioGmail01",
+          "name": "Gmail"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Lead pushed by the API": {
+      "main": [
+        [
+          {
+            "node": "Sign the body",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sign the body": {
+      "main": [
+        [
+          {
+            "node": "Signed in the last 5 minutes?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Signed in the last 5 minutes?": {
+      "main": [
+        [
+          {
+            "node": "Acknowledge",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reject",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Acknowledge": {
+      "main": [
+        [
+          {
+            "node": "Pushed lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pushed lead": {
+      "main": [
+        [
+          {
+            "node": "Once per lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Every 30 minutes": {
+      "main": [
+        [
+          {
+            "node": "Missed by the push",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Missed by the push": {
+      "main": [
+        [
+          {
+            "node": "Pulled lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pulled lead": {
+      "main": [
+        [
+          {
+            "node": "Mark delivered in Atlas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark delivered in Atlas": {
+      "main": [
+        [
+          {
+            "node": "Delivered lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delivered lead": {
+      "main": [
+        [
+          {
+            "node": "Once per lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Once per lead": {
+      "main": [
+        [
+          {
+            "node": "Passed the human check?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Passed the human check?": {
+      "main": [
+        [
+          {
+            "node": "Auto-reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {}
+}

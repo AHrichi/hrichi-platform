@@ -15,6 +15,7 @@ Each ADR records one decision, why it was made, and what a spike proved. New ADR
 | [0007](0007-cloudflare-hosting.md)        | Cloudflare Workers static assets, one Worker per app, affected deploys from CI         |
 | [0008](0008-design-tokens-and-ui.md)      | Design tokens (DTCG + Style Dictionary) with a contrast gate, cascade layers, `@ah/ui` |
 | [0009](0009-content-audiences-and-seo.md) | Typed content, audience modes, SEO, generated CV, Lighthouse gate                      |
+| [0010](0010-lead-pipeline.md)             | Lead pipeline: document outbox, direct Telegram alert, n8n push and pull               |
 
 ## Proposed (written when the area is built)
 
@@ -23,7 +24,6 @@ From [the architecture document](../architecture.md) §16:
 - State ladder: signals → NgRx SignalStore → Events plugin; no classic `@ngrx/store`
 - Framework-agnostic Three.js engine with a thin Angular adapter
 - Zero-cost hosting topology with graceful degradation
-- Lead pipeline: document outbox, direct Telegram alert, n8n push and pull
 - One feature lib, many shells (remote, PWA, Electron, Capacitor)
 - OpenAPI contract-first clients for NestJS and Spring Boot
 - Runtime i18n (Transloco), EN/FR, URL-based locale, RTL-ready

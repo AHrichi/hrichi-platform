@@ -1,0 +1,11 @@
+{
+  "$comment": "Per-environment runtime config, written to site-config.json by tools/scripts/prepare-hosting.mjs --site-config. Development uses Cloudflare's public always-pass Turnstile test key. null disables the contact form (the page falls back to email).",
+  "development": {
+    "apiUrl": "http://localhost:3000",
+    "turnstileSiteKey": "1x00000000000000000000AA"
+  },
+  "production": {
+    "apiUrl": null,
+    "turnstileSiteKey": null
+  }
+}
