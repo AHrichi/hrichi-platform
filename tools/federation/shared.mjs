@@ -1,0 +1,36 @@
+import { fromPackageJson } from '@angular-architects/native-federation/config';
+
+/**
+ * One sharing policy for the shell and every remote (ADR-0002), so shared
+ * versions can't drift between independently deployed apps.
+ */
+export const shared = fromPackageJson({
+  singleton: true,
+  strictVersion: true,
+  requiredVersion: 'auto',
+  build: 'package',
+})
+  .patch(['@angular/*'], { includeSecondaries: { keepAll: true } })
+  .get();
+
+export const skip = [
+  'rxjs/ajax',
+  'rxjs/fetch',
+  'rxjs/testing',
+  'rxjs/webSocket',
+  // keepAll publishes these too, but they import @angular/animations, an
+  // optional peer we don't install (deprecated in favour of animate.enter/leave).
+  '@angular/platform-browser/animations',
+  '@angular/platform-browser/animations/async',
+  // Build-time config and standalone worker scripts, never imported by app code.
+  '@angular/service-worker/config',
+  '@angular/service-worker/ngsw-worker.js',
+  '@angular/service-worker/safety-worker.js',
+];
+
+// https://native-federation.com/docs/v4/angular-adapter/configuration/
+export const features = {
+  denseChunking: true,
+  denseExternals: true,
+  strictImports: false,
+};

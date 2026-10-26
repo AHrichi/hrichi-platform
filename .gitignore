@@ -1,0 +1,46 @@
+# compiled output
+dist
+tmp
+out-tsc
+
+# dependencies
+node_modules
+
+# IDEs and editors
+.idea
+.project
+.classpath
+*.launch
+.settings/
+*.sublime-workspace
+
+# misc
+.angular
+.sass-cache
+connect.lock
+coverage
+libpeerconnection.log
+npm-debug.log
+yarn-error.log
+testem.log
+typings
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Nx
+.nx/cache
+.nx/workspace-data
+
+# Playwright
+test-output
+playwright-report
+blob-report
+
+# env
+.env
+.env.*
+!.env.example
+vitest.config.*.timestamp*
+.vitest

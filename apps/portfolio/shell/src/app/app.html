@@ -1,0 +1,15 @@
+<header class="site-header">
+  <a class="brand" routerLink="/">Ahmed Hrichi</a>
+  <nav aria-label="Main">
+    <a
+      routerLink="/"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
+      >Home</a
+    >
+    <a routerLink="/labs/hello" routerLinkActive="active">Hello lab</a>
+  </nav>
+</header>
+<main id="main">
+  <router-outlet />
+</main>

@@ -1,0 +1,10 @@
+{
+  "name": "platform-federation",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/platform/federation/src",
+  "prefix": "ah",
+  "projectType": "library",
+  "tags": ["scope:platform", "type:platform", "runtime:browser"],
+  "// targets": "to see all targets run: nx show project platform-federation --web",
+  "targets": {}
+}

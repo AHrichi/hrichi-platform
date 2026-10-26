@@ -1,0 +1,114 @@
+{
+  "name": "lab-hello",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "prefix": "ah",
+  "sourceRoot": "apps/labs/hello/src",
+  "tags": ["scope:lab-hello", "type:app", "runtime:browser"],
+  "targets": {
+    "build": {
+      "executor": "@angular-architects/native-federation:build",
+      "defaultConfiguration": "production",
+      "options": {
+        "cacheExternalArtifacts": true,
+        "tsConfig": "apps/labs/hello/tsconfig.federation.json"
+      },
+      "configurations": {
+        "production": {
+          "target": "lab-hello:esbuild:production"
+        },
+        "development": {
+          "target": "lab-hello:esbuild:development",
+          "dev": true
+        }
+      }
+    },
+    "serve": {
+      "executor": "@angular-architects/native-federation:build",
+      "options": {
+        "target": "lab-hello:serve-original:development",
+        "tsConfig": "apps/labs/hello/tsconfig.federation.json",
+        "rebuildDelay": 500,
+        "cacheExternalArtifacts": true,
+        "dev": true,
+        "devServer": true,
+        "port": 0
+      }
+    },
+    "test": {
+      "executor": "@angular/build:unit-test",
+      "options": {
+        "watch": false
+      }
+    },
+    "serve-static": {
+      "continuous": true,
+      "dependsOn": ["build"],
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node tools/scripts/serve-static.mjs dist/apps/labs/hello/browser 4301",
+        "readyWhen": "Serving"
+      }
+    },
+    "esbuild": {
+      "executor": "@angular/build:application",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "outputPath": "dist/apps/labs/hello",
+        "browser": "apps/labs/hello/src/main.ts",
+        "tsConfig": "apps/labs/hello/tsconfig.app.json",
+        "inlineStyleLanguage": "scss",
+        "assets": [
+          {
+            "glob": "**/*",
+            "input": "apps/labs/hello/public"
+          }
+        ],
+        "styles": ["apps/labs/hello/src/styles.scss"],
+        "polyfills": ["es-module-shims"]
+      },
+      "configurations": {
+        "production": {
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "500kb",
+              "maximumError": "1mb"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "4kb",
+              "maximumError": "8kb"
+            }
+          ],
+          "outputHashing": "all"
+        },
+        "development": {
+          "optimization": false,
+          "extractLicenses": false,
+          "sourceMap": true
+        }
+      }
+    },
+    "serve-original": {
+      "continuous": true,
+      "readyWhen": {
+        "signal": true
+      },
+      "executor": "@angular/build:dev-server",
+      "defaultConfiguration": "development",
+      "options": {
+        "port": 4301
+      },
+      "configurations": {
+        "production": {
+          "buildTarget": "lab-hello:esbuild:production"
+        },
+        "development": {
+          "buildTarget": "lab-hello:esbuild:development"
+        }
+      }
+    }
+  }
+}

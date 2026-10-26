@@ -1,0 +1,25 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "shell (static build)",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "tools/scripts/serve-static.mjs",
+        "dist/apps/portfolio/shell/browser",
+        "4200"
+      ],
+      "port": 4200
+    },
+    {
+      "name": "lab-hello (static build)",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "tools/scripts/serve-static.mjs",
+        "dist/apps/labs/hello/browser",
+        "4301"
+      ],
+      "port": 4301
+    }
+  ]
+}
