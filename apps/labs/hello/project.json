@@ -43,11 +43,13 @@
     },
     "serve-static": {
       "continuous": true,
+      "readyWhen": {
+        "signal": true
+      },
       "dependsOn": ["build"],
       "executor": "nx:run-commands",
       "options": {
-        "command": "node tools/scripts/serve-static.mjs dist/apps/labs/hello/browser 4301",
-        "readyWhen": "Serving"
+        "command": "node tools/scripts/serve-static.mjs dist/apps/labs/hello/browser 4301"
       }
     },
     "esbuild": {
@@ -108,6 +110,29 @@
         "development": {
           "buildTarget": "lab-hello:esbuild:development"
         }
+      }
+    },
+    "serve-cloudflare": {
+      "continuous": true,
+      "dependsOn": ["build"],
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "node tools/scripts/prepare-hosting.mjs dist/apps/labs/hello/browser --env development --cors",
+          "wrangler dev --config apps/labs/hello/wrangler.jsonc --port 4301"
+        ],
+        "parallel": false
+      }
+    },
+    "deploy": {
+      "dependsOn": ["build"],
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "node tools/scripts/prepare-hosting.mjs dist/apps/labs/hello/browser --env production --cors",
+          "wrangler deploy --config apps/labs/hello/wrangler.jsonc"
+        ],
+        "parallel": false
       }
     }
   }

@@ -1,0 +1,7 @@
+{
+  "$comment": "Origin of every remote per environment. prepare-hosting.mjs writes the shell's federation.manifest.json and CSP from this file.",
+  "lab-hello": {
+    "development": "http://localhost:4301",
+    "production": "https://ahmed-hrichi-lab-hello.ACCOUNT_SUBDOMAIN.workers.dev"
+  }
+}

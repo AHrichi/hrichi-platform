@@ -19,6 +19,18 @@ test('loads the hello remote through Native Federation', async ({ page }) => {
   ).toBeVisible();
 });
 
+test('boots without the federation manifest', async ({ page }) => {
+  await page.route('**/federation.manifest.json', (route) =>
+    route.fulfill({ status: 404, body: 'Not found' }),
+  );
+  await page.goto('/');
+  await page.getByRole('link', { name: 'Hello lab' }).click();
+
+  await expect(
+    page.getByRole('heading', { name: "This section didn't load" }),
+  ).toBeVisible();
+});
+
 test('shows a fallback when a remote is unreachable', async ({ page }) => {
   await page.route('http://localhost:4301/**', (route) => route.abort());
   await page.goto('/labs/hello');

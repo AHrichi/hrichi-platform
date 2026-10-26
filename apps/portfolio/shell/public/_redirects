@@ -1,0 +1,4 @@
+# Client-rendered routes (RenderMode.Client) get the CSR shell; everything else
+# is either a prerendered page or a real 404 (wrangler.jsonc: 404-page).
+# The target has no .html: html_handling would answer /index.csr.html with a 307.
+/labs/* /index.csr 200

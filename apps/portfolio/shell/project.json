@@ -58,11 +58,13 @@
     },
     "serve-static": {
       "continuous": true,
+      "readyWhen": {
+        "signal": true
+      },
       "dependsOn": ["build"],
       "executor": "nx:run-commands",
       "options": {
-        "command": "node tools/scripts/serve-static.mjs dist/apps/portfolio/shell/browser 4200",
-        "readyWhen": "Serving"
+        "command": "node tools/scripts/serve-static.mjs dist/apps/portfolio/shell/browser 4200"
       }
     },
     "esbuild": {
@@ -126,6 +128,29 @@
         "development": {
           "buildTarget": "shell:esbuild:development"
         }
+      }
+    },
+    "serve-cloudflare": {
+      "continuous": true,
+      "dependsOn": ["build"],
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "node tools/scripts/prepare-hosting.mjs dist/apps/portfolio/shell/browser --env development --federation --not-found index.csr.html",
+          "wrangler dev --config apps/portfolio/shell/wrangler.jsonc --port 4200"
+        ],
+        "parallel": false
+      }
+    },
+    "deploy": {
+      "dependsOn": ["build"],
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "node tools/scripts/prepare-hosting.mjs dist/apps/portfolio/shell/browser --env production --federation --not-found index.csr.html",
+          "wrangler deploy --config apps/portfolio/shell/wrangler.jsonc"
+        ],
+        "parallel": false
       }
     }
   }

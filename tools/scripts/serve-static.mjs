@@ -65,7 +65,7 @@ function cacheControl(file) {
   return 'public, max-age=31536000, immutable';
 }
 
-createServer(async (req, res) => {
+const server = createServer(async (req, res) => {
   const { pathname } = new URL(req.url ?? '/', 'http://localhost');
   const file = await resolveFile(pathname);
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -80,6 +80,11 @@ createServer(async (req, res) => {
     'Cache-Control': cacheControl(file),
   });
   res.end(await readFile(file));
-}).listen(port, () => {
+}).listen(port, async () => {
   console.log(`Serving ${root} on http://localhost:${port}`);
+  // Tell Nx the continuous task is ready (targets use readyWhen: { signal: true }).
+  if (process.env['NX_READY_SIGNAL_SOCKET']) {
+    const { emitReadySignal } = await import('@nx/devkit');
+    emitReadySignal(server);
+  }
 });

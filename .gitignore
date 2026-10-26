@@ -44,3 +44,6 @@ blob-report
 !.env.example
 vitest.config.*.timestamp*
 .vitest
+
+# Cloudflare wrangler local state
+.wrangler

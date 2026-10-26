@@ -1,0 +1,11 @@
+{
+  "$schema": "../../../node_modules/wrangler/config-schema.json",
+  // Assets-only Worker; deployed independently of the shell (ADR-0002).
+  "name": "ahmed-hrichi-lab-hello",
+  "compatibility_date": "2026-10-26",
+  "assets": {
+    "directory": "../../../dist/apps/labs/hello/browser",
+    "html_handling": "drop-trailing-slash",
+    "not_found_handling": "single-page-application",
+  },
+}
