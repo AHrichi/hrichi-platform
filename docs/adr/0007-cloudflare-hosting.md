@@ -12,10 +12,10 @@ The site must cost nothing to host, have no cold starts, and let each micro-fron
 
 - **One assets-only Worker per deployable app**, each with its own `wrangler.jsonc` next to the app:
 
-  | App         | Worker                   | URL                                                  |
-  | ----------- | ------------------------ | ---------------------------------------------------- |
-  | `shell`     | `ahmed-hrichi`           | https://ahmed-hrichi.ah-source.workers.dev           |
-  | `lab-hello` | `ahmed-hrichi-lab-hello` | https://ahmed-hrichi-lab-hello.ah-source.workers.dev |
+  | App         | Worker      | URL                                        |
+  | ----------- | ----------- | ------------------------------------------ |
+  | `shell`     | `portfolio` | https://portfolio.ahmed-hrichi.workers.dev |
+  | `lab-hello` | `lab-hello` | https://lab-hello.ahmed-hrichi.workers.dev |
 
 - **Routing** implements the host contract from ADR-0003:
   - `html_handling: "drop-trailing-slash"`: `/about` serves `about/index.html` with no redirect.
@@ -42,6 +42,7 @@ The site must cost nothing to host, have no cold starts, and let each micro-fron
 ## Consequences
 
 - Changing a remote's URL means editing `tools/federation/remotes.json` and redeploying the shell.
-- The workers.dev subdomain (`ah-source`) is account-wide. Renaming it in the Cloudflare dashboard changes every URL above, so the registry and the shell must be redeployed. A custom domain (e.g. `ahmed.is-a.dev`) can replace it later without code changes.
+- The workers.dev subdomain (`ahmed-hrichi`) is account-wide. Renaming it changes every URL above, so the registry must be updated and the shell redeployed (or use Actions → CI → Run workflow). In the dashboard it is the pencil icon next to **Subdomain** under **Account details** on the Workers & Pages page. Existing Workers moved to the new subdomain at once.
+- Worker names are the first DNS label, so a remote's Worker name is its project name (`lab-hello`). Renaming a Worker in `wrangler.jsonc` deploys a **new** Worker; the old one keeps serving until it is deleted with `wrangler delete <name>`. On 2026-10-26 `ahmed-hrichi` and `ahmed-hrichi-lab-hello` were replaced by `portfolio` and `lab-hello` this way. A custom domain (e.g. `ahmed.is-a.dev`) can replace it later without code changes.
 - Cloudflare limits `_headers` to 100 rules and 2,000 characters per line. `prepare-hosting.mjs` checks the line length; with many remotes, the CSP may need to move to a smaller policy per route.
 - Until the `CLOUDFLARE_API_TOKEN` secret exists, the CI deploy job fails while the CI job itself still passes.

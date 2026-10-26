@@ -4,7 +4,7 @@ Ahmed Hrichi's portfolio, built as the kind of platform it describes: an Nx mono
 
 - Architecture: [docs/architecture.md](docs/architecture.md)
 - Decisions and spike results: [docs/adr](docs/adr/README.md)
-- Live: [ahmed-hrichi.ah-source.workers.dev](https://ahmed-hrichi.ah-source.workers.dev) (shell) and [ahmed-hrichi-lab-hello.ah-source.workers.dev](https://ahmed-hrichi-lab-hello.ah-source.workers.dev) (remote)
+- Live: [portfolio.ahmed-hrichi.workers.dev](https://portfolio.ahmed-hrichi.workers.dev) (shell) and [lab-hello.ahmed-hrichi.workers.dev](https://lab-hello.ahmed-hrichi.workers.dev) (remote)
 
 ## Projects
 
