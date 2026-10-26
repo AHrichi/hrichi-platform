@@ -2,7 +2,10 @@
 
 <header class="site-header ah-no-print">
   <div class="ah-container site-header__inner">
-    <a class="brand" routerLink="/">{{ profile.name }}</a>
+    <a class="brand" routerLink="/">
+      <img src="favicon.svg" alt="" width="28" height="28" />
+      {{ profile.name }}
+    </a>
     <nav aria-label="Main">
       <ul class="ah-cluster" role="list">
         @for (item of nav; track item.path) {

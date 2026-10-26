@@ -3,22 +3,34 @@
   "short_name": "Ahmed Hrichi",
   "description": "Angular and full-stack developer: micro-frontends, Nx monorepos, Three.js and NestJS.",
   "theme_color": "#b3122e",
-  "background_color": "#121114",
+  "background_color": "#0f0f12",
   "display": "standalone",
   "scope": "./",
   "start_url": "./",
   "icons": [
     {
+      "src": "favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
       "src": "icons/icon-192x192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "maskable any"
+      "purpose": "any"
     },
     {
       "src": "icons/icon-512x512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "maskable any"
+      "purpose": "any"
+    },
+    {
+      "src": "icons/maskable-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ]
 }
