@@ -133,7 +133,12 @@
           "wrangler deploy --config apps/labs/hello/wrangler.jsonc"
         ],
         "parallel": false
-      }
+      },
+      "inputs": [
+        "production",
+        "^production",
+        "{workspaceRoot}/tools/scripts/prepare-hosting.mjs"
+      ]
     }
   }
 }

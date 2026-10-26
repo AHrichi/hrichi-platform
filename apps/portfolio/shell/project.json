@@ -151,7 +151,13 @@
           "wrangler deploy --config apps/portfolio/shell/wrangler.jsonc"
         ],
         "parallel": false
-      }
+      },
+      "inputs": [
+        "production",
+        "^production",
+        "{workspaceRoot}/tools/scripts/prepare-hosting.mjs",
+        "{workspaceRoot}/tools/federation/remotes.json"
+      ]
     }
   }
 }
