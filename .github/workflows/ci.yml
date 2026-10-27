@@ -27,9 +27,12 @@ jobs:
     runs-on: ubuntu-latest
     # For the integration tests of the leads repository (libs/api/leads) and
     # the Orbit API's catalog store (apps/orbit-api).
+    # MongoDB 8.x refuses to start on the runners' Linux 6.19+ kernel (its
+    # TCMalloc breaks the kernel's rseq ABI, SERVER-121912); 7.0 uses the older
+    # allocator. Atlas in production is unaffected. Back to 8.x once fixed.
     services:
       mongo:
-        image: mongo:8.0
+        image: mongo:7.0
         ports:
           - 27017:27017
     steps:
