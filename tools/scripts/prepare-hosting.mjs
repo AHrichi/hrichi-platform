@@ -198,8 +198,10 @@ const csp = [
   "img-src 'self' data:",
   "font-src 'self'",
   "manifest-src 'self'",
-  // blob: starts a remote's Web Worker inside the shell (ADR-0014).
-  "worker-src 'self' blob:",
+  // blob: starts a remote's Web Worker inside the shell, and the remotes'
+  // origins let it import the worker script: a module worker's imports are
+  // checked against worker-src, not script-src (ADR-0014).
+  `worker-src 'self' blob: ${remotes}`,
   "object-src 'none'",
   "base-uri 'self'",
   "form-action 'self'",

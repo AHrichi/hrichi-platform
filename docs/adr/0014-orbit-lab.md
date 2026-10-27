@@ -50,7 +50,8 @@ M2's 3D lab replaces Quote3D (ADR-0013 explains why). It has to show Three.js, c
 ## What M2 found
 
 1. **A remote can't start its own Web Worker inside the shell:** browsers start workers only from the page's origin.
-   - `startPropagationWorker()` starts a same-origin `blob:` module that imports the remote's worker script, and the shell's CSP now has `worker-src 'self' blob:`.
+   - `startPropagationWorker()` starts a same-origin `blob:` module that imports the remote's worker script.
+   - The shell's CSP needs `worker-src 'self' blob:` plus the remotes' origins, because a module worker's imports are checked against `worker-src`, not `script-src`. Local servers send no CSP, so this showed only in production: the worker never started and the lab's telemetry stayed at "…". A local check, serving the shell with its real development CSP, reproduced the failure with the old policy and passed with the new one.
    - Angular still finds and bundles the worker, because the call keeps the `new Worker(new URL(…, import.meta.url))` shape with a locally shadowed `Worker`.
 2. **satellite.js 7's entry point re-exports its WebAssembly build,** whose Node-only branches import `node:module` and `node:worker_threads`. The browser build can't resolve them, and `externalDependencies` doesn't reach Angular's separate worker build. The package exports nothing else, so the worker imports satellite.js's plain modules by path (`propagation/sgp4.ts`).
 3. **Native Federation shares `three`, and esbuild treats every `three/…` subpath as part of that external.** The import map lists only the package root, so `three/addons/controls/OrbitControls.js` failed at run time ("Unable to resolve specifier"). The addon is bundled with the scene by path, and its own `import 'three'` still uses the shared copy.
