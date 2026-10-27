@@ -1,0 +1,143 @@
+<!-- src/app/exercises/bulk-operations/bulk-operations.component.html -->
+<div class="exercise-container">
+  <h2 class="exercise-title">Exercise: Bulk Operations</h2>
+  <p class="exercise-description">
+    Using operators like <code>forkJoin</code> and <code>bufferCount</code> to
+    handle multiple streams in parallel or in batches.
+  </p>
+
+  <div class="card config-card">
+    <div class="card-header">
+      <h3>Configuration</h3>
+    </div>
+    <div class="card-content">
+      <div class="config-group">
+        <div class="config-item">
+          <label for="file-count">Total Files:</label>
+          <input
+            id="file-count"
+            type="number"
+            [value]="fileCount()"
+            (input)="onFileCountChange($event)"
+          />
+        </div>
+        <div class="config-item">
+          <label for="batch-size">Batch Size (for bufferCount):</label>
+          <input
+            id="batch-size"
+            type="number"
+            [value]="batchSize()"
+            (input)="onBatchSizeChange($event)"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- forkJoin Card -->
+  <div class="card">
+    <div class="card-header">
+      <h3><code>forkJoin</code>: All or Nothing</h3>
+      <p>
+        Waits for multiple Observables to complete and then emits an array of
+        their last values.
+      </p>
+    </div>
+    <div class="card-content">
+      <div class="everyday-example">
+        <p>
+          <strong>Analogy:</strong> Ordering a multi-course meal. You have to
+          wait for the appetizer, main course, and dessert to all be ready
+          before the full meal is served.
+        </p>
+      </div>
+      <div class="button-group">
+        <button
+          (click)="processAllWithForkJoin()"
+          [disabled]="isForkJoinProcessing()"
+        >
+          Process All Files
+        </button>
+        <button class="btn-secondary" (click)="reset('forkJoin')">Reset</button>
+      </div>
+
+      <div class="display-grid">
+        <div class="file-list">
+          <h4>Files to Process:</h4>
+          @for (file of forkJoinFiles(); track file.id) {
+            <div class="file-item" [ngClass]="file.status">
+              <span>{{ file.name }}</span>
+              <span class="status-indicator">{{ file.status }}</span>
+            </div>
+          }
+        </div>
+        <div class="result-box">
+          <h4>Final Result (emitted once all are done):</h4>
+          @if (isForkJoinProcessing()) {
+            <p class="loading-text">Processing...</p>
+          }
+          @for (result of forkJoinResults(); track $index) {
+            <p>{{ result }}</p>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- bufferCount Card -->
+  <div class="card">
+    <div class="card-header">
+      <h3><code>bufferCount</code>: Batch Processing</h3>
+      <p>
+        Collects values from the source Observable into a buffer until it
+        reaches a specified size, then emits the buffer.
+      </p>
+    </div>
+    <div class="card-content">
+      <div class="everyday-example">
+        <p>
+          <strong>Analogy:</strong> A factory assembly line that waits to fill a
+          box with {{ batchSize() }} items before sealing it and sending it to
+          the next station.
+        </p>
+      </div>
+      <div class="button-group">
+        <button
+          (click)="processInBatches()"
+          [disabled]="isBufferCountProcessing()"
+        >
+          Process in Batches of {{ batchSize() }}
+        </button>
+        <button class="btn-secondary" (click)="reset('bufferCount')">
+          Reset
+        </button>
+      </div>
+
+      <div class="display-grid">
+        <div class="file-list">
+          <h4>Files to Process:</h4>
+          @for (file of bufferCountFiles(); track file.id) {
+            <div class="file-item" [ngClass]="file.status">
+              <span>{{ file.name }}</span>
+              <span class="status-indicator">{{ file.status }}</span>
+            </div>
+          }
+        </div>
+        <div class="result-box">
+          <h4>Batched Results:</h4>
+          @if (isBufferCountProcessing()) {
+            <p class="loading-text">Processing...</p>
+          }
+          @for (batch of bufferCountResults(); track $index) {
+            <div class="batch-result">
+              <strong>Batch {{ $index + 1 }}:</strong>
+              @for (result of batch; track result) {
+                <p>{{ result }}</p>
+              }
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

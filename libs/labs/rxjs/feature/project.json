@@ -1,0 +1,9 @@
+{
+  "name": "lab-rxjs-feature",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/labs/rxjs/feature/src",
+  "prefix": "ah",
+  "projectType": "library",
+  "tags": ["scope:lab-rxjs", "type:feature", "runtime:browser"],
+  "targets": {}
+}

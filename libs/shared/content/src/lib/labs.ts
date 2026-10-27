@@ -21,4 +21,9 @@ export const labs = {
     heading: 'Hello from a federated remote',
     lead: 'This page is built and deployed separately from the shell and loaded at runtime through Native Federation. No zone.js: the counter below updates through signals only.',
   },
+  'lab-rxjs': {
+    eyebrow: 'Lab · Reactive Streams & Signals',
+    heading: 'RxJS Practice Pad',
+    lead: 'Interactive laboratory for reactive stream patterns, multicast subjects, error handling strategies, caching architectures, and Angular signal interoperability in zoneless Angular.',
+  },
 } as const satisfies Record<string, LabIntro>;

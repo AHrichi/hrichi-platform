@@ -58,6 +58,8 @@ export const nodeLinks: Readonly<Record<string, string>> = {
   shell: '/work/this-platform',
   'lab-hello': '/labs/hello',
   'lab-sky': '/labs/sky',
+  'lab-rxjs': '/labs/rxjs',
+  'product-strategy': '/apps/strategy',
   api: '/contact',
 };
 

@@ -1,0 +1,9 @@
+<!-- src/app/shared/ui/toaster/toaster.component.html -->
+<div class="toaster-container">
+  @for (toast of toasts(); track toast.id) {
+    <div class="toast" [ngClass]="toast.type">
+      <p>{{ toast.message }}</p>
+      <button (click)="notificationService.remove(toast.id)">&times;</button>
+    </div>
+  }
+</div>

@@ -1,0 +1,119 @@
+<!-- src/app/exercises/combining-streams/combining-streams.component.html -->
+<div class="exercise-container">
+  <h2 class="exercise-title">Exercise: Combining Streams</h2>
+  <p class="exercise-description">
+    Exploring the <strong>withLatestFrom</strong> and
+    <strong>combineLatest</strong> operators as discussed in Chapter 5.
+  </p>
+
+  <!-- Card for withLatestFrom Strategy -->
+  <div class="card">
+    <div class="card-header">
+      <h3>The <code>withLatestFrom</code> Operator</h3>
+      <p>
+        Emits when the primary stream emits, combining its value with the latest
+        value from the secondary stream.
+      </p>
+    </div>
+    <div class="card-content">
+      <div class="stream-controls">
+        <div class="stream-control">
+          <h4>Primary Stream</h4>
+          <div class="button-group">
+            <button (click)="emitPrimary('A')">Emit "A"</button>
+            <button (click)="emitPrimary('B')">Emit "B"</button>
+            <button (click)="emitPrimary('C')">Emit "C"</button>
+          </div>
+        </div>
+        <div class="stream-control">
+          <h4>Secondary Stream</h4>
+          <div class="button-group">
+            <button (click)="emitSecondary('1')">Emit "1"</button>
+            <button (click)="emitSecondary('2')">Emit "2"</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="state-display">
+        <strong>Latest from Secondary:</strong>
+        <span class="state-value">{{ latestSecondaryValue() || 'N/A' }}</span>
+      </div>
+
+      <div class="button-group">
+        <button class="btn-secondary" (click)="resetWithLatestFrom()">
+          Reset
+        </button>
+      </div>
+
+      <div class="result-box">
+        <h4>Output</h4>
+        @if (outputValues().length > 0) {
+          @for (value of outputValues(); track $index) {
+            <p>{{ value }}</p>
+          }
+        } @else {
+          <p class="placeholder-text">
+            Emit from the primary stream to see the output.
+          </p>
+        }
+      </div>
+    </div>
+  </div>
+
+  <!-- Card for combineLatest Strategy -->
+  <div class="card">
+    <div class="card-header">
+      <h3>The <code>combineLatest</code> Operator</h3>
+      <p>
+        Emits an array of the latest values from all source streams whenever any
+        source stream emits.
+      </p>
+    </div>
+    <div class="card-content">
+      <div class="stream-controls">
+        <div class="stream-control">
+          <h4>Source 1 (string)</h4>
+          <div class="button-group">
+            <button (click)="emitSource1('A')">Emit "A"</button>
+            <button (click)="emitSource1('B')">Emit "B"</button>
+          </div>
+        </div>
+        <div class="stream-control">
+          <h4>Source 2 (number)</h4>
+          <div class="button-group">
+            <button (click)="emitSource2(1)">Emit 1</button>
+            <button (click)="emitSource2(2)">Emit 2</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="state-display">
+        <strong>Latest from Source 1:</strong>
+        <span class="state-value">{{ latestSource1Value() || 'N/A' }}</span>
+      </div>
+      <div class="state-display">
+        <strong>Latest from Source 2:</strong>
+        <span class="state-value">{{ latestSource2Value() ?? 'N/A' }}</span>
+      </div>
+
+      <div class="button-group">
+        <button class="btn-secondary" (click)="resetCombineLatest()">
+          Reset
+        </button>
+      </div>
+
+      <div class="result-box">
+        <h4>Output</h4>
+        @if (combineLatestOutput().length > 0) {
+          @for (value of combineLatestOutput(); track $index) {
+            <p>{{ value }}</p>
+          }
+        } @else {
+          <p class="placeholder-text">
+            Emit a value from both streams to see the output.
+          </p>
+        }
+      </div>
+    </div>
+  </div>
+</div>

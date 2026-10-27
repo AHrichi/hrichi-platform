@@ -1,0 +1,137 @@
+<!-- src/app/exercises/quiz/quiz.component.html -->
+<div class="exercise-container">
+  <h2 class="exercise-title">RxJS Challenge</h2>
+
+  @switch (quizState()) {
+    @case ('selecting') {
+      <p class="exercise-description">
+        Select your difficulty level to test your knowledge.
+      </p>
+      <div class="difficulty-selection">
+        <div class="card" (click)="startQuiz('Beginner')">
+          <h3>Beginner</h3>
+          <p>Fundamentals of Observables and simple operators.</p>
+        </div>
+        <div class="card" (click)="startQuiz('Mid-level')">
+          <h3>Mid-level</h3>
+          <p>Higher-order mapping, multicasting, and caching.</p>
+        </div>
+        <div class="card" (click)="startQuiz('Senior')">
+          <h3>Senior</h3>
+          <p>Advanced patterns, testing, and edge cases.</p>
+        </div>
+      </div>
+    }
+    @case ('in-progress') {
+      <div class="quiz-container">
+        <div class="progress-bar">
+          <div
+            class="progress"
+            [style.width.%]="
+              ((currentQuestionIndex() + 1) / questions().length) * 100
+            "
+          ></div>
+        </div>
+        <p class="question-counter">
+          Question {{ currentQuestionIndex() + 1 }} of {{ questions().length }}
+        </p>
+
+        <div class="card question-card">
+          <p class="question-text">{{ currentQuestion().text }}</p>
+
+          @if (currentQuestion().codeSnippet) {
+            <div class="code-example">
+              <pre><code>{{ currentQuestion().codeSnippet }}</code></pre>
+            </div>
+          }
+
+          @if (currentQuestion().type === 'multiple-choice') {
+            <div class="options-container">
+              @for (option of currentQuestion().options; track option) {
+                <button
+                  class="option-btn"
+                  (click)="selectAnswer(option)"
+                  [class.selected]="selectedAnswer() === option"
+                  [class.correct]="
+                    isAnswered() && option === currentQuestion().answer
+                  "
+                  [class.incorrect]="
+                    isAnswered() &&
+                    option !== currentQuestion().answer &&
+                    option === userAnswers()[currentQuestion().id]
+                  "
+                  [disabled]="isAnswered()"
+                >
+                  {{ option }}
+                </button>
+              }
+            </div>
+          }
+          @if (
+            currentQuestion().type === 'fill-in-the-blank' ||
+            currentQuestion().type === 'code-completion'
+          ) {
+            <div class="fill-in-blank-container">
+              <input
+                type="text"
+                #blankInput
+                (input)="selectAnswer(blankInput.value)"
+                [disabled]="isAnswered()"
+              />
+              @if (isAnswered()) {
+                <span class="answer-reveal" [class.correct]="isCorrect()">
+                  Correct answer: {{ currentQuestion().answer }}
+                </span>
+              }
+            </div>
+          }
+        </div>
+
+        @if (!isAnswered()) {
+          <div class="feedback-container">
+            <button
+              (click)="submitAnswer()"
+              [disabled]="selectedAnswer() === null"
+            >
+              Submit Answer
+            </button>
+          </div>
+        }
+
+        @if (isAnswered()) {
+          <div class="feedback-container">
+            @if (isCorrect()) {
+              <p class="feedback correct">Correct! Well done.</p>
+            } @else {
+              <p class="feedback incorrect">
+                Not quite. This concept is covered in:
+              </p>
+              <button
+                class="btn-secondary"
+                (click)="navigateToConcept(currentQuestion().relatedRoute)"
+              >
+                Review Concept
+              </button>
+            }
+            <button (click)="nextQuestion()">
+              {{
+                currentQuestionIndex() < questions().length - 1
+                  ? 'Next Question'
+                  : 'Finish Quiz'
+              }}
+            </button>
+          </div>
+        }
+      </div>
+    }
+    @case ('finished') {
+      <div class="card results-card">
+        <h3>Quiz Complete!</h3>
+        <p class="score">
+          You scored {{ score() }} out of {{ questions().length }}
+        </p>
+        <button (click)="restart()">Try Another Level</button>
+      </div>
+    }
+  }
+</div>

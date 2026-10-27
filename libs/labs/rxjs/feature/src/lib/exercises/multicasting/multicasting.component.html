@@ -1,0 +1,426 @@
+<!-- src/app/exercises/multicasting/multicasting.component.html -->
+<div class="exercise-container">
+  <h2 class="exercise-title">Exercise: Multicasting</h2>
+  <p class="exercise-description">
+    Exploring how to share a single Observable execution with multiple
+    Observers.
+  </p>
+
+  <div class="operators-grid">
+    <!-- Cold Observable Card -->
+    <div class="card">
+      <div class="card-header">
+        <h3>Cold Observable</h3>
+        <p>
+          Each subscriber gets its own independent execution of the Observable.
+        </p>
+      </div>
+      <div class="card-content">
+        <div class="everyday-example">
+          <p>
+            <strong>Analogy:</strong> Watching a movie on Netflix. Each person
+            who clicks play starts the movie from the beginning, getting their
+            own private stream.
+          </p>
+        </div>
+        <div class="button-group">
+          <button (click)="addSubscriber('cold')">Add Subscriber</button>
+          <button class="btn-secondary" (click)="reset('cold')">Reset</button>
+        </div>
+
+        @for (subscriber of subscribers().cold; track subscriber.id) {
+          <div class="timeline-group">
+            <div class="timeline-label">{{ subscriber.id }}'s Execution</div>
+            <div class="timeline subscriber-timeline">
+              @for (marble of subscriber.marbles; track marble.id) {
+                <div class="marble" [style.background]="marble.color">
+                  {{ marble.value }}
+                </div>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Hot Observable (share) Card -->
+    <div class="card">
+      <div class="card-header">
+        <h3>Hot Observable (with <code>share()</code>)</h3>
+        <p>
+          All subscribers share a single execution. Late subscribers miss
+          earlier values.
+        </p>
+      </div>
+      <div class="card-content">
+        <div class="everyday-example">
+          <p>
+            <strong>Analogy:</strong> Tuning into a live radio broadcast.
+            Everyone hears the same song at the same time. If you tune in late,
+            you miss the beginning.
+          </p>
+        </div>
+        <div class="button-group">
+          <button (click)="addSubscriber('hot')">Add Subscriber</button>
+          <button class="btn-secondary" (click)="reset('hot')">Reset</button>
+        </div>
+
+        <div class="timeline-group">
+          <div class="timeline-label">Shared Source Stream</div>
+          <div class="timeline source-timeline">
+            @for (marble of sourceMarbles().hot; track marble.id) {
+              <div class="marble" [style.background]="marble.color">
+                {{ marble.value }}
+              </div>
+            }
+          </div>
+        </div>
+
+        @for (subscriber of subscribers().hot; track subscriber.id) {
+          <div class="timeline-group">
+            <div class="timeline-label">{{ subscriber.id }}</div>
+            <div class="timeline subscriber-timeline">
+              @for (marble of subscriber.marbles; track marble.id) {
+                <div class="marble" [style.background]="marble.color">
+                  {{ marble.value }}
+                </div>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Hot Observable (connectable) Card -->
+    <div class="card">
+      <div class="card-header">
+        <h3>Hot Observable (with <code>connectable</code>)</h3>
+        <p>
+          Gives you manual control over when the shared execution starts via
+          <code>connect()</code>.
+        </p>
+      </div>
+      <div class="card-content">
+        <div class="everyday-example">
+          <p>
+            <strong>Analogy:</strong> A movie premiere. The audience
+            (subscribers) can gather, but the movie (source) won't start until
+            the projectionist (you) hits the play button
+            (<code>connect()</code>).
+          </p>
+        </div>
+        <div class="button-group">
+          <button (click)="createConnectable()">Create</button>
+          <button (click)="addSubscriber('connectable')">Add Subscriber</button>
+          <button (click)="connectConnectable()">Connect</button>
+          <button class="btn-secondary" (click)="reset('connectable')">
+            Reset
+          </button>
+        </div>
+
+        <div class="timeline-group">
+          <div class="timeline-label">Shared Source Stream</div>
+          <div class="timeline source-timeline">
+            @for (marble of sourceMarbles().connectable; track marble.id) {
+              <div class="marble" [style.background]="marble.color">
+                {{ marble.value }}
+              </div>
+            }
+          </div>
+        </div>
+
+        @for (subscriber of subscribers().connectable; track subscriber.id) {
+          <div class="timeline-group">
+            <div class="timeline-label">{{ subscriber.id }}</div>
+            <div class="timeline subscriber-timeline">
+              @for (marble of subscriber.marbles; track marble.id) {
+                <div class="marble" [style.background]="marble.color">
+                  {{ marble.value }}
+                </div>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Subject Card -->
+    <div class="card">
+      <div class="card-header">
+        <h3><code>Subject</code></h3>
+        <p>
+          A basic multicast Observable. Observers only receive values emitted
+          *after* they subscribe.
+        </p>
+      </div>
+      <div class="card-content">
+        <div class="button-group">
+          <button (click)="createSubject('subject')">Create Subject</button>
+          <button
+            (click)="emitValue('subject')"
+            [disabled]="!isSubjectCreated().subject"
+          >
+            Emit Value
+          </button>
+          <button (click)="addSubscriber('subject')">Add Subscriber</button>
+          <button
+            (click)="completeSubject('subject')"
+            [disabled]="!isSubjectCreated().subject"
+          >
+            Complete
+          </button>
+          <button class="btn-secondary" (click)="reset('subject')">
+            Reset
+          </button>
+        </div>
+
+        <div class="timeline-group">
+          <div class="timeline-label">Source Stream</div>
+          <div class="timeline source-timeline">
+            @for (marble of sourceMarbles().subject; track marble.id) {
+              <div class="marble" [style.background]="marble.color">
+                {{ marble.value }}
+              </div>
+            }
+          </div>
+        </div>
+
+        @for (subscriber of subscribers().subject; track subscriber.id) {
+          <div class="timeline-group">
+            <div class="timeline-label">{{ subscriber.id }}</div>
+            <div class="timeline subscriber-timeline">
+              @for (marble of subscriber.marbles; track marble.id) {
+                <div class="marble" [style.background]="marble.color">
+                  {{ marble.value }}
+                </div>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- BehaviorSubject Card -->
+    <div class="card">
+      <div class="card-header">
+        <h3><code>BehaviorSubject</code></h3>
+        <p>
+          Requires an initial value. New subscribers immediately receive the
+          *most recent* value upon subscription.
+        </p>
+      </div>
+      <div class="card-content">
+        <div class="config-group inline-config">
+          <div class="config-item">
+            <label for="behavior-initial">Initial Value:</label>
+            <input
+              id="behavior-initial"
+              type="number"
+              [value]="behaviorInitialValue()"
+              (input)="onBehaviorInitialValueChange($event)"
+            />
+          </div>
+        </div>
+        <div class="button-group">
+          <button (click)="createSubject('behaviorSubject')">
+            Create Subject
+          </button>
+          <button
+            (click)="emitValue('behaviorSubject')"
+            [disabled]="!isSubjectCreated().behaviorSubject"
+          >
+            Emit Value
+          </button>
+          <button (click)="addSubscriber('behaviorSubject')">
+            Add Subscriber
+          </button>
+          <button
+            (click)="completeSubject('behaviorSubject')"
+            [disabled]="!isSubjectCreated().behaviorSubject"
+          >
+            Complete
+          </button>
+          <button class="btn-secondary" (click)="reset('behaviorSubject')">
+            Reset
+          </button>
+        </div>
+
+        <div class="special-display current-value-box">
+          <strong>Current Value:</strong> {{ behaviorSubjectValue() ?? 'N/A' }}
+        </div>
+
+        <div class="timeline-group">
+          <div class="timeline-label">Source Stream</div>
+          <div class="timeline source-timeline">
+            @for (marble of sourceMarbles().behaviorSubject; track marble.id) {
+              <div class="marble" [style.background]="marble.color">
+                {{ marble.value }}
+              </div>
+            }
+          </div>
+        </div>
+
+        @for (
+          subscriber of subscribers().behaviorSubject;
+          track subscriber.id
+        ) {
+          <div class="timeline-group">
+            <div class="timeline-label">{{ subscriber.id }}</div>
+            <div class="timeline subscriber-timeline">
+              @for (marble of subscriber.marbles; track marble.id) {
+                <div class="marble" [style.background]="marble.color">
+                  {{ marble.value }}
+                </div>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- ReplaySubject Card -->
+    <div class="card">
+      <div class="card-header">
+        <h3><code>ReplaySubject</code></h3>
+        <p>
+          Buffers a specified number of values and "replays" them to new
+          subscribers.
+        </p>
+      </div>
+      <div class="card-content">
+        <div class="config-group inline-config">
+          <div class="config-item">
+            <label for="replay-buffer">Buffer Size:</label>
+            <input
+              id="replay-buffer"
+              type="number"
+              [value]="replayBufferSize()"
+              (input)="onReplayBufferSizeChange($event)"
+            />
+          </div>
+        </div>
+        <div class="button-group">
+          <button (click)="createSubject('replaySubject')">
+            Create Subject
+          </button>
+          <button
+            (click)="emitValue('replaySubject')"
+            [disabled]="!isSubjectCreated().replaySubject"
+          >
+            Emit Value
+          </button>
+          <button (click)="addSubscriber('replaySubject')">
+            Add Subscriber
+          </button>
+          <button
+            (click)="completeSubject('replaySubject')"
+            [disabled]="!isSubjectCreated().replaySubject"
+          >
+            Complete
+          </button>
+          <button class="btn-secondary" (click)="reset('replaySubject')">
+            Reset
+          </button>
+        </div>
+
+        <div class="special-display buffer-box">
+          <strong>Buffer:</strong>
+          @for (value of replaySubjectBuffer(); track $index) {
+            <div
+              class="marble"
+              [style.background]="colors[$index % colors.length]"
+            >
+              {{ value }}
+            </div>
+          } @empty {
+            <span>Empty</span>
+          }
+        </div>
+
+        <div class="timeline-group">
+          <div class="timeline-label">Source Stream</div>
+          <div class="timeline source-timeline">
+            @for (marble of sourceMarbles().replaySubject; track marble.id) {
+              <div class="marble" [style.background]="marble.color">
+                {{ marble.value }}
+              </div>
+            }
+          </div>
+        </div>
+
+        @for (subscriber of subscribers().replaySubject; track subscriber.id) {
+          <div class="timeline-group">
+            <div class="timeline-label">{{ subscriber.id }}</div>
+            <div class="timeline subscriber-timeline">
+              @for (marble of subscriber.marbles; track marble.id) {
+                <div class="marble" [style.background]="marble.color">
+                  {{ marble.value }}
+                </div>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- AsyncSubject Card -->
+    <div class="card">
+      <div class="card-header">
+        <h3><code>AsyncSubject</code></h3>
+        <p>
+          Only emits the *last* value of the source Observable, and only when
+          the source completes.
+        </p>
+      </div>
+      <div class="card-content">
+        <div class="button-group">
+          <button (click)="createSubject('asyncSubject')">
+            Create Subject
+          </button>
+          <button
+            (click)="emitValue('asyncSubject')"
+            [disabled]="!isSubjectCreated().asyncSubject"
+          >
+            Emit Value
+          </button>
+          <button (click)="addSubscriber('asyncSubject')">
+            Add Subscriber
+          </button>
+          <button
+            (click)="completeSubject('asyncSubject')"
+            [disabled]="!isSubjectCreated().asyncSubject"
+          >
+            Complete
+          </button>
+          <button class="btn-secondary" (click)="reset('asyncSubject')">
+            Reset
+          </button>
+        </div>
+
+        <div class="timeline-group">
+          <div class="timeline-label">Source Stream</div>
+          <div class="timeline source-timeline">
+            @for (marble of sourceMarbles().asyncSubject; track marble.id) {
+              <div class="marble" [style.background]="marble.color">
+                {{ marble.value }}
+              </div>
+            }
+          </div>
+        </div>
+
+        @for (subscriber of subscribers().asyncSubject; track subscriber.id) {
+          <div class="timeline-group">
+            <div class="timeline-label">{{ subscriber.id }}</div>
+            <div class="timeline subscriber-timeline">
+              @for (marble of subscriber.marbles; track marble.id) {
+                <div class="marble" [style.background]="marble.color">
+                  {{ marble.value }}
+                </div>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</div>

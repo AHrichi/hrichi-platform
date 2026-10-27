@@ -1,0 +1,65 @@
+/* src/app/navigation/navigation.component.scss */
+.nav-menu {
+  width: 100%;
+}
+
+.nav-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.nav-menu li a {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 24px;
+  text-decoration: none;
+  color: #4a5568;
+  font-weight: 500;
+  border-radius: 6px;
+  transition: background-color 0.2s ease;
+  margin-bottom: 4px;
+}
+
+.nav-menu.closed li a {
+  justify-content: center;
+  padding: 12px;
+}
+
+.nav-menu li a:hover {
+  background-color: #e2e8f0;
+}
+
+.nav-menu li a.active {
+  background-color: #4299e1;
+  color: white;
+}
+
+.nav-menu li a.active svg {
+  color: white;
+}
+
+.nav-menu li a.active .description {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.nav-menu svg {
+  width: 20px;
+  height: 20px;
+  color: #718096;
+  flex-shrink: 0;
+}
+
+.link-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.description {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: #a0aec0;
+  margin-top: 2px;
+}

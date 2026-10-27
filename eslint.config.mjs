@@ -51,6 +51,15 @@ export default [
               ],
             },
             {
+              sourceTag: 'scope:lab-rxjs',
+              onlyDependOnLibsWithTags: [
+                'scope:lab-rxjs',
+                'scope:shared',
+                'scope:platform',
+                'scope:design-system',
+              ],
+            },
+            {
               sourceTag: 'scope:product-strategy',
               onlyDependOnLibsWithTags: [
                 'scope:product-strategy',

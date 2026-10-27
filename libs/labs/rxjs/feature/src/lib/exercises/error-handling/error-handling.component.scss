@@ -1,0 +1,134 @@
+/* src/app/exercises/error-handling/error-handling.component.scss */
+.exercise-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #2d3748;
+  border-bottom: 2px solid #e2e8f0;
+  padding-bottom: 16px;
+  margin-bottom: 8px;
+}
+
+.exercise-description {
+  font-size: 1rem;
+  color: #718096;
+  margin-top: 0;
+  margin-bottom: 32px;
+}
+
+.card {
+  background-color: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  margin-bottom: 24px;
+  box-shadow:
+    0 1px 3px 0 rgba(0, 0, 0, 0.1),
+    0 1px 2px 0 rgba(0, 0, 0, 0.06);
+}
+
+.card-header {
+  padding: 16px 24px;
+  border-bottom: 1px solid #e2e8f0;
+  background-color: #f7fafc;
+}
+
+.card-header h3 {
+  margin: 0;
+  font-size: 1.125rem;
+  color: #2d3748;
+}
+
+.card-header p {
+  margin: 4px 0 0;
+  font-size: 0.875rem;
+  color: #718096;
+}
+
+.card-content {
+  padding: 24px;
+}
+
+.config-group {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.config-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.config-item label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #4a5568;
+}
+
+.config-item input {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #cbd5e0;
+  background-color: white;
+  font-size: 0.875rem;
+  width: 120px;
+}
+
+.config-item input:focus {
+  outline: none;
+  border-color: #4299e1;
+  box-shadow: 0 0 0 1px #4299e1;
+}
+
+.button-group {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+button {
+  padding: 10px 16px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background-color: #4299e1;
+  color: white;
+}
+
+button:hover {
+  background-color: #3182ce;
+}
+
+button:disabled {
+  background-color: #a0aec0;
+  cursor: not-allowed;
+}
+
+button.btn-secondary {
+  background-color: #a0aec0;
+  color: white;
+}
+
+button.btn-secondary:hover {
+  background-color: #718096;
+}
+
+.result-box {
+  background-color: #f7fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 16px;
+  min-height: 50px;
+  font-family:
+    'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+  color: #4a5568;
+}
+
+.loading-text,
+.placeholder-text {
+  color: #a0aec0;
+}

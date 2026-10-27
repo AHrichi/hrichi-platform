@@ -11,5 +11,9 @@
   "product-strategy": {
     "development": "http://localhost:4303",
     "production": "https://product-strategy.ahmed-hrichi.workers.dev"
+  },
+  "lab-rxjs": {
+    "development": "http://localhost:4304",
+    "production": "https://lab-rxjs.ahmed-hrichi.workers.dev"
   }
 }

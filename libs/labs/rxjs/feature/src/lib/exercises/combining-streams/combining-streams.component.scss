@@ -1,0 +1,140 @@
+/* src/app/exercises/combining-streams/combining-streams.component.scss */
+.exercise-container {
+  padding: 24px;
+}
+
+.exercise-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #2d3748;
+  border-bottom: 2px solid #e2e8f0;
+  padding-bottom: 16px;
+  margin-bottom: 8px;
+}
+
+.exercise-description {
+  font-size: 1rem;
+  color: #718096;
+  margin-top: 0;
+  margin-bottom: 32px;
+}
+
+.card {
+  background-color: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  margin-bottom: 24px;
+  box-shadow:
+    0 1px 3px 0 rgba(0, 0, 0, 0.1),
+    0 1px 2px 0 rgba(0, 0, 0, 0.06);
+}
+
+.card-header {
+  padding: 16px 24px;
+  border-bottom: 1px solid #e2e8f0;
+  background-color: #f7fafc;
+}
+
+.card-header h3 {
+  margin: 0;
+  font-size: 1.125rem;
+  color: #2d3748;
+}
+
+.card-header p {
+  margin: 4px 0 0;
+  font-size: 0.875rem;
+  color: #718096;
+}
+
+.card-content {
+  padding: 24px;
+}
+
+.stream-controls {
+  display: flex;
+  gap: 32px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.stream-control h4 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #4a5568;
+  margin-top: 0;
+  margin-bottom: 12px;
+}
+
+.button-group {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+button {
+  padding: 10px 16px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background-color: #4299e1;
+  color: white;
+}
+
+button:hover {
+  background-color: #3182ce;
+}
+
+button.btn-secondary {
+  background-color: #a0aec0;
+  color: white;
+}
+
+button.btn-secondary:hover {
+  background-color: #718096;
+}
+
+.state-display {
+  margin-bottom: 16px;
+  font-size: 0.9rem;
+  color: #4a5568;
+}
+
+.state-value {
+  font-weight: 600;
+  font-family:
+    'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+  background-color: #edf2f7;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-left: 8px;
+}
+
+.result-box {
+  background-color: #f7fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 16px;
+  min-height: 100px;
+  font-family:
+    'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+  color: #4a5568;
+}
+
+.result-box h4 {
+  margin-top: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #2d3748;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 8px;
+  margin-bottom: 12px;
+}
+
+.placeholder-text {
+  color: #a0aec0;
+}

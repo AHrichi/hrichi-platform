@@ -1,0 +1,186 @@
+<!-- src/app/exercises/signals/signals.component.html -->
+<div class="exercise-container">
+  <h2 class="exercise-title">Exercise: The Power of Signals</h2>
+  <p class="exercise-description">
+    Exploring the core primitives of Angular Signals and their interoperability
+    with RxJS.
+  </p>
+
+  <!-- Writable Signals Card -->
+  <div class="card">
+    <div class="card-header">
+      <h3>1. Writable Signals: <code>signal()</code></h3>
+      <p>
+        These are the sources of truth in our application. We can directly
+        change their values.
+      </p>
+    </div>
+    <div class="card-content">
+      <div class="config-group">
+        <div class="config-item">
+          <label for="first-name">First Name:</label>
+          <input
+            id="first-name"
+            type="text"
+            [value]="firstName()"
+            (input)="onFirstNameChange($event)"
+          />
+        </div>
+        <div class="config-item">
+          <label for="last-name">Last Name:</label>
+          <input
+            id="last-name"
+            type="text"
+            [value]="lastName()"
+            (input)="onLastNameChange($event)"
+          />
+        </div>
+        <div class="config-item">
+          <label>Quantity:</label>
+          <div class="quantity-control">
+            <button (click)="decrement()">-</button>
+            <span>{{ quantity() }}</span>
+            <button (click)="increment()">+</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Computed Signals Card -->
+  <div class="card">
+    <div class="card-header">
+      <h3>2. Computed Signals: <code>computed()</code></h3>
+      <p>
+        These derive their value from other signals. They are read-only and
+        update automatically and efficiently.
+      </p>
+    </div>
+    <div class="card-content">
+      <div class="computed-grid">
+        <div class="computed-item">
+          <label>Full Name:</label>
+          <div
+            class="data-display highlight-on-change"
+            [class.changed]="fullName()"
+          >
+            {{ fullName() }}
+          </div>
+        </div>
+        <div class="computed-item">
+          <label>Is Stock Low?</label>
+          <div
+            class="data-display highlight-on-change"
+            [class.changed]="isStockLow()"
+          >
+            {{ isStockLow() }}
+          </div>
+        </div>
+        <div class="computed-item full-width">
+          <label>Stock Message:</label>
+          <div
+            class="data-display highlight-on-change"
+            [class.changed]="stockMessage()"
+            [class.warning]="isStockLow()"
+          >
+            {{ stockMessage() }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Effect Card -->
+  <div class="card">
+    <div class="card-header">
+      <h3>3. Effects: <code>effect()</code></h3>
+      <p>
+        This code runs whenever any of its dependent signals change. Ideal for
+        side effects like logging, analytics, or data synchronization.
+      </p>
+    </div>
+    <div class="card-content">
+      <div class="log-box">
+        <h4>Effect Log</h4>
+        @for (log of logs(); track log.id) {
+          <p class="log-entry">{{ log.message }}</p>
+        }
+      </div>
+    </div>
+  </div>
+
+  <!-- RxJS Interop Card -->
+  <div class="card">
+    <div class="card-header">
+      <h3>4. RxJS Interop: <code>toSignal()</code></h3>
+      <p>
+        Convert an RxJS Observable into a read-only Signal to seamlessly
+        integrate with a modern, signal-based component.
+      </p>
+    </div>
+    <div class="card-content">
+      <div class="everyday-example">
+        <p>
+          <strong>Analogy:</strong> Subscribing to a magazine (the Observable).
+          Each time a new issue is released, a delivery person
+          (<code>toSignal</code>) puts it in your mailbox (the Signal), where
+          you can check for the latest issue at any time.
+        </p>
+      </div>
+
+      <div class="timeline-group">
+        <div class="timeline-label">
+          RxJS <code>interval(1000)</code> Observable
+        </div>
+        <div class="timeline">
+          @for (marble of observableMarbles(); track marble.id) {
+            <div class="marble" [style.background]="marble.color">
+              {{ marble.value }}
+            </div>
+          }
+        </div>
+      </div>
+
+      <div class="computed-grid">
+        <div class="computed-item">
+          <label>Resulting Signal (<code>counterSignal</code>):</label>
+          <div
+            class="data-display highlight-on-change"
+            [class.changed]="counterSignal()"
+          >
+            {{ counterSignal() }}
+          </div>
+        </div>
+        <div class="computed-item">
+          <label>Computed from Signal (<code>isEven</code>):</label>
+          <div
+            class="data-display highlight-on-change"
+            [class.changed]="isEven()"
+          >
+            {{ isEven() }}
+          </div>
+        </div>
+      </div>
+
+      <div class="button-group">
+        @if (!isCounterRunning()) {
+          <button (click)="startCounter()">Start Stream</button>
+        } @else {
+          <button (click)="stopCounter()">Stop Stream</button>
+        }
+        <button class="btn-secondary" (click)="resetCounter()">Reset</button>
+      </div>
+
+      <div class="code-example">
+        <pre><code>// An Observable that emits every second
+counter$ = interval(1000);
+
+// Converted to a Signal
+counterSignal = toSignal(this.counter$, &#123; initialValue: 0 &#125;);
+
+// A computed signal that reacts to the change
+isEven = computed(() => this.counterSignal() % 2 === 0);</code></pre>
+      </div>
+    </div>
+  </div>
+</div>

@@ -48,6 +48,7 @@
       "@ah/shared/api-client": ["./libs/shared/api-client/src/index.ts"],
       "@ah/labs/sky/domain": ["./libs/labs/sky/domain/src/index.ts"],
       "@ah/labs/sky/feature": ["./libs/labs/sky/feature/src/index.ts"],
+      "@ah/labs/rxjs/feature": ["./libs/labs/rxjs/feature/src/index.ts"],
       "@ah/three/scenes/sky": ["./libs/three/scenes/sky/src/index.ts"],
       "@ah/three/engine": ["./libs/three/engine/src/index.ts"],
       "@ah/three/engine/quality": ["./libs/three/engine/src/quality.ts"],

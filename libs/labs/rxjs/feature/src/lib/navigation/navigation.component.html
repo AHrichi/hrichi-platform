@@ -1,0 +1,255 @@
+<nav class="nav-menu" [class.closed]="!isOpen()">
+  <ul>
+    <li>
+      <a
+        routerLink="./error-handling"
+        routerLinkActive="active"
+        title="Error Handling"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+        @if (isOpen()) {
+          <div class="link-text">
+            <span>Error Handling</span>
+            <span class="description">catchError, retry, throwError</span>
+          </div>
+        }
+      </a>
+    </li>
+    <li>
+      <a
+        routerLink="./combining-streams"
+        routerLinkActive="active"
+        title="Combining Streams"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M18 8L22 12L18 16"></path>
+          <path d="M2 12H22"></path>
+          <path d="M6 8L2 12L6 16"></path>
+        </svg>
+        @if (isOpen()) {
+          <div class="link-text">
+            <span>Combining Streams</span>
+            <span class="description">withLatestFrom, combineLatest</span>
+          </div>
+        }
+      </a>
+    </li>
+    <li>
+      <a
+        routerLink="./transforming-streams"
+        routerLinkActive="active"
+        title="Transforming Streams"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path
+            d="M12 20v-6M12 8V2M20 12h-6M8 12H2M16 16l3-3-1.5-1.5-3 3L16 16zM8 8l-3 3 1.5 1.5 3-3L8 8z"
+          ></path>
+        </svg>
+        @if (isOpen()) {
+          <div class="link-text">
+            <span>Transforming Streams</span>
+            <span class="description">Higher-order mapping</span>
+          </div>
+        }
+      </a>
+    </li>
+    <li>
+      <a
+        routerLink="./sharing-data"
+        routerLinkActive="active"
+        title="Sharing Data"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M12 18L12 6M6 12L18 12"></path>
+        </svg>
+        @if (isOpen()) {
+          <div class="link-text">
+            <span>Sharing Data</span>
+            <span class="description">&#64;Input, &#64;Output, Service</span>
+          </div>
+        }
+      </a>
+    </li>
+    <li>
+      <a
+        routerLink="./signals"
+        routerLinkActive="active"
+        title="Power of Signals"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+        </svg>
+        @if (isOpen()) {
+          <div class="link-text">
+            <span>Power of Signals</span>
+            <span class="description">signal, computed, effect</span>
+          </div>
+        }
+      </a>
+    </li>
+    <li>
+      <a
+        routerLink="./multicasting"
+        routerLinkActive="active"
+        title="Multicasting"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M4 12v-2a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v2"></path>
+          <path d="M4 12v2a4 4 0 0 0 4 4h8a4 4 0 0 0 4-4v-2"></path>
+          <circle cx="12" cy="12" r="2"></circle>
+        </svg>
+        @if (isOpen()) {
+          <div class="link-text">
+            <span>Multicasting</span>
+            <span class="description">Hot vs Cold, Subjects, share()</span>
+          </div>
+        }
+      </a>
+    </li>
+    <li>
+      <a
+        routerLink="./reactive-caching"
+        routerLinkActive="active"
+        title="Reactive Caching"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M20 12v2a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4v-2"></path>
+          <path d="M20 8v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+          <line x1="2" y1="12" x2="22" y2="12"></line>
+        </svg>
+        @if (isOpen()) {
+          <div class="link-text">
+            <span>Reactive Caching</span>
+            <span class="description">shareReplay</span>
+          </div>
+        }
+      </a>
+    </li>
+    <li>
+      <a
+        routerLink="./bulk-operations"
+        routerLinkActive="active"
+        title="Bulk Operations"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+          <line x1="8" y1="12" x2="16" y2="12"></line>
+        </svg>
+        @if (isOpen()) {
+          <div class="link-text">
+            <span>Bulk Operations</span>
+            <span class="description">forkJoin, bufferCount</span>
+          </div>
+        }
+      </a>
+    </li>
+    <li>
+      <a routerLink="./quiz" routerLinkActive="active" title="RxJS Challenge">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+          <path d="M9.5 14.5l1.5 1.5 4-4"></path>
+        </svg>
+        @if (isOpen()) {
+          <div class="link-text">
+            <span>RxJS Challenge</span>
+            <span class="description">Test your knowledge</span>
+          </div>
+        }
+      </a>
+    </li>
+  </ul>
+</nav>

@@ -1,0 +1,204 @@
+<!-- src/app/exercises/sharing-data/sharing-data.component.html -->
+<div class="exercise-container">
+  <h2 class="exercise-title">Exercise: Sharing Data Between Components</h2>
+  <p class="exercise-description">
+    Visualizing the different ways Angular components communicate with each
+    other.
+  </p>
+
+  <!-- Parent to Child Card -->
+  <div class="card">
+    <div class="card-header">
+      <h3>Parent to Child: <code>Input()</code></h3>
+      <p>
+        The parent component passes data down to the child using an input
+        binding.
+      </p>
+    </div>
+    <div class="card-content">
+      <div class="everyday-example">
+        <p>
+          <strong>Analogy:</strong> A parent giving a child a specific toy to
+          play with. The data flow is one-way, from parent to child.
+        </p>
+      </div>
+      <div class="parent-box">
+        <p><strong>Parent Component</strong></p>
+        <div class="config-item">
+          <label for="parent-input">Data to send:</label>
+          <input
+            id="parent-input"
+            type="text"
+            [value]="parentData()"
+            (input)="onParentInputChange($event)"
+          />
+        </div>
+
+        <div class="child-container">
+          <app-parent-to-child [data]="parentData()" />
+          @if (animateParentToChild()) {
+            <div class="data-packet p-to-c-animation"></div>
+          }
+        </div>
+      </div>
+      <div class="code-example">
+        <button class="btn-toggle-code" (click)="toggleCode('Input')">
+          {{ showInputCode() ? 'Hide' : 'Show' }} Code
+        </button>
+        @if (showInputCode()) {
+          <pre><code>// parent.component.ts
+dataToSend = 'Hello Child';
+
+// child.component.ts
+            Input() data: string;</code></pre>
+        }
+      </div>
+    </div>
+  </div>
+
+  <!-- Child to Parent Card -->
+  <div class="card">
+    <div class="card-header">
+      <h3>Child to Parent: <code>Output()</code></h3>
+      <p>The child component emits an event that the parent listens for.</p>
+    </div>
+    <div class="card-content">
+      <div class="everyday-example">
+        <p>
+          <strong>Analogy:</strong> A child telling a parent they are hungry.
+          The child initiates the communication, and the parent reacts to the
+          event.
+        </p>
+      </div>
+      <div class="parent-box">
+        <p><strong>Parent Component</strong></p>
+        <p>
+          Received:
+          <span class="data-display">{{ dataFromChild() || 'N/A' }}</span>
+        </p>
+
+        <div class="child-container">
+          <app-child-to-parent (dataEvent)="onDataFromChild($event)" />
+          @if (animateChildToParent()) {
+            <div class="data-packet c-to-p-animation"></div>
+          }
+        </div>
+      </div>
+      <div class="code-example">
+        <button class="btn-toggle-code" (click)="toggleCode('Output')">
+          {{ showOutputCode() ? 'Hide' : 'Show' }} Code
+        </button>
+        @if (showOutputCode()) {
+          <pre><code>// child.component.ts
+            Output() dataEvent = new EventEmitter&lt;string&gt;();
+sendData() &#123; this.dataEvent.emit('Data from child'); &#125;
+
+// parent.component.html
+&lt;app-child (dataEvent)="onDataReceived($event)"&gt;&lt;/app-child&gt;</code></pre>
+        }
+      </div>
+    </div>
+  </div>
+
+  <!-- Service Communication Card -->
+  <div class="card">
+    <div class="card-header">
+      <h3>Unrelated Components: Service</h3>
+      <p>
+        A shared service acts as a central hub for components to share data.
+      </p>
+    </div>
+    <div class="card-content">
+      <div class="everyday-example">
+        <p>
+          <strong>Analogy:</strong> A public announcement system at an airport.
+          A gate agent (sender) makes an announcement, and all passengers
+          (receivers) can hear it, regardless of where they are.
+        </p>
+      </div>
+      <div class="service-layout">
+        <app-service-sender />
+        <div class="service-hub">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="48"
+            height="48"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path
+              d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"
+            ></path>
+            <path d="M12 8v4l2 2"></path>
+          </svg>
+          <span>DataSharingService</span>
+        </div>
+        <app-service-receiver />
+      </div>
+      <div class="code-example">
+        <button class="btn-toggle-code" (click)="toggleCode('Service')">
+          {{ showServiceCode() ? 'Hide' : 'Show' }} Code
+        </button>
+        @if (showServiceCode()) {
+          <pre><code>// data-sharing.service.ts
+private dataSubject = new BehaviorSubject&lt;string&gt;(null);
+data$ = this.dataSubject.asObservable();
+sendData(data: string) &#123; this.dataSubject.next(data); &#125;
+
+// sender.component.ts
+this.dataService.sendData('New Data');
+
+// receiver.component.ts
+this.dataService.data$.subscribe(data => ...);</code></pre>
+        }
+      </div>
+    </div>
+  </div>
+
+  <!-- @ViewChild Card -->
+  <div class="card">
+    <div class="card-header">
+      <h3>Parent to Child: <code>ViewChild()</code></h3>
+      <p>
+        The parent directly accesses the child component's properties and
+        methods.
+      </p>
+    </div>
+    <div class="card-content">
+      <div class="everyday-example">
+        <p>
+          <strong>Analogy:</strong> A TV remote control. The parent (you) has
+          direct access to the child's (the TV's) methods, like `turnOn()` or
+          `changeChannel()`.
+        </p>
+      </div>
+      <div class="parent-box">
+        <p><strong>Parent Component</strong></p>
+        <button (click)="triggerChildMethod()">
+          Call Child's Highlight Method
+        </button>
+
+        <div class="child-container">
+          <app-view-child-example />
+        </div>
+      </div>
+      <div class="code-example">
+        <button class="btn-toggle-code" (click)="toggleCode('ViewChild')">
+          {{ showViewChildCode() ? 'Hide' : 'Show' }} Code
+        </button>
+        @if (showViewChildCode()) {
+          <pre><code>// parent.component.ts
+            ViewChild(ChildComponent) child: ChildComponent;
+callChild() &#123; this.child.childMethod(); &#125;
+
+// child.component.ts
+childMethod() &#123; console.log('Method called!'); &#125;</code></pre>
+        }
+      </div>
+    </div>
+  </div>
+</div>
