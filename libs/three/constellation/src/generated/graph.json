@@ -7,9 +7,9 @@
       "scope": "api",
       "layer": "app",
       "runtime": "node",
-      "x": 0.25,
-      "y": 0.811,
-      "z": -0.53
+      "x": 0.102,
+      "y": 0.879,
+      "z": -0.466
     },
     {
       "id": "api-leads",
@@ -17,9 +17,9 @@
       "scope": "api",
       "layer": "feature",
       "runtime": "node",
-      "x": -0.25,
-      "y": 0.664,
-      "z": -0.67
+      "x": -0.333,
+      "y": 0.659,
+      "z": -0.642
     },
     {
       "id": "design-system-tokens",
@@ -27,9 +27,9 @@
       "scope": "design-system",
       "layer": "tokens",
       "runtime": "agnostic",
-      "x": 0.886,
-      "y": 0.258,
-      "z": -0.268
+      "x": 0.738,
+      "y": 0.439,
+      "z": -0.438
     },
     {
       "id": "design-system-ui",
@@ -37,9 +37,9 @@
       "scope": "design-system",
       "layer": "ui",
       "runtime": "browser",
-      "x": -0.3,
-      "y": -0.51,
-      "z": 0.516
+      "x": -0.243,
+      "y": -0.476,
+      "z": 0.56
     },
     {
       "id": "lab-hello",
@@ -47,9 +47,9 @@
       "scope": "lab-hello",
       "layer": "app",
       "runtime": "browser",
-      "x": -0.218,
+      "x": -0.119,
       "y": 0.921,
-      "z": 0.023
+      "z": 0.171
     },
     {
       "id": "lab-orbit",
@@ -57,9 +57,9 @@
       "scope": "lab-orbit",
       "layer": "app",
       "runtime": "browser",
-      "x": 0.278,
-      "y": 0.648,
-      "z": 0.649
+      "x": 0.596,
+      "y": 0.213,
+      "z": 0.632
     },
     {
       "id": "lab-orbit-domain",
@@ -67,9 +67,9 @@
       "scope": "lab-orbit",
       "layer": "domain",
       "runtime": "agnostic",
-      "x": 0.69,
-      "y": -0.465,
-      "z": 0.459
+      "x": 0.873,
+      "y": -0.17,
+      "z": 0.363
     },
     {
       "id": "lab-orbit-feature",
@@ -77,9 +77,9 @@
       "scope": "lab-orbit",
       "layer": "feature",
       "runtime": "browser",
-      "x": 0.375,
-      "y": -0.783,
-      "z": 0.054
+      "x": 0.567,
+      "y": -0.587,
+      "z": 0.178
     },
     {
       "id": "orbit-api",
@@ -87,9 +87,9 @@
       "scope": "orbit",
       "layer": "app",
       "runtime": "jvm",
-      "x": -0.448,
-      "y": -0.411,
-      "z": -0.752
+      "x": -0.339,
+      "y": -0.606,
+      "z": -0.663
     },
     {
       "id": "platform-federation",
@@ -97,9 +97,9 @@
       "scope": "platform",
       "layer": "platform",
       "runtime": "browser",
-      "x": 0.273,
-      "y": 0.875,
-      "z": 0.199
+      "x": 0.317,
+      "y": 0.719,
+      "z": 0.494
     },
     {
       "id": "platform-inspector",
@@ -107,9 +107,9 @@
       "scope": "platform",
       "layer": "platform",
       "runtime": "browser",
-      "x": 0.677,
-      "y": 0.594,
-      "z": 0.254
+      "x": 0.556,
+      "y": 0.745,
+      "z": 0.125
     },
     {
       "id": "portfolio-feature-cv",
@@ -117,9 +117,9 @@
       "scope": "portfolio",
       "layer": "feature",
       "runtime": "browser",
-      "x": -0.326,
-      "y": -0.025,
-      "z": 0.851
+      "x": -0.284,
+      "y": 0.031,
+      "z": 0.853
     },
     {
       "id": "portfolio-feature-experience",
@@ -127,9 +127,9 @@
       "scope": "portfolio",
       "layer": "feature",
       "runtime": "browser",
-      "x": -0.559,
-      "y": 0.184,
-      "z": 0.712
+      "x": -0.587,
+      "y": 0.256,
+      "z": 0.657
     },
     {
       "id": "portfolio-feature-home",
@@ -137,9 +137,9 @@
       "scope": "portfolio",
       "layer": "feature",
       "runtime": "browser",
-      "x": -0.233,
-      "y": -0.134,
-      "z": -0.168
+      "x": -0.282,
+      "y": -0.159,
+      "z": -0.212
     },
     {
       "id": "portfolio-feature-services",
@@ -147,9 +147,9 @@
       "scope": "portfolio",
       "layer": "feature",
       "runtime": "browser",
-      "x": -0.786,
-      "y": -0.288,
-      "z": 0.028
+      "x": -0.737,
+      "y": -0.378,
+      "z": 0.008
     },
     {
       "id": "portfolio-feature-work",
@@ -157,9 +157,9 @@
       "scope": "portfolio",
       "layer": "feature",
       "runtime": "browser",
-      "x": -0.125,
-      "y": -0.278,
-      "z": 0.831
+      "x": -0.481,
+      "y": -0.204,
+      "z": 0.753
     },
     {
       "id": "portfolio-util-seo",
@@ -167,9 +167,9 @@
       "scope": "portfolio",
       "layer": "util",
       "runtime": "browser",
-      "x": -0.626,
-      "y": -0.349,
-      "z": 0.514
+      "x": -0.713,
+      "y": -0.295,
+      "z": 0.434
     },
     {
       "id": "shared-api-client",
@@ -177,9 +177,9 @@
       "scope": "shared",
       "layer": "contracts",
       "runtime": "agnostic",
-      "x": -0.032,
-      "y": -0.767,
-      "z": -0.557
+      "x": 0.146,
+      "y": -0.832,
+      "z": -0.401
     },
     {
       "id": "shared-content",
@@ -187,9 +187,9 @@
       "scope": "shared",
       "layer": "content",
       "runtime": "agnostic",
-      "x": -0.746,
-      "y": 0.055,
-      "z": 0.378
+      "x": -0.79,
+      "y": 0.109,
+      "z": 0.293
     },
     {
       "id": "shared-contracts",
@@ -197,9 +197,9 @@
       "scope": "shared",
       "layer": "contracts",
       "runtime": "agnostic",
-      "x": -0.681,
-      "y": 0.177,
-      "z": -0.632
+      "x": -0.672,
+      "y": 0.091,
+      "z": -0.668
     },
     {
       "id": "shared-site-config",
@@ -207,9 +207,9 @@
       "scope": "shared",
       "layer": "data-access",
       "runtime": "browser",
-      "x": -0.313,
-      "y": -0.854,
-      "z": -0.099
+      "x": -0.134,
+      "y": -0.885,
+      "z": 0.031
     },
     {
       "id": "shared-state",
@@ -217,9 +217,9 @@
       "scope": "shared",
       "layer": "data-access",
       "runtime": "browser",
-      "x": -0.822,
-      "y": 0.29,
-      "z": -0.078
+      "x": -0.839,
+      "y": 0.212,
+      "z": -0.169
     },
     {
       "id": "shell",
@@ -227,9 +227,9 @@
       "scope": "portfolio",
       "layer": "app",
       "runtime": "browser",
-      "x": -0.177,
-      "y": 0.32,
-      "z": 0.459
+      "x": -0.167,
+      "y": 0.259,
+      "z": 0.441
     },
     {
       "id": "shell-e2e",
@@ -237,9 +237,9 @@
       "scope": "test",
       "layer": "e2e",
       "runtime": "node",
-      "x": 0.547,
-      "y": 0.087,
-      "z": 0.736
+      "x": 0.363,
+      "y": -0.224,
+      "z": 0.797
     },
     {
       "id": "three-angular",
@@ -247,9 +247,9 @@
       "scope": "platform",
       "layer": "ui",
       "runtime": "browser",
-      "x": 0.451,
-      "y": -0.613,
-      "z": -0.512
+      "x": 0.53,
+      "y": -0.563,
+      "z": -0.473
     },
     {
       "id": "three-constellation",
@@ -257,9 +257,9 @@
       "scope": "platform",
       "layer": "engine",
       "runtime": "browser",
-      "x": 0.071,
-      "y": 0.017,
-      "z": -0.945
+      "x": -0.042,
+      "y": -0.07,
+      "z": -0.949
     },
     {
       "id": "three-engine",
@@ -267,9 +267,9 @@
       "scope": "platform",
       "layer": "engine",
       "runtime": "browser",
-      "x": 0.775,
-      "y": -0.206,
-      "z": -0.583
+      "x": 0.716,
+      "y": -0.113,
+      "z": -0.671
     },
     {
       "id": "three-scene-constellation",
@@ -277,9 +277,9 @@
       "scope": "platform",
       "layer": "engine",
       "runtime": "browser",
-      "x": 0.516,
-      "y": 0.176,
-      "z": -0.758
+      "x": 0.35,
+      "y": 0.205,
+      "z": -0.845
     },
     {
       "id": "three-scene-orbit-globe",
@@ -287,9 +287,9 @@
       "scope": "platform",
       "layer": "engine",
       "runtime": "browser",
-      "x": 0.854,
-      "y": -0.394,
-      "z": -0.11
+      "x": 0.908,
+      "y": -0.176,
+      "z": -0.192
     }
   ],
   "edges": [
@@ -307,6 +307,11 @@
       4,
       9,
       "static"
+    ],
+    [
+      5,
+      7,
+      "dynamic"
     ],
     [
       5,

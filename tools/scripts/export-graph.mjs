@@ -11,6 +11,9 @@ import { readFileSync, writeFileSync } from 'node:fs';
 
 const output = 'libs/three/constellation/src/generated/graph.json';
 
+// A running Nx daemon can serve a graph that misses recent imports, which
+// made CI's export differ from the committed one; compute it fresh.
+process.env.NX_DAEMON = 'false';
 const graph = await createProjectGraphAsync({ exitOnError: true });
 const names = Object.keys(graph.nodes).sort();
 const index = new Map(names.map((name, i) => [name, i]));
