@@ -5,7 +5,7 @@ Ahmed Hrichi's portfolio, built as the kind of platform it describes: an Nx mono
 - Architecture: [docs/architecture.md](docs/architecture.md)
 - Decisions and spike results: [docs/adr](docs/adr/README.md)
 - Lead pipeline setup (accounts, secrets, n8n): [docs/lead-pipeline.md](docs/lead-pipeline.md)
-- Live: [portfolio.ahmed-hrichi.workers.dev](https://portfolio.ahmed-hrichi.workers.dev) (shell) and [lab-hello.ahmed-hrichi.workers.dev](https://lab-hello.ahmed-hrichi.workers.dev) (remote)
+- Live: [portfolio.ahmed-hrichi.workers.dev](https://portfolio.ahmed-hrichi.workers.dev) (shell), [lab-hello.ahmed-hrichi.workers.dev](https://lab-hello.ahmed-hrichi.workers.dev) (remote) and [ahmed-hrichi-api.onrender.com/health](https://ahmed-hrichi-api.onrender.com/health) (lead API; sleeps when idle)
 
 ## Projects
 

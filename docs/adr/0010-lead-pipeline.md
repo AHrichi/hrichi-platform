@@ -1,6 +1,6 @@
 # ADR-0010: Lead pipeline: document outbox, direct Telegram alert, n8n push and pull
 
-- **Status:** Accepted (built and tested locally; production setup pending the accounts in [lead-pipeline.md](../lead-pipeline.md))
+- **Status:** Accepted (deployed and verified end to end on 2026-10-27; setup in [lead-pipeline.md](../lead-pipeline.md))
 - **Date:** 2026-10-26
 - **Milestone:** M1
 
@@ -42,6 +42,12 @@ The contact form is the site's conversion point, so a lead must never be lost. E
     - The backstop marked an overdue lead `sent` with a real date and left a leased lead and a not-yet-due lead pending.
     - Both paths reached the auto-reply node with the right address; with a fake Gmail credential it failed as expected.
 11. **The API image** is 437 MB on `node:24-slim`, runs as `node`, listens on `PORT`, and exits at once with the list of missing settings.
+12. **A hidden-prompt bug leaked a secret.** The setup scripts first hid input by filtering readline's output, but readline redraws the prompt and the line in one write when a long paste wraps, so part of a pasted token reached the terminal. Hidden prompts now put the terminal in raw mode (`tools/scripts/prompt.mjs`) and echo nothing.
+13. **`docker cp` into the n8n container creates root-owned files** that n8n's `node` user can't delete from `/tmp`, so a credentials file would have stayed behind. `tools/n8n/install.mjs` streams the JSON in through `docker exec -i` instead.
+14. **Verified in production on 2026-10-27:**
+    - The API on Render answered `/health` with Atlas up. It allowed CORS from the portfolio only, refused an invalid lead with `400` and a fake Turnstile token with `403`, and sent the Helmet headers.
+    - The live contact page loaded `site-config.json`, rendered the Turnstile widget and reported no CSP errors.
+    - A message sent from the live page produced the Telegram alert and the Gmail auto-reply sent by n8n.
 
 ## Consequences
 
