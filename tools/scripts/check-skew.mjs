@@ -22,6 +22,21 @@ async function json(url) {
   return response.json();
 }
 
+/** A Worker's first deploy takes a few seconds to answer on workers.dev. */
+async function jsonWithRetries(url, attempts = 6) {
+  for (let attempt = 1; ; attempt++) {
+    try {
+      return await json(url);
+    } catch (error) {
+      if (attempt === attempts) {
+        throw error;
+      }
+      console.log(`${error.message}; retrying in 10 s`);
+      await new Promise((resolve) => setTimeout(resolve, 10_000));
+    }
+  }
+}
+
 const versions = (entry) =>
   new Map(entry.shared.map((s) => [s.packageName, s.version]));
 
@@ -32,7 +47,7 @@ const problems = [];
 for (const [remote, entryUrl] of Object.entries(manifest)) {
   let entry;
   try {
-    entry = await json(entryUrl);
+    entry = await jsonWithRetries(entryUrl);
   } catch (error) {
     problems.push(`${remote}: unreachable (${error.message})`);
     continue;
