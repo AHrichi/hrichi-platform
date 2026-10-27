@@ -1,0 +1,84 @@
+.constellation {
+  display: grid;
+  gap: var(--space-3);
+  margin: 0;
+}
+
+.constellation__stage {
+  aspect-ratio: 4 / 3;
+  border: 1px solid var(--color-stage-border);
+  border-radius: var(--radius-lg);
+  background: radial-gradient(
+    circle at 50% 45%,
+    color-mix(in srgb, var(--color-stage-bg) 82%, var(--color-data-4)),
+    var(--color-stage-bg) 70%
+  );
+}
+
+.constellation__svg {
+  inline-size: 100%;
+  block-size: 100%;
+
+  line {
+    stroke-width: 0.006;
+    stroke-opacity: 0.4;
+  }
+
+  .federated {
+    stroke-dasharray: 0.025 0.02;
+    stroke-opacity: 0.7;
+  }
+
+  .halo {
+    opacity: 0.16;
+  }
+
+  .focus circle:not(.halo) {
+    stroke: var(--color-stage-text);
+    stroke-width: 0.012;
+  }
+
+  text {
+    fill: var(--color-stage-text);
+    font-size: 0.055px;
+    font-weight: var(--font-weight-medium);
+    text-anchor: middle;
+  }
+}
+
+.constellation__caption {
+  display: grid;
+  gap: var(--space-2);
+  font-size: var(--font-size-100);
+  color: var(--color-text-muted);
+
+  p {
+    margin: 0;
+  }
+}
+
+.legend,
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.swatch {
+  inline-size: 0.625rem;
+  block-size: 0.625rem;
+  border-radius: 50%;
+}
+
+.links {
+  font-size: var(--font-size-200);
+}

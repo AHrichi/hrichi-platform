@@ -53,7 +53,12 @@ export default defineConfig({
   projects: [
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      use: {
+        ...devices['Desktop Chrome'],
+        // Headless Chromium has no GPU; this lets WebGL fall back to software
+        // so the hero's 3D path can be tested (it still treats it as slow).
+        launchOptions: { args: ['--enable-unsafe-swiftshader'] },
+      },
     },
 
     // Uncomment for mobile browsers support

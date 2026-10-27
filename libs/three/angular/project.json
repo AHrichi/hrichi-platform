@@ -1,0 +1,9 @@
+{
+  "name": "three-angular",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/three/angular/src",
+  "prefix": "ah",
+  "projectType": "library",
+  "tags": ["scope:platform", "type:ui", "runtime:browser"],
+  "targets": {}
+}

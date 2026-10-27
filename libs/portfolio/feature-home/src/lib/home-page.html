@@ -19,26 +19,23 @@
         (valueChange)="preferences.setAudience($event)"
       />
     </div>
+    <dl class="facts">
+      <div>
+        <dt>Based in</dt>
+        <dd>{{ profile.location }}</dd>
+      </div>
+      <div>
+        <dt>Works</dt>
+        <dd>{{ profile.workSetup }}</dd>
+      </div>
+      <div>
+        <dt>Now</dt>
+        <dd>{{ currentRole.title }} at {{ currentRole.company }}</dd>
+      </div>
+    </dl>
   </div>
 
-  <dl class="facts ah-card">
-    <div>
-      <dt>Name</dt>
-      <dd>{{ profile.name }}</dd>
-    </div>
-    <div>
-      <dt>Based in</dt>
-      <dd>{{ profile.location }}</dd>
-    </div>
-    <div>
-      <dt>Works</dt>
-      <dd>{{ profile.workSetup }}</dd>
-    </div>
-    <div>
-      <dt>Now</dt>
-      <dd>{{ currentRole.title }} at {{ currentRole.company }}</dd>
-    </div>
-  </dl>
+  <ah-constellation-figure class="hero__figure" />
 </section>
 
 @for (section of preferences.copy().sections; track section) {

@@ -1,0 +1,16 @@
+{
+  "name": "three-constellation",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/three/constellation/src",
+  "projectType": "library",
+  "tags": ["scope:platform", "type:engine", "runtime:browser"],
+  "targets": {
+    "export-graph": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "options": {
+        "command": "node tools/scripts/export-graph.mjs"
+      }
+    }
+  }
+}

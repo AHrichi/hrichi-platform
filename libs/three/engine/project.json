@@ -1,0 +1,8 @@
+{
+  "name": "three-engine",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/three/engine/src",
+  "projectType": "library",
+  "tags": ["scope:platform", "type:engine", "runtime:browser"],
+  "targets": {}
+}

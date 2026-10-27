@@ -9,21 +9,25 @@ Ahmed Hrichi's portfolio, built as the kind of platform it describes: an Nx mono
 
 ## Projects
 
-| Project                | Path                        | What it is                                                                                 |
-| ---------------------- | --------------------------- | ------------------------------------------------------------------------------------------ |
-| `shell`                | `apps/portfolio/shell`      | Host. Prerendered content pages, PWA, loads remotes from `public/federation.manifest.json` |
-| `shell-e2e`            | `apps/portfolio/shell-e2e`  | Playwright tests for prerendering, federation and remote fallback                          |
-| `lab-hello`            | `apps/labs/hello`           | M0 spike remote; exposes `./routes` and `./meta`                                           |
-| `platform-federation`  | `libs/platform/federation`  | Remote contract, `federatedRoutes()`, `RemoteUnavailable` fallback                         |
-| `design-system-tokens` | `libs/design-system/tokens` | DTCG tokens → CSS variables and TS, with a WCAG contrast gate (`nx build-tokens`)          |
-| `design-system-ui`     | `libs/design-system/ui`     | `@ah/ui`: global styles (cascade layers) and components                                    |
-| `shared-content`       | `libs/shared/content`       | Profile, experience, case studies, services and per-audience copy                          |
-| `shared-state`         | `libs/shared/state`         | `PreferencesStore` (NgRx SignalStore): the `?for=` audience mode                           |
-| `portfolio-util-seo`   | `libs/portfolio/util-seo`   | Title, description, canonical, Open Graph and JSON-LD                                      |
-| `portfolio-feature-*`  | `libs/portfolio/feature-*`  | Pages: home, work, experience, services/contact, CV                                        |
-| `shared-contracts`     | `libs/shared/contracts`     | Types shared by the browser and the API (`LeadRequest`, field limits)                      |
-| `api`                  | `apps/api`                  | NestJS API for Render: config validation, health, CORS, rate limits                        |
-| `api-leads`            | `libs/api/leads`            | Lead intake: Turnstile, idempotency, Mongo outbox, Telegram and n8n delivery               |
+| Project                     | Path                              | What it is                                                                                 |
+| --------------------------- | --------------------------------- | ------------------------------------------------------------------------------------------ |
+| `shell`                     | `apps/portfolio/shell`            | Host. Prerendered content pages, PWA, loads remotes from `public/federation.manifest.json` |
+| `shell-e2e`                 | `apps/portfolio/shell-e2e`        | Playwright tests for prerendering, federation and remote fallback                          |
+| `lab-hello`                 | `apps/labs/hello`                 | M0 spike remote; exposes `./routes` and `./meta`                                           |
+| `platform-federation`       | `libs/platform/federation`        | Remote contract, `federatedRoutes()`, `RemoteUnavailable` fallback                         |
+| `design-system-tokens`      | `libs/design-system/tokens`       | DTCG tokens → CSS variables and TS, with a WCAG contrast gate (`nx build-tokens`)          |
+| `design-system-ui`          | `libs/design-system/ui`           | `@ah/ui`: global styles (cascade layers) and components                                    |
+| `shared-content`            | `libs/shared/content`             | Profile, experience, case studies, services and per-audience copy                          |
+| `shared-state`              | `libs/shared/state`               | `PreferencesStore` (NgRx SignalStore): the `?for=` audience mode                           |
+| `portfolio-util-seo`        | `libs/portfolio/util-seo`         | Title, description, canonical, Open Graph and JSON-LD                                      |
+| `portfolio-feature-*`       | `libs/portfolio/feature-*`        | Pages: home, work, experience, services/contact, CV                                        |
+| `shared-contracts`          | `libs/shared/contracts`           | Types shared by the browser and the API (`LeadRequest`, field limits)                      |
+| `api`                       | `apps/api`                        | NestJS API for Render: config validation, health, CORS, rate limits                        |
+| `api-leads`                 | `libs/api/leads`                  | Lead intake: Turnstile, idempotency, Mongo outbox, Telegram and n8n delivery               |
+| `three-engine`              | `libs/three/engine`               | Framework-free Three.js stage: on-demand frames, pause off-screen, quality tiers, dispose  |
+| `three-angular`             | `libs/three/angular`              | `<ah-scene>`: loads a scene after idle over a static fallback                              |
+| `three-constellation`       | `libs/three/constellation`        | The exported Nx graph, camera and SVG projection for the hero                              |
+| `three-scene-constellation` | `libs/three/scenes/constellation` | The hero's WebGL scene (lazy)                                                              |
 
 ## Commands
 

@@ -26,10 +26,18 @@ import {
   SegmentedControl,
   type SegmentedOption,
 } from '@ah/ui';
+import { ConstellationFigure } from './constellation/constellation-figure';
 
 @Component({
   selector: 'ah-home-page',
-  imports: [ActionLink, LinkCard, RouterLink, SectionHeading, SegmentedControl],
+  imports: [
+    ActionLink,
+    ConstellationFigure,
+    LinkCard,
+    RouterLink,
+    SectionHeading,
+    SegmentedControl,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './home-page.html',
   styleUrl: './home-page.scss',

@@ -1,0 +1,84 @@
+<figure class="constellation">
+  <ah-scene
+    class="constellation__stage"
+    [load]="loadScene"
+    [params]="params()"
+    (navigate)="open($event)"
+  >
+    <svg
+      class="constellation__svg"
+      [attr.viewBox]="viewBox"
+      role="img"
+      [attr.aria-label]="summary"
+    >
+      <g class="edges">
+        @for (edge of edges; track $index) {
+          <line
+            [attr.x1]="edge.x1"
+            [attr.y1]="edge.y1"
+            [attr.x2]="edge.x2"
+            [attr.y2]="edge.y2"
+            [class.federated]="edge.kind === 'federated'"
+            [style.stroke]="'var(--' + edge.token + ')'"
+          />
+        }
+      </g>
+      @for (node of nodes; track node.id) {
+        <g
+          class="node"
+          [class.app]="node.kind === 'app'"
+          [class.focus]="highlight() === node.id"
+          [style.fill]="'var(--' + node.token + ')'"
+        >
+          <title>{{ node.id }}</title>
+          <circle
+            class="halo"
+            [attr.cx]="node.x"
+            [attr.cy]="node.y"
+            [attr.r]="node.r * 2.4"
+          />
+          <circle [attr.cx]="node.x" [attr.cy]="node.y" [attr.r]="node.r" />
+          @if (node.kind === 'app') {
+            <text [attr.x]="node.x" [attr.y]="node.y - node.r - 0.035">
+              {{ node.id }}
+            </text>
+          }
+        </g>
+      }
+    </svg>
+  </ah-scene>
+
+  <figcaption class="constellation__caption">
+    <p>
+      <strong>This site's real Nx graph:</strong> {{ projectCount }} projects
+      and {{ dependencyCount }} dependencies, exported from the repository at
+      build time.
+    </p>
+    <ul class="legend" role="list" aria-label="Colours by scope">
+      @for (item of legend; track item.label) {
+        <li>
+          <span
+            class="swatch"
+            aria-hidden="true"
+            [style.background]="'var(--' + item.token + ')'"
+          ></span
+          >{{ item.label }}
+        </li>
+      }
+    </ul>
+    <ul class="links" role="list">
+      @for (link of links; track link.id) {
+        <li>
+          <a
+            [routerLink]="link.href"
+            (mouseenter)="highlight.set(link.id)"
+            (mouseleave)="highlight.set(null)"
+            (focus)="highlight.set(link.id)"
+            (blur)="highlight.set(null)"
+            >{{ link.label }}</a
+          >
+        </li>
+      }
+    </ul>
+  </figcaption>
+</figure>

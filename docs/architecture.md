@@ -224,6 +224,7 @@ hrichi-platform/
 │   ├── three/
 │   │   ├── engine/                   framework-agnostic (no Angular imports)
 │   │   ├── angular/                  <ah-scene> adapter, signals ↔ scene bridge
+│   │   ├── constellation/            exported Nx graph, shared camera, SVG projection
 │   │   └── scenes/{constellation,part-viewer}/
 │   ├── portfolio/
 │   │   ├── feature-{home,experience,case-studies,services,contact,cv,architecture}/
@@ -718,24 +719,24 @@ Each milestone ships on its own. **M1 is the one that gets you interviews, so it
 
 The full records are in [`docs/adr`](adr/README.md). Proposed decisions get the next number when their area is built.
 
-| ADR                                           | Decision                                                                           | Status   |
-| --------------------------------------------- | ---------------------------------------------------------------------------------- | -------- |
-| [0001](adr/0001-nx-integrated-monorepo.md)    | Nx 24 integrated monorepo · pnpm · single version policy                           | Accepted |
-| [0002](adr/0002-native-federation.md)         | Native Federation v4 · dynamic host · remote contract `./routes` + `./meta`        | Accepted |
-| [0003](adr/0003-static-first-rendering.md)    | Prerendered shell; client-rendered remotes; no server                              | Accepted |
-| [0004](adr/0004-zoneless.md)                  | Zoneless everywhere; `pnpm check:zoneless` guard                                   | Accepted |
-| [0005](adr/0005-pwa-with-federation.md)       | Service worker regenerated after the federation build                              | Accepted |
-| [0006](adr/0006-content-security-policy.md)   | CSP header with build-time hashes                                                  | Accepted |
-| [0007](adr/0007-cloudflare-hosting.md)        | Cloudflare Workers static assets, one Worker per app, affected deploys from CI     | Accepted |
-| [0008](adr/0008-design-tokens-and-ui.md)      | Design tokens with a contrast gate, cascade layers, `@ah/ui`                       | Accepted |
-| [0009](adr/0009-content-audiences-and-seo.md) | Typed content, audience modes, SEO, generated CV, Lighthouse gate                  | Accepted |
-| —                                             | State ladder: signals → SignalStore → Events plugin; no classic `@ngrx/store`      | Proposed |
-| —                                             | Framework-agnostic Three.js engine + thin Angular adapter; progressive enhancement | Proposed |
-| —                                             | Zero-cost topology: static-first; sleeping backends; graceful degradation          | Proposed |
-| —                                             | Lead pipeline: document outbox + direct Telegram alert + n8n push/pull             | Proposed |
-| —                                             | One feature lib, many shells (remote / PWA / Electron / Capacitor)                 | Proposed |
-| —                                             | OpenAPI contract-first; generated TS clients for Nest and Spring                   | Proposed |
-| —                                             | Runtime i18n (Transloco), EN/FR, URL-based locale, RTL-ready                       | Proposed |
+| ADR                                                | Decision                                                                           | Status   |
+| -------------------------------------------------- | ---------------------------------------------------------------------------------- | -------- |
+| [0001](adr/0001-nx-integrated-monorepo.md)         | Nx 24 integrated monorepo · pnpm · single version policy                           | Accepted |
+| [0002](adr/0002-native-federation.md)              | Native Federation v4 · dynamic host · remote contract `./routes` + `./meta`        | Accepted |
+| [0003](adr/0003-static-first-rendering.md)         | Prerendered shell; client-rendered remotes; no server                              | Accepted |
+| [0004](adr/0004-zoneless.md)                       | Zoneless everywhere; `pnpm check:zoneless` guard                                   | Accepted |
+| [0005](adr/0005-pwa-with-federation.md)            | Service worker regenerated after the federation build                              | Accepted |
+| [0006](adr/0006-content-security-policy.md)        | CSP header with build-time hashes                                                  | Accepted |
+| [0007](adr/0007-cloudflare-hosting.md)             | Cloudflare Workers static assets, one Worker per app, affected deploys from CI     | Accepted |
+| [0008](adr/0008-design-tokens-and-ui.md)           | Design tokens with a contrast gate, cascade layers, `@ah/ui`                       | Accepted |
+| [0009](adr/0009-content-audiences-and-seo.md)      | Typed content, audience modes, SEO, generated CV, Lighthouse gate                  | Accepted |
+| [0010](adr/0010-lead-pipeline.md)                  | Lead pipeline: document outbox + direct Telegram alert + n8n push/pull             | Accepted |
+| [0011](adr/0011-three-engine-and-constellation.md) | Framework-agnostic Three.js engine + thin Angular adapter; progressive enhancement | Accepted |
+| —                                                  | State ladder: signals → SignalStore → Events plugin; no classic `@ngrx/store`      | Proposed |
+| —                                                  | Zero-cost topology: static-first; sleeping backends; graceful degradation          | Proposed |
+| —                                                  | One feature lib, many shells (remote / PWA / Electron / Capacitor)                 | Proposed |
+| —                                                  | OpenAPI contract-first; generated TS clients for Nest and Spring                   | Proposed |
+| —                                                  | Runtime i18n (Transloco), EN/FR, URL-based locale, RTL-ready                       | Proposed |
 
 ---
 

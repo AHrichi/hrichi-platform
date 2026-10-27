@@ -1,0 +1,41 @@
+{
+  "ci": {
+    "collect": {
+      "startServerCommand": "pnpm exec nx run-many -t serve-static -p shell lab-hello --output-style=stream",
+      "startServerReadyPattern": "Serving .*4200",
+      "startServerReadyTimeout": 600000,
+      "url": ["http://localhost:4200/?3d=on"],
+      "numberOfRuns": 3,
+      "settings": {
+        "preset": "desktop",
+        "throttlingMethod": "devtools",
+        "chromeFlags": "--enable-unsafe-swiftshader"
+      }
+    },
+    "assert": {
+      "assertions": {
+        "categories:performance": [
+          "error",
+          { "minScore": 0.9, "aggregationMethod": "median-run" }
+        ],
+        "categories:accessibility": ["error", { "minScore": 1 }],
+        "largest-contentful-paint": [
+          "error",
+          { "maxNumericValue": 2000, "aggregationMethod": "median" }
+        ],
+        "total-blocking-time": [
+          "warn",
+          { "maxNumericValue": 200, "aggregationMethod": "median" }
+        ],
+        "cumulative-layout-shift": [
+          "error",
+          { "maxNumericValue": 0.05, "aggregationMethod": "pessimistic" }
+        ]
+      }
+    },
+    "upload": {
+      "target": "filesystem",
+      "outputDir": "dist/.lighthouse/desktop"
+    }
+  }
+}

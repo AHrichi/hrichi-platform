@@ -101,7 +101,15 @@ const contrastPairs = [
   ['color-accent-default', 'color-bg-raised'],
   ['color-accent-on', 'color-accent-default'],
   ['color-success-default', 'color-bg-canvas'],
+  ['color-stage-text', 'color-stage-bg'],
+  ['color-stage-muted', 'color-stage-bg'],
 ];
+
+// WCAG 2.2 1.4.11: graphics need 3:1 against what they're drawn on.
+const graphicPairs = [1, 2, 3, 4, 5, 6, 7].map((n) => [
+  `color-data-${n}`,
+  'color-stage-bg',
+]);
 
 function luminance(hex) {
   const [r, g, b] = [1, 3, 5].map((i) => {
@@ -117,18 +125,25 @@ for (const [theme, tokens] of [
   ['dark', darkSemantic],
 ]) {
   const values = asRecordOf(tokens);
-  for (const [fg, bg] of contrastPairs) {
-    const [l1, l2] = [luminance(values[fg]), luminance(values[bg])].sort(
-      (a, b) => b - a,
-    );
-    const ratio = (l1 + 0.05) / (l2 + 0.05);
-    if (ratio < 4.5) {
-      failures.push(`${theme}: ${fg} on ${bg} is ${ratio.toFixed(2)}:1`);
+  for (const [pairs, minimum] of [
+    [contrastPairs, 4.5],
+    [graphicPairs, 3],
+  ]) {
+    for (const [fg, bg] of pairs) {
+      const [l1, l2] = [luminance(values[fg]), luminance(values[bg])].sort(
+        (a, b) => b - a,
+      );
+      const ratio = (l1 + 0.05) / (l2 + 0.05);
+      if (ratio < minimum) {
+        failures.push(
+          `${theme}: ${fg} on ${bg} is ${ratio.toFixed(2)}:1, needs ${minimum}:1`,
+        );
+      }
     }
   }
 }
 if (failures.length) {
-  console.error(`Contrast below WCAG AA (4.5:1):\n  ${failures.join('\n  ')}`);
+  console.error(`Contrast below WCAG AA:\n  ${failures.join('\n  ')}`);
   process.exit(1);
 }
 

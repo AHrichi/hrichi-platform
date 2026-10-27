@@ -1,0 +1,8 @@
+{
+  "name": "three-scene-constellation",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/three/scenes/constellation/src",
+  "projectType": "library",
+  "tags": ["scope:platform", "type:engine", "runtime:browser"],
+  "targets": {}
+}

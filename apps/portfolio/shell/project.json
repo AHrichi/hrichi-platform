@@ -171,7 +171,11 @@
     "lighthouse": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "lhci autorun --config=apps/portfolio/shell/lighthouserc.json"
+        "commands": [
+          "lhci autorun --config=apps/portfolio/shell/lighthouserc.json",
+          "lhci autorun --config=apps/portfolio/shell/lighthouserc.desktop.json"
+        ],
+        "parallel": false
       }
     }
   }

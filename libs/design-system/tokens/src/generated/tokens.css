@@ -28,6 +28,10 @@
     --color-neutral-950: #0f0f12;
     --color-green-400: #4ade80;
     --color-green-600: #15803d;
+    --color-amber-300: #fcd34d;
+    --color-teal-300: #5eead4;
+    --color-blue-300: #93c5fd;
+    --color-violet-300: #c4b5fd;
     --font-family-sans: 'Inter Variable', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
     --font-family-mono: ui-monospace, 'Cascadia Code', 'JetBrains Mono', Consolas, monospace;
     --font-size-100: 0.8125rem;
@@ -81,6 +85,17 @@
     --color-accent-on: var(--color-neutral-0);
     --color-success-default: var(--color-green-600);
     --color-focus-ring: var(--color-crimson-500);
+    --color-stage-bg: var(--color-neutral-950);
+    --color-stage-text: var(--color-neutral-50);
+    --color-stage-muted: var(--color-neutral-400);
+    --color-stage-border: var(--color-neutral-800);
+    --color-data-1: var(--color-crimson-400);
+    --color-data-2: var(--color-amber-300);
+    --color-data-3: var(--color-teal-300);
+    --color-data-4: var(--color-blue-300);
+    --color-data-5: var(--color-violet-300);
+    --color-data-6: var(--color-neutral-300);
+    --color-data-7: var(--color-green-400);
     --shadow-raised: 0 1px 2px rgb(15 15 18 / 6%), 0 4px 16px rgb(15 15 18 / 6%);
   }
 
@@ -101,6 +116,17 @@
       --color-accent-on: var(--color-neutral-950);
       --color-success-default: var(--color-green-400);
       --color-focus-ring: var(--color-crimson-300);
+      --color-stage-bg: var(--color-neutral-950);
+      --color-stage-text: var(--color-neutral-50);
+      --color-stage-muted: var(--color-neutral-400);
+      --color-stage-border: var(--color-neutral-800);
+      --color-data-1: var(--color-crimson-400);
+      --color-data-2: var(--color-amber-300);
+      --color-data-3: var(--color-teal-300);
+      --color-data-4: var(--color-blue-300);
+      --color-data-5: var(--color-violet-300);
+      --color-data-6: var(--color-neutral-300);
+      --color-data-7: var(--color-green-400);
       --shadow-raised: 0 1px 2px rgb(0 0 0 / 40%), 0 4px 16px rgb(0 0 0 / 30%);
     }
   }
@@ -121,6 +147,17 @@
     --color-accent-on: var(--color-neutral-950);
     --color-success-default: var(--color-green-400);
     --color-focus-ring: var(--color-crimson-300);
+    --color-stage-bg: var(--color-neutral-950);
+    --color-stage-text: var(--color-neutral-50);
+    --color-stage-muted: var(--color-neutral-400);
+    --color-stage-border: var(--color-neutral-800);
+    --color-data-1: var(--color-crimson-400);
+    --color-data-2: var(--color-amber-300);
+    --color-data-3: var(--color-teal-300);
+    --color-data-4: var(--color-blue-300);
+    --color-data-5: var(--color-violet-300);
+    --color-data-6: var(--color-neutral-300);
+    --color-data-7: var(--color-green-400);
     --shadow-raised: 0 1px 2px rgb(0 0 0 / 40%), 0 4px 16px rgb(0 0 0 / 30%);
   }
 

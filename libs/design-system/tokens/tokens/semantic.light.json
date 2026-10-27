@@ -27,6 +27,23 @@
     },
     "focus": {
       "ring": { "$value": "{color.crimson.500}" }
+    },
+    "stage": {
+      "$description": "Dark panel behind 3D scenes in both themes: additive glow needs a dark background",
+      "bg": { "$value": "{color.neutral.950}" },
+      "text": { "$value": "{color.neutral.50}" },
+      "muted": { "$value": "{color.neutral.400}" },
+      "border": { "$value": "{color.neutral.800}" }
+    },
+    "data": {
+      "$description": "Categorical palette for graphics on the stage; each needs 3:1 against stage.bg",
+      "1": { "$value": "{color.crimson.400}" },
+      "2": { "$value": "{color.amber.300}" },
+      "3": { "$value": "{color.teal.300}" },
+      "4": { "$value": "{color.blue.300}" },
+      "5": { "$value": "{color.violet.300}" },
+      "6": { "$value": "{color.neutral.300}" },
+      "7": { "$value": "{color.green.400}" }
     }
   },
   "shadow": {

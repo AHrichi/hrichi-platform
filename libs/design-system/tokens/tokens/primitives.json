@@ -36,6 +36,18 @@
     "green": {
       "400": { "$value": "#4ade80" },
       "600": { "$value": "#15803d" }
+    },
+    "amber": {
+      "300": { "$value": "#fcd34d" }
+    },
+    "teal": {
+      "300": { "$value": "#5eead4" }
+    },
+    "blue": {
+      "300": { "$value": "#93c5fd" }
+    },
+    "violet": {
+      "300": { "$value": "#c4b5fd" }
     }
   },
   "font": {

@@ -61,7 +61,11 @@ test('opens a case study from the work list', async ({ page }) => {
 
 test('loads the hello remote through Native Federation', async ({ page }) => {
   await page.goto('/');
-  await page.getByRole('link', { name: 'Micro-frontend demo' }).click();
+  // The hero caption links the same demo; use the footer's.
+  await page
+    .getByRole('contentinfo')
+    .getByRole('link', { name: 'Micro-frontend demo' })
+    .click();
 
   const counter = page.getByRole('button', { name: 'Clicked 0 times' });
   await expect(counter).toBeVisible();
@@ -76,7 +80,11 @@ test('boots without the federation manifest', async ({ page }) => {
     route.fulfill({ status: 404, body: 'Not found' }),
   );
   await page.goto('/');
-  await page.getByRole('link', { name: 'Micro-frontend demo' }).click();
+  // The hero caption links the same demo; use the footer's.
+  await page
+    .getByRole('contentinfo')
+    .getByRole('link', { name: 'Micro-frontend demo' })
+    .click();
 
   await expect(
     page.getByRole('heading', { name: "This section didn't load" }),

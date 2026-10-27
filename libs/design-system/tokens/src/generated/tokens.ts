@@ -24,6 +24,10 @@ export const primitives = {
   "color-neutral-950": "#0f0f12",
   "color-green-400": "#4ade80",
   "color-green-600": "#15803d",
+  "color-amber-300": "#fcd34d",
+  "color-teal-300": "#5eead4",
+  "color-blue-300": "#93c5fd",
+  "color-violet-300": "#c4b5fd",
   "font-family-sans": "'Inter Variable', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif",
   "font-family-mono": "ui-monospace, 'Cascadia Code', 'JetBrains Mono', Consolas, monospace",
   "font-size-100": "0.8125rem",
@@ -80,6 +84,17 @@ export const lightTheme = {
   "color-accent-on": "#ffffff",
   "color-success-default": "#15803d",
   "color-focus-ring": "#d03553",
+  "color-stage-bg": "#0f0f12",
+  "color-stage-text": "#f7f7f8",
+  "color-stage-muted": "#9a9aa3",
+  "color-stage-border": "#26262b",
+  "color-data-1": "#e66f85",
+  "color-data-2": "#fcd34d",
+  "color-data-3": "#5eead4",
+  "color-data-4": "#93c5fd",
+  "color-data-5": "#c4b5fd",
+  "color-data-6": "#c2c2c8",
+  "color-data-7": "#4ade80",
   "shadow-raised": "0 1px 2px rgb(15 15 18 / 6%), 0 4px 16px rgb(15 15 18 / 6%)"
 } as const;
 
@@ -99,6 +114,17 @@ export const darkTheme = {
   "color-accent-on": "#0f0f12",
   "color-success-default": "#4ade80",
   "color-focus-ring": "#ee9aa8",
+  "color-stage-bg": "#0f0f12",
+  "color-stage-text": "#f7f7f8",
+  "color-stage-muted": "#9a9aa3",
+  "color-stage-border": "#26262b",
+  "color-data-1": "#e66f85",
+  "color-data-2": "#fcd34d",
+  "color-data-3": "#5eead4",
+  "color-data-4": "#93c5fd",
+  "color-data-5": "#c4b5fd",
+  "color-data-6": "#c2c2c8",
+  "color-data-7": "#4ade80",
   "shadow-raised": "0 1px 2px rgb(0 0 0 / 40%), 0 4px 16px rgb(0 0 0 / 30%)"
 } as const;
 

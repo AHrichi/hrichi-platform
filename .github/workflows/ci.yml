@@ -50,6 +50,10 @@ jobs:
         run: |
           pnpm nx run design-system-tokens:build-tokens --skip-nx-cache
           git diff --exit-code libs/design-system/tokens/src/generated
+      - name: The hero's project graph matches the workspace (ADR-0011)
+        run: |
+          node tools/scripts/export-graph.mjs
+          git diff --exit-code libs/three/constellation/src/generated
       - run: pnpm nx affected -t lint test build
         env:
           MONGODB_TEST_URI: mongodb://localhost:27017

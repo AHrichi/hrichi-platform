@@ -75,6 +75,7 @@ export default [
                 'type:contracts',
                 'type:tokens',
                 'type:content',
+                'type:engine',
               ],
             },
             {
@@ -91,6 +92,7 @@ export default [
               sourceTag: 'type:feature',
               onlyDependOnLibsWithTags: [
                 'type:content',
+                'type:engine',
                 'type:ui',
                 'type:data-access',
                 'type:domain',
@@ -100,7 +102,22 @@ export default [
             },
             {
               sourceTag: 'type:ui',
-              onlyDependOnLibsWithTags: ['type:ui', 'type:util', 'type:tokens'],
+              onlyDependOnLibsWithTags: [
+                'type:ui',
+                'type:engine',
+                'type:util',
+                'type:tokens',
+              ],
+            },
+            // Three.js engine and scenes stay framework-agnostic (ADR-0011).
+            {
+              sourceTag: 'type:engine',
+              onlyDependOnLibsWithTags: [
+                'type:engine',
+                'type:util',
+                'type:tokens',
+              ],
+              bannedExternalImports: ['@angular/*'],
             },
             {
               sourceTag: 'type:data-access',

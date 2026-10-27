@@ -1,11 +1,13 @@
 .hero {
   display: grid;
   gap: var(--space-7);
-  align-items: center;
+  // Top-aligned: centring would move the figure when the web font changes
+  // the text column's height (a 0.24 CLS on a cold cache).
+  align-items: start;
   padding-block: var(--space-9) var(--space-8);
 
   @media (min-width: 60rem) {
-    grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
   }
 }
 
@@ -15,7 +17,12 @@
 }
 
 .facts {
-  gap: var(--space-4);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  gap: var(--space-3) var(--space-5);
+  margin: 0;
+  padding-block-start: var(--space-4);
+  border-block-start: 1px solid var(--color-border-default);
 
   dt {
     font-size: var(--font-size-100);

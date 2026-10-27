@@ -12,8 +12,17 @@
           "/index.csr.html",
           "/manifest.webmanifest",
           "/*.css",
-          "/*.js"
+          "/*.js",
+          "!/three.*.js"
         ]
+      }
+    },
+    {
+      "name": "webgl",
+      "installMode": "lazy",
+      "updateMode": "lazy",
+      "resources": {
+        "files": ["/three.*.js"]
       }
     },
     {
