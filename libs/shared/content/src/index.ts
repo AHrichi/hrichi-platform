@@ -1,6 +1,7 @@
 export * from './lib/audiences';
 export * from './lib/case-studies';
 export * from './lib/experience';
+export * from './lib/labs';
 export * from './lib/model';
 export * from './lib/profile';
 export * from './lib/services';

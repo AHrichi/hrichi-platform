@@ -1,5 +1,6 @@
 import { Route } from '@angular/router';
-import { federatedRoutes } from '@ah/platform/federation';
+import { federatedRoutes, LabFrame } from '@ah/platform/federation';
+import { labs } from '@ah/shared/content';
 
 export const appRoutes: Route[] = [
   {
@@ -35,13 +36,18 @@ export const appRoutes: Route[] = [
     loadChildren: () =>
       import('@ah/portfolio/feature-cv').then((m) => m.cvRoutes),
   },
+  // Each lab's intro is prerendered around its remote (ADR-0014).
   {
     path: 'labs/hello',
+    component: LabFrame,
+    data: labs['lab-hello'],
     loadChildren: federatedRoutes('lab-hello'),
     title: 'Hello lab · Ahmed Hrichi',
   },
   {
     path: 'labs/orbit',
+    component: LabFrame,
+    data: labs['lab-orbit'],
     loadChildren: federatedRoutes('lab-orbit'),
     title: 'Orbit lab: live satellites · Ahmed Hrichi',
   },

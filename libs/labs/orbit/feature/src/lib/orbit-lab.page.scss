@@ -1,18 +1,6 @@
 .orbit {
   display: grid;
   gap: var(--space-5);
-  padding-block: var(--space-7) var(--space-8);
-}
-
-.orbit__intro {
-  display: grid;
-  gap: var(--space-3);
-  max-inline-size: var(--layout-prose);
-
-  h1,
-  p {
-    margin: 0;
-  }
 }
 
 .orbit__status {

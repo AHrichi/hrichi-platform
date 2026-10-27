@@ -12,8 +12,12 @@ M2's 3D lab replaces Quote3D (ADR-0013 explains why). It has to show Three.js, c
 
 - **Remote `lab-orbit`** (`apps/labs/orbit`, port 4302):
   - Built like `lab-hello` and served from `lab-orbit.ahmed-hrichi.workers.dev`.
-  - Its `./meta` declares `['webgl', 'worker']`, so the shell checks both before mounting it (ADR-0012).
+  - Its `./meta` declares `['worker']`, so the shell checks for workers before mounting it (ADR-0012). Without WebGL the lab still lists satellites and passes, so WebGL isn't required.
   - The shell mounts it at `/labs/orbit`; it is linked from the footer, the home page and the constellation.
+- **A prerendered frame:** the shell's `labs/*` routes render `LabFrame` (`@ah/platform/federation`), with the lab's intro from `@ah/shared/content`, and mount the remote inside it.
+  - The shell prerenders that frame, so the first paint and the LCP come from static HTML and never wait for the remote.
+  - The frame's body keeps a screen's height, so the footer starts below the fold and doesn't move when the remote arrives.
+  - In standalone mode the remote's own app renders the same frame.
 - **Libraries:**
   - **`lab-orbit-domain`** (pure TypeScript):
     - the OMM type and the bundled snapshot
@@ -56,7 +60,11 @@ M2's 3D lab replaces Quote3D (ADR-0013 explains why). It has to show Three.js, c
 7. **springdoc leaves record components optional,** so every generated TypeScript field was `| undefined`. An `OpenApiCustomizer` marks the API's record components required, which the JSON always contains.
 8. **A one-pixel WebGL line disappears inside 16,821 points.** The selected orbit is drawn as 240 fixed-size points, and the other satellites dim to 30%.
 9. **Sizes, gzipped:** the page chunk is 24 kB (including the 65 kB snapshot), the scene 31 kB (including Natural Earth's 55 kB outline and OrbitControls), and the worker 9.7 kB. three.js is the 189 kB bundle the shell shares, already cached after the hero.
-10. **Verified:**
+10. **Client-rendered lab routes failed the mobile Lighthouse budget in CI:** performance 0.39, FCP 8.0 s, LCP 10.6 s, CLS 0.20.
+    - On a throttled phone nothing paints until the shell's Angular, the federation runtime and the remote have all loaded. The remote's arrival then pushed the footer down.
+    - CI's headless Chrome also has no WebGL, so the `webgl` capability check replaced the whole lab with "This section needs WebGL" (see the `./meta` change above).
+    - With the prerendered frame, on the same machine and throttling: FCP and LCP fell from 8.3 s and 11.0 s to 1.1 s, and CLS from 0.20 to 0. On desktop, with WebGL on SwiftShader, performance is 0.99.
+11. **Verified:**
     - Unit: the domain (16), the store, the API client's retries and the worker bridge (14), the remote's contract (2).
     - e2e: snapshot mode with axe; the live catalog and visible passes with a mocked API; search without WebGL.
     - By hand, with the Orbit API running locally: 16,821 satellites live, the ISS's passes over a city, and clicking a Starlink satellite on the globe shows its 70° orbit and new passes.

@@ -2,8 +2,9 @@ import { RenderMode, ServerRoute } from '@angular/ssr';
 import { caseStudies } from '@ah/shared/content';
 
 /**
- * Static-first (ADR-0003): content routes are prerendered at build time,
- * federated routes render in the browser only.
+ * Static-first (ADR-0003): every route is prerendered at build time. A lab's
+ * page is prerendered with its intro only; its remote renders in the browser
+ * (ADR-0014).
  */
 export const serverRoutes: ServerRoute[] = [
   {
@@ -12,6 +13,5 @@ export const serverRoutes: ServerRoute[] = [
     getPrerenderParams: async () =>
       caseStudies.map((study) => ({ slug: study.slug })),
   },
-  { path: 'labs/**', renderMode: RenderMode.Client },
   { path: '**', renderMode: RenderMode.Prerender },
 ];

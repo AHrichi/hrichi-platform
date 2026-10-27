@@ -5,7 +5,7 @@ describe('lab-orbit remote contract', () => {
   it('declares what the shell must check before mounting it', () => {
     expect(remoteMeta).toMatchObject({
       id: 'lab-orbit',
-      capabilities: ['webgl', 'worker'],
+      capabilities: ['worker'],
     });
   });
 

@@ -1,9 +1,19 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { LabFrame } from '@ah/platform/federation';
+import { labs } from '@ah/shared/content';
 
+/** Standalone mode: the same frame the shell draws around this remote. */
 @Component({
-  imports: [RouterOutlet],
+  imports: [LabFrame],
   selector: 'ah-root',
-  template: '<router-outlet />',
+  template: `
+    <ah-lab-frame
+      [eyebrow]="intro.eyebrow"
+      [heading]="intro.heading"
+      [lead]="intro.lead"
+    />
+  `,
 })
-export class App {}
+export class App {
+  protected readonly intro = labs['lab-hello'];
+}

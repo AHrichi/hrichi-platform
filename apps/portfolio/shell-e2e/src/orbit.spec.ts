@@ -35,6 +35,13 @@ const iss = {
   MEAN_MOTION_DDOT: 0,
 };
 
+test('prerenders the intro, so the first paint never waits for the remote', async ({
+  request,
+}) => {
+  const html = await (await request.get('/labs/orbit')).text();
+  expect(html).toContain('Every active satellite, right now');
+});
+
 test('works from the bundled snapshot when no API is configured', async ({
   page,
 }) => {

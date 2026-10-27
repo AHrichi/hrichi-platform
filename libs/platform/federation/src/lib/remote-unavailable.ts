@@ -16,8 +16,8 @@ const capabilityNames: Record<RemoteCapability, string> = {
 };
 
 /**
- * Shown in place of a remote that can't run; the rest of the shell keeps
- * working. A missing browser feature gets its own message, because trying
+ * Shown in place of a remote that can't run, inside the lab's frame; the rest
+ * of the shell keeps working. A missing browser feature gets its own message, because trying
  * again won't help.
  */
 @Component({
@@ -26,14 +26,14 @@ const capabilityNames: Record<RemoteCapability, string> = {
   template: `
     <section class="remote-unavailable" role="alert">
       @if (missing(); as missing) {
-        <h1>This section needs {{ missing }}</h1>
+        <h2>This section needs {{ missing }}</h2>
         <p>
           The <code>{{ remoteName }}</code> micro-frontend needs a browser
           feature that is turned off or unsupported here. The rest of the site
           works as usual.
         </p>
       } @else {
-        <h1>This section didn't load</h1>
+        <h2>This section didn't load</h2>
         <p>
           The <code>{{ remoteName }}</code> micro-frontend is unreachable right
           now. The rest of the site still works.
@@ -44,9 +44,7 @@ const capabilityNames: Record<RemoteCapability, string> = {
   `,
   styles: `
     .remote-unavailable {
-      max-inline-size: 40rem;
-      margin-inline: auto;
-      padding-block: 3rem;
+      max-inline-size: var(--layout-prose);
     }
     button {
       font: inherit;

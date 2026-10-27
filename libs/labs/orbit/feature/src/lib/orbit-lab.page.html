@@ -1,16 +1,5 @@
-<section class="orbit ah-container" aria-labelledby="orbit-heading">
-  <header class="orbit__intro">
-    <p class="ah-eyebrow">
-      Lab · Three.js, a Web Worker, Spring Boot and Orekit
-    </p>
-    <h1 id="orbit-heading">Every active satellite, right now</h1>
-    <p class="ah-lead">
-      Positions are computed in your browser from CelesTrak's public orbit data.
-      Pick a satellite to see its orbit and when it passes over you; the pass
-      times come from a Spring Boot API running Orekit.
-    </p>
-  </header>
-
+<!-- The intro comes from the lab frame around this page (ADR-0014). -->
+<div class="orbit">
   <p class="orbit__status" role="status" [attr.data-api]="store.api()">
     {{ status() }}
   </p>
@@ -189,4 +178,4 @@
       </p>
     </aside>
   </div>
-</section>
+</div>

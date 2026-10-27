@@ -4,7 +4,10 @@
       "startServerCommand": "pnpm exec nx run-many -t serve-static -p shell lab-hello lab-orbit --output-style=stream",
       "startServerReadyPattern": "Serving .*4200",
       "startServerReadyTimeout": 600000,
-      "url": ["http://localhost:4200/?3d=on"],
+      "url": [
+        "http://localhost:4200/?3d=on",
+        "http://localhost:4200/labs/orbit"
+      ],
       "numberOfRuns": 3,
       "settings": {
         "preset": "desktop",
