@@ -26,6 +26,7 @@ import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import {
   copyFileSync,
+  existsSync,
   readFileSync,
   readdirSync,
   writeFileSync,
@@ -240,6 +241,28 @@ if (longest > 2000) {
   );
   process.exit(1);
 }
+
+// A service worker keeps the CSP its script was served with, and browsers
+// reinstall it only when the script's bytes change. Stamping the policy's
+// hash into the script carries every CSP change (a new remote or API origin)
+// to returning visitors' workers. ngsw.json lists the script's hash, so that
+// changes too (ADR-0014).
+const worker = join(dir, 'ngsw-worker.js');
+const stampWorker = existsSync(worker);
+if (stampWorker) {
+  const policyHash = createHash('sha256').update(csp).digest('base64');
+  const original = readFileSync(worker, 'utf8')
+    .replace(/\/\/ Content-Security-Policy \S+\n$/, '')
+    .replace(/\n?$/, '\n');
+  const script = `${original}// Content-Security-Policy ${policyHash}\n`;
+  writeFileSync(worker, script);
+  const ngsw = JSON.parse(readFileSync(join(dir, 'ngsw.json'), 'utf8'));
+  ngsw.hashTable['/ngsw-worker.js'] = createHash('sha1')
+    .update(script)
+    .digest('hex');
+  writeFileSync(join(dir, 'ngsw.json'), `${JSON.stringify(ngsw, null, 2)}\n`);
+}
+
 console.log(
-  `Prepared ${dir} for ${values.env}: _headers${values.app ? ', build-info.json' : ''}${values.federation ? ', federation.manifest.json' : ''}${values['not-found'] ? ', 404.html' : ''}${values.sitemap ? ', sitemap.xml, robots.txt' : ''}${values['site-config'] ? ', site-config.json' : ''}`,
+  `Prepared ${dir} for ${values.env}: _headers${stampWorker ? ', ngsw-worker.js stamped' : ''}${values.app ? ', build-info.json' : ''}${values.federation ? ', federation.manifest.json' : ''}${values['not-found'] ? ', 404.html' : ''}${values.sitemap ? ', sitemap.xml, robots.txt' : ''}${values['site-config'] ? ', site-config.json' : ''}`,
 );
