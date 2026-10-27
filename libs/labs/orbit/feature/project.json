@@ -1,9 +1,0 @@
-{
-  "name": "lab-orbit-feature",
-  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/labs/orbit/feature/src",
-  "prefix": "ah",
-  "projectType": "library",
-  "tags": ["scope:lab-orbit", "type:feature", "runtime:browser"],
-  "targets": {}
-}

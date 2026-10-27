@@ -39,9 +39,9 @@ export const skip = [
   '@angular/service-worker/safety-worker.js',
   // Only the shell's lazy Federation Inspector uses it; bundled there instead.
   'web-vitals',
-  // The Orbit lab's own dependencies (ADR-0014). satellite.js runs in a Web
-  // Worker, which has no import map, so it must be bundled, never shared.
-  'satellite.js',
+  // The Sky lab's own dependencies (ADR-0016), bundled into the remote so
+  // esbuild can tree-shake them; nothing else uses them.
+  'astronomy-engine',
   'world-atlas',
   'topojson-client',
 ];

@@ -1,7 +1,7 @@
 {
   "ci": {
     "collect": {
-      "startServerCommand": "pnpm exec nx run-many -t serve-static -p shell lab-hello lab-orbit --output-style=stream",
+      "startServerCommand": "pnpm exec nx run-many -t serve-static -p shell lab-hello lab-sky --output-style=stream",
       "startServerReadyPattern": "Serving .*4200",
       "startServerReadyTimeout": 600000,
       "url": [
@@ -10,7 +10,7 @@
         "http://localhost:4200/experience",
         "http://localhost:4200/contact",
         "http://localhost:4200/cv",
-        "http://localhost:4200/labs/orbit"
+        "http://localhost:4200/labs/sky"
       ],
       "numberOfRuns": 3,
       "settings": {

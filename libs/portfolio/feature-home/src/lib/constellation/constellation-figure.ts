@@ -23,7 +23,7 @@ import { SceneHost } from '@ah/three/angular';
 const linkLabels: Record<string, string> = {
   shell: 'How this site is built',
   'lab-hello': 'Micro-frontend demo',
-  'lab-orbit': 'Orbit lab',
+  'lab-sky': 'Sky lab',
   api: 'The API behind the contact form',
 };
 

@@ -1,6 +1,6 @@
 # ADR-0014: Orbit lab: every active satellite on a WebGL globe
 
-- **Status:** Accepted
+- **Status:** Superseded by [ADR-0016](0016-sky-lab.md): the lab became the Sky lab
 - **Date:** 2026-10-27
 - **Milestone:** M2
 

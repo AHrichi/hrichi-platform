@@ -45,12 +45,14 @@ export const appRoutes: Route[] = [
     title: 'Hello lab · Ahmed Hrichi',
   },
   {
-    path: 'labs/orbit',
+    path: 'labs/sky',
     component: LabFrame,
-    data: labs['lab-orbit'],
-    loadChildren: federatedRoutes('lab-orbit'),
-    title: 'Orbit lab: live satellites · Ahmed Hrichi',
+    data: labs['lab-sky'],
+    loadChildren: federatedRoutes('lab-sky'),
+    title: 'Sky lab: the night sky anywhere · Ahmed Hrichi',
   },
+  // The Orbit lab became the Sky lab (ADR-0016); keep old links working.
+  { path: 'labs/orbit', redirectTo: 'labs/sky', pathMatch: 'full' },
   {
     path: '**',
     loadComponent: () =>

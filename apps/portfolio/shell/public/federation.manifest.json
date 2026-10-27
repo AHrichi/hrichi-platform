@@ -1,4 +1,4 @@
 {
   "lab-hello": "http://localhost:4301/remoteEntry.json",
-  "lab-orbit": "http://localhost:4302/remoteEntry.json"
+  "lab-sky": "http://localhost:4302/remoteEntry.json"
 }

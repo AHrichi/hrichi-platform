@@ -43,8 +43,8 @@ export default defineConfig({
     },
     {
       command: isCI
-        ? 'pnpm exec nx run lab-orbit:serve-static'
-        : 'pnpm exec nx run lab-orbit:serve',
+        ? 'pnpm exec nx run lab-sky:serve-static'
+        : 'pnpm exec nx run lab-sky:serve',
       url: 'http://localhost:4302/remoteEntry.json',
       reuseExistingServer: true,
       cwd: workspaceRoot,

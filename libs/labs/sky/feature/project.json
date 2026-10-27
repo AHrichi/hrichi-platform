@@ -1,0 +1,9 @@
+{
+  "name": "lab-sky-feature",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/labs/sky/feature/src",
+  "prefix": "ah",
+  "projectType": "library",
+  "tags": ["scope:lab-sky", "type:feature", "runtime:browser"],
+  "targets": {}
+}

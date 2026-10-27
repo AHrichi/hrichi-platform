@@ -42,9 +42,9 @@ export default [
               ],
             },
             {
-              sourceTag: 'scope:lab-orbit',
+              sourceTag: 'scope:lab-sky',
               onlyDependOnLibsWithTags: [
-                'scope:lab-orbit',
+                'scope:lab-sky',
                 'scope:shared',
                 'scope:platform',
                 'scope:design-system',

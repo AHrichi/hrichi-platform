@@ -11,10 +11,10 @@ export interface LabIntro {
  * mode shows the same intro.
  */
 export const labs = {
-  'lab-orbit': {
-    eyebrow: 'Lab · Three.js, a Web Worker, Spring Boot and Orekit',
-    heading: 'Every active satellite, right now',
-    lead: "Positions are computed in your browser from CelesTrak's public orbit data. Pick a satellite to see its orbit and when it passes over you; the pass times come from a Spring Boot API running Orekit.",
+  'lab-sky': {
+    eyebrow: 'Lab · Three.js, custom shaders and astronomy in the browser',
+    heading: 'The sky above any campsite, any night',
+    lead: 'Pick a place on the globe, dive down to the ground and look up: 5,000 real stars, the constellations, the Moon in its true phase, the planets, the Milky Way and meteor showers, for any date and time.',
   },
   'lab-hello': {
     eyebrow: 'Lab · Native Federation',

@@ -62,6 +62,9 @@ importers:
       '@ngrx/signals':
         specifier: 22.0.1
         version: 22.0.1(@angular/core@22.2.3(@angular/compiler@22.2.3)(rxjs@7.8.2))(rxjs@7.8.2)
+      astronomy-engine:
+        specifier: 2.1.19
+        version: 2.1.19
       class-transformer:
         specifier: 0.5.1
         version: 0.5.1
@@ -83,9 +86,6 @@ importers:
       rxjs:
         specifier: ~7.8.0
         version: 7.8.2
-      satellite.js:
-        specifier: 7.1.0
-        version: 7.1.0
       three:
         specifier: 0.186.1
         version: 0.186.1
@@ -4967,6 +4967,9 @@ packages:
   ast-v8-to-istanbul@1.0.7:
     resolution: {integrity: sha512-kFL68AG6ajd8fg248zwM9GQrUWEp79gsmjum34OEXjs4yHuUMZfYKwOLW9GMmB4oNvVrj+EAGxsP7ye2UR9UlA==}
 
+  astronomy-engine@2.1.19:
+    resolution: {integrity: sha512-8yWKNf7UeNbH458h3sAJ6ZgAjE5jTXp/mNNRFoC20j2SHwZIjAQeEsBB2Q3uCFRaTCCJRv33K2XhkhZQMXoX6w==}
+
   async@3.2.6:
     resolution: {integrity: sha512-htCUDlxyyCLMgaM3xXg0C0LW2xqfuQ6p05pCEIsXuyQ+a1koYKTuBMzRNwmybfLgvJDMd0r1LTn4+E0Ti6C2AA==}
 
@@ -8674,9 +8677,6 @@ packages:
     resolution: {integrity: sha512-yDA+1aIG3EHgN4V/BvuhCvu61FF6hEd4e+9DxikUm9U0CAGuvdIZ/UYy7qbOxjhbbWQraoyLlMuzdRGOSV5Bmw==}
     engines: {node: '>=20.19.0'}
     hasBin: true
-
-  satellite.js@7.1.0:
-    resolution: {integrity: sha512-U6nRml9Nb7dV9LJPiMNPyna7U7ry+1nXYkOeCEG7K/YbojQQLHHmcjPisp03VNY+HLcbQHqbt7t4t1vQMaKCLQ==}
 
   sax@1.6.1:
     resolution: {integrity: sha512-42tBVwLWnaQvW5zc4HbZrTuWccECCZfBi92FDuwtqxasH+JbPB3/FOKb1m222K42R4WxuxzzMsTswfzgtSu64Q==}
@@ -15007,6 +15007,8 @@ snapshots:
       estree-walker: 3.0.3
       js-tokens: 10.0.0
 
+  astronomy-engine@2.1.19: {}
+
   async@3.2.6: {}
 
   asynckit@0.4.0: {}
@@ -19166,8 +19168,6 @@ snapshots:
       source-map-js: 1.2.2
     optionalDependencies:
       '@parcel/watcher': 2.6.0
-
-  satellite.js@7.1.0: {}
 
   sax@1.6.1: {}
 

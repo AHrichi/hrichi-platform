@@ -1,0 +1,218 @@
+<!-- The intro comes from the lab frame around this page (ADR-0014). -->
+<div class="sky">
+  <p class="sky__status" role="status">{{ status() }}</p>
+
+  <div class="sky__layout">
+    <div class="sky__main">
+      <div class="sky__stage">
+        <ah-scene
+          class="sky__scene"
+          essential
+          [load]="loadScene"
+          [params]="params()"
+          (picked)="picked($event)"
+        >
+          <div class="sky__fallback">
+            <p>
+              The 3D sky needs WebGL. Tonight's sky is described next to it, and
+              the time and place controls still work.
+            </p>
+          </div>
+        </ah-scene>
+      </div>
+
+      <div class="sky__toolbar">
+        <button type="button" class="sky__primary" (click)="toggleView()">
+          {{
+            store.view() === 'earth' ? 'Look up at the sky' : 'Back to Earth'
+          }}
+        </button>
+        @if (store.view() === 'sky') {
+          <ah-segmented-control
+            label="Face"
+            [options]="directions"
+            [value]="facing()"
+            (valueChange)="face($event)"
+          />
+        }
+      </div>
+
+      <fieldset class="sky__group">
+        <legend>Time</legend>
+        <p class="sky__when">{{ when() }}</p>
+        <div class="sky__row">
+          <label class="sky__field">
+            <span
+              >Date and time
+              <span class="ah-muted">({{ zoneLabel() }})</span></span
+            >
+            <input
+              type="datetime-local"
+              [value]="localInput()"
+              (change)="setTime($event)"
+            />
+          </label>
+          <button type="button" (click)="store.now()">Now</button>
+        </div>
+        <ah-segmented-control
+          label="Speed"
+          [options]="speeds"
+          [value]="speed()"
+          (valueChange)="setSpeed($event)"
+        />
+        @if (tonightRange(); as range) {
+          <label class="sky__field">
+            <span>Through tonight, sunset to sunrise</span>
+            <input
+              type="range"
+              step="60000"
+              [min]="range.min"
+              [max]="range.max"
+              [value]="range.value"
+              [attr.aria-valuetext]="range.text"
+              (input)="scrub($event)"
+            />
+          </label>
+        }
+      </fieldset>
+
+      <fieldset class="sky__group sky__layers">
+        <legend>Show</legend>
+        <label
+          ><input
+            type="checkbox"
+            [checked]="store.layers().constellations"
+            (change)="toggleLayer('constellations')"
+          />
+          Constellations</label
+        >
+        <label
+          ><input
+            type="checkbox"
+            [checked]="store.layers().labels"
+            (change)="toggleLayer('labels')"
+          />
+          Names</label
+        >
+        <label
+          ><input
+            type="checkbox"
+            [checked]="store.layers().milkyWay"
+            (change)="toggleLayer('milkyWay')"
+          />
+          Milky Way</label
+        >
+      </fieldset>
+    </div>
+
+    <aside class="sky__panel" aria-label="Your sky">
+      <section class="sky__section" aria-labelledby="sky-place">
+        <h2 id="sky-place" class="sky__heading">{{ store.place().name }}</h2>
+        <label class="sky__field" for="sky-city">Campsite or city</label>
+        <select id="sky-city" (change)="chooseCity($event)">
+          <option value="" disabled [selected]="!store.place().timeZone">
+            Choose a city
+          </option>
+          @for (city of cities; track city.name) {
+            <option
+              [value]="city.name"
+              [selected]="
+                store.place().name === city.name + ', ' + city.country
+              "
+            >
+              {{ city.name }}, {{ city.country }}
+            </option>
+          }
+        </select>
+        <div class="sky__row">
+          <button type="button" (click)="locate()">Use my location</button>
+        </div>
+        @switch (store.locating()) {
+          @case ('asking') {
+            <p class="ah-muted">Waiting for your browser…</p>
+          }
+          @case ('denied') {
+            <p class="ah-muted">
+              Location access was declined; pick a city or click the globe.
+            </p>
+          }
+          @case ('unavailable') {
+            <p class="ah-muted">
+              Your location isn't available; pick a city or click the globe.
+            </p>
+          }
+          @default {
+            <p class="ah-muted">
+              Or click anywhere on the globe. Your location stays in your
+              browser.
+            </p>
+          }
+        }
+      </section>
+
+      @if (selection(); as item) {
+        <section class="sky__section sky__selection" aria-live="polite">
+          <h2 class="sky__heading">{{ item.title }}</h2>
+          <p class="ah-muted">{{ item.subtitle }}</p>
+          @if (item.facts.length) {
+            <dl class="sky__facts">
+              @for (fact of item.facts; track fact.label) {
+                <div>
+                  <dt>{{ fact.label }}</dt>
+                  <dd>{{ fact.value }}</dd>
+                </div>
+              }
+            </dl>
+          }
+          <button type="button" (click)="store.select(null)">Close</button>
+        </section>
+      }
+
+      <section class="sky__section" aria-labelledby="sky-tonight">
+        <h2 id="sky-tonight" class="sky__heading">What's up tonight</h2>
+        <dl class="sky__facts">
+          @for (fact of tonight().facts; track fact.label) {
+            <div>
+              <dt>{{ fact.label }}</dt>
+              <dd>{{ fact.value }}</dd>
+            </div>
+          }
+        </dl>
+        <h3 class="sky__subheading">Planets</h3>
+        <ul class="sky__list" role="list">
+          @for (planet of tonight().planets; track planet.name) {
+            <li>
+              <strong>{{ planet.name }}</strong> {{ planet.text }}
+            </li>
+          }
+        </ul>
+        @if (tonight().showers.length) {
+          <h3 class="sky__subheading">Meteor showers</h3>
+          <ul class="sky__list" role="list">
+            @for (shower of tonight().showers; track shower.name) {
+              <li>
+                <strong>{{ shower.name }}</strong> {{ shower.text }}
+              </li>
+            }
+          </ul>
+        }
+        <h3 class="sky__subheading">Constellations up high</h3>
+        <p>{{ tonight().constellations || 'None high up right now.' }}</p>
+      </section>
+
+      <p class="sky__share">
+        <a [href]="shareLink()">Link to this sky</a>
+        <button type="button" (click)="copyLink()">
+          {{ copied() ? 'Copied' : 'Copy link' }}
+        </button>
+      </p>
+    </aside>
+  </div>
+
+  <p class="sky__credits ah-muted">
+    Stars: XHIP via d3-celestial. Sun, Moon and planets: Astronomy Engine.
+    Meteor showers: International Meteor Organization. Coastlines: Natural
+    Earth. Drag to look around, scroll or pinch to zoom, click a star, planet or
+    constellation.
+  </p>
+</div>

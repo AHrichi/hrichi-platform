@@ -229,7 +229,8 @@ const rules = [
       'Strict-Transport-Security: max-age=31536000; includeSubDomains',
       'X-Content-Type-Options: nosniff',
       'Referrer-Policy: strict-origin-when-cross-origin',
-      'Permissions-Policy: camera=(), microphone=(), geolocation=()',
+      // The Sky lab's "Use my location" asks the page's own origin (ADR-0016).
+      'Permissions-Policy: camera=(), microphone=(), geolocation=(self)',
       ...(values.cors ? ['Access-Control-Allow-Origin: *'] : []),
     ],
   ],

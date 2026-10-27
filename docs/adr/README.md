@@ -19,8 +19,9 @@ Each ADR records one decision, why it was made, and what a spike proved. New ADR
 | [0011](0011-three-engine-and-constellation.md) | Three.js engine, `<ah-scene>` adapter and the constellation hero with an SVG fallback    |
 | [0012](0012-federation-inspector.md)           | Federation Inspector: remote telemetry, capability checks, build info, skew check        |
 | [0013](0013-orbit-api.md)                      | Orbit API: Spring Boot 4 + Orekit, polite CelesTrak cache, contract-first, JVM on Render |
-| [0014](0014-orbit-lab.md)                      | Orbit lab: satellites on a WebGL globe, SGP4 in a cross-origin worker, snapshot first    |
+| [0014](0014-orbit-lab.md)                      | Orbit lab (superseded by 0016): satellites on a globe, SGP4 worker                       |
 | [0015](0015-public-storybook.md)               | Public Storybook (angular-vite, zoneless), axe on every story, visual regression         |
+| [0016](0016-sky-lab.md)                        | Sky lab: the sky over any place and time, globe dive, Astronomy Engine, star catalogue   |
 
 ## Proposed (written when the area is built)
 

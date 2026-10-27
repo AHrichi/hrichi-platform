@@ -1,0 +1,161 @@
+{
+  "$comment": "Major annual meteor showers, from the International Meteor Organization's shower calendar: activity window and peak (month-day), radiant at the peak (J2000, degrees), ideal-sky peak ZHR and entry speed (km/s). Shared by the Sky lab and the night planner API (ADR-0016).",
+  "showers": [
+    {
+      "id": "QUA",
+      "name": "Quadrantids",
+      "start": "12-28",
+      "peak": "01-04",
+      "end": "01-12",
+      "ra": 230,
+      "dec": 49,
+      "zhr": 80,
+      "speed": 41,
+      "parent": "2003 EH1"
+    },
+    {
+      "id": "LYR",
+      "name": "Lyrids",
+      "start": "04-14",
+      "peak": "04-22",
+      "end": "04-30",
+      "ra": 271,
+      "dec": 34,
+      "zhr": 18,
+      "speed": 49,
+      "parent": "C/1861 G1 (Thatcher)"
+    },
+    {
+      "id": "ETA",
+      "name": "Eta Aquariids",
+      "start": "04-19",
+      "peak": "05-06",
+      "end": "05-28",
+      "ra": 338,
+      "dec": -1,
+      "zhr": 50,
+      "speed": 66,
+      "parent": "1P/Halley"
+    },
+    {
+      "id": "SDA",
+      "name": "Southern Delta Aquariids",
+      "start": "07-12",
+      "peak": "07-31",
+      "end": "08-23",
+      "ra": 340,
+      "dec": -16,
+      "zhr": 25,
+      "speed": 41,
+      "parent": "96P/Machholz"
+    },
+    {
+      "id": "CAP",
+      "name": "Alpha Capricornids",
+      "start": "07-03",
+      "peak": "07-31",
+      "end": "08-15",
+      "ra": 307,
+      "dec": -10,
+      "zhr": 5,
+      "speed": 23,
+      "parent": "169P/NEAT"
+    },
+    {
+      "id": "PER",
+      "name": "Perseids",
+      "start": "07-17",
+      "peak": "08-12",
+      "end": "08-24",
+      "ra": 48,
+      "dec": 58,
+      "zhr": 100,
+      "speed": 59,
+      "parent": "109P/Swift–Tuttle"
+    },
+    {
+      "id": "DRA",
+      "name": "Draconids",
+      "start": "10-06",
+      "peak": "10-08",
+      "end": "10-10",
+      "ra": 262,
+      "dec": 54,
+      "zhr": 10,
+      "speed": 20,
+      "parent": "21P/Giacobini–Zinner"
+    },
+    {
+      "id": "STA",
+      "name": "Southern Taurids",
+      "start": "09-10",
+      "peak": "10-10",
+      "end": "11-20",
+      "ra": 32,
+      "dec": 9,
+      "zhr": 5,
+      "speed": 27,
+      "parent": "2P/Encke"
+    },
+    {
+      "id": "ORI",
+      "name": "Orionids",
+      "start": "10-02",
+      "peak": "10-21",
+      "end": "11-07",
+      "ra": 95,
+      "dec": 16,
+      "zhr": 20,
+      "speed": 66,
+      "parent": "1P/Halley"
+    },
+    {
+      "id": "NTA",
+      "name": "Northern Taurids",
+      "start": "10-20",
+      "peak": "11-12",
+      "end": "12-10",
+      "ra": 58,
+      "dec": 22,
+      "zhr": 5,
+      "speed": 29,
+      "parent": "2P/Encke"
+    },
+    {
+      "id": "LEO",
+      "name": "Leonids",
+      "start": "11-06",
+      "peak": "11-17",
+      "end": "11-30",
+      "ra": 153,
+      "dec": 22,
+      "zhr": 15,
+      "speed": 71,
+      "parent": "55P/Tempel–Tuttle"
+    },
+    {
+      "id": "GEM",
+      "name": "Geminids",
+      "start": "12-04",
+      "peak": "12-14",
+      "end": "12-20",
+      "ra": 112,
+      "dec": 33,
+      "zhr": 150,
+      "speed": 35,
+      "parent": "3200 Phaethon"
+    },
+    {
+      "id": "URS",
+      "name": "Ursids",
+      "start": "12-17",
+      "peak": "12-22",
+      "end": "12-26",
+      "ra": 217,
+      "dec": 76,
+      "zhr": 10,
+      "speed": 33,
+      "parent": "8P/Tuttle"
+    }
+  ]
+}

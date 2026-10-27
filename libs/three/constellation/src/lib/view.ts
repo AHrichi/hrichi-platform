@@ -57,7 +57,7 @@ export const legend = [
 export const nodeLinks: Readonly<Record<string, string>> = {
   shell: '/work/this-platform',
   'lab-hello': '/labs/hello',
-  'lab-orbit': '/labs/orbit',
+  'lab-sky': '/labs/sky',
   api: '/contact',
 };
 
