@@ -5,7 +5,7 @@
     "turnstileSiteKey": "1x00000000000000000000AA"
   },
   "production": {
-    "apiUrl": null,
-    "turnstileSiteKey": null
+    "apiUrl": "https://ahmed-hrichi-api.onrender.com",
+    "turnstileSiteKey": "0x4AAAAAAFnL_vOz5m0JX351"
   }
 }
