@@ -28,7 +28,7 @@ Ahmed Hrichi's portfolio, built as the kind of platform it describes: an Nx mono
 | `shared-contracts`          | `libs/shared/contracts`            | Types shared by the browser and the API (`LeadRequest`, field limits)                          |
 | `api`                       | `apps/api`                         | NestJS API for Render: config validation, health, CORS, rate limits                            |
 | `api-leads`                 | `libs/api/leads`                   | Lead intake: Turnstile, idempotency, Mongo outbox, Telegram and n8n delivery                   |
-| `orbit-api`                 | `apps/orbit-api`                   | Spring Boot 4 + Orekit on Render: CelesTrak catalog cache, satellite details, pass predictions |
+| `orbit-api`                 | `apps/orbit-api`                   | Spring Boot 4 + Orekit on Render: the Sky lab's night planner (twilight, the Moon, dark hours) |
 | `shared-api-client`         | `libs/shared/api-client`           | TypeScript types generated from the Orbit API's OpenAPI contract                               |
 | `three-engine`              | `libs/three/engine`                | Framework-free Three.js stage: on-demand frames, pause off-screen, quality tiers, dispose      |
 | `three-angular`             | `libs/three/angular`               | `<ah-scene>`: loads a scene after idle over a static fallback                                  |
@@ -77,7 +77,7 @@ Serve production builds the way the static host will (prerendered routes, `index
 pnpm nx run-many -t serve-static -p shell lab-hello lab-sky
 ```
 
-Run the Orbit API locally (port 8081; Java 17+ runs Gradle, which downloads Java 25; it reads MongoDB at `MONGODB_URI`, default `localhost:27017`):
+Run the Orbit API, the night planner, locally (port 8081; Java 17+ runs Gradle, which downloads Java 25; no database needed):
 
 ```bash
 pnpm nx serve orbit-api

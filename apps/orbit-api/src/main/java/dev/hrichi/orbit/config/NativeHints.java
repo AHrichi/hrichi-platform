@@ -1,8 +1,6 @@
 package dev.hrichi.orbit.config;
 
-import dev.hrichi.orbit.catalog.BundledSnapshot;
-import dev.hrichi.orbit.catalog.Catalog;
-import dev.hrichi.orbit.catalog.OrbitalElements;
+import dev.hrichi.orbit.night.MeteorShowers;
 import org.hipparchus.analysis.differentiation.DerivativeStructure;
 import org.hipparchus.analysis.differentiation.Gradient;
 import org.hipparchus.analysis.differentiation.UnivariateDerivative1;
@@ -22,13 +20,13 @@ import org.springframework.context.annotation.ImportRuntimeHints;
  */
 @Configuration(proxyBeanMethods = false)
 @ImportRuntimeHints(NativeHints.Resources.class)
-@RegisterReflectionForBinding({BundledSnapshot.File.class, OrbitalElements.class, Catalog.CatalogResponse.class})
+@RegisterReflectionForBinding(MeteorShowers.Shower.class)
 public class NativeHints {
 
     static class Resources implements RuntimeHintsRegistrar {
         @Override
         public void registerHints(RuntimeHints hints, ClassLoader classLoader) {
-            hints.resources().registerPattern("catalog-snapshot.json");
+            hints.resources().registerPattern("meteor-showers.json");
             // Orekit reads its nutation and precession tables, and its messages, from the jar.
             hints.resources().registerPattern("assets/org/orekit/IERS-conventions/*/*");
             hints.resources().registerPattern("assets/org/orekit/localization/*");

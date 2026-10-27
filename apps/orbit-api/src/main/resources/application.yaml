@@ -1,9 +1,6 @@
 spring:
   application:
     name: orbit-api
-  mongodb:
-    uri: ${MONGODB_URI:mongodb://localhost:27017}
-    database: ${MONGODB_DB:orbit}
   mvc:
     problemdetails:
       enabled: true
@@ -14,9 +11,8 @@ spring:
 server:
   port: ${PORT:8081}
   shutdown: graceful
-  # The catalog is pre-gzipped by the API; everything else is small.
   compression:
-    enabled: false
+    enabled: true
 
 management:
   endpoints:

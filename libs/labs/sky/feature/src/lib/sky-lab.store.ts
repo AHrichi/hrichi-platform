@@ -8,6 +8,7 @@ import {
   skyAt,
   sunDirection,
 } from '@ah/labs/sky/domain';
+import type { Night } from '@ah/shared/api-client';
 import type { EarthFrame, SkyFrame } from '@ah/three/scenes/sky';
 import {
   patchState,
@@ -29,6 +30,12 @@ export interface SkyLayers {
 
 export type Locating = 'idle' | 'asking' | 'denied' | 'unavailable';
 
+/** The night planner (ADR-0017): off when no API is configured here. */
+export interface Planner {
+  status: 'off' | 'loading' | 'waking' | 'ready' | 'unavailable';
+  nights: Night[];
+}
+
 interface SkyLabState {
   place: Place;
   view: 'earth' | 'sky';
@@ -44,6 +51,7 @@ interface SkyLabState {
   /** Wall clock, refreshed every second, so the page's text follows the sky. */
   tick: number;
   locating: Locating;
+  planner: Planner;
 }
 
 /** The sky at one moment, shaped for the scene. */
@@ -103,6 +111,7 @@ export const SkyLabStore = signalStore(
     selected: null,
     tick: Date.now(),
     locating: 'idle',
+    planner: { status: 'off', nights: [] },
   }),
   withProps((store) => ({
     /** Simulated "now", ms; cheap, so the scene calls it on every frame. */
@@ -169,6 +178,21 @@ export const SkyLabStore = signalStore(
       },
       setLocating(locating: Locating): void {
         patchState(store, { locating });
+      },
+      /** A new place's nights are on their way; the old ones no longer apply. */
+      plannerLoading(): void {
+        patchState(store, { planner: { status: 'loading', nights: [] } });
+      },
+      plannerWaking(): void {
+        patchState(store, {
+          planner: { ...store.planner(), status: 'waking' },
+        });
+      },
+      plannerReady(nights: Night[]): void {
+        patchState(store, { planner: { status: 'ready', nights } });
+      },
+      plannerUnavailable(): void {
+        patchState(store, { planner: { status: 'unavailable', nights: [] } });
       },
     };
   }),

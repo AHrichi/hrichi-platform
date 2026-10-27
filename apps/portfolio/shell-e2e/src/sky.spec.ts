@@ -1,5 +1,5 @@
 import AxeBuilder from '@axe-core/playwright';
-import { expect, test } from './support/test';
+import { development, expect, test } from './support/test';
 
 // page.route can't see requests a service worker handles.
 test.use({ serviceWorkers: 'block' });
@@ -96,3 +96,75 @@ test('starts paused when the visitor prefers reduced motion', async ({
     'true',
   );
 });
+
+test('lists the best nights from the night planner and jumps to one', async ({
+  page,
+}) => {
+  const api = development.orbitApiUrl as string;
+  await page.route('**/site-config.json', (route) =>
+    route.fulfill({
+      json: { apiUrl: null, turnstileSiteKey: null, orbitApiUrl: api },
+    }),
+  );
+  await page.route(`${api}/nights?**`, (route) =>
+    route.fulfill({
+      json: {
+        latitude: 36.8,
+        longitude: 10.2,
+        zone: 'Africa/Tunis',
+        nights: [
+          plannedNight('2026-08-12', true, 100),
+          plannedNight('2026-08-13', false, 20),
+        ],
+      },
+    }),
+  );
+
+  await page.goto('/labs/sky');
+
+  await expect(
+    page.getByRole('heading', { name: 'Best nights to go' }),
+  ).toBeVisible();
+  const best = page.getByRole('button', { name: /Wed 12 Aug/ });
+  await expect(best).toContainText('8 h 8 min of moonless dark');
+  await expect(best).toContainText('Perseids');
+  await best.click();
+
+  await expect(
+    page.getByRole('button', { name: 'Back to Earth' }),
+  ).toBeVisible();
+  await expect(page.getByRole('radio', { name: 'Paused' })).toHaveAttribute(
+    'aria-checked',
+    'true',
+  );
+});
+
+function nextDay(date: string): string {
+  const next = new Date(`${date}T12:00:00Z`);
+  next.setUTCDate(next.getUTCDate() + 1);
+  return next.toISOString().slice(0, 10);
+}
+
+/** A night as the planner returns it; dark from dusk to dawn, or not at all. */
+function plannedNight(date: string, dark: boolean, score: number) {
+  const dusk = `${date}T19:50:00Z`;
+  const dawn = `${nextDay(date)}T03:58:00Z`;
+  return {
+    date,
+    sunset: `${date}T18:14:00Z`,
+    civilDusk: `${date}T18:42:00Z`,
+    nauticalDusk: `${date}T19:15:00Z`,
+    astronomicalDusk: dusk,
+    astronomicalDawn: dawn,
+    nauticalDawn: null,
+    civilDawn: null,
+    sunrise: `${nextDay(date)}T04:34:00Z`,
+    moonrise: null,
+    moonset: `${date}T18:13:00Z`,
+    moonIllumination: 0,
+    darkWindows: dark ? [{ start: dusk, end: dawn }] : [],
+    darkMinutes: dark ? 488 : 0,
+    showers: [{ id: 'PER', name: 'Perseids', rate: 100 }],
+    score,
+  };
+}

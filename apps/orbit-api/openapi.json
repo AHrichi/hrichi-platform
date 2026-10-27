@@ -1,7 +1,7 @@
 {
   "openapi" : "3.1.0",
   "info" : {
-    "description" : "Active satellites from CelesTrak's public GP data, and pass predictions computed with Orekit. Errors are RFC 9457 problem details.",
+    "description" : "A night planner for stargazers: twilight, the Moon and moonless darkness for any place, computed with Orekit. Errors are RFC 9457 problem details.",
     "license" : {
       "name" : "MIT"
     },
@@ -9,117 +9,11 @@
     "version" : "1"
   },
   "paths" : {
-    "/satellites" : {
+    "/nights" : {
       "get" : {
-        "description" : "Mean elements for every active satellite (about 11,000), refreshed from CelesTrak at most every 6 hours. Pre-serialised and pre-gzipped; send If-None-Match to get 304.",
-        "operationId" : "list",
+        "description" : "Sunset, twilight, sunrise, moonrise and moonset, the Moon's phase, windows of moonless astronomical darkness and active meteor showers, computed with Orekit. Nights run from local noon; in the morning, the first is the night just ending.",
+        "operationId" : "nights",
         "parameters" : [ {
-          "description" : "all, stations, starlink, gnss, weather or other",
-          "in" : "query",
-          "name" : "group",
-          "required" : false,
-          "schema" : {
-            "type" : "string",
-            "default" : "all",
-            "pattern" : "all|stations|starlink|gnss|weather|other"
-          }
-        }, {
-          "in" : "header",
-          "name" : "If-None-Match",
-          "required" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "in" : "header",
-          "name" : "Accept-Encoding",
-          "required" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/CatalogResponse"
-                }
-              }
-            },
-            "description" : "OK"
-          },
-          "304" : {
-            "description" : "Not modified since the ETag in If-None-Match"
-          },
-          "400" : {
-            "content" : {
-              "application/problem+json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ProblemDetail"
-                }
-              }
-            },
-            "description" : "Unknown group"
-          }
-        },
-        "summary" : "The catalog, or one group of it",
-        "tags" : [ "satellite-controller" ]
-      }
-    },
-    "/satellites/{noradId}" : {
-      "get" : {
-        "operationId" : "details",
-        "parameters" : [ {
-          "in" : "path",
-          "name" : "noradId",
-          "required" : true,
-          "schema" : {
-            "type" : "integer",
-            "format" : "int32",
-            "minimum" : 1
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/SatelliteDetails"
-                }
-              }
-            },
-            "description" : "OK"
-          },
-          "404" : {
-            "content" : {
-              "application/problem+json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ProblemDetail"
-                }
-              }
-            },
-            "description" : "No active satellite has this number"
-          }
-        },
-        "summary" : "One satellite, with its orbit's size and period",
-        "tags" : [ "satellite-controller" ]
-      }
-    },
-    "/satellites/{noradId}/passes" : {
-      "get" : {
-        "description" : "Rise, highest point and set, computed with Orekit (SGP4). A pass is visible to the naked eye when the satellite is sunlit while the observer's sky is dark.",
-        "operationId" : "passes",
-        "parameters" : [ {
-          "in" : "path",
-          "name" : "noradId",
-          "required" : true,
-          "schema" : {
-            "type" : "integer",
-            "format" : "int32",
-            "minimum" : 1
-          }
-        }, {
           "description" : "Degrees, north positive",
           "in" : "query",
           "name" : "lat",
@@ -142,39 +36,25 @@
             "minimum" : -180.0
           }
         }, {
-          "description" : "Metres above the WGS-84 ellipsoid",
-          "in" : "query",
-          "name" : "altM",
-          "required" : false,
-          "schema" : {
-            "type" : "number",
-            "format" : "double",
-            "default" : 0.0,
-            "maximum" : 9000.0,
-            "minimum" : -500.0
-          }
-        }, {
+          "description" : "How many nights",
           "in" : "query",
           "name" : "days",
           "required" : false,
           "schema" : {
             "type" : "integer",
             "format" : "int32",
-            "default" : 3,
-            "maximum" : 7,
+            "default" : 14,
+            "maximum" : 30,
             "minimum" : 1
           }
         }, {
-          "description" : "Ignore passes lower than this, in degrees",
+          "description" : "IANA time zone for the dates, e.g. Africa/Tunis",
           "in" : "query",
-          "name" : "minElevation",
+          "name" : "zone",
           "required" : false,
           "schema" : {
-            "type" : "number",
-            "format" : "double",
-            "default" : 10.0,
-            "maximum" : 60.0,
-            "minimum" : 0.0
+            "type" : "string",
+            "default" : "UTC"
           }
         } ],
         "responses" : {
@@ -182,7 +62,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/PassesResponse"
+                  "$ref" : "#/components/schemas/NightsResponse"
                 }
               }
             },
@@ -197,228 +77,153 @@
               }
             },
             "description" : "Invalid parameters, each listed in errors"
-          },
-          "404" : {
-            "content" : {
-              "application/problem+json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ProblemDetail"
-                }
-              }
-            },
-            "description" : "No active satellite has this number"
           }
         },
-        "summary" : "Upcoming passes over a place",
-        "tags" : [ "satellite-controller" ]
+        "summary" : "The coming nights at a place, for stargazing",
+        "tags" : [ "night-controller" ]
       }
     }
   },
   "components" : {
     "schemas" : {
-      "CatalogResponse" : {
+      "ActiveShower" : {
         "type" : "object",
         "properties" : {
-          "count" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "fetchedAt" : {
-            "type" : "string",
-            "format" : "date-time"
-          },
-          "group" : {
+          "id" : {
             "type" : "string"
-          },
-          "satellites" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/OrbitalElements"
-            }
-          },
-          "source" : {
-            "type" : "string"
-          }
-        },
-        "required" : [ "count", "fetchedAt", "group", "satellites", "source" ]
-      },
-      "Observer" : {
-        "type" : "object",
-        "properties" : {
-          "altitudeM" : {
-            "type" : "number",
-            "format" : "double",
-            "description" : "Metres above the ellipsoid"
-          },
-          "latitude" : {
-            "type" : "number",
-            "format" : "double",
-            "description" : "Degrees, north positive"
-          },
-          "longitude" : {
-            "type" : "number",
-            "format" : "double",
-            "description" : "Degrees, east positive"
-          }
-        },
-        "required" : [ "altitudeM", "latitude", "longitude" ]
-      },
-      "OrbitalElements" : {
-        "type" : "object",
-        "description" : "Mean orbital elements (CCSDS OMM keys, as published by CelesTrak)",
-        "properties" : {
-          "ARG_OF_PERICENTER" : {
-            "type" : "number",
-            "format" : "double",
-            "description" : "Degrees"
-          },
-          "BSTAR" : {
-            "type" : "number",
-            "format" : "double"
-          },
-          "CLASSIFICATION_TYPE" : {
-            "type" : "string"
-          },
-          "ECCENTRICITY" : {
-            "type" : "number",
-            "format" : "double"
-          },
-          "ELEMENT_SET_NO" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "EPHEMERIS_TYPE" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "EPOCH" : {
-            "type" : "string",
-            "description" : "UTC, ISO-8601 without zone"
-          },
-          "INCLINATION" : {
-            "type" : "number",
-            "format" : "double",
-            "description" : "Degrees"
-          },
-          "MEAN_ANOMALY" : {
-            "type" : "number",
-            "format" : "double",
-            "description" : "Degrees"
-          },
-          "MEAN_MOTION" : {
-            "type" : "number",
-            "format" : "double",
-            "description" : "Revolutions per day"
-          },
-          "MEAN_MOTION_DDOT" : {
-            "type" : "number",
-            "format" : "double",
-            "description" : "Revolutions per day³, as in the TLE (a sixth of the derivative)"
-          },
-          "MEAN_MOTION_DOT" : {
-            "type" : "number",
-            "format" : "double",
-            "description" : "Revolutions per day², as in the TLE (half the derivative)"
-          },
-          "NORAD_CAT_ID" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "OBJECT_ID" : {
-            "type" : "string"
-          },
-          "OBJECT_NAME" : {
-            "type" : "string"
-          },
-          "RA_OF_ASC_NODE" : {
-            "type" : "number",
-            "format" : "double",
-            "description" : "Degrees"
-          },
-          "REV_AT_EPOCH" : {
-            "type" : "integer",
-            "format" : "int32"
-          }
-        },
-        "required" : [ "ARG_OF_PERICENTER", "BSTAR", "CLASSIFICATION_TYPE", "ECCENTRICITY", "ELEMENT_SET_NO", "EPHEMERIS_TYPE", "EPOCH", "INCLINATION", "MEAN_ANOMALY", "MEAN_MOTION", "MEAN_MOTION_DDOT", "MEAN_MOTION_DOT", "NORAD_CAT_ID", "OBJECT_ID", "OBJECT_NAME", "RA_OF_ASC_NODE", "REV_AT_EPOCH" ]
-      },
-      "Pass" : {
-        "type" : "object",
-        "properties" : {
-          "culmination" : {
-            "$ref" : "#/components/schemas/Point",
-            "description" : "Highest point of the pass"
-          },
-          "durationSeconds" : {
-            "type" : "integer",
-            "format" : "int64"
-          },
-          "rise" : {
-            "$ref" : "#/components/schemas/Point"
-          },
-          "set" : {
-            "$ref" : "#/components/schemas/Point"
-          },
-          "visible" : {
-            "type" : "boolean",
-            "description" : "The satellite is sunlit while the observer is in darkness (sun 6° or more below the horizon)"
-          }
-        },
-        "required" : [ "culmination", "durationSeconds", "rise", "set", "visible" ]
-      },
-      "PassesResponse" : {
-        "type" : "object",
-        "properties" : {
-          "from" : {
-            "type" : "string",
-            "format" : "date-time"
-          },
-          "minElevationDeg" : {
-            "type" : "number",
-            "format" : "double"
           },
           "name" : {
             "type" : "string"
           },
-          "noradId" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "observer" : {
-            "$ref" : "#/components/schemas/Observer"
-          },
-          "passes" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/Pass"
-            }
-          },
-          "to" : {
-            "type" : "string",
-            "format" : "date-time"
+          "rate" : {
+            "type" : "number",
+            "format" : "double"
           }
         },
-        "required" : [ "from", "minElevationDeg", "name", "noradId", "observer", "passes", "to" ]
+        "required" : [ "id", "name", "rate" ]
       },
-      "Point" : {
+      "DarkWindow" : {
         "type" : "object",
         "properties" : {
-          "azimuthDeg" : {
-            "type" : "number",
-            "format" : "double",
-            "description" : "Degrees from north, clockwise"
+          "end" : {
+            "type" : "string",
+            "format" : "date-time"
           },
-          "elevationDeg" : {
-            "type" : "number",
-            "format" : "double",
-            "description" : "Degrees above the horizon"
-          },
-          "time" : {
+          "start" : {
             "type" : "string",
             "format" : "date-time"
           }
         },
-        "required" : [ "azimuthDeg", "elevationDeg", "time" ]
+        "required" : [ "end", "start" ]
+      },
+      "Night" : {
+        "type" : "object",
+        "properties" : {
+          "astronomicalDawn" : {
+            "type" : [ "string", "null" ],
+            "format" : "date-time"
+          },
+          "astronomicalDusk" : {
+            "type" : [ "string", "null" ],
+            "format" : "date-time",
+            "description" : "Sun 18° below: truly dark"
+          },
+          "civilDawn" : {
+            "type" : [ "string", "null" ],
+            "format" : "date-time"
+          },
+          "civilDusk" : {
+            "type" : [ "string", "null" ],
+            "format" : "date-time",
+            "description" : "Sun 6° below the horizon"
+          },
+          "darkMinutes" : {
+            "type" : "integer",
+            "format" : "int64",
+            "description" : "Total minutes in darkWindows"
+          },
+          "darkWindows" : {
+            "type" : "array",
+            "description" : "Astronomical darkness with the Moon below the horizon",
+            "items" : {
+              "$ref" : "#/components/schemas/DarkWindow"
+            }
+          },
+          "date" : {
+            "type" : "string",
+            "format" : "date",
+            "description" : "Local date of the evening"
+          },
+          "moonIllumination" : {
+            "type" : "number",
+            "format" : "double",
+            "description" : "Lit fraction of the Moon at local midnight, 0–1"
+          },
+          "moonrise" : {
+            "type" : [ "string", "null" ],
+            "format" : "date-time"
+          },
+          "moonset" : {
+            "type" : [ "string", "null" ],
+            "format" : "date-time"
+          },
+          "nauticalDawn" : {
+            "type" : [ "string", "null" ],
+            "format" : "date-time"
+          },
+          "nauticalDusk" : {
+            "type" : [ "string", "null" ],
+            "format" : "date-time",
+            "description" : "Sun 12° below the horizon"
+          },
+          "score" : {
+            "type" : "integer",
+            "format" : "int32",
+            "description" : "0–100: hours of moonless darkness, up to six, plus a little for meteors"
+          },
+          "showers" : {
+            "type" : "array",
+            "description" : "Meteor showers active at local midnight, busiest first",
+            "items" : {
+              "$ref" : "#/components/schemas/ActiveShower"
+            }
+          },
+          "sunrise" : {
+            "type" : [ "string", "null" ],
+            "format" : "date-time"
+          },
+          "sunset" : {
+            "type" : [ "string", "null" ],
+            "format" : "date-time"
+          }
+        },
+        "required" : [ "astronomicalDawn", "astronomicalDusk", "civilDawn", "civilDusk", "darkMinutes", "darkWindows", "date", "moonIllumination", "moonrise", "moonset", "nauticalDawn", "nauticalDusk", "score", "showers", "sunrise", "sunset" ]
+      },
+      "NightsResponse" : {
+        "type" : "object",
+        "properties" : {
+          "latitude" : {
+            "type" : "number",
+            "format" : "double",
+            "description" : "Degrees, rounded to 0.1° (about 11 km)"
+          },
+          "longitude" : {
+            "type" : "number",
+            "format" : "double",
+            "description" : "Degrees, rounded to 0.1°"
+          },
+          "nights" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/Night"
+            }
+          },
+          "zone" : {
+            "type" : "string",
+            "description" : "IANA time zone of the dates"
+          }
+        },
+        "required" : [ "latitude", "longitude", "nights", "zone" ]
       },
       "ProblemDetail" : {
         "type" : "object",
@@ -446,56 +251,6 @@
             "format" : "uri"
           }
         }
-      },
-      "SatelliteDetails" : {
-        "type" : "object",
-        "properties" : {
-          "apogeeKm" : {
-            "type" : "number",
-            "format" : "double"
-          },
-          "eccentricity" : {
-            "type" : "number",
-            "format" : "double"
-          },
-          "elements" : {
-            "$ref" : "#/components/schemas/OrbitalElements"
-          },
-          "epoch" : {
-            "type" : "string"
-          },
-          "group" : {
-            "type" : "string",
-            "enum" : [ "STATIONS", "STARLINK", "GNSS", "WEATHER", "OTHER" ]
-          },
-          "inclinationDeg" : {
-            "type" : "number",
-            "format" : "double"
-          },
-          "name" : {
-            "type" : "string"
-          },
-          "noradId" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "objectId" : {
-            "type" : "string"
-          },
-          "orbitClass" : {
-            "type" : "string",
-            "enum" : [ "LEO", "MEO", "GEO", "HEO" ]
-          },
-          "perigeeKm" : {
-            "type" : "number",
-            "format" : "double"
-          },
-          "periodMinutes" : {
-            "type" : "number",
-            "format" : "double"
-          }
-        },
-        "required" : [ "apogeeKm", "eccentricity", "elements", "epoch", "group", "inclinationDeg", "name", "noradId", "objectId", "orbitClass", "perigeeKm", "periodMinutes" ]
       }
     }
   }

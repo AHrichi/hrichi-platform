@@ -10,7 +10,7 @@
 **The concept: the portfolio is the proof.** Instead of a page that _lists_ "Angular, Nx, micro-frontends, Three.js, NestJS…", the site _is_ an Nx + Native Federation platform that visitors can open up and inspect. It has three layers:
 
 1. **Portfolio (shell):** a fast, prerendered, SEO-friendly site with three audience modes: recruiter, engineer and client.
-2. **Labs (remotes):** working demos of the skills on your resume: a live satellite tracker in 3D, a schema-driven form engine and an automation pipeline.
+2. **Labs (remotes):** working demos of the skills on your resume: the night sky over any campsite in 3D, a schema-driven form engine and an automation pipeline.
 3. **Apps (remotes):** your four real apps (StrategyApp, DeutschLernen, Code de la Route, Accountability Architect) running inside the portfolio in demo mode. The same apps ship as desktop builds (Electron) and mobile builds (Capacitor).
 
 **Stack:**
@@ -70,12 +70,12 @@ Pages: Home, Experience, Case Studies, Labs, Apps, Services, How I Work, Contact
 
 ### 2.2 Labs: clean-room proof of the resume
 
-| Lab                               | Proves (resume line)                                      | Tech                                                                                                                                                                                  |
-| --------------------------------- | --------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Orbit**: live satellites (M2)   | Three.js custom shaders; Java/Spring Boot backends        | Every active satellite from CelesTrak on a GLSL globe (one draw call, SGP4 in a Web Worker); pass predictions from a Spring Boot + Orekit API; a bundled snapshot while the API wakes |
-| **Form Engine**: schema-driven UI | Plug-and-play integration platform with JSON-schema forms | JSON Schema → Signal Forms + design-system controls, live schema editor. **The same engine powers the Estimator.**                                                                    |
-| **Pipeline**: automation          | n8n webhook workers, BullMQ, transactional email          | NestJS outbox → n8n, live lead-journey timeline over SSE, replay mode when n8n is offline                                                                                             |
-| **Canvas** (M4): design editor    | MyEasyLogo / MyEasyContent                                | Fabric.js, text-on-arc, undo/redo through a SignalStore history feature                                                                                                               |
+| Lab                               | Proves (resume line)                                      | Tech                                                                                                                                                                         |
+| --------------------------------- | --------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Sky**: the night sky (M2)       | Three.js custom shaders; Java/Spring Boot backends        | Pick a place on a dot-matrix globe and dive down: 5,000 stars, constellations, Moon, planets, Milky Way and meteors in GLSL; a night planner from a Spring Boot + Orekit API |
+| **Form Engine**: schema-driven UI | Plug-and-play integration platform with JSON-schema forms | JSON Schema → Signal Forms + design-system controls, live schema editor. **The same engine powers the Estimator.**                                                           |
+| **Pipeline**: automation          | n8n webhook workers, BullMQ, transactional email          | NestJS outbox → n8n, live lead-journey timeline over SSE, replay mode when n8n is offline                                                                                    |
+| **Canvas** (M4): design editor    | MyEasyLogo / MyEasyContent                                | Fabric.js, text-on-arc, undo/redo through a SignalStore history feature                                                                                                      |
 
 > ⚠ **Clean-room only.** No SeekMake (or other employer) code, data, screenshots, customer names or branding. Case studies describe employer work at the level of detail your CV already uses.
 
@@ -109,10 +109,10 @@ Pages: Home, Experience, Case Studies, Labs, Apps, Services, How I Work, Contact
 | Nx monorepo                   | The public repo, module boundaries, custom generators, `affected` CI |
 | Micro-frontends               | Native Federation shell with 7+ remotes; Federation Inspector        |
 | NgRx SignalStore              | Feature stores, cross-remote Events, devtools                        |
-| Three.js / shaders            | Constellation hero, Orbit lab                                        |
+| Three.js / shaders            | Constellation hero, Sky lab                                          |
 | Design systems                | `@ah/ui`, token pipeline, public Storybook                           |
 | NestJS + MongoDB              | Lead outbox, assistant, OpenAPI → generated client                   |
-| Java / Spring Boot            | Orbit API (Spring Boot 4, Java 25, Orekit, MongoDB)                  |
+| Java / Spring Boot            | Night planner API (Spring Boot 4, Java 25, Orekit)                   |
 | n8n                           | Lead enrichment, weekly digest, Pipeline lab                         |
 | PWA                           | Installable, offline content, Background Sync for the contact form   |
 | Electron                      | 4 desktop apps on one shared main-process lib with auto-update       |
@@ -129,7 +129,7 @@ Pages: Home, Experience, Case Studies, Labs, Apps, Services, How I Work, Contact
 flowchart LR
   subgraph Browser["Visitor browser"]
     SH["Shell (host)<br/>Angular 22 · prerendered · PWA"]
-    RL["Lab remotes<br/>orbit · form-engine · pipeline"]
+    RL["Lab remotes<br/>sky · form-engine · pipeline"]
     RA["App remotes<br/>strategy · deutsch · code-route · accountability"]
     SH -- "loadRemoteModule" --> RL
     SH -- "loadRemoteModule" --> RA
@@ -157,9 +157,7 @@ flowchart LR
   RL --> CFR
   RA --> CFR
   SH -- "contact / assistant" --> API
-  RL -- "catalog · passes" --> PE
-  PE --> DB
-  PE -- "GP data, at most every 6 h" --> CT["CelesTrak"]
+  RL -- "night planner" --> PE
   API --> DB
   API -- "instant alert" --> TG
   API -- "webhook (HMAC)" --> N8N
@@ -230,7 +228,7 @@ hrichi-platform/
 │   │   ├── engine/                   framework-agnostic (no Angular imports)
 │   │   ├── angular/                  <ah-scene> adapter, signals ↔ scene bridge
 │   │   ├── constellation/            exported Nx graph, shared camera, SVG projection
-│   │   └── scenes/{constellation,orbit-globe}/
+│   │   └── scenes/{constellation,sky}/
 │   ├── portfolio/
 │   │   ├── feature-{home,experience,case-studies,services,contact,cv,architecture}/
 │   │   ├── data-access-content/
@@ -328,7 +326,7 @@ sequenceDiagram
   S-->>B: HTML + shell JS (hydrates, zoneless)
   B->>M: initFederation(manifest)
   Note over B: user opens /labs/orbit
-  B->>R: loadRemoteModule('lab-orbit', './routes')
+  B->>R: loadRemoteModule('lab-sky', './routes')
   R-->>B: remoteEntry.json + chunks (shared deps via import map)
   alt remote fails / times out / version skew
     B-->>B: RemoteUnavailable + retry · Inspector logs it
@@ -385,7 +383,7 @@ Signal Forms (stable in Angular 22) for all new forms. The Form Engine lib maps 
 - **`@ah/three/angular`:** an `<ah-scene>` component created in `afterNextRender` (browser-only, safe under prerendering). Signals drive scene parameters through `effect()`.
 - **Scenes:**
   - `constellation`: the Nx graph, built from instanced meshes with a custom GLSL glow and bloom
-  - `orbit-globe`: a dot-matrix Earth with a day/night terminator and atmosphere, and every active satellite as one point cloud
+  - `sky`: a dot-matrix Earth with a day/night terminator, a dive to the ground, and the sky above it: stars, constellations, Sun, Moon, planets, Milky Way and meteors
 - **Workers:** SGP4 propagation of the whole catalog runs in a Web Worker and posts zero-copy transferable `Float32Array`s.
 - **Progressive enhancement:**
   - poster image first (it is the LCP)
@@ -516,17 +514,14 @@ sequenceDiagram
 
 ### 7.2 Spring Boot Orbit API: `apps/orbit-api`
 
-Built in M2; details and spike results in [ADR-0013](adr/0013-orbit-api.md).
+Built in M2 ([ADR-0013](adr/0013-orbit-api.md)); a night planner since [ADR-0017](adr/0017-night-planner.md).
 
 - **Platform:** Java 25 LTS, **Spring Boot 4.1**, Gradle Kotlin DSL, wired into Nx with a `project.json` (`build`, `test`, `serve`).
-- **Data:** CelesTrak's Active catalog (about 17,000 satellites), downloaded at most every 6 hours and never twice in CelesTrak's 2-hour window, stored in MongoDB Atlas, and served pre-serialised and pre-gzipped.
-- **API:**
-  - `GET /satellites?group=`: OMM elements that satellite.js reads directly
-  - `GET /satellites/{noradId}`: orbit class, period, apogee, perigee
-  - `GET /satellites/{noradId}/passes`: rise, culmination, set and naked-eye visibility over a place, computed with Orekit
+- **Computation, no data store:** Orekit event detectors time twilight, sunrise and sunset, and moonrise and moonset over a place. An analytical Moon (MiniMoon plus Meeus' distance terms) stands in for JPL ephemerides. Results are cached in memory.
+- **API:** `GET /nights?lat&lon&days&zone`: for each night, twilight times, the Moon, windows of moonless darkness, active meteor showers and a score.
 - **Errors and validation:** Jakarta Bean Validation; Problem Details (RFC 9457) listing each invalid parameter.
 - **Contract:** `springdoc-openapi` writes `apps/orbit-api/openapi.json`; `openapi-typescript` generates `@ah/shared/api-client`. CI fails when either is out of date.
-- **Tests:** JUnit 5, Spring MVC test slices, a MongoDB integration test, and pass predictions checked against satellite.js.
+- **Tests:** JUnit 5 and Spring MVC test slices; every event checked against Astronomy Engine to within two minutes at six places, polar nights included.
 
 ### 7.3 n8n
 
@@ -698,7 +693,7 @@ Each milestone ships on its own. **M1 is the one that gets you interviews, so it
 | --------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
 | **M0 Foundation**           | Workspace, pnpm, lint/format, boundaries, CI skeleton, design-system tokens v0, shell + 1 hello remote, Nest `/health`                                         | Shell + remote live on Cloudflare via CI · Native Federation + zoneless + prerender + PWA + CSP spike recorded as ADRs · zone.js guard passing |
 | **M1 Launchable portfolio** | Home, Experience, 3 case studies, Services, Contact (full lead pipeline), CV PDF (EN), audience modes, SEO, poster-image hero                                  | Lighthouse budgets green · a test lead reaches Telegram + n8n · **start sending the link**                                                     |
-| **M2 Signature**            | Three.js engine, constellation hero, Orbit lab + Spring Boot Orbit API, Federation Inspector, public Storybook                                                 | WebGL scenes pass budgets and the reduced-motion fallback                                                                                      |
+| **M2 Signature**            | Three.js engine, constellation hero, Sky lab + Spring Boot night planner, Federation Inspector, public Storybook                                               | WebGL scenes pass budgets and the reduced-motion fallback                                                                                      |
 | **M3 Products**             | Import the 4 apps (order in §13), demo-mode remotes, shared Electron lib, GitHub Releases downloads                                                            | All 4 apps run inside the portfolio and as desktop builds                                                                                      |
 | **M4 Differentiators**      | Form Engine lab + Estimator, Pipeline lab, assistant, FR locale + FR CV, Capacitor Android (DeutschLernen, Code de la Route), custom Nx generators, Canvas lab | Each ships as an independent remote                                                                                                            |
 
@@ -742,6 +737,7 @@ The full records are in [`docs/adr`](adr/README.md). Proposed decisions get the 
 | [0014](adr/0014-orbit-lab.md)                      | Orbit lab remote: WebGL globe, SGP4 worker, snapshot fallback                                | Superseded |
 | [0015](adr/0015-public-storybook.md)               | Public Storybook: angular-vite, zoneless, axe and visual regression on every story           | Accepted   |
 | [0016](adr/0016-sky-lab.md)                        | Sky lab remote: the night sky over any place and time; replaces the Orbit lab                | Accepted   |
+| [0017](adr/0017-night-planner.md)                  | Orbit API becomes the Sky lab's night planner; no database, no outbound calls                | Accepted   |
 | —                                                  | State ladder: signals → SignalStore → Events plugin; no classic `@ngrx/store`                | Proposed   |
 | —                                                  | Zero-cost topology: static-first; sleeping backends; graceful degradation                    | Proposed   |
 | —                                                  | One feature lib, many shells (remote / PWA / Electron / Capacitor)                           | Proposed   |

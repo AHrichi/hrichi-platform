@@ -198,3 +198,59 @@ input[type='checkbox'] {
   margin: 0;
   font-size: var(--font-size-100);
 }
+
+.sky__nights {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sky__night {
+  display: grid;
+  gap: var(--space-1);
+  inline-size: 100%;
+  text-align: start;
+}
+
+.sky__night--best {
+  border-color: var(--color-accent-default);
+}
+
+.sky__night-date {
+  font-weight: var(--font-weight-semibold);
+}
+
+.sky__night-facts {
+  font-size: var(--font-size-200);
+  color: var(--color-text-muted);
+}
+
+.sky__badge {
+  margin-inline-start: var(--space-2);
+  padding-inline: var(--space-2);
+  border-radius: var(--radius-pill);
+  background: var(--color-accent-default);
+  color: var(--color-accent-on);
+  font-size: var(--font-size-100);
+}
+
+.sky__score {
+  display: block;
+  block-size: 0.3rem;
+  border-radius: var(--radius-pill);
+  background: var(--color-border-default);
+  overflow: hidden;
+
+  span {
+    display: block;
+    block-size: 100%;
+    background: var(--color-accent-default);
+  }
+}
+
+.sky__note {
+  margin: 0;
+  font-size: var(--font-size-100);
+}

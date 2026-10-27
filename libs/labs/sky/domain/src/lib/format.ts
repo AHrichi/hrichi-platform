@@ -22,6 +22,16 @@ export function formatDateTime(date: Date, timeZone: string | null): string {
   }).format(date);
 }
 
+/** `Wed 12 Aug` for a calendar date, `2026-08-12`, wherever the viewer is. */
+export function formatDay(isoDate: string): string {
+  return new Intl.DateTimeFormat('en-GB', {
+    weekday: 'short',
+    day: 'numeric',
+    month: 'short',
+    timeZone: 'UTC',
+  }).format(new Date(`${isoDate}T12:00:00Z`));
+}
+
 /** `6 h 40 min`, `25 min` */
 export function formatDuration(ms: number): string {
   const minutes = Math.round(ms / 60_000);

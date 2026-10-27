@@ -4,7 +4,7 @@
  */
 
 export interface paths {
-    "/satellites": {
+    "/nights": {
         parameters: {
             query?: never;
             header?: never;
@@ -12,47 +12,10 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * The catalog, or one group of it
-         * @description Mean elements for every active satellite (about 11,000), refreshed from CelesTrak at most every 6 hours. Pre-serialised and pre-gzipped; send If-None-Match to get 304.
+         * The coming nights at a place, for stargazing
+         * @description Sunset, twilight, sunrise, moonrise and moonset, the Moon's phase, windows of moonless astronomical darkness and active meteor showers, computed with Orekit. Nights run from local noon; in the morning, the first is the night just ending.
          */
-        get: operations["list"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/satellites/{noradId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** One satellite, with its orbit's size and period */
-        get: operations["details"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/satellites/{noradId}/passes": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Upcoming passes over a place
-         * @description Rise, highest point and set, computed with Orekit (SGP4). A pass is visible to the naked eye when the satellite is sunlit while the observer's sky is dark.
-         */
-        get: operations["passes"];
+        get: operations["nights"];
         put?: never;
         post?: never;
         delete?: never;
@@ -65,123 +28,87 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
-        CatalogResponse: {
-            /** Format: int32 */
-            count: number;
-            /** Format: date-time */
-            fetchedAt: string;
-            group: string;
-            satellites: components["schemas"]["OrbitalElements"][];
-            source: string;
+        ActiveShower: {
+            id: string;
+            name: string;
+            /** Format: double */
+            rate: number;
         };
-        Observer: {
+        DarkWindow: {
+            /** Format: date-time */
+            end: string;
+            /** Format: date-time */
+            start: string;
+        };
+        Night: {
+            /** Format: date-time */
+            astronomicalDawn: string | null;
             /**
-             * Format: double
-             * @description Metres above the ellipsoid
+             * Format: date-time
+             * @description Sun 18° below: truly dark
              */
-            altitudeM: number;
+            astronomicalDusk: string | null;
+            /** Format: date-time */
+            civilDawn: string | null;
+            /**
+             * Format: date-time
+             * @description Sun 6° below the horizon
+             */
+            civilDusk: string | null;
+            /**
+             * Format: int64
+             * @description Total minutes in darkWindows
+             */
+            darkMinutes: number;
+            /** @description Astronomical darkness with the Moon below the horizon */
+            darkWindows: components["schemas"]["DarkWindow"][];
+            /**
+             * Format: date
+             * @description Local date of the evening
+             */
+            date: string;
             /**
              * Format: double
-             * @description Degrees, north positive
+             * @description Lit fraction of the Moon at local midnight, 0–1
+             */
+            moonIllumination: number;
+            /** Format: date-time */
+            moonrise: string | null;
+            /** Format: date-time */
+            moonset: string | null;
+            /** Format: date-time */
+            nauticalDawn: string | null;
+            /**
+             * Format: date-time
+             * @description Sun 12° below the horizon
+             */
+            nauticalDusk: string | null;
+            /**
+             * Format: int32
+             * @description 0–100: hours of moonless darkness, up to six, plus a little for meteors
+             */
+            score: number;
+            /** @description Meteor showers active at local midnight, busiest first */
+            showers: components["schemas"]["ActiveShower"][];
+            /** Format: date-time */
+            sunrise: string | null;
+            /** Format: date-time */
+            sunset: string | null;
+        };
+        NightsResponse: {
+            /**
+             * Format: double
+             * @description Degrees, rounded to 0.1° (about 11 km)
              */
             latitude: number;
             /**
              * Format: double
-             * @description Degrees, east positive
+             * @description Degrees, rounded to 0.1°
              */
             longitude: number;
-        };
-        /** @description Mean orbital elements (CCSDS OMM keys, as published by CelesTrak) */
-        OrbitalElements: {
-            /**
-             * Format: double
-             * @description Degrees
-             */
-            ARG_OF_PERICENTER: number;
-            /** Format: double */
-            BSTAR: number;
-            CLASSIFICATION_TYPE: string;
-            /** Format: double */
-            ECCENTRICITY: number;
-            /** Format: int32 */
-            ELEMENT_SET_NO: number;
-            /** Format: int32 */
-            EPHEMERIS_TYPE: number;
-            /** @description UTC, ISO-8601 without zone */
-            EPOCH: string;
-            /**
-             * Format: double
-             * @description Degrees
-             */
-            INCLINATION: number;
-            /**
-             * Format: double
-             * @description Degrees
-             */
-            MEAN_ANOMALY: number;
-            /**
-             * Format: double
-             * @description Revolutions per day
-             */
-            MEAN_MOTION: number;
-            /**
-             * Format: double
-             * @description Revolutions per day³, as in the TLE (a sixth of the derivative)
-             */
-            MEAN_MOTION_DDOT: number;
-            /**
-             * Format: double
-             * @description Revolutions per day², as in the TLE (half the derivative)
-             */
-            MEAN_MOTION_DOT: number;
-            /** Format: int32 */
-            NORAD_CAT_ID: number;
-            OBJECT_ID: string;
-            OBJECT_NAME: string;
-            /**
-             * Format: double
-             * @description Degrees
-             */
-            RA_OF_ASC_NODE: number;
-            /** Format: int32 */
-            REV_AT_EPOCH: number;
-        };
-        Pass: {
-            /** @description Highest point of the pass */
-            culmination: components["schemas"]["Point"];
-            /** Format: int64 */
-            durationSeconds: number;
-            rise: components["schemas"]["Point"];
-            set: components["schemas"]["Point"];
-            /** @description The satellite is sunlit while the observer is in darkness (sun 6° or more below the horizon) */
-            visible: boolean;
-        };
-        PassesResponse: {
-            /** Format: date-time */
-            from: string;
-            /** Format: double */
-            minElevationDeg: number;
-            name: string;
-            /** Format: int32 */
-            noradId: number;
-            observer: components["schemas"]["Observer"];
-            passes: components["schemas"]["Pass"][];
-            /** Format: date-time */
-            to: string;
-        };
-        Point: {
-            /**
-             * Format: double
-             * @description Degrees from north, clockwise
-             */
-            azimuthDeg: number;
-            /**
-             * Format: double
-             * @description Degrees above the horizon
-             */
-            elevationDeg: number;
-            /** Format: date-time */
-            time: string;
+            nights: components["schemas"]["Night"][];
+            /** @description IANA time zone of the dates */
+            zone: string;
         };
         ProblemDetail: {
             detail?: string;
@@ -196,28 +123,6 @@ export interface components {
             /** Format: uri */
             type?: string;
         };
-        SatelliteDetails: {
-            /** Format: double */
-            apogeeKm: number;
-            /** Format: double */
-            eccentricity: number;
-            elements: components["schemas"]["OrbitalElements"];
-            epoch: string;
-            /** @enum {string} */
-            group: "STATIONS" | "STARLINK" | "GNSS" | "WEATHER" | "OTHER";
-            /** Format: double */
-            inclinationDeg: number;
-            name: string;
-            /** Format: int32 */
-            noradId: number;
-            objectId: string;
-            /** @enum {string} */
-            orbitClass: "LEO" | "MEO" | "GEO" | "HEO";
-            /** Format: double */
-            perigeeKm: number;
-            /** Format: double */
-            periodMinutes: number;
-        };
     };
     responses: never;
     parameters: never;
@@ -227,16 +132,19 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
-    list: {
+    nights: {
         parameters: {
-            query?: {
-                /** @description all, stations, starlink, gnss, weather or other */
-                group?: string;
+            query: {
+                /** @description Degrees, north positive */
+                lat: number;
+                /** @description Degrees, east positive */
+                lon: number;
+                /** @description How many nights */
+                days?: number;
+                /** @description IANA time zone for the dates, e.g. Africa/Tunis */
+                zone?: string;
             };
-            header?: {
-                "If-None-Match"?: string;
-                "Accept-Encoding"?: string;
-            };
+            header?: never;
             path?: never;
             cookie?: never;
         };
@@ -248,99 +156,11 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["CatalogResponse"];
-                };
-            };
-            /** @description Not modified since the ETag in If-None-Match */
-            304: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unknown group */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-        };
-    };
-    details: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                noradId: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["SatelliteDetails"];
-                };
-            };
-            /** @description No active satellite has this number */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-        };
-    };
-    passes: {
-        parameters: {
-            query: {
-                /** @description Degrees, north positive */
-                lat: number;
-                /** @description Degrees, east positive */
-                lon: number;
-                /** @description Metres above the WGS-84 ellipsoid */
-                altM?: number;
-                days?: number;
-                /** @description Ignore passes lower than this, in degrees */
-                minElevation?: number;
-            };
-            header?: never;
-            path: {
-                noradId: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PassesResponse"];
+                    "application/json": components["schemas"]["NightsResponse"];
                 };
             };
             /** @description Invalid parameters, each listed in errors */
             400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-            /** @description No active satellite has this number */
-            404: {
                 headers: {
                     [name: string]: unknown;
                 };

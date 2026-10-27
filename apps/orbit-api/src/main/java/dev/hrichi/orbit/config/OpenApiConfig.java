@@ -14,14 +14,7 @@ import org.springframework.context.annotation.Configuration;
 public class OpenApiConfig {
 
     /** The API's own response records; every component is always present. */
-    private static final Set<String> RECORDS = Set.of(
-            "CatalogResponse",
-            "OrbitalElements",
-            "SatelliteDetails",
-            "PassesResponse",
-            "Pass",
-            "Point",
-            "Observer");
+    private static final Set<String> RECORDS = Set.of("NightsResponse", "Night", "DarkWindow", "ActiveShower");
 
     @Bean
     OpenAPI orbitOpenApi() {
@@ -29,8 +22,8 @@ public class OpenApiConfig {
                 .info(new Info()
                         .title("Orbit API")
                         .version("1")
-                        .description("Active satellites from CelesTrak's public GP data, and pass predictions computed"
-                                + " with Orekit. Errors are RFC 9457 problem details.")
+                        .description("A night planner for stargazers: twilight, the Moon and moonless darkness for"
+                                + " any place, computed with Orekit. Errors are RFC 9457 problem details.")
                         .license(new License().name("MIT")));
     }
 

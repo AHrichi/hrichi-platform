@@ -21,7 +21,7 @@ import tools.jackson.databind.json.JsonMapper;
  * when either differs from what's committed: the contract can't change by
  * accident (ADR-0013).
  */
-@SpringBootTest(properties = "orbit.load-on-startup=false")
+@SpringBootTest
 @AutoConfigureMockMvc
 class OpenApiContractTest {
 
@@ -34,7 +34,7 @@ class OpenApiContractTest {
         JsonMapper json = JsonMapper.builder().enable(SerializationFeature.INDENT_OUTPUT).build();
         JsonNode document = json.readTree(body);
 
-        assertThat(document.path("paths").has("/satellites/{noradId}/passes")).isTrue();
+        assertThat(document.path("paths").has("/nights")).isTrue();
         // The server URL depends on how the test runs; it isn't part of the contract.
         ((tools.jackson.databind.node.ObjectNode) document).remove("servers");
         Files.writeString(

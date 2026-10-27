@@ -13,7 +13,7 @@ if (providers.gradleProperty("native").isPresent) {
 }
 
 group = "dev.hrichi"
-version = "0.1.0"
+version = "0.2.0"
 
 java {
     toolchain {
@@ -30,7 +30,6 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-webmvc")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
-    implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-api:3.2.0")
     implementation("org.orekit:orekit:13.1.9")
 
@@ -45,8 +44,6 @@ tasks.withType<JavaCompile> {
 
 tasks.test {
     useJUnitPlatform()
-    // Integration tests run when a MongoDB is available (CI's service, or Docker locally).
-    environment("MONGODB_TEST_URI", System.getenv("MONGODB_TEST_URI") ?: "")
     testLogging {
         events("failed")
         exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL

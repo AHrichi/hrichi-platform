@@ -200,6 +200,61 @@
         <p>{{ tonight().constellations || 'None high up right now.' }}</p>
       </section>
 
+      @if (planner().status !== 'off') {
+        <section class="sky__section" aria-labelledby="sky-planner">
+          <h2 id="sky-planner" class="sky__heading">Best nights to go</h2>
+          @switch (planner().status) {
+            @case ('loading') {
+              <p class="ah-muted">Asking the night planner…</p>
+            }
+            @case ('waking') {
+              <p class="ah-muted">
+                Waking the free-tier night planner (Spring Boot on Render); this
+                takes up to a minute…
+              </p>
+            }
+            @case ('unavailable') {
+              <p class="ah-muted">
+                The night planner didn't answer. Tonight's sky above still
+                works.
+              </p>
+            }
+          }
+          @if (planner().nights.length) {
+            <ol class="sky__nights" role="list">
+              @for (night of planner().nights; track night.date) {
+                <li>
+                  <button
+                    type="button"
+                    class="sky__night"
+                    [class.sky__night--best]="night.best"
+                    (click)="goToNight(night.time)"
+                  >
+                    <span class="sky__night-date"
+                      >{{ night.label }}
+                      @if (night.best) {
+                        <span class="sky__badge">Best</span>
+                      }
+                    </span>
+                    <span class="sky__night-facts"
+                      >{{ night.dark }} · {{ night.moon
+                      }}{{ night.shower ? ' · ' + night.shower : '' }}</span
+                    >
+                    <span class="sky__score" aria-hidden="true"
+                      ><span [style.inline-size.%]="night.score"></span
+                    ></span>
+                  </button>
+                </li>
+              }
+            </ol>
+            <p class="ah-muted sky__note">
+              From the night planner: Orekit on Spring Boot. A full bar is six
+              hours of moonless darkness.
+            </p>
+          }
+        </section>
+      }
+
       <p class="sky__share">
         <a [href]="shareLink()">Link to this sky</a>
         <button type="button" (click)="copyLink()">

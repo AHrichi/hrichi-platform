@@ -6,7 +6,7 @@ export interface SiteConfig {
   /** Lead API (NestJS), for the contact form. */
   apiUrl: string | null;
   turnstileSiteKey: string | null;
-  /** Orbit API (Spring Boot), for the Orbit lab. */
+  /** Orbit API (Spring Boot), the Sky lab's night planner. */
   orbitApiUrl: string | null;
 }
 

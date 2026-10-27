@@ -5,6 +5,7 @@ import {
   Component,
   computed,
   DestroyRef,
+  effect,
   inject,
   signal,
 } from '@angular/core';
@@ -15,6 +16,7 @@ import {
   defaultCity,
   formatCompass,
   formatDateTime,
+  formatDay,
   formatDuration,
   formatMagnitude,
   formatPercent,
@@ -33,6 +35,8 @@ import {
   toLocalInput,
   type Twilight,
 } from '@ah/labs/sky/domain';
+import type { Night } from '@ah/shared/api-client';
+import { SiteConfigService } from '@ah/shared/site-config';
 import { SceneHost } from '@ah/three/angular';
 import type { SkyLabel, SkySceneParams } from '@ah/three/scenes/sky';
 import { SegmentedControl, type SegmentedOption } from '@ah/ui';
@@ -42,6 +46,7 @@ import {
   SkyLabStore,
   type Speed,
 } from './sky-lab.store';
+import { NightPlannerApi } from './night-planner-api';
 
 const twilightNames: Record<Twilight, string> = {
   day: 'Daytime',
@@ -72,6 +77,29 @@ const skyLabels: SkyLabel[] = [
 interface Fact {
   label: string;
   value: string;
+}
+
+/**
+ * The middle of a night's longest moonless dark window, or of the night
+ * itself when there is none: the moment worth looking at.
+ */
+function darkestMoment(night: Night): number {
+  const middle = (start: string, end: string) =>
+    (Date.parse(start) + Date.parse(end)) / 2;
+  const longest = [...night.darkWindows].sort(
+    (a, b) =>
+      Date.parse(b.end) -
+      Date.parse(b.start) -
+      (Date.parse(a.end) - Date.parse(a.start)),
+  )[0];
+  if (longest) {
+    return middle(longest.start, longest.end);
+  }
+  if (night.sunset && night.sunrise) {
+    return middle(night.sunset, night.sunrise);
+  }
+  // Midnight sun or polar night: local midnight, roughly.
+  return Date.parse(`${night.date}T23:59:00Z`);
 }
 
 /**
@@ -297,6 +325,36 @@ export class SkyLabPage {
     return null;
   });
 
+  private readonly plannerApi = signal<NightPlannerApi | null>(null);
+
+  /** The night planner's nights, best three marked, each with a time to jump to. */
+  protected readonly planner = computed(() => {
+    const { status, nights } = this.store.planner();
+    const best = new Set(
+      nights
+        .filter((night) => night.score > 0)
+        .sort((a, b) => b.score - a.score)
+        .slice(0, 3)
+        .map((night) => night.date),
+    );
+    return {
+      status,
+      nights: nights.map((night) => ({
+        date: night.date,
+        label: formatDay(night.date),
+        dark:
+          night.darkMinutes > 0
+            ? `${formatDuration(night.darkMinutes * 60_000)} of moonless dark`
+            : 'No moonless darkness',
+        moon: `Moon ${formatPercent(night.moonIllumination)}`,
+        shower: night.showers[0]?.name ?? null,
+        score: night.score,
+        best: best.has(night.date),
+        time: darkestMoment(night),
+      })),
+    };
+  });
+
   protected readonly shareLink = computed(() => {
     const path = this.window?.location.pathname ?? '/labs/sky';
     return `${path}${skyLink(this.store.place(), new Date(this.store.time()))}`;
@@ -324,10 +382,55 @@ export class SkyLabPage {
     }
 
     const destroyRef = inject(DestroyRef);
+    const siteConfig = inject(SiteConfigService);
     afterNextRender(() => {
       const timer = this.window?.setInterval(() => this.store.tickNow(), 1000);
       destroyRef.onDestroy(() => this.window?.clearInterval(timer));
+      void siteConfig
+        .load()
+        .then(({ orbitApiUrl }) =>
+          this.plannerApi.set(
+            orbitApiUrl ? new NightPlannerApi(orbitApiUrl) : null,
+          ),
+        );
     });
+
+    // Plan the nights for each new place, once the visitor stops changing it.
+    effect((onCleanup) => {
+      const api = this.plannerApi();
+      const place = this.store.place();
+      if (!api) {
+        return;
+      }
+      const zone =
+        place.timeZone ?? Intl.DateTimeFormat().resolvedOptions().timeZone;
+      const controller = new AbortController();
+      const timer = setTimeout(() => {
+        this.store.plannerLoading();
+        api
+          .nights(place, zone, {
+            signal: controller.signal,
+            onWaking: () => this.store.plannerWaking(),
+          })
+          .then((response) => this.store.plannerReady(response.nights))
+          .catch(() => {
+            if (!controller.signal.aborted) {
+              this.store.plannerUnavailable();
+            }
+          });
+      }, 400);
+      onCleanup(() => {
+        clearTimeout(timer);
+        controller.abort();
+      });
+    });
+  }
+
+  /** Jumps the sky to a planned night's darkest hour, paused. */
+  protected goToNight(time: number): void {
+    this.store.setTime(time);
+    this.store.setSpeed(0);
+    this.store.setView('sky');
   }
 
   protected toggleView(): void {

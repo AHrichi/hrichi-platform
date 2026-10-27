@@ -39,9 +39,8 @@ services:
       - key: N8N_WEBHOOK_SECRET
         sync: false
 
-  # The Orbit API (ADR-0013): Spring Boot 4 + Orekit, read-only and cached.
-  # MONGODB_URI is copied from the lead API, so nothing needs pasting; it
-  # uses its own database (orbit) on the same free Atlas cluster.
+  # The Orbit API (ADR-0013, ADR-0017): Spring Boot 4 + Orekit, the Sky lab's
+  # night planner. Pure computation: no database, no secrets.
   - type: web
     name: ahmed-hrichi-orbit
     runtime: docker
@@ -57,12 +56,5 @@ services:
         - apps/orbit-api/**
         - render.yaml
     envVars:
-      - key: MONGODB_URI
-        fromService:
-          type: web
-          name: ahmed-hrichi-api
-          envVarKey: MONGODB_URI
-      - key: MONGODB_DB
-        value: orbit
       - key: CORS_ORIGINS
-        value: https://portfolio.ahmed-hrichi.workers.dev,https://lab-orbit.ahmed-hrichi.workers.dev,http://localhost:4200,http://localhost:4302
+        value: https://portfolio.ahmed-hrichi.workers.dev,https://lab-sky.ahmed-hrichi.workers.dev,http://localhost:4200,http://localhost:4302

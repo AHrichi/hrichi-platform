@@ -1,4 +1,4 @@
-package dev.hrichi.orbit.passes;
+package dev.hrichi.orbit.night;
 
 import java.util.ArrayList;
 import java.util.List;

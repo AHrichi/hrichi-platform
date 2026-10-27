@@ -1,6 +1,6 @@
 # ADR-0013: Orbit API: Spring Boot 4, Orekit, a polite CelesTrak cache, JVM on Render
 
-- **Status:** Accepted
+- **Status:** Accepted; the satellite catalogue and passes are superseded by [ADR-0017](0017-night-planner.md)
 - **Date:** 2026-10-27
 - **Milestone:** M2
 

@@ -2,14 +2,13 @@ package dev.hrichi.orbit;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
- * The Orbit API (ADR-0013): a cached copy of CelesTrak's public orbit data,
- * refreshed politely, plus pass predictions computed with Orekit.
+ * The Orbit API (ADR-0013, ADR-0017): a night planner for stargazers. For a
+ * place and the coming nights it computes twilight, moonrise and moonset and
+ * the windows of true darkness with Orekit.
  */
 @SpringBootApplication
-@EnableScheduling
 public class OrbitApiApplication {
 
     public static void main(String[] args) {

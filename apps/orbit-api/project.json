@@ -27,7 +27,7 @@
       "inputs": [
         "gradle",
         "{projectRoot}/src/**/*",
-        { "env": "MONGODB_TEST_URI" }
+        "{workspaceRoot}/libs/labs/sky/domain/src/lib/meteor-showers.json"
       ],
       "outputs": [
         "{projectRoot}/openapi.json",

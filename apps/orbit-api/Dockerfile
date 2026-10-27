@@ -16,9 +16,8 @@ WORKDIR /app
 COPY --from=build /extracted/ ./
 # Training run: start the context once and record the loaded classes, so
 # the real start skips most class loading and linking on Render's 0.1 CPU.
-# It exits after refresh, before the catalog loads or anything connects.
-RUN java -XX:AOTCacheOutput=orbit-api.aot -Dspring.context.exit=onRefresh \
-      -Dorbit.load-on-startup=false -jar orbit-api.jar \
+# It exits as soon as the context has refreshed.
+RUN java -XX:AOTCacheOutput=orbit-api.aot -Dspring.context.exit=onRefresh -jar orbit-api.jar \
  && useradd --system --uid 10001 orbit
 USER orbit
 ENV JAVA_TOOL_OPTIONS="-XX:MaxRAMPercentage=75 -XX:+UseSerialGC -XX:TieredStopAtLevel=1"
