@@ -26,7 +26,12 @@ const contentTypes = {
   '.ico': 'image/x-icon',
 };
 
-const browser = await chromium.launch();
+let browser;
+try {
+  browser = await chromium.launch();
+} catch {
+  browser = await chromium.launch({ channel: 'msedge' });
+}
 try {
   const page = await browser.newPage({
     javaScriptEnabled: false,
