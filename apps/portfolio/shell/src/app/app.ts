@@ -1,11 +1,22 @@
-import { afterNextRender, Component, inject } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+import {
+  afterNextRender,
+  Component,
+  ElementRef,
+  inject,
+  signal,
+  viewChild,
+} from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { getState } from '@ngrx/signals';
+import { FederationStore } from '@ah/platform/federation';
+import { Inspector, type InspectableStores } from '@ah/platform/inspector';
 import { profile, site } from '@ah/shared/content';
 import { PreferencesStore } from '@ah/shared/state';
 import { AhButton } from '@ah/ui';
 
 @Component({
-  imports: [AhButton, RouterLink, RouterLinkActive, RouterOutlet],
+  imports: [AhButton, Inspector, RouterLink, RouterLinkActive, RouterOutlet],
   selector: 'ah-root',
   templateUrl: './app.html',
 })
@@ -20,9 +31,33 @@ export class App {
     { label: 'Contact', path: '/contact' },
   ];
 
+  protected readonly inspecting = signal(false);
+  private readonly hoodButton =
+    viewChild<ElementRef<HTMLButtonElement>>('hoodButton');
+
+  /** What the Federation Inspector's State tab shows. */
+  protected readonly stores: InspectableStores;
+
   constructor() {
-    // Prerendered HTML uses the default audience; switch only once hydrated.
     const preferences = inject(PreferencesStore);
-    afterNextRender(() => preferences.restore());
+    const federation = inject(FederationStore);
+    this.stores = {
+      PreferencesStore: () => getState(preferences),
+      FederationStore: () => getState(federation),
+    };
+
+    // Prerendered HTML uses the default audience; switch only once hydrated.
+    const window = inject(DOCUMENT).defaultView;
+    afterNextRender(() => {
+      preferences.restore();
+      if (window && new URL(window.location.href).searchParams.has('inspect')) {
+        this.inspecting.set(true);
+      }
+    });
+  }
+
+  protected closeInspector(): void {
+    this.inspecting.set(false);
+    this.hoodButton()?.nativeElement.focus();
   }
 }

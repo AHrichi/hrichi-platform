@@ -111,3 +111,6 @@ jobs:
           DEPLOY_ALL: ${{ inputs.deploy_all }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+      # Remotes deploy independently; fail the deploy that introduces skew (ADR-0012).
+      - name: Shared dependencies match across the live shell and remotes
+        run: node tools/scripts/check-skew.mjs

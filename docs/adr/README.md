@@ -17,6 +17,7 @@ Each ADR records one decision, why it was made, and what a spike proved. New ADR
 | [0009](0009-content-audiences-and-seo.md)      | Typed content, audience modes, SEO, generated CV, Lighthouse gate                      |
 | [0010](0010-lead-pipeline.md)                  | Lead pipeline: document outbox, direct Telegram alert, n8n push and pull               |
 | [0011](0011-three-engine-and-constellation.md) | Three.js engine, `<ah-scene>` adapter and the constellation hero with an SVG fallback  |
+| [0012](0012-federation-inspector.md)           | Federation Inspector: remote telemetry, capability checks, build info, skew check      |
 
 ## Proposed (written when the area is built)
 

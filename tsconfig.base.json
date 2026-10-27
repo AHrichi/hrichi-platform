@@ -16,6 +16,7 @@
     "resolveJsonModule": true,
     "paths": {
       "@ah/platform/federation": ["./libs/platform/federation/src/index.ts"],
+      "@ah/platform/inspector": ["./libs/platform/inspector/src/index.ts"],
       "@ah/design-system/tokens": ["./libs/design-system/tokens/src/index.ts"],
       "@ah/ui": ["./libs/design-system/ui/src/index.ts"],
       "@ah/shared/content": ["./libs/shared/content/src/index.ts"],

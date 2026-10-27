@@ -1,0 +1,163 @@
+<section class="inspector" aria-labelledby="inspector-heading">
+  <header class="inspector__header">
+    <div>
+      <h2 id="inspector-heading" #heading tabindex="-1">Under the hood</h2>
+      <p class="inspector__meta">
+        Shell <code>{{ shellBuild() }}</code> · Native Federation · zoneless
+        Angular
+      </p>
+    </div>
+    <button
+      type="button"
+      class="inspector__close"
+      aria-label="Close the inspector"
+      (click)="closed.emit()"
+    >
+      ×
+    </button>
+  </header>
+
+  <div class="inspector__tabs" role="tablist" aria-label="Inspector sections">
+    @for (item of tabs; track item.id) {
+      <button
+        type="button"
+        role="tab"
+        [id]="'inspector-tab-' + item.id"
+        [attr.aria-selected]="tab() === item.id"
+        [attr.aria-controls]="
+          tab() === item.id ? 'inspector-panel-' + item.id : null
+        "
+        [tabindex]="tab() === item.id ? 0 : -1"
+        (click)="select(item.id)"
+        (keydown.arrowright)="step(1, $event)"
+        (keydown.arrowleft)="step(-1, $event)"
+      >
+        {{ item.label }}
+      </button>
+    }
+  </div>
+
+  <div
+    class="inspector__panel"
+    role="tabpanel"
+    [id]="'inspector-panel-' + tab()"
+    [attr.aria-labelledby]="'inspector-tab-' + tab()"
+    tabindex="0"
+  >
+    @switch (tab()) {
+      @case ('remotes') {
+        <p class="inspector__hint">
+          Remotes from <code>federation.manifest.json</code>. Each loads only
+          when you open its page.
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">Remote</th>
+              <th scope="col">Status</th>
+              <th scope="col">Load</th>
+              <th scope="col">Version</th>
+              <th scope="col">Build</th>
+              <th scope="col">Needs</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (remote of remotes(); track remote.name) {
+              <tr>
+                <th scope="row">
+                  <code [title]="remote.entry">{{ remote.name }}</code>
+                </th>
+                <td>
+                  <span class="status" [attr.data-status]="remote.status">{{
+                    remote.status
+                  }}</span>
+                  @if (remote.failure) {
+                    <span class="inspector__hint"> ({{ remote.failure }})</span>
+                  }
+                </td>
+                <td>{{ remote.duration }}</td>
+                <td>{{ remote.version }}</td>
+                <td>
+                  <code>{{ remote.build }}</code>
+                </td>
+                <td>{{ remote.capabilities }}</td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="6">No remotes in the manifest.</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      }
+      @case ('shared') {
+        @if (shared(); as shared) {
+          <p class="inspector__hint">
+            Singletons with <code>strictVersion</code>: the shell's copy runs
+            everywhere, so any other version is skew.
+          </p>
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Package</th>
+                <th scope="col">shell</th>
+                @for (name of shared.remotes; track name) {
+                  <th scope="col">{{ name }}</th>
+                }
+              </tr>
+            </thead>
+            <tbody>
+              @for (row of shared.rows; track row.packageName) {
+                <tr [class.skew]="row.skew">
+                  <th scope="row">
+                    <code>{{ row.packageName }}</code>
+                    @if (row.skew) {
+                      <span class="status" data-status="failed">skew</span>
+                    }
+                  </th>
+                  <td>{{ row.shell ?? '—' }}</td>
+                  @for (name of shared.remotes; track name) {
+                    <td>{{ row.versions[name] ?? '—' }}</td>
+                  }
+                </tr>
+              }
+            </tbody>
+          </table>
+        } @else {
+          <p>Reading <code>remoteEntry.json</code> files…</p>
+        }
+      }
+      @case ('state') {
+        @for (store of state(); track store.name) {
+          <h3>{{ store.name }}</h3>
+          <!-- Scrollable, so it must be reachable by keyboard. -->
+          <pre
+            tabindex="0"
+            [attr.aria-label]="store.name + ' state'"
+          ><code>{{ store.json }}</code></pre>
+        }
+      }
+      @case ('vitals') {
+        <p class="inspector__hint">
+          Measured in your browser for this visit, by
+          <code>web-vitals</code>.
+        </p>
+        <dl class="vitals">
+          @for (vital of vitals(); track vital.name) {
+            <div>
+              <dt>{{ vital.name }}</dt>
+              <dd>
+                {{ vital.value }}
+                @if (vital.rating) {
+                  <span class="status" [attr.data-status]="vital.rating">{{
+                    vital.rating
+                  }}</span>
+                }
+              </dd>
+            </div>
+          }
+        </dl>
+      }
+    }
+  </div>
+</section>

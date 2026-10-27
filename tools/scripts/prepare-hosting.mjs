@@ -10,11 +10,14 @@
 //   --site-config         Write site-config.json (the contact form's API URL and
 //                         Turnstile key) from tools/hosting/environments.json,
 //                         and allow both origins in the CSP (ADR-0010)
+//   --app <name>          Write build-info.json (app, commit, build time) for the
+//                         Federation Inspector (ADR-0012)
 //
 // It always writes `_headers` with security headers and a Content-Security-Policy
 // whose script hashes come from the inline scripts in the built HTML (ADR-0006).
 //
 // Usage: node tools/scripts/prepare-hosting.mjs <dist/browser dir> [options]
+import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import {
   copyFileSync,
@@ -34,6 +37,7 @@ const { positionals, values } = parseArgs({
     cors: { type: 'boolean', default: false },
     sitemap: { type: 'boolean', default: false },
     'site-config': { type: 'boolean', default: false },
+    app: { type: 'string' },
   },
 });
 const [dir] = positionals;
@@ -93,6 +97,19 @@ if (values['site-config']) {
   if (turnstileSiteKey) {
     turnstileOrigins.push('https://challenges.cloudflare.com');
   }
+}
+
+// Written at deploy time rather than compiled in, so the commit SHA never
+// invalidates Nx's build cache.
+if (values.app) {
+  const sha =
+    process.env.GITHUB_SHA ??
+    execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
+  writeFileSync(
+    join(dir, 'build-info.json'),
+    `${JSON.stringify({ app: values.app, sha, builtAt: new Date().toISOString() }, null, 2)}
+`,
+  );
 }
 
 if (values['not-found']) {
@@ -208,5 +225,5 @@ if (longest > 2000) {
   process.exit(1);
 }
 console.log(
-  `Prepared ${dir} for ${values.env}: _headers${values.federation ? ', federation.manifest.json' : ''}${values['not-found'] ? ', 404.html' : ''}${values.sitemap ? ', sitemap.xml, robots.txt' : ''}${values['site-config'] ? ', site-config.json' : ''}`,
+  `Prepared ${dir} for ${values.env}: _headers${values.app ? ', build-info.json' : ''}${values.federation ? ', federation.manifest.json' : ''}${values['not-found'] ? ', 404.html' : ''}${values.sitemap ? ', sitemap.xml, robots.txt' : ''}${values['site-config'] ? ', site-config.json' : ''}`,
 );

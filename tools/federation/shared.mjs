@@ -37,6 +37,8 @@ export const skip = [
   '@angular/service-worker/config',
   '@angular/service-worker/ngsw-worker.js',
   '@angular/service-worker/safety-worker.js',
+  // Only the shell's lazy Federation Inspector uses it; bundled there instead.
+  'web-vitals',
 ];
 
 // https://native-federation.com/docs/v4/angular-adapter/configuration/

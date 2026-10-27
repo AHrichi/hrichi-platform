@@ -56,3 +56,20 @@ main:focus {
   justify-content: space-between;
   gap: var(--space-4);
 }
+
+/* A button that reads as a footer link ("Open the hood"). */
+.link-button {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--color-accent-default);
+  font: inherit;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  text-decoration-thickness: 1px;
+  cursor: pointer;
+
+  &:hover {
+    color: var(--color-accent-hover);
+  }
+}

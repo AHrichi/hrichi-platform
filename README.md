@@ -14,7 +14,8 @@ Ahmed Hrichi's portfolio, built as the kind of platform it describes: an Nx mono
 | `shell`                     | `apps/portfolio/shell`            | Host. Prerendered content pages, PWA, loads remotes from `public/federation.manifest.json` |
 | `shell-e2e`                 | `apps/portfolio/shell-e2e`        | Playwright tests for prerendering, federation and remote fallback                          |
 | `lab-hello`                 | `apps/labs/hello`                 | M0 spike remote; exposes `./routes` and `./meta`                                           |
-| `platform-federation`       | `libs/platform/federation`        | Remote contract, `federatedRoutes()`, `RemoteUnavailable` fallback                         |
+| `platform-federation`       | `libs/platform/federation`        | Remote contract, `federatedRoutes()`, `FederationStore`, `RemoteUnavailable` fallback      |
+| `platform-inspector`        | `libs/platform/inspector`         | "Open the hood" (`?inspect=1`): remotes, builds, shared-dependency skew, state, Web Vitals |
 | `design-system-tokens`      | `libs/design-system/tokens`       | DTCG tokens → CSS variables and TS, with a WCAG contrast gate (`nx build-tokens`)          |
 | `design-system-ui`          | `libs/design-system/ui`           | `@ah/ui`: global styles (cascade layers) and components                                    |
 | `shared-content`            | `libs/shared/content`             | Profile, experience, case studies, services and per-audience copy                          |

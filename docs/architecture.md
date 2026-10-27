@@ -732,6 +732,7 @@ The full records are in [`docs/adr`](adr/README.md). Proposed decisions get the 
 | [0009](adr/0009-content-audiences-and-seo.md)      | Typed content, audience modes, SEO, generated CV, Lighthouse gate                  | Accepted |
 | [0010](adr/0010-lead-pipeline.md)                  | Lead pipeline: document outbox + direct Telegram alert + n8n push/pull             | Accepted |
 | [0011](adr/0011-three-engine-and-constellation.md) | Framework-agnostic Three.js engine + thin Angular adapter; progressive enhancement | Accepted |
+| [0012](adr/0012-federation-inspector.md)           | Federation Inspector, capability checks, deploy-time build info, CI skew check     | Accepted |
 | —                                                  | State ladder: signals → SignalStore → Events plugin; no classic `@ngrx/store`      | Proposed |
 | —                                                  | Zero-cost topology: static-first; sleeping backends; graceful degradation          | Proposed |
 | —                                                  | One feature lib, many shells (remote / PWA / Electron / Capacitor)                 | Proposed |

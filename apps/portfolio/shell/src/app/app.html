@@ -47,6 +47,24 @@
         <a [href]="repository" target="_blank" rel="noopener">Source & ADRs</a>
       </li>
       <li><a routerLink="/labs/hello">Micro-frontend demo</a></li>
+      <li>
+        <button
+          #hoodButton
+          type="button"
+          class="link-button"
+          [attr.aria-expanded]="inspecting()"
+          (click)="inspecting.set(!inspecting())"
+        >
+          Open the hood
+        </button>
+      </li>
     </ul>
   </div>
 </footer>
+
+<!-- Lazy: the inspector and web-vitals load only when someone opens it (ADR-0012). -->
+@defer (when inspecting()) {
+  @if (inspecting()) {
+    <ah-inspector [stores]="stores" (closed)="closeInspector()" />
+  }
+}

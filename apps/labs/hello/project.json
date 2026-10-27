@@ -123,7 +123,7 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "node tools/scripts/prepare-hosting.mjs dist/apps/labs/hello/browser --env development --cors",
+          "node tools/scripts/prepare-hosting.mjs dist/apps/labs/hello/browser --env development --app lab-hello --cors",
           "wrangler dev --config apps/labs/hello/wrangler.jsonc --port 4301"
         ],
         "parallel": false
@@ -134,7 +134,7 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "node tools/scripts/prepare-hosting.mjs dist/apps/labs/hello/browser --env production --cors",
+          "node tools/scripts/prepare-hosting.mjs dist/apps/labs/hello/browser --env production --app lab-hello --cors",
           "wrangler deploy --config apps/labs/hello/wrangler.jsonc"
         ],
         "parallel": false
