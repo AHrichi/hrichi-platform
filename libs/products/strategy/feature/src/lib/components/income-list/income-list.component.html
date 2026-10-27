@@ -1,0 +1,212 @@
+<section class="panel">
+  <div class="panel-header">
+    <h2><span class="header-icon">💰</span> Incomes</h2>
+  </div>
+
+  <form [formGroup]="incomeForm" (ngSubmit)="onSubmit()" class="add-form">
+    <div class="form-row">
+      <div class="form-group">
+        <label for="income-name">Name</label>
+        <input
+          id="income-name"
+          type="text"
+          formControlName="name"
+          placeholder="e.g., Salary"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="income-amount">Amount</label>
+        <div class="input-with-icon">
+          <input id="income-amount" type="number" formControlName="amount" />
+          <span class="currency-tag">TND</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="income-start">Start Month</label>
+        <input
+          id="income-start"
+          type="number"
+          formControlName="startMonth"
+          min="1"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="income-end">End Month</label>
+        <input
+          id="income-end"
+          type="number"
+          formControlName="endMonth"
+          placeholder="Ongoing"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="income-growth-type">Growth Type</label>
+        <select id="income-growth-type" formControlName="growthType">
+          <option value="none">None</option>
+          <option value="fixed">Fixed</option>
+          <option value="percentage">Percentage (%)</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="income-growth-value">Growth Value</label>
+        <input
+          id="income-growth-value"
+          type="number"
+          formControlName="growthValue"
+        />
+      </div>
+
+      <div class="form-actions">
+        <button
+          type="submit"
+          [disabled]="incomeForm.invalid"
+          class="btn-modern btn-submit"
+        >
+          {{ editingId ? '✏️ Update Income' : '➕ Add Income' }}
+        </button>
+        @if (editingId) {
+          <button
+            type="button"
+            class="btn-modern btn-cancel"
+            (click)="cancelEdit()"
+          >
+            Cancel
+          </button>
+        }
+      </div>
+    </div>
+  </form>
+
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Amount</th>
+          <th>Duration</th>
+          <th>Growth</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (income of incomes(); track income.id) {
+          <tr [class.editing-row]="income.id === editingId">
+            <td class="font-medium">{{ income.name }}</td>
+            <td>
+              <strong class="text-success">{{
+                income.amount | currency: 'TND' : 'symbol'
+              }}</strong>
+            </td>
+            <td>
+              <span class="duration-badge" [class.ongoing]="!income.endMonth">
+                {{ income.startMonth }} - {{ income.endMonth || 'Ongoing' }}
+              </span>
+            </td>
+            <td>
+              @if (income.growthValue > 0) {
+                <span class="growth-badge"
+                  >+{{ income.growthValue
+                  }}{{ income.growthType === 'percentage' ? '%' : '' }}</span
+                >
+              } @else {
+                <span class="text-muted">None</span>
+              }
+            </td>
+            <td class="actions-cell">
+              <div class="action-buttons">
+                <button
+                  type="button"
+                  (click)="openCopyModal(income)"
+                  class="action-icon copy"
+                  title="Copy to other scenarios"
+                >
+                  📋
+                </button>
+                <button
+                  type="button"
+                  (click)="onEdit(income)"
+                  class="action-icon edit"
+                  title="Edit"
+                >
+                  ✏️
+                </button>
+                <button
+                  type="button"
+                  (click)="onRemove(income.id)"
+                  class="action-icon delete"
+                  title="Remove"
+                >
+                  🗑️
+                </button>
+              </div>
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="5" class="empty-state">
+              <div class="empty-content">
+                <span class="empty-icon">💼</span>
+                <p>No income streams added yet.</p>
+              </div>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</section>
+
+@if (incomeToCopy) {
+  <div class="modal-backdrop" (click)="closeCopyModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <h3>Copy "{{ incomeToCopy.name }}"</h3>
+      <p>Select the scenarios that will receive this income:</p>
+
+      <div class="scenario-list">
+        @if (otherScenarios().length > 0) {
+          <button (click)="selectAllTargets()" class="btn-text">
+            Select All Scenarios
+          </button>
+
+          @for (scenario of otherScenarios(); track scenario.id) {
+            <div
+              class="copy-item-card"
+              [class.selected]="selectedTargetScenarios.has(scenario.id)"
+              (click)="toggleTargetScenario(scenario.id)"
+            >
+              <span class="scenario-name">{{ scenario.name }}</span>
+              <label class="toggle-switch" (click)="$event.stopPropagation()">
+                <input
+                  type="checkbox"
+                  [checked]="selectedTargetScenarios.has(scenario.id)"
+                  (change)="toggleTargetScenario(scenario.id)"
+                />
+                <span class="slider"></span>
+              </label>
+            </div>
+          }
+        } @else {
+          <p class="text-muted">No other scenarios available to copy to.</p>
+        }
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-modern btn-cancel" (click)="closeCopyModal()">
+          Cancel
+        </button>
+        <button
+          class="btn-modern btn-submit"
+          [disabled]="selectedTargetScenarios.size === 0"
+          (click)="confirmCopy()"
+        >
+          Apply
+        </button>
+      </div>
+    </div>
+  </div>
+}

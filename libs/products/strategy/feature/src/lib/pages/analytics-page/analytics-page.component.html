@@ -1,0 +1,1137 @@
+<div class="analytics-container" [class.dark]="isDarkMode()">
+  <div class="analytics-header">
+    <div class="header-left">
+      <h1>Financial Analytics</h1>
+      @if (hasData()) {
+        <span class="scenario-badge">{{ store.activeScenario().name }}</span>
+      }
+    </div>
+    <div class="header-tabs">
+      <button
+        class="tab-btn"
+        [class.active]="activeAnalyticsTab === 'overview'"
+        (click)="activeAnalyticsTab = 'overview'"
+      >
+        Overview
+      </button>
+      <button
+        class="tab-btn"
+        [class.active]="activeAnalyticsTab === 'trajectory'"
+        (click)="activeAnalyticsTab = 'trajectory'"
+      >
+        Trajectory
+      </button>
+      <button
+        class="tab-btn"
+        [class.active]="activeAnalyticsTab === 'goals'"
+        (click)="activeAnalyticsTab = 'goals'"
+      >
+        Goals
+      </button>
+    </div>
+  </div>
+
+  <app-scenario-selector
+    [scenarios]="store.scenarios()"
+    [activeId]="store.activeScenarioId()"
+    [showLabel]="true"
+    mode="single"
+    (toggle)="selectScenario($event)"
+    (add)="createScenario($event)"
+    (duplicate)="duplicateScenario($event)"
+    (rename)="renameScenario($event)"
+    (delete)="deleteScenario($event)"
+  />
+
+  @if (!hasData()) {
+    <div class="empty-state">
+      <div class="empty-icon">📊</div>
+      <h2>No Data Yet</h2>
+      <p>Create a scenario in the editor to see projections and analytics.</p>
+      <button class="btn-primary" routerLink="../editor">Go to Editor</button>
+    </div>
+  }
+
+  @if (activeAnalyticsTab === 'overview') {
+    <!-- KPI Row -->
+    <div class="kpi-grid">
+      <div class="kpi-card kpi-balance">
+        <div class="kpi-icon">💰</div>
+        <div class="kpi-body">
+          <span class="kpi-label">
+            <app-ui-tooltip
+              tipTitle="Current Balance"
+              tipBody="Your total account balance across all accounts at the start of the projection."
+              tipFormula="Sum of all account balances"
+              tipMeaning="Shows your starting financial position before any income or expenses are applied."
+              >Current Balance</app-ui-tooltip
+            >
+          </span>
+          <span
+            class="kpi-value"
+            title="{{ fmtCurrency(financialOverview().currentBalance) }}"
+            >{{ fmtCurrency(financialOverview().currentBalance) }}</span
+          >
+        </div>
+      </div>
+      <div class="kpi-card kpi-income">
+        <div class="kpi-icon">📈</div>
+        <div class="kpi-body">
+          <span class="kpi-label">
+            <app-ui-tooltip
+              tipTitle="Monthly Income"
+              tipBody="Total projected income per month averaged across the entire projection period."
+              tipFormula="Sum of all income line items &divide; projection months"
+              tipMeaning="Includes salaries, business revenue, investments, and any other income sources you defined."
+              >Monthly Income</app-ui-tooltip
+            >
+          </span>
+          <span
+            class="kpi-value"
+            title="{{
+              fmtCurrency(
+                financialOverview().totalIncome > 0 ? avgMonthlyIncome() : 0
+              )
+            }}"
+            >{{
+              fmtCurrency(
+                financialOverview().totalIncome > 0 ? avgMonthlyIncome() : 0
+              )
+            }}</span
+          >
+        </div>
+      </div>
+      <div class="kpi-card kpi-expense">
+        <div class="kpi-icon">📉</div>
+        <div class="kpi-body">
+          <span class="kpi-label">
+            <app-ui-tooltip
+              tipTitle="Monthly Expenses"
+              tipBody="Total projected expenses per month averaged across the entire projection period."
+              tipFormula="Sum of all expense line items &divide; projection months"
+              tipMeaning="Includes fixed costs (rent, utilities), variable spending, and any recurring outflows you defined."
+              >Monthly Expenses</app-ui-tooltip
+            >
+          </span>
+          <span
+            class="kpi-value"
+            title="{{
+              fmtCurrency(
+                financialOverview().totalExpenses > 0 ? avgMonthlyExpenses() : 0
+              )
+            }}"
+            >{{
+              fmtCurrency(
+                financialOverview().totalExpenses > 0 ? avgMonthlyExpenses() : 0
+              )
+            }}</span
+          >
+        </div>
+      </div>
+      <div
+        class="kpi-card"
+        [class.kpi-positive]="financialOverview().monthlyNet >= 0"
+        [class.kpi-negative]="financialOverview().monthlyNet < 0"
+      >
+        <div class="kpi-icon">
+          {{ financialOverview().monthlyNet >= 0 ? '✅' : '⚠️' }}
+        </div>
+        <div class="kpi-body">
+          <span class="kpi-label">
+            <app-ui-tooltip
+              tipTitle="Monthly Net"
+              tipBody="The difference between your monthly income and monthly expenses, averaged across the projection."
+              tipFormula="Monthly Income − Monthly Expenses"
+              tipMeaning="Positive means you earn more than you spend each month. Negative means you're running a deficit."
+              >Monthly Net</app-ui-tooltip
+            >
+          </span>
+          <span
+            class="kpi-value"
+            title="{{ fmtCurrency(financialOverview().monthlyNet) }}"
+            >{{ fmtCurrency(financialOverview().monthlyNet) }}</span
+          >
+        </div>
+      </div>
+      <div
+        class="kpi-card"
+        [class.kpi-positive]="financialOverview().finalReserve >= 0"
+        [class.kpi-negative]="financialOverview().finalReserve < 0"
+      >
+        <div class="kpi-icon">🏦</div>
+        <div class="kpi-body">
+          <span class="kpi-label">
+            <app-ui-tooltip
+              tipTitle="Final Reserve"
+              tipBody="Your projected account balance at the end of the projection period, after all income, expenses, loan payments, and goal contributions have been applied."
+              tipFormula="Final projected balance"
+              tipMeaning="A positive value means you have money left. A negative value means your expenses and goals exceed your income over the projection period."
+              >Final Reserve</app-ui-tooltip
+            >
+          </span>
+          <span
+            class="kpi-value"
+            title="{{ fmtCurrency(financialOverview().finalReserve) }}"
+            >{{ fmtCurrency(financialOverview().finalReserve) }}</span
+          >
+        </div>
+      </div>
+      <div class="kpi-card kpi-goals">
+        <div class="kpi-icon">🎯</div>
+        <div class="kpi-body">
+          <span class="kpi-label">
+            <app-ui-tooltip
+              tipTitle="Goal Funding"
+              tipBody="The total amount allocated toward your financial goals across the entire projection period."
+              tipFormula="Sum of all goal target amounts"
+              tipMeaning="Shows the total funding earmarked for goals like retirement, education, or large purchases. Compare this to your final reserve to gauge overall financial health."
+              >Goal Funding</app-ui-tooltip
+            >
+          </span>
+          <span
+            class="kpi-value"
+            title="{{ fmtCurrency(financialOverview().totalGoals) }}"
+            >{{ fmtCurrency(financialOverview().totalGoals) }}</span
+          >
+        </div>
+      </div>
+    </div>
+
+    <!-- Smart Insights -->
+    @let insights = smartInsights();
+    @if (insights.length > 0) {
+      <div class="insights-section">
+        <div class="insights-header">
+          <h2>💡 Smart Insights & Recommendations</h2>
+          <span class="insights-badge">AI Analysis</span>
+        </div>
+        <div class="insights-grid">
+          @for (insight of insights; track insight.id) {
+            <div class="insight-card" [ngClass]="'insight-' + insight.type">
+              <div class="insight-icon">
+                {{
+                  insight.type === 'positive'
+                    ? '🚀'
+                    : insight.type === 'warning'
+                      ? '⚠️'
+                      : 'ℹ️'
+                }}
+              </div>
+              <div class="insight-content">
+                <h4>{{ insight.title }}</h4>
+                <p>{{ insight.description }}</p>
+              </div>
+              <button class="insight-action" routerLink="../what-if">
+                {{ insight.actionText }}
+              </button>
+            </div>
+          }
+        </div>
+      </div>
+    }
+
+    <!-- Budget Progress -->
+    @let budgets = store.budgetProgress();
+    @if (budgets.length > 0) {
+      <div class="budget-section">
+        <div class="budget-header">
+          <h2>💰 Monthly Budgets</h2>
+          <span class="budget-month">{{ todayLabel }}</span>
+        </div>
+        <div class="budget-grid">
+          @for (bp of budgets; track bp.budget.id) {
+            <div class="budget-card" [class.over-budget]="bp.overBudget">
+              <div class="budget-top">
+                <span class="budget-icon">{{ bp.category?.icon || '📋' }}</span>
+                <div class="budget-info">
+                  <span class="budget-cat">{{
+                    bp.category?.name || 'Uncategorized'
+                  }}</span>
+                  <span class="budget-amounts"
+                    >{{ fmtCurrency(bp.spent) }} /
+                    {{ fmtCurrency(bp.limit) }}</span
+                  >
+                </div>
+                <span
+                  class="budget-remaining"
+                  [class.positive]="!bp.overBudget"
+                  [class.negative]="bp.overBudget"
+                >
+                  {{
+                    bp.overBudget
+                      ? '+' + fmtCurrency(-bp.remaining)
+                      : fmtCurrency(bp.remaining)
+                  }}
+                </span>
+              </div>
+              <div class="budget-bar-track">
+                <div
+                  class="budget-bar-fill"
+                  [style.width.%]="bp.progress * 100"
+                  [class.warning]="bp.progress >= 0.8 && !bp.overBudget"
+                  [class.danger]="bp.overBudget"
+                ></div>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    }
+
+    <!-- Plan vs Reality Comparison -->
+    <div class="comparison-card">
+      <div class="comparison-header">
+        <h2>Plan vs Reality</h2>
+        <span class="comparison-subtitle"
+          >How your actual finances compare to the plan</span
+        >
+      </div>
+      <div class="comparison-body">
+        <div class="comparison-metric">
+          <span class="cmp-label">Balance</span>
+          <div class="cmp-bars">
+            <div class="cmp-bar-row">
+              <span class="cmp-bar-label projected-label">Plan</span>
+              <div class="cmp-bar-track">
+                <div
+                  class="cmp-bar-fill cmp-bar-projected"
+                  [style.width.%]="projectedBalance() > 0 ? 100 : 0"
+                ></div>
+              </div>
+              <span class="cmp-bar-value projected-value">{{
+                fmtCurrency(projectedBalance())
+              }}</span>
+            </div>
+            <div class="cmp-bar-row">
+              <span class="cmp-bar-label reality-label">Actual</span>
+              <div class="cmp-bar-track">
+                @let balPct =
+                  projectedBalance() > 0
+                    ? (financialOverview().currentBalance /
+                        projectedBalance()) *
+                      100
+                    : 0;
+                <div
+                  class="cmp-bar-fill cmp-bar-reality"
+                  [style.width.%]="balPct > 100 ? 100 : balPct"
+                ></div>
+              </div>
+              <span class="cmp-bar-value reality-value">{{
+                fmtCurrency(financialOverview().currentBalance)
+              }}</span>
+            </div>
+          </div>
+          @let balVar = financialOverview().currentBalance - projectedBalance();
+          <span
+            class="cmp-variance"
+            [class.positive]="balVar >= 0"
+            [class.negative]="balVar < 0"
+          >
+            {{ balVar >= 0 ? '▲' : '▼' }} {{ fmtCurrency(Math.abs(balVar)) }}
+          </span>
+        </div>
+        <div class="comparison-divider"></div>
+        <div class="comparison-metric">
+          <span class="cmp-label">Monthly Cash Flow</span>
+          <div class="cmp-bars">
+            <div class="cmp-bar-row">
+              <span class="cmp-bar-label projected-label">Plan</span>
+              <div class="cmp-bar-track">
+                @let planNet = Math.max(financialOverview().monthlyNet, 0);
+                @let refFlow =
+                  Math.max(
+                    Math.abs(financialOverview().monthlyNet),
+                    Math.abs(realityMonthlyNetAvg()),
+                    1
+                  );
+                <div
+                  class="cmp-bar-fill cmp-bar-projected"
+                  [style.width.%]="(planNet / refFlow) * 100"
+                ></div>
+              </div>
+              <span class="cmp-bar-value projected-value">{{
+                fmtCurrency(financialOverview().monthlyNet)
+              }}</span>
+            </div>
+            <div class="cmp-bar-row">
+              <span class="cmp-bar-label reality-label">Actual</span>
+              <div class="cmp-bar-track">
+                @let actualNet = Math.max(realityMonthlyNetAvg(), 0);
+                <div
+                  class="cmp-bar-fill cmp-bar-reality"
+                  [style.width.%]="(actualNet / refFlow) * 100"
+                ></div>
+              </div>
+              <span class="cmp-bar-value reality-value">{{
+                fmtCurrency(realityMonthlyNetAvg())
+              }}</span>
+            </div>
+          </div>
+          @let flowVar =
+            realityMonthlyNetAvg() - financialOverview().monthlyNet;
+          <span
+            class="cmp-variance"
+            [class.positive]="flowVar >= 0"
+            [class.negative]="flowVar < 0"
+          >
+            {{ flowVar >= 0 ? '▲' : '▼' }} {{ fmtCurrency(Math.abs(flowVar)) }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cash Flow Calendar -->
+    <div class="calendar-card">
+      <div class="calendar-header">
+        <h2>📅 Cash Flow Calendar</h2>
+        <span class="calendar-month"
+          >Today: <strong>{{ todayLabel }}</strong></span
+        >
+      </div>
+      <div class="calendar-body">
+        <div class="cal-weekdays">
+          <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span
+          ><span>Thu</span><span>Fri</span><span>Sat</span>
+        </div>
+        <div class="cal-grid">
+          @let monthDays = calendarDays();
+          @let firstDow = monthDays[0]?.dow ?? 0;
+          @for (blank of [].constructor(firstDow); track $index) {
+            <div class="cal-cell cal-empty"></div>
+          }
+          @for (day of monthDays; track day.date) {
+            <div
+              class="cal-cell"
+              [class.has-income]="day.income > 0"
+              [class.has-expense]="day.expense > 0"
+              [title]="day.tooltip"
+            >
+              <span class="cal-day">{{ day.day }}</span>
+              @if (day.income > 0) {
+                <span class="cal-income">+{{ fmtCurrency(day.income) }}</span>
+              }
+              @if (day.expense > 0) {
+                <span class="cal-expense">-{{ fmtCurrency(day.expense) }}</span>
+              }
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- Current Month Performance -->
+    <div class="month-perf-card">
+      <div class="perf-card-header">
+        <h2>This Month</h2>
+        <span class="perf-date">{{ todayLabel }}</span>
+      </div>
+      <div class="perf-card-body">
+        <div class="perf-item">
+          <div class="perf-item-header">
+            <span class="perf-item-title">Income</span>
+            <span class="perf-item-values">
+              <span class="perf-actual">{{
+                fmtCurrency(store.currentMonthPerformance().actualIncome)
+              }}</span>
+              <span class="perf-sep">/</span>
+              <span class="perf-planned">{{
+                fmtCurrency(store.currentMonthPerformance().plannedIncome)
+              }}</span>
+            </span>
+          </div>
+          <div class="perf-bar-group">
+            <div class="perf-bar-label">Actual</div>
+            <div class="perf-bar-track">
+              <div
+                class="perf-bar-fill perf-income-fill"
+                [style.width.%]="getIncomeProgress()"
+              ></div>
+            </div>
+            <div class="perf-bar-label">Plan</div>
+            <div class="perf-bar-track">
+              <div
+                class="perf-bar-fill perf-planned-fill"
+                [style.width.%]="100"
+              ></div>
+            </div>
+          </div>
+          <div class="perf-item-footer">
+            <span
+              >Variance:
+              {{
+                fmtCurrency(store.currentMonthPerformance().incomeVariance)
+              }}</span
+            >
+            <span class="perf-pct">{{ fmtPct(getIncomeProgress()) }}</span>
+          </div>
+        </div>
+        <div class="perf-item">
+          <div class="perf-item-header">
+            <span class="perf-item-title">Expenses</span>
+            <span class="perf-item-values">
+              <span class="perf-actual">{{
+                fmtCurrency(store.currentMonthPerformance().actualExpense)
+              }}</span>
+              <span class="perf-sep">/</span>
+              <span class="perf-planned">{{
+                fmtCurrency(store.currentMonthPerformance().plannedExpense)
+              }}</span>
+            </span>
+          </div>
+          <div class="perf-bar-group">
+            <div class="perf-bar-label">Actual</div>
+            <div class="perf-bar-track">
+              <div
+                class="perf-bar-fill perf-expense-fill"
+                [style.width.%]="getExpenseProgress()"
+              ></div>
+            </div>
+            <div class="perf-bar-label">Plan</div>
+            <div class="perf-bar-track">
+              <div
+                class="perf-bar-fill perf-planned-fill"
+                [style.width.%]="100"
+              ></div>
+            </div>
+          </div>
+          <div class="perf-item-footer">
+            <span
+              >Variance:
+              {{
+                fmtCurrency(store.currentMonthPerformance().expenseVariance)
+              }}</span
+            >
+            <span class="perf-pct">{{ fmtPct(getExpenseProgress()) }}</span>
+          </div>
+        </div>
+        <div class="perf-item perf-item-net">
+          <div class="perf-item-header">
+            <span class="perf-item-title">Net Result</span>
+            <span class="perf-item-values">
+              <span
+                class="perf-actual"
+                [class.positive]="
+                  store.currentMonthPerformance().actualNet >= 0
+                "
+                [class.negative]="store.currentMonthPerformance().actualNet < 0"
+              >
+                {{ fmtCurrency(store.currentMonthPerformance().actualNet) }}
+              </span>
+            </span>
+          </div>
+          <div class="perf-netchart">
+            <div class="perf-netchart-bar">
+              <div
+                class="perf-netchart-fill"
+                [class.positive]="
+                  store.currentMonthPerformance().actualNet >= 0
+                "
+                [class.negative]="store.currentMonthPerformance().actualNet < 0"
+                [style.height.%]="
+                  Math.min(
+                    (Math.abs(store.currentMonthPerformance().actualNet) /
+                      Math.max(
+                        Math.abs(store.currentMonthPerformance().actualNet),
+                        Math.abs(store.currentMonthPerformance().plannedNet),
+                        1
+                      )) *
+                      100,
+                    100
+                  )
+                "
+              ></div>
+            </div>
+            <div class="perf-netchart-bar">
+              <div
+                class="perf-netchart-fill planned-net-fill"
+                [class.positive]="
+                  store.currentMonthPerformance().plannedNet >= 0
+                "
+                [class.negative]="
+                  store.currentMonthPerformance().plannedNet < 0
+                "
+                [style.height.%]="
+                  Math.min(
+                    (Math.abs(store.currentMonthPerformance().plannedNet) /
+                      Math.max(
+                        Math.abs(store.currentMonthPerformance().actualNet),
+                        Math.abs(store.currentMonthPerformance().plannedNet),
+                        1
+                      )) *
+                      100,
+                    100
+                  )
+                "
+              ></div>
+            </div>
+          </div>
+          <div class="perf-netchart-labels">
+            <span>Actual</span>
+            <span>Planned</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Time View Toggle -->
+    <div class="time-view-bar">
+      <span>View:</span>
+      <button
+        [class.active]="timeView() === 'monthly'"
+        (click)="timeView.set('monthly')"
+      >
+        Monthly
+      </button>
+      <button
+        [class.active]="timeView() === 'yearly'"
+        (click)="timeView.set('yearly')"
+      >
+        Yearly
+      </button>
+      <button
+        [class.active]="timeView() === 'all'"
+        (click)="timeView.set('all')"
+      >
+        All
+      </button>
+    </div>
+
+    <!-- Charts Row 1: Trajectory + Cashflow -->
+    <div class="chart-grid">
+      <div class="chart-card">
+        <div class="chart-card-header">
+          <h2>Capital Trajectory</h2>
+          <span class="chart-card-badge">over time</span>
+        </div>
+        <div class="chart-canvas-wrap">
+          <canvas
+            baseChart
+            type="line"
+            [data]="trajectoryChartData()"
+            [options]="trajectoryChartOptions()"
+          ></canvas>
+        </div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-card-header">
+          <h2>Income vs Expenses</h2>
+          <span class="chart-card-badge">over time</span>
+        </div>
+        <div class="chart-canvas-wrap">
+          <canvas
+            baseChart
+            type="bar"
+            [data]="cashFlowChartData()"
+            [options]="cashFlowChartOptions()"
+          ></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Charts Row 2: Breakdown + Goals -->
+    <div class="chart-grid">
+      <div class="chart-card">
+        <div class="chart-card-header">
+          <h2>Outflow Breakdown</h2>
+          <span class="chart-card-badge">total cost</span>
+        </div>
+        <div class="chart-canvas-wrap chart-doughnut-wrap">
+          <canvas
+            baseChart
+            type="doughnut"
+            [data]="breakdownChartData()"
+            [options]="breakdownChartOptions()"
+          ></canvas>
+        </div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-card-header">
+          <h2>Goal Progress</h2>
+          <span class="chart-card-badge">projected</span>
+        </div>
+        <div class="chart-canvas-wrap">
+          <canvas
+            baseChart
+            type="bar"
+            [data]="goalsChartData()"
+            [options]="goalsChartOptions()"
+          ></canvas>
+        </div>
+      </div>
+    </div>
+  }
+
+  @if (activeAnalyticsTab === 'trajectory') {
+    <div class="time-view-bar">
+      <span>View:</span>
+      <button
+        [class.active]="timeView() === 'monthly'"
+        (click)="timeView.set('monthly')"
+      >
+        Monthly
+      </button>
+      <button
+        [class.active]="timeView() === 'yearly'"
+        (click)="timeView.set('yearly')"
+      >
+        Yearly
+      </button>
+      <button
+        [class.active]="timeView() === 'all'"
+        (click)="timeView.set('all')"
+      >
+        All
+      </button>
+    </div>
+
+    <div class="full-chart-card">
+      <div class="full-chart-header">
+        <div>
+          <h2>Capital Growth Trajectory</h2>
+          <p class="chart-subtitle">
+            Accumulated capital over time with goal achievement markers
+          </p>
+        </div>
+        <div class="full-chart-stats">
+          <div class="fcs-item">
+            <span class="fcs-label">Start</span>
+            <span class="fcs-value">{{ trajectoryStartDate() }}</span>
+          </div>
+          <div class="fcs-item">
+            <span class="fcs-label">Final</span>
+            <span class="fcs-value accent">{{
+              fmtCurrency(trajectoryFinalCapital())
+            }}</span>
+          </div>
+          <div class="fcs-item">
+            <span class="fcs-label">Period</span>
+            <span class="fcs-value">{{ trajectoryYears() }}y</span>
+          </div>
+        </div>
+      </div>
+      <div class="full-chart-body">
+        <canvas
+          baseChart
+          type="line"
+          [data]="trajectoryChartData()"
+          [options]="trajectoryChartOptions()"
+        ></canvas>
+      </div>
+    </div>
+
+    <div class="kpi-grid">
+      <div class="kpi-card kpi-income">
+        <div class="kpi-icon">📈</div>
+        <div class="kpi-body">
+          <span class="kpi-label">
+            <app-ui-tooltip
+              tipTitle="Total Inflow"
+              tipBody="The sum of all income received over the entire projection period."
+              tipFormula="Sum of all income amounts across all months"
+              tipMeaning="Shows your total earning power across the full projection horizon."
+              >Total Inflow</app-ui-tooltip
+            >
+          </span>
+          <span
+            class="kpi-value"
+            title="{{ fmtCurrency(trajectoryTotalIncome()) }}"
+            >{{ fmtCurrency(trajectoryTotalIncome()) }}</span
+          >
+        </div>
+      </div>
+      <div class="kpi-card kpi-expense">
+        <div class="kpi-icon">📉</div>
+        <div class="kpi-body">
+          <span class="kpi-label">
+            <app-ui-tooltip
+              tipTitle="Total Outflow"
+              tipBody="The sum of all expenses and goal contributions over the entire projection period."
+              tipFormula="Sum of all expense amounts + goal contributions across all months"
+              tipMeaning="Shows your total spending including goal funding across the full projection horizon."
+              >Total Outflow</app-ui-tooltip
+            >
+          </span>
+          <span
+            class="kpi-value"
+            title="{{ fmtCurrency(trajectoryTotalOutflow()) }}"
+            >{{ fmtCurrency(trajectoryTotalOutflow()) }}</span
+          >
+        </div>
+      </div>
+      <div
+        class="kpi-card"
+        [class.kpi-positive]="trajectoryReserveAfterGoals() >= 0"
+        [class.kpi-negative]="trajectoryReserveAfterGoals() < 0"
+      >
+        <div class="kpi-icon">🏦</div>
+        <div class="kpi-body">
+          <span class="kpi-label">
+            <app-ui-tooltip
+              tipTitle="Reserve after Goals"
+              tipBody="Your projected account balance at the end of the projection period, after all income, expenses, loan payments, and goal contributions have been applied."
+              tipFormula="Final projected balance"
+              tipMeaning="A positive value means you have money left. A negative value means your expenses and goals exceed your income over the projection period."
+              >Reserve after Goals</app-ui-tooltip
+            >
+          </span>
+          <span
+            class="kpi-value"
+            title="{{ fmtCurrency(trajectoryReserveAfterGoals()) }}"
+            >{{ fmtCurrency(trajectoryReserveAfterGoals()) }}</span
+          >
+        </div>
+      </div>
+      <div class="kpi-card kpi-goals">
+        <div class="kpi-icon">🎯</div>
+        <div class="kpi-body">
+          <span class="kpi-label">
+            <app-ui-tooltip
+              tipTitle="Goal Funding"
+              tipBody="The total amount allocated toward your financial goals across the entire projection period."
+              tipFormula="Sum of all goal target amounts"
+              tipMeaning="Shows the total funding earmarked for goals like retirement, education, or large purchases."
+              >Goal Funding</app-ui-tooltip
+            >
+          </span>
+          <span
+            class="kpi-value"
+            title="{{ fmtCurrency(financialOverview().totalGoals) }}"
+            >{{ fmtCurrency(financialOverview().totalGoals) }}</span
+          >
+        </div>
+      </div>
+    </div>
+  }
+
+  @if (activeAnalyticsTab === 'goals') {
+    <div class="score-card">
+      <div class="score-rings">
+        <div class="score-ring-wrapper">
+          <svg class="score-ring" viewBox="0 0 120 120">
+            <circle
+              class="ring-bg"
+              cx="60"
+              cy="60"
+              r="54"
+              fill="none"
+              stroke-width="10"
+            />
+            <circle
+              class="ring-fill"
+              cx="60"
+              cy="60"
+              r="54"
+              fill="none"
+              stroke-width="10"
+              stroke-dasharray="339.292"
+              [attr.stroke-dashoffset]="
+                339.292 - (339.292 * overallGoalScore()) / 100
+              "
+              [class.score-low]="overallGoalScore() < 33"
+              [class.score-mid]="
+                overallGoalScore() >= 33 && overallGoalScore() < 66
+              "
+              [class.score-high]="overallGoalScore() >= 66"
+            />
+          </svg>
+          <div class="score-ring-text">
+            <span class="score-value"
+              >{{ overallGoalScore().toFixed(0) }}%</span
+            >
+            <span class="score-label">Planned</span>
+          </div>
+          <span class="score-ring-badge projected-label">Projected</span>
+        </div>
+        <div class="score-ring-wrapper">
+          <svg class="score-ring" viewBox="0 0 120 120">
+            <circle
+              class="ring-bg"
+              cx="60"
+              cy="60"
+              r="54"
+              fill="none"
+              stroke-width="10"
+            />
+            <circle
+              class="ring-fill ring-reality"
+              cx="60"
+              cy="60"
+              r="54"
+              fill="none"
+              stroke-width="10"
+              stroke-dasharray="339.292"
+              [attr.stroke-dashoffset]="
+                339.292 - (339.292 * overallRealityScore()) / 100
+              "
+              [class.score-low]="overallRealityScore() < 33"
+              [class.score-mid]="
+                overallRealityScore() >= 33 && overallRealityScore() < 66
+              "
+              [class.score-high]="overallRealityScore() >= 66"
+            />
+          </svg>
+          <div class="score-ring-text">
+            <span class="score-value reality-value"
+              >{{ overallRealityScore().toFixed(0) }}%</span
+            >
+            <span class="score-label">Actual</span>
+          </div>
+          <span class="score-ring-badge reality-label">Reality</span>
+        </div>
+      </div>
+      <div class="score-details">
+        <div class="score-details-header">
+          <h2>Goal Completion</h2>
+          <span class="score-month"
+            >Month {{ store.currentProjectionMonth() }}</span
+          >
+        </div>
+        <div class="score-breakdown">
+          <div class="sb-group">
+            <span class="sb-group-title projected-label">Projected</span>
+            <div class="sb-row">
+              <span class="sb-icon">🏆</span
+              ><span class="sb-count">{{ goalScoreDetails().achieved }}</span
+              ><span class="sb-label">Achieved</span>
+            </div>
+            <div class="sb-row">
+              <span class="sb-icon">🟢</span
+              ><span class="sb-count">{{ goalScoreDetails().onTrack }}</span
+              ><span class="sb-label">On Track</span>
+            </div>
+            <div class="sb-row">
+              <span class="sb-icon">🟡</span
+              ><span class="sb-count">{{ goalScoreDetails().atRisk }}</span
+              ><span class="sb-label">Needs Attention</span>
+            </div>
+            <div class="sb-row">
+              <span class="sb-icon">🔴</span
+              ><span class="sb-count">{{ goalScoreDetails().offTrack }}</span
+              ><span class="sb-label">Behind Schedule</span>
+            </div>
+          </div>
+          <div class="sb-group">
+            <span class="sb-group-title reality-label">Reality</span>
+            <div class="sb-row">
+              <span class="sb-icon">🏆</span
+              ><span class="sb-count">{{ realityScoreDetails().achieved }}</span
+              ><span class="sb-label">Achieved</span>
+            </div>
+            <div class="sb-row">
+              <span class="sb-icon">🟢</span
+              ><span class="sb-count">{{ realityScoreDetails().onTrack }}</span
+              ><span class="sb-label">On Track</span>
+            </div>
+            <div class="sb-row">
+              <span class="sb-icon">🟡</span
+              ><span class="sb-count">{{ realityScoreDetails().atRisk }}</span
+              ><span class="sb-label">Needs Attention</span>
+            </div>
+            <div class="sb-row">
+              <span class="sb-icon">🔴</span
+              ><span class="sb-count">{{ realityScoreDetails().offTrack }}</span
+              ><span class="sb-label">Behind Schedule</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Goal Timeline Gantt -->
+    @let ganttMilestones = store.activeGoalMilestones();
+    @if (ganttMilestones.length > 0) {
+      <div class="gantt-card">
+        <div class="gantt-header">
+          <h2>📅 Goal Timeline</h2>
+          <span class="gantt-subtitle"
+            >Duration from start to target with current progress</span
+          >
+        </div>
+        <div class="gantt-body">
+          @let maxMonth =
+            Math.max(...ganttMilestones.map((m) => m.achievedMonth ?? 0), 12);
+          @for (m of ganttMilestones; track m.id) {
+            <div class="gantt-row">
+              <div class="gantt-label-group">
+                <span class="gantt-name">{{ m.name }}</span>
+                <span class="gantt-amount">{{ fmtCurrency(m.amount) }}</span>
+              </div>
+              <div class="gantt-track">
+                @let totalWidth = maxMonth;
+                @let achievedPct =
+                  ((m.achievedMonth ?? totalWidth) / totalWidth) * 100;
+                @let curPct =
+                  maxMonth > 0 ? (m.fundAccumulated / m.amount) * 100 : 0;
+                <div class="gantt-bar-bg">
+                  <div
+                    class="gantt-bar-progress"
+                    [style.width.%]="Math.min(curPct, 100)"
+                    [class]="m.status"
+                  ></div>
+                  @if (m.achievedMonth) {
+                    <span
+                      class="gantt-marker"
+                      [style.left.%]="achievedPct"
+                      title="Achieved month {{ m.achievedMonth }} ({{
+                        getAchievedDate(m.achievedMonth)
+                      }})"
+                      >🏆</span
+                    >
+                  }
+                </div>
+                <div class="gantt-labels">
+                  <span></span>
+                  <span class="gantt-label-end">{{
+                    m.achievedMonth
+                      ? 'Mo ' +
+                        m.achievedMonth +
+                        ' (' +
+                        getAchievedDate(m.achievedMonth) +
+                        ')'
+                      : ''
+                  }}</span>
+                </div>
+              </div>
+              <span class="gantt-status-badge" [class]="m.status">{{
+                m.status
+              }}</span>
+            </div>
+          }
+        </div>
+      </div>
+    }
+
+    <div class="full-chart-card">
+      <div class="full-chart-header">
+        <div>
+          <h2>Goal Progress Overview</h2>
+          <p class="chart-subtitle">Planned vs target vs reality per goal</p>
+        </div>
+      </div>
+      <div class="full-chart-body">
+        <canvas
+          baseChart
+          type="bar"
+          [data]="goalsChartData()"
+          [options]="goalsChartOptions()"
+        ></canvas>
+      </div>
+    </div>
+
+    <div class="milestones-card">
+      <div class="milestones-header">
+        <h2>Goal Milestones</h2>
+        <span class="milestones-subtitle"
+          >Projected vs actual progress per goal</span
+        >
+      </div>
+      <div class="milestones-table-wrap">
+        <table class="milestones-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Goal</th>
+              <th>Target Amount</th>
+              <th>
+                <app-ui-tooltip
+                  tipTitle="Priority"
+                  tipBody="Goals with lower numbers (e.g., 1) are funded first before higher numbers."
+                  tipMeaning="Determines the order of cash flow allocation."
+                  >Priority</app-ui-tooltip
+                >
+              </th>
+              <th>Achieved Month</th>
+              <th>Progress</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (ms of currentGoalProgress(); track ms.id; let i = $index) {
+              @let rms = realityGoalProgress()[i];
+              @let rpct = rms ? goalPct(rms.fundAccumulated, rms.amount) : 0;
+              @let ppct = goalPct(ms.fundAccumulated, ms.amount);
+              <tr>
+                <td class="rank-cell">{{ i + 1 }}</td>
+                <td>
+                  <div class="goal-title-row">
+                    <span class="goal-title">{{ ms.name }}</span>
+                    <span class="goal-category">{{ ms.category }}</span>
+                  </div>
+                </td>
+                <td class="amount-cell">{{ fmtCurrency(ms.amount) }}</td>
+                <td class="amount-cell monthly-cell">{{ ms.priority || 1 }}</td>
+                <td class="date-cell">
+                  {{ ms.achievedMonth ? 'Month ' + ms.achievedMonth : '—' }}
+                </td>
+                <td class="dual-progress-cell">
+                  <div class="dual-bar">
+                    <div class="dual-bar-row">
+                      <div class="dual-bar-track projected-bar-bg">
+                        <div
+                          class="dual-bar-fill dual-projected"
+                          [style.width.%]="ppct"
+                          [title]="
+                            'Planned: ' + fmtCurrency(ms.fundAccumulated)
+                          "
+                        ></div>
+                      </div>
+                      <span class="dual-bar-pct projected-label"
+                        >{{ ppct.toFixed(0) }}%</span
+                      >
+                    </div>
+                    <div class="dual-bar-row">
+                      <div class="dual-bar-track reality-bar-bg">
+                        <div
+                          class="dual-bar-fill dual-reality"
+                          [style.width.%]="rpct"
+                          [title]="
+                            'Actual: ' +
+                            (rms ? fmtCurrency(rms.fundAccumulated) : '0')
+                          "
+                        ></div>
+                      </div>
+                      <span class="dual-bar-pct reality-label"
+                        >{{ rpct.toFixed(0) }}%</span
+                      >
+                    </div>
+                  </div>
+                  <div class="dual-amounts">
+                    <span class="proj-amt"
+                      >P: {{ fmtCurrency(ms.fundAccumulated) }}</span
+                    >
+                    <span class="real-amt"
+                      >R:
+                      {{ rms ? fmtCurrency(rms.fundAccumulated) : '0' }}</span
+                    >
+                  </div>
+                </td>
+                <td>
+                  <div class="dual-status">
+                    <span
+                      class="badge badge-sm"
+                      [class]="statusClass(ms.status)"
+                      [title]="'Projected'"
+                      >{{ formatStatus(ms.status) }}</span
+                    >
+                    <span
+                      class="badge badge-sm"
+                      [class]="rms ? statusClass(rms.status) : ''"
+                      [title]="'Reality'"
+                      >{{ rms ? formatStatus(rms.status) : '—' }}</span
+                    >
+                  </div>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="7" class="empty-row">
+                  No goals defined in active scenario.
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  }
+</div>

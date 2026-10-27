@@ -1,0 +1,528 @@
+<div class="compare-view">
+  <div class="action-bar">
+    <button class="btn-modern btn-primary" (click)="exportPdf()">
+      <span class="icon">📄</span> Export Report
+    </button>
+    <button class="btn-modern btn-secondary" (click)="exportJson()">
+      <span class="icon">💾</span> Backup JSON
+    </button>
+    <label class="btn-modern btn-outline file-upload">
+      <span class="icon">📂</span> Load JSON
+      <input
+        type="file"
+        accept=".json"
+        (change)="importJson($event)"
+        style="display: none"
+      />
+    </label>
+  </div>
+
+  @if (store.scenarios().length === 0) {
+    <div class="empty-state">
+      <div class="empty-icon">📊</div>
+      <h2>No Scenarios to Compare</h2>
+      <p>Create at least one scenario in the editor to start comparing.</p>
+      <a class="btn-primary" routerLink="../editor">Go to Editor</a>
+    </div>
+  }
+
+  <div class="scenario-filters">
+    <app-scenario-selector
+      [scenarios]="store.scenarios()"
+      mode="multiple"
+      [hiddenIds]="hiddenScenarioIds()"
+      (toggle)="toggleVisibility($event)"
+    ></app-scenario-selector>
+  </div>
+
+  <div class="live-sliders-panel">
+    <h3>🎛️ Live What-If Overrides</h3>
+    <p class="subtitle">
+      Drag the sliders to dynamically recalculate the comparison projection.
+    </p>
+    <div class="sliders-grid">
+      <div class="slider-control">
+        <label
+          >Income Multiplier:
+          <strong>{{ incomeMult().toFixed(2) }}x</strong></label
+        >
+        <input
+          type="range"
+          min="0.5"
+          max="2"
+          step="0.05"
+          [ngModel]="incomeMult()"
+          (ngModelChange)="incomeMult.set($event)"
+        />
+      </div>
+      <div class="slider-control">
+        <label
+          >Expense Multiplier:
+          <strong>{{ expenseMult().toFixed(2) }}x</strong></label
+        >
+        <input
+          type="range"
+          min="0.5"
+          max="2"
+          step="0.05"
+          [ngModel]="expenseMult()"
+          (ngModelChange)="expenseMult.set($event)"
+        />
+      </div>
+      <div class="slider-control">
+        <div class="label-row">
+          <label
+            >Inflation Override:
+            <strong>{{
+              inflationOverride() !== null
+                ? inflationOverride() + '%'
+                : 'Default'
+            }}</strong></label
+          >
+          <button
+            class="btn-text-small"
+            *ngIf="inflationOverride() !== null"
+            (click)="inflationOverride.set(null)"
+          >
+            Reset
+          </button>
+        </div>
+        <input
+          type="range"
+          min="0"
+          max="15"
+          step="0.5"
+          [ngModel]="inflationOverride() || 0"
+          (ngModelChange)="inflationOverride.set($event)"
+        />
+      </div>
+      <div class="slider-control">
+        <div class="label-row">
+          <label
+            >Yield Override:
+            <strong>{{
+              yieldOverride() !== null ? yieldOverride() + '%' : 'Default'
+            }}</strong></label
+          >
+          <button
+            class="btn-text-small"
+            *ngIf="yieldOverride() !== null"
+            (click)="yieldOverride.set(null)"
+          >
+            Reset
+          </button>
+        </div>
+        <input
+          type="range"
+          min="0"
+          max="20"
+          step="0.5"
+          [ngModel]="yieldOverride() || 0"
+          (ngModelChange)="yieldOverride.set($event)"
+        />
+      </div>
+    </div>
+  </div>
+
+  @if (store.scenarios().length > 0) {
+    <div class="combined-chart-wrapper">
+      <div class="chart-header">
+        <h3>Growth Trajectory Overview</h3>
+      </div>
+      <div class="canvas-container" style="height: 380px">
+        <canvas
+          baseChart
+          [data]="combinedChartData()"
+          [options]="combinedChartOptions()"
+          [type]="'line'"
+        ></canvas>
+      </div>
+    </div>
+
+    <div class="comparison-matrix">
+      <table>
+        <thead>
+          <tr>
+            <th class="sticky-col">Financial Metric</th>
+            @for (summary of visibleSummaries(); track summary.id) {
+              <th>
+                <div class="scenario-th-header">
+                  <input
+                    type="text"
+                    class="inline-input name-input"
+                    [ngModel]="summary.name"
+                    (ngModelChange)="
+                      store.updateSpecificScenarioName(summary.id, $event)
+                    "
+                    placeholder="Scenario Name"
+                  />
+                  <div class="th-actions">
+                    <button
+                      class="action-icon"
+                      (click)="store.duplicateScenario(summary.id)"
+                      title="Duplicate"
+                    >
+                      📑
+                    </button>
+                    <button
+                      class="action-icon danger"
+                      (click)="store.deleteScenario(summary.id)"
+                      [disabled]="store.scenarios().length === 1"
+                      title="Delete"
+                    >
+                      🗑️
+                    </button>
+                  </div>
+                </div>
+              </th>
+            }
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            class="section-header clickable reality-header"
+            (click)="toggleSection('variance')"
+          >
+            <td colspan="100%">
+              <div class="section-header-content">
+                <span>🎯 Current Month Reality Check</span>
+                <span
+                  class="chevron"
+                  [class.rotated]="collapsedSections().has('variance')"
+                  >▼</span
+                >
+              </div>
+            </td>
+          </tr>
+          @if (!collapsedSections().has('variance')) {
+            <tr class="variance-row">
+              <td class="sticky-col">Income Progress</td>
+              @for (summary of visibleSummaries(); track summary.id) {
+                <td>
+                  <app-ui-stat-cell
+                    [actualValue]="summary.variance.actualIncome"
+                    [plannedValue]="summary.variance.plannedIncome"
+                    labelActual="Earned"
+                    labelPlanned="Goal"
+                    [progress]="summary.variance.incomeProgress"
+                    [varianceAmount]="summary.variance.incomeVariance"
+                    [isExpense]="false"
+                  ></app-ui-stat-cell>
+                </td>
+              }
+            </tr>
+            <tr class="variance-row border-thick">
+              <td class="sticky-col">Expense Status</td>
+              @for (summary of visibleSummaries(); track summary.id) {
+                <td>
+                  <app-ui-stat-cell
+                    [actualValue]="summary.variance.actualExpense"
+                    [plannedValue]="summary.variance.plannedExpense"
+                    labelActual="Spent"
+                    labelPlanned="Budget"
+                    [progress]="summary.variance.expenseProgress"
+                    [varianceAmount]="summary.variance.expenseVariance"
+                    [isExpense]="true"
+                  ></app-ui-stat-cell>
+                </td>
+              }
+            </tr>
+          }
+
+          <tr
+            class="section-header clickable"
+            (click)="toggleSection('parameters')"
+          >
+            <td colspan="100%">
+              <div class="section-header-content">
+                <span>⚙️ Adjustable Parameters (Real-time)</span>
+                <span
+                  class="chevron"
+                  [class.rotated]="collapsedSections().has('parameters')"
+                  >▼</span
+                >
+              </div>
+            </td>
+          </tr>
+          @if (!collapsedSections().has('parameters')) {
+            <tr>
+              <td class="sticky-col">Timeline (Years)</td>
+              @for (summary of visibleSummaries(); track summary.id) {
+                <td>
+                  <div class="inline-input-wrapper">
+                    <input
+                      type="number"
+                      class="inline-input param-input"
+                      [ngModel]="summary.years"
+                      (ngModelChange)="
+                        store.updateSpecificScenarioYears(summary.id, $event)
+                      "
+                      min="1"
+                    />
+                    <span class="input-suffix">Yrs</span>
+                  </div>
+                </td>
+              }
+            </tr>
+            <tr>
+              <td class="sticky-col">Expected Inflation</td>
+              @for (summary of visibleSummaries(); track summary.id) {
+                <td>
+                  <div class="inline-input-wrapper">
+                    <input
+                      type="number"
+                      class="inline-input param-input"
+                      [ngModel]="summary.inflationRate"
+                      (ngModelChange)="
+                        store.updateSpecificScenarioInflation(
+                          summary.id,
+                          $event
+                        )
+                      "
+                      step="0.1"
+                    />
+                    <span class="input-suffix">%</span>
+                  </div>
+                </td>
+              }
+            </tr>
+            <tr>
+              <td class="sticky-col">Investment Yield</td>
+              @for (summary of visibleSummaries(); track summary.id) {
+                <td>
+                  <div class="inline-input-wrapper">
+                    <input
+                      type="number"
+                      class="inline-input param-input text-success"
+                      [ngModel]="summary.investmentYield"
+                      (ngModelChange)="
+                        store.updateSpecificScenarioYield(summary.id, $event)
+                      "
+                      step="0.1"
+                    />
+                    <span class="input-suffix">%</span>
+                  </div>
+                </td>
+              }
+            </tr>
+          }
+
+          <tr
+            class="section-header clickable"
+            (click)="toggleSection('elements')"
+          >
+            <td colspan="100%">
+              <div class="section-header-content">
+                <span>🎛️ Active Elements (Toggle On/Off)</span>
+                <span
+                  class="chevron"
+                  [class.rotated]="collapsedSections().has('elements')"
+                  >▼</span
+                >
+              </div>
+            </td>
+          </tr>
+          @if (!collapsedSections().has('elements')) {
+            <tr>
+              <td class="sticky-col">💰 Income Streams</td>
+              @for (summary of visibleSummaries(); track summary.id) {
+                <td>
+                  <app-element-toggle-list
+                    [items]="summary.incomes"
+                    emptyMessage="No incomes"
+                    (toggle)="store.toggleIncome(summary.id, $event)"
+                  ></app-element-toggle-list>
+                </td>
+              }
+            </tr>
+            <tr>
+              <td class="sticky-col">💸 Expenses</td>
+              @for (summary of visibleSummaries(); track summary.id) {
+                <td>
+                  <app-element-toggle-list
+                    [items]="summary.expenses"
+                    emptyMessage="No expenses"
+                    (toggle)="store.toggleExpense(summary.id, $event)"
+                  ></app-element-toggle-list>
+                </td>
+              }
+            </tr>
+            <tr>
+              <td class="sticky-col">🎯 Financial Goals</td>
+              @for (summary of visibleSummaries(); track summary.id) {
+                <td>
+                  <app-element-toggle-list
+                    [items]="summary.goals"
+                    emptyMessage="No goals"
+                    (toggle)="store.toggleGoal(summary.id, $event)"
+                  ></app-element-toggle-list>
+                </td>
+              }
+            </tr>
+          }
+
+          <tr
+            class="section-header clickable"
+            (click)="toggleSection('outcomes')"
+          >
+            <td colspan="100%">
+              <div class="section-header-content">
+                <span>📊 Projected Outcomes</span>
+                <span
+                  class="chevron"
+                  [class.rotated]="collapsedSections().has('outcomes')"
+                  >▼</span
+                >
+              </div>
+            </td>
+          </tr>
+          @if (!collapsedSections().has('outcomes')) {
+            <tr>
+              <td class="sticky-col">
+                <span class="row-icon">📈</span>
+                <app-ui-tooltip
+                  tipTitle="Average Monthly Net"
+                  tipBody="The average of (income − expenses) per month across the projection."
+                  tipMeaning="Positive means surplus, negative means deficit."
+                  >Average Monthly Net</app-ui-tooltip
+                >
+              </td>
+              @for (summary of visibleSummaries(); track summary.id) {
+                <td>
+                  <div
+                    class="outcome-metric"
+                    [class.positive]="summary.monthlyAverage >= 0"
+                    [class.negative]="summary.monthlyAverage < 0"
+                  >
+                    <span class="metric-value">{{
+                      summary.monthlyAverage
+                        | currency: 'TND' : 'symbol' : '1.0-0'
+                    }}</span>
+                  </div>
+                </td>
+              }
+            </tr>
+            <tr>
+              <td class="sticky-col">
+                <span class="row-icon">🏦</span>
+                <app-ui-tooltip
+                  tipTitle="Final Accumulated Reserve"
+                  tipBody="Projected account balance at the end after all income, expenses, loans, and goals."
+                  tipMeaning="Positive = money left over, negative = outgo exceeded income."
+                  >Final Accumulated Reserve</app-ui-tooltip
+                >
+              </td>
+              @for (summary of visibleSummaries(); track summary.id) {
+                <td>
+                  <div
+                    class="outcome-metric large"
+                    [class.positive]="summary.finalReserve >= 0"
+                    [class.negative]="summary.finalReserve < 0"
+                  >
+                    <span class="metric-value">{{
+                      summary.finalReserve
+                        | currency: 'TND' : 'symbol' : '1.0-0'
+                    }}</span>
+                  </div>
+                </td>
+              }
+            </tr>
+            <tr>
+              <td class="sticky-col">
+                <span class="row-icon">💵</span>
+                <app-ui-tooltip
+                  tipTitle="Total Projected Income"
+                  tipBody="Sum of all income across the entire projection period."
+                  >Total Projected Income</app-ui-tooltip
+                >
+              </td>
+              @for (summary of visibleSummaries(); track summary.id) {
+                <td>
+                  <div class="outcome-metric positive-subtle">
+                    <span class="metric-value">{{
+                      summary.totalIncome | currency: 'TND' : 'symbol' : '1.0-0'
+                    }}</span>
+                  </div>
+                </td>
+              }
+            </tr>
+            <tr>
+              <td class="sticky-col">
+                <span class="row-icon">🔥</span>
+                <app-ui-tooltip
+                  tipTitle="Total Projected Expenses"
+                  tipBody="Sum of all expenses across the entire projection period."
+                  >Total Projected Expenses</app-ui-tooltip
+                >
+              </td>
+              @for (summary of visibleSummaries(); track summary.id) {
+                <td>
+                  <div class="outcome-metric negative-subtle">
+                    <span class="metric-value">{{
+                      summary.totalExpenses
+                        | currency: 'TND' : 'symbol' : '1.0-0'
+                    }}</span>
+                  </div>
+                </td>
+              }
+            </tr>
+            <tr>
+              <td class="sticky-col">
+                <span class="row-icon">🎯</span> Goals Achieved
+              </td>
+              @for (summary of visibleSummaries(); track summary.id) {
+                <td>
+                  <div class="milestones-preview">
+                    @for (
+                      milestone of summary.goalMilestones;
+                      track milestone.id
+                    ) {
+                      @if (milestone.status === 'achieved') {
+                        <span
+                          class="milestone-badge success"
+                          title="{{ milestone.name }}"
+                        >
+                          🏆 {{ milestone.name }}
+                          <span class="mo-tag">{{
+                            summary.dateLabels[
+                              (milestone.achievedMonth ?? 1) - 1
+                            ]
+                          }}</span>
+                        </span>
+                      } @else if (milestone.status === 'in_progress') {
+                        <span
+                          class="milestone-badge on-track"
+                          title="{{ milestone.name }}"
+                          >⏳ {{ milestone.name }} (Priority:
+                          {{ milestone.priority || 1 }})</span
+                        >
+                      } @else {
+                        <span
+                          class="milestone-badge unmet"
+                          title="{{ milestone.name }}"
+                          >⏸️ {{ milestone.name }} (Priority:
+                          {{ milestone.priority || 1 }})</span
+                        >
+                      }
+                    }
+                    @if (summary.goalMilestones.length === 0) {
+                      <span class="text-muted empty-goals">No goals set</span>
+                    }
+                  </div>
+                </td>
+              }
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+  @if (store.scenarios().length > 0 && visibleSummaries().length === 0) {
+    <div class="empty-state">
+      <div class="empty-icon">👁️</div>
+      <h2>All Scenarios Hidden</h2>
+      <p>Toggle scenarios on using the filters above to compare them.</p>
+    </div>
+  }
+</div>

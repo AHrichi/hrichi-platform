@@ -1,0 +1,219 @@
+<section class="panel">
+  <div class="panel-header">
+    <h2><span class="header-icon">💸</span> Expenses</h2>
+  </div>
+
+  <form [formGroup]="expenseForm" (ngSubmit)="onSubmit()" class="add-form">
+    <div class="form-row">
+      <div class="form-group">
+        <label for="expense-name">Name</label>
+        <input
+          id="expense-name"
+          type="text"
+          formControlName="name"
+          placeholder="e.g., Gym, Groceries"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="expense-amount">Amount</label>
+        <div class="input-with-icon">
+          <input id="expense-amount" type="number" formControlName="amount" />
+          <span class="currency-tag">TND</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="expense-start">Start Month</label>
+        <input
+          id="expense-start"
+          type="number"
+          formControlName="startMonth"
+          min="1"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="expense-months">Duration (Months)</label>
+        <input
+          id="expense-months"
+          type="number"
+          formControlName="monthsActive"
+          placeholder="Ongoing"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="expense-interval">Repeats Every (Months)</label>
+        <input
+          id="expense-interval"
+          type="number"
+          formControlName="recurrenceInterval"
+          min="1"
+        />
+      </div>
+
+      <div class="form-actions">
+        <button
+          type="submit"
+          [disabled]="expenseForm.invalid"
+          class="btn-modern btn-submit"
+        >
+          {{ editingId ? '✏️ Update Expense' : '➕ Add Expense' }}
+        </button>
+
+        @if (editingId) {
+          <button
+            type="button"
+            class="btn-modern btn-cancel"
+            (click)="cancelEdit()"
+          >
+            Cancel
+          </button>
+        }
+      </div>
+    </div>
+  </form>
+
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Amount</th>
+          <th>Start Mo.</th>
+          <th>Duration</th>
+          <th>Repeats</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (expense of expenses(); track expense.id) {
+          <tr
+            [class.disabled-row]="expense.isEnabled === false"
+            [class.editing-row]="expense.id === editingId"
+          >
+            <td class="font-medium">{{ expense.name }}</td>
+            <td>
+              <strong class="text-danger">{{
+                expense.amount | currency: 'TND' : 'symbol'
+              }}</strong>
+            </td>
+            <td>Mo. {{ expense.startMonth || 1 }}</td>
+            <td>
+              <span
+                class="duration-badge"
+                [class.ongoing]="!expense.monthsActive"
+              >
+                {{
+                  expense.monthsActive
+                    ? expense.monthsActive + ' Months'
+                    : 'Ongoing'
+                }}
+              </span>
+            </td>
+            <td>Every {{ expense.recurrenceInterval || 1 }} Mo.</td>
+            <td>
+              <label class="toggle-switch">
+                <input
+                  type="checkbox"
+                  [checked]="expense.isEnabled !== false"
+                  (change)="onToggle(expense.id)"
+                />
+                <span class="slider"></span>
+              </label>
+            </td>
+            <td class="actions-cell">
+              <div class="action-buttons">
+                <button
+                  type="button"
+                  (click)="openCopyModal(expense)"
+                  class="action-icon copy"
+                  title="Copy to other scenarios"
+                >
+                  📋
+                </button>
+                <button
+                  type="button"
+                  (click)="onEdit(expense)"
+                  class="action-icon edit"
+                  title="Edit"
+                >
+                  ✏️
+                </button>
+                <button
+                  type="button"
+                  (click)="onRemove(expense.id)"
+                  class="action-icon delete"
+                  title="Remove"
+                >
+                  🗑️
+                </button>
+              </div>
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="7" class="empty-state">
+              <div class="empty-content">
+                <span class="empty-icon">🍃</span>
+                <p>No expenses added yet.</p>
+              </div>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</section>
+
+@if (expenseToCopy) {
+  <div class="modal-backdrop" (click)="closeCopyModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <h3>Copy "{{ expenseToCopy.name }}"</h3>
+      <p>Select the scenarios that will receive this expense:</p>
+
+      <div class="scenario-list">
+        @if (otherScenarios().length > 0) {
+          <button (click)="selectAllTargets()" class="btn-text">
+            Select All Scenarios
+          </button>
+
+          @for (scenario of otherScenarios(); track scenario.id) {
+            <div
+              class="copy-item-card"
+              [class.selected]="selectedTargetScenarios.has(scenario.id)"
+              (click)="toggleTargetScenario(scenario.id)"
+            >
+              <span class="scenario-name">{{ scenario.name }}</span>
+              <label class="toggle-switch" (click)="$event.stopPropagation()">
+                <input
+                  type="checkbox"
+                  [checked]="selectedTargetScenarios.has(scenario.id)"
+                  (change)="toggleTargetScenario(scenario.id)"
+                />
+                <span class="slider"></span>
+              </label>
+            </div>
+          }
+        } @else {
+          <p class="text-muted">No other scenarios available to copy to.</p>
+        }
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-modern btn-cancel" (click)="closeCopyModal()">
+          Cancel
+        </button>
+        <button
+          class="btn-modern btn-submit"
+          [disabled]="selectedTargetScenarios.size === 0"
+          (click)="confirmCopy()"
+        >
+          Apply
+        </button>
+      </div>
+    </div>
+  </div>
+}

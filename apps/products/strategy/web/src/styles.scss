@@ -1,0 +1,127 @@
+/* StrategyApp global styles */
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+  margin: 0;
+  flex-shrink: 0;
+
+  input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--border-dark, #cbd5e1);
+    transition: 0.4s;
+    border-radius: 24px;
+
+    &:before {
+      position: absolute;
+      content: '';
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: 0.4s;
+      border-radius: 50%;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+  }
+
+  input:checked + .slider {
+    background-color: var(--success, #10b981);
+  }
+  input:checked + .slider:before {
+    transform: translateX(20px);
+  }
+}
+
+.copy-item-card {
+  display: flex !important;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.85rem 1.25rem !important;
+  border-radius: 12px !important;
+  background: var(--surface, #ffffff) !important;
+  border: 1px solid var(--border-light, #e2e8f0) !important;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: 0.5rem;
+
+  &:hover {
+    background: var(--bg-body, #f4f7fe) !important;
+    border-color: rgba(79, 70, 229, 0.3) !important;
+  }
+
+  &.selected {
+    background: var(--primary-light, #e0e7ff) !important;
+    border-color: var(--primary, #4f46e5) !important;
+  }
+
+  .scenario-name {
+    font-weight: 600;
+    color: var(--text-main, #1e293b);
+    font-size: 0.95rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-right: 12px;
+  }
+}
+
+.toast-container {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10000;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: none;
+}
+
+.toast {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 20px;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #fff;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  pointer-events: auto;
+  animation: toast-in 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+
+  &.success {
+    background: #059669;
+  }
+  &.error {
+    background: #dc2626;
+  }
+  &.info {
+    background: #4f46e5;
+  }
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}

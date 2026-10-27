@@ -1,0 +1,12 @@
+{
+  "$schema": "../../../../node_modules/wrangler/config-schema.json",
+  "name": "product-strategy",
+  "compatibility_date": "2026-10-26",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "directory": "../../../../dist/apps/products/strategy/web/browser",
+    "binding": "ASSETS",
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "single-page-application",
+  },
+}

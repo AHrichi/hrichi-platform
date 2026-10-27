@@ -1,3 +1,7 @@
+if (typeof (globalThis as any).ngDevMode === 'undefined') {
+  (globalThis as any).ngDevMode = false;
+}
+
 import { initFederation } from '@angular-architects/native-federation';
 
 /**

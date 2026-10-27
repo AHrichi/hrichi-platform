@@ -15,6 +15,13 @@
     "skipDefaultLibCheck": true,
     "resolveJsonModule": true,
     "paths": {
+      "@ah/products/strategy/domain": [
+        "./libs/products/strategy/domain/src/index.ts"
+      ],
+      "@ah/products/strategy/feature": [
+        "./libs/products/strategy/feature/src/index.ts"
+      ],
+      "@ah/platform/app-mode": ["./libs/platform/app-mode/src/index.ts"],
       "@ah/platform/federation": ["./libs/platform/federation/src/index.ts"],
       "@ah/platform/inspector": ["./libs/platform/inspector/src/index.ts"],
       "@ah/design-system/tokens": ["./libs/design-system/tokens/src/index.ts"],

@@ -1,0 +1,514 @@
+/* src/app/app.component.scss */
+.theme-wrapper {
+  --bg-body: #f4f7fe; /* Modern soft blue-gray background */
+  --surface: #ffffff;
+  --text-main: #1e293b;
+  --text-muted: #64748b;
+  --border-light: #e2e8f0;
+  --border-dark: #cbd5e1;
+  --input-bg: #f8fafc;
+
+  --primary: #4f46e5;
+  --primary-hover: #4338ca;
+  --primary-light: #e0e7ff;
+  --success: #10b981;
+  --success-hover: #059669;
+  --danger: #ef4444;
+  --danger-light: #fee2e2;
+
+  background-color: var(--bg-body);
+  color: var(--text-main);
+  min-height: 100vh;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+
+  &.dark-theme {
+    --bg-body: #0f172a;
+    --surface: #1e293b;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --border-light: #334155;
+    --border-dark: #475569;
+    --input-bg: #0f172a;
+  }
+}
+
+.demo-banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  background: var(--surface);
+  border: 1px solid var(--border-light);
+  border-left: 4px solid var(--primary);
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+
+  &__info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .demo-badge {
+    background: var(--primary-light);
+    color: var(--primary);
+    font-weight: 700;
+    font-size: 0.8rem;
+    padding: 4px 10px;
+    border-radius: 999px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .demo-text {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+
+    code {
+      background: var(--input-bg);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.85em;
+      color: var(--primary);
+    }
+  }
+
+  .demo-reset-btn {
+    background: transparent;
+    border: 1px solid var(--border-dark);
+    color: var(--text-main);
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover {
+      background: var(--primary-light);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+  }
+}
+
+.dashboard-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 32px 24px;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.header-flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+
+  h2 {
+    color: var(--text-main);
+    font-size: 1.8rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.header-btn,
+.calc-toggle-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  border: 1px solid var(--border-light);
+  background: var(--surface);
+  font-size: 1.2rem;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+  }
+}
+
+.theme-toggle {
+  background: var(--surface);
+  color: var(--text-main);
+  border: 1px solid var(--border-light);
+  padding: 10px 20px;
+  border-radius: 14px;
+  cursor: pointer;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  transition: all 0.2s;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+  }
+}
+
+/* Modern Segmented Control Navigation */
+.main-nav {
+  display: inline-flex;
+  background: var(--surface);
+  padding: 6px;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  margin-bottom: 32px;
+
+  button {
+    background: transparent;
+    border: none;
+    padding: 10px 24px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    cursor: pointer;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+
+    &:hover:not(.active) {
+      background: var(--bg-body);
+      color: var(--text-main);
+    }
+
+    &.active {
+      background: var(--primary);
+      color: white;
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+    }
+  }
+}
+
+.header-btn.connected {
+  background: rgba(16, 185, 129, 0.1) !important;
+  border-color: rgba(16, 185, 129, 0.3) !important;
+}
+
+/* ── Button Base (reused in Drive modal) ── */
+.btn-modern {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  font-weight: 600;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  &:hover {
+    transform: translateY(-1px);
+  }
+}
+.btn-sm {
+  padding: 0.5rem 1rem !important;
+  height: 38px !important;
+  font-size: 0.85rem !important;
+}
+.btn-submit {
+  padding: 0.75rem 1.25rem;
+  border: none;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  height: 46px;
+  background: linear-gradient(135deg, var(--primary), #818cf8);
+  color: white;
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
+  transition: all 0.25s ease;
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(79, 70, 229, 0.4);
+  }
+  &:disabled {
+    background: var(--border-dark);
+    box-shadow: none;
+    cursor: not-allowed;
+  }
+}
+.btn-cancel {
+  padding: 0.75rem 1.25rem;
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  height: 46px;
+  background: var(--surface);
+  color: var(--text-muted);
+  transition: all 0.2s ease;
+  &:hover {
+    background: var(--bg-body);
+    color: var(--text-main);
+    border-color: var(--border-dark);
+  }
+}
+
+/* ── Google Drive Modal ── */
+.drive-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.drive-modal {
+  background: var(--surface);
+  border-radius: 20px;
+  max-width: 540px;
+  width: 100%;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.15);
+  padding: 1.5rem;
+}
+
+.drive-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.25rem;
+
+  h3 {
+    margin: 0;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--text-main);
+  }
+}
+
+.drive-section {
+  margin-bottom: 1.25rem;
+}
+
+.drive-name-row {
+  margin-bottom: 0.75rem;
+
+  .drive-input {
+    width: 100%;
+    padding: 0.6rem 0.8rem;
+    border: 1px solid var(--border-light);
+    border-radius: 10px;
+    background: var(--input-bg);
+    color: var(--text-main);
+    font-size: 0.88rem;
+    outline: none;
+    box-sizing: border-box;
+
+    &:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-light);
+    }
+  }
+}
+
+.drive-desc {
+  margin: 0 0 1rem;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.drive-form-row {
+  display: flex;
+  gap: 0.5rem;
+
+  .drive-input {
+    flex: 1;
+    padding: 0.6rem 0.8rem;
+    border: 1px solid var(--border-light);
+    border-radius: 10px;
+    background: var(--input-bg);
+    color: var(--text-main);
+    font-size: 0.88rem;
+    outline: none;
+
+    &:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-light);
+    }
+  }
+}
+
+.drive-help {
+  margin-top: 1rem;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+
+  summary {
+    cursor: pointer;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+
+  ol {
+    padding-left: 1.2rem;
+    li {
+      margin-bottom: 0.3rem;
+    }
+    code {
+      background: var(--bg-body);
+      padding: 1px 5px;
+      border-radius: 4px;
+      font-size: 0.8rem;
+    }
+    a {
+      color: var(--primary);
+    }
+  }
+}
+
+.drive-status {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--success);
+  margin-bottom: 1rem;
+
+  .drive-status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--success);
+  }
+}
+
+.drive-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.drive-files {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+.drive-file-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.65rem;
+  border-radius: 10px;
+  background: var(--bg-body);
+  border: 1px solid var(--border-light);
+
+  .drive-file-icon {
+    font-size: 1rem;
+    flex-shrink: 0;
+  }
+  .drive-file-name {
+    flex: 1;
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--text-main);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .drive-file-date {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+  .drive-file-actions {
+    display: flex;
+    gap: 0.25rem;
+    flex-shrink: 0;
+  }
+}
+
+/* ── Daily Reminder Modal ── */
+.reminder-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+
+  .reminder-modal {
+    background: var(--surface);
+    border-radius: 20px;
+    padding: 2rem 2.5rem;
+    max-width: 380px;
+    width: 90%;
+    text-align: center;
+    position: relative;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+
+    .reminder-icon {
+      font-size: 3rem;
+      margin-bottom: 0.5rem;
+    }
+
+    h3 {
+      margin: 0 0 0.75rem;
+      font-size: 1.2rem;
+      color: var(--text-main);
+    }
+
+    p {
+      margin: 0 0 0.4rem;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    .reminder-sub {
+      font-size: 0.8rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .reminder-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      align-items: center;
+    }
+
+    .reminder-close {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: none;
+      border: none;
+      font-size: 1.1rem;
+      cursor: pointer;
+      color: var(--text-muted);
+      padding: 4px;
+      line-height: 1;
+      border-radius: 6px;
+
+      &:hover {
+        background: var(--bg-body);
+      }
+    }
+  }
+}

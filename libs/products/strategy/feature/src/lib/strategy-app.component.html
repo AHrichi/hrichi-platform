@@ -1,0 +1,141 @@
+<div class="theme-wrapper" [class.dark-theme]="isDarkMode()">
+  <div class="dashboard-container">
+    @if (isEmbeddedDemo()) {
+      <div class="demo-banner">
+        <div class="demo-banner__info">
+          <span class="demo-badge">Platform Demo</span>
+          <span class="demo-text">
+            Zoneless Angular 22 micro-frontend · Isolated IndexedDB
+            (<code>ah-demo-strategy</code>)
+          </span>
+        </div>
+        <button type="button" class="demo-reset-btn" (click)="resetDemo()">
+          🔄 Reset Demo Data
+        </button>
+      </div>
+    }
+
+    <div class="header-flex">
+      <a [routerLink]="['home']" class="logo-link">
+        <h2 style="margin: 0">✨ Financial Strategy Dashboard</h2>
+      </a>
+      <div class="header-actions">
+        @if (hasScenarios()) {
+          <button
+            class="header-btn"
+            (click)="exportJson()"
+            title="Backup all data as JSON"
+          >
+            💾
+          </button>
+          <label
+            class="header-btn file-upload"
+            title="Restore data from JSON backup"
+          >
+            📂
+            <input
+              type="file"
+              accept=".json"
+              (change)="importJson($event)"
+              style="display: none"
+            />
+          </label>
+        }
+        <button
+          class="header-btn"
+          [routerLink]="['help']"
+          title="Help & Instructions"
+        >
+          ❓
+        </button>
+        <button
+          class="header-btn"
+          (click)="toggleCalculator()"
+          title="Toggle Calculator"
+        >
+          🧮
+        </button>
+        <button class="theme-toggle" (click)="themeService.toggleTheme()">
+          {{ isDarkMode() ? '☀️' : '🌙' }}
+        </button>
+      </div>
+    </div>
+
+    @if (hasScenarios()) {
+      <div class="main-nav">
+        <button
+          [routerLink]="['editor', store.activeScenarioId(), 'settings']"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: false }"
+        >
+          ✏️ Scenario Builder
+        </button>
+        <button [routerLink]="['ledger']" routerLinkActive="active">
+          📓 Daily Ledger
+        </button>
+        <button [routerLink]="['analytics']" routerLinkActive="active">
+          📈 Analytics
+        </button>
+        <button [routerLink]="['compare']" routerLinkActive="active">
+          📊 Detailed Comparison
+        </button>
+        <button [routerLink]="['net-worth']" routerLinkActive="active">
+          🏦 Net Worth
+        </button>
+        <button [routerLink]="['what-if']" routerLinkActive="active">
+          🔮 What-If
+        </button>
+        <button [routerLink]="['help']" routerLinkActive="active">
+          ❓ Help
+        </button>
+      </div>
+    }
+
+    <!-- Daily Reminder Modal -->
+    @if (showDailyReminder()) {
+      <div class="reminder-overlay" (click)="dismissDailyReminder()">
+        <div class="reminder-modal" (click)="$event.stopPropagation()">
+          <div class="reminder-icon">📝</div>
+          <h3>Daily Reminder</h3>
+          <p>You haven't logged any transactions for today yet.</p>
+          <p class="reminder-sub">Keep your ledger up to date!</p>
+          <div class="reminder-actions">
+            <button
+              type="button"
+              class="btn-modern btn-submit"
+              (click)="goToLedger()"
+            >
+              ➕ Log a Transaction
+            </button>
+            <button
+              type="button"
+              class="btn-cancel"
+              (click)="dismissDailyReminder()"
+            >
+              Don't show today
+            </button>
+          </div>
+          <button
+            type="button"
+            class="reminder-close"
+            (click)="dismissDailyReminder()"
+          >
+            ✕
+          </button>
+        </div>
+      </div>
+    }
+
+    <router-outlet></router-outlet>
+  </div>
+
+  @if (showCalculator()) {
+    <app-calculator-widget
+      (closeWidget)="toggleCalculator()"
+    ></app-calculator-widget>
+  }
+
+  @if (hasScenarios()) {
+    <app-floating-scenario-widget></app-floating-scenario-widget>
+  }
+</div>

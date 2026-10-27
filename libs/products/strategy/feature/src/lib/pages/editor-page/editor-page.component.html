@@ -1,0 +1,51 @@
+<app-scenario-selector
+  [scenarios]="store.scenarios()"
+  mode="single"
+  [activeId]="store.activeScenarioId()"
+  (toggle)="switchScenario($event)"
+  (add)="createScenario($event)"
+  (duplicate)="duplicateScenario($event)"
+  (rename)="renameScenario($event)"
+  (delete)="deleteScenario($event)"
+>
+</app-scenario-selector>
+
+<div class="editor-layout">
+  <div class="entry-column">
+    <nav class="section-tabs">
+      <a
+        [routerLink]="['/editor', store.activeScenarioId(), 'settings']"
+        routerLinkActive="active"
+        >Settings</a
+      >
+      <a
+        [routerLink]="['/editor', store.activeScenarioId(), 'incomes']"
+        routerLinkActive="active"
+        >Incomes</a
+      >
+      <a
+        [routerLink]="['/editor', store.activeScenarioId(), 'expenses']"
+        routerLinkActive="active"
+        >Expenses</a
+      >
+      <a
+        [routerLink]="['/editor', store.activeScenarioId(), 'goals']"
+        routerLinkActive="active"
+        >Goals</a
+      >
+    </nav>
+
+    <div class="section-content">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+
+  <div class="preview-column">
+    <div class="sticky-preview">
+      @if (activeScenarioSummary(); as summary) {
+        <app-scenario-card [summary]="summary" [isDarkMode]="isDarkMode()">
+        </app-scenario-card>
+      }
+    </div>
+  </div>
+</div>

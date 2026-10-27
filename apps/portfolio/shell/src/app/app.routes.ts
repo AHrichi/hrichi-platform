@@ -1,4 +1,5 @@
 import { Route } from '@angular/router';
+import { provideAppMode } from '@ah/platform/app-mode';
 import { federatedRoutes, LabFrame } from '@ah/platform/federation';
 import { labs } from '@ah/shared/content';
 
@@ -35,6 +36,12 @@ export const appRoutes: Route[] = [
     path: 'cv',
     loadChildren: () =>
       import('@ah/portfolio/feature-cv').then((m) => m.cvRoutes),
+  },
+  {
+    path: 'apps/strategy',
+    providers: [provideAppMode('embedded-demo')],
+    loadChildren: federatedRoutes('product-strategy'),
+    title: 'StrategyApp · Financial Planning & Projections · Ahmed Hrichi',
   },
   // Each lab's intro is prerendered around its remote (ADR-0014).
   {

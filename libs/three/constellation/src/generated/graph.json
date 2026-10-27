@@ -7,9 +7,9 @@
       "scope": "api",
       "layer": "app",
       "runtime": "node",
-      "x": -0.346,
-      "y": 0.895,
-      "z": -0.282
+      "x": 0.242,
+      "y": 0.868,
+      "z": -0.373
     },
     {
       "id": "api-leads",
@@ -17,9 +17,9 @@
       "scope": "api",
       "layer": "feature",
       "runtime": "node",
-      "x": -0.638,
-      "y": 0.537,
-      "z": -0.536
+      "x": 0.241,
+      "y": 0.844,
+      "z": 0.31
     },
     {
       "id": "design-system",
@@ -27,9 +27,9 @@
       "scope": "design-system",
       "layer": "app",
       "runtime": "browser",
-      "x": 0.193,
-      "y": 0.637,
-      "z": 0.554
+      "x": 0.032,
+      "y": 0.843,
+      "z": -0.086
     },
     {
       "id": "design-system-e2e",
@@ -37,9 +37,9 @@
       "scope": "test",
       "layer": "e2e",
       "runtime": "node",
-      "x": -0.347,
-      "y": 0.666,
-      "z": 0.571
+      "x": -0.19,
+      "y": 0.682,
+      "z": -0.647
     },
     {
       "id": "design-system-tokens",
@@ -47,9 +47,9 @@
       "scope": "design-system",
       "layer": "tokens",
       "runtime": "agnostic",
-      "x": 0.669,
-      "y": 0.516,
-      "z": 0.216
+      "x": 0.58,
+      "y": 0.638,
+      "z": -0.101
     },
     {
       "id": "design-system-ui",
@@ -57,9 +57,9 @@
       "scope": "design-system",
       "layer": "ui",
       "runtime": "browser",
-      "x": -0.009,
-      "y": 0.037,
-      "z": 0.507
+      "x": -0.102,
+      "y": 0.331,
+      "z": 0.376
     },
     {
       "id": "lab-hello",
@@ -67,9 +67,9 @@
       "scope": "lab-hello",
       "layer": "app",
       "runtime": "browser",
-      "x": -0.023,
-      "y": -0.855,
-      "z": -0.321
+      "x": -0.922,
+      "y": -0.12,
+      "z": -0.088
     },
     {
       "id": "lab-sky",
@@ -77,9 +77,9 @@
       "scope": "lab-sky",
       "layer": "app",
       "runtime": "browser",
-      "x": 0.384,
-      "y": -0.283,
-      "z": 0.642
+      "x": -0.353,
+      "y": 0.413,
+      "z": 0.61
     },
     {
       "id": "lab-sky-domain",
@@ -87,9 +87,9 @@
       "scope": "lab-sky",
       "layer": "domain",
       "runtime": "agnostic",
-      "x": 0.533,
-      "y": 0.432,
-      "z": 0.641
+      "x": 0.668,
+      "y": 0.483,
+      "z": 0.473
     },
     {
       "id": "lab-sky-feature",
@@ -97,9 +97,9 @@
       "scope": "lab-sky",
       "layer": "feature",
       "runtime": "browser",
-      "x": 0.207,
-      "y": 0.748,
-      "z": 0.16
+      "x": 0.711,
+      "y": 0.069,
+      "z": 0.354
     },
     {
       "id": "orbit-api",
@@ -107,9 +107,19 @@
       "scope": "orbit",
       "layer": "app",
       "runtime": "jvm",
-      "x": -0.326,
-      "y": 0.135,
-      "z": -0.936
+      "x": 0.152,
+      "y": -0.851,
+      "z": -0.411
+    },
+    {
+      "id": "platform-app-mode",
+      "kind": "lib",
+      "scope": "platform",
+      "layer": "platform",
+      "runtime": "browser",
+      "x": -0.449,
+      "y": 0.053,
+      "z": -0.814
     },
     {
       "id": "platform-federation",
@@ -117,9 +127,9 @@
       "scope": "platform",
       "layer": "platform",
       "runtime": "browser",
-      "x": 0.436,
-      "y": -0.708,
-      "z": 0.168
+      "x": -0.752,
+      "y": 0.418,
+      "z": 0.022
     },
     {
       "id": "platform-inspector",
@@ -127,9 +137,9 @@
       "scope": "platform",
       "layer": "platform",
       "runtime": "browser",
-      "x": 0.473,
-      "y": -0.712,
-      "z": -0.361
+      "x": -0.664,
+      "y": 0.488,
+      "z": -0.424
     },
     {
       "id": "portfolio-feature-cv",
@@ -137,9 +147,9 @@
       "scope": "portfolio",
       "layer": "feature",
       "runtime": "browser",
-      "x": -0.35,
-      "y": -0.315,
-      "z": 0.755
+      "x": -0.264,
+      "y": -0.082,
+      "z": 0.831
     },
     {
       "id": "portfolio-feature-experience",
@@ -147,9 +157,9 @@
       "scope": "portfolio",
       "layer": "feature",
       "runtime": "browser",
-      "x": -0.142,
-      "y": -0.554,
-      "z": 0.69
+      "x": -0.765,
+      "y": -0.111,
+      "z": 0.482
     },
     {
       "id": "portfolio-feature-home",
@@ -157,9 +167,9 @@
       "scope": "portfolio",
       "layer": "feature",
       "runtime": "browser",
-      "x": 0.108,
-      "y": -0.353,
-      "z": -0.202
+      "x": 0.197,
+      "y": -0.457,
+      "z": 0.072
     },
     {
       "id": "portfolio-feature-services",
@@ -167,9 +177,9 @@
       "scope": "portfolio",
       "layer": "feature",
       "runtime": "browser",
-      "x": -0.799,
-      "y": -0.246,
-      "z": 0.04
+      "x": 0.087,
+      "y": -0.346,
+      "z": 0.731
     },
     {
       "id": "portfolio-feature-work",
@@ -177,9 +187,9 @@
       "scope": "portfolio",
       "layer": "feature",
       "runtime": "browser",
-      "x": -0.624,
-      "y": -0.16,
-      "z": 0.597
+      "x": -0.562,
+      "y": 0.028,
+      "z": 0.696
     },
     {
       "id": "portfolio-util-seo",
@@ -187,9 +197,19 @@
       "scope": "portfolio",
       "layer": "util",
       "runtime": "browser",
-      "x": -0.645,
-      "y": -0.497,
-      "z": 0.359
+      "x": -0.259,
+      "y": -0.531,
+      "z": 0.677
+    },
+    {
+      "id": "product-strategy",
+      "kind": "app",
+      "scope": "product-strategy",
+      "layer": "app",
+      "runtime": "browser",
+      "x": -0.774,
+      "y": -0.065,
+      "z": -0.528
     },
     {
       "id": "shared-api-client",
@@ -197,9 +217,9 @@
       "scope": "shared",
       "layer": "contracts",
       "runtime": "agnostic",
-      "x": -0.079,
-      "y": 0.622,
-      "z": -0.729
+      "x": 0.663,
+      "y": -0.658,
+      "z": -0.023
     },
     {
       "id": "shared-content",
@@ -207,9 +227,9 @@
       "scope": "shared",
       "layer": "content",
       "runtime": "agnostic",
-      "x": -0.385,
-      "y": -0.699,
-      "z": 0.189
+      "x": -0.502,
+      "y": -0.448,
+      "z": 0.465
     },
     {
       "id": "shared-contracts",
@@ -217,9 +237,9 @@
       "scope": "shared",
       "layer": "contracts",
       "runtime": "agnostic",
-      "x": -0.817,
-      "y": -0.007,
-      "z": -0.544
+      "x": 0.35,
+      "y": 0.278,
+      "z": 0.777
     },
     {
       "id": "shared-site-config",
@@ -227,9 +247,9 @@
       "scope": "shared",
       "layer": "data-access",
       "runtime": "browser",
-      "x": -0.749,
-      "y": 0.522,
-      "z": 0.064
+      "x": 0.63,
+      "y": -0.438,
+      "z": 0.522
     },
     {
       "id": "shared-state",
@@ -237,9 +257,9 @@
       "scope": "shared",
       "layer": "data-access",
       "runtime": "browser",
-      "x": -0.505,
-      "y": -0.652,
-      "z": -0.363
+      "x": -0.119,
+      "y": -0.824,
+      "z": 0.292
     },
     {
       "id": "shell",
@@ -247,9 +267,9 @@
       "scope": "portfolio",
       "layer": "app",
       "runtime": "browser",
-      "x": -0.031,
-      "y": -0.686,
-      "z": 0.282
+      "x": -0.525,
+      "y": -0.141,
+      "z": 0.123
     },
     {
       "id": "shell-e2e",
@@ -257,9 +277,29 @@
       "scope": "test",
       "layer": "e2e",
       "runtime": "node",
-      "x": 0.745,
-      "y": -0.459,
-      "z": 0.234
+      "x": -0.558,
+      "y": -0.728,
+      "z": -0.252
+    },
+    {
+      "id": "strategy-domain",
+      "kind": "lib",
+      "scope": "product-strategy",
+      "layer": "domain",
+      "runtime": "browser",
+      "x": 0.011,
+      "y": -0.233,
+      "z": -0.973
+    },
+    {
+      "id": "strategy-feature",
+      "kind": "lib",
+      "scope": "product-strategy",
+      "layer": "feature",
+      "runtime": "browser",
+      "x": -0.399,
+      "y": -0.39,
+      "z": -0.817
     },
     {
       "id": "three-angular",
@@ -267,9 +307,9 @@
       "scope": "platform",
       "layer": "ui",
       "runtime": "browser",
-      "x": 0.712,
-      "y": 0.382,
-      "z": -0.241
+      "x": 0.708,
+      "y": 0.215,
+      "z": -0.396
     },
     {
       "id": "three-constellation",
@@ -277,9 +317,9 @@
       "scope": "platform",
       "layer": "engine",
       "runtime": "browser",
-      "x": 0.529,
-      "y": -0.141,
-      "z": -0.757
+      "x": 0.57,
+      "y": -0.443,
+      "z": -0.597
     },
     {
       "id": "three-engine",
@@ -287,9 +327,9 @@
       "scope": "platform",
       "layer": "engine",
       "runtime": "browser",
-      "x": 0.552,
-      "y": 0.398,
-      "z": -0.71
+      "x": 0.6,
+      "y": 0.151,
+      "z": -0.763
     },
     {
       "id": "three-scene-constellation",
@@ -297,9 +337,9 @@
       "scope": "platform",
       "layer": "engine",
       "runtime": "browser",
-      "x": 0.813,
-      "y": 0.007,
-      "z": -0.399
+      "x": 0.805,
+      "y": -0.155,
+      "z": -0.401
     },
     {
       "id": "three-scene-sky",
@@ -307,9 +347,9 @@
       "scope": "platform",
       "layer": "engine",
       "runtime": "browser",
-      "x": 0.463,
-      "y": 0.795,
-      "z": -0.288
+      "x": 0.91,
+      "y": 0.219,
+      "z": -0.119
     }
   ],
   "edges": [
@@ -320,7 +360,7 @@
     ],
     [
       1,
-      21,
+      23,
       "static"
     ],
     [
@@ -340,7 +380,7 @@
     ],
     [
       2,
-      26,
+      30,
       "implicit"
     ],
     [
@@ -355,12 +395,12 @@
     ],
     [
       6,
-      11,
+      12,
       "static"
     ],
     [
       6,
-      20,
+      22,
       "static"
     ],
     [
@@ -370,12 +410,12 @@
     ],
     [
       7,
-      11,
+      12,
       "static"
     ],
     [
       7,
-      20,
+      22,
       "static"
     ],
     [
@@ -390,133 +430,103 @@
     ],
     [
       9,
-      19,
-      "static"
-    ],
-    [
-      9,
-      22,
-      "static"
-    ],
-    [
-      9,
-      26,
-      "static"
-    ],
-    [
-      9,
-      30,
-      "static"
-    ],
-    [
-      9,
-      30,
-      "dynamic"
-    ],
-    [
-      11,
-      5,
-      "static"
-    ],
-    [
-      12,
-      11,
-      "static"
-    ],
-    [
-      13,
-      5,
-      "static"
-    ],
-    [
-      13,
-      18,
-      "static"
-    ],
-    [
-      13,
-      20,
-      "static"
-    ],
-    [
-      14,
-      5,
-      "static"
-    ],
-    [
-      14,
-      18,
-      "static"
-    ],
-    [
-      14,
-      20,
-      "static"
-    ],
-    [
-      15,
-      5,
-      "static"
-    ],
-    [
-      15,
-      18,
-      "static"
-    ],
-    [
-      15,
-      20,
-      "static"
-    ],
-    [
-      15,
-      23,
-      "static"
-    ],
-    [
-      15,
-      26,
-      "static"
-    ],
-    [
-      15,
-      27,
-      "static"
-    ],
-    [
-      15,
-      29,
-      "dynamic"
-    ],
-    [
-      16,
-      5,
-      "static"
-    ],
-    [
-      16,
-      18,
-      "static"
-    ],
-    [
-      16,
-      20,
-      "static"
-    ],
-    [
-      16,
       21,
       "static"
     ],
     [
+      9,
+      24,
+      "static"
+    ],
+    [
+      9,
+      30,
+      "static"
+    ],
+    [
+      9,
+      34,
+      "static"
+    ],
+    [
+      9,
+      34,
+      "dynamic"
+    ],
+    [
+      12,
+      5,
+      "static"
+    ],
+    [
+      13,
+      12,
+      "static"
+    ],
+    [
+      14,
+      5,
+      "static"
+    ],
+    [
+      14,
+      19,
+      "static"
+    ],
+    [
+      14,
+      22,
+      "static"
+    ],
+    [
+      15,
+      5,
+      "static"
+    ],
+    [
+      15,
+      19,
+      "static"
+    ],
+    [
+      15,
+      22,
+      "static"
+    ],
+    [
+      16,
+      5,
+      "static"
+    ],
+    [
+      16,
+      19,
+      "static"
+    ],
+    [
       16,
       22,
       "static"
     ],
     [
       16,
-      23,
+      25,
       "static"
+    ],
+    [
+      16,
+      30,
+      "static"
+    ],
+    [
+      16,
+      31,
+      "static"
+    ],
+    [
+      16,
+      33,
+      "dynamic"
     ],
     [
       17,
@@ -525,117 +535,152 @@
     ],
     [
       17,
-      18,
+      19,
       "static"
     ],
     [
       17,
-      20,
+      22,
+      "static"
+    ],
+    [
+      17,
+      23,
+      "static"
+    ],
+    [
+      17,
+      24,
+      "static"
+    ],
+    [
+      17,
+      25,
       "static"
     ],
     [
       18,
-      20,
+      5,
+      "static"
+    ],
+    [
+      18,
+      19,
+      "static"
+    ],
+    [
+      18,
+      22,
       "static"
     ],
     [
       19,
-      10,
-      "implicit"
+      22,
+      "static"
     ],
     [
-      23,
       20,
-      "static"
-    ],
-    [
-      24,
-      5,
-      "static"
-    ],
-    [
-      24,
-      6,
-      "federated"
-    ],
-    [
-      24,
-      7,
-      "federated"
-    ],
-    [
-      24,
       11,
       "static"
     ],
     [
-      24,
+      20,
       12,
       "static"
     ],
     [
-      24,
-      13,
+      20,
+      29,
       "dynamic"
     ],
     [
-      24,
+      21,
+      10,
+      "implicit"
+    ],
+    [
+      25,
+      22,
+      "static"
+    ],
+    [
+      26,
+      5,
+      "static"
+    ],
+    [
+      26,
+      6,
+      "federated"
+    ],
+    [
+      26,
+      7,
+      "federated"
+    ],
+    [
+      26,
+      11,
+      "static"
+    ],
+    [
+      26,
+      12,
+      "static"
+    ],
+    [
+      26,
+      13,
+      "static"
+    ],
+    [
+      26,
       14,
       "dynamic"
     ],
     [
-      24,
+      26,
       15,
       "dynamic"
     ],
     [
-      24,
+      26,
       16,
       "dynamic"
     ],
     [
-      24,
+      26,
       17,
       "dynamic"
     ],
     [
-      24,
-      20,
-      "static"
-    ],
-    [
-      24,
-      23,
-      "static"
-    ],
-    [
-      25,
-      24,
-      "implicit"
-    ],
-    [
       26,
-      27,
-      "static"
-    ],
-    [
-      26,
-      28,
-      "static"
-    ],
-    [
-      26,
-      29,
+      18,
       "dynamic"
     ],
     [
-      29,
-      4,
+      26,
+      20,
+      "federated"
+    ],
+    [
+      26,
+      22,
       "static"
     ],
     [
-      29,
+      26,
+      25,
+      "static"
+    ],
+    [
       27,
+      26,
+      "implicit"
+    ],
+    [
+      29,
+      11,
       "static"
     ],
     [
@@ -645,12 +690,42 @@
     ],
     [
       30,
-      4,
+      31,
       "static"
     ],
     [
       30,
-      28,
+      32,
+      "static"
+    ],
+    [
+      30,
+      33,
+      "dynamic"
+    ],
+    [
+      33,
+      4,
+      "static"
+    ],
+    [
+      33,
+      31,
+      "static"
+    ],
+    [
+      33,
+      32,
+      "static"
+    ],
+    [
+      34,
+      4,
+      "static"
+    ],
+    [
+      34,
+      32,
       "static"
     ]
   ]

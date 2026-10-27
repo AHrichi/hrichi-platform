@@ -1,0 +1,259 @@
+<section class="panel">
+  <div class="panel-header">
+    <h2><span class="header-icon">🎯</span> Financial Goals</h2>
+  </div>
+
+  <form [formGroup]="goalForm" (ngSubmit)="onSubmit()" class="add-form">
+    <div class="form-row">
+      <div class="form-group">
+        <label for="goal-name">Name</label>
+        <input
+          id="goal-name"
+          type="text"
+          formControlName="name"
+          placeholder="e.g., Buy a Car"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="goal-amount">Target Amount</label>
+        <div class="input-with-icon">
+          <input id="goal-amount" type="number" formControlName="amount" />
+          <span class="currency-tag">TND</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="goal-priority">Priority</label>
+        <input
+          id="goal-priority"
+          type="number"
+          formControlName="priority"
+          placeholder="1"
+          min="1"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="goal-category">Category</label>
+        <input
+          id="goal-category"
+          type="text"
+          formControlName="category"
+          placeholder="e.g., Housing"
+        />
+      </div>
+
+      <div class="form-actions">
+        <button
+          type="submit"
+          [disabled]="goalForm.invalid"
+          class="btn-modern btn-submit"
+        >
+          {{ editingId ? '✏️ Update Goal' : '➕ Add Goal' }}
+        </button>
+
+        @if (editingId) {
+          <button
+            type="button"
+            class="btn-modern btn-cancel"
+            (click)="cancelEdit()"
+          >
+            Cancel
+          </button>
+        }
+      </div>
+    </div>
+  </form>
+
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th style="width: 40px"></th>
+          <th>Rank</th>
+          <th>Name</th>
+          <th>Target Amount</th>
+          <th>Priority</th>
+          <th>Category</th>
+          <th>Progress</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody cdkDropList (cdkDropListDropped)="drop($event)">
+        @for (goal of goals(); track goal.id; let i = $index) {
+          <tr
+            cdkDrag
+            [class.disabled-row]="goal.isEnabled === false"
+            [class.editing-row]="goal.id === editingId"
+          >
+            <td class="drag-cell">
+              <div cdkDragHandle class="drag-handle" title="Drag to reorder">
+                ⋮⋮
+              </div>
+            </td>
+            <td>
+              <span class="rank-badge" [class.rank-1]="i === 0"
+                >#{{ i + 1 }}</span
+              >
+            </td>
+            <td class="font-medium">{{ goal.name }}</td>
+            <td>
+              <strong class="text-primary">{{
+                goal.amount | currency: 'TND' : 'symbol'
+              }}</strong>
+            </td>
+            <td>
+              <span class="badge-priority">{{ goal.priority || '-' }}</span>
+            </td>
+            <td>
+              @if (goal.category) {
+                <span class="category-tag">{{ goal.category }}</span>
+              } @else {
+                <span class="text-muted">—</span>
+              }
+            </td>
+            <td class="progress-cell">
+              @let pct = getProgress(goal.id);
+              @let rpct = getRealityProgress(goal.id);
+              @let rfund = getRealityFundAccumulated(goal.id);
+              <div class="goal-progress-compact">
+                <div class="progress-group">
+                  <span class="progress-label projected-label">Projected</span>
+                  <div class="progress-bar-compact">
+                    <div
+                      class="progress-fill-compact projected-fill"
+                      [style.width.%]="pct"
+                      [title]="'Projected: ' + pct.toFixed(0) + '%'"
+                    ></div>
+                  </div>
+                </div>
+                <div class="progress-group">
+                  <span class="progress-label reality-label">Actual</span>
+                  <div class="progress-bar-compact reality-bar">
+                    <div
+                      class="progress-fill-compact reality-fill"
+                      [style.width.%]="rpct"
+                      [title]="
+                        'Actual: ' +
+                        rpct.toFixed(0) +
+                        '% (' +
+                        (rfund | currency: 'TND' : 'symbol') +
+                        ')'
+                      "
+                    ></div>
+                  </div>
+                </div>
+                <div class="progress-meta">
+                  <span class="progress-pct">Plan: {{ pct.toFixed(0) }}%</span>
+                  <span class="progress-pct reality-pct"
+                    >Actual: {{ rpct.toFixed(0) }}%</span
+                  >
+                </div>
+              </div>
+            </td>
+            <td>
+              <label class="toggle-switch">
+                <input
+                  type="checkbox"
+                  [checked]="goal.isEnabled !== false"
+                  (change)="onToggle(goal.id)"
+                />
+                <span class="slider"></span>
+              </label>
+            </td>
+
+            <td class="actions-cell">
+              <div class="action-buttons">
+                <button
+                  type="button"
+                  (click)="openCopyModal(goal)"
+                  class="action-icon copy"
+                  title="Copy to other scenarios"
+                >
+                  📋
+                </button>
+                <button
+                  type="button"
+                  (click)="onEdit(goal)"
+                  class="action-icon edit"
+                  title="Edit"
+                >
+                  ✏️
+                </button>
+                <button
+                  type="button"
+                  (click)="onRemove(goal.id)"
+                  class="action-icon delete"
+                  title="Remove"
+                >
+                  🗑️
+                </button>
+              </div>
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="10" class="empty-state">
+              <div class="empty-content">
+                <span class="empty-icon">🏁</span>
+                <p>No goals added yet.</p>
+              </div>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</section>
+
+@if (goalToCopy) {
+  <div class="modal-backdrop" (click)="closeCopyModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <h3>Copy "{{ goalToCopy.name }}"</h3>
+      <p>Select the scenarios that will receive this goal:</p>
+
+      <div class="scenario-list">
+        @if (otherScenarios().length > 0) {
+          <button (click)="selectAllTargets()" class="btn-text">
+            Select All Scenarios
+          </button>
+
+          @for (scenario of otherScenarios(); track scenario.id) {
+            <div
+              class="copy-item-card"
+              [class.selected]="selectedTargetScenarios.has(scenario.id)"
+              (click)="toggleTargetScenario(scenario.id)"
+            >
+              <span class="scenario-name">{{ scenario.name }}</span>
+              <label class="toggle-switch" (click)="$event.stopPropagation()">
+                <input
+                  type="checkbox"
+                  [checked]="selectedTargetScenarios.has(scenario.id)"
+                  (change)="toggleTargetScenario(scenario.id)"
+                />
+                <span class="slider"></span>
+              </label>
+            </div>
+          }
+        } @else {
+          <p class="text-muted">No other scenarios available to copy to.</p>
+        }
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-modern btn-cancel" (click)="closeCopyModal()">
+          Cancel
+        </button>
+        <button
+          class="btn-modern btn-submit"
+          [disabled]="selectedTargetScenarios.size === 0"
+          (click)="confirmCopy()"
+        >
+          Apply
+        </button>
+      </div>
+    </div>
+  </div>
+}

@@ -1,0 +1,97 @@
+<div class="nw-wrapper">
+  <div class="nw-header">
+    <h1>🏦 Net Worth</h1>
+    <p class="nw-subtitle">
+      Track your total financial position across all accounts
+    </p>
+  </div>
+
+  <!-- Summary Cards -->
+  <div class="nw-summary">
+    <div class="nw-card primary">
+      <span class="nw-label">Current Net Worth</span>
+      <span
+        class="nw-value"
+        [class.positive]="netWorth() >= 0"
+        [class.negative]="netWorth() < 0"
+        >{{ fmtCurrency(netWorth()) }}</span
+      >
+    </div>
+    <div class="nw-card">
+      <span class="nw-label">Total Accounts</span>
+      <span class="nw-value">{{ store.accounts().length }}</span>
+    </div>
+    <div class="nw-card">
+      <span class="nw-label">Transactions</span>
+      <span class="nw-value">{{ store.transactions().length }}</span>
+    </div>
+    <div class="nw-card">
+      <span class="nw-label">Scenarios</span>
+      <span class="nw-value">{{ store.scenarios().length }}</span>
+    </div>
+  </div>
+
+  <!-- Account Cards -->
+  <div class="nw-accounts-section">
+    <h2>Accounts</h2>
+    <div class="nw-accounts">
+      @for (a of accountBalances(); track a.id) {
+        <div class="nw-account-card">
+          <div class="nw-acct-top">
+            <span class="nw-acct-icon">
+              {{
+                a.type === 'bank'
+                  ? '🏦'
+                  : a.type === 'savings'
+                    ? '💰'
+                    : a.type === 'cash'
+                      ? '💵'
+                      : '📦'
+              }}
+            </span>
+            <div class="nw-acct-info">
+              <span class="nw-acct-name">{{ a.name }}</span>
+              <span class="nw-acct-type">{{ a.type }}</span>
+            </div>
+            <span
+              class="nw-acct-balance"
+              [class.positive]="a.balance >= 0"
+              [class.negative]="a.balance < 0"
+              >{{ fmtCurrency(a.balance) }}</span
+            >
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- Balance Trend Chart -->
+  @if (balanceHistory().months.length > 1) {
+    <div class="nw-chart-card">
+      <div class="nw-chart-header">
+        <h2>Net Worth Trend</h2>
+      </div>
+      <div class="nw-chart-body">
+        <canvas
+          baseChart
+          type="line"
+          [data]="chartData()"
+          [options]="chartOptions"
+        ></canvas>
+      </div>
+    </div>
+  } @else {
+    <div class="nw-empty">
+      <p>
+        Not enough transaction data to show a trend chart. Start logging
+        transactions in the Daily Ledger.
+      </p>
+      <a routerLink="../ledger" class="btn-primary">Go to Ledger</a>
+    </div>
+  }
+
+  <div class="nw-actions">
+    <a routerLink="../ledger" class="btn-secondary">📓 Manage Transactions</a>
+    <a routerLink="../home" class="btn-secondary">← Back to Dashboard</a>
+  </div>
+</div>

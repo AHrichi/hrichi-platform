@@ -1,0 +1,9 @@
+{
+  "name": "platform-app-mode",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/platform/app-mode/src",
+  "prefix": "ah",
+  "projectType": "library",
+  "tags": ["scope:platform", "type:platform", "runtime:browser"],
+  "targets": {}
+}

@@ -1,0 +1,350 @@
+<div class="dashboard">
+  @if (store.scenarios().length === 0) {
+    <div class="hero">
+      <div class="hero-icon">📈</div>
+      <h1>Financial Strategy<br />Dashboard</h1>
+      <p class="subtitle">
+        Model, compare, and project your financial future across different life
+        scenarios.
+      </p>
+    </div>
+
+    <div class="create-card">
+      <h3>Get Started</h3>
+      <p class="create-desc">
+        Create your first financial scenario to begin planning.
+      </p>
+      <div class="create-form">
+        <input
+          type="text"
+          placeholder="e.g. My Career Plan"
+          [ngModel]="scenarioName()"
+          (ngModelChange)="scenarioName.set($event)"
+          (keyup.enter)="createScenario()"
+        />
+        <button class="btn-primary" (click)="createScenario()">
+          ✨ Create Scenario
+        </button>
+      </div>
+    </div>
+
+    <div class="features">
+      <div class="feature">
+        <span class="feature-icon">💰</span>
+        <h4>Income &amp; Expenses</h4>
+        <p>
+          Define multiple income sources with growth projections and expenses
+          with inflation adjustments.
+        </p>
+      </div>
+      <div class="feature">
+        <span class="feature-icon">🎯</span>
+        <h4>Goals &amp; Loans</h4>
+        <p>
+          Set financial goals and track when you'll achieve them. Model loans
+          with amortization.
+        </p>
+      </div>
+      <div class="feature">
+        <span class="feature-icon">📊</span>
+        <h4>Projections &amp; Compare</h4>
+        <p>
+          Visualize wealth accumulation over time and compare multiple scenarios
+          side by side.
+        </p>
+      </div>
+    </div>
+  } @else {
+    <!-- Gamification Profile -->
+    <div class="gamification-header">
+      @let gProfile = store.gamificationProfile();
+      <div class="level-badge">
+        <span class="level-num">Lvl {{ gProfile.level }}</span>
+      </div>
+      <div class="level-info">
+        <h2 class="level-title">{{ gProfile.title }}</h2>
+        <div class="level-progress-container">
+          <div
+            class="level-progress-bar"
+            [style.width.%]="gProfile.progressPercentage"
+          ></div>
+        </div>
+        <span class="level-subtitle"
+          >Next Level at
+          {{
+            gProfile.maxNetWorth !== null
+              ? fmtCurrency(gProfile.maxNetWorth)
+              : 'MAX'
+          }}</span
+        >
+      </div>
+    </div>
+
+    <!-- Summary Bar -->
+    <div class="summary-bar">
+      <div class="summary-item">
+        <span class="summary-label">Scenarios</span>
+        <span class="summary-value">{{ store.scenarios().length }}</span>
+      </div>
+      <div class="summary-item">
+        <span class="summary-label">Current Balance</span>
+        <span
+          class="summary-value"
+          [class.positive]="store.currentBalance() >= 0"
+          [class.negative]="store.currentBalance() < 0"
+          >{{ fmtCurrency(store.currentBalance()) }}</span
+        >
+      </div>
+      <div class="summary-item">
+        <span class="summary-label">Monthly Net</span>
+        <span
+          class="summary-value"
+          [class.positive]="store.currentMonthPerformance().plannedNet >= 0"
+          [class.negative]="store.currentMonthPerformance().plannedNet < 0"
+          >{{ fmtCurrency(store.currentMonthPerformance().plannedNet) }}</span
+        >
+      </div>
+      <div class="summary-item">
+        <span class="summary-label">Active Scenario</span>
+        <span class="summary-value name">{{
+          store.activeScenario().name
+        }}</span>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="quick-actions">
+      <a
+        class="quick-action"
+        [routerLink]="['../editor', store.activeScenarioId(), 'settings']"
+        >✏️ Scenario Builder</a
+      >
+      <a class="quick-action" routerLink="../ledger">📓 Daily Ledger</a>
+      <a class="quick-action" routerLink="../analytics">📈 Analytics</a>
+      <a class="quick-action" routerLink="../compare">📊 Comparison</a>
+    </div>
+
+    <div class="dash-grid">
+      <!-- Achievements -->
+      <div class="dash-section achievements-section">
+        <div class="section-header">
+          <h2>Achievements</h2>
+        </div>
+        <div class="achievements-grid">
+          @for (ach of store.unlockedAchievementsList(); track ach.id) {
+            <div
+              class="achievement-badge"
+              [class.unlocked]="ach.unlocked"
+              [title]="ach.description"
+            >
+              <span class="ach-icon">{{ ach.icon }}</span>
+              <div class="ach-info">
+                <span class="ach-title">{{ ach.title }}</span>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Scenario Cards -->
+      <div class="dash-section scenarios-section">
+        <div class="section-header">
+          <h2>Scenarios</h2>
+          <button class="btn-sm" (click)="createScenario()">+ New</button>
+        </div>
+        <div class="scenario-cards">
+          @for (s of store.scenarios(); track s.id) {
+            <div
+              class="scenario-card-mini"
+              [class.active]="s.id === store.activeScenarioId()"
+              (click)="goToScenario(s.id)"
+            >
+              <div class="scenario-mini-header">
+                <span class="scenario-mini-name">{{ s.name }}</span>
+                @if (s.id === store.activeScenarioId()) {
+                  <span class="active-badge">Active</span>
+                }
+              </div>
+              <div class="scenario-mini-stats">
+                <span>{{ s.projectionYears }}y</span>
+                <span>{{ s.incomes.length }} incomes</span>
+                <span>{{ s.expenses.length }} expenses</span>
+                <span>{{ s.goals.length }} goals</span>
+              </div>
+              @let summary =
+                store.scenarioSummaries().find((ss) => ss.id === s.id);
+              @if (summary) {
+                <div class="scenario-mini-reserve">
+                  Final:
+                  <strong
+                    [class.positive]="summary.finalReserve >= 0"
+                    [class.negative]="summary.finalReserve < 0"
+                    >{{ fmtCurrency(summary.finalReserve) }}</strong
+                  >
+                </div>
+              }
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Goal Progress -->
+      <div class="dash-section goals-section">
+        <div class="section-header">
+          <h2>Goal Progress</h2>
+          <a class="btn-sm" routerLink="../analytics">View All</a>
+        </div>
+        @let milestones = store.activeGoalMilestones();
+        @if (milestones.length > 0) {
+          <div class="goal-ring-wrapper">
+            <svg class="goal-ring" viewBox="0 0 120 120">
+              <circle
+                class="ring-bg"
+                cx="60"
+                cy="60"
+                r="54"
+                fill="none"
+                stroke-width="10"
+              />
+              <circle
+                class="ring-fill"
+                cx="60"
+                cy="60"
+                r="54"
+                fill="none"
+                stroke-width="10"
+                stroke-dasharray="339.292"
+                [attr.stroke-dashoffset]="
+                  339.292 - (339.292 * totalGoalProgress()) / 100
+                "
+              />
+            </svg>
+            <div class="goal-ring-text">
+              <span class="goal-ring-value">{{ totalGoalProgress() }}%</span>
+              <span class="goal-ring-label">Achieved</span>
+            </div>
+          </div>
+          <div class="goal-status-breakdown">
+            @let achieved =
+              milestones.filter((m) => m.status === 'achieved').length;
+            @let inProgress =
+              milestones.filter((m) => m.status === 'in_progress').length;
+            @let pending =
+              milestones.filter((m) => m.status === 'pending').length;
+            <span class="status-badge achieved">🏆 {{ achieved }}</span>
+            <span class="status-badge on-track">⏳ {{ inProgress }}</span>
+            <span class="status-badge off-track">⏸️ {{ pending }}</span>
+          </div>
+        } @else {
+          <p class="empty-message">No goals set in active scenario.</p>
+        }
+      </div>
+
+      <!-- Current Month Performance -->
+      <div class="dash-section perf-section">
+        <div class="section-header">
+          <h2>This Month</h2>
+          <a class="btn-sm" routerLink="../ledger">Log Transaction</a>
+        </div>
+        @let perf = store.currentMonthPerformance();
+        <div class="perf-mini-grid">
+          <div class="perf-mini-item">
+            <span class="perf-mini-label">Income</span>
+            <span class="perf-mini-value positive">{{
+              fmtCurrency(perf.actualIncome)
+            }}</span>
+            <div class="perf-mini-bar">
+              <div
+                class="perf-mini-fill income-fill"
+                [style.width.%]="
+                  Math.min(
+                    (perf.actualIncome / Math.max(perf.plannedIncome, 1)) * 100,
+                    100
+                  )
+                "
+              ></div>
+            </div>
+            <span class="perf-mini-plan"
+              >of {{ fmtCurrency(perf.plannedIncome) }}</span
+            >
+          </div>
+          <div class="perf-mini-item">
+            <span class="perf-mini-label">Expenses</span>
+            <span
+              class="perf-mini-value"
+              [class.negative]="perf.actualExpense > perf.plannedExpense"
+              >{{ fmtCurrency(perf.actualExpense) }}</span
+            >
+            <div class="perf-mini-bar">
+              <div
+                class="perf-mini-fill expense-fill"
+                [style.width.%]="
+                  Math.min(
+                    (perf.actualExpense / Math.max(perf.plannedExpense, 1)) *
+                      100,
+                    100
+                  )
+                "
+              ></div>
+            </div>
+            <span class="perf-mini-plan"
+              >of {{ fmtCurrency(perf.plannedExpense) }}</span
+            >
+          </div>
+          <div class="perf-mini-item net-item">
+            <span class="perf-mini-label">Net Result</span>
+            <span
+              class="perf-mini-value"
+              [class.positive]="perf.actualNet >= 0"
+              [class.negative]="perf.actualNet < 0"
+              >{{ fmtCurrency(perf.actualNet) }}</span
+            >
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Transactions -->
+      <div class="dash-section txns-section">
+        <div class="section-header">
+          <h2>Recent Transactions</h2>
+          <a class="btn-sm" routerLink="../ledger">View All</a>
+        </div>
+        @let recent = recentTransactions();
+        @if (recent.length > 0) {
+          <div class="txn-list">
+            @for (t of recent; track t.id) {
+              <div class="txn-row">
+                <span class="txn-icon">{{
+                  t.type === 'income'
+                    ? '📈'
+                    : t.type === 'expense'
+                      ? '📉'
+                      : '🔄'
+                }}</span>
+                <div class="txn-info">
+                  <span class="txn-note">{{
+                    t.note || (t.type === 'income' ? 'Income' : 'Expense')
+                  }}</span>
+                  <span class="txn-date">{{ t.date }}</span>
+                </div>
+                <span
+                  class="txn-amount"
+                  [class.positive]="t.type === 'income'"
+                  [class.negative]="t.type === 'expense'"
+                >
+                  {{
+                    t.type === 'income' ? '+' : t.type === 'expense' ? '-' : ''
+                  }}{{ fmtCurrency(t.amount) }}
+                </span>
+              </div>
+            }
+          </div>
+        } @else {
+          <p class="empty-message">
+            No transactions yet. Start logging in the Daily Ledger.
+          </p>
+        }
+      </div>
+    </div>
+  }
+</div>

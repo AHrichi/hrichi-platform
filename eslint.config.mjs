@@ -51,6 +51,15 @@ export default [
               ],
             },
             {
+              sourceTag: 'scope:product-strategy',
+              onlyDependOnLibsWithTags: [
+                'scope:product-strategy',
+                'scope:shared',
+                'scope:platform',
+                'scope:design-system',
+              ],
+            },
+            {
               sourceTag: 'scope:platform',
               onlyDependOnLibsWithTags: [
                 'scope:platform',
@@ -100,6 +109,7 @@ export default [
             {
               sourceTag: 'type:feature',
               onlyDependOnLibsWithTags: [
+                'type:platform',
                 'type:content',
                 'type:engine',
                 'type:ui',

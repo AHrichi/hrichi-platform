@@ -50,6 +50,7 @@
     "@storybook/addon-docs": "10.6.4",
     "@storybook/angular-vite": "10.6.4",
     "@swc/helpers": "~0.5.18",
+    "@types/canvas-confetti": "^1.9.0",
     "@types/geojson": "7946.0.16",
     "@types/node": "^22.0.0",
     "@types/supertest": "7.2.1",
@@ -84,6 +85,7 @@
   "dependencies": {
     "@angular-architects/native-federation": "~22.2.3",
     "@angular-devkit/build-angular": "~22.2.0",
+    "@angular/cdk": "~22.2.4",
     "@angular/common": "~22.2.0",
     "@angular/compiler": "~22.2.0",
     "@angular/core": "~22.2.0",
@@ -101,16 +103,23 @@
     "@nestjs/throttler": "6.7.1",
     "@ngrx/signals": "22.0.1",
     "astronomy-engine": "2.1.19",
+    "canvas-confetti": "^1.9.4",
+    "chart.js": "^4.6.1",
     "class-transformer": "0.5.1",
     "class-validator": "0.15.1",
+    "dexie": "^4.4.7",
     "es-module-shims": "^2.8.4",
     "helmet": "8.3.0",
+    "html2canvas": "^1.4.1",
+    "jspdf": "^4.2.1",
     "mongodb": "7.7.0",
+    "ng2-charts": "^10.0.0",
     "reflect-metadata": "^0.2.0",
     "rxjs": "~7.8.0",
     "three": "0.186.1",
     "topojson-client": "3.1.0",
     "web-vitals": "6.2.3",
-    "world-atlas": "2.0.2"
+    "world-atlas": "2.0.2",
+    "xlsx": "^0.18.5"
   }
 }

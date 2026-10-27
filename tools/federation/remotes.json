@@ -7,5 +7,9 @@
   "lab-sky": {
     "development": "http://localhost:4302",
     "production": "https://lab-sky.ahmed-hrichi.workers.dev"
+  },
+  "product-strategy": {
+    "development": "http://localhost:4303",
+    "production": "https://product-strategy.ahmed-hrichi.workers.dev"
   }
 }

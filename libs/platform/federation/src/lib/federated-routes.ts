@@ -36,6 +36,9 @@ export function federatedRoutes(
   }: FederatedRoutesOptions = {},
 ): () => Promise<Routes> {
   return async () => {
+    if (typeof (globalThis as any).ngDevMode === 'undefined') {
+      (globalThis as any).ngDevMode = false;
+    }
     // Remote routes render on the client only, so prerendering never fetches a remote.
     if (isPlatformServer(inject(PLATFORM_ID))) {
       return [];

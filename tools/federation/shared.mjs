@@ -37,6 +37,7 @@ export const skip = [
   '@angular/service-worker/config',
   '@angular/service-worker/ngsw-worker.js',
   '@angular/service-worker/safety-worker.js',
+  '@angular/cdk/schematics',
   // Only the shell's lazy Federation Inspector uses it; bundled there instead.
   'web-vitals',
   // The Sky lab's own dependencies (ADR-0016), bundled into the remote so
@@ -44,6 +45,15 @@ export const skip = [
   'astronomy-engine',
   'world-atlas',
   'topojson-client',
+  // StrategyApp's own dependencies, bundled into the remote so
+  // esbuild can tree-shake them; nothing else uses them.
+  'dexie',
+  'chart.js',
+  'ng2-charts',
+  'canvas-confetti',
+  'jspdf',
+  'html2canvas',
+  'xlsx',
 ];
 
 // https://native-federation.com/docs/v4/angular-adapter/configuration/

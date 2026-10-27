@@ -1,0 +1,1234 @@
+<section class="panel">
+  <div class="panel-header balance-header">
+    <h2><span class="header-icon">📓</span> Daily Ledger (Reality)</h2>
+    <div class="total-balance">
+      <span class="total-label">Total Balance:</span>
+      <span
+        class="total-value"
+        [class.positive]="currentBalance() >= 0"
+        [class.negative]="currentBalance() < 0"
+      >
+        {{ currentBalance() | currency: 'TND' : 'symbol' }}
+      </span>
+    </div>
+  </div>
+
+  <div class="ledger-tabs">
+    <button
+      type="button"
+      class="ledger-tab"
+      [class.active]="activeTab() === 'ledger'"
+      (click)="activeTab.set('ledger')"
+    >
+      📓 Ledger
+    </button>
+    <button
+      type="button"
+      class="ledger-tab"
+      [class.active]="activeTab() === 'analytics'"
+      (click)="activeTab.set('analytics')"
+    >
+      📊 Analytics
+    </button>
+    <button
+      type="button"
+      class="ledger-tab"
+      [class.active]="activeTab() === 'accounts'"
+      (click)="activeTab.set('accounts')"
+    >
+      🏦 Accounts
+    </button>
+    <button
+      type="button"
+      class="ledger-tab"
+      [class.active]="activeTab() === 'categories'"
+      (click)="activeTab.set('categories')"
+    >
+      📂 Categories
+    </button>
+  </div>
+
+  @if (activeTab() === 'accounts') {
+    <!-- Account Cards -->
+    <div class="account-cards">
+      @for (acct of accountBalances(); track acct.id) {
+        <div class="account-card">
+          <div class="acct-top">
+            <span class="acct-icon">{{ accountTypeIcon(acct.type) }}</span>
+            <span class="acct-name">{{ acct.name }}</span>
+            <button
+              type="button"
+              class="acct-remove"
+              (click)="removeAccountById(acct.id)"
+              title="Remove account"
+            >
+              ✕
+            </button>
+          </div>
+          <div
+            class="acct-balance"
+            [class.positive]="acct.balance >= 0"
+            [class.negative]="acct.balance < 0"
+          >
+            {{ acct.balance | currency: 'TND' : 'symbol' }}
+          </div>
+        </div>
+      }
+      <button
+        type="button"
+        class="add-account-btn"
+        (click)="showAddAccount = !showAddAccount"
+      >
+        <span>➕ Add Account</span>
+      </button>
+    </div>
+
+    <!-- Add Account Form -->
+    @if (showAddAccount) {
+      <form
+        [formGroup]="addAccountForm"
+        (ngSubmit)="onSubmitAddAccount()"
+        class="add-form add-account-form"
+      >
+        <div class="form-row">
+          <div class="form-group">
+            <label>Name</label>
+            <input
+              type="text"
+              formControlName="name"
+              placeholder="e.g. Bank A"
+            />
+          </div>
+          <div class="form-group">
+            <label>Type</label>
+            <select formControlName="type">
+              <option value="cash">💵 Cash</option>
+              <option value="bank">🏦 Bank</option>
+              <option value="savings">🏧 Savings</option>
+              <option value="other">📦 Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Opening Balance</label>
+            <div class="input-with-icon">
+              <input type="number" formControlName="initialBalance" />
+              <span class="currency-tag">TND</span>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button
+              type="submit"
+              [disabled]="addAccountForm.invalid"
+              class="btn-modern btn-submit btn-sm"
+            >
+              Add
+            </button>
+            <button
+              type="button"
+              class="btn-cancel"
+              (click)="showAddAccount = false"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      </form>
+    }
+  }
+
+  <!-- Category Manager -->
+  @if (activeTab() === 'categories') {
+    <div class="cat-manager">
+      <div class="cat-manager-header">
+        <h3>📂 Manage Categories</h3>
+        <button
+          type="button"
+          class="btn-cancel btn-sm"
+          (click)="closeCategoryManager()"
+        >
+          📓 Back
+        </button>
+      </div>
+      <div class="cat-tabs">
+        <button
+          type="button"
+          class="cat-tab"
+          [class.active]="categoryManageTab() === 'expense'"
+          (click)="setCategoryTab('expense')"
+        >
+          📉 Expense
+        </button>
+        <button
+          type="button"
+          class="cat-tab"
+          [class.active]="categoryManageTab() === 'income'"
+          (click)="setCategoryTab('income')"
+        >
+          📈 Income
+        </button>
+      </div>
+      <div class="cat-list">
+        @for (parent of filteredCategoryTree(); track parent.id) {
+          <div class="cat-group">
+            <div class="cat-item cat-parent">
+              <span class="cat-icon">{{ parent.icon }}</span>
+              <span class="cat-name">{{ parent.name }}</span>
+              <div class="cat-actions">
+                <button
+                  type="button"
+                  class="cat-action"
+                  (click)="startEditCategory(parent)"
+                  title="Edit"
+                >
+                  ✏️
+                </button>
+                <button
+                  type="button"
+                  class="cat-action"
+                  (click)="confirmRemoveCategory(parent.id)"
+                  title="Delete"
+                >
+                  🗑️
+                </button>
+              </div>
+            </div>
+            @for (child of parent.children; track child.id) {
+              <div class="cat-item cat-child">
+                <span class="cat-icon">{{ child.icon }}</span>
+                <span class="cat-name">{{ child.name }}</span>
+                <div class="cat-actions">
+                  <button
+                    type="button"
+                    class="cat-action"
+                    (click)="startEditCategory(child)"
+                    title="Edit"
+                  >
+                    ✏️
+                  </button>
+                  <button
+                    type="button"
+                    class="cat-action"
+                    (click)="confirmRemoveCategory(child.id)"
+                    title="Delete"
+                  >
+                    🗑️
+                  </button>
+                </div>
+              </div>
+            }
+            <button
+              type="button"
+              class="cat-add-child"
+              (click)="
+                startAddCategory();
+                categoryForm.patchValue({ parentId: parent.id })
+              "
+            >
+              ＋ Add Subcategory
+            </button>
+          </div>
+        } @empty {
+          <div class="cat-empty">No categories yet. Add one below.</div>
+        }
+      </div>
+      <div class="cat-form-section">
+        <h4>
+          {{ editingCategory() ? '✏️ Edit Category' : '➕ New Category' }}
+        </h4>
+        <form [formGroup]="categoryForm" (ngSubmit)="saveCategory()">
+          <div class="cat-form-row">
+            <div class="cat-form-group">
+              <label>Name</label>
+              <input
+                type="text"
+                formControlName="name"
+                placeholder="Category name"
+              />
+            </div>
+            <div class="cat-form-group">
+              <label>Parent (optional)</label>
+              <select formControlName="parentId">
+                <option value="">— None (top-level) —</option>
+                @for (p of availableParents(); track p.id) {
+                  <option [value]="p.id">{{ p.icon }} {{ p.name }}</option>
+                }
+              </select>
+            </div>
+          </div>
+          <div class="cat-form-group">
+            <label>Icon</label>
+            <div class="icon-picker">
+              @for (icon of CATEGORY_ICONS; track icon) {
+                <button
+                  type="button"
+                  class="icon-option"
+                  [class.selected]="categoryForm.value.icon === icon"
+                  (click)="selectIcon(icon)"
+                >
+                  {{ icon }}
+                </button>
+              }
+            </div>
+          </div>
+          <div class="cat-form-actions">
+            <button
+              type="submit"
+              [disabled]="categoryForm.invalid"
+              class="btn-modern btn-submit btn-sm"
+            >
+              {{ editingCategory() ? 'Save Changes' : 'Add Category' }}
+            </button>
+            <button
+              type="button"
+              class="btn-cancel btn-sm"
+              (click)="startAddCategory()"
+            >
+              Reset
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  }
+
+  @if (activeTab() === 'ledger') {
+    <!-- Add / Edit Transaction Form -->
+    <form [formGroup]="ledgerForm" (ngSubmit)="onSubmit()" class="add-form">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="trans-date">Date</label>
+          <input id="trans-date" type="date" formControlName="date" />
+        </div>
+
+        @if (isTransfer()) {
+          <div class="form-group">
+            <label for="trans-from">From</label>
+            <select id="trans-from" formControlName="fromAccountId">
+              @for (acct of accounts(); track acct.id) {
+                <option [value]="acct.id">
+                  {{ accountTypeIcon(acct.type) }} {{ acct.name }}
+                </option>
+              }
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="trans-to">To</label>
+            <select id="trans-to" formControlName="accountId">
+              @for (acct of accounts(); track acct.id) {
+                <option [value]="acct.id">
+                  {{ accountTypeIcon(acct.type) }} {{ acct.name }}
+                </option>
+              }
+            </select>
+          </div>
+        } @else {
+          <div class="form-group">
+            <label for="trans-account">Account</label>
+            <select id="trans-account" formControlName="accountId">
+              @for (acct of accounts(); track acct.id) {
+                <option [value]="acct.id">
+                  {{ accountTypeIcon(acct.type) }} {{ acct.name }}
+                </option>
+              }
+            </select>
+          </div>
+        }
+
+        <div class="form-group">
+          <label for="trans-type">Type</label>
+          <select
+            id="trans-type"
+            formControlName="type"
+            (change)="onTypeChange()"
+          >
+            <option value="expense">📉 Expense</option>
+            <option value="income">📈 Income</option>
+            <option value="transfer">🔄 Transfer</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="trans-amount">Amount</label>
+          <div class="input-with-icon">
+            <input id="trans-amount" type="number" formControlName="amount" />
+            <span class="currency-tag">TND</span>
+          </div>
+        </div>
+
+        <div class="form-group flex-grow">
+          <label for="trans-note">Note</label>
+          <input
+            id="trans-note"
+            type="text"
+            formControlName="note"
+            placeholder="e.g., Groceries, Salary"
+          />
+        </div>
+
+        <div class="form-actions form-actions-top">
+          @if (isEditing()) {
+            <button
+              type="button"
+              class="btn-cancel btn-sm"
+              (click)="cancelEdit()"
+            >
+              Cancel
+            </button>
+          }
+          <button
+            type="submit"
+            [disabled]="ledgerForm.invalid"
+            class="btn-modern btn-submit"
+          >
+            @if (isEditing()) {
+              💾 Save Changes
+            } @else if (isTransfer()) {
+              🔄 Transfer
+            } @else {
+              ➕ Log Entry
+            }
+          </button>
+        </div>
+      </div>
+
+      <!-- Category selector row (all types) -->
+      <div class="form-row form-row-category">
+        <div class="form-group category-select-group">
+          <label>Category</label>
+          <div class="category-dropdown">
+            <button
+              type="button"
+              class="dropdown-trigger"
+              (click)="toggleCategoryDropdown()"
+            >
+              <span class="dropdown-label">{{ selectedCategoryLabel() }}</span>
+              <span class="dropdown-arrow">▾</span>
+            </button>
+            @if (showCategoryDropdown()) {
+              <div class="dropdown-menu">
+                <button
+                  type="button"
+                  class="drop-item drop-all"
+                  [class.active]="!ledgerForm.value.categoryId"
+                  (click)="selectCategory('')"
+                >
+                  — Uncategorized —
+                </button>
+                @for (parent of categoriesTree(); track parent.id) {
+                  <div class="drop-group">
+                    <button
+                      type="button"
+                      class="drop-item drop-parent"
+                      [class.active]="ledgerForm.value.categoryId === parent.id"
+                      (click)="selectCategory(parent.id)"
+                    >
+                      <span class="drop-icon">{{ parent.icon }}</span>
+                      {{ parent.name }}
+                    </button>
+                    @for (child of parent.children; track child.id) {
+                      <button
+                        type="button"
+                        class="drop-item drop-child"
+                        [class.active]="
+                          ledgerForm.value.categoryId === child.id
+                        "
+                        (click)="selectCategory(child.id)"
+                      >
+                        <span class="drop-icon">{{ child.icon }}</span>
+                        {{ child.name }}
+                      </button>
+                    }
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- Goal link row -->
+      <div class="form-row form-row-category">
+        <div class="form-group category-select-group">
+          <label>Link to Goal</label>
+          <div class="category-dropdown">
+            <button
+              type="button"
+              class="dropdown-trigger"
+              (click)="toggleGoalDropdown()"
+            >
+              <span class="dropdown-label">{{ selectedGoalLabel() }}</span>
+              <span class="dropdown-arrow">▾</span>
+            </button>
+            @if (showGoalDropdown()) {
+              <div class="dropdown-menu">
+                <button
+                  type="button"
+                  class="drop-item drop-all"
+                  [class.active]="!ledgerForm.value.goalId"
+                  (click)="selectGoal('')"
+                >
+                  — None —
+                </button>
+                @for (goal of goals(); track goal.id) {
+                  <button
+                    type="button"
+                    class="drop-item"
+                    [class.active]="ledgerForm.value.goalId === goal.id"
+                    (click)="selectGoal(goal.id)"
+                  >
+                    🎯 {{ goal.name }}
+                  </button>
+                }
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <!-- Import XLSX button -->
+    <div class="import-bar">
+      <button
+        type="button"
+        class="btn-modern btn-import"
+        (click)="xlsxInput.click()"
+      >
+        📥 Import from Excel
+      </button>
+      <input
+        #xlsxInput
+        type="file"
+        accept=".xlsx"
+        (change)="onXlsxImportFileSelected($event)"
+        style="display: none"
+      />
+    </div>
+
+    <!-- Import Preview Dialog -->
+    @if (showImportDialog() && importPreviewData(); as data) {
+      <div class="import-overlay" (click)="cancelImport()">
+        <div class="import-dialog" (click)="$event.stopPropagation()">
+          <div class="import-dialog-header">
+            <h3>📥 Import Preview</h3>
+            <span class="import-file-name">{{ importFileName() }}</span>
+          </div>
+          <div class="import-stats">
+            <div class="import-stat">
+              <span class="import-stat-value">{{ importAccountsFound() }}</span>
+              <span class="import-stat-label">Accounts</span>
+            </div>
+            <div class="import-stat">
+              <span class="import-stat-value">{{
+                importCategoriesFound()
+              }}</span>
+              <span class="import-stat-label">Categories</span>
+            </div>
+            <div class="import-stat">
+              <span class="import-stat-value">{{
+                data.transactions.length
+              }}</span>
+              <span class="import-stat-label">Transactions</span>
+            </div>
+          </div>
+          <div class="import-preview-table">
+            <table>
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Account</th>
+                  <th>Category</th>
+                  <th>Note</th>
+                  <th class="col-amount">Amount</th>
+                  <th class="col-type">Type</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (t of data.transactions.slice(0, 20); track $index) {
+                  <tr>
+                    <td>{{ t.date }}</td>
+                    <td>{{ t.accountName }}</td>
+                    <td>{{ t.categoryName }}</td>
+                    <td>{{ t.note }}</td>
+                    <td
+                      class="col-amount"
+                      [class.text-success]="t.type === 'income'"
+                      [class.text-danger]="t.type === 'expense'"
+                    >
+                      {{ t.amount | currency: 'TND' : 'symbol' }}
+                    </td>
+                    <td class="col-type">
+                      {{ t.type === 'income' ? '📈' : '📉' }}
+                    </td>
+                  </tr>
+                }
+                @if (data.transactions.length > 20) {
+                  <tr>
+                    <td colspan="6" class="import-more">
+                      ... and {{ data.transactions.length - 20 }} more
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+          <div class="import-dialog-actions">
+            <button
+              type="button"
+              class="btn-cancel btn-sm"
+              (click)="cancelImport()"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              class="btn-modern btn-submit btn-sm"
+              (click)="confirmImport()"
+            >
+              ✅ Import {{ data.transactions.length }} Transactions
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- Search / Filter Bar -->
+    @if (transactions().length > 0) {
+      <div class="filter-bar">
+        <div class="filter-search">
+          <span class="filter-search-icon">🔍</span>
+          <input
+            type="text"
+            class="filter-search-input"
+            placeholder="Search notes..."
+            [value]="searchQuery()"
+            (input)="onSearchInput($event)"
+          />
+        </div>
+        <select
+          class="filter-select"
+          [value]="filterType()"
+          (change)="setFilter('type', $any($event.target).value)"
+        >
+          <option value="all">📋 All</option>
+          <option value="income">📈 Income</option>
+          <option value="expense">📉 Expense</option>
+          <option value="transfer">🔄 Transfer</option>
+        </select>
+        <select
+          class="filter-select"
+          [value]="filterAccountId()"
+          (change)="setFilter('account', $any($event.target).value)"
+        >
+          <option value="">🏦 All Accounts</option>
+          @for (acct of accounts(); track acct.id) {
+            <option [value]="acct.id">
+              {{ accountTypeIcon(acct.type) }} {{ acct.name }}
+            </option>
+          }
+        </select>
+        <select
+          class="filter-select"
+          [value]="filterCategoryId()"
+          (change)="setFilter('category', $any($event.target).value)"
+        >
+          <option value="">📁 All Categories</option>
+          @for (parent of categoriesTree(); track parent.id) {
+            <option [value]="parent.id">
+              {{ parent.icon }} {{ parent.name }}
+            </option>
+            @for (child of parent.children; track child.id) {
+              <option [value]="child.id">
+                &nbsp;&nbsp;{{ child.icon }} {{ child.name }}
+              </option>
+            }
+          }
+        </select>
+        <input
+          type="date"
+          class="filter-date"
+          [value]="filterDateFrom()"
+          (change)="setFilter('dateFrom', $any($event.target).value)"
+          title="From date"
+        />
+        <input
+          type="date"
+          class="filter-date"
+          [value]="filterDateTo()"
+          (change)="setFilter('dateTo', $any($event.target).value)"
+          title="To date"
+        />
+        <div class="filter-sort">
+          <button
+            type="button"
+            class="sort-btn"
+            [class.active]="sortBy() === 'date'"
+            (click)="toggleSort('date')"
+          >
+            Date {{ sortBy() === 'date' ? (sortAsc() ? '▲' : '▼') : '▽' }}
+          </button>
+          <button
+            type="button"
+            class="sort-btn"
+            [class.active]="sortBy() === 'amount'"
+            (click)="toggleSort('amount')"
+          >
+            Amount {{ sortBy() === 'amount' ? (sortAsc() ? '▲' : '▼') : '▽' }}
+          </button>
+        </div>
+        @if (hasActiveFilters()) {
+          <button type="button" class="filter-clear" (click)="clearFilters()">
+            ✕ Clear
+          </button>
+        }
+      </div>
+      <div class="filter-count">
+        Showing {{ pagedTransactions().length }} of
+        {{ totalFilteredCount() }} transaction{{
+          totalFilteredCount() !== 1 ? 's' : ''
+        }}
+        @if (totalFilteredCount() !== totalUnfilteredCount()) {
+          <span class="filter-count-total">
+            (filtered from {{ totalUnfilteredCount() }})</span
+          >
+        }
+      </div>
+    }
+
+    <!-- Transactions Table -->
+    <div class="table-container">
+      <table class="ledger-table">
+        <thead>
+          <tr>
+            <th class="col-date"><span class="hdr-label">Date</span></th>
+            <th class="col-acct">
+              <span class="hdr-label">Account</span>
+              <span class="hdr-short">Acct</span>
+            </th>
+            <th class="col-cat"><span class="hdr-label">Category</span></th>
+            <th class="col-desc"><span class="hdr-label">Note</span></th>
+            <th class="col-amount">Amount</th>
+            <th class="col-actions"></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (t of pagedTransactions(); track t.id) {
+            <tr>
+              <td class="col-date">
+                <span class="date-text">{{ t.date | date: 'dd MMM' }}</span>
+                <span
+                  class="type-mark"
+                  [class.income]="t.type === 'income'"
+                  [class.expense]="t.type === 'expense'"
+                  [class.transfer]="t.type === 'transfer'"
+                >
+                  @switch (t.type) {
+                    @case ('income') {
+                      +
+                    }
+                    @case ('expense') {
+                      –
+                    }
+                    @case ('transfer') {
+                      ↻
+                    }
+                  }
+                </span>
+              </td>
+              <td class="col-acct">
+                @if (t.type === 'transfer') {
+                  @let src = accountsMap()[t.fromAccountId || ''];
+                  @let dst = accountsMap()[t.accountId];
+                  <span class="acct-badge transfer-badge"
+                    >{{ accountTypeIcon(src?.type || 'other') }}
+                    {{ src?.name || '?' }} →
+                    {{ accountTypeIcon(dst?.type || 'other') }}
+                    {{ dst?.name || '?' }}</span
+                  >
+                } @else {
+                  @let acct = accountsMap()[t.accountId];
+                  <span class="acct-badge" title="{{ acct?.name || 'Unknown' }}"
+                    >{{ accountTypeIcon(acct?.type || 'other') }}
+                    <span class="acct-name-text">{{
+                      acct?.name || 'Unknown'
+                    }}</span></span
+                  >
+                }
+              </td>
+              <td class="col-cat">
+                @let cat = categoriesMap()[t.categoryId || ''];
+                <span class="category-badge" title="{{ categoryLabel(cat) }}">{{
+                  categoryLabel(cat)
+                }}</span>
+              </td>
+              <td class="col-desc">{{ t.note }}</td>
+              <td class="col-amount">
+                <span
+                  class="amount-value"
+                  [class.text-success]="t.type === 'income'"
+                  [class.text-danger]="t.type === 'expense'"
+                  [class.text-muted]="t.type === 'transfer'"
+                >
+                  {{
+                    t.type === 'income' ? '+' : t.type === 'expense' ? '–' : ''
+                  }}{{ t.amount | currency: 'TND' : 'symbol' }}
+                </span>
+              </td>
+              <td class="col-actions">
+                <button
+                  type="button"
+                  (click)="startEditTransaction(t)"
+                  class="action-icon edit"
+                  title="Edit"
+                >
+                  ✏️
+                </button>
+                <button
+                  type="button"
+                  (click)="removeTransaction.emit(t.id)"
+                  class="action-icon delete"
+                  title="Remove"
+                >
+                  🗑️
+                </button>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="6" class="empty-state">
+                <div class="empty-content">
+                  <span class="empty-icon">{{
+                    transactions().length === 0 ? '📝' : '🔍'
+                  }}</span>
+                  <p>
+                    {{
+                      transactions().length === 0
+                        ? 'No transactions logged yet. Start tracking your reality!'
+                        : 'No transactions match your filters.'
+                    }}
+                  </p>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    @if (totalPages() > 1) {
+      <div class="pagination">
+        <div class="pagination-info">
+          Page {{ currentPage() }} of {{ totalPages() }}
+          &nbsp;·&nbsp;
+          <select
+            class="page-size-select"
+            [value]="pageSize()"
+            (change)="
+              pageSize.set(+$any($event.target).value); currentPage.set(1)
+            "
+          >
+            <option [value]="10">10</option>
+            <option [value]="25">25</option>
+            <option [value]="50">50</option>
+            <option [value]="100">100</option>
+          </select>
+          per page
+        </div>
+        <div class="pagination-buttons">
+          <button
+            type="button"
+            class="page-btn"
+            [disabled]="currentPage() <= 1"
+            (click)="prevPage()"
+          >
+            ‹ Prev
+          </button>
+          @for (p of pageNumbers(); track $index) {
+            @if (p === '...') {
+              <span class="page-ellipsis">…</span>
+            } @else {
+              <button
+                type="button"
+                class="page-btn page-num"
+                [class.active]="p === currentPage()"
+                (click)="currentPage.set($any(p))"
+              >
+                {{ p }}
+              </button>
+            }
+          }
+          <button
+            type="button"
+            class="page-btn"
+            [disabled]="currentPage() >= totalPages()"
+            (click)="nextPage()"
+          >
+            Next ›
+          </button>
+        </div>
+      </div>
+    }
+  }
+
+  <!-- Analytics Section -->
+  @if (activeTab() === 'analytics') {
+    <div class="analytics-section">
+      <div class="analytics-header">
+        <h3>📊 Ledger Analytics</h3>
+        <button
+          type="button"
+          class="btn-cancel btn-sm"
+          (click)="activeTab.set('ledger')"
+        >
+          📓 Back
+        </button>
+      </div>
+
+      <!-- Analytics filter bar -->
+      <div class="an-filters">
+        <div class="an-filter-group">
+          <label>From</label>
+          <input
+            type="date"
+            class="filter-date"
+            [value]="analyticsDateFrom()"
+            (change)="analyticsDateFrom.set($any($event.target).value)"
+          />
+        </div>
+        <div class="an-filter-group">
+          <label>To</label>
+          <input
+            type="date"
+            class="filter-date"
+            [value]="analyticsDateTo()"
+            (change)="analyticsDateTo.set($any($event.target).value)"
+          />
+        </div>
+        <div class="an-filter-group">
+          <label>Type</label>
+          <select
+            class="filter-select"
+            [value]="analyticsTypeFilter()"
+            (change)="analyticsTypeFilter.set($any($event.target).value)"
+          >
+            <option value="all">📋 All</option>
+            <option value="income">📈 Income</option>
+            <option value="expense">📉 Expense</option>
+            <option value="transfer">🔄 Transfer</option>
+          </select>
+        </div>
+        <button
+          type="button"
+          class="filter-clear"
+          (click)="clearAnalyticsFilters()"
+        >
+          ✕ Clear
+        </button>
+      </div>
+
+      <div class="an-filter-count">
+        Showing {{ analyticsSummary().count }} transaction{{
+          analyticsSummary().count !== 1 ? 's' : ''
+        }}
+      </div>
+
+      <!-- Summary cards -->
+      <div class="analytics-cards">
+        <div class="an-card an-card-income">
+          <span class="an-card-label">Total Income</span>
+          <span class="an-card-value"
+            >+{{ analyticsSummary().income | currency: 'TND' : 'symbol' }}</span
+          >
+        </div>
+        <div class="an-card an-card-expense">
+          <span class="an-card-label">Total Expenses</span>
+          <span class="an-card-value"
+            >-{{
+              analyticsSummary().expense | currency: 'TND' : 'symbol'
+            }}</span
+          >
+        </div>
+        <div
+          class="an-card an-card-net"
+          [class.positive]="analyticsSummary().net >= 0"
+          [class.negative]="analyticsSummary().net < 0"
+        >
+          <span class="an-card-label">Net</span>
+          <span class="an-card-value">{{
+            analyticsSummary().net | currency: 'TND' : 'symbol'
+          }}</span>
+        </div>
+        <div class="an-card an-card-transfer">
+          <span class="an-card-label">Transfers</span>
+          <span class="an-card-value">{{
+            analyticsSummary().transfer | currency: 'TND' : 'symbol'
+          }}</span>
+        </div>
+      </div>
+
+      <!-- Combined pie chart + category stats -->
+      @if (analyticsByCategory().all.length > 0) {
+        <div class="an-section">
+          <h4>📊 All Categories Combined</h4>
+          <div class="an-pie-layout">
+            <div class="an-pie-chart an-pie-chart-lg">
+              <canvas
+                baseChart
+                [data]="pieChartAllData()"
+                [options]="pieChartOptions"
+                [type]="'pie'"
+              ></canvas>
+            </div>
+            <div class="an-legend an-legend-lg">
+              @for (item of analyticsByCategory().all; track item.id) {
+                <div
+                  class="an-legend-item an-legend-item-clickable"
+                  [class.selected]="selectedCategoryId() === item.id"
+                  (click)="selectCategoryForBreakdown(item.id)"
+                  (keydown.enter)="selectCategoryForBreakdown(item.id)"
+                  tabindex="0"
+                  role="button"
+                >
+                  <span
+                    class="an-legend-dot"
+                    [style.background]="item.color"
+                  ></span>
+                  <span class="an-legend-icon">{{ item.icon }}</span>
+                  <span class="an-legend-name">{{ item.name }}</span>
+                  <span class="an-legend-count">{{ item.count }}x</span>
+                  <span class="an-legend-amount">{{
+                    item.amount | currency: 'TND' : 'symbol'
+                  }}</span>
+                  <span class="an-legend-pct"
+                    >{{ item.pct | number: '1.0-0' }}%</span
+                  >
+                </div>
+                @if (selectedCategoryId() === item.id) {
+                  <div class="an-child-stats">
+                    <span class="an-child-stat"
+                      >Avg: {{ item.avg | currency: 'TND' : 'symbol' }}</span
+                    >
+                    <span class="an-child-stat"
+                      >Min: {{ item.min | currency: 'TND' : 'symbol' }}</span
+                    >
+                    <span class="an-child-stat"
+                      >Max: {{ item.max | currency: 'TND' : 'symbol' }}</span
+                    >
+                  </div>
+                }
+              }
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- Category breakdown with Chart.js pie charts -->
+      @if (analyticsByCategory().expense.length > 0) {
+        <div class="an-section">
+          <h4>📉 Expenses by Category</h4>
+          <div class="an-pie-layout">
+            <div class="an-pie-chart">
+              <canvas
+                baseChart
+                [data]="pieChartExpenseData()"
+                [options]="pieChartOptions"
+                [type]="'pie'"
+              ></canvas>
+            </div>
+            <div class="an-legend">
+              @for (item of analyticsByCategory().expense; track item.name) {
+                <div class="an-legend-item">
+                  <span
+                    class="an-legend-dot"
+                    [style.background]="item.color"
+                  ></span>
+                  <span class="an-legend-icon">{{ item.icon }}</span>
+                  <span class="an-legend-name">{{ item.name }}</span>
+                  <span class="an-legend-count">{{ item.count }}x</span>
+                  <span class="an-legend-amount">{{
+                    item.amount | currency: 'TND' : 'symbol'
+                  }}</span>
+                  <span class="an-legend-pct"
+                    >{{ item.pct | number: '1.0-0' }}%</span
+                  >
+                </div>
+                <div class="an-child-stats">
+                  <span class="an-child-stat"
+                    >Avg: {{ item.avg | currency: 'TND' : 'symbol' }}</span
+                  >
+                  <span class="an-child-stat"
+                    >Min: {{ item.min | currency: 'TND' : 'symbol' }}</span
+                  >
+                  <span class="an-child-stat"
+                    >Max: {{ item.max | currency: 'TND' : 'symbol' }}</span
+                  >
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      }
+
+      @if (analyticsByCategory().income.length > 0) {
+        <div class="an-section">
+          <h4>📈 Income by Category</h4>
+          <div class="an-pie-layout">
+            <div class="an-pie-chart">
+              <canvas
+                baseChart
+                [data]="pieChartIncomeData()"
+                [options]="pieChartOptions"
+                [type]="'pie'"
+              ></canvas>
+            </div>
+            <div class="an-legend">
+              @for (item of analyticsByCategory().income; track item.name) {
+                <div class="an-legend-item">
+                  <span
+                    class="an-legend-dot"
+                    [style.background]="item.color"
+                  ></span>
+                  <span class="an-legend-icon">{{ item.icon }}</span>
+                  <span class="an-legend-name">{{ item.name }}</span>
+                  <span class="an-legend-count">{{ item.count }}x</span>
+                  <span class="an-legend-amount">{{
+                    item.amount | currency: 'TND' : 'symbol'
+                  }}</span>
+                  <span class="an-legend-pct"
+                    >{{ item.pct | number: '1.0-0' }}%</span
+                  >
+                </div>
+                <div class="an-child-stats">
+                  <span class="an-child-stat"
+                    >Avg: {{ item.avg | currency: 'TND' : 'symbol' }}</span
+                  >
+                  <span class="an-child-stat"
+                    >Min: {{ item.min | currency: 'TND' : 'symbol' }}</span
+                  >
+                  <span class="an-child-stat"
+                    >Max: {{ item.max | currency: 'TND' : 'symbol' }}</span
+                  >
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      }
+
+      @if (
+        analyticsByCategory().transfer.length > 0 &&
+        analyticsByCategory().transfer[0].name !== 'Uncategorized'
+      ) {
+        <div class="an-section">
+          <h4>🔄 Transfers by Category</h4>
+          <div class="an-pie-layout">
+            <div class="an-pie-chart">
+              <canvas
+                baseChart
+                [data]="pieChartTransferData()"
+                [options]="pieChartOptions"
+                [type]="'pie'"
+              ></canvas>
+            </div>
+            <div class="an-legend">
+              @for (item of analyticsByCategory().transfer; track item.name) {
+                <div class="an-legend-item">
+                  <span
+                    class="an-legend-dot"
+                    [style.background]="item.color"
+                  ></span>
+                  <span class="an-legend-icon">{{ item.icon }}</span>
+                  <span class="an-legend-name">{{ item.name }}</span>
+                  <span class="an-legend-count">{{ item.count }}x</span>
+                  <span class="an-legend-amount">{{
+                    item.amount | currency: 'TND' : 'symbol'
+                  }}</span>
+                  <span class="an-legend-pct"
+                    >{{ item.pct | number: '1.0-0' }}%</span
+                  >
+                </div>
+                <div class="an-child-stats">
+                  <span class="an-child-stat"
+                    >Avg: {{ item.avg | currency: 'TND' : 'symbol' }}</span
+                  >
+                  <span class="an-child-stat"
+                    >Min: {{ item.min | currency: 'TND' : 'symbol' }}</span
+                  >
+                  <span class="an-child-stat"
+                    >Max: {{ item.max | currency: 'TND' : 'symbol' }}</span
+                  >
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- Category drill-down: transactions for selected category -->
+      @if (selectedCategoryId() && categoryBreakdownTransactions().length > 0) {
+        <div class="an-section an-drilldown">
+          <h4>
+            📋 {{ categoriesMap()[selectedCategoryId()!]?.icon }}
+            {{ categoriesMap()[selectedCategoryId()!]?.name }} —
+            {{ categoryBreakdownTransactions().length }} transaction{{
+              categoryBreakdownTransactions().length !== 1 ? 's' : ''
+            }}
+            ({{ categoryBreakdownTotal() | currency: 'TND' : 'symbol' }})
+          </h4>
+          <div class="an-drilldown-table">
+            <table>
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Account</th>
+                  <th>Description</th>
+                  <th class="col-amount">Amount</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (
+                  t of categoryBreakdownTransactions().slice(0, 50);
+                  track t.id
+                ) {
+                  <tr>
+                    <td>{{ t.date | date: 'dd MMM' }}</td>
+                    <td>{{ accountsMap()[t.accountId]?.name || '?' }}</td>
+                    <td>{{ t.note }}</td>
+                    <td
+                      class="col-amount"
+                      [class.text-success]="t.type === 'income'"
+                      [class.text-danger]="t.type === 'expense'"
+                    >
+                      {{
+                        t.type === 'income'
+                          ? '+'
+                          : t.type === 'expense'
+                            ? '-'
+                            : ''
+                      }}{{ t.amount | currency: 'TND' : 'symbol' }}
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      }
+
+      <!-- Monthly trends with Chart.js -->
+      @if (analyticsMonthly().months.length > 0) {
+        <div class="an-section">
+          <h4>📅 Monthly Trends</h4>
+          <div class="an-monthly-chart">
+            <canvas
+              baseChart
+              [data]="analyticsMonthlyChartData()"
+              [options]="analyticsMonthlyChartOptions"
+              [type]="'bar'"
+            ></canvas>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</section>

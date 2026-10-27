@@ -1,0 +1,285 @@
+<div class="scenario-card" [class.dark]="isDarkMode()">
+  <div class="card-header">
+    <h3>{{ summary().name }}</h3>
+    <span class="badge">{{ summary().years }} Years</span>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-box">
+      <span class="label">
+        <app-ui-tooltip
+          tipTitle="Monthly Net"
+          tipBody="The difference between your monthly income and expenses, averaged across the projection."
+          tipFormula="Monthly Income − Monthly Expenses"
+          tipMeaning="Positive means you earn more than you spend. Negative means a deficit."
+          >Monthly Net</app-ui-tooltip
+        >
+      </span>
+      <strong
+        [class.text-success]="summary().monthlyAverage >= 0"
+        [class.text-danger]="summary().monthlyAverage < 0"
+      >
+        {{ summary().monthlyAverage | currency: 'TND' : 'symbol' : '1.0-0' }}
+      </strong>
+    </div>
+    <div class="stat-box">
+      <span class="label">
+        <app-ui-tooltip
+          tipTitle="Total Income"
+          tipBody="The sum of all projected income over the entire period."
+          tipFormula="Sum of all income line items"
+          tipMeaning="Shows your total earning power across the full projection."
+          >Total Income</app-ui-tooltip
+        >
+      </span>
+      <strong class="text-success">
+        {{ summary().totalIncome | currency: 'TND' : 'symbol' : '1.0-0' }}
+      </strong>
+    </div>
+    <div class="stat-box">
+      <span class="label">
+        <app-ui-tooltip
+          tipTitle="Total Expenses"
+          tipBody="The sum of all projected expenses over the entire period."
+          tipFormula="Sum of all expense line items"
+          tipMeaning="Shows your total spending across the full projection."
+          >Total Expenses</app-ui-tooltip
+        >
+      </span>
+      <strong class="text-danger">
+        {{ summary().totalExpenses | currency: 'TND' : 'symbol' : '1.0-0' }}
+      </strong>
+    </div>
+    <div class="stat-box highlight">
+      <span class="label">
+        <app-ui-tooltip
+          tipTitle="Final Reserve"
+          tipBody="Projected account balance at the end, after all income, expenses, loans, and goals."
+          tipFormula="Final projected balance"
+          tipMeaning="Positive = money left over. Negative = outgo exceeds income."
+          >Final Reserve</app-ui-tooltip
+        >
+      </span>
+      <strong
+        [class.text-success]="summary().finalReserve >= 0"
+        [class.text-danger]="summary().finalReserve < 0"
+      >
+        {{ summary().finalReserve | currency: 'TND' : 'symbol' : '1.0-0' }}
+      </strong>
+    </div>
+  </div>
+
+  <div class="milestones-preview">
+    <h4>Goal Projections:</h4>
+    <div class="badges">
+      @for (milestone of summary().goalMilestones; track milestone.id) {
+        @if (milestone.status === 'achieved') {
+          <span class="milestone-badge success" title="{{ milestone.name }}">
+            🏆 {{ milestone.name }} ({{
+              summary().dateLabels[(milestone.achievedMonth ?? 1) - 1]
+            }})
+          </span>
+        } @else if (milestone.status === 'in_progress') {
+          <span class="milestone-badge on-track" title="{{ milestone.name }}">
+            ⏳ {{ milestone.name }} (Priority: {{ milestone.priority || 1 }})
+          </span>
+        } @else {
+          <span class="milestone-badge unmet" title="{{ milestone.name }}">
+            ⏸️ {{ milestone.name }} (Priority: {{ milestone.priority || 1 }})
+          </span>
+        }
+      }
+      @if (summary().goalMilestones.length === 0) {
+        <span class="text-muted">No goals set</span>
+      }
+    </div>
+  </div>
+
+  <div class="chart-section-wrapper">
+    <div class="chart-tabs">
+      <button
+        [class.active]="activeChartTab === 'trajectory'"
+        (click)="activeChartTab = 'trajectory'"
+      >
+        📈 Trajectory
+      </button>
+      <button
+        [class.active]="activeChartTab === 'cashflow'"
+        (click)="activeChartTab = 'cashflow'"
+      >
+        ⚖️ Cash Flow
+      </button>
+      <button
+        [class.active]="activeChartTab === 'breakdown'"
+        (click)="activeChartTab = 'breakdown'"
+      >
+        🥧 Breakdown
+      </button>
+      <button
+        [class.active]="activeChartTab === 'variance'"
+        (click)="activeChartTab = 'variance'"
+      >
+        🎯 This Month
+      </button>
+      <button
+        [class.active]="activeChartTab === 'goals'"
+        (click)="activeChartTab = 'goals'"
+      >
+        🎯 Goals
+      </button>
+    </div>
+
+    <div class="time-view-toggle">
+      <button
+        [class.active]="timeView() === 'monthly'"
+        (click)="timeView.set('monthly')"
+      >
+        Monthly
+      </button>
+      <button
+        [class.active]="timeView() === 'yearly'"
+        (click)="timeView.set('yearly')"
+      >
+        Yearly
+      </button>
+      <button
+        [class.active]="timeView() === 'all'"
+        (click)="timeView.set('all')"
+      >
+        All
+      </button>
+    </div>
+    <div class="chart-wrapper">
+      @if (activeChartTab === 'trajectory') {
+        <canvas
+          baseChart
+          [data]="trajectoryChartData()"
+          [options]="trajectoryChartOptions()"
+          [type]="'line'"
+        ></canvas>
+      }
+      @if (activeChartTab === 'cashflow') {
+        <canvas
+          baseChart
+          [data]="cashFlowChartData()"
+          [options]="cashFlowChartOptions()"
+          [type]="'bar'"
+        ></canvas>
+      }
+      @if (activeChartTab === 'breakdown') {
+        <canvas
+          baseChart
+          [data]="breakdownChartData()"
+          [options]="breakdownChartOptions()"
+          [type]="'doughnut'"
+        ></canvas>
+      }
+
+      @if (activeChartTab === 'goals' && summary().goalMilestones.length > 0) {
+        <canvas
+          baseChart
+          [data]="goalsChartData()"
+          [options]="goalsChartOptions()"
+          [type]="'bar'"
+        ></canvas>
+      }
+      @if (
+        activeChartTab === 'goals' && summary().goalMilestones.length === 0
+      ) {
+        <div class="empty-state">No goals set for this scenario.</div>
+      }
+      @if (activeChartTab === 'variance') {
+        <div class="variance-wrapper">
+          <div class="variance-card">
+            <div class="variance-header">
+              <h4>Income Progress</h4>
+              <span class="small-text"
+                >{{ getIncomeProgress() | number: '1.0-0' }}% of Goal</span
+              >
+            </div>
+            <div class="variance-stats">
+              <span class="text-success"
+                >Earned:
+                {{
+                  store.currentMonthPerformance().actualIncome
+                    | currency: 'TND' : 'symbol' : '1.0-0'
+                }}</span
+              >
+              <span class="text-muted"
+                >Goal:
+                {{
+                  store.currentMonthPerformance().plannedIncome
+                    | currency: 'TND' : 'symbol' : '1.0-0'
+                }}</span
+              >
+            </div>
+            <div class="progress-track">
+              <div
+                class="progress-fill income"
+                [style.width.%]="getIncomeProgress()"
+              ></div>
+            </div>
+          </div>
+
+          <div class="variance-card">
+            <div class="variance-header">
+              <h4>Expense Status</h4>
+              <span class="small-text"
+                >{{ getExpenseProgress() | number: '1.0-0' }}% of Budget</span
+              >
+            </div>
+            <div class="variance-stats">
+              <span
+                [class.text-danger]="
+                  store.currentMonthPerformance().expenseVariance < 0
+                "
+              >
+                Spent:
+                {{
+                  store.currentMonthPerformance().actualExpense
+                    | currency: 'TND' : 'symbol' : '1.0-0'
+                }}
+              </span>
+              <span class="text-muted"
+                >Budget:
+                {{
+                  store.currentMonthPerformance().plannedExpense
+                    | currency: 'TND' : 'symbol' : '1.0-0'
+                }}</span
+              >
+            </div>
+            <div class="progress-track">
+              <div
+                class="progress-fill expense"
+                [style.width.%]="getExpenseProgress()"
+                [class.over-budget]="
+                  store.currentMonthPerformance().expenseVariance < 0
+                "
+              ></div>
+            </div>
+
+            <div class="variance-alert">
+              @if (store.currentMonthPerformance().expenseVariance < 0) {
+                <span class="text-danger font-medium">
+                  ⚠️ Over budget by
+                  {{
+                    store.currentMonthPerformance().expenseVariance * -1
+                      | currency: 'TND' : 'symbol' : '1.0-0'
+                  }}
+                </span>
+              } @else {
+                <span class="text-success font-medium">
+                  ✓ Under budget by
+                  {{
+                    store.currentMonthPerformance().expenseVariance
+                      | currency: 'TND' : 'symbol' : '1.0-0'
+                  }}
+                </span>
+              }
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</div>
