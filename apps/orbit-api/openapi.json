@@ -239,7 +239,8 @@
           "source" : {
             "type" : "string"
           }
-        }
+        },
+        "required" : [ "count", "fetchedAt", "group", "satellites", "source" ]
       },
       "Observer" : {
         "type" : "object",
@@ -259,7 +260,8 @@
             "format" : "double",
             "description" : "Degrees, east positive"
           }
-        }
+        },
+        "required" : [ "altitudeM", "latitude", "longitude" ]
       },
       "OrbitalElements" : {
         "type" : "object",
@@ -337,7 +339,8 @@
             "type" : "integer",
             "format" : "int32"
           }
-        }
+        },
+        "required" : [ "ARG_OF_PERICENTER", "BSTAR", "CLASSIFICATION_TYPE", "ECCENTRICITY", "ELEMENT_SET_NO", "EPHEMERIS_TYPE", "EPOCH", "INCLINATION", "MEAN_ANOMALY", "MEAN_MOTION", "MEAN_MOTION_DDOT", "MEAN_MOTION_DOT", "NORAD_CAT_ID", "OBJECT_ID", "OBJECT_NAME", "RA_OF_ASC_NODE", "REV_AT_EPOCH" ]
       },
       "Pass" : {
         "type" : "object",
@@ -360,7 +363,8 @@
             "type" : "boolean",
             "description" : "The satellite is sunlit while the observer is in darkness (sun 6° or more below the horizon)"
           }
-        }
+        },
+        "required" : [ "culmination", "durationSeconds", "rise", "set", "visible" ]
       },
       "PassesResponse" : {
         "type" : "object",
@@ -393,7 +397,8 @@
             "type" : "string",
             "format" : "date-time"
           }
-        }
+        },
+        "required" : [ "from", "minElevationDeg", "name", "noradId", "observer", "passes", "to" ]
       },
       "Point" : {
         "type" : "object",
@@ -412,7 +417,8 @@
             "type" : "string",
             "format" : "date-time"
           }
-        }
+        },
+        "required" : [ "azimuthDeg", "elevationDeg", "time" ]
       },
       "ProblemDetail" : {
         "type" : "object",
@@ -488,7 +494,8 @@
             "type" : "number",
             "format" : "double"
           }
-        }
+        },
+        "required" : [ "apogeeKm", "eccentricity", "elements", "epoch", "group", "inclinationDeg", "name", "noradId", "objectId", "orbitClass", "perigeeKm", "periodMinutes" ]
       }
     }
   }

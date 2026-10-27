@@ -8,8 +8,9 @@
 //   --sitemap             Write sitemap.xml and robots.txt from Angular's
 //                         prerendered-routes.json and the site URL (site.json)
 //   --site-config         Write site-config.json (the contact form's API URL and
-//                         Turnstile key) from tools/hosting/environments.json,
-//                         and allow both origins in the CSP (ADR-0010)
+//                         Turnstile key, the Orbit API URL) from
+//                         tools/hosting/environments.json, and allow those
+//                         origins in the CSP (ADR-0010, ADR-0013)
 //   --app <name>          Write build-info.json (app, commit, build time) for the
 //                         Federation Inspector (ADR-0012)
 //
@@ -85,14 +86,20 @@ if (values['site-config']) {
     );
     process.exit(1);
   }
-  const { apiUrl = null, turnstileSiteKey = null } = environment;
+  const {
+    apiUrl = null,
+    turnstileSiteKey = null,
+    orbitApiUrl = null,
+  } = environment;
   writeFileSync(
     join(dir, 'site-config.json'),
-    `${JSON.stringify({ apiUrl, turnstileSiteKey }, null, 2)}
+    `${JSON.stringify({ apiUrl, turnstileSiteKey, orbitApiUrl }, null, 2)}
 `,
   );
-  if (apiUrl) {
-    apiOrigins.push(new URL(apiUrl).origin);
+  for (const url of [apiUrl, orbitApiUrl]) {
+    if (url) {
+      apiOrigins.push(new URL(url).origin);
+    }
   }
   if (turnstileSiteKey) {
     turnstileOrigins.push('https://challenges.cloudflare.com');
@@ -182,7 +189,8 @@ const csp = [
   "img-src 'self' data:",
   "font-src 'self'",
   "manifest-src 'self'",
-  "worker-src 'self'",
+  // blob: starts a remote's Web Worker inside the shell (ADR-0014).
+  "worker-src 'self' blob:",
   "object-src 'none'",
   "base-uri 'self'",
   "form-action 'self'",

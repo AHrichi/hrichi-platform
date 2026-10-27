@@ -39,6 +39,11 @@ export const skip = [
   '@angular/service-worker/safety-worker.js',
   // Only the shell's lazy Federation Inspector uses it; bundled there instead.
   'web-vitals',
+  // The Orbit lab's own dependencies (ADR-0014). satellite.js runs in a Web
+  // Worker, which has no import map, so it must be bundled, never shared.
+  'satellite.js',
+  'world-atlas',
+  'topojson-client',
 ];
 
 // https://native-federation.com/docs/v4/angular-adapter/configuration/

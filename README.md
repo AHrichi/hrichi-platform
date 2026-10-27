@@ -5,7 +5,7 @@ Ahmed Hrichi's portfolio, built as the kind of platform it describes: an Nx mono
 - Architecture: [docs/architecture.md](docs/architecture.md)
 - Decisions and spike results: [docs/adr](docs/adr/README.md)
 - Lead pipeline setup (accounts, secrets, n8n): [docs/lead-pipeline.md](docs/lead-pipeline.md)
-- Live: [portfolio.ahmed-hrichi.workers.dev](https://portfolio.ahmed-hrichi.workers.dev) (shell), [lab-hello.ahmed-hrichi.workers.dev](https://lab-hello.ahmed-hrichi.workers.dev) (remote) and [ahmed-hrichi-api.onrender.com/health](https://ahmed-hrichi-api.onrender.com/health) (lead API; sleeps when idle)
+- Live: [portfolio.ahmed-hrichi.workers.dev](https://portfolio.ahmed-hrichi.workers.dev) (shell), [lab-hello.ahmed-hrichi.workers.dev](https://lab-hello.ahmed-hrichi.workers.dev) and [lab-orbit.ahmed-hrichi.workers.dev](https://lab-orbit.ahmed-hrichi.workers.dev) (remotes) and [ahmed-hrichi-api.onrender.com/health](https://ahmed-hrichi-api.onrender.com/health) (lead API; sleeps when idle)
 
 ## Projects
 
@@ -14,6 +14,7 @@ Ahmed Hrichi's portfolio, built as the kind of platform it describes: an Nx mono
 | `shell`                     | `apps/portfolio/shell`            | Host. Prerendered content pages, PWA, loads remotes from `public/federation.manifest.json`     |
 | `shell-e2e`                 | `apps/portfolio/shell-e2e`        | Playwright tests for prerendering, federation and remote fallback                              |
 | `lab-hello`                 | `apps/labs/hello`                 | M0 spike remote; exposes `./routes` and `./meta`                                               |
+| `lab-orbit`                 | `apps/labs/orbit`                 | Orbit lab remote: every active satellite on a WebGL globe, passes from the Orbit API           |
 | `platform-federation`       | `libs/platform/federation`        | Remote contract, `federatedRoutes()`, `FederationStore`, `RemoteUnavailable` fallback          |
 | `platform-inspector`        | `libs/platform/inspector`         | "Open the hood" (`?inspect=1`): remotes, builds, shared-dependency skew, state, Web Vitals     |
 | `design-system-tokens`      | `libs/design-system/tokens`       | DTCG tokens → CSS variables and TS, with a WCAG contrast gate (`nx build-tokens`)              |
@@ -31,6 +32,10 @@ Ahmed Hrichi's portfolio, built as the kind of platform it describes: an Nx mono
 | `three-angular`             | `libs/three/angular`              | `<ah-scene>`: loads a scene after idle over a static fallback                                  |
 | `three-constellation`       | `libs/three/constellation`        | The exported Nx graph, camera and SVG projection for the hero                                  |
 | `three-scene-constellation` | `libs/three/scenes/constellation` | The hero's WebGL scene (lazy)                                                                  |
+| `three-scene-orbit-globe`   | `libs/three/scenes/orbit-globe`   | The Orbit lab's globe: dot-matrix Earth, real Sun, one point cloud (lazy)                      |
+| `lab-orbit-domain`          | `libs/labs/orbit/domain`          | Orbit shapes, groups, Sun and sidereal time, cities, the bundled snapshot                      |
+| `lab-orbit-feature`         | `libs/labs/orbit/feature`         | The lab page, its SignalStore, the API client and the SGP4 worker                              |
+| `shared-site-config`        | `libs/shared/site-config`         | Per-environment backend URLs from `site-config.json`                                           |
 
 ## Commands
 
@@ -40,10 +45,14 @@ Requires Node 24 and pnpm 10, and Java 17 or later for the Orbit API.
 pnpm install
 ```
 
-Run the shell with its remote in development (two terminals):
+Run the shell with its remotes in development (one terminal each):
 
 ```bash
 pnpm nx serve lab-hello
+```
+
+```bash
+pnpm nx serve lab-orbit
 ```
 
 ```bash
@@ -63,10 +72,10 @@ pnpm check:zoneless
 Serve production builds the way the static host will (prerendered routes, `index.csr.html` fallback, CORS):
 
 ```bash
-pnpm nx run-many -t serve-static -p shell lab-hello
+pnpm nx run-many -t serve-static -p shell lab-hello lab-orbit
 ```
 
-Run the Orbit API locally (Java 17+ runs Gradle, which downloads Java 25; it reads MongoDB at `MONGODB_URI`, default `localhost:27017`):
+Run the Orbit API locally (port 8081; Java 17+ runs Gradle, which downloads Java 25; it reads MongoDB at `MONGODB_URI`, default `localhost:27017`):
 
 ```bash
 pnpm nx serve orbit-api

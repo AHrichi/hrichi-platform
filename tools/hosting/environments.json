@@ -1,11 +1,13 @@
 {
-  "$comment": "Per-environment runtime config, written to site-config.json by tools/scripts/prepare-hosting.mjs --site-config. Development uses Cloudflare's public always-pass Turnstile test key. null disables the contact form (the page falls back to email).",
+  "$comment": "Per-environment runtime config, written to site-config.json by tools/scripts/prepare-hosting.mjs --site-config. Development uses Cloudflare's public always-pass Turnstile test key. null disables a feature's live path (the contact form falls back to email, the Orbit lab to its bundled snapshot).",
   "development": {
     "apiUrl": "http://localhost:3000",
-    "turnstileSiteKey": "1x00000000000000000000AA"
+    "turnstileSiteKey": "1x00000000000000000000AA",
+    "orbitApiUrl": "http://localhost:8081"
   },
   "production": {
     "apiUrl": "https://ahmed-hrichi-api.onrender.com",
-    "turnstileSiteKey": "0x4AAAAAAFnL_vOz5m0JX351"
+    "turnstileSiteKey": "0x4AAAAAAFnL_vOz5m0JX351",
+    "orbitApiUrl": "https://ahmed-hrichi-orbit.onrender.com"
   }
 }

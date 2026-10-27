@@ -1,0 +1,192 @@
+<section class="orbit ah-container" aria-labelledby="orbit-heading">
+  <header class="orbit__intro">
+    <p class="ah-eyebrow">
+      Lab · Three.js, a Web Worker, Spring Boot and Orekit
+    </p>
+    <h1 id="orbit-heading">Every active satellite, right now</h1>
+    <p class="ah-lead">
+      Positions are computed in your browser from CelesTrak's public orbit data.
+      Pick a satellite to see its orbit and when it passes over you; the pass
+      times come from a Spring Boot API running Orekit.
+    </p>
+  </header>
+
+  <p class="orbit__status" role="status" [attr.data-api]="store.api()">
+    {{ status() }}
+  </p>
+
+  <div class="orbit__layout">
+    <div class="orbit__stage">
+      <ah-scene
+        class="orbit__scene"
+        essential
+        [load]="loadScene"
+        [params]="params()"
+        (picked)="picked($event)"
+      >
+        <div class="orbit__fallback">
+          <p>The globe needs WebGL. The list and pass times still work.</p>
+        </div>
+      </ah-scene>
+
+      <ul class="orbit__legend" role="list" aria-label="Colours by orbit">
+        @for (item of legend; track item.label) {
+          <li>
+            <span
+              class="swatch"
+              aria-hidden="true"
+              [style.background]="'var(--' + item.token + ')'"
+            ></span
+            >{{ item.label }}
+          </li>
+        }
+      </ul>
+
+      <div class="orbit__time">
+        <ah-segmented-control
+          label="Simulation speed"
+          [options]="speeds"
+          [value]="speed()"
+          (valueChange)="setSpeed($event)"
+        />
+      </div>
+    </div>
+
+    <aside class="orbit__panel" aria-label="Satellites">
+      <div class="orbit__search">
+        <label for="orbit-search">Find a satellite</label>
+        <input
+          id="orbit-search"
+          type="search"
+          autocomplete="off"
+          placeholder="ISS, Hubble, Starlink-1007, 25544…"
+          [value]="store.query()"
+          (input)="store.setQuery($any($event.target).value)"
+        />
+        @if (store.results().length > 0) {
+          <ul class="orbit__results" role="list">
+            @for (result of store.results(); track result.NORAD_CAT_ID) {
+              <li>
+                <button
+                  type="button"
+                  (click)="store.select(result.NORAD_CAT_ID)"
+                >
+                  {{ result.OBJECT_NAME }}
+                  <span class="ah-muted">{{ result.NORAD_CAT_ID }}</span>
+                </button>
+              </li>
+            }
+          </ul>
+        }
+      </div>
+
+      <fieldset class="orbit__groups">
+        <legend>Show</legend>
+        @for (item of groups(); track item.group) {
+          <label>
+            <input
+              type="checkbox"
+              [checked]="item.shown"
+              (change)="store.toggleGroup(item.group)"
+            />
+            {{ item.label }} <span class="ah-muted">{{ item.count }}</span>
+          </label>
+        }
+      </fieldset>
+
+      @if (details(); as satellite) {
+        <section class="orbit__selected" aria-labelledby="orbit-selected">
+          <h2 id="orbit-selected">{{ satellite.name }}</h2>
+          <p class="ah-muted">{{ satellite.subtitle }}</p>
+          <dl class="orbit__facts">
+            @for (fact of satellite.facts; track fact.label) {
+              <div>
+                <dt>{{ fact.label }}</dt>
+                <dd>{{ fact.value }}</dd>
+              </div>
+            }
+          </dl>
+
+          <div class="orbit__passes">
+            <label for="orbit-city">Next passes over</label>
+            <select
+              id="orbit-city"
+              [value]="store.cityName()"
+              (change)="store.setCity($any($event.target).value)"
+            >
+              @for (city of cities; track city.name) {
+                <option [value]="city.name">
+                  {{ city.name }}, {{ city.country }}
+                </option>
+              }
+            </select>
+
+            @switch (store.api() === 'off' ? 'off' : store.passes().status) {
+              @case ('off') {
+                <p class="ah-muted">
+                  Pass predictions come from the Orbit API, which isn't
+                  configured here.
+                </p>
+              }
+              @case ('waking') {
+                <p class="ah-muted">
+                  Waking the free-tier Orbit API (Spring Boot on Render); this
+                  takes up to a minute…
+                </p>
+              }
+              @case ('loading') {
+                <p class="ah-muted">Asking the Orbit API…</p>
+              }
+              @case ('error') {
+                <p class="ah-muted">Couldn't get passes right now.</p>
+              }
+              @default {
+                @if (passes().length === 0) {
+                  <p class="ah-muted">
+                    No pass above 10° over {{ store.city().name }} in the next
+                    three days.
+                  </p>
+                } @else {
+                  <ol class="orbit__pass-list" role="list">
+                    @for (pass of passes(); track pass.key) {
+                      <li>
+                        <span class="when">{{ pass.when }}</span>
+                        <span class="ah-muted">{{ pass.fromNow }}</span>
+                        <span
+                          >up to {{ pass.height }} ·
+                          {{ pass.minutes }} min</span
+                        >
+                        @if (pass.visible) {
+                          <span class="ah-badge ah-badge--success"
+                            >Visible to the eye</span
+                          >
+                        }
+                      </li>
+                    }
+                  </ol>
+                  <p class="ah-muted orbit__note">
+                    Local time in {{ store.city().name }}. "Visible": the
+                    satellite is sunlit while your sky is dark.
+                  </p>
+                }
+              }
+            }
+          </div>
+        </section>
+      }
+
+      <p class="ah-muted orbit__credits">
+        Orbit data:
+        <a href="https://celestrak.org" target="_blank" rel="noopener"
+          >CelesTrak</a
+        >. Coastlines:
+        <a
+          href="https://www.naturalearthdata.com"
+          target="_blank"
+          rel="noopener"
+          >Natural Earth</a
+        >. Drag to turn the globe, scroll to zoom, click a dot to select it.
+      </p>
+    </aside>
+  </div>
+</section>

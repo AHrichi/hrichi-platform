@@ -42,6 +42,15 @@ export default [
               ],
             },
             {
+              sourceTag: 'scope:lab-orbit',
+              onlyDependOnLibsWithTags: [
+                'scope:lab-orbit',
+                'scope:shared',
+                'scope:platform',
+                'scope:design-system',
+              ],
+            },
+            {
               sourceTag: 'scope:platform',
               onlyDependOnLibsWithTags: [
                 'scope:platform',

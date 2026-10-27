@@ -1,0 +1,8 @@
+{
+  "name": "three-scene-orbit-globe",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/three/scenes/orbit-globe/src",
+  "projectType": "library",
+  "tags": ["scope:platform", "type:engine", "runtime:browser"],
+  "targets": {}
+}

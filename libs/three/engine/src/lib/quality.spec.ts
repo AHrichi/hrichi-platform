@@ -82,3 +82,31 @@ describe('decideQuality', () => {
     ).toBe('off');
   });
 });
+
+describe('decideQuality for essential scenes', () => {
+  it('ignores the comfort heuristics but still needs WebGL2', () => {
+    const phone = {
+      ...capable,
+      reducedMotion: true,
+      viewportWidth: 390,
+      cores: 2,
+    };
+
+    expect(decideQuality(phone, { essential: true })).toBe('high');
+    expect(
+      decideQuality(
+        { ...phone, gpu: { ...gpu, softwareOnly: true } },
+        { essential: true },
+      ),
+    ).toBe('low');
+    expect(
+      decideQuality({ ...phone, override: 'off' }, { essential: true }),
+    ).toBe('off');
+    expect(
+      decideQuality(
+        { ...phone, gpu: { webgl2: false, softwareOnly: false, renderer: '' } },
+        { essential: true },
+      ),
+    ).toBe('off');
+  });
+});

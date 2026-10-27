@@ -32,7 +32,18 @@ export const minViewportWidth = 768;
 const softwareRenderer = /swiftshader|llvmpipe|software|basic render/i;
 const modestGpu = /intel|mali|adreno \(tm\) [1-5]|adreno [1-5]|powervr/i;
 
-export function decideQuality(signals: QualitySignals): QualityTier {
+export interface QualityOptions {
+  /**
+   * The 3D view is the content, not decoration: only a missing WebGL2 or
+   * `?3d=off` turns it off, and slow devices get the low tier.
+   */
+  essential?: boolean;
+}
+
+export function decideQuality(
+  signals: QualitySignals,
+  { essential = false }: QualityOptions = {},
+): QualityTier {
   const { gpu, override } = signals;
   if (!gpu?.webgl2 || override === 'off') {
     return 'off';
@@ -42,6 +53,13 @@ export function decideQuality(signals: QualitySignals): QualityTier {
   }
   if (override === 'low') {
     return 'low';
+  }
+  if (essential) {
+    return gpu.softwareOnly ||
+      softwareRenderer.test(gpu.renderer) ||
+      modestGpu.test(gpu.renderer)
+      ? 'low'
+      : 'high';
   }
   if (
     signals.reducedMotion ||
@@ -76,8 +94,11 @@ export function readQualitySignals(window: Window): QualitySignals {
   };
 }
 
-export function detectQuality(window: Window): QualityTier {
-  return decideQuality(readQualitySignals(window));
+export function detectQuality(
+  window: Window,
+  options?: QualityOptions,
+): QualityTier {
+  return decideQuality(readQualitySignals(window), options);
 }
 
 /** Opens a throwaway WebGL2 context, reads what it can, and releases it. */

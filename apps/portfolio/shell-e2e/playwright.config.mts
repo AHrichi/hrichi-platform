@@ -31,13 +31,21 @@ export default defineConfig({
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
   },
-  // The shell needs its remote running to exercise federation.
+  // The shell needs its remotes running to exercise federation.
   webServer: [
     {
       command: isCI
         ? 'pnpm exec nx run lab-hello:serve-static'
         : 'pnpm exec nx run lab-hello:serve',
       url: 'http://localhost:4301/remoteEntry.json',
+      reuseExistingServer: true,
+      cwd: workspaceRoot,
+    },
+    {
+      command: isCI
+        ? 'pnpm exec nx run lab-orbit:serve-static'
+        : 'pnpm exec nx run lab-orbit:serve',
+      url: 'http://localhost:4302/remoteEntry.json',
       reuseExistingServer: true,
       cwd: workspaceRoot,
     },

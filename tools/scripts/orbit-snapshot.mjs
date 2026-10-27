@@ -12,7 +12,10 @@ import { dirname } from 'node:path';
 
 const url =
   'https://celestrak.org/NORAD/elements/gp.php?GROUP=visual&FORMAT=json';
-const outputs = ['apps/orbit-api/src/main/resources/catalog-snapshot.json'];
+const outputs = [
+  'apps/orbit-api/src/main/resources/catalog-snapshot.json',
+  'libs/labs/orbit/domain/src/generated/snapshot.json',
+];
 
 const response = await fetch(url, {
   headers: {

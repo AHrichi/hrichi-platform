@@ -14,6 +14,7 @@ import { Inspector, type InspectableStores } from '@ah/platform/inspector';
 import { profile, site } from '@ah/shared/content';
 import { PreferencesStore } from '@ah/shared/state';
 import { AhButton } from '@ah/ui';
+import { reloadOnNavigationWhenUpdated } from './sw-updates';
 
 @Component({
   imports: [AhButton, Inspector, RouterLink, RouterLinkActive, RouterOutlet],
@@ -45,6 +46,8 @@ export class App {
       PreferencesStore: () => getState(preferences),
       FederationStore: () => getState(federation),
     };
+
+    reloadOnNavigationWhenUpdated();
 
     // Prerendered HTML uses the default audience; switch only once hydrated.
     const window = inject(DOCUMENT).defaultView;

@@ -1,0 +1,68 @@
+# ADR-0014: Orbit lab: every active satellite on a WebGL globe
+
+- **Status:** Accepted
+- **Date:** 2026-10-27
+- **Milestone:** M2
+
+## Context
+
+M2's 3D lab replaces Quote3D (ADR-0013 explains why). It has to show Three.js, custom shaders and a Web Worker doing real work, use the Spring Boot Orbit API for something only the backend does well, and stay useful when that free-tier API is asleep. It ships as an independent micro-frontend, so it also has to run inside the shell, from another origin.
+
+## Decision
+
+- **Remote `lab-orbit`** (`apps/labs/orbit`, port 4302):
+  - Built like `lab-hello` and served from `lab-orbit.ahmed-hrichi.workers.dev`.
+  - Its `./meta` declares `['webgl', 'worker']`, so the shell checks both before mounting it (ADR-0012).
+  - The shell mounts it at `/labs/orbit`; it is linked from the footer, the home page and the constellation.
+- **Libraries:**
+  - **`lab-orbit-domain`** (pure TypeScript):
+    - the OMM type and the bundled snapshot
+    - orbit shape and class, and groups, mirroring the Orbit API's Java rules with the same test cases
+    - sidereal time and the Sun's direction (checked against satellite.js and the equinox and solstice)
+    - about 60 cities with time zones, and formatting
+  - **`lab-orbit-feature`:** the page, an NgRx SignalStore, the API client and the worker.
+  - **`three-scene-orbit-globe`:** the WebGL scene, framework-free and loaded lazily through `<ah-scene essential>`.
+- **Propagation in a worker:**
+  - satellite.js 7 (SGP4) propagates the whole catalog, 16,821 satellites, 1–4 times a second depending on the simulation speed.
+  - Positions come back as transferable `Float32Array`s.
+  - The globe's vertex shader interpolates between the last two frames, so motion is smooth at the display's rate. Frames are requested one step ahead.
+- **The globe** (custom GLSL, one draw call per layer):
+  - A dot-matrix Earth rasterised at run time from Natural Earth's outlines (public domain, via `world-atlas`), turned by sidereal time and lit by the real Sun with a soft terminator.
+  - A Fresnel atmosphere.
+  - Every satellite as one point cloud coloured by orbit class. Groups are filtered in the shader with a bit mask.
+  - The selected satellite gets a ringed marker and its orbit as a dotted ring, while the rest of the catalog dims.
+  - Clicking picks the nearest satellite on screen that the Earth doesn't hide.
+- **Never waits on the API:**
+  - The page renders the 155 brightest satellites from the bundled snapshot at once.
+  - It asks the Orbit API for the full catalog. Requests retry for up to 150 s, honour `Retry-After`, and say "waking" after 3 s.
+  - It swaps the catalog in when the API answers. Pass predictions show the same waking state.
+  - With no API configured, or none answering, the lab says so and keeps working.
+- **`essential` scenes:** `detectQuality(…, { essential: true })` ignores the comfort rules (reduced motion, small screens, few cores) that turn the decorative hero off. The globe is the content, so only a missing WebGL2 or `?3d=off` hides it. With reduced motion the camera doesn't turn by itself.
+- **Config:**
+  - `orbitApiUrl` joins `site-config.json`.
+  - `SiteConfigService` moved to `@ah/shared/site-config` (a federation singleton), so the remote reads the shell's file inside the shell and its own file standalone.
+  - `prepare-hosting.mjs` adds the API's origin to `connect-src`.
+
+## What M2 found
+
+1. **A remote can't start its own Web Worker inside the shell:** browsers start workers only from the page's origin.
+   - `startPropagationWorker()` starts a same-origin `blob:` module that imports the remote's worker script, and the shell's CSP now has `worker-src 'self' blob:`.
+   - Angular still finds and bundles the worker, because the call keeps the `new Worker(new URL(…, import.meta.url))` shape with a locally shadowed `Worker`.
+2. **satellite.js 7's entry point re-exports its WebAssembly build,** whose Node-only branches import `node:module` and `node:worker_threads`. The browser build can't resolve them, and `externalDependencies` doesn't reach Angular's separate worker build. The package exports nothing else, so the worker imports satellite.js's plain modules by path (`propagation/sgp4.ts`).
+3. **Native Federation shares `three`, and esbuild treats every `three/…` subpath as part of that external.** The import map lists only the package root, so `three/addons/controls/OrbitControls.js` failed at run time ("Unable to resolve specifier"). The addon is bundled with the scene by path, and its own `import 'three'` still uses the shared copy.
+4. **A worker has no import map,** so anything it imports must be bundled. `satellite.js`, `world-atlas` and `topojson-client` are on the federation skip list.
+5. **NgRx freezes state in development, and typed arrays can't be frozen.** The catalog feed, the orbit path and the telemetry live in `withProps`; `withState` holds only plain data.
+6. **The shell's service worker answered the cross-origin API calls with 504** in the in-app browser, while the API was up and the same request with `ngsw-bypass` returned 200. The client appends `ngsw-bypass=true`, a query parameter rather than a header so there's no CORS preflight; the worker has nothing to cache for these calls anyway.
+7. **springdoc leaves record components optional,** so every generated TypeScript field was `| undefined`. An `OpenApiCustomizer` marks the API's record components required, which the JSON always contains.
+8. **A one-pixel WebGL line disappears inside 16,821 points.** The selected orbit is drawn as 240 fixed-size points, and the other satellites dim to 30%.
+9. **Sizes, gzipped:** the page chunk is 24 kB (including the 65 kB snapshot), the scene 31 kB (including Natural Earth's 55 kB outline and OrbitControls), and the worker 9.7 kB. three.js is the 189 kB bundle the shell shares, already cached after the hero.
+10. **Verified:**
+    - Unit: the domain (16), the store, the API client's retries and the worker bridge (14), the remote's contract (2).
+    - e2e: snapshot mode with axe; the live catalog and visible passes with a mocked API; search without WebGL.
+    - By hand, with the Orbit API running locally: 16,821 satellites live, the ISS's passes over a city, and clicking a Starlink satellite on the globe shows its 70° orbit and new passes.
+
+## Consequences
+
+- The lab is useful with the API asleep or gone, and honest about which data it shows.
+- Every new third-party import in a worker, or `three/…` subpath, needs the same path-import treatment; the ADR is the place to look.
+- The classification rules live in both Java and TypeScript; their tests share cases, so a change to one shows up in the other's tests.

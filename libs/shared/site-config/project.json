@@ -1,0 +1,9 @@
+{
+  "name": "shared-site-config",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/shared/site-config/src",
+  "prefix": "ah",
+  "projectType": "library",
+  "tags": ["scope:shared", "type:data-access", "runtime:browser"],
+  "targets": {}
+}

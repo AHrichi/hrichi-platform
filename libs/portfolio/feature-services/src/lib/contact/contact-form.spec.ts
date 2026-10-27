@@ -3,12 +3,13 @@ import { TestBed } from '@angular/core/testing';
 import type { Audience } from '@ah/shared/content';
 import { PreferencesStore } from '@ah/shared/state';
 import { ContactForm } from './contact-form';
-import { type SiteConfig, SiteConfigService } from './site-config';
+import { type SiteConfig, SiteConfigService } from '@ah/shared/site-config';
 import { TurnstileService } from './turnstile';
 
 const enabled: SiteConfig = {
   apiUrl: 'https://api.test',
   turnstileSiteKey: 'site-key',
+  orbitApiUrl: null,
 };
 
 /** Renders the form with a config and a Turnstile that passes at once. */
@@ -90,7 +91,7 @@ afterEach(() => {
 describe('ContactForm', () => {
   it('hands the message to the email app when the API is not configured', async () => {
     const { fixture, element } = await setup({
-      config: { apiUrl: null, turnstileSiteKey: null },
+      config: { apiUrl: null, turnstileSiteKey: null, orbitApiUrl: null },
       audience: 'recruiter',
     });
 

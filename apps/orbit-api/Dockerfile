@@ -22,5 +22,5 @@ RUN java -XX:AOTCacheOutput=orbit-api.aot -Dspring.context.exit=onRefresh \
  && useradd --system --uid 10001 orbit
 USER orbit
 ENV JAVA_TOOL_OPTIONS="-XX:MaxRAMPercentage=75 -XX:+UseSerialGC -XX:TieredStopAtLevel=1"
-EXPOSE 8080
+EXPOSE 8081
 ENTRYPOINT ["java", "-XX:AOTCache=orbit-api.aot", "-jar", "orbit-api.jar"]

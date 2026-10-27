@@ -2,7 +2,7 @@ import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { ContactPage } from './contact-page';
-import { SiteConfigService } from './contact/site-config';
+import { SiteConfigService } from '@ah/shared/site-config';
 import { ServicesPage } from './services-page';
 
 beforeEach(() => {
@@ -34,7 +34,11 @@ describe('ContactPage', () => {
   it('lists direct ways to reach me beside the form', async () => {
     TestBed.overrideProvider(SiteConfigService, {
       useValue: {
-        load: async () => ({ apiUrl: null, turnstileSiteKey: null }),
+        load: async () => ({
+          apiUrl: null,
+          turnstileSiteKey: null,
+          orbitApiUrl: null,
+        }),
       },
     });
     const fixture = TestBed.createComponent(ContactPage);

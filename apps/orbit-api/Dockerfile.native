@@ -16,5 +16,5 @@ FROM debian:trixie-slim
 RUN useradd --system --uid 10001 orbit
 COPY --from=build /project/build/native/nativeCompile/orbit-api /app/orbit-api
 USER orbit
-EXPOSE 8080
+EXPOSE 8081
 ENTRYPOINT ["/app/orbit-api"]

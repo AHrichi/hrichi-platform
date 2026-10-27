@@ -20,6 +20,16 @@
         "4301"
       ],
       "port": 4301
+    },
+    {
+      "name": "lab-orbit (static build)",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "tools/scripts/serve-static.mjs",
+        "dist/apps/labs/orbit/browser",
+        "4302"
+      ],
+      "port": 4302
     }
   ]
 }

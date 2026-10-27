@@ -21,6 +21,7 @@
       "@ah/ui": ["./libs/design-system/ui/src/index.ts"],
       "@ah/shared/content": ["./libs/shared/content/src/index.ts"],
       "@ah/shared/state": ["./libs/shared/state/src/index.ts"],
+      "@ah/shared/site-config": ["./libs/shared/site-config/src/index.ts"],
       "@ah/portfolio/util-seo": ["./libs/portfolio/util-seo/src/index.ts"],
       "@ah/portfolio/feature-home": [
         "./libs/portfolio/feature-home/src/index.ts"
@@ -38,6 +39,11 @@
       "@ah/api/leads": ["./libs/api/leads/src/index.ts"],
       "@ah/shared/contracts": ["./libs/shared/contracts/src/index.ts"],
       "@ah/shared/api-client": ["./libs/shared/api-client/src/index.ts"],
+      "@ah/labs/orbit/domain": ["./libs/labs/orbit/domain/src/index.ts"],
+      "@ah/labs/orbit/feature": ["./libs/labs/orbit/feature/src/index.ts"],
+      "@ah/three/scenes/orbit-globe": [
+        "./libs/three/scenes/orbit-globe/src/index.ts"
+      ],
       "@ah/three/engine": ["./libs/three/engine/src/index.ts"],
       "@ah/three/engine/quality": ["./libs/three/engine/src/quality.ts"],
       "@ah/three/angular": ["./libs/three/angular/src/index.ts"],

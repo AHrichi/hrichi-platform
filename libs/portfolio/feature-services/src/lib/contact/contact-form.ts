@@ -22,7 +22,7 @@ import { type Audience, profile } from '@ah/shared/content';
 import { PreferencesStore } from '@ah/shared/state';
 import { AhButton } from '@ah/ui';
 import { LeadError, prewarm, sendLead } from './lead-client';
-import { SiteConfigService } from './site-config';
+import { SiteConfigService } from '@ah/shared/site-config';
 import { TurnstileService, type TurnstileWidget } from './turnstile';
 
 type Status =

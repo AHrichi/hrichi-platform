@@ -6,6 +6,8 @@ export interface SceneEvents {
   navigate(href: string): void;
   /** The pointer is over something worth labelling, or nothing (`null`). */
   hover(target: HoverTarget | null): void;
+  /** The visitor clicked an object (by the scene's own id), or empty space. */
+  select(id: string | null): void;
 }
 
 export interface HoverTarget {

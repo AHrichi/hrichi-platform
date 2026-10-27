@@ -1,6 +1,7 @@
 import { DOCUMENT } from '@angular/common';
 import {
   afterNextRender,
+  booleanAttribute,
   ChangeDetectionStrategy,
   Component,
   DestroyRef,
@@ -126,6 +127,13 @@ export class SceneHost<P> {
   readonly params = input.required<P>();
   /** The scene asked to open a link. */
   readonly navigate = output<string>();
+  /** The visitor clicked an object in the scene (its id), or empty space. */
+  readonly picked = output<string | null>();
+  /**
+   * The scene is the page's content rather than decoration: show it whenever
+   * WebGL2 works, even with reduced motion or on a phone (the scene adapts).
+   */
+  readonly essential = input(false, { transform: booleanAttribute });
 
   protected readonly state = signal<SceneState>('fallback');
   protected readonly tier = signal<QualityTier | null>(null);
@@ -154,7 +162,7 @@ export class SceneHost<P> {
     if (!window) {
       return;
     }
-    const tier = detectQuality(window);
+    const tier = detectQuality(window, { essential: this.essential() });
     this.tier.set(tier);
     if (tier === 'off') {
       return;
@@ -179,6 +187,7 @@ export class SceneHost<P> {
         params: untracked(this.params),
         events: {
           navigate: (href) => this.navigate.emit(href),
+          select: (id) => this.picked.emit(id),
           hover: (target) => this.hover.set(target),
         },
       });

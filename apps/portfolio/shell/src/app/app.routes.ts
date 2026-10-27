@@ -41,6 +41,11 @@ export const appRoutes: Route[] = [
     title: 'Hello lab · Ahmed Hrichi',
   },
   {
+    path: 'labs/orbit',
+    loadChildren: federatedRoutes('lab-orbit'),
+    title: 'Orbit lab: live satellites · Ahmed Hrichi',
+  },
+  {
     path: '**',
     loadComponent: () =>
       import('./not-found/not-found').then((m) => m.NotFound),

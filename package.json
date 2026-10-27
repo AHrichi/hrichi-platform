@@ -47,9 +47,12 @@
     "@schematics/angular": "~22.2.0",
     "@softarc/native-federation-orchestrator": "^4.8.0",
     "@swc/helpers": "~0.5.18",
+    "@types/geojson": "7946.0.16",
     "@types/node": "^22.0.0",
     "@types/supertest": "7.2.1",
     "@types/three": "0.186.0",
+    "@types/topojson-client": "3.1.5",
+    "@types/topojson-specification": "1.0.5",
     "@typescript-eslint/utils": "^8.58.0",
     "@vitest/coverage-v8": "^4.0.0",
     "@vitest/ui": "^4.0.0",
@@ -102,6 +105,8 @@
     "rxjs": "~7.8.0",
     "satellite.js": "7.1.0",
     "three": "0.186.1",
-    "web-vitals": "6.2.3"
+    "topojson-client": "3.1.0",
+    "web-vitals": "6.2.3",
+    "world-atlas": "2.0.2"
   }
 }

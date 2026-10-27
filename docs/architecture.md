@@ -737,6 +737,7 @@ The full records are in [`docs/adr`](adr/README.md). Proposed decisions get the 
 | [0011](adr/0011-three-engine-and-constellation.md) | Framework-agnostic Three.js engine + thin Angular adapter; progressive enhancement           | Accepted |
 | [0012](adr/0012-federation-inspector.md)           | Federation Inspector, capability checks, deploy-time build info, CI skew check               | Accepted |
 | [0013](adr/0013-orbit-api.md)                      | Orbit API: Spring Boot 4 + Orekit; OpenAPI contract-first; generated TS types; JVM on Render | Accepted |
+| [0014](adr/0014-orbit-lab.md)                      | Orbit lab remote: WebGL globe, SGP4 worker, snapshot fallback                                | Accepted |
 | —                                                  | State ladder: signals → SignalStore → Events plugin; no classic `@ngrx/store`                | Proposed |
 | —                                                  | Zero-cost topology: static-first; sleeping backends; graceful degradation                    | Proposed |
 | —                                                  | One feature lib, many shells (remote / PWA / Electron / Capacitor)                           | Proposed |

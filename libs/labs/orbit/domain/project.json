@@ -1,0 +1,8 @@
+{
+  "name": "lab-orbit-domain",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/labs/orbit/domain/src",
+  "projectType": "library",
+  "tags": ["scope:lab-orbit", "type:domain", "runtime:agnostic"],
+  "targets": {}
+}

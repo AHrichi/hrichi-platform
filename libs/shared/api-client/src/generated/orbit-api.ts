@@ -67,29 +67,29 @@ export interface components {
     schemas: {
         CatalogResponse: {
             /** Format: int32 */
-            count?: number;
+            count: number;
             /** Format: date-time */
-            fetchedAt?: string;
-            group?: string;
-            satellites?: components["schemas"]["OrbitalElements"][];
-            source?: string;
+            fetchedAt: string;
+            group: string;
+            satellites: components["schemas"]["OrbitalElements"][];
+            source: string;
         };
         Observer: {
             /**
              * Format: double
              * @description Metres above the ellipsoid
              */
-            altitudeM?: number;
+            altitudeM: number;
             /**
              * Format: double
              * @description Degrees, north positive
              */
-            latitude?: number;
+            latitude: number;
             /**
              * Format: double
              * @description Degrees, east positive
              */
-            longitude?: number;
+            longitude: number;
         };
         /** @description Mean orbital elements (CCSDS OMM keys, as published by CelesTrak) */
         OrbitalElements: {
@@ -97,91 +97,91 @@ export interface components {
              * Format: double
              * @description Degrees
              */
-            ARG_OF_PERICENTER?: number;
+            ARG_OF_PERICENTER: number;
             /** Format: double */
-            BSTAR?: number;
-            CLASSIFICATION_TYPE?: string;
+            BSTAR: number;
+            CLASSIFICATION_TYPE: string;
             /** Format: double */
-            ECCENTRICITY?: number;
+            ECCENTRICITY: number;
             /** Format: int32 */
-            ELEMENT_SET_NO?: number;
+            ELEMENT_SET_NO: number;
             /** Format: int32 */
-            EPHEMERIS_TYPE?: number;
+            EPHEMERIS_TYPE: number;
             /** @description UTC, ISO-8601 without zone */
-            EPOCH?: string;
+            EPOCH: string;
             /**
              * Format: double
              * @description Degrees
              */
-            INCLINATION?: number;
+            INCLINATION: number;
             /**
              * Format: double
              * @description Degrees
              */
-            MEAN_ANOMALY?: number;
+            MEAN_ANOMALY: number;
             /**
              * Format: double
              * @description Revolutions per day
              */
-            MEAN_MOTION?: number;
+            MEAN_MOTION: number;
             /**
              * Format: double
              * @description Revolutions per day³, as in the TLE (a sixth of the derivative)
              */
-            MEAN_MOTION_DDOT?: number;
+            MEAN_MOTION_DDOT: number;
             /**
              * Format: double
              * @description Revolutions per day², as in the TLE (half the derivative)
              */
-            MEAN_MOTION_DOT?: number;
+            MEAN_MOTION_DOT: number;
             /** Format: int32 */
-            NORAD_CAT_ID?: number;
-            OBJECT_ID?: string;
-            OBJECT_NAME?: string;
+            NORAD_CAT_ID: number;
+            OBJECT_ID: string;
+            OBJECT_NAME: string;
             /**
              * Format: double
              * @description Degrees
              */
-            RA_OF_ASC_NODE?: number;
+            RA_OF_ASC_NODE: number;
             /** Format: int32 */
-            REV_AT_EPOCH?: number;
+            REV_AT_EPOCH: number;
         };
         Pass: {
             /** @description Highest point of the pass */
-            culmination?: components["schemas"]["Point"];
+            culmination: components["schemas"]["Point"];
             /** Format: int64 */
-            durationSeconds?: number;
-            rise?: components["schemas"]["Point"];
-            set?: components["schemas"]["Point"];
+            durationSeconds: number;
+            rise: components["schemas"]["Point"];
+            set: components["schemas"]["Point"];
             /** @description The satellite is sunlit while the observer is in darkness (sun 6° or more below the horizon) */
-            visible?: boolean;
+            visible: boolean;
         };
         PassesResponse: {
             /** Format: date-time */
-            from?: string;
+            from: string;
             /** Format: double */
-            minElevationDeg?: number;
-            name?: string;
+            minElevationDeg: number;
+            name: string;
             /** Format: int32 */
-            noradId?: number;
-            observer?: components["schemas"]["Observer"];
-            passes?: components["schemas"]["Pass"][];
+            noradId: number;
+            observer: components["schemas"]["Observer"];
+            passes: components["schemas"]["Pass"][];
             /** Format: date-time */
-            to?: string;
+            to: string;
         };
         Point: {
             /**
              * Format: double
              * @description Degrees from north, clockwise
              */
-            azimuthDeg?: number;
+            azimuthDeg: number;
             /**
              * Format: double
              * @description Degrees above the horizon
              */
-            elevationDeg?: number;
+            elevationDeg: number;
             /** Format: date-time */
-            time?: string;
+            time: string;
         };
         ProblemDetail: {
             detail?: string;
@@ -198,25 +198,25 @@ export interface components {
         };
         SatelliteDetails: {
             /** Format: double */
-            apogeeKm?: number;
+            apogeeKm: number;
             /** Format: double */
-            eccentricity?: number;
-            elements?: components["schemas"]["OrbitalElements"];
-            epoch?: string;
+            eccentricity: number;
+            elements: components["schemas"]["OrbitalElements"];
+            epoch: string;
             /** @enum {string} */
-            group?: "STATIONS" | "STARLINK" | "GNSS" | "WEATHER" | "OTHER";
+            group: "STATIONS" | "STARLINK" | "GNSS" | "WEATHER" | "OTHER";
             /** Format: double */
-            inclinationDeg?: number;
-            name?: string;
+            inclinationDeg: number;
+            name: string;
             /** Format: int32 */
-            noradId?: number;
-            objectId?: string;
+            noradId: number;
+            objectId: string;
             /** @enum {string} */
-            orbitClass?: "LEO" | "MEO" | "GEO" | "HEO";
+            orbitClass: "LEO" | "MEO" | "GEO" | "HEO";
             /** Format: double */
-            perigeeKm?: number;
+            perigeeKm: number;
             /** Format: double */
-            periodMinutes?: number;
+            periodMinutes: number;
         };
     };
     responses: never;

@@ -3,5 +3,9 @@
   "lab-hello": {
     "development": "http://localhost:4301",
     "production": "https://lab-hello.ahmed-hrichi.workers.dev"
+  },
+  "lab-orbit": {
+    "development": "http://localhost:4302",
+    "production": "https://lab-orbit.ahmed-hrichi.workers.dev"
   }
 }

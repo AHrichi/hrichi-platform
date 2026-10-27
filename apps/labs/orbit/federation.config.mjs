@@ -1,0 +1,22 @@
+import { withNativeFederation } from '@angular-architects/native-federation/config';
+import {
+  features,
+  shared,
+  sharedMappings,
+  skip,
+} from '../../../tools/federation/shared.mjs';
+
+export default withNativeFederation({
+  name: 'lab-orbit',
+
+  // The remote contract (@ah/platform/federation): every remote exposes ./routes and ./meta.
+  exposes: {
+    './routes': './apps/labs/orbit/src/app/remote.routes.ts',
+    './meta': './apps/labs/orbit/src/app/remote.meta.ts',
+  },
+
+  shared,
+  sharedMappings,
+  skip,
+  features,
+});

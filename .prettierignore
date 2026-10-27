@@ -18,3 +18,4 @@ libs/shared/api-client/src/generated
 # Written by the Orbit API's tests and by tools/scripts/orbit-snapshot.mjs
 apps/orbit-api/openapi.json
 apps/orbit-api/src/main/resources/catalog-snapshot.json
+libs/labs/orbit/domain/src/generated
