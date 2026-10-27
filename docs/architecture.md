@@ -10,7 +10,7 @@
 **The concept: the portfolio is the proof.** Instead of a page that _lists_ "Angular, Nx, micro-frontends, Three.js, NestJS…", the site _is_ an Nx + Native Federation platform that visitors can open up and inspect. It has three layers:
 
 1. **Portfolio (shell):** a fast, prerendered, SEO-friendly site with three audience modes: recruiter, engineer and client.
-2. **Labs (remotes):** clean-room rebuilds of your signature resume work: a 3D instant-quote lab, a schema-driven form engine and an automation pipeline.
+2. **Labs (remotes):** working demos of the skills on your resume: a live satellite tracker in 3D, a schema-driven form engine and an automation pipeline.
 3. **Apps (remotes):** your four real apps (StrategyApp, DeutschLernen, Code de la Route, Accountability Architect) running inside the portfolio in demo mode. The same apps ship as desktop builds (Electron) and mobile builds (Capacitor).
 
 **Stack:**
@@ -70,12 +70,12 @@ Pages: Home, Experience, Case Studies, Labs, Apps, Services, How I Work, Contact
 
 ### 2.2 Labs: clean-room proof of the resume
 
-| Lab                               | Proves (resume line)                                      | Tech                                                                                                                                                    |
-| --------------------------------- | --------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Quote3D**: instant 3D quote     | SeekMake instant 3D quoting; Three.js custom shaders      | STL parsing in a Web Worker (volume, surface area, bounding box), custom GLSL material, Spring Boot pricing engine with a client-side fallback estimate |
-| **Form Engine**: schema-driven UI | Plug-and-play integration platform with JSON-schema forms | JSON Schema → Signal Forms + design-system controls, live schema editor. **The same engine powers the Estimator.**                                      |
-| **Pipeline**: automation          | n8n webhook workers, BullMQ, transactional email          | NestJS outbox → n8n, live lead-journey timeline over SSE, replay mode when n8n is offline                                                               |
-| **Canvas** (M4): design editor    | MyEasyLogo / MyEasyContent                                | Fabric.js, text-on-arc, undo/redo through a SignalStore history feature                                                                                 |
+| Lab                               | Proves (resume line)                                      | Tech                                                                                                                                                                                  |
+| --------------------------------- | --------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Orbit**: live satellites (M2)   | Three.js custom shaders; Java/Spring Boot backends        | Every active satellite from CelesTrak on a GLSL globe (one draw call, SGP4 in a Web Worker); pass predictions from a Spring Boot + Orekit API; a bundled snapshot while the API wakes |
+| **Form Engine**: schema-driven UI | Plug-and-play integration platform with JSON-schema forms | JSON Schema → Signal Forms + design-system controls, live schema editor. **The same engine powers the Estimator.**                                                                    |
+| **Pipeline**: automation          | n8n webhook workers, BullMQ, transactional email          | NestJS outbox → n8n, live lead-journey timeline over SSE, replay mode when n8n is offline                                                                                             |
+| **Canvas** (M4): design editor    | MyEasyLogo / MyEasyContent                                | Fabric.js, text-on-arc, undo/redo through a SignalStore history feature                                                                                                               |
 
 > ⚠ **Clean-room only.** No SeekMake (or other employer) code, data, screenshots, customer names or branding. Case studies describe employer work at the level of detail your CV already uses.
 
@@ -109,10 +109,10 @@ Pages: Home, Experience, Case Studies, Labs, Apps, Services, How I Work, Contact
 | Nx monorepo                   | The public repo, module boundaries, custom generators, `affected` CI |
 | Micro-frontends               | Native Federation shell with 7+ remotes; Federation Inspector        |
 | NgRx SignalStore              | Feature stores, cross-remote Events, devtools                        |
-| Three.js / shaders            | Constellation hero, Quote3D                                          |
+| Three.js / shaders            | Constellation hero, Orbit lab                                        |
 | Design systems                | `@ah/ui`, token pipeline, public Storybook                           |
 | NestJS + MongoDB              | Lead outbox, assistant, OpenAPI → generated client                   |
-| Java / Spring Boot            | Pricing engine (Spring Boot 4, GraalVM native)                       |
+| Java / Spring Boot            | Orbit API (Spring Boot 4, Java 25, Orekit, MongoDB)                  |
 | n8n                           | Lead enrichment, weekly digest, Pipeline lab                         |
 | PWA                           | Installable, offline content, Background Sync for the contact form   |
 | Electron                      | 4 desktop apps on one shared main-process lib with auto-update       |
@@ -129,7 +129,7 @@ Pages: Home, Experience, Case Studies, Labs, Apps, Services, How I Work, Contact
 flowchart LR
   subgraph Browser["Visitor browser"]
     SH["Shell (host)<br/>Angular 22 · prerendered · PWA"]
-    RL["Lab remotes<br/>quote3d · form-engine · pipeline"]
+    RL["Lab remotes<br/>orbit · form-engine · pipeline"]
     RA["App remotes<br/>strategy · deutsch · code-route · accountability"]
     SH -- "loadRemoteModule" --> RL
     SH -- "loadRemoteModule" --> RA
@@ -143,7 +143,7 @@ flowchart LR
 
   subgraph RD["Render free (sleeps after 15 min idle)"]
     API["NestJS BFF<br/>leads · assistant · github"]
-    PE["Spring Boot<br/>pricing engine"]
+    PE["Spring Boot<br/>Orbit API"]
   end
 
   DB[("MongoDB Atlas Free<br/>512 MB")]
@@ -157,7 +157,9 @@ flowchart LR
   RL --> CFR
   RA --> CFR
   SH -- "contact / assistant" --> API
-  RL -- "quote" --> PE
+  RL -- "catalog · passes" --> PE
+  PE --> DB
+  PE -- "GP data, at most every 6 h" --> CT["CelesTrak"]
   API --> DB
   API -- "instant alert" --> TG
   API -- "webhook (HMAC)" --> N8N
@@ -190,7 +192,7 @@ hrichi-platform/
 │   │   ├── shell/                    host · prerendered · PWA · dynamic host (manifest)
 │   │   └── shell-e2e/                Playwright
 │   ├── labs/
-│   │   ├── quote3d/                  remote
+│   │   ├── orbit/                    remote (M2)
 │   │   ├── form-engine/              remote
 │   │   └── pipeline/                 remote
 │   ├── products/
@@ -199,7 +201,7 @@ hrichi-platform/
 │   │   ├── code-route/{web,desktop,mobile}
 │   │   └── accountability/{web,desktop}
 │   ├── api/                          NestJS BFF
-│   └── pricing-engine/               Spring Boot 4 (Gradle)
+│   └── orbit-api/                    Spring Boot 4 (Gradle)
 ├── libs/
 │   ├── design-system/
 │   │   ├── tokens/                   DTCG JSON → CSS vars + TS constants
@@ -225,7 +227,7 @@ hrichi-platform/
 │   │   ├── engine/                   framework-agnostic (no Angular imports)
 │   │   ├── angular/                  <ah-scene> adapter, signals ↔ scene bridge
 │   │   ├── constellation/            exported Nx graph, shared camera, SVG projection
-│   │   └── scenes/{constellation,part-viewer}/
+│   │   └── scenes/{constellation,orbit-globe}/
 │   ├── portfolio/
 │   │   ├── feature-{home,experience,case-studies,services,contact,cv,architecture}/
 │   │   ├── data-access-content/
@@ -246,11 +248,11 @@ hrichi-platform/
 
 Every project carries three tags, enforced in CI by `@nx/enforce-module-boundaries`:
 
-| Axis       | Values                                                                                               |
-| ---------- | ---------------------------------------------------------------------------------------------------- |
-| `scope:`   | `portfolio`, `lab-<name>`, `product-<name>`, `shared`, `platform`, `design-system`, `api`, `pricing` |
-| `type:`    | `app`, `feature`, `ui`, `data-access`, `domain`, `util`, `contracts`, `tokens`, `engine`             |
-| `runtime:` | `browser`, `node`, `electron-main`, `jvm`, `agnostic`                                                |
+| Axis       | Values                                                                                             |
+| ---------- | -------------------------------------------------------------------------------------------------- |
+| `scope:`   | `portfolio`, `lab-<name>`, `product-<name>`, `shared`, `platform`, `design-system`, `api`, `orbit` |
+| `type:`    | `app`, `feature`, `ui`, `data-access`, `domain`, `util`, `contracts`, `tokens`, `engine`           |
+| `runtime:` | `browser`, `node`, `electron-main`, `jvm`, `agnostic`                                              |
 
 ```mermaid
 flowchart TD
@@ -322,8 +324,8 @@ sequenceDiagram
   B->>S: GET /en/ (prerendered HTML)
   S-->>B: HTML + shell JS (hydrates, zoneless)
   B->>M: initFederation(manifest)
-  Note over B: user opens /en/labs/quote3d
-  B->>R: loadRemoteModule('lab-quote3d', './routes')
+  Note over B: user opens /labs/orbit
+  B->>R: loadRemoteModule('lab-orbit', './routes')
   R-->>B: remoteEntry.json + chunks (shared deps via import map)
   alt remote fails / times out / version skew
     B-->>B: RemoteUnavailable + retry · Inspector logs it
@@ -380,8 +382,8 @@ Signal Forms (stable in Angular 22) for all new forms. The Form Engine lib maps 
 - **`@ah/three/angular`:** an `<ah-scene>` component created in `afterNextRender` (browser-only, safe under prerendering). Signals drive scene parameters through `effect()`.
 - **Scenes:**
   - `constellation`: the Nx graph, built from instanced meshes with a custom GLSL glow and bloom
-  - `part-viewer`: STL loading, a custom material and measurement overlays
-- **Workers:** STL parsing, volume (signed tetrahedra) and bounding box run in a Web Worker, with zero-copy transferable `ArrayBuffer`s.
+  - `orbit-globe`: a dot-matrix Earth with a day/night terminator and atmosphere, and every active satellite as one point cloud
+- **Workers:** SGP4 propagation of the whole catalog runs in a Web Worker and posts zero-copy transferable `Float32Array`s.
 - **Progressive enhancement:**
   - poster image first (it is the LCP)
   - WebGL after `requestIdleCallback`, on capable devices only
@@ -510,18 +512,19 @@ sequenceDiagram
   N->>N: AI summary + fit score · CRM row · auto-reply (Gmail) · rich Telegram card
 ```
 
-### 7.2 Spring Boot pricing engine: `apps/pricing-engine`
+### 7.2 Spring Boot Orbit API: `apps/orbit-api`
 
-- **Platform:** Java 25 LTS, **Spring Boot 4.x**, Gradle Kotlin DSL, `@nx/gradle`.
-- **API:** `POST /quotes`
-  - **Input:** `{ geometry: { volumeMm3, surfaceMm2, bbox }, process: FDM|SLA|CNC|LASER, material, quantity, currency }`
-  - **Output:** a price breakdown covering material, machine time, setup, quantity break and tax.
-  - **Rules:** one strategy per manufacturing process.
-- **Errors and validation:** Jakarta Bean Validation; Problem Details (RFC 9457) error responses.
-- **Contract:** `springdoc-openapi` produces the OpenAPI spec, from which the TypeScript client in `@ah/shared/api-client` is generated.
-- **Build:** a **GraalVM native image**, for a small memory footprint and fast cold start on a 512 MB free instance.
-  - ⚠ M2 spike. Fallback: the JVM with `-XX:MaxRAMPercentage=75` and class data sharing.
-- **Tests:** JUnit 5 and Spring test slices, plus an OpenAPI contract diff in CI.
+Built in M2; details and spike results in [ADR-0013](adr/0013-orbit-api.md).
+
+- **Platform:** Java 25 LTS, **Spring Boot 4.1**, Gradle Kotlin DSL, wired into Nx with a `project.json` (`build`, `test`, `serve`).
+- **Data:** CelesTrak's Active catalog (about 17,000 satellites), downloaded at most every 6 hours and never twice in CelesTrak's 2-hour window, stored in MongoDB Atlas, and served pre-serialised and pre-gzipped.
+- **API:**
+  - `GET /satellites?group=`: OMM elements that satellite.js reads directly
+  - `GET /satellites/{noradId}`: orbit class, period, apogee, perigee
+  - `GET /satellites/{noradId}/passes`: rise, culmination, set and naked-eye visibility over a place, computed with Orekit
+- **Errors and validation:** Jakarta Bean Validation; Problem Details (RFC 9457) listing each invalid parameter.
+- **Contract:** `springdoc-openapi` writes `apps/orbit-api/openapi.json`; `openapi-typescript` generates `@ah/shared/api-client`. CI fails when either is out of date.
+- **Tests:** JUnit 5, Spring MVC test slices, a MongoDB integration test, and pass predictions checked against satellite.js.
 
 ### 7.3 n8n
 
@@ -585,7 +588,7 @@ libs/products/deutsch/feature-flashcards
 | ------------------------- | ------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- | -------------------------- | ---------------------------------------------------------------------------- |
 | Shell, remotes, Storybook | **Cloudflare static assets** (one project per deployable)                 | Static requests free and unlimited                                                            | None for static            | GitHub Pages mirror                                                          |
 | NestJS API                | **Render free** (Docker)                                                  | 750 instance-h/month **per workspace**; sleeps after 15 min; no persistent disk; SMTP blocked | ~1 min cold start          | Pre-warm on intent, honest "waking" UI, Background Sync, `mailto:` + Cal.com |
-| Pricing engine            | **Render free** (shares the 750 h)                                        | As above                                                                                      | Cold start                 | Client-side estimate badged "approximate"                                    |
+| Orbit API                 | **Render free** (shares the 750 h)                                        | As above                                                                                      | Cold start                 | Bundled catalog snapshot in the lab; passes wait for the API                 |
 | Database                  | **MongoDB Atlas Free**                                                    | 512 MB, one free cluster per project                                                          | —                          | —                                                                            |
 | Automation                | **n8n** on your PC (Docker + ngrok static domain)                         | Free                                                                                          | Offline when the PC is off | Outbox + 30-min backstop; direct Telegram alert                              |
 | AI                        | **Gemini / Groq** free tiers                                              | Rate limits                                                                                   | Quota exhaustion           | Canned FAQ answers                                                           |
@@ -693,7 +696,7 @@ Each milestone ships on its own. **M1 is the one that gets you interviews, so it
 | --------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
 | **M0 Foundation**           | Workspace, pnpm, lint/format, boundaries, CI skeleton, design-system tokens v0, shell + 1 hello remote, Nest `/health`                                         | Shell + remote live on Cloudflare via CI · Native Federation + zoneless + prerender + PWA + CSP spike recorded as ADRs · zone.js guard passing |
 | **M1 Launchable portfolio** | Home, Experience, 3 case studies, Services, Contact (full lead pipeline), CV PDF (EN), audience modes, SEO, poster-image hero                                  | Lighthouse budgets green · a test lead reaches Telegram + n8n · **start sending the link**                                                     |
-| **M2 Signature**            | Three.js engine, constellation hero, Quote3D lab + Spring Boot pricing engine, Federation Inspector, public Storybook                                          | WebGL scenes pass budgets and the reduced-motion fallback                                                                                      |
+| **M2 Signature**            | Three.js engine, constellation hero, Orbit lab + Spring Boot Orbit API, Federation Inspector, public Storybook                                                 | WebGL scenes pass budgets and the reduced-motion fallback                                                                                      |
 | **M3 Products**             | Import the 4 apps (order in §13), demo-mode remotes, shared Electron lib, GitHub Releases downloads                                                            | All 4 apps run inside the portfolio and as desktop builds                                                                                      |
 | **M4 Differentiators**      | Form Engine lab + Estimator, Pipeline lab, assistant, FR locale + FR CV, Capacitor Android (DeutschLernen, Code de la Route), custom Nx generators, Canvas lab | Each ships as an independent remote                                                                                                            |
 
@@ -719,25 +722,25 @@ Each milestone ships on its own. **M1 is the one that gets you interviews, so it
 
 The full records are in [`docs/adr`](adr/README.md). Proposed decisions get the next number when their area is built.
 
-| ADR                                                | Decision                                                                           | Status   |
-| -------------------------------------------------- | ---------------------------------------------------------------------------------- | -------- |
-| [0001](adr/0001-nx-integrated-monorepo.md)         | Nx 24 integrated monorepo · pnpm · single version policy                           | Accepted |
-| [0002](adr/0002-native-federation.md)              | Native Federation v4 · dynamic host · remote contract `./routes` + `./meta`        | Accepted |
-| [0003](adr/0003-static-first-rendering.md)         | Prerendered shell; client-rendered remotes; no server                              | Accepted |
-| [0004](adr/0004-zoneless.md)                       | Zoneless everywhere; `pnpm check:zoneless` guard                                   | Accepted |
-| [0005](adr/0005-pwa-with-federation.md)            | Service worker regenerated after the federation build                              | Accepted |
-| [0006](adr/0006-content-security-policy.md)        | CSP header with build-time hashes                                                  | Accepted |
-| [0007](adr/0007-cloudflare-hosting.md)             | Cloudflare Workers static assets, one Worker per app, affected deploys from CI     | Accepted |
-| [0008](adr/0008-design-tokens-and-ui.md)           | Design tokens with a contrast gate, cascade layers, `@ah/ui`                       | Accepted |
-| [0009](adr/0009-content-audiences-and-seo.md)      | Typed content, audience modes, SEO, generated CV, Lighthouse gate                  | Accepted |
-| [0010](adr/0010-lead-pipeline.md)                  | Lead pipeline: document outbox + direct Telegram alert + n8n push/pull             | Accepted |
-| [0011](adr/0011-three-engine-and-constellation.md) | Framework-agnostic Three.js engine + thin Angular adapter; progressive enhancement | Accepted |
-| [0012](adr/0012-federation-inspector.md)           | Federation Inspector, capability checks, deploy-time build info, CI skew check     | Accepted |
-| —                                                  | State ladder: signals → SignalStore → Events plugin; no classic `@ngrx/store`      | Proposed |
-| —                                                  | Zero-cost topology: static-first; sleeping backends; graceful degradation          | Proposed |
-| —                                                  | One feature lib, many shells (remote / PWA / Electron / Capacitor)                 | Proposed |
-| —                                                  | OpenAPI contract-first; generated TS clients for Nest and Spring                   | Proposed |
-| —                                                  | Runtime i18n (Transloco), EN/FR, URL-based locale, RTL-ready                       | Proposed |
+| ADR                                                | Decision                                                                                     | Status   |
+| -------------------------------------------------- | -------------------------------------------------------------------------------------------- | -------- |
+| [0001](adr/0001-nx-integrated-monorepo.md)         | Nx 24 integrated monorepo · pnpm · single version policy                                     | Accepted |
+| [0002](adr/0002-native-federation.md)              | Native Federation v4 · dynamic host · remote contract `./routes` + `./meta`                  | Accepted |
+| [0003](adr/0003-static-first-rendering.md)         | Prerendered shell; client-rendered remotes; no server                                        | Accepted |
+| [0004](adr/0004-zoneless.md)                       | Zoneless everywhere; `pnpm check:zoneless` guard                                             | Accepted |
+| [0005](adr/0005-pwa-with-federation.md)            | Service worker regenerated after the federation build                                        | Accepted |
+| [0006](adr/0006-content-security-policy.md)        | CSP header with build-time hashes                                                            | Accepted |
+| [0007](adr/0007-cloudflare-hosting.md)             | Cloudflare Workers static assets, one Worker per app, affected deploys from CI               | Accepted |
+| [0008](adr/0008-design-tokens-and-ui.md)           | Design tokens with a contrast gate, cascade layers, `@ah/ui`                                 | Accepted |
+| [0009](adr/0009-content-audiences-and-seo.md)      | Typed content, audience modes, SEO, generated CV, Lighthouse gate                            | Accepted |
+| [0010](adr/0010-lead-pipeline.md)                  | Lead pipeline: document outbox + direct Telegram alert + n8n push/pull                       | Accepted |
+| [0011](adr/0011-three-engine-and-constellation.md) | Framework-agnostic Three.js engine + thin Angular adapter; progressive enhancement           | Accepted |
+| [0012](adr/0012-federation-inspector.md)           | Federation Inspector, capability checks, deploy-time build info, CI skew check               | Accepted |
+| [0013](adr/0013-orbit-api.md)                      | Orbit API: Spring Boot 4 + Orekit; OpenAPI contract-first; generated TS types; JVM on Render | Accepted |
+| —                                                  | State ladder: signals → SignalStore → Events plugin; no classic `@ngrx/store`                | Proposed |
+| —                                                  | Zero-cost topology: static-first; sleeping backends; graceful degradation                    | Proposed |
+| —                                                  | One feature lib, many shells (remote / PWA / Electron / Capacitor)                           | Proposed |
+| —                                                  | Runtime i18n (Transloco), EN/FR, URL-based locale, RTL-ready                                 | Proposed |
 
 ---
 

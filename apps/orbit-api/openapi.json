@@ -1,0 +1,495 @@
+{
+  "openapi" : "3.1.0",
+  "info" : {
+    "description" : "Active satellites from CelesTrak's public GP data, and pass predictions computed with Orekit. Errors are RFC 9457 problem details.",
+    "license" : {
+      "name" : "MIT"
+    },
+    "title" : "Orbit API",
+    "version" : "1"
+  },
+  "paths" : {
+    "/satellites" : {
+      "get" : {
+        "description" : "Mean elements for every active satellite (about 11,000), refreshed from CelesTrak at most every 6 hours. Pre-serialised and pre-gzipped; send If-None-Match to get 304.",
+        "operationId" : "list",
+        "parameters" : [ {
+          "description" : "all, stations, starlink, gnss, weather or other",
+          "in" : "query",
+          "name" : "group",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "default" : "all",
+            "pattern" : "all|stations|starlink|gnss|weather|other"
+          }
+        }, {
+          "in" : "header",
+          "name" : "If-None-Match",
+          "required" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "in" : "header",
+          "name" : "Accept-Encoding",
+          "required" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CatalogResponse"
+                }
+              }
+            },
+            "description" : "OK"
+          },
+          "304" : {
+            "description" : "Not modified since the ETag in If-None-Match"
+          },
+          "400" : {
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description" : "Unknown group"
+          }
+        },
+        "summary" : "The catalog, or one group of it",
+        "tags" : [ "satellite-controller" ]
+      }
+    },
+    "/satellites/{noradId}" : {
+      "get" : {
+        "operationId" : "details",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "noradId",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "minimum" : 1
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/SatelliteDetails"
+                }
+              }
+            },
+            "description" : "OK"
+          },
+          "404" : {
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description" : "No active satellite has this number"
+          }
+        },
+        "summary" : "One satellite, with its orbit's size and period",
+        "tags" : [ "satellite-controller" ]
+      }
+    },
+    "/satellites/{noradId}/passes" : {
+      "get" : {
+        "description" : "Rise, highest point and set, computed with Orekit (SGP4). A pass is visible to the naked eye when the satellite is sunlit while the observer's sky is dark.",
+        "operationId" : "passes",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "noradId",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "minimum" : 1
+          }
+        }, {
+          "description" : "Degrees, north positive",
+          "in" : "query",
+          "name" : "lat",
+          "required" : true,
+          "schema" : {
+            "type" : "number",
+            "format" : "double",
+            "maximum" : 90.0,
+            "minimum" : -90.0
+          }
+        }, {
+          "description" : "Degrees, east positive",
+          "in" : "query",
+          "name" : "lon",
+          "required" : true,
+          "schema" : {
+            "type" : "number",
+            "format" : "double",
+            "maximum" : 180.0,
+            "minimum" : -180.0
+          }
+        }, {
+          "description" : "Metres above the WGS-84 ellipsoid",
+          "in" : "query",
+          "name" : "altM",
+          "required" : false,
+          "schema" : {
+            "type" : "number",
+            "format" : "double",
+            "default" : 0.0,
+            "maximum" : 9000.0,
+            "minimum" : -500.0
+          }
+        }, {
+          "in" : "query",
+          "name" : "days",
+          "required" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "default" : 3,
+            "maximum" : 7,
+            "minimum" : 1
+          }
+        }, {
+          "description" : "Ignore passes lower than this, in degrees",
+          "in" : "query",
+          "name" : "minElevation",
+          "required" : false,
+          "schema" : {
+            "type" : "number",
+            "format" : "double",
+            "default" : 10.0,
+            "maximum" : 60.0,
+            "minimum" : 0.0
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PassesResponse"
+                }
+              }
+            },
+            "description" : "OK"
+          },
+          "400" : {
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description" : "Invalid parameters, each listed in errors"
+          },
+          "404" : {
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description" : "No active satellite has this number"
+          }
+        },
+        "summary" : "Upcoming passes over a place",
+        "tags" : [ "satellite-controller" ]
+      }
+    }
+  },
+  "components" : {
+    "schemas" : {
+      "CatalogResponse" : {
+        "type" : "object",
+        "properties" : {
+          "count" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "fetchedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "group" : {
+            "type" : "string"
+          },
+          "satellites" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/OrbitalElements"
+            }
+          },
+          "source" : {
+            "type" : "string"
+          }
+        }
+      },
+      "Observer" : {
+        "type" : "object",
+        "properties" : {
+          "altitudeM" : {
+            "type" : "number",
+            "format" : "double",
+            "description" : "Metres above the ellipsoid"
+          },
+          "latitude" : {
+            "type" : "number",
+            "format" : "double",
+            "description" : "Degrees, north positive"
+          },
+          "longitude" : {
+            "type" : "number",
+            "format" : "double",
+            "description" : "Degrees, east positive"
+          }
+        }
+      },
+      "OrbitalElements" : {
+        "type" : "object",
+        "description" : "Mean orbital elements (CCSDS OMM keys, as published by CelesTrak)",
+        "properties" : {
+          "ARG_OF_PERICENTER" : {
+            "type" : "number",
+            "format" : "double",
+            "description" : "Degrees"
+          },
+          "BSTAR" : {
+            "type" : "number",
+            "format" : "double"
+          },
+          "CLASSIFICATION_TYPE" : {
+            "type" : "string"
+          },
+          "ECCENTRICITY" : {
+            "type" : "number",
+            "format" : "double"
+          },
+          "ELEMENT_SET_NO" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "EPHEMERIS_TYPE" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "EPOCH" : {
+            "type" : "string",
+            "description" : "UTC, ISO-8601 without zone"
+          },
+          "INCLINATION" : {
+            "type" : "number",
+            "format" : "double",
+            "description" : "Degrees"
+          },
+          "MEAN_ANOMALY" : {
+            "type" : "number",
+            "format" : "double",
+            "description" : "Degrees"
+          },
+          "MEAN_MOTION" : {
+            "type" : "number",
+            "format" : "double",
+            "description" : "Revolutions per day"
+          },
+          "MEAN_MOTION_DDOT" : {
+            "type" : "number",
+            "format" : "double",
+            "description" : "Revolutions per day³, as in the TLE (a sixth of the derivative)"
+          },
+          "MEAN_MOTION_DOT" : {
+            "type" : "number",
+            "format" : "double",
+            "description" : "Revolutions per day², as in the TLE (half the derivative)"
+          },
+          "NORAD_CAT_ID" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "OBJECT_ID" : {
+            "type" : "string"
+          },
+          "OBJECT_NAME" : {
+            "type" : "string"
+          },
+          "RA_OF_ASC_NODE" : {
+            "type" : "number",
+            "format" : "double",
+            "description" : "Degrees"
+          },
+          "REV_AT_EPOCH" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
+      "Pass" : {
+        "type" : "object",
+        "properties" : {
+          "culmination" : {
+            "$ref" : "#/components/schemas/Point",
+            "description" : "Highest point of the pass"
+          },
+          "durationSeconds" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "rise" : {
+            "$ref" : "#/components/schemas/Point"
+          },
+          "set" : {
+            "$ref" : "#/components/schemas/Point"
+          },
+          "visible" : {
+            "type" : "boolean",
+            "description" : "The satellite is sunlit while the observer is in darkness (sun 6° or more below the horizon)"
+          }
+        }
+      },
+      "PassesResponse" : {
+        "type" : "object",
+        "properties" : {
+          "from" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "minElevationDeg" : {
+            "type" : "number",
+            "format" : "double"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "noradId" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "observer" : {
+            "$ref" : "#/components/schemas/Observer"
+          },
+          "passes" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/Pass"
+            }
+          },
+          "to" : {
+            "type" : "string",
+            "format" : "date-time"
+          }
+        }
+      },
+      "Point" : {
+        "type" : "object",
+        "properties" : {
+          "azimuthDeg" : {
+            "type" : "number",
+            "format" : "double",
+            "description" : "Degrees from north, clockwise"
+          },
+          "elevationDeg" : {
+            "type" : "number",
+            "format" : "double",
+            "description" : "Degrees above the horizon"
+          },
+          "time" : {
+            "type" : "string",
+            "format" : "date-time"
+          }
+        }
+      },
+      "ProblemDetail" : {
+        "type" : "object",
+        "properties" : {
+          "detail" : {
+            "type" : "string"
+          },
+          "instance" : {
+            "type" : "string",
+            "format" : "uri"
+          },
+          "properties" : {
+            "type" : "object",
+            "additionalProperties" : { }
+          },
+          "status" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "title" : {
+            "type" : "string"
+          },
+          "type" : {
+            "type" : "string",
+            "format" : "uri"
+          }
+        }
+      },
+      "SatelliteDetails" : {
+        "type" : "object",
+        "properties" : {
+          "apogeeKm" : {
+            "type" : "number",
+            "format" : "double"
+          },
+          "eccentricity" : {
+            "type" : "number",
+            "format" : "double"
+          },
+          "elements" : {
+            "$ref" : "#/components/schemas/OrbitalElements"
+          },
+          "epoch" : {
+            "type" : "string"
+          },
+          "group" : {
+            "type" : "string",
+            "enum" : [ "STATIONS", "STARLINK", "GNSS", "WEATHER", "OTHER" ]
+          },
+          "inclinationDeg" : {
+            "type" : "number",
+            "format" : "double"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "noradId" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "objectId" : {
+            "type" : "string"
+          },
+          "orbitClass" : {
+            "type" : "string",
+            "enum" : [ "LEO", "MEO", "GEO", "HEO" ]
+          },
+          "perigeeKm" : {
+            "type" : "number",
+            "format" : "double"
+          },
+          "periodMinutes" : {
+            "type" : "number",
+            "format" : "double"
+          }
+        }
+      }
+    }
+  }
+}

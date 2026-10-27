@@ -1,0 +1,19 @@
+{
+  "name": "shared-api-client",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/shared/api-client/src",
+  "projectType": "library",
+  "tags": ["scope:shared", "type:contracts", "runtime:agnostic"],
+  "implicitDependencies": ["orbit-api"],
+  "targets": {
+    "generate": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": ["{workspaceRoot}/apps/orbit-api/openapi.json"],
+      "outputs": ["{projectRoot}/src/generated"],
+      "options": {
+        "command": "openapi-typescript apps/orbit-api/openapi.json -o libs/shared/api-client/src/generated/orbit-api.ts"
+      }
+    }
+  }
+}

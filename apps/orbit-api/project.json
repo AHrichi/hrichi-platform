@@ -1,0 +1,48 @@
+{
+  "name": "orbit-api",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "apps/orbit-api/src",
+  "tags": ["scope:orbit", "type:app", "runtime:jvm"],
+  "namedInputs": {
+    "gradle": [
+      "{projectRoot}/*.gradle.kts",
+      "{projectRoot}/gradle/**/*",
+      "{projectRoot}/gradlew*"
+    ]
+  },
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": ["gradle", "{projectRoot}/src/main/**/*"],
+      "outputs": ["{projectRoot}/build/libs"],
+      "options": {
+        "command": "node tools/scripts/gradle.mjs apps/orbit-api bootJar"
+      }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": [
+        "gradle",
+        "{projectRoot}/src/**/*",
+        { "env": "MONGODB_TEST_URI" }
+      ],
+      "outputs": [
+        "{projectRoot}/openapi.json",
+        "{projectRoot}/build/test-results"
+      ],
+      "options": {
+        "command": "node tools/scripts/gradle.mjs apps/orbit-api test"
+      }
+    },
+    "serve": {
+      "executor": "nx:run-commands",
+      "continuous": true,
+      "options": {
+        "command": "node tools/scripts/gradle.mjs apps/orbit-api bootRun"
+      }
+    }
+  }
+}

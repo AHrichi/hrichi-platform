@@ -1,0 +1,20 @@
+# Orbit API as a GraalVM native image (ADR-0013): ready in seconds on Render's
+# 0.1 CPU, against about 40 s on the JVM, but not deployed yet. Building it
+# takes about 11 minutes and 6 GB of memory, which Render's builder doesn't
+# have, so CI would build it and push it to a registry. Verify it with:
+#   docker build -f apps/orbit-api/Dockerfile.native -t orbit-api:native apps/orbit-api
+
+FROM gradle:9.8.2-jdk25-graal AS build
+WORKDIR /project
+COPY gradle gradle
+COPY gradlew settings.gradle.kts build.gradle.kts ./
+RUN ./gradlew --no-daemon -q -Pnative dependencies --configuration runtimeClasspath > /dev/null
+COPY src src
+RUN ./gradlew --no-daemon -q -Pnative nativeCompile
+
+FROM debian:trixie-slim
+RUN useradd --system --uid 10001 orbit
+COPY --from=build /project/build/native/nativeCompile/orbit-api /app/orbit-api
+USER orbit
+EXPOSE 8080
+ENTRYPOINT ["/app/orbit-api"]

@@ -1,6 +1,6 @@
-# Render Blueprint for the lead API (ADR-0010). Secrets are `sync: false`:
-# Render asks for them once, in its dashboard, when the Blueprint is created.
-# Setup steps: docs/lead-pipeline.md.
+# Render Blueprint: the lead API (ADR-0010) and the Orbit API (ADR-0013).
+# Secrets are `sync: false`: Render asks for them once, in its dashboard,
+# when the Blueprint is created. Setup steps: docs/lead-pipeline.md.
 services:
   - type: web
     name: ahmed-hrichi-api
@@ -38,3 +38,31 @@ services:
         sync: false
       - key: N8N_WEBHOOK_SECRET
         sync: false
+
+  # The Orbit API (ADR-0013): Spring Boot 4 + Orekit, read-only and cached.
+  # MONGODB_URI is copied from the lead API, so nothing needs pasting; it
+  # uses its own database (orbit) on the same free Atlas cluster.
+  - type: web
+    name: ahmed-hrichi-orbit
+    runtime: docker
+    plan: free
+    region: frankfurt
+    dockerfilePath: ./apps/orbit-api/Dockerfile
+    dockerContext: ./apps/orbit-api
+    healthCheckPath: /actuator/health
+    branch: main
+    autoDeployTrigger: checksPass
+    buildFilter:
+      paths:
+        - apps/orbit-api/**
+        - render.yaml
+    envVars:
+      - key: MONGODB_URI
+        fromService:
+          type: web
+          name: ahmed-hrichi-api
+          envVarKey: MONGODB_URI
+      - key: MONGODB_DB
+        value: orbit
+      - key: CORS_ORIGINS
+        value: https://portfolio.ahmed-hrichi.workers.dev,https://lab-orbit.ahmed-hrichi.workers.dev,http://localhost:4200,http://localhost:4302

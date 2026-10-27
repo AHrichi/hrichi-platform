@@ -50,3 +50,8 @@ vitest.config.*.timestamp*
 
 # Lighthouse CI local runs
 .lighthouseci
+
+# Gradle (apps/orbit-api)
+.gradle
+apps/orbit-api/build
+apps/orbit-api/bin

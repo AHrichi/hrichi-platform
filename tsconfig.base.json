@@ -37,6 +37,7 @@
       "@ah/portfolio/feature-cv": ["./libs/portfolio/feature-cv/src/index.ts"],
       "@ah/api/leads": ["./libs/api/leads/src/index.ts"],
       "@ah/shared/contracts": ["./libs/shared/contracts/src/index.ts"],
+      "@ah/shared/api-client": ["./libs/shared/api-client/src/index.ts"],
       "@ah/three/engine": ["./libs/three/engine/src/index.ts"],
       "@ah/three/engine/quality": ["./libs/three/engine/src/quality.ts"],
       "@ah/three/angular": ["./libs/three/angular/src/index.ts"],

@@ -25,7 +25,8 @@ jobs:
   ci:
     name: Lint, test, build, e2e
     runs-on: ubuntu-latest
-    # For the leads repository's integration tests (libs/api/leads).
+    # For the integration tests of the leads repository (libs/api/leads) and
+    # the Orbit API's catalog store (apps/orbit-api).
     services:
       mongo:
         image: mongo:8.0
@@ -40,6 +41,12 @@ jobs:
         with:
           node-version: 24
           cache: pnpm
+      # The Orbit API (Spring Boot); Gradle finds this JDK for its toolchain.
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 25
+          cache: gradle
       - run: pnpm install --frozen-lockfile
       - uses: nrwl/nx-set-shas@v4
 
@@ -57,6 +64,11 @@ jobs:
       - run: pnpm nx affected -t lint test build
         env:
           MONGODB_TEST_URI: mongodb://localhost:27017
+      # orbit-api's tests rewrite openapi.json; the TypeScript types follow it.
+      - name: The Orbit API contract and its TypeScript types are committed (ADR-0013)
+        run: |
+          pnpm nx run shared-api-client:generate --skip-nx-cache
+          git diff --exit-code apps/orbit-api/openapi.json libs/shared/api-client/src/generated
 
       - run: pnpm exec playwright install --with-deps chromium
       - name: End-to-end tests against production builds

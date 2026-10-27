@@ -59,6 +59,7 @@
     "eslint-plugin-playwright": "^1.6.2",
     "jsdom": "^27.1.0",
     "nx": "24.0.1",
+    "openapi-typescript": "7.13.0",
     "prettier": "^3.9.10",
     "style-dictionary": "5.7.1",
     "supertest": "7.3.1",
@@ -99,6 +100,7 @@
     "mongodb": "7.7.0",
     "reflect-metadata": "^0.2.0",
     "rxjs": "~7.8.0",
+    "satellite.js": "7.1.0",
     "three": "0.186.1",
     "web-vitals": "6.2.3"
   }

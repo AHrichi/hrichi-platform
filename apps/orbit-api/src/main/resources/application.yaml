@@ -1,0 +1,36 @@
+spring:
+  application:
+    name: orbit-api
+  mongodb:
+    uri: ${MONGODB_URI:mongodb://localhost:27017}
+    database: ${MONGODB_DB:orbit}
+  mvc:
+    problemdetails:
+      enabled: true
+  threads:
+    virtual:
+      enabled: true
+
+server:
+  port: ${PORT:8080}
+  shutdown: graceful
+  # The catalog is pre-gzipped by the API; everything else is small.
+  compression:
+    enabled: false
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: always
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  writer-with-order-by-keys: true
+
+orbit:
+  cors-origins: ${CORS_ORIGINS:http://localhost:4200,http://localhost:4302}

@@ -9,30 +9,32 @@ Ahmed Hrichi's portfolio, built as the kind of platform it describes: an Nx mono
 
 ## Projects
 
-| Project                     | Path                              | What it is                                                                                 |
-| --------------------------- | --------------------------------- | ------------------------------------------------------------------------------------------ |
-| `shell`                     | `apps/portfolio/shell`            | Host. Prerendered content pages, PWA, loads remotes from `public/federation.manifest.json` |
-| `shell-e2e`                 | `apps/portfolio/shell-e2e`        | Playwright tests for prerendering, federation and remote fallback                          |
-| `lab-hello`                 | `apps/labs/hello`                 | M0 spike remote; exposes `./routes` and `./meta`                                           |
-| `platform-federation`       | `libs/platform/federation`        | Remote contract, `federatedRoutes()`, `FederationStore`, `RemoteUnavailable` fallback      |
-| `platform-inspector`        | `libs/platform/inspector`         | "Open the hood" (`?inspect=1`): remotes, builds, shared-dependency skew, state, Web Vitals |
-| `design-system-tokens`      | `libs/design-system/tokens`       | DTCG tokens → CSS variables and TS, with a WCAG contrast gate (`nx build-tokens`)          |
-| `design-system-ui`          | `libs/design-system/ui`           | `@ah/ui`: global styles (cascade layers) and components                                    |
-| `shared-content`            | `libs/shared/content`             | Profile, experience, case studies, services and per-audience copy                          |
-| `shared-state`              | `libs/shared/state`               | `PreferencesStore` (NgRx SignalStore): the `?for=` audience mode                           |
-| `portfolio-util-seo`        | `libs/portfolio/util-seo`         | Title, description, canonical, Open Graph and JSON-LD                                      |
-| `portfolio-feature-*`       | `libs/portfolio/feature-*`        | Pages: home, work, experience, services/contact, CV                                        |
-| `shared-contracts`          | `libs/shared/contracts`           | Types shared by the browser and the API (`LeadRequest`, field limits)                      |
-| `api`                       | `apps/api`                        | NestJS API for Render: config validation, health, CORS, rate limits                        |
-| `api-leads`                 | `libs/api/leads`                  | Lead intake: Turnstile, idempotency, Mongo outbox, Telegram and n8n delivery               |
-| `three-engine`              | `libs/three/engine`               | Framework-free Three.js stage: on-demand frames, pause off-screen, quality tiers, dispose  |
-| `three-angular`             | `libs/three/angular`              | `<ah-scene>`: loads a scene after idle over a static fallback                              |
-| `three-constellation`       | `libs/three/constellation`        | The exported Nx graph, camera and SVG projection for the hero                              |
-| `three-scene-constellation` | `libs/three/scenes/constellation` | The hero's WebGL scene (lazy)                                                              |
+| Project                     | Path                              | What it is                                                                                     |
+| --------------------------- | --------------------------------- | ---------------------------------------------------------------------------------------------- |
+| `shell`                     | `apps/portfolio/shell`            | Host. Prerendered content pages, PWA, loads remotes from `public/federation.manifest.json`     |
+| `shell-e2e`                 | `apps/portfolio/shell-e2e`        | Playwright tests for prerendering, federation and remote fallback                              |
+| `lab-hello`                 | `apps/labs/hello`                 | M0 spike remote; exposes `./routes` and `./meta`                                               |
+| `platform-federation`       | `libs/platform/federation`        | Remote contract, `federatedRoutes()`, `FederationStore`, `RemoteUnavailable` fallback          |
+| `platform-inspector`        | `libs/platform/inspector`         | "Open the hood" (`?inspect=1`): remotes, builds, shared-dependency skew, state, Web Vitals     |
+| `design-system-tokens`      | `libs/design-system/tokens`       | DTCG tokens → CSS variables and TS, with a WCAG contrast gate (`nx build-tokens`)              |
+| `design-system-ui`          | `libs/design-system/ui`           | `@ah/ui`: global styles (cascade layers) and components                                        |
+| `shared-content`            | `libs/shared/content`             | Profile, experience, case studies, services and per-audience copy                              |
+| `shared-state`              | `libs/shared/state`               | `PreferencesStore` (NgRx SignalStore): the `?for=` audience mode                               |
+| `portfolio-util-seo`        | `libs/portfolio/util-seo`         | Title, description, canonical, Open Graph and JSON-LD                                          |
+| `portfolio-feature-*`       | `libs/portfolio/feature-*`        | Pages: home, work, experience, services/contact, CV                                            |
+| `shared-contracts`          | `libs/shared/contracts`           | Types shared by the browser and the API (`LeadRequest`, field limits)                          |
+| `api`                       | `apps/api`                        | NestJS API for Render: config validation, health, CORS, rate limits                            |
+| `api-leads`                 | `libs/api/leads`                  | Lead intake: Turnstile, idempotency, Mongo outbox, Telegram and n8n delivery                   |
+| `orbit-api`                 | `apps/orbit-api`                  | Spring Boot 4 + Orekit on Render: CelesTrak catalog cache, satellite details, pass predictions |
+| `shared-api-client`         | `libs/shared/api-client`          | TypeScript types generated from the Orbit API's OpenAPI contract                               |
+| `three-engine`              | `libs/three/engine`               | Framework-free Three.js stage: on-demand frames, pause off-screen, quality tiers, dispose      |
+| `three-angular`             | `libs/three/angular`              | `<ah-scene>`: loads a scene after idle over a static fallback                                  |
+| `three-constellation`       | `libs/three/constellation`        | The exported Nx graph, camera and SVG projection for the hero                                  |
+| `three-scene-constellation` | `libs/three/scenes/constellation` | The hero's WebGL scene (lazy)                                                                  |
 
 ## Commands
 
-Requires Node 24 and pnpm 10.
+Requires Node 24 and pnpm 10, and Java 17 or later for the Orbit API.
 
 ```bash
 pnpm install
@@ -62,6 +64,12 @@ Serve production builds the way the static host will (prerendered routes, `index
 
 ```bash
 pnpm nx run-many -t serve-static -p shell lab-hello
+```
+
+Run the Orbit API locally (Java 17+ runs Gradle, which downloads Java 25; it reads MongoDB at `MONGODB_URI`, default `localhost:27017`):
+
+```bash
+pnpm nx serve orbit-api
 ```
 
 Run the lead API locally (setup in [docs/lead-pipeline.md](docs/lead-pipeline.md#local-development)):
