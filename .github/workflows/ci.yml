@@ -72,7 +72,8 @@ jobs:
 
       - run: pnpm exec playwright install --with-deps chromium
       - name: End-to-end tests against production builds
-        run: pnpm nx affected -t e2e
+        # The Storybook suite runs in its own job, in the Playwright image.
+        run: pnpm nx affected -t e2e --exclude=design-system-e2e
       - name: Lighthouse budgets (performance, a11y 100, SEO 100)
         run: pnpm nx affected -t lighthouse
       - uses: actions/upload-artifact@v4
@@ -87,9 +88,48 @@ jobs:
           include-hidden-files: true
           if-no-files-found: ignore
 
+  storybook:
+    name: Storybook (axe, visual regression)
+    runs-on: ubuntu-latest
+    # The screenshot baselines are made in this image by
+    # tools/scripts/visual-baselines.mjs. Its tag must match the installed
+    # @playwright/test (ADR-0015).
+    container:
+      image: mcr.microsoft.com/playwright:v1.64.1-noble
+      options: --ipc=host
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      # The container runs as root; git refuses a checkout owned by another user.
+      - run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - uses: nrwl/nx-set-shas@v4
+      - name: Every story passes axe and matches its screenshot
+        run: |
+          if pnpm nx show projects --affected --withTarget e2e | grep -qx design-system-e2e; then
+            pnpm nx run design-system-e2e:e2e
+          else
+            echo "The Storybook isn't affected."
+          fi
+        env:
+          VISUAL_REGRESSION: '1'
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: storybook-reports
+          path: dist/.playwright
+          include-hidden-files: true
+          if-no-files-found: ignore
+
   deploy:
     name: Deploy to Cloudflare
-    needs: ci
+    needs: [ci, storybook]
     if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-latest
     environment: production

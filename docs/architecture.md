@@ -191,6 +191,9 @@ hrichi-platform/
 │   ├── portfolio/
 │   │   ├── shell/                    host · prerendered · PWA · dynamic host (manifest)
 │   │   └── shell-e2e/                Playwright
+│   ├── design-system/
+│   │   ├── storybook/                public Storybook (ADR-0015)
+│   │   └── storybook-e2e/            axe + visual regression on every story
 │   ├── labs/
 │   │   ├── orbit/                    remote (M2)
 │   │   ├── form-engine/              remote
@@ -449,10 +452,9 @@ Theming:
 
   New components are added **only when a page needs one**.
 
-- **Storybook:**
-  - public, at `design.<domain>`, with the a11y addon
-  - Playwright visual regression on stories whenever the design system changes
-  - ⚠ Check Storybook's Angular 22 + zoneless support in M0. Fallback: an in-house docs remote.
+- **Storybook** (ADR-0015):
+  - public, at `design.<domain>`, with the a11y addon; `@storybook/angular-vite` runs zoneless, so no fallback was needed
+  - Playwright runs axe on every story in both themes, and compares screenshots in the Linux Playwright image, whenever the design system changes
 - **Adopting it in the existing apps:** tokens first (all four already use CSS variables), components gradually.
   - Accountability Architect keeps raw CSS (its own "no Tailwind" rule).
   - Code de la Route's Tailwind theme reads the tokens until it is replaced.
@@ -738,6 +740,7 @@ The full records are in [`docs/adr`](adr/README.md). Proposed decisions get the 
 | [0012](adr/0012-federation-inspector.md)           | Federation Inspector, capability checks, deploy-time build info, CI skew check               | Accepted |
 | [0013](adr/0013-orbit-api.md)                      | Orbit API: Spring Boot 4 + Orekit; OpenAPI contract-first; generated TS types; JVM on Render | Accepted |
 | [0014](adr/0014-orbit-lab.md)                      | Orbit lab remote: WebGL globe, SGP4 worker, snapshot fallback                                | Accepted |
+| [0015](adr/0015-public-storybook.md)               | Public Storybook: angular-vite, zoneless, axe and visual regression on every story           | Accepted |
 | —                                                  | State ladder: signals → SignalStore → Events plugin; no classic `@ngrx/store`                | Proposed |
 | —                                                  | Zero-cost topology: static-first; sleeping backends; graceful degradation                    | Proposed |
 | —                                                  | One feature lib, many shells (remote / PWA / Electron / Capacitor)                           | Proposed |

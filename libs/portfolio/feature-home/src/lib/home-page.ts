@@ -49,6 +49,7 @@ export class HomePage {
   protected readonly currentPeriod = rolePeriod(experience[0]);
   protected readonly featuredServices = services.slice(0, 3);
   protected readonly repository = site.repository;
+  protected readonly designSystem = site.designSystem;
   protected readonly audienceOptions: SegmentedOption<Audience>[] =
     audiences.map((value) => ({ value, label: audienceCopy[value].label }));
 

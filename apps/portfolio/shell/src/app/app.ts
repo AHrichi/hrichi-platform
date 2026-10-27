@@ -24,6 +24,7 @@ import { reloadOnNavigationWhenUpdated } from './sw-updates';
 export class App {
   protected readonly profile = profile;
   protected readonly repository = site.repository;
+  protected readonly designSystem = site.designSystem;
   protected readonly year = new Date().getFullYear();
   protected readonly nav = [
     { label: 'Work', path: '/work' },

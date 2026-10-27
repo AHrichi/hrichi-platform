@@ -1,0 +1,52 @@
+{
+  "name": "design-system",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "apps/design-system/storybook/.storybook",
+  "tags": ["scope:design-system", "type:app", "runtime:browser"],
+  "// implicitDependencies": "Storybook finds stories by glob, so Nx can't see these.",
+  "implicitDependencies": ["design-system-ui", "three-angular"],
+  "targets": {
+    "storybook": {
+      "executor": "nx:run-commands",
+      "continuous": true,
+      "options": {
+        "command": "storybook dev --port 6006 --config-dir apps/design-system/storybook/.storybook --no-open"
+      }
+    },
+    "build-storybook": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": ["default", "^production"],
+      "outputs": ["{workspaceRoot}/dist/storybook/design-system"],
+      "options": {
+        "command": "storybook build --config-dir apps/design-system/storybook/.storybook --output-dir dist/storybook/design-system --quiet"
+      }
+    },
+    "serve-static": {
+      "dependsOn": ["build-storybook"],
+      "executor": "nx:run-commands",
+      "continuous": true,
+      "options": {
+        "command": "node tools/scripts/serve-static.mjs dist/storybook/design-system 6007"
+      },
+      "readyWhen": { "signal": true }
+    },
+    "deploy": {
+      "dependsOn": ["build-storybook"],
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "node tools/scripts/prepare-hosting.mjs dist/storybook/design-system --env production --app design-system --frame-self --allow-eval",
+          "wrangler deploy --config apps/design-system/storybook/wrangler.jsonc"
+        ],
+        "parallel": false
+      },
+      "inputs": [
+        "default",
+        "^production",
+        "{workspaceRoot}/tools/scripts/prepare-hosting.mjs"
+      ]
+    }
+  }
+}

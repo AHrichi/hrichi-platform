@@ -1,0 +1,11 @@
+{
+  "$schema": "../../../node_modules/wrangler/config-schema.json",
+  // The public Storybook (ADR-0015): assets only, at design.<account>.workers.dev.
+  "name": "design",
+  "compatibility_date": "2026-10-26",
+  "assets": {
+    "directory": "../../../dist/storybook/design-system",
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "404-page",
+  },
+}

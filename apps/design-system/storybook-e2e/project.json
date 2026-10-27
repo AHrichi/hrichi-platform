@@ -1,0 +1,24 @@
+{
+  "name": "design-system-e2e",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "apps/design-system/storybook-e2e/src",
+  "implicitDependencies": ["design-system"],
+  "targets": {
+    "e2e": {
+      "inputs": [
+        "default",
+        "^production",
+        { "externalDependencies": ["@playwright/test"] },
+        { "env": "CI" },
+        { "env": "VISUAL_REGRESSION" }
+      ]
+    },
+    "update-baselines": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node tools/scripts/visual-baselines.mjs"
+      }
+    }
+  }
+}

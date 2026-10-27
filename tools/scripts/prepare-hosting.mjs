@@ -13,6 +13,10 @@
 //                         origins in the CSP (ADR-0010, ADR-0013)
 //   --app <name>          Write build-info.json (app, commit, build time) for the
 //                         Federation Inspector (ADR-0012)
+//   --frame-self          Let the site frame its own pages (Storybook's manager
+//                         shows each story in a same-origin iframe, ADR-0015)
+//   --allow-eval          Allow 'unsafe-eval' (Storybook compiles story templates
+//                         with Angular's JIT compiler in the browser, ADR-0015)
 //
 // It always writes `_headers` with security headers and a Content-Security-Policy
 // whose script hashes come from the inline scripts in the built HTML (ADR-0006).
@@ -39,6 +43,8 @@ const { positionals, values } = parseArgs({
     sitemap: { type: 'boolean', default: false },
     'site-config': { type: 'boolean', default: false },
     app: { type: 'string' },
+    'frame-self': { type: 'boolean', default: false },
+    'allow-eval': { type: 'boolean', default: false },
   },
 });
 const [dir] = positionals;
@@ -179,13 +185,15 @@ function inlineScriptHashes(root) {
 
 const remotes = remoteOrigins.join(' ');
 const turnstile = turnstileOrigins.join(' ');
+const self = values['frame-self'] ? "'self'" : '';
+const evaluate = values['allow-eval'] ? "'unsafe-eval'" : '';
 const csp = [
   "default-src 'self'",
   // blob: is required by es-module-shims in shim mode (ADR-0006).
-  `script-src 'self' ${inlineScriptHashes(dir).join(' ')} blob: ${remotes} ${turnstile}`,
+  `script-src 'self' ${evaluate} ${inlineScriptHashes(dir).join(' ')} blob: ${remotes} ${turnstile}`,
   "style-src 'self' 'unsafe-inline'",
   `connect-src 'self' ${remotes} ${apiOrigins.join(' ')}`,
-  `frame-src ${turnstile || "'none'"}`,
+  `frame-src ${[self, turnstile].join(' ').trim() || "'none'"}`,
   "img-src 'self' data:",
   "font-src 'self'",
   "manifest-src 'self'",
@@ -194,7 +202,7 @@ const csp = [
   "object-src 'none'",
   "base-uri 'self'",
   "form-action 'self'",
-  "frame-ancestors 'none'",
+  `frame-ancestors ${self || "'none'"}`,
 ]
   .map((directive) => directive.replace(/\s+/g, ' ').trim())
   .join('; ');

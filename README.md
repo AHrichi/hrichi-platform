@@ -5,37 +5,39 @@ Ahmed Hrichi's portfolio, built as the kind of platform it describes: an Nx mono
 - Architecture: [docs/architecture.md](docs/architecture.md)
 - Decisions and spike results: [docs/adr](docs/adr/README.md)
 - Lead pipeline setup (accounts, secrets, n8n): [docs/lead-pipeline.md](docs/lead-pipeline.md)
-- Live: [portfolio.ahmed-hrichi.workers.dev](https://portfolio.ahmed-hrichi.workers.dev) (shell), [lab-hello.ahmed-hrichi.workers.dev](https://lab-hello.ahmed-hrichi.workers.dev) and [lab-orbit.ahmed-hrichi.workers.dev](https://lab-orbit.ahmed-hrichi.workers.dev) (remotes) and [ahmed-hrichi-api.onrender.com/health](https://ahmed-hrichi-api.onrender.com/health) (lead API; sleeps when idle)
+- Live: [portfolio.ahmed-hrichi.workers.dev](https://portfolio.ahmed-hrichi.workers.dev) (shell), [lab-hello.ahmed-hrichi.workers.dev](https://lab-hello.ahmed-hrichi.workers.dev) and [lab-orbit.ahmed-hrichi.workers.dev](https://lab-orbit.ahmed-hrichi.workers.dev) (remotes), [design.ahmed-hrichi.workers.dev](https://design.ahmed-hrichi.workers.dev) (Storybook) and [ahmed-hrichi-api.onrender.com/health](https://ahmed-hrichi-api.onrender.com/health) (lead API; sleeps when idle)
 
 ## Projects
 
-| Project                     | Path                              | What it is                                                                                     |
-| --------------------------- | --------------------------------- | ---------------------------------------------------------------------------------------------- |
-| `shell`                     | `apps/portfolio/shell`            | Host. Prerendered content pages, PWA, loads remotes from `public/federation.manifest.json`     |
-| `shell-e2e`                 | `apps/portfolio/shell-e2e`        | Playwright tests for prerendering, federation and remote fallback                              |
-| `lab-hello`                 | `apps/labs/hello`                 | M0 spike remote; exposes `./routes` and `./meta`                                               |
-| `lab-orbit`                 | `apps/labs/orbit`                 | Orbit lab remote: every active satellite on a WebGL globe, passes from the Orbit API           |
-| `platform-federation`       | `libs/platform/federation`        | Remote contract, `federatedRoutes()`, `FederationStore`, `RemoteUnavailable` fallback          |
-| `platform-inspector`        | `libs/platform/inspector`         | "Open the hood" (`?inspect=1`): remotes, builds, shared-dependency skew, state, Web Vitals     |
-| `design-system-tokens`      | `libs/design-system/tokens`       | DTCG tokens → CSS variables and TS, with a WCAG contrast gate (`nx build-tokens`)              |
-| `design-system-ui`          | `libs/design-system/ui`           | `@ah/ui`: global styles (cascade layers) and components                                        |
-| `shared-content`            | `libs/shared/content`             | Profile, experience, case studies, services and per-audience copy                              |
-| `shared-state`              | `libs/shared/state`               | `PreferencesStore` (NgRx SignalStore): the `?for=` audience mode                               |
-| `portfolio-util-seo`        | `libs/portfolio/util-seo`         | Title, description, canonical, Open Graph and JSON-LD                                          |
-| `portfolio-feature-*`       | `libs/portfolio/feature-*`        | Pages: home, work, experience, services/contact, CV                                            |
-| `shared-contracts`          | `libs/shared/contracts`           | Types shared by the browser and the API (`LeadRequest`, field limits)                          |
-| `api`                       | `apps/api`                        | NestJS API for Render: config validation, health, CORS, rate limits                            |
-| `api-leads`                 | `libs/api/leads`                  | Lead intake: Turnstile, idempotency, Mongo outbox, Telegram and n8n delivery                   |
-| `orbit-api`                 | `apps/orbit-api`                  | Spring Boot 4 + Orekit on Render: CelesTrak catalog cache, satellite details, pass predictions |
-| `shared-api-client`         | `libs/shared/api-client`          | TypeScript types generated from the Orbit API's OpenAPI contract                               |
-| `three-engine`              | `libs/three/engine`               | Framework-free Three.js stage: on-demand frames, pause off-screen, quality tiers, dispose      |
-| `three-angular`             | `libs/three/angular`              | `<ah-scene>`: loads a scene after idle over a static fallback                                  |
-| `three-constellation`       | `libs/three/constellation`        | The exported Nx graph, camera and SVG projection for the hero                                  |
-| `three-scene-constellation` | `libs/three/scenes/constellation` | The hero's WebGL scene (lazy)                                                                  |
-| `three-scene-orbit-globe`   | `libs/three/scenes/orbit-globe`   | The Orbit lab's globe: dot-matrix Earth, real Sun, one point cloud (lazy)                      |
-| `lab-orbit-domain`          | `libs/labs/orbit/domain`          | Orbit shapes, groups, Sun and sidereal time, cities, the bundled snapshot                      |
-| `lab-orbit-feature`         | `libs/labs/orbit/feature`         | The lab page, its SignalStore, the API client and the SGP4 worker                              |
-| `shared-site-config`        | `libs/shared/site-config`         | Per-environment backend URLs from `site-config.json`                                           |
+| Project                     | Path                               | What it is                                                                                     |
+| --------------------------- | ---------------------------------- | ---------------------------------------------------------------------------------------------- |
+| `shell`                     | `apps/portfolio/shell`             | Host. Prerendered content pages, PWA, loads remotes from `public/federation.manifest.json`     |
+| `shell-e2e`                 | `apps/portfolio/shell-e2e`         | Playwright tests for prerendering, federation and remote fallback                              |
+| `lab-hello`                 | `apps/labs/hello`                  | M0 spike remote; exposes `./routes` and `./meta`                                               |
+| `lab-orbit`                 | `apps/labs/orbit`                  | Orbit lab remote: every active satellite on a WebGL globe, passes from the Orbit API           |
+| `platform-federation`       | `libs/platform/federation`         | Remote contract, `federatedRoutes()`, `FederationStore`, `RemoteUnavailable` fallback          |
+| `platform-inspector`        | `libs/platform/inspector`          | "Open the hood" (`?inspect=1`): remotes, builds, shared-dependency skew, state, Web Vitals     |
+| `design-system-tokens`      | `libs/design-system/tokens`        | DTCG tokens → CSS variables and TS, with a WCAG contrast gate (`nx build-tokens`)              |
+| `design-system-ui`          | `libs/design-system/ui`            | `@ah/ui`: global styles (cascade layers) and components                                        |
+| `design-system`             | `apps/design-system/storybook`     | Public Storybook: every `@ah/ui` component, the tokens and the scene host                      |
+| `design-system-e2e`         | `apps/design-system/storybook-e2e` | axe on every story in both themes; screenshot comparison in the Linux Playwright image         |
+| `shared-content`            | `libs/shared/content`              | Profile, experience, case studies, services and per-audience copy                              |
+| `shared-state`              | `libs/shared/state`                | `PreferencesStore` (NgRx SignalStore): the `?for=` audience mode                               |
+| `portfolio-util-seo`        | `libs/portfolio/util-seo`          | Title, description, canonical, Open Graph and JSON-LD                                          |
+| `portfolio-feature-*`       | `libs/portfolio/feature-*`         | Pages: home, work, experience, services/contact, CV                                            |
+| `shared-contracts`          | `libs/shared/contracts`            | Types shared by the browser and the API (`LeadRequest`, field limits)                          |
+| `api`                       | `apps/api`                         | NestJS API for Render: config validation, health, CORS, rate limits                            |
+| `api-leads`                 | `libs/api/leads`                   | Lead intake: Turnstile, idempotency, Mongo outbox, Telegram and n8n delivery                   |
+| `orbit-api`                 | `apps/orbit-api`                   | Spring Boot 4 + Orekit on Render: CelesTrak catalog cache, satellite details, pass predictions |
+| `shared-api-client`         | `libs/shared/api-client`           | TypeScript types generated from the Orbit API's OpenAPI contract                               |
+| `three-engine`              | `libs/three/engine`                | Framework-free Three.js stage: on-demand frames, pause off-screen, quality tiers, dispose      |
+| `three-angular`             | `libs/three/angular`               | `<ah-scene>`: loads a scene after idle over a static fallback                                  |
+| `three-constellation`       | `libs/three/constellation`         | The exported Nx graph, camera and SVG projection for the hero                                  |
+| `three-scene-constellation` | `libs/three/scenes/constellation`  | The hero's WebGL scene (lazy)                                                                  |
+| `three-scene-orbit-globe`   | `libs/three/scenes/orbit-globe`    | The Orbit lab's globe: dot-matrix Earth, real Sun, one point cloud (lazy)                      |
+| `lab-orbit-domain`          | `libs/labs/orbit/domain`           | Orbit shapes, groups, Sun and sidereal time, cities, the bundled snapshot                      |
+| `lab-orbit-feature`         | `libs/labs/orbit/feature`          | The lab page, its SignalStore, the API client and the SGP4 worker                              |
+| `shared-site-config`        | `libs/shared/site-config`          | Per-environment backend URLs from `site-config.json`                                           |
 
 ## Commands
 
@@ -91,6 +93,22 @@ End-to-end tests (first run: `pnpm exec playwright install chromium`):
 
 ```bash
 pnpm nx e2e shell-e2e
+```
+
+The design system's Storybook (port 6006), and its accessibility checks:
+
+```bash
+pnpm nx storybook design-system
+```
+
+```bash
+pnpm nx e2e design-system-e2e
+```
+
+After an intended visual change, remake the screenshot baselines in the Linux Playwright image (needs Docker; ADR-0015):
+
+```bash
+pnpm nx run design-system-e2e:update-baselines
 ```
 
 ## Deploy

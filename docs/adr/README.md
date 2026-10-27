@@ -20,6 +20,7 @@ Each ADR records one decision, why it was made, and what a spike proved. New ADR
 | [0012](0012-federation-inspector.md)           | Federation Inspector: remote telemetry, capability checks, build info, skew check        |
 | [0013](0013-orbit-api.md)                      | Orbit API: Spring Boot 4 + Orekit, polite CelesTrak cache, contract-first, JVM on Render |
 | [0014](0014-orbit-lab.md)                      | Orbit lab: satellites on a WebGL globe, SGP4 in a cross-origin worker, snapshot first    |
+| [0015](0015-public-storybook.md)               | Public Storybook (angular-vite, zoneless), axe on every story, visual regression         |
 
 ## Proposed (written when the area is built)
 

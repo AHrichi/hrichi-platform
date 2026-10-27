@@ -177,6 +177,7 @@ export const caseStudies: readonly CaseStudy[] = [
         href: `${site.repository}/tree/main/docs/adr`,
         external: true,
       },
+      { label: 'Design system', href: site.designSystem, external: true },
     ],
     rank: { recruiter: 4, engineer: 1, client: 4 },
   },

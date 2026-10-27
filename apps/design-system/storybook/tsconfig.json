@@ -1,0 +1,26 @@
+{
+  "extends": "../../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "../../../dist/out-tsc/storybook",
+    "isolatedModules": true,
+    "strict": true,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "module": "preserve",
+    "types": ["node"]
+  },
+  "angularCompilerOptions": {
+    "enableI18nLegacyMessageIdFormat": false,
+    "strictInjectionParameters": true,
+    "strictInputAccessModifiers": true,
+    "strictTemplates": true
+  },
+  "include": [
+    ".storybook/*.ts",
+    "../../../libs/design-system/ui/src/**/*.ts",
+    "../../../libs/three/angular/src/**/*.ts"
+  ],
+  "exclude": ["../../../libs/**/*.spec.ts", "../../../libs/**/test-setup.ts"]
+}

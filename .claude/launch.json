@@ -30,6 +30,16 @@
         "4302"
       ],
       "port": 4302
+    },
+    {
+      "name": "storybook (static build)",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "tools/scripts/serve-static.mjs",
+        "dist/storybook/design-system",
+        "6007"
+      ],
+      "port": 6007
     }
   ]
 }
