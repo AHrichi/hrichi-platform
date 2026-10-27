@@ -98,10 +98,10 @@ Your n8n needs version 2.x (the workflow was tested on 2.43.7 and 2.44.7).
 **With n8n in Docker and `.env.render` filled in,** one command creates the Crypto and MongoDB credentials, points the auto-reply at the Gmail credential n8n already has, and imports the workflow (unpublished). The secrets are streamed straight into n8n's encrypted store and never printed:
 
 ```bash
-node tools/n8n/install.mjs
+node tools/n8n/install.mjs --publish
 ```
 
-Pass `--container <name>` if the container isn't called `n8n`. Then skip to step 4 below. **By hand:**
+`--publish` also publishes the workflow: it restarts the n8n container (about 30 seconds, so other workflows pause briefly) and checks that the public webhook refuses an unsigned call. Without it, publish in the n8n editor. Pass `--container <name>` if the container isn't called `n8n`. Then skip to step 5 below. **By hand:**
 
 1. **Credentials** → create three, with exactly these names so the workflow finds them:
 

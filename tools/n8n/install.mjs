@@ -6,10 +6,12 @@
 // Secrets go from the file straight into n8n's encrypted store; they are
 // never printed, and the temporary copies are deleted. Safe to rerun.
 //
+//   --publish           also publish the workflow: restarts the container
+//                       (about 30 seconds) and checks the public webhook
 //   --container <name>  the n8n container (default: n8n)
 //   --env-file <path>   default: .env.render
 //
-// Usage: node tools/n8n/install.mjs
+// Usage: node tools/n8n/install.mjs --publish
 import { execFileSync } from 'node:child_process';
 import { randomBytes } from 'node:crypto';
 import { readFileSync } from 'node:fs';
@@ -18,12 +20,15 @@ import { readEnvFile, secretsFile } from '../scripts/env-file.mjs';
 
 const { values } = parseArgs({
   options: {
+    publish: { type: 'boolean', default: false },
     container: { type: 'string', default: 'n8n' },
     'env-file': { type: 'string', default: secretsFile },
   },
 });
 const container = values.container;
 const workflowFile = 'tools/n8n/workflows/lead-intake.json';
+const workflowId = 'PortfolioLeads01';
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 function docker(...args) {
   return execFileSync('docker', args, { encoding: 'utf8', stdio: 'pipe' });
@@ -147,9 +152,67 @@ importJson('credentials', [
 console.log('- Workflow');
 importJson('workflow', [workflow]);
 
-console.log(`
+const testHint = `Send a signed test lead to another address of yours:
+     node tools/n8n/send-test-lead.mjs --to you@example.com
+   Expect 202 and an auto-reply at that address.`;
+
+if (!values.publish) {
+  console.log(`
 Done. Next:
-  1. Open n8n (http://localhost:5678) > "Portfolio lead intake" > Publish.
-  2. Send a signed test lead to another address of yours:
-       node tools/n8n/send-test-lead.mjs --to you@example.com
-     Expect 202 and an auto-reply at that address.`);
+  1. Open n8n (http://localhost:5678) > "Portfolio lead intake" > Publish,
+     or rerun with --publish.
+  2. ${testHint}`);
+  process.exit(0);
+}
+
+// The CLI publishes in the database; a running n8n picks it up on restart.
+console.log('- Publishing (restarts n8n, about 30 seconds)');
+docker('exec', container, 'n8n', 'publish:workflow', `--id=${workflowId}`);
+docker('restart', container);
+const healthy = () => {
+  try {
+    docker(
+      'exec',
+      container,
+      'node',
+      '-e',
+      'fetch(`http://localhost:${process.env.N8N_PORT || 5678}/healthz`)' +
+        '.then((r) => process.exit(r.ok ? 0 : 1), () => process.exit(1))',
+    );
+    return true;
+  } catch {
+    return false;
+  }
+};
+let up = false;
+for (let waited = 0; waited < 120_000 && !up; waited += 3000) {
+  await sleep(3000);
+  up = healthy();
+}
+if (!up) {
+  fail(
+    `  n8n didn't come back within 2 minutes; check: docker logs ${container}`,
+  );
+}
+console.log('  n8n is back up');
+
+// Unsigned on purpose: the live workflow must refuse it with 401.
+if (env.N8N_WEBHOOK_URL) {
+  await sleep(3000);
+  const response = await fetch(env.N8N_WEBHOOK_URL, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: '{}',
+    signal: AbortSignal.timeout(15_000),
+  }).catch(() => null);
+  if (response?.status === 401) {
+    console.log('  The public webhook is live and refuses unsigned calls');
+  } else {
+    console.log(
+      `  The public webhook answered ${response?.status ?? 'nothing'}, expected 401. Check the workflow in n8n.`,
+    );
+  }
+}
+
+console.log(`
+Done. ${testHint}`);
