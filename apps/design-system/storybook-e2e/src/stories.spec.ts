@@ -28,6 +28,15 @@ const themes = ['light', 'dark'] as const;
 async function openStory(page: Page, id: string, theme: string) {
   const errors: string[] = [];
   page.on('pageerror', (error) => errors.push(error.message));
+  // The server sends the deployed Storybook's CSP (ADR-0015).
+  page.on('console', (message) => {
+    if (
+      message.type() === 'error' &&
+      message.text().includes('Content Security Policy')
+    ) {
+      errors.push(message.text());
+    }
+  });
   await page.goto(
     `/iframe.html?id=${id}&viewMode=story&globals=theme:${theme}`,
   );

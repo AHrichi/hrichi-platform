@@ -49,7 +49,7 @@
       "dependsOn": ["build"],
       "executor": "nx:run-commands",
       "options": {
-        "command": "node tools/scripts/serve-static.mjs dist/apps/labs/orbit/browser 4302"
+        "command": "node tools/scripts/prepare-hosting.mjs dist/apps/labs/orbit/browser --env development --cors --site-config --headers-only && node tools/scripts/serve-static.mjs dist/apps/labs/orbit/browser 4302"
       }
     },
     "esbuild": {

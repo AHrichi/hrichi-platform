@@ -64,7 +64,7 @@
       "dependsOn": ["build"],
       "executor": "nx:run-commands",
       "options": {
-        "command": "node tools/scripts/serve-static.mjs dist/apps/portfolio/shell/browser 4200"
+        "command": "node tools/scripts/prepare-hosting.mjs dist/apps/portfolio/shell/browser --env development --federation --site-config --headers-only && node tools/scripts/serve-static.mjs dist/apps/portfolio/shell/browser 4200"
       }
     },
     "esbuild": {

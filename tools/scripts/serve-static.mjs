@@ -6,6 +6,10 @@
 //   4. Hashed assets are immutable; HTML and federation metadata are no-cache.
 //   5. Text responses are brotli/gzip compressed, ahead of time like
 //      Cloudflare's edge, so Lighthouse never measures compression latency.
+//   6. The headers of a `_headers` file's `/*` rule (the CSP among them) go on
+//      every response, so e2e tests and Lighthouse run under the real policy.
+//      The serve-static targets write one first with prepare-hosting.mjs
+//      --headers-only (ADR-0006).
 //
 // Usage: node tools/scripts/serve-static.mjs <build/browser dir> <port>
 import { createServer } from 'node:http';
@@ -118,6 +122,7 @@ const server = createServer(async (req, res) => {
   }
   const { body, br, gzip } = await load(file);
   const headers = {
+    ...siteHeaders,
     'Content-Type': contentTypes[extname(file)] ?? 'application/octet-stream',
     'Cache-Control': cacheControl(file),
     Vary: 'Accept-Encoding',
@@ -135,6 +140,31 @@ const server = createServer(async (req, res) => {
   }
 });
 
+/** The `/*` rule of `_headers`, as Cloudflare would apply it to every path. */
+async function readSiteHeaders() {
+  let text;
+  try {
+    text = await readFile(join(root, '_headers'), 'utf8');
+  } catch {
+    return {};
+  }
+  const headers = {};
+  let everyPath = false;
+  for (const line of text.split('\n')) {
+    if (!line.trim()) {
+      continue;
+    }
+    if (!/^\s/.test(line)) {
+      everyPath = line.trim() === '/*';
+    } else if (everyPath) {
+      const colon = line.indexOf(':');
+      headers[line.slice(0, colon).trim()] = line.slice(colon + 1).trim();
+    }
+  }
+  return headers;
+}
+
+const siteHeaders = await readSiteHeaders();
 await warmUp(root);
 server.listen(port, async () => {
   console.log(`Serving ${root} on http://localhost:${port}`);

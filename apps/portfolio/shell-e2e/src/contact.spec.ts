@@ -1,6 +1,8 @@
-import { expect, type Page, test } from '@playwright/test';
+import type { Page } from '@playwright/test';
+import { development, expect, test } from './support/test';
 
-const apiUrl = 'https://api.example.test';
+// The CSP allows only the configured API origin, so the mock uses it.
+const apiUrl = development.apiUrl as string;
 
 // Requests the service worker forwards bypass page.route, so the mocks need
 // the page to talk to the network itself.

@@ -1,10 +1,12 @@
 import AxeBuilder from '@axe-core/playwright';
-import { expect, type Page, test } from '@playwright/test';
+import type { Page } from '@playwright/test';
+import { development, expect, test } from './support/test';
 
 // page.route can't see requests a service worker handles.
 test.use({ serviceWorkers: 'block' });
 
-const api = 'https://orbit.test';
+// The CSP allows only the configured Orbit API origin, so the mock uses it.
+const api = development.orbitApiUrl as string;
 
 /** Points the lab at a fake Orbit API, or at none. */
 async function siteConfig(page: Page, orbitApiUrl: string | null) {
@@ -56,6 +58,12 @@ test('works from the bundled snapshot when no API is configured', async ({
     page.getByRole('heading', { name: 'ISS (ZARYA)' }),
   ).toBeVisible();
   await expect(page.getByText(/isn't configured here/).last()).toBeVisible();
+
+  // The propagation worker runs: its telemetry replaces the placeholder.
+  // A CSP that blocks the worker leaves "…" here (ADR-0014).
+  await expect(page.locator('ah-orbit-lab-page dd').first()).toHaveText(
+    /\d km$/,
+  );
 
   // The globe is the content, so it renders whenever WebGL2 exists.
   await expect(page.locator('ah-orbit-lab-page ah-scene')).toHaveAttribute(

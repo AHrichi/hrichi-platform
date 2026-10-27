@@ -17,6 +17,11 @@
 //                         shows each story in a same-origin iframe, ADR-0015)
 //   --allow-eval          Allow 'unsafe-eval' (Storybook compiles story templates
 //                         with Angular's JIT compiler in the browser, ADR-0015)
+//   --headers-only        Write only _headers, still allowing the origins that
+//                         --federation and --site-config name. serve-static.mjs
+//                         applies it, so e2e tests and Lighthouse run under the
+//                         real CSP without changing the app's runtime config
+//                         (ADR-0006)
 //
 // It always writes `_headers` with security headers and a Content-Security-Policy
 // whose script hashes come from the inline scripts in the built HTML (ADR-0006).
@@ -46,8 +51,10 @@ const { positionals, values } = parseArgs({
     app: { type: 'string' },
     'frame-self': { type: 'boolean', default: false },
     'allow-eval': { type: 'boolean', default: false },
+    'headers-only': { type: 'boolean', default: false },
   },
 });
+const writeFiles = !values['headers-only'];
 const [dir] = positionals;
 if (!dir) {
   console.error(
@@ -74,10 +81,12 @@ if (values.federation) {
     manifest[name] = `${origin}/remoteEntry.json`;
     remoteOrigins.push(origin);
   }
-  writeFileSync(
-    join(dir, 'federation.manifest.json'),
-    `${JSON.stringify(manifest, null, 2)}\n`,
-  );
+  if (writeFiles) {
+    writeFileSync(
+      join(dir, 'federation.manifest.json'),
+      `${JSON.stringify(manifest, null, 2)}\n`,
+    );
+  }
 }
 
 const apiOrigins = [];
@@ -98,11 +107,13 @@ if (values['site-config']) {
     turnstileSiteKey = null,
     orbitApiUrl = null,
   } = environment;
-  writeFileSync(
-    join(dir, 'site-config.json'),
-    `${JSON.stringify({ apiUrl, turnstileSiteKey, orbitApiUrl }, null, 2)}
+  if (writeFiles) {
+    writeFileSync(
+      join(dir, 'site-config.json'),
+      `${JSON.stringify({ apiUrl, turnstileSiteKey, orbitApiUrl }, null, 2)}
 `,
-  );
+    );
+  }
   for (const url of [apiUrl, orbitApiUrl]) {
     if (url) {
       apiOrigins.push(new URL(url).origin);
@@ -250,7 +261,7 @@ if (longest > 2000) {
 // to returning visitors' workers. ngsw.json lists the script's hash, so that
 // changes too (ADR-0014).
 const worker = join(dir, 'ngsw-worker.js');
-const stampWorker = existsSync(worker);
+const stampWorker = writeFiles && existsSync(worker);
 if (stampWorker) {
   const policyHash = createHash('sha256').update(csp).digest('base64');
   const original = readFileSync(worker, 'utf8')
@@ -266,5 +277,5 @@ if (stampWorker) {
 }
 
 console.log(
-  `Prepared ${dir} for ${values.env}: _headers${stampWorker ? ', ngsw-worker.js stamped' : ''}${values.app ? ', build-info.json' : ''}${values.federation ? ', federation.manifest.json' : ''}${values['not-found'] ? ', 404.html' : ''}${values.sitemap ? ', sitemap.xml, robots.txt' : ''}${values['site-config'] ? ', site-config.json' : ''}`,
+  `Prepared ${dir} for ${values.env}: _headers${stampWorker ? ', ngsw-worker.js stamped' : ''}${values.app ? ', build-info.json' : ''}${values.federation && writeFiles ? ', federation.manifest.json' : ''}${values['not-found'] ? ', 404.html' : ''}${values.sitemap ? ', sitemap.xml, robots.txt' : ''}${values['site-config'] && writeFiles ? ', site-config.json' : ''}`,
 );

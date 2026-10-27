@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { expect, test } from './support/test';
 
 const recruiterHeadline =
   'Angular & full-stack developer with 5+ years of enterprise SaaS';

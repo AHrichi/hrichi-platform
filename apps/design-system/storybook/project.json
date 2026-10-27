@@ -28,9 +28,11 @@
       "executor": "nx:run-commands",
       "continuous": true,
       "options": {
-        "command": "node tools/scripts/serve-static.mjs dist/storybook/design-system 6007"
+        "command": "node tools/scripts/prepare-hosting.mjs dist/storybook/design-system --env development --frame-self --allow-eval --headers-only && node tools/scripts/serve-static.mjs dist/storybook/design-system 6007"
       },
-      "readyWhen": { "signal": true }
+      "readyWhen": {
+        "signal": true
+      }
     },
     "deploy": {
       "dependsOn": ["build-storybook"],

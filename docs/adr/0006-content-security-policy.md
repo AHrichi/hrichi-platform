@@ -29,6 +29,18 @@ base-uri 'self'
 3. With `blob:` added, the prerendered page hydrated, client navigation loaded the remote, and no new violations were reported.
 4. `style-src` needs `'unsafe-inline'`: Angular inserts component styles as `<style>` elements, and the critical-CSS step inlines styles.
 
+## What M2 found
+
+1. **Two CSP bugs reached production because no test ran under the policy.** The local servers sent no CSP, and `_headers` was written only at deploy time.
+   - A module worker's imports are checked against `worker-src`. The Orbit lab's `blob:` trampoline couldn't import the remote's worker script, so the lab never got positions (ADR-0014).
+   - A service worker keeps the CSP its script was installed with. Returning visitors' workers refused to fetch a newly added remote and answered 504. `prepare-hosting.mjs` now stamps the policy's hash into `ngsw-worker.js`, so every CSP change reinstalls the worker (ADR-0014).
+2. **e2e tests and Lighthouse now run under the real policy:**
+   - Each `serve-static` target first runs `prepare-hosting.mjs --headers-only`, with the same flags as its deploy, for the `development` origins. That writes `_headers` and nothing else, so the app's runtime config is unchanged.
+   - `serve-static.mjs` applies the `/*` rule's headers to every response.
+   - The shell's e2e `test` (`apps/portfolio/shell-e2e/src/support/test.ts`) fails any test that logs a CSP violation, and mocked APIs use the development origins that the policy allows.
+   - The Orbit test checks that the worker's telemetry arrives: with the old `worker-src` it fails as production did, and with the fix it passes.
+   - The Storybook suite fails on CSP errors too, under the Storybook's own policy (ADR-0015).
+
 ## Consequences
 
 - `blob:` in `script-src` is a known trade-off: a blob URL can only be created by script already running on the page, so it does not open a path for injected markup.
