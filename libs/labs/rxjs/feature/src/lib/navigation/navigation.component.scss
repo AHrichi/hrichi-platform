@@ -12,43 +12,53 @@
 .nav-menu li a {
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 12px 24px;
+  gap: var(--space-4, 16px);
+  padding: var(--space-3, 12px) var(--space-4, 16px);
   text-decoration: none;
-  color: #4a5568;
-  font-weight: 500;
-  border-radius: 6px;
-  transition: background-color 0.2s ease;
-  margin-bottom: 4px;
+  color: var(--color-text-muted, #4a5568);
+  font-weight: var(--font-weight-medium, 500);
+  font-family: var(--font-family-sans, system-ui, sans-serif);
+  border-radius: var(--radius-sm, 6px);
+  transition:
+    background-color var(--motion-duration-fast, 0.2s) ease,
+    color var(--motion-duration-fast, 0.2s) ease;
+  margin-bottom: var(--space-1, 4px);
+
+  &:hover {
+    background-color: var(--color-bg-canvas, #e2e8f0);
+    color: var(--color-text-default, #1a202c);
+
+    svg {
+      color: var(--color-text-default, #1a202c);
+    }
+  }
+
+  &.active {
+    background-color: var(--color-accent-default, #b3122e);
+    color: var(--color-accent-on, white);
+
+    svg {
+      color: var(--color-accent-on, white);
+    }
+
+    .description {
+      color: var(--color-accent-on, rgba(255, 255, 255, 0.85));
+      opacity: 0.85;
+    }
+  }
 }
 
 .nav-menu.closed li a {
   justify-content: center;
-  padding: 12px;
-}
-
-.nav-menu li a:hover {
-  background-color: #e2e8f0;
-}
-
-.nav-menu li a.active {
-  background-color: #4299e1;
-  color: white;
-}
-
-.nav-menu li a.active svg {
-  color: white;
-}
-
-.nav-menu li a.active .description {
-  color: rgba(255, 255, 255, 0.8);
+  padding: var(--space-3, 12px);
 }
 
 .nav-menu svg {
   width: 20px;
   height: 20px;
-  color: #718096;
+  color: var(--color-text-muted, #718096);
   flex-shrink: 0;
+  transition: color var(--motion-duration-fast, 0.2s) ease;
 }
 
 .link-text {
@@ -58,8 +68,8 @@
 
 .description {
   display: block;
-  font-size: 0.8rem;
-  font-weight: 400;
-  color: #a0aec0;
+  font-size: var(--font-size-100, 0.8rem);
+  font-weight: var(--font-weight-regular, 400);
+  color: var(--color-text-muted, #a0aec0);
   margin-top: 2px;
 }

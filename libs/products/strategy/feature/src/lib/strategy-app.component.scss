@@ -1,36 +1,52 @@
 /* src/app/app.component.scss */
 .theme-wrapper {
-  --bg-body: #f4f7fe; /* Modern soft blue-gray background */
-  --surface: #ffffff;
-  --text-main: #1e293b;
-  --text-muted: #64748b;
-  --border-light: #e2e8f0;
-  --border-dark: #cbd5e1;
-  --input-bg: #f8fafc;
+  --bg-body: var(--color-bg-canvas, #f4f7fe);
+  --surface: var(--color-bg-raised, #ffffff);
+  --text-main: var(--color-text-default, #1e293b);
+  --text-muted: var(--color-text-muted, #64748b);
+  --border-light: var(--color-border-default, #e2e8f0);
+  --border-dark: var(--color-border-strong, #cbd5e1);
+  --input-bg: var(--color-bg-surface, #f8fafc);
 
-  --primary: #4f46e5;
-  --primary-hover: #4338ca;
-  --primary-light: #e0e7ff;
-  --success: #10b981;
-  --success-hover: #059669;
+  --primary: var(--color-accent-default, #b3122e);
+  --primary-hover: var(--color-accent-hover, #960f27);
+  --primary-light: var(--color-accent-subtle, #fdf2f4);
+  --success: var(--color-success-default, #15803d);
+  --success-hover: var(--color-green-600, #15803d);
   --danger: #ef4444;
   --danger-light: #fee2e2;
 
   background-color: var(--bg-body);
   color: var(--text-main);
   min-height: 100vh;
+  font-family: var(--font-family-sans, 'Inter Variable', system-ui, sans-serif);
   transition:
     background-color 0.3s ease,
     color 0.3s ease;
 
-  &.dark-theme {
-    --bg-body: #0f172a;
-    --surface: #1e293b;
-    --text-main: #f8fafc;
-    --text-muted: #94a3b8;
-    --border-light: #334155;
-    --border-dark: #475569;
-    --input-bg: #0f172a;
+  &.dark-theme,
+  &[data-theme='dark'] {
+    --bg-body: var(--color-bg-canvas, #0f0f12);
+    --surface: var(--color-bg-raised, #26262b);
+    --text-main: var(--color-text-default, #f7f7f8);
+    --text-muted: var(--color-text-muted, #9a9aa3);
+    --border-light: var(--color-border-default, #3d3d44);
+    --border-dark: var(--color-border-strong, #56565e);
+    --input-bg: var(--color-bg-surface, #18181b);
+    --primary-light: var(--color-accent-subtle, #3a0811);
+  }
+
+  &:fullscreen,
+  &.is-fullscreen {
+    position: fixed !important;
+    inset: 0 !important;
+    inline-size: 100vw !important;
+    block-size: 100vh !important;
+    max-inline-size: none !important;
+    max-block-size: none !important;
+    z-index: 99999 !important;
+    overflow-y: auto !important;
+    background-color: var(--bg-body) !important;
   }
 }
 
@@ -102,7 +118,7 @@
   max-width: 1400px;
   margin: 0 auto;
   padding: 32px 24px;
-  font-family: 'Inter', system-ui, sans-serif;
+  font-family: var(--font-family-sans, 'Inter Variable', system-ui, sans-serif);
 }
 
 .header-flex {

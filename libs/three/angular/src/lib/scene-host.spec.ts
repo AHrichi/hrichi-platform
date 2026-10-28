@@ -118,6 +118,25 @@ describe('SceneHost', () => {
     expect(controller.dispose).toHaveBeenCalled();
   });
 
+  it('renders fullscreen toggle button when scene is ready and allows toggling', async () => {
+    vi.mocked(detectQuality).mockReturnValue('high');
+    const { module } = fakeScene();
+    const { element, scene, settle, fixture } = await setup(async () => module);
+
+    await settle();
+
+    expect(scene().dataset['state']).toBe('ready');
+    const btn = element.querySelector<HTMLButtonElement>(
+      '.ah-scene__fullscreen-btn',
+    );
+    expect(btn).not.toBeNull();
+    expect(btn?.getAttribute('aria-label')).toBe('View 3D scene in fullscreen');
+
+    btn?.click();
+    await fixture.whenStable();
+    expect(scene().classList.contains('is-fullscreen')).toBe(true);
+  });
+
   it('falls back to the static view when the scene fails', async () => {
     vi.mocked(detectQuality).mockReturnValue('high');
     vi.spyOn(console, 'warn').mockImplementation(() => undefined);

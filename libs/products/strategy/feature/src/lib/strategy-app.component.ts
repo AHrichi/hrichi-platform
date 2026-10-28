@@ -1,5 +1,13 @@
-import { Component, computed, effect, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import {
+  Component,
+  computed,
+  DestroyRef,
+  effect,
+  ElementRef,
+  inject,
+  signal,
+} from '@angular/core';
+import { CommonModule, DOCUMENT } from '@angular/common';
 import {
   RouterOutlet,
   RouterLink,
@@ -39,8 +47,11 @@ export class StrategyAppComponent {
 
   hasScenarios = computed(() => this.store.scenarios().length > 0);
   showCalculator = signal(false);
+  isFullscreen = signal(false);
   router = inject(Router);
   route = inject(ActivatedRoute);
+  private readonly hostRef = inject<ElementRef<HTMLElement>>(ElementRef);
+  private readonly document = inject(DOCUMENT);
 
   // ─── Daily Reminder ───
   showDailyReminder = signal(false);
@@ -51,6 +62,46 @@ export class StrategyAppComponent {
       new Date().toISOString().split('T')[0],
     );
     this.showDailyReminder.set(false);
+  }
+
+  async toggleFullscreen(): Promise<void> {
+    if (this.isFullscreen()) {
+      await this.exitFullscreen();
+    } else {
+      await this.enterFullscreen();
+    }
+  }
+
+  async enterFullscreen(): Promise<void> {
+    const el =
+      this.hostRef.nativeElement.querySelector<HTMLElement>('.theme-wrapper') ??
+      this.hostRef.nativeElement;
+    try {
+      if (el.requestFullscreen) {
+        await el.requestFullscreen();
+      } else {
+        el.classList.add('is-fullscreen');
+        this.isFullscreen.set(true);
+      }
+    } catch {
+      el.classList.add('is-fullscreen');
+      this.isFullscreen.set(true);
+    }
+  }
+
+  async exitFullscreen(): Promise<void> {
+    const el =
+      this.hostRef.nativeElement.querySelector<HTMLElement>('.theme-wrapper') ??
+      this.hostRef.nativeElement;
+    try {
+      if (this.document.fullscreenElement) {
+        await this.document.exitFullscreen();
+      }
+    } catch {
+      // Ignore exit failures
+    }
+    el.classList.remove('is-fullscreen');
+    this.isFullscreen.set(false);
   }
 
   goToLedger() {
@@ -111,6 +162,32 @@ export class StrategyAppComponent {
       if (!this.hasScenarios()) return;
       e.preventDefault();
       e.returnValue = '';
+    });
+
+    const onFullscreenChange = () => {
+      const el =
+        this.hostRef.nativeElement.querySelector<HTMLElement>(
+          '.theme-wrapper',
+        ) ?? this.hostRef.nativeElement;
+      const active = this.document.fullscreenElement === el;
+      this.isFullscreen.set(active);
+      if (!active) {
+        el.classList.remove('is-fullscreen');
+      }
+    };
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && this.isFullscreen()) {
+        void this.exitFullscreen();
+      }
+    };
+
+    this.document.addEventListener('fullscreenchange', onFullscreenChange);
+    this.document.addEventListener('keydown', onKeyDown);
+
+    inject(DestroyRef).onDestroy(() => {
+      this.document.removeEventListener('fullscreenchange', onFullscreenChange);
+      this.document.removeEventListener('keydown', onKeyDown);
     });
   }
 
