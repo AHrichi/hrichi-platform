@@ -8,14 +8,6 @@ import type {
   ShiftType,
   WhatsAppChannelType,
 } from '@ah/products/dispatch/domain';
-import {
-  INITIAL_ORDERS,
-  INITIAL_DRIVERS,
-  INITIAL_SUBCONTRACTORS,
-  INITIAL_STOCK,
-  INITIAL_MESSAGES,
-  INITIAL_INCIDENTS,
-} from '@ah/products/dispatch/domain';
 
 export type DispatchTab =
   'kanban' | 'whatsapp' | 'drivers' | 'plants' | 'stock' | 'analytics';
@@ -38,26 +30,34 @@ export interface DispatchState {
   showHandoverModal: boolean;
   showEmergencyModal: boolean;
   emergencyOrderTargetId: string | null;
+  showAddOrderModal: boolean;
+  showAddDriverModal: boolean;
+  showAddPlantModal: boolean;
+  showAddStockModal: boolean;
   londonTime: string;
 }
 
 export const initialDispatchState: DispatchState = {
-  orders: INITIAL_ORDERS,
-  drivers: INITIAL_DRIVERS,
-  subcontractors: INITIAL_SUBCONTRACTORS,
-  stock: INITIAL_STOCK,
-  messages: INITIAL_MESSAGES,
-  incidents: INITIAL_INCIDENTS,
+  orders: [],
+  drivers: [],
+  subcontractors: [],
+  stock: [],
+  messages: [],
+  incidents: [],
   activeShift: 'shift_a',
   activeTab: 'kanban',
   filterSector: 'all',
   searchQuery: '',
   activeWhatsAppChannel: 'customers',
   isSyncingSheets: false,
-  lastSheetsSyncedAt: '12:00 (Auto-Sync)',
+  lastSheetsSyncedAt: null,
   selectedOrderIdForPod: null,
   showHandoverModal: false,
   showEmergencyModal: false,
   emergencyOrderTargetId: null,
+  showAddOrderModal: false,
+  showAddDriverModal: false,
+  showAddPlantModal: false,
+  showAddStockModal: false,
   londonTime: '12:45',
 };

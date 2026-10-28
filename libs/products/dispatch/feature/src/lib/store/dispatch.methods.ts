@@ -9,10 +9,21 @@ import { initialDispatchState } from './dispatch.state';
 import type {
   OrderStatus,
   Order,
+  Driver,
+  SubcontractorPlant,
+  LinenSKU,
   ProofOfDelivery,
   WhatsAppChannelType,
   ClientSector,
   QualityClaim,
+} from '@ah/products/dispatch/domain';
+import {
+  INITIAL_ORDERS,
+  INITIAL_DRIVERS,
+  INITIAL_SUBCONTRACTORS,
+  INITIAL_STOCK,
+  INITIAL_MESSAGES,
+  INITIAL_INCIDENTS,
 } from '@ah/products/dispatch/domain';
 
 const STATUS_PIPELINE: OrderStatus[] = [
@@ -426,10 +437,125 @@ export function withDispatchMethods() {
         patchState(state, { showHandoverModal: false });
       },
 
+      openAddOrderModal() {
+        patchState(state, { showAddOrderModal: true });
+      },
+
+      closeAddOrderModal() {
+        patchState(state, { showAddOrderModal: false });
+      },
+
+      addOrder(newOrder: Order) {
+        patchState(state, {
+          orders: [newOrder, ...state.orders()],
+          showAddOrderModal: false,
+        });
+      },
+
+      deleteOrder(orderId: string) {
+        patchState(state, {
+          orders: state.orders().filter((o) => o.id !== orderId),
+        });
+      },
+
+      openAddDriverModal() {
+        patchState(state, { showAddDriverModal: true });
+      },
+
+      closeAddDriverModal() {
+        patchState(state, { showAddDriverModal: false });
+      },
+
+      addDriver(newDriver: Driver) {
+        patchState(state, {
+          drivers: [...state.drivers(), newDriver],
+          showAddDriverModal: false,
+        });
+      },
+
+      deleteDriver(driverId: string) {
+        patchState(state, {
+          drivers: state.drivers().filter((d) => d.id !== driverId),
+        });
+      },
+
+      openAddPlantModal() {
+        patchState(state, { showAddPlantModal: true });
+      },
+
+      closeAddPlantModal() {
+        patchState(state, { showAddPlantModal: false });
+      },
+
+      addSubcontractor(newPlant: SubcontractorPlant) {
+        patchState(state, {
+          subcontractors: [...state.subcontractors(), newPlant],
+          showAddPlantModal: false,
+        });
+      },
+
+      deleteSubcontractor(plantId: string) {
+        patchState(state, {
+          subcontractors: state
+            .subcontractors()
+            .filter((p) => p.id !== plantId),
+        });
+      },
+
+      openAddStockModal() {
+        patchState(state, { showAddStockModal: true });
+      },
+
+      closeAddStockModal() {
+        patchState(state, { showAddStockModal: false });
+      },
+
+      addStockItem(newItem: LinenSKU) {
+        patchState(state, {
+          stock: [...state.stock(), newItem],
+          showAddStockModal: false,
+        });
+      },
+
+      deleteStockItem(sku: string) {
+        patchState(state, {
+          stock: state.stock().filter((item) => item.sku !== sku),
+        });
+      },
+
+      clearAllData() {
+        patchState(state, {
+          orders: [],
+          drivers: [],
+          subcontractors: [],
+          stock: [],
+          messages: [],
+          incidents: [],
+        });
+        try {
+          localStorage.removeItem('ah_pulseops_state_scratch_v2');
+          localStorage.removeItem('ah_pulseops_state_v1');
+        } catch {
+          // ignore
+        }
+      },
+
+      loadSampleData() {
+        patchState(state, {
+          orders: INITIAL_ORDERS,
+          drivers: INITIAL_DRIVERS,
+          subcontractors: INITIAL_SUBCONTRACTORS,
+          stock: INITIAL_STOCK,
+          messages: INITIAL_MESSAGES,
+          incidents: INITIAL_INCIDENTS,
+        });
+      },
+
       resetToDefaults() {
         patchState(state, initialDispatchState);
         try {
-          localStorage.removeItem('ah_pulseops_state');
+          localStorage.removeItem('ah_pulseops_state_scratch_v2');
+          localStorage.removeItem('ah_pulseops_state_v1');
         } catch {
           // ignore
         }

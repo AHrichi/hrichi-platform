@@ -3,7 +3,7 @@ import { isPlatformBrowser } from '@angular/common';
 import { patchState, signalStoreFeature, type, withHooks } from '@ngrx/signals';
 import type { DispatchState } from './dispatch.state';
 
-const STORAGE_KEY = 'ah_pulseops_state_v1';
+const STORAGE_KEY = 'ah_pulseops_state_scratch_v2';
 
 export function withDispatchHooks() {
   return signalStoreFeature(
@@ -14,7 +14,7 @@ export function withDispatchHooks() {
 
       return {
         onInit() {
-          if (!isBrowser) return () => {};
+          if (!isBrowser) return () => undefined;
 
           // 1. Restore state from localStorage if available
           try {

@@ -17,6 +17,10 @@ import { HandoverModalComponent } from './components/handover-modal/handover-mod
 import { EmergencyCourierModalComponent } from './components/emergency-courier-modal/emergency-courier-modal.component';
 import { PodModalComponent } from './components/pod-modal/pod-modal.component';
 import { AnalyticsDashboardComponent } from './components/analytics-dashboard/analytics-dashboard.component';
+import { AddOrderModalComponent } from './components/add-order-modal/add-order-modal.component';
+import { AddDriverModalComponent } from './components/add-driver-modal/add-driver-modal.component';
+import { AddPlantModalComponent } from './components/add-plant-modal/add-plant-modal.component';
+import { AddStockModalComponent } from './components/add-stock-modal/add-stock-modal.component';
 import type { DispatchTab } from './store/dispatch.state';
 
 @Component({
@@ -33,6 +37,10 @@ import type { DispatchTab } from './store/dispatch.state';
     EmergencyCourierModalComponent,
     PodModalComponent,
     AnalyticsDashboardComponent,
+    AddOrderModalComponent,
+    AddDriverModalComponent,
+    AddPlantModalComponent,
+    AddStockModalComponent,
   ],
   template: `
     <div class="pulseops-shell" [class.is-fullscreen]="isFullscreen()">
@@ -126,10 +134,18 @@ import type { DispatchTab } from './store/dispatch.state';
           <button
             type="button"
             class="ctrl-btn"
-            (click)="store.resetToDefaults()"
-            title="Reset operational state to default demonstration data"
+            (click)="store.loadSampleData()"
+            title="Load sample demonstration data"
           >
-            ↺ Reset Demo Data
+            📋 Load Demo
+          </button>
+          <button
+            type="button"
+            class="ctrl-btn"
+            (click)="store.clearAllData()"
+            title="Clear all data to work from clean slate"
+          >
+            🗑 Clear Data
           </button>
           <button
             type="button"
@@ -172,6 +188,10 @@ import type { DispatchTab } from './store/dispatch.state';
       <ah-handover-modal />
       <ah-emergency-courier-modal />
       <ah-pod-modal />
+      <ah-add-order-modal />
+      <ah-add-driver-modal />
+      <ah-add-plant-modal />
+      <ah-add-stock-modal />
     </div>
   `,
   styles: `

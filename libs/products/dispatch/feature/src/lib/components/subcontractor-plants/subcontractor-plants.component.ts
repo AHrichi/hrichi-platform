@@ -30,11 +30,21 @@ import type {
         <div class="plants-actions">
           <button
             type="button"
-            class="action-manifest-btn"
-            (click)="generateAllManifests()"
+            class="add-plant-btn"
+            (click)="store.openAddPlantModal()"
           >
-            📄 Send Daily Wash Lists (All 3 Plants)
+            + Add Partner Facility
           </button>
+          @if (store.subcontractors().length > 0) {
+            <button
+              type="button"
+              class="action-manifest-btn"
+              (click)="generateAllManifests()"
+            >
+              📄 Send Daily Wash Lists (All
+              {{ store.subcontractors().length }} Plants)
+            </button>
+          }
         </div>
       </div>
 
@@ -54,9 +64,20 @@ import type {
                 </div>
               </div>
 
-              <div class="sla-badge">
-                <span class="sla-label">SLA Punctuality</span>
-                <span class="sla-val">{{ plant.slaPunctualityPct }}%</span>
+              <div class="plant-header-right">
+                <div class="sla-badge">
+                  <span class="sla-label">SLA Punctuality</span>
+                  <span class="sla-val">{{ plant.slaPunctualityPct }}%</span>
+                </div>
+                <button
+                  type="button"
+                  class="delete-plant-btn"
+                  (click)="store.deleteSubcontractor(plant.id)"
+                  title="Remove Subcontractor"
+                  aria-label="Remove Subcontractor"
+                >
+                  ✕
+                </button>
               </div>
             </div>
 
@@ -194,6 +215,24 @@ import type {
               </button>
             </div>
           </div>
+        } @empty {
+          <div class="empty-plants-card">
+            <span class="empty-plants-icon">🏭</span>
+            <h3 class="empty-plants-title">
+              No Subcontractor Plants Connected
+            </h3>
+            <p class="empty-plants-desc">
+              Connect partner industrial laundry facilities to route orders,
+              track tunnel wash loads, and log quality claims.
+            </p>
+            <button
+              type="button"
+              class="add-plant-btn"
+              (click)="store.openAddPlantModal()"
+            >
+              + Connect First Partner Plant
+            </button>
+          </div>
         }
       </div>
 
@@ -311,6 +350,31 @@ import type {
       color: var(--color-text-muted);
     }
 
+    .plants-actions {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2, 0.5rem);
+      flex-wrap: wrap;
+    }
+
+    .add-plant-btn {
+      background: var(--color-accent-default, #0284c7);
+      color: var(--color-accent-on, #fff);
+      border: none;
+      padding: 8px 14px;
+      border-radius: var(--radius-md, 0.5rem);
+      font-size: 0.8125rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      transition: filter 0.15s ease;
+
+      &:hover {
+        filter: brightness(1.1);
+      }
+    }
+
     .action-manifest-btn {
       background: var(--color-accent-default);
       color: var(--color-accent-on);
@@ -376,6 +440,31 @@ import type {
     .plant-loc {
       font-size: 0.75rem;
       color: var(--color-text-muted);
+    }
+
+    .plant-header-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .delete-plant-btn {
+      background: transparent;
+      border: none;
+      color: var(--color-text-muted);
+      cursor: pointer;
+      font-size: 0.75rem;
+      padding: 2px 5px;
+      border-radius: 4px;
+      line-height: 1;
+      opacity: 0.6;
+      transition: all 0.15s ease;
+
+      &:hover {
+        opacity: 1;
+        background: rgba(239, 68, 68, 0.15);
+        color: #ef4444;
+      }
     }
 
     .sla-badge {
@@ -760,6 +849,37 @@ import type {
       &:hover {
         filter: brightness(1.1);
       }
+    }
+    .empty-plants-card {
+      grid-column: 1 / -1;
+      background: var(--color-bg-surface);
+      border: 2px dashed var(--color-border-default);
+      border-radius: var(--radius-xl, 1rem);
+      padding: var(--space-8, 2.5rem) var(--space-4, 1rem);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: var(--space-2, 0.5rem);
+    }
+
+    .empty-plants-icon {
+      font-size: 2.5rem;
+      margin-bottom: var(--space-2, 0.5rem);
+    }
+
+    .empty-plants-title {
+      font-size: var(--text-lg, 1.125rem);
+      font-weight: 700;
+      color: var(--color-text-default);
+      margin: 0;
+    }
+
+    .empty-plants-desc {
+      font-size: var(--text-sm, 0.875rem);
+      color: var(--color-text-muted);
+      max-width: 440px;
+      margin: 0 0 var(--space-3, 0.75rem);
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,

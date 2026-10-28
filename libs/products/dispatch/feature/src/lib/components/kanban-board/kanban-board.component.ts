@@ -58,6 +58,13 @@ interface KanbanColumn {
           <span class="active-count-badge">
             {{ store.filteredOrders().length }} Active Orders
           </span>
+          <button
+            type="button"
+            class="add-order-btn"
+            (click)="store.openAddOrderModal()"
+          >
+            + Create Order
+          </button>
         </div>
       </div>
 
@@ -99,12 +106,23 @@ interface KanbanColumn {
                         <span class="at-risk-tag">⏳ SLA AT RISK</span>
                       }
                     </div>
-                    <span
-                      class="sector-pill"
-                      [class]="'sector-' + order.clientSector"
-                    >
-                      {{ order.clientSector | titlecase }}
-                    </span>
+                    <div class="card-top-right">
+                      <span
+                        class="sector-pill"
+                        [class]="'sector-' + order.clientSector"
+                      >
+                        {{ order.clientSector | titlecase }}
+                      </span>
+                      <button
+                        type="button"
+                        class="delete-order-btn"
+                        (click)="store.deleteOrder(order.id)"
+                        title="Delete Order"
+                        aria-label="Delete Order"
+                      >
+                        ✕
+                      </button>
+                    </div>
                   </div>
 
                   <!-- Client Name & Zone -->
@@ -220,6 +238,15 @@ interface KanbanColumn {
               } @empty {
                 <div class="empty-column">
                   <span>No orders in this stage</span>
+                  @if (col.id === 'intake') {
+                    <button
+                      type="button"
+                      class="empty-create-btn"
+                      (click)="store.openAddOrderModal()"
+                    >
+                      + Add New Order
+                    </button>
+                  }
                 </div>
               }
             </div>
@@ -666,6 +693,49 @@ interface KanbanColumn {
       }
     }
 
+    .add-order-btn {
+      background: var(--color-accent-default, #0284c7);
+      color: var(--color-accent-on, #fff);
+      border: none;
+      padding: 6px 14px;
+      border-radius: var(--radius-md, 0.375rem);
+      font-size: 0.8125rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      transition: filter 0.15s ease;
+
+      &:hover {
+        filter: brightness(1.1);
+      }
+    }
+
+    .card-top-right {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .delete-order-btn {
+      background: transparent;
+      border: none;
+      color: var(--color-text-muted);
+      cursor: pointer;
+      font-size: 0.75rem;
+      padding: 2px 5px;
+      border-radius: 4px;
+      line-height: 1;
+      opacity: 0.6;
+      transition: all 0.15s ease;
+
+      &:hover {
+        opacity: 1;
+        background: rgba(239, 68, 68, 0.15);
+        color: #ef4444;
+      }
+    }
+
     .empty-column {
       border: 2px dashed var(--color-border-default);
       border-radius: var(--radius-lg, 0.75rem);
@@ -673,6 +743,27 @@ interface KanbanColumn {
       text-align: center;
       color: var(--color-text-muted);
       font-size: 0.75rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .empty-create-btn {
+      background: var(--color-bg-subtle, rgba(255, 255, 255, 0.05));
+      border: 1px dashed var(--color-border-default);
+      color: var(--color-accent-default, #0284c7);
+      padding: 6px 12px;
+      border-radius: var(--radius-sm, 0.25rem);
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+
+      &:hover {
+        background: var(--color-bg-muted);
+        border-style: solid;
+      }
     }
 
     @media (max-width: 768px) {

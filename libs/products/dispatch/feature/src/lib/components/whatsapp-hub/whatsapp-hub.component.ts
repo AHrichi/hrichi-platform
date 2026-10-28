@@ -235,6 +235,24 @@ import type { WhatsAppChannelType } from '@ah/products/dispatch/domain';
                   }
                 </div>
               </div>
+            } @empty {
+              <div class="empty-chat-state">
+                <span class="empty-chat-icon">💬</span>
+                <h4 class="empty-chat-title">
+                  No messages in this WhatsApp group
+                </h4>
+                <p class="empty-chat-desc">
+                  Broadcast a dispatch update, use canned coordinator replies
+                  below, or simulate an incoming customer order message.
+                </p>
+                <button
+                  type="button"
+                  class="empty-sim-btn"
+                  (click)="addQuickDemoOrder()"
+                >
+                  + Simulate Incoming Customer Message
+                </button>
+              </div>
             }
           </div>
 
@@ -544,6 +562,53 @@ import type { WhatsAppChannelType } from '@ah/products/dispatch/domain';
       flex-direction: column;
       gap: var(--space-3, 0.75rem);
       max-height: 440px;
+    }
+
+    .empty-chat-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin: auto;
+      text-align: center;
+      max-width: 380px;
+      padding: var(--space-6, 1.5rem);
+    }
+
+    .empty-chat-icon {
+      font-size: 2.5rem;
+      margin-bottom: var(--space-2, 0.5rem);
+      opacity: 0.6;
+    }
+
+    .empty-chat-title {
+      font-size: var(--text-base, 1rem);
+      font-weight: 700;
+      color: var(--color-text-default);
+      margin: 0;
+    }
+
+    .empty-chat-desc {
+      font-size: var(--text-xs, 0.75rem);
+      color: var(--color-text-muted);
+      margin: var(--space-1, 0.25rem) 0 var(--space-3, 0.75rem);
+      line-height: 1.4;
+    }
+
+    .empty-sim-btn {
+      background: var(--color-accent-default, #0284c7);
+      color: var(--color-accent-on, #fff);
+      border: none;
+      padding: 7px 14px;
+      border-radius: var(--radius-md, 0.375rem);
+      font-size: var(--text-xs, 0.75rem);
+      font-weight: 600;
+      cursor: pointer;
+      transition: filter 0.15s ease;
+
+      &:hover {
+        filter: brightness(1.1);
+      }
     }
 
     .message-wrapper {

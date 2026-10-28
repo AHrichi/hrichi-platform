@@ -68,6 +68,15 @@ import { AhButton } from '@ah/ui';
           <div class="action-buttons">
             <button
               type="button"
+              class="header-add-order-btn"
+              (click)="store.openAddOrderModal()"
+              title="Create new commercial laundry order"
+            >
+              + New Order
+            </button>
+
+            <button
+              type="button"
               ahButton="secondary"
               size="sm"
               [disabled]="store.isSyncingSheets()"
@@ -397,6 +406,24 @@ import { AhButton } from '@ah/ui';
       display: flex;
       align-items: center;
       gap: 8px;
+    }
+
+    .header-add-order-btn {
+      background: var(--color-accent-default, #0284c7);
+      color: var(--color-accent-on, #fff);
+      border: none;
+      padding: 6px 12px;
+      border-radius: var(--radius-md, 0.375rem);
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      transition: filter 0.15s ease;
+
+      &:hover {
+        filter: brightness(1.1);
+      }
     }
 
     .spinner {

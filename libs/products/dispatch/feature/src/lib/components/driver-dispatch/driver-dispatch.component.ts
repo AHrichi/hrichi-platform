@@ -24,11 +24,20 @@ import type { Driver } from '@ah/products/dispatch/domain';
         <div class="fleet-actions">
           <button
             type="button"
-            class="emergency-rapid-btn"
-            (click)="store.reassignStops('drv-harpreet', 'drv-carlos')"
+            class="add-driver-btn"
+            (click)="store.openAddDriverModal()"
           >
-            ⚡ Reassign Stranded Stops to Standby Carlos
+            + Register Driver & Van
           </button>
+          @if (store.drivers().length > 1) {
+            <button
+              type="button"
+              class="emergency-rapid-btn"
+              (click)="store.reassignStops('drv-harpreet', 'drv-carlos')"
+            >
+              ⚡ Reassign Stranded Stops to Standby Carlos
+            </button>
+          }
         </div>
       </div>
 
@@ -58,15 +67,26 @@ import type { Driver } from '@ah/products/dispatch/domain';
                 </div>
               </div>
 
-              <span
-                class="status-badge"
-                [class.status-route]="driver.status === 'on_route'"
-                [class.status-breakdown]="driver.status === 'breakdown'"
-                [class.status-delayed]="driver.status === 'delayed'"
-                [class.status-idle]="driver.status === 'idle'"
-              >
-                {{ driver.status | uppercase }}
-              </span>
+              <div class="header-right-actions">
+                <span
+                  class="status-badge"
+                  [class.status-route]="driver.status === 'on_route'"
+                  [class.status-breakdown]="driver.status === 'breakdown'"
+                  [class.status-delayed]="driver.status === 'delayed'"
+                  [class.status-idle]="driver.status === 'idle'"
+                >
+                  {{ driver.status | uppercase }}
+                </span>
+                <button
+                  type="button"
+                  class="delete-driver-btn"
+                  (click)="store.deleteDriver(driver.id)"
+                  title="Remove Driver"
+                  aria-label="Remove Driver"
+                >
+                  ✕
+                </button>
+              </div>
             </div>
 
             <!-- Vehicle & Reg -->
@@ -172,6 +192,22 @@ import type { Driver } from '@ah/products/dispatch/domain';
               }
             </div>
           </div>
+        } @empty {
+          <div class="empty-fleet-card">
+            <span class="empty-fleet-icon">🚐</span>
+            <h3 class="empty-fleet-title">No Fleet Drivers Registered</h3>
+            <p class="empty-fleet-desc">
+              Register delivery vans, set London zone coverage and payload
+              limits to start dispatching orders.
+            </p>
+            <button
+              type="button"
+              class="add-driver-btn"
+              (click)="store.openAddDriverModal()"
+            >
+              + Register First Driver & Van
+            </button>
+          </div>
         }
       </div>
 
@@ -238,6 +274,31 @@ import type { Driver } from '@ah/products/dispatch/domain';
       margin: 2px 0 0;
       font-size: 0.8125rem;
       color: var(--color-text-muted);
+    }
+
+    .fleet-actions {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2, 0.5rem);
+      flex-wrap: wrap;
+    }
+
+    .add-driver-btn {
+      background: var(--color-accent-default, #0284c7);
+      color: var(--color-accent-on, #fff);
+      border: none;
+      padding: 8px 14px;
+      border-radius: var(--radius-md, 0.5rem);
+      font-size: 0.8125rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      transition: filter 0.15s ease;
+
+      &:hover {
+        filter: brightness(1.1);
+      }
     }
 
     .emergency-rapid-btn {
@@ -646,6 +707,63 @@ import type { Driver } from '@ah/products/dispatch/domain';
       &:hover {
         filter: brightness(1.1);
       }
+    }
+
+    .header-right-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .delete-driver-btn {
+      background: transparent;
+      border: none;
+      color: var(--color-text-muted);
+      cursor: pointer;
+      font-size: 0.75rem;
+      padding: 2px 5px;
+      border-radius: 4px;
+      line-height: 1;
+      opacity: 0.6;
+      transition: all 0.15s ease;
+
+      &:hover {
+        opacity: 1;
+        background: rgba(239, 68, 68, 0.15);
+        color: #ef4444;
+      }
+    }
+
+    .empty-fleet-card {
+      grid-column: 1 / -1;
+      background: var(--color-bg-surface);
+      border: 2px dashed var(--color-border-default);
+      border-radius: var(--radius-xl, 1rem);
+      padding: var(--space-8, 2.5rem) var(--space-4, 1rem);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: var(--space-2, 0.5rem);
+    }
+
+    .empty-fleet-icon {
+      font-size: 2.5rem;
+      margin-bottom: var(--space-2, 0.5rem);
+    }
+
+    .empty-fleet-title {
+      font-size: var(--text-lg, 1.125rem);
+      font-weight: 700;
+      color: var(--color-text-default);
+      margin: 0;
+    }
+
+    .empty-fleet-desc {
+      font-size: var(--text-sm, 0.875rem);
+      color: var(--color-text-muted);
+      max-width: 420px;
+      margin: 0 0 var(--space-3, 0.75rem);
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,

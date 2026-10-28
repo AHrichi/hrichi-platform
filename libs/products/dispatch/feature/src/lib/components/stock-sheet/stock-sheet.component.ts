@@ -25,6 +25,14 @@ import * as XLSX from 'xlsx';
         <div class="toolbar-actions">
           <button
             type="button"
+            class="add-stock-btn"
+            (click)="store.openAddStockModal()"
+          >
+            + Add Linen SKU
+          </button>
+
+          <button
+            type="button"
             class="sync-btn"
             [disabled]="store.isSyncingSheets()"
             (click)="store.syncGoogleSheets()"
@@ -139,6 +147,36 @@ import * as XLSX from 'xlsx';
                   >
                     +1 Scrap
                   </button>
+                  <button
+                    type="button"
+                    class="adj-btn delete-stock-btn"
+                    (click)="store.deleteStockItem(item.sku)"
+                    title="Delete SKU"
+                    aria-label="Delete SKU"
+                  >
+                    ✕
+                  </button>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="12" class="empty-stock-cell">
+                  <div class="empty-stock-content">
+                    <span class="empty-stock-icon">📊</span>
+                    <h3 class="empty-stock-title">Stock Ledger is Empty</h3>
+                    <p class="empty-stock-desc">
+                      Add hotel bed sheets, towelling, or dining linen SKUs to
+                      track circulation, reserve levels, and replacement asset
+                      values.
+                    </p>
+                    <button
+                      type="button"
+                      class="add-stock-btn"
+                      (click)="store.openAddStockModal()"
+                    >
+                      + Add First Linen SKU
+                    </button>
+                  </div>
                 </td>
               </tr>
             }
@@ -223,6 +261,26 @@ import * as XLSX from 'xlsx';
     .toolbar-actions {
       display: flex;
       gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .add-stock-btn {
+      background: var(--color-accent-default, #0284c7);
+      color: var(--color-accent-on, #fff);
+      border: none;
+      padding: 8px 14px;
+      border-radius: var(--radius-md, 0.5rem);
+      font-size: 0.8125rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      transition: filter 0.15s ease;
+
+      &:hover {
+        filter: brightness(1.1);
+      }
     }
 
     .sync-btn {
@@ -440,6 +498,48 @@ import * as XLSX from 'xlsx';
         border-color: #ef4444;
         color: #ef4444;
       }
+
+      &.delete-stock-btn {
+        opacity: 0.6;
+        &:hover {
+          opacity: 1;
+          background: rgba(239, 68, 68, 0.15);
+          color: #ef4444;
+          border-color: rgba(239, 68, 68, 0.4);
+        }
+      }
+    }
+
+    .empty-stock-cell {
+      padding: var(--space-8, 2.5rem) var(--space-4, 1rem) !important;
+      text-align: center;
+      background: var(--color-bg-surface);
+    }
+
+    .empty-stock-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--space-2, 0.5rem);
+      max-width: 440px;
+      margin: 0 auto;
+    }
+
+    .empty-stock-icon {
+      font-size: 2.5rem;
+    }
+
+    .empty-stock-title {
+      font-size: var(--text-lg, 1.125rem);
+      font-weight: 700;
+      color: var(--color-text-default);
+      margin: 0;
+    }
+
+    .empty-stock-desc {
+      font-size: var(--text-sm, 0.875rem);
+      color: var(--color-text-muted);
+      margin: 0 0 var(--space-3, 0.75rem);
     }
 
     .totals-row td {
