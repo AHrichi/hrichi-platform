@@ -1,0 +1,9 @@
+{
+  "name": "product-dispatch-feature",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/products/dispatch/feature/src",
+  "prefix": "ah",
+  "projectType": "library",
+  "tags": ["scope:product-dispatch", "type:feature", "runtime:browser"],
+  "targets": {}
+}

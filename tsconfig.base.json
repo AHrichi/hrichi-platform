@@ -21,6 +21,12 @@
       "@ah/products/strategy/feature": [
         "./libs/products/strategy/feature/src/index.ts"
       ],
+      "@ah/products/dispatch/domain": [
+        "./libs/products/dispatch/domain/src/index.ts"
+      ],
+      "@ah/products/dispatch/feature": [
+        "./libs/products/dispatch/feature/src/index.ts"
+      ],
       "@ah/platform/app-mode": ["./libs/platform/app-mode/src/index.ts"],
       "@ah/platform/federation": ["./libs/platform/federation/src/index.ts"],
       "@ah/platform/inspector": ["./libs/platform/inspector/src/index.ts"],

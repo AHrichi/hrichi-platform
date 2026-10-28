@@ -19,5 +19,9 @@
   "lab-ngrx": {
     "development": "http://localhost:4305",
     "production": "https://lab-ngrx.ahmed-hrichi.workers.dev"
+  },
+  "product-dispatch": {
+    "development": "http://localhost:4306",
+    "production": "https://product-dispatch.ahmed-hrichi.workers.dev"
   }
 }

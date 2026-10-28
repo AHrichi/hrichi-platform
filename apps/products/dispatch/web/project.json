@@ -1,0 +1,127 @@
+{
+  "name": "product-dispatch",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "prefix": "ah",
+  "sourceRoot": "apps/products/dispatch/web/src",
+  "tags": ["scope:product-dispatch", "type:app", "runtime:browser"],
+  "targets": {
+    "build": {
+      "executor": "@angular-architects/native-federation:build",
+      "defaultConfiguration": "production",
+      "options": {
+        "cacheExternalArtifacts": true,
+        "tsConfig": "apps/products/dispatch/web/tsconfig.federation.json"
+      },
+      "configurations": {
+        "production": {
+          "target": "product-dispatch:esbuild:production"
+        },
+        "development": {
+          "target": "product-dispatch:esbuild:development",
+          "dev": true
+        }
+      }
+    },
+    "serve": {
+      "executor": "@angular-architects/native-federation:build",
+      "options": {
+        "target": "product-dispatch:serve-original:development",
+        "tsConfig": "apps/products/dispatch/web/tsconfig.federation.json",
+        "rebuildDelay": 500,
+        "cacheExternalArtifacts": true,
+        "dev": true,
+        "devServer": true,
+        "port": 0
+      }
+    },
+    "serve-static": {
+      "continuous": true,
+      "readyWhen": {
+        "signal": true
+      },
+      "dependsOn": ["build"],
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node tools/scripts/prepare-hosting.mjs dist/apps/products/dispatch/web/browser --env development --cors --site-config --headers-only && node tools/scripts/serve-static.mjs dist/apps/products/dispatch/web/browser 4306"
+      }
+    },
+    "esbuild": {
+      "executor": "@angular/build:application",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "outputPath": "dist/apps/products/dispatch/web",
+        "browser": "apps/products/dispatch/web/src/main.ts",
+        "tsConfig": "apps/products/dispatch/web/tsconfig.app.json",
+        "inlineStyleLanguage": "scss",
+        "assets": [
+          {
+            "glob": "**/*",
+            "input": "apps/products/dispatch/web/public"
+          }
+        ],
+        "styles": [
+          "node_modules/@fontsource-variable/inter/index.css",
+          "libs/design-system/tokens/src/generated/tokens.css",
+          "libs/design-system/ui/src/styles/index.scss",
+          "apps/products/dispatch/web/src/styles.scss"
+        ],
+        "polyfills": ["es-module-shims"]
+      },
+      "configurations": {
+        "production": {
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "1mb",
+              "maximumError": "2mb"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "35kb",
+              "maximumError": "50kb"
+            }
+          ],
+          "outputHashing": "all"
+        },
+        "development": {
+          "optimization": false,
+          "extractLicenses": false,
+          "sourceMap": true
+        }
+      }
+    },
+    "serve-original": {
+      "executor": "@angular/build:dev-server",
+      "configurations": {
+        "production": {
+          "buildTarget": "product-dispatch:esbuild:production"
+        },
+        "development": {
+          "buildTarget": "product-dispatch:esbuild:development"
+        }
+      },
+      "defaultConfiguration": "development",
+      "options": {
+        "port": 4306
+      }
+    },
+    "deploy": {
+      "dependsOn": ["build"],
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "node tools/scripts/prepare-hosting.mjs dist/apps/products/dispatch/web/browser --env production --app product-dispatch --cors",
+          "wrangler deploy --config apps/products/dispatch/web/wrangler.jsonc"
+        ],
+        "parallel": false
+      },
+      "inputs": [
+        "production",
+        "^production",
+        "{workspaceRoot}/tools/scripts/prepare-hosting.mjs"
+      ]
+    }
+  }
+}

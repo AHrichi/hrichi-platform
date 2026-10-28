@@ -43,6 +43,13 @@ export const appRoutes: Route[] = [
     loadChildren: federatedRoutes('product-strategy'),
     title: 'StrategyApp · Financial Planning & Projections · Ahmed Hrichi',
   },
+  {
+    path: 'apps/dispatch',
+    providers: [provideAppMode('embedded-demo')],
+    loadChildren: federatedRoutes('product-dispatch'),
+    title:
+      'PulseOps · Commercial Operations & Dispatch Control Center · Ahmed Hrichi',
+  },
   // Each lab's intro is prerendered around its remote (ADR-0014).
   {
     path: 'labs/hello',

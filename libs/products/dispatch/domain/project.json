@@ -1,0 +1,9 @@
+{
+  "name": "product-dispatch-domain",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/products/dispatch/domain/src",
+  "prefix": "ah",
+  "projectType": "library",
+  "tags": ["scope:product-dispatch", "type:domain", "runtime:browser"],
+  "targets": {}
+}
