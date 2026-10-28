@@ -22,6 +22,7 @@ import { reloadOnNavigationWhenUpdated } from './sw-updates';
   templateUrl: './app.html',
 })
 export class App {
+  protected readonly preferences = inject(PreferencesStore);
   protected readonly profile = profile;
   protected readonly repository = site.repository;
   protected readonly designSystem = site.designSystem;

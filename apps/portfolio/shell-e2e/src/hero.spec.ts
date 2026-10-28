@@ -66,11 +66,17 @@ test('fades in the WebGL scene after load and opens apps from the caption', asyn
   const axe = await new AxeBuilder({ page }).include('.hero').analyze();
   expect(axe.violations).toEqual([]);
 
-  await page
+  const link = page
     .getByRole('figure')
-    .getByRole('link', { name: 'Micro-frontend demo' })
-    .click();
-  await expect(page).toHaveURL(/\/labs\/hello$/);
+    .getByRole('link', { name: 'Micro-frontend demo' });
+  await expect(link).toHaveAttribute('target', '_blank');
+  await expect(link).toHaveAttribute('href', '/labs/hello');
+  const [newPage] = await Promise.all([
+    page.context().waitForEvent('page'),
+    link.click(),
+  ]);
+  await expect(newPage).toHaveURL(/\/labs\/hello$/);
+  await newPage.close();
 });
 
 test('releases its WebGL context on every route change', async ({ page }) => {
@@ -114,4 +120,42 @@ test('releases its WebGL context on every route change', async ({ page }) => {
   );
   expect(live).toBe(1);
   await expect(page.locator('canvas')).toHaveCount(1);
+});
+
+test('toggles dark and light mode via the header button', async ({ page }) => {
+  await page.goto('/');
+  const toggle = page.locator('.theme-toggle');
+  await expect(toggle).toBeVisible();
+
+  const html = page.locator('html');
+  const initialTheme = await html.getAttribute('data-theme');
+
+  await toggle.click();
+  const themeAfterFirstClick = await html.getAttribute('data-theme');
+  expect(themeAfterFirstClick).toMatch(/^(dark|light)$/);
+  expect(themeAfterFirstClick).not.toBe(initialTheme);
+
+  await toggle.click();
+  const themeAfterSecondClick = await html.getAttribute('data-theme');
+  expect(themeAfterSecondClick).toMatch(/^(dark|light)$/);
+  expect(themeAfterSecondClick).not.toBe(themeAfterFirstClick);
+});
+
+test('ensures all footer project and external links open in a new tab', async ({
+  page,
+}) => {
+  await page.goto('/');
+  const footerLinks = page.locator('.site-footer a');
+  const count = await footerLinks.count();
+  expect(count).toBeGreaterThan(5);
+
+  for (let i = 0; i < count; i++) {
+    const link = footerLinks.nth(i);
+    const href = await link.getAttribute('href');
+    if (href?.startsWith('mailto:')) continue;
+
+    await expect(link).toHaveAttribute('target', '_blank');
+    const rel = await link.getAttribute('rel');
+    expect(rel).toContain('noopener');
+  }
 });

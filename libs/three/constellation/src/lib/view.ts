@@ -4,6 +4,8 @@ import type { GraphNode } from './graph';
 export interface ConstellationParams {
   /** A project to highlight from outside the canvas (e.g. a hovered link). */
   highlight: string | null;
+  /** Active visual theme: 'light' | 'dark'. */
+  theme?: 'light' | 'dark';
 }
 
 /**
@@ -56,11 +58,25 @@ export const legend = [
 /** Where clicking a project goes. Projects without a page aren't links. */
 export const nodeLinks: Readonly<Record<string, string>> = {
   shell: '/work/this-platform',
-  'lab-hello': '/labs/hello',
-  'lab-sky': '/labs/sky',
-  'lab-rxjs': '/labs/rxjs',
   'product-strategy': '/apps/strategy',
+  'lab-rxjs': '/labs/rxjs',
+  'lab-sky': '/labs/sky',
+  'lab-hello': '/labs/hello',
+  'design-system': 'https://design.ahmed-hrichi.workers.dev',
   api: '/contact',
+  'orbit-api': '/labs/sky',
+  'portfolio-feature-work': '/work',
+  'portfolio-feature-experience': '/experience',
+  'portfolio-feature-services': '/services',
+  'portfolio-feature-cv': '/cv',
+  'strategy-feature': '/apps/strategy',
+  'strategy-domain': '/apps/strategy',
+  'lab-rxjs-feature': '/labs/rxjs',
+  'lab-sky-feature': '/labs/sky',
+  'lab-sky-domain': '/labs/sky',
+  'design-system-ui': 'https://design.ahmed-hrichi.workers.dev',
+  'design-system-tokens': 'https://design.ahmed-hrichi.workers.dev',
+  'api-leads': '/contact',
 };
 
 export interface ProjectedPoint {

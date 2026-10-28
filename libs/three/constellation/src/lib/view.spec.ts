@@ -37,7 +37,7 @@ describe('constellation graph', () => {
 
   it('links every app that has a page', () => {
     for (const id of Object.keys(nodeLinks)) {
-      expect(nodeLinks[id]).toMatch(/^\//);
+      expect(nodeLinks[id]).toMatch(/^(\/|https?:\/\/)/);
     }
     expect(scopeColour('portfolio')).toBe('color-data-1');
     expect(scopeColour('lab-anything')).toBe('color-data-7');

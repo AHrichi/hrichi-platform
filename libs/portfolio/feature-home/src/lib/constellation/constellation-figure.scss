@@ -29,6 +29,15 @@
     stroke-opacity: 0.7;
   }
 
+  .node.clickable {
+    cursor: pointer;
+
+    &:hover circle:not(.halo) {
+      stroke: var(--color-stage-text);
+      stroke-width: 0.012;
+    }
+  }
+
   .halo {
     opacity: 0.16;
   }

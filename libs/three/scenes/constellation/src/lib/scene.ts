@@ -325,10 +325,11 @@ export async function createScene({
     const key = `${focus}:${Math.round(s.x)}:${Math.round(s.y)}`;
     if (key !== lastLabel) {
       lastLabel = key;
+      const hasLink = Boolean(nodeLinks[node.id]);
       events.hover({
         id: node.id,
         label: node.id,
-        detail: `${node.kind === 'e2e' ? 'e2e tests' : node.kind} · ${node.scope} · ${degree[focus]} links`,
+        detail: `${node.kind === 'e2e' ? 'e2e tests' : node.kind} · ${node.scope} · ${degree[focus]} links${hasLink ? ' · Click to open in new tab' : ''}`,
         href: nodeLinks[node.id],
         x: s.x,
         y: s.y - s.radius - 6,

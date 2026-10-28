@@ -28,9 +28,13 @@
           class="node"
           [class.app]="node.kind === 'app'"
           [class.focus]="highlight() === node.id"
+          [class.clickable]="!!nodeLinks[node.id]"
           [style.fill]="'var(--' + node.token + ')'"
+          (click)="nodeLinks[node.id] ? open(nodeLinks[node.id]) : null"
         >
-          <title>{{ node.id }}</title>
+          <title>
+            {{ node.id }}{{ nodeLinks[node.id] ? ' (opens in new tab)' : '' }}
+          </title>
           <circle
             class="halo"
             [attr.cx]="node.x"
@@ -52,7 +56,7 @@
     <p>
       <strong>This site's real Nx graph:</strong> {{ projectCount }} projects
       and {{ dependencyCount }} dependencies, exported from the repository at
-      build time.
+      build time. Click any project to open it in a new tab.
     </p>
     <ul class="legend" role="list" aria-label="Colours by scope">
       @for (item of legend; track item.label) {
@@ -70,7 +74,9 @@
       @for (link of links; track link.id) {
         <li>
           <a
-            [routerLink]="link.href"
+            [href]="link.href"
+            target="_blank"
+            rel="noopener noreferrer"
             (mouseenter)="highlight.set(link.id)"
             (mouseleave)="highlight.set(null)"
             (focus)="highlight.set(link.id)"
