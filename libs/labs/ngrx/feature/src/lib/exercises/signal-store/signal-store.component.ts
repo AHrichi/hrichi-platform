@@ -305,6 +305,7 @@ export const SkillsStore = signalStore(
               <div class="category-pills">
                 @for (cat of categories; track cat.id) {
                   <button
+                    type="button"
                     class="pill"
                     [class.active]="store.selectedCategory() === cat.id"
                     (click)="store.setCategory(cat.id)"
@@ -440,7 +441,7 @@ export const SkillsStore = signalStore(
 
     .metric-card .value.sync {
       font-size: 0.85rem;
-      color: #38bdf8;
+      color: var(--color-accent-default);
     }
 
     .cards-grid {
@@ -450,9 +451,9 @@ export const SkillsStore = signalStore(
     }
 
     .card {
-      background: var(--color-surface-raised, rgba(30, 41, 59, 0.7));
-      border: 1px solid var(--color-border-subtle, rgba(255, 255, 255, 0.08));
-      border-radius: var(--radius-xl, 1rem);
+      background: var(--color-bg-raised);
+      border: 1px solid var(--color-border-default);
+      border-radius: var(--radius-lg, 0.75rem);
       padding: var(--space-5, 1.25rem);
       display: flex;
       flex-direction: column;
@@ -463,15 +464,15 @@ export const SkillsStore = signalStore(
     }
 
     .card.focused-card {
-      border-color: #6366f1;
-      box-shadow: 0 0 24px rgba(99, 102, 241, 0.15);
+      border-color: var(--color-accent-default);
+      box-shadow: 0 0 24px rgba(179, 18, 46, 0.15);
     }
 
     .card-header h3 {
       margin: var(--space-1, 0.25rem) 0 0;
       font-size: var(--font-size-base, 1rem);
       font-weight: 600;
-      color: var(--color-text-primary, #f8fafc);
+      color: var(--color-text-default);
     }
 
     .badge {
@@ -479,12 +480,12 @@ export const SkillsStore = signalStore(
       text-transform: uppercase;
       font-weight: 700;
       letter-spacing: 0.05em;
-      color: #818cf8;
+      color: var(--color-accent-default);
     }
 
     .description {
       font-size: var(--font-size-sm, 0.875rem);
-      color: var(--color-text-muted, #94a3b8);
+      color: var(--color-text-muted);
       line-height: 1.5;
       margin: 0;
     }
@@ -510,8 +511,8 @@ export const SkillsStore = signalStore(
       justify-content: space-between;
       gap: var(--space-2, 0.5rem);
       padding: var(--space-2, 0.5rem) var(--space-3, 0.75rem);
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.06);
+      background: var(--color-bg-surface);
+      border: 1px solid var(--color-border-default);
       border-radius: var(--radius-md, 0.5rem);
     }
 
@@ -525,7 +526,7 @@ export const SkillsStore = signalStore(
     .skill-name {
       font-size: var(--font-size-xs, 0.75rem);
       font-weight: 600;
-      color: var(--color-text-primary, #f1f5f9);
+      color: var(--color-text-default);
     }
 
     .skill-badges {
@@ -544,14 +545,14 @@ export const SkillsStore = signalStore(
     .progress-bar {
       height: 6px;
       flex: 1;
-      background: rgba(255, 255, 255, 0.1);
+      background: var(--color-border-strong);
       border-radius: 9999px;
       overflow: hidden;
     }
 
     .progress-fill {
       height: 100%;
-      background: linear-gradient(90deg, #6366f1, #38bdf8);
+      background: var(--color-accent-default);
       border-radius: 9999px;
       transition: width 0.3s ease;
     }
@@ -559,7 +560,7 @@ export const SkillsStore = signalStore(
     .mastery-text {
       font-size: 0.7rem;
       font-family: monospace;
-      color: #94a3b8;
+      color: var(--color-text-muted);
       width: 32px;
       text-align: right;
     }
@@ -578,22 +579,22 @@ export const SkillsStore = signalStore(
     .input-label {
       font-size: var(--font-size-xs, 0.75rem);
       font-weight: 600;
-      color: var(--color-text-muted, #94a3b8);
+      color: var(--color-text-muted);
     }
 
     .text-input {
-      background: rgba(0, 0, 0, 0.3);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: var(--color-bg-surface);
+      border: 1px solid var(--color-border-default);
       border-radius: var(--radius-md, 0.5rem);
       padding: var(--space-2, 0.5rem) var(--space-3, 0.75rem);
-      color: #f8fafc;
+      color: var(--color-text-default);
       font-size: var(--font-size-xs, 0.75rem);
       outline: none;
       transition: border-color 0.2s ease;
     }
 
     .text-input:focus {
-      border-color: #818cf8;
+      border-color: var(--color-accent-default);
     }
 
     .category-pills {
@@ -603,31 +604,33 @@ export const SkillsStore = signalStore(
     }
 
     .pill {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 9999px;
-      padding: 3px 10px;
-      font-size: 0.7rem;
-      color: var(--color-text-muted, #94a3b8);
+      background: var(--color-bg-surface);
+      border: 1px solid var(--color-border-default);
+      border-radius: var(--radius-pill);
+      padding: 4px 12px;
+      font-size: 0.75rem;
+      color: var(--color-text-muted);
       cursor: pointer;
-      transition: all 0.2s ease;
+      user-select: none;
+      transition: all var(--motion-duration-fast) var(--motion-easing-standard);
     }
 
     .pill:hover {
-      background: rgba(255, 255, 255, 0.1);
-      color: #f8fafc;
+      background: var(--color-bg-raised);
+      color: var(--color-text-default);
+      border-color: var(--color-border-strong);
     }
 
     .pill.active {
-      background: #6366f1;
-      border-color: #6366f1;
-      color: #ffffff;
+      background: var(--color-accent-default);
+      border-color: var(--color-accent-default);
+      color: var(--color-accent-on);
       font-weight: 600;
     }
 
     .normalized-debug {
-      background: rgba(0, 0, 0, 0.35);
-      border: 1px solid rgba(255, 255, 255, 0.06);
+      background: var(--color-stage-bg, #0f0f12);
+      border: 1px solid var(--color-stage-border, #26262b);
       border-radius: var(--radius-md, 0.5rem);
       padding: var(--space-3, 0.75rem);
     }
@@ -636,7 +639,7 @@ export const SkillsStore = signalStore(
       font-size: 0.65rem;
       text-transform: uppercase;
       font-weight: 600;
-      color: var(--color-text-muted, #94a3b8);
+      color: var(--color-stage-muted, #9a9aa3);
       display: block;
       margin-bottom: var(--space-2, 0.5rem);
     }
@@ -649,7 +652,7 @@ export const SkillsStore = signalStore(
 
     .debug-col strong {
       font-size: 0.65rem;
-      color: #38bdf8;
+      color: var(--color-stage-muted, #9a9aa3);
       display: block;
       margin-bottom: 2px;
     }
@@ -659,7 +662,7 @@ export const SkillsStore = signalStore(
       font-family: monospace;
       font-size: 0.7rem;
       line-height: 1.3;
-      color: #a5f3fc;
+      color: var(--color-stage-text, #f7f7f8);
       max-height: 110px;
       overflow-y: auto;
     }
@@ -674,11 +677,15 @@ export const SkillsStore = signalStore(
       display: flex;
       align-items: center;
       gap: var(--space-2, 0.5rem);
+      background: var(--color-bg-surface);
+      border: 1px solid var(--color-border-default);
+      padding: var(--space-3, 0.75rem);
+      border-radius: var(--radius-md, 0.5rem);
     }
 
     .counter-label {
       font-size: var(--font-size-xs, 0.75rem);
-      color: var(--color-text-muted, #94a3b8);
+      color: var(--color-text-muted);
     }
 
     .button-row {
@@ -688,8 +695,8 @@ export const SkillsStore = signalStore(
     }
 
     .code-preview {
-      background: rgba(0, 0, 0, 0.3);
-      border: 1px solid rgba(255, 255, 255, 0.06);
+      background: var(--color-stage-bg, #0f0f12);
+      border: 1px solid var(--color-stage-border, #26262b);
       border-radius: var(--radius-md, 0.5rem);
       padding: var(--space-3, 0.75rem);
     }
@@ -697,7 +704,7 @@ export const SkillsStore = signalStore(
     .preview-title {
       font-size: 0.65rem;
       text-transform: uppercase;
-      color: var(--color-text-muted, #94a3b8);
+      color: var(--color-stage-muted, #9a9aa3);
       font-weight: 600;
       display: block;
       margin-bottom: 4px;
@@ -707,7 +714,7 @@ export const SkillsStore = signalStore(
       margin: 0;
       font-family: monospace;
       font-size: 0.75rem;
-      color: #93c5fd;
+      color: var(--color-stage-text, #f7f7f8);
       line-height: 1.4;
       overflow-x: auto;
     }
@@ -716,8 +723,8 @@ export const SkillsStore = signalStore(
       padding: var(--space-4, 1rem);
       text-align: center;
       font-size: var(--font-size-xs, 0.75rem);
-      color: var(--color-text-muted, #64748b);
-      border: 1px dashed rgba(255, 255, 255, 0.1);
+      color: var(--color-text-muted);
+      border: 1px dashed var(--color-border-default);
       border-radius: var(--radius-md, 0.5rem);
     }
   `,

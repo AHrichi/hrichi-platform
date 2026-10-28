@@ -64,12 +64,11 @@ export interface ActionRecord<T = unknown> {
 
       <div class="history-list" role="list">
         @for (record of history(); track record.id; let idx = $index) {
-          <div
+          <button
+            type="button"
             class="history-item"
             [class.active]="idx === currentIndex()"
             (click)="selectSnapshot(idx)"
-            role="button"
-            tabindex="0"
           >
             <div class="item-left">
               <span class="seq">#{{ record.id }}</span>
@@ -83,7 +82,7 @@ export interface ActionRecord<T = unknown> {
               }
               <span class="time">{{ record.timestamp }}</span>
             </div>
-          </div>
+          </button>
         }
       </div>
 
@@ -102,9 +101,9 @@ export interface ActionRecord<T = unknown> {
   `,
   styles: `
     .time-travel-container {
-      background: var(--color-surface-sunken, rgba(15, 23, 42, 0.7));
-      border: 1px solid var(--color-border-subtle, rgba(255, 255, 255, 0.08));
-      border-radius: var(--radius-xl, 1rem);
+      background: var(--color-bg-surface);
+      border: 1px solid var(--color-border-default);
+      border-radius: var(--radius-lg, 0.75rem);
       padding: var(--space-4, 1rem);
       margin-top: var(--space-5, 1.25rem);
     }
@@ -116,8 +115,7 @@ export interface ActionRecord<T = unknown> {
       justify-content: space-between;
       gap: var(--space-3, 0.75rem);
       padding-bottom: var(--space-3, 0.75rem);
-      border-bottom: 1px solid
-        var(--color-border-subtle, rgba(255, 255, 255, 0.08));
+      border-bottom: 1px solid var(--color-border-default);
     }
 
     .title-meta {
@@ -128,9 +126,9 @@ export interface ActionRecord<T = unknown> {
 
     .title {
       margin: 0;
-      font-size: var(--font-size-sm, 0.875rem);
+      font-size: var(--font-size-200, 0.9375rem);
       font-weight: 600;
-      color: var(--color-text-primary, #f8fafc);
+      color: var(--color-text-default);
     }
 
     .scrubber-controls {
@@ -140,9 +138,9 @@ export interface ActionRecord<T = unknown> {
     }
 
     .index-indicator {
-      font-size: var(--font-size-xs, 0.75rem);
+      font-size: var(--font-size-100, 0.8125rem);
       font-family: monospace;
-      color: var(--color-text-muted, #94a3b8);
+      color: var(--color-text-muted);
       padding: 0 var(--space-2, 0.5rem);
     }
 
@@ -161,24 +159,30 @@ export interface ActionRecord<T = unknown> {
       align-items: center;
       justify-content: space-between;
       gap: var(--space-2, 0.5rem);
-      padding: 6px var(--space-3, 0.75rem);
-      background: rgba(255, 255, 255, 0.02);
-      border: 1px solid transparent;
+      padding: 8px var(--space-3, 0.75rem);
+      background: var(--color-bg-raised);
+      border: 1px solid var(--color-border-default);
       border-radius: var(--radius-md, 0.5rem);
+      color: var(--color-text-default);
       cursor: pointer;
-      font-size: var(--font-size-xs, 0.75rem);
+      user-select: none;
+      width: 100%;
+      text-align: left;
+      font: inherit;
+      font-size: var(--font-size-100, 0.8125rem);
       transition:
-        background 0.2s ease,
-        border-color 0.2s ease;
+        background var(--motion-duration-fast) var(--motion-easing-standard),
+        border-color var(--motion-duration-fast) var(--motion-easing-standard);
     }
 
     .history-item:hover {
-      background: rgba(255, 255, 255, 0.05);
+      background: var(--color-bg-canvas);
+      border-color: var(--color-border-strong);
     }
 
     .history-item.active {
-      background: rgba(99, 102, 241, 0.15);
-      border-color: #6366f1;
+      background: var(--color-accent-subtle);
+      border-color: var(--color-accent-default);
     }
 
     .item-left {
@@ -189,14 +193,14 @@ export interface ActionRecord<T = unknown> {
 
     .seq {
       font-family: monospace;
-      color: var(--color-text-muted, #64748b);
+      color: var(--color-text-muted);
       font-weight: 600;
     }
 
     .action-type {
       font-family: monospace;
       font-weight: 600;
-      color: #38bdf8;
+      color: var(--color-accent-default);
     }
 
     .item-right {
@@ -207,25 +211,26 @@ export interface ActionRecord<T = unknown> {
 
     .payload-badge {
       font-family: monospace;
-      font-size: 0.65rem;
-      background: rgba(255, 255, 255, 0.08);
+      font-size: 0.7rem;
+      background: var(--color-bg-surface);
+      border: 1px solid var(--color-border-default);
       padding: 2px 6px;
       border-radius: 4px;
-      color: var(--color-text-muted, #cbd5e1);
-      max-width: 140px;
+      color: var(--color-text-muted);
+      max-width: 160px;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
     }
 
     .time {
-      font-size: 0.65rem;
-      color: var(--color-text-muted, #64748b);
+      font-size: 0.7rem;
+      color: var(--color-text-muted);
     }
 
     .active-snapshot-view {
-      background: rgba(0, 0, 0, 0.35);
-      border: 1px solid var(--color-border-subtle, rgba(255, 255, 255, 0.06));
+      background: var(--color-stage-bg, #0f0f12);
+      border: 1px solid var(--color-stage-border, #26262b);
       border-radius: var(--radius-md, 0.5rem);
       padding: var(--space-3, 0.75rem);
     }
@@ -242,7 +247,7 @@ export interface ActionRecord<T = unknown> {
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.05em;
-      color: var(--color-text-muted, #94a3b8);
+      color: var(--color-stage-muted, #9a9aa3);
     }
 
     .json-code {
@@ -250,7 +255,7 @@ export interface ActionRecord<T = unknown> {
       font-family: monospace;
       font-size: 0.75rem;
       line-height: 1.4;
-      color: #a5f3fc;
+      color: var(--color-stage-text, #f7f7f8);
       overflow-x: auto;
       max-height: 140px;
     }

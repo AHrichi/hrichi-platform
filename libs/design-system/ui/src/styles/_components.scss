@@ -15,10 +15,18 @@
     line-height: 1;
     text-decoration: none;
     cursor: pointer;
+    user-select: none;
     transition:
       background-color var(--motion-duration-fast) var(--motion-easing-standard),
       border-color var(--motion-duration-fast) var(--motion-easing-standard),
       color var(--motion-duration-fast) var(--motion-easing-standard);
+
+    &:disabled,
+    &[aria-disabled='true'] {
+      opacity: 0.5;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
 
     &--primary {
       background: var(--color-accent-default);

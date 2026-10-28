@@ -65,6 +65,7 @@ export interface EffectLog {
                 >
                 <div class="pills-row">
                   <button
+                    type="button"
                     class="pill"
                     [class.active]="operator() === 'exhaustMap'"
                     (click)="operator.set('exhaustMap')"
@@ -72,6 +73,7 @@ export interface EffectLog {
                     exhaustMap (Ignore rapid clicks)
                   </button>
                   <button
+                    type="button"
                     class="pill"
                     [class.active]="operator() === 'switchMap'"
                     (click)="operator.set('switchMap')"
@@ -85,6 +87,7 @@ export interface EffectLog {
                 <span class="config-title">Outcome Simulation:</span>
                 <div class="pills-row">
                   <button
+                    type="button"
                     class="pill"
                     [class.active]="outcome() === 'success'"
                     (click)="outcome.set('success')"
@@ -92,6 +95,7 @@ export interface EffectLog {
                     200 Success
                   </button>
                   <button
+                    type="button"
                     class="pill"
                     [class.active]="outcome() === 'error'"
                     (click)="outcome.set('error')"
@@ -228,9 +232,9 @@ export interface EffectLog {
     }
 
     .card {
-      background: var(--color-surface-raised, rgba(30, 41, 59, 0.7));
-      border: 1px solid var(--color-border-subtle, rgba(255, 255, 255, 0.08));
-      border-radius: var(--radius-xl, 1rem);
+      background: var(--color-bg-raised);
+      border: 1px solid var(--color-border-default);
+      border-radius: var(--radius-lg, 0.75rem);
       padding: var(--space-5, 1.25rem);
       display: flex;
       flex-direction: column;
@@ -241,15 +245,15 @@ export interface EffectLog {
     }
 
     .card.focused-card {
-      border-color: #6366f1;
-      box-shadow: 0 0 24px rgba(99, 102, 241, 0.15);
+      border-color: var(--color-accent-default);
+      box-shadow: 0 0 24px rgba(179, 18, 46, 0.15);
     }
 
     .card-header h3 {
       margin: var(--space-1, 0.25rem) 0 0;
       font-size: var(--font-size-base, 1rem);
       font-weight: 600;
-      color: var(--color-text-primary, #f8fafc);
+      color: var(--color-text-default);
     }
 
     .badge {
@@ -257,12 +261,12 @@ export interface EffectLog {
       text-transform: uppercase;
       font-weight: 700;
       letter-spacing: 0.05em;
-      color: #818cf8;
+      color: var(--color-accent-default);
     }
 
     .description {
       font-size: var(--font-size-sm, 0.875rem);
-      color: var(--color-text-muted, #94a3b8);
+      color: var(--color-text-muted);
       line-height: 1.5;
       margin: 0;
     }
@@ -271,8 +275,8 @@ export interface EffectLog {
       display: flex;
       flex-direction: column;
       gap: var(--space-3, 0.75rem);
-      background: rgba(0, 0, 0, 0.25);
-      border: 1px solid rgba(255, 255, 255, 0.06);
+      background: var(--color-bg-surface);
+      border: 1px solid var(--color-border-default);
       border-radius: var(--radius-md, 0.5rem);
       padding: var(--space-3, 0.75rem);
     }
@@ -281,7 +285,7 @@ export interface EffectLog {
       font-size: 0.65rem;
       text-transform: uppercase;
       font-weight: 600;
-      color: var(--color-text-muted, #94a3b8);
+      color: var(--color-text-muted);
       display: block;
       margin-bottom: 4px;
     }
@@ -293,25 +297,27 @@ export interface EffectLog {
     }
 
     .pill {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: var(--radius-md, 0.5rem);
-      padding: 4px 10px;
-      font-size: 0.7rem;
-      color: var(--color-text-muted, #94a3b8);
+      background: var(--color-bg-surface);
+      border: 1px solid var(--color-border-default);
+      border-radius: var(--radius-pill);
+      padding: 4px 12px;
+      font-size: 0.75rem;
+      color: var(--color-text-muted);
       cursor: pointer;
-      transition: all 0.2s ease;
+      user-select: none;
+      transition: all var(--motion-duration-fast) var(--motion-easing-standard);
     }
 
     .pill:hover {
-      background: rgba(255, 255, 255, 0.1);
-      color: #f8fafc;
+      background: var(--color-bg-raised);
+      color: var(--color-text-default);
+      border-color: var(--color-border-strong);
     }
 
     .pill.active {
-      background: #6366f1;
-      border-color: #6366f1;
-      color: #ffffff;
+      background: var(--color-accent-default);
+      border-color: var(--color-accent-default);
+      color: var(--color-accent-on);
       font-weight: 600;
     }
 
@@ -334,42 +340,43 @@ export interface EffectLog {
       align-items: center;
       gap: var(--space-2, 0.5rem);
       padding: 6px var(--space-3, 0.75rem);
-      background: rgba(255, 255, 255, 0.03);
-      border-left: 3px solid #64748b;
+      background: var(--color-bg-surface);
+      border: 1px solid var(--color-border-default);
+      border-left: 3px solid var(--color-border-strong);
       border-radius: 4px;
       font-size: var(--font-size-xs, 0.75rem);
     }
 
     .timeline-item.badge-info {
-      border-left-color: #38bdf8;
+      border-left-color: var(--color-accent-default);
     }
 
     .timeline-item.badge-success {
-      border-left-color: #34d399;
+      border-left-color: var(--color-success-default, #15803d);
     }
 
     .timeline-item.badge-warn {
-      border-left-color: #fbbf24;
+      border-left-color: #f59e0b;
     }
 
     .timeline-item.badge-error {
-      border-left-color: #f87171;
+      border-left-color: #ef4444;
     }
 
     .timeline-time {
       font-family: monospace;
-      color: var(--color-text-muted, #64748b);
+      color: var(--color-text-muted);
       font-size: 0.65rem;
     }
 
     .timeline-source {
       font-weight: 700;
-      color: #cbd5e1;
+      color: var(--color-text-default);
       min-width: 80px;
     }
 
     .timeline-msg {
-      color: var(--color-text-primary, #f1f5f9);
+      color: var(--color-text-default);
       font-family: monospace;
       font-size: 0.7rem;
     }
@@ -378,23 +385,23 @@ export interface EffectLog {
       padding: var(--space-4, 1rem);
       text-align: center;
       font-size: var(--font-size-xs, 0.75rem);
-      color: var(--color-text-muted, #64748b);
-      border: 1px dashed rgba(255, 255, 255, 0.1);
+      color: var(--color-text-muted);
+      border: 1px dashed var(--color-border-default);
       border-radius: var(--radius-md, 0.5rem);
     }
 
     .audit-note {
-      background: rgba(0, 0, 0, 0.35);
-      border: 1px solid rgba(255, 255, 255, 0.06);
+      background: var(--color-stage-bg, #0f0f12);
+      border: 1px solid var(--color-stage-border, #26262b);
       border-radius: var(--radius-md, 0.5rem);
       padding: var(--space-3, 0.75rem);
       font-size: 0.7rem;
-      color: var(--color-text-muted, #94a3b8);
+      color: var(--color-stage-muted, #9a9aa3);
       line-height: 1.4;
     }
 
     .audit-note strong {
-      color: #38bdf8;
+      color: var(--color-stage-text, #f7f7f8);
     }
 
     .operator-guide-list {
@@ -405,8 +412,8 @@ export interface EffectLog {
 
     .operator-item {
       padding: var(--space-3, 0.75rem);
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.06);
+      background: var(--color-bg-surface);
+      border: 1px solid var(--color-border-default);
       border-radius: var(--radius-md, 0.5rem);
       display: flex;
       flex-direction: column;
@@ -417,18 +424,18 @@ export interface EffectLog {
       font-family: monospace;
       font-weight: 700;
       font-size: 0.8rem;
-      color: #818cf8;
+      color: var(--color-accent-default);
     }
 
     .op-desc {
       font-size: 0.7rem;
-      color: var(--color-text-muted, #94a3b8);
+      color: var(--color-text-muted);
       line-height: 1.4;
     }
 
     .code-preview {
-      background: rgba(0, 0, 0, 0.3);
-      border: 1px solid rgba(255, 255, 255, 0.06);
+      background: var(--color-stage-bg, #0f0f12);
+      border: 1px solid var(--color-stage-border, #26262b);
       border-radius: var(--radius-md, 0.5rem);
       padding: var(--space-3, 0.75rem);
     }
@@ -436,7 +443,7 @@ export interface EffectLog {
     .preview-title {
       font-size: 0.65rem;
       text-transform: uppercase;
-      color: var(--color-text-muted, #94a3b8);
+      color: var(--color-stage-muted, #9a9aa3);
       font-weight: 600;
       display: block;
       margin-bottom: 4px;
@@ -446,7 +453,7 @@ export interface EffectLog {
       margin: 0;
       font-family: monospace;
       font-size: 0.7rem;
-      color: #93c5fd;
+      color: var(--color-stage-text, #f7f7f8);
       line-height: 1.4;
       overflow-x: auto;
     }

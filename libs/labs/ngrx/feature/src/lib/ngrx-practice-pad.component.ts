@@ -24,6 +24,13 @@ import { NgrxNavigationComponent } from './navigation/navigation.component';
     </div>
   `,
   styles: `
+    :host {
+      display: block;
+      color: var(--color-text-default);
+      font-family: var(--font-family-sans, system-ui, sans-serif);
+      width: 100%;
+    }
+
     .ngrx-lab-shell {
       display: flex;
       flex-direction: column;
@@ -31,19 +38,20 @@ import { NgrxNavigationComponent } from './navigation/navigation.component';
       min-height: 100%;
       box-sizing: border-box;
       position: relative;
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      color: var(--color-text-default);
+      transition: all var(--motion-duration-slow, 0.3s)
+        var(--motion-easing-standard, cubic-bezier(0.16, 1, 0.3, 1));
     }
 
     .ngrx-lab-shell.is-fullscreen {
       position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
+      inset: 0;
       width: 100vw;
       height: 100vh;
+      height: 100dvh;
       z-index: 99999;
-      background: var(--color-surface-base, #0b0f19);
+      background: var(--color-bg-canvas);
+      color: var(--color-text-default);
       padding: var(--space-6, 1.5rem);
       overflow-y: auto;
     }

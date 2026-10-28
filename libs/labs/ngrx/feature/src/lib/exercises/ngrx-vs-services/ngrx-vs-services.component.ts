@@ -57,6 +57,7 @@ export interface ArchitectureComparison {
             <span class="q-label">1. State Scope &amp; Sharing:</span>
             <div class="option-pills">
               <button
+                type="button"
                 class="pill"
                 [class.active]="stateScope() === 'local'"
                 (click)="stateScope.set('local')"
@@ -64,6 +65,7 @@ export interface ArchitectureComparison {
                 Feature / Component Local
               </button>
               <button
+                type="button"
                 class="pill"
                 [class.active]="stateScope() === 'modular'"
                 (click)="stateScope.set('modular')"
@@ -71,6 +73,7 @@ export interface ArchitectureComparison {
                 Shared Across Related Features
               </button>
               <button
+                type="button"
                 class="pill"
                 [class.active]="stateScope() === 'global'"
                 (click)="stateScope.set('global')"
@@ -85,6 +88,7 @@ export interface ArchitectureComparison {
             <span class="q-label">2. Async &amp; Event Choreography:</span>
             <div class="option-pills">
               <button
+                type="button"
                 class="pill"
                 [class.active]="asyncComplexity() === 'simple'"
                 (click)="asyncComplexity.set('simple')"
@@ -92,6 +96,7 @@ export interface ArchitectureComparison {
                 Simple HTTP fetch / mutations
               </button>
               <button
+                type="button"
                 class="pill"
                 [class.active]="asyncComplexity() === 'streams'"
                 (click)="asyncComplexity.set('streams')"
@@ -99,6 +104,7 @@ export interface ArchitectureComparison {
                 Debounced search, polling, WebSockets
               </button>
               <button
+                type="button"
                 class="pill"
                 [class.active]="asyncComplexity() === 'choreography'"
                 (click)="asyncComplexity.set('choreography')"
@@ -113,6 +119,7 @@ export interface ArchitectureComparison {
             <span class="q-label">3. Team Scale &amp; Time-Travel Audit:</span>
             <div class="option-pills">
               <button
+                type="button"
                 class="pill"
                 [class.active]="auditLevel() === 'standard'"
                 (click)="auditLevel.set('standard')"
@@ -120,6 +127,7 @@ export interface ArchitectureComparison {
                 Standard Dev (Console / Tests)
               </button>
               <button
+                type="button"
                 class="pill"
                 [class.active]="auditLevel() === 'strict'"
                 (click)="auditLevel.set('strict')"
@@ -153,12 +161,11 @@ export interface ArchitectureComparison {
       <!-- Pattern Selector Cards -->
       <div class="pattern-tabs">
         @for (pat of patterns; track pat.key) {
-          <div
+          <button
+            type="button"
             class="pattern-tab-card"
             [class.active]="selectedPatternKey() === pat.key"
             (click)="selectPattern(pat.key)"
-            role="button"
-            tabindex="0"
           >
             <div class="tab-top">
               <span class="tab-name">{{ pat.name }}</span>
@@ -167,7 +174,7 @@ export interface ArchitectureComparison {
               </ah-tag>
             </div>
             <p class="tab-tagline">{{ pat.tagline }}</p>
-          </div>
+          </button>
         }
       </div>
 
@@ -299,9 +306,9 @@ export interface ArchitectureComparison {
     }
 
     .advisor-card {
-      background: var(--color-surface-sunken, rgba(15, 23, 42, 0.7));
-      border: 1px solid var(--color-border-subtle, rgba(255, 255, 255, 0.08));
-      border-radius: var(--radius-xl, 1rem);
+      background: var(--color-bg-surface);
+      border: 1px solid var(--color-border-default);
+      border-radius: var(--radius-lg, 0.75rem);
       padding: var(--space-5, 1.25rem);
       display: flex;
       flex-direction: column;
@@ -330,21 +337,21 @@ export interface ArchitectureComparison {
       margin: 0;
       font-size: var(--font-size-base, 1rem);
       font-weight: 700;
-      color: var(--color-text-primary, #f8fafc);
+      color: var(--color-text-default);
     }
 
     .advisor-sub {
       margin: 2px 0 0;
       font-size: var(--font-size-xs, 0.75rem);
-      color: var(--color-text-muted, #94a3b8);
+      color: var(--color-text-muted);
     }
 
     .wizard-questions {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: var(--space-3, 0.75rem);
-      background: rgba(0, 0, 0, 0.25);
-      border: 1px solid rgba(255, 255, 255, 0.06);
+      background: var(--color-bg-raised);
+      border: 1px solid var(--color-border-default);
       border-radius: var(--radius-lg, 0.75rem);
       padding: var(--space-4, 1rem);
     }
@@ -358,7 +365,7 @@ export interface ArchitectureComparison {
     .q-label {
       font-size: var(--font-size-xs, 0.75rem);
       font-weight: 600;
-      color: var(--color-text-muted, #94a3b8);
+      color: var(--color-text-muted);
     }
 
     .option-pills {
@@ -368,32 +375,35 @@ export interface ArchitectureComparison {
     }
 
     .pill {
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: var(--color-bg-surface);
+      border: 1px solid var(--color-border-default);
       border-radius: var(--radius-md, 0.5rem);
       padding: 6px var(--space-3, 0.75rem);
       font-size: 0.75rem;
-      color: var(--color-text-muted, #94a3b8);
+      color: var(--color-text-muted);
       text-align: left;
       cursor: pointer;
-      transition: all 0.2s ease;
+      user-select: none;
+      font: inherit;
+      transition: all var(--motion-duration-fast) var(--motion-easing-standard);
     }
 
     .pill:hover {
-      background: rgba(255, 255, 255, 0.08);
-      color: #f8fafc;
+      background: var(--color-bg-raised);
+      color: var(--color-text-default);
+      border-color: var(--color-border-strong);
     }
 
     .pill.active {
-      background: rgba(99, 102, 241, 0.2);
-      border-color: #6366f1;
-      color: #ffffff;
+      background: var(--color-accent-subtle);
+      border-color: var(--color-accent-default);
+      color: var(--color-accent-default);
       font-weight: 600;
     }
 
     .recommendation-result {
-      background: rgba(99, 102, 241, 0.1);
-      border: 1px solid rgba(99, 102, 241, 0.3);
+      background: var(--color-accent-subtle);
+      border: 1px solid var(--color-accent-default);
       border-radius: var(--radius-lg, 0.75rem);
       padding: var(--space-4, 1rem);
       display: flex;
@@ -412,12 +422,12 @@ export interface ArchitectureComparison {
       text-transform: uppercase;
       font-weight: 700;
       letter-spacing: 0.05em;
-      color: var(--color-text-muted, #cbd5e1);
+      color: var(--color-accent-default);
     }
 
     .result-rationale {
       font-size: var(--font-size-sm, 0.875rem);
-      color: var(--color-text-primary, #f1f5f9);
+      color: var(--color-text-default);
       line-height: 1.5;
       margin: 0;
     }
@@ -433,26 +443,29 @@ export interface ArchitectureComparison {
     }
 
     .pattern-tab-card {
-      background: var(--color-surface-raised, rgba(30, 41, 59, 0.7));
-      border: 1px solid var(--color-border-subtle, rgba(255, 255, 255, 0.08));
+      background: var(--color-bg-raised);
+      border: 1px solid var(--color-border-default);
       border-radius: var(--radius-lg, 0.75rem);
       padding: var(--space-4, 1rem);
       cursor: pointer;
+      user-select: none;
+      font: inherit;
+      text-align: left;
       display: flex;
       flex-direction: column;
       gap: 4px;
-      transition: all 0.2s ease;
+      transition: all var(--motion-duration-fast) var(--motion-easing-standard);
     }
 
     .pattern-tab-card:hover {
-      background: rgba(255, 255, 255, 0.05);
-      border-color: rgba(255, 255, 255, 0.15);
+      background: var(--color-bg-canvas);
+      border-color: var(--color-border-strong);
     }
 
     .pattern-tab-card.active {
-      border-color: #6366f1;
-      background: rgba(99, 102, 241, 0.12);
-      box-shadow: 0 0 16px rgba(99, 102, 241, 0.2);
+      border-color: var(--color-accent-default);
+      background: var(--color-accent-subtle);
+      box-shadow: 0 0 16px rgba(179, 18, 46, 0.15);
     }
 
     .tab-top {
@@ -465,20 +478,20 @@ export interface ArchitectureComparison {
     .tab-name {
       font-size: var(--font-size-xs, 0.75rem);
       font-weight: 700;
-      color: var(--color-text-primary, #f8fafc);
+      color: var(--color-text-default);
     }
 
     .tab-tagline {
       font-size: 0.7rem;
-      color: var(--color-text-muted, #94a3b8);
+      color: var(--color-text-muted);
       margin: 0;
       line-height: 1.4;
     }
 
     .pattern-detail-card {
-      background: var(--color-surface-raised, rgba(30, 41, 59, 0.7));
-      border: 1px solid var(--color-border-subtle, rgba(255, 255, 255, 0.08));
-      border-radius: var(--radius-xl, 1rem);
+      background: var(--color-bg-raised);
+      border: 1px solid var(--color-border-default);
+      border-radius: var(--radius-lg, 0.75rem);
       padding: var(--space-5, 1.25rem);
       display: flex;
       flex-direction: column;
@@ -491,7 +504,7 @@ export interface ArchitectureComparison {
       align-items: flex-start;
       flex-wrap: wrap;
       gap: var(--space-3, 0.75rem);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      border-bottom: 1px solid var(--color-border-default);
       padding-bottom: var(--space-4, 1rem);
     }
 
@@ -500,7 +513,7 @@ export interface ArchitectureComparison {
       text-transform: uppercase;
       font-weight: 700;
       letter-spacing: 0.05em;
-      color: #818cf8;
+      color: var(--color-accent-default);
       display: block;
     }
 
@@ -508,13 +521,13 @@ export interface ArchitectureComparison {
       margin: 2px 0 4px;
       font-size: 1.25rem;
       font-weight: 700;
-      color: var(--color-text-primary, #f8fafc);
+      color: var(--color-text-default);
     }
 
     .detail-tagline {
       margin: 0;
       font-size: var(--font-size-sm, 0.875rem);
-      color: var(--color-text-muted, #94a3b8);
+      color: var(--color-text-muted);
     }
 
     .metrics-cluster {
@@ -524,8 +537,8 @@ export interface ArchitectureComparison {
     }
 
     .metric-chip {
-      background: rgba(0, 0, 0, 0.35);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: var(--color-bg-surface);
+      border: 1px solid var(--color-border-default);
       border-radius: var(--radius-md, 0.5rem);
       padding: 6px var(--space-3, 0.75rem);
       display: flex;
@@ -535,13 +548,13 @@ export interface ArchitectureComparison {
     .metric-chip .k {
       font-size: 0.6rem;
       text-transform: uppercase;
-      color: var(--color-text-muted, #94a3b8);
+      color: var(--color-text-muted);
     }
 
     .metric-chip .v {
       font-size: var(--font-size-xs, 0.75rem);
       font-weight: 700;
-      color: #38bdf8;
+      color: var(--color-text-default);
       font-family: monospace;
     }
 
@@ -552,8 +565,9 @@ export interface ArchitectureComparison {
     }
 
     .tradeoff-box {
-      background: rgba(0, 0, 0, 0.25);
-      border-radius: var(--radius-lg, 0.75rem);
+      background: var(--color-bg-surface);
+      border: 1px solid var(--color-border-default);
+      border-radius: var(--radius-md, 0.5rem);
       padding: var(--space-4, 1rem);
       display: flex;
       flex-direction: column;
@@ -561,44 +575,44 @@ export interface ArchitectureComparison {
     }
 
     .tradeoff-box.pros {
-      border: 1px solid rgba(52, 211, 153, 0.2);
+      border-left: 3px solid var(--color-success-default, #15803d);
     }
 
     .tradeoff-box.cons {
-      border: 1px solid rgba(251, 191, 36, 0.2);
+      border-left: 3px solid #f59e0b;
     }
 
     .box-title {
       font-size: var(--font-size-xs, 0.75rem);
       font-weight: 700;
-      color: var(--color-text-primary, #f8fafc);
+      color: var(--color-text-default);
     }
 
     .tradeoff-box ul {
       margin: 0;
       padding-left: 1.2rem;
       font-size: var(--font-size-xs, 0.75rem);
-      color: var(--color-text-muted, #cbd5e1);
+      color: var(--color-text-muted);
       line-height: 1.5;
     }
 
     .code-section {
-      background: rgba(0, 0, 0, 0.4);
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      border-radius: var(--radius-lg, 0.75rem);
+      background: var(--color-stage-bg, #0f0f12);
+      border: 1px solid var(--color-stage-border, #26262b);
+      border-radius: var(--radius-md, 0.5rem);
       overflow: hidden;
     }
 
     .code-header {
       background: rgba(255, 255, 255, 0.03);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      border-bottom: 1px solid var(--color-stage-border, #26262b);
       padding: var(--space-2, 0.5rem) var(--space-4, 1rem);
     }
 
     .code-title {
       font-size: 0.7rem;
       font-weight: 600;
-      color: var(--color-text-muted, #94a3b8);
+      color: var(--color-stage-muted, #9a9aa3);
       text-transform: uppercase;
       letter-spacing: 0.05em;
     }
@@ -609,14 +623,14 @@ export interface ArchitectureComparison {
       font-family: monospace;
       font-size: 0.75rem;
       line-height: 1.45;
-      color: #93c5fd;
+      color: var(--color-stage-text, #f7f7f8);
       overflow-x: auto;
     }
 
     .matrix-card {
-      background: var(--color-surface-sunken, rgba(15, 23, 42, 0.6));
-      border: 1px solid var(--color-border-subtle, rgba(255, 255, 255, 0.08));
-      border-radius: var(--radius-xl, 1rem);
+      background: var(--color-bg-surface);
+      border: 1px solid var(--color-border-default);
+      border-radius: var(--radius-lg, 0.75rem);
       padding: var(--space-5, 1.25rem);
     }
 
@@ -624,7 +638,7 @@ export interface ArchitectureComparison {
       margin: 0 0 var(--space-4, 1rem);
       font-size: var(--font-size-sm, 0.875rem);
       font-weight: 700;
-      color: var(--color-text-primary, #f8fafc);
+      color: var(--color-text-default);
     }
 
     .table-wrapper {
@@ -641,12 +655,12 @@ export interface ArchitectureComparison {
     .comparison-table th,
     .comparison-table td {
       padding: 10px 14px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      border-bottom: 1px solid var(--color-border-default);
     }
 
     .comparison-table th {
-      background: rgba(255, 255, 255, 0.03);
-      color: #818cf8;
+      background: var(--color-bg-raised);
+      color: var(--color-text-default);
       font-weight: 700;
       text-transform: uppercase;
       font-size: 0.65rem;
@@ -654,12 +668,12 @@ export interface ArchitectureComparison {
     }
 
     .comparison-table td {
-      color: var(--color-text-muted, #cbd5e1);
+      color: var(--color-text-muted);
       line-height: 1.4;
     }
 
     .comparison-table td strong {
-      color: var(--color-text-primary, #f1f5f9);
+      color: var(--color-text-default);
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -44,8 +44,8 @@ import { AhButton, SegmentedControl, Tag, type SegmentedOption } from '@ah/ui';
       justify-content: space-between;
       gap: var(--space-3, 0.75rem);
       padding: var(--space-3, 0.75rem) var(--space-4, 1rem);
-      background: var(--color-surface-sunken, rgba(255, 255, 255, 0.03));
-      border: 1px solid var(--color-border-subtle, rgba(255, 255, 255, 0.08));
+      background: var(--color-bg-surface);
+      border: 1px solid var(--color-border-default);
       border-radius: var(--radius-lg, 0.75rem);
       margin-bottom: var(--space-6, 1.5rem);
     }
@@ -58,11 +58,11 @@ import { AhButton, SegmentedControl, Tag, type SegmentedOption } from '@ah/ui';
     }
 
     .control-label {
-      font-size: var(--font-size-xs, 0.75rem);
-      font-weight: 600;
+      font-size: var(--font-size-100, 0.8125rem);
+      font-weight: var(--font-weight-medium, 500);
       text-transform: uppercase;
       letter-spacing: 0.05em;
-      color: var(--color-text-muted, #94a3b8);
+      color: var(--color-text-muted);
     }
 
     .active-badge-group {

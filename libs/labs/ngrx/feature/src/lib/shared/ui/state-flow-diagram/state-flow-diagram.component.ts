@@ -117,9 +117,9 @@ export type FlowStage =
   `,
   styles: `
     .flow-card {
-      background: var(--color-surface-sunken, rgba(15, 23, 42, 0.6));
-      border: 1px solid var(--color-border-subtle, rgba(255, 255, 255, 0.08));
-      border-radius: var(--radius-xl, 1rem);
+      background: var(--color-bg-surface);
+      border: 1px solid var(--color-border-default);
+      border-radius: var(--radius-lg, 0.75rem);
       padding: var(--space-4, 1rem) var(--space-5, 1.25rem);
       margin-bottom: var(--space-6, 1.5rem);
       transition:
@@ -128,8 +128,8 @@ export type FlowStage =
     }
 
     .flow-card.is-animating {
-      border-color: var(--color-brand-primary, #6366f1);
-      box-shadow: 0 0 20px rgba(99, 102, 241, 0.15);
+      border-color: var(--color-accent-default);
+      box-shadow: 0 0 20px rgba(179, 18, 46, 0.15);
     }
 
     .flow-header {
@@ -149,15 +149,15 @@ export type FlowStage =
       width: 10px;
       height: 10px;
       border-radius: 50%;
-      background: var(--color-border-subtle, #64748b);
+      background: var(--color-border-strong);
       transition:
         background 0.3s ease,
         box-shadow 0.3s ease;
     }
 
     .pulse-indicator.active {
-      background: #10b981;
-      box-shadow: 0 0 8px #10b981;
+      background: var(--color-success-default, #15803d);
+      box-shadow: 0 0 8px var(--color-success-default, #15803d);
       animation: heart-pulse 1.2s infinite;
     }
 
@@ -175,9 +175,9 @@ export type FlowStage =
 
     .flow-title {
       margin: 0;
-      font-size: var(--font-size-sm, 0.875rem);
+      font-size: var(--font-size-200, 0.9375rem);
       font-weight: 600;
-      color: var(--color-text-primary, #f8fafc);
+      color: var(--color-text-default);
     }
 
     .pipeline-track {
@@ -192,8 +192,8 @@ export type FlowStage =
       display: flex;
       align-items: center;
       gap: var(--space-2, 0.5rem);
-      background: var(--color-surface-raised, rgba(30, 41, 59, 0.7));
-      border: 1px solid var(--color-border-subtle, rgba(255, 255, 255, 0.08));
+      background: var(--color-bg-raised);
+      border: 1px solid var(--color-border-default);
       padding: var(--space-2, 0.5rem) var(--space-3, 0.75rem);
       border-radius: var(--radius-md, 0.5rem);
       min-width: 110px;
@@ -201,9 +201,9 @@ export type FlowStage =
     }
 
     .stage-node.current {
-      background: var(--color-surface-elevated, #312e81);
-      border-color: #818cf8;
-      box-shadow: 0 0 14px rgba(129, 140, 248, 0.4);
+      background: var(--color-accent-subtle);
+      border-color: var(--color-accent-default);
+      box-shadow: 0 0 14px rgba(179, 18, 46, 0.2);
       transform: translateY(-2px);
     }
 
@@ -215,8 +215,8 @@ export type FlowStage =
       display: flex;
       align-items: center;
       justify-content: center;
-      background: rgba(255, 255, 255, 0.06);
-      border-radius: 4px;
+      background: var(--color-bg-surface);
+      border-radius: var(--radius-sm, 0.375rem);
     }
 
     .node-meta {
@@ -225,14 +225,14 @@ export type FlowStage =
     }
 
     .node-name {
-      font-size: var(--font-size-xs, 0.75rem);
+      font-size: var(--font-size-100, 0.8125rem);
       font-weight: 600;
-      color: var(--color-text-primary, #f1f5f9);
+      color: var(--color-text-default);
     }
 
     .node-desc {
       font-size: 0.65rem;
-      color: var(--color-text-muted, #94a3b8);
+      color: var(--color-text-muted);
       white-space: nowrap;
     }
 
@@ -248,7 +248,7 @@ export type FlowStage =
     .arrow-line {
       height: 2px;
       width: 100%;
-      background: var(--color-border-subtle, rgba(255, 255, 255, 0.15));
+      background: var(--color-border-strong);
       position: relative;
     }
 
@@ -261,27 +261,26 @@ export type FlowStage =
       height: 0;
       border-top: 4px solid transparent;
       border-bottom: 4px solid transparent;
-      border-left: 6px solid
-        var(--color-border-subtle, rgba(255, 255, 255, 0.15));
+      border-left: 6px solid var(--color-border-strong);
     }
 
     .arrow-tag {
       font-size: 0.6rem;
       font-family: monospace;
-      color: var(--color-text-muted, #94a3b8);
+      color: var(--color-text-muted);
     }
 
     .stage-arrow.pulse .arrow-line {
-      background: #818cf8;
-      box-shadow: 0 0 6px #818cf8;
+      background: var(--color-accent-default);
+      box-shadow: 0 0 6px var(--color-accent-default);
     }
 
     .stage-arrow.pulse .arrow-line::after {
-      border-left-color: #818cf8;
+      border-left-color: var(--color-accent-default);
     }
 
     .stage-arrow.pulse .arrow-tag {
-      color: #818cf8;
+      color: var(--color-accent-default);
       font-weight: 700;
     }
 

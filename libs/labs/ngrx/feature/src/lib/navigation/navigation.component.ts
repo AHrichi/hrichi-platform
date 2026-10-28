@@ -54,9 +54,9 @@ import { AhButton } from '@ah/ui';
       justify-content: space-between;
       gap: var(--space-3, 0.75rem);
       padding: var(--space-2, 0.5rem) var(--space-4, 1rem);
-      background: var(--color-surface-raised, rgba(30, 41, 59, 0.5));
-      border: 1px solid var(--color-border-subtle, rgba(255, 255, 255, 0.08));
-      border-radius: var(--radius-xl, 1rem);
+      background: var(--color-bg-surface);
+      border: 1px solid var(--color-border-default);
+      border-radius: var(--radius-lg, 0.75rem);
       margin-bottom: var(--space-6, 1.5rem);
     }
 
@@ -67,27 +67,35 @@ import { AhButton } from '@ah/ui';
     }
 
     .nav-tab {
+      display: inline-flex;
+      align-items: center;
       padding: var(--space-2, 0.5rem) var(--space-3, 0.75rem);
-      border-radius: var(--radius-md, 0.5rem);
-      font-size: var(--font-size-xs, 0.75rem);
-      font-weight: 600;
-      color: var(--color-text-muted, #94a3b8);
+      border-radius: var(--radius-pill);
+      font-size: var(--font-size-100, 0.8125rem);
+      font-weight: var(--font-weight-medium, 500);
+      color: var(--color-text-muted);
       text-decoration: none;
-      transition: all 0.2s ease;
+      cursor: pointer;
+      user-select: none;
+      transition:
+        background-color var(--motion-duration-fast)
+          var(--motion-easing-standard),
+        color var(--motion-duration-fast) var(--motion-easing-standard);
     }
 
     .nav-tab:hover {
-      color: var(--color-text-primary, #f8fafc);
-      background: rgba(255, 255, 255, 0.05);
+      color: var(--color-text-default);
+      background: var(--color-bg-raised);
     }
 
     .nav-tab.active {
-      background: #6366f1;
-      color: #ffffff;
+      background: var(--color-accent-default);
+      color: var(--color-accent-on);
     }
 
     .nav-tab.highlight.active {
-      background: linear-gradient(135deg, #6366f1, #3b82f6);
+      background: var(--color-accent-default);
+      color: var(--color-accent-on);
     }
 
     .controls-group {

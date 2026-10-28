@@ -302,9 +302,9 @@ export const cartFeature = createFeature({
     }
 
     .card {
-      background: var(--color-surface-raised, rgba(30, 41, 59, 0.7));
-      border: 1px solid var(--color-border-subtle, rgba(255, 255, 255, 0.08));
-      border-radius: var(--radius-xl, 1rem);
+      background: var(--color-bg-raised);
+      border: 1px solid var(--color-border-default);
+      border-radius: var(--radius-lg, 0.75rem);
       padding: var(--space-5, 1.25rem);
       display: flex;
       flex-direction: column;
@@ -315,15 +315,15 @@ export const cartFeature = createFeature({
     }
 
     .card.focused-card {
-      border-color: #6366f1;
-      box-shadow: 0 0 24px rgba(99, 102, 241, 0.15);
+      border-color: var(--color-accent-default);
+      box-shadow: 0 0 24px rgba(179, 18, 46, 0.15);
     }
 
     .card-header h3 {
       margin: var(--space-1, 0.25rem) 0 0;
       font-size: var(--font-size-base, 1rem);
       font-weight: 600;
-      color: var(--color-text-primary, #f8fafc);
+      color: var(--color-text-default);
     }
 
     .badge {
@@ -331,12 +331,12 @@ export const cartFeature = createFeature({
       text-transform: uppercase;
       font-weight: 700;
       letter-spacing: 0.05em;
-      color: #818cf8;
+      color: var(--color-accent-default);
     }
 
     .description {
       font-size: var(--font-size-sm, 0.875rem);
-      color: var(--color-text-muted, #94a3b8);
+      color: var(--color-text-muted);
       line-height: 1.5;
       margin: 0;
     }
@@ -349,8 +349,8 @@ export const cartFeature = createFeature({
     }
 
     .code-preview {
-      background: rgba(0, 0, 0, 0.3);
-      border: 1px solid rgba(255, 255, 255, 0.06);
+      background: var(--color-stage-bg, #0f0f12);
+      border: 1px solid var(--color-stage-border, #26262b);
       border-radius: var(--radius-md, 0.5rem);
       padding: var(--space-3, 0.75rem);
     }
@@ -358,7 +358,7 @@ export const cartFeature = createFeature({
     .preview-title {
       font-size: 0.65rem;
       text-transform: uppercase;
-      color: var(--color-text-muted, #94a3b8);
+      color: var(--color-stage-muted, #9a9aa3);
       font-weight: 600;
       display: block;
       margin-bottom: 4px;
@@ -368,7 +368,7 @@ export const cartFeature = createFeature({
       margin: 0;
       font-family: monospace;
       font-size: 0.75rem;
-      color: #93c5fd;
+      color: var(--color-stage-text, #f7f7f8);
       line-height: 1.4;
       overflow-x: auto;
     }
@@ -385,8 +385,8 @@ export const cartFeature = createFeature({
       align-items: center;
       justify-content: space-between;
       padding: var(--space-2, 0.5rem) var(--space-3, 0.75rem);
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.06);
+      background: var(--color-bg-surface);
+      border: 1px solid var(--color-border-default);
       border-radius: var(--radius-md, 0.5rem);
     }
 
@@ -394,19 +394,19 @@ export const cartFeature = createFeature({
       display: block;
       font-size: var(--font-size-xs, 0.75rem);
       font-weight: 600;
-      color: var(--color-text-primary, #f1f5f9);
+      color: var(--color-text-default);
     }
 
     .item-meta {
       font-size: 0.7rem;
-      color: var(--color-text-muted, #94a3b8);
+      color: var(--color-text-muted);
       font-family: monospace;
     }
 
     .coupon-banner {
-      background: rgba(16, 185, 129, 0.12);
-      border: 1px solid rgba(16, 185, 129, 0.3);
-      color: #34d399;
+      background: var(--color-accent-subtle);
+      border: 1px solid var(--color-accent-default);
+      color: var(--color-accent-default);
       padding: var(--space-2, 0.5rem) var(--space-3, 0.75rem);
       border-radius: var(--radius-md, 0.5rem);
       font-size: var(--font-size-xs, 0.75rem);
@@ -416,8 +416,8 @@ export const cartFeature = createFeature({
       padding: var(--space-4, 1rem);
       text-align: center;
       font-size: var(--font-size-xs, 0.75rem);
-      color: var(--color-text-muted, #64748b);
-      border: 1px dashed rgba(255, 255, 255, 0.1);
+      color: var(--color-text-muted);
+      border: 1px dashed var(--color-border-default);
       border-radius: var(--radius-md, 0.5rem);
     }
 
@@ -433,34 +433,34 @@ export const cartFeature = createFeature({
       flex-direction: column;
       align-items: center;
       padding: var(--space-3, 0.75rem);
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.06);
+      background: var(--color-bg-surface);
+      border: 1px solid var(--color-border-default);
       border-radius: var(--radius-md, 0.5rem);
       text-align: center;
     }
 
     .metric-box.highlight {
-      background: rgba(99, 102, 241, 0.12);
-      border-color: rgba(99, 102, 241, 0.3);
+      background: var(--color-accent-subtle);
+      border-color: var(--color-accent-default);
     }
 
     .metric-label {
       font-size: 0.65rem;
       text-transform: uppercase;
-      color: var(--color-text-muted, #94a3b8);
+      color: var(--color-text-muted);
       margin-bottom: 2px;
     }
 
     .metric-value {
       font-size: 1.1rem;
       font-weight: 700;
-      color: #f8fafc;
+      color: var(--color-text-default);
       font-family: monospace;
     }
 
     .memoization-audit {
-      background: rgba(0, 0, 0, 0.35);
-      border: 1px solid rgba(255, 255, 255, 0.06);
+      background: var(--color-stage-bg, #0f0f12);
+      border: 1px solid var(--color-stage-border, #26262b);
       border-radius: var(--radius-md, 0.5rem);
       padding: var(--space-3, 0.75rem);
       display: flex;
@@ -473,24 +473,24 @@ export const cartFeature = createFeature({
       display: flex;
       justify-content: space-between;
       font-size: var(--font-size-xs, 0.75rem);
-      color: var(--color-text-muted, #cbd5e1);
+      color: var(--color-stage-muted, #9a9aa3);
     }
 
     .audit-row .count {
       font-family: monospace;
       font-weight: 700;
-      color: #38bdf8;
+      color: var(--color-stage-text, #f7f7f8);
     }
 
     .audit-row .count.success {
-      color: #34d399;
+      color: var(--color-success-default, #4ade80);
     }
 
     .audit-note {
-      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      border-top: 1px solid var(--color-stage-border, #26262b);
       padding-top: 6px;
       margin-top: 2px;
-      color: var(--color-text-muted, #94a3b8);
+      color: var(--color-stage-muted, #9a9aa3);
       line-height: 1.4;
     }
   `,
@@ -529,7 +529,6 @@ export class StoreFlowComponent {
   // Selector Memoization Audit Counters
   readonly projectorRuns = signal(1);
   readonly cacheHits = signal(0);
-  private lastEvaluatedState: CartState | null = null;
 
   // Memoized Selector implementations
   readonly totalItemCount = computed(() => {
@@ -545,14 +544,6 @@ export class StoreFlowComponent {
 
   readonly discountedTotal = computed(() => {
     const state = this.currentState();
-    // Audit memoization behavior
-    if (this.lastEvaluatedState === state) {
-      this.cacheHits.update((c) => c + 1);
-    } else {
-      this.projectorRuns.update((r) => r + 1);
-      this.lastEvaluatedState = state;
-    }
-
     const sub = this.subtotal();
     const discount = (sub * state.discountPercent) / 100;
     return Math.round((sub - discount) * 100) / 100;
@@ -618,7 +609,7 @@ export class StoreFlowComponent {
 
   private processAction(
     type: string,
-    payload: any,
+    payload: unknown,
     reducerFn: (s: CartState) => CartState,
   ): void {
     this.animateFlow('dispatch');
@@ -636,6 +627,7 @@ export class StoreFlowComponent {
 
     this.actionHistory.update((h) => [...h, newRecord]);
     this.currentHistoryIndex.set(this.actionHistory().length - 1);
+    this.projectorRuns.update((r) => r + 1);
   }
 
   onTimeTravelIndexChange(index: number): void {
