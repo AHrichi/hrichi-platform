@@ -1,9 +1,11 @@
 <!-- src/app/exercises/signals/signals.component.html -->
 <div class="exercise-container">
-  <h2 class="exercise-title">Exercise: The Power of Signals</h2>
+  <h2 class="exercise-title">
+    Exercise: The Power of Signals & Angular 22 Reactivity
+  </h2>
   <p class="exercise-description">
-    Exploring the core primitives of Angular Signals and their interoperability
-    with RxJS.
+    Exploring modern Angular 22 reactivity: Signals, Linked Signals, RxJS
+    Interop, and Asynchronous Resources.
   </p>
 
   <!-- Writable Signals Card -->
@@ -180,6 +182,230 @@ counterSignal = toSignal(this.counter$, &#123; initialValue: 0 &#125;);
 
 // A computed signal that reacts to the change
 isEven = computed(() => this.counterSignal() % 2 === 0);</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- Angular 22 linkedSignal() Card -->
+  <div class="card">
+    <div class="card-header">
+      <h3>5. Angular 22: <code>linkedSignal()</code></h3>
+      <p>
+        A writable signal that resets to a computed default whenever its source
+        dependency changes, while still allowing direct user writes and
+        overrides.
+      </p>
+    </div>
+    <div class="card-content">
+      @let currentTier = planTier();
+      @let credits = computeCredits();
+      @let isCustom = isCreditsCustomized();
+
+      <div class="everyday-example">
+        <p>
+          <strong>Why linkedSignal?</strong> With <code>computed()</code>, state
+          is strictly read-only. With separate writable signals + effects,
+          syncing is error-prone. <code>linkedSignal()</code> gives you the best
+          of both worlds: reactive default syncing with writable capability!
+        </p>
+      </div>
+
+      <div class="config-group">
+        <div class="config-item">
+          <label>Choose Plan Tier:</label>
+          <div class="button-group-inline">
+            <button
+              [class.active]="currentTier === 'Starter'"
+              (click)="selectPlanTier('Starter')"
+            >
+              Starter (5 credits)
+            </button>
+            <button
+              [class.active]="currentTier === 'Pro'"
+              (click)="selectPlanTier('Pro')"
+            >
+              Pro (25 credits)
+            </button>
+            <button
+              [class.active]="currentTier === 'Enterprise'"
+              (click)="selectPlanTier('Enterprise')"
+            >
+              Enterprise (100 credits)
+            </button>
+          </div>
+        </div>
+
+        <div class="config-item">
+          <label>Adjust Compute Credits (Direct Mutation):</label>
+          <div class="quantity-control">
+            <button (click)="decrementCredits()">-5</button>
+            <span class="credits-value" [class.customized]="isCustom">{{
+              credits
+            }}</span>
+            <button (click)="incrementCredits()">+5</button>
+          </div>
+          @if (isCustom) {
+            <span class="custom-badge">User customized (overridden)</span>
+            <button class="btn-link" (click)="resetCreditsToDefault()">
+              Reset to plan default
+            </button>
+          } @else {
+            <span class="default-badge">Plan default</span>
+          }
+        </div>
+      </div>
+
+      <div class="code-example">
+        <pre><code>// Angular 22 linkedSignal
+planTier = signal&lt;'Starter' | 'Pro' | 'Enterprise'&gt;('Pro');
+
+computeCredits = linkedSignal&lt;PlanTier, number&gt;(&#123;
+  source: () => this.planTier(),
+  computation: (tier) => (tier === 'Enterprise' ? 100 : tier === 'Pro' ? 25 : 5),
+&#125;);
+
+// Direct mutation allowed without breaking reactivity:
+computeCredits.update(c => c + 5);</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- Angular 22 rxResource() Card -->
+  <div class="card">
+    <div class="card-header">
+      <h3>6. Angular 22: <code>rxResource()</code> Async Data Streams</h3>
+      <p>
+        Bridges asynchronous RxJS streams directly into declarative Signals with
+        built-in loading flags, automatic cancellation on parameter change, and
+        error boundaries.
+      </p>
+    </div>
+    <div class="card-content">
+      @let resource = userProfileResource;
+      @let profile = resource.value();
+      @let loading = resource.isLoading();
+      @let status = resource.status();
+
+      <div class="everyday-example">
+        <p>
+          <strong>Async Data in Zoneless Angular:</strong>
+          <code>rxResource()</code> executes an RxJS loader stream, exposing
+          synchronous signals for <code>value()</code>,
+          <code>isLoading()</code>, and <code>status()</code>, with complete SSR
+          hydration safety and zero <code>zone.js</code>.
+        </p>
+      </div>
+
+      <div class="resource-panel">
+        <div class="resource-controls">
+          <label>Select User ID:</label>
+          <div class="button-group-inline">
+            <button
+              [class.active]="selectedUserId() === 1"
+              (click)="selectUser(1)"
+            >
+              User 1
+            </button>
+            <button
+              [class.active]="selectedUserId() === 2"
+              (click)="selectUser(2)"
+            >
+              User 2
+            </button>
+            <button
+              [class.active]="selectedUserId() === 3"
+              (click)="selectUser(3)"
+            >
+              User 3
+            </button>
+            <button class="btn-reload" (click)="reloadUserResource()">
+              Reload Stream
+            </button>
+          </div>
+        </div>
+
+        <div class="resource-display" [class.loading]="loading">
+          @if (loading) {
+            <div class="loading-state">
+              <span class="spinner"></span>
+              <span>Streaming data via RxJS...</span>
+            </div>
+          } @else if (profile) {
+            <div class="profile-card">
+              <div class="profile-header">
+                <span class="profile-name">{{ profile.name }}</span>
+                <span class="profile-status">Status: {{ status }}</span>
+              </div>
+              <p class="profile-role">{{ profile.role }}</p>
+              <p class="profile-quota">{{ profile.quota }}</p>
+            </div>
+          }
+        </div>
+      </div>
+
+      <div class="code-example">
+        <pre><code>// Angular 22 rxResource from @angular/core/rxjs-interop
+userProfileResource = rxResource&lt;UserProfile, &#123; id: number &#125;&gt;(&#123;
+  params: () => (&#123; id: this.selectedUserId() &#125;),
+  stream: (&#123; params &#125;) => this.http.get&lt;UserProfile&gt;(`/api/users/$&#123;params.id&#125;`),
+&#125;);
+
+// In template: resource.value(), resource.isLoading(), resource.reload()</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bidirectional Interop Card -->
+  <div class="card">
+    <div class="card-header">
+      <h3>
+        7. Bidirectional Interop: <code>toObservable()</code> &amp;
+        <code>toSignal()</code>
+      </h3>
+      <p>
+        Taking values from a Signal, piping through RxJS operators (like
+        <code>debounceTime</code>), and outputting back to a Signal.
+      </p>
+    </div>
+    <div class="card-content">
+      @let query = searchQuery();
+      @let debounced = debouncedSearch();
+
+      <div class="config-group">
+        <div class="config-item">
+          <label for="search-input">Type to search (debounced 350ms):</label>
+          <input
+            id="search-input"
+            type="text"
+            [value]="query"
+            (input)="onSearchChange($event)"
+            placeholder="Type search terms..."
+          />
+        </div>
+        <div class="computed-grid">
+          <div class="computed-item">
+            <label>Raw Signal Input:</label>
+            <div class="data-display">{{ query }}</div>
+          </div>
+          <div class="computed-item">
+            <label>Debounced + UpperCase Signal:</label>
+            <div class="data-display highlight-on-change">{{ debounced }}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="code-example">
+        <pre><code>// Signal -> Observable -> Operators -> Signal
+searchQuery = signal('Angular 22');
+searchQuery$ = toObservable(this.searchQuery);
+
+debouncedSearch = toSignal(
+  this.searchQuery$.pipe(
+    debounceTime(350),
+    map(q => q.toUpperCase().trim()),
+  ),
+  &#123; initialValue: 'ANGULAR 22' &#125;
+);</code></pre>
       </div>
     </div>
   </div>

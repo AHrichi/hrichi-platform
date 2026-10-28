@@ -6,11 +6,12 @@ import {
   computed,
   effect,
   inject,
+  linkedSignal,
 } from '@angular/core';
 
-import { toSignal } from '@angular/core/rxjs-interop';
-import { interval, Subscription, Observable, Subject } from 'rxjs';
-import { tap, switchMap, takeUntil } from 'rxjs/operators';
+import { toSignal, toObservable, rxResource } from '@angular/core/rxjs-interop';
+import { interval, Observable, Subject, timer } from 'rxjs';
+import { tap, switchMap, takeUntil, map, debounceTime } from 'rxjs/operators';
 import { NotificationService } from '../../shared/services/notification.service';
 
 interface LogEntry {
@@ -24,6 +25,14 @@ interface Marble {
   color: string;
 }
 
+export type PlanTier = 'Starter' | 'Pro' | 'Enterprise';
+
+export interface UserProfile {
+  name: string;
+  role: string;
+  quota: string;
+}
+
 @Component({
   selector: 'app-signals',
   standalone: true,
@@ -33,12 +42,12 @@ interface Marble {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SignalsComponent {
-  // --- Writable Signals (The "Source of Truth") ---
+  // --- 1. Writable Signals (The "Source of Truth") ---
   firstName = signal('John');
   lastName = signal('Doe');
   quantity = signal(1);
 
-  // --- Computed Signals (Derived State) ---
+  // --- 2. Computed Signals (Derived State) ---
   fullName = computed(() => `${this.firstName()} ${this.lastName()}`);
   isStockLow = computed(() => this.quantity() <= 5);
   stockMessage = computed(() =>
@@ -47,12 +56,12 @@ export class SignalsComponent {
       : `${this.quantity()} in stock.`,
   );
 
-  // --- Effect (Side Effect) ---
+  // --- 3. Effect (Side Effect) ---
   logs = signal<LogEntry[]>([]);
   private logCounter = 0;
   private notificationService = inject(NotificationService);
 
-  // --- RxJS Interop: toSignal ---
+  // --- 4. RxJS Interop: toSignal ---
   private marbleCounter = 0;
   private colors = ['#f87171', '#60a5fa', '#4ade80', '#facc15', '#a78bfa'];
 
@@ -73,6 +82,69 @@ export class SignalsComponent {
 
   counterSignal = toSignal(this.counter$);
   isEven = computed(() => (this.counterSignal() ?? -1) % 2 === 0);
+
+  // --- 5. Angular 22 linkedSignal() ---
+  planTier = signal<PlanTier>('Pro');
+  computeCredits = linkedSignal<PlanTier, number>({
+    source: () => this.planTier(),
+    computation: (tier) =>
+      tier === 'Enterprise' ? 100 : tier === 'Pro' ? 25 : 5,
+  });
+
+  defaultCreditsForCurrentTier = computed(() => {
+    const tier = this.planTier();
+    return tier === 'Enterprise' ? 100 : tier === 'Pro' ? 25 : 5;
+  });
+
+  isCreditsCustomized = computed(
+    () => this.computeCredits() !== this.defaultCreditsForCurrentTier(),
+  );
+
+  // --- 6. Angular 22 rxResource() ---
+  selectedUserId = signal<number>(1);
+  userProfileResource = rxResource<UserProfile, { id: number }>({
+    params: () => ({ id: this.selectedUserId() }),
+    stream: ({ params }) => {
+      const profiles: Record<number, UserProfile> = {
+        1: {
+          name: 'Alice Martin',
+          role: 'Staff Frontend Architect',
+          quota: '85% compute used',
+        },
+        2: {
+          name: 'Bob Vance',
+          role: 'Senior Platform Engineer',
+          quota: '42% compute used',
+        },
+        3: {
+          name: 'Carol Danvers',
+          role: 'Engineering Director',
+          quota: '98% compute used',
+        },
+      };
+      return timer(500).pipe(
+        map(
+          () =>
+            profiles[params.id] ?? {
+              name: 'Guest Developer',
+              role: 'Contributor',
+              quota: '10% compute used',
+            },
+        ),
+      );
+    },
+  });
+
+  // --- 7. Bidirectional Interop: toObservable() + toSignal() ---
+  searchQuery = signal('Angular 22');
+  searchQuery$ = toObservable(this.searchQuery);
+  debouncedSearch = toSignal(
+    this.searchQuery$.pipe(
+      debounceTime(350),
+      map((q) => q.toUpperCase().trim()),
+    ),
+    { initialValue: 'ANGULAR 22' },
+  );
 
   constructor() {
     // Effect for native signals
@@ -113,6 +185,46 @@ export class SignalsComponent {
     this.quantity.update((q) => (q > 0 ? q - 1 : 0));
   }
 
+  // --- Methods for linkedSignal ---
+  selectPlanTier(tier: PlanTier) {
+    this.planTier.set(tier);
+    this.notificationService.show(
+      `Plan changed to ${tier}. Credits reset to default.`,
+      'info',
+    );
+  }
+
+  incrementCredits() {
+    this.computeCredits.update((c) => c + 5);
+  }
+
+  decrementCredits() {
+    this.computeCredits.update((c) => Math.max(0, c - 5));
+  }
+
+  resetCreditsToDefault() {
+    this.computeCredits.set(this.defaultCreditsForCurrentTier());
+    this.notificationService.show(
+      'Credits restored to plan default.',
+      'success',
+    );
+  }
+
+  // --- Methods for rxResource ---
+  selectUser(id: number) {
+    this.selectedUserId.set(id);
+  }
+
+  reloadUserResource() {
+    this.userProfileResource.reload();
+    this.notificationService.show('Reloading rxResource stream...', 'info');
+  }
+
+  // --- Methods for toObservable Search ---
+  onSearchChange(event: Event) {
+    this.searchQuery.set((event.target as HTMLInputElement).value);
+  }
+
   // --- Methods for RxJS Interop ---
   startCounter() {
     if (this.isCounterRunning()) return;
@@ -129,8 +241,6 @@ export class SignalsComponent {
   resetCounter() {
     this.stopCounter();
     this.observableMarbles.set([]);
-    // The signal will retain its last value. A more complex setup would be
-    // needed to reset it to an initial value, but this is sufficient for the demo.
   }
 
   private addMarble(value: number) {

@@ -173,6 +173,29 @@ const data = toSignal(data$, { ____: 'Loading...' });`,
       answer: 'initialValue',
       relatedRoute: '/signals',
     },
+    {
+      id: 16,
+      type: 'multiple-choice',
+      difficulty: 'Mid-level',
+      text: 'In Angular 22, which signal primitive creates a writable signal that resets to a computed default when its source changes?',
+      options: ['computed()', 'linkedSignal()', 'toSignal()', 'effect()'],
+      answer: 'linkedSignal()',
+      relatedRoute: '/signals',
+    },
+    {
+      id: 17,
+      type: 'multiple-choice',
+      difficulty: 'Senior',
+      text: 'In Angular 22, which function from @angular/core/rxjs-interop loads asynchronous data from an RxJS stream into declarative signals with automatic loading and reload capabilities?',
+      options: [
+        'toSignal()',
+        'rxResource()',
+        'toObservable()',
+        'outputFromObservable()',
+      ],
+      answer: 'rxResource()',
+      relatedRoute: '/signals',
+    },
   ];
 
   getQuestionsByDifficulty(difficulty: Difficulty): QuizQuestion[] {

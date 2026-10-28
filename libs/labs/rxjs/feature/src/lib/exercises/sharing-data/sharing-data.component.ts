@@ -4,7 +4,7 @@ import {
   ChangeDetectionStrategy,
   signal,
   inject,
-  ViewChild,
+  viewChild,
 } from '@angular/core';
 
 import { ParentToChildComponent } from './parent-to-child/parent-to-child.component';
@@ -29,9 +29,8 @@ import { ViewChildExampleComponent } from './view-child-example/view-child-examp
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SharingDataComponent {
-  // --- Child Component Instance via @ViewChild ---
-  @ViewChild(ViewChildExampleComponent)
-  childComponent!: ViewChildExampleComponent;
+  // --- Child Component Instance via modern Angular viewChild() signal query ---
+  readonly childComponent = viewChild(ViewChildExampleComponent);
 
   // --- Parent to Child (@Input) ---
   parentData = signal('Hello from Parent!');
@@ -65,7 +64,7 @@ export class SharingDataComponent {
   }
 
   triggerChildMethod() {
-    this.childComponent.highlight();
+    this.childComponent()?.highlight();
     this.notificationService.show(
       'Calling a method on the child component!',
       'info',

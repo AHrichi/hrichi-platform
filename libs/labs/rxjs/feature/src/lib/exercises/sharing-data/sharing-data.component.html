@@ -9,7 +9,7 @@
   <!-- Parent to Child Card -->
   <div class="card">
     <div class="card-header">
-      <h3>Parent to Child: <code>Input()</code></h3>
+      <h3>Parent to Child: <code>input()</code></h3>
       <p>
         The parent component passes data down to the child using an input
         binding.
@@ -46,11 +46,11 @@
           {{ showInputCode() ? 'Hide' : 'Show' }} Code
         </button>
         @if (showInputCode()) {
-          <pre><code>// parent.component.ts
-dataToSend = 'Hello Child';
+          <pre><code>// child.component.ts (Angular 22 Signal Input)
+data = input.required&lt;string&gt;();
 
-// child.component.ts
-            Input() data: string;</code></pre>
+// parent.component.html
+&lt;app-child [data]="parentData()" /&gt;</code></pre>
         }
       </div>
     </div>
@@ -59,7 +59,7 @@ dataToSend = 'Hello Child';
   <!-- Child to Parent Card -->
   <div class="card">
     <div class="card-header">
-      <h3>Child to Parent: <code>Output()</code></h3>
+      <h3>Child to Parent: <code>output()</code></h3>
       <p>The child component emits an event that the parent listens for.</p>
     </div>
     <div class="card-content">
@@ -89,12 +89,12 @@ dataToSend = 'Hello Child';
           {{ showOutputCode() ? 'Hide' : 'Show' }} Code
         </button>
         @if (showOutputCode()) {
-          <pre><code>// child.component.ts
-            Output() dataEvent = new EventEmitter&lt;string&gt;();
+          <pre><code>// child.component.ts (Angular 22 Output)
+dataEvent = output&lt;string&gt;();
 sendData() &#123; this.dataEvent.emit('Data from child'); &#125;
 
 // parent.component.html
-&lt;app-child (dataEvent)="onDataReceived($event)"&gt;&lt;/app-child&gt;</code></pre>
+&lt;app-child (dataEvent)="onDataFromChild($event)" /&gt;</code></pre>
         }
       </div>
     </div>
@@ -162,7 +162,7 @@ this.dataService.data$.subscribe(data => ...);</code></pre>
   <!-- @ViewChild Card -->
   <div class="card">
     <div class="card-header">
-      <h3>Parent to Child: <code>ViewChild()</code></h3>
+      <h3>Parent to Child: <code>viewChild()</code></h3>
       <p>
         The parent directly accesses the child component's properties and
         methods.
@@ -191,9 +191,9 @@ this.dataService.data$.subscribe(data => ...);</code></pre>
           {{ showViewChildCode() ? 'Hide' : 'Show' }} Code
         </button>
         @if (showViewChildCode()) {
-          <pre><code>// parent.component.ts
-            ViewChild(ChildComponent) child: ChildComponent;
-callChild() &#123; this.child.childMethod(); &#125;
+          <pre><code>// parent.component.ts (Angular 22 Signal Query)
+readonly child = viewChild(ChildComponent);
+callChild() &#123; this.child()?.childMethod(); &#125;
 
 // child.component.ts
 childMethod() &#123; console.log('Method called!'); &#125;</code></pre>
