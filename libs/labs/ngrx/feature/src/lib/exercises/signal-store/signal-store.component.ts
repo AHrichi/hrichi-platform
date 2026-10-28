@@ -23,7 +23,13 @@ import {
 } from '@ngrx/signals/entities';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { delay, of, pipe, switchMap, tap } from 'rxjs';
-import { AhButton, SectionHeading, Tag, type SegmentedOption } from '@ah/ui';
+import {
+  AhButton,
+  MetricCard,
+  SectionHeading,
+  Tag,
+  type SegmentedOption,
+} from '@ah/ui';
 import { UseCaseFocusComponent } from '../../shared/ui/use-case-focus/use-case-focus.component';
 
 export interface DeveloperSkill {
@@ -147,7 +153,7 @@ export const SkillsStore = signalStore(
 
 @Component({
   selector: 'ah-ngrx-signal-store',
-  imports: [SectionHeading, AhButton, Tag, UseCaseFocusComponent],
+  imports: [SectionHeading, AhButton, Tag, UseCaseFocusComponent, MetricCard],
   providers: [SkillsStore],
   template: `
     <div class="exercise-container">
@@ -165,40 +171,35 @@ export const SkillsStore = signalStore(
 
       <!-- Metrics Row (Dynamic Dark/Light Tokens with Elevation) -->
       <div class="metrics-row">
-        <div class="metric-card">
-          <div class="card-head">
-            <span class="label">Total Skills</span>
-            <span class="metric-icon">📚</span>
-          </div>
-          <span class="value">{{ store.totalCount() }}</span>
-          <span class="hint">via withEntities (ids.length)</span>
-        </div>
-        <div class="metric-card">
-          <div class="card-head">
-            <span class="label">Avg Mastery</span>
-            <span class="metric-icon">📈</span>
-          </div>
-          <span class="value">{{ store.averageMastery() }}%</span>
-          <span class="hint">withComputed auto-tracked</span>
-        </div>
-        <div class="metric-card highlight">
-          <div class="card-head">
-            <span class="label">Certified Count</span>
-            <span class="metric-icon">⭐</span>
-          </div>
-          <span class="value">{{ store.certifiedCount() }}</span>
-          <span class="hint">filtered memoized signal</span>
-        </div>
-        <div class="metric-card">
-          <div class="card-head">
-            <span class="label">Last Synced</span>
-            <span class="metric-icon">⚡</span>
-          </div>
-          <span class="value sync">{{
-            store.lastSyncTime() ?? 'Initializing...'
-          }}</span>
-          <span class="hint">live rxMethod stream</span>
-        </div>
+        <ah-metric-card
+          label="Total Skills"
+          [value]="store.totalCount()"
+          icon="📚"
+          hint="via withEntities (ids.length)"
+          variant="default"
+        />
+        <ah-metric-card
+          label="Avg Mastery"
+          [value]="store.averageMastery() + '%'"
+          icon="📈"
+          hint="withComputed auto-tracked"
+          variant="accent"
+        />
+        <ah-metric-card
+          label="Certified Count"
+          [value]="store.certifiedCount()"
+          icon="⭐"
+          hint="filtered memoized signal"
+          variant="success"
+          elevation="raised"
+        />
+        <ah-metric-card
+          label="Last Synced"
+          [value]="store.lastSyncTime() ?? 'Initializing...'"
+          icon="⚡"
+          hint="live rxMethod stream"
+          variant="default"
+        />
       </div>
 
       <div class="cards-grid">

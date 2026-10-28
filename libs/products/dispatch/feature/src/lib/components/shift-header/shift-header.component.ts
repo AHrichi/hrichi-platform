@@ -1,11 +1,11 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DispatchStore } from '../../store/dispatch.store';
-import { AhButton } from '@ah/ui';
+import { AhButton, Badge } from '@ah/ui';
 
 @Component({
   selector: 'ah-shift-header',
-  imports: [CommonModule, AhButton],
+  imports: [CommonModule, AhButton, Badge],
   template: `
     <header class="ops-header">
       <!-- Top Bar: Title, Live Time, Shift Toggle, Primary Actions -->
@@ -18,23 +18,25 @@ import { AhButton } from '@ah/ui';
             <div>
               <div class="brand-title">
                 <h1>PulseOps</h1>
-                <span
-                  class="status-dot"
-                  [class.is-cloud]="store.isCloudConnected()"
-                ></span>
-                <span class="status-text">
+                <ah-badge
+                  [variant]="store.isCloudConnected() ? 'success' : 'neutral'"
+                  [dot]="true"
+                  [pulse]="store.isCloudConnected()"
+                  size="sm"
+                >
                   {{
                     store.isCloudConnected()
                       ? 'MongoDB Cloud Active'
                       : 'Offline-Safe Mode'
                   }}
-                </span>
-                <span
-                  class="db-quota-pill"
+                </ah-badge>
+                <ah-badge
+                  variant="neutral"
+                  size="sm"
                   title="Free Cluster Quota Guard: Max 50 active orders to prevent DB overload"
                 >
                   📦 DB: {{ store.orders().length }}/50 orders
-                </span>
+                </ah-badge>
               </div>
               <p class="brand-subtitle">
                 Commercial Laundry & Dispatch Control Center · London Zones 1–4

@@ -7,9 +7,9 @@
       "scope": "api",
       "layer": "app",
       "runtime": "node",
-      "x": -0.328,
-      "y": 0.642,
-      "z": 0.674
+      "x": -0.347,
+      "y": 0.695,
+      "z": 0.61
     },
     {
       "id": "api-dispatch",
@@ -17,9 +17,9 @@
       "scope": "api",
       "layer": "feature",
       "runtime": "node",
-      "x": -0.62,
-      "y": 0.234,
-      "z": 0.727
+      "x": -0.593,
+      "y": 0.276,
+      "z": 0.735
     },
     {
       "id": "api-leads",
@@ -27,9 +27,9 @@
       "scope": "api",
       "layer": "feature",
       "runtime": "node",
-      "x": -0.061,
-      "y": 0.343,
-      "z": 0.913
+      "x": -0.051,
+      "y": 0.45,
+      "z": 0.867
     },
     {
       "id": "design-system",
@@ -37,9 +37,9 @@
       "scope": "design-system",
       "layer": "app",
       "runtime": "browser",
-      "x": -0.654,
-      "y": 0.566,
-      "z": 0.25
+      "x": -0.709,
+      "y": 0.488,
+      "z": 0.234
     },
     {
       "id": "design-system-e2e",
@@ -47,9 +47,9 @@
       "scope": "test",
       "layer": "e2e",
       "runtime": "node",
-      "x": -0.958,
-      "y": 0.082,
-      "z": 0.27
+      "x": -0.965,
+      "y": 0.003,
+      "z": 0.264
     },
     {
       "id": "design-system-tokens",
@@ -57,9 +57,9 @@
       "scope": "design-system",
       "layer": "tokens",
       "runtime": "agnostic",
-      "x": -0.85,
-      "y": 0.352,
-      "z": -0.093
+      "x": -0.873,
+      "y": 0.27,
+      "z": -0.129
     },
     {
       "id": "design-system-ui",
@@ -67,9 +67,9 @@
       "scope": "design-system",
       "layer": "ui",
       "runtime": "browser",
-      "x": 0.024,
-      "y": 0.163,
-      "z": 0.179
+      "x": 0.009,
+      "y": 0.073,
+      "z": 0.084
     },
     {
       "id": "lab-hello",
@@ -78,8 +78,8 @@
       "layer": "app",
       "runtime": "browser",
       "x": 0.714,
-      "y": 0.287,
-      "z": -0.55
+      "y": 0.299,
+      "z": -0.535
     },
     {
       "id": "lab-ngrx",
@@ -87,9 +87,9 @@
       "scope": "lab-ngrx",
       "layer": "app",
       "runtime": "browser",
-      "x": 0.663,
-      "y": 0.591,
-      "z": -0.14
+      "x": 0.671,
+      "y": 0.584,
+      "z": -0.121
     },
     {
       "id": "lab-ngrx-feature",
@@ -97,9 +97,9 @@
       "scope": "lab-ngrx",
       "layer": "feature",
       "runtime": "browser",
-      "x": 0.222,
-      "y": 0.815,
-      "z": 0.389
+      "x": 0.235,
+      "y": 0.804,
+      "z": 0.379
     },
     {
       "id": "lab-rxjs",
@@ -107,9 +107,9 @@
       "scope": "lab-rxjs",
       "layer": "app",
       "runtime": "browser",
-      "x": 0.351,
-      "y": 0.577,
-      "z": -0.538
+      "x": 0.366,
+      "y": 0.584,
+      "z": -0.517
     },
     {
       "id": "lab-rxjs-feature",
@@ -117,9 +117,9 @@
       "scope": "lab-rxjs",
       "layer": "feature",
       "runtime": "browser",
-      "x": -0.174,
-      "y": 0.898,
-      "z": -0.06
+      "x": -0.178,
+      "y": 0.891,
+      "z": -0.068
     },
     {
       "id": "lab-sky",
@@ -127,9 +127,9 @@
       "scope": "lab-sky",
       "layer": "app",
       "runtime": "browser",
-      "x": 0.571,
-      "y": -0.502,
-      "z": -0.392
+      "x": 0.569,
+      "y": -0.504,
+      "z": -0.388
     },
     {
       "id": "lab-sky-domain",
@@ -137,9 +137,9 @@
       "scope": "lab-sky",
       "layer": "domain",
       "runtime": "agnostic",
-      "x": -0.303,
-      "y": -0.887,
-      "z": -0.276
+      "x": -0.317,
+      "y": -0.879,
+      "z": -0.283
     },
     {
       "id": "lab-sky-feature",
@@ -147,9 +147,9 @@
       "scope": "lab-sky",
       "layer": "feature",
       "runtime": "browser",
-      "x": -0.524,
-      "y": -0.558,
-      "z": -0.104
+      "x": -0.52,
+      "y": -0.567,
+      "z": -0.112
     },
     {
       "id": "orbit-api",
@@ -157,9 +157,9 @@
       "scope": "orbit",
       "layer": "app",
       "runtime": "jvm",
-      "x": -0.4,
-      "y": -0.354,
-      "z": 0.845
+      "x": -0.38,
+      "y": -0.352,
+      "z": 0.853
     },
     {
       "id": "platform-app-mode",
@@ -167,9 +167,9 @@
       "scope": "platform",
       "layer": "platform",
       "runtime": "browser",
-      "x": 0.15,
-      "y": -0.648,
-      "z": -0.639
+      "x": 0.172,
+      "y": -0.657,
+      "z": -0.625
     },
     {
       "id": "platform-federation",
@@ -177,9 +177,9 @@
       "scope": "platform",
       "layer": "platform",
       "runtime": "browser",
-      "x": 0.492,
-      "y": -0.019,
-      "z": -0.634
+      "x": 0.499,
+      "y": -0.03,
+      "z": -0.635
     },
     {
       "id": "platform-inspector",
@@ -187,9 +187,9 @@
       "scope": "platform",
       "layer": "platform",
       "runtime": "browser",
-      "x": 0.124,
-      "y": 0.147,
-      "z": -0.899
+      "x": 0.161,
+      "y": 0.168,
+      "z": -0.889
     },
     {
       "id": "portfolio-feature-cv",
@@ -197,9 +197,9 @@
       "scope": "portfolio",
       "layer": "feature",
       "runtime": "browser",
-      "x": 0.574,
-      "y": 0.269,
-      "z": 0.609
+      "x": 0.732,
+      "y": -0.144,
+      "z": 0.478
     },
     {
       "id": "portfolio-feature-experience",
@@ -207,9 +207,9 @@
       "scope": "portfolio",
       "layer": "feature",
       "runtime": "browser",
-      "x": 0.855,
-      "y": -0.261,
-      "z": 0.101
+      "x": 0.885,
+      "y": -0.17,
+      "z": 0.099
     },
     {
       "id": "portfolio-feature-home",
@@ -217,9 +217,9 @@
       "scope": "portfolio",
       "layer": "feature",
       "runtime": "browser",
-      "x": 0.273,
-      "y": 0.692,
-      "z": -0.162
+      "x": 0.263,
+      "y": 0.7,
+      "z": -0.125
     },
     {
       "id": "portfolio-feature-services",
@@ -227,9 +227,9 @@
       "scope": "portfolio",
       "layer": "feature",
       "runtime": "browser",
-      "x": 0.542,
-      "y": -0.137,
-      "z": 0.624
+      "x": 0.485,
+      "y": -0.063,
+      "z": 0.674
     },
     {
       "id": "portfolio-feature-work",
@@ -237,9 +237,9 @@
       "scope": "portfolio",
       "layer": "feature",
       "runtime": "browser",
-      "x": 0.729,
-      "y": -0.307,
-      "z": 0.385
+      "x": 0.719,
+      "y": -0.386,
+      "z": 0.295
     },
     {
       "id": "portfolio-util-seo",
@@ -247,9 +247,9 @@
       "scope": "portfolio",
       "layer": "util",
       "runtime": "browser",
-      "x": 0.831,
-      "y": 0.164,
-      "z": 0.371
+      "x": 0.767,
+      "y": 0.234,
+      "z": 0.441
     },
     {
       "id": "product-dispatch",
@@ -257,9 +257,9 @@
       "scope": "product-dispatch",
       "layer": "app",
       "runtime": "browser",
-      "x": 0.229,
-      "y": -0.8,
-      "z": -0.231
+      "x": 0.23,
+      "y": -0.802,
+      "z": -0.221
     },
     {
       "id": "product-dispatch-domain",
@@ -267,9 +267,9 @@
       "scope": "product-dispatch",
       "layer": "domain",
       "runtime": "agnostic",
-      "x": -0.762,
-      "y": -0.309,
-      "z": 0.548
+      "x": -0.724,
+      "y": -0.28,
+      "z": 0.606
     },
     {
       "id": "product-dispatch-feature",
@@ -277,9 +277,9 @@
       "scope": "product-dispatch",
       "layer": "feature",
       "runtime": "browser",
-      "x": -0.279,
-      "y": -0.779,
-      "z": 0.326
+      "x": -0.278,
+      "y": -0.782,
+      "z": 0.33
     },
     {
       "id": "product-strategy",
@@ -287,9 +287,9 @@
       "scope": "product-strategy",
       "layer": "app",
       "runtime": "browser",
-      "x": 0.287,
-      "y": -0.32,
-      "z": -0.829
+      "x": 0.256,
+      "y": -0.324,
+      "z": -0.83
     },
     {
       "id": "shared-api-client",
@@ -297,9 +297,9 @@
       "scope": "shared",
       "layer": "contracts",
       "runtime": "agnostic",
-      "x": -0.598,
-      "y": -0.656,
-      "z": 0.443
+      "x": -0.616,
+      "y": -0.641,
+      "z": 0.433
     },
     {
       "id": "shared-content",
@@ -307,9 +307,9 @@
       "scope": "shared",
       "layer": "content",
       "runtime": "agnostic",
-      "x": 0.803,
-      "y": 0.189,
-      "z": -0.003
+      "x": 0.795,
+      "y": 0.2,
+      "z": 0.021
     },
     {
       "id": "shared-contracts",
@@ -317,9 +317,9 @@
       "scope": "shared",
       "layer": "contracts",
       "runtime": "agnostic",
-      "x": 0.11,
-      "y": -0.155,
-      "z": 0.956
+      "x": 0.069,
+      "y": -0.036,
+      "z": 0.974
     },
     {
       "id": "shared-site-config",
@@ -327,9 +327,9 @@
       "scope": "shared",
       "layer": "data-access",
       "runtime": "browser",
-      "x": 0.044,
-      "y": -0.717,
-      "z": 0.586
+      "x": 0.015,
+      "y": -0.676,
+      "z": 0.629
     },
     {
       "id": "shared-state",
@@ -337,9 +337,9 @@
       "scope": "shared",
       "layer": "data-access",
       "runtime": "browser",
-      "x": 0.643,
-      "y": 0.507,
-      "z": 0.331
+      "x": 0.591,
+      "y": 0.503,
+      "z": 0.415
     },
     {
       "id": "shell",
@@ -347,9 +347,9 @@
       "scope": "portfolio",
       "layer": "app",
       "runtime": "browser",
-      "x": 0.593,
-      "y": -0.07,
-      "z": -0.198
+      "x": 0.608,
+      "y": -0.09,
+      "z": -0.209
     },
     {
       "id": "shell-e2e",
@@ -357,9 +357,9 @@
       "scope": "test",
       "layer": "e2e",
       "runtime": "node",
-      "x": 0.453,
-      "y": -0.802,
-      "z": 0.142
+      "x": 0.415,
+      "y": -0.816,
+      "z": 0.164
     },
     {
       "id": "strategy-domain",
@@ -367,9 +367,9 @@
       "scope": "product-strategy",
       "layer": "domain",
       "runtime": "browser",
-      "x": -0.572,
-      "y": -0.439,
-      "z": -0.673
+      "x": -0.433,
+      "y": -0.161,
+      "z": -0.861
     },
     {
       "id": "strategy-feature",
@@ -377,9 +377,9 @@
       "scope": "product-strategy",
       "layer": "feature",
       "runtime": "browser",
-      "x": -0.193,
-      "y": -0.415,
-      "z": -0.852
+      "x": -0.223,
+      "y": -0.48,
+      "z": -0.719
     },
     {
       "id": "three-angular",
@@ -387,9 +387,9 @@
       "scope": "platform",
       "layer": "ui",
       "runtime": "browser",
-      "x": -0.645,
-      "y": 0.481,
-      "z": -0.347
+      "x": -0.652,
+      "y": 0.5,
+      "z": -0.31
     },
     {
       "id": "three-constellation",
@@ -397,9 +397,9 @@
       "scope": "platform",
       "layer": "engine",
       "runtime": "browser",
-      "x": -0.245,
-      "y": 0.782,
-      "z": -0.498
+      "x": -0.243,
+      "y": 0.794,
+      "z": -0.479
     },
     {
       "id": "three-engine",
@@ -407,9 +407,9 @@
       "scope": "platform",
       "layer": "engine",
       "runtime": "browser",
-      "x": -0.754,
-      "y": 0.093,
-      "z": -0.628
+      "x": -0.777,
+      "y": 0.104,
+      "z": -0.596
     },
     {
       "id": "three-scene-constellation",
@@ -417,9 +417,9 @@
       "scope": "platform",
       "layer": "engine",
       "runtime": "browser",
-      "x": -0.451,
-      "y": 0.493,
-      "z": -0.652
+      "x": -0.467,
+      "y": 0.51,
+      "z": -0.624
     },
     {
       "id": "three-scene-sky",
@@ -427,9 +427,9 @@
       "scope": "platform",
       "layer": "engine",
       "runtime": "browser",
-      "x": -0.905,
-      "y": -0.235,
-      "z": -0.27
+      "x": -0.881,
+      "y": -0.287,
+      "z": -0.307
     }
   ],
   "edges": [
@@ -852,6 +852,11 @@
       35,
       34,
       "implicit"
+    ],
+    [
+      37,
+      6,
+      "static"
     ],
     [
       37,

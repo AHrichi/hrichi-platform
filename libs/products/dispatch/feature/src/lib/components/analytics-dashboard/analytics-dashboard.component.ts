@@ -1,10 +1,11 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DispatchStore } from '../../store/dispatch.store';
+import { Badge, ProgressBar } from '@ah/ui';
 
 @Component({
   selector: 'ah-analytics-dashboard',
-  imports: [CommonModule],
+  imports: [CommonModule, Badge, ProgressBar],
   template: `
     <div class="analytics-wrapper">
       <div class="analytics-intro-bar">
@@ -23,7 +24,7 @@ import { DispatchStore } from '../../store/dispatch.store';
         <div class="chart-card">
           <div class="card-header">
             <h3 class="card-title">Daily Linen Throughput by Sector</h3>
-            <span class="card-tag">890 kg Total</span>
+            <ah-badge variant="neutral" size="sm">890 kg Total</ah-badge>
           </div>
 
           <div class="sector-bars">
@@ -34,9 +35,7 @@ import { DispatchStore } from '../../store/dispatch.store';
                 >
                 <span class="bar-val">490 kg (55%)</span>
               </div>
-              <div class="bar-track">
-                <div class="bar-fill fill-blue" style="width: 55%"></div>
-              </div>
+              <ah-progress-bar [value]="55" variant="accent" size="sm" />
             </div>
 
             <div class="bar-row">
@@ -46,9 +45,7 @@ import { DispatchStore } from '../../store/dispatch.store';
                 >
                 <span class="bar-val">220 kg (25%)</span>
               </div>
-              <div class="bar-track">
-                <div class="bar-fill fill-amber" style="width: 25%"></div>
-              </div>
+              <ah-progress-bar [value]="25" variant="warning" size="sm" />
             </div>
 
             <div class="bar-row">
@@ -58,9 +55,7 @@ import { DispatchStore } from '../../store/dispatch.store';
                 >
                 <span class="bar-val">110 kg (12%)</span>
               </div>
-              <div class="bar-track">
-                <div class="bar-fill fill-pink" style="width: 12%"></div>
-              </div>
+              <ah-progress-bar [value]="12" variant="primary" size="sm" />
             </div>
 
             <div class="bar-row">
@@ -70,9 +65,7 @@ import { DispatchStore } from '../../store/dispatch.store';
                 >
                 <span class="bar-val">70 kg (8%)</span>
               </div>
-              <div class="bar-track">
-                <div class="bar-fill fill-emerald" style="width: 8%"></div>
-              </div>
+              <ah-progress-bar [value]="8" variant="success" size="sm" />
             </div>
           </div>
         </div>
@@ -81,7 +74,7 @@ import { DispatchStore } from '../../store/dispatch.store';
         <div class="chart-card">
           <div class="card-header">
             <h3 class="card-title">Subcontractor Plant SLAs & Quality</h3>
-            <span class="card-tag">3 Facilities</span>
+            <ah-badge variant="neutral" size="sm">3 Facilities</ah-badge>
           </div>
 
           <div class="plants-benchmark">
@@ -93,9 +86,7 @@ import { DispatchStore } from '../../store/dispatch.store';
               <span class="b-sub"
                 >Avg Turnaround: 3.8 hrs · Defect Rate: 0.6%</span
               >
-              <div class="bench-track">
-                <div class="bench-fill" style="width: 98.4%"></div>
-              </div>
+              <ah-progress-bar [value]="98.4" variant="success" size="sm" />
             </div>
 
             <div class="benchmark-item">
@@ -106,9 +97,7 @@ import { DispatchStore } from '../../store/dispatch.store';
               <span class="b-sub"
                 >Avg Turnaround: 3.5 hrs · Defect Rate: 0.4%</span
               >
-              <div class="bench-track">
-                <div class="bench-fill" style="width: 99%"></div>
-              </div>
+              <ah-progress-bar [value]="99" variant="accent" size="sm" />
             </div>
 
             <div class="benchmark-item">
@@ -119,9 +108,7 @@ import { DispatchStore } from '../../store/dispatch.store';
               <span class="b-sub"
                 >Avg Turnaround: 4.2 hrs · Defect Rate: 0.9%</span
               >
-              <div class="bench-track">
-                <div class="bench-fill" style="width: 97.1%"></div>
-              </div>
+              <ah-progress-bar [value]="97.1" variant="success" size="sm" />
             </div>
           </div>
         </div>

@@ -60,9 +60,27 @@ export default [
               ],
             },
             {
+              sourceTag: 'scope:lab-ngrx',
+              onlyDependOnLibsWithTags: [
+                'scope:lab-ngrx',
+                'scope:shared',
+                'scope:platform',
+                'scope:design-system',
+              ],
+            },
+            {
               sourceTag: 'scope:product-strategy',
               onlyDependOnLibsWithTags: [
                 'scope:product-strategy',
+                'scope:shared',
+                'scope:platform',
+                'scope:design-system',
+              ],
+            },
+            {
+              sourceTag: 'scope:product-dispatch',
+              onlyDependOnLibsWithTags: [
+                'scope:product-dispatch',
                 'scope:shared',
                 'scope:platform',
                 'scope:design-system',

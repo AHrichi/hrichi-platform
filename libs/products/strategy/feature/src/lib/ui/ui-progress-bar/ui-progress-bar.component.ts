@@ -1,44 +1,29 @@
-import { Component, input } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  input,
+} from '@angular/core';
+import { ProgressBar, ProgressBarVariant } from '@ah/ui';
 
 @Component({
   selector: 'app-ui-progress-bar',
   standalone: true,
-  imports: [CommonModule],
+  imports: [ProgressBar],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="progress-track mt-2">
-      <div
-        class="progress-fill"
-        [ngClass]="colorClass()"
-        [class.over-budget]="isOverBudget()"
-        [style.width.%]="progress()"
-      ></div>
-    </div>
+    <ah-progress-bar
+      [value]="progress()"
+      [variant]="barVariant()"
+      [striped]="isOverBudget()"
+      size="md"
+    />
   `,
   styles: [
     `
-      .progress-track {
-        background: var(--border-light);
-        border-radius: 8px;
-        height: 8px;
-        overflow: hidden;
+      :host {
+        display: block;
         margin-top: 8px;
-      }
-      .progress-fill {
-        height: 100%;
-        border-radius: 8px;
-        transition: width 0.3s ease;
-        background: var(--primary); /* default fallback */
-
-        &.income {
-          background: var(--success);
-        }
-        &.expense {
-          background: var(--primary);
-        }
-        &.over-budget {
-          background: var(--danger);
-        }
       }
     `,
   ],
@@ -47,4 +32,10 @@ export class UiProgressBarComponent {
   progress = input.required<number>();
   colorClass = input<'income' | 'expense' | ''>('');
   isOverBudget = input<boolean>(false);
+
+  protected readonly barVariant = computed<ProgressBarVariant>(() => {
+    if (this.isOverBudget()) return 'danger';
+    if (this.colorClass() === 'income') return 'success';
+    return 'primary';
+  });
 }
