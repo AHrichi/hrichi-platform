@@ -47,7 +47,10 @@ export function getFinancialDb(): FinancialDB {
 export const db: FinancialDB = new Proxy({} as FinancialDB, {
   get(_target, prop) {
     const instance = getFinancialDb();
-    const val = (instance as any)[prop];
-    return typeof val === 'function' ? val.bind(instance) : val;
+    const key = prop as keyof FinancialDB;
+    const val = instance[key];
+    return typeof val === 'function'
+      ? (val as (...args: unknown[]) => unknown).bind(instance)
+      : val;
   },
 });

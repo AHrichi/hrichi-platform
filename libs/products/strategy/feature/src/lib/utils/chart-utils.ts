@@ -1,4 +1,4 @@
-import { Chart } from 'chart.js';
+import { Chart, ScriptableContext } from 'chart.js';
 import { GoalMilestone, ScenarioSummary } from '../store/models';
 
 export type TimeView = 'monthly' | 'yearly' | 'all';
@@ -119,9 +119,9 @@ export function aggMilestones(
   }));
 }
 
-export function trajectoryGradient(context: {
-  chart: Chart;
-}): string | CanvasGradient {
+export function trajectoryGradient(
+  context: ScriptableContext<'line'>,
+): string | CanvasGradient {
   const chart = context.chart;
   if (!chart.chartArea) return 'rgba(79, 70, 229, 0.1)';
   const gradient = chart.ctx.createLinearGradient(

@@ -1,4 +1,9 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  signal,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DispatchStore } from '../../store/dispatch.store';
@@ -9,7 +14,7 @@ import type { Driver, DriverStatus } from '@ah/products/dispatch/domain';
   imports: [CommonModule, FormsModule],
   template: `
     @if (store.showAddDriverModal()) {
-      <div class="modal-overlay" (click)="store.closeAddDriverModal()">
+      <div class="modal-overlay" (click)="closeModal()">
         <div class="modal-card" (click)="$event.stopPropagation()">
           <div class="modal-header">
             <div class="title-wrap">
@@ -24,41 +29,83 @@ import type { Driver, DriverStatus } from '@ah/products/dispatch/domain';
             <button
               type="button"
               class="close-btn"
-              (click)="store.closeAddDriverModal()"
+              (click)="closeModal()"
+              aria-label="Close modal"
             >
               ✕
             </button>
           </div>
 
-          <form class="modal-body" (ngSubmit)="submitDriver()">
+          <form class="modal-body" (ngSubmit)="submitDriver()" novalidate>
+            @if (successMessage()) {
+              <div class="form-success-banner" role="status">
+                {{ successMessage() }}
+              </div>
+            }
+
             <div class="form-grid">
               <div class="form-group full-width">
-                <label class="form-label">Driver Full Name *</label>
+                <label class="form-label" for="driver-name"
+                  >Driver Full Name *</label
+                >
                 <input
+                  id="driver-name"
                   type="text"
                   class="form-input"
+                  [class.has-error]="
+                    nameRef.invalid && (nameRef.touched || submitted())
+                  "
                   [(ngModel)]="name"
                   name="name"
+                  #nameRef="ngModel"
                   placeholder="e.g. Tariq Mahmood, James Wilson..."
                   required
+                  minlength="2"
+                  [attr.aria-invalid]="
+                    nameRef.invalid && (nameRef.touched || submitted())
+                  "
                 />
+                @if (nameRef.invalid && (nameRef.touched || submitted())) {
+                  <span class="field-error" role="alert"
+                    >Driver full name is required (min 2 characters)</span
+                  >
+                }
               </div>
 
               <div class="form-group">
-                <label class="form-label">Contact Phone / WhatsApp *</label>
+                <label class="form-label" for="driver-phone"
+                  >Contact Phone / WhatsApp *</label
+                >
                 <input
+                  id="driver-phone"
                   type="text"
                   class="form-input"
+                  [class.has-error]="
+                    phoneRef.invalid && (phoneRef.touched || submitted())
+                  "
                   [(ngModel)]="phone"
                   name="phone"
+                  #phoneRef="ngModel"
                   placeholder="e.g. +44 7700 900821"
                   required
+                  minlength="7"
+                  [attr.aria-invalid]="
+                    phoneRef.invalid && (phoneRef.touched || submitted())
+                  "
                 />
+                @if (phoneRef.invalid && (phoneRef.touched || submitted())) {
+                  <span class="field-error" role="alert"
+                    >Valid contact number is required</span
+                  >
+                }
               </div>
 
               <div class="form-group">
-                <label class="form-label">Assigned Shift *</label>
+                <label class="form-label" for="driver-shift"
+                  >Assigned Shift *</label
+                >
                 <select
+                  id="driver-shift"
                   class="form-select"
                   [(ngModel)]="activeShift"
                   name="activeShift"
@@ -70,8 +117,11 @@ import type { Driver, DriverStatus } from '@ah/products/dispatch/domain';
               </div>
 
               <div class="form-group">
-                <label class="form-label">Vehicle Make & Model *</label>
+                <label class="form-label" for="driver-vehicle"
+                  >Vehicle Make & Model *</label
+                >
                 <input
+                  id="driver-vehicle"
                   type="text"
                   class="form-input"
                   [(ngModel)]="vehicle"
@@ -82,20 +132,38 @@ import type { Driver, DriverStatus } from '@ah/products/dispatch/domain';
               </div>
 
               <div class="form-group">
-                <label class="form-label">Registration Plate *</label>
+                <label class="form-label" for="driver-reg"
+                  >Registration Plate *</label
+                >
                 <input
+                  id="driver-reg"
                   type="text"
                   class="form-input"
+                  [class.has-error]="
+                    regRef.invalid && (regRef.touched || submitted())
+                  "
                   [(ngModel)]="registration"
                   name="registration"
+                  #regRef="ngModel"
                   placeholder="e.g. LD72 XPR, VO23 GHL"
                   required
+                  [attr.aria-invalid]="
+                    regRef.invalid && (regRef.touched || submitted())
+                  "
                 />
+                @if (regRef.invalid && (regRef.touched || submitted())) {
+                  <span class="field-error" role="alert"
+                    >Registration plate is required</span
+                  >
+                }
               </div>
 
               <div class="form-group">
-                <label class="form-label">Zone Coverage *</label>
+                <label class="form-label" for="driver-zone"
+                  >Zone Coverage *</label
+                >
                 <input
+                  id="driver-zone"
                   type="text"
                   class="form-input"
                   [(ngModel)]="zone"
@@ -106,8 +174,11 @@ import type { Driver, DriverStatus } from '@ah/products/dispatch/domain';
               </div>
 
               <div class="form-group">
-                <label class="form-label">Current / Starting Location *</label>
+                <label class="form-label" for="driver-location"
+                  >Current / Starting Location *</label
+                >
                 <input
+                  id="driver-location"
                   type="text"
                   class="form-input"
                   [(ngModel)]="currentLocation"
@@ -118,8 +189,11 @@ import type { Driver, DriverStatus } from '@ah/products/dispatch/domain';
               </div>
 
               <div class="form-group">
-                <label class="form-label">Max Payload Capacity (kg) *</label>
+                <label class="form-label" for="driver-capacity"
+                  >Max Payload Capacity (kg) *</label
+                >
                 <input
+                  id="driver-capacity"
                   type="number"
                   class="form-input"
                   [(ngModel)]="capacityKg"
@@ -131,8 +205,15 @@ import type { Driver, DriverStatus } from '@ah/products/dispatch/domain';
               </div>
 
               <div class="form-group">
-                <label class="form-label">Initial Status</label>
-                <select class="form-select" [(ngModel)]="status" name="status">
+                <label class="form-label" for="driver-status"
+                  >Initial Status</label
+                >
+                <select
+                  id="driver-status"
+                  class="form-select"
+                  [(ngModel)]="status"
+                  name="status"
+                >
                   <option value="idle">Idle / Ready at Base</option>
                   <option value="on_route">Active on Route</option>
                 </select>
@@ -140,21 +221,17 @@ import type { Driver, DriverStatus } from '@ah/products/dispatch/domain';
             </div>
 
             <div class="modal-footer">
-              <button
-                type="button"
-                class="btn-cancel"
-                (click)="store.closeAddDriverModal()"
-              >
+              <button type="button" class="btn-cancel" (click)="closeModal()">
                 Cancel
               </button>
               <button
                 type="submit"
                 class="btn-submit"
-                [disabled]="
-                  !name.trim() || !phone.trim() || !registration.trim()
-                "
+                [disabled]="isSubmitting()"
               >
-                ✓ Register Van & Driver
+                {{
+                  isSubmitting() ? 'Registering...' : '✓ Register Van & Driver'
+                }}
               </button>
             </div>
           </form>
@@ -185,7 +262,7 @@ import type { Driver, DriverStatus } from '@ah/products/dispatch/domain';
       border-radius: var(--radius-xl, 1rem);
       width: 100%;
       max-width: 600px;
-      max-height: 90vh;
+      max-height: min(90dvh, 52rem);
       display: flex;
       flex-direction: column;
       box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
@@ -198,6 +275,7 @@ import type { Driver, DriverStatus } from '@ah/products/dispatch/domain';
       display: flex;
       align-items: center;
       justify-content: space-between;
+      flex-shrink: 0;
     }
 
     .title-wrap {
@@ -231,6 +309,7 @@ import type { Driver, DriverStatus } from '@ah/products/dispatch/domain';
       padding: 0.25rem 0.5rem;
       border-radius: var(--radius-md, 0.375rem);
       transition: all 0.2s;
+      flex-shrink: 0;
     }
 
     .close-btn:hover {
@@ -241,9 +320,23 @@ import type { Driver, DriverStatus } from '@ah/products/dispatch/domain';
     .modal-body {
       padding: var(--space-5, 1.25rem);
       overflow-y: auto;
+      overflow-x: hidden;
+      flex: 1 1 auto;
+      min-height: 0;
       display: flex;
       flex-direction: column;
       gap: var(--space-4, 1rem);
+    }
+
+    .form-success-banner {
+      background: rgba(34, 197, 94, 0.12);
+      border: 1px solid rgba(34, 197, 94, 0.3);
+      color: #22c55e;
+      padding: 0.75rem;
+      border-radius: var(--radius-md, 0.375rem);
+      font-weight: 600;
+      font-size: var(--text-sm, 0.875rem);
+      text-align: center;
     }
 
     .form-grid {
@@ -279,12 +372,30 @@ import type { Driver, DriverStatus } from '@ah/products/dispatch/domain';
       font-size: var(--text-sm, 0.875rem);
       color: var(--color-text-default);
       outline: none;
-      transition: border-color 0.2s;
+      transition:
+        border-color 0.2s,
+        box-shadow 0.2s;
     }
 
     .form-input:focus,
     .form-select:focus {
       border-color: var(--color-accent-blue, #0284c7);
+      box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.2);
+    }
+
+    .form-input.has-error {
+      border-color: #ef4444;
+      background: rgba(239, 68, 68, 0.04);
+    }
+
+    .form-input.has-error:focus {
+      box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);
+    }
+
+    .field-error {
+      font-size: 0.75rem;
+      color: #ef4444;
+      font-weight: 500;
     }
 
     .modal-footer {
@@ -293,6 +404,8 @@ import type { Driver, DriverStatus } from '@ah/products/dispatch/domain';
       gap: var(--space-3, 0.75rem);
       padding-top: var(--space-4, 1rem);
       border-top: 1px solid var(--color-border-default);
+      flex-shrink: 0;
+      flex-wrap: wrap;
     }
 
     .btn-cancel {
@@ -339,6 +452,9 @@ import type { Driver, DriverStatus } from '@ah/products/dispatch/domain';
       .full-width {
         grid-column: span 1;
       }
+      .modal-card {
+        max-height: 94dvh;
+      }
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -356,10 +472,29 @@ export class AddDriverModalComponent {
   activeShift: 'shift_a' | 'shift_b' = 'shift_a';
   status: DriverStatus = 'idle';
 
-  submitDriver(): void {
-    if (!this.name.trim() || !this.phone.trim() || !this.registration.trim())
-      return;
+  submitted = signal(false);
+  isSubmitting = signal(false);
+  successMessage = signal<string | null>(null);
 
+  closeModal(): void {
+    this.submitted.set(false);
+    this.successMessage.set(null);
+    this.store.closeAddDriverModal();
+  }
+
+  submitDriver(): void {
+    this.submitted.set(true);
+
+    if (
+      !this.name.trim() ||
+      this.name.trim().length < 2 ||
+      !this.phone.trim() ||
+      !this.registration.trim()
+    ) {
+      return;
+    }
+
+    this.isSubmitting.set(true);
     const newId = `DRV-${Math.floor(10 + Math.random() * 89)}`;
 
     const newDriver: Driver = {
@@ -383,9 +518,13 @@ export class AddDriverModalComponent {
 
     this.store.addDriver(newDriver);
 
-    // Reset form
-    this.name = '';
-    this.phone = '';
-    this.registration = '';
+    this.successMessage.set('✓ Driver registered successfully!');
+    setTimeout(() => {
+      this.isSubmitting.set(false);
+      this.name = '';
+      this.phone = '';
+      this.registration = '';
+      this.closeModal();
+    }, 700);
   }
 }

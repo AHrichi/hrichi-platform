@@ -100,8 +100,16 @@ export class SharingDataComponent {
     setTimeout(() => this[signalName].set(false), 1000);
   }
 
-  toggleCode(type: 'Input' | 'Output' | 'Service' | 'ViewChild') {
-    const signal = this[`show${type}Code` as keyof this] as any;
-    signal.update((value: boolean) => !value);
+  toggleCode(type: 'Input' | 'Output' | 'Service' | 'ViewChild'): void {
+    const map: Record<
+      'Input' | 'Output' | 'Service' | 'ViewChild',
+      WritableSignal<boolean>
+    > = {
+      Input: this.showInputCode,
+      Output: this.showOutputCode,
+      Service: this.showServiceCode,
+      ViewChild: this.showViewChildCode,
+    };
+    map[type].update((value) => !value);
   }
 }

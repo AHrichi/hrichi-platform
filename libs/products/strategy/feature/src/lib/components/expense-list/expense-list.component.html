@@ -12,15 +12,38 @@
           type="text"
           formControlName="name"
           placeholder="e.g., Gym, Groceries"
+          [class.has-error]="
+            expenseForm.controls.name.invalid &&
+            expenseForm.controls.name.touched
+          "
         />
+        @if (
+          expenseForm.controls.name.invalid && expenseForm.controls.name.touched
+        ) {
+          <span class="field-error">Expense name is required</span>
+        }
       </div>
 
       <div class="form-group">
         <label for="expense-amount">Amount</label>
         <div class="input-with-icon">
-          <input id="expense-amount" type="number" formControlName="amount" />
+          <input
+            id="expense-amount"
+            type="number"
+            formControlName="amount"
+            [class.has-error]="
+              expenseForm.controls.amount.invalid &&
+              expenseForm.controls.amount.touched
+            "
+          />
           <span class="currency-tag">TND</span>
         </div>
+        @if (
+          expenseForm.controls.amount.invalid &&
+          expenseForm.controls.amount.touched
+        ) {
+          <span class="field-error">Amount must be at least 1</span>
+        }
       </div>
 
       <div class="form-group">

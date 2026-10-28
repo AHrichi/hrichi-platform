@@ -246,19 +246,41 @@ import type {
               plant.
             </p>
 
-            <form class="claim-form" (ngSubmit)="submitClaim()">
-              <label class="form-label">Client Affected:</label>
+            <form class="claim-form" (ngSubmit)="submitClaim()" novalidate>
+              <label class="form-label" for="claim-client"
+                >Client Affected:</label
+              >
               <input
+                id="claim-client"
                 type="text"
                 class="form-input"
+                [class.has-error]="
+                  claimClientRef.invalid &&
+                  (claimClientRef.touched || claimSubmitted())
+                "
                 [(ngModel)]="claimClient"
                 name="claimClient"
+                #claimClientRef="ngModel"
                 placeholder="e.g. The Dorchester, Dishoom..."
                 required
+                minlength="2"
+                [attr.aria-invalid]="
+                  claimClientRef.invalid &&
+                  (claimClientRef.touched || claimSubmitted())
+                "
               />
+              @if (
+                claimClientRef.invalid &&
+                (claimClientRef.touched || claimSubmitted())
+              ) {
+                <span class="field-error" role="alert"
+                  >Client name is required</span
+                >
+              }
 
-              <label class="form-label">Defect Type:</label>
+              <label class="form-label" for="claim-defect">Defect Type:</label>
               <select
+                id="claim-defect"
                 class="form-select"
                 [(ngModel)]="claimType"
                 name="claimType"
@@ -759,6 +781,9 @@ import type {
       padding: var(--space-5, 1.25rem);
       width: 90%;
       max-width: 440px;
+      max-height: min(90dvh, 36rem);
+      overflow-y: auto;
+      overflow-x: hidden;
       display: flex;
       flex-direction: column;
       gap: 12px;
@@ -803,6 +828,17 @@ import type {
         outline: none;
         border-color: var(--color-accent-default);
       }
+
+      &.has-error {
+        border-color: #ef4444;
+        background: rgba(239, 68, 68, 0.04);
+      }
+    }
+
+    .field-error {
+      font-size: 0.72rem;
+      color: #ef4444;
+      font-weight: 500;
     }
 
     .credit-calc-box {
@@ -889,25 +925,29 @@ export class SubcontractorPlantsComponent {
   readonly Math = Math;
 
   readonly activeClaimPlantId = signal<string | null>(null);
+  readonly claimSubmitted = signal(false);
   claimClient = 'The Dorchester Mayfair';
   claimType: QualityClaim['type'] = 'stain_rewash';
   claimCount = 6;
 
   openClaimForm(plantId: string): void {
+    this.claimSubmitted.set(false);
     this.activeClaimPlantId.set(plantId);
   }
 
   submitClaim(): void {
+    this.claimSubmitted.set(true);
     const plantId = this.activeClaimPlantId();
-    if (!plantId) return;
+    if (!plantId || !this.claimClient.trim()) return;
 
     this.store.logQualityClaim(
       plantId,
-      this.claimClient,
+      this.claimClient.trim(),
       'LIN-SHT-KNG',
       this.claimCount,
       this.claimType,
     );
+    this.claimSubmitted.set(false);
     this.activeClaimPlantId.set(null);
   }
 

@@ -350,9 +350,23 @@
         <div class="form-group">
           <label for="trans-amount">Amount</label>
           <div class="input-with-icon">
-            <input id="trans-amount" type="number" formControlName="amount" />
+            <input
+              id="trans-amount"
+              type="number"
+              formControlName="amount"
+              [class.has-error]="
+                ledgerForm.controls.amount.invalid &&
+                ledgerForm.controls.amount.touched
+              "
+            />
             <span class="currency-tag">TND</span>
           </div>
+          @if (
+            ledgerForm.controls.amount.invalid &&
+            ledgerForm.controls.amount.touched
+          ) {
+            <span class="field-error">Amount must be &gt; 0</span>
+          }
         </div>
 
         <div class="form-group flex-grow">
@@ -362,7 +376,16 @@
             type="text"
             formControlName="note"
             placeholder="e.g., Groceries, Salary"
+            [class.has-error]="
+              ledgerForm.controls.note.invalid &&
+              ledgerForm.controls.note.touched
+            "
           />
+          @if (
+            ledgerForm.controls.note.invalid && ledgerForm.controls.note.touched
+          ) {
+            <span class="field-error">Note description is required</span>
+          }
         </div>
 
         <div class="form-actions form-actions-top">

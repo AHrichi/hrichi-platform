@@ -1,4 +1,9 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  signal,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DispatchStore } from '../../store/dispatch.store';
@@ -9,7 +14,7 @@ import type { SubcontractorPlant } from '@ah/products/dispatch/domain';
   imports: [CommonModule, FormsModule],
   template: `
     @if (store.showAddPlantModal()) {
-      <div class="modal-overlay" (click)="store.closeAddPlantModal()">
+      <div class="modal-overlay" (click)="closeModal()">
         <div class="modal-card" (click)="$event.stopPropagation()">
           <div class="modal-header">
             <div class="title-wrap">
@@ -24,41 +29,81 @@ import type { SubcontractorPlant } from '@ah/products/dispatch/domain';
             <button
               type="button"
               class="close-btn"
-              (click)="store.closeAddPlantModal()"
+              (click)="closeModal()"
+              aria-label="Close modal"
             >
               ✕
             </button>
           </div>
 
-          <form class="modal-body" (ngSubmit)="submitPlant()">
+          <form class="modal-body" (ngSubmit)="submitPlant()" novalidate>
+            @if (successMessage()) {
+              <div class="form-success-banner" role="status">
+                {{ successMessage() }}
+              </div>
+            }
+
             <div class="form-grid">
               <div class="form-group full-width">
-                <label class="form-label">Plant Name *</label>
+                <label class="form-label" for="plant-name">Plant Name *</label>
                 <input
+                  id="plant-name"
                   type="text"
                   class="form-input"
+                  [class.has-error]="
+                    nameRef.invalid && (nameRef.touched || submitted())
+                  "
                   [(ngModel)]="name"
                   name="name"
+                  #nameRef="ngModel"
                   placeholder="e.g. Thames Industrial Laundries, Acton Royal Wash..."
                   required
+                  minlength="2"
+                  [attr.aria-invalid]="
+                    nameRef.invalid && (nameRef.touched || submitted())
+                  "
                 />
+                @if (nameRef.invalid && (nameRef.touched || submitted())) {
+                  <span class="field-error" role="alert"
+                    >Plant name is required (min 2 characters)</span
+                  >
+                }
               </div>
 
               <div class="form-group full-width">
-                <label class="form-label">Plant Facility Address *</label>
+                <label class="form-label" for="plant-location"
+                  >Plant Facility Address *</label
+                >
                 <input
+                  id="plant-location"
                   type="text"
                   class="form-input"
+                  [class.has-error]="
+                    locRef.invalid && (locRef.touched || submitted())
+                  "
                   [(ngModel)]="location"
                   name="location"
+                  #locRef="ngModel"
                   placeholder="e.g. Unit 4, Park Royal Trading Estate, London"
                   required
+                  minlength="5"
+                  [attr.aria-invalid]="
+                    locRef.invalid && (locRef.touched || submitted())
+                  "
                 />
+                @if (locRef.invalid && (locRef.touched || submitted())) {
+                  <span class="field-error" role="alert"
+                    >Plant address is required</span
+                  >
+                }
               </div>
 
               <div class="form-group">
-                <label class="form-label">Postal Code *</label>
+                <label class="form-label" for="plant-postcode"
+                  >Postal Code *</label
+                >
                 <input
+                  id="plant-postcode"
                   type="text"
                   class="form-input"
                   [(ngModel)]="postalCode"
@@ -69,8 +114,11 @@ import type { SubcontractorPlant } from '@ah/products/dispatch/domain';
               </div>
 
               <div class="form-group">
-                <label class="form-label">Speciality Wash *</label>
+                <label class="form-label" for="plant-spec"
+                  >Speciality Wash *</label
+                >
                 <select
+                  id="plant-spec"
                   class="form-select"
                   [(ngModel)]="speciality"
                   name="speciality"
@@ -96,8 +144,11 @@ import type { SubcontractorPlant } from '@ah/products/dispatch/domain';
               </div>
 
               <div class="form-group">
-                <label class="form-label">Daily Capacity (kg) *</label>
+                <label class="form-label" for="plant-capacity"
+                  >Daily Capacity (kg) *</label
+                >
                 <input
+                  id="plant-capacity"
                   type="number"
                   class="form-input"
                   [(ngModel)]="dailyCapacityKg"
@@ -109,32 +160,53 @@ import type { SubcontractorPlant } from '@ah/products/dispatch/domain';
               </div>
 
               <div class="form-group">
-                <label class="form-label">Plant Manager / Contact *</label>
+                <label class="form-label" for="plant-contact"
+                  >Plant Manager / Contact</label
+                >
                 <input
+                  id="plant-contact"
                   type="text"
                   class="form-input"
                   [(ngModel)]="contactPerson"
                   name="contactPerson"
                   placeholder="e.g. Vikram Sharma, Dave Mitchell"
-                  required
                 />
               </div>
 
               <div class="form-group">
-                <label class="form-label">Production Phone / WhatsApp *</label>
+                <label class="form-label" for="plant-phone"
+                  >Production Phone / WhatsApp *</label
+                >
                 <input
+                  id="plant-phone"
                   type="text"
                   class="form-input"
+                  [class.has-error]="
+                    phoneRef.invalid && (phoneRef.touched || submitted())
+                  "
                   [(ngModel)]="phone"
                   name="phone"
+                  #phoneRef="ngModel"
                   placeholder="e.g. +44 20 8965 4100"
                   required
+                  minlength="7"
+                  [attr.aria-invalid]="
+                    phoneRef.invalid && (phoneRef.touched || submitted())
+                  "
                 />
+                @if (phoneRef.invalid && (phoneRef.touched || submitted())) {
+                  <span class="field-error" role="alert"
+                    >Valid contact number is required</span
+                  >
+                }
               </div>
 
               <div class="form-group">
-                <label class="form-label">Dispatch Email</label>
+                <label class="form-label" for="plant-email"
+                  >Dispatch Email</label
+                >
                 <input
+                  id="plant-email"
                   type="email"
                   class="form-input"
                   [(ngModel)]="email"
@@ -145,19 +217,19 @@ import type { SubcontractorPlant } from '@ah/products/dispatch/domain';
             </div>
 
             <div class="modal-footer">
-              <button
-                type="button"
-                class="btn-cancel"
-                (click)="store.closeAddPlantModal()"
-              >
+              <button type="button" class="btn-cancel" (click)="closeModal()">
                 Cancel
               </button>
               <button
                 type="submit"
                 class="btn-submit"
-                [disabled]="!name.trim() || !location.trim() || !phone.trim()"
+                [disabled]="isSubmitting()"
               >
-                ✓ Connect Subcontractor Plant
+                {{
+                  isSubmitting()
+                    ? 'Connecting...'
+                    : '✓ Connect Subcontractor Plant'
+                }}
               </button>
             </div>
           </form>
@@ -188,7 +260,7 @@ import type { SubcontractorPlant } from '@ah/products/dispatch/domain';
       border-radius: var(--radius-xl, 1rem);
       width: 100%;
       max-width: 600px;
-      max-height: 90vh;
+      max-height: min(90dvh, 52rem);
       display: flex;
       flex-direction: column;
       box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
@@ -201,6 +273,7 @@ import type { SubcontractorPlant } from '@ah/products/dispatch/domain';
       display: flex;
       align-items: center;
       justify-content: space-between;
+      flex-shrink: 0;
     }
 
     .title-wrap {
@@ -234,6 +307,7 @@ import type { SubcontractorPlant } from '@ah/products/dispatch/domain';
       padding: 0.25rem 0.5rem;
       border-radius: var(--radius-md, 0.375rem);
       transition: all 0.2s;
+      flex-shrink: 0;
     }
 
     .close-btn:hover {
@@ -244,9 +318,23 @@ import type { SubcontractorPlant } from '@ah/products/dispatch/domain';
     .modal-body {
       padding: var(--space-5, 1.25rem);
       overflow-y: auto;
+      overflow-x: hidden;
+      flex: 1 1 auto;
+      min-height: 0;
       display: flex;
       flex-direction: column;
       gap: var(--space-4, 1rem);
+    }
+
+    .form-success-banner {
+      background: rgba(34, 197, 94, 0.12);
+      border: 1px solid rgba(34, 197, 94, 0.3);
+      color: #22c55e;
+      padding: 0.75rem;
+      border-radius: var(--radius-md, 0.375rem);
+      font-weight: 600;
+      font-size: var(--text-sm, 0.875rem);
+      text-align: center;
     }
 
     .form-grid {
@@ -282,12 +370,30 @@ import type { SubcontractorPlant } from '@ah/products/dispatch/domain';
       font-size: var(--text-sm, 0.875rem);
       color: var(--color-text-default);
       outline: none;
-      transition: border-color 0.2s;
+      transition:
+        border-color 0.2s,
+        box-shadow 0.2s;
     }
 
     .form-input:focus,
     .form-select:focus {
       border-color: var(--color-accent-blue, #0284c7);
+      box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.2);
+    }
+
+    .form-input.has-error {
+      border-color: #ef4444;
+      background: rgba(239, 68, 68, 0.04);
+    }
+
+    .form-input.has-error:focus {
+      box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);
+    }
+
+    .field-error {
+      font-size: 0.75rem;
+      color: #ef4444;
+      font-weight: 500;
     }
 
     .modal-footer {
@@ -296,6 +402,8 @@ import type { SubcontractorPlant } from '@ah/products/dispatch/domain';
       gap: var(--space-3, 0.75rem);
       padding-top: var(--space-4, 1rem);
       border-top: 1px solid var(--color-border-default);
+      flex-shrink: 0;
+      flex-wrap: wrap;
     }
 
     .btn-cancel {
@@ -342,6 +450,9 @@ import type { SubcontractorPlant } from '@ah/products/dispatch/domain';
       .full-width {
         grid-column: span 1;
       }
+      .modal-card {
+        max-height: 94dvh;
+      }
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -358,10 +469,29 @@ export class AddPlantModalComponent {
   phone = '';
   email = '';
 
-  submitPlant(): void {
-    if (!this.name.trim() || !this.location.trim() || !this.phone.trim())
-      return;
+  submitted = signal(false);
+  isSubmitting = signal(false);
+  successMessage = signal<string | null>(null);
 
+  closeModal(): void {
+    this.submitted.set(false);
+    this.successMessage.set(null);
+    this.store.closeAddPlantModal();
+  }
+
+  submitPlant(): void {
+    this.submitted.set(true);
+
+    if (
+      !this.name.trim() ||
+      this.name.trim().length < 2 ||
+      !this.location.trim() ||
+      !this.phone.trim()
+    ) {
+      return;
+    }
+
+    this.isSubmitting.set(true);
     const newId = `plant-${Math.floor(100 + Math.random() * 899)}`;
 
     const newPlant: SubcontractorPlant = {
@@ -384,10 +514,14 @@ export class AddPlantModalComponent {
 
     this.store.addSubcontractor(newPlant);
 
-    // Reset form
-    this.name = '';
-    this.location = '';
-    this.contactPerson = '';
-    this.phone = '';
+    this.successMessage.set('✓ Partner laundry facility connected!');
+    setTimeout(() => {
+      this.isSubmitting.set(false);
+      this.name = '';
+      this.location = '';
+      this.contactPerson = '';
+      this.phone = '';
+      this.closeModal();
+    }, 700);
   }
 }

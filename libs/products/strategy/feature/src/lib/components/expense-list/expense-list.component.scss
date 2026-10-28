@@ -64,6 +64,18 @@
         box-shadow: 0 0 0 3px var(--primary-light);
         background: var(--surface);
       }
+
+      &.has-error {
+        border-color: #ef4444;
+        background: rgba(239, 68, 68, 0.05);
+      }
+    }
+
+    .field-error {
+      font-size: 0.75rem;
+      color: #ef4444;
+      font-weight: 500;
+      margin-top: 0.25rem;
     }
 
     .input-with-icon {
@@ -351,25 +363,27 @@
 /* --- NEW: Modal Styles --- */
 .modal-backdrop {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  inset: 0;
   background: rgba(0, 0, 0, 0.4);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
   backdrop-filter: blur(4px);
+  padding: 1rem;
   animation: fadeIn 0.2s ease-out;
 }
 
 .modal-content {
   background: var(--surface);
-  padding: 2rem;
+  padding: 1.5rem;
   border-radius: 20px;
-  width: 90%;
+  width: 100%;
   max-width: 420px;
+  max-height: min(90dvh, 36rem);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
   border: 1px solid var(--border-light);
 
@@ -377,12 +391,14 @@
     margin-top: 0;
     color: var(--text-main);
     font-size: 1.25rem;
+    flex-shrink: 0;
   }
 
   p {
     color: var(--text-muted);
     font-size: 0.95rem;
     margin-bottom: 1.25rem;
+    flex-shrink: 0;
   }
 }
 
@@ -390,9 +406,11 @@
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-  margin-bottom: 2rem;
-  max-height: 250px;
+  margin-bottom: 1.25rem;
+  flex: 1 1 auto;
+  min-height: 0;
   overflow-y: auto;
+  overflow-x: hidden;
   padding-right: 0.5rem;
 
   &::-webkit-scrollbar {

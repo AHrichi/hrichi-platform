@@ -14,7 +14,7 @@ import type { Order, ClientSector } from '@ah/products/dispatch/domain';
   imports: [CommonModule, FormsModule],
   template: `
     @if (store.showAddOrderModal()) {
-      <div class="modal-overlay" (click)="store.closeAddOrderModal()">
+      <div class="modal-overlay" (click)="closeModal()">
         <div class="modal-card" (click)="$event.stopPropagation()">
           <div class="modal-header">
             <div class="title-wrap">
@@ -29,29 +29,53 @@ import type { Order, ClientSector } from '@ah/products/dispatch/domain';
             <button
               type="button"
               class="close-btn"
-              (click)="store.closeAddOrderModal()"
+              (click)="closeModal()"
+              aria-label="Close modal"
             >
               ✕
             </button>
           </div>
 
-          <form class="modal-body" (ngSubmit)="submitOrder()">
+          <form class="modal-body" (ngSubmit)="submitOrder()" novalidate>
+            @if (successMessage()) {
+              <div class="form-success-banner" role="status">
+                {{ successMessage() }}
+              </div>
+            }
+
             <div class="form-grid">
               <div class="form-group full-width">
-                <label class="form-label">Client Name *</label>
+                <label class="form-label" for="order-client"
+                  >Client Name *</label
+                >
                 <input
+                  id="order-client"
                   type="text"
                   class="form-input"
+                  [class.has-error]="
+                    clientRef.invalid && (clientRef.touched || submitted())
+                  "
                   [(ngModel)]="clientName"
                   name="clientName"
+                  #clientRef="ngModel"
                   placeholder="e.g. The Claridge's Hotel London, Hawksmoor Guildhall..."
                   required
+                  minlength="2"
+                  [attr.aria-invalid]="
+                    clientRef.invalid && (clientRef.touched || submitted())
+                  "
                 />
+                @if (clientRef.invalid && (clientRef.touched || submitted())) {
+                  <span class="field-error" role="alert"
+                    >Client / venue name is required</span
+                  >
+                }
               </div>
 
               <div class="form-group">
-                <label class="form-label">Sector *</label>
+                <label class="form-label" for="order-sector">Sector *</label>
                 <select
+                  id="order-sector"
                   class="form-select"
                   [(ngModel)]="clientSector"
                   name="clientSector"
@@ -66,8 +90,9 @@ import type { Order, ClientSector } from '@ah/products/dispatch/domain';
               </div>
 
               <div class="form-group">
-                <label class="form-label">Zone / Area *</label>
+                <label class="form-label" for="order-zone">Zone / Area *</label>
                 <input
+                  id="order-zone"
                   type="text"
                   class="form-input"
                   [(ngModel)]="zone"
@@ -78,20 +103,41 @@ import type { Order, ClientSector } from '@ah/products/dispatch/domain';
               </div>
 
               <div class="form-group full-width">
-                <label class="form-label">Delivery Address *</label>
+                <label class="form-label" for="order-address"
+                  >Delivery Address *</label
+                >
                 <input
+                  id="order-address"
                   type="text"
                   class="form-input"
+                  [class.has-error]="
+                    addressRef.invalid && (addressRef.touched || submitted())
+                  "
                   [(ngModel)]="address"
                   name="address"
+                  #addressRef="ngModel"
                   placeholder="e.g. Brook St, Mayfair, London W1K 4HR"
                   required
+                  minlength="5"
+                  [attr.aria-invalid]="
+                    addressRef.invalid && (addressRef.touched || submitted())
+                  "
                 />
+                @if (
+                  addressRef.invalid && (addressRef.touched || submitted())
+                ) {
+                  <span class="field-error" role="alert"
+                    >A complete delivery address is required</span
+                  >
+                }
               </div>
 
               <div class="form-group">
-                <label class="form-label">Target Delivery Window *</label>
+                <label class="form-label" for="order-window"
+                  >Target Delivery Window *</label
+                >
                 <input
+                  id="order-window"
                   type="text"
                   class="form-input"
                   [(ngModel)]="targetWindow"
@@ -102,8 +148,11 @@ import type { Order, ClientSector } from '@ah/products/dispatch/domain';
               </div>
 
               <div class="form-group">
-                <label class="form-label">SLA Cutoff Time (24h) *</label>
+                <label class="form-label" for="order-sla"
+                  >SLA Cutoff Time (24h) *</label
+                >
                 <input
+                  id="order-sla"
                   type="text"
                   class="form-input"
                   [(ngModel)]="slaDeadline"
@@ -114,33 +163,66 @@ import type { Order, ClientSector } from '@ah/products/dispatch/domain';
               </div>
 
               <div class="form-group">
-                <label class="form-label">Total Linen Weight (kg) *</label>
+                <label class="form-label" for="order-weight"
+                  >Total Linen Weight (kg) *</label
+                >
                 <input
+                  id="order-weight"
                   type="number"
                   class="form-input"
+                  [class.has-error]="
+                    weightRef.invalid && (weightRef.touched || submitted())
+                  "
                   [(ngModel)]="totalWeightKg"
                   name="totalWeightKg"
+                  #weightRef="ngModel"
                   min="5"
                   max="1000"
                   required
+                  [attr.aria-invalid]="
+                    weightRef.invalid && (weightRef.touched || submitted())
+                  "
                 />
+                @if (weightRef.invalid && (weightRef.touched || submitted())) {
+                  <span class="field-error" role="alert"
+                    >Weight must be between 5 and 1,000 kg</span
+                  >
+                }
               </div>
 
               <div class="form-group">
-                <label class="form-label">Linen Description *</label>
+                <label class="form-label" for="order-items"
+                  >Linen Description *</label
+                >
                 <input
+                  id="order-items"
                   type="text"
                   class="form-input"
+                  [class.has-error]="
+                    itemsRef.invalid && (itemsRef.touched || submitted())
+                  "
                   [(ngModel)]="itemsSummary"
                   name="itemsSummary"
+                  #itemsRef="ngModel"
                   placeholder="e.g. 50x King Sheets, 50x Duvets, 100x Bath Sheets"
                   required
+                  [attr.aria-invalid]="
+                    itemsRef.invalid && (itemsRef.touched || submitted())
+                  "
                 />
+                @if (itemsRef.invalid && (itemsRef.touched || submitted())) {
+                  <span class="field-error" role="alert"
+                    >Linen items summary is required</span
+                  >
+                }
               </div>
 
               <div class="form-group">
-                <label class="form-label">Assign Driver</label>
+                <label class="form-label" for="order-driver"
+                  >Assign Driver</label
+                >
                 <select
+                  id="order-driver"
                   class="form-select"
                   [(ngModel)]="assignedDriverId"
                   name="assignedDriverId"
@@ -155,8 +237,11 @@ import type { Order, ClientSector } from '@ah/products/dispatch/domain';
               </div>
 
               <div class="form-group">
-                <label class="form-label">Assign Subcontract Plant</label>
+                <label class="form-label" for="order-plant"
+                  >Assign Subcontract Plant</label
+                >
                 <select
+                  id="order-plant"
                   class="form-select"
                   [(ngModel)]="assignedPlantId"
                   name="assignedPlantId"
@@ -169,10 +254,11 @@ import type { Order, ClientSector } from '@ah/products/dispatch/domain';
               </div>
 
               <div class="form-group full-width">
-                <label class="form-label"
+                <label class="form-label" for="order-notes"
                   >Special Delivery / Access Instructions</label
                 >
                 <input
+                  id="order-notes"
                   type="text"
                   class="form-input"
                   [(ngModel)]="specialInstructions"
@@ -194,19 +280,15 @@ import type { Order, ClientSector } from '@ah/products/dispatch/domain';
             </div>
 
             <div class="modal-footer">
-              <button
-                type="button"
-                class="btn-cancel"
-                (click)="store.closeAddOrderModal()"
-              >
+              <button type="button" class="btn-cancel" (click)="closeModal()">
                 Cancel
               </button>
               <button
                 type="submit"
                 class="btn-submit"
-                [disabled]="!clientName.trim() || !address.trim()"
+                [disabled]="isSubmitting()"
               >
-                ✓ Add Order to Kanban
+                {{ isSubmitting() ? 'Adding...' : '✓ Add Order to Kanban' }}
               </button>
             </div>
           </form>
@@ -237,7 +319,7 @@ import type { Order, ClientSector } from '@ah/products/dispatch/domain';
       border-radius: var(--radius-xl, 1rem);
       width: 100%;
       max-width: 620px;
-      max-height: 90vh;
+      max-height: min(90dvh, 52rem);
       display: flex;
       flex-direction: column;
       box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
@@ -250,6 +332,7 @@ import type { Order, ClientSector } from '@ah/products/dispatch/domain';
       display: flex;
       align-items: center;
       justify-content: space-between;
+      flex-shrink: 0;
     }
 
     .title-wrap {
@@ -280,14 +363,29 @@ import type { Order, ClientSector } from '@ah/products/dispatch/domain';
       font-size: 1.25rem;
       color: var(--color-text-muted);
       cursor: pointer;
+      flex-shrink: 0;
     }
 
     .modal-body {
       padding: var(--space-4, 1rem) var(--space-5, 1.25rem);
       overflow-y: auto;
+      overflow-x: hidden;
+      flex: 1 1 auto;
+      min-height: 0;
       display: flex;
       flex-direction: column;
       gap: var(--space-4, 1rem);
+    }
+
+    .form-success-banner {
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: #10b981;
+      padding: 0.75rem;
+      border-radius: var(--radius-md, 0.5rem);
+      font-weight: 600;
+      font-size: var(--text-sm, 0.875rem);
+      text-align: center;
     }
 
     .form-grid {
@@ -320,11 +418,30 @@ import type { Order, ClientSector } from '@ah/products/dispatch/domain';
       padding: 9px 12px;
       font-size: 0.8125rem;
       color: var(--color-text-default);
+      transition:
+        border-color 0.2s,
+        box-shadow 0.2s;
 
       &:focus {
         outline: none;
         border-color: var(--color-accent-default);
+        box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.2);
       }
+    }
+
+    .form-input.has-error {
+      border-color: #ef4444;
+      background: rgba(239, 68, 68, 0.04);
+    }
+
+    .form-input.has-error:focus {
+      box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);
+    }
+
+    .field-error {
+      font-size: 0.75rem;
+      color: #ef4444;
+      font-weight: 500;
     }
 
     .checkbox-row {
@@ -346,6 +463,8 @@ import type { Order, ClientSector } from '@ah/products/dispatch/domain';
       justify-content: flex-end;
       gap: 10px;
       margin-top: 8px;
+      flex-shrink: 0;
+      flex-wrap: wrap;
     }
 
     .btn-cancel {
@@ -387,6 +506,9 @@ import type { Order, ClientSector } from '@ah/products/dispatch/domain';
       .full-width {
         grid-column: span 1;
       }
+      .modal-card {
+        max-height: 94dvh;
+      }
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -407,9 +529,30 @@ export class AddOrderModalComponent {
   specialInstructions = '';
   isEmergency = false;
 
-  submitOrder(): void {
-    if (!this.clientName.trim() || !this.address.trim()) return;
+  submitted = signal(false);
+  isSubmitting = signal(false);
+  successMessage = signal<string | null>(null);
 
+  closeModal(): void {
+    this.submitted.set(false);
+    this.successMessage.set(null);
+    this.store.closeAddOrderModal();
+  }
+
+  submitOrder(): void {
+    this.submitted.set(true);
+
+    if (
+      !this.clientName.trim() ||
+      this.clientName.trim().length < 2 ||
+      !this.address.trim() ||
+      this.address.trim().length < 5 ||
+      !this.itemsSummary.trim()
+    ) {
+      return;
+    }
+
+    this.isSubmitting.set(true);
     const newId = `ORD-${Math.floor(8420 + Math.random() * 80)}`;
     const nowHhMm = new Date().toLocaleTimeString('en-GB', {
       hour: '2-digit',
@@ -445,9 +588,13 @@ export class AddOrderModalComponent {
 
     this.store.addOrder(newOrder);
 
-    // Reset form
-    this.clientName = '';
-    this.address = '';
-    this.specialInstructions = '';
+    this.successMessage.set(`✓ Order ${newId} added to Intake queue!`);
+    setTimeout(() => {
+      this.isSubmitting.set(false);
+      this.clientName = '';
+      this.address = '';
+      this.specialInstructions = '';
+      this.closeModal();
+    }, 700);
   }
 }

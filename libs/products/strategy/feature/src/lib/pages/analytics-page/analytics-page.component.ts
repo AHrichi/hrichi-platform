@@ -133,7 +133,7 @@ export class AnalyticsPageComponent {
           data: agg.data,
           label: 'Projected Capital',
           borderColor: '#4f46e5',
-          backgroundColor: trajectoryGradient as any,
+          backgroundColor: trajectoryGradient,
           fill: true,
           tension: view === 'all' ? 0 : 0.4,
           pointRadius: (ctx) => {

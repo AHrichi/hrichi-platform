@@ -1,6 +1,6 @@
 import { Component, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FinancialStore, Goal } from '../../financial.store';
+import { FinancialStore, Goal, Transaction } from '../../financial.store';
 import { TransactionLedgerComponent } from '../../components/transaction-ledger/transaction-ledger.component';
 
 @Component({
@@ -62,7 +62,7 @@ export class LedgerPageComponent {
     return result;
   });
 
-  handleAddTransaction(txn: any) {
+  handleAddTransaction(txn: Omit<Transaction, 'id'>) {
     const prevAchieved = this.store
       .realityGoalProgress()
       .filter((g) => g.status === 'achieved').length;

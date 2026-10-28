@@ -4,6 +4,7 @@ import { RouterLink } from '@angular/router';
 import { FinancialStore } from '../../financial.store';
 import { ThemeService } from '../../services/theme.service';
 import { fmtCurrency } from '../../utils/chart-utils';
+import { ChartConfiguration } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 
 @Component({
@@ -95,7 +96,7 @@ export class NetWorthPageComponent {
     ],
   }));
 
-  readonly chartOptions: any = {
+  readonly chartOptions: ChartConfiguration<'line'>['options'] = {
     responsive: true,
     maintainAspectRatio: false,
     plugins: { legend: { display: false } },
@@ -104,7 +105,8 @@ export class NetWorthPageComponent {
       y: {
         grid: { color: 'rgba(0,0,0,0.06)' },
         ticks: {
-          callback: (v: any) => (typeof v === 'number' ? fmtCurrency(v) : v),
+          callback: (v: string | number) =>
+            typeof v === 'number' ? fmtCurrency(v) : v,
         },
       },
     },

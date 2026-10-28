@@ -127,6 +127,7 @@ import { DispatchStore } from '../../store/dispatch.store';
       border-radius: var(--radius-xl, 1rem);
       width: 100%;
       max-width: 520px;
+      max-height: min(90dvh, 52rem);
       display: flex;
       flex-direction: column;
       box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
@@ -139,6 +140,7 @@ import { DispatchStore } from '../../store/dispatch.store';
       display: flex;
       align-items: center;
       justify-content: space-between;
+      flex-shrink: 0;
     }
 
     .title-wrap {
@@ -173,6 +175,10 @@ import { DispatchStore } from '../../store/dispatch.store';
 
     .modal-body {
       padding: var(--space-4, 1rem) var(--space-5, 1.25rem);
+      overflow-y: auto;
+      overflow-x: hidden;
+      flex: 1 1 auto;
+      min-height: 0;
       display: flex;
       flex-direction: column;
       gap: var(--space-4, 1rem);
@@ -300,6 +306,8 @@ import { DispatchStore } from '../../store/dispatch.store';
       display: flex;
       justify-content: flex-end;
       background: var(--color-bg-surface);
+      flex-shrink: 0;
+      flex-wrap: wrap;
     }
 
     .btn-close {

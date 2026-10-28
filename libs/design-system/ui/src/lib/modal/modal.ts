@@ -89,7 +89,7 @@ export type ModalSize = 'sm' | 'md' | 'lg' | 'xl';
       z-index: 9999;
       display: flex;
       flex-direction: column;
-      max-block-size: min(90vh, 52rem);
+      max-block-size: min(90dvh, 52rem);
       inline-size: min(92vw, 36rem);
       background: var(--color-bg-surface);
       border: 1px solid var(--color-border-default);
@@ -124,12 +124,15 @@ export type ModalSize = 'sm' | 'md' | 'lg' | 'xl';
       padding: var(--space-5);
       border-block-end: 1px solid var(--color-border-default);
       background: var(--color-bg-raised);
+      flex-shrink: 0;
     }
 
     .ah-modal-title-wrap {
       display: flex;
       flex-direction: column;
       gap: var(--space-1);
+      min-width: 0;
+      overflow-wrap: break-word;
     }
 
     .ah-modal-title {
@@ -138,6 +141,7 @@ export type ModalSize = 'sm' | 'md' | 'lg' | 'xl';
       font-weight: var(--font-weight-bold);
       color: var(--color-text-default);
       line-height: var(--font-line-height-snug);
+      overflow-wrap: break-word;
     }
 
     .ah-modal-close-btn {
@@ -154,6 +158,7 @@ export type ModalSize = 'sm' | 'md' | 'lg' | 'xl';
       cursor: pointer;
       font-size: 0.9rem;
       transition: all var(--motion-duration-fast) ease;
+      flex-shrink: 0;
     }
 
     .ah-modal-close-btn:hover {
@@ -170,10 +175,13 @@ export type ModalSize = 'sm' | 'md' | 'lg' | 'xl';
     .ah-modal-body {
       padding: var(--space-5);
       overflow-y: auto;
-      flex: 1;
+      overflow-x: hidden;
+      flex: 1 1 auto;
+      min-block-size: 0;
       display: flex;
       flex-direction: column;
       gap: var(--space-4);
+      overflow-wrap: break-word;
     }
 
     .ah-modal-footer {
@@ -185,6 +193,8 @@ export type ModalSize = 'sm' | 'md' | 'lg' | 'xl';
       padding-inline: var(--space-5);
       border-block-start: 1px solid var(--color-border-default);
       background: var(--color-bg-raised);
+      flex-shrink: 0;
+      flex-wrap: wrap;
     }
 
     .ah-modal-footer:empty {

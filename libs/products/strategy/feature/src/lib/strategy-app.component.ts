@@ -22,6 +22,15 @@ import { FinancialStore, Account, Transaction } from './financial.store';
 import { CalculatorWidgetComponent } from './components/calculator-widget/calculator-widget.component';
 import { FloatingScenarioWidgetComponent } from './components/floating-scenario-widget/floating-scenario-widget.component';
 
+interface ElectronWindow extends Window {
+  require?: (module: string) => {
+    ipcRenderer?: {
+      on: (channel: string, listener: (...args: unknown[]) => void) => void;
+      send: (channel: string, ...args: unknown[]) => void;
+    };
+  };
+}
+
 @Component({
   selector: 'ah-strategy-app',
   standalone: true,
@@ -120,10 +129,13 @@ export class StrategyAppComponent {
 
   constructor() {
     try {
-      const ipc = (window as any).require?.('electron')?.ipcRenderer;
+      const electronWindow = window as unknown as ElectronWindow;
+      const ipc = electronWindow.require?.('electron')?.ipcRenderer;
       if (ipc) {
-        ipc.on('app:navigate', (_event: unknown, path: string) => {
-          this.router.navigate([path], { relativeTo: this.route });
+        ipc.on('app:navigate', (_event: unknown, path: unknown) => {
+          if (typeof path === 'string') {
+            this.router.navigate([path], { relativeTo: this.route });
+          }
         });
       }
     } catch {}
@@ -141,7 +153,8 @@ export class StrategyAppComponent {
         .reverse();
       const lastDate = dates.length > 0 ? dates[0] : '';
       try {
-        const ipc = (window as any).require?.('electron')?.ipcRenderer;
+        const electronWindow = window as unknown as ElectronWindow;
+        const ipc = electronWindow.require?.('electron')?.ipcRenderer;
         if (ipc) ipc.send('daily-reminder:update', { lastDate });
       } catch {}
 

@@ -1,5 +1,10 @@
 // src/app/exercises/transforming-streams/transforming-streams.component.ts
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  signal,
+  WritableSignal,
+} from '@angular/core';
 
 import { Subject, Observable, timer, interval, Subscription } from 'rxjs';
 import {
@@ -37,6 +42,14 @@ interface StreamLog {
 }
 
 type OperatorType = 'concatMap' | 'switchMap' | 'mergeMap' | 'exhaustMap';
+
+interface SignalMap {
+  SourceMarbles: WritableSignal<Marble[]>;
+  InnerStreams: WritableSignal<InnerStream[]>;
+  OutputMarbles: WritableSignal<Marble[]>;
+  AllOutputMarbles: WritableSignal<Marble[]>;
+  Logs: WritableSignal<StreamLog[]>;
+}
 
 @Component({
   selector: 'app-transforming-streams',
@@ -283,15 +296,12 @@ source$.pipe(
     );
   }
 
-  private getSignal<
-    T extends
-      | 'SourceMarbles'
-      | 'InnerStreams'
-      | 'OutputMarbles'
-      | 'AllOutputMarbles'
-      | 'Logs',
-  >(strategy: OperatorType, type: T): any {
-    return this[`${strategy}${type}` as keyof this];
+  private getSignal<T extends keyof SignalMap>(
+    strategy: OperatorType,
+    type: T,
+  ): SignalMap[T] {
+    const key = `${strategy}${type}` as keyof this;
+    return this[key] as unknown as SignalMap[T];
   }
 
   private addLog(strategy: OperatorType, message: string, color: string) {
@@ -366,11 +376,14 @@ source$.pipe(
     });
   }
 
-  toggleCode(strategy: OperatorType) {
-    const signal = this[
-      `show${strategy.charAt(0).toUpperCase() + strategy.slice(1)}Code` as keyof this
-    ] as any;
-    signal.update((value: boolean) => !value);
+  toggleCode(strategy: OperatorType): void {
+    const map: Record<OperatorType, WritableSignal<boolean>> = {
+      concatMap: this.showConcatMapCode,
+      switchMap: this.showSwitchMapCode,
+      mergeMap: this.showMergeMapCode,
+      exhaustMap: this.showExhaustMapCode,
+    };
+    map[strategy].update((value) => !value);
   }
 
   onSourceEmissionsChange(event: Event) {

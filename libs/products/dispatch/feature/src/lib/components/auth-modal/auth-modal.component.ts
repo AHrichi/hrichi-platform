@@ -152,20 +152,41 @@ import type { CurrentDispatchUser } from '../../store/dispatch.state';
                 <form class="actual-form" (ngSubmit)="handleAuthSubmit()">
                   @if (isRegisterMode()) {
                     <div class="form-group">
-                      <label class="form-label">Full Name *</label>
+                      <label class="form-label" for="reg-name"
+                        >Full Name *</label
+                      >
                       <input
+                        id="reg-name"
                         type="text"
                         class="form-input"
+                        [class.has-error]="
+                          nameRef.invalid &&
+                          (nameRef.touched || authSubmitted())
+                        "
                         [(ngModel)]="name"
                         name="name"
+                        #nameRef="ngModel"
                         placeholder="e.g. Tariq Mahmood"
                         required
+                        minlength="2"
+                        [attr.aria-invalid]="
+                          nameRef.invalid &&
+                          (nameRef.touched || authSubmitted())
+                        "
                       />
+                      @if (
+                        nameRef.invalid && (nameRef.touched || authSubmitted())
+                      ) {
+                        <span class="field-error" role="alert"
+                          >Full name is required (min 2 characters)</span
+                        >
+                      }
                     </div>
 
                     <div class="form-group">
-                      <label class="form-label">Role *</label>
+                      <label class="form-label" for="reg-role">Role *</label>
                       <select
+                        id="reg-role"
                         class="form-select"
                         [(ngModel)]="role"
                         name="role"
@@ -189,8 +210,11 @@ import type { CurrentDispatchUser } from '../../store/dispatch.state';
                     </div>
 
                     <div class="form-group">
-                      <label class="form-label">Company / Venue Name</label>
+                      <label class="form-label" for="reg-company"
+                        >Company / Venue Name</label
+                      >
                       <input
+                        id="reg-company"
                         type="text"
                         class="form-input"
                         [(ngModel)]="companyName"
@@ -201,31 +225,78 @@ import type { CurrentDispatchUser } from '../../store/dispatch.state';
                   }
 
                   <div class="form-group">
-                    <label class="form-label">Email Address *</label>
+                    <label class="form-label" for="auth-email"
+                      >Email Address *</label
+                    >
                     <input
+                      id="auth-email"
                       type="email"
                       class="form-input"
+                      [class.has-error]="
+                        emailRef.invalid &&
+                        (emailRef.touched || authSubmitted())
+                      "
                       [(ngModel)]="email"
                       name="email"
+                      #emailRef="ngModel"
                       placeholder="e.g. user@lplaundry.co.uk"
                       required
+                      email
+                      [attr.aria-invalid]="
+                        emailRef.invalid &&
+                        (emailRef.touched || authSubmitted())
+                      "
                     />
+                    @if (
+                      emailRef.invalid && (emailRef.touched || authSubmitted())
+                    ) {
+                      <span class="field-error" role="alert"
+                        >Valid email address is required</span
+                      >
+                    }
                   </div>
 
                   <div class="form-group">
-                    <label class="form-label">Password *</label>
+                    <label class="form-label" for="auth-password"
+                      >Password *</label
+                    >
                     <input
+                      id="auth-password"
                       type="password"
                       class="form-input"
+                      [class.has-error]="
+                        passRef.invalid && (passRef.touched || authSubmitted())
+                      "
                       [(ngModel)]="password"
                       name="password"
+                      #passRef="ngModel"
                       placeholder="Minimum 6 characters"
                       required
+                      minlength="6"
+                      [attr.aria-invalid]="
+                        passRef.invalid && (passRef.touched || authSubmitted())
+                      "
                     />
+                    @if (
+                      passRef.invalid && (passRef.touched || authSubmitted())
+                    ) {
+                      <span class="field-error" role="alert"
+                        >Password must be at least 6 characters</span
+                      >
+                    }
                   </div>
 
                   @if (authMessage()) {
-                    <div class="auth-message-box">
+                    <div
+                      class="auth-message-box"
+                      [class.auth-message-box--error]="
+                        authMessageType() === 'error'
+                      "
+                      [class.auth-message-box--success]="
+                        authMessageType() === 'success'
+                      "
+                      role="alert"
+                    >
                       {{ authMessage() }}
                     </div>
                   }
@@ -282,7 +353,7 @@ import type { CurrentDispatchUser } from '../../store/dispatch.state';
       border-radius: var(--radius-xl, 1rem);
       width: 100%;
       max-width: 760px;
-      max-height: 92vh;
+      max-height: min(92dvh, 52rem);
       display: flex;
       flex-direction: column;
       box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
@@ -295,6 +366,7 @@ import type { CurrentDispatchUser } from '../../store/dispatch.state';
       display: flex;
       align-items: center;
       justify-content: space-between;
+      flex-shrink: 0;
     }
 
     .title-wrap {
@@ -338,6 +410,9 @@ import type { CurrentDispatchUser } from '../../store/dispatch.state';
     .modal-body {
       padding: var(--space-4, 1rem) var(--space-5, 1.25rem);
       overflow-y: auto;
+      overflow-x: hidden;
+      flex: 1 1 auto;
+      min-height: 0;
       display: flex;
       flex-direction: column;
       gap: var(--space-3, 0.75rem);
@@ -613,6 +688,18 @@ import type { CurrentDispatchUser } from '../../store/dispatch.state';
       &:focus {
         border-color: var(--color-accent-default);
       }
+
+      &.has-error {
+        border-color: #ef4444;
+        background: rgba(239, 68, 68, 0.04);
+      }
+    }
+
+    .field-error {
+      font-size: 0.72rem;
+      color: #ef4444;
+      font-weight: 500;
+      margin-top: 2px;
     }
 
     .auth-message-box {
@@ -622,6 +709,18 @@ import type { CurrentDispatchUser } from '../../store/dispatch.state';
       padding: 6px 10px;
       border-radius: 4px;
       font-size: 0.75rem;
+
+      &--error {
+        background: rgba(239, 68, 68, 0.1);
+        border-color: rgba(239, 68, 68, 0.3);
+        color: #ef4444;
+      }
+
+      &--success {
+        background: rgba(16, 185, 129, 0.1);
+        border-color: rgba(16, 185, 129, 0.3);
+        color: #10b981;
+      }
     }
 
     .auth-submit-btn {
@@ -674,6 +773,8 @@ export class AuthModalComponent {
   readonly activeMode = signal<'switch' | 'login'>('switch');
   readonly isRegisterMode = signal(false);
   readonly authMessage = signal<string | null>(null);
+  readonly authSubmitted = signal(false);
+  readonly authMessageType = signal<'error' | 'success'>('error');
 
   email = '';
   password = '';
@@ -769,7 +870,29 @@ export class AuthModalComponent {
   }
 
   handleAuthSubmit(): void {
-    if (!this.email.trim() || !this.password.trim()) return;
+    this.authSubmitted.set(true);
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!this.email.trim() || !emailRegex.test(this.email.trim())) {
+      this.authMessageType.set('error');
+      this.authMessage.set('Please provide a valid email address.');
+      return;
+    }
+
+    if (!this.password.trim() || this.password.trim().length < 6) {
+      this.authMessageType.set('error');
+      this.authMessage.set('Password must be at least 6 characters.');
+      return;
+    }
+
+    if (
+      this.isRegisterMode() &&
+      (!this.name.trim() || this.name.trim().length < 2)
+    ) {
+      this.authMessageType.set('error');
+      this.authMessage.set('Full name is required (min 2 characters).');
+      return;
+    }
 
     if (this.isRegisterMode()) {
       const newUser: CurrentDispatchUser = {
@@ -780,15 +903,28 @@ export class AuthModalComponent {
         companyName: this.companyName.trim(),
       };
       this.store.setCurrentUser(newUser);
-      this.authMessage.set('Account created and encrypted successfully!');
-      setTimeout(() => this.store.closeAuthModal(), 800);
+      this.authMessageType.set('success');
+      this.authMessage.set('✓ Account created and encrypted successfully!');
+      setTimeout(() => {
+        this.store.closeAuthModal();
+        this.authSubmitted.set(false);
+        this.authMessage.set(null);
+      }, 700);
     } else {
       // Sign In
       const matched = this.personas.find(
         (p) => p.email.toLowerCase() === this.email.trim().toLowerCase(),
       );
       if (matched) {
-        this.selectPersona(matched);
+        this.authMessageType.set('success');
+        this.authMessage.set(
+          `✓ Signed in as ${matched.name} (${matched.role.toUpperCase()})`,
+        );
+        setTimeout(() => {
+          this.selectPersona(matched);
+          this.authSubmitted.set(false);
+          this.authMessage.set(null);
+        }, 500);
       } else {
         const user: CurrentDispatchUser = {
           id: `usr_custom_${Date.now()}`,
@@ -797,7 +933,13 @@ export class AuthModalComponent {
           role: 'coordinator',
         };
         this.store.setCurrentUser(user);
-        this.store.closeAuthModal();
+        this.authMessageType.set('success');
+        this.authMessage.set('✓ Signed in as Operations Coordinator');
+        setTimeout(() => {
+          this.store.closeAuthModal();
+          this.authSubmitted.set(false);
+          this.authMessage.set(null);
+        }, 500);
       }
     }
   }

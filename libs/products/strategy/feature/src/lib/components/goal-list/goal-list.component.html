@@ -12,15 +12,34 @@
           type="text"
           formControlName="name"
           placeholder="e.g., Buy a Car"
+          [class.has-error]="
+            goalForm.controls.name.invalid && goalForm.controls.name.touched
+          "
         />
+        @if (goalForm.controls.name.invalid && goalForm.controls.name.touched) {
+          <span class="field-error">Goal name is required</span>
+        }
       </div>
 
       <div class="form-group">
         <label for="goal-amount">Target Amount</label>
         <div class="input-with-icon">
-          <input id="goal-amount" type="number" formControlName="amount" />
+          <input
+            id="goal-amount"
+            type="number"
+            formControlName="amount"
+            [class.has-error]="
+              goalForm.controls.amount.invalid &&
+              goalForm.controls.amount.touched
+            "
+          />
           <span class="currency-tag">TND</span>
         </div>
+        @if (
+          goalForm.controls.amount.invalid && goalForm.controls.amount.touched
+        ) {
+          <span class="field-error">Target amount must be at least 1</span>
+        }
       </div>
 
       <div class="form-group">

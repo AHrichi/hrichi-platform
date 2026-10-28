@@ -1,4 +1,9 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  signal,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DispatchStore } from '../../store/dispatch.store';
@@ -9,7 +14,7 @@ import type { LinenSKU, LinenCategory } from '@ah/products/dispatch/domain';
   imports: [CommonModule, FormsModule],
   template: `
     @if (store.showAddStockModal()) {
-      <div class="modal-overlay" (click)="store.closeAddStockModal()">
+      <div class="modal-overlay" (click)="closeModal()">
         <div class="modal-card" (click)="$event.stopPropagation()">
           <div class="modal-header">
             <div class="title-wrap">
@@ -24,29 +29,51 @@ import type { LinenSKU, LinenCategory } from '@ah/products/dispatch/domain';
             <button
               type="button"
               class="close-btn"
-              (click)="store.closeAddStockModal()"
+              (click)="closeModal()"
+              aria-label="Close modal"
             >
               ✕
             </button>
           </div>
 
-          <form class="modal-body" (ngSubmit)="submitStock()">
+          <form class="modal-body" (ngSubmit)="submitStock()" novalidate>
+            @if (successMessage()) {
+              <div class="form-success-banner" role="status">
+                {{ successMessage() }}
+              </div>
+            }
+
             <div class="form-grid">
               <div class="form-group">
-                <label class="form-label">SKU Code *</label>
+                <label class="form-label" for="stock-sku">SKU Code *</label>
                 <input
+                  id="stock-sku"
                   type="text"
-                  class="form-input"
+                  class="form-input font-mono"
+                  [class.has-error]="
+                    skuRef.invalid && (skuRef.touched || submitted())
+                  "
                   [(ngModel)]="sku"
                   name="sku"
-                  placeholder="e.g. BED-SHT-KNG, BTH-TWL-SHT"
+                  #skuRef="ngModel"
+                  placeholder="e.g. BED-SHT-KNG"
                   required
+                  minlength="3"
+                  [attr.aria-invalid]="
+                    skuRef.invalid && (skuRef.touched || submitted())
+                  "
                 />
+                @if (skuRef.invalid && (skuRef.touched || submitted())) {
+                  <span class="field-error" role="alert"
+                    >SKU code is required (min 3 chars)</span
+                  >
+                }
               </div>
 
               <div class="form-group">
-                <label class="form-label">Category *</label>
+                <label class="form-label" for="stock-cat">Category *</label>
                 <select
+                  id="stock-cat"
                   class="form-select"
                   [(ngModel)]="category"
                   name="category"
@@ -61,20 +88,39 @@ import type { LinenSKU, LinenCategory } from '@ah/products/dispatch/domain';
               </div>
 
               <div class="form-group full-width">
-                <label class="form-label">Item Description *</label>
+                <label class="form-label" for="stock-name"
+                  >Item Description *</label
+                >
                 <input
+                  id="stock-name"
                   type="text"
                   class="form-input"
+                  [class.has-error]="
+                    nameRef.invalid && (nameRef.touched || submitted())
+                  "
                   [(ngModel)]="name"
                   name="name"
+                  #nameRef="ngModel"
                   placeholder="e.g. King Bed Sheet 300TC Percale White"
                   required
+                  minlength="3"
+                  [attr.aria-invalid]="
+                    nameRef.invalid && (nameRef.touched || submitted())
+                  "
                 />
+                @if (nameRef.invalid && (nameRef.touched || submitted())) {
+                  <span class="field-error" role="alert"
+                    >Item description is required</span
+                  >
+                }
               </div>
 
               <div class="form-group">
-                <label class="form-label">Unit Weight (grams) *</label>
+                <label class="form-label" for="stock-weight"
+                  >Unit Weight (Grams)</label
+                >
                 <input
+                  id="stock-weight"
                   type="number"
                   class="form-input"
                   [(ngModel)]="unitWeightGrams"
@@ -86,33 +132,41 @@ import type { LinenSKU, LinenCategory } from '@ah/products/dispatch/domain';
               </div>
 
               <div class="form-group">
-                <label class="form-label">Replacement Cost (£ GBP) *</label>
+                <label class="form-label" for="stock-cost"
+                  >Replacement Cost (£)</label
+                >
                 <input
+                  id="stock-cost"
                   type="number"
-                  step="0.5"
                   class="form-input"
                   [(ngModel)]="replacementCostGbp"
                   name="replacementCostGbp"
                   min="1"
+                  step="0.5"
                   required
                 />
               </div>
 
               <div class="form-group">
-                <label class="form-label">Clean Reserve (On-Hand) *</label>
+                <label class="form-label" for="stock-clean"
+                  >Clean Reserve Stock</label
+                >
                 <input
+                  id="stock-clean"
                   type="number"
                   class="form-input"
                   [(ngModel)]="inCleanReserve"
                   name="inCleanReserve"
                   min="0"
-                  required
                 />
               </div>
 
               <div class="form-group">
-                <label class="form-label">Currently in Circulation</label>
+                <label class="form-label" for="stock-circ"
+                  >In Circulation</label
+                >
                 <input
+                  id="stock-circ"
                   type="number"
                   class="form-input"
                   [(ngModel)]="inCirculation"
@@ -122,20 +176,11 @@ import type { LinenSKU, LinenCategory } from '@ah/products/dispatch/domain';
               </div>
 
               <div class="form-group">
-                <label class="form-label">Minimum Par Threshold *</label>
+                <label class="form-label" for="stock-plant"
+                  >At Subcontractor Plant</label
+                >
                 <input
-                  type="number"
-                  class="form-input"
-                  [(ngModel)]="minThreshold"
-                  name="minThreshold"
-                  min="10"
-                  required
-                />
-              </div>
-
-              <div class="form-group">
-                <label class="form-label">At Subcontractor Wash</label>
-                <input
+                  id="stock-plant"
                   type="number"
                   class="form-input"
                   [(ngModel)]="atPlantWash"
@@ -143,22 +188,32 @@ import type { LinenSKU, LinenCategory } from '@ah/products/dispatch/domain';
                   min="0"
                 />
               </div>
+
+              <div class="form-group">
+                <label class="form-label" for="stock-thresh"
+                  >Min Reorder Threshold</label
+                >
+                <input
+                  id="stock-thresh"
+                  type="number"
+                  class="form-input"
+                  [(ngModel)]="minThreshold"
+                  name="minThreshold"
+                  min="10"
+                />
+              </div>
             </div>
 
             <div class="modal-footer">
-              <button
-                type="button"
-                class="btn-cancel"
-                (click)="store.closeAddStockModal()"
-              >
+              <button type="button" class="btn-cancel" (click)="closeModal()">
                 Cancel
               </button>
               <button
                 type="submit"
                 class="btn-submit"
-                [disabled]="!sku.trim() || !name.trim()"
+                [disabled]="isSubmitting()"
               >
-                ✓ Add to Stock Ledger
+                {{ isSubmitting() ? 'Adding...' : '✓ Add to Stock Ledger' }}
               </button>
             </div>
           </form>
@@ -189,7 +244,7 @@ import type { LinenSKU, LinenCategory } from '@ah/products/dispatch/domain';
       border-radius: var(--radius-xl, 1rem);
       width: 100%;
       max-width: 600px;
-      max-height: 90vh;
+      max-height: min(90dvh, 52rem);
       display: flex;
       flex-direction: column;
       box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
@@ -202,6 +257,7 @@ import type { LinenSKU, LinenCategory } from '@ah/products/dispatch/domain';
       display: flex;
       align-items: center;
       justify-content: space-between;
+      flex-shrink: 0;
     }
 
     .title-wrap {
@@ -235,6 +291,7 @@ import type { LinenSKU, LinenCategory } from '@ah/products/dispatch/domain';
       padding: 0.25rem 0.5rem;
       border-radius: var(--radius-md, 0.375rem);
       transition: all 0.2s;
+      flex-shrink: 0;
     }
 
     .close-btn:hover {
@@ -245,9 +302,23 @@ import type { LinenSKU, LinenCategory } from '@ah/products/dispatch/domain';
     .modal-body {
       padding: var(--space-5, 1.25rem);
       overflow-y: auto;
+      overflow-x: hidden;
+      flex: 1 1 auto;
+      min-height: 0;
       display: flex;
       flex-direction: column;
       gap: var(--space-4, 1rem);
+    }
+
+    .form-success-banner {
+      background: rgba(34, 197, 94, 0.12);
+      border: 1px solid rgba(34, 197, 94, 0.3);
+      color: #22c55e;
+      padding: 0.75rem;
+      border-radius: var(--radius-md, 0.375rem);
+      font-weight: 600;
+      font-size: var(--text-sm, 0.875rem);
+      text-align: center;
     }
 
     .form-grid {
@@ -283,12 +354,30 @@ import type { LinenSKU, LinenCategory } from '@ah/products/dispatch/domain';
       font-size: var(--text-sm, 0.875rem);
       color: var(--color-text-default);
       outline: none;
-      transition: border-color 0.2s;
+      transition:
+        border-color 0.2s,
+        box-shadow 0.2s;
     }
 
     .form-input:focus,
     .form-select:focus {
       border-color: var(--color-accent-blue, #0284c7);
+      box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.2);
+    }
+
+    .form-input.has-error {
+      border-color: #ef4444;
+      background: rgba(239, 68, 68, 0.04);
+    }
+
+    .form-input.has-error:focus {
+      box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);
+    }
+
+    .field-error {
+      font-size: 0.75rem;
+      color: #ef4444;
+      font-weight: 500;
     }
 
     .modal-footer {
@@ -297,6 +386,8 @@ import type { LinenSKU, LinenCategory } from '@ah/products/dispatch/domain';
       gap: var(--space-3, 0.75rem);
       padding-top: var(--space-4, 1rem);
       border-top: 1px solid var(--color-border-default);
+      flex-shrink: 0;
+      flex-wrap: wrap;
     }
 
     .btn-cancel {
@@ -343,6 +434,9 @@ import type { LinenSKU, LinenCategory } from '@ah/products/dispatch/domain';
       .full-width {
         grid-column: span 1;
       }
+      .modal-card {
+        max-height: 94dvh;
+      }
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -360,9 +454,29 @@ export class AddStockModalComponent {
   atPlantWash = 150;
   replacementCostGbp = 18.5;
 
-  submitStock(): void {
-    if (!this.sku.trim() || !this.name.trim()) return;
+  submitted = signal(false);
+  isSubmitting = signal(false);
+  successMessage = signal<string | null>(null);
 
+  closeModal(): void {
+    this.submitted.set(false);
+    this.successMessage.set(null);
+    this.store.closeAddStockModal();
+  }
+
+  submitStock(): void {
+    this.submitted.set(true);
+
+    if (
+      !this.sku.trim() ||
+      this.sku.trim().length < 3 ||
+      !this.name.trim() ||
+      this.name.trim().length < 3
+    ) {
+      return;
+    }
+
+    this.isSubmitting.set(true);
     const nowHhMm = new Date().toLocaleTimeString('en-GB', {
       hour: '2-digit',
       minute: '2-digit',
@@ -385,8 +499,12 @@ export class AddStockModalComponent {
 
     this.store.addStockItem(newItem);
 
-    // Reset form
-    this.sku = '';
-    this.name = '';
+    this.successMessage.set(`✓ SKU ${newItem.sku} added to Stock Ledger!`);
+    setTimeout(() => {
+      this.isSubmitting.set(false);
+      this.sku = '';
+      this.name = '';
+      this.closeModal();
+    }, 700);
   }
 }

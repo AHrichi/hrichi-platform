@@ -364,12 +364,34 @@ calculation$.complete(); // Subscribers now receive 2!`,
     if (type === 'replaySubject') this.replaySubjectBuffer.set([]);
   }
 
-  private getSubject(type: SubjectType) {
-    return this[type] as Subject<number> | null;
+  private getSubject(type: SubjectType): Subject<number> | null {
+    switch (type) {
+      case 'subject':
+        return this.subject;
+      case 'behaviorSubject':
+        return this.behaviorSubject;
+      case 'replaySubject':
+        return this.replaySubject;
+      case 'asyncSubject':
+        return this.asyncSubject;
+    }
   }
 
-  private setSubject(type: SubjectType, value: any) {
-    (this[type] as any) = value;
+  private setSubject(type: SubjectType, value: Subject<number> | null): void {
+    switch (type) {
+      case 'subject':
+        this.subject = value;
+        break;
+      case 'behaviorSubject':
+        this.behaviorSubject = value as BehaviorSubject<number> | null;
+        break;
+      case 'replaySubject':
+        this.replaySubject = value as ReplaySubject<number> | null;
+        break;
+      case 'asyncSubject':
+        this.asyncSubject = value as AsyncSubject<number> | null;
+        break;
+    }
   }
 
   // --- Marble and Logging Helpers ---
