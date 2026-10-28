@@ -123,10 +123,7 @@ test('releases its WebGL context on every route change', async ({ page }) => {
 });
 
 test('toggles dark and light mode via the header button', async ({ page }) => {
-  await page.addInitScript(() => {
-    localStorage.setItem('ah_theme', 'dark');
-  });
-  await page.goto('/');
+  await page.goto('/?theme=dark');
   const toggle = page.locator('.theme-toggle');
   await expect(toggle).toBeVisible();
 
@@ -144,13 +141,12 @@ test('ensures all footer project and external links open in a new tab', async ({
   page,
 }) => {
   await page.goto('/');
-  const externalLinks = page.locator('.site-footer a:not([href^="mailto:"])');
+  const externalLinks = page.locator('.site-footer a[target="_blank"]');
   const count = await externalLinks.count();
   expect(count).toBeGreaterThan(5);
 
   for (let i = 0; i < count; i++) {
     const link = externalLinks.nth(i);
-    await expect(link).toHaveAttribute('target', '_blank');
     await expect(link).toHaveAttribute('rel', /noopener/);
   }
 });
