@@ -2,13 +2,15 @@
   display: block;
   font-family: var(--font-family-sans, system-ui, sans-serif);
   color: var(--color-text-default);
+  inline-size: 100%;
+  block-size: 100%;
 }
 
 .app-container {
   display: flex;
-  min-height: 700px;
-  height: 80vh;
-  max-height: 920px;
+  min-height: 720px;
+  height: calc(100vh - 120px);
+  height: calc(100dvh - 120px);
   border: 1px solid var(--color-border-default, #e0e6ed);
   border-radius: var(--radius-lg, 12px);
   overflow: hidden;
@@ -16,13 +18,19 @@
   background-color: var(--color-bg-raised, #ffffff);
 
   &:fullscreen,
-  &.is-fullscreen {
+  &.is-fullscreen,
+  :host-context(.lab__body:fullscreen) &,
+  :host-context(.lab__body.is-fullscreen) & {
     position: fixed !important;
     inset: 0 !important;
     inline-size: 100vw !important;
     block-size: 100vh !important;
-    max-height: none !important;
+    block-size: 100dvh !important;
+    width: 100vw !important;
     height: 100vh !important;
+    height: 100dvh !important;
+    min-height: 100dvh !important;
+    max-height: none !important;
     border-radius: 0 !important;
     border: none !important;
     z-index: 99999 !important;

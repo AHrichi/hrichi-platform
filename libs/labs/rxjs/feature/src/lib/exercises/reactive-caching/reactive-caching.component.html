@@ -104,21 +104,12 @@
       </div>
 
       <div class="code-example">
-        <pre><code>// In-memory cache stored in component or service
-private cache = new Map&lt;number, Observable&lt;User&gt;&gt;();
-
-fetchUser(id: number): Observable&lt;User&gt; {{ '{' }}
-  if (this.cache.has(id)) {{ '{' }}
-    return this.cache.get(id)!;
-  {{ '}' }}
-
-  const user$ = this.http.get&lt;User&gt;('/api/users/' + id).pipe(
-    shareReplay({{ '{' }} bufferSize: 1, refCount: true {{ '}' }})
-  );
-
-  this.cache.set(id, user$);
-  return user$;
-{{ '}' }}</code></pre>
+        <button type="button" ahButton="ghost" size="sm" (click)="toggleCode()">
+          {{ showCode() ? 'Hide' : 'Show' }} Enterprise Cache Pattern
+        </button>
+        @if (showCode()) {
+          <pre><code>{{ codeSnippet }}</code></pre>
+        }
       </div>
     </div>
   </div>

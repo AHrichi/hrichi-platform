@@ -104,6 +104,20 @@
               }
             </div>
           </div>
+
+          <div class="code-example">
+            <button
+              type="button"
+              ahButton="ghost"
+              size="sm"
+              (click)="toggleCode('forkJoin')"
+            >
+              {{ showCode()['forkJoin'] ? 'Hide' : 'Show' }} Code Example
+            </button>
+            @if (showCode()['forkJoin']) {
+              <pre><code>{{ codeSnippets.forkJoin }}</code></pre>
+            }
+          </div>
         </div>
       </div>
     }
@@ -176,6 +190,20 @@
                 </div>
               }
             </div>
+          </div>
+
+          <div class="code-example">
+            <button
+              type="button"
+              ahButton="ghost"
+              size="sm"
+              (click)="toggleCode('bufferCount')"
+            >
+              {{ showCode()['bufferCount'] ? 'Hide' : 'Show' }} Code Example
+            </button>
+            @if (showCode()['bufferCount']) {
+              <pre><code>{{ codeSnippets.bufferCount }}</code></pre>
+            }
           </div>
         </div>
       </div>

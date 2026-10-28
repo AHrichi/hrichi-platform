@@ -47,6 +47,38 @@ export class ReactiveCachingComponent {
   logs = signal<LogEntry[]>([]);
   currentUser = signal<User | undefined>(undefined);
   isLoading = signal(false);
+  showCode = signal(false);
+
+  readonly codeSnippet = `// ⚡ Production Pattern: In-Memory Stream Cache with shareReplay
+@Injectable({ providedIn: 'root' })
+export class CatalogCacheService {
+  private cache = new Map<string, Observable<Product[]>>();
+
+  getProductsByCategory(category: string): Observable<Product[]> {
+    if (!this.cache.has(category)) {
+      const stream$ = this.http.get<Product[]>(\`/api/products?cat=\${category}\`).pipe(
+        // bufferSize: 1 keeps latest value for late subscribers.
+        // refCount: false preserves cache even when all components unmount.
+        shareReplay({ bufferSize: 1, refCount: false }),
+        catchError((err) => {
+          this.cache.delete(category); // Do NOT cache failed responses!
+          return throwError(() => err);
+        })
+      );
+      this.cache.set(category, stream$);
+    }
+    return this.cache.get(category)!;
+  }
+
+  invalidate(category?: string) {
+    if (category) this.cache.delete(category);
+    else this.cache.clear();
+  }
+}`;
+
+  toggleCode() {
+    this.showCode.update((v) => !v);
+  }
 
   constructor() {
     effect(() => {

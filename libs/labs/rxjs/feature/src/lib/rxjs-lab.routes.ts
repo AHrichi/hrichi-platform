@@ -5,6 +5,7 @@ import { CombiningStreamsComponent } from './exercises/combining-streams/combini
 import { TransformingStreamsComponent } from './exercises/transforming-streams/transforming-streams.component';
 import { SharingDataComponent } from './exercises/sharing-data/sharing-data.component';
 import { SignalsComponent } from './exercises/signals/signals.component';
+import { RxjsVsSignalsComponent } from './exercises/rxjs-vs-signals/rxjs-vs-signals.component';
 import { MulticastingComponent } from './exercises/multicasting/multicasting.component';
 import { ReactiveCachingComponent } from './exercises/reactive-caching/reactive-caching.component';
 import { BulkOperationsComponent } from './exercises/bulk-operations/bulk-operations.component';
@@ -44,6 +45,11 @@ export const rxjsLabRoutes: Routes = [
         path: 'signals',
         component: SignalsComponent,
         title: 'Angular | Signals',
+      },
+      {
+        path: 'rxjs-vs-signals',
+        component: RxjsVsSignalsComponent,
+        title: 'Angular | RxJS vs Signals',
       },
       {
         path: 'multicasting',

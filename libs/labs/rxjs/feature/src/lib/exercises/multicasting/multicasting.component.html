@@ -67,6 +67,20 @@
               </div>
             </div>
           }
+
+          <div class="code-example">
+            <button
+              type="button"
+              ahButton="ghost"
+              size="sm"
+              (click)="toggleCode('cold')"
+            >
+              {{ showCode()['cold'] ? 'Hide' : 'Show' }} Code Example
+            </button>
+            @if (showCode()['cold']) {
+              <pre><code>{{ codeSnippets.cold }}</code></pre>
+            }
+          </div>
         </div>
       </div>
     }
@@ -136,6 +150,20 @@
               </div>
             </div>
           }
+
+          <div class="code-example">
+            <button
+              type="button"
+              ahButton="ghost"
+              size="sm"
+              (click)="toggleCode('hot')"
+            >
+              {{ showCode()['hot'] ? 'Hide' : 'Show' }} Code Example
+            </button>
+            @if (showCode()['hot']) {
+              <pre><code>{{ codeSnippets.hot }}</code></pre>
+            }
+          </div>
         </div>
       </div>
     }
@@ -222,6 +250,20 @@
               </div>
             </div>
           }
+
+          <div class="code-example">
+            <button
+              type="button"
+              ahButton="ghost"
+              size="sm"
+              (click)="toggleCode('hot')"
+            >
+              {{ showCode()['hot'] ? 'Hide' : 'Show' }} Code Example
+            </button>
+            @if (showCode()['hot']) {
+              <pre><code>{{ codeSnippets.hot }}</code></pre>
+            }
+          </div>
         </div>
       </div>
     }
@@ -310,6 +352,20 @@
               </div>
             </div>
           }
+
+          <div class="code-example">
+            <button
+              type="button"
+              ahButton="ghost"
+              size="sm"
+              (click)="toggleCode('subject')"
+            >
+              {{ showCode()['subject'] ? 'Hide' : 'Show' }} Code Example
+            </button>
+            @if (showCode()['subject']) {
+              <pre><code>{{ codeSnippets.subject }}</code></pre>
+            }
+          </div>
         </div>
       </div>
     }
@@ -423,6 +479,20 @@
               </div>
             </div>
           }
+
+          <div class="code-example">
+            <button
+              type="button"
+              ahButton="ghost"
+              size="sm"
+              (click)="toggleCode('behaviorSubject')"
+            >
+              {{ showCode()['behaviorSubject'] ? 'Hide' : 'Show' }} Code Example
+            </button>
+            @if (showCode()['behaviorSubject']) {
+              <pre><code>{{ codeSnippets.behaviorSubject }}</code></pre>
+            }
+          </div>
         </div>
       </div>
     }
@@ -539,6 +609,20 @@
               </div>
             </div>
           }
+
+          <div class="code-example">
+            <button
+              type="button"
+              ahButton="ghost"
+              size="sm"
+              (click)="toggleCode('replaySubject')"
+            >
+              {{ showCode()['replaySubject'] ? 'Hide' : 'Show' }} Code Example
+            </button>
+            @if (showCode()['replaySubject']) {
+              <pre><code>{{ codeSnippets.replaySubject }}</code></pre>
+            }
+          </div>
         </div>
       </div>
     }
@@ -627,6 +711,20 @@
               </div>
             </div>
           }
+
+          <div class="code-example">
+            <button
+              type="button"
+              ahButton="ghost"
+              size="sm"
+              (click)="toggleCode('asyncSubject')"
+            >
+              {{ showCode()['asyncSubject'] ? 'Hide' : 'Show' }} Code Example
+            </button>
+            @if (showCode()['asyncSubject']) {
+              <pre><code>{{ codeSnippets.asyncSubject }}</code></pre>
+            }
+          </div>
         </div>
       </div>
     }

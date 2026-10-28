@@ -1,4 +1,4 @@
-<div class="app-container">
+<div class="app-container" [class.is-fullscreen]="isFullscreen()">
   <aside class="sidebar" [class.closed]="!isSidebarOpen()">
     <div class="sidebar-header">
       @if (isSidebarOpen()) {

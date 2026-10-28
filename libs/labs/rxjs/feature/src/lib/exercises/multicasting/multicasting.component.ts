@@ -63,6 +63,59 @@ export class MulticastingComponent implements OnDestroy {
   ];
   readonly activeCase = signal<string>('all');
 
+  // --- Code Snippets & Visibility ---
+  readonly showCode = signal<Record<string, boolean>>({
+    cold: false,
+    hot: false,
+    subject: false,
+    behaviorSubject: false,
+    replaySubject: false,
+    asyncSubject: false,
+  });
+
+  readonly codeSnippets = {
+    cold: `// ❄️ Cold Observable: Unicast execution
+// Each subscription executes the producer independently.
+// Example: Angular HttpClient GET request.
+const request$ = http.get('/api/users');
+request$.subscribe(); // Triggers HTTP request #1
+request$.subscribe(); // Triggers HTTP request #2!`,
+    hot: `// 🔥 Hot Observable (via share()): Multicast execution
+// Subscribers share a single execution. Producer runs once.
+const shared$ = http.get('/api/users').pipe(
+  share({
+    connector: () => new ReplaySubject(1),
+    resetOnError: true,
+    resetOnComplete: false,
+    resetOnRefCountZero: true,
+  })
+);`,
+    subject: `// ⚡ Subject: Pure event bus (no memory)
+// Late subscribers only receive emissions that happen AFTER subscription.
+const events$ = new Subject<UserEvent>();
+events$.next(e1); // Lost to subscribers who join later!
+events$.subscribe(e => console.log(e));`,
+    behaviorSubject: `// 🧠 BehaviorSubject: Holds current value (1-item replay)
+// Must have an initial value. Subscribers immediately get the latest value.
+const currentUser$ = new BehaviorSubject<User>(INITIAL_USER);
+currentUser$.subscribe(user => ...); // Immediately receives latest value!`,
+    replaySubject: `// 📼 ReplaySubject: Buffers past N values or window of time
+// New subscribers receive the buffered history upon subscription.
+const auditLog$ = new ReplaySubject<Action>(5); // Replays last 5 events
+auditLog$.next(a1); auditLog$.next(a2);
+auditLog$.subscribe(action => ...); // Receives a1 and a2 immediately!`,
+    asyncSubject: `// 🏁 AsyncSubject: Emits ONLY the last value upon completion
+// Similar to Promise.resolve(); nothing is emitted until complete() is called.
+const calculation$ = new AsyncSubject<number>();
+calculation$.next(1);
+calculation$.next(2);
+calculation$.complete(); // Subscribers now receive 2!`,
+  };
+
+  toggleCode(key: string) {
+    this.showCode.update((s) => ({ ...s, [key]: !s[key] }));
+  }
+
   // --- Signals for UI Configuration ---
   replayBufferSize = signal(3);
   behaviorInitialValue = signal(0);

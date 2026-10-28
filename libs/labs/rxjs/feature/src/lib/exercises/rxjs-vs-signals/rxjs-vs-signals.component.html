@@ -1,0 +1,501 @@
+<div class="exercise-container">
+  <ah-section-heading
+    eyebrow="Angular 22 Architecture · Reactive Paradigms"
+    heading="RxJS vs Angular Signals: Coexistence Guide"
+    lead="Master the reactive spectrum in modern Angular. Understand the fundamental trade-offs, when to use RxJS, when to use Signals, and how the 'Events In, State Out' pattern provides rock-solid zoneless architecture."
+  />
+
+  <ah-use-case-focus
+    [options]="focusOptions"
+    [(value)]="activeCase"
+    ariaLabel="Filter architecture topic"
+  />
+
+  <div class="architecture-grid" [class.single-case]="activeCase() !== 'all'">
+    <!-- 1. The Coexistence Golden Rule -->
+    @if (activeCase() === 'all' || activeCase() === 'coexistence') {
+      <div
+        class="card highlight-card"
+        [class.focused-card]="activeCase() === 'coexistence'"
+      >
+        <div class="card-header">
+          <div class="card-title-row">
+            <h3>Architectural Philosophy: "Events In, State Out"</h3>
+            <ah-tag>Core Foundation</ah-tag>
+          </div>
+          <p>
+            Signals and RxJS are not competing rivals; they solve fundamentally
+            different problems in application architecture.
+          </p>
+        </div>
+        <div class="card-content">
+          <div class="coexistence-diagram">
+            <div class="diagram-step events-step">
+              <div class="step-badge">1. Events In (RxJS)</div>
+              <h4>Asynchronous Coordination</h4>
+              <ul>
+                <li>User keystrokes, clicks, scrolls</li>
+                <li>WebSocket & Server-Sent Events</li>
+                <li>Debounce, throttle, debounceTime</li>
+                <li>Retries, timeouts & exponential backoff</li>
+                <li>Concurrency: switchMap, exhaustMap, concatMap</li>
+              </ul>
+            </div>
+
+            <div class="diagram-arrow">
+              <span class="bridge-tag">toSignal()</span>
+              <svg
+                width="32"
+                height="32"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+              </svg>
+            </div>
+
+            <div class="diagram-step state-step">
+              <div class="step-badge">2. State Out (Signals)</div>
+              <h4>Synchronous UI State</h4>
+              <ul>
+                <li>Component and view model state</li>
+                <li>Synchronous derivations (computed)</li>
+                <li>Template bindings & zoneless CD</li>
+                <li>Automatic cleanup (zero memory leaks)</li>
+                <li>Signal I/O (input, output, model)</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="rule-summary">
+            <strong>The Universal Rule of Thumb:</strong>
+            <em
+              >"Use RxJS for events over time; use Signals for values over
+              time."</em
+            >
+            If you need time, cancellation, or concurrency control, reach for
+            RxJS. If you are holding, deriving, or displaying synchronous UI
+            state, reach for Signals.
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- 2. Interactive Decision Matrix -->
+    @if (activeCase() === 'all' || activeCase() === 'decision-matrix') {
+      <div
+        class="card"
+        [class.focused-card]="activeCase() === 'decision-matrix'"
+      >
+        <div class="card-header">
+          <div class="card-title-row">
+            <h3>Interactive Decision Matrix</h3>
+            @if (activeCase() === 'decision-matrix') {
+              <ah-tag>Focused View</ah-tag>
+            }
+          </div>
+          <p>
+            Select a common production requirement to compare the RxJS, Signals,
+            and Hybrid approaches.
+          </p>
+        </div>
+        <div class="card-content">
+          <div class="scenario-pills">
+            @for (sc of scenarios; track sc.id) {
+              <button
+                type="button"
+                class="scenario-pill-btn"
+                [class.active]="selectedScenarioId() === sc.id"
+                (click)="selectScenario(sc.id)"
+              >
+                <span>{{ sc.title }}</span>
+                <span class="pill-badge" [attr.data-winner]="sc.winner">{{
+                  sc.winner
+                }}</span>
+              </button>
+            }
+          </div>
+
+          @let current = selectedScenario();
+          <div class="scenario-detail-card">
+            <div class="detail-header">
+              <h4>{{ current.title }}</h4>
+              <div class="detail-tags">
+                <ah-tag>Category: {{ current.category }}</ah-tag>
+                <ah-tag>Recommended: {{ current.winner }}</ah-tag>
+              </div>
+            </div>
+
+            <p class="scenario-summary">{{ current.summary }}</p>
+
+            <div class="comparison-grid">
+              <div class="approach-box rxjs-box">
+                <div class="box-title">
+                  <span class="icon">🌊</span>
+                  <strong>RxJS Approach</strong>
+                </div>
+                <code>{{ current.rxjsApproach }}</code>
+              </div>
+
+              <div class="approach-box signals-box">
+                <div class="box-title">
+                  <span class="icon">⚡</span>
+                  <strong>Signals Approach</strong>
+                </div>
+                <code>{{ current.signalsApproach }}</code>
+              </div>
+
+              <div class="approach-box hybrid-box">
+                <div class="box-title">
+                  <span class="icon">✨</span>
+                  <strong>Best Practice / Hybrid</strong>
+                </div>
+                <code>{{ current.hybridApproach }}</code>
+              </div>
+            </div>
+
+            <div class="takeaway-banner">
+              <strong>Architecture Takeaway:</strong> {{ current.ruleOfThumb }}
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- 3. Live Sandbox: Derived Calculations (combineLatest vs computed) -->
+    @if (activeCase() === 'all' || activeCase() === 'derived-state') {
+      <div class="card" [class.focused-card]="activeCase() === 'derived-state'">
+        <div class="card-header">
+          <div class="card-title-row">
+            <h3>
+              Live Sandbox: Derived State (<code>combineLatest</code> vs
+              <code>computed</code>)
+            </h3>
+            @if (activeCase() === 'derived-state') {
+              <ah-tag>Focused View</ah-tag>
+            }
+          </div>
+          <p>
+            Deriving a synchronous total from base price, discount, and tax
+            rate. Compare the clean ergonomics of Signals against stream piping.
+          </p>
+        </div>
+        <div class="card-content">
+          <div class="config-group">
+            <div class="config-item">
+              <label for="base-price-input">Base Price ($):</label>
+              <input
+                id="base-price-input"
+                type="number"
+                min="0"
+                step="5"
+                [value]="basePrice()"
+                (input)="updateBasePrice($event)"
+              />
+            </div>
+            <div class="config-item">
+              <label for="discount-input">Discount ($):</label>
+              <input
+                id="discount-input"
+                type="number"
+                min="0"
+                step="5"
+                [value]="discount()"
+                (input)="updateDiscount($event)"
+              />
+            </div>
+            <div class="config-item">
+              <label>Tax Rate (20%):</label>
+              <div class="readonly-badge">20% Fixed</div>
+            </div>
+          </div>
+
+          <div class="results-comparison">
+            <div class="result-tile signal-result">
+              <div class="result-header">
+                <span class="tag-label">Signals (computed)</span>
+                <span class="tag-status">Synchronous Pull</span>
+              </div>
+              <div class="total-number">${{ computedTotal() }}</div>
+              <p class="result-note">
+                Evaluated lazily, glitch-free, memoized, zero subscription
+                cleanup required.
+              </p>
+            </div>
+
+            <div class="result-tile rxjs-result">
+              <div class="result-header">
+                <span class="tag-label">RxJS (combineLatest)</span>
+                <span class="tag-status">Push Stream</span>
+              </div>
+              <div class="total-number">${{ rxjsTotalSignal() }}</div>
+              <p class="result-note">
+                Requires 3 BehaviorSubjects, combineLatest, map pipe, and
+                toSignal or async pipe.
+              </p>
+            </div>
+          </div>
+
+          <div class="code-example">
+            <pre><code>{{ codeSnippets.derived }}</code></pre>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- 4. Live Sandbox: Debounced Search (toObservable + toSignal) -->
+    @if (activeCase() === 'all' || activeCase() === 'search-debounce') {
+      <div
+        class="card"
+        [class.focused-card]="activeCase() === 'search-debounce'"
+      >
+        <div class="card-header">
+          <div class="card-title-row">
+            <h3>Live Sandbox: Time-Based Search (Hybrid Interop)</h3>
+            @if (activeCase() === 'search-debounce') {
+              <ah-tag>Focused View</ah-tag>
+            }
+          </div>
+          <p>
+            Signals have no native concept of time delays or debouncing. We use
+            <code>toObservable()</code> to leverage RxJS time operators, then
+            store the result in a Signal via <code>toSignal()</code>.
+          </p>
+        </div>
+        <div class="card-content">
+          <div class="config-group">
+            <div class="config-item">
+              <label for="search-hybrid-input"
+                >Type rapidly to observe debounce (400ms):</label
+              >
+              <input
+                id="search-hybrid-input"
+                type="text"
+                [value]="searchQuery()"
+                (input)="onSearchInput($event)"
+                placeholder="Type query..."
+              />
+            </div>
+          </div>
+
+          <div class="computed-grid">
+            <div class="computed-item">
+              <label>Raw Keystroke Signal (Immediate):</label>
+              <div class="data-display">{{ searchQuery() }}</div>
+            </div>
+            <div class="computed-item">
+              <label>Debounced + Normalized Signal (toSignal):</label>
+              <div class="data-display highlight-on-change">
+                {{ debouncedQuery() }}
+              </div>
+            </div>
+          </div>
+
+          <div class="code-example">
+            <pre><code>{{ codeSnippets.debounce }}</code></pre>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- 5. Live Sandbox: Async Data Fetching (rxResource) -->
+    @if (activeCase() === 'all' || activeCase() === 'async-resource') {
+      <div
+        class="card"
+        [class.focused-card]="activeCase() === 'async-resource'"
+      >
+        <div class="card-header">
+          <div class="card-title-row">
+            <h3>Live Sandbox: Async Data with <code>rxResource()</code></h3>
+            @if (activeCase() === 'async-resource') {
+              <ah-tag>Focused View</ah-tag>
+            }
+          </div>
+          <p>
+            Angular 22 introduces <code>resource()</code> and
+            <code>rxResource()</code> to unify async data fetching with signals.
+            It manages loading indicators, params reactivity, and cancellation
+            automatically.
+          </p>
+        </div>
+        <div class="card-content">
+          @let weather = cityWeather.value();
+          @let isLoading = cityWeather.isLoading();
+          @let status = cityWeather.status();
+
+          <div class="resource-toolbar">
+            <label>Select Location:</label>
+            <div class="button-group-inline">
+              <button
+                type="button"
+                [ahButton]="
+                  selectedCityId() === 'paris' ? 'primary' : 'secondary'
+                "
+                size="sm"
+                (click)="setCity('paris')"
+              >
+                Paris
+              </button>
+              <button
+                type="button"
+                [ahButton]="
+                  selectedCityId() === 'tokyo' ? 'primary' : 'secondary'
+                "
+                size="sm"
+                (click)="setCity('tokyo')"
+              >
+                Tokyo
+              </button>
+              <button
+                type="button"
+                [ahButton]="
+                  selectedCityId() === 'nyc' ? 'primary' : 'secondary'
+                "
+                size="sm"
+                (click)="setCity('nyc')"
+              >
+                New York
+              </button>
+              <button
+                type="button"
+                ahButton="ghost"
+                size="sm"
+                (click)="reloadWeather()"
+              >
+                Reload Stream
+              </button>
+            </div>
+          </div>
+
+          <div class="resource-status-box" [class.loading]="isLoading">
+            @if (isLoading) {
+              <div class="loading-state">
+                <span class="spinner"></span>
+                <span>Fetching weather stream via rxResource...</span>
+              </div>
+            } @else if (weather) {
+              <div class="weather-card">
+                <div class="weather-header">
+                  <span class="city-name">{{ weather.city }}</span>
+                  <ah-tag>Status: {{ status }}</ah-tag>
+                </div>
+                <div class="weather-temp">{{ weather.temp }}</div>
+                <div class="weather-condition">{{ weather.condition }}</div>
+              </div>
+            }
+          </div>
+
+          <div class="code-example">
+            <pre><code>{{ codeSnippets.resource }}</code></pre>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- 6. Live Sandbox: Dependent State Reset with linkedSignal -->
+    @if (activeCase() === 'all' || activeCase() === 'linked-state') {
+      <div class="card" [class.focused-card]="activeCase() === 'linked-state'">
+        <div class="card-header">
+          <div class="card-title-row">
+            <h3>
+              Live Sandbox: Dependent State with <code>linkedSignal()</code>
+            </h3>
+            @if (activeCase() === 'linked-state') {
+              <ah-tag>Focused View</ah-tag>
+            }
+          </div>
+          <p>
+            In Angular applications, a classic bug is resetting child state when
+            parent state changes. Angular 22's
+            <code>linkedSignal()</code> provides an auto-resetting writable
+            signal.
+          </p>
+        </div>
+        <div class="card-content">
+          @let plan = selectedPlan();
+          @let quota = customQuota();
+          @let overridden = isQuotaOverridden();
+
+          <div class="config-group">
+            <div class="config-item">
+              <label>Select Plan Tier (Parent State):</label>
+              <div class="button-group-inline">
+                <button
+                  type="button"
+                  [ahButton]="plan === 'Basic' ? 'primary' : 'secondary'"
+                  size="sm"
+                  (click)="setPlan('Basic')"
+                >
+                  Basic (20GB)
+                </button>
+                <button
+                  type="button"
+                  [ahButton]="plan === 'Pro' ? 'primary' : 'secondary'"
+                  size="sm"
+                  (click)="setPlan('Pro')"
+                >
+                  Pro (100GB)
+                </button>
+                <button
+                  type="button"
+                  [ahButton]="plan === 'Enterprise' ? 'primary' : 'secondary'"
+                  size="sm"
+                  (click)="setPlan('Enterprise')"
+                >
+                  Enterprise (500GB)
+                </button>
+              </div>
+            </div>
+
+            <div class="config-item">
+              <label>Adjust Storage Quota (Writable Signal Mutation):</label>
+              <div class="quantity-control">
+                <button
+                  type="button"
+                  ahButton="secondary"
+                  size="sm"
+                  (click)="decrementQuota()"
+                >
+                  -10
+                </button>
+                <span class="quota-value" [class.overridden]="overridden">
+                  {{ quota }} GB
+                </span>
+                <button
+                  type="button"
+                  ahButton="secondary"
+                  size="sm"
+                  (click)="incrementQuota()"
+                >
+                  +10
+                </button>
+              </div>
+              <div class="quota-status-row">
+                @if (overridden) {
+                  <ah-tag>Custom Override</ah-tag>
+                  <button
+                    type="button"
+                    ahButton="ghost"
+                    size="sm"
+                    (click)="resetQuota()"
+                  >
+                    Reset to plan default
+                  </button>
+                } @else {
+                  <span class="default-badge">Plan default</span>
+                }
+              </div>
+            </div>
+          </div>
+
+          <div class="code-example">
+            <pre><code>{{ codeSnippets.linked }}</code></pre>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+</div>

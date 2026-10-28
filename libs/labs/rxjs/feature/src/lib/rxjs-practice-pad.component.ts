@@ -31,10 +31,17 @@ export class RxjsPracticePadComponent {
         this.hostRef.nativeElement.querySelector<HTMLElement>(
           '.app-container',
         ) ?? this.hostRef.nativeElement;
-      const active = this.document.fullscreenElement === container;
+      const active =
+        this.document.fullscreenElement === container ||
+        !!(
+          this.document.fullscreenElement &&
+          this.document.fullscreenElement.contains(container)
+        );
       this.isFullscreen.set(active);
       if (!active) {
         container.classList.remove('is-fullscreen');
+      } else {
+        container.classList.add('is-fullscreen');
       }
     };
 

@@ -151,3 +151,51 @@
   font-style: italic;
   margin: 0;
 }
+
+.architecture-card {
+  border-left: 4px solid var(--color-accent-default);
+  margin-bottom: var(--space-5, 24px);
+}
+
+.everyday-example {
+  background-color: var(--color-bg-surface);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-md, 8px);
+  padding: 12px 16px;
+  margin-bottom: 16px;
+
+  p {
+    margin: 0;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: var(--color-text-muted);
+  }
+
+  strong {
+    color: var(--color-text-default);
+  }
+}
+
+.code-example {
+  margin-top: 16px;
+
+  button {
+    margin-bottom: 8px;
+  }
+
+  pre {
+    background-color: var(--color-bg-canvas);
+    border: 1px solid var(--color-border-default);
+    color: var(--color-text-default);
+    padding: 12px 16px;
+    border-radius: var(--radius-md, 8px);
+    overflow-x: auto;
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    margin: 8px 0 0;
+  }
+
+  code {
+    font-family: var(--font-family-mono, monospace);
+  }
+}

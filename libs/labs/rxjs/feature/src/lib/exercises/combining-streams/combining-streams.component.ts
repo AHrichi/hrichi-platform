@@ -29,6 +29,43 @@ export class CombiningStreamsComponent {
   ];
   readonly activeCase = signal<string>('all');
 
+  // --- Code Snippets & Visibility ---
+  readonly showCode = signal<Record<string, boolean>>({
+    withLatestFrom: false,
+    combineLatest: false,
+    comparison: true,
+  });
+
+  readonly codeSnippets = {
+    withLatestFrom: `// 🎯 withLatestFrom: Triggered ONLY by primary stream
+saveButtonClick$.pipe(
+  withLatestFrom(this.formValues$, this.currentUser$),
+  switchMap(([click, form, user]) => 
+    this.api.saveDocument({ ...form, userId: user.id })
+  )
+);`,
+    combineLatest: `// 🔀 combineLatest: Re-emits whenever ANY source emits
+// (Requires every source to have emitted at least once!)
+combineLatest([
+  searchQuery$,
+  filterCategory$,
+  sortBy$,
+]).pipe(
+  switchMap(([query, category, sort]) =>
+    this.catalogService.query({ query, category, sort })
+  )
+);`,
+    comparison: `// 📊 Quick Decision Guide:
+// 1. combineLatest([A$, B$]): Both are equals. Emits when A OR B emits.
+// 2. A$.pipe(withLatestFrom(B$)): A is master. Emits ONLY when A emits, reading B's latest snapshot.
+// 3. forkJoin([A$, B$]): Waits for both A and B to COMPLETE. Emits once with final values.
+// 4. zip([A$, B$]): Pairs emissions 1-to-1 in strict lockstep (1st with 1st, 2nd with 2nd).`,
+  };
+
+  toggleCode(key: string) {
+    this.showCode.update((s) => ({ ...s, [key]: !s[key] }));
+  }
+
   // --- Subjects for withLatestFrom ---
   private primarySource = new Subject<string>();
   private secondarySource = new Subject<string>();

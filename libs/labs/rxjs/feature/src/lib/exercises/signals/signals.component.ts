@@ -7,6 +7,7 @@ import {
   effect,
   inject,
   linkedSignal,
+  resource,
 } from '@angular/core';
 
 import { toSignal, toObservable, rxResource } from '@angular/core/rxjs-interop';
@@ -51,6 +52,7 @@ export class SignalsComponent {
     { value: 'toSignal', label: 'toSignal()' },
     { value: 'linkedSignal', label: 'linkedSignal()' },
     { value: 'rxResource', label: 'rxResource()' },
+    { value: 'resource', label: 'resource() [Promise]' },
     { value: 'toObservable', label: 'toObservable()' },
   ];
   readonly activeCase = signal<string>('all');
@@ -159,16 +161,51 @@ export class SignalsComponent {
     { initialValue: 'ANGULAR 22' },
   );
 
+  // --- 8. Angular 22 resource() (Promise + AbortSignal) ---
+  resourceSearchTopic = signal('Angular');
+  articleResource = resource({
+    params: () => ({ topic: this.resourceSearchTopic() }),
+    loader: async ({
+      params,
+      abortSignal,
+    }: {
+      params: { topic: string };
+      abortSignal: AbortSignal;
+    }) => {
+      await new Promise((r) => setTimeout(r, 450));
+      if (abortSignal.aborted) {
+        throw new DOMException('Aborted by newer request', 'AbortError');
+      }
+      return {
+        title: `${params.topic} 22 Deep Dive`,
+        summary: `Exploring fine-grained reactivity, signals, and zoneless change detection in ${params.topic}.`,
+        readTime: '5 min read',
+      };
+    },
+  });
+
+  setResourceTopic(topic: string) {
+    this.resourceSearchTopic.set(topic);
+  }
+
+  reloadArticleResource() {
+    this.articleResource.reload();
+  }
+
   constructor() {
-    // Effect for native signals
-    effect(() => {
+    // Effect with onCleanup hook
+    effect((onCleanup) => {
       const name = this.fullName();
       const qty = this.quantity();
       const message = `Effect triggered: User is ${name}, Quantity is ${qty}.`;
 
       const newLog: LogEntry = { id: this.logCounter++, message };
-      this.logs.update((currentLogs) => [newLog, ...currentLogs]);
+      this.logs.update((currentLogs) => [newLog, ...currentLogs.slice(0, 9)]);
       this.notificationService.show(message, 'info', 2000);
+
+      onCleanup(() => {
+        // Disposed when dependency changes or component is destroyed
+      });
     });
 
     // Effect for toSignal

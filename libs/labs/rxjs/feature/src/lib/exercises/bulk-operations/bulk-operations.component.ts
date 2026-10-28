@@ -40,6 +40,37 @@ export class BulkOperationsComponent {
   ];
   readonly activeCase = signal<string>('all');
 
+  // --- Code Snippets & Visibility ---
+  readonly showCode = signal<Record<string, boolean>>({
+    forkJoin: false,
+    bufferCount: false,
+  });
+
+  readonly codeSnippets = {
+    forkJoin: `// ⚡ forkJoin: Parallel requests (like Promise.all)
+// All streams must COMPLETE. Emits once with an array/dictionary of last values.
+forkJoin({
+  user: this.http.get<User>('/api/me'),
+  roles: this.http.get<Role[]>('/api/roles'),
+  features: this.http.get<FeatureFlag[]>('/api/flags')
+}).subscribe(({ user, roles, features }) => {
+  this.appState.initialize(user, roles, features);
+});`,
+    bufferCount: `// 📦 bufferCount: Controlled Chunking / Rate Limiting
+// Avoid flooding backend API with 100 simultaneous requests.
+// Process 5 items per batch in sequence using concatMap.
+from(largeFileList).pipe(
+  bufferCount(5),
+  concatMap(batch => forkJoin(batch.map(file => this.upload(file))))
+).subscribe(batchResults => {
+  console.log('Batch completed:', batchResults);
+});`,
+  };
+
+  toggleCode(key: string) {
+    this.showCode.update((s) => ({ ...s, [key]: !s[key] }));
+  }
+
   // --- Signals for UI Configuration ---
   fileCount = signal(6);
   batchSize = signal(3);

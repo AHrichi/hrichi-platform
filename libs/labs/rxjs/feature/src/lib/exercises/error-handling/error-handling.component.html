@@ -47,6 +47,37 @@
     </div>
   }
 
+  <!-- Architectural Pitfall Alert Card -->
+  @if (activeCase() === 'all') {
+    <div class="card architecture-card">
+      <div class="card-header">
+        <div class="card-title-row">
+          <h3>Architecture Rule: Inner vs. Outer Error Handling</h3>
+          <ah-tag>Critical Best Practice</ah-tag>
+        </div>
+        <p>
+          The most widespread bug in reactive Angular applications is attaching
+          <code>catchError</code> to the wrong stream level.
+        </p>
+      </div>
+      <div class="card-content">
+        <div class="everyday-example">
+          <p>
+            <strong>The Pitfall:</strong> When an Observable encounters an
+            unhandled error notification, the contract of RxJS terminates the
+            stream permanently. If you place <code>catchError</code>
+            <em>after</em> a <code>switchMap</code> (on the outer stream), any
+            HTTP error permanently destroys user keystrokes!
+          </p>
+        </div>
+
+        <div class="code-example">
+          <pre><code>{{ codeSnippets.pitfall }}</code></pre>
+        </div>
+      </div>
+    </div>
+  }
+
   <div class="operators-grid" [class.single-case]="activeCase() !== 'all'">
     <!-- Card for Replace Strategy -->
     @if (activeCase() === 'all' || activeCase() === 'replace') {
@@ -64,6 +95,16 @@
           </p>
         </div>
         <div class="card-content">
+          <div class="everyday-example">
+            <p>
+              <strong>Production Use Case:</strong> Degrading gracefully when an
+              auxiliary microservice fails (e.g. recommendation carousel,
+              profile avatar, cached weather). Return
+              <code>of(FALLBACK_DATA)</code> so the rest of the dashboard
+              remains operational.
+            </p>
+          </div>
+
           <div class="button-group">
             <button
               type="button"
@@ -105,6 +146,20 @@
               }
             }
           </div>
+
+          <div class="code-example">
+            <button
+              type="button"
+              ahButton="ghost"
+              size="sm"
+              (click)="toggleCode('replace')"
+            >
+              {{ showCode()['replace'] ? 'Hide' : 'Show' }} Code Example
+            </button>
+            @if (showCode()['replace']) {
+              <pre><code>{{ codeSnippets.replace }}</code></pre>
+            }
+          </div>
         </div>
       </div>
     }
@@ -125,6 +180,15 @@
           </p>
         </div>
         <div class="card-content">
+          <div class="everyday-example">
+            <p>
+              <strong>Production Use Case:</strong> HTTP interceptors, global
+              telemetry error loggers, or form submission boundaries where a
+              toast is displayed, but the caller still needs the rejected
+              Promise or error notification.
+            </p>
+          </div>
+
           <div class="button-group">
             <button
               type="button"
@@ -157,6 +221,20 @@
               }
             }
           </div>
+
+          <div class="code-example">
+            <button
+              type="button"
+              ahButton="ghost"
+              size="sm"
+              (click)="toggleCode('rethrow')"
+            >
+              {{ showCode()['rethrow'] ? 'Hide' : 'Show' }} Code Example
+            </button>
+            @if (showCode()['rethrow']) {
+              <pre><code>{{ codeSnippets.rethrow }}</code></pre>
+            }
+          </div>
         </div>
       </div>
     }
@@ -177,6 +255,14 @@
           </p>
         </div>
         <div class="card-content">
+          <div class="everyday-example">
+            <p>
+              <strong>Production Use Case:</strong> Network instability on
+              mobile devices, transient gateway errors (HTTP 502/503/504), rate
+              limit cooldowns (HTTP 429), or WebSocket reconnection handshakes.
+            </p>
+          </div>
+
           <div class="button-group">
             <button
               type="button"
@@ -211,6 +297,20 @@
               }
             }
           </div>
+
+          <div class="code-example">
+            <button
+              type="button"
+              ahButton="ghost"
+              size="sm"
+              (click)="toggleCode('retry')"
+            >
+              {{ showCode()['retry'] ? 'Hide' : 'Show' }} Code Example
+            </button>
+            @if (showCode()['retry']) {
+              <pre><code>{{ codeSnippets.retry }}</code></pre>
+            }
+          </div>
         </div>
       </div>
     }
@@ -231,6 +331,16 @@
           </p>
         </div>
         <div class="card-content">
+          <div class="everyday-example">
+            <p>
+              <strong>Migration Note:</strong> In modern Angular / RxJS 7+,
+              <code>retryWhen</code> is officially deprecated in favor of
+              <code>retry(&#123; delay &#125;)</code>. Use
+              <code>retry(&#123; delay &#125;)</code> for cleaner, type-safe
+              retry logic.
+            </p>
+          </div>
+
           <div class="button-group">
             <button
               type="button"
@@ -263,6 +373,20 @@
                   Click to trigger legacy retryWhen stream.
                 </p>
               }
+            }
+          </div>
+
+          <div class="code-example">
+            <button
+              type="button"
+              ahButton="ghost"
+              size="sm"
+              (click)="toggleCode('retryWhen')"
+            >
+              {{ showCode()['retryWhen'] ? 'Hide' : 'Show' }} Code Example
+            </button>
+            @if (showCode()['retryWhen']) {
+              <pre><code>{{ codeSnippets.retryWhen }}</code></pre>
             }
           </div>
         </div>

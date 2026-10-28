@@ -157,13 +157,27 @@ import { SectionHeading } from '@ah/ui';
       inset: 0 !important;
       inline-size: 100vw !important;
       block-size: 100vh !important;
+      block-size: 100dvh !important;
       max-inline-size: none !important;
       max-block-size: none !important;
       z-index: 99999 !important;
       background: var(--color-bg-canvas) !important;
-      padding: var(--space-4) !important;
-      overflow-y: auto !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      display: flex !important;
+      flex-direction: column !important;
+      overflow: hidden !important;
       box-sizing: border-box !important;
+
+      > *:not(.lab__fullscreen-exit) {
+        inline-size: 100% !important;
+        block-size: 100% !important;
+        min-height: 100% !important;
+        height: 100% !important;
+        flex: 1 1 100% !important;
+        display: flex !important;
+        flex-direction: column !important;
+      }
     }
     .lab__fullscreen-exit {
       position: fixed;

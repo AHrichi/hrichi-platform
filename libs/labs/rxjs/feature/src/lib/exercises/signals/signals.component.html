@@ -466,7 +466,119 @@ computeCredits.update(c => c + 5);</code></pre>
       </div>
     }
 
-    <!-- 7. Bidirectional Interop Card -->
+    <!-- 7. Angular 22 resource() (Promise Loader with AbortSignal) -->
+    @if (activeCase() === 'all' || activeCase() === 'resource') {
+      <div class="card" [class.focused-card]="activeCase() === 'resource'">
+        <div class="card-header">
+          <div class="card-title-row">
+            <h3>7. Angular 22: <code>resource()</code> Promise Loader</h3>
+            @if (activeCase() === 'resource') {
+              <ah-tag>Focused View</ah-tag>
+            }
+          </div>
+          <p>
+            Async loader using native async/await Promises with automatic
+            AbortSignal cancellation support.
+          </p>
+        </div>
+        <div class="card-content">
+          @let art = articleResource.value();
+          @let isArtLoading = articleResource.isLoading();
+          @let artStatus = articleResource.status();
+
+          <div class="everyday-example">
+            <p>
+              <strong>Native Promises in Zoneless:</strong> While
+              <code>rxResource()</code> wraps RxJS Observables,
+              <code>resource()</code> connects directly to standard
+              <code>fetch()</code> or async/await functions, passing an
+              <code>AbortSignal</code> that aborts if the parameter changes
+              before completion.
+            </p>
+          </div>
+
+          <div class="resource-panel">
+            <div class="resource-controls">
+              <label>Select Search Topic:</label>
+              <div class="button-group-inline">
+                <button
+                  type="button"
+                  [ahButton]="
+                    resourceSearchTopic() === 'Angular'
+                      ? 'primary'
+                      : 'secondary'
+                  "
+                  size="sm"
+                  (click)="setResourceTopic('Angular')"
+                >
+                  Angular
+                </button>
+                <button
+                  type="button"
+                  [ahButton]="
+                    resourceSearchTopic() === 'RxJS' ? 'primary' : 'secondary'
+                  "
+                  size="sm"
+                  (click)="setResourceTopic('RxJS')"
+                >
+                  RxJS
+                </button>
+                <button
+                  type="button"
+                  [ahButton]="
+                    resourceSearchTopic() === 'Signals'
+                      ? 'primary'
+                      : 'secondary'
+                  "
+                  size="sm"
+                  (click)="setResourceTopic('Signals')"
+                >
+                  Signals
+                </button>
+                <button
+                  type="button"
+                  ahButton="ghost"
+                  size="sm"
+                  (click)="reloadArticleResource()"
+                >
+                  Reload
+                </button>
+              </div>
+            </div>
+
+            <div class="resource-display" [class.loading]="isArtLoading">
+              @if (isArtLoading) {
+                <div class="loading-state">
+                  <span class="spinner"></span>
+                  <span>Executing async loader...</span>
+                </div>
+              } @else if (art) {
+                <div class="profile-card">
+                  <div class="profile-header">
+                    <span class="profile-name">{{ art.title }}</span>
+                    <ah-tag>Status: {{ artStatus }}</ah-tag>
+                  </div>
+                  <p class="profile-role">{{ art.summary }}</p>
+                  <p class="profile-quota">{{ art.readTime }}</p>
+                </div>
+              }
+            </div>
+          </div>
+
+          <div class="code-example">
+            <pre><code>articleResource = resource(&#123;
+  params: () => (&#123; topic: this.topic() &#125;),
+  loader: async (&#123; params, abortSignal &#125;) => &#123;
+    const res = await fetch(`/api/articles?q=$&#123;params.topic&#125;`, &#123; signal: abortSignal &#125;);
+    return res.json();
+  &#125;
+&#125;);</code></pre>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- 8. Bidirectional Interop Card -->
     @if (activeCase() === 'all' || activeCase() === 'toObservable') {
       <div class="card" [class.focused-card]="activeCase() === 'toObservable'">
         <div class="card-header">

@@ -64,6 +64,74 @@ export class ErrorHandlingComponent {
   isLoadingRetry = signal(false);
   isLoadingRetryWhen = signal(false);
 
+  // --- Code Snippets & Visibility ---
+  readonly showCode = signal<Record<string, boolean>>({
+    replace: false,
+    rethrow: false,
+    retry: false,
+    retryWhen: false,
+    architecture: true,
+  });
+
+  readonly codeSnippets = {
+    replace: `// 🛡️ Catch & Replace: Fallback to safe default
+http.get<UserProfile>('/api/profile').pipe(
+  catchError((error) => {
+    logger.warn('Failed to load profile, using guest fallback', error);
+    return of(GUEST_DEFAULT_PROFILE); // Upstream error is absorbed
+  })
+);`,
+    rethrow: `// 📢 Catch & Rethrow: Intercept for side-effects, then forward error
+http.post('/api/checkout', payload).pipe(
+  catchError((error) => {
+    toastService.show('Payment failed: ' + error.message, 'error');
+    // Rethrow so the calling component knows submission failed
+    return throwError(() => error);
+  })
+);`,
+    retry: `// 🔁 Modern RxJS 7+ Declarative Retry Policy
+http.get<Order[]>('/api/orders').pipe(
+  retry({
+    count: 3,
+    delay: (error, retryCount) => {
+      // Exponential backoff: 1s, 2s, 4s...
+      const delayMs = Math.min(1000 * Math.pow(2, retryCount - 1), 8000);
+      return timer(delayMs);
+    },
+    resetOnSuccess: true,
+  }),
+  catchError((err) => of([]))
+);`,
+    retryWhen: `// ⏳ Legacy retryWhen (RxJS 6 style)
+http.get('/api/data').pipe(
+  retryWhen((errors$) =>
+    errors$.pipe(
+      delayWhen(() => timer(2000)),
+      take(3)
+    )
+  )
+);`,
+    pitfall: `// ⚠️ THE CRITICAL ARCHITECTURE RULE: Inner vs. Outer catchError
+// ❌ WRONG: Outer catchError kills the outer keystroke stream permanently!
+searchKeystrokes$.pipe(
+  switchMap(query => http.get('/search?q=' + query)),
+  catchError(err => of([])) // Once this fires, searchKeystrokes$ is UNCONSUMABLE!
+);
+
+// ✅ CORRECT: Place catchError on the INNER observable
+searchKeystrokes$.pipe(
+  switchMap(query =>
+    http.get('/search?q=' + query).pipe(
+      catchError(err => of([])) // Only the inner request fails; search remains active!
+    )
+  )
+);`,
+  };
+
+  toggleCode(key: string) {
+    this.showCode.update((state) => ({ ...state, [key]: !state[key] }));
+  }
+
   // --- Strategy 1: Replace Strategy ---
   replaceStrategyData$: Observable<string | null> = merge(
     this.triggerReplace.pipe(

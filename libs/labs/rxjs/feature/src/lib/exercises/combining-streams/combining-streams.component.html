@@ -12,6 +12,38 @@
     ariaLabel="Filter combining operator"
   />
 
+  <!-- Comparison Guide Card -->
+  @if (activeCase() === 'all') {
+    <div class="card comparison-card">
+      <div class="card-header">
+        <div class="card-title-row">
+          <h3>Combination Mental Model: Master-Slave vs. Democratic</h3>
+          <ah-tag>Architecture Guide</ah-tag>
+        </div>
+        <p>
+          Choosing the right combination operator prevents redundant network
+          calls, timing glitches, and silent deadlocks.
+        </p>
+      </div>
+      <div class="card-content">
+        <div class="everyday-example">
+          <p>
+            <strong>The Core Distinction:</strong>
+            <code>withLatestFrom</code> is a <em>master-slave</em> relationship
+            (only the master stream triggers emissions).
+            <code>combineLatest</code> is <em>democratic</em> (any source
+            emission triggers a recalculation, provided all sources have emitted
+            at least once).
+          </p>
+        </div>
+
+        <div class="code-example">
+          <pre><code>{{ codeSnippets.comparison }}</code></pre>
+        </div>
+      </div>
+    </div>
+  }
+
   <div class="operators-grid" [class.single-case]="activeCase() !== 'all'">
     <!-- Card for withLatestFrom Strategy -->
     @if (activeCase() === 'all' || activeCase() === 'withLatestFrom') {
@@ -32,6 +64,15 @@
           </p>
         </div>
         <div class="card-content">
+          <div class="everyday-example">
+            <p>
+              <strong>Production Use Case:</strong> User clicks a "Save" button.
+              The click event is the primary trigger, and it samples the latest
+              form values and auth credentials without creating multiple
+              triggers when the form inputs change.
+            </p>
+          </div>
+
           <div class="stream-controls">
             <div class="stream-control">
               <h4>Primary Stream (Trigger)</h4>
@@ -116,6 +157,20 @@
               </p>
             }
           </div>
+
+          <div class="code-example">
+            <button
+              type="button"
+              ahButton="ghost"
+              size="sm"
+              (click)="toggleCode('withLatestFrom')"
+            >
+              {{ showCode()['withLatestFrom'] ? 'Hide' : 'Show' }} Code Example
+            </button>
+            @if (showCode()['withLatestFrom']) {
+              <pre><code>{{ codeSnippets.withLatestFrom }}</code></pre>
+            }
+          </div>
         </div>
       </div>
     }
@@ -136,46 +191,63 @@
           </p>
         </div>
         <div class="card-content">
+          <div class="everyday-example">
+            <p>
+              <strong>Production Use Case:</strong> Complex dashboard filters
+              where changing the search box, the dropdown category, or the date
+              range should immediately recalculate and re-fetch filtered grid
+              items.
+            </p>
+          </div>
+
           <div class="stream-controls">
             <div class="stream-control">
-              <h4>Source 1 (string)</h4>
+              <h4>Source 1 (Strings)</h4>
               <div class="button-group">
                 <button
                   type="button"
                   ahButton="primary"
                   size="sm"
-                  (click)="emitSource1('A')"
+                  (click)="emitSource1('Red')"
                 >
-                  Emit "A"
+                  Emit "Red"
                 </button>
                 <button
                   type="button"
                   ahButton="primary"
                   size="sm"
-                  (click)="emitSource1('B')"
+                  (click)="emitSource1('Green')"
                 >
-                  Emit "B"
+                  Emit "Green"
+                </button>
+                <button
+                  type="button"
+                  ahButton="primary"
+                  size="sm"
+                  (click)="emitSource1('Blue')"
+                >
+                  Emit "Blue"
                 </button>
               </div>
             </div>
             <div class="stream-control">
-              <h4>Source 2 (number)</h4>
+              <h4>Source 2 (Numbers)</h4>
               <div class="button-group">
                 <button
                   type="button"
                   ahButton="secondary"
                   size="sm"
-                  (click)="emitSource2(1)"
+                  (click)="emitSource2(10)"
                 >
-                  Emit 1
+                  Emit 10
                 </button>
                 <button
                   type="button"
                   ahButton="secondary"
                   size="sm"
-                  (click)="emitSource2(2)"
+                  (click)="emitSource2(20)"
                 >
-                  Emit 2
+                  Emit 20
                 </button>
               </div>
             </div>
@@ -212,6 +284,20 @@
                 Both sources must emit at least once for combineLatest to
                 produce its first value.
               </p>
+            }
+          </div>
+
+          <div class="code-example">
+            <button
+              type="button"
+              ahButton="ghost"
+              size="sm"
+              (click)="toggleCode('combineLatest')"
+            >
+              {{ showCode()['combineLatest'] ? 'Hide' : 'Show' }} Code Example
+            </button>
+            @if (showCode()['combineLatest']) {
+              <pre><code>{{ codeSnippets.combineLatest }}</code></pre>
             }
           </div>
         </div>
