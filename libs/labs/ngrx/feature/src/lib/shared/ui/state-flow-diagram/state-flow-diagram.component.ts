@@ -116,12 +116,22 @@ export type FlowStage =
     </div>
   `,
   styles: `
+    :host {
+      display: block;
+      max-inline-size: 100%;
+      min-inline-size: 0;
+    }
+
     .flow-card {
       background: var(--color-bg-surface);
       border: 1px solid var(--color-border-default);
       border-radius: var(--radius-lg, 0.75rem);
       padding: var(--space-4, 1rem) var(--space-5, 1.25rem);
       margin-bottom: var(--space-6, 1.5rem);
+      max-inline-size: 100%;
+      min-inline-size: 0;
+      box-sizing: border-box;
+      overflow: hidden;
       transition:
         border-color 0.3s ease,
         box-shadow 0.3s ease;
@@ -185,7 +195,11 @@ export type FlowStage =
       align-items: center;
       gap: var(--space-2, 0.5rem);
       overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
       padding-bottom: var(--space-2, 0.5rem);
+      max-inline-size: 100%;
+      min-inline-size: 0;
+      scrollbar-width: thin;
     }
 
     .stage-node {
@@ -197,7 +211,42 @@ export type FlowStage =
       padding: var(--space-2, 0.5rem) var(--space-3, 0.75rem);
       border-radius: var(--radius-md, 0.5rem);
       min-width: 110px;
+      flex-shrink: 0;
       transition: all 0.25s ease;
+    }
+
+    @media (max-width: 768px) {
+      .flow-card {
+        padding: var(--space-3, 0.75rem);
+        margin-bottom: var(--space-4, 1rem);
+      }
+
+      .flow-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-2, 0.5rem);
+      }
+
+      .flow-title {
+        font-size: 0.8125rem;
+      }
+
+      .stage-node {
+        min-width: 90px;
+        padding: var(--space-1, 0.25rem) var(--space-2, 0.5rem);
+      }
+
+      .node-name {
+        font-size: 0.75rem;
+      }
+
+      .node-desc {
+        font-size: 0.6rem;
+      }
+
+      .stage-arrow {
+        min-width: 36px;
+      }
     }
 
     .stage-node.current {

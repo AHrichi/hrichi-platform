@@ -29,12 +29,16 @@ import { NgrxNavigationComponent } from './navigation/navigation.component';
       color: var(--color-text-default);
       font-family: var(--font-family-sans, system-ui, sans-serif);
       width: 100%;
+      max-width: 100%;
+      min-width: 0;
     }
 
     .ngrx-lab-shell {
       display: flex;
       flex-direction: column;
       width: 100%;
+      max-width: 100%;
+      min-width: 0;
       min-height: 100%;
       box-sizing: border-box;
       position: relative;
@@ -60,6 +64,9 @@ import { NgrxNavigationComponent } from './navigation/navigation.component';
       flex: 1;
       display: flex;
       flex-direction: column;
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,

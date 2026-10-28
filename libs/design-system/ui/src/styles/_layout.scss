@@ -2,6 +2,7 @@
   /** Centred page column with fluid side gutters. */
   .ah-container {
     inline-size: 100%;
+    min-inline-size: 0;
     max-inline-size: calc(var(--layout-content) + 2 * var(--layout-gutter));
     margin-inline: auto;
     padding-inline: var(--layout-gutter);

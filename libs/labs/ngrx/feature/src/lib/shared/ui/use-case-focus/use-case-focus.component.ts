@@ -37,6 +37,12 @@ import { AhButton, SegmentedControl, Tag, type SegmentedOption } from '@ah/ui';
     </div>
   `,
   styles: `
+    :host {
+      display: block;
+      max-inline-size: 100%;
+      min-inline-size: 0;
+    }
+
     .use-case-focus-wrapper {
       display: flex;
       flex-wrap: wrap;
@@ -48,6 +54,9 @@ import { AhButton, SegmentedControl, Tag, type SegmentedOption } from '@ah/ui';
       border: 1px solid var(--color-border-default);
       border-radius: var(--radius-lg, 0.75rem);
       margin-bottom: var(--space-6, 1.5rem);
+      max-inline-size: 100%;
+      min-inline-size: 0;
+      box-sizing: border-box;
     }
 
     .control-row {
@@ -55,6 +64,13 @@ import { AhButton, SegmentedControl, Tag, type SegmentedOption } from '@ah/ui';
       align-items: center;
       gap: var(--space-3, 0.75rem);
       flex-wrap: wrap;
+      max-inline-size: 100%;
+      min-inline-size: 0;
+    }
+
+    ah-segmented-control {
+      max-inline-size: 100%;
+      min-inline-size: 0;
     }
 
     .control-label {
@@ -63,12 +79,31 @@ import { AhButton, SegmentedControl, Tag, type SegmentedOption } from '@ah/ui';
       text-transform: uppercase;
       letter-spacing: 0.05em;
       color: var(--color-text-muted);
+      flex-shrink: 0;
     }
 
     .active-badge-group {
       display: flex;
       align-items: center;
       gap: var(--space-2, 0.5rem);
+    }
+
+    @media (max-width: 768px) {
+      .use-case-focus-wrapper {
+        padding: var(--space-2, 0.5rem) var(--space-3, 0.75rem);
+        margin-bottom: var(--space-4, 1rem);
+      }
+
+      .control-row {
+        width: 100%;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-1, 0.25rem);
+      }
+
+      ah-segmented-control {
+        width: 100%;
+      }
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,

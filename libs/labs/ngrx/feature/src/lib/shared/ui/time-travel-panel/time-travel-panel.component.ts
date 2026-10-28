@@ -100,12 +100,21 @@ export interface ActionRecord<T = unknown> {
     </div>
   `,
   styles: `
+    :host {
+      display: block;
+      max-inline-size: 100%;
+      min-inline-size: 0;
+    }
+
     .time-travel-container {
       background: var(--color-bg-surface);
       border: 1px solid var(--color-border-default);
       border-radius: var(--radius-lg, 0.75rem);
       padding: var(--space-4, 1rem);
       margin-top: var(--space-5, 1.25rem);
+      max-inline-size: 100%;
+      min-inline-size: 0;
+      box-sizing: border-box;
     }
 
     .panel-header {
@@ -260,7 +269,7 @@ export interface ActionRecord<T = unknown> {
       max-height: 140px;
     }
 
-    @media (max-width: 600px) {
+    @media (max-width: 768px) {
       .panel-header {
         flex-direction: column;
         align-items: stretch;

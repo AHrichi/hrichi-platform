@@ -47,6 +47,12 @@ import { AhButton } from '@ah/ui';
     </nav>
   `,
   styles: `
+    :host {
+      display: block;
+      max-inline-size: 100%;
+      min-inline-size: 0;
+    }
+
     .sub-nav {
       display: flex;
       flex-wrap: wrap;
@@ -58,12 +64,17 @@ import { AhButton } from '@ah/ui';
       border: 1px solid var(--color-border-default);
       border-radius: var(--radius-lg, 0.75rem);
       margin-bottom: var(--space-6, 1.5rem);
+      max-inline-size: 100%;
+      min-inline-size: 0;
+      box-sizing: border-box;
     }
 
     .links-group {
       display: flex;
       flex-wrap: wrap;
       gap: var(--space-1, 0.25rem);
+      max-inline-size: 100%;
+      min-inline-size: 0;
     }
 
     .nav-tab {
@@ -103,7 +114,7 @@ import { AhButton } from '@ah/ui';
       align-items: center;
     }
 
-    @media (max-width: 640px) {
+    @media (max-width: 768px) {
       .sub-nav {
         padding: var(--space-2, 0.5rem);
         flex-direction: column;
@@ -117,6 +128,7 @@ import { AhButton } from '@ah/ui';
         -webkit-overflow-scrolling: touch;
         scrollbar-width: none;
         padding-bottom: 2px;
+        width: 100%;
 
         &::-webkit-scrollbar {
           display: none;

@@ -528,10 +528,20 @@ export const SkillsStore = signalStore(
     </div>
   `,
   styles: `
+    :host {
+      display: block;
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
+    }
+
     .exercise-container {
       display: flex;
       flex-direction: column;
       gap: var(--space-4, 1rem);
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
     }
 
     .metrics-row {
@@ -1024,7 +1034,7 @@ export const SkillsStore = signalStore(
       border-radius: var(--radius-md, 0.5rem);
     }
 
-    @media (max-width: 640px) {
+    @media (max-width: 768px) {
       .cards-grid {
         grid-template-columns: 1fr;
         gap: var(--space-4, 1rem);

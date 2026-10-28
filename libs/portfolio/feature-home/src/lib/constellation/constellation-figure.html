@@ -73,16 +73,27 @@
     <ul class="links" role="list">
       @for (link of links; track link.id) {
         <li>
-          <a
-            [href]="link.href"
-            target="_blank"
-            rel="noopener noreferrer"
-            (mouseenter)="highlight.set(link.id)"
-            (mouseleave)="highlight.set(null)"
-            (focus)="highlight.set(link.id)"
-            (blur)="highlight.set(null)"
-            >{{ link.label }}</a
-          >
+          @if (link.isExternal) {
+            <a
+              [href]="link.href"
+              target="_blank"
+              rel="noopener noreferrer"
+              (mouseenter)="highlight.set(link.id)"
+              (mouseleave)="highlight.set(null)"
+              (focus)="highlight.set(link.id)"
+              (blur)="highlight.set(null)"
+              >{{ link.label }}</a
+            >
+          } @else {
+            <a
+              [routerLink]="link.href"
+              (mouseenter)="highlight.set(link.id)"
+              (mouseleave)="highlight.set(null)"
+              (focus)="highlight.set(link.id)"
+              (blur)="highlight.set(null)"
+              >{{ link.label }}</a
+            >
+          }
         </li>
       }
     </ul>

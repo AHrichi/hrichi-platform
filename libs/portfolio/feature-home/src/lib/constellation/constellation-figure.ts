@@ -5,6 +5,7 @@ import {
   inject,
   signal,
 } from '@angular/core';
+import { Router, RouterLink } from '@angular/router';
 import {
   constellation,
   type ConstellationParams,
@@ -48,12 +49,13 @@ const placed = constellation.nodes.map((node, i) => {
  */
 @Component({
   selector: 'ah-constellation-figure',
-  imports: [SceneHost],
+  imports: [SceneHost, RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './constellation-figure.html',
   styleUrl: './constellation-figure.scss',
 })
 export class ConstellationFigure {
+  private readonly router = inject(Router);
   private readonly preferences = inject(PreferencesStore);
 
   protected readonly viewBox = viewBox;
@@ -78,6 +80,7 @@ export class ConstellationFigure {
     .map((node) => ({
       id: node.id,
       href: nodeLinks[node.id],
+      isExternal: (nodeLinks[node.id] ?? '').startsWith('http'),
       label: linkLabels[node.id] ?? node.id,
     }));
 
@@ -92,7 +95,11 @@ export class ConstellationFigure {
 
   protected open(href: string): void {
     if (typeof window !== 'undefined' && href) {
-      window.open(href, '_blank', 'noopener,noreferrer');
+      if (href.startsWith('http')) {
+        window.open(href, '_blank', 'noopener,noreferrer');
+      } else {
+        void this.router.navigateByUrl(href);
+      }
     }
   }
 }

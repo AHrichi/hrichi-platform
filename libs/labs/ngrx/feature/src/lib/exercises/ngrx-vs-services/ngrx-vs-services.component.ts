@@ -378,10 +378,20 @@ export interface ArchitectureComparison {
     </div>
   `,
   styles: `
+    :host {
+      display: block;
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
+    }
+
     .architecture-guide-container {
       display: flex;
       flex-direction: column;
       gap: var(--space-6, 1.5rem);
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
     }
 
     .advisor-card {
@@ -948,7 +958,7 @@ export interface ArchitectureComparison {
       color: var(--color-accent-default);
     }
 
-    @media (max-width: 640px) {
+    @media (max-width: 768px) {
       .advisor-card,
       .spectrum-card,
       .pattern-detail-card,

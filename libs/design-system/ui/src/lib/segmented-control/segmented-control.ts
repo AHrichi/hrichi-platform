@@ -38,6 +38,11 @@ export interface SegmentedOption<T extends string> {
     </div>
   `,
   styles: `
+    :host {
+      display: block;
+      max-inline-size: 100%;
+      min-inline-size: 0;
+    }
     .track {
       display: inline-flex;
       max-inline-size: 100%;

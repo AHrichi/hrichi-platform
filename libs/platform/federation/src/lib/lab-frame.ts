@@ -121,6 +121,8 @@ import { SectionHeading } from '@ah/ui';
       display: grid;
       gap: var(--space-5);
       padding-block: var(--space-7) var(--space-8);
+      min-inline-size: 0;
+      max-inline-size: 100%;
     }
     .lab__header {
       display: flex;
@@ -150,6 +152,24 @@ import { SectionHeading } from '@ah/ui';
     .lab__body {
       min-block-size: 100svh;
       position: relative;
+      min-inline-size: 0;
+      max-inline-size: 100%;
+    }
+
+    @media (max-width: 768px) {
+      .lab {
+        padding-block: var(--space-4) var(--space-6);
+        gap: var(--space-3);
+      }
+      .lab__header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-3);
+      }
+      .lab__actions {
+        width: 100%;
+        justify-content: flex-end;
+      }
     }
     .lab__body:fullscreen,
     .lab__body.is-fullscreen {
