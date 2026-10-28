@@ -29,6 +29,8 @@ export class App {
   protected readonly year = new Date().getFullYear();
   protected readonly nav = [
     { label: 'Work', path: '/work' },
+    { label: 'PulseOps', path: '/apps/dispatch' },
+    { label: 'StrategyApp', path: '/apps/strategy' },
     { label: 'Experience', path: '/experience' },
     { label: 'Services', path: '/services' },
     { label: 'Contact', path: '/contact' },

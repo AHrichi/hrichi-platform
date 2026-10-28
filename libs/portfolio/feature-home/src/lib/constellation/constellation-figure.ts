@@ -24,6 +24,7 @@ import { PreferencesStore } from '@ah/shared/state';
 const linkLabels: Record<string, string> = {
   shell: 'How this site is built',
   'product-strategy': 'Financial strategy dashboard',
+  'product-dispatch': 'PulseOps · Commercial dispatch control center',
   'lab-rxjs': 'RxJS practice pad',
   'lab-sky': 'Sky lab',
   'lab-hello': 'Micro-frontend demo',

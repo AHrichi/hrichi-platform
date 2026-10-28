@@ -59,6 +59,7 @@ export const legend = [
 export const nodeLinks: Readonly<Record<string, string>> = {
   shell: '/work/this-platform',
   'product-strategy': '/apps/strategy',
+  'product-dispatch': '/apps/dispatch',
   'lab-rxjs': '/labs/rxjs',
   'lab-sky': '/labs/sky',
   'lab-hello': '/labs/hello',
@@ -71,6 +72,8 @@ export const nodeLinks: Readonly<Record<string, string>> = {
   'portfolio-feature-cv': '/cv',
   'strategy-feature': '/apps/strategy',
   'strategy-domain': '/apps/strategy',
+  'product-dispatch-feature': '/apps/dispatch',
+  'product-dispatch-domain': '/apps/dispatch',
   'lab-rxjs-feature': '/labs/rxjs',
   'lab-sky-feature': '/labs/sky',
   'lab-sky-domain': '/labs/sky',
