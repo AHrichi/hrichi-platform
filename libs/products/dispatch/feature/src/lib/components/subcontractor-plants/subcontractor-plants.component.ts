@@ -813,16 +813,25 @@ import type {
       font-size: 0.75rem;
       font-weight: 600;
       color: var(--color-text-muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: block;
     }
 
     .form-input,
     .form-select {
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+      min-width: 0;
       background: var(--color-bg-canvas);
       border: 1px solid var(--color-border-default);
       border-radius: var(--radius-md, 0.5rem);
       padding: 8px 12px;
       font-size: 0.875rem;
       color: var(--color-text-default);
+      text-overflow: ellipsis;
 
       &:focus {
         outline: none;

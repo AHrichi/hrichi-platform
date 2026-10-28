@@ -36,187 +36,189 @@ import type { Driver, DriverStatus } from '@ah/products/dispatch/domain';
             </button>
           </div>
 
-          <form class="modal-body" (ngSubmit)="submitDriver()" novalidate>
-            @if (successMessage()) {
-              <div class="form-success-banner" role="status">
-                {{ successMessage() }}
-              </div>
-            }
+          <form class="modal-form" (ngSubmit)="submitDriver()" novalidate>
+            <div class="modal-body">
+              @if (successMessage()) {
+                <div class="form-success-banner" role="status">
+                  {{ successMessage() }}
+                </div>
+              }
 
-            <div class="form-grid">
-              <div class="form-group full-width">
-                <label class="form-label" for="driver-name"
-                  >Driver Full Name *</label
-                >
-                <input
-                  id="driver-name"
-                  type="text"
-                  class="form-input"
-                  [class.has-error]="
-                    nameRef.invalid && (nameRef.touched || submitted())
-                  "
-                  [(ngModel)]="name"
-                  name="name"
-                  #nameRef="ngModel"
-                  placeholder="e.g. Tariq Mahmood, James Wilson..."
-                  required
-                  minlength="2"
-                  [attr.aria-invalid]="
-                    nameRef.invalid && (nameRef.touched || submitted())
-                  "
-                />
-                @if (nameRef.invalid && (nameRef.touched || submitted())) {
-                  <span class="field-error" role="alert"
-                    >Driver full name is required (min 2 characters)</span
+              <div class="form-grid">
+                <div class="form-group full-width">
+                  <label class="form-label" for="driver-name"
+                    >Driver Full Name *</label
                   >
-                }
-              </div>
+                  <input
+                    id="driver-name"
+                    type="text"
+                    class="form-input"
+                    [class.has-error]="
+                      nameRef.invalid && (nameRef.touched || submitted())
+                    "
+                    [(ngModel)]="name"
+                    name="name"
+                    #nameRef="ngModel"
+                    placeholder="e.g. Tariq Mahmood, James Wilson..."
+                    required
+                    minlength="2"
+                    [attr.aria-invalid]="
+                      nameRef.invalid && (nameRef.touched || submitted())
+                    "
+                  />
+                  @if (nameRef.invalid && (nameRef.touched || submitted())) {
+                    <span class="field-error" role="alert"
+                      >Driver full name is required (min 2 characters)</span
+                    >
+                  }
+                </div>
 
-              <div class="form-group">
-                <label class="form-label" for="driver-phone"
-                  >Contact Phone / WhatsApp *</label
-                >
-                <input
-                  id="driver-phone"
-                  type="text"
-                  class="form-input"
-                  [class.has-error]="
-                    phoneRef.invalid && (phoneRef.touched || submitted())
-                  "
-                  [(ngModel)]="phone"
-                  name="phone"
-                  #phoneRef="ngModel"
-                  placeholder="e.g. +44 7700 900821"
-                  required
-                  minlength="7"
-                  [attr.aria-invalid]="
-                    phoneRef.invalid && (phoneRef.touched || submitted())
-                  "
-                />
-                @if (phoneRef.invalid && (phoneRef.touched || submitted())) {
-                  <span class="field-error" role="alert"
-                    >Valid contact number is required</span
+                <div class="form-group">
+                  <label class="form-label" for="driver-phone"
+                    >Contact Phone / WhatsApp *</label
                   >
-                }
-              </div>
+                  <input
+                    id="driver-phone"
+                    type="text"
+                    class="form-input"
+                    [class.has-error]="
+                      phoneRef.invalid && (phoneRef.touched || submitted())
+                    "
+                    [(ngModel)]="phone"
+                    name="phone"
+                    #phoneRef="ngModel"
+                    placeholder="e.g. +44 7700 900821"
+                    required
+                    minlength="7"
+                    [attr.aria-invalid]="
+                      phoneRef.invalid && (phoneRef.touched || submitted())
+                    "
+                  />
+                  @if (phoneRef.invalid && (phoneRef.touched || submitted())) {
+                    <span class="field-error" role="alert"
+                      >Valid contact number is required</span
+                    >
+                  }
+                </div>
 
-              <div class="form-group">
-                <label class="form-label" for="driver-shift"
-                  >Assigned Shift *</label
-                >
-                <select
-                  id="driver-shift"
-                  class="form-select"
-                  [(ngModel)]="activeShift"
-                  name="activeShift"
-                  required
-                >
-                  <option value="shift_a">Shift A (07:00 - 13:00)</option>
-                  <option value="shift_b">Shift B (13:00 - 19:00)</option>
-                </select>
-              </div>
-
-              <div class="form-group">
-                <label class="form-label" for="driver-vehicle"
-                  >Vehicle Make & Model *</label
-                >
-                <input
-                  id="driver-vehicle"
-                  type="text"
-                  class="form-input"
-                  [(ngModel)]="vehicle"
-                  name="vehicle"
-                  placeholder="e.g. Mercedes Sprinter LWB, Ford Transit Custom"
-                  required
-                />
-              </div>
-
-              <div class="form-group">
-                <label class="form-label" for="driver-reg"
-                  >Registration Plate *</label
-                >
-                <input
-                  id="driver-reg"
-                  type="text"
-                  class="form-input"
-                  [class.has-error]="
-                    regRef.invalid && (regRef.touched || submitted())
-                  "
-                  [(ngModel)]="registration"
-                  name="registration"
-                  #regRef="ngModel"
-                  placeholder="e.g. LD72 XPR, VO23 GHL"
-                  required
-                  [attr.aria-invalid]="
-                    regRef.invalid && (regRef.touched || submitted())
-                  "
-                />
-                @if (regRef.invalid && (regRef.touched || submitted())) {
-                  <span class="field-error" role="alert"
-                    >Registration plate is required</span
+                <div class="form-group">
+                  <label class="form-label" for="driver-shift"
+                    >Assigned Shift *</label
                   >
-                }
-              </div>
+                  <select
+                    id="driver-shift"
+                    class="form-select"
+                    [(ngModel)]="activeShift"
+                    name="activeShift"
+                    required
+                  >
+                    <option value="shift_a">Shift A (07:00 - 13:00)</option>
+                    <option value="shift_b">Shift B (13:00 - 19:00)</option>
+                  </select>
+                </div>
 
-              <div class="form-group">
-                <label class="form-label" for="driver-zone"
-                  >Zone Coverage *</label
-                >
-                <input
-                  id="driver-zone"
-                  type="text"
-                  class="form-input"
-                  [(ngModel)]="zone"
-                  name="zone"
-                  placeholder="e.g. West End (W1/SW1), City & Shoreditch (EC/E1)"
-                  required
-                />
-              </div>
+                <div class="form-group">
+                  <label class="form-label" for="driver-vehicle"
+                    >Vehicle Make & Model *</label
+                  >
+                  <input
+                    id="driver-vehicle"
+                    type="text"
+                    class="form-input"
+                    [(ngModel)]="vehicle"
+                    name="vehicle"
+                    placeholder="e.g. Mercedes Sprinter LWB, Ford Transit Custom"
+                    required
+                  />
+                </div>
 
-              <div class="form-group">
-                <label class="form-label" for="driver-location"
-                  >Current / Starting Location *</label
-                >
-                <input
-                  id="driver-location"
-                  type="text"
-                  class="form-input"
-                  [(ngModel)]="currentLocation"
-                  name="currentLocation"
-                  placeholder="e.g. Park Lane / Mayfair or Stratford Depot"
-                  required
-                />
-              </div>
+                <div class="form-group">
+                  <label class="form-label" for="driver-reg"
+                    >Registration Plate *</label
+                  >
+                  <input
+                    id="driver-reg"
+                    type="text"
+                    class="form-input"
+                    [class.has-error]="
+                      regRef.invalid && (regRef.touched || submitted())
+                    "
+                    [(ngModel)]="registration"
+                    name="registration"
+                    #regRef="ngModel"
+                    placeholder="e.g. LD72 XPR, VO23 GHL"
+                    required
+                    [attr.aria-invalid]="
+                      regRef.invalid && (regRef.touched || submitted())
+                    "
+                  />
+                  @if (regRef.invalid && (regRef.touched || submitted())) {
+                    <span class="field-error" role="alert"
+                      >Registration plate is required</span
+                    >
+                  }
+                </div>
 
-              <div class="form-group">
-                <label class="form-label" for="driver-capacity"
-                  >Max Payload Capacity (kg) *</label
-                >
-                <input
-                  id="driver-capacity"
-                  type="number"
-                  class="form-input"
-                  [(ngModel)]="capacityKg"
-                  name="capacityKg"
-                  min="200"
-                  max="3500"
-                  required
-                />
-              </div>
+                <div class="form-group">
+                  <label class="form-label" for="driver-zone"
+                    >Zone Coverage *</label
+                  >
+                  <input
+                    id="driver-zone"
+                    type="text"
+                    class="form-input"
+                    [(ngModel)]="zone"
+                    name="zone"
+                    placeholder="e.g. West End (W1/SW1), City & Shoreditch (EC/E1)"
+                    required
+                  />
+                </div>
 
-              <div class="form-group">
-                <label class="form-label" for="driver-status"
-                  >Initial Status</label
-                >
-                <select
-                  id="driver-status"
-                  class="form-select"
-                  [(ngModel)]="status"
-                  name="status"
-                >
-                  <option value="idle">Idle / Ready at Base</option>
-                  <option value="on_route">Active on Route</option>
-                </select>
+                <div class="form-group">
+                  <label class="form-label" for="driver-location"
+                    >Current / Starting Location *</label
+                  >
+                  <input
+                    id="driver-location"
+                    type="text"
+                    class="form-input"
+                    [(ngModel)]="currentLocation"
+                    name="currentLocation"
+                    placeholder="e.g. Park Lane / Mayfair or Stratford Depot"
+                    required
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="driver-capacity"
+                    >Max Payload Capacity (kg) *</label
+                  >
+                  <input
+                    id="driver-capacity"
+                    type="number"
+                    class="form-input"
+                    [(ngModel)]="capacityKg"
+                    name="capacityKg"
+                    min="200"
+                    max="3500"
+                    required
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="driver-status"
+                    >Initial Status</label
+                  >
+                  <select
+                    id="driver-status"
+                    class="form-select"
+                    [(ngModel)]="status"
+                    name="status"
+                  >
+                    <option value="idle">Idle / Ready at Base</option>
+                    <option value="on_route">Active on Route</option>
+                  </select>
+                </div>
               </div>
             </div>
 
@@ -260,8 +262,7 @@ import type { Driver, DriverStatus } from '@ah/products/dispatch/domain';
       background: var(--color-bg-surface);
       border: 1px solid var(--color-border-default);
       border-radius: var(--radius-xl, 1rem);
-      width: 100%;
-      max-width: 600px;
+      width: min(100%, 640px);
       max-height: min(90dvh, 52rem);
       display: flex;
       flex-direction: column;
@@ -276,6 +277,7 @@ import type { Driver, DriverStatus } from '@ah/products/dispatch/domain';
       align-items: center;
       justify-content: space-between;
       flex-shrink: 0;
+      background: var(--color-bg-surface);
     }
 
     .title-wrap {
@@ -317,6 +319,14 @@ import type { Driver, DriverStatus } from '@ah/products/dispatch/domain';
       color: var(--color-text-default);
     }
 
+    .modal-form {
+      display: flex;
+      flex-direction: column;
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow: hidden;
+    }
+
     .modal-body {
       padding: var(--space-5, 1.25rem);
       overflow-y: auto;
@@ -326,6 +336,7 @@ import type { Driver, DriverStatus } from '@ah/products/dispatch/domain';
       display: flex;
       flex-direction: column;
       gap: var(--space-4, 1rem);
+      box-sizing: border-box;
     }
 
     .form-success-banner {
@@ -341,18 +352,23 @@ import type { Driver, DriverStatus } from '@ah/products/dispatch/domain';
 
     .form-grid {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: var(--space-3, 0.75rem);
+      width: 100%;
+      box-sizing: border-box;
     }
 
     .full-width {
-      grid-column: span 2;
+      grid-column: 1 / -1;
     }
 
     .form-group {
       display: flex;
       flex-direction: column;
       gap: 0.35rem;
+      min-width: 0;
+      width: 100%;
+      box-sizing: border-box;
     }
 
     .form-label {
@@ -361,10 +377,18 @@ import type { Driver, DriverStatus } from '@ah/products/dispatch/domain';
       color: var(--color-text-muted);
       text-transform: uppercase;
       letter-spacing: 0.04em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: block;
     }
 
     .form-input,
     .form-select {
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+      min-width: 0;
       background: var(--color-bg-subtle, rgba(255, 255, 255, 0.04));
       border: 1px solid var(--color-border-default);
       border-radius: var(--radius-md, 0.375rem);
@@ -372,6 +396,7 @@ import type { Driver, DriverStatus } from '@ah/products/dispatch/domain';
       font-size: var(--text-sm, 0.875rem);
       color: var(--color-text-default);
       outline: none;
+      text-overflow: ellipsis;
       transition:
         border-color 0.2s,
         box-shadow 0.2s;
@@ -401,9 +426,11 @@ import type { Driver, DriverStatus } from '@ah/products/dispatch/domain';
     .modal-footer {
       display: flex;
       justify-content: flex-end;
+      align-items: center;
       gap: var(--space-3, 0.75rem);
-      padding-top: var(--space-4, 1rem);
+      padding: 0.875rem 1.25rem;
       border-top: 1px solid var(--color-border-default);
+      background: var(--color-bg-surface);
       flex-shrink: 0;
       flex-wrap: wrap;
     }
@@ -450,7 +477,7 @@ import type { Driver, DriverStatus } from '@ah/products/dispatch/domain';
         grid-template-columns: 1fr;
       }
       .full-width {
-        grid-column: span 1;
+        grid-column: 1 / -1;
       }
       .modal-card {
         max-height: 94dvh;

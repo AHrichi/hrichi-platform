@@ -36,183 +36,189 @@ import type { SubcontractorPlant } from '@ah/products/dispatch/domain';
             </button>
           </div>
 
-          <form class="modal-body" (ngSubmit)="submitPlant()" novalidate>
-            @if (successMessage()) {
-              <div class="form-success-banner" role="status">
-                {{ successMessage() }}
-              </div>
-            }
+          <form class="modal-form" (ngSubmit)="submitPlant()" novalidate>
+            <div class="modal-body">
+              @if (successMessage()) {
+                <div class="form-success-banner" role="status">
+                  {{ successMessage() }}
+                </div>
+              }
 
-            <div class="form-grid">
-              <div class="form-group full-width">
-                <label class="form-label" for="plant-name">Plant Name *</label>
-                <input
-                  id="plant-name"
-                  type="text"
-                  class="form-input"
-                  [class.has-error]="
-                    nameRef.invalid && (nameRef.touched || submitted())
-                  "
-                  [(ngModel)]="name"
-                  name="name"
-                  #nameRef="ngModel"
-                  placeholder="e.g. Thames Industrial Laundries, Acton Royal Wash..."
-                  required
-                  minlength="2"
-                  [attr.aria-invalid]="
-                    nameRef.invalid && (nameRef.touched || submitted())
-                  "
-                />
-                @if (nameRef.invalid && (nameRef.touched || submitted())) {
-                  <span class="field-error" role="alert"
-                    >Plant name is required (min 2 characters)</span
+              <div class="form-grid">
+                <div class="form-group full-width">
+                  <label class="form-label" for="plant-name"
+                    >Plant Name *</label
                   >
-                }
-              </div>
+                  <input
+                    id="plant-name"
+                    type="text"
+                    class="form-input"
+                    [class.has-error]="
+                      nameRef.invalid && (nameRef.touched || submitted())
+                    "
+                    [(ngModel)]="name"
+                    name="name"
+                    #nameRef="ngModel"
+                    placeholder="e.g. Thames Industrial Laundries, Acton Royal Wash..."
+                    required
+                    minlength="2"
+                    [attr.aria-invalid]="
+                      nameRef.invalid && (nameRef.touched || submitted())
+                    "
+                  />
+                  @if (nameRef.invalid && (nameRef.touched || submitted())) {
+                    <span class="field-error" role="alert"
+                      >Plant name is required (min 2 characters)</span
+                    >
+                  }
+                </div>
 
-              <div class="form-group full-width">
-                <label class="form-label" for="plant-location"
-                  >Plant Facility Address *</label
-                >
-                <input
-                  id="plant-location"
-                  type="text"
-                  class="form-input"
-                  [class.has-error]="
-                    locRef.invalid && (locRef.touched || submitted())
-                  "
-                  [(ngModel)]="location"
-                  name="location"
-                  #locRef="ngModel"
-                  placeholder="e.g. Unit 4, Park Royal Trading Estate, London"
-                  required
-                  minlength="5"
-                  [attr.aria-invalid]="
-                    locRef.invalid && (locRef.touched || submitted())
-                  "
-                />
-                @if (locRef.invalid && (locRef.touched || submitted())) {
-                  <span class="field-error" role="alert"
-                    >Plant address is required</span
+                <div class="form-group full-width">
+                  <label class="form-label" for="plant-location"
+                    >Plant Facility Address *</label
                   >
-                }
-              </div>
+                  <input
+                    id="plant-location"
+                    type="text"
+                    class="form-input"
+                    [class.has-error]="
+                      locRef.invalid && (locRef.touched || submitted())
+                    "
+                    [(ngModel)]="location"
+                    name="location"
+                    #locRef="ngModel"
+                    placeholder="e.g. Unit 4, Park Royal Trading Estate, London"
+                    required
+                    minlength="5"
+                    [attr.aria-invalid]="
+                      locRef.invalid && (locRef.touched || submitted())
+                    "
+                  />
+                  @if (locRef.invalid && (locRef.touched || submitted())) {
+                    <span class="field-error" role="alert"
+                      >Plant address is required</span
+                    >
+                  }
+                </div>
 
-              <div class="form-group">
-                <label class="form-label" for="plant-postcode"
-                  >Postal Code *</label
-                >
-                <input
-                  id="plant-postcode"
-                  type="text"
-                  class="form-input"
-                  [(ngModel)]="postalCode"
-                  name="postalCode"
-                  placeholder="e.g. NW10 7QQ, E16 2EZ"
-                  required
-                />
-              </div>
-
-              <div class="form-group">
-                <label class="form-label" for="plant-spec"
-                  >Speciality Wash *</label
-                >
-                <select
-                  id="plant-spec"
-                  class="form-select"
-                  [(ngModel)]="speciality"
-                  name="speciality"
-                  required
-                >
-                  <option
-                    value="Hotel Bed Linen & Towels (Heavy Continuous Tunnel)"
+                <div class="form-group">
+                  <label class="form-label" for="plant-postcode"
+                    >Postal Code *</label
                   >
-                    Hotel Bed Linen & Towels (Continuous Tunnel)
-                  </option>
-                  <option
-                    value="F&B Table Linen & Kitchen Linens (High Temp Degreasing)"
+                  <input
+                    id="plant-postcode"
+                    type="text"
+                    class="form-input"
+                    [(ngModel)]="postalCode"
+                    name="postalCode"
+                    placeholder="e.g. NW10 7QQ, E16 2EZ"
+                    required
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="plant-spec"
+                    >Speciality Wash *</label
                   >
-                    F&B Table Linen & Kitchen Linens
-                  </option>
-                  <option value="Short-Let / Airbnb Turn Linen (Rapid Express)">
-                    Short-Let / Airbnb Turn Linen (Rapid Express)
-                  </option>
-                  <option value="Dry Cleaning & Luxury Uniforms">
-                    Dry Cleaning & Luxury Uniforms
-                  </option>
-                </select>
-              </div>
-
-              <div class="form-group">
-                <label class="form-label" for="plant-capacity"
-                  >Daily Capacity (kg) *</label
-                >
-                <input
-                  id="plant-capacity"
-                  type="number"
-                  class="form-input"
-                  [(ngModel)]="dailyCapacityKg"
-                  name="dailyCapacityKg"
-                  min="500"
-                  max="15000"
-                  required
-                />
-              </div>
-
-              <div class="form-group">
-                <label class="form-label" for="plant-contact"
-                  >Plant Manager / Contact</label
-                >
-                <input
-                  id="plant-contact"
-                  type="text"
-                  class="form-input"
-                  [(ngModel)]="contactPerson"
-                  name="contactPerson"
-                  placeholder="e.g. Vikram Sharma, Dave Mitchell"
-                />
-              </div>
-
-              <div class="form-group">
-                <label class="form-label" for="plant-phone"
-                  >Production Phone / WhatsApp *</label
-                >
-                <input
-                  id="plant-phone"
-                  type="text"
-                  class="form-input"
-                  [class.has-error]="
-                    phoneRef.invalid && (phoneRef.touched || submitted())
-                  "
-                  [(ngModel)]="phone"
-                  name="phone"
-                  #phoneRef="ngModel"
-                  placeholder="e.g. +44 20 8965 4100"
-                  required
-                  minlength="7"
-                  [attr.aria-invalid]="
-                    phoneRef.invalid && (phoneRef.touched || submitted())
-                  "
-                />
-                @if (phoneRef.invalid && (phoneRef.touched || submitted())) {
-                  <span class="field-error" role="alert"
-                    >Valid contact number is required</span
+                  <select
+                    id="plant-spec"
+                    class="form-select"
+                    [(ngModel)]="speciality"
+                    name="speciality"
+                    required
                   >
-                }
-              </div>
+                    <option
+                      value="Hotel Bed Linen & Towels (Heavy Continuous Tunnel)"
+                    >
+                      Hotel Bed Linen & Towels (Continuous Tunnel)
+                    </option>
+                    <option
+                      value="F&B Table Linen & Kitchen Linens (High Temp Degreasing)"
+                    >
+                      F&B Table Linen & Kitchen Linens
+                    </option>
+                    <option
+                      value="Short-Let / Airbnb Turn Linen (Rapid Express)"
+                    >
+                      Short-Let / Airbnb Turn Linen (Rapid Express)
+                    </option>
+                    <option value="Dry Cleaning & Luxury Uniforms">
+                      Dry Cleaning & Luxury Uniforms
+                    </option>
+                  </select>
+                </div>
 
-              <div class="form-group">
-                <label class="form-label" for="plant-email"
-                  >Dispatch Email</label
-                >
-                <input
-                  id="plant-email"
-                  type="email"
-                  class="form-input"
-                  [(ngModel)]="email"
-                  name="email"
-                  placeholder="e.g. dispatch@thameslaundry.co.uk"
-                />
+                <div class="form-group">
+                  <label class="form-label" for="plant-capacity"
+                    >Daily Capacity (kg) *</label
+                  >
+                  <input
+                    id="plant-capacity"
+                    type="number"
+                    class="form-input"
+                    [(ngModel)]="dailyCapacityKg"
+                    name="dailyCapacityKg"
+                    min="500"
+                    max="15000"
+                    required
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="plant-contact"
+                    >Plant Manager / Contact</label
+                  >
+                  <input
+                    id="plant-contact"
+                    type="text"
+                    class="form-input"
+                    [(ngModel)]="contactPerson"
+                    name="contactPerson"
+                    placeholder="e.g. Vikram Sharma, Dave Mitchell"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="plant-phone"
+                    >Production Phone / WhatsApp *</label
+                  >
+                  <input
+                    id="plant-phone"
+                    type="text"
+                    class="form-input"
+                    [class.has-error]="
+                      phoneRef.invalid && (phoneRef.touched || submitted())
+                    "
+                    [(ngModel)]="phone"
+                    name="phone"
+                    #phoneRef="ngModel"
+                    placeholder="e.g. +44 20 8965 4100"
+                    required
+                    minlength="7"
+                    [attr.aria-invalid]="
+                      phoneRef.invalid && (phoneRef.touched || submitted())
+                    "
+                  />
+                  @if (phoneRef.invalid && (phoneRef.touched || submitted())) {
+                    <span class="field-error" role="alert"
+                      >Valid contact number is required</span
+                    >
+                  }
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="plant-email"
+                    >Dispatch Email</label
+                  >
+                  <input
+                    id="plant-email"
+                    type="email"
+                    class="form-input"
+                    [(ngModel)]="email"
+                    name="email"
+                    placeholder="e.g. dispatch@thameslaundry.co.uk"
+                  />
+                </div>
               </div>
             </div>
 
@@ -258,8 +264,7 @@ import type { SubcontractorPlant } from '@ah/products/dispatch/domain';
       background: var(--color-bg-surface);
       border: 1px solid var(--color-border-default);
       border-radius: var(--radius-xl, 1rem);
-      width: 100%;
-      max-width: 600px;
+      width: min(100%, 640px);
       max-height: min(90dvh, 52rem);
       display: flex;
       flex-direction: column;
@@ -274,6 +279,7 @@ import type { SubcontractorPlant } from '@ah/products/dispatch/domain';
       align-items: center;
       justify-content: space-between;
       flex-shrink: 0;
+      background: var(--color-bg-surface);
     }
 
     .title-wrap {
@@ -315,6 +321,14 @@ import type { SubcontractorPlant } from '@ah/products/dispatch/domain';
       color: var(--color-text-default);
     }
 
+    .modal-form {
+      display: flex;
+      flex-direction: column;
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow: hidden;
+    }
+
     .modal-body {
       padding: var(--space-5, 1.25rem);
       overflow-y: auto;
@@ -324,6 +338,7 @@ import type { SubcontractorPlant } from '@ah/products/dispatch/domain';
       display: flex;
       flex-direction: column;
       gap: var(--space-4, 1rem);
+      box-sizing: border-box;
     }
 
     .form-success-banner {
@@ -339,18 +354,23 @@ import type { SubcontractorPlant } from '@ah/products/dispatch/domain';
 
     .form-grid {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: var(--space-3, 0.75rem);
+      width: 100%;
+      box-sizing: border-box;
     }
 
     .full-width {
-      grid-column: span 2;
+      grid-column: 1 / -1;
     }
 
     .form-group {
       display: flex;
       flex-direction: column;
       gap: 0.35rem;
+      min-width: 0;
+      width: 100%;
+      box-sizing: border-box;
     }
 
     .form-label {
@@ -359,10 +379,18 @@ import type { SubcontractorPlant } from '@ah/products/dispatch/domain';
       color: var(--color-text-muted);
       text-transform: uppercase;
       letter-spacing: 0.04em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: block;
     }
 
     .form-input,
     .form-select {
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+      min-width: 0;
       background: var(--color-bg-subtle, rgba(255, 255, 255, 0.04));
       border: 1px solid var(--color-border-default);
       border-radius: var(--radius-md, 0.375rem);
@@ -370,6 +398,7 @@ import type { SubcontractorPlant } from '@ah/products/dispatch/domain';
       font-size: var(--text-sm, 0.875rem);
       color: var(--color-text-default);
       outline: none;
+      text-overflow: ellipsis;
       transition:
         border-color 0.2s,
         box-shadow 0.2s;
@@ -399,9 +428,11 @@ import type { SubcontractorPlant } from '@ah/products/dispatch/domain';
     .modal-footer {
       display: flex;
       justify-content: flex-end;
+      align-items: center;
       gap: var(--space-3, 0.75rem);
-      padding-top: var(--space-4, 1rem);
+      padding: 0.875rem 1.25rem;
       border-top: 1px solid var(--color-border-default);
+      background: var(--color-bg-surface);
       flex-shrink: 0;
       flex-wrap: wrap;
     }
@@ -448,7 +479,7 @@ import type { SubcontractorPlant } from '@ah/products/dispatch/domain';
         grid-template-columns: 1fr;
       }
       .full-width {
-        grid-column: span 1;
+        grid-column: 1 / -1;
       }
       .modal-card {
         max-height: 94dvh;

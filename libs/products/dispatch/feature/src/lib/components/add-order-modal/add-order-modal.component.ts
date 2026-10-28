@@ -36,246 +36,254 @@ import type { Order, ClientSector } from '@ah/products/dispatch/domain';
             </button>
           </div>
 
-          <form class="modal-body" (ngSubmit)="submitOrder()" novalidate>
-            @if (successMessage()) {
-              <div class="form-success-banner" role="status">
-                {{ successMessage() }}
-              </div>
-            }
+          <form class="modal-form" (ngSubmit)="submitOrder()" novalidate>
+            <div class="modal-body">
+              @if (successMessage()) {
+                <div class="form-success-banner" role="status">
+                  {{ successMessage() }}
+                </div>
+              }
 
-            <div class="form-grid">
-              <div class="form-group full-width">
-                <label class="form-label" for="order-client"
-                  >Client Name *</label
-                >
-                <input
-                  id="order-client"
-                  type="text"
-                  class="form-input"
-                  [class.has-error]="
-                    clientRef.invalid && (clientRef.touched || submitted())
-                  "
-                  [(ngModel)]="clientName"
-                  name="clientName"
-                  #clientRef="ngModel"
-                  placeholder="e.g. The Claridge's Hotel London, Hawksmoor Guildhall..."
-                  required
-                  minlength="2"
-                  [attr.aria-invalid]="
-                    clientRef.invalid && (clientRef.touched || submitted())
-                  "
-                />
-                @if (clientRef.invalid && (clientRef.touched || submitted())) {
-                  <span class="field-error" role="alert"
-                    >Client / venue name is required</span
+              <div class="form-grid">
+                <div class="form-group full-width">
+                  <label class="form-label" for="order-client"
+                    >Client Name *</label
                   >
-                }
-              </div>
-
-              <div class="form-group">
-                <label class="form-label" for="order-sector">Sector *</label>
-                <select
-                  id="order-sector"
-                  class="form-select"
-                  [(ngModel)]="clientSector"
-                  name="clientSector"
-                  required
-                >
-                  <option value="hotel">Hotel & Hospitality</option>
-                  <option value="restaurant">Restaurant & Kitchen</option>
-                  <option value="airbnb">Airbnb & Short-Let</option>
-                  <option value="spa_gym">Spa & Health Club</option>
-                  <option value="corporate">Corporate Suite</option>
-                </select>
-              </div>
-
-              <div class="form-group">
-                <label class="form-label" for="order-zone">Zone / Area *</label>
-                <input
-                  id="order-zone"
-                  type="text"
-                  class="form-input"
-                  [(ngModel)]="zone"
-                  name="zone"
-                  placeholder="e.g. W1 - Mayfair, E1 - Shoreditch"
-                  required
-                />
-              </div>
-
-              <div class="form-group full-width">
-                <label class="form-label" for="order-address"
-                  >Delivery Address *</label
-                >
-                <input
-                  id="order-address"
-                  type="text"
-                  class="form-input"
-                  [class.has-error]="
-                    addressRef.invalid && (addressRef.touched || submitted())
-                  "
-                  [(ngModel)]="address"
-                  name="address"
-                  #addressRef="ngModel"
-                  placeholder="e.g. Brook St, Mayfair, London W1K 4HR"
-                  required
-                  minlength="5"
-                  [attr.aria-invalid]="
-                    addressRef.invalid && (addressRef.touched || submitted())
-                  "
-                />
-                @if (
-                  addressRef.invalid && (addressRef.touched || submitted())
-                ) {
-                  <span class="field-error" role="alert"
-                    >A complete delivery address is required</span
-                  >
-                }
-              </div>
-
-              <div class="form-group">
-                <label class="form-label" for="order-window"
-                  >Target Delivery Window *</label
-                >
-                <input
-                  id="order-window"
-                  type="text"
-                  class="form-input"
-                  [(ngModel)]="targetWindow"
-                  name="targetWindow"
-                  placeholder="e.g. 13:00 - 14:30"
-                  required
-                />
-              </div>
-
-              <div class="form-group">
-                <label class="form-label" for="order-sla"
-                  >SLA Cutoff Time (24h) *</label
-                >
-                <input
-                  id="order-sla"
-                  type="text"
-                  class="form-input"
-                  [(ngModel)]="slaDeadline"
-                  name="slaDeadline"
-                  placeholder="e.g. 14:30"
-                  required
-                />
-              </div>
-
-              <div class="form-group">
-                <label class="form-label" for="order-weight"
-                  >Total Linen Weight (kg) *</label
-                >
-                <input
-                  id="order-weight"
-                  type="number"
-                  class="form-input"
-                  [class.has-error]="
-                    weightRef.invalid && (weightRef.touched || submitted())
-                  "
-                  [(ngModel)]="totalWeightKg"
-                  name="totalWeightKg"
-                  #weightRef="ngModel"
-                  min="5"
-                  max="1000"
-                  required
-                  [attr.aria-invalid]="
-                    weightRef.invalid && (weightRef.touched || submitted())
-                  "
-                />
-                @if (weightRef.invalid && (weightRef.touched || submitted())) {
-                  <span class="field-error" role="alert"
-                    >Weight must be between 5 and 1,000 kg</span
-                  >
-                }
-              </div>
-
-              <div class="form-group">
-                <label class="form-label" for="order-items"
-                  >Linen Description *</label
-                >
-                <input
-                  id="order-items"
-                  type="text"
-                  class="form-input"
-                  [class.has-error]="
-                    itemsRef.invalid && (itemsRef.touched || submitted())
-                  "
-                  [(ngModel)]="itemsSummary"
-                  name="itemsSummary"
-                  #itemsRef="ngModel"
-                  placeholder="e.g. 50x King Sheets, 50x Duvets, 100x Bath Sheets"
-                  required
-                  [attr.aria-invalid]="
-                    itemsRef.invalid && (itemsRef.touched || submitted())
-                  "
-                />
-                @if (itemsRef.invalid && (itemsRef.touched || submitted())) {
-                  <span class="field-error" role="alert"
-                    >Linen items summary is required</span
-                  >
-                }
-              </div>
-
-              <div class="form-group">
-                <label class="form-label" for="order-driver"
-                  >Assign Driver</label
-                >
-                <select
-                  id="order-driver"
-                  class="form-select"
-                  [(ngModel)]="assignedDriverId"
-                  name="assignedDriverId"
-                >
-                  <option [ngValue]="null">-- Unassigned --</option>
-                  @for (driver of store.drivers(); track driver.id) {
-                    <option [value]="driver.id">
-                      {{ driver.name }} ({{ driver.zone }})
-                    </option>
-                  }
-                </select>
-              </div>
-
-              <div class="form-group">
-                <label class="form-label" for="order-plant"
-                  >Assign Subcontract Plant</label
-                >
-                <select
-                  id="order-plant"
-                  class="form-select"
-                  [(ngModel)]="assignedPlantId"
-                  name="assignedPlantId"
-                >
-                  <option value="plant-general">General Partner Plant</option>
-                  @for (plant of store.subcontractors(); track plant.id) {
-                    <option [value]="plant.id">{{ plant.name }}</option>
-                  }
-                </select>
-              </div>
-
-              <div class="form-group full-width">
-                <label class="form-label" for="order-notes"
-                  >Special Delivery / Access Instructions</label
-                >
-                <input
-                  id="order-notes"
-                  type="text"
-                  class="form-input"
-                  [(ngModel)]="specialInstructions"
-                  name="specialInstructions"
-                  placeholder="e.g. Deliver to rear loading bay off Deanery St, ask for security."
-                />
-              </div>
-
-              <div class="form-group full-width checkbox-row">
-                <label class="checkbox-label">
                   <input
-                    type="checkbox"
-                    [(ngModel)]="isEmergency"
-                    name="isEmergency"
+                    id="order-client"
+                    type="text"
+                    class="form-input"
+                    [class.has-error]="
+                      clientRef.invalid && (clientRef.touched || submitted())
+                    "
+                    [(ngModel)]="clientName"
+                    name="clientName"
+                    #clientRef="ngModel"
+                    placeholder="e.g. The Claridge's Hotel London, Hawksmoor Guildhall..."
+                    required
+                    minlength="2"
+                    [attr.aria-invalid]="
+                      clientRef.invalid && (clientRef.touched || submitted())
+                    "
                   />
-                  <span>Mark as Urgent / Priority Express</span>
-                </label>
+                  @if (
+                    clientRef.invalid && (clientRef.touched || submitted())
+                  ) {
+                    <span class="field-error" role="alert"
+                      >Client / venue name is required</span
+                    >
+                  }
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="order-sector">Sector *</label>
+                  <select
+                    id="order-sector"
+                    class="form-select"
+                    [(ngModel)]="clientSector"
+                    name="clientSector"
+                    required
+                  >
+                    <option value="hotel">Hotel & Hospitality</option>
+                    <option value="restaurant">Restaurant & Kitchen</option>
+                    <option value="airbnb">Airbnb & Short-Let</option>
+                    <option value="spa_gym">Spa & Health Club</option>
+                    <option value="corporate">Corporate Suite</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="order-zone"
+                    >Zone / Area *</label
+                  >
+                  <input
+                    id="order-zone"
+                    type="text"
+                    class="form-input"
+                    [(ngModel)]="zone"
+                    name="zone"
+                    placeholder="e.g. W1 - Mayfair, E1 - Shoreditch"
+                    required
+                  />
+                </div>
+
+                <div class="form-group full-width">
+                  <label class="form-label" for="order-address"
+                    >Delivery Address *</label
+                  >
+                  <input
+                    id="order-address"
+                    type="text"
+                    class="form-input"
+                    [class.has-error]="
+                      addressRef.invalid && (addressRef.touched || submitted())
+                    "
+                    [(ngModel)]="address"
+                    name="address"
+                    #addressRef="ngModel"
+                    placeholder="e.g. Brook St, Mayfair, London W1K 4HR"
+                    required
+                    minlength="5"
+                    [attr.aria-invalid]="
+                      addressRef.invalid && (addressRef.touched || submitted())
+                    "
+                  />
+                  @if (
+                    addressRef.invalid && (addressRef.touched || submitted())
+                  ) {
+                    <span class="field-error" role="alert"
+                      >A complete delivery address is required</span
+                    >
+                  }
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="order-window"
+                    >Target Delivery Window *</label
+                  >
+                  <input
+                    id="order-window"
+                    type="text"
+                    class="form-input"
+                    [(ngModel)]="targetWindow"
+                    name="targetWindow"
+                    placeholder="e.g. 13:00 - 14:30"
+                    required
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="order-sla"
+                    >SLA Cutoff Time (24h) *</label
+                  >
+                  <input
+                    id="order-sla"
+                    type="text"
+                    class="form-input"
+                    [(ngModel)]="slaDeadline"
+                    name="slaDeadline"
+                    placeholder="e.g. 14:30"
+                    required
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="order-weight"
+                    >Total Linen Weight (kg) *</label
+                  >
+                  <input
+                    id="order-weight"
+                    type="number"
+                    class="form-input"
+                    [class.has-error]="
+                      weightRef.invalid && (weightRef.touched || submitted())
+                    "
+                    [(ngModel)]="totalWeightKg"
+                    name="totalWeightKg"
+                    #weightRef="ngModel"
+                    min="5"
+                    max="1000"
+                    required
+                    [attr.aria-invalid]="
+                      weightRef.invalid && (weightRef.touched || submitted())
+                    "
+                  />
+                  @if (
+                    weightRef.invalid && (weightRef.touched || submitted())
+                  ) {
+                    <span class="field-error" role="alert"
+                      >Weight must be between 5 and 1,000 kg</span
+                    >
+                  }
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="order-items"
+                    >Linen Description *</label
+                  >
+                  <input
+                    id="order-items"
+                    type="text"
+                    class="form-input"
+                    [class.has-error]="
+                      itemsRef.invalid && (itemsRef.touched || submitted())
+                    "
+                    [(ngModel)]="itemsSummary"
+                    name="itemsSummary"
+                    #itemsRef="ngModel"
+                    placeholder="e.g. 50x King Sheets, 50x Duvets, 100x Bath Sheets"
+                    required
+                    [attr.aria-invalid]="
+                      itemsRef.invalid && (itemsRef.touched || submitted())
+                    "
+                  />
+                  @if (itemsRef.invalid && (itemsRef.touched || submitted())) {
+                    <span class="field-error" role="alert"
+                      >Linen items summary is required</span
+                    >
+                  }
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="order-driver"
+                    >Assign Driver</label
+                  >
+                  <select
+                    id="order-driver"
+                    class="form-select"
+                    [(ngModel)]="assignedDriverId"
+                    name="assignedDriverId"
+                  >
+                    <option [ngValue]="null">-- Unassigned --</option>
+                    @for (driver of store.drivers(); track driver.id) {
+                      <option [value]="driver.id">
+                        {{ driver.name }} ({{ driver.zone }})
+                      </option>
+                    }
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="order-plant"
+                    >Assign Subcontract Plant</label
+                  >
+                  <select
+                    id="order-plant"
+                    class="form-select"
+                    [(ngModel)]="assignedPlantId"
+                    name="assignedPlantId"
+                  >
+                    <option value="plant-general">General Partner Plant</option>
+                    @for (plant of store.subcontractors(); track plant.id) {
+                      <option [value]="plant.id">{{ plant.name }}</option>
+                    }
+                  </select>
+                </div>
+
+                <div class="form-group full-width">
+                  <label class="form-label" for="order-notes"
+                    >Special Delivery / Access Instructions</label
+                  >
+                  <input
+                    id="order-notes"
+                    type="text"
+                    class="form-input"
+                    [(ngModel)]="specialInstructions"
+                    name="specialInstructions"
+                    placeholder="e.g. Deliver to rear loading bay off Deanery St, ask for security."
+                  />
+                </div>
+
+                <div class="form-group full-width checkbox-row">
+                  <label class="checkbox-label">
+                    <input
+                      type="checkbox"
+                      [(ngModel)]="isEmergency"
+                      name="isEmergency"
+                    />
+                    <span>Mark as Urgent / Priority Express</span>
+                  </label>
+                </div>
               </div>
             </div>
 
@@ -317,8 +325,7 @@ import type { Order, ClientSector } from '@ah/products/dispatch/domain';
       background: var(--color-bg-surface);
       border: 1px solid var(--color-border-default);
       border-radius: var(--radius-xl, 1rem);
-      width: 100%;
-      max-width: 620px;
+      width: min(100%, 640px);
       max-height: min(90dvh, 52rem);
       display: flex;
       flex-direction: column;
@@ -333,6 +340,7 @@ import type { Order, ClientSector } from '@ah/products/dispatch/domain';
       align-items: center;
       justify-content: space-between;
       flex-shrink: 0;
+      background: var(--color-bg-surface);
     }
 
     .title-wrap {
@@ -366,6 +374,14 @@ import type { Order, ClientSector } from '@ah/products/dispatch/domain';
       flex-shrink: 0;
     }
 
+    .modal-form {
+      display: flex;
+      flex-direction: column;
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow: hidden;
+    }
+
     .modal-body {
       padding: var(--space-4, 1rem) var(--space-5, 1.25rem);
       overflow-y: auto;
@@ -375,6 +391,7 @@ import type { Order, ClientSector } from '@ah/products/dispatch/domain';
       display: flex;
       flex-direction: column;
       gap: var(--space-4, 1rem);
+      box-sizing: border-box;
     }
 
     .form-success-banner {
@@ -390,34 +407,48 @@ import type { Order, ClientSector } from '@ah/products/dispatch/domain';
 
     .form-grid {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 12px;
+      width: 100%;
+      box-sizing: border-box;
     }
 
     .full-width {
-      grid-column: span 2;
+      grid-column: 1 / -1;
     }
 
     .form-group {
       display: flex;
       flex-direction: column;
       gap: 4px;
+      min-width: 0;
+      width: 100%;
+      box-sizing: border-box;
     }
 
     .form-label {
       font-size: 0.75rem;
       font-weight: 700;
       color: var(--color-text-default);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: block;
     }
 
     .form-input,
     .form-select {
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+      min-width: 0;
       background: var(--color-bg-canvas);
       border: 1px solid var(--color-border-default);
       border-radius: var(--radius-md, 0.5rem);
       padding: 9px 12px;
       font-size: 0.8125rem;
       color: var(--color-text-default);
+      text-overflow: ellipsis;
       transition:
         border-color 0.2s,
         box-shadow 0.2s;
@@ -461,8 +492,11 @@ import type { Order, ClientSector } from '@ah/products/dispatch/domain';
     .modal-footer {
       display: flex;
       justify-content: flex-end;
+      align-items: center;
       gap: 10px;
-      margin-top: 8px;
+      padding: var(--space-4, 1rem) var(--space-5, 1.25rem);
+      border-top: 1px solid var(--color-border-default);
+      background: var(--color-bg-surface);
       flex-shrink: 0;
       flex-wrap: wrap;
     }
@@ -504,7 +538,7 @@ import type { Order, ClientSector } from '@ah/products/dispatch/domain';
         grid-template-columns: 1fr;
       }
       .full-width {
-        grid-column: span 1;
+        grid-column: 1 / -1;
       }
       .modal-card {
         max-height: 94dvh;

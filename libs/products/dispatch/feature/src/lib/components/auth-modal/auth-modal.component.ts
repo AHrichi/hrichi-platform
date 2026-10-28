@@ -665,6 +665,9 @@ import type { CurrentDispatchUser } from '../../store/dispatch.state';
       display: flex;
       flex-direction: column;
       gap: 4px;
+      min-width: 0;
+      width: 100%;
+      box-sizing: border-box;
     }
 
     .form-label {
@@ -673,10 +676,18 @@ import type { CurrentDispatchUser } from '../../store/dispatch.state';
       color: var(--color-text-muted);
       text-transform: uppercase;
       letter-spacing: 0.04em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: block;
     }
 
     .form-input,
     .form-select {
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+      min-width: 0;
       background: var(--color-bg-surface);
       border: 1px solid var(--color-border-default);
       border-radius: var(--radius-md, 0.375rem);
@@ -684,6 +695,7 @@ import type { CurrentDispatchUser } from '../../store/dispatch.state';
       font-size: 0.8125rem;
       color: var(--color-text-default);
       outline: none;
+      text-overflow: ellipsis;
 
       &:focus {
         border-color: var(--color-accent-default);

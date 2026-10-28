@@ -36,171 +36,173 @@ import type { LinenSKU, LinenCategory } from '@ah/products/dispatch/domain';
             </button>
           </div>
 
-          <form class="modal-body" (ngSubmit)="submitStock()" novalidate>
-            @if (successMessage()) {
-              <div class="form-success-banner" role="status">
-                {{ successMessage() }}
-              </div>
-            }
+          <form class="modal-form" (ngSubmit)="submitStock()" novalidate>
+            <div class="modal-body">
+              @if (successMessage()) {
+                <div class="form-success-banner" role="status">
+                  {{ successMessage() }}
+                </div>
+              }
 
-            <div class="form-grid">
-              <div class="form-group">
-                <label class="form-label" for="stock-sku">SKU Code *</label>
-                <input
-                  id="stock-sku"
-                  type="text"
-                  class="form-input font-mono"
-                  [class.has-error]="
-                    skuRef.invalid && (skuRef.touched || submitted())
-                  "
-                  [(ngModel)]="sku"
-                  name="sku"
-                  #skuRef="ngModel"
-                  placeholder="e.g. BED-SHT-KNG"
-                  required
-                  minlength="3"
-                  [attr.aria-invalid]="
-                    skuRef.invalid && (skuRef.touched || submitted())
-                  "
-                />
-                @if (skuRef.invalid && (skuRef.touched || submitted())) {
-                  <span class="field-error" role="alert"
-                    >SKU code is required (min 3 chars)</span
+              <div class="form-grid">
+                <div class="form-group">
+                  <label class="form-label" for="stock-sku">SKU Code *</label>
+                  <input
+                    id="stock-sku"
+                    type="text"
+                    class="form-input font-mono"
+                    [class.has-error]="
+                      skuRef.invalid && (skuRef.touched || submitted())
+                    "
+                    [(ngModel)]="sku"
+                    name="sku"
+                    #skuRef="ngModel"
+                    placeholder="e.g. BED-SHT-KNG"
+                    required
+                    minlength="3"
+                    [attr.aria-invalid]="
+                      skuRef.invalid && (skuRef.touched || submitted())
+                    "
+                  />
+                  @if (skuRef.invalid && (skuRef.touched || submitted())) {
+                    <span class="field-error" role="alert"
+                      >SKU code is required (min 3 chars)</span
+                    >
+                  }
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="stock-cat">Category *</label>
+                  <select
+                    id="stock-cat"
+                    class="form-select"
+                    [(ngModel)]="category"
+                    name="category"
+                    required
                   >
-                }
-              </div>
+                    <option value="bedding">Bedding & Sheets</option>
+                    <option value="bath">Bath & Towelling</option>
+                    <option value="dining">Dining & Napery</option>
+                    <option value="kitchen">Kitchen & Chefs</option>
+                    <option value="uniform">Uniform & Workwear</option>
+                  </select>
+                </div>
 
-              <div class="form-group">
-                <label class="form-label" for="stock-cat">Category *</label>
-                <select
-                  id="stock-cat"
-                  class="form-select"
-                  [(ngModel)]="category"
-                  name="category"
-                  required
-                >
-                  <option value="bedding">Bedding & Sheets</option>
-                  <option value="bath">Bath & Towelling</option>
-                  <option value="dining">Dining & Napery</option>
-                  <option value="kitchen">Kitchen & Chefs</option>
-                  <option value="uniform">Uniform & Workwear</option>
-                </select>
-              </div>
-
-              <div class="form-group full-width">
-                <label class="form-label" for="stock-name"
-                  >Item Description *</label
-                >
-                <input
-                  id="stock-name"
-                  type="text"
-                  class="form-input"
-                  [class.has-error]="
-                    nameRef.invalid && (nameRef.touched || submitted())
-                  "
-                  [(ngModel)]="name"
-                  name="name"
-                  #nameRef="ngModel"
-                  placeholder="e.g. King Bed Sheet 300TC Percale White"
-                  required
-                  minlength="3"
-                  [attr.aria-invalid]="
-                    nameRef.invalid && (nameRef.touched || submitted())
-                  "
-                />
-                @if (nameRef.invalid && (nameRef.touched || submitted())) {
-                  <span class="field-error" role="alert"
-                    >Item description is required</span
+                <div class="form-group full-width">
+                  <label class="form-label" for="stock-name"
+                    >Item Description *</label
                   >
-                }
-              </div>
+                  <input
+                    id="stock-name"
+                    type="text"
+                    class="form-input"
+                    [class.has-error]="
+                      nameRef.invalid && (nameRef.touched || submitted())
+                    "
+                    [(ngModel)]="name"
+                    name="name"
+                    #nameRef="ngModel"
+                    placeholder="e.g. King Bed Sheet 300TC Percale White"
+                    required
+                    minlength="3"
+                    [attr.aria-invalid]="
+                      nameRef.invalid && (nameRef.touched || submitted())
+                    "
+                  />
+                  @if (nameRef.invalid && (nameRef.touched || submitted())) {
+                    <span class="field-error" role="alert"
+                      >Item description is required</span
+                    >
+                  }
+                </div>
 
-              <div class="form-group">
-                <label class="form-label" for="stock-weight"
-                  >Unit Weight (Grams)</label
-                >
-                <input
-                  id="stock-weight"
-                  type="number"
-                  class="form-input"
-                  [(ngModel)]="unitWeightGrams"
-                  name="unitWeightGrams"
-                  min="50"
-                  max="5000"
-                  required
-                />
-              </div>
+                <div class="form-group">
+                  <label class="form-label" for="stock-weight"
+                    >Unit Weight (Grams)</label
+                  >
+                  <input
+                    id="stock-weight"
+                    type="number"
+                    class="form-input"
+                    [(ngModel)]="unitWeightGrams"
+                    name="unitWeightGrams"
+                    min="50"
+                    max="5000"
+                    required
+                  />
+                </div>
 
-              <div class="form-group">
-                <label class="form-label" for="stock-cost"
-                  >Replacement Cost (£)</label
-                >
-                <input
-                  id="stock-cost"
-                  type="number"
-                  class="form-input"
-                  [(ngModel)]="replacementCostGbp"
-                  name="replacementCostGbp"
-                  min="1"
-                  step="0.5"
-                  required
-                />
-              </div>
+                <div class="form-group">
+                  <label class="form-label" for="stock-cost"
+                    >Replacement Cost (£)</label
+                  >
+                  <input
+                    id="stock-cost"
+                    type="number"
+                    class="form-input"
+                    [(ngModel)]="replacementCostGbp"
+                    name="replacementCostGbp"
+                    min="1"
+                    step="0.5"
+                    required
+                  />
+                </div>
 
-              <div class="form-group">
-                <label class="form-label" for="stock-clean"
-                  >Clean Reserve Stock</label
-                >
-                <input
-                  id="stock-clean"
-                  type="number"
-                  class="form-input"
-                  [(ngModel)]="inCleanReserve"
-                  name="inCleanReserve"
-                  min="0"
-                />
-              </div>
+                <div class="form-group">
+                  <label class="form-label" for="stock-clean"
+                    >Clean Reserve Stock</label
+                  >
+                  <input
+                    id="stock-clean"
+                    type="number"
+                    class="form-input"
+                    [(ngModel)]="inCleanReserve"
+                    name="inCleanReserve"
+                    min="0"
+                  />
+                </div>
 
-              <div class="form-group">
-                <label class="form-label" for="stock-circ"
-                  >In Circulation</label
-                >
-                <input
-                  id="stock-circ"
-                  type="number"
-                  class="form-input"
-                  [(ngModel)]="inCirculation"
-                  name="inCirculation"
-                  min="0"
-                />
-              </div>
+                <div class="form-group">
+                  <label class="form-label" for="stock-circ"
+                    >In Circulation</label
+                  >
+                  <input
+                    id="stock-circ"
+                    type="number"
+                    class="form-input"
+                    [(ngModel)]="inCirculation"
+                    name="inCirculation"
+                    min="0"
+                  />
+                </div>
 
-              <div class="form-group">
-                <label class="form-label" for="stock-plant"
-                  >At Subcontractor Plant</label
-                >
-                <input
-                  id="stock-plant"
-                  type="number"
-                  class="form-input"
-                  [(ngModel)]="atPlantWash"
-                  name="atPlantWash"
-                  min="0"
-                />
-              </div>
+                <div class="form-group">
+                  <label class="form-label" for="stock-plant"
+                    >At Subcontractor Plant</label
+                  >
+                  <input
+                    id="stock-plant"
+                    type="number"
+                    class="form-input"
+                    [(ngModel)]="atPlantWash"
+                    name="atPlantWash"
+                    min="0"
+                  />
+                </div>
 
-              <div class="form-group">
-                <label class="form-label" for="stock-thresh"
-                  >Min Reorder Threshold</label
-                >
-                <input
-                  id="stock-thresh"
-                  type="number"
-                  class="form-input"
-                  [(ngModel)]="minThreshold"
-                  name="minThreshold"
-                  min="10"
-                />
+                <div class="form-group">
+                  <label class="form-label" for="stock-thresh"
+                    >Min Reorder Threshold</label
+                  >
+                  <input
+                    id="stock-thresh"
+                    type="number"
+                    class="form-input"
+                    [(ngModel)]="minThreshold"
+                    name="minThreshold"
+                    min="10"
+                  />
+                </div>
               </div>
             </div>
 
@@ -242,8 +244,7 @@ import type { LinenSKU, LinenCategory } from '@ah/products/dispatch/domain';
       background: var(--color-bg-surface);
       border: 1px solid var(--color-border-default);
       border-radius: var(--radius-xl, 1rem);
-      width: 100%;
-      max-width: 600px;
+      width: min(100%, 640px);
       max-height: min(90dvh, 52rem);
       display: flex;
       flex-direction: column;
@@ -258,6 +259,7 @@ import type { LinenSKU, LinenCategory } from '@ah/products/dispatch/domain';
       align-items: center;
       justify-content: space-between;
       flex-shrink: 0;
+      background: var(--color-bg-surface);
     }
 
     .title-wrap {
@@ -299,6 +301,14 @@ import type { LinenSKU, LinenCategory } from '@ah/products/dispatch/domain';
       color: var(--color-text-default);
     }
 
+    .modal-form {
+      display: flex;
+      flex-direction: column;
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow: hidden;
+    }
+
     .modal-body {
       padding: var(--space-5, 1.25rem);
       overflow-y: auto;
@@ -308,6 +318,7 @@ import type { LinenSKU, LinenCategory } from '@ah/products/dispatch/domain';
       display: flex;
       flex-direction: column;
       gap: var(--space-4, 1rem);
+      box-sizing: border-box;
     }
 
     .form-success-banner {
@@ -323,18 +334,23 @@ import type { LinenSKU, LinenCategory } from '@ah/products/dispatch/domain';
 
     .form-grid {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: var(--space-3, 0.75rem);
+      width: 100%;
+      box-sizing: border-box;
     }
 
     .full-width {
-      grid-column: span 2;
+      grid-column: 1 / -1;
     }
 
     .form-group {
       display: flex;
       flex-direction: column;
       gap: 0.35rem;
+      min-width: 0;
+      width: 100%;
+      box-sizing: border-box;
     }
 
     .form-label {
@@ -343,10 +359,18 @@ import type { LinenSKU, LinenCategory } from '@ah/products/dispatch/domain';
       color: var(--color-text-muted);
       text-transform: uppercase;
       letter-spacing: 0.04em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: block;
     }
 
     .form-input,
     .form-select {
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+      min-width: 0;
       background: var(--color-bg-subtle, rgba(255, 255, 255, 0.04));
       border: 1px solid var(--color-border-default);
       border-radius: var(--radius-md, 0.375rem);
@@ -354,9 +378,15 @@ import type { LinenSKU, LinenCategory } from '@ah/products/dispatch/domain';
       font-size: var(--text-sm, 0.875rem);
       color: var(--color-text-default);
       outline: none;
+      text-overflow: ellipsis;
       transition:
         border-color 0.2s,
         box-shadow 0.2s;
+    }
+
+    .font-mono {
+      font-family: monospace;
+      letter-spacing: 0.05em;
     }
 
     .form-input:focus,
@@ -383,9 +413,11 @@ import type { LinenSKU, LinenCategory } from '@ah/products/dispatch/domain';
     .modal-footer {
       display: flex;
       justify-content: flex-end;
+      align-items: center;
       gap: var(--space-3, 0.75rem);
-      padding-top: var(--space-4, 1rem);
+      padding: 0.875rem 1.25rem;
       border-top: 1px solid var(--color-border-default);
+      background: var(--color-bg-surface);
       flex-shrink: 0;
       flex-wrap: wrap;
     }
@@ -432,7 +464,7 @@ import type { LinenSKU, LinenCategory } from '@ah/products/dispatch/domain';
         grid-template-columns: 1fr;
       }
       .full-width {
-        grid-column: span 1;
+        grid-column: 1 / -1;
       }
       .modal-card {
         max-height: 94dvh;
