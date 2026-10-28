@@ -59,19 +59,12 @@ test('opens a case study from the work list', async ({ page }) => {
   ).toBeVisible();
 });
 
-test('loads the hello remote through Native Federation', async ({ page }) => {
-  await page.goto('/');
-  // The hero caption links the same demo; use the footer's.
-  await page
-    .getByRole('contentinfo')
-    .getByRole('link', { name: 'Micro-frontend demo' })
-    .click();
-
-  const counter = page.getByRole('button', { name: 'Clicked 0 times' });
-  await expect(counter).toBeVisible();
-  await counter.click();
+test('loads the sky remote through Native Federation', async ({ page }) => {
+  await page.goto('/labs/sky');
   await expect(
-    page.getByRole('button', { name: 'Clicked 1 times' }),
+    page.getByRole('heading', {
+      name: 'The sky above any campsite, any night',
+    }),
   ).toBeVisible();
 });
 
@@ -79,12 +72,7 @@ test('boots without the federation manifest', async ({ page }) => {
   await page.route('**/federation.manifest.json', (route) =>
     route.fulfill({ status: 404, body: 'Not found' }),
   );
-  await page.goto('/');
-  // The hero caption links the same demo; use the footer's.
-  await page
-    .getByRole('contentinfo')
-    .getByRole('link', { name: 'Micro-frontend demo' })
-    .click();
+  await page.goto('/labs/sky');
 
   await expect(
     page.getByRole('heading', { name: "This section didn't load" }),
@@ -92,8 +80,8 @@ test('boots without the federation manifest', async ({ page }) => {
 });
 
 test('shows a fallback when a remote is unreachable', async ({ page }) => {
-  await page.route('http://localhost:4301/**', (route) => route.abort());
-  await page.goto('/labs/hello');
+  await page.route('http://localhost:4302/**', (route) => route.abort());
+  await page.goto('/labs/sky');
 
   await expect(
     page.getByRole('heading', { name: "This section didn't load" }),

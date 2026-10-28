@@ -66,16 +66,14 @@ test('fades in the WebGL scene after load and opens apps from the caption', asyn
   const axe = await new AxeBuilder({ page }).include('.hero').analyze();
   expect(axe.violations).toEqual([]);
 
-  const link = page
-    .getByRole('figure')
-    .getByRole('link', { name: 'Micro-frontend demo' });
+  const link = page.getByRole('figure').getByRole('link', { name: 'Sky lab' });
   await expect(link).toHaveAttribute('target', '_blank');
-  await expect(link).toHaveAttribute('href', '/labs/hello');
+  await expect(link).toHaveAttribute('href', '/labs/sky');
   const [newPage] = await Promise.all([
     page.context().waitForEvent('page'),
     link.click(),
   ]);
-  await expect(newPage).toHaveURL(/\/labs\/hello$/);
+  await expect(newPage).toHaveURL(/\/labs\/sky$/);
   await newPage.close();
 });
 

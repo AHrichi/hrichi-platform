@@ -19,7 +19,14 @@ describe('App', () => {
       a.textContent?.trim(),
     );
 
-    expect(links).toEqual(['Work', 'Experience', 'Services', 'Contact', 'CV']);
+    expect(links).toEqual([
+      'Work',
+      'Apps & Labs',
+      'Experience',
+      'Services',
+      'Contact',
+      'CV',
+    ]);
     expect(element.querySelector('.ah-skip-link')?.getAttribute('href')).toBe(
       '#main',
     );

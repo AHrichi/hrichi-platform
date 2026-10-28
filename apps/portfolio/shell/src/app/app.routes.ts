@@ -38,6 +38,12 @@ export const appRoutes: Route[] = [
       import('@ah/portfolio/feature-cv').then((m) => m.cvRoutes),
   },
   {
+    path: 'apps',
+    loadChildren: () =>
+      import('@ah/portfolio/feature-apps').then((m) => m.appsRoutes),
+    title: 'Applications & Interactive Labs · Ahmed Hrichi',
+  },
+  {
     path: 'apps/strategy',
     providers: [provideAppMode('embedded-demo')],
     loadChildren: federatedRoutes('product-strategy'),
@@ -50,14 +56,9 @@ export const appRoutes: Route[] = [
     title:
       'PulseOps · Commercial Operations & Dispatch Control Center · Ahmed Hrichi',
   },
+  // The hello demo was replaced by the full applications & labs hub; redirect.
+  { path: 'labs/hello', redirectTo: 'apps', pathMatch: 'full' },
   // Each lab's intro is prerendered around its remote (ADR-0014).
-  {
-    path: 'labs/hello',
-    component: LabFrame,
-    data: labs['lab-hello'],
-    loadChildren: federatedRoutes('lab-hello'),
-    title: 'Hello lab · Ahmed Hrichi',
-  },
   {
     path: 'labs/sky',
     component: LabFrame,

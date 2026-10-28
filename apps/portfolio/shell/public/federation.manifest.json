@@ -1,6 +1,7 @@
 {
-  "lab-hello": "http://localhost:4301/remoteEntry.json",
   "lab-sky": "http://localhost:4302/remoteEntry.json",
   "product-strategy": "http://localhost:4303/remoteEntry.json",
-  "lab-rxjs": "http://localhost:4304/remoteEntry.json"
+  "lab-rxjs": "http://localhost:4304/remoteEntry.json",
+  "lab-ngrx": "http://localhost:4305/remoteEntry.json",
+  "product-dispatch": "http://localhost:4306/remoteEntry.json"
 }

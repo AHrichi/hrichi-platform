@@ -6,14 +6,16 @@ test.use({ serviceWorkers: 'block' });
 test('opens the hood from ?inspect=1 and shows the loaded remote', async ({
   page,
 }) => {
-  await page.goto('/labs/hello?inspect=1');
+  await page.goto('/labs/sky?inspect=1');
   await expect(
-    page.getByRole('heading', { name: 'Hello from a federated remote' }),
+    page.getByRole('heading', {
+      name: 'The sky above any campsite, any night',
+    }),
   ).toBeVisible();
 
   const inspector = page.getByRole('region', { name: 'Under the hood' });
   await expect(inspector).toBeVisible();
-  const row = inspector.getByRole('row', { name: /lab-hello/ });
+  const row = inspector.getByRole('row', { name: /lab-sky/ });
   await expect(row).toContainText('loaded');
   await expect(row).toContainText(/\d+ ms/);
 
@@ -36,8 +38,8 @@ test('opens the hood from ?inspect=1 and shows the loaded remote', async ({
 });
 
 test('reports a remote that is down as failed', async ({ page }) => {
-  await page.route('http://localhost:4301/**', (route) => route.abort());
-  await page.goto('/labs/hello');
+  await page.route('http://localhost:4302/**', (route) => route.abort());
+  await page.goto('/labs/sky');
   await expect(
     page.getByRole('heading', { name: "This section didn't load" }),
   ).toBeVisible();
@@ -46,6 +48,6 @@ test('reports a remote that is down as failed', async ({ page }) => {
 
   const row = page
     .getByRole('region', { name: 'Under the hood' })
-    .getByRole('row', { name: /lab-hello/ });
+    .getByRole('row', { name: /lab-sky/ });
   await expect(row).toContainText('failed');
 });

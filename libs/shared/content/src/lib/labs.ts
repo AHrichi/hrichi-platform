@@ -16,11 +16,6 @@ export const labs = {
     heading: 'The sky above any campsite, any night',
     lead: 'Pick a place on the globe, dive down to the ground and look up: 5,000 real stars, the constellations, the Moon in its true phase, the planets, the Milky Way and meteor showers, for any date and time.',
   },
-  'lab-hello': {
-    eyebrow: 'Lab · Native Federation',
-    heading: 'Hello from a federated remote',
-    lead: 'This page is built and deployed separately from the shell and loaded at runtime through Native Federation. No zone.js: the counter below updates through signals only.',
-  },
   'lab-rxjs': {
     eyebrow: 'Lab · Reactive Streams & Signals',
     heading: 'RxJS Practice Pad',

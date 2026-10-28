@@ -17,12 +17,12 @@ describe('constellation graph', () => {
   it('includes the shell, its federated remotes and the hero itself', () => {
     const ids = constellation.nodes.map((node) => node.id);
     expect(ids).toEqual(
-      expect.arrayContaining(['shell', 'lab-hello', 'three-constellation']),
+      expect.arrayContaining(['shell', 'lab-sky', 'three-constellation']),
     );
     const shell = ids.indexOf('shell');
     expect(constellation.edges).toContainEqual([
       shell,
-      ids.indexOf('lab-hello'),
+      ids.indexOf('lab-sky'),
       'federated',
     ]);
   });

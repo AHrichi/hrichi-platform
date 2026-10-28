@@ -11,7 +11,7 @@ const brand = 'libs/design-system/tokens/brand';
 const mark = readFileSync(join(brand, 'mark.svg'), 'utf8');
 const fullBleed = readFileSync(join(brand, 'mark-full-bleed.svg'), 'utf8');
 const shellPublic = 'apps/portfolio/shell/public';
-const appPublics = [shellPublic, 'apps/labs/hello/public'];
+const appPublics = [shellPublic];
 
 const browser = await chromium.launch();
 const page = await browser.newPage();

@@ -35,14 +35,6 @@ export default defineConfig({
   webServer: [
     {
       command: isCI
-        ? 'pnpm exec nx run lab-hello:serve-static'
-        : 'pnpm exec nx run lab-hello:serve',
-      url: 'http://localhost:4301/remoteEntry.json',
-      reuseExistingServer: true,
-      cwd: workspaceRoot,
-    },
-    {
-      command: isCI
         ? 'pnpm exec nx run lab-sky:serve-static'
         : 'pnpm exec nx run lab-sky:serve',
       url: 'http://localhost:4302/remoteEntry.json',

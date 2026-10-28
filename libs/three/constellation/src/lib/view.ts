@@ -51,7 +51,7 @@ export const legend = [
   { label: 'Design system', token: scopeColour('design-system') },
   { label: 'Shared', token: scopeColour('shared') },
   { label: 'Backend', token: scopeColour('api') },
-  { label: 'Labs', token: scopeColour('lab-hello') },
+  { label: 'Labs', token: scopeColour('lab-sky') },
   { label: 'Tests', token: scopeColour('test') },
 ] as const;
 
@@ -62,7 +62,6 @@ export const nodeLinks: Readonly<Record<string, string>> = {
   'product-dispatch': '/apps/dispatch',
   'lab-rxjs': '/labs/rxjs',
   'lab-sky': '/labs/sky',
-  'lab-hello': '/labs/hello',
   'design-system': 'https://design.ahmed-hrichi.workers.dev',
   api: '/contact',
   'orbit-api': '/labs/sky',

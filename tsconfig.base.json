@@ -48,6 +48,9 @@
       "@ah/portfolio/feature-services": [
         "./libs/portfolio/feature-services/src/index.ts"
       ],
+      "@ah/portfolio/feature-apps": [
+        "./libs/portfolio/feature-apps/src/index.ts"
+      ],
       "@ah/portfolio/feature-cv": ["./libs/portfolio/feature-cv/src/index.ts"],
       "@ah/api/leads": ["./libs/api/leads/src/index.ts"],
       "@ah/api/dispatch": ["./libs/api/dispatch/src/index.ts"],

@@ -18,15 +18,15 @@ vi.mock('web-vitals', () => {
 
 const files: Record<string, unknown> = {
   'federation.manifest.json': {
-    'lab-hello': 'https://lab-hello.example/remoteEntry.json',
+    'lab-sky': 'https://lab-sky.example/remoteEntry.json',
   },
   'build-info.json': {
     app: 'shell',
     sha: '1111111aaaa',
     builtAt: '2026-10-27T08:00:00Z',
   },
-  'https://lab-hello.example/build-info.json': {
-    app: 'lab-hello',
+  'https://lab-sky.example/build-info.json': {
+    app: 'lab-sky',
     sha: '2222222bbbb',
     builtAt: '2026-10-27T08:05:00Z',
   },
@@ -34,8 +34,8 @@ const files: Record<string, unknown> = {
     name: 'shell',
     shared: [{ packageName: 'rxjs', version: '7.8.2' }],
   },
-  'https://lab-hello.example/remoteEntry.json': {
-    name: 'lab-hello',
+  'https://lab-sky.example/remoteEntry.json': {
+    name: 'lab-sky',
     shared: [{ packageName: 'rxjs', version: '7.8.1' }],
   },
 };
@@ -53,10 +53,10 @@ async function setup() {
     providers: [provideZonelessChangeDetection()],
   });
   const federation = TestBed.inject(FederationStore);
-  federation.recordStart('lab-hello', 100);
+  federation.recordStart('lab-sky', 100);
   federation.recordLoaded(
-    'lab-hello',
-    { id: 'lab-hello', title: 'Hello', version: '0.0.0', capabilities: [] },
+    'lab-sky',
+    { id: 'lab-sky', title: 'Sky', version: '0.0.0', capabilities: [] },
     342,
   );
   const fixture = TestBed.createComponent(Inspector);
@@ -89,7 +89,7 @@ describe('Inspector', () => {
     const { element } = await setup();
 
     const row = element.querySelector('tbody tr');
-    expect(row?.textContent).toContain('lab-hello');
+    expect(row?.textContent).toContain('lab-sky');
     expect(row?.textContent).toContain('loaded');
     expect(row?.textContent).toContain('242 ms');
     expect(row?.textContent).toContain('2222222');

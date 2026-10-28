@@ -33,15 +33,6 @@ export default [
               ],
             },
             {
-              sourceTag: 'scope:lab-hello',
-              onlyDependOnLibsWithTags: [
-                'scope:lab-hello',
-                'scope:shared',
-                'scope:platform',
-                'scope:design-system',
-              ],
-            },
-            {
               sourceTag: 'scope:lab-sky',
               onlyDependOnLibsWithTags: [
                 'scope:lab-sky',

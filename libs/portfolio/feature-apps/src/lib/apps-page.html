@@ -1,0 +1,198 @@
+<div class="ah-section ah-container ah-stack" style="--gap: var(--space-8)">
+  <!-- Hero Section Heading -->
+  <ah-section-heading
+    [level]="1"
+    eyebrow="Portfolio Architecture & Solutions"
+    heading="Applications & Interactive Labs"
+    lead="Explore production-grade platforms and specialized engineering workbenches built with modern zoneless Angular 22, Native Federation, Three.js WebGL, NestJS, and reactive state architectures. Every platform below is fully interactive and documented."
+  />
+
+  <!-- Quick Category Jump -->
+  <nav class="apps-nav-bar" aria-label="Solutions Filter">
+    <a href="#production-apps" class="apps-jump-link">
+      <span>🚀</span> Production Applications
+      <span class="jump-count">2</span>
+    </a>
+    <a href="#engineering-labs" class="apps-jump-link">
+      <span>🔬</span> Interactive Engineering Labs
+      <span class="jump-count">3</span>
+    </a>
+  </nav>
+
+  <!-- SECTION 1: Production Applications -->
+  <section
+    id="production-apps"
+    class="apps-category-section"
+    aria-labelledby="production-heading"
+  >
+    <div class="category-header">
+      <ah-section-heading
+        headingId="production-heading"
+        [level]="2"
+        eyebrow="Commercial Platforms"
+        heading="Production Applications"
+        lead="Full-stack, domain-driven systems designed for real business workflows, distributed operations, and privacy-first computation."
+      />
+    </div>
+
+    <div class="apps-grid">
+      @for (app of productionApps; track app.id) {
+        <article class="app-card ah-card">
+          <!-- Card Top Bar: Icon, Title, Eyebrow & Live Status -->
+          <div class="app-card__header">
+            <div class="app-card__identity">
+              <span class="app-icon" aria-hidden="true">{{ app.icon }}</span>
+              <div>
+                <p class="app-eyebrow">{{ app.eyebrow }}</p>
+                <h3 class="app-title">{{ app.title }}</h3>
+              </div>
+            </div>
+            <ah-badge
+              [variant]="app.badge.variant"
+              [dot]="true"
+              [pulse]="app.badge.pulse ?? false"
+              size="md"
+            >
+              {{ app.badge.label }}
+            </ah-badge>
+          </div>
+
+          <!-- Summary / Business Problem Solved -->
+          <p class="app-summary">{{ app.summary }}</p>
+
+          <!-- Tech Stack Tags -->
+          <div class="app-stack-row">
+            <span class="stack-label">Stack:</span>
+            <ul class="ah-cluster" role="list" style="--gap: var(--space-2)">
+              @for (tech of app.stack; track tech) {
+                <li>
+                  <ah-tag>{{ tech }}</ah-tag>
+                </li>
+              }
+            </ul>
+          </div>
+
+          <!-- Feature Highlights List -->
+          <div class="app-features-box">
+            <h4 class="box-title">Key Capabilities & Features:</h4>
+            <ul class="features-list">
+              @for (feature of app.features; track feature) {
+                <li>
+                  <span class="check-icon" aria-hidden="true">✓</span>
+                  <span>{{ feature }}</span>
+                </li>
+              }
+            </ul>
+          </div>
+
+          <!-- Architecture & Security Callout -->
+          <div class="app-arch-callout">
+            <strong>Architecture & Quota Safeguards:</strong>
+            <p>{{ app.architectureNotes }}</p>
+          </div>
+
+          <!-- Credentials / Exploration Hint -->
+          @if (app.credentialsNote) {
+            <div class="app-demo-hint">
+              <span class="hint-icon" aria-hidden="true">💡</span>
+              <p><strong>How to test:</strong> {{ app.credentialsNote }}</p>
+            </div>
+          }
+
+          <!-- Launch Button Footer -->
+          <div class="app-card__actions">
+            <a [routerLink]="app.route" ahButton="primary" size="md">
+              Launch {{ app.id === 'dispatch' ? 'PulseOps' : 'StrategyApp' }} →
+            </a>
+          </div>
+        </article>
+      }
+    </div>
+  </section>
+
+  <!-- SECTION 2: Interactive Engineering Labs -->
+  <section
+    id="engineering-labs"
+    class="apps-category-section"
+    aria-labelledby="labs-heading"
+  >
+    <div class="category-header">
+      <ah-section-heading
+        headingId="labs-heading"
+        [level]="2"
+        eyebrow="Specialized Research & Tooling"
+        heading="Interactive Engineering Labs"
+        lead="Hands-on interactive workbenches demonstrating 3D WebGL computer graphics, complex reactive streams, and modern state architectures."
+      />
+    </div>
+
+    <div class="apps-grid">
+      @for (lab of engineeringLabs; track lab.id) {
+        <article class="app-card ah-card">
+          <!-- Card Top Bar: Icon, Title, Eyebrow & Live Status -->
+          <div class="app-card__header">
+            <div class="app-card__identity">
+              <span class="app-icon" aria-hidden="true">{{ lab.icon }}</span>
+              <div>
+                <p class="app-eyebrow">{{ lab.eyebrow }}</p>
+                <h3 class="app-title">{{ lab.title }}</h3>
+              </div>
+            </div>
+            <ah-badge [variant]="lab.badge.variant" [dot]="true" size="md">
+              {{ lab.badge.label }}
+            </ah-badge>
+          </div>
+
+          <!-- Summary / Business Problem Solved -->
+          <p class="app-summary">{{ lab.summary }}</p>
+
+          <!-- Tech Stack Tags -->
+          <div class="app-stack-row">
+            <span class="stack-label">Stack:</span>
+            <ul class="ah-cluster" role="list" style="--gap: var(--space-2)">
+              @for (tech of lab.stack; track tech) {
+                <li>
+                  <ah-tag>{{ tech }}</ah-tag>
+                </li>
+              }
+            </ul>
+          </div>
+
+          <!-- Feature Highlights List -->
+          <div class="app-features-box">
+            <h4 class="box-title">Interactive Experiments:</h4>
+            <ul class="features-list">
+              @for (feature of lab.features; track feature) {
+                <li>
+                  <span class="check-icon" aria-hidden="true">✓</span>
+                  <span>{{ feature }}</span>
+                </li>
+              }
+            </ul>
+          </div>
+
+          <!-- Architecture Callout -->
+          <div class="app-arch-callout">
+            <strong>Architecture & Engine Design:</strong>
+            <p>{{ lab.architectureNotes }}</p>
+          </div>
+
+          <!-- Launch Button Footer -->
+          <div class="app-card__actions">
+            <a [routerLink]="lab.route" ahButton="primary" size="md">
+              Open
+              {{
+                lab.id === 'sky'
+                  ? 'Sky Lab'
+                  : lab.id === 'rxjs'
+                    ? 'RxJS Lab'
+                    : 'NgRx Lab'
+              }}
+              →
+            </a>
+          </div>
+        </article>
+      }
+    </div>
+  </section>
+</div>

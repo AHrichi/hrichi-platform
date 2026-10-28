@@ -27,7 +27,6 @@ const linkLabels: Record<string, string> = {
   'product-dispatch': 'PulseOps · Commercial dispatch control center',
   'lab-rxjs': 'RxJS practice pad',
   'lab-sky': 'Sky lab',
-  'lab-hello': 'Micro-frontend demo',
   'design-system': 'Design system & Storybook',
   api: 'The API behind the contact form',
 };

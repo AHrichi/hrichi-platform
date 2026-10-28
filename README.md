@@ -5,7 +5,7 @@ Ahmed Hrichi's portfolio, built as the kind of platform it describes: an Nx mono
 - Architecture: [docs/architecture.md](docs/architecture.md)
 - Decisions and spike results: [docs/adr](docs/adr/README.md)
 - Lead pipeline setup (accounts, secrets, n8n): [docs/lead-pipeline.md](docs/lead-pipeline.md)
-- Live: [portfolio.ahmed-hrichi.workers.dev](https://portfolio.ahmed-hrichi.workers.dev) (shell), [lab-hello.ahmed-hrichi.workers.dev](https://lab-hello.ahmed-hrichi.workers.dev) and [lab-sky.ahmed-hrichi.workers.dev](https://lab-sky.ahmed-hrichi.workers.dev) (remotes), [design.ahmed-hrichi.workers.dev](https://design.ahmed-hrichi.workers.dev) (Storybook) and [ahmed-hrichi-api.onrender.com/health](https://ahmed-hrichi-api.onrender.com/health) (lead API; sleeps when idle)
+- Live: [portfolio.ahmed-hrichi.workers.dev](https://portfolio.ahmed-hrichi.workers.dev) (shell), [lab-sky.ahmed-hrichi.workers.dev](https://lab-sky.ahmed-hrichi.workers.dev) (remotes), [design.ahmed-hrichi.workers.dev](https://design.ahmed-hrichi.workers.dev) (Storybook) and [ahmed-hrichi-api.onrender.com/health](https://ahmed-hrichi-api.onrender.com/health) (lead API; sleeps when idle)
 
 ## Projects
 
@@ -13,7 +13,12 @@ Ahmed Hrichi's portfolio, built as the kind of platform it describes: an Nx mono
 | --------------------------- | ---------------------------------- | ---------------------------------------------------------------------------------------------- |
 | `shell`                     | `apps/portfolio/shell`             | Host. Prerendered content pages, PWA, loads remotes from `public/federation.manifest.json`     |
 | `shell-e2e`                 | `apps/portfolio/shell-e2e`         | Playwright tests for prerendering, federation and remote fallback                              |
-| `lab-hello`                 | `apps/labs/hello`                  | M0 spike remote; exposes `./routes` and `./meta`                                               |
+| `product-dispatch`          | `apps/products/dispatch`           | PulseOps: Commercial Laundry & Fleet Operations Dispatch Control Center                        |
+| `product-strategy`          | `apps/products/strategy`           | StrategyApp: Multi-Scenario Wealth & Financial Planning Engine                                 |
+| `lab-sky`                   | `apps/labs/sky`                    | Sky lab remote: the night sky over any place and time, from a 3D globe down to a campsite      |
+| `lab-rxjs`                  | `apps/labs/rxjs`                   | RxJS Practice Pad: Interactive stream visualizer & marble testing lab                          |
+| `lab-ngrx`                  | `apps/labs/ngrx`                   | NgRx State Architecture Lab: Reactive SignalStore and state transitions                        |
+| `portfolio-feature-apps`    | `libs/portfolio/feature-apps`      | Dedicated Apps & Labs showcase hub and engineering documentation (`/apps`)                     |
 | `lab-sky`                   | `apps/labs/sky`                    | Sky lab remote: the night sky over any place and time, from a 3D globe down to a campsite      |
 | `platform-federation`       | `libs/platform/federation`         | Remote contract, `federatedRoutes()`, `FederationStore`, `RemoteUnavailable` fallback          |
 | `platform-inspector`        | `libs/platform/inspector`          | "Open the hood" (`?inspect=1`): remotes, builds, shared-dependency skew, state, Web Vitals     |
@@ -50,10 +55,6 @@ pnpm install
 Run the shell with its remotes in development (one terminal each):
 
 ```bash
-pnpm nx serve lab-hello
-```
-
-```bash
 pnpm nx serve lab-sky
 ```
 
@@ -74,7 +75,7 @@ pnpm check:zoneless
 Serve production builds the way the static host will (prerendered routes, `index.csr.html` fallback, CORS):
 
 ```bash
-pnpm nx run-many -t serve-static -p shell lab-hello lab-sky
+pnpm nx run-many -t serve-static -p shell lab-sky
 ```
 
 Run the Orbit API, the night planner, locally (port 8081; Java 17+ runs Gradle, which downloads Java 25; no database needed):
@@ -116,7 +117,7 @@ pnpm nx run design-system-e2e:update-baselines
 CI deploys the apps that changed after every green push to `main` (ADR-0007). To deploy by hand after `pnpm exec wrangler login`, deploy remotes first, because the shell's manifest points at them:
 
 ```bash
-pnpm nx deploy lab-hello
+pnpm nx deploy lab-sky
 ```
 
 ```bash
