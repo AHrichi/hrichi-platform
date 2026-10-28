@@ -1,15 +1,9 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  input,
-  output,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
-import { AhButton } from '@ah/ui';
 
 @Component({
   selector: 'ah-ngrx-navigation',
-  imports: [RouterLink, RouterLinkActive, AhButton],
+  imports: [RouterLink, RouterLinkActive],
   template: `
     <nav class="sub-nav" aria-label="NgRx lab modules">
       <div class="links-group">
@@ -30,20 +24,6 @@ import { AhButton } from '@ah/ui';
           NgRx vs Services Guide
         </a>
       </div>
-
-      <div class="controls-group">
-        <button
-          type="button"
-          ahButton="ghost"
-          size="sm"
-          (click)="toggleFullscreen.emit()"
-          [attr.aria-label]="
-            isFullscreen() ? 'Exit Full Screen' : 'Enter Full Screen'
-          "
-        >
-          {{ isFullscreen() ? '⤢ Exit Full Screen' : '⤢ Full Screen' }}
-        </button>
-      </div>
     </nav>
   `,
   styles: `
@@ -55,11 +35,8 @@ import { AhButton } from '@ah/ui';
 
     .sub-nav {
       display: flex;
-      flex-wrap: wrap;
       align-items: center;
-      justify-content: space-between;
-      gap: var(--space-3, 0.75rem);
-      padding: var(--space-2, 0.5rem) var(--space-4, 1rem);
+      padding: var(--space-2, 0.5rem) var(--space-3, 0.75rem);
       background: var(--color-bg-surface);
       border: 1px solid var(--color-border-default);
       border-radius: var(--radius-lg, 0.75rem);
@@ -109,17 +86,10 @@ import { AhButton } from '@ah/ui';
       color: var(--color-accent-on);
     }
 
-    .controls-group {
-      display: flex;
-      align-items: center;
-    }
-
     @media (max-width: 768px) {
       .sub-nav {
-        padding: var(--space-2, 0.5rem);
-        flex-direction: column;
-        align-items: stretch;
-        gap: var(--space-2, 0.5rem);
+        padding: var(--space-1, 0.25rem) var(--space-2, 0.5rem);
+        margin-bottom: var(--space-4, 1rem);
       }
 
       .links-group {
@@ -141,15 +111,8 @@ import { AhButton } from '@ah/ui';
         font-size: 0.75rem;
         padding: 6px 10px;
       }
-
-      .controls-group {
-        justify-content: flex-end;
-      }
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class NgrxNavigationComponent {
-  readonly isFullscreen = input<boolean>(false);
-  readonly toggleFullscreen = output<void>();
-}
+export class NgrxNavigationComponent {}

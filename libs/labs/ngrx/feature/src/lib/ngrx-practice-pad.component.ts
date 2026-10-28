@@ -1,10 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  ElementRef,
-  inject,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { NgrxNavigationComponent } from './navigation/navigation.component';
 
@@ -12,11 +6,8 @@ import { NgrxNavigationComponent } from './navigation/navigation.component';
   selector: 'ah-ngrx-practice-pad',
   imports: [RouterOutlet, NgrxNavigationComponent],
   template: `
-    <div class="ngrx-lab-shell" [class.is-fullscreen]="isFullscreen()">
-      <ah-ngrx-navigation
-        [isFullscreen]="isFullscreen()"
-        (toggleFullscreen)="toggleFullscreen()"
-      />
+    <div class="ngrx-lab-shell">
+      <ah-ngrx-navigation />
 
       <main class="lab-main-content">
         <router-outlet />
@@ -43,21 +34,6 @@ import { NgrxNavigationComponent } from './navigation/navigation.component';
       box-sizing: border-box;
       position: relative;
       color: var(--color-text-default);
-      transition: all var(--motion-duration-slow, 0.3s)
-        var(--motion-easing-standard, cubic-bezier(0.16, 1, 0.3, 1));
-    }
-
-    .ngrx-lab-shell.is-fullscreen {
-      position: fixed;
-      inset: 0;
-      width: 100vw;
-      height: 100vh;
-      height: 100dvh;
-      z-index: 99999;
-      background: var(--color-bg-canvas);
-      color: var(--color-text-default);
-      padding: var(--space-6, 1.5rem);
-      overflow-y: auto;
     }
 
     .lab-main-content {
@@ -71,23 +47,4 @@ import { NgrxNavigationComponent } from './navigation/navigation.component';
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class NgrxPracticePadComponent {
-  private readonly elementRef = inject(ElementRef);
-  readonly isFullscreen = signal(false);
-
-  toggleFullscreen(): void {
-    const next = !this.isFullscreen();
-    this.isFullscreen.set(next);
-
-    const el = this.elementRef.nativeElement as HTMLElement;
-    if (next) {
-      if (el.requestFullscreen && !document.fullscreenElement) {
-        el.requestFullscreen().catch(() => void 0);
-      }
-    } else {
-      if (document.fullscreenElement && document.exitFullscreen) {
-        document.exitFullscreen().catch(() => void 0);
-      }
-    }
-  }
-}
+export class NgrxPracticePadComponent {}
