@@ -1,0 +1,102 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-md);
+  transition:
+    border-color var(--motion-duration-fast) ease,
+    box-shadow var(--motion-duration-fast) ease;
+}
+
+:host(.ah-metric-card--raised) {
+  background: var(--color-bg-raised);
+  box-shadow: var(--shadow-raised);
+}
+
+:host(.ah-metric-card--accent) {
+  border-color: var(--color-accent-default);
+}
+
+:host(.ah-metric-card--success) {
+  border-color: var(--color-success-default);
+}
+
+:host(.ah-metric-card--warning) {
+  border-color: var(--color-amber-300);
+}
+
+:host(.ah-metric-card--danger) {
+  border-color: var(--color-crimson-500);
+}
+
+.ah-metric-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.ah-metric-label {
+  font-size: var(--font-size-200);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-muted);
+  letter-spacing: -0.01em;
+}
+
+.ah-metric-icon {
+  font-size: 1.25rem;
+  line-height: 1;
+  opacity: 0.85;
+}
+
+.ah-metric-value-row {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-1);
+}
+
+.ah-metric-value {
+  font-size: var(--font-size-500);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-default);
+  line-height: var(--font-line-height-tight);
+  letter-spacing: -0.02em;
+}
+
+.ah-metric-unit {
+  font-size: var(--font-size-200);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-muted);
+}
+
+.ah-metric-trend {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--font-size-100);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-muted);
+}
+
+.ah-metric-trend--positive {
+  color: var(--color-success-default);
+}
+
+.ah-metric-trend--negative {
+  color: var(--color-crimson-500);
+}
+
+.ah-metric-trend-arrow {
+  font-size: 0.9em;
+  line-height: 1;
+}
+
+.ah-metric-hint {
+  margin: 0;
+  font-size: var(--font-size-100);
+  color: var(--color-text-muted);
+  line-height: var(--font-line-height-normal);
+}

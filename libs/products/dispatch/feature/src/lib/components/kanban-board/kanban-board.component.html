@@ -1,0 +1,235 @@
+<div class="kanban-wrapper">
+  <!-- Controls Bar: Filter by Sector, Search, At-Risk Highlight -->
+  <div class="kanban-controls">
+    <div class="filter-group">
+      <label class="control-label" for="sectorFilter">Sector:</label>
+      <select
+        id="sectorFilter"
+        class="control-select"
+        [value]="store.filterSector()"
+        (change)="onSectorChange($event)"
+      >
+        <option value="all">All Sectors (Hotels, Dining, Airbnbs, Spas)</option>
+        <option value="hotel">Hotels & Hospitality</option>
+        <option value="restaurant">Restaurants & Kitchens</option>
+        <option value="airbnb">Airbnbs & Short-Lets</option>
+        <option value="spa_gym">Spas & Health Clubs</option>
+        <option value="corporate">Corporate Suites</option>
+      </select>
+    </div>
+
+    <div class="search-group">
+      <input
+        type="search"
+        class="control-input"
+        placeholder="Search by client, ID (ORD-8401), zone, or driver..."
+        [value]="store.searchQuery()"
+        (input)="onSearchChange($event)"
+      />
+    </div>
+
+    <div class="stat-pills">
+      @if (store.atRiskOrdersCount() > 0) {
+        <span class="at-risk-badge">
+          ⚠️ {{ store.atRiskOrdersCount() }} Deliveries Near SLA Deadline (&lt;
+          45m)
+        </span>
+      }
+      <span class="active-count-badge">
+        {{ store.filteredOrders().length }} Active Orders
+      </span>
+      <button
+        type="button"
+        class="add-order-btn"
+        (click)="store.openAddOrderModal()"
+      >
+        + Create Order
+      </button>
+    </div>
+  </div>
+
+  <!-- Kanban 6-Column Pipeline -->
+  <div class="columns-track">
+    @for (col of columns; track col.id) {
+      <div
+        class="kanban-column"
+        [class.is-delivered-col]="col.id === 'delivered'"
+      >
+        <!-- Column Header -->
+        <div class="col-header">
+          <div class="col-title-wrap">
+            <span class="col-icon">{{ col.icon }}</span>
+            <span class="col-title">{{ col.title }}</span>
+          </div>
+          <span class="col-count">
+            {{ getOrdersForColumn(col.id).length }}
+          </span>
+        </div>
+        <p class="col-desc">{{ col.description }}</p>
+
+        <!-- Cards Container -->
+        <div class="cards-list">
+          @for (order of getOrdersForColumn(col.id); track order.id) {
+            <div
+              class="order-card"
+              [class.is-emergency]="order.isEmergency"
+              [class.is-at-risk]="isAtRisk(order)"
+            >
+              <!-- Card Top: ID, Sector Badge, Emergency Tag -->
+              <div class="card-top">
+                <div class="id-wrap">
+                  <span class="order-id">{{ order.id }}</span>
+                  @if (order.isEmergency) {
+                    <span class="emergency-tag">⚡ EXPRESS</span>
+                  }
+                  @if (isAtRisk(order)) {
+                    <span class="at-risk-tag">⏳ SLA AT RISK</span>
+                  }
+                </div>
+                <div class="card-top-right">
+                  <span
+                    class="sector-pill"
+                    [class]="'sector-' + order.clientSector"
+                  >
+                    {{ order.clientSector | titlecase }}
+                  </span>
+                  <button
+                    type="button"
+                    class="delete-order-btn"
+                    (click)="store.deleteOrder(order.id)"
+                    title="Delete Order"
+                    aria-label="Delete Order"
+                  >
+                    ✕
+                  </button>
+                </div>
+              </div>
+
+              <!-- Client Name & Zone -->
+              <h3 class="client-name">{{ order.clientName }}</h3>
+              <p class="order-address">📍 {{ order.address }}</p>
+
+              <!-- Weight & Item Breakdown -->
+              <div class="weight-row">
+                <span class="weight-badge"
+                  >⚖️ {{ order.totalWeightKg }} kg</span
+                >
+                <span class="items-count"
+                  >{{ order.items.length }} linen types</span
+                >
+              </div>
+
+              <!-- Linen items mini-pills -->
+              <div class="items-preview">
+                @for (item of order.items.slice(0, 2); track item.sku) {
+                  <span class="item-pill">
+                    {{ item.quantity }}x {{ item.name }}
+                  </span>
+                }
+                @if (order.items.length > 2) {
+                  <span class="item-pill more-pill">
+                    +{{ order.items.length - 2 }} more
+                  </span>
+                }
+              </div>
+
+              <!-- Subcontractor & Driver assignment info -->
+              <div class="logistics-info">
+                <div class="info-row">
+                  <span class="info-label">🏭 Subcontractor:</span>
+                  <span class="info-value">{{
+                    getPlantName(order.assignedPlantId)
+                  }}</span>
+                </div>
+                @if (order.subcontractStage) {
+                  <div class="info-row">
+                    <span class="info-label">⚙️ Plant Stage:</span>
+                    <span class="stage-tag">{{
+                      order.subcontractStage | uppercase
+                    }}</span>
+                  </div>
+                }
+                <div class="info-row">
+                  <span class="info-label">🚚 Assigned Driver:</span>
+                  <span class="info-value driver-name">
+                    {{ getDriverName(order.assignedDriverId) }}
+                  </span>
+                </div>
+                <div class="info-row">
+                  <span class="info-label">⏰ SLA Target:</span>
+                  <span class="info-value time-val"
+                    >{{ order.targetDeliveryWindow }} (Cutoff:
+                    {{ order.slaDeadline }})</span
+                  >
+                </div>
+              </div>
+
+              @if (order.specialInstructions) {
+                <div class="instructions-box">
+                  <strong>Note:</strong> {{ order.specialInstructions }}
+                </div>
+              }
+
+              <!-- Card Actions -->
+              <div class="card-footer">
+                @if (order.status === 'delivered') {
+                  <button
+                    type="button"
+                    class="pod-btn"
+                    (click)="store.openPodModal(order.id)"
+                  >
+                    📄 View Signed POD
+                  </button>
+                } @else {
+                  <div class="stage-buttons">
+                    <button
+                      type="button"
+                      class="nav-stage-btn"
+                      [disabled]="order.status === 'intake'"
+                      (click)="store.regressOrderStatus(order.id)"
+                      title="Move to previous pipeline stage"
+                    >
+                      ◀
+                    </button>
+                    <button
+                      type="button"
+                      class="advance-stage-btn"
+                      (click)="store.advanceOrderStatus(order.id)"
+                    >
+                      Advance Stage ▶
+                    </button>
+                  </div>
+
+                  @if (
+                    isAtRisk(order) || order.assignedDriverId === 'drv-harpreet'
+                  ) {
+                    <button
+                      type="button"
+                      class="emergency-dispatch-btn"
+                      (click)="store.openEmergencyModal(order.id)"
+                    >
+                      🚨 Emergency Courier
+                    </button>
+                  }
+                }
+              </div>
+            </div>
+          } @empty {
+            <div class="empty-column">
+              <span>No orders in this stage</span>
+              @if (col.id === 'intake') {
+                <button
+                  type="button"
+                  class="empty-create-btn"
+                  (click)="store.openAddOrderModal()"
+                >
+                  + Add New Order
+                </button>
+              }
+            </div>
+          }
+        </div>
+      </div>
+    }
+  </div>
+</div>

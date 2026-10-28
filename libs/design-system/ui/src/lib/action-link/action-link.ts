@@ -21,23 +21,8 @@ export interface ActionLinkTarget {
   selector: 'ah-action-link',
   imports: [RouterLink, AhButton],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { style: 'display: contents' },
-  template: `
-    @if (internal()) {
-      <a [ahButton]="variant()" [size]="size()" [routerLink]="link().href">{{
-        link().label
-      }}</a>
-    } @else {
-      <a
-        [ahButton]="variant()"
-        [size]="size()"
-        [href]="link().href"
-        [attr.target]="link().external ? '_blank' : null"
-        [attr.rel]="link().external ? 'noopener' : null"
-        >{{ link().label }}</a
-      >
-    }
-  `,
+  templateUrl: './action-link.html',
+  styleUrl: './action-link.scss',
 })
 export class ActionLink {
   readonly link = input.required<ActionLinkTarget>();

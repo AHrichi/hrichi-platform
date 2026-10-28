@@ -1,0 +1,14 @@
+@if (internal()) {
+  <a [ahButton]="variant()" [size]="size()" [routerLink]="link().href">{{
+    link().label
+  }}</a>
+} @else {
+  <a
+    [ahButton]="variant()"
+    [size]="size()"
+    [href]="link().href"
+    [attr.target]="link().external ? '_blank' : null"
+    [attr.rel]="link().external ? 'noopener' : null"
+    >{{ link().label }}</a
+  >
+}

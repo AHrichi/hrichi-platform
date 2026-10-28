@@ -1,0 +1,19 @@
+<app-goal-list
+  [goals]="store.activeScenario().goals"
+  [startDate]="store.activeScenario().startDate"
+  [milestones]="store.currentGoalProgress()"
+  [realityMilestones]="store.realityGoalProgress()"
+  [otherScenarios]="otherScenarios()"
+  (applyToScenarios)="store.applyGoalToScenarios($event)"
+  (add)="store.addGoal($event)"
+  (remove)="store.removeGoal($event)"
+  (toggle)="store.toggleGoal(store.activeScenarioId(), $event)"
+  (edit)="store.editGoal($event.id, $event.updated)"
+  (reorder)="
+    store.reorderGoals(
+      store.activeScenarioId(),
+      $event.previousIndex,
+      $event.currentIndex
+    )
+  "
+></app-goal-list>

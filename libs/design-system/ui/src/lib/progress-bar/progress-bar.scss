@@ -1,0 +1,91 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  inline-size: 100%;
+}
+
+.ah-progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: var(--font-size-100);
+}
+
+.ah-progress-label {
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-default);
+}
+
+.ah-progress-value-text {
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-muted);
+  font-feature-settings: 'tnum';
+}
+
+.ah-progress-details {
+  margin-inline-start: var(--space-1);
+  font-weight: var(--font-weight-regular);
+  font-size: 0.9em;
+}
+
+.ah-progress-track {
+  inline-size: 100%;
+  background: var(--color-border-default);
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+  display: flex;
+}
+
+:host(.ah-progress--sm) .ah-progress-track {
+  block-size: 4px;
+}
+
+:host(.ah-progress--md) .ah-progress-track {
+  block-size: 8px;
+}
+
+:host(.ah-progress--lg) .ah-progress-track {
+  block-size: 14px;
+}
+
+.ah-progress-fill {
+  block-size: 100%;
+  border-radius: var(--radius-pill);
+  transition: width var(--motion-duration-slow) var(--motion-easing-standard);
+  background: var(--color-accent-default);
+}
+
+.ah-progress-fill--primary {
+  background: var(--color-accent-default);
+}
+
+.ah-progress-fill--accent {
+  background: var(--color-data-4);
+}
+
+.ah-progress-fill--success {
+  background: var(--color-success-default);
+}
+
+.ah-progress-fill--warning {
+  background: var(--color-amber-300);
+}
+
+.ah-progress-fill--danger {
+  background: var(--color-crimson-500);
+}
+
+.ah-progress-fill--striped {
+  background-image: linear-gradient(
+    45deg,
+    rgba(255, 255, 255, 0.15) 25%,
+    transparent 25%,
+    transparent 50%,
+    rgba(255, 255, 255, 0.15) 50%,
+    rgba(255, 255, 255, 0.15) 75%,
+    transparent 75%,
+    transparent
+  );
+  background-size: 1rem 1rem;
+}

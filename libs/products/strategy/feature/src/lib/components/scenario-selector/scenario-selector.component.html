@@ -1,0 +1,65 @@
+<div class="scenario-tabs">
+  @if (mode() === 'multiple') {
+    <span class="filter-label" *ngIf="showLabel()">👀 Compare Scenarios:</span>
+  }
+
+  @for (scenario of scenarios(); track scenario.id) {
+    <div class="scenario-tab-item">
+      @if (mode() === 'single' && renamingId() === scenario.id) {
+        <input
+          class="rename-input"
+          [value]="renameValue()"
+          (input)="renameValue.set($any($event.target).value)"
+          (keyup.enter)="confirmRename(scenario.id)"
+          (blur)="confirmRename(scenario.id)"
+          (click)="$event.stopPropagation()"
+          autofocus
+        />
+      } @else {
+        <button
+          [class.active]="isActive(scenario.id)"
+          (click)="handleToggle(scenario.id)"
+        >
+          <span class="indicator" *ngIf="mode() === 'multiple'"></span>
+          {{ scenario.name }}
+        </button>
+      }
+      @if (mode() === 'single') {
+        <button class="btn-icon" (click)="startRename(scenario)" title="Rename">
+          ✏️
+        </button>
+        <button
+          class="btn-icon"
+          (click)="handleDuplicate(scenario.id)"
+          title="Copy scenario"
+        >
+          📑
+        </button>
+        <button
+          class="btn-icon danger"
+          (click)="handleDelete(scenario.id)"
+          [disabled]="scenarios().length <= 1"
+          title="Delete"
+        >
+          🗑️
+        </button>
+      }
+    </div>
+  }
+
+  @if (mode() === 'single') {
+    <form
+      class="add-scenario-form"
+      [formRoot]="addForm"
+      (ngSubmit)="handleAdd()"
+      novalidate
+    >
+      <input
+        type="text"
+        placeholder="New Scenario Name"
+        [formField]="addForm.name"
+      />
+      <button type="submit" class="btn-add">➕ Add</button>
+    </form>
+  }
+</div>

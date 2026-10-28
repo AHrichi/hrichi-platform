@@ -1,0 +1,87 @@
+@if (targetOrder(); as order) {
+  <div class="modal-overlay" (click)="store.closePodModal()">
+    <div class="modal-card" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <div class="title-wrap">
+          <span class="modal-icon">✅</span>
+          <div>
+            <h2 class="modal-title">Digital Proof of Delivery (POD)</h2>
+            <span class="modal-sub">
+              Verified dropoff for {{ order.clientName }} · {{ order.id }}
+            </span>
+          </div>
+        </div>
+        <button type="button" class="close-btn" (click)="store.closePodModal()">
+          ✕
+        </button>
+      </div>
+
+      <div class="modal-body">
+        @if (order.pod; as pod) {
+          <!-- Recipient & Delivery Meta -->
+          <div class="meta-grid">
+            <div class="meta-item">
+              <span class="meta-lbl">Signed By:</span>
+              <strong class="meta-val">{{ pod.recipientName }}</strong>
+            </div>
+            <div class="meta-item">
+              <span class="meta-lbl">Title:</span>
+              <span class="meta-val">{{ pod.recipientTitle }}</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-lbl">Delivered At:</span>
+              <span class="meta-val font-mono">{{ pod.deliveredAt }}</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-lbl">Cages / Bags Count:</span>
+              <span class="meta-val">{{ pod.bagsCount }} Sealed Bags</span>
+            </div>
+          </div>
+
+          <!-- Security Bag Seal Numbers -->
+          <div class="seals-box">
+            <span class="seals-lbl">Security Tamper-Proof Seal Numbers:</span>
+            <div class="seals-pills">
+              @for (seal of pod.sealNumbers; track seal) {
+                <span class="seal-pill">{{ seal }}</span>
+              }
+            </div>
+          </div>
+
+          <!-- Digital Signature Pad Preview -->
+          <div class="signature-box">
+            <span class="sig-lbl">Recipient Digital Signature:</span>
+            <div class="sig-canvas">
+              <svg width="240" height="70" viewBox="0 0 120 40">
+                <path
+                  [attr.d]="pod.signatureSvg"
+                  fill="none"
+                  stroke="#2563eb"
+                  stroke-width="2.5"
+                  stroke-linecap="round"
+                />
+              </svg>
+            </div>
+          </div>
+
+          @if (pod.notes) {
+            <div class="notes-box">
+              <span class="notes-lbl">Driver & Security Notes:</span>
+              <p class="notes-text">"{{ pod.notes }}"</p>
+            </div>
+          }
+        } @else {
+          <div class="no-pod-box">
+            <p>Digital POD not yet submitted for this order.</p>
+          </div>
+        }
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn-close" (click)="store.closePodModal()">
+          Done
+        </button>
+      </div>
+    </div>
+  </div>
+}

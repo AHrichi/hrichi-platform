@@ -3,20 +3,20 @@
     <h2><span class="header-icon">🎯</span> Financial Goals</h2>
   </div>
 
-  <form [formGroup]="goalForm" (ngSubmit)="onSubmit()" class="add-form">
+  <form [formRoot]="goalForm" novalidate class="add-form">
     <div class="form-row">
       <div class="form-group">
         <label for="goal-name">Name</label>
         <input
           id="goal-name"
           type="text"
-          formControlName="name"
+          [formField]="goalForm.name"
           placeholder="e.g., Buy a Car"
           [class.has-error]="
-            goalForm.controls.name.invalid && goalForm.controls.name.touched
+            goalForm.name().invalid && goalForm.name().touched()
           "
         />
-        @if (goalForm.controls.name.invalid && goalForm.controls.name.touched) {
+        @if (goalForm.name().invalid && goalForm.name().touched()) {
           <span class="field-error">Goal name is required</span>
         }
       </div>
@@ -27,17 +27,14 @@
           <input
             id="goal-amount"
             type="number"
-            formControlName="amount"
+            [formField]="goalForm.amount"
             [class.has-error]="
-              goalForm.controls.amount.invalid &&
-              goalForm.controls.amount.touched
+              goalForm.amount().invalid && goalForm.amount().touched()
             "
           />
           <span class="currency-tag">TND</span>
         </div>
-        @if (
-          goalForm.controls.amount.invalid && goalForm.controls.amount.touched
-        ) {
+        @if (goalForm.amount().invalid && goalForm.amount().touched()) {
           <span class="field-error">Target amount must be at least 1</span>
         }
       </div>
@@ -47,9 +44,8 @@
         <input
           id="goal-priority"
           type="number"
-          formControlName="priority"
+          [formField]="goalForm.priority"
           placeholder="1"
-          min="1"
         />
       </div>
 
@@ -58,17 +54,13 @@
         <input
           id="goal-category"
           type="text"
-          formControlName="category"
+          [formField]="goalForm.category"
           placeholder="e.g., Housing"
         />
       </div>
 
       <div class="form-actions">
-        <button
-          type="submit"
-          [disabled]="goalForm.invalid"
-          class="btn-modern btn-submit"
-        >
+        <button type="submit" class="btn-modern btn-submit">
           {{ editingId ? '✏️ Update Goal' : '➕ Add Goal' }}
         </button>
 

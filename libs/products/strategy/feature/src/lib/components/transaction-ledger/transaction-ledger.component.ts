@@ -9,10 +9,12 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
-  ReactiveFormsModule,
-  NonNullableFormBuilder,
-  Validators,
-} from '@angular/forms';
+  form,
+  FormField,
+  FormRoot,
+  min,
+  required,
+} from '@angular/forms/signals';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration, ChartOptions } from 'chart.js';
 import * as XLSX from 'xlsx';
@@ -219,9 +221,9 @@ interface CategoryTotal {
 @Component({
   selector: 'app-transaction-ledger',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, BaseChartDirective],
+  imports: [CommonModule, FormField, FormRoot, BaseChartDirective],
   templateUrl: './transaction-ledger.component.html',
-  styleUrls: ['./transaction-ledger.component.scss'],
+  styleUrl: './transaction-ledger.component.scss',
 })
 export class TransactionLedgerComponent {
   CATEGORY_ICONS = CATEGORY_ICONS;
@@ -249,26 +251,56 @@ export class TransactionLedgerComponent {
   }>();
   bulkImport = output<ImportPayload>();
 
-  private fb = inject(NonNullableFormBuilder);
   private themeService = inject(ThemeService);
   isDarkMode = this.themeService.isDarkMode;
 
-  ledgerForm = this.fb.group({
-    date: [new Date().toISOString().split('T')[0], Validators.required],
-    amount: [0, [Validators.required, Validators.min(0.1)]],
-    type: ['expense' as 'income' | 'expense' | 'transfer', Validators.required],
-    accountId: ['', Validators.required],
-    fromAccountId: [''],
-    categoryId: [''],
-    goalId: [''],
-    note: ['', Validators.required],
+  readonly ledgerModel = signal({
+    date: new Date().toISOString().split('T')[0],
+    amount: 0,
+    type: 'expense' as 'income' | 'expense' | 'transfer',
+    accountId: '',
+    fromAccountId: '',
+    categoryId: '',
+    goalId: '',
+    note: '',
   });
 
-  addAccountForm = this.fb.group({
-    name: ['', Validators.required],
-    type: ['cash' as Account['type'], Validators.required],
-    initialBalance: [0, Validators.required],
+  readonly ledgerForm = form(
+    this.ledgerModel,
+    (schema) => {
+      required(schema.date, { message: 'Date is required' });
+      required(schema.amount, { message: 'Amount is required' });
+      min(schema.amount, 0.1, { message: 'Amount must be at least 0.1' });
+      required(schema.type);
+      required(schema.accountId, { message: 'Account is required' });
+      required(schema.note, { message: 'Note is required' });
+    },
+    {
+      submission: {
+        action: async () => this.onSubmit(),
+      },
+    },
+  );
+
+  readonly addAccountModel = signal({
+    name: '',
+    type: 'cash' as Account['type'],
+    initialBalance: 0,
   });
+
+  readonly addAccountForm = form(
+    this.addAccountModel,
+    (schema) => {
+      required(schema.name, { message: 'Account name is required' });
+      required(schema.type);
+      required(schema.initialBalance);
+    },
+    {
+      submission: {
+        action: async () => this.onSubmitAddAccount(),
+      },
+    },
+  );
 
   showAddAccount = false;
   isTransfer = signal(false);
@@ -277,7 +309,7 @@ export class TransactionLedgerComponent {
   showGoalDropdown = signal(false);
 
   selectedGoalLabel(): string {
-    const gid = this.ledgerForm.value.goalId;
+    const gid = this.ledgerModel().goalId;
     if (!gid) return '— None —';
     const goal = this.goals().find((g) => g.id === gid);
     return goal ? goal.name : '— None —';
@@ -303,12 +335,26 @@ export class TransactionLedgerComponent {
   currentPage = signal(1);
   pageSize = signal(25);
 
-  categoryForm = this.fb.group({
-    name: ['', Validators.required],
-    icon: ['📦', Validators.required],
-    type: ['expense' as 'income' | 'expense', Validators.required],
-    parentId: [''],
+  readonly categoryModel = signal({
+    name: '',
+    icon: '📦',
+    type: 'expense' as 'income' | 'expense',
+    parentId: '',
   });
+
+  readonly categoryForm = form(
+    this.categoryModel,
+    (schema) => {
+      required(schema.name, { message: 'Category name is required' });
+      required(schema.icon);
+      required(schema.type);
+    },
+    {
+      submission: {
+        action: async () => this.saveCategory(),
+      },
+    },
+  );
 
   // --- Analytics signals ---
 
@@ -372,7 +418,7 @@ export class TransactionLedgerComponent {
   });
 
   selectedCategoryLabel(): string {
-    const id = this.ledgerForm.value.categoryId;
+    const id = this.ledgerModel().categoryId;
     if (!id) return '— Uncategorized —';
     const cat = this.categoriesMap()[id];
     return cat ? this.categoryLabel(cat) : '— Uncategorized —';
@@ -695,35 +741,35 @@ export class TransactionLedgerComponent {
   constructor() {
     effect(() => {
       const accts = this.accounts();
-      if (accts.length > 0 && !this.ledgerForm.value.accountId) {
-        this.ledgerForm.patchValue({ accountId: accts[0].id });
+      if (accts.length > 0 && !this.ledgerModel().accountId) {
+        this.ledgerModel.update((m) => ({ ...m, accountId: accts[0].id }));
       }
     });
 
     effect(() => {
-      const type = this.ledgerForm.value.type;
+      const type = this.ledgerModel().type;
       this.isTransfer.set(type === 'transfer');
       if (type !== 'transfer') {
-        this.ledgerForm.patchValue({ fromAccountId: '' });
+        this.ledgerModel.update((m) => ({ ...m, fromAccountId: '' }));
       }
     });
 
     effect(() => {
       const tab = this.categoryManageTab();
-      this.categoryForm.patchValue({ type: tab });
+      this.categoryModel.update((m) => ({ ...m, type: tab }));
     });
   }
 
   // --- Transaction methods ---
 
   onTypeChange() {
-    const type = this.ledgerForm.value.type;
+    const type = this.ledgerModel().type;
     this.isTransfer.set(type === 'transfer');
   }
 
   startEditTransaction(tx: Transaction) {
     this.editingTransactionId.set(tx.id);
-    this.ledgerForm.patchValue({
+    this.ledgerModel.set({
       date: tx.date,
       amount: tx.amount,
       type: tx.type === 'transfer' ? 'transfer' : tx.type,
@@ -737,7 +783,7 @@ export class TransactionLedgerComponent {
 
   cancelEdit() {
     this.editingTransactionId.set(null);
-    this.ledgerForm.reset({
+    this.ledgerModel.set({
       date: new Date().toISOString().split('T')[0],
       amount: 0,
       type: 'expense',
@@ -749,39 +795,46 @@ export class TransactionLedgerComponent {
     });
   }
 
-  onSubmit() {
-    if (this.ledgerForm.valid) {
-      const raw = this.ledgerForm.getRawValue();
-      const tx: Omit<Transaction, 'id'> = {
-        date: raw.date,
-        amount: raw.amount,
-        type: raw.type,
-        accountId:
-          raw.type === 'transfer'
-            ? raw.fromAccountId || raw.accountId
-            : raw.accountId,
-        note: raw.note,
-      };
-      if (raw.type === 'transfer') {
-        tx.fromAccountId = raw.fromAccountId || raw.accountId;
-        tx.accountId = raw.accountId;
-      }
-      if (raw.categoryId) tx.categoryId = raw.categoryId;
-      if (raw.goalId) tx.goalId = raw.goalId;
-
-      const editingId = this.editingTransactionId();
-      if (editingId) {
-        this.updateTransaction.emit({ id: editingId, data: tx });
-        this.cancelEdit();
-      } else {
-        this.addTransaction.emit(tx);
-        this.ledgerForm.patchValue({ amount: 0, note: '', goalId: '' });
-      }
+  async onSubmit(): Promise<undefined> {
+    const raw = this.ledgerModel();
+    const tx: Omit<Transaction, 'id'> = {
+      date: raw.date,
+      amount: raw.amount,
+      type: raw.type,
+      accountId:
+        raw.type === 'transfer'
+          ? raw.fromAccountId || raw.accountId
+          : raw.accountId,
+      note: raw.note,
+    };
+    if (raw.type === 'transfer') {
+      tx.fromAccountId = raw.fromAccountId || raw.accountId;
+      tx.accountId = raw.accountId;
     }
+    if (raw.categoryId) tx.categoryId = raw.categoryId;
+    if (raw.goalId) tx.goalId = raw.goalId;
+
+    const editingId = this.editingTransactionId();
+    if (editingId) {
+      this.updateTransaction.emit({ id: editingId, data: tx });
+      this.cancelEdit();
+    } else {
+      this.addTransaction.emit(tx);
+      this.ledgerModel.update((m) => ({
+        ...m,
+        amount: 0,
+        note: '',
+        goalId: '',
+      }));
+    }
+    return undefined;
   }
 
   selectCategory(id: string) {
-    this.ledgerForm.patchValue({ categoryId: id === '' ? '' : id });
+    this.ledgerModel.update((m) => ({
+      ...m,
+      categoryId: id === '' ? '' : id,
+    }));
     this.showCategoryDropdown.set(false);
   }
 
@@ -794,7 +847,10 @@ export class TransactionLedgerComponent {
   }
 
   selectGoal(id: string) {
-    this.ledgerForm.patchValue({ goalId: id === '' ? '' : id });
+    this.ledgerModel.update((m) => ({
+      ...m,
+      goalId: id === '' ? '' : id,
+    }));
     this.showGoalDropdown.set(false);
   }
 
@@ -808,12 +864,11 @@ export class TransactionLedgerComponent {
 
   // --- Account methods ---
 
-  onSubmitAddAccount() {
-    if (this.addAccountForm.valid) {
-      this.addAccount.emit(this.addAccountForm.getRawValue());
-      this.addAccountForm.reset({ name: '', type: 'cash', initialBalance: 0 });
-      this.showAddAccount = false;
-    }
+  async onSubmitAddAccount(): Promise<undefined> {
+    this.addAccount.emit(this.addAccountModel());
+    this.addAccountModel.set({ name: '', type: 'cash', initialBalance: 0 });
+    this.showAddAccount = false;
+    return undefined;
   }
 
   removeAccountById(id: string) {
@@ -831,7 +886,7 @@ export class TransactionLedgerComponent {
   openCategoryManager() {
     this.activeTab.set('categories');
     this.editingCategory.set(null);
-    this.categoryForm.reset({
+    this.categoryModel.set({
       name: '',
       icon: '📦',
       type: this.categoryManageTab(),
@@ -847,12 +902,12 @@ export class TransactionLedgerComponent {
   setCategoryTab(tab: 'income' | 'expense') {
     this.categoryManageTab.set(tab);
     this.editingCategory.set(null);
-    this.categoryForm.reset({ name: '', icon: '📦', type: tab, parentId: '' });
+    this.categoryModel.set({ name: '', icon: '📦', type: tab, parentId: '' });
   }
 
   startAddCategory() {
     this.editingCategory.set(null);
-    this.categoryForm.reset({
+    this.categoryModel.set({
       name: '',
       icon: '📦',
       type: this.categoryManageTab(),
@@ -862,7 +917,7 @@ export class TransactionLedgerComponent {
 
   startEditCategory(cat: Category) {
     this.editingCategory.set(cat);
-    this.categoryForm.patchValue({
+    this.categoryModel.set({
       name: cat.name,
       icon: cat.icon,
       type: cat.type,
@@ -870,29 +925,28 @@ export class TransactionLedgerComponent {
     });
   }
 
-  saveCategory() {
-    if (this.categoryForm.valid) {
-      const raw = this.categoryForm.getRawValue();
-      const data: Omit<Category, 'id'> = {
-        name: raw.name,
-        icon: raw.icon,
-        type: raw.type,
-        parentId: raw.parentId || null,
-      };
-      const editing = this.editingCategory();
-      if (editing) {
-        this.updateCategory.emit({ id: editing.id, data });
-      } else {
-        this.addCategory.emit(data);
-      }
-      this.editingCategory.set(null);
-      this.categoryForm.reset({
-        name: '',
-        icon: '📦',
-        type: this.categoryManageTab(),
-        parentId: '',
-      });
+  async saveCategory(): Promise<undefined> {
+    const raw = this.categoryModel();
+    const data: Omit<Category, 'id'> = {
+      name: raw.name,
+      icon: raw.icon,
+      type: raw.type,
+      parentId: raw.parentId || null,
+    };
+    const editing = this.editingCategory();
+    if (editing) {
+      this.updateCategory.emit({ id: editing.id, data });
+    } else {
+      this.addCategory.emit(data);
     }
+    this.editingCategory.set(null);
+    this.categoryModel.set({
+      name: '',
+      icon: '📦',
+      type: this.categoryManageTab(),
+      parentId: '',
+    });
+    return undefined;
   }
 
   confirmRemoveCategory(id: string) {
@@ -906,7 +960,7 @@ export class TransactionLedgerComponent {
   }
 
   selectIcon(icon: string) {
-    this.categoryForm.patchValue({ icon });
+    this.categoryModel.update((m) => ({ ...m, icon }));
   }
 
   trackByFn(_: number, item: { id: string | number }) {

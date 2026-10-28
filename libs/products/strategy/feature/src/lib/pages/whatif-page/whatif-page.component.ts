@@ -1,6 +1,5 @@
 import { Component, inject, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration, ChartOptions } from 'chart.js';
 import { FinancialStore } from '../../financial.store';
@@ -12,263 +11,9 @@ import { computeScenarioProjection } from '../../utils/projection-engine';
 @Component({
   selector: 'app-whatif-page',
   standalone: true,
-  imports: [CommonModule, FormsModule, BaseChartDirective],
-  template: `
-    <div class="whatif-container" [class.dark]="isDarkMode()">
-      <div class="whatif-header">
-        <h1>🔮 What-If Simulator</h1>
-        <p class="whatif-subtitle">
-          Tweak key parameters and see how they affect your financial future
-        </p>
-      </div>
-
-      <div class="whatif-layout">
-        <div class="whatif-controls">
-          <h3>Adjustments</h3>
-
-          <div class="control-group">
-            <label>Income Multiplier</label>
-            <input
-              type="range"
-              min="0.5"
-              max="2"
-              step="0.05"
-              [(ngModel)]="incomeMult"
-            />
-            <span class="control-val">{{ incomeMult().toFixed(2) }}×</span>
-          </div>
-
-          <div class="control-group">
-            <label>Expense Multiplier</label>
-            <input
-              type="range"
-              min="0.5"
-              max="2"
-              step="0.05"
-              [(ngModel)]="expenseMult"
-            />
-            <span class="control-val">{{ expenseMult().toFixed(2) }}×</span>
-          </div>
-
-          <div class="control-group">
-            <label>Investment Yield (%)</label>
-            <input
-              type="range"
-              min="0"
-              max="20"
-              step="0.5"
-              [(ngModel)]="yieldOverride"
-            />
-            <span class="control-val">{{ yieldOverride() }}%</span>
-          </div>
-
-          <div class="control-group">
-            <label>Extra Monthly Savings</label>
-            <input
-              type="range"
-              min="0"
-              max="5000"
-              step="100"
-              [(ngModel)]="extraSavings"
-            />
-            <span class="control-val">{{ fmtCurrency(extraSavings()) }}</span>
-          </div>
-
-          <div class="control-group">
-            <label>Inflation Rate (%)</label>
-            <input
-              type="range"
-              min="0"
-              max="15"
-              step="0.5"
-              [(ngModel)]="inflationOverride"
-            />
-            <span class="control-val">{{ inflationOverride() }}%</span>
-          </div>
-
-          <div class="whatif-results">
-            <div class="result-item">
-              <span class="result-label">Baseline Final</span>
-              <span class="result-val baseline">{{
-                fmtCurrency(baselineFinal())
-              }}</span>
-            </div>
-            <div class="result-item">
-              <span class="result-label">What-If Final</span>
-              <span
-                class="result-val"
-                [class.positive]="whatifFinal() >= baselineFinal()"
-                [class.negative]="whatifFinal() < baselineFinal()"
-              >
-                {{ fmtCurrency(whatifFinal()) }}
-              </span>
-            </div>
-            <div class="result-item result-diff">
-              <span class="result-label">Difference</span>
-              <span
-                class="result-val"
-                [class.positive]="diff() >= 0"
-                [class.negative]="diff() < 0"
-              >
-                {{ diff() >= 0 ? '+' : '' }}{{ fmtCurrency(diff()) }}
-              </span>
-            </div>
-          </div>
-        </div>
-
-        <div class="whatif-chart">
-          <canvas
-            baseChart
-            type="line"
-            [data]="chartData()"
-            [options]="chartOptions()"
-          ></canvas>
-        </div>
-      </div>
-
-      <button class="btn-apply" (click)="applyToScenario()">
-        Apply Parameters to Current Scenario
-      </button>
-    </div>
-  `,
-  styles: [
-    `
-      .whatif-container {
-        padding: 24px;
-        max-width: 1200px;
-        margin: 0 auto;
-        color: #334155;
-        &.dark {
-          color: #f1f5f9;
-          .whatif-controls {
-            background: #1e293b;
-            border-color: #334155;
-          }
-          .result-item {
-            background: #0f172a;
-          }
-          .result-label {
-            color: #94a3b8;
-          }
-          input[type='range'] {
-            accent-color: #818cf8;
-          }
-        }
-      }
-      .whatif-header {
-        margin-bottom: 24px;
-        h1 {
-          margin: 0 0 4px;
-          font-size: 1.3rem;
-        }
-        .whatif-subtitle {
-          font-size: 0.85rem;
-          color: #64748b;
-          margin: 0;
-        }
-      }
-      .whatif-layout {
-        display: grid;
-        grid-template-columns: 300px 1fr;
-        gap: 24px;
-        margin-bottom: 20px;
-      }
-      @media (max-width: 768px) {
-        .whatif-layout {
-          grid-template-columns: 1fr;
-        }
-      }
-      .whatif-controls {
-        background: #fff;
-        border: 1px solid #e2e8f0;
-        border-radius: 14px;
-        padding: 20px;
-        h3 {
-          margin: 0 0 16px;
-          font-size: 1rem;
-        }
-      }
-      .control-group {
-        margin-bottom: 16px;
-        label {
-          display: block;
-          font-size: 0.8rem;
-          font-weight: 600;
-          margin-bottom: 4px;
-        }
-        input {
-          width: 100%;
-        }
-        .control-val {
-          font-size: 0.75rem;
-          color: #64748b;
-          font-weight: 700;
-        }
-      }
-      .whatif-results {
-        margin-top: 20px;
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-      }
-      .result-item {
-        background: #f8fafc;
-        border-radius: 8px;
-        padding: 10px 12px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        &.result-diff {
-          border-top: 1px solid #e2e8f0;
-          padding-top: 12px;
-        }
-      }
-      .result-label {
-        font-size: 0.75rem;
-        color: #64748b;
-      }
-      .result-val {
-        font-size: 0.9rem;
-        font-weight: 700;
-        &.baseline {
-          color: #6366f1;
-        }
-        &.positive {
-          color: #059669;
-        }
-        &.negative {
-          color: #dc2626;
-        }
-      }
-      .whatif-chart {
-        background: #fff;
-        border: 1px solid #e2e8f0;
-        border-radius: 14px;
-        padding: 20px;
-        min-height: 350px;
-        .dark & {
-          background: #1e293b;
-          border-color: #334155;
-        }
-      }
-      .btn-apply {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        padding: 10px 20px;
-        font-size: 0.85rem;
-        font-weight: 600;
-        background: #4f46e5;
-        color: #fff;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-        &:hover {
-          background: #4338ca;
-        }
-      }
-    `,
-  ],
+  imports: [CommonModule, BaseChartDirective],
+  templateUrl: './whatif-page.component.html',
+  styleUrl: './whatif-page.component.scss',
 })
 export class WhatifPageComponent {
   readonly store = inject(FinancialStore);
@@ -281,6 +26,28 @@ export class WhatifPageComponent {
   yieldOverride = signal<number | null>(null);
   extraSavings = signal(0);
   inflationOverride = signal<number | null>(null);
+
+  updateIncomeMult(event: Event): void {
+    this.incomeMult.set(Number((event.target as HTMLInputElement).value));
+  }
+
+  updateExpenseMult(event: Event): void {
+    this.expenseMult.set(Number((event.target as HTMLInputElement).value));
+  }
+
+  updateYieldOverride(event: Event): void {
+    this.yieldOverride.set(Number((event.target as HTMLInputElement).value));
+  }
+
+  updateExtraSavings(event: Event): void {
+    this.extraSavings.set(Number((event.target as HTMLInputElement).value));
+  }
+
+  updateInflationOverride(event: Event): void {
+    this.inflationOverride.set(
+      Number((event.target as HTMLInputElement).value),
+    );
+  }
 
   private baseline = computed(() => {
     const scenario = this.store.activeScenario();

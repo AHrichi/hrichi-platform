@@ -14,18 +14,19 @@
       <p class="create-desc">
         Create your first financial scenario to begin planning.
       </p>
-      <div class="create-form">
+      <form
+        class="create-form"
+        [formRoot]="createForm"
+        (ngSubmit)="createScenario()"
+        novalidate
+      >
         <input
           type="text"
           placeholder="e.g. My Career Plan"
-          [ngModel]="scenarioName()"
-          (ngModelChange)="scenarioName.set($event)"
-          (keyup.enter)="createScenario()"
+          [formField]="createForm.name"
         />
-        <button class="btn-primary" (click)="createScenario()">
-          ✨ Create Scenario
-        </button>
-      </div>
+        <button type="submit" class="btn-primary">✨ Create Scenario</button>
+      </form>
     </div>
 
     <div class="features">

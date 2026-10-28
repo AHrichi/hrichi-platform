@@ -1,10 +1,12 @@
-import { Component, input, output, inject, computed } from '@angular/core';
+import { Component, input, output, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
-  ReactiveFormsModule,
-  NonNullableFormBuilder,
-  Validators,
-} from '@angular/forms';
+  form,
+  FormField,
+  FormRoot,
+  min,
+  required,
+} from '@angular/forms/signals';
 import { DragDropModule, CdkDragDrop } from '@angular/cdk/drag-drop';
 import { Goal } from '../../financial.store';
 import { GoalMilestone } from '../../store/models';
@@ -12,9 +14,9 @@ import { GoalMilestone } from '../../store/models';
 @Component({
   selector: 'app-goal-list',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, DragDropModule],
+  imports: [CommonModule, FormField, FormRoot, DragDropModule],
   templateUrl: './goal-list.component.html',
-  styleUrls: ['./goal-list.component.scss'],
+  styleUrl: './goal-list.component.scss',
 })
 export class GoalListComponent {
   goals = input.required<Goal[]>();
@@ -51,44 +53,57 @@ export class GoalListComponent {
     targetScenarioIds: string[];
   }>();
 
-  private fb = inject(NonNullableFormBuilder);
-
   editingId: string | null = null;
   goalToCopy: Goal | null = null;
   selectedTargetScenarios = new Set<string>();
 
-  goalForm = this.fb.group({
-    name: ['', Validators.required],
-    amount: [0, [Validators.required, Validators.min(1)]],
-    priority: [1, [Validators.required, Validators.min(1)]],
-    category: [''],
+  readonly goalModel = signal({
+    name: '',
+    amount: 0,
+    priority: 1,
+    category: '',
   });
 
-  onSubmit() {
-    if (this.goalForm.valid) {
-      const raw = this.goalForm.getRawValue();
-      const goalData = {
-        name: raw.name,
-        amount: raw.amount,
-        priority: raw.priority ?? 1,
-        category: raw.category ?? '',
-      };
-      if (this.editingId) {
-        this.edit.emit({
-          id: this.editingId,
-          updated: goalData,
-        });
-        this.editingId = null;
-      } else {
-        this.add.emit(goalData);
-      }
-      this.resetForm();
+  readonly goalForm = form(
+    this.goalModel,
+    (schema) => {
+      required(schema.name, { message: 'Goal name is required' });
+      required(schema.amount, { message: 'Target amount is required' });
+      min(schema.amount, 1, { message: 'Target amount must be at least 1' });
+      required(schema.priority, { message: 'Priority is required' });
+      min(schema.priority, 1, { message: 'Priority must be at least 1' });
+    },
+    {
+      submission: {
+        action: async () => this.onSubmit(),
+      },
+    },
+  );
+
+  async onSubmit(): Promise<undefined> {
+    const raw = this.goalModel();
+    const goalData = {
+      name: raw.name,
+      amount: raw.amount,
+      priority: raw.priority ?? 1,
+      category: raw.category ?? '',
+    };
+    if (this.editingId) {
+      this.edit.emit({
+        id: this.editingId,
+        updated: goalData,
+      });
+      this.editingId = null;
+    } else {
+      this.add.emit(goalData);
     }
+    this.resetForm();
+    return undefined;
   }
 
   onEdit(goal: Goal) {
     this.editingId = goal.id;
-    this.goalForm.patchValue({
+    this.goalModel.set({
       name: goal.name,
       amount: goal.amount,
       priority: goal.priority ?? 1,
@@ -102,7 +117,12 @@ export class GoalListComponent {
   }
 
   private resetForm() {
-    this.goalForm.reset({ name: '', amount: 0, priority: 1, category: '' });
+    this.goalModel.set({
+      name: '',
+      amount: 0,
+      priority: 1,
+      category: '',
+    });
   }
 
   onRemove(id: string | undefined) {
@@ -113,75 +133,11 @@ export class GoalListComponent {
     if (id) this.toggle.emit(id);
   }
 
-  getMilestone(goalId: string): GoalMilestone | undefined {
-    return this.milestoneMap().get(goalId);
-  }
-
-  getProgress(goalId: string): number {
-    const ms = this.getMilestone(goalId);
-    if (!ms || ms.amount <= 0) return 0;
-    return Math.min((ms.fundAccumulated / ms.amount) * 100, 100);
-  }
-
-  getStatus(goalId: string): string {
-    const ms = this.getMilestone(goalId);
-    if (!ms) return 'unknown';
-    return ms.status;
-  }
-
-  getRealityProgress(goalId: string): number {
-    const ms = this.realityMilestoneMap().get(goalId);
-    if (!ms || ms.amount <= 0) return 0;
-    return Math.min((ms.fundAccumulated / ms.amount) * 100, 100);
-  }
-
-  getRealityStatus(goalId: string): string {
-    const ms = this.realityMilestoneMap().get(goalId);
-    if (!ms) return 'unknown';
-    return ms.status;
-  }
-
-  getRealityFundAccumulated(goalId: string): number {
-    return this.realityMilestoneMap().get(goalId)?.fundAccumulated ?? 0;
-  }
-
-  getStatusIcon(goalId: string): string {
-    const ms = this.getMilestone(goalId);
-    if (!ms) return '⚪';
-    switch (ms.status) {
-      case 'achieved':
-        return '🏆';
-      case 'in_progress':
-        return '⏳';
-      case 'pending':
-        return '⏸️';
-      default:
-        return '⚪';
-    }
-  }
-
-  getStatusLabel(goalId: string): string {
-    const ms = this.getMilestone(goalId);
-    if (!ms) return '';
-    switch (ms.status) {
-      case 'achieved':
-        return 'Achieved';
-      case 'in_progress':
-        return 'In Progress';
-      case 'pending':
-        return 'Pending';
-      default:
-        return '';
-    }
-  }
-
   drop(event: CdkDragDrop<Goal[]>) {
-    if (event.previousIndex !== event.currentIndex) {
-      this.reorder.emit({
-        previousIndex: event.previousIndex,
-        currentIndex: event.currentIndex,
-      });
-    }
+    this.reorder.emit({
+      previousIndex: event.previousIndex,
+      currentIndex: event.currentIndex,
+    });
   }
 
   openCopyModal(goal: Goal) {
@@ -216,5 +172,36 @@ export class GoalListComponent {
       });
       this.closeCopyModal();
     }
+  }
+
+  formatTargetMonth(targetMonth: number | undefined): string {
+    if (!targetMonth || targetMonth <= 0) return 'N/A';
+
+    const start = this.startDate();
+    if (!start) {
+      return `Month ${targetMonth}`;
+    }
+
+    const [yearStr, monthStr] = start.split('-');
+    const startYear = parseInt(yearStr, 10);
+    const startMonth = parseInt(monthStr, 10) - 1;
+
+    const targetDate = new Date(startYear, startMonth + targetMonth - 1, 1);
+    const monthNames = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
+
+    return `${monthNames[targetDate.getMonth()]} ${targetDate.getFullYear()} (M${targetMonth})`;
   }
 }

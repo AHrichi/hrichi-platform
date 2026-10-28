@@ -51,8 +51,8 @@
           min="0.5"
           max="2"
           step="0.05"
-          [ngModel]="incomeMult()"
-          (ngModelChange)="incomeMult.set($event)"
+          [value]="incomeMult()"
+          (input)="updateIncomeMult($event)"
         />
       </div>
       <div class="slider-control">
@@ -65,8 +65,8 @@
           min="0.5"
           max="2"
           step="0.05"
-          [ngModel]="expenseMult()"
-          (ngModelChange)="expenseMult.set($event)"
+          [value]="expenseMult()"
+          (input)="updateExpenseMult($event)"
         />
       </div>
       <div class="slider-control">
@@ -92,8 +92,8 @@
           min="0"
           max="15"
           step="0.5"
-          [ngModel]="inflationOverride() || 0"
-          (ngModelChange)="inflationOverride.set($event)"
+          [value]="inflationOverride() || 0"
+          (input)="updateInflationOverride($event)"
         />
       </div>
       <div class="slider-control">
@@ -117,8 +117,8 @@
           min="0"
           max="20"
           step="0.5"
-          [ngModel]="yieldOverride() || 0"
-          (ngModelChange)="yieldOverride.set($event)"
+          [value]="yieldOverride() || 0"
+          (input)="updateYieldOverride($event)"
         />
       </div>
     </div>
@@ -150,10 +150,8 @@
                   <input
                     type="text"
                     class="inline-input name-input"
-                    [ngModel]="summary.name"
-                    (ngModelChange)="
-                      store.updateSpecificScenarioName(summary.id, $event)
-                    "
+                    [value]="summary.name"
+                    (input)="updateScenarioName(summary.id, $event)"
                     placeholder="Scenario Name"
                   />
                   <div class="th-actions">
@@ -253,10 +251,8 @@
                     <input
                       type="number"
                       class="inline-input param-input"
-                      [ngModel]="summary.years"
-                      (ngModelChange)="
-                        store.updateSpecificScenarioYears(summary.id, $event)
-                      "
+                      [value]="summary.years"
+                      (input)="updateScenarioYears(summary.id, $event)"
                       min="1"
                     />
                     <span class="input-suffix">Yrs</span>
@@ -272,13 +268,8 @@
                     <input
                       type="number"
                       class="inline-input param-input"
-                      [ngModel]="summary.inflationRate"
-                      (ngModelChange)="
-                        store.updateSpecificScenarioInflation(
-                          summary.id,
-                          $event
-                        )
-                      "
+                      [value]="summary.inflationRate"
+                      (input)="updateScenarioInflation(summary.id, $event)"
                       step="0.1"
                     />
                     <span class="input-suffix">%</span>
@@ -294,10 +285,8 @@
                     <input
                       type="number"
                       class="inline-input param-input text-success"
-                      [ngModel]="summary.investmentYield"
-                      (ngModelChange)="
-                        store.updateSpecificScenarioYield(summary.id, $event)
-                      "
+                      [value]="summary.investmentYield"
+                      (input)="updateScenarioYield(summary.id, $event)"
                       step="0.1"
                     />
                     <span class="input-suffix">%</span>

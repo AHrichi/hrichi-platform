@@ -1,0 +1,8 @@
+<app-income-list
+  [incomes]="store.activeScenario().incomes"
+  [otherScenarios]="otherScenarios()"
+  (add)="store.addIncome($event)"
+  (edit)="store.editIncome($event.id, $event.updated)"
+  (remove)="store.removeIncome($event)"
+  (applyToScenarios)="store.applyIncomeToScenarios($event)"
+></app-income-list>

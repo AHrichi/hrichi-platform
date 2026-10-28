@@ -1,0 +1,308 @@
+<div class="whatsapp-card">
+  <div class="whatsapp-layout">
+    <!-- Sidebar: 3 Channels -->
+    <aside class="channels-sidebar">
+      <div class="sidebar-header">
+        <div class="wa-brand">
+          <span class="wa-icon">💬</span>
+          <div>
+            <span class="wa-title">WhatsApp Business Hub</span>
+            <span class="wa-sub">3 Managed Team Groups</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="channel-list" role="tablist">
+        <!-- Channel 1: Customers -->
+        <button
+          type="button"
+          class="channel-item"
+          [class.is-active]="store.activeWhatsAppChannel() === 'customers'"
+          (click)="store.setWhatsAppChannel('customers')"
+        >
+          <div class="channel-avatar cust-avatar">🏨</div>
+          <div class="channel-meta">
+            <div class="channel-row">
+              <span class="channel-name">Customer Group</span>
+              <span class="channel-time">12:30</span>
+            </div>
+            <p class="channel-preview">The Savoy, Dishoom, Rosewood...</p>
+          </div>
+        </button>
+
+        <!-- Channel 2: Drivers -->
+        <button
+          type="button"
+          class="channel-item"
+          [class.is-active]="store.activeWhatsAppChannel() === 'drivers'"
+          (click)="store.setWhatsAppChannel('drivers')"
+        >
+          <div class="channel-avatar drv-avatar">🚚</div>
+          <div class="channel-meta">
+            <div class="channel-row">
+              <span class="channel-name">Drivers Fleet</span>
+              <span class="channel-time">12:16</span>
+            </div>
+            <p class="channel-preview">Tariq, Liam, Harpreet, Carlos...</p>
+          </div>
+        </button>
+
+        <!-- Channel 3: Production -->
+        <button
+          type="button"
+          class="channel-item"
+          [class.is-active]="store.activeWhatsAppChannel() === 'production'"
+          (click)="store.setWhatsAppChannel('production')"
+        >
+          <div class="channel-avatar prod-avatar">🏭</div>
+          <div class="channel-meta">
+            <div class="channel-row">
+              <span class="channel-name">Production Subcontractors</span>
+              <span class="channel-time">12:05</span>
+            </div>
+            <p class="channel-preview">Thames Valley, Apex Clean...</p>
+          </div>
+        </button>
+      </div>
+
+      <!-- Coordinator Notice -->
+      <div class="coordinator-tip">
+        <span class="tip-icon">💡</span>
+        <p>
+          Incoming WhatsApp order requests can be converted into active jobs
+          with 1-click.
+        </p>
+      </div>
+    </aside>
+
+    <!-- Main Chat Area -->
+    <main class="chat-area">
+      <!-- Chat Header -->
+      <div class="chat-header">
+        <div class="active-contact-info">
+          <span class="active-avatar">
+            {{
+              store.activeWhatsAppChannel() === 'customers'
+                ? '🏨'
+                : store.activeWhatsAppChannel() === 'drivers'
+                  ? '🚚'
+                  : '🏭'
+            }}
+          </span>
+          <div>
+            <h2 class="active-title">
+              {{
+                store.activeWhatsAppChannel() === 'customers'
+                  ? 'London Hospitality & B2B Customers'
+                  : store.activeWhatsAppChannel() === 'drivers'
+                    ? 'London Fleet Dispatch & Drivers'
+                    : 'Subcontractor Laundry Plant Managers'
+              }}
+            </h2>
+            <span class="online-indicator">
+              <span class="green-dot"></span> Online · Coordinator
+              {{ store.activeCoordinator().name }} active
+            </span>
+          </div>
+        </div>
+
+        <div class="chat-header-actions">
+          <button
+            type="button"
+            class="quick-action-pill"
+            (click)="addQuickDemoOrder()"
+          >
+            + Simulate New Customer Order
+          </button>
+        </div>
+      </div>
+
+      <!-- Message Stream -->
+      <div class="messages-viewport" #scrollViewport>
+        @for (msg of store.channelMessages(); track msg.id) {
+          <div
+            class="message-wrapper"
+            [class.is-coordinator]="msg.isCoordinator"
+          >
+            <div
+              class="message-bubble"
+              [class.is-coord-bubble]="msg.isCoordinator"
+            >
+              <div class="msg-header">
+                <span class="msg-sender">{{ msg.senderName }}</span>
+                <span class="msg-role">{{ msg.senderRole }}</span>
+                <span class="msg-time">{{ msg.timestamp }}</span>
+              </div>
+
+              <p class="msg-text">{{ msg.text }}</p>
+
+              <!-- Embedded Action Card (If present) -->
+              @if (msg.suggestedAction; as action) {
+                <div class="action-card">
+                  <div class="action-card-header">
+                    <span class="action-card-icon">⚡</span>
+                    <span class="action-card-title"
+                      >Coordinator Action Suggested:</span
+                    >
+                  </div>
+
+                  @if (action.type === 'create_order') {
+                    <p class="action-desc">
+                      Emergency Top-Up requested for
+                      <strong>Third Space Soho</strong>. Convert this WhatsApp
+                      request to a confirmed job in the Kanban.
+                    </p>
+                    <button
+                      type="button"
+                      class="action-btn-convert"
+                      (click)="convertThirdSpaceOrder()"
+                    >
+                      ✓ Convert to Live Job & Assign Standby Driver
+                    </button>
+                  }
+
+                  @if (action.type === 'emergency_courier') {
+                    <p class="action-desc">
+                      Rosewood VIP check-in at risk due to vehicle breakdown.
+                    </p>
+                    <button
+                      type="button"
+                      class="action-btn-emergency"
+                      (click)="
+                        store.dispatchEmergencyCourier(
+                          'ORD-8403',
+                          'Gophr London Rapid Courier'
+                        )
+                      "
+                    >
+                      🚨 Book Emergency Courier (Gophr - 25m ETA)
+                    </button>
+                  }
+
+                  @if (action.type === 'reassign_driver') {
+                    <p class="action-desc">
+                      Van 3 broken down on A40 Western Ave.
+                    </p>
+                    <button
+                      type="button"
+                      class="action-btn-convert"
+                      (click)="
+                        store.reassignStops('drv-harpreet', 'drv-carlos')
+                      "
+                    >
+                      🔄 Reroute Stops to Standby Carlos
+                    </button>
+                  }
+
+                  @if (action.type === 'quality_claim') {
+                    <p class="action-desc">
+                      8 burnt/damaged napkins from Gymkhana reported by Apex
+                      plant.
+                    </p>
+                    <button
+                      type="button"
+                      class="action-btn-claim"
+                      (click)="
+                        store.logQualityClaim(
+                          'plant-apex',
+                          'Gymkhana Restaurant',
+                          'TAB-NAP-WHT',
+                          8,
+                          'torn_damaged'
+                        )
+                      "
+                    >
+                      📝 Log Damage Claim & Credit Note (£28.00)
+                    </button>
+                  }
+                </div>
+              }
+            </div>
+          </div>
+        } @empty {
+          <div class="empty-chat-state">
+            <span class="empty-chat-icon">💬</span>
+            <h4 class="empty-chat-title">No messages in this WhatsApp group</h4>
+            <p class="empty-chat-desc">
+              Broadcast a dispatch update, use canned coordinator replies below,
+              or simulate an incoming customer order message.
+            </p>
+            <button
+              type="button"
+              class="empty-sim-btn"
+              (click)="addQuickDemoOrder()"
+            >
+              + Simulate Incoming Customer Message
+            </button>
+          </div>
+        }
+      </div>
+
+      <!-- Quick Reply Chips -->
+      <div class="quick-replies-bar">
+        <span class="replies-label">Quick Responses:</span>
+        <button
+          type="button"
+          class="reply-chip"
+          (click)="
+            sendQuickReply('Driver is en-route, ETA approximately 12 minutes.')
+          "
+        >
+          "Driver 12m away"
+        </button>
+        <button
+          type="button"
+          class="reply-chip"
+          (click)="
+            sendQuickReply(
+              'Order confirmed for pickup. Assigned to driver manifest.'
+            )
+          "
+        >
+          "Order confirmed"
+        </button>
+        <button
+          type="button"
+          class="reply-chip"
+          (click)="
+            sendQuickReply(
+              'Linen is currently in the drying cycle at the plant. Expected ready by 14:00.'
+            )
+          "
+        >
+          "Plant status: Drying"
+        </button>
+        <button
+          type="button"
+          class="reply-chip"
+          (click)="
+            sendQuickReply(
+              'Signed Proof of Delivery received and logged in system.'
+            )
+          "
+        >
+          "POD logged"
+        </button>
+      </div>
+
+      <!-- Message Input Bar -->
+      <form class="chat-input-bar" [formRoot]="chatForm" novalidate>
+        <input
+          type="text"
+          class="chat-input"
+          [formField]="chatForm.messageText"
+          placeholder="Type message to {{
+            store.activeWhatsAppChannel()
+          }} group as {{ store.activeCoordinator().name }}..."
+        />
+        <button
+          type="submit"
+          class="send-btn"
+          [disabled]="!chatModel().messageText.trim()"
+        >
+          Send ➤
+        </button>
+      </form>
+    </main>
+  </div>
+</div>

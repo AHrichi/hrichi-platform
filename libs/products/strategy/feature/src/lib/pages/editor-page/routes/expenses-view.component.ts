@@ -6,17 +6,8 @@ import { ExpenseListComponent } from '../../../components/expense-list/expense-l
   selector: 'app-expenses-view',
   standalone: true,
   imports: [ExpenseListComponent],
-  template: `
-    <app-expense-list
-      [expenses]="store.activeScenario().expenses"
-      [otherScenarios]="otherScenarios()"
-      (applyToScenarios)="store.applyExpenseToScenarios($event)"
-      (add)="store.addExpense($event)"
-      (remove)="store.removeExpense($event)"
-      (toggle)="store.toggleExpense(store.activeScenarioId(), $event)"
-      (edit)="store.editExpense($event.id, $event.updated)"
-    ></app-expense-list>
-  `,
+  templateUrl: './expenses-view.component.html',
+  styleUrl: './expenses-view.component.scss',
 })
 export class ExpensesViewComponent {
   store = inject(FinancialStore);

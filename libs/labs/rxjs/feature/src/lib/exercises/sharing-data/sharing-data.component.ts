@@ -5,6 +5,7 @@ import {
   signal,
   inject,
   viewChild,
+  WritableSignal,
 } from '@angular/core';
 
 import { ParentToChildComponent } from './parent-to-child/parent-to-child.component';
@@ -110,6 +111,6 @@ export class SharingDataComponent {
       Service: this.showServiceCode,
       ViewChild: this.showViewChildCode,
     };
-    map[type].update((value) => !value);
+    map[type].update((value: boolean) => !value);
   }
 }

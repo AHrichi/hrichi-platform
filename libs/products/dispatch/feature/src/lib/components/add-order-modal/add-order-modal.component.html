@@ -1,0 +1,303 @@
+@if (store.showAddOrderModal()) {
+  <div class="modal-overlay" (click)="closeModal()">
+    <div class="modal-card" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <div class="title-wrap">
+          <span class="modal-icon">📦</span>
+          <div>
+            <h2 class="modal-title">Create New Order from Scratch</h2>
+            <span class="modal-sub">
+              Add custom hotel, restaurant, or Airbnb laundry dispatch job
+            </span>
+          </div>
+        </div>
+        <button
+          type="button"
+          class="close-btn"
+          (click)="closeModal()"
+          aria-label="Close modal"
+        >
+          ✕
+        </button>
+      </div>
+
+      <form class="modal-form" [formRoot]="orderForm" novalidate>
+        <div class="modal-body">
+          @if (successMessage()) {
+            <div class="form-success-banner" role="status">
+              {{ successMessage() }}
+            </div>
+          }
+
+          <div class="form-grid">
+            <div class="form-group full-width">
+              <label class="form-label" for="order-client">Client Name *</label>
+              <input
+                id="order-client"
+                type="text"
+                class="form-input"
+                [formField]="orderForm.clientName"
+                [class.has-error]="
+                  orderForm.clientName().touched() &&
+                  orderForm.clientName().invalid()
+                "
+                [attr.aria-invalid]="
+                  orderForm.clientName().touched() &&
+                  orderForm.clientName().invalid()
+                "
+                placeholder="e.g. The Claridge's Hotel London, Hawksmoor Guildhall..."
+              />
+              @if (
+                orderForm.clientName().touched() &&
+                orderForm.clientName().invalid()
+              ) {
+                <span class="field-error" role="alert">
+                  {{ orderForm.clientName().errors()[0]?.message }}
+                </span>
+              }
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="order-sector">Sector *</label>
+              <select
+                id="order-sector"
+                class="form-select"
+                [formField]="orderForm.clientSector"
+              >
+                <option value="hotel">Hotel & Hospitality</option>
+                <option value="restaurant">Restaurant & Kitchen</option>
+                <option value="airbnb">Airbnb & Short-Let</option>
+                <option value="spa_gym">Spa & Health Club</option>
+                <option value="corporate">Corporate Suite</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="order-zone">Zone / Area *</label>
+              <input
+                id="order-zone"
+                type="text"
+                class="form-input"
+                [formField]="orderForm.zone"
+                [class.has-error]="
+                  orderForm.zone().touched() && orderForm.zone().invalid()
+                "
+                [attr.aria-invalid]="
+                  orderForm.zone().touched() && orderForm.zone().invalid()
+                "
+                placeholder="e.g. W1 - Mayfair, E1 - Shoreditch"
+              />
+              @if (orderForm.zone().touched() && orderForm.zone().invalid()) {
+                <span class="field-error" role="alert">
+                  {{ orderForm.zone().errors()[0]?.message }}
+                </span>
+              }
+            </div>
+
+            <div class="form-group full-width">
+              <label class="form-label" for="order-address"
+                >Delivery Address *</label
+              >
+              <input
+                id="order-address"
+                type="text"
+                class="form-input"
+                [formField]="orderForm.address"
+                [class.has-error]="
+                  orderForm.address().touched() && orderForm.address().invalid()
+                "
+                [attr.aria-invalid]="
+                  orderForm.address().touched() && orderForm.address().invalid()
+                "
+                placeholder="e.g. Brook St, Mayfair, London W1K 4HR"
+              />
+              @if (
+                orderForm.address().touched() && orderForm.address().invalid()
+              ) {
+                <span class="field-error" role="alert">
+                  {{ orderForm.address().errors()[0]?.message }}
+                </span>
+              }
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="order-window"
+                >Target Delivery Window *</label
+              >
+              <input
+                id="order-window"
+                type="text"
+                class="form-input"
+                [formField]="orderForm.targetWindow"
+                [class.has-error]="
+                  orderForm.targetWindow().touched() &&
+                  orderForm.targetWindow().invalid()
+                "
+                [attr.aria-invalid]="
+                  orderForm.targetWindow().touched() &&
+                  orderForm.targetWindow().invalid()
+                "
+                placeholder="e.g. 13:00 - 14:30"
+              />
+              @if (
+                orderForm.targetWindow().touched() &&
+                orderForm.targetWindow().invalid()
+              ) {
+                <span class="field-error" role="alert">
+                  {{ orderForm.targetWindow().errors()[0]?.message }}
+                </span>
+              }
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="order-sla"
+                >SLA Cutoff Time (24h) *</label
+              >
+              <input
+                id="order-sla"
+                type="text"
+                class="form-input"
+                [formField]="orderForm.slaDeadline"
+                [class.has-error]="
+                  orderForm.slaDeadline().touched() &&
+                  orderForm.slaDeadline().invalid()
+                "
+                [attr.aria-invalid]="
+                  orderForm.slaDeadline().touched() &&
+                  orderForm.slaDeadline().invalid()
+                "
+                placeholder="e.g. 14:30"
+              />
+              @if (
+                orderForm.slaDeadline().touched() &&
+                orderForm.slaDeadline().invalid()
+              ) {
+                <span class="field-error" role="alert">
+                  {{ orderForm.slaDeadline().errors()[0]?.message }}
+                </span>
+              }
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="order-weight"
+                >Total Linen Weight (kg) *</label
+              >
+              <input
+                id="order-weight"
+                type="number"
+                class="form-input"
+                [formField]="orderForm.totalWeightKg"
+                [class.has-error]="
+                  orderForm.totalWeightKg().touched() &&
+                  orderForm.totalWeightKg().invalid()
+                "
+                [attr.aria-invalid]="
+                  orderForm.totalWeightKg().touched() &&
+                  orderForm.totalWeightKg().invalid()
+                "
+              />
+              @if (
+                orderForm.totalWeightKg().touched() &&
+                orderForm.totalWeightKg().invalid()
+              ) {
+                <span class="field-error" role="alert">
+                  {{ orderForm.totalWeightKg().errors()[0]?.message }}
+                </span>
+              }
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="order-items"
+                >Linen Description *</label
+              >
+              <input
+                id="order-items"
+                type="text"
+                class="form-input"
+                [formField]="orderForm.itemsSummary"
+                [class.has-error]="
+                  orderForm.itemsSummary().touched() &&
+                  orderForm.itemsSummary().invalid()
+                "
+                [attr.aria-invalid]="
+                  orderForm.itemsSummary().touched() &&
+                  orderForm.itemsSummary().invalid()
+                "
+                placeholder="e.g. 50x King Sheets, 50x Duvets, 100x Bath Sheets"
+              />
+              @if (
+                orderForm.itemsSummary().touched() &&
+                orderForm.itemsSummary().invalid()
+              ) {
+                <span class="field-error" role="alert">
+                  {{ orderForm.itemsSummary().errors()[0]?.message }}
+                </span>
+              }
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="order-driver">Assign Driver</label>
+              <select
+                id="order-driver"
+                class="form-select"
+                [formField]="orderForm.assignedDriverId"
+              >
+                <option [ngValue]="null">-- Unassigned --</option>
+                @for (driver of store.drivers(); track driver.id) {
+                  <option [value]="driver.id">
+                    {{ driver.name }} ({{ driver.zone }})
+                  </option>
+                }
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="order-plant"
+                >Assign Subcontract Plant</label
+              >
+              <select
+                id="order-plant"
+                class="form-select"
+                [formField]="orderForm.assignedPlantId"
+              >
+                <option value="plant-general">General Partner Plant</option>
+                @for (plant of store.subcontractors(); track plant.id) {
+                  <option [value]="plant.id">{{ plant.name }}</option>
+                }
+              </select>
+            </div>
+
+            <div class="form-group full-width">
+              <label class="form-label" for="order-notes"
+                >Special Delivery / Access Instructions</label
+              >
+              <input
+                id="order-notes"
+                type="text"
+                class="form-input"
+                [formField]="orderForm.specialInstructions"
+                placeholder="e.g. Deliver to rear loading bay off Deanery St, ask for security."
+              />
+            </div>
+
+            <div class="form-group full-width checkbox-row">
+              <label class="checkbox-label">
+                <input type="checkbox" [formField]="orderForm.isEmergency" />
+                <span>Mark as Urgent / Priority Express</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-cancel" (click)="closeModal()">
+            Cancel
+          </button>
+          <button type="submit" class="btn-submit" [disabled]="isSubmitting()">
+            {{ isSubmitting() ? 'Adding...' : '✓ Add Order to Kanban' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}

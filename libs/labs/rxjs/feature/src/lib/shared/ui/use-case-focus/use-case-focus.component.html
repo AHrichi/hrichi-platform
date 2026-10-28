@@ -1,0 +1,24 @@
+<div class="focus-toolbar" role="region" [attr.aria-label]="ariaLabel()">
+  <div class="control-wrapper">
+    <ah-segmented-control
+      [options]="options()"
+      [(value)]="value"
+      [label]="ariaLabel()"
+    />
+  </div>
+
+  @if (value() !== 'all') {
+    <div class="active-badge-group">
+      <ah-tag>Focused: {{ activeLabel() }}</ah-tag>
+      <button
+        type="button"
+        ahButton="ghost"
+        size="sm"
+        (click)="resetToAll()"
+        title="Show all use cases in parallel"
+      >
+        Show All
+      </button>
+    </div>
+  }
+</div>

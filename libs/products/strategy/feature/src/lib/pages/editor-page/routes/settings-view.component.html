@@ -1,0 +1,7 @@
+<app-scenario-settings
+  [years]="store.activeScenario().projectionYears"
+  [inflation]="store.activeScenario().inflationRate"
+  [investmentYield]="store.activeScenario().investmentYield"
+  [startDate]="store.activeScenario().startDate"
+  (settingsChange)="onSettingsChange($event)"
+></app-scenario-settings>

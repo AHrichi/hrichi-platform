@@ -1,0 +1,121 @@
+<div class="whatif-container" [class.dark]="isDarkMode()">
+  <div class="whatif-header">
+    <h1>🔮 What-If Simulator</h1>
+    <p class="whatif-subtitle">
+      Tweak key parameters and see how they affect your financial future
+    </p>
+  </div>
+
+  <div class="whatif-layout">
+    <div class="whatif-controls">
+      <h3>Adjustments</h3>
+
+      <div class="control-group">
+        <label>Income Multiplier</label>
+        <input
+          type="range"
+          min="0.5"
+          max="2"
+          step="0.05"
+          [value]="incomeMult()"
+          (input)="updateIncomeMult($event)"
+        />
+        <span class="control-val">{{ incomeMult().toFixed(2) }}×</span>
+      </div>
+
+      <div class="control-group">
+        <label>Expense Multiplier</label>
+        <input
+          type="range"
+          min="0.5"
+          max="2"
+          step="0.05"
+          [value]="expenseMult()"
+          (input)="updateExpenseMult($event)"
+        />
+        <span class="control-val">{{ expenseMult().toFixed(2) }}×</span>
+      </div>
+
+      <div class="control-group">
+        <label>Investment Yield (%)</label>
+        <input
+          type="range"
+          min="0"
+          max="20"
+          step="0.5"
+          [value]="yieldOverride() ?? 0"
+          (input)="updateYieldOverride($event)"
+        />
+        <span class="control-val">{{ yieldOverride() }}%</span>
+      </div>
+
+      <div class="control-group">
+        <label>Extra Monthly Savings</label>
+        <input
+          type="range"
+          min="0"
+          max="5000"
+          step="100"
+          [value]="extraSavings()"
+          (input)="updateExtraSavings($event)"
+        />
+        <span class="control-val">{{ fmtCurrency(extraSavings()) }}</span>
+      </div>
+
+      <div class="control-group">
+        <label>Inflation Rate (%)</label>
+        <input
+          type="range"
+          min="0"
+          max="15"
+          step="0.5"
+          [value]="inflationOverride() ?? 0"
+          (input)="updateInflationOverride($event)"
+        />
+        <span class="control-val">{{ inflationOverride() }}%</span>
+      </div>
+
+      <div class="whatif-results">
+        <div class="result-item">
+          <span class="result-label">Baseline Final</span>
+          <span class="result-val baseline">{{
+            fmtCurrency(baselineFinal())
+          }}</span>
+        </div>
+        <div class="result-item">
+          <span class="result-label">What-If Final</span>
+          <span
+            class="result-val"
+            [class.positive]="whatifFinal() >= baselineFinal()"
+            [class.negative]="whatifFinal() < baselineFinal()"
+          >
+            {{ fmtCurrency(whatifFinal()) }}
+          </span>
+        </div>
+        <div class="result-item result-diff">
+          <span class="result-label">Difference</span>
+          <span
+            class="result-val"
+            [class.positive]="diff() >= 0"
+            [class.negative]="diff() < 0"
+          >
+            {{ diff() >= 0 ? '+' : '' }}{{ fmtCurrency(diff()) }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="whatif-chart">
+      <canvas
+        baseChart
+        type="line"
+        [data]="chartData()"
+        [options]="chartOptions()"
+      ></canvas>
+    </div>
+  </div>
+
+  <button class="btn-apply" (click)="applyToScenario()">
+    Apply Parameters to Current Scenario
+  </button>
+</div>

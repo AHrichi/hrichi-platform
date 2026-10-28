@@ -7,15 +7,8 @@ import { ScenarioSettingsComponent } from '../../../components/scenario-settings
   selector: 'app-settings-view',
   standalone: true,
   imports: [ScenarioSettingsComponent],
-  template: `
-    <app-scenario-settings
-      [years]="store.activeScenario().projectionYears"
-      [inflation]="store.activeScenario().inflationRate"
-      [investmentYield]="store.activeScenario().investmentYield"
-      [startDate]="store.activeScenario().startDate"
-      (settingsChange)="onSettingsChange($event)"
-    ></app-scenario-settings>
-  `,
+  templateUrl: './settings-view.component.html',
+  styleUrl: './settings-view.component.scss',
 })
 export class SettingsViewComponent {
   store = inject(FinancialStore);

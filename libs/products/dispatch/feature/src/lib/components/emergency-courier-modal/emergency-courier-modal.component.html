@@ -1,0 +1,161 @@
+@if (store.showEmergencyModal()) {
+  <div class="modal-overlay" (click)="store.closeEmergencyModal()">
+    <div class="modal-card" (click)="$event.stopPropagation()">
+      <form [formRoot]="courierForm" novalidate>
+        <div class="modal-header">
+          <div class="title-wrap">
+            <span class="modal-icon">🚨</span>
+            <div>
+              <h2 class="modal-title">
+                Book Emergency Courier (Addison Lee / Gophr)
+              </h2>
+              <span class="modal-sub">
+                Rapid roadside delivery rescue for high-risk hotel check-in SLA
+              </span>
+            </div>
+          </div>
+          <button
+            type="button"
+            class="close-btn"
+            (click)="store.closeEmergencyModal()"
+          >
+            ✕
+          </button>
+        </div>
+
+        <div class="modal-body">
+          @if (targetOrder(); as order) {
+            <div class="target-order-summary">
+              <div class="order-top">
+                <span class="order-id">{{ order.id }}</span>
+                <span class="order-client">{{ order.clientName }}</span>
+              </div>
+              <p class="order-address">📍 {{ order.address }}</p>
+              <div class="sla-warning">
+                <span
+                  >⏰ Strict Deadline: {{ order.slaDeadline }} ({{
+                    order.totalWeightKg
+                  }}
+                  kg clean linen)</span
+                >
+              </div>
+            </div>
+          }
+
+          <div class="courier-options">
+            <label class="section-label">Select Rapid Response Carrier:</label>
+
+            <label
+              class="courier-card"
+              [class.is-selected]="
+                courierModel().selectedCourier === 'Gophr London Rapid'
+              "
+              (click)="
+                courierModel.update((m) => ({
+                  ...m,
+                  selectedCourier: 'Gophr London Rapid',
+                }))
+              "
+            >
+              <input
+                type="radio"
+                name="courierOption"
+                value="Gophr London Rapid"
+                [checked]="
+                  courierModel().selectedCourier === 'Gophr London Rapid'
+                "
+              />
+              <div class="courier-info">
+                <div class="c-top">
+                  <strong>Gophr London On-Demand Courier</strong>
+                  <span class="c-price">£28.50</span>
+                </div>
+                <span class="c-desc"
+                  >Electric Cargo Van · 15m roadside arrival · Live GPS
+                  link</span
+                >
+              </div>
+            </label>
+
+            <label
+              class="courier-card"
+              [class.is-selected]="
+                courierModel().selectedCourier === 'Addison Lee Priority Van'
+              "
+              (click)="
+                courierModel.update((m) => ({
+                  ...m,
+                  selectedCourier: 'Addison Lee Priority Van',
+                }))
+              "
+            >
+              <input
+                type="radio"
+                name="courierOption"
+                value="Addison Lee Priority Van"
+                [checked]="
+                  courierModel().selectedCourier === 'Addison Lee Priority Van'
+                "
+              />
+              <div class="courier-info">
+                <div class="c-top">
+                  <strong>Addison Lee Express Cargo</strong>
+                  <span class="c-price">£34.00</span>
+                </div>
+                <span class="c-desc"
+                  >LWB Transit · 20m arrival · Tail-lift capable for laundry
+                  cages</span
+                >
+              </div>
+            </label>
+
+            <label
+              class="courier-card"
+              [class.is-selected]="
+                courierModel().selectedCourier === 'Stuart Logistics London'
+              "
+              (click)="
+                courierModel.update((m) => ({
+                  ...m,
+                  selectedCourier: 'Stuart Logistics London',
+                }))
+              "
+            >
+              <input
+                type="radio"
+                name="courierOption"
+                value="Stuart Logistics London"
+                [checked]="
+                  courierModel().selectedCourier === 'Stuart Logistics London'
+                "
+              />
+              <div class="courier-info">
+                <div class="c-top">
+                  <strong>Stuart Urban Dispatch</strong>
+                  <span class="c-price">£22.00</span>
+                </div>
+                <span class="c-desc"
+                  >Medium Van · 18m arrival · Direct dropoff to hotel loading
+                  bay</span
+                >
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn-cancel"
+            (click)="store.closeEmergencyModal()"
+          >
+            Cancel
+          </button>
+          <button type="submit" class="btn-confirm-courier">
+            ⚡ Confirm & Dispatch Courier
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}

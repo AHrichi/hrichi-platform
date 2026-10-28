@@ -1,0 +1,157 @@
+<div class="pulseops-shell" [class.is-fullscreen]="isFullscreen()">
+  <!-- Main Coordinator Cockpit Header -->
+  <ah-shift-header />
+
+  <!-- Module Navigation Tabs -->
+  <nav class="module-nav" aria-label="PulseOps Operations Modules">
+    <div class="nav-track" role="tablist">
+      <button
+        type="button"
+        class="tab-btn"
+        role="tab"
+        [attr.aria-selected]="store.activeTab() === 'kanban'"
+        [class.is-active]="store.activeTab() === 'kanban'"
+        (click)="store.setTab('kanban')"
+      >
+        <span class="tab-icon">📥</span>
+        <span class="tab-label">Order Pipeline (Kanban)</span>
+        <span class="tab-badge">{{ store.totalOrdersCount() }}</span>
+      </button>
+
+      <button
+        type="button"
+        class="tab-btn"
+        role="tab"
+        [attr.aria-selected]="store.activeTab() === 'whatsapp'"
+        [class.is-active]="store.activeTab() === 'whatsapp'"
+        (click)="store.setTab('whatsapp')"
+      >
+        <span class="tab-icon">💬</span>
+        <span class="tab-label">WhatsApp Comms Hub</span>
+        <span class="tab-badge pulse-badge">3</span>
+      </button>
+
+      <button
+        type="button"
+        class="tab-btn"
+        role="tab"
+        [attr.aria-selected]="store.activeTab() === 'drivers'"
+        [class.is-active]="store.activeTab() === 'drivers'"
+        (click)="store.setTab('drivers')"
+      >
+        <span class="tab-icon">🚚</span>
+        <span class="tab-label">Driver Fleet & Routes</span>
+        <span class="tab-badge">{{ store.activeFleetCount() }} on road</span>
+      </button>
+
+      <button
+        type="button"
+        class="tab-btn"
+        role="tab"
+        [attr.aria-selected]="store.activeTab() === 'plants'"
+        [class.is-active]="store.activeTab() === 'plants'"
+        (click)="store.setTab('plants')"
+      >
+        <span class="tab-icon">🏭</span>
+        <span class="tab-label">Subcontractor Plants</span>
+        <span class="tab-badge">3</span>
+      </button>
+
+      <button
+        type="button"
+        class="tab-btn"
+        role="tab"
+        [attr.aria-selected]="store.activeTab() === 'stock'"
+        [class.is-active]="store.activeTab() === 'stock'"
+        (click)="store.setTab('stock')"
+      >
+        <span class="tab-icon">📊</span>
+        <span class="tab-label">Linen Stock Sheet</span>
+        <span class="tab-badge">Sheets Sync</span>
+      </button>
+
+      <button
+        type="button"
+        class="tab-btn"
+        role="tab"
+        [attr.aria-selected]="store.activeTab() === 'analytics'"
+        [class.is-active]="store.activeTab() === 'analytics'"
+        (click)="store.setTab('analytics')"
+      >
+        <span class="tab-icon">📈</span>
+        <span class="tab-label">Analytics & SLAs</span>
+      </button>
+    </div>
+
+    <div class="nav-controls">
+      <button
+        type="button"
+        class="ctrl-btn role-btn"
+        (click)="store.openAuthModal()"
+        title="Switch User Persona (Owner, Coordinator, Driver, Subcontractor, Customer) or Sign In"
+      >
+        👤 Role: {{ store.currentUser().role }}
+      </button>
+      <button
+        type="button"
+        class="ctrl-btn"
+        (click)="store.loadSampleData()"
+        title="Load sample demonstration data"
+      >
+        📋 Load Demo
+      </button>
+      <button
+        type="button"
+        class="ctrl-btn"
+        (click)="store.clearAllData()"
+        title="Clear all data to work from clean slate"
+      >
+        🗑 Clear Data
+      </button>
+      <button
+        type="button"
+        class="ctrl-btn"
+        (click)="toggleFullscreen()"
+        [attr.aria-label]="
+          isFullscreen() ? 'Exit Full Screen' : 'Enter Full Screen'
+        "
+      >
+        {{ isFullscreen() ? '⤢ Exit Fullscreen' : '⤢ Fullscreen' }}
+      </button>
+    </div>
+  </nav>
+
+  <!-- Active Module View -->
+  <main class="ops-main-viewport">
+    @switch (store.activeTab()) {
+      @case ('kanban') {
+        <ah-kanban-board />
+      }
+      @case ('whatsapp') {
+        <ah-whatsapp-hub />
+      }
+      @case ('drivers') {
+        <ah-driver-dispatch />
+      }
+      @case ('plants') {
+        <ah-subcontractor-plants />
+      }
+      @case ('stock') {
+        <ah-stock-sheet />
+      }
+      @case ('analytics') {
+        <ah-analytics-dashboard />
+      }
+    }
+  </main>
+
+  <!-- Modals -->
+  <ah-handover-modal />
+  <ah-emergency-courier-modal />
+  <ah-pod-modal />
+  <ah-add-order-modal />
+  <ah-add-driver-modal />
+  <ah-add-plant-modal />
+  <ah-add-stock-modal />
+  <ah-auth-modal />
+</div>

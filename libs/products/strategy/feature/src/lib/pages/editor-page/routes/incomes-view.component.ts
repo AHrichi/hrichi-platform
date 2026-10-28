@@ -6,16 +6,8 @@ import { IncomeListComponent } from '../../../components/income-list/income-list
   selector: 'app-incomes-view',
   standalone: true,
   imports: [IncomeListComponent],
-  template: `
-    <app-income-list
-      [incomes]="store.activeScenario().incomes"
-      [otherScenarios]="otherScenarios()"
-      (add)="store.addIncome($event)"
-      (edit)="store.editIncome($event.id, $event.updated)"
-      (remove)="store.removeIncome($event)"
-      (applyToScenarios)="store.applyIncomeToScenarios($event)"
-    ></app-income-list>
-  `,
+  templateUrl: './incomes-view.component.html',
+  styleUrl: './incomes-view.component.scss',
 })
 export class IncomesViewComponent {
   store = inject(FinancialStore);

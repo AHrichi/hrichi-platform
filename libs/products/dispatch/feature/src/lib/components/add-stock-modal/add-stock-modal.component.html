@@ -1,0 +1,180 @@
+@if (store.showAddStockModal()) {
+  <div class="modal-overlay" (click)="closeModal()">
+    <div class="modal-card" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <div class="title-wrap">
+          <span class="modal-icon">📊</span>
+          <div>
+            <h2 class="modal-title">Add Linen Stock SKU</h2>
+            <span class="modal-sub">
+              Track inventory on the Google Sheets synchronized stock ledger
+            </span>
+          </div>
+        </div>
+        <button
+          type="button"
+          class="close-btn"
+          (click)="closeModal()"
+          aria-label="Close modal"
+        >
+          ✕
+        </button>
+      </div>
+
+      <form class="modal-form" [formRoot]="stockForm" novalidate>
+        <div class="modal-body">
+          @if (successMessage()) {
+            <div class="form-success-banner" role="status">
+              {{ successMessage() }}
+            </div>
+          }
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label" for="stock-sku">SKU Code *</label>
+              <input
+                id="stock-sku"
+                type="text"
+                class="form-input font-mono"
+                [formField]="stockForm.sku"
+                [class.has-error]="
+                  stockForm.sku().touched() && stockForm.sku().invalid()
+                "
+                [attr.aria-invalid]="
+                  stockForm.sku().touched() && stockForm.sku().invalid()
+                "
+                placeholder="e.g. BED-SHT-KNG"
+              />
+              @if (stockForm.sku().touched() && stockForm.sku().invalid()) {
+                <span class="field-error" role="alert">
+                  {{ stockForm.sku().errors()[0]?.message }}
+                </span>
+              }
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="stock-category">Category</label>
+              <select
+                id="stock-category"
+                class="form-select"
+                [formField]="stockForm.category"
+              >
+                <option value="bedding">Bedding & Linens</option>
+                <option value="towels">Towels & Bath Linens</option>
+                <option value="table_linen">Table & Kitchen Linens</option>
+                <option value="bathrobes">Robes & Spa Linens</option>
+                <option value="kitchen_wear">Chef Wear & Kitchen</option>
+              </select>
+            </div>
+
+            <div class="form-group full-width">
+              <label class="form-label" for="stock-name"
+                >Item Name & Description *</label
+              >
+              <input
+                id="stock-name"
+                type="text"
+                class="form-input"
+                [formField]="stockForm.name"
+                [class.has-error]="
+                  stockForm.name().touched() && stockForm.name().invalid()
+                "
+                [attr.aria-invalid]="
+                  stockForm.name().touched() && stockForm.name().invalid()
+                "
+                placeholder="e.g. King Bed Flat Sheet (300TC Egyptian Cotton White)"
+              />
+              @if (stockForm.name().touched() && stockForm.name().invalid()) {
+                <span class="field-error" role="alert">
+                  {{ stockForm.name().errors()[0]?.message }}
+                </span>
+              }
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="stock-weight"
+                >Unit Weight (g)</label
+              >
+              <input
+                id="stock-weight"
+                type="number"
+                class="form-input"
+                [formField]="stockForm.unitWeightGrams"
+              />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="stock-cost"
+                >Replacement Cost (£)</label
+              >
+              <input
+                id="stock-cost"
+                type="number"
+                step="0.5"
+                class="form-input"
+                [formField]="stockForm.replacementCostGbp"
+              />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="stock-clean"
+                >Initial Clean Reserve</label
+              >
+              <input
+                id="stock-clean"
+                type="number"
+                class="form-input"
+                [formField]="stockForm.inCleanReserve"
+              />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="stock-circ"
+                >In Circulation (Clients)</label
+              >
+              <input
+                id="stock-circ"
+                type="number"
+                class="form-input"
+                [formField]="stockForm.inCirculation"
+              />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="stock-plant"
+                >At Partner Wash Plant</label
+              >
+              <input
+                id="stock-plant"
+                type="number"
+                class="form-input"
+                [formField]="stockForm.atPlantWash"
+              />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="stock-min"
+                >Min Safety Threshold</label
+              >
+              <input
+                id="stock-min"
+                type="number"
+                class="form-input"
+                [formField]="stockForm.minThreshold"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-cancel" (click)="closeModal()">
+            Cancel
+          </button>
+          <button type="submit" class="btn-submit" [disabled]="isSubmitting()">
+            {{ isSubmitting() ? 'Adding...' : '✓ Add to Stock Ledger' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}

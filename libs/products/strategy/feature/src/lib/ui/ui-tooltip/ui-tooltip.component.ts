@@ -6,17 +6,8 @@ import { Tooltip } from '@ah/ui';
   standalone: true,
   imports: [Tooltip],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `
-    <ah-tooltip
-      [title]="tipTitle()"
-      [body]="tipBody()"
-      [formula]="tipFormula()"
-      [meaning]="tipMeaning()"
-      position="top"
-    >
-      <ng-content />
-    </ah-tooltip>
-  `,
+  templateUrl: './ui-tooltip.component.html',
+  styleUrl: './ui-tooltip.component.scss',
 })
 export class UiTooltipComponent {
   tipTitle = input<string>();

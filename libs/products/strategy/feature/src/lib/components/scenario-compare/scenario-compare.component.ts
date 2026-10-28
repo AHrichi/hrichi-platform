@@ -1,6 +1,5 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration, ChartOptions } from 'chart.js';
@@ -49,7 +48,6 @@ function calculateMonthlyPayment(
   standalone: true,
   imports: [
     CommonModule,
-    FormsModule,
     RouterLink,
     BaseChartDirective,
     ScenarioSelectorComponent,
@@ -58,11 +56,49 @@ function calculateMonthlyPayment(
     UiTooltipComponent,
   ],
   templateUrl: './scenario-compare.component.html',
-  styleUrls: ['./scenario-compare.component.scss'],
+  styleUrl: './scenario-compare.component.scss',
 })
 export class ScenarioCompareComponent {
   store = inject(FinancialStore);
   themeService = inject(ThemeService);
+
+  updateScenarioName(id: string, event: Event): void {
+    const val = (event.target as HTMLInputElement).value;
+    this.store.updateSpecificScenarioName(id, val);
+  }
+
+  updateScenarioYears(id: string, event: Event): void {
+    const val = Number((event.target as HTMLInputElement).value);
+    this.store.updateSpecificScenarioYears(id, val);
+  }
+
+  updateScenarioInflation(id: string, event: Event): void {
+    const val = Number((event.target as HTMLInputElement).value);
+    this.store.updateSpecificScenarioInflation(id, val);
+  }
+
+  updateScenarioYield(id: string, event: Event): void {
+    const val = Number((event.target as HTMLInputElement).value);
+    this.store.updateSpecificScenarioYield(id, val);
+  }
+
+  updateIncomeMult(event: Event): void {
+    this.incomeMult.set(Number((event.target as HTMLInputElement).value));
+  }
+
+  updateExpenseMult(event: Event): void {
+    this.expenseMult.set(Number((event.target as HTMLInputElement).value));
+  }
+
+  updateInflationOverride(event: Event): void {
+    this.inflationOverride.set(
+      Number((event.target as HTMLInputElement).value),
+    );
+  }
+
+  updateYieldOverride(event: Event): void {
+    this.yieldOverride.set(Number((event.target as HTMLInputElement).value));
+  }
   isDarkMode = this.themeService.isDarkMode;
 
   hiddenScenarioIds = signal<Set<string>>(new Set());

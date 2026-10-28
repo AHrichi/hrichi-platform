@@ -1,0 +1,10 @@
+.remote-unavailable {
+  max-inline-size: var(--layout-prose);
+}
+
+button {
+  font: inherit;
+  padding-block: 0.5rem;
+  padding-inline: 1rem;
+  cursor: pointer;
+}

@@ -3,19 +3,18 @@
     <h2><span class="header-icon">⚙️</span> Global Settings</h2>
   </div>
 
-  <form
-    [formGroup]="settingsForm"
-    (ngSubmit)="onSubmit()"
-    class="settings-form"
-  >
+  <form [formRoot]="settingsForm" novalidate class="settings-form">
     <div class="form-group">
       <label for="start-date">Plan Start Date</label>
       <div class="input-with-icon">
-        <input id="start-date" type="date" formControlName="startDate" />
+        <input
+          id="start-date"
+          type="date"
+          [formField]="settingsForm.startDate"
+        />
       </div>
       @if (
-        settingsForm.get('startDate')?.invalid &&
-        settingsForm.get('startDate')?.touched
+        settingsForm.startDate().invalid && settingsForm.startDate().touched()
       ) {
         <span class="validation-error">Start date is required</span>
       }
@@ -27,14 +26,13 @@
         <input
           id="years"
           type="number"
-          formControlName="projectionYears"
-          min="1"
+          [formField]="settingsForm.projectionYears"
         />
         <span class="currency-tag">Yrs</span>
       </div>
       @if (
-        settingsForm.get('projectionYears')?.invalid &&
-        settingsForm.get('projectionYears')?.touched
+        settingsForm.projectionYears().invalid &&
+        settingsForm.projectionYears().touched()
       ) {
         <span class="validation-error">Must be at least 1 year</span>
       }
@@ -46,14 +44,14 @@
         <input
           id="inflation"
           type="number"
-          formControlName="inflationRate"
+          [formField]="settingsForm.inflationRate"
           step="0.1"
         />
         <span class="currency-tag">%</span>
       </div>
       @if (
-        settingsForm.get('inflationRate')?.invalid &&
-        settingsForm.get('inflationRate')?.touched
+        settingsForm.inflationRate().invalid &&
+        settingsForm.inflationRate().touched()
       ) {
         <span class="validation-error">Required</span>
       }
@@ -65,25 +63,21 @@
         <input
           id="yield"
           type="number"
-          formControlName="investmentYield"
+          [formField]="settingsForm.investmentYield"
           step="0.1"
         />
         <span class="currency-tag">%</span>
       </div>
       @if (
-        settingsForm.get('investmentYield')?.invalid &&
-        settingsForm.get('investmentYield')?.touched
+        settingsForm.investmentYield().invalid &&
+        settingsForm.investmentYield().touched()
       ) {
         <span class="validation-error">Required</span>
       }
     </div>
 
     <div class="form-actions">
-      <button
-        type="submit"
-        [disabled]="settingsForm.invalid"
-        class="btn-modern btn-primary"
-      >
+      <button type="submit" class="btn-modern btn-primary">
         💾 Apply Settings
       </button>
     </div>

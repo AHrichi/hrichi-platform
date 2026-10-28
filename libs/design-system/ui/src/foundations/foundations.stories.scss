@@ -1,0 +1,27 @@
+.tokens {
+  border-collapse: collapse;
+  font-size: var(--font-size-200);
+}
+caption {
+  text-align: start;
+  padding-block-end: var(--space-3);
+  color: var(--color-text-muted);
+}
+th,
+td {
+  padding: var(--space-2) var(--space-4) var(--space-2) 0;
+  text-align: start;
+  border-block-end: 1px solid var(--color-border-default);
+}
+th {
+  font-weight: var(--font-weight-regular);
+}
+.swatch {
+  display: inline-block;
+  inline-size: 1rem;
+  block-size: 1rem;
+  margin-inline-end: var(--space-2);
+  vertical-align: middle;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+}

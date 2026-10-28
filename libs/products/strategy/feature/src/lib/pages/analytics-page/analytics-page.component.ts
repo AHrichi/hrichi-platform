@@ -1,6 +1,5 @@
 import { Component, inject, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration, ChartOptions } from 'chart.js';
@@ -36,7 +35,6 @@ export interface Insight {
   standalone: true,
   imports: [
     CommonModule,
-    FormsModule,
     RouterLink,
     BaseChartDirective,
     ScenarioSelectorComponent,

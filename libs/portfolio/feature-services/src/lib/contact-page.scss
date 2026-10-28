@@ -1,0 +1,22 @@
+.layout {
+  display: grid;
+  gap: var(--space-7);
+  align-items: start;
+}
+@media (min-width: 60rem) {
+  .layout {
+    grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+  }
+}
+.details {
+  display: grid;
+  gap: var(--space-4);
+}
+dt {
+  font-size: var(--font-size-100);
+  color: var(--color-text-muted);
+}
+dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}

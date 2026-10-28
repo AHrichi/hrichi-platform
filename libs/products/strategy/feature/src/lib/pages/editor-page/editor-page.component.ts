@@ -7,7 +7,6 @@ import {
   untracked,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { map } from 'rxjs';
@@ -22,13 +21,12 @@ import { ScenarioSelectorComponent } from '../../components/scenario-selector/sc
   standalone: true,
   imports: [
     CommonModule,
-    FormsModule,
     RouterModule,
     ScenarioCardComponent,
     ScenarioSelectorComponent,
   ],
   templateUrl: './editor-page.component.html',
-  styleUrls: ['./editor-page.component.scss'],
+  styleUrl: './editor-page.component.scss',
 })
 export class EditorPageComponent {
   readonly store = inject(FinancialStore);

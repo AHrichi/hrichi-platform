@@ -1,0 +1,246 @@
+<header class="ops-header">
+  <!-- Top Bar: Title, Live Time, Shift Toggle, Primary Actions -->
+  <div class="top-row">
+    <div class="brand-zone">
+      <div class="brand-title-wrap">
+        <div class="logo-box">
+          <span class="logo-icon">🧺</span>
+        </div>
+        <div>
+          <div class="brand-title">
+            <h1>PulseOps</h1>
+            <ah-badge
+              [variant]="store.isCloudConnected() ? 'success' : 'neutral'"
+              [dot]="true"
+              [pulse]="store.isCloudConnected()"
+              size="sm"
+            >
+              {{
+                store.isCloudConnected()
+                  ? 'MongoDB Cloud Active'
+                  : 'Offline-Safe Mode'
+              }}
+            </ah-badge>
+            <ah-badge
+              variant="neutral"
+              size="sm"
+              title="Free Cluster Quota Guard: Max 50 active orders to prevent DB overload"
+            >
+              📦 DB: {{ store.orders().length }}/50 orders
+            </ah-badge>
+          </div>
+          <p class="brand-subtitle">
+            Commercial Laundry & Dispatch Control Center · London Zones 1–4 ·
+            AES-256 Encrypted
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="header-actions">
+      <!-- London Live Clock & Shift Pill -->
+      <div class="shift-pill">
+        <span class="clock-icon">🕒</span>
+        <span class="clock-time">{{ store.londonTime() }} UK</span>
+        <span class="shift-divider">|</span>
+        <span class="shift-name">
+          {{
+            store.activeShift() === 'shift_a'
+              ? 'Shift A (07:00–13:00)'
+              : 'Shift B (13:00–19:00)'
+          }}
+        </span>
+        <button
+          type="button"
+          class="shift-switch-btn"
+          (click)="store.toggleShift()"
+          title="Switch between Shift A and Shift B"
+        >
+          🔄 Switch Shift
+        </button>
+      </div>
+
+      <!-- Active User / Role Card -->
+      <button
+        type="button"
+        class="user-role-card"
+        (click)="store.openAuthModal()"
+        title="Click to Switch Role (Owner, Coordinator, Driver, Subcontractor, Customer) or Sign In"
+      >
+        <span class="user-avatar">
+          {{
+            store.currentUser().role === 'owner'
+              ? '👑'
+              : store.currentUser().role === 'coordinator'
+                ? '📋'
+                : store.currentUser().role === 'driver'
+                  ? '🚚'
+                  : store.currentUser().role === 'plant_manager'
+                    ? '🏭'
+                    : '🏨'
+          }}
+        </span>
+        <div class="user-info">
+          <div class="user-top-line">
+            <span class="user-name">{{ store.currentUser().name }}</span>
+            <span
+              class="role-pill"
+              [class]="'role-' + store.currentUser().role"
+            >
+              {{ store.currentUser().role | uppercase }}
+            </span>
+          </div>
+          <span class="security-tag">🔒 AES-256 · Switch Persona ▾</span>
+        </div>
+      </button>
+
+      <!-- Handover & Sync Buttons -->
+      <div class="action-buttons">
+        <button
+          type="button"
+          class="header-add-order-btn"
+          (click)="store.openAddOrderModal()"
+          title="Create new commercial laundry order"
+        >
+          + New Order
+        </button>
+
+        <button
+          type="button"
+          ahButton="secondary"
+          size="sm"
+          [disabled]="store.isSyncingSheets()"
+          (click)="store.syncGoogleSheets()"
+          title="Sync with Google Sheets"
+        >
+          @if (store.isSyncingSheets()) {
+            <span class="spinner">⏳</span> Syncing...
+          } @else {
+            <span>📊 Sync Sheets</span>
+          }
+        </button>
+
+        <button
+          type="button"
+          ahButton="primary"
+          size="sm"
+          (click)="store.openHandoverModal()"
+          title="Generate End-of-Shift Handover Report"
+        >
+          📋 Shift Handover
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Urgent Incident Banner (Ticker) -->
+  @if (store.urgentIncident(); as incident) {
+    <div
+      class="incident-banner"
+      [class.is-critical]="incident.severity === 'critical'"
+    >
+      <div class="incident-content">
+        <span class="incident-icon">🚨</span>
+        <div class="incident-text">
+          <strong>OPERATIONAL ALERT:</strong>
+          <span>{{ incident.title }}</span>
+          <span class="incident-desc">— {{ incident.description }}</span>
+        </div>
+      </div>
+      <div class="incident-actions">
+        @if (incident.driverId === 'drv-harpreet') {
+          <button
+            type="button"
+            class="banner-action-btn"
+            (click)="store.reassignStops('drv-harpreet', 'drv-carlos')"
+          >
+            ⚡ Rapid Reroute to Standby Carlos
+          </button>
+        }
+        <button
+          type="button"
+          class="banner-resolve-btn"
+          (click)="store.resolveIncident(incident.id)"
+        >
+          ✓ Dismiss
+        </button>
+      </div>
+    </div>
+  }
+
+  <!-- Operations Barometer (KPI Cells) -->
+  <div class="barometer-grid">
+    <div class="baro-card">
+      <span class="baro-label">Orders Completed</span>
+      <div class="baro-val-wrap">
+        <span class="baro-val">{{ store.completedOrdersCount() }}</span>
+        <span class="baro-total">/ {{ store.totalOrdersCount() }}</span>
+      </div>
+      <span class="baro-sub"
+        >{{ store.pendingOrdersCount() }} pending delivery</span
+      >
+    </div>
+
+    <div class="baro-card">
+      <span class="baro-label">Total Delivered Weight</span>
+      <div class="baro-val-wrap">
+        <span class="baro-val">{{ store.totalWeightDeliveredKg() }}</span>
+        <span class="baro-unit">kg</span>
+      </div>
+      <span class="baro-sub"
+        >of {{ store.totalWeightProcessedKg() }} kg daily target</span
+      >
+    </div>
+
+    <div class="baro-card">
+      <span class="baro-label">SLA On-Time Rate</span>
+      <div class="baro-val-wrap">
+        <span class="baro-val text-success">{{ store.onTimeRatePct() }}%</span>
+      </div>
+      <span class="baro-sub">Hospitality 14:00 check-in SLA</span>
+    </div>
+
+    <div class="baro-card">
+      <span class="baro-label">Active Fleet Status</span>
+      <div class="baro-val-wrap">
+        <span class="baro-val">{{ store.activeFleetCount() }}</span>
+        <span class="baro-total">/ 4 Vans</span>
+      </div>
+      <span
+        class="baro-sub"
+        [class.text-danger]="store.delayedFleetCount() > 0"
+      >
+        {{
+          store.delayedFleetCount() > 0
+            ? store.delayedFleetCount() + ' delayed / breakdown'
+            : 'All vans on schedule'
+        }}
+      </span>
+    </div>
+
+    <div class="baro-card">
+      <span class="baro-label">Subcontractor Plants</span>
+      <div class="baro-val-wrap">
+        <span class="baro-val">3</span>
+        <span class="baro-unit">Active</span>
+      </div>
+      <span class="baro-sub">Tunnel washers & finishing</span>
+    </div>
+
+    <div class="baro-card">
+      <span class="baro-label">Linen Stock Valuation</span>
+      <div class="baro-val-wrap">
+        <span class="baro-val"
+          >£{{ store.stockTotalValuationGbp().toLocaleString() }}</span
+        >
+      </div>
+      <span class="baro-sub" [class.text-warning]="store.lowStockCount() > 0">
+        {{
+          store.lowStockCount() > 0
+            ? store.lowStockCount() + ' SKUs below reserve'
+            : 'Stock levels optimal'
+        }}
+      </span>
+    </div>
+  </div>
+</header>

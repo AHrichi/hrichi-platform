@@ -6,13 +6,8 @@ import { labs } from '@ah/shared/content';
 @Component({
   imports: [LabFrame],
   selector: 'ah-root',
-  template: `
-    <ah-lab-frame
-      [eyebrow]="intro.eyebrow"
-      [heading]="intro.heading"
-      [lead]="intro.lead"
-    />
-  `,
+  templateUrl: './app.html',
+  styleUrl: './app.scss',
 })
 export class App {
   protected readonly intro = labs['lab-rxjs'];

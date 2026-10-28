@@ -1,16 +1,19 @@
-import { Component, input, output, effect, inject } from '@angular/core';
+import { Component, input, output, effect, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import {
-  ReactiveFormsModule,
-  NonNullableFormBuilder,
-  Validators,
-} from '@angular/forms';
+  form,
+  FormField,
+  FormRoot,
+  min,
+  required,
+} from '@angular/forms/signals';
 
 @Component({
   selector: 'app-scenario-settings',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [CommonModule, FormField, FormRoot],
   templateUrl: './scenario-settings.component.html',
-  styleUrls: ['./scenario-settings.component.scss'],
+  styleUrl: './scenario-settings.component.scss',
 })
 export class ScenarioSettingsComponent {
   // Signal Inputs receiving data from the parent Smart Component
@@ -27,33 +30,43 @@ export class ScenarioSettingsComponent {
     startDate: string;
   }>();
 
-  private fb = inject(NonNullableFormBuilder);
-
-  settingsForm = this.fb.group({
-    projectionYears: [0, [Validators.required, Validators.min(1)]],
-    inflationRate: [0, [Validators.required]],
-    investmentYield: [0, [Validators.required]],
-    startDate: ['', [Validators.required]],
+  readonly settingsModel = signal({
+    projectionYears: 0,
+    inflationRate: 0,
+    investmentYield: 0,
+    startDate: '',
   });
 
+  readonly settingsForm = form(
+    this.settingsModel,
+    (schema) => {
+      required(schema.startDate, { message: 'Start date is required' });
+      required(schema.projectionYears, { message: 'Must be at least 1 year' });
+      min(schema.projectionYears, 1, { message: 'Must be at least 1 year' });
+      required(schema.inflationRate, { message: 'Required' });
+      required(schema.investmentYield, { message: 'Required' });
+    },
+    {
+      submission: {
+        action: async () => this.onSubmit(),
+      },
+    },
+  );
+
   constructor() {
-    // Automatically sync the reactive form when the parent inputs change
+    // Automatically sync the model when parent inputs change
     effect(() => {
-      this.settingsForm.patchValue(
-        {
-          projectionYears: this.years(),
-          inflationRate: this.inflation(),
-          investmentYield: this.investmentYield(),
-          startDate: this.startDate(),
-        },
-        { emitEvent: false },
-      );
+      this.settingsModel.set({
+        projectionYears: this.years(),
+        inflationRate: this.inflation(),
+        investmentYield: this.investmentYield(),
+        startDate: this.startDate(),
+      });
     });
   }
 
-  onSubmit() {
-    if (this.settingsForm.valid) {
-      this.settingsChange.emit(this.settingsForm.getRawValue());
-    }
+  async onSubmit(): Promise<undefined> {
+    this.settingsChange.emit(this.settingsModel());
+    return undefined;
   }
 }

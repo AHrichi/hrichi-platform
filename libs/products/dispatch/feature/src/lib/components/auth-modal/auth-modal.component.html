@@ -1,0 +1,286 @@
+@if (store.showAuthModal()) {
+  <div class="modal-overlay" (click)="store.closeAuthModal()">
+    <div class="modal-card" (click)="$event.stopPropagation()">
+      <!-- Header -->
+      <div class="modal-header">
+        <div class="title-wrap">
+          <span class="modal-icon">🔐</span>
+          <div>
+            <h2 class="modal-title">Access Control & Role Switcher</h2>
+            <span class="modal-sub">
+              AES-256-GCM Encrypted · Multi-Role Operations (Owner, Coordinator,
+              Driver, Plant, Customer)
+            </span>
+          </div>
+        </div>
+        <button
+          type="button"
+          class="close-btn"
+          (click)="store.closeAuthModal()"
+        >
+          ✕
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Security Info Banner -->
+        <div class="security-banner">
+          <div class="sec-icon">🛡️</div>
+          <div class="sec-text">
+            <strong>Enterprise Security Architecture:</strong>
+            <span>
+              Sensitive customer contact numbers, loading bay door codes, and
+              digital signatures are encrypted at rest with
+              <strong>AES-256-GCM</strong>. Passwords hashed via
+              <strong>PBKDF2 (SHA-512)</strong>. Database strictly quota-capped
+              (max 50 orders) to conserve free cluster resources.
+            </span>
+          </div>
+        </div>
+
+        <!-- Tab switcher: 1-Click Role Switcher vs Custom Login -->
+        <div class="tab-toggle-bar">
+          <button
+            type="button"
+            class="mode-toggle-btn"
+            [class.is-active]="activeMode() === 'switch'"
+            (click)="activeMode.set('switch')"
+          >
+            ⚡ 1-Click Persona Switcher
+          </button>
+          <button
+            type="button"
+            class="mode-toggle-btn"
+            [class.is-active]="activeMode() === 'login'"
+            (click)="activeMode.set('login')"
+          >
+            🔑 Custom Sign In / Register
+          </button>
+        </div>
+
+        @if (activeMode() === 'switch') {
+          <!-- Personas Grid -->
+          <div class="personas-grid">
+            @for (persona of personas; track persona.email) {
+              <div
+                class="persona-card"
+                [class.is-current]="store.currentUser().role === persona.role"
+                (click)="selectPersona(persona)"
+              >
+                <div class="persona-top">
+                  <span class="persona-avatar">{{ persona.avatar }}</span>
+                  <div class="persona-titles">
+                    <span class="persona-name">{{ persona.name }}</span>
+                    <span
+                      class="persona-role-badge"
+                      [class]="'badge-' + persona.role"
+                    >
+                      {{ persona.role | uppercase }}
+                    </span>
+                  </div>
+                  @if (store.currentUser().role === persona.role) {
+                    <span class="current-pill">Active</span>
+                  }
+                </div>
+
+                <p class="persona-desc">{{ persona.description }}</p>
+                <div class="persona-access">
+                  <span class="access-label">View:</span>
+                  <span class="access-val">{{ persona.accessSummary }}</span>
+                </div>
+
+                <button
+                  type="button"
+                  class="switch-to-btn"
+                  [class.btn-active]="store.currentUser().role === persona.role"
+                  (click)="selectPersona(persona)"
+                >
+                  {{
+                    store.currentUser().role === persona.role
+                      ? '✓ Logged In'
+                      : 'Switch to ' + persona.role
+                  }}
+                </button>
+              </div>
+            }
+          </div>
+        } @else {
+          <!-- Custom Login / Register Form -->
+          <div class="auth-form-card">
+            <div class="form-tabs">
+              <button
+                type="button"
+                class="form-tab"
+                [class.is-tab-active]="isRegisterMode() === false"
+                (click)="isRegisterMode.set(false)"
+              >
+                Sign In
+              </button>
+              <button
+                type="button"
+                class="form-tab"
+                [class.is-tab-active]="isRegisterMode() === true"
+                (click)="isRegisterMode.set(true)"
+              >
+                Register New Account
+              </button>
+            </div>
+
+            <form class="actual-form" [formRoot]="authForm" novalidate>
+              @if (isRegisterMode()) {
+                <div class="form-group">
+                  <label class="form-label" for="reg-name">Full Name *</label>
+                  <input
+                    id="reg-name"
+                    type="text"
+                    class="form-input"
+                    [formField]="authForm.name"
+                    [class.has-error]="
+                      authForm.name().touched() && authForm.name().invalid()
+                    "
+                    [attr.aria-invalid]="
+                      authForm.name().touched() && authForm.name().invalid()
+                    "
+                    placeholder="e.g. Tariq Mahmood"
+                  />
+                  @if (authForm.name().touched() && authForm.name().invalid()) {
+                    <span class="field-error" role="alert">
+                      {{ authForm.name().errors()[0]?.message }}
+                    </span>
+                  }
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="reg-role">Role *</label>
+                  <select
+                    id="reg-role"
+                    class="form-select"
+                    [formField]="authForm.role"
+                  >
+                    <option value="owner">
+                      Owner (Full Operations Control)
+                    </option>
+                    <option value="coordinator">
+                      Coordinator (Shift Dispatch)
+                    </option>
+                    <option value="driver">
+                      Driver (Assigned Van Courier)
+                    </option>
+                    <option value="plant_manager">
+                      Plant Manager (Laundry Subcontractor)
+                    </option>
+                    <option value="customer">
+                      Customer (B2B Hotel / Dining Client)
+                    </option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="reg-company"
+                    >Company / Venue Name</label
+                  >
+                  <input
+                    id="reg-company"
+                    type="text"
+                    class="form-input"
+                    [formField]="authForm.companyName"
+                    placeholder="e.g. The Dorchester, Dishoom London"
+                  />
+                </div>
+              }
+
+              <div class="form-group">
+                <label class="form-label" for="auth-email"
+                  >Email Address *</label
+                >
+                <input
+                  id="auth-email"
+                  type="email"
+                  class="form-input"
+                  [formField]="authForm.email"
+                  [class.has-error]="
+                    authForm.email().touched() && authForm.email().invalid()
+                  "
+                  [attr.aria-invalid]="
+                    authForm.email().touched() && authForm.email().invalid()
+                  "
+                  placeholder="e.g. user@lplaundry.co.uk"
+                />
+                @if (authForm.email().touched() && authForm.email().invalid()) {
+                  <span class="field-error" role="alert">
+                    {{ authForm.email().errors()[0]?.message }}
+                  </span>
+                }
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="auth-pass"
+                  >Password (min 6 chars) *</label
+                >
+                <input
+                  id="auth-pass"
+                  type="password"
+                  class="form-input"
+                  [formField]="authForm.password"
+                  [class.has-error]="
+                    authForm.password().touched() &&
+                    authForm.password().invalid()
+                  "
+                  [attr.aria-invalid]="
+                    authForm.password().touched() &&
+                    authForm.password().invalid()
+                  "
+                  placeholder="••••••••"
+                />
+                @if (
+                  authForm.password().touched() && authForm.password().invalid()
+                ) {
+                  <span class="field-error" role="alert">
+                    {{ authForm.password().errors()[0]?.message }}
+                  </span>
+                }
+              </div>
+
+              @if (authMessage()) {
+                <div
+                  class="auth-message-box"
+                  [class.auth-message-box--error]="
+                    authMessageType() === 'error'
+                  "
+                  [class.auth-message-box--success]="
+                    authMessageType() === 'success'
+                  "
+                  role="alert"
+                >
+                  {{ authMessage() }}
+                </div>
+              }
+
+              <button type="submit" class="auth-submit-btn">
+                {{
+                  isRegisterMode()
+                    ? 'Create & Encrypt Account'
+                    : 'Sign In with Token'
+                }}
+              </button>
+            </form>
+          </div>
+        }
+      </div>
+
+      <div class="modal-footer">
+        <span class="footer-note">
+          🔒 Session token signed with HMAC-SHA256 · AES-256 field encryption
+          active
+        </span>
+        <button
+          type="button"
+          class="btn-cancel"
+          (click)="store.closeAuthModal()"
+        >
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+}

@@ -1,0 +1,231 @@
+@if (store.showAddPlantModal()) {
+  <div class="modal-overlay" (click)="closeModal()">
+    <div class="modal-card" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <div class="title-wrap">
+          <span class="modal-icon">🏭</span>
+          <div>
+            <h2 class="modal-title">Partner Laundry Facility</h2>
+            <span class="modal-sub">
+              Add external subcontractor commercial washing plant
+            </span>
+          </div>
+        </div>
+        <button
+          type="button"
+          class="close-btn"
+          (click)="closeModal()"
+          aria-label="Close modal"
+        >
+          ✕
+        </button>
+      </div>
+
+      <form class="modal-form" [formRoot]="plantForm" novalidate>
+        <div class="modal-body">
+          @if (successMessage()) {
+            <div class="form-success-banner" role="status">
+              {{ successMessage() }}
+            </div>
+          }
+
+          <div class="form-grid">
+            <div class="form-group full-width">
+              <label class="form-label" for="plant-name">Plant Name *</label>
+              <input
+                id="plant-name"
+                type="text"
+                class="form-input"
+                [formField]="plantForm.name"
+                [class.has-error]="
+                  plantForm.name().touched() && plantForm.name().invalid()
+                "
+                [attr.aria-invalid]="
+                  plantForm.name().touched() && plantForm.name().invalid()
+                "
+                placeholder="e.g. Thames Industrial Laundries, Acton Royal Wash..."
+              />
+              @if (plantForm.name().touched() && plantForm.name().invalid()) {
+                <span class="field-error" role="alert">
+                  {{ plantForm.name().errors()[0]?.message }}
+                </span>
+              }
+            </div>
+
+            <div class="form-group full-width">
+              <label class="form-label" for="plant-location"
+                >Plant Facility Address *</label
+              >
+              <input
+                id="plant-location"
+                type="text"
+                class="form-input"
+                [formField]="plantForm.location"
+                [class.has-error]="
+                  plantForm.location().touched() &&
+                  plantForm.location().invalid()
+                "
+                [attr.aria-invalid]="
+                  plantForm.location().touched() &&
+                  plantForm.location().invalid()
+                "
+                placeholder="e.g. Unit 4, Park Royal Trading Estate, London"
+              />
+              @if (
+                plantForm.location().touched() && plantForm.location().invalid()
+              ) {
+                <span class="field-error" role="alert">
+                  {{ plantForm.location().errors()[0]?.message }}
+                </span>
+              }
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="plant-postcode"
+                >Postal Code *</label
+              >
+              <input
+                id="plant-postcode"
+                type="text"
+                class="form-input"
+                [formField]="plantForm.postalCode"
+                [class.has-error]="
+                  plantForm.postalCode().touched() &&
+                  plantForm.postalCode().invalid()
+                "
+                [attr.aria-invalid]="
+                  plantForm.postalCode().touched() &&
+                  plantForm.postalCode().invalid()
+                "
+                placeholder="e.g. NW10 7QQ, E16 2EZ"
+              />
+              @if (
+                plantForm.postalCode().touched() &&
+                plantForm.postalCode().invalid()
+              ) {
+                <span class="field-error" role="alert">
+                  {{ plantForm.postalCode().errors()[0]?.message }}
+                </span>
+              }
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="plant-spec"
+                >Speciality Wash *</label
+              >
+              <select
+                id="plant-spec"
+                class="form-select"
+                [formField]="plantForm.speciality"
+              >
+                <option
+                  value="Hotel Bed Linen & Towels (Heavy Continuous Tunnel)"
+                >
+                  Hotel Bed Linen & Towels (Continuous Tunnel)
+                </option>
+                <option
+                  value="F&B Table Linen & Kitchen Linens (High Temp Degreasing)"
+                >
+                  F&B Table Linen & Kitchen Linens
+                </option>
+                <option value="Short-Let / Airbnb Turn Linen (Rapid Express)">
+                  Short-Let / Airbnb Turn Linen (Rapid Express)
+                </option>
+                <option value="Dry Cleaning & Luxury Uniforms">
+                  Dry Cleaning & Luxury Uniforms
+                </option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="plant-capacity"
+                >Daily Capacity (kg) *</label
+              >
+              <input
+                id="plant-capacity"
+                type="number"
+                class="form-input"
+                [formField]="plantForm.dailyCapacityKg"
+                [class.has-error]="
+                  plantForm.dailyCapacityKg().touched() &&
+                  plantForm.dailyCapacityKg().invalid()
+                "
+                [attr.aria-invalid]="
+                  plantForm.dailyCapacityKg().touched() &&
+                  plantForm.dailyCapacityKg().invalid()
+                "
+              />
+              @if (
+                plantForm.dailyCapacityKg().touched() &&
+                plantForm.dailyCapacityKg().invalid()
+              ) {
+                <span class="field-error" role="alert">
+                  {{ plantForm.dailyCapacityKg().errors()[0]?.message }}
+                </span>
+              }
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="plant-contact"
+                >Plant Manager / Contact</label
+              >
+              <input
+                id="plant-contact"
+                type="text"
+                class="form-input"
+                [formField]="plantForm.contactPerson"
+                placeholder="e.g. Vikram Sharma, Dave Mitchell"
+              />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="plant-phone"
+                >Production Phone / WhatsApp *</label
+              >
+              <input
+                id="plant-phone"
+                type="text"
+                class="form-input"
+                [formField]="plantForm.phone"
+                [class.has-error]="
+                  plantForm.phone().touched() && plantForm.phone().invalid()
+                "
+                [attr.aria-invalid]="
+                  plantForm.phone().touched() && plantForm.phone().invalid()
+                "
+                placeholder="e.g. +44 20 8965 4100"
+              />
+              @if (plantForm.phone().touched() && plantForm.phone().invalid()) {
+                <span class="field-error" role="alert">
+                  {{ plantForm.phone().errors()[0]?.message }}
+                </span>
+              }
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="plant-email">Dispatch Email</label>
+              <input
+                id="plant-email"
+                type="email"
+                class="form-input"
+                [formField]="plantForm.email"
+                placeholder="e.g. dispatch@thameslaundry.co.uk"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-cancel" (click)="closeModal()">
+            Cancel
+          </button>
+          <button type="submit" class="btn-submit" [disabled]="isSubmitting()">
+            {{
+              isSubmitting() ? 'Connecting...' : '✓ Connect Subcontractor Plant'
+            }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}

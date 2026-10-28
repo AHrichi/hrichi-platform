@@ -1,6 +1,6 @@
 import { Component, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { form, FormField, FormRoot } from '@angular/forms/signals';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FinancialStore } from '../../financial.store';
 import { ThemeService } from '../../services/theme.service';
@@ -9,9 +9,9 @@ import { fmtCurrency } from '../../utils/chart-utils';
 @Component({
   selector: 'app-home-page',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormField, FormRoot, RouterLink],
   templateUrl: './home-page.component.html',
-  styleUrls: ['./home-page.component.scss'],
+  styleUrl: './home-page.component.scss',
 })
 export class HomePageComponent {
   readonly store = inject(FinancialStore);
@@ -21,7 +21,14 @@ export class HomePageComponent {
   readonly isDarkMode = this.themeService.isDarkMode;
   readonly fmtCurrency = fmtCurrency;
 
-  scenarioName = signal('');
+  readonly createModel = signal({ name: '' });
+  readonly createForm = form(this.createModel, {
+    submission: {
+      action: async () => {
+        this.createScenario();
+      },
+    },
+  });
 
   readonly Math = Math;
 
@@ -43,7 +50,7 @@ export class HomePageComponent {
   );
 
   createScenario() {
-    const name = this.scenarioName().trim() || 'My First Scenario';
+    const name = this.createModel().name.trim() || 'My First Scenario';
     this.store.addScenario(name);
     const newId = this.store.activeScenarioId();
     this.router.navigate(['../editor', newId, 'settings'], {

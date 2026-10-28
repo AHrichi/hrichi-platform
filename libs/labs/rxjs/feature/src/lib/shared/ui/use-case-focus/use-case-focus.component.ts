@@ -19,73 +19,8 @@ import { AhButton, SegmentedControl, SegmentedOption, Tag } from '@ah/ui';
   standalone: true,
   imports: [SegmentedControl, Tag, AhButton],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `
-    <div class="focus-toolbar" role="region" [attr.aria-label]="ariaLabel()">
-      <div class="control-wrapper">
-        <ah-segmented-control
-          [options]="options()"
-          [(value)]="value"
-          [label]="ariaLabel()"
-        />
-      </div>
-
-      @if (value() !== 'all') {
-        <div class="active-badge-group">
-          <ah-tag>Focused: {{ activeLabel() }}</ah-tag>
-          <button
-            type="button"
-            ahButton="ghost"
-            size="sm"
-            (click)="resetToAll()"
-            title="Show all use cases in parallel"
-          >
-            Show All
-          </button>
-        </div>
-      }
-    </div>
-  `,
-  styles: `
-    :host {
-      display: block;
-      margin-bottom: var(--space-5);
-    }
-
-    .focus-toolbar {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
-      gap: var(--space-3);
-      padding: var(--space-3) var(--space-4);
-      background: var(--color-bg-raised);
-      border: 1px solid var(--color-border-default);
-      border-radius: var(--radius-lg);
-      box-shadow: var(--shadow-raised);
-    }
-
-    .control-wrapper {
-      display: flex;
-      align-items: center;
-      overflow-x: auto;
-      max-width: 100%;
-      padding-block: var(--space-1);
-
-      &::-webkit-scrollbar {
-        height: 4px;
-      }
-      &::-webkit-scrollbar-thumb {
-        background: var(--color-border-default);
-        border-radius: var(--radius-pill);
-      }
-    }
-
-    .active-badge-group {
-      display: inline-flex;
-      align-items: center;
-      gap: var(--space-2);
-    }
-  `,
+  templateUrl: './use-case-focus.component.html',
+  styleUrl: './use-case-focus.component.scss',
 })
 export class UseCaseFocusComponent implements OnInit {
   readonly options = input.required<readonly SegmentedOption<string>[]>();

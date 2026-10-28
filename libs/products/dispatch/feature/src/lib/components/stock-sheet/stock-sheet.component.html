@@ -1,0 +1,194 @@
+<div class="sheet-wrapper">
+  <!-- Sheet Toolbar -->
+  <div class="sheet-toolbar">
+    <div class="toolbar-brand">
+      <span class="sheets-icon">📊</span>
+      <div>
+        <h2 class="sheet-title">Commercial Linen & Stock Sheet</h2>
+        <span class="sheet-status">
+          Live Google Sheets 2-Way Sync · Last update:
+          {{ store.lastSheetsSyncedAt() }}
+        </span>
+      </div>
+    </div>
+
+    <div class="toolbar-actions">
+      <button
+        type="button"
+        class="add-stock-btn"
+        (click)="store.openAddStockModal()"
+      >
+        + Add Linen SKU
+      </button>
+
+      <button
+        type="button"
+        class="sync-btn"
+        [disabled]="store.isSyncingSheets()"
+        (click)="store.syncGoogleSheets()"
+      >
+        @if (store.isSyncingSheets()) {
+          <span class="spin-icon">⏳</span> Synchronizing...
+        } @else {
+          <span>🔄 Sync to Google Sheets</span>
+        }
+      </button>
+
+      <button type="button" class="export-btn" (click)="exportToExcel()">
+        📥 Export Excel (.xlsx)
+      </button>
+    </div>
+  </div>
+
+  <!-- Google Sheets Style Grid -->
+  <div class="sheet-table-container">
+    <table class="sheets-table">
+      <thead>
+        <tr class="col-headers-row">
+          <th class="row-num-col">#</th>
+          <th>SKU</th>
+          <th>Linen Item Name</th>
+          <th>Category</th>
+          <th class="num-col">In Circulation</th>
+          <th class="num-col">At Plant Wash</th>
+          <th class="num-col">Clean Reserve</th>
+          <th class="num-col">Damaged / Scrap</th>
+          <th class="num-col">Missing</th>
+          <th class="num-col">Unit Weight</th>
+          <th class="num-col">Total Asset Value</th>
+          <th class="actions-col">Quick Adjust</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (item of store.stock(); track item.sku; let idx = $index) {
+          <tr [class.is-low-stock]="item.inCleanReserve < item.minThreshold">
+            <td class="row-num">{{ idx + 1 }}</td>
+            <td class="sku-cell">{{ item.sku }}</td>
+            <td class="name-cell">
+              <strong>{{ item.name }}</strong>
+              @if (item.inCleanReserve < item.minThreshold) {
+                <span class="low-stock-alert"
+                  >⚠️ LOW STOCK (&lt; {{ item.minThreshold }})</span
+                >
+              }
+            </td>
+            <td>
+              <span class="cat-pill" [class]="'cat-' + item.category">
+                {{ item.category | uppercase }}
+              </span>
+            </td>
+            <td class="num-cell">
+              {{ item.inCirculation.toLocaleString() }}
+            </td>
+            <td class="num-cell wash-cell">
+              {{ item.atPlantWash.toLocaleString() }}
+            </td>
+            <td
+              class="num-cell reserve-cell"
+              [class.text-danger]="item.inCleanReserve < item.minThreshold"
+            >
+              {{ item.inCleanReserve.toLocaleString() }}
+            </td>
+            <td class="num-cell scrap-cell">
+              {{ item.damagedScrap.toLocaleString() }}
+            </td>
+            <td class="num-cell missing-cell">
+              {{ item.disputedMissing.toLocaleString() }}
+            </td>
+            <td class="num-cell">{{ item.unitWeightGrams }}g</td>
+            <td class="num-cell value-cell">
+              £{{
+                (
+                  (item.inCirculation +
+                    item.atPlantWash +
+                    item.inCleanReserve) *
+                  item.replacementCostGbp
+                ).toLocaleString()
+              }}
+            </td>
+            <td class="adjust-cell">
+              <button
+                type="button"
+                class="adj-btn"
+                (click)="store.updateStockItem(item.sku, 'inCleanReserve', -10)"
+                title="Dispatch 10 clean units"
+              >
+                -10
+              </button>
+              <button
+                type="button"
+                class="adj-btn add-btn"
+                (click)="store.updateStockItem(item.sku, 'inCleanReserve', 10)"
+                title="Receive 10 clean units"
+              >
+                +10
+              </button>
+              <button
+                type="button"
+                class="adj-btn scrap-btn"
+                (click)="store.updateStockItem(item.sku, 'damagedScrap', 1)"
+                title="Scrap 1 damaged unit"
+              >
+                +1 Scrap
+              </button>
+              <button
+                type="button"
+                class="adj-btn delete-stock-btn"
+                (click)="store.deleteStockItem(item.sku)"
+                title="Delete SKU"
+                aria-label="Delete SKU"
+              >
+                ✕
+              </button>
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="12" class="empty-stock-cell">
+              <div class="empty-stock-content">
+                <span class="empty-stock-icon">📊</span>
+                <h3 class="empty-stock-title">Stock Ledger is Empty</h3>
+                <p class="empty-stock-desc">
+                  Add hotel bed sheets, towelling, or dining linen SKUs to track
+                  circulation, reserve levels, and replacement asset values.
+                </p>
+                <button
+                  type="button"
+                  class="add-stock-btn"
+                  (click)="store.openAddStockModal()"
+                >
+                  + Add First Linen SKU
+                </button>
+              </div>
+            </td>
+          </tr>
+        }
+      </tbody>
+      <tfoot>
+        <tr class="totals-row">
+          <td colspan="4" class="totals-label">TOTAL FLEET INVENTORY</td>
+          <td class="num-cell">
+            {{ getTotal('inCirculation').toLocaleString() }}
+          </td>
+          <td class="num-cell">
+            {{ getTotal('atPlantWash').toLocaleString() }}
+          </td>
+          <td class="num-cell">
+            {{ getTotal('inCleanReserve').toLocaleString() }}
+          </td>
+          <td class="num-cell">
+            {{ getTotal('damagedScrap').toLocaleString() }}
+          </td>
+          <td class="num-cell">
+            {{ getTotal('disputedMissing').toLocaleString() }}
+          </td>
+          <td>-</td>
+          <td class="num-cell val-total">
+            £{{ store.stockTotalValuationGbp().toLocaleString() }}
+          </td>
+          <td></td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+</div>

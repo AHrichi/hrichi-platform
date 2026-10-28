@@ -1,0 +1,240 @@
+@if (store.showAddDriverModal()) {
+  <div class="modal-overlay" (click)="closeModal()">
+    <div class="modal-card" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <div class="title-wrap">
+          <span class="modal-icon">🚐</span>
+          <div>
+            <h2 class="modal-title">Register Driver & Van</h2>
+            <span class="modal-sub">
+              Add courier van to the London fleet schedule
+            </span>
+          </div>
+        </div>
+        <button
+          type="button"
+          class="close-btn"
+          (click)="closeModal()"
+          aria-label="Close modal"
+        >
+          ✕
+        </button>
+      </div>
+
+      <form class="modal-form" [formRoot]="driverForm" novalidate>
+        <div class="modal-body">
+          @if (successMessage()) {
+            <div class="form-success-banner" role="status">
+              {{ successMessage() }}
+            </div>
+          }
+
+          <div class="form-grid">
+            <div class="form-group full-width">
+              <label class="form-label" for="driver-name"
+                >Driver Full Name *</label
+              >
+              <input
+                id="driver-name"
+                type="text"
+                class="form-input"
+                [formField]="driverForm.name"
+                [class.has-error]="
+                  driverForm.name().touched() && driverForm.name().invalid()
+                "
+                [attr.aria-invalid]="
+                  driverForm.name().touched() && driverForm.name().invalid()
+                "
+                placeholder="e.g. Tariq Mahmood, James Wilson..."
+              />
+              @if (driverForm.name().touched() && driverForm.name().invalid()) {
+                <span class="field-error" role="alert">
+                  {{ driverForm.name().errors()[0]?.message }}
+                </span>
+              }
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="driver-phone"
+                >Contact Phone / WhatsApp *</label
+              >
+              <input
+                id="driver-phone"
+                type="text"
+                class="form-input"
+                [formField]="driverForm.phone"
+                [class.has-error]="
+                  driverForm.phone().touched() && driverForm.phone().invalid()
+                "
+                [attr.aria-invalid]="
+                  driverForm.phone().touched() && driverForm.phone().invalid()
+                "
+                placeholder="e.g. +44 7700 900821"
+              />
+              @if (
+                driverForm.phone().touched() && driverForm.phone().invalid()
+              ) {
+                <span class="field-error" role="alert">
+                  {{ driverForm.phone().errors()[0]?.message }}
+                </span>
+              }
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="driver-vehicle"
+                >Van Make & Model</label
+              >
+              <select
+                id="driver-vehicle"
+                class="form-select"
+                [formField]="driverForm.vehicle"
+              >
+                <option value="Mercedes Sprinter LWB (14m³)">
+                  Mercedes Sprinter LWB (14m³)
+                </option>
+                <option value="Ford Transit Custom (High Roof)">
+                  Ford Transit Custom (High Roof)
+                </option>
+                <option value="Vauxhall Vivaro-e Electric">
+                  Vauxhall Vivaro-e Electric
+                </option>
+                <option value="Renault Master Box Van (Tail Lift)">
+                  Renault Master Box Van (Tail Lift)
+                </option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="driver-reg"
+                >Registration Plate *</label
+              >
+              <input
+                id="driver-reg"
+                type="text"
+                class="form-input"
+                [formField]="driverForm.registration"
+                [class.has-error]="
+                  driverForm.registration().touched() &&
+                  driverForm.registration().invalid()
+                "
+                [attr.aria-invalid]="
+                  driverForm.registration().touched() &&
+                  driverForm.registration().invalid()
+                "
+                placeholder="e.g. LD71 KXP"
+              />
+              @if (
+                driverForm.registration().touched() &&
+                driverForm.registration().invalid()
+              ) {
+                <span class="field-error" role="alert">
+                  {{ driverForm.registration().errors()[0]?.message }}
+                </span>
+              }
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="driver-zone">Primary Zone *</label>
+              <input
+                id="driver-zone"
+                type="text"
+                class="form-input"
+                [formField]="driverForm.zone"
+                [class.has-error]="
+                  driverForm.zone().touched() && driverForm.zone().invalid()
+                "
+                [attr.aria-invalid]="
+                  driverForm.zone().touched() && driverForm.zone().invalid()
+                "
+                placeholder="e.g. West End & City, East London / Canary Wharf"
+              />
+              @if (driverForm.zone().touched() && driverForm.zone().invalid()) {
+                <span class="field-error" role="alert">
+                  {{ driverForm.zone().errors()[0]?.message }}
+                </span>
+              }
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="driver-location"
+                >Starting Location</label
+              >
+              <input
+                id="driver-location"
+                type="text"
+                class="form-input"
+                [formField]="driverForm.currentLocation"
+                placeholder="e.g. Park Royal Hub, Acton Depot"
+              />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="driver-cap"
+                >Max Payload (kg) *</label
+              >
+              <input
+                id="driver-cap"
+                type="number"
+                class="form-input"
+                [formField]="driverForm.capacityKg"
+                [class.has-error]="
+                  driverForm.capacityKg().touched() &&
+                  driverForm.capacityKg().invalid()
+                "
+                [attr.aria-invalid]="
+                  driverForm.capacityKg().touched() &&
+                  driverForm.capacityKg().invalid()
+                "
+              />
+              @if (
+                driverForm.capacityKg().touched() &&
+                driverForm.capacityKg().invalid()
+              ) {
+                <span class="field-error" role="alert">
+                  {{ driverForm.capacityKg().errors()[0]?.message }}
+                </span>
+              }
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="driver-shift"
+                >Designated Shift</label
+              >
+              <select
+                id="driver-shift"
+                class="form-select"
+                [formField]="driverForm.activeShift"
+              >
+                <option value="shift_a">Shift A (07:00 - 13:00)</option>
+                <option value="shift_b">Shift B (13:00 - 19:00)</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="driver-status"
+                >Initial Status</label
+              >
+              <select
+                id="driver-status"
+                class="form-select"
+                [formField]="driverForm.status"
+              >
+                <option value="idle">Idle / Ready at Base</option>
+                <option value="on_route">Active on Route</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-cancel" (click)="closeModal()">
+            Cancel
+          </button>
+          <button type="submit" class="btn-submit" [disabled]="isSubmitting()">
+            {{ isSubmitting() ? 'Registering...' : '✓ Register Van & Driver' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}

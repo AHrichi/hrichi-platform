@@ -1,0 +1,49 @@
+<div class="floating-widget" [class.expanded]="isOpen()">
+  <div class="fab-scrim" [class.show]="isOpen()" (click)="close()"></div>
+
+  @if (isOpen()) {
+    <div class="fab-panel">
+      <div class="panel-header">
+        <span>Switch Scenario</span>
+        <button class="panel-close" (click)="close()">✕</button>
+      </div>
+      <div class="panel-search">
+        <input
+          type="text"
+          placeholder="Search scenarios…"
+          [value]="searchQuery()"
+          (input)="onSearchInput($event)"
+          (keydown)="$event.stopPropagation()"
+        />
+      </div>
+      <div class="panel-list">
+        @for (s of filteredScenarios(); track s.id) {
+          <div
+            class="panel-item"
+            [class.active]="s.id === store.activeScenarioId()"
+            (click)="select(s.id)"
+          >
+            <span class="item-name">{{ s.name }}</span>
+            @if (s.id === store.activeScenarioId()) {
+              <span class="item-check">✓</span>
+            }
+          </div>
+        }
+        @if (filteredScenarios().length === 0) {
+          <div class="panel-empty">No scenarios found</div>
+        }
+      </div>
+      <div class="panel-footer">
+        <button class="panel-action" (click)="addNew()">+ New Scenario</button>
+      </div>
+    </div>
+  }
+
+  <button class="fab-btn" (click)="toggle()" title="Switch scenario">
+    <span class="fab-icon">📋</span>
+    <span class="fab-label">{{
+      store.activeScenario()?.name || 'No Scenario'
+    }}</span>
+    <span class="fab-arrow">{{ isOpen() ? '▼' : '▲' }}</span>
+  </button>
+</div>

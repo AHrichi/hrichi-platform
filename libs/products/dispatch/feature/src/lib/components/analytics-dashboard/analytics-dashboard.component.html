@@ -1,0 +1,183 @@
+<div class="analytics-wrapper">
+  <div class="analytics-intro-bar">
+    <div>
+      <h2 class="section-title">Operations & SLA Analytics</h2>
+      <p class="section-subtitle">
+        Fleet efficiency, hospitality check-in compliance, subcontractor
+        turnaround, and linen loss metrics.
+      </p>
+    </div>
+  </div>
+
+  <!-- Analytics Cards Grid -->
+  <div class="charts-grid">
+    <!-- Card 1: Throughput by Sector -->
+    <div class="chart-card">
+      <div class="card-header">
+        <h3 class="card-title">Daily Linen Throughput by Sector</h3>
+        <ah-badge variant="neutral" size="sm">890 kg Total</ah-badge>
+      </div>
+
+      <div class="sector-bars">
+        <div class="bar-row">
+          <div class="bar-meta">
+            <span class="bar-lbl"
+              >🏨 Luxury Hotels (Savoy, Dorchester, Rosewood)</span
+            >
+            <span class="bar-val">490 kg (55%)</span>
+          </div>
+          <ah-progress-bar [value]="55" variant="accent" size="sm" />
+        </div>
+
+        <div class="bar-row">
+          <div class="bar-meta">
+            <span class="bar-lbl"
+              >🍽️ Fine Dining & Kitchens (Dishoom, Gymkhana)</span
+            >
+            <span class="bar-val">220 kg (25%)</span>
+          </div>
+          <ah-progress-bar [value]="25" variant="warning" size="sm" />
+        </div>
+
+        <div class="bar-row">
+          <div class="bar-meta">
+            <span class="bar-lbl"
+              >🏠 High-End Airbnbs & Short-Lets (Kensington)</span
+            >
+            <span class="bar-val">110 kg (12%)</span>
+          </div>
+          <ah-progress-bar [value]="12" variant="primary" size="sm" />
+        </div>
+
+        <div class="bar-row">
+          <div class="bar-meta">
+            <span class="bar-lbl"
+              >🧘 Spas, Gyms & Corporate Suites (Third Space)</span
+            >
+            <span class="bar-val">70 kg (8%)</span>
+          </div>
+          <ah-progress-bar [value]="8" variant="success" size="sm" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 2: Subcontractor Laundry Performance -->
+    <div class="chart-card">
+      <div class="card-header">
+        <h3 class="card-title">Subcontractor Plant SLAs & Quality</h3>
+        <ah-badge variant="neutral" size="sm">3 Facilities</ah-badge>
+      </div>
+
+      <div class="plants-benchmark">
+        <div class="benchmark-item">
+          <div class="b-top">
+            <strong>Thames Valley Steam Laundry</strong>
+            <span class="b-score text-success">98.4% On-Time</span>
+          </div>
+          <span class="b-sub">Avg Turnaround: 3.8 hrs · Defect Rate: 0.6%</span>
+          <ah-progress-bar [value]="98.4" variant="success" size="sm" />
+        </div>
+
+        <div class="benchmark-item">
+          <div class="b-top">
+            <strong>Park Royal Linen Processors</strong>
+            <span class="b-score text-success">99.0% On-Time</span>
+          </div>
+          <span class="b-sub">Avg Turnaround: 3.5 hrs · Defect Rate: 0.4%</span>
+          <ah-progress-bar [value]="99" variant="accent" size="sm" />
+        </div>
+
+        <div class="benchmark-item">
+          <div class="b-top">
+            <strong>Apex Clean London Ltd</strong>
+            <span class="b-score text-success">97.1% On-Time</span>
+          </div>
+          <span class="b-sub">Avg Turnaround: 4.2 hrs · Defect Rate: 0.9%</span>
+          <ah-progress-bar [value]="97.1" variant="success" size="sm" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 3: Driver Punctuality & Drops -->
+    <div class="chart-card">
+      <div class="card-header">
+        <h3 class="card-title">Driver Punctuality Ranking</h3>
+        <span class="card-tag">London Fleet</span>
+      </div>
+
+      <div class="driver-ranking-list">
+        <div class="rank-item">
+          <span class="rank-badge">1</span>
+          <div class="rank-meta">
+            <strong>Carlos Mendez (Standby / Rapid)</strong>
+            <span class="rank-zone"
+              >Zone 4 & Rapid Courier · 100% Punctual</span
+            >
+          </div>
+          <span class="rank-score text-success">100%</span>
+        </div>
+
+        <div class="rank-item">
+          <span class="rank-badge">2</span>
+          <div class="rank-meta">
+            <strong>Tariq Mahmood (Mayfair / Soho)</strong>
+            <span class="rank-zone">Mercedes eVito · 8/12 completed</span>
+          </div>
+          <span class="rank-score text-success">99.1%</span>
+        </div>
+
+        <div class="rank-item">
+          <span class="rank-badge">3</span>
+          <div class="rank-meta">
+            <strong>Liam O'Connor (Shoreditch / City)</strong>
+            <span class="rank-zone"
+              >Ford Transit 350 · Commercial St delay</span
+            >
+          </div>
+          <span class="rank-score text-warning">96.4%</span>
+        </div>
+
+        <div class="rank-item">
+          <span class="rank-badge alert-badge">!</span>
+          <div class="rank-meta">
+            <strong>Harpreet Singh (Kensington / Chelsea)</strong>
+            <span class="rank-zone"
+              >Breakdown near A40 · Rescued by Carlos</span
+            >
+          </div>
+          <span class="rank-score text-danger">Incident</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 4: Linen Scrap & Damage KPI -->
+    <div class="chart-card">
+      <div class="card-header">
+        <h3 class="card-title">Linen Scrap & Quality KPI</h3>
+        <span class="card-tag">Industry Benchmark</span>
+      </div>
+
+      <div class="loss-kpi-wrap">
+        <div class="loss-cell">
+          <span class="loss-num text-success">0.72%</span>
+          <span class="loss-lbl">Monthly Defect / Scrap Rate</span>
+          <span class="loss-bench">Target: &lt; 2.50% industry standard</span>
+        </div>
+
+        <div class="loss-cell">
+          <span class="loss-num text-accent">£124.50</span>
+          <span class="loss-lbl">Discrepancy Credits Recovered</span>
+          <span class="loss-bench">Deducted from partner plant invoices</span>
+        </div>
+      </div>
+
+      <div class="loss-note">
+        💡
+        <em
+          >Continuous RFID bag tagging & digital POD signatures reduce linen
+          shrinkage and customer disputes by over 74%.</em
+        >
+      </div>
+    </div>
+  </div>
+</div>

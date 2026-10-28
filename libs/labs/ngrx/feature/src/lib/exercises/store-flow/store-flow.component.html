@@ -1,0 +1,278 @@
+<div class="exercise-container">
+  <ah-section-heading
+    eyebrow="NgRx Store Core"
+    heading="Unidirectional Architecture & Selector Memoization"
+    lead="Explore how Actions, pure Reducers, and memoized Selectors synchronize state with predictable immutability and time-travel auditability."
+  />
+
+  <ah-ngrx-use-case-focus
+    [options]="focusOptions"
+    [(value)]="activeCase"
+    ariaLabel="Focus on specific NgRx Store concept"
+  />
+
+  <!-- Real-time Animated State Flow Cycle -->
+  <ah-state-flow-diagram [activeStage]="currentStage()" [showEffect]="false" />
+
+  <!-- Interactive Playground Grid -->
+  <div class="cards-grid">
+    <!-- Card 0: Conceptual Overview & Analogy -->
+    @if (activeCase() === 'all' || activeCase() === 'concept') {
+      <div
+        class="card highlight-card"
+        [class.focused-card]="activeCase() === 'concept'"
+      >
+        <div class="card-header">
+          <span class="badge">Core Architecture</span>
+          <h3>The Redux Mental Model: The Bank Ledger Analogy</h3>
+        </div>
+        <p class="description">
+          In simple apps, developers mutate variables directly (<code
+            >state.balance = 5000</code
+          >). In large enterprise apps, direct mutation creates hidden side
+          effects, race conditions, and un-debuggable state.
+        </p>
+
+        <div class="pillars-grid">
+          <div class="pillar-box">
+            <span class="pillar-icon">🏛️</span>
+            <strong>1. Single Source of Truth</strong>
+            <p>
+              The entire application state is stored in a single immutable
+              object tree inside the Store.
+            </p>
+          </div>
+          <div class="pillar-box">
+            <span class="pillar-icon">🧾</span>
+            <strong>2. State is Read-Only</strong>
+            <p>
+              To change state, you cannot assign properties. You must issue an
+              Action voucher capturing intent.
+            </p>
+          </div>
+          <div class="pillar-box">
+            <span class="pillar-icon">⚙️</span>
+            <strong>3. Pure Transitions</strong>
+            <p>
+              Reducers are strictly pure functions:
+              <code>(state, action) =&gt; newState</code> with zero
+              side-effects.
+            </p>
+          </div>
+        </div>
+
+        <div class="concept-callout">
+          <div class="callout-icon">💡</div>
+          <div class="callout-body">
+            <strong>Why Immutability Matters:</strong>
+            Because reducers return a <em>new state reference</em> (via object
+            spread <code>&#123; ...state &#125;</code>), components and
+            selectors can perform instant $O(1)$ reference comparisons (<code
+              >prevState === nextState</code
+            >) rather than deeply checking thousands of nested properties!
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- Card 1: Action Dispatcher -->
+    @if (activeCase() === 'all' || activeCase() === 'actions') {
+      <div class="card" [class.focused-card]="activeCase() === 'actions'">
+        <div class="card-header">
+          <span class="badge">1. Action Group (createActionGroup)</span>
+          <h3>Dispatch Typed Actions</h3>
+        </div>
+        <p class="description">
+          Actions represent unique events in the application lifecycle. They
+          contain a type tag and a typed payload.
+        </p>
+
+        <div class="actions-toolbar">
+          <button
+            type="button"
+            ahButton="primary"
+            size="sm"
+            (click)="dispatchAddItem('p3', 'RxJS to Signals Migration', 65)"
+          >
+            + Add Book ($65)
+          </button>
+          <button
+            type="button"
+            ahButton="secondary"
+            size="sm"
+            (click)="dispatchApplyCoupon('SUMMER25', 25)"
+          >
+            Apply 25% Coupon
+          </button>
+          <button
+            type="button"
+            ahButton="ghost"
+            size="sm"
+            (click)="dispatchClearCart()"
+          >
+            Clear Cart
+          </button>
+          <button
+            type="button"
+            ahButton="ghost"
+            size="sm"
+            (click)="dispatchUnrelatedAction()"
+          >
+            Dispatch Unrelated Action
+          </button>
+        </div>
+
+        <div class="hygiene-explainer">
+          <span class="hygiene-title"
+            >⚡ Action Hygiene Rule: Events, Not Commands</span
+          >
+          <p>
+            Name actions after
+            <strong>events that happened in the UI</strong> (e.g.
+            <code>[Cart Page] Add Book Clicked</code>), not commands (e.g.
+            <code>[Cart] Set State</code>). This makes Redux DevTools logs read
+            like a chronological storyboard of user interactions.
+          </p>
+        </div>
+
+        <div class="code-preview">
+          <span class="preview-title">Action Definition Code:</span>
+          <pre><code>{{ actionGroupSnippet }}</code></pre>
+        </div>
+      </div>
+    }
+
+    <!-- Card 2: Pure Reducer State -->
+    @if (activeCase() === 'all' || activeCase() === 'reducers') {
+      <div class="card" [class.focused-card]="activeCase() === 'reducers'">
+        <div class="card-header">
+          <span class="badge">2. Pure Reducer (createFeature)</span>
+          <h3>Current Immutable State</h3>
+        </div>
+        <p class="description">
+          Reducers are pure functions:
+          <code>(state, action) =&gt; newState</code>. They never mutate state
+          directly.
+        </p>
+
+        <div class="cart-items-list">
+          @for (item of currentState().items; track item.id) {
+            <div class="cart-item">
+              <div class="item-info">
+                <span class="item-name">{{ item.name }}</span>
+                <span class="item-meta"
+                  >\${{ item.price }} &times; {{ item.qty }}</span
+                >
+              </div>
+              <button
+                type="button"
+                ahButton="ghost"
+                size="sm"
+                (click)="dispatchRemoveItem(item.id)"
+              >
+                Remove
+              </button>
+            </div>
+          } @empty {
+            <div class="empty-state">
+              Cart is empty. Add items above to populate state.
+            </div>
+          }
+        </div>
+
+        @if (currentState().couponCode) {
+          <div class="coupon-banner">
+            Coupon Applied:
+            <strong>{{ currentState().couponCode }}</strong> ({{
+              currentState().discountPercent
+            }}% OFF)
+          </div>
+        }
+
+        <div class="immutability-note">
+          <span class="note-title">🛡️ Pure Function Guarantees:</span>
+          <p>
+            Notice how the reducer never calls <code>items.push()</code>. It
+            always returns a new object
+            <code>&#123; ...state, items: [...state.items, newItem] &#125;</code
+            >. This guarantees previous state snapshots remain intact for
+            time-travel debugging!
+          </p>
+        </div>
+      </div>
+    }
+
+    <!-- Card 3: Memoized Selectors -->
+    @if (activeCase() === 'all' || activeCase() === 'selectors') {
+      <div class="card" [class.focused-card]="activeCase() === 'selectors'">
+        <div class="card-header">
+          <span class="badge">3. Memoized Selectors (createSelector)</span>
+          <h3>Selector Projection &amp; Cache Efficiency</h3>
+        </div>
+        <p class="description">
+          Selectors compute derived slices. If their input arguments have not
+          changed by reference, their projector is skipped and the cached value
+          is returned instantly.
+        </p>
+
+        <div class="selector-metrics-grid">
+          <div class="metric-box">
+            <span class="metric-icon">📦</span>
+            <span class="metric-label">Items Count</span>
+            <span class="metric-value">{{ totalItemCount() }}</span>
+          </div>
+          <div class="metric-box">
+            <span class="metric-icon">💲</span>
+            <span class="metric-label">Subtotal</span>
+            <span class="metric-value">\${{ subtotal() }}</span>
+          </div>
+          <div class="metric-box highlight">
+            <span class="metric-icon">🏷️</span>
+            <span class="metric-label">Discounted Total</span>
+            <span class="metric-value">\${{ discountedTotal() }}</span>
+          </div>
+        </div>
+
+        <div class="memoization-audit">
+          <div
+            class="memo-status-badge"
+            [class.is-hit]="lastActionMemoStatus() === 'hit'"
+          >
+            @if (lastActionMemoStatus() === 'hit') {
+              <span
+                >⚡ Last Action:
+                <strong>CACHE HIT (Projector Skipped)</strong></span
+              >
+            } @else {
+              <span>🔄 Last Action: <strong>PROJECTOR EXECUTED</strong></span>
+            }
+          </div>
+          <div class="audit-row">
+            <span>Projector Executions:</span>
+            <span class="count">{{ projectorRuns() }}</span>
+          </div>
+          <div class="audit-row">
+            <span>Cache Hits (Skipped recomputation):</span>
+            <span class="count success">{{ cacheHits() }}</span>
+          </div>
+          <div class="audit-note">
+            <small
+              >Tip: Clicking "Dispatch Unrelated Action" dispatches an event
+              that does not touch the cart. Notice that cache hits increase
+              while projector runs stay the same!</small
+            >
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- Time-Travel Panel -->
+  @if (activeCase() === 'all' || activeCase() === 'time-travel') {
+    <ah-time-travel-panel
+      [history]="actionHistory()"
+      [currentIndex]="currentHistoryIndex()"
+      (timeTravelIndexChange)="onTimeTravelIndexChange($event)"
+    />
+  }
+</div>

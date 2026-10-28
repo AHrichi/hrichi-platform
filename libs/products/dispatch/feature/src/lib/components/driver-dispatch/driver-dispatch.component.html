@@ -1,0 +1,214 @@
+<div class="dispatch-fleet-wrapper">
+  <div class="fleet-intro-bar">
+    <div>
+      <h2 class="section-title">Fleet Dispatch & Driver Logistics</h2>
+      <p class="section-subtitle">
+        Live telemetry, route progression, vehicle capacity, and roadside
+        breakdown contingencies.
+      </p>
+    </div>
+    <div class="fleet-actions">
+      <button
+        type="button"
+        class="add-driver-btn"
+        (click)="store.openAddDriverModal()"
+      >
+        + Register Driver & Van
+      </button>
+      @if (store.drivers().length > 1) {
+        <button
+          type="button"
+          class="emergency-rapid-btn"
+          (click)="store.reassignStops('drv-harpreet', 'drv-carlos')"
+        >
+          ⚡ Reassign Stranded Stops to Standby Carlos
+        </button>
+      }
+    </div>
+  </div>
+
+  <!-- Drivers Grid -->
+  <div class="drivers-grid">
+    @for (driver of store.drivers(); track driver.id) {
+      <div
+        class="driver-card"
+        [class.is-breakdown]="driver.status === 'breakdown'"
+        [class.is-delayed]="driver.status === 'delayed'"
+      >
+        <!-- Card Header -->
+        <div class="driver-card-header">
+          <div class="driver-profile">
+            <span class="driver-avatar-box">
+              {{
+                driver.status === 'breakdown'
+                  ? '🚨'
+                  : driver.status === 'delayed'
+                    ? '⚠️'
+                    : '🚚'
+              }}
+            </span>
+            <div>
+              <h3 class="driver-name">{{ driver.name }}</h3>
+              <span class="driver-zone">{{ driver.zone }}</span>
+            </div>
+          </div>
+
+          <div class="header-right-actions">
+            <span
+              class="status-badge"
+              [class.status-route]="driver.status === 'on_route'"
+              [class.status-breakdown]="driver.status === 'breakdown'"
+              [class.status-delayed]="driver.status === 'delayed'"
+              [class.status-idle]="driver.status === 'idle'"
+            >
+              {{ driver.status | uppercase }}
+            </span>
+            <button
+              type="button"
+              class="delete-driver-btn"
+              (click)="store.deleteDriver(driver.id)"
+              title="Remove Driver"
+              aria-label="Remove Driver"
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+
+        <!-- Vehicle & Reg -->
+        <div class="vehicle-info-bar">
+          <div class="veh-item">
+            <span class="veh-label">Van:</span>
+            <span class="veh-val">{{ driver.vehicle }}</span>
+          </div>
+          <div class="veh-item">
+            <span class="veh-label">Plate:</span>
+            <span class="reg-plate">{{ driver.registration }}</span>
+          </div>
+        </div>
+
+        <!-- Capacity Progress Bar -->
+        <div class="payload-bar-wrap">
+          <div class="payload-meta">
+            <span class="payload-label">Payload Capacity:</span>
+            <span class="payload-val">
+              {{ driver.currentPayloadKg }} kg / {{ driver.capacityKg }} kg ({{
+                Math.round((driver.currentPayloadKg / driver.capacityKg) * 100)
+              }}%)
+            </span>
+          </div>
+          <div class="progress-track">
+            <div
+              class="progress-fill"
+              [style.width.%]="
+                (driver.currentPayloadKg / driver.capacityKg) * 100
+              "
+              [class.is-full]="
+                driver.currentPayloadKg > driver.capacityKg * 0.85
+              "
+            ></div>
+          </div>
+        </div>
+
+        <!-- Location & Incident Alert -->
+        <div class="location-box">
+          <span class="loc-icon">📍</span>
+          <span class="loc-text">{{ driver.currentLocation }}</span>
+        </div>
+
+        @if (driver.incidentNotice) {
+          <div class="incident-alert-box">
+            {{ driver.incidentNotice }}
+          </div>
+        }
+
+        <!-- Stops Sequence -->
+        <div class="stops-section">
+          <h4 class="stops-header">
+            Route Schedule ({{ driver.assignedOrderIds.length }} stops assigned)
+          </h4>
+
+          <div class="stops-list">
+            @for (stop of driver.stops; track stop.orderId) {
+              <div class="stop-item" [class.is-done]="stop.completed">
+                <span class="stop-status-icon">
+                  {{ stop.completed ? '✅' : '⏳' }}
+                </span>
+                <div class="stop-content">
+                  <div class="stop-title-row">
+                    <span class="stop-name">{{ stop.clientName }}</span>
+                    <span class="stop-time">{{ stop.targetTime }}</span>
+                  </div>
+                  <span class="stop-addr">{{ stop.address }}</span>
+                  @if (stop.notes) {
+                    <span class="stop-notes">Note: {{ stop.notes }}</span>
+                  }
+                </div>
+              </div>
+            } @empty {
+              <div class="no-stops">
+                <span>Standby vehicle — available for rapid rescue.</span>
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- Driver Actions Footer -->
+        <div class="driver-card-footer">
+          <button type="button" class="call-btn" (click)="callDriver(driver)">
+            📞 VoIP Call Driver
+          </button>
+
+          @if (driver.status === 'breakdown') {
+            <button
+              type="button"
+              class="reroute-btn"
+              (click)="store.reassignStops('drv-harpreet', 'drv-carlos')"
+            >
+              ⚡ Rescue Stops
+            </button>
+          }
+        </div>
+      </div>
+    } @empty {
+      <div class="empty-fleet-card">
+        <span class="empty-fleet-icon">🚐</span>
+        <h3 class="empty-fleet-title">No Fleet Drivers Registered</h3>
+        <p class="empty-fleet-desc">
+          Register delivery vans, set London zone coverage and payload limits to
+          start dispatching orders.
+        </p>
+        <button
+          type="button"
+          class="add-driver-btn"
+          (click)="store.openAddDriverModal()"
+        >
+          + Register First Driver & Van
+        </button>
+      </div>
+    }
+  </div>
+
+  <!-- Simulated VoIP Call Modal -->
+  @if (callingDriver()) {
+    <div class="voip-modal-overlay">
+      <div class="voip-modal-card">
+        <div class="voip-pulse-box">
+          <span class="voip-icon">📞</span>
+        </div>
+        <h3 class="voip-title">Calling {{ callingDriver()?.name }}</h3>
+        <p class="voip-sub">
+          {{ callingDriver()?.phone }} · Zone {{ callingDriver()?.zone }}
+        </p>
+        <p class="voip-status">Connecting via VoIP softphone integration...</p>
+        <button
+          type="button"
+          class="hangup-btn"
+          (click)="callingDriver.set(null)"
+        >
+          End Call ✖
+        </button>
+      </div>
+    </div>
+  }
+</div>

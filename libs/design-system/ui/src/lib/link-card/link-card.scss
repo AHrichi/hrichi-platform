@@ -1,0 +1,13 @@
+:host {
+  display: flex;
+  flex-direction: column;
+}
+
+.title {
+  font-size: var(--font-size-400);
+}
+
+.tags {
+  margin-block-start: auto;
+  padding-block-start: var(--space-2);
+}

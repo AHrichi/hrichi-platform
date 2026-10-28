@@ -1,0 +1,249 @@
+<div
+  class="calc-widget"
+  [class.finance-mode]="mode() === 'finance'"
+  cdkDrag
+  cdkDragBoundary=".theme-wrapper"
+>
+  <div class="calc-header" cdkDragHandle>
+    <span class="calc-title">🧮 Calculator</span>
+    <div class="calc-header-actions">
+      <button
+        class="header-btn-sm"
+        (click)="toggleMode()"
+        [title]="mode() === 'basic' ? 'Financial Tools' : 'Basic'"
+      >
+        {{ mode() === 'basic' ? '📊' : '🔢' }}
+      </button>
+      <button class="header-btn-sm" (click)="collapsed.set(!collapsed())">
+        {{ collapsed() ? '▸' : '▾' }}
+      </button>
+    </div>
+  </div>
+
+  @if (!collapsed()) {
+    <div class="calc-body">
+      @if (mode() === 'basic') {
+        <div class="calc-display">
+          <input type="text" readonly [value]="display()" />
+        </div>
+        <div class="calc-memory">
+          <button
+            class="calc-btn mem"
+            (click)="memoryClear()"
+            title="Memory Clear"
+          >
+            MC
+          </button>
+          <button
+            class="calc-btn mem"
+            (click)="memoryRecall()"
+            title="Memory Recall"
+          >
+            MR
+          </button>
+          <button
+            class="calc-btn mem"
+            (click)="memoryAdd()"
+            title="Add to Memory"
+          >
+            M+
+          </button>
+          <button
+            class="calc-btn mem"
+            (click)="memorySubtract()"
+            title="Subtract from Memory"
+          >
+            M−
+          </button>
+        </div>
+        <div class="calc-buttons">
+          <button class="calc-btn fn" (click)="clear()">C</button>
+          <button class="calc-btn fn" (click)="backspace()">⌫</button>
+          <button class="calc-btn fn" (click)="percent()">%</button>
+          <button class="calc-btn op" (click)="inputOp('/')">÷</button>
+          <button class="calc-btn" (click)="inputDigit('7')">7</button>
+          <button class="calc-btn" (click)="inputDigit('8')">8</button>
+          <button class="calc-btn" (click)="inputDigit('9')">9</button>
+          <button class="calc-btn op" (click)="inputOp('*')">×</button>
+          <button class="calc-btn" (click)="inputDigit('4')">4</button>
+          <button class="calc-btn" (click)="inputDigit('5')">5</button>
+          <button class="calc-btn" (click)="inputDigit('6')">6</button>
+          <button class="calc-btn op" (click)="inputOp('-')">−</button>
+          <button class="calc-btn" (click)="inputDigit('1')">1</button>
+          <button class="calc-btn" (click)="inputDigit('2')">2</button>
+          <button class="calc-btn" (click)="inputDigit('3')">3</button>
+          <button class="calc-btn op" (click)="inputOp('+')">+</button>
+          <button class="calc-btn zero" (click)="inputDigit('0')">0</button>
+          <button class="calc-btn" (click)="inputDot()">.</button>
+          <button class="calc-btn eq" (click)="compute()">=</button>
+        </div>
+      }
+
+      @if (mode() === 'finance') {
+        <div class="finance-tabs">
+          <button
+            [class.active]="financeTool() === 'fv'"
+            (click)="financeTool.set('fv')"
+          >
+            FV
+          </button>
+          <button
+            [class.active]="financeTool() === 'pmt'"
+            (click)="financeTool.set('pmt')"
+          >
+            PMT
+          </button>
+          <button
+            [class.active]="financeTool() === 'save'"
+            (click)="financeTool.set('save')"
+          >
+            Goal
+          </button>
+        </div>
+
+        <div class="finance-body">
+          @if (financeTool() === 'fv') {
+            <div class="fin-row">
+              <label>Present Value</label>
+              <input
+                type="number"
+                [value]="fvPv"
+                (input)="onFvPvChange($event)"
+              />
+              <button
+                class="snap-btn"
+                (click)="snap('currentBalance')"
+                title="Use current balance"
+              >
+                📋
+              </button>
+            </div>
+            <div class="fin-row">
+              <label>Rate (% yearly)</label>
+              <input
+                type="number"
+                [value]="fvRate"
+                (input)="onFvRateChange($event)"
+              />
+              <button
+                class="snap-btn"
+                (click)="snap('yield')"
+                title="Use scenario yield"
+              >
+                📋
+              </button>
+            </div>
+            <div class="fin-row">
+              <label>Years</label>
+              <input
+                type="number"
+                [value]="fvYears"
+                (input)="onFvYearsChange($event)"
+              />
+            </div>
+            <div class="fin-result">
+              Future Value: <strong>{{ fmtRes(fvResult()) }}</strong>
+            </div>
+          }
+
+          @if (financeTool() === 'pmt') {
+            <div class="fin-row">
+              <label>Loan Amount</label>
+              <input
+                type="number"
+                [value]="pmtPrincipal"
+                (input)="onPmtPrincipalChange($event)"
+              />
+            </div>
+            <div class="fin-row">
+              <label>Annual Rate (%)</label>
+              <input
+                type="number"
+                [value]="pmtRate"
+                (input)="onPmtRateChange($event)"
+              />
+            </div>
+            <div class="fin-row">
+              <label>Term (months)</label>
+              <input
+                type="number"
+                [value]="pmtMonths"
+                (input)="onPmtMonthsChange($event)"
+              />
+            </div>
+            <div class="fin-result">
+              Monthly Payment: <strong>{{ fmtRes(pmtResult()) }}</strong>
+            </div>
+          }
+
+          @if (financeTool() === 'save') {
+            <div class="fin-row">
+              <label>Goal Amount</label>
+              <input
+                type="number"
+                [value]="saveTarget"
+                (input)="onSaveTargetChange($event)"
+              />
+              <button
+                class="snap-btn"
+                (click)="snap('totalGoals')"
+                title="Use total goals"
+              >
+                📋
+              </button>
+            </div>
+            <div class="fin-row">
+              <label>Target (months)</label>
+              <input
+                type="number"
+                [value]="saveMonths"
+                (input)="onSaveMonthsChange($event)"
+              />
+              <button
+                class="snap-btn"
+                (click)="snap('projectionMonths')"
+                title="Use projection length"
+              >
+                📋
+              </button>
+            </div>
+            <div class="fin-row">
+              <label>Starting Amount</label>
+              <input
+                type="number"
+                [value]="saveStart"
+                (input)="onSaveStartChange($event)"
+              />
+              <button
+                class="snap-btn"
+                (click)="snap('currentBalance')"
+                title="Use current balance"
+              >
+                📋
+              </button>
+            </div>
+            <div class="fin-result">
+              Monthly Save: <strong>{{ fmtRes(saveResult()) }}</strong>
+            </div>
+          }
+        </div>
+
+        <div class="snap-quickpick">
+          <span class="snap-label">Snap Values:</span>
+          <button class="chip" (click)="snap('income')">Income</button>
+          <button class="chip" (click)="snap('expenses')">Expenses</button>
+          <button class="chip" (click)="snap('balance')">Balance</button>
+          <button class="chip" (click)="snap('yield')">Yield</button>
+        </div>
+      }
+
+      @if (history().length > 0) {
+        <div class="calc-history">
+          @for (h of history(); track $index) {
+            <div class="history-item">{{ h }}</div>
+          }
+        </div>
+      }
+    </div>
+  }
+</div>

@@ -44,69 +44,8 @@ function backgroundFor(name: string): string | null {
 @Component({
   selector: 'ah-colour-tokens',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `
-    <table class="tokens">
-      <caption>
-        Semantic colours,
-        {{
-          theme()
-        }}
-        theme. Text needs 4.5:1, graphics 3:1; the token build fails below that.
-      </caption>
-      <thead>
-        <tr>
-          <th scope="col">Token</th>
-          <th scope="col">Value</th>
-          <th scope="col">On</th>
-          <th scope="col">Contrast</th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (row of rows(); track row.name) {
-          <tr>
-            <th scope="row">
-              <span class="swatch" [style.background]="row.value"></span>
-              <code>--{{ row.name }}</code>
-            </th>
-            <td>
-              <code>{{ row.value }}</code>
-            </td>
-            <td>{{ row.on }}</td>
-            <td>{{ row.contrast }}</td>
-          </tr>
-        }
-      </tbody>
-    </table>
-  `,
-  styles: `
-    .tokens {
-      border-collapse: collapse;
-      font-size: var(--font-size-200);
-    }
-    caption {
-      text-align: start;
-      padding-block-end: var(--space-3);
-      color: var(--color-text-muted);
-    }
-    th,
-    td {
-      padding: var(--space-2) var(--space-4) var(--space-2) 0;
-      text-align: start;
-      border-block-end: 1px solid var(--color-border-default);
-    }
-    th {
-      font-weight: var(--font-weight-regular);
-    }
-    .swatch {
-      display: inline-block;
-      inline-size: 1rem;
-      block-size: 1rem;
-      margin-inline-end: var(--space-2);
-      vertical-align: middle;
-      border: 1px solid var(--color-border-strong);
-      border-radius: var(--radius-sm);
-    }
-  `,
+  templateUrl: './foundations.stories.html',
+  styleUrl: './foundations.stories.scss',
 })
 class ColourTokens {
   readonly theme = input<Theme>('light');

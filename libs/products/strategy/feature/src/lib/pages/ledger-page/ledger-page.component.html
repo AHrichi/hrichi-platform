@@ -1,0 +1,22 @@
+<div class="ledger-page-container">
+  <div class="ledger-wrapper">
+    <app-transaction-ledger
+      [transactions]="store.transactions()"
+      [currentBalance]="store.currentBalance()"
+      [accounts]="store.accounts()"
+      [categories]="store.categories()"
+      [goals]="allGoals()"
+      (addTransaction)="handleAddTransaction($event)"
+      (updateTransaction)="store.updateTransaction($event.id, $event.data)"
+      (removeTransaction)="store.removeTransaction($event)"
+      (addAccount)="
+        store.addAccount($event.name, $event.type, $event.initialBalance)
+      "
+      (removeAccount)="store.removeAccount($event)"
+      (addCategory)="store.addCategory($event)"
+      (removeCategory)="store.removeCategory($event)"
+      (updateCategory)="store.updateCategory($event.id, $event.data)"
+      (bulkImport)="store.bulkImportData($event)"
+    ></app-transaction-ledger>
+  </div>
+</div>

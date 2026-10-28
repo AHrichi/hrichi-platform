@@ -11,22 +11,8 @@ import { ProgressBar, ProgressBarVariant } from '@ah/ui';
   standalone: true,
   imports: [ProgressBar],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `
-    <ah-progress-bar
-      [value]="progress()"
-      [variant]="barVariant()"
-      [striped]="isOverBudget()"
-      size="md"
-    />
-  `,
-  styles: [
-    `
-      :host {
-        display: block;
-        margin-top: 8px;
-      }
-    `,
-  ],
+  templateUrl: './ui-progress-bar.component.html',
+  styleUrl: './ui-progress-bar.component.scss',
 })
 export class UiProgressBarComponent {
   progress = input.required<number>();

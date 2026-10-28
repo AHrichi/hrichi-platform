@@ -1,73 +1,84 @@
-import { Component, input, output, inject } from '@angular/core';
+import { Component, input, output, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
-  ReactiveFormsModule,
-  NonNullableFormBuilder,
-  Validators,
-} from '@angular/forms';
+  form,
+  FormField,
+  FormRoot,
+  min,
+  required,
+} from '@angular/forms/signals';
 import { IncomeSource } from '../../financial.store';
 
 @Component({
   selector: 'app-income-list',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, FormField, FormRoot],
   templateUrl: './income-list.component.html',
-  styleUrls: ['./income-list.component.scss'],
+  styleUrl: './income-list.component.scss',
 })
 export class IncomeListComponent {
   incomes = input.required<IncomeSource[]>();
 
-  // NEW: Pass in the list of other scenarios to populate the modal
   otherScenarios = input<{ id: string; name: string }[]>([]);
 
   add = output<Omit<IncomeSource, 'id' | 'isEnabled'>>();
   remove = output<string>();
   edit = output<{ id: string; updated: Omit<IncomeSource, 'id'> }>();
 
-  // NEW: Emit the copy command back to the parent
   applyToScenarios = output<{
     income: Omit<IncomeSource, 'id' | 'isEnabled'>;
     targetScenarioIds: string[];
   }>();
 
-  private fb = inject(NonNullableFormBuilder);
-
   editingId: string | null = null;
-
-  // NEW: Modal State
   incomeToCopy: IncomeSource | null = null;
   selectedTargetScenarios = new Set<string>();
 
-  incomeForm = this.fb.group({
-    name: ['', Validators.required],
-    amount: [0, [Validators.required, Validators.min(1)]],
-    startMonth: [1, [Validators.required, Validators.min(1)]],
-    endMonth: [null as number | null],
-    growthType: [
-      'none' as 'none' | 'fixed' | 'percentage',
-      Validators.required,
-    ],
-    growthValue: [0, Validators.required],
+  readonly incomeModel = signal({
+    name: '',
+    amount: 0,
+    startMonth: 1,
+    endMonth: null as number | null,
+    growthType: 'none' as 'none' | 'fixed' | 'percentage',
+    growthValue: 0,
   });
 
-  onSubmit() {
-    if (this.incomeForm.valid) {
-      if (this.editingId) {
-        this.edit.emit({
-          id: this.editingId,
-          updated: this.incomeForm.getRawValue(),
-        });
-        this.editingId = null;
-      } else {
-        this.add.emit(this.incomeForm.getRawValue());
-      }
-      this.resetForm();
+  readonly incomeForm = form(
+    this.incomeModel,
+    (schema) => {
+      required(schema.name, { message: 'Income name is required' });
+      required(schema.amount, { message: 'Amount is required' });
+      min(schema.amount, 1, { message: 'Amount must be at least 1' });
+      required(schema.startMonth, { message: 'Start month is required' });
+      min(schema.startMonth, 1, { message: 'Start month must be at least 1' });
+      required(schema.growthType);
+      required(schema.growthValue);
+    },
+    {
+      submission: {
+        action: async () => this.onSubmit(),
+      },
+    },
+  );
+
+  async onSubmit(): Promise<undefined> {
+    const raw = this.incomeModel();
+    if (this.editingId) {
+      this.edit.emit({
+        id: this.editingId,
+        updated: raw,
+      });
+      this.editingId = null;
+    } else {
+      this.add.emit(raw);
     }
+    this.resetForm();
+    return undefined;
   }
 
   onEdit(income: IncomeSource) {
     this.editingId = income.id;
-    this.incomeForm.patchValue({
+    this.incomeModel.set({
       name: income.name,
       amount: income.amount,
       startMonth: income.startMonth,
@@ -83,7 +94,7 @@ export class IncomeListComponent {
   }
 
   private resetForm() {
-    this.incomeForm.reset({
+    this.incomeModel.set({
       name: '',
       amount: 0,
       startMonth: 1,
@@ -99,7 +110,6 @@ export class IncomeListComponent {
     }
   }
 
-  // === NEW: Modal Logic ===
   openCopyModal(income: IncomeSource) {
     this.incomeToCopy = income;
     this.selectedTargetScenarios.clear();
@@ -125,9 +135,7 @@ export class IncomeListComponent {
 
   confirmCopy() {
     if (this.incomeToCopy && this.selectedTargetScenarios.size > 0) {
-      // Strip out the original ID so the store generates a fresh one
       const { id, isEnabled, ...incomeData } = this.incomeToCopy;
-
       this.applyToScenarios.emit({
         income: incomeData,
         targetScenarioIds: Array.from(this.selectedTargetScenarios),

@@ -1,0 +1,354 @@
+<div class="exercise-container">
+  <ah-section-heading
+    eyebrow="@ngrx/signals & Modern State"
+    heading="Declarative SignalStore & Entity Normalization"
+    lead="Explore functional signal composition with withEntities(), withComputed(), withMethods(), rxMethod() for reactive async flows, and withHooks()."
+  />
+
+  <ah-ngrx-use-case-focus
+    [options]="focusOptions"
+    [(value)]="activeCase"
+    ariaLabel="Focus on SignalStore features"
+  />
+
+  <!-- Metrics Row (Dynamic Dark/Light Tokens with Elevation) -->
+  <div class="metrics-row">
+    <ah-metric-card
+      label="Total Skills"
+      [value]="store.totalCount()"
+      icon="📚"
+      hint="via withEntities (ids.length)"
+      variant="default"
+    />
+    <ah-metric-card
+      label="Avg Mastery"
+      [value]="store.averageMastery() + '%'"
+      icon="📈"
+      hint="withComputed auto-tracked"
+      variant="accent"
+    />
+    <ah-metric-card
+      label="Certified Count"
+      [value]="store.certifiedCount()"
+      icon="⭐"
+      hint="filtered memoized signal"
+      variant="success"
+      elevation="raised"
+    />
+    <ah-metric-card
+      label="Last Synced"
+      [value]="store.lastSyncTime() ?? 'Initializing...'"
+      icon="⚡"
+      hint="live rxMethod stream"
+      variant="default"
+    />
+  </div>
+
+  <div class="cards-grid">
+    <!-- Card 0: Architectural Overview & Mental Model -->
+    @if (activeCase() === 'all' || activeCase() === 'concept') {
+      <div
+        class="card highlight-card"
+        [class.focused-card]="activeCase() === 'concept'"
+      >
+        <div class="card-header">
+          <span class="badge">Architecture Overview</span>
+          <h3>Why @ngrx/signals? The Modern 5-Plugin Architecture</h3>
+        </div>
+        <p class="description">
+          Traditional Redux requires 4 separate files per feature (Action,
+          Reducer, Selector, Effect) with high indirection.
+          <strong>SignalStore</strong> replaces this with a functional,
+          tree-shakeable pipeline that composes modular features into a
+          strongly-typed store:
+        </p>
+
+        <div class="plugins-diagram">
+          <div class="plugin-pill">
+            <span class="p-num">1</span>
+            <div class="p-info">
+              <strong>withState&lt;T&gt;()</strong>
+              <span>Immutable state signals</span>
+            </div>
+          </div>
+          <div class="plugin-arrow">→</div>
+          <div class="plugin-pill">
+            <span class="p-num">2</span>
+            <div class="p-info">
+              <strong>withEntities&lt;T&gt;()</strong>
+              <span>Normalized O(1) dictionary</span>
+            </div>
+          </div>
+          <div class="plugin-arrow">→</div>
+          <div class="plugin-pill">
+            <span class="p-num">3</span>
+            <div class="p-info">
+              <strong>withComputed()</strong>
+              <span>Auto-tracked derivations</span>
+            </div>
+          </div>
+          <div class="plugin-arrow">→</div>
+          <div class="plugin-pill">
+            <span class="p-num">4</span>
+            <div class="p-info">
+              <strong>withMethods()</strong>
+              <span>patchState &amp; rxMethod</span>
+            </div>
+          </div>
+          <div class="plugin-arrow">→</div>
+          <div class="plugin-pill">
+            <span class="p-num">5</span>
+            <div class="p-info">
+              <strong>withHooks()</strong>
+              <span>onInit &amp; onDestroy</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="concept-callout">
+          <div class="callout-icon">💡</div>
+          <div class="callout-content">
+            <strong>The "Zero-Boilerplate" Rule:</strong>
+            SignalStore requires no action types, no reducer switch statements,
+            and no selectors. Every state slice is automatically exposed as a
+            direct signal (e.g. <code>store.skills()</code>,
+            <code>store.totalCount()</code>) that triggers zoneless change
+            detection with zero Zone.js overhead!
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- Card 1: Interactive Entities Manager -->
+    @if (activeCase() === 'all' || activeCase() === 'entities') {
+      <div class="card" [class.focused-card]="activeCase() === 'entities'">
+        <div class="card-header">
+          <span class="badge">1. Entity Management Plugin (withEntities)</span>
+          <h3>Normalized Entities &amp; Operations</h3>
+        </div>
+        <p class="description">
+          <code>withEntities&lt;T&gt;()</code> maintains normalized state: an
+          <code>ids: string[]</code> array preserving order and an
+          <code>entityMap: Record&lt;string, T&gt;</code> for $O(1)$ lookups.
+        </p>
+
+        <div class="toolbar">
+          <button
+            type="button"
+            ahButton="primary"
+            size="sm"
+            (click)="addCustomSkill()"
+          >
+            + Add Custom Skill
+          </button>
+          <button
+            type="button"
+            ahButton="secondary"
+            size="sm"
+            [disabled]="store.isLoading()"
+            (click)="store.simulateRemoteSync()"
+          >
+            {{
+              store.isLoading() ? 'Syncing...' : 'Reset &amp; Sync via rxMethod'
+            }}
+          </button>
+        </div>
+
+        <div class="entity-list">
+          @for (skill of store.filteredSkills(); track skill.id) {
+            <div class="skill-row">
+              <div class="skill-main">
+                <span class="skill-name">{{ skill.name }}</span>
+                <div class="skill-badges">
+                  <ah-tag>{{ skill.category }}</ah-tag>
+                  @if (skill.isCertified) {
+                    <ah-tag>Verified</ah-tag>
+                  }
+                </div>
+              </div>
+              <div class="mastery-indicator">
+                <div class="progress-bar">
+                  <div
+                    class="progress-fill"
+                    [style.width.%]="skill.masteryLevel"
+                  ></div>
+                </div>
+                <span class="mastery-text">{{ skill.masteryLevel }}%</span>
+              </div>
+              <div class="skill-actions">
+                <button
+                  type="button"
+                  ahButton="ghost"
+                  size="sm"
+                  (click)="store.boostMastery(skill.id)"
+                  title="Boost mastery by 5%"
+                >
+                  ▲ Boost
+                </button>
+                <button
+                  type="button"
+                  ahButton="ghost"
+                  size="sm"
+                  (click)="store.removeSkill(skill.id)"
+                >
+                  &times;
+                </button>
+              </div>
+            </div>
+          } @empty {
+            <div class="empty-state">No skills match the current filters.</div>
+          }
+        </div>
+
+        <!-- O(1) vs O(n) Normalization Visual Explainer -->
+        <div class="normalization-explainer">
+          <div class="explainer-box">
+            <span class="explainer-tag alert"
+              >Naive Array: O(n) Bottleneck</span
+            >
+            <p>
+              Updating one item in an array requires iterating every element
+              with <code>items.map()</code>. At scale, this forces unnecessary
+              re-allocations.
+            </p>
+          </div>
+          <div class="explainer-box">
+            <span class="explainer-tag success">Normalized: O(1) Lookups</span>
+            <p>
+              <code>withEntities()</code> maintains
+              <code>ids: string[]</code> (order) and
+              <code>entityMap: Record&lt;string, T&gt;</code> (instant key
+              access). Lookups and updates are $O(1)$!
+            </p>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- Card 2: Filter & rxMethod Stream Card -->
+    @if (activeCase() === 'all' || activeCase() === 'rx-method') {
+      <div class="card" [class.focused-card]="activeCase() === 'rx-method'">
+        <div class="card-header">
+          <span class="badge">2. rxMethod &amp; Reactive Query</span>
+          <h3>RxJS Stream Interoperability</h3>
+        </div>
+        <p class="description">
+          <code>rxMethod&lt;T&gt;()</code> bridges RxJS operators (cancellation,
+          switchMap, debounceTime, tapResponse) directly into SignalStore
+          methods while updating signals without manual subscriptions.
+        </p>
+
+        <div class="filter-controls">
+          <label class="input-label" for="skill-search"
+            >Live Filter Search:</label
+          >
+          <input
+            id="skill-search"
+            type="text"
+            class="text-input"
+            placeholder="Filter skills (e.g. Signals, Zoneless)..."
+            [value]="store.searchTerm()"
+            (input)="onSearchInput($event)"
+          />
+
+          <div class="category-pills">
+            @for (cat of categories; track cat.id) {
+              <button
+                type="button"
+                class="pill"
+                [class.active]="store.selectedCategory() === cat.id"
+                (click)="store.setCategory(cat.id)"
+              >
+                {{ cat.label }}
+              </button>
+            }
+          </div>
+        </div>
+
+        <div class="normalized-debug">
+          <span class="debug-title"
+            >Normalized State Slices (Under the Hood):</span
+          >
+          <div class="debug-grid">
+            <div class="debug-col">
+              <strong>ids: string[] (Order)</strong>
+              <pre><code>{{ formattedIds() }}</code></pre>
+            </div>
+            <div class="debug-col">
+              <strong>entityMap: Record&lt;string, Entity&gt;</strong>
+              <pre><code>{{ formattedEntityMap() }}</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- rxMethod Explainer -->
+        <div class="rxmethod-explainer">
+          <div class="callout-icon">⚡</div>
+          <div class="callout-body">
+            <strong>Why rxMethod() is Essential:</strong>
+            <p>
+              Standard RxJS subscriptions inside components risk memory leaks if
+              not manually unsubscribed.
+              <code>rxMethod&lt;T&gt;()</code> accepts a static argument,
+              Signal, or Observable, connects to the injection context, and
+              automatically manages the subscription lifecycle with cancellation
+              support.
+            </p>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- Card 3: signalState Lightweight State -->
+    @if (activeCase() === 'all' || activeCase() === 'signal-state') {
+      <div class="card" [class.focused-card]="activeCase() === 'signal-state'">
+        <div class="card-header">
+          <span class="badge">3. signalState (Lightweight Local State)</span>
+          <h3>Component-Level Micro Stores</h3>
+        </div>
+        <p class="description">
+          <code>signalState()</code> gives you deep signal state and
+          patchability without creating a class or functional store. Ideal for
+          dialogs, forms, and local component UI state.
+        </p>
+
+        <div class="local-state-demo">
+          <div class="counter-display">
+            <span class="counter-label">Active Inspector Mode:</span>
+            <ah-tag [class.active-tag]="localUiState.isInspecting()">
+              {{
+                localUiState.isInspecting()
+                  ? 'Deep Inspection Enabled'
+                  : 'Standard View'
+              }}
+            </ah-tag>
+          </div>
+
+          <div class="button-row">
+            <button
+              type="button"
+              [ahButton]="localUiState.isInspecting() ? 'secondary' : 'primary'"
+              size="sm"
+              (click)="toggleInspection()"
+            >
+              Toggle Inspection Flag
+            </button>
+            <button
+              type="button"
+              ahButton="ghost"
+              size="sm"
+              (click)="incrementInteractions()"
+            >
+              Interactions: {{ localUiState.interactionCount() }}
+            </button>
+          </div>
+
+          <div class="code-preview">
+            <span class="preview-title">signalState snippet:</span>
+            <pre><code>{{ signalStateSnippet }}</code></pre>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+</div>

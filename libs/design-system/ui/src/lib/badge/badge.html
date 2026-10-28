@@ -1,0 +1,10 @@
+@if (dot()) {
+  <span
+    class="ah-badge-dot"
+    [class.ah-badge-dot--pulse]="pulse()"
+    aria-hidden="true"
+  ></span>
+}
+<span class="ah-badge-content">
+  <ng-content />
+</span>

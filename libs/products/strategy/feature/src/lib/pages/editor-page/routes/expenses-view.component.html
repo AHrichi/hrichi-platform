@@ -1,0 +1,9 @@
+<app-expense-list
+  [expenses]="store.activeScenario().expenses"
+  [otherScenarios]="otherScenarios()"
+  (applyToScenarios)="store.applyExpenseToScenarios($event)"
+  (add)="store.addExpense($event)"
+  (remove)="store.removeExpense($event)"
+  (toggle)="store.toggleExpense(store.activeScenarioId(), $event)"
+  (edit)="store.editExpense($event.id, $event.updated)"
+></app-expense-list>

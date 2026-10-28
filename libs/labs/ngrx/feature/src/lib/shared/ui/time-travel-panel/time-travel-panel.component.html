@@ -1,0 +1,80 @@
+<div class="time-travel-container">
+  <div class="panel-header">
+    <div class="title-meta">
+      <span class="icon">⏱️</span>
+      <h4 class="title">Time-Travel State History</h4>
+      <ah-tag>{{ history().length }} actions recorded</ah-tag>
+    </div>
+
+    <div class="scrubber-controls">
+      <button
+        type="button"
+        ahButton="ghost"
+        size="sm"
+        [disabled]="currentIndex() <= 0"
+        (click)="stepPrevious()"
+        aria-label="Step backward one action"
+      >
+        ◀ Back
+      </button>
+      <span class="index-indicator">
+        Snapshot {{ currentIndex() + 1 }} / {{ history().length }}
+      </span>
+      <button
+        type="button"
+        ahButton="ghost"
+        size="sm"
+        [disabled]="currentIndex() >= history().length - 1"
+        (click)="stepNext()"
+        aria-label="Step forward one action"
+      >
+        Forward ▶
+      </button>
+      <button
+        type="button"
+        ahButton="secondary"
+        size="sm"
+        [disabled]="currentIndex() === history().length - 1"
+        (click)="jumpToLatest()"
+      >
+        Latest ⏭️
+      </button>
+    </div>
+  </div>
+
+  <div class="history-list" role="list">
+    @for (record of history(); track record.id; let idx = $index) {
+      <button
+        type="button"
+        class="history-item"
+        [class.active]="idx === currentIndex()"
+        (click)="selectSnapshot(idx)"
+      >
+        <div class="item-left">
+          <span class="seq">#{{ record.id }}</span>
+          <span class="action-type">{{ record.type }}</span>
+        </div>
+        <div class="item-right">
+          @if (record.payload) {
+            <span class="payload-badge">{{
+              stringifyPayload(record.payload)
+            }}</span>
+          }
+          <span class="time">{{ record.timestamp }}</span>
+        </div>
+      </button>
+    }
+  </div>
+
+  <div class="active-snapshot-view">
+    <div class="snapshot-header">
+      <span class="view-title"
+        >Snapshot State (#{{ currentSnapshot()?.id ?? 0 }})</span
+      >
+      @if (isTimeTravelling()) {
+        <ah-tag>⚠️ Time Travelling</ah-tag>
+      }
+    </div>
+    <pre class="json-code"><code>{{ formattedSnapshot() }}</code></pre>
+  </div>
+</div>

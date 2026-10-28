@@ -1,0 +1,151 @@
+@if (store.showHandoverModal()) {
+  <div class="modal-overlay" (click)="store.closeHandoverModal()">
+    <div class="modal-card" (click)="$event.stopPropagation()">
+      <!-- Header -->
+      <div class="modal-header">
+        <div class="title-wrap">
+          <span class="modal-icon">📋</span>
+          <div>
+            <h2 class="modal-title">End-of-Shift Handover Report</h2>
+            <span class="modal-sub">
+              {{ report().shift.toUpperCase() }} ({{ report().shiftHours }}) ·
+              {{ report().date }} · Generated at {{ report().generatedAt }}
+            </span>
+          </div>
+        </div>
+        <button
+          type="button"
+          class="close-btn"
+          (click)="store.closeHandoverModal()"
+        >
+          ✕
+        </button>
+      </div>
+
+      <!-- Body -->
+      <div class="modal-body">
+        <!-- Coordinators Info -->
+        <div class="coord-bar">
+          <div class="coord-box">
+            <span class="c-tag">Outgoing Coordinator (Handing Over)</span>
+            <strong class="c-val">👨‍💼 {{ report().outgoingCoordinator }}</strong>
+          </div>
+          <div class="coord-arrow">➔</div>
+          <div class="coord-box">
+            <span class="c-tag">Incoming Coordinator (Receiving)</span>
+            <strong class="c-val">👩‍💼 {{ report().incomingCoordinator }}</strong>
+          </div>
+        </div>
+
+        <!-- KPI Summary Grid -->
+        <div class="kpi-grid">
+          <div class="kpi-box">
+            <span class="kpi-num"
+              >{{ report().ordersCompleted }} /
+              {{ report().ordersTarget }}</span
+            >
+            <span class="kpi-lbl">Orders Completed</span>
+          </div>
+          <div class="kpi-box">
+            <span class="kpi-num">{{ report().totalKgDelivered }} kg</span>
+            <span class="kpi-lbl">Delivered Linen</span>
+          </div>
+          <div class="kpi-box">
+            <span class="kpi-num text-success"
+              >{{ report().onTimePunctualityPct }}%</span
+            >
+            <span class="kpi-lbl">SLA On-Time Rate</span>
+          </div>
+        </div>
+
+        <!-- Incidents / Problems Section -->
+        <div class="section-card">
+          <h3 class="card-heading">
+            ⚠️ Open Incidents & Roadblocks ({{
+              report().unresolvedIncidents.length
+            }})
+          </h3>
+          @if (report().unresolvedIncidents.length > 0) {
+            <div class="incident-list">
+              @for (inc of report().unresolvedIncidents; track inc.id) {
+                <div class="incident-item">
+                  <span class="inc-badge">{{ inc.status }}</span>
+                  <span class="inc-title">{{ inc.title }}</span>
+                </div>
+              }
+            </div>
+          } @else {
+            <p class="clean-state">
+              ✅ All incidents resolved during this shift.
+            </p>
+          }
+        </div>
+
+        <!-- Pending Drops for Incoming Coordinator -->
+        <div class="section-card">
+          <h3 class="card-heading">
+            ⏳ Pending Deliveries for Incoming Shift ({{
+              report().criticalPendingDrops.length
+            }})
+          </h3>
+          <div class="pending-table-wrap">
+            <table class="pending-table">
+              <thead>
+                <tr>
+                  <th>Order ID</th>
+                  <th>Client Name</th>
+                  <th>SLA Target</th>
+                  <th>Current Stage</th>
+                  <th>Driver Assigned</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (
+                  drop of report().criticalPendingDrops;
+                  track drop.orderId
+                ) {
+                  <tr>
+                    <td class="font-mono">{{ drop.orderId }}</td>
+                    <td>
+                      <strong>{{ drop.clientName }}</strong>
+                    </td>
+                    <td class="font-mono text-accent">
+                      {{ drop.deadline }}
+                    </td>
+                    <td>
+                      <span class="stage-pill">{{ drop.status }}</span>
+                    </td>
+                    <td>{{ drop.driverName }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Handover Notes -->
+        <div class="section-card">
+          <h3 class="card-heading">📝 Coordinator Handover Notes</h3>
+          <div class="notes-quote">"{{ report().notesForIncoming }}"</div>
+        </div>
+      </div>
+
+      <!-- Footer Actions -->
+      <div class="modal-footer">
+        @if (copiedText()) {
+          <span class="copied-toast"
+            >✓ WhatsApp format copied to clipboard!</span
+          >
+        }
+
+        <button type="button" class="copy-wa-btn" (click)="copyWhatsAppText()">
+          💬 Copy WhatsApp Group Handover
+        </button>
+
+        <button type="button" class="print-btn" (click)="downloadReport()">
+          📥 Download Report (.txt)
+        </button>
+      </div>
+    </div>
+  </div>
+}

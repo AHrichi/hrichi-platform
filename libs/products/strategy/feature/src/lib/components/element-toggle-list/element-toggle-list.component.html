@@ -1,0 +1,24 @@
+<div class="element-toggle-list">
+  @for (item of items(); track item.id) {
+    <div
+      class="copy-item-card"
+      style="padding: 0.5rem 1rem !important; margin-bottom: 0.3rem"
+    >
+      <span class="scenario-name" [class.disabled]="item.isEnabled === false">
+        {{ item.name }}
+      </span>
+      <label class="toggle-switch">
+        <input
+          type="checkbox"
+          [checked]="item.isEnabled !== false"
+          (change)="handleToggle(item.id)"
+        />
+        <span class="slider"></span>
+      </label>
+    </div>
+  }
+
+  @if (items().length === 0) {
+    <span class="text-muted empty-msg">{{ emptyMessage() }}</span>
+  }
+</div>

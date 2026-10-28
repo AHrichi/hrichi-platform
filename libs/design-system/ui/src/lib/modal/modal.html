@@ -1,0 +1,45 @@
+@if (open()) {
+  <div
+    class="ah-modal-backdrop"
+    (click)="onBackdropClick($event)"
+    aria-hidden="true"
+  ></div>
+
+  <div
+    class="ah-modal-dialog"
+    role="dialog"
+    aria-modal="true"
+    [attr.aria-labelledby]="titleId"
+    [class.ah-modal--sm]="size() === 'sm'"
+    [class.ah-modal--md]="size() === 'md'"
+    [class.ah-modal--lg]="size() === 'lg'"
+    [class.ah-modal--xl]="size() === 'xl'"
+    #dialogRef
+  >
+    <div class="ah-modal-header">
+      <div class="ah-modal-title-wrap">
+        @if (eyebrow()) {
+          <p class="ah-eyebrow">{{ eyebrow() }}</p>
+        }
+        <h2 [id]="titleId" class="ah-modal-title">{{ title() }}</h2>
+      </div>
+
+      <button
+        type="button"
+        class="ah-modal-close-btn"
+        aria-label="Close dialog"
+        (click)="close()"
+      >
+        ✕
+      </button>
+    </div>
+
+    <div class="ah-modal-body">
+      <ng-content />
+    </div>
+
+    <div class="ah-modal-footer">
+      <ng-content select="[modal-actions]" />
+    </div>
+  </div>
+}

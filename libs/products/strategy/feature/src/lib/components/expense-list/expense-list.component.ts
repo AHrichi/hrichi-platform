@@ -1,18 +1,20 @@
-import { Component, input, output, inject } from '@angular/core';
+import { Component, input, output, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
-  ReactiveFormsModule,
-  NonNullableFormBuilder,
-  Validators,
-} from '@angular/forms';
+  form,
+  FormField,
+  FormRoot,
+  min,
+  required,
+} from '@angular/forms/signals';
 import { Expense } from '../../financial.store';
 
 @Component({
   selector: 'app-expense-list',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, FormField, FormRoot],
   templateUrl: './expense-list.component.html',
-  styleUrls: ['./expense-list.component.scss'],
+  styleUrl: './expense-list.component.scss',
 })
 export class ExpenseListComponent {
   expenses = input.required<Expense[]>();
@@ -29,42 +31,60 @@ export class ExpenseListComponent {
     targetScenarioIds: string[];
   }>();
 
-  private fb = inject(NonNullableFormBuilder);
-
   editingId: string | null = null;
   expenseToCopy: Expense | null = null;
   selectedTargetScenarios = new Set<string>();
 
-  expenseForm = this.fb.group({
-    name: ['', Validators.required],
-    amount: [0, [Validators.required, Validators.min(1)]],
-    startMonth: [1, [Validators.required, Validators.min(1)]],
-    monthsActive: [null as number | null],
-    recurrenceInterval: [1, [Validators.required, Validators.min(1)]],
+  readonly expenseModel = signal({
+    name: '',
+    amount: 0,
+    startMonth: 1,
+    monthsActive: null as number | null,
+    recurrenceInterval: 1,
   });
 
-  onSubmit() {
-    if (this.expenseForm.valid) {
-      if (this.editingId) {
-        this.edit.emit({
-          id: this.editingId,
-          updated: this.expenseForm.getRawValue(),
-        });
-        this.editingId = null;
-      } else {
-        this.add.emit(this.expenseForm.getRawValue());
-      }
-      this.resetForm();
+  readonly expenseForm = form(
+    this.expenseModel,
+    (schema) => {
+      required(schema.name, { message: 'Expense name is required' });
+      required(schema.amount, { message: 'Amount is required' });
+      min(schema.amount, 1, { message: 'Amount must be at least 1' });
+      required(schema.startMonth, { message: 'Start month is required' });
+      min(schema.startMonth, 1, { message: 'Start month must be at least 1' });
+      required(schema.recurrenceInterval, { message: 'Interval is required' });
+      min(schema.recurrenceInterval, 1, {
+        message: 'Interval must be at least 1',
+      });
+    },
+    {
+      submission: {
+        action: async () => this.onSubmit(),
+      },
+    },
+  );
+
+  async onSubmit(): Promise<undefined> {
+    const raw = this.expenseModel();
+    if (this.editingId) {
+      this.edit.emit({
+        id: this.editingId,
+        updated: raw,
+      });
+      this.editingId = null;
+    } else {
+      this.add.emit(raw);
     }
+    this.resetForm();
+    return undefined;
   }
 
   onEdit(expense: Expense) {
     this.editingId = expense.id;
-    this.expenseForm.patchValue({
+    this.expenseModel.set({
       name: expense.name,
       amount: expense.amount,
       startMonth: expense.startMonth || 1,
-      monthsActive: expense.monthsActive,
+      monthsActive: expense.monthsActive ?? null,
       recurrenceInterval: expense.recurrenceInterval || 1,
     });
   }
@@ -75,7 +95,7 @@ export class ExpenseListComponent {
   }
 
   private resetForm() {
-    this.expenseForm.reset({
+    this.expenseModel.set({
       name: '',
       amount: 0,
       startMonth: 1,

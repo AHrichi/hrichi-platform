@@ -5,13 +5,7 @@ import { RouterLink } from '@angular/router';
   selector: 'ah-not-found',
   imports: [RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `
-    <section class="hero">
-      <h1>Page not found</h1>
-      <p>
-        That page doesn't exist. <a routerLink="/">Back to the home page</a>.
-      </p>
-    </section>
-  `,
+  templateUrl: './not-found.html',
+  styleUrl: './not-found.scss',
 })
 export class NotFound {}

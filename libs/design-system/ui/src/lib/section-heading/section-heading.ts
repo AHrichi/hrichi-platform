@@ -5,19 +5,8 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
   selector: 'ah-section-heading',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'ah-stack', style: '--gap: var(--space-3)' },
-  template: `
-    @if (eyebrow()) {
-      <p class="ah-eyebrow">{{ eyebrow() }}</p>
-    }
-    @if (level() === 1) {
-      <h1 [id]="headingId()">{{ heading() }}</h1>
-    } @else {
-      <h2 [id]="headingId()">{{ heading() }}</h2>
-    }
-    @if (lead()) {
-      <p class="ah-lead ah-prose">{{ lead() }}</p>
-    }
-  `,
+  templateUrl: './section-heading.html',
+  styleUrl: './section-heading.scss',
 })
 export class SectionHeading {
   readonly heading = input.required<string>();

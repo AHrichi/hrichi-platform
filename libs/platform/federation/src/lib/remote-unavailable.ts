@@ -23,36 +23,8 @@ const capabilityNames: Record<RemoteCapability, string> = {
 @Component({
   selector: 'ah-remote-unavailable',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `
-    <section class="remote-unavailable" role="alert">
-      @if (missing(); as missing) {
-        <h2>This section needs {{ missing }}</h2>
-        <p>
-          The <code>{{ remoteName }}</code> micro-frontend needs a browser
-          feature that is turned off or unsupported here. The rest of the site
-          works as usual.
-        </p>
-      } @else {
-        <h2>This section didn't load</h2>
-        <p>
-          The <code>{{ remoteName }}</code> micro-frontend is unreachable right
-          now. The rest of the site still works.
-        </p>
-        <button type="button" (click)="retry()">Try again</button>
-      }
-    </section>
-  `,
-  styles: `
-    .remote-unavailable {
-      max-inline-size: var(--layout-prose);
-    }
-    button {
-      font: inherit;
-      padding-block: 0.5rem;
-      padding-inline: 1rem;
-      cursor: pointer;
-    }
-  `,
+  templateUrl: './remote-unavailable.html',
+  styleUrl: './remote-unavailable.scss',
 })
 export class RemoteUnavailable {
   private readonly document = inject(DOCUMENT);

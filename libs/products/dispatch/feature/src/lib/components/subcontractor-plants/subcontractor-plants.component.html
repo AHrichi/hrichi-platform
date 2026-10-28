@@ -1,0 +1,303 @@
+<div class="plants-wrapper">
+  <div class="plants-intro-bar">
+    <div>
+      <h2 class="section-title">
+        Subcontractor Laundry Plants (Partner Facilities)
+      </h2>
+      <p class="section-subtitle">
+        Daily wash order lists, tunnel washer capacity limits, quality
+        discrepancies, and damage credit claims.
+      </p>
+    </div>
+    <div class="plants-actions">
+      <button
+        type="button"
+        class="add-plant-btn"
+        (click)="store.openAddPlantModal()"
+      >
+        + Add Partner Facility
+      </button>
+      @if (store.subcontractors().length > 0) {
+        <button
+          type="button"
+          class="action-manifest-btn"
+          (click)="generateAllManifests()"
+        >
+          📄 Send Daily Wash Lists (All
+          {{ store.subcontractors().length }} Plants)
+        </button>
+      }
+    </div>
+  </div>
+
+  <!-- Plant Cards Grid -->
+  <div class="plants-grid">
+    @for (plant of store.subcontractors(); track plant.id) {
+      <div class="plant-card">
+        <!-- Header -->
+        <div class="plant-card-header">
+          <div class="plant-title-wrap">
+            <span class="plant-icon">🏭</span>
+            <div>
+              <h3 class="plant-name">{{ plant.name }}</h3>
+              <span class="plant-loc"
+                >📍 {{ plant.location }} ({{ plant.postalCode }})</span
+              >
+            </div>
+          </div>
+
+          <div class="plant-header-right">
+            <div class="sla-badge">
+              <span class="sla-label">SLA Punctuality</span>
+              <span class="sla-val">{{ plant.slaPunctualityPct }}%</span>
+            </div>
+            <button
+              type="button"
+              class="delete-plant-btn"
+              (click)="store.deleteSubcontractor(plant.id)"
+              title="Remove Subcontractor"
+              aria-label="Remove Subcontractor"
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+
+        <!-- Speciality -->
+        <div class="speciality-box">
+          <span class="spec-label">Speciality:</span>
+          <span class="spec-val">{{ plant.speciality }}</span>
+        </div>
+
+        <!-- Capacity Progress -->
+        <div class="capacity-section">
+          <div class="capacity-meta">
+            <span class="cap-label">Daily Capacity Utilization:</span>
+            <span class="cap-val">
+              {{ plant.currentLoadKg }} kg / {{ plant.dailyCapacityKg }} kg ({{
+                Math.round((plant.currentLoadKg / plant.dailyCapacityKg) * 100)
+              }}%)
+            </span>
+          </div>
+          <div class="progress-track">
+            <div
+              class="progress-fill"
+              [style.width.%]="
+                (plant.currentLoadKg / plant.dailyCapacityKg) * 100
+              "
+              [class.is-near-limit]="
+                plant.currentLoadKg > plant.dailyCapacityKg * 0.85
+              "
+            ></div>
+          </div>
+        </div>
+
+        <!-- Batches & Metrics Row -->
+        <div class="metrics-row">
+          <div class="metric-cell">
+            <span class="m-val">{{ plant.activeBatchCount }}</span>
+            <span class="m-lbl">Batches in Wash</span>
+          </div>
+          <div class="metric-cell">
+            <span class="m-val text-success">{{
+              plant.readyForPickupCount
+            }}</span>
+            <span class="m-lbl">Ready for Van Pickup</span>
+          </div>
+          <div class="metric-cell">
+            <span class="m-val" [class.text-warning]="plant.defectRatePct > 0.5"
+              >{{ plant.defectRatePct }}%</span
+            >
+            <span class="m-lbl">Re-wash Defect Rate</span>
+          </div>
+        </div>
+
+        <!-- Contact & Operations info -->
+        <div class="contact-box">
+          <div class="contact-row">
+            <span class="c-lbl">Plant Manager:</span>
+            <span class="c-val">{{ plant.contactPerson }}</span>
+          </div>
+          <div class="contact-row">
+            <span class="c-lbl">Hotline:</span>
+            <span class="c-val phone">{{ plant.phone }}</span>
+          </div>
+        </div>
+
+        <!-- Claims & Discrepancies -->
+        <div class="claims-section">
+          <div class="claims-header">
+            <span class="claims-title"
+              >Quality Claims & Discrepancies ({{ plant.claims.length }})</span
+            >
+            <button
+              type="button"
+              class="add-claim-btn"
+              (click)="openClaimForm(plant.id)"
+            >
+              + Log Stained / Missing Item
+            </button>
+          </div>
+
+          <div class="claims-list">
+            @for (claim of plant.claims; track claim.id) {
+              <div class="claim-item">
+                <div class="claim-top">
+                  <span class="claim-type">
+                    {{
+                      claim.type === 'stain_rewash'
+                        ? '🧼 Permanent Stain'
+                        : '✂️ Torn / Scrapped'
+                    }}
+                  </span>
+                  <span class="claim-credit"
+                    >-£{{ claim.creditAmountGbp.toFixed(2) }}</span
+                  >
+                </div>
+                <div class="claim-desc">
+                  {{ claim.count }}x {{ claim.itemName }} ({{
+                    claim.clientName
+                  }})
+                </div>
+                <span class="claim-time"
+                  >Logged at {{ claim.loggedAt }} · Status:
+                  {{ claim.status | uppercase }}</span
+                >
+              </div>
+            } @empty {
+              <span class="no-claims"
+                >Zero active quality discrepancies for today's run.</span
+              >
+            }
+          </div>
+        </div>
+
+        <!-- Plant Card Footer -->
+        <div class="plant-card-footer">
+          <button
+            type="button"
+            class="manifest-btn"
+            (click)="generatePlantManifest(plant)"
+          >
+            📄 Send Order Manifest
+          </button>
+          <button type="button" class="chase-btn" (click)="chasePlant(plant)">
+            📞 Chase Plant Manager
+          </button>
+        </div>
+      </div>
+    } @empty {
+      <div class="empty-plants-card">
+        <span class="empty-plants-icon">🏭</span>
+        <h3 class="empty-plants-title">No Subcontractor Plants Connected</h3>
+        <p class="empty-plants-desc">
+          Connect partner industrial laundry facilities to route orders, track
+          tunnel wash loads, and log quality claims.
+        </p>
+        <button
+          type="button"
+          class="add-plant-btn"
+          (click)="store.openAddPlantModal()"
+        >
+          + Connect First Partner Plant
+        </button>
+      </div>
+    }
+  </div>
+
+  <!-- Quick Claim Modal -->
+  @if (activeClaimPlantId()) {
+    <div class="modal-overlay">
+      <div class="claim-modal-card">
+        <h3 class="modal-title">Log Quality Defect / Missing Item Claim</h3>
+        <p class="modal-desc">
+          File a re-wash request or credit deduction against partner laundry
+          plant.
+        </p>
+
+        <form class="claim-form" [formRoot]="claimForm" novalidate>
+          <label class="form-label" for="claim-client">Client Affected:</label>
+          <input
+            id="claim-client"
+            type="text"
+            class="form-input"
+            [class.has-error]="
+              claimForm.client().touched() && claimForm.client().invalid()
+            "
+            [formField]="claimForm.client"
+            placeholder="e.g. The Dorchester, Dishoom..."
+            [attr.aria-invalid]="
+              claimForm.client().touched() && claimForm.client().invalid()
+            "
+            aria-describedby="claim-client-error"
+          />
+          @if (claimForm.client().touched() && claimForm.client().invalid()) {
+            <span class="field-error" id="claim-client-error" role="alert">
+              {{ claimForm.client().errors()[0]?.message }}
+            </span>
+          }
+
+          <label class="form-label" for="claim-defect">Defect Type:</label>
+          <select
+            id="claim-defect"
+            class="form-select"
+            [formField]="claimForm.type"
+          >
+            <option value="stain_rewash">
+              Stain / Incomplete Wash (Re-wash required)
+            </option>
+            <option value="torn_damaged">
+              Torn / Ripped Linen (Scrap claim)
+            </option>
+            <option value="missing_count">
+              Short delivery / Missing pieces
+            </option>
+            <option value="creased_press">Poor ironing / Creased finish</option>
+          </select>
+
+          <label class="form-label" for="claim-count"
+            >Number of Items Affected:</label
+          >
+          <input
+            id="claim-count"
+            type="number"
+            class="form-input"
+            [class.has-error]="
+              claimForm.count().touched() && claimForm.count().invalid()
+            "
+            [formField]="claimForm.count"
+            min="1"
+            max="500"
+            [attr.aria-invalid]="
+              claimForm.count().touched() && claimForm.count().invalid()
+            "
+            aria-describedby="claim-count-error"
+          />
+          @if (claimForm.count().touched() && claimForm.count().invalid()) {
+            <span class="field-error" id="claim-count-error" role="alert">
+              {{ claimForm.count().errors()[0]?.message }}
+            </span>
+          }
+
+          <div class="credit-calc-box">
+            <span>Calculated Credit Deduction:</span>
+            <strong>£{{ (claimModel().count * 3.5).toFixed(2) }}</strong>
+          </div>
+
+          <div class="modal-actions">
+            <button
+              type="button"
+              class="btn-cancel"
+              (click)="activeClaimPlantId.set(null)"
+            >
+              Cancel
+            </button>
+            <button type="submit" class="btn-submit">
+              Confirm & Deduct Credit
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  }
+</div>

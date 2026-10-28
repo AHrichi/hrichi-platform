@@ -1,0 +1,254 @@
+<div class="exercise-container">
+  <ah-section-heading
+    eyebrow="NgRx Effects & Async Pipelines"
+    heading="Side-Effect Model & Concurrency Strategies"
+    lead="Isolate impure asynchronous side-effects (HTTP, WebSockets, LocalStorage) from pure UI components with functional effects, ofType filtering, and tapResponse."
+  />
+
+  <ah-ngrx-use-case-focus
+    [options]="focusOptions"
+    [(value)]="activeCase"
+    ariaLabel="Focus on NgRx Effects concepts"
+  />
+
+  <!-- Visual State Flow with Active Effect Branch -->
+  <ah-state-flow-diagram [activeStage]="currentStage()" [showEffect]="true" />
+
+  <div class="cards-grid">
+    <!-- Interactive Simulation Controller -->
+    @if (activeCase() === 'all' || activeCase() === 'simulation') {
+      <div class="card" [class.focused-card]="activeCase() === 'simulation'">
+        <div class="card-header">
+          <span class="badge">1. Interactive Effect Runner</span>
+          <h3>Simulate Async Authentication Flow</h3>
+        </div>
+        <p class="description">
+          Test how effects handle async network latency, success, and errors
+          without ever breaking the component or killing the stream.
+        </p>
+
+        <div class="config-controls">
+          <div class="config-group">
+            <span class="config-title"
+              >Concurrency Flattening Operator (4 Strategies):</span
+            >
+            <div class="pills-row">
+              <button
+                type="button"
+                class="pill"
+                [class.active]="operator() === 'exhaustMap'"
+                (click)="operator.set('exhaustMap')"
+              >
+                exhaustMap (Ignore rapid duplicates)
+              </button>
+              <button
+                type="button"
+                class="pill"
+                [class.active]="operator() === 'switchMap'"
+                (click)="operator.set('switchMap')"
+              >
+                switchMap (Cancel previous in-flight)
+              </button>
+              <button
+                type="button"
+                class="pill"
+                [class.active]="operator() === 'concatMap'"
+                (click)="operator.set('concatMap')"
+              >
+                concatMap (Queue sequentially)
+              </button>
+              <button
+                type="button"
+                class="pill"
+                [class.active]="operator() === 'mergeMap'"
+                (click)="operator.set('mergeMap')"
+              >
+                mergeMap (Run in parallel)
+              </button>
+            </div>
+          </div>
+
+          <div class="config-group">
+            <span class="config-title">Outcome Simulation:</span>
+            <div class="pills-row">
+              <button
+                type="button"
+                class="pill"
+                [class.active]="outcome() === 'success'"
+                (click)="outcome.set('success')"
+              >
+                200 Success
+              </button>
+              <button
+                type="button"
+                class="pill"
+                [class.active]="outcome() === 'error'"
+                (click)="outcome.set('error')"
+              >
+                401 Unauthorized
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="action-bar">
+          <button
+            type="button"
+            ahButton="primary"
+            [disabled]="isBusy() && operator() === 'exhaustMap'"
+            (click)="triggerEffect()"
+          >
+            {{ isBusy() ? 'Effect in Progress...' : 'Dispatch [Auth] Login' }}
+          </button>
+          <button
+            type="button"
+            ahButton="secondary"
+            [disabled]="isBusy() && operator() === 'exhaustMap'"
+            (click)="rapidFireDispatches()"
+            title="Dispatch 3 actions in rapid succession to test concurrency"
+          >
+            🔥 Rapid-Fire 3 Actions
+          </button>
+          <button type="button" ahButton="ghost" (click)="clearLogs()">
+            Clear Timeline
+          </button>
+        </div>
+
+        <!-- Effect Pipeline Code Snippet -->
+        <div class="code-preview">
+          <span class="preview-title"
+            >Modern Functional Effect Definition:</span
+          >
+          <pre><code>{{ effectCodeSnippet }}</code></pre>
+        </div>
+      </div>
+    }
+
+    <!-- Card 2: Stream Activity Timeline -->
+    @if (activeCase() === 'all' || activeCase() === 'timeline') {
+      <div class="card" [class.focused-card]="activeCase() === 'timeline'">
+        <div class="card-header">
+          <span class="badge">2. Live Event Stream Log</span>
+          <h3>Pipeline Trace &amp; tapResponse Audit</h3>
+        </div>
+        <p class="description">
+          Notice that when an HTTP call fails,
+          <code>tapResponse</code> catches the error and dispatches a failure
+          action. The outer effect stream stays alive!
+        </p>
+
+        <div class="timeline-list">
+          @for (log of logs(); track log.id) {
+            <div class="timeline-item" [class]="'badge-' + log.badge">
+              <span class="timeline-time">{{ log.time }}</span>
+              <span class="timeline-source">{{ log.source }}</span>
+              <span class="timeline-msg">{{ log.message }}</span>
+            </div>
+          } @empty {
+            <div class="empty-state">
+              No events yet. Click "Dispatch [Auth] Login" above to start the
+              cycle.
+            </div>
+          }
+        </div>
+
+        <!-- TapResponse explanation note -->
+        <div class="audit-note">
+          <strong>Why tapResponse instead of catchError?</strong><br />
+          Standard RxJS <code>catchError()</code> can accidentally complete the
+          stream if not nested inside <code>switchMap</code>.
+          <code>tapResponse</code> guarantees error handling isolation and
+          enforces exhaustiveness for success and failure handlers.
+        </div>
+      </div>
+    }
+
+    <!-- Card 3: Concurrency Flattening Comparison -->
+    @if (activeCase() === 'all' || activeCase() === 'operators') {
+      <div class="card" [class.focused-card]="activeCase() === 'operators'">
+        <div class="card-header">
+          <span class="badge">3. Concurrency Cheatsheet</span>
+          <h3>Choosing the Right Operator</h3>
+        </div>
+
+        <div class="operator-guide-list">
+          <div class="operator-item">
+            <span class="op-name">exhaustMap</span>
+            <span class="op-desc"
+              >Ignores new source emissions until current inner observable
+              completes. Perfect for submit buttons, logins, and checkout
+              actions to prevent double submissions.</span
+            >
+          </div>
+          <div class="operator-item">
+            <span class="op-name">switchMap</span>
+            <span class="op-desc"
+              >Unsubscribes from previous inner request when a new action
+              arrives. Perfect for search/autocomplete filters where only the
+              latest query matters.</span
+            >
+          </div>
+          <div class="operator-item">
+            <span class="op-name">concatMap</span>
+            <span class="op-desc"
+              >Buffers incoming actions and processes them sequentially in
+              strict order. Perfect for queued file uploads or chronological
+              transactions.</span
+            >
+          </div>
+          <div class="operator-item">
+            <span class="op-name">mergeMap</span>
+            <span class="op-desc"
+              >Executes all inner requests concurrently. Perfect for independent
+              background syncs where ordering and duplicate prevention do not
+              matter.</span
+            >
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- Card 4: The Dead Stream Trap -->
+    @if (activeCase() === 'all' || activeCase() === 'dead-stream') {
+      <div class="card" [class.focused-card]="activeCase() === 'dead-stream'">
+        <div class="card-header">
+          <span class="badge">Production Reliability</span>
+          <h3>The "Dead Stream" Trap &amp; Why tapResponse is Vital</h3>
+        </div>
+        <p class="description">
+          The #1 most common junior/intermediate bug in NgRx is putting
+          <code>catchError()</code> directly on the outer
+          <code>actions$.pipe(...)</code> stream instead of the inner HTTP
+          observable.
+        </p>
+
+        <div class="comparison-boxes">
+          <div class="cmp-box fatal">
+            <span class="cmp-tag">❌ Fatal: Outer catchError Kills Effect</span>
+            <pre><code>actions$.pipe(
+  ofType(AuthActions.login),
+  switchMap(() => api.login()),
+  catchError(err => of(AuthActions.failure(&#123; err &#125;)))
+  // 💀 Outer actions stream COMPLETES!
+  // Future login clicks will NEVER fire!
+)</code></pre>
+          </div>
+
+          <div class="cmp-box safe">
+            <span class="cmp-tag">✅ Production Safe: tapResponse</span>
+            <pre><code>actions$.pipe(
+  ofType(AuthActions.login),
+  switchMap(() => api.login().pipe(
+    tapResponse(&#123;
+      next: (user) => AuthActions.success(&#123; user &#125;),
+      error: (err) => AuthActions.failure(&#123; err &#125;),
+    &#125;)
+  ))
+  // 🛡️ Outer stream remains ALIVE forever!
+)</code></pre>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+</div>

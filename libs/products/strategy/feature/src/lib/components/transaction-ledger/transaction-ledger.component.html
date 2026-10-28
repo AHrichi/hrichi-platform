@@ -86,8 +86,8 @@
     <!-- Add Account Form -->
     @if (showAddAccount) {
       <form
-        [formGroup]="addAccountForm"
-        (ngSubmit)="onSubmitAddAccount()"
+        [formRoot]="addAccountForm"
+        novalidate
         class="add-form add-account-form"
       >
         <div class="form-row">
@@ -95,13 +95,13 @@
             <label>Name</label>
             <input
               type="text"
-              formControlName="name"
+              [formField]="addAccountForm.name"
               placeholder="e.g. Bank A"
             />
           </div>
           <div class="form-group">
             <label>Type</label>
-            <select formControlName="type">
+            <select [formField]="addAccountForm.type">
               <option value="cash">💵 Cash</option>
               <option value="bank">🏦 Bank</option>
               <option value="savings">🏧 Savings</option>
@@ -111,16 +111,15 @@
           <div class="form-group">
             <label>Opening Balance</label>
             <div class="input-with-icon">
-              <input type="number" formControlName="initialBalance" />
+              <input
+                type="number"
+                [formField]="addAccountForm.initialBalance"
+              />
               <span class="currency-tag">TND</span>
             </div>
           </div>
           <div class="form-actions">
-            <button
-              type="submit"
-              [disabled]="addAccountForm.invalid"
-              class="btn-modern btn-submit btn-sm"
-            >
+            <button type="submit" class="btn-modern btn-submit btn-sm">
               Add
             </button>
             <button
@@ -235,19 +234,19 @@
         <h4>
           {{ editingCategory() ? '✏️ Edit Category' : '➕ New Category' }}
         </h4>
-        <form [formGroup]="categoryForm" (ngSubmit)="saveCategory()">
+        <form [formRoot]="categoryForm" (ngSubmit)="saveCategory()" novalidate>
           <div class="cat-form-row">
             <div class="cat-form-group">
               <label>Name</label>
               <input
                 type="text"
-                formControlName="name"
+                [formField]="categoryForm.name"
                 placeholder="Category name"
               />
             </div>
             <div class="cat-form-group">
               <label>Parent (optional)</label>
-              <select formControlName="parentId">
+              <select [formField]="categoryForm.parentId">
                 <option value="">— None (top-level) —</option>
                 @for (p of availableParents(); track p.id) {
                   <option [value]="p.id">{{ p.icon }} {{ p.name }}</option>
@@ -262,7 +261,7 @@
                 <button
                   type="button"
                   class="icon-option"
-                  [class.selected]="categoryForm.value.icon === icon"
+                  [class.selected]="categoryModel().icon === icon"
                   (click)="selectIcon(icon)"
                 >
                   {{ icon }}
@@ -273,7 +272,7 @@
           <div class="cat-form-actions">
             <button
               type="submit"
-              [disabled]="categoryForm.invalid"
+              [disabled]="categoryForm().invalid()"
               class="btn-modern btn-submit btn-sm"
             >
               {{ editingCategory() ? 'Save Changes' : 'Add Category' }}
@@ -293,17 +292,22 @@
 
   @if (activeTab() === 'ledger') {
     <!-- Add / Edit Transaction Form -->
-    <form [formGroup]="ledgerForm" (ngSubmit)="onSubmit()" class="add-form">
+    <form
+      [formRoot]="ledgerForm"
+      (ngSubmit)="onSubmit()"
+      novalidate
+      class="add-form"
+    >
       <div class="form-row">
         <div class="form-group">
           <label for="trans-date">Date</label>
-          <input id="trans-date" type="date" formControlName="date" />
+          <input id="trans-date" type="date" [formField]="ledgerForm.date" />
         </div>
 
         @if (isTransfer()) {
           <div class="form-group">
             <label for="trans-from">From</label>
-            <select id="trans-from" formControlName="fromAccountId">
+            <select id="trans-from" [formField]="ledgerForm.fromAccountId">
               @for (acct of accounts(); track acct.id) {
                 <option [value]="acct.id">
                   {{ accountTypeIcon(acct.type) }} {{ acct.name }}
@@ -313,7 +317,7 @@
           </div>
           <div class="form-group">
             <label for="trans-to">To</label>
-            <select id="trans-to" formControlName="accountId">
+            <select id="trans-to" [formField]="ledgerForm.accountId">
               @for (acct of accounts(); track acct.id) {
                 <option [value]="acct.id">
                   {{ accountTypeIcon(acct.type) }} {{ acct.name }}
@@ -324,7 +328,7 @@
         } @else {
           <div class="form-group">
             <label for="trans-account">Account</label>
-            <select id="trans-account" formControlName="accountId">
+            <select id="trans-account" [formField]="ledgerForm.accountId">
               @for (acct of accounts(); track acct.id) {
                 <option [value]="acct.id">
                   {{ accountTypeIcon(acct.type) }} {{ acct.name }}
@@ -338,7 +342,7 @@
           <label for="trans-type">Type</label>
           <select
             id="trans-type"
-            formControlName="type"
+            [formField]="ledgerForm.type"
             (change)="onTypeChange()"
           >
             <option value="expense">📉 Expense</option>
@@ -353,18 +357,14 @@
             <input
               id="trans-amount"
               type="number"
-              formControlName="amount"
+              [formField]="ledgerForm.amount"
               [class.has-error]="
-                ledgerForm.controls.amount.invalid &&
-                ledgerForm.controls.amount.touched
+                ledgerForm.amount().invalid() && ledgerForm.amount().touched()
               "
             />
             <span class="currency-tag">TND</span>
           </div>
-          @if (
-            ledgerForm.controls.amount.invalid &&
-            ledgerForm.controls.amount.touched
-          ) {
+          @if (ledgerForm.amount().invalid() && ledgerForm.amount().touched()) {
             <span class="field-error">Amount must be &gt; 0</span>
           }
         </div>
@@ -374,16 +374,13 @@
           <input
             id="trans-note"
             type="text"
-            formControlName="note"
+            [formField]="ledgerForm.note"
             placeholder="e.g., Groceries, Salary"
             [class.has-error]="
-              ledgerForm.controls.note.invalid &&
-              ledgerForm.controls.note.touched
+              ledgerForm.note().invalid() && ledgerForm.note().touched()
             "
           />
-          @if (
-            ledgerForm.controls.note.invalid && ledgerForm.controls.note.touched
-          ) {
+          @if (ledgerForm.note().invalid() && ledgerForm.note().touched()) {
             <span class="field-error">Note description is required</span>
           }
         </div>
@@ -400,7 +397,7 @@
           }
           <button
             type="submit"
-            [disabled]="ledgerForm.invalid"
+            [disabled]="ledgerForm().invalid()"
             class="btn-modern btn-submit"
           >
             @if (isEditing()) {
@@ -432,7 +429,7 @@
                 <button
                   type="button"
                   class="drop-item drop-all"
-                  [class.active]="!ledgerForm.value.categoryId"
+                  [class.active]="!ledgerModel().categoryId"
                   (click)="selectCategory('')"
                 >
                   — Uncategorized —
@@ -442,7 +439,7 @@
                     <button
                       type="button"
                       class="drop-item drop-parent"
-                      [class.active]="ledgerForm.value.categoryId === parent.id"
+                      [class.active]="ledgerModel().categoryId === parent.id"
                       (click)="selectCategory(parent.id)"
                     >
                       <span class="drop-icon">{{ parent.icon }}</span>
@@ -452,9 +449,7 @@
                       <button
                         type="button"
                         class="drop-item drop-child"
-                        [class.active]="
-                          ledgerForm.value.categoryId === child.id
-                        "
+                        [class.active]="ledgerModel().categoryId === child.id"
                         (click)="selectCategory(child.id)"
                       >
                         <span class="drop-icon">{{ child.icon }}</span>
@@ -487,7 +482,7 @@
                 <button
                   type="button"
                   class="drop-item drop-all"
-                  [class.active]="!ledgerForm.value.goalId"
+                  [class.active]="!ledgerModel().goalId"
                   (click)="selectGoal('')"
                 >
                   — None —
@@ -496,7 +491,7 @@
                   <button
                     type="button"
                     class="drop-item"
-                    [class.active]="ledgerForm.value.goalId === goal.id"
+                    [class.active]="ledgerModel().goalId === goal.id"
                     (click)="selectGoal(goal.id)"
                   >
                     🎯 {{ goal.name }}

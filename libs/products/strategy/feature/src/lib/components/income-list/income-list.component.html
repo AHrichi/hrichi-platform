@@ -3,22 +3,20 @@
     <h2><span class="header-icon">💰</span> Incomes</h2>
   </div>
 
-  <form [formGroup]="incomeForm" (ngSubmit)="onSubmit()" class="add-form">
+  <form [formRoot]="incomeForm" novalidate class="add-form">
     <div class="form-row">
       <div class="form-group">
         <label for="income-name">Name</label>
         <input
           id="income-name"
           type="text"
-          formControlName="name"
+          [formField]="incomeForm.name"
           placeholder="e.g., Salary"
           [class.has-error]="
-            incomeForm.controls.name.invalid && incomeForm.controls.name.touched
+            incomeForm.name().invalid && incomeForm.name().touched()
           "
         />
-        @if (
-          incomeForm.controls.name.invalid && incomeForm.controls.name.touched
-        ) {
+        @if (incomeForm.name().invalid && incomeForm.name().touched()) {
           <span class="field-error">Income name is required</span>
         }
       </div>
@@ -29,18 +27,14 @@
           <input
             id="income-amount"
             type="number"
-            formControlName="amount"
+            [formField]="incomeForm.amount"
             [class.has-error]="
-              incomeForm.controls.amount.invalid &&
-              incomeForm.controls.amount.touched
+              incomeForm.amount().invalid && incomeForm.amount().touched()
             "
           />
           <span class="currency-tag">TND</span>
         </div>
-        @if (
-          incomeForm.controls.amount.invalid &&
-          incomeForm.controls.amount.touched
-        ) {
+        @if (incomeForm.amount().invalid && incomeForm.amount().touched()) {
           <span class="field-error">Amount must be at least 1</span>
         }
       </div>
@@ -50,8 +44,7 @@
         <input
           id="income-start"
           type="number"
-          formControlName="startMonth"
-          min="1"
+          [formField]="incomeForm.startMonth"
         />
       </div>
 
@@ -60,14 +53,14 @@
         <input
           id="income-end"
           type="number"
-          formControlName="endMonth"
+          [formField]="incomeForm.endMonth"
           placeholder="Ongoing"
         />
       </div>
 
       <div class="form-group">
         <label for="income-growth-type">Growth Type</label>
-        <select id="income-growth-type" formControlName="growthType">
+        <select id="income-growth-type" [formField]="incomeForm.growthType">
           <option value="none">None</option>
           <option value="fixed">Fixed</option>
           <option value="percentage">Percentage (%)</option>
@@ -79,16 +72,12 @@
         <input
           id="income-growth-value"
           type="number"
-          formControlName="growthValue"
+          [formField]="incomeForm.growthValue"
         />
       </div>
 
       <div class="form-actions">
-        <button
-          type="submit"
-          [disabled]="incomeForm.invalid"
-          class="btn-modern btn-submit"
-        >
+        <button type="submit" class="btn-modern btn-submit">
           {{ editingId ? '✏️ Update Income' : '➕ Add Income' }}
         </button>
         @if (editingId) {

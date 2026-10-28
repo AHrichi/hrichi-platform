@@ -11,33 +11,8 @@ import { Tag } from '../tag/tag';
   imports: [RouterLink, Tag],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'ah-card ah-card--link' },
-  template: `
-    @if (eyebrow()) {
-      <p class="ah-eyebrow">{{ eyebrow() }}</p>
-    }
-    <h3 class="title">
-      <a class="ah-card__link" [routerLink]="href()">{{ heading() }}</a>
-    </h3>
-    <p class="ah-muted">{{ summary() }}</p>
-    @if (tags().length) {
-      <ul class="ah-cluster tags" role="list" style="--gap: var(--space-2)">
-        @for (tag of tags(); track tag) {
-          <li>
-            <ah-tag>{{ tag }}</ah-tag>
-          </li>
-        }
-      </ul>
-    }
-  `,
-  styles: `
-    .title {
-      font-size: var(--font-size-400);
-    }
-    .tags {
-      margin-block-start: auto;
-      padding-block-start: var(--space-2);
-    }
-  `,
+  templateUrl: './link-card.html',
+  styleUrl: './link-card.scss',
 })
 export class LinkCard {
   readonly heading = input.required<string>();

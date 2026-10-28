@@ -1,0 +1,34 @@
+<span
+  class="ah-tooltip-trigger"
+  tabindex="0"
+  [attr.aria-describedby]="tooltipId"
+  (keydown.escape)="hide()"
+>
+  <ng-content />
+  <span class="ah-tooltip-icon" aria-hidden="true">ⓘ</span>
+</span>
+
+@if (isOpen()) {
+  <div
+    class="ah-tooltip-box"
+    role="tooltip"
+    [id]="tooltipId"
+    [class.ah-tooltip-box--bottom]="position() === 'bottom'"
+  >
+    <div class="ah-tooltip-arrow" aria-hidden="true"></div>
+    @if (title()) {
+      <div class="ah-tooltip-title">{{ title() }}</div>
+    }
+    <div class="ah-tooltip-body">{{ body() }}</div>
+    @if (formula()) {
+      <div class="ah-tooltip-formula">
+        <span class="ah-tooltip-prop-label">Formula:</span> {{ formula() }}
+      </div>
+    }
+    @if (meaning()) {
+      <div class="ah-tooltip-meaning">
+        <span class="ah-tooltip-prop-label">Meaning:</span> {{ meaning() }}
+      </div>
+    }
+  </div>
+}

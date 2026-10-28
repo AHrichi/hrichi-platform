@@ -3,23 +3,20 @@
     <h2><span class="header-icon">💸</span> Expenses</h2>
   </div>
 
-  <form [formGroup]="expenseForm" (ngSubmit)="onSubmit()" class="add-form">
+  <form [formRoot]="expenseForm" novalidate class="add-form">
     <div class="form-row">
       <div class="form-group">
         <label for="expense-name">Name</label>
         <input
           id="expense-name"
           type="text"
-          formControlName="name"
+          [formField]="expenseForm.name"
           placeholder="e.g., Gym, Groceries"
           [class.has-error]="
-            expenseForm.controls.name.invalid &&
-            expenseForm.controls.name.touched
+            expenseForm.name().invalid && expenseForm.name().touched()
           "
         />
-        @if (
-          expenseForm.controls.name.invalid && expenseForm.controls.name.touched
-        ) {
+        @if (expenseForm.name().invalid && expenseForm.name().touched()) {
           <span class="field-error">Expense name is required</span>
         }
       </div>
@@ -30,18 +27,14 @@
           <input
             id="expense-amount"
             type="number"
-            formControlName="amount"
+            [formField]="expenseForm.amount"
             [class.has-error]="
-              expenseForm.controls.amount.invalid &&
-              expenseForm.controls.amount.touched
+              expenseForm.amount().invalid && expenseForm.amount().touched()
             "
           />
           <span class="currency-tag">TND</span>
         </div>
-        @if (
-          expenseForm.controls.amount.invalid &&
-          expenseForm.controls.amount.touched
-        ) {
+        @if (expenseForm.amount().invalid && expenseForm.amount().touched()) {
           <span class="field-error">Amount must be at least 1</span>
         }
       </div>
@@ -51,8 +44,7 @@
         <input
           id="expense-start"
           type="number"
-          formControlName="startMonth"
-          min="1"
+          [formField]="expenseForm.startMonth"
         />
       </div>
 
@@ -61,7 +53,7 @@
         <input
           id="expense-months"
           type="number"
-          formControlName="monthsActive"
+          [formField]="expenseForm.monthsActive"
           placeholder="Ongoing"
         />
       </div>
@@ -71,17 +63,12 @@
         <input
           id="expense-interval"
           type="number"
-          formControlName="recurrenceInterval"
-          min="1"
+          [formField]="expenseForm.recurrenceInterval"
         />
       </div>
 
       <div class="form-actions">
-        <button
-          type="submit"
-          [disabled]="expenseForm.invalid"
-          class="btn-modern btn-submit"
-        >
+        <button type="submit" class="btn-modern btn-submit">
           {{ editingId ? '✏️ Update Expense' : '➕ Add Expense' }}
         </button>
 

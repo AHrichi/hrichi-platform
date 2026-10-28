@@ -1,0 +1,16 @@
+@if (eyebrow()) {
+  <p class="ah-eyebrow">{{ eyebrow() }}</p>
+}
+<h3 class="title">
+  <a class="ah-card__link" [routerLink]="href()">{{ heading() }}</a>
+</h3>
+<p class="ah-muted">{{ summary() }}</p>
+@if (tags().length) {
+  <ul class="ah-cluster tags" role="list" style="--gap: var(--space-2)">
+    @for (tag of tags(); track tag) {
+      <li>
+        <ah-tag>{{ tag }}</ah-tag>
+      </li>
+    }
+  </ul>
+}

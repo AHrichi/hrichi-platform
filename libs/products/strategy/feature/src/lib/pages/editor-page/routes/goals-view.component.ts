@@ -6,27 +6,8 @@ import { GoalListComponent } from '../../../components/goal-list/goal-list.compo
   selector: 'app-goals-view',
   standalone: true,
   imports: [GoalListComponent],
-  template: `
-    <app-goal-list
-      [goals]="store.activeScenario().goals"
-      [startDate]="store.activeScenario().startDate"
-      [milestones]="store.currentGoalProgress()"
-      [realityMilestones]="store.realityGoalProgress()"
-      [otherScenarios]="otherScenarios()"
-      (applyToScenarios)="store.applyGoalToScenarios($event)"
-      (add)="store.addGoal($event)"
-      (remove)="store.removeGoal($event)"
-      (toggle)="store.toggleGoal(store.activeScenarioId(), $event)"
-      (edit)="store.editGoal($event.id, $event.updated)"
-      (reorder)="
-        store.reorderGoals(
-          store.activeScenarioId(),
-          $event.previousIndex,
-          $event.currentIndex
-        )
-      "
-    ></app-goal-list>
-  `,
+  templateUrl: './goals-view.component.html',
+  styleUrl: './goals-view.component.scss',
 })
 export class GoalsViewComponent {
   store = inject(FinancialStore);

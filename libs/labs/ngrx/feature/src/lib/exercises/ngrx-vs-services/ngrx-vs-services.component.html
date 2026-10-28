@@ -1,0 +1,348 @@
+<div class="architecture-guide-container">
+  <ah-section-heading
+    eyebrow="Architectural Showdown"
+    heading="NgRx vs Services: State Strategy Matrix"
+    lead="A recruiter-ready, senior-level evaluation: when to use plain Services (Signals/RxJS), when to pick NgRx SignalStore, and when to reach for the Global Redux Store."
+  />
+
+  <!-- State Architecture Spectrum Visual Ruler -->
+  <div class="spectrum-card">
+    <div class="spectrum-header">
+      <span class="spectrum-title"
+        >The Angular State Architecture Spectrum</span
+      >
+      <span class="spectrum-sub"
+        >From Lightweight UI Reactivity to Mission-Critical Enterprise
+        Orchestration</span
+      >
+    </div>
+    <div class="spectrum-track">
+      <div class="spectrum-step tier-1">
+        <span class="step-num">Tier 1</span>
+        <strong>Component Signal</strong>
+        <span>Local UI flags, toggles, forms</span>
+      </div>
+      <div class="spectrum-arrow">→</div>
+      <div class="spectrum-step tier-2">
+        <span class="step-num">Tier 2</span>
+        <strong>Signal Service</strong>
+        <span>Feature-scoped, single API service</span>
+      </div>
+      <div class="spectrum-arrow">→</div>
+      <div class="spectrum-step tier-3 highlight-tier">
+        <span class="step-num">Tier 3 ⭐</span>
+        <strong>NgRx SignalStore</strong>
+        <span>Modular, normalized O(1), rxMethod</span>
+      </div>
+      <div class="spectrum-arrow">→</div>
+      <div class="spectrum-step tier-4">
+        <span class="step-num">Tier 4</span>
+        <strong>Global Redux Store</strong>
+        <span>Multi-team, cross-feature events</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Interactive State Advisor Wizard -->
+  <div class="advisor-card">
+    <div class="advisor-header">
+      <div class="advisor-title-group">
+        <span class="icon">🧭</span>
+        <div>
+          <h3 class="advisor-title">State Architecture Advisor</h3>
+          <p class="advisor-sub">
+            Answer 3 questions to generate an architectural recommendation for
+            your project.
+          </p>
+        </div>
+      </div>
+      <ah-tag>Interactive Wizard</ah-tag>
+    </div>
+
+    <div class="wizard-questions">
+      <!-- Question 1: Scope -->
+      <div class="question-block">
+        <span class="q-label">1. State Scope &amp; Sharing:</span>
+        <div class="option-pills">
+          <button
+            type="button"
+            class="pill"
+            [class.active]="stateScope() === 'local'"
+            (click)="stateScope.set('local')"
+          >
+            Feature / Component Local
+          </button>
+          <button
+            type="button"
+            class="pill"
+            [class.active]="stateScope() === 'modular'"
+            (click)="stateScope.set('modular')"
+          >
+            Shared Across Related Features
+          </button>
+          <button
+            type="button"
+            class="pill"
+            [class.active]="stateScope() === 'global'"
+            (click)="stateScope.set('global')"
+          >
+            App-Wide Global Cache
+          </button>
+        </div>
+      </div>
+
+      <!-- Question 2: Async Complexity -->
+      <div class="question-block">
+        <span class="q-label">2. Async &amp; Event Choreography:</span>
+        <div class="option-pills">
+          <button
+            type="button"
+            class="pill"
+            [class.active]="asyncComplexity() === 'simple'"
+            (click)="asyncComplexity.set('simple')"
+          >
+            Simple HTTP fetch / mutations
+          </button>
+          <button
+            type="button"
+            class="pill"
+            [class.active]="asyncComplexity() === 'streams'"
+            (click)="asyncComplexity.set('streams')"
+          >
+            Debounced search, polling, WebSockets
+          </button>
+          <button
+            type="button"
+            class="pill"
+            [class.active]="asyncComplexity() === 'choreography'"
+            (click)="asyncComplexity.set('choreography')"
+          >
+            Cross-feature action choreography
+          </button>
+        </div>
+      </div>
+
+      <!-- Question 3: Team & Audit -->
+      <div class="question-block">
+        <span class="q-label">3. Team Scale &amp; Time-Travel Audit:</span>
+        <div class="option-pills">
+          <button
+            type="button"
+            class="pill"
+            [class.active]="auditLevel() === 'standard'"
+            (click)="auditLevel.set('standard')"
+          >
+            Standard Dev (Console / Tests)
+          </button>
+          <button
+            type="button"
+            class="pill"
+            [class.active]="auditLevel() === 'strict'"
+            (click)="auditLevel.set('strict')"
+          >
+            Strict Compliance / Redux DevTools Replay
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Wizard Recommendation Output -->
+    <div class="recommendation-result">
+      <div class="result-badge-row">
+        <span class="result-label">Recommended Architecture:</span>
+        <ah-tag>{{ wizardRecommendation().winner }}</ah-tag>
+      </div>
+      <p class="result-rationale">{{ wizardRecommendation().rationale }}</p>
+      <div class="result-actions">
+        <button
+          type="button"
+          ahButton="secondary"
+          size="sm"
+          (click)="selectPattern(wizardRecommendation().patternKey)"
+        >
+          Inspect Pattern Specifications &amp; Code Snippet &darr;
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pattern Selector Cards -->
+  <div class="pattern-tabs">
+    @for (pat of patterns; track pat.key) {
+      <button
+        type="button"
+        class="pattern-tab-card"
+        [class.active]="selectedPatternKey() === pat.key"
+        (click)="selectPattern(pat.key)"
+      >
+        <div class="tab-top">
+          <span class="tab-name">{{ pat.name }}</span>
+          <ah-tag>
+            {{ pat.badge }}
+          </ah-tag>
+        </div>
+        <p class="tab-tagline">{{ pat.tagline }}</p>
+      </button>
+    }
+  </div>
+
+  <!-- Detailed Specification of Selected Pattern -->
+  @if (currentPattern(); as pat) {
+    <div class="pattern-detail-card">
+      <div class="detail-header">
+        <div>
+          <span class="detail-eyebrow">Architecture Profile</span>
+          <h3 class="detail-title">{{ pat.name }}</h3>
+          <p class="detail-tagline">{{ pat.tagline }}</p>
+        </div>
+        <div class="metrics-cluster">
+          <div class="metric-chip">
+            <span class="k">Bundle Impact</span>
+            <span class="v">{{ pat.bundleWeight }}</span>
+          </div>
+          <div class="metric-chip">
+            <span class="k">Learning Curve</span>
+            <span class="v">{{ pat.learningCurve }}</span>
+          </div>
+          <div class="metric-chip">
+            <span class="k">Time-Travel</span>
+            <span class="v">{{ pat.timeTravelSupport }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="tradeoffs-grid">
+        <div class="tradeoff-box pros">
+          <span class="box-title">✅ When To Use (Prime Fit)</span>
+          <ul>
+            @for (item of pat.whenToUse; track item) {
+              <li>{{ item }}</li>
+            }
+          </ul>
+        </div>
+        <div class="tradeoff-box cons">
+          <span class="box-title">⚠️ When To Avoid (Pitfalls)</span>
+          <ul>
+            @for (item of pat.whenToAvoid; track item) {
+              <li>{{ item }}</li>
+            }
+          </ul>
+        </div>
+      </div>
+
+      <div class="code-section">
+        <div class="code-header">
+          <span class="code-title"
+            >Idiomatic Angular 22 Implementation Example:</span
+          >
+        </div>
+        <pre class="code-block"><code>{{ pat.codeSample }}</code></pre>
+      </div>
+    </div>
+  }
+
+  <!-- Comparison Matrix Table -->
+  <div class="matrix-card">
+    <h4 class="matrix-heading">
+      Comprehensive Architectural Comparison Matrix
+    </h4>
+    <div class="table-wrapper">
+      <table class="comparison-table">
+        <thead>
+          <tr>
+            <th>Evaluation Dimension</th>
+            <th>Service + Signals</th>
+            <th>Service + RxJS</th>
+            <th>NgRx SignalStore</th>
+            <th>NgRx Global Store</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Reactivity Model</strong></td>
+            <td>Push-pull Glitch-free Signals</td>
+            <td>Push Observable Streams</td>
+            <td>Push-pull Signals + rxMethod</td>
+            <td>Observable Slices (or toSignal)</td>
+          </tr>
+          <tr>
+            <td><strong>Boilerplate Level</strong></td>
+            <td>Lowest (Zero framework)</td>
+            <td>Low-Medium (Subjects)</td>
+            <td>Low (Declarative plugins)</td>
+            <td>High (Actions/Reducers/Effects)</td>
+          </tr>
+          <tr>
+            <td><strong>Zoneless Ergonomics</strong></td>
+            <td>First-class native</td>
+            <td>Requires async pipe / rxResource</td>
+            <td>First-class native</td>
+            <td>Requires selectSignal / toSignal</td>
+          </tr>
+          <tr>
+            <td><strong>Entity Normalization</strong></td>
+            <td>Manual object mapping</td>
+            <td>Manual object mapping</td>
+            <td>Built-in <code>withEntities()</code></td>
+            <td>Built-in <code>@ngrx/entity</code></td>
+          </tr>
+          <tr>
+            <td><strong>DevTools &amp; Time-Travel</strong></td>
+            <td>Standard Browser DevTools</td>
+            <td>Console logs / taps</td>
+            <td>Custom Signal plugins</td>
+            <td>Full Redux DevTools Extension</td>
+          </tr>
+          <tr>
+            <td><strong>Best Use Case</strong></td>
+            <td>Component UI / Form state</td>
+            <td>Real-time stream aggregation</td>
+            <td>Modular features (Recommended)</td>
+            <td>Large enterprise cross-team state</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Recruiter & Senior Architect Q&A Card -->
+  <div class="interview-card">
+    <div class="interview-header">
+      <span class="interview-eyebrow"
+        >Senior Developer &amp; Recruiter Q&amp;A</span
+      >
+      <h4 class="interview-title">
+        Critical State Management Architecture Questions
+      </h4>
+    </div>
+
+    <div class="faq-list">
+      @for (faq of interviewFaqs; track faq.id) {
+        <div class="faq-item" [class.open]="expandedFaqId() === faq.id">
+          <button
+            type="button"
+            class="faq-question-btn"
+            (click)="toggleFaq(faq.id)"
+            [attr.aria-expanded]="expandedFaqId() === faq.id"
+          >
+            <span class="q-icon">💬</span>
+            <span class="q-text">{{ faq.question }}</span>
+            <span class="toggle-icon">{{
+              expandedFaqId() === faq.id ? '▲' : '▼'
+            }}</span>
+          </button>
+          @if (expandedFaqId() === faq.id) {
+            <div class="faq-answer">
+              <p>{{ faq.answer }}</p>
+              @if (faq.takeaway) {
+                <div class="takeaway-box">
+                  <strong>Key Rule of Thumb:</strong> {{ faq.takeaway }}
+                </div>
+              }
+            </div>
+          }
+        </div>
+      }
+    </div>
+  </div>
+</div>
