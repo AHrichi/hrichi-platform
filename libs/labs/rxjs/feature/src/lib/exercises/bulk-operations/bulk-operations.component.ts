@@ -146,13 +146,19 @@ export class BulkOperationsComponent {
 
   // --- Input Handlers ---
   onFileCountChange(event: Event) {
-    this.fileCount.set(Number((event.target as HTMLInputElement).value));
-    this.reset('forkJoin');
-    this.reset('bufferCount');
+    const val = Number((event.target as HTMLInputElement).value);
+    if (!isNaN(val) && val >= 1) {
+      this.fileCount.set(val);
+      this.reset('forkJoin');
+      this.reset('bufferCount');
+    }
   }
 
   onBatchSizeChange(event: Event) {
-    this.batchSize.set(Number((event.target as HTMLInputElement).value));
-    this.reset('bufferCount');
+    const val = Number((event.target as HTMLInputElement).value);
+    if (!isNaN(val) && val >= 1) {
+      this.batchSize.set(val);
+      this.reset('bufferCount');
+    }
   }
 }

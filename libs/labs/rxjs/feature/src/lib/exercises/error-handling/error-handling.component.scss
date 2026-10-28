@@ -68,17 +68,19 @@
 
 .config-item input {
   padding: 8px 12px;
-  border-radius: 6px;
-  border: 1px solid #cbd5e0;
-  background-color: white;
+  border-radius: var(--radius-sm, 6px);
+  border: 1px solid var(--color-border-default, #cbd5e0);
+  background-color: var(--color-bg-canvas, white);
+  color: var(--color-text-default, #1e293b);
+  font-family: var(--font-family-sans, system-ui, sans-serif);
   font-size: 0.875rem;
   width: 120px;
 }
 
 .config-item input:focus {
   outline: none;
-  border-color: #4299e1;
-  box-shadow: 0 0 0 1px #4299e1;
+  border-color: var(--color-accent-default, #4299e1);
+  box-shadow: 0 0 0 2px var(--color-accent-subtle, rgba(66, 153, 225, 0.2));
 }
 
 .button-group {

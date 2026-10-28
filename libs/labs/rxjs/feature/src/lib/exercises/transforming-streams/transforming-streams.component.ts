@@ -362,15 +362,19 @@ source$.pipe(
   }
 
   onSourceEmissionsChange(event: Event) {
-    this.sourceEmissions.set(Number((event.target as HTMLInputElement).value));
+    const val = Number((event.target as HTMLInputElement).value);
+    if (!isNaN(val) && val >= 1) this.sourceEmissions.set(val);
   }
   onSourceIntervalChange(event: Event) {
-    this.sourceInterval.set(Number((event.target as HTMLInputElement).value));
+    const val = Number((event.target as HTMLInputElement).value);
+    if (!isNaN(val) && val >= 100) this.sourceInterval.set(val);
   }
   onInnerValuesChange(event: Event) {
-    this.innerValues.set(Number((event.target as HTMLInputElement).value));
+    const val = Number((event.target as HTMLInputElement).value);
+    if (!isNaN(val) && val >= 1) this.innerValues.set(val);
   }
   onInnerIntervalChange(event: Event) {
-    this.innerInterval.set(Number((event.target as HTMLInputElement).value));
+    const val = Number((event.target as HTMLInputElement).value);
+    if (!isNaN(val) && val >= 100) this.innerInterval.set(val);
   }
 }

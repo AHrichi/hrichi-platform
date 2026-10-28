@@ -75,8 +75,11 @@
               <input
                 type="text"
                 #blankInput
+                [value]="selectedAnswer() ?? ''"
                 (input)="selectAnswer(blankInput.value)"
+                (keydown.enter)="submitAnswer()"
                 [disabled]="isAnswered()"
+                placeholder="Type your answer and press Enter..."
               />
               @if (isAnswered()) {
                 <span class="answer-reveal" [class.correct]="isCorrect()">

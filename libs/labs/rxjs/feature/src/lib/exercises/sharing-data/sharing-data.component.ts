@@ -53,8 +53,14 @@ export class SharingDataComponent {
   onParentInputChange(event: Event) {
     const value = (event.target as HTMLInputElement).value;
     this.parentData.set(value);
+  }
+
+  sendParentData() {
     this.triggerAnimation('animateParentToChild');
-    this.notificationService.show(`Sending "${value}" to child`, 'info');
+    this.notificationService.show(
+      `Sending "${this.parentData()}" to child`,
+      'info',
+    );
   }
 
   onDataFromChild(data: string) {

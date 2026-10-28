@@ -319,13 +319,17 @@ export class MulticastingComponent implements OnDestroy {
 
   // --- Input Handlers ---
   onReplayBufferSizeChange(event: Event) {
-    this.replayBufferSize.set(Number((event.target as HTMLInputElement).value));
-    this.reset('replaySubject');
+    const val = Number((event.target as HTMLInputElement).value);
+    if (!isNaN(val) && val >= 1) {
+      this.replayBufferSize.set(val);
+      this.reset('replaySubject');
+    }
   }
   onBehaviorInitialValueChange(event: Event) {
-    this.behaviorInitialValue.set(
-      Number((event.target as HTMLInputElement).value),
-    );
-    this.reset('behaviorSubject');
+    const val = Number((event.target as HTMLInputElement).value);
+    if (!isNaN(val)) {
+      this.behaviorInitialValue.set(val);
+      this.reset('behaviorSubject');
+    }
   }
 }

@@ -26,12 +26,19 @@
         <p><strong>Parent Component</strong></p>
         <div class="config-item">
           <label for="parent-input">Data to send:</label>
-          <input
-            id="parent-input"
-            type="text"
-            [value]="parentData()"
-            (input)="onParentInputChange($event)"
-          />
+          <div class="input-with-button">
+            <input
+              id="parent-input"
+              type="text"
+              [value]="parentData()"
+              (input)="onParentInputChange($event)"
+              (keydown.enter)="sendParentData()"
+              placeholder="Type message to child..."
+            />
+            <button type="button" (click)="sendParentData()">
+              Send to Child
+            </button>
+          </div>
         </div>
 
         <div class="child-container">

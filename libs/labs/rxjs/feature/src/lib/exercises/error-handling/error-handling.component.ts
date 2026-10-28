@@ -207,11 +207,17 @@ export class ErrorHandlingComponent {
   // --- Methods to update signals from the template ---
   onRetryDelayChange(event: Event) {
     const value = (event.target as HTMLInputElement).value;
-    this.retryDelay.set(Number(value));
+    const num = Number(value);
+    if (!isNaN(num) && num >= 0) {
+      this.retryDelay.set(num);
+    }
   }
 
   onMaxRetriesChange(event: Event) {
     const value = (event.target as HTMLInputElement).value;
-    this.maxRetries.set(Number(value));
+    const num = Number(value);
+    if (!isNaN(num) && num >= 0) {
+      this.maxRetries.set(num);
+    }
   }
 }
