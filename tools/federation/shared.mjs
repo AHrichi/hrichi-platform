@@ -14,6 +14,7 @@ export const shared = fromPackageJson({
   build: 'package',
 })
   .patch(['@angular/*'], { includeSecondaries: { keepAll: true } })
+  .patch(['@ngrx/*'], { includeSecondaries: { keepAll: true } })
   .get();
 
 /**

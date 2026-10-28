@@ -26,4 +26,9 @@ export const labs = {
     heading: 'RxJS Practice Pad',
     lead: 'Interactive laboratory for reactive stream patterns, multicast subjects, error handling strategies, caching architectures, and Angular signal interoperability in zoneless Angular.',
   },
+  'lab-ngrx': {
+    eyebrow: 'Lab · NgRx State Architecture & Signals',
+    heading: 'NgRx State Lab & Architecture Guide',
+    lead: 'Interactive laboratory for state transitions, animated store cycles, SignalStore plugins, side-effect pipelines, entity normalization, and an architectural showdown comparing NgRx with service-based state.',
+  },
 } as const satisfies Record<string, LabIntro>;

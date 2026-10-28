@@ -15,5 +15,9 @@
   "lab-rxjs": {
     "development": "http://localhost:4304",
     "production": "https://lab-rxjs.ahmed-hrichi.workers.dev"
+  },
+  "lab-ngrx": {
+    "development": "http://localhost:4305",
+    "production": "https://lab-ngrx.ahmed-hrichi.workers.dev"
   }
 }

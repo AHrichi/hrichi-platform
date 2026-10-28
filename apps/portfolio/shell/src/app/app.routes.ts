@@ -65,6 +65,13 @@ export const appRoutes: Route[] = [
     loadChildren: federatedRoutes('lab-rxjs'),
     title: 'RxJS Practice Pad · Ahmed Hrichi',
   },
+  {
+    path: 'labs/ngrx',
+    component: LabFrame,
+    data: labs['lab-ngrx'],
+    loadChildren: federatedRoutes('lab-ngrx'),
+    title: 'NgRx State Lab & Architecture Guide · Ahmed Hrichi',
+  },
   // The Orbit lab became the Sky lab (ADR-0016); keep old links working.
   { path: 'labs/orbit', redirectTo: 'labs/sky', pathMatch: 'full' },
   {

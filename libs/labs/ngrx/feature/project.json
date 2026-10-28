@@ -1,0 +1,9 @@
+{
+  "name": "lab-ngrx-feature",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/labs/ngrx/feature/src",
+  "prefix": "ah",
+  "projectType": "library",
+  "tags": ["scope:lab-ngrx", "type:feature", "runtime:browser"],
+  "targets": {}
+}
