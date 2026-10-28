@@ -2,6 +2,7 @@ import { effect, inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { patchState, signalStoreFeature, type, withHooks } from '@ngrx/signals';
 import type { DispatchState } from './dispatch.state';
+import { DispatchApiService } from '../services/dispatch-api.service';
 
 const STORAGE_KEY = 'ah_pulseops_state_scratch_v2';
 
@@ -11,6 +12,7 @@ export function withDispatchHooks() {
     withHooks((state) => {
       const platformId = inject(PLATFORM_ID);
       const isBrowser = isPlatformBrowser(platformId);
+      const api = inject(DispatchApiService);
 
       return {
         onInit() {
@@ -29,6 +31,7 @@ export function withDispatchHooks() {
                 messages: parsed.messages ?? state.messages(),
                 incidents: parsed.incidents ?? state.incidents(),
                 activeShift: parsed.activeShift ?? state.activeShift(),
+                currentUser: parsed.currentUser ?? state.currentUser(),
               });
             }
           } catch {
@@ -45,6 +48,7 @@ export function withDispatchHooks() {
               messages: state.messages(),
               incidents: state.incidents(),
               activeShift: state.activeShift(),
+              currentUser: state.currentUser(),
             };
             try {
               localStorage.setItem(STORAGE_KEY, JSON.stringify(snapshot));
@@ -53,7 +57,27 @@ export function withDispatchHooks() {
             }
           });
 
-          // 3. Live London time clock
+          // 3. Check Cloud Backend & MongoDB Quotas in background
+          api
+            .checkConnectionAndQuota()
+            .then((quota) => {
+              if (quota) {
+                patchState(state, {
+                  isCloudConnected: true,
+                  dbQuotaUsage: {
+                    ordersCount: quota.orders.current,
+                    maxOrders: quota.orders.max,
+                    pct: quota.orders.pct,
+                    status: quota.status,
+                  },
+                });
+              }
+            })
+            .catch(() => {
+              // Graceful offline degradation
+            });
+
+          // 4. Live London time clock
           const updateLondonTime = () => {
             try {
               const now = new Date();

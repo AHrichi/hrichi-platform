@@ -4,7 +4,11 @@ import {
   type,
   withMethods,
 } from '@ngrx/signals';
-import type { DispatchState, DispatchTab } from './dispatch.state';
+import type {
+  DispatchState,
+  DispatchTab,
+  CurrentDispatchUser,
+} from './dispatch.state';
 import { initialDispatchState } from './dispatch.state';
 import type {
   OrderStatus,
@@ -521,6 +525,26 @@ export function withDispatchMethods() {
         patchState(state, {
           stock: state.stock().filter((item) => item.sku !== sku),
         });
+      },
+
+      openAuthModal() {
+        patchState(state, { showAuthModal: true });
+      },
+
+      closeAuthModal() {
+        patchState(state, { showAuthModal: false });
+      },
+
+      setCurrentUser(currentUser: CurrentDispatchUser) {
+        patchState(state, { currentUser });
+      },
+
+      setCloudConnected(isCloudConnected: boolean) {
+        patchState(state, { isCloudConnected });
+      },
+
+      setDbQuotaUsage(dbQuotaUsage: DispatchState['dbQuotaUsage']) {
+        patchState(state, { dbQuotaUsage });
       },
 
       clearAllData() {

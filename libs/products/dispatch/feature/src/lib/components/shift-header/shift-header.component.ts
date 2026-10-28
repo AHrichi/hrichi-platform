@@ -18,11 +18,27 @@ import { AhButton } from '@ah/ui';
             <div>
               <div class="brand-title">
                 <h1>PulseOps</h1>
-                <span class="status-dot"></span>
-                <span class="status-text">Live Operations Hub</span>
+                <span
+                  class="status-dot"
+                  [class.is-cloud]="store.isCloudConnected()"
+                ></span>
+                <span class="status-text">
+                  {{
+                    store.isCloudConnected()
+                      ? 'MongoDB Cloud Active'
+                      : 'Offline-Safe Mode'
+                  }}
+                </span>
+                <span
+                  class="db-quota-pill"
+                  title="Free Cluster Quota Guard: Max 50 active orders to prevent DB overload"
+                >
+                  📦 DB: {{ store.orders().length }}/50 orders
+                </span>
               </div>
               <p class="brand-subtitle">
                 Commercial Laundry & Dispatch Control Center · London Zones 1–4
+                · AES-256 Encrypted
               </p>
             </div>
           </div>
@@ -51,18 +67,39 @@ import { AhButton } from '@ah/ui';
             </button>
           </div>
 
-          <!-- Active Coordinator Card -->
-          <div class="coordinator-card">
-            <span class="coordinator-avatar">{{
-              store.activeCoordinator().avatar
-            }}</span>
-            <div class="coordinator-info">
-              <span class="coord-label">Active Coordinator</span>
-              <span class="coord-name">{{
-                store.activeCoordinator().name
-              }}</span>
+          <!-- Active User / Role Card -->
+          <button
+            type="button"
+            class="user-role-card"
+            (click)="store.openAuthModal()"
+            title="Click to Switch Role (Owner, Coordinator, Driver, Subcontractor, Customer) or Sign In"
+          >
+            <span class="user-avatar">
+              {{
+                store.currentUser().role === 'owner'
+                  ? '👑'
+                  : store.currentUser().role === 'coordinator'
+                    ? '📋'
+                    : store.currentUser().role === 'driver'
+                      ? '🚚'
+                      : store.currentUser().role === 'plant_manager'
+                        ? '🏭'
+                        : '🏨'
+              }}
+            </span>
+            <div class="user-info">
+              <div class="user-top-line">
+                <span class="user-name">{{ store.currentUser().name }}</span>
+                <span
+                  class="role-pill"
+                  [class]="'role-' + store.currentUser().role"
+                >
+                  {{ store.currentUser().role | uppercase }}
+                </span>
+              </div>
+              <span class="security-tag">🔒 AES-256 · Switch Persona ▾</span>
             </div>
-          </div>
+          </button>
 
           <!-- Handover & Sync Buttons -->
           <div class="action-buttons">
@@ -298,6 +335,22 @@ import { AhButton } from '@ah/ui';
       background: #10b981;
       box-shadow: 0 0 8px #10b981;
       display: inline-block;
+
+      &.is-cloud {
+        background: #0284c7;
+        box-shadow: 0 0 8px #0284c7;
+      }
+    }
+
+    .db-quota-pill {
+      background: rgba(245, 158, 11, 0.12);
+      border: 1px solid rgba(245, 158, 11, 0.35);
+      color: #f59e0b;
+      font-size: 0.6875rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 9999px;
+      letter-spacing: 0.02em;
     }
 
     .status-text {
@@ -370,36 +423,82 @@ import { AhButton } from '@ah/ui';
       }
     }
 
-    .coordinator-card {
+    .user-role-card {
       display: flex;
       align-items: center;
       gap: 8px;
-      padding: 4px 12px;
+      padding: 4px 10px;
       background: var(--color-bg-canvas);
       border: 1px solid var(--color-border-default);
       border-radius: var(--radius-md, 0.5rem);
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.15s ease;
+
+      &:hover {
+        border-color: var(--color-accent-default);
+        transform: translateY(-1px);
+      }
     }
 
-    .coordinator-avatar {
+    .user-avatar {
       font-size: 1.25rem;
     }
 
-    .coordinator-info {
+    .user-info {
       display: flex;
       flex-direction: column;
     }
 
-    .coord-label {
-      font-size: 0.6875rem;
-      color: var(--color-text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
+    .user-top-line {
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
 
-    .coord-name {
+    .user-name {
       font-size: 0.8125rem;
       font-weight: 700;
       color: var(--color-text-default);
+      max-width: 140px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .role-pill {
+      font-size: 0.5625rem;
+      font-weight: 800;
+      padding: 1px 5px;
+      border-radius: 4px;
+      letter-spacing: 0.04em;
+
+      &.role-owner {
+        background: rgba(245, 158, 11, 0.15);
+        color: #f59e0b;
+      }
+      &.role-coordinator {
+        background: rgba(59, 130, 246, 0.15);
+        color: #3b82f6;
+      }
+      &.role-driver {
+        background: rgba(16, 185, 129, 0.15);
+        color: #10b981;
+      }
+      &.role-plant_manager {
+        background: rgba(168, 85, 247, 0.15);
+        color: #a855f7;
+      }
+      &.role-customer {
+        background: rgba(236, 72, 153, 0.15);
+        color: #ec4899;
+      }
+    }
+
+    .security-tag {
+      font-size: 0.625rem;
+      color: var(--color-text-muted);
+      font-weight: 600;
     }
 
     .action-buttons {

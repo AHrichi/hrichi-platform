@@ -21,6 +21,7 @@ import { AddOrderModalComponent } from './components/add-order-modal/add-order-m
 import { AddDriverModalComponent } from './components/add-driver-modal/add-driver-modal.component';
 import { AddPlantModalComponent } from './components/add-plant-modal/add-plant-modal.component';
 import { AddStockModalComponent } from './components/add-stock-modal/add-stock-modal.component';
+import { AuthModalComponent } from './components/auth-modal/auth-modal.component';
 import type { DispatchTab } from './store/dispatch.state';
 
 @Component({
@@ -41,6 +42,7 @@ import type { DispatchTab } from './store/dispatch.state';
     AddDriverModalComponent,
     AddPlantModalComponent,
     AddStockModalComponent,
+    AuthModalComponent,
   ],
   template: `
     <div class="pulseops-shell" [class.is-fullscreen]="isFullscreen()">
@@ -133,6 +135,14 @@ import type { DispatchTab } from './store/dispatch.state';
         <div class="nav-controls">
           <button
             type="button"
+            class="ctrl-btn role-btn"
+            (click)="store.openAuthModal()"
+            title="Switch User Persona (Owner, Coordinator, Driver, Subcontractor, Customer) or Sign In"
+          >
+            👤 Role: {{ store.currentUser().role }}
+          </button>
+          <button
+            type="button"
             class="ctrl-btn"
             (click)="store.loadSampleData()"
             title="Load sample demonstration data"
@@ -192,6 +202,7 @@ import type { DispatchTab } from './store/dispatch.state';
       <ah-add-driver-modal />
       <ah-add-plant-modal />
       <ah-add-stock-modal />
+      <ah-auth-modal />
     </div>
   `,
   styles: `

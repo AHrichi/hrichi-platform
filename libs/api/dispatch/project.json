@@ -1,0 +1,12 @@
+{
+  "name": "api-dispatch",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/api/dispatch/src",
+  "projectType": "library",
+  "tags": ["scope:api", "type:feature", "runtime:node"],
+  "targets": {
+    "test": {
+      "inputs": ["default", "^production"]
+    }
+  }
+}

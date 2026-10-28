@@ -5,6 +5,10 @@ export interface ApiConfig {
   corsOrigins: string[];
   mongo: { uri: string; dbName: string };
   leads: LeadsModuleOptions;
+  dispatch: {
+    authSecret: string;
+    encryptionKey: string;
+  };
 }
 
 /**
@@ -62,6 +66,14 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): ApiConfig {
           secret,
         }),
       ),
+    },
+    dispatch: {
+      authSecret:
+        env['DISPATCH_AUTH_SECRET']?.trim() ||
+        'pulseops-london-dispatch-secure-auth-secret-2026',
+      encryptionKey:
+        env['DISPATCH_ENCRYPTION_KEY']?.trim() ||
+        '0123456789abcdef0123456789abcdef', // 32 hex chars / 16 bytes minimum
     },
   };
 

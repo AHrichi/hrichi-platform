@@ -4,6 +4,11 @@
   "sourceRoot": "libs/products/dispatch/domain/src",
   "prefix": "ah",
   "projectType": "library",
-  "tags": ["scope:product-dispatch", "type:domain", "runtime:browser"],
+  "tags": [
+    "scope:product-dispatch",
+    "scope:shared",
+    "type:domain",
+    "runtime:agnostic"
+  ],
   "targets": {}
 }

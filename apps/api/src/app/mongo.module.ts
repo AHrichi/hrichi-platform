@@ -7,6 +7,7 @@ import {
 } from '@nestjs/common';
 import { MongoClient } from 'mongodb';
 import { MONGO_DB } from '@ah/api/leads';
+import { DISPATCH_MONGO_DB } from '@ah/api/dispatch';
 
 export const MONGO_CLIENT = Symbol('MONGO_CLIENT');
 
@@ -33,8 +34,13 @@ export class MongoModule implements OnApplicationShutdown {
           inject: [MONGO_CLIENT],
           useFactory: (client: MongoClient) => client.db(options.dbName),
         },
+        {
+          provide: DISPATCH_MONGO_DB,
+          inject: [MONGO_CLIENT],
+          useFactory: (client: MongoClient) => client.db(options.dbName),
+        },
       ],
-      exports: [MONGO_CLIENT, MONGO_DB],
+      exports: [MONGO_CLIENT, MONGO_DB, DISPATCH_MONGO_DB],
     };
   }
 

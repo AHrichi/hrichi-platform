@@ -3,6 +3,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { LeadsModule } from '@ah/api/leads';
+import { DispatchModule } from '@ah/api/dispatch';
 import type { ApiConfig } from './config';
 import { HealthController } from './health.controller';
 import { MongoModule } from './mongo.module';
@@ -18,6 +19,7 @@ export class AppModule {
         ScheduleModule.forRoot(),
         MongoModule.forRoot(config.mongo),
         LeadsModule.register(config.leads),
+        DispatchModule.register(config.dispatch),
       ],
       controllers: [HealthController],
       providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],

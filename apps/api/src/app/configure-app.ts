@@ -13,8 +13,8 @@ export function configureApp(
   app.use(helmet());
   app.enableCors({
     origin: config.corsOrigins,
-    methods: ['GET', 'POST'],
-    allowedHeaders: ['content-type'],
+    methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['content-type', 'authorization', 'x-requested-with'],
     maxAge: 86_400,
   });
   app.useGlobalPipes(

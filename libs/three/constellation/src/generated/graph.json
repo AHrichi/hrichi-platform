@@ -7,9 +7,19 @@
       "scope": "api",
       "layer": "app",
       "runtime": "node",
-      "x": 0.105,
-      "y": 0.964,
-      "z": -0.087
+      "x": -0.328,
+      "y": 0.642,
+      "z": 0.674
+    },
+    {
+      "id": "api-dispatch",
+      "kind": "lib",
+      "scope": "api",
+      "layer": "feature",
+      "runtime": "node",
+      "x": -0.62,
+      "y": 0.234,
+      "z": 0.727
     },
     {
       "id": "api-leads",
@@ -17,9 +27,9 @@
       "scope": "api",
       "layer": "feature",
       "runtime": "node",
-      "x": 0.463,
-      "y": 0.734,
-      "z": -0.392
+      "x": -0.061,
+      "y": 0.343,
+      "z": 0.913
     },
     {
       "id": "design-system",
@@ -27,9 +37,9 @@
       "scope": "design-system",
       "layer": "app",
       "runtime": "browser",
-      "x": -0.43,
-      "y": 0.752,
-      "z": -0.183
+      "x": -0.654,
+      "y": 0.566,
+      "z": 0.25
     },
     {
       "id": "design-system-e2e",
@@ -37,9 +47,9 @@
       "scope": "test",
       "layer": "e2e",
       "runtime": "node",
-      "x": -0.862,
-      "y": 0.457,
-      "z": 0.041
+      "x": -0.958,
+      "y": 0.082,
+      "z": 0.27
     },
     {
       "id": "design-system-tokens",
@@ -47,9 +57,9 @@
       "scope": "design-system",
       "layer": "tokens",
       "runtime": "agnostic",
-      "x": -0.637,
-      "y": 0.478,
-      "z": -0.455
+      "x": -0.85,
+      "y": 0.352,
+      "z": -0.093
     },
     {
       "id": "design-system-ui",
@@ -57,9 +67,9 @@
       "scope": "design-system",
       "layer": "ui",
       "runtime": "browser",
-      "x": 0.041,
-      "y": 0.282,
-      "z": 0.127
+      "x": 0.024,
+      "y": 0.163,
+      "z": 0.179
     },
     {
       "id": "lab-hello",
@@ -67,9 +77,9 @@
       "scope": "lab-hello",
       "layer": "app",
       "runtime": "browser",
-      "x": 0.223,
-      "y": -0.206,
-      "z": 0.88
+      "x": 0.714,
+      "y": 0.287,
+      "z": -0.55
     },
     {
       "id": "lab-ngrx",
@@ -77,9 +87,9 @@
       "scope": "lab-ngrx",
       "layer": "app",
       "runtime": "browser",
-      "x": 0.138,
-      "y": 0.251,
-      "z": 0.86
+      "x": 0.663,
+      "y": 0.591,
+      "z": -0.14
     },
     {
       "id": "lab-ngrx-feature",
@@ -87,9 +97,9 @@
       "scope": "lab-ngrx",
       "layer": "feature",
       "runtime": "browser",
-      "x": -0.024,
-      "y": 0.75,
-      "z": 0.561
+      "x": 0.222,
+      "y": 0.815,
+      "z": 0.389
     },
     {
       "id": "lab-rxjs",
@@ -97,9 +107,9 @@
       "scope": "lab-rxjs",
       "layer": "app",
       "runtime": "browser",
-      "x": -0.269,
-      "y": 0.177,
-      "z": 0.82
+      "x": 0.351,
+      "y": 0.577,
+      "z": -0.538
     },
     {
       "id": "lab-rxjs-feature",
@@ -107,9 +117,9 @@
       "scope": "lab-rxjs",
       "layer": "feature",
       "runtime": "browser",
-      "x": -0.585,
-      "y": 0.559,
-      "z": 0.476
+      "x": -0.174,
+      "y": 0.898,
+      "z": -0.06
     },
     {
       "id": "lab-sky",
@@ -117,9 +127,9 @@
       "scope": "lab-sky",
       "layer": "app",
       "runtime": "browser",
-      "x": 0.33,
-      "y": -0.747,
-      "z": 0.139
+      "x": 0.571,
+      "y": -0.502,
+      "z": -0.392
     },
     {
       "id": "lab-sky-domain",
@@ -127,9 +137,9 @@
       "scope": "lab-sky",
       "layer": "domain",
       "runtime": "agnostic",
-      "x": 0.34,
-      "y": -0.271,
-      "z": -0.871
+      "x": -0.303,
+      "y": -0.887,
+      "z": -0.276
     },
     {
       "id": "lab-sky-feature",
@@ -137,9 +147,9 @@
       "scope": "lab-sky",
       "layer": "feature",
       "runtime": "browser",
-      "x": -0.018,
-      "y": -0.428,
-      "z": -0.705
+      "x": -0.524,
+      "y": -0.558,
+      "z": -0.104
     },
     {
       "id": "orbit-api",
@@ -147,9 +157,9 @@
       "scope": "orbit",
       "layer": "app",
       "runtime": "jvm",
-      "x": -0.456,
-      "y": -0.844,
-      "z": -0.119
+      "x": -0.4,
+      "y": -0.354,
+      "z": 0.845
     },
     {
       "id": "platform-app-mode",
@@ -157,9 +167,9 @@
       "scope": "platform",
       "layer": "platform",
       "runtime": "browser",
-      "x": -0.813,
-      "y": -0.237,
-      "z": 0.35
+      "x": 0.15,
+      "y": -0.648,
+      "z": -0.639
     },
     {
       "id": "platform-federation",
@@ -167,9 +177,9 @@
       "scope": "platform",
       "layer": "platform",
       "runtime": "browser",
-      "x": -0.153,
-      "y": -0.369,
-      "z": 0.73
+      "x": 0.492,
+      "y": -0.019,
+      "z": -0.634
     },
     {
       "id": "platform-inspector",
@@ -177,9 +187,9 @@
       "scope": "platform",
       "layer": "platform",
       "runtime": "browser",
-      "x": -0.579,
-      "y": -0.189,
-      "z": 0.699
+      "x": 0.124,
+      "y": 0.147,
+      "z": -0.899
     },
     {
       "id": "portfolio-feature-cv",
@@ -187,9 +197,9 @@
       "scope": "portfolio",
       "layer": "feature",
       "runtime": "browser",
-      "x": 0.624,
-      "y": 0.49,
-      "z": 0.355
+      "x": 0.574,
+      "y": 0.269,
+      "z": 0.609
     },
     {
       "id": "portfolio-feature-experience",
@@ -197,9 +207,9 @@
       "scope": "portfolio",
       "layer": "feature",
       "runtime": "browser",
-      "x": 0.675,
-      "y": -0.401,
-      "z": 0.4
+      "x": 0.855,
+      "y": -0.261,
+      "z": 0.101
     },
     {
       "id": "portfolio-feature-home",
@@ -207,9 +217,9 @@
       "scope": "portfolio",
       "layer": "feature",
       "runtime": "browser",
-      "x": 0.609,
-      "y": 0.355,
-      "z": -0.27
+      "x": 0.273,
+      "y": 0.692,
+      "z": -0.162
     },
     {
       "id": "portfolio-feature-services",
@@ -217,9 +227,9 @@
       "scope": "portfolio",
       "layer": "feature",
       "runtime": "browser",
-      "x": 0.706,
-      "y": -0.394,
-      "z": -0.069
+      "x": 0.542,
+      "y": -0.137,
+      "z": 0.624
     },
     {
       "id": "portfolio-feature-work",
@@ -227,9 +237,9 @@
       "scope": "portfolio",
       "layer": "feature",
       "runtime": "browser",
-      "x": 0.539,
-      "y": 0.325,
-      "z": 0.629
+      "x": 0.729,
+      "y": -0.307,
+      "z": 0.385
     },
     {
       "id": "portfolio-util-seo",
@@ -237,9 +247,39 @@
       "scope": "portfolio",
       "layer": "util",
       "runtime": "browser",
-      "x": 0.877,
-      "y": 0.121,
-      "z": 0.203
+      "x": 0.831,
+      "y": 0.164,
+      "z": 0.371
+    },
+    {
+      "id": "product-dispatch",
+      "kind": "app",
+      "scope": "product-dispatch",
+      "layer": "app",
+      "runtime": "browser",
+      "x": 0.229,
+      "y": -0.8,
+      "z": -0.231
+    },
+    {
+      "id": "product-dispatch-domain",
+      "kind": "lib",
+      "scope": "product-dispatch",
+      "layer": "domain",
+      "runtime": "agnostic",
+      "x": -0.762,
+      "y": -0.309,
+      "z": 0.548
+    },
+    {
+      "id": "product-dispatch-feature",
+      "kind": "lib",
+      "scope": "product-dispatch",
+      "layer": "feature",
+      "runtime": "browser",
+      "x": -0.279,
+      "y": -0.779,
+      "z": 0.326
     },
     {
       "id": "product-strategy",
@@ -247,9 +287,9 @@
       "scope": "product-strategy",
       "layer": "app",
       "runtime": "browser",
-      "x": -0.531,
-      "y": -0.615,
-      "z": 0.446
+      "x": 0.287,
+      "y": -0.32,
+      "z": -0.829
     },
     {
       "id": "shared-api-client",
@@ -257,9 +297,9 @@
       "scope": "shared",
       "layer": "contracts",
       "runtime": "agnostic",
-      "x": -0.279,
-      "y": -0.764,
-      "z": -0.54
+      "x": -0.598,
+      "y": -0.656,
+      "z": 0.443
     },
     {
       "id": "shared-content",
@@ -267,9 +307,9 @@
       "scope": "shared",
       "layer": "content",
       "runtime": "agnostic",
-      "x": 0.611,
-      "y": -0.063,
-      "z": 0.494
+      "x": 0.803,
+      "y": 0.189,
+      "z": -0.003
     },
     {
       "id": "shared-contracts",
@@ -277,9 +317,9 @@
       "scope": "shared",
       "layer": "contracts",
       "runtime": "agnostic",
-      "x": 0.703,
-      "y": 0.036,
-      "z": -0.6
+      "x": 0.11,
+      "y": -0.155,
+      "z": 0.956
     },
     {
       "id": "shared-site-config",
@@ -287,9 +327,9 @@
       "scope": "shared",
       "layer": "data-access",
       "runtime": "browser",
-      "x": 0.37,
-      "y": -0.718,
-      "z": -0.486
+      "x": 0.044,
+      "y": -0.717,
+      "z": 0.586
     },
     {
       "id": "shared-state",
@@ -297,9 +337,9 @@
       "scope": "shared",
       "layer": "data-access",
       "runtime": "browser",
-      "x": 0.868,
-      "y": -0.106,
-      "z": -0.079
+      "x": 0.643,
+      "y": 0.507,
+      "z": 0.331
     },
     {
       "id": "shell",
@@ -307,9 +347,9 @@
       "scope": "portfolio",
       "layer": "app",
       "runtime": "browser",
-      "x": 0.191,
-      "y": -0.209,
-      "z": 0.457
+      "x": 0.593,
+      "y": -0.07,
+      "z": -0.198
     },
     {
       "id": "shell-e2e",
@@ -317,9 +357,9 @@
       "scope": "test",
       "layer": "e2e",
       "runtime": "node",
-      "x": -0.017,
-      "y": -0.861,
-      "z": 0.381
+      "x": 0.453,
+      "y": -0.802,
+      "z": 0.142
     },
     {
       "id": "strategy-domain",
@@ -327,9 +367,9 @@
       "scope": "product-strategy",
       "layer": "domain",
       "runtime": "browser",
-      "x": -0.952,
-      "y": -0.153,
-      "z": -0.264
+      "x": -0.572,
+      "y": -0.439,
+      "z": -0.673
     },
     {
       "id": "strategy-feature",
@@ -337,9 +377,9 @@
       "scope": "product-strategy",
       "layer": "feature",
       "runtime": "browser",
-      "x": -0.857,
-      "y": -0.49,
-      "z": 0.013
+      "x": -0.193,
+      "y": -0.415,
+      "z": -0.852
     },
     {
       "id": "three-angular",
@@ -347,9 +387,9 @@
       "scope": "platform",
       "layer": "ui",
       "runtime": "browser",
-      "x": -0.072,
-      "y": 0.263,
-      "z": -0.852
+      "x": -0.645,
+      "y": 0.481,
+      "z": -0.347
     },
     {
       "id": "three-constellation",
@@ -357,9 +397,9 @@
       "scope": "platform",
       "layer": "engine",
       "runtime": "browser",
-      "x": 0.3,
-      "y": 0.426,
-      "z": -0.8
+      "x": -0.245,
+      "y": 0.782,
+      "z": -0.498
     },
     {
       "id": "three-engine",
@@ -367,9 +407,9 @@
       "scope": "platform",
       "layer": "engine",
       "runtime": "browser",
-      "x": -0.522,
-      "y": 0.223,
-      "z": -0.818
+      "x": -0.754,
+      "y": 0.093,
+      "z": -0.628
     },
     {
       "id": "three-scene-constellation",
@@ -377,9 +417,9 @@
       "scope": "platform",
       "layer": "engine",
       "runtime": "browser",
-      "x": -0.133,
-      "y": 0.619,
-      "z": -0.691
+      "x": -0.451,
+      "y": 0.493,
+      "z": -0.652
     },
     {
       "id": "three-scene-sky",
@@ -387,9 +427,9 @@
       "scope": "platform",
       "layer": "engine",
       "runtime": "browser",
-      "x": -0.524,
-      "y": -0.198,
-      "z": -0.78
+      "x": -0.905,
+      "y": -0.235,
+      "z": -0.27
     }
   ],
   "edges": [
@@ -399,408 +439,423 @@
       "static"
     ],
     [
+      0,
+      2,
+      "static"
+    ],
+    [
       1,
-      27,
+      26,
       "static"
     ],
     [
       2,
-      4,
+      31,
       "static"
     ],
     [
-      2,
-      5,
-      "implicit"
-    ],
-    [
-      2,
+      3,
       5,
       "static"
     ],
     [
-      2,
-      34,
+      3,
+      6,
       "implicit"
     ],
     [
       3,
-      2,
+      6,
+      "static"
+    ],
+    [
+      3,
+      38,
       "implicit"
     ],
     [
-      5,
       4,
-      "static"
+      3,
+      "implicit"
     ],
     [
       6,
-      16,
-      "static"
-    ],
-    [
-      6,
-      26,
+      5,
       "static"
     ],
     [
       7,
-      8,
-      "dynamic"
-    ],
-    [
-      7,
-      16,
+      17,
       "static"
     ],
     [
       7,
-      26,
+      30,
       "static"
     ],
     [
       8,
-      5,
-      "static"
-    ],
-    [
       9,
-      10,
       "dynamic"
     ],
     [
-      9,
-      16,
+      8,
+      17,
+      "static"
+    ],
+    [
+      8,
+      30,
       "static"
     ],
     [
       9,
-      26,
+      6,
       "static"
     ],
     [
       10,
-      5,
-      "static"
-    ],
-    [
       11,
-      13,
       "dynamic"
     ],
     [
-      11,
-      16,
+      10,
+      17,
+      "static"
+    ],
+    [
+      10,
+      30,
       "static"
     ],
     [
       11,
-      26,
+      6,
       "static"
     ],
     [
-      13,
-      5,
-      "static"
-    ],
-    [
-      13,
       12,
-      "static"
-    ],
-    [
-      13,
-      25,
-      "static"
-    ],
-    [
-      13,
-      28,
-      "static"
-    ],
-    [
-      13,
-      34,
-      "static"
-    ],
-    [
-      13,
-      38,
-      "static"
-    ],
-    [
-      13,
-      38,
-      "dynamic"
-    ],
-    [
-      16,
-      5,
-      "static"
-    ],
-    [
-      17,
-      16,
-      "static"
-    ],
-    [
-      18,
-      5,
-      "static"
-    ],
-    [
-      18,
-      23,
-      "static"
-    ],
-    [
-      18,
-      26,
-      "static"
-    ],
-    [
-      19,
-      5,
-      "static"
-    ],
-    [
-      19,
-      23,
-      "static"
-    ],
-    [
-      19,
-      26,
-      "static"
-    ],
-    [
-      20,
-      5,
-      "static"
-    ],
-    [
-      20,
-      23,
-      "static"
-    ],
-    [
-      20,
-      26,
-      "static"
-    ],
-    [
-      20,
-      29,
-      "static"
-    ],
-    [
-      20,
-      34,
-      "static"
-    ],
-    [
-      20,
-      35,
-      "static"
-    ],
-    [
-      20,
-      37,
-      "dynamic"
-    ],
-    [
-      21,
-      5,
-      "static"
-    ],
-    [
-      21,
-      23,
-      "static"
-    ],
-    [
-      21,
-      26,
-      "static"
-    ],
-    [
-      21,
-      27,
-      "static"
-    ],
-    [
-      21,
-      28,
-      "static"
-    ],
-    [
-      21,
-      29,
-      "static"
-    ],
-    [
-      22,
-      5,
-      "static"
-    ],
-    [
-      22,
-      23,
-      "static"
-    ],
-    [
-      22,
-      26,
-      "static"
-    ],
-    [
-      23,
-      26,
-      "static"
-    ],
-    [
-      24,
-      15,
-      "static"
-    ],
-    [
-      24,
-      16,
-      "static"
-    ],
-    [
-      24,
-      33,
-      "dynamic"
-    ],
-    [
-      25,
       14,
-      "implicit"
+      "dynamic"
     ],
     [
-      29,
-      26,
-      "static"
-    ],
-    [
-      30,
-      5,
-      "static"
-    ],
-    [
-      30,
-      6,
-      "federated"
-    ],
-    [
-      30,
-      7,
-      "federated"
-    ],
-    [
-      30,
-      9,
-      "federated"
-    ],
-    [
-      30,
-      11,
-      "federated"
-    ],
-    [
-      30,
-      15,
-      "static"
-    ],
-    [
-      30,
-      16,
-      "static"
-    ],
-    [
-      30,
+      12,
       17,
       "static"
     ],
     [
+      12,
       30,
-      18,
-      "dynamic"
-    ],
-    [
-      30,
-      19,
-      "dynamic"
-    ],
-    [
-      30,
-      20,
-      "dynamic"
-    ],
-    [
-      30,
-      21,
-      "dynamic"
-    ],
-    [
-      30,
-      22,
-      "dynamic"
-    ],
-    [
-      30,
-      24,
-      "federated"
-    ],
-    [
-      30,
-      26,
       "static"
     ],
     [
-      30,
+      14,
+      6,
+      "static"
+    ],
+    [
+      14,
+      13,
+      "static"
+    ],
+    [
+      14,
       29,
       "static"
     ],
     [
-      31,
-      30,
-      "implicit"
-    ],
-    [
-      33,
-      15,
-      "static"
-    ],
-    [
-      33,
+      14,
       32,
       "static"
     ],
     [
-      34,
-      35,
+      14,
+      38,
       "static"
     ],
     [
-      34,
-      36,
+      14,
+      42,
       "static"
     ],
     [
-      34,
+      14,
+      42,
+      "dynamic"
+    ],
+    [
+      17,
+      6,
+      "static"
+    ],
+    [
+      18,
+      17,
+      "static"
+    ],
+    [
+      19,
+      6,
+      "static"
+    ],
+    [
+      19,
+      24,
+      "static"
+    ],
+    [
+      19,
+      30,
+      "static"
+    ],
+    [
+      20,
+      6,
+      "static"
+    ],
+    [
+      20,
+      24,
+      "static"
+    ],
+    [
+      20,
+      30,
+      "static"
+    ],
+    [
+      21,
+      6,
+      "static"
+    ],
+    [
+      21,
+      24,
+      "static"
+    ],
+    [
+      21,
+      30,
+      "static"
+    ],
+    [
+      21,
+      33,
+      "static"
+    ],
+    [
+      21,
+      38,
+      "static"
+    ],
+    [
+      21,
+      39,
+      "static"
+    ],
+    [
+      21,
+      41,
+      "dynamic"
+    ],
+    [
+      22,
+      6,
+      "static"
+    ],
+    [
+      22,
+      24,
+      "static"
+    ],
+    [
+      22,
+      30,
+      "static"
+    ],
+    [
+      22,
+      31,
+      "static"
+    ],
+    [
+      22,
+      32,
+      "static"
+    ],
+    [
+      22,
+      33,
+      "static"
+    ],
+    [
+      23,
+      6,
+      "static"
+    ],
+    [
+      23,
+      24,
+      "static"
+    ],
+    [
+      23,
+      30,
+      "static"
+    ],
+    [
+      24,
+      30,
+      "static"
+    ],
+    [
+      25,
+      16,
+      "static"
+    ],
+    [
+      25,
+      17,
+      "static"
+    ],
+    [
+      25,
+      27,
+      "dynamic"
+    ],
+    [
+      27,
+      6,
+      "static"
+    ],
+    [
+      27,
+      26,
+      "static"
+    ],
+    [
+      27,
+      32,
+      "static"
+    ],
+    [
+      28,
+      16,
+      "static"
+    ],
+    [
+      28,
+      17,
+      "static"
+    ],
+    [
+      28,
       37,
       "dynamic"
     ],
     [
-      37,
-      4,
+      29,
+      15,
+      "implicit"
+    ],
+    [
+      33,
+      30,
       "static"
     ],
     [
-      37,
+      34,
+      6,
+      "static"
+    ],
+    [
+      34,
+      7,
+      "federated"
+    ],
+    [
+      34,
+      8,
+      "federated"
+    ],
+    [
+      34,
+      10,
+      "federated"
+    ],
+    [
+      34,
+      12,
+      "federated"
+    ],
+    [
+      34,
+      16,
+      "static"
+    ],
+    [
+      34,
+      17,
+      "static"
+    ],
+    [
+      34,
+      18,
+      "static"
+    ],
+    [
+      34,
+      19,
+      "dynamic"
+    ],
+    [
+      34,
+      20,
+      "dynamic"
+    ],
+    [
+      34,
+      21,
+      "dynamic"
+    ],
+    [
+      34,
+      22,
+      "dynamic"
+    ],
+    [
+      34,
+      23,
+      "dynamic"
+    ],
+    [
+      34,
+      25,
+      "federated"
+    ],
+    [
+      34,
+      28,
+      "federated"
+    ],
+    [
+      34,
+      30,
+      "static"
+    ],
+    [
+      34,
+      33,
+      "static"
+    ],
+    [
       35,
+      34,
+      "implicit"
+    ],
+    [
+      37,
+      16,
       "static"
     ],
     [
@@ -810,12 +865,42 @@
     ],
     [
       38,
-      4,
+      39,
       "static"
     ],
     [
       38,
-      36,
+      40,
+      "static"
+    ],
+    [
+      38,
+      41,
+      "dynamic"
+    ],
+    [
+      41,
+      5,
+      "static"
+    ],
+    [
+      41,
+      39,
+      "static"
+    ],
+    [
+      41,
+      40,
+      "static"
+    ],
+    [
+      42,
+      5,
+      "static"
+    ],
+    [
+      42,
+      40,
       "static"
     ]
   ]
