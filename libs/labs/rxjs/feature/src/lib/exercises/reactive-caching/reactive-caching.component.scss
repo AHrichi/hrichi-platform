@@ -84,7 +84,7 @@
 
 .display-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
   gap: 24px;
 }
 
@@ -162,4 +162,23 @@ pre {
   color: var(--color-accent-default);
   font-style: italic;
   margin: 0;
+}
+
+@media (max-width: 640px) {
+  .exercise-container {
+    padding: var(--space-3, 12px);
+  }
+
+  .card-header {
+    padding: var(--space-3, 12px) var(--space-4, 16px);
+  }
+
+  .card-content {
+    padding: var(--space-3, 12px) var(--space-4, 16px);
+  }
+
+  .display-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-3, 12px);
+  }
 }

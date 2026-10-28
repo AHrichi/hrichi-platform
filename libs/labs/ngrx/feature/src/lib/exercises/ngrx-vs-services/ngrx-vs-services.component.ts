@@ -427,7 +427,7 @@ export interface ArchitectureComparison {
 
     .wizard-questions {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
       gap: var(--space-3, 0.75rem);
       background: var(--color-bg-raised);
       border: 1px solid var(--color-border-default);
@@ -517,7 +517,7 @@ export interface ArchitectureComparison {
 
     .pattern-tabs {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
       gap: var(--space-3, 0.75rem);
     }
 
@@ -639,7 +639,7 @@ export interface ArchitectureComparison {
 
     .tradeoffs-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
       gap: var(--space-3, 0.75rem);
     }
 
@@ -722,6 +722,7 @@ export interface ArchitectureComparison {
 
     .table-wrapper {
       overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
     }
 
     .comparison-table {
@@ -787,7 +788,13 @@ export interface ArchitectureComparison {
       align-items: center;
       gap: var(--space-2, 0.5rem);
       overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
       padding: var(--space-2, 0.5rem) 0;
+
+      &::-webkit-scrollbar {
+        display: none;
+      }
     }
 
     .spectrum-step {
@@ -939,6 +946,40 @@ export interface ArchitectureComparison {
 
     .takeaway-box strong {
       color: var(--color-accent-default);
+    }
+
+    @media (max-width: 640px) {
+      .advisor-card,
+      .spectrum-card,
+      .pattern-detail-card,
+      .matrix-card,
+      .interview-card {
+        padding: var(--space-4, 1rem);
+      }
+
+      .detail-header {
+        flex-direction: column;
+        gap: var(--space-3, 0.75rem);
+      }
+
+      .metrics-cluster {
+        width: 100%;
+      }
+
+      .metric-chip {
+        flex: 1;
+        min-width: 90px;
+      }
+
+      .wizard-questions,
+      .pattern-tabs,
+      .tradeoffs-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .table-wrapper {
+        padding-bottom: var(--space-2, 0.5rem);
+      }
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,

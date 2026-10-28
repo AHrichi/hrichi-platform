@@ -1,4 +1,4 @@
-﻿.analytics-container {
+.analytics-container {
   padding: 24px;
   max-width: 1200px;
   margin: 0 auto;
@@ -308,7 +308,7 @@
 /* â”€â”€ KPI Grid â”€â”€ */
 .kpi-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
   gap: 16px;
   margin-bottom: 24px;
 }
@@ -410,7 +410,7 @@
 
   .budget-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
     gap: 12px;
   }
 
@@ -1688,7 +1688,7 @@
 }
 .insights-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
   gap: 16px;
 }
 .insight-card {

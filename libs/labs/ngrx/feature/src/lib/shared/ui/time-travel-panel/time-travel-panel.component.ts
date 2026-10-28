@@ -259,6 +259,34 @@ export interface ActionRecord<T = unknown> {
       overflow-x: auto;
       max-height: 140px;
     }
+
+    @media (max-width: 600px) {
+      .panel-header {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .scrubber-controls {
+        justify-content: space-between;
+        width: 100%;
+        flex-wrap: wrap;
+      }
+
+      .history-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+      }
+
+      .item-right {
+        width: 100%;
+        justify-content: space-between;
+      }
+
+      .payload-badge {
+        max-width: 100%;
+      }
+    }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

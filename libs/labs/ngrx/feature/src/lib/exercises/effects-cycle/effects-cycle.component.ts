@@ -305,7 +305,7 @@ export interface EffectLog {
 
     .cards-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
       gap: var(--space-5, 1.25rem);
     }
 
@@ -583,6 +583,35 @@ export interface EffectLog {
       line-height: 1.45;
       color: var(--color-stage-text, #f7f7f8);
       overflow-x: auto;
+    }
+
+    @media (max-width: 640px) {
+      .cards-grid {
+        grid-template-columns: 1fr;
+        gap: var(--space-4, 1rem);
+      }
+
+      .card {
+        padding: var(--space-4, 1rem);
+      }
+
+      .action-bar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .action-bar button {
+        width: 100%;
+      }
+
+      .comparison-boxes {
+        grid-template-columns: 1fr;
+      }
+
+      .pills-row button {
+        flex: 1;
+        min-width: 140px;
+      }
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,

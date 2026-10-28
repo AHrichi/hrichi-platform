@@ -40,11 +40,19 @@ export interface SegmentedOption<T extends string> {
   styles: `
     .track {
       display: inline-flex;
+      max-inline-size: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
       gap: var(--space-1);
       padding: var(--space-1);
       background: var(--color-bg-surface);
       border: 1px solid var(--color-border-default);
       border-radius: var(--radius-pill);
+
+      &::-webkit-scrollbar {
+        display: none;
+      }
     }
     .segment {
       padding-block: var(--space-1);
@@ -56,6 +64,9 @@ export interface SegmentedOption<T extends string> {
       font-size: var(--font-size-100);
       font-weight: var(--font-weight-medium);
       cursor: pointer;
+      user-select: none;
+      white-space: nowrap;
+      flex-shrink: 0;
       transition: background-color var(--motion-duration-fast)
         var(--motion-easing-standard);
     }

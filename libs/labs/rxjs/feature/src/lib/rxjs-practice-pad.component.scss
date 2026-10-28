@@ -197,17 +197,36 @@
   .app-container {
     flex-direction: column;
     height: auto;
+    min-height: auto;
     max-height: none;
+    border-radius: var(--radius-md, 8px);
   }
 
   .sidebar {
     width: 100%;
     border-right: none;
     border-bottom: 1px solid var(--color-border-default, #e0e6ed);
+    padding: var(--space-3, 12px) var(--space-4, 16px);
   }
 
   .sidebar.closed {
     width: 100%;
-    padding: 12px 0;
+    padding: 8px 16px;
+  }
+
+  .sidebar-header {
+    padding: 0;
+  }
+
+  .title {
+    font-size: var(--font-size-300, 1.125rem);
+  }
+
+  .subtitle {
+    margin-bottom: var(--space-2, 8px);
+  }
+
+  .content {
+    padding: var(--space-3, 12px);
   }
 }

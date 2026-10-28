@@ -102,6 +102,38 @@ import { AhButton } from '@ah/ui';
       display: flex;
       align-items: center;
     }
+
+    @media (max-width: 640px) {
+      .sub-nav {
+        padding: var(--space-2, 0.5rem);
+        flex-direction: column;
+        align-items: stretch;
+        gap: var(--space-2, 0.5rem);
+      }
+
+      .links-group {
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        padding-bottom: 2px;
+
+        &::-webkit-scrollbar {
+          display: none;
+        }
+      }
+
+      .nav-tab {
+        white-space: nowrap;
+        flex-shrink: 0;
+        font-size: 0.75rem;
+        padding: 6px 10px;
+      }
+
+      .controls-group {
+        justify-content: flex-end;
+      }
+    }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

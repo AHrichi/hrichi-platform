@@ -8,7 +8,7 @@
 
 .architecture-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(460px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 460px), 1fr));
   gap: var(--space-5, 24px);
   margin-top: var(--space-5, 24px);
 
@@ -259,7 +259,7 @@
 
 .comparison-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
   gap: var(--space-3, 12px);
 }
 
@@ -572,5 +572,29 @@
     font-size: 0.75rem;
     line-height: 1.5;
     color: var(--color-text-default);
+  }
+}
+
+@media (max-width: 640px) {
+  .exercise-container {
+    padding: var(--space-3, 12px);
+  }
+
+  .architecture-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-3, 12px);
+    margin-top: var(--space-3, 12px);
+  }
+
+  .card-header {
+    padding: var(--space-3, 12px) var(--space-4, 16px);
+  }
+
+  .card-content {
+    padding: var(--space-3, 12px) var(--space-4, 16px);
+  }
+
+  .comparison-grid {
+    grid-template-columns: 1fr;
   }
 }

@@ -9,7 +9,7 @@
 
 .operators-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr));
   gap: var(--space-5, 24px);
 
   &.single-case {
@@ -119,7 +119,7 @@
 
 .computed-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
   gap: 16px;
 }
 
@@ -347,4 +347,27 @@ pre {
   overflow-x: auto;
   font-family: var(--font-family-mono, monospace);
   font-size: 0.8125rem;
+}
+
+@media (max-width: 640px) {
+  .exercise-container {
+    padding: var(--space-3, 12px);
+  }
+
+  .operators-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-3, 12px);
+  }
+
+  .card-header {
+    padding: var(--space-3, 12px) var(--space-4, 16px);
+  }
+
+  .card-content {
+    padding: var(--space-3, 12px) var(--space-4, 16px);
+  }
+
+  .computed-grid {
+    grid-template-columns: 1fr;
+  }
 }

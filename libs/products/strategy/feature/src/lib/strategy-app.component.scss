@@ -182,11 +182,19 @@
 /* Modern Segmented Control Navigation */
 .main-nav {
   display: inline-flex;
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
   background: var(--surface);
   padding: 6px;
   border-radius: 16px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
   margin-bottom: 32px;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 
   button {
     background: transparent;
@@ -198,6 +206,8 @@
     cursor: pointer;
     border-radius: 12px;
     transition: all 0.3s ease;
+    white-space: nowrap;
+    flex-shrink: 0;
 
     &:hover:not(.active) {
       background: var(--bg-body);
@@ -526,5 +536,48 @@
         background: var(--bg-body);
       }
     }
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard-container {
+    padding: 16px 12px;
+  }
+
+  .header-flex {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 20px;
+
+    h2 {
+      font-size: 1.35rem;
+    }
+  }
+
+  .header-actions {
+    width: 100%;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .main-nav {
+    margin-bottom: 20px;
+    padding: 4px;
+    border-radius: 12px;
+
+    button {
+      padding: 8px 14px;
+      font-size: 0.85rem;
+      border-radius: 8px;
+    }
+  }
+
+  .demo-banner {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 10px 12px;
+    margin-bottom: 16px;
   }
 }

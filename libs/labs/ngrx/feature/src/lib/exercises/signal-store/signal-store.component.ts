@@ -536,7 +536,7 @@ export const SkillsStore = signalStore(
 
     .metrics-row {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr));
       gap: var(--space-3, 0.75rem);
       margin-bottom: var(--space-4, 1rem);
     }
@@ -742,7 +742,7 @@ export const SkillsStore = signalStore(
 
     .cards-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
       gap: var(--space-5, 1.25rem);
     }
 
@@ -1022,6 +1022,50 @@ export const SkillsStore = signalStore(
       color: var(--color-text-muted);
       border: 1px dashed var(--color-border-default);
       border-radius: var(--radius-md, 0.5rem);
+    }
+
+    @media (max-width: 640px) {
+      .cards-grid {
+        grid-template-columns: 1fr;
+        gap: var(--space-4, 1rem);
+      }
+
+      .card {
+        padding: var(--space-4, 1rem);
+      }
+
+      .normalization-explainer,
+      .debug-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .toolbar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .toolbar button {
+        width: 100%;
+      }
+
+      .skill-row {
+        flex-direction: column;
+        align-items: stretch;
+        gap: var(--space-2, 0.5rem);
+      }
+
+      .skill-main {
+        width: 100%;
+      }
+
+      .mastery-indicator {
+        max-width: none;
+        width: 100%;
+      }
+
+      .skill-actions {
+        justify-content: flex-end;
+      }
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,

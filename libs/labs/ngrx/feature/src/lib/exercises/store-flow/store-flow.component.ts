@@ -400,7 +400,7 @@ export const cartFeature = createFeature({
 
     .cards-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
       gap: var(--space-5, 1.25rem);
     }
 
@@ -698,6 +698,34 @@ export const cartFeature = createFeature({
       margin-top: 2px;
       color: var(--color-stage-muted, #9a9aa3);
       line-height: 1.4;
+    }
+
+    @media (max-width: 640px) {
+      .cards-grid {
+        grid-template-columns: 1fr;
+        gap: var(--space-4, 1rem);
+      }
+
+      .card {
+        padding: var(--space-4, 1rem);
+      }
+
+      .selector-metrics-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .pillars-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .actions-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .actions-toolbar button {
+        width: 100%;
+      }
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
