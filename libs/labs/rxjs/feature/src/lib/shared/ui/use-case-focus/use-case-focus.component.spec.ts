@@ -2,7 +2,7 @@ import { Component, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { SegmentedOption } from '@ah/ui';
-import { UseCaseFocusComponent } from '@ah/labs/rxjs/feature';
+import { UseCaseFocusComponent } from './use-case-focus.component';
 
 @Component({
   standalone: true,

@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import { MulticastingComponent } from '@ah/labs/rxjs/feature';
+import { MulticastingComponent } from './multicasting.component';
 
 describe('MulticastingComponent', () => {
   let fixture: ComponentFixture<MulticastingComponent>;

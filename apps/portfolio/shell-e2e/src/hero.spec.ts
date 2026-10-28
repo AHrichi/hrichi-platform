@@ -123,39 +123,34 @@ test('releases its WebGL context on every route change', async ({ page }) => {
 });
 
 test('toggles dark and light mode via the header button', async ({ page }) => {
+  await page.addInitScript(() => {
+    localStorage.setItem('ah_theme', 'dark');
+  });
   await page.goto('/');
   const toggle = page.locator('.theme-toggle');
   await expect(toggle).toBeVisible();
 
   const html = page.locator('html');
-  const initialTheme = await html.getAttribute('data-theme');
+  await expect(html).toHaveAttribute('data-theme', 'dark');
 
   await toggle.click();
-  const themeAfterFirstClick = await html.getAttribute('data-theme');
-  expect(themeAfterFirstClick).toMatch(/^(dark|light)$/);
-  expect(themeAfterFirstClick).not.toBe(initialTheme);
+  await expect(html).toHaveAttribute('data-theme', 'light');
 
   await toggle.click();
-  const themeAfterSecondClick = await html.getAttribute('data-theme');
-  expect(themeAfterSecondClick).toMatch(/^(dark|light)$/);
-  expect(themeAfterSecondClick).not.toBe(themeAfterFirstClick);
+  await expect(html).toHaveAttribute('data-theme', 'dark');
 });
 
 test('ensures all footer project and external links open in a new tab', async ({
   page,
 }) => {
   await page.goto('/');
-  const footerLinks = page.locator('.site-footer a');
-  const count = await footerLinks.count();
+  const externalLinks = page.locator('.site-footer a:not([href^="mailto:"])');
+  const count = await externalLinks.count();
   expect(count).toBeGreaterThan(5);
 
   for (let i = 0; i < count; i++) {
-    const link = footerLinks.nth(i);
-    const href = await link.getAttribute('href');
-    if (href?.startsWith('mailto:')) continue;
-
+    const link = externalLinks.nth(i);
     await expect(link).toHaveAttribute('target', '_blank');
-    const rel = await link.getAttribute('rel');
-    expect(rel).toContain('noopener');
+    await expect(link).toHaveAttribute('rel', /noopener/);
   }
 });

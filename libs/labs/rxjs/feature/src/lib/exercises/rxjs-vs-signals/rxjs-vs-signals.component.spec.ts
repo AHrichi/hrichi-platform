@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import { RxjsVsSignalsComponent } from '@ah/labs/rxjs/feature';
+import { RxjsVsSignalsComponent } from './rxjs-vs-signals.component';
 
 describe('RxjsVsSignalsComponent', () => {
   let fixture: ComponentFixture<RxjsVsSignalsComponent>;

@@ -26,8 +26,8 @@ function setup(url: string, stored?: Record<string, string>) {
     matchMedia: (query: string) => ({
       matches: false,
       media: query,
-      addEventListener: () => {},
-      removeEventListener: () => {},
+      addEventListener: () => void 0,
+      removeEventListener: () => void 0,
     }),
   };
   TestBed.configureTestingModule({

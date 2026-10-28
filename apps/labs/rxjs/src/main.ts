@@ -1,5 +1,6 @@
-if (typeof (globalThis as any).ngDevMode === 'undefined') {
-  (globalThis as any).ngDevMode = false;
+const globalScope = globalThis as unknown as { ngDevMode?: boolean };
+if (typeof globalScope.ngDevMode === 'undefined') {
+  globalScope.ngDevMode = false;
 }
 
 import { initFederation } from '@angular-architects/native-federation';
