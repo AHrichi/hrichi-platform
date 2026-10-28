@@ -126,6 +126,65 @@ export const cartFeature = createFeature({
 
       <!-- Interactive Playground Grid -->
       <div class="cards-grid">
+        <!-- Card 0: Conceptual Overview & Analogy -->
+        @if (activeCase() === 'all' || activeCase() === 'concept') {
+          <div
+            class="card highlight-card"
+            [class.focused-card]="activeCase() === 'concept'"
+          >
+            <div class="card-header">
+              <span class="badge">Core Architecture</span>
+              <h3>The Redux Mental Model: The Bank Ledger Analogy</h3>
+            </div>
+            <p class="description">
+              In simple apps, developers mutate variables directly (<code
+                >state.balance = 5000</code
+              >). In large enterprise apps, direct mutation creates hidden side
+              effects, race conditions, and un-debuggable state.
+            </p>
+
+            <div class="pillars-grid">
+              <div class="pillar-box">
+                <span class="pillar-icon">🏛️</span>
+                <strong>1. Single Source of Truth</strong>
+                <p>
+                  The entire application state is stored in a single immutable
+                  object tree inside the Store.
+                </p>
+              </div>
+              <div class="pillar-box">
+                <span class="pillar-icon">🧾</span>
+                <strong>2. State is Read-Only</strong>
+                <p>
+                  To change state, you cannot assign properties. You must issue
+                  an Action voucher capturing intent.
+                </p>
+              </div>
+              <div class="pillar-box">
+                <span class="pillar-icon">⚙️</span>
+                <strong>3. Pure Transitions</strong>
+                <p>
+                  Reducers are strictly pure functions:
+                  <code>(state, action) =&gt; newState</code> with zero
+                  side-effects.
+                </p>
+              </div>
+            </div>
+
+            <div class="concept-callout">
+              <div class="callout-icon">💡</div>
+              <div class="callout-body">
+                <strong>Why Immutability Matters:</strong>
+                Because reducers return a <em>new state reference</em> (via
+                object spread <code>&#123; ...state &#125;</code>), components
+                and selectors can perform instant $O(1)$ reference comparisons
+                (<code>prevState === nextState</code>) rather than deeply
+                checking thousands of nested properties!
+              </div>
+            </div>
+          </div>
+        }
+
         <!-- Card 1: Action Dispatcher -->
         @if (activeCase() === 'all' || activeCase() === 'actions') {
           <div class="card" [class.focused-card]="activeCase() === 'actions'">
@@ -171,6 +230,19 @@ export const cartFeature = createFeature({
               >
                 Dispatch Unrelated Action
               </button>
+            </div>
+
+            <div class="hygiene-explainer">
+              <span class="hygiene-title"
+                >⚡ Action Hygiene Rule: Events, Not Commands</span
+              >
+              <p>
+                Name actions after
+                <strong>events that happened in the UI</strong> (e.g.
+                <code>[Cart Page] Add Book Clicked</code>), not commands (e.g.
+                <code>[Cart] Set State</code>). This makes Redux DevTools logs
+                read like a chronological storyboard of user interactions.
+              </p>
             </div>
 
             <div class="code-preview">
@@ -226,6 +298,19 @@ export const cartFeature = createFeature({
                 }}% OFF)
               </div>
             }
+
+            <div class="immutability-note">
+              <span class="note-title">🛡️ Pure Function Guarantees:</span>
+              <p>
+                Notice how the reducer never calls <code>items.push()</code>. It
+                always returns a new object
+                <code
+                  >&#123; ...state, items: [...state.items, newItem]
+                  &#125;</code
+                >. This guarantees previous state snapshots remain intact for
+                time-travel debugging!
+              </p>
+            </div>
           </div>
         }
 
@@ -244,20 +329,38 @@ export const cartFeature = createFeature({
 
             <div class="selector-metrics-grid">
               <div class="metric-box">
+                <span class="metric-icon">📦</span>
                 <span class="metric-label">Items Count</span>
                 <span class="metric-value">{{ totalItemCount() }}</span>
               </div>
               <div class="metric-box">
+                <span class="metric-icon">💲</span>
                 <span class="metric-label">Subtotal</span>
                 <span class="metric-value">\${{ subtotal() }}</span>
               </div>
               <div class="metric-box highlight">
-                <span class="metric-label">Total After Discount</span>
+                <span class="metric-icon">🏷️</span>
+                <span class="metric-label">Discounted Total</span>
                 <span class="metric-value">\${{ discountedTotal() }}</span>
               </div>
             </div>
 
             <div class="memoization-audit">
+              <div
+                class="memo-status-badge"
+                [class.is-hit]="lastActionMemoStatus() === 'hit'"
+              >
+                @if (lastActionMemoStatus() === 'hit') {
+                  <span
+                    >⚡ Last Action:
+                    <strong>CACHE HIT (Projector Skipped)</strong></span
+                  >
+                } @else {
+                  <span
+                    >🔄 Last Action: <strong>PROJECTOR EXECUTED</strong></span
+                  >
+                }
+              </div>
               <div class="audit-row">
                 <span>Projector Executions:</span>
                 <span class="count">{{ projectorRuns() }}</span>
@@ -433,15 +536,28 @@ export const cartFeature = createFeature({
       flex-direction: column;
       align-items: center;
       padding: var(--space-3, 0.75rem);
-      background: var(--color-bg-surface);
+      background: var(--color-bg-raised);
       border: 1px solid var(--color-border-default);
       border-radius: var(--radius-md, 0.5rem);
       text-align: center;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+      transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+    }
+
+    .metric-box:hover {
+      border-color: var(--color-border-strong);
     }
 
     .metric-box.highlight {
       background: var(--color-accent-subtle);
       border-color: var(--color-accent-default);
+    }
+
+    .metric-box .metric-icon {
+      font-size: 1rem;
+      margin-bottom: 2px;
     }
 
     .metric-label {
@@ -456,6 +572,96 @@ export const cartFeature = createFeature({
       font-weight: 700;
       color: var(--color-text-default);
       font-family: monospace;
+    }
+
+    .pillars-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: var(--space-3, 0.75rem);
+      margin: var(--space-2, 0.5rem) 0;
+    }
+
+    .pillar-box {
+      background: var(--color-bg-surface);
+      border: 1px solid var(--color-border-default);
+      border-radius: var(--radius-md, 0.5rem);
+      padding: var(--space-3, 0.75rem);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .pillar-icon {
+      font-size: 1.25rem;
+    }
+
+    .pillar-box strong {
+      font-size: var(--font-size-xs, 0.75rem);
+      color: var(--color-text-default);
+    }
+
+    .pillar-box p {
+      margin: 0;
+      font-size: 0.7rem;
+      color: var(--color-text-muted);
+      line-height: 1.4;
+    }
+
+    .concept-callout {
+      display: flex;
+      gap: var(--space-3, 0.75rem);
+      background: var(--color-bg-surface);
+      border-left: 3px solid var(--color-accent-default);
+      border-radius: var(--radius-sm, 0.25rem);
+      padding: var(--space-3, 0.75rem);
+      font-size: var(--font-size-xs, 0.75rem);
+      line-height: 1.5;
+      color: var(--color-text-default);
+    }
+
+    .concept-callout .callout-icon {
+      font-size: 1.25rem;
+    }
+
+    .hygiene-explainer,
+    .immutability-note {
+      background: var(--color-bg-surface);
+      border: 1px solid var(--color-border-default);
+      border-radius: var(--radius-md, 0.5rem);
+      padding: var(--space-3, 0.75rem);
+      font-size: 0.7rem;
+      color: var(--color-text-muted);
+      line-height: 1.4;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .hygiene-title,
+    .note-title {
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--color-accent-default);
+    }
+
+    .memo-status-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 8px;
+      border-radius: var(--radius-sm, 0.25rem);
+      background: rgba(239, 68, 68, 0.15);
+      color: #f87171;
+      font-size: 0.7rem;
+      font-family: monospace;
+      margin-bottom: 4px;
+      transition: all 0.3s ease;
+    }
+
+    .memo-status-badge.is-hit {
+      background: rgba(34, 197, 94, 0.15);
+      color: #4ade80;
     }
 
     .memoization-audit {
@@ -499,6 +705,7 @@ export const cartFeature = createFeature({
 export class StoreFlowComponent {
   readonly focusOptions: readonly SegmentedOption<string>[] = [
     { value: 'all', label: 'All Concepts' },
+    { value: 'concept', label: 'Unidirectional Flow Model' },
     { value: 'actions', label: 'Action Groups' },
     { value: 'reducers', label: 'Feature Reducers' },
     { value: 'selectors', label: 'Memoized Selectors' },
@@ -507,6 +714,7 @@ export class StoreFlowComponent {
 
   readonly activeCase = signal('all');
   readonly currentStage = signal<FlowStage>('idle');
+  readonly lastActionMemoStatus = signal<'hit' | 'run'>('run');
 
   // Reducer State and Time-Travel History
   readonly actionHistory = signal<ActionRecord<CartState>[]>([
@@ -605,6 +813,7 @@ export class StoreFlowComponent {
 
     // Cache hit counter increases because state reference did not change
     this.cacheHits.update((c) => c + 1);
+    this.lastActionMemoStatus.set('hit');
   }
 
   private processAction(
@@ -628,6 +837,7 @@ export class StoreFlowComponent {
     this.actionHistory.update((h) => [...h, newRecord]);
     this.currentHistoryIndex.set(this.actionHistory().length - 1);
     this.projectorRuns.update((r) => r + 1);
+    this.lastActionMemoStatus.set('run');
   }
 
   onTimeTravelIndexChange(index: number): void {

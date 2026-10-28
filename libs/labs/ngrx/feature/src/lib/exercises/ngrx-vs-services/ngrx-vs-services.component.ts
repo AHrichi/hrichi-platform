@@ -35,6 +35,44 @@ export interface ArchitectureComparison {
         lead="A recruiter-ready, senior-level evaluation: when to use plain Services (Signals/RxJS), when to pick NgRx SignalStore, and when to reach for the Global Redux Store."
       />
 
+      <!-- State Architecture Spectrum Visual Ruler -->
+      <div class="spectrum-card">
+        <div class="spectrum-header">
+          <span class="spectrum-title"
+            >The Angular State Architecture Spectrum</span
+          >
+          <span class="spectrum-sub"
+            >From Lightweight UI Reactivity to Mission-Critical Enterprise
+            Orchestration</span
+          >
+        </div>
+        <div class="spectrum-track">
+          <div class="spectrum-step tier-1">
+            <span class="step-num">Tier 1</span>
+            <strong>Component Signal</strong>
+            <span>Local UI flags, toggles, forms</span>
+          </div>
+          <div class="spectrum-arrow">→</div>
+          <div class="spectrum-step tier-2">
+            <span class="step-num">Tier 2</span>
+            <strong>Signal Service</strong>
+            <span>Feature-scoped, single API service</span>
+          </div>
+          <div class="spectrum-arrow">→</div>
+          <div class="spectrum-step tier-3 highlight-tier">
+            <span class="step-num">Tier 3 ⭐</span>
+            <strong>NgRx SignalStore</strong>
+            <span>Modular, normalized O(1), rxMethod</span>
+          </div>
+          <div class="spectrum-arrow">→</div>
+          <div class="spectrum-step tier-4">
+            <span class="step-num">Tier 4</span>
+            <strong>Global Redux Store</strong>
+            <span>Multi-team, cross-feature events</span>
+          </div>
+        </div>
+      </div>
+
       <!-- Interactive State Advisor Wizard -->
       <div class="advisor-card">
         <div class="advisor-header">
@@ -294,6 +332,47 @@ export interface ArchitectureComparison {
               </tr>
             </tbody>
           </table>
+        </div>
+      </div>
+
+      <!-- Recruiter & Senior Architect Q&A Card -->
+      <div class="interview-card">
+        <div class="interview-header">
+          <span class="interview-eyebrow"
+            >Senior Developer &amp; Recruiter Q&amp;A</span
+          >
+          <h4 class="interview-title">
+            Critical State Management Architecture Questions
+          </h4>
+        </div>
+
+        <div class="faq-list">
+          @for (faq of interviewFaqs; track faq.id) {
+            <div class="faq-item" [class.open]="expandedFaqId() === faq.id">
+              <button
+                type="button"
+                class="faq-question-btn"
+                (click)="toggleFaq(faq.id)"
+                [attr.aria-expanded]="expandedFaqId() === faq.id"
+              >
+                <span class="q-icon">💬</span>
+                <span class="q-text">{{ faq.question }}</span>
+                <span class="toggle-icon">{{
+                  expandedFaqId() === faq.id ? '▲' : '▼'
+                }}</span>
+              </button>
+              @if (expandedFaqId() === faq.id) {
+                <div class="faq-answer">
+                  <p>{{ faq.answer }}</p>
+                  @if (faq.takeaway) {
+                    <div class="takeaway-box">
+                      <strong>Key Rule of Thumb:</strong> {{ faq.takeaway }}
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+          }
         </div>
       </div>
     </div>
@@ -675,10 +754,239 @@ export interface ArchitectureComparison {
     .comparison-table td strong {
       color: var(--color-text-default);
     }
+
+    .spectrum-card {
+      background: var(--color-bg-surface);
+      border: 1px solid var(--color-border-default);
+      border-radius: var(--radius-lg, 0.75rem);
+      padding: var(--space-4, 1rem) var(--space-5, 1.25rem);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3, 0.75rem);
+    }
+
+    .spectrum-header {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .spectrum-title {
+      font-size: var(--font-size-sm, 0.875rem);
+      font-weight: 700;
+      color: var(--color-text-default);
+    }
+
+    .spectrum-sub {
+      font-size: 0.7rem;
+      color: var(--color-text-muted);
+    }
+
+    .spectrum-track {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2, 0.5rem);
+      overflow-x: auto;
+      padding: var(--space-2, 0.5rem) 0;
+    }
+
+    .spectrum-step {
+      background: var(--color-bg-raised);
+      border: 1px solid var(--color-border-default);
+      border-radius: var(--radius-md, 0.5rem);
+      padding: var(--space-3, 0.75rem);
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      min-width: 170px;
+      flex: 1;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+    }
+
+    .spectrum-step.highlight-tier {
+      border-color: var(--color-accent-default);
+      background: var(--color-accent-subtle);
+    }
+
+    .step-num {
+      font-size: 0.6rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--color-accent-default);
+    }
+
+    .spectrum-step strong {
+      font-size: var(--font-size-xs, 0.75rem);
+      color: var(--color-text-default);
+    }
+
+    .spectrum-step span {
+      font-size: 0.65rem;
+      color: var(--color-text-muted);
+      line-height: 1.35;
+    }
+
+    .spectrum-arrow {
+      color: var(--color-text-muted);
+      font-weight: 700;
+    }
+
+    .interview-card {
+      background: var(--color-bg-surface);
+      border: 1px solid var(--color-border-default);
+      border-radius: var(--radius-lg, 0.75rem);
+      padding: var(--space-5, 1.25rem);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4, 1rem);
+    }
+
+    .interview-header {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .interview-eyebrow {
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--color-accent-default);
+    }
+
+    .interview-title {
+      margin: 0;
+      font-size: var(--font-size-sm, 0.875rem);
+      font-weight: 700;
+      color: var(--color-text-default);
+    }
+
+    .faq-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2, 0.5rem);
+    }
+
+    .faq-item {
+      background: var(--color-bg-raised);
+      border: 1px solid var(--color-border-default);
+      border-radius: var(--radius-md, 0.5rem);
+      overflow: hidden;
+      transition: border-color var(--motion-duration-fast) ease;
+    }
+
+    .faq-item.open {
+      border-color: var(--color-accent-default);
+    }
+
+    .faq-question-btn {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: var(--space-3, 0.75rem);
+      padding: var(--space-3, 0.75rem) var(--space-4, 1rem);
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      user-select: none;
+      font: inherit;
+      text-align: left;
+    }
+
+    .faq-question-btn:hover {
+      background: rgba(0, 0, 0, 0.02);
+    }
+
+    .q-icon {
+      font-size: 1rem;
+    }
+
+    .q-text {
+      flex: 1;
+      font-size: var(--font-size-xs, 0.75rem);
+      font-weight: 600;
+      color: var(--color-text-default);
+    }
+
+    .toggle-icon {
+      font-size: 0.7rem;
+      color: var(--color-text-muted);
+    }
+
+    .faq-answer {
+      padding: 0 var(--space-4, 1rem) var(--space-4, 1rem);
+      border-top: 1px solid var(--color-border-default);
+      padding-top: var(--space-3, 0.75rem);
+    }
+
+    .faq-answer p {
+      margin: 0 0 var(--space-2, 0.5rem);
+      font-size: var(--font-size-xs, 0.75rem);
+      color: var(--color-text-muted);
+      line-height: 1.5;
+    }
+
+    .takeaway-box {
+      background: var(--color-bg-surface);
+      border-left: 3px solid var(--color-accent-default);
+      padding: var(--space-2, 0.5rem) var(--space-3, 0.75rem);
+      border-radius: var(--radius-sm, 0.25rem);
+      font-size: 0.7rem;
+      color: var(--color-text-default);
+    }
+
+    .takeaway-box strong {
+      color: var(--color-accent-default);
+    }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NgRxVsServicesComponent {
+  readonly expandedFaqId = signal<string | null>('signals-vs-ngrx');
+
+  toggleFaq(id: string): void {
+    this.expandedFaqId.update((curr) => (curr === id ? null : id));
+  }
+
+  readonly interviewFaqs = [
+    {
+      id: 'signals-vs-ngrx',
+      question: 'Does Angular Signals replace NgRx in Angular 22?',
+      answer:
+        'No. Angular Signals is a fine-grained reactivity and change detection primitive (solving how the UI updates synchronously without Zone.js overhead). NgRx is a state architecture framework (solving how state is organized, normalized in O(1) dictionaries, shared across lazy features, audited via DevTools, and coordinated across complex asynchronous streams). They work in synergy: NgRx exposes signals for template binding.',
+      takeaway:
+        'Use Signals to expose data to templates; use NgRx to architect, normalize, and coordinate state lifecycle.',
+    },
+    {
+      id: 'anti-pattern',
+      question: 'When is NgRx considered an anti-pattern or over-engineering?',
+      answer:
+        'NgRx is an anti-pattern for simple CRUD applications with independent pages, isolated forms, and zero cross-feature state sharing. Writing Actions, Reducers, and Selectors just to toggle an isModalOpen boolean or submit a 3-field form introduces needless ceremony and indirection without tangible benefit.',
+      takeaway:
+        'Default to simple Signal Services or Component state; promote to SignalStore when state is shared or requires normalized caching.',
+    },
+    {
+      id: 'signalstore-vs-global',
+      question:
+        'Why choose NgRx SignalStore over traditional NgRx Global Store?',
+      answer:
+        'SignalStore reduces boilerplate by ~80% while retaining full type-safety and immutability. It requires no action types or reducer switch statements, is 100% tree-shakeable, supports modular plugin composition (withEntities, withComputed, withMethods), and connects seamlessly to RxJS via rxMethod.',
+      takeaway:
+        'For new Angular features in 2026, SignalStore is the recommended default standard.',
+    },
+    {
+      id: 'optimistic-rollback',
+      question:
+        'How do you handle optimistic UI updates with rollback in NgRx?',
+      answer:
+        'In SignalStore, call patchState(store, updateEntity(optimisticData)) immediately upon user action. The rxMethod then triggers the backend HTTP call; if the network call fails, the tapResponse error callback executes patchState(store, updateEntity(previousSnapshot)) and displays a user error toast.',
+      takeaway:
+        'Always capture previous state before optimistic mutations to enable instant rollback upon error.',
+    },
+  ];
+
   // Wizard state inputs
   readonly stateScope = signal<'local' | 'modular' | 'global'>('modular');
   readonly asyncComplexity = signal<'simple' | 'streams' | 'choreography'>(

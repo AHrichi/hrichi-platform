@@ -163,28 +163,119 @@ export const SkillsStore = signalStore(
         ariaLabel="Focus on SignalStore features"
       />
 
+      <!-- Metrics Row (Dynamic Dark/Light Tokens with Elevation) -->
       <div class="metrics-row">
         <div class="metric-card">
-          <span class="label">Total Skills</span>
+          <div class="card-head">
+            <span class="label">Total Skills</span>
+            <span class="metric-icon">📚</span>
+          </div>
           <span class="value">{{ store.totalCount() }}</span>
+          <span class="hint">via withEntities (ids.length)</span>
         </div>
         <div class="metric-card">
-          <span class="label">Avg Mastery</span>
+          <div class="card-head">
+            <span class="label">Avg Mastery</span>
+            <span class="metric-icon">📈</span>
+          </div>
           <span class="value">{{ store.averageMastery() }}%</span>
+          <span class="hint">withComputed auto-tracked</span>
         </div>
         <div class="metric-card highlight">
-          <span class="label">Certified Count</span>
+          <div class="card-head">
+            <span class="label">Certified Count</span>
+            <span class="metric-icon">⭐</span>
+          </div>
           <span class="value">{{ store.certifiedCount() }}</span>
+          <span class="hint">filtered memoized signal</span>
         </div>
         <div class="metric-card">
-          <span class="label">Last Synced</span>
+          <div class="card-head">
+            <span class="label">Last Synced</span>
+            <span class="metric-icon">⚡</span>
+          </div>
           <span class="value sync">{{
             store.lastSyncTime() ?? 'Initializing...'
           }}</span>
+          <span class="hint">live rxMethod stream</span>
         </div>
       </div>
 
       <div class="cards-grid">
+        <!-- Card 0: Architectural Overview & Mental Model -->
+        @if (activeCase() === 'all' || activeCase() === 'concept') {
+          <div
+            class="card highlight-card"
+            [class.focused-card]="activeCase() === 'concept'"
+          >
+            <div class="card-header">
+              <span class="badge">Architecture Overview</span>
+              <h3>Why @ngrx/signals? The Modern 5-Plugin Architecture</h3>
+            </div>
+            <p class="description">
+              Traditional Redux requires 4 separate files per feature (Action,
+              Reducer, Selector, Effect) with high indirection.
+              <strong>SignalStore</strong> replaces this with a functional,
+              tree-shakeable pipeline that composes modular features into a
+              strongly-typed store:
+            </p>
+
+            <div class="plugins-diagram">
+              <div class="plugin-pill">
+                <span class="p-num">1</span>
+                <div class="p-info">
+                  <strong>withState&lt;T&gt;()</strong>
+                  <span>Immutable state signals</span>
+                </div>
+              </div>
+              <div class="plugin-arrow">→</div>
+              <div class="plugin-pill">
+                <span class="p-num">2</span>
+                <div class="p-info">
+                  <strong>withEntities&lt;T&gt;()</strong>
+                  <span>Normalized O(1) dictionary</span>
+                </div>
+              </div>
+              <div class="plugin-arrow">→</div>
+              <div class="plugin-pill">
+                <span class="p-num">3</span>
+                <div class="p-info">
+                  <strong>withComputed()</strong>
+                  <span>Auto-tracked derivations</span>
+                </div>
+              </div>
+              <div class="plugin-arrow">→</div>
+              <div class="plugin-pill">
+                <span class="p-num">4</span>
+                <div class="p-info">
+                  <strong>withMethods()</strong>
+                  <span>patchState &amp; rxMethod</span>
+                </div>
+              </div>
+              <div class="plugin-arrow">→</div>
+              <div class="plugin-pill">
+                <span class="p-num">5</span>
+                <div class="p-info">
+                  <strong>withHooks()</strong>
+                  <span>onInit &amp; onDestroy</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="concept-callout">
+              <div class="callout-icon">💡</div>
+              <div class="callout-content">
+                <strong>The "Zero-Boilerplate" Rule:</strong>
+                SignalStore requires no action types, no reducer switch
+                statements, and no selectors. Every state slice is automatically
+                exposed as a direct signal (e.g. <code>store.skills()</code>,
+                <code>store.totalCount()</code>) that triggers zoneless change
+                detection with zero Zone.js overhead!
+              </div>
+            </div>
+          </div>
+        }
+
         <!-- Card 1: Interactive Entities Manager -->
         @if (activeCase() === 'all' || activeCase() === 'entities') {
           <div class="card" [class.focused-card]="activeCase() === 'entities'">
@@ -272,6 +363,31 @@ export const SkillsStore = signalStore(
                 </div>
               }
             </div>
+
+            <!-- O(1) vs O(n) Normalization Visual Explainer -->
+            <div class="normalization-explainer">
+              <div class="explainer-box">
+                <span class="explainer-tag alert"
+                  >Naive Array: O(n) Bottleneck</span
+                >
+                <p>
+                  Updating one item in an array requires iterating every element
+                  with <code>items.map()</code>. At scale, this forces
+                  unnecessary re-allocations.
+                </p>
+              </div>
+              <div class="explainer-box">
+                <span class="explainer-tag success"
+                  >Normalized: O(1) Lookups</span
+                >
+                <p>
+                  <code>withEntities()</code> maintains
+                  <code>ids: string[]</code> (order) and
+                  <code>entityMap: Record&lt;string, T&gt;</code> (instant key
+                  access). Lookups and updates are $O(1)$!
+                </p>
+              </div>
+            </div>
           </div>
         }
 
@@ -329,6 +445,22 @@ export const SkillsStore = signalStore(
                   <strong>entityMap: Record&lt;string, Entity&gt;</strong>
                   <pre><code>{{ formattedEntityMap() }}</code></pre>
                 </div>
+              </div>
+            </div>
+
+            <!-- rxMethod Explainer -->
+            <div class="rxmethod-explainer">
+              <div class="callout-icon">⚡</div>
+              <div class="callout-body">
+                <strong>Why rxMethod() is Essential:</strong>
+                <p>
+                  Standard RxJS subscriptions inside components risk memory
+                  leaks if not manually unsubscribed.
+                  <code>rxMethod&lt;T&gt;()</code> accepts a static argument,
+                  Signal, or Observable, connects to the injection context, and
+                  automatically manages the subscription lifecycle with
+                  cancellation support.
+                </p>
               </div>
             </div>
           </div>
@@ -404,44 +536,208 @@ export const SkillsStore = signalStore(
 
     .metrics-row {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
       gap: var(--space-3, 0.75rem);
       margin-bottom: var(--space-4, 1rem);
     }
 
     .metric-card {
-      background: var(--color-surface-sunken, rgba(15, 23, 42, 0.6));
-      border: 1px solid var(--color-border-subtle, rgba(255, 255, 255, 0.08));
+      background: var(--color-bg-raised);
+      border: 1px solid var(--color-border-default);
       border-radius: var(--radius-lg, 0.75rem);
       padding: var(--space-3, 0.75rem) var(--space-4, 1rem);
       display: flex;
       flex-direction: column;
-      gap: 2px;
+      gap: 4px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+      transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+    }
+
+    .metric-card:hover {
+      border-color: var(--color-border-strong);
     }
 
     .metric-card.highlight {
-      background: rgba(99, 102, 241, 0.12);
-      border-color: rgba(99, 102, 241, 0.3);
+      background: var(--color-accent-subtle);
+      border-color: var(--color-accent-default);
+    }
+
+    .metric-card .card-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
 
     .metric-card .label {
       font-size: 0.65rem;
       text-transform: uppercase;
       letter-spacing: 0.05em;
-      color: var(--color-text-muted, #94a3b8);
+      color: var(--color-text-muted);
       font-weight: 600;
     }
 
+    .metric-card .metric-icon {
+      font-size: 0.875rem;
+    }
+
     .metric-card .value {
-      font-size: 1.25rem;
+      font-size: 1.35rem;
       font-weight: 700;
-      color: var(--color-text-primary, #f8fafc);
+      color: var(--color-text-default);
       font-family: monospace;
+      line-height: 1.2;
     }
 
     .metric-card .value.sync {
       font-size: 0.85rem;
       color: var(--color-accent-default);
+      font-weight: 600;
+    }
+
+    .metric-card .hint {
+      font-size: 0.65rem;
+      color: var(--color-text-muted);
+    }
+
+    .plugins-diagram {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2, 0.5rem);
+      overflow-x: auto;
+      padding: var(--space-2, 0.5rem) 0;
+      margin: var(--space-2, 0.5rem) 0;
+    }
+
+    .plugin-pill {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2, 0.5rem);
+      background: var(--color-bg-surface);
+      border: 1px solid var(--color-border-default);
+      border-radius: var(--radius-md, 0.5rem);
+      padding: var(--space-2, 0.5rem) var(--space-3, 0.75rem);
+      white-space: nowrap;
+    }
+
+    .plugin-pill .p-num {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--color-accent-default);
+      color: var(--color-accent-on);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      font-weight: 700;
+    }
+
+    .plugin-pill .p-info {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+    }
+
+    .plugin-pill .p-info strong {
+      font-size: var(--font-size-xs, 0.75rem);
+      color: var(--color-text-default);
+      font-family: monospace;
+    }
+
+    .plugin-pill .p-info span {
+      font-size: 0.65rem;
+      color: var(--color-text-muted);
+    }
+
+    .plugin-arrow {
+      color: var(--color-text-muted);
+      font-weight: 700;
+    }
+
+    .concept-callout {
+      display: flex;
+      gap: var(--space-3, 0.75rem);
+      background: var(--color-bg-surface);
+      border-left: 3px solid var(--color-accent-default);
+      border-radius: var(--radius-sm, 0.25rem);
+      padding: var(--space-3, 0.75rem);
+      font-size: var(--font-size-xs, 0.75rem);
+      line-height: 1.5;
+      color: var(--color-text-default);
+    }
+
+    .concept-callout .callout-icon {
+      font-size: 1.25rem;
+    }
+
+    .normalization-explainer {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-3, 0.75rem);
+      margin-top: var(--space-3, 0.75rem);
+    }
+
+    .explainer-box {
+      background: var(--color-bg-surface);
+      border: 1px solid var(--color-border-default);
+      border-radius: var(--radius-md, 0.5rem);
+      padding: var(--space-3, 0.75rem);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .explainer-box p {
+      margin: 0;
+      font-size: 0.7rem;
+      color: var(--color-text-muted);
+      line-height: 1.4;
+    }
+
+    .explainer-tag {
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .explainer-tag.alert {
+      color: var(--color-warning-default, #d97706);
+    }
+
+    .explainer-tag.success {
+      color: var(--color-success-default, #15803d);
+    }
+
+    .explainer-tag.accent {
+      color: var(--color-accent-default);
+    }
+
+    .rxmethod-explainer {
+      display: flex;
+      gap: var(--space-3, 0.75rem);
+      background: var(--color-bg-surface);
+      border: 1px solid var(--color-border-default);
+      border-radius: var(--radius-md, 0.5rem);
+      padding: var(--space-3, 0.75rem);
+      margin-top: var(--space-3, 0.75rem);
+      font-size: 0.7rem;
+      color: var(--color-text-muted);
+      line-height: 1.45;
+    }
+
+    .rxmethod-explainer .callout-icon {
+      font-size: 1.25rem;
+    }
+
+    .rxmethod-explainer strong {
+      color: var(--color-text-default);
+    }
+
+    .rxmethod-explainer p {
+      margin: 2px 0 0;
     }
 
     .cards-grid {
@@ -735,6 +1031,7 @@ export class SignalStoreComponent {
 
   readonly focusOptions: readonly SegmentedOption<string>[] = [
     { value: 'all', label: 'All SignalStore Features' },
+    { value: 'concept', label: 'SignalStore Philosophy' },
     { value: 'entities', label: 'withEntities Normalization' },
     { value: 'rx-method', label: 'rxMethod Stream Interop' },
     { value: 'signal-state', label: 'signalState Local State' },

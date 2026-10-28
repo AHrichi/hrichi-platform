@@ -1,4 +1,9 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  signal,
+} from '@angular/core';
 import { AhButton, SectionHeading, type SegmentedOption } from '@ah/ui';
 import {
   FlowStage,
@@ -61,7 +66,7 @@ export interface EffectLog {
             <div class="config-controls">
               <div class="config-group">
                 <span class="config-title"
-                  >Concurrency Flattening Operator:</span
+                  >Concurrency Flattening Operator (4 Strategies):</span
                 >
                 <div class="pills-row">
                   <button
@@ -70,7 +75,7 @@ export interface EffectLog {
                     [class.active]="operator() === 'exhaustMap'"
                     (click)="operator.set('exhaustMap')"
                   >
-                    exhaustMap (Ignore rapid clicks)
+                    exhaustMap (Ignore rapid duplicates)
                   </button>
                   <button
                     type="button"
@@ -78,7 +83,23 @@ export interface EffectLog {
                     [class.active]="operator() === 'switchMap'"
                     (click)="operator.set('switchMap')"
                   >
-                    switchMap (Cancel previous)
+                    switchMap (Cancel previous in-flight)
+                  </button>
+                  <button
+                    type="button"
+                    class="pill"
+                    [class.active]="operator() === 'concatMap'"
+                    (click)="operator.set('concatMap')"
+                  >
+                    concatMap (Queue sequentially)
+                  </button>
+                  <button
+                    type="button"
+                    class="pill"
+                    [class.active]="operator() === 'mergeMap'"
+                    (click)="operator.set('mergeMap')"
+                  >
+                    mergeMap (Run in parallel)
                   </button>
                 </div>
               </div>
@@ -116,6 +137,15 @@ export interface EffectLog {
                 {{
                   isBusy() ? 'Effect in Progress...' : 'Dispatch [Auth] Login'
                 }}
+              </button>
+              <button
+                type="button"
+                ahButton="secondary"
+                [disabled]="isBusy() && operator() === 'exhaustMap'"
+                (click)="rapidFireDispatches()"
+                title="Dispatch 3 actions in rapid succession to test concurrency"
+              >
+                🔥 Rapid-Fire 3 Actions
               </button>
               <button type="button" ahButton="ghost" (click)="clearLogs()">
                 Clear Timeline
@@ -211,6 +241,54 @@ export interface EffectLog {
                   independent background syncs where ordering and duplicate
                   prevention do not matter.</span
                 >
+              </div>
+            </div>
+          </div>
+        }
+
+        <!-- Card 4: The Dead Stream Trap -->
+        @if (activeCase() === 'all' || activeCase() === 'dead-stream') {
+          <div
+            class="card"
+            [class.focused-card]="activeCase() === 'dead-stream'"
+          >
+            <div class="card-header">
+              <span class="badge">Production Reliability</span>
+              <h3>The "Dead Stream" Trap &amp; Why tapResponse is Vital</h3>
+            </div>
+            <p class="description">
+              The #1 most common junior/intermediate bug in NgRx is putting
+              <code>catchError()</code> directly on the outer
+              <code>actions$.pipe(...)</code> stream instead of the inner HTTP
+              observable.
+            </p>
+
+            <div class="comparison-boxes">
+              <div class="cmp-box fatal">
+                <span class="cmp-tag"
+                  >❌ Fatal: Outer catchError Kills Effect</span
+                >
+                <pre><code>actions$.pipe(
+  ofType(AuthActions.login),
+  switchMap(() => api.login()),
+  catchError(err => of(AuthActions.failure(&#123; err &#125;)))
+  // 💀 Outer actions stream COMPLETES!
+  // Future login clicks will NEVER fire!
+)</code></pre>
+              </div>
+
+              <div class="cmp-box safe">
+                <span class="cmp-tag">✅ Production Safe: tapResponse</span>
+                <pre><code>actions$.pipe(
+  ofType(AuthActions.login),
+  switchMap(() => api.login().pipe(
+    tapResponse(&#123;
+      next: (user) => AuthActions.success(&#123; user &#125;),
+      error: (err) => AuthActions.failure(&#123; err &#125;),
+    &#125;)
+  ))
+  // 🛡️ Outer stream remains ALIVE forever!
+)</code></pre>
               </div>
             </div>
           </div>
@@ -457,6 +535,55 @@ export interface EffectLog {
       line-height: 1.4;
       overflow-x: auto;
     }
+
+    .comparison-boxes {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: var(--space-3, 0.75rem);
+      margin-top: var(--space-2, 0.5rem);
+    }
+
+    .cmp-box {
+      background: var(--color-stage-bg, #0f0f12);
+      border: 1px solid var(--color-stage-border, #26262b);
+      border-radius: var(--radius-md, 0.5rem);
+      padding: var(--space-3, 0.75rem);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .cmp-box.fatal {
+      border-color: rgba(239, 68, 68, 0.4);
+    }
+
+    .cmp-box.safe {
+      border-color: rgba(34, 197, 94, 0.4);
+    }
+
+    .cmp-tag {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .cmp-box.fatal .cmp-tag {
+      color: #f87171;
+    }
+
+    .cmp-box.safe .cmp-tag {
+      color: #4ade80;
+    }
+
+    .cmp-box pre {
+      margin: 0;
+      font-family: monospace;
+      font-size: 0.7rem;
+      line-height: 1.45;
+      color: var(--color-stage-text, #f7f7f8);
+      overflow-x: auto;
+    }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -464,13 +591,16 @@ export class EffectsCycleComponent {
   readonly focusOptions: readonly SegmentedOption<string>[] = [
     { value: 'all', label: 'All Effect Concepts' },
     { value: 'simulation', label: 'Simulation Runner' },
+    { value: 'operators', label: 'Concurrency Flattening' },
+    { value: 'dead-stream', label: 'The Dead Stream Trap' },
     { value: 'timeline', label: 'Stream Timeline' },
-    { value: 'operators', label: 'Concurrency Cheatsheet' },
   ];
 
   readonly activeCase = signal('all');
   readonly currentStage = signal<FlowStage>('idle');
-  readonly operator = signal<'exhaustMap' | 'switchMap'>('exhaustMap');
+  readonly operator = signal<
+    'exhaustMap' | 'switchMap' | 'concatMap' | 'mergeMap'
+  >('exhaustMap');
   readonly outcome = signal<'success' | 'error'>('success');
   readonly isBusy = signal(false);
 
@@ -484,11 +614,13 @@ export class EffectsCycleComponent {
     },
   ]);
 
-  readonly effectCodeSnippet = `export const loginEffect = createEffect(
+  readonly effectCodeSnippet = computed(() => {
+    const op = this.operator();
+    return `export const loginEffect = createEffect(
   (actions$ = inject(Actions), authService = inject(AuthService)) =>
     actions$.pipe(
       ofType(AuthActions.login),
-      exhaustMap(({ credentials }) =>
+      ${op}(({ credentials }) =>
         authService.login(credentials).pipe(
           tapResponse({
             next: (user) => AuthActions.loginSuccess({ user }),
@@ -499,8 +631,9 @@ export class EffectsCycleComponent {
     ),
   { functional: true },
 );`;
+  });
 
-  triggerEffect(): void {
+  triggerEffect(customLabel?: string): void {
     if (this.isBusy() && this.operator() === 'exhaustMap') {
       this.addLog(
         'Effect',
@@ -512,7 +645,11 @@ export class EffectsCycleComponent {
 
     this.isBusy.set(true);
     this.currentStage.set('dispatch');
-    this.addLog('Component', 'Dispatched [Auth] Login Request', 'info');
+    this.addLog(
+      'Component',
+      `Dispatched [Auth] Login Request ${customLabel ? `(${customLabel})` : ''}`,
+      'info',
+    );
 
     setTimeout(() => {
       this.currentStage.set('effect');
@@ -568,6 +705,92 @@ export class EffectsCycleComponent {
         this.currentStage.set('idle');
       }, 1500);
     }, 1200);
+  }
+
+  rapidFireDispatches(): void {
+    this.clearLogs();
+    const op = this.operator();
+    this.addLog(
+      'Component',
+      `🔥 Triggering Rapid-Fire 3 Dispatches under [${op}]...`,
+      'warn',
+    );
+
+    if (op === 'exhaustMap') {
+      this.triggerEffect('Action #1');
+      setTimeout(() => {
+        this.addLog(
+          'Effect',
+          '⚡ Action #2 arrived: exhaustMap DROPPED it because Action #1 is in-flight!',
+          'warn',
+        );
+      }, 200);
+      setTimeout(() => {
+        this.addLog(
+          'Effect',
+          '⚡ Action #3 arrived: exhaustMap DROPPED it because Action #1 is in-flight!',
+          'warn',
+        );
+      }, 400);
+    } else if (op === 'switchMap') {
+      this.triggerEffect('Action #1');
+      setTimeout(() => {
+        this.addLog(
+          'Effect',
+          '🔄 Action #2 arrived: switchMap CANCELLED Action #1 HTTP request!',
+          'warn',
+        );
+        this.triggerEffect('Action #2');
+      }, 300);
+      setTimeout(() => {
+        this.addLog(
+          'Effect',
+          '🔄 Action #3 arrived: switchMap CANCELLED Action #2 HTTP request!',
+          'warn',
+        );
+        this.triggerEffect('Action #3 (Final)');
+      }, 600);
+    } else if (op === 'concatMap') {
+      this.addLog(
+        'Effect',
+        '⛓️ concatMap: Action #1 started immediately.',
+        'info',
+      );
+      this.addLog(
+        'Effect',
+        '⛓️ concatMap: Action #2 buffered in FIFO queue.',
+        'info',
+      );
+      this.addLog(
+        'Effect',
+        '⛓️ concatMap: Action #3 buffered in FIFO queue.',
+        'info',
+      );
+      this.triggerEffect('Action #1');
+      setTimeout(() => {
+        this.addLog(
+          'Effect',
+          '⛓️ Action #1 completed -> dequeuing and executing Action #2.',
+          'success',
+        );
+      }, 1400);
+      setTimeout(() => {
+        this.addLog(
+          'Effect',
+          '⛓️ Action #2 completed -> dequeuing and executing Action #3.',
+          'success',
+        );
+      }, 2700);
+    } else if (op === 'mergeMap') {
+      this.addLog(
+        'Effect',
+        '⚡ mergeMap: Spawning 3 concurrent parallel HTTP requests simultaneously!',
+        'info',
+      );
+      this.triggerEffect('Action #1 (Parallel)');
+      setTimeout(() => this.triggerEffect('Action #2 (Parallel)'), 150);
+      setTimeout(() => this.triggerEffect('Action #3 (Parallel)'), 300);
+    }
   }
 
   clearLogs(): void {
