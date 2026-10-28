@@ -24,19 +24,19 @@
 }
 
 .config-card {
-  background-color: #ebf8ff;
-  border-color: #bee3f8;
+  background-color: var(--color-bg-raised);
+  border-color: var(--color-border-default);
 }
 
 .config-card .card-header {
-  background-color: #bee3f8;
-  border-bottom-color: #90cdf4;
+  background-color: var(--color-bg-surface);
+  border-bottom-color: var(--color-border-default);
 }
 
 .config-group {
   display: flex;
-  gap: 24px;
-  margin-bottom: 16px;
+  gap: var(--space-4, 16px);
+  margin-bottom: var(--space-4, 16px);
   flex-wrap: wrap;
   align-items: flex-end;
 }
@@ -50,15 +50,15 @@
 .config-item label {
   font-size: 0.875rem;
   font-weight: 500;
-  color: #4a5568;
+  color: var(--color-text-muted);
 }
 
 .config-item input {
   padding: 8px 12px;
   border-radius: var(--radius-sm, 6px);
-  border: 1px solid var(--color-border-default, #cbd5e0);
-  background-color: var(--color-bg-canvas, white);
-  color: var(--color-text-default, #1e293b);
+  border: 1px solid var(--color-border-default);
+  background-color: var(--color-bg-surface);
+  color: var(--color-text-default);
   font-family: var(--font-family-sans, system-ui, sans-serif);
   font-size: 0.875rem;
   width: 120px;
@@ -66,42 +66,64 @@
 
 .config-item input:focus {
   outline: none;
-  border-color: var(--color-accent-default, #4299e1);
-  box-shadow: 0 0 0 2px var(--color-accent-subtle, rgba(66, 153, 225, 0.2));
+  border-color: var(--color-accent-default);
+  box-shadow: 0 0 0 2px var(--color-accent-subtle, rgba(208, 53, 83, 0.2));
 }
 
 .operators-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-  gap: 24px;
+  gap: var(--space-5, 24px);
+
+  &.single-case {
+    grid-template-columns: 1fr;
+  }
 }
 
 .card {
-  background-color: #fff;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  margin-bottom: 24px;
-  box-shadow:
-    0 1px 3px 0 rgba(0, 0, 0, 0.1),
-    0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  background-color: var(--color-bg-raised);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-lg, 12px);
+  margin-bottom: var(--space-5, 24px);
+  box-shadow: var(--shadow-raised);
+  transition:
+    border-color var(--motion-duration-fast) var(--motion-easing-standard),
+    box-shadow var(--motion-duration-fast) var(--motion-easing-standard);
+
+  &.focused-card {
+    border-color: var(--color-accent-default);
+    box-shadow:
+      0 0 0 1px var(--color-accent-default),
+      var(--shadow-raised);
+  }
 }
 
 .card-header {
-  padding: 16px 24px;
-  border-bottom: 1px solid #e2e8f0;
-  background-color: #f7fafc;
+  padding: var(--space-4, 16px) var(--space-5, 24px);
+  border-bottom: 1px solid var(--color-border-default);
+  background-color: var(--color-bg-surface);
+  border-top-left-radius: inherit;
+  border-top-right-radius: inherit;
+}
+
+.card-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-1);
 }
 
 .card-header h3 {
   margin: 0;
   font-size: 1.125rem;
-  color: #2d3748;
+  color: var(--color-text-default);
 }
 
 .card-header p {
   margin: 4px 0 0;
   font-size: 0.875rem;
-  color: #718096;
+  color: var(--color-text-muted);
 }
 
 .card-content {
@@ -270,39 +292,9 @@
 
 .button-group {
   display: flex;
-  gap: 12px;
-  margin-top: 16px;
+  gap: var(--space-3, 12px);
+  margin-top: var(--space-4, 16px);
   flex-wrap: wrap;
-}
-
-button {
-  padding: 10px 16px;
-  font-size: 0.875rem;
-  font-weight: 600;
-  border-radius: 6px;
-  border: 1px solid transparent;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  background-color: #4299e1;
-  color: white;
-}
-
-button:hover {
-  background-color: #3182ce;
-}
-
-button:disabled {
-  background-color: #a0aec0;
-  cursor: not-allowed;
-}
-
-button.btn-secondary {
-  background-color: #a0aec0;
-  color: white;
-}
-
-button.btn-secondary:hover {
-  background-color: #718096;
 }
 
 .log-box {

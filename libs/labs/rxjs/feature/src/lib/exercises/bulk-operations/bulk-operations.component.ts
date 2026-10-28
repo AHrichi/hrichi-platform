@@ -8,11 +8,13 @@ import {
 import { CommonModule } from '@angular/common';
 import { Observable, forkJoin, from, of } from 'rxjs';
 import { bufferCount, concatMap, tap, finalize, toArray } from 'rxjs/operators';
+import { AhButton, SectionHeading, SegmentedOption, Tag } from '@ah/ui';
 import {
   FileProcessingService,
   File,
 } from '../../shared/services/file-processing.service';
 import { NotificationService } from '../../shared/services/notification.service';
+import { UseCaseFocusComponent } from '../../shared/ui/use-case-focus/use-case-focus.component';
 
 interface FileItem extends File {
   status: 'pending' | 'processing' | 'done';
@@ -21,7 +23,7 @@ interface FileItem extends File {
 @Component({
   selector: 'app-bulk-operations',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, UseCaseFocusComponent, AhButton, Tag, SectionHeading],
   templateUrl: './bulk-operations.component.html',
   styleUrls: ['./bulk-operations.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -29,6 +31,14 @@ interface FileItem extends File {
 export class BulkOperationsComponent {
   private fileService = inject(FileProcessingService);
   private notificationService = inject(NotificationService);
+
+  // --- Focus View Options ---
+  readonly focusOptions: readonly SegmentedOption<string>[] = [
+    { value: 'all', label: 'All Bulk Operations' },
+    { value: 'forkJoin', label: 'forkJoin (Parallel)' },
+    { value: 'bufferCount', label: 'bufferCount (Batched)' },
+  ];
+  readonly activeCase = signal<string>('all');
 
   // --- Signals for UI Configuration ---
   fileCount = signal(6);

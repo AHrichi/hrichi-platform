@@ -5,7 +5,6 @@ import {
   signal,
   inject,
   OnDestroy,
-  computed,
 } from '@angular/core';
 
 import {
@@ -22,7 +21,9 @@ import {
   connectable,
   Connectable,
 } from 'rxjs';
+import { AhButton, SectionHeading, SegmentedOption, Tag } from '@ah/ui';
 import { NotificationService } from '../../shared/services/notification.service';
+import { UseCaseFocusComponent } from '../../shared/ui/use-case-focus/use-case-focus.component';
 
 interface Marble {
   id: number;
@@ -43,12 +44,25 @@ type ExampleType = 'cold' | 'hot' | 'connectable' | SubjectType;
 @Component({
   selector: 'app-multicasting',
   standalone: true,
-  imports: [],
+  imports: [UseCaseFocusComponent, AhButton, Tag, SectionHeading],
   templateUrl: './multicasting.component.html',
   styleUrls: ['./multicasting.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MulticastingComponent implements OnDestroy {
+  // --- Focus View Options ---
+  readonly focusOptions: readonly SegmentedOption<string>[] = [
+    { value: 'all', label: 'All Multicasting' },
+    { value: 'cold', label: 'Cold Observable' },
+    { value: 'hot', label: 'Hot (share)' },
+    { value: 'connectable', label: 'Connectable' },
+    { value: 'subject', label: 'Subject' },
+    { value: 'behaviorSubject', label: 'BehaviorSubject' },
+    { value: 'replaySubject', label: 'ReplaySubject' },
+    { value: 'asyncSubject', label: 'AsyncSubject' },
+  ];
+  readonly activeCase = signal<string>('all');
+
   // --- Signals for UI Configuration ---
   replayBufferSize = signal(3);
   behaviorInitialValue = signal(0);
@@ -87,7 +101,7 @@ export class MulticastingComponent implements OnDestroy {
   private replaySubject: ReplaySubject<number> | null = null;
   private asyncSubject: AsyncSubject<number> | null = null;
 
-  private hotSource$: Observable<number>;
+  private hotSource$!: Observable<number>;
   private connectableSource$: Connectable<number> | null = null;
   private connectableSubscription: Subscription | null = null;
 
@@ -103,15 +117,19 @@ export class MulticastingComponent implements OnDestroy {
   public colors = ['#f87171', '#60a5fa', '#4ade80', '#facc15', '#a78bfa'];
   private notificationService = inject(NotificationService);
 
-  // --- Computed signals for special displays ---
-  behaviorSubjectValue = computed(() => this.behaviorSubject?.getValue());
+  // --- Reactive signals for special displays ---
+  behaviorSubjectValue = signal<number | null>(null);
   replaySubjectBuffer = signal<number[]>([]);
 
   constructor() {
+    this.initHotSource();
+  }
+
+  private initHotSource() {
     this.hotSource$ = interval(1000).pipe(
       take(5),
       tap((value) => this.addSourceMarble('hot', value)),
-      share(), // share makes the source hot
+      share(),
     );
   }
 
@@ -128,10 +146,12 @@ export class MulticastingComponent implements OnDestroy {
   createSubject(type: SubjectType) {
     this.reset(type);
     if (type === 'subject') this.subject = new Subject<number>();
-    if (type === 'behaviorSubject')
+    if (type === 'behaviorSubject') {
       this.behaviorSubject = new BehaviorSubject<number>(
         this.behaviorInitialValue(),
       );
+      this.behaviorSubjectValue.set(this.behaviorInitialValue());
+    }
     if (type === 'replaySubject')
       this.replaySubject = new ReplaySubject<number>(this.replayBufferSize());
     if (type === 'asyncSubject') this.asyncSubject = new AsyncSubject<number>();
@@ -152,6 +172,9 @@ export class MulticastingComponent implements OnDestroy {
     const value = this.valueCounters[type]++;
     this.addSourceMarble(type, value);
     subject.next(value);
+    if (type === 'behaviorSubject') {
+      this.behaviorSubjectValue.set(value);
+    }
     if (type === 'replaySubject') {
       this.replaySubjectBuffer.update((buffer) =>
         [...buffer, value].slice(-this.replayBufferSize()),
@@ -272,7 +295,9 @@ export class MulticastingComponent implements OnDestroy {
     if (type === 'connectable') {
       this.connectableSubscription?.unsubscribe();
       this.connectableSource$ = null;
-    } else if (type !== 'cold' && type !== 'hot') {
+    } else if (type === 'hot') {
+      this.initHotSource();
+    } else if (type !== 'cold') {
       const subject = this.getSubject(type);
       subject?.complete();
       this.setSubject(type, null);
@@ -282,6 +307,7 @@ export class MulticastingComponent implements OnDestroy {
       }));
       this.valueCounters[type as SubjectType] = 0;
     }
+    if (type === 'behaviorSubject') this.behaviorSubjectValue.set(null);
     if (type === 'replaySubject') this.replaySubjectBuffer.set([]);
   }
 

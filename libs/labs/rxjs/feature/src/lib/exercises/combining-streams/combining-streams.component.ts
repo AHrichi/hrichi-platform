@@ -9,16 +9,26 @@ import {
   scan,
   startWith,
 } from 'rxjs/operators';
+import { AhButton, SectionHeading, SegmentedOption, Tag } from '@ah/ui';
+import { UseCaseFocusComponent } from '../../shared/ui/use-case-focus/use-case-focus.component';
 
 @Component({
   selector: 'app-combining-streams',
   standalone: true,
-  imports: [],
+  imports: [UseCaseFocusComponent, AhButton, Tag, SectionHeading],
   templateUrl: './combining-streams.component.html',
   styleUrls: ['./combining-streams.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CombiningStreamsComponent {
+  // --- Focus View Options ---
+  readonly focusOptions: readonly SegmentedOption<string>[] = [
+    { value: 'all', label: 'All Combining Operators' },
+    { value: 'withLatestFrom', label: 'withLatestFrom' },
+    { value: 'combineLatest', label: 'combineLatest' },
+  ];
+  readonly activeCase = signal<string>('all');
+
   // --- Subjects for withLatestFrom ---
   private primarySource = new Subject<string>();
   private secondarySource = new Subject<string>();

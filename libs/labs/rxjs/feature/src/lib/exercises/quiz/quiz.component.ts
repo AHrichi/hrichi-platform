@@ -8,6 +8,7 @@ import {
 } from '@angular/core';
 
 import { ActivatedRoute, Router } from '@angular/router';
+import { AhButton, SectionHeading, Tag } from '@ah/ui';
 import { QuizService } from '../../shared/services/quiz.service';
 import { QuizQuestion, Difficulty } from '../../shared/models/quiz.model';
 import { NotificationService } from '../../shared/services/notification.service';
@@ -17,7 +18,7 @@ type QuizState = 'selecting' | 'in-progress' | 'finished';
 @Component({
   selector: 'app-quiz',
   standalone: true,
-  imports: [],
+  imports: [AhButton, Tag, SectionHeading],
   templateUrl: './quiz.component.html',
   styleUrls: ['./quiz.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

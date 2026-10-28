@@ -1,10 +1,12 @@
 import { Component, inject } from '@angular/core';
+import { AhButton } from '@ah/ui';
 import { DataSharingService } from '../../../shared/services/data-sharing.service';
 import { NotificationService } from '../../../shared/services/notification.service';
 
 @Component({
   selector: 'app-service-sender',
   standalone: true,
+  imports: [AhButton],
   templateUrl: './service-sender.component.html',
   styleUrls: ['./service-sender.component.scss'],
 })

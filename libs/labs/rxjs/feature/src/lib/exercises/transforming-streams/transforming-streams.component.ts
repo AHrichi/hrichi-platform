@@ -12,6 +12,8 @@ import {
   exhaustMap,
   finalize,
 } from 'rxjs/operators';
+import { AhButton, SectionHeading, SegmentedOption, Tag } from '@ah/ui';
+import { UseCaseFocusComponent } from '../../shared/ui/use-case-focus/use-case-focus.component';
 
 // --- Interfaces for Visualization ---
 interface Marble {
@@ -39,12 +41,22 @@ type OperatorType = 'concatMap' | 'switchMap' | 'mergeMap' | 'exhaustMap';
 @Component({
   selector: 'app-transforming-streams',
   standalone: true,
-  imports: [],
+  imports: [UseCaseFocusComponent, AhButton, Tag, SectionHeading],
   templateUrl: './transforming-streams.component.html',
   styleUrls: ['./transforming-streams.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TransformingStreamsComponent {
+  // --- Focus View Options ---
+  readonly focusOptions: readonly SegmentedOption<string>[] = [
+    { value: 'all', label: 'All Operators' },
+    { value: 'concatMap', label: 'concatMap' },
+    { value: 'switchMap', label: 'switchMap' },
+    { value: 'mergeMap', label: 'mergeMap' },
+    { value: 'exhaustMap', label: 'exhaustMap' },
+  ];
+  readonly activeCase = signal<string>('all');
+
   // --- Source for all strategies ---
   private source = new Subject<{ clickIndex: number; color: string }>();
   private sourceSubscription: Subscription | null = null;

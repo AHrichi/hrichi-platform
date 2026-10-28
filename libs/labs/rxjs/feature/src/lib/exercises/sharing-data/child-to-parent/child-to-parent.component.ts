@@ -1,8 +1,10 @@
 import { Component, output } from '@angular/core';
+import { AhButton } from '@ah/ui';
 
 @Component({
   selector: 'app-child-to-parent',
   standalone: true,
+  imports: [AhButton],
   templateUrl: './child-to-parent.component.html',
   styleUrls: ['./child-to-parent.component.scss'],
 })

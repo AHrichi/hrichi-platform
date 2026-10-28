@@ -1,24 +1,57 @@
 <!-- src/app/exercises/quiz/quiz.component.html -->
 <div class="exercise-container">
-  <h2 class="exercise-title">RxJS Challenge</h2>
+  <ah-section-heading
+    eyebrow="Knowledge Assessment"
+    heading="RxJS & Angular Reactivity Challenge"
+    lead="Test your mastery of stream transformation, multicasting, error recovery, caching, and modern Angular 22 Signals."
+  />
 
   @switch (quizState()) {
     @case ('selecting') {
-      <p class="exercise-description">
-        Select your difficulty level to test your knowledge.
-      </p>
       <div class="difficulty-selection">
-        <div class="card" (click)="startQuiz('Beginner')">
-          <h3>Beginner</h3>
-          <p>Fundamentals of Observables and simple operators.</p>
+        <div class="card difficulty-card" (click)="startQuiz('Beginner')">
+          <div class="card-header">
+            <div class="card-title-row">
+              <h3>Beginner</h3>
+              <ah-tag>Fundamentals</ah-tag>
+            </div>
+            <p>Observables, basic operators, and primary data sharing.</p>
+          </div>
+          <div class="card-content">
+            <button type="button" ahButton="primary" size="sm">
+              Start Beginner Track
+            </button>
+          </div>
         </div>
-        <div class="card" (click)="startQuiz('Mid-level')">
-          <h3>Mid-level</h3>
-          <p>Higher-order mapping, multicasting, and caching.</p>
+
+        <div class="card difficulty-card" (click)="startQuiz('Mid-level')">
+          <div class="card-header">
+            <div class="card-title-row">
+              <h3>Mid-level</h3>
+              <ah-tag>Operators &amp; Subjects</ah-tag>
+            </div>
+            <p>Higher-order mapping, multicasting, caching, and batching.</p>
+          </div>
+          <div class="card-content">
+            <button type="button" ahButton="primary" size="sm">
+              Start Mid-level Track
+            </button>
+          </div>
         </div>
-        <div class="card" (click)="startQuiz('Senior')">
-          <h3>Senior</h3>
-          <p>Advanced patterns, testing, and edge cases.</p>
+
+        <div class="card difficulty-card" (click)="startQuiz('Senior')">
+          <div class="card-header">
+            <div class="card-title-row">
+              <h3>Senior</h3>
+              <ah-tag>Architecture &amp; Interop</ah-tag>
+            </div>
+            <p>Zoneless execution, linkedSignal, rxResource, and edge cases.</p>
+          </div>
+          <div class="card-content">
+            <button type="button" ahButton="primary" size="sm">
+              Start Senior Track
+            </button>
+          </div>
         </div>
       </div>
     }
@@ -49,6 +82,7 @@
             <div class="options-container">
               @for (option of currentQuestion().options; track option) {
                 <button
+                  type="button"
                   class="option-btn"
                   (click)="selectAnswer(option)"
                   [class.selected]="selectedAnswer() === option"
@@ -93,6 +127,9 @@
         @if (!isAnswered()) {
           <div class="feedback-container">
             <button
+              type="button"
+              ahButton="primary"
+              size="sm"
               (click)="submitAnswer()"
               [disabled]="selectedAnswer() === null"
             >
@@ -110,13 +147,20 @@
                 Not quite. This concept is covered in:
               </p>
               <button
-                class="btn-secondary"
+                type="button"
+                ahButton="secondary"
+                size="sm"
                 (click)="navigateToConcept(currentQuestion().relatedRoute)"
               >
                 Review Concept
               </button>
             }
-            <button (click)="nextQuestion()">
+            <button
+              type="button"
+              ahButton="primary"
+              size="sm"
+              (click)="nextQuestion()"
+            >
               {{
                 currentQuestionIndex() < questions().length - 1
                   ? 'Next Question'
@@ -133,7 +177,9 @@
         <p class="score">
           You scored {{ score() }} out of {{ questions().length }}
         </p>
-        <button (click)="restart()">Try Another Level</button>
+        <button type="button" ahButton="primary" size="sm" (click)="restart()">
+          Try Another Level
+        </button>
       </div>
     }
   }

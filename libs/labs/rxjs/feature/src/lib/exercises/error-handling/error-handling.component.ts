@@ -22,16 +22,28 @@ import {
   delayWhen,
   scan,
 } from 'rxjs/operators';
+import { AhButton, SectionHeading, SegmentedOption, Tag } from '@ah/ui';
+import { UseCaseFocusComponent } from '../../shared/ui/use-case-focus/use-case-focus.component';
 
 @Component({
   selector: 'app-error-handling',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, UseCaseFocusComponent, AhButton, Tag, SectionHeading],
   templateUrl: './error-handling.component.html',
   styleUrls: ['./error-handling.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ErrorHandlingComponent {
+  // --- Focus View Options ---
+  readonly focusOptions: readonly SegmentedOption<string>[] = [
+    { value: 'all', label: 'All Error Strategies' },
+    { value: 'replace', label: 'Catch & Replace' },
+    { value: 'rethrow', label: 'Catch & Rethrow' },
+    { value: 'retry', label: 'Modern Retry' },
+    { value: 'retryWhen', label: 'Legacy RetryWhen' },
+  ];
+  readonly activeCase = signal<string>('all');
+
   // --- Signals for retry strategy configuration ---
   retryDelay = signal(3000);
   maxRetries = signal(2);

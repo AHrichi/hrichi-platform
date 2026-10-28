@@ -1,11 +1,16 @@
 <!-- src/app/exercises/transforming-streams/transforming-streams.component.html -->
 <div class="exercise-container">
-  <h2 class="exercise-title">Exercise: Transforming Streams</h2>
-  <p class="exercise-description">
-    Exploring higher-order mapping operators as discussed in Chapter 6.
-    Configure the source stream and click "Start Emitting" to see how each
-    operator handles concurrent inner streams.
-  </p>
+  <ah-section-heading
+    eyebrow="Chapter 6 · Higher-Order Mapping"
+    heading="Exercise: Transforming Streams"
+    lead="Explore how concatMap, switchMap, mergeMap, and exhaustMap handle concurrent inner streams. Filter to a single operator to inspect its timeline and marble behavior in full detail."
+  />
+
+  <ah-use-case-focus
+    [options]="focusOptions"
+    [(value)]="activeCase"
+    ariaLabel="Filter transforming operator"
+  />
 
   <div class="card config-card">
     <div class="card-header">
@@ -51,381 +56,442 @@
         </div>
       </div>
       <div class="button-group">
-        <button (click)="startEmitting()" [disabled]="isEmitting()">
+        <button
+          type="button"
+          ahButton="primary"
+          size="sm"
+          (click)="startEmitting()"
+          [disabled]="isEmitting()"
+        >
           Start Emitting
         </button>
-        <button class="btn-secondary" (click)="resetAll()">Reset All</button>
+        <button
+          type="button"
+          ahButton="secondary"
+          size="sm"
+          (click)="resetAll()"
+        >
+          Reset All
+        </button>
       </div>
     </div>
   </div>
 
-  <div class="operators-grid">
+  <div class="operators-grid" [class.single-case]="activeCase() !== 'all'">
     <!-- Card for concatMap -->
-    <div class="card">
-      <div class="card-header">
-        <h3>The <code>concatMap</code> Operator</h3>
-        <p>
-          Maps each source value to an inner Observable and processes them in
-          sequence. Guarantees order.
-        </p>
-      </div>
-      <div class="card-content">
-        <div class="everyday-example">
+    @if (activeCase() === 'all' || activeCase() === 'concatMap') {
+      <div class="card" [class.focused-card]="activeCase() === 'concatMap'">
+        <div class="card-header">
+          <div class="card-title-row">
+            <h3>The <code>concatMap</code> Operator</h3>
+            @if (activeCase() === 'concatMap') {
+              <ah-tag>Focused View</ah-tag>
+            }
+          </div>
           <p>
-            <strong>Analogy:</strong> A meticulous chef following a recipe. They
-            complete one step (e.g., chopping vegetables) before starting the
-            next (e.g., sautéing). The order is crucial.
+            Maps each source value to an inner Observable and processes them in
+            sequence. Guarantees order.
           </p>
         </div>
-        <div class="timeline-group">
-          <div class="timeline-label">Source Stream</div>
-          <div class="timeline source-timeline">
-            @for (marble of concatMapSourceMarbles(); track marble.id) {
-              <div
-                class="marble source-marble"
-                [style.background]="marble.color"
-              >
-                {{ marble.value }}
-              </div>
-            }
-          </div>
-        </div>
-        <div class="timeline-group">
-          <div class="timeline-label">Inner Streams</div>
-          <div class="inner-streams-container">
-            @for (stream of concatMapInnerStreams(); track stream.id) {
-              <div
-                class="timeline inner-timeline"
-                [class.completed]="stream.status === 'completed'"
-                [class.cancelled]="stream.status === 'cancelled'"
-              >
-                @for (marble of stream.marbles; track marble.id) {
-                  <div class="marble" [style.background]="marble.color"></div>
-                }
-              </div>
-            }
-          </div>
-        </div>
-        <div class="timeline-group">
-          <div class="timeline-label">Output Stream (Animated)</div>
-          <div class="timeline">
-            @for (marble of concatMapOutputMarbles(); track marble.id) {
-              <div
-                class="marble output-marble"
-                [style.background]="marble.color"
-              >
-                {{ marble.value }}
-              </div>
-            }
-          </div>
-        </div>
-        <div class="timeline-group">
-          <div class="timeline-label">Final Output</div>
-          <div class="timeline final-output-timeline">
-            @for (marble of concatMapAllOutputMarbles(); track marble.id) {
-              <div
-                class="marble static-marble"
-                [style.background]="marble.color"
-              >
-                {{ marble.value }}
-              </div>
-            }
-          </div>
-        </div>
-        <div class="log-box">
-          <h4>Logs</h4>
-          @for (log of concatMapLogs(); track $index) {
+        <div class="card-content">
+          <div class="everyday-example">
             <p>
-              <span class="log-time">{{ log.time }}</span>
-              <span [style.color]="log.color">{{ log.message }}</span>
+              <strong>Analogy:</strong> A meticulous chef following a recipe.
+              They complete one step (e.g., chopping vegetables) before starting
+              the next (e.g., sautéing). The order is crucial.
             </p>
-          }
-        </div>
-        <div class="code-example">
-          <button class="btn-toggle-code" (click)="toggleCode('concatMap')">
-            {{ showConcatMapCode() ? 'Hide' : 'Show' }} Code
-          </button>
-          @if (showConcatMapCode()) {
-            <pre><code>{{ codeSnippets.concatMap }}</code></pre>
-          }
+          </div>
+          <div class="timeline-group">
+            <div class="timeline-label">Source Stream</div>
+            <div class="timeline source-timeline">
+              @for (marble of concatMapSourceMarbles(); track marble.id) {
+                <div
+                  class="marble source-marble"
+                  [style.background]="marble.color"
+                >
+                  {{ marble.value }}
+                </div>
+              }
+            </div>
+          </div>
+          <div class="timeline-group">
+            <div class="timeline-label">Inner Streams</div>
+            <div class="inner-streams-container">
+              @for (stream of concatMapInnerStreams(); track stream.id) {
+                <div
+                  class="timeline inner-timeline"
+                  [class.completed]="stream.status === 'completed'"
+                  [class.cancelled]="stream.status === 'cancelled'"
+                >
+                  @for (marble of stream.marbles; track marble.id) {
+                    <div class="marble" [style.background]="marble.color"></div>
+                  }
+                </div>
+              }
+            </div>
+          </div>
+          <div class="timeline-group">
+            <div class="timeline-label">Output Stream (Animated)</div>
+            <div class="timeline">
+              @for (marble of concatMapOutputMarbles(); track marble.id) {
+                <div
+                  class="marble output-marble"
+                  [style.background]="marble.color"
+                >
+                  {{ marble.value }}
+                </div>
+              }
+            </div>
+          </div>
+          <div class="timeline-group">
+            <div class="timeline-label">Final Output</div>
+            <div class="timeline final-output-timeline">
+              @for (marble of concatMapAllOutputMarbles(); track marble.id) {
+                <div
+                  class="marble static-marble"
+                  [style.background]="marble.color"
+                >
+                  {{ marble.value }}
+                </div>
+              }
+            </div>
+          </div>
+          <div class="log-box">
+            <h4>Logs</h4>
+            @for (log of concatMapLogs(); track $index) {
+              <p>
+                <span class="log-time">{{ log.time }}</span>
+                <span [style.color]="log.color">{{ log.message }}</span>
+              </p>
+            }
+          </div>
+          <div class="code-example">
+            <button
+              type="button"
+              ahButton="ghost"
+              size="sm"
+              (click)="toggleCode('concatMap')"
+            >
+              {{ showConcatMapCode() ? 'Hide' : 'Show' }} Code
+            </button>
+            @if (showConcatMapCode()) {
+              <pre><code>{{ codeSnippets.concatMap }}</code></pre>
+            }
+          </div>
         </div>
       </div>
-    </div>
+    }
 
     <!-- Card for switchMap -->
-    <div class="card">
-      <div class="card-header">
-        <h3>The <code>switchMap</code> Operator</h3>
-        <p>
-          Switches to a new inner Observable when the source emits, cancelling
-          the previous one. Ideal for cancellation.
-        </p>
-      </div>
-      <div class="card-content">
-        <div class="everyday-example">
+    @if (activeCase() === 'all' || activeCase() === 'switchMap') {
+      <div class="card" [class.focused-card]="activeCase() === 'switchMap'">
+        <div class="card-header">
+          <div class="card-title-row">
+            <h3>The <code>switchMap</code> Operator</h3>
+            @if (activeCase() === 'switchMap') {
+              <ah-tag>Focused View</ah-tag>
+            }
+          </div>
           <p>
-            <strong>Analogy:</strong> Typing in a search bar. You only care
-            about the results for the latest thing you typed. Old searches are
-            cancelled and discarded.
+            Switches to a new inner Observable when the source emits, cancelling
+            the previous one. Ideal for cancellation.
           </p>
         </div>
-        <div class="timeline-group">
-          <div class="timeline-label">Source Stream</div>
-          <div class="timeline source-timeline">
-            @for (marble of switchMapSourceMarbles(); track marble.id) {
-              <div
-                class="marble source-marble"
-                [style.background]="marble.color"
-              >
-                {{ marble.value }}
-              </div>
-            }
-          </div>
-        </div>
-        <div class="timeline-group">
-          <div class="timeline-label">Inner Streams</div>
-          <div class="inner-streams-container">
-            @for (stream of switchMapInnerStreams(); track stream.id) {
-              <div
-                class="timeline inner-timeline"
-                [class.completed]="stream.status === 'completed'"
-                [class.cancelled]="stream.status === 'cancelled'"
-              >
-                @for (marble of stream.marbles; track marble.id) {
-                  <div class="marble" [style.background]="marble.color"></div>
-                }
-              </div>
-            }
-          </div>
-        </div>
-        <div class="timeline-group">
-          <div class="timeline-label">Output Stream (Animated)</div>
-          <div class="timeline">
-            @for (marble of switchMapOutputMarbles(); track marble.id) {
-              <div
-                class="marble output-marble"
-                [style.background]="marble.color"
-              >
-                {{ marble.value }}
-              </div>
-            }
-          </div>
-        </div>
-        <div class="timeline-group">
-          <div class="timeline-label">Final Output</div>
-          <div class="timeline final-output-timeline">
-            @for (marble of switchMapAllOutputMarbles(); track marble.id) {
-              <div
-                class="marble static-marble"
-                [style.background]="marble.color"
-              >
-                {{ marble.value }}
-              </div>
-            }
-          </div>
-        </div>
-        <div class="log-box">
-          <h4>Logs</h4>
-          @for (log of switchMapLogs(); track $index) {
+        <div class="card-content">
+          <div class="everyday-example">
             <p>
-              <span class="log-time">{{ log.time }}</span>
-              <span [style.color]="log.color">{{ log.message }}</span>
+              <strong>Analogy:</strong> Typing in a search bar. You only care
+              about the results for the latest thing you typed. Old searches are
+              cancelled and discarded.
             </p>
-          }
-        </div>
-        <div class="code-example">
-          <button class="btn-toggle-code" (click)="toggleCode('switchMap')">
-            {{ showSwitchMapCode() ? 'Hide' : 'Show' }} Code
-          </button>
-          @if (showSwitchMapCode()) {
-            <pre><code>{{ codeSnippets.switchMap }}</code></pre>
-          }
+          </div>
+          <div class="timeline-group">
+            <div class="timeline-label">Source Stream</div>
+            <div class="timeline source-timeline">
+              @for (marble of switchMapSourceMarbles(); track marble.id) {
+                <div
+                  class="marble source-marble"
+                  [style.background]="marble.color"
+                >
+                  {{ marble.value }}
+                </div>
+              }
+            </div>
+          </div>
+          <div class="timeline-group">
+            <div class="timeline-label">Inner Streams</div>
+            <div class="inner-streams-container">
+              @for (stream of switchMapInnerStreams(); track stream.id) {
+                <div
+                  class="timeline inner-timeline"
+                  [class.completed]="stream.status === 'completed'"
+                  [class.cancelled]="stream.status === 'cancelled'"
+                >
+                  @for (marble of stream.marbles; track marble.id) {
+                    <div class="marble" [style.background]="marble.color"></div>
+                  }
+                </div>
+              }
+            </div>
+          </div>
+          <div class="timeline-group">
+            <div class="timeline-label">Output Stream (Animated)</div>
+            <div class="timeline">
+              @for (marble of switchMapOutputMarbles(); track marble.id) {
+                <div
+                  class="marble output-marble"
+                  [style.background]="marble.color"
+                >
+                  {{ marble.value }}
+                </div>
+              }
+            </div>
+          </div>
+          <div class="timeline-group">
+            <div class="timeline-label">Final Output</div>
+            <div class="timeline final-output-timeline">
+              @for (marble of switchMapAllOutputMarbles(); track marble.id) {
+                <div
+                  class="marble static-marble"
+                  [style.background]="marble.color"
+                >
+                  {{ marble.value }}
+                </div>
+              }
+            </div>
+          </div>
+          <div class="log-box">
+            <h4>Logs</h4>
+            @for (log of switchMapLogs(); track $index) {
+              <p>
+                <span class="log-time">{{ log.time }}</span>
+                <span [style.color]="log.color">{{ log.message }}</span>
+              </p>
+            }
+          </div>
+          <div class="code-example">
+            <button
+              type="button"
+              ahButton="ghost"
+              size="sm"
+              (click)="toggleCode('switchMap')"
+            >
+              {{ showSwitchMapCode() ? 'Hide' : 'Show' }} Code
+            </button>
+            @if (showSwitchMapCode()) {
+              <pre><code>{{ codeSnippets.switchMap }}</code></pre>
+            }
+          </div>
         </div>
       </div>
-    </div>
+    }
 
     <!-- Card for mergeMap -->
-    <div class="card">
-      <div class="card-header">
-        <h3>The <code>mergeMap</code> Operator</h3>
-        <p>
-          Subscribes to all inner Observables concurrently. Emits values as they
-          arrive. Order is not guaranteed.
-        </p>
-      </div>
-      <div class="card-content">
-        <div class="everyday-example">
+    @if (activeCase() === 'all' || activeCase() === 'mergeMap') {
+      <div class="card" [class.focused-card]="activeCase() === 'mergeMap'">
+        <div class="card-header">
+          <div class="card-title-row">
+            <h3>The <code>mergeMap</code> Operator</h3>
+            @if (activeCase() === 'mergeMap') {
+              <ah-tag>Focused View</ah-tag>
+            }
+          </div>
           <p>
-            <strong>Analogy:</strong> Downloading multiple files at once. All
-            downloads start immediately and run in parallel. The one that
-            finishes first appears first.
+            Runs multiple inner Observables concurrently without cancelling or
+            queuing. Order depends on timing.
           </p>
         </div>
-        <div class="timeline-group">
-          <div class="timeline-label">Source Stream</div>
-          <div class="timeline source-timeline">
-            @for (marble of mergeMapSourceMarbles(); track marble.id) {
-              <div
-                class="marble source-marble"
-                [style.background]="marble.color"
-              >
-                {{ marble.value }}
-              </div>
-            }
-          </div>
-        </div>
-        <div class="timeline-group">
-          <div class="timeline-label">Inner Streams</div>
-          <div class="inner-streams-container">
-            @for (stream of mergeMapInnerStreams(); track stream.id) {
-              <div
-                class="timeline inner-timeline"
-                [class.completed]="stream.status === 'completed'"
-                [class.cancelled]="stream.status === 'cancelled'"
-              >
-                @for (marble of stream.marbles; track marble.id) {
-                  <div class="marble" [style.background]="marble.color"></div>
-                }
-              </div>
-            }
-          </div>
-        </div>
-        <div class="timeline-group">
-          <div class="timeline-label">Output Stream (Animated)</div>
-          <div class="timeline">
-            @for (marble of mergeMapOutputMarbles(); track marble.id) {
-              <div
-                class="marble output-marble"
-                [style.background]="marble.color"
-              >
-                {{ marble.value }}
-              </div>
-            }
-          </div>
-        </div>
-        <div class="timeline-group">
-          <div class="timeline-label">Final Output</div>
-          <div class="timeline final-output-timeline">
-            @for (marble of mergeMapAllOutputMarbles(); track marble.id) {
-              <div
-                class="marble static-marble"
-                [style.background]="marble.color"
-              >
-                {{ marble.value }}
-              </div>
-            }
-          </div>
-        </div>
-        <div class="log-box">
-          <h4>Logs</h4>
-          @for (log of mergeMapLogs(); track $index) {
+        <div class="card-content">
+          <div class="everyday-example">
             <p>
-              <span class="log-time">{{ log.time }}</span>
-              <span [style.color]="log.color">{{ log.message }}</span>
+              <strong>Analogy:</strong> A busy intersection with multiple lanes
+              flowing at the same time. Cars from all directions merge into the
+              main flow as they arrive.
             </p>
-          }
-        </div>
-        <div class="code-example">
-          <button class="btn-toggle-code" (click)="toggleCode('mergeMap')">
-            {{ showMergeMapCode() ? 'Hide' : 'Show' }} Code
-          </button>
-          @if (showMergeMapCode()) {
-            <pre><code>{{ codeSnippets.mergeMap }}</code></pre>
-          }
+          </div>
+          <div class="timeline-group">
+            <div class="timeline-label">Source Stream</div>
+            <div class="timeline source-timeline">
+              @for (marble of mergeMapSourceMarbles(); track marble.id) {
+                <div
+                  class="marble source-marble"
+                  [style.background]="marble.color"
+                >
+                  {{ marble.value }}
+                </div>
+              }
+            </div>
+          </div>
+          <div class="timeline-group">
+            <div class="timeline-label">Inner Streams</div>
+            <div class="inner-streams-container">
+              @for (stream of mergeMapInnerStreams(); track stream.id) {
+                <div
+                  class="timeline inner-timeline"
+                  [class.completed]="stream.status === 'completed'"
+                  [class.cancelled]="stream.status === 'cancelled'"
+                >
+                  @for (marble of stream.marbles; track marble.id) {
+                    <div class="marble" [style.background]="marble.color"></div>
+                  }
+                </div>
+              }
+            </div>
+          </div>
+          <div class="timeline-group">
+            <div class="timeline-label">Output Stream (Animated)</div>
+            <div class="timeline">
+              @for (marble of mergeMapOutputMarbles(); track marble.id) {
+                <div
+                  class="marble output-marble"
+                  [style.background]="marble.color"
+                >
+                  {{ marble.value }}
+                </div>
+              }
+            </div>
+          </div>
+          <div class="timeline-group">
+            <div class="timeline-label">Final Output</div>
+            <div class="timeline final-output-timeline">
+              @for (marble of mergeMapAllOutputMarbles(); track marble.id) {
+                <div
+                  class="marble static-marble"
+                  [style.background]="marble.color"
+                >
+                  {{ marble.value }}
+                </div>
+              }
+            </div>
+          </div>
+          <div class="log-box">
+            <h4>Logs</h4>
+            @for (log of mergeMapLogs(); track $index) {
+              <p>
+                <span class="log-time">{{ log.time }}</span>
+                <span [style.color]="log.color">{{ log.message }}</span>
+              </p>
+            }
+          </div>
+          <div class="code-example">
+            <button
+              type="button"
+              ahButton="ghost"
+              size="sm"
+              (click)="toggleCode('mergeMap')"
+            >
+              {{ showMergeMapCode() ? 'Hide' : 'Show' }} Code
+            </button>
+            @if (showMergeMapCode()) {
+              <pre><code>{{ codeSnippets.mergeMap }}</code></pre>
+            }
+          </div>
         </div>
       </div>
-    </div>
+    }
 
     <!-- Card for exhaustMap -->
-    <div class="card">
-      <div class="card-header">
-        <h3>The <code>exhaustMap</code> Operator</h3>
-        <p>
-          Ignores new source values while an inner Observable is active. Ready
-          for the next source value only after completion.
-        </p>
-      </div>
-      <div class="card-content">
-        <div class="everyday-example">
+    @if (activeCase() === 'all' || activeCase() === 'exhaustMap') {
+      <div class="card" [class.focused-card]="activeCase() === 'exhaustMap'">
+        <div class="card-header">
+          <div class="card-title-row">
+            <h3>The <code>exhaustMap</code> Operator</h3>
+            @if (activeCase() === 'exhaustMap') {
+              <ah-tag>Focused View</ah-tag>
+            }
+          </div>
           <p>
-            <strong>Analogy:</strong> Repeatedly clicking a "Save" button. The
-            first click starts the save process, and all other clicks are
-            ignored until the first one is finished.
+            Ignores new source values while an inner Observable is currently
+            active. Ideal for spam prevention.
           </p>
         </div>
-        <div class="timeline-group">
-          <div class="timeline-label">Source Stream</div>
-          <div class="timeline source-timeline">
-            @for (marble of exhaustMapSourceMarbles(); track marble.id) {
-              <div
-                class="marble source-marble"
-                [style.background]="marble.color"
-              >
-                {{ marble.value }}
-              </div>
-            }
-          </div>
-        </div>
-        <div class="timeline-group">
-          <div class="timeline-label">Inner Streams</div>
-          <div class="inner-streams-container">
-            @for (stream of exhaustMapInnerStreams(); track stream.id) {
-              <div
-                class="timeline inner-timeline"
-                [class.completed]="stream.status === 'completed'"
-                [class.cancelled]="stream.status === 'cancelled'"
-              >
-                @for (marble of stream.marbles; track marble.id) {
-                  <div class="marble" [style.background]="marble.color"></div>
-                }
-              </div>
-            }
-          </div>
-        </div>
-        <div class="timeline-group">
-          <div class="timeline-label">Output Stream (Animated)</div>
-          <div class="timeline">
-            @for (marble of exhaustMapOutputMarbles(); track marble.id) {
-              <div
-                class="marble output-marble"
-                [style.background]="marble.color"
-              >
-                {{ marble.value }}
-              </div>
-            }
-          </div>
-        </div>
-        <div class="timeline-group">
-          <div class="timeline-label">Final Output</div>
-          <div class="timeline final-output-timeline">
-            @for (marble of exhaustMapAllOutputMarbles(); track marble.id) {
-              <div
-                class="marble static-marble"
-                [style.background]="marble.color"
-              >
-                {{ marble.value }}
-              </div>
-            }
-          </div>
-        </div>
-        <div class="log-box">
-          <h4>Logs</h4>
-          @for (log of exhaustMapLogs(); track $index) {
+        <div class="card-content">
+          <div class="everyday-example">
             <p>
-              <span class="log-time">{{ log.time }}</span>
-              <span [style.color]="log.color">{{ log.message }}</span>
+              <strong>Analogy:</strong> A revolving door that only lets one
+              person enter at a time. Anyone attempting to enter while it is
+              turning must wait or is turned away.
             </p>
-          }
-        </div>
-        <div class="code-example">
-          <button class="btn-toggle-code" (click)="toggleCode('exhaustMap')">
-            {{ showExhaustMapCode() ? 'Hide' : 'Show' }} Code
-          </button>
-          @if (showExhaustMapCode()) {
-            <pre><code>{{ codeSnippets.exhaustMap }}</code></pre>
-          }
+          </div>
+          <div class="timeline-group">
+            <div class="timeline-label">Source Stream</div>
+            <div class="timeline source-timeline">
+              @for (marble of exhaustMapSourceMarbles(); track marble.id) {
+                <div
+                  class="marble source-marble"
+                  [style.background]="marble.color"
+                >
+                  {{ marble.value }}
+                </div>
+              }
+            </div>
+          </div>
+          <div class="timeline-group">
+            <div class="timeline-label">Inner Streams</div>
+            <div class="inner-streams-container">
+              @for (stream of exhaustMapInnerStreams(); track stream.id) {
+                <div
+                  class="timeline inner-timeline"
+                  [class.completed]="stream.status === 'completed'"
+                  [class.cancelled]="stream.status === 'cancelled'"
+                >
+                  @for (marble of stream.marbles; track marble.id) {
+                    <div class="marble" [style.background]="marble.color"></div>
+                  }
+                </div>
+              }
+            </div>
+          </div>
+          <div class="timeline-group">
+            <div class="timeline-label">Output Stream (Animated)</div>
+            <div class="timeline">
+              @for (marble of exhaustMapOutputMarbles(); track marble.id) {
+                <div
+                  class="marble output-marble"
+                  [style.background]="marble.color"
+                >
+                  {{ marble.value }}
+                </div>
+              }
+            </div>
+          </div>
+          <div class="timeline-group">
+            <div class="timeline-label">Final Output</div>
+            <div class="timeline final-output-timeline">
+              @for (marble of exhaustMapAllOutputMarbles(); track marble.id) {
+                <div
+                  class="marble static-marble"
+                  [style.background]="marble.color"
+                >
+                  {{ marble.value }}
+                </div>
+              }
+            </div>
+          </div>
+          <div class="log-box">
+            <h4>Logs</h4>
+            @for (log of exhaustMapLogs(); track $index) {
+              <p>
+                <span class="log-time">{{ log.time }}</span>
+                <span [style.color]="log.color">{{ log.message }}</span>
+              </p>
+            }
+          </div>
+          <div class="code-example">
+            <button
+              type="button"
+              ahButton="ghost"
+              size="sm"
+              (click)="toggleCode('exhaustMap')"
+            >
+              {{ showExhaustMapCode() ? 'Hide' : 'Show' }} Code
+            </button>
+            @if (showExhaustMapCode()) {
+              <pre><code>{{ codeSnippets.exhaustMap }}</code></pre>
+            }
+          </div>
         </div>
       </div>
-    </div>
+    }
   </div>
 </div>

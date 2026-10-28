@@ -1,173 +1,272 @@
 <!-- src/app/exercises/error-handling/error-handling.component.html -->
 <div class="exercise-container">
-  <h2 class="exercise-title">Exercise: Error Handling</h2>
-  <p class="exercise-description">
-    Exploring the <strong>replace</strong>, <strong>rethrow</strong>, and
-    <strong>retrying</strong> strategies as discussed in Chapter 4.
-  </p>
+  <ah-section-heading
+    eyebrow="Chapter 4 · Resilient Streams"
+    heading="Exercise: Error Handling"
+    lead="Master error recovery with catchError (fallback replacement), throwError (catch & rethrow), and modern delay-based retry policies."
+  />
 
-  <!-- Card for Replace Strategy -->
-  <div class="card">
-    <div class="card-header">
-      <h3>The <code>catchError</code> Operator (Replace Strategy)</h3>
-      <p>This demonstrates catching an error and providing a fallback value.</p>
-    </div>
-    <div class="card-content">
-      <div class="button-group">
-        <button (click)="fetchSuccess()" [disabled]="isLoadingReplace()">
-          Fetch Success
-        </button>
-        <button (click)="fetchFail()" [disabled]="isLoadingReplace()">
-          Fetch with Failure
-        </button>
-        <button class="btn-secondary" (click)="resetReplaceMessage()">
-          Reset
-        </button>
-      </div>
-      <div class="result-box">
-        @if (replaceStrategyData$ | async; as data) {
-          <p>{{ data }}</p>
-        } @else {
-          @if (isLoadingReplace()) {
-            <p class="loading-text">Loading...</p>
-          } @else {
-            <p class="placeholder-text">Click a button to fetch data.</p>
-          }
-        }
-      </div>
-    </div>
-  </div>
-
-  <!-- Card for Rethrow Strategy -->
-  <div class="card">
-    <div class="card-header">
-      <h3>The <code>throwError</code> Operator (Rethrow Strategy)</h3>
-      <p>
-        This demonstrates performing a side-effect and then propagating the
-        error.
-      </p>
-    </div>
-    <div class="card-content">
-      <div class="button-group">
-        <button (click)="fetchWithRethrow()" [disabled]="isLoadingRethrow()">
-          Fetch with Rethrow
-        </button>
-        <button class="btn-secondary" (click)="resetRethrowMessage()">
-          Reset
-        </button>
-      </div>
-      <div class="result-box">
-        @if (rethrowStrategyData$ | async; as data) {
-          <p>{{ data }}</p>
-        } @else {
-          @if (isLoadingRethrow()) {
-            <p class="loading-text">Loading...</p>
-          } @else {
-            <p class="placeholder-text">Click the button to start.</p>
-          }
-        }
-      </div>
-    </div>
-  </div>
+  <ah-use-case-focus
+    [options]="focusOptions"
+    [(value)]="activeCase"
+    ariaLabel="Filter error handling strategy"
+  />
 
   <!-- Shared Configuration for Retry Strategies -->
-  <div class="card config-card">
-    <div class="card-header">
-      <h3>Retry Configuration (Applies to examples below)</h3>
-    </div>
-    <div class="card-content">
-      <div class="config-group">
-        <div class="config-item">
-          <label for="retry-delay">Retry Delay (ms):</label>
-          <input
-            id="retry-delay"
-            type="number"
-            [value]="retryDelay()"
-            (input)="onRetryDelayChange($event)"
-          />
+  @if (
+    activeCase() === 'all' ||
+    activeCase() === 'retry' ||
+    activeCase() === 'retryWhen'
+  ) {
+    <div class="card config-card">
+      <div class="card-header">
+        <h3>Retry Configuration (Applies to retry strategies)</h3>
+      </div>
+      <div class="card-content">
+        <div class="config-group">
+          <div class="config-item">
+            <label for="retry-delay">Retry Delay (ms):</label>
+            <input
+              id="retry-delay"
+              type="number"
+              [value]="retryDelay()"
+              (input)="onRetryDelayChange($event)"
+            />
+          </div>
+          <div class="config-item">
+            <label for="max-retries">Max Retries:</label>
+            <input
+              id="max-retries"
+              type="number"
+              [value]="maxRetries()"
+              (input)="onMaxRetriesChange($event)"
+            />
+          </div>
         </div>
-        <div class="config-item">
-          <label for="max-retries">Max Retries:</label>
-          <input
-            id="max-retries"
-            type="number"
-            [value]="maxRetries()"
-            (input)="onMaxRetriesChange($event)"
-          />
+      </div>
+    </div>
+  }
+
+  <div class="operators-grid" [class.single-case]="activeCase() !== 'all'">
+    <!-- Card for Replace Strategy -->
+    @if (activeCase() === 'all' || activeCase() === 'replace') {
+      <div class="card" [class.focused-card]="activeCase() === 'replace'">
+        <div class="card-header">
+          <div class="card-title-row">
+            <h3>The <code>catchError</code> Operator (Replace Strategy)</h3>
+            @if (activeCase() === 'replace') {
+              <ah-tag>Focused View</ah-tag>
+            }
+          </div>
+          <p>
+            Catch an error from an upstream Observable and replace it with a
+            graceful fallback value.
+          </p>
+        </div>
+        <div class="card-content">
+          <div class="button-group">
+            <button
+              type="button"
+              ahButton="primary"
+              size="sm"
+              (click)="fetchSuccess()"
+              [disabled]="isLoadingReplace()"
+            >
+              Fetch Success
+            </button>
+            <button
+              type="button"
+              ahButton="secondary"
+              size="sm"
+              (click)="fetchFail()"
+              [disabled]="isLoadingReplace()"
+            >
+              Fetch with Failure
+            </button>
+            <button
+              type="button"
+              ahButton="ghost"
+              size="sm"
+              (click)="resetReplaceMessage()"
+            >
+              Reset
+            </button>
+          </div>
+          <div class="result-box">
+            @if (replaceStrategyData$ | async; as data) {
+              <p class="result-item">{{ data }}</p>
+            } @else {
+              @if (isLoadingReplace()) {
+                <p class="loading-text">Loading...</p>
+              } @else {
+                <p class="placeholder-text">
+                  Click a button to test catchError replacement.
+                </p>
+              }
+            }
+          </div>
         </div>
       </div>
-    </div>
-  </div>
+    }
 
-  <!-- Card for Retry Strategy -->
-  <div class="card">
-    <div class="card-header">
-      <h3>The <code>retry</code> Operator (Retrying Strategy)</h3>
-      <p>
-        This demonstrates retrying a failing stream with a configurable delay
-        (modern approach).
-      </p>
-    </div>
-    <div class="card-content">
-      <div class="button-group">
-        <button (click)="fetchWithRetry()" [disabled]="isLoadingRetry()">
-          Attempt Fetch (will retry {{ maxRetries() }} times)
-        </button>
-        <button class="btn-secondary" (click)="resetRetryMessage()">
-          Reset
-        </button>
+    <!-- Card for Rethrow Strategy -->
+    @if (activeCase() === 'all' || activeCase() === 'rethrow') {
+      <div class="card" [class.focused-card]="activeCase() === 'rethrow'">
+        <div class="card-header">
+          <div class="card-title-row">
+            <h3>The <code>throwError</code> Operator (Rethrow Strategy)</h3>
+            @if (activeCase() === 'rethrow') {
+              <ah-tag>Focused View</ah-tag>
+            }
+          </div>
+          <p>
+            Perform a logging side-effect or telemetry dispatch when an error
+            occurs, then rethrow it downstream.
+          </p>
+        </div>
+        <div class="card-content">
+          <div class="button-group">
+            <button
+              type="button"
+              ahButton="primary"
+              size="sm"
+              (click)="fetchWithRethrow()"
+              [disabled]="isLoadingRethrow()"
+            >
+              Fetch with Rethrow
+            </button>
+            <button
+              type="button"
+              ahButton="ghost"
+              size="sm"
+              (click)="resetRethrowMessage()"
+            >
+              Reset
+            </button>
+          </div>
+          <div class="result-box">
+            @if (rethrowStrategyData$ | async; as data) {
+              <p class="result-item">{{ data }}</p>
+            } @else {
+              @if (isLoadingRethrow()) {
+                <p class="loading-text">Loading...</p>
+              } @else {
+                <p class="placeholder-text">
+                  Click to trigger an error that is logged and rethrown.
+                </p>
+              }
+            }
+          </div>
+        </div>
       </div>
-      <div class="result-box">
-        @if (retryStrategyData$ | async; as data) {
-          <p>{{ data }}</p>
-        } @else {
-          @if (isLoadingRetry()) {
-            <p class="loading-text">
-              Attempting fetch (Attempt: {{ retryCount() }})...
-            </p>
-          } @else {
-            <p class="placeholder-text">Click the button to start.</p>
-          }
-        }
-      </div>
-    </div>
-  </div>
+    }
 
-  <!-- Card for RetryWhen Strategy -->
-  <div class="card">
-    <div class="card-header">
-      <h3>
-        The <code>retryWhen</code> and <code>delayWhen</code> Operators (Legacy)
-      </h3>
-      <p>
-        This demonstrates a delayed retry strategy using deprecated operators.
-      </p>
-    </div>
-    <div class="card-content">
-      <div class="button-group">
-        <button
-          (click)="fetchWithRetryWhen()"
-          [disabled]="isLoadingRetryWhen()"
-        >
-          Attempt Fetch with RetryWhen
-        </button>
-        <button class="btn-secondary" (click)="resetRetryWhenMessage()">
-          Reset
-        </button>
+    <!-- Card for Retry Strategy -->
+    @if (activeCase() === 'all' || activeCase() === 'retry') {
+      <div class="card" [class.focused-card]="activeCase() === 'retry'">
+        <div class="card-header">
+          <div class="card-title-row">
+            <h3>The <code>retry</code> Operator (Modern Strategy)</h3>
+            @if (activeCase() === 'retry') {
+              <ah-tag>Focused View</ah-tag>
+            }
+          </div>
+          <p>
+            Retry a failing stream with configurable attempts and a delay timer
+            (modern RxJS 7+ configuration).
+          </p>
+        </div>
+        <div class="card-content">
+          <div class="button-group">
+            <button
+              type="button"
+              ahButton="primary"
+              size="sm"
+              (click)="fetchWithRetry()"
+              [disabled]="isLoadingRetry()"
+            >
+              Attempt Fetch (retries {{ maxRetries() }}x)
+            </button>
+            <button
+              type="button"
+              ahButton="ghost"
+              size="sm"
+              (click)="resetRetryMessage()"
+            >
+              Reset
+            </button>
+          </div>
+          <div class="result-box">
+            @if (retryStrategyData$ | async; as data) {
+              <p class="result-item">{{ data }}</p>
+            } @else {
+              @if (isLoadingRetry()) {
+                <p class="loading-text">
+                  Attempting fetch (Attempt: {{ retryCount() }})...
+                </p>
+              } @else {
+                <p class="placeholder-text">
+                  Click to trigger modern retry policy.
+                </p>
+              }
+            }
+          </div>
+        </div>
       </div>
-      <div class="result-box">
-        @if (retryWhenStrategyData$ | async; as data) {
-          <p>{{ data }}</p>
-        } @else {
-          @if (isLoadingRetryWhen()) {
-            <p class="loading-text">
-              Attempting fetch (Attempt: {{ retryWhenCount() }})...
-            </p>
-          } @else {
-            <p class="placeholder-text">Click the button to start.</p>
-          }
-        }
+    }
+
+    <!-- Card for RetryWhen Strategy -->
+    @if (activeCase() === 'all' || activeCase() === 'retryWhen') {
+      <div class="card" [class.focused-card]="activeCase() === 'retryWhen'">
+        <div class="card-header">
+          <div class="card-title-row">
+            <h3>The <code>retryWhen</code> Operator (Legacy)</h3>
+            @if (activeCase() === 'retryWhen') {
+              <ah-tag>Focused View</ah-tag>
+            }
+          </div>
+          <p>
+            Demonstrates delayed retry using RxJS 6 retryWhen and delayWhen
+            notification streams.
+          </p>
+        </div>
+        <div class="card-content">
+          <div class="button-group">
+            <button
+              type="button"
+              ahButton="primary"
+              size="sm"
+              (click)="fetchWithRetryWhen()"
+              [disabled]="isLoadingRetryWhen()"
+            >
+              Attempt Fetch with RetryWhen
+            </button>
+            <button
+              type="button"
+              ahButton="ghost"
+              size="sm"
+              (click)="resetRetryWhenMessage()"
+            >
+              Reset
+            </button>
+          </div>
+          <div class="result-box">
+            @if (retryWhenStrategyData$ | async; as data) {
+              <p class="result-item">{{ data }}</p>
+            } @else {
+              @if (isLoadingRetryWhen()) {
+                <p class="loading-text">
+                  Attempting fetch (Attempt: {{ retryWhenCount() }})...
+                </p>
+              } @else {
+                <p class="placeholder-text">
+                  Click to trigger legacy retryWhen stream.
+                </p>
+              }
+            }
+          </div>
+        </div>
       </div>
-    </div>
+    }
   </div>
 </div>

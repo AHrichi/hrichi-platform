@@ -13,6 +13,8 @@ import { ServiceSenderComponent } from './service-sender/service-sender.componen
 import { ServiceReceiverComponent } from './service-receiver/service-receiver.component';
 import { NotificationService } from '../../shared/services/notification.service';
 import { ViewChildExampleComponent } from './view-child-example/view-child-example.component';
+import { AhButton, SectionHeading, SegmentedOption, Tag } from '@ah/ui';
+import { UseCaseFocusComponent } from '../../shared/ui/use-case-focus/use-case-focus.component';
 
 @Component({
   selector: 'app-sharing-data',
@@ -23,12 +25,26 @@ import { ViewChildExampleComponent } from './view-child-example/view-child-examp
     ServiceSenderComponent,
     ServiceReceiverComponent,
     ViewChildExampleComponent,
+    UseCaseFocusComponent,
+    AhButton,
+    Tag,
+    SectionHeading,
   ],
   templateUrl: './sharing-data.component.html',
   styleUrls: ['./sharing-data.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SharingDataComponent {
+  // --- Focus View Options ---
+  readonly focusOptions: readonly SegmentedOption<string>[] = [
+    { value: 'all', label: 'All Communication Patterns' },
+    { value: 'input', label: 'Parent to Child (input)' },
+    { value: 'output', label: 'Child to Parent (output)' },
+    { value: 'service', label: 'Shared Service' },
+    { value: 'viewChild', label: 'Component Query (viewChild)' },
+  ];
+  readonly activeCase = signal<string>('all');
+
   // --- Child Component Instance via modern Angular viewChild() signal query ---
   readonly childComponent = viewChild(ViewChildExampleComponent);
 

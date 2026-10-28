@@ -99,7 +99,10 @@ async function resolveFile(urlPath) {
   if (await isFile(prerendered)) {
     return prerendered;
   }
-  return join(root, 'index.csr.html');
+  if (await isFile(join(root, 'index.csr.html'))) {
+    return join(root, 'index.csr.html');
+  }
+  return join(root, 'index.html');
 }
 
 function cacheControl(file) {

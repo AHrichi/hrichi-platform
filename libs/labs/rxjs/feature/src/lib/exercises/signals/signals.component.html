@@ -1,263 +1,359 @@
 <!-- src/app/exercises/signals/signals.component.html -->
 <div class="exercise-container">
-  <h2 class="exercise-title">
-    Exercise: The Power of Signals & Angular 22 Reactivity
-  </h2>
-  <p class="exercise-description">
-    Exploring modern Angular 22 reactivity: Signals, Linked Signals, RxJS
-    Interop, and Asynchronous Resources.
-  </p>
+  <ah-section-heading
+    eyebrow="Angular 22 · Reactive Primitives"
+    heading="Exercise: Signals & Reactive Interop"
+    lead="Explore fine-grained signals, derived computeds, side-effects, linkedSignal resets, and bidirectional RxJS interop with toSignal, toObservable, and rxResource."
+  />
 
-  <!-- Writable Signals Card -->
-  <div class="card">
-    <div class="card-header">
-      <h3>1. Writable Signals: <code>signal()</code></h3>
-      <p>
-        These are the sources of truth in our application. We can directly
-        change their values.
-      </p>
-    </div>
-    <div class="card-content">
-      <div class="config-group">
-        <div class="config-item">
-          <label for="first-name">First Name:</label>
-          <input
-            id="first-name"
-            type="text"
-            [value]="firstName()"
-            (input)="onFirstNameChange($event)"
-          />
-        </div>
-        <div class="config-item">
-          <label for="last-name">Last Name:</label>
-          <input
-            id="last-name"
-            type="text"
-            [value]="lastName()"
-            (input)="onLastNameChange($event)"
-          />
-        </div>
-        <div class="config-item">
-          <label>Quantity:</label>
-          <div class="quantity-control">
-            <button (click)="decrement()">-</button>
-            <span>{{ quantity() }}</span>
-            <button (click)="increment()">+</button>
+  <ah-use-case-focus
+    [options]="focusOptions"
+    [(value)]="activeCase"
+    ariaLabel="Filter signal topic"
+  />
+
+  <div class="operators-grid" [class.single-case]="activeCase() !== 'all'">
+    <!-- 1. Writable Signals & Computed Signals Card -->
+    @if (activeCase() === 'all' || activeCase() === 'basics') {
+      <div class="card" [class.focused-card]="activeCase() === 'basics'">
+        <div class="card-header">
+          <div class="card-title-row">
+            <h3>1. Writable Signals: <code>signal()</code></h3>
+            @if (activeCase() === 'basics') {
+              <ah-tag>Focused View</ah-tag>
+            }
           </div>
+          <p>
+            The fundamental sources of truth in modern Angular. Directly mutate
+            state and notify fine-grained dependencies.
+          </p>
         </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Computed Signals Card -->
-  <div class="card">
-    <div class="card-header">
-      <h3>2. Computed Signals: <code>computed()</code></h3>
-      <p>
-        These derive their value from other signals. They are read-only and
-        update automatically and efficiently.
-      </p>
-    </div>
-    <div class="card-content">
-      <div class="computed-grid">
-        <div class="computed-item">
-          <label>Full Name:</label>
-          <div
-            class="data-display highlight-on-change"
-            [class.changed]="fullName()"
-          >
-            {{ fullName() }}
-          </div>
-        </div>
-        <div class="computed-item">
-          <label>Is Stock Low?</label>
-          <div
-            class="data-display highlight-on-change"
-            [class.changed]="isStockLow()"
-          >
-            {{ isStockLow() }}
-          </div>
-        </div>
-        <div class="computed-item full-width">
-          <label>Stock Message:</label>
-          <div
-            class="data-display highlight-on-change"
-            [class.changed]="stockMessage()"
-            [class.warning]="isStockLow()"
-          >
-            {{ stockMessage() }}
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Effect Card -->
-  <div class="card">
-    <div class="card-header">
-      <h3>3. Effects: <code>effect()</code></h3>
-      <p>
-        This code runs whenever any of its dependent signals change. Ideal for
-        side effects like logging, analytics, or data synchronization.
-      </p>
-    </div>
-    <div class="card-content">
-      <div class="log-box">
-        <h4>Effect Log</h4>
-        @for (log of logs(); track log.id) {
-          <p class="log-entry">{{ log.message }}</p>
-        }
-      </div>
-    </div>
-  </div>
-
-  <!-- RxJS Interop Card -->
-  <div class="card">
-    <div class="card-header">
-      <h3>4. RxJS Interop: <code>toSignal()</code></h3>
-      <p>
-        Convert an RxJS Observable into a read-only Signal to seamlessly
-        integrate with a modern, signal-based component.
-      </p>
-    </div>
-    <div class="card-content">
-      <div class="everyday-example">
-        <p>
-          <strong>Analogy:</strong> Subscribing to a magazine (the Observable).
-          Each time a new issue is released, a delivery person
-          (<code>toSignal</code>) puts it in your mailbox (the Signal), where
-          you can check for the latest issue at any time.
-        </p>
-      </div>
-
-      <div class="timeline-group">
-        <div class="timeline-label">
-          RxJS <code>interval(1000)</code> Observable
-        </div>
-        <div class="timeline">
-          @for (marble of observableMarbles(); track marble.id) {
-            <div class="marble" [style.background]="marble.color">
-              {{ marble.value }}
+        <div class="card-content">
+          <div class="config-group">
+            <div class="config-item">
+              <label for="first-name">First Name:</label>
+              <input
+                id="first-name"
+                type="text"
+                [value]="firstName()"
+                (input)="onFirstNameChange($event)"
+              />
             </div>
-          }
-        </div>
-      </div>
-
-      <div class="computed-grid">
-        <div class="computed-item">
-          <label>Resulting Signal (<code>counterSignal</code>):</label>
-          <div
-            class="data-display highlight-on-change"
-            [class.changed]="counterSignal()"
-          >
-            {{ counterSignal() }}
+            <div class="config-item">
+              <label for="last-name">Last Name:</label>
+              <input
+                id="last-name"
+                type="text"
+                [value]="lastName()"
+                (input)="onLastNameChange($event)"
+              />
+            </div>
+            <div class="config-item">
+              <label>Quantity:</label>
+              <div class="quantity-control">
+                <button
+                  type="button"
+                  ahButton="secondary"
+                  size="sm"
+                  (click)="decrement()"
+                >
+                  -
+                </button>
+                <span class="quantity-value">{{ quantity() }}</span>
+                <button
+                  type="button"
+                  ahButton="secondary"
+                  size="sm"
+                  (click)="increment()"
+                >
+                  +
+                </button>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="computed-item">
-          <label>Computed from Signal (<code>isEven</code>):</label>
-          <div
-            class="data-display highlight-on-change"
-            [class.changed]="isEven()"
-          >
-            {{ isEven() }}
+      </div>
+
+      <!-- Computed Signals Card -->
+      <div class="card" [class.focused-card]="activeCase() === 'basics'">
+        <div class="card-header">
+          <div class="card-title-row">
+            <h3>2. Computed Signals: <code>computed()</code></h3>
+            @if (activeCase() === 'basics') {
+              <ah-tag>Focused View</ah-tag>
+            }
+          </div>
+          <p>
+            Derive read-only values memoized on change. Evaluated lazily and
+            re-computed only when dependencies change.
+          </p>
+        </div>
+        <div class="card-content">
+          <div class="computed-grid">
+            <div class="computed-item">
+              <label>Full Name:</label>
+              <div
+                class="data-display highlight-on-change"
+                [class.changed]="fullName()"
+              >
+                {{ fullName() }}
+              </div>
+            </div>
+            <div class="computed-item">
+              <label>Is Stock Low?</label>
+              <div
+                class="data-display highlight-on-change"
+                [class.changed]="isStockLow()"
+              >
+                {{ isStockLow() }}
+              </div>
+            </div>
+            <div class="computed-item full-width">
+              <label>Stock Message:</label>
+              <div
+                class="data-display highlight-on-change"
+                [class.changed]="stockMessage()"
+                [class.warning]="isStockLow()"
+              >
+                {{ stockMessage() }}
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
-      <div class="button-group">
-        @if (!isCounterRunning()) {
-          <button (click)="startCounter()">Start Stream</button>
-        } @else {
-          <button (click)="stopCounter()">Stop Stream</button>
-        }
-        <button class="btn-secondary" (click)="resetCounter()">Reset</button>
+      <!-- Effect Card -->
+      <div class="card" [class.focused-card]="activeCase() === 'basics'">
+        <div class="card-header">
+          <div class="card-title-row">
+            <h3>3. Effects: <code>effect()</code></h3>
+            @if (activeCase() === 'basics') {
+              <ah-tag>Focused View</ah-tag>
+            }
+          </div>
+          <p>
+            Side-effects scheduled on microtask ticks whenever tracked signals
+            change.
+          </p>
+        </div>
+        <div class="card-content">
+          <div class="log-box">
+            <h4>Effect Audit Trail</h4>
+            @for (log of logs(); track log.id) {
+              <p class="log-entry">{{ log.message }}</p>
+            }
+          </div>
+        </div>
       </div>
+    }
 
-      <div class="code-example">
-        <pre><code>// An Observable that emits every second
+    <!-- 4. RxJS Interop: toSignal() Card -->
+    @if (activeCase() === 'all' || activeCase() === 'toSignal') {
+      <div class="card" [class.focused-card]="activeCase() === 'toSignal'">
+        <div class="card-header">
+          <div class="card-title-row">
+            <h3>4. RxJS Interop: <code>toSignal()</code></h3>
+            @if (activeCase() === 'toSignal') {
+              <ah-tag>Focused View</ah-tag>
+            }
+          </div>
+          <p>
+            Converts an RxJS Observable into a reactive read-only Signal with
+            automatic subscription cleanup.
+          </p>
+        </div>
+        <div class="card-content">
+          <div class="everyday-example">
+            <p>
+              <strong>Analogy:</strong> Subscribing to a publication
+              (Observable). Each new release is placed directly in your mailbox
+              (Signal), ready to read synchronously without manual subscription
+              boilerplates.
+            </p>
+          </div>
+
+          <div class="timeline-group">
+            <div class="timeline-label">
+              RxJS <code>interval(1000)</code> Observable Stream
+            </div>
+            <div class="timeline">
+              @for (marble of observableMarbles(); track marble.id) {
+                <div class="marble" [style.background]="marble.color">
+                  {{ marble.value }}
+                </div>
+              }
+            </div>
+          </div>
+
+          <div class="computed-grid">
+            <div class="computed-item">
+              <label>Resulting Signal (<code>counterSignal</code>):</label>
+              <div
+                class="data-display highlight-on-change"
+                [class.changed]="counterSignal()"
+              >
+                {{ counterSignal() }}
+              </div>
+            </div>
+            <div class="computed-item">
+              <label>Computed from Signal (<code>isEven</code>):</label>
+              <div
+                class="data-display highlight-on-change"
+                [class.changed]="isEven()"
+              >
+                {{ isEven() }}
+              </div>
+            </div>
+          </div>
+
+          <div class="button-group">
+            @if (!isCounterRunning()) {
+              <button
+                type="button"
+                ahButton="primary"
+                size="sm"
+                (click)="startCounter()"
+              >
+                Start Stream
+              </button>
+            } @else {
+              <button
+                type="button"
+                ahButton="secondary"
+                size="sm"
+                (click)="stopCounter()"
+              >
+                Stop Stream
+              </button>
+            }
+            <button
+              type="button"
+              ahButton="ghost"
+              size="sm"
+              (click)="resetCounter()"
+            >
+              Reset
+            </button>
+          </div>
+
+          <div class="code-example">
+            <pre><code>// Convert interval Observable to synchronous Signal
 counter$ = interval(1000);
-
-// Converted to a Signal
 counterSignal = toSignal(this.counter$, &#123; initialValue: 0 &#125;);
-
-// A computed signal that reacts to the change
 isEven = computed(() => this.counterSignal() % 2 === 0);</code></pre>
-      </div>
-    </div>
-  </div>
-
-  <!-- Angular 22 linkedSignal() Card -->
-  <div class="card">
-    <div class="card-header">
-      <h3>5. Angular 22: <code>linkedSignal()</code></h3>
-      <p>
-        A writable signal that resets to a computed default whenever its source
-        dependency changes, while still allowing direct user writes and
-        overrides.
-      </p>
-    </div>
-    <div class="card-content">
-      @let currentTier = planTier();
-      @let credits = computeCredits();
-      @let isCustom = isCreditsCustomized();
-
-      <div class="everyday-example">
-        <p>
-          <strong>Why linkedSignal?</strong> With <code>computed()</code>, state
-          is strictly read-only. With separate writable signals + effects,
-          syncing is error-prone. <code>linkedSignal()</code> gives you the best
-          of both worlds: reactive default syncing with writable capability!
-        </p>
-      </div>
-
-      <div class="config-group">
-        <div class="config-item">
-          <label>Choose Plan Tier:</label>
-          <div class="button-group-inline">
-            <button
-              [class.active]="currentTier === 'Starter'"
-              (click)="selectPlanTier('Starter')"
-            >
-              Starter (5 credits)
-            </button>
-            <button
-              [class.active]="currentTier === 'Pro'"
-              (click)="selectPlanTier('Pro')"
-            >
-              Pro (25 credits)
-            </button>
-            <button
-              [class.active]="currentTier === 'Enterprise'"
-              (click)="selectPlanTier('Enterprise')"
-            >
-              Enterprise (100 credits)
-            </button>
           </div>
         </div>
-
-        <div class="config-item">
-          <label>Adjust Compute Credits (Direct Mutation):</label>
-          <div class="quantity-control">
-            <button (click)="decrementCredits()">-5</button>
-            <span class="credits-value" [class.customized]="isCustom">{{
-              credits
-            }}</span>
-            <button (click)="incrementCredits()">+5</button>
-          </div>
-          @if (isCustom) {
-            <span class="custom-badge">User customized (overridden)</span>
-            <button class="btn-link" (click)="resetCreditsToDefault()">
-              Reset to plan default
-            </button>
-          } @else {
-            <span class="default-badge">Plan default</span>
-          }
-        </div>
       </div>
+    }
 
-      <div class="code-example">
-        <pre><code>// Angular 22 linkedSignal
-planTier = signal&lt;'Starter' | 'Pro' | 'Enterprise'&gt;('Pro');
+    <!-- 5. Angular 22 linkedSignal() Card -->
+    @if (activeCase() === 'all' || activeCase() === 'linkedSignal') {
+      <div class="card" [class.focused-card]="activeCase() === 'linkedSignal'">
+        <div class="card-header">
+          <div class="card-title-row">
+            <h3>5. Angular 22: <code>linkedSignal()</code></h3>
+            @if (activeCase() === 'linkedSignal') {
+              <ah-tag>Focused View</ah-tag>
+            }
+          </div>
+          <p>
+            A writable signal that resets to a computed default whenever its
+            source dependency changes, while still supporting direct user
+            mutations.
+          </p>
+        </div>
+        <div class="card-content">
+          @let currentTier = planTier();
+          @let credits = computeCredits();
+          @let isCustom = isCreditsCustomized();
+
+          <div class="everyday-example">
+            <p>
+              <strong>Why linkedSignal?</strong> With <code>computed()</code>,
+              state is strictly read-only. With separate writable signals and
+              effects, synchronization is prone to glitches.
+              <code>linkedSignal()</code> solves this cleanly.
+            </p>
+          </div>
+
+          <div class="config-group">
+            <div class="config-item">
+              <label>Choose Plan Tier:</label>
+              <div class="button-group-inline">
+                <button
+                  type="button"
+                  [ahButton]="
+                    currentTier === 'Starter' ? 'primary' : 'secondary'
+                  "
+                  size="sm"
+                  (click)="selectPlanTier('Starter')"
+                >
+                  Starter (5)
+                </button>
+                <button
+                  type="button"
+                  [ahButton]="currentTier === 'Pro' ? 'primary' : 'secondary'"
+                  size="sm"
+                  (click)="selectPlanTier('Pro')"
+                >
+                  Pro (25)
+                </button>
+                <button
+                  type="button"
+                  [ahButton]="
+                    currentTier === 'Enterprise' ? 'primary' : 'secondary'
+                  "
+                  size="sm"
+                  (click)="selectPlanTier('Enterprise')"
+                >
+                  Enterprise (100)
+                </button>
+              </div>
+            </div>
+
+            <div class="config-item">
+              <label>Adjust Compute Credits (Direct Mutation):</label>
+              <div class="quantity-control">
+                <button
+                  type="button"
+                  ahButton="secondary"
+                  size="sm"
+                  (click)="decrementCredits()"
+                >
+                  -5
+                </button>
+                <span class="credits-value" [class.customized]="isCustom">{{
+                  credits
+                }}</span>
+                <button
+                  type="button"
+                  ahButton="secondary"
+                  size="sm"
+                  (click)="incrementCredits()"
+                >
+                  +5
+                </button>
+              </div>
+              <div class="credits-status-row">
+                @if (isCustom) {
+                  <ah-tag>Overridden</ah-tag>
+                  <button
+                    type="button"
+                    ahButton="ghost"
+                    size="sm"
+                    (click)="resetCreditsToDefault()"
+                  >
+                    Reset to default
+                  </button>
+                } @else {
+                  <span class="default-badge">Plan default</span>
+                }
+              </div>
+            </div>
+          </div>
+
+          <div class="code-example">
+            <pre><code>planTier = signal&lt;PlanTier&gt;('Pro');
 
 computeCredits = linkedSignal&lt;PlanTier, number&gt;(&#123;
   source: () => this.planTier(),
@@ -266,137 +362,161 @@ computeCredits = linkedSignal&lt;PlanTier, number&gt;(&#123;
 
 // Direct mutation allowed without breaking reactivity:
 computeCredits.update(c => c + 5);</code></pre>
-      </div>
-    </div>
-  </div>
-
-  <!-- Angular 22 rxResource() Card -->
-  <div class="card">
-    <div class="card-header">
-      <h3>6. Angular 22: <code>rxResource()</code> Async Data Streams</h3>
-      <p>
-        Bridges asynchronous RxJS streams directly into declarative Signals with
-        built-in loading flags, automatic cancellation on parameter change, and
-        error boundaries.
-      </p>
-    </div>
-    <div class="card-content">
-      @let resource = userProfileResource;
-      @let profile = resource.value();
-      @let loading = resource.isLoading();
-      @let status = resource.status();
-
-      <div class="everyday-example">
-        <p>
-          <strong>Async Data in Zoneless Angular:</strong>
-          <code>rxResource()</code> executes an RxJS loader stream, exposing
-          synchronous signals for <code>value()</code>,
-          <code>isLoading()</code>, and <code>status()</code>, with complete SSR
-          hydration safety and zero <code>zone.js</code>.
-        </p>
-      </div>
-
-      <div class="resource-panel">
-        <div class="resource-controls">
-          <label>Select User ID:</label>
-          <div class="button-group-inline">
-            <button
-              [class.active]="selectedUserId() === 1"
-              (click)="selectUser(1)"
-            >
-              User 1
-            </button>
-            <button
-              [class.active]="selectedUserId() === 2"
-              (click)="selectUser(2)"
-            >
-              User 2
-            </button>
-            <button
-              [class.active]="selectedUserId() === 3"
-              (click)="selectUser(3)"
-            >
-              User 3
-            </button>
-            <button class="btn-reload" (click)="reloadUserResource()">
-              Reload Stream
-            </button>
           </div>
         </div>
-
-        <div class="resource-display" [class.loading]="loading">
-          @if (loading) {
-            <div class="loading-state">
-              <span class="spinner"></span>
-              <span>Streaming data via RxJS...</span>
-            </div>
-          } @else if (profile) {
-            <div class="profile-card">
-              <div class="profile-header">
-                <span class="profile-name">{{ profile.name }}</span>
-                <span class="profile-status">Status: {{ status }}</span>
-              </div>
-              <p class="profile-role">{{ profile.role }}</p>
-              <p class="profile-quota">{{ profile.quota }}</p>
-            </div>
-          }
-        </div>
       </div>
+    }
 
-      <div class="code-example">
-        <pre><code>// Angular 22 rxResource from @angular/core/rxjs-interop
-userProfileResource = rxResource&lt;UserProfile, &#123; id: number &#125;&gt;(&#123;
+    <!-- 6. Angular 22 rxResource() Card -->
+    @if (activeCase() === 'all' || activeCase() === 'rxResource') {
+      <div class="card" [class.focused-card]="activeCase() === 'rxResource'">
+        <div class="card-header">
+          <div class="card-title-row">
+            <h3>6. Angular 22: <code>rxResource()</code> Async Loader</h3>
+            @if (activeCase() === 'rxResource') {
+              <ah-tag>Focused View</ah-tag>
+            }
+          </div>
+          <p>
+            Bridges asynchronous RxJS streams directly into declarative Signals
+            with loading flags, cancellation, and error boundaries.
+          </p>
+        </div>
+        <div class="card-content">
+          @let resource = userProfileResource;
+          @let profile = resource.value();
+          @let loading = resource.isLoading();
+          @let status = resource.status();
+
+          <div class="everyday-example">
+            <p>
+              <strong>Async Data in Zoneless Angular:</strong>
+              <code>rxResource()</code> executes an RxJS loader stream, exposing
+              synchronous signals for <code>value()</code>,
+              <code>isLoading()</code>, and <code>status()</code> with zero
+              <code>zone.js</code>.
+            </p>
+          </div>
+
+          <div class="resource-panel">
+            <div class="resource-controls">
+              <label>Select User ID:</label>
+              <div class="button-group-inline">
+                <button
+                  type="button"
+                  [ahButton]="selectedUserId() === 1 ? 'primary' : 'secondary'"
+                  size="sm"
+                  (click)="selectUser(1)"
+                >
+                  User 1
+                </button>
+                <button
+                  type="button"
+                  [ahButton]="selectedUserId() === 2 ? 'primary' : 'secondary'"
+                  size="sm"
+                  (click)="selectUser(2)"
+                >
+                  User 2
+                </button>
+                <button
+                  type="button"
+                  [ahButton]="selectedUserId() === 3 ? 'primary' : 'secondary'"
+                  size="sm"
+                  (click)="selectUser(3)"
+                >
+                  User 3
+                </button>
+                <button
+                  type="button"
+                  ahButton="ghost"
+                  size="sm"
+                  (click)="reloadUserResource()"
+                >
+                  Reload Stream
+                </button>
+              </div>
+            </div>
+
+            <div class="resource-display" [class.loading]="loading">
+              @if (loading) {
+                <div class="loading-state">
+                  <span class="spinner"></span>
+                  <span>Streaming data via RxJS...</span>
+                </div>
+              } @else if (profile) {
+                <div class="profile-card">
+                  <div class="profile-header">
+                    <span class="profile-name">{{ profile.name }}</span>
+                    <ah-tag>Status: {{ status }}</ah-tag>
+                  </div>
+                  <p class="profile-role">{{ profile.role }}</p>
+                  <p class="profile-quota">{{ profile.quota }}</p>
+                </div>
+              }
+            </div>
+          </div>
+
+          <div class="code-example">
+            <pre><code>userProfileResource = rxResource&lt;UserProfile, &#123; id: number &#125;&gt;(&#123;
   params: () => (&#123; id: this.selectedUserId() &#125;),
   stream: (&#123; params &#125;) => this.http.get&lt;UserProfile&gt;(`/api/users/$&#123;params.id&#125;`),
-&#125;);
-
-// In template: resource.value(), resource.isLoading(), resource.reload()</code></pre>
-      </div>
-    </div>
-  </div>
-
-  <!-- Bidirectional Interop Card -->
-  <div class="card">
-    <div class="card-header">
-      <h3>
-        7. Bidirectional Interop: <code>toObservable()</code> &amp;
-        <code>toSignal()</code>
-      </h3>
-      <p>
-        Taking values from a Signal, piping through RxJS operators (like
-        <code>debounceTime</code>), and outputting back to a Signal.
-      </p>
-    </div>
-    <div class="card-content">
-      @let query = searchQuery();
-      @let debounced = debouncedSearch();
-
-      <div class="config-group">
-        <div class="config-item">
-          <label for="search-input">Type to search (debounced 350ms):</label>
-          <input
-            id="search-input"
-            type="text"
-            [value]="query"
-            (input)="onSearchChange($event)"
-            placeholder="Type search terms..."
-          />
-        </div>
-        <div class="computed-grid">
-          <div class="computed-item">
-            <label>Raw Signal Input:</label>
-            <div class="data-display">{{ query }}</div>
-          </div>
-          <div class="computed-item">
-            <label>Debounced + UpperCase Signal:</label>
-            <div class="data-display highlight-on-change">{{ debounced }}</div>
+&#125;);</code></pre>
           </div>
         </div>
       </div>
+    }
 
-      <div class="code-example">
-        <pre><code>// Signal -> Observable -> Operators -> Signal
-searchQuery = signal('Angular 22');
+    <!-- 7. Bidirectional Interop Card -->
+    @if (activeCase() === 'all' || activeCase() === 'toObservable') {
+      <div class="card" [class.focused-card]="activeCase() === 'toObservable'">
+        <div class="card-header">
+          <div class="card-title-row">
+            <h3>
+              7. Bidirectional Interop: <code>toObservable()</code> +
+              <code>toSignal()</code>
+            </h3>
+            @if (activeCase() === 'toObservable') {
+              <ah-tag>Focused View</ah-tag>
+            }
+          </div>
+          <p>
+            Signal input piped through RxJS operators (like
+            <code>debounceTime</code>), then mirrored back into a Signal.
+          </p>
+        </div>
+        <div class="card-content">
+          @let query = searchQuery();
+          @let debounced = debouncedSearch();
+
+          <div class="config-group">
+            <div class="config-item">
+              <label for="search-input"
+                >Type to search (debounced 350ms):</label
+              >
+              <input
+                id="search-input"
+                type="text"
+                [value]="query"
+                (input)="onSearchChange($event)"
+                placeholder="Type search terms..."
+              />
+            </div>
+            <div class="computed-grid">
+              <div class="computed-item">
+                <label>Raw Signal Input:</label>
+                <div class="data-display">{{ query }}</div>
+              </div>
+              <div class="computed-item">
+                <label>Debounced + UpperCase Signal:</label>
+                <div class="data-display highlight-on-change">
+                  {{ debounced }}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="code-example">
+            <pre><code>searchQuery = signal('Angular 22');
 searchQuery$ = toObservable(this.searchQuery);
 
 debouncedSearch = toSignal(
@@ -406,7 +526,9 @@ debouncedSearch = toSignal(
   ),
   &#123; initialValue: 'ANGULAR 22' &#125;
 );</code></pre>
+          </div>
+        </div>
       </div>
-    </div>
+    }
   </div>
 </div>

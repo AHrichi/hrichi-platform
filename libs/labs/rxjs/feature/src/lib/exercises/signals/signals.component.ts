@@ -12,7 +12,9 @@ import {
 import { toSignal, toObservable, rxResource } from '@angular/core/rxjs-interop';
 import { interval, Observable, Subject, timer } from 'rxjs';
 import { tap, switchMap, takeUntil, map, debounceTime } from 'rxjs/operators';
+import { AhButton, SectionHeading, SegmentedOption, Tag } from '@ah/ui';
 import { NotificationService } from '../../shared/services/notification.service';
+import { UseCaseFocusComponent } from '../../shared/ui/use-case-focus/use-case-focus.component';
 
 interface LogEntry {
   id: number;
@@ -36,12 +38,23 @@ export interface UserProfile {
 @Component({
   selector: 'app-signals',
   standalone: true,
-  imports: [],
+  imports: [UseCaseFocusComponent, AhButton, Tag, SectionHeading],
   templateUrl: './signals.component.html',
   styleUrls: ['./signals.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SignalsComponent {
+  // --- Focus View Options ---
+  readonly focusOptions: readonly SegmentedOption<string>[] = [
+    { value: 'all', label: 'All Signal Topics' },
+    { value: 'basics', label: 'Signal Basics' },
+    { value: 'toSignal', label: 'toSignal()' },
+    { value: 'linkedSignal', label: 'linkedSignal()' },
+    { value: 'rxResource', label: 'rxResource()' },
+    { value: 'toObservable', label: 'toObservable()' },
+  ];
+  readonly activeCase = signal<string>('all');
+
   // --- 1. Writable Signals (The "Source of Truth") ---
   firstName = signal('John');
   lastName = signal('Doe');
