@@ -1,5 +1,6 @@
 import type {
   CompetencyTier,
+  ConceptElaboration,
   N8nConnectionConfig,
   SoftwareEngineeringDomain,
   StudySource,
@@ -47,6 +48,10 @@ export interface StudyLmState {
   showAddFlashcardModal: boolean;
   showAddQuizModal: boolean;
   showJsonImportModal: boolean;
+  activeElaboration: ConceptElaboration | null;
+  isLoadingElaboration: boolean;
+  showElaborationModal: boolean;
+  elaborationError: string | null;
 }
 
 const initialSubjectId = 'subj-default-js';
@@ -116,4 +121,8 @@ export const initialStudyLmState: StudyLmState = {
   showAddFlashcardModal: false,
   showAddQuizModal: false,
   showJsonImportModal: false,
+  activeElaboration: null,
+  isLoadingElaboration: false,
+  showElaborationModal: false,
+  elaborationError: null,
 };

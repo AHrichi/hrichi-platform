@@ -206,4 +206,30 @@ export class FlashcardDeckComponent {
       this.store.exportAnki(subj.title, this.store.filteredCards());
     }
   }
+
+  requestHint(card: StudyFlashcard): void {
+    const subj = this.store.activeSubject()?.title || 'Software Engineering';
+    this.store.requestHint({
+      subject: subj,
+      conceptTitle: card.category || 'Core Specification Concept',
+      difficultyTier: card.tier,
+      sectionCode: card.sectionCode,
+      promptOrQuestion: card.front,
+      answerOrExplanation: card.back,
+      codeSnippet: card.codeSnippet,
+    });
+  }
+
+  requestDeepDive(card: StudyFlashcard): void {
+    const subj = this.store.activeSubject()?.title || 'Software Engineering';
+    this.store.requestDeepDive({
+      subject: subj,
+      conceptTitle: card.category || 'Architecture & Invariants',
+      difficultyTier: card.tier,
+      sectionCode: card.sectionCode,
+      promptOrQuestion: card.front,
+      answerOrExplanation: card.back,
+      codeSnippet: card.codeSnippet,
+    });
+  }
 }

@@ -152,4 +152,30 @@ export class QuizArenaComponent {
   onNextQuestion(): void {
     this.store.nextQuizQuestion(this.store.filteredQuiz().length);
   }
+
+  requestHint(q: StudyQuizQuestion): void {
+    const subj = this.store.activeSubject()?.title || 'Software Engineering';
+    this.store.requestHint({
+      subject: subj,
+      conceptTitle: q.sectionCode ? `Section ${q.sectionCode}` : 'Quiz Concept',
+      difficultyTier: q.tier,
+      sectionCode: q.sectionCode,
+      promptOrQuestion: q.question,
+      answerOrExplanation: q.explanation,
+      codeSnippet: q.codeSnippet,
+    });
+  }
+
+  requestDeepDive(q: StudyQuizQuestion): void {
+    const subj = this.store.activeSubject()?.title || 'Software Engineering';
+    this.store.requestDeepDive({
+      subject: subj,
+      conceptTitle: q.sectionCode ? `Section ${q.sectionCode} Invariants` : 'Architecture & Invariants',
+      difficultyTier: q.tier,
+      sectionCode: q.sectionCode,
+      promptOrQuestion: q.question,
+      answerOrExplanation: q.explanation,
+      codeSnippet: q.codeSnippet,
+    });
+  }
 }

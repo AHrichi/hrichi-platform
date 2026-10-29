@@ -32,3 +32,12 @@ export * from './lib/alert/alert';
 export { Alert as AhAlert } from './lib/alert/alert';
 export * from './lib/select/select';
 export { Select as AhSelect, type SelectOption as AhSelectOption } from './lib/select/select';
+
+export * from './lib/flow-chart/flow-chart';
+export {
+  FlowChart as AhFlowChart,
+  type ConceptGraphData,
+  type FlowchartNode,
+  type FlowchartEdge,
+} from './lib/flow-chart/flow-chart';
+

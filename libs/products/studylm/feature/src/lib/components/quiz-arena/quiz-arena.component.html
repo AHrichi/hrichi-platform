@@ -77,6 +77,17 @@
       <article class="question-card">
         <div class="question-header">
           <h3 class="question-text">{{ q.question }}</h3>
+          @if (!q.isAnswered) {
+            <button
+              type="button"
+              class="quiz-action-btn hint-btn"
+              (click)="requestHint(q)"
+              title="Need a hint? Get pedagogical guidance without spoiling the answer"
+            >
+              <span class="btn-icon">💡</span>
+              <span>Need a Hint?</span>
+            </button>
+          }
         </div>
 
         @if (q.codeSnippet) {
@@ -122,6 +133,15 @@
               <span class="explanation-title">
                 {{ q.isCorrect ? '✓ Correct Assessment' : '✕ Specification Misconception' }}
               </span>
+              <button
+                type="button"
+                class="quiz-action-btn deepdive-btn"
+                (click)="requestDeepDive(q)"
+                title="Deep dive: view architectural breakdown, flowchart, and verified code"
+              >
+                <span class="btn-icon">🔍</span>
+                <span>Deep Dive & Diagram</span>
+              </button>
             </div>
             <p class="explanation-text">{{ q.explanation }}</p>
             @if (getQuestionDocLink(q); as doc) {

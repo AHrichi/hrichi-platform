@@ -1,5 +1,8 @@
 import { Injectable } from '@angular/core';
 import {
+  type ConceptElaboration,
+  type ConceptElaborationRequest,
+  type ConceptElaborationResponse,
   type CurriculumRoadmap,
   type GenerateRoadmapRequest,
   type GenerateRoadmapResponse,
@@ -16,6 +19,7 @@ import {
   type StudyQuizQuestion,
   type SynthesisRequest,
   type SynthesisResponse,
+  validateAndParseElaboration,
   validateAndParseRoadmap,
   validateAndParseSectionFlashcards,
   validateAndParseSectionQuiz,
@@ -204,6 +208,34 @@ export class StudyLmApiService {
     } catch (err) {
       console.warn('Quiz generation via n8n failed, generating client fallback quiz:', err);
       return this.generateFallbackSectionQuiz(subject, section);
+    }
+  }
+
+  async elaborateConcept(
+    request: ConceptElaborationRequest,
+    endpoint?: string,
+  ): Promise<ConceptElaborationResponse> {
+    const url = endpoint || DEFAULT_TUNNEL_URL;
+
+    try {
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'ngrok-skip-browser-warning': 'true',
+        },
+        body: JSON.stringify(request),
+      });
+
+      if (!res.ok) {
+        throw new Error(`n8n HTTP ${res.status}: ${res.statusText}`);
+      }
+
+      const raw = await res.text();
+      return validateAndParseElaboration(raw, request);
+    } catch (err) {
+      console.warn('Concept elaboration via n8n failed or was rejected, generating client fallback elaboration:', err);
+      return this.generateFallbackElaboration(request);
     }
   }
 
@@ -511,6 +543,162 @@ export class StudyLmApiService {
       overview,
       flashcards,
       quiz,
+    };
+  }
+
+  private generateFallbackElaboration(
+    request: ConceptElaborationRequest,
+  ): ConceptElaborationResponse {
+    const isHint = request.mode === 'hint';
+    const title = request.conceptTitle || request.subject;
+
+    if (isHint) {
+      const elaboration: ConceptElaboration = {
+        id: `elab-hint-${Date.now()}`,
+        mode: 'hint',
+        conceptTitle: title,
+        sectionCode: request.sectionCode,
+        tier: request.difficultyTier,
+        summary: `Pedagogical Hint for ${title}: Focus on the exact specification invariants, execution boundaries, and evaluation order.`,
+        bulletPoints: [
+          `Consider whether this concept relies on stack value copying vs heap reference allocation.`,
+          `Check whether asynchronous microtask checkpoints or event-driven boundaries alter the sequence before this point.`,
+          `Rule of thumb: Look for immutability guarantees or pure derivations before assuming in-place mutation.`,
+        ],
+        codeSnippet: {
+          code: `// Diagnostic Check for ${title}\nfunction evaluateInvariant(context: unknown): boolean {\n  // Invariant: Verify reference integrity and deterministic state\n  return typeof context !== 'undefined' && context !== null;\n}`,
+          language: 'typescript',
+          filename: 'diagnostic-hint.ts',
+          explanation: 'Demonstrates verifying preconditions before evaluating runtime effects.',
+        },
+        graph: {
+          title: `Mental Model: ${title}`,
+          description: 'Step-by-step heuristic for arriving at the correct specification answer',
+          direction: 'vertical',
+          nodes: [
+            {
+              id: 'h1',
+              label: 'Inspect Preconditions',
+              subtext: 'Are values passed by reference or primitive value?',
+              type: 'start',
+              badge: 'Step 1',
+            },
+            {
+              id: 'h2',
+              label: 'Evaluate Runtime Invariants',
+              subtext: 'Does a microtask, event handler, or prototype lookup intervene?',
+              type: 'decision',
+              badge: 'Step 2',
+            },
+            {
+              id: 'h3',
+              label: 'Deduce Deterministic Outcome',
+              subtext: 'Matches official specification semantics',
+              type: 'end',
+              badge: 'Conclusion',
+            },
+          ],
+          edges: [
+            { from: 'h1', to: 'h2', label: 'Inputs verified' },
+            { from: 'h2', to: 'h3', label: 'Invariants satisfied' },
+          ],
+        },
+        officialDocs: [
+          {
+            title: `MDN Reference — ${title}`,
+            url: `https://developer.mozilla.org/en-US/search?q=${encodeURIComponent(title)}`,
+          },
+        ],
+        provider: 'Grounded Pedagogical Assistant (Client Fallback)',
+        timestamp: new Date().toISOString(),
+      };
+
+      return {
+        success: true,
+        provider: elaboration.provider,
+        elaboration,
+      };
+    }
+
+    // Deep Dive mode
+    const elaboration: ConceptElaboration = {
+      id: `elab-deep-${Date.now()}`,
+      mode: 'deep_dive',
+      conceptTitle: title,
+      sectionCode: request.sectionCode,
+      tier: request.difficultyTier,
+      summary: `In-Depth Architectural Analysis of ${title}: Exploring runtime mechanics, memory layout, specification constraints, and production failure modes.`,
+      bulletPoints: [
+        `Specification Invariants: In ${request.subject}, ${title} guarantees deterministic state boundaries and avoids uncoordinated shared memory mutation.`,
+        `Memory & Lifecycle: Allocation strategy distinguishes between short-lived stack frames and heap structures monitored by generational garbage collection roots.`,
+        `Asynchronous Scheduling: Under high concurrent load, operations must avoid starving the microtask drain phase or holding dangling closure references.`,
+        `Production Resilience: Defend against silent type coercions, unhandled rejections, and cascading invalidation storms by validating contracts at system boundaries.`,
+      ],
+      codeSnippet: {
+        code: `/**\n * Production Implementation Pattern for ${title}\n * Preserves type safety, immutability, and boundary isolation.\n */\nexport class ${title.replace(/[^a-zA-Z0-9]/g, '') || 'ConceptEngine'} {\n  private readonly state = new Map<string, unknown>();\n\n  public executeSafely<T>(key: string, compute: () => T): Readonly<T> {\n    // 1. Boundary check\n    if (!key || typeof key !== 'string') {\n      throw new TypeError('[Invariant Violation] Key must be a non-empty string');\n    }\n\n    // 2. Deterministic execution\n    const result = Object.freeze(compute());\n    this.state.set(key, result);\n    return result;\n  }\n}`,
+        language: 'typescript',
+        filename: `${(title.toLowerCase().replace(/[^a-z0-9]/g, '-') || 'concept')}.ts`,
+        explanation: 'Enforces boundary verification, frozen immutability, and isolated state retention.',
+      },
+      graph: {
+        title: `Architectural Lifecycle: ${title}`,
+        description: 'End-to-end dataflow and state machine progression through the runtime engine',
+        direction: 'vertical',
+        nodes: [
+          {
+            id: 'n1',
+            label: 'Caller Invocation & Argument Binding',
+            subtext: 'Allocates call frame and captures lexical environment references',
+            type: 'start',
+            badge: 'Stack Frame',
+          },
+          {
+            id: 'n2',
+            label: 'Boundary Validation & Type Guard',
+            subtext: 'Verifies runtime contracts against specification invariants',
+            type: 'decision',
+            badge: 'Contract Gate',
+          },
+          {
+            id: 'n3',
+            label: 'Core State Transformation',
+            subtext: 'Calculates pure derivations or schedules microtask reactions',
+            type: 'highlight',
+            badge: 'Deterministic',
+          },
+          {
+            id: 'n4',
+            label: 'Frame Settlement & GC Deallocation',
+            subtext: 'Pops call stack; unreferenced heap nodes collected in nursery GC pass',
+            type: 'end',
+            badge: 'Reclaimed',
+          },
+        ],
+        edges: [
+          { from: 'n1', to: 'n2', label: 'Invoke' },
+          { from: 'n2', to: 'n3', label: 'Valid Contract' },
+          { from: 'n3', to: 'n4', label: 'Return Result' },
+        ],
+        rawMermaid: `graph TD\n  A[Caller Invocation] -->|Stack Allocated| B[Boundary Gate]\n  B -->|Valid Invariant| C[Core Transformation]\n  C -->|Return Result| D[Frame Teardown & GC]`,
+      },
+      officialDocs: [
+        {
+          title: `MDN Specification Guide — ${title}`,
+          url: `https://developer.mozilla.org/en-US/search?q=${encodeURIComponent(title)}`,
+        },
+        {
+          title: `ECMAScript / Web Standards Specifications`,
+          url: 'https://tc39.es/ecma262/',
+        },
+      ],
+      provider: 'Grounded Curriculum Architect (Client Fallback)',
+      timestamp: new Date().toISOString(),
+    };
+
+    return {
+      success: true,
+      provider: elaboration.provider,
+      elaboration,
     };
   }
 }

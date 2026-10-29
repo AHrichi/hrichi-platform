@@ -6,6 +6,8 @@ import { StudyLmStorageService } from '../services/studylm-storage.service';
 import {
   type AddSourceInput,
   type CompetencyTier,
+  type ConceptElaboration,
+  type ConceptElaborationRequest,
   type CreateFlashcardInput,
   type CreateQuizQuestionInput,
   type CreateSubjectInput,
@@ -820,6 +822,103 @@ export function withStudyLmMethods() {
             a.download = `${subject.title.toLowerCase().replace(/[^a-z0-9]/g, '_')}_study_guide.md`;
             a.click();
             URL.revokeObjectURL(url);
+          },
+
+          async requestHint(context: {
+            subject: string;
+            conceptTitle: string;
+            difficultyTier?: CompetencyTier;
+            sectionCode?: string;
+            promptOrQuestion: string;
+            answerOrExplanation?: string;
+            codeSnippet?: string;
+          }) {
+            patchState(state, {
+              isLoadingElaboration: true,
+              showElaborationModal: true,
+              elaborationError: null,
+            });
+
+            const req: ConceptElaborationRequest = {
+              action: 'elaborate_concept',
+              mode: 'hint',
+              subject: context.subject,
+              conceptTitle: context.conceptTitle,
+              difficultyTier: context.difficultyTier,
+              sectionCode: context.sectionCode,
+              promptOrQuestion: context.promptOrQuestion,
+              answerOrExplanation: context.answerOrExplanation,
+              codeSnippet: context.codeSnippet,
+            };
+
+            try {
+              const res = await apiService.elaborateConcept(req, state.n8nConfig().activeEndpoint);
+              patchState(state, {
+                activeElaboration: res.elaboration,
+                isLoadingElaboration: false,
+              });
+            } catch (err) {
+              patchState(state, {
+                isLoadingElaboration: false,
+                elaborationError: err instanceof Error ? err.message : 'Failed to retrieve hint',
+              });
+            }
+          },
+
+          async requestDeepDive(context: {
+            subject: string;
+            conceptTitle: string;
+            difficultyTier?: CompetencyTier;
+            sectionCode?: string;
+            promptOrQuestion: string;
+            answerOrExplanation?: string;
+            codeSnippet?: string;
+          }) {
+            patchState(state, {
+              isLoadingElaboration: true,
+              showElaborationModal: true,
+              elaborationError: null,
+            });
+
+            const req: ConceptElaborationRequest = {
+              action: 'elaborate_concept',
+              mode: 'deep_dive',
+              subject: context.subject,
+              conceptTitle: context.conceptTitle,
+              difficultyTier: context.difficultyTier,
+              sectionCode: context.sectionCode,
+              promptOrQuestion: context.promptOrQuestion,
+              answerOrExplanation: context.answerOrExplanation,
+              codeSnippet: context.codeSnippet,
+            };
+
+            try {
+              const res = await apiService.elaborateConcept(req, state.n8nConfig().activeEndpoint);
+              patchState(state, {
+                activeElaboration: res.elaboration,
+                isLoadingElaboration: false,
+              });
+            } catch (err) {
+              patchState(state, {
+                isLoadingElaboration: false,
+                elaborationError: err instanceof Error ? err.message : 'Failed to retrieve deep dive',
+              });
+            }
+          },
+
+          closeElaborationModal() {
+            patchState(state, {
+              showElaborationModal: false,
+            });
+          },
+
+          clearElaboration() {
+            patchState(state, {
+              activeElaboration: null,
+              isLoadingElaboration: false,
+              showElaborationModal: false,
+              elaborationError: null,
+            });
           },
         };
       },

@@ -1,0 +1,181 @@
+<ah-modal
+  [open]="store.showElaborationModal()"
+  [title]="store.activeElaboration()?.conceptTitle || 'Concept Breakdown'"
+  [eyebrow]="store.activeElaboration()?.mode === 'hint' ? '💡 Pedagogical Hint' : '🔍 Architectural Deep Dive'"
+  size="lg"
+  (closed)="close()"
+>
+  <div class="elaboration-container">
+    <!-- Header -->
+    <header class="elaboration-header">
+      <div class="header-badges">
+        @if (store.activeElaboration(); as elab) {
+          <ah-badge
+            [variant]="elab.mode === 'hint' ? 'warning' : 'accent'"
+            size="sm"
+          >
+            <span>{{ elab.mode === 'hint' ? '💡 Concept Hint' : '🔍 Architectural Deep Dive' }}</span>
+          </ah-badge>
+
+          @if (elab.sectionCode) {
+            <ah-badge variant="neutral" size="sm">
+              <span>Section {{ elab.sectionCode }}</span>
+            </ah-badge>
+          }
+
+          @if (elab.tier) {
+            <ah-badge
+              [variant]="elab.tier === 'beginner' ? 'info' : (elab.tier === 'intermediate' ? 'warning' : 'danger')"
+              size="sm"
+            >
+              <span>{{ elab.tier | uppercase }}</span>
+            </ah-badge>
+          }
+        } @else {
+          <ah-badge variant="accent" size="sm">
+            <span>⚡ Deep Dive Engine</span>
+          </ah-badge>
+        }
+      </div>
+
+      <h3 class="elaboration-title">
+        {{ store.activeElaboration()?.conceptTitle || 'Concept Synthesis' }}
+      </h3>
+    </header>
+
+    <!-- Body -->
+    <div class="elaboration-body">
+      <!-- Loading State -->
+      @if (store.isLoadingElaboration()) {
+        <div class="elaboration-loading">
+          <div class="loading-spinner" aria-hidden="true"></div>
+          <h4 class="loading-heading">Consulting AI Knowledge Engine...</h4>
+          <p class="loading-subtext">
+            Synthesizing specification invariants, architectural flowcharts, and verified code patterns.
+          </p>
+        </div>
+      }
+
+      <!-- Error State -->
+      @if (store.elaborationError(); as err) {
+        <div class="elaboration-error">
+          <ah-alert variant="danger" title="Unable to retrieve details">
+            {{ err }}
+          </ah-alert>
+        </div>
+      }
+
+      <!-- Content -->
+      @if (!store.isLoadingElaboration() && store.activeElaboration(); as elab) {
+        <!-- Summary Callout -->
+        <section class="summary-section" [class.summary-section--hint]="elab.mode === 'hint'">
+          <div class="summary-icon" aria-hidden="true">
+            {{ elab.mode === 'hint' ? '💡' : '📐' }}
+          </div>
+          <div class="summary-content">
+            <h4 class="section-title">
+              {{ elab.mode === 'hint' ? 'Pedagogical Clue' : 'Specification Overview' }}
+            </h4>
+            <p class="summary-text">{{ elab.summary }}</p>
+          </div>
+        </section>
+
+        <!-- Key Nuances / Bullet Points -->
+        @if (elab.bulletPoints.length > 0) {
+          <section class="nuances-section">
+            <h4 class="section-subtitle">
+              {{ elab.mode === 'hint' ? 'Key Invariants to Test' : 'Architectural Invariants & Mechanisms' }}
+            </h4>
+            <ul class="nuances-list">
+              @for (bullet of elab.bulletPoints; track $index) {
+                <li class="nuance-item">
+                  <span class="nuance-bullet" aria-hidden="true">✦</span>
+                  <span class="nuance-text">{{ bullet }}</span>
+                </li>
+              }
+            </ul>
+          </section>
+        }
+
+        <!-- Architectural Diagram / Flowchart -->
+        @if (elab.graph) {
+          <section class="diagram-section">
+            <h4 class="section-subtitle">Visual Lifecycle & State Transitions</h4>
+            <ah-flow-chart [graph]="elab.graph" />
+          </section>
+        }
+
+        <!-- Code Snippet -->
+        @if (elab.codeSnippet) {
+          <section class="code-section">
+            <div class="code-section-header">
+              <h4 class="section-subtitle">
+                {{ elab.mode === 'hint' ? 'Diagnostic Assertion' : 'Verified Implementation Pattern' }}
+              </h4>
+            </div>
+
+            <ah-code-block
+              [code]="elab.codeSnippet.code"
+              [language]="elab.codeSnippet.language"
+              [filename]="elab.codeSnippet.filename"
+            />
+
+            @if (elab.codeSnippet.explanation) {
+              <p class="code-explanation">
+                <span class="explanation-icon" aria-hidden="true">ℹ</span>
+                {{ elab.codeSnippet.explanation }}
+              </p>
+            }
+          </section>
+        }
+
+        <!-- Official Citations / Docs -->
+        @if (elab.officialDocs && elab.officialDocs.length > 0) {
+          <section class="docs-section">
+            <h4 class="section-subtitle">Official Grounded Reference Documentation</h4>
+            <div class="docs-links-grid">
+              @for (doc of elab.officialDocs; track doc.url) {
+                <a
+                  [href]="doc.url"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="doc-link-card"
+                  title="Open official specification in new tab"
+                >
+                  <div class="doc-link-content">
+                    <span class="doc-link-title">{{ doc.title }}</span>
+                    <span class="doc-link-url">{{ doc.url }}</span>
+                  </div>
+                  <span class="doc-link-arrow" aria-hidden="true">↗</span>
+                </a>
+              }
+            </div>
+          </section>
+        }
+      }
+    </div>
+
+    <!-- Footer -->
+    <footer class="elaboration-footer">
+      <div class="footer-meta">
+        @if (store.activeElaboration(); as elab) {
+          <span class="provider-pill">
+            <span class="provider-dot"></span>
+            {{ elab.provider }}
+          </span>
+        }
+      </div>
+
+      <div class="footer-actions">
+        <button
+          type="button"
+          ahButton="primary"
+          size="sm"
+          (click)="close()"
+        >
+          <span>Got it, thanks!</span>
+        </button>
+      </div>
+    </footer>
+  </div>
+</ah-modal>

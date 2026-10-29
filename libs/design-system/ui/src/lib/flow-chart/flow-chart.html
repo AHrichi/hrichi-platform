@@ -1,0 +1,104 @@
+@if (graph(); as g) {
+  <div class="ah-flow-chart-container">
+    <!-- Header with Meta & View Toggles -->
+    <div class="ah-flow-chart-header">
+      <div class="ah-flow-chart-title-area">
+        @if (g.title) {
+          <h4 class="ah-flow-chart-title">
+            <span class="ah-flow-chart-icon" aria-hidden="true">🔀</span>
+            {{ g.title }}
+          </h4>
+        }
+        @if (g.description) {
+          <p class="ah-flow-chart-desc">{{ g.description }}</p>
+        }
+      </div>
+
+      <div class="ah-flow-chart-controls">
+        <span class="ah-flow-chart-count-badge">
+          {{ g.nodes.length }} Steps
+        </span>
+
+        <button
+          type="button"
+          class="ah-flow-chart-btn"
+          (click)="toggleDirection()"
+          [title]="activeDirection() === 'vertical' ? 'Switch to Horizontal Flow' : 'Switch to Vertical Flow'"
+        >
+          <span>{{ activeDirection() === 'vertical' ? '⇄ Horizontal' : '⇅ Vertical' }}</span>
+        </button>
+
+        @if (showCodeToggle() && g.rawMermaid) {
+          <button
+            type="button"
+            class="ah-flow-chart-btn"
+            [class.ah-flow-chart-btn--active]="showMermaidSource()"
+            (click)="toggleMermaidSource()"
+            title="Toggle Raw Mermaid Definition"
+          >
+            <span>{{ showMermaidSource() ? 'Diagram View' : 'Mermaid View' }}</span>
+          </button>
+        }
+      </div>
+    </div>
+
+    <!-- Raw Mermaid / Code View -->
+    @if (showMermaidSource() && g.rawMermaid) {
+      <div class="ah-flow-chart-raw">
+        <pre><code>{{ g.rawMermaid }}</code></pre>
+      </div>
+    } @else {
+      <!-- Visual Flow Canvas -->
+      <div class="ah-flow-canvas" [class.ah-flow-canvas--horizontal]="activeDirection() === 'horizontal'">
+        <div class="ah-flow-nodes-track">
+          @for (item of resolvedNodes(); track item.node.id; let idx = $index) {
+            <div class="ah-flow-step" [class.ah-flow-step--last]="item.isLast">
+              <!-- Node Card -->
+              <div
+                class="ah-flow-node"
+                [ngClass]="getNodeTypeClass(item.node.type)"
+                [attr.data-node-id]="item.node.id"
+              >
+                <div class="ah-flow-node-top">
+                  <div class="ah-flow-node-icon-wrapper">
+                    <span class="ah-flow-node-icon">{{ getNodeIcon(item.node) }}</span>
+                    <span class="ah-flow-step-num">#{{ idx + 1 }}</span>
+                  </div>
+
+                  @if (item.node.badge) {
+                    <span class="ah-flow-node-badge">{{ item.node.badge }}</span>
+                  }
+                </div>
+
+                <div class="ah-flow-node-body">
+                  <div class="ah-flow-node-label">{{ item.node.label }}</div>
+                  @if (item.node.subtext) {
+                    <div class="ah-flow-node-subtext">{{ item.node.subtext }}</div>
+                  }
+                </div>
+              </div>
+
+              <!-- Directed Flow Connector -->
+              @if (!item.isLast) {
+                <div class="ah-flow-connector" [class.ah-flow-connector--multi]="item.outgoingEdges.length > 1">
+                  @for (edge of item.outgoingEdges; track edge.to + edge.label) {
+                    <div class="ah-flow-arrow-wrapper">
+                      @if (edge.label) {
+                        <span class="ah-flow-edge-label">{{ edge.label }}</span>
+                      }
+                      <div class="ah-flow-line" [class.ah-flow-line--dashed]="edge.style === 'dashed'">
+                        <span class="ah-flow-arrow-head" aria-hidden="true">
+                          {{ activeDirection() === 'horizontal' ? '→' : '↓' }}
+                        </span>
+                      </div>
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+          }
+        </div>
+      </div>
+    }
+  </div>
+}

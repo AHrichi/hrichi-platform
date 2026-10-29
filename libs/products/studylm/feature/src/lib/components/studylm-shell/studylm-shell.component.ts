@@ -21,6 +21,7 @@ import { AddFlashcardModalComponent } from '../add-flashcard-modal/add-flashcard
 import { AddQuizModalComponent } from '../add-quiz-modal/add-quiz-modal.component';
 import { JsonImportModalComponent } from '../json-import-modal/json-import-modal.component';
 import { StudyStatsComponent } from '../study-stats/study-stats.component';
+import { ElaborationModalComponent } from '../elaboration-modal/elaboration-modal.component';
 
 @Component({
   selector: 'ah-studylm-shell',
@@ -40,6 +41,7 @@ import { StudyStatsComponent } from '../study-stats/study-stats.component';
     AddQuizModalComponent,
     JsonImportModalComponent,
     StudyStatsComponent,
+    ElaborationModalComponent,
     AhSelect,
   ],
   templateUrl: './studylm-shell.component.html',

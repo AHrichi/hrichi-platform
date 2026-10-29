@@ -99,8 +99,19 @@
           <!-- Front Face -->
           <div flip-front slot="front" class="card-face-content front-face">
             <div class="face-tag">
-              <span class="category-name">{{ card.category }}</span>
-              <span class="face-label">PROMPT</span>
+              <div class="face-tag-left">
+                <span class="category-name">{{ card.category }}</span>
+                <span class="face-label">PROMPT</span>
+              </div>
+              <button
+                type="button"
+                class="card-action-btn hint-btn"
+                (click)="$event.stopPropagation(); requestHint(card)"
+                title="Need a hint? Request pedagogical clues without spoiling the answer"
+              >
+                <span class="btn-icon">💡</span>
+                <span>Hint</span>
+              </button>
             </div>
 
             <div class="prompt-text">
@@ -129,8 +140,19 @@
           <!-- Back Face -->
           <div flip-back slot="back" class="card-face-content back-face">
             <div class="face-tag">
-              <span class="category-name">{{ card.category }}</span>
-              <span class="face-label">EXPLANATION</span>
+              <div class="face-tag-left">
+                <span class="category-name">{{ card.category }}</span>
+                <span class="face-label">EXPLANATION</span>
+              </div>
+              <button
+                type="button"
+                class="card-action-btn deepdive-btn"
+                (click)="$event.stopPropagation(); requestDeepDive(card)"
+                title="Deep dive: view architectural breakdown, flowchart, and verified code"
+              >
+                <span class="btn-icon">🔍</span>
+                <span>Deep Dive & Diagram</span>
+              </button>
             </div>
 
             <div class="explanation-text">
