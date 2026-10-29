@@ -1,50 +1,58 @@
 <div class="studylm-layout">
   <!-- Top Navigation & Control Bar -->
   <header class="studylm-navbar">
-    <div class="nav-left">
-      <div class="brand">
-        <span class="brand-icon">📚</span>
-        <div class="brand-titles">
+    <!-- Brand Lockup -->
+    <div class="brand">
+      <span class="brand-icon" aria-hidden="true">📚</span>
+      <div class="brand-titles">
+        <div class="brand-title-line">
           <h1>StudyLM</h1>
-          <span class="brand-tag">Pedagogical Curriculum & Drill Engine</span>
+          <span class="brand-badge">Engine</span>
         </div>
-      </div>
-
-      <!-- Subject Switcher & Creator -->
-      <div class="subject-switcher-wrap">
-        <ah-select
-          [options]="subjectOptions()"
-          [value]="store.activeSubjectId()"
-          (valueChange)="selectSubjectId($event)"
-          size="sm"
-          placeholder="Select Subject..."
-        />
-
-        <button
-          type="button"
-          ahButton="ghost"
-          size="sm"
-          (click)="openCreateSubjectModal()"
-        >
-          <span>+ New Subject</span>
-        </button>
-
-        @if (store.activeSubject()) {
-          <button
-            type="button"
-            class="btn-delete-subject"
-            (click)="deleteCurrentSubject()"
-            title="Delete active subject and its curriculum data"
-            aria-label="Delete active subject"
-          >
-            <span class="delete-icon" aria-hidden="true">🗑️</span>
-            <span class="delete-label">Delete</span>
-          </button>
-        }
+        <span class="brand-tag">Pedagogical Curriculum & Drill Engine</span>
       </div>
     </div>
 
-    <div class="nav-right">
+    <!-- Subject Switcher & Creator -->
+    <div class="subject-switcher-wrap">
+      <ah-select
+        class="subject-select"
+        [options]="subjectOptions()"
+        [value]="store.activeSubjectId()"
+        (valueChange)="selectSubjectId($event)"
+        size="sm"
+        placeholder="Select Subject..."
+      />
+
+      <button
+        type="button"
+        ahButton="ghost"
+        size="sm"
+        class="btn-new-subject"
+        (click)="openCreateSubjectModal()"
+        title="Create new subject curriculum"
+      >
+        <span class="plus-icon" aria-hidden="true">+</span>
+        <span class="new-label-desktop">New Subject</span>
+        <span class="new-label-mobile">New</span>
+      </button>
+
+      @if (store.activeSubject()) {
+        <button
+          type="button"
+          class="btn-delete-subject"
+          (click)="deleteCurrentSubject()"
+          title="Delete active subject and its curriculum data"
+          aria-label="Delete active subject"
+        >
+          <span class="delete-icon" aria-hidden="true">🗑️</span>
+          <span class="delete-label">Delete</span>
+        </button>
+      }
+    </div>
+
+    <!-- Global Header Actions -->
+    <div class="nav-actions">
       <!-- n8n Gateway Connection Pill -->
       <button
         type="button"
@@ -52,10 +60,12 @@
         [class.connected]="store.n8nConfig().isConnected"
         (click)="openSettingsModal()"
         title="Configure n8n AI webhook endpoint"
+        [attr.aria-label]="'n8n AI Engine status: ' + (store.n8nConfig().isConnected ? 'Online' : 'Offline')"
       >
         <span class="status-dot"></span>
-        <span class="btn-label">n8n Engine: {{ store.n8nConfig().isConnected ? 'Online' : 'Offline' }}</span>
-        <span class="gear-icon">⚙️</span>
+        <span class="btn-label-desktop">n8n Engine: {{ store.n8nConfig().isConnected ? 'Online' : 'Offline' }}</span>
+        <span class="btn-label-mobile">{{ store.n8nConfig().isConnected ? 'Online' : 'Offline' }}</span>
+        <span class="gear-icon" aria-hidden="true">⚙️</span>
       </button>
 
       <!-- Markdown Guide Export -->
@@ -63,9 +73,14 @@
         type="button"
         ahButton="ghost"
         size="sm"
+        class="btn-export-guide"
         (click)="exportStudyGuide()"
+        title="Export Markdown Study Guide"
+        aria-label="Export Markdown Study Guide"
       >
-        <span>📥 Export Guide</span>
+        <span class="export-icon" aria-hidden="true">📥</span>
+        <span class="export-label-desktop">Export Guide</span>
+        <span class="export-label-mobile">Guide</span>
       </button>
     </div>
   </header>
