@@ -91,11 +91,20 @@ const meta: Meta<FlowChart> = {
     showCodeToggle: {
       control: 'boolean',
     },
+    density: {
+      control: 'select',
+      options: ['comfortable', 'compact'],
+    },
+    selectedNodeId: {
+      control: 'text',
+    },
   },
   args: {
     graph: sampleEventLoopGraph,
     direction: 'vertical',
     showCodeToggle: true,
+    density: 'comfortable',
+    selectedNodeId: null,
   },
 };
 
@@ -108,6 +117,20 @@ export const Horizontal: Story = {
   args: {
     graph: sampleScopeLookupGraph,
     direction: 'horizontal',
+  },
+};
+
+export const CompactDensity: Story = {
+  args: {
+    graph: sampleEventLoopGraph,
+    density: 'compact',
+  },
+};
+
+export const SelectedStep: Story = {
+  args: {
+    graph: sampleEventLoopGraph,
+    selectedNodeId: '2',
   },
 };
 
