@@ -62,10 +62,10 @@ describe('FlowChart', () => {
     fixture.detectChanges();
 
     const compiled = fixture.nativeElement as HTMLElement;
-    const nodes = compiled.querySelectorAll('.ah-flow-node');
+    const nodes = compiled.querySelectorAll('.node');
     expect(nodes.length).toBe(4);
 
-    const titleEl = compiled.querySelector('.ah-flow-chart-title');
+    const titleEl = compiled.querySelector('.chart-title');
     expect(titleEl?.textContent).toContain('Event Loop Microtask Lifecycle');
   });
 
@@ -89,7 +89,29 @@ describe('FlowChart', () => {
 
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    const rawCode = compiled.querySelector('.ah-flow-chart-raw code');
+    const rawCode = compiled.querySelector('.raw-view code');
     expect(rawCode?.textContent).toContain('graph TD');
+  });
+
+  it('should handle node selection, density and zoom controls', () => {
+    fixture.componentRef.setInput('graph', sampleGraph);
+    fixture.detectChanges();
+
+    expect(component.selectedNodeId()).toBeNull();
+    component.selectNode('2');
+    expect(component.selectedNodeId()).toBe('2');
+
+    component.selectNode('2');
+    expect(component.selectedNodeId()).toBeNull();
+
+    expect(component.density()).toBe('comfortable');
+    component.toggleDensity();
+    expect(component.density()).toBe('compact');
+
+    expect(component.zoom()).toBe(1);
+    component.zoomIn();
+    expect(component.zoom()).toBe(1.1);
+    component.zoomOut();
+    expect(component.zoom()).toBe(1);
   });
 });

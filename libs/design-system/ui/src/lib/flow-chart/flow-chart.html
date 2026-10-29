@@ -1,96 +1,112 @@
 @if (graph(); as g) {
-  <div class="ah-flow-chart-container">
-    <!-- Header with Meta & View Toggles -->
-    <div class="ah-flow-chart-header">
-      <div class="ah-flow-chart-title-area">
+  <div class="chart-container">
+    <div class="chart-header">
+      <div class="title-area">
         @if (g.title) {
-          <h4 class="ah-flow-chart-title">
-            <span class="ah-flow-chart-icon" aria-hidden="true">🔀</span>
-            {{ g.title }}
+          <h4 class="chart-title">
+            <span aria-hidden="true">🔀</span>
+            <span>{{ g.title }}</span>
           </h4>
         }
         @if (g.description) {
-          <p class="ah-flow-chart-desc">{{ g.description }}</p>
+          <p class="chart-desc">{{ g.description }}</p>
         }
       </div>
 
-      <div class="ah-flow-chart-controls">
-        <span class="ah-flow-chart-count-badge">
-          {{ g.nodes.length }} Steps
-        </span>
+      <div class="controls">
+        <span class="count-badge mono">{{ g.nodes.length }} Steps</span>
 
-        <button
-          type="button"
-          class="ah-flow-chart-btn"
-          (click)="toggleDirection()"
-          [title]="activeDirection() === 'vertical' ? 'Switch to Horizontal Flow' : 'Switch to Vertical Flow'"
-        >
+        <button type="button" class="btn" (click)="toggleDirection()" [title]="activeDirection() === 'vertical' ? 'Switch to Horizontal' : 'Switch to Vertical'">
           <span>{{ activeDirection() === 'vertical' ? '⇄ Horizontal' : '⇅ Vertical' }}</span>
         </button>
 
+        <button type="button" class="btn" [class.btn--active]="density() === 'compact'" (click)="toggleDensity()">
+          <span>{{ density() === 'compact' ? 'Detailed' : 'Compact' }}</span>
+        </button>
+
+        <div class="zoom-group">
+          <button type="button" (click)="zoomOut()" [disabled]="zoom() <= 0.7" aria-label="Zoom Out">−</button>
+          <span class="zoom-label mono" (click)="resetZoom()" role="button" tabindex="0" title="Reset Zoom">{{ (zoom() * 100).toFixed(0) }}%</span>
+          <button type="button" (click)="zoomIn()" [disabled]="zoom() >= 1.5" aria-label="Zoom In">+</button>
+        </div>
+
         @if (showCodeToggle() && g.rawMermaid) {
-          <button
-            type="button"
-            class="ah-flow-chart-btn"
-            [class.ah-flow-chart-btn--active]="showMermaidSource()"
-            (click)="toggleMermaidSource()"
-            title="Toggle Raw Mermaid Definition"
-          >
-            <span>{{ showMermaidSource() ? 'Diagram View' : 'Mermaid View' }}</span>
+          <button type="button" class="btn" [class.btn--active]="showMermaidSource()" (click)="toggleMermaidSource()">
+            <span>{{ showMermaidSource() ? 'Diagram' : 'Mermaid' }}</span>
           </button>
         }
       </div>
     </div>
 
-    <!-- Raw Mermaid / Code View -->
     @if (showMermaidSource() && g.rawMermaid) {
-      <div class="ah-flow-chart-raw">
+      <div class="raw-view">
+        <div class="raw-actions">
+          <button type="button" class="btn" (click)="copyMermaid()">
+            <span>{{ copiedMermaid() ? '✓ Copied' : '📋 Copy Mermaid' }}</span>
+          </button>
+        </div>
         <pre><code>{{ g.rawMermaid }}</code></pre>
       </div>
     } @else {
-      <!-- Visual Flow Canvas -->
-      <div class="ah-flow-canvas" [class.ah-flow-canvas--horizontal]="activeDirection() === 'horizontal'">
-        <div class="ah-flow-nodes-track">
+      <div class="canvas" [class.is-compact]="density() === 'compact'">
+        <div class="nodes-track" [class.is-horizontal]="activeDirection() === 'horizontal'" [style.transform]="'scale(' + zoom() + ')'">
           @for (item of resolvedNodes(); track item.node.id; let idx = $index) {
-            <div class="ah-flow-step" [class.ah-flow-step--last]="item.isLast">
-              <!-- Node Card -->
+            <div class="step" [class.step--last]="item.isLast">
               <div
-                class="ah-flow-node"
-                [ngClass]="getNodeTypeClass(item.node.type)"
+                class="node"
+                [style.--c]="getNodeColor(item.node.type)"
+                [class.node--selected]="selectedNodeId() === item.node.id"
                 [attr.data-node-id]="item.node.id"
+                (click)="selectNode(item.node.id)"
+                role="button"
+                tabindex="0"
+                (keydown.enter)="selectNode(item.node.id)"
               >
-                <div class="ah-flow-node-top">
-                  <div class="ah-flow-node-icon-wrapper">
-                    <span class="ah-flow-node-icon">{{ getNodeIcon(item.node) }}</span>
-                    <span class="ah-flow-step-num">#{{ idx + 1 }}</span>
+                <div class="node-top">
+                  <div class="icon-wrap">
+                    <span class="node-icon" aria-hidden="true">{{ getNodeIcon(item.node) }}</span>
+                    <span class="step-num mono">{{ (idx + 1) < 10 ? '0' + (idx + 1) : (idx + 1) }}</span>
+                    <span class="type-pill mono">{{ getNodeTypePill(item.node.type) }}</span>
                   </div>
 
                   @if (item.node.badge) {
-                    <span class="ah-flow-node-badge">{{ item.node.badge }}</span>
+                    <span class="node-badge mono">{{ item.node.badge }}</span>
                   }
                 </div>
 
-                <div class="ah-flow-node-body">
-                  <div class="ah-flow-node-label">{{ item.node.label }}</div>
-                  @if (item.node.subtext) {
-                    <div class="ah-flow-node-subtext">{{ item.node.subtext }}</div>
+                <div class="node-body">
+                  <div class="node-label">{{ item.node.label }}</div>
+                  @if (item.node.subtext && density() === 'comfortable') {
+                    <div class="node-subtext">{{ item.node.subtext }}</div>
                   }
                 </div>
               </div>
 
-              <!-- Directed Flow Connector -->
               @if (!item.isLast) {
-                <div class="ah-flow-connector" [class.ah-flow-connector--multi]="item.outgoingEdges.length > 1">
+                <div class="connector" [class.connector--multi]="item.outgoingEdges.length > 1">
                   @for (edge of item.outgoingEdges; track edge.to + edge.label) {
-                    <div class="ah-flow-arrow-wrapper">
+                    <div class="arrow-wrap">
                       @if (edge.label) {
-                        <span class="ah-flow-edge-label">{{ edge.label }}</span>
-                      }
-                      <div class="ah-flow-line" [class.ah-flow-line--dashed]="edge.style === 'dashed'">
-                        <span class="ah-flow-arrow-head" aria-hidden="true">
-                          {{ activeDirection() === 'horizontal' ? '→' : '↓' }}
+                        <span
+                          class="edge-badge mono"
+                          [class.is-ok]="edge.label.toLowerCase().includes('success') || edge.label.toLowerCase().includes('true') || edge.label.toLowerCase().includes('yes')"
+                          [class.is-err]="edge.label.toLowerCase().includes('error') || edge.label.toLowerCase().includes('fail') || edge.label.toLowerCase().includes('no')"
+                        >
+                          {{ edge.label }}
                         </span>
-                      </div>
+                      }
+
+                      @if (activeDirection() === 'horizontal') {
+                        <svg class="arrow-svg" viewBox="0 0 28 16" width="28" height="16" aria-hidden="true">
+                          <line x1="0" y1="8" x2="20" y2="8" stroke="currentColor" stroke-width="2" [attr.stroke-dasharray]="edge.style === 'dashed' ? '4 3' : null"/>
+                          <polygon points="19,3 27,8 19,13" fill="currentColor"/>
+                        </svg>
+                      } @else {
+                        <svg class="arrow-svg" viewBox="0 0 16 28" width="16" height="28" aria-hidden="true">
+                          <line x1="8" y1="0" x2="8" y2="20" stroke="currentColor" stroke-width="2" [attr.stroke-dasharray]="edge.style === 'dashed' ? '4 3' : null"/>
+                          <polygon points="3,19 8,27 13,19" fill="currentColor"/>
+                        </svg>
+                      }
                     </div>
                   }
                 </div>

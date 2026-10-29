@@ -3,9 +3,10 @@ import {
   Component,
   computed,
   input,
+  model,
   signal,
 } from '@angular/core';
-import { NgClass } from '@angular/common';
+import { CommonModule } from '@angular/common';
 
 export interface FlowchartNode {
   id: string;
@@ -44,7 +45,8 @@ export interface ResolvedFlowNode {
  */
 @Component({
   selector: 'ah-flow-chart',
-  imports: [NgClass],
+  standalone: true,
+  imports: [CommonModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     class: 'ah-flow-chart',
@@ -58,9 +60,13 @@ export class FlowChart {
   readonly graph = input<ConceptGraphData | null>(null);
   readonly direction = input<'horizontal' | 'vertical'>('vertical');
   readonly showCodeToggle = input<boolean>(true);
+  readonly density = model<'comfortable' | 'compact'>('comfortable');
 
   readonly showMermaidSource = signal<boolean>(false);
   readonly customDirection = signal<'horizontal' | 'vertical' | null>(null);
+  readonly selectedNodeId = signal<string | null>(null);
+  readonly zoom = signal<number>(1);
+  readonly copiedMermaid = signal<boolean>(false);
 
   readonly activeDirection = computed<'horizontal' | 'vertical'>(() => {
     return this.customDirection() ?? this.graph()?.direction ?? this.direction();
@@ -76,10 +82,8 @@ export class FlowChart {
     const edges = g.edges ?? [];
 
     return nodes.map((node, index) => {
-      // Find explicit outgoing edges
       let outgoing = edges.filter((e) => e.from === node.id);
 
-      // If no explicit edges exist for non-last node, create default sequential edge to next node
       if (outgoing.length === 0 && index < nodes.length - 1) {
         outgoing = [{ from: node.id, to: nodes[index + 1].id }];
       }
@@ -92,13 +96,51 @@ export class FlowChart {
     });
   });
 
+  selectNode(nodeId: string): void {
+    if (this.selectedNodeId() === nodeId) {
+      this.selectedNodeId.set(null);
+    } else {
+      this.selectedNodeId.set(nodeId);
+    }
+  }
+
   toggleDirection(): void {
     const next = this.activeDirection() === 'vertical' ? 'horizontal' : 'vertical';
     this.customDirection.set(next);
   }
 
+  toggleDensity(): void {
+    this.density.update((d) => (d === 'comfortable' ? 'compact' : 'comfortable'));
+  }
+
   toggleMermaidSource(): void {
     this.showMermaidSource.update((v) => !v);
+  }
+
+  zoomIn(): void {
+    this.zoom.update((z) => Math.min(1.5, +(z + 0.1).toFixed(1)));
+  }
+
+  zoomOut(): void {
+    this.zoom.update((z) => Math.max(0.7, +(z - 0.1).toFixed(1)));
+  }
+
+  resetZoom(): void {
+    this.zoom.set(1);
+  }
+
+  async copyMermaid(): Promise<void> {
+    const raw = this.graph()?.rawMermaid;
+    if (!raw) return;
+    try {
+      if (typeof navigator !== 'undefined' && navigator.clipboard) {
+        await navigator.clipboard.writeText(raw);
+        this.copiedMermaid.set(true);
+        setTimeout(() => this.copiedMermaid.set(false), 2000);
+      }
+    } catch (err) {
+      console.warn('Copy failed', err);
+    }
   }
 
   getNodeIcon(node: FlowchartNode): string {
@@ -107,13 +149,28 @@ export class FlowChart {
       case 'start':
         return '▶';
       case 'decision':
-        return '◆';
+        return '◈';
       case 'end':
         return '⏹';
       case 'highlight':
         return '⚡';
       default:
-        return '●';
+        return '⚙';
+    }
+  }
+
+  getNodeColor(type?: string): string {
+    switch (type) {
+      case 'start':
+        return '#10b981';
+      case 'decision':
+        return '#f59e0b';
+      case 'end':
+        return '#3b82f6';
+      case 'highlight':
+        return '#a855f7';
+      default:
+        return '#64748b';
     }
   }
 
@@ -129,6 +186,21 @@ export class FlowChart {
         return 'node--highlight';
       default:
         return 'node--process';
+    }
+  }
+
+  getNodeTypePill(type?: string): string {
+    switch (type) {
+      case 'start':
+        return 'START';
+      case 'decision':
+        return 'DECISION';
+      case 'end':
+        return 'TERMINAL';
+      case 'highlight':
+        return 'KEY SPEC';
+      default:
+        return 'PROCESS';
     }
   }
 }
