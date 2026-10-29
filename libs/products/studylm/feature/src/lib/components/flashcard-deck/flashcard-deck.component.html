@@ -174,11 +174,15 @@
             </div>
 
             @if (card.codeSnippet) {
-              <div class="card-code-block" (click)="$event.stopPropagation()">
+              <div class="card-code-section" (click)="$event.stopPropagation()">
+                <div class="code-section-header">
+                  <span class="code-section-title">Verified Code Example</span>
+                  <span class="code-section-hint">Interactive snippet</span>
+                </div>
                 <ah-code-block
                   [code]="card.codeSnippet"
                   [language]="card.codeLanguage || 'typescript'"
-                  [showLineNumbers]="false"
+                  [filename]="'snippet.' + (card.codeLanguage === 'javascript' ? 'js' : 'ts')"
                 />
               </div>
             }

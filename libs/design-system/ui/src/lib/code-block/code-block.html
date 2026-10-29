@@ -1,24 +1,64 @@
 <div class="ah-code-block-header">
   <div class="ah-code-block-meta">
+    <div class="ah-code-window-dots" aria-hidden="true">
+      <span class="dot dot--close"></span>
+      <span class="dot dot--minimize"></span>
+      <span class="dot dot--maximize"></span>
+    </div>
+
     @if (filename()) {
       <span class="ah-code-filename">{{ filename() }}</span>
     }
+
     <span class="ah-code-lang">{{ language() }}</span>
   </div>
 
-  @if (allowCopy()) {
+  <div class="ah-code-block-controls">
+    <span class="ah-code-lines-count">{{ lines().length }} lines</span>
+
     <button
       type="button"
-      class="ah-code-copy-btn"
-      [class.ah-code-copy-btn--copied]="copied()"
-      (click)="copyCode()"
-      [attr.aria-label]="copied() ? 'Copied code to clipboard' : 'Copy code to clipboard'"
+      class="ah-code-action-btn"
+      [class.ah-code-action-btn--active]="wrapLines()"
+      (click)="toggleWrap()"
+      [title]="wrapLines() ? 'Disable word wrap' : 'Enable word wrap'"
+      [attr.aria-label]="wrapLines() ? 'Disable word wrap' : 'Enable word wrap'"
     >
-      {{ copied() ? '✓ Copied' : '📋 Copy' }}
+      <span>Wrap</span>
     </button>
-  }
+
+    <button
+      type="button"
+      class="ah-code-action-btn"
+      [class.ah-code-action-btn--active]="showLineNumbers()"
+      (click)="toggleLineNumbers()"
+      [title]="showLineNumbers() ? 'Hide line numbers' : 'Show line numbers'"
+      [attr.aria-label]="showLineNumbers() ? 'Hide line numbers' : 'Show line numbers'"
+    >
+      <span>#</span>
+    </button>
+
+    @if (allowCopy()) {
+      <button
+        type="button"
+        class="ah-code-copy-btn"
+        [class.ah-code-copy-btn--copied]="copied()"
+        (click)="copyCode()"
+        [attr.aria-label]="copied() ? 'Copied code to clipboard' : 'Copy code to clipboard'"
+      >
+        <span>{{ copied() ? '✓ Copied' : '📋 Copy' }}</span>
+      </button>
+    }
+  </div>
 </div>
 
-<div class="ah-code-body">
-  <pre><code>{{ code() }}</code></pre>
+<div class="ah-code-body" [class.ah-code-body--wrapped]="wrapLines()">
+  <pre class="ah-code-pre"><code>@for (line of lines(); track line.lineNumber) {<div class="ah-code-line">@if (showLineNumbers()) {<span class="ah-code-line-number" aria-hidden="true">{{ line.lineNumber }}</span>}<span class="ah-code-line-content">@for (token of line.tokens; track $index) {<span [class]="'token-' + token.type">{{ token.text }}</span>}</span></div>}</code></pre>
 </div>
+
+@if (caption()) {
+  <div class="ah-code-caption">
+    <span class="caption-icon" aria-hidden="true">💡</span>
+    <span class="caption-text">{{ caption() }}</span>
+  </div>
+}

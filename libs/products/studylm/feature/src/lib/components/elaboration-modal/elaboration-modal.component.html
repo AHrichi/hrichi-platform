@@ -118,14 +118,8 @@
               [code]="elab.codeSnippet.code"
               [language]="elab.codeSnippet.language"
               [filename]="elab.codeSnippet.filename"
+              [caption]="elab.codeSnippet.explanation"
             />
-
-            @if (elab.codeSnippet.explanation) {
-              <p class="code-explanation">
-                <span class="explanation-icon" aria-hidden="true">ℹ</span>
-                {{ elab.codeSnippet.explanation }}
-              </p>
-            }
           </section>
         }
 

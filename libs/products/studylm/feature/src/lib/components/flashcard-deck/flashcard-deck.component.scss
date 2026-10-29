@@ -283,10 +283,33 @@
   }
 }
 
-.card-code-block {
-  margin-bottom: var(--space-2, 0.5rem);
+.card-code-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1, 0.25rem);
+  margin-bottom: var(--space-3, 0.75rem);
   max-width: 100%;
-  overflow-x: auto;
+}
+
+.code-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--space-1, 0.25rem);
+}
+
+.code-section-title {
+  font-size: var(--font-size-100, 0.75rem);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-muted);
+}
+
+.code-section-hint {
+  font-size: var(--font-size-100, 0.75rem);
+  color: var(--color-text-muted);
+  opacity: 0.75;
 }
 
 .citation-tag {

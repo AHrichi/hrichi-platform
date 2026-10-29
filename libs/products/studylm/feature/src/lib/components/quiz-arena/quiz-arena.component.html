@@ -91,11 +91,15 @@
         </div>
 
         @if (q.codeSnippet) {
-          <div class="question-code-block">
+          <div class="question-code-section">
+            <div class="code-section-header">
+              <span class="code-section-title">Code Under Evaluation</span>
+              <span class="code-section-hint">Analyze the snippet to determine outcome</span>
+            </div>
             <ah-code-block
               [code]="q.codeSnippet"
               [language]="q.codeLanguage || 'typescript'"
-              [showLineNumbers]="false"
+              [filename]="'diagnostic.' + (q.codeLanguage === 'javascript' ? 'js' : 'ts')"
             />
           </div>
         }
