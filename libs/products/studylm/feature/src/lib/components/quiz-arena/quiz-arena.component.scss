@@ -26,6 +26,21 @@
   flex-wrap: wrap;
   align-items: center;
   gap: var(--space-3, 0.75rem);
+
+  @media (max-width: 640px) {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    gap: var(--space-2, 0.5rem);
+
+    ah-segmented-control {
+      width: 100%;
+    }
+
+    ah-select {
+      width: 100%;
+    }
+  }
 }
 
 .section-select-wrapper {
@@ -57,6 +72,16 @@
   display: flex;
   align-items: center;
   gap: var(--space-2, 0.5rem);
+
+  @media (max-width: 640px) {
+    width: 100%;
+    justify-content: space-between;
+
+    button {
+      flex: 1 1 auto;
+      justify-content: center;
+    }
+  }
 }
 
 .visually-hidden {
@@ -114,14 +139,20 @@
   border: 1px solid var(--color-border-default);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-raised);
+
+  @media (max-width: 640px) {
+    padding: var(--space-4, 1rem);
+  }
 }
 
 .question-text {
   margin: 0;
-  font-size: var(--font-size-400, 1.125rem);
+  font-size: clamp(1rem, 3.8vw, var(--font-size-400, 1.125rem));
   font-weight: 600;
   line-height: 1.5;
   color: var(--color-text-default);
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 .options-list {
@@ -132,7 +163,7 @@
 
 .option-btn {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: var(--space-3, 0.75rem);
   padding: var(--space-3, 0.75rem) var(--space-4, 1rem);
   background: var(--color-bg-raised);
@@ -144,6 +175,8 @@
   line-height: 1.45;
   cursor: pointer;
   transition: all var(--motion-duration-fast) ease;
+  word-break: break-word;
+  overflow-wrap: break-word;
 
   &:hover:not(:disabled) {
     background: color-mix(in srgb, var(--color-accent-subtle) 25%, var(--color-bg-raised));
@@ -184,10 +217,13 @@
   font-size: var(--font-size-100, 0.75rem);
   font-weight: 700;
   flex-shrink: 0;
+  margin-top: 1px;
 }
 
 .option-content {
   flex: 1;
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 .feedback-icon {
@@ -274,8 +310,29 @@
   display: flex;
   align-items: center;
   gap: var(--space-2, 0.5rem);
+
+  @media (max-width: 640px) {
+    width: 100%;
+
+    button {
+      flex: 1 1 auto;
+      justify-content: center;
+      min-height: 42px;
+      font-weight: 600;
+    }
+  }
 }
 
 .empty-quiz-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  inline-size: 100%;
   padding: var(--space-8, 2rem) 0;
+
+  ah-empty-state {
+    inline-size: 100%;
+    max-inline-size: 640px;
+    margin-inline: auto;
+  }
 }

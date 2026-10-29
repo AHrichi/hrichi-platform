@@ -1,20 +1,25 @@
-.ah-empty-state {
+:host {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
+  inline-size: 100%;
   padding: var(--space-8) var(--space-5);
   background: var(--color-bg-surface);
   border: 1px dashed var(--color-border-default);
   border-radius: var(--radius-lg);
+  box-sizing: border-box;
 }
 
 .ah-empty-state-content {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
+  margin-inline: auto;
   max-width: 480px;
+  width: 100%;
 }
 
 .ah-empty-state-icon {

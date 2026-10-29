@@ -20,6 +20,7 @@ interface AppItem {
   architectureNotes: string;
   credentialsNote?: string;
   icon: string;
+  ctaLabel?: string;
 }
 
 @Component({
@@ -41,6 +42,7 @@ export class AppsPage {
         'A comprehensive remote coordinator command center for commercial laundry and hospitality logistics. Manages daily intake, route planning, driver transport, subcontractor wash manifests, missing item chases, and automated shift handovers.',
       route: '/apps/dispatch',
       icon: '🧺',
+      ctaLabel: 'PulseOps',
       stack: [
         'Zoneless Angular 22',
         'Native Federation',
@@ -73,6 +75,7 @@ export class AppsPage {
         'Multi-scenario financial forecasting platform that projects net worth, runway, savings rates, and emergency fund coverage over multi-year horizons without transmitting sensitive financial data to any external server.',
       route: '/apps/strategy',
       icon: '📈',
+      ctaLabel: 'StrategyApp',
       stack: [
         'Angular 22',
         'NgRx SignalStore',
@@ -103,6 +106,7 @@ export class AppsPage {
         'A software engineering mastery platform powered by self-hosted n8n workflows and free-tier Groq LPU models (openai/gpt-oss-120b and qwen/qwen3.8-27b). Deconstructs complex SE topics into progressive pedagogical branches and atomic sections with difficulty tiers (Beginner 🌱, Intermediate ⚡, Expert 🔥) and official documentation grounding. Features manual per-section generation of uncapped, thorough flashcard decks and 4-option diagnostic quizzes with detailed distractor rationale.',
       route: '/apps/studylm',
       icon: '📚',
+      ctaLabel: 'StudyLM',
       stack: [
         'Zoneless Angular 22',
         'Native Federation',

@@ -4,6 +4,8 @@ import {
   AhBadge,
   AhButton,
   AhMetricCard,
+  AhSelect,
+  type AhSelectOption,
   AhTabItem,
   AhTabs,
 } from '@ah/ui';
@@ -18,6 +20,7 @@ import { CreateSubjectModalComponent } from '../create-subject-modal/create-subj
 import { AddFlashcardModalComponent } from '../add-flashcard-modal/add-flashcard-modal.component';
 import { AddQuizModalComponent } from '../add-quiz-modal/add-quiz-modal.component';
 import { JsonImportModalComponent } from '../json-import-modal/json-import-modal.component';
+import { StudyStatsComponent } from '../study-stats/study-stats.component';
 
 @Component({
   selector: 'ah-studylm-shell',
@@ -36,6 +39,8 @@ import { JsonImportModalComponent } from '../json-import-modal/json-import-modal
     AddFlashcardModalComponent,
     AddQuizModalComponent,
     JsonImportModalComponent,
+    StudyStatsComponent,
+    AhSelect,
   ],
   templateUrl: './studylm-shell.component.html',
   styleUrl: './studylm-shell.component.scss',
@@ -69,10 +74,30 @@ export class StudyLmShellComponent {
       icon: '📚',
       count: this.store.sourcesCount() > 0 ? this.store.sourcesCount() : undefined,
     },
+    {
+      id: 'stats',
+      label: 'Progress & Stats',
+      icon: '📊',
+    },
   ]);
 
   onTabChange(tabId: string): void {
     this.store.setActiveTab(tabId as StudyLmTab);
+  }
+
+  readonly subjectOptions = computed<AhSelectOption[]>(() =>
+    this.store.subjects().map((s) => ({
+      value: s.id,
+      label: s.title,
+      icon: '📁',
+      hint: s.domain,
+    })),
+  );
+
+  selectSubjectId(id: string | null): void {
+    if (id) {
+      this.store.setActiveSubject(id);
+    }
   }
 
   selectSubject(event: Event): void {

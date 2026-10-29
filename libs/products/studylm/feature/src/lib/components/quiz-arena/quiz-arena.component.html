@@ -11,20 +11,13 @@
 
       <!-- Section Filter Dropdown -->
       @if (store.allSections().length > 0) {
-        <div class="section-select-wrapper">
-          <label for="quizSectionFilter" class="visually-hidden">Filter by Section</label>
-          <select
-            id="quizSectionFilter"
-            class="section-select"
-            [value]="store.quizFilter().sectionId"
-            (change)="onSectionChange($event)"
-          >
-            <option value="all">All Sections ({{ store.activeQuizQuestions().length }} questions)</option>
-            @for (sec of store.allSections(); track sec.id) {
-              <option [value]="sec.id">{{ sec.code }} - {{ sec.title }}</option>
-            }
-          </select>
-        </div>
+        <ah-select
+          [options]="sectionOptions()"
+          [value]="store.quizFilter().sectionId"
+          (valueChange)="onSectionSelect($event)"
+          size="sm"
+          placeholder="Filter by section..."
+        />
       }
     </div>
 

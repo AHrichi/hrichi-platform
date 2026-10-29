@@ -102,7 +102,7 @@
           <!-- Launch Button Footer -->
           <div class="app-card__actions">
             <a [routerLink]="app.route" ahButton="primary" size="md">
-              Launch {{ app.id === 'dispatch' ? 'PulseOps' : 'StrategyApp' }} →
+              Launch {{ app.ctaLabel || app.title }} →
             </a>
           </div>
         </article>

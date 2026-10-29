@@ -6,7 +6,7 @@ import type {
   StudySubject,
 } from '@ah/products/studylm/domain';
 
-export type StudyLmTab = 'roadmap' | 'flashcards' | 'quiz' | 'sources';
+export type StudyLmTab = 'roadmap' | 'flashcards' | 'quiz' | 'sources' | 'stats';
 
 export interface StudyLmCardFilter {
   tier: CompetencyTier | 'all';

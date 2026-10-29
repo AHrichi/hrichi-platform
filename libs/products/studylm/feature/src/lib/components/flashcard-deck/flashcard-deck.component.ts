@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   HostListener,
+  computed,
   inject,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -12,6 +13,8 @@ import {
   AhEmptyState,
   AhFlipCard,
   AhSegmentedControl,
+  AhSelect,
+  type AhSelectOption,
 } from '@ah/ui';
 import { StudyLmStore } from '../../store/studylm.store';
 import {
@@ -31,6 +34,7 @@ import {
     AhBadge,
     AhEmptyState,
     AhSegmentedControl,
+    AhSelect,
   ],
   templateUrl: './flashcard-deck.component.html',
   styleUrl: './flashcard-deck.component.scss',
@@ -46,6 +50,22 @@ export class FlashcardDeckComponent {
     { label: 'Intermediate', value: 'intermediate' },
     { label: 'Expert', value: 'expert' },
   ];
+
+  readonly sectionOptions = computed<AhSelectOption[]>(() => [
+    {
+      value: 'all',
+      label: `All Sections (${this.store.activeFlashcards().length} cards)`,
+    },
+    ...this.store.allSections().map((sec) => ({
+      value: sec.id,
+      label: `${sec.code} - ${sec.title}`,
+      hint: `${sec.difficultyTier.toUpperCase()}${sec.officialDocs[0] ? ' · ' + sec.officialDocs[0].title : ''}`,
+    })),
+  ]);
+
+  onSectionSelect(sectionId: string | null): void {
+    this.store.setCardSectionFilter(sectionId || 'all');
+  }
 
   @HostListener('window:keydown', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent): void {

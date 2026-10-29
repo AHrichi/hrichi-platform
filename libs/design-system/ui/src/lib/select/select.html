@@ -1,0 +1,86 @@
+<div class="ah-select-container">
+  @if (label()) {
+    <label [id]="selectId + '-label'" class="ah-select-label">
+      {{ label() }}
+    </label>
+  }
+
+  <button
+    type="button"
+    class="ah-select-trigger"
+    [id]="selectId"
+    role="combobox"
+    aria-haspopup="listbox"
+    [attr.aria-expanded]="isOpen()"
+    [attr.aria-controls]="listboxId"
+    [attr.aria-labelledby]="label() ? selectId + '-label ' + selectId : selectId"
+    [disabled]="disabled()"
+    (click)="toggleOpen()"
+    (keydown)="onTriggerKeydown($event)"
+  >
+    <div class="ah-select-trigger-content">
+      @if (selectedOption(); as opt) {
+        @if (opt.icon) {
+          <span class="ah-select-icon" aria-hidden="true">{{ opt.icon }}</span>
+        }
+        <span class="ah-select-value">{{ opt.label }}</span>
+      } @else {
+        <span class="ah-select-placeholder">{{ placeholder() }}</span>
+      }
+    </div>
+
+    <span class="ah-select-chevron" aria-hidden="true">
+      <svg
+        viewBox="0 0 20 20"
+        fill="currentColor"
+        class="chevron-svg"
+      >
+        <path
+          fill-rule="evenodd"
+          d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
+          clip-rule="evenodd"
+        />
+      </svg>
+    </span>
+  </button>
+
+  @if (isOpen()) {
+    <div class="ah-select-popover">
+      <ul
+        [id]="listboxId"
+        class="ah-select-listbox"
+        role="listbox"
+        tabindex="-1"
+      >
+        @for (option of options(); track option.value; let idx = $index) {
+          <li
+            class="ah-select-option"
+            [class.ah-select-option--selected]="option.value === value()"
+            [class.ah-select-option--active]="idx === activeIndex()"
+            [class.ah-select-option--disabled]="option.disabled"
+            role="option"
+            [attr.aria-selected]="option.value === value()"
+            [attr.aria-disabled]="option.disabled"
+            (click)="selectOption(option)"
+          >
+            <div class="ah-select-option-content">
+              @if (option.icon) {
+                <span class="ah-select-icon" aria-hidden="true">{{ option.icon }}</span>
+              }
+              <div class="ah-select-option-text">
+                <span class="ah-select-option-label">{{ option.label }}</span>
+                @if (option.hint) {
+                  <span class="ah-select-option-hint">{{ option.hint }}</span>
+                }
+              </div>
+            </div>
+
+            @if (option.value === value()) {
+              <span class="ah-select-check" aria-hidden="true">✓</span>
+            }
+          </li>
+        }
+      </ul>
+    </div>
+  }
+</div>

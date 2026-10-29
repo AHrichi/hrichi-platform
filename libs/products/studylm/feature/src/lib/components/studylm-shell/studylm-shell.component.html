@@ -12,17 +12,13 @@
 
       <!-- Subject Switcher & Creator -->
       <div class="subject-switcher-wrap">
-        <label for="subjectSelect" class="sr-only">Active Subject</label>
-        <div class="subject-select-container">
-          <span class="subject-icon">📁</span>
-          <select id="subjectSelect" (change)="selectSubject($event)">
-            @for (subj of store.subjects(); track subj.id) {
-              <option [value]="subj.id" [selected]="subj.id === store.activeSubjectId()">
-                {{ subj.title }}
-              </option>
-            }
-          </select>
-        </div>
+        <ah-select
+          [options]="subjectOptions()"
+          [value]="store.activeSubjectId()"
+          (valueChange)="selectSubjectId($event)"
+          size="sm"
+          placeholder="Select Subject..."
+        />
 
         <button
           type="button"
@@ -125,6 +121,9 @@
       }
       @case ('sources') {
         <ah-source-manager />
+      }
+      @case ('stats') {
+        <ah-study-stats />
       }
     }
   </main>

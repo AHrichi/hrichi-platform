@@ -1,0 +1,215 @@
+:host {
+  display: inline-block;
+  inline-size: auto;
+  min-inline-size: 180px;
+  position: relative;
+  font-family: var(--font-family-sans, sans-serif);
+}
+
+.ah-select-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  inline-size: 100%;
+  position: relative;
+}
+
+.ah-select-label {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-muted);
+}
+
+.ah-select-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  inline-size: 100%;
+  padding: var(--space-2) var(--space-3);
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-md);
+  color: var(--color-text-default);
+  font-size: var(--font-size-sm);
+  font-family: inherit;
+  cursor: pointer;
+  outline: none;
+  transition: all var(--motion-duration-fast) ease;
+  user-select: none;
+  box-sizing: border-box;
+
+  &:hover:not(:disabled) {
+    border-color: var(--color-border-strong);
+    background: var(--color-bg-raised);
+  }
+
+  &:focus-visible {
+    border-color: var(--color-accent-default);
+    box-shadow: 0 0 0 2px var(--color-focus-ring);
+  }
+
+  :host(.ah-select--open) & {
+    border-color: var(--color-accent-default);
+  }
+
+  :host(.ah-select--sm) & {
+    padding: var(--space-1) var(--space-2);
+    font-size: var(--font-size-xs);
+    min-block-size: 32px;
+  }
+
+  :host(.ah-select--md) & {
+    min-block-size: 40px;
+  }
+
+  :host(.ah-select--lg) & {
+    padding: var(--space-3) var(--space-4);
+    font-size: var(--font-size-base);
+    min-block-size: 48px;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: var(--color-bg-canvas);
+  }
+}
+
+.ah-select-trigger-content {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-inline-size: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ah-select-placeholder {
+  color: var(--color-text-muted);
+}
+
+.ah-select-value {
+  color: var(--color-text-default);
+  font-weight: var(--font-weight-medium);
+}
+
+.ah-select-icon {
+  font-size: 1rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.ah-select-chevron {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+  transition: transform var(--motion-duration-fast) ease;
+
+  .chevron-svg {
+    inline-size: 1rem;
+    block-size: 1rem;
+  }
+
+  :host(.ah-select--open) & {
+    transform: rotate(180deg);
+    color: var(--color-accent-default);
+  }
+}
+
+.ah-select-popover {
+  position: absolute;
+  top: calc(100% + var(--space-1));
+  left: 0;
+  right: 0;
+  z-index: 50;
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-overlay);
+  max-block-size: 260px;
+  overflow-y: auto;
+  animation: ah-select-fade-in var(--motion-duration-fast) ease;
+}
+
+@keyframes ah-select-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.ah-select-listbox {
+  list-style: none;
+  margin: 0;
+  padding: var(--space-1);
+  outline: none;
+}
+
+.ah-select-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  color: var(--color-text-default);
+  font-size: var(--font-size-sm);
+  transition: background var(--motion-duration-fast) ease;
+  user-select: none;
+
+  &:hover,
+  &--active {
+    background: color-mix(in srgb, var(--color-accent-subtle) 60%, transparent);
+    color: var(--color-text-default);
+  }
+
+  &--selected {
+    color: var(--color-accent-default);
+    font-weight: var(--font-weight-semibold);
+    background: color-mix(in srgb, var(--color-accent-subtle) 80%, transparent);
+  }
+
+  &--disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+}
+
+.ah-select-option-content {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-inline-size: 0;
+}
+
+.ah-select-option-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.ah-select-option-label {
+  line-height: 1.25;
+}
+
+.ah-select-option-hint {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  line-height: 1.2;
+}
+
+.ah-select-check {
+  font-weight: var(--font-weight-bold);
+  color: var(--color-accent-default);
+  font-size: 0.875rem;
+  flex-shrink: 0;
+}

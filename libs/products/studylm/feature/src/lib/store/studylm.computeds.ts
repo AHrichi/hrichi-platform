@@ -14,6 +14,37 @@ import type {
   StudySubject,
 } from '@ah/products/studylm/domain';
 
+export interface SubjectMasteryStats {
+  id: string;
+  title: string;
+  domain: string;
+  sectionsTotal: number;
+  sectionsSynthesized: number;
+  sectionsApproved: number;
+  synthesisPct: number;
+  cardsTotal: number;
+  cardsMastered: number;
+  quizTotal: number;
+  quizAnswered: number;
+  quizCorrect: number;
+  quizAccuracyPct: number;
+  sourcesCount: number;
+}
+
+export interface OverallPlatformStats {
+  totalSubjects: number;
+  totalSections: number;
+  totalSynthesizedSections: number;
+  overallCurriculumPct: number;
+  totalFlashcards: number;
+  totalCardsMastered: number;
+  totalQuizQuestions: number;
+  totalQuizAnswered: number;
+  totalQuizCorrect: number;
+  overallQuizAccuracyPct: number;
+  totalSources: number;
+}
+
 export function withStudyLmComputeds() {
   return signalStoreFeature(
     { state: type<StudyLmState>() },
@@ -208,6 +239,102 @@ export function withStudyLmComputeds() {
         };
       });
 
+      const subjectStatsList = computed<SubjectMasteryStats[]>(() => {
+        return subjects().map((subj) => {
+          const branches = subj.roadmap?.branches ?? [];
+          const sections: RoadmapSection[] = [];
+          for (const b of branches) {
+            if (b.sections) sections.push(...b.sections);
+          }
+          const sectionsTotal = sections.length;
+          const sectionsApproved = sections.filter((s) => s.approved).length;
+          const sectionsSynthesized = sections.filter(
+            (s) => s.flashcardsStatus === 'ready' || s.quizStatus === 'ready',
+          ).length;
+          const synthesisPct =
+            sectionsTotal > 0
+              ? Math.round((sectionsSynthesized / sectionsTotal) * 100)
+              : 0;
+
+          const cardsTotal = subj.flashcards.length;
+          const cardsMastered = subj.flashcards.filter(
+            (c) => (c.masteryCount ?? 0) >= 3,
+          ).length;
+
+          const quizTotal = subj.quizQuestions.length;
+          const quizAnswered = subj.quizQuestions.filter((q) => q.isAnswered).length;
+          const quizCorrect = subj.quizQuestions.filter((q) => q.isCorrect).length;
+          const quizAccuracyPct =
+            quizAnswered > 0
+              ? Math.round((quizCorrect / quizAnswered) * 100)
+              : 0;
+
+          return {
+            id: subj.id,
+            title: subj.title,
+            domain: subj.domain,
+            sectionsTotal,
+            sectionsSynthesized,
+            sectionsApproved,
+            synthesisPct,
+            cardsTotal,
+            cardsMastered,
+            quizTotal,
+            quizAnswered,
+            quizCorrect,
+            quizAccuracyPct,
+            sourcesCount: subj.sources.length,
+          };
+        });
+      });
+
+      const overallStats = computed<OverallPlatformStats>(() => {
+        const list = subjectStatsList();
+        const totalSubjects = list.length;
+        const totalSections = list.reduce((acc, s) => acc + s.sectionsTotal, 0);
+        const totalSynthesizedSections = list.reduce(
+          (acc, s) => acc + s.sectionsSynthesized,
+          0,
+        );
+        const overallCurriculumPct =
+          totalSections > 0
+            ? Math.round((totalSynthesizedSections / totalSections) * 100)
+            : 0;
+
+        const totalFlashcards = list.reduce((acc, s) => acc + s.cardsTotal, 0);
+        const totalCardsMastered = list.reduce(
+          (acc, s) => acc + s.cardsMastered,
+          0,
+        );
+
+        const totalQuizQuestions = list.reduce((acc, s) => acc + s.quizTotal, 0);
+        const totalQuizAnswered = list.reduce(
+          (acc, s) => acc + s.quizAnswered,
+          0,
+        );
+        const totalQuizCorrect = list.reduce((acc, s) => acc + s.quizCorrect, 0);
+        const overallQuizAccuracyPct =
+          totalQuizAnswered > 0
+            ? Math.round((totalQuizCorrect / totalQuizAnswered) * 100)
+            : 0;
+
+        const totalSources = list.reduce((acc, s) => acc + s.sourcesCount, 0);
+
+        return {
+          totalSubjects,
+          totalSections,
+          totalSynthesizedSections,
+          overallCurriculumPct,
+          totalFlashcards,
+          totalCardsMastered,
+          totalQuizQuestions,
+          totalQuizAnswered,
+          totalQuizCorrect,
+          overallQuizAccuracyPct,
+          totalSources,
+        };
+      });
+
       return {
         activeSubject,
         activeRoadmap,
@@ -236,6 +363,8 @@ export function withStudyLmComputeds() {
         filteredQuiz,
         currentQuizQuestion,
         quizSummary,
+        subjectStatsList,
+        overallStats,
       };
     }),
   );

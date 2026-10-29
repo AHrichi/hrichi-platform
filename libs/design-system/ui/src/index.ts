@@ -30,3 +30,5 @@ export * from './lib/empty-state/empty-state';
 export { EmptyState as AhEmptyState } from './lib/empty-state/empty-state';
 export * from './lib/alert/alert';
 export { Alert as AhAlert } from './lib/alert/alert';
+export * from './lib/select/select';
+export { Select as AhSelect, type SelectOption as AhSelectOption } from './lib/select/select';

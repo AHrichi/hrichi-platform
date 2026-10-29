@@ -1,0 +1,146 @@
+<div class="stats-container">
+  <!-- Overall Analytics Header -->
+  <header class="stats-header">
+    <div class="header-titles">
+      <span class="eyebrow">Learning Analytics & Retention Engine</span>
+      <h2>Study Mastery & Progress Dashboard</h2>
+      <p class="stats-subtitle">
+        Cross-subject telemetry covering curriculum synthesis, spaced repetition flashcard retention, and diagnostic quiz accuracy.
+      </p>
+    </div>
+  </header>
+
+  <!-- High-Level Overview Metrics -->
+  @if (store.overallStats(); as overall) {
+    <section class="overview-metrics-grid" aria-label="Platform Wide Learning Stats">
+      <ah-metric-card
+        label="Tracked Subjects"
+        [value]="overall.totalSubjects.toString()"
+        hint="Active Learning Tracks"
+        icon="📚"
+      />
+      <ah-metric-card
+        label="Overall Synthesis"
+        [value]="overall.overallCurriculumPct + '%'"
+        [hint]="overall.totalSynthesizedSections + ' of ' + overall.totalSections + ' Sections Ready'"
+        icon="🗺️"
+      />
+      <ah-metric-card
+        label="Card Mastery"
+        [value]="overall.totalCardsMastered + ' / ' + overall.totalFlashcards"
+        hint="Leitner Level 3+ Retention"
+        icon="🃏"
+      />
+      <ah-metric-card
+        label="Diagnostic Accuracy"
+        [value]="overall.overallQuizAccuracyPct + '%'"
+        [hint]="overall.totalQuizCorrect + ' of ' + overall.totalQuizAnswered + ' Correct'"
+        icon="🎯"
+      />
+    </section>
+  }
+
+  <!-- Per-Subject Breakdown Section -->
+  <section class="subjects-stats-section">
+    <div class="section-title-row">
+      <h3>Subject-by-Subject Breakdown</h3>
+      <span class="subject-count-badge">{{ store.subjectStatsList().length }} Subjects</span>
+    </div>
+
+    <div class="subjects-grid">
+      @for (subj of store.subjectStatsList(); track subj.id) {
+        <article class="subject-stat-card" [class.active-card]="subj.id === store.activeSubjectId()">
+          <header class="card-header">
+            <div class="header-left">
+              <div class="title-domain">
+                <h4 class="subject-title">{{ subj.title }}</h4>
+                <ah-badge variant="neutral" size="sm">
+                  <span>{{ subj.domain }}</span>
+                </ah-badge>
+                @if (subj.id === store.activeSubjectId()) {
+                  <ah-badge variant="accent" size="sm">
+                    <span>Active Track</span>
+                  </ah-badge>
+                }
+              </div>
+            </div>
+
+            <div class="header-actions">
+              <button
+                type="button"
+                ahButton="ghost"
+                size="sm"
+                (click)="selectSubjectAndTab(subj.id, 'roadmap')"
+                title="Open Roadmap for this subject"
+              >
+                <span>🗺️ Roadmap</span>
+              </button>
+              <button
+                type="button"
+                ahButton="ghost"
+                size="sm"
+                (click)="selectSubjectAndTab(subj.id, 'flashcards')"
+                title="Study Flashcards for this subject"
+              >
+                <span>🃏 Cards</span>
+              </button>
+              <button
+                type="button"
+                ahButton="ghost"
+                size="sm"
+                (click)="selectSubjectAndTab(subj.id, 'quiz')"
+                title="Take Quiz for this subject"
+              >
+                <span>🎯 Quiz</span>
+              </button>
+            </div>
+          </header>
+
+          <div class="card-metrics-body">
+            <!-- Curriculum Synthesis Progress -->
+            <div class="stat-progress-item">
+              <div class="progress-labels">
+                <span class="stat-name">Curriculum Synthesis</span>
+                <span class="stat-val">
+                  {{ subj.sectionsSynthesized }} / {{ subj.sectionsTotal }} Sections ({{ subj.synthesisPct }}%)
+                </span>
+              </div>
+              <ah-progress-bar
+                [value]="subj.synthesisPct"
+                variant="primary"
+                size="sm"
+              />
+            </div>
+
+            <!-- Flashcard Bank & Mastery -->
+            <div class="stat-row-metrics">
+              <div class="sub-stat-box">
+                <span class="sub-label">Flashcard Deck</span>
+                <span class="sub-value">{{ subj.cardsTotal }}</span>
+                <span class="sub-sub">
+                  {{ subj.cardsMastered }} Mastered ({{ subj.cardsTotal > 0 ? (subj.cardsMastered / subj.cardsTotal * 100 | number:'1.0-0') : 0 }}%)
+                </span>
+              </div>
+
+              <!-- Quiz Diagnostics -->
+              <div class="sub-stat-box">
+                <span class="sub-label">Quiz Accuracy</span>
+                <span class="sub-value">{{ subj.quizAnswered > 0 ? (subj.quizAccuracyPct + '%') : 'N/A' }}</span>
+                <span class="sub-sub">
+                  {{ subj.quizCorrect }} / {{ subj.quizAnswered }} Answered
+                </span>
+              </div>
+
+              <!-- Reference Docs -->
+              <div class="sub-stat-box">
+                <span class="sub-label">Sources Attached</span>
+                <span class="sub-value">{{ subj.sourcesCount }}</span>
+                <span class="sub-sub">Grounded Ingests</span>
+              </div>
+            </div>
+          </div>
+        </article>
+      }
+    </div>
+  </section>
+</div>

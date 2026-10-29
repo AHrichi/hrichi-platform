@@ -41,6 +41,11 @@
   padding: var(--space-4, 1rem) var(--space-6, 1.5rem);
   color: var(--color-text-default);
   box-sizing: border-box;
+
+  @media (max-width: 640px) {
+    padding: var(--space-3, 0.75rem);
+    gap: var(--space-4, 1rem);
+  }
 }
 
 .studylm-navbar {
@@ -52,6 +57,11 @@
   border: 1px solid var(--color-border-default);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-raised);
+
+  @media (max-width: 640px) {
+    padding: var(--space-3, 0.75rem);
+    gap: var(--space-3, 0.75rem);
+  }
 
   @media (min-width: 860px) {
     flex-direction: row;
@@ -65,6 +75,13 @@
   flex-wrap: wrap;
   align-items: center;
   gap: var(--space-4, 1rem);
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    gap: var(--space-3, 0.75rem);
+  }
 }
 
 .brand {
@@ -75,11 +92,13 @@
 
 .brand-icon {
   font-size: 1.75rem;
+  flex-shrink: 0;
 }
 
 .brand-titles {
   display: flex;
   flex-direction: column;
+  min-width: 0;
 
   h1 {
     margin: 0;
@@ -87,18 +106,36 @@
     font-weight: var(--font-weight-bold, 700);
     letter-spacing: -0.02em;
     color: var(--color-text-default);
+    line-height: 1.2;
   }
 }
 
 .brand-tag {
   font-size: var(--font-size-100, 0.75rem);
   color: var(--color-text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .subject-switcher-wrap {
   display: flex;
   align-items: center;
   gap: var(--space-2, 0.5rem);
+
+  @media (max-width: 768px) {
+    width: 100%;
+    flex-wrap: wrap;
+
+    ah-select {
+      flex: 1 1 180px;
+      min-width: 140px;
+    }
+
+    button {
+      flex: 0 0 auto;
+    }
+  }
 }
 
 .subject-select-container {
@@ -159,6 +196,18 @@
   display: flex;
   align-items: center;
   gap: var(--space-3, 0.75rem);
+
+  @media (max-width: 768px) {
+    width: 100%;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--space-2, 0.5rem);
+
+    .n8n-indicator-btn {
+      flex: 1 1 auto;
+      justify-content: center;
+    }
+  }
 }
 
 .n8n-indicator-btn {
@@ -203,6 +252,15 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: var(--space-4, 1rem);
+
+  @media (max-width: 640px) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-2, 0.5rem);
+  }
+
+  @media (max-width: 380px) {
+    grid-template-columns: 1fr;
+  }
 }
 
 .tabs-wrapper {

@@ -1,4 +1,4 @@
-.ah-accordion-item {
+:host {
   display: block;
   background: var(--color-bg-raised);
   border: 1px solid var(--color-border-default);
@@ -9,15 +9,15 @@
   &:hover:not(.ah-accordion-item--disabled) {
     border-color: var(--color-border-strong);
   }
+}
 
-  &--expanded {
-    border-color: var(--color-accent-default);
-  }
+:host(.ah-accordion-item--expanded) {
+  border-color: var(--color-accent-default);
+}
 
-  &--disabled {
-    opacity: 0.5;
-    pointer-events: none;
-  }
+:host(.ah-accordion-item--disabled) {
+  opacity: 0.5;
+  pointer-events: none;
 }
 
 .ah-accordion-header {

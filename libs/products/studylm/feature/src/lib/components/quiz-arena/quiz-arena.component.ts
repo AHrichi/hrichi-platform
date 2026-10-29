@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   inject,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -10,6 +11,8 @@ import {
   AhCodeBlock,
   AhEmptyState,
   AhSegmentedControl,
+  AhSelect,
+  type AhSelectOption,
 } from '@ah/ui';
 import { StudyLmStore } from '../../store/studylm.store';
 import {
@@ -27,6 +30,7 @@ import {
     AhBadge,
     AhEmptyState,
     AhSegmentedControl,
+    AhSelect,
   ],
   templateUrl: './quiz-arena.component.html',
   styleUrl: './quiz-arena.component.scss',
@@ -42,6 +46,22 @@ export class QuizArenaComponent {
     { label: 'Intermediate', value: 'intermediate' },
     { label: 'Expert', value: 'expert' },
   ];
+
+  readonly sectionOptions = computed<AhSelectOption[]>(() => [
+    {
+      value: 'all',
+      label: `All Sections (${this.store.activeQuizQuestions().length} questions)`,
+    },
+    ...this.store.allSections().map((sec) => ({
+      value: sec.id,
+      label: `${sec.code} - ${sec.title}`,
+      hint: `${sec.difficultyTier.toUpperCase()}${sec.officialDocs[0] ? ' · ' + sec.officialDocs[0].title : ''}`,
+    })),
+  ]);
+
+  onSectionSelect(sectionId: string | null): void {
+    this.store.setQuizSectionFilter(sectionId || 'all');
+  }
 
   selectOption(index: number): void {
     const question = this.store.currentQuizQuestion();
