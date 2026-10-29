@@ -9,11 +9,11 @@ import {
   skills,
 } from '@ah/shared/content';
 import { Seo } from '@ah/portfolio/util-seo';
-import { SectionHeading, Tag } from '@ah/ui';
+import { AhButton, SectionHeading, Tag } from '@ah/ui';
 
 @Component({
   selector: 'ah-experience-page',
-  imports: [RouterLink, SectionHeading, Tag],
+  imports: [AhButton, RouterLink, SectionHeading, Tag],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './experience-page.html',
   styleUrl: './experience-page.scss',

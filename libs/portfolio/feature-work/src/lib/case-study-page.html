@@ -1,9 +1,12 @@
 @if (study(); as study) {
   <article class="ah-section ah-container case-study">
     <header class="ah-stack" style="--gap: var(--space-4)">
-      <a routerLink="/work" class="back">All case studies</a>
-      <p class="ah-eyebrow">{{ study.client }} · {{ study.period }}</p>
-      <h1>{{ study.title }}</h1>
+      <a routerLink="/work" class="back-link">
+        <span class="back-arrow" aria-hidden="true">←</span>
+        <span>All case studies</span>
+      </a>
+      <p class="ah-eyebrow" [attr.title]="study.client + ' · ' + study.period">{{ study.client }} · {{ study.period }}</p>
+      <h1 class="case-study-heading">{{ study.title }}</h1>
       <p class="ah-lead ah-prose">{{ study.summary }}</p>
       @if (study.confidentiality) {
         <p class="note ah-prose">{{ study.confidentiality }}</p>
@@ -21,7 +24,7 @@
           <ul class="ah-cluster" role="list" style="--gap: var(--space-2)">
             @for (item of study.stack; track item) {
               <li>
-                <ah-tag>{{ item }}</ah-tag>
+                <ah-tag [attr.title]="item">{{ item }}</ah-tag>
               </li>
             }
           </ul>
@@ -44,7 +47,7 @@
         <h2 id="approach-heading">Decisions and why</h2>
         <ol class="decisions" role="list">
           @for (item of study.approach; track item.decision) {
-            <li class="ah-card">
+            <li class="ah-card decision-card">
               <h3>{{ item.decision }}</h3>
               <p class="ah-muted">{{ item.why }}</p>
             </li>
@@ -54,7 +57,7 @@
 
       <section aria-labelledby="outcome-heading" class="ah-stack">
         <h2 id="outcome-heading">Outcome</h2>
-        <ul>
+        <ul class="outcomes-list">
           @for (item of study.outcome; track item) {
             <li>{{ item }}</li>
           }
@@ -64,14 +67,16 @@
       @if (study.links?.length) {
         <section aria-labelledby="links-heading" class="ah-stack">
           <h2 id="links-heading">Links</h2>
-          <ul>
+          <ul class="case-links-list">
             @for (link of study.links; track link.href) {
               <li>
                 <a
                   [href]="link.href"
                   [attr.target]="link.external ? '_blank' : null"
                   [attr.rel]="link.external ? 'noopener' : null"
-                  >{{ link.label }}</a
+                  [attr.title]="link.label"
+                  class="case-external-link"
+                  >{{ link.label }} <span aria-hidden="true">↗</span></a
                 >
               </li>
             }
@@ -83,7 +88,10 @@
     @if (next(); as next) {
       <nav class="next ah-card" aria-label="Next case study">
         <p class="ah-eyebrow">Next case study</p>
-        <a [routerLink]="['/work', next.slug]">{{ next.title }}</a>
+        <a [routerLink]="['/work', next.slug]" class="next-link" [attr.title]="next.title">
+          <span>{{ next.title }}</span>
+          <span class="next-arrow" aria-hidden="true">→</span>
+        </a>
       </nav>
     }
   </article>

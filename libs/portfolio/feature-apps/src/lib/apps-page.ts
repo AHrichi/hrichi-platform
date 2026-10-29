@@ -144,6 +144,7 @@ export class AppsPage {
         'Pick any location on Earth, dive down from orbit to ground level, and explore the night sky in real time: 5,000 accurate stars, constellations, exact Moon phases, visible planets, the Milky Way, and meteor showers.',
       route: '/labs/sky',
       icon: '✨',
+      ctaLabel: 'Sky Lab',
       stack: [
         'Three.js WebGL',
         'Custom GLSL Shaders',
@@ -170,6 +171,7 @@ export class AppsPage {
         'An interactive laboratory for mastering complex RxJS stream mechanics: animated marble diagrams, operator comparisons, backpressure strategies, multicast subjects, and signal interoperability.',
       route: '/labs/rxjs',
       icon: '⚡',
+      ctaLabel: 'RxJS Lab',
       stack: [
         'Angular 22 Zoneless',
         'RxJS 7+',
@@ -195,6 +197,7 @@ export class AppsPage {
         'Comprehensive workbench exploring enterprise state architectures: visual Redux unidirectional data flow, asynchronous side-effects, declarative SignalStore with entity normalization, and an architectural comparison matrix.',
       route: '/labs/ngrx',
       icon: '🧠',
+      ctaLabel: 'NgRx Lab',
       stack: [
         'Angular 22',
         '@ngrx/signals',
