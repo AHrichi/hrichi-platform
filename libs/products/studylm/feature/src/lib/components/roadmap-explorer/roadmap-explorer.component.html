@@ -107,18 +107,49 @@
             [subtitle]="branch.description"
             [expanded]="branch.order === 1"
           >
+            <!-- Branch toolbar to toggle all sections in this branch -->
+            <div class="branch-sections-toolbar">
+              <span class="sections-count-pill">{{ branch.sections.length }} sections</span>
+              <button
+                type="button"
+                ahButton="ghost"
+                size="xs"
+                (click)="toggleAllSectionsInBranch(branch.sections)"
+              >
+                <span>{{ areAllSectionsExpanded(branch.sections) ? 'Collapse all sections' : 'Expand all sections' }}</span>
+              </button>
+            </div>
+
             <div class="sections-grid">
               @for (section of branch.sections; track section.id) {
                 <article
                   class="section-card"
+                  [class.is-expanded]="isSectionExpanded(section.id)"
+                  [class.is-collapsed]="!isSectionExpanded(section.id)"
                   [class.is-approved]="section.approved"
                   [class.has-cards]="section.flashcardsStatus === 'ready'"
                   [class.has-quiz]="section.quizStatus === 'ready'"
                 >
-                  <div class="section-card-header">
-                    <div class="code-and-title">
-                      <span class="section-code">{{ section.code }}</span>
-                      <h4 class="section-title">{{ section.title }}</h4>
+                  <!-- Interactive Section Header -->
+                  <div
+                    class="section-card-header"
+                    role="button"
+                    tabindex="0"
+                    [attr.aria-expanded]="isSectionExpanded(section.id)"
+                    [attr.aria-controls]="'section-body-' + section.id"
+                    (click)="toggleSection(section.id)"
+                    (keydown.enter)="toggleSection(section.id)"
+                    (keydown.space)="$event.preventDefault(); toggleSection(section.id)"
+                  >
+                    <div class="header-left">
+                      <span class="section-toggle-indicator" aria-hidden="true">
+                        <span class="section-chevron">▸</span>
+                      </span>
+
+                      <div class="code-and-title">
+                        <span class="section-code">{{ section.code }}</span>
+                        <h4 class="section-title">{{ section.title }}</h4>
+                      </div>
                     </div>
 
                     <div class="tier-and-status">
@@ -138,105 +169,127 @@
                           <span>Pending Review</span>
                         </ah-badge>
                       }
+
+                      @if (getSectionCardCount(section.id); as cardCount) {
+                        <ah-badge variant="info" size="sm" class="cards-count-badge">
+                          <span>🗂️ {{ cardCount }} cards</span>
+                        </ah-badge>
+                      }
+                      @if (getSectionQuizCount(section.id); as quizCount) {
+                        <ah-badge variant="accent" size="sm" class="quiz-count-badge">
+                          <span>📝 {{ quizCount }} quiz</span>
+                        </ah-badge>
+                      }
                     </div>
                   </div>
 
-                  <p class="section-summary">{{ section.summary }}</p>
+                  <!-- Collapsible Body -->
+                  <div
+                    class="section-card-body-wrapper"
+                    [id]="'section-body-' + section.id"
+                    [class.is-collapsed]="!isSectionExpanded(section.id)"
+                    [attr.inert]="!isSectionExpanded(section.id) ? '' : null"
+                    [hidden]="!isSectionExpanded(section.id)"
+                  >
+                    <div class="section-card-body">
+                      <p class="section-summary">{{ section.summary }}</p>
 
-                  <!-- Subtopics Chips -->
-                  @if (section.subtopics.length > 0) {
-                    <div class="subtopics-list">
-                      <span class="subtopics-label">Subtopics:</span>
-                      <div class="chips-row">
-                        @for (sub of section.subtopics; track sub) {
-                          <span class="subtopic-chip">{{ sub }}</span>
+                      <!-- Subtopics Chips -->
+                      @if (section.subtopics.length > 0) {
+                        <div class="subtopics-list">
+                          <span class="subtopics-label">Subtopics:</span>
+                          <div class="chips-row">
+                            @for (sub of section.subtopics; track sub) {
+                              <span class="subtopic-chip">{{ sub }}</span>
+                            }
+                          </div>
+                        </div>
+                      }
+
+                      <!-- Grounding Official Docs -->
+                      @if (section.officialDocs.length > 0) {
+                        <div class="docs-list">
+                          <span class="docs-label">Official Grounding:</span>
+                          <ul class="docs-links">
+                            @for (doc of section.officialDocs; track doc.url) {
+                              <li>
+                                <a
+                                  [href]="doc.url"
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  class="doc-link"
+                                >
+                                  {{ doc.title }} ↗
+                                </a>
+                              </li>
+                            }
+                          </ul>
+                        </div>
+                      }
+
+                      <!-- Action Buttons -->
+                      <div class="section-actions">
+                        @if (!section.approved) {
+                          <button
+                            type="button"
+                            ahButton="ghost"
+                            size="sm"
+                            (click)="onApproveSection(section.id)"
+                          >
+                            <span>Approve Section</span>
+                          </button>
+                        }
+
+                        <!-- Separate Flashcards Button -->
+                        <button
+                          type="button"
+                          [ahButton]="section.flashcardsStatus === 'ready' ? 'secondary' : 'primary'"
+                          size="sm"
+                          [disabled]="isSectionGeneratingCards(section.id)"
+                          (click)="onGenerateFlashcards(section.id)"
+                        >
+                          <span>
+                            {{ isSectionGeneratingCards(section.id) ? 'Generating Cards...' : (section.flashcardsStatus === 'ready' ? 'Regenerate Flashcards' : 'Generate Flashcards') }}
+                          </span>
+                        </button>
+
+                        <!-- Separate Quiz Button -->
+                        <button
+                          type="button"
+                          [ahButton]="section.quizStatus === 'ready' ? 'secondary' : 'primary'"
+                          size="sm"
+                          [disabled]="isSectionGeneratingQuiz(section.id)"
+                          (click)="onGenerateQuiz(section.id)"
+                        >
+                          <span>
+                            {{ isSectionGeneratingQuiz(section.id) ? 'Generating Quiz...' : (section.quizStatus === 'ready' ? 'Regenerate Quiz' : 'Generate Quiz') }}
+                          </span>
+                        </button>
+
+                        <!-- Interactive Study Navigation Links -->
+                        @if (getSectionCardCount(section.id); as cardCount) {
+                          <button
+                            type="button"
+                            ahButton="ghost"
+                            size="sm"
+                            (click)="onStudySectionCards(section)"
+                          >
+                            <span>Study Cards ({{ cardCount }})</span>
+                          </button>
+                        }
+
+                        @if (getSectionQuizCount(section.id); as quizCount) {
+                          <button
+                            type="button"
+                            ahButton="ghost"
+                            size="sm"
+                            (click)="onTakeSectionQuiz(section)"
+                          >
+                            <span>Take Quiz ({{ quizCount }})</span>
+                          </button>
                         }
                       </div>
                     </div>
-                  }
-
-                  <!-- Grounding Official Docs -->
-                  @if (section.officialDocs.length > 0) {
-                    <div class="docs-list">
-                      <span class="docs-label">Official Grounding:</span>
-                      <ul class="docs-links">
-                        @for (doc of section.officialDocs; track doc.url) {
-                          <li>
-                            <a
-                              [href]="doc.url"
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              class="doc-link"
-                            >
-                              {{ doc.title }} ↗
-                            </a>
-                          </li>
-                        }
-                      </ul>
-                    </div>
-                  }
-
-                  <!-- Action Buttons -->
-                  <div class="section-actions">
-                    @if (!section.approved) {
-                      <button
-                        type="button"
-                        ahButton="ghost"
-                        size="sm"
-                        (click)="onApproveSection(section.id)"
-                      >
-                        <span>Approve Section</span>
-                      </button>
-                    }
-
-                    <!-- Separate Flashcards Button -->
-                    <button
-                      type="button"
-                      [ahButton]="section.flashcardsStatus === 'ready' ? 'secondary' : 'primary'"
-                      size="sm"
-                      [disabled]="isSectionGeneratingCards(section.id)"
-                      (click)="onGenerateFlashcards(section.id)"
-                    >
-                      <span>
-                        {{ isSectionGeneratingCards(section.id) ? 'Generating Cards...' : (section.flashcardsStatus === 'ready' ? 'Regenerate Flashcards' : 'Generate Flashcards') }}
-                      </span>
-                    </button>
-
-                    <!-- Separate Quiz Button -->
-                    <button
-                      type="button"
-                      [ahButton]="section.quizStatus === 'ready' ? 'secondary' : 'primary'"
-                      size="sm"
-                      [disabled]="isSectionGeneratingQuiz(section.id)"
-                      (click)="onGenerateQuiz(section.id)"
-                    >
-                      <span>
-                        {{ isSectionGeneratingQuiz(section.id) ? 'Generating Quiz...' : (section.quizStatus === 'ready' ? 'Regenerate Quiz' : 'Generate Quiz') }}
-                      </span>
-                    </button>
-
-                    <!-- Interactive Study Navigation Links -->
-                    @if (getSectionCardCount(section.id); as cardCount) {
-                      <button
-                        type="button"
-                        ahButton="ghost"
-                        size="sm"
-                        (click)="onStudySectionCards(section)"
-                      >
-                        <span>Study Cards ({{ cardCount }})</span>
-                      </button>
-                    }
-
-                    @if (getSectionQuizCount(section.id); as quizCount) {
-                      <button
-                        type="button"
-                        ahButton="ghost"
-                        size="sm"
-                        (click)="onTakeSectionQuiz(section)"
-                      >
-                        <span>Take Quiz ({{ quizCount }})</span>
-                      </button>
-                    }
                   </div>
                 </article>
               }
