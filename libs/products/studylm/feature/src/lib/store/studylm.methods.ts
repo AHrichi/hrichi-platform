@@ -746,6 +746,13 @@ export function withStudyLmMethods() {
             }));
           },
 
+          removeSource(id: string) {
+            updateActiveSubject((curr) => ({
+              ...curr,
+              sources: curr.sources.filter((s) => s.id !== id),
+            }));
+          },
+
           setEditingSource(editingSource: StudySource | null) {
             patchState(state, { editingSource });
           },

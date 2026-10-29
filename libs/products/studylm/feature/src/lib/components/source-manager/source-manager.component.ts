@@ -99,6 +99,15 @@ export class SourceManagerComponent {
     this.store.setSelectedSourceForPreview(null);
   }
 
+  deleteSource(source: StudySource, event?: Event): void {
+    if (event) {
+      event.stopPropagation();
+    }
+    if (confirm(`Are you sure you want to delete the source "${source.title}"?`)) {
+      this.store.deleteSource(source.id);
+    }
+  }
+
   getSourceIcon(type: SourceType): string {
     switch (type) {
       case 'slide':
