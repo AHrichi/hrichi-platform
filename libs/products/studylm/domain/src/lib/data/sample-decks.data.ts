@@ -61,28 +61,6 @@ At scale, Native Federation extends this architectural purity across distributed
         'effects execute asynchronously in microtasks; state derivations must stay in computed() primitives.',
         'Native Federation enables independent remote deployments via native browser module standards.',
       ],
-      audioOverviewScript: [
-        {
-          speaker: 'Dr. Sarah (Host)',
-          text: 'Welcome to StudyLM. Today we are unpacking one of the biggest paradigm shifts in modern enterprise frontend engineering: Angular going completely Zoneless with Signals.',
-          timestamp: '00:00',
-        },
-        {
-          speaker: 'Alex (Co-Host)',
-          text: 'It is huge. For years, Zone.js was both Angular superpower and its Achilles heel—intercepting every single Promise and timeout just to run dirty checking.',
-          timestamp: '00:16',
-        },
-        {
-          speaker: 'Dr. Sarah (Host)',
-          text: 'Right! And with provideZonelessChangeDetection(), the engine does not poll or monkey-patch anymore. Components explicitly notify the scheduler when signals emit or user events fire.',
-          timestamp: '00:34',
-        },
-        {
-          speaker: 'Alex (Co-Host)',
-          text: 'And looking through the flashcards, notice how the beginner tier covers the syntax, while the expert tier digs into diamond graph resolution and microtask queues.',
-          timestamp: '00:52',
-        },
-      ],
     },
     flashcards: [
       {
@@ -217,23 +195,6 @@ Crucially, Raft operates within the Crash-Fault-Tolerant (CFT) model, assuming n
         'Majority quorums (floor(N/2) + 1) ensure any two quorums overlap by at least one node.',
         'Leader Completeness invariant guarantees committed entries are never overwritten.',
         'CFT systems tolerate f crashes with 2f + 1 nodes; BFT systems tolerate f Byzantine nodes with 3f + 1 nodes.',
-      ],
-      audioOverviewScript: [
-        {
-          speaker: 'Dr. Sarah (Host)',
-          text: 'Welcome back. Today we are diving into distributed consensus: how servers across the world agree on truth without a single point of failure.',
-          timestamp: '00:00',
-        },
-        {
-          speaker: 'Alex (Co-Host)',
-          text: 'Paxos used to be the gold standard, but nobody could understand or implement it safely. Raft changed everything by introducing understandable terms and clear leader elections.',
-          timestamp: '00:20',
-        },
-        {
-          speaker: 'Dr. Sarah (Host)',
-          text: 'Exactly. And the mathematical beauty is that any two majorities in a cluster of size 2f + 1 must share at least one node, preventing split-brain states.',
-          timestamp: '00:44',
-        },
       ],
     },
     flashcards: [

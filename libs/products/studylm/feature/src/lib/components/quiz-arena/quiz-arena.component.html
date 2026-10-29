@@ -39,12 +39,32 @@
       </button>
     </div>
 
-    <div class="quiz-score-pill">
-      <span>Score:</span>
-      <strong>{{ store.quizSummary().correctCount }} / {{ store.quizSummary().answeredCount }}</strong>
-      @if (store.quizSummary().answeredCount > 0) {
-        <span class="accuracy-tag">({{ store.quizSummary().scorePercentage }}%)</span>
-      }
+    <div class="header-right-actions">
+      <button
+        type="button"
+        class="btn-quiz-action"
+        (click)="store.toggleAddQuizModal(true)"
+        title="Add a new quiz question manually"
+      >
+        + Add Question
+      </button>
+
+      <button
+        type="button"
+        class="btn-quiz-action"
+        (click)="store.toggleJsonImportModal(true)"
+        title="Import quiz questions from JSON"
+      >
+        📥 Import JSON
+      </button>
+
+      <div class="quiz-score-pill">
+        <span>Score:</span>
+        <strong>{{ store.quizSummary().correctCount }} / {{ store.quizSummary().answeredCount }}</strong>
+        @if (store.quizSummary().answeredCount > 0) {
+          <span class="accuracy-tag">({{ store.quizSummary().scorePercentage }}%)</span>
+        }
+      </div>
     </div>
   </header>
 
@@ -60,8 +80,16 @@
     <div class="empty-quiz-notice">
       <div class="empty-icon">🎯</div>
       <h3>No Quiz Questions Available</h3>
-      <p>No questions match the current tier filter. Try selecting 'All Tiers' or adding more sources.</p>
-      <button type="button" class="btn-reset" (click)="setTier('all')">View All Tiers</button>
+      <p>No questions match the current tier filter. Create questions manually, import JSON, or run AI synthesis on your sources.</p>
+      <div class="empty-actions">
+        <button type="button" class="btn-create-manual" (click)="store.toggleAddQuizModal(true)">
+          + Add Question Manually
+        </button>
+        <button type="button" class="btn-import-empty" (click)="store.toggleJsonImportModal(true)">
+          📥 Import JSON Questions
+        </button>
+        <button type="button" class="btn-reset" (click)="setTier('all')">View All Tiers</button>
+      </div>
     </div>
   } @else {
     <article class="question-card tier-{{ store.currentQuizQuestion()?.tier }}">

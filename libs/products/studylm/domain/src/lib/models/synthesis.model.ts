@@ -3,17 +3,10 @@ import type { StudyFlashcard } from './flashcard.model';
 import type { StudyQuizQuestion } from './quiz.model';
 import type { SourceType } from './source.model';
 
-export interface AudioOverviewTurn {
-  speaker: string;
-  text: string;
-  timestamp?: string;
-}
-
 export interface StudyOverview {
   title: string;
   executiveSummary: string;
   keyTakeaways: string[];
-  audioOverviewScript: AudioOverviewTurn[];
 }
 
 export interface SynthesisRequest {

@@ -13,6 +13,15 @@ export interface StudyQuizQuestion {
   isCorrect?: boolean;
 }
 
+export interface CreateQuizQuestionInput {
+  tier: CompetencyTier;
+  question: string;
+  options: [string, string, string, string];
+  correctIndex: number;
+  explanation: string;
+  sourceCitation: string;
+}
+
 export interface QuizSessionSummary {
   totalQuestions: number;
   answeredCount: number;

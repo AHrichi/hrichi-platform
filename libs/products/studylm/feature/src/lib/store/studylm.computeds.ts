@@ -5,33 +5,57 @@ import type {
   CompetencyTier,
   QuizSessionSummary,
   StudyFlashcard,
+  StudyOverview,
   StudyQuizQuestion,
+  StudySource,
+  StudySubject,
 } from '@ah/products/studylm/domain';
 
 export function withStudyLmComputeds() {
   return signalStoreFeature(
     { state: type<StudyLmState>() },
     withComputed((state) => {
-      const sources = state.sources;
-      const flashcards = state.flashcards;
-      const quizQuestions = state.quizQuestions;
+      const subjects = state.subjects;
+      const activeSubjectId = state.activeSubjectId;
       const activeTier = state.activeTier;
       const cardFilter = state.cardFilter;
       const activeCardIndex = state.activeCardIndex;
       const activeQuizIndex = state.activeQuizIndex;
 
+      const activeSubject = computed<StudySubject | null>(() => {
+        const id = activeSubjectId();
+        const list = subjects();
+        return list.find((s) => s.id === id) ?? list[0] ?? null;
+      });
+
+      const activeSources = computed<StudySource[]>(() => {
+        return activeSubject()?.sources ?? [];
+      });
+
+      const activeOverview = computed<StudyOverview | null>(() => {
+        return activeSubject()?.overview ?? null;
+      });
+
+      const activeFlashcards = computed<StudyFlashcard[]>(() => {
+        return activeSubject()?.flashcards ?? [];
+      });
+
+      const activeQuizQuestions = computed<StudyQuizQuestion[]>(() => {
+        return activeSubject()?.quizQuestions ?? [];
+      });
+
       const totalWords = computed(() =>
-        sources().reduce((acc, s) => acc + s.wordCount, 0),
+        activeSources().reduce((acc, s) => acc + s.wordCount, 0),
       );
 
-      const sourcesCount = computed(() => sources().length);
+      const sourcesCount = computed(() => activeSources().length);
 
       const filteredCards = computed(() => {
         const filter = cardFilter();
         const globalTier = activeTier();
         const effectiveTier = globalTier !== 'all' ? globalTier : filter.tier;
 
-        return flashcards().filter((card) => {
+        return activeFlashcards().filter((card) => {
           if (effectiveTier !== 'all' && card.tier !== effectiveTier) {
             return false;
           }
@@ -57,7 +81,7 @@ export function withStudyLmComputeds() {
       });
 
       const cardTierCounts = computed(() => {
-        const list = flashcards();
+        const list = activeFlashcards();
         return {
           beginner: list.filter((c) => c.tier === 'beginner').length,
           intermediate: list.filter((c) => c.tier === 'intermediate').length,
@@ -67,7 +91,7 @@ export function withStudyLmComputeds() {
       });
 
       const cardMasteryStats = computed(() => {
-        const list = flashcards();
+        const list = activeFlashcards();
         const mastered = list.filter((c) => c.masteryCount >= 3).length;
         const learning = list.filter(
           (c) => c.masteryCount > 0 && c.masteryCount < 3,
@@ -85,8 +109,9 @@ export function withStudyLmComputeds() {
 
       const filteredQuiz = computed(() => {
         const globalTier = activeTier();
-        if (globalTier === 'all') return quizQuestions();
-        return quizQuestions().filter((q) => q.tier === globalTier);
+        const list = activeQuizQuestions();
+        if (globalTier === 'all') return list;
+        return list.filter((q) => q.tier === globalTier);
       });
 
       const currentQuizQuestion = computed<StudyQuizQuestion | null>(() => {
@@ -129,6 +154,15 @@ export function withStudyLmComputeds() {
       });
 
       return {
+        activeSubject,
+        activeSources,
+        sources: activeSources,
+        activeOverview,
+        overview: activeOverview,
+        activeFlashcards,
+        flashcards: activeFlashcards,
+        activeQuizQuestions,
+        quizQuestions: activeQuizQuestions,
         totalWords,
         sourcesCount,
         filteredCards,

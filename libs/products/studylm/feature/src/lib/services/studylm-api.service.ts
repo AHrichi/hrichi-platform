@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import type {
-  CompetencyTier,
   N8nConnectionConfig,
   N8nConnectionMode,
   StudyFlashcard,
@@ -17,9 +16,6 @@ const DEFAULT_TUNNEL_URL = 'https://saffron-glacial-uncork.ngrok-free.dev/webhoo
   providedIn: 'root',
 })
 export class StudyLmApiService {
-  /**
-   * Determine the most appropriate initial endpoint based on the browser's current environment.
-   */
   getDefaultConfig(): N8nConnectionConfig {
     const isLocalhost =
       typeof window !== 'undefined' &&
@@ -35,7 +31,7 @@ export class StudyLmApiService {
       tunnelUrl: DEFAULT_TUNNEL_URL,
       customUrl: '',
       activeEndpoint: activeUrl,
-      isConnected: true,
+      isConnected: false,
       isChecking: false,
     };
   }
@@ -45,7 +41,6 @@ export class StudyLmApiService {
   ): Promise<{ ok: boolean; latencyMs: number; error?: string }> {
     const start = performance.now();
     try {
-      // Use ngrok-skip-browser-warning for ngrok tunnels
       const res = await fetch(endpoint, {
         method: 'POST',
         headers: {
@@ -99,7 +94,11 @@ export class StudyLmApiService {
           provider: rawJson.provider ?? 'n8n AI Engine (Gemini)',
           timestamp: rawJson.timestamp ?? new Date().toISOString(),
           subject: request.subject,
-          overview: rawJson.overview,
+          overview: {
+            title: rawJson.overview.title || request.subject,
+            executiveSummary: rawJson.overview.executiveSummary || '',
+            keyTakeaways: rawJson.overview.keyTakeaways || [],
+          },
           flashcards: rawJson.flashcards,
           quiz: rawJson.quiz,
         };
@@ -108,7 +107,6 @@ export class StudyLmApiService {
       console.warn('n8n request failed, executing client-side grounded synthesis fallback:', err);
     }
 
-    // Graceful offline grounded fallback
     return this.generateClientFallbackSynthesis(request);
   }
 
@@ -135,28 +133,6 @@ export class StudyLmApiService {
         `Architecture: ${s2.slice(0, 140)}...`,
         `Production resilience: ${s3.slice(0, 140)}...`,
         `Performance tuning: ${s4.slice(0, 140)}...`,
-      ],
-      audioOverviewScript: [
-        {
-          speaker: 'Dr. Sarah (Host)',
-          text: `Welcome back to the deep dive on ${subject}. Today we are breaking this down from first principles all the way to production system trade-offs.`,
-          timestamp: '00:00',
-        },
-        {
-          speaker: 'Alex (Co-Host)',
-          text: `What struck me from the source materials is how directly the fundamental mental models dictate the advanced optimization strategies.`,
-          timestamp: '00:18',
-        },
-        {
-          speaker: 'Dr. Sarah (Host)',
-          text: `Exactly. If your foundation is solid, understanding edge cases like concurrent mutations or boundary validation becomes second nature.`,
-          timestamp: '00:39',
-        },
-        {
-          speaker: 'Alex (Co-Host)',
-          text: `Let us explore the flashcards and test ourselves against the quiz questions across all three competency tiers.`,
-          timestamp: '01:02',
-        },
       ],
     };
 
@@ -249,7 +225,7 @@ export class StudyLmApiService {
       {
         id: `qz-fb-exp-1`,
         tier: 'expert',
-        question: `In high-scale deployments, what catastrophic failure mode is caused by setting reactive state directly inside asynchronous side-effect listeners?`,
+        question: `In high-scale deployments, what failure mode is caused by setting reactive state directly inside asynchronous side-effect listeners?`,
         options: [
           'Uncompressed HTTP response payloads',
           'Infinite microtask starvation loops that freeze the execution thread',

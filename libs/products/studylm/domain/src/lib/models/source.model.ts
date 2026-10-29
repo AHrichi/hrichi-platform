@@ -8,10 +8,19 @@ export interface StudySource {
   url?: string;
   wordCount: number;
   addedAt: string;
+  updatedAt?: string;
   summary?: string;
 }
 
 export interface AddSourceInput {
+  title: string;
+  type: SourceType;
+  content: string;
+  url?: string;
+}
+
+export interface UpdateSourceInput {
+  id: string;
   title: string;
   type: SourceType;
   content: string;

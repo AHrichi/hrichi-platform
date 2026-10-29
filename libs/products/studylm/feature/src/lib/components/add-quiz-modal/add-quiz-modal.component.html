@@ -1,0 +1,153 @@
+<div class="modal-backdrop" (click)="close()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <header class="modal-header">
+      <div class="header-titles">
+        <span class="eyebrow">Manual Quiz Authoring</span>
+        <h2>Add Question to Quiz Arena</h2>
+      </div>
+      <button type="button" class="close-btn" (click)="close()" aria-label="Close modal">✕</button>
+    </header>
+
+    <form [formRoot]="quizForm" (ngSubmit)="submitQuiz()" class="quiz-form" novalidate>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Competency Tier *</label>
+          <div class="tier-buttons">
+            <button
+              type="button"
+              class="tier-btn btn-beginner"
+              [class.active]="model().tier === 'beginner'"
+              (click)="setTier('beginner')"
+            >
+              🌱 Beginner
+            </button>
+            <button
+              type="button"
+              class="tier-btn btn-intermediate"
+              [class.active]="model().tier === 'intermediate'"
+              (click)="setTier('intermediate')"
+            >
+              ⚡ Intermediate
+            </button>
+            <button
+              type="button"
+              class="tier-btn btn-expert"
+              [class.active]="model().tier === 'expert'"
+              (click)="setTier('expert')"
+            >
+              🔥 Expert
+            </button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="quizQuestion">Question Statement *</label>
+          <textarea
+            id="quizQuestion"
+            rows="3"
+            [formField]="quizForm.question"
+            placeholder="e.g. Which Angular decorator or function is used to create a derived reactive value?"
+          ></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Options & Correct Answer * (Select the correct option)</label>
+          <div class="options-container">
+            <div class="option-row" [class.is-correct]="model().correctIndex === 0">
+              <button
+                type="button"
+                class="radio-btn"
+                [class.checked]="model().correctIndex === 0"
+                (click)="setCorrectIndex(0)"
+                title="Mark Option A as correct"
+              >
+                A
+              </button>
+              <input
+                type="text"
+                [formField]="quizForm.optionA"
+                placeholder="Option A text..."
+              />
+            </div>
+
+            <div class="option-row" [class.is-correct]="model().correctIndex === 1">
+              <button
+                type="button"
+                class="radio-btn"
+                [class.checked]="model().correctIndex === 1"
+                (click)="setCorrectIndex(1)"
+                title="Mark Option B as correct"
+              >
+                B
+              </button>
+              <input
+                type="text"
+                [formField]="quizForm.optionB"
+                placeholder="Option B text..."
+              />
+            </div>
+
+            <div class="option-row" [class.is-correct]="model().correctIndex === 2">
+              <button
+                type="button"
+                class="radio-btn"
+                [class.checked]="model().correctIndex === 2"
+                (click)="setCorrectIndex(2)"
+                title="Mark Option C as correct"
+              >
+                C
+              </button>
+              <input
+                type="text"
+                [formField]="quizForm.optionC"
+                placeholder="Option C text..."
+              />
+            </div>
+
+            <div class="option-row" [class.is-correct]="model().correctIndex === 3">
+              <button
+                type="button"
+                class="radio-btn"
+                [class.checked]="model().correctIndex === 3"
+                (click)="setCorrectIndex(3)"
+                title="Mark Option D as correct"
+              >
+                D
+              </button>
+              <input
+                type="text"
+                [formField]="quizForm.optionD"
+                placeholder="Option D text..."
+              />
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="quizExplanation">Explanation / Rationale *</label>
+          <textarea
+            id="quizExplanation"
+            rows="2"
+            [formField]="quizForm.explanation"
+            placeholder="Explain why the selected answer is correct..."
+          ></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="quizCitation">Source Citation</label>
+          <input
+            id="quizCitation"
+            type="text"
+            [formField]="quizForm.sourceCitation"
+            placeholder="e.g. Angular Signals Guide, Official Docs"
+          />
+        </div>
+      </div>
+
+      <footer class="modal-footer">
+        <button type="button" class="btn-secondary" (click)="close()">Cancel</button>
+        <button type="submit" class="btn-primary">Add Question</button>
+      </footer>
+    </form>
+  </div>
+</div>

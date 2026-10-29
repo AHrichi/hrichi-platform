@@ -37,11 +37,47 @@ export class SourceManagerComponent {
     this.model.update((m) => ({ ...m, type }));
   }
 
+  openAddSource() {
+    this.store.setEditingSource(null);
+    this.model.set({
+      title: '',
+      type: 'document',
+      content: '',
+      url: '',
+    });
+    this.store.toggleAddSourceModal(true);
+  }
+
+  openEditSource(source: StudySource, event?: Event) {
+    if (event) {
+      event.stopPropagation();
+    }
+    this.model.set({
+      title: source.title,
+      type: source.type,
+      content: source.content,
+      url: source.url,
+    });
+    this.store.setEditingSource(source);
+  }
+
   submitSource() {
     const val = this.model();
     if (!val.title.trim() || !val.content.trim()) return;
 
-    this.store.addSource(val);
+    const currentEditing = this.store.editingSource();
+    if (currentEditing) {
+      this.store.updateSource({
+        id: currentEditing.id,
+        title: val.title,
+        type: val.type,
+        content: val.content,
+        url: val.url,
+      });
+    } else {
+      this.store.addSource(val);
+    }
+
     this.model.set({
       title: '',
       type: 'document',
@@ -51,6 +87,7 @@ export class SourceManagerComponent {
   }
 
   cancelAdd() {
+    this.store.setEditingSource(null);
     this.store.toggleAddSourceModal(false);
   }
 

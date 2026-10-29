@@ -1,10 +1,10 @@
 <div class="source-manager-container">
   <div class="source-header-row">
     <div class="stats-summary">
-      <span class="eyebrow">Grounded Knowledge Base</span>
+      <span class="eyebrow">Subject Knowledge Base</span>
       <h3>{{ store.sourcesCount() }} Sources Grounded &bull; {{ store.totalWords() | number }} Total Words</h3>
       <p class="subtitle">
-        Add research papers, slide decks, documentation links, or personal notes. StudyLM grounds all flashcards, quizzes, and briefing notes directly in these materials.
+        Ground all flashcards, quizzes, and briefing notes directly in these materials. You can edit, add, or update sources anytime and re-synthesize.
       </p>
     </div>
 
@@ -12,7 +12,7 @@
       <button
         type="button"
         class="btn-add-source"
-        (click)="store.toggleAddSourceModal(true)"
+        (click)="openAddSource()"
       >
         <span>+</span> Add Source Document
       </button>
@@ -20,26 +20,26 @@
       <button
         type="button"
         class="btn-synthesize-now"
-        [disabled]="store.sources().length === 0 || store.isSynthesizing()"
-        (click)="store.synthesize()"
+        [disabled]="store.activeSources().length === 0 || store.isSynthesizing()"
+        (click)="store.synthesizeActiveSubject()"
       >
-        {{ store.isSynthesizing() ? '⚡ Synthesizing with AI...' : '✨ Run AI Synthesis' }}
+        {{ store.isSynthesizing() ? '⚡ Synthesizing with AI...' : '✨ Re-synthesize Subject' }}
       </button>
     </div>
   </div>
 
-  @if (store.sources().length === 0) {
+  @if (store.activeSources().length === 0) {
     <div class="empty-sources-card">
       <div class="empty-icon">📂</div>
-      <h4>No sources added yet</h4>
+      <h4>No sources added yet for this subject</h4>
       <p>Add documents, paste slide notes, or link reference documentation to begin generating grounded study materials.</p>
-      <button type="button" class="btn-add-first" (click)="store.toggleAddSourceModal(true)">
-        Add First Source
+      <button type="button" class="btn-add-first" (click)="openAddSource()">
+        + Add First Source
       </button>
     </div>
   } @else {
     <div class="sources-grid">
-      @for (source of store.sources(); track source.id) {
+      @for (source of store.activeSources(); track source.id) {
         <article class="source-card" (click)="previewSource(source)">
           <div class="card-top">
             <span class="type-badge type-{{ source.type }}">
@@ -64,28 +64,40 @@
             <button type="button" class="action-btn preview-btn" (click)="previewSource(source)">
               Read Document
             </button>
-            <button
-              type="button"
-              class="action-btn delete-btn"
-              (click)="store.removeSource(source.id)"
-              aria-label="Remove source"
-            >
-              🗑️
-            </button>
+            <div class="right-actions">
+              <button
+                type="button"
+                class="action-btn edit-btn"
+                (click)="openEditSource(source, $event)"
+                aria-label="Edit source"
+                title="Edit source"
+              >
+                ✏️ Edit
+              </button>
+              <button
+                type="button"
+                class="action-btn delete-btn"
+                (click)="store.removeSource(source.id)"
+                aria-label="Remove source"
+                title="Delete source"
+              >
+                🗑️
+              </button>
+            </div>
           </div>
         </article>
       }
     </div>
   }
 
-  <!-- Add Source Modal -->
+  <!-- Add / Edit Source Modal -->
   @if (store.showAddSourceModal()) {
     <div class="modal-backdrop" (click)="cancelAdd()">
       <div class="modal-container" (click)="$event.stopPropagation()">
         <header class="modal-header">
           <div class="header-titles">
             <span class="eyebrow">Ingestion Pipeline</span>
-            <h2>Add Knowledge Source</h2>
+            <h2>{{ store.editingSource() ? 'Edit Knowledge Source' : 'Add Knowledge Source' }}</h2>
           </div>
           <button type="button" class="close-btn" (click)="cancelAdd()">✕</button>
         </header>
@@ -165,7 +177,9 @@
 
           <footer class="modal-footer">
             <button type="button" class="btn-secondary" (click)="cancelAdd()">Cancel</button>
-            <button type="submit" class="btn-primary">Add to StudyLM Sources</button>
+            <button type="submit" class="btn-primary">
+              {{ store.editingSource() ? 'Update Source' : 'Add to StudyLM Sources' }}
+            </button>
           </footer>
         </form>
       </div>

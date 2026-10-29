@@ -10,16 +10,40 @@
         </div>
       </div>
 
-      <!-- Presets Switcher -->
-      <div class="preset-selector-wrap">
-        <label for="deckPresetSelect">Preset Subject:</label>
-        <select id="deckPresetSelect" (change)="selectPresetDeck($event)">
-          @for (deck of preseededDecks; track deck.id) {
-            <option [value]="deck.id" [selected]="deck.subject === store.activeSubject()">
-              {{ deck.subject }}
-            </option>
-          }
-        </select>
+      <!-- Subject Switcher & Creator -->
+      <div class="subject-switcher-wrap">
+        <label for="subjectSelect" class="sr-only">Active Subject</label>
+        <div class="subject-select-container">
+          <span class="subject-icon">📁</span>
+          <select id="subjectSelect" (change)="selectSubject($event)">
+            @for (subj of store.subjects(); track subj.id) {
+              <option [value]="subj.id" [selected]="subj.id === store.activeSubjectId()">
+                {{ subj.title }}
+              </option>
+            }
+          </select>
+        </div>
+
+        <button
+          type="button"
+          class="btn-new-subject"
+          (click)="store.toggleCreateSubjectModal(true)"
+          title="Create a new study subject"
+        >
+          <span>+</span> New Subject
+        </button>
+
+        @if (store.subjects().length > 1) {
+          <button
+            type="button"
+            class="btn-delete-subject"
+            (click)="deleteCurrentSubject()"
+            title="Delete active subject"
+            aria-label="Delete active subject"
+          >
+            🗑️
+          </button>
+        }
       </div>
     </div>
 
@@ -41,9 +65,9 @@
       <button
         type="button"
         class="btn-synthesize-top"
-        [disabled]="store.isSynthesizing() || store.sources().length === 0"
-        (click)="store.synthesize()"
-        title="Trigger AI synthesis across all grounded sources"
+        [disabled]="store.isSynthesizing() || store.sourcesCount() === 0"
+        (click)="store.synthesizeActiveSubject()"
+        title="Trigger AI synthesis across active subject sources"
       >
         {{ store.isSynthesizing() ? '⚡ Synthesizing...' : '✨ Run AI Synthesis' }}
       </button>
@@ -100,16 +124,6 @@
       🎯 Quiz Arena
       <span class="tab-badge">{{ store.quizQuestions().length }}</span>
     </button>
-
-    <button
-      type="button"
-      class="tab-btn"
-      [class.active]="store.activeTab() === 'audio-overview'"
-      (click)="store.setActiveTab('audio-overview')"
-    >
-      🎙️ Audio Overview
-      <span class="tab-tag">NotebookLM</span>
-    </button>
   </nav>
 
   <!-- Main Active Content View -->
@@ -127,14 +141,27 @@
       @case ('quiz') {
         <ah-quiz-arena />
       }
-      @case ('audio-overview') {
-        <ah-audio-overview />
-      }
     }
   </main>
 
-  <!-- n8n Gateway Settings Modal -->
+  <!-- Modals -->
   @if (store.showSettingsModal()) {
     <ah-n8n-settings-modal />
+  }
+
+  @if (store.showCreateSubjectModal()) {
+    <ah-create-subject-modal />
+  }
+
+  @if (store.showAddFlashcardModal()) {
+    <ah-add-flashcard-modal />
+  }
+
+  @if (store.showAddQuizModal()) {
+    <ah-add-quiz-modal />
+  }
+
+  @if (store.showJsonImportModal()) {
+    <ah-json-import-modal />
   }
 </div>

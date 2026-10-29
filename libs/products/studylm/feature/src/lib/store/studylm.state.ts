@@ -1,31 +1,19 @@
-import {
-  type CompetencyTier,
-  type N8nConnectionConfig,
-  type StudyFlashcard,
-  type StudyOverview,
-  type StudyQuizQuestion,
-  type StudySource,
-  PRESEEDED_STUDY_DECKS,
+import type {
+  CompetencyTier,
+  N8nConnectionConfig,
+  StudySource,
+  StudySubject,
 } from '@ah/products/studylm/domain';
 
-export type StudyLmTab =
-  | 'sources'
-  | 'brief'
-  | 'flashcards'
-  | 'quiz'
-  | 'audio-overview';
+export type StudyLmTab = 'brief' | 'sources' | 'flashcards' | 'quiz';
 
 export interface StudyLmState {
-  activeSubject: string;
-  sources: StudySource[];
-  flashcards: StudyFlashcard[];
-  quizQuestions: StudyQuizQuestion[];
-  overview: StudyOverview | null;
+  subjects: StudySubject[];
+  activeSubjectId: string;
   activeTier: CompetencyTier | 'all';
   activeTab: StudyLmTab;
   isSynthesizing: boolean;
   synthesisProvider: string;
-  lastSynthesizedAt: string | null;
   activeCardIndex: number;
   isCardFlipped: boolean;
   cardFilter: {
@@ -38,22 +26,34 @@ export interface StudyLmState {
   n8nConfig: N8nConnectionConfig;
   showSettingsModal: boolean;
   showAddSourceModal: boolean;
+  editingSource: StudySource | null;
   selectedSourceForPreview: StudySource | null;
+  showCreateSubjectModal: boolean;
+  showAddFlashcardModal: boolean;
+  showAddQuizModal: boolean;
+  showJsonImportModal: boolean;
 }
 
-const defaultDeck = PRESEEDED_STUDY_DECKS[0];
+const initialSubjectId = 'subj-default-1';
 
 export const initialStudyLmState: StudyLmState = {
-  activeSubject: defaultDeck.subject,
-  sources: defaultDeck.sources,
-  flashcards: defaultDeck.flashcards,
-  quizQuestions: defaultDeck.quiz,
-  overview: defaultDeck.overview,
+  subjects: [
+    {
+      id: initialSubjectId,
+      title: 'New Study Subject',
+      description: 'Add your documents, slides, and links to generate grounded flashcards and quizzes.',
+      sources: [],
+      overview: null,
+      flashcards: [],
+      quizQuestions: [],
+      createdAt: new Date().toISOString(),
+    },
+  ],
+  activeSubjectId: initialSubjectId,
   activeTier: 'all',
-  activeTab: 'brief',
+  activeTab: 'sources',
   isSynthesizing: false,
-  synthesisProvider: 'Pre-seeded Grounded High-Yield Set',
-  lastSynthesizedAt: new Date().toISOString(),
+  synthesisProvider: 'n8n AI Engine / Grounded Synthesizer',
   activeCardIndex: 0,
   isCardFlipped: false,
   cardFilter: {
@@ -69,10 +69,15 @@ export const initialStudyLmState: StudyLmState = {
     tunnelUrl: 'https://saffron-glacial-uncork.ngrok-free.dev/webhook/study-synthesizer',
     customUrl: '',
     activeEndpoint: 'https://saffron-glacial-uncork.ngrok-free.dev/webhook/study-synthesizer',
-    isConnected: true,
+    isConnected: false,
     isChecking: false,
   },
   showSettingsModal: false,
   showAddSourceModal: false,
+  editingSource: null,
   selectedSourceForPreview: null,
+  showCreateSubjectModal: false,
+  showAddFlashcardModal: false,
+  showAddQuizModal: false,
+  showJsonImportModal: false,
 };

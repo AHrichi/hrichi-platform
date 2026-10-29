@@ -51,6 +51,24 @@
 
       <button
         type="button"
+        class="btn-action-outline"
+        (click)="store.toggleAddFlashcardModal(true)"
+        title="Add a new flashcard manually"
+      >
+        + Add Card
+      </button>
+
+      <button
+        type="button"
+        class="btn-action-outline"
+        (click)="store.toggleJsonImportModal(true)"
+        title="Import flashcards from JSON"
+      >
+        📥 Import JSON
+      </button>
+
+      <button
+        type="button"
         class="bookmark-filter-btn"
         [class.active]="store.cardFilter().onlyBookmarked"
         (click)="store.toggleCardBookmarkFilter()"
@@ -65,7 +83,7 @@
         (click)="store.exportAnki()"
         title="Export entire deck to Anki TSV/CSV format"
       >
-        📥 Export Anki Deck
+        📥 Export Anki
       </button>
     </div>
   </header>
@@ -100,10 +118,18 @@
     <div class="empty-cards-notice">
       <div class="empty-icon">🃏</div>
       <h3>No Flashcards Found</h3>
-      <p>No cards match the active filter or tier. Try switching tiers or adding new sources.</p>
-      <button type="button" class="btn-reset-filters" (click)="setTier('all')">
-        Reset Tier Filters
-      </button>
+      <p>No cards match the active filter or tier. Create cards manually, import JSON, or run AI synthesis on your sources.</p>
+      <div class="empty-actions">
+        <button type="button" class="btn-create-manual" (click)="store.toggleAddFlashcardModal(true)">
+          + Add Card Manually
+        </button>
+        <button type="button" class="btn-import-empty" (click)="store.toggleJsonImportModal(true)">
+          📥 Import JSON Deck
+        </button>
+        <button type="button" class="btn-reset-filters" (click)="setTier('all')">
+          Reset Tier Filters
+        </button>
+      </div>
     </div>
   } @else {
     <div class="card-stage">

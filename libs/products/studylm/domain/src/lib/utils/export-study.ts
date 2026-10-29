@@ -29,13 +29,6 @@ export function exportToMarkdown(
       md += `- ${k}\n`;
     });
     md += `\n`;
-
-    if (overview.audioOverviewScript.length > 0) {
-      md += `### Audio Overview Dialogue (NotebookLM Style)\n\n`;
-      overview.audioOverviewScript.forEach((turn) => {
-        md += `**${turn.speaker}**: ${turn.text}\n\n`;
-      });
-    }
   }
 
   md += `## Flashcards Deck (${flashcards.length} Cards)\n\n`;

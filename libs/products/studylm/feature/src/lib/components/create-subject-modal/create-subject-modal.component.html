@@ -1,0 +1,62 @@
+<div class="modal-backdrop" (click)="close()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <header class="modal-header">
+      <div class="header-titles">
+        <span class="eyebrow">Subject Workspace</span>
+        <h2>Create Study Subject</h2>
+      </div>
+      <button type="button" class="close-btn" (click)="close()" aria-label="Close modal">✕</button>
+    </header>
+
+    <div class="modal-body">
+      <form [formRoot]="subjectForm" (ngSubmit)="submitSubject()" class="subject-form" novalidate>
+        <div class="form-group">
+          <label for="subjTitle">Subject Name / Topic *</label>
+          <input
+            id="subjTitle"
+            type="text"
+            [formField]="subjectForm.title"
+            placeholder="e.g. Kubernetes Cluster Networking, System Design, or Vue 3 Reactivity"
+            autofocus
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="subjDesc">Description & Scope (Optional)</label>
+          <textarea
+            id="subjDesc"
+            rows="3"
+            [formField]="subjectForm.description"
+            placeholder="What concepts and milestones are covered in this study set?"
+          ></textarea>
+        </div>
+
+        <footer class="modal-footer">
+          <button type="button" class="btn-secondary" (click)="close()">Cancel</button>
+          <button type="submit" class="btn-primary">Create Blank Subject</button>
+        </footer>
+      </form>
+
+      <div class="divider">
+        <span>or load a verified curriculum template</span>
+      </div>
+
+      <div class="templates-list">
+        @for (tmpl of sampleTemplates; track tmpl.id) {
+          <div class="template-card" (click)="loadTemplate(tmpl.id)">
+            <div class="tmpl-meta">
+              <h4>{{ tmpl.subject }}</h4>
+              <p>{{ tmpl.tagline }}</p>
+              <div class="tmpl-counts">
+                <span>{{ tmpl.sources.length }} sources</span> &bull;
+                <span>{{ tmpl.flashcards.length }} cards</span> &bull;
+                <span>{{ tmpl.quiz.length }} questions</span>
+              </div>
+            </div>
+            <button type="button" class="btn-load-tmpl">Load Template →</button>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</div>

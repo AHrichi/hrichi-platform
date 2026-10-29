@@ -1,5 +1,5 @@
 import { inject } from '@angular/core';
-import { signalStoreFeature, type, withHooks } from '@ngrx/signals';
+import { patchState, signalStoreFeature, type, withHooks } from '@ngrx/signals';
 import type { StudyLmState } from './studylm.state';
 import { StudyLmApiService } from '../services/studylm-api.service';
 
@@ -8,16 +8,40 @@ export function withStudyLmHooks() {
     { state: type<StudyLmState>() },
     withHooks({
       onInit(store, apiService = inject(StudyLmApiService)) {
-        // Auto-detect optimal default n8n endpoint based on browser environment
         const defaultCfg = apiService.getDefaultConfig();
-        // Fire non-blocking ping
+        // Check primary endpoint
         apiService.testConnection(defaultCfg.activeEndpoint).then((res) => {
-          if (!res.ok) {
-            // If tunnel failed, try local, or fallback
+          if (res.ok) {
+            patchState(store, (s) => ({
+              n8nConfig: {
+                ...s.n8nConfig,
+                isConnected: true,
+                lastPingMs: res.latencyMs,
+                lastError: undefined,
+              },
+            }));
+          } else {
+            // Try fallback to local Docker endpoint if on localhost or tunnel failed
             apiService.testConnection(defaultCfg.localUrl).then((localRes) => {
               if (localRes.ok) {
-                // local worked
-                // Store can stay connected
+                patchState(store, (s) => ({
+                  n8nConfig: {
+                    ...s.n8nConfig,
+                    mode: 'local' as const,
+                    activeEndpoint: defaultCfg.localUrl,
+                    isConnected: true,
+                    lastPingMs: localRes.latencyMs,
+                    lastError: undefined,
+                  },
+                }));
+              } else {
+                patchState(store, (s) => ({
+                  n8nConfig: {
+                    ...s.n8nConfig,
+                    isConnected: false,
+                    lastError: res.error || localRes.error || 'Connection failed',
+                  },
+                }));
               }
             });
           }

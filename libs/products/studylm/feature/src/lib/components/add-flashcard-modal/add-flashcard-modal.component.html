@@ -1,0 +1,92 @@
+<div class="modal-backdrop" (click)="close()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <header class="modal-header">
+      <div class="header-titles">
+        <span class="eyebrow">Manual Card Authoring</span>
+        <h2>Add Flashcard to Deck</h2>
+      </div>
+      <button type="button" class="close-btn" (click)="close()" aria-label="Close modal">✕</button>
+    </header>
+
+    <form [formRoot]="flashcardForm" (ngSubmit)="submitCard()" class="flashcard-form" novalidate>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Competency Tier *</label>
+          <div class="tier-buttons">
+            <button
+              type="button"
+              class="tier-btn btn-beginner"
+              [class.active]="model().tier === 'beginner'"
+              (click)="setTier('beginner')"
+            >
+              🌱 Beginner
+            </button>
+            <button
+              type="button"
+              class="tier-btn btn-intermediate"
+              [class.active]="model().tier === 'intermediate'"
+              (click)="setTier('intermediate')"
+            >
+              ⚡ Intermediate
+            </button>
+            <button
+              type="button"
+              class="tier-btn btn-expert"
+              [class.active]="model().tier === 'expert'"
+              (click)="setTier('expert')"
+            >
+              🔥 Expert
+            </button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="cardFront">Front: Question / Prompt *</label>
+          <textarea
+            id="cardFront"
+            rows="3"
+            [formField]="flashcardForm.front"
+            placeholder="e.g. What is the difference between computed() and effect() in Angular?"
+          ></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="cardBack">Back: Explanation / Answer *</label>
+          <textarea
+            id="cardBack"
+            rows="4"
+            [formField]="flashcardForm.back"
+            placeholder="e.g. computed() creates a pure, memoized derived signal. effect() runs side-effects asynchronously."
+          ></textarea>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="cardCategory">Category Tag *</label>
+            <input
+              id="cardCategory"
+              type="text"
+              [formField]="flashcardForm.category"
+              placeholder="e.g. Reactivity, Architecture, Networking"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="cardCitation">Source Citation</label>
+            <input
+              id="cardCitation"
+              type="text"
+              [formField]="flashcardForm.sourceCitation"
+              placeholder="e.g. Angular Documentation, Chapter 4"
+            />
+          </div>
+        </div>
+      </div>
+
+      <footer class="modal-footer">
+        <button type="button" class="btn-secondary" (click)="close()">Cancel</button>
+        <button type="submit" class="btn-primary">Add Flashcard</button>
+      </footer>
+    </form>
+  </div>
+</div>

@@ -15,6 +15,14 @@ export interface StudyFlashcard {
   isBookmarked?: boolean;
 }
 
+export interface CreateFlashcardInput {
+  tier: CompetencyTier;
+  front: string;
+  back: string;
+  category: string;
+  sourceCitation: string;
+}
+
 export interface FlashcardFilter {
   tier: CompetencyTier | 'all';
   searchQuery: string;

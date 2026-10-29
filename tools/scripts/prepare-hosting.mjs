@@ -204,7 +204,7 @@ const csp = [
   // blob: is required by es-module-shims in shim mode (ADR-0006).
   `script-src 'self' ${evaluate} ${inlineScriptHashes(dir).join(' ')} blob: ${remotes} ${turnstile}`,
   "style-src 'self' 'unsafe-inline'",
-  `connect-src 'self' ${remotes} ${apiOrigins.join(' ')}`,
+  `connect-src 'self' ${remotes} ${apiOrigins.join(' ')} https://*.ngrok-free.dev https://*.ngrok.app https://*.ngrok.io http://127.0.0.1:* http://localhost:*`,
   `frame-src ${[self, turnstile].join(' ').trim() || "'none'"}`,
   "img-src 'self' data:",
   "font-src 'self'",
