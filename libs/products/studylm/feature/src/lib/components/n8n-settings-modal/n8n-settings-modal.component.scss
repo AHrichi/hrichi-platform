@@ -1,66 +1,66 @@
 .n8n-settings-body {
   display: flex;
   flex-direction: column;
-  gap: var(--ah-space-4, 1rem);
+  gap: var(--space-4, 1rem);
   width: 100%;
 }
 
 .status-summary {
   display: flex;
   align-items: center;
-  gap: var(--ah-space-2, 0.5rem);
-  font-size: var(--ah-font-size-sm, 0.875rem);
+  gap: var(--space-2, 0.5rem);
+  font-size: var(--font-size-200, 0.875rem);
 }
 
 .status-label {
   font-weight: 600;
-  color: var(--ah-text-secondary, #94a3b8);
+  color: var(--color-text-muted);
 }
 
 .ping-tag {
-  font-family: var(--ah-font-mono, monospace);
-  font-size: var(--ah-font-size-xs, 0.75rem);
-  color: var(--ah-text-muted, #64748b);
+  font-family: var(--font-mono, monospace);
+  font-size: var(--font-size-100, 0.75rem);
+  color: var(--color-text-muted);
 }
 
 .settings-form {
   display: flex;
   flex-direction: column;
-  gap: var(--ah-space-4, 1rem);
+  gap: var(--space-4, 1rem);
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: var(--ah-space-1-5, 0.375rem);
+  gap: var(--space-2, 0.5rem);
 
   label {
-    font-size: var(--ah-font-size-sm, 0.875rem);
+    font-size: var(--font-size-200, 0.875rem);
     font-weight: 600;
-    color: var(--ah-text-primary, #f8fafc);
+    color: var(--color-text-default);
   }
 }
 
 .form-input {
   width: 100%;
-  padding: var(--ah-space-2-5, 0.625rem) var(--ah-space-3, 0.75rem);
-  background: var(--ah-surface-input, rgba(0, 0, 0, 0.25));
-  border: 1px solid var(--ah-border-subtle, rgba(255, 255, 255, 0.1));
-  border-radius: var(--ah-radius-md, 0.5rem);
-  color: var(--ah-text-primary, #f8fafc);
-  font-size: var(--ah-font-size-sm, 0.875rem);
-  font-family: var(--ah-font-mono, monospace);
+  padding: 0.625rem 0.75rem;
+  background: var(--color-bg-raised);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-md);
+  color: var(--color-text-default);
+  font-size: var(--font-size-200, 0.875rem);
+  font-family: var(--font-mono, monospace);
   outline: none;
-  transition: border-color var(--ah-duration-fast, 150ms) ease;
+  transition: border-color var(--motion-duration-fast) ease;
 
   &:focus {
-    border-color: var(--ah-color-primary-500, #0ea5e9);
+    border-color: var(--color-focus-ring);
   }
 }
 
 .modal-footer-actions {
   display: flex;
   justify-content: flex-end;
-  gap: var(--ah-space-2, 0.5rem);
+  gap: var(--space-2, 0.5rem);
   width: 100%;
 }

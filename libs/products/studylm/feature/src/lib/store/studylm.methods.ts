@@ -141,6 +141,10 @@ export function withStudyLmMethods() {
               patchState(state, {
                 subjects: [fresh],
                 activeSubjectId: fresh.id,
+                activeCardIndex: 0,
+                activeQuizIndex: 0,
+                isCardFlipped: false,
+                cardFilter: { tier: 'all', sectionId: 'all', searchQuery: '', onlyBookmarked: false },
               });
               storageService.saveSubject(fresh).catch(() => {});
             } else {
@@ -150,6 +154,10 @@ export function withStudyLmMethods() {
                   state.activeSubjectId() === subjectId
                     ? remaining[0].id
                     : state.activeSubjectId(),
+                activeCardIndex: 0,
+                activeQuizIndex: 0,
+                isCardFlipped: false,
+                cardFilter: { tier: 'all', sectionId: 'all', searchQuery: '', onlyBookmarked: false },
               });
             }
           },
@@ -558,6 +566,10 @@ export function withStudyLmMethods() {
             });
 
             patchState(state, { showJsonImportModal: false });
+          },
+
+          setCardFlipped(isCardFlipped: boolean) {
+            patchState(state, { isCardFlipped });
           },
 
           flipCard() {

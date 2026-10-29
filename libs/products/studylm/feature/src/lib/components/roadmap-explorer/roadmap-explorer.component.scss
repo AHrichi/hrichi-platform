@@ -1,19 +1,19 @@
 .roadmap-explorer-container {
   display: flex;
   flex-direction: column;
-  gap: var(--ah-space-6, 1.5rem);
+  gap: var(--space-6, 1.5rem);
   width: 100%;
 }
 
 .roadmap-header {
   display: flex;
   flex-direction: column;
-  gap: var(--ah-space-4, 1rem);
-  padding: var(--ah-space-6, 1.5rem);
-  background: var(--ah-surface-card, #1e293b);
-  border: 1px solid var(--ah-border-subtle, rgba(255, 255, 255, 0.08));
-  border-radius: var(--ah-radius-xl, 1rem);
-  box-shadow: var(--ah-shadow-sm, 0 1px 2px rgba(0, 0, 0, 0.05));
+  gap: var(--space-4, 1rem);
+  padding: var(--space-6, 1.5rem);
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-raised);
 
   @media (min-width: 768px) {
     flex-direction: row;
@@ -25,7 +25,7 @@
 .header-main {
   display: flex;
   flex-direction: column;
-  gap: var(--ah-space-2, 0.5rem);
+  gap: var(--space-2, 0.5rem);
   flex: 1;
 }
 
@@ -33,32 +33,32 @@
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: var(--ah-space-3, 0.75rem);
+  gap: var(--space-3, 0.75rem);
 }
 
 .subject-title {
   margin: 0;
-  font-size: var(--ah-font-size-2xl, 1.5rem);
-  font-weight: 700;
-  color: var(--ah-text-primary, #f8fafc);
+  font-size: var(--font-size-500, 1.5rem);
+  font-weight: var(--font-weight-bold, 700);
+  color: var(--color-text-default);
   letter-spacing: -0.02em;
 }
 
 .badges-row {
   display: flex;
   align-items: center;
-  gap: var(--ah-space-2, 0.5rem);
+  gap: var(--space-2, 0.5rem);
 }
 
 .domain-tag {
-  font-family: var(--ah-font-mono, monospace);
-  font-size: var(--ah-font-size-xs, 0.75rem);
+  font-family: var(--font-mono, monospace);
+  font-size: var(--font-size-100, 0.75rem);
 }
 
 .overview-summary {
   margin: 0;
-  color: var(--ah-text-secondary, #94a3b8);
-  font-size: var(--ah-font-size-sm, 0.875rem);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-200, 0.875rem);
   line-height: 1.5;
   max-width: 65ch;
 }
@@ -66,18 +66,18 @@
 .portal-link-row {
   display: flex;
   align-items: center;
-  gap: var(--ah-space-2, 0.5rem);
-  font-size: var(--ah-font-size-xs, 0.75rem);
+  gap: var(--space-2, 0.5rem);
+  font-size: var(--font-size-100, 0.75rem);
 }
 
 .portal-label {
-  color: var(--ah-text-muted, #64748b);
+  color: var(--color-text-muted);
 }
 
 .portal-anchor {
-  color: var(--ah-color-primary-400, #38bdf8);
+  color: var(--color-accent-default);
   text-decoration: none;
-  font-family: var(--ah-font-mono, monospace);
+  font-family: var(--font-mono, monospace);
 
   &:hover {
     text-decoration: underline;
@@ -88,96 +88,92 @@
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: var(--ah-space-3, 0.75rem);
+  gap: var(--space-3, 0.75rem);
 }
 
 .rejection-alert-wrapper {
-  margin-bottom: var(--ah-space-2, 0.5rem);
+  margin-bottom: var(--space-2, 0.5rem);
 }
 
 .rejection-text {
-  margin: 0 0 var(--ah-space-2, 0.5rem) 0;
+  margin: 0 0 var(--space-2, 0.5rem) 0;
   font-weight: 500;
 }
 
 .rejection-hint {
   margin: 0;
-  font-size: var(--ah-font-size-xs, 0.75rem);
+  font-size: var(--font-size-100, 0.75rem);
   opacity: 0.85;
 }
 
 .curriculum-progress-card {
   display: flex;
   flex-direction: column;
-  gap: var(--ah-space-2, 0.5rem);
-  padding: var(--ah-space-4, 1rem) var(--ah-space-5, 1.25rem);
-  background: var(--ah-surface-card, #1e293b);
-  border: 1px solid var(--ah-border-subtle, rgba(255, 255, 255, 0.08));
-  border-radius: var(--ah-radius-lg, 0.75rem);
+  gap: var(--space-2, 0.5rem);
+  padding: var(--space-4, 1rem) var(--space-5, 1.25rem);
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-lg);
 }
 
 .progress-meta {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: var(--ah-font-size-sm, 0.875rem);
+  font-size: var(--font-size-200, 0.875rem);
 }
 
 .progress-title {
   font-weight: 600;
-  color: var(--ah-text-primary, #f8fafc);
+  color: var(--color-text-default);
 }
 
 .progress-count {
-  color: var(--ah-text-secondary, #94a3b8);
-  font-family: var(--ah-font-mono, monospace);
-  font-size: var(--ah-font-size-xs, 0.75rem);
+  color: var(--color-text-muted);
+  font-family: var(--font-mono, monospace);
+  font-size: var(--font-size-100, 0.75rem);
 }
 
 .branches-wrapper {
   display: flex;
   flex-direction: column;
-  gap: var(--ah-space-4, 1rem);
+  gap: var(--space-4, 1rem);
 }
 
 .branch-accordion-card {
-  border-radius: var(--ah-radius-lg, 0.75rem);
+  border-radius: var(--radius-lg);
 }
 
 .sections-grid {
   display: flex;
   flex-direction: column;
-  gap: var(--ah-space-4, 1rem);
-  padding: var(--ah-space-2, 0.5rem) 0;
+  gap: var(--space-4, 1rem);
+  padding: var(--space-2, 0.5rem) 0;
 }
 
 .section-card {
   display: flex;
   flex-direction: column;
-  gap: var(--ah-space-3, 0.75rem);
-  padding: var(--ah-space-4, 1rem);
-  background: var(--ah-surface-card-hover, rgba(255, 255, 255, 0.03));
-  border: 1px solid var(--ah-border-subtle, rgba(255, 255, 255, 0.06));
-  border-radius: var(--ah-radius-md, 0.5rem);
-  transition: border-color var(--ah-duration-fast, 150ms) ease, box-shadow var(--ah-duration-fast, 150ms) ease;
+  gap: var(--space-3, 0.75rem);
+  padding: var(--space-4, 1rem);
+  background: var(--color-bg-raised);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-md);
+  transition: border-color var(--motion-duration-fast) ease, box-shadow var(--motion-duration-fast) ease;
 
   &.is-approved {
-    border-left: 3px solid var(--ah-color-success-500, #10b981);
+    border-left: 3px solid var(--color-success-default);
   }
 
   &.has-cards.has-quiz {
-    background: linear-gradient(
-      135deg,
-      rgba(16, 185, 129, 0.04) 0%,
-      transparent 100%
-    );
+    background: color-mix(in srgb, var(--color-success-default) 6%, var(--color-bg-raised));
   }
 }
 
 .section-card-header {
   display: flex;
   flex-direction: column;
-  gap: var(--ah-space-2, 0.5rem);
+  gap: var(--space-2, 0.5rem);
 
   @media (min-width: 640px) {
     flex-direction: row;
@@ -189,49 +185,50 @@
 .code-and-title {
   display: flex;
   align-items: center;
-  gap: var(--ah-space-2, 0.5rem);
+  gap: var(--space-2, 0.5rem);
 }
 
 .section-code {
-  font-family: var(--ah-font-mono, monospace);
-  font-size: var(--ah-font-size-xs, 0.75rem);
+  font-family: var(--font-mono, monospace);
+  font-size: var(--font-size-100, 0.75rem);
   font-weight: 700;
   padding: 0.15rem 0.4rem;
-  background: var(--ah-surface-pill, rgba(255, 255, 255, 0.1));
-  border-radius: var(--ah-radius-sm, 0.25rem);
-  color: var(--ah-text-primary, #f8fafc);
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-default);
 }
 
 .section-title {
   margin: 0;
-  font-size: var(--ah-font-size-base, 1rem);
+  font-size: var(--font-size-300, 1rem);
   font-weight: 600;
-  color: var(--ah-text-primary, #f8fafc);
+  color: var(--color-text-default);
 }
 
 .tier-and-status {
   display: flex;
   align-items: center;
-  gap: var(--ah-space-2, 0.5rem);
+  gap: var(--space-2, 0.5rem);
 }
 
 .section-summary {
   margin: 0;
-  color: var(--ah-text-secondary, #94a3b8);
-  font-size: var(--ah-font-size-sm, 0.875rem);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-200, 0.875rem);
   line-height: 1.45;
 }
 
 .subtopics-list {
   display: flex;
   flex-direction: column;
-  gap: var(--ah-space-1, 0.25rem);
+  gap: var(--space-1, 0.25rem);
 }
 
 .subtopics-label {
-  font-size: var(--ah-font-size-xs, 0.75rem);
+  font-size: var(--font-size-100, 0.75rem);
   font-weight: 600;
-  color: var(--ah-text-muted, #64748b);
+  color: var(--color-text-muted);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
@@ -239,46 +236,46 @@
 .chips-row {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--ah-space-1-5, 0.375rem);
+  gap: var(--space-1, 0.25rem);
 }
 
 .subtopic-chip {
   padding: 0.15rem 0.5rem;
-  background: var(--ah-surface-chip, rgba(255, 255, 255, 0.05));
-  border: 1px solid var(--ah-border-subtle, rgba(255, 255, 255, 0.08));
-  border-radius: var(--ah-radius-full, 9999px);
-  font-size: var(--ah-font-size-xs, 0.75rem);
-  color: var(--ah-text-secondary, #cbd5e1);
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-pill);
+  font-size: var(--font-size-100, 0.75rem);
+  color: var(--color-text-muted);
 }
 
 .docs-list {
   display: flex;
   flex-direction: column;
-  gap: var(--ah-space-1, 0.25rem);
+  gap: var(--space-1, 0.25rem);
 }
 
 .docs-label {
-  font-size: var(--ah-font-size-xs, 0.75rem);
+  font-size: var(--font-size-100, 0.75rem);
   font-weight: 600;
-  color: var(--ah-text-muted, #64748b);
+  color: var(--color-text-muted);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
 
 .docs-links {
   margin: 0;
-  padding-left: var(--ah-space-4, 1rem);
+  padding-left: var(--space-4, 1rem);
   display: flex;
   flex-direction: column;
   gap: 0.2rem;
 
   li {
-    font-size: var(--ah-font-size-xs, 0.75rem);
+    font-size: var(--font-size-100, 0.75rem);
   }
 }
 
 .doc-link {
-  color: var(--ah-color-primary-400, #38bdf8);
+  color: var(--color-accent-default);
   text-decoration: none;
 
   &:hover {
@@ -290,11 +287,11 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--ah-space-2, 0.5rem);
-  padding-top: var(--ah-space-2, 0.5rem);
-  border-top: 1px solid var(--ah-border-subtle, rgba(255, 255, 255, 0.05));
+  gap: var(--space-2, 0.5rem);
+  padding-top: var(--space-2, 0.5rem);
+  border-top: 1px solid var(--color-border-default);
 }
 
 .empty-roadmap-container {
-  padding: var(--ah-space-8, 2rem) 0;
+  padding: var(--space-8, 2rem) 0;
 }

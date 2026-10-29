@@ -1,4 +1,4 @@
-.ah-flip-card {
+:host {
   display: block;
   perspective: 1200px;
   cursor: pointer;
@@ -17,10 +17,11 @@
   inline-size: 100%;
   min-block-size: 320px;
   transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
   transition: transform var(--motion-duration-slow) cubic-bezier(0.4, 0, 0.2, 1);
   border-radius: var(--radius-lg);
 
-  .ah-flip-card--flipped & {
+  :host(.ah-flip-card--flipped) & {
     transform: rotateY(180deg);
   }
 }
@@ -35,6 +36,7 @@
   position: absolute;
   inset: 0;
   backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
   border-radius: var(--radius-lg);
   padding: var(--space-6);
   background: var(--color-bg-raised);
@@ -45,22 +47,25 @@
   justify-content: space-between;
   overflow-y: auto;
 
-  .ah-flip-card--accent-beginner & {
+  :host(.ah-flip-card--accent-beginner) & {
     border-top: 4px solid var(--color-success-default);
   }
 
-  .ah-flip-card--accent-intermediate & {
+  :host(.ah-flip-card--accent-intermediate) & {
     border-top: 4px solid var(--color-data-2);
   }
 
-  .ah-flip-card--accent-expert & {
+  :host(.ah-flip-card--accent-expert) & {
     border-top: 4px solid var(--color-accent-default);
   }
 }
 
 .ah-flip-card-front {
-  z-index: 2;
   transform: rotateY(0deg);
+
+  :host(.ah-flip-card--flipped) & {
+    pointer-events: none;
+  }
 }
 
 .ah-flip-card-back {

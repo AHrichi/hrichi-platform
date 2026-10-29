@@ -4,11 +4,12 @@
 
 .ah-tablist {
   display: flex;
-  align-items: center;
+  align-items: stretch;
   gap: var(--space-2);
   border-bottom: 1px solid var(--color-border-default);
   overflow-x: auto;
   scrollbar-width: none;
+  position: relative;
 
   &::-webkit-scrollbar {
     display: none;
@@ -23,6 +24,8 @@
   background: transparent;
   border: none;
   border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
   color: var(--color-text-muted);
   font-size: var(--font-size-200);
   font-weight: var(--font-weight-medium);
@@ -30,28 +33,32 @@
   white-space: nowrap;
   user-select: none;
   outline: none;
+  position: relative;
   transition:
     color var(--motion-duration-fast) var(--motion-easing-standard),
+    background-color var(--motion-duration-fast) var(--motion-easing-standard),
     border-color var(--motion-duration-fast) var(--motion-easing-standard);
 
   &:hover:not(:disabled) {
     color: var(--color-text-default);
+    background: color-mix(in srgb, var(--color-bg-raised) 50%, transparent);
   }
 
   &:focus-visible {
     outline: 2px solid var(--color-focus-ring);
     outline-offset: -2px;
-    border-radius: var(--radius-sm);
   }
 
-  &--active {
+  &--active,
+  &--active:hover {
     color: var(--color-accent-default);
-    border-bottom-color: var(--color-accent-default);
+    border-bottom: 2px solid var(--color-accent-default);
+    background: color-mix(in srgb, var(--color-accent-subtle) 40%, transparent);
     font-weight: var(--font-weight-semibold);
 
     .ah-tab-count {
-      background: var(--color-accent-subtle);
-      color: var(--color-accent-default);
+      background: var(--color-accent-default);
+      color: var(--color-accent-on, #ffffff);
     }
   }
 

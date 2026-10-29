@@ -101,10 +101,10 @@
         <ah-flip-card
           [flipped]="store.isCardFlipped()"
           [accent]="card.tier"
-          (flippedChange)="store.flipCard()"
+          (flippedChange)="store.setCardFlipped($event)"
         >
           <!-- Front Face -->
-          <div slot="front" class="card-face-content front-face">
+          <div flip-front slot="front" class="card-face-content front-face">
             <div class="face-tag">
               <span class="category-name">{{ card.category }}</span>
               <span class="face-label">PROMPT</span>
@@ -120,7 +120,7 @@
           </div>
 
           <!-- Back Face -->
-          <div slot="back" class="card-face-content back-face">
+          <div flip-back slot="back" class="card-face-content back-face">
             <div class="face-tag">
               <span class="category-name">{{ card.category }}</span>
               <span class="face-label">EXPLANATION</span>
@@ -146,6 +146,10 @@
                 <span class="citation-val">{{ card.sourceCitation }}</span>
               </div>
             }
+
+            <div class="flip-hint">
+              <span class="hint-pill">Click or Space to flip back to question 🔄</span>
+            </div>
           </div>
         </ah-flip-card>
       </div>

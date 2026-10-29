@@ -1,8 +1,8 @@
 <div class="ah-flip-card-inner">
   <div class="ah-flip-card-face ah-flip-card-front">
-    <ng-content select="[flip-front]" />
+    <ng-content select="[flip-front], [slot=front]" />
   </div>
   <div class="ah-flip-card-face ah-flip-card-back">
-    <ng-content select="[flip-back]" />
+    <ng-content select="[flip-back], [slot=back]" />
   </div>
 </div>

@@ -2,10 +2,12 @@ html,
 body {
   margin: 0;
   padding: 0;
+  width: 100%;
+  max-width: 100%;
   min-height: 100%;
-  background: #0b0f19;
-  color: #f8fafc;
-  font-family: 'Inter Variable', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--color-bg-canvas);
+  color: var(--color-text-default);
+  font-family: var(--font-family-sans, sans-serif);
   -webkit-font-smoothing: antialiased;
 }
 

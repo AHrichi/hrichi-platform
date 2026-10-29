@@ -33,15 +33,16 @@
           <span>+ New Subject</span>
         </button>
 
-        @if (store.subjects().length > 1) {
+        @if (store.activeSubject()) {
           <button
             type="button"
             class="btn-delete-subject"
             (click)="deleteCurrentSubject()"
-            title="Delete active subject"
+            title="Delete active subject and its curriculum data"
             aria-label="Delete active subject"
           >
-            🗑️
+            <span class="delete-icon" aria-hidden="true">🗑️</span>
+            <span class="delete-label">Delete</span>
           </button>
         }
       </div>
