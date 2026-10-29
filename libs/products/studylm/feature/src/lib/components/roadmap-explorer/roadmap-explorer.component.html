@@ -1,0 +1,260 @@
+<div class="roadmap-explorer-container">
+  <!-- Subject Header -->
+  <header class="roadmap-header">
+    <div class="header-main">
+      <div class="title-row">
+        <h2 class="subject-title">{{ store.activeSubject()?.title || 'Technical Roadmap' }}</h2>
+        <div class="badges-row">
+          @if (store.activeSubject()?.domain) {
+            <ah-badge variant="neutral" size="sm">
+              <span class="domain-tag">{{ store.activeSubject()?.domain }}</span>
+            </ah-badge>
+          }
+          @if (store.activeRoadmap(); as rm) {
+            <ah-badge variant="success" size="sm">
+              <span>{{ store.totalSectionsCount() }} Sections</span>
+            </ah-badge>
+          }
+        </div>
+      </div>
+
+      @if (store.activeRoadmap(); as rm) {
+        <p class="overview-summary">{{ rm.overviewSummary }}</p>
+        @if (rm.officialDocPortal) {
+          <div class="portal-link-row">
+            <span class="portal-label">Grounding Portal:</span>
+            <a
+              [href]="rm.officialDocPortal"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="portal-anchor"
+            >
+              {{ rm.officialDocPortal }} ↗
+            </a>
+          </div>
+        }
+      } @else {
+        <p class="overview-summary">
+          {{ store.activeSubject()?.description || 'Decompose this software engineering concept into progressive chapters, atomic sections, and authoritative documentation references.' }}
+        </p>
+      }
+    </div>
+
+    <!-- Top Action Controls -->
+    <div class="header-actions">
+      <button
+        type="button"
+        ahButton="primary"
+        size="md"
+        [disabled]="store.isGeneratingRoadmap()"
+        (click)="onGenerateRoadmap()"
+      >
+        <span>{{ store.isGeneratingRoadmap() ? 'Generating Roadmap...' : (store.activeRoadmap() ? 'Resynthesize Roadmap' : 'Generate Roadmap') }}</span>
+      </button>
+
+      @if (store.activeRoadmap() && store.approvedSectionsCount() < store.totalSectionsCount()) {
+        <button
+          type="button"
+          ahButton="secondary"
+          size="md"
+          (click)="onApproveAll()"
+        >
+          <span>Approve All Sections</span>
+        </button>
+      }
+    </div>
+  </header>
+
+  <!-- Rejection Alert -->
+  @if (store.roadmapRejectionReason(); as rejection) {
+    <div class="rejection-alert-wrapper">
+      <ah-alert
+        variant="warning"
+        title="Software Engineering Topic Required"
+        [dismissible]="true"
+      >
+        <p class="rejection-text">{{ rejection }}</p>
+        <p class="rejection-hint">
+          StudyLM utilizes specialized technical engines grounded in authoritative software engineering specifications (e.g. JavaScript V8, Angular Signals, PostgreSQL MVCC, Distributed Systems). Please select a valid Software Engineering domain topic.
+        </p>
+      </ah-alert>
+    </div>
+  }
+
+  <!-- Progress Tracker -->
+  @if (store.activeRoadmap(); as rm) {
+    <div class="curriculum-progress-card">
+      <div class="progress-meta">
+        <span class="progress-title">Curriculum Synthesis Progress</span>
+        <span class="progress-count">
+          {{ store.synthesizedSectionsCount() }} / {{ store.totalSectionsCount() }} Sections Ready
+          ({{ store.curriculumProgressPct() }}%)
+        </span>
+      </div>
+      <ah-progress-bar
+        [progress]="store.curriculumProgressPct()"
+        variant="primary"
+        size="md"
+      />
+    </div>
+
+    <!-- Branches List -->
+    <section class="branches-wrapper" aria-label="Curriculum Branches">
+      @for (branch of store.activeBranches(); track branch.id) {
+        <div class="branch-accordion-card">
+          <ah-accordion-item
+            [title]="branch.title"
+            [subtitle]="branch.description"
+            [expanded]="branch.order === 1"
+          >
+            <div class="sections-grid">
+              @for (section of branch.sections; track section.id) {
+                <article
+                  class="section-card"
+                  [class.is-approved]="section.approved"
+                  [class.has-cards]="section.flashcardsStatus === 'ready'"
+                  [class.has-quiz]="section.quizStatus === 'ready'"
+                >
+                  <div class="section-card-header">
+                    <div class="code-and-title">
+                      <span class="section-code">{{ section.code }}</span>
+                      <h4 class="section-title">{{ section.title }}</h4>
+                    </div>
+
+                    <div class="tier-and-status">
+                      <ah-badge
+                        [variant]="section.difficultyTier === 'beginner' ? 'info' : (section.difficultyTier === 'intermediate' ? 'warning' : 'danger')"
+                        size="sm"
+                      >
+                        <span>{{ section.difficultyTier | uppercase }}</span>
+                      </ah-badge>
+
+                      @if (section.approved) {
+                        <ah-badge variant="success" size="sm">
+                          <span>Approved</span>
+                        </ah-badge>
+                      } @else {
+                        <ah-badge variant="neutral" size="sm">
+                          <span>Pending Review</span>
+                        </ah-badge>
+                      }
+                    </div>
+                  </div>
+
+                  <p class="section-summary">{{ section.summary }}</p>
+
+                  <!-- Subtopics Chips -->
+                  @if (section.subtopics.length > 0) {
+                    <div class="subtopics-list">
+                      <span class="subtopics-label">Subtopics:</span>
+                      <div class="chips-row">
+                        @for (sub of section.subtopics; track sub) {
+                          <span class="subtopic-chip">{{ sub }}</span>
+                        }
+                      </div>
+                    </div>
+                  }
+
+                  <!-- Grounding Official Docs -->
+                  @if (section.officialDocs.length > 0) {
+                    <div class="docs-list">
+                      <span class="docs-label">Official Grounding:</span>
+                      <ul class="docs-links">
+                        @for (doc of section.officialDocs; track doc.url) {
+                          <li>
+                            <a
+                              [href]="doc.url"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              class="doc-link"
+                            >
+                              {{ doc.title }} ↗
+                            </a>
+                          </li>
+                        }
+                      </ul>
+                    </div>
+                  }
+
+                  <!-- Action Buttons -->
+                  <div class="section-actions">
+                    @if (!section.approved) {
+                      <button
+                        type="button"
+                        ahButton="ghost"
+                        size="sm"
+                        (click)="onApproveSection(section.id)"
+                      >
+                        <span>Approve Section</span>
+                      </button>
+                    }
+
+                    <!-- Separate Flashcards Button -->
+                    <button
+                      type="button"
+                      [ahButton]="section.flashcardsStatus === 'ready' ? 'secondary' : 'primary'"
+                      size="sm"
+                      [disabled]="isSectionGeneratingCards(section.id)"
+                      (click)="onGenerateFlashcards(section.id)"
+                    >
+                      <span>
+                        {{ isSectionGeneratingCards(section.id) ? 'Generating Cards...' : (section.flashcardsStatus === 'ready' ? 'Regenerate Flashcards' : 'Generate Flashcards') }}
+                      </span>
+                    </button>
+
+                    <!-- Separate Quiz Button -->
+                    <button
+                      type="button"
+                      [ahButton]="section.quizStatus === 'ready' ? 'secondary' : 'primary'"
+                      size="sm"
+                      [disabled]="isSectionGeneratingQuiz(section.id)"
+                      (click)="onGenerateQuiz(section.id)"
+                    >
+                      <span>
+                        {{ isSectionGeneratingQuiz(section.id) ? 'Generating Quiz...' : (section.quizStatus === 'ready' ? 'Regenerate Quiz' : 'Generate Quiz') }}
+                      </span>
+                    </button>
+
+                    <!-- Interactive Study Navigation Links -->
+                    @if (getSectionCardCount(section.id); as cardCount) {
+                      <button
+                        type="button"
+                        ahButton="ghost"
+                        size="sm"
+                        (click)="onStudySectionCards(section)"
+                      >
+                        <span>Study Cards ({{ cardCount }})</span>
+                      </button>
+                    }
+
+                    @if (getSectionQuizCount(section.id); as quizCount) {
+                      <button
+                        type="button"
+                        ahButton="ghost"
+                        size="sm"
+                        (click)="onTakeSectionQuiz(section)"
+                      >
+                        <span>Take Quiz ({{ quizCount }})</span>
+                      </button>
+                    }
+                  </div>
+                </article>
+              }
+            </div>
+          </ah-accordion-item>
+        </div>
+      }
+    </section>
+  } @else {
+    <!-- Empty State -->
+    <div class="empty-roadmap-container">
+      <ah-empty-state
+        title="No Curriculum Roadmap Yet"
+        description="StudyLM uses multi-model free-tier AI engines grounded in official specifications to break down software engineering concepts into structured chapters and atomic sections."
+        icon="🗺️"
+        actionLabel="Generate Technical Roadmap"
+        (actionClick)="onGenerateRoadmap()"
+      />
+    </div>
+  }
+</div>

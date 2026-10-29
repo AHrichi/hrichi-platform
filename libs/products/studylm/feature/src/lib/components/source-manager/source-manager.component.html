@@ -21,7 +21,7 @@
         type="button"
         class="btn-synthesize-now"
         [disabled]="store.activeSources().length === 0 || store.isSynthesizing()"
-        (click)="store.synthesizeActiveSubject()"
+        (click)="store.synthesizeCurriculum()"
       >
         {{ store.isSynthesizing() ? '⚡ Synthesizing with AI...' : '✨ Re-synthesize Subject' }}
       </button>

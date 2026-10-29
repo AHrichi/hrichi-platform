@@ -1,0 +1,253 @@
+[
+  {
+    "name": "StudyLM Pedagogical Synthesis & Roadmap Engine",
+    "id": "DeA78ziIV0C4jZZ9",
+    "active": true,
+    "nodes": [
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "study-synthesizer",
+          "responseMode": "responseNode",
+          "options": {}
+        },
+        "id": "webhook-in",
+        "name": "Webhook Ingest",
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [
+          100,
+          300
+        ],
+        "webhookId": "study-synthesizer-webhook-id"
+      },
+      {
+        "parameters": {
+          "jsCode": "\nconst body = $input.item.json.body || $input.item.json || {};\nconst action = body.action || (body.sources ? 'synthesize_sources' : 'ping');\nconst subject = String(body.subject || '').trim();\nconst domain = body.domain || 'languages-runtimes';\n\nif (action === 'ping') {\n  return [{\n    json: {\n      action: 'ping',\n      isPing: true,\n      ok: true,\n      providers: ['Groq LPU (openai/gpt-oss-120b)', 'Groq LPU (qwen/qwen3.8-27b)']\n    }\n  }];\n}\n\nlet systemPrompt = '';\nlet userPrompt = '';\n\nif (action === 'generate_roadmap') {\n  const focusNotes = body.focusNotes ? ('\\nAdditional User Focus: ' + body.focusNotes) : '';\n  systemPrompt = 'You are the StudyLM Principal Software Engineering Curriculum Architect.\\n' +\n    'Your goal is to build an exhaustive, progressive, multi-branch curriculum roadmap for technical mastery.\\n' +\n    'GUARDRAIL:\\n' +\n    'The subject MUST be a valid Software Engineering, Computer Science, System Architecture, or Web Development topic.\\n' +\n    'If the subject is NOT a Software Engineering topic (e.g. cooking, history, fiction), you MUST set \"isValidSoftwareEngineeringTopic\": false, explain why in \"rejectionReason\", and provide empty branches.\\n\\n' +\n    'CURRICULUM SPECIFICATIONS FOR VALID SE TOPICS:\\n' +\n    '1. Break the subject into 5 to 8 logical Branches (Chapters/Phases) in pedagogical sequence.\\n' +\n    '2. Inside each Branch, define 2 to 5 atomic Sections with code \"X.Y\" (e.g. Section 1.1, 1.2, 2.1...).\\n' +\n    '3. To prevent LLM hallucination and shallow coverage, EACH section MUST be scoped tightly to a cohesive concept cluster.\\n' +\n    '4. Assign each Section an accurate difficultyTier: \"beginner\", \"intermediate\", or \"expert\".\\n' +\n    '5. List 3 to 6 explicit subtopics that MUST be covered when generating cards/quizzes for that section.\\n' +\n    '6. Provide authoritative official documentation links (MDN Web Docs, ECMAScript Spec, Angular.dev, TypeScript Handbook, RFCs, official docs).\\n\\n' +\n    'OUTPUT FORMAT (Strict JSON):\\n' +\n    '{\\n' +\n    '  \"isValidSoftwareEngineeringTopic\": true,\\n' +\n    '  \"canonicalSubject\": \"' + subject + '\",\\n' +\n    '  \"domain\": \"' + domain + '\",\\n' +\n    '  \"officialDocPortal\": \"Official Documentation URL or hub\",\\n' +\n    '  \"overviewSummary\": \"2-3 sentence overview of the technical mastery path\",\\n' +\n    '  \"branches\": [\\n' +\n    '    {\\n' +\n    '      \"id\": \"branch-1\",\\n' +\n    '      \"order\": 1,\\n' +\n    '      \"title\": \"Branch 1: Core Fundamentals\",\\n' +\n    '      \"description\": \"Branch description\",\\n' +\n    '      \"sections\": [\\n' +\n    '        {\\n' +\n    '          \"id\": \"sec-1-1\",\\n' +\n    '          \"code\": \"1.1\",\\n' +\n    '          \"title\": \"Section Title\",\\n' +\n    '          \"summary\": \"Specific boundary of this section\",\\n' +\n    '          \"difficultyTier\": \"beginner\",\\n' +\n    '          \"subtopics\": [\"Concept 1\", \"Concept 2\", \"Concept 3\"],\\n' +\n    '          \"officialDocs\": [{ \"title\": \"Official Doc Page\", \"url\": \"https://...\" }]\\n' +\n    '        }\\n' +\n    '      ]\\n' +\n    '    }\\n' +\n    '  ]\\n' +\n    '}';\n\n  userPrompt = 'Create an exhaustive Software Engineering curriculum roadmap for: \"' + subject + '\"' + focusNotes;\n} else if (action === 'generate_section_flashcards') {\n  const section = body.section || {};\n  const branchTitle = body.branchTitle || 'Curriculum Branch';\n  const subtopicsList = (section.subtopics || []).join(', ');\n  const docsList = (section.officialDocs || []).map(d => d.title + (d.url ? ' (' + d.url + ')' : '')).join('; ');\n\n  systemPrompt = 'You are the StudyLM Senior Technical Drill Master.\\n' +\n    'You are generating an UNCAPPED, EXHAUSTIVE deck of high-yield technical flashcards for a SINGLE atomic section.\\n\\n' +\n    'SECTION DETAILS:\\n' +\n    '• Subject: ' + subject + '\\n' +\n    '• Branch: ' + branchTitle + '\\n' +\n    '• Section ' + (section.code || '1.1') + ': ' + (section.title || '') + '\\n' +\n    '• Difficulty Tier: ' + (section.difficultyTier || 'intermediate') + '\\n' +\n    '• Required Subtopics: ' + subtopicsList + '\\n' +\n    '• Grounding Documentation: ' + docsList + '\\n\\n' +\n    'MANDATORY RULES:\\n' +\n    '1. PRIORITIZE OFFICIAL DOCUMENTATION & SPECIFICATIONS: Strictly align with canonical spec behavior (ECMAScript, MDN, framework specs, RFCs). No informal blog folklore.\\n' +\n    '2. EXHAUSTIVE COVERAGE: There is NO ARBITRARY LIMIT on cards. Cover EVERY subtopic, edge case, gotcha, runtime mechanic, and subtle trap thoroughly (typically 12 to 24+ cards depending on depth).\\n' +\n    '3. CODE SNIPPETS: Whenever illustrating syntax, coercion, closures, concurrency, or gotchas, provide a concise, clean codeSnippet and codeLanguage.\\n' +\n    '4. TIER ACCURACY: Calibrate cards to the section tier (' + (section.difficultyTier || 'intermediate') + ').\\n' +\n    '5. OUTPUT JSON ONLY matching this structure:\\n' +\n    '{\\n' +\n    '  \"sectionId\": \"' + (section.id || 'sec-1-1') + '\",\\n' +\n    '  \"docsGrounded\": [\"' + (docsList || 'Official Documentation') + '\"],\\n' +\n    '  \"flashcards\": [\\n' +\n    '    {\\n' +\n    '      \"id\": \"fc-1\",\\n' +\n    '      \"tier\": \"' + (section.difficultyTier || 'intermediate') + '\",\\n' +\n    '      \"front\": \"Targeted question or scenario prompt\",\\n' +\n    '      \"back\": \"Precise, deep technical explanation citing the exact rule/behavior\",\\n' +\n    '      \"codeSnippet\": \"optional code example or gotcha\",\\n' +\n    '      \"codeLanguage\": \"javascript\",\\n' +\n    '      \"category\": \"Subtopic Name\",\\n' +\n    '      \"sourceCitation\": \"MDN Web Docs / Spec Section\"\\n' +\n    '    }\\n' +\n    '  ]\\n' +\n    '}';\n\n  userPrompt = 'Generate an exhaustive, deep flashcard deck covering all subtopics of Section ' + (section.code || '') + ': ' + (section.title || subject);\n} else if (action === 'generate_section_quiz') {\n  const section = body.section || {};\n  const branchTitle = body.branchTitle || 'Curriculum Branch';\n  const subtopicsList = (section.subtopics || []).join(', ');\n  const docsList = (section.officialDocs || []).map(d => d.title + (d.url ? ' (' + d.url + ')' : '')).join('; ');\n\n  systemPrompt = 'You are the StudyLM Senior Technical Assessment Engineer.\\n' +\n    'You are generating an UNCAPPED, THOROUGH diagnostic quiz for a SINGLE atomic section.\\n\\n' +\n    'SECTION DETAILS:\\n' +\n    '• Subject: ' + subject + '\\n' +\n    '• Branch: ' + branchTitle + '\\n' +\n    '• Section ' + (section.code || '1.1') + ': ' + (section.title || '') + '\\n' +\n    '• Difficulty Tier: ' + (section.difficultyTier || 'intermediate') + '\\n' +\n    '• Required Subtopics: ' + subtopicsList + '\\n' +\n    '• Grounding Documentation: ' + docsList + '\\n\\n' +\n    'MANDATORY RULES:\\n' +\n    '1. PRIORITIZE OFFICIAL DOCUMENTATION: Test exact specification behavior, runtime outcomes, trade-offs, and gotchas.\\n' +\n    '2. DIAGNOSTIC MCQs: Provide exactly 4 distinct options per question. Only ONE is correct. Distractors must represent common developer misconceptions or invalid assumptions.\\n' +\n    '3. CODE EXAMPLES: Include codeSnippet for questions testing output order, type coercion, mutation, or architectural signatures.\\n' +\n    '4. DETAILED RATIONALE: Provide a thorough explanation explaining why the correct answer is right according to documentation, and why each distractor is wrong.\\n' +\n    '5. OUTPUT JSON ONLY matching this structure:\\n' +\n    '{\\n' +\n    '  \"sectionId\": \"' + (section.id || 'sec-1-1') + '\",\\n' +\n    '  \"docsGrounded\": [\"' + (docsList || 'Official Documentation') + '\"],\\n' +\n    '  \"quiz\": [\\n' +\n    '    {\\n' +\n    '      \"id\": \"qz-1\",\\n' +\n    '      \"tier\": \"' + (section.difficultyTier || 'intermediate') + '\",\\n' +\n    '      \"question\": \"Question statement\",\\n' +\n    '      \"codeSnippet\": \"optional code snippet\",\\n' +\n    '      \"codeLanguage\": \"javascript\",\\n' +\n    '      \"options\": [\"Option A\", \"Option B\", \"Option C\", \"Option D\"],\\n' +\n    '      \"correctIndex\": 0,\\n' +\n    '      \"explanation\": \"Detailed rationale citing official docs\",\\n' +\n    '      \"sourceCitation\": \"MDN Web Docs / Spec Section\"\\n' +\n    '    }\\n' +\n    '  ]\\n' +\n    '}';\n\n  userPrompt = 'Generate a deep, diagnostic technical quiz covering Section ' + (section.code || '') + ': ' + (section.title || subject);\n} else {\n  systemPrompt = 'You are StudyLM pedagogical synthesizer. Synthesize study cards and quiz from the provided sources. Output valid JSON with overview, flashcards, quiz.';\n  userPrompt = 'Subject: ' + subject + '\\n\\nSources: ' + JSON.stringify(body.sources || []);\n}\n\nreturn [{\n  json: {\n    action,\n    subject,\n    domain,\n    sectionId: body.section?.id || '',\n    groqPrimaryBody: {\n      model: 'openai/gpt-oss-120b',\n      messages: [\n        { role: 'system', content: systemPrompt },\n        { role: 'user', content: userPrompt }\n      ],\n      temperature: 0.1,\n      response_format: { type: 'json_object' }\n    },\n    groqFailoverBody: {\n      model: 'qwen/qwen3.8-27b',\n      messages: [\n        { role: 'system', content: systemPrompt },\n        { role: 'user', content: userPrompt }\n      ],\n      temperature: 0.1,\n      response_format: { type: 'json_object' }\n    }\n  }\n}];\n"
+        },
+        "id": "format-study-prompt",
+        "name": "Format Multi-AI Prompts",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          320,
+          300
+        ]
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true
+            },
+            "conditions": [
+              {
+                "leftValue": "={{ $json.action }}",
+                "rightValue": "ping",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals"
+                }
+              }
+            ],
+            "combinator": "and"
+          }
+        },
+        "id": "check-if-ping",
+        "name": "Is Ping Action?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2,
+        "position": [
+          540,
+          300
+        ]
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.groq.com/openai/v1/chat/completions",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "groqApi",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={{ JSON.stringify($json.groqPrimaryBody) }}",
+          "options": {
+            "timeout": 45000
+          }
+        },
+        "id": "primary-groq-call",
+        "name": "Primary AI: Groq 120B",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          760,
+          200
+        ],
+        "onError": "continueErrorOutput",
+        "credentials": {
+          "groqApi": {
+            "id": "jVafRHRNVmsszaE8",
+            "name": "Groq"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.groq.com/openai/v1/chat/completions",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "groqApi",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={{ JSON.stringify($('Format Multi-AI Prompts').item.json.groqFailoverBody) }}",
+          "options": {
+            "timeout": 45000
+          }
+        },
+        "id": "failover-groq-call",
+        "name": "Failover AI: Groq Qwen",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          980,
+          420
+        ],
+        "onError": "continueRegularOutput",
+        "credentials": {
+          "groqApi": {
+            "id": "jVafRHRNVmsszaE8",
+            "name": "Groq"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "\nconst promptItem = $('Format Multi-AI Prompts').first()?.json || {};\nconst action = promptItem.action;\n\nif (promptItem.isPing) {\n  return [{ json: { ok: true, success: true, action: 'ping', latencyMs: 25, providers: promptItem.providers } }];\n}\n\nlet rawOutput = '';\nlet providerUsed = 'Groq LPU (openai/gpt-oss-120b)';\n\n// Check Primary AI output\ntry {\n  if ($('Primary AI: Groq 120B').isExecuted) {\n    const res = $('Primary AI: Groq 120B').first()?.json;\n    if (res && res.choices && res.choices[0]?.message?.content) {\n      rawOutput = res.choices[0].message.content;\n    }\n  }\n} catch (e) {\n  // Ignored, proceed to failover\n}\n\n// Check Failover AI if Primary failed\nif (!rawOutput.trim()) {\n  try {\n    if ($('Failover AI: Groq Qwen').isExecuted) {\n      const res = $('Failover AI: Groq Qwen').first()?.json;\n      if (res && res.choices && res.choices[0]?.message?.content) {\n        rawOutput = res.choices[0].message.content;\n        providerUsed = 'Groq LPU (qwen/qwen3.8-27b)';\n      }\n    }\n  } catch (e) {\n    // Failover also errored\n  }\n}\n\nif (!rawOutput.trim()) {\n  throw new Error('All AI models temporarily unavailable or returned empty output.');\n}\n\n// Strip markdown fences if present\nlet cleanJson = rawOutput.trim();\nif (cleanJson.startsWith('```')) {\n  cleanJson = cleanJson.replace(/^```(?:json)?\\s*/i, '').replace(/```\\s*$/, '');\n}\nconst firstB = cleanJson.indexOf('{');\nconst lastB = cleanJson.lastIndexOf('}');\nif (firstB !== -1 && lastB !== -1) {\n  cleanJson = cleanJson.substring(firstB, lastB + 1);\n}\n\nconst parsed = JSON.parse(cleanJson);\n\nreturn [{\n  json: {\n    success: true,\n    provider: providerUsed,\n    timestamp: new Date().toISOString(),\n    ...parsed\n  }\n}];\n"
+        },
+        "id": "parse-and-normalize",
+        "name": "Parse & Normalize Response",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          1200,
+          300
+        ]
+      },
+      {
+        "parameters": {
+          "respondWith": "json",
+          "responseBody": "={{ $json }}",
+          "options": {
+            "responseCode": 200,
+            "responseHeaders": {
+              "entries": [
+                {
+                  "name": "Access-Control-Allow-Origin",
+                  "value": "*"
+                },
+                {
+                  "name": "Access-Control-Allow-Headers",
+                  "value": "*"
+                },
+                {
+                  "name": "Access-Control-Allow-Methods",
+                  "value": "POST, OPTIONS"
+                }
+              ]
+            }
+          }
+        },
+        "id": "respond-webhook",
+        "name": "Respond Webhook",
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.1,
+        "position": [
+          1420,
+          300
+        ]
+      }
+    ],
+    "connections": {
+      "Webhook Ingest": {
+        "main": [
+          [
+            {
+              "node": "Format Multi-AI Prompts",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Format Multi-AI Prompts": {
+        "main": [
+          [
+            {
+              "node": "Is Ping Action?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Is Ping Action?": {
+        "main": [
+          [
+            {
+              "node": "Parse & Normalize Response",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Primary AI: Groq 120B",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Primary AI: Groq 120B": {
+        "main": [
+          [
+            {
+              "node": "Parse & Normalize Response",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Failover AI: Groq Qwen",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Failover AI: Groq Qwen": {
+        "main": [
+          [
+            {
+              "node": "Parse & Normalize Response",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Parse & Normalize Response": {
+        "main": [
+          [
+            {
+              "node": "Respond Webhook",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    }
+  }
+]

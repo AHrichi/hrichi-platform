@@ -1,0 +1,31 @@
+<div class="ah-alert-icon" aria-hidden="true">
+  @switch (variant()) {
+    @case ('success') { ✓ }
+    @case ('warning') { ⚠️ }
+    @case ('danger') { ✕ }
+    @default { ℹ }
+  }
+</div>
+
+<div class="ah-alert-body">
+  @if (title()) {
+    <h4 class="ah-alert-title">{{ title() }}</h4>
+  }
+  <div class="ah-alert-message">
+    <ng-content />
+  </div>
+</div>
+
+<div class="ah-alert-actions">
+  <ng-content select="[alert-actions]" />
+  @if (dismissible()) {
+    <button
+      type="button"
+      class="ah-alert-dismiss-btn"
+      aria-label="Dismiss alert"
+      (click)="dismiss()"
+    >
+      ✕
+    </button>
+  }
+</div>

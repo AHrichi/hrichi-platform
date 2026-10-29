@@ -1,153 +1,144 @@
-<div class="modal-backdrop" (click)="close()">
-  <div class="modal-container" (click)="$event.stopPropagation()">
-    <header class="modal-header">
-      <div class="header-titles">
-        <span class="eyebrow">Manual Quiz Authoring</span>
-        <h2>Add Question to Quiz Arena</h2>
-      </div>
-      <button type="button" class="close-btn" (click)="close()" aria-label="Close modal">✕</button>
-    </header>
+<ah-modal
+  [open]="store.showAddQuizModal()"
+  title="Author Diagnostic Quiz Question"
+  eyebrow="Technical Assessment Bank"
+  size="lg"
+  (closed)="close()"
+>
+  <form [formRoot]="quizForm" (ngSubmit)="submitQuiz()" class="quiz-form" novalidate>
+    <div class="form-group">
+      <ah-segmented-control
+        label="Competency Tier"
+        [options]="tierOptions"
+        [value]="model().tier"
+        (valueChange)="setTier($event)"
+      />
+    </div>
 
-    <form [formRoot]="quizForm" (ngSubmit)="submitQuiz()" class="quiz-form" novalidate>
-      <div class="modal-body">
-        <div class="form-group">
-          <label>Competency Tier *</label>
-          <div class="tier-buttons">
-            <button
-              type="button"
-              class="tier-btn btn-beginner"
-              [class.active]="model().tier === 'beginner'"
-              (click)="setTier('beginner')"
-            >
-              🌱 Beginner
-            </button>
-            <button
-              type="button"
-              class="tier-btn btn-intermediate"
-              [class.active]="model().tier === 'intermediate'"
-              (click)="setTier('intermediate')"
-            >
-              ⚡ Intermediate
-            </button>
-            <button
-              type="button"
-              class="tier-btn btn-expert"
-              [class.active]="model().tier === 'expert'"
-              (click)="setTier('expert')"
-            >
-              🔥 Expert
-            </button>
-          </div>
-        </div>
+    <div class="form-group">
+      <label for="qStatement">Question Statement *</label>
+      <textarea
+        id="qStatement"
+        rows="2"
+        [formField]="quizForm.question"
+        class="form-textarea"
+        placeholder="e.g. Which of the following is true regarding microtask queue execution order in ECMAScript?"
+        autofocus
+      ></textarea>
+    </div>
 
-        <div class="form-group">
-          <label for="quizQuestion">Question Statement *</label>
-          <textarea
-            id="quizQuestion"
-            rows="3"
-            [formField]="quizForm.question"
-            placeholder="e.g. Which Angular decorator or function is used to create a derived reactive value?"
-          ></textarea>
-        </div>
+    <div class="form-group">
+      <label for="qCode">Diagnostic Code Snippet (Optional)</label>
+      <textarea
+        id="qCode"
+        rows="2"
+        [formField]="quizForm.codeSnippet"
+        class="form-textarea code-area"
+        placeholder="// Code snippet tested in this question"
+      ></textarea>
+    </div>
 
-        <div class="form-group">
-          <label>Options & Correct Answer * (Select the correct option)</label>
-          <div class="options-container">
-            <div class="option-row" [class.is-correct]="model().correctIndex === 0">
-              <button
-                type="button"
-                class="radio-btn"
-                [class.checked]="model().correctIndex === 0"
-                (click)="setCorrectIndex(0)"
-                title="Mark Option A as correct"
-              >
-                A
-              </button>
-              <input
-                type="text"
-                [formField]="quizForm.optionA"
-                placeholder="Option A text..."
-              />
-            </div>
+    <div class="options-container">
+      <label class="section-label">Options (Select the correct radio button) *</label>
 
-            <div class="option-row" [class.is-correct]="model().correctIndex === 1">
-              <button
-                type="button"
-                class="radio-btn"
-                [class.checked]="model().correctIndex === 1"
-                (click)="setCorrectIndex(1)"
-                title="Mark Option B as correct"
-              >
-                B
-              </button>
-              <input
-                type="text"
-                [formField]="quizForm.optionB"
-                placeholder="Option B text..."
-              />
-            </div>
-
-            <div class="option-row" [class.is-correct]="model().correctIndex === 2">
-              <button
-                type="button"
-                class="radio-btn"
-                [class.checked]="model().correctIndex === 2"
-                (click)="setCorrectIndex(2)"
-                title="Mark Option C as correct"
-              >
-                C
-              </button>
-              <input
-                type="text"
-                [formField]="quizForm.optionC"
-                placeholder="Option C text..."
-              />
-            </div>
-
-            <div class="option-row" [class.is-correct]="model().correctIndex === 3">
-              <button
-                type="button"
-                class="radio-btn"
-                [class.checked]="model().correctIndex === 3"
-                (click)="setCorrectIndex(3)"
-                title="Mark Option D as correct"
-              >
-                D
-              </button>
-              <input
-                type="text"
-                [formField]="quizForm.optionD"
-                placeholder="Option D text..."
-              />
-            </div>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label for="quizExplanation">Explanation / Rationale *</label>
-          <textarea
-            id="quizExplanation"
-            rows="2"
-            [formField]="quizForm.explanation"
-            placeholder="Explain why the selected answer is correct..."
-          ></textarea>
-        </div>
-
-        <div class="form-group">
-          <label for="quizCitation">Source Citation</label>
-          <input
-            id="quizCitation"
-            type="text"
-            [formField]="quizForm.sourceCitation"
-            placeholder="e.g. Angular Signals Guide, Official Docs"
-          />
-        </div>
+      <div class="option-row" [class.is-correct]="model().correctIndex === 0">
+        <input
+          type="radio"
+          name="correctOpt"
+          id="optA_radio"
+          [checked]="model().correctIndex === 0"
+          (change)="setCorrectIndex(0)"
+        />
+        <label for="optA_radio" class="opt-tag">A</label>
+        <input
+          type="text"
+          [formField]="quizForm.optionA"
+          class="form-input"
+          placeholder="Option A"
+        />
       </div>
 
-      <footer class="modal-footer">
-        <button type="button" class="btn-secondary" (click)="close()">Cancel</button>
-        <button type="submit" class="btn-primary">Add Question</button>
-      </footer>
-    </form>
+      <div class="option-row" [class.is-correct]="model().correctIndex === 1">
+        <input
+          type="radio"
+          name="correctOpt"
+          id="optB_radio"
+          [checked]="model().correctIndex === 1"
+          (change)="setCorrectIndex(1)"
+        />
+        <label for="optB_radio" class="opt-tag">B</label>
+        <input
+          type="text"
+          [formField]="quizForm.optionB"
+          class="form-input"
+          placeholder="Option B"
+        />
+      </div>
+
+      <div class="option-row" [class.is-correct]="model().correctIndex === 2">
+        <input
+          type="radio"
+          name="correctOpt"
+          id="optC_radio"
+          [checked]="model().correctIndex === 2"
+          (change)="setCorrectIndex(2)"
+        />
+        <label for="optC_radio" class="opt-tag">C</label>
+        <input
+          type="text"
+          [formField]="quizForm.optionC"
+          class="form-input"
+          placeholder="Option C"
+        />
+      </div>
+
+      <div class="option-row" [class.is-correct]="model().correctIndex === 3">
+        <input
+          type="radio"
+          name="correctOpt"
+          id="optD_radio"
+          [checked]="model().correctIndex === 3"
+          (change)="setCorrectIndex(3)"
+        />
+        <label for="optD_radio" class="opt-tag">D</label>
+        <input
+          type="text"
+          [formField]="quizForm.optionD"
+          class="form-input"
+          placeholder="Option D"
+        />
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="qExplanation">Explanation & Rationale *</label>
+      <textarea
+        id="qExplanation"
+        rows="3"
+        [formField]="quizForm.explanation"
+        class="form-textarea"
+        placeholder="Explain why the selected option is correct citing official documentation, and explain common misconceptions."
+      ></textarea>
+    </div>
+
+    <div class="form-group">
+      <label for="qCitation">Grounding Citation</label>
+      <input
+        id="qCitation"
+        type="text"
+        [formField]="quizForm.sourceCitation"
+        class="form-input"
+        placeholder="e.g. ECMA-262 §9.5.4 Jobs and Job Queues"
+      />
+    </div>
+  </form>
+
+  <div slot="footer" class="modal-footer-actions">
+    <button type="button" ahButton="ghost" size="md" (click)="close()">
+      <span>Cancel</span>
+    </button>
+    <button type="button" ahButton="primary" size="md" (click)="submitQuiz()">
+      <span>Save Question</span>
+    </button>
   </div>
-</div>
+</ah-modal>

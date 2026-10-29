@@ -8,6 +8,10 @@ export interface StudyQuizQuestion {
   correctIndex: number;
   explanation: string;
   sourceCitation: string;
+  sectionId?: string;
+  sectionCode?: string;
+  codeSnippet?: string;
+  codeLanguage?: string;
   userSelectedIndex?: number;
   isAnswered?: boolean;
   isCorrect?: boolean;
@@ -20,6 +24,10 @@ export interface CreateQuizQuestionInput {
   correctIndex: number;
   explanation: string;
   sourceCitation: string;
+  sectionId?: string;
+  sectionCode?: string;
+  codeSnippet?: string;
+  codeLanguage?: string;
 }
 
 export interface QuizSessionSummary {

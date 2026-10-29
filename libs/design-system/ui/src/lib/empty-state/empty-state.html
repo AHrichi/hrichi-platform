@@ -1,0 +1,19 @@
+<div class="ah-empty-state-content">
+  @if (icon()) {
+    <div class="ah-empty-state-icon" aria-hidden="true">{{ icon() }}</div>
+  }
+
+  @if (eyebrow()) {
+    <p class="ah-eyebrow">{{ eyebrow() }}</p>
+  }
+
+  <h3 class="ah-empty-state-title">{{ title() }}</h3>
+
+  @if (description()) {
+    <p class="ah-empty-state-desc">{{ description() }}</p>
+  }
+
+  <div class="ah-empty-state-actions">
+    <ng-content select="[empty-actions]" />
+  </div>
+</div>

@@ -4,13 +4,17 @@ import {
   inject,
   signal,
 } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { form, FormField, FormRoot, minLength, required } from '@angular/forms/signals';
+import { AhButton, AhModal, AhSegmentedControl } from '@ah/ui';
 import { StudyLmStore } from '../../store/studylm.store';
 import type { CompetencyTier } from '@ah/products/studylm/domain';
 
 interface AddQuizFormModel {
   tier: CompetencyTier;
   question: string;
+  codeSnippet: string;
+  codeLanguage: string;
   optionA: string;
   optionB: string;
   optionC: string;
@@ -22,7 +26,8 @@ interface AddQuizFormModel {
 
 @Component({
   selector: 'ah-add-quiz-modal',
-  imports: [FormField, FormRoot],
+  standalone: true,
+  imports: [CommonModule, FormField, FormRoot, AhModal, AhButton, AhSegmentedControl],
   templateUrl: './add-quiz-modal.component.html',
   styleUrl: './add-quiz-modal.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -30,9 +35,17 @@ interface AddQuizFormModel {
 export class AddQuizModalComponent {
   readonly store = inject(StudyLmStore);
 
+  readonly tierOptions: { label: string; value: CompetencyTier }[] = [
+    { label: 'Beginner', value: 'beginner' },
+    { label: 'Intermediate', value: 'intermediate' },
+    { label: 'Expert', value: 'expert' },
+  ];
+
   readonly model = signal<AddQuizFormModel>({
     tier: 'beginner',
     question: '',
+    codeSnippet: '',
+    codeLanguage: 'typescript',
     optionA: '',
     optionB: '',
     optionC: '',
@@ -52,29 +65,33 @@ export class AddQuizModalComponent {
     required(path.explanation, { message: 'Explanation / rationale is required' });
   });
 
-  setTier(tier: CompetencyTier) {
+  setTier(tier: CompetencyTier): void {
     this.model.update((m) => ({ ...m, tier }));
   }
 
-  setCorrectIndex(correctIndex: number) {
+  setCorrectIndex(correctIndex: number): void {
     this.model.update((m) => ({ ...m, correctIndex }));
   }
 
-  submitQuiz() {
+  submitQuiz(): void {
     const val = this.model();
     if (!val.question.trim() || !val.optionA.trim() || !val.optionB.trim()) return;
 
-    this.store.createQuizQuestion({
+    this.store.addManualQuizQuestion({
       tier: val.tier,
       question: val.question,
+      codeSnippet: val.codeSnippet.trim() || undefined,
+      codeLanguage: val.codeLanguage.trim() || undefined,
       options: [val.optionA, val.optionB, val.optionC, val.optionD],
       correctIndex: val.correctIndex,
       explanation: val.explanation,
-      sourceCitation: val.sourceCitation,
+      sourceCitation: val.sourceCitation || 'Manual Input',
+      sectionId: this.store.selectedSectionId() || undefined,
     });
+    this.close();
   }
 
-  close() {
-    this.store.toggleAddQuizModal(false);
+  close(): void {
+    this.store.setShowAddQuizModal(false);
   }
 }

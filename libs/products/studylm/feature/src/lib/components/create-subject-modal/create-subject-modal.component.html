@@ -1,62 +1,83 @@
-<div class="modal-backdrop" (click)="close()">
-  <div class="modal-container" (click)="$event.stopPropagation()">
-    <header class="modal-header">
-      <div class="header-titles">
-        <span class="eyebrow">Subject Workspace</span>
-        <h2>Create Study Subject</h2>
-      </div>
-      <button type="button" class="close-btn" (click)="close()" aria-label="Close modal">✕</button>
-    </header>
+<ah-modal
+  [open]="store.showCreateSubjectModal()"
+  title="New Software Engineering Subject"
+  eyebrow="Pedagogical Curriculum Deconstruction"
+  size="lg"
+  (closed)="close()"
+>
+  <div class="create-subject-body">
+    <ah-alert variant="info" title="Software Engineering Guardrail">
+      <p class="guardrail-desc">
+        StudyLM is strictly calibrated for Software Engineering, Computer Science, and System Architecture concepts (e.g., JavaScript internals, React/Angular architectures, Distributed Consensus, PostgreSQL MVCC).
+      </p>
+    </ah-alert>
 
-    <div class="modal-body">
-      <form [formRoot]="subjectForm" (ngSubmit)="submitSubject()" class="subject-form" novalidate>
-        <div class="form-group">
-          <label for="subjTitle">Subject Name / Topic *</label>
-          <input
-            id="subjTitle"
-            type="text"
-            [formField]="subjectForm.title"
-            placeholder="e.g. Kubernetes Cluster Networking, System Design, or Vue 3 Reactivity"
-            autofocus
-          />
+    <form [formRoot]="subjectForm" (ngSubmit)="submitSubject(true)" class="subject-form" novalidate>
+      <div class="form-group">
+        <label for="subjDomain">Software Engineering Domain *</label>
+        <select
+          id="subjDomain"
+          [formField]="subjectForm.domain"
+          class="form-select"
+        >
+          @for (d of domains; track d.id) {
+            <option [value]="d.id">{{ d.icon }} {{ d.label }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="subjTitle">Subject / Concept Name *</label>
+        <input
+          id="subjTitle"
+          type="text"
+          [formField]="subjectForm.title"
+          class="form-input"
+          placeholder="e.g. JavaScript Internals & V8, Distributed Consensus (Raft), PostgreSQL Indexing"
+          autofocus
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="subjDesc">Focus Notes & Constraints (Optional)</label>
+        <textarea
+          id="subjDesc"
+          rows="2"
+          [formField]="subjectForm.description"
+          class="form-textarea"
+          placeholder="e.g. Focus deeply on memory layouts, garbage collection, event loop microtasks, and gotchas."
+        ></textarea>
+      </div>
+
+      <!-- Suggested Topics Quick Pick -->
+      <div class="suggested-topics-section">
+        <span class="suggested-label">Or Pick a Standard Curriculum Track:</span>
+        <div class="suggested-chips">
+          @for (d of domains; track d.id) {
+            @for (top of d.suggestedTopics; track top) {
+              <button
+                type="button"
+                class="suggested-chip"
+                (click)="selectSuggestedTopic(top, d.id)"
+              >
+                <span>{{ d.icon }} {{ top }}</span>
+              </button>
+            }
+          }
         </div>
-
-        <div class="form-group">
-          <label for="subjDesc">Description & Scope (Optional)</label>
-          <textarea
-            id="subjDesc"
-            rows="3"
-            [formField]="subjectForm.description"
-            placeholder="What concepts and milestones are covered in this study set?"
-          ></textarea>
-        </div>
-
-        <footer class="modal-footer">
-          <button type="button" class="btn-secondary" (click)="close()">Cancel</button>
-          <button type="submit" class="btn-primary">Create Blank Subject</button>
-        </footer>
-      </form>
-
-      <div class="divider">
-        <span>or load a verified curriculum template</span>
       </div>
-
-      <div class="templates-list">
-        @for (tmpl of sampleTemplates; track tmpl.id) {
-          <div class="template-card" (click)="loadTemplate(tmpl.id)">
-            <div class="tmpl-meta">
-              <h4>{{ tmpl.subject }}</h4>
-              <p>{{ tmpl.tagline }}</p>
-              <div class="tmpl-counts">
-                <span>{{ tmpl.sources.length }} sources</span> &bull;
-                <span>{{ tmpl.flashcards.length }} cards</span> &bull;
-                <span>{{ tmpl.quiz.length }} questions</span>
-              </div>
-            </div>
-            <button type="button" class="btn-load-tmpl">Load Template →</button>
-          </div>
-        }
-      </div>
-    </div>
+    </form>
   </div>
-</div>
+
+  <div slot="footer" class="modal-footer-actions">
+    <button type="button" ahButton="ghost" size="md" (click)="close()">
+      <span>Cancel</span>
+    </button>
+    <button type="button" ahButton="secondary" size="md" (click)="submitSubject(false)">
+      <span>Create Blank</span>
+    </button>
+    <button type="button" ahButton="primary" size="md" (click)="submitSubject(true)">
+      <span>Create & Generate Roadmap</span>
+    </button>
+  </div>
+</ah-modal>

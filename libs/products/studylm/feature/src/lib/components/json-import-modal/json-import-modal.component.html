@@ -1,61 +1,47 @@
-<div class="modal-backdrop" (click)="close()">
-  <div class="modal-container" (click)="$event.stopPropagation()">
-    <header class="modal-header">
-      <div class="header-titles">
-        <span class="eyebrow">Bulk Ingestion</span>
-        <h2>Import Study Data (JSON)</h2>
-      </div>
-      <button type="button" class="close-btn" (click)="close()" aria-label="Close modal">✕</button>
-    </header>
+<ah-modal
+  [open]="store.showJsonImportModal()"
+  title="Import Structured Curriculum JSON"
+  eyebrow="Pedagogical Schema Ingest"
+  size="lg"
+  (closed)="close()"
+>
+  <div class="json-import-body">
+    @if (errorStatus(); as err) {
+      <ah-alert variant="danger" title="Import Error">
+        <span>{{ err }}</span>
+      </ah-alert>
+    }
 
     <form [formRoot]="importForm" (ngSubmit)="submitImport()" class="import-form" novalidate>
-      <div class="modal-body">
-        <p class="intro-text">
-          Import flashcards and quiz questions directly from a structured JSON document or paste exported study sets.
-        </p>
-
-        <div class="actions-bar">
-          <label class="file-upload-label">
-            📁 Upload .json File
-            <input type="file" accept=".json,application/json" (change)="handleFileUpload($event)" class="sr-only" />
-          </label>
-          <button type="button" class="btn-sample" (click)="loadSample()">
-            📋 Insert Sample Template
-          </button>
-        </div>
-
-        @if (errorStatus()) {
-          <div class="error-banner" role="alert">
-            <span class="error-icon">⚠️</span>
-            <span>{{ errorStatus() }}</span>
-          </div>
-        }
-
-        <div class="form-group">
-          <label for="jsonTextarea">JSON Payload *</label>
-          <textarea
-            id="jsonTextarea"
-            rows="12"
-            [formField]="importForm.jsonText"
-            placeholder="Paste your JSON payload here..."
-            spellcheck="false"
-          ></textarea>
-        </div>
-
-        <div class="schema-hint">
-          <span class="hint-title">💡 Supported JSON Formats:</span>
-          <ul>
-            <li>Full Object with <code>"subject"</code>, <code>"flashcards"</code> array, and <code>"quiz"</code> array.</li>
-            <li>Array of Flashcards: <code>[{{ '{' }} "tier", "front", "back", "category" {{ '}' }}]</code></li>
-            <li>Array of Quizzes: <code>[{{ '{' }} "tier", "question", "options", "correctIndex", "explanation" {{ '}' }}]</code></li>
-          </ul>
-        </div>
+      <div class="actions-bar">
+        <label class="file-upload-label">
+          <span>📁 Upload .json file</span>
+          <input type="file" accept=".json" (change)="handleFileUpload($event)" class="hidden-file-input" />
+        </label>
+        <button type="button" ahButton="ghost" size="sm" (click)="loadSample()">
+          <span>Load Example Schema</span>
+        </button>
       </div>
 
-      <footer class="modal-footer">
-        <button type="button" class="btn-secondary" (click)="close()">Cancel</button>
-        <button type="submit" class="btn-primary">📥 Import to Active Subject</button>
-      </footer>
+      <div class="form-group">
+        <label for="jsonInput">JSON Payload *</label>
+        <textarea
+          id="jsonInput"
+          rows="10"
+          [formField]="importForm.jsonText"
+          class="form-textarea code-area"
+          placeholder="Paste structured JSON matching StudyLM schema..."
+        ></textarea>
+      </div>
     </form>
   </div>
-</div>
+
+  <div slot="footer" class="modal-footer-actions">
+    <button type="button" ahButton="ghost" size="md" (click)="close()">
+      <span>Cancel</span>
+    </button>
+    <button type="button" ahButton="primary" size="md" (click)="submitImport()">
+      <span>Import Into Active Subject</span>
+    </button>
+  </div>
+</ah-modal>

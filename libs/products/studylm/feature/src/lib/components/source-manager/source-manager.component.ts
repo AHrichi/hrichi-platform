@@ -45,7 +45,7 @@ export class SourceManagerComponent {
       content: '',
       url: '',
     });
-    this.store.toggleAddSourceModal(true);
+    this.store.setShowAddSourceModal(true);
   }
 
   openEditSource(source: StudySource, event?: Event) {
@@ -88,15 +88,15 @@ export class SourceManagerComponent {
 
   cancelAdd() {
     this.store.setEditingSource(null);
-    this.store.toggleAddSourceModal(false);
+    this.store.setShowAddSourceModal(false);
   }
 
   previewSource(source: StudySource) {
-    this.store.selectSourceForPreview(source);
+    this.store.setSelectedSourceForPreview(source);
   }
 
   closePreview() {
-    this.store.selectSourceForPreview(null);
+    this.store.setSelectedSourceForPreview(null);
   }
 
   getSourceIcon(type: SourceType): string {

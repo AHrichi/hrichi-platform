@@ -1,0 +1,46 @@
+<div class="ah-accordion-header">
+  <button
+    type="button"
+    class="ah-accordion-trigger"
+    [id]="headerId"
+    [attr.aria-expanded]="expanded()"
+    [attr.aria-controls]="contentId"
+    [disabled]="disabled()"
+    (click)="toggle()"
+  >
+    <span class="ah-accordion-indicator" aria-hidden="true">
+      <span class="ah-accordion-chevron">▸</span>
+    </span>
+
+    @if (icon()) {
+      <span class="ah-accordion-icon" aria-hidden="true">{{ icon() }}</span>
+    }
+
+    <div class="ah-accordion-titles">
+      <span class="ah-accordion-title">{{ title() }}</span>
+      @if (subtitle()) {
+        <span class="ah-accordion-subtitle">{{ subtitle() }}</span>
+      }
+    </div>
+  </button>
+
+  <div class="ah-accordion-meta">
+    <ng-content select="[accordion-meta]" />
+  </div>
+
+  <div class="ah-accordion-actions">
+    <ng-content select="[accordion-actions]" />
+  </div>
+</div>
+
+<div
+  class="ah-accordion-content"
+  [id]="contentId"
+  role="region"
+  [attr.aria-labelledby]="headerId"
+  [hidden]="!expanded()"
+>
+  <div class="ah-accordion-body">
+    <ng-content />
+  </div>
+</div>

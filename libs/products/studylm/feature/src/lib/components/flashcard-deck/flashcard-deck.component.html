@@ -1,42 +1,31 @@
 <div class="deck-container">
-  <!-- Controls Bar: Tier pills, search, bookmark filter, anki export -->
+  <!-- Controls Bar -->
   <header class="deck-controls-bar">
-    <div class="tier-pills">
-      <button
-        type="button"
-        class="tier-pill"
-        [class.active]="store.activeTier() === 'all'"
-        (click)="setTier('all')"
-      >
-        All Tiers ({{ store.cardTierCounts().all }})
-      </button>
+    <div class="tier-and-section-controls">
+      <ah-segmented-control
+        label="Filter Flashcards by Tier"
+        [options]="tierOptions"
+        [value]="store.activeTier()"
+        (valueChange)="setTier($event)"
+      />
 
-      <button
-        type="button"
-        class="tier-pill tier-pill-beginner"
-        [class.active]="store.activeTier() === 'beginner'"
-        (click)="setTier('beginner')"
-      >
-        {{ tiersInfo.beginner.icon }} Beginner ({{ store.cardTierCounts().beginner }})
-      </button>
-
-      <button
-        type="button"
-        class="tier-pill tier-pill-intermediate"
-        [class.active]="store.activeTier() === 'intermediate'"
-        (click)="setTier('intermediate')"
-      >
-        {{ tiersInfo.intermediate.icon }} Intermediate ({{ store.cardTierCounts().intermediate }})
-      </button>
-
-      <button
-        type="button"
-        class="tier-pill tier-pill-expert"
-        [class.active]="store.activeTier() === 'expert'"
-        (click)="setTier('expert')"
-      >
-        {{ tiersInfo.expert.icon }} Expert ({{ store.cardTierCounts().expert }})
-      </button>
+      <!-- Section Filter Dropdown -->
+      @if (store.allSections().length > 0) {
+        <div class="section-select-wrapper">
+          <label for="sectionFilter" class="visually-hidden">Filter by Section</label>
+          <select
+            id="sectionFilter"
+            class="section-select"
+            [value]="store.cardFilter().sectionId"
+            (change)="onSectionChange($event)"
+          >
+            <option value="all">All Sections ({{ store.activeFlashcards().length }} cards)</option>
+            @for (sec of store.allSections(); track sec.id) {
+              <option [value]="sec.id">{{ sec.code }} - {{ sec.title }}</option>
+            }
+          </select>
+        </div>
+      }
     </div>
 
     <div class="deck-actions-right">
@@ -46,228 +35,169 @@
           [value]="store.cardFilter().searchQuery"
           (input)="onSearch($event)"
           placeholder="Filter cards..."
+          class="search-input"
         />
       </div>
 
       <button
         type="button"
-        class="btn-action-outline"
-        (click)="store.toggleAddFlashcardModal(true)"
-        title="Add a new flashcard manually"
+        ahButton="ghost"
+        size="sm"
+        (click)="openAddCardModal()"
       >
-        + Add Card
+        <span>+ Add Card</span>
       </button>
 
-      <button
-        type="button"
-        class="btn-action-outline"
-        (click)="store.toggleJsonImportModal(true)"
-        title="Import flashcards from JSON"
-      >
-        📥 Import JSON
-      </button>
-
-      <button
-        type="button"
-        class="bookmark-filter-btn"
-        [class.active]="store.cardFilter().onlyBookmarked"
-        (click)="store.toggleCardBookmarkFilter()"
-        title="Show only bookmarked cards"
-      >
-        ★
-      </button>
-
-      <button
-        type="button"
-        class="btn-export-anki"
-        (click)="store.exportAnki()"
-        title="Export entire deck to Anki TSV/CSV format"
-      >
-        📥 Export Anki
-      </button>
+      @if (store.filteredCards().length > 0) {
+        <button
+          type="button"
+          ahButton="ghost"
+          size="sm"
+          (click)="exportAnki()"
+        >
+          <span>Export Anki</span>
+        </button>
+      }
     </div>
   </header>
 
-  <!-- Mastery Progress Ribbon -->
-  <div class="mastery-ribbon">
-    <div class="stat-item">
-      <span class="stat-label">Mastered (3+ reps):</span>
-      <strong class="stat-val mastered-val">{{ store.cardMasteryStats().mastered }}</strong>
-    </div>
-    <div class="stat-item">
-      <span class="stat-label">Learning:</span>
-      <strong class="stat-val learning-val">{{ store.cardMasteryStats().learning }}</strong>
-    </div>
-    <div class="stat-item">
-      <span class="stat-label">Unstudied:</span>
-      <strong class="stat-val unstudied-val">{{ store.cardMasteryStats().unstudied }}</strong>
-    </div>
-    <div class="progress-track">
-      <div
-        class="progress-fill"
-        [style.width.%]="store.filteredCards().length > 0 ? ((store.activeCardIndex() + 1) / store.filteredCards().length) * 100 : 0"
-      ></div>
-    </div>
-    <span class="counter-text">
-      Card {{ store.currentCard() ? store.activeCardIndex() + 1 : 0 }} of {{ store.filteredCards().length }}
-    </span>
-  </div>
+  <!-- Deck Body -->
+  @if (store.currentCard(); as card) {
+    <div class="active-card-workspace">
+      <!-- Card Position Meta -->
+      <div class="card-meta-bar">
+        <div class="meta-left">
+          <span class="card-counter">
+            Card {{ store.activeCardIndex() + 1 }} of {{ store.filteredCards().length }}
+          </span>
+          @if (card.sectionCode) {
+            <ah-badge variant="neutral" size="sm">
+              <span>Section {{ card.sectionCode }}</span>
+            </ah-badge>
+          }
+          <ah-badge
+            [variant]="card.tier === 'beginner' ? 'info' : (card.tier === 'intermediate' ? 'warning' : 'danger')"
+            size="sm"
+          >
+            <span>{{ card.tier | uppercase }}</span>
+          </ah-badge>
+        </div>
 
-  <!-- Flashcard Arena -->
-  @if (!store.currentCard()) {
-    <div class="empty-cards-notice">
-      <div class="empty-icon">🃏</div>
-      <h3>No Flashcards Found</h3>
-      <p>No cards match the active filter or tier. Create cards manually, import JSON, or run AI synthesis on your sources.</p>
-      <div class="empty-actions">
-        <button type="button" class="btn-create-manual" (click)="store.toggleAddFlashcardModal(true)">
-          + Add Card Manually
-        </button>
-        <button type="button" class="btn-import-empty" (click)="store.toggleJsonImportModal(true)">
-          📥 Import JSON Deck
-        </button>
-        <button type="button" class="btn-reset-filters" (click)="setTier('all')">
-          Reset Tier Filters
-        </button>
+        <div class="meta-right">
+          <button
+            type="button"
+            class="bookmark-btn"
+            [class.bookmarked]="card.isBookmarked"
+            (click)="store.toggleCardBookmark(card.id)"
+            title="Bookmark this card"
+          >
+            {{ card.isBookmarked ? '★ Bookmarked' : '☆ Bookmark' }}
+          </button>
+        </div>
       </div>
+
+      <!-- 3D Flip Card -->
+      <div class="flip-card-wrapper">
+        <ah-flip-card
+          [flipped]="store.isCardFlipped()"
+          [accent]="card.tier"
+          (flippedChange)="store.flipCard()"
+        >
+          <!-- Front Face -->
+          <div slot="front" class="card-face-content front-face">
+            <div class="face-tag">
+              <span class="category-name">{{ card.category }}</span>
+              <span class="face-label">PROMPT</span>
+            </div>
+
+            <div class="prompt-text">
+              <p>{{ card.front }}</p>
+            </div>
+
+            <div class="flip-hint">
+              <span>Press Space or Click to reveal answer</span>
+            </div>
+          </div>
+
+          <!-- Back Face -->
+          <div slot="back" class="card-face-content back-face">
+            <div class="face-tag">
+              <span class="category-name">{{ card.category }}</span>
+              <span class="face-label">EXPLANATION</span>
+            </div>
+
+            <div class="explanation-text">
+              <p>{{ card.back }}</p>
+            </div>
+
+            @if (card.codeSnippet) {
+              <div class="card-code-block" (click)="$event.stopPropagation()">
+                <ah-code-block
+                  [code]="card.codeSnippet"
+                  [language]="card.codeLanguage || 'typescript'"
+                  [showLineNumbers]="false"
+                />
+              </div>
+            }
+
+            @if (card.sourceCitation) {
+              <div class="citation-tag">
+                <span class="citation-label">Grounded Citation:</span>
+                <span class="citation-val">{{ card.sourceCitation }}</span>
+              </div>
+            }
+          </div>
+        </ah-flip-card>
+      </div>
+
+      <!-- Rating & Spaced Repetition Controls -->
+      <footer class="deck-footer-bar">
+        <div class="nav-btn-group">
+          <button
+            type="button"
+            ahButton="ghost"
+            size="sm"
+            (click)="store.prevCard(store.filteredCards().length)"
+          >
+            <span>← Previous</span>
+          </button>
+          <button
+            type="button"
+            ahButton="ghost"
+            size="sm"
+            (click)="store.nextCard(store.filteredCards().length)"
+          >
+            <span>Next →</span>
+          </button>
+        </div>
+
+        <div class="spaced-repetition-ratings">
+          <span class="rate-label">Self-Assessment:</span>
+          <button type="button" class="rate-btn rate-again" (click)="rate('again')">
+            <span class="shortcut">1</span> Again
+          </button>
+          <button type="button" class="rate-btn rate-hard" (click)="rate('hard')">
+            <span class="shortcut">2</span> Hard
+          </button>
+          <button type="button" class="rate-btn rate-good" (click)="rate('good')">
+            <span class="shortcut">3</span> Good
+          </button>
+          <button type="button" class="rate-btn rate-easy" (click)="rate('easy')">
+            <span class="shortcut">4</span> Easy
+          </button>
+        </div>
+      </footer>
     </div>
   } @else {
-    <div class="card-stage">
-      <div
-        class="flashcard-3d"
-        [class.flipped]="store.isCardFlipped()"
-        (click)="store.flipCard()"
-        tabindex="0"
-        role="button"
-        aria-label="Flashcard. Click or press Space to flip."
-      >
-        <!-- FRONT FACE -->
-        <div class="card-face card-front tier-{{ store.currentCard()?.tier }}">
-          <div class="face-top">
-            <span class="tier-badge">
-              {{ store.currentCard()?.tier === 'beginner' ? '🌱 Beginner' : (store.currentCard()?.tier === 'intermediate' ? '⚡ Intermediate' : '🔥 Expert') }}
-            </span>
-            <span class="category-tag">{{ store.currentCard()?.category }}</span>
-            <button
-              type="button"
-              class="bookmark-btn"
-              [class.bookmarked]="store.currentCard()?.isBookmarked"
-              (click)="$event.stopPropagation(); store.toggleCardBookmark(store.currentCard()!.id)"
-              title="Bookmark card"
-            >
-              ★
-            </button>
-          </div>
-
-          <div class="face-body">
-            <span class="prompt-label">PROMPT / CONCEPT</span>
-            <h3 class="card-question">{{ store.currentCard()?.front }}</h3>
-          </div>
-
-          <div class="face-bottom">
-            <span class="flip-hint">👆 Click or press <strong>Space</strong> to reveal answer</span>
-            <span class="citation-pill">📌 {{ store.currentCard()?.sourceCitation }}</span>
-          </div>
-        </div>
-
-        <!-- BACK FACE -->
-        <div class="card-face card-back tier-{{ store.currentCard()?.tier }}">
-          <div class="face-top">
-            <span class="tier-badge">
-              {{ store.currentCard()?.tier === 'beginner' ? '🌱 Beginner' : (store.currentCard()?.tier === 'intermediate' ? '⚡ Intermediate' : '🔥 Expert') }}
-            </span>
-            <span class="category-tag">{{ store.currentCard()?.category }}</span>
-            <button
-              type="button"
-              class="bookmark-btn"
-              [class.bookmarked]="store.currentCard()?.isBookmarked"
-              (click)="$event.stopPropagation(); store.toggleCardBookmark(store.currentCard()!.id)"
-              title="Bookmark card"
-            >
-              ★
-            </button>
-          </div>
-
-          <div class="face-body">
-            <span class="prompt-label">EXPLANATION / KEY TAKEAWAY</span>
-            <div class="card-answer">{{ store.currentCard()?.back }}</div>
-          </div>
-
-          <div class="face-bottom">
-            <span class="reps-pill">Reps: {{ store.currentCard()?.masteryCount }}</span>
-            <span class="citation-pill">📌 {{ store.currentCard()?.sourceCitation }}</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Navigation & Leitner Rating Buttons -->
-      <div class="interaction-bar">
-        <button
-          type="button"
-          class="nav-btn prev-btn"
-          [disabled]="store.activeCardIndex() === 0"
-          (click)="store.prevCard()"
-          title="Previous Card (Left Arrow)"
-        >
-          ← Prev
-        </button>
-
-        <div class="leitner-rating-buttons">
-          <button
-            type="button"
-            class="rate-btn rate-again"
-            (click)="rate('again')"
-            title="Reset repetition interval (Key: 1)"
-          >
-            <span class="btn-key">1</span> Again
-            <small>&lt; 1m</small>
-          </button>
-
-          <button
-            type="button"
-            class="rate-btn rate-hard"
-            (click)="rate('hard')"
-            title="Slightly hesitant (Key: 2)"
-          >
-            <span class="btn-key">2</span> Hard
-            <small>1d</small>
-          </button>
-
-          <button
-            type="button"
-            class="rate-btn rate-good"
-            (click)="rate('good')"
-            title="Recalled well (Key: 3)"
-          >
-            <span class="btn-key">3</span> Good
-            <small>3d</small>
-          </button>
-
-          <button
-            type="button"
-            class="rate-btn rate-easy"
-            (click)="rate('easy')"
-            title="Immediate recall (Key: 4)"
-          >
-            <span class="btn-key">4</span> Easy
-            <small>7d</small>
-          </button>
-        </div>
-
-        <button
-          type="button"
-          class="nav-btn next-btn"
-          [disabled]="store.activeCardIndex() >= store.filteredCards().length - 1"
-          (click)="store.nextCard(store.filteredCards().length)"
-          title="Next Card (Right Arrow)"
-        >
-          Next →
-        </button>
-      </div>
-
-      <div class="shortcuts-legend">
-        <span>Shortcuts: <strong>Space</strong> Flip &bull; <strong>← / →</strong> Navigate &bull; <strong>1-4</strong> Rate</span>
-      </div>
+    <!-- Empty State -->
+    <div class="empty-deck-wrapper">
+      <ah-empty-state
+        title="No Flashcards Available"
+        description="Generate flashcards for any section in the Curriculum Roadmap tab, or add cards manually."
+        icon="🃏"
+        actionLabel="Go to Roadmap"
+        (actionClick)="store.setActiveTab('roadmap')"
+      />
     </div>
   }
 </div>

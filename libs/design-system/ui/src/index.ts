@@ -17,3 +17,16 @@ export * from './lib/tag/tag';
 export { Tag as AhTag } from './lib/tag/tag';
 export * from './lib/tooltip/tooltip';
 export { Tooltip as AhTooltip } from './lib/tooltip/tooltip';
+
+export * from './lib/accordion-item/accordion-item';
+export { AccordionItem as AhAccordionItem } from './lib/accordion-item/accordion-item';
+export * from './lib/tabs/tabs';
+export { Tabs as AhTabs, type TabItem as AhTabItem } from './lib/tabs/tabs';
+export * from './lib/flip-card/flip-card';
+export { FlipCard as AhFlipCard } from './lib/flip-card/flip-card';
+export * from './lib/code-block/code-block';
+export { CodeBlock as AhCodeBlock } from './lib/code-block/code-block';
+export * from './lib/empty-state/empty-state';
+export { EmptyState as AhEmptyState } from './lib/empty-state/empty-state';
+export * from './lib/alert/alert';
+export { Alert as AhAlert } from './lib/alert/alert';

@@ -9,6 +9,10 @@ export interface StudyFlashcard {
   back: string;
   sourceCitation: string;
   category: string;
+  sectionId?: string;
+  sectionCode?: string;
+  codeSnippet?: string;
+  codeLanguage?: string;
   masteryCount: number;
   lastRating?: MasteryRating;
   lastReviewedAt?: string;
@@ -21,10 +25,15 @@ export interface CreateFlashcardInput {
   back: string;
   category: string;
   sourceCitation: string;
+  sectionId?: string;
+  sectionCode?: string;
+  codeSnippet?: string;
+  codeLanguage?: string;
 }
 
 export interface FlashcardFilter {
   tier: CompetencyTier | 'all';
+  sectionId?: string | 'all';
   searchQuery: string;
   onlyBookmarked: boolean;
 }

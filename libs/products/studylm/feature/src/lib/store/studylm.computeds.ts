@@ -3,7 +3,10 @@ import { signalStoreFeature, type, withComputed } from '@ngrx/signals';
 import type { StudyLmState } from './studylm.state';
 import type {
   CompetencyTier,
+  CurriculumRoadmap,
   QuizSessionSummary,
+  RoadmapBranch,
+  RoadmapSection,
   StudyFlashcard,
   StudyOverview,
   StudyQuizQuestion,
@@ -19,6 +22,7 @@ export function withStudyLmComputeds() {
       const activeSubjectId = state.activeSubjectId;
       const activeTier = state.activeTier;
       const cardFilter = state.cardFilter;
+      const quizFilter = state.quizFilter;
       const activeCardIndex = state.activeCardIndex;
       const activeQuizIndex = state.activeQuizIndex;
 
@@ -26,6 +30,44 @@ export function withStudyLmComputeds() {
         const id = activeSubjectId();
         const list = subjects();
         return list.find((s) => s.id === id) ?? list[0] ?? null;
+      });
+
+      const activeRoadmap = computed<CurriculumRoadmap | null>(() => {
+        return activeSubject()?.roadmap ?? null;
+      });
+
+      const activeBranches = computed<RoadmapBranch[]>(() => {
+        return activeRoadmap()?.branches ?? [];
+      });
+
+      const allSections = computed<RoadmapSection[]>(() => {
+        const branches = activeBranches();
+        const sections: RoadmapSection[] = [];
+        for (const b of branches) {
+          if (b.sections) {
+            sections.push(...b.sections);
+          }
+        }
+        return sections;
+      });
+
+      const totalSectionsCount = computed(() => allSections().length);
+
+      const approvedSectionsCount = computed(
+        () => allSections().filter((s) => s.approved).length,
+      );
+
+      const synthesizedSectionsCount = computed(
+        () =>
+          allSections().filter(
+            (s) => s.flashcardsStatus === 'ready' || s.quizStatus === 'ready',
+          ).length,
+      );
+
+      const curriculumProgressPct = computed(() => {
+        const total = totalSectionsCount();
+        if (total === 0) return 0;
+        return Math.round((synthesizedSectionsCount() / total) * 100);
       });
 
       const activeSources = computed<StudySource[]>(() => {
@@ -45,7 +87,7 @@ export function withStudyLmComputeds() {
       });
 
       const totalWords = computed(() =>
-        activeSources().reduce((acc, s) => acc + s.wordCount, 0),
+        activeSources().reduce((acc, s) => acc + (s.wordCount ?? 0), 0),
       );
 
       const sourcesCount = computed(() => activeSources().length);
@@ -57,6 +99,9 @@ export function withStudyLmComputeds() {
 
         return activeFlashcards().filter((card) => {
           if (effectiveTier !== 'all' && card.tier !== effectiveTier) {
+            return false;
+          }
+          if (filter.sectionId !== 'all' && card.sectionId !== filter.sectionId) {
             return false;
           }
           if (filter.onlyBookmarked && !card.isBookmarked) {
@@ -109,9 +154,19 @@ export function withStudyLmComputeds() {
 
       const filteredQuiz = computed(() => {
         const globalTier = activeTier();
+        const filter = quizFilter();
+        const effectiveTier = globalTier !== 'all' ? globalTier : filter.tier;
         const list = activeQuizQuestions();
-        if (globalTier === 'all') return list;
-        return list.filter((q) => q.tier === globalTier);
+
+        return list.filter((q) => {
+          if (effectiveTier !== 'all' && q.tier !== effectiveTier) {
+            return false;
+          }
+          if (filter.sectionId !== 'all' && q.sectionId !== filter.sectionId) {
+            return false;
+          }
+          return true;
+        });
       });
 
       const currentQuizQuestion = computed<StudyQuizQuestion | null>(() => {
@@ -155,6 +210,15 @@ export function withStudyLmComputeds() {
 
       return {
         activeSubject,
+        activeRoadmap,
+        roadmap: activeRoadmap,
+        activeBranches,
+        branches: activeBranches,
+        allSections,
+        totalSectionsCount,
+        approvedSectionsCount,
+        synthesizedSectionsCount,
+        curriculumProgressPct,
         activeSources,
         sources: activeSources,
         activeOverview,

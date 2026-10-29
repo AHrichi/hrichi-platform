@@ -5,7 +5,7 @@ import { Badge } from './badge';
  * Status badges communicate state, lifecycle phase, or operational alerts
  * with semantic color tokens and optional animated status dots.
  */
-const meta: Meta<Badge> = {
+const meta: Meta<Badge & { label?: string }> = {
   title: 'Display/Badge',
   component: Badge,
   render: (args) => ({
