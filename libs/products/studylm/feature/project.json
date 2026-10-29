@@ -1,0 +1,9 @@
+{
+  "name": "product-studylm-feature",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/products/studylm/feature/src",
+  "prefix": "ah",
+  "projectType": "library",
+  "tags": ["scope:product-studylm", "type:feature", "runtime:browser"],
+  "targets": {}
+}

@@ -1,0 +1,133 @@
+<div class="modal-backdrop" (click)="close()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <header class="modal-header">
+      <div class="header-titles">
+        <span class="eyebrow">Integration Gateway</span>
+        <h2>n8n AI Server Configuration</h2>
+      </div>
+      <button type="button" class="close-btn" (click)="close()" aria-label="Close settings">✕</button>
+    </header>
+
+    <div class="modal-body">
+      <p class="description">
+        StudyLM connects to your self-hosted n8n instance to trigger grounded AI synthesis with Google Gemini and Groq model pools.
+      </p>
+
+      <div class="connection-status-card" [class.connected]="store.n8nConfig().isConnected">
+        <div class="status-indicator">
+          <span class="status-dot"></span>
+          <div class="status-text">
+            <strong>{{ store.n8nConfig().isConnected ? 'Connected & Ready' : 'Offline / Unreachable' }}</strong>
+            <span class="endpoint-preview">{{ store.n8nConfig().activeEndpoint }}</span>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          class="ping-btn"
+          [disabled]="store.n8nConfig().isChecking"
+          (click)="store.testN8nConnection()"
+        >
+          {{ store.n8nConfig().isChecking ? 'Pinging...' : 'Test Connection' }}
+          @if (store.n8nConfig().lastPingMs) {
+            <span class="ping-latency">({{ store.n8nConfig().lastPingMs }}ms)</span>
+          }
+        </button>
+      </div>
+
+      @if (store.n8nConfig().lastError) {
+        <div class="error-notice">
+          ⚠️ {{ store.n8nConfig().lastError }}. Local grounded fallback will be used automatically.
+        </div>
+      }
+
+      <form [formRoot]="n8nForm" (ngSubmit)="saveSettings()" class="settings-form" novalidate>
+        <fieldset class="mode-selection">
+          <legend>Endpoint Mode</legend>
+          <div class="mode-grid">
+            <button
+              type="button"
+              class="mode-pill"
+              [class.active]="model().mode === 'tunnel'"
+              (click)="setMode('tunnel')"
+            >
+              ☁️ Cloud Ngrok Tunnel
+              <small>Public URL for remote browser access</small>
+            </button>
+
+            <button
+              type="button"
+              class="mode-pill"
+              [class.active]="model().mode === 'local'"
+              (click)="setMode('local')"
+            >
+              💻 Local Docker (127.0.0.1)
+              <small>Direct localhost port 5678</small>
+            </button>
+
+            <button
+              type="button"
+              class="mode-pill"
+              [class.active]="model().mode === 'custom'"
+              (click)="setMode('custom')"
+            >
+              ⚙️ Custom Webhook URL
+              <small>Custom tunnel, VPS, or reverse proxy</small>
+            </button>
+
+            <button
+              type="button"
+              class="mode-pill"
+              [class.active]="model().mode === 'fallback'"
+              (click)="setMode('fallback')"
+            >
+              🛡️ Client Fallback
+              <small>100% offline client synthesis</small>
+            </button>
+          </div>
+        </fieldset>
+
+        @if (model().mode === 'tunnel') {
+          <div class="form-group">
+            <label for="tunnelUrl">Active Tunnel Webhook URL</label>
+            <input
+              id="tunnelUrl"
+              type="url"
+              [formField]="n8nForm.tunnelUrl"
+              placeholder="https://...ngrok-free.dev/webhook/study-synthesizer"
+            />
+          </div>
+        }
+
+        @if (model().mode === 'local') {
+          <div class="form-group">
+            <label for="localUrl">Localhost n8n Webhook</label>
+            <input
+              id="localUrl"
+              type="url"
+              [formField]="n8nForm.localUrl"
+              placeholder="http://127.0.0.1:5678/webhook/study-synthesizer"
+            />
+          </div>
+        }
+
+        @if (model().mode === 'custom') {
+          <div class="form-group">
+            <label for="customUrl">Custom Endpoint URL</label>
+            <input
+              id="customUrl"
+              type="url"
+              [formField]="n8nForm.customUrl"
+              placeholder="https://n8n.yourdomain.com/webhook/study-synthesizer"
+            />
+          </div>
+        }
+
+        <footer class="modal-footer">
+          <button type="button" class="btn-secondary" (click)="close()">Cancel</button>
+          <button type="submit" class="btn-primary">Save & Apply</button>
+        </footer>
+      </form>
+    </div>
+  </div>
+</div>

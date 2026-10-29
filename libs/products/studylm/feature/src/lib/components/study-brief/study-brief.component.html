@@ -1,0 +1,118 @@
+<div class="brief-container">
+  @if (!store.overview()) {
+    <div class="empty-brief">
+      <div class="empty-icon">📖</div>
+      <h3>No Study Brief Generated</h3>
+      <p>Add sources in the Sources tab and run AI synthesis to generate an executive briefing, key takeaways, and 3-tier study drills.</p>
+      <button type="button" class="btn-synthesize" (click)="store.synthesize()">
+        Synthesize Sources Now
+      </button>
+    </div>
+  } @else {
+    <header class="brief-header">
+      <div class="badge-row">
+        <span class="notebooklm-badge">📘 NotebookLM Grounded Brief</span>
+        <span class="provider-pill">Synthesized by: {{ store.synthesisProvider() }}</span>
+      </div>
+      <h1 class="brief-title">{{ store.overview()?.title }}</h1>
+    </header>
+
+    <!-- 3 Tier Competency Cards -->
+    <section class="tiers-summary-section">
+      <div class="tier-card tier-beginner">
+        <div class="tier-header">
+          <span class="tier-icon">{{ tiersInfo.beginner.icon }}</span>
+          <div class="tier-title-wrap">
+            <span class="tier-tag">Tier 1</span>
+            <h4>Beginner Foundations</h4>
+          </div>
+        </div>
+        <p class="tier-desc">{{ tiersInfo.beginner.description }}</p>
+        <div class="tier-stats">
+          <span><strong>{{ store.cardTierCounts().beginner }}</strong> Flashcards</span>
+          <span>&bull;</span>
+          <span><strong>{{ store.quizSummary().tierBreakdown.beginner.total }}</strong> Quiz Questions</span>
+        </div>
+        <div class="tier-actions">
+          <button type="button" class="tier-btn" (click)="jumpToTier('beginner', 'flashcards')">
+            Study Cards →
+          </button>
+          <button type="button" class="tier-btn-outline" (click)="jumpToTier('beginner', 'quiz')">
+            Test Quiz →
+          </button>
+        </div>
+      </div>
+
+      <div class="tier-card tier-intermediate">
+        <div class="tier-header">
+          <span class="tier-icon">{{ tiersInfo.intermediate.icon }}</span>
+          <div class="tier-title-wrap">
+            <span class="tier-tag">Tier 2</span>
+            <h4>Intermediate Architecture</h4>
+          </div>
+        </div>
+        <p class="tier-desc">{{ tiersInfo.intermediate.description }}</p>
+        <div class="tier-stats">
+          <span><strong>{{ store.cardTierCounts().intermediate }}</strong> Flashcards</span>
+          <span>&bull;</span>
+          <span><strong>{{ store.quizSummary().tierBreakdown.intermediate.total }}</strong> Quiz Questions</span>
+        </div>
+        <div class="tier-actions">
+          <button type="button" class="tier-btn" (click)="jumpToTier('intermediate', 'flashcards')">
+            Study Cards →
+          </button>
+          <button type="button" class="tier-btn-outline" (click)="jumpToTier('intermediate', 'quiz')">
+            Test Quiz →
+          </button>
+        </div>
+      </div>
+
+      <div class="tier-card tier-expert">
+        <div class="tier-header">
+          <span class="tier-icon">{{ tiersInfo.expert.icon }}</span>
+          <div class="tier-title-wrap">
+            <span class="tier-tag">Tier 3</span>
+            <h4>Expert Internals</h4>
+          </div>
+        </div>
+        <p class="tier-desc">{{ tiersInfo.expert.description }}</p>
+        <div class="tier-stats">
+          <span><strong>{{ store.cardTierCounts().expert }}</strong> Flashcards</span>
+          <span>&bull;</span>
+          <span><strong>{{ store.quizSummary().tierBreakdown.expert.total }}</strong> Quiz Questions</span>
+        </div>
+        <div class="tier-actions">
+          <button type="button" class="tier-btn" (click)="jumpToTier('expert', 'flashcards')">
+            Study Cards →
+          </button>
+          <button type="button" class="tier-btn-outline" (click)="jumpToTier('expert', 'quiz')">
+            Test Quiz →
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Executive Summary Document -->
+    <article class="doc-card executive-summary-card">
+      <div class="doc-card-header">
+        <h3>Executive Briefing</h3>
+      </div>
+      <div class="summary-content">
+        <p>{{ store.overview()?.executiveSummary }}</p>
+      </div>
+    </article>
+
+    <!-- Key Takeaways Grid -->
+    <section class="takeaways-section">
+      <h3 class="section-title">Core Grounded Takeaways</h3>
+      <div class="takeaways-grid">
+        @for (takeaway of store.overview()?.keyTakeaways; track $index) {
+          <div class="takeaway-card">
+            <span class="takeaway-num">0{{ $index + 1 }}</span>
+            <p>{{ takeaway }}</p>
+          </div>
+        }
+      </div>
+    </section>
+  }
+</div>

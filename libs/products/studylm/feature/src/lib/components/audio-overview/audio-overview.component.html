@@ -1,0 +1,72 @@
+<div class="audio-overview-container">
+  <!-- NotebookLM Style Podcast Header -->
+  <header class="podcast-banner">
+    <div class="podcast-meta">
+      <div class="hosts-avatars">
+        <div class="avatar host-a" title="Dr. Sarah (Host)">👩‍🏫</div>
+        <div class="avatar host-b" title="Alex (Co-Host)">👨‍💻</div>
+      </div>
+      <div class="podcast-titles">
+        <span class="eyebrow">NotebookLM Deep Dive Audio Overview</span>
+        <h2>{{ store.overview()?.title }} &bull; The Deep Dive</h2>
+        <span class="hosts-names">Hosted by Dr. Sarah & Alex</span>
+      </div>
+    </div>
+
+    <!-- Playback Controls & Waveform -->
+    <div class="player-controls-wrap">
+      <button
+        type="button"
+        class="play-toggle-btn"
+        [class.playing]="isPlaying()"
+        (click)="togglePlayback()"
+        aria-label="Play or pause audio overview"
+      >
+        {{ isPlaying() ? '⏸ Pause' : '▶ Play Audio' }}
+      </button>
+
+      <div class="waveform-visualizer" [class.active]="isPlaying()">
+        <span class="bar bar-1"></span>
+        <span class="bar bar-2"></span>
+        <span class="bar bar-3"></span>
+        <span class="bar bar-4"></span>
+        <span class="bar bar-5"></span>
+        <span class="bar bar-6"></span>
+        <span class="bar bar-7"></span>
+        <span class="bar bar-8"></span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Interactive Dialogue Script -->
+  <section class="transcript-section">
+    <h3 class="section-title">Episode Transcript & Key Exchanges</h3>
+    <p class="transcript-note">
+      Click on any exchange to start listening from that point. Powered by Web Speech Synthesis.
+    </p>
+
+    <div class="dialogue-turns-list">
+      @for (turn of store.overview()?.audioOverviewScript; track $index) {
+        <article
+          class="dialogue-turn"
+          [class.active]="currentTurnIndex() === $index && isPlaying()"
+          (click)="jumpToTurn($index)"
+        >
+          <div class="turn-speaker-col">
+            <span class="speaker-avatar">
+              {{ turn.speaker.includes('Sarah') || turn.speaker.includes('Host') ? '👩‍🏫' : '👨‍💻' }}
+            </span>
+            <span class="speaker-name">{{ turn.speaker }}</span>
+            @if (turn.timestamp) {
+              <span class="speaker-time">{{ turn.timestamp }}</span>
+            }
+          </div>
+
+          <div class="turn-content-col">
+            <p>{{ turn.text }}</p>
+          </div>
+        </article>
+      }
+    </div>
+  </section>
+</div>

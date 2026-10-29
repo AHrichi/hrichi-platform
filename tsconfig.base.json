@@ -27,6 +27,12 @@
       "@ah/products/dispatch/feature": [
         "./libs/products/dispatch/feature/src/index.ts"
       ],
+      "@ah/products/studylm/domain": [
+        "./libs/products/studylm/domain/src/index.ts"
+      ],
+      "@ah/products/studylm/feature": [
+        "./libs/products/studylm/feature/src/index.ts"
+      ],
       "@ah/platform/app-mode": ["./libs/platform/app-mode/src/index.ts"],
       "@ah/platform/federation": ["./libs/platform/federation/src/index.ts"],
       "@ah/platform/inspector": ["./libs/platform/inspector/src/index.ts"],

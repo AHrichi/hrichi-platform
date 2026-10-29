@@ -1,0 +1,140 @@
+<div class="studylm-layout">
+  <!-- Top Navigation & Control Bar -->
+  <header class="studylm-navbar">
+    <div class="nav-left">
+      <div class="brand">
+        <span class="brand-icon">📚</span>
+        <div class="brand-titles">
+          <h1>StudyLM</h1>
+          <span class="brand-tag">Grounded Curriculum & Drill Engine</span>
+        </div>
+      </div>
+
+      <!-- Presets Switcher -->
+      <div class="preset-selector-wrap">
+        <label for="deckPresetSelect">Preset Subject:</label>
+        <select id="deckPresetSelect" (change)="selectPresetDeck($event)">
+          @for (deck of preseededDecks; track deck.id) {
+            <option [value]="deck.id" [selected]="deck.subject === store.activeSubject()">
+              {{ deck.subject }}
+            </option>
+          }
+        </select>
+      </div>
+    </div>
+
+    <div class="nav-right">
+      <!-- n8n Gateway Connection Pill -->
+      <button
+        type="button"
+        class="n8n-indicator-btn"
+        [class.connected]="store.n8nConfig().isConnected"
+        (click)="store.toggleSettingsModal(true)"
+        title="Configure n8n AI webhook endpoint"
+      >
+        <span class="status-dot"></span>
+        <span class="btn-label">n8n Engine: {{ store.n8nConfig().isConnected ? 'Online' : 'Offline' }}</span>
+        <span class="gear-icon">⚙️</span>
+      </button>
+
+      <!-- Run AI Synthesis Button -->
+      <button
+        type="button"
+        class="btn-synthesize-top"
+        [disabled]="store.isSynthesizing() || store.sources().length === 0"
+        (click)="store.synthesize()"
+        title="Trigger AI synthesis across all grounded sources"
+      >
+        {{ store.isSynthesizing() ? '⚡ Synthesizing...' : '✨ Run AI Synthesis' }}
+      </button>
+
+      <!-- Markdown Guide Export -->
+      <button
+        type="button"
+        class="btn-export-guide"
+        (click)="store.exportMarkdown()"
+        title="Download full Markdown study guide"
+      >
+        📥 Export Guide
+      </button>
+    </div>
+  </header>
+
+  <!-- Navigation Tabs Bar -->
+  <nav class="studylm-tabs-bar" aria-label="StudyLM Sections">
+    <button
+      type="button"
+      class="tab-btn"
+      [class.active]="store.activeTab() === 'brief'"
+      (click)="store.setActiveTab('brief')"
+    >
+      📖 Study Brief
+    </button>
+
+    <button
+      type="button"
+      class="tab-btn"
+      [class.active]="store.activeTab() === 'sources'"
+      (click)="store.setActiveTab('sources')"
+    >
+      📂 Grounded Sources
+      <span class="tab-badge">{{ store.sourcesCount() }}</span>
+    </button>
+
+    <button
+      type="button"
+      class="tab-btn"
+      [class.active]="store.activeTab() === 'flashcards'"
+      (click)="store.setActiveTab('flashcards')"
+    >
+      🃏 3D Flashcards
+      <span class="tab-badge">{{ store.flashcards().length }}</span>
+    </button>
+
+    <button
+      type="button"
+      class="tab-btn"
+      [class.active]="store.activeTab() === 'quiz'"
+      (click)="store.setActiveTab('quiz')"
+    >
+      🎯 Quiz Arena
+      <span class="tab-badge">{{ store.quizQuestions().length }}</span>
+    </button>
+
+    <button
+      type="button"
+      class="tab-btn"
+      [class.active]="store.activeTab() === 'audio-overview'"
+      (click)="store.setActiveTab('audio-overview')"
+    >
+      🎙️ Audio Overview
+      <span class="tab-tag">NotebookLM</span>
+    </button>
+  </nav>
+
+  <!-- Main Active Content View -->
+  <main class="studylm-main-content">
+    @switch (store.activeTab()) {
+      @case ('brief') {
+        <ah-study-brief />
+      }
+      @case ('sources') {
+        <ah-source-manager />
+      }
+      @case ('flashcards') {
+        <ah-flashcard-deck />
+      }
+      @case ('quiz') {
+        <ah-quiz-arena />
+      }
+      @case ('audio-overview') {
+        <ah-audio-overview />
+      }
+    }
+  </main>
+
+  <!-- n8n Gateway Settings Modal -->
+  @if (store.showSettingsModal()) {
+    <ah-n8n-settings-modal />
+  }
+</div>

@@ -93,6 +93,39 @@ export class AppsPage {
       credentialsNote:
         'Pre-loaded with sample financial portfolios across multiple currencies (GBP, EUR, TND). Fully interactive scenario switcher in the sidebar.',
     },
+    {
+      id: 'studylm',
+      title: 'StudyLM · Grounded AI Multi-Tier Learning & Drill Arena',
+      category: 'production',
+      badge: { label: '🤖 AI Grounded Engine', variant: 'accent', pulse: true },
+      eyebrow: 'NotebookLM-Style Synthesis · n8n Autonomous Workflow Integration',
+      summary:
+        'A comprehensive NotebookLM-style study and exam mastery application powered by self-hosted n8n workflows and Google Gemini. Ingests research slides, documentation links, and source texts, synthesizing executive study briefs, 3D flip flashcard decks, interactive quiz arenas, and multi-speaker audio overviews organized across 3 strictly categorized competency tiers: Beginner 🌱, Intermediate ⚡, and Expert 🔥.',
+      route: '/apps/studylm',
+      icon: '📚',
+      stack: [
+        'Zoneless Angular 22',
+        'Native Federation',
+        'n8n AI Workflow Engine',
+        'Google Gemini 2.0 Flash',
+        'NgRx SignalStore',
+        'Angular Signal Forms',
+        'Web Speech API',
+      ],
+      features: [
+        'NotebookLM Multi-Source Ingestion: Process slide decks, markdown papers, web documentation URLs, and personal notes',
+        'Strict 3-Tier Categorization: Beginner (mental models), Intermediate (production idioms), and Expert (internals & edge cases)',
+        'Interactive 3D Flip Flashcards with Leitner spaced-repetition ratings (Again, Hard, Good, Easy) and keyboard shortcuts',
+        'Interactive Quiz Arena with instant scenario feedback, distractor refutations, and source citations',
+        'NotebookLM Audio Overview simulation: Two AI hosts (Dr. Sarah & Alex) deep-diving the material with Web Speech Synthesis',
+        'Dual Gateway Architecture: Connects directly to self-hosted n8n instance via local/cloud webhooks with 100% offline client fallback',
+        'Multi-Format Exports: 1-click export to Anki TSV/CSV deck and Markdown executive study guide',
+      ],
+      architectureNotes:
+        'Built with 100% zoneless change detection and Angular Signal Forms. Integrates with self-hosted n8n via POST /webhook/study-synthesizer, using Google Gemini API credentials and resilient client-side grounded extraction failovers.',
+      credentialsNote:
+        'Connected to live n8n server with pre-seeded high-yield decks (Angular 19 Zoneless, Distributed Consensus & Raft). Click ⚙️ to configure custom webhook endpoints or test live ping latency.',
+    },
   ];
 
   protected readonly engineeringLabs: AppItem[] = [

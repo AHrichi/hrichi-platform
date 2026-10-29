@@ -1,0 +1,211 @@
+<div class="source-manager-container">
+  <div class="source-header-row">
+    <div class="stats-summary">
+      <span class="eyebrow">Grounded Knowledge Base</span>
+      <h3>{{ store.sourcesCount() }} Sources Grounded &bull; {{ store.totalWords() | number }} Total Words</h3>
+      <p class="subtitle">
+        Add research papers, slide decks, documentation links, or personal notes. StudyLM grounds all flashcards, quizzes, and briefing notes directly in these materials.
+      </p>
+    </div>
+
+    <div class="header-actions">
+      <button
+        type="button"
+        class="btn-add-source"
+        (click)="store.toggleAddSourceModal(true)"
+      >
+        <span>+</span> Add Source Document
+      </button>
+
+      <button
+        type="button"
+        class="btn-synthesize-now"
+        [disabled]="store.sources().length === 0 || store.isSynthesizing()"
+        (click)="store.synthesize()"
+      >
+        {{ store.isSynthesizing() ? '⚡ Synthesizing with AI...' : '✨ Run AI Synthesis' }}
+      </button>
+    </div>
+  </div>
+
+  @if (store.sources().length === 0) {
+    <div class="empty-sources-card">
+      <div class="empty-icon">📂</div>
+      <h4>No sources added yet</h4>
+      <p>Add documents, paste slide notes, or link reference documentation to begin generating grounded study materials.</p>
+      <button type="button" class="btn-add-first" (click)="store.toggleAddSourceModal(true)">
+        Add First Source
+      </button>
+    </div>
+  } @else {
+    <div class="sources-grid">
+      @for (source of store.sources(); track source.id) {
+        <article class="source-card" (click)="previewSource(source)">
+          <div class="card-top">
+            <span class="type-badge type-{{ source.type }}">
+              {{ getSourceIcon(source.type) }} {{ source.type | uppercase }}
+            </span>
+            <span class="words-pill">{{ source.wordCount }} words</span>
+          </div>
+
+          <h4 class="source-title">{{ source.title }}</h4>
+
+          @if (source.url) {
+            <a [href]="source.url" target="_blank" rel="noopener noreferrer" class="source-link" (click)="$event.stopPropagation()">
+              🔗 {{ source.url }}
+            </a>
+          }
+
+          <p class="source-excerpt">
+            {{ source.content | slice:0:180 }}...
+          </p>
+
+          <div class="card-footer" (click)="$event.stopPropagation()">
+            <button type="button" class="action-btn preview-btn" (click)="previewSource(source)">
+              Read Document
+            </button>
+            <button
+              type="button"
+              class="action-btn delete-btn"
+              (click)="store.removeSource(source.id)"
+              aria-label="Remove source"
+            >
+              🗑️
+            </button>
+          </div>
+        </article>
+      }
+    </div>
+  }
+
+  <!-- Add Source Modal -->
+  @if (store.showAddSourceModal()) {
+    <div class="modal-backdrop" (click)="cancelAdd()">
+      <div class="modal-container" (click)="$event.stopPropagation()">
+        <header class="modal-header">
+          <div class="header-titles">
+            <span class="eyebrow">Ingestion Pipeline</span>
+            <h2>Add Knowledge Source</h2>
+          </div>
+          <button type="button" class="close-btn" (click)="cancelAdd()">✕</button>
+        </header>
+
+        <form [formRoot]="sourceForm" (ngSubmit)="submitSource()" class="source-form" novalidate>
+          <div class="form-body">
+            <div class="type-selector">
+              <label>Source Type</label>
+              <div class="type-buttons">
+                <button
+                  type="button"
+                  class="type-btn"
+                  [class.active]="model().type === 'document'"
+                  (click)="setType('document')"
+                >
+                  📄 Document / Text
+                </button>
+                <button
+                  type="button"
+                  class="type-btn"
+                  [class.active]="model().type === 'slide'"
+                  (click)="setType('slide')"
+                >
+                  📑 Slide Presentation
+                </button>
+                <button
+                  type="button"
+                  class="type-btn"
+                  [class.active]="model().type === 'link'"
+                  (click)="setType('link')"
+                >
+                  🔗 Web Documentation Link
+                </button>
+                <button
+                  type="button"
+                  class="type-btn"
+                  [class.active]="model().type === 'note'"
+                  (click)="setType('note')"
+                >
+                  📝 Personal Note
+                </button>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="sourceTitle">Source Title / Reference Name *</label>
+              <input
+                id="sourceTitle"
+                type="text"
+                [formField]="sourceForm.title"
+                placeholder="e.g. Raft Consensus Paper, or Angular 19 Zoneless Architecture"
+              />
+            </div>
+
+            @if (model().type === 'link') {
+              <div class="form-group">
+                <label for="sourceUrl">Reference URL (Optional)</label>
+                <input
+                  id="sourceUrl"
+                  type="url"
+                  [formField]="sourceForm.url"
+                  placeholder="https://angular.dev/guide/signals"
+                />
+              </div>
+            }
+
+            <div class="form-group">
+              <label for="sourceContent">Content / Slides / Notes / Extracted Text *</label>
+              <textarea
+                id="sourceContent"
+                rows="8"
+                [formField]="sourceForm.content"
+                placeholder="Paste the full text, markdown, slide contents, or summary to ground AI generation..."
+              ></textarea>
+            </div>
+          </div>
+
+          <footer class="modal-footer">
+            <button type="button" class="btn-secondary" (click)="cancelAdd()">Cancel</button>
+            <button type="submit" class="btn-primary">Add to StudyLM Sources</button>
+          </footer>
+        </form>
+      </div>
+    </div>
+  }
+
+  <!-- Source Detail Preview Drawer / Modal -->
+  @if (store.selectedSourceForPreview()) {
+    <div class="modal-backdrop" (click)="closePreview()">
+      <div class="modal-container preview-modal" (click)="$event.stopPropagation()">
+        <header class="modal-header">
+          <div class="header-titles">
+            <span class="type-badge type-{{ store.selectedSourceForPreview()?.type }}">
+              {{ getSourceIcon(store.selectedSourceForPreview()?.type || 'document') }}
+              {{ store.selectedSourceForPreview()?.type | uppercase }} &bull; {{ store.selectedSourceForPreview()?.wordCount }} words
+            </span>
+            <h2>{{ store.selectedSourceForPreview()?.title }}</h2>
+          </div>
+          <button type="button" class="close-btn" (click)="closePreview()">✕</button>
+        </header>
+
+        <div class="modal-body preview-body">
+          @if (store.selectedSourceForPreview()?.url) {
+            <div class="source-url-banner">
+              <span>External Reference:</span>
+              <a [href]="store.selectedSourceForPreview()?.url" target="_blank" rel="noopener noreferrer">
+                {{ store.selectedSourceForPreview()?.url }}
+              </a>
+            </div>
+          }
+
+          <div class="document-text-viewer">
+            <pre>{{ store.selectedSourceForPreview()?.content }}</pre>
+          </div>
+        </div>
+
+        <footer class="modal-footer">
+          <button type="button" class="btn-primary" (click)="closePreview()">Done Reading</button>
+        </footer>
+      </div>
+    </div>
+  }
+</div>

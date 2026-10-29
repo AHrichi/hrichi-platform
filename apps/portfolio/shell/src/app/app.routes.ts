@@ -56,6 +56,15 @@ export const appRoutes: Route[] = [
     title:
       'PulseOps · Commercial Operations & Dispatch Control Center · Ahmed Hrichi',
   },
+  {
+    path: 'apps/studylm',
+    providers: [provideAppMode('embedded-demo')],
+    loadChildren: federatedRoutes('product-studylm'),
+    title:
+      'StudyLM · AI-Powered Multi-Tier Learning & Drill Arena · Ahmed Hrichi',
+  },
+  // Keep alias for study
+  { path: 'apps/study', redirectTo: 'apps/studylm', pathMatch: 'full' },
   // The hello demo was replaced by the full applications & labs hub; redirect.
   { path: 'labs/hello', redirectTo: 'apps', pathMatch: 'full' },
   // Each lab's intro is prerendered around its remote (ADR-0014).

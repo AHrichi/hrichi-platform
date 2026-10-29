@@ -19,5 +19,9 @@
   "product-dispatch": {
     "development": "http://localhost:4306",
     "production": "https://product-dispatch.ahmed-hrichi.workers.dev"
+  },
+  "product-studylm": {
+    "development": "http://localhost:4307",
+    "production": "https://product-studylm.ahmed-hrichi.workers.dev"
   }
 }

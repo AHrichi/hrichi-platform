@@ -1,0 +1,150 @@
+<div class="quiz-container">
+  <!-- Quiz Header Bar -->
+  <header class="quiz-header-bar">
+    <div class="tier-pills">
+      <button
+        type="button"
+        class="tier-pill"
+        [class.active]="store.activeTier() === 'all'"
+        (click)="setTier('all')"
+      >
+        All Tiers ({{ store.quizSummary().totalQuestions }})
+      </button>
+
+      <button
+        type="button"
+        class="tier-pill tier-pill-beginner"
+        [class.active]="store.activeTier() === 'beginner'"
+        (click)="setTier('beginner')"
+      >
+        {{ tiersInfo.beginner.icon }} Beginner ({{ store.quizSummary().tierBreakdown.beginner.total }})
+      </button>
+
+      <button
+        type="button"
+        class="tier-pill tier-pill-intermediate"
+        [class.active]="store.activeTier() === 'intermediate'"
+        (click)="setTier('intermediate')"
+      >
+        {{ tiersInfo.intermediate.icon }} Intermediate ({{ store.quizSummary().tierBreakdown.intermediate.total }})
+      </button>
+
+      <button
+        type="button"
+        class="tier-pill tier-pill-expert"
+        [class.active]="store.activeTier() === 'expert'"
+        (click)="setTier('expert')"
+      >
+        {{ tiersInfo.expert.icon }} Expert ({{ store.quizSummary().tierBreakdown.expert.total }})
+      </button>
+    </div>
+
+    <div class="quiz-score-pill">
+      <span>Score:</span>
+      <strong>{{ store.quizSummary().correctCount }} / {{ store.quizSummary().answeredCount }}</strong>
+      @if (store.quizSummary().answeredCount > 0) {
+        <span class="accuracy-tag">({{ store.quizSummary().scorePercentage }}%)</span>
+      }
+    </div>
+  </header>
+
+  <!-- Progress Bar -->
+  <div class="quiz-progress-track">
+    <div
+      class="progress-fill"
+      [style.width.%]="store.filteredQuiz().length > 0 ? ((store.activeQuizIndex() + 1) / store.filteredQuiz().length) * 100 : 0"
+    ></div>
+  </div>
+
+  @if (!store.currentQuizQuestion()) {
+    <div class="empty-quiz-notice">
+      <div class="empty-icon">🎯</div>
+      <h3>No Quiz Questions Available</h3>
+      <p>No questions match the current tier filter. Try selecting 'All Tiers' or adding more sources.</p>
+      <button type="button" class="btn-reset" (click)="setTier('all')">View All Tiers</button>
+    </div>
+  } @else {
+    <article class="question-card tier-{{ store.currentQuizQuestion()?.tier }}">
+      <div class="card-meta-top">
+        <span class="tier-badge">
+          {{ store.currentQuizQuestion()?.tier === 'beginner' ? '🌱 Beginner Question' : (store.currentQuizQuestion()?.tier === 'intermediate' ? '⚡ Intermediate Question' : '🔥 Expert Question') }}
+        </span>
+        <span class="question-counter">
+          Question {{ store.activeQuizIndex() + 1 }} of {{ store.filteredQuiz().length }}
+        </span>
+      </div>
+
+      <h3 class="question-text">
+        {{ store.currentQuizQuestion()?.question }}
+      </h3>
+
+      <!-- 4 Multiple Choice Options -->
+      <div class="options-grid">
+        @for (option of store.currentQuizQuestion()?.options; track $index) {
+          <button
+            type="button"
+            class="option-btn"
+            [class.selected]="store.currentQuizQuestion()?.userSelectedIndex === $index"
+            [class.correct]="store.currentQuizQuestion()?.isAnswered && $index === store.currentQuizQuestion()?.correctIndex"
+            [class.incorrect]="store.currentQuizQuestion()?.isAnswered && store.currentQuizQuestion()?.userSelectedIndex === $index && !store.currentQuizQuestion()?.isCorrect"
+            [disabled]="store.currentQuizQuestion()?.isAnswered"
+            (click)="selectOption($index)"
+          >
+            <span class="option-letter">{{ getOptionLetter($index) }}</span>
+            <span class="option-label">{{ option }}</span>
+            @if (store.currentQuizQuestion()?.isAnswered) {
+              @if ($index === store.currentQuizQuestion()?.correctIndex) {
+                <span class="result-icon correct-icon">✓</span>
+              } @else if (store.currentQuizQuestion()?.userSelectedIndex === $index) {
+                <span class="result-icon wrong-icon">✕</span>
+              }
+            }
+          </button>
+        }
+      </div>
+
+      <!-- Explanation & Citation reveal on answered -->
+      @if (store.currentQuizQuestion()?.isAnswered) {
+        <div class="explanation-box" [class.box-correct]="store.currentQuizQuestion()?.isCorrect">
+          <div class="explanation-header">
+            <span class="verdict">
+              {{ store.currentQuizQuestion()?.isCorrect ? '✅ Correct Answer!' : '❌ Incorrect' }}
+            </span>
+            <span class="citation-tag">📌 {{ store.currentQuizQuestion()?.sourceCitation }}</span>
+          </div>
+          <p class="explanation-text">{{ store.currentQuizQuestion()?.explanation }}</p>
+        </div>
+      }
+
+      <!-- Bottom Nav Controls -->
+      <footer class="card-footer-controls">
+        <button
+          type="button"
+          class="nav-btn prev-btn"
+          [disabled]="store.activeQuizIndex() === 0"
+          (click)="store.prevQuiz()"
+        >
+          ← Previous
+        </button>
+
+        <button
+          type="button"
+          class="btn-reset-quiz"
+          (click)="store.resetQuiz()"
+          title="Clear all answers and restart"
+        >
+          🔄 Restart Drill
+        </button>
+
+        <button
+          type="button"
+          class="nav-btn next-btn"
+          [disabled]="store.activeQuizIndex() >= store.filteredQuiz().length - 1"
+          (click)="store.nextQuiz(store.filteredQuiz().length)"
+        >
+          Next Question →
+        </button>
+      </footer>
+    </article>
+  }
+</div>
