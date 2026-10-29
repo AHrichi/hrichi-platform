@@ -6,9 +6,17 @@
   font-weight: var(--font-weight-semibold);
   line-height: 1;
   white-space: nowrap;
+  max-width: 100%;
   transition:
     background-color var(--motion-duration-fast) ease,
     color var(--motion-duration-fast) ease;
+}
+
+.ah-badge-content {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
 }
 
 :host(.ah-badge--sm) {

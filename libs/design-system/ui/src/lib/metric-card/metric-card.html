@@ -1,11 +1,11 @@
 <div class="ah-metric-head">
-  <span class="ah-metric-label">{{ label() }}</span>
+  <span class="ah-metric-label" [attr.title]="label()">{{ label() }}</span>
   @if (icon()) {
     <span class="ah-metric-icon" aria-hidden="true">{{ icon() }}</span>
   }
 </div>
 
-<div class="ah-metric-value-row">
+<div class="ah-metric-value-row" [attr.title]="value() + (unit() ? ' ' + unit() : '')">
   <span class="ah-metric-value">{{ value() }}</span>
   @if (unit()) {
     <span class="ah-metric-unit">{{ unit() }}</span>
@@ -17,6 +17,7 @@
     class="ah-metric-trend"
     [class.ah-metric-trend--positive]="t.positive === true"
     [class.ah-metric-trend--negative]="t.positive === false"
+    [attr.title]="t.label"
   >
     <span class="ah-metric-trend-arrow" aria-hidden="true">{{
       trendArrow()
@@ -26,7 +27,7 @@
 }
 
 @if (hint()) {
-  <p class="ah-metric-hint">{{ hint() }}</p>
+  <p class="ah-metric-hint" [attr.title]="hint()">{{ hint() }}</p>
 }
 
 <ng-content />

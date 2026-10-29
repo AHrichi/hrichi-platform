@@ -41,3 +41,7 @@ export {
   type FlowchartEdge,
 } from './lib/flow-chart/flow-chart';
 
+export * from './lib/truncated-text/truncated-text';
+export { TruncatedText as AhTruncatedText } from './lib/truncated-text/truncated-text';
+
+

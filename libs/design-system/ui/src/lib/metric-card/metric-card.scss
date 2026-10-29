@@ -44,6 +44,9 @@
   font-weight: var(--font-weight-medium);
   color: var(--color-text-muted);
   letter-spacing: -0.01em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .ah-metric-icon {
@@ -99,4 +102,7 @@
   font-size: var(--font-size-100);
   color: var(--color-text-muted);
   line-height: var(--font-line-height-normal);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }

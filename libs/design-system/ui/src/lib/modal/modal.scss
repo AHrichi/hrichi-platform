@@ -150,3 +150,41 @@
     transform: translate(-50%, -50%) scale(1);
   }
 }
+
+@keyframes ah-sheet-slide-up {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 640px) {
+  .ah-modal-dialog {
+    top: auto;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    transform: none;
+    inline-size: 100vw;
+    max-inline-size: 100vw;
+    max-block-size: 92dvh;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    border-bottom: none;
+    padding-bottom: env(safe-area-inset-bottom, 0);
+    animation: ah-sheet-slide-up var(--motion-duration-base) var(--motion-easing-standard);
+  }
+
+  .ah-modal-header {
+    padding: var(--space-4);
+  }
+
+  .ah-modal-body {
+    padding: var(--space-4);
+  }
+
+  .ah-modal-footer {
+    padding: var(--space-3) var(--space-4);
+  }
+}

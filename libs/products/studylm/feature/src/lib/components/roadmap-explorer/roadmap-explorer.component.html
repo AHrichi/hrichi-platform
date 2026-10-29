@@ -148,7 +148,7 @@
 
                       <div class="code-and-title">
                         <span class="section-code">{{ section.code }}</span>
-                        <h4 class="section-title">{{ section.title }}</h4>
+                        <h4 class="section-title" [attr.title]="section.title">{{ section.title }}</h4>
                       </div>
                     </div>
 
@@ -200,7 +200,7 @@
                           <span class="subtopics-label">Subtopics:</span>
                           <div class="chips-row">
                             @for (sub of section.subtopics; track sub) {
-                              <span class="subtopic-chip">{{ sub }}</span>
+                              <span class="subtopic-chip" [attr.title]="sub">{{ sub }}</span>
                             }
                           </div>
                         </div>
@@ -218,6 +218,7 @@
                                   target="_blank"
                                   rel="noopener noreferrer"
                                   class="doc-link"
+                                  [attr.title]="doc.title + ' (' + doc.url + ')'"
                                 >
                                   {{ doc.title }} ↗
                                 </a>

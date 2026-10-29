@@ -1,0 +1,24 @@
+<span
+  class="ah-truncate-content"
+  [class.ah-truncate-content--multiline]="lines() > 1"
+  [style.max-width]="maxWidth()"
+  [style.-webkit-line-clamp]="lines() > 1 ? lines() : null"
+  [attr.title]="text()"
+>
+  {{ text() }}
+</span>
+
+@if (isOpen() && interactive()) {
+  <div
+    class="ah-truncate-popover"
+    role="tooltip"
+    [id]="tooltipId"
+    [class.ah-truncate-popover--bottom]="position() === 'bottom'"
+  >
+    <div class="ah-truncate-arrow" aria-hidden="true"></div>
+    @if (tooltipTitle()) {
+      <div class="ah-truncate-popover-title">{{ tooltipTitle() }}</div>
+    }
+    <div class="ah-truncate-popover-body">{{ text() }}</div>
+  </div>
+}

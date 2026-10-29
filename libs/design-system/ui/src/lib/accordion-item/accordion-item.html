@@ -17,9 +17,9 @@
     }
 
     <div class="ah-accordion-titles">
-      <span class="ah-accordion-title">{{ title() }}</span>
+      <span class="ah-accordion-title" [attr.title]="title()">{{ title() }}</span>
       @if (subtitle()) {
-        <span class="ah-accordion-subtitle">{{ subtitle() }}</span>
+        <span class="ah-accordion-subtitle" [attr.title]="subtitle()">{{ subtitle() }}</span>
       }
     </div>
   </button>

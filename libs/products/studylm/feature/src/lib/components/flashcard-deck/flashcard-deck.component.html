@@ -100,7 +100,7 @@
           <div flip-front slot="front" class="card-face-content front-face">
             <div class="face-tag">
               <div class="face-tag-left">
-                <span class="category-name">{{ card.category }}</span>
+                <span class="category-name" [attr.title]="card.category">{{ card.category }}</span>
                 <span class="face-label">PROMPT</span>
               </div>
               <button
@@ -141,7 +141,7 @@
           <div flip-back slot="back" class="card-face-content back-face">
             <div class="face-tag">
               <div class="face-tag-left">
-                <span class="category-name">{{ card.category }}</span>
+                <span class="category-name" [attr.title]="card.category">{{ card.category }}</span>
                 <span class="face-label">EXPLANATION</span>
               </div>
               <button
@@ -196,16 +196,16 @@
                   rel="noopener noreferrer"
                   class="citation-link"
                   (click)="$event.stopPropagation()"
-                  title="Open official documentation in new tab"
+                  [title]="'Open ' + doc.title + ' in official documentation'"
                 >
-                  <span class="citation-title">{{ doc.title }}</span>
+                  <span class="citation-title" [attr.title]="doc.title">{{ doc.title }}</span>
                   <span class="citation-icon" aria-hidden="true">↗</span>
                 </a>
               </div>
             } @else if (card.sourceCitation) {
               <div class="citation-tag">
                 <span class="citation-label">Grounded Citation:</span>
-                <span class="citation-val">{{ card.sourceCitation }}</span>
+                <span class="citation-val" [attr.title]="card.sourceCitation">{{ card.sourceCitation }}</span>
               </div>
             }
 
