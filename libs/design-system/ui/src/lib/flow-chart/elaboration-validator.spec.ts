@@ -79,6 +79,20 @@ describe('validateAndParseElaboration', () => {
     expect(res.elaboration.bulletPoints.length).toBe(1);
   });
 
+  it('should fall back safely if server returns unhandled synthesis schema', () => {
+    const synthesisRaw = JSON.stringify({
+      success: true,
+      provider: 'Groq LPU',
+      overview: '',
+      flashcards: [],
+      quiz: [],
+    });
+    const res = validateAndParseElaboration(synthesisRaw, sampleReq);
+    expect(res.success).toBe(false);
+    expect(res.elaboration.conceptTitle).toBe('Event Loop & Microtask Queue');
+    expect(res.elaboration.bulletPoints.length).toBeGreaterThan(0);
+  });
+
   it('should fall back safely if JSON is completely malformed', () => {
     const badRaw = '<html><body>502 Bad Gateway</body></html>';
     const res = validateAndParseElaboration(badRaw, sampleReq);

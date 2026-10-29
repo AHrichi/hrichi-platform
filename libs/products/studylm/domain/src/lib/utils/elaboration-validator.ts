@@ -21,6 +21,17 @@ export function validateAndParseElaboration(
 
     const elabObj = (data['elaboration'] ?? data) as Record<string, unknown>;
 
+    // Guard against unhandled synthesis responses (e.g. { overview: "", flashcards: [], quiz: [] })
+    if (
+      !elabObj['summary'] &&
+      !elabObj['bulletPoints'] &&
+      !elabObj['codeSnippet'] &&
+      !elabObj['graph'] &&
+      (data['overview'] !== undefined || data['flashcards'] !== undefined)
+    ) {
+      throw new Error('Server returned synthesis schema instead of elaboration response');
+    }
+
     const mode =
       elabObj['mode'] === 'hint' || elabObj['mode'] === 'deep_dive'
         ? elabObj['mode']

@@ -164,6 +164,120 @@ if (action === 'generate_roadmap') {
     '}';
 
   userPrompt = 'Generate a deep, diagnostic technical quiz covering Section ' + (section.code || '') + ': ' + (section.title || subject);
+} else if (action === 'elaborate_concept') {
+  const mode = body.mode === 'hint' ? 'hint' : 'deep_dive';
+  const conceptTitle = String(body.conceptTitle || body.subject || 'Core Concept').trim();
+  const difficultyTier = body.difficultyTier || 'intermediate';
+  const sectionCode = body.sectionCode || '';
+  const promptOrQuestion = body.promptOrQuestion || '';
+  const answerOrExplanation = body.answerOrExplanation || '';
+  const codeSnippet = body.codeSnippet || '';
+
+  if (mode === 'hint') {
+    systemPrompt = 'You are the StudyLM Pedagogical Technical Tutor.\\n' +
+      'Your goal is to provide a targeted pedagogical HINT and mental-model clues for a technical software engineering concept or question WITHOUT giving away the final answer.\\n\\n' +
+      'RULES:\\n' +
+      '1. Provide a concise, clear hint in "summary".\\n' +
+      '2. Provide 2 to 3 bulletPoints focusing on invariants, evaluation order, memory allocation, or boundary conditions to inspect.\\n' +
+      '3. Provide a diagnostic codeSnippet showing the condition check or invariant assertion.\\n' +
+      '4. Provide a 3-step mental model flowchart in "graph" (start, decision, end) with direction, nodes, and edges.\\n' +
+      '5. Provide authoritative documentation links in "officialDocs".\\n' +
+      '6. Output STRICT JSON ONLY matching this format:\\n' +
+      '{\\n' +
+      '  "mode": "hint",\\n' +
+      '  "conceptTitle": "' + conceptTitle.replace(/"/g, '\\\\"') + '",\\n' +
+      '  "summary": "1-2 sentence pedagogical clue focusing on specification behavior",\\n' +
+      '  "bulletPoints": [\\n' +
+      '    "First invariant to inspect...",\\n' +
+      '    "Second runtime queue or memory behavior to test..."\\n' +
+      '  ],\\n' +
+      '  "codeSnippet": {\\n' +
+      '    "code": "// Diagnostic check\\n...",\\n' +
+      '    "language": "typescript",\\n' +
+      '    "filename": "diagnostic-hint.ts",\\n' +
+      '    "explanation": "Why this assertion tests the invariant"\\n' +
+      '  },\\n' +
+      '  "graph": {\\n' +
+      '    "title": "Mental Model: ' + conceptTitle.replace(/"/g, '\\\\"') + '",\\n' +
+      '    "description": "Step-by-step diagnostic reasoning",\\n' +
+      '    "direction": "vertical",\\n' +
+      '    "nodes": [\\n' +
+      '      { "id": "1", "label": "Inspect Inputs", "subtext": "Value vs Reference check", "type": "start", "badge": "Step 1" },\\n' +
+      '      { "id": "2", "label": "Evaluate Boundary Invariant", "subtext": "Queue scheduling or prototype lookup", "type": "decision", "badge": "Step 2" },\\n' +
+      '      { "id": "3", "label": "Expected Specification Result", "subtext": "Matches official contract", "type": "end", "badge": "Outcome" }\\n' +
+      '    ],\\n' +
+      '    "edges": [\\n' +
+      '      { "from": "1", "to": "2", "label": "Evaluate" },\\n' +
+      '      { "from": "2", "to": "3", "label": "Condition verified" }\\n' +
+      '    ]\\n' +
+      '  },\\n' +
+      '  "officialDocs": [\\n' +
+      '    { "title": "Official Technical Documentation", "url": "https://developer.mozilla.org/en-US/" }\\n' +
+      '  ]\\n' +
+      '}';
+
+    userPrompt = 'Provide a pedagogical hint and mental model for:\\n' +
+      'Subject: ' + subject + '\\n' +
+      'Concept: ' + conceptTitle + '\\n' +
+      'Section: ' + sectionCode + '\\n' +
+      'Question / Prompt: ' + promptOrQuestion + '\\n' +
+      (codeSnippet ? ('Code:\\n' + codeSnippet) : '');
+  } else {
+    systemPrompt = 'You are the StudyLM Principal Systems Architect and Technical Educator.\\n' +
+      'Your goal is to provide an in-depth, rigorous architectural deep dive for a technical software engineering concept.\\n\\n' +
+      'RULES:\\n' +
+      '1. Provide an authoritative, multi-sentence architectural breakdown in "summary".\\n' +
+      '2. Provide 3 to 5 detailed bulletPoints analyzing specification invariants, runtime mechanics, memory allocation, scheduling/queues, and production failure modes.\\n' +
+      '3. Provide a working, production-grade codeSnippet with comments and explanations.\\n' +
+      '4. Provide a rich visual architectural lifecycle flowchart in "graph" with 3 to 5 nodes (start, process, decision, highlight, end) showing data flow or state transitions, with directed edges and condition labels.\\n' +
+      '5. Provide canonical official documentation links (MDN, Angular.dev, RxJS docs, ECMAScript, RFCs) in "officialDocs".\\n' +
+      '6. Output STRICT JSON ONLY matching this format:\\n' +
+      '{\\n' +
+      '  "mode": "deep_dive",\\n' +
+      '  "conceptTitle": "' + conceptTitle.replace(/"/g, '\\\\"') + '",\\n' +
+      '  "summary": "Authoritative architectural breakdown of the concept and its runtime mechanics",\\n' +
+      '  "bulletPoints": [\\n' +
+      '    "Specification Invariant: ...",\\n' +
+      '    "Runtime & Scheduling: ...",\\n' +
+      '    "Memory & Lifecycle: ...",\\n' +
+      '    "Production Failure Mode / Gotcha: ..."\\n' +
+      '  ],\\n' +
+      '  "codeSnippet": {\\n' +
+      '    "code": "// Production-grade TypeScript pattern\\n...",\\n' +
+      '    "language": "typescript",\\n' +
+      '    "filename": "architecture-pattern.ts",\\n' +
+      '    "explanation": "Detailed explanation of why this pattern is resilient"\\n' +
+      '  },\\n' +
+      '  "graph": {\\n' +
+      '    "title": "Architectural Lifecycle: ' + conceptTitle.replace(/"/g, '\\\\"') + '",\\n' +
+      '    "description": "State transition and execution pipeline",\\n' +
+      '    "direction": "vertical",\\n' +
+      '    "nodes": [\\n' +
+      '      { "id": "1", "label": "Method Invocation", "subtext": "Cold creation", "type": "start", "badge": "Step 1" },\\n' +
+      '      { "id": "2", "label": "Subscription Pipeline", "subtext": "Instantiates handler", "type": "process", "badge": "Step 2" },\\n' +
+      '      { "id": "3", "label": "Async I/O / Dispatch", "subtext": "Network / Task execution", "type": "decision", "badge": "Step 3" },\\n' +
+      '      { "id": "4", "label": "Emission & Completion", "subtext": "next() and complete()", "type": "highlight", "badge": "Terminal" }\\n' +
+      '    ],\\n' +
+      '    "edges": [\\n' +
+      '      { "from": "1", "to": "2", "label": "subscribe()" },\\n' +
+      '      { "from": "2", "to": "3", "label": "Dispatch" },\\n' +
+      '      { "from": "3", "to": "4", "label": "Success" }\\n' +
+      '    ],\\n' +
+      '    "rawMermaid": "graph TD\\\\n A[Step 1] --> B[Step 2]\\\\n B --> C[Step 3]\\\\n C --> D[Step 4]"\\n' +
+      '  },\\n' +
+      '  "officialDocs": [\\n' +
+      '    { "title": "Official Guide", "url": "https://..." }\\n' +
+      '  ]\\n' +
+      '}';
+
+    userPrompt = 'Provide an in-depth architectural breakdown and diagram for:\\n' +
+      'Subject: ' + subject + '\\n' +
+      'Concept: ' + conceptTitle + '\\n' +
+      'Section: ' + sectionCode + '\\n' +
+      'Question / Prompt: ' + promptOrQuestion + '\\n' +
+      'Explanation / Grounding: ' + answerOrExplanation + '\\n' +
+      (codeSnippet ? ('Code:\\n' + codeSnippet) : '');
+  }
 } else {
   systemPrompt = 'You are StudyLM pedagogical synthesizer. Synthesize study cards and quiz from the provided sources. Output valid JSON with overview, flashcards, quiz.';
   userPrompt = 'Subject: ' + subject + '\\n\\nSources: ' + JSON.stringify(body.sources || []);
