@@ -124,7 +124,21 @@
               </span>
             </div>
             <p class="explanation-text">{{ q.explanation }}</p>
-            @if (q.sourceCitation) {
+            @if (getQuestionDocLink(q); as doc) {
+              <div class="citation-row">
+                <span class="citation-label">Grounded Reference:</span>
+                <a
+                  [href]="doc.url"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="citation-link"
+                  title="Open official documentation in new tab"
+                >
+                  <span>{{ doc.title }}</span>
+                  <span aria-hidden="true">↗</span>
+                </a>
+              </div>
+            } @else if (q.sourceCitation) {
               <div class="citation-row">
                 <span class="citation-label">Grounded Reference:</span>
                 <span class="citation-text">{{ q.sourceCitation }}</span>

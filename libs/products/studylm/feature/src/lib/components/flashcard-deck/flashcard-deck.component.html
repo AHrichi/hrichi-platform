@@ -104,7 +104,21 @@
             </div>
 
             <div class="prompt-text">
-              <p>{{ card.front }}</p>
+              <p>
+                @for (seg of formatCardSegments(card.front); track $index) {
+                  @if (seg.isLink) {
+                    <a
+                      [href]="seg.url"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="card-inline-link"
+                      (click)="$event.stopPropagation()"
+                    >{{ seg.text }} ↗</a>
+                  } @else {
+                    <span>{{ seg.text }}</span>
+                  }
+                }
+              </p>
             </div>
 
             <div class="flip-hint">
@@ -120,7 +134,21 @@
             </div>
 
             <div class="explanation-text">
-              <p>{{ card.back }}</p>
+              <p>
+                @for (seg of formatCardSegments(card.back); track $index) {
+                  @if (seg.isLink) {
+                    <a
+                      [href]="seg.url"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="card-inline-link"
+                      (click)="$event.stopPropagation()"
+                    >{{ seg.text }} ↗</a>
+                  } @else {
+                    <span>{{ seg.text }}</span>
+                  }
+                }
+              </p>
             </div>
 
             @if (card.codeSnippet) {
@@ -133,7 +161,22 @@
               </div>
             }
 
-            @if (card.sourceCitation) {
+            @if (getCardDocLink(card); as doc) {
+              <div class="citation-tag">
+                <span class="citation-label">Grounded Citation:</span>
+                <a
+                  [href]="doc.url"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="citation-link"
+                  (click)="$event.stopPropagation()"
+                  title="Open official documentation in new tab"
+                >
+                  <span class="citation-title">{{ doc.title }}</span>
+                  <span class="citation-icon" aria-hidden="true">↗</span>
+                </a>
+              </div>
+            } @else if (card.sourceCitation) {
               <div class="citation-tag">
                 <span class="citation-label">Grounded Citation:</span>
                 <span class="citation-val">{{ card.sourceCitation }}</span>

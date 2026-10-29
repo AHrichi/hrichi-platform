@@ -18,6 +18,7 @@ import { StudyLmStore } from '../../store/studylm.store';
 import {
   COMPETENCY_TIERS,
   type CompetencyTier,
+  type StudyQuizQuestion,
 } from '@ah/products/studylm/domain';
 
 @Component({
@@ -61,6 +62,52 @@ export class QuizArenaComponent {
 
   onSectionSelect(sectionId: string | null): void {
     this.store.setQuizSectionFilter(sectionId || 'all');
+  }
+
+  getQuestionDocLink(q: StudyQuizQuestion | null): { title: string; url: string } | null {
+    if (!q) return null;
+
+    const citation = q.sourceCitation?.trim() || '';
+    if (citation.startsWith('http://') || citation.startsWith('https://')) {
+      return { title: citation, url: citation };
+    }
+
+    if (q.sectionId) {
+      const section = this.store
+        .allSections()
+        .find((s) => s.id === q.sectionId);
+      if (section?.officialDocs && section.officialDocs.length > 0) {
+        return {
+          title: citation || section.officialDocs[0].title,
+          url: section.officialDocs[0].url,
+        };
+      }
+    }
+
+    const activeSubject = this.store.activeSubject();
+    if (activeSubject?.sources) {
+      const matchingSource = activeSubject.sources.find(
+        (s) =>
+          s.type === 'link' &&
+          (s.title === citation || s.content.startsWith('http')),
+      );
+      if (matchingSource && matchingSource.content.startsWith('http')) {
+        return {
+          title: citation || matchingSource.title,
+          url: matchingSource.content,
+        };
+      }
+    }
+
+    const portal = activeSubject?.roadmap?.officialDocPortal;
+    if (portal) {
+      return {
+        title: citation || 'Official Documentation Reference',
+        url: portal,
+      };
+    }
+
+    return null;
   }
 
   selectOption(index: number): void {

@@ -1,9 +1,10 @@
 :host {
   display: block;
-  background: var(--color-neutral-950);
+  background: var(--color-bg-canvas);
   border: 1px solid var(--color-border-default);
   border-radius: var(--radius-lg);
   overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 .ah-code-block-header {
@@ -12,8 +13,8 @@
   justify-content: space-between;
   gap: var(--space-3);
   padding: var(--space-2) var(--space-4);
-  background: var(--color-neutral-900);
-  border-bottom: 1px solid var(--color-neutral-800);
+  background: var(--color-bg-surface);
+  border-bottom: 1px solid var(--color-border-default);
 }
 
 .ah-code-block-meta {
@@ -25,7 +26,7 @@
 .ah-code-filename {
   font-family: var(--font-family-mono);
   font-size: var(--font-size-100);
-  color: var(--color-neutral-300);
+  color: var(--color-text-muted);
   font-weight: var(--font-weight-medium);
 }
 
@@ -34,24 +35,25 @@
   font-size: var(--font-size-100);
   color: var(--color-accent-default);
   text-transform: uppercase;
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--font-weight-bold);
   letter-spacing: 0.05em;
 }
 
 .ah-code-copy-btn {
-  background: transparent;
-  border: 1px solid var(--color-neutral-700);
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border-default);
   border-radius: var(--radius-sm);
   padding: var(--space-1) var(--space-2);
-  color: var(--color-neutral-300);
+  color: var(--color-text-muted);
   font-size: var(--font-size-100);
   font-family: var(--font-family-sans);
   cursor: pointer;
   transition: all var(--motion-duration-fast) var(--motion-easing-standard);
 
   &:hover {
-    background: var(--color-neutral-800);
-    color: var(--color-neutral-0);
+    background: var(--color-bg-raised);
+    color: var(--color-text-default);
+    border-color: var(--color-border-strong);
   }
 
   &--copied {
@@ -63,16 +65,19 @@
 .ah-code-body {
   padding: var(--space-4);
   overflow-x: auto;
+  background: var(--color-bg-canvas);
 
   pre {
     margin: 0;
+    font-family: var(--font-family-mono);
   }
 
   code {
     font-family: var(--font-family-mono);
-    font-size: var(--font-size-100);
-    line-height: var(--font-line-height-normal);
-    color: var(--color-neutral-100);
+    font-size: var(--font-size-200, 0.875rem);
+    line-height: 1.6;
+    color: var(--color-text-default);
     white-space: pre;
+    tab-size: 2;
   }
 }

@@ -34,14 +34,23 @@ export class FlipCard {
   readonly accent = input<FlipCardAccent>('default');
   readonly ariaLabel = input<string>('Double-sided card. Press Space or Enter to flip.');
 
-  @HostListener('click')
-  onClick(): void {
+  @HostListener('click', ['$event'])
+  onClick(event: MouseEvent): void {
+    const target = event.target as HTMLElement | null;
+    // Prevent flip if clicking an interactive element (link, button, input, code block, etc.)
+    if (target?.closest('a, button, input, textarea, select, .ah-code-block')) {
+      return;
+    }
     this.toggle();
   }
 
   @HostListener('keydown', ['$event'])
   onKeydown(event: KeyboardEvent): void {
     if (event.code === 'Space' || event.code === 'Enter') {
+      const target = event.target as HTMLElement | null;
+      if (target?.closest('a, button, input, textarea, select')) {
+        return;
+      }
       event.preventDefault();
       this.toggle();
     }

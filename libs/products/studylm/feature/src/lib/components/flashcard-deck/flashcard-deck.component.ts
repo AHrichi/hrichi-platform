@@ -21,6 +21,7 @@ import {
   COMPETENCY_TIERS,
   type CompetencyTier,
   type MasteryRating,
+  type StudyFlashcard,
 } from '@ah/products/studylm/domain';
 
 @Component({
@@ -65,6 +66,85 @@ export class FlashcardDeckComponent {
 
   onSectionSelect(sectionId: string | null): void {
     this.store.setCardSectionFilter(sectionId || 'all');
+  }
+
+  getCardDocLink(card: StudyFlashcard | null): { title: string; url: string } | null {
+    if (!card) return null;
+
+    // 1. If sourceCitation itself is a URL:
+    const citation = card.sourceCitation?.trim() || '';
+    if (citation.startsWith('http://') || citation.startsWith('https://')) {
+      return { title: citation, url: citation };
+    }
+
+    // 2. If the card belongs to a section with official docs:
+    if (card.sectionId) {
+      const section = this.store
+        .allSections()
+        .find((s) => s.id === card.sectionId);
+      if (section?.officialDocs && section.officialDocs.length > 0) {
+        return {
+          title: citation || section.officialDocs[0].title,
+          url: section.officialDocs[0].url,
+        };
+      }
+    }
+
+    // 3. Check active subject's sources for matching link:
+    const activeSubject = this.store.activeSubject();
+    if (activeSubject?.sources) {
+      const matchingSource = activeSubject.sources.find(
+        (s) =>
+          s.type === 'link' &&
+          (s.title === citation || s.content.startsWith('http')),
+      );
+      if (matchingSource && matchingSource.content.startsWith('http')) {
+        return {
+          title: citation || matchingSource.title,
+          url: matchingSource.content,
+        };
+      }
+    }
+
+    // 4. Fallback to active subject's roadmap doc portal:
+    const portal = activeSubject?.roadmap?.officialDocPortal;
+    if (portal) {
+      return {
+        title: citation || 'Official Documentation Reference',
+        url: portal,
+      };
+    }
+
+    return null;
+  }
+
+  formatCardSegments(text: string): { isLink: boolean; text: string; url?: string }[] {
+    if (!text) return [];
+    // Matches markdown links [label](url) OR standalone URLs (https?://[^\s)]+)
+    const regex = /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)|(https?:\/\/[^\s,)]+)/g;
+    const segments: { isLink: boolean; text: string; url?: string }[] = [];
+    let lastIndex = 0;
+    let match: RegExpExecArray | null;
+
+    while ((match = regex.exec(text)) !== null) {
+      if (match.index > lastIndex) {
+        segments.push({ isLink: false, text: text.substring(lastIndex, match.index) });
+      }
+      if (match[1] && match[2]) {
+        // Markdown link [label](url)
+        segments.push({ isLink: true, text: match[1], url: match[2] });
+      } else if (match[3]) {
+        // Standalone URL
+        segments.push({ isLink: true, text: match[3], url: match[3] });
+      }
+      lastIndex = regex.lastIndex;
+    }
+
+    if (lastIndex < text.length) {
+      segments.push({ isLink: false, text: text.substring(lastIndex) });
+    }
+
+    return segments.length > 0 ? segments : [{ isLink: false, text }];
   }
 
   @HostListener('window:keydown', ['$event'])

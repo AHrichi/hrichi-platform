@@ -264,6 +264,42 @@
   word-break: break-all;
 }
 
+.citation-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1, 0.25rem);
+  color: var(--color-accent-default);
+  font-family: var(--font-mono, monospace);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+  word-break: break-all;
+  transition: color var(--motion-duration-fast) ease;
+
+  &:hover {
+    color: var(--color-accent-hover, var(--color-accent-default));
+  }
+
+  .citation-icon {
+    font-size: 0.85em;
+  }
+}
+
+.card-inline-link {
+  color: var(--color-accent-default);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+  word-break: break-all;
+  transition: color var(--motion-duration-fast) ease;
+
+  &:hover {
+    color: var(--color-accent-hover, var(--color-accent-default));
+  }
+}
+
 .deck-footer-bar {
   display: flex;
   flex-direction: column;
