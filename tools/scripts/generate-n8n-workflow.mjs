@@ -14,17 +14,17 @@ const workflow = {
             entries: [
               { name: 'Access-Control-Allow-Origin', value: '*' },
               { name: 'Access-Control-Allow-Headers', value: '*' },
-              { name: 'Access-Control-Allow-Methods', value: 'POST, OPTIONS' }
-            ]
-          }
-        }
+              { name: 'Access-Control-Allow-Methods', value: 'POST, OPTIONS' },
+            ],
+          },
+        },
       },
       id: 'webhook-study-synthesizer',
       name: 'Webhook Ingest',
       type: 'n8n-nodes-base.webhook',
       typeVersion: 2,
       position: [100, 200],
-      webhookId: 'study-synthesizer-webhook-id'
+      webhookId: 'study-synthesizer-webhook-id',
     },
     {
       parameters: {
@@ -94,13 +94,13 @@ return [{
     }
   }
 }];
-`
+`,
       },
       id: 'format-gemini-prompt',
       name: 'Format Gemini Prompt',
       type: 'n8n-nodes-base.code',
       typeVersion: 2,
-      position: [320, 200]
+      position: [320, 200],
     },
     {
       parameters: {
@@ -112,8 +112,8 @@ return [{
         specifyBody: 'json',
         jsonBody: '={{ JSON.stringify($json.geminiRequestBody) }}',
         options: {
-          timeout: 45000
-        }
+          timeout: 45000,
+        },
       },
       id: 'gemini-synthesis',
       name: 'Google Gemini Synthesis',
@@ -123,10 +123,10 @@ return [{
       credentials: {
         googlePalmApi: {
           id: 'dISTV0tMmBYHUXlX',
-          name: 'Google Gemini'
-        }
+          name: 'Google Gemini',
+        },
       },
-      onError: 'continueRegularOutput'
+      onError: 'continueRegularOutput',
     },
     {
       parameters: {
@@ -267,13 +267,13 @@ return [{
     ...synthesizedData
   }
 }];
-`
+`,
       },
       id: 'parse-and-structure',
       name: 'Parse & Validate Synthesis',
       type: 'n8n-nodes-base.code',
       typeVersion: 2,
-      position: [760, 200]
+      position: [760, 200],
     },
     {
       parameters: {
@@ -285,34 +285,35 @@ return [{
             entries: [
               { name: 'Access-Control-Allow-Origin', value: '*' },
               { name: 'Access-Control-Allow-Headers', value: '*' },
-              { name: 'Access-Control-Allow-Methods', value: 'POST, OPTIONS' }
-            ]
-          }
-        }
+              { name: 'Access-Control-Allow-Methods', value: 'POST, OPTIONS' },
+            ],
+          },
+        },
       },
       id: 'respond-to-webhook',
       name: 'Return Synthesis Response',
       type: 'n8n-nodes-base.respondToWebhook',
       typeVersion: 1.1,
-      position: [980, 200]
-    }
+      position: [980, 200],
+    },
   ],
   connections: {
     'Webhook Ingest': {
-      main: [[{ node: 'Format Gemini Prompt', type: 'main', index: 0 }]]
+      main: [[{ node: 'Format Gemini Prompt', type: 'main', index: 0 }]],
     },
     'Format Gemini Prompt': {
-      main: [[{ node: 'Google Gemini Synthesis', type: 'main', index: 0 }]]
+      main: [[{ node: 'Google Gemini Synthesis', type: 'main', index: 0 }]],
     },
     'Google Gemini Synthesis': {
-      main: [[{ node: 'Parse & Validate Synthesis', type: 'main', index: 0 }]]
+      main: [[{ node: 'Parse & Validate Synthesis', type: 'main', index: 0 }]],
     },
     'Parse & Validate Synthesis': {
-      main: [[{ node: 'Return Synthesis Response', type: 'main', index: 0 }]]
-    }
-  }
+      main: [[{ node: 'Return Synthesis Response', type: 'main', index: 0 }]],
+    },
+  },
 };
 
-const targetPath = 'C:/Users/Administrator/Desktop/n8n/workflows/study-and-interview/study-lm-synthesizer.json';
+const targetPath =
+  'C:/Users/Administrator/Desktop/n8n/workflows/study-and-interview/study-lm-synthesizer.json';
 fs.writeFileSync(targetPath, JSON.stringify([workflow], null, 2), 'utf8');
 console.log('Saved to', targetPath);

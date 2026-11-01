@@ -2,23 +2,23 @@ import { writeFileSync } from 'fs';
 
 const workflow = [
   {
-    name: "StudyLM Pedagogical Synthesis & Roadmap Engine",
-    id: "DeA78ziIV0C4jZZ9",
+    name: 'StudyLM Pedagogical Synthesis & Roadmap Engine',
+    id: 'DeA78ziIV0C4jZZ9',
     active: true,
     nodes: [
       {
         parameters: {
-          httpMethod: "POST",
-          path: "study-synthesizer",
-          responseMode: "responseNode",
-          options: {}
+          httpMethod: 'POST',
+          path: 'study-synthesizer',
+          responseMode: 'responseNode',
+          options: {},
         },
-        id: "webhook-in",
-        name: "Webhook Ingest",
-        type: "n8n-nodes-base.webhook",
+        id: 'webhook-in',
+        name: 'Webhook Ingest',
+        type: 'n8n-nodes-base.webhook',
         typeVersion: 2,
         position: [100, 300],
-        webhookId: "study-synthesizer-webhook-id"
+        webhookId: 'study-synthesizer-webhook-id',
       },
       {
         parameters: {
@@ -309,13 +309,13 @@ return [{
     }
   }
 }];
-`
+`,
         },
-        id: "format-study-prompt",
-        name: "Format Multi-AI Prompts",
-        type: "n8n-nodes-base.code",
+        id: 'format-study-prompt',
+        name: 'Format Multi-AI Prompts',
+        type: 'n8n-nodes-base.code',
         typeVersion: 2,
-        position: [320, 300]
+        position: [320, 300],
       },
       {
         parameters: {
@@ -323,61 +323,62 @@ return [{
             options: { caseSensitive: true },
             conditions: [
               {
-                leftValue: "={{ $json.action }}",
-                rightValue: "ping",
-                operator: { type: "string", operation: "equals" }
-              }
+                leftValue: '={{ $json.action }}',
+                rightValue: 'ping',
+                operator: { type: 'string', operation: 'equals' },
+              },
             ],
-            combinator: "and"
-          }
+            combinator: 'and',
+          },
         },
-        id: "check-if-ping",
-        name: "Is Ping Action?",
-        type: "n8n-nodes-base.if",
+        id: 'check-if-ping',
+        name: 'Is Ping Action?',
+        type: 'n8n-nodes-base.if',
         typeVersion: 2,
-        position: [540, 300]
+        position: [540, 300],
       },
       {
         parameters: {
-          method: "POST",
-          url: "https://api.groq.com/openai/v1/chat/completions",
-          authentication: "predefinedCredentialType",
-          nodeCredentialType: "groqApi",
+          method: 'POST',
+          url: 'https://api.groq.com/openai/v1/chat/completions',
+          authentication: 'predefinedCredentialType',
+          nodeCredentialType: 'groqApi',
           sendBody: true,
-          specifyBody: "json",
-          jsonBody: "={{ JSON.stringify($json.groqPrimaryBody) }}",
-          options: { timeout: 45000 }
+          specifyBody: 'json',
+          jsonBody: '={{ JSON.stringify($json.groqPrimaryBody) }}',
+          options: { timeout: 45000 },
         },
-        id: "primary-groq-call",
-        name: "Primary AI: Groq 120B",
-        type: "n8n-nodes-base.httpRequest",
+        id: 'primary-groq-call',
+        name: 'Primary AI: Groq 120B',
+        type: 'n8n-nodes-base.httpRequest',
         typeVersion: 4.2,
         position: [760, 200],
-        onError: "continueErrorOutput",
+        onError: 'continueErrorOutput',
         credentials: {
-          groqApi: { id: "jVafRHRNVmsszaE8", name: "Groq" }
-        }
+          groqApi: { id: 'jVafRHRNVmsszaE8', name: 'Groq' },
+        },
       },
       {
         parameters: {
-          method: "POST",
-          url: "https://api.groq.com/openai/v1/chat/completions",
-          authentication: "predefinedCredentialType",
-          nodeCredentialType: "groqApi",
+          method: 'POST',
+          url: 'https://api.groq.com/openai/v1/chat/completions',
+          authentication: 'predefinedCredentialType',
+          nodeCredentialType: 'groqApi',
           sendBody: true,
-          specifyBody: "json",
-          jsonBody: "={{ JSON.stringify($('Format Multi-AI Prompts').item.json.groqFailoverBody) }}",
-          options: { timeout: 45000 }
+          specifyBody: 'json',
+          jsonBody:
+            "={{ JSON.stringify($('Format Multi-AI Prompts').item.json.groqFailoverBody) }}",
+          options: { timeout: 45000 },
         },
-        id: "failover-groq-call",
-        name: "Failover AI: Groq Qwen",
-        type: "n8n-nodes-base.httpRequest",
+        id: 'failover-groq-call',
+        name: 'Failover AI: Groq Qwen',
+        type: 'n8n-nodes-base.httpRequest',
         typeVersion: 4.2,
         position: [980, 420],
-        onError: "continueRegularOutput",
+        onError: 'continueRegularOutput',
         credentials: {
-          groqApi: { id: "jVafRHRNVmsszaE8", name: "Groq" }
-        }
+          groqApi: { id: 'jVafRHRNVmsszaE8', name: 'Groq' },
+        },
       },
       {
         parameters: {
@@ -444,64 +445,72 @@ return [{
     ...parsed
   }
 }];
-`
+`,
         },
-        id: "parse-and-normalize",
-        name: "Parse & Normalize Response",
-        type: "n8n-nodes-base.code",
+        id: 'parse-and-normalize',
+        name: 'Parse & Normalize Response',
+        type: 'n8n-nodes-base.code',
         typeVersion: 2,
-        position: [1200, 300]
+        position: [1200, 300],
       },
       {
         parameters: {
-          respondWith: "json",
-          responseBody: "={{ $json }}",
+          respondWith: 'json',
+          responseBody: '={{ $json }}',
           options: {
             responseCode: 200,
             responseHeaders: {
               entries: [
-                { name: "Access-Control-Allow-Origin", value: "*" },
-                { name: "Access-Control-Allow-Headers", value: "*" },
-                { name: "Access-Control-Allow-Methods", value: "POST, OPTIONS" }
-              ]
-            }
-          }
+                { name: 'Access-Control-Allow-Origin', value: '*' },
+                { name: 'Access-Control-Allow-Headers', value: '*' },
+                {
+                  name: 'Access-Control-Allow-Methods',
+                  value: 'POST, OPTIONS',
+                },
+              ],
+            },
+          },
         },
-        id: "respond-webhook",
-        name: "Respond Webhook",
-        type: "n8n-nodes-base.respondToWebhook",
+        id: 'respond-webhook',
+        name: 'Respond Webhook',
+        type: 'n8n-nodes-base.respondToWebhook',
         typeVersion: 1.1,
-        position: [1420, 300]
-      }
+        position: [1420, 300],
+      },
     ],
     connections: {
-      "Webhook Ingest": {
-        main: [[{ node: "Format Multi-AI Prompts", type: "main", index: 0 }]]
+      'Webhook Ingest': {
+        main: [[{ node: 'Format Multi-AI Prompts', type: 'main', index: 0 }]],
       },
-      "Format Multi-AI Prompts": {
-        main: [[{ node: "Is Ping Action?", type: "main", index: 0 }]]
+      'Format Multi-AI Prompts': {
+        main: [[{ node: 'Is Ping Action?', type: 'main', index: 0 }]],
       },
-      "Is Ping Action?": {
+      'Is Ping Action?': {
         main: [
-          [{ node: "Parse & Normalize Response", type: "main", index: 0 }],
-          [{ node: "Primary AI: Groq 120B", type: "main", index: 0 }]
-        ]
+          [{ node: 'Parse & Normalize Response', type: 'main', index: 0 }],
+          [{ node: 'Primary AI: Groq 120B', type: 'main', index: 0 }],
+        ],
       },
-      "Primary AI: Groq 120B": {
+      'Primary AI: Groq 120B': {
         main: [
-          [{ node: "Parse & Normalize Response", type: "main", index: 0 }],
-          [{ node: "Failover AI: Groq Qwen", type: "main", index: 0 }]
-        ]
+          [{ node: 'Parse & Normalize Response', type: 'main', index: 0 }],
+          [{ node: 'Failover AI: Groq Qwen', type: 'main', index: 0 }],
+        ],
       },
-      "Failover AI: Groq Qwen": {
-        main: [[{ node: "Parse & Normalize Response", type: "main", index: 0 }]]
+      'Failover AI: Groq Qwen': {
+        main: [
+          [{ node: 'Parse & Normalize Response', type: 'main', index: 0 }],
+        ],
       },
-      "Parse & Normalize Response": {
-        main: [[{ node: "Respond Webhook", type: "main", index: 0 }]]
-      }
-    }
-  }
+      'Parse & Normalize Response': {
+        main: [[{ node: 'Respond Webhook', type: 'main', index: 0 }]],
+      },
+    },
+  },
 ];
 
-writeFileSync('tools/scripts/studylm_workflow.json', JSON.stringify(workflow, null, 2));
+writeFileSync(
+  'tools/scripts/studylm_workflow.json',
+  JSON.stringify(workflow, null, 2),
+);
 console.log('Generated tools/scripts/studylm_workflow.json successfully.');

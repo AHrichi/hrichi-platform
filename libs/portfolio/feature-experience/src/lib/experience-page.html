@@ -19,12 +19,17 @@
       <li class="role">
         <header class="role__header">
           <p class="ah-eyebrow" [attr.title]="role.period">{{ role.period }}</p>
-          <h2 class="role__title" [attr.title]="role.title + ' at ' + role.company">
+          <h2
+            class="role__title"
+            [attr.title]="role.title + ' at ' + role.company"
+          >
             <span class="role-title-text">{{ role.title }}</span>
             <span class="role-company-sep">·</span>
             <span class="role-company-text">{{ role.company }}</span>
           </h2>
-          <p class="ah-muted" [attr.title]="role.location">{{ role.location }}</p>
+          <p class="ah-muted" [attr.title]="role.location">
+            {{ role.location }}
+          </p>
         </header>
         <p class="role-context">{{ role.context }}</p>
         <ul class="highlights" role="list">
@@ -35,7 +40,11 @@
             </li>
           }
         </ul>
-        <ul class="ah-cluster role-stack" role="list" style="--gap: var(--space-2)">
+        <ul
+          class="ah-cluster role-stack"
+          role="list"
+          style="--gap: var(--space-2)"
+        >
           @for (item of role.stack; track item) {
             <li>
               <ah-tag [attr.title]="item">{{ item }}</ah-tag>
@@ -65,7 +74,10 @@
   </section>
 
   <div class="ah-grid" style="--min: 20rem">
-    <section aria-labelledby="education-heading" class="ah-stack education-card ah-card">
+    <section
+      aria-labelledby="education-heading"
+      class="ah-stack education-card ah-card"
+    >
       <h2 id="education-heading">Education</h2>
       <ul class="plain ah-stack" role="list">
         @for (item of education; track item.title) {
@@ -77,7 +89,10 @@
         }
       </ul>
     </section>
-    <section aria-labelledby="languages-heading" class="ah-stack languages-card ah-card">
+    <section
+      aria-labelledby="languages-heading"
+      class="ah-stack languages-card ah-card"
+    >
       <h2 id="languages-heading">Languages</h2>
       <ul class="plain ah-stack" role="list">
         @for (item of languages; track item.language) {

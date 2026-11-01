@@ -5,7 +5,9 @@
         <span class="back-arrow" aria-hidden="true">←</span>
         <span>All case studies</span>
       </a>
-      <p class="ah-eyebrow" [attr.title]="study.client + ' · ' + study.period">{{ study.client }} · {{ study.period }}</p>
+      <p class="ah-eyebrow" [attr.title]="study.client + ' · ' + study.period">
+        {{ study.client }} · {{ study.period }}
+      </p>
       <h1 class="case-study-heading">{{ study.title }}</h1>
       <p class="ah-lead ah-prose">{{ study.summary }}</p>
       @if (study.confidentiality) {
@@ -88,7 +90,11 @@
     @if (next(); as next) {
       <nav class="next ah-card" aria-label="Next case study">
         <p class="ah-eyebrow">Next case study</p>
-        <a [routerLink]="['/work', next.slug]" class="next-link" [attr.title]="next.title">
+        <a
+          [routerLink]="['/work', next.slug]"
+          class="next-link"
+          [attr.title]="next.title"
+        >
           <span>{{ next.title }}</span>
           <span class="next-arrow" aria-hidden="true">→</span>
         </a>

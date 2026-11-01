@@ -15,10 +15,7 @@
         "name": "Webhook Ingest",
         "type": "n8n-nodes-base.webhook",
         "typeVersion": 2,
-        "position": [
-          100,
-          300
-        ],
+        "position": [100, 300],
         "webhookId": "study-synthesizer-webhook-id"
       },
       {
@@ -29,10 +26,7 @@
         "name": "Format Multi-AI Prompts",
         "type": "n8n-nodes-base.code",
         "typeVersion": 2,
-        "position": [
-          320,
-          300
-        ]
+        "position": [320, 300]
       },
       {
         "parameters": {
@@ -57,10 +51,7 @@
         "name": "Is Ping Action?",
         "type": "n8n-nodes-base.if",
         "typeVersion": 2,
-        "position": [
-          540,
-          300
-        ]
+        "position": [540, 300]
       },
       {
         "parameters": {
@@ -79,10 +70,7 @@
         "name": "Primary AI: Groq 120B",
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.2,
-        "position": [
-          760,
-          200
-        ],
+        "position": [760, 200],
         "onError": "continueErrorOutput",
         "credentials": {
           "groqApi": {
@@ -108,10 +96,7 @@
         "name": "Failover AI: Groq Qwen",
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.2,
-        "position": [
-          980,
-          420
-        ],
+        "position": [980, 420],
         "onError": "continueRegularOutput",
         "credentials": {
           "groqApi": {
@@ -128,10 +113,7 @@
         "name": "Parse & Normalize Response",
         "type": "n8n-nodes-base.code",
         "typeVersion": 2,
-        "position": [
-          1200,
-          300
-        ]
+        "position": [1200, 300]
       },
       {
         "parameters": {
@@ -161,10 +143,7 @@
         "name": "Respond Webhook",
         "type": "n8n-nodes-base.respondToWebhook",
         "typeVersion": 1.1,
-        "position": [
-          1420,
-          300
-        ]
+        "position": [1420, 300]
       }
     ],
     "connections": {
