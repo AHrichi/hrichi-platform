@@ -101,6 +101,16 @@ body {
     }
   }
 
+  // The nav scrolls sideways on phones: items keep their width and one line,
+  // or a longer label (the Arabic CV button) wraps and stretches the header.
+  .site-header nav ul.ah-cluster > li {
+    flex-shrink: 0;
+  }
+
+  .site-header nav .ah-button {
+    white-space: nowrap;
+  }
+
   .site-header nav a:not(.ah-button) {
     display: inline-flex;
     align-items: center;
@@ -135,7 +145,7 @@ body {
     min-width: 2.25rem;
     min-height: 2.25rem;
     flex-shrink: 0;
-    margin-left: auto;
+    margin-inline-start: auto;
   }
 }
 
