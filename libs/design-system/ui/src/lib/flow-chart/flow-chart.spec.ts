@@ -41,7 +41,8 @@ describe('FlowChart', () => {
       { from: '2', to: '3', label: 'Queue Exhausted' },
       { from: '3', to: '4', label: 'Next Tick' },
     ],
-    rawMermaid: 'graph TD\n A[Stack] -->|Empty| B[Microtasks]\n B --> C[Render]\n C --> D[Macrotask]',
+    rawMermaid:
+      'graph TD\n A[Stack] -->|Empty| B[Microtasks]\n B --> C[Render]\n C --> D[Macrotask]',
   };
 
   beforeEach(async () => {

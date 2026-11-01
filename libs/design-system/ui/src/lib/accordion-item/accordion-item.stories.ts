@@ -1,4 +1,8 @@
-import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular-vite';
+import {
+  moduleMetadata,
+  type Meta,
+  type StoryObj,
+} from '@storybook/angular-vite';
 import { AccordionItem } from './accordion-item';
 import { Badge } from '../badge/badge';
 import { AhButton } from '../button/button';

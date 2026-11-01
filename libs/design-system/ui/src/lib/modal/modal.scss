@@ -173,7 +173,8 @@
     border-radius: var(--radius-lg) var(--radius-lg) 0 0;
     border-bottom: none;
     padding-bottom: env(safe-area-inset-bottom, 0);
-    animation: ah-sheet-slide-up var(--motion-duration-base) var(--motion-easing-standard);
+    animation: ah-sheet-slide-up var(--motion-duration-base)
+      var(--motion-easing-standard);
   }
 
   .ah-modal-header {

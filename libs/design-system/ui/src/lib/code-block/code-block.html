@@ -33,7 +33,9 @@
       [class.ah-code-action-btn--active]="showLineNumbers()"
       (click)="toggleLineNumbers()"
       [title]="showLineNumbers() ? 'Hide line numbers' : 'Show line numbers'"
-      [attr.aria-label]="showLineNumbers() ? 'Hide line numbers' : 'Show line numbers'"
+      [attr.aria-label]="
+        showLineNumbers() ? 'Hide line numbers' : 'Show line numbers'
+      "
     >
       <span>#</span>
     </button>
@@ -44,7 +46,9 @@
         class="ah-code-copy-btn"
         [class.ah-code-copy-btn--copied]="copied()"
         (click)="copyCode()"
-        [attr.aria-label]="copied() ? 'Copied code to clipboard' : 'Copy code to clipboard'"
+        [attr.aria-label]="
+          copied() ? 'Copied code to clipboard' : 'Copy code to clipboard'
+        "
       >
         <span>{{ copied() ? '✓ Copied' : '📋 Copy' }}</span>
       </button>
@@ -53,7 +57,9 @@
 </div>
 
 <div class="ah-code-body" [class.ah-code-body--wrapped]="wrapLines()">
-  <pre class="ah-code-pre"><code>@for (line of lines(); track line.lineNumber) {<div class="ah-code-line">@if (showLineNumbers()) {<span class="ah-code-line-number" aria-hidden="true">{{ line.lineNumber }}</span>}<span class="ah-code-line-content">@for (token of line.tokens; track $index) {<span [class]="'token-' + token.type">{{ token.text }}</span>}</span></div>}</code></pre>
+  <pre
+    class="ah-code-pre"
+  ><code>@for (line of lines(); track line.lineNumber) {<div class="ah-code-line">@if (showLineNumbers()) {<span class="ah-code-line-number" aria-hidden="true">{{ line.lineNumber }}</span>}<span class="ah-code-line-content">@for (token of line.tokens; track $index) {<span [class]="'token-' + token.type">{{ token.text }}</span>}</span></div>}</code></pre>
 </div>
 
 @if (caption()) {

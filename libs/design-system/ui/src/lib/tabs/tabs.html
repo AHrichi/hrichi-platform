@@ -1,8 +1,4 @@
-<div
-  class="ah-tablist"
-  role="tablist"
-  [attr.aria-label]="ariaLabel()"
->
+<div class="ah-tablist" role="tablist" [attr.aria-label]="ariaLabel()">
   @for (tab of tabs(); track tab.id; let i = $index) {
     <button
       #tabButton

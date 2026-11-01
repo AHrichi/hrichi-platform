@@ -2,10 +2,12 @@ import {
   ChangeDetectionStrategy,
   Component,
   ElementRef,
+  inject,
   input,
   model,
   viewChildren,
 } from '@angular/core';
+import { isRtl } from '../direction';
 
 export interface SegmentedOption<T extends string> {
   value: T;
@@ -31,11 +33,16 @@ export class SegmentedControl<T extends string> {
   private readonly segments =
     viewChildren<ElementRef<HTMLButtonElement>>('segment');
 
+  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
+
   protected onKeydown(event: KeyboardEvent, index: number): void {
+    // Right-to-left, the right arrow goes to the previous option.
+    const forward = isRtl(this.host.nativeElement) ? 'ArrowLeft' : 'ArrowRight';
+    const back = forward === 'ArrowLeft' ? 'ArrowRight' : 'ArrowLeft';
     const step =
-      event.key === 'ArrowRight' || event.key === 'ArrowDown'
+      event.key === forward || event.key === 'ArrowDown'
         ? 1
-        : event.key === 'ArrowLeft' || event.key === 'ArrowUp'
+        : event.key === back || event.key === 'ArrowUp'
           ? -1
           : 0;
     if (step === 0) {

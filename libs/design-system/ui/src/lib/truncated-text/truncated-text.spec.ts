@@ -15,7 +15,8 @@ import { TruncatedText } from './truncated-text';
   `,
 })
 class TestHost {
-  longText = 'This is an exceptionally long piece of text that should truncate gracefully with a popover tooltip';
+  longText =
+    'This is an exceptionally long piece of text that should truncate gracefully with a popover tooltip';
   title = 'Full Description';
 }
 
@@ -35,8 +36,12 @@ describe('TruncatedText Component', () => {
     const el = fixture.nativeElement as HTMLElement;
     const content = el.querySelector('.ah-truncate-content');
     expect(content).toBeTruthy();
-    expect(content?.textContent?.trim()).toContain('This is an exceptionally long');
-    expect(content?.getAttribute('title')).toBe(fixture.componentInstance.longText);
+    expect(content?.textContent?.trim()).toContain(
+      'This is an exceptionally long',
+    );
+    expect(content?.getAttribute('title')).toBe(
+      fixture.componentInstance.longText,
+    );
   });
 
   it('opens and closes tooltip on hover / click', () => {
@@ -48,8 +53,12 @@ describe('TruncatedText Component', () => {
     host.dispatchEvent(new MouseEvent('mouseenter'));
     fixture.detectChanges();
     expect(el.querySelector('.ah-truncate-popover')).toBeTruthy();
-    expect(el.querySelector('.ah-truncate-popover-title')?.textContent?.trim()).toBe('Full Description');
-    expect(el.querySelector('.ah-truncate-popover-body')?.textContent?.trim()).toBe(fixture.componentInstance.longText);
+    expect(
+      el.querySelector('.ah-truncate-popover-title')?.textContent?.trim(),
+    ).toBe('Full Description');
+    expect(
+      el.querySelector('.ah-truncate-popover-body')?.textContent?.trim(),
+    ).toBe(fixture.componentInstance.longText);
 
     // Trigger mouse leave
     host.dispatchEvent(new MouseEvent('mouseleave'));

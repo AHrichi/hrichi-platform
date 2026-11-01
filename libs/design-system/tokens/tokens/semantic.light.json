@@ -23,7 +23,20 @@
       "on": { "$value": "{color.neutral.0}" }
     },
     "success": {
-      "default": { "$value": "{color.green.600}" }
+      "default": { "$value": "{color.green.600}" },
+      "subtle": { "$value": "{color.green.50}" }
+    },
+    "warning": {
+      "default": { "$value": "{color.amber.700}" },
+      "subtle": { "$value": "{color.amber.50}" }
+    },
+    "info": {
+      "default": { "$value": "{color.blue.700}" },
+      "subtle": { "$value": "{color.blue.50}" }
+    },
+    "danger": {
+      "default": { "$value": "{color.crimson.600}" },
+      "subtle": { "$value": "{color.crimson.50}" }
     },
     "focus": {
       "ring": { "$value": "{color.crimson.500}" }

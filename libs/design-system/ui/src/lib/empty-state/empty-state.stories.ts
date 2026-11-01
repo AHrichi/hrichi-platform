@@ -1,4 +1,8 @@
-import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular-vite';
+import {
+  moduleMetadata,
+  type Meta,
+  type StoryObj,
+} from '@storybook/angular-vite';
 import { EmptyState } from './empty-state';
 import { AhButton } from '../button/button';
 
@@ -31,7 +35,8 @@ const meta: Meta<EmptyState> = {
     icon: '🗺️',
     eyebrow: 'Curriculum Roadmap',
     title: 'No Software Engineering Roadmap Generated',
-    description: 'Enter a topic like JavaScript, Angular Signals, or PostgreSQL to generate a structured branch roadmap.',
+    description:
+      'Enter a topic like JavaScript, Angular Signals, or PostgreSQL to generate a structured branch roadmap.',
   },
 };
 export default meta;

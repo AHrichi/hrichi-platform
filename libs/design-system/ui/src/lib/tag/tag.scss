@@ -8,5 +8,9 @@
   font-size: var(--font-size-100);
   font-weight: var(--font-weight-medium);
   color: var(--color-text-muted);
-  white-space: nowrap;
+  white-space: normal;
+  line-height: 1.25;
+  max-inline-size: 100%;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }

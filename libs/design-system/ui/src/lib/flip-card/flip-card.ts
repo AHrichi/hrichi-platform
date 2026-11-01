@@ -20,7 +20,6 @@ export type FlipCardAccent = 'default' | 'beginner' | 'intermediate' | 'expert';
     tabindex: '0',
     role: 'button',
     '[attr.aria-pressed]': 'flipped()',
-    '[attr.aria-label]': 'ariaLabel()',
     '[class.ah-flip-card--flipped]': 'flipped()',
     '[class.ah-flip-card--accent-beginner]': "accent() === 'beginner'",
     '[class.ah-flip-card--accent-intermediate]': "accent() === 'intermediate'",
@@ -32,7 +31,10 @@ export type FlipCardAccent = 'default' | 'beginner' | 'intermediate' | 'expert';
 export class FlipCard {
   readonly flipped = model<boolean>(false);
   readonly accent = input<FlipCardAccent>('default');
-  readonly ariaLabel = input<string>('Double-sided card. Press Space or Enter to flip.');
+  /** How to use the card, read after its visible text by screen readers. */
+  readonly ariaLabel = input<string>(
+    'Double-sided card. Press Space or Enter to flip.',
+  );
 
   @HostListener('click', ['$event'])
   onClick(event: MouseEvent): void {

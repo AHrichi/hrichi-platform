@@ -9,7 +9,9 @@ import { FlipCard } from './flip-card';
     <ah-flip-card [flipped]="isFlipped">
       <div flip-front>
         Front Text
-        <a href="https://example.com" class="test-link" target="_blank">Test Link</a>
+        <a href="https://example.com" class="test-link" target="_blank"
+          >Test Link</a
+        >
         <button type="button" class="test-btn">Test Button</button>
       </div>
       <div flip-back>Back Text</div>

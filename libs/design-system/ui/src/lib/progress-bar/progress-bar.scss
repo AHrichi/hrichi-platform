@@ -61,7 +61,7 @@
 }
 
 .ah-progress-fill--accent {
-  background: var(--color-data-4);
+  background: var(--color-info-default);
 }
 
 .ah-progress-fill--success {
@@ -69,11 +69,11 @@
 }
 
 .ah-progress-fill--warning {
-  background: var(--color-amber-300);
+  background: var(--color-warning-default);
 }
 
 .ah-progress-fill--danger {
-  background: var(--color-crimson-500);
+  background: var(--color-danger-default);
 }
 
 .ah-progress-fill--striped {

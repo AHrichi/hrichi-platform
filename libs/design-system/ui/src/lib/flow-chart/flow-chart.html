@@ -16,22 +16,64 @@
       <div class="controls">
         <span class="count-badge mono">{{ g.nodes.length }} Steps</span>
 
-        <button type="button" class="btn" (click)="toggleDirection()" [title]="activeDirection() === 'vertical' ? 'Switch to Horizontal' : 'Switch to Vertical'">
-          <span>{{ activeDirection() === 'vertical' ? '⇄ Horizontal' : '⇅ Vertical' }}</span>
+        <button
+          type="button"
+          class="btn"
+          (click)="toggleDirection()"
+          [title]="
+            activeDirection() === 'vertical'
+              ? 'Switch to Horizontal'
+              : 'Switch to Vertical'
+          "
+        >
+          <span>{{
+            activeDirection() === 'vertical' ? '⇄ Horizontal' : '⇅ Vertical'
+          }}</span>
         </button>
 
-        <button type="button" class="btn" [class.btn--active]="density() === 'compact'" (click)="toggleDensity()">
+        <button
+          type="button"
+          class="btn"
+          [class.btn--active]="density() === 'compact'"
+          (click)="toggleDensity()"
+        >
           <span>{{ density() === 'compact' ? 'Detailed' : 'Compact' }}</span>
         </button>
 
         <div class="zoom-group">
-          <button type="button" (click)="zoomOut()" [disabled]="zoom() <= 0.7" aria-label="Zoom Out">−</button>
-          <span class="zoom-label mono" (click)="resetZoom()" role="button" tabindex="0" title="Reset Zoom">{{ (zoom() * 100).toFixed(0) }}%</span>
-          <button type="button" (click)="zoomIn()" [disabled]="zoom() >= 1.5" aria-label="Zoom In">+</button>
+          <button
+            type="button"
+            (click)="zoomOut()"
+            [disabled]="zoom() <= 0.7"
+            aria-label="Zoom Out"
+          >
+            −
+          </button>
+          <span
+            class="zoom-label mono"
+            (click)="resetZoom()"
+            role="button"
+            tabindex="0"
+            title="Reset Zoom"
+            >{{ (zoom() * 100).toFixed(0) }}%</span
+          >
+          <button
+            type="button"
+            (click)="zoomIn()"
+            [disabled]="zoom() >= 1.5"
+            aria-label="Zoom In"
+          >
+            +
+          </button>
         </div>
 
         @if (showCodeToggle() && g.rawMermaid) {
-          <button type="button" class="btn" [class.btn--active]="showMermaidSource()" (click)="toggleMermaidSource()">
+          <button
+            type="button"
+            class="btn"
+            [class.btn--active]="showMermaidSource()"
+            (click)="toggleMermaidSource()"
+          >
             <span>{{ showMermaidSource() ? 'Diagram' : 'Mermaid' }}</span>
           </button>
         }
@@ -49,7 +91,11 @@
       </div>
     } @else {
       <div class="canvas" [class.is-compact]="density() === 'compact'">
-        <div class="nodes-track" [class.is-horizontal]="activeDirection() === 'horizontal'" [style.transform]="'scale(' + zoom() + ')'">
+        <div
+          class="nodes-track"
+          [class.is-horizontal]="activeDirection() === 'horizontal'"
+          [style.transform]="'scale(' + zoom() + ')'"
+        >
           @for (item of resolvedNodes(); track item.node.id; let idx = $index) {
             <div class="step" [class.step--last]="item.isLast">
               <div
@@ -64,9 +110,15 @@
               >
                 <div class="node-top">
                   <div class="icon-wrap">
-                    <span class="node-icon" aria-hidden="true">{{ getNodeIcon(item.node) }}</span>
-                    <span class="step-num mono">{{ (idx + 1) < 10 ? '0' + (idx + 1) : (idx + 1) }}</span>
-                    <span class="type-pill mono">{{ getNodeTypePill(item.node.type) }}</span>
+                    <span class="node-icon" aria-hidden="true">{{
+                      getNodeIcon(item.node)
+                    }}</span>
+                    <span class="step-num mono">{{
+                      idx + 1 < 10 ? '0' + (idx + 1) : idx + 1
+                    }}</span>
+                    <span class="type-pill mono">{{
+                      getNodeTypePill(item.node.type)
+                    }}</span>
                   </div>
 
                   @if (item.node.badge) {
@@ -83,28 +135,80 @@
               </div>
 
               @if (!item.isLast) {
-                <div class="connector" [class.connector--multi]="item.outgoingEdges.length > 1">
-                  @for (edge of item.outgoingEdges; track edge.to + edge.label) {
+                <div
+                  class="connector"
+                  [class.connector--multi]="item.outgoingEdges.length > 1"
+                >
+                  @for (
+                    edge of item.outgoingEdges;
+                    track edge.to + edge.label
+                  ) {
                     <div class="arrow-wrap">
                       @if (edge.label) {
                         <span
                           class="edge-badge mono"
-                          [class.is-ok]="edge.label.toLowerCase().includes('success') || edge.label.toLowerCase().includes('true') || edge.label.toLowerCase().includes('yes')"
-                          [class.is-err]="edge.label.toLowerCase().includes('error') || edge.label.toLowerCase().includes('fail') || edge.label.toLowerCase().includes('no')"
+                          [class.is-ok]="
+                            edge.label.toLowerCase().includes('success') ||
+                            edge.label.toLowerCase().includes('true') ||
+                            edge.label.toLowerCase().includes('yes')
+                          "
+                          [class.is-err]="
+                            edge.label.toLowerCase().includes('error') ||
+                            edge.label.toLowerCase().includes('fail') ||
+                            edge.label.toLowerCase().includes('no')
+                          "
                         >
                           {{ edge.label }}
                         </span>
                       }
 
                       @if (activeDirection() === 'horizontal') {
-                        <svg class="arrow-svg" viewBox="0 0 28 16" width="28" height="16" aria-hidden="true">
-                          <line x1="0" y1="8" x2="20" y2="8" stroke="currentColor" stroke-width="2" [attr.stroke-dasharray]="edge.style === 'dashed' ? '4 3' : null"/>
-                          <polygon points="19,3 27,8 19,13" fill="currentColor"/>
+                        <svg
+                          class="arrow-svg"
+                          viewBox="0 0 28 16"
+                          width="28"
+                          height="16"
+                          aria-hidden="true"
+                        >
+                          <line
+                            x1="0"
+                            y1="8"
+                            x2="20"
+                            y2="8"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            [attr.stroke-dasharray]="
+                              edge.style === 'dashed' ? '4 3' : null
+                            "
+                          />
+                          <polygon
+                            points="19,3 27,8 19,13"
+                            fill="currentColor"
+                          />
                         </svg>
                       } @else {
-                        <svg class="arrow-svg" viewBox="0 0 16 28" width="16" height="28" aria-hidden="true">
-                          <line x1="8" y1="0" x2="8" y2="20" stroke="currentColor" stroke-width="2" [attr.stroke-dasharray]="edge.style === 'dashed' ? '4 3' : null"/>
-                          <polygon points="3,19 8,27 13,19" fill="currentColor"/>
+                        <svg
+                          class="arrow-svg"
+                          viewBox="0 0 16 28"
+                          width="16"
+                          height="28"
+                          aria-hidden="true"
+                        >
+                          <line
+                            x1="8"
+                            y1="0"
+                            x2="8"
+                            y2="20"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            [attr.stroke-dasharray]="
+                              edge.style === 'dashed' ? '4 3' : null
+                            "
+                          />
+                          <polygon
+                            points="3,19 8,27 13,19"
+                            fill="currentColor"
+                          />
                         </svg>
                       }
                     </div>

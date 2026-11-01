@@ -29,6 +29,8 @@ export class Modal {
   readonly eyebrow = input<string>();
   readonly size = input<ModalSize>('md');
   readonly closeOnBackdrop = input<boolean>(true);
+  /** The close button's accessible name, in the page's language. */
+  readonly closeLabel = input<string>('Close dialog');
 
   readonly closed = output<void>();
 

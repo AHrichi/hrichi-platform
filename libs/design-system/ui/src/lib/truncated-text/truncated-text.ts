@@ -85,7 +85,10 @@ export class TruncatedText {
 
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent): void {
-    if (this.isOpen() && !this.elementRef.nativeElement.contains(event.target as Node)) {
+    if (
+      this.isOpen() &&
+      !this.elementRef.nativeElement.contains(event.target as Node)
+    ) {
       this.close();
     }
   }

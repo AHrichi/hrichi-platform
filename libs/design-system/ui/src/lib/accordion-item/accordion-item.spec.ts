@@ -27,8 +27,12 @@ describe('AccordionItem', () => {
     const fixture = TestBed.createComponent(Host);
     await fixture.whenStable();
 
-    const trigger = fixture.nativeElement.querySelector('.ah-accordion-trigger');
-    const content = fixture.nativeElement.querySelector('.ah-accordion-content');
+    const trigger = fixture.nativeElement.querySelector(
+      '.ah-accordion-trigger',
+    );
+    const content = fixture.nativeElement.querySelector(
+      '.ah-accordion-content',
+    );
 
     expect(trigger.getAttribute('aria-expanded')).toBe('false');
     expect(content.hasAttribute('hidden')).toBe(true);

@@ -4,9 +4,10 @@
   gap: var(--space-1);
   border-radius: var(--radius-pill);
   font-weight: var(--font-weight-semibold);
-  line-height: 1;
+  line-height: 1.25;
   white-space: nowrap;
   max-width: 100%;
+  box-sizing: border-box;
   transition:
     background-color var(--motion-duration-fast) ease,
     color var(--motion-duration-fast) ease;
@@ -17,6 +18,22 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   max-width: 100%;
+}
+
+@media (max-width: 40rem) {
+  :host {
+    white-space: normal;
+    border-radius: var(--radius-md);
+    padding-block: 0.2rem;
+  }
+
+  .ah-badge-content {
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
 }
 
 :host(.ah-badge--sm) {
@@ -42,9 +59,10 @@
 
 /* Success */
 :host(.ah-badge--success) {
-  background: rgba(34, 197, 94, 0.12);
+  background: var(--color-success-subtle);
   color: var(--color-success-default);
-  border: 1px solid rgba(34, 197, 94, 0.25);
+  border: 1px solid
+    color-mix(in srgb, var(--color-success-default) 32%, transparent);
 }
 :host(.ah-badge--success) .ah-badge-dot {
   background: var(--color-success-default);
@@ -52,32 +70,35 @@
 
 /* Warning */
 :host(.ah-badge--warning) {
-  background: rgba(245, 158, 11, 0.12);
-  color: var(--color-amber-300);
-  border: 1px solid rgba(245, 158, 11, 0.25);
+  background: var(--color-warning-subtle);
+  color: var(--color-warning-default);
+  border: 1px solid
+    color-mix(in srgb, var(--color-warning-default) 32%, transparent);
 }
 :host(.ah-badge--warning) .ah-badge-dot {
-  background: var(--color-amber-300);
+  background: var(--color-warning-default);
 }
 
 /* Danger */
 :host(.ah-badge--danger) {
-  background: rgba(239, 68, 68, 0.12);
-  color: var(--color-crimson-500);
-  border: 1px solid rgba(239, 68, 68, 0.25);
+  background: var(--color-danger-subtle);
+  color: var(--color-danger-default);
+  border: 1px solid
+    color-mix(in srgb, var(--color-danger-default) 32%, transparent);
 }
 :host(.ah-badge--danger) .ah-badge-dot {
-  background: var(--color-crimson-500);
+  background: var(--color-danger-default);
 }
 
 /* Info */
 :host(.ah-badge--info) {
-  background: rgba(59, 130, 246, 0.12);
-  color: var(--color-blue-300);
-  border: 1px solid rgba(59, 130, 246, 0.25);
+  background: var(--color-info-subtle);
+  color: var(--color-info-default);
+  border: 1px solid
+    color-mix(in srgb, var(--color-info-default) 32%, transparent);
 }
 :host(.ah-badge--info) .ah-badge-dot {
-  background: var(--color-blue-300);
+  background: var(--color-info-default);
 }
 
 /* Accent */

@@ -1,0 +1,45 @@
+<div class="ah-split-bar__track" role="list" [attr.aria-label]="ariaLabel()">
+  @for (seg of segments(); track seg.label; let idx = $index) {
+    <div
+      class="ah-split-bar__segment"
+      role="listitem"
+      [style.width.%]="seg.percentage"
+      [style.--seg-color]="
+        seg.color || 'var(--color-data-' + ((idx % 7) + 1) + ')'
+      "
+      [attr.title]="
+        seg.label +
+        ': ' +
+        seg.percentage +
+        '%' +
+        (seg.value !== undefined ? ' (' + seg.value + ')' : '')
+      "
+    >
+      @if (seg.percentage >= 14) {
+        <span class="ah-split-bar__inline-label">
+          {{ seg.label }} ({{ seg.percentage }}%)
+        </span>
+      }
+    </div>
+  }
+</div>
+
+@if (showLegend() && segments().length > 0) {
+  <div class="ah-split-bar__legend">
+    @for (seg of segments(); track seg.label; let idx = $index) {
+      <div class="ah-split-bar__legend-item">
+        <span
+          class="ah-split-bar__dot"
+          [style.background]="
+            seg.color || 'var(--color-data-' + ((idx % 7) + 1) + ')'
+          "
+        ></span>
+        <span class="ah-split-bar__legend-name">{{ seg.label }}</span>
+        <strong class="ah-split-bar__legend-pct">{{ seg.percentage }}%</strong>
+        @if (seg.value !== undefined) {
+          <span class="ah-split-bar__legend-val">({{ seg.value }})</span>
+        }
+      </div>
+    }
+  </div>
+}

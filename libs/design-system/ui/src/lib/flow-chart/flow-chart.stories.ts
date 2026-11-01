@@ -3,27 +3,31 @@ import { type ConceptGraphData, FlowChart } from './flow-chart';
 
 const sampleEventLoopGraph: ConceptGraphData = {
   title: 'JavaScript Event Loop Execution Order',
-  description: 'Deterministic tick dispatch: Call Stack -> Microtask Queue -> Render -> Macrotask Queue',
+  description:
+    'Deterministic tick dispatch: Call Stack -> Microtask Queue -> Render -> Macrotask Queue',
   direction: 'vertical',
   nodes: [
     {
       id: '1',
       label: 'Call Stack Execution',
-      subtext: 'Synchronous bytecode runs to completion on the V8 engine thread',
+      subtext:
+        'Synchronous bytecode runs to completion on the V8 engine thread',
       type: 'start',
       badge: 'Synchronous',
     },
     {
       id: '2',
       label: 'Drain Microtask Queue',
-      subtext: 'Promise reactions, queueMicrotask callbacks run until queue is totally empty',
+      subtext:
+        'Promise reactions, queueMicrotask callbacks run until queue is totally empty',
       type: 'highlight',
       badge: 'Zero Delay',
     },
     {
       id: '3',
       label: 'Animation & DOM Render Frame',
-      subtext: 'requestAnimationFrame, layout recalculation and paint composite',
+      subtext:
+        'requestAnimationFrame, layout recalculation and paint composite',
       type: 'process',
       badge: '60/120Hz',
     },
@@ -48,7 +52,8 @@ const sampleEventLoopGraph: ConceptGraphData = {
 
 const sampleScopeLookupGraph: ConceptGraphData = {
   title: 'Lexical Environment Scope Chain Traversal',
-  description: 'Identifier resolution from inner closure to global window/globalThis',
+  description:
+    'Identifier resolution from inner closure to global window/globalThis',
   direction: 'horizontal',
   nodes: [
     {
@@ -138,12 +143,14 @@ export const DecisionPipeline: Story = {
   args: {
     graph: {
       title: 'PostgreSQL MVCC Transaction Read Visibility',
-      description: 'Determines whether a tuple version is visible to a snapshot',
+      description:
+        'Determines whether a tuple version is visible to a snapshot',
       nodes: [
         {
           id: 'n1',
           label: 'Tuple xmin < Snapshot xmin',
-          subtext: 'Created by transaction that committed before our snapshot started',
+          subtext:
+            'Created by transaction that committed before our snapshot started',
           type: 'start',
           badge: 'Check 1',
         },

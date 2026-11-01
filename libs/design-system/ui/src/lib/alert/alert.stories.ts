@@ -24,7 +24,8 @@ const meta: Meta<Alert & { message?: string }> = {
   args: {
     variant: 'info',
     title: 'Curriculum Roadmap Generated',
-    message: 'Review the branches and approve sections before generating flashcards and quizzes.',
+    message:
+      'Review the branches and approve sections before generating flashcards and quizzes.',
     dismissible: true,
   },
 };

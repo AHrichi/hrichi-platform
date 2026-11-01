@@ -2,10 +2,12 @@ import {
   ChangeDetectionStrategy,
   Component,
   ElementRef,
+  inject,
   input,
   model,
   viewChildren,
 } from '@angular/core';
+import { isRtl } from '../direction';
 
 export interface TabItem<T extends string = string> {
   readonly id: T;
@@ -33,6 +35,7 @@ export class Tabs<T extends string = string> {
   readonly selectedId = model.required<T>();
   readonly ariaLabel = input<string>('Navigation Tabs');
 
+  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly tabButtons =
     viewChildren<ElementRef<HTMLButtonElement>>('tabButton');
 
@@ -45,10 +48,14 @@ export class Tabs<T extends string = string> {
     const list = this.tabs();
     let nextIndex = currentIndex;
 
-    if (event.key === 'ArrowRight') {
+    // Right-to-left, the right arrow goes to the previous tab.
+    const forward = isRtl(this.host.nativeElement) ? 'ArrowLeft' : 'ArrowRight';
+    const back = forward === 'ArrowLeft' ? 'ArrowRight' : 'ArrowLeft';
+
+    if (event.key === forward) {
       event.preventDefault();
       nextIndex = (currentIndex + 1) % list.length;
-    } else if (event.key === 'ArrowLeft') {
+    } else if (event.key === back) {
       event.preventDefault();
       nextIndex = (currentIndex - 1 + list.length) % list.length;
     } else if (event.key === 'Home') {

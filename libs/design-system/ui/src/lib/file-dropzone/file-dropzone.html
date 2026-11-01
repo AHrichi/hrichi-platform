@@ -1,0 +1,41 @@
+<input
+  #fileInput
+  type="file"
+  class="ah-file-dropzone__sr-input"
+  tabindex="-1"
+  [attr.aria-label]="title()"
+  [attr.accept]="accept()"
+  [multiple]="multiple()"
+  [disabled]="disabled() || loading()"
+  (change)="onInputChange($event)"
+/>
+
+<div class="ah-file-dropzone__orb" aria-hidden="true">
+  <span>{{ loading() ? loadingIcon() : icon() }}</span>
+</div>
+
+@if (badges().length > 0) {
+  <div class="ah-file-dropzone__badges">
+    @for (b of badges(); track b) {
+      <ah-badge variant="neutral" size="sm">{{ b }}</ah-badge>
+    }
+  </div>
+}
+
+<h2 class="ah-file-dropzone__title">{{ title() }}</h2>
+
+@if (description()) {
+  <p class="ah-file-dropzone__desc">{{ description() }}</p>
+}
+
+<div class="ah-file-dropzone__actions">
+  <button
+    type="button"
+    ahButton="primary"
+    [disabled]="disabled() || loading()"
+    (click)="openFileDialog()"
+  >
+    <span>{{ loading() ? loadingLabel() : ctaLabel() }}</span>
+  </button>
+  <ng-content select="[dropzone-actions]" />
+</div>

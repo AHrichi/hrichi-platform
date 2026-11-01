@@ -72,7 +72,8 @@ export const AngularRxjs: StoryObj<CodeBlock> = {
     language: 'typescript',
     filename: 'user.service.ts',
     code: RXJS_CODE,
-    caption: 'Cold observable emission scheduled asynchronously on microtask queue',
+    caption:
+      'Cold observable emission scheduled asynchronously on microtask queue',
   },
 };
 

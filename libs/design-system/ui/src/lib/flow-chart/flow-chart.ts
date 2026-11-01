@@ -69,7 +69,9 @@ export class FlowChart {
   readonly copiedMermaid = signal<boolean>(false);
 
   readonly activeDirection = computed<'horizontal' | 'vertical'>(() => {
-    return this.customDirection() ?? this.graph()?.direction ?? this.direction();
+    return (
+      this.customDirection() ?? this.graph()?.direction ?? this.direction()
+    );
   });
 
   readonly resolvedNodes = computed<ResolvedFlowNode[]>(() => {
@@ -105,12 +107,15 @@ export class FlowChart {
   }
 
   toggleDirection(): void {
-    const next = this.activeDirection() === 'vertical' ? 'horizontal' : 'vertical';
+    const next =
+      this.activeDirection() === 'vertical' ? 'horizontal' : 'vertical';
     this.customDirection.set(next);
   }
 
   toggleDensity(): void {
-    this.density.update((d) => (d === 'comfortable' ? 'compact' : 'comfortable'));
+    this.density.update((d) =>
+      d === 'comfortable' ? 'compact' : 'comfortable',
+    );
   }
 
   toggleMermaidSource(): void {
@@ -162,15 +167,15 @@ export class FlowChart {
   getNodeColor(type?: string): string {
     switch (type) {
       case 'start':
-        return '#10b981';
+        return 'var(--color-success-default)';
       case 'decision':
-        return '#f59e0b';
+        return 'var(--color-warning-default)';
       case 'end':
-        return '#3b82f6';
+        return 'var(--color-info-default)';
       case 'highlight':
-        return '#a855f7';
+        return 'var(--color-accent-default)';
       default:
-        return '#64748b';
+        return 'var(--color-text-muted)';
     }
   }
 

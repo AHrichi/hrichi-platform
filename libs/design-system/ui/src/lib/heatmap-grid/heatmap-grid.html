@@ -1,0 +1,71 @@
+<div class="ah-heatmap-grid__toolbar">
+  <div class="ah-heatmap-grid__legend" aria-label="Intensity scale">
+    <span class="ah-heatmap-grid__legend-lbl">Less</span>
+    <span class="ah-heatmap-grid__swatch" data-level="0"></span>
+    <span class="ah-heatmap-grid__swatch" data-level="1"></span>
+    <span class="ah-heatmap-grid__swatch" data-level="2"></span>
+    <span class="ah-heatmap-grid__swatch" data-level="3"></span>
+    <span class="ah-heatmap-grid__swatch" data-level="4"></span>
+    <span class="ah-heatmap-grid__legend-lbl">More</span>
+  </div>
+
+  @if (activeCell(); as cell) {
+    <div class="ah-heatmap-grid__readout" aria-live="polite">
+      <span>{{ cell.rowLabel }} · {{ cell.colLabel }}:00</span>
+      <strong>{{ cell.value }} {{ unitLabel() }}</strong>
+    </div>
+  }
+</div>
+
+<div class="ah-heatmap-grid__scroll">
+  <div
+    class="ah-heatmap-grid__table"
+    role="grid"
+    [style.--cols]="colLabels().length"
+  >
+    <div class="ah-heatmap-grid__header-row" role="row">
+      <span class="ah-heatmap-grid__corner" role="columnheader">
+        {{ cornerLabel() }}
+      </span>
+      @for (col of colLabels(); track col) {
+        <span class="ah-heatmap-grid__col-head" role="columnheader">
+          {{ col }}
+        </span>
+      }
+    </div>
+
+    @for (row of rows(); track row.label) {
+      <div class="ah-heatmap-grid__row" role="row">
+        <span
+          class="ah-heatmap-grid__row-label"
+          role="rowheader"
+          [attr.title]="row.label"
+        >
+          {{ row.shortLabel || row.label }}
+        </span>
+
+        @for (val of row.values; track $index; let colIdx = $index) {
+          @let colLbl = colLabels()[colIdx] || '';
+          <button
+            type="button"
+            class="ah-heatmap-grid__cell"
+            role="gridcell"
+            [attr.data-level]="cellLevel(val)"
+            [attr.title]="
+              row.label + ' ' + colLbl + ':00 — ' + val + ' ' + unitLabel()
+            "
+            [attr.aria-label]="
+              row.label + ' ' + colLbl + ':00, ' + val + ' ' + unitLabel()
+            "
+            (mouseenter)="setActive(row.label, colLbl, val)"
+            (focus)="setActive(row.label, colLbl, val)"
+          >
+            @if (val > 0) {
+              <span>{{ val }}</span>
+            }
+          </button>
+        }
+      </div>
+    }
+  </div>
+</div>

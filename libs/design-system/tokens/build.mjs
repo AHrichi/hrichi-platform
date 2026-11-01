@@ -101,6 +101,13 @@ const contrastPairs = [
   ['color-accent-default', 'color-bg-raised'],
   ['color-accent-on', 'color-accent-default'],
   ['color-success-default', 'color-bg-canvas'],
+  ['color-success-default', 'color-bg-surface'],
+  ['color-warning-default', 'color-bg-canvas'],
+  ['color-warning-default', 'color-bg-surface'],
+  ['color-info-default', 'color-bg-canvas'],
+  ['color-info-default', 'color-bg-surface'],
+  ['color-danger-default', 'color-bg-canvas'],
+  ['color-danger-default', 'color-bg-surface'],
   ['color-stage-text', 'color-stage-bg'],
   ['color-stage-muted', 'color-stage-bg'],
 ];

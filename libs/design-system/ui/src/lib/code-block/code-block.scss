@@ -1,7 +1,7 @@
 :host {
   display: block;
-  background: #0f0f13;
-  border: 1px solid var(--color-stage-border, #26262b);
+  background: var(--color-stage-bg);
+  border: 1px solid var(--color-stage-border);
   border-radius: var(--radius-lg, 0.75rem);
   overflow: hidden;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
@@ -13,8 +13,12 @@
   justify-content: space-between;
   gap: var(--space-3, 0.75rem);
   padding: 0.55rem 0.9rem;
-  background: #16161d;
-  border-bottom: 1px solid #262632;
+  background: color-mix(
+    in srgb,
+    var(--color-stage-text) 4%,
+    var(--color-stage-bg)
+  );
+  border-bottom: 1px solid var(--color-stage-border);
   user-select: none;
 }
 
@@ -51,7 +55,7 @@
 .ah-code-filename {
   font-family: var(--font-family-mono, monospace);
   font-size: 0.75rem;
-  color: #94a3b8;
+  color: var(--color-stage-muted);
   font-weight: 500;
   max-width: 200px;
   overflow: hidden;
@@ -62,7 +66,7 @@
 .ah-code-lang {
   font-family: var(--font-family-mono, monospace);
   font-size: 0.7rem;
-  color: var(--color-data-1, #e66f85);
+  color: var(--color-data-1);
   text-transform: uppercase;
   font-weight: 700;
   letter-spacing: 0.05em;
@@ -80,7 +84,7 @@
 .ah-code-lines-count {
   font-family: var(--font-family-mono, monospace);
   font-size: 0.7rem;
-  color: #64748b;
+  color: var(--color-stage-muted);
   display: none;
 
   @media (min-width: 480px) {
@@ -93,11 +97,15 @@
   display: inline-flex;
   align-items: center;
   gap: 0.25rem;
-  background: #1e1e28;
-  border: 1px solid #333342;
+  background: color-mix(
+    in srgb,
+    var(--color-stage-text) 7%,
+    var(--color-stage-bg)
+  );
+  border: 1px solid var(--color-stage-border);
   border-radius: var(--radius-sm, 0.25rem);
   padding: 0.2rem 0.5rem;
-  color: #94a3b8;
+  color: var(--color-stage-muted);
   font-size: 0.72rem;
   font-family: var(--font-family-sans, sans-serif);
   cursor: pointer;
@@ -105,33 +113,37 @@
   transition: all var(--motion-duration-fast, 120ms) ease;
 
   &:hover {
-    background: #282836;
-    color: #f8fafc;
-    border-color: #475569;
+    background: color-mix(
+      in srgb,
+      var(--color-stage-text) 12%,
+      var(--color-stage-bg)
+    );
+    color: var(--color-stage-text);
+    border-color: var(--color-stage-muted);
   }
 
   &:focus-visible {
-    outline: 2px solid var(--color-focus-ring, #6366f1);
+    outline: 2px solid var(--color-focus-ring);
     outline-offset: 1px;
   }
 }
 
 .ah-code-action-btn--active {
   background: rgba(99, 102, 241, 0.2);
-  border-color: #6366f1;
-  color: #a5b4fc;
+  border-color: var(--color-data-4);
+  color: var(--color-data-4);
 }
 
 .ah-code-copy-btn--copied {
-  border-color: #10b981;
-  color: #34d399;
+  border-color: var(--color-data-7);
+  color: var(--color-data-7);
   background: rgba(16, 185, 129, 0.15);
 }
 
 .ah-code-body {
   padding: 0.85rem 0;
   overflow-x: auto;
-  background: #0f0f13;
+  background: var(--color-stage-bg);
 
   pre {
     margin: 0;
@@ -144,7 +156,7 @@
     font-family: var(--font-family-mono, monospace);
     font-size: 0.85rem;
     line-height: 1.6;
-    color: #f8fafc;
+    color: var(--color-stage-text);
     tab-size: 2;
   }
 }
@@ -167,9 +179,9 @@
   padding-right: 0.8rem;
   margin-right: 0.8rem;
   text-align: right;
-  color: #4b5563;
+  color: var(--color-stage-muted);
   font-size: 0.75rem;
-  border-right: 1px solid #23232f;
+  border-right: 1px solid var(--color-stage-border);
   user-select: none;
   flex-shrink: 0;
 }
@@ -186,42 +198,42 @@
 
 /* Syntax Token Colors (Vibrant, high-contrast on dark editor canvas) */
 .token-keyword {
-  color: #c084fc;
+  color: var(--color-data-5);
   font-weight: 600;
 }
 
 .token-function {
-  color: #38bdf8;
+  color: var(--color-data-4);
 }
 
 .token-type {
-  color: #818cf8;
+  color: var(--color-data-4);
 }
 
 .token-string {
-  color: #34d399;
+  color: var(--color-data-7);
 }
 
 .token-number {
-  color: #fbbf24;
+  color: var(--color-data-2);
 }
 
 .token-boolean {
-  color: #fb923c;
+  color: var(--color-data-1);
   font-weight: 500;
 }
 
 .token-comment {
-  color: #64748b;
+  color: var(--color-stage-muted);
   font-style: italic;
 }
 
 .token-operator {
-  color: #94a3b8;
+  color: var(--color-stage-muted);
 }
 
 .token-plain {
-  color: #f1f5f9;
+  color: var(--color-stage-text);
 }
 
 .ah-code-caption {
@@ -229,10 +241,10 @@
   align-items: center;
   gap: var(--space-2, 0.5rem);
   padding: 0.55rem 0.9rem;
-  background: #14141b;
-  border-top: 1px solid #22222d;
+  background: var(--color-stage-bg);
+  border-top: 1px solid var(--color-stage-border);
   font-size: 0.78rem;
-  color: #94a3b8;
+  color: var(--color-stage-muted);
 
   .caption-icon {
     font-size: 0.9rem;

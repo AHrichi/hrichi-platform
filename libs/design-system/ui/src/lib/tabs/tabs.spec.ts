@@ -5,12 +5,7 @@ import { Tabs, type TabItem } from './tabs';
 
 @Component({
   imports: [Tabs],
-  template: `
-    <ah-tabs
-      [tabs]="tabs"
-      [(selectedId)]="activeTab"
-    />
-  `,
+  template: ` <ah-tabs [tabs]="tabs" [(selectedId)]="activeTab" /> `,
 })
 class Host {
   tabs: readonly TabItem[] = [

@@ -26,7 +26,9 @@ describe('Alert', () => {
     expect(hostElem.textContent).toContain('Validation Failed');
     expect(hostElem.textContent).toContain('Topic is out of bounds');
 
-    const dismissBtn = fixture.nativeElement.querySelector('.ah-alert-dismiss-btn');
+    const dismissBtn = fixture.nativeElement.querySelector(
+      '.ah-alert-dismiss-btn',
+    );
     expect(dismissBtn).toBeTruthy();
 
     dismissBtn.click();

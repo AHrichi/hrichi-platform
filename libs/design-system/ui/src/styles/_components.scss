@@ -6,14 +6,17 @@
     justify-content: center;
     gap: var(--space-2);
     min-block-size: 2.75rem;
+    max-inline-size: 100%;
     padding-block: var(--space-2);
     padding-inline: var(--space-5);
     border: 1px solid transparent;
     border-radius: var(--radius-pill);
     font-weight: var(--font-weight-semibold);
     font-size: var(--font-size-200);
-    line-height: 1;
+    line-height: 1.25;
+    text-align: center;
     text-decoration: none;
+    overflow-wrap: anywhere;
     cursor: pointer;
     user-select: none;
     transition:
@@ -69,7 +72,11 @@
     display: flex;
     flex-direction: column;
     gap: var(--space-3);
-    padding: var(--space-5);
+    padding: clamp(0.95rem, 2.5vw, var(--space-5));
+    min-inline-size: 0;
+    max-inline-size: 100%;
+    overflow-wrap: anywhere;
+    word-break: break-word;
     background: var(--color-bg-raised);
     border: 1px solid var(--color-border-default);
     border-radius: var(--radius-lg);

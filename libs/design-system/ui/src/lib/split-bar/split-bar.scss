@@ -1,0 +1,81 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  inline-size: 100%;
+}
+
+.ah-split-bar__track {
+  display: flex;
+  inline-size: 100%;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  gap: 2px;
+  background: var(--color-border-default);
+}
+
+:host(.ah-split-bar--sm) .ah-split-bar__track {
+  block-size: 0.75rem;
+}
+
+:host(.ah-split-bar--md) .ah-split-bar__track {
+  block-size: 1.85rem;
+}
+
+:host(.ah-split-bar--lg) .ah-split-bar__track {
+  block-size: 2.35rem;
+}
+
+.ah-split-bar__segment {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--seg-color, var(--color-accent-default));
+  color: #06140b;
+  font-size: var(--font-size-100);
+  font-weight: var(--font-weight-bold);
+  padding-inline: var(--space-2);
+  overflow: hidden;
+  white-space: nowrap;
+  transition: width var(--motion-duration-base) var(--motion-easing-standard);
+}
+
+.ah-split-bar__inline-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ah-split-bar__legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-4);
+  font-size: var(--font-size-100);
+}
+
+.ah-split-bar__legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.ah-split-bar__dot {
+  inline-size: 0.6rem;
+  block-size: 0.6rem;
+  border-radius: var(--radius-pill);
+  flex-shrink: 0;
+}
+
+.ah-split-bar__legend-name {
+  color: var(--color-text-default);
+  font-weight: var(--font-weight-medium);
+}
+
+.ah-split-bar__legend-pct {
+  color: var(--color-text-default);
+  font-weight: var(--font-weight-bold);
+}
+
+.ah-split-bar__legend-val {
+  color: var(--color-text-muted);
+}

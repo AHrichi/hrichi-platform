@@ -49,13 +49,13 @@ describe('CodeBlock', () => {
     await fixture.whenStable();
 
     const lineNumsBefore = fixture.nativeElement.querySelectorAll(
-      '.ah-code-line-number'
+      '.ah-code-line-number',
     );
     expect(lineNumsBefore.length).toBe(3);
 
     // Toggle line numbers button
     const actionBtns = fixture.nativeElement.querySelectorAll(
-      '.ah-code-action-btn'
+      '.ah-code-action-btn',
     );
     const wrapBtn = actionBtns[0];
     const numToggleBtn = actionBtns[1];
@@ -64,18 +64,18 @@ describe('CodeBlock', () => {
     await fixture.whenStable();
 
     const lineNumsAfter = fixture.nativeElement.querySelectorAll(
-      '.ah-code-line-number'
+      '.ah-code-line-number',
     );
     expect(lineNumsAfter.length).toBe(0);
 
     // Toggle wrapping
     expect(
-      fixture.nativeElement.querySelector('.ah-code-body--wrapped')
+      fixture.nativeElement.querySelector('.ah-code-body--wrapped'),
     ).toBeNull();
     wrapBtn.click();
     await fixture.whenStable();
     expect(
-      fixture.nativeElement.querySelector('.ah-code-body--wrapped')
+      fixture.nativeElement.querySelector('.ah-code-body--wrapped'),
     ).not.toBeNull();
   });
 });

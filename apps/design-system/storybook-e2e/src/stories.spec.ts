@@ -46,6 +46,29 @@ async function openStory(page: Page, id: string, theme: string) {
   return errors;
 }
 
+/**
+ * Runs axe on the story. Storybook's accessibility add-on may still be running
+ * its own pass (slow on animated scenes), and axe refuses to run twice at once,
+ * so wait for that pass to end and try again.
+ */
+async function analyze(page: Page) {
+  for (let attempt = 1; ; attempt++) {
+    try {
+      return await new AxeBuilder({ page })
+        .include('#storybook-root')
+        .analyze();
+    } catch (error) {
+      if (attempt === 5 || !String(error).includes('Axe is already running')) {
+        throw error;
+      }
+      // axe-core flags its own run; wait until the other pass is done.
+      await page.waitForFunction(
+        () => !(window as { axe?: { _running?: boolean } }).axe?._running,
+      );
+    }
+  }
+}
+
 test('the Storybook has stories', () => {
   expect(stories.length).toBeGreaterThan(10);
 });
@@ -55,9 +78,7 @@ for (const theme of themes) {
     for (const story of stories) {
       test(`${story.title}: ${story.name}`, async ({ page }) => {
         const errors = await openStory(page, story.id, theme);
-        const axe = await new AxeBuilder({ page })
-          .include('#storybook-root')
-          .analyze();
+        const axe = await analyze(page);
         expect(axe.violations).toEqual([]);
         expect(errors).toEqual([]);
       });

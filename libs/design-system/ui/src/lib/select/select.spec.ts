@@ -61,7 +61,9 @@ describe('Select', () => {
     fixture.detectChanges();
 
     expect(fixture.componentInstance.selectedValue()).toBe('ng');
-    expect(fixture.nativeElement.querySelector('.ah-select-popover')).toBeNull();
+    expect(
+      fixture.nativeElement.querySelector('.ah-select-popover'),
+    ).toBeNull();
     expect(trigger.textContent).toContain('Angular');
   });
 });

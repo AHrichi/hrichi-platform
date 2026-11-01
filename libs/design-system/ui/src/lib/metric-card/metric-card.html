@@ -5,7 +5,10 @@
   }
 </div>
 
-<div class="ah-metric-value-row" [attr.title]="value() + (unit() ? ' ' + unit() : '')">
+<div
+  class="ah-metric-value-row"
+  [attr.title]="value() + (unit() ? ' ' + unit() : '')"
+>
   <span class="ah-metric-value">{{ value() }}</span>
   @if (unit()) {
     <span class="ah-metric-unit">{{ unit() }}</span>

@@ -1,8 +1,9 @@
 <div class="ah-select-container">
   @if (label()) {
-    <label [id]="selectId + '-label'" class="ah-select-label">
+    <!-- The trigger is a button, so it's named by aria-labelledby, not a <label>. -->
+    <span [id]="selectId + '-label'" class="ah-select-label">
       {{ label() }}
-    </label>
+    </span>
   }
 
   <button
@@ -13,8 +14,15 @@
     aria-haspopup="listbox"
     [attr.aria-expanded]="isOpen()"
     [attr.aria-controls]="listboxId"
-    [attr.aria-labelledby]="label() ? selectId + '-label ' + selectId : selectId"
-    [attr.title]="selectedOption() ? (selectedOption()!.label + (selectedOption()!.hint ? ' — ' + selectedOption()!.hint : '')) : placeholder()"
+    [attr.aria-labelledby]="
+      label() ? selectId + '-label ' + selectId : selectId
+    "
+    [attr.title]="
+      selectedOption()
+        ? selectedOption()!.label +
+          (selectedOption()!.hint ? ' — ' + selectedOption()!.hint : '')
+        : placeholder()
+    "
     [disabled]="disabled()"
     (click)="toggleOpen()"
     (keydown)="onTriggerKeydown($event)"
@@ -31,11 +39,7 @@
     </div>
 
     <span class="ah-select-chevron" aria-hidden="true">
-      <svg
-        viewBox="0 0 20 20"
-        fill="currentColor"
-        class="chevron-svg"
-      >
+      <svg viewBox="0 0 20 20" fill="currentColor" class="chevron-svg">
         <path
           fill-rule="evenodd"
           d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
@@ -62,12 +66,18 @@
             role="option"
             [attr.aria-selected]="option.value === value()"
             [attr.aria-disabled]="option.disabled"
-            [attr.title]="option.label + (option.hint ? ' — ' + option.hint : '')"
+            [attr.title]="
+              option.label + (option.hint ? ' — ' + option.hint : '')
+            "
+            tabindex="-1"
             (click)="selectOption(option)"
+            (keydown.enter)="selectOption(option)"
           >
             <div class="ah-select-option-content">
               @if (option.icon) {
-                <span class="ah-select-icon" aria-hidden="true">{{ option.icon }}</span>
+                <span class="ah-select-icon" aria-hidden="true">{{
+                  option.icon
+                }}</span>
               }
               <div class="ah-select-option-text">
                 <span class="ah-select-option-label">{{ option.label }}</span>

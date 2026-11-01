@@ -27,7 +27,7 @@
       <button
         type="button"
         class="ah-modal-close-btn"
-        aria-label="Close dialog"
+        [attr.aria-label]="closeLabel()"
         (click)="close()"
       >
         ✕
@@ -39,7 +39,7 @@
     </div>
 
     <div class="ah-modal-footer">
-      <ng-content select="[modal-actions]" />
+      <ng-content select="[modal-actions], [slot=footer]" />
     </div>
   </div>
 }

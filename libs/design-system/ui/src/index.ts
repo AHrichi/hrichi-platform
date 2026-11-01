@@ -31,7 +31,10 @@ export { EmptyState as AhEmptyState } from './lib/empty-state/empty-state';
 export * from './lib/alert/alert';
 export { Alert as AhAlert } from './lib/alert/alert';
 export * from './lib/select/select';
-export { Select as AhSelect, type SelectOption as AhSelectOption } from './lib/select/select';
+export {
+  Select as AhSelect,
+  type SelectOption as AhSelectOption,
+} from './lib/select/select';
 
 export * from './lib/flow-chart/flow-chart';
 export {
@@ -44,4 +47,22 @@ export {
 export * from './lib/truncated-text/truncated-text';
 export { TruncatedText as AhTruncatedText } from './lib/truncated-text/truncated-text';
 
+export * from './lib/file-dropzone/file-dropzone';
+export { FileDropzone as AhFileDropzone } from './lib/file-dropzone/file-dropzone';
 
+export * from './lib/split-bar/split-bar';
+export {
+  SplitBar as AhSplitBar,
+  type SplitBarSegment as AhSplitBarSegment,
+  type SplitBarSize as AhSplitBarSize,
+} from './lib/split-bar/split-bar';
+
+export * from './lib/heatmap-grid/heatmap-grid';
+export {
+  HeatmapGrid as AhHeatmapGrid,
+  type HeatmapRowData as AhHeatmapRowData,
+  type HeatmapActiveCell as AhHeatmapActiveCell,
+} from './lib/heatmap-grid/heatmap-grid';
+
+export * from './lib/pagination/pagination';
+export { Pagination as AhPagination } from './lib/pagination/pagination';
