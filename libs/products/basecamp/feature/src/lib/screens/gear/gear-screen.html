@@ -1,0 +1,141 @@
+<section class="screen" aria-labelledby="bc-gear-title">
+  <header class="head">
+    <div>
+      <h2 id="bc-gear-title">{{ t().gear.title }}</h2>
+      <p>{{ t().gear.intro }}</p>
+    </div>
+    <button ahButton type="button" (click)="openNew()">
+      + {{ t().gear.add }}
+    </button>
+  </header>
+
+  @if (store.gear().length) {
+    <ul class="gear" role="list">
+      @for (item of store.gear(); track item.id) {
+        <li class="panel">
+          <div class="main">
+            <strong>{{ item.name }}</strong>
+            <span class="meta">
+              {{ t().categories[item.category] }} ·
+              <span [class]="'condition ' + item.condition">{{
+                t().gear.conditions[item.condition]
+              }}</span>
+            </span>
+            @if (item.notes) {
+              <span class="notes">{{ item.notes }}</span>
+            }
+          </div>
+          <div class="actions">
+            <button
+              ahButton="secondary"
+              size="sm"
+              type="button"
+              (click)="draft.set({ ...item })"
+            >
+              {{ t().common.edit }}
+            </button>
+            <button
+              ahButton="ghost"
+              size="sm"
+              type="button"
+              (click)="remove(item)"
+            >
+              {{ t().common.delete }}
+            </button>
+          </div>
+        </li>
+      }
+    </ul>
+  } @else if (!store.isLoading()) {
+    <ah-empty-state
+      icon="🧰"
+      [title]="t().gear.emptyTitle"
+      [description]="t().gear.emptyText"
+    />
+  }
+
+  @if (store.activeTrip(); as trip) {
+    <section class="panel" aria-labelledby="bc-to-get">
+      <h3 id="bc-to-get">{{ t().gear.toGet }}</h3>
+      <p class="muted">{{ t().gear.toGetHint }} ({{ trip.name }})</p>
+      <ul class="to-get" role="list">
+        @for (name of toGet(); track name) {
+          <li>{{ name }}</li>
+        }
+      </ul>
+    </section>
+  }
+</section>
+
+<ah-modal
+  [closeLabel]="t().common.close"
+  [open]="draft() !== null"
+  (openChange)="$event || draft.set(null)"
+  [title]="isNew() ? t().gear.add : t().gear.editTitle"
+>
+  @if (draft(); as d) {
+    <form
+      class="form"
+      id="bc-gear-form"
+      (submit)="$event.preventDefault(); save()"
+    >
+      <label class="wide">
+        <span>{{ t().gear.kind }}</span>
+        <select (change)="setKind(value($event))">
+          <option value="" [selected]="!d.key">{{ t().gear.other }}</option>
+          @for (kind of kinds(); track kind.key) {
+            <option [value]="kind.key" [selected]="kind.key === d.key">
+              {{ kind.name }}
+            </option>
+          }
+        </select>
+      </label>
+      <label class="wide">
+        <span>{{ t().gear.name }} *</span>
+        <input
+          type="text"
+          required
+          [placeholder]="t().gear.namePlaceholder"
+          [value]="d.name"
+          (input)="patch({ name: value($event) })"
+        />
+      </label>
+      <label>
+        <span>{{ t().gear.category }}</span>
+        <select (change)="patch({ category: asCategory(value($event)) })">
+          @for (category of categories; track category) {
+            <option [value]="category" [selected]="category === d.category">
+              {{ t().categories[category] }}
+            </option>
+          }
+        </select>
+      </label>
+      <label>
+        <span>{{ t().gear.condition }}</span>
+        <select (change)="patch({ condition: asCondition(value($event)) })">
+          @for (condition of conditions; track condition) {
+            <option [value]="condition" [selected]="condition === d.condition">
+              {{ t().gear.conditions[condition] }}
+            </option>
+          }
+        </select>
+      </label>
+      <label class="wide">
+        <span>{{ t().gear.notes }}</span>
+        <textarea
+          rows="2"
+          [value]="d.notes"
+          (input)="patch({ notes: value($event) })"
+        ></textarea>
+      </label>
+    </form>
+  }
+  <div modal-actions class="modal-actions">
+    <button ahButton="ghost" type="button" (click)="draft.set(null)">
+      {{ t().common.cancel }}
+    </button>
+    <button ahButton type="submit" form="bc-gear-form">
+      {{ t().common.save }}
+    </button>
+  </div>
+</ah-modal>

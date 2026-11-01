@@ -1,0 +1,52 @@
+<section class="panel" aria-labelledby="bc-share-title">
+  <h3 id="bc-share-title">{{ t().share.title }}</h3>
+  @if (store.activeTrip()) {
+    <div class="block">
+      <button ahButton type="button" (click)="share()">
+        🔗 {{ t().share.share }}
+      </button>
+      <p class="hint">{{ t().share.shareHint }}</p>
+      @if (link(); as url) {
+        <input
+          class="link"
+          type="text"
+          readonly
+          dir="ltr"
+          [attr.aria-label]="t().share.share"
+          [value]="url"
+          (focus)="select($event)"
+        />
+      }
+    </div>
+  }
+  <div class="block">
+    <div class="actions">
+      <button
+        ahButton="secondary"
+        type="button"
+        [disabled]="!store.trips().length && !store.gear().length"
+        (click)="download()"
+      >
+        💾 {{ t().share.backup }}
+      </button>
+      <label class="open">
+        <input
+          type="file"
+          accept=".json,application/json"
+          class="ah-visually-hidden"
+          (change)="restore($event)"
+        />
+        <span aria-hidden="true">📂</span> {{ t().share.restore }}
+      </label>
+    </div>
+    <p class="hint">{{ t().share.backupHint }}</p>
+  </div>
+  <p
+    class="status"
+    role="status"
+    [hidden]="!status()"
+    [class.error]="status()?.error"
+  >
+    {{ status()?.text }}
+  </p>
+</section>

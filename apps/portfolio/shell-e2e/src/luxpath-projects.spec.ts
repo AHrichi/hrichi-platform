@@ -74,10 +74,10 @@ test.describe('LuxPath projects', () => {
     );
     await page.goto('/apps/lighting/projects');
     await page.getByRole('button', { name: '+ New project' }).first().click();
-    const picker = page.locator('lp-location-picker');
-    const coords = picker.locator('.lp-pick__coords');
+    const picker = page.locator('ah-map-picker');
+    const coords = picker.locator('.ah-pick__coords');
     const before = await coords.innerText();
-    const map = picker.locator('.lp-pick__map');
+    const map = picker.locator('.ah-pick__map');
     await map.scrollIntoViewIfNeeded();
     await map.click({ position: { x: 90, y: 90 } });
     await expect(coords).not.toHaveText(before);

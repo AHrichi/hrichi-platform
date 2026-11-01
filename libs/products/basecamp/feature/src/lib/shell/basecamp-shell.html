@@ -1,0 +1,119 @@
+<div
+  class="basecamp"
+  [attr.dir]="i18n.isRtl() ? 'rtl' : 'ltr'"
+  [attr.lang]="i18n.lang()"
+>
+  <header class="bar">
+    <a class="brand" routerLink="trips">
+      <svg class="logo" viewBox="0 0 32 32" aria-hidden="true">
+        <rect width="32" height="32" rx="9" />
+        <path class="tent" d="M6 25 16 9l10 16z" />
+        <path class="door" d="M16 25v-7" />
+        <path
+          class="star"
+          d="M24 5.5l.7 1.6 1.7.2-1.3 1.1.4 1.7-1.5-.9-1.5.9.4-1.7-1.3-1.1 1.7-.2z"
+        />
+      </svg>
+      <span class="brand-text">
+        <strong>Basecamp</strong>
+        <small>{{ t().app.tagline }}</small>
+      </span>
+    </a>
+
+    @if (store.activeTrip(); as trip) {
+      <a class="trip-chip" routerLink="trips" [title]="trip.name">
+        {{ trip.name }}
+      </a>
+    }
+
+    <div class="tools">
+      <span class="offline" [title]="t().app.offlineHint">
+        <span class="dot" aria-hidden="true"></span>{{ t().app.offline }}
+      </span>
+      @if (standalone) {
+        <div class="langs" role="group" [attr.aria-label]="t().app.language">
+          @for (lang of languages; track lang.id) {
+            <button
+              type="button"
+              [attr.aria-pressed]="i18n.lang() === lang.id"
+              [attr.lang]="lang.id"
+              (click)="i18n.setLanguage(lang.id)"
+            >
+              {{ lang.label }}
+            </button>
+          }
+        </div>
+      }
+    </div>
+  </header>
+
+  <nav class="tabs" ahScrollHint [attr.aria-label]="t().app.sections">
+    @for (item of nav; track item.id) {
+      <a
+        [routerLink]="item.id"
+        routerLinkActive="is-active"
+        ariaCurrentWhenActive="page"
+      >
+        <span aria-hidden="true">{{ item.icon }}</span>
+        {{ t().nav[item.id] }}
+      </a>
+    }
+  </nav>
+
+  <div class="content">
+    @if (notice(); as text) {
+      <div class="notice" role="status">
+        <span>{{ text }}</span>
+        <button
+          type="button"
+          [attr.aria-label]="t().common.close"
+          (click)="notice.set(null)"
+        >
+          ✕
+        </button>
+      </div>
+    }
+    <router-outlet />
+  </div>
+
+  <nav class="bottom" [attr.aria-label]="t().app.sections">
+    @for (item of primary; track item.id) {
+      <a
+        [routerLink]="item.id"
+        routerLinkActive="is-active"
+        ariaCurrentWhenActive="page"
+        (click)="closeMore()"
+      >
+        <span class="icon" aria-hidden="true">{{ item.icon }}</span>
+        <span class="label">{{ t().nav[item.id] }}</span>
+      </a>
+    }
+    <button
+      type="button"
+      [class.is-active]="inSecondary()"
+      [attr.aria-expanded]="moreOpen()"
+      aria-controls="bc-more"
+      (click)="moreOpen.set(!moreOpen())"
+    >
+      <span class="icon" aria-hidden="true">⋯</span>
+      <span class="label">{{ t().nav.more }}</span>
+    </button>
+  </nav>
+
+  @if (moreOpen()) {
+    <div class="scrim" aria-hidden="true" (click)="closeMore()"></div>
+    <div class="more" id="bc-more" (keydown.escape)="closeMore()">
+      @for (item of secondary; track item.id) {
+        <a
+          [routerLink]="item.id"
+          routerLinkActive="is-active"
+          ariaCurrentWhenActive="page"
+          (click)="closeMore()"
+        >
+          <span aria-hidden="true">{{ item.icon }}</span>
+          {{ t().nav[item.id] }}
+        </a>
+      }
+    </div>
+  }
+</div>

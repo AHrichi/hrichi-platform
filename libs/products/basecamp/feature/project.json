@@ -1,0 +1,9 @@
+{
+  "name": "product-basecamp-feature",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/products/basecamp/feature/src",
+  "prefix": "ah",
+  "projectType": "library",
+  "tags": ["scope:product-basecamp", "type:feature", "runtime:browser"],
+  "targets": {}
+}

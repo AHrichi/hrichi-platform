@@ -1,0 +1,137 @@
+<section class="screen" aria-labelledby="bc-weather-title">
+  <header class="head">
+    <div>
+      <h2 id="bc-weather-title">{{ t().weather.title }}</h2>
+      <p>{{ t().weather.intro }}</p>
+    </div>
+    @if (store.activeTrip() && store.forecastState() !== 'loading') {
+      <button
+        ahButton="secondary"
+        size="sm"
+        type="button"
+        (click)="store.loadForecast(true)"
+      >
+        ↻ {{ t().weather.refresh }}
+      </button>
+    }
+  </header>
+
+  @if (store.activeTrip(); as trip) {
+    <p class="where">
+      📍 {{ trip.campsite.name || trip.name }}
+      @if (asOf(); as time) {
+        · <span class="muted">{{ t().weather.asOf(time) }}</span>
+      }
+    </p>
+
+    @if (store.weatherAdded()) {
+      <p class="added" role="status">
+        🎒 {{ t().weather.added(store.weatherAdded()) }}
+        <a routerLink="../packing"
+          >{{ t().nav.packing }} {{ t().common.next }}</a
+        >
+      </p>
+    }
+
+    @switch (store.forecastState()) {
+      @case ('loading') {
+        @if (!days().length) {
+          <p class="muted" role="status">{{ t().weather.loading }}</p>
+        }
+      }
+      @case ('failed') {
+        <div class="failed" role="alert">
+          <p>{{ t().weather.failed }}</p>
+          <button
+            ahButton="secondary"
+            size="sm"
+            type="button"
+            (click)="store.loadForecast(true)"
+          >
+            {{ t().weather.retry }}
+          </button>
+        </div>
+      }
+    }
+
+    @if (gap(); as why) {
+      <p class="muted">
+        {{
+          why.kind === 'past'
+            ? t().weather.past
+            : t().weather.tooFar(i18n.date(why.from))
+        }}
+      </p>
+    }
+
+    @if (days().length) {
+      <ol class="days" role="list">
+        @for (day of days(); track day.date) {
+          <li class="day" [class.has-warning]="day.warnings.length">
+            <header>
+              <h3>{{ i18n.day(day.date) }}</h3>
+              <span class="sky">
+                <span class="icon" aria-hidden="true">{{ day.icon }}</span>
+                {{ t().weather.sky[day.sky] }}
+              </span>
+            </header>
+            <dl>
+              <div>
+                <dt>{{ t().weather.high }}</dt>
+                <dd>
+                  <bdi>{{ i18n.num(day.maxC) }} °C</bdi>
+                </dd>
+              </div>
+              <div>
+                <dt>{{ t().weather.low }}</dt>
+                <dd>
+                  <bdi>{{ i18n.num(day.minC) }} °C</bdi>
+                </dd>
+              </div>
+              <div>
+                <dt>{{ t().weather.rain }}</dt>
+                <dd>
+                  <bdi>{{ i18n.num(day.rainMm, 1) }} mm</bdi> ·
+                  <bdi>{{ i18n.num(day.rainChance) }} %</bdi>
+                </dd>
+              </div>
+              <div>
+                <dt>{{ t().weather.wind }}</dt>
+                <dd>
+                  <bdi>{{ i18n.num(day.windKmh) }} km/h</bdi>
+                  <span class="muted">
+                    ({{ t().weather.gusts }}
+                    <bdi>{{ i18n.num(day.gustKmh) }}</bdi
+                    >)</span
+                  >
+                </dd>
+              </div>
+            </dl>
+            @if (day.warnings.length) {
+              <ul class="warnings" role="list">
+                @for (warning of day.warnings; track warning) {
+                  <li>⚠️ {{ t().weather.warnings[warning] }}</li>
+                }
+              </ul>
+            }
+          </li>
+        }
+      </ol>
+    }
+
+    <p class="credit">
+      <a href="https://open-meteo.com/" target="_blank" rel="noopener">{{
+        t().weather.credit
+      }}</a>
+    </p>
+  } @else if (!store.isLoading()) {
+    <ah-empty-state
+      icon="🌦️"
+      [title]="t().weather.title"
+      [description]="t().weather.noTrip"
+    />
+    <p class="center">
+      <a ahButton="secondary" routerLink="../trips">{{ t().nav.trips }}</a>
+    </p>
+  }
+</section>

@@ -210,8 +210,11 @@
     </label>
     <div class="select wide">
       <span>{{ t().mapPicker.projectPoint }}</span>
-      <lp-location-picker
+      <ah-map-picker
         [(value)]="gps"
+        [labels]="i18n.mapLabels()"
+        [language]="i18n.lang()"
+        [locale]="i18n.locale()"
         [zoom]="editing() ? 17 : 13"
         (valueChange)="nameFromPoint($event)"
         (placeChosen)="nameFromPlace($event.name)"

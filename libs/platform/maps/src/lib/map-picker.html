@@ -1,13 +1,13 @@
-<div class="lp-pick">
+<div class="ah-pick">
   @if (searchable()) {
-    <form class="lp-pick__search" role="search" (submit)="search($event)">
-      <label class="ah-visually-hidden" for="lp-pick-query">{{
-        t().mapPicker.search
+    <form class="ah-pick__search" role="search" (submit)="search($event)">
+      <label class="ah-visually-hidden" for="ah-pick-query">{{
+        labels().search
       }}</label>
       <input
-        id="lp-pick-query"
+        id="ah-pick-query"
         type="search"
-        [placeholder]="t().mapPicker.searchPlaceholder"
+        [placeholder]="labels().searchPlaceholder"
         [value]="query()"
         (input)="query.set(text($event))"
       />
@@ -17,12 +17,12 @@
         type="submit"
         [disabled]="searching()"
       >
-        🔎 {{ t().mapPicker.search }}
+        🔎 {{ labels().search }}
       </button>
     </form>
     @if (results(); as places) {
       @if (places.length) {
-        <ul class="lp-pick__results" role="list">
+        <ul class="ah-pick__results" role="list">
           @for (place of places; track $index) {
             <li>
               <button type="button" (click)="choose(place)">
@@ -32,28 +32,28 @@
           }
         </ul>
       } @else {
-        <p class="lp-pick__note">{{ t().mapPicker.noResults }}</p>
+        <p class="ah-pick__note">{{ labels().noResults }}</p>
       }
     }
   }
 
   <div
     #map
-    class="lp-pick__map"
+    class="ah-pick__map"
     role="application"
-    [attr.aria-label]="t().mapPicker.mapLabel"
+    [attr.aria-label]="labels().mapLabel"
   ></div>
 
-  <div class="lp-pick__row">
-    <p class="lp-pick__note">{{ t().mapPicker.hint }}</p>
+  <div class="ah-pick__row">
+    <p class="ah-pick__note">{{ labels().hint }}</p>
     <button ahButton="ghost" size="sm" type="button" (click)="locate()">
-      📍 {{ t().mapPicker.myLocation }}
+      📍 {{ labels().myLocation }}
     </button>
   </div>
-  <p class="lp-pick__coords" dir="ltr">
-    {{ i18n.num(value().lat, 6) }}, {{ i18n.num(value().lng, 6) }}
+  <p class="ah-pick__coords" dir="ltr">
+    {{ coords() }}
   </p>
   @if (notice(); as text) {
-    <p class="lp-pick__note" role="status">{{ text }}</p>
+    <p class="ah-pick__note" role="status">{{ text }}</p>
   }
 </div>

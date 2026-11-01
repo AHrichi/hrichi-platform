@@ -81,6 +81,12 @@ export const appRoutes: Route[] = [
       'LuxPath · Public & Solar Street Lighting Field Engineering Platform · Ahmed Hrichi',
   },
   { path: 'apps/luxpath', redirectTo: 'apps/lighting', pathMatch: 'full' },
+  {
+    path: 'apps/basecamp',
+    providers: [provideAppMode('embedded-demo')],
+    loadChildren: federatedRoutes('product-basecamp'),
+    title: 'Basecamp · Camping Trip Planner · Ahmed Hrichi',
+  },
   { path: 'apps/solarlux', redirectTo: 'apps/lighting', pathMatch: 'full' },
   // The hello demo was replaced by the full applications & labs hub; redirect.
   { path: 'labs/hello', redirectTo: 'apps', pathMatch: 'full' },

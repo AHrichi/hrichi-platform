@@ -22,6 +22,16 @@
       "port": 4309
     },
     {
+      "name": "basecamp (static build)",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "tools/scripts/serve-static.mjs",
+        "dist/apps/products/basecamp/web/browser",
+        "4310"
+      ],
+      "port": 4310
+    },
+    {
       "name": "lab-sky (static build)",
       "runtimeExecutable": "node",
       "runtimeArgs": [

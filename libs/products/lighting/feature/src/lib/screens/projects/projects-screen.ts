@@ -28,11 +28,7 @@ import {
 } from '../options';
 import { RouterLink } from '@angular/router';
 import { BackupPanel } from '../../ui/backup-panel/backup-panel';
-import { Geocoder } from '../../services/geocoder';
-import {
-  type LatLng,
-  LocationPicker,
-} from '../../ui/location-picker/location-picker';
+import { Geocoder, type LatLng, MapPicker } from '@ah/platform/maps';
 import { MilestoneList } from './milestone-list/milestone-list';
 import { PoleList } from './pole-list/pole-list';
 import { SavedResults } from './saved-results/saved-results';
@@ -52,7 +48,7 @@ const DEFAULT_POINT: LatLng = { lat: 36.8065, lng: 10.1815 };
     AhModal,
     AhProgressBar,
     BackupPanel,
-    LocationPicker,
+    MapPicker,
     PoleList,
     MilestoneList,
     RouterLink,

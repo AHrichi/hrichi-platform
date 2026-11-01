@@ -268,6 +268,41 @@ export class AppsPage {
             'معمارية تعمل 100% دون الحاجة إلى إنترنت، مع حفظ المشاريع وسجلات الفحص محلياً في IndexedDB.',
         },
         {
+          id: 'basecamp',
+          title: 'Basecamp · مخطط رحلات التخييم',
+          category: 'production',
+          badge: { label: '🏕️ تخييم ونجوم', variant: 'success' },
+          eyebrow: 'الطقس · رصد السماء · قوائم الحقيبة · يعمل دون اتصال',
+          summary:
+            'خطّط لرحلة تخييم على هاتفك: حدّد مكان المخيم على الخريطة، وتابع توقعات الطقس حتى 16 يومًا مع تنبيهات الصقيع والرياح والمطر، واعرف أفضل ليلة لرصد النجوم (ساعات الظلام، القمر، زخات الشهب)، وجهّز قائمة حقيبة على مقاس المجموعة، ثم شارك الرحلة مع أصدقائك برابط دون حساب ولا خادم.',
+          route: '/apps/basecamp',
+          icon: '🏕️',
+          ctaLabel: 'Basecamp',
+          stack: [
+            'Zoneless Angular 22',
+            'Native Federation',
+            'Leaflet OpenStreetMap',
+            'Open-Meteo API',
+            'astronomy-engine',
+            'CompressionStream share links',
+            'IndexedDB Local Storage',
+            'Trilingual RTL (FR/AR/EN)',
+            'NgRx SignalStore',
+          ],
+          features: [
+            'مكان المخيم على خريطة OpenStreetMap مع البحث وتحديد الموقع',
+            'توقعات Open-Meteo يومًا بيوم مع تنبيهات الصقيع والرياح والمطر والحر',
+            'ليالي الرحلة محسوبة على الهاتف: الظلام التام، طور القمر، الشهب، ونتيجة للرصد',
+            'رابط إلى مختبر السماء لرؤية نجوم أفضل ليلة',
+            'قائمة حقيبة حسب نوع الرحلة وعدد المشاركين والليالي، مع توزيع من يحضر ماذا',
+            'أغراض يضيفها الطقس تلقائيًا (غطاء مشمّع، طبقة دافئة، حبال شدّ)',
+            'جرد المعدات الشخصية لمعرفة ما يجب شراؤه أو استعارته',
+            'مشاركة الرحلة برابط مضغوط في جزء العنوان، ونسخة احتياطية JSON',
+          ],
+          architectureNotes:
+            'يعمل دون اتصال: الرحلات والمعدات وآخر توقعات في IndexedDB، وحسابات السماء على الجهاز.',
+        },
+        {
           id: 'dispatch',
           title: 'PulseOps · مركز التحكم اللوجستي وعمليات التوزيع',
           category: 'production',
@@ -437,6 +472,41 @@ export class AppsPage {
           ],
           architectureNotes:
             'Architecture 100% hors-ligne avec persistance locale IndexedDB et calculs locaux sans aucun serveur externe requis.',
+        },
+        {
+          id: 'basecamp',
+          title: 'Basecamp · Planificateur de sorties camping',
+          category: 'production',
+          badge: { label: '🏕️ Camping & étoiles', variant: 'success' },
+          eyebrow: 'Météo · Observation du ciel · Listes de sac · Hors ligne',
+          summary:
+            'Préparez une sortie camping sur votre téléphone : placez le camp sur la carte, suivez jusqu’à 16 jours de prévisions avec alertes gel, vent et pluie, trouvez la meilleure nuit pour les étoiles (nuit noire, Lune, étoiles filantes), préparez un sac à la taille du groupe, puis partagez la sortie par un lien, sans compte ni serveur.',
+          route: '/apps/basecamp',
+          icon: '🏕️',
+          ctaLabel: 'Basecamp',
+          stack: [
+            'Zoneless Angular 22',
+            'Native Federation',
+            'Leaflet OpenStreetMap',
+            'Open-Meteo API',
+            'astronomy-engine',
+            'CompressionStream share links',
+            'IndexedDB Local Storage',
+            'Trilingual RTL (FR/AR/EN)',
+            'NgRx SignalStore',
+          ],
+          features: [
+            'Lieu de camp sur une carte OpenStreetMap, avec recherche et position',
+            'Prévisions Open-Meteo jour par jour, avec alertes gel, vent, pluie et chaleur',
+            'Nuits calculées sur le téléphone : nuit noire, phase de la Lune, étoiles filantes et score d’observation',
+            'Lien vers le Sky lab pour voir les étoiles de la meilleure nuit',
+            'Liste de sac selon le type de sortie, le groupe et les nuits, avec qui apporte quoi',
+            'Articles ajoutés par la météo (bâche, couche chaude, haubans)',
+            'Inventaire du matériel pour savoir quoi acheter ou emprunter',
+            'Partage par lien compressé dans le fragment de l’URL, et sauvegarde JSON',
+          ],
+          architectureNotes:
+            'Conçu hors ligne : sorties, matériel et dernières prévisions dans IndexedDB, calculs du ciel sur l’appareil.',
         },
         {
           id: 'dispatch',
@@ -612,6 +682,41 @@ export class AppsPage {
         ],
         architectureNotes:
           '100% offline-first field architecture storing projects, poles, and calculation logs in local IndexedDB. All calculations execute locally on device with zero required cloud roundtrips.',
+      },
+      {
+        id: 'basecamp',
+        title: 'Basecamp · Camping Trip Planner',
+        category: 'production',
+        badge: { label: '🏕️ Camping & stars', variant: 'success' },
+        eyebrow: 'Weather · Stargazing · Packing lists · Offline-first',
+        summary:
+          'Plan a camping trip on your phone: pin the campsite on a map, follow up to 16 days of forecast with frost, wind and rain warnings, find the best night for stargazing (true darkness, the Moon, meteor showers), pack a list sized to the group, then share the trip with friends as a link, with no account and no server.',
+        route: '/apps/basecamp',
+        icon: '🏕️',
+        ctaLabel: 'Basecamp',
+        stack: [
+          'Zoneless Angular 22',
+          'Native Federation',
+          'Leaflet OpenStreetMap',
+          'Open-Meteo API',
+          'astronomy-engine',
+          'CompressionStream share links',
+          'IndexedDB Local Storage',
+          'Trilingual RTL (FR/AR/EN)',
+          'NgRx SignalStore',
+        ],
+        features: [
+          'Campsite on an OpenStreetMap map, with place search and your location',
+          'Open-Meteo forecast day by day, with frost, wind, rain and heat warnings',
+          'Nights worked out on the phone: astronomical darkness, Moon phase, meteor showers and a stargazing score',
+          'A link into the Sky lab to see the best night’s stars',
+          'Packing list by trip type, sized to the people and nights, with who brings what',
+          'Items the weather calls for added automatically (tarp, warm layer, guy lines)',
+          'Your own gear inventory, showing what to buy or borrow',
+          'Trips shared as a link compressed into the URL fragment, plus JSON backups',
+        ],
+        architectureNotes:
+          'Offline-first: trips, gear and the last forecast live in IndexedDB, and the sky is computed on the device.',
       },
       {
         id: 'dispatch',
@@ -841,7 +946,7 @@ export class AppsPage {
     inject(Seo).update({
       title: 'Applications & Interactive Engineering Labs · Ahmed Hrichi',
       description:
-        'Explore live production applications and interactive engineering laboratories: LuxPath public lighting, PulseOps commercial dispatch, StrategyApp financial planning, Sky Lab 3D planetarium, RxJS and NgRx architectures.',
+        'Explore live production applications and interactive engineering laboratories: LuxPath public lighting, Basecamp camping planner, PulseOps commercial dispatch, StrategyApp financial planning, Sky Lab 3D planetarium, RxJS and NgRx architectures.',
       path: '/apps',
     });
   }

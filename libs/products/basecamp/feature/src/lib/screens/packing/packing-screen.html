@@ -1,0 +1,162 @@
+<section class="screen" aria-labelledby="bc-packing-title">
+  <header class="head">
+    <div>
+      <h2 id="bc-packing-title">{{ t().packing.title }}</h2>
+      <p>{{ t().packing.intro }}</p>
+    </div>
+    @if (store.activeTrip()) {
+      <button ahButton="ghost" size="sm" type="button" (click)="rebuild()">
+        ↺ {{ t().packing.regenerate }}
+      </button>
+    }
+  </header>
+
+  @if (store.activeTrip(); as trip) {
+    <div class="panel summary">
+      <ah-progress-bar
+        [value]="progress().packed"
+        [max]="progress().total || 1"
+        [label]="t().packing.progress(progress().packed, progress().total)"
+        variant="success"
+      />
+      @if (trip.people.length) {
+        <div class="filter" ahScrollHint>
+          <ah-segmented-control
+            [options]="people()"
+            [(value)]="person"
+            [label]="t().packing.show"
+          />
+        </div>
+      }
+      <label class="check">
+        <input
+          type="checkbox"
+          [checked]="hidePacked()"
+          (change)="hidePacked.set(checked($event))"
+        />
+        {{ t().packing.hidePacked }}
+      </label>
+      @if (progress().total && progress().packed === progress().total) {
+        <p class="done" role="status">🎉 {{ t().packing.allPacked }}</p>
+      }
+    </div>
+
+    @for (group of groups(); track group.category) {
+      <section
+        class="panel group"
+        [attr.aria-labelledby]="'bc-cat-' + group.category"
+      >
+        <h3 [id]="'bc-cat-' + group.category">
+          {{ t().categories[group.category] }}
+        </h3>
+        <ul class="items" role="list">
+          @for (row of group.items; track row.item.id) {
+            <li [class.packed]="row.item.packed">
+              <label class="tick">
+                <input
+                  type="checkbox"
+                  [checked]="row.item.packed"
+                  (change)="store.setPacked(row.item.id, checked($event))"
+                />
+                <span class="name">
+                  {{ row.name }}
+                  @if (row.item.quantity > 1) {
+                    <span class="qty"
+                      >× <bdi>{{ row.item.quantity }}</bdi></span
+                    >
+                  }
+                </span>
+              </label>
+              <span class="tags">
+                @if (row.item.source === 'weather') {
+                  <span class="tag weather"
+                    >🌦️ {{ t().packing.fromWeather }}</span
+                  >
+                }
+                @if (row.owned) {
+                  <span class="tag own">✓ {{ t().packing.own }}</span>
+                }
+              </span>
+              @if (trip.people.length) {
+                <select
+                  class="who"
+                  [attr.aria-label]="t().packing.who + ': ' + row.name"
+                  (change)="assign(row.item, $event)"
+                >
+                  <option value="" [selected]="!row.item.personId">
+                    {{ t().packing.anyone }}
+                  </option>
+                  @for (p of trip.people; track p.id) {
+                    <option
+                      [value]="p.id"
+                      [selected]="p.id === row.item.personId"
+                    >
+                      {{ p.name }}
+                    </option>
+                  }
+                </select>
+              }
+              @if (row.item.source === 'custom') {
+                <button
+                  type="button"
+                  class="remove"
+                  [attr.aria-label]="t().packing.remove(row.name)"
+                  (click)="store.removeItem(row.item.id)"
+                >
+                  ✕
+                </button>
+              }
+            </li>
+          }
+        </ul>
+      </section>
+    }
+
+    <form class="panel add" (submit)="add($event)">
+      <h3>{{ t().packing.add }}</h3>
+      <div class="add-fields">
+        <label class="grow">
+          <span>{{ t().packing.addPlaceholder }}</span>
+          <input
+            type="text"
+            [value]="newLabel()"
+            (input)="newLabel.set(value($event))"
+          />
+        </label>
+        <label>
+          <span>{{ t().packing.category }}</span>
+          <select (change)="newCategory.set($any(value($event)))">
+            @for (category of categories; track category) {
+              <option
+                [value]="category"
+                [selected]="category === newCategory()"
+              >
+                {{ t().categories[category] }}
+              </option>
+            }
+          </select>
+        </label>
+        <label class="qty-field">
+          <span>{{ t().packing.quantity }}</span>
+          <input
+            type="number"
+            inputmode="numeric"
+            min="1"
+            [value]="newQuantity()"
+            (input)="newQuantity.set(+value($event))"
+          />
+        </label>
+        <button ahButton type="submit">+ {{ t().common.add }}</button>
+      </div>
+    </form>
+  } @else if (!store.isLoading()) {
+    <ah-empty-state
+      icon="🎒"
+      [title]="t().packing.title"
+      [description]="t().packing.noTrip"
+    />
+    <p class="center">
+      <a ahButton="secondary" routerLink="../trips">{{ t().nav.trips }}</a>
+    </p>
+  }
+</section>

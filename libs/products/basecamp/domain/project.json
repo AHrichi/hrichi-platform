@@ -1,0 +1,14 @@
+{
+  "name": "product-basecamp-domain",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/products/basecamp/domain/src",
+  "prefix": "ah",
+  "projectType": "library",
+  "tags": [
+    "scope:product-basecamp",
+    "scope:shared",
+    "type:domain",
+    "runtime:agnostic"
+  ],
+  "targets": {}
+}

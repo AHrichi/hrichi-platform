@@ -198,8 +198,11 @@
       </label>
       <div class="field wide">
         <span>{{ t().mapPicker.polePoint }}</span>
-        <lp-location-picker
+        <ah-map-picker
           [value]="pole.gps"
+          [labels]="i18n.mapLabels()"
+          [language]="i18n.lang()"
+          [locale]="i18n.locale()"
           (valueChange)="patch({ gps: $event })"
           [context]="otherPoles()"
           [searchable]="false"

@@ -1,0 +1,115 @@
+@use '../../styles/basecamp' as bc;
+
+:host {
+  display: block;
+}
+
+.screen {
+  @include bc.screen;
+}
+
+.head {
+  @include bc.screen-head;
+}
+
+.where,
+.added {
+  margin: 0;
+}
+
+.muted,
+.credit {
+  @include bc.muted;
+}
+
+.added {
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-success-default);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-raised);
+  font-size: var(--font-size-200);
+}
+
+.failed {
+  @include bc.actions;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-danger-default);
+  border-radius: var(--radius-md);
+
+  p {
+    margin: 0;
+  }
+}
+
+.days {
+  display: grid;
+  gap: var(--space-3);
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr));
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.day {
+  @include bc.panel;
+  gap: var(--space-3);
+
+  &.has-warning {
+    border-color: var(--color-warning-default);
+  }
+
+  header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+  }
+
+  h3 {
+    @include bc.panel-title;
+  }
+
+  .sky {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    color: var(--color-text-muted);
+    font-size: var(--font-size-200);
+  }
+
+  .icon {
+    font-size: 1.5rem;
+  }
+
+  dl {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-2) var(--space-3);
+    margin: 0;
+  }
+
+  dt {
+    color: var(--color-text-muted);
+    font-size: var(--font-size-100);
+  }
+
+  dd {
+    margin: 0;
+    font-weight: var(--font-weight-semibold);
+  }
+}
+
+.warnings {
+  display: grid;
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--font-size-200);
+}
+
+p.center {
+  margin: 0;
+  text-align: center;
+}

@@ -1,0 +1,28 @@
+<section class="screen" aria-labelledby="bc-guide-title">
+  <header class="head">
+    <div>
+      <h2 id="bc-guide-title">{{ t().guide.title }}</h2>
+      <p>{{ t().guide.intro }}</p>
+    </div>
+  </header>
+
+  <div class="grid">
+    @for (section of t().guide.sections; track $index; let i = $index) {
+      <article class="panel" [attr.aria-labelledby]="'bc-guide-' + i">
+        <h3 [id]="'bc-guide-' + i">
+          <span class="icon" aria-hidden="true">{{ section.icon }}</span>
+          {{ section.title }}
+        </h3>
+        <p class="what">{{ section.what }}</p>
+        <ol class="how">
+          @for (step of section.how; track $index) {
+            <li>{{ step }}</li>
+          }
+        </ol>
+        <a class="open" [routerLink]="['..', section.route]">
+          {{ t().guide.open(section.title) }} {{ t().common.next }}
+        </a>
+      </article>
+    }
+  </div>
+</section>

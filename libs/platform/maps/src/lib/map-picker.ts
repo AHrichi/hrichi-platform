@@ -2,6 +2,7 @@ import {
   afterNextRender,
   ChangeDetectionStrategy,
   Component,
+  computed,
   DestroyRef,
   effect,
   ElementRef,
@@ -16,41 +17,55 @@ import {
 } from '@angular/core';
 import type * as Leaflet from 'leaflet';
 import { AhButton } from '@ah/ui';
-import { LuxPathI18n } from '../../i18n/luxpath-i18n';
-import { Geocoder, type Place } from '../../services/geocoder';
+import { Geocoder, type Place } from './geocoder';
 
 export interface LatLng {
   lat: number;
   lng: number;
 }
 
+/** The picker's words, in the host app's language. */
+export interface MapPickerLabels {
+  search: string;
+  searchPlaceholder: string;
+  noResults: string;
+  mapLabel: string;
+  hint: string;
+  myLocation: string;
+  noGps: string;
+}
+
 const TILES = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
 
 /**
  * Picks a point on a map: tap to set it, drag the pin, use the phone's
- * position, or search for a place. Shows other points (the project's poles)
- * for context. Used by the project and pole forms.
+ * position, or search for a place. Shows other points for context. Leaflet
+ * loads only when a picker first renders, and the host app supplies the
+ * words, so any product can use it.
  */
 @Component({
-  selector: 'lp-location-picker',
+  selector: 'ah-map-picker',
   imports: [AhButton],
   changeDetection: ChangeDetectionStrategy.OnPush,
   // Leaflet builds its own DOM: rules are nested under the element instead.
   encapsulation: ViewEncapsulation.None,
-  templateUrl: './location-picker.html',
-  styleUrl: './location-picker.scss',
+  templateUrl: './map-picker.html',
+  styleUrl: './map-picker.scss',
 })
-export class LocationPicker {
+export class MapPicker {
   readonly value = model.required<LatLng>();
-  /** Other points to show faintly, e.g. the project's poles. */
+  readonly labels = input.required<MapPickerLabels>();
+  /** The search language for place names, e.g. 'fr'. */
+  readonly language = input('en');
+  /** The locale for the coordinates, e.g. 'ar-u-nu-latn'. */
+  readonly locale = input('en-GB');
+  /** Other points to show faintly, e.g. a project's poles. */
   readonly context = input<readonly LatLng[]>([]);
   readonly searchable = input(true);
   readonly zoom = input(17);
   /** A place the user searched and chose, with its name. */
   readonly placeChosen = output<Place>();
 
-  protected readonly i18n = inject(LuxPathI18n);
-  protected readonly t = this.i18n.t;
   private readonly geocoder = inject(Geocoder);
   private readonly host = viewChild.required<ElementRef<HTMLElement>>('map');
 
@@ -58,6 +73,14 @@ export class LocationPicker {
   protected readonly results = signal<Place[] | null>(null);
   protected readonly searching = signal(false);
   protected readonly notice = signal<string | null>(null);
+  protected readonly coords = computed(() => {
+    const format = new Intl.NumberFormat(this.locale(), {
+      minimumFractionDigits: 6,
+      maximumFractionDigits: 6,
+    });
+    const { lat, lng } = this.value();
+    return `${format.format(lat)}, ${format.format(lng)}`;
+  });
 
   private L: typeof Leaflet | null = null;
   private map: Leaflet.Map | null = null;
@@ -85,7 +108,7 @@ export class LocationPicker {
         draggable: true,
         keyboard: false,
         icon: L.divIcon({
-          className: 'lp-pick-pin',
+          className: 'ah-pick-pin',
           iconSize: [28, 28],
           iconAnchor: [14, 28],
         }),
@@ -135,7 +158,7 @@ export class LocationPicker {
     for (const p of this.context()) {
       L.circleMarker([p.lat, p.lng], {
         radius: 5,
-        className: 'lp-pick-other',
+        className: 'ah-pick-other',
         interactive: false,
       }).addTo(this.others);
     }
@@ -147,13 +170,14 @@ export class LocationPicker {
       lng: Math.round(point.lng * 1e6) / 1e6,
     };
     this.pin?.setLatLng([rounded.lat, rounded.lng]);
-    if (pan) this.map?.setView([rounded.lat, rounded.lng], 18);
+    if (pan)
+      this.map?.setView([rounded.lat, rounded.lng], Math.max(this.zoom(), 14));
     this.value.set(rounded);
   }
 
   protected locate(): void {
     if (!navigator.geolocation) {
-      this.notice.set(this.t().map.noGps);
+      this.notice.set(this.labels().noGps);
       return;
     }
     navigator.geolocation.getCurrentPosition(
@@ -161,7 +185,7 @@ export class LocationPicker {
         this.notice.set(null);
         this.set({ lat: coords.latitude, lng: coords.longitude }, true);
       },
-      () => this.notice.set(this.t().map.noGps),
+      () => this.notice.set(this.labels().noGps),
       { enableHighAccuracy: true, timeout: 10000 },
     );
   }
@@ -171,7 +195,7 @@ export class LocationPicker {
     const query = this.query().trim();
     if (!query) return;
     this.searching.set(true);
-    const places = await this.geocoder.search(query, this.i18n.lang());
+    const places = await this.geocoder.search(query, this.language());
     this.searching.set(false);
     this.results.set(places);
   }

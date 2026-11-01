@@ -87,6 +87,15 @@ export default [
               ],
             },
             {
+              sourceTag: 'scope:product-basecamp',
+              onlyDependOnLibsWithTags: [
+                'scope:product-basecamp',
+                'scope:shared',
+                'scope:platform',
+                'scope:design-system',
+              ],
+            },
+            {
               sourceTag: 'scope:product-lighting',
               onlyDependOnLibsWithTags: [
                 'scope:product-lighting',

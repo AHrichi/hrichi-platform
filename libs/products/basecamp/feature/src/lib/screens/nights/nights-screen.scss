@@ -1,0 +1,108 @@
+@use '../../styles/basecamp' as bc;
+
+:host {
+  display: block;
+}
+
+.screen {
+  @include bc.screen;
+}
+
+.head {
+  @include bc.screen-head;
+}
+
+.nights {
+  display: grid;
+  gap: var(--space-3);
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr));
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.night {
+  @include bc.panel;
+  gap: var(--space-3);
+
+  &.best {
+    border-color: var(--color-accent-default);
+    box-shadow: 0 0 0 1px var(--color-accent-default);
+  }
+
+  header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+  }
+
+  h3 {
+    @include bc.panel-title;
+  }
+
+  dl {
+    display: grid;
+    gap: var(--space-2);
+    margin: 0;
+
+    div {
+      display: grid;
+      grid-template-columns: minmax(7rem, auto) 1fr;
+      gap: var(--space-2);
+    }
+  }
+
+  dt {
+    color: var(--color-text-muted);
+    font-size: var(--font-size-200);
+  }
+
+  dd {
+    margin: 0;
+    min-inline-size: 0;
+    font-size: var(--font-size-200);
+  }
+}
+
+.badge {
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-pill);
+  background: var(--color-accent-default);
+  color: var(--color-accent-on);
+  font-size: var(--font-size-100);
+  font-weight: var(--font-weight-semibold);
+}
+
+.muted {
+  color: var(--color-text-muted);
+}
+
+.showers {
+  h4 {
+    margin: 0 0 var(--space-1);
+    font-size: var(--font-size-200);
+  }
+
+  ul {
+    margin: 0;
+    padding-inline-start: var(--space-4);
+    font-size: var(--font-size-200);
+  }
+}
+
+.sky-link {
+  margin-block-start: auto;
+  color: var(--color-accent-default);
+  font-weight: var(--font-weight-medium);
+}
+
+.how {
+  @include bc.muted;
+}
+
+p.center {
+  margin: 0;
+  text-align: center;
+}

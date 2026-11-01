@@ -1,0 +1,291 @@
+<section class="screen" aria-labelledby="bc-trips-title">
+  <header class="head">
+    <div>
+      <h2 id="bc-trips-title">{{ t().trips.title }}</h2>
+      <p>{{ t().trips.intro }}</p>
+    </div>
+    @if (store.trips().length) {
+      <button ahButton type="button" (click)="openNew()">
+        + {{ t().trips.new }}
+      </button>
+    }
+  </header>
+
+  @if (store.isLoading()) {
+    <!-- Trips load from this device in a moment. -->
+  } @else if (store.activeTrip(); as trip) {
+    @if (store.trips().length > 1) {
+      <label class="picker">
+        <span>{{ t().trips.choose }}</span>
+        <select (change)="store.open(value($event))">
+          @for (other of store.trips(); track other.id) {
+            <option [value]="other.id" [selected]="other.id === trip.id">
+              {{ other.name }} · {{ i18n.date(other.start) }}
+            </option>
+          }
+        </select>
+      </label>
+    }
+
+    <article class="panel trip" aria-labelledby="bc-trip-name">
+      <header class="trip-head">
+        <div>
+          <p class="kicker">{{ t().types[trip.type] }}</p>
+          <h3 id="bc-trip-name">{{ trip.name }}</h3>
+        </div>
+        <div class="actions">
+          <button
+            ahButton="secondary"
+            size="sm"
+            type="button"
+            (click)="openEdit(trip)"
+          >
+            ✏️ {{ t().common.edit }}
+          </button>
+          <button
+            ahButton="ghost"
+            size="sm"
+            type="button"
+            (click)="remove(trip)"
+          >
+            {{ t().common.delete }}
+          </button>
+        </div>
+      </header>
+      <dl class="facts">
+        <div>
+          <dt>📅</dt>
+          <dd>
+            {{ t().trips.dates(i18n.date(trip.start), i18n.date(lastDay())) }}
+            · {{ t().trips.nightsCount(trip.nights) }}
+          </dd>
+        </div>
+        <div>
+          <dt>📍</dt>
+          <dd>
+            @if (trip.campsite.name) {
+              {{ trip.campsite.name }} ·
+            }
+            <bdi dir="ltr" class="coords"
+              >{{ i18n.num(trip.campsite.lat, 4) }},
+              {{ i18n.num(trip.campsite.lng, 4) }}</bdi
+            >
+          </dd>
+        </div>
+        <div>
+          <dt>👥</dt>
+          <dd>{{ peopleLine() }}</dd>
+        </div>
+      </dl>
+      @if (trip.notes) {
+        <p class="notes">{{ trip.notes }}</p>
+      }
+    </article>
+
+    <section class="glance" aria-labelledby="bc-glance-title">
+      <h3 id="bc-glance-title" class="ah-visually-hidden">
+        {{ t().trips.summary }}
+      </h3>
+      <a class="card" routerLink="../weather">
+        <span class="label">{{ t().trips.forecastFor }}</span>
+        @if (firstDay(); as day) {
+          <strong
+            ><span aria-hidden="true">{{ day.icon }}</span>
+            <bdi
+              >{{ i18n.num(day.minC) }}° / {{ i18n.num(day.maxC) }}°</bdi
+            ></strong
+          >
+          <span class="muted">{{ i18n.day(day.date) }}</span>
+        } @else {
+          <span class="muted">{{ t().trips.noForecast }}</span>
+        }
+        <span class="go"
+          >{{ t().trips.openWeather }} {{ t().common.next }}</span
+        >
+      </a>
+      <a class="card" routerLink="../nights">
+        <span class="label">{{ t().trips.bestNight }}</span>
+        @if (store.bestNight(); as night) {
+          <strong
+            ><span aria-hidden="true">🌌</span>
+            <bdi>{{ night.finalScore }}/100</bdi></strong
+          >
+          <span class="muted">{{ i18n.day(night.date) }}</span>
+        }
+        <span class="go">{{ t().trips.openNights }} {{ t().common.next }}</span>
+      </a>
+      <a class="card" routerLink="../packing">
+        <span class="label">{{ t().trips.packed }}</span>
+        <strong
+          ><span aria-hidden="true">🎒</span>
+          <bdi
+            >{{ store.packingProgress().packed }}/{{
+              store.packingProgress().total
+            }}</bdi
+          ></strong
+        >
+        <span class="go"
+          >{{ t().trips.openPacking }} {{ t().common.next }}</span
+        >
+      </a>
+    </section>
+
+    <bc-share-panel />
+  } @else {
+    <ah-empty-state
+      icon="🏕️"
+      [title]="t().trips.emptyTitle"
+      [description]="t().trips.emptyText"
+    />
+    <p class="center">
+      <a routerLink="../guide">📖 {{ t().trips.newHere }}</a>
+    </p>
+    <div class="actions center">
+      <button ahButton type="button" (click)="openNew()">
+        + {{ t().trips.new }}
+      </button>
+      <button
+        ahButton="secondary"
+        type="button"
+        (click)="store.loadSample(t().trips.sampleName)"
+      >
+        {{ t().trips.loadSample }}
+      </button>
+    </div>
+    <bc-share-panel />
+  }
+</section>
+
+<ah-modal
+  [closeLabel]="t().common.close"
+  [open]="draft() !== null"
+  (openChange)="closeForm($event)"
+  [title]="editingId() ? t().trips.editTitle : t().trips.new"
+  size="lg"
+>
+  @if (draft(); as d) {
+    <form
+      class="form"
+      id="bc-trip-form"
+      (submit)="$event.preventDefault(); save()"
+    >
+      <label class="wide">
+        <span>{{ t().trips.name }} *</span>
+        <input
+          id="bc-trip-name-input"
+          type="text"
+          required
+          [placeholder]="t().trips.namePlaceholder"
+          [value]="d.name"
+          (input)="patch({ name: value($event) })"
+        />
+      </label>
+      <label>
+        <span>{{ t().trips.type }}</span>
+        <select (change)="patch({ type: $any(value($event)) })">
+          @for (type of types; track type) {
+            <option [value]="type" [selected]="type === d.type">
+              {{ t().types[type] }}
+            </option>
+          }
+        </select>
+      </label>
+      <label>
+        <span>{{ t().trips.start }}</span>
+        <input
+          type="date"
+          required
+          [value]="d.start"
+          (change)="patch({ start: value($event) || d.start })"
+        />
+      </label>
+      <label>
+        <span>{{ t().trips.nights }}</span>
+        <input
+          type="number"
+          inputmode="numeric"
+          min="1"
+          max="14"
+          [value]="d.nights"
+          (input)="patch({ nights: +value($event) })"
+        />
+      </label>
+
+      <fieldset class="wide people">
+        <legend>{{ t().trips.people }}</legend>
+        @if (d.people.length) {
+          <ul role="list">
+            @for (person of d.people; track person.id) {
+              <li>
+                <bdi>{{ person.name }}</bdi>
+                <button
+                  type="button"
+                  class="chip-x"
+                  [attr.aria-label]="t().trips.removePerson(person.name)"
+                  (click)="removePerson(person.id)"
+                >
+                  ✕
+                </button>
+              </li>
+            }
+          </ul>
+        }
+        <div class="add-row">
+          <input
+            type="text"
+            [attr.aria-label]="t().trips.personPlaceholder"
+            [placeholder]="t().trips.personPlaceholder"
+            [value]="newPerson()"
+            (input)="newPerson.set(value($event))"
+            (keydown.enter)="addPerson($event)"
+          />
+          <button
+            ahButton="secondary"
+            size="sm"
+            type="button"
+            (click)="addPerson()"
+          >
+            + {{ t().trips.addPerson }}
+          </button>
+        </div>
+      </fieldset>
+
+      <div class="field wide">
+        <span>{{ t().trips.campsite }}</span>
+        <ah-map-picker
+          [value]="d.campsite"
+          (valueChange)="setSite($event)"
+          (placeChosen)="choosePlace($event)"
+          [labels]="t().map"
+          [language]="i18n.lang()"
+          [locale]="i18n.locale()"
+          [zoom]="12"
+        />
+      </div>
+      <label class="wide">
+        <span>{{ t().trips.campsiteName }}</span>
+        <input
+          type="text"
+          [value]="d.campsite.name"
+          (input)="setSiteName(value($event))"
+        />
+      </label>
+      <label class="wide">
+        <span>{{ t().trips.notes }}</span>
+        <textarea
+          rows="2"
+          [value]="d.notes"
+          (input)="patch({ notes: value($event) })"
+        ></textarea>
+      </label>
+    </form>
+  }
+  <div modal-actions class="modal-actions">
+    <button ahButton="ghost" type="button" (click)="draft.set(null)">
+      {{ t().common.cancel }}
+    </button>
+    <button ahButton type="submit" form="bc-trip-form">
+      {{ editingId() ? t().common.save : t().trips.new }}
+    </button>
+  </div>
+</ah-modal>

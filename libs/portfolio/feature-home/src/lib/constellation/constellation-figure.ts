@@ -25,6 +25,8 @@ const linkLabels: Record<string, string> = {
   shell: 'How this site is built',
   'product-strategy': 'Financial strategy dashboard',
   'product-dispatch': 'PulseOps · Commercial dispatch control center',
+  'product-lighting': 'LuxPath · Street lighting field kit',
+  'product-basecamp': 'Basecamp · Camping trip planner',
   'lab-rxjs': 'RxJS practice pad',
   'lab-sky': 'Sky lab',
   'design-system': 'Design system & Storybook',

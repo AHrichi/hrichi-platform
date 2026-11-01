@@ -31,5 +31,9 @@
   "product-lighting": {
     "development": "http://localhost:4309",
     "production": "https://product-lighting.ahmed-hrichi.workers.dev"
+  },
+  "product-basecamp": {
+    "development": "http://localhost:4310",
+    "production": "https://product-basecamp.ahmed-hrichi.workers.dev"
   }
 }

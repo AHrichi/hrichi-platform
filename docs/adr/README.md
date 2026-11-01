@@ -25,6 +25,7 @@ Each ADR records one decision, why it was made, and what a spike proved. New ADR
 | [0017](0017-night-planner.md)                  | Orbit API as a night planner: Orekit events for twilight and the Moon, analytical Moon   |
 | [0018](0018-site-languages.md)                 | English, French and Arabic at runtime from one store; English-only pages marked as such  |
 | [0019](0019-luxpath.md)                        | LuxPath on the design system: language-neutral domain, editable drawings, saved inputs   |
+| [0020](0020-basecamp.md)                       | Basecamp: local-first camping planner, Open-Meteo, stars on the phone, share links       |
 
 ## Proposed (written when the area is built)
 

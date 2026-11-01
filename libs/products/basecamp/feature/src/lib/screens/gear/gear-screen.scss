@@ -1,0 +1,89 @@
+@use '../../styles/basecamp' as bc;
+
+:host {
+  display: block;
+}
+
+.screen {
+  @include bc.screen;
+}
+
+.head {
+  @include bc.screen-head;
+}
+
+.panel {
+  @include bc.panel;
+  gap: var(--space-3);
+
+  h3 {
+    @include bc.panel-title;
+  }
+}
+
+.gear {
+  display: grid;
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-inline-size: 0;
+}
+
+.meta,
+.notes,
+.muted {
+  @include bc.muted;
+}
+
+.condition {
+  &.worn {
+    color: var(--color-warning-default);
+  }
+
+  &.repair {
+    color: var(--color-danger-default);
+  }
+}
+
+.actions,
+.modal-actions {
+  @include bc.actions;
+}
+
+.modal-actions {
+  justify-content: flex-end;
+}
+
+.to-get {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    padding: var(--space-1) var(--space-3);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-pill);
+    font-size: var(--font-size-200);
+  }
+}
+
+.form {
+  @include bc.form;
+}

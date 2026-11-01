@@ -10,7 +10,7 @@ const NOMINATIM = 'https://nominatim.openstreetmap.org';
 
 /**
  * Place search and reverse lookup with OpenStreetMap's Nominatim (free, no
- * key). Its usage policy allows about one request a second, so LuxPath only
+ * key). Its usage policy allows about one request a second, so apps only
  * asks when the user searches or sets a project's point, never as they type.
  */
 @Injectable({ providedIn: 'root' })

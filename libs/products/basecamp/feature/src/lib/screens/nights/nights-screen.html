@@ -1,0 +1,123 @@
+<section class="screen" aria-labelledby="bc-nights-title">
+  <header class="head">
+    <div>
+      <h2 id="bc-nights-title">{{ t().nights.title }}</h2>
+      <p>{{ t().nights.intro }}</p>
+    </div>
+  </header>
+
+  @if (store.activeTrip(); as trip) {
+    <ol class="nights" role="list">
+      @for (night of nights(); track night.date) {
+        <li class="night" [class.best]="night.best">
+          <header>
+            <h3>{{ t().nights.night(i18n.day(night.date)) }}</h3>
+            @if (night.best) {
+              <span class="badge">⭐ {{ t().nights.best }}</span>
+            }
+          </header>
+
+          <ah-progress-bar
+            [value]="night.finalScore"
+            [label]="t().nights.score"
+            [variant]="variant(night.finalScore)"
+            [showValue]="true"
+          />
+
+          <dl>
+            <div>
+              <dt>🌇 {{ t().nights.sunset }}</dt>
+              <dd>
+                <bdi>{{ i18n.time(night.sunset) }}</bdi>
+              </dd>
+            </div>
+            <div>
+              <dt>🌃 {{ t().nights.dark }}</dt>
+              <dd>
+                @if (night.darkStart) {
+                  <bdi
+                    >{{ i18n.time(night.darkStart) }}–{{
+                      i18n.time(night.darkEnd)
+                    }}</bdi
+                  >
+                  <span class="muted">
+                    ({{ t().nights.hours(i18n.num(night.darkHours, 1)) }})</span
+                  >
+                } @else {
+                  <span class="muted">{{ t().nights.neverDark }}</span>
+                }
+              </dd>
+            </div>
+            <div>
+              <dt>🌑 {{ t().nights.moonFree }}</dt>
+              <dd>
+                <bdi>{{
+                  t().nights.hours(i18n.num(night.moonFreeHours, 1))
+                }}</bdi>
+              </dd>
+            </div>
+            <div>
+              <dt>
+                <span aria-hidden="true">{{ night.moonIcon }}</span>
+                {{ t().nights.moon }}
+              </dt>
+              <dd>
+                {{ t().nights.phases[night.moonPhase] }} ·
+                {{ t().nights.lit(i18n.num(night.moonIllumination * 100)) }}
+                <span class="muted">
+                  ·
+                  {{
+                    t().nights.moonTimes(
+                      i18n.time(night.moonRise),
+                      i18n.time(night.moonSet)
+                    )
+                  }}
+                </span>
+              </dd>
+            </div>
+            @if (night.cloudPct !== null) {
+              <div>
+                <dt>☁️</dt>
+                <dd>{{ t().nights.clouds(i18n.num(night.cloudPct)) }}</dd>
+              </div>
+            }
+          </dl>
+
+          @if (night.showers.length) {
+            <div class="showers">
+              <h4>☄️ {{ t().nights.showers }}</h4>
+              <ul role="list">
+                @for (shower of night.showers; track shower.id) {
+                  <li>
+                    <bdi>{{ shower.name }}</bdi
+                    >:
+                    {{ t().nights.rate(i18n.num(shower.rate)) }}
+                  </li>
+                }
+              </ul>
+            </div>
+          }
+
+          @if (inPortfolio) {
+            <a
+              class="sky-link"
+              routerLink="/labs/sky"
+              [queryParams]="night.skyParams"
+              >🔭 {{ t().nights.openSky }} {{ t().common.next }}</a
+            >
+          }
+        </li>
+      }
+    </ol>
+    <p class="how">{{ t().nights.how }}</p>
+  } @else if (!store.isLoading()) {
+    <ah-empty-state
+      icon="🌌"
+      [title]="t().nights.title"
+      [description]="t().nights.noTrip"
+    />
+    <p class="center">
+      <a ahButton="secondary" routerLink="../trips">{{ t().nav.trips }}</a>
+    </p>
+  }
+</section>

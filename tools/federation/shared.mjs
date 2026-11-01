@@ -20,9 +20,22 @@ export const shared = fromPackageJson({
 /**
  * Only libraries that remotes may use are federated; page-level feature libs
  * stay inside the shell's own lazy chunks.
+ *
+ * The platform's libs are named one by one: federation ships a scope's libs
+ * as one bundle, and a remote whose bundle holds a lib the shell's lacks
+ * loads its own copy of all of them, so it would get its own APP_MODE token
+ * and run as if standalone. Libs only remotes use, like `@ah/platform/maps`,
+ * stay out and are bundled into each remote.
  */
 export const sharedMappings = mappingsFromWorkspace({ singleton: true })
-  .filter(['@ah/platform/*', '@ah/shared/*', '@ah/ui', '@ah/design-system/*'])
+  .filter([
+    '@ah/platform/app-mode',
+    '@ah/platform/federation',
+    '@ah/platform/inspector',
+    '@ah/shared/*',
+    '@ah/ui',
+    '@ah/design-system/*',
+  ])
   .get();
 
 export const skip = [

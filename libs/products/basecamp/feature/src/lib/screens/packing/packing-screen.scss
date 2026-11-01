@@ -1,0 +1,163 @@
+@use '../../styles/basecamp' as bc;
+
+:host {
+  display: block;
+}
+
+.screen {
+  @include bc.screen;
+}
+
+.head {
+  @include bc.screen-head;
+}
+
+.panel {
+  @include bc.panel;
+  gap: var(--space-3);
+
+  h3 {
+    @include bc.panel-title;
+  }
+}
+
+.filter {
+  display: flex;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.check,
+.tick {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  cursor: pointer;
+
+  input {
+    flex: none;
+    inline-size: 1.25rem;
+    block-size: 1.25rem;
+    accent-color: var(--color-success-default);
+  }
+}
+
+.done {
+  margin: 0;
+  color: var(--color-success-default);
+  font-weight: var(--font-weight-semibold);
+}
+
+.items {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2) var(--space-3);
+    min-block-size: 3rem;
+    padding-block: var(--space-2);
+    border-block-end: 1px solid var(--color-border-default);
+
+    &:last-child {
+      border-block-end: 0;
+    }
+
+    &.packed .name {
+      color: var(--color-text-muted);
+      text-decoration: line-through;
+    }
+  }
+
+  .tick {
+    flex: 1 1 9rem;
+    min-inline-size: 0;
+    min-block-size: 2.75rem;
+  }
+
+  .qty {
+    color: var(--color-text-muted);
+    font-size: var(--font-size-200);
+    white-space: nowrap;
+  }
+}
+
+.tags {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+
+  &:empty {
+    display: none;
+  }
+}
+
+.tag {
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-pill);
+  font-size: var(--font-size-100);
+  white-space: nowrap;
+
+  &.weather {
+    background: var(--color-bg-surface);
+    color: var(--color-warning-default);
+  }
+
+  &.own {
+    background: var(--color-bg-surface);
+    color: var(--color-success-default);
+  }
+}
+
+.who {
+  @include bc.form-control;
+  inline-size: auto;
+  min-inline-size: 6.5rem;
+  max-inline-size: 9rem;
+  min-block-size: 2.5rem;
+  padding-block: var(--space-1);
+  font-size: var(--font-size-200);
+}
+
+.remove {
+  min-inline-size: 2.75rem;
+  min-block-size: 2.75rem;
+  border: 0;
+  background: none;
+  color: var(--color-text-muted);
+  font: inherit;
+  cursor: pointer;
+}
+
+.add-fields {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: var(--space-3);
+
+  label {
+    @include bc.label;
+  }
+
+  .grow {
+    flex: 1 1 12rem;
+  }
+
+  .qty-field {
+    inline-size: 6rem;
+  }
+
+  input,
+  select {
+    @include bc.form-control;
+  }
+}
+
+p.center {
+  margin: 0;
+  text-align: center;
+}

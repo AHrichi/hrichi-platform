@@ -29,6 +29,10 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 The globe's coastlines are Natural Earth's land outlines (public domain), via the `world-atlas` package.
 
+## Open-Meteo
+
+Basecamp's campsite forecasts come from the [Open-Meteo](https://open-meteo.com/) forecast API, free and without a key, under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). The Weather screen credits it.
+
 ## LuxPath material photos
 
 The Materials screen's photos (`libs/products/lighting/feature/src/lib/diagrams/material-art/material-photos.generated.ts`) are fetched from the Wikimedia Commons API by `tools/scripts/material-photos.mjs`, scaled to fit 320 × 240 px by Commons, and shown with their credit and licence:

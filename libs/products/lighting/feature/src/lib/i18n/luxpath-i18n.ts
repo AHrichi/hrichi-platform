@@ -28,7 +28,12 @@ export class LuxPathI18n {
   readonly lang = this.preferences.language;
   readonly isRtl = this.preferences.isRtl;
   readonly t = computed(() => COPY[this.lang()]);
-  private readonly locale = computed(() => LOCALES[this.lang()]);
+  readonly locale = computed(() => LOCALES[this.lang()]);
+  /** The shared map picker's words. */
+  readonly mapLabels = computed(() => ({
+    ...this.t().mapPicker,
+    noGps: this.t().map.noGps,
+  }));
 
   setLanguage(lang: SiteLanguage): void {
     this.preferences.setLanguage(lang);

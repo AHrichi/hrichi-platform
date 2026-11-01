@@ -50,6 +50,13 @@ export default defineConfig({
       cwd: workspaceRoot,
     },
     {
+      // Basecamp too: its spec covers the forecast under the real CSP.
+      command: 'pnpm exec nx run product-basecamp:serve-static',
+      url: 'http://localhost:4310/remoteEntry.json',
+      reuseExistingServer: true,
+      cwd: workspaceRoot,
+    },
+    {
       command: isCI
         ? 'pnpm exec nx run shell:serve-static'
         : 'pnpm exec nx run shell:serve',

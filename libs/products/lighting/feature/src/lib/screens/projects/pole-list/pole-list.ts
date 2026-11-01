@@ -18,7 +18,7 @@ import {
   LightingStore,
   type PoleFilter,
 } from '../../../store/lighting.store';
-import { LocationPicker } from '../../../ui/location-picker/location-picker';
+import { MapPicker } from '@ah/platform/maps';
 import { NumberField } from '../../../ui/number-field/number-field';
 import { PolePhotos } from '../../../ui/pole-photos/pole-photos';
 import { POLE_STATUSES, POLE_TYPES } from '../../options';
@@ -45,7 +45,7 @@ const STATUS_BADGE: Record<
     NumberField,
     PolePhotos,
     RouterLink,
-    LocationPicker,
+    MapPicker,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './pole-list.html',

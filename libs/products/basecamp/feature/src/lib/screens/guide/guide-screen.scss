@@ -1,0 +1,49 @@
+@use '../../styles/basecamp' as bc;
+
+:host {
+  display: block;
+}
+
+.screen {
+  @include bc.screen;
+}
+
+.head {
+  @include bc.screen-head;
+}
+
+.grid {
+  display: grid;
+  gap: var(--space-4);
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr));
+}
+
+.panel {
+  @include bc.panel;
+
+  h3 {
+    @include bc.panel-title;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+}
+
+.what {
+  margin: 0;
+}
+
+.how {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  padding-inline-start: var(--space-6);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-200);
+  line-height: 1.5;
+}
+
+.open {
+  margin-block-start: auto;
+  font-weight: var(--font-weight-semibold);
+}

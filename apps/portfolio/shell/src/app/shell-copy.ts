@@ -122,10 +122,14 @@ export const SHELL_COPY: Record<SiteLanguage, ShellCopy> = {
 };
 
 /**
- * Pages written in all three languages. Every other page is English only:
+ * Pages written in all three languages (the apps page, LuxPath, Basecamp). Every other page is English only:
  * it keeps lang="en" and left-to-right layout whatever the site language.
  */
 export function isTranslatedPage(url: string): boolean {
   const path = url.split(/[?#]/)[0];
-  return path === '/apps' || path.startsWith('/apps/lighting');
+  return (
+    path === '/apps' ||
+    path.startsWith('/apps/lighting') ||
+    path.startsWith('/apps/basecamp')
+  );
 }

@@ -222,12 +222,14 @@ const evaluate = values['allow-eval'] ? "'unsafe-eval'" : '';
 const tiles = 'https://tile.openstreetmap.org';
 // OpenStreetMap's Nominatim: place search and names for LuxPath's map picker.
 const geocoder = 'https://nominatim.openstreetmap.org';
+// Basecamp's forecast for a campsite (Open-Meteo: free, no key).
+const weather = 'https://api.open-meteo.com';
 const csp = [
   "default-src 'self'",
   // blob: is required by es-module-shims in shim mode (ADR-0006).
   `script-src 'self' ${evaluate} ${inlineScriptHashes(dir).join(' ')} blob: ${remotes} ${turnstile}`,
   "style-src 'self' 'unsafe-inline'",
-  `connect-src 'self' ${remotes} ${apiOrigins.join(' ')} ${tiles} ${geocoder} https://*.ngrok-free.dev https://*.ngrok.app https://*.ngrok.io http://127.0.0.1:* http://localhost:*`,
+  `connect-src 'self' ${remotes} ${apiOrigins.join(' ')} ${tiles} ${geocoder} ${weather} https://*.ngrok-free.dev https://*.ngrok.app https://*.ngrok.io http://127.0.0.1:* http://localhost:*`,
   `frame-src ${[self, turnstile].join(' ').trim() || "'none'"}`,
   `img-src 'self' data: ${tiles}`,
   "font-src 'self'",
