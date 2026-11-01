@@ -1,6 +1,10 @@
 import { expect, test } from './support/test';
 
 test.describe('New version prompt', () => {
+  // Requests a service worker makes skip page.route, so the mocked
+  // build-info.json would 404; the worker's own path has a unit test.
+  test.use({ serviceWorkers: 'block' });
+
   test('offers a reload when a loaded app has a newer build live', async ({
     page,
   }) => {

@@ -46,6 +46,8 @@ export class AppUpdates {
 
   /** The commit of each remote this page loaded. */
   private readonly loadedBuilds = new Map<string, string>();
+  /** Lookups of those commits still in flight; a check waits for them. */
+  private readonly recording = new Set<Promise<void>>();
   private manifest?: Promise<Record<string, string>>;
   private workerReady = false;
   private started = false;
@@ -79,9 +81,11 @@ export class AppUpdates {
         for (const load of this.federation.entities()) {
           if (load.status === 'loaded' && !seen.has(load.name)) {
             seen.add(load.name);
-            void this.liveBuild(load.name).then((sha) => {
+            const recorded = this.liveBuild(load.name).then((sha) => {
               if (sha) this.loadedBuilds.set(load.name, sha);
+              this.recording.delete(recorded);
             });
+            this.recording.add(recorded);
           }
         }
       },
@@ -118,9 +122,12 @@ export class AppUpdates {
     }
     this.lastCheck = now;
     if (this.worker?.isEnabled) {
-      // A newer shell build arrives as VERSION_READY.
-      await this.worker.checkForUpdate().catch(() => false);
+      // A newer shell build arrives as VERSION_READY. Not awaited: the
+      // promise waits until the worker controls the page, which on a first
+      // visit is not until the next load.
+      void this.worker.checkForUpdate().catch(() => false);
     }
+    await Promise.all(this.recording);
     for (const [name, sha] of this.loadedBuilds) {
       const live = await this.liveBuild(name);
       if (live && live !== sha) {
