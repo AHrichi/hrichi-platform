@@ -131,6 +131,10 @@ export const LightingStore = signalStore(
       stats,
       selectedPole,
       calculations: computed(() => activeProject()?.calculations ?? []),
+      /** Poles with as-built photos, for the report. */
+      photographedPoles: computed(
+        () => activeProject()?.poles.filter((p) => p.photos?.length) ?? [],
+      ),
       measurements: computed(() => activeProject()?.measurements ?? []),
     };
   }),

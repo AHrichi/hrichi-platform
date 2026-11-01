@@ -28,9 +28,12 @@ export const EN = {
     standards: 'Standards',
     materials: 'Materials',
     guide: 'Guide',
+    report: 'Report',
     more: 'More',
   },
   common: {
+    next: '→',
+    back: '←',
     close: 'Close',
     edit: 'Edit',
     delete: 'Delete',
@@ -187,6 +190,7 @@ export const EN = {
       electrical: 'Cable sizing',
       concrete: 'Concrete check',
       span: 'Wires and span',
+      energy: 'Energy and savings',
       measurement: 'Camera measurement',
     },
   },
@@ -214,6 +218,7 @@ export const EN = {
       solar: 'Solar',
       electrical: 'Cable',
       span: 'Wires & span',
+      energy: 'Energy & cost',
     },
     dragHint: 'Drag the round handles, or use the arrow keys on them.',
     how: 'How it’s calculated',
@@ -428,6 +433,16 @@ export const EN = {
       `At S = ${v['span']} m the cable would sag below 6 m on a hot day: ${v['max']} m at most. Fix it higher or bring the poles closer.`,
     'spacing.cableNone': () =>
       'No spacing works with this cable and pole type: check the pole’s rated load on its plate.',
+    'energy.saving': (v) =>
+      `The LEDs use ${v['pct']} % less energy than the old lamps.`,
+    'energy.quickPayback': (v) =>
+      `The retrofit pays for itself in ${v['years']} years: a quick win.`,
+    'energy.slowPayback': (v) =>
+      `The retrofit takes ${v['years']} years to pay back: add night dimming, or check the tariff and the cost per luminaire.`,
+    'energy.noSaving': () =>
+      'With these figures the LEDs save nothing: check both powers.',
+    'energy.tryDimming': () =>
+      'Night dimming (for example 100 % until midnight, then 50 %) usually saves another 25–35 %.',
   } as Record<string, NoteWriter>,
 
   diagrams: {
@@ -695,6 +710,7 @@ export const EN = {
       cable: 'Cables',
       overhead_cable: 'Overhead cable',
       electrical: 'Electrical',
+      fittings: 'Fittings',
     },
     frenchNote:
       'Catalogue entries are shown as the suppliers publish them, in French.',
@@ -843,6 +859,12 @@ export const EN = {
       'Pole nominal load: printed on the pole’s plate or datasheet, for example “250 daN”. Concrete low-voltage poles are often 150–650 daN.',
       'Clearance: 6 m over roads and 5 m elsewhere on most networks; check the operator’s rules.',
     ],
+    energy: [
+      'LED power: the luminaire’s rated watts, driver included. Old lamp power: the lamp plus its ballast, about 15 % more (a 150 W HPS draws about 170 W).',
+      'Hours per night: dusk to dawn averages about 11.5 h over a year in North Africa (4,200 h); use your astronomical clock’s figures if you have them.',
+      'Night dimming: about 30 % for a usual 3-step profile, 0 if the lamps burn at full power all night.',
+      'Tariff: the public-lighting price per kWh on the electricity bill. CO₂ factor: from the national grid (about 0.47 kg/kWh in Tunisia).',
+    ],
     concrete: [
       'Slump: fill the cone in three layers, rod each one 25 times, lift the cone straight up in 5–10 s and measure how far the top dropped.',
       'Water and cement: from the delivery note (kg per m³) or the batch weights on site.',
@@ -927,6 +949,10 @@ export const EN = {
       cable: 'Power cable, cut open',
       abc: 'Aerial bundled cable with its clamps',
       box: 'Electrical equipment',
+      woodPole: 'Wooden pole with bundled cable and a lamp',
+      concretePole: 'Concrete pole with a lamp',
+      arm: 'Arm clamped to a pole',
+      stay: 'End pole with a stay wire',
     },
   },
   backup: {
@@ -974,6 +1000,7 @@ export const EN = {
         how: [
           'Tap “New project”, give it a name and a client, choose solar, grid or hybrid, and tap its place on the map (or search an address).',
           'Add poles with their height, type and status; tap a pole to edit it.',
+          'Add as-built photos to each pole from its form: they stay on the phone and appear in the report.',
           'Add milestones to the plan; put a reminder in your calendar or send it by email.',
           'Results saved from the other tools are listed here: reopen one to correct it, rename it or delete it.',
         ],
@@ -986,6 +1013,7 @@ export const EN = {
         how: [
           'Pick a tab: Spacing (EN 13201 light levels), Foundation (block depth against wind), Solar (panel and battery), Cable (voltage drop) or Wires & span (sag and tension).',
           'Type values, or drag the round handles on the drawing: the results follow.',
+          'Energy & cost compares the LEDs with the old lamps: yearly kWh, money, CO₂ and how fast the retrofit pays back.',
           'Read “How it’s calculated” to check each step, and “How to take the measurements” for where each value comes from.',
           'Save the result to the project with a name; reopen it later from Projects to change it.',
         ],
@@ -1044,6 +1072,17 @@ export const EN = {
         how: [
           'Read each standard’s summary (EN 13201, EN 40, Eurocode 7, NF EN 206, NF C 17-200).',
           'Tick the checklist as you work on site.',
+        ],
+      },
+      {
+        route: 'report',
+        icon: '🖨️',
+        title: 'Report',
+        what: 'The whole project on one page, to print or save as a PDF for a client or a municipality.',
+        how: [
+          'Open Report from the menu, or from the project on Projects.',
+          'Check the details, poles, photos, plan and saved results.',
+          'Tap “Print or save as PDF” and choose “Save as PDF” as the printer.',
         ],
       },
       {
@@ -1106,6 +1145,76 @@ export const EN = {
     mapLabel: 'Map: tap to set the point',
     hint: 'Tap the map to set the point, or drag the pin.',
     myLocation: 'My location',
+  },
+  energy: {
+    luminaires: 'Luminaires',
+    ledWatts: 'LED power, driver included',
+    oldWatts: 'Old lamp power, with ballast',
+    oldHint: 'A 150 W HPS draws about 170 W',
+    hours: 'Hours per night (year average)',
+    hoursHint: 'About 11.5 h in North Africa',
+    dimming: 'Saved by night dimming',
+    dimmingHint: 'About 30 % for a 3-step profile',
+    tariff: 'Price per kWh',
+    co2: 'Grid CO₂ per kWh',
+    co2Hint: 'About 0.47 kg in Tunisia',
+    retrofit: 'Retrofit cost per luminaire',
+    verdictOk: (pct: string) => `LEDs use ${pct} % less energy`,
+    verdictBad: 'No saving with these figures',
+    saving: 'Saved per year',
+    ledEnergy: 'LED energy per year',
+    co2Saved: 'CO₂ avoided per year',
+    payback: 'Payback',
+    years: 'years',
+    never: 'never',
+    investment: (money: string) => `for ${money} invested`,
+    oldLamps: 'Old lamps',
+    diagramAlt: 'Energy per year: old lamps against LEDs, and what is saved',
+    formulas: {
+      hours: 'Burning hours per year',
+      old: 'Old lamps, full power all night',
+      led: 'LEDs, with night dimming',
+      saved: 'Saved per year: money and CO₂',
+      payback: 'Years to pay back the retrofit',
+    },
+  },
+  report: {
+    title: 'Project report',
+    print: 'Print or save as PDF',
+    tip: 'In the print dialog, choose “Save as PDF” as the printer to keep a file.',
+    coordinates: 'Coordinates',
+    lighting: 'Lighting',
+    stage: 'Stage',
+    date: 'Report date',
+    summary: 'Summary',
+    poles: 'Poles',
+    solarGrid: 'Solar / grid',
+    working: 'Working',
+    power: 'Installed power',
+    concrete: 'Concrete',
+    code: 'Pole',
+    type: 'Type',
+    status: 'Status',
+    plumb: 'Plumb',
+    position: 'Position',
+    photos: 'Site photos',
+    plan: 'Plan',
+    noPlan: 'No milestones yet.',
+    results: 'Saved results',
+    noProject: 'Create or load a project on Projects: its report appears here.',
+    noResults: 'No saved results yet.',
+    footer:
+      'Made with LuxPath. Calculations are planning aids under the stated standards, not certified designs.',
+  },
+  photos: {
+    title: 'Photos',
+    add: 'Add photos',
+    saving: 'Saving…',
+    remove: 'Remove photo',
+    alt: (date: string) => `Pole photo, ${date}`,
+    hint: (max: number) =>
+      `Up to ${max} photos, shrunk to save space; kept on this phone and in backups.`,
+    failed: 'That photo couldn’t be read: try another one.',
   },
 };
 

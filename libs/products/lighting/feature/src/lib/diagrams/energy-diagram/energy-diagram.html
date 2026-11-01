@@ -1,0 +1,45 @@
+<svg viewBox="0 0 480 200" role="img" [attr.aria-label]="t().energy.diagramAlt">
+  <rect class="backdrop" width="480" height="200" rx="12" />
+
+  <text class="caption" [attr.x]="x0 - 10" y="62" text-anchor="end">
+    {{ t().energy.oldLamps }}
+  </text>
+  <rect
+    class="old"
+    [attr.x]="x0"
+    y="44"
+    [attr.width]="oldWidth()"
+    height="28"
+    rx="4"
+  />
+  <text class="value" [attr.x]="x0 + 8" y="92">
+    {{ i18n.num(result().oldKwhPerYear, 0) }} kWh
+  </text>
+
+  <text class="caption" [attr.x]="x0 - 10" y="132" text-anchor="end">LED</text>
+  <rect
+    class="led"
+    [attr.x]="x0"
+    y="114"
+    [attr.width]="ledWidth()"
+    height="28"
+    rx="4"
+  />
+  <text class="value" [attr.x]="x0 + 8" y="162">
+    {{ i18n.num(result().ledKwhPerYear, 0) }} kWh
+  </text>
+
+  @if (result().savedKwhPerYear > 0) {
+    <rect
+      class="saved"
+      [attr.x]="x0 + ledWidth()"
+      y="114"
+      [attr.width]="oldWidth() - ledWidth()"
+      height="28"
+      rx="4"
+    />
+    <text class="value saved-label" x="240" y="30" text-anchor="middle">
+      −{{ result().savingPct }} %
+    </text>
+  }
+</svg>

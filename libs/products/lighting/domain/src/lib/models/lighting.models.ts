@@ -89,6 +89,14 @@ export interface PoleItem {
   inspectedDate?: string;
   measuredVerticalTilt?: number; // degrees deviation from 90° plumb
   notes?: string;
+  /** As-built photos, shrunk JPEGs as data URLs. */
+  photos?: PolePhoto[];
+}
+
+export interface PolePhoto {
+  id: string;
+  dataUrl: string;
+  takenAt: string;
 }
 
 export interface MilestoneItem {
@@ -404,6 +412,39 @@ export interface SpanCalculationResult {
   notes: CalcNote[];
 }
 
+/** A year of lighting: LEDs against the lamps they replace. */
+export interface EnergyParams {
+  luminaires: number;
+  /** LED luminaire power, driver included. */
+  ledWatts: number;
+  /** The old lamp's power with its ballast (a 150 W HPS draws about 170 W). */
+  oldWatts: number;
+  /** Average night length: about 11.5 h over a year in North Africa. */
+  hoursPerNight: number;
+  /** Energy the night dimming saves, as a % of full power all night. */
+  dimmingSavingPct: number;
+  tariffPerKwh: number;
+  /** Grid emission factor, kg CO₂ per kWh. */
+  co2KgPerKwh: number;
+  retrofitCostPerLuminaire: number;
+}
+
+export interface EnergyResult {
+  hoursPerYear: number;
+  oldKwhPerYear: number;
+  ledKwhPerYear: number;
+  savedKwhPerYear: number;
+  oldCostPerYear: number;
+  ledCostPerYear: number;
+  savedCostPerYear: number;
+  co2SavedKgPerYear: number;
+  investment: number;
+  /** null when there is nothing saved to pay it back. */
+  paybackYears: number | null;
+  savingPct: number;
+  notes: CalcNote[];
+}
+
 export interface CalculationInputs {
   spacing: SpacingCalculationParams;
   foundation: FoundationCalculationParams;
@@ -411,6 +452,7 @@ export interface CalculationInputs {
   electrical: ElectricalParams;
   concrete: ConcreteMixParams;
   span: SpanCalculationParams;
+  energy: EnergyParams;
 }
 
 export type CalculationKind = keyof CalculationInputs;
@@ -450,7 +492,8 @@ export type MaterialCategory =
   | 'anchor_bolts'
   | 'cable'
   | 'overhead_cable'
-  | 'electrical';
+  | 'electrical'
+  | 'fittings';
 
 export interface MaterialItem {
   id: string;

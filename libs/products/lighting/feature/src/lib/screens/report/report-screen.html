@@ -1,0 +1,207 @@
+@if (store.activeProject(); as project) {
+  <div class="toolbar">
+    <a routerLink="../projects">{{ t().common.back }} {{ t().nav.projects }}</a>
+    <button ahButton type="button" (click)="print()">
+      🖨️ {{ t().report.print }}
+    </button>
+  </div>
+  <p class="tip">{{ t().report.tip }}</p>
+
+  <article class="report" [attr.aria-label]="t().report.title">
+    <header class="report-head">
+      <p class="kicker">LuxPath · {{ t().report.title }}</p>
+      <h2>{{ project.title }}</h2>
+      <dl class="facts">
+        <div>
+          <dt>{{ t().projects.client }}</dt>
+          <dd>{{ project.clientOrMunicipality }}</dd>
+        </div>
+        @if (project.locationName) {
+          <div>
+            <dt>{{ t().projects.location }}</dt>
+            <dd>{{ project.locationName }}</dd>
+          </div>
+        }
+        <div>
+          <dt>{{ t().report.coordinates }}</dt>
+          <dd dir="ltr">
+            {{ i18n.num(project.gpsCenter.lat, 5) }},
+            {{ i18n.num(project.gpsCenter.lng, 5) }}
+          </dd>
+        </div>
+        <div>
+          <dt>{{ t().report.lighting }}</dt>
+          <dd>{{ t().lightingTypes[project.lightingType] }}</dd>
+        </div>
+        <div>
+          <dt>{{ t().report.stage }}</dt>
+          <dd>{{ t().stages[project.stage] }}</dd>
+        </div>
+        @if (project.engineerName) {
+          <div>
+            <dt>{{ t().projects.engineer }}</dt>
+            <dd>{{ project.engineerName }}</dd>
+          </div>
+        }
+        <div>
+          <dt>{{ t().report.date }}</dt>
+          <dd>{{ i18n.date(today) }}</dd>
+        </div>
+      </dl>
+    </header>
+
+    <section aria-labelledby="lp-report-summary">
+      <h3 id="lp-report-summary">{{ t().report.summary }}</h3>
+      <ul class="figures" role="list">
+        <li>
+          <strong>{{ store.stats().totalPoles }}</strong>
+          <span>{{ t().report.poles }}</span>
+        </li>
+        <li>
+          <strong
+            >{{ store.stats().solarPoles }} /
+            {{ store.stats().gridPoles }}</strong
+          >
+          <span>{{ t().report.solarGrid }}</span>
+        </li>
+        <li>
+          <strong>{{ store.stats().completionPct }} %</strong>
+          <span>{{ t().report.working }}</span>
+        </li>
+        <li>
+          <strong
+            ><bdi>{{ i18n.num(store.stats().totalWatts, 0) }} W</bdi></strong
+          >
+          <span>{{ t().report.power }}</span>
+        </li>
+        <li>
+          <strong
+            ><bdi
+              >{{ i18n.num(store.stats().totalConcreteVolumeM3, 1) }} m³</bdi
+            ></strong
+          >
+          <span>{{ t().report.concrete }}</span>
+        </li>
+      </ul>
+    </section>
+
+    <section aria-labelledby="lp-report-poles">
+      <h3 id="lp-report-poles">{{ t().report.poles }}</h3>
+      @if (project.poles.length) {
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">{{ t().report.code }}</th>
+                <th scope="col">{{ t().report.type }}</th>
+                <th scope="col">{{ t().report.status }}</th>
+                <th scope="col" class="num">H</th>
+                <th scope="col" class="num">W</th>
+                <th scope="col">{{ t().report.plumb }}</th>
+                <th scope="col">{{ t().report.position }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (pole of project.poles; track pole.id) {
+                <tr>
+                  <th scope="row">{{ pole.code }}</th>
+                  <td>{{ t().poleTypes[pole.type] }}</td>
+                  <td>{{ t().poleStatuses[pole.status] }}</td>
+                  <td class="num">
+                    <bdi>{{ i18n.num(pole.heightMeters) }} m</bdi>
+                  </td>
+                  <td class="num">{{ pole.luminaireWattage }}</td>
+                  <td>
+                    @if (pole.measuredVerticalTilt !== undefined) {
+                      <bdi>{{ i18n.num(pole.measuredVerticalTilt, 2) }}°</bdi>
+                    } @else {
+                      —
+                    }
+                  </td>
+                  <td dir="ltr" class="small">
+                    {{ i18n.num(pole.gps.lat, 5) }},
+                    {{ i18n.num(pole.gps.lng, 5) }}
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      } @else {
+        <p class="muted">{{ t().poles.empty }}</p>
+      }
+    </section>
+
+    @if (store.photographedPoles().length) {
+      <section aria-labelledby="lp-report-photos">
+        <h3 id="lp-report-photos">{{ t().report.photos }}</h3>
+        <div class="photo-grid">
+          @for (pole of store.photographedPoles(); track pole.id) {
+            @for (photo of pole.photos; track photo.id) {
+              <figure>
+                <img
+                  [src]="photo.dataUrl"
+                  [alt]="pole.code + ' · ' + i18n.date(photo.takenAt)"
+                />
+                <figcaption>
+                  <bdi>{{ pole.code }}</bdi> ·
+                  <bdi>{{ i18n.date(photo.takenAt) }}</bdi>
+                </figcaption>
+              </figure>
+            }
+          }
+        </div>
+      </section>
+    }
+
+    <section aria-labelledby="lp-report-plan">
+      <h3 id="lp-report-plan">{{ t().report.plan }}</h3>
+      @if (milestones().length) {
+        <ul class="plan" role="list">
+          @for (m of milestones(); track m.id) {
+            <li [class.done]="m.completed">
+              <span class="check" aria-hidden="true">{{
+                m.completed ? '✓' : '○'
+              }}</span>
+              <span class="when">{{ i18n.date(m.date) }}</span>
+              <span>{{ m.title }}</span>
+              <span class="muted">{{
+                t().milestoneCategories[m.category]
+              }}</span>
+            </li>
+          }
+        </ul>
+      } @else {
+        <p class="muted">{{ t().report.noPlan }}</p>
+      }
+    </section>
+
+    <section aria-labelledby="lp-report-results">
+      <h3 id="lp-report-results">{{ t().report.results }}</h3>
+      @if (results().length) {
+        <ul class="results" role="list">
+          @for (r of results(); track r.id) {
+            <li>
+              <span class="kind">{{ r.kind }}</span>
+              <strong>{{ r.label }}</strong>
+              <bdi class="summary">{{ r.summary }}</bdi>
+            </li>
+          }
+        </ul>
+      } @else {
+        <p class="muted">{{ t().report.noResults }}</p>
+      }
+    </section>
+
+    <footer class="report-foot">{{ t().report.footer }}</footer>
+  </article>
+} @else if (!store.isLoading()) {
+  <ah-empty-state
+    icon="🖨️"
+    [title]="t().report.title"
+    [description]="t().report.noProject"
+  />
+  <p class="center">
+    <a ahButton="secondary" routerLink="../projects">{{ t().nav.projects }}</a>
+  </p>
+}

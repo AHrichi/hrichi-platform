@@ -88,6 +88,39 @@
       <path class="drop" d="M80 53v18" />
       <rect class="box-small" x="72" y="70" width="16" height="12" rx="2" />
     }
+    @case ('woodPole') {
+      <!-- Wooden pole with crossarm, bundled cable and a lamp on an arm -->
+      <path class="wood" d="M74 94l2-84h8l2 84z" />
+      <path class="grain" d="M78 20v70M82 30v56" />
+      <path class="abc" d="M10 26c25 10 45 10 70 4c25 6 45 6 70-4" />
+      <path class="arm" d="M84 48c10-6 22-8 34-6" />
+      <path class="head" d="M112 39h20l-3 6h-14z" />
+    }
+    @case ('concretePole') {
+      <!-- Tapered concrete pole with its arm and lamp -->
+      <path class="concrete" d="M70 94l7-84h6l7 84z" />
+      <path class="grain" d="M80 26v6M80 44v6M80 62v6" />
+      <path class="arm" d="M83 18c10-6 24-8 36-6" />
+      <path class="head" d="M112 9h20l-3 6h-14z" />
+      <path class="beam" d="M114 15l-12 26h34l-10-26z" />
+    }
+    @case ('arm') {
+      <!-- A galvanised arm clamped to a pole with steel bands -->
+      <rect class="wood" x="30" y="10" width="14" height="84" rx="2" />
+      <rect class="clamp" x="27" y="40" width="20" height="5" rx="1" />
+      <rect class="clamp" x="27" y="58" width="20" height="5" rx="1" />
+      <path class="arm" d="M44 52c24-12 60-18 92-14" />
+      <path class="head" d="M126 32h22l-3 7h-16z" />
+    }
+    @case ('stay') {
+      <!-- End pole held by a stay wire to a ground anchor -->
+      <rect class="concrete" x="40" y="8" width="12" height="80" rx="2" />
+      <rect class="ground" x="0" y="88" width="160" height="12" />
+      <path class="stay" d="M50 20L128 88" />
+      <circle class="clock" cx="96" cy="60" r="4" />
+      <path class="abc" d="M0 22h46" />
+      <path class="anchor" d="M128 88v8l-6 4h12l-6-4" />
+    }
     @case ('box') {
       <!-- Control cabinet: door, breaker row and a clock -->
       <rect class="box" x="44" y="10" width="72" height="80" rx="4" />

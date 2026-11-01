@@ -23,6 +23,9 @@
           }}</span>
           <div class="main">
             <strong>{{ pole.code }}</strong>
+            @if (pole.photos?.length; as count) {
+              <span class="photo-count">📷 {{ count }}</span>
+            }
             <span class="meta">
               {{ t().poleTypes[pole.type] }} ·
               <bdi>{{ i18n.num(pole.heightMeters) }} m</bdi> ·
@@ -211,6 +214,13 @@
           (input)="patch({ notes: value($event) })"
         ></textarea>
       </label>
+      <div class="field wide">
+        <span>{{ t().photos.title }}</span>
+        <lp-pole-photos
+          [photos]="pole.photos ?? []"
+          (photosChange)="patch({ photos: $event })"
+        />
+      </div>
     </form>
   }
   <div modal-actions class="actions">

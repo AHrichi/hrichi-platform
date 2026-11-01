@@ -13,7 +13,7 @@ test.describe('LuxPath projects', () => {
     await expect(
       page.getByRole('heading', { level: 2, name: 'How to use LuxPath' }),
     ).toBeVisible();
-    await expect(page.locator('lp-guide-screen article')).toHaveCount(8);
+    await expect(page.locator('lp-guide-screen article')).toHaveCount(9);
     await page.getByRole('link', { name: 'Open Plumb check →' }).click();
     await expect(page).toHaveURL(/\/apps\/lighting\/verticality$/);
   });

@@ -62,7 +62,8 @@
         </details>
         @if (toolFor[s.id]; as tool) {
           <a class="tool" [routerLink]="'../' + tool"
-            >→ {{ t().standards.openTool }}: {{ t().nav[tool] }}</a
+            >{{ t().common.next }} {{ t().standards.openTool }}:
+            {{ t().nav[tool] }}</a
           >
         }
       </article>

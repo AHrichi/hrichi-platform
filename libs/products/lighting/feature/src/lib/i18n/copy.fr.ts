@@ -23,9 +23,12 @@ export const FR: LuxPathCopy = {
     standards: 'Normes',
     materials: 'Matériel',
     guide: 'Guide',
+    report: 'Rapport',
     more: 'Plus',
   },
   common: {
+    next: '→',
+    back: '←',
     close: 'Fermer',
     edit: 'Modifier',
     delete: 'Supprimer',
@@ -181,6 +184,7 @@ export const FR: LuxPathCopy = {
       electrical: 'Section de câble',
       concrete: 'Contrôle béton',
       span: 'Câbles et portée',
+      energy: 'Énergie et économies',
       measurement: 'Mesure caméra',
     },
   },
@@ -208,6 +212,7 @@ export const FR: LuxPathCopy = {
       solar: 'Solaire',
       electrical: 'Câble',
       span: 'Câbles et portée',
+      energy: 'Énergie et coûts',
     },
     dragHint:
       'Faites glisser les poignées rondes, ou utilisez les flèches du clavier.',
@@ -426,6 +431,16 @@ export const FR: LuxPathCopy = {
       `À S = ${v['span']} m le câble descendrait sous 6 m par forte chaleur : ${v['max']} m au plus. Fixez-le plus haut ou rapprochez les mâts.`,
     'spacing.cableNone': () =>
       'Aucun espacement ne convient avec ce câble et ce type de mât : vérifiez l’effort nominal sur la plaque du mât.',
+    'energy.saving': (v) =>
+      `Les LED consomment ${v['pct']} % d’énergie en moins que les anciennes lampes.`,
+    'energy.quickPayback': (v) =>
+      `La rénovation se rembourse en ${v['years']} ans : un gain rapide.`,
+    'energy.slowPayback': (v) =>
+      `La rénovation met ${v['years']} ans à se rembourser : ajoutez un abaissement de nuit, ou vérifiez le tarif et le coût par luminaire.`,
+    'energy.noSaving': () =>
+      'Avec ces valeurs les LED n’économisent rien : vérifiez les deux puissances.',
+    'energy.tryDimming': () =>
+      'Un abaissement de nuit (par exemple 100 % jusqu’à minuit, puis 50 %) économise en général 25 à 35 % de plus.',
   } as Record<string, NoteWriter>,
 
   diagrams: {
@@ -698,6 +713,7 @@ export const FR: LuxPathCopy = {
       cable: 'Câbles',
       overhead_cable: 'Réseau aérien',
       electrical: 'Électrique',
+      fittings: 'Accessoires',
     },
     frenchNote:
       'Les fiches du catalogue sont affichées telles que publiées par les fournisseurs, en français.',
@@ -848,6 +864,12 @@ export const FR: LuxPathCopy = {
       'Effort nominal : inscrit sur la plaque ou la fiche du mât, par exemple « 250 daN ». Les poteaux béton BT font souvent 150 à 650 daN.',
       'Hauteur au sol : 6 m au-dessus des routes et 5 m ailleurs sur la plupart des réseaux ; vérifiez les règles du gestionnaire.',
     ],
+    energy: [
+      'Puissance LED : la puissance nominale du luminaire, driver compris. Ancienne lampe : la lampe plus son ballast, environ 15 % de plus (une SHP 150 W consomme environ 170 W).',
+      'Heures par nuit : du crépuscule à l’aube, environ 11,5 h en moyenne sur l’année en Afrique du Nord (4 200 h) ; prenez les valeurs de votre horloge astronomique si vous les avez.',
+      'Abaissement de nuit : environ 30 % pour un profil courant à trois paliers, 0 si les lampes restent à pleine puissance toute la nuit.',
+      'Tarif : le prix du kWh éclairage public sur la facture. Facteur CO₂ : celui du réseau national (environ 0,47 kg/kWh en Tunisie).',
+    ],
     concrete: [
       'Affaissement : remplissez le cône en trois couches, piquez chacune 25 fois, soulevez le cône bien droit en 5 à 10 s et mesurez de combien le sommet est descendu.',
       'Eau et ciment : sur le bon de livraison (kg par m³) ou d’après les pesées de gâchée.',
@@ -933,6 +955,10 @@ export const FR: LuxPathCopy = {
       cable: 'Câble d’énergie, en coupe',
       abc: 'Câble torsadé aérien et ses pinces',
       box: 'Équipement électrique',
+      woodPole: 'Poteau bois avec torsadé et luminaire',
+      concretePole: 'Poteau béton avec luminaire',
+      arm: 'Crosse fixée sur un poteau',
+      stay: 'Poteau d’arrêt avec hauban',
     },
   },
   backup: {
@@ -983,6 +1009,7 @@ export const FR: LuxPathCopy = {
         how: [
           'Touchez « Nouveau projet », donnez un nom et un client, choisissez solaire, réseau ou hybride, et touchez son emplacement sur la carte (ou cherchez une adresse).',
           'Ajoutez les mâts avec leur hauteur, leur type et leur état ; touchez un mât pour le modifier.',
+          'Ajoutez des photos de récolement à chaque mât depuis sa fiche : elles restent sur le téléphone et apparaissent dans le rapport.',
           'Ajoutez des jalons au planning ; mettez un rappel dans votre agenda ou envoyez-le par e-mail.',
           'Les résultats enregistrés depuis les autres outils sont listés ici : rouvrez-en un pour le corriger, renommez-le ou supprimez-le.',
         ],
@@ -995,6 +1022,7 @@ export const FR: LuxPathCopy = {
         how: [
           'Choisissez un onglet : Implantation (niveaux EN 13201), Massif (profondeur face au vent), Solaire (panneau et batterie), Câble (chute de tension) ou Câbles et portée (flèche et tension).',
           'Saisissez les valeurs, ou faites glisser les poignées rondes du dessin : les résultats suivent.',
+          'Énergie et coûts compare les LED aux anciennes lampes : kWh par an, argent, CO₂ et délai de retour de la rénovation.',
           'Lisez « Comment c’est calculé » pour vérifier chaque étape, et « Comment prendre les mesures » pour l’origine de chaque valeur.',
           'Enregistrez le résultat dans le projet avec un nom ; rouvrez-le plus tard depuis Projets pour le modifier.',
         ],
@@ -1053,6 +1081,17 @@ export const FR: LuxPathCopy = {
         how: [
           'Lisez le résumé de chaque norme (EN 13201, EN 40, Eurocode 7, NF EN 206, NF C 17-200).',
           'Cochez la liste de contrôle au fil du chantier.',
+        ],
+      },
+      {
+        route: 'report',
+        icon: '🖨️',
+        title: 'Rapport',
+        what: 'Tout le projet sur une page, à imprimer ou enregistrer en PDF pour un client ou une commune.',
+        how: [
+          'Ouvrez Rapport depuis le menu, ou depuis le projet dans Projets.',
+          'Vérifiez les informations, les mâts, les photos, le planning et les résultats.',
+          'Touchez « Imprimer ou enregistrer en PDF » et choisissez « Enregistrer au format PDF » comme imprimante.',
         ],
       },
       {
@@ -1115,5 +1154,76 @@ export const FR: LuxPathCopy = {
     mapLabel: 'Carte : touchez pour placer le point',
     hint: 'Touchez la carte pour placer le point, ou faites glisser l’épingle.',
     myLocation: 'Ma position',
+  },
+  energy: {
+    luminaires: 'Luminaires',
+    ledWatts: 'Puissance LED, driver compris',
+    oldWatts: 'Ancienne lampe, avec ballast',
+    oldHint: 'Une SHP 150 W consomme environ 170 W',
+    hours: 'Heures par nuit (moyenne annuelle)',
+    hoursHint: 'Environ 11,5 h en Afrique du Nord',
+    dimming: 'Économie de l’abaissement de nuit',
+    dimmingHint: 'Environ 30 % pour un profil à 3 paliers',
+    tariff: 'Prix du kWh',
+    co2: 'CO₂ du réseau par kWh',
+    co2Hint: 'Environ 0,47 kg en Tunisie',
+    retrofit: 'Coût de rénovation par luminaire',
+    verdictOk: (pct: string) => `Les LED consomment ${pct} % de moins`,
+    verdictBad: 'Aucune économie avec ces valeurs',
+    saving: 'Économie par an',
+    ledEnergy: 'Énergie LED par an',
+    co2Saved: 'CO₂ évité par an',
+    payback: 'Retour sur investissement',
+    years: 'ans',
+    never: 'jamais',
+    investment: (money: string) => `pour ${money} investis`,
+    oldLamps: 'Anciennes lampes',
+    diagramAlt: 'Énergie par an : anciennes lampes contre LED, et l’économie',
+    formulas: {
+      hours: 'Heures de fonctionnement par an',
+      old: 'Anciennes lampes, pleine puissance toute la nuit',
+      led: 'LED, avec abaissement de nuit',
+      saved: 'Économie par an : argent et CO₂',
+      payback: 'Années pour rembourser la rénovation',
+    },
+  },
+  report: {
+    title: 'Rapport du projet',
+    print: 'Imprimer ou enregistrer en PDF',
+    tip: 'Dans la fenêtre d’impression, choisissez « Enregistrer au format PDF » pour garder un fichier.',
+    coordinates: 'Coordonnées',
+    lighting: 'Éclairage',
+    stage: 'Étape',
+    date: 'Date du rapport',
+    summary: 'Synthèse',
+    poles: 'Mâts',
+    solarGrid: 'Solaire / réseau',
+    working: 'En service',
+    power: 'Puissance installée',
+    concrete: 'Béton',
+    code: 'Mât',
+    type: 'Type',
+    status: 'État',
+    plumb: 'Aplomb',
+    position: 'Position',
+    photos: 'Photos du chantier',
+    plan: 'Planning',
+    noPlan: 'Pas encore de jalons.',
+    results: 'Résultats enregistrés',
+    noProject:
+      'Créez ou chargez un projet dans Projets : son rapport s’affiche ici.',
+    noResults: 'Pas encore de résultats enregistrés.',
+    footer:
+      'Réalisé avec LuxPath. Les calculs sont des aides à la conception selon les normes citées, pas des études certifiées.',
+  },
+  photos: {
+    title: 'Photos',
+    add: 'Ajouter des photos',
+    saving: 'Enregistrement…',
+    remove: 'Supprimer la photo',
+    alt: (date: string) => `Photo du mât, ${date}`,
+    hint: (max: number) =>
+      `Jusqu’à ${max} photos, réduites pour gagner de la place ; gardées sur ce téléphone et dans les sauvegardes.`,
+    failed: 'Cette photo n’a pas pu être lue : essayez-en une autre.',
   },
 };

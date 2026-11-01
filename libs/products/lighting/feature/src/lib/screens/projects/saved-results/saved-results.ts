@@ -9,6 +9,7 @@ import { RouterLink } from '@angular/router';
 import { AhButton, AhModal } from '@ah/ui';
 import {
   calculateElectricalNetwork,
+  calculateEnergy,
   calculateFoundation,
   calculatePoleSpacing,
   calculateSolarSizing,
@@ -38,8 +39,47 @@ const ICONS: Record<Row['kind'], string> = {
   electrical: '🔌',
   concrete: '🧱',
   span: '〰️',
+  energy: '⚡',
   measurement: '📷',
 };
+
+/** One line that sums up a saved result, recomputed from its inputs. */
+export function summarizeCalculation(
+  c: SavedCalculation,
+  i18n: LuxPathI18n,
+): string {
+  const n = (v: number, d = 1) => i18n.num(v, d);
+  switch (c.kind) {
+    case 'spacing': {
+      const r = calculatePoleSpacing(c.inputs);
+      return `S/H ${n(r.spacingRatio, 2)} · ${n(r.estimatedAverageLux)} lx · ${r.isCompliant ? '✓' : '✕'}${c.inputs.overheadCable ? ` · ${i18n.t().cableCheck.short}` : ''}`;
+    }
+    case 'foundation': {
+      const r = calculateFoundation(c.inputs);
+      return `D ${n(r.actualDepthMeters, 2)} / ${n(r.minRecommendedDepthMeters, 2)} m · SF ${n(r.safetyFactor, 2)}`;
+    }
+    case 'solar': {
+      const r = calculateSolarSizing(c.inputs);
+      return `${r.commercialPanelSizeWatts} Wp · ${r.commercialBatteryCapacityAh} Ah`;
+    }
+    case 'electrical': {
+      const r = calculateElectricalNetwork(c.inputs);
+      return `${r.recommendedCrossSectionMm2} mm² · ΔU ${n(r.actualVoltageDropPct, 2)} %`;
+    }
+    case 'span': {
+      const r = calculateSpan(c.inputs);
+      return `L ${n(c.inputs.spanMeters, 0)} m · f ${n(r.sagHotMeters, 2)} m · max ${n(r.maxSpanMeters, 0)} m · ${r.isCompliant ? '✓' : '✕'}`;
+    }
+    case 'energy': {
+      const r = calculateEnergy(c.inputs);
+      return `${c.inputs.luminaires} × ${c.inputs.ledWatts} W · −${r.savingPct} % · ${i18n.money(r.savedCostPerYear)}`;
+    }
+    case 'concrete': {
+      const r = validateConcreteMix(c.inputs);
+      return `E/C ${n(r.providedWaterCementRatio, 2)} · ${r.slumpClassification} · ${r.currentStrengthPctOf28Days} %`;
+    }
+  }
+}
 
 /**
  * Everything saved to the project: reopen it in its tool to correct and
@@ -75,40 +115,7 @@ export class SavedResults {
   protected readonly removing = signal<Row | null>(null);
 
   private calculationRow(c: SavedCalculation): Row {
-    const n = (v: number, d = 1) => this.i18n.num(v, d);
-    let summary: string;
-    switch (c.kind) {
-      case 'spacing': {
-        const r = calculatePoleSpacing(c.inputs);
-        summary = `S/H ${n(r.spacingRatio, 2)} · ${n(r.estimatedAverageLux)} lx · ${r.isCompliant ? '✓' : '✕'}${c.inputs.overheadCable ? ` · ${this.t().cableCheck.short}` : ''}`;
-        break;
-      }
-      case 'foundation': {
-        const r = calculateFoundation(c.inputs);
-        summary = `D ${n(r.actualDepthMeters, 2)} / ${n(r.minRecommendedDepthMeters, 2)} m · SF ${n(r.safetyFactor, 2)}`;
-        break;
-      }
-      case 'solar': {
-        const r = calculateSolarSizing(c.inputs);
-        summary = `${r.commercialPanelSizeWatts} Wp · ${r.commercialBatteryCapacityAh} Ah`;
-        break;
-      }
-      case 'electrical': {
-        const r = calculateElectricalNetwork(c.inputs);
-        summary = `${r.recommendedCrossSectionMm2} mm² · ΔU ${n(r.actualVoltageDropPct, 2)} %`;
-        break;
-      }
-      case 'span': {
-        const r = calculateSpan(c.inputs);
-        summary = `L ${n(c.inputs.spanMeters, 0)} m · f ${n(r.sagHotMeters, 2)} m · max ${n(r.maxSpanMeters, 0)} m · ${r.isCompliant ? '✓' : '✕'}`;
-        break;
-      }
-      case 'concrete': {
-        const r = validateConcreteMix(c.inputs);
-        summary = `E/C ${n(r.providedWaterCementRatio, 2)} · ${r.slumpClassification} · ${r.currentStrengthPctOf28Days} %`;
-        break;
-      }
-    }
+    const summary = summarizeCalculation(c, this.i18n);
     const concrete = c.kind === 'concrete';
     return {
       id: c.id,

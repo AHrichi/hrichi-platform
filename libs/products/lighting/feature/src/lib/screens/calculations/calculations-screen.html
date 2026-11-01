@@ -57,8 +57,13 @@
               [result]="span()"
             />
           }
+          @case ('energy') {
+            <lp-energy-diagram [result]="energy()" />
+          }
         }
-        <figcaption>✋ {{ t().calc.dragHint }}</figcaption>
+        @if (tab() !== 'energy') {
+          <figcaption>✋ {{ t().calc.dragHint }}</figcaption>
+        }
       </figure>
 
       <section class="panel" aria-labelledby="lp-calc-how">
@@ -492,6 +497,75 @@
               />
             </div>
           }
+          @case ('energy') {
+            <div class="fields">
+              <lp-number-field
+                [label]="t().energy.luminaires"
+                [min]="1"
+                [max]="2000"
+                [(value)]="gLuminaires"
+              />
+              <lp-number-field
+                [label]="t().energy.ledWatts"
+                unit="W"
+                [min]="5"
+                [max]="400"
+                [(value)]="gLed"
+              />
+              <lp-number-field
+                [label]="t().energy.oldWatts"
+                unit="W"
+                [min]="5"
+                [max]="1000"
+                [step]="5"
+                [hint]="t().energy.oldHint"
+                [(value)]="gOld"
+              />
+              <lp-number-field
+                [label]="t().energy.hours"
+                unit="h"
+                [min]="6"
+                [max]="15"
+                [step]="0.5"
+                [hint]="t().energy.hoursHint"
+                [(value)]="gHours"
+              />
+              <lp-number-field
+                [label]="t().energy.dimming"
+                unit="%"
+                [min]="0"
+                [max]="70"
+                [step]="5"
+                [hint]="t().energy.dimmingHint"
+                [(value)]="gDimming"
+              />
+              <lp-number-field
+                [label]="t().energy.tariff"
+                unit="€"
+                [min]="0"
+                [max]="1"
+                [step]="0.01"
+                [(value)]="gTariff"
+              />
+              <lp-number-field
+                [label]="t().energy.co2"
+                unit="kg"
+                [min]="0"
+                [max]="1.2"
+                [step]="0.01"
+                [hint]="t().energy.co2Hint"
+                [(value)]="gCo2"
+              />
+              <lp-number-field
+                [label]="t().energy.retrofit"
+                unit="€"
+                [min]="0"
+                [max]="2000"
+                [step]="10"
+                [(value)]="gRetrofit"
+              />
+            </div>
+          }
         }
         @if (howTo(); as steps) {
           <lp-how-to [steps]="steps" />
@@ -799,6 +873,45 @@
               </table>
             </div>
             <lp-note-list [notes]="span().notes" />
+          }
+          @case ('energy') {
+            <div class="verdict" [attr.data-ok]="energy().savedKwhPerYear > 0">
+              {{
+                energy().savedKwhPerYear > 0
+                  ? t().energy.verdictOk(i18n.num(energy().savingPct, 0))
+                  : t().energy.verdictBad
+              }}
+            </div>
+            <div class="results">
+              <ah-metric-card
+                [label]="t().energy.saving"
+                [value]="i18n.money(energy().savedCostPerYear)"
+                [hint]="i18n.num(energy().savedKwhPerYear, 0) + ' kWh'"
+                variant="accent"
+              />
+              <ah-metric-card
+                [label]="t().energy.ledEnergy"
+                [value]="i18n.num(energy().ledKwhPerYear, 0)"
+                unit="kWh"
+                [hint]="i18n.money(energy().ledCostPerYear)"
+              />
+              <ah-metric-card
+                [label]="t().energy.co2Saved"
+                [value]="i18n.num(energy().co2SavedKgPerYear, 0)"
+                unit="kg"
+              />
+              <ah-metric-card
+                [label]="t().energy.payback"
+                [value]="
+                  energy().paybackYears === null
+                    ? t().energy.never
+                    : i18n.num(energy().paybackYears ?? 0, 1)
+                "
+                [unit]="energy().paybackYears === null ? '' : t().energy.years"
+                [hint]="t().energy.investment(i18n.money(energy().investment))"
+              />
+            </div>
+            <lp-note-list [notes]="energy().notes" />
           }
         }
       </section>

@@ -41,3 +41,5 @@ The Materials screen's photos (`libs/products/lighting/feature/src/lib/diagrams/
 - [12V 200Ah lithium iron phosphate battery](https://commons.wikimedia.org/wiki/File:12V_200Ah_lithium_iron_phosphate_battery.jpg) by HasanAbuarja, [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0)
 - [AnchorBolt Moku 01](https://commons.wikimedia.org/wiki/File:AnchorBolt_Moku_01.jpg) by ほーるだうん, [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0)
 - [3.core.cable](https://commons.wikimedia.org/wiki/File:3.core.cable.JPG) by Hafiz n, [CC BY 3.0](https://creativecommons.org/licenses/by/3.0)
+- [ABC TQ3157 073](https://commons.wikimedia.org/wiki/File:ABC_TQ3157_073.JPG) by RHaworth, [CC BY-SA 3.0](http://creativecommons.org/licenses/by-sa/3.0/)
+- [9 Sichovykh Striltsiv Street, Bolekhiv (2)](<https://commons.wikimedia.org/wiki/File:9_Sichovykh_Striltsiv_Street,_Bolekhiv_(2).jpg>) by Aeou, [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0)

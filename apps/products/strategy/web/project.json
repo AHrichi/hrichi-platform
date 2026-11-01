@@ -67,7 +67,13 @@
           "libs/design-system/ui/src/styles/index.scss",
           "apps/products/strategy/web/src/styles.scss"
         ],
-        "polyfills": ["es-module-shims"]
+        "polyfills": ["es-module-shims"],
+        "allowedCommonJsDependencies": [
+          "core-js",
+          "html2canvas",
+          "raf",
+          "rgbcolor"
+        ]
       },
       "configurations": {
         "production": {

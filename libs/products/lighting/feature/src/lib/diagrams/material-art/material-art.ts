@@ -19,7 +19,11 @@ export type ArtKind =
   | 'bolts'
   | 'cable'
   | 'abc'
-  | 'box';
+  | 'box'
+  | 'woodPole'
+  | 'concretePole'
+  | 'arm'
+  | 'stay';
 
 /** Which drawing a catalogue item gets, from its category and id. */
 export function artKind(
@@ -28,6 +32,8 @@ export function artKind(
 ): ArtKind {
   switch (category) {
     case 'pole':
+      if (id.includes('wood')) return 'woodPole';
+      if (id.includes('concrete')) return 'concretePole';
       return id.includes('solar')
         ? 'solarPole'
         : id.includes('conic')
@@ -45,6 +51,8 @@ export function artKind(
       return 'abc';
     case 'electrical':
       return 'box';
+    case 'fittings':
+      return id.includes('stay') ? 'stay' : 'arm';
     default:
       return 'cable';
   }

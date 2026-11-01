@@ -75,6 +75,12 @@ export const LIGHTING_ROUTES: Routes = [
           ),
       },
       {
+        path: 'report',
+        title: title('report'),
+        loadComponent: () =>
+          import('./screens/report/report-screen').then((m) => m.ReportScreen),
+      },
+      {
         path: 'guide',
         title: title('guide'),
         loadComponent: () =>

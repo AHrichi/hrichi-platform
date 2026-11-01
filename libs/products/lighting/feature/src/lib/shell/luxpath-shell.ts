@@ -31,6 +31,7 @@ export type LuxPathScreen =
   | 'concrete'
   | 'standards'
   | 'materials'
+  | 'report'
   | 'guide';
 
 interface NavItem {
@@ -48,6 +49,7 @@ const NAV: readonly NavItem[] = [
   { id: 'concrete', icon: '🧱' },
   { id: 'standards', icon: '📜' },
   { id: 'materials', icon: '📦' },
+  { id: 'report', icon: '🖨️' },
   { id: 'guide', icon: '📖' },
 ];
 

@@ -549,6 +549,155 @@ export const MATERIALS_CATALOG: MaterialItem[] = [
     estimatedUnitCostEur: 18,
     keyAttributes: { lengthMeters: 1.5 },
   },
+
+  // WOOD POLES
+  {
+    id: 'pole-wood-9m',
+    category: 'pole',
+    name: 'Poteau Bois Pin Traité 9m Classe 175 daN',
+    manufacturer: 'Poteaux bois (pin sylvestre)',
+    specsSummary:
+      'Poteau bois pin traité en autoclave (classe d’emploi 4), 9m, effort 175 daN, pour réseau aérien et éclairage rural.',
+    estimatedUnitCostEur: 180,
+    keyAttributes: {
+      heightMeters: 9,
+      material: 'Pin traité autoclave',
+      nominalLoadDaN: 175,
+      standardCompliant: 'NF EN 14229',
+    },
+  },
+  {
+    id: 'pole-wood-10m',
+    category: 'pole',
+    name: 'Poteau Bois Pin Traité 10m Classe 250 daN',
+    manufacturer: 'Poteaux bois (pin sylvestre)',
+    specsSummary:
+      'Poteau bois traité 10m, effort 250 daN, pour poteaux d’angle ou portées plus longues.',
+    estimatedUnitCostEur: 230,
+    keyAttributes: {
+      heightMeters: 10,
+      material: 'Pin traité autoclave',
+      nominalLoadDaN: 250,
+      standardCompliant: 'NF EN 14229',
+    },
+  },
+  {
+    id: 'pole-wood-12m',
+    category: 'pole',
+    name: 'Poteau Bois Pin Traité 12m Classe 325 daN',
+    manufacturer: 'Poteaux bois (pin sylvestre)',
+    specsSummary:
+      'Poteau bois traité 12m, effort 325 daN, pour poteaux d’arrêt (avec hauban) et traversées de route.',
+    estimatedUnitCostEur: 310,
+    keyAttributes: {
+      heightMeters: 12,
+      material: 'Pin traité autoclave',
+      nominalLoadDaN: 325,
+      standardCompliant: 'NF EN 14229',
+    },
+  },
+  // MORE CONCRETE POLES
+  {
+    id: 'pole-concrete-ep-8m',
+    category: 'pole',
+    name: 'Candélabre Béton Armé 8m 150 daN',
+    manufacturer: 'Sotupa / Bonna Sabla',
+    specsSummary:
+      'Mât béton armé pour éclairage public, 8m, effort 150 daN, avec trappe de visite et fourreau d’entrée de câble.',
+    estimatedUnitCostEur: 210,
+    keyAttributes: {
+      heightMeters: 8,
+      material: 'Béton armé vibré',
+      nominalLoadDaN: 150,
+      standardCompliant: 'EN 40-4',
+    },
+  },
+  {
+    id: 'pole-concrete-10m-400',
+    category: 'pole',
+    name: 'Poteau Béton Armé BT 10m 400 daN',
+    manufacturer: 'Sotupa / Bonna Sabla',
+    specsSummary:
+      'Poteau béton armé 10m, effort 400 daN, pour angles et poteaux d’arrêt de réseau BT torsadé.',
+    estimatedUnitCostEur: 360,
+    keyAttributes: {
+      heightMeters: 10,
+      material: 'Béton armé',
+      nominalLoadDaN: 400,
+      standardCompliant: 'NF C 67-200',
+    },
+  },
+  {
+    id: 'pole-concrete-12m-650',
+    category: 'pole',
+    name: 'Poteau Béton Armé 12m 650 daN',
+    manufacturer: 'Sotupa / Bonna Sabla',
+    specsSummary:
+      'Poteau béton armé 12m, effort 650 daN, pour fins de ligne sans hauban et traversées.',
+    estimatedUnitCostEur: 520,
+    keyAttributes: {
+      heightMeters: 12,
+      material: 'Béton armé',
+      nominalLoadDaN: 650,
+      standardCompliant: 'NF C 67-200',
+    },
+  },
+  {
+    id: 'pole-concrete-octo-9m',
+    category: 'pole',
+    name: 'Mât Béton Centrifugé Octogonal 9m',
+    manufacturer: 'Sotupa / Bonna Sabla',
+    specsSummary:
+      'Mât d’éclairage en béton centrifugé, section octogonale, finition lisse, 9m, résistant à l’air salin.',
+    estimatedUnitCostEur: 340,
+    keyAttributes: {
+      heightMeters: 9,
+      material: 'Béton centrifugé',
+      shape: 'Octogonal',
+      standardCompliant: 'EN 40-4',
+    },
+  },
+  // FITTINGS
+  {
+    id: 'arm-single-15',
+    category: 'fittings',
+    name: 'Crosse Simple 1,5m pour Poteau Bois ou Béton',
+    manufacturer: 'Sermeto / Sicame',
+    specsSummary:
+      'Crosse acier galvanisé 1,5m, inclinaison 5°, fixation par colliers sur poteau bois ou béton, embout Ø 60mm.',
+    estimatedUnitCostEur: 55,
+    keyAttributes: { lengthMeters: 1.5, spigotMm: 60 },
+  },
+  {
+    id: 'arm-double-2',
+    category: 'fittings',
+    name: 'Crosse Double 2 × 2m',
+    manufacturer: 'Sermeto / Sicame',
+    specsSummary:
+      'Double crosse acier galvanisé 2 × 2m pour terre-plein central ou éclairage des deux côtés.',
+    estimatedUnitCostEur: 90,
+    keyAttributes: { lengthMeters: 2, arms: 2 },
+  },
+  {
+    id: 'stay-kit',
+    category: 'fittings',
+    name: 'Kit de Hauban pour Poteau d’Arrêt',
+    manufacturer: 'Sicame / Ensto',
+    specsSummary:
+      'Câble acier galvanisé, tendeur, isolateur de hauban et ancre à visser : reprend la traction du câble en fin de ligne ou en angle.',
+    estimatedUnitCostEur: 75,
+    keyAttributes: { breakingLoadDaN: 2000 },
+  },
+  {
+    id: 'band-clamp',
+    category: 'fittings',
+    name: 'Feuillard et Chapes Inox (fixation sur poteau)',
+    manufacturer: 'Sicame / Ensto',
+    specsSummary:
+      'Feuillard inox 20mm et chapes pour fixer crosses, pinces et coffrets sur poteaux bois ou béton.',
+    estimatedUnitCostEur: 3,
+    keyAttributes: { widthMm: 20, material: 'Inox' },
+  },
 ];
 
 export const PUBLIC_MATERIALS_CATALOG = MATERIALS_CATALOG;

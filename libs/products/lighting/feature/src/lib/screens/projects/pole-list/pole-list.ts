@@ -20,6 +20,7 @@ import {
 } from '../../../store/lighting.store';
 import { LocationPicker } from '../../../ui/location-picker/location-picker';
 import { NumberField } from '../../../ui/number-field/number-field';
+import { PolePhotos } from '../../../ui/pole-photos/pole-photos';
 import { POLE_STATUSES, POLE_TYPES } from '../../options';
 
 const STATUS_BADGE: Record<
@@ -42,6 +43,7 @@ const STATUS_BADGE: Record<
     AhModal,
     AhSegmentedControl,
     NumberField,
+    PolePhotos,
     RouterLink,
     LocationPicker,
   ],

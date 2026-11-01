@@ -1,0 +1,219 @@
+@use '../../styles/luxpath' as lp;
+
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+p.center {
+  margin: 0;
+  text-align: center;
+}
+
+.tip,
+.muted {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-200);
+}
+
+.report {
+  @include lp.panel;
+  gap: var(--space-5);
+
+  h2,
+  h3 {
+    margin: 0;
+  }
+
+  h3 {
+    margin-block-end: var(--space-2);
+    font-size: var(--font-size-300);
+  }
+
+  section {
+    break-inside: avoid-page;
+  }
+}
+
+.kicker {
+  margin: 0 0 var(--space-1);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-100);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.facts {
+  display: grid;
+  gap: var(--space-2) var(--space-5);
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 12rem), 1fr));
+  margin: var(--space-3) 0 0;
+
+  dt {
+    color: var(--color-text-muted);
+    font-size: var(--font-size-100);
+  }
+
+  dd {
+    margin: 0;
+    font-weight: var(--font-weight-medium);
+  }
+}
+
+.figures {
+  display: grid;
+  gap: var(--space-3);
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 8rem), 1fr));
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    display: flex;
+    flex-direction: column;
+    padding: var(--space-3);
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-md);
+  }
+
+  strong {
+    font-size: var(--font-size-400);
+  }
+
+  span {
+    color: var(--color-text-muted);
+    font-size: var(--font-size-100);
+  }
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+table {
+  inline-size: 100%;
+  border-collapse: collapse;
+  font-size: var(--font-size-200);
+
+  th,
+  td {
+    padding: var(--space-1) var(--space-2);
+    border-block-end: 1px solid var(--color-border-default);
+    text-align: start;
+  }
+
+  thead th {
+    color: var(--color-text-muted);
+    font-weight: var(--font-weight-medium);
+  }
+
+  .num,
+  tbody th {
+    white-space: nowrap;
+  }
+
+  .num {
+    text-align: end;
+  }
+
+  .small {
+    font-size: var(--font-size-100);
+    white-space: nowrap;
+  }
+}
+
+.photo-grid {
+  display: grid;
+  gap: var(--space-3);
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 10rem), 1fr));
+
+  figure {
+    margin: 0;
+    break-inside: avoid;
+  }
+
+  img {
+    display: block;
+    inline-size: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-radius: var(--radius-md);
+  }
+
+  figcaption {
+    color: var(--color-text-muted);
+    font-size: var(--font-size-100);
+  }
+}
+
+.plan,
+.results {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--font-size-200);
+
+  li {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1) var(--space-3);
+    align-items: baseline;
+  }
+}
+
+.plan .done {
+  color: var(--color-text-muted);
+}
+
+.when {
+  min-inline-size: 7rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.kind {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-100);
+}
+
+.summary {
+  font-variant-numeric: tabular-nums;
+}
+
+.report-foot {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-100);
+}
+
+// On paper: black on white whatever the theme, and no controls.
+@media print {
+  :host {
+    --color-text-default: #111;
+    --color-text-muted: #555;
+    --color-bg-raised: #fff;
+    --color-border-default: #ccc;
+
+    color: #111;
+  }
+
+  .toolbar,
+  .tip {
+    display: none;
+  }
+
+  .report {
+    padding: 0;
+    border: 0;
+  }
+}

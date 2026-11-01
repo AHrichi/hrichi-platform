@@ -12,6 +12,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AhMetricCard, AhTabs, type AhTabItem } from '@ah/ui';
 import {
   calculateElectricalNetwork,
+  calculateEnergy,
   calculateFoundation,
   calculatePoleSpacing,
   calculateSolarSizing,
@@ -20,6 +21,7 @@ import {
   CONDUCTORS,
   type ConductorType,
   type ElectricalParams,
+  type EnergyParams,
   type FoundationCalculationParams,
   type PoleKind,
   type PoleMaterial,
@@ -34,6 +36,7 @@ import {
   type WindZone,
 } from '@ah/products/lighting/domain';
 import { CableDiagram } from '../../diagrams/cable-diagram/cable-diagram';
+import { EnergyDiagram } from '../../diagrams/energy-diagram/energy-diagram';
 import { FoundationDiagram } from '../../diagrams/foundation-diagram/foundation-diagram';
 import { SolarDiagram } from '../../diagrams/solar-diagram/solar-diagram';
 import { SpacingDiagram } from '../../diagrams/spacing-diagram/spacing-diagram';
@@ -54,13 +57,14 @@ import {
 } from '../options';
 
 export type CalculatorTab =
-  'spacing' | 'foundation' | 'solar' | 'electrical' | 'span';
+  'spacing' | 'foundation' | 'solar' | 'electrical' | 'span' | 'energy';
 const TABS: readonly CalculatorTab[] = [
   'spacing',
   'foundation',
   'solar',
   'electrical',
   'span',
+  'energy',
 ];
 
 function isTab(value: string | null): value is CalculatorTab {
@@ -80,6 +84,7 @@ function isTab(value: string | null): value is CalculatorTab {
     SolarDiagram,
     CableDiagram,
     SpanDiagram,
+    EnergyDiagram,
     HowTo,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -269,6 +274,29 @@ export class CalculationsScreen {
     return limit ? this.t().spanLimits[limit] : '';
   });
 
+  // A year of energy and cost, LEDs against the old lamps
+  protected readonly gLuminaires = signal(20);
+  protected readonly gLed = signal(60);
+  protected readonly gOld = signal(170);
+  protected readonly gHours = signal(11.5);
+  protected readonly gDimming = signal(30);
+  protected readonly gTariff = signal(0.12);
+  protected readonly gCo2 = signal(0.47);
+  protected readonly gRetrofit = signal(250);
+  protected readonly energyParams = computed<EnergyParams>(() => ({
+    luminaires: this.gLuminaires(),
+    ledWatts: this.gLed(),
+    oldWatts: this.gOld(),
+    hoursPerNight: this.gHours(),
+    dimmingSavingPct: this.gDimming(),
+    tariffPerKwh: this.gTariff(),
+    co2KgPerKwh: this.gCo2(),
+    retrofitCostPerLuminaire: this.gRetrofit(),
+  }));
+  protected readonly energy = computed(() =>
+    calculateEnergy(this.energyParams()),
+  );
+
   /** The saved calculation being edited (from ?edit=), if any. */
   protected readonly editing = signal<SavedCalculation | null>(null);
   protected readonly editingLabel = computed(() =>
@@ -291,6 +319,8 @@ export class CalculationsScreen {
         return `${name} · ${n(this.eLength(), 0)} m · ${this.electrical().recommendedCrossSectionMm2} mm²`;
       case 'span':
         return `${name} · L ${n(this.lSpan())} m · ${this.t().poleRoles[this.lRole()]}`;
+      case 'energy':
+        return `${name} · ${this.gLuminaires()} × ${this.gLed()} W · −${this.energy().savingPct} %`;
     }
   });
 
@@ -426,6 +456,33 @@ export class CalculationsScreen {
           },
         ];
       }
+      case 'energy': {
+        const r = this.energy();
+        const p = this.energyParams();
+        const g = this.t().energy.formulas;
+        return [
+          {
+            label: g.hours,
+            math: `t = ${n(p.hoursPerNight)} h × 365 = ${n(r.hoursPerYear, 0)} h`,
+          },
+          {
+            label: g.old,
+            math: `E₀ = ${p.luminaires} × ${p.oldWatts} W × ${n(r.hoursPerYear, 0)} h = ${n(r.oldKwhPerYear, 0)} kWh`,
+          },
+          {
+            label: g.led,
+            math: `E = ${p.luminaires} × ${p.ledWatts} W × ${n(r.hoursPerYear, 0)} h × (1 − ${n(p.dimmingSavingPct, 0)} %) = ${n(r.ledKwhPerYear, 0)} kWh`,
+          },
+          {
+            label: g.saved,
+            math: `(E₀ − E) × ${n(p.tariffPerKwh, 2)} = ${this.i18n.money(r.savedCostPerYear)} · × ${n(p.co2KgPerKwh, 2)} kg = ${n(r.co2SavedKgPerYear, 0)} kg CO₂`,
+          },
+          {
+            label: g.payback,
+            math: `${p.luminaires} × ${this.i18n.money(p.retrofitCostPerLuminaire)} / ${this.i18n.money(r.savedCostPerYear)} = ${r.paybackYears === null ? '—' : n(r.paybackYears, 1)}`,
+          },
+        ];
+      }
     }
   });
 
@@ -525,6 +582,18 @@ export class CalculationsScreen {
         this.lPoleKind.set(i.poleKind ?? 'concrete');
         break;
       }
+      case 'energy': {
+        const i = saved.inputs;
+        this.gLuminaires.set(i.luminaires);
+        this.gLed.set(i.ledWatts);
+        this.gOld.set(i.oldWatts);
+        this.gHours.set(i.hoursPerNight);
+        this.gDimming.set(i.dimmingSavingPct);
+        this.gTariff.set(i.tariffPerKwh);
+        this.gCo2.set(i.co2KgPerKwh);
+        this.gRetrofit.set(i.retrofitCostPerLuminaire);
+        break;
+      }
     }
   }
 
@@ -585,6 +654,13 @@ export class CalculationsScreen {
           ...base,
           kind: 'span',
           inputs: this.spanParams(),
+        });
+        break;
+      case 'energy':
+        savedId = await this.store.saveCalculation({
+          ...base,
+          kind: 'energy',
+          inputs: this.energyParams(),
         });
         break;
     }

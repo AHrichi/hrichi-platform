@@ -29,6 +29,7 @@ const CATEGORIES: readonly MaterialCategory[] = [
   'cable',
   'overhead_cable',
   'electrical',
+  'fittings',
 ];
 export type BomLine =
   | 'pole'

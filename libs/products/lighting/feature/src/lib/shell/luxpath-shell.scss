@@ -353,3 +353,12 @@
     }
   }
 }
+
+// Printing (the project report): only the page's content.
+@media print {
+  .bar,
+  .tabs,
+  .bottom {
+    display: none !important;
+  }
+}

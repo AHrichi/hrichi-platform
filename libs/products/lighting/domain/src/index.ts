@@ -9,6 +9,7 @@ export * from './lib/calculations/concrete';
 export * from './lib/calculations/verticality';
 export * from './lib/calculations/electrical';
 export * from './lib/calculations/span';
+export * from './lib/calculations/energy';
 
 // Standards & Materials Data
 export * from './lib/data/standards.data';

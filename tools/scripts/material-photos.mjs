@@ -37,6 +37,8 @@ const PICKS = {
   battery: 'File:12V 200Ah lithium iron phosphate battery.jpg',
   bolts: 'File:AnchorBolt Moku 01.jpg',
   cable: 'File:3.core.cable.JPG',
+  woodPole: 'File:ABC TQ3157 073.JPG',
+  concretePole: 'File:9 Sichovykh Striltsiv Street, Bolekhiv (2).jpg',
 };
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));

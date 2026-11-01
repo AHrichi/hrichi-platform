@@ -1,0 +1,40 @@
+<div class="photos">
+  @for (photo of photos(); track photo.id) {
+    <figure>
+      <img
+        [src]="photo.dataUrl"
+        [alt]="t().photos.alt(i18n.date(photo.takenAt))"
+      />
+      <button
+        type="button"
+        class="remove"
+        [attr.aria-label]="t().photos.remove"
+        (click)="remove(photo.id)"
+      >
+        ✕
+      </button>
+    </figure>
+  }
+  @if (photos().length < max) {
+    <label class="add" [class.busy]="busy()">
+      <input
+        type="file"
+        accept="image/*"
+        capture="environment"
+        multiple
+        class="ah-visually-hidden"
+        [disabled]="busy()"
+        (change)="add($event)"
+      />
+      <span aria-hidden="true">📷</span>
+      <span>{{ busy() ? t().photos.saving : t().photos.add }}</span>
+    </label>
+  }
+</div>
+<p class="hint">
+  @if (failed()) {
+    <span class="error" role="alert">{{ t().photos.failed }}</span>
+  } @else {
+    {{ t().photos.hint(max) }}
+  }
+</p>

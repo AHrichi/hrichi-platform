@@ -1,0 +1,24 @@
+@use '../../styles/luxpath' as lp;
+
+@include lp.diagram;
+
+.old {
+  fill: var(--color-text-muted);
+}
+
+.led {
+  fill: var(--color-accent-default);
+}
+
+.saved {
+  fill: none;
+  stroke: var(--color-success-default);
+  stroke-width: 2;
+  stroke-dasharray: 5 4;
+}
+
+.saved-label {
+  fill: var(--color-success-default);
+  font-size: 22px;
+  font-weight: 700;
+}
