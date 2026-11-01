@@ -20,12 +20,63 @@
     "assert": {
       "assertMatrix": [
         {
-          "matchingUrlPattern": "^http://localhost:4200/(?!labs/)",
+          "matchingUrlPattern": "^http://localhost:4200/(?!labs/).+",
           "assertions": {
             "categories:performance": [
               "error",
               {
                 "minScore": 0.9,
+                "aggregationMethod": "median-run"
+              }
+            ],
+            "categories:accessibility": [
+              "error",
+              {
+                "minScore": 1
+              }
+            ],
+            "categories:best-practices": [
+              "error",
+              {
+                "minScore": 0.95
+              }
+            ],
+            "categories:seo": [
+              "error",
+              {
+                "minScore": 1
+              }
+            ],
+            "largest-contentful-paint": [
+              "error",
+              {
+                "maxNumericValue": 2000,
+                "aggregationMethod": "median"
+              }
+            ],
+            "total-blocking-time": [
+              "warn",
+              {
+                "maxNumericValue": 300,
+                "aggregationMethod": "median"
+              }
+            ],
+            "cumulative-layout-shift": [
+              "error",
+              {
+                "maxNumericValue": 0.05,
+                "aggregationMethod": "pessimistic"
+              }
+            ]
+          }
+        },
+        {
+          "matchingUrlPattern": "^http://localhost:4200/$",
+          "assertions": {
+            "categories:performance": [
+              "error",
+              {
+                "minScore": 0.85,
                 "aggregationMethod": "median-run"
               }
             ],
