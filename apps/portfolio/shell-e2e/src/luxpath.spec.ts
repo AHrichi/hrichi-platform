@@ -1,3 +1,4 @@
+import { loadSampleProjects } from './support/luxpath';
 import { expect, test } from './support/test';
 
 test.describe('LuxPath inside the portfolio', () => {
@@ -26,6 +27,7 @@ test.describe('LuxPath inside the portfolio', () => {
   test('reopens a saved calculation, corrects it and updates it', async ({
     page,
   }) => {
+    await loadSampleProjects(page);
     await page.goto('/apps/lighting/calculations?tab=spacing');
     await page.getByRole('spinbutton', { name: /^Spacing S/ }).fill('34');
     await page.getByRole('button', { name: 'Save to project' }).click();

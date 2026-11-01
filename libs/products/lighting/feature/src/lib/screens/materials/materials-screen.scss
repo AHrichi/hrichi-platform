@@ -143,3 +143,28 @@ lp-material-art {
   display: block;
   max-inline-size: 14rem;
 }
+
+// A real photo of the kind of item, with its credit (open licences).
+.photo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  margin: 0;
+
+  img {
+    display: block;
+    inline-size: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-radius: var(--radius-md);
+    background: var(--color-bg-surface);
+  }
+
+  figcaption {
+    overflow: hidden;
+    color: var(--color-text-muted);
+    font-size: var(--font-size-100);
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+}

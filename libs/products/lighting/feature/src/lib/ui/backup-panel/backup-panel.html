@@ -1,0 +1,34 @@
+<p class="lead">{{ t().backup.lead }}</p>
+<div class="actions">
+  <button
+    ahButton
+    type="button"
+    [disabled]="store.projects().length === 0"
+    (click)="download()"
+  >
+    💾 {{ t().backup.download }}
+  </button>
+  @if (canShare()) {
+    <button
+      ahButton="secondary"
+      type="button"
+      [disabled]="store.projects().length === 0"
+      (click)="share()"
+    >
+      ☁️ {{ t().backup.share }}
+    </button>
+  }
+  <label class="open">
+    <input
+      type="file"
+      accept=".json,application/json"
+      class="ah-visually-hidden"
+      (change)="open($event)"
+    />
+    <span aria-hidden="true">📂</span> {{ t().backup.open }}
+  </label>
+</div>
+<p class="hint">{{ t().backup.driveHint }}</p>
+<p class="status" role="status" [class.error]="status()?.kind === 'error'">
+  {{ message() }}
+</p>

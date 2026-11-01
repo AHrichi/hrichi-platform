@@ -27,6 +27,7 @@ export const EN = {
     concrete: 'Concrete',
     standards: 'Standards',
     materials: 'Materials',
+    guide: 'Guide',
     more: 'More',
   },
   common: {
@@ -69,7 +70,7 @@ export const EN = {
     deleteTitle: 'Delete this project?',
     deleteText: (title: string) =>
       `“${title}” and everything in it (poles, plan, saved results) will be deleted from this device. This can’t be undone.`,
-    restore: 'Restore sample projects',
+    restore: 'Load the sample projects',
     restoreText:
       'The two sample projects come back as they were. Your own projects are kept.',
     emptyTitle: 'No projects yet',
@@ -643,6 +644,7 @@ export const EN = {
     none: 'No standard matches.',
   },
   materials: {
+    photoBy: 'Photo:',
     title: 'Materials',
     lead: 'Typical supplier equipment, and a bill of materials for the active project.',
     views: { catalog: 'Catalogue', bom: 'Bill of materials' },
@@ -886,6 +888,159 @@ export const EN = {
       bolts: 'Anchor bolt cage with its template',
       cable: 'Power cable, cut open',
     },
+  },
+  backup: {
+    title: 'Back up and restore',
+    lead: 'Your projects are kept in this browser only. Keep a copy: save a backup file on the phone, or share it to Google Drive, and open it again on any device.',
+    download: 'Save a backup file',
+    share: 'Share or save to Drive',
+    shareTitle: 'LuxPath backup',
+    open: 'Open a backup',
+    driveHint:
+      'On Android, “Share or save to Drive” lists Drive in the share menu, and “Open a backup” can pick the file from Drive. On iPhone, choose Files or the Drive app.',
+    saved: (n: number) => `Backup of ${n} project${n === 1 ? '' : 's'} ready.`,
+    restored: (n: number, skipped: number) =>
+      `${n} project${n === 1 ? '' : 's'} restored${skipped ? ` (${skipped} damaged entr${skipped === 1 ? 'y' : 'ies'} left out)` : ''}. Any with the same name as one here came in as a copy.`,
+    shareFailed: 'Sharing didn’t work here: save the backup file instead.',
+    errors: {
+      notJson: 'This file isn’t a LuxPath backup (it isn’t JSON).',
+      notLuxPath: 'This JSON file isn’t a LuxPath backup.',
+      newerVersion:
+        'This backup comes from a newer LuxPath: reload the app and try again.',
+      empty: 'This backup has no project LuxPath can read.',
+    },
+  },
+  guidePage: {
+    title: 'How to use LuxPath',
+    lead: 'A field kit for street and solar lighting: plan a project, size it, measure on site and keep the record, on your phone and offline.',
+    newHere: 'New here? Read how LuxPath works',
+    quickTitle: 'Getting started',
+    quick: [
+      'Create a project for your street or site on Projects, or load the sample projects to explore.',
+      'Size the lighting on Calculators: spacing, foundation, solar, cable, and the wires between poles.',
+      'On site, measure poles with the Camera, check they stand straight with Plumb, and test the concrete.',
+      'Place the poles on the Map, follow the plan’s milestones, and export the bill of materials.',
+      'Back up your projects to a file or to Google Drive from Projects.',
+    ],
+    open: (name: string) => `Open ${name}`,
+    whatFor: 'What it’s for',
+    howTo: 'How to use it',
+    sections: [
+      {
+        route: 'projects',
+        icon: '📋',
+        title: 'Projects',
+        what: 'Everything for one street or site: the client, the poles, the plan and the saved results.',
+        how: [
+          'Tap “New project”, give it a name and a client, and choose solar, grid or hybrid.',
+          'Add poles with their height, type and status; tap a pole to edit it.',
+          'Add milestones to the plan; put a reminder in your calendar or send it by email.',
+          'Results saved from the other tools are listed here: reopen one to correct it, rename it or delete it.',
+        ],
+      },
+      {
+        route: 'calculations',
+        icon: '📐',
+        title: 'Calculators',
+        what: 'Size the lighting with the standard methods, and see every formula with your numbers in it.',
+        how: [
+          'Pick a tab: Spacing (EN 13201 light levels), Foundation (block depth against wind), Solar (panel and battery), Cable (voltage drop) or Wires & span (sag and tension).',
+          'Type values, or drag the round handles on the drawing: the results follow.',
+          'Read “How it’s calculated” to check each step, and “How to take the measurements” for where each value comes from.',
+          'Save the result to the project with a name; reopen it later from Projects to change it.',
+        ],
+      },
+      {
+        route: 'camera',
+        icon: '📷',
+        title: 'Camera',
+        what: 'Measure a pole’s distance and height without a tape or a ladder.',
+        how: [
+          'Set your eye height once (about 1.6 m).',
+          'Aim the crosshair at the foot of the pole and lock it, then at the top and lock it: the two angles give the distance and the height.',
+          'On an Android phone, the AR tape measures distances on the ground directly: tap to drop points.',
+          'Correct any reading by hand, then save it, and write the height to a pole if you like.',
+        ],
+      },
+      {
+        route: 'verticality',
+        icon: '🎯',
+        title: 'Plumb check',
+        what: 'Check that a pole is vertical (EN 40-3 allows 1°) and how to straighten it.',
+        how: [
+          'Follow the pictures: phone upright, its back flat on the pole, screen facing you.',
+          'Tap “Use phone as a level”, keep still until it says “Steady”, then save side A.',
+          'Walk to the opposite side and save side B: the average cancels the phone’s own error.',
+          'Out of tolerance? The steps say which levelling nuts to raise and by how much. Record the check on the pole.',
+        ],
+      },
+      {
+        route: 'concrete',
+        icon: '🧱',
+        title: 'Concrete',
+        what: 'Check a foundation’s mix and slump against NF EN 206, and when it is strong enough.',
+        how: [
+          'Enter the cement and water from the delivery note, and the slump you measured.',
+          'Read the water/cement ratio, the slump class and the strength by age; drag along the curve for other days.',
+          'Save the check: it says when the pole can go up.',
+        ],
+      },
+      {
+        route: 'map',
+        icon: '🗺️',
+        title: 'Map',
+        what: 'See and place the project’s poles on a map, with the length of each span.',
+        how: [
+          'Tap the map to put a pole there, or drag a pole to move it.',
+          'Filter solar or grid poles; “My location” centres the map on you.',
+          'Span lengths show on the lines between poles: use them in the calculators.',
+        ],
+      },
+      {
+        route: 'standards',
+        icon: '📜',
+        title: 'Standards',
+        what: 'The rules LuxPath follows, in short, with a site checklist.',
+        how: [
+          'Read each standard’s summary (EN 13201, EN 40, Eurocode 7, NF EN 206, NF C 17-200).',
+          'Tick the checklist as you work on site.',
+        ],
+      },
+      {
+        route: 'materials',
+        icon: '📦',
+        title: 'Materials',
+        what: 'A catalogue of poles, luminaires, panels, batteries, bolts and cables, and your project’s bill of materials.',
+        how: [
+          'Search or filter the catalogue; each item has a photo and a typical price.',
+          'Open “Parts of a lighting pole” to put a name on every part.',
+          'Switch to the bill of materials to count what the project needs, and export it as a CSV file for a spreadsheet.',
+        ],
+      },
+    ],
+    extrasTitle: 'Good to know',
+    extras: [
+      {
+        icon: '💾',
+        title: 'Your data stays on your phone',
+        text: 'Projects are stored in this browser and work offline. Back them up from Projects: save a file or share it to Google Drive, then open it on any device.',
+      },
+      {
+        icon: '☀️',
+        title: 'Sunlight mode',
+        text: 'The sun button raises the contrast so the screen reads outdoors.',
+      },
+      {
+        icon: '🌐',
+        title: 'Three languages',
+        text: 'English, French and Arabic (right to left); numbers keep their units.',
+      },
+      {
+        icon: '📶',
+        title: 'Works offline',
+        text: 'Once opened, LuxPath works without a connection; the map needs one to load new areas.',
+      },
+    ],
   },
 };
 

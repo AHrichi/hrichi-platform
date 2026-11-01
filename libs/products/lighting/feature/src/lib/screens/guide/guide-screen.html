@@ -1,0 +1,56 @@
+<section class="screen" aria-labelledby="lp-guide-title">
+  <header class="head">
+    <div>
+      <h2 id="lp-guide-title">{{ t().guidePage.title }}</h2>
+      <p>{{ t().guidePage.lead }}</p>
+    </div>
+  </header>
+
+  <section class="panel" aria-labelledby="lp-guide-quick">
+    <h3 id="lp-guide-quick">{{ t().guidePage.quickTitle }}</h3>
+    <ol class="quick">
+      @for (step of t().guidePage.quick; track $index) {
+        <li>{{ step }}</li>
+      }
+    </ol>
+  </section>
+
+  <div class="grid">
+    @for (section of t().guidePage.sections; track section.route) {
+      <article
+        class="panel"
+        [attr.aria-labelledby]="'lp-guide-' + section.route"
+      >
+        <h3 [id]="'lp-guide-' + section.route">
+          <span class="icon" aria-hidden="true">{{ section.icon }}</span>
+          {{ section.title }}
+        </h3>
+        <p class="what">{{ section.what }}</p>
+        <h4>{{ t().guidePage.howTo }}</h4>
+        <ol class="how">
+          @for (step of section.how; track $index) {
+            <li>{{ step }}</li>
+          }
+        </ol>
+        <a class="open" [routerLink]="['..', section.route]">
+          {{ t().guidePage.open(section.title) }} →
+        </a>
+      </article>
+    }
+  </div>
+
+  <section class="panel" aria-labelledby="lp-guide-extras">
+    <h3 id="lp-guide-extras">{{ t().guidePage.extrasTitle }}</h3>
+    <ul class="extras" role="list">
+      @for (extra of t().guidePage.extras; track $index) {
+        <li>
+          <span class="icon" aria-hidden="true">{{ extra.icon }}</span>
+          <div>
+            <strong>{{ extra.title }}</strong>
+            <p>{{ extra.text }}</p>
+          </div>
+        </li>
+      }
+    </ul>
+  </section>
+</section>

@@ -5,7 +5,9 @@ import {
   inject,
   signal,
 } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { AhButton, AhSegmentedControl } from '@ah/ui';
+import { from } from 'rxjs';
 import {
   type MaterialItem,
   PUBLIC_MATERIALS_CATALOG,
@@ -47,6 +49,14 @@ export class MaterialsScreen {
   protected readonly t = this.i18n.t;
 
   protected readonly artKind = artKind;
+  /** Real photos, loaded with this screen only; the drawings stand in until then. */
+  protected readonly photos = toSignal(
+    from(
+      import('../../diagrams/material-art/material-photos.generated').then(
+        (m) => m.MATERIAL_PHOTOS,
+      ),
+    ),
+  );
   protected readonly view = signal<View>('catalog');
   protected readonly views = computed(() =>
     (['catalog', 'bom'] as const).map((value) => ({

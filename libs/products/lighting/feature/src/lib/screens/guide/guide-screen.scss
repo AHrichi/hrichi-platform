@@ -1,0 +1,82 @@
+@use '../../styles/luxpath' as lp;
+
+.screen {
+  @include lp.screen;
+}
+
+.head {
+  @include lp.screen-head;
+}
+
+.panel {
+  @include lp.panel;
+
+  h3 {
+    @include lp.panel-title;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  h4 {
+    margin: 0;
+    color: var(--color-text-muted);
+    font-size: var(--font-size-100);
+    font-weight: var(--font-weight-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+}
+
+.grid {
+  display: grid;
+  gap: var(--space-4);
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr));
+}
+
+.what {
+  margin: 0;
+}
+
+.quick,
+.how {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  padding-inline-start: var(--space-6);
+  font-size: var(--font-size-200);
+  line-height: 1.5;
+}
+
+.how {
+  color: var(--color-text-muted);
+}
+
+.open {
+  margin-block-start: auto;
+  font-weight: var(--font-weight-semibold);
+}
+
+.extras {
+  display: grid;
+  gap: var(--space-4);
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 16rem), 1fr));
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    display: flex;
+    gap: var(--space-3);
+  }
+
+  p {
+    margin: var(--space-1) 0 0;
+    color: var(--color-text-muted);
+    font-size: var(--font-size-200);
+  }
+}
+
+.icon {
+  font-size: 1.25em;
+}

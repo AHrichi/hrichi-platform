@@ -74,6 +74,12 @@ export const LIGHTING_ROUTES: Routes = [
             (m) => m.MaterialsScreen,
           ),
       },
+      {
+        path: 'guide',
+        title: title('guide'),
+        loadComponent: () =>
+          import('./screens/guide/guide-screen').then((m) => m.GuideScreen),
+      },
       { path: '**', redirectTo: 'projects' },
     ],
   },

@@ -26,6 +26,8 @@ import {
   SOIL_TYPES,
   WIND_ZONES,
 } from '../options';
+import { RouterLink } from '@angular/router';
+import { BackupPanel } from '../../ui/backup-panel/backup-panel';
 import { MilestoneList } from './milestone-list/milestone-list';
 import { PoleList } from './pole-list/pole-list';
 import { SavedResults } from './saved-results/saved-results';
@@ -41,8 +43,10 @@ type LightingType = ProjectItem['lightingType'];
     AhMetricCard,
     AhModal,
     AhProgressBar,
+    BackupPanel,
     PoleList,
     MilestoneList,
+    RouterLink,
     SavedResults,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -145,7 +149,7 @@ export class ProjectsScreen {
   }
 
   protected async reset(): Promise<void> {
-    await this.store.resetToDefaults();
+    await this.store.loadSamples();
     this.confirmReset.set(false);
   }
 

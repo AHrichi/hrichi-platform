@@ -41,5 +41,8 @@
     }
   </p>
 } @else {
-  <p class="none">{{ t().save.noProject }}</p>
+  <p class="none">
+    {{ t().save.noProject }}
+    <a routerLink="../projects">{{ t().nav.projects }} →</a>
+  </p>
 }

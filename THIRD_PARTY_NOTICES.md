@@ -28,3 +28,16 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 ## Natural Earth
 
 The globe's coastlines are Natural Earth's land outlines (public domain), via the `world-atlas` package.
+
+## LuxPath material photos
+
+The Materials screen's photos (`libs/products/lighting/feature/src/lib/diagrams/material-art/material-photos.generated.ts`) are fetched from the Wikimedia Commons API by `tools/scripts/material-photos.mjs`, scaled to fit 320 × 240 px by Commons, and shown with their credit and licence:
+
+- [20160207 xl P1020443-LED-Strassenlampen Landhausstrasse Strausberg Vorstadt](https://commons.wikimedia.org/wiki/File:20160207_xl_P1020443-LED-Strassenlampen_Landhausstrasse_Strausberg_Vorstadt.JPG) by Molgreen, [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0)
+- [20160206 xl P1020432-LED-Strassenlampen Gustav-Kurtze-Wohnpark Strausberg Vorstadt](https://commons.wikimedia.org/wiki/File:20160206_xl_P1020432-LED-Strassenlampen_Gustav-Kurtze-Wohnpark_Strausberg_Vorstadt.JPG) by Molgreen, [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0)
+- [Solar power for streetlights along part of Paradise Trail (3937798321)](<https://commons.wikimedia.org/wiki/File:Solar_power_for_streetlights_along_part_of_Paradise_Trail_(3937798321).jpg>) by Robert Ashworth from Bellingham, WA., USA, [CC BY 2.0](https://creativecommons.org/licenses/by/2.0)
+- [Brooklands Road, Hall Green - new lamppost installation - new lamp (7949223938)](<https://commons.wikimedia.org/wiki/File:Brooklands_Road,_Hall_Green_-_new_lamppost_installation_-_new_lamp_(7949223938).jpg>) by Elliott Brown from Birmingham, United Kingdom, [CC BY 2.0](https://creativecommons.org/licenses/by/2.0)
+- [BP Solar 12V solar panel](https://commons.wikimedia.org/wiki/File:BP_Solar_12V_solar_panel.jpg) by JayCubby, [CC BY 4.0](https://creativecommons.org/licenses/by/4.0)
+- [12V 200Ah lithium iron phosphate battery](https://commons.wikimedia.org/wiki/File:12V_200Ah_lithium_iron_phosphate_battery.jpg) by HasanAbuarja, [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0)
+- [AnchorBolt Moku 01](https://commons.wikimedia.org/wiki/File:AnchorBolt_Moku_01.jpg) by ほーるだうん, [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0)
+- [3.core.cable](https://commons.wikimedia.org/wiki/File:3.core.cable.JPG) by Hafiz n, [CC BY 3.0](https://creativecommons.org/licenses/by/3.0)

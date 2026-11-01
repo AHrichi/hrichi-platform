@@ -22,6 +22,7 @@ export const FR: LuxPathCopy = {
     concrete: 'Béton',
     standards: 'Normes',
     materials: 'Matériel',
+    guide: 'Guide',
     more: 'Plus',
   },
   common: {
@@ -64,7 +65,7 @@ export const FR: LuxPathCopy = {
     deleteTitle: 'Supprimer ce projet ?',
     deleteText: (title: string) =>
       `« ${title} » et tout son contenu (candélabres, planning, résultats enregistrés) seront supprimés de cet appareil. Action irréversible.`,
-    restore: 'Restaurer les projets exemples',
+    restore: 'Charger les projets exemples',
     restoreText:
       'Les deux projets exemples reviennent dans leur état d’origine. Vos projets sont conservés.',
     emptyTitle: 'Aucun projet',
@@ -646,6 +647,7 @@ export const FR: LuxPathCopy = {
     none: 'Aucune norme ne correspond.',
   },
   materials: {
+    photoBy: 'Photo :',
     title: 'Matériel',
     lead: 'Équipements fournisseurs courants, et un métré pour le projet actif.',
     views: { catalog: 'Catalogue', bom: 'Métré' },
@@ -892,5 +894,161 @@ export const FR: LuxPathCopy = {
       bolts: 'Cage d’ancrage avec gabarit',
       cable: 'Câble d’énergie, en coupe',
     },
+  },
+  backup: {
+    title: 'Sauvegarder et restaurer',
+    lead: 'Vos projets ne sont gardés que dans ce navigateur. Gardez-en une copie : enregistrez un fichier de sauvegarde sur le téléphone, ou partagez-le vers Google Drive, et rouvrez-le sur n’importe quel appareil.',
+    download: 'Enregistrer une sauvegarde',
+    share: 'Partager ou enregistrer sur Drive',
+    shareTitle: 'Sauvegarde LuxPath',
+    open: 'Ouvrir une sauvegarde',
+    driveHint:
+      'Sur Android, « Partager ou enregistrer sur Drive » propose Drive dans le menu de partage, et « Ouvrir une sauvegarde » peut choisir le fichier dans Drive. Sur iPhone, choisissez Fichiers ou l’app Drive.',
+    saved: (n: number) =>
+      `Sauvegarde de ${n} projet${n === 1 ? '' : 's'} prête.`,
+    restored: (n: number, skipped: number) =>
+      `${n} projet${n === 1 ? '' : 's'} restauré${n === 1 ? '' : 's'}${skipped ? ` (${skipped} entrée${skipped === 1 ? '' : 's'} abîmée${skipped === 1 ? '' : 's'} ignorée${skipped === 1 ? '' : 's'})` : ''}. Un projet déjà présent arrive en copie.`,
+    shareFailed:
+      'Le partage n’a pas fonctionné ici : enregistrez plutôt le fichier de sauvegarde.',
+    errors: {
+      notJson:
+        'Ce fichier n’est pas une sauvegarde LuxPath (ce n’est pas du JSON).',
+      notLuxPath: 'Ce fichier JSON n’est pas une sauvegarde LuxPath.',
+      newerVersion:
+        'Cette sauvegarde vient d’une version plus récente de LuxPath : rechargez l’app et réessayez.',
+      empty: 'Cette sauvegarde ne contient aucun projet lisible.',
+    },
+  },
+  guidePage: {
+    title: 'Comment utiliser LuxPath',
+    lead: 'Un kit de terrain pour l’éclairage public et solaire : préparez un projet, dimensionnez-le, mesurez sur site et gardez la trace, sur votre téléphone et hors ligne.',
+    newHere: 'Nouveau ? Découvrez comment fonctionne LuxPath',
+    quickTitle: 'Pour commencer',
+    quick: [
+      'Créez un projet pour votre rue ou votre chantier dans Projets, ou chargez les projets exemples pour découvrir.',
+      'Dimensionnez l’éclairage dans Calculs : implantation, massif, solaire, câble, et les câbles entre mâts.',
+      'Sur site, mesurez les mâts avec la Caméra, vérifiez leur aplomb avec Aplomb et contrôlez le béton.',
+      'Placez les mâts sur la Carte, suivez les jalons du planning et exportez la liste du matériel.',
+      'Sauvegardez vos projets dans un fichier ou sur Google Drive depuis Projets.',
+    ],
+    open: (name: string) => `Ouvrir ${name}`,
+    whatFor: 'À quoi ça sert',
+    howTo: 'Comment s’en servir',
+    sections: [
+      {
+        route: 'projects',
+        icon: '📋',
+        title: 'Projets',
+        what: 'Tout pour une rue ou un chantier : le client, les mâts, le planning et les résultats enregistrés.',
+        how: [
+          'Touchez « Nouveau projet », donnez un nom et un client, et choisissez solaire, réseau ou hybride.',
+          'Ajoutez les mâts avec leur hauteur, leur type et leur état ; touchez un mât pour le modifier.',
+          'Ajoutez des jalons au planning ; mettez un rappel dans votre agenda ou envoyez-le par e-mail.',
+          'Les résultats enregistrés depuis les autres outils sont listés ici : rouvrez-en un pour le corriger, renommez-le ou supprimez-le.',
+        ],
+      },
+      {
+        route: 'calculations',
+        icon: '📐',
+        title: 'Calculs',
+        what: 'Dimensionnez l’éclairage selon les méthodes normalisées, et voyez chaque formule avec vos valeurs.',
+        how: [
+          'Choisissez un onglet : Implantation (niveaux EN 13201), Massif (profondeur face au vent), Solaire (panneau et batterie), Câble (chute de tension) ou Câbles et portée (flèche et tension).',
+          'Saisissez les valeurs, ou faites glisser les poignées rondes du dessin : les résultats suivent.',
+          'Lisez « Comment c’est calculé » pour vérifier chaque étape, et « Comment prendre les mesures » pour l’origine de chaque valeur.',
+          'Enregistrez le résultat dans le projet avec un nom ; rouvrez-le plus tard depuis Projets pour le modifier.',
+        ],
+      },
+      {
+        route: 'camera',
+        icon: '📷',
+        title: 'Caméra',
+        what: 'Mesurez la distance et la hauteur d’un mât sans mètre ni échelle.',
+        how: [
+          'Réglez une fois votre hauteur d’yeux (environ 1,6 m).',
+          'Visez le pied du mât avec la mire et verrouillez, puis le sommet et verrouillez : les deux angles donnent la distance et la hauteur.',
+          'Sur un téléphone Android, le mètre AR mesure directement les distances au sol : touchez pour poser des points.',
+          'Corrigez une valeur à la main si besoin, puis enregistrez, et reportez la hauteur sur un mât si vous voulez.',
+        ],
+      },
+      {
+        route: 'verticality',
+        icon: '🎯',
+        title: 'Contrôle d’aplomb',
+        what: 'Vérifiez qu’un mât est vertical (l’EN 40-3 tolère 1°) et comment le redresser.',
+        how: [
+          'Suivez les images : téléphone debout, dos à plat sur le mât, écran vers vous.',
+          'Touchez « Utiliser le téléphone comme niveau », ne bougez plus jusqu’à « Stable », puis enregistrez le côté A.',
+          'Passez du côté opposé et enregistrez le côté B : la moyenne annule l’erreur propre au téléphone.',
+          'Hors tolérance ? Les étapes indiquent quels écrous de réglage remonter et de combien. Enregistrez le contrôle sur le mât.',
+        ],
+      },
+      {
+        route: 'concrete',
+        icon: '🧱',
+        title: 'Béton',
+        what: 'Vérifiez la composition et l’affaissement d’un massif selon la NF EN 206, et quand il est assez résistant.',
+        how: [
+          'Saisissez le ciment et l’eau du bon de livraison, et l’affaissement mesuré.',
+          'Lisez le rapport E/C, la classe d’affaissement et la résistance selon l’âge ; glissez le long de la courbe pour d’autres jours.',
+          'Enregistrez le contrôle : il indique quand le mât peut être levé.',
+        ],
+      },
+      {
+        route: 'map',
+        icon: '🗺️',
+        title: 'Carte',
+        what: 'Voyez et placez les mâts du projet sur une carte, avec la longueur de chaque portée.',
+        how: [
+          'Touchez la carte pour y placer un mât, ou faites glisser un mât pour le déplacer.',
+          'Filtrez les mâts solaires ou réseau ; « Ma position » centre la carte sur vous.',
+          'Les portées s’affichent sur les lignes entre mâts : reprenez-les dans les calculs.',
+        ],
+      },
+      {
+        route: 'standards',
+        icon: '📜',
+        title: 'Normes',
+        what: 'Les règles suivies par LuxPath, en bref, avec une liste de contrôle chantier.',
+        how: [
+          'Lisez le résumé de chaque norme (EN 13201, EN 40, Eurocode 7, NF EN 206, NF C 17-200).',
+          'Cochez la liste de contrôle au fil du chantier.',
+        ],
+      },
+      {
+        route: 'materials',
+        icon: '📦',
+        title: 'Matériel',
+        what: 'Un catalogue de mâts, luminaires, panneaux, batteries, tiges et câbles, et la liste du matériel de votre projet.',
+        how: [
+          'Cherchez ou filtrez le catalogue ; chaque article a une photo et un prix indicatif.',
+          'Ouvrez « Les éléments d’un mât d’éclairage » pour nommer chaque pièce.',
+          'Passez à la liste du matériel pour compter ce qu’il faut au projet, et exportez-la en CSV pour un tableur.',
+        ],
+      },
+    ],
+    extrasTitle: 'Bon à savoir',
+    extras: [
+      {
+        icon: '💾',
+        title: 'Vos données restent sur votre téléphone',
+        text: 'Les projets sont gardés dans ce navigateur et marchent hors ligne. Sauvegardez-les depuis Projets : enregistrez un fichier ou partagez-le vers Google Drive, puis ouvrez-le sur n’importe quel appareil.',
+      },
+      {
+        icon: '☀️',
+        title: 'Mode plein soleil',
+        text: 'Le bouton soleil augmente le contraste pour lire l’écran dehors.',
+      },
+      {
+        icon: '🌐',
+        title: 'Trois langues',
+        text: 'Anglais, français et arabe (de droite à gauche) ; les nombres gardent leurs unités.',
+      },
+      {
+        icon: '📶',
+        title: 'Hors ligne',
+        text: 'Une fois ouvert, LuxPath fonctionne sans connexion ; la carte en a besoin pour charger de nouvelles zones.',
+      },
+    ],
   },
 };

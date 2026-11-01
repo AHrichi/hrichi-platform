@@ -1,0 +1,49 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.lead,
+.hint,
+.status {
+  margin: 0;
+  font-size: var(--font-size-200);
+}
+
+.hint {
+  color: var(--color-text-muted);
+}
+
+.status.error {
+  color: var(--color-danger-default);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+// The file input is hidden; its label looks and works like a button.
+.open {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-block-size: 2.75rem;
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-size: var(--font-size-200);
+  font-weight: var(--font-weight-medium);
+
+  &:hover {
+    background: var(--color-bg-surface);
+  }
+
+  &:focus-within {
+    outline: 2px solid var(--color-focus-ring);
+    outline-offset: 2px;
+  }
+}

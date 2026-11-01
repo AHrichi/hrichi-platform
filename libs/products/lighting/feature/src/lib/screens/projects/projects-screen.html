@@ -144,6 +144,9 @@
       [title]="t().projects.emptyTitle"
       [description]="t().projects.emptyText"
     />
+    <p class="center">
+      <a routerLink="../guide">📖 {{ t().guidePage.newHere }}</a>
+    </p>
     <div class="actions center">
       <button ahButton type="button" (click)="openNew()">
         + {{ t().projects.new }}
@@ -152,6 +155,13 @@
         ↺ {{ t().projects.restore }}
       </button>
     </div>
+  }
+
+  @if (!store.isLoading()) {
+    <section class="panel" id="backup" aria-labelledby="lp-backup-title">
+      <h3 id="lp-backup-title">{{ t().backup.title }}</h3>
+      <lp-backup-panel />
+    </section>
   }
 </section>
 

@@ -1,9 +1,11 @@
+import { loadSampleProjects } from './support/luxpath';
 import { expect, test } from './support/test';
 
 test.describe('LuxPath field tools', () => {
   test('checks a span: wire, pole and clearance, and saves it', async ({
     page,
   }) => {
+    await loadSampleProjects(page);
     await page.goto('/apps/lighting/calculations?tab=span');
     const results = page.locator('section[aria-labelledby="lp-calc-results"]');
     await expect(results).toContainText(

@@ -13,6 +13,7 @@ import {
   type ProjectItem,
   SAMPLE_PROJECTS,
   type SavedCalculation,
+  withNewId,
 } from '@ah/products/lighting/domain';
 import { LightingDbService } from '../services/lighting-db.service';
 
@@ -152,10 +153,10 @@ export const LightingStore = signalStore(
             isLoading: false,
           });
         } catch {
-          // Private browsing can refuse IndexedDB: show the samples read-only.
+          // Private browsing can refuse IndexedDB: start empty, in memory.
           patchState(store, {
-            projects: SAMPLE_PROJECTS,
-            activeProjectId: SAMPLE_PROJECTS[0].id,
+            projects: [],
+            activeProjectId: null,
             isLoading: false,
           });
         }
@@ -378,11 +379,36 @@ export const LightingStore = signalStore(
         }));
       },
 
-      async resetToDefaults(): Promise<void> {
-        const projects = await db.seedDefaults();
+      /**
+       * Restores projects from a backup file. One whose id is already here
+       * comes in as a copy with a new id, so nothing is ever overwritten.
+       */
+      async importProjects(projects: readonly ProjectItem[]): Promise<number> {
+        const taken = new Set(store.projects().map((p) => p.id));
+        for (const project of projects) {
+          const incoming = taken.has(project.id)
+            ? withNewId(project, newId('proj'))
+            : project;
+          taken.add(incoming.id);
+          await db.saveProject(incoming);
+        }
+        const all = await db.getAllProjects();
+        patchState(store, {
+          projects: all,
+          activeProjectId: store.activeProjectId() ?? all[0]?.id ?? null,
+        });
+        return projects.length;
+      },
+
+      /** Adds the sample projects (back as they were); the user's stay. */
+      async loadSamples(): Promise<void> {
+        await db.seedDefaults();
+        const projects = await db.getAllProjects();
+        const first = SAMPLE_PROJECTS[0].id;
+        db.lastProjectId = first;
         patchState(store, {
           projects,
-          activeProjectId: projects[0]?.id ?? null,
+          activeProjectId: first,
           selectedPoleId: null,
         });
       },

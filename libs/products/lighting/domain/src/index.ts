@@ -18,4 +18,5 @@ export * from './lib/data/sample-projects.data';
 // Utilities
 export * from './lib/utils/trigonometry';
 export * from './lib/utils/plumb';
+export * from './lib/utils/backup';
 export * from './lib/utils/calendar-export';

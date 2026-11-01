@@ -21,16 +21,12 @@ export class LightingDbService {
       ? 'ah-demo-lighting'
       : 'luxpath_lighting_db_v1';
   private database: Promise<IDBDatabase> | null = null;
-  /** True when this visit created the database: only then seed the samples. */
-  private created = false;
 
   private open(): Promise<IDBDatabase> {
     this.database ??= new Promise((resolve, reject) => {
       const request = indexedDB.open(this.name, 1);
-      request.onupgradeneeded = () => {
-        this.created = true;
+      request.onupgradeneeded = () =>
         request.result.createObjectStore(STORE, { keyPath: 'id' });
-      };
       request.onsuccess = () => resolve(request.result);
       request.onerror = () => reject(request.error);
     });
@@ -50,15 +46,13 @@ export class LightingDbService {
   }
 
   async getAllProjects(): Promise<ProjectItem[]> {
+    // A new device starts empty; the samples load on request (seedDefaults).
     if (!this.isBrowser) {
-      return SAMPLE_PROJECTS;
+      return [];
     }
-    let projects = (await this.request('readonly', (s) =>
+    const projects = (await this.request('readonly', (s) =>
       s.getAll(),
     )) as ProjectItem[];
-    if (projects.length === 0 && this.created) {
-      projects = await this.seedDefaults();
-    }
     // Oldest first, the same on every load.
     return [...projects].sort((a, b) => a.createdAt.localeCompare(b.createdAt));
   }
