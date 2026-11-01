@@ -163,6 +163,48 @@
   </div>
 </footer>
 
+<!-- Always present, so screen readers announce the banner when it appears. -->
+<div class="update-region ah-no-print" aria-live="polite">
+  @if (updates.visible()) {
+    <div class="update-banner">
+      <p class="update-banner__message">
+        {{
+          updates.state() === 'broken'
+            ? copy().update.broken
+            : copy().update.ready
+        }}
+      </p>
+      <div class="update-banner__actions">
+        <button ahButton size="sm" type="button" (click)="updates.reload()">
+          {{ copy().update.reload }}
+        </button>
+        <button
+          ahButton="secondary"
+          size="sm"
+          type="button"
+          [attr.title]="copy().update.hardReloadHint"
+          aria-describedby="hard-reload-hint"
+          (click)="updates.hardReload()"
+        >
+          {{ copy().update.hardReload }}
+        </button>
+        <span id="hard-reload-hint" class="ah-visually-hidden">{{
+          copy().update.hardReloadHint
+        }}</span>
+        <button
+          ahButton="ghost"
+          size="sm"
+          type="button"
+          [attr.aria-label]="copy().update.dismiss"
+          (click)="updates.dismiss()"
+        >
+          <span aria-hidden="true">✕</span>
+        </button>
+      </div>
+    </div>
+  }
+</div>
+
 <!-- Lazy: the inspector and web-vitals load only when someone opens it (ADR-0012). -->
 @defer (when inspecting()) {
   @if (inspecting()) {

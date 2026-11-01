@@ -20,6 +20,14 @@ export interface ShellCopy {
   designSystem: string;
   hood: string;
   englishOnly: string;
+  update: {
+    ready: string;
+    broken: string;
+    reload: string;
+    hardReload: string;
+    hardReloadHint: string;
+    dismiss: string;
+  };
 }
 
 export const SHELL_COPY: Record<SiteLanguage, ShellCopy> = {
@@ -42,6 +50,16 @@ export const SHELL_COPY: Record<SiteLanguage, ShellCopy> = {
     designSystem: 'Design system',
     hood: 'Open the hood',
     englishOnly: '',
+    update: {
+      ready: 'A new version of this site is available.',
+      broken:
+        'The saved copy of this site is out of date and can’t update in place.',
+      reload: 'Reload',
+      hardReload: 'Hard reload',
+      hardReloadHint:
+        'Clears the site’s offline copy, then loads everything fresh.',
+      dismiss: 'Dismiss',
+    },
   },
   fr: {
     skip: 'Aller au contenu',
@@ -62,6 +80,16 @@ export const SHELL_COPY: Record<SiteLanguage, ShellCopy> = {
     designSystem: 'Design system',
     hood: 'Sous le capot',
     englishOnly: 'Cette page n’existe qu’en anglais pour l’instant.',
+    update: {
+      ready: 'Une nouvelle version du site est disponible.',
+      broken:
+        'La copie enregistrée du site est périmée et ne peut pas se mettre à jour.',
+      reload: 'Recharger',
+      hardReload: 'Rechargement complet',
+      hardReloadHint:
+        'Efface la copie hors ligne du site, puis recharge tout depuis le réseau.',
+      dismiss: 'Fermer',
+    },
   },
   ar: {
     skip: 'الانتقال إلى المحتوى',
@@ -82,6 +110,14 @@ export const SHELL_COPY: Record<SiteLanguage, ShellCopy> = {
     designSystem: 'نظام التصميم',
     hood: 'نظرة من الداخل',
     englishOnly: 'هذه الصفحة متاحة بالإنجليزية فقط حاليًا.',
+    update: {
+      ready: 'يتوفر إصدار جديد من هذا الموقع.',
+      broken: 'النسخة المحفوظة من الموقع قديمة ولا يمكن تحديثها تلقائيًا.',
+      reload: 'إعادة التحميل',
+      hardReload: 'إعادة تحميل كاملة',
+      hardReloadHint: 'تمسح النسخة المحفوظة للموقع ثم تحمّل كل شيء من جديد.',
+      dismiss: 'إغلاق',
+    },
   },
 };
 

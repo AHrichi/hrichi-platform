@@ -219,6 +219,42 @@ body {
   font-size: var(--font-size-200);
 }
 
+.update-region {
+  position: fixed;
+  z-index: 50;
+  inset-inline: var(--space-4);
+  inset-block-end: max(var(--space-4), env(safe-area-inset-bottom));
+  display: flex;
+  justify-content: flex-end;
+  pointer-events: none;
+}
+
+.update-banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-4);
+  max-inline-size: 36rem;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-raised);
+  box-shadow: var(--shadow-raised);
+  pointer-events: auto;
+}
+
+.update-banner__message {
+  flex: 1 1 14rem;
+  margin: 0;
+  font-size: var(--font-size-200);
+}
+
+.update-banner__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
 main:focus {
   outline: none;
 }

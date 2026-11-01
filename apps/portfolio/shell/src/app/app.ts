@@ -24,7 +24,7 @@ import { profile, site } from '@ah/shared/content';
 import { PreferencesStore } from '@ah/shared/state';
 import { AhButton } from '@ah/ui';
 import { isTranslatedPage, SHELL_COPY } from './shell-copy';
-import { reloadOnNavigationWhenUpdated } from './sw-updates';
+import { AppUpdates } from './app-updates';
 
 @Component({
   imports: [AhButton, Inspector, RouterLink, RouterLinkActive, RouterOutlet],
@@ -33,6 +33,7 @@ import { reloadOnNavigationWhenUpdated } from './sw-updates';
 })
 export class App {
   protected readonly preferences = inject(PreferencesStore);
+  protected readonly updates = inject(AppUpdates);
   protected readonly profile = profile;
   protected readonly repository = site.repository;
   protected readonly designSystem = site.designSystem;
@@ -85,12 +86,11 @@ export class App {
       FederationStore: () => getState(federation),
     };
 
-    reloadOnNavigationWhenUpdated();
-
     // Prerendered HTML uses the default audience; switch only once hydrated.
     const window = inject(DOCUMENT).defaultView;
     afterNextRender(() => {
       preferences.restore();
+      this.updates.start();
       if (window && new URL(window.location.href).searchParams.has('inspect')) {
         this.inspecting.set(true);
       }
