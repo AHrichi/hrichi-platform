@@ -230,10 +230,11 @@ const csp = [
   `img-src 'self' data: ${tiles}`,
   "font-src 'self'",
   "manifest-src 'self'",
-  // blob: starts a remote's Web Worker inside the shell, and the remotes'
-  // origins let it import the worker script: a module worker's imports are
-  // checked against worker-src, not script-src (ADR-0014).
-  `worker-src 'self' blob: ${remotes}`,
+  // 'self' for the service worker; blob: for workers a page builds itself.
+  // No remote starts a Web Worker since the Orbit lab's orbit worker went
+  // (ADR-0016), so the remotes' origins aren't listed: the whole policy has
+  // to fit Cloudflare's 2,000-character _headers line.
+  "worker-src 'self' blob:",
   "object-src 'none'",
   "base-uri 'self'",
   "form-action 'self'",
