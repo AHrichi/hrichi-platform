@@ -55,6 +55,8 @@ export const skip = [
   'jspdf',
   'html2canvas',
   'xlsx',
+  // LuxPath's own dependencies, bundled into the remote so esbuild bundles it cleanly
+  'leaflet',
 ];
 
 // https://native-federation.com/docs/v4/angular-adapter/configuration/

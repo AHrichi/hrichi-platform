@@ -23,5 +23,13 @@
   "product-studylm": {
     "development": "http://localhost:4307",
     "production": "https://product-studylm.ahmed-hrichi.workers.dev"
+  },
+  "product-whatsapp": {
+    "development": "http://localhost:4308",
+    "production": "https://product-whatsapp.ahmed-hrichi.workers.dev"
+  },
+  "product-lighting": {
+    "development": "http://localhost:4309",
+    "production": "https://product-lighting.ahmed-hrichi.workers.dev"
   }
 }

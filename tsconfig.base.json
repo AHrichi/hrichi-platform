@@ -33,6 +33,18 @@
       "@ah/products/studylm/feature": [
         "./libs/products/studylm/feature/src/index.ts"
       ],
+      "@ah/products/whatsapp/domain": [
+        "./libs/products/whatsapp/domain/src/index.ts"
+      ],
+      "@ah/products/whatsapp/feature": [
+        "./libs/products/whatsapp/feature/src/index.ts"
+      ],
+      "@ah/products/lighting/domain": [
+        "./libs/products/lighting/domain/src/index.ts"
+      ],
+      "@ah/products/lighting/feature": [
+        "./libs/products/lighting/feature/src/index.ts"
+      ],
       "@ah/platform/app-mode": ["./libs/platform/app-mode/src/index.ts"],
       "@ah/platform/federation": ["./libs/platform/federation/src/index.ts"],
       "@ah/platform/inspector": ["./libs/platform/inspector/src/index.ts"],

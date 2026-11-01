@@ -78,6 +78,33 @@ export default [
               ],
             },
             {
+              sourceTag: 'scope:product-studylm',
+              onlyDependOnLibsWithTags: [
+                'scope:product-studylm',
+                'scope:shared',
+                'scope:platform',
+                'scope:design-system',
+              ],
+            },
+            {
+              sourceTag: 'scope:product-lighting',
+              onlyDependOnLibsWithTags: [
+                'scope:product-lighting',
+                'scope:shared',
+                'scope:platform',
+                'scope:design-system',
+              ],
+            },
+            {
+              sourceTag: 'scope:product-whatsapp',
+              onlyDependOnLibsWithTags: [
+                'scope:product-whatsapp',
+                'scope:shared',
+                'scope:platform',
+                'scope:design-system',
+              ],
+            },
+            {
               sourceTag: 'scope:platform',
               onlyDependOnLibsWithTags: [
                 'scope:platform',

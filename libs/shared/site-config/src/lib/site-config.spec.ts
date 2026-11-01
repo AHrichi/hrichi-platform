@@ -1,6 +1,6 @@
 import { PLATFORM_ID, provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { SiteConfigService } from './site-config';
+import { n8nWebhookUrl, SiteConfigService } from './site-config';
 
 function setup(platform: 'browser' | 'server' = 'browser') {
   TestBed.configureTestingModule({
@@ -27,6 +27,7 @@ describe('SiteConfigService', () => {
       apiUrl: null,
       turnstileSiteKey: null,
       orbitApiUrl: 'https://orbit.example',
+      n8nUrl: null,
     });
     await service.load();
     expect(fetch).toHaveBeenCalledTimes(1);
@@ -42,6 +43,7 @@ describe('SiteConfigService', () => {
       apiUrl: null,
       turnstileSiteKey: null,
       orbitApiUrl: null,
+      n8nUrl: null,
     });
   });
 
@@ -53,5 +55,18 @@ describe('SiteConfigService', () => {
       orbitApiUrl: null,
     });
     expect(fetch).not.toHaveBeenCalled();
+  });
+
+  it('builds n8n webhook URLs only when n8n is configured', () => {
+    const config = {
+      apiUrl: null,
+      turnstileSiteKey: null,
+      orbitApiUrl: null,
+      n8nUrl: 'https://n8n.example/',
+    };
+    expect(n8nWebhookUrl(config, 'study-synthesizer')).toBe(
+      'https://n8n.example/webhook/study-synthesizer',
+    );
+    expect(n8nWebhookUrl({ ...config, n8nUrl: null }, 'x')).toBeNull();
   });
 });

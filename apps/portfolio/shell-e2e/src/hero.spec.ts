@@ -66,15 +66,11 @@ test('fades in the WebGL scene after load and opens apps from the caption', asyn
   const axe = await new AxeBuilder({ page }).include('.hero').analyze();
   expect(axe.violations).toEqual([]);
 
+  // Pages of this site open in place; only other sites open a new tab.
   const link = page.getByRole('figure').getByRole('link', { name: 'Sky lab' });
-  await expect(link).toHaveAttribute('target', '_blank');
-  await expect(link).toHaveAttribute('href', '/labs/sky');
-  const [newPage] = await Promise.all([
-    page.context().waitForEvent('page'),
-    link.click(),
-  ]);
-  await expect(newPage).toHaveURL(/\/labs\/sky$/);
-  await newPage.close();
+  await expect(link).not.toHaveAttribute('target', '_blank');
+  await link.click();
+  await expect(page).toHaveURL(/\/labs\/sky$/);
 });
 
 test('releases its WebGL context on every route change', async ({ page }) => {
@@ -135,16 +131,19 @@ test('toggles dark and light mode via the header button', async ({ page }) => {
   await expect(html).toHaveAttribute('data-theme', 'dark');
 });
 
-test('ensures all footer project and external links open in a new tab', async ({
+test('opens other sites from the footer in a new tab, safely', async ({
   page,
 }) => {
   await page.goto('/');
-  const externalLinks = page.locator('.site-footer a[target="_blank"]');
-  const count = await externalLinks.count();
-  expect(count).toBeGreaterThan(5);
+  const external = page.locator('.site-footer a[href^="http"]');
+  const count = await external.count();
+  expect(count).toBeGreaterThanOrEqual(4);
 
   for (let i = 0; i < count; i++) {
-    const link = externalLinks.nth(i);
-    await expect(link).toHaveAttribute('rel', /noopener/);
+    await expect(external.nth(i)).toHaveAttribute('target', '_blank');
+    await expect(external.nth(i)).toHaveAttribute('rel', /noopener/);
   }
+  await expect(
+    page.locator('.site-footer a[href="/apps"]'),
+  ).not.toHaveAttribute('target', '_blank');
 });

@@ -8,9 +8,11 @@
 //   --sitemap             Write sitemap.xml and robots.txt from Angular's
 //                         prerendered-routes.json and the site URL (site.json)
 //   --site-config         Write site-config.json (the contact form's API URL and
-//                         Turnstile key, the Orbit API URL) from
+//                         Turnstile key, the Orbit API URL, the n8n URL) from
 //                         tools/hosting/environments.json, and allow those
-//                         origins in the CSP (ADR-0010, ADR-0013)
+//                         origins in the CSP (ADR-0010, ADR-0013). N8N_URL, when
+//                         set, replaces the n8n URL, so the tunnel address can
+//                         be a CI secret
 //   --app <name>          Write build-info.json (app, commit, build time) for the
 //                         Federation Inspector (ADR-0012)
 //   --frame-self          Let the site frame its own pages (Storybook's manager
@@ -64,28 +66,41 @@ if (!dir) {
 }
 
 const remoteOrigins = [];
-if (values.federation) {
-  const registry = JSON.parse(
-    readFileSync('tools/federation/remotes.json', 'utf8'),
-  );
-  const manifest = {};
-  for (const [name, origins] of Object.entries(registry)) {
-    if (name.startsWith('$')) continue;
-    const origin = origins[values.env];
-    if (!origin || origin.includes('ACCOUNT_SUBDOMAIN')) {
-      console.error(
-        `Remote "${name}" has no ${values.env} origin in tools/federation/remotes.json`,
-      );
-      process.exit(1);
-    }
-    manifest[name] = `${origin}/remoteEntry.json`;
-    remoteOrigins.push(origin);
-  }
-  if (writeFiles) {
-    writeFileSync(
-      join(dir, 'federation.manifest.json'),
-      `${JSON.stringify(manifest, null, 2)}\n`,
+const registry = JSON.parse(
+  readFileSync('tools/federation/remotes.json', 'utf8'),
+);
+const manifest = {};
+for (const [name, origins] of Object.entries(registry)) {
+  if (name.startsWith('$')) continue;
+  const origin = origins[values.env];
+  if (!origin || origin.includes('ACCOUNT_SUBDOMAIN')) {
+    console.error(
+      `Remote "${name}" has no ${values.env} origin in tools/federation/remotes.json`,
     );
+    process.exit(1);
+  }
+  manifest[name] = `${origin}/remoteEntry.json`;
+  remoteOrigins.push(origin);
+}
+if (values.federation && writeFiles) {
+  writeFileSync(
+    join(dir, 'federation.manifest.json'),
+    `${JSON.stringify(manifest, null, 2)}\n`,
+  );
+} else if (values.federation) {
+  // Headers only: the build's own manifest (public/) must list every remote,
+  // or the shell can't load the ones it misses.
+  const built = JSON.parse(
+    readFileSync(join(dir, 'federation.manifest.json'), 'utf8'),
+  );
+  const stale = Object.keys(manifest).filter(
+    (name) => built[name] !== manifest[name],
+  );
+  if (stale.length > 0) {
+    console.error(
+      `federation.manifest.json is out of step with tools/federation/remotes.json (${values.env}): ${stale.join(', ')}`,
+    );
+    process.exit(1);
   }
 }
 
@@ -107,14 +122,15 @@ if (values['site-config']) {
     turnstileSiteKey = null,
     orbitApiUrl = null,
   } = environment;
+  const n8nUrl = process.env.N8N_URL || environment.n8nUrl || null;
   if (writeFiles) {
     writeFileSync(
       join(dir, 'site-config.json'),
-      `${JSON.stringify({ apiUrl, turnstileSiteKey, orbitApiUrl }, null, 2)}
+      `${JSON.stringify({ apiUrl, turnstileSiteKey, orbitApiUrl, n8nUrl }, null, 2)}
 `,
     );
   }
-  for (const url of [apiUrl, orbitApiUrl]) {
+  for (const url of [apiUrl, orbitApiUrl, n8nUrl]) {
     if (url) {
       apiOrigins.push(new URL(url).origin);
     }
@@ -206,7 +222,8 @@ const csp = [
   "style-src 'self' 'unsafe-inline'",
   `connect-src 'self' ${remotes} ${apiOrigins.join(' ')} https://*.ngrok-free.dev https://*.ngrok.app https://*.ngrok.io http://127.0.0.1:* http://localhost:*`,
   `frame-src ${[self, turnstile].join(' ').trim() || "'none'"}`,
-  "img-src 'self' data:",
+  // OpenStreetMap tiles for LuxPath's site map.
+  "img-src 'self' data: https://tile.openstreetmap.org",
   "font-src 'self'",
   "manifest-src 'self'",
   // blob: starts a remote's Web Worker inside the shell, and the remotes'
@@ -229,8 +246,8 @@ const rules = [
       'Strict-Transport-Security: max-age=31536000; includeSubDomains',
       'X-Content-Type-Options: nosniff',
       'Referrer-Policy: strict-origin-when-cross-origin',
-      // The Sky lab's "Use my location" asks the page's own origin (ADR-0016).
-      'Permissions-Policy: camera=(), microphone=(), geolocation=(self)',
+      // The Sky lab's "Use my location" asks the page's own origin (ADR-0016), and LuxPath uses the camera.
+      'Permissions-Policy: camera=(self), microphone=(), geolocation=(self)',
       ...(values.cors ? ['Access-Control-Allow-Origin: *'] : []),
     ],
   ],

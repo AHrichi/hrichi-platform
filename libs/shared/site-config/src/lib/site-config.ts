@@ -8,13 +8,23 @@ export interface SiteConfig {
   turnstileSiteKey: string | null;
   /** Orbit API (Spring Boot), the Sky lab's night planner. */
   orbitApiUrl: string | null;
+  /** Self-hosted n8n, for StudyLM's and ChatPulse's AI webhooks. */
+  n8nUrl: string | null;
 }
 
 const disabled: SiteConfig = {
   apiUrl: null,
   turnstileSiteKey: null,
   orbitApiUrl: null,
+  n8nUrl: null,
 };
+
+/** The URL of an n8n webhook, or null when no n8n is configured. */
+export function n8nWebhookUrl(config: SiteConfig, name: string): string | null {
+  return config.n8nUrl
+    ? `${config.n8nUrl.replace(/\/+$/, '')}/webhook/${name}`
+    : null;
+}
 
 /**
  * Runtime config written per environment at deploy time (site-config.json,
@@ -37,6 +47,7 @@ export class SiteConfigService {
         apiUrl: config.apiUrl ?? null,
         turnstileSiteKey: config.turnstileSiteKey ?? null,
         orbitApiUrl: config.orbitApiUrl ?? null,
+        n8nUrl: config.n8nUrl ?? null,
       }))
       .catch(() => disabled);
     return this.config;

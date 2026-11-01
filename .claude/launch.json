@@ -12,6 +12,16 @@
       "port": 4200
     },
     {
+      "name": "luxpath (static build)",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "tools/scripts/serve-static.mjs",
+        "dist/apps/products/lighting/web/browser",
+        "4309"
+      ],
+      "port": 4309
+    },
+    {
       "name": "lab-sky (static build)",
       "runtimeExecutable": "node",
       "runtimeArgs": [

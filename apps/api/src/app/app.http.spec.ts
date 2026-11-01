@@ -14,6 +14,7 @@ import {
 import { AppModule } from './app.module';
 import { loadConfig } from './config';
 import { configureApp } from './configure-app';
+import { DISPATCH_MONGO_DB, MongoDispatchRepository } from '@ah/api/dispatch';
 import { MONGO_CLIENT } from './mongo.module';
 
 const config = loadConfig({
@@ -37,6 +38,11 @@ describe('API over HTTP', () => {
       .useValue({ close: async () => undefined })
       .overrideProvider(MONGO_DB)
       .useValue({ command: async () => ({ ok: 1 }) })
+      // These tests cover leads; PulseOps' store is stubbed so it never connects.
+      .overrideProvider(DISPATCH_MONGO_DB)
+      .useValue({})
+      .overrideProvider(MongoDispatchRepository)
+      .useValue({})
       .overrideProvider(LEADS_REPOSITORY)
       .useValue(repository)
       .overrideProvider(LEAD_CHANNELS)
