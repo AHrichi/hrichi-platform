@@ -1,0 +1,18 @@
+@use '../../styles/luxpath' as lp;
+
+@include lp.diagram;
+
+.road {
+  stroke: var(--color-text-muted);
+  stroke-width: 2;
+}
+
+.ratio {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.gap-label {
+  fill: var(--color-danger-default);
+  font-weight: 600;
+}

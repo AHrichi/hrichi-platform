@@ -1,0 +1,256 @@
+// Shared building blocks for LuxPath's screens, on platform tokens only.
+
+@mixin panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-inline-size: 0;
+  padding: clamp(var(--space-4), 2.5vw, var(--space-5));
+  background: var(--color-bg-raised);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-lg);
+}
+
+@mixin panel-title {
+  margin: 0;
+  font-size: var(--font-size-300);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--font-line-height-snug);
+}
+
+@mixin screen {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  min-inline-size: 0;
+}
+
+@mixin screen-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  justify-content: space-between;
+  gap: var(--space-3);
+
+  h2 {
+    margin: 0;
+    font-size: var(--font-size-500);
+    line-height: var(--font-line-height-tight);
+  }
+
+  p {
+    margin: var(--space-1) 0 0;
+    max-inline-size: 60ch;
+    color: var(--color-text-muted);
+  }
+}
+
+// Diagram on one side, inputs and results on the other; stacked on phones.
+@mixin workbench {
+  display: grid;
+  gap: var(--space-4);
+  grid-template-columns: minmax(0, 1fr);
+
+  @media (min-width: 60rem) {
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+    align-items: start;
+  }
+}
+
+@mixin fields {
+  display: grid;
+  gap: var(--space-3);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr));
+}
+
+@mixin results {
+  display: grid;
+  gap: var(--space-3);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 9.5rem), 1fr));
+}
+
+@mixin form-control {
+  inline-size: 100%;
+  min-block-size: 2.75rem;
+  padding: var(--space-2) var(--space-3);
+  font: inherit;
+  color: var(--color-text-default);
+  background: var(--color-bg-canvas);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+
+  &:focus-visible {
+    outline: 2px solid var(--color-focus-ring);
+    outline-offset: 1px;
+  }
+}
+
+@mixin label {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  font-size: var(--font-size-200);
+  font-weight: var(--font-weight-medium);
+}
+
+@mixin actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+@mixin chip-row {
+  display: flex;
+  gap: var(--space-2);
+  overflow-x: auto;
+  padding-block-end: var(--space-1);
+  scrollbar-width: thin;
+}
+
+// Illustrated diagrams. Geometry never mirrors in Arabic (the svg stays ltr);
+// only the words inside it change.
+@mixin diagram {
+  :host {
+    display: block;
+    min-inline-size: 0;
+  }
+
+  svg {
+    display: block;
+    inline-size: 100%;
+    block-size: auto;
+    direction: ltr;
+    overflow: visible;
+    font-family: var(--font-family-sans);
+    user-select: none;
+  }
+
+  .backdrop {
+    fill: var(--color-bg-surface);
+  }
+
+  .ground {
+    fill: var(--color-border-default);
+  }
+
+  .soil {
+    fill: var(--color-bg-raised);
+    stroke: var(--color-border-strong);
+    stroke-width: 1;
+  }
+
+  .structure {
+    fill: none;
+    stroke: var(--color-text-default);
+    stroke-width: 4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .thin {
+    fill: none;
+    stroke: var(--color-text-default);
+    stroke-width: 2;
+    stroke-linecap: round;
+  }
+
+  .light {
+    fill: var(--color-warning-default);
+    opacity: 0.22;
+  }
+
+  .lamp {
+    fill: var(--color-warning-default);
+  }
+
+  .dim {
+    fill: none;
+    stroke: var(--color-text-muted);
+    stroke-width: 1.5;
+    stroke-dasharray: 5 4;
+  }
+
+  .measure {
+    fill: none;
+    stroke: var(--color-accent-default);
+    stroke-width: 2;
+  }
+
+  .label {
+    fill: var(--color-text-default);
+    font-size: 15px;
+    font-weight: 600;
+  }
+
+  .caption {
+    fill: var(--color-text-muted);
+    font-size: 13px;
+  }
+
+  .value {
+    fill: var(--color-accent-default);
+    font-size: 16px;
+    font-weight: 700;
+  }
+
+  .ok {
+    fill: var(--color-success-default);
+  }
+
+  .warn {
+    fill: var(--color-warning-default);
+  }
+
+  .bad {
+    fill: var(--color-danger-default);
+  }
+
+  // A draggable handle: a big transparent hit area for fingers, a visible dot.
+  .lp-drag-handle {
+    cursor: grab;
+    touch-action: none;
+    outline: none;
+
+    .hit {
+      fill: transparent;
+    }
+
+    .dot {
+      fill: var(--color-accent-default);
+      stroke: var(--color-bg-raised);
+      stroke-width: 3;
+      transition: r var(--motion-duration-fast) var(--motion-easing-standard);
+    }
+
+    .arrows {
+      fill: none;
+      stroke: var(--color-accent-on);
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      pointer-events: none;
+    }
+
+    &:hover .dot,
+    &:active .dot {
+      r: 13;
+    }
+
+    &:active {
+      cursor: grabbing;
+    }
+
+    &:focus-visible .hit {
+      fill: none;
+      stroke: var(--color-focus-ring);
+      stroke-width: 3;
+    }
+  }
+}
+
+@mixin diagram-caption {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-100);
+}

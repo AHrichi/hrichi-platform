@@ -1,0 +1,63 @@
+@use '../../styles/luxpath' as lp;
+
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.editing {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-200);
+}
+
+.badge {
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-pill);
+  background: var(--color-warning-subtle);
+  color: var(--color-text-default);
+  font-size: var(--font-size-100);
+  font-weight: var(--font-weight-semibold);
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: var(--space-3);
+}
+
+.field {
+  @include lp.label;
+  flex: 1 1 14rem;
+
+  input {
+    @include lp.form-control;
+  }
+}
+
+.actions {
+  @include lp.actions;
+}
+
+.status {
+  min-block-size: 1.25rem;
+  margin: 0;
+  color: var(--color-success-default);
+  font-size: var(--font-size-200);
+
+  a {
+    color: var(--color-accent-default);
+  }
+}
+
+.none {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-200);
+}

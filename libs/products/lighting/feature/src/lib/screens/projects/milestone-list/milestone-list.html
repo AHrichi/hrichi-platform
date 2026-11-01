@@ -1,0 +1,131 @@
+<section class="panel" aria-labelledby="lp-milestones-title">
+  <div class="title-row">
+    <h3 id="lp-milestones-title">{{ t().milestones.title }}</h3>
+    <button ahButton size="sm" type="button" (click)="add()">
+      + {{ t().milestones.add }}
+    </button>
+  </div>
+
+  @if (milestones().length === 0) {
+    <p class="muted">{{ t().milestones.empty }}</p>
+  } @else {
+    <ol class="timeline" role="list">
+      @for (m of milestones(); track m.id) {
+        <li [class.done]="m.completed" [class.late]="isLate(m)">
+          <input
+            type="checkbox"
+            [checked]="m.completed"
+            (change)="store.toggleMilestone(m.id)"
+            [attr.aria-label]="t().milestones.done + ': ' + m.title"
+          />
+          <div class="main">
+            <span class="date">
+              {{ i18n.date(m.date) }}
+              @if (isLate(m)) {
+                · <strong>{{ t().milestones.late }}</strong>
+              }
+            </span>
+            <strong class="title">{{ m.title }}</strong>
+            @if (m.notes) {
+              <span class="notes">{{ m.notes }}</span>
+            }
+          </div>
+          <div class="row-actions">
+            <button
+              type="button"
+              class="icon-btn"
+              (click)="toCalendar(m)"
+              [attr.aria-label]="t().milestones.calendar + ': ' + m.title"
+              [title]="t().milestones.calendar"
+            >
+              📅
+            </button>
+            <button
+              type="button"
+              class="icon-btn"
+              (click)="toEmail(m)"
+              [attr.aria-label]="t().milestones.email + ': ' + m.title"
+              [title]="t().milestones.email"
+            >
+              ✉️
+            </button>
+            <button
+              type="button"
+              class="icon-btn"
+              (click)="edit(m)"
+              [attr.aria-label]="t().common.edit + ': ' + m.title"
+              [title]="t().common.edit"
+            >
+              ✏️
+            </button>
+          </div>
+        </li>
+      }
+    </ol>
+  }
+</section>
+
+<ah-modal
+  [closeLabel]="t().common.close"
+  [open]="draft() !== null"
+  (openChange)="$event || draft.set(null)"
+  [title]="isNew() ? t().milestones.addTitle : t().milestones.editTitle"
+>
+  @if (draft(); as m) {
+    <form
+      class="form"
+      id="lp-milestone-form"
+      (submit)="$event.preventDefault(); saveDraft()"
+    >
+      <label class="field wide">
+        <span>{{ t().milestones.name }} *</span>
+        <input
+          type="text"
+          required
+          [value]="m.title"
+          (input)="patch({ title: value($event) })"
+        />
+      </label>
+      <label class="field">
+        <span>{{ t().milestones.date }} *</span>
+        <input
+          type="date"
+          required
+          [value]="m.date"
+          (change)="patch({ date: value($event) })"
+        />
+      </label>
+      <label class="field">
+        <span>{{ t().milestones.category }}</span>
+        <select (change)="patch({ category: $any(value($event)) })">
+          @for (c of categories; track c) {
+            <option [value]="c" [selected]="c === m.category">
+              {{ t().milestoneCategories[c] }}
+            </option>
+          }
+        </select>
+      </label>
+      <label class="field wide">
+        <span>{{ t().poles.notes }}</span>
+        <textarea
+          rows="3"
+          [value]="m.notes ?? ''"
+          (input)="patch({ notes: value($event) })"
+        ></textarea>
+      </label>
+    </form>
+  }
+  <div modal-actions class="actions">
+    @if (!isNew()) {
+      <button ahButton="ghost" type="button" class="delete" (click)="remove()">
+        🗑 {{ t().common.delete }}
+      </button>
+    }
+    <button ahButton="ghost" type="button" (click)="draft.set(null)">
+      {{ t().common.cancel }}
+    </button>
+    <button ahButton type="submit" form="lp-milestone-form">
+      {{ isNew() ? t().milestones.add : t().common.saveChanges }}
+    </button>
+  </div>
+</ah-modal>

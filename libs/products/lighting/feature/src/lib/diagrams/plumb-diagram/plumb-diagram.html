@@ -1,0 +1,128 @@
+<svg viewBox="0 0 480 300" role="img" [attr.aria-label]="t().diagrams.plumbAlt">
+  <rect class="backdrop" width="480" height="300" rx="12" />
+
+  <!-- Level -->
+  <circle
+    class="level"
+    [attr.cx]="level.x"
+    [attr.cy]="level.y"
+    [attr.r]="level.r"
+  />
+  <circle
+    class="tolerance"
+    [attr.cx]="level.x"
+    [attr.cy]="level.y"
+    [attr.r]="ring"
+  />
+  <circle
+    class="perfect"
+    [attr.cx]="level.x"
+    [attr.cy]="level.y"
+    [attr.r]="ring * 0.4"
+  />
+  <path
+    class="dim"
+    [attr.d]="
+      'M' +
+      (level.x - level.r) +
+      ' ' +
+      level.y +
+      'h' +
+      level.r * 2 +
+      'M' +
+      level.x +
+      ' ' +
+      (level.y - level.r) +
+      'v' +
+      level.r * 2
+    "
+  />
+  <text
+    class="caption"
+    [attr.x]="level.x"
+    [attr.y]="level.y - level.r - 8"
+    text-anchor="middle"
+  >
+    N
+  </text>
+  <text class="caption" [attr.x]="level.x + level.r + 8" [attr.y]="level.y + 4">
+    E
+  </text>
+  <text
+    class="caption"
+    [attr.x]="level.x"
+    [attr.y]="level.y + level.r + 18"
+    text-anchor="middle"
+  >
+    S
+  </text>
+  <text
+    class="caption"
+    [attr.x]="level.x - level.r - 8"
+    [attr.y]="level.y + 4"
+    text-anchor="end"
+  >
+    W
+  </text>
+  <text
+    class="caption"
+    [attr.x]="level.x + ring * 0.72"
+    [attr.y]="level.y - ring * 0.72 - 4"
+  >
+    1°
+  </text>
+
+  <g
+    lpSvgDrag
+    (lpSvgDrag)="drag($event)"
+    (keydown)="key($event)"
+    role="slider"
+    tabindex="0"
+    [attr.aria-label]="t().diagrams.leanDot"
+    [attr.aria-valuemin]="0"
+    aria-valuemax="3"
+    [attr.aria-valuenow]="result().tiltDegrees"
+    [attr.aria-valuetext]="i18n.num(result().tiltDegrees, 2) + '°'"
+    [attr.transform]="'translate(' + dot().x + ' ' + dot().y + ')'"
+  >
+    <circle class="hit" r="22" />
+    <circle class="dot bubble" [class]="tone()" r="12" />
+  </g>
+
+  <!-- Pole, lean ×10 -->
+  <line
+    class="ground-line"
+    x1="250"
+    [attr.y1]="pole.ground"
+    x2="460"
+    [attr.y2]="pole.ground"
+  />
+  <path class="cone" [attr.d]="cone()" />
+  <line
+    class="dim"
+    [attr.x1]="pole.x"
+    [attr.y1]="pole.ground"
+    [attr.x2]="pole.x"
+    [attr.y2]="pole.ground - pole.length - 10"
+  />
+  <line
+    class="structure"
+    [attr.x1]="pole.x"
+    [attr.y1]="pole.ground"
+    [attr.x2]="tip().x"
+    [attr.y2]="tip().y"
+  />
+  <circle class="lamp" [attr.cx]="tip().x" [attr.cy]="tip().y" r="6" />
+  <text class="value" [class]="tone()" x="350" y="30" text-anchor="middle">
+    {{ i18n.num(result().tiltDegrees, 2) }}° · Δ
+    {{ i18n.num(result().displacementAtTipMm, 0) }} mm
+  </text>
+  <text
+    class="caption"
+    x="350"
+    [attr.y]="pole.ground + 22"
+    text-anchor="middle"
+  >
+    {{ t().diagrams.exaggerated }}
+  </text>
+</svg>

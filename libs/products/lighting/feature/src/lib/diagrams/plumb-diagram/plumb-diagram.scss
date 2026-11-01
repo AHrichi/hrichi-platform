@@ -1,0 +1,48 @@
+@use '../../styles/luxpath' as lp;
+
+@include lp.diagram;
+
+.level {
+  fill: var(--color-bg-raised);
+  stroke: var(--color-border-strong);
+  stroke-width: 2;
+}
+
+.tolerance {
+  fill: var(--color-success-subtle);
+  stroke: var(--color-success-default);
+  stroke-width: 2;
+  stroke-dasharray: 6 4;
+}
+
+.perfect {
+  fill: none;
+  stroke: var(--color-success-default);
+  stroke-width: 1;
+}
+
+.lp-drag-handle .bubble {
+  &.ok {
+    fill: var(--color-success-default);
+  }
+
+  &.warn {
+    fill: var(--color-warning-default);
+  }
+
+  &.bad {
+    fill: var(--color-danger-default);
+  }
+}
+
+.ground-line {
+  stroke: var(--color-text-default);
+  stroke-width: 2;
+}
+
+.cone {
+  fill: var(--color-success-subtle);
+  stroke: var(--color-success-default);
+  stroke-width: 1.5;
+  stroke-dasharray: 6 4;
+}

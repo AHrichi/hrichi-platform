@@ -1,0 +1,160 @@
+<section class="screen" aria-labelledby="lp-plumb-title">
+  <header class="head">
+    <div>
+      <h2 id="lp-plumb-title">{{ t().plumb.title }}</h2>
+      <p>{{ t().plumb.lead }}</p>
+    </div>
+  </header>
+
+  <div class="workbench">
+    <section class="panel" aria-labelledby="lp-plumb-level">
+      <h3 id="lp-plumb-level">{{ t().plumb.level }}</h3>
+      <lp-plumb-diagram [(pitch)]="pitch" [(roll)]="roll" [result]="result()" />
+      <p class="hint">✋ {{ t().plumb.dragHint }}</p>
+      <div class="actions">
+        <button ahButton="secondary" type="button" (click)="toggleSensor()">
+          📱
+          {{ sensor() === 'on' ? t().plumb.stopSensor : t().plumb.useSensor }}
+        </button>
+      </div>
+      @if (sensor() === 'on') {
+        <p class="hint">{{ t().plumb.sensorHint }}</p>
+      }
+      @if (sensor() === 'denied' || sensor() === 'unsupported') {
+        <ah-alert variant="info">{{
+          sensor() === 'denied'
+            ? t().camera.sensorDenied
+            : t().camera.sensorMissing
+        }}</ah-alert>
+      }
+      <div class="fields">
+        <lp-number-field
+          [label]="t().plumb.northSouth"
+          unit="°"
+          [min]="-2.2"
+          [max]="2.2"
+          [step]="0.05"
+          [(value)]="pitch"
+        />
+        <lp-number-field
+          [label]="t().plumb.eastWest"
+          unit="°"
+          [min]="-2.2"
+          [max]="2.2"
+          [step]="0.05"
+          [(value)]="roll"
+        />
+      </div>
+    </section>
+
+    <div class="column">
+      <section class="panel" aria-labelledby="lp-plumb-pole">
+        <h3 id="lp-plumb-pole">{{ t().plumb.pole }}</h3>
+        <div class="fields">
+          @if (store.activeProject(); as project) {
+            <label class="select">
+              <span>{{ t().camera.pole }}</span>
+              <select (change)="selectPole($any($event.target).value)">
+                @for (pole of project.poles; track pole.id) {
+                  <option [value]="pole.id" [selected]="pole.id === poleId()">
+                    {{ pole.code }}
+                  </option>
+                }
+              </select>
+            </label>
+          }
+          <lp-number-field
+            [label]="t().fields.height"
+            unit="m"
+            [min]="3"
+            [max]="16"
+            [step]="0.5"
+            [(value)]="poleHeight"
+          />
+          <lp-number-field
+            [label]="t().plumb.boltPitch"
+            unit="mm"
+            [min]="150"
+            [max]="500"
+            [step]="10"
+            [(value)]="boltPitch"
+          />
+          <label class="select">
+            <span>{{ t().plumb.leansTowards }}</span>
+            <select (change)="direction.set($any($event.target).value)">
+              @for (d of directions; track d) {
+                <option [value]="d" [selected]="d === lean()">
+                  {{ t().compass[d] }}
+                </option>
+              }
+            </select>
+          </label>
+        </div>
+      </section>
+
+      <section
+        class="panel"
+        aria-labelledby="lp-plumb-result"
+        aria-live="polite"
+      >
+        <h3 id="lp-plumb-result">{{ t().calc.results }}</h3>
+        <div class="verdict" [attr.data-status]="result().status">
+          {{ t().plumbStatus[result().status] }}
+        </div>
+        <div class="results">
+          <ah-metric-card
+            [label]="t().plumb.tilt"
+            [value]="i18n.num(result().tiltDegrees, 2)"
+            unit="°"
+            [hint]="'≤ ' + i18n.num(result().maxAllowableTiltDegrees) + '°'"
+            [variant]="result().isCompliant ? 'success' : 'danger'"
+          />
+          <ah-metric-card
+            [label]="t().plumb.offset"
+            [value]="i18n.num(result().displacementAtTipMm, 0)"
+            unit="mm"
+          />
+        </div>
+        <code dir="ltr"
+          >Δ = H × tan θ = {{ i18n.num(poleHeight()) }} m × tan
+          {{ i18n.num(result().tiltDegrees, 2) }}° =
+          {{ i18n.num(result().displacementAtTipMm, 0) }} mm</code
+        >
+
+        @if (result().correction; as fix) {
+          <h4>{{ t().plumb.howToFix }}</h4>
+          <ol class="fix">
+            @for (
+              line of t().plumb.fixSteps(
+                t().compass[fix.raiseSide],
+                i18n.num(fix.heightMm),
+                i18n.num(fix.turns)
+              );
+              track $index
+            ) {
+              <li>{{ line }}</li>
+            }
+          </ol>
+        } @else {
+          <p class="ok">✓ {{ t().plumb.noFix }}</p>
+        }
+
+        <div class="actions">
+          <button
+            ahButton
+            type="button"
+            [disabled]="!poleId()"
+            (click)="certify()"
+          >
+            {{ t().plumb.certify }}
+          </button>
+        </div>
+        <p class="status" role="status">
+          @if (certified(); as code) {
+            ✓ {{ t().plumb.certified(code) }}
+          }
+        </p>
+      </section>
+    </div>
+  </div>
+</section>

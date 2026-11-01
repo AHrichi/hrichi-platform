@@ -1,0 +1,32 @@
+@use '../../styles/luxpath' as lp;
+
+@include lp.diagram;
+
+.cabinet {
+  fill: var(--color-bg-raised);
+  stroke: var(--color-text-default);
+  stroke-width: 2.5;
+}
+
+.cabinet-label {
+  fill: var(--color-text-default);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.pole {
+  fill: none;
+  stroke: var(--color-text-muted);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+}
+
+.cable {
+  stroke-width: 6;
+  stroke-linecap: round;
+}
+
+.drop {
+  font-size: 15px;
+  font-weight: 700;
+}

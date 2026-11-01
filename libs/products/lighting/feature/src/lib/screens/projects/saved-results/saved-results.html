@@ -1,0 +1,96 @@
+<section class="panel" aria-labelledby="lp-saved-title">
+  <h3 id="lp-saved-title">{{ t().saved.title }}</h3>
+  @if (rows().length === 0) {
+    <p class="muted">{{ t().saved.empty }}</p>
+  } @else {
+    <ul class="rows" role="list">
+      @for (row of rows(); track row.id) {
+        <li>
+          <span class="icon" aria-hidden="true">{{ row.icon }}</span>
+          <div class="main">
+            <strong>{{ row.label }}</strong>
+            <span class="meta">
+              {{ t().saved.kinds[row.kind] }} · {{ i18n.date(row.savedAt) }}
+            </span>
+            <span class="summary" dir="ltr">{{ row.summary }}</span>
+          </div>
+          <div class="row-actions">
+            <a
+              ahButton="secondary"
+              size="sm"
+              [routerLink]="row.link"
+              [queryParams]="row.query"
+            >
+              ✏️ {{ t().saved.open }}
+            </a>
+            <button
+              type="button"
+              class="icon-btn"
+              (click)="startRename(row)"
+              [attr.aria-label]="t().saved.rename + ': ' + row.label"
+              [title]="t().saved.rename"
+            >
+              🏷️
+            </button>
+            <button
+              type="button"
+              class="icon-btn"
+              (click)="removing.set(row)"
+              [attr.aria-label]="t().common.delete + ': ' + row.label"
+              [title]="t().common.delete"
+            >
+              🗑
+            </button>
+          </div>
+        </li>
+      }
+    </ul>
+  }
+</section>
+
+<ah-modal
+  [closeLabel]="t().common.close"
+  [open]="renaming() !== null"
+  (openChange)="$event || renaming.set(null)"
+  [title]="t().saved.rename"
+  size="sm"
+>
+  <form id="lp-rename-form" (submit)="$event.preventDefault(); rename()">
+    <label class="field">
+      <span>{{ t().save.label }}</span>
+      <input
+        type="text"
+        maxlength="80"
+        required
+        [value]="newLabel()"
+        (input)="newLabel.set(value($event))"
+      />
+    </label>
+  </form>
+  <div modal-actions class="actions">
+    <button ahButton="ghost" type="button" (click)="renaming.set(null)">
+      {{ t().common.cancel }}
+    </button>
+    <button ahButton type="submit" form="lp-rename-form">
+      {{ t().common.saveChanges }}
+    </button>
+  </div>
+</ah-modal>
+
+<ah-modal
+  [closeLabel]="t().common.close"
+  [open]="removing() !== null"
+  (openChange)="$event || removing.set(null)"
+  [title]="t().saved.deleteTitle"
+  size="sm"
+>
+  <p>{{ t().saved.deleteText(removing()?.label ?? '') }}</p>
+  <div modal-actions class="actions">
+    <button ahButton="ghost" type="button" (click)="removing.set(null)">
+      {{ t().common.cancel }}
+    </button>
+    <button ahButton type="button" class="danger" (click)="remove()">
+      {{ t().common.delete }}
+    </button>
+  </div>
+</ah-modal>

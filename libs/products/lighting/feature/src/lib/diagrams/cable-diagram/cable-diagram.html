@@ -1,0 +1,130 @@
+<svg viewBox="0 0 480 210" role="img" [attr.aria-label]="t().diagrams.cableAlt">
+  <defs>
+    <!-- A straight line has no height, so the gradient uses the svg's units. -->
+    <linearGradient
+      id="lp-cable-drop"
+      gradientUnits="userSpaceOnUse"
+      [attr.x1]="start"
+      [attr.x2]="end()"
+      y1="0"
+      y2="0"
+    >
+      <stop offset="0" style="stop-color: var(--color-success-default)" />
+      <stop offset="1" [style.stop-color]="endTone()" />
+    </linearGradient>
+  </defs>
+  <rect class="backdrop" width="480" height="210" rx="12" />
+
+  <text class="caption" x="20" y="28">
+    P = {{ i18n.num(result().totalPowerWatts, 0) }} W · I =
+    {{ i18n.num(result().totalCurrentAmperes, 2) }} A ·
+    {{ params().circuitVoltage }} V
+  </text>
+
+  <!-- Cabinet and breaker -->
+  <rect
+    class="cabinet"
+    x="16"
+    [attr.y]="line - 30"
+    width="40"
+    height="58"
+    rx="4"
+  />
+  <text class="cabinet-label" x="36" [attr.y]="line + 4" text-anchor="middle">
+    {{ result().recommendedBreakerRatingAmps }} A
+  </text>
+  <text class="caption" x="36" [attr.y]="line + 48" text-anchor="middle">
+    {{ t().diagrams.cabinet }}
+  </text>
+
+  @for (x of lamps(); track $index) {
+    <path
+      class="pole"
+      [attr.d]="'M' + x + ' ' + line + 'V' + (line - 46) + 'h8'"
+    />
+    <rect
+      class="lamp"
+      [attr.x]="x + 5"
+      [attr.y]="line - 49"
+      width="10"
+      height="5"
+      rx="2"
+    />
+  }
+
+  <line
+    class="cable"
+    [attr.x1]="start"
+    [attr.y1]="line"
+    [attr.x2]="end()"
+    [attr.y2]="line"
+    stroke="url(#lp-cable-drop)"
+  />
+
+  <path
+    class="measure"
+    [attr.d]="'M' + start + ' ' + (line + 26) + 'H' + end()"
+  />
+  <path
+    class="measure"
+    [attr.d]="
+      'M' +
+      start +
+      ' ' +
+      (line + 20) +
+      'v12M' +
+      end() +
+      ' ' +
+      (line + 20) +
+      'v12'
+    "
+  />
+  <text
+    class="value"
+    [attr.x]="(start + end()) / 2"
+    [attr.y]="line + 48"
+    text-anchor="middle"
+  >
+    L = {{ i18n.num(length(), 0) }} m
+  </text>
+  <text
+    class="caption"
+    [attr.x]="(start + end()) / 2"
+    [attr.y]="line + 68"
+    text-anchor="middle"
+  >
+    {{ result().recommendedCrossSectionMm2 }} mm²
+    {{ params().conductorMaterial === 'copper' ? 'Cu' : 'Al' }}
+  </text>
+
+  <text
+    class="drop"
+    [attr.x]="end() > 330 ? end() : end() + 18"
+    [attr.y]="line - 62"
+    [attr.text-anchor]="end() > 330 ? 'end' : 'start'"
+    [style.fill]="endTone()"
+  >
+    ΔU {{ i18n.num(result().actualVoltageDropPct, 2) }} % ({{
+      i18n.num(result().actualVoltageDropVolts, 1)
+    }}
+    V)
+  </text>
+
+  <g
+    lpSvgDrag
+    (lpSvgDrag)="drag($event)"
+    (keydown)="key($event)"
+    role="slider"
+    tabindex="0"
+    [attr.aria-label]="t().fields.cableLength"
+    [attr.aria-valuemin]="limits.min"
+    [attr.aria-valuemax]="limits.max"
+    [attr.aria-valuenow]="length()"
+    [attr.aria-valuetext]="i18n.num(length(), 0) + ' m'"
+    [attr.transform]="'translate(' + end() + ' ' + line + ')'"
+  >
+    <circle class="hit" r="24" />
+    <circle class="dot" r="11" />
+    <path class="arrows" d="M-2 -4l-4 4 4 4M2 -4l4 4-4 4" />
+  </g>
+</svg>

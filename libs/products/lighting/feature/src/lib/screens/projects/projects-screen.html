@@ -1,0 +1,303 @@
+<section class="screen" aria-labelledby="lp-projects-title">
+  <header class="head">
+    <div>
+      <h2 id="lp-projects-title">{{ t().projects.title }}</h2>
+      <p>{{ t().projects.lead }}</p>
+    </div>
+    <button ahButton type="button" (click)="openNew()">
+      + {{ t().projects.new }}
+    </button>
+  </header>
+
+  @if (store.isLoading()) {
+    <p class="muted" role="status">{{ t().projects.loading }}</p>
+  } @else if (store.activeProject(); as project) {
+    <section class="panel project" aria-labelledby="lp-project-name">
+      @if (store.projects().length > 1) {
+        <label class="select picker">
+          <span>{{ t().projects.switch }}</span>
+          <select (change)="store.setActiveProject(value($event))">
+            @for (p of store.projects(); track p.id) {
+              <option [value]="p.id" [selected]="p.id === project.id">
+                {{ p.title }}
+              </option>
+            }
+          </select>
+        </label>
+      }
+      <div class="title-row">
+        <h3 id="lp-project-name">{{ project.title }}</h3>
+        <div class="actions">
+          <button
+            ahButton="secondary"
+            size="sm"
+            type="button"
+            (click)="openEdit()"
+          >
+            ✏️ {{ t().common.edit }}
+          </button>
+          <button
+            ahButton="ghost"
+            size="sm"
+            type="button"
+            (click)="confirmDelete.set(true)"
+          >
+            🗑 {{ t().common.delete }}
+          </button>
+        </div>
+      </div>
+      <dl class="facts">
+        <div>
+          <dt>{{ t().projects.client }}</dt>
+          <dd>{{ project.clientOrMunicipality }}</dd>
+        </div>
+        @if (project.locationName) {
+          <div>
+            <dt>{{ t().projects.location }}</dt>
+            <dd>{{ project.locationName }}</dd>
+          </div>
+        }
+        @if (project.engineerName) {
+          <div>
+            <dt>{{ t().projects.engineer }}</dt>
+            <dd>{{ project.engineerName }}</dd>
+          </div>
+        }
+        <div>
+          <dt>{{ t().projects.deadline }}</dt>
+          <dd>{{ i18n.date(project.commissioningDeadline) }}</dd>
+        </div>
+        <div>
+          <dt>{{ t().fields.roadClass }}</dt>
+          <dd>{{ project.roadClass }}</dd>
+        </div>
+        <div>
+          <dt>{{ t().projects.lighting }}</dt>
+          <dd>{{ t().lightingTypes[project.lightingType] }}</dd>
+        </div>
+      </dl>
+      <label class="select stage">
+        <span>{{ t().projects.stage }}</span>
+        <select (change)="setStage($any(value($event)))">
+          @for (s of stages; track s) {
+            <option [value]="s" [selected]="s === project.stage">
+              {{ t().stages[s] }}
+            </option>
+          }
+        </select>
+      </label>
+      <ah-progress-bar
+        [value]="store.stats().completionPct"
+        [label]="t().projects.commissioned"
+        [showValue]="true"
+        variant="success"
+      />
+    </section>
+
+    <div class="stats">
+      <ah-metric-card
+        [label]="t().projects.poles"
+        [value]="store.stats().totalPoles"
+        icon="💡"
+      />
+      <ah-metric-card
+        [label]="t().projects.solarGrid"
+        [value]="store.stats().solarPoles + ' / ' + store.stats().gridPoles"
+        icon="☀️"
+      />
+      <ah-metric-card
+        [label]="t().projects.erected"
+        [value]="store.stats().erectedPoles"
+        icon="🏗️"
+      />
+      <ah-metric-card
+        [label]="t().projects.power"
+        [value]="i18n.num(store.stats().totalWatts / 1000, 2)"
+        unit="kW"
+        icon="⚡"
+      />
+      <ah-metric-card
+        [label]="t().projects.concrete"
+        [value]="i18n.num(store.stats().totalConcreteVolumeM3, 2)"
+        unit="m³"
+        icon="🧱"
+      />
+    </div>
+
+    <lp-pole-list />
+    <lp-milestone-list />
+    <lp-saved-results id="saved" />
+
+    <footer class="foot">
+      <button
+        ahButton="ghost"
+        size="sm"
+        type="button"
+        (click)="confirmReset.set(true)"
+      >
+        ↺ {{ t().projects.restore }}
+      </button>
+    </footer>
+  } @else {
+    <ah-empty-state
+      icon="💡"
+      [title]="t().projects.emptyTitle"
+      [description]="t().projects.emptyText"
+    />
+    <div class="actions center">
+      <button ahButton type="button" (click)="openNew()">
+        + {{ t().projects.new }}
+      </button>
+      <button ahButton="secondary" type="button" (click)="reset()">
+        ↺ {{ t().projects.restore }}
+      </button>
+    </div>
+  }
+</section>
+
+<ah-modal
+  [closeLabel]="t().common.close"
+  [(open)]="formOpen"
+  [title]="editing() ? t().projects.editTitle : t().projects.newTitle"
+  size="lg"
+>
+  <form
+    class="form"
+    id="lp-project-form"
+    (submit)="$event.preventDefault(); submit()"
+  >
+    @if (formError()) {
+      <p class="error" role="alert">{{ t().projects.required }}</p>
+    }
+    <label class="select wide">
+      <span>{{ t().projects.name }} *</span>
+      <input
+        type="text"
+        required
+        [value]="title()"
+        (input)="title.set(value($event))"
+      />
+    </label>
+    <label class="select">
+      <span>{{ t().projects.client }} *</span>
+      <input
+        type="text"
+        required
+        [value]="client()"
+        (input)="client.set(value($event))"
+      />
+    </label>
+    <label class="select">
+      <span>{{ t().projects.location }}</span>
+      <input
+        type="text"
+        [value]="location()"
+        (input)="location.set(value($event))"
+      />
+    </label>
+    <label class="select">
+      <span>{{ t().projects.engineer }}</span>
+      <input
+        type="text"
+        [value]="engineer()"
+        (input)="engineer.set(value($event))"
+      />
+    </label>
+    <label class="select">
+      <span>{{ t().projects.email }}</span>
+      <input
+        type="email"
+        [value]="email()"
+        (input)="email.set(value($event))"
+      />
+    </label>
+    <label class="select">
+      <span>{{ t().projects.lighting }}</span>
+      <select (change)="lightingType.set($any(value($event)))">
+        @for (l of lightingTypes; track l) {
+          <option [value]="l" [selected]="l === lightingType()">
+            {{ t().lightingTypes[l] }}
+          </option>
+        }
+      </select>
+    </label>
+    <label class="select">
+      <span>{{ t().fields.roadClass }}</span>
+      <select (change)="roadClass.set($any(value($event)))">
+        @for (c of roadClasses; track c) {
+          <option [value]="c" [selected]="c === roadClass()">{{ c }}</option>
+        }
+      </select>
+    </label>
+    <label class="select">
+      <span>{{ t().fields.windZone }}</span>
+      <select (change)="windZone.set($any(+value($event)))">
+        @for (z of windZones; track z) {
+          <option [value]="z" [selected]="z === windZone()">
+            {{ t().windZones[z] }}
+          </option>
+        }
+      </select>
+    </label>
+    <label class="select">
+      <span>{{ t().fields.soil }}</span>
+      <select (change)="soil.set($any(value($event)))">
+        @for (s of soils; track s) {
+          <option [value]="s" [selected]="s === soil()">
+            {{ t().soils[s] }}
+          </option>
+        }
+      </select>
+    </label>
+    <label class="select">
+      <span>{{ t().projects.deadline }}</span>
+      <input
+        type="date"
+        [value]="deadline()"
+        (change)="deadline.set(value($event))"
+      />
+    </label>
+  </form>
+  <div modal-actions class="actions">
+    <button ahButton="ghost" type="button" (click)="formOpen.set(false)">
+      {{ t().common.cancel }}
+    </button>
+    <button ahButton type="submit" form="lp-project-form">
+      {{ editing() ? t().common.saveChanges : t().projects.create }}
+    </button>
+  </div>
+</ah-modal>
+
+<ah-modal
+  [closeLabel]="t().common.close"
+  [(open)]="confirmDelete"
+  [title]="t().projects.deleteTitle"
+  size="sm"
+>
+  <p>{{ t().projects.deleteText(store.activeProject()?.title ?? '') }}</p>
+  <div modal-actions class="actions">
+    <button ahButton="ghost" type="button" (click)="confirmDelete.set(false)">
+      {{ t().common.cancel }}
+    </button>
+    <button ahButton type="button" class="danger" (click)="remove()">
+      {{ t().common.delete }}
+    </button>
+  </div>
+</ah-modal>
+
+<ah-modal
+  [closeLabel]="t().common.close"
+  [(open)]="confirmReset"
+  [title]="t().projects.restore"
+  size="sm"
+>
+  <p>{{ t().projects.restoreText }}</p>
+  <div modal-actions class="actions">
+    <button ahButton="ghost" type="button" (click)="confirmReset.set(false)">
+      {{ t().common.cancel }}
+    </button>
+    <button ahButton type="button" (click)="reset()">
+      {{ t().projects.restore }}
+    </button>
+  </div>
+</ah-modal>

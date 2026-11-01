@@ -1,0 +1,551 @@
+<section class="screen" aria-labelledby="lp-calc-title">
+  <header class="head">
+    <div>
+      <h2 id="lp-calc-title">{{ t().calc.title }}</h2>
+      <p>{{ t().calc.lead }}</p>
+    </div>
+  </header>
+
+  <ah-tabs
+    [tabs]="tabs()"
+    [selectedId]="tab()"
+    (selectedIdChange)="selectTab($event)"
+    [ariaLabel]="t().calc.title"
+  />
+
+  <div class="workbench">
+    <!-- Left: the picture and the maths -->
+    <div class="column">
+      <figure class="panel">
+        @switch (tab()) {
+          @case ('spacing') {
+            <lp-spacing-diagram
+              [(height)]="sHeight"
+              [(spacing)]="sSpacing"
+              [result]="spacing()"
+            />
+          }
+          @case ('foundation') {
+            <lp-foundation-diagram
+              [(depth)]="fDepth"
+              [result]="foundation()"
+              [hasSolarPanel]="fSolar()"
+            />
+          }
+          @case ('solar') {
+            <lp-solar-diagram
+              [(profile)]="pProfile"
+              [params]="solarParams()"
+              [result]="solar()"
+            />
+          }
+          @case ('electrical') {
+            <lp-cable-diagram
+              [(length)]="eLength"
+              [params]="electricalParams()"
+              [result]="electrical()"
+            />
+          }
+        }
+        <figcaption>✋ {{ t().calc.dragHint }}</figcaption>
+      </figure>
+
+      <section class="panel" aria-labelledby="lp-calc-how">
+        <h3 id="lp-calc-how">{{ t().calc.how }}</h3>
+        <ol class="steps">
+          @for (step of steps(); track $index) {
+            <li>
+              <span class="step-label">{{ step.label }}</span>
+              <code dir="ltr">{{ step.math }}</code>
+            </li>
+          }
+        </ol>
+      </section>
+    </div>
+
+    <!-- Right: inputs, results, findings, saving -->
+    <div class="column">
+      <section class="panel" aria-labelledby="lp-calc-inputs">
+        <h3 id="lp-calc-inputs">{{ t().calc.inputs }}</h3>
+        @switch (tab()) {
+          @case ('spacing') {
+            <div class="fields">
+              <lp-number-field
+                [label]="t().fields.height"
+                unit="m"
+                [min]="4"
+                [max]="16"
+                [step]="0.5"
+                [(value)]="sHeight"
+              />
+              <lp-number-field
+                [label]="t().fields.spacing"
+                unit="m"
+                [min]="10"
+                [max]="60"
+                [(value)]="sSpacing"
+              />
+              <lp-number-field
+                [label]="t().fields.roadWidth"
+                unit="m"
+                [min]="3"
+                [max]="20"
+                [step]="0.5"
+                [(value)]="sRoadWidth"
+              />
+              <lp-number-field
+                [label]="t().fields.lumens"
+                unit="lm"
+                [min]="1000"
+                [max]="30000"
+                [step]="100"
+                [(value)]="sLumens"
+              />
+              <lp-number-field
+                [label]="t().fields.maintenance"
+                [min]="0.5"
+                [max]="1"
+                [step]="0.05"
+                [(value)]="sMaintenance"
+                [hint]="t().fields.maintenanceHint"
+              />
+              <label class="select">
+                <span>{{ t().fields.roadClass }}</span>
+                <select (change)="sRoadClass.set($any(optionValue($event)))">
+                  @for (c of roadClasses; track c) {
+                    <option [value]="c" [selected]="c === sRoadClass()">
+                      {{ c }} · {{ roadGroup(c) }}
+                    </option>
+                  }
+                </select>
+              </label>
+            </div>
+          }
+          @case ('foundation') {
+            <div class="fields">
+              <lp-number-field
+                [label]="t().fields.height"
+                unit="m"
+                [min]="4"
+                [max]="16"
+                [step]="0.5"
+                [(value)]="fHeight"
+              />
+              <lp-number-field
+                [label]="t().fields.depth"
+                unit="m"
+                [min]="0.6"
+                [max]="2.6"
+                [step]="0.05"
+                [(value)]="fDepth"
+              />
+              <label class="select">
+                <span>{{ t().fields.windZone }}</span>
+                <select (change)="fWindZone.set($any(+optionValue($event)))">
+                  @for (z of windZones; track z) {
+                    <option [value]="z" [selected]="z === fWindZone()">
+                      {{ t().windZones[z] }}
+                    </option>
+                  }
+                </select>
+              </label>
+              <label class="select">
+                <span>{{ t().fields.soil }}</span>
+                <select (change)="fSoil.set($any(optionValue($event)))">
+                  @for (s of soilTypes; track s) {
+                    <option [value]="s" [selected]="s === fSoil()">
+                      {{ t().soils[s] }}
+                    </option>
+                  }
+                </select>
+              </label>
+              <label class="select">
+                <span>{{ t().fields.material }}</span>
+                <select (change)="fMaterial.set($any(optionValue($event)))">
+                  @for (m of materials; track m) {
+                    <option [value]="m" [selected]="m === fMaterial()">
+                      {{ t().poleMaterials[m] }}
+                    </option>
+                  }
+                </select>
+              </label>
+              <label class="check">
+                <input
+                  type="checkbox"
+                  [checked]="fSolar()"
+                  (change)="fSolar.set($any($event.target).checked)"
+                />
+                {{ t().fields.hasSolar }}
+              </label>
+              @if (fSolar()) {
+                <lp-number-field
+                  [label]="t().fields.panelArea"
+                  unit="m²"
+                  [min]="0.6"
+                  [max]="3"
+                  [step]="0.1"
+                  [(value)]="fPanelArea"
+                />
+              }
+            </div>
+          }
+          @case ('solar') {
+            <div class="fields">
+              <lp-number-field
+                [label]="t().fields.ledWattage"
+                unit="W"
+                [min]="10"
+                [max]="150"
+                [(value)]="pLed"
+              />
+              <lp-number-field
+                [label]="t().fields.sunHours"
+                unit="h"
+                [min]="2"
+                [max]="7"
+                [step]="0.1"
+                [(value)]="pSunHours"
+                [hint]="t().fields.sunHoursHint"
+              />
+              <lp-number-field
+                [label]="t().fields.autonomy"
+                [unit]="t().units.nights"
+                [min]="1"
+                [max]="7"
+                [(value)]="pAutonomy"
+              />
+              <label class="select">
+                <span>{{ t().fields.voltage }}</span>
+                <select (change)="pVoltage.set($any(+optionValue($event)))">
+                  <option value="12" [selected]="pVoltage() === 12">
+                    12 V
+                  </option>
+                  <option value="24" [selected]="pVoltage() === 24">
+                    24 V
+                  </option>
+                </select>
+              </label>
+              <label class="select">
+                <span>{{ t().fields.chemistry }}</span>
+                <select (change)="pChemistry.set($any(optionValue($event)))">
+                  <option
+                    value="LiFePO4"
+                    [selected]="pChemistry() === 'LiFePO4'"
+                  >
+                    LiFePO4
+                  </option>
+                  <option
+                    value="Gel_AGM"
+                    [selected]="pChemistry() === 'Gel_AGM'"
+                  >
+                    {{ t().fields.gel }}
+                  </option>
+                </select>
+              </label>
+            </div>
+            <fieldset class="stages">
+              <legend>{{ t().fields.dimming }}</legend>
+              @for (s of stages; track s) {
+                <lp-number-field
+                  [label]="t().fields.stageHours(s)"
+                  unit="h"
+                  [min]="0"
+                  [max]="8"
+                  [step]="0.5"
+                  [value]="stage('hours', s)"
+                  (valueChange)="setStage('hours', s, $event)"
+                />
+                <lp-number-field
+                  [label]="t().fields.stagePower(s)"
+                  unit="%"
+                  [min]="0"
+                  [max]="100"
+                  [step]="5"
+                  [value]="stage('pct', s)"
+                  (valueChange)="setStage('pct', s, $event)"
+                />
+              }
+            </fieldset>
+          }
+          @case ('electrical') {
+            <div class="fields">
+              <lp-number-field
+                [label]="t().fields.cableLength"
+                unit="m"
+                [min]="10"
+                [max]="500"
+                [step]="5"
+                [(value)]="eLength"
+              />
+              <lp-number-field
+                [label]="t().fields.luminaires"
+                [min]="1"
+                [max]="40"
+                [(value)]="eCount"
+              />
+              <lp-number-field
+                [label]="t().fields.wattage"
+                unit="W"
+                [min]="10"
+                [max]="250"
+                [step]="5"
+                [(value)]="eWattage"
+              />
+              <lp-number-field
+                [label]="t().fields.maxDrop"
+                unit="%"
+                [min]="1"
+                [max]="5"
+                [step]="0.5"
+                [(value)]="eMaxDrop"
+              />
+              <label class="select">
+                <span>{{ t().fields.circuit }}</span>
+                <select (change)="eVoltage.set($any(+optionValue($event)))">
+                  <option value="230" [selected]="eVoltage() === 230">
+                    {{ t().fields.singlePhase }}
+                  </option>
+                  <option value="400" [selected]="eVoltage() === 400">
+                    {{ t().fields.threePhase }}
+                  </option>
+                </select>
+              </label>
+              <label class="select">
+                <span>{{ t().fields.conductor }}</span>
+                <select (change)="eMaterial.set($any(optionValue($event)))">
+                  <option value="copper" [selected]="eMaterial() === 'copper'">
+                    {{ t().fields.copper }}
+                  </option>
+                  <option
+                    value="aluminum"
+                    [selected]="eMaterial() === 'aluminum'"
+                  >
+                    {{ t().fields.aluminium }}
+                  </option>
+                </select>
+              </label>
+            </div>
+          }
+        }
+      </section>
+
+      <section
+        class="panel"
+        aria-labelledby="lp-calc-results"
+        aria-live="polite"
+      >
+        <h3 id="lp-calc-results">{{ t().calc.results }}</h3>
+        @switch (tab()) {
+          @case ('spacing') {
+            <div class="verdict" [attr.data-ok]="spacing().isCompliant">
+              {{
+                spacing().isCompliant
+                  ? t().verdicts.compliant
+                  : t().verdicts.notCompliant
+              }}
+              · {{ t().ratioEvaluations[spacing().ratioEvaluation] }}
+            </div>
+            <div class="results">
+              <ah-metric-card
+                [label]="t().results.ratio"
+                [value]="i18n.num(spacing().spacingRatio, 2)"
+                [variant]="
+                  spacing().ratioEvaluation === 'excessive'
+                    ? 'danger'
+                    : 'default'
+                "
+              />
+              <ah-metric-card
+                [label]="t().results.lux"
+                [value]="i18n.num(spacing().estimatedAverageLux)"
+                unit="lx"
+                [hint]="'≥ ' + i18n.num(spacing().requiredAverageLux) + ' lx'"
+                [variant]="spacing().meetsLux ? 'success' : 'danger'"
+              />
+              <ah-metric-card
+                [label]="t().results.uniformity"
+                [value]="i18n.num(spacing().estimatedUniformity, 2)"
+                [hint]="'≥ ' + i18n.num(spacing().requiredUniformity, 2)"
+                [variant]="spacing().meetsUniformity ? 'success' : 'danger'"
+              />
+              <ah-metric-card
+                [label]="t().results.spacingRange"
+                [value]="
+                  spacing().recommendedSpacingMinMeters +
+                  '–' +
+                  spacing().recommendedSpacingMaxMeters
+                "
+                unit="m"
+              />
+            </div>
+            <lp-note-list [notes]="spacing().notes" />
+          }
+          @case ('foundation') {
+            <div
+              class="verdict"
+              [attr.data-ok]="foundation().depthComplianceVerdict === 'safe'"
+            >
+              {{ t().depthVerdicts[foundation().depthComplianceVerdict] }}
+            </div>
+            <div class="results">
+              <ah-metric-card
+                [label]="t().results.minDepth"
+                [value]="i18n.num(foundation().minRecommendedDepthMeters, 2)"
+                unit="m"
+              />
+              <ah-metric-card
+                [label]="t().results.block"
+                [value]="
+                  i18n.num(foundation().recommendedBlockWidthMeters, 2) +
+                  ' × ' +
+                  i18n.num(foundation().recommendedBlockLengthMeters, 2)
+                "
+                unit="m"
+              />
+              <ah-metric-card
+                [label]="t().results.concrete"
+                [value]="i18n.num(foundation().recommendedVolumeM3, 2)"
+                unit="m³"
+                [hint]="i18n.num(foundation().minConcreteMassKg, 0) + ' kg'"
+              />
+              <ah-metric-card
+                [label]="t().results.safety"
+                [value]="i18n.num(foundation().safetyFactor, 2)"
+                hint="≥ 1.5"
+                [variant]="
+                  foundation().safetyFactor >= 1.5 ? 'success' : 'danger'
+                "
+              />
+              <ah-metric-card
+                [label]="t().results.bolts"
+                [value]="'4× ' + foundation().anchorBolts.size"
+                [hint]="
+                  'L ' +
+                  foundation().anchorBolts.lengthMm +
+                  ' mm · ' +
+                  foundation().anchorBolts.pitchMm +
+                  ' mm'
+                "
+              />
+              <ah-metric-card
+                [label]="t().results.moment"
+                [value]="i18n.num(foundation().overturningMomentDanM, 0)"
+                unit="daN·m"
+              />
+            </div>
+            <lp-note-list [notes]="foundation().notes" />
+          }
+          @case ('solar') {
+            <div class="results">
+              <ah-metric-card
+                [label]="t().results.panel"
+                [value]="solar().commercialPanelSizeWatts"
+                unit="Wp"
+                [hint]="
+                  t().results.minimum +
+                  ' ' +
+                  solar().minSolarPanelPeakWatts +
+                  ' Wp'
+                "
+                variant="accent"
+              />
+              <ah-metric-card
+                [label]="t().results.battery"
+                [value]="solar().commercialBatteryCapacityAh"
+                unit="Ah"
+                [hint]="
+                  i18n.num(solar().minBatteryCapacityWh, 0) +
+                  ' Wh · ' +
+                  pVoltage() +
+                  ' V'
+                "
+                variant="accent"
+              />
+              <ah-metric-card
+                [label]="t().results.controller"
+                [value]="solar().mpptControllerAmpRating"
+                unit="A"
+                hint="MPPT"
+              />
+              <ah-metric-card
+                [label]="t().results.nightEnergy"
+                [value]="i18n.num(solar().dailyEnergyConsumptionWh, 0)"
+                unit="Wh"
+              />
+              <ah-metric-card
+                [label]="t().results.winter"
+                [value]="solar().winterSolsticeCoveragePct"
+                unit="%"
+                [variant]="
+                  solar().winterSolsticeCoveragePct >= 90
+                    ? 'success'
+                    : 'warning'
+                "
+              />
+              <ah-metric-card
+                [label]="t().results.co2"
+                [value]="i18n.num(solar().co2SavedKgPerYear, 0)"
+                [unit]="t().units.kgPerYear"
+              />
+            </div>
+            <lp-note-list [notes]="solar().notes" />
+          }
+          @case ('electrical') {
+            <div
+              class="verdict"
+              [attr.data-ok]="electrical().isVoltageDropAcceptable"
+            >
+              {{
+                electrical().isVoltageDropAcceptable
+                  ? t().verdicts.dropOk
+                  : t().verdicts.dropTooHigh
+              }}
+            </div>
+            <div class="results">
+              <ah-metric-card
+                [label]="t().results.section"
+                [value]="electrical().recommendedCrossSectionMm2"
+                unit="mm²"
+                variant="accent"
+              />
+              <ah-metric-card
+                [label]="t().results.drop"
+                [value]="i18n.num(electrical().actualVoltageDropPct, 2)"
+                unit="%"
+                [hint]="i18n.num(electrical().actualVoltageDropVolts, 2) + ' V'"
+                [variant]="
+                  electrical().isVoltageDropAcceptable ? 'success' : 'danger'
+                "
+              />
+              <ah-metric-card
+                [label]="t().results.current"
+                [value]="i18n.num(electrical().totalCurrentAmperes, 2)"
+                unit="A"
+              />
+              <ah-metric-card
+                [label]="t().results.breaker"
+                [value]="electrical().recommendedBreakerRatingAmps"
+                unit="A"
+              />
+              <ah-metric-card
+                [label]="t().results.earth"
+                [value]="'≤ ' + electrical().earthResistanceTargetOhms"
+                unit="Ω"
+              />
+            </div>
+          }
+        }
+      </section>
+
+      <section class="panel" aria-labelledby="lp-calc-save">
+        <h3 id="lp-calc-save">{{ t().save.title }}</h3>
+        <lp-save-bar
+          [suggestedLabel]="suggestedLabel()"
+          [editingLabel]="editingLabel()"
+          (save)="save($event)"
+          (stopEditing)="stopEditing()"
+        />
+      </section>
+    </div>
+  </div>
+</section>

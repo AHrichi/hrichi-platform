@@ -1,0 +1,74 @@
+@use '../../styles/luxpath' as lp;
+
+@include lp.diagram;
+
+:host {
+  display: grid;
+  gap: var(--space-3);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+}
+
+figure {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin: 0;
+}
+
+figcaption {
+  @include lp.diagram-caption;
+}
+
+.base,
+.axis {
+  fill: none;
+  stroke: var(--color-text-default);
+  stroke-width: 2;
+}
+
+.cone {
+  fill: none;
+  stroke: var(--color-text-muted);
+  stroke-width: 2;
+  stroke-dasharray: 6 4;
+}
+
+.heap {
+  stroke-width: 2;
+
+  &.ok {
+    fill: var(--color-success-subtle);
+    stroke: var(--color-success-default);
+  }
+
+  &.warn {
+    fill: var(--color-warning-subtle);
+    stroke: var(--color-warning-default);
+  }
+}
+
+.value.ok {
+  fill: var(--color-success-default);
+}
+
+.value.warn {
+  fill: var(--color-warning-default);
+}
+
+.lift {
+  stroke: var(--color-warning-default);
+  stroke-width: 1.5;
+  stroke-dasharray: 6 4;
+}
+
+.lift-label {
+  fill: var(--color-warning-default);
+  font-weight: 600;
+}
+
+.curve {
+  fill: none;
+  stroke: var(--color-accent-default);
+  stroke-width: 3;
+  stroke-linejoin: round;
+}

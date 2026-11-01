@@ -1,0 +1,144 @@
+<svg viewBox="0 0 480 320" role="img" [attr.aria-label]="t().diagrams.solarAlt">
+  <rect class="backdrop" width="480" height="320" rx="12" />
+
+  <!-- Energy chain -->
+  <g transform="translate(55 52)">
+    <circle class="sun" r="16" />
+    @for (a of [0, 45, 90, 135, 180, 225, 270, 315]; track a) {
+      <line
+        class="ray"
+        x1="22"
+        x2="30"
+        [attr.transform]="'rotate(' + a + ')'"
+      />
+    }
+  </g>
+  <g transform="translate(175 52)">
+    <path class="panel" d="M-26 12l10-26h42l-10 26z" />
+    <path class="panel-grid" d="M-21 -1h42M-5 -14l-6 26M9 -14l-6 26" />
+  </g>
+  <g transform="translate(295 52)">
+    <rect class="battery" x="-20" y="-14" width="40" height="28" rx="4" />
+    <rect class="battery-tip" x="20" y="-6" width="5" height="12" rx="1" />
+    <rect
+      class="charge"
+      x="-16"
+      y="-10"
+      [attr.width]="32 * (result().maxDischargeDepthPct / 100)"
+      height="20"
+      rx="2"
+    />
+  </g>
+  <g transform="translate(415 52)">
+    <path class="structure" d="M-12 28V-6h14" />
+    <rect class="lamp" x="0" y="-11" width="18" height="8" rx="3" />
+    <path class="light" d="M2 -3l-14 31h40l-14-31z" />
+  </g>
+  @for (x of [85, 205, 325]; track x) {
+    <path class="flow" [attr.d]="'M' + x + ' 52h50m-8 -5l8 5-8 5'" />
+  }
+
+  <text class="caption" x="55" y="98" text-anchor="middle">
+    {{ t().diagrams.sunHours }}
+  </text>
+  <text class="value" x="55" y="118" text-anchor="middle">
+    {{ i18n.num(params().peakSunHours) }} h
+  </text>
+  <text class="caption" x="175" y="98" text-anchor="middle">
+    {{ t().diagrams.panel }}
+  </text>
+  <text class="value" x="175" y="118" text-anchor="middle">
+    {{ result().commercialPanelSizeWatts }} Wp
+  </text>
+  <text class="caption" x="295" y="98" text-anchor="middle">
+    {{ t().diagrams.battery }}
+  </text>
+  <text class="value" x="295" y="118" text-anchor="middle">
+    {{ result().commercialBatteryCapacityAh }} Ah ·
+    {{ params().systemVoltage }} V
+  </text>
+  <text class="caption" x="415" y="98" text-anchor="middle">
+    {{ t().diagrams.lamp }}
+  </text>
+  <text class="value" x="415" y="118" text-anchor="middle">
+    {{ params().ledWattage }} W
+  </text>
+
+  <!-- Night profile -->
+  <text class="label" x="40" y="160">{{ t().diagrams.nightProfile }}</text>
+  <text class="caption" x="440" y="160" text-anchor="end">
+    {{ i18n.num(result().dailyEnergyConsumptionWh, 0) }} Wh /
+    {{ i18n.word(t().diagrams.night) }}
+  </text>
+  <line
+    class="axis"
+    x1="40"
+    [attr.y1]="base"
+    [attr.x2]="nightEnd()"
+    [attr.y2]="base"
+  />
+  <line
+    class="dim"
+    x1="40"
+    [attr.y1]="base - 100 * 1.05"
+    x2="440"
+    [attr.y2]="base - 100 * 1.05"
+  />
+  <text class="caption" x="444" [attr.y]="base - 100 * 1.05 + 4">100 %</text>
+
+  @for (bar of bars(); track bar.stage) {
+    <rect
+      class="bar"
+      [attr.data-stage]="bar.stage"
+      [attr.x]="bar.x + 1"
+      [attr.y]="bar.top"
+      [attr.width]="bar.width > 2 ? bar.width - 2 : 0"
+      [attr.height]="base - bar.top"
+      rx="3"
+    />
+    @if (bar.width > 36) {
+      <text
+        class="caption"
+        [attr.x]="bar.x + bar.width / 2"
+        [attr.y]="base + 18"
+        text-anchor="middle"
+      >
+        {{ i18n.num(bar.hours) }} h
+      </text>
+    }
+  }
+  <text class="caption" x="40" [attr.y]="base + 32">
+    🌇 {{ t().diagrams.sunset }}
+  </text>
+  <text
+    class="caption"
+    [attr.x]="nightEnd()"
+    [attr.y]="base + 32"
+    text-anchor="end"
+  >
+    {{ t().diagrams.sunrise }} 🌅
+  </text>
+
+  @for (bar of bars(); track bar.stage) {
+    <g
+      lpSvgDrag
+      (lpSvgDrag)="drag(bar.stage, $event)"
+      (keydown)="key(bar.stage, $event)"
+      role="slider"
+      tabindex="0"
+      [attr.aria-label]="t().diagrams.stagePower(bar.stage)"
+      aria-valuemin="0"
+      aria-valuemax="100"
+      [attr.aria-valuenow]="bar.pct"
+      [attr.aria-valuetext]="bar.pct + ' %'"
+      [attr.transform]="
+        'translate(' + (bar.x + bar.width / 2) + ' ' + bar.top + ')'
+      "
+    >
+      <circle class="hit" r="22" />
+      <circle class="dot" r="10" />
+      <path class="arrows" d="M-4 -2l4-4 4 4M-4 2l4 4 4-4" />
+      <text class="pct" y="-18" text-anchor="middle">{{ bar.pct }} %</text>
+    </g>
+  }
+</svg>

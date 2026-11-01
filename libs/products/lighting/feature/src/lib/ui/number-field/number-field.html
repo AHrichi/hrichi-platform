@@ -1,0 +1,33 @@
+<label class="head" [for]="id">
+  <span>{{ label() }}</span>
+  @if (unit()) {
+    <span class="unit">{{ unit() }}</span>
+  }
+</label>
+<input
+  class="exact"
+  type="number"
+  inputmode="decimal"
+  [id]="id"
+  [min]="min()"
+  [max]="max()"
+  [step]="step()"
+  [value]="value()"
+  [attr.aria-describedby]="hint() ? id + '-hint' : null"
+  (input)="onInput($any($event.target).value)"
+  (blur)="clamp()"
+/>
+<input
+  class="slider"
+  type="range"
+  tabindex="-1"
+  aria-hidden="true"
+  [min]="min()"
+  [max]="max()"
+  [step]="step()"
+  [value]="value()"
+  (input)="onInput($any($event.target).value)"
+/>
+@if (hint()) {
+  <small class="hint" [id]="id + '-hint'">{{ hint() }}</small>
+}

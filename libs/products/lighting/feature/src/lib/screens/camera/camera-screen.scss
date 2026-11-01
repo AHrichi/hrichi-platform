@@ -1,0 +1,255 @@
+@use '../../styles/luxpath' as lp;
+
+.screen {
+  @include lp.screen;
+}
+
+.head {
+  @include lp.screen-head;
+}
+
+.workbench {
+  @include lp.workbench;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-inline-size: 0;
+}
+
+.panel {
+  @include lp.panel;
+
+  h3 {
+    @include lp.panel-title;
+  }
+}
+
+.guide summary {
+  @include lp.panel-title;
+  cursor: pointer;
+}
+
+.viewfinder {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 3 / 4;
+  max-block-size: 28rem;
+  border-radius: var(--radius-lg);
+  background: #0b1220;
+
+  video,
+  .scene {
+    position: absolute;
+    inset: 0;
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: cover;
+  }
+}
+
+// The illustrated view stays dark in both themes, like a camera.
+.scene {
+  .sky {
+    fill: #1d3557;
+  }
+
+  .earth {
+    fill: #3a4a3a;
+  }
+
+  .far {
+    fill: #24344d;
+  }
+
+  .road {
+    fill: #4b5563;
+  }
+
+  .pole {
+    fill: none;
+    stroke: #e5e7eb;
+    stroke-width: 6;
+    stroke-linecap: round;
+  }
+
+  .lamp {
+    fill: #fbbf24;
+  }
+
+  .glow {
+    fill: #fbbf24;
+    opacity: 0.12;
+  }
+}
+
+.scene-note {
+  position: absolute;
+  inset-block-start: var(--space-3);
+  inset-inline-start: var(--space-3);
+  margin: 0;
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-sm);
+  background: rgb(0 0 0 / 0.55);
+  color: #ffffff;
+  font-size: var(--font-size-100);
+}
+
+.crosshair {
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: 50%;
+  inline-size: 3.5rem;
+  block-size: 3.5rem;
+  translate: -50% -50%;
+  border: 2px solid #ff4d4d;
+  border-radius: 50%;
+  pointer-events: none;
+
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    background: #ff4d4d;
+  }
+
+  &::before {
+    inset-block-start: 50%;
+    inset-inline: -1.25rem;
+    block-size: 2px;
+    translate: 0 -50%;
+  }
+
+  &::after {
+    inset-inline-start: 50%;
+    inset-block: -1.25rem;
+    inline-size: 2px;
+    translate: -50% 0;
+  }
+}
+
+.hud {
+  position: absolute;
+  inset-inline: var(--space-3);
+  inset-block-end: var(--space-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.readout,
+.prompt {
+  margin: 0;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  background: rgb(0 0 0 / 0.6);
+  color: #ffffff;
+  text-align: center;
+  font-size: var(--font-size-200);
+}
+
+.readout strong {
+  font-size: var(--font-size-400);
+  font-variant-numeric: tabular-nums;
+}
+
+.actions {
+  @include lp.actions;
+}
+
+.fields {
+  @include lp.fields;
+}
+
+.select {
+  @include lp.label;
+
+  select {
+    @include lp.form-control;
+  }
+}
+
+.check {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-block-size: 2.75rem;
+  font-size: var(--font-size-200);
+
+  input {
+    inline-size: 1.25rem;
+    block-size: 1.25rem;
+    accent-color: var(--color-accent-default);
+  }
+}
+
+.example,
+.hint {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-200);
+}
+
+.example {
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--color-warning-subtle);
+  color: var(--color-text-default);
+}
+
+.explain {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin: 0;
+
+  dt {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-weight: var(--font-weight-semibold);
+    font-size: var(--font-size-200);
+  }
+
+  dd {
+    margin: var(--space-1) 0 0;
+    color: var(--color-text-muted);
+    font-size: var(--font-size-200);
+  }
+}
+
+.sym {
+  display: inline-grid;
+  place-items: center;
+  min-inline-size: 1.6rem;
+  block-size: 1.6rem;
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-surface);
+  font-family: var(--font-family-mono);
+
+  &.base {
+    color: var(--color-info-default);
+  }
+
+  &.top {
+    color: var(--color-accent-default);
+  }
+}
+
+code {
+  display: block;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-surface);
+  color: var(--color-text-default);
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-100);
+  text-align: start;
+  overflow-wrap: anywhere;
+}
+
+.results {
+  @include lp.results;
+}

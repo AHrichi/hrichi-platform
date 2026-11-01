@@ -1,0 +1,269 @@
+<section class="screen" aria-labelledby="lp-camera-title">
+  <header class="head">
+    <div>
+      <h2 id="lp-camera-title">{{ t().camera.title }}</h2>
+      <p>{{ t().camera.lead }}</p>
+    </div>
+  </header>
+
+  <details class="panel guide" [open]="!editingId()">
+    <summary>{{ t().guide.title }}</summary>
+    <lp-camera-guide [active]="step()" />
+  </details>
+
+  <div class="workbench">
+    <section class="panel" aria-labelledby="lp-camera-sight">
+      <h3 id="lp-camera-sight">{{ t().camera.sight }}</h3>
+
+      <div class="viewfinder">
+        @if (cameraOn()) {
+          <video
+            #video
+            autoplay
+            playsinline
+            muted
+            [attr.aria-label]="t().camera.liveView"
+          ></video>
+        } @else {
+          <svg
+            class="scene"
+            viewBox="0 0 300 400"
+            preserveAspectRatio="xMidYMid slice"
+            aria-hidden="true"
+          >
+            <g [attr.transform]="'translate(0 ' + sceneOffset() + ')'">
+              <rect class="sky" x="0" y="-600" width="300" height="800" />
+              <rect class="earth" x="0" y="200" width="300" height="700" />
+              <path
+                class="far"
+                d="M0 200V172l30-14 26 10 34-22 30 16 40-8 30 18 40-12 30 8 40 6v26z"
+              />
+              <path class="road" d="M110 256L-60 420H360L190 256z" />
+              <path class="pole" d="M150 256V-8h22" />
+              <rect class="lamp" x="166" y="-12" width="22" height="9" rx="3" />
+              <path class="glow" d="M170 -3l-30 259h60z" />
+            </g>
+          </svg>
+          <p class="scene-note">{{ t().camera.simulated }}</p>
+        }
+        <div class="crosshair" aria-hidden="true"></div>
+        <div class="hud">
+          <p class="readout" aria-live="polite">
+            <strong dir="ltr">{{ i18n.num(sight()) }}°</strong>
+            {{ sight() < 0 ? t().camera.below : t().camera.above }}
+          </p>
+          <p class="prompt">
+            @switch (step()) {
+              @case (2) {
+                🎯 {{ t().camera.aimBase }}
+              }
+              @case (3) {
+                🎯 {{ t().camera.aimTop }}
+              }
+              @default {
+                ✓ {{ t().camera.done }}
+              }
+            }
+          </p>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button
+          [ahButton]="step() === 2 ? 'primary' : 'secondary'"
+          type="button"
+          (click)="lockBase()"
+        >
+          {{ t().camera.lockBase }}
+        </button>
+        <button
+          [ahButton]="step() === 3 ? 'primary' : 'secondary'"
+          type="button"
+          (click)="lockTop()"
+        >
+          {{ t().camera.lockTop }}
+        </button>
+        <button ahButton="ghost" type="button" (click)="restart()">
+          {{ t().camera.restart }}
+        </button>
+      </div>
+
+      <div class="actions">
+        <button
+          ahButton="secondary"
+          size="sm"
+          type="button"
+          (click)="toggleCamera()"
+        >
+          📷 {{ cameraOn() ? t().camera.stopCamera : t().camera.startCamera }}
+        </button>
+        @if (sensor() !== 'on') {
+          <button
+            ahButton="secondary"
+            size="sm"
+            type="button"
+            (click)="startSensor()"
+          >
+            📱 {{ t().camera.useSensor }}
+          </button>
+        }
+      </div>
+
+      @if (cameraError(); as error) {
+        <ah-alert variant="warning">{{
+          error === 'denied'
+            ? t().camera.cameraDenied
+            : t().camera.cameraMissing
+        }}</ah-alert>
+      }
+      @if (sensor() === 'denied' || sensor() === 'unsupported') {
+        <ah-alert variant="info">{{
+          sensor() === 'denied'
+            ? t().camera.sensorDenied
+            : t().camera.sensorMissing
+        }}</ah-alert>
+      }
+      @if (sensor() !== 'on') {
+        <lp-number-field
+          [label]="t().camera.manualAngle"
+          unit="°"
+          [min]="-60"
+          [max]="80"
+          [step]="0.5"
+          [(value)]="sight"
+          [hint]="t().camera.manualHint"
+        />
+      }
+    </section>
+
+    <div class="column">
+      <section class="panel" aria-labelledby="lp-camera-readings">
+        <h3 id="lp-camera-readings">{{ t().camera.readings }}</h3>
+        @if (isExample()) {
+          <p class="example">{{ t().camera.example }}</p>
+        }
+        <lp-rangefinder-diagram
+          [(eyeHeight)]="eyeHeight"
+          [(baseAngle)]="baseAngle"
+          [(topAngle)]="topAngle"
+        />
+        <p class="hint">✋ {{ t().camera.dragHint }}</p>
+
+        <div class="fields">
+          <lp-number-field
+            [label]="t().fields.eyeHeight"
+            unit="m"
+            [min]="limits.eye.min"
+            [max]="limits.eye.max"
+            [step]="0.01"
+            [(value)]="eyeHeight"
+          />
+          <lp-number-field
+            [label]="t().fields.baseAngle"
+            unit="°"
+            [min]="limits.base.min"
+            [max]="limits.base.max"
+            [step]="0.1"
+            [(value)]="baseAngle"
+          />
+          <lp-number-field
+            [label]="t().fields.topAngle"
+            unit="°"
+            [min]="limits.top.min"
+            [max]="limits.top.max"
+            [step]="0.1"
+            [(value)]="topAngle"
+          />
+        </div>
+
+        <dl class="explain">
+          <div>
+            <dt><span class="sym">h</span> {{ t().fields.eyeHeight }}</dt>
+            <dd>{{ t().camera.explainEye }}</dd>
+          </div>
+          <div>
+            <dt><span class="sym base">α</span> {{ t().fields.baseAngle }}</dt>
+            <dd>{{ t().camera.explainBase }}</dd>
+          </div>
+          <div>
+            <dt><span class="sym top">β</span> {{ t().fields.topAngle }}</dt>
+            <dd>{{ t().camera.explainTop }}</dd>
+          </div>
+          <div>
+            <dt><span class="sym">D</span> {{ t().results.distance }}</dt>
+            <dd>
+              <code dir="ltr"
+                >D = h / tan α = {{ i18n.num(eyeHeight(), 2) }} / tan
+                {{ i18n.num(baseAngle()) }}° =
+                {{ i18n.num(measured().distanceMeters) }} m</code
+              >
+            </dd>
+          </div>
+          <div>
+            <dt><span class="sym">H</span> {{ t().results.poleHeight }}</dt>
+            <dd>
+              <code dir="ltr"
+                >H = D × tan β + h = {{ i18n.num(measured().distanceMeters) }} ×
+                tan {{ i18n.num(topAngle()) }}° +
+                {{ i18n.num(eyeHeight(), 2) }} =
+                {{ i18n.num(measured().heightMeters) }} m</code
+              >
+            </dd>
+          </div>
+        </dl>
+
+        <div class="results">
+          <ah-metric-card
+            [label]="t().results.distance"
+            [value]="i18n.num(measured().distanceMeters)"
+            unit="m"
+          />
+          <ah-metric-card
+            [label]="t().results.poleHeight"
+            [value]="i18n.num(measured().heightMeters)"
+            unit="m"
+            variant="accent"
+          />
+        </div>
+      </section>
+
+      <section class="panel" aria-labelledby="lp-camera-save">
+        <h3 id="lp-camera-save">{{ t().save.title }}</h3>
+        @if (store.activeProject(); as project) {
+          <div class="fields">
+            <label class="select">
+              <span>{{ t().camera.pole }}</span>
+              <select (change)="poleId.set($any($event.target).value)">
+                <option value="" [selected]="poleId() === ''">
+                  {{ t().camera.noPole }}
+                </option>
+                @for (pole of project.poles; track pole.id) {
+                  <option [value]="pole.id" [selected]="pole.id === poleId()">
+                    {{ pole.code }} ·
+                    {{ i18n.word(i18n.num(pole.heightMeters) + ' m') }}
+                  </option>
+                }
+              </select>
+            </label>
+            @if (poleId()) {
+              <label class="check">
+                <input
+                  type="checkbox"
+                  [checked]="applyToPole()"
+                  (change)="applyToPole.set($any($event.target).checked)"
+                />
+                {{ t().camera.applyHeight }}
+              </label>
+            }
+          </div>
+        }
+        <lp-save-bar
+          [suggestedLabel]="suggestedLabel()"
+          [editingLabel]="editingLabel()"
+          (save)="save($event)"
+          (stopEditing)="stopEditing()"
+        />
+      </section>
+    </div>
+  </div>
+</section>

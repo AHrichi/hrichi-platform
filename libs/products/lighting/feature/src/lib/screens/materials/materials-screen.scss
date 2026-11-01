@@ -1,0 +1,125 @@
+@use '../../styles/luxpath' as lp;
+
+.screen {
+  @include lp.screen;
+}
+
+.head {
+  @include lp.screen-head;
+}
+
+.filters {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.search input {
+  @include lp.form-control;
+  max-inline-size: 28rem;
+}
+
+.chips {
+  @include lp.chip-row;
+}
+
+.note {
+  margin: 0;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--color-info-subtle);
+  font-size: var(--font-size-200);
+}
+
+.grid {
+  display: grid;
+  gap: var(--space-4);
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr));
+}
+
+.panel {
+  @include lp.panel;
+  gap: var(--space-2);
+
+  h3 {
+    @include lp.panel-title;
+  }
+
+  p {
+    margin: 0;
+    font-size: var(--font-size-200);
+  }
+}
+
+.tag {
+  align-self: start;
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-pill);
+  background: var(--color-bg-surface);
+  font-size: var(--font-size-100);
+}
+
+.maker {
+  color: var(--color-text-muted);
+}
+
+.price {
+  margin-block-start: auto !important;
+}
+
+.title-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+table {
+  inline-size: 100%;
+  min-inline-size: 32rem;
+  border-collapse: collapse;
+  font-size: var(--font-size-200);
+
+  th,
+  td {
+    padding: var(--space-2) var(--space-3);
+    border-block-end: 1px solid var(--color-border-default);
+    text-align: start;
+    vertical-align: top;
+  }
+
+  thead th {
+    color: var(--color-text-muted);
+    font-weight: var(--font-weight-medium);
+  }
+
+  tbody th {
+    font-weight: var(--font-weight-medium);
+
+    small {
+      display: block;
+      color: var(--color-text-muted);
+      font-weight: var(--font-weight-regular);
+    }
+  }
+
+  .num {
+    text-align: end;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+.muted {
+  margin: 0;
+  color: var(--color-text-muted);
+
+  &.small {
+    font-size: var(--font-size-100);
+  }
+}

@@ -1,0 +1,56 @@
+@use '../../styles/luxpath' as lp;
+
+@include lp.diagram;
+
+.person {
+  circle {
+    fill: var(--color-text-default);
+  }
+
+  path {
+    fill: none;
+    stroke: var(--color-text-default);
+    stroke-width: 2;
+    stroke-linecap: round;
+  }
+}
+
+.sight {
+  stroke-width: 2.5;
+  stroke-dasharray: 7 4;
+
+  &.base {
+    stroke: var(--color-info-default);
+  }
+
+  &.top {
+    stroke: var(--color-accent-default);
+  }
+}
+
+.arc-base,
+.arc-top {
+  fill: none;
+  stroke-width: 1.5;
+}
+
+.arc-base {
+  stroke: var(--color-info-default);
+}
+
+.arc-top {
+  stroke: var(--color-accent-default);
+}
+
+.angle {
+  font-size: 14px;
+  font-weight: 700;
+
+  &.base {
+    fill: var(--color-info-default);
+  }
+
+  &.top {
+    fill: var(--color-accent-default);
+  }
+}

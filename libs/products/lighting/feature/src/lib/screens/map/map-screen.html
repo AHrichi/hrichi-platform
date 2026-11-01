@@ -1,0 +1,79 @@
+<section class="lp-map" aria-labelledby="lp-map-title">
+  <header class="lp-map__head">
+    <div>
+      <h2 id="lp-map-title">{{ t().map.title }}</h2>
+      <p>{{ t().map.lead }}</p>
+    </div>
+    <div class="lp-map__actions">
+      <button ahButton="secondary" size="sm" type="button" (click)="locate()">
+        📍 {{ t().map.locate }}
+      </button>
+      <button
+        ahButton="secondary"
+        size="sm"
+        type="button"
+        (click)="centerOnProject()"
+      >
+        🎯 {{ t().map.center }}
+      </button>
+    </div>
+  </header>
+
+  <ah-segmented-control
+    [options]="filters()"
+    [value]="store.poleFilter()"
+    (valueChange)="setFilter($event)"
+    [label]="t().poles.filterLabel"
+  />
+
+  @if (notice(); as message) {
+    <p class="lp-map__notice" role="status">{{ message }}</p>
+  }
+
+  <div class="lp-map__layout">
+    <div
+      class="lp-map__canvas"
+      #map
+      [attr.aria-label]="t().map.title"
+      role="region"
+    ></div>
+
+    <aside class="lp-map__list" [attr.aria-label]="t().poles.title">
+      <p class="lp-map__total">
+        {{ t().map.total }}:
+        <strong
+          ><bdi>{{ i18n.num(totalLength(), 0) }} m</bdi></strong
+        >
+      </p>
+      <ol role="list">
+        @for (run of runs(); track run.pole.id) {
+          <li>
+            <button
+              type="button"
+              [class.is-selected]="run.pole.id === store.selectedPoleId()"
+              (click)="focus(run.pole)"
+            >
+              <span
+                class="lp-map__code"
+                [class.is-solar]="run.pole.type.startsWith('solar')"
+                >{{ run.pole.code }}</span
+              >
+              <span
+                ><bdi>{{ i18n.num(run.pole.heightMeters) }} m</bdi> ·
+                <bdi>{{ run.pole.luminaireWattage }} W</bdi></span
+              >
+            </button>
+            @if (run.toNext !== null) {
+              <span class="lp-map__gap"
+                >↓ <bdi>{{ i18n.num(run.toNext, 0) }} m</bdi></span
+              >
+            }
+          </li>
+        } @empty {
+          <li class="lp-map__empty">{{ t().poles.empty }}</li>
+        }
+      </ol>
+      <p class="lp-map__hint">✋ {{ t().map.hint }}</p>
+    </aside>
+  </div>
+</section>

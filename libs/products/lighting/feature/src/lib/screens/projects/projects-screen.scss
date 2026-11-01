@@ -1,0 +1,103 @@
+@use '../../styles/luxpath' as lp;
+
+.screen {
+  @include lp.screen;
+}
+
+.head {
+  @include lp.screen-head;
+}
+
+.panel {
+  @include lp.panel;
+}
+
+.title-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+
+  h3 {
+    margin: 0;
+    font-size: var(--font-size-400);
+    line-height: var(--font-line-height-snug);
+  }
+}
+
+.facts {
+  display: grid;
+  gap: var(--space-3);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+  margin: 0;
+
+  dt {
+    color: var(--color-text-muted);
+    font-size: var(--font-size-100);
+  }
+
+  dd {
+    margin: 0;
+    font-size: var(--font-size-200);
+    font-weight: var(--font-weight-medium);
+  }
+}
+
+.stats {
+  @include lp.results;
+}
+
+.select {
+  @include lp.label;
+
+  select,
+  input {
+    @include lp.form-control;
+  }
+}
+
+.picker,
+.stage {
+  max-inline-size: 26rem;
+}
+
+.form {
+  display: grid;
+  gap: var(--space-3);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+
+  .wide {
+    grid-column: 1 / -1;
+  }
+}
+
+.error {
+  grid-column: 1 / -1;
+  margin: 0;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--color-danger-subtle);
+}
+
+.actions {
+  @include lp.actions;
+
+  &.center {
+    justify-content: center;
+  }
+}
+
+.danger {
+  background: var(--color-danger-default);
+  color: var(--color-bg-canvas);
+}
+
+.foot {
+  display: flex;
+  justify-content: center;
+}
+
+.muted {
+  color: var(--color-text-muted);
+}

@@ -1,0 +1,181 @@
+<figure>
+  <svg
+    viewBox="0 0 220 260"
+    role="img"
+    [attr.aria-label]="t().diagrams.slumpAlt"
+  >
+    <rect class="backdrop" width="220" height="260" rx="12" />
+    <line
+      class="base"
+      x1="8"
+      [attr.y1]="cone.base"
+      x2="212"
+      [attr.y2]="cone.base"
+    />
+    <!-- The cone before it was lifted -->
+    <path
+      class="cone"
+      [attr.d]="
+        'M' +
+        (cone.x - 60) +
+        ' ' +
+        cone.base +
+        'L' +
+        (cone.x - 30) +
+        ' ' +
+        coneTop +
+        'H' +
+        (cone.x + 30) +
+        'L' +
+        (cone.x + 60) +
+        ' ' +
+        cone.base
+      "
+    />
+    <path class="heap" [class]="slumpTone()" [attr.d]="heap().path" />
+    <!-- The slump, measured from the cone's top -->
+    <path class="dim" [attr.d]="'M' + (cone.x + 34) + ' ' + coneTop + 'H180'" />
+    <path class="measure" [attr.d]="'M172 ' + coneTop + 'V' + heap().top" />
+    <text class="value" x="178" [attr.y]="(coneTop + heap().top) / 2 + 30">
+      {{ i18n.num(slump()) }}
+    </text>
+    <text class="caption" x="178" [attr.y]="(coneTop + heap().top) / 2 + 46">
+      cm
+    </text>
+    <text
+      class="value"
+      [class]="slumpTone()"
+      x="110"
+      y="24"
+      text-anchor="middle"
+    >
+      {{ result().slumpClassification }}
+    </text>
+
+    <g
+      lpSvgDrag
+      (lpSvgDrag)="dragSlump($event)"
+      (keydown)="keySlump($event)"
+      role="slider"
+      tabindex="0"
+      [attr.aria-label]="t().fields.slump"
+      [attr.aria-valuemin]="slumpLimits.min"
+      [attr.aria-valuemax]="slumpLimits.max"
+      [attr.aria-valuenow]="slump()"
+      [attr.aria-valuetext]="i18n.num(slump()) + ' cm'"
+      [attr.transform]="'translate(' + cone.x + ' ' + heap().top + ')'"
+    >
+      <circle class="hit" r="22" />
+      <circle class="dot" r="10" />
+      <path class="arrows" d="M-4 -2l4-4 4 4M-4 2l4 4 4-4" />
+    </g>
+  </svg>
+  <figcaption>{{ t().diagrams.slumpCaption }}</figcaption>
+</figure>
+
+<figure>
+  <svg
+    viewBox="0 0 300 260"
+    role="img"
+    [attr.aria-label]="t().diagrams.strengthAlt"
+  >
+    <rect class="backdrop" width="300" height="260" rx="12" />
+    <path
+      class="axis"
+      [attr.d]="
+        'M' +
+        chart.left +
+        ' ' +
+        chart.top +
+        'V' +
+        chart.bottom +
+        'H' +
+        chart.right
+      "
+    />
+    <text
+      class="caption"
+      [attr.x]="chart.left - 6"
+      [attr.y]="chart.top + 4"
+      text-anchor="end"
+    >
+      100%
+    </text>
+    <text
+      class="caption"
+      [attr.x]="chart.left - 6"
+      [attr.y]="liftLine + 4"
+      text-anchor="end"
+    >
+      70%
+    </text>
+    @for (day of [7, 14, 21, 28]; track day) {
+      <text
+        class="caption"
+        [attr.x]="chart.left + day * ((chart.right - chart.left) / 28)"
+        [attr.y]="chart.bottom + 18"
+        text-anchor="middle"
+      >
+        {{ day }}
+      </text>
+    }
+    <text
+      class="caption"
+      [attr.x]="chart.right"
+      [attr.y]="chart.bottom + 34"
+      text-anchor="end"
+    >
+      {{ t().diagrams.days }}
+    </text>
+    <line
+      class="lift"
+      [attr.x1]="chart.left"
+      [attr.y1]="liftLine"
+      [attr.x2]="chart.right"
+      [attr.y2]="liftLine"
+    />
+    <text
+      class="caption lift-label"
+      [attr.x]="chart.right"
+      [attr.y]="liftLine - 6"
+      text-anchor="end"
+    >
+      {{ t().diagrams.liftPoles }}
+    </text>
+    <polyline class="curve" [attr.points]="curve" />
+    <line
+      class="dim"
+      [attr.x1]="marker().x"
+      [attr.y1]="chart.bottom"
+      [attr.x2]="marker().x"
+      [attr.y2]="marker().y"
+    />
+    <text
+      class="value"
+      [attr.x]="marker().x < 200 ? marker().x + 14 : marker().x - 14"
+      [attr.y]="marker().y + 22"
+      [attr.text-anchor]="marker().x < 200 ? 'start' : 'end'"
+    >
+      {{ result().currentStrengthPctOf28Days }} %
+    </text>
+
+    <g
+      lpSvgDrag
+      (lpSvgDrag)="dragDays($event)"
+      (keydown)="keyDays($event)"
+      role="slider"
+      tabindex="0"
+      [attr.aria-label]="t().fields.curingDays"
+      [attr.aria-valuemin]="curingLimits.min"
+      [attr.aria-valuemax]="curingLimits.max"
+      [attr.aria-valuenow]="days()"
+      [attr.aria-valuetext]="days() + ' ' + t().diagrams.days"
+      [attr.transform]="'translate(' + marker().x + ' ' + marker().y + ')'"
+    >
+      <circle class="hit" r="22" />
+      <circle class="dot" r="10" />
+      <path class="arrows" d="M-2 -4l-4 4 4 4M2 -4l4 4-4 4" />
+    </g>
+  </svg>
+  <figcaption>{{ t().diagrams.strengthCaption }}</figcaption>
+</figure>

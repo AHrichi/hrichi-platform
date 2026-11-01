@@ -1,0 +1,123 @@
+@use '../../styles/luxpath' as lp;
+
+.screen {
+  @include lp.screen;
+}
+
+.head {
+  @include lp.screen-head;
+}
+
+.filters {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.search input {
+  @include lp.form-control;
+  max-inline-size: 28rem;
+}
+
+.chips {
+  @include lp.chip-row;
+}
+
+.note {
+  margin: 0;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--color-info-subtle);
+  font-size: var(--font-size-200);
+}
+
+.list {
+  display: grid;
+  gap: var(--space-4);
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 22rem), 1fr));
+}
+
+.panel {
+  @include lp.panel;
+  gap: var(--space-3);
+
+  h3 {
+    @include lp.panel-title;
+    text-align: start;
+  }
+
+  p {
+    margin: 0;
+    color: var(--color-text-muted);
+    font-size: var(--font-size-200);
+    text-align: start;
+  }
+}
+
+.card-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.code {
+  font-family: var(--font-family-mono);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-accent-default);
+}
+
+.tag {
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-pill);
+  background: var(--color-bg-surface);
+  font-size: var(--font-size-100);
+}
+
+details {
+  font-size: var(--font-size-200);
+
+  summary {
+    min-block-size: 2.75rem;
+    display: flex;
+    align-items: center;
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+  }
+
+  ul {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    margin: 0;
+    padding-inline-start: var(--space-5);
+    text-align: start;
+  }
+}
+
+.checklist {
+  padding-inline-start: 0 !important;
+  list-style: none;
+
+  label {
+    display: flex;
+    gap: var(--space-2);
+    align-items: start;
+  }
+
+  input {
+    margin-block-start: 3px;
+    accent-color: var(--color-success-default);
+  }
+}
+
+.tool {
+  color: var(--color-accent-default);
+  font-size: var(--font-size-200);
+  font-weight: var(--font-weight-medium);
+}
+
+.muted {
+  color: var(--color-text-muted);
+}

@@ -1,0 +1,219 @@
+<section class="screen" aria-labelledby="lp-concrete-title">
+  <header class="head">
+    <div>
+      <h2 id="lp-concrete-title">{{ t().concrete.title }}</h2>
+      <p>{{ t().concrete.lead }}</p>
+    </div>
+  </header>
+
+  <section class="panel">
+    <lp-concrete-diagram
+      [(slump)]="slump"
+      [(days)]="days"
+      [result]="result()"
+    />
+    <p class="hint">✋ {{ t().calc.dragHint }}</p>
+  </section>
+
+  <div class="workbench">
+    <section class="panel" aria-labelledby="lp-concrete-inputs">
+      <h3 id="lp-concrete-inputs">{{ t().calc.inputs }}</h3>
+      <div class="fields">
+        <lp-number-field
+          [label]="t().fields.cement"
+          unit="kg/m³"
+          [min]="200"
+          [max]="500"
+          [step]="5"
+          [(value)]="cement"
+        />
+        <lp-number-field
+          [label]="t().fields.water"
+          unit="L/m³"
+          [min]="100"
+          [max]="260"
+          [step]="1"
+          [(value)]="water"
+        />
+        <lp-number-field
+          [label]="t().fields.slump"
+          unit="cm"
+          [min]="0"
+          [max]="25"
+          [step]="0.5"
+          [(value)]="slump"
+        />
+        <lp-number-field
+          [label]="t().fields.curingDays"
+          [unit]="t().diagrams.days"
+          [min]="1"
+          [max]="28"
+          [(value)]="days"
+        />
+        <lp-number-field
+          [label]="t().fields.volume"
+          unit="m³"
+          [min]="0.1"
+          [max]="50"
+          [step]="0.1"
+          [(value)]="volume"
+        />
+        <label class="select">
+          <span>{{ t().fields.exposure }}</span>
+          <select (change)="exposure.set($any($event.target).value)">
+            @for (e of exposures; track e) {
+              <option [value]="e" [selected]="e === exposure()">
+                {{ t().exposures[e] }}
+              </option>
+            }
+          </select>
+        </label>
+      </div>
+    </section>
+
+    <section
+      class="panel"
+      aria-labelledby="lp-concrete-results"
+      aria-live="polite"
+    >
+      <h3 id="lp-concrete-results">{{ t().calc.results }}</h3>
+      <div class="verdict" [attr.data-status]="result().overallCompliance">
+        {{ t().compliance[result().overallCompliance] }}
+      </div>
+      <div class="results">
+        <ah-metric-card
+          [label]="t().results.waterCement"
+          [value]="i18n.num(result().providedWaterCementRatio, 2)"
+          [hint]="'≤ ' + i18n.num(result().maxWaterCementRatio, 2)"
+          [variant]="result().isWaterRatioValid ? 'success' : 'danger'"
+        />
+        <ah-metric-card
+          [label]="t().results.cement"
+          [value]="result().providedCementKgM3"
+          unit="kg/m³"
+          [hint]="'≥ ' + result().requiredCementMinKgM3"
+          [variant]="result().isCementDosageValid ? 'success' : 'danger'"
+        />
+        <ah-metric-card
+          [label]="t().results.slumpClass"
+          [value]="result().slumpClassification"
+          [hint]="t().slumpClasses[result().slumpClassification]"
+          [variant]="result().isSlumpAcceptable ? 'success' : 'warning'"
+        />
+        <ah-metric-card
+          [label]="t().results.strength"
+          [value]="result().currentStrengthPctOf28Days"
+          unit="%"
+          [hint]="
+            result().isErectionPermitted
+              ? t().results.liftOk
+              : t().results.liftWait
+          "
+          [variant]="result().isErectionPermitted ? 'success' : 'warning'"
+        />
+      </div>
+      <lp-note-list [notes]="result().notes" />
+    </section>
+  </div>
+
+  <div class="workbench">
+    <section class="panel" aria-labelledby="lp-concrete-batch">
+      <h3 id="lp-concrete-batch">{{ t().concrete.batch }}</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col"></th>
+              <th scope="col">{{ t().concrete.perM3 }}</th>
+              <th scope="col">
+                {{ t().concrete.total(i18n.num(volume(), 2)) }}
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">{{ t().concrete.cement }}</th>
+              <td>{{ result().batchRecipes.perCubicMeter.cementKg }} kg</td>
+              <td>
+                {{
+                  t().concrete.bags(
+                    result().batchRecipes.totalJobBatch.cementBags35Kg
+                  )
+                }}
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">{{ t().concrete.sand }}</th>
+              <td>{{ result().batchRecipes.perCubicMeter.sandKg }} kg</td>
+              <td>
+                {{
+                  i18n.num(result().batchRecipes.totalJobBatch.sandTonnes, 2)
+                }}
+                t
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">{{ t().concrete.gravel }}</th>
+              <td>{{ result().batchRecipes.perCubicMeter.gravelKg }} kg</td>
+              <td>
+                {{
+                  i18n.num(result().batchRecipes.totalJobBatch.gravelTonnes, 2)
+                }}
+                t
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">{{ t().concrete.water }}</th>
+              <td>{{ result().batchRecipes.perCubicMeter.waterLiters }} L</td>
+              <td>
+                {{
+                  i18n.num(result().batchRecipes.totalJobBatch.waterLiters, 0)
+                }}
+                L
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <div class="column">
+      <section class="panel" aria-labelledby="lp-concrete-plan">
+        <h3 id="lp-concrete-plan">{{ t().concrete.plan }}</h3>
+        <label class="select">
+          <span>{{ t().concrete.pouredOn }}</span>
+          <input
+            type="date"
+            [value]="pouredOn()"
+            (change)="pouredOn.set($any($event.target).value)"
+          />
+        </label>
+        <div class="actions">
+          <button
+            ahButton="secondary"
+            type="button"
+            [disabled]="!store.activeProject()"
+            (click)="planCuring()"
+          >
+            📅 {{ t().concrete.addMilestones }}
+          </button>
+        </div>
+        <p class="status" role="status">
+          @if (planned()) {
+            ✓ {{ t().concrete.planned }}
+          }
+        </p>
+      </section>
+
+      <section class="panel" aria-labelledby="lp-concrete-save">
+        <h3 id="lp-concrete-save">{{ t().save.title }}</h3>
+        <lp-save-bar
+          [suggestedLabel]="suggestedLabel()"
+          [editingLabel]="editingLabel()"
+          (save)="save($event)"
+          (stopEditing)="stopEditing()"
+        />
+      </section>
+    </div>
+  </div>
+</section>

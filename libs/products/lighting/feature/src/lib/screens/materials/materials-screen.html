@@ -1,0 +1,113 @@
+<section class="screen" aria-labelledby="lp-materials-title">
+  <header class="head">
+    <div>
+      <h2 id="lp-materials-title">{{ t().materials.title }}</h2>
+      <p>{{ t().materials.lead }}</p>
+    </div>
+    <ah-segmented-control
+      [options]="views()"
+      [(value)]="view"
+      [label]="t().materials.title"
+    />
+  </header>
+
+  @if (view() === 'catalog') {
+    <div class="filters">
+      <label class="search">
+        <span class="ah-visually-hidden">{{ t().common.search }}</span>
+        <input
+          type="search"
+          [placeholder]="t().materials.search"
+          [value]="query()"
+          (input)="query.set(value($event))"
+        />
+      </label>
+      <div class="chips">
+        <ah-segmented-control
+          [options]="categories()"
+          [(value)]="category"
+          [label]="t().materials.filterLabel"
+        />
+      </div>
+    </div>
+    @if (i18n.lang() !== 'fr') {
+      <p class="note">🌐 {{ t().materials.frenchNote }}</p>
+    }
+    <div class="grid">
+      @for (m of items(); track m.id) {
+        <article class="panel" [attr.aria-labelledby]="'lp-mat-' + m.id">
+          <span class="tag">{{ t().materials.categories[m.category] }}</span>
+          <h3 [id]="'lp-mat-' + m.id" lang="fr">{{ m.name }}</h3>
+          <p class="maker">{{ m.manufacturer }}</p>
+          <p lang="fr">{{ m.specsSummary }}</p>
+          <p class="price">
+            {{ t().materials.from }}
+            <strong>{{ i18n.money(m.estimatedUnitCostEur) }}</strong>
+          </p>
+        </article>
+      } @empty {
+        <p class="muted">{{ t().materials.none }}</p>
+      }
+    </div>
+  } @else {
+    <section class="panel" aria-labelledby="lp-bom-title">
+      <div class="title-row">
+        <h3 id="lp-bom-title">
+          {{ t().materials.bomTitle(store.activeProject()?.title ?? '') }}
+        </h3>
+        <button
+          ahButton="secondary"
+          size="sm"
+          type="button"
+          [disabled]="lines().length === 0"
+          (click)="exportCsv()"
+        >
+          ⬇ {{ t().materials.export }}
+        </button>
+      </div>
+      @if (lines().length === 0) {
+        <p class="muted">{{ t().poles.empty }}</p>
+      } @else {
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">{{ t().materials.item }}</th>
+                <th scope="col" class="num">{{ t().materials.quantity }}</th>
+                <th scope="col" class="num">{{ t().materials.unitPrice }}</th>
+                <th scope="col" class="num">{{ t().materials.lineTotal }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (line of lines(); track line.id) {
+                <tr>
+                  <th scope="row">
+                    {{ t().materials.bom[line.id].name }}
+                    <small>{{ t().materials.bom[line.id].spec }}</small>
+                  </th>
+                  <td class="num">
+                    {{ i18n.num(line.quantity, 0) }}
+                    {{ line.unit === 'm' ? 'm' : '' }}
+                  </td>
+                  <td class="num">{{ i18n.money(line.unitPrice) }}</td>
+                  <td class="num">
+                    {{ i18n.money(line.quantity * line.unitPrice) }}
+                  </td>
+                </tr>
+              }
+            </tbody>
+            <tfoot>
+              <tr>
+                <th scope="row" colspan="3">{{ t().materials.total }}</th>
+                <td class="num">
+                  <strong>{{ i18n.money(total()) }}</strong>
+                </td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+        <p class="muted small">{{ t().materials.indicative }}</p>
+      }
+    </section>
+  }
+</section>

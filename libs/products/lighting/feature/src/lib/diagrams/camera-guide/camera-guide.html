@@ -1,0 +1,105 @@
+<ol class="guide" role="list">
+  <!-- 1. Stand, phone upright at eye height -->
+  <li [class.is-active]="active() === 1">
+    <svg viewBox="0 0 240 170" aria-hidden="true">
+      <rect class="backdrop" width="240" height="170" rx="10" />
+      <rect class="ground" y="150" width="240" height="20" />
+      <g class="person">
+        <circle cx="50" cy="58" r="9" />
+        <path d="M50 67v46M50 113l-10 37M50 113l10 37M50 80l16-14" />
+      </g>
+      <rect class="phone" x="64" y="48" width="9" height="17" rx="2" />
+      <path class="measure" d="M24 150V60" />
+      <path class="measure" d="M18 60h12M18 150h12" />
+      <text class="value" x="14" y="110" text-anchor="middle">h</text>
+      <path class="structure" d="M200 150V34h12" />
+      <rect class="lamp" x="207" y="31" width="14" height="6" rx="2" />
+      <text class="caption" x="132" y="108" text-anchor="middle">
+        ≈ 10–20 m
+      </text>
+      <path class="dim" d="M82 118H188" />
+    </svg>
+    <div class="text">
+      <strong><span class="num">1</span>{{ t().guide.step1Title }}</strong>
+      <p>{{ t().guide.step1Text }}</p>
+    </div>
+  </li>
+
+  <!-- 2. Sight the foot of the pole -->
+  <li [class.is-active]="active() === 2">
+    <svg viewBox="0 0 240 170" aria-hidden="true">
+      <rect class="backdrop" width="240" height="170" rx="10" />
+      <rect class="ground" y="150" width="240" height="20" />
+      <g class="person">
+        <circle cx="50" cy="58" r="9" />
+        <path d="M50 67v46M50 113l-10 37M50 113l10 37M50 80l16-14" />
+      </g>
+      <rect
+        class="phone"
+        x="64"
+        y="50"
+        width="9"
+        height="17"
+        rx="2"
+        transform="rotate(14 68 58)"
+      />
+      <path class="dim" d="M70 58H200" />
+      <path class="sight" d="M70 58L200 150" />
+      <path class="arc" d="M120 58a50 50 0 0 1 -9 27" />
+      <text class="value" x="127" y="80">α</text>
+      <path class="structure" d="M200 150V34h12" />
+      <rect class="lamp" x="207" y="31" width="14" height="6" rx="2" />
+      <g class="target" transform="translate(200 150)">
+        <circle r="8" />
+        <path d="M-13 0h7M6 0h7M0 -13v7" />
+      </g>
+    </svg>
+    <div class="text">
+      <strong><span class="num">2</span>{{ t().guide.step2Title }}</strong>
+      <p>{{ t().guide.step2Text }}</p>
+    </div>
+  </li>
+
+  <!-- 3. Sight the top -->
+  <li [class.is-active]="active() === 3">
+    <svg viewBox="0 0 240 170" aria-hidden="true">
+      <rect class="backdrop" width="240" height="170" rx="10" />
+      <rect class="ground" y="150" width="240" height="20" />
+      <g class="person">
+        <circle cx="50" cy="58" r="9" />
+        <path d="M50 67v46M50 113l-10 37M50 113l10 37M50 80l16-14" />
+      </g>
+      <rect
+        class="phone"
+        x="64"
+        y="47"
+        width="9"
+        height="17"
+        rx="2"
+        transform="rotate(-20 68 56)"
+      />
+      <path class="dim" d="M70 58H200" />
+      <path class="sight" d="M70 58L203 34" />
+      <path class="arc" d="M120 58a50 50 0 0 0 -2 -9" />
+      <text class="value" x="126" y="52">β</text>
+      <path class="structure" d="M200 150V34h12" />
+      <rect class="lamp" x="207" y="31" width="14" height="6" rx="2" />
+      <g class="target" transform="translate(203 34)">
+        <circle r="8" />
+        <path d="M-13 0h7M6 0h7M0 6v7" />
+      </g>
+      <path class="measure" d="M226 150V34" />
+      <text class="value" x="232" y="96">H</text>
+    </svg>
+    <div class="text">
+      <strong><span class="num">3</span>{{ t().guide.step3Title }}</strong>
+      <p>{{ t().guide.step3Text }}</p>
+    </div>
+  </li>
+</ol>
+
+<ul class="tips" role="list">
+  @for (tip of t().guide.tips; track $index) {
+    <li>💡 {{ tip }}</li>
+  }
+</ul>

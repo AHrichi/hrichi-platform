@@ -1,0 +1,9 @@
+{
+  "name": "product-lighting-feature",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/products/lighting/feature/src",
+  "prefix": "ah",
+  "projectType": "library",
+  "tags": ["scope:product-lighting", "type:feature", "runtime:browser"],
+  "targets": {}
+}

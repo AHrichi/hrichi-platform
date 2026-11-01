@@ -1,0 +1,73 @@
+<section class="screen" aria-labelledby="lp-standards-title">
+  <header class="head">
+    <div>
+      <h2 id="lp-standards-title">{{ t().standards.title }}</h2>
+      <p>{{ t().standards.lead }}</p>
+    </div>
+  </header>
+
+  <div class="filters">
+    <label class="search">
+      <span class="ah-visually-hidden">{{ t().common.search }}</span>
+      <input
+        type="search"
+        [placeholder]="t().standards.search"
+        [value]="query()"
+        (input)="query.set(value($event))"
+      />
+    </label>
+    <div class="chips">
+      <ah-segmented-control
+        [options]="categories()"
+        [(value)]="category"
+        [label]="t().standards.filterLabel"
+      />
+    </div>
+  </div>
+
+  @if (i18n.lang() !== 'en') {
+    <p class="note">🌐 {{ t().standards.englishNote }}</p>
+  }
+
+  <div class="list">
+    @for (s of standards(); track s.id) {
+      <article class="panel" [attr.aria-labelledby]="'lp-std-' + s.id">
+        <header class="card-head">
+          <span class="code" dir="ltr">{{ s.code }}</span>
+          <span class="tag">{{ t().standards.categories[s.category] }}</span>
+        </header>
+        <h3 [id]="'lp-std-' + s.id" lang="en" dir="ltr">{{ s.title }}</h3>
+        <p lang="en" dir="ltr">{{ s.summary }}</p>
+        <details>
+          <summary>
+            {{ t().standards.requirements }} ({{ s.coreRequirements.length }})
+          </summary>
+          <ul lang="en" dir="ltr">
+            @for (r of s.coreRequirements; track $index) {
+              <li>{{ r }}</li>
+            }
+          </ul>
+        </details>
+        <details>
+          <summary>
+            {{ t().standards.checklist }} ({{ s.checklistItems.length }})
+          </summary>
+          <ul class="checklist" lang="en" dir="ltr">
+            @for (c of s.checklistItems; track $index) {
+              <li>
+                <label><input type="checkbox" /> {{ c }}</label>
+              </li>
+            }
+          </ul>
+        </details>
+        @if (toolFor[s.id]; as tool) {
+          <a class="tool" [routerLink]="'../' + tool"
+            >→ {{ t().standards.openTool }}: {{ t().nav[tool] }}</a
+          >
+        }
+      </article>
+    } @empty {
+      <p class="muted">{{ t().standards.none }}</p>
+    }
+  </div>
+</section>

@@ -1,0 +1,232 @@
+<section class="panel" aria-labelledby="lp-poles-title">
+  <div class="title-row">
+    <h3 id="lp-poles-title">{{ t().poles.title }}</h3>
+    <button ahButton size="sm" type="button" (click)="add()">
+      + {{ t().poles.add }}
+    </button>
+  </div>
+  <ah-segmented-control
+    [options]="filters()"
+    [value]="store.poleFilter()"
+    (valueChange)="setFilter($event)"
+    [label]="t().poles.filterLabel"
+  />
+
+  @if (store.filteredPoles().length === 0) {
+    <p class="muted">{{ t().poles.empty }}</p>
+  } @else {
+    <ul class="poles" role="list">
+      @for (pole of store.filteredPoles(); track pole.id) {
+        <li>
+          <span class="icon" aria-hidden="true">{{
+            isSolar(pole) ? '☀️' : '🔌'
+          }}</span>
+          <div class="main">
+            <strong>{{ pole.code }}</strong>
+            <span class="meta">
+              {{ t().poleTypes[pole.type] }} ·
+              <bdi>{{ i18n.num(pole.heightMeters) }} m</bdi> ·
+              <bdi>{{ pole.luminaireWattage }} W</bdi>
+              @if (pole.measuredVerticalTilt !== undefined) {
+                · {{ t().poles.tilt }}
+                <bdi>{{ i18n.num(pole.measuredVerticalTilt, 2) }}°</bdi>
+              }
+            </span>
+          </div>
+          <ah-badge [variant]="badge[pole.status]" size="sm">{{
+            t().poleStatuses[pole.status]
+          }}</ah-badge>
+          <div class="row-actions">
+            <button
+              type="button"
+              class="icon-btn"
+              (click)="edit(pole)"
+              [attr.aria-label]="t().common.edit + ' ' + pole.code"
+            >
+              ✏️
+            </button>
+            <button
+              type="button"
+              class="icon-btn"
+              (click)="removing.set(pole)"
+              [attr.aria-label]="t().common.delete + ' ' + pole.code"
+            >
+              🗑
+            </button>
+          </div>
+        </li>
+      }
+    </ul>
+  }
+  <p class="muted small">
+    {{ t().poles.measureHint }}
+    <a routerLink="../camera">{{ t().nav.camera }}</a> ·
+    <a routerLink="../verticality">{{ t().nav.verticality }}</a> ·
+    <a routerLink="../map">{{ t().nav.map }}</a>
+  </p>
+</section>
+
+<ah-modal
+  [closeLabel]="t().common.close"
+  [open]="draft() !== null"
+  (openChange)="closeEditor($event)"
+  [title]="isNew() ? t().poles.addTitle : t().poles.editTitle"
+  size="lg"
+>
+  @if (draft(); as pole) {
+    <form
+      class="form"
+      id="lp-pole-form"
+      (submit)="$event.preventDefault(); saveDraft()"
+    >
+      <label class="field">
+        <span>{{ t().poles.code }} *</span>
+        <input
+          type="text"
+          required
+          [value]="pole.code"
+          (input)="patch({ code: value($event) })"
+        />
+      </label>
+      <label class="field">
+        <span>{{ t().poles.type }}</span>
+        <select (change)="setType($any(value($event)))">
+          @for (type of types; track type) {
+            <option [value]="type" [selected]="type === pole.type">
+              {{ t().poleTypes[type] }}
+            </option>
+          }
+        </select>
+      </label>
+      <label class="field">
+        <span>{{ t().poles.status }}</span>
+        <select (change)="patch({ status: $any(value($event)) })">
+          @for (status of statuses; track status) {
+            <option [value]="status" [selected]="status === pole.status">
+              {{ t().poleStatuses[status] }}
+            </option>
+          }
+        </select>
+      </label>
+      <lp-number-field
+        [label]="t().fields.height"
+        unit="m"
+        [min]="3"
+        [max]="16"
+        [step]="0.1"
+        [value]="pole.heightMeters"
+        (valueChange)="patch({ heightMeters: $event })"
+      />
+      <lp-number-field
+        [label]="t().fields.wattage"
+        unit="W"
+        [min]="10"
+        [max]="250"
+        [step]="5"
+        [value]="pole.luminaireWattage"
+        (valueChange)="patch({ luminaireWattage: $event })"
+      />
+      <lp-number-field
+        [label]="t().fields.lumens"
+        unit="lm"
+        [min]="1000"
+        [max]="30000"
+        [step]="100"
+        [value]="pole.luminaireLumens"
+        (valueChange)="patch({ luminaireLumens: $event })"
+      />
+      <lp-number-field
+        [label]="t().poles.blockWidth"
+        unit="m"
+        [min]="0.4"
+        [max]="2"
+        [step]="0.05"
+        [value]="pole.foundationWidthMeters"
+        (valueChange)="patch({ foundationWidthMeters: $event })"
+      />
+      <lp-number-field
+        [label]="t().fields.depth"
+        unit="m"
+        [min]="0.6"
+        [max]="2.6"
+        [step]="0.05"
+        [value]="pole.foundationDepthMeters"
+        (valueChange)="patch({ foundationDepthMeters: $event })"
+      />
+      @if (isSolar(pole)) {
+        <lp-number-field
+          [label]="t().results.panel"
+          unit="Wp"
+          [min]="50"
+          [max]="500"
+          [step]="10"
+          [value]="pole.solarPanelWatts ?? 150"
+          (valueChange)="patch({ solarPanelWatts: $event })"
+        />
+        <lp-number-field
+          [label]="t().results.battery"
+          unit="Wh"
+          [min]="100"
+          [max]="3000"
+          [step]="10"
+          [value]="pole.solarBatteryWh ?? 600"
+          (valueChange)="patch({ solarBatteryWh: $event })"
+        />
+      }
+      <label class="field">
+        <span>{{ t().poles.lat }}</span>
+        <input
+          type="number"
+          step="0.00001"
+          inputmode="decimal"
+          [value]="pole.gps.lat"
+          (input)="patch({ gps: { lat: +value($event), lng: pole.gps.lng } })"
+        />
+      </label>
+      <label class="field">
+        <span>{{ t().poles.lng }}</span>
+        <input
+          type="number"
+          step="0.00001"
+          inputmode="decimal"
+          [value]="pole.gps.lng"
+          (input)="patch({ gps: { lat: pole.gps.lat, lng: +value($event) } })"
+        />
+      </label>
+      <label class="field wide">
+        <span>{{ t().poles.notes }}</span>
+        <textarea
+          rows="2"
+          [value]="pole.notes ?? ''"
+          (input)="patch({ notes: value($event) })"
+        ></textarea>
+      </label>
+    </form>
+  }
+  <div modal-actions class="actions">
+    <button ahButton="ghost" type="button" (click)="draft.set(null)">
+      {{ t().common.cancel }}
+    </button>
+    <button ahButton type="submit" form="lp-pole-form">
+      {{ isNew() ? t().poles.add : t().common.saveChanges }}
+    </button>
+  </div>
+</ah-modal>
+
+<ah-modal
+  [closeLabel]="t().common.close"
+  [open]="removing() !== null"
+  (openChange)="$event || removing.set(null)"
+  [title]="t().poles.deleteTitle"
+  size="sm"
+>
+  <p>{{ t().poles.deleteText(removing()?.code ?? '') }}</p>
+  <div modal-actions class="actions">
+    <button ahButton="ghost" type="button" (click)="removing.set(null)">
+      {{ t().common.cancel }}
+    </button>
+    <button ahButton type="button" class="danger" (click)="confirmRemove()">
+      {{ t().common.delete }}
+    </button>
+  </div>
+</ah-modal>

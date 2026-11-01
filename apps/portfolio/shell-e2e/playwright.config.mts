@@ -42,6 +42,14 @@ export default defineConfig({
       cwd: workspaceRoot,
     },
     {
+      // LuxPath runs from its production build here too: its spec covers
+      // the embedded app under the real CSP.
+      command: 'pnpm exec nx run product-lighting:serve-static',
+      url: 'http://localhost:4309/remoteEntry.json',
+      reuseExistingServer: true,
+      cwd: workspaceRoot,
+    },
+    {
       command: isCI
         ? 'pnpm exec nx run shell:serve-static'
         : 'pnpm exec nx run shell:serve',

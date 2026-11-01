@@ -1,0 +1,120 @@
+<svg
+  viewBox="0 0 480 330"
+  role="img"
+  [attr.aria-label]="t().diagrams.foundationAlt"
+>
+  <rect class="backdrop" width="480" height="330" rx="12" />
+
+  <!-- Wind on the pole and panel -->
+  @for (y of [48, 78, 108]; track y) {
+    <path class="wind" [attr.d]="'M30 ' + y + 'h150m-10 -6l10 6-10 6'" />
+  }
+  <text class="caption" x="30" y="26">
+    {{ i18n.word(t().diagrams.wind) }}
+    {{ i18n.num(result().windSpeedKmH, 0) }} km/h · q =
+    {{ i18n.num(result().windPressureDanM2, 0) }} daN/m²
+  </text>
+
+  <path class="structure" [attr.d]="'M' + center + ' ' + ground + 'V36h22'" />
+  <rect
+    class="lamp"
+    [attr.x]="center + 16"
+    y="32"
+    width="18"
+    height="8"
+    rx="3"
+  />
+  @if (hasSolarPanel()) {
+    <path class="panel" [attr.d]="'M' + (center - 34) + ' 30l52 -16'" />
+  }
+  <text class="caption" [attr.x]="center + 44" y="70">
+    {{ t().diagrams.notToScale }}
+  </text>
+
+  <!-- Soil and block -->
+  <rect
+    class="soil"
+    x="0"
+    [attr.y]="ground"
+    width="480"
+    [attr.height]="330 - ground"
+  />
+  <line class="grade" x1="0" [attr.y1]="ground" x2="480" [attr.y2]="ground" />
+
+  <rect
+    class="block"
+    [class]="tone()"
+    [attr.x]="center - halfWidth()"
+    [attr.y]="ground"
+    [attr.width]="halfWidth() * 2"
+    [attr.height]="bottom() - ground"
+  />
+  @for (dx of [-0.55, 0.55]; track dx) {
+    <line
+      class="bolt"
+      [attr.x1]="center + dx * halfWidth()"
+      [attr.y1]="ground - 6"
+      [attr.x2]="center + dx * halfWidth()"
+      [attr.y2]="ground + boltLength()"
+    />
+  }
+
+  <!-- Minimum depth -->
+  <line
+    class="min"
+    [attr.x1]="center - halfWidth() - 46"
+    [attr.y1]="minLine()"
+    [attr.x2]="center + halfWidth() + 46"
+    [attr.y2]="minLine()"
+  />
+  <text
+    class="caption"
+    [attr.x]="center + halfWidth() + 50"
+    [attr.y]="minLine() + 4"
+  >
+    {{ i18n.word(t().results.minimum) }}
+    {{ i18n.num(result().minRecommendedDepthMeters, 2) }} m
+  </text>
+
+  <!-- D and B -->
+  <path
+    class="measure"
+    [attr.d]="'M' + (center - halfWidth() - 22) + ' ' + ground + 'V' + bottom()"
+  />
+  <text
+    class="value"
+    [attr.x]="center - halfWidth() - 30"
+    [attr.y]="(ground + bottom()) / 2 + 5"
+    text-anchor="end"
+  >
+    D = {{ i18n.num(depth(), 2) }} m
+  </text>
+  <text
+    class="caption"
+    [attr.x]="center"
+    [attr.y]="bottom() + 36"
+    text-anchor="middle"
+  >
+    B = {{ i18n.num(result().recommendedBlockWidthMeters, 2) }} m · 4×
+    {{ result().anchorBolts.size }} · SF
+    {{ i18n.num(result().safetyFactor, 2) }}
+  </text>
+
+  <g
+    lpSvgDrag
+    (lpSvgDrag)="drag($event)"
+    (keydown)="key($event)"
+    role="slider"
+    tabindex="0"
+    [attr.aria-label]="t().fields.depth"
+    [attr.aria-valuemin]="limits.min"
+    [attr.aria-valuemax]="limits.max"
+    [attr.aria-valuenow]="depth()"
+    [attr.aria-valuetext]="i18n.num(depth(), 2) + ' m'"
+    [attr.transform]="'translate(' + center + ' ' + bottom() + ')'"
+  >
+    <circle class="hit" r="24" />
+    <circle class="dot" r="11" />
+    <path class="arrows" d="M-4 -2l4-4 4 4M-4 2l4 4 4-4" />
+  </g>
+</svg>

@@ -1,0 +1,171 @@
+<svg
+  viewBox="0 0 480 300"
+  role="img"
+  [attr.aria-label]="t().diagrams.rangefinderAlt"
+>
+  <rect class="backdrop" width="480" height="300" rx="12" />
+  <rect class="ground" x="0" [attr.y]="ground" width="480" height="38" />
+
+  <!-- Person holding the phone at eye height -->
+  <g class="person">
+    <circle [attr.cx]="eyeX - 4" [attr.cy]="eyeY() - 2" r="3" />
+    <path
+      [attr.d]="
+        'M' +
+        (eyeX - 4) +
+        ' ' +
+        (eyeY() + 1) +
+        'V' +
+        (ground - (ground - eyeY()) * 0.45) +
+        'l-3 ' +
+        (ground - eyeY()) * 0.45 +
+        'm3 -' +
+        (ground - eyeY()) * 0.45 +
+        'l3 ' +
+        (ground - eyeY()) * 0.45
+      "
+    />
+  </g>
+
+  <!-- Horizon from the eye, and the two sight lines -->
+  <line
+    class="dim"
+    [attr.x1]="eyeX"
+    [attr.y1]="eyeY()"
+    [attr.x2]="poleX() + 10"
+    [attr.y2]="eyeY()"
+  />
+  <line
+    class="sight base"
+    [attr.x1]="eyeX"
+    [attr.y1]="eyeY()"
+    [attr.x2]="poleX()"
+    [attr.y2]="ground"
+  />
+  <line
+    class="sight top"
+    [attr.x1]="eyeX"
+    [attr.y1]="eyeY()"
+    [attr.x2]="poleX()"
+    [attr.y2]="topY()"
+  />
+  <path class="arc-base" [attr.d]="arc(-baseAngle(), 70)" />
+  <path class="arc-top" [attr.d]="arc(topAngle(), 96)" />
+  <text class="angle base" [attr.x]="eyeX + 78" [attr.y]="eyeY() + 22">
+    α {{ i18n.num(baseAngle()) }}°
+  </text>
+  <text class="angle top" [attr.x]="eyeX + 104" [attr.y]="eyeY() - 12">
+    β {{ i18n.num(topAngle()) }}°
+  </text>
+
+  <!-- The pole -->
+  <path
+    class="structure"
+    [attr.d]="'M' + poleX() + ' ' + ground + 'V' + topY() + 'h12'"
+  />
+  <rect
+    class="lamp"
+    [attr.x]="poleX() + 8"
+    [attr.y]="topY() - 3"
+    width="14"
+    height="6"
+    rx="2"
+  />
+
+  <!-- h, D and H -->
+  <path
+    class="measure"
+    [attr.d]="'M' + (eyeX - 22) + ' ' + ground + 'V' + eyeY()"
+  />
+  <text
+    class="value"
+    [attr.x]="eyeX - 28"
+    [attr.y]="eyeY() - 10"
+    text-anchor="middle"
+  >
+    h
+  </text>
+  <path
+    class="measure"
+    [attr.d]="'M' + eyeX + ' ' + (ground + 16) + 'H' + poleX()"
+  />
+  <text
+    class="value"
+    [attr.x]="(eyeX + poleX()) / 2"
+    [attr.y]="ground + 34"
+    text-anchor="middle"
+  >
+    D = {{ i18n.num(measured().distanceMeters) }} m
+  </text>
+  <path
+    class="measure"
+    [attr.d]="'M' + (poleX() + 28) + ' ' + ground + 'V' + topY()"
+  />
+  <text
+    class="value"
+    [attr.x]="poleX() - 12"
+    [attr.y]="ground - (ground - topY()) * 0.35"
+    text-anchor="end"
+  >
+    H = {{ i18n.num(measured().heightMeters) }} m
+  </text>
+
+  <g
+    lpSvgDrag
+    (lpDragStart)="hold()"
+    (lpDragEnd)="release()"
+    (lpSvgDrag)="dragEye($event)"
+    (keydown)="keyEye($event)"
+    role="slider"
+    tabindex="0"
+    [attr.aria-label]="t().fields.eyeHeight"
+    [attr.aria-valuemin]="limits.eye.min"
+    [attr.aria-valuemax]="limits.eye.max"
+    [attr.aria-valuenow]="eyeHeight()"
+    [attr.aria-valuetext]="i18n.num(eyeHeight(), 2) + ' m'"
+    [attr.transform]="'translate(' + eyeX + ' ' + eyeY() + ')'"
+  >
+    <circle class="hit" r="22" />
+    <circle class="dot" r="9" />
+  </g>
+
+  <g
+    lpSvgDrag
+    (lpDragStart)="hold()"
+    (lpDragEnd)="release()"
+    (lpSvgDrag)="dragBase($event)"
+    (keydown)="keyBase($event)"
+    role="slider"
+    tabindex="0"
+    [attr.aria-label]="t().fields.baseAngle"
+    [attr.aria-valuemin]="limits.base.min"
+    [attr.aria-valuemax]="limits.base.max"
+    [attr.aria-valuenow]="baseAngle()"
+    [attr.aria-valuetext]="i18n.num(baseAngle()) + '°'"
+    [attr.transform]="'translate(' + poleX() + ' ' + ground + ')'"
+  >
+    <circle class="hit" r="22" />
+    <circle class="dot" r="10" />
+    <path class="arrows" d="M-2 -4l-4 4 4 4M2 -4l4 4-4 4" />
+  </g>
+
+  <g
+    lpSvgDrag
+    (lpDragStart)="hold()"
+    (lpDragEnd)="release()"
+    (lpSvgDrag)="dragTop($event)"
+    (keydown)="keyTop($event)"
+    role="slider"
+    tabindex="0"
+    [attr.aria-label]="t().fields.topAngle"
+    [attr.aria-valuemin]="limits.top.min"
+    [attr.aria-valuemax]="limits.top.max"
+    [attr.aria-valuenow]="topAngle()"
+    [attr.aria-valuetext]="i18n.num(topAngle()) + '°'"
+    [attr.transform]="'translate(' + poleX() + ' ' + topY() + ')'"
+  >
+    <circle class="hit" r="22" />
+    <circle class="dot" r="10" />
+    <path class="arrows" d="M-4 -2l4-4 4 4M-4 2l4 4 4-4" />
+  </g>
+</svg>

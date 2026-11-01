@@ -1,0 +1,108 @@
+@use '../../styles/luxpath' as lp;
+
+@include lp.diagram;
+
+.guide {
+  display: grid;
+  gap: var(--space-3);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  > li {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    padding: var(--space-3);
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-lg);
+    background: var(--color-bg-raised);
+    transition: border-color var(--motion-duration-base)
+      var(--motion-easing-standard);
+
+    &.is-active {
+      border-color: var(--color-accent-default);
+      box-shadow: 0 0 0 1px var(--color-accent-default);
+    }
+  }
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+
+  strong {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  p {
+    margin: 0;
+    color: var(--color-text-muted);
+    font-size: var(--font-size-200);
+  }
+}
+
+.num {
+  display: inline-grid;
+  place-items: center;
+  inline-size: 1.5rem;
+  block-size: 1.5rem;
+  border-radius: 50%;
+  background: var(--color-accent-default);
+  color: var(--color-accent-on);
+  font-size: var(--font-size-100);
+}
+
+.person {
+  circle {
+    fill: var(--color-text-default);
+  }
+
+  path {
+    fill: none;
+    stroke: var(--color-text-default);
+    stroke-width: 4;
+    stroke-linecap: round;
+  }
+}
+
+.phone {
+  fill: var(--color-accent-default);
+}
+
+.sight {
+  fill: none;
+  stroke: var(--color-accent-default);
+  stroke-width: 2.5;
+  stroke-dasharray: 7 4;
+}
+
+.arc {
+  fill: none;
+  stroke: var(--color-accent-default);
+  stroke-width: 1.5;
+}
+
+.target {
+  circle,
+  path {
+    fill: none;
+    stroke: var(--color-danger-default);
+    stroke-width: 2;
+  }
+}
+
+.tips {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  margin: var(--space-3) 0 0;
+  padding: 0;
+  list-style: none;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-200);
+}

@@ -1,0 +1,45 @@
+@if (store.activeProject(); as project) {
+  @if (editingLabel() !== null) {
+    <p class="editing">
+      <span class="badge">{{ t().save.editing }}</span>
+      {{ t().save.editingHint }}
+    </p>
+  }
+  <div class="row">
+    <label class="field" [for]="id">
+      <span>{{ t().save.label }}</span>
+      <input
+        [id]="id"
+        type="text"
+        maxlength="80"
+        [value]="label()"
+        (input)="onType($any($event.target).value)"
+      />
+    </label>
+    <div class="actions">
+      @if (editingLabel() !== null) {
+        <button ahButton type="button" (click)="submit(true)">
+          {{ t().save.update }}
+        </button>
+        <button ahButton="secondary" type="button" (click)="submit(false)">
+          {{ t().save.saveCopy }}
+        </button>
+        <button ahButton="ghost" type="button" (click)="stopEditing.emit()">
+          {{ t().save.stopEditing }}
+        </button>
+      } @else {
+        <button ahButton type="button" (click)="submit(false)">
+          {{ t().save.save }}
+        </button>
+      }
+    </div>
+  </div>
+  <p class="status" role="status">
+    @if (saved()) {
+      ✓ {{ t().save.savedTo }} <strong>{{ project.title }}</strong> ·
+      <a routerLink="../projects" fragment="saved">{{ t().save.viewSaved }}</a>
+    }
+  </p>
+} @else {
+  <p class="none">{{ t().save.noProject }}</p>
+}

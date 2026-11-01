@@ -1,0 +1,74 @@
+@use '../../styles/luxpath' as lp;
+
+@include lp.diagram;
+
+.sun {
+  fill: var(--color-warning-default);
+}
+
+.ray {
+  stroke: var(--color-warning-default);
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+
+.panel {
+  fill: var(--color-info-subtle);
+  stroke: var(--color-info-default);
+  stroke-width: 2.5;
+  stroke-linejoin: round;
+}
+
+.panel-grid {
+  fill: none;
+  stroke: var(--color-info-default);
+  stroke-width: 1.2;
+}
+
+.battery,
+.battery-tip {
+  fill: none;
+  stroke: var(--color-text-default);
+  stroke-width: 2.5;
+}
+
+.battery-tip {
+  fill: var(--color-text-default);
+}
+
+.charge {
+  fill: var(--color-success-default);
+}
+
+.flow {
+  fill: none;
+  stroke: var(--color-text-muted);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.axis {
+  stroke: var(--color-text-default);
+  stroke-width: 2;
+}
+
+.bar {
+  fill: var(--color-warning-default);
+  opacity: 0.85;
+
+  &[data-stage='2'] {
+    opacity: 0.6;
+  }
+
+  &[data-stage='3'] {
+    opacity: 0.4;
+  }
+}
+
+.pct {
+  fill: var(--color-text-default);
+  font-size: 13px;
+  font-weight: 700;
+  pointer-events: none;
+}

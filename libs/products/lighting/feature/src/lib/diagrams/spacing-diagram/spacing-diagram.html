@@ -1,0 +1,143 @@
+<svg
+  viewBox="0 0 480 236"
+  role="img"
+  [attr.aria-label]="t().diagrams.spacingAlt"
+>
+  <defs>
+    <clipPath id="lp-spacing-clip">
+      <rect x="0" y="0" width="480" height="236" rx="12" />
+    </clipPath>
+  </defs>
+  <g clip-path="url(#lp-spacing-clip)">
+    <rect class="backdrop" width="480" height="236" />
+
+    @for (cone of cones(); track $index) {
+      <polygon class="light" [attr.points]="cone" />
+    }
+
+    <rect class="ground" x="0" [attr.y]="ground" width="480" height="60" />
+    <line class="road" x1="0" [attr.y1]="ground" x2="480" [attr.y2]="ground" />
+
+    @if (darkGap(); as gap) {
+      <rect
+        class="bad"
+        [attr.x]="gap.from"
+        [attr.y]="ground - 3"
+        [attr.width]="gap.to - gap.from"
+        height="6"
+        rx="3"
+      />
+      <text
+        class="caption gap-label"
+        [attr.x]="(gap.from + gap.to) / 2"
+        [attr.y]="ground - 10"
+        text-anchor="middle"
+      >
+        {{ t().diagrams.darkZone }}
+      </text>
+    }
+
+    @for (x of [x0, xB()]; track $index) {
+      <path
+        class="structure"
+        [attr.d]="'M' + x + ' ' + ground + 'V' + top() + 'h12'"
+      />
+      <rect
+        class="lamp"
+        [attr.x]="x + 9"
+        [attr.y]="top() - 1"
+        width="16"
+        height="7"
+        rx="3"
+      />
+    }
+
+    <!-- H: height dimension -->
+    <path class="measure" [attr.d]="'M24 ' + ground + 'V' + top()" />
+    <path
+      class="measure"
+      [attr.d]="'M18 ' + top() + 'h12M18 ' + ground + 'h12'"
+    />
+    <text
+      class="value"
+      [attr.transform]="
+        'translate(14 ' + (ground + top()) / 2 + ') rotate(-90)'
+      "
+      text-anchor="middle"
+    >
+      H = {{ i18n.num(height()) }} m
+    </text>
+
+    <!-- S: spacing dimension -->
+    <path
+      class="measure"
+      [attr.d]="'M' + x0 + ' ' + (ground + 20) + 'H' + xB()"
+    />
+    <path
+      class="measure"
+      [attr.d]="
+        'M' +
+        x0 +
+        ' ' +
+        (ground + 14) +
+        'v12M' +
+        xB() +
+        ' ' +
+        (ground + 14) +
+        'v12'
+      "
+    />
+    <text
+      class="value"
+      [attr.x]="(x0 + xB()) / 2"
+      [attr.y]="ground + 44"
+      text-anchor="middle"
+    >
+      S = {{ i18n.num(spacing(), 0) }} m
+    </text>
+
+    <text x="240" y="30" text-anchor="middle" class="ratio" [class]="tone()">
+      S/H = {{ i18n.num(result().spacingRatio, 2) }}
+    </text>
+    <text x="240" y="52" text-anchor="middle" class="caption">
+      E ≈ {{ i18n.num(result().estimatedAverageLux) }} lx · U₀ ≈
+      {{ i18n.num(result().estimatedUniformity, 2) }}
+    </text>
+  </g>
+
+  <g
+    lpSvgDrag
+    (lpSvgDrag)="dragHeight($event)"
+    (keydown)="keyHeight($event)"
+    role="slider"
+    tabindex="0"
+    [attr.aria-label]="t().fields.height"
+    [attr.aria-valuemin]="limits.height.min"
+    [attr.aria-valuemax]="limits.height.max"
+    [attr.aria-valuenow]="height()"
+    [attr.aria-valuetext]="i18n.num(height()) + ' m'"
+    [attr.transform]="'translate(' + x0 + ' ' + top() + ')'"
+  >
+    <circle class="hit" r="24" />
+    <circle class="dot" r="11" />
+    <path class="arrows" d="M-4 -2l4-4 4 4M-4 2l4 4 4-4" />
+  </g>
+
+  <g
+    lpSvgDrag
+    (lpSvgDrag)="dragSpacing($event)"
+    (keydown)="keySpacing($event)"
+    role="slider"
+    tabindex="0"
+    [attr.aria-label]="t().fields.spacing"
+    [attr.aria-valuemin]="limits.spacing.min"
+    [attr.aria-valuemax]="limits.spacing.max"
+    [attr.aria-valuenow]="spacing()"
+    [attr.aria-valuetext]="i18n.num(spacing(), 0) + ' m'"
+    [attr.transform]="'translate(' + xB() + ' ' + ground + ')'"
+  >
+    <circle class="hit" r="24" />
+    <circle class="dot" r="11" />
+    <path class="arrows" d="M-2 -4l-4 4 4 4M2 -4l4 4-4 4" />
+  </g>
+</svg>

@@ -1,0 +1,52 @@
+@use '../../styles/luxpath' as lp;
+
+@include lp.diagram;
+
+.wind {
+  fill: none;
+  stroke: var(--color-info-default);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.panel {
+  stroke: var(--color-info-default);
+  stroke-width: 7;
+  stroke-linecap: round;
+}
+
+.grade {
+  stroke: var(--color-text-default);
+  stroke-width: 2;
+}
+
+.block {
+  stroke-width: 2.5;
+
+  &.is-safe {
+    fill: var(--color-success-subtle);
+    stroke: var(--color-success-default);
+  }
+
+  &.is-marginal {
+    fill: var(--color-warning-subtle);
+    stroke: var(--color-warning-default);
+  }
+
+  &.is-unsafe {
+    fill: var(--color-danger-subtle);
+    stroke: var(--color-danger-default);
+  }
+}
+
+.bolt {
+  stroke: var(--color-text-muted);
+  stroke-width: 3;
+}
+
+.min {
+  stroke: var(--color-danger-default);
+  stroke-width: 2;
+  stroke-dasharray: 8 5;
+}

@@ -1,0 +1,37 @@
+@use '../../styles/luxpath' as lp;
+
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-inline-size: 0;
+}
+
+.head {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-2);
+  font-size: var(--font-size-200);
+  font-weight: var(--font-weight-medium);
+}
+
+.unit {
+  color: var(--color-text-muted);
+  font-weight: var(--font-weight-regular);
+}
+
+.exact {
+  @include lp.form-control;
+  font-variant-numeric: tabular-nums;
+}
+
+.slider {
+  inline-size: 100%;
+  margin: 0;
+  accent-color: var(--color-accent-default);
+}
+
+.hint {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-100);
+}

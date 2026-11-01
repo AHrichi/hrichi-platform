@@ -1,0 +1,10 @@
+{
+  "$schema": "../../../../node_modules/wrangler/config-schema.json",
+  "name": "product-lighting",
+  "compatibility_date": "2026-10-26",
+  "assets": {
+    "directory": "../../../../dist/apps/products/lighting/web/browser",
+    "html_handling": "drop-trailing-slash",
+    "not_found_handling": "single-page-application",
+  },
+}

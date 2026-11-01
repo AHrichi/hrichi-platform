@@ -1,0 +1,100 @@
+@use '../../styles/luxpath' as lp;
+
+.screen {
+  @include lp.screen;
+}
+
+.head {
+  @include lp.screen-head;
+}
+
+.workbench {
+  @include lp.workbench;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-inline-size: 0;
+}
+
+.panel {
+  @include lp.panel;
+
+  h3 {
+    @include lp.panel-title;
+  }
+}
+
+.hint {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-200);
+}
+
+.fields {
+  @include lp.fields;
+}
+
+.select {
+  @include lp.label;
+
+  select,
+  input {
+    @include lp.form-control;
+  }
+}
+
+.results {
+  @include lp.results;
+}
+
+.verdict {
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--color-danger-subtle);
+  font-weight: var(--font-weight-semibold);
+
+  &[data-status='compliant'] {
+    background: var(--color-success-subtle);
+  }
+
+  &[data-status='warning'] {
+    background: var(--color-warning-subtle);
+  }
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+table {
+  inline-size: 100%;
+  border-collapse: collapse;
+  font-size: var(--font-size-200);
+  font-variant-numeric: tabular-nums;
+
+  th,
+  td {
+    padding: var(--space-2) var(--space-3);
+    border-block-end: 1px solid var(--color-border-default);
+    text-align: start;
+  }
+
+  thead th {
+    color: var(--color-text-muted);
+    font-weight: var(--font-weight-medium);
+  }
+}
+
+.actions {
+  @include lp.actions;
+}
+
+.status {
+  min-block-size: 1.25rem;
+  margin: 0;
+  color: var(--color-success-default);
+  font-size: var(--font-size-200);
+}
