@@ -11,6 +11,11 @@
     <lp-camera-guide [active]="step()" />
   </details>
 
+  <section class="panel" aria-labelledby="lp-camera-ar">
+    <h3 id="lp-camera-ar">{{ t().ar.title }}</h3>
+    <lp-ar-tape (distance)="useArDistance($event)" />
+  </section>
+
   <div class="workbench">
     <section class="panel" aria-labelledby="lp-camera-sight">
       <h3 id="lp-camera-sight">{{ t().camera.sight }}</h3>

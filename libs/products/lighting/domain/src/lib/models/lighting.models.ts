@@ -330,12 +330,72 @@ export interface ElectricalCalculationResult {
 }
 
 /** The calculators whose inputs can be saved to a project and reopened. */
+/** Aerial bundled cables (NF C 33-209): cores × mm², plus the messenger. */
+export type ConductorType =
+  | 'abc_2x16'
+  | 'abc_4x16'
+  | 'abc_4x25'
+  | 'abc_3x35_54'
+  | 'abc_3x70_54'
+  | 'abc_3x150_70';
+
+/** Where the pole sits in the line, which sets the load the wire puts on it. */
+export type PoleRole = 'intermediate' | 'angle' | 'terminal';
+
+export type SpanState = 'everyday' | 'wind' | 'cold' | 'hot';
+
+/** What stops the span growing: the wire, the pole or the ground clearance. */
+export type SpanLimit = 'conductor' | 'pole' | 'clearance';
+
+export interface SpanCalculationParams {
+  spanMeters: number;
+  conductor: ConductorType;
+  /** Tension when strung at 15 °C, as a % of the breaking load. */
+  everydayTensionPct: number;
+  windZone: WindZone;
+  poleRole: PoleRole;
+  /** Line deviation at an angle pole. */
+  deviationDegrees: number;
+  poleHeightMeters: number;
+  /** Height where the wire is fixed. */
+  attachmentHeightMeters: number;
+  /** The pole's nominal load near its top, from its datasheet. */
+  poleNominalLoadDaN: number;
+  /** Lowest point of the wire above the ground, on the hottest day. */
+  requiredClearanceMeters: number;
+}
+
+export interface SpanCalculationResult {
+  weightNPerM: number;
+  windNPerM: number;
+  everydayTensionDaN: number;
+  sagEverydayMeters: number;
+  sagHotMeters: number;
+  maxTensionDaN: number;
+  maxTensionState: SpanState;
+  allowedTensionDaN: number;
+  conductorUtilization: number;
+  poleLoadDaN: number;
+  poleUtilization: number;
+  clearanceMeters: number;
+  meetsConductor: boolean;
+  meetsPole: boolean;
+  meetsClearance: boolean;
+  isCompliant: boolean;
+  /** Longest span passing every check; 0 when none does. */
+  maxSpanMeters: number;
+  limitingFactor: SpanLimit | null;
+  states: { state: SpanState; tensionDaN: number; sagMeters: number }[];
+  notes: CalcNote[];
+}
+
 export interface CalculationInputs {
   spacing: SpacingCalculationParams;
   foundation: FoundationCalculationParams;
   solar: SolarSizingParams;
   electrical: ElectricalParams;
   concrete: ConcreteMixParams;
+  span: SpanCalculationParams;
 }
 
 export type CalculationKind = keyof CalculationInputs;

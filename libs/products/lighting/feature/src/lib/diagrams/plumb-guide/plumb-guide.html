@@ -1,0 +1,119 @@
+<ol class="guide" role="list">
+  @for (step of t().plumbGuide.steps; track $index; let i = $index) {
+    <li [class.is-active]="active() === i + 1">
+      <svg viewBox="0 0 240 170" aria-hidden="true">
+        <rect class="backdrop" width="240" height="170" rx="10" />
+        <rect class="ground" y="150" width="240" height="20" />
+        @switch (i) {
+          @case (0) {
+            <!-- The shaft with its door and arm, and the spot to use -->
+            <path class="shaft" d="M112 150V22h8V150z" />
+            <path class="structure" d="M120 26h40" />
+            <rect class="lamp" x="152" y="23" width="18" height="7" rx="3" />
+            <rect class="door" x="108" y="118" width="16" height="22" rx="2" />
+            <rect class="zone" x="98" y="66" width="36" height="34" rx="6" />
+            <path class="tick" d="M140 83l6 6 12-14" />
+            <path class="cross" d="M132 122l12 12M144 122l-12 12" />
+          }
+          @case (1) {
+            <!-- Close-up: phone upright, back flat on the shaft -->
+            <path class="shaft" d="M70 10h34V160H70z" />
+            <rect
+              class="handset"
+              x="104"
+              y="44"
+              width="20"
+              height="80"
+              rx="4"
+            />
+            <rect class="screen" x="107" y="50" width="14" height="66" rx="2" />
+            <path class="press" d="M144 56h-14m5-5l-5 5 5 5" />
+            <path class="press" d="M144 112h-14m5-5l-5 5 5 5" />
+            <g class="person">
+              <circle cx="196" cy="58" r="9" />
+              <path d="M196 67v46M196 113l-10 37M196 113l10 37M196 84h-48" />
+            </g>
+          }
+          @case (2) {
+            <!-- Keep still until the level settles -->
+            <path class="shaft" d="M112 150V14h16V150z" />
+            <rect
+              class="handset"
+              x="128"
+              y="62"
+              width="11"
+              height="40"
+              rx="3"
+            />
+            <g class="person">
+              <circle cx="180" cy="58" r="9" />
+              <path d="M180 67v46M180 113l-10 37M180 113l10 37M180 84h-38" />
+            </g>
+            <g class="level" transform="translate(60 52)">
+              <rect x="-34" y="-12" width="68" height="24" rx="12" />
+              <circle class="bubble" r="7" />
+              <path d="M-10 -12v24M10 -12v24" />
+            </g>
+            <text class="caption steady" x="60" y="88" text-anchor="middle">
+              {{ t().plumb.steady }}
+            </text>
+          }
+          @case (3) {
+            <!-- From above: side A, then walk round to side B -->
+            <circle class="shaft-top" cx="120" cy="80" r="16" />
+            <rect class="handset" x="94" y="72" width="8" height="16" rx="2" />
+            <rect class="handset" x="138" y="72" width="8" height="16" rx="2" />
+            <circle class="head" cx="70" cy="80" r="10" />
+            <circle class="head" cx="170" cy="80" r="10" />
+            <path class="walk" d="M70 104c10 40 90 40 100 0" />
+            <path class="walk-head" d="M164 108l6-7 4 9z" />
+            <text class="caption" x="70" y="58" text-anchor="middle">
+              {{ t().plumb.sideA }}
+            </text>
+            <text class="caption" x="170" y="58" text-anchor="middle">
+              {{ t().plumb.sideB }}
+            </text>
+          }
+        }
+      </svg>
+      <div class="text">
+        <strong
+          ><span class="num">{{ i + 1 }}</span
+          >{{ step.title }}</strong
+        >
+        <p>{{ step.text }}</p>
+      </div>
+    </li>
+  }
+</ol>
+
+<h4 class="mistakes-title">{{ t().plumbGuide.mistakes }}</h4>
+<ul class="mistakes" role="list">
+  <li>
+    <svg viewBox="0 0 120 110" aria-hidden="true">
+      <rect class="backdrop" width="120" height="110" rx="10" />
+      <path class="shaft" d="M40 6h22V104H40z" />
+      <path class="handset-side" d="M62 56h40" />
+      <path class="cross" d="M88 14l14 14M102 14L88 28" />
+    </svg>
+    <span>{{ t().plumbGuide.wrongFlat }}</span>
+  </li>
+  <li>
+    <svg viewBox="0 0 120 110" aria-hidden="true">
+      <rect class="backdrop" width="120" height="110" rx="10" />
+      <path class="shaft" d="M40 6h22V104H40z" />
+      <path class="handset-side" d="M66 26l14 58" />
+      <path class="cross" d="M88 14l14 14M102 14L88 28" />
+    </svg>
+    <span>{{ t().plumbGuide.wrongGap }}</span>
+  </li>
+  <li>
+    <svg viewBox="0 0 120 110" aria-hidden="true">
+      <rect class="backdrop" width="120" height="110" rx="10" />
+      <path class="shaft" d="M40 6h22V104H40z" />
+      <path class="handset-side ok-side" d="M66 24v62" />
+      <path class="tick" d="M86 24l6 6 12-14" />
+    </svg>
+    <span>{{ t().plumbGuide.right }}</span>
+  </li>
+</ul>

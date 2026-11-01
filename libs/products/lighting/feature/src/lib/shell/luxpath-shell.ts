@@ -14,6 +14,7 @@ import {
   RouterLinkActive,
   RouterOutlet,
 } from '@angular/router';
+import { AhScrollHint } from '@ah/ui';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { filter, map } from 'rxjs';
 import { APP_MODE } from '@ah/platform/app-mode';
@@ -56,7 +57,7 @@ const LANGUAGES: readonly { id: SiteLanguage; label: string }[] = [
 
 @Component({
   selector: 'lp-luxpath-shell',
-  imports: [RouterOutlet, RouterLink, RouterLinkActive],
+  imports: [AhScrollHint, RouterOutlet, RouterLink, RouterLinkActive],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './luxpath-shell.html',
   styleUrl: './luxpath-shell.scss',

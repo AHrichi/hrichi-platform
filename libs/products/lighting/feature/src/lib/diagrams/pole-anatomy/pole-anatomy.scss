@@ -1,0 +1,102 @@
+@use '../../styles/luxpath' as lp;
+
+@include lp.diagram;
+
+.soil {
+  fill: color-mix(
+    in srgb,
+    var(--color-warning-default) 12%,
+    var(--color-bg-surface)
+  );
+  stroke: none;
+}
+
+.ground-line {
+  stroke: var(--color-border-strong);
+  stroke-width: 2;
+}
+
+.block {
+  fill: var(--color-bg-raised);
+  stroke: var(--color-text-muted);
+  stroke-width: 2;
+  stroke-dasharray: 6 4;
+}
+
+.grout {
+  fill: var(--color-text-muted);
+}
+
+.rod {
+  fill: none;
+  stroke: var(--color-text-default);
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+
+.nut {
+  fill: var(--color-text-default);
+}
+
+.plate,
+.shaft {
+  fill: var(--color-bg-raised);
+  stroke: var(--color-text-default);
+  stroke-width: 2;
+  stroke-linejoin: round;
+}
+
+.door {
+  fill: none;
+  stroke: var(--color-text-muted);
+  stroke-width: 1.5;
+}
+
+.arm {
+  fill: none;
+  stroke: var(--color-text-default);
+  stroke-width: 4;
+  stroke-linecap: round;
+}
+
+.head {
+  fill: var(--color-text-default);
+}
+
+.beam {
+  fill: var(--color-warning-default);
+  opacity: 0.2;
+}
+
+.duct {
+  fill: none;
+  stroke: var(--color-text-muted);
+  stroke-width: 6;
+  stroke-linecap: round;
+}
+
+.earth,
+.earth-wire {
+  fill: none;
+  stroke: var(--color-success-default);
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+
+.earth-wire {
+  stroke-width: 1.5;
+}
+
+.labels {
+  path {
+    fill: none;
+    stroke: var(--color-accent-default);
+    stroke-width: 1;
+  }
+
+  text {
+    fill: var(--color-text-default);
+    font-size: 13px;
+    font-weight: 500;
+  }
+}

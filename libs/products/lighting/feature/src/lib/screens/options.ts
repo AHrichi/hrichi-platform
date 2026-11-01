@@ -1,5 +1,7 @@
 import type {
   CompassDirection,
+  ConductorType,
+  PoleRole,
   ConcreteExposure,
   PoleStatus,
   PoleType,
@@ -82,4 +84,19 @@ export const DIRECTIONS: readonly CompassDirection[] = [
   'SW',
   'W',
   'NW',
+];
+
+export const CONDUCTOR_TYPES: readonly ConductorType[] = [
+  'abc_2x16',
+  'abc_4x16',
+  'abc_4x25',
+  'abc_3x35_54',
+  'abc_3x70_54',
+  'abc_3x150_70',
+];
+
+export const POLE_ROLES: readonly PoleRole[] = [
+  'intermediate',
+  'angle',
+  'terminal',
 ];

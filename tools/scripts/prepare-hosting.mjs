@@ -215,15 +215,19 @@ const remotes = remoteOrigins.join(' ');
 const turnstile = turnstileOrigins.join(' ');
 const self = values['frame-self'] ? "'self'" : '';
 const evaluate = values['allow-eval'] ? "'unsafe-eval'" : '';
+// OpenStreetMap tiles for LuxPath's site map. In img-src for the page, and in
+// connect-src because once the service worker controls the page it fetches
+// every request itself, and a worker's fetches are checked against
+// connect-src: without it each tile fails with a 504 for returning visitors.
+const tiles = 'https://tile.openstreetmap.org';
 const csp = [
   "default-src 'self'",
   // blob: is required by es-module-shims in shim mode (ADR-0006).
   `script-src 'self' ${evaluate} ${inlineScriptHashes(dir).join(' ')} blob: ${remotes} ${turnstile}`,
   "style-src 'self' 'unsafe-inline'",
-  `connect-src 'self' ${remotes} ${apiOrigins.join(' ')} https://*.ngrok-free.dev https://*.ngrok.app https://*.ngrok.io http://127.0.0.1:* http://localhost:*`,
+  `connect-src 'self' ${remotes} ${apiOrigins.join(' ')} ${tiles} https://*.ngrok-free.dev https://*.ngrok.app https://*.ngrok.io http://127.0.0.1:* http://localhost:*`,
   `frame-src ${[self, turnstile].join(' ').trim() || "'none'"}`,
-  // OpenStreetMap tiles for LuxPath's site map.
-  "img-src 'self' data: https://tile.openstreetmap.org",
+  `img-src 'self' data: ${tiles}`,
   "font-src 'self'",
   "manifest-src 'self'",
   // blob: starts a remote's Web Worker inside the shell, and the remotes'
@@ -246,8 +250,9 @@ const rules = [
       'Strict-Transport-Security: max-age=31536000; includeSubDomains',
       'X-Content-Type-Options: nosniff',
       'Referrer-Policy: strict-origin-when-cross-origin',
-      // The Sky lab's "Use my location" asks the page's own origin (ADR-0016), and LuxPath uses the camera.
-      'Permissions-Policy: camera=(self), microphone=(), geolocation=(self)',
+      // The Sky lab's "Use my location" asks the page's own origin (ADR-0016);
+      // LuxPath uses the camera, and WebXR for its AR tape measure.
+      'Permissions-Policy: camera=(self), microphone=(), geolocation=(self), xr-spatial-tracking=(self)',
       ...(values.cors ? ['Access-Control-Allow-Origin: *'] : []),
     ],
   ],

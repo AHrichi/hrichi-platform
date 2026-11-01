@@ -1,0 +1,119 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.lead,
+.muted,
+.result,
+.error {
+  margin: 0;
+  font-size: var(--font-size-200);
+}
+
+.muted {
+  color: var(--color-text-muted);
+}
+
+.error {
+  color: var(--color-danger-default);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+// Hidden until an AR session shows it full screen over the camera
+// (the browser applies :xr-overlay to it).
+.overlay {
+  display: none;
+
+  &.is-live {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: max(var(--space-4), env(safe-area-inset-top)) var(--space-4)
+      max(var(--space-4), env(safe-area-inset-bottom));
+    color: #fff;
+    font-family: var(--font-family-sans);
+    pointer-events: none;
+  }
+}
+
+.top,
+.controls {
+  pointer-events: auto;
+}
+
+.top {
+  display: grid;
+  gap: var(--space-2);
+  justify-items: center;
+  text-align: center;
+}
+
+.prompt,
+.reading {
+  margin: 0;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  background: rgb(0 0 0 / 60%);
+  font-size: var(--font-size-200);
+}
+
+.reading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: center;
+  gap: var(--space-1) var(--space-3);
+
+  strong {
+    font-size: 1.75rem;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+// A fixed aim mark at the centre, where the hit test looks.
+.crosshair {
+  align-self: center;
+  inline-size: 1.5rem;
+  block-size: 1.5rem;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px rgb(0 0 0 / 50%);
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-2);
+
+  button {
+    min-block-size: 2.75rem;
+    padding: var(--space-2) var(--space-4);
+    border: 0;
+    border-radius: var(--radius-pill);
+    background: rgb(0 0 0 / 65%);
+    color: #fff;
+    font: inherit;
+    font-size: var(--font-size-200);
+
+    &.primary {
+      background: var(--color-accent-default);
+      color: var(--color-accent-on);
+      font-weight: var(--font-weight-semibold);
+    }
+
+    &:disabled {
+      opacity: 0.45;
+    }
+  }
+}

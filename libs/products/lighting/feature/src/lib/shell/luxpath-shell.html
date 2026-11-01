@@ -57,7 +57,7 @@
     </div>
   </header>
 
-  <nav class="tabs" [attr.aria-label]="t().app.sections">
+  <nav class="tabs" ahScrollHint [attr.aria-label]="t().app.sections">
     @for (item of nav; track item.id) {
       <a
         [routerLink]="item.id"

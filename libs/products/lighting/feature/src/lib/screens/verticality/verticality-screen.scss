@@ -103,3 +103,41 @@ code {
 .status {
   min-block-size: 1.25rem;
 }
+
+// Live reading from the phone, and the saved sides.
+.live {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-3);
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-surface);
+  font-size: var(--font-size-200);
+  font-variant-numeric: tabular-nums;
+}
+
+.chip {
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-pill);
+  background: var(--color-warning-subtle);
+  color: var(--color-text-default);
+  font-weight: var(--font-weight-semibold);
+
+  &.steady {
+    background: var(--color-success-subtle);
+  }
+}
+
+.sides {
+  display: grid;
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--font-size-200);
+
+  strong {
+    margin-inline-end: var(--space-2);
+  }
+}

@@ -1,0 +1,104 @@
+<svg viewBox="0 0 480 250" role="img" [attr.aria-label]="t().spanDiagram.alt">
+  <rect class="backdrop" width="480" height="250" rx="12" />
+  <rect class="ground" x="0" [attr.y]="ground" width="480" height="44" />
+
+  <!-- Required clearance -->
+  <line
+    class="clearance"
+    [class]="clearanceTone()"
+    x1="40"
+    [attr.y1]="yClear()"
+    x2="450"
+    [attr.y2]="yClear()"
+  />
+  <text class="caption" x="448" [attr.y]="yClear() - 6" text-anchor="end">
+    {{ t().spanDiagram.clearance }} {{ i18n.num(clearance()) }} m
+  </text>
+
+  <!-- Poles -->
+  @for (x of [xL, xR()]; track $index) {
+    <path class="structure" [attr.d]="'M' + x + ' ' + ground + 'V' + top()" />
+    <circle class="insulator" [attr.cx]="x" [attr.cy]="yA()" r="4" />
+  }
+
+  <!-- The wire: strung (solid) and on a hot day (dashed) -->
+  <path class="wire" [attr.d]="strung().d" />
+  <path
+    class="wire hot"
+    [class.bad]="!result().meetsClearance"
+    [attr.d]="hot().d"
+  />
+
+  <!-- Sag at mid-span -->
+  <path class="measure" [attr.d]="'M' + mid() + ' ' + yA() + 'V' + hot().low" />
+  <text
+    class="value"
+    [attr.x]="mid()"
+    [attr.y]="yA() - 12"
+    text-anchor="middle"
+  >
+    {{ t().spanDiagram.sag }} {{ i18n.num(result().sagHotMeters, 2) }} m
+  </text>
+
+  <!-- Pull on the first pole when it ends the line or turns it -->
+  @if (role() !== 'intermediate') {
+    <g [attr.transform]="'translate(' + xL + ' ' + yA() + ')'">
+      <path class="force" [class]="poleTone()" d="M0 0h-44" />
+      <path class="force-head" [class]="poleTone()" d="M-44 -6l-10 6 10 6z" />
+    </g>
+    <text
+      class="value"
+      [attr.x]="xL - 6"
+      [attr.y]="yA() - 12"
+      text-anchor="end"
+    >
+      F {{ i18n.num(result().poleLoadDaN, 0) }} daN
+    </text>
+  }
+
+  <!-- L: span dimension -->
+  <path
+    class="measure"
+    [attr.d]="'M' + xL + ' ' + (ground + 16) + 'H' + xR()"
+  />
+  <path
+    class="measure"
+    [attr.d]="
+      'M' +
+      xL +
+      ' ' +
+      (ground + 10) +
+      'v12M' +
+      xR() +
+      ' ' +
+      (ground + 10) +
+      'v12'
+    "
+  />
+  <text
+    class="value"
+    [attr.x]="(xL + xR()) / 2"
+    [attr.y]="ground + 36"
+    text-anchor="middle"
+  >
+    L = {{ i18n.num(span(), 1) }} m
+  </text>
+
+  <g
+    lpSvgDrag
+    (lpSvgDrag)="dragSpan($event)"
+    (keydown)="keySpan($event)"
+    role="slider"
+    tabindex="0"
+    [attr.aria-label]="t().span.span"
+    [attr.aria-valuemin]="limits.min"
+    [attr.aria-valuemax]="limits.max"
+    [attr.aria-valuenow]="span()"
+    [attr.aria-valuetext]="i18n.num(span(), 1) + ' m'"
+    [attr.transform]="'translate(' + xR() + ' ' + ground + ')'"
+  >
+    <circle class="hit" r="32" />
+    <circle class="dot" r="11" />
+    <path class="arrows" d="M-2 -4l-4 4 4 4M2 -4l4 4-4 4" />
+  </g>
+</svg>

@@ -19,6 +19,7 @@ import { ConcreteDiagram } from '../../diagrams/concrete-diagram/concrete-diagra
 import { LuxPathI18n } from '../../i18n/luxpath-i18n';
 import { LightingStore } from '../../store/lighting.store';
 import { NoteList } from '../../ui/note-list/note-list';
+import { HowTo } from '../../ui/how-to/how-to';
 import { NumberField } from '../../ui/number-field/number-field';
 import { SaveBar, type SaveRequest } from '../../ui/save-bar/save-bar';
 import { EXPOSURES } from '../options';
@@ -39,6 +40,7 @@ function addDays(iso: string, days: number): string {
     AhButton,
     AhMetricCard,
     ConcreteDiagram,
+    HowTo,
     NoteList,
     NumberField,
     SaveBar,

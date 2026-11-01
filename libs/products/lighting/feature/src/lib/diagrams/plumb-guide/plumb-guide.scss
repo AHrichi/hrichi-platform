@@ -1,0 +1,187 @@
+@use '../../styles/luxpath' as lp;
+
+@include lp.diagram;
+
+.guide {
+  display: grid;
+  gap: var(--space-3);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  > li {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    padding: var(--space-3);
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-lg);
+    background: var(--color-bg-raised);
+    transition: border-color var(--motion-duration-base)
+      var(--motion-easing-standard);
+
+    &.is-active {
+      border-color: var(--color-accent-default);
+      box-shadow: 0 0 0 1px var(--color-accent-default);
+    }
+  }
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+
+  strong {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  p {
+    margin: 0;
+    color: var(--color-text-muted);
+    font-size: var(--font-size-200);
+  }
+}
+
+.num {
+  display: inline-grid;
+  flex: none;
+  place-items: center;
+  inline-size: 1.5rem;
+  block-size: 1.5rem;
+  border-radius: 50%;
+  background: var(--color-accent-default);
+  color: var(--color-accent-on);
+  font-size: var(--font-size-100);
+}
+
+.shaft,
+.shaft-top {
+  fill: var(--color-bg-raised);
+  stroke: var(--color-text-default);
+  stroke-width: 2;
+}
+
+.door {
+  fill: none;
+  stroke: var(--color-text-muted);
+  stroke-width: 1.5;
+}
+
+.zone {
+  fill: color-mix(in srgb, var(--color-success-default) 18%, transparent);
+  stroke: var(--color-success-default);
+  stroke-width: 2;
+  stroke-dasharray: 5 3;
+}
+
+.tick {
+  fill: none;
+  stroke: var(--color-success-default);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.cross {
+  fill: none;
+  stroke: var(--color-danger-default);
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+
+.handset,
+.head {
+  fill: var(--color-text-default);
+}
+
+.screen {
+  fill: var(--color-accent-default);
+}
+
+.handset-side {
+  fill: none;
+  stroke: var(--color-text-default);
+  stroke-width: 6;
+  stroke-linecap: round;
+
+  &.ok-side {
+    stroke: var(--color-accent-default);
+  }
+}
+
+.press,
+.walk {
+  fill: none;
+  stroke: var(--color-accent-default);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+}
+
+.walk {
+  stroke-dasharray: 6 4;
+}
+
+.walk-head {
+  fill: var(--color-accent-default);
+}
+
+.person {
+  circle {
+    fill: var(--color-text-default);
+  }
+
+  path {
+    fill: none;
+    stroke: var(--color-text-default);
+    stroke-width: 4;
+    stroke-linecap: round;
+  }
+}
+
+.level {
+  rect {
+    fill: color-mix(in srgb, var(--color-success-default) 25%, transparent);
+    stroke: var(--color-text-default);
+    stroke-width: 2;
+  }
+
+  path {
+    stroke: var(--color-text-muted);
+    stroke-width: 1.5;
+  }
+}
+
+.bubble {
+  fill: var(--color-success-default);
+}
+
+.steady {
+  fill: var(--color-success-default);
+  font-weight: 600;
+}
+
+.mistakes-title {
+  margin: var(--space-4) 0 var(--space-2);
+  font-size: var(--font-size-200);
+}
+
+.mistakes {
+  display: grid;
+  gap: var(--space-3);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 9rem), 1fr));
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    color: var(--color-text-muted);
+    font-size: var(--font-size-100);
+  }
+}

@@ -1,0 +1,76 @@
+<svg viewBox="0 0 480 380" role="img" [attr.aria-label]="t().art.anatomyTitle">
+  <rect class="backdrop" width="480" height="380" rx="12" />
+
+  <!-- Ground and the foundation block -->
+  <rect class="soil" x="0" y="250" width="480" height="130" />
+  <rect class="block" x="96" y="262" width="112" height="104" rx="4" />
+  <rect class="grout" x="120" y="246" width="64" height="6" />
+  <path class="ground-line" d="M0 250H480" />
+
+  <!-- Anchor bolts with nuts, into the block -->
+  @for (x of [128, 176]; track x) {
+    <path class="rod" [attr.d]="'M' + x + ' 236V340c0 10 10 10 12 4'" />
+    <rect
+      class="nut"
+      [attr.x]="x - 6"
+      [attr.y]="230"
+      width="12"
+      height="6"
+      rx="1"
+    />
+    <rect
+      class="nut"
+      [attr.x]="x - 6"
+      [attr.y]="246"
+      width="12"
+      height="6"
+      rx="1"
+    />
+  }
+  <rect class="plate" x="112" y="236" width="80" height="8" rx="1" />
+
+  <!-- Cable duct entering under the plate; earth rod beside the block -->
+  <path class="duct" d="M0 318H120c14 0 26-12 26-26v-40" />
+  <path class="earth" d="M232 262v100" />
+  <path class="earth-wire" d="M160 238c30 0 60 0 72 24" />
+
+  <!-- Shaft, door, arm and luminaire -->
+  <path class="shaft" d="M140 236l6-200h12l6 200z" />
+  <rect class="door" x="144" y="176" width="16" height="34" rx="2" />
+  <path class="arm" d="M152 44c22-14 64-20 104-14" />
+  <path class="head" d="M246 22h52c6 0 8 4 8 8h-60z" />
+  <path class="beam" d="M252 30l-30 70h96l-22-70z" />
+
+  <!-- Labels with leader lines -->
+  <g class="labels">
+    <path d="M300 24h40" />
+    <text x="344" y="28">{{ t().art.anatomy.luminaire }}</text>
+
+    <path d="M200 38l18 16h122" />
+    <text x="344" y="58">{{ t().art.anatomy.arm }}</text>
+
+    <path d="M162 120h178" />
+    <text x="344" y="124">{{ t().art.anatomy.shaft }}</text>
+
+    <path d="M160 194h180" />
+    <text x="344" y="198">{{ t().art.anatomy.door }}</text>
+
+    <path d="M192 240h148" />
+    <text x="344" y="244">{{ t().art.anatomy.plate }}</text>
+
+    <path d="M182 249l20 16h138" />
+    <text x="344" y="269">{{ t().art.anatomy.grout }}</text>
+
+    <path d="M180 300h160" />
+    <text x="344" y="304">{{ t().art.anatomy.bolts }}</text>
+
+    <path d="M232 330h108" />
+    <text x="344" y="334">{{ t().art.anatomy.earth }}</text>
+
+    <path d="M208 356h132" />
+    <text x="344" y="360">{{ t().art.anatomy.block }}</text>
+
+    <path d="M40 318v-40h-4" />
+    <text x="12" y="272">{{ t().art.anatomy.duct }}</text>
+  </g>
+</svg>

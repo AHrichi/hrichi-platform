@@ -10,6 +10,8 @@ import {
   type MaterialItem,
   PUBLIC_MATERIALS_CATALOG,
 } from '@ah/products/lighting/domain';
+import { artKind, MaterialArt } from '../../diagrams/material-art/material-art';
+import { PoleAnatomy } from '../../diagrams/pole-anatomy/pole-anatomy';
 import { LuxPathI18n } from '../../i18n/luxpath-i18n';
 import { isSolarPole, LightingStore } from '../../store/lighting.store';
 
@@ -34,7 +36,7 @@ interface Line {
 /** The supplier catalogue, and a bill of materials for the active project. */
 @Component({
   selector: 'lp-materials-screen',
-  imports: [AhButton, AhSegmentedControl],
+  imports: [AhButton, AhSegmentedControl, MaterialArt, PoleAnatomy],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './materials-screen.html',
   styleUrl: './materials-screen.scss',
@@ -44,6 +46,7 @@ export class MaterialsScreen {
   protected readonly i18n = inject(LuxPathI18n);
   protected readonly t = this.i18n.t;
 
+  protected readonly artKind = artKind;
   protected readonly view = signal<View>('catalog');
   protected readonly views = computed(() =>
     (['catalog', 'bom'] as const).map((value) => ({

@@ -46,6 +46,16 @@
               [result]="electrical()"
             />
           }
+          @case ('span') {
+            <lp-span-diagram
+              [(span)]="lSpan"
+              [poleHeight]="lPoleHeight()"
+              [attachment]="spanParams().attachmentHeightMeters"
+              [clearance]="lClearance()"
+              [role]="lRole()"
+              [result]="span()"
+            />
+          }
         }
         <figcaption>✋ {{ t().calc.dragHint }}</figcaption>
       </figure>
@@ -326,6 +336,103 @@
               </label>
             </div>
           }
+          @case ('span') {
+            <div class="fields">
+              <label class="select">
+                <span>{{ t().span.conductor }}</span>
+                <select (change)="lConductor.set($any(optionValue($event)))">
+                  @for (c of conductorTypes; track c) {
+                    <option [value]="c" [selected]="c === lConductor()">
+                      {{ t().conductors[c] }}
+                    </option>
+                  }
+                </select>
+              </label>
+              <lp-number-field
+                [label]="t().span.span"
+                unit="m"
+                [min]="10"
+                [max]="120"
+                [step]="0.5"
+                [(value)]="lSpan"
+              />
+              <lp-number-field
+                [label]="t().span.everydayTension"
+                unit="%"
+                [min]="5"
+                [max]="25"
+                [step]="0.5"
+                [hint]="t().span.everydayHint"
+                [(value)]="lEveryday"
+              />
+              <label class="select">
+                <span>{{ t().span.windZone }}</span>
+                <select (change)="lWindZone.set($any(+optionValue($event)))">
+                  @for (z of windZones; track z) {
+                    <option [value]="z" [selected]="z === lWindZone()">
+                      {{ t().windZones[z] }}
+                    </option>
+                  }
+                </select>
+              </label>
+              <label class="select">
+                <span>{{ t().span.poleRole }}</span>
+                <select (change)="lRole.set($any(optionValue($event)))">
+                  @for (r of poleRoles; track r) {
+                    <option [value]="r" [selected]="r === lRole()">
+                      {{ t().poleRoles[r] }}
+                    </option>
+                  }
+                </select>
+              </label>
+              @if (lRole() === 'angle') {
+                <lp-number-field
+                  [label]="t().span.deviation"
+                  unit="°"
+                  [min]="5"
+                  [max]="90"
+                  [(value)]="lDeviation"
+                />
+              }
+              <lp-number-field
+                [label]="t().span.poleHeight"
+                unit="m"
+                [min]="5"
+                [max]="14"
+                [step]="0.5"
+                [(value)]="lPoleHeight"
+              />
+              <lp-number-field
+                [label]="t().span.attachment"
+                unit="m"
+                [min]="4"
+                [max]="14"
+                [step]="0.1"
+                [(value)]="lAttachment"
+              />
+              <lp-number-field
+                [label]="t().span.nominalLoad"
+                unit="daN"
+                [min]="50"
+                [max]="1000"
+                [step]="25"
+                [hint]="t().span.nominalHint"
+                [(value)]="lNominal"
+              />
+              <lp-number-field
+                [label]="t().span.clearance"
+                unit="m"
+                [min]="3"
+                [max]="8"
+                [step]="0.5"
+                [hint]="t().span.clearanceHint"
+                [(value)]="lClearance"
+              />
+            </div>
+          }
+        }
+        @if (howTo(); as steps) {
+          <lp-how-to [steps]="steps" />
         }
       </section>
 
@@ -533,6 +640,87 @@
                 unit="Ω"
               />
             </div>
+          }
+          @case ('span') {
+            <div class="verdict" [attr.data-ok]="span().isCompliant">
+              {{
+                span().isCompliant ? t().span.verdictOk : t().span.verdictBad
+              }}
+            </div>
+            <div class="results">
+              <ah-metric-card
+                [label]="t().span.maxSpan"
+                [value]="
+                  span().limitingFactor
+                    ? i18n.num(span().maxSpanMeters, 1)
+                    : t().span.beyond
+                "
+                [unit]="span().limitingFactor ? 'm' : ''"
+                [hint]="spanLimit()"
+                variant="accent"
+              />
+              <ah-metric-card
+                [label]="t().span.sag"
+                [value]="i18n.num(span().sagHotMeters, 2)"
+                unit="m"
+                [hint]="
+                  t().span.sagWhenStrung(i18n.num(span().sagEverydayMeters, 2))
+                "
+              />
+              <ah-metric-card
+                [label]="t().span.maxTension"
+                [value]="i18n.num(span().maxTensionDaN, 0)"
+                unit="daN"
+                [hint]="t().span.allowed(i18n.num(span().allowedTensionDaN, 0))"
+                [variant]="span().meetsConductor ? 'success' : 'danger'"
+              />
+              <ah-metric-card
+                [label]="t().span.poleLoad"
+                [value]="i18n.num(span().poleLoadDaN, 0)"
+                unit="daN"
+                [hint]="
+                  t().span.ofRated(i18n.num(span().poleUtilization * 100, 0))
+                "
+                [variant]="span().meetsPole ? 'success' : 'danger'"
+              />
+              <ah-metric-card
+                [label]="t().span.lowestPoint"
+                [value]="i18n.num(span().clearanceMeters, 2)"
+                unit="m"
+                [hint]="'≥ ' + i18n.num(lClearance()) + ' m'"
+                [variant]="span().meetsClearance ? 'success' : 'danger'"
+              />
+            </div>
+            <div class="table-wrap">
+              <table class="states">
+                <caption>
+                  {{
+                    t().span.byWeather
+                  }}
+                </caption>
+                <thead>
+                  <tr>
+                    <th scope="col">{{ t().span.condition }}</th>
+                    <th scope="col" class="num">{{ t().span.tension }}</th>
+                    <th scope="col" class="num">{{ t().span.sagColumn }}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (row of span().states; track row.state) {
+                    <tr [class.worst]="row.state === span().maxTensionState">
+                      <th scope="row">{{ t().spanStates[row.state] }}</th>
+                      <td class="num">
+                        <bdi>{{ i18n.num(row.tensionDaN, 0) }} daN</bdi>
+                      </td>
+                      <td class="num">
+                        <bdi>{{ i18n.num(row.sagMeters, 2) }} m</bdi>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+            <lp-note-list [notes]="span().notes" />
           }
         }
       </section>

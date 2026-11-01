@@ -15,6 +15,9 @@ export interface SvgPoint {
   selector: '[lpSvgDrag]',
   host: {
     class: 'lp-drag-handle',
+    // Chrome ignores touch-action inside an SVG, so a touch that starts on a
+    // handle would scroll the page instead of dragging: cancel it here.
+    '(touchstart)': '$event.preventDefault()',
     '(pointerdown)': 'start($event)',
     '(pointermove)': 'move($event)',
     '(pointerup)': 'end($event)',

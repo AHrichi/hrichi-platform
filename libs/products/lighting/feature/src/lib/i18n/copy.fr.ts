@@ -179,6 +179,7 @@ export const FR: LuxPathCopy = {
       solar: 'Dimensionnement solaire',
       electrical: 'Section de câble',
       concrete: 'Contrôle béton',
+      span: 'Câbles et portée',
       measurement: 'Mesure caméra',
     },
   },
@@ -205,6 +206,7 @@ export const FR: LuxPathCopy = {
       foundation: 'Massif',
       solar: 'Solaire',
       electrical: 'Câble',
+      span: 'Câbles et portée',
     },
     dragHint:
       'Faites glisser les poignées rondes, ou utilisez les flèches du clavier.',
@@ -393,6 +395,26 @@ export const FR: LuxPathCopy = {
       `À ${v['days']} jours, le béton a ${v['pct']} % de sa résistance. Attendre 70 % (environ 7 jours) avant de lever un mât.`,
     'concrete.notFull': (v) =>
       `À ${v['days']} jours (${v['pct']} %), le levage est permis ; serrage définitif et mise en service après 28 jours.`,
+    'span.conductorOver': (v) =>
+      `Le câble atteindrait ${v['pct']} % de sa tension admissible : réduisez la portée ou tendez-le moins.`,
+    'span.poleOver': (v) =>
+      `Le mât porterait ${v['pct']} % de son effort nominal (${v['load']} daN au câble) : prenez une classe plus forte, ajoutez un hauban ou réduisez la portée.`,
+    'span.clearanceShort': (v) =>
+      `Par forte chaleur, le câble descend à ${v['clearance']} m du sol, sous les ${v['required']} m exigés : fixez-le plus haut, tendez-le davantage ou réduisez la portée.`,
+    'span.ok': () =>
+      'Le câble, le mât et la hauteur au sol tiennent à cette portée.',
+    'span.maxSpan.conductor': (v) =>
+      `Portée maximale sûre : ${v['span']} m, limitée par la résistance du câble.`,
+    'span.maxSpan.pole': (v) =>
+      `Portée maximale sûre : ${v['span']} m, limitée par l’effort nominal du mât.`,
+    'span.maxSpan.clearance': (v) =>
+      `Portée maximale sûre : ${v['span']} m, limitée par la hauteur au sol par forte chaleur.`,
+    'span.noSpan': () =>
+      'Aucune portée ne passe avec ces réglages : vérifiez l’effort du mât et la hauteur au sol.',
+    'span.highEveryday': (v) =>
+      `Une tension de pose de ${v['pct']} % est élevée pour du torsadé : le vent et le froid pourraient le surcharger. 10 à 15 % est courant.`,
+    'span.datasheet': () =>
+      'Les valeurs de câble sont typiques de catalogue : vérifiez la fiche technique (masse, diamètre, charge de rupture).',
   } as Record<string, NoteWriter>,
 
   diagrams: {
@@ -502,7 +524,23 @@ export const FR: LuxPathCopy = {
     useSensor: 'Téléphone comme niveau',
     stopSensor: 'Arrêter le capteur',
     sensorHint:
-      'Plaquez le téléphone contre le mât, écran vers vous, sans bouger.',
+      'Téléphone debout (portrait), dos à plat sur le mât, écran vers vous. Ne bougez plus.',
+    facing: 'Côté A, vous regardez vers',
+    steady: 'Stable',
+    holdStill: 'Ne bougez plus…',
+    sideways: 'Penche à droite (+) / à gauche (−)',
+    away: 'Penche en s’éloignant (+) / vers vous (−)',
+    saveA: 'Enregistrer côté A',
+    saveB: 'Enregistrer côté B',
+    sideA: 'Côté A',
+    sideB: 'Côté B',
+    reset: 'Recommencer',
+    oneSide:
+      'Un seul côté : le résultat inclut l’erreur propre au téléphone, souvent ±0,5°. Enregistrez aussi le côté B pour une mesure fiable.',
+    twoSides:
+      'Moyenne des deux côtés : l’erreur du téléphone et la conicité du mât s’annulent.',
+    reading: (side: string, away: string) =>
+      `latéral ${side}°, éloignement ${away}°`,
     northSouth: 'Penche au nord (+) / au sud (−)',
     eastWest: 'Penche à l’est (+) / à l’ouest (−)',
     pole: 'Candélabre',
@@ -664,6 +702,195 @@ export const FR: LuxPathCopy = {
         name: 'Câble U-1000 R2V 4 × 6 mm² Cu',
         spec: 'NF C 17-200, environ 30 m par mât',
       },
+    },
+  },
+  span: {
+    conductor: 'Câble (torsadé)',
+    everydayTension: 'Tension de pose',
+    everydayHint: '% de la charge de rupture à 15 °C ; 10 à 15 % est courant',
+    span: 'Portée L',
+    poleRole: 'Rôle du mât',
+    deviation: 'Angle de la ligne',
+    poleHeight: 'Hauteur du mât',
+    attachment: 'Câble fixé à',
+    nominalLoad: 'Effort nominal du mât',
+    nominalHint: 'Sur la plaque ou la fiche du mât (effort en tête)',
+    clearance: 'Hauteur au sol exigée',
+    clearanceHint:
+      '6 m au-dessus des routes, 5 m ailleurs (selon règles locales)',
+    windZone: 'Zone de vent',
+    verdictOk: 'Le câble et le mât tiennent à cette portée',
+    verdictBad: 'Pas sûr à cette portée',
+    sag: 'Flèche par forte chaleur',
+    sagWhenStrung: (m: string) => `${m} m à la pose`,
+    maxTension: 'Tension maximale',
+    allowed: (daN: string) => `admis ${daN} daN`,
+    poleLoad: 'Effort sur le mât',
+    ofRated: (pct: string) => `${pct} % de son nominal`,
+    lowestPoint: 'Point bas au-dessus du sol',
+    maxSpan: 'Portée maximale sûre',
+    beyond: 'plus de 150 m',
+    byWeather: 'Flèche et tension selon la météo',
+    condition: 'Situation',
+    tension: 'Tension',
+    sagColumn: 'Flèche',
+    formulas: {
+      weight: 'Poids du câble',
+      wind: 'Vent sur le câble (0,75 : une rafale ne charge jamais toute la portée)',
+      sag: 'Flèche d’un câble tendu (parabole)',
+      change:
+        'Tension après un changement de météo (équation de changement d’état)',
+      tension: 'Tension au mât',
+      wire: 'Vérification du câble : au plus ⅓ de la charge de rupture',
+      pole: 'Effort sur le mât au niveau du câble',
+      clearance: 'Point bas par forte chaleur',
+    },
+  },
+  spanStates: {
+    everyday: 'Pose, 15 °C',
+    wind: 'Vent de calcul, 15 °C',
+    cold: 'Froid, −5 °C',
+    hot: 'Chaleur, 50 °C',
+  },
+  spanLimits: {
+    conductor: 'limitée par le câble',
+    pole: 'limitée par le mât',
+    clearance: 'limitée par la hauteur au sol',
+  },
+  conductors: {
+    abc_2x16: 'Torsadé 2 × 16 mm² Al (autoporteur)',
+    abc_4x16: 'Torsadé 4 × 16 mm² Al (autoporteur)',
+    abc_4x25: 'Torsadé 4 × 25 mm² Al (autoporteur)',
+    abc_3x35_54: 'Torsadé 3 × 35 + 54,6 mm² (neutre porteur Almelec)',
+    abc_3x70_54: 'Torsadé 3 × 70 + 54,6 mm² (neutre porteur Almelec)',
+    abc_3x150_70: 'Torsadé 3 × 150 + 70 mm² (neutre porteur Almelec)',
+  },
+  poleRoles: {
+    intermediate: 'En alignement',
+    angle: 'D’angle',
+    terminal: 'D’arrêt (fin de ligne)',
+  },
+  spanDiagram: {
+    alt: 'Deux mâts reliés par un câble qui fléchit : portée, flèche et hauteur au sol',
+    sag: 'flèche',
+    clearance: 'hauteur au sol',
+  },
+  howTo: {
+    title: 'Comment prendre les mesures',
+    spacing: [
+      'Hauteur H : sur la plaque du mât ou les plans, ou mesurez-la dans l’onglet Caméra (visez le pied, puis le sommet).',
+      'Espacement S : d’un mât à l’autre avec un odomètre, le mètre AR de l’onglet Caméra, ou en plaçant les deux mâts sur la Carte.',
+      'Largeur W : au mètre ruban, de bordure à bordure, perpendiculairement à la route.',
+      'Flux Φ : les lumens de la fiche du luminaire, pas ceux de ses puces LED.',
+      'Facteur de maintenance MF : 0,8 pour des luminaires LED étanches nettoyés tous les 3 à 4 ans ; 0,7 en air poussiéreux ou salin.',
+    ],
+    foundation: [
+      'Profondeur : du niveau du sol au fond de la fouille, mètre tenu à la verticale.',
+      'Sol : serrez une poignée. Elle s’effrite : grave ou sable. Elle se roule en boudin : argile. Le pouce s’enfonce facilement : argile molle. La roche demande un pic ou un brise-roche.',
+      'Zone de vent : carte nationale des vents (annexe de l’Eurocode 1) ; en bord de mer ou sur les hauteurs, prenez la zone supérieure.',
+      'Surface du panneau : longueur × largeur sur la fiche du panneau.',
+    ],
+    solar: [
+      'Heures de plein soleil : sur PVGIS (re.jrc.ec.europa.eu/pvg_tools), relevez l’irradiation journalière de décembre sur votre site en kWh/m²/jour : ce nombre est le nombre d’heures de plein soleil.',
+      'Puissance LED : la puissance nominale du luminaire à 100 %, driver compris.',
+      'Profil de gradation : les heures à chaque niveau réglées dans le contrôleur, par exemple 4 h à 100 %, 4 h à 50 %, 3 h à 30 %.',
+      'Autonomie : nuits de fonctionnement sans soleil ; 3 pour l’essentiel de la Méditerranée, 5 là où l’hiver est nuageux.',
+    ],
+    electrical: [
+      'Longueur de câble : de l’armoire au dernier mât, le long du tracé ; sur la Carte, additionnez les portées.',
+      'Luminaires et puissance : comptez les points lumineux du circuit et prenez la puissance nominale de chacun, driver compris.',
+      'Chute de tension : 3 % pour l’éclairage (NF C 15-100, NF C 17-200) sauf exigence du gestionnaire de réseau.',
+    ],
+    span: [
+      'Portée L : entre axes des mâts, à l’odomètre, au mètre AR (onglet Caméra) ou sur la Carte.',
+      'Câble fixé à : la hauteur de la pince d’ancrage sur le mât ; mesurez-la dans l’onglet Caméra.',
+      'Angle de la ligne : de combien la ligne tourne à ce mât. Visez les deux directions à la boussole, ou lisez-le sur la Carte.',
+      'Effort nominal : inscrit sur la plaque ou la fiche du mât, par exemple « 250 daN ». Les poteaux béton BT font souvent 150 à 650 daN.',
+      'Hauteur au sol : 6 m au-dessus des routes et 5 m ailleurs sur la plupart des réseaux ; vérifiez les règles du gestionnaire.',
+    ],
+    concrete: [
+      'Affaissement : remplissez le cône en trois couches, piquez chacune 25 fois, soulevez le cône bien droit en 5 à 10 s et mesurez de combien le sommet est descendu.',
+      'Eau et ciment : sur le bon de livraison (kg par m³) ou d’après les pesées de gâchée.',
+      'Âge : jours depuis le coulage ; écrasez les éprouvettes à 7 et 28 jours.',
+    ],
+  },
+  plumbGuide: {
+    title: 'Comment placer le téléphone',
+    steps: [
+      {
+        title: 'Choisissez un endroit propre et droit',
+        text: 'À hauteur de poitrine sur le fût, loin de la porte, des soudures, des autocollants et de la crosse.',
+      },
+      {
+        title: 'Téléphone debout, dos à plat sur le mât',
+        text: 'En portrait, grand côté le long du mât, écran vers vous. Appuyez le haut et le bas contre le mât : pas de jour, pas un seul coin en contact.',
+      },
+      {
+        title: 'Ne bougez plus, puis enregistrez le côté A',
+        text: 'Attendez « Stable », puis touchez « Enregistrer côté A ». Indiquez vers où vous regardez.',
+      },
+      {
+        title: 'Faites le tour et enregistrez le côté B',
+        text: 'Passez du côté opposé du mât et recommencez. La moyenne des deux côtés annule l’erreur du téléphone et la conicité des mâts.',
+      },
+    ],
+    mistakes: 'Erreurs fréquentes',
+    wrongFlat: 'À plat comme un plateau : mesure dans le mauvais sens',
+    wrongGap: 'Un seul coin en contact : faussé par le jour',
+    right: 'Tout le dos à plat sur le fût',
+  },
+  ar: {
+    title: 'Mètre AR',
+    lead: 'Mesurez des distances au sol avec la caméra, comme un mètre : visez, touchez, avancez, touchez.',
+    start: 'Lancer le mètre AR',
+    close: 'Fermer',
+    addPoint: 'Ajouter un point',
+    undo: 'Annuler',
+    clear: 'Effacer',
+    checking: 'Vérification de la RA…',
+    scanning:
+      'Balayez lentement le sol avec le téléphone jusqu’à voir l’anneau.',
+    aim: 'Placez l’anneau sur le premier point et touchez « Ajouter un point ».',
+    next: 'Placez l’anneau sur le point suivant et touchez « Ajouter un point ».',
+    total: 'Total',
+    last: 'Dernier segment',
+    useAsDistance: 'Utiliser comme distance au mât',
+    unsupported:
+      'Le mètre AR demande Chrome sur un téléphone Android avec les Services Google Play pour la RA. Sur iPhone ou ordinateur, utilisez la méthode par angles ci-dessous ou la Carte.',
+    failed: 'La RA n’a pas pu démarrer. Autorisez la caméra et réessayez.',
+    accuracy:
+      'En général à 1–2 % près sur un sol éclairé et texturé ; moins fiable sur une surface brillante ou unie et au-delà de 10 m.',
+    howTitle: 'Comment fonctionne le mètre AR',
+    how: [
+      'La RA du téléphone (ARCore) suit le sol en 3D grâce à la caméra et aux capteurs de mouvement.',
+      'Chaque appui pose un point sur cette surface ; LuxPath mesure les lignes droites entre eux.',
+      'Tout reste sur le téléphone : aucune image n’est envoyée.',
+    ],
+  },
+  art: {
+    anatomyTitle: 'Les éléments d’un mât d’éclairage',
+    anatomy: {
+      luminaire: 'Luminaire',
+      arm: 'Crosse',
+      shaft: 'Fût',
+      door: 'Porte : fusible et bornier',
+      plate: 'Platine',
+      bolts: 'Tiges d’ancrage',
+      grout: 'Calage',
+      block: 'Massif béton',
+      earth: 'Piquet de terre',
+      duct: 'Fourreau',
+    },
+    kinds: {
+      pole: 'Mât acier avec crosse',
+      conic: 'Mât aluminium cylindro-conique',
+      solarPole: 'Mât solaire : panneau en tête, batterie dans le coffret',
+      luminaire: 'Luminaire routier LED',
+      solarLuminaire: 'Luminaire solaire tout-en-un',
+      panel: 'Panneau solaire',
+      battery: 'Batterie LiFePO4',
+      bolts: 'Cage d’ancrage avec gabarit',
+      cable: 'Câble d’énergie, en coupe',
     },
   },
 };

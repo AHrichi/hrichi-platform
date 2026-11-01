@@ -6,20 +6,100 @@
     </div>
   </header>
 
+  <section class="panel" aria-labelledby="lp-plumb-how">
+    <h3 id="lp-plumb-how">{{ t().plumbGuide.title }}</h3>
+    <lp-plumb-guide [active]="guideStep()" />
+  </section>
+
   <div class="workbench">
     <section class="panel" aria-labelledby="lp-plumb-level">
       <h3 id="lp-plumb-level">{{ t().plumb.level }}</h3>
       <lp-plumb-diagram [(pitch)]="pitch" [(roll)]="roll" [result]="result()" />
       <p class="hint">✋ {{ t().plumb.dragHint }}</p>
+
+      <div class="fields">
+        <label class="select">
+          <span>{{ t().plumb.facing }}</span>
+          <select (change)="setFacing($any($event.target).value)">
+            @for (d of directions; track d) {
+              <option [value]="d" [selected]="d === facing()">
+                {{ t().compass[d] }}
+              </option>
+            }
+          </select>
+        </label>
+      </div>
+
       <div class="actions">
         <button ahButton="secondary" type="button" (click)="toggleSensor()">
           📱
           {{ sensor() === 'on' ? t().plumb.stopSensor : t().plumb.useSensor }}
         </button>
       </div>
+
       @if (sensor() === 'on') {
-        <p class="hint">{{ t().plumb.sensorHint }}</p>
+        <div class="live" role="status">
+          @if (live(); as reading) {
+            <span class="chip" [class.steady]="reading.steady">
+              {{ reading.steady ? t().plumb.steady : t().plumb.holdStill }}
+            </span>
+            <bdi>{{
+              t().plumb.reading(
+                i18n.num(reading.sideways, 2),
+                i18n.num(reading.away, 2)
+              )
+            }}</bdi>
+          } @else {
+            <span>{{ t().plumb.sensorHint }}</span>
+          }
+        </div>
+        <div class="actions">
+          <button
+            ahButton
+            type="button"
+            [disabled]="!live()?.steady"
+            (click)="save('A')"
+          >
+            {{ t().plumb.saveA }}
+          </button>
+          <button
+            ahButton="secondary"
+            type="button"
+            [disabled]="!sideA() || !live()?.steady"
+            (click)="save('B')"
+          >
+            {{ t().plumb.saveB }}
+          </button>
+          @if (sideA()) {
+            <button ahButton="ghost" type="button" (click)="restart()">
+              {{ t().plumb.reset }}
+            </button>
+          }
+        </div>
       }
+
+      @if (sideA(); as a) {
+        <ul class="sides" role="list">
+          <li>
+            <strong>{{ t().plumb.sideA }}</strong>
+            <bdi>{{
+              t().plumb.reading(i18n.num(a.sideways, 2), i18n.num(a.away, 2))
+            }}</bdi>
+          </li>
+          @if (sideB(); as b) {
+            <li>
+              <strong>{{ t().plumb.sideB }}</strong>
+              <bdi>{{
+                t().plumb.reading(i18n.num(b.sideways, 2), i18n.num(b.away, 2))
+              }}</bdi>
+            </li>
+          }
+        </ul>
+        <p class="hint">
+          {{ sideB() ? t().plumb.twoSides : t().plumb.oneSide }}
+        </p>
+      }
+
       @if (sensor() === 'denied' || sensor() === 'unsupported') {
         <ah-alert variant="info">{{
           sensor() === 'denied'

@@ -1,0 +1,92 @@
+<svg viewBox="0 0 160 100" role="img" [attr.aria-label]="label()">
+  <rect class="backdrop" width="160" height="100" rx="10" />
+  @switch (kind()) {
+    @case ('pole') {
+      <!-- Octagonal steel pole, single arm, LED head -->
+      <path class="metal" d="M74 92l3-78h6l3 78z" />
+      <path class="arm" d="M80 18c10-6 26-8 42-6" />
+      <path class="head" d="M114 9h22l-3 7h-16z" />
+      <path class="beam" d="M117 16l-14 30h40l-12-30z" />
+      <rect class="detail" x="76" y="70" width="8" height="12" rx="1" />
+      <rect class="base" x="66" y="90" width="28" height="4" rx="1" />
+    }
+    @case ('conic') {
+      <!-- Tapered aluminium pole with a post-top lantern -->
+      <path class="metal" d="M72 92l6-70h4l6 70z" />
+      <path class="head" d="M70 20h20l-4-8h-12z" />
+      <path class="beam" d="M72 20l-16 34h48l-16-34z" />
+      <rect class="detail" x="75" y="72" width="10" height="10" rx="1" />
+      <rect class="base" x="64" y="90" width="32" height="4" rx="1" />
+    }
+    @case ('solarPole') {
+      <!-- Pole with a tilted panel on top and a battery box -->
+      <path class="metal" d="M76 92l2-74h4l2 74z" />
+      <path class="panel" d="M58 14l44-8 4 10-44 8z" />
+      <path class="cells" d="M69 12l3 10M80 10l3 10M91 8l3 10M61 19l43-8" />
+      <path class="arm" d="M80 30h26" />
+      <path class="head" d="M100 26h20l-2 6h-16z" />
+      <rect class="box" x="70" y="52" width="20" height="18" rx="2" />
+      <path class="bolt" d="M80 55l-4 7h5l-3 6" />
+      <rect class="base" x="66" y="90" width="28" height="4" rx="1" />
+    }
+    @case ('luminaire') {
+      <!-- Road luminaire from the side, LED board underneath -->
+      <path class="arm" d="M14 46h34" />
+      <path class="head" d="M44 38h86c8 0 12 4 12 10H44z" />
+      <rect class="leds" x="58" y="48" width="70" height="5" rx="2" />
+      <path
+        class="dots"
+        d="M64 50.5h.1M74 50.5h.1M84 50.5h.1M94 50.5h.1M104 50.5h.1M114 50.5h.1M124 50.5h.1"
+      />
+      <path class="beam" d="M60 54l-18 40h104l-18-40z" />
+    }
+    @case ('solarLuminaire') {
+      <!-- All-in-one: panel on the back, battery and LEDs in one body -->
+      <path class="arm" d="M14 50h28" />
+      <path class="panel" d="M40 30h96l-6 12H46z" />
+      <path class="cells" d="M64 30l-2 12M88 30v12M112 30l2 12M43 36h90" />
+      <path class="head" d="M46 42h84l-4 10H50z" />
+      <rect class="leds" x="58" y="52" width="60" height="4" rx="2" />
+      <path class="beam" d="M60 56l-16 38h88l-16-38z" />
+    }
+    @case ('panel') {
+      <!-- Monocrystalline panel, front -->
+      <rect class="frame" x="34" y="10" width="92" height="80" rx="3" />
+      <path
+        class="cells"
+        d="M57 12v76M80 12v76M103 12v76M36 30h88M36 50h88M36 70h88"
+      />
+      <path class="sun" d="M138 16h.1" />
+    }
+    @case ('battery') {
+      <!-- LiFePO4 block with terminals -->
+      <rect class="box" x="38" y="24" width="84" height="62" rx="5" />
+      <rect class="terminal" x="52" y="16" width="14" height="9" rx="2" />
+      <rect class="terminal" x="94" y="16" width="14" height="9" rx="2" />
+      <path class="sign" d="M54 44h10M59 39v10M96 44h10" />
+      <path class="bolt" d="M82 54l-8 14h9l-6 12" />
+    }
+    @case ('bolts') {
+      <!-- Anchor cage: four J-bolts, two rings and the top template -->
+      <rect class="template" x="40" y="12" width="80" height="8" rx="2" />
+      @for (x of [52, 68, 92, 108]; track x) {
+        <path class="rod" [attr.d]="'M' + x + ' 8V80c0 8 8 8 10 4'" />
+        <path
+          class="thread"
+          [attr.d]="'M' + (x - 3) + ' 26h6M' + (x - 3) + ' 30h6'"
+        />
+      }
+      <path class="ring" d="M50 44h60M50 66h60" />
+    }
+    @default {
+      <!-- U-1000 R2V cable cut open: sheath, filler, four cores -->
+      <circle class="sheath" cx="62" cy="50" r="34" />
+      <circle class="filler" cx="62" cy="50" r="27" />
+      <circle class="core" cx="51" cy="39" r="10" />
+      <circle class="core alt" cx="73" cy="39" r="10" />
+      <circle class="core alt2" cx="51" cy="61" r="10" />
+      <circle class="core earth" cx="73" cy="61" r="10" />
+      <path class="cable-run" d="M96 50h56" />
+    }
+  }
+</svg>

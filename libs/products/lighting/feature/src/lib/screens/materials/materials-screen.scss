@@ -123,3 +123,23 @@ table {
     font-size: var(--font-size-100);
   }
 }
+
+// The labelled pole, folded away once it has been read.
+.anatomy {
+  summary {
+    cursor: pointer;
+    min-block-size: 2.75rem;
+    font-weight: var(--font-weight-semibold);
+  }
+
+  lp-pole-anatomy {
+    display: block;
+    max-inline-size: 40rem;
+    margin-block-start: var(--space-3);
+  }
+}
+
+lp-material-art {
+  display: block;
+  max-inline-size: 14rem;
+}

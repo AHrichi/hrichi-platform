@@ -23,6 +23,7 @@ import {
 } from '../../diagrams/rangefinder-diagram/rangefinder-diagram';
 import { LuxPathI18n } from '../../i18n/luxpath-i18n';
 import { LightingStore } from '../../store/lighting.store';
+import { ArTape } from '../../ui/ar-tape/ar-tape';
 import { NumberField } from '../../ui/number-field/number-field';
 import { SaveBar, type SaveRequest } from '../../ui/save-bar/save-bar';
 
@@ -47,6 +48,7 @@ interface OrientationPermission {
     AhAlert,
     AhButton,
     AhMetricCard,
+    ArTape,
     CameraGuide,
     RangefinderDiagram,
     NumberField,
@@ -229,6 +231,17 @@ export class CameraScreen {
     if (this.isBrowser) {
       window.removeEventListener('deviceorientation', this.onOrientation, true);
     }
+  }
+
+  /**
+   * A distance measured with the AR tape (eye to pole foot, along the ground)
+   * sets the foot's angle, so the top's angle alone then gives the height.
+   */
+  protected useArDistance(meters: number): void {
+    if (meters <= 0) return;
+    const angle = (Math.atan(this.eyeHeight() / meters) * 180) / Math.PI;
+    this.baseAngle.set(Math.round(angle * 10) / 10);
+    this.baseLocked.set(true);
   }
 
   protected lockBase(): void {

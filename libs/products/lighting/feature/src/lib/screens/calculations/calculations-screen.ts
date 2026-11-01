@@ -15,33 +15,48 @@ import {
   calculateFoundation,
   calculatePoleSpacing,
   calculateSolarSizing,
+  calculateSpan,
+  CONDUCTORS,
+  type ConductorType,
   type ElectricalParams,
   type FoundationCalculationParams,
   type PoleMaterial,
+  type PoleRole,
   type RoadLightingClass,
   type SavedCalculation,
   type SoilType,
   type SolarSizingParams,
   type SpacingCalculationParams,
+  type SpanCalculationParams,
   type WindZone,
 } from '@ah/products/lighting/domain';
 import { CableDiagram } from '../../diagrams/cable-diagram/cable-diagram';
 import { FoundationDiagram } from '../../diagrams/foundation-diagram/foundation-diagram';
 import { SolarDiagram } from '../../diagrams/solar-diagram/solar-diagram';
 import { SpacingDiagram } from '../../diagrams/spacing-diagram/spacing-diagram';
+import { SpanDiagram } from '../../diagrams/span-diagram/span-diagram';
 import { LuxPathI18n } from '../../i18n/luxpath-i18n';
 import { LightingStore } from '../../store/lighting.store';
+import { HowTo } from '../../ui/how-to/how-to';
 import { NoteList } from '../../ui/note-list/note-list';
 import { NumberField } from '../../ui/number-field/number-field';
 import { SaveBar, type SaveRequest } from '../../ui/save-bar/save-bar';
-import { ROAD_CLASSES, SOIL_TYPES, WIND_ZONES } from '../options';
+import {
+  CONDUCTOR_TYPES,
+  POLE_ROLES,
+  ROAD_CLASSES,
+  SOIL_TYPES,
+  WIND_ZONES,
+} from '../options';
 
-export type CalculatorTab = 'spacing' | 'foundation' | 'solar' | 'electrical';
+export type CalculatorTab =
+  'spacing' | 'foundation' | 'solar' | 'electrical' | 'span';
 const TABS: readonly CalculatorTab[] = [
   'spacing',
   'foundation',
   'solar',
   'electrical',
+  'span',
 ];
 
 function isTab(value: string | null): value is CalculatorTab {
@@ -60,6 +75,8 @@ function isTab(value: string | null): value is CalculatorTab {
     FoundationDiagram,
     SolarDiagram,
     CableDiagram,
+    SpanDiagram,
+    HowTo,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './calculations-screen.html',
@@ -75,6 +92,8 @@ export class CalculationsScreen {
   protected readonly roadClasses = ROAD_CLASSES;
   protected readonly soilTypes = SOIL_TYPES;
   protected readonly windZones = WIND_ZONES;
+  protected readonly conductorTypes = CONDUCTOR_TYPES;
+  protected readonly poleRoles = POLE_ROLES;
   protected readonly materials: readonly PoleMaterial[] = [
     'galvanized_steel',
     'aluminum',
@@ -177,6 +196,36 @@ export class CalculationsScreen {
     calculateElectricalNetwork(this.electricalParams()),
   );
 
+  // Overhead wire and span (NF C 11-201)
+  protected readonly lSpan = signal(35);
+  protected readonly lConductor = signal<ConductorType>('abc_4x16');
+  protected readonly lEveryday = signal(12);
+  protected readonly lWindZone = signal<WindZone>(2);
+  protected readonly lRole = signal<PoleRole>('intermediate');
+  protected readonly lDeviation = signal(30);
+  protected readonly lPoleHeight = signal(8);
+  protected readonly lAttachment = signal(7.5);
+  protected readonly lNominal = signal(250);
+  protected readonly lClearance = signal(6);
+  protected readonly spanParams = computed<SpanCalculationParams>(() => ({
+    spanMeters: this.lSpan(),
+    conductor: this.lConductor(),
+    everydayTensionPct: this.lEveryday(),
+    windZone: this.lWindZone(),
+    poleRole: this.lRole(),
+    deviationDegrees: this.lDeviation(),
+    poleHeightMeters: this.lPoleHeight(),
+    attachmentHeightMeters: Math.min(this.lAttachment(), this.lPoleHeight()),
+    poleNominalLoadDaN: this.lNominal(),
+    requiredClearanceMeters: this.lClearance(),
+  }));
+  protected readonly span = computed(() => calculateSpan(this.spanParams()));
+  /** What stops the span growing, in words; empty when nothing does by 150 m. */
+  protected readonly spanLimit = computed(() => {
+    const limit = this.span().limitingFactor;
+    return limit ? this.t().spanLimits[limit] : '';
+  });
+
   /** The saved calculation being edited (from ?edit=), if any. */
   protected readonly editing = signal<SavedCalculation | null>(null);
   protected readonly editingLabel = computed(() =>
@@ -197,8 +246,13 @@ export class CalculationsScreen {
         return `${name} · ${this.pLed()} W · ${this.solar().commercialPanelSizeWatts} Wp`;
       case 'electrical':
         return `${name} · ${n(this.eLength(), 0)} m · ${this.electrical().recommendedCrossSectionMm2} mm²`;
+      case 'span':
+        return `${name} · L ${n(this.lSpan())} m · ${this.t().poleRoles[this.lRole()]}`;
     }
   });
+
+  /** Where each input comes from on site. */
+  protected readonly howTo = computed(() => this.t().howTo[this.tab()]);
 
   /** "How it's calculated": each formula with today's numbers in it. */
   protected readonly steps = computed(() => {
@@ -285,6 +339,50 @@ export class CalculationsScreen {
           },
         ];
       }
+      case 'span': {
+        const r = this.span();
+        const p = this.spanParams();
+        const g = this.t().span.formulas;
+        const c = CONDUCTORS[p.conductor];
+        const hot = r.states.find((s) => s.state === 'hot');
+        const theta = n(p.deviationDegrees, 0);
+        const pole =
+          p.poleRole === 'terminal'
+            ? `F = T + F_w × L / 2 = ${n(r.poleLoadDaN, 0)} daN`
+            : p.poleRole === 'angle'
+              ? `F = 2 T sin(${theta}° / 2) + F_w × L × cos(${theta}° / 2) = ${n(r.poleLoadDaN, 0)} daN`
+              : `F = F_w × L = ${n(r.windNPerM, 2)} × ${n(p.spanMeters)} = ${n(r.poleLoadDaN, 0)} daN`;
+        return [
+          {
+            label: g.weight,
+            math: `w = m × g = ${n(c.massKgPerM, 2)} × 9.81 = ${n(r.weightNPerM, 2)} N/m`,
+          },
+          {
+            label: g.wind,
+            math: `F_w = 0.75 × q × d (d = ${c.diameterMm} mm) = ${n(r.windNPerM, 2)} N/m`,
+          },
+          {
+            label: g.sag,
+            math: `f = w × L² / (8 H₀), H₀ = ${n(p.everydayTensionPct)} % × ${c.breakingLoadDaN} daN → f = ${n(r.sagEverydayMeters, 2)} m`,
+          },
+          {
+            label: g.change,
+            math: `H² (H − H₀ + EA w₀² L² / 24 H₀² + EA α Δt) = EA w² L² / 24 → 50 °C: ${n(hot?.tensionDaN ?? 0, 0)} daN, f = ${n(r.sagHotMeters, 2)} m`,
+          },
+          {
+            label: g.wire,
+            math: `T_max = ${n(r.maxTensionDaN, 0)} daN ≤ ${c.breakingLoadDaN} / 3 = ${n(r.allowedTensionDaN, 0)} daN → ${n(r.conductorUtilization * 100, 0)} %`,
+          },
+          {
+            label: g.pole,
+            math: `${pole}; F × ${n(p.attachmentHeightMeters)} m ≤ ${n(p.poleNominalLoadDaN, 0)} daN × (${n(p.poleHeightMeters)} − 0.25) m → ${n(r.poleUtilization * 100, 0)} %`,
+          },
+          {
+            label: g.clearance,
+            math: `${n(p.attachmentHeightMeters)} − ${n(r.sagHotMeters, 2)} = ${n(r.clearanceMeters, 2)} m (≥ ${n(p.requiredClearanceMeters)} m)`,
+          },
+        ];
+      }
     }
   });
 
@@ -362,6 +460,20 @@ export class CalculationsScreen {
         this.eMaxDrop.set(i.maxAllowableVoltageDropPct);
         break;
       }
+      case 'span': {
+        const i = saved.inputs;
+        this.lSpan.set(i.spanMeters);
+        this.lConductor.set(i.conductor);
+        this.lEveryday.set(i.everydayTensionPct);
+        this.lWindZone.set(i.windZone);
+        this.lRole.set(i.poleRole);
+        this.lDeviation.set(i.deviationDegrees);
+        this.lPoleHeight.set(i.poleHeightMeters);
+        this.lAttachment.set(i.attachmentHeightMeters);
+        this.lNominal.set(i.poleNominalLoadDaN);
+        this.lClearance.set(i.requiredClearanceMeters);
+        break;
+      }
     }
   }
 
@@ -415,6 +527,13 @@ export class CalculationsScreen {
           ...base,
           kind: 'electrical',
           inputs: this.electricalParams(),
+        });
+        break;
+      case 'span':
+        savedId = await this.store.saveCalculation({
+          ...base,
+          kind: 'span',
+          inputs: this.spanParams(),
         });
         break;
     }

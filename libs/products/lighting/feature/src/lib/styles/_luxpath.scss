@@ -61,6 +61,25 @@
   display: grid;
   gap: var(--space-3);
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr));
+
+  // Every field shares four rows (label, control, slider, hint) with its
+  // neighbours, so a label that wraps onto two lines keeps the inputs level.
+  > lp-number-field,
+  > .select {
+    grid-row: span 4;
+    display: grid;
+    grid-template-rows: subgrid;
+    row-gap: var(--space-1);
+  }
+
+  > .select > span {
+    align-self: end;
+  }
+
+  > .check {
+    grid-row: span 4;
+    align-self: center;
+  }
 }
 
 @mixin results {

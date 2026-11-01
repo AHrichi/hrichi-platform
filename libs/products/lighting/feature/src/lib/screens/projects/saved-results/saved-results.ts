@@ -12,6 +12,7 @@ import {
   calculateFoundation,
   calculatePoleSpacing,
   calculateSolarSizing,
+  calculateSpan,
   type HeightMeasurement,
   type SavedCalculation,
   validateConcreteMix,
@@ -36,6 +37,7 @@ const ICONS: Record<Row['kind'], string> = {
   solar: '☀️',
   electrical: '🔌',
   concrete: '🧱',
+  span: '〰️',
   measurement: '📷',
 };
 
@@ -94,6 +96,11 @@ export class SavedResults {
       case 'electrical': {
         const r = calculateElectricalNetwork(c.inputs);
         summary = `${r.recommendedCrossSectionMm2} mm² · ΔU ${n(r.actualVoltageDropPct, 2)} %`;
+        break;
+      }
+      case 'span': {
+        const r = calculateSpan(c.inputs);
+        summary = `L ${n(c.inputs.spanMeters, 0)} m · f ${n(r.sagHotMeters, 2)} m · max ${n(r.maxSpanMeters, 0)} m · ${r.isCompliant ? '✓' : '✕'}`;
         break;
       }
       case 'concrete': {

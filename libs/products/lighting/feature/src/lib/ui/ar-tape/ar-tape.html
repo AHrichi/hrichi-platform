@@ -1,0 +1,72 @@
+<p class="lead">{{ t().ar.lead }}</p>
+
+@switch (support()) {
+  @case ('checking') {
+    <p class="muted">{{ t().ar.checking }}</p>
+  }
+  @case ('no') {
+    <p class="muted">{{ t().ar.unsupported }}</p>
+  }
+  @default {
+    <div class="actions">
+      <button ahButton type="button" (click)="start()">
+        📐 {{ t().ar.start }}
+      </button>
+    </div>
+    @if (failed()) {
+      <p class="error" role="alert">{{ t().ar.failed }}</p>
+    }
+    <p class="muted">{{ t().ar.accuracy }}</p>
+  }
+}
+
+@if (!active() && last() !== null) {
+  <p class="result">
+    {{ t().ar.last }}:
+    <bdi
+      ><strong>{{ i18n.num(last() ?? 0, 2) }} m</strong></bdi
+    >
+    · {{ t().ar.total }}: <bdi>{{ i18n.num(total(), 2) }} m</bdi>
+  </p>
+}
+
+<lp-how-to [title]="t().ar.howTitle" [steps]="t().ar.how" />
+
+<!-- Shown over the camera while the AR session runs (WebXR DOM overlay). -->
+<div #overlay class="overlay" [attr.dir]="i18n.isRtl() ? 'rtl' : 'ltr'">
+  <div class="top" (beforexrselect)="keepTap($event)">
+    <p class="prompt" role="status">{{ prompt() }}</p>
+    @if (last() !== null) {
+      <p class="reading">
+        <span>{{ t().ar.last }}</span>
+        <bdi
+          ><strong>{{ i18n.num(last() ?? 0, 2) }} m</strong></bdi
+        >
+        <span
+          >{{ t().ar.total }} <bdi>{{ i18n.num(total(), 2) }} m</bdi></span
+        >
+      </p>
+    }
+  </div>
+  <span class="crosshair" aria-hidden="true"></span>
+  <div class="controls" (beforexrselect)="keepTap($event)">
+    <button
+      type="button"
+      class="primary"
+      [disabled]="!tracking()"
+      (click)="add()"
+    >
+      {{ t().ar.addPoint }}
+    </button>
+    <button type="button" [disabled]="points().length === 0" (click)="undo()">
+      {{ t().ar.undo }}
+    </button>
+    <button type="button" [disabled]="points().length === 0" (click)="clear()">
+      {{ t().ar.clear }}
+    </button>
+    <button type="button" [disabled]="last() === null" (click)="useLast()">
+      {{ t().ar.useAsDistance }}
+    </button>
+    <button type="button" (click)="close()">{{ t().ar.close }}</button>
+  </div>
+</div>
