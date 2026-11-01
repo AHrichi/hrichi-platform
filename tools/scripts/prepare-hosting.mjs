@@ -299,6 +299,22 @@ if (stampWorker) {
   ngsw.hashTable['/ngsw-worker.js'] = createHash('sha1')
     .update(script)
     .digest('hex');
+  // The worker caches HTML by content hash, with the headers it was first
+  // fetched with, and reuses it across versions while the HTML is unchanged:
+  // a policy change alone would never reach returning visitors' pages. The
+  // same stamp on each cached page changes its hash, so the worker refetches
+  // it, with the new policy.
+  for (const path of Object.keys(ngsw.hashTable)) {
+    if (!path.endsWith('.html')) continue;
+    const file = join(dir, path);
+    if (!existsSync(file)) continue;
+    const html = readFileSync(file, 'utf8')
+      .replace(/<!-- Content-Security-Policy \S+ -->\n?$/, '')
+      .replace(/\n?$/, '\n');
+    const stamped = `${html}<!-- Content-Security-Policy ${policyHash} -->\n`;
+    writeFileSync(file, stamped);
+    ngsw.hashTable[path] = createHash('sha1').update(stamped).digest('hex');
+  }
   writeFileSync(join(dir, 'ngsw.json'), `${JSON.stringify(ngsw, null, 2)}\n`);
 }
 
