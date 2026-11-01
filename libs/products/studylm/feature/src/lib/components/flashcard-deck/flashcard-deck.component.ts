@@ -68,7 +68,9 @@ export class FlashcardDeckComponent {
     this.store.setCardSectionFilter(sectionId || 'all');
   }
 
-  getCardDocLink(card: StudyFlashcard | null): { title: string; url: string } | null {
+  getCardDocLink(
+    card: StudyFlashcard | null,
+  ): { title: string; url: string } | null {
     if (!card) return null;
 
     // 1. If sourceCitation itself is a URL:
@@ -118,7 +120,9 @@ export class FlashcardDeckComponent {
     return null;
   }
 
-  formatCardSegments(text: string): { isLink: boolean; text: string; url?: string }[] {
+  formatCardSegments(
+    text: string,
+  ): { isLink: boolean; text: string; url?: string }[] {
     if (!text) return [];
     // Matches markdown links [label](url) OR standalone URLs (https?://[^\s)]+)
     const regex = /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)|(https?:\/\/[^\s,)]+)/g;
@@ -128,7 +132,10 @@ export class FlashcardDeckComponent {
 
     while ((match = regex.exec(text)) !== null) {
       if (match.index > lastIndex) {
-        segments.push({ isLink: false, text: text.substring(lastIndex, match.index) });
+        segments.push({
+          isLink: false,
+          text: text.substring(lastIndex, match.index),
+        });
       }
       if (match[1] && match[2]) {
         // Markdown link [label](url)

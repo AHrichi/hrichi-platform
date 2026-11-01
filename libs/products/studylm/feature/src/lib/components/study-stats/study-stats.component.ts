@@ -3,7 +3,6 @@ import { DecimalPipe } from '@angular/common';
 import { StudyLmStore } from '../../store/studylm.store';
 import { AhBadge, AhButton, AhMetricCard, AhProgressBar } from '@ah/ui';
 import type { StudyLmTab } from '../../store/studylm.state';
-import type { SubjectMasteryStats } from '../../store/studylm.computeds';
 
 @Component({
   selector: 'ah-study-stats',

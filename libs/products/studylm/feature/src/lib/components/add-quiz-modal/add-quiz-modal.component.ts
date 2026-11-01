@@ -5,7 +5,13 @@ import {
   signal,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { form, FormField, FormRoot, minLength, required } from '@angular/forms/signals';
+import {
+  form,
+  FormField,
+  FormRoot,
+  minLength,
+  required,
+} from '@angular/forms/signals';
 import { AhButton, AhModal, AhSegmentedControl } from '@ah/ui';
 import { StudyLmStore } from '../../store/studylm.store';
 import type { CompetencyTier } from '@ah/products/studylm/domain';
@@ -27,7 +33,14 @@ interface AddQuizFormModel {
 @Component({
   selector: 'ah-add-quiz-modal',
   standalone: true,
-  imports: [CommonModule, FormField, FormRoot, AhModal, AhButton, AhSegmentedControl],
+  imports: [
+    CommonModule,
+    FormField,
+    FormRoot,
+    AhModal,
+    AhButton,
+    AhSegmentedControl,
+  ],
   templateUrl: './add-quiz-modal.component.html',
   styleUrl: './add-quiz-modal.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -57,12 +70,16 @@ export class AddQuizModalComponent {
 
   readonly quizForm = form(this.model, (path) => {
     required(path.question, { message: 'Question statement is required' });
-    minLength(path.question, 10, { message: 'Question must be at least 10 characters' });
+    minLength(path.question, 10, {
+      message: 'Question must be at least 10 characters',
+    });
     required(path.optionA, { message: 'Option A is required' });
     required(path.optionB, { message: 'Option B is required' });
     required(path.optionC, { message: 'Option C is required' });
     required(path.optionD, { message: 'Option D is required' });
-    required(path.explanation, { message: 'Explanation / rationale is required' });
+    required(path.explanation, {
+      message: 'Explanation / rationale is required',
+    });
   });
 
   setTier(tier: CompetencyTier): void {
@@ -75,7 +92,8 @@ export class AddQuizModalComponent {
 
   submitQuiz(): void {
     const val = this.model();
-    if (!val.question.trim() || !val.optionA.trim() || !val.optionB.trim()) return;
+    if (!val.question.trim() || !val.optionA.trim() || !val.optionB.trim())
+      return;
 
     this.store.addManualQuizQuestion({
       tier: val.tier,

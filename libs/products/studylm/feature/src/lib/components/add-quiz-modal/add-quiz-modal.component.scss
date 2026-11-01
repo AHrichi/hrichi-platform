@@ -41,7 +41,11 @@
 
   &.is-correct {
     border-color: var(--color-success-default);
-    background: color-mix(in srgb, var(--color-success-default) 10%, var(--color-bg-raised));
+    background: color-mix(
+      in srgb,
+      var(--color-success-default) 10%,
+      var(--color-bg-raised)
+    );
   }
 }
 

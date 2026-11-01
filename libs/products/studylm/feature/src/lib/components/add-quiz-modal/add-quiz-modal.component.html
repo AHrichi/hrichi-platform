@@ -5,7 +5,12 @@
   size="lg"
   (closed)="close()"
 >
-  <form [formRoot]="quizForm" (ngSubmit)="submitQuiz()" class="quiz-form" novalidate>
+  <form
+    [formRoot]="quizForm"
+    (ngSubmit)="submitQuiz()"
+    class="quiz-form"
+    novalidate
+  >
     <div class="form-group">
       <ah-segmented-control
         label="Competency Tier"
@@ -39,7 +44,9 @@
     </div>
 
     <div class="options-container">
-      <label class="section-label">Options (Select the correct radio button) *</label>
+      <label class="section-label"
+        >Options (Select the correct radio button) *</label
+      >
 
       <div class="option-row" [class.is-correct]="model().correctIndex === 0">
         <input

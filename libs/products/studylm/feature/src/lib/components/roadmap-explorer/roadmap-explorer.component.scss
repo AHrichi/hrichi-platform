@@ -176,7 +176,10 @@
   background: var(--color-bg-raised);
   border: 1px solid var(--color-border-default);
   border-radius: var(--radius-md);
-  transition: border-color var(--motion-duration-fast) ease, box-shadow var(--motion-duration-fast) ease, background-color var(--motion-duration-fast) ease;
+  transition:
+    border-color var(--motion-duration-fast) ease,
+    box-shadow var(--motion-duration-fast) ease,
+    background-color var(--motion-duration-fast) ease;
 
   &.is-collapsed {
     padding: var(--space-3, 0.75rem) var(--space-4, 1rem);
@@ -192,7 +195,11 @@
   }
 
   &.has-cards.has-quiz {
-    background: color-mix(in srgb, var(--color-success-default) 6%, var(--color-bg-raised));
+    background: color-mix(
+      in srgb,
+      var(--color-success-default) 6%,
+      var(--color-bg-raised)
+    );
   }
 }
 
@@ -238,7 +245,9 @@
   border: 1px solid var(--color-border-default);
   color: var(--color-text-muted);
   font-size: var(--font-size-100, 0.75rem);
-  transition: transform var(--motion-duration-fast) ease, border-color var(--motion-duration-fast) ease;
+  transition:
+    transform var(--motion-duration-fast) ease,
+    border-color var(--motion-duration-fast) ease;
 
   .section-chevron {
     display: inline-block;

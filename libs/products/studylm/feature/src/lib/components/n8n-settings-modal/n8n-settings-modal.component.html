@@ -25,7 +25,12 @@
       </ah-alert>
     }
 
-    <form [formRoot]="n8nForm" (ngSubmit)="saveSettings()" class="settings-form" novalidate>
+    <form
+      [formRoot]="n8nForm"
+      (ngSubmit)="saveSettings()"
+      class="settings-form"
+      novalidate
+    >
       <div class="form-group">
         <ah-segmented-control
           label="Routing Mode"
@@ -43,7 +48,7 @@
             type="url"
             [formField]="n8nForm.tunnelUrl"
             class="form-input"
-            placeholder="https://saffron-glacial-uncork.ngrok-free.dev/webhook/study-synthesizer"
+            placeholder="https://your-tunnel.ngrok-free.dev/webhook/study-synthesizer"
           />
         </div>
       }

@@ -1,7 +1,11 @@
 <ah-modal
   [open]="store.showElaborationModal()"
   [title]="store.activeElaboration()?.conceptTitle || 'Concept Breakdown'"
-  [eyebrow]="store.activeElaboration()?.mode === 'hint' ? '💡 Pedagogical Hint' : '🔍 Architectural Deep Dive'"
+  [eyebrow]="
+    store.activeElaboration()?.mode === 'hint'
+      ? '💡 Pedagogical Hint'
+      : '🔍 Architectural Deep Dive'
+  "
   size="lg"
   (closed)="close()"
 >
@@ -14,7 +18,11 @@
             [variant]="elab.mode === 'hint' ? 'warning' : 'accent'"
             size="sm"
           >
-            <span>{{ elab.mode === 'hint' ? '💡 Concept Hint' : '🔍 Architectural Deep Dive' }}</span>
+            <span>{{
+              elab.mode === 'hint'
+                ? '💡 Concept Hint'
+                : '🔍 Architectural Deep Dive'
+            }}</span>
           </ah-badge>
 
           @if (elab.sectionCode) {
@@ -25,7 +33,13 @@
 
           @if (elab.tier) {
             <ah-badge
-              [variant]="elab.tier === 'beginner' ? 'info' : (elab.tier === 'intermediate' ? 'warning' : 'danger')"
+              [variant]="
+                elab.tier === 'beginner'
+                  ? 'info'
+                  : elab.tier === 'intermediate'
+                    ? 'warning'
+                    : 'danger'
+              "
               size="sm"
             >
               <span>{{ elab.tier | uppercase }}</span>
@@ -51,7 +65,8 @@
           <div class="loading-spinner" aria-hidden="true"></div>
           <h4 class="loading-heading">Consulting AI Knowledge Engine...</h4>
           <p class="loading-subtext">
-            Synthesizing specification invariants, architectural flowcharts, and verified code patterns.
+            Synthesizing specification invariants, architectural flowcharts, and
+            verified code patterns.
           </p>
         </div>
       }
@@ -66,15 +81,25 @@
       }
 
       <!-- Content -->
-      @if (!store.isLoadingElaboration() && store.activeElaboration(); as elab) {
+      @if (
+        !store.isLoadingElaboration() && store.activeElaboration();
+        as elab
+      ) {
         <!-- Summary Callout -->
-        <section class="summary-section" [class.summary-section--hint]="elab.mode === 'hint'">
+        <section
+          class="summary-section"
+          [class.summary-section--hint]="elab.mode === 'hint'"
+        >
           <div class="summary-icon" aria-hidden="true">
             {{ elab.mode === 'hint' ? '💡' : '📐' }}
           </div>
           <div class="summary-content">
             <h4 class="section-title">
-              {{ elab.mode === 'hint' ? 'Pedagogical Clue' : 'Specification Overview' }}
+              {{
+                elab.mode === 'hint'
+                  ? 'Pedagogical Clue'
+                  : 'Specification Overview'
+              }}
             </h4>
             <p class="summary-text">{{ elab.summary }}</p>
           </div>
@@ -84,7 +109,11 @@
         @if (elab.bulletPoints.length > 0) {
           <section class="nuances-section">
             <h4 class="section-subtitle">
-              {{ elab.mode === 'hint' ? 'Key Invariants to Test' : 'Architectural Invariants & Mechanisms' }}
+              {{
+                elab.mode === 'hint'
+                  ? 'Key Invariants to Test'
+                  : 'Architectural Invariants & Mechanisms'
+              }}
             </h4>
             <ul class="nuances-list">
               @for (bullet of elab.bulletPoints; track $index) {
@@ -100,7 +129,9 @@
         <!-- Architectural Diagram / Flowchart -->
         @if (elab.graph) {
           <section class="diagram-section">
-            <h4 class="section-subtitle">Visual Lifecycle & State Transitions</h4>
+            <h4 class="section-subtitle">
+              Visual Lifecycle & State Transitions
+            </h4>
             <ah-flow-chart [graph]="elab.graph" />
           </section>
         }
@@ -110,7 +141,11 @@
           <section class="code-section">
             <div class="code-section-header">
               <h4 class="section-subtitle">
-                {{ elab.mode === 'hint' ? 'Diagnostic Assertion' : 'Verified Implementation Pattern' }}
+                {{
+                  elab.mode === 'hint'
+                    ? 'Diagnostic Assertion'
+                    : 'Verified Implementation Pattern'
+                }}
               </h4>
             </div>
 
@@ -126,7 +161,9 @@
         <!-- Official Citations / Docs -->
         @if (elab.officialDocs && elab.officialDocs.length > 0) {
           <section class="docs-section">
-            <h4 class="section-subtitle">Official Grounded Reference Documentation</h4>
+            <h4 class="section-subtitle">
+              Official Grounded Reference Documentation
+            </h4>
             <div class="docs-links-grid">
               @for (doc of elab.officialDocs; track doc.url) {
                 <a
@@ -161,12 +198,7 @@
       </div>
 
       <div class="footer-actions">
-        <button
-          type="button"
-          ahButton="primary"
-          size="sm"
-          (click)="close()"
-        >
+        <button type="button" ahButton="primary" size="sm" (click)="close()">
           <span>Got it, thanks!</span>
         </button>
       </div>

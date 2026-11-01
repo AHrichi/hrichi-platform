@@ -256,7 +256,11 @@
   overflow-wrap: break-word;
 
   &:hover:not(:disabled) {
-    background: color-mix(in srgb, var(--color-accent-subtle) 25%, var(--color-bg-raised));
+    background: color-mix(
+      in srgb,
+      var(--color-accent-subtle) 25%,
+      var(--color-bg-raised)
+    );
     border-color: var(--color-accent-default);
   }
 
@@ -265,13 +269,21 @@
   }
 
   &.is-correct {
-    background: color-mix(in srgb, var(--color-success-default) 15%, var(--color-bg-raised));
+    background: color-mix(
+      in srgb,
+      var(--color-success-default) 15%,
+      var(--color-bg-raised)
+    );
     border-color: var(--color-success-default);
     color: var(--color-success-default);
   }
 
   &.is-wrong {
-    background: color-mix(in srgb, var(--color-accent-default) 15%, var(--color-bg-raised));
+    background: color-mix(
+      in srgb,
+      var(--color-accent-default) 15%,
+      var(--color-bg-raised)
+    );
     border-color: var(--color-accent-default);
     color: var(--color-accent-default);
   }
@@ -325,13 +337,23 @@
   gap: var(--space-2, 0.5rem);
 
   &.correct-box {
-    background: color-mix(in srgb, var(--color-success-default) 10%, var(--color-bg-raised));
-    border: 1px solid color-mix(in srgb, var(--color-success-default) 30%, transparent);
+    background: color-mix(
+      in srgb,
+      var(--color-success-default) 10%,
+      var(--color-bg-raised)
+    );
+    border: 1px solid
+      color-mix(in srgb, var(--color-success-default) 30%, transparent);
   }
 
   &.wrong-box {
-    background: color-mix(in srgb, var(--color-accent-default) 10%, var(--color-bg-raised));
-    border: 1px solid color-mix(in srgb, var(--color-accent-default) 30%, transparent);
+    background: color-mix(
+      in srgb,
+      var(--color-accent-default) 10%,
+      var(--color-bg-raised)
+    );
+    border: 1px solid
+      color-mix(in srgb, var(--color-accent-default) 30%, transparent);
   }
 }
 

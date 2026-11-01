@@ -14,20 +14,33 @@ export function withStudyLmHooks() {
         storageService = inject(StudyLmStorageService),
       ) {
         // 1. Hydrate subjects from IndexedDB
-        storageService.getAllSubjects().then((saved) => {
-          if (saved && saved.length > 0) {
-            patchState(store, {
-              subjects: saved,
-              activeSubjectId: saved[0].id,
-            });
-          }
-        }).catch(() => {
-          // Keep initial in-memory subjects
-        });
+        storageService
+          .getAllSubjects()
+          .then((saved) => {
+            if (saved && saved.length > 0) {
+              patchState(store, {
+                subjects: saved,
+                activeSubjectId: saved[0].id,
+              });
+            }
+          })
+          .catch(() => {
+            // Keep initial in-memory subjects
+          });
 
-        // 2. Check n8n endpoint
-        const defaultCfg = apiService.getDefaultConfig();
-        apiService.testConnection(defaultCfg.activeEndpoint).then((res) => {
+        // 2. Pick the n8n endpoint from site config, then check it
+        apiService.getDefaultConfig().then(async (defaultCfg) => {
+          patchState(store, (s) => ({
+            n8nConfig: {
+              ...s.n8nConfig,
+              mode: defaultCfg.mode,
+              tunnelUrl: defaultCfg.tunnelUrl,
+              activeEndpoint: defaultCfg.activeEndpoint,
+            },
+          }));
+          const res = await apiService.testConnection(
+            defaultCfg.activeEndpoint,
+          );
           if (res.ok) {
             patchState(store, (s) => ({
               n8nConfig: {
@@ -55,7 +68,8 @@ export function withStudyLmHooks() {
                   n8nConfig: {
                     ...s.n8nConfig,
                     isConnected: false,
-                    lastError: res.error || localRes.error || 'Connection failed',
+                    lastError:
+                      res.error || localRes.error || 'Connection failed',
                   },
                 }));
               }

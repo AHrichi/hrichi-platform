@@ -102,7 +102,11 @@
   transition: border-color var(--motion-duration-fast, 150ms) ease;
 
   &.active-card {
-    border-color: color-mix(in srgb, var(--color-accent-default, #e11d48) 60%, transparent);
+    border-color: color-mix(
+      in srgb,
+      var(--color-accent-default, #e11d48) 60%,
+      transparent
+    );
   }
 
   &:hover {

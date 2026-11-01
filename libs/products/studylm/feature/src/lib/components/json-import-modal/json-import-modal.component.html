@@ -12,11 +12,21 @@
       </ah-alert>
     }
 
-    <form [formRoot]="importForm" (ngSubmit)="submitImport()" class="import-form" novalidate>
+    <form
+      [formRoot]="importForm"
+      (ngSubmit)="submitImport()"
+      class="import-form"
+      novalidate
+    >
       <div class="actions-bar">
         <label class="file-upload-label">
           <span>📁 Upload .json file</span>
-          <input type="file" accept=".json" (change)="handleFileUpload($event)" class="hidden-file-input" />
+          <input
+            type="file"
+            accept=".json"
+            (change)="handleFileUpload($event)"
+            class="hidden-file-input"
+          />
         </label>
         <button type="button" ahButton="ghost" size="sm" (click)="loadSample()">
           <span>Load Example Schema</span>

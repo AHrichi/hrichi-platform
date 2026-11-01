@@ -5,7 +5,12 @@
   size="lg"
   (closed)="close()"
 >
-  <form [formRoot]="flashcardForm" (ngSubmit)="submitCard()" class="flashcard-form" novalidate>
+  <form
+    [formRoot]="flashcardForm"
+    (ngSubmit)="submitCard()"
+    class="flashcard-form"
+    novalidate
+  >
     <div class="form-group">
       <ah-segmented-control
         label="Competency Tier"

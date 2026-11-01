@@ -41,7 +41,10 @@ export function extractAndParseJson<T>(raw: string | unknown): T {
   return JSON.parse(clean) as T;
 }
 
-function parseTier(val: unknown, fallback: CompetencyTier = 'intermediate'): CompetencyTier {
+function parseTier(
+  val: unknown,
+  fallback: CompetencyTier = 'intermediate',
+): CompetencyTier {
   if (val === 'beginner' || val === 'intermediate' || val === 'expert') {
     return val;
   }
@@ -53,9 +56,15 @@ export function validateAndParseRoadmap(
   fallbackDomain: SoftwareEngineeringDomain = 'languages-runtimes',
 ): GenerateRoadmapResponse {
   try {
-    const data = typeof raw === 'string' ? extractAndParseJson<Record<string, unknown>>(raw) : (raw as Record<string, unknown>);
+    const data =
+      typeof raw === 'string'
+        ? extractAndParseJson<Record<string, unknown>>(raw)
+        : (raw as Record<string, unknown>);
 
-    if (data['code'] === 'NON_SE_TOPIC' || data['isValidSoftwareEngineeringTopic'] === false) {
+    if (
+      data['code'] === 'NON_SE_TOPIC' ||
+      data['isValidSoftwareEngineeringTopic'] === false
+    ) {
       return {
         success: false,
         code: 'NON_SE_TOPIC',
@@ -76,8 +85,12 @@ export function validateAndParseRoadmap(
         const s = sRaw as Record<string, unknown>;
         const secCode = String(s['code'] || `${bIdx + 1}.${sIdx + 1}`);
         const secId = String(s['id'] || `sec-${bIdx + 1}-${sIdx + 1}`);
-        const docsRaw = Array.isArray(s['officialDocs']) ? s['officialDocs'] : [];
-        const subtopicsRaw = Array.isArray(s['subtopics']) ? s['subtopics'] : [];
+        const docsRaw = Array.isArray(s['officialDocs'])
+          ? s['officialDocs']
+          : [];
+        const subtopicsRaw = Array.isArray(s['subtopics'])
+          ? s['subtopics']
+          : [];
 
         return {
           id: secId,
@@ -85,7 +98,9 @@ export function validateAndParseRoadmap(
           title: String(s['title'] || `Section ${secCode}`),
           summary: String(s['summary'] || ''),
           difficultyTier: parseTier(s['difficultyTier'], 'intermediate'),
-          subtopics: subtopicsRaw.map((st) => String(st).trim()).filter(Boolean),
+          subtopics: subtopicsRaw
+            .map((st) => String(st).trim())
+            .filter(Boolean),
           officialDocs: docsRaw.map((d) => {
             const docObj = d as Record<string, unknown>;
             return {
@@ -109,7 +124,11 @@ export function validateAndParseRoadmap(
     });
 
     const roadmap: CurriculumRoadmap = {
-      canonicalSubject: String(data['canonicalSubject'] || data['subject'] || 'Software Engineering Curriculum'),
+      canonicalSubject: String(
+        data['canonicalSubject'] ||
+          data['subject'] ||
+          'Software Engineering Curriculum',
+      ),
       domain: (data['domain'] as SoftwareEngineeringDomain) || fallbackDomain,
       officialDocPortal: String(data['officialDocPortal'] || ''),
       overviewSummary: String(data['overviewSummary'] || data['summary'] || ''),
@@ -127,7 +146,8 @@ export function validateAndParseRoadmap(
       success: false,
       code: 'INVALID_RESPONSE',
       provider: 'Parser Guard',
-      message: err instanceof Error ? err.message : 'Failed to parse roadmap JSON',
+      message:
+        err instanceof Error ? err.message : 'Failed to parse roadmap JSON',
     };
   }
 }
@@ -137,10 +157,19 @@ export function validateAndParseSectionFlashcards(
   fallbackSectionId: string,
 ): GenerateSectionFlashcardsResponse {
   try {
-    const data = typeof raw === 'string' ? extractAndParseJson<Record<string, unknown>>(raw) : (raw as Record<string, unknown>);
-    const rawList = Array.isArray(data['flashcards']) ? data['flashcards'] : Array.isArray(data) ? data : [];
+    const data =
+      typeof raw === 'string'
+        ? extractAndParseJson<Record<string, unknown>>(raw)
+        : (raw as Record<string, unknown>);
+    const rawList = Array.isArray(data['flashcards'])
+      ? data['flashcards']
+      : Array.isArray(data)
+        ? data
+        : [];
     const sectionId = String(data['sectionId'] || fallbackSectionId);
-    const docsGrounded = Array.isArray(data['docsGrounded']) ? (data['docsGrounded'] as string[]) : [];
+    const docsGrounded = Array.isArray(data['docsGrounded'])
+      ? (data['docsGrounded'] as string[])
+      : [];
 
     const flashcards: StudyFlashcard[] = rawList.map((cRaw, i) => {
       const c = cRaw as Record<string, unknown>;
@@ -153,7 +182,9 @@ export function validateAndParseSectionFlashcards(
         sectionId,
         sectionCode: c['sectionCode'] ? String(c['sectionCode']) : undefined,
         codeSnippet: c['codeSnippet'] ? String(c['codeSnippet']) : undefined,
-        codeLanguage: c['codeLanguage'] ? String(c['codeLanguage']) : 'typescript',
+        codeLanguage: c['codeLanguage']
+          ? String(c['codeLanguage'])
+          : 'typescript',
         sourceCitation: String(c['sourceCitation'] || 'Official Documentation'),
         masteryCount: 0,
       };
@@ -183,10 +214,19 @@ export function validateAndParseSectionQuiz(
   fallbackSectionId: string,
 ): GenerateSectionQuizResponse {
   try {
-    const data = typeof raw === 'string' ? extractAndParseJson<Record<string, unknown>>(raw) : (raw as Record<string, unknown>);
-    const rawList = Array.isArray(data['quiz']) ? data['quiz'] : Array.isArray(data) ? data : [];
+    const data =
+      typeof raw === 'string'
+        ? extractAndParseJson<Record<string, unknown>>(raw)
+        : (raw as Record<string, unknown>);
+    const rawList = Array.isArray(data['quiz'])
+      ? data['quiz']
+      : Array.isArray(data)
+        ? data
+        : [];
     const sectionId = String(data['sectionId'] || fallbackSectionId);
-    const docsGrounded = Array.isArray(data['docsGrounded']) ? (data['docsGrounded'] as string[]) : [];
+    const docsGrounded = Array.isArray(data['docsGrounded'])
+      ? (data['docsGrounded'] as string[])
+      : [];
 
     const quiz: StudyQuizQuestion[] = rawList.map((qRaw, i) => {
       const q = qRaw as Record<string, unknown>;
@@ -198,7 +238,12 @@ export function validateAndParseSectionQuiz(
         String(rawOpts[3] || 'Option D'),
       ];
 
-      const cIdx = typeof q['correctIndex'] === 'number' && q['correctIndex'] >= 0 && q['correctIndex'] <= 3 ? q['correctIndex'] : 0;
+      const cIdx =
+        typeof q['correctIndex'] === 'number' &&
+        q['correctIndex'] >= 0 &&
+        q['correctIndex'] <= 3
+          ? q['correctIndex']
+          : 0;
 
       return {
         id: String(q['id'] || `qz-${sectionId}-${Date.now()}-${i}`),
@@ -206,12 +251,16 @@ export function validateAndParseSectionQuiz(
         question: String(q['question'] || ''),
         options: opts,
         correctIndex: cIdx,
-        explanation: String(q['explanation'] || 'Official specification rationale.'),
+        explanation: String(
+          q['explanation'] || 'Official specification rationale.',
+        ),
         sourceCitation: String(q['sourceCitation'] || 'Official Documentation'),
         sectionId,
         sectionCode: q['sectionCode'] ? String(q['sectionCode']) : undefined,
         codeSnippet: q['codeSnippet'] ? String(q['codeSnippet']) : undefined,
-        codeLanguage: q['codeLanguage'] ? String(q['codeLanguage']) : 'typescript',
+        codeLanguage: q['codeLanguage']
+          ? String(q['codeLanguage'])
+          : 'typescript',
       };
     });
 

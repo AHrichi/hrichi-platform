@@ -6,7 +6,13 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { form, FormField, FormRoot, required } from '@angular/forms/signals';
-import { AhAlert, AhBadge, AhButton, AhModal, AhSegmentedControl } from '@ah/ui';
+import {
+  AhAlert,
+  AhBadge,
+  AhButton,
+  AhModal,
+  AhSegmentedControl,
+} from '@ah/ui';
 import { StudyLmStore } from '../../store/studylm.store';
 import { StudyLmApiService } from '../../services/studylm-api.service';
 import type { N8nConnectionMode } from '@ah/products/studylm/domain';
@@ -21,7 +27,16 @@ interface N8nFormModel {
 @Component({
   selector: 'ah-n8n-settings-modal',
   standalone: true,
-  imports: [CommonModule, FormField, FormRoot, AhModal, AhButton, AhBadge, AhAlert, AhSegmentedControl],
+  imports: [
+    CommonModule,
+    FormField,
+    FormRoot,
+    AhModal,
+    AhButton,
+    AhBadge,
+    AhAlert,
+    AhSegmentedControl,
+  ],
   templateUrl: './n8n-settings-modal.component.html',
   styleUrl: './n8n-settings-modal.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

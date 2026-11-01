@@ -35,7 +35,8 @@ export const SE_DOMAINS: readonly SoftwareEngineeringDomainMeta[] = [
     id: 'frontend-web',
     label: 'Frontend & Web Architecture',
     icon: '🌐',
-    description: 'Angular Zoneless, React Internals, Browser Rendering Engine, Web APIs',
+    description:
+      'Angular Zoneless, React Internals, Browser Rendering Engine, Web APIs',
     suggestedTopics: [
       'Angular Signals & Zoneless Architecture',
       'Browser Rendering & Event Loop',
@@ -46,7 +47,8 @@ export const SE_DOMAINS: readonly SoftwareEngineeringDomainMeta[] = [
     id: 'backend-distributed',
     label: 'Backend & Distributed Systems',
     icon: '🏗️',
-    description: 'Microservices, Raft Consensus, gRPC, Event-Driven Architecture, Caching',
+    description:
+      'Microservices, Raft Consensus, gRPC, Event-Driven Architecture, Caching',
     suggestedTopics: [
       'Distributed Consensus & Raft',
       'Event-Driven Architectures with Kafka',
@@ -57,7 +59,8 @@ export const SE_DOMAINS: readonly SoftwareEngineeringDomainMeta[] = [
     id: 'databases-storage',
     label: 'Databases & Storage Engines',
     icon: '🗄️',
-    description: 'PostgreSQL Internals, B-Tree & LSM Trees, Indexing, Transactions, MVCC',
+    description:
+      'PostgreSQL Internals, B-Tree & LSM Trees, Indexing, Transactions, MVCC',
     suggestedTopics: [
       'PostgreSQL Indexing & MVCC',
       'Distributed Key-Value Stores',
@@ -68,7 +71,8 @@ export const SE_DOMAINS: readonly SoftwareEngineeringDomainMeta[] = [
     id: 'data-structures-algos',
     label: 'Data Structures & Algorithms',
     icon: '🧩',
-    description: 'Complexity analysis, Graph Algorithms, Dynamic Programming, Tree balancing',
+    description:
+      'Complexity analysis, Graph Algorithms, Dynamic Programming, Tree balancing',
     suggestedTopics: [
       'Graph Algorithms & Shortest Path',
       'Dynamic Programming Optimization',
@@ -79,7 +83,8 @@ export const SE_DOMAINS: readonly SoftwareEngineeringDomainMeta[] = [
     id: 'devops-cloud-networking',
     label: 'DevOps, Cloud & Networking',
     icon: '☁️',
-    description: 'TCP/IP, HTTP/3, Docker, Kubernetes, Service Mesh, CI/CD pipelines',
+    description:
+      'TCP/IP, HTTP/3, Docker, Kubernetes, Service Mesh, CI/CD pipelines',
     suggestedTopics: [
       'TCP/IP & HTTP/3 Transport Protocols',
       'Kubernetes Architecture & Controllers',
@@ -90,7 +95,8 @@ export const SE_DOMAINS: readonly SoftwareEngineeringDomainMeta[] = [
     id: 'architecture-patterns',
     label: 'Software Architecture & Patterns',
     icon: '📐',
-    description: 'Domain-Driven Design (DDD), Clean Architecture, CQRS, Hexagonal',
+    description:
+      'Domain-Driven Design (DDD), Clean Architecture, CQRS, Hexagonal',
     suggestedTopics: [
       'Domain-Driven Design (DDD)',
       'CQRS & Event Sourcing',
@@ -101,7 +107,8 @@ export const SE_DOMAINS: readonly SoftwareEngineeringDomainMeta[] = [
     id: 'security-testing',
     label: 'Security, Cryptography & Testing',
     icon: '🛡️',
-    description: 'OAuth2/OIDC, PKI, OWASP Top 10, Zero-Trust, Property-Based Testing',
+    description:
+      'OAuth2/OIDC, PKI, OWASP Top 10, Zero-Trust, Property-Based Testing',
     suggestedTopics: [
       'OAuth 2.1 & OpenID Connect Protocols',
       'Zero-Trust Architecture & mTLS',

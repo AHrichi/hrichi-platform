@@ -1,7 +1,11 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
-  AhBadge,
   AhButton,
   AhMetricCard,
   AhSelect,
@@ -56,25 +60,35 @@ export class StudyLmShellComponent {
       id: 'roadmap',
       label: 'Curriculum Roadmap',
       icon: '🗺️',
-      count: this.store.totalSectionsCount() > 0 ? this.store.totalSectionsCount() : undefined,
+      count:
+        this.store.totalSectionsCount() > 0
+          ? this.store.totalSectionsCount()
+          : undefined,
     },
     {
       id: 'flashcards',
       label: 'Flashcards',
       icon: '🃏',
-      count: this.store.flashcards().length > 0 ? this.store.flashcards().length : undefined,
+      count:
+        this.store.flashcards().length > 0
+          ? this.store.flashcards().length
+          : undefined,
     },
     {
       id: 'quiz',
       label: 'Quiz Arena',
       icon: '🎯',
-      count: this.store.quizQuestions().length > 0 ? this.store.quizQuestions().length : undefined,
+      count:
+        this.store.quizQuestions().length > 0
+          ? this.store.quizQuestions().length
+          : undefined,
     },
     {
       id: 'sources',
       label: 'Reference Docs',
       icon: '📚',
-      count: this.store.sourcesCount() > 0 ? this.store.sourcesCount() : undefined,
+      count:
+        this.store.sourcesCount() > 0 ? this.store.sourcesCount() : undefined,
     },
     {
       id: 'stats',
@@ -131,7 +145,11 @@ export class StudyLmShellComponent {
   deleteCurrentSubject(): void {
     const active = this.store.activeSubject();
     if (!active) return;
-    if (confirm(`Are you sure you want to delete "${active.title}" and its study data?`)) {
+    if (
+      confirm(
+        `Are you sure you want to delete "${active.title}" and its study data?`,
+      )
+    ) {
       this.store.deleteSubject(active.id);
     }
   }

@@ -4,8 +4,6 @@ import type { StudyQuizQuestion } from './quiz.model';
 import type { SourceType } from './source.model';
 import type {
   CurriculumRoadmap,
-  RoadmapBranch,
-  RoadmapSection,
   SoftwareEngineeringDomain,
 } from './roadmap.model';
 

@@ -5,9 +5,19 @@ import {
   signal,
 } from '@angular/core';
 import { DecimalPipe, SlicePipe, UpperCasePipe } from '@angular/common';
-import { form, FormField, FormRoot, minLength, required } from '@angular/forms/signals';
+import {
+  form,
+  FormField,
+  FormRoot,
+  minLength,
+  required,
+} from '@angular/forms/signals';
 import { StudyLmStore } from '../../store/studylm.store';
-import type { AddSourceInput, SourceType, StudySource } from '@ah/products/studylm/domain';
+import type {
+  AddSourceInput,
+  SourceType,
+  StudySource,
+} from '@ah/products/studylm/domain';
 
 @Component({
   selector: 'ah-source-manager',
@@ -28,9 +38,13 @@ export class SourceManagerComponent {
 
   readonly sourceForm = form(this.model, (path) => {
     required(path.title, { message: 'Source title is required' });
-    minLength(path.title, 3, { message: 'Title must be at least 3 characters' });
+    minLength(path.title, 3, {
+      message: 'Title must be at least 3 characters',
+    });
     required(path.content, { message: 'Content or summary is required' });
-    minLength(path.content, 20, { message: 'Please provide at least 20 characters for meaningful synthesis' });
+    minLength(path.content, 20, {
+      message: 'Please provide at least 20 characters for meaningful synthesis',
+    });
   });
 
   setType(type: SourceType) {
@@ -103,7 +117,9 @@ export class SourceManagerComponent {
     if (event) {
       event.stopPropagation();
     }
-    if (confirm(`Are you sure you want to delete the source "${source.title}"?`)) {
+    if (
+      confirm(`Are you sure you want to delete the source "${source.title}"?`)
+    ) {
       this.store.deleteSource(source.id);
     }
   }

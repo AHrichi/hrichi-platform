@@ -5,7 +5,11 @@
   --ah-surface-canvas: var(--color-bg-canvas);
   --ah-surface-input: var(--color-bg-raised);
   --ah-surface-pill: var(--color-bg-raised);
-  --ah-surface-hover: color-mix(in srgb, var(--color-bg-raised) 70%, transparent);
+  --ah-surface-hover: color-mix(
+    in srgb,
+    var(--color-bg-raised) 70%,
+    transparent
+  );
   --ah-text-primary: var(--color-text-default);
   --ah-text-secondary: var(--color-text-muted);
   --ah-text-muted: var(--color-text-muted);
@@ -63,8 +67,8 @@
     display: grid;
     grid-template-columns: 1fr auto;
     grid-template-areas:
-      "brand actions"
-      "switcher switcher";
+      'brand actions'
+      'switcher switcher';
     gap: var(--space-2, 0.5rem) var(--space-3, 0.75rem);
     padding: var(--space-3, 0.75rem);
     border-radius: var(--radius-md);
@@ -126,7 +130,8 @@
   border-radius: var(--radius-sm);
   background: color-mix(in srgb, var(--color-accent-default) 14%, transparent);
   color: var(--color-accent-default);
-  border: 1px solid color-mix(in srgb, var(--color-accent-default) 25%, transparent);
+  border: 1px solid
+    color-mix(in srgb, var(--color-accent-default) 25%, transparent);
   text-transform: uppercase;
   letter-spacing: 0.04em;
   line-height: 1.4;
@@ -244,7 +249,8 @@
   gap: var(--space-2, 0.5rem);
   padding: 0.35rem 0.75rem;
   background: color-mix(in srgb, var(--color-accent-subtle) 30%, transparent);
-  border: 1px solid color-mix(in srgb, var(--color-accent-default) 40%, transparent);
+  border: 1px solid
+    color-mix(in srgb, var(--color-accent-default) 40%, transparent);
   border-radius: var(--radius-pill);
   color: var(--color-accent-default);
   font-size: var(--font-size-100, 0.75rem);
@@ -266,8 +272,16 @@
   }
 
   &.connected {
-    background: color-mix(in srgb, var(--color-success-default) 15%, transparent);
-    border-color: color-mix(in srgb, var(--color-success-default) 40%, transparent);
+    background: color-mix(
+      in srgb,
+      var(--color-success-default) 15%,
+      transparent
+    );
+    border-color: color-mix(
+      in srgb,
+      var(--color-success-default) 40%,
+      transparent
+    );
     color: var(--color-success-default);
 
     .status-dot {

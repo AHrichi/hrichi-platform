@@ -51,7 +51,9 @@ export class RoadmapExplorerComponent {
         this.lastSubjectId = currentSubjectId;
         const branches = this.store.activeBranches();
         const firstSecId = branches[0]?.sections[0]?.id;
-        this.expandedSectionIds.set(firstSecId ? new Set([firstSecId]) : new Set());
+        this.expandedSectionIds.set(
+          firstSecId ? new Set([firstSecId]) : new Set(),
+        );
       }
     });
 
@@ -157,10 +159,12 @@ export class RoadmapExplorerComponent {
   }
 
   getSectionCardCount(sectionId: string): number {
-    return this.store.flashcards().filter((c) => c.sectionId === sectionId).length;
+    return this.store.flashcards().filter((c) => c.sectionId === sectionId)
+      .length;
   }
 
   getSectionQuizCount(sectionId: string): number {
-    return this.store.quizQuestions().filter((q) => q.sectionId === sectionId).length;
+    return this.store.quizQuestions().filter((q) => q.sectionId === sectionId)
+      .length;
   }
 }

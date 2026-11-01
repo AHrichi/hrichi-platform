@@ -2,28 +2,35 @@
   <div class="source-header-row">
     <div class="stats-summary">
       <span class="eyebrow">Subject Knowledge Base</span>
-      <h3>{{ store.sourcesCount() }} Sources Grounded &bull; {{ store.totalWords() | number }} Total Words</h3>
+      <h3>
+        {{ store.sourcesCount() }} Sources Grounded &bull;
+        {{ store.totalWords() | number }} Total Words
+      </h3>
       <p class="subtitle">
-        Ground all flashcards, quizzes, and briefing notes directly in these materials. You can edit, add, or update sources anytime and re-synthesize.
+        Ground all flashcards, quizzes, and briefing notes directly in these
+        materials. You can edit, add, or update sources anytime and
+        re-synthesize.
       </p>
     </div>
 
     <div class="header-actions">
-      <button
-        type="button"
-        class="btn-add-source"
-        (click)="openAddSource()"
-      >
+      <button type="button" class="btn-add-source" (click)="openAddSource()">
         <span>+</span> Add Source Document
       </button>
 
       <button
         type="button"
         class="btn-synthesize-now"
-        [disabled]="store.activeSources().length === 0 || store.isSynthesizing()"
+        [disabled]="
+          store.activeSources().length === 0 || store.isSynthesizing()
+        "
         (click)="store.synthesizeCurriculum()"
       >
-        {{ store.isSynthesizing() ? '⚡ Synthesizing with AI...' : '✨ Re-synthesize Subject' }}
+        {{
+          store.isSynthesizing()
+            ? '⚡ Synthesizing with AI...'
+            : '✨ Re-synthesize Subject'
+        }}
       </button>
     </div>
   </div>
@@ -32,7 +39,10 @@
     <div class="empty-sources-card">
       <div class="empty-icon">📂</div>
       <h4>No sources added yet for this subject</h4>
-      <p>Add documents, paste slide notes, or link reference documentation to begin generating grounded study materials.</p>
+      <p>
+        Add documents, paste slide notes, or link reference documentation to
+        begin generating grounded study materials.
+      </p>
       <button type="button" class="btn-add-first" (click)="openAddSource()">
         + Add First Source
       </button>
@@ -51,17 +61,25 @@
           <h4 class="source-title">{{ source.title }}</h4>
 
           @if (source.url) {
-            <a [href]="source.url" target="_blank" rel="noopener noreferrer" class="source-link" (click)="$event.stopPropagation()">
+            <a
+              [href]="source.url"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="source-link"
+              (click)="$event.stopPropagation()"
+            >
               🔗 {{ source.url }}
             </a>
           }
 
-          <p class="source-excerpt">
-            {{ source.content | slice:0:180 }}...
-          </p>
+          <p class="source-excerpt">{{ source.content | slice: 0 : 180 }}...</p>
 
           <div class="card-footer" (click)="$event.stopPropagation()">
-            <button type="button" class="action-btn preview-btn" (click)="previewSource(source)">
+            <button
+              type="button"
+              class="action-btn preview-btn"
+              (click)="previewSource(source)"
+            >
               Read Document
             </button>
             <div class="right-actions">
@@ -97,12 +115,25 @@
         <header class="modal-header">
           <div class="header-titles">
             <span class="eyebrow">Ingestion Pipeline</span>
-            <h2>{{ store.editingSource() ? 'Edit Knowledge Source' : 'Add Knowledge Source' }}</h2>
+            <h2>
+              {{
+                store.editingSource()
+                  ? 'Edit Knowledge Source'
+                  : 'Add Knowledge Source'
+              }}
+            </h2>
           </div>
-          <button type="button" class="close-btn" (click)="cancelAdd()">✕</button>
+          <button type="button" class="close-btn" (click)="cancelAdd()">
+            ✕
+          </button>
         </header>
 
-        <form [formRoot]="sourceForm" (ngSubmit)="submitSource()" class="source-form" novalidate>
+        <form
+          [formRoot]="sourceForm"
+          (ngSubmit)="submitSource()"
+          class="source-form"
+          novalidate
+        >
           <div class="form-body">
             <div class="type-selector">
               <label>Source Type</label>
@@ -165,7 +196,9 @@
             }
 
             <div class="form-group">
-              <label for="sourceContent">Content / Slides / Notes / Extracted Text *</label>
+              <label for="sourceContent"
+                >Content / Slides / Notes / Extracted Text *</label
+              >
               <textarea
                 id="sourceContent"
                 rows="8"
@@ -176,9 +209,15 @@
           </div>
 
           <footer class="modal-footer">
-            <button type="button" class="btn-secondary" (click)="cancelAdd()">Cancel</button>
+            <button type="button" class="btn-secondary" (click)="cancelAdd()">
+              Cancel
+            </button>
             <button type="submit" class="btn-primary">
-              {{ store.editingSource() ? 'Update Source' : 'Add to StudyLM Sources' }}
+              {{
+                store.editingSource()
+                  ? 'Update Source'
+                  : 'Add to StudyLM Sources'
+              }}
             </button>
           </footer>
         </form>
@@ -189,23 +228,41 @@
   <!-- Source Detail Preview Drawer / Modal -->
   @if (store.selectedSourceForPreview()) {
     <div class="modal-backdrop" (click)="closePreview()">
-      <div class="modal-container preview-modal" (click)="$event.stopPropagation()">
+      <div
+        class="modal-container preview-modal"
+        (click)="$event.stopPropagation()"
+      >
         <header class="modal-header">
           <div class="header-titles">
-            <span class="type-badge type-{{ store.selectedSourceForPreview()?.type }}">
-              {{ getSourceIcon(store.selectedSourceForPreview()?.type || 'document') }}
-              {{ store.selectedSourceForPreview()?.type | uppercase }} &bull; {{ store.selectedSourceForPreview()?.wordCount }} words
+            <span
+              class="type-badge type-{{
+                store.selectedSourceForPreview()?.type
+              }}"
+            >
+              {{
+                getSourceIcon(
+                  store.selectedSourceForPreview()?.type || 'document'
+                )
+              }}
+              {{ store.selectedSourceForPreview()?.type | uppercase }} &bull;
+              {{ store.selectedSourceForPreview()?.wordCount }} words
             </span>
             <h2>{{ store.selectedSourceForPreview()?.title }}</h2>
           </div>
-          <button type="button" class="close-btn" (click)="closePreview()">✕</button>
+          <button type="button" class="close-btn" (click)="closePreview()">
+            ✕
+          </button>
         </header>
 
         <div class="modal-body preview-body">
           @if (store.selectedSourceForPreview()?.url) {
             <div class="source-url-banner">
               <span>External Reference:</span>
-              <a [href]="store.selectedSourceForPreview()?.url" target="_blank" rel="noopener noreferrer">
+              <a
+                [href]="store.selectedSourceForPreview()?.url"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 {{ store.selectedSourceForPreview()?.url }}
               </a>
             </div>
@@ -217,7 +274,9 @@
         </div>
 
         <footer class="modal-footer">
-          <button type="button" class="btn-primary" (click)="closePreview()">Done Reading</button>
+          <button type="button" class="btn-primary" (click)="closePreview()">
+            Done Reading
+          </button>
         </footer>
       </div>
     </div>

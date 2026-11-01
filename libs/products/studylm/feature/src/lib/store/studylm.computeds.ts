@@ -132,7 +132,10 @@ export function withStudyLmComputeds() {
           if (effectiveTier !== 'all' && card.tier !== effectiveTier) {
             return false;
           }
-          if (filter.sectionId !== 'all' && card.sectionId !== filter.sectionId) {
+          if (
+            filter.sectionId !== 'all' &&
+            card.sectionId !== filter.sectionId
+          ) {
             return false;
           }
           if (filter.onlyBookmarked && !card.isBookmarked) {
@@ -213,10 +216,15 @@ export function withStudyLmComputeds() {
         const answeredCount = list.filter((q) => q.isAnswered).length;
         const correctCount = list.filter((q) => q.isCorrect).length;
         const scorePercentage =
-          answeredCount > 0 ? Math.round((correctCount / answeredCount) * 100) : 0;
+          answeredCount > 0
+            ? Math.round((correctCount / answeredCount) * 100)
+            : 0;
 
         const tiers: CompetencyTier[] = ['beginner', 'intermediate', 'expert'];
-        const tierBreakdown: Record<CompetencyTier, { total: number; correct: number }> = {
+        const tierBreakdown: Record<
+          CompetencyTier,
+          { total: number; correct: number }
+        > = {
           beginner: { total: 0, correct: 0 },
           intermediate: { total: 0, correct: 0 },
           expert: { total: 0, correct: 0 },
@@ -262,8 +270,12 @@ export function withStudyLmComputeds() {
           ).length;
 
           const quizTotal = subj.quizQuestions.length;
-          const quizAnswered = subj.quizQuestions.filter((q) => q.isAnswered).length;
-          const quizCorrect = subj.quizQuestions.filter((q) => q.isCorrect).length;
+          const quizAnswered = subj.quizQuestions.filter(
+            (q) => q.isAnswered,
+          ).length;
+          const quizCorrect = subj.quizQuestions.filter(
+            (q) => q.isCorrect,
+          ).length;
           const quizAccuracyPct =
             quizAnswered > 0
               ? Math.round((quizCorrect / quizAnswered) * 100)
@@ -307,12 +319,18 @@ export function withStudyLmComputeds() {
           0,
         );
 
-        const totalQuizQuestions = list.reduce((acc, s) => acc + s.quizTotal, 0);
+        const totalQuizQuestions = list.reduce(
+          (acc, s) => acc + s.quizTotal,
+          0,
+        );
         const totalQuizAnswered = list.reduce(
           (acc, s) => acc + s.quizAnswered,
           0,
         );
-        const totalQuizCorrect = list.reduce((acc, s) => acc + s.quizCorrect, 0);
+        const totalQuizCorrect = list.reduce(
+          (acc, s) => acc + s.quizCorrect,
+          0,
+        );
         const overallQuizAccuracyPct =
           totalQuizAnswered > 0
             ? Math.round((totalQuizCorrect / totalQuizAnswered) * 100)

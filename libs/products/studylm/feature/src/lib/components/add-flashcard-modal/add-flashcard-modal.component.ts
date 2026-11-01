@@ -5,15 +5,31 @@ import {
   signal,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { form, FormField, FormRoot, minLength, required } from '@angular/forms/signals';
+import {
+  form,
+  FormField,
+  FormRoot,
+  minLength,
+  required,
+} from '@angular/forms/signals';
 import { AhButton, AhModal, AhSegmentedControl } from '@ah/ui';
 import { StudyLmStore } from '../../store/studylm.store';
-import type { CompetencyTier, CreateFlashcardInput } from '@ah/products/studylm/domain';
+import type {
+  CompetencyTier,
+  CreateFlashcardInput,
+} from '@ah/products/studylm/domain';
 
 @Component({
   selector: 'ah-add-flashcard-modal',
   standalone: true,
-  imports: [CommonModule, FormField, FormRoot, AhModal, AhButton, AhSegmentedControl],
+  imports: [
+    CommonModule,
+    FormField,
+    FormRoot,
+    AhModal,
+    AhButton,
+    AhSegmentedControl,
+  ],
   templateUrl: './add-flashcard-modal.component.html',
   styleUrl: './add-flashcard-modal.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -40,9 +56,13 @@ export class AddFlashcardModalComponent {
 
   readonly flashcardForm = form(this.model, (path) => {
     required(path.front, { message: 'Front prompt / question is required' });
-    minLength(path.front, 5, { message: 'Front text must be at least 5 characters' });
+    minLength(path.front, 5, {
+      message: 'Front text must be at least 5 characters',
+    });
     required(path.back, { message: 'Back answer / explanation is required' });
-    minLength(path.back, 5, { message: 'Back text must be at least 5 characters' });
+    minLength(path.back, 5, {
+      message: 'Back text must be at least 5 characters',
+    });
     required(path.category, { message: 'Category tag is required' });
   });
 

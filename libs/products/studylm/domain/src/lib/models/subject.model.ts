@@ -2,7 +2,10 @@ import type { StudySource } from './source.model';
 import type { StudyOverview } from './synthesis.model';
 import type { StudyFlashcard } from './flashcard.model';
 import type { StudyQuizQuestion } from './quiz.model';
-import type { CurriculumRoadmap, SoftwareEngineeringDomain } from './roadmap.model';
+import type {
+  CurriculumRoadmap,
+  SoftwareEngineeringDomain,
+} from './roadmap.model';
 
 export interface StudySubject {
   id: string;

@@ -1,8 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import {
-  type ConceptElaborationRequest,
-  validateAndParseElaboration,
-} from '@ah/products/studylm/domain';
+import type { ConceptElaborationRequest } from '../models/elaboration.model';
+import { validateAndParseElaboration } from './elaboration-validator';
 
 describe('validateAndParseElaboration', () => {
   const sampleReq: ConceptElaborationRequest = {
@@ -12,8 +10,10 @@ describe('validateAndParseElaboration', () => {
     conceptTitle: 'Event Loop & Microtask Queue',
     difficultyTier: 'expert',
     sectionCode: '3.1',
-    promptOrQuestion: 'How does the V8 microtask queue handle Promise resolution during ticks?',
-    answerOrExplanation: 'Microtasks are drained completely before the next macrotask is dispatched.',
+    promptOrQuestion:
+      'How does the V8 microtask queue handle Promise resolution during ticks?',
+    answerOrExplanation:
+      'Microtasks are drained completely before the next macrotask is dispatched.',
   };
 
   it('should parse valid JSON elaboration with graph and code snippet', () => {
@@ -22,7 +22,8 @@ describe('validateAndParseElaboration', () => {
       elaboration: {
         mode: 'deep_dive',
         conceptTitle: 'Event Loop & Microtask Queue',
-        summary: 'The microtask queue executes to completion before rendering or macrotasks.',
+        summary:
+          'The microtask queue executes to completion before rendering or macrotasks.',
         bulletPoints: [
           'Promises and queueMicrotask enqueue callbacks into the microtask queue.',
           'Drain loop runs until size is 0, risking starvation if recursive.',
@@ -56,7 +57,9 @@ describe('validateAndParseElaboration', () => {
     const res = validateAndParseElaboration(jsonPayload, sampleReq);
     expect(res.success).toBe(true);
     expect(res.elaboration.mode).toBe('deep_dive');
-    expect(res.elaboration.summary).toContain('microtask queue executes to completion');
+    expect(res.elaboration.summary).toContain(
+      'microtask queue executes to completion',
+    );
     expect(res.elaboration.codeSnippet?.code).toContain('queueMicrotask');
     expect(res.elaboration.graph?.nodes.length).toBe(3);
     expect(res.elaboration.graph?.edges?.length).toBe(2);
@@ -72,10 +75,15 @@ describe('validateAndParseElaboration', () => {
     }
     \`\`\``;
 
-    const res = validateAndParseElaboration(rawFenced, { ...sampleReq, mode: 'hint' });
+    const res = validateAndParseElaboration(rawFenced, {
+      ...sampleReq,
+      mode: 'hint',
+    });
     expect(res.success).toBe(true);
     expect(res.elaboration.mode).toBe('hint');
-    expect(res.elaboration.summary).toContain('Think about whether microtasks run before');
+    expect(res.elaboration.summary).toContain(
+      'Think about whether microtasks run before',
+    );
     expect(res.elaboration.bulletPoints.length).toBe(1);
   });
 

@@ -463,7 +463,11 @@
   &.rate-again {
     background: color-mix(in srgb, var(--color-accent-subtle) 40%, transparent);
     color: var(--color-accent-default);
-    border-color: color-mix(in srgb, var(--color-accent-default) 40%, transparent);
+    border-color: color-mix(
+      in srgb,
+      var(--color-accent-default) 40%,
+      transparent
+    );
   }
 
   &.rate-hard {
@@ -479,9 +483,17 @@
   }
 
   &.rate-easy {
-    background: color-mix(in srgb, var(--color-success-default) 15%, transparent);
+    background: color-mix(
+      in srgb,
+      var(--color-success-default) 15%,
+      transparent
+    );
     color: var(--color-success-default);
-    border-color: color-mix(in srgb, var(--color-success-default) 40%, transparent);
+    border-color: color-mix(
+      in srgb,
+      var(--color-success-default) 40%,
+      transparent
+    );
   }
 }
 

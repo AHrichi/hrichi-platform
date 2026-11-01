@@ -5,14 +5,18 @@
       <span class="eyebrow">Learning Analytics & Retention Engine</span>
       <h2>Study Mastery & Progress Dashboard</h2>
       <p class="stats-subtitle">
-        Cross-subject telemetry covering curriculum synthesis, spaced repetition flashcard retention, and diagnostic quiz accuracy.
+        Cross-subject telemetry covering curriculum synthesis, spaced repetition
+        flashcard retention, and diagnostic quiz accuracy.
       </p>
     </div>
   </header>
 
   <!-- High-Level Overview Metrics -->
   @if (store.overallStats(); as overall) {
-    <section class="overview-metrics-grid" aria-label="Platform Wide Learning Stats">
+    <section
+      class="overview-metrics-grid"
+      aria-label="Platform Wide Learning Stats"
+    >
       <ah-metric-card
         label="Tracked Subjects"
         [value]="overall.totalSubjects.toString()"
@@ -22,7 +26,12 @@
       <ah-metric-card
         label="Overall Synthesis"
         [value]="overall.overallCurriculumPct + '%'"
-        [hint]="overall.totalSynthesizedSections + ' of ' + overall.totalSections + ' Sections Ready'"
+        [hint]="
+          overall.totalSynthesizedSections +
+          ' of ' +
+          overall.totalSections +
+          ' Sections Ready'
+        "
         icon="🗺️"
       />
       <ah-metric-card
@@ -34,7 +43,12 @@
       <ah-metric-card
         label="Diagnostic Accuracy"
         [value]="overall.overallQuizAccuracyPct + '%'"
-        [hint]="overall.totalQuizCorrect + ' of ' + overall.totalQuizAnswered + ' Correct'"
+        [hint]="
+          overall.totalQuizCorrect +
+          ' of ' +
+          overall.totalQuizAnswered +
+          ' Correct'
+        "
         icon="🎯"
       />
     </section>
@@ -44,12 +58,17 @@
   <section class="subjects-stats-section">
     <div class="section-title-row">
       <h3>Subject-by-Subject Breakdown</h3>
-      <span class="subject-count-badge">{{ store.subjectStatsList().length }} Subjects</span>
+      <span class="subject-count-badge"
+        >{{ store.subjectStatsList().length }} Subjects</span
+      >
     </div>
 
     <div class="subjects-grid">
       @for (subj of store.subjectStatsList(); track subj.id) {
-        <article class="subject-stat-card" [class.active-card]="subj.id === store.activeSubjectId()">
+        <article
+          class="subject-stat-card"
+          [class.active-card]="subj.id === store.activeSubjectId()"
+        >
           <header class="card-header">
             <div class="header-left">
               <div class="title-domain">
@@ -102,7 +121,8 @@
               <div class="progress-labels">
                 <span class="stat-name">Curriculum Synthesis</span>
                 <span class="stat-val">
-                  {{ subj.sectionsSynthesized }} / {{ subj.sectionsTotal }} Sections ({{ subj.synthesisPct }}%)
+                  {{ subj.sectionsSynthesized }} /
+                  {{ subj.sectionsTotal }} Sections ({{ subj.synthesisPct }}%)
                 </span>
               </div>
               <ah-progress-bar
@@ -118,14 +138,21 @@
                 <span class="sub-label">Flashcard Deck</span>
                 <span class="sub-value">{{ subj.cardsTotal }}</span>
                 <span class="sub-sub">
-                  {{ subj.cardsMastered }} Mastered ({{ subj.cardsTotal > 0 ? (subj.cardsMastered / subj.cardsTotal * 100 | number:'1.0-0') : 0 }}%)
+                  {{ subj.cardsMastered }} Mastered ({{
+                    subj.cardsTotal > 0
+                      ? ((subj.cardsMastered / subj.cardsTotal) * 100
+                        | number: '1.0-0')
+                      : 0
+                  }}%)
                 </span>
               </div>
 
               <!-- Quiz Diagnostics -->
               <div class="sub-stat-box">
                 <span class="sub-label">Quiz Accuracy</span>
-                <span class="sub-value">{{ subj.quizAnswered > 0 ? (subj.quizAccuracyPct + '%') : 'N/A' }}</span>
+                <span class="sub-value">{{
+                  subj.quizAnswered > 0 ? subj.quizAccuracyPct + '%' : 'N/A'
+                }}</span>
                 <span class="sub-sub">
                   {{ subj.quizCorrect }} / {{ subj.quizAnswered }} Answered
                 </span>

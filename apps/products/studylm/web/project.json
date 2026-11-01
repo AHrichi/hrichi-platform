@@ -112,7 +112,7 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "node tools/scripts/prepare-hosting.mjs dist/apps/products/studylm/web/browser --env production --app product-studylm --cors",
+          "node tools/scripts/prepare-hosting.mjs dist/apps/products/studylm/web/browser --env production --app product-studylm --cors --site-config",
           "wrangler deploy --config apps/products/studylm/web/wrangler.jsonc"
         ],
         "parallel": false

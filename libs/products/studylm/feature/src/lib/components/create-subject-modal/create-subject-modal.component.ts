@@ -5,8 +5,14 @@ import {
   signal,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { form, FormField, FormRoot, minLength, required } from '@angular/forms/signals';
-import { AhAlert, AhBadge, AhButton, AhModal } from '@ah/ui';
+import {
+  form,
+  FormField,
+  FormRoot,
+  minLength,
+  required,
+} from '@angular/forms/signals';
+import { AhAlert, AhButton, AhModal } from '@ah/ui';
 import { StudyLmStore } from '../../store/studylm.store';
 import {
   SE_DOMAINS,
@@ -39,10 +45,15 @@ export class CreateSubjectModalComponent {
 
   readonly subjectForm = form(this.model, (path) => {
     required(path.title, { message: 'Subject title is required' });
-    minLength(path.title, 2, { message: 'Subject title must be at least 2 characters' });
+    minLength(path.title, 2, {
+      message: 'Subject title must be at least 2 characters',
+    });
   });
 
-  selectSuggestedTopic(topic: string, domainId: SoftwareEngineeringDomain): void {
+  selectSuggestedTopic(
+    topic: string,
+    domainId: SoftwareEngineeringDomain,
+  ): void {
     this.model.update((m) => ({ ...m, title: topic, domain: domainId }));
   }
 

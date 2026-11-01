@@ -1,12 +1,16 @@
 import { inject } from '@angular/core';
-import { patchState, signalStoreFeature, type, withMethods } from '@ngrx/signals';
-import type { StudyLmCardFilter, StudyLmQuizFilter, StudyLmState, StudyLmTab } from './studylm.state';
+import {
+  patchState,
+  signalStoreFeature,
+  type,
+  withMethods,
+} from '@ngrx/signals';
+import type { StudyLmState, StudyLmTab } from './studylm.state';
 import { StudyLmApiService } from '../services/studylm-api.service';
 import { StudyLmStorageService } from '../services/studylm-storage.service';
 import {
   type AddSourceInput,
   type CompetencyTier,
-  type ConceptElaboration,
   type ConceptElaborationRequest,
   type CreateFlashcardInput,
   type CreateQuizQuestionInput,
@@ -15,7 +19,6 @@ import {
   type MasteryRating,
   type N8nConnectionConfig,
   type RoadmapSection,
-  type SoftwareEngineeringDomain,
   type StudyFlashcard,
   type StudyLmJsonImport,
   type StudyQuizQuestion,
@@ -25,6 +28,11 @@ import {
   exportToAnkiCsv,
   exportToMarkdown,
 } from '@ah/products/studylm/domain';
+
+/** Saving runs in the background; a failure leaves the in-memory state intact. */
+function warnStorageFailure(error: unknown): void {
+  console.warn('[studylm] could not persist a change', error);
+}
 
 export function withStudyLmMethods() {
   return signalStoreFeature(
@@ -48,7 +56,7 @@ export function withStudyLmMethods() {
           });
           patchState(state, { subjects: updatedList });
           if (targetSubject) {
-            storageService.saveSubject(targetSubject).catch(() => {});
+            storageService.saveSubject(targetSubject).catch(warnStorageFailure);
           }
         }
 
@@ -121,12 +129,14 @@ export function withStudyLmMethods() {
               roadmapRejectionReason: null,
             });
 
-            storageService.saveSubject(newSubj).catch(() => {});
+            storageService.saveSubject(newSubj).catch(warnStorageFailure);
           },
 
           deleteSubject(subjectId: string) {
-            const remaining = state.subjects().filter((s) => s.id !== subjectId);
-            storageService.deleteSubject(subjectId).catch(() => {});
+            const remaining = state
+              .subjects()
+              .filter((s) => s.id !== subjectId);
+            storageService.deleteSubject(subjectId).catch(warnStorageFailure);
 
             if (remaining.length === 0) {
               const fresh: StudySubject = {
@@ -146,9 +156,14 @@ export function withStudyLmMethods() {
                 activeCardIndex: 0,
                 activeQuizIndex: 0,
                 isCardFlipped: false,
-                cardFilter: { tier: 'all', sectionId: 'all', searchQuery: '', onlyBookmarked: false },
+                cardFilter: {
+                  tier: 'all',
+                  sectionId: 'all',
+                  searchQuery: '',
+                  onlyBookmarked: false,
+                },
               });
-              storageService.saveSubject(fresh).catch(() => {});
+              storageService.saveSubject(fresh).catch(warnStorageFailure);
             } else {
               patchState(state, {
                 subjects: remaining,
@@ -159,7 +174,12 @@ export function withStudyLmMethods() {
                 activeCardIndex: 0,
                 activeQuizIndex: 0,
                 isCardFlipped: false,
-                cardFilter: { tier: 'all', sectionId: 'all', searchQuery: '', onlyBookmarked: false },
+                cardFilter: {
+                  tier: 'all',
+                  sectionId: 'all',
+                  searchQuery: '',
+                  onlyBookmarked: false,
+                },
               });
             }
           },
@@ -207,7 +227,10 @@ export function withStudyLmMethods() {
                 roadmapRejectionReason: null,
               });
             } catch (err) {
-              const msg = err instanceof Error ? err.message : 'Roadmap generation failed';
+              const msg =
+                err instanceof Error
+                  ? err.message
+                  : 'Roadmap generation failed';
               patchState(state, {
                 isGeneratingRoadmap: false,
                 roadmapRejectionReason: msg,
@@ -249,7 +272,9 @@ export function withStudyLmMethods() {
           },
 
           async generateFlashcardsForSection(sectionId: string) {
-            const subject = state.subjects().find((s) => s.id === state.activeSubjectId());
+            const subject = state
+              .subjects()
+              .find((s) => s.id === state.activeSubjectId());
             if (!subject || !subject.roadmap) return;
 
             let targetBranchTitle = 'Curriculum Branch';
@@ -283,29 +308,35 @@ export function withStudyLmMethods() {
                 endpoint,
               );
 
-              const incomingCards: StudyFlashcard[] = res.flashcards.map((c) => ({
-                ...c,
-                sectionId,
-                sectionCode: targetSection?.code,
-                masteryCount: 0,
-              }));
+              const incomingCards: StudyFlashcard[] = res.flashcards.map(
+                (c) => ({
+                  ...c,
+                  sectionId,
+                  sectionCode: targetSection?.code,
+                  masteryCount: 0,
+                }),
+              );
 
               updateActiveSubject((curr) => {
-                const existingOtherCards = curr.flashcards.filter((c) => c.sectionId !== sectionId);
+                const existingOtherCards = curr.flashcards.filter(
+                  (c) => c.sectionId !== sectionId,
+                );
                 const allCards = [...existingOtherCards, ...incomingCards];
 
-                const updatedBranches = (curr.roadmap?.branches ?? []).map((b) => ({
-                  ...b,
-                  sections: b.sections.map((sec) => {
-                    if (sec.id !== sectionId) return sec;
-                    return {
-                      ...sec,
-                      approved: true,
-                      flashcardsStatus: 'ready' as const,
-                      flashcardsProvider: res.provider,
-                    };
+                const updatedBranches = (curr.roadmap?.branches ?? []).map(
+                  (b) => ({
+                    ...b,
+                    sections: b.sections.map((sec) => {
+                      if (sec.id !== sectionId) return sec;
+                      return {
+                        ...sec,
+                        approved: true,
+                        flashcardsStatus: 'ready' as const,
+                        flashcardsProvider: res.provider,
+                      };
+                    }),
                   }),
-                }));
+                );
 
                 return {
                   ...curr,
@@ -327,7 +358,9 @@ export function withStudyLmMethods() {
           },
 
           async generateQuizForSection(sectionId: string) {
-            const subject = state.subjects().find((s) => s.id === state.activeSubjectId());
+            const subject = state
+              .subjects()
+              .find((s) => s.id === state.activeSubjectId());
             if (!subject || !subject.roadmap) return;
 
             let targetBranchTitle = 'Curriculum Branch';
@@ -361,31 +394,38 @@ export function withStudyLmMethods() {
                 endpoint,
               );
 
-              const incomingQuestions: StudyQuizQuestion[] = res.quiz.map((q) => ({
-                ...q,
-                sectionId,
-                sectionCode: targetSection?.code,
-                isAnswered: false,
-              }));
+              const incomingQuestions: StudyQuizQuestion[] = res.quiz.map(
+                (q) => ({
+                  ...q,
+                  sectionId,
+                  sectionCode: targetSection?.code,
+                  isAnswered: false,
+                }),
+              );
 
               updateActiveSubject((curr) => {
                 const existingOtherQuestions = curr.quizQuestions.filter(
                   (q) => q.sectionId !== sectionId,
                 );
-                const allQuestions = [...existingOtherQuestions, ...incomingQuestions];
+                const allQuestions = [
+                  ...existingOtherQuestions,
+                  ...incomingQuestions,
+                ];
 
-                const updatedBranches = (curr.roadmap?.branches ?? []).map((b) => ({
-                  ...b,
-                  sections: b.sections.map((sec) => {
-                    if (sec.id !== sectionId) return sec;
-                    return {
-                      ...sec,
-                      approved: true,
-                      quizStatus: 'ready' as const,
-                      quizProvider: res.provider,
-                    };
+                const updatedBranches = (curr.roadmap?.branches ?? []).map(
+                  (b) => ({
+                    ...b,
+                    sections: b.sections.map((sec) => {
+                      if (sec.id !== sectionId) return sec;
+                      return {
+                        ...sec,
+                        approved: true,
+                        quizStatus: 'ready' as const,
+                        quizProvider: res.provider,
+                      };
+                    }),
                   }),
-                }));
+                );
 
                 return {
                   ...curr,
@@ -407,7 +447,9 @@ export function withStudyLmMethods() {
           },
 
           async synthesizeCurriculum() {
-            const subject = state.subjects().find((s) => s.id === state.activeSubjectId());
+            const subject = state
+              .subjects()
+              .find((s) => s.id === state.activeSubjectId());
             if (!subject) return;
 
             if (subject.roadmap && subject.roadmap.branches.length > 0) {
@@ -509,7 +551,9 @@ export function withStudyLmMethods() {
               const updatedTitle = data.subject?.trim() || curr.title;
               const updatedDomain = data.domain || curr.domain;
 
-              const importedCards: StudyFlashcard[] = (data.flashcards || []).map((c, i) => ({
+              const importedCards: StudyFlashcard[] = (
+                data.flashcards || []
+              ).map((c, i) => ({
                 id: c.id || `fc-import-${Date.now()}-${i}`,
                 tier: (c.tier as CompetencyTier) || 'intermediate',
                 front: c.front || '',
@@ -523,35 +567,43 @@ export function withStudyLmMethods() {
                 masteryCount: 0,
               }));
 
-              const importedQuiz: StudyQuizQuestion[] = (data.quiz || []).map((q, i) => {
-                const rawOpts = q.options || [];
-                const safeOptions: [string, string, string, string] = [
-                  rawOpts[0] || 'Option A',
-                  rawOpts[1] || 'Option B',
-                  rawOpts[2] || 'Option C',
-                  rawOpts[3] || 'Option D',
-                ];
-                return {
-                  id: q.id || `qz-import-${Date.now()}-${i}`,
-                  tier: (q.tier as CompetencyTier) || 'intermediate',
-                  question: q.question || '',
-                  options: safeOptions,
-                  correctIndex: q.correctIndex ?? 0,
-                  explanation: q.explanation || '',
-                  sectionId: q.sectionId,
-                  sectionCode: q.sectionCode,
-                  codeSnippet: q.codeSnippet,
-                  codeLanguage: q.codeLanguage,
-                  sourceCitation: q.sourceCitation || 'JSON Import',
-                  isAnswered: false,
-                };
-              });
+              const importedQuiz: StudyQuizQuestion[] = (data.quiz || []).map(
+                (q, i) => {
+                  const rawOpts = q.options || [];
+                  const safeOptions: [string, string, string, string] = [
+                    rawOpts[0] || 'Option A',
+                    rawOpts[1] || 'Option B',
+                    rawOpts[2] || 'Option C',
+                    rawOpts[3] || 'Option D',
+                  ];
+                  return {
+                    id: q.id || `qz-import-${Date.now()}-${i}`,
+                    tier: (q.tier as CompetencyTier) || 'intermediate',
+                    question: q.question || '',
+                    options: safeOptions,
+                    correctIndex: q.correctIndex ?? 0,
+                    explanation: q.explanation || '',
+                    sectionId: q.sectionId,
+                    sectionCode: q.sectionCode,
+                    codeSnippet: q.codeSnippet,
+                    codeLanguage: q.codeLanguage,
+                    sourceCitation: q.sourceCitation || 'JSON Import',
+                    isAnswered: false,
+                  };
+                },
+              );
 
               const mergedRoadmap: CurriculumRoadmap | null = data.roadmap
                 ? {
-                    canonicalSubject: data.roadmap.canonicalSubject || updatedTitle,
-                    domain: data.roadmap.domain || updatedDomain || 'languages-runtimes',
-                    officialDocPortal: data.roadmap.officialDocPortal || 'Official Documentation',
+                    canonicalSubject:
+                      data.roadmap.canonicalSubject || updatedTitle,
+                    domain:
+                      data.roadmap.domain ||
+                      updatedDomain ||
+                      'languages-runtimes',
+                    officialDocPortal:
+                      data.roadmap.officialDocPortal ||
+                      'Official Documentation',
                     overviewSummary: data.roadmap.overviewSummary || '',
                     branches: data.roadmap.branches || [],
                   }
@@ -599,7 +651,11 @@ export function withStudyLmMethods() {
             });
           },
 
-          rateCard(cardId: string, rating: MasteryRating, totalFiltered: number) {
+          rateCard(
+            cardId: string,
+            rating: MasteryRating,
+            totalFiltered: number,
+          ) {
             updateActiveSubject((curr) => ({
               ...curr,
               flashcards: curr.flashcards.map((c) => {
@@ -607,7 +663,10 @@ export function withStudyLmMethods() {
                 let delta = 0;
                 if (rating === 'easy') delta = 1;
                 else if (rating === 'again') delta = -1;
-                const nextCount = Math.max(0, Math.min(5, c.masteryCount + delta));
+                const nextCount = Math.max(
+                  0,
+                  Math.min(5, c.masteryCount + delta),
+                );
                 return {
                   ...c,
                   masteryCount: nextCount,
@@ -702,7 +761,10 @@ export function withStudyLmMethods() {
           },
 
           addSource(input: AddSourceInput) {
-            const wordCount = input.content.trim().split(/\s+/).filter(Boolean).length;
+            const wordCount = input.content
+              .trim()
+              .split(/\s+/)
+              .filter(Boolean).length;
             const newSource: StudySource = {
               id: `src-${Date.now()}`,
               title: input.title.trim(),
@@ -722,7 +784,10 @@ export function withStudyLmMethods() {
           },
 
           updateSource(input: UpdateSourceInput) {
-            const wordCount = input.content.trim().split(/\s+/).filter(Boolean).length;
+            const wordCount = input.content
+              .trim()
+              .split(/\s+/)
+              .filter(Boolean).length;
             updateActiveSubject((curr) => ({
               ...curr,
               sources: curr.sources.map((s) => {
@@ -759,7 +824,9 @@ export function withStudyLmMethods() {
             patchState(state, { editingSource });
           },
 
-          setSelectedSourceForPreview(selectedSourceForPreview: StudySource | null) {
+          setSelectedSourceForPreview(
+            selectedSourceForPreview: StudySource | null,
+          ) {
             patchState(state, { selectedSourceForPreview });
           },
 
@@ -815,7 +882,9 @@ export function withStudyLmMethods() {
               cards,
               quiz,
             );
-            const blob = new Blob([md], { type: 'text/markdown;charset=utf-8;' });
+            const blob = new Blob([md], {
+              type: 'text/markdown;charset=utf-8;',
+            });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
@@ -852,7 +921,10 @@ export function withStudyLmMethods() {
             };
 
             try {
-              const res = await apiService.elaborateConcept(req, state.n8nConfig().activeEndpoint);
+              const res = await apiService.elaborateConcept(
+                req,
+                state.n8nConfig().activeEndpoint,
+              );
               patchState(state, {
                 activeElaboration: res.elaboration,
                 isLoadingElaboration: false,
@@ -860,7 +932,10 @@ export function withStudyLmMethods() {
             } catch (err) {
               patchState(state, {
                 isLoadingElaboration: false,
-                elaborationError: err instanceof Error ? err.message : 'Failed to retrieve hint',
+                elaborationError:
+                  err instanceof Error
+                    ? err.message
+                    : 'Failed to retrieve hint',
               });
             }
           },
@@ -893,7 +968,10 @@ export function withStudyLmMethods() {
             };
 
             try {
-              const res = await apiService.elaborateConcept(req, state.n8nConfig().activeEndpoint);
+              const res = await apiService.elaborateConcept(
+                req,
+                state.n8nConfig().activeEndpoint,
+              );
               patchState(state, {
                 activeElaboration: res.elaboration,
                 isLoadingElaboration: false,
@@ -901,7 +979,10 @@ export function withStudyLmMethods() {
             } catch (err) {
               patchState(state, {
                 isLoadingElaboration: false,
-                elaborationError: err instanceof Error ? err.message : 'Failed to retrieve deep dive',
+                elaborationError:
+                  err instanceof Error
+                    ? err.message
+                    : 'Failed to retrieve deep dive',
               });
             }
           },

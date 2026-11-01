@@ -2,12 +2,12 @@ import type {
   CompetencyTier,
   ConceptElaboration,
   N8nConnectionConfig,
-  SoftwareEngineeringDomain,
   StudySource,
   StudySubject,
 } from '@ah/products/studylm/domain';
 
-export type StudyLmTab = 'roadmap' | 'flashcards' | 'quiz' | 'sources' | 'stats';
+export type StudyLmTab =
+  'roadmap' | 'flashcards' | 'quiz' | 'sources' | 'stats';
 
 export interface StudyLmCardFilter {
   tier: CompetencyTier | 'all';
@@ -62,14 +62,16 @@ export const initialStudyLmState: StudyLmState = {
       id: initialSubjectId,
       title: 'JavaScript Internals & Modern Runtime',
       domain: 'languages-runtimes',
-      description: 'Progressive roadmap covering ECMAScript specifications, lexical environments, event loop mechanics, and prototype inheritance.',
+      description:
+        'Progressive roadmap covering ECMAScript specifications, lexical environments, event loop mechanics, and prototype inheritance.',
       roadmap: null,
       sources: [
         {
           id: 'src-1',
           title: 'MDN Web Docs (JavaScript Guide)',
           type: 'link',
-          content: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide',
+          content:
+            'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide',
           addedAt: new Date().toISOString(),
           wordCount: 150,
         },
@@ -104,12 +106,13 @@ export const initialStudyLmState: StudyLmState = {
   },
   activeQuizIndex: 0,
   quizSubmitted: false,
+  // The tunnel URL arrives from site config on init (withStudyLmHooks).
   n8nConfig: {
-    mode: 'tunnel',
+    mode: 'local',
     localUrl: 'http://127.0.0.1:5678/webhook/study-synthesizer',
-    tunnelUrl: 'https://saffron-glacial-uncork.ngrok-free.dev/webhook/study-synthesizer',
+    tunnelUrl: '',
     customUrl: '',
-    activeEndpoint: 'https://saffron-glacial-uncork.ngrok-free.dev/webhook/study-synthesizer',
+    activeEndpoint: 'http://127.0.0.1:5678/webhook/study-synthesizer',
     isConnected: true,
     isChecking: false,
   },

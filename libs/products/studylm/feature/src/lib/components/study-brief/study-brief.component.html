@@ -3,7 +3,10 @@
     <div class="empty-brief">
       <div class="empty-icon">📖</div>
       <h3>No Study Brief Generated</h3>
-      <p>Add sources in the Sources tab and run AI synthesis to generate an executive briefing, key takeaways, and 3-tier study drills.</p>
+      <p>
+        Add sources in the Sources tab and run AI synthesis to generate an
+        executive briefing, key takeaways, and 3-tier study drills.
+      </p>
       <button type="button" class="btn-synthesize" (click)="store.synthesize()">
         Synthesize Sources Now
       </button>
@@ -12,7 +15,9 @@
     <header class="brief-header">
       <div class="badge-row">
         <span class="notebooklm-badge">📘 NotebookLM Grounded Brief</span>
-        <span class="provider-pill">Synthesized by: {{ store.synthesisProvider() }}</span>
+        <span class="provider-pill"
+          >Synthesized by: {{ store.synthesisProvider() }}</span
+        >
       </div>
       <h1 class="brief-title">{{ store.overview()?.title }}</h1>
     </header>
@@ -29,15 +34,31 @@
         </div>
         <p class="tier-desc">{{ tiersInfo.beginner.description }}</p>
         <div class="tier-stats">
-          <span><strong>{{ store.cardTierCounts().beginner }}</strong> Flashcards</span>
+          <span
+            ><strong>{{ store.cardTierCounts().beginner }}</strong>
+            Flashcards</span
+          >
           <span>&bull;</span>
-          <span><strong>{{ store.quizSummary().tierBreakdown.beginner.total }}</strong> Quiz Questions</span>
+          <span
+            ><strong>{{
+              store.quizSummary().tierBreakdown.beginner.total
+            }}</strong>
+            Quiz Questions</span
+          >
         </div>
         <div class="tier-actions">
-          <button type="button" class="tier-btn" (click)="jumpToTier('beginner', 'flashcards')">
+          <button
+            type="button"
+            class="tier-btn"
+            (click)="jumpToTier('beginner', 'flashcards')"
+          >
             Study Cards →
           </button>
-          <button type="button" class="tier-btn-outline" (click)="jumpToTier('beginner', 'quiz')">
+          <button
+            type="button"
+            class="tier-btn-outline"
+            (click)="jumpToTier('beginner', 'quiz')"
+          >
             Test Quiz →
           </button>
         </div>
@@ -53,15 +74,31 @@
         </div>
         <p class="tier-desc">{{ tiersInfo.intermediate.description }}</p>
         <div class="tier-stats">
-          <span><strong>{{ store.cardTierCounts().intermediate }}</strong> Flashcards</span>
+          <span
+            ><strong>{{ store.cardTierCounts().intermediate }}</strong>
+            Flashcards</span
+          >
           <span>&bull;</span>
-          <span><strong>{{ store.quizSummary().tierBreakdown.intermediate.total }}</strong> Quiz Questions</span>
+          <span
+            ><strong>{{
+              store.quizSummary().tierBreakdown.intermediate.total
+            }}</strong>
+            Quiz Questions</span
+          >
         </div>
         <div class="tier-actions">
-          <button type="button" class="tier-btn" (click)="jumpToTier('intermediate', 'flashcards')">
+          <button
+            type="button"
+            class="tier-btn"
+            (click)="jumpToTier('intermediate', 'flashcards')"
+          >
             Study Cards →
           </button>
-          <button type="button" class="tier-btn-outline" (click)="jumpToTier('intermediate', 'quiz')">
+          <button
+            type="button"
+            class="tier-btn-outline"
+            (click)="jumpToTier('intermediate', 'quiz')"
+          >
             Test Quiz →
           </button>
         </div>
@@ -77,15 +114,31 @@
         </div>
         <p class="tier-desc">{{ tiersInfo.expert.description }}</p>
         <div class="tier-stats">
-          <span><strong>{{ store.cardTierCounts().expert }}</strong> Flashcards</span>
+          <span
+            ><strong>{{ store.cardTierCounts().expert }}</strong>
+            Flashcards</span
+          >
           <span>&bull;</span>
-          <span><strong>{{ store.quizSummary().tierBreakdown.expert.total }}</strong> Quiz Questions</span>
+          <span
+            ><strong>{{
+              store.quizSummary().tierBreakdown.expert.total
+            }}</strong>
+            Quiz Questions</span
+          >
         </div>
         <div class="tier-actions">
-          <button type="button" class="tier-btn" (click)="jumpToTier('expert', 'flashcards')">
+          <button
+            type="button"
+            class="tier-btn"
+            (click)="jumpToTier('expert', 'flashcards')"
+          >
             Study Cards →
           </button>
-          <button type="button" class="tier-btn-outline" (click)="jumpToTier('expert', 'quiz')">
+          <button
+            type="button"
+            class="tier-btn-outline"
+            (click)="jumpToTier('expert', 'quiz')"
+          >
             Test Quiz →
           </button>
         </div>

@@ -3,11 +3,15 @@
   <header class="roadmap-header">
     <div class="header-main">
       <div class="title-row">
-        <h2 class="subject-title">{{ store.activeSubject()?.title || 'Technical Roadmap' }}</h2>
+        <h2 class="subject-title">
+          {{ store.activeSubject()?.title || 'Technical Roadmap' }}
+        </h2>
         <div class="badges-row">
           @if (store.activeSubject()?.domain) {
             <ah-badge variant="neutral" size="sm">
-              <span class="domain-tag">{{ store.activeSubject()?.domain }}</span>
+              <span class="domain-tag">{{
+                store.activeSubject()?.domain
+              }}</span>
             </ah-badge>
           }
           @if (store.activeRoadmap(); as rm) {
@@ -35,7 +39,10 @@
         }
       } @else {
         <p class="overview-summary">
-          {{ store.activeSubject()?.description || 'Decompose this software engineering concept into progressive chapters, atomic sections, and authoritative documentation references.' }}
+          {{
+            store.activeSubject()?.description ||
+              'Decompose this software engineering concept into progressive chapters, atomic sections, and authoritative documentation references.'
+          }}
         </p>
       }
     </div>
@@ -49,10 +56,19 @@
         [disabled]="store.isGeneratingRoadmap()"
         (click)="onGenerateRoadmap()"
       >
-        <span>{{ store.isGeneratingRoadmap() ? 'Generating Roadmap...' : (store.activeRoadmap() ? 'Resynthesize Roadmap' : 'Generate Roadmap') }}</span>
+        <span>{{
+          store.isGeneratingRoadmap()
+            ? 'Generating Roadmap...'
+            : store.activeRoadmap()
+              ? 'Resynthesize Roadmap'
+              : 'Generate Roadmap'
+        }}</span>
       </button>
 
-      @if (store.activeRoadmap() && store.approvedSectionsCount() < store.totalSectionsCount()) {
+      @if (
+        store.activeRoadmap() &&
+        store.approvedSectionsCount() < store.totalSectionsCount()
+      ) {
         <button
           type="button"
           ahButton="secondary"
@@ -75,7 +91,10 @@
       >
         <p class="rejection-text">{{ rejection }}</p>
         <p class="rejection-hint">
-          StudyLM utilizes specialized technical engines grounded in authoritative software engineering specifications (e.g. JavaScript V8, Angular Signals, PostgreSQL MVCC, Distributed Systems). Please select a valid Software Engineering domain topic.
+          StudyLM utilizes specialized technical engines grounded in
+          authoritative software engineering specifications (e.g. JavaScript V8,
+          Angular Signals, PostgreSQL MVCC, Distributed Systems). Please select
+          a valid Software Engineering domain topic.
         </p>
       </ah-alert>
     </div>
@@ -87,8 +106,10 @@
       <div class="progress-meta">
         <span class="progress-title">Curriculum Synthesis Progress</span>
         <span class="progress-count">
-          {{ store.synthesizedSectionsCount() }} / {{ store.totalSectionsCount() }} Sections Ready
-          ({{ store.curriculumProgressPct() }}%)
+          {{ store.synthesizedSectionsCount() }} /
+          {{ store.totalSectionsCount() }} Sections Ready ({{
+            store.curriculumProgressPct()
+          }}%)
         </span>
       </div>
       <ah-progress-bar
@@ -109,14 +130,20 @@
           >
             <!-- Branch toolbar to toggle all sections in this branch -->
             <div class="branch-sections-toolbar">
-              <span class="sections-count-pill">{{ branch.sections.length }} sections</span>
+              <span class="sections-count-pill"
+                >{{ branch.sections.length }} sections</span
+              >
               <button
                 type="button"
                 ahButton="ghost"
                 size="xs"
                 (click)="toggleAllSectionsInBranch(branch.sections)"
               >
-                <span>{{ areAllSectionsExpanded(branch.sections) ? 'Collapse all sections' : 'Expand all sections' }}</span>
+                <span>{{
+                  areAllSectionsExpanded(branch.sections)
+                    ? 'Collapse all sections'
+                    : 'Expand all sections'
+                }}</span>
               </button>
             </div>
 
@@ -139,7 +166,9 @@
                     [attr.aria-controls]="'section-body-' + section.id"
                     (click)="toggleSection(section.id)"
                     (keydown.enter)="toggleSection(section.id)"
-                    (keydown.space)="$event.preventDefault(); toggleSection(section.id)"
+                    (keydown.space)="
+                      $event.preventDefault(); toggleSection(section.id)
+                    "
                   >
                     <div class="header-left">
                       <span class="section-toggle-indicator" aria-hidden="true">
@@ -148,13 +177,21 @@
 
                       <div class="code-and-title">
                         <span class="section-code">{{ section.code }}</span>
-                        <h4 class="section-title" [attr.title]="section.title">{{ section.title }}</h4>
+                        <h4 class="section-title" [attr.title]="section.title">
+                          {{ section.title }}
+                        </h4>
                       </div>
                     </div>
 
                     <div class="tier-and-status">
                       <ah-badge
-                        [variant]="section.difficultyTier === 'beginner' ? 'info' : (section.difficultyTier === 'intermediate' ? 'warning' : 'danger')"
+                        [variant]="
+                          section.difficultyTier === 'beginner'
+                            ? 'info'
+                            : section.difficultyTier === 'intermediate'
+                              ? 'warning'
+                              : 'danger'
+                        "
                         size="sm"
                       >
                         <span>{{ section.difficultyTier | uppercase }}</span>
@@ -171,12 +208,20 @@
                       }
 
                       @if (getSectionCardCount(section.id); as cardCount) {
-                        <ah-badge variant="info" size="sm" class="cards-count-badge">
+                        <ah-badge
+                          variant="info"
+                          size="sm"
+                          class="cards-count-badge"
+                        >
                           <span>🗂️ {{ cardCount }} cards</span>
                         </ah-badge>
                       }
                       @if (getSectionQuizCount(section.id); as quizCount) {
-                        <ah-badge variant="accent" size="sm" class="quiz-count-badge">
+                        <ah-badge
+                          variant="accent"
+                          size="sm"
+                          class="quiz-count-badge"
+                        >
                           <span>📝 {{ quizCount }} quiz</span>
                         </ah-badge>
                       }
@@ -200,7 +245,9 @@
                           <span class="subtopics-label">Subtopics:</span>
                           <div class="chips-row">
                             @for (sub of section.subtopics; track sub) {
-                              <span class="subtopic-chip" [attr.title]="sub">{{ sub }}</span>
+                              <span class="subtopic-chip" [attr.title]="sub">{{
+                                sub
+                              }}</span>
                             }
                           </div>
                         </div>
@@ -218,7 +265,9 @@
                                   target="_blank"
                                   rel="noopener noreferrer"
                                   class="doc-link"
-                                  [attr.title]="doc.title + ' (' + doc.url + ')'"
+                                  [attr.title]="
+                                    doc.title + ' (' + doc.url + ')'
+                                  "
                                 >
                                   {{ doc.title }} ↗
                                 </a>
@@ -244,26 +293,46 @@
                         <!-- Separate Flashcards Button -->
                         <button
                           type="button"
-                          [ahButton]="section.flashcardsStatus === 'ready' ? 'secondary' : 'primary'"
+                          [ahButton]="
+                            section.flashcardsStatus === 'ready'
+                              ? 'secondary'
+                              : 'primary'
+                          "
                           size="sm"
                           [disabled]="isSectionGeneratingCards(section.id)"
                           (click)="onGenerateFlashcards(section.id)"
                         >
                           <span>
-                            {{ isSectionGeneratingCards(section.id) ? 'Generating Cards...' : (section.flashcardsStatus === 'ready' ? 'Regenerate Flashcards' : 'Generate Flashcards') }}
+                            {{
+                              isSectionGeneratingCards(section.id)
+                                ? 'Generating Cards...'
+                                : section.flashcardsStatus === 'ready'
+                                  ? 'Regenerate Flashcards'
+                                  : 'Generate Flashcards'
+                            }}
                           </span>
                         </button>
 
                         <!-- Separate Quiz Button -->
                         <button
                           type="button"
-                          [ahButton]="section.quizStatus === 'ready' ? 'secondary' : 'primary'"
+                          [ahButton]="
+                            section.quizStatus === 'ready'
+                              ? 'secondary'
+                              : 'primary'
+                          "
                           size="sm"
                           [disabled]="isSectionGeneratingQuiz(section.id)"
                           (click)="onGenerateQuiz(section.id)"
                         >
                           <span>
-                            {{ isSectionGeneratingQuiz(section.id) ? 'Generating Quiz...' : (section.quizStatus === 'ready' ? 'Regenerate Quiz' : 'Generate Quiz') }}
+                            {{
+                              isSectionGeneratingQuiz(section.id)
+                                ? 'Generating Quiz...'
+                                : section.quizStatus === 'ready'
+                                  ? 'Regenerate Quiz'
+                                  : 'Generate Quiz'
+                            }}
                           </span>
                         </button>
 

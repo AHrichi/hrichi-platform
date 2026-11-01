@@ -83,7 +83,11 @@
   }
 
   &:hover {
-    background: color-mix(in srgb, var(--color-bg-raised) 80%, var(--color-text-default));
+    background: color-mix(
+      in srgb,
+      var(--color-bg-raised) 80%,
+      var(--color-text-default)
+    );
     border-color: var(--color-border-strong);
   }
 }
@@ -97,7 +101,8 @@
   font-weight: 700;
   border-radius: var(--radius-md);
   cursor: pointer;
-  box-shadow: 0 4px 14px color-mix(in srgb, var(--color-accent-default) 30%, transparent);
+  box-shadow: 0 4px 14px
+    color-mix(in srgb, var(--color-accent-default) 30%, transparent);
   transition: all var(--motion-duration-fast) ease;
 
   &:hover:not(:disabled) {
@@ -195,7 +200,11 @@
       gap: 0.35rem;
 
       &.type-document {
-        background: color-mix(in srgb, var(--color-accent-subtle) 30%, transparent);
+        background: color-mix(
+          in srgb,
+          var(--color-accent-subtle) 30%,
+          transparent
+        );
         color: var(--color-accent-default);
       }
       &.type-slide {
@@ -207,7 +216,11 @@
         color: var(--color-data-5);
       }
       &.type-note {
-        background: color-mix(in srgb, var(--color-success-default) 15%, transparent);
+        background: color-mix(
+          in srgb,
+          var(--color-success-default) 15%,
+          transparent
+        );
         color: var(--color-success-default);
       }
     }
@@ -272,10 +285,18 @@
       color: var(--color-accent-default);
       font-weight: 600;
       padding: 0.35rem 0.75rem;
-      background: color-mix(in srgb, var(--color-accent-subtle) 30%, transparent);
+      background: color-mix(
+        in srgb,
+        var(--color-accent-subtle) 30%,
+        transparent
+      );
 
       &:hover {
-        background: color-mix(in srgb, var(--color-accent-subtle) 60%, transparent);
+        background: color-mix(
+          in srgb,
+          var(--color-accent-subtle) 60%,
+          transparent
+        );
       }
     }
 
@@ -303,7 +324,11 @@
 
       &:hover {
         color: var(--color-accent-default);
-        background: color-mix(in srgb, var(--color-accent-subtle) 20%, transparent);
+        background: color-mix(
+          in srgb,
+          var(--color-accent-subtle) 20%,
+          transparent
+        );
       }
     }
   }
@@ -426,12 +451,20 @@
       transition: all var(--motion-duration-fast) ease;
 
       &:hover {
-        background: color-mix(in srgb, var(--color-bg-raised) 70%, var(--color-text-default));
+        background: color-mix(
+          in srgb,
+          var(--color-bg-raised) 70%,
+          var(--color-text-default)
+        );
         color: var(--color-text-default);
       }
 
       &.active {
-        background: color-mix(in srgb, var(--color-accent-subtle) 40%, transparent);
+        background: color-mix(
+          in srgb,
+          var(--color-accent-subtle) 40%,
+          transparent
+        );
         border-color: var(--color-accent-default);
         color: var(--color-accent-default);
       }
@@ -449,7 +482,8 @@
       color: var(--color-text-muted);
     }
 
-    input, textarea {
+    input,
+    textarea {
       background: var(--color-bg-raised);
       border: 1px solid var(--color-border-default);
       border-radius: var(--radius-md);
@@ -517,7 +551,8 @@
 
   .source-url-banner {
     background: color-mix(in srgb, var(--color-accent-subtle) 30%, transparent);
-    border: 1px solid color-mix(in srgb, var(--color-accent-default) 30%, transparent);
+    border: 1px solid
+      color-mix(in srgb, var(--color-accent-default) 30%, transparent);
     border-radius: var(--radius-md);
     padding: 0.6rem 0.85rem;
     margin-bottom: 1.25rem;

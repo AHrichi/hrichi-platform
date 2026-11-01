@@ -42,12 +42,7 @@
       </button>
 
       @if (store.filteredCards().length > 0) {
-        <button
-          type="button"
-          ahButton="ghost"
-          size="sm"
-          (click)="exportAnki()"
-        >
+        <button type="button" ahButton="ghost" size="sm" (click)="exportAnki()">
           <span>Export Anki</span>
         </button>
       }
@@ -61,7 +56,8 @@
       <div class="card-meta-bar">
         <div class="meta-left">
           <span class="card-counter">
-            Card {{ store.activeCardIndex() + 1 }} of {{ store.filteredCards().length }}
+            Card {{ store.activeCardIndex() + 1 }} of
+            {{ store.filteredCards().length }}
           </span>
           @if (card.sectionCode) {
             <ah-badge variant="neutral" size="sm">
@@ -69,7 +65,13 @@
             </ah-badge>
           }
           <ah-badge
-            [variant]="card.tier === 'beginner' ? 'info' : (card.tier === 'intermediate' ? 'warning' : 'danger')"
+            [variant]="
+              card.tier === 'beginner'
+                ? 'info'
+                : card.tier === 'intermediate'
+                  ? 'warning'
+                  : 'danger'
+            "
             size="sm"
           >
             <span>{{ card.tier | uppercase }}</span>
@@ -100,7 +102,9 @@
           <div flip-front slot="front" class="card-face-content front-face">
             <div class="face-tag">
               <div class="face-tag-left">
-                <span class="category-name" [attr.title]="card.category">{{ card.category }}</span>
+                <span class="category-name" [attr.title]="card.category">{{
+                  card.category
+                }}</span>
                 <span class="face-label">PROMPT</span>
               </div>
               <button
@@ -124,7 +128,8 @@
                       rel="noopener noreferrer"
                       class="card-inline-link"
                       (click)="$event.stopPropagation()"
-                    >{{ seg.text }} ↗</a>
+                      >{{ seg.text }} ↗</a
+                    >
                   } @else {
                     <span>{{ seg.text }}</span>
                   }
@@ -141,7 +146,9 @@
           <div flip-back slot="back" class="card-face-content back-face">
             <div class="face-tag">
               <div class="face-tag-left">
-                <span class="category-name" [attr.title]="card.category">{{ card.category }}</span>
+                <span class="category-name" [attr.title]="card.category">{{
+                  card.category
+                }}</span>
                 <span class="face-label">EXPLANATION</span>
               </div>
               <button
@@ -165,7 +172,8 @@
                       rel="noopener noreferrer"
                       class="card-inline-link"
                       (click)="$event.stopPropagation()"
-                    >{{ seg.text }} ↗</a>
+                      >{{ seg.text }} ↗</a
+                    >
                   } @else {
                     <span>{{ seg.text }}</span>
                   }
@@ -182,7 +190,10 @@
                 <ah-code-block
                   [code]="card.codeSnippet"
                   [language]="card.codeLanguage || 'typescript'"
-                  [filename]="'snippet.' + (card.codeLanguage === 'javascript' ? 'js' : 'ts')"
+                  [filename]="
+                    'snippet.' +
+                    (card.codeLanguage === 'javascript' ? 'js' : 'ts')
+                  "
                 />
               </div>
             }
@@ -198,19 +209,25 @@
                   (click)="$event.stopPropagation()"
                   [title]="'Open ' + doc.title + ' in official documentation'"
                 >
-                  <span class="citation-title" [attr.title]="doc.title">{{ doc.title }}</span>
+                  <span class="citation-title" [attr.title]="doc.title">{{
+                    doc.title
+                  }}</span>
                   <span class="citation-icon" aria-hidden="true">↗</span>
                 </a>
               </div>
             } @else if (card.sourceCitation) {
               <div class="citation-tag">
                 <span class="citation-label">Grounded Citation:</span>
-                <span class="citation-val" [attr.title]="card.sourceCitation">{{ card.sourceCitation }}</span>
+                <span class="citation-val" [attr.title]="card.sourceCitation">{{
+                  card.sourceCitation
+                }}</span>
               </div>
             }
 
             <div class="flip-hint">
-              <span class="hint-pill">Click or Space to flip back to question 🔄</span>
+              <span class="hint-pill"
+                >Click or Space to flip back to question 🔄</span
+              >
             </div>
           </div>
         </ah-flip-card>
@@ -239,16 +256,32 @@
 
         <div class="spaced-repetition-ratings">
           <span class="rate-label">Self-Assessment:</span>
-          <button type="button" class="rate-btn rate-again" (click)="rate('again')">
+          <button
+            type="button"
+            class="rate-btn rate-again"
+            (click)="rate('again')"
+          >
             <span class="shortcut">1</span> Again
           </button>
-          <button type="button" class="rate-btn rate-hard" (click)="rate('hard')">
+          <button
+            type="button"
+            class="rate-btn rate-hard"
+            (click)="rate('hard')"
+          >
             <span class="shortcut">2</span> Hard
           </button>
-          <button type="button" class="rate-btn rate-good" (click)="rate('good')">
+          <button
+            type="button"
+            class="rate-btn rate-good"
+            (click)="rate('good')"
+          >
             <span class="shortcut">3</span> Good
           </button>
-          <button type="button" class="rate-btn rate-easy" (click)="rate('easy')">
+          <button
+            type="button"
+            class="rate-btn rate-easy"
+            (click)="rate('easy')"
+          >
             <span class="shortcut">4</span> Easy
           </button>
         </div>

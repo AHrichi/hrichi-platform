@@ -64,7 +64,9 @@ export class QuizArenaComponent {
     this.store.setQuizSectionFilter(sectionId || 'all');
   }
 
-  getQuestionDocLink(q: StudyQuizQuestion | null): { title: string; url: string } | null {
+  getQuestionDocLink(
+    q: StudyQuizQuestion | null,
+  ): { title: string; url: string } | null {
     if (!q) return null;
 
     const citation = q.sourceCitation?.trim() || '';
@@ -170,7 +172,9 @@ export class QuizArenaComponent {
     const subj = this.store.activeSubject()?.title || 'Software Engineering';
     this.store.requestDeepDive({
       subject: subj,
-      conceptTitle: q.sectionCode ? `Section ${q.sectionCode} Invariants` : 'Architecture & Invariants',
+      conceptTitle: q.sectionCode
+        ? `Section ${q.sectionCode} Invariants`
+        : 'Architecture & Invariants',
       difficultyTier: q.tier,
       sectionCode: q.sectionCode,
       promptOrQuestion: q.question,

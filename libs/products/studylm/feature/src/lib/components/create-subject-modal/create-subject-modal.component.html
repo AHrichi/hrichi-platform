@@ -8,11 +8,18 @@
   <div class="create-subject-body">
     <ah-alert variant="info" title="Software Engineering Guardrail">
       <p class="guardrail-desc">
-        StudyLM is strictly calibrated for Software Engineering, Computer Science, and System Architecture concepts (e.g., JavaScript internals, React/Angular architectures, Distributed Consensus, PostgreSQL MVCC).
+        StudyLM is strictly calibrated for Software Engineering, Computer
+        Science, and System Architecture concepts (e.g., JavaScript internals,
+        React/Angular architectures, Distributed Consensus, PostgreSQL MVCC).
       </p>
     </ah-alert>
 
-    <form [formRoot]="subjectForm" (ngSubmit)="submitSubject(true)" class="subject-form" novalidate>
+    <form
+      [formRoot]="subjectForm"
+      (ngSubmit)="submitSubject(true)"
+      class="subject-form"
+      novalidate
+    >
       <div class="form-group">
         <label for="subjDomain">Software Engineering Domain *</label>
         <select
@@ -51,7 +58,9 @@
 
       <!-- Suggested Topics Quick Pick -->
       <div class="suggested-topics-section">
-        <span class="suggested-label">Or Pick a Standard Curriculum Track:</span>
+        <span class="suggested-label"
+          >Or Pick a Standard Curriculum Track:</span
+        >
         <div class="suggested-chips">
           @for (d of domains; track d.id) {
             @for (top of d.suggestedTopics; track top) {
@@ -73,10 +82,20 @@
     <button type="button" ahButton="ghost" size="md" (click)="close()">
       <span>Cancel</span>
     </button>
-    <button type="button" ahButton="secondary" size="md" (click)="submitSubject(false)">
+    <button
+      type="button"
+      ahButton="secondary"
+      size="md"
+      (click)="submitSubject(false)"
+    >
       <span>Create Blank</span>
     </button>
-    <button type="button" ahButton="primary" size="md" (click)="submitSubject(true)">
+    <button
+      type="button"
+      ahButton="primary"
+      size="md"
+      (click)="submitSubject(true)"
+    >
       <span>Create & Generate Roadmap</span>
     </button>
   </div>

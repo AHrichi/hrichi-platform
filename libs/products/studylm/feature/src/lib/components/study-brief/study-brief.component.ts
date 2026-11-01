@@ -1,6 +1,9 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { StudyLmStore } from '../../store/studylm.store';
-import { COMPETENCY_TIERS, type CompetencyTier } from '@ah/products/studylm/domain';
+import {
+  COMPETENCY_TIERS,
+  type CompetencyTier,
+} from '@ah/products/studylm/domain';
 
 @Component({
   selector: 'ah-study-brief',

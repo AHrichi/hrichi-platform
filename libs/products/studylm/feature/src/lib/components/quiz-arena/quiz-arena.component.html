@@ -48,7 +48,8 @@
       <div class="quiz-meta-bar">
         <div class="meta-left">
           <span class="question-counter">
-            Question {{ store.activeQuizIndex() + 1 }} of {{ store.filteredQuiz().length }}
+            Question {{ store.activeQuizIndex() + 1 }} of
+            {{ store.filteredQuiz().length }}
           </span>
           @if (q.sectionCode) {
             <ah-badge variant="neutral" size="sm">
@@ -56,7 +57,13 @@
             </ah-badge>
           }
           <ah-badge
-            [variant]="q.tier === 'beginner' ? 'info' : (q.tier === 'intermediate' ? 'warning' : 'danger')"
+            [variant]="
+              q.tier === 'beginner'
+                ? 'info'
+                : q.tier === 'intermediate'
+                  ? 'warning'
+                  : 'danger'
+            "
             size="sm"
           >
             <span>{{ q.tier | uppercase }}</span>
@@ -65,7 +72,8 @@
 
         <div class="meta-right">
           <span class="score-badge">
-            Score: {{ store.quizSummary().correctCount }} / {{ store.quizSummary().answeredCount }}
+            Score: {{ store.quizSummary().correctCount }} /
+            {{ store.quizSummary().answeredCount }}
             @if (store.quizSummary().answeredCount > 0) {
               ({{ store.quizSummary().scorePercentage }}%)
             }
@@ -94,12 +102,16 @@
           <div class="question-code-section">
             <div class="code-section-header">
               <span class="code-section-title">Code Under Evaluation</span>
-              <span class="code-section-hint">Analyze the snippet to determine outcome</span>
+              <span class="code-section-hint"
+                >Analyze the snippet to determine outcome</span
+              >
             </div>
             <ah-code-block
               [code]="q.codeSnippet"
               [language]="q.codeLanguage || 'typescript'"
-              [filename]="'diagnostic.' + (q.codeLanguage === 'javascript' ? 'js' : 'ts')"
+              [filename]="
+                'diagnostic.' + (q.codeLanguage === 'javascript' ? 'js' : 'ts')
+              "
             />
           </div>
         }
@@ -112,12 +124,16 @@
               class="option-btn"
               [class.is-selected]="q.userSelectedIndex === $index"
               [class.is-correct]="q.isAnswered && $index === q.correctIndex"
-              [class.is-wrong]="q.isAnswered && q.userSelectedIndex === $index && !q.isCorrect"
+              [class.is-wrong]="
+                q.isAnswered && q.userSelectedIndex === $index && !q.isCorrect
+              "
               [disabled]="q.isAnswered"
               (click)="selectOption($index)"
             >
               <span class="option-letter">{{ getOptionLetter($index) }}</span>
-              <span class="option-content" [attr.title]="option">{{ option }}</span>
+              <span class="option-content" [attr.title]="option">{{
+                option
+              }}</span>
 
               @if (q.isAnswered) {
                 @if ($index === q.correctIndex) {
@@ -132,10 +148,18 @@
 
         <!-- Rationale & Official Citation -->
         @if (q.isAnswered) {
-          <div class="explanation-box" [class.correct-box]="q.isCorrect" [class.wrong-box]="!q.isCorrect">
+          <div
+            class="explanation-box"
+            [class.correct-box]="q.isCorrect"
+            [class.wrong-box]="!q.isCorrect"
+          >
             <div class="explanation-header">
               <span class="explanation-title">
-                {{ q.isCorrect ? '✓ Correct Assessment' : '✕ Specification Misconception' }}
+                {{
+                  q.isCorrect
+                    ? '✓ Correct Assessment'
+                    : '✕ Specification Misconception'
+                }}
               </span>
               <button
                 type="button"
@@ -202,7 +226,9 @@
           >
             <span>Reset Test</span>
           </button>
-          @if (!store.quizSubmitted() && store.quizSummary().answeredCount > 0) {
+          @if (
+            !store.quizSubmitted() && store.quizSummary().answeredCount > 0
+          ) {
             <button
               type="button"
               ahButton="primary"

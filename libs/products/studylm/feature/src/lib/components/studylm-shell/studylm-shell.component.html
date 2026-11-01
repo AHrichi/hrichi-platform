@@ -60,11 +60,19 @@
         [class.connected]="store.n8nConfig().isConnected"
         (click)="openSettingsModal()"
         title="Configure n8n AI webhook endpoint"
-        [attr.aria-label]="'n8n AI Engine status: ' + (store.n8nConfig().isConnected ? 'Online' : 'Offline')"
+        [attr.aria-label]="
+          'n8n AI Engine status: ' +
+          (store.n8nConfig().isConnected ? 'Online' : 'Offline')
+        "
       >
         <span class="status-dot"></span>
-        <span class="btn-label-desktop">n8n Engine: {{ store.n8nConfig().isConnected ? 'Online' : 'Offline' }}</span>
-        <span class="btn-label-mobile">{{ store.n8nConfig().isConnected ? 'Online' : 'Offline' }}</span>
+        <span class="btn-label-desktop"
+          >n8n Engine:
+          {{ store.n8nConfig().isConnected ? 'Online' : 'Offline' }}</span
+        >
+        <span class="btn-label-mobile">{{
+          store.n8nConfig().isConnected ? 'Online' : 'Offline'
+        }}</span>
         <span class="gear-icon" aria-hidden="true">⚙️</span>
       </button>
 
@@ -96,7 +104,12 @@
     <ah-metric-card
       label="Synthesis Progress"
       [value]="store.curriculumProgressPct() + '%'"
-      [hint]="store.synthesizedSectionsCount() + ' of ' + store.totalSectionsCount() + ' Ready'"
+      [hint]="
+        store.synthesizedSectionsCount() +
+        ' of ' +
+        store.totalSectionsCount() +
+        ' Ready'
+      "
       icon="⚡"
     />
     <ah-metric-card
@@ -107,8 +120,17 @@
     />
     <ah-metric-card
       label="Diagnostic Accuracy"
-      [value]="store.quizSummary().answeredCount > 0 ? (store.quizSummary().scorePercentage + '%') : 'N/A'"
-      [hint]="store.quizSummary().correctCount + ' / ' + store.quizSummary().answeredCount + ' Correct'"
+      [value]="
+        store.quizSummary().answeredCount > 0
+          ? store.quizSummary().scorePercentage + '%'
+          : 'N/A'
+      "
+      [hint]="
+        store.quizSummary().correctCount +
+        ' / ' +
+        store.quizSummary().answeredCount +
+        ' Correct'
+      "
       icon="🎯"
     />
   </section>
