@@ -8,6 +8,7 @@ import {
   viewChildren,
 } from '@angular/core';
 import { isRtl } from '../direction';
+import { ScrollHint } from '../scroll-hint/scroll-hint';
 
 export interface SegmentedOption<T extends string> {
   value: T;
@@ -20,6 +21,7 @@ export interface SegmentedOption<T extends string> {
  */
 @Component({
   selector: 'ah-segmented-control',
+  imports: [ScrollHint],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './segmented-control.html',
   styleUrl: './segmented-control.scss',

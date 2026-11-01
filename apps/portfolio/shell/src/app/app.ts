@@ -22,12 +22,19 @@ import { FederationStore } from '@ah/platform/federation';
 import { Inspector, type InspectableStores } from '@ah/platform/inspector';
 import { profile, site } from '@ah/shared/content';
 import { PreferencesStore } from '@ah/shared/state';
-import { AhButton } from '@ah/ui';
+import { AhButton, AhScrollHint } from '@ah/ui';
 import { isTranslatedPage, SHELL_COPY } from './shell-copy';
 import { AppUpdates } from './app-updates';
 
 @Component({
-  imports: [AhButton, Inspector, RouterLink, RouterLinkActive, RouterOutlet],
+  imports: [
+    AhButton,
+    AhScrollHint,
+    Inspector,
+    RouterLink,
+    RouterLinkActive,
+    RouterOutlet,
+  ],
   selector: 'ah-root',
   templateUrl: './app.html',
 })

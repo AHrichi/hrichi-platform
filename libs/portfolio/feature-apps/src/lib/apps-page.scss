@@ -305,3 +305,8 @@
     width: 100%;
   }
 }
+
+// Jump targets land below the sticky header.
+.apps-category-section {
+  scroll-margin-block-start: 8rem;
+}

@@ -7,7 +7,7 @@ import {
 import { RouterLink } from '@angular/router';
 import { Seo } from '@ah/portfolio/util-seo';
 import { PreferencesStore } from '@ah/shared/state';
-import { AhButton, Badge, SectionHeading, Tag } from '@ah/ui';
+import { AhButton, AhScrollHint, Badge, SectionHeading, Tag } from '@ah/ui';
 
 interface AppItem {
   id: string;
@@ -137,7 +137,7 @@ const LAB_COPY: Partial<Record<'en' | 'fr' | 'ar', Record<string, LabText>>> = {
 @Component({
   selector: 'ah-apps-page',
   standalone: true,
-  imports: [AhButton, Badge, RouterLink, SectionHeading, Tag],
+  imports: [AhButton, AhScrollHint, Badge, RouterLink, SectionHeading, Tag],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './apps-page.html',
   styleUrl: './apps-page.scss',

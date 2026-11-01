@@ -1,0 +1,76 @@
+// Cues for sideways-scrolling rows; added by the ahScrollHint directive.
+@layer components {
+  [data-scroll-hint] {
+    // Focus and scrollIntoView keep items clear of the cues.
+    scroll-padding-inline: 2.5rem;
+  }
+
+  .ah-scroll-cue {
+    --_size: 2rem;
+    --_bg: var(--ah-scroll-cue-bg, var(--color-bg-canvas));
+
+    position: sticky;
+    z-index: 1;
+    flex: none;
+    align-self: stretch;
+    display: grid;
+    place-items: center;
+    inline-size: var(--_size);
+    min-block-size: 1.5rem;
+    padding: 0;
+    border: 0;
+    color: var(--color-text-default);
+    cursor: pointer;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--motion-duration-fast)
+      var(--motion-easing-standard);
+
+    // Cancels its own width and the row's gap, so the content never moves.
+    &--start {
+      inset-inline-start: 0;
+      margin-inline-end: calc(-1 * (var(--_size) + var(--ah-scroll-gap, 0px)));
+      background: linear-gradient(to right, var(--_bg) 45%, transparent);
+
+      svg {
+        transform: scaleX(-1);
+      }
+    }
+
+    &--end {
+      inset-inline-end: 0;
+      margin-inline-start: calc(
+        -1 * (var(--_size) + var(--ah-scroll-gap, 0px))
+      );
+      background: linear-gradient(to left, var(--_bg) 45%, transparent);
+    }
+
+    &--start:dir(rtl) {
+      background: linear-gradient(to left, var(--_bg) 45%, transparent);
+
+      svg {
+        transform: none;
+      }
+    }
+
+    &--end:dir(rtl) {
+      background: linear-gradient(to right, var(--_bg) 45%, transparent);
+
+      svg {
+        transform: scaleX(-1);
+      }
+    }
+  }
+
+  [data-overflow-start] > .ah-scroll-cue--start,
+  [data-overflow-end] > .ah-scroll-cue--end {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ah-scroll-cue {
+      transition: none;
+    }
+  }
+}

@@ -8,6 +8,7 @@ import {
   viewChildren,
 } from '@angular/core';
 import { isRtl } from '../direction';
+import { ScrollHint } from '../scroll-hint/scroll-hint';
 
 export interface TabItem<T extends string = string> {
   readonly id: T;
@@ -23,6 +24,7 @@ export interface TabItem<T extends string = string> {
  */
 @Component({
   selector: 'ah-tabs',
+  imports: [ScrollHint],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     class: 'ah-tabs',

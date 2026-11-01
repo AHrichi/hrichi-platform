@@ -7,7 +7,7 @@
       {{ profile.name }}
     </a>
     <nav [attr.aria-label]="copy().mainNav">
-      <ul class="ah-cluster" role="list">
+      <ul class="ah-cluster" role="list" ahScrollHint>
         @for (item of nav(); track item.path) {
           <li>
             <a

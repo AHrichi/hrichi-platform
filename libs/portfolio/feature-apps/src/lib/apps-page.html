@@ -1,12 +1,12 @@
 <div class="ah-section ah-container ah-stack" style="--gap: var(--space-8)">
-  <!-- Jump to a section -->
+  <!-- Jump to a section. routerLink keeps the page: a bare #hash resolves against <base href="/"> and opens home. -->
   <div class="apps-top-toolbar">
-    <nav class="apps-nav-bar" aria-label="Solutions Filter">
-      <a href="#production-apps" class="apps-jump-link">
+    <nav class="apps-nav-bar" aria-label="Solutions Filter" ahScrollHint>
+      <a routerLink="." fragment="production-apps" class="apps-jump-link">
         <span>🚀</span> {{ t().jumpProduction }}
         <span class="jump-count">{{ productionApps().length }}</span>
       </a>
-      <a href="#engineering-labs" class="apps-jump-link">
+      <a routerLink="." fragment="engineering-labs" class="apps-jump-link">
         <span>🔬</span> {{ t().jumpLabs }}
         <span class="jump-count">{{ engineeringLabs().length }}</span>
       </a>

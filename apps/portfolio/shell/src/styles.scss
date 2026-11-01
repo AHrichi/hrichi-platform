@@ -81,21 +81,6 @@ body {
     padding-block: 4px;
     padding-inline: var(--space-1);
     scrollbar-width: none;
-    mask-image: linear-gradient(
-      to right,
-      transparent 0,
-      black 12px,
-      black calc(100% - 16px),
-      transparent 100%
-    );
-    -webkit-mask-image: linear-gradient(
-      to right,
-      transparent 0,
-      black 12px,
-      black calc(100% - 16px),
-      transparent 100%
-    );
-
     &::-webkit-scrollbar {
       display: none;
     }

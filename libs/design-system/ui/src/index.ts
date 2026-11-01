@@ -66,3 +66,6 @@ export {
 
 export * from './lib/pagination/pagination';
 export { Pagination as AhPagination } from './lib/pagination/pagination';
+
+export * from './lib/scroll-hint/scroll-hint';
+export { ScrollHint as AhScrollHint } from './lib/scroll-hint/scroll-hint';
