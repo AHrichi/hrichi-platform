@@ -141,3 +141,15 @@ code {
     margin-inline-end: var(--space-2);
   }
 }
+
+.live progress {
+  flex: 1 1 8rem;
+  block-size: 0.5rem;
+  accent-color: var(--color-accent-default);
+}
+
+.moved {
+  margin: 0;
+  color: var(--color-danger-default);
+  font-size: var(--font-size-200);
+}

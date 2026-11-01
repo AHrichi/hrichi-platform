@@ -39,25 +39,29 @@
 
       @if (sensor() === 'on') {
         <div class="live" role="status">
-          @if (live(); as reading) {
-            <span class="chip" [class.steady]="reading.steady">
-              {{ reading.steady ? t().plumb.steady : t().plumb.holdStill }}
-            </span>
+          @if (capture(); as c) {
+            <span class="chip">{{ t().plumb.measuring }}</span>
+            <progress max="100" [value]="c.progress"></progress>
+          } @else if (live(); as reading) {
             <bdi>{{
               t().plumb.reading(
-                i18n.num(reading.sideways, 2),
-                i18n.num(reading.away, 2)
+                i18n.num(reading.sideways, 1),
+                i18n.num(reading.away, 1)
               )
             }}</bdi>
           } @else {
             <span>{{ t().plumb.sensorHint }}</span>
           }
         </div>
+        <p class="hint">{{ t().plumb.captureHint }}</p>
+        @if (moved()) {
+          <p class="moved" role="alert">{{ t().plumb.moved }}</p>
+        }
         <div class="actions">
           <button
             ahButton
             type="button"
-            [disabled]="!live()?.steady"
+            [disabled]="!live() || !!capture()"
             (click)="save('A')"
           >
             {{ t().plumb.saveA }}
@@ -65,7 +69,7 @@
           <button
             ahButton="secondary"
             type="button"
-            [disabled]="!sideA() || !live()?.steady"
+            [disabled]="!sideA() || !live() || !!capture()"
             (click)="save('B')"
           >
             {{ t().plumb.saveB }}

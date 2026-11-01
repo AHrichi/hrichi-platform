@@ -23,6 +23,7 @@
               [(height)]="sHeight"
               [(spacing)]="sSpacing"
               [result]="spacing()"
+              [cableFits]="spacingCable()?.fits ?? null"
             />
           }
           @case ('foundation') {
@@ -129,6 +130,57 @@
                   }
                 </select>
               </label>
+              <label class="check">
+                <input
+                  type="checkbox"
+                  [checked]="sCable()"
+                  (change)="sCable.set($any($event.target).checked)"
+                />
+                <span>{{ t().cableCheck.carries }}</span>
+              </label>
+              @if (sCable()) {
+                <label class="select">
+                  <span>{{ t().span.conductor }}</span>
+                  <select (change)="sConductor.set($any(optionValue($event)))">
+                    @for (c of conductorTypes; track c) {
+                      <option [value]="c" [selected]="c === sConductor()">
+                        {{ t().conductors[c] }}
+                      </option>
+                    }
+                  </select>
+                </label>
+                <label class="select">
+                  <span>{{ t().cableCheck.poleKind }}</span>
+                  <select
+                    (change)="setSpacingPoleKind($any(optionValue($event)))"
+                  >
+                    @for (k of poleKinds; track k) {
+                      <option [value]="k" [selected]="k === sPoleKind()">
+                        {{ t().poleKinds[k] }}
+                      </option>
+                    }
+                  </select>
+                </label>
+                <lp-number-field
+                  [label]="t().span.nominalLoad"
+                  unit="daN"
+                  [min]="50"
+                  [max]="1000"
+                  [step]="10"
+                  [hint]="t().cableCheck.typicalHint"
+                  [(value)]="sNominal"
+                />
+                <label class="select">
+                  <span>{{ t().span.windZone }}</span>
+                  <select (change)="sWindZone.set($any(+optionValue($event)))">
+                    @for (z of windZones; track z) {
+                      <option [value]="z" [selected]="z === sWindZone()">
+                        {{ t().windZones[z] }}
+                      </option>
+                    }
+                  </select>
+                </label>
+              }
             </div>
           }
           @case ('foundation') {
@@ -410,6 +462,16 @@
                 [step]="0.1"
                 [(value)]="lAttachment"
               />
+              <label class="select">
+                <span>{{ t().cableCheck.poleKind }}</span>
+                <select (change)="setSpanPoleKind($any(optionValue($event)))">
+                  @for (k of poleKinds; track k) {
+                    <option [value]="k" [selected]="k === lPoleKind()">
+                      {{ t().poleKinds[k] }}
+                    </option>
+                  }
+                </select>
+              </label>
               <lp-number-field
                 [label]="t().span.nominalLoad"
                 unit="daN"
@@ -484,8 +546,24 @@
                 "
                 unit="m"
               />
+              @if (spacingCable(); as cable) {
+                <ah-metric-card
+                  [label]="t().cableCheck.maxSpacing"
+                  [value]="
+                    cable.span.limitingFactor
+                      ? i18n.num(cable.maxSpacingMeters, 1)
+                      : t().span.beyond
+                  "
+                  [unit]="cable.span.limitingFactor ? 'm' : ''"
+                  [hint]="spacingCableLimit()"
+                  [variant]="cable.fits ? 'success' : 'danger'"
+                />
+              }
             </div>
             <lp-note-list [notes]="spacing().notes" />
+            @if (spacingCable(); as cable) {
+              <lp-note-list [notes]="[cable.note]" />
+            }
           }
           @case ('foundation') {
             <div

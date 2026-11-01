@@ -193,6 +193,16 @@
           (input)="patch({ gps: { lat: pole.gps.lat, lng: +value($event) } })"
         />
       </label>
+      <div class="field wide">
+        <span>{{ t().mapPicker.polePoint }}</span>
+        <lp-location-picker
+          [value]="pole.gps"
+          (valueChange)="patch({ gps: $event })"
+          [context]="otherPoles()"
+          [searchable]="false"
+          [zoom]="18"
+        />
+      </div>
       <label class="field wide">
         <span>{{ t().poles.notes }}</span>
         <textarea

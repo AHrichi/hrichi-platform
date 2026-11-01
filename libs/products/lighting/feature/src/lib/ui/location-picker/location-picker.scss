@@ -1,0 +1,91 @@
+@use 'sass:meta';
+@use '../../styles/luxpath' as lp;
+
+// Unencapsulated (Leaflet's DOM): every rule lives under the element.
+lp-location-picker {
+  @include meta.load-css('leaflet/dist/leaflet');
+
+  display: block;
+
+  .lp-pick {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .lp-pick__search {
+    display: flex;
+    gap: var(--space-2);
+
+    input {
+      @include lp.form-control;
+      flex: 1;
+    }
+  }
+
+  .lp-pick__results {
+    display: grid;
+    gap: var(--space-1);
+    max-block-size: 10rem;
+    margin: 0;
+    padding: 0;
+    overflow-y: auto;
+    list-style: none;
+
+    button {
+      inline-size: 100%;
+      padding: var(--space-2);
+      border: 1px solid var(--color-border-default);
+      border-radius: var(--radius-sm);
+      background: var(--color-bg-surface);
+      color: var(--color-text-default);
+      font: inherit;
+      font-size: var(--font-size-100);
+      text-align: start;
+      cursor: pointer;
+    }
+  }
+
+  .lp-pick__map {
+    block-size: 16rem;
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-md);
+    // Leaflet's own layers sit above the dialog's content otherwise.
+    isolation: isolate;
+  }
+
+  .lp-pick__row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+  }
+
+  .lp-pick__note,
+  .lp-pick__coords {
+    margin: 0;
+    color: var(--color-text-muted);
+    font-size: var(--font-size-100);
+  }
+
+  .lp-pick__coords {
+    font-variant-numeric: tabular-nums;
+  }
+
+  // The chosen point: a teardrop pin, its tip on the spot.
+  .lp-pick-pin {
+    border: 3px solid var(--color-bg-raised);
+    border-radius: 50% 50% 50% 0;
+    background: var(--color-accent-default);
+    box-shadow: 0 1px 4px rgb(0 0 0 / 40%);
+    transform: rotate(-45deg);
+  }
+
+  .lp-pick-other {
+    fill: var(--color-text-muted);
+    fill-opacity: 0.6;
+    stroke: var(--color-bg-raised);
+    stroke-width: 1;
+  }
+}

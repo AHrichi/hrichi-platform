@@ -18,6 +18,7 @@ import {
   LightingStore,
   type PoleFilter,
 } from '../../../store/lighting.store';
+import { LocationPicker } from '../../../ui/location-picker/location-picker';
 import { NumberField } from '../../../ui/number-field/number-field';
 import { POLE_STATUSES, POLE_TYPES } from '../../options';
 
@@ -42,6 +43,7 @@ const STATUS_BADGE: Record<
     AhSegmentedControl,
     NumberField,
     RouterLink,
+    LocationPicker,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './pole-list.html',
@@ -65,6 +67,12 @@ export class PoleList {
 
   /** The pole being edited; a pole without an id is a new one. */
   protected readonly draft = signal<PoleItem | null>(null);
+  /** The project's other poles, shown faintly on the form's map. */
+  protected readonly otherPoles = computed(() =>
+    (this.store.activeProject()?.poles ?? [])
+      .filter((p) => p.id !== this.draft()?.id)
+      .map((p) => p.gps),
+  );
   protected readonly isNew = signal(false);
   protected readonly removing = signal<PoleItem | null>(null);
 

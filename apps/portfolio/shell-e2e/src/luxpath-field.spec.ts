@@ -28,6 +28,31 @@ test.describe('LuxPath field tools', () => {
     await expect(page.locator('lp-saved-results')).toContainText('L 35 m');
   });
 
+  test('checks the spacing against the cable the poles carry', async ({
+    page,
+  }) => {
+    await page.goto('/apps/lighting/calculations?tab=spacing');
+    const results = page.locator('section[aria-labelledby="lp-calc-results"]');
+    const card = results.locator('ah-metric-card', {
+      hasText: 'Longest spacing for the cable',
+    });
+    await expect(card).toContainText('31.5');
+    await expect(results).toContainText(
+      'The cable and the poles hold at S = 28 m',
+    );
+
+    await page.getByRole('spinbutton', { name: /^Spacing S/ }).fill('40');
+    await expect(results).toContainText(
+      'At S = 40 m the cable would be overloaded',
+    );
+
+    // Fibreglass poles bring their own typical rating.
+    await page.getByRole('combobox', { name: 'Pole type' }).selectOption('frp');
+    await expect(
+      page.getByRole('spinbutton', { name: /^Pole nominal load/ }),
+    ).toHaveValue('120');
+  });
+
   test('shows how to place the phone for a plumb check', async ({ page }) => {
     await page.goto('/apps/lighting/verticality');
     const guide = page.locator('lp-plumb-guide');

@@ -1,6 +1,7 @@
 import type {
   CompassDirection,
   ConductorType,
+  PoleKind,
   PoleRole,
   ConcreteExposure,
   PoleStatus,
@@ -93,6 +94,14 @@ export const CONDUCTOR_TYPES: readonly ConductorType[] = [
   'abc_3x35_54',
   'abc_3x70_54',
   'abc_3x150_70',
+];
+
+export const POLE_KINDS: readonly PoleKind[] = [
+  'steel',
+  'aluminium',
+  'frp',
+  'concrete',
+  'wood',
 ];
 
 export const POLE_ROLES: readonly PoleRole[] = [

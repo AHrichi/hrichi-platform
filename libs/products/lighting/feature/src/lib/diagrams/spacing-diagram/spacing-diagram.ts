@@ -36,6 +36,8 @@ export class SpacingDiagram {
   readonly height = model.required<number>();
   readonly spacing = model.required<number>();
   readonly result = input.required<SpacingCalculationResult>();
+  /** Whether the overhead cable holds at this spacing; null when there's none. */
+  readonly cableFits = input<boolean | null>(null);
 
   protected readonly i18n = inject(LuxPathI18n);
   protected readonly t = this.i18n.t;

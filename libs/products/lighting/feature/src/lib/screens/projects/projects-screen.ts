@@ -28,6 +28,11 @@ import {
 } from '../options';
 import { RouterLink } from '@angular/router';
 import { BackupPanel } from '../../ui/backup-panel/backup-panel';
+import { Geocoder } from '../../services/geocoder';
+import {
+  type LatLng,
+  LocationPicker,
+} from '../../ui/location-picker/location-picker';
 import { MilestoneList } from './milestone-list/milestone-list';
 import { PoleList } from './pole-list/pole-list';
 import { SavedResults } from './saved-results/saved-results';
@@ -35,6 +40,9 @@ import { SavedResults } from './saved-results/saved-results';
 type LightingType = ProjectItem['lightingType'];
 
 /** Projects: pick one, see where it stands, and edit its poles, plan and saved work. */
+/** Where a new project's map opens: central Tunis. */
+const DEFAULT_POINT: LatLng = { lat: 36.8065, lng: 10.1815 };
+
 @Component({
   selector: 'lp-projects-screen',
   imports: [
@@ -44,6 +52,7 @@ type LightingType = ProjectItem['lightingType'];
     AhModal,
     AhProgressBar,
     BackupPanel,
+    LocationPicker,
     PoleList,
     MilestoneList,
     RouterLink,
@@ -77,6 +86,11 @@ export class ProjectsScreen {
   protected readonly title = signal('');
   protected readonly client = signal('');
   protected readonly location = signal('');
+  /** The project's point on the map (its poles start around it). */
+  protected readonly gps = signal<LatLng>(DEFAULT_POINT);
+  /** Typed names win; until then the map's point names the place. */
+  private locationTyped = false;
+  private readonly geocoder = inject(Geocoder);
   protected readonly engineer = signal('');
   protected readonly email = signal('');
   protected readonly lightingType = signal<LightingType>('solar_only');
@@ -102,6 +116,8 @@ export class ProjectsScreen {
     this.title.set(project?.title ?? '');
     this.client.set(project?.clientOrMunicipality ?? '');
     this.location.set(project?.locationName ?? '');
+    this.locationTyped = !!project?.locationName;
+    this.gps.set(project ? { ...project.gpsCenter } : DEFAULT_POINT);
     this.engineer.set(project?.engineerName ?? '');
     this.email.set(project?.engineerEmail ?? '');
     this.lightingType.set(project?.lightingType ?? 'solar_only');
@@ -109,6 +125,26 @@ export class ProjectsScreen {
     this.windZone.set(project?.windZone ?? 2);
     this.soil.set(project?.defaultSoil ?? 'compact_gravel');
     this.deadline.set(project?.commissioningDeadline ?? '');
+  }
+
+  protected typeLocation(name: string): void {
+    this.locationTyped = name.trim() !== '';
+    this.location.set(name);
+  }
+
+  /** A point picked on the map names the place, unless one was typed. */
+  protected async nameFromPoint(point: LatLng): Promise<void> {
+    if (this.locationTyped) return;
+    const name = await this.geocoder.reverse(
+      point.lat,
+      point.lng,
+      this.i18n.lang(),
+    );
+    if (name && !this.locationTyped) this.location.set(name);
+  }
+
+  protected nameFromPlace(name: string): void {
+    if (!this.locationTyped) this.location.set(name.split(',')[0]);
   }
 
   protected async submit(): Promise<void> {
@@ -120,6 +156,7 @@ export class ProjectsScreen {
       title: this.title().trim(),
       clientOrMunicipality: this.client().trim(),
       locationName: this.location().trim(),
+      gpsCenter: this.gps(),
       engineerName: this.engineer().trim(),
       engineerEmail: this.email().trim(),
       lightingType: this.lightingType(),

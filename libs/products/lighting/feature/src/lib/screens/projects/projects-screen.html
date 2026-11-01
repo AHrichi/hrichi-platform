@@ -202,9 +202,18 @@
       <input
         type="text"
         [value]="location()"
-        (input)="location.set(value($event))"
+        (input)="typeLocation(value($event))"
       />
     </label>
+    <div class="select wide">
+      <span>{{ t().mapPicker.projectPoint }}</span>
+      <lp-location-picker
+        [(value)]="gps"
+        [zoom]="editing() ? 17 : 13"
+        (valueChange)="nameFromPoint($event)"
+        (placeChosen)="nameFromPlace($event.name)"
+      />
+    </div>
     <label class="select">
       <span>{{ t().projects.engineer }}</span>
       <input

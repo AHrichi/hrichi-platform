@@ -1,6 +1,9 @@
 import type {
   CalcNote,
   ConductorType,
+  OverheadCable,
+  PoleKind,
+  SpacingCalculationParams,
   SpanCalculationParams,
   SpanCalculationResult,
   SpanLimit,
@@ -324,5 +327,74 @@ export function calculateSpan(
       sagMeters: round(s.sagM),
     })),
     notes,
+  };
+}
+
+/**
+ * Typical rated loads near the top of 7–10 m poles that carry an aerial
+ * cable, in daN. Only a starting point: the pole's plate or datasheet wins.
+ * Fibreglass (FRP) poles are light and flexible, so they rate lower than
+ * steel; concrete and wood network poles rate higher.
+ */
+export const POLE_KIND_LOADS: Record<PoleKind, number> = {
+  steel: 150,
+  aluminium: 100,
+  frp: 120,
+  concrete: 300,
+  wood: 200,
+};
+
+/** Where the cable is clamped below the lamp, and the clearance it keeps. */
+const CABLE_BELOW_TOP_M = 0.6;
+const STREET_CLEARANCE_M = 6;
+/** A usual stringing tension for bundled cable on lighting poles. */
+const LIGHTING_EVERYDAY_PCT = 12;
+
+/**
+ * Whether the poles' spacing also suits the cable they carry: the span
+ * check at S, with the poles in line, the cable just below the lamp and a
+ * 6 m clearance. Returns the longest spacing the cable and poles allow.
+ */
+export function checkSpacingCable(
+  spacing: SpacingCalculationParams,
+  cable: OverheadCable,
+): {
+  span: SpanCalculationResult;
+  fits: boolean;
+  maxSpacingMeters: number;
+  note: CalcNote;
+} {
+  const span = calculateSpan({
+    spanMeters: spacing.spacingMeters,
+    conductor: cable.conductor,
+    everydayTensionPct: LIGHTING_EVERYDAY_PCT,
+    windZone: cable.windZone,
+    poleRole: 'intermediate',
+    deviationDegrees: 0,
+    poleHeightMeters: spacing.mountingHeightMeters,
+    attachmentHeightMeters: Math.max(
+      3,
+      spacing.mountingHeightMeters - CABLE_BELOW_TOP_M,
+    ),
+    poleNominalLoadDaN: cable.poleNominalLoadDaN,
+    requiredClearanceMeters: STREET_CLEARANCE_M,
+    poleKind: cable.poleKind,
+  });
+  const values = { span: spacing.spacingMeters, max: span.maxSpanMeters };
+  const note: CalcNote =
+    span.maxSpanMeters === 0
+      ? { code: 'spacing.cableNone', severity: 'error' }
+      : span.isCompliant
+        ? { code: 'spacing.cableOk', severity: 'ok', values }
+        : {
+            code: `spacing.cableTooLong.${span.limitingFactor ?? 'conductor'}`,
+            severity: 'error',
+            values,
+          };
+  return {
+    span,
+    fits: span.isCompliant,
+    maxSpacingMeters: span.maxSpanMeters,
+    note,
   };
 }

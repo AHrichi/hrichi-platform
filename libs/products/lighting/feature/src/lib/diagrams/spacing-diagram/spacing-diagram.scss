@@ -16,3 +16,14 @@
   fill: var(--color-danger-default);
   font-weight: 600;
 }
+
+.cable {
+  fill: none;
+  stroke: var(--color-text-default);
+  stroke-width: 2;
+
+  &.bad {
+    stroke: var(--color-danger-default);
+    stroke-dasharray: 6 4;
+  }
+}

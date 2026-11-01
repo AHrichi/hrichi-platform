@@ -1,0 +1,59 @@
+<div class="lp-pick">
+  @if (searchable()) {
+    <form class="lp-pick__search" role="search" (submit)="search($event)">
+      <label class="ah-visually-hidden" for="lp-pick-query">{{
+        t().mapPicker.search
+      }}</label>
+      <input
+        id="lp-pick-query"
+        type="search"
+        [placeholder]="t().mapPicker.searchPlaceholder"
+        [value]="query()"
+        (input)="query.set(text($event))"
+      />
+      <button
+        ahButton="secondary"
+        size="sm"
+        type="submit"
+        [disabled]="searching()"
+      >
+        🔎 {{ t().mapPicker.search }}
+      </button>
+    </form>
+    @if (results(); as places) {
+      @if (places.length) {
+        <ul class="lp-pick__results" role="list">
+          @for (place of places; track $index) {
+            <li>
+              <button type="button" (click)="choose(place)">
+                {{ place.name }}
+              </button>
+            </li>
+          }
+        </ul>
+      } @else {
+        <p class="lp-pick__note">{{ t().mapPicker.noResults }}</p>
+      }
+    }
+  }
+
+  <div
+    #map
+    class="lp-pick__map"
+    role="application"
+    [attr.aria-label]="t().mapPicker.mapLabel"
+  ></div>
+
+  <div class="lp-pick__row">
+    <p class="lp-pick__note">{{ t().mapPicker.hint }}</p>
+    <button ahButton="ghost" size="sm" type="button" (click)="locate()">
+      📍 {{ t().mapPicker.myLocation }}
+    </button>
+  </div>
+  <p class="lp-pick__coords" dir="ltr">
+    {{ i18n.num(value().lat, 6) }}, {{ i18n.num(value().lng, 6) }}
+  </p>
+  @if (notice(); as text) {
+    <p class="lp-pick__note" role="status">{{ text }}</p>
+  }
+</div>

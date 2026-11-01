@@ -3,6 +3,9 @@ import { loadSampleProjects } from './support/luxpath';
 import { expect, test } from './support/test';
 
 test.describe('LuxPath projects', () => {
+  // page.route can't see requests made through the service worker.
+  test.use({ serviceWorkers: 'block' });
+
   test('starts with no project, and points to the guide', async ({ page }) => {
     await page.goto('/apps/lighting/projects');
     await expect(page.getByText('No projects yet')).toBeVisible();
@@ -59,5 +62,27 @@ test.describe('LuxPath projects', () => {
     await expect(photo.locator('img')).toHaveJSProperty('complete', true);
     await expect(photo.locator('figcaption')).toContainText('Photo:');
     await expect(photo.locator('figcaption')).toContainText('CC BY');
+  });
+
+  test('places a new project on the map and names it from the point', async ({
+    page,
+  }) => {
+    await page.route('**/nominatim.openstreetmap.org/reverse**', (route) =>
+      route.fulfill({
+        json: { address: { road: 'Avenue Habib Bourguiba', city: 'Tunis' } },
+      }),
+    );
+    await page.goto('/apps/lighting/projects');
+    await page.getByRole('button', { name: '+ New project' }).first().click();
+    const picker = page.locator('lp-location-picker');
+    const coords = picker.locator('.lp-pick__coords');
+    const before = await coords.innerText();
+    const map = picker.locator('.lp-pick__map');
+    await map.scrollIntoViewIfNeeded();
+    await map.click({ position: { x: 90, y: 90 } });
+    await expect(coords).not.toHaveText(before);
+    await expect(page.getByRole('textbox', { name: 'Location' })).toHaveValue(
+      'Avenue Habib Bourguiba, Tunis',
+    );
   });
 });

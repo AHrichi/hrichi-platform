@@ -418,6 +418,16 @@ export const EN = {
       `${v['pct']} % stringing tension is high for bundled cable: wind and cold could overload it. 10–15 % is usual.`,
     'span.datasheet': () =>
       'Cable figures are typical catalogue values: check your cable’s datasheet (mass, diameter, breaking load).',
+    'spacing.cableOk': (v) =>
+      `The cable and the poles hold at S = ${v['span']} m; they allow up to ${v['max']} m.`,
+    'spacing.cableTooLong.conductor': (v) =>
+      `At S = ${v['span']} m the cable would be overloaded: ${v['max']} m at most with this cable. Bring the poles closer or choose a stronger cable.`,
+    'spacing.cableTooLong.pole': (v) =>
+      `At S = ${v['span']} m the poles can't carry the cable's pull: ${v['max']} m at most with this pole type. Use stronger poles or bring them closer.`,
+    'spacing.cableTooLong.clearance': (v) =>
+      `At S = ${v['span']} m the cable would sag below 6 m on a hot day: ${v['max']} m at most. Fix it higher or bring the poles closer.`,
+    'spacing.cableNone': () =>
+      'No spacing works with this cable and pole type: check the pole’s rated load on its plate.',
   } as Record<string, NoteWriter>,
 
   diagrams: {
@@ -527,9 +537,13 @@ export const EN = {
       'Phone upright (portrait), back flat on the pole, screen facing you. Keep still.',
     facing: 'On side A you face',
     steady: 'Steady',
-    holdStill: 'Hold still…',
     sideways: 'Leans right (+) / left (−)',
     away: 'Leans away (+) / towards you (−)',
+    measuring: 'Measuring… keep still',
+    captureHint:
+      'Each side measures for 3 seconds and keeps the average: tap the button, then keep the phone still against the pole.',
+    moved:
+      'The phone moved while measuring. Press it flat against the pole, keep still and try again.',
     saveA: 'Save side A',
     saveB: 'Save side B',
     sideA: 'Side A',
@@ -780,6 +794,7 @@ export const EN = {
       'Road width W: tape from kerb to kerb, at right angles to the road.',
       'Luminaire flux Φ: the lumens on the luminaire’s datasheet, not the lumens of its LED chips.',
       'Maintenance factor MF: 0.8 for sealed LED luminaires cleaned every 3–4 years; 0.7 in dusty or salty air.',
+      'Overhead cable: if the poles carry one, choose it (for example 2 × 16 mm²) and the pole type (steel, aluminium, fibreglass, concrete or wood); LuxPath checks the spacing suits them too.',
     ],
     foundation: [
       'Depth: from ground level to the bottom of the hole, with the tape held vertical.',
@@ -824,7 +839,7 @@ export const EN = {
       },
       {
         title: 'Keep still, then save side A',
-        text: 'Wait for “Steady”, then tap “Save side A”. Set which way you face.',
+        text: 'Set which way you face, tap “Save side A” and keep still for 3 seconds while it measures.',
       },
       {
         title: 'Go round and save side B',
@@ -932,7 +947,7 @@ export const EN = {
         title: 'Projects',
         what: 'Everything for one street or site: the client, the poles, the plan and the saved results.',
         how: [
-          'Tap “New project”, give it a name and a client, and choose solar, grid or hybrid.',
+          'Tap “New project”, give it a name and a client, choose solar, grid or hybrid, and tap its place on the map (or search an address).',
           'Add poles with their height, type and status; tap a pole to edit it.',
           'Add milestones to the plan; put a reminder in your calendar or send it by email.',
           'Results saved from the other tools are listed here: reopen one to correct it, rename it or delete it.',
@@ -969,7 +984,7 @@ export const EN = {
         what: 'Check that a pole is vertical (EN 40-3 allows 1°) and how to straighten it.',
         how: [
           'Follow the pictures: phone upright, its back flat on the pole, screen facing you.',
-          'Tap “Use phone as a level”, keep still until it says “Steady”, then save side A.',
+          'Tap “Use phone as a level”, then “Save side A”, and keep still for the 3 seconds it measures.',
           'Walk to the opposite side and save side B: the average cancels the phone’s own error.',
           'Out of tolerance? The steps say which levelling nuts to raise and by how much. Record the check on the pole.',
         ],
@@ -1041,6 +1056,30 @@ export const EN = {
         text: 'Once opened, LuxPath works without a connection; the map needs one to load new areas.',
       },
     ],
+  },
+  cableCheck: {
+    carries: 'The poles carry an overhead cable',
+    poleKind: 'Pole type',
+    typicalHint: 'Typical for this pole type; read the plate',
+    maxSpacing: 'Longest spacing for the cable',
+    short: 'cable checked',
+  },
+  poleKinds: {
+    steel: 'Galvanised steel',
+    aluminium: 'Aluminium',
+    frp: 'Fibreglass (FRP)',
+    concrete: 'Reinforced concrete',
+    wood: 'Wood',
+  },
+  mapPicker: {
+    projectPoint: 'Project location on the map',
+    polePoint: 'Pole position on the map',
+    search: 'Search',
+    searchPlaceholder: 'A place or address',
+    noResults: 'Nothing found: try a town or street name.',
+    mapLabel: 'Map: tap to set the point',
+    hint: 'Tap the map to set the point, or drag the pin.',
+    myLocation: 'My location',
   },
 };
 

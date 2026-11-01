@@ -416,6 +416,16 @@ export const FR: LuxPathCopy = {
       `Une tension de pose de ${v['pct']} % est élevée pour du torsadé : le vent et le froid pourraient le surcharger. 10 à 15 % est courant.`,
     'span.datasheet': () =>
       'Les valeurs de câble sont typiques de catalogue : vérifiez la fiche technique (masse, diamètre, charge de rupture).',
+    'spacing.cableOk': (v) =>
+      `Le câble et les mâts tiennent à S = ${v['span']} m ; ils permettent jusqu’à ${v['max']} m.`,
+    'spacing.cableTooLong.conductor': (v) =>
+      `À S = ${v['span']} m le câble serait surchargé : ${v['max']} m au plus avec ce câble. Rapprochez les mâts ou choisissez un câble plus fort.`,
+    'spacing.cableTooLong.pole': (v) =>
+      `À S = ${v['span']} m les mâts ne tiennent pas la traction du câble : ${v['max']} m au plus avec ce type de mât. Prenez des mâts plus forts ou rapprochez-les.`,
+    'spacing.cableTooLong.clearance': (v) =>
+      `À S = ${v['span']} m le câble descendrait sous 6 m par forte chaleur : ${v['max']} m au plus. Fixez-le plus haut ou rapprochez les mâts.`,
+    'spacing.cableNone': () =>
+      'Aucun espacement ne convient avec ce câble et ce type de mât : vérifiez l’effort nominal sur la plaque du mât.',
   } as Record<string, NoteWriter>,
 
   diagrams: {
@@ -528,9 +538,13 @@ export const FR: LuxPathCopy = {
       'Téléphone debout (portrait), dos à plat sur le mât, écran vers vous. Ne bougez plus.',
     facing: 'Côté A, vous regardez vers',
     steady: 'Stable',
-    holdStill: 'Ne bougez plus…',
     sideways: 'Penche à droite (+) / à gauche (−)',
     away: 'Penche en s’éloignant (+) / vers vous (−)',
+    measuring: 'Mesure en cours… ne bougez plus',
+    captureHint:
+      'Chaque côté est mesuré pendant 3 secondes et la moyenne est gardée : touchez le bouton, puis gardez le téléphone immobile contre le mât.',
+    moved:
+      'Le téléphone a bougé pendant la mesure. Plaquez-le contre le mât, ne bougez plus et recommencez.',
     saveA: 'Enregistrer côté A',
     saveB: 'Enregistrer côté B',
     sideA: 'Côté A',
@@ -785,6 +799,7 @@ export const FR: LuxPathCopy = {
       'Largeur W : au mètre ruban, de bordure à bordure, perpendiculairement à la route.',
       'Flux Φ : les lumens de la fiche du luminaire, pas ceux de ses puces LED.',
       'Facteur de maintenance MF : 0,8 pour des luminaires LED étanches nettoyés tous les 3 à 4 ans ; 0,7 en air poussiéreux ou salin.',
+      'Câble aérien : si les mâts en portent un, choisissez-le (par exemple 2 × 16 mm²) et le type de mât (acier, aluminium, fibre de verre, béton ou bois) ; LuxPath vérifie que l’espacement leur convient aussi.',
     ],
     foundation: [
       'Profondeur : du niveau du sol au fond de la fouille, mètre tenu à la verticale.',
@@ -829,7 +844,7 @@ export const FR: LuxPathCopy = {
       },
       {
         title: 'Ne bougez plus, puis enregistrez le côté A',
-        text: 'Attendez « Stable », puis touchez « Enregistrer côté A ». Indiquez vers où vous regardez.',
+        text: 'Indiquez vers où vous regardez, touchez « Enregistrer côté A » et ne bougez plus pendant les 3 secondes de mesure.',
       },
       {
         title: 'Faites le tour et enregistrez le côté B',
@@ -941,7 +956,7 @@ export const FR: LuxPathCopy = {
         title: 'Projets',
         what: 'Tout pour une rue ou un chantier : le client, les mâts, le planning et les résultats enregistrés.',
         how: [
-          'Touchez « Nouveau projet », donnez un nom et un client, et choisissez solaire, réseau ou hybride.',
+          'Touchez « Nouveau projet », donnez un nom et un client, choisissez solaire, réseau ou hybride, et touchez son emplacement sur la carte (ou cherchez une adresse).',
           'Ajoutez les mâts avec leur hauteur, leur type et leur état ; touchez un mât pour le modifier.',
           'Ajoutez des jalons au planning ; mettez un rappel dans votre agenda ou envoyez-le par e-mail.',
           'Les résultats enregistrés depuis les autres outils sont listés ici : rouvrez-en un pour le corriger, renommez-le ou supprimez-le.',
@@ -978,7 +993,7 @@ export const FR: LuxPathCopy = {
         what: 'Vérifiez qu’un mât est vertical (l’EN 40-3 tolère 1°) et comment le redresser.',
         how: [
           'Suivez les images : téléphone debout, dos à plat sur le mât, écran vers vous.',
-          'Touchez « Utiliser le téléphone comme niveau », ne bougez plus jusqu’à « Stable », puis enregistrez le côté A.',
+          'Touchez « Utiliser le téléphone comme niveau », puis « Enregistrer côté A », et ne bougez plus pendant les 3 secondes de mesure.',
           'Passez du côté opposé et enregistrez le côté B : la moyenne annule l’erreur propre au téléphone.',
           'Hors tolérance ? Les étapes indiquent quels écrous de réglage remonter et de combien. Enregistrez le contrôle sur le mât.',
         ],
@@ -1050,5 +1065,29 @@ export const FR: LuxPathCopy = {
         text: 'Une fois ouvert, LuxPath fonctionne sans connexion ; la carte en a besoin pour charger de nouvelles zones.',
       },
     ],
+  },
+  cableCheck: {
+    carries: 'Les mâts portent un câble aérien',
+    poleKind: 'Type de mât',
+    typicalHint: 'Valeur typique pour ce type ; lisez la plaque',
+    maxSpacing: 'Espacement maximal pour le câble',
+    short: 'câble vérifié',
+  },
+  poleKinds: {
+    steel: 'Acier galvanisé',
+    aluminium: 'Aluminium',
+    frp: 'Fibre de verre (PRV)',
+    concrete: 'Béton armé',
+    wood: 'Bois',
+  },
+  mapPicker: {
+    projectPoint: 'Emplacement du projet sur la carte',
+    polePoint: 'Position du mât sur la carte',
+    search: 'Chercher',
+    searchPlaceholder: 'Un lieu ou une adresse',
+    noResults: 'Rien trouvé : essayez une ville ou une rue.',
+    mapLabel: 'Carte : touchez pour placer le point',
+    hint: 'Touchez la carte pour placer le point, ou faites glisser l’épingle.',
+    myLocation: 'Ma position',
   },
 };

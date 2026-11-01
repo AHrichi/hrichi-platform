@@ -158,6 +158,8 @@ export interface SpacingCalculationParams {
   luminaireLumens: number;
   maintenanceFactor: number; // e.g. 0.8
   utilizationFactor?: number; // auto-derived if omitted
+  /** Set when the poles also carry an overhead cable. */
+  overheadCable?: OverheadCable;
 }
 
 export interface SpacingCalculationResult {
@@ -339,6 +341,17 @@ export type ConductorType =
   | 'abc_3x70_54'
   | 'abc_3x150_70';
 
+/** What a pole is made of; sets a typical rated load until the plate is read. */
+export type PoleKind = 'steel' | 'aluminium' | 'frp' | 'concrete' | 'wood';
+
+/** An aerial cable strung between the lighting poles themselves. */
+export interface OverheadCable {
+  conductor: ConductorType;
+  poleKind: PoleKind;
+  poleNominalLoadDaN: number;
+  windZone: WindZone;
+}
+
 /** Where the pole sits in the line, which sets the load the wire puts on it. */
 export type PoleRole = 'intermediate' | 'angle' | 'terminal';
 
@@ -363,6 +376,8 @@ export interface SpanCalculationParams {
   poleNominalLoadDaN: number;
   /** Lowest point of the wire above the ground, on the hottest day. */
   requiredClearanceMeters: number;
+  /** What the poles are made of, kept with saved inputs. */
+  poleKind?: PoleKind;
 }
 
 export interface SpanCalculationResult {

@@ -80,7 +80,7 @@ export class SavedResults {
     switch (c.kind) {
       case 'spacing': {
         const r = calculatePoleSpacing(c.inputs);
-        summary = `S/H ${n(r.spacingRatio, 2)} · ${n(r.estimatedAverageLux)} lx · ${r.isCompliant ? '✓' : '✕'}`;
+        summary = `S/H ${n(r.spacingRatio, 2)} · ${n(r.estimatedAverageLux)} lx · ${r.isCompliant ? '✓' : '✕'}${c.inputs.overheadCable ? ` · ${this.t().cableCheck.short}` : ''}`;
         break;
       }
       case 'foundation': {

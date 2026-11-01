@@ -52,6 +52,28 @@
       />
     }
 
+    @if (cableFits() !== null) {
+      <!-- The overhead cable, just below the lamps -->
+      <path
+        class="cable"
+        [class.bad]="!cableFits()"
+        [attr.d]="
+          'M' +
+          x0 +
+          ' ' +
+          (top() + 8) +
+          'Q' +
+          (x0 + xB()) / 2 +
+          ' ' +
+          (top() + 20) +
+          ' ' +
+          xB() +
+          ' ' +
+          (top() + 8)
+        "
+      />
+    }
+
     <!-- H: height dimension -->
     <path class="measure" [attr.d]="'M24 ' + ground + 'V' + top()" />
     <path

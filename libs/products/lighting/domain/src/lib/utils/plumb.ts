@@ -65,3 +65,38 @@ export function leanToCompass(
     east: lean.away * Math.sin(f) + lean.sideways * Math.cos(f),
   };
 }
+
+/** Mean of a set of readings, and how much they spread (standard deviation). */
+export function summarizeReadings(readings: readonly LeanReading[]): {
+  mean: LeanReading;
+  spread: number;
+} {
+  const n = Math.max(1, readings.length);
+  const mean = {
+    sideways: readings.reduce((s, r) => s + r.sideways, 0) / n,
+    away: readings.reduce((s, r) => s + r.away, 0) / n,
+  };
+  const variance =
+    readings.reduce(
+      (s, r) =>
+        s + (r.sideways - mean.sideways) ** 2 + (r.away - mean.away) ** 2,
+      0,
+    ) / n;
+  return { mean, spread: Math.sqrt(variance) };
+}
+
+/**
+ * Exponential smoothing for the live display: each new reading moves the
+ * shown value a fraction of the way, so sensor jitter doesn't make it jump.
+ */
+export function smoothReading(
+  previous: LeanReading | null,
+  next: LeanReading,
+  factor = 0.08,
+): LeanReading {
+  if (!previous) return next;
+  return {
+    sideways: previous.sideways + factor * (next.sideways - previous.sideways),
+    away: previous.away + factor * (next.away - previous.away),
+  };
+}

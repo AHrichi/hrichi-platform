@@ -18,6 +18,8 @@ import {
   gravityToLean,
   type LeanReading,
   leanToCompass,
+  smoothReading,
+  summarizeReadings,
 } from '@ah/products/lighting/domain';
 import { PlumbDiagram } from '../../diagrams/plumb-diagram/plumb-diagram';
 import { PlumbGuide } from '../../diagrams/plumb-guide/plumb-guide';
@@ -32,23 +34,32 @@ interface MotionPermission {
   requestPermission?: () => Promise<'granted' | 'denied'>;
 }
 
-/** About a second of samples at the usual 60 Hz. */
-const WINDOW = 60;
-/** Spread below which the phone counts as still, in degrees. */
-const STEADY_SPREAD = 0.06;
+/** Chrome's fused gravity sensor (Generic Sensor API): steadier than raw motion. */
+interface GravitySensorLike extends EventTarget {
+  readonly x?: number;
+  readonly y?: number;
+  readonly z?: number;
+  start(): void;
+  stop(): void;
+}
+type GravitySensorCtor = new (options: {
+  frequency: number;
+}) => GravitySensorLike;
+
+/** A side is measured over this long; averaging cancels the sensor jitter. */
+const CAPTURE_MS = 3000;
+/**
+ * Spread (standard deviation) of a capture above which the phone moved.
+ * Held still, phone sensors jitter by a few tenths of a degree; that much
+ * is averaged out, more means the phone was shifting on the pole.
+ */
+const MAX_SPREAD = 0.6;
 
 /** The compass point the pole leans towards. */
 function leanDirection(north: number, east: number): CompassDirection {
   const bearing = ((Math.atan2(east, north) * 180) / Math.PI + 360) % 360;
   return DIRECTIONS[Math.round(bearing / 45) % 8];
 }
-
-const mean = (values: number[]) =>
-  values.reduce((sum, v) => sum + v, 0) / values.length;
-const spread = (values: number[]) => {
-  const m = mean(values);
-  return Math.sqrt(mean(values.map((v) => (v - m) ** 2)));
-};
 
 /**
  * Plumb check (EN 40-3): hold the phone upright against the pole on one
@@ -87,19 +98,27 @@ export class VerticalityScreen {
 
   /** Which way the user looks, towards the pole, on side A. */
   protected readonly facing = signal<CompassDirection>('N');
-  /** The phone's current reading, averaged over the last second. */
-  protected readonly live = signal<(LeanReading & { steady: boolean }) | null>(
-    null,
-  );
+  /** The phone's current reading, smoothed so it doesn't jump. */
+  protected readonly live = signal<LeanReading | null>(null);
   protected readonly sideA = signal<LeanReading | null>(null);
   protected readonly sideB = signal<LeanReading | null>(null);
+  /** A side being measured, and how far along (0 to 100). */
+  protected readonly capture = signal<{
+    side: 'A' | 'B';
+    progress: number;
+  } | null>(null);
+  /** The last capture was refused because the phone moved. */
+  protected readonly moved = signal(false);
   private samples: LeanReading[] = [];
+  private captureStart = 0;
+  private gravity: GravitySensorLike | null = null;
 
   /** The guide step the user is on, lit up in the pictures. */
   protected readonly guideStep = computed(() => {
     if (this.sensor() !== 'on') return 0;
+    if (this.capture()) return 3;
     if (this.sideA()) return this.sideB() ? 0 : 4;
-    return this.live()?.steady ? 3 : 2;
+    return 2;
   });
 
   /** Follows the level until the user picks a direction by hand. */
@@ -121,27 +140,34 @@ export class VerticalityScreen {
   private readonly onMotion = (event: DeviceMotionEvent) => {
     const g = event.accelerationIncludingGravity;
     if (g?.x == null || g.y == null || g.z == null) return;
-    const reading = gravityToLean(g.x, g.y, g.z);
+    this.onGravity(g.x, g.y, g.z);
+  };
+
+  /** One gravity sample, from either sensor. */
+  private onGravity(x: number, y: number, z: number): void {
+    const reading = gravityToLean(x, y, z);
     if (!reading) {
-      this.samples = [];
       this.live.set(null);
       return;
     }
-    this.samples.push(reading);
-    if (this.samples.length > WINDOW) this.samples.shift();
-    const sideways = this.samples.map((s) => s.sideways);
-    const away = this.samples.map((s) => s.away);
-    this.live.set({
-      sideways: mean(sideways),
-      away: mean(away),
-      steady:
-        this.samples.length >= WINDOW / 2 &&
-        spread(sideways) < STEADY_SPREAD &&
-        spread(away) < STEADY_SPREAD,
-    });
+    const live = smoothReading(this.live(), reading);
+    this.live.set(live);
     // Before anything is saved, the drawing follows the phone.
-    if (!this.sideA()) this.apply(this.live() as LeanReading);
-  };
+    if (!this.sideA()) this.apply(live);
+
+    const capture = this.capture();
+    if (!capture) return;
+    this.samples.push(reading);
+    const elapsed = performance.now() - this.captureStart;
+    if (elapsed < CAPTURE_MS) {
+      this.capture.set({
+        side: capture.side,
+        progress: Math.round((elapsed / CAPTURE_MS) * 100),
+      });
+      return;
+    }
+    this.finishCapture(capture.side);
+  }
 
   constructor() {
     // Start from the first pole of the project, with its height.
@@ -188,23 +214,73 @@ export class VerticalityScreen {
         return;
       }
     }
-    this.samples = [];
-    window.addEventListener('devicemotion', this.onMotion);
+    this.live.set(null);
+    if (!this.startGravitySensor()) {
+      window.addEventListener('devicemotion', this.onMotion);
+    }
     this.sensor.set('on');
+  }
+
+  /** Uses the fused gravity sensor where the browser has one (Chrome). */
+  private startGravitySensor(): boolean {
+    const Sensor = (window as unknown as { GravitySensor?: GravitySensorCtor })
+      .GravitySensor;
+    if (!Sensor) return false;
+    try {
+      const sensor = new Sensor({ frequency: 60 });
+      sensor.addEventListener('reading', () => {
+        if (sensor.x != null && sensor.y != null && sensor.z != null) {
+          this.onGravity(sensor.x, sensor.y, sensor.z);
+        }
+      });
+      // Refused or missing hardware: fall back to the motion events.
+      sensor.addEventListener('error', () => {
+        sensor.stop();
+        this.gravity = null;
+        if (this.sensor() === 'on') {
+          window.addEventListener('devicemotion', this.onMotion);
+        }
+      });
+      sensor.start();
+      this.gravity = sensor;
+      return true;
+    } catch {
+      return false;
+    }
   }
 
   private stopSensor(): void {
     if (this.isBrowser) {
       window.removeEventListener('devicemotion', this.onMotion);
     }
+    this.gravity?.stop();
+    this.gravity = null;
     this.live.set(null);
+    this.capture.set(null);
   }
 
+  /** Measures one side: keep still for three seconds while it averages. */
   protected save(side: 'A' | 'B'): void {
-    const reading = this.live();
-    if (!reading?.steady) return;
-    const { sideways, away } = reading;
-    (side === 'A' ? this.sideA : this.sideB).set({ sideways, away });
+    if (!this.live() || this.capture()) return;
+    this.moved.set(false);
+    this.samples = [];
+    this.captureStart = performance.now();
+    this.capture.set({ side, progress: 0 });
+  }
+
+  private finishCapture(side: 'A' | 'B'): void {
+    this.capture.set(null);
+    const { mean, spread } = summarizeReadings(this.samples);
+    this.samples = [];
+    if (spread > MAX_SPREAD) {
+      this.moved.set(true);
+      return;
+    }
+    const rounded = {
+      sideways: Math.round(mean.sideways * 100) / 100,
+      away: Math.round(mean.away * 100) / 100,
+    };
+    (side === 'A' ? this.sideA : this.sideB).set(rounded);
     const a = this.sideA();
     const b = this.sideB();
     if (a) this.apply(b ? combineSides(a, b) : a);
@@ -213,6 +289,7 @@ export class VerticalityScreen {
   protected restart(): void {
     this.sideA.set(null);
     this.sideB.set(null);
+    this.moved.set(false);
     this.samples = [];
   }
 

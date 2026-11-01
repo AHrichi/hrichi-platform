@@ -1,5 +1,11 @@
 import type { SpanCalculationParams } from '../models/lighting.models';
-import { calculateSpan, changeOfState, CONDUCTORS } from './span';
+import {
+  calculateSpan,
+  changeOfState,
+  checkSpacingCable,
+  CONDUCTORS,
+  POLE_KIND_LOADS,
+} from './span';
 
 const base: SpanCalculationParams = {
   spanMeters: 35,
@@ -75,5 +81,33 @@ describe('Overhead span (sag and tension)', () => {
     });
     expect(r.meetsClearance).toBe(false);
     expect(r.clearanceMeters).toBeLessThan(6);
+  });
+
+  it('checks a lighting spacing against the cable the poles carry', () => {
+    const spacing = {
+      mountingHeightMeters: 8,
+      spacingMeters: 30,
+      roadWidthMeters: 7,
+      roadClass: 'M3' as const,
+      luminaireLumens: 7500,
+      maintenanceFactor: 0.8,
+    };
+    const cable = {
+      conductor: 'abc_2x16' as const,
+      poleKind: 'frp' as const,
+      poleNominalLoadDaN: POLE_KIND_LOADS.frp,
+      windZone: 2 as const,
+    };
+    const ok = checkSpacingCable(spacing, cable);
+    expect(ok.fits).toBe(true);
+    expect(ok.note.code).toBe('spacing.cableOk');
+    expect(ok.maxSpacingMeters).toBeGreaterThan(30);
+
+    const far = checkSpacingCable(
+      { ...spacing, spacingMeters: ok.maxSpacingMeters + 5 },
+      cable,
+    );
+    expect(far.fits).toBe(false);
+    expect(far.note.code).toMatch(/^spacing\.cableTooLong\./);
   });
 });

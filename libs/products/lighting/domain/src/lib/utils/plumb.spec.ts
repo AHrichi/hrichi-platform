@@ -1,4 +1,10 @@
-import { combineSides, gravityToLean, leanToCompass } from './plumb';
+import {
+  combineSides,
+  gravityToLean,
+  leanToCompass,
+  smoothReading,
+  summarizeReadings,
+} from './plumb';
 
 const g = 9.81;
 const rad = (deg: number) => (deg * Math.PI) / 180;
@@ -46,5 +52,25 @@ describe('Phone plumb reading', () => {
     // Facing east, leaning away = east; leaning right = south.
     expect(leanToCompass({ sideways: 0, away: 1 }, 90).east).toBeCloseTo(1);
     expect(leanToCompass({ sideways: 1, away: 0 }, 90).north).toBeCloseTo(-1);
+  });
+
+  it('averages jittery readings into a steady one', () => {
+    // ±0.3° of jitter around a 0.5° lean, as a hand-held phone gives.
+    const readings = Array.from({ length: 180 }, (_, i) => ({
+      sideways: 0.5 + (i % 2 ? 0.3 : -0.3),
+      away: -0.2 + (i % 3 === 0 ? 0.3 : -0.15),
+    }));
+    const { mean, spread } = summarizeReadings(readings);
+    expect(mean.sideways).toBeCloseTo(0.5);
+    expect(mean.away).toBeCloseTo(-0.2);
+    expect(spread).toBeLessThan(0.5);
+  });
+
+  it('smooths the live value towards each new reading', () => {
+    const start = { sideways: 0, away: 0 };
+    const next = smoothReading(start, { sideways: 1, away: -1 }, 0.1);
+    expect(next.sideways).toBeCloseTo(0.1);
+    expect(next.away).toBeCloseTo(-0.1);
+    expect(smoothReading(null, start)).toBe(start);
   });
 });

@@ -220,12 +220,14 @@ const evaluate = values['allow-eval'] ? "'unsafe-eval'" : '';
 // every request itself, and a worker's fetches are checked against
 // connect-src: without it each tile fails with a 504 for returning visitors.
 const tiles = 'https://tile.openstreetmap.org';
+// OpenStreetMap's Nominatim: place search and names for LuxPath's map picker.
+const geocoder = 'https://nominatim.openstreetmap.org';
 const csp = [
   "default-src 'self'",
   // blob: is required by es-module-shims in shim mode (ADR-0006).
   `script-src 'self' ${evaluate} ${inlineScriptHashes(dir).join(' ')} blob: ${remotes} ${turnstile}`,
   "style-src 'self' 'unsafe-inline'",
-  `connect-src 'self' ${remotes} ${apiOrigins.join(' ')} ${tiles} https://*.ngrok-free.dev https://*.ngrok.app https://*.ngrok.io http://127.0.0.1:* http://localhost:*`,
+  `connect-src 'self' ${remotes} ${apiOrigins.join(' ')} ${tiles} ${geocoder} https://*.ngrok-free.dev https://*.ngrok.app https://*.ngrok.io http://127.0.0.1:* http://localhost:*`,
   `frame-src ${[self, turnstile].join(' ').trim() || "'none'"}`,
   `img-src 'self' data: ${tiles}`,
   "font-src 'self'",

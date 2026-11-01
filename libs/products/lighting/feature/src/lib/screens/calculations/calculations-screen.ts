@@ -16,12 +16,15 @@ import {
   calculatePoleSpacing,
   calculateSolarSizing,
   calculateSpan,
+  checkSpacingCable,
   CONDUCTORS,
   type ConductorType,
   type ElectricalParams,
   type FoundationCalculationParams,
+  type PoleKind,
   type PoleMaterial,
   type PoleRole,
+  POLE_KIND_LOADS,
   type RoadLightingClass,
   type SavedCalculation,
   type SoilType,
@@ -43,6 +46,7 @@ import { NumberField } from '../../ui/number-field/number-field';
 import { SaveBar, type SaveRequest } from '../../ui/save-bar/save-bar';
 import {
   CONDUCTOR_TYPES,
+  POLE_KINDS,
   POLE_ROLES,
   ROAD_CLASSES,
   SOIL_TYPES,
@@ -94,6 +98,7 @@ export class CalculationsScreen {
   protected readonly windZones = WIND_ZONES;
   protected readonly conductorTypes = CONDUCTOR_TYPES;
   protected readonly poleRoles = POLE_ROLES;
+  protected readonly poleKinds = POLE_KINDS;
   protected readonly materials: readonly PoleMaterial[] = [
     'galvanized_steel',
     'aluminum',
@@ -112,6 +117,12 @@ export class CalculationsScreen {
   protected readonly sRoadClass = signal<RoadLightingClass>('M3');
   protected readonly sLumens = signal(7500);
   protected readonly sMaintenance = signal(0.8);
+  // The overhead cable the poles carry, if any, and what the poles are.
+  protected readonly sCable = signal(true);
+  protected readonly sConductor = signal<ConductorType>('abc_2x16');
+  protected readonly sPoleKind = signal<PoleKind>('steel');
+  protected readonly sNominal = signal(POLE_KIND_LOADS.steel);
+  protected readonly sWindZone = signal<WindZone>(2);
   protected readonly spacingParams = computed<SpacingCalculationParams>(() => ({
     mountingHeightMeters: this.sHeight(),
     spacingMeters: this.sSpacing(),
@@ -119,10 +130,35 @@ export class CalculationsScreen {
     roadClass: this.sRoadClass(),
     luminaireLumens: this.sLumens(),
     maintenanceFactor: this.sMaintenance(),
+    overheadCable: this.sCable()
+      ? {
+          conductor: this.sConductor(),
+          poleKind: this.sPoleKind(),
+          poleNominalLoadDaN: this.sNominal(),
+          windZone: this.sWindZone(),
+        }
+      : undefined,
   }));
   protected readonly spacing = computed(() =>
     calculatePoleSpacing(this.spacingParams()),
   );
+  /** The spacing checked against the cable and the poles' rated load. */
+  protected readonly spacingCable = computed(() => {
+    const params = this.spacingParams();
+    return params.overheadCable
+      ? checkSpacingCable(params, params.overheadCable)
+      : null;
+  });
+  protected readonly spacingCableLimit = computed(() => {
+    const limit = this.spacingCable()?.span.limitingFactor;
+    return limit ? this.t().spanLimits[limit] : '';
+  });
+
+  /** Choosing a pole type fills in its typical rated load. */
+  protected setSpacingPoleKind(kind: PoleKind): void {
+    this.sPoleKind.set(kind);
+    this.sNominal.set(POLE_KIND_LOADS[kind]);
+  }
 
   // Foundation (Eurocode 7)
   protected readonly fHeight = signal(8);
@@ -206,6 +242,7 @@ export class CalculationsScreen {
   protected readonly lPoleHeight = signal(8);
   protected readonly lAttachment = signal(7.5);
   protected readonly lNominal = signal(250);
+  protected readonly lPoleKind = signal<PoleKind>('concrete');
   protected readonly lClearance = signal(6);
   protected readonly spanParams = computed<SpanCalculationParams>(() => ({
     spanMeters: this.lSpan(),
@@ -218,7 +255,13 @@ export class CalculationsScreen {
     attachmentHeightMeters: Math.min(this.lAttachment(), this.lPoleHeight()),
     poleNominalLoadDaN: this.lNominal(),
     requiredClearanceMeters: this.lClearance(),
+    poleKind: this.lPoleKind(),
   }));
+
+  protected setSpanPoleKind(kind: PoleKind): void {
+    this.lPoleKind.set(kind);
+    this.lNominal.set(POLE_KIND_LOADS[kind]);
+  }
   protected readonly span = computed(() => calculateSpan(this.spanParams()));
   /** What stops the span growing, in words; empty when nothing does by 150 m. */
   protected readonly spanLimit = computed(() => {
@@ -427,6 +470,13 @@ export class CalculationsScreen {
         this.sRoadClass.set(i.roadClass);
         this.sLumens.set(i.luminaireLumens);
         this.sMaintenance.set(i.maintenanceFactor);
+        this.sCable.set(!!i.overheadCable);
+        if (i.overheadCable) {
+          this.sConductor.set(i.overheadCable.conductor);
+          this.sPoleKind.set(i.overheadCable.poleKind);
+          this.sNominal.set(i.overheadCable.poleNominalLoadDaN);
+          this.sWindZone.set(i.overheadCable.windZone);
+        }
         break;
       }
       case 'foundation': {
@@ -472,6 +522,7 @@ export class CalculationsScreen {
         this.lAttachment.set(i.attachmentHeightMeters);
         this.lNominal.set(i.poleNominalLoadDaN);
         this.lClearance.set(i.requiredClearanceMeters);
+        this.lPoleKind.set(i.poleKind ?? 'concrete');
         break;
       }
     }
