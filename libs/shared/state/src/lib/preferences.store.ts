@@ -16,11 +16,17 @@ import {
 
 const audienceStorageKey = 'ah.audience';
 const themeStorageKey = 'ah.theme';
+export const languageStorageKey = 'preferred_language';
 
 export type ThemePreference = 'system' | 'light' | 'dark';
+export type SiteLanguage = 'fr' | 'ar' | 'en';
 
 export function isThemePreference(value: unknown): value is ThemePreference {
   return value === 'system' || value === 'light' || value === 'dark';
+}
+
+export function isSiteLanguage(value: unknown): value is SiteLanguage {
+  return value === 'fr' || value === 'ar' || value === 'en';
 }
 
 function applyThemeToDocument(
@@ -38,6 +44,16 @@ function applyThemeToDocument(
   }
 }
 
+function applyLanguageToDocument(
+  doc: Document | null,
+  lang: SiteLanguage,
+): void {
+  if (!doc) return;
+  const root = doc.documentElement;
+  root.setAttribute('lang', lang);
+  root.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
+}
+
 /**
  * Site-wide visitor preferences. Shared as a federation singleton (ADR-0002),
  * so remotes read the same instance as the shell.
@@ -47,17 +63,17 @@ export const PreferencesStore = signalStore(
   withState({
     audience: defaultAudience as Audience,
     theme: 'system' as ThemePreference,
+    // The site is written in English first; prerendered pages are English.
+    language: 'en' as SiteLanguage,
+    /** The OS colour scheme, followed while the theme is 'system'. */
+    systemDark: false,
   }),
-  withComputed(({ audience, theme }) => ({
+  withComputed(({ audience, theme, language, systemDark }) => ({
     copy: computed(() => audienceCopy[audience()]),
+    isRtl: computed(() => language() === 'ar'),
     isDark: computed(() => {
       const pref = theme();
-      if (pref === 'dark') return true;
-      if (pref === 'light') return false;
-      if (typeof window !== 'undefined' && window.matchMedia) {
-        return window.matchMedia('(prefers-color-scheme: dark)').matches;
-      }
-      return false;
+      return pref === 'system' ? systemDark() : pref === 'dark';
     }),
   })),
   withMethods((store) => {
@@ -90,6 +106,11 @@ export const PreferencesStore = signalStore(
         writeStorage(themeStorageKey, theme);
         applyThemeToDocument(doc, theme);
       },
+      setLanguage(language: SiteLanguage): void {
+        patchState(store, { language });
+        writeStorage(languageStorageKey, language);
+        applyLanguageToDocument(doc, language);
+      },
       toggleTheme(): void {
         const next: ThemePreference = store.isDark() ? 'light' : 'dark';
         patchState(store, { theme: next });
@@ -114,6 +135,19 @@ export const PreferencesStore = signalStore(
           }
         }
 
+        // The stored choice, else the browser's language if the site speaks it.
+        const storedLang = readStorage(languageStorageKey);
+        const browserLang = window?.navigator?.language
+          ?.slice(0, 2)
+          .toLowerCase();
+        const language: SiteLanguage = isSiteLanguage(storedLang)
+          ? storedLang
+          : isSiteLanguage(browserLang)
+            ? browserLang
+            : 'en';
+        patchState(store, { language });
+        applyLanguageToDocument(doc, language);
+
         const themeFromUrl = window
           ? new URL(window.location.href).searchParams.get('theme')
           : null;
@@ -131,18 +165,12 @@ export const PreferencesStore = signalStore(
           }
         }
 
-        if (window && window.matchMedia) {
-          const mql = window.matchMedia('(prefers-color-scheme: dark)');
-          const listener = () => {
-            if (store.theme() === 'system') {
-              patchState(store, { theme: 'system' });
-            }
-          };
-          try {
-            mql.addEventListener('change', listener);
-          } catch {
-            mql.addListener?.(listener);
-          }
+        const scheme = window?.matchMedia?.('(prefers-color-scheme: dark)');
+        if (scheme) {
+          patchState(store, { systemDark: scheme.matches });
+          scheme.addEventListener('change', (event) =>
+            patchState(store, { systemDark: event.matches }),
+          );
         }
       },
     };

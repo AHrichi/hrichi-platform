@@ -1,4 +1,4 @@
-<a class="ah-skip-link" href="#main">Skip to content</a>
+<a class="ah-skip-link" href="#main">{{ copy().skip }}</a>
 
 <header class="site-header ah-no-print">
   <div class="ah-container site-header__inner">
@@ -6,9 +6,9 @@
       <img src="favicon.svg" alt="" width="28" height="28" />
       {{ profile.name }}
     </a>
-    <nav aria-label="Main">
+    <nav [attr.aria-label]="copy().mainNav">
       <ul class="ah-cluster" role="list">
-        @for (item of nav; track item.path) {
+        @for (item of nav(); track item.path) {
           <li>
             <a
               [routerLink]="item.path"
@@ -19,22 +19,36 @@
           </li>
         }
         <li>
-          <a ahButton size="sm" routerLink="/cv">CV</a>
+          <a ahButton size="sm" routerLink="/cv">{{ copy().cv }}</a>
+        </li>
+        <li>
+          <div
+            class="lang-switch"
+            role="group"
+            [attr.aria-label]="copy().language"
+          >
+            @for (lang of languages; track lang.id) {
+              <button
+                type="button"
+                [attr.lang]="lang.id"
+                [attr.aria-pressed]="preferences.language() === lang.id"
+                [attr.aria-label]="lang.name"
+                [title]="lang.name"
+                (click)="preferences.setLanguage(lang.id)"
+              >
+                {{ lang.label }}
+              </button>
+            }
+          </div>
         </li>
         <li>
           <button
             type="button"
             class="theme-toggle"
             [attr.aria-label]="
-              preferences.isDark()
-                ? 'Switch to light mode'
-                : 'Switch to dark mode'
+              preferences.isDark() ? copy().toLight : copy().toDark
             "
-            [attr.title]="
-              preferences.isDark()
-                ? 'Switch to light mode'
-                : 'Switch to dark mode'
-            "
+            [attr.title]="preferences.isDark() ? copy().toLight : copy().toDark"
             (click)="preferences.toggleTheme()"
           >
             @if (preferences.isDark()) {
@@ -83,7 +97,22 @@
   </div>
 </header>
 
-<main id="main" tabindex="-1">
+<main
+  id="main"
+  tabindex="-1"
+  [attr.lang]="englishOnly() ? 'en' : null"
+  [attr.dir]="englishOnly() ? 'ltr' : null"
+>
+  @if (englishOnly()) {
+    <p
+      class="language-note ah-container"
+      role="note"
+      [attr.lang]="preferences.language()"
+      [attr.dir]="preferences.isRtl() ? 'rtl' : 'ltr'"
+    >
+      🌐 {{ copy().englishOnly }}
+    </p>
+  }
   <router-outlet />
 </main>
 
@@ -93,7 +122,9 @@
       © {{ year }} {{ profile.name }} · {{ profile.location }}
     </p>
     <ul class="ah-cluster" role="list">
-      <li><a [href]="'mailto:' + profile.email">Email</a></li>
+      <li>
+        <a [href]="'mailto:' + profile.email">{{ copy().email }}</a>
+      </li>
       <li>
         <a [href]="profile.linkedin" target="_blank" rel="noopener noreferrer"
           >LinkedIn</a
@@ -105,17 +136,17 @@
         >
       </li>
       <li>
-        <a [href]="repository" target="_blank" rel="noopener noreferrer"
-          >Source & ADRs</a
-        >
+        <a [href]="repository" target="_blank" rel="noopener noreferrer">{{
+          copy().source
+        }}</a>
       </li>
       <li>
-        <a [href]="designSystem" target="_blank" rel="noopener noreferrer"
-          >Design system</a
-        >
+        <a [href]="designSystem" target="_blank" rel="noopener noreferrer">{{
+          copy().designSystem
+        }}</a>
       </li>
       <li>
-        <a routerLink="/apps">Apps & Labs</a>
+        <a routerLink="/apps">{{ copy().nav.apps }}</a>
       </li>
       <li>
         <button
@@ -125,7 +156,7 @@
           [attr.aria-expanded]="inspecting()"
           (click)="inspecting.set(!inspecting())"
         >
-          Open the hood
+          {{ copy().hood }}
         </button>
       </li>
     </ul>

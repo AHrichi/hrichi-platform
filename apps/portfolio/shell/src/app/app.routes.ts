@@ -65,6 +65,23 @@ export const appRoutes: Route[] = [
   },
   // Keep alias for study
   { path: 'apps/study', redirectTo: 'apps/studylm', pathMatch: 'full' },
+  {
+    path: 'apps/whatsapp',
+    providers: [provideAppMode('embedded-demo')],
+    loadChildren: federatedRoutes('product-whatsapp'),
+    title:
+      'ChatPulse · WhatsApp Chat & AI Relationship Intelligence · Ahmed Hrichi',
+  },
+  { path: 'apps/chatpulse', redirectTo: 'apps/whatsapp', pathMatch: 'full' },
+  {
+    path: 'apps/lighting',
+    providers: [provideAppMode('embedded-demo')],
+    loadChildren: federatedRoutes('product-lighting'),
+    title:
+      'LuxPath · Public & Solar Street Lighting Field Engineering Platform · Ahmed Hrichi',
+  },
+  { path: 'apps/luxpath', redirectTo: 'apps/lighting', pathMatch: 'full' },
+  { path: 'apps/solarlux', redirectTo: 'apps/lighting', pathMatch: 'full' },
   // The hello demo was replaced by the full applications & labs hub; redirect.
   { path: 'labs/hello', redirectTo: 'apps', pathMatch: 'full' },
   // Each lab's intro is prerendered around its remote (ADR-0014).

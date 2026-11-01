@@ -1,23 +1,25 @@
 <div class="ah-section ah-container ah-stack" style="--gap: var(--space-8)">
+  <!-- Jump to a section -->
+  <div class="apps-top-toolbar">
+    <nav class="apps-nav-bar" aria-label="Solutions Filter">
+      <a href="#production-apps" class="apps-jump-link">
+        <span>🚀</span> {{ t().jumpProduction }}
+        <span class="jump-count">{{ productionApps().length }}</span>
+      </a>
+      <a href="#engineering-labs" class="apps-jump-link">
+        <span>🔬</span> {{ t().jumpLabs }}
+        <span class="jump-count">{{ engineeringLabs().length }}</span>
+      </a>
+    </nav>
+  </div>
+
   <!-- Hero Section Heading -->
   <ah-section-heading
     [level]="1"
-    eyebrow="Portfolio Architecture & Solutions"
-    heading="Applications & Interactive Labs"
-    lead="Explore production-grade platforms and specialized engineering workbenches built with modern zoneless Angular 22, Native Federation, Three.js WebGL, NestJS, and reactive state architectures. Every platform below is fully interactive and documented."
+    [eyebrow]="t().heroEyebrow"
+    [heading]="t().heroHeading"
+    [lead]="t().heroLead"
   />
-
-  <!-- Quick Category Jump -->
-  <nav class="apps-nav-bar" aria-label="Solutions Filter">
-    <a href="#production-apps" class="apps-jump-link">
-      <span>🚀</span> Production Applications
-      <span class="jump-count">{{ productionApps.length }}</span>
-    </a>
-    <a href="#engineering-labs" class="apps-jump-link">
-      <span>🔬</span> Interactive Engineering Labs
-      <span class="jump-count">{{ engineeringLabs.length }}</span>
-    </a>
-  </nav>
 
   <!-- SECTION 1: Production Applications -->
   <section
@@ -29,22 +31,26 @@
       <ah-section-heading
         headingId="production-heading"
         [level]="2"
-        eyebrow="Commercial Platforms"
-        heading="Production Applications"
-        lead="Full-stack, domain-driven systems designed for real business workflows, distributed operations, and privacy-first computation."
+        [eyebrow]="t().prodEyebrow"
+        [heading]="t().prodHeading"
+        [lead]="t().prodLead"
       />
     </div>
 
     <div class="apps-grid">
-      @for (app of productionApps; track app.id) {
+      @for (app of productionApps(); track app.id) {
         <article class="app-card ah-card">
           <!-- Card Top Bar: Icon, Title, Eyebrow & Live Status -->
           <div class="app-card__header">
             <div class="app-card__identity">
               <span class="app-icon" aria-hidden="true">{{ app.icon }}</span>
               <div class="app-card__titles">
-                <p class="app-eyebrow" [attr.title]="app.eyebrow">{{ app.eyebrow }}</p>
-                <h3 class="app-title" [attr.title]="app.title">{{ app.title }}</h3>
+                <p class="app-eyebrow" [attr.title]="app.eyebrow">
+                  {{ app.eyebrow }}
+                </p>
+                <h3 class="app-title" [attr.title]="app.title">
+                  {{ app.title }}
+                </h3>
               </div>
             </div>
             <div class="app-card__badge-wrap">
@@ -76,7 +82,7 @@
 
           <!-- Feature Highlights List -->
           <div class="app-features-box">
-            <h4 class="box-title">Key Capabilities & Features:</h4>
+            <h4 class="box-title">{{ t().keyCapabilities }}</h4>
             <ul class="features-list">
               @for (feature of app.features; track feature) {
                 <li [attr.title]="feature">
@@ -89,7 +95,7 @@
 
           <!-- Architecture & Security Callout -->
           <div class="app-callout app-callout--arch">
-            <strong>Architecture & Quota Safeguards:</strong>
+            <strong>{{ t().architectureTitle }}</strong>
             <p>{{ app.architectureNotes }}</p>
           </div>
 
@@ -97,14 +103,23 @@
           @if (app.credentialsNote) {
             <div class="app-callout app-callout--demo">
               <span class="hint-icon" aria-hidden="true">💡</span>
-              <p><strong>How to test:</strong> {{ app.credentialsNote }}</p>
+              <p>
+                <strong>{{ t().howToTestTitle }}</strong>
+                {{ app.credentialsNote }}
+              </p>
             </div>
           }
 
           <!-- Launch Button Footer -->
           <div class="app-card__actions">
-            <a [routerLink]="app.route" ahButton="primary" size="md" class="app-launch-btn">
-              Launch {{ app.ctaLabel || app.title }} →
+            <a
+              [routerLink]="app.route"
+              ahButton="primary"
+              size="md"
+              class="app-launch-btn"
+            >
+              {{ t().launchPrefix }} {{ app.ctaLabel || app.title }}
+              {{ arrow() }}
             </a>
           </div>
         </article>
@@ -122,22 +137,26 @@
       <ah-section-heading
         headingId="labs-heading"
         [level]="2"
-        eyebrow="Specialized Research & Tooling"
-        heading="Interactive Engineering Labs"
-        lead="Hands-on interactive workbenches demonstrating 3D WebGL computer graphics, complex reactive streams, and modern state architectures."
+        [eyebrow]="t().labsEyebrow"
+        [heading]="t().labsHeading"
+        [lead]="t().labsLead"
       />
     </div>
 
     <div class="apps-grid">
-      @for (lab of engineeringLabs; track lab.id) {
+      @for (lab of engineeringLabs(); track lab.id) {
         <article class="app-card ah-card">
           <!-- Card Top Bar: Icon, Title, Eyebrow & Live Status -->
           <div class="app-card__header">
             <div class="app-card__identity">
               <span class="app-icon" aria-hidden="true">{{ lab.icon }}</span>
               <div class="app-card__titles">
-                <p class="app-eyebrow" [attr.title]="lab.eyebrow">{{ lab.eyebrow }}</p>
-                <h3 class="app-title" [attr.title]="lab.title">{{ lab.title }}</h3>
+                <p class="app-eyebrow" [attr.title]="lab.eyebrow">
+                  {{ lab.eyebrow }}
+                </p>
+                <h3 class="app-title" [attr.title]="lab.title">
+                  {{ lab.title }}
+                </h3>
               </div>
             </div>
             <div class="app-card__badge-wrap">
@@ -164,7 +183,7 @@
 
           <!-- Feature Highlights List -->
           <div class="app-features-box">
-            <h4 class="box-title">Interactive Experiments:</h4>
+            <h4 class="box-title">{{ t().interactiveExperiments }}</h4>
             <ul class="features-list">
               @for (feature of lab.features; track feature) {
                 <li [attr.title]="feature">
@@ -177,14 +196,20 @@
 
           <!-- Architecture Callout -->
           <div class="app-callout app-callout--arch">
-            <strong>Architecture & Engine Design:</strong>
+            <strong>{{ t().architectureTitle }}</strong>
             <p>{{ lab.architectureNotes }}</p>
           </div>
 
           <!-- Launch Button Footer -->
           <div class="app-card__actions">
-            <a [routerLink]="lab.route" ahButton="primary" size="md" class="app-launch-btn">
-              Open {{ lab.ctaLabel || lab.title }} →
+            <a
+              [routerLink]="lab.route"
+              ahButton="primary"
+              size="md"
+              class="app-launch-btn"
+            >
+              {{ t().launchPrefix }} {{ lab.ctaLabel || lab.title }}
+              {{ arrow() }}
             </a>
           </div>
         </article>

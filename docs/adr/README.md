@@ -23,6 +23,8 @@ Each ADR records one decision, why it was made, and what a spike proved. New ADR
 | [0015](0015-public-storybook.md)               | Public Storybook (angular-vite, zoneless), axe on every story, visual regression         |
 | [0016](0016-sky-lab.md)                        | Sky lab: the sky over any place and time, globe dive, Astronomy Engine, star catalogue   |
 | [0017](0017-night-planner.md)                  | Orbit API as a night planner: Orekit events for twilight and the Moon, analytical Moon   |
+| [0018](0018-site-languages.md)                 | English, French and Arabic at runtime from one store; English-only pages marked as such  |
+| [0019](0019-luxpath.md)                        | LuxPath on the design system: language-neutral domain, editable drawings, saved inputs   |
 
 ## Proposed (written when the area is built)
 
@@ -32,4 +34,3 @@ From [the architecture document](../architecture.md) §16:
 - Zero-cost hosting topology with graceful degradation
 - One feature lib, many shells (remote, PWA, Electron, Capacitor)
 - OpenAPI contract-first clients for NestJS (the Orbit API is done: ADR-0013)
-- Runtime i18n (Transloco), EN/FR, URL-based locale, RTL-ready
