@@ -442,14 +442,27 @@ export interface HeightMeasurement {
   savedAt: string;
 }
 
+export type MaterialCategory =
+  | 'pole'
+  | 'luminaire'
+  | 'solar_panel'
+  | 'battery'
+  | 'anchor_bolts'
+  | 'cable'
+  | 'overhead_cable'
+  | 'electrical';
+
 export interface MaterialItem {
   id: string;
-  category:
-    'pole' | 'luminaire' | 'solar_panel' | 'battery' | 'anchor_bolts' | 'cable';
+  category: MaterialCategory;
   name: string;
   manufacturer: string;
   specsSummary: string;
   estimatedUnitCostEur: number;
+  /** What the price is for: one piece (default) or one metre. */
+  unit?: 'pcs' | 'm';
+  /** Set on items the user added ('user') or changed from the catalogue ('edited'). */
+  origin?: 'user' | 'edited';
   imageUrl?: string;
   datasheetUrl?: string;
   keyAttributes: Record<string, string | number>;

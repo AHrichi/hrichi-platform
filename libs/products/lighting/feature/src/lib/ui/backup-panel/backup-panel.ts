@@ -71,9 +71,12 @@ export class BackupPanel {
   }
 
   private file(): File {
-    return new File([createBackup(this.store.projects())], backupFileName(), {
-      type: 'application/json',
-    });
+    const backup = createBackup(
+      this.store.projects(),
+      new Date(),
+      this.store.userMaterials(),
+    );
+    return new File([backup], backupFileName(), { type: 'application/json' });
   }
 
   protected download(): void {
@@ -119,6 +122,7 @@ export class BackupPanel {
       return;
     }
     const count = await this.store.importProjects(read.projects);
+    await this.store.importMaterials(read.materials);
     this.status.set({ kind: 'restored', count, skipped: read.skipped });
   }
 }

@@ -1,4 +1,4 @@
-import type { ProjectItem } from '../models/lighting.models';
+import type { MaterialItem, ProjectItem } from '../models/lighting.models';
 
 /** A LuxPath backup file: every project, with its poles, plan and results. */
 export interface LuxPathBackup {
@@ -6,22 +6,27 @@ export interface LuxPathBackup {
   version: 1;
   exportedAt: string;
   projects: ProjectItem[];
+  /** Materials the user added or edited (optional: older backups lack it). */
+  materials?: MaterialItem[];
 }
 
 export type BackupError = 'notJson' | 'notLuxPath' | 'newerVersion' | 'empty';
 
 export type BackupRead =
-  { projects: ProjectItem[]; skipped: number } | { error: BackupError };
+  | { projects: ProjectItem[]; materials: MaterialItem[]; skipped: number }
+  | { error: BackupError };
 
 export function createBackup(
   projects: readonly ProjectItem[],
   now = new Date(),
+  materials: readonly MaterialItem[] = [],
 ): string {
   const backup: LuxPathBackup = {
     app: 'luxpath',
     version: 1,
     exportedAt: now.toISOString(),
     projects: [...projects],
+    ...(materials.length ? { materials: [...materials] } : {}),
   };
   return JSON.stringify(backup, null, 2);
 }
@@ -29,6 +34,18 @@ export function createBackup(
 /** The file name a backup gets, dated so several can sit side by side. */
 export function backupFileName(now = new Date()): string {
   return `luxpath-backup-${now.toISOString().slice(0, 10)}.json`;
+}
+
+function isMaterial(value: unknown): value is MaterialItem {
+  const m = value as Partial<MaterialItem> | null;
+  return (
+    typeof m === 'object' &&
+    m !== null &&
+    typeof m.id === 'string' &&
+    typeof m.name === 'string' &&
+    typeof m.category === 'string' &&
+    typeof m.estimatedUnitCostEur === 'number'
+  );
 }
 
 function isProject(value: unknown): value is ProjectItem {
@@ -65,10 +82,17 @@ export function readBackup(text: string): BackupRead {
     return { error: 'newerVersion' };
   }
   const projects = backup.projects.filter(isProject);
-  if (projects.length === 0) {
+  const materials = (
+    Array.isArray(backup.materials) ? backup.materials : []
+  ).filter(isMaterial);
+  if (projects.length === 0 && materials.length === 0) {
     return { error: 'empty' };
   }
-  return { projects, skipped: backup.projects.length - projects.length };
+  return {
+    projects,
+    materials,
+    skipped: backup.projects.length - projects.length,
+  };
 }
 
 /**

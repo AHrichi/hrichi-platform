@@ -3,7 +3,9 @@
   <button
     ahButton
     type="button"
-    [disabled]="store.projects().length === 0"
+    [disabled]="
+      store.projects().length === 0 && store.userMaterials().length === 0
+    "
     (click)="download()"
   >
     💾 {{ t().backup.download }}
@@ -12,7 +14,9 @@
     <button
       ahButton="secondary"
       type="button"
-      [disabled]="store.projects().length === 0"
+      [disabled]="
+        store.projects().length === 0 && store.userMaterials().length === 0
+      "
       (click)="share()"
     >
       ☁️ {{ t().backup.share }}

@@ -6,11 +6,11 @@ import {
   signal,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { AhButton, AhSegmentedControl } from '@ah/ui';
+import { AhButton, AhModal, AhSegmentedControl } from '@ah/ui';
 import { from } from 'rxjs';
-import {
-  type MaterialItem,
-  PUBLIC_MATERIALS_CATALOG,
+import type {
+  MaterialCategory,
+  MaterialItem,
 } from '@ah/products/lighting/domain';
 import { artKind, MaterialArt } from '../../diagrams/material-art/material-art';
 import { PoleAnatomy } from '../../diagrams/pole-anatomy/pole-anatomy';
@@ -18,7 +18,18 @@ import { LuxPathI18n } from '../../i18n/luxpath-i18n';
 import { isSolarPole, LightingStore } from '../../store/lighting.store';
 
 type View = 'catalog' | 'bom';
-type Category = MaterialItem['category'] | 'all';
+type Category = MaterialCategory | 'all';
+
+const CATEGORIES: readonly MaterialCategory[] = [
+  'pole',
+  'luminaire',
+  'solar_panel',
+  'battery',
+  'anchor_bolts',
+  'cable',
+  'overhead_cable',
+  'electrical',
+];
 export type BomLine =
   | 'pole'
   | 'luminaire'
@@ -38,7 +49,7 @@ interface Line {
 /** The supplier catalogue, and a bill of materials for the active project. */
 @Component({
   selector: 'lp-materials-screen',
-  imports: [AhButton, AhSegmentedControl, MaterialArt, PoleAnatomy],
+  imports: [AhButton, AhModal, AhSegmentedControl, MaterialArt, PoleAnatomy],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './materials-screen.html',
   styleUrl: './materials-screen.scss',
@@ -67,30 +78,25 @@ export class MaterialsScreen {
   protected readonly query = signal('');
   protected readonly category = signal<Category>('all');
   protected readonly categories = computed(() =>
-    (
-      [
-        'all',
-        'pole',
-        'luminaire',
-        'solar_panel',
-        'battery',
-        'anchor_bolts',
-        'cable',
-      ] as const
-    ).map((value) => ({ value, label: this.t().materials.categories[value] })),
+    (['all', ...CATEGORIES] as const).map((value) => ({
+      value,
+      label: this.t().materials.categories[value],
+    })),
   );
 
   protected readonly items = computed(() => {
     const q = this.query().trim().toLowerCase();
     const category = this.category();
-    return PUBLIC_MATERIALS_CATALOG.filter(
-      (m) =>
-        (category === 'all' || m.category === category) &&
-        (!q ||
-          `${m.name} ${m.manufacturer} ${m.specsSummary}`
-            .toLowerCase()
-            .includes(q)),
-    );
+    return this.store
+      .catalog()
+      .filter(
+        (m) =>
+          (category === 'all' || m.category === category) &&
+          (!q ||
+            `${m.name} ${m.manufacturer} ${m.specsSummary}`
+              .toLowerCase()
+              .includes(q)),
+      );
   });
 
   /** Quantities from the project's poles; unit prices are indicative (€ excl. VAT). */
@@ -125,6 +131,74 @@ export class MaterialsScreen {
   protected readonly total = computed(() =>
     this.lines().reduce((sum, line) => sum + line.quantity * line.unitPrice, 0),
   );
+
+  // Adding or editing a material
+  protected readonly categoryList = CATEGORIES;
+  protected readonly formOpen = signal(false);
+  /** The material being edited; null while adding a new one. */
+  protected readonly editingItem = signal<MaterialItem | null>(null);
+  protected readonly fCategory = signal<MaterialCategory>('pole');
+  protected readonly fName = signal('');
+  protected readonly fMaker = signal('');
+  protected readonly fSpecs = signal('');
+  protected readonly fPrice = signal(0);
+  protected readonly fUnit = signal<'pcs' | 'm'>('pcs');
+  protected readonly fError = signal(false);
+  /** The material to delete (or, if edited from the catalogue, to reset). */
+  protected readonly removing = signal<MaterialItem | null>(null);
+
+  protected openAdd(): void {
+    this.editingItem.set(null);
+    this.fill(null);
+    this.formOpen.set(true);
+  }
+
+  protected openEdit(item: MaterialItem): void {
+    this.editingItem.set(item);
+    this.fill(item);
+    this.formOpen.set(true);
+  }
+
+  private fill(item: MaterialItem | null): void {
+    const category = this.category();
+    this.fCategory.set(
+      item?.category ?? (category === 'all' ? 'pole' : category),
+    );
+    this.fName.set(item?.name ?? '');
+    this.fMaker.set(item?.manufacturer ?? '');
+    this.fSpecs.set(item?.specsSummary ?? '');
+    this.fPrice.set(item?.estimatedUnitCostEur ?? 0);
+    this.fUnit.set(item?.unit ?? 'pcs');
+    this.fError.set(false);
+  }
+
+  protected async saveItem(): Promise<void> {
+    const name = this.fName().trim();
+    const price = Number(this.fPrice());
+    if (!name || !Number.isFinite(price) || price < 0) {
+      this.fError.set(true);
+      return;
+    }
+    const editing = this.editingItem();
+    await this.store.saveMaterial({
+      ...(editing
+        ? { id: editing.id, keyAttributes: editing.keyAttributes }
+        : {}),
+      category: this.fCategory(),
+      name,
+      manufacturer: this.fMaker().trim(),
+      specsSummary: this.fSpecs().trim(),
+      estimatedUnitCostEur: Math.round(price * 100) / 100,
+      unit: this.fUnit(),
+    });
+    this.formOpen.set(false);
+  }
+
+  protected async confirmRemove(): Promise<void> {
+    const item = this.removing();
+    if (item) await this.store.deleteMaterial(item.id);
+    this.removing.set(null);
+  }
 
   protected exportCsv(): void {
     const t = this.t().materials;

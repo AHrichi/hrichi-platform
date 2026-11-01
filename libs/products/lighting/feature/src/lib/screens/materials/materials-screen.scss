@@ -168,3 +168,56 @@ lp-material-art {
     text-overflow: ellipsis;
   }
 }
+
+.add-row {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
+
+.tag.mine {
+  background: var(--color-accent-subtle);
+  color: var(--color-text-default);
+}
+
+.card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-block-start: auto;
+}
+
+.material-form {
+  display: grid;
+  gap: var(--space-3);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+
+  .field {
+    @include lp.label;
+
+    input,
+    select,
+    textarea {
+      @include lp.form-control;
+    }
+  }
+
+  .wide {
+    grid-column: 1 / -1;
+  }
+}
+
+.form-error {
+  margin: 0;
+  color: var(--color-danger-default);
+  font-size: var(--font-size-200);
+}
+
+.actions {
+  @include lp.actions;
+}

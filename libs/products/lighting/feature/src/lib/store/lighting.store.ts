@@ -8,6 +8,8 @@ import {
 } from '@ngrx/signals';
 import {
   type HeightMeasurement,
+  MATERIALS_CATALOG,
+  type MaterialItem,
   type MilestoneItem,
   type PoleItem,
   type ProjectItem,
@@ -27,6 +29,8 @@ export interface LightingState {
   isHighContrast: boolean;
   isLoading: boolean;
   selectedPoleId: string | null;
+  /** The user's own materials and their edits to catalogue items. */
+  userMaterials: MaterialItem[];
 }
 
 const initialState: LightingState = {
@@ -36,6 +40,7 @@ const initialState: LightingState = {
   isHighContrast: false,
   isLoading: false,
   selectedPoleId: null,
+  userMaterials: [],
 };
 
 export function isSolarPole(pole: PoleItem): boolean {
@@ -108,7 +113,19 @@ export const LightingStore = signalStore(
         null,
     );
 
+    /** The catalogue with the user's edits applied, then the user's own items. */
+    const catalog = computed<MaterialItem[]>(() => {
+      const mine = new Map(store.userMaterials().map((m) => [m.id, m]));
+      const merged = MATERIALS_CATALOG.map((item) => mine.get(item.id) ?? item);
+      const builtIn = new Set(MATERIALS_CATALOG.map((item) => item.id));
+      return [
+        ...merged,
+        ...store.userMaterials().filter((m) => !builtIn.has(m.id)),
+      ];
+    });
+
     return {
+      catalog,
       activeProject,
       filteredPoles,
       stats,
@@ -143,10 +160,14 @@ export const LightingStore = signalStore(
       async loadProjects(): Promise<void> {
         patchState(store, { isLoading: true });
         try {
-          const projects = await db.getAllProjects();
+          const [projects, userMaterials] = await Promise.all([
+            db.getAllProjects(),
+            db.getMaterials(),
+          ]);
           const wanted = store.activeProjectId() ?? db.lastProjectId;
           patchState(store, {
             projects,
+            userMaterials,
             activeProjectId: projects.some((p) => p.id === wanted)
               ? wanted
               : (projects[0]?.id ?? null),
@@ -398,6 +419,46 @@ export const LightingStore = signalStore(
           activeProjectId: store.activeProjectId() ?? all[0]?.id ?? null,
         });
         return projects.length;
+      },
+
+      /**
+       * Adds a material, or saves a change to one. Editing a catalogue item
+       * keeps its id, so the edit replaces it until it's reset.
+       */
+      async saveMaterial(
+        material: Omit<MaterialItem, 'id' | 'origin' | 'keyAttributes'> &
+          Partial<Pick<MaterialItem, 'id' | 'keyAttributes'>>,
+      ): Promise<MaterialItem> {
+        const builtIn = MATERIALS_CATALOG.some((m) => m.id === material.id);
+        const saved: MaterialItem = {
+          keyAttributes: {},
+          ...material,
+          id: material.id ?? newId('mat'),
+          origin: builtIn ? 'edited' : 'user',
+        };
+        await db.saveMaterial(saved);
+        const others = store.userMaterials().filter((m) => m.id !== saved.id);
+        patchState(store, { userMaterials: [...others, saved] });
+        return saved;
+      },
+
+      /** Deletes the user's own material, or resets an edited catalogue item. */
+      async deleteMaterial(id: string): Promise<void> {
+        await db.deleteMaterial(id);
+        patchState(store, {
+          userMaterials: store.userMaterials().filter((m) => m.id !== id),
+        });
+      },
+
+      /** Materials from a backup; one with the same id replaces this device's. */
+      async importMaterials(
+        materials: readonly MaterialItem[],
+      ): Promise<number> {
+        for (const material of materials) {
+          await db.saveMaterial(material);
+        }
+        patchState(store, { userMaterials: await db.getMaterials() });
+        return materials.length;
       },
 
       /** Adds the sample projects (back as they were); the user's stay. */

@@ -6,7 +6,11 @@ describe('Project backups', () => {
 
   it('round-trips every project', () => {
     const read = readBackup(createBackup(SAMPLE_PROJECTS, now));
-    expect(read).toEqual({ projects: SAMPLE_PROJECTS, skipped: 0 });
+    expect(read).toEqual({
+      projects: SAMPLE_PROJECTS,
+      materials: [],
+      skipped: 0,
+    });
     expect(backupFileName(now)).toBe('luxpath-backup-2026-11-01.json');
   });
 
@@ -29,6 +33,7 @@ describe('Project backups', () => {
     });
     expect(readBackup(text)).toEqual({
       projects: [SAMPLE_PROJECTS[0]],
+      materials: [],
       skipped: 1,
     });
   });
@@ -40,5 +45,20 @@ describe('Project backups', () => {
     expect(copy.milestones.every((m) => m.projectId === 'proj_copy')).toBe(
       true,
     );
+  });
+
+  it("carries the user's own materials", () => {
+    const mine = {
+      id: 'mat_1',
+      category: 'electrical' as const,
+      name: 'Local fuse box',
+      manufacturer: 'Local',
+      specsSummary: '',
+      estimatedUnitCostEur: 12,
+      keyAttributes: {},
+      origin: 'user' as const,
+    };
+    const read = readBackup(createBackup([], now, [mine]));
+    expect(read).toEqual({ projects: [], materials: [mine], skipped: 0 });
   });
 });

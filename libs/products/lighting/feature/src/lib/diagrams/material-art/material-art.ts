@@ -17,7 +17,9 @@ export type ArtKind =
   | 'panel'
   | 'battery'
   | 'bolts'
-  | 'cable';
+  | 'cable'
+  | 'abc'
+  | 'box';
 
 /** Which drawing a catalogue item gets, from its category and id. */
 export function artKind(
@@ -39,6 +41,10 @@ export function artKind(
       return 'battery';
     case 'anchor_bolts':
       return 'bolts';
+    case 'overhead_cable':
+      return 'abc';
+    case 'electrical':
+      return 'box';
     default:
       return 'cable';
   }

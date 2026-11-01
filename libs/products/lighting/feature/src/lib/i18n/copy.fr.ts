@@ -662,6 +662,27 @@ export const FR: LuxPathCopy = {
   },
   materials: {
     photoBy: 'Photo :',
+    add: 'Ajouter un article',
+    addTitle: 'Nouvel article',
+    editTitle: 'Modifier l’article',
+    reset: 'Rétablir',
+    resetTitle: 'Rétablir le catalogue ?',
+    resetText: (name: string) =>
+      `Vos modifications de « ${name} » seront annulées et les valeurs du catalogue reviendront.`,
+    deleteTitle: 'Supprimer cet article ?',
+    deleteText: (name: string) => `« ${name} » sera supprimé de cet appareil.`,
+    required: 'Saisissez au moins un nom et un prix positif ou nul.',
+    perMetre: 'le mètre',
+    origins: { user: 'À vous', edited: 'Modifié' },
+    fields: {
+      category: 'Catégorie',
+      name: 'Nom',
+      maker: 'Fabricant ou fournisseur',
+      price: 'Prix unitaire',
+      unit: 'Prix',
+      specs: 'Description',
+    },
+    units: { pcs: 'à la pièce', m: 'au mètre' },
     title: 'Matériel',
     lead: 'Équipements fournisseurs courants, et un métré pour le projet actif.',
     views: { catalog: 'Catalogue', bom: 'Métré' },
@@ -675,6 +696,8 @@ export const FR: LuxPathCopy = {
       battery: 'Batteries',
       anchor_bolts: 'Tiges d’ancrage',
       cable: 'Câbles',
+      overhead_cable: 'Réseau aérien',
+      electrical: 'Électrique',
     },
     frenchNote:
       'Les fiches du catalogue sont affichées telles que publiées par les fournisseurs, en français.',
@@ -908,6 +931,8 @@ export const FR: LuxPathCopy = {
       battery: 'Batterie LiFePO4',
       bolts: 'Cage d’ancrage avec gabarit',
       cable: 'Câble d’énergie, en coupe',
+      abc: 'Câble torsadé aérien et ses pinces',
+      box: 'Équipement électrique',
     },
   },
   backup: {
@@ -1038,6 +1063,7 @@ export const FR: LuxPathCopy = {
         how: [
           'Cherchez ou filtrez le catalogue ; chaque article a une photo et un prix indicatif.',
           'Ouvrez « Les éléments d’un mât d’éclairage » pour nommer chaque pièce.',
+          'Ajoutez vos propres articles, ou modifiez le prix et la description de n’importe lequel ; vos changements restent sur le téléphone et vont dans les sauvegardes. « Rétablir » remet les valeurs du catalogue.',
           'Passez à la liste du matériel pour compter ce qu’il faut au projet, et exportez-la en CSV pour un tableur.',
         ],
       },

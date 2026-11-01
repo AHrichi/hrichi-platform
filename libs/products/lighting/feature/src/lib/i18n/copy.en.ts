@@ -659,6 +659,27 @@ export const EN = {
   },
   materials: {
     photoBy: 'Photo:',
+    add: 'Add a material',
+    addTitle: 'New material',
+    editTitle: 'Edit the material',
+    reset: 'Reset',
+    resetTitle: 'Reset to the catalogue?',
+    resetText: (name: string) =>
+      `Your changes to “${name}” will be undone and the catalogue values come back.`,
+    deleteTitle: 'Delete this material?',
+    deleteText: (name: string) => `“${name}” will be deleted from this device.`,
+    required: 'Enter at least a name and a price of 0 or more.',
+    perMetre: 'per metre',
+    origins: { user: 'Yours', edited: 'Edited' },
+    fields: {
+      category: 'Category',
+      name: 'Name',
+      maker: 'Maker or supplier',
+      price: 'Unit price',
+      unit: 'Priced',
+      specs: 'Description',
+    },
+    units: { pcs: 'per piece', m: 'per metre' },
     title: 'Materials',
     lead: 'Typical supplier equipment, and a bill of materials for the active project.',
     views: { catalog: 'Catalogue', bom: 'Bill of materials' },
@@ -672,6 +693,8 @@ export const EN = {
       battery: 'Batteries',
       anchor_bolts: 'Anchor bolts',
       cable: 'Cables',
+      overhead_cable: 'Overhead cable',
+      electrical: 'Electrical',
     },
     frenchNote:
       'Catalogue entries are shown as the suppliers publish them, in French.',
@@ -902,6 +925,8 @@ export const EN = {
       battery: 'LiFePO4 battery',
       bolts: 'Anchor bolt cage with its template',
       cable: 'Power cable, cut open',
+      abc: 'Aerial bundled cable with its clamps',
+      box: 'Electrical equipment',
     },
   },
   backup: {
@@ -1029,6 +1054,7 @@ export const EN = {
         how: [
           'Search or filter the catalogue; each item has a photo and a typical price.',
           'Open “Parts of a lighting pole” to put a name on every part.',
+          'Add your own materials, or edit any item’s price and description; your changes stay on the phone and go into backups. “Reset” brings back the catalogue values.',
           'Switch to the bill of materials to count what the project needs, and export it as a CSV file for a spreadsheet.',
         ],
       },

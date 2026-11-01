@@ -13,6 +13,11 @@
 
   @if (view() === 'catalog') {
     <div class="filters">
+      <div class="add-row">
+        <button ahButton type="button" (click)="openAdd()">
+          + {{ t().materials.add }}
+        </button>
+      </div>
       <label class="search">
         <span class="ah-visually-hidden">{{ t().common.search }}</span>
         <input
@@ -61,14 +66,55 @@
           } @else {
             <lp-material-art [kind]="artKind(m.category, m.id)" />
           }
-          <span class="tag">{{ t().materials.categories[m.category] }}</span>
-          <h3 [id]="'lp-mat-' + m.id" lang="fr">{{ m.name }}</h3>
-          <p class="maker">{{ m.manufacturer }}</p>
-          <p lang="fr">{{ m.specsSummary }}</p>
+          <div class="tags">
+            <span class="tag">{{ t().materials.categories[m.category] }}</span>
+            @if (m.origin) {
+              <span class="tag mine">{{
+                t().materials.origins[m.origin]
+              }}</span>
+            }
+          </div>
+          <!-- Catalogue text is the suppliers' French; the user's is their own. -->
+          <h3 [id]="'lp-mat-' + m.id" [attr.lang]="m.origin ? null : 'fr'">
+            {{ m.name }}
+          </h3>
+          @if (m.manufacturer) {
+            <p class="maker">{{ m.manufacturer }}</p>
+          }
+          @if (m.specsSummary) {
+            <p [attr.lang]="m.origin ? null : 'fr'">{{ m.specsSummary }}</p>
+          }
           <p class="price">
             {{ t().materials.from }}
             <strong>{{ i18n.money(m.estimatedUnitCostEur) }}</strong>
+            @if (m.unit === 'm') {
+              {{ t().materials.perMetre }}
+            }
           </p>
+          <div class="card-actions">
+            <button
+              ahButton="secondary"
+              size="sm"
+              type="button"
+              (click)="openEdit(m)"
+            >
+              ✏️ {{ t().common.edit }}
+            </button>
+            @if (m.origin) {
+              <button
+                ahButton="ghost"
+                size="sm"
+                type="button"
+                (click)="removing.set(m)"
+              >
+                {{
+                  m.origin === 'edited'
+                    ? '↺ ' + t().materials.reset
+                    : '🗑 ' + t().common.delete
+                }}
+              </button>
+            }
+          </div>
         </article>
       } @empty {
         <p class="muted">{{ t().materials.none }}</p>
@@ -136,3 +182,114 @@
     </section>
   }
 </section>
+
+<ah-modal
+  [closeLabel]="t().common.close"
+  [(open)]="formOpen"
+  [title]="editingItem() ? t().materials.editTitle : t().materials.addTitle"
+>
+  <form class="material-form" (submit)="$event.preventDefault(); saveItem()">
+    <label class="field">
+      <span>{{ t().materials.fields.category }}</span>
+      <select (change)="fCategory.set($any($event.target).value)">
+        @for (c of categoryList; track c) {
+          <option [value]="c" [selected]="c === fCategory()">
+            {{ t().materials.categories[c] }}
+          </option>
+        }
+      </select>
+    </label>
+    <label class="field wide">
+      <span>{{ t().materials.fields.name }} *</span>
+      <input
+        type="text"
+        maxlength="120"
+        [value]="fName()"
+        (input)="fName.set($any($event.target).value)"
+      />
+    </label>
+    <label class="field">
+      <span>{{ t().materials.fields.maker }}</span>
+      <input
+        type="text"
+        maxlength="80"
+        [value]="fMaker()"
+        (input)="fMaker.set($any($event.target).value)"
+      />
+    </label>
+    <label class="field">
+      <span>{{ t().materials.fields.price }} (€)</span>
+      <input
+        type="number"
+        inputmode="decimal"
+        min="0"
+        step="0.01"
+        [value]="fPrice()"
+        (input)="fPrice.set(+$any($event.target).value)"
+      />
+    </label>
+    <label class="field">
+      <span>{{ t().materials.fields.unit }}</span>
+      <select (change)="fUnit.set($any($event.target).value)">
+        <option value="pcs" [selected]="fUnit() === 'pcs'">
+          {{ t().materials.units.pcs }}
+        </option>
+        <option value="m" [selected]="fUnit() === 'm'">
+          {{ t().materials.units.m }}
+        </option>
+      </select>
+    </label>
+    <label class="field wide">
+      <span>{{ t().materials.fields.specs }}</span>
+      <textarea
+        rows="3"
+        maxlength="400"
+        [value]="fSpecs()"
+        (input)="fSpecs.set($any($event.target).value)"
+      ></textarea>
+    </label>
+    @if (fError()) {
+      <p class="form-error wide" role="alert">{{ t().materials.required }}</p>
+    }
+  </form>
+  <div modal-actions class="actions">
+    <button ahButton="ghost" type="button" (click)="formOpen.set(false)">
+      {{ t().common.cancel }}
+    </button>
+    <button ahButton type="button" (click)="saveItem()">
+      {{ editingItem() ? t().common.saveChanges : t().materials.add }}
+    </button>
+  </div>
+</ah-modal>
+
+<ah-modal
+  [closeLabel]="t().common.close"
+  [open]="!!removing()"
+  (openChange)="$event || removing.set(null)"
+  [title]="
+    removing()?.origin === 'edited'
+      ? t().materials.resetTitle
+      : t().materials.deleteTitle
+  "
+  size="sm"
+>
+  <p>
+    {{
+      removing()?.origin === 'edited'
+        ? t().materials.resetText(removing()?.name ?? '')
+        : t().materials.deleteText(removing()?.name ?? '')
+    }}
+  </p>
+  <div modal-actions class="actions">
+    <button ahButton="ghost" type="button" (click)="removing.set(null)">
+      {{ t().common.cancel }}
+    </button>
+    <button ahButton type="button" (click)="confirmRemove()">
+      {{
+        removing()?.origin === 'edited'
+          ? t().materials.reset
+          : t().common.delete
+      }}
+    </button>
+  </div>
+</ah-modal>

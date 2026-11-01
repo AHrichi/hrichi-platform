@@ -41,11 +41,14 @@ export class LuxPathI18n {
     }).format(value);
   }
 
+  /** Euros: whole when round, with cents otherwise (cable is €1.40 a metre). */
   money(value: number): string {
+    const cents = !Number.isInteger(Math.round(value * 100) / 100);
     return new Intl.NumberFormat(this.locale(), {
       style: 'currency',
       currency: 'EUR',
-      maximumFractionDigits: 0,
+      minimumFractionDigits: cents ? 2 : 0,
+      maximumFractionDigits: cents ? 2 : 0,
     }).format(value);
   }
 

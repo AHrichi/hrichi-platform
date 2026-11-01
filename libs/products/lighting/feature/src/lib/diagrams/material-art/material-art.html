@@ -78,6 +78,26 @@
       }
       <path class="ring" d="M50 44h60M50 66h60" />
     }
+    @case ('abc') {
+      <!-- Aerial bundled cable between two poles, held by a clamp -->
+      <path class="metal" d="M20 92V18h8v74zM132 92V18h8v74z" />
+      <path class="abc" d="M28 34c30 26 74 26 104 0" />
+      <path class="abc twist" d="M28 34c30 26 74 26 104 0" />
+      <rect class="clamp" x="22" y="28" width="14" height="10" rx="2" />
+      <rect class="clamp" x="124" y="28" width="14" height="10" rx="2" />
+      <path class="drop" d="M80 53v18" />
+      <rect class="box-small" x="72" y="70" width="16" height="12" rx="2" />
+    }
+    @case ('box') {
+      <!-- Control cabinet: door, breaker row and a clock -->
+      <rect class="box" x="44" y="10" width="72" height="80" rx="4" />
+      <path class="door-line" d="M80 10v80" />
+      <rect class="breaker" x="52" y="22" width="8" height="16" rx="1" />
+      <rect class="breaker" x="62" y="22" width="8" height="16" rx="1" />
+      <circle class="clock" cx="98" cy="30" r="9" />
+      <path class="sign" d="M98 24v6l4 3" />
+      <path class="bolt" d="M66 54l-6 10h7l-4 10" />
+    }
     @default {
       <!-- U-1000 R2V cable cut open: sheath, filler, four cores -->
       <circle class="sheath" cx="62" cy="50" r="34" />

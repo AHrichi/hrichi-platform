@@ -2,11 +2,14 @@ import { inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { APP_MODE } from '@ah/platform/app-mode';
 import {
+  type MaterialItem,
   type ProjectItem,
   SAMPLE_PROJECTS,
 } from '@ah/products/lighting/domain';
 
 const STORE = 'projects';
+/** Materials the user added, or catalogue items they edited (by the same id). */
+const MATERIALS = 'materials';
 
 /**
  * Projects live in IndexedDB, so LuxPath works offline on site. The portfolio's
@@ -24,9 +27,16 @@ export class LightingDbService {
 
   private open(): Promise<IDBDatabase> {
     this.database ??= new Promise((resolve, reject) => {
-      const request = indexedDB.open(this.name, 1);
-      request.onupgradeneeded = () =>
-        request.result.createObjectStore(STORE, { keyPath: 'id' });
+      // Version 2 adds the materials store; projects are kept as they are.
+      const request = indexedDB.open(this.name, 2);
+      request.onupgradeneeded = () => {
+        const db = request.result;
+        for (const name of [STORE, MATERIALS]) {
+          if (!db.objectStoreNames.contains(name)) {
+            db.createObjectStore(name, { keyPath: 'id' });
+          }
+        }
+      };
       request.onsuccess = () => resolve(request.result);
       request.onerror = () => reject(request.error);
     });
@@ -36,10 +46,13 @@ export class LightingDbService {
   private async request<T>(
     mode: IDBTransactionMode,
     run: (store: IDBObjectStore) => IDBRequest<T>,
+    storeName = STORE,
   ): Promise<T> {
     const db = await this.open();
     return new Promise((resolve, reject) => {
-      const request = run(db.transaction(STORE, mode).objectStore(STORE));
+      const request = run(
+        db.transaction(storeName, mode).objectStore(storeName),
+      );
       request.onsuccess = () => resolve(request.result);
       request.onerror = () => reject(request.error);
     });
@@ -87,6 +100,29 @@ export class LightingDbService {
   async deleteProject(id: string): Promise<void> {
     if (this.isBrowser) {
       await this.request('readwrite', (s) => s.delete(id));
+    }
+  }
+
+  async getMaterials(): Promise<MaterialItem[]> {
+    if (!this.isBrowser) {
+      return [];
+    }
+    return (await this.request(
+      'readonly',
+      (s) => s.getAll(),
+      MATERIALS,
+    )) as MaterialItem[];
+  }
+
+  async saveMaterial(material: MaterialItem): Promise<void> {
+    if (this.isBrowser) {
+      await this.request('readwrite', (s) => s.put(material), MATERIALS);
+    }
+  }
+
+  async deleteMaterial(id: string): Promise<void> {
+    if (this.isBrowser) {
+      await this.request('readwrite', (s) => s.delete(id), MATERIALS);
     }
   }
 
