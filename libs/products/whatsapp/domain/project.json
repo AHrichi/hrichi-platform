@@ -1,0 +1,14 @@
+{
+  "name": "product-whatsapp-domain",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/products/whatsapp/domain/src",
+  "prefix": "ah",
+  "projectType": "library",
+  "tags": [
+    "scope:product-whatsapp",
+    "scope:shared",
+    "type:domain",
+    "runtime:agnostic"
+  ],
+  "targets": {}
+}

@@ -1,0 +1,9 @@
+{
+  "name": "product-whatsapp-feature",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/products/whatsapp/feature/src",
+  "prefix": "ah",
+  "projectType": "library",
+  "tags": ["scope:product-whatsapp", "type:feature", "runtime:browser"],
+  "targets": {}
+}

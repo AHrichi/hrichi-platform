@@ -1,0 +1,3246 @@
+<div class="chatpulse-shell">
+  <!-- Hidden global file input so workspace header can trigger a new upload -->
+  <input
+    #globalFilePicker
+    type="file"
+    multiple
+    accept=".txt,.zip,text/plain,application/zip,application/x-zip-compressed,application/octet-stream,audio/*,image/*,video/*,.opus,.ogg,.mp3,.m4a,.wav,.aac,.jpg,.jpeg,.png,.webp,.mp4,.mov,.pdf"
+    class="sr-only-input"
+    (change)="onFileInputChange($event)"
+  />
+
+  <!-- Hidden folder input for unzipped Google Drive / WhatsApp export folders -->
+  <input
+    #folderPicker
+    type="file"
+    webkitdirectory
+    directory
+    multiple
+    class="sr-only-input"
+    (change)="onFileInputChange($event)"
+  />
+
+  <!-- TOP APPLICATION BAR -->
+  <header class="top-navbar">
+    <div class="brand-row">
+      <div class="brand-logo" aria-hidden="true">💬</div>
+      <div class="brand-copy">
+        <div class="brand-title-line">
+          <h1 class="app-title">ChatPulse</h1>
+          <ah-badge variant="success" [dot]="true" [pulse]="true" size="sm">
+            100% Client-Side IndexedDB Vault · Zero Server Storage
+          </ah-badge>
+        </div>
+        <p class="app-subtitle">
+          WhatsApp Archive Analytics &amp; n8n Groq 120B Relationship
+          Intelligence
+        </p>
+      </div>
+    </div>
+
+    <div class="navbar-actions">
+      <!-- Theme Switcher (Light / Dark Mode) -->
+      <button
+        type="button"
+        ahButton="ghost"
+        size="sm"
+        (click)="preferences.toggleTheme()"
+        [attr.title]="
+          preferences.isDark() ? 'Switch to Light Mode' : 'Switch to Dark Mode'
+        "
+        [attr.aria-label]="
+          preferences.isDark() ? 'Switch to Light Mode' : 'Switch to Dark Mode'
+        "
+      >
+        <span>{{ preferences.isDark() ? '☀️ Light' : '🌙 Dark' }}</span>
+      </button>
+
+      <!-- IndexedDB Saved Conversations Vault Trigger -->
+      <button
+        type="button"
+        ahButton="secondary"
+        size="sm"
+        (click)="store.openVaultModal()"
+        title="Open IndexedDB Saved Conversations Vault"
+      >
+        <span>🗄️ Saved Vault ({{ store.savedConversations().length }})</span>
+      </button>
+
+      <!-- n8n Status & Settings Trigger -->
+      <button
+        type="button"
+        class="btn-webhook-status"
+        (click)="store.openSettingsModal()"
+        [attr.title]="
+          store.webhookTestStatus() ||
+          'Configure or test n8n AI Webhook endpoint'
+        "
+      >
+        <ah-badge
+          [variant]="
+            store.webhookSettings().lastTestOk === true
+              ? 'success'
+              : store.webhookSettings().lastTestOk === false
+                ? 'danger'
+                : 'warning'
+          "
+          [dot]="true"
+          [pulse]="store.webhookSettings().lastTestOk === true"
+          size="sm"
+        >
+          @if (store.webhookSettings().lastTestOk === true) {
+            n8n · {{ store.webhookSettings().lastLatencyMs }}ms
+          } @else if (store.webhookSettings().lastTestOk === false) {
+            n8n Offline
+          } @else {
+            n8n Settings
+          }
+        </ah-badge>
+        <span class="gear-glyph" aria-hidden="true">⚙️</span>
+      </button>
+
+      @if (store.hasChatLoaded()) {
+        <button
+          type="button"
+          ahButton="secondary"
+          size="sm"
+          (click)="globalFilePicker.click()"
+          title="Upload a different WhatsApp .zip or .txt export"
+        >
+          📂 Upload New Chat
+        </button>
+
+        <button
+          type="button"
+          ahButton="ghost"
+          size="sm"
+          (click)="store.clearChat()"
+          title="Return to upload & Saved Conversations Vault (your current conversation remains safely stored in IndexedDB)"
+        >
+          ⇄ Switch Chat
+        </button>
+      }
+    </div>
+  </header>
+
+  @if (store.ingestionError()) {
+    <ah-alert variant="danger" title="Archive Ingestion Error">
+      <span>{{ store.ingestionError() }}</span>
+    </ah-alert>
+  }
+
+  <!-- ======================================================================= -->
+  <!-- STATE 1: CLEAN ONBOARDING & FILE UPLOAD STAGE (ZERO TEST DATA)          -->
+  <!-- ======================================================================= -->
+  @if (!store.hasChatLoaded()) {
+    <section class="onboarding-stage" aria-label="Upload WhatsApp Chat Export">
+      <ah-file-dropzone
+        title="Drop your WhatsApp .ZIP, .TXT, or Drive Folder here"
+        description="Upload a compressed .zip archive, a _chat.txt transcript, or select all files / an extracted folder from Google Drive (including .opus/.ogg/.mp3 voice notes, photos, and videos). ChatPulse computes exact voice-note durations and transcribes spoken words via AI."
+        accept=".txt,.zip,text/plain,application/zip,application/x-zip-compressed,application/octet-stream,audio/*,image/*,video/*,.opus,.ogg,.mp3,.m4a,.wav,.aac,.jpg,.jpeg,.png,.webp,.mp4,.mov,.pdf"
+        [multiple]="true"
+        [badges]="dropzoneBadges"
+        [loading]="store.isIngestingFile()"
+        ctaLabel="📂 Select .ZIP, .TXT &amp; Media Files"
+        loadingLabel="⏳ Extracting Transcript, Media &amp; Voice Notes..."
+        (filesSelected)="onFilesSelected($event)"
+      >
+        <button
+          dropzone-actions
+          type="button"
+          ahButton="secondary"
+          (click)="folderPicker.click()"
+          title="Select an unzipped folder downloaded from Google Drive containing _chat.txt and media files"
+        >
+          📁 Select Extracted Drive Folder
+        </button>
+        <button
+          dropzone-actions
+          type="button"
+          ahButton="ghost"
+          (click)="store.openSettingsModal()"
+        >
+          🔌 Configure n8n AI Webhook
+        </button>
+      </ah-file-dropzone>
+
+      <!-- SAVED CONVERSATIONS VAULT (INDEXEDDB) -->
+      @if (store.savedConversations().length > 0) {
+        <div class="ah-card section-card vault-section-card">
+          <div class="section-header">
+            <div>
+              <div class="basis-badge-line">
+                <span class="ah-eyebrow">BROWSER INDEXEDDB VAULT</span>
+                <ah-badge variant="success" [dot]="true" size="sm">
+                  🗄️ {{ store.savedConversations().length }} Saved
+                  Conversation(s)
+                </ah-badge>
+              </div>
+              <h2>Saved Conversations History</h2>
+              <p>
+                Uploaded conversations, extracted voice notes, Whisper
+                transcriptions, English translations, and n8n AI reports are
+                persisted locally in your browser's IndexedDB.
+              </p>
+            </div>
+
+            <div class="ai-banner-actions">
+              <button
+                type="button"
+                ahButton="ghost"
+                size="sm"
+                (click)="store.clearAllSavedConversations()"
+                title="Delete all saved conversations from browser IndexedDB"
+              >
+                🧹 Clear All Saved ({{ store.savedConversations().length }})
+              </button>
+            </div>
+          </div>
+
+          <div class="vault-cards-grid">
+            @for (conv of store.savedConversations(); track conv.id) {
+              <article class="vault-conv-card">
+                <div class="vault-conv-top">
+                  <div class="active-chat-identity">
+                    <div class="avatar-stack">
+                      @for (
+                        p of conv.participants | slice: 0 : 3;
+                        track p.name
+                      ) {
+                        <span
+                          class="mini-avatar"
+                          [style.background]="p.accentColor"
+                          [attr.title]="p.name"
+                        >
+                          {{ p.initials }}
+                        </span>
+                      }
+                    </div>
+                    <div class="chat-identity-text">
+                      <strong class="chat-main-title" dir="auto">{{
+                        conv.chatTitle
+                      }}</strong>
+                      <span class="chat-sub-meta">
+                        {{ conv.firstMessageDate }} →
+                        {{ conv.lastMessageDate }} · {{ conv.fileName }}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div class="vault-conv-badges">
+                    <ah-badge variant="success" size="sm">
+                      🔬 {{ conv.overallChemistryScore }}/100 Chemistry
+                    </ah-badge>
+                    @if (conv.hasAiAnalysis) {
+                      <ah-badge variant="accent" size="sm">
+                        🧠 AI Report Saved
+                      </ah-badge>
+                    }
+                    @if (conv.totalVoiceNotes > 0) {
+                      <ah-badge variant="info" size="sm">
+                        🎙️ {{ conv.transcribedVoiceNotes }}/{{
+                          conv.totalVoiceNotes
+                        }}
+                        Read
+                      </ah-badge>
+                    }
+                  </div>
+                </div>
+
+                <div class="vault-conv-metrics">
+                  <span class="basis-pill"
+                    >💬
+                    <strong>{{ conv.totalMessages | number }}</strong>
+                    msgs</span
+                  >
+                  <span class="basis-pill">
+                    📝 <strong>{{ conv.totalWords | number }}</strong> words
+                    @if (conv.spokenWordsAdded > 0) {
+                      (+{{ conv.spokenWordsAdded | number }} spoken)
+                    }
+                  </span>
+                  @if (conv.totalMediaFiles > 0) {
+                    <span class="basis-pill"
+                      >🎬
+                      <strong>{{ conv.totalMediaFiles }}</strong> media</span
+                    >
+                  }
+                  <span class="basis-pill"
+                    >💾 {{ formatBytes(conv.estimatedSizeBytes) }}</span
+                  >
+                </div>
+
+                @if (conv.aiRelationshipTitle) {
+                  <p class="vault-ai-line" dir="auto">
+                    ✨ <strong>AI Dynamic:</strong>
+                    {{ conv.aiRelationshipTitle }}
+                  </p>
+                }
+
+                <div class="vault-conv-foot">
+                  <span class="vault-saved-time">
+                    🕒 Saved {{ formatSavedTimestamp(conv.updatedAtIso) }}
+                  </span>
+
+                  <div class="vault-conv-actions">
+                    <button
+                      type="button"
+                      ahButton="primary"
+                      size="sm"
+                      (click)="store.openSavedConversation(conv.id)"
+                    >
+                      📂 Open Conversation
+                    </button>
+                    <button
+                      type="button"
+                      ahButton="ghost"
+                      size="sm"
+                      (click)="store.deleteSavedConversation(conv.id)"
+                      title="Delete this conversation from IndexedDB"
+                    >
+                      🗑️ Delete
+                    </button>
+                  </div>
+                </div>
+              </article>
+            }
+          </div>
+        </div>
+      }
+
+      <!-- HOW TO EXPORT FROM WHATSAPP (iOS & ANDROID) + ARCHITECTURE PILLARS -->
+      <div class="onboarding-guides-grid">
+        <article class="ah-card guide-card">
+          <div class="guide-head">
+            <ah-badge variant="info" size="sm">iOS / iPhone</ah-badge>
+            <h3>How to Export from WhatsApp on iOS</h3>
+          </div>
+          <ol class="guide-steps">
+            <li>
+              Open the conversation in WhatsApp and tap the
+              <strong>contact or group name</strong> at the top.
+            </li>
+            <li>Scroll to the bottom and tap <strong>Export Chat</strong>.</li>
+            <li>
+              Select <strong>Without Media</strong> (recommended) or
+              <em>Attach Media</em>—ChatPulse automatically skips heavy media
+              inside the <code>.zip</code>.
+            </li>
+            <li>
+              Save the <code>.zip</code> file and drop it into the box above.
+            </li>
+          </ol>
+        </article>
+
+        <article class="ah-card guide-card">
+          <div class="guide-head">
+            <ah-badge variant="success" size="sm">Android</ah-badge>
+            <h3>How to Export from WhatsApp on Android</h3>
+          </div>
+          <ol class="guide-steps">
+            <li>
+              Open the chat, tap the <strong>⋮ three-dot menu</strong> in the
+              top-right corner, and choose <strong>More</strong>.
+            </li>
+            <li>
+              Tap <strong>Export chat</strong> and select
+              <strong>Without media</strong>.
+            </li>
+            <li>
+              Save or transfer the exported <code>.txt</code> or
+              <code>.zip</code> file to your device.
+            </li>
+            <li>
+              Drop the file above—Android 12h/24h dash headers are detected
+              automatically.
+            </li>
+          </ol>
+        </article>
+
+        <article class="ah-card guide-card">
+          <div class="guide-head">
+            <ah-badge variant="accent" size="sm">n8n + Groq 120B AI</ah-badge>
+            <h3>Automated Relationship &amp; Behavioral AI</h3>
+          </div>
+          <p class="guide-desc">
+            Once your chat is parsed, click
+            <strong>Run n8n AI Analysis</strong>. ChatPulse samples 5
+            representative conversation windows (<em>Opening</em>,
+            <em>Peak Momentum</em>, <em>Late-Night</em>,
+            <em>High-Investment</em>, and <em>Recent</em>) and sends them with
+            quantitative telemetry to your n8n webhook for deep attachment-style
+            and reciprocity analysis.
+          </p>
+          <div class="guide-webhook-foot">
+            <ah-truncated-text
+              [text]="store.webhookSettings().webhookUrl"
+              tooltipTitle="Active n8n Webhook Endpoint"
+            />
+          </div>
+        </article>
+      </div>
+    </section>
+  }
+
+  <!-- ======================================================================= -->
+  <!-- STATE 2: FULL ANALYTICS & AI INTELLIGENCE WORKSPACE                     -->
+  <!-- ======================================================================= -->
+  @if (store.report(); as r) {
+    @let detection = r.dateDetection;
+    @let streaks = r.streaksAndTimeline;
+    @let heat = r.heatmap;
+    @let wrapped = r.wrapped;
+    @let basis = r.analyticsBasis;
+    @let deep = r.deepAnalytics;
+
+    <!-- WORKSPACE TELEMETRY & CONTROLS BAR -->
+    <section
+      class="workspace-toolbar"
+      aria-label="Transcript telemetry and parser controls"
+    >
+      <div class="toolbar-left">
+        <div class="active-chat-identity">
+          <div class="avatar-stack">
+            @for (p of r.participants | slice: 0 : 3; track p.name) {
+              <span
+                class="mini-avatar"
+                [style.background]="p.accentColor"
+                [attr.title]="p.name"
+              >
+                {{ p.initials }}
+              </span>
+            }
+          </div>
+          <div class="chat-identity-text">
+            <strong class="chat-main-title">
+              <ah-truncated-text [text]="r.chatTitle" [maxWidth]="'20rem'" />
+            </strong>
+            <span class="chat-sub-meta">
+              {{ streaks.firstMessageDate }} → {{ streaks.lastMessageDate }} ·
+              {{ r.sourceInfo.fileName }}
+            </span>
+          </div>
+        </div>
+
+        <div class="telemetry-chips">
+          @if (store.activeConversationId()) {
+            <ah-badge
+              variant="success"
+              [dot]="true"
+              size="sm"
+              title="This conversation, its voice-note transcriptions, translations, and AI report are automatically saved in your browser's IndexedDB"
+            >
+              🗄️ Saved in IndexedDB
+            </ah-badge>
+          }
+
+          @if (r.mediaAnalytics.totalArchiveMediaFiles > 0) {
+            <ah-badge
+              variant="success"
+              size="sm"
+              [attr.title]="
+                'Analyzed media in ZIP: ' +
+                r.sourceInfo.skippedMediaFiles.join(', ')
+              "
+            >
+              🎬 {{ r.mediaAnalytics.totalArchiveMediaFiles }} media files ({{
+                formatBytes(r.mediaAnalytics.totalArchiveMediaBytes)
+              }})
+            </ah-badge>
+          }
+
+          @if (r.mediaAnalytics.byCategory.audio > 0) {
+            <ah-badge
+              variant="accent"
+              size="sm"
+              title="Voice notes detected — spoken words are transcribed and added to word analytics"
+            >
+              🎙️ {{ r.mediaAnalytics.byCategory.audio }} voice notes ({{
+                formatDuration(r.mediaAnalytics.totalAudioDurationSeconds)
+              }})
+              @if (r.mediaAnalytics.transcribedWordsAdded > 0) {
+                · +{{ r.mediaAnalytics.transcribedWordsAdded }} spoken words
+              }
+            </ah-badge>
+          }
+
+          @if (r.sourceInfo.strippedInvisibleChars > 0) {
+            <ah-badge
+              variant="neutral"
+              size="sm"
+              title="Stripped invisible UTF-8 BOM, LRM/RLM directional marks, and non-breaking spaces"
+            >
+              🧹 {{ r.sourceInfo.strippedInvisibleChars }} Unicode marks cleaned
+            </ah-badge>
+          }
+
+          <ah-badge variant="info" size="sm" [attr.title]="detection.reason">
+            🕒
+            {{
+              detection.headerStyle === 'ios-bracket'
+                ? 'iOS [Bracket]'
+                : detection.headerStyle === 'android-dash'
+                  ? 'Android - Dash'
+                  : 'Mixed Format'
+            }}
+            · {{ detection.resolvedOrder }} ({{ detection.confidence }})
+          </ah-badge>
+        </div>
+      </div>
+
+      <div class="toolbar-right">
+        <div class="control-group" [attr.title]="detection.reason">
+          <span class="control-label">Date Format:</span>
+          <ah-segmented-control
+            label="Date format ordering"
+            [options]="dateModeOptions()"
+            [value]="store.dateOrderMode()"
+            (valueChange)="setDateMode($event)"
+          />
+        </div>
+
+        <div
+          class="control-group"
+          title="Inactivity threshold that defines when a message starts a new conversation session"
+        >
+          <span class="control-label">Session Gap:</span>
+          <ah-segmented-control
+            label="Session gap threshold"
+            [options]="sessionGapSegmentOptions"
+            [value]="selectedSessionGapStr()"
+            (valueChange)="onSessionGapChange($event)"
+          />
+        </div>
+
+        <button
+          type="button"
+          ahButton="primary"
+          size="sm"
+          [disabled]="store.isAnalyzingAi()"
+          (click)="store.triggerN8nAiAnalysis()"
+        >
+          @if (store.isAnalyzingAi()) {
+            <span>⏳ Analyzing with n8n AI...</span>
+          } @else {
+            <span>✨ Run n8n AI Analysis</span>
+          }
+        </button>
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- ANALYTICS DATA BASIS BANNER & LIVE BATCH AUDIO TRANSCRIPTION PROGRESS -->
+    <!-- ===================================================================== -->
+    <section
+      class="analytics-basis-banner ah-card"
+      aria-label="Analytics data basis and audio transcription status"
+    >
+      <div class="basis-top-row">
+        <div class="basis-info">
+          <div class="basis-badge-line">
+            <span class="ah-eyebrow">ANALYTICS DATA SOURCE BASIS</span>
+            <ah-badge
+              [variant]="
+                basis.mode === 'text_and_audio' &&
+                basis.transcribedVoiceNotes > 0
+                  ? 'success'
+                  : 'info'
+              "
+              [dot]="true"
+              [pulse]="store.isTranscribingAudio()"
+              size="sm"
+            >
+              {{ basis.badgeLabel }}
+            </ah-badge>
+            @for (lang of basis.detectedAudioLanguages; track lang) {
+              <ah-badge variant="accent" size="sm">🌐 {{ lang }}</ah-badge>
+            }
+          </div>
+          <p class="basis-desc">{{ basis.description }}</p>
+          <div class="basis-metrics-pills">
+            <span class="basis-pill">
+              ✍️ <strong>{{ basis.writtenWordsCount | number }}</strong> written
+              words
+            </span>
+            <span class="basis-pill">
+              🗣️
+              <strong>+{{ basis.spokenAudioWordsCount | number }}</strong>
+              spoken audio words ({{ basis.audioShareOfTotalWordsPct }}% of
+              total)
+            </span>
+            @if (basis.translatedVoiceNotes > 0) {
+              <span class="basis-pill">
+                🌐 <strong>{{ basis.translatedVoiceNotes }}</strong> voice notes
+                translated to English ({{
+                  basis.translatedAudioWordsCount | number
+                }}
+                words)
+              </span>
+            }
+          </div>
+        </div>
+
+        <div class="basis-actions">
+          <div
+            class="control-group"
+            title="Switch between computing stats from Written Text + Audio Transcription/Translation vs Written Text Only"
+          >
+            <span class="control-label">Stats Basis:</span>
+            <ah-segmented-control
+              label="Analytics Data Basis Mode"
+              [options]="analyticsBasisOptions()"
+              [value]="store.analyticsBasisMode()"
+              (valueChange)="setAnalyticsBasis($event)"
+            />
+          </div>
+
+          @if (basis.hasVoiceNotesInChat) {
+            @if (store.isTranscribingAudio()) {
+              <button
+                type="button"
+                ahButton="secondary"
+                size="sm"
+                (click)="store.cancelAudioTranscription()"
+                title="Pause batch audio transcription"
+              >
+                ⏹️ Pause Batch STT
+              </button>
+            } @else if (basis.transcribedVoiceNotes < basis.totalVoiceNotes) {
+              <button
+                type="button"
+                ahButton="primary"
+                size="sm"
+                (click)="store.transcribeAllVoiceNotes(true)"
+                title="Transcribe remaining voice notes in small batches of 3"
+              >
+                🎙️ Transcribe
+                {{ basis.totalVoiceNotes - basis.transcribedVoiceNotes }} Voice
+                Note(s) (Batched)
+              </button>
+            } @else {
+              <button
+                type="button"
+                ahButton="ghost"
+                size="sm"
+                (click)="store.transcribeAllVoiceNotes(false)"
+                title="Re-run Whisper STT + Translation in batches of 3"
+              >
+                🔄 Re-Transcribe Audio ({{ basis.totalVoiceNotes }})
+              </button>
+            }
+          }
+        </div>
+      </div>
+
+      <!-- LIVE BATCH AUDIO TRANSCRIPTION PROGRESS BAR (VISIBLE ON ALL TABS) -->
+      @if (
+        store.isTranscribingAudio() && store.audioTranscriptionProgress();
+        as prog
+      ) {
+        <div class="batch-stt-progress-box" role="status" aria-live="polite">
+          <div class="batch-stt-head">
+            <div class="batch-stt-title">
+              <span class="stt-pulse-dot" aria-hidden="true"></span>
+              <strong>
+                🎙️ Transcribing &amp; Translating Voice Notes — Batch
+                {{ prog.currentBatch }} of {{ prog.totalBatches }}
+              </strong>
+              <span class="batch-stt-sub">
+                ({{ prog.completed }} / {{ prog.total }} voice notes ·
+                {{ prog.percent }}% · 3 per batch to protect workflow)
+              </span>
+            </div>
+            <ah-badge variant="accent" size="sm">
+              ⚡ {{ prog.provider }}
+            </ah-badge>
+          </div>
+
+          <ah-progress-bar
+            [value]="prog.percent"
+            [max]="100"
+            variant="success"
+            size="md"
+          />
+
+          <div class="batch-stt-foot">
+            <span>
+              Current batch files:
+              <code>{{ prog.currentFiles.join(', ') }}</code>
+            </span>
+            @if (basis.spokenAudioWordsCount > 0) {
+              <strong class="emerald-text">
+                +{{ basis.spokenAudioWordsCount | number }} spoken words merged
+                into live stats so far
+              </strong>
+            }
+          </div>
+        </div>
+      } @else if (store.audioTranscriptionStatus()) {
+        <div class="batch-stt-status-line">
+          <span>{{ store.audioTranscriptionStatus() }}</span>
+        </div>
+      }
+    </section>
+
+    <!-- GLOBAL 6-KPI BENTO STRIP (USING @ah/ui AhMetricCard) -->
+    <section class="kpi-strip" aria-label="Key chat metrics">
+      <ah-metric-card
+        label="Total Messages"
+        [value]="r.totalMessages.toLocaleString()"
+        [hint]="r.systemNoticeCount + ' system notices filtered'"
+        icon="💬"
+        elevation="raised"
+      />
+      <ah-metric-card
+        label="Total Words"
+        [value]="r.totalWords.toLocaleString()"
+        [hint]="
+          r.mediaAnalytics.transcribedWordsAdded > 0
+            ? '+' +
+              r.mediaAnalytics.transcribedWordsAdded +
+              ' spoken words from voice notes · ' +
+              r.totalEmojis.toLocaleString() +
+              ' emojis'
+            : r.totalChars.toLocaleString() +
+              ' chars · ' +
+              r.totalEmojis.toLocaleString() +
+              ' emojis'
+        "
+        icon="📝"
+        elevation="raised"
+      />
+      <ah-metric-card
+        label="Active Calendar Span"
+        [value]="streaks.activeDays + ' / ' + streaks.totalCalendarDays + 'd'"
+        [hint]="
+          streaks.activeDaysPct +
+          '% active · ' +
+          streaks.avgMessagesPerActiveDay +
+          ' msgs/day'
+        "
+        icon="📅"
+        elevation="raised"
+      />
+      <ah-metric-card
+        label="Longest Streak"
+        [value]="streaks.longestStreak.days + ' days'"
+        [hint]="
+          streaks.longestStreak.startDate +
+          ' → ' +
+          streaks.longestStreak.endDate
+        "
+        icon="🔥"
+        variant="success"
+        elevation="raised"
+      />
+      <ah-metric-card
+        label="Media & Voice Notes"
+        [value]="
+          r.totalMedia + ' media · ' + r.mediaAnalytics.byCategory.audio + ' 🎙️'
+        "
+        [hint]="
+          '🖼️ ' +
+          r.mediaAnalytics.byCategory.image +
+          ' · 🎬 ' +
+          r.mediaAnalytics.byCategory.video +
+          ' · ⏱️ ' +
+          formatDuration(r.mediaAnalytics.totalAudioDurationSeconds) +
+          ' audio'
+        "
+        icon="🎙️"
+        elevation="raised"
+      />
+      <ah-metric-card
+        label="Peak Rhythm"
+        [value]="(heat.peakDayName | slice: 0 : 3) + ' · ' + heat.peakHourLabel"
+        [hint]="'🌙 ' + heat.lateNightPct + '% late-night (23:00–05:00)'"
+        icon="⏱️"
+        variant="accent"
+        elevation="raised"
+      />
+    </section>
+
+    <!-- DASHBOARD NAVIGATION TABS (USING @ah/ui AhTabs) -->
+    <ah-tabs
+      ariaLabel="ChatPulse Analytics Sections"
+      [tabs]="dashboardTabs()"
+      [selectedId]="store.activeTab()"
+      (selectedIdChange)="setTab($event)"
+    />
+
+    <!-- ===================================================================== -->
+    <!-- TAB 1: OVERVIEW, CHEMISTRY SCORES & DEEP PARTICIPANT COMPARISON       -->
+    <!-- ===================================================================== -->
+    @if (store.activeTab() === 'overview') {
+      <section
+        class="tab-panel"
+        aria-label="Overview and Participant Comparison"
+      >
+        <!-- QUANTITATIVE RELATIONSHIP CHEMISTRY & BEHAVIORAL PULSE (0..100) -->
+        <div class="ah-card section-card">
+          <div class="section-header">
+            <div>
+              <h2>
+                🔬 Quantitative Relationship Chemistry &amp; Behavioral Pulse
+              </h2>
+              <p>
+                Algorithmic 0–100 indices computed from message symmetry, reply
+                velocity, emotional expressiveness, streak consistency, and
+                session architecture.
+              </p>
+            </div>
+            <ah-badge variant="success" size="sm">
+              {{ basis.badgeLabel }}
+            </ah-badge>
+          </div>
+
+          <div class="chemistry-scores-grid">
+            <div class="chem-score-card primary-chem">
+              <span class="chem-label">Overall Chemistry Pulse</span>
+              <strong class="chem-val emerald-text"
+                >{{ deep.overallChemistryScore }}<small>/100</small></strong
+              >
+              <ah-progress-bar
+                [value]="deep.overallChemistryScore"
+                [max]="100"
+                variant="success"
+                size="sm"
+              />
+              <span class="chem-hint"
+                >{{ deep.momentumLabel }} ({{
+                  deep.momentumDeltaPct > 0 ? '+' : ''
+                }}{{ deep.momentumDeltaPct }}% 2nd half)</span
+              >
+            </div>
+
+            <div class="chem-score-card">
+              <span class="chem-label">Balance &amp; Symmetry</span>
+              <strong class="chem-val"
+                >{{ deep.symmetryScore }}<small>/100</small></strong
+              >
+              <ah-progress-bar
+                [value]="deep.symmetryScore"
+                [max]="100"
+                variant="accent"
+                size="sm"
+              />
+              <span class="chem-hint"
+                >Message, word &amp; initiation equilibrium</span
+              >
+            </div>
+
+            <div class="chem-score-card">
+              <span class="chem-label">Engagement Momentum</span>
+              <strong class="chem-val"
+                >{{ deep.momentumScore }}<small>/100</small></strong
+              >
+              <ah-progress-bar
+                [value]="deep.momentumScore"
+                [max]="100"
+                variant="success"
+                size="sm"
+              />
+              <span class="chem-hint"
+                >{{ deep.totalSessions }} sessions · avg
+                {{ deep.avgMessagesPerSession }} msgs/session</span
+              >
+            </div>
+
+            <div class="chem-score-card">
+              <span class="chem-label">Emotional Expressiveness</span>
+              <strong class="chem-val"
+                >{{ deep.expressivenessScore }}<small>/100</small></strong
+              >
+              <ah-progress-bar
+                [value]="deep.expressivenessScore"
+                [max]="100"
+                variant="accent"
+                size="sm"
+              />
+              <span class="chem-hint"
+                >😂 {{ deep.overallSentiment.totalLaughterCount }} laughs · ❤️
+                {{ deep.overallSentiment.totalAffectionCount }} affection</span
+              >
+            </div>
+
+            <div class="chem-score-card">
+              <span class="chem-label">Streak Consistency</span>
+              <strong class="chem-val"
+                >{{ deep.consistencyScore }}<small>/100</small></strong
+              >
+              <ah-progress-bar
+                [value]="deep.consistencyScore"
+                [max]="100"
+                variant="success"
+                size="sm"
+              />
+              <span class="chem-hint"
+                >{{ streaks.activeDaysPct }}% active days ·
+                {{ deep.weekendSharePct }}% weekend msgs</span
+              >
+            </div>
+          </div>
+        </div>
+
+        <div class="ah-card section-card">
+          <div class="section-header">
+            <div>
+              <h2>
+                Side-by-Side Deep Participant Comparison (24 Telemetry
+                Dimensions)
+              </h2>
+              <p>
+                Written vs. spoken audio words, vocabulary diversity, circadian
+                chronotype, sentiment polarity, humor/affection/politeness
+                signals, and reply dynamics per participant.
+              </p>
+            </div>
+          </div>
+
+          <ah-split-bar
+            ariaLabel="Participant message volume share"
+            size="md"
+            [segments]="splitBarSegments()"
+          />
+
+          <div class="participant-grid">
+            @for (p of r.participants; track p.name) {
+              <article
+                class="participant-card"
+                [style.--p-accent]="p.accentColor"
+              >
+                <div class="p-header">
+                  <div class="p-avatar" [style.background]="p.accentColor">
+                    {{ p.initials }}
+                  </div>
+                  <div class="p-title-wrap">
+                    <h3 class="p-name">
+                      <ah-truncated-text [text]="p.name" />
+                    </h3>
+                    <span class="p-share-badge">
+                      {{ p.messageSharePct }}% of messages ·
+                      {{ p.wordSharePct }}% of words · {{ p.chronotypeLabel }}
+                    </span>
+                  </div>
+                </div>
+
+                <div class="p-metrics-grid">
+                  <div class="p-stat">
+                    <span class="p-stat-label">Messages</span>
+                    <strong
+                      >{{ p.messageCount | number }} ({{
+                        p.messageSharePct
+                      }}%)</strong
+                    >
+                  </div>
+                  <div class="p-stat">
+                    <span class="p-stat-label">Effective Words</span>
+                    <strong
+                      >{{ p.wordCount | number }} ({{
+                        p.wordSharePct
+                      }}%)</strong
+                    >
+                  </div>
+                  <div class="p-stat p-stat--wide">
+                    <span class="p-stat-label">✍️ Written vs 🗣️ Audio</span>
+                    <strong
+                      >{{ p.writtenWordCount | number }}w · +{{
+                        p.transcribedAudioWords | number
+                      }}w ({{ p.audioWordSharePct }}%)</strong
+                    >
+                  </div>
+                  <div class="p-stat">
+                    <span class="p-stat-label">Avg Words / Chars</span>
+                    <strong
+                      >{{ p.avgWordsPerMessage }}w ·
+                      {{ p.avgCharsPerMessage }}c</strong
+                    >
+                  </div>
+                  <div class="p-stat">
+                    <span class="p-stat-label">Unique Vocabulary</span>
+                    <strong
+                      >{{ p.uniqueWordCount | number }} words ({{
+                        p.vocabularyRichnessPct
+                      }}% diversity)</strong
+                    >
+                  </div>
+                  <div class="p-stat">
+                    <span class="p-stat-label">Median / Fast Reply</span>
+                    <strong class="emerald-text"
+                      >{{ formatDuration(p.medianReplySeconds) }} ({{
+                        p.repliesUnder1MinPct
+                      }}% &lt;1m)</strong
+                    >
+                  </div>
+                  <div class="p-stat p-stat--wide">
+                    <span class="p-stat-label">Starts vs Closes Chat</span>
+                    <strong
+                      >🚀 {{ p.initiationSharePct }}% start · 🏁
+                      {{ p.closingSharePct }}% last word</strong
+                    >
+                  </div>
+                  <div class="p-stat">
+                    <span class="p-stat-label">Double-Text / Burst</span>
+                    <strong
+                      >{{ p.doubleTextIndexPct }}% ({{ p.doubleTextCount }}) ·
+                      {{ p.avgBurstLength }} msgs/turn</strong
+                    >
+                  </div>
+                  <div class="p-stat">
+                    <span class="p-stat-label">Left Waiting &gt;6h</span>
+                    <strong
+                      >⏳ {{ p.unansweredOver6hCount }}× unanswered
+                      &gt;6h</strong
+                    >
+                  </div>
+                  <div class="p-stat">
+                    <span class="p-stat-label">🎙️ Voice Notes &amp; Speed</span>
+                    <strong
+                      >{{ p.audioCount }} ({{
+                        formatDuration(p.totalAudioDurationSeconds)
+                      }}
+                      · {{ p.speakingRateWpm || '—' }} WPM)</strong
+                    >
+                  </div>
+                  <div class="p-stat">
+                    <span class="p-stat-label"
+                      >🖼️ Photos / Videos / Stickers</span
+                    >
+                    <strong
+                      >{{ p.imageCount }}🖼️ · {{ p.videoCount }}🎬 ·
+                      {{ p.stickerCount }}✨</strong
+                    >
+                  </div>
+                  <div class="p-stat p-stat--wide">
+                    <span class="p-stat-label">Questions / Links / Caps</span>
+                    <strong
+                      >{{ p.questionCount }}? · {{ p.linkCount }}🔗 ·
+                      {{ p.exclamationCount }}! ·
+                      {{ p.capsLockCount }} CAPS</strong
+                    >
+                  </div>
+                  <div class="p-stat">
+                    <span class="p-stat-label"
+                      >😂 Laughter &amp; ❤️ Affection</span
+                    >
+                    <strong
+                      >😂 {{ p.laughterCount }}× · ❤️
+                      {{ p.affectionCount }}×</strong
+                    >
+                  </div>
+                  <div class="p-stat">
+                    <span class="p-stat-label"
+                      >🙏 Apologies &amp; ✨ Gratitude</span
+                    >
+                    <strong
+                      >🙏 {{ p.apologyCount }} sorry · ✨
+                      {{ p.gratitudeCount }} thanks</strong
+                    >
+                  </div>
+                  <div class="p-stat p-stat--wide">
+                    <span class="p-stat-label">Sentiment Polarity</span>
+                    <strong
+                      >😊 {{ p.sentimentPositivePct }}% · ⚖️
+                      {{ p.sentimentNeutralPct }}% · ⚡
+                      {{ p.sentimentNegativePct }}%</strong
+                    >
+                  </div>
+                  <div class="p-stat p-stat--wide">
+                    <span class="p-stat-label">Circadian Rhythm</span>
+                    <strong
+                      >🌅{{ p.morningPct }}% · ☀️{{ p.afternoonPct }}% · 🌆{{
+                        p.eveningPct
+                      }}% · 🌙{{ p.nightOwlPct }}%</strong
+                    >
+                  </div>
+                  <div class="p-stat p-stat--wide">
+                    <span class="p-stat-label">Message Length Mix</span>
+                    <strong
+                      >1-3w: {{ p.messageLengthBreakdown.shortCount }} · 4-15w:
+                      {{ p.messageLengthBreakdown.mediumCount }} · 16+w:
+                      {{
+                        p.messageLengthBreakdown.longCount +
+                          p.messageLengthBreakdown.paragraphCount
+                      }}</strong
+                    >
+                  </div>
+                  <div class="p-stat p-stat--wide">
+                    <span class="p-stat-label">Longest Single Message</span>
+                    <strong
+                      >{{ p.longestMessageChars | number }} chars · max burst
+                      {{ p.longestBurstCount }} msgs</strong
+                    >
+                  </div>
+                </div>
+
+                @if (p.exclusiveWords.length > 0) {
+                  <div class="p-signature-row">
+                    <span class="sig-label">Signature Exclusive Words:</span>
+                    <div class="emoji-pills">
+                      @for (
+                        ew of p.exclusiveWords | slice: 0 : 6;
+                        track ew.word
+                      ) {
+                        <ah-tag
+                          [attr.title]="
+                            p.name +
+                            ' uses ' +
+                            ew.word +
+                            ' ' +
+                            ew.count +
+                            ' times'
+                          "
+                        >
+                          #{{ ew.word }} ({{ ew.count }})
+                        </ah-tag>
+                      }
+                    </div>
+                  </div>
+                }
+
+                <div class="p-signature-row">
+                  <span class="sig-label">Top Emojis:</span>
+                  <div class="emoji-pills">
+                    @for (em of p.topEmojis | slice: 0 : 6; track em.emoji) {
+                      <ah-tag
+                        [attr.title]="em.emoji + ' used ' + em.count + ' times'"
+                      >
+                        {{ em.emoji }} {{ em.count }}
+                      </ah-tag>
+                    } @empty {
+                      <span class="muted-note">No emojis</span>
+                    }
+                  </div>
+                </div>
+              </article>
+            }
+          </div>
+        </div>
+
+        <!-- VOLUME TIMELINE CHART -->
+        <div class="ah-card section-card">
+          <div class="section-header">
+            <div>
+              <h2>
+                Messaging Volume Trend ({{
+                  basis.mode === 'text_and_audio'
+                    ? 'Text + Audio Words'
+                    : 'Written Text Only'
+                }})
+              </h2>
+              <p>
+                Chronological message activity stacked by participant across the
+                conversation timeline.
+              </p>
+            </div>
+            <ah-segmented-control
+              label="Timeline granularity"
+              [options]="timelineGranularityOptions()"
+              [value]="store.timelineGranularity()"
+              (valueChange)="store.setTimelineGranularity($event)"
+            />
+          </div>
+
+          <div class="timeline-chart-scroll">
+            <div class="timeline-bars-stage">
+              @for (pt of store.timelinePoints(); track pt.period) {
+                <div
+                  class="timeline-col"
+                  [attr.title]="
+                    pt.period +
+                    ': ' +
+                    pt.totalMessages +
+                    ' messages (' +
+                    pt.totalWords +
+                    ' words)'
+                  "
+                >
+                  <span class="bar-val">{{ pt.totalMessages }}</span>
+                  <div
+                    class="bar-stack"
+                    [style.height.%]="
+                      barHeightPct(pt.totalMessages, maxTimelineMessages())
+                    "
+                  >
+                    @for (p of r.participants; track p.name) {
+                      <div
+                        class="bar-sub"
+                        [style.height.%]="participantShareInPoint(pt, p.name)"
+                        [style.background]="p.accentColor"
+                      ></div>
+                    }
+                  </div>
+                  <span class="bar-label">{{ pt.label }}</span>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      </section>
+    }
+
+    <!-- ===================================================================== -->
+    <!-- TAB 2: MULTIMEDIA & VOICE NOTE INTELLIGENCE                           -->
+    <!-- ===================================================================== -->
+    @if (store.activeTab() === 'media') {
+      @let media = r.mediaAnalytics;
+      <section
+        class="tab-panel"
+        aria-label="Multimedia and Voice Note Intelligence"
+      >
+        <!-- 6-KPI MULTIMEDIA BENTO STRIP -->
+        <div class="kpi-strip">
+          <ah-metric-card
+            label="Voice Notes (Audio)"
+            [value]="media.byCategory.audio + ' notes'"
+            [hint]="
+              '⏱️ ' +
+              formatDuration(media.totalAudioDurationSeconds) +
+              ' total · avg ' +
+              formatDuration(media.avgAudioDurationSeconds)
+            "
+            icon="🎙️"
+            variant="success"
+            elevation="raised"
+          />
+          <ah-metric-card
+            label="Spoken Words Merged"
+            [value]="
+              '+' + media.transcribedWordsAdded.toLocaleString() + ' words'
+            "
+            [hint]="
+              media.transcribedVoiceNoteCount +
+              ' / ' +
+              media.voiceNotes.length +
+              ' transcribed · ' +
+              media.translatedVoiceNoteCount +
+              ' translated'
+            "
+            icon="🗣️"
+            variant="accent"
+            elevation="raised"
+          />
+          <ah-metric-card
+            label="Photos & Images"
+            [value]="media.byCategory.image.toLocaleString()"
+            [hint]="formatBytes(media.bytesByCategory.image) + ' in archive'"
+            icon="🖼️"
+            elevation="raised"
+          />
+          <ah-metric-card
+            label="Videos Shared"
+            [value]="media.byCategory.video.toLocaleString()"
+            [hint]="formatBytes(media.bytesByCategory.video) + ' in archive'"
+            icon="🎬"
+            elevation="raised"
+          />
+          <ah-metric-card
+            label="Stickers & GIFs"
+            [value]="
+              (media.byCategory.sticker + media.byCategory.gif).toLocaleString()
+            "
+            [hint]="
+              media.byCategory.sticker +
+              ' stickers · ' +
+              media.byCategory.gif +
+              ' GIFs'
+            "
+            icon="✨"
+            elevation="raised"
+          />
+          <ah-metric-card
+            label="Docs & Archive Size"
+            [value]="media.byCategory.document + ' docs'"
+            [hint]="
+              media.totalArchiveMediaFiles +
+              ' ZIP files (' +
+              formatBytes(media.totalArchiveMediaBytes) +
+              ')'
+            "
+            icon="📄"
+            elevation="raised"
+          />
+        </div>
+
+        <!-- MULTIMEDIA DISTRIBUTION & PER-PARTICIPANT BREAKDOWN -->
+        <div class="ah-card section-card">
+          <div class="section-header">
+            <div>
+              <h2>Multimedia &amp; Voice Note Breakdown by Participant</h2>
+              <p>
+                Tracks audios, voice-note air-time, speaking rate (WPM),
+                transcribed spoken words, photos, videos, stickers, and
+                documents shared per participant.
+              </p>
+            </div>
+          </div>
+
+          @if (mediaSplitSegments().length > 0) {
+            <ah-split-bar
+              ariaLabel="Multimedia category breakdown"
+              size="md"
+              [segments]="mediaSplitSegments()"
+            />
+          }
+
+          <div class="participant-grid">
+            @for (p of r.participants; track p.name) {
+              <article
+                class="participant-card"
+                [style.--p-accent]="p.accentColor"
+              >
+                <div class="p-header">
+                  <div class="p-avatar" [style.background]="p.accentColor">
+                    {{ p.initials }}
+                  </div>
+                  <div class="p-title-wrap">
+                    <h3 class="p-name">
+                      <ah-truncated-text [text]="p.name" />
+                    </h3>
+                    <span class="p-share-badge">
+                      {{ p.mediaCount }} media attachments · 🎙️
+                      {{ formatDuration(p.totalAudioDurationSeconds) }} voice
+                      time ({{ p.audioWordSharePct }}% of their words)
+                    </span>
+                  </div>
+                </div>
+
+                <div class="p-metrics-grid">
+                  <div class="p-stat">
+                    <span class="p-stat-label">🎙️ Voice Notes</span>
+                    <strong class="emerald-text"
+                      >{{ p.audioCount }} ({{
+                        formatDuration(p.totalAudioDurationSeconds)
+                      }})</strong
+                    >
+                  </div>
+                  <div class="p-stat p-stat--wide">
+                    <span class="p-stat-label">🗣️ Spoken Words</span>
+                    <strong
+                      >+{{ p.transcribedAudioWords | number }} ({{
+                        p.transcribedAudioCount
+                      }}
+                      read · {{ p.speakingRateWpm || '—' }} WPM)</strong
+                    >
+                  </div>
+                  <div class="p-stat">
+                    <span class="p-stat-label">🖼️ Photos</span>
+                    <strong>{{ p.imageCount }}</strong>
+                  </div>
+                  <div class="p-stat">
+                    <span class="p-stat-label">🎬 Videos</span>
+                    <strong>{{ p.videoCount }}</strong>
+                  </div>
+                  <div class="p-stat">
+                    <span class="p-stat-label">✨ Stickers / GIFs</span>
+                    <strong>{{ p.stickerCount }}</strong>
+                  </div>
+                  <div class="p-stat">
+                    <span class="p-stat-label">📄 Documents</span>
+                    <strong>{{ p.documentCount }}</strong>
+                  </div>
+                </div>
+              </article>
+            }
+          </div>
+        </div>
+
+        <!-- VOICE NOTE STUDIO: PLAYBACK, BATCH WHISPER STT & ENGLISH TRANSLATION -->
+        <div class="ah-card section-card">
+          <div class="section-header">
+            <div>
+              <h2>
+                🎙️ Voice Note Player, Batch Whisper STT &amp; Multilingual
+                Translation Studio
+              </h2>
+              <p>
+                Transcribes <code>.opus</code> / <code>.ogg</code> /
+                <code>.mp3</code> / <code>.m4a</code> voice notes in throttled
+                <strong>batches of 3</strong> via Groq Whisper v3 Turbo + Llama
+                3.3 70B so the n8n workflow is never overloaded. Both the
+                original spoken transcript and English translation are folded
+                into your analytics!
+              </p>
+            </div>
+            <div class="ai-banner-actions">
+              <button
+                type="button"
+                ahButton="secondary"
+                size="sm"
+                (click)="globalFilePicker.click()"
+                title="Select additional .opus, .ogg, .mp3, .jpg, or .mp4 files from Google Drive to attach to this chat"
+              >
+                ➕ Attach Media / Audio Files
+              </button>
+              @if (media.voiceNotes.length > 0) {
+                @if (store.isTranscribingAudio()) {
+                  <button
+                    type="button"
+                    ahButton="secondary"
+                    size="sm"
+                    (click)="store.cancelAudioTranscription()"
+                  >
+                    ⏹️ Pause Batch Transcription
+                  </button>
+                } @else {
+                  @if (
+                    media.transcribedVoiceNoteCount > 0 &&
+                    media.transcribedVoiceNoteCount < media.voiceNotes.length
+                  ) {
+                    <button
+                      type="button"
+                      ahButton="primary"
+                      size="sm"
+                      (click)="store.transcribeAllVoiceNotes(true)"
+                    >
+                      ▶️ Transcribe Remaining ({{
+                        media.voiceNotes.length -
+                          media.transcribedVoiceNoteCount
+                      }})
+                    </button>
+                  }
+                  <button
+                    type="button"
+                    ahButton="secondary"
+                    size="sm"
+                    (click)="transcribeCurrentVoiceNotesPage()"
+                    title="Transcribe and translate only the voice notes on this current page"
+                  >
+                    📄 Transcribe Page ({{ paginatedVoiceNotes().length }})
+                  </button>
+                  <button
+                    type="button"
+                    ahButton="primary"
+                    size="sm"
+                    (click)="store.transcribeAllVoiceNotes(false)"
+                  >
+                    🎙️
+                    {{
+                      media.transcribedVoiceNoteCount > 0
+                        ? 'Re-Transcribe All'
+                        : 'Batch Transcribe & Translate'
+                    }}
+                    ({{ media.voiceNotes.length }})
+                  </button>
+                }
+              }
+            </div>
+          </div>
+
+          @if (media.voiceNotes.length > 0) {
+            <ah-pagination
+              [totalItems]="media.voiceNotes.length"
+              [pageSize]="voiceNotesPageSize()"
+              [currentPage]="voiceNotesPage()"
+              [pageSizeOptions]="voiceNotesPageSizeOptions"
+              itemLabel="voice notes"
+              ariaLabel="Voice notes pagination"
+              (pageChange)="voiceNotesPage.set($event)"
+              (pageSizeChange)="voiceNotesPageSize.set($event)"
+            />
+
+            <div class="voice-notes-list">
+              @for (vn of paginatedVoiceNotes(); track vn.id) {
+                <article class="voice-note-card">
+                  <div class="vn-top-row">
+                    <div class="vn-sender-meta">
+                      <strong [style.color]="participantColor(vn.sender)">{{
+                        vn.sender
+                      }}</strong>
+                      <span class="msg-time">{{ vn.timestampLabel }}</span>
+                      <ah-badge variant="success" size="sm">
+                        🎙️ {{ formatDuration(vn.durationSeconds) }}
+                      </ah-badge>
+                      @if (vn.detectedLanguage) {
+                        <ah-badge variant="info" size="sm">
+                          🌐 {{ vn.detectedLanguage }}
+                        </ah-badge>
+                      }
+                      @if (vn.tone) {
+                        <ah-badge variant="neutral" size="sm">
+                          🎭 {{ vn.tone }}
+                        </ah-badge>
+                      }
+                      @if (vn.sizeBytes > 0) {
+                        <ah-badge variant="neutral" size="sm">
+                          {{ formatBytes(vn.sizeBytes) }}
+                        </ah-badge>
+                      }
+                      <code class="vn-filename">{{ vn.fileName }}</code>
+                    </div>
+
+                    @if (vn.transcriptWordCount > 0) {
+                      <ah-badge variant="accent" size="sm">
+                        ✓ +{{ vn.transcriptWordCount }} spoken words in stats
+                      </ah-badge>
+                    } @else if (store.isTranscribingAudio()) {
+                      <ah-badge variant="warning" size="sm">
+                        ⏳ Queued in batch...
+                      </ah-badge>
+                    }
+                  </div>
+
+                  @if (vn.previewUrl) {
+                    <audio
+                      controls
+                      preload="metadata"
+                      class="vn-audio-player"
+                      [src]="vn.previewUrl"
+                    ></audio>
+                  }
+
+                  <div class="vn-dual-inputs">
+                    <label class="vn-transcript-label">
+                      <div class="vn-label-row">
+                        <span
+                          >🗣️ Spoken Transcript (Original Language — live-linked
+                          to stats):</span
+                        >
+                        @if (savedVoiceNoteKey() === vn.fileName) {
+                          <span class="vn-saved-pill">✓ Saved</span>
+                        }
+                      </div>
+                      <textarea
+                        rows="2"
+                        dir="auto"
+                        maxlength="2500"
+                        class="text-area-input"
+                        placeholder="Spoken transcript from Whisper STT (or type/edit manually)..."
+                        [ngModel]="vn.transcript || ''"
+                        (ngModelChange)="
+                          onVoiceNoteTranscriptInput(vn.fileName, $event)
+                        "
+                      ></textarea>
+                    </label>
+
+                    <label class="vn-transcript-label">
+                      <div class="vn-label-row">
+                        <span
+                          >🌐 English Translation (auto-generated for
+                          Arabic/Derja/French/Spanish):</span
+                        >
+                        @if (savedVoiceNoteKey() === vn.fileName) {
+                          <span class="vn-saved-pill">✓ Saved</span>
+                        }
+                      </div>
+                      <textarea
+                        rows="2"
+                        dir="auto"
+                        maxlength="2500"
+                        class="text-area-input"
+                        placeholder="English translation of voice note..."
+                        [ngModel]="vn.translation || ''"
+                        (ngModelChange)="
+                          onVoiceNoteTranslationInput(vn.fileName, $event)
+                        "
+                      ></textarea>
+                    </label>
+                  </div>
+                </article>
+              }
+            </div>
+
+            @if (media.voiceNotes.length > voiceNotesPageSize()) {
+              <ah-pagination
+                [totalItems]="media.voiceNotes.length"
+                [pageSize]="voiceNotesPageSize()"
+                [currentPage]="voiceNotesPage()"
+                [pageSizeOptions]="voiceNotesPageSizeOptions"
+                itemLabel="voice notes"
+                ariaLabel="Voice notes bottom pagination"
+                (pageChange)="voiceNotesPage.set($event)"
+                (pageSizeChange)="voiceNotesPageSize.set($event)"
+              />
+            }
+          } @else {
+            <ah-empty-state
+              icon="🎙️"
+              title="No Voice Notes Detected in This Export"
+              description="Upload a WhatsApp .zip export selected 'With Media' (containing .opus, .ogg, .m4a, or .mp3 voice notes) or click 'Attach Media / Audio Files' above to add voice notes from Google Drive."
+            />
+          }
+        </div>
+
+        <!-- ARCHIVE PHOTO, STICKER & VIDEO GALLERY -->
+        @if (media.mediaGallery.length > 0) {
+          <div class="ah-card section-card">
+            <div class="section-header">
+              <div>
+                <h2>
+                  🖼️ Archive Photos, Videos, Stickers &amp; Documents ({{
+                    media.mediaGallery.length
+                  }})
+                </h2>
+                <p>
+                  Visual thumbnails and attachment telemetry extracted in-memory
+                  from the WhatsApp archive.
+                </p>
+              </div>
+            </div>
+
+            <ah-pagination
+              [totalItems]="media.mediaGallery.length"
+              [pageSize]="mediaGalleryPageSize()"
+              [currentPage]="mediaGalleryPage()"
+              [pageSizeOptions]="mediaGalleryPageSizeOptions"
+              itemLabel="media files"
+              ariaLabel="Media gallery pagination"
+              (pageChange)="mediaGalleryPage.set($event)"
+              (pageSizeChange)="mediaGalleryPageSize.set($event)"
+            />
+
+            <div class="media-gallery-grid">
+              @for (item of paginatedMediaGallery(); track item.id) {
+                <article class="media-gallery-card">
+                  @if (item.previewUrl) {
+                    <div class="media-thumb-wrap">
+                      <img
+                        [src]="item.previewUrl"
+                        [alt]="item.fileName"
+                        class="media-thumb-img"
+                        loading="lazy"
+                      />
+                    </div>
+                  } @else {
+                    <div class="media-thumb-placeholder">
+                      <span>
+                        {{
+                          item.category === 'image'
+                            ? '🖼️'
+                            : item.category === 'video'
+                              ? '🎬'
+                              : item.category === 'sticker' ||
+                                  item.category === 'gif'
+                                ? '✨'
+                                : '📄'
+                        }}
+                      </span>
+                    </div>
+                  }
+                  <div class="media-card-meta">
+                    <strong class="media-card-name">
+                      <ah-truncated-text [text]="item.fileName" />
+                    </strong>
+                    <div class="media-card-sub">
+                      <span [style.color]="participantColor(item.sender)">{{
+                        item.sender
+                      }}</span>
+                      <span>· {{ item.category | uppercase }}</span>
+                      @if (item.sizeBytes > 0) {
+                        <span>· {{ formatBytes(item.sizeBytes) }}</span>
+                      }
+                    </div>
+                  </div>
+                </article>
+              }
+            </div>
+          </div>
+        }
+      </section>
+    }
+
+    <!-- ===================================================================== -->
+    <!-- TAB 3: REPLY DYNAMICS, SESSION ARCHITECTURE & INITIATIONS             -->
+    <!-- ===================================================================== -->
+    @if (store.activeTab() === 'dynamics') {
+      <section class="tab-panel" aria-label="Reply Dynamics and Initiations">
+        <!-- SESSION ARCHITECTURE KPI STRIP -->
+        <div class="kpi-strip">
+          <ah-metric-card
+            label="Conversation Sessions"
+            [value]="deep.totalSessions.toLocaleString() + ' sessions'"
+            [hint]="
+              'Defined by ' + store.sessionGapMinutes() + 'm silence threshold'
+            "
+            icon="🔄"
+            elevation="raised"
+          />
+          <ah-metric-card
+            label="Avg Session Depth"
+            [value]="deep.avgMessagesPerSession + ' msgs'"
+            [hint]="
+              '⏱️ Avg ' +
+              deep.avgSessionDurationMinutes +
+              ' mins per active session'
+            "
+            icon="💬"
+            elevation="raised"
+          />
+          <ah-metric-card
+            label="Longest Marathon Session"
+            [value]="deep.longestSession.messageCount + ' msgs'"
+            [hint]="
+              deep.longestSession.date +
+              ' (' +
+              deep.longestSession.durationMinutes +
+              'm · ' +
+              deep.longestSession.wordCount +
+              ' words)'
+            "
+            icon="🏆"
+            variant="success"
+            elevation="raised"
+          />
+          <ah-metric-card
+            label="Trajectory Momentum"
+            [value]="deep.momentumLabel"
+            [hint]="
+              '1st half: ' +
+              deep.firstHalfMessages +
+              ' vs 2nd half: ' +
+              deep.secondHalfMessages +
+              ' (' +
+              (deep.momentumDeltaPct > 0 ? '+' : '') +
+              deep.momentumDeltaPct +
+              '%)'
+            "
+            icon="📈"
+            variant="accent"
+            elevation="raised"
+          />
+          <ah-metric-card
+            label="Weekday vs Weekend"
+            [value]="deep.weekendSharePct + '% Weekend'"
+            [hint]="
+              deep.weekdayMessages +
+              ' weekday · ' +
+              deep.weekendMessages +
+              ' weekend msgs'
+            "
+            icon="🗓️"
+            elevation="raised"
+          />
+        </div>
+
+        <div class="two-col-grid">
+          <div class="ah-card section-card">
+            <div class="section-header">
+              <div>
+                <h2>Response Time, Instant Replies &amp; Burst Dynamics</h2>
+                <p>
+                  Mean vs. median reply latency, instant turnaround (&lt;1 min),
+                  and unanswered &gt;6h gaps.
+                </p>
+              </div>
+            </div>
+
+            <div class="latency-cards-list">
+              @for (p of r.participants; track p.name) {
+                <div class="latency-card" [style.--p-accent]="p.accentColor">
+                  <div class="latency-card-head">
+                    <strong [attr.title]="p.name">{{ p.name }}</strong>
+                    <ah-badge variant="neutral" size="sm">
+                      Avg burst: {{ p.avgBurstLength }} msgs/turn (max
+                      {{ p.longestBurstCount }})
+                    </ah-badge>
+                  </div>
+                  <div class="latency-stats-row">
+                    <div>
+                      <span class="stat-lbl">Median Reply</span>
+                      <strong class="stat-big emerald-text">{{
+                        formatDuration(p.medianReplySeconds)
+                      }}</strong>
+                    </div>
+                    <div>
+                      <span class="stat-lbl">Mean Reply</span>
+                      <strong class="stat-big">{{
+                        formatDuration(p.meanReplySeconds)
+                      }}</strong>
+                    </div>
+                    <div>
+                      <span class="stat-lbl">Instant (&lt;1m / &lt;5m)</span>
+                      <strong class="stat-big"
+                        >{{ p.repliesUnder1MinPct }}% /
+                        {{ p.repliesUnder5MinPct }}%</strong
+                      >
+                    </div>
+                    <div>
+                      <span class="stat-lbl">Double-Text / Left &gt;6h</span>
+                      <strong class="stat-big"
+                        >{{ p.doubleTextIndexPct }}% ·
+                        {{ p.unansweredOver6hCount }}×</strong
+                      >
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+
+          <div class="ah-card section-card">
+            <div class="section-header">
+              <div>
+                <h2>
+                  Conversation Starters vs. Closers ({{
+                    store.sessionGapMinutes()
+                  }}m Gap)
+                </h2>
+                <p>
+                  Who breaks the silence to start a session vs. who sends the
+                  final message ("Last Word").
+                </p>
+              </div>
+              <ah-tooltip
+                title="Initiators & Closers Formula"
+                [body]="
+                  'A session starts after ' +
+                  store.sessionGapMinutes() +
+                  '+ minutes of silence. The sender of the first message is the Initiator; the sender of the last message before the next silence is the Closer.'
+                "
+                formula="SessionStarts / TotalSessions × 100"
+              />
+            </div>
+
+            <div class="initiations-list">
+              @for (p of r.participants; track p.name) {
+                <div class="initiation-row">
+                  <div class="init-meta">
+                    <strong [attr.title]="p.name"
+                      >{{ p.name }} — 🚀 Initiations</strong
+                    >
+                    <span
+                      >{{ p.initiationCount }} started ({{
+                        p.initiationSharePct
+                      }}%)</span
+                    >
+                  </div>
+                  <ah-progress-bar
+                    [value]="p.initiationSharePct"
+                    [max]="100"
+                    variant="success"
+                    size="md"
+                  />
+                </div>
+                <div class="initiation-row">
+                  <div class="init-meta">
+                    <strong [attr.title]="p.name"
+                      >{{ p.name }} — 🏁 Closings (Last Word)</strong
+                    >
+                    <span
+                      >{{ p.closingCount }} closed ({{
+                        p.closingSharePct
+                      }}%)</span
+                    >
+                  </div>
+                  <ah-progress-bar
+                    [value]="p.closingSharePct"
+                    [max]="100"
+                    variant="accent"
+                    size="md"
+                  />
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+
+        <div class="ah-card section-card">
+          <div class="section-header">
+            <div>
+              <h2>Reply-Time Distribution Buckets</h2>
+              <p>
+                Breakdown of response speed across 6 latency intervals per
+                participant.
+              </p>
+            </div>
+          </div>
+
+          <div class="buckets-comparison-grid">
+            @for (p of r.participants; track p.name; let pIdx = $index) {
+              <div class="bucket-column">
+                <h3 class="bucket-col-title" [style.color]="p.accentColor">
+                  {{ p.name }}'s Turnaround ({{ p.replyCount }} replies)
+                </h3>
+                @for (b of p.replyBuckets; track b.key) {
+                  <div class="bucket-row">
+                    <span class="bucket-label">{{ b.label }}</span>
+                    <ah-progress-bar
+                      [value]="b.percentage"
+                      [max]="100"
+                      [variant]="pIdx % 2 === 0 ? 'success' : 'accent'"
+                      size="md"
+                    />
+                    <span class="bucket-val"
+                      >{{ b.percentage }}% ({{ b.count }})</span
+                    >
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        </div>
+      </section>
+    }
+
+    <!-- ===================================================================== -->
+    <!-- TAB 4: LEXICAL, PHRASES, SENTIMENT & EMOJI LEADERBOARDS               -->
+    <!-- ===================================================================== -->
+    @if (store.activeTab() === 'lexical') {
+      <section class="tab-panel" aria-label="Lexical and Emoji Leaderboards">
+        <!-- SENTIMENT, HUMOR, AFFECTION & POLITENESS BREAKDOWN -->
+        <div class="ah-card section-card">
+          <div class="section-header">
+            <div>
+              <h2>
+                😊 Multilingual Sentiment, Humor, Affection &amp; Politeness
+                Analysis
+              </h2>
+              <p>
+                Evaluates emotional polarity, laughter (<em
+                  >😂, haha, lol, mdr, هههه</em
+                >), affection (<em>❤️, love, habibi, nhbek, chéri</em>),
+                apologies, and gratitude across {{ basis.badgeLabel }}.
+              </p>
+            </div>
+          </div>
+
+          <ah-split-bar
+            ariaLabel="Overall conversation sentiment polarity"
+            size="md"
+            [segments]="sentimentSplitSegments()"
+          />
+
+          <div class="kpi-strip">
+            <ah-metric-card
+              label="Laughter & Humor"
+              [value]="
+                deep.overallSentiment.totalLaughterCount.toLocaleString() +
+                ' 😂'
+              "
+              hint="Haha, lol, mdr, هههه & laughing emojis"
+              icon="😂"
+              variant="success"
+              elevation="raised"
+            />
+            <ah-metric-card
+              label="Affection & Warmth"
+              [value]="
+                deep.overallSentiment.totalAffectionCount.toLocaleString() +
+                ' ❤️'
+              "
+              hint="Hearts, love, habibi, nhbek, bisous"
+              icon="❤️"
+              variant="accent"
+              elevation="raised"
+            />
+            <ah-metric-card
+              label="Gratitude & Appreciation"
+              [value]="
+                deep.overallSentiment.totalGratitudeCount.toLocaleString() +
+                ' ✨'
+              "
+              hint="Thanks, merci, chokran, aychek"
+              icon="🙏"
+              elevation="raised"
+            />
+            <ah-metric-card
+              label="Apologies & Repair"
+              [value]="
+                deep.overallSentiment.totalApologyCount.toLocaleString() + ' 🤝'
+              "
+              hint="Sorry, désolé, pardon, smahni"
+              icon="🕊️"
+              elevation="raised"
+            />
+          </div>
+        </div>
+
+        <div class="ah-card section-card">
+          <div class="section-header">
+            <div>
+              <h2>Multilingual Tokenization &amp; Custom Stopword Filter</h2>
+              <p>
+                Default stopwords automatically filter common fillers in
+                English, French, Spanish, and Arabic/Franco. Add custom words
+                below to refine the leaderboards in real time.
+              </p>
+            </div>
+          </div>
+
+          <div class="stopword-controls">
+            <div class="stopword-input-row">
+              <div class="stopword-input-wrap">
+                <input
+                  type="text"
+                  class="text-input"
+                  [class.is-invalid]="stopwordError()"
+                  placeholder="Type a word to exclude from leaderboards..."
+                  [ngModel]="stopwordInput()"
+                  (ngModelChange)="onStopwordInputChange($event)"
+                  (keydown.enter)="submitCustomStopword()"
+                  aria-label="Custom word to exclude"
+                  [attr.aria-invalid]="stopwordError() ? 'true' : null"
+                />
+                @if (stopwordInput()) {
+                  <button
+                    type="button"
+                    class="input-clear-btn"
+                    (click)="onStopwordInputChange('')"
+                    title="Clear input"
+                  >
+                    ✕
+                  </button>
+                }
+              </div>
+              <button
+                type="button"
+                ahButton="secondary"
+                size="sm"
+                [disabled]="!stopwordInput().trim()"
+                (click)="submitCustomStopword()"
+              >
+                + Exclude Word
+              </button>
+              @if (store.customStopwords().length > 0) {
+                <button
+                  type="button"
+                  ahButton="ghost"
+                  size="sm"
+                  (click)="store.clearCustomStopwords()"
+                >
+                  Reset Custom ({{ store.customStopwords().length }})
+                </button>
+              }
+            </div>
+
+            @if (stopwordError()) {
+              <div class="input-error-alert" role="alert">
+                <span class="error-icon" aria-hidden="true">⚠️</span>
+                <span>{{ stopwordError() }}</span>
+              </div>
+            }
+
+            @if (store.customStopwords().length > 0) {
+              <div class="custom-stopwords-chips">
+                @for (sw of store.customStopwords(); track sw) {
+                  <button
+                    type="button"
+                    class="stopword-chip"
+                    (click)="store.removeCustomStopword(sw)"
+                    title="Click to restore word"
+                  >
+                    {{ sw }} ✕
+                  </button>
+                }
+              </div>
+            }
+          </div>
+        </div>
+
+        <div class="two-col-grid">
+          <div class="ah-card section-card">
+            <div class="section-header">
+              <div>
+                <h2>
+                  Top Words Leaderboard ({{
+                    basis.mode === 'text_and_audio'
+                      ? 'Text + Audio'
+                      : 'Text Only'
+                  }})
+                </h2>
+                <p>
+                  Most frequent substantive words (≥3 characters) across the
+                  conversation.
+                </p>
+              </div>
+            </div>
+
+            <div class="leaderboard-list">
+              @for (
+                item of paginatedTopWords();
+                track item.word;
+                let i = $index
+              ) {
+                <div class="leaderboard-row">
+                  <span class="rank-num"
+                    >#{{ topWordsStartOffset() + i + 1 }}</span
+                  >
+                  <div class="word-main">
+                    <div class="word-top-line">
+                      <strong class="word-token">
+                        <ah-truncated-text
+                          [text]="item.word"
+                          [maxWidth]="'12rem'"
+                        />
+                      </strong>
+                      <span class="word-count"
+                        >{{ item.count }}× ({{ item.sharePct }}%)</span
+                      >
+                    </div>
+                    <ah-progress-bar
+                      [value]="item.count"
+                      [max]="maxTopWordCount()"
+                      variant="success"
+                      size="sm"
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    class="mini-exclude-btn"
+                    (click)="store.addCustomStopword(item.word)"
+                    [attr.title]="'Exclude ' + item.word"
+                  >
+                    Hide
+                  </button>
+                </div>
+              } @empty {
+                <p class="muted-note">No words matched.</p>
+              }
+            </div>
+
+            @if (r.topWords.length > topWordsPageSize()) {
+              <ah-pagination
+                [totalItems]="r.topWords.length"
+                [pageSize]="topWordsPageSize()"
+                [currentPage]="topWordsPage()"
+                [pageSizeOptions]="topWordsPageSizeOptions"
+                [compact]="true"
+                itemLabel="words"
+                ariaLabel="Top words pagination"
+                (pageChange)="topWordsPage.set($event)"
+                (pageSizeChange)="topWordsPageSize.set($event)"
+              />
+            }
+          </div>
+
+          <div class="ah-card section-card">
+            <div class="section-header">
+              <div>
+                <h2>Top Emojis Leaderboard</h2>
+                <p>Most frequent emojis used across all participants.</p>
+              </div>
+            </div>
+
+            <div class="leaderboard-list">
+              @for (
+                em of paginatedTopEmojis();
+                track em.emoji;
+                let i = $index
+              ) {
+                <div class="leaderboard-row">
+                  <span class="rank-num"
+                    >#{{ topEmojisStartOffset() + i + 1 }}</span
+                  >
+                  <span class="emoji-glyph">{{ em.emoji }}</span>
+                  <div class="word-main">
+                    <div class="word-top-line">
+                      <span class="word-count"
+                        >{{ em.count }} uses ({{ em.sharePct }}% of all
+                        emojis)</span
+                      >
+                    </div>
+                    <ah-progress-bar
+                      [value]="em.count"
+                      [max]="maxTopEmojiCount()"
+                      variant="accent"
+                      size="sm"
+                    />
+                  </div>
+                </div>
+              } @empty {
+                <p class="muted-note">No emojis found in this transcript.</p>
+              }
+            </div>
+
+            @if (r.topEmojis.length > topEmojisPageSize()) {
+              <ah-pagination
+                [totalItems]="r.topEmojis.length"
+                [pageSize]="topEmojisPageSize()"
+                [currentPage]="topEmojisPage()"
+                [pageSizeOptions]="topEmojisPageSizeOptions"
+                [compact]="true"
+                itemLabel="emojis"
+                ariaLabel="Top emojis pagination"
+                (pageChange)="topEmojisPage.set($event)"
+                (pageSizeChange)="topEmojisPageSize.set($event)"
+              />
+            }
+          </div>
+        </div>
+
+        <!-- TOP PHRASES (BIGRAMS & TRIGRAMS) + SHARED DOMAINS -->
+        <div class="two-col-grid">
+          <div class="ah-card section-card">
+            <div class="section-header">
+              <div>
+                <h2>🗣️ Top Recurring 2-Word &amp; 3-Word Phrases (N-Grams)</h2>
+                <p>
+                  Signature multi-word expressions repeated across text messages
+                  and transcribed voice notes.
+                </p>
+              </div>
+            </div>
+
+            <div class="leaderboard-list">
+              @for (
+                bg of deep.topBigrams | slice: 0 : 12;
+                track bg.phrase;
+                let i = $index
+              ) {
+                <div class="leaderboard-row">
+                  <span class="rank-num">#{{ i + 1 }}</span>
+                  <div class="word-main">
+                    <div class="word-top-line">
+                      <strong class="word-token">"{{ bg.phrase }}"</strong>
+                      <span class="word-count">{{ bg.count }}×</span>
+                    </div>
+                  </div>
+                </div>
+              } @empty {
+                <p class="muted-note">
+                  Not enough repeated 2-word phrases yet.
+                </p>
+              }
+            </div>
+          </div>
+
+          <div class="ah-card section-card">
+            <div class="section-header">
+              <div>
+                <h2>🔗 Top 3-Word Expressions &amp; Shared Link Domains</h2>
+                <p>
+                  Recurring 3-word collocations and external websites shared in
+                  the chat.
+                </p>
+              </div>
+            </div>
+
+            <div class="leaderboard-list">
+              @for (
+                tg of deep.topTrigrams | slice: 0 : 8;
+                track tg.phrase;
+                let i = $index
+              ) {
+                <div class="leaderboard-row">
+                  <span class="rank-num">#{{ i + 1 }}</span>
+                  <div class="word-main">
+                    <div class="word-top-line">
+                      <strong class="word-token">"{{ tg.phrase }}"</strong>
+                      <span class="word-count">{{ tg.count }}×</span>
+                    </div>
+                  </div>
+                </div>
+              }
+              @if (deep.topDomains.length > 0) {
+                <h3 class="sub-heading">Shared Website Domains</h3>
+                @for (dom of deep.topDomains; track dom.domain) {
+                  <div class="leaderboard-row">
+                    <span class="rank-num">🔗</span>
+                    <div class="word-main">
+                      <div class="word-top-line">
+                        <strong class="word-token">{{ dom.domain }}</strong>
+                        <span class="word-count">{{ dom.count }} link(s)</span>
+                      </div>
+                    </div>
+                  </div>
+                }
+              }
+            </div>
+          </div>
+        </div>
+      </section>
+    }
+
+    <!-- ===================================================================== -->
+    <!-- TAB 4: 7×24 ACTIVITY HEATMAP & STREAKS (USING @ah/ui AhHeatmapGrid)   -->
+    <!-- ===================================================================== -->
+    @if (store.activeTab() === 'heatmap') {
+      <section
+        class="tab-panel"
+        aria-label="7 by 24 Activity Heatmap and Streaks"
+      >
+        <div class="ah-card section-card">
+          <div class="section-header">
+            <div>
+              <h2>Day-of-Week × Hour-of-Day Activity Heatmap (7×24)</h2>
+              <p>
+                Peak messaging window:
+                <strong
+                  >{{ heat.peakDayName }}s around
+                  {{ heat.peakHourLabel }}</strong
+                >
+                · Late-night ratio: <strong>{{ heat.lateNightPct }}%</strong>
+              </p>
+            </div>
+          </div>
+
+          <ah-heatmap-grid
+            [rows]="heatmapRows()"
+            [colLabels]="hoursHeader"
+            [maxValue]="heat.maxCellValue"
+            cornerLabel="Day \ Hr"
+            unitLabel="msgs"
+          />
+        </div>
+
+        <div class="two-col-grid">
+          <div class="ah-card section-card">
+            <div class="section-header">
+              <div>
+                <h2>Activity by Day of Week</h2>
+                <p>Message volume distribution from Monday to Sunday.</p>
+              </div>
+            </div>
+
+            <div class="day-bars-list">
+              @for (d of heat.byDayOfWeek; track d.dayIndex) {
+                <div class="bucket-row">
+                  <span class="bucket-label">{{ d.dayName }}</span>
+                  <ah-progress-bar
+                    [value]="d.count"
+                    [max]="maxDayCount()"
+                    variant="success"
+                    size="md"
+                  />
+                  <span class="bucket-val">{{ d.count }} ({{ d.pct }}%)</span>
+                </div>
+              }
+            </div>
+          </div>
+
+          <div class="ah-card section-card">
+            <div class="section-header">
+              <div>
+                <h2>Streaks &amp; Peak Activity Days</h2>
+                <p>Continuous daily messaging streaks vs. silent gaps.</p>
+              </div>
+            </div>
+
+            <div class="streak-summary-grid">
+              <div class="streak-box">
+                <span class="stat-lbl">Longest Daily Streak</span>
+                <strong class="stat-big emerald-text"
+                  >🔥 {{ streaks.longestStreak.days }} Days</strong
+                >
+                <small
+                  >{{ streaks.longestStreak.startDate }} →
+                  {{ streaks.longestStreak.endDate }} ({{
+                    streaks.longestStreak.totalMessages
+                  }}
+                  msgs)</small
+                >
+              </div>
+              <div class="streak-box">
+                <span class="stat-lbl">Longest Silent Gap</span>
+                <strong class="stat-big"
+                  >{{ streaks.longestSilentGapDays }} Days</strong
+                >
+                <small
+                  >{{ streaks.silentDays }} silent days out of
+                  {{ streaks.totalCalendarDays }}</small
+                >
+              </div>
+            </div>
+
+            <h3 class="sub-heading">Top Peak Volume Days</h3>
+            <div class="peak-days-list">
+              @for (pk of streaks.peakDays; track pk.date; let i = $index) {
+                <div class="peak-day-item">
+                  <span class="rank-num">#{{ i + 1 }}</span>
+                  <strong>{{ pk.date }}</strong>
+                  <span
+                    >{{ pk.messageCount }} messages ·
+                    {{ pk.wordCount | number }} words</span
+                  >
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      </section>
+    }
+
+    <!-- ===================================================================== -->
+    <!-- TAB 5: SHAREABLE "WRAPPED SUMMARY CARD"                               -->
+    <!-- ===================================================================== -->
+    @if (store.activeTab() === 'wrapped') {
+      <section
+        class="tab-panel wrapped-stage"
+        aria-label="Shareable Wrapped Summary Card"
+      >
+        <div class="wrapped-card-frame">
+          <div class="wrapped-top-badge">
+            CHATPULSE · WHATSAPP WRAPPED EDITION
+          </div>
+          <h2 class="wrapped-title" [attr.title]="wrapped.chatTitle">
+            {{ wrapped.chatTitle }}
+          </h2>
+          <p class="wrapped-dates">{{ wrapped.dateRangeLabel }}</p>
+
+          <div class="wrapped-vibe-banner">
+            <span class="vibe-eyebrow">CONVERSATIONAL VIBE ARCHETYPE</span>
+            <strong>✨ {{ wrapped.vibeBadge }}</strong>
+            <small>{{ wrapped.peakTimePersona }}</small>
+          </div>
+
+          <div class="wrapped-stats-grid">
+            <div class="w-stat">
+              <span>TOTAL MESSAGES</span>
+              <strong>{{ wrapped.totalMessages | number }}</strong>
+            </div>
+            <div class="w-stat">
+              <span>TOTAL WORDS</span>
+              <strong>{{ wrapped.totalWords | number }}</strong>
+            </div>
+            <div class="w-stat">
+              <span>LONGEST STREAK</span>
+              <strong>🔥 {{ wrapped.longestStreakDays }} Days</strong>
+            </div>
+            <div class="w-stat">
+              <span>ACTIVE DAYS</span>
+              <strong>{{ wrapped.activeDays }} Days</strong>
+            </div>
+          </div>
+
+          <div class="wrapped-awards-list">
+            <div class="w-award">
+              <span>🏆 Top Chatter</span>
+              <strong
+                >{{ wrapped.topChatter.name }} ({{
+                  wrapped.topChatter.pct
+                }}%)</strong
+              >
+            </div>
+            <div class="w-award">
+              <span>⚡ Fastest Responder</span>
+              <strong
+                >{{ wrapped.fastestResponder.name }} ({{
+                  formatDuration(wrapped.fastestResponder.medianSeconds)
+                }}
+                median)</strong
+              >
+            </div>
+            <div class="w-award">
+              <span>🚀 Session Initiator</span>
+              <strong
+                >{{ wrapped.topInitiator.name }} ({{
+                  wrapped.topInitiator.pct
+                }}%)</strong
+              >
+            </div>
+            <div class="w-award">
+              <span>💬 Double-Text Champion</span>
+              <strong
+                >{{ wrapped.doubleTextChampion.name }} ({{
+                  wrapped.doubleTextChampion.indexPct
+                }}%)</strong
+              >
+            </div>
+          </div>
+
+          <div class="wrapped-signatures">
+            <div>
+              <span class="sig-eyebrow">SIGNATURE EMOJIS</span>
+              <div class="sig-emojis">
+                {{ wrapped.signatureEmojis.join('  ') || '✨' }}
+              </div>
+            </div>
+            <div>
+              <span class="sig-eyebrow">SIGNATURE VOCABULARY</span>
+              <div class="sig-words">
+                @for (w of wrapped.signatureWords; track w) {
+                  <ah-badge variant="info" size="sm">#{{ w }}</ah-badge>
+                }
+              </div>
+            </div>
+          </div>
+
+          <div class="wrapped-actions">
+            <button
+              type="button"
+              ahButton="primary"
+              size="sm"
+              (click)="copyWrappedText()"
+            >
+              @if (store.copiedBadge() === 'wrapped-text') {
+                <span>✅ Copied Summary to Clipboard!</span>
+              } @else {
+                <span>📋 Copy Shareable Wrapped Text</span>
+              }
+            </button>
+            <button
+              type="button"
+              ahButton="secondary"
+              size="sm"
+              (click)="copyWrappedJson()"
+            >
+              @if (store.copiedBadge() === 'wrapped-json') {
+                <span>✅ Copied JSON!</span>
+              } @else {
+                <span>📄 Export Wrapped JSON</span>
+              }
+            </button>
+          </div>
+        </div>
+      </section>
+    }
+
+    <!-- ===================================================================== -->
+    <!-- TAB 6: n8n WEBHOOK AI BEHAVIORAL & RELATIONSHIP ANALYSIS              -->
+    <!-- ===================================================================== -->
+    @if (store.activeTab() === 'ai-insights') {
+      <section
+        class="tab-panel"
+        aria-label="AI Relationship and Behavioral Analysis"
+      >
+        <div class="ah-card section-card ai-control-banner">
+          <div class="ai-banner-info">
+            <span class="ah-eyebrow"
+              >LIVE n8n WEBHOOK · GROQ LPU 120B / LLAMA 3.3 70B</span
+            >
+            <h2>AI Behavioral &amp; Relationship Intelligence</h2>
+            <p>
+              Packages your chat's quantitative metrics alongside
+              <strong
+                >{{ store.aiPayload()?.sampledWindows?.length || 0 }} stratified
+                conversation windows</strong
+              >
+              (Opening, Peak Density, Late-Night, High-Investment &amp; Recent)
+              and sends them to your n8n webhook for psychological &amp;
+              relational synthesis.
+            </p>
+          </div>
+
+          <div class="ai-banner-actions">
+            <button
+              type="button"
+              ahButton="primary"
+              size="sm"
+              [disabled]="store.isAnalyzingAi()"
+              (click)="store.triggerN8nAiAnalysis()"
+            >
+              @if (store.isAnalyzingAi()) {
+                <span>⏳ Running n8n AI Analysis...</span>
+              } @else {
+                <span>🚀 Run n8n Webhook Analysis</span>
+              }
+            </button>
+
+            <button
+              type="button"
+              ahButton="secondary"
+              size="sm"
+              (click)="store.openSettingsModal()"
+            >
+              ⚙️ Webhook Settings
+            </button>
+
+            <button
+              type="button"
+              ahButton="ghost"
+              size="sm"
+              (click)="store.togglePayloadInspector()"
+            >
+              {{
+                store.showPayloadInspector()
+                  ? 'Hide Payload JSON'
+                  : '📄 Inspect Outgoing Payload'
+              }}
+            </button>
+          </div>
+        </div>
+
+        @if (store.aiError()) {
+          <ah-alert variant="danger" title="n8n AI Analysis Error">
+            <span>{{ store.aiError() }}</span>
+          </ah-alert>
+        }
+
+        @if (store.showPayloadInspector()) {
+          <div class="ah-card section-card payload-inspector-card">
+            <div class="section-header">
+              <div>
+                <h3>Outgoing JSON Payload Sent to n8n Webhook</h3>
+                <p>
+                  Endpoint:
+                  <code>{{ store.webhookSettings().webhookUrl }}</code>
+                </p>
+              </div>
+              <button
+                type="button"
+                ahButton="secondary"
+                size="sm"
+                (click)="copyWebhookPayloadJson()"
+              >
+                @if (store.copiedBadge() === 'webhook-payload') {
+                  <span>✅ Copied Payload JSON!</span>
+                } @else {
+                  <span>📋 Copy Payload JSON</span>
+                }
+              </button>
+            </div>
+            <ah-code-block
+              [code]="formattedPayloadJson()"
+              language="json"
+              filename="whatsapp-ai-webhook-payload.json"
+            />
+          </div>
+        }
+
+        @if (!store.aiAnalysis() && !store.isAnalyzingAi()) {
+          <ah-empty-state
+            icon="🧠"
+            eyebrow="AI Relationship Synthesis"
+            [title]="'Ready to Analyze ' + r.chatTitle + ' via n8n AI'"
+            [description]="
+              'Click below to send the sampled conversation payload to ' +
+              store.webhookSettings().webhookUrl +
+              ' and generate attachment styles, reciprocity scores, and green/amber/red behavioral flags.'
+            "
+          >
+            <button
+              type="button"
+              ahButton="primary"
+              (click)="store.triggerN8nAiAnalysis()"
+            >
+              ✨ Start n8n AI Behavioral Analysis
+            </button>
+          </ah-empty-state>
+        }
+
+        @if (store.isAnalyzingAi()) {
+          <div class="ah-card section-card ai-loading-card">
+            <div class="spinner-orb" aria-hidden="true">⏳</div>
+            <h3>
+              Synthesizing Behavioral &amp; Relationship Insights via n8n...
+            </h3>
+            <p>
+              Evaluating
+              {{ store.aiPayload()?.sampledWindows?.length || 5 }} conversation
+              windows and participant turnaround dynamics on Groq LPU
+              (<code>openai/gpt-oss-120b</code>)...
+            </p>
+          </div>
+        }
+
+        @if (store.aiAnalysis(); as ai) {
+          <div class="ah-card section-card">
+            <div class="ai-summary-header">
+              <div class="ai-summary-copy">
+                <ah-badge variant="success" [dot]="true" size="sm">
+                  ⚡ {{ ai.provider }}
+                </ah-badge>
+                <h3 class="ai-dynamic-title">
+                  {{ ai.relationshipDynamicTitle }}
+                </h3>
+                <p class="ai-exec-summary">{{ ai.executiveSummary }}</p>
+              </div>
+
+              <div class="ai-gauges-row">
+                <div class="ai-gauge-box">
+                  <span class="gauge-lbl">Reciprocity</span>
+                  <strong class="gauge-num emerald-text"
+                    >{{ ai.reciprocityScore }}<small>/100</small></strong
+                  >
+                </div>
+                <div class="ai-gauge-box">
+                  <span class="gauge-lbl">Emotional Safety</span>
+                  <strong class="gauge-num cyan-text"
+                    >{{ ai.emotionalSafetyScore }}<small>/100</small></strong
+                  >
+                </div>
+                <div class="ai-gauge-box">
+                  <span class="gauge-lbl">Velocity</span>
+                  <strong class="gauge-num"
+                    >{{ ai.engagementVelocityScore }}<small>/100</small></strong
+                  >
+                </div>
+              </div>
+            </div>
+
+            <div class="mutual-interest-grid">
+              <div class="mi-item">
+                <span class="mi-label">Balance Equilibrium</span>
+                <strong>{{ ai.mutualInterestBreakdown.balanceLabel }}</strong>
+              </div>
+              <div class="mi-item">
+                <span class="mi-label">Initiation Dynamic</span>
+                <p>{{ ai.mutualInterestBreakdown.initiationAnalysis }}</p>
+              </div>
+              <div class="mi-item">
+                <span class="mi-label">Response Latency Dynamic</span>
+                <p>{{ ai.mutualInterestBreakdown.responseLatencyAnalysis }}</p>
+              </div>
+              <div class="mi-item">
+                <span class="mi-label">Investment Depth</span>
+                <p>{{ ai.mutualInterestBreakdown.investmentDepthAnalysis }}</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="two-col-grid">
+            @for (prof of ai.participantProfiles; track prof.name) {
+              <article class="ah-card section-card profile-card">
+                <span class="ah-eyebrow">PARTICIPANT BEHAVIORAL ARCHETYPE</span>
+                <h3>{{ prof.name }}</h3>
+                <div class="archetype-badges">
+                  <ah-badge variant="success" size="sm">{{
+                    prof.attachmentStyle
+                  }}</ah-badge>
+                  <ah-badge variant="info" size="sm">{{
+                    prof.communicationArchetype
+                  }}</ah-badge>
+                </div>
+                <p class="cadence-desc">{{ prof.emotionalCadence }}</p>
+                <ul class="trait-list">
+                  @for (t of prof.dominantTraits; track t) {
+                    <li>{{ t }}</li>
+                  }
+                </ul>
+              </article>
+            }
+          </div>
+
+          <div class="two-col-grid">
+            <div class="ah-card section-card">
+              <div class="section-header">
+                <div>
+                  <h2>Conversational Green, Amber &amp; Red Flags</h2>
+                  <p>
+                    Evidence-backed relational signals detected in transcript
+                    dynamics.
+                  </p>
+                </div>
+              </div>
+
+              <div class="flags-list">
+                @for (flag of ai.flags; track flag.title) {
+                  <div class="flag-card" [attr.data-flag]="flag.type">
+                    <div class="flag-head">
+                      <strong>{{ flag.title }}</strong>
+                      <ah-badge
+                        [variant]="
+                          flag.type === 'green'
+                            ? 'success'
+                            : flag.type === 'amber'
+                              ? 'warning'
+                              : 'danger'
+                        "
+                        size="sm"
+                      >
+                        {{ flag.type | uppercase }} FLAG
+                      </ah-badge>
+                    </div>
+                    <p class="flag-evidence">
+                      <strong>Evidence:</strong> {{ flag.evidence }}
+                    </p>
+                    <p class="flag-impact">
+                      <strong>Impact:</strong> {{ flag.impact }}
+                    </p>
+                  </div>
+                }
+              </div>
+            </div>
+
+            <div class="ah-card section-card">
+              <div class="section-header">
+                <div>
+                  <h2>Repair Style &amp; Coaching Recommendations</h2>
+                  <p>
+                    Conflict resolution patterns and tailored communication
+                    habits.
+                  </p>
+                </div>
+              </div>
+
+              <div class="repair-box">
+                <span class="stat-lbl">CONFLICT &amp; REPAIR CADENCE</span>
+                <p>{{ ai.conflictAndRepairStyle }}</p>
+              </div>
+
+              <h3 class="sub-heading">Actionable Recommendations</h3>
+              <ul class="recommendations-list">
+                @for (rec of ai.recommendations; track rec) {
+                  <li>{{ rec }}</li>
+                }
+              </ul>
+            </div>
+          </div>
+        }
+      </section>
+    }
+
+    <!-- ===================================================================== -->
+    <!-- TAB 7: PARSED TRANSCRIPT EXPLORER                                     -->
+    <!-- ===================================================================== -->
+    @if (store.activeTab() === 'transcript') {
+      <section class="tab-panel" aria-label="Parsed Transcript Explorer">
+        <div class="ah-card section-card">
+          <div class="section-header">
+            <div>
+              <h2>Parsed Transcript Explorer</h2>
+              <p>
+                Showing {{ store.filteredTranscriptMessages().length }} of
+                {{ r.totalMessages | number }} parsed messages ({{
+                  store.parsedTranscript()?.multilineContinuationCount || 0
+                }}
+                multi-line continuations stitched).
+              </p>
+            </div>
+          </div>
+
+          <div class="transcript-filters-bar">
+            <div class="search-input-wrap">
+              <span class="search-glyph" aria-hidden="true">🔍</span>
+              <input
+                type="text"
+                class="text-input text-input--search"
+                placeholder="Search messages, spoken audio transcripts, translations, sender, or date..."
+                [ngModel]="store.transcriptSearch()"
+                (ngModelChange)="onTranscriptSearchChange($event)"
+                aria-label="Search conversation messages"
+              />
+              @if (store.transcriptSearch()) {
+                <button
+                  type="button"
+                  class="input-clear-btn"
+                  (click)="clearTranscriptSearch()"
+                  title="Clear search"
+                  aria-label="Clear search query"
+                >
+                  ✕
+                </button>
+              }
+            </div>
+
+            <ah-select
+              class="participant-filter-select"
+              [options]="participantSelectOptions()"
+              [value]="store.transcriptParticipantFilter()"
+              (valueChange)="onParticipantFilterChange($event)"
+              size="sm"
+              placeholder="Filter by participant"
+            />
+
+            <ah-segmented-control
+              label="Transcript message type filter"
+              [options]="transcriptTypeOptions"
+              [value]="store.transcriptTypeFilter()"
+              (valueChange)="setTranscriptType($event)"
+            />
+          </div>
+
+          @if (store.transcriptSearch()) {
+            <div class="search-active-bar">
+              <span class="search-active-pill">
+                🔍 Filtered by: "<strong>{{ store.transcriptSearch() }}</strong
+                >" ({{ store.filteredTranscriptMessages().length }} match{{
+                  store.filteredTranscriptMessages().length === 1 ? '' : 'es'
+                }})
+              </span>
+              <button
+                type="button"
+                ahButton="ghost"
+                size="sm"
+                (click)="clearTranscriptSearch()"
+              >
+                Clear Filter ✕
+              </button>
+            </div>
+          }
+
+          <ah-pagination
+            [totalItems]="store.filteredTranscriptMessages().length"
+            [pageSize]="transcriptPageSize()"
+            [currentPage]="transcriptPage()"
+            [pageSizeOptions]="transcriptPageSizeOptions"
+            itemLabel="messages"
+            ariaLabel="Transcript messages pagination"
+            (pageChange)="transcriptPage.set($event)"
+            (pageSizeChange)="transcriptPageSize.set($event)"
+          />
+
+          <div class="transcript-messages-list">
+            @for (msg of paginatedTranscriptMessages(); track msg.id) {
+              <article
+                class="msg-bubble-row"
+                [class.media-msg]="msg.isMedia || msg.isDeleted"
+              >
+                <div class="msg-meta">
+                  <strong
+                    [style.color]="participantColor(msg.sender)"
+                    [attr.title]="msg.sender"
+                  >
+                    {{ msg.sender }}
+                  </strong>
+                  <span class="msg-time"
+                    >{{ msg.isoDate }} ·
+                    {{ msg.hour | number: '2.0-0' }}:00</span
+                  >
+                  @if (msg.isMultiline) {
+                    <ah-badge variant="neutral" size="sm">Multi-line</ah-badge>
+                  }
+                  @if (msg.isMedia) {
+                    <ah-badge
+                      [variant]="
+                        msg.mediaCategory === 'audio' ? 'success' : 'info'
+                      "
+                      size="sm"
+                    >
+                      @if (msg.mediaCategory === 'audio') {
+                        🎙️ Voice Note ({{
+                          formatDuration(msg.audioDurationSeconds || 10)
+                        }})
+                      } @else if (msg.mediaCategory === 'image') {
+                        🖼️ Photo
+                      } @else if (msg.mediaCategory === 'video') {
+                        🎬 Video
+                      } @else if (
+                        msg.mediaCategory === 'sticker' ||
+                        msg.mediaCategory === 'gif'
+                      ) {
+                        ✨ Sticker / GIF
+                      } @else if (msg.mediaCategory === 'document') {
+                        📄 Document
+                      } @else {
+                        📎 Media
+                      }
+                    </ah-badge>
+                  }
+                  @if (msg.isDeleted) {
+                    <ah-badge variant="danger" size="sm">Deleted</ah-badge>
+                  }
+                </div>
+                <p class="msg-text" dir="auto">{{ msg.text }}</p>
+                @if (msg.audioTranscript) {
+                  <div class="msg-audio-transcript">
+                    <div class="msg-audio-head">
+                      <ah-badge variant="accent" size="sm"
+                        >🗣️ Spoken Transcript</ah-badge
+                      >
+                      @if (msg.audioLanguage) {
+                        <ah-badge variant="info" size="sm"
+                          >🌐 {{ msg.audioLanguage }}</ah-badge
+                        >
+                      }
+                    </div>
+                    <p class="msg-audio-body" dir="auto">
+                      "{{ msg.audioTranscript }}"
+                    </p>
+                  </div>
+                }
+                @if (
+                  msg.audioTranslation &&
+                  msg.audioTranslation !== msg.audioTranscript
+                ) {
+                  <div class="msg-audio-transcript">
+                    <div class="msg-audio-head">
+                      <ah-badge variant="success" size="sm"
+                        >🌐 English Translation</ah-badge
+                      >
+                    </div>
+                    <p class="msg-audio-body" dir="auto">
+                      "{{ msg.audioTranslation }}"
+                    </p>
+                  </div>
+                }
+              </article>
+            } @empty {
+              <ah-empty-state
+                icon="🔍"
+                title="No matching messages"
+                description="Try clearing the search query or switching the participant/type filter."
+              />
+            }
+          </div>
+
+          @if (
+            store.filteredTranscriptMessages().length > transcriptPageSize()
+          ) {
+            <ah-pagination
+              [totalItems]="store.filteredTranscriptMessages().length"
+              [pageSize]="transcriptPageSize()"
+              [currentPage]="transcriptPage()"
+              [pageSizeOptions]="transcriptPageSizeOptions"
+              itemLabel="messages"
+              ariaLabel="Transcript messages bottom pagination"
+              (pageChange)="transcriptPage.set($event)"
+              (pageSizeChange)="transcriptPageSize.set($event)"
+            />
+          }
+        </div>
+      </section>
+    }
+  }
+
+  <!-- ===================================================================== -->
+  <!-- SECURE n8n WEBHOOK SETTINGS MODAL (USING @ah/ui AhModal)              -->
+  <!-- ===================================================================== -->
+  <ah-modal
+    [open]="store.isSettingsOpen()"
+    eyebrow="LIVE AI WORKFLOW INTEGRATION"
+    title="n8n Webhook Configuration"
+    size="md"
+    (closed)="store.closeSettingsModal()"
+  >
+    <div class="settings-modal-form">
+      <div class="field-group">
+        <span class="field-label">Quick Endpoint Presets</span>
+        <ah-segmented-control
+          label="n8n Webhook Endpoint Preset"
+          [options]="endpointPresetOptions"
+          [value]="activeEndpointPreset()"
+          (valueChange)="store.setWebhookEndpointPreset($event)"
+        />
+      </div>
+
+      <label class="field-group">
+        <span class="field-label">n8n Webhook POST Endpoint URL</span>
+        <input
+          type="url"
+          class="text-input"
+          [class.is-invalid]="webhookUrlError()"
+          placeholder="https://your-tunnel.ngrok-free.dev/webhook/whatsapp-analyzer"
+          [ngModel]="store.webhookSettings().webhookUrl"
+          (ngModelChange)="updateWebhookUrl($event)"
+          aria-label="n8n webhook URL"
+          [attr.aria-invalid]="webhookUrlError() ? 'true' : null"
+        />
+        @if (webhookUrlError()) {
+          <span class="field-error-text" role="alert"
+            >⚠️ {{ webhookUrlError() }}</span
+          >
+        } @else {
+          <small class="field-hint">
+            Receives <code>action: "analyze_whatsapp_chat"</code> with
+            quantitative metrics and 5 stratified conversation windows.
+          </small>
+        }
+      </label>
+
+      <div class="two-col-grid">
+        <label class="field-group">
+          <span class="field-label">Optional Auth Header Name</span>
+          <input
+            type="text"
+            class="text-input"
+            [class.is-invalid]="authHeaderError()"
+            placeholder="e.g. X-Webhook-Secret"
+            [ngModel]="store.webhookSettings().authHeaderName"
+            (ngModelChange)="updateAuthHeaderName($event)"
+          />
+        </label>
+
+        <label class="field-group">
+          <span class="field-label">Optional Auth Header Value</span>
+          <input
+            type="password"
+            class="text-input"
+            [class.is-invalid]="authHeaderError()"
+            placeholder="Bearer ... or secret token"
+            [ngModel]="store.webhookSettings().authHeaderValue"
+            (ngModelChange)="updateAuthHeaderValue($event)"
+          />
+        </label>
+      </div>
+      @if (authHeaderError()) {
+        <span class="field-error-text" role="alert"
+          >⚠️ {{ authHeaderError() }}</span
+        >
+      }
+
+      <div class="field-group">
+        <span class="field-label"
+          >Sampled Excerpt Budget (Total Messages Across 5 Windows)</span
+        >
+        <ah-segmented-control
+          label="Sampled excerpt count"
+          [options]="sampleSizeSegmentOptions"
+          [value]="selectedSampleSizeStr()"
+          (valueChange)="onSampleSizeSegmentChange($event)"
+        />
+      </div>
+
+      @if (store.webhookTestStatus()) {
+        <ah-alert
+          [variant]="
+            store.webhookSettings().lastTestOk === true ? 'success' : 'danger'
+          "
+        >
+          <span>{{ store.webhookTestStatus() }}</span>
+        </ah-alert>
+      }
+    </div>
+
+    <div modal-actions class="modal-actions-row">
+      <button
+        type="button"
+        ahButton="secondary"
+        size="sm"
+        [disabled]="store.isTestingWebhook() || hasSettingsErrors()"
+        (click)="store.testWebhookConnection()"
+      >
+        @if (store.isTestingWebhook()) {
+          <span>⏳ Pinging n8n...</span>
+        } @else {
+          <span>🔌 Test Webhook Connection</span>
+        }
+      </button>
+
+      <button
+        type="button"
+        ahButton="primary"
+        size="sm"
+        [disabled]="hasSettingsErrors()"
+        (click)="store.closeSettingsModal()"
+      >
+        <span>Done &amp; Save</span>
+      </button>
+    </div>
+  </ah-modal>
+
+  <!-- ===================================================================== -->
+  <!-- SAVED CONVERSATIONS VAULT MODAL (INDEXEDDB)                           -->
+  <!-- ===================================================================== -->
+  <ah-modal
+    [open]="store.isVaultModalOpen()"
+    eyebrow="CLIENT-SIDE INDEXEDDB PERSISTENCE"
+    title="Saved Conversations Vault"
+    size="lg"
+    (closed)="store.closeVaultModal()"
+  >
+    @if (store.savedConversations().length > 0) {
+      <div class="vault-modal-list">
+        @for (conv of store.savedConversations(); track conv.id) {
+          <article
+            class="vault-conv-card"
+            [class.vault-conv-card--active]="
+              conv.id === store.activeConversationId()
+            "
+          >
+            <div class="vault-conv-top">
+              <div class="active-chat-identity">
+                <div class="avatar-stack">
+                  @for (p of conv.participants | slice: 0 : 3; track p.name) {
+                    <span
+                      class="mini-avatar"
+                      [style.background]="p.accentColor"
+                      [attr.title]="p.name"
+                    >
+                      {{ p.initials }}
+                    </span>
+                  }
+                </div>
+                <div class="chat-identity-text">
+                  <strong class="chat-main-title" dir="auto">
+                    {{ conv.chatTitle }}
+                    @if (conv.id === store.activeConversationId()) {
+                      <ah-badge variant="success" [dot]="true" size="sm"
+                        >Active</ah-badge
+                      >
+                    }
+                  </strong>
+                  <span class="chat-sub-meta">
+                    {{ conv.firstMessageDate }} → {{ conv.lastMessageDate }} ·
+                    {{ conv.fileName }}
+                  </span>
+                </div>
+              </div>
+
+              <div class="vault-conv-badges">
+                <ah-badge variant="success" size="sm">
+                  🔬 {{ conv.overallChemistryScore }}/100
+                </ah-badge>
+                @if (conv.hasAiAnalysis) {
+                  <ah-badge variant="accent" size="sm">🧠 AI Report</ah-badge>
+                }
+                @if (conv.totalVoiceNotes > 0) {
+                  <ah-badge variant="info" size="sm">
+                    🎙️ {{ conv.transcribedVoiceNotes }}/{{
+                      conv.totalVoiceNotes
+                    }}
+                    Read
+                  </ah-badge>
+                }
+              </div>
+            </div>
+
+            <div class="vault-conv-metrics">
+              <span class="basis-pill"
+                >💬
+                <strong>{{ conv.totalMessages | number }}</strong> msgs</span
+              >
+              <span class="basis-pill">
+                📝 <strong>{{ conv.totalWords | number }}</strong> words
+                @if (conv.spokenWordsAdded > 0) {
+                  (+{{ conv.spokenWordsAdded | number }} spoken)
+                }
+              </span>
+              @if (conv.totalMediaFiles > 0) {
+                <span class="basis-pill"
+                  >🎬 <strong>{{ conv.totalMediaFiles }}</strong> media</span
+                >
+              }
+              <span class="basis-pill"
+                >💾 {{ formatBytes(conv.estimatedSizeBytes) }}</span
+              >
+            </div>
+
+            <div class="vault-conv-foot">
+              <span class="vault-saved-time">
+                🕒 {{ formatSavedTimestamp(conv.updatedAtIso) }}
+              </span>
+
+              <div class="vault-conv-actions">
+                @if (conv.id !== store.activeConversationId()) {
+                  <button
+                    type="button"
+                    ahButton="primary"
+                    size="sm"
+                    (click)="store.openSavedConversation(conv.id)"
+                  >
+                    📂 Open
+                  </button>
+                }
+                <button
+                  type="button"
+                  ahButton="ghost"
+                  size="sm"
+                  (click)="store.deleteSavedConversation(conv.id)"
+                  title="Delete from IndexedDB"
+                >
+                  🗑️ Delete
+                </button>
+              </div>
+            </div>
+          </article>
+        }
+      </div>
+    } @else {
+      <ah-empty-state
+        icon="🗄️"
+        title="No Conversations Saved in IndexedDB Yet"
+        description="Upload a WhatsApp .zip archive, .txt transcript, or extracted Google Drive folder—ChatPulse will automatically persist the parsed transcript, voice notes, Whisper transcriptions, and AI insights in your browser's IndexedDB."
+      />
+    }
+
+    <div modal-actions class="modal-actions-row">
+      @if (store.savedConversations().length > 0) {
+        <button
+          type="button"
+          ahButton="ghost"
+          size="sm"
+          (click)="store.clearAllSavedConversations()"
+        >
+          🧹 Clear All ({{ store.savedConversations().length }})
+        </button>
+      }
+      <button
+        type="button"
+        ahButton="secondary"
+        size="sm"
+        (click)="store.closeVaultModal(); globalFilePicker.click()"
+      >
+        📂 Upload New Chat
+      </button>
+      <button
+        type="button"
+        ahButton="primary"
+        size="sm"
+        (click)="store.closeVaultModal()"
+      >
+        Done
+      </button>
+    </div>
+  </ah-modal>
+</div>

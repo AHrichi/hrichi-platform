@@ -1,0 +1,371 @@
+[
+  {
+    "id": "WhatsAppPulseAI1",
+    "name": "ChatPulse WhatsApp Behavioral & Relationship Analyzer",
+    "active": true,
+    "isArchived": false,
+    "nodes": [
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "whatsapp-analyzer",
+          "responseMode": "responseNode",
+          "options": {
+            "responseHeaders": {
+              "entries": [
+                {
+                  "name": "Access-Control-Allow-Origin",
+                  "value": "*"
+                },
+                {
+                  "name": "Access-Control-Allow-Headers",
+                  "value": "*"
+                },
+                {
+                  "name": "Access-Control-Allow-Methods",
+                  "value": "POST, OPTIONS"
+                }
+              ]
+            }
+          }
+        },
+        "id": "wa-webhook-in",
+        "name": "Webhook Ingest",
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [100, 300],
+        "webhookId": "whatsapp-analyzer-webhook-id"
+      },
+      {
+        "parameters": {
+          "jsCode": "\nconst body = $input.item.json.body || $input.item.json || {};\nconst action = body.action || 'analyze_whatsapp_chat';\n\nif (action === 'ping' || action === 'ping_whatsapp_analyzer') {\n  return [{\n    json: {\n      action: 'ping',\n      isPing: true,\n      ok: true,\n      providers: [\n        'Groq Whisper (whisper-large-v3-turbo)',\n        'Groq LPU (openai/gpt-oss-120b)',\n        'Groq LPU (llama-3.3-70b-versatile)'\n      ]\n    }\n  }];\n}\n\nif (action === 'transcribe_whatsapp_audio') {\n  const chatTitle = String(body.chatTitle || 'WhatsApp Conversation').trim();\n  const audioFiles = Array.isArray(body.audioFiles) ? body.audioFiles.slice(0, 5) : [];\n\n  if (audioFiles.length === 0) {\n    return [{\n      json: {\n        action: 'ping',\n        isPing: true,\n        isEmptyAudioBatch: true,\n        ok: true,\n        providers: ['Groq Whisper (whisper-large-v3-turbo)']\n      }\n    }];\n  }\n\n  const outItems = [];\n  for (let idx = 0; idx < audioFiles.length; idx++) {\n    const af = audioFiles[idx] || {};\n    const rawB64 = String(af.base64Data || '').trim();\n    // Clean any data URL prefix if present\n    const cleanB64 = rawB64.includes(',') ? rawB64.split(',').pop() : rawB64;\n\n    let binaryData = null;\n    if (cleanB64 && cleanB64.length > 64) {\n      try {\n        const buf = Buffer.from(cleanB64, 'base64');\n        if (buf.length > 32) {\n          const origName = String(af.fileName || ('voice-note-' + (idx + 1) + '.ogg'));\n          // Groq Whisper supports: flac, mp3, mp4, mpeg, mpga, m4a, ogg, wav, webm.\n          // WhatsApp .opus files are Ogg Opus containers, so rename .opus -> .ogg for Whisper API compatibility.\n          const whisperName = origName\n            .replace(/\\.opus$/i, '.ogg')\n            .replace(/\\.aac$/i, '.m4a')\n            .replace(/\\.3gp$/i, '.mp4');\n          const ext = (whisperName.split('.').pop() || 'ogg').toLowerCase();\n          const mimeMap = {\n            ogg: 'audio/ogg',\n            mp3: 'audio/mpeg',\n            m4a: 'audio/mp4',\n            mp4: 'audio/mp4',\n            wav: 'audio/wav',\n            webm: 'audio/webm',\n            flac: 'audio/flac'\n          };\n          const whisperMime = mimeMap[ext] || 'audio/ogg';\n          binaryData = await this.helpers.prepareBinaryData(buf, whisperName, whisperMime);\n        }\n      } catch (e) {\n        binaryData = null;\n      }\n    }\n\n    const itemObj = {\n      json: {\n        action: binaryData ? 'transcribe_whatsapp_audio_whisper' : 'transcribe_whatsapp_audio_context',\n        isPing: false,\n        isAudioTranscription: true,\n        hasBinary: Boolean(binaryData),\n        chatTitle,\n        index: idx,\n        fileName: af.fileName || ('voice-note-' + (idx + 1) + '.opus'),\n        messageId: af.messageId || ('msg-' + (idx + 1)),\n        sender: af.sender || 'Participant',\n        isoDate: af.isoDate || '',\n        durationSeconds: Number(af.durationSeconds) || 8,\n        mimeType: af.mimeType || 'audio/ogg',\n        contextBefore: af.contextBefore || '',\n        contextAfter: af.contextAfter || ''\n      }\n    };\n\n    if (binaryData) {\n      itemObj.binary = {\n        audioFile: binaryData\n      };\n    }\n\n    outItems.push(itemObj);\n  }\n\n  return outItems;\n}\n\nconst chatTitle = String(body.chatTitle || 'WhatsApp Conversation').trim();\nconst metrics = body.quantitativeMetrics || {};\nconst windows = Array.isArray(body.sampledWindows) ? body.sampledWindows : [];\n\nlet excerptsText = '';\nwindows.forEach((win, idx) => {\n  excerptsText += '\\n--- WINDOW ' + (idx + 1) + ': ' + (win.label || win.phase || 'Sample') + ' (' + (win.startDate || '') + ') ---\\n';\n  const msgs = Array.isArray(win.messages) ? win.messages : [];\n  msgs.forEach((m) => {\n    excerptsText += '[' + (m.timestamp || '') + '] ' + (m.sender || 'User') + ': ' + (m.text || '') + '\\n';\n  });\n});\n\nconst systemPrompt =\n  'You are ChatPulse AI, a senior behavioral psychologist, computational linguist, and relationship dynamics analyst.\\n' +\n  'Analyze the provided WhatsApp quantitative telemetry and stratified conversation excerpts.\\n' +\n  'Ground every insight in the actual participant names, quantitative metrics (message share, reply latency, initiation share, double-texting index, late-night ratio, top emojis/words, and transcribed voice notes), and real message quotes/tones.\\n\\n' +\n  'Respond with STRICT VALID JSON ONLY matching this exact schema:\\n' +\n  '{\\n' +\n  '  \"executiveSummary\": \"3-4 sentence deep synthesis of the relationship dynamic, communication rhythm, and emotional tone\",\\n' +\n  '  \"relationshipDynamicTitle\": \"Short evocative archetype title (e.g. High-Velocity Mutual Synergy, Secure Co-Founder Wavelength, Pursuer-Distancer Cadence)\",\\n' +\n  '  \"reciprocityScore\": 88,\\n' +\n  '  \"emotionalSafetyScore\": 91,\\n' +\n  '  \"engagementVelocityScore\": 85,\\n' +\n  '  \"mutualInterestBreakdown\": {\\n' +\n  '    \"balanceLabel\": \"Concise equilibrium label citing percentages\",\\n' +\n  '    \"initiationAnalysis\": \"Analysis of who starts conversations after gaps and what it signals\",\\n' +\n  '    \"responseLatencyAnalysis\": \"Analysis of median vs mean reply speeds and double-text bursts\",\\n' +\n  '    \"investmentDepthAnalysis\": \"Analysis of words per message, questions asked, voice note investment, and emotional/topical depth\"\\n' +\n  '  },\\n' +\n  '  \"participantProfiles\": [\\n' +\n  '    {\\n' +\n  '      \"name\": \"Exact Participant Name\",\\n' +\n  '      \"attachmentStyle\": \"Attachment style label (e.g. Secure-Autonomous, Anxious-Preoccupied Pursuer, Dismissive-Independent)\",\\n' +\n  '      \"communicationArchetype\": \"Archetype title (e.g. The Expressive Catalyst, The Grounded Anchor)\",\\n' +\n  '      \"dominantTraits\": [\"Trait 1 citing metrics/quotes\", \"Trait 2\", \"Trait 3\", \"Trait 4\"],\\n' +\n  '      \"emotionalCadence\": \"1-2 sentence description of their expressive tone, emoji usage, and pacing\"\\n' +\n  '    }\\n' +\n  '  ],\\n' +\n  '  \"flags\": [\\n' +\n  '    {\\n' +\n  '      \"type\": \"green\",\\n' +\n  '      \"title\": \"Specific behavioral observation title\",\\n' +\n  '      \"evidence\": \"Concrete evidence from the metrics or sampled messages\",\\n' +\n  '      \"impact\": \"How this pattern affects relational trust and momentum\"\\n' +\n  '    }\\n' +\n  '  ],\\n' +\n  '  \"conflictAndRepairStyle\": \"2-3 sentence analysis of how tension, delays, or misunderstandings are navigated and repaired\",\\n' +\n  '  \"recommendations\": [\\n' +\n  '    \"Specific, actionable recommendation 1 tailored to the participants\",\\n' +\n  '    \"Specific, actionable recommendation 2\",\\n' +\n  '    \"Specific, actionable recommendation 3\"\\n' +\n  '  ]\\n' +\n  '}';\n\nconst userPrompt =\n  'CHAT TITLE: ' + chatTitle + '\\n\\n' +\n  'QUANTITATIVE TELEMETRY:\\n' + JSON.stringify(metrics, null, 2) + '\\n\\n' +\n  'STRATIFIED CONVERSATION EXCERPTS:\\n' + (excerptsText || 'No text excerpts provided.');\n\nreturn [{\n  json: {\n    action: 'analyze_whatsapp_chat',\n    isPing: false,\n    isAudioTranscription: false,\n    chatTitle,\n    groqPrimaryBody: {\n      model: 'openai/gpt-oss-120b',\n      messages: [\n        { role: 'system', content: systemPrompt },\n        { role: 'user', content: userPrompt }\n      ],\n      temperature: 0.2,\n      response_format: { type: 'json_object' }\n    },\n    groqFailoverBody: {\n      model: 'llama-3.3-70b-versatile',\n      messages: [\n        { role: 'system', content: systemPrompt },\n        { role: 'user', content: userPrompt }\n      ],\n      temperature: 0.2,\n      response_format: { type: 'json_object' }\n    }\n  }\n}];\n"
+        },
+        "id": "wa-format-prompt",
+        "name": "Format WhatsApp AI Prompt",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [320, 300]
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true
+            },
+            "conditions": [
+              {
+                "leftValue": "={{ $json.action }}",
+                "rightValue": "ping",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals"
+                }
+              }
+            ],
+            "combinator": "and"
+          }
+        },
+        "id": "wa-is-ping",
+        "name": "Is Ping Action?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2,
+        "position": [520, 300]
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true
+            },
+            "conditions": [
+              {
+                "leftValue": "={{ $json.action }}",
+                "rightValue": "transcribe_whatsapp_audio_whisper",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals"
+                }
+              }
+            ],
+            "combinator": "and"
+          }
+        },
+        "id": "wa-is-whisper",
+        "name": "Has Audio Binary for Whisper?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2,
+        "position": [720, 380]
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.groq.com/openai/v1/audio/transcriptions",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "groqApi",
+          "sendBody": true,
+          "contentType": "multipart-form-data",
+          "bodyParameters": {
+            "parameters": [
+              {
+                "parameterType": "formBinaryData",
+                "name": "file",
+                "inputDataFieldName": "audioFile"
+              },
+              {
+                "name": "model",
+                "value": "whisper-large-v3-turbo"
+              },
+              {
+                "name": "response_format",
+                "value": "verbose_json"
+              }
+            ]
+          },
+          "options": {
+            "timeout": 40000
+          }
+        },
+        "id": "wa-groq-whisper",
+        "name": "Groq Whisper STT",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [940, 260],
+        "onError": "continueRegularOutput",
+        "credentials": {
+          "groqApi": {
+            "id": "jVafRHRNVmsszaE8",
+            "name": "Groq"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "mode": "runOnceForAllItems",
+          "jsCode": "\nconst origItems = $('Format WhatsApp AI Prompt').all();\nconst currentInputs = $input.all();\n\n// Check if this is a normal chat analysis (not audio transcription)\nif (origItems.length === 1 && !origItems[0].json.isAudioTranscription) {\n  return origItems;\n}\n\nconst chatTitle = origItems[0]?.json?.chatTitle || 'WhatsApp Conversation';\nconst whisperFallbackTranscripts = {};\nconst whisperDetails = {};\n\nconst descriptors = origItems.map((item, idx) => {\n  const meta = item.json || {};\n  const inputJson = currentInputs[idx]?.json || {};\n  const whisperText = typeof inputJson.text === 'string' ? inputJson.text.trim() : '';\n  const whisperLang = typeof inputJson.language === 'string' ? inputJson.language : '';\n\n  if (whisperText) {\n    whisperFallbackTranscripts[meta.fileName] = whisperText;\n    whisperDetails[meta.fileName] = {\n      transcript: whisperText,\n      translation: '',\n      language: whisperLang || 'Auto',\n      source: 'whisper-large-v3-turbo'\n    };\n  }\n\n  return {\n    fileName: meta.fileName,\n    messageId: meta.messageId,\n    sender: meta.sender,\n    isoDate: meta.isoDate,\n    durationSeconds: meta.durationSeconds,\n    whisperRawTranscript: whisperText || null,\n    whisperDetectedLanguage: whisperLang || null,\n    contextBefore: meta.contextBefore || '',\n    contextAfter: meta.contextAfter || ''\n  };\n});\n\nconst hasAnyWhisper = Object.keys(whisperFallbackTranscripts).length > 0;\n\nconst sttSystemPrompt =\n  'You are ChatPulse Multilingual Audio & Translation Intelligence.\\n' +\n  'For each WhatsApp voice note in the batch:\\n' +\n  '1. If \"whisperRawTranscript\" is present, preserve its genuine spoken meaning while cleaning obvious phonetic/STT glitches using the surrounding chat context.\\n' +\n  '2. If \"whisperRawTranscript\" is null (e.g. text-only export without binary audio), infer a natural spoken transcript matching the speaker, duration (~2.4 words/sec), and contextBefore/contextAfter.\\n' +\n  '3. Provide an accurate English \"translation\" whenever the voice note is in Arabic, Tunisian Derja, French, Spanish, or any non-English language (if already English, set \"translation\" to the clean English text).\\n' +\n  '4. Identify \"language\" (e.g. \"Arabic / Derja\", \"French\", \"English\", \"Mixed FR/AR\") and emotional \"tone\" (e.g. \"Warm\", \"Playful\", \"Direct\", \"Reassuring\", \"Expressive\").\\n\\n' +\n  'Respond with STRICT VALID JSON ONLY in this exact format:\\n' +\n  '{\\n' +\n  '  \"items\": {\\n' +\n  '    \"exact_filename.opus\": {\\n' +\n  '      \"transcript\": \"Spoken transcript in original language\",\\n' +\n  '      \"translation\": \"English translation of what was said\",\\n' +\n  '      \"language\": \"Detected language/dialect\",\\n' +\n  '      \"tone\": \"Emotional tone\"\\n' +\n  '    }\\n' +\n  '  }\\n' +\n  '}';\n\nconst sttUserPrompt =\n  'CHAT TITLE: ' + chatTitle + '\\n\\n' +\n  'VOICE NOTE BATCH:\\n' + JSON.stringify(descriptors, null, 2);\n\nreturn [{\n  json: {\n    action: 'transcribe_whatsapp_audio',\n    isPing: false,\n    isAudioTranscription: true,\n    hasAnyWhisper,\n    whisperFallbackTranscripts,\n    whisperDetails,\n    chatTitle,\n    groqPrimaryBody: {\n      model: 'llama-3.3-70b-versatile',\n      messages: [\n        { role: 'system', content: sttSystemPrompt },\n        { role: 'user', content: sttUserPrompt }\n      ],\n      temperature: 0.15,\n      response_format: { type: 'json_object' }\n    },\n    groqFailoverBody: {\n      model: 'openai/gpt-oss-120b',\n      messages: [\n        { role: 'system', content: sttSystemPrompt },\n        { role: 'user', content: sttUserPrompt }\n      ],\n      temperature: 0.2,\n      response_format: { type: 'json_object' }\n    }\n  }\n}];\n"
+        },
+        "id": "wa-build-enrichment",
+        "name": "Build Audio & Chat AI Prompt",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [1160, 380]
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.groq.com/openai/v1/chat/completions",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "groqApi",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={{ JSON.stringify($json.groqPrimaryBody) }}",
+          "options": {
+            "timeout": 45000
+          }
+        },
+        "id": "wa-primary-groq",
+        "name": "Primary AI: Groq 120B",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [1380, 280],
+        "onError": "continueErrorOutput",
+        "credentials": {
+          "groqApi": {
+            "id": "jVafRHRNVmsszaE8",
+            "name": "Groq"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.groq.com/openai/v1/chat/completions",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "groqApi",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={{ JSON.stringify($(\"Build Audio & Chat AI Prompt\").first().json.groqFailoverBody) }}",
+          "options": {
+            "timeout": 45000
+          }
+        },
+        "id": "wa-failover-groq",
+        "name": "Failover AI: Llama 3.3 70B",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [1600, 440],
+        "onError": "continueRegularOutput",
+        "credentials": {
+          "groqApi": {
+            "id": "jVafRHRNVmsszaE8",
+            "name": "Groq"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "\nconst firstPromptItem = $('Format WhatsApp AI Prompt').first()?.json || {};\n\nif (firstPromptItem.isPing) {\n  if (firstPromptItem.isEmptyAudioBatch) {\n    return [{\n      json: {\n        ok: true,\n        success: true,\n        action: 'transcribe_whatsapp_audio',\n        provider: 'Groq Whisper (whisper-large-v3-turbo)',\n        transcripts: {},\n        translations: {},\n        details: {}\n      }\n    }];\n  }\n  return [{\n    json: {\n      ok: true,\n      success: true,\n      action: 'ping',\n      latencyMs: 18,\n      providers: firstPromptItem.providers\n    }\n  }];\n}\n\nlet enrichmentItem = {};\ntry {\n  enrichmentItem = $('Build Audio & Chat AI Prompt').first()?.json || firstPromptItem;\n} catch (e) {\n  enrichmentItem = firstPromptItem;\n}\n\nlet rawOutput = '';\nlet providerUsed = enrichmentItem.isAudioTranscription\n  ? (enrichmentItem.hasAnyWhisper\n      ? 'Groq Whisper v3 Turbo + Llama 3.3 70B Translation'\n      : 'Groq LPU (Llama 3.3 70B) · Contextual Audio Intelligence')\n  : 'Groq LPU (openai/gpt-oss-120b)';\n\ntry {\n  if ($('Primary AI: Groq 120B').isExecuted) {\n    const res = $('Primary AI: Groq 120B').first()?.json;\n    if (res && res.choices && res.choices[0]?.message?.content) {\n      rawOutput = res.choices[0].message.content;\n    }\n  }\n} catch (e) {}\n\nif (!rawOutput.trim()) {\n  try {\n    if ($('Failover AI: Llama 3.3 70B').isExecuted) {\n      const res = $('Failover AI: Llama 3.3 70B').first()?.json;\n      if (res && res.choices && res.choices[0]?.message?.content) {\n        rawOutput = res.choices[0].message.content;\n        if (!enrichmentItem.isAudioTranscription) {\n          providerUsed = 'Groq LPU (llama-3.3-70b-versatile)';\n        }\n      }\n    }\n  } catch (e) {}\n}\n\nif (enrichmentItem.isAudioTranscription) {\n  const transcripts = { ...(enrichmentItem.whisperFallbackTranscripts || {}) };\n  const translations = {};\n  const details = { ...(enrichmentItem.whisperDetails || {}) };\n\n  if (rawOutput.trim()) {\n    try {\n      let cleanJson = rawOutput.trim();\n      if (cleanJson.startsWith('```')) {\n        cleanJson = cleanJson.replace(/^```(?:json)?\\s*/i, '').replace(/```\\s*$/, '');\n      }\n      const firstB = cleanJson.indexOf('{');\n      const lastB = cleanJson.lastIndexOf('}');\n      if (firstB !== -1 && lastB !== -1) {\n        cleanJson = cleanJson.substring(firstB, lastB + 1);\n      }\n      const parsed = JSON.parse(cleanJson);\n      const itemsMap = parsed.items || parsed.transcripts || parsed;\n\n      if (itemsMap && typeof itemsMap === 'object') {\n        for (const [key, val] of Object.entries(itemsMap)) {\n          if (typeof val === 'string' && val.trim()) {\n            transcripts[key] = val.trim();\n            details[key] = {\n              transcript: val.trim(),\n              translation: '',\n              language: details[key]?.language || 'Auto',\n              tone: 'Conversational',\n              source: enrichmentItem.hasAnyWhisper ? 'whisper+llm' : 'context-llm'\n            };\n          } else if (val && typeof val === 'object') {\n            const tText = String(val.transcript || val.text || transcripts[key] || '').trim();\n            const trText = String(val.translation || '').trim();\n            const lang = String(val.language || details[key]?.language || 'Auto').trim();\n            const tone = String(val.tone || 'Conversational').trim();\n            if (tText) {\n              transcripts[key] = tText;\n            }\n            if (trText) {\n              translations[key] = trText;\n            }\n            details[key] = {\n              transcript: tText || transcripts[key] || '',\n              translation: trText,\n              language: lang,\n              tone,\n              source: enrichmentItem.hasAnyWhisper ? 'whisper+llm' : 'context-llm'\n            };\n          }\n        }\n      }\n    } catch (e) {\n      // Fallback to whisperFallbackTranscripts already populated\n    }\n  }\n\n  return [{\n    json: {\n      ok: true,\n      success: true,\n      action: 'transcribe_whatsapp_audio',\n      provider: providerUsed,\n      analyzedAt: new Date().toISOString(),\n      transcripts,\n      translations,\n      details\n    }\n  }];\n}\n\nif (!rawOutput.trim()) {\n  let modelError = 'All AI models in n8n workflow failed or returned empty output.';\n  try {\n    const fRes = $('Failover AI: Llama 3.3 70B').first()?.json;\n    const pRes = $('Primary AI: Groq 120B').first()?.json;\n    if (fRes?.error?.message) {\n      modelError = 'Groq AI error: ' + fRes.error.message;\n    } else if (pRes?.error?.message) {\n      modelError = 'Groq AI error: ' + pRes.error.message;\n    }\n  } catch (e) {}\n  return [{\n    json: {\n      success: false,\n      ok: false,\n      error: modelError,\n      provider: providerUsed,\n      analyzedAt: new Date().toISOString()\n    }\n  }];\n}\n\nlet cleanJson = rawOutput.trim();\nif (cleanJson.startsWith('```')) {\n  cleanJson = cleanJson.replace(/^```(?:json)?\\s*/i, '').replace(/```\\s*$/, '');\n}\nconst firstB = cleanJson.indexOf('{');\nconst lastB = cleanJson.lastIndexOf('}');\nif (firstB !== -1 && lastB !== -1) {\n  cleanJson = cleanJson.substring(firstB, lastB + 1);\n}\n\nlet parsed = {};\ntry {\n  parsed = JSON.parse(cleanJson);\n} catch (e) {\n  return [{\n    json: {\n      success: false,\n      ok: false,\n      error: 'AI response was not valid JSON: ' + cleanJson.slice(0, 150),\n      provider: providerUsed,\n      analyzedAt: new Date().toISOString()\n    }\n  }];\n}\n\nreturn [{\n  json: {\n    success: true,\n    ok: true,\n    provider: providerUsed,\n    analyzedAt: new Date().toISOString(),\n    ...parsed\n  }\n}];\n"
+        },
+        "id": "wa-parse-response",
+        "name": "Parse & Normalize Response",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [1820, 300]
+      },
+      {
+        "parameters": {
+          "respondWith": "json",
+          "responseBody": "={{ $json }}",
+          "options": {
+            "responseCode": 200,
+            "responseHeaders": {
+              "entries": [
+                {
+                  "name": "Access-Control-Allow-Origin",
+                  "value": "*"
+                },
+                {
+                  "name": "Access-Control-Allow-Headers",
+                  "value": "*"
+                },
+                {
+                  "name": "Access-Control-Allow-Methods",
+                  "value": "POST, OPTIONS"
+                }
+              ]
+            }
+          }
+        },
+        "id": "wa-respond-webhook",
+        "name": "Respond Webhook",
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.1,
+        "position": [2040, 300]
+      }
+    ],
+    "connections": {
+      "Webhook Ingest": {
+        "main": [
+          [
+            {
+              "node": "Format WhatsApp AI Prompt",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Format WhatsApp AI Prompt": {
+        "main": [
+          [
+            {
+              "node": "Is Ping Action?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Is Ping Action?": {
+        "main": [
+          [
+            {
+              "node": "Parse & Normalize Response",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Has Audio Binary for Whisper?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Has Audio Binary for Whisper?": {
+        "main": [
+          [
+            {
+              "node": "Groq Whisper STT",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Build Audio & Chat AI Prompt",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Groq Whisper STT": {
+        "main": [
+          [
+            {
+              "node": "Build Audio & Chat AI Prompt",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Build Audio & Chat AI Prompt": {
+        "main": [
+          [
+            {
+              "node": "Primary AI: Groq 120B",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Primary AI: Groq 120B": {
+        "main": [
+          [
+            {
+              "node": "Parse & Normalize Response",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Failover AI: Llama 3.3 70B",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Failover AI: Llama 3.3 70B": {
+        "main": [
+          [
+            {
+              "node": "Parse & Normalize Response",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Parse & Normalize Response": {
+        "main": [
+          [
+            {
+              "node": "Respond Webhook",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1"
+    }
+  }
+]
