@@ -563,7 +563,8 @@ const content = $input.first()?.json?.choices?.[0]?.message?.content;
 const parsed = parseReply(content);
 const usable =
   parsed !== null && (!promptItem.schema || conforms(parsed, promptItem.schema));
-return [{ json: { usable } }];
+// The parsed reply travels on, so Parse never reads back across nodes.
+return [{ json: { usable, parsed: usable ? parsed : null } }];
 `,
         },
         id: 'check-primary-reply',
@@ -608,23 +609,25 @@ if (promptItem.respondNow) {
 }
 const isLessonPart = promptItem.action === 'generate_lesson_part';
 
-/** A model's reply as JSON, if it parses and fits the schema. */
-const replyOf = (node) => {
-  try {
-    if (!$(node).isExecuted) return null;
-    const parsed = parseReply($(node).first()?.json?.choices?.[0]?.message?.content);
-    if (parsed === null) return null;
-    return !promptItem.schema || conforms(parsed, promptItem.schema) ? parsed : null;
-  } catch (e) {
-    return null;
-  }
-};
-
-let parsed = replyOf('Primary AI: Groq 120B');
+// The reply is this node's input: the checked primary reply, or the
+// failover model's raw response. (Reading the HTTP nodes back with $()
+// from here lost the reply in n8n's Code node, so nothing reaches back.)
+const input = $input.first()?.json || {};
+let parsed = null;
 let providerUsed = 'Groq LPU (openai/gpt-oss-120b)';
-if (parsed === null) {
-  parsed = replyOf('Failover AI: Groq Qwen');
+if (input.usable === true) {
+  parsed = input.parsed;
+} else {
   providerUsed = 'Groq LPU (qwen/qwen3.8-27b)';
+  try {
+    const reply = parseReply(input.choices?.[0]?.message?.content);
+    parsed =
+      reply !== null && (!promptItem.schema || conforms(reply, promptItem.schema))
+        ? reply
+        : null;
+  } catch (e) {
+    parsed = null;
+  }
 }
 
 if (parsed === null) {

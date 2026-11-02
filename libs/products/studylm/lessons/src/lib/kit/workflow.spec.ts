@@ -42,11 +42,22 @@ async function run(
   model: Model,
 ): Promise<{ response: Json; path: string[] }> {
   const results = new Map<string, Json>();
-  const $ = (name: string) => ({
-    isExecuted: results.has(name),
-    first: () => ({ json: results.get(name) }),
-    item: { json: results.get(name) },
-  });
+  // As in n8n's Code node: no `isExecuted`, and reading a node that didn't
+  // run throws.
+  const $ = (name: string) => {
+    const read = () => {
+      if (!results.has(name)) {
+        throw new Error(`Node '${name}' hasn't been executed`);
+      }
+      return { json: results.get(name) };
+    };
+    return {
+      first: read,
+      get item() {
+        return read();
+      },
+    };
+  };
   let current = next('Webhook Ingest');
   let item: Json = { body };
   const path: string[] = [];
@@ -134,6 +145,15 @@ describe('The n8n workflow', () => {
     expect(JSON.parse(String(line).slice('const KIT = '.length, -1))).toEqual(
       JSON.parse(JSON.stringify(kit)),
     );
+  });
+
+  // In n8n, Parse lost the model's reply when it read the HTTP nodes back
+  // with $(); this harness can't reproduce that, so it checks the source.
+  it('parses only the reply that reaches it, not one read back from the HTTP nodes', () => {
+    const code = String(
+      nodes.get('Parse & Normalize Response')?.parameters['jsCode'],
+    );
+    expect(code).not.toMatch(/\$\('(Primary|Failover) AI/);
   });
 
   it('generates a block with strict JSON Schema, keeping the input fenced', async () => {
