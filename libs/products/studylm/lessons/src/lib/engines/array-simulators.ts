@@ -1,6 +1,7 @@
 import type { BlockOf } from '../spec/blocks';
 import type { Step } from '../spec/step';
 import type { OpOf, Simulator } from './contracts';
+import { StepList } from './steps';
 
 type ArrayBlock = BlockOf<'array'>;
 type ArrayOp = OpOf<'array'>;
@@ -14,21 +15,7 @@ function op(fields: Partial<ArrayOp> & Pick<ArrayOp, 'op'>): ArrayOp {
 const pointerAt = (name: string, i: number | null) =>
   op({ op: 'pointer', name, i });
 
-/** Collects steps with ids that are unique and kebab-case. */
-class Steps {
-  readonly list: Step<ArrayOp>[] = [];
-
-  add(title: string, narration: string, ops: ArrayOp[]): void {
-    this.list.push({
-      id: `s${this.list.length + 1}`,
-      title,
-      narration,
-      focus: [],
-      ops,
-      pauseFor: null,
-    });
-  }
-}
+class Steps extends StepList<ArrayOp> {}
 
 const num = (value: Value) => Number(value);
 const less = (a: Value, b: Value) =>

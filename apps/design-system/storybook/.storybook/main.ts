@@ -10,6 +10,7 @@ const config: StorybookConfig = {
   stories: [
     '../../../../libs/design-system/ui/src/**/*.stories.ts',
     '../../../../libs/three/angular/src/**/*.stories.ts',
+    '../../../../libs/products/studylm/learn/src/**/*.stories.ts',
   ],
   addons: ['@storybook/addon-a11y', '@storybook/addon-docs'],
   framework: {

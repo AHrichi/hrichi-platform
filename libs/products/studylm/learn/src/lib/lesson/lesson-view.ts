@@ -26,7 +26,7 @@ import { SelfExplainCheck } from '../checks/self-explain-check';
 import { injectReducedMotion } from '../player/reduced-motion';
 import { type SeekRequest, SteppedVisual } from '../player/stepped-visual';
 import { MarkdownView } from '../text/markdown-view';
-import { ComingNext } from './coming-next';
+import { ChartView } from '../visuals/chart-view';
 
 /** What a learner has done in a lesson, kept on their device. */
 export interface LessonProgressState {
@@ -34,15 +34,6 @@ export interface LessonProgressState {
   checks: Record<string, CheckRecord>;
   completedAt: string | null;
 }
-
-/** Visual kinds this version plays; the rest show `sl-coming-next`. */
-const PLAYED = new Set<string>([
-  'array',
-  'stack-queue',
-  'flow',
-  'sequence',
-  'code-walkthrough',
-]);
 
 const TONES: Record<string, { label: string; icon: string }> = {
   'key-idea': { label: 'Key idea', icon: '💡' },
@@ -62,7 +53,7 @@ const TONES: Record<string, { label: string; icon: string }> = {
   imports: [
     CategorizeCheck,
     ClozeCheck,
-    ComingNext,
+    ChartView,
     MarkdownView,
     OrderStepsCheck,
     ParsonsCheck,
@@ -118,10 +109,6 @@ export class LessonView {
       right: blocks.filter((b) => checks[b.id]?.correct).length,
     };
   });
-
-  protected isPlayed(block: Block): boolean {
-    return PLAYED.has(block.kind);
-  }
 
   protected record(id: string): CheckRecord | null {
     return this.checks()[id] ?? null;

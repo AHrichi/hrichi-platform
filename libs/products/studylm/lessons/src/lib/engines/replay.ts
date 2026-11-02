@@ -2,6 +2,11 @@ import type { BlockOf } from '../spec/blocks';
 import type { Step } from '../spec/step';
 import { simulateArray } from './array-simulators';
 import type { OpOf } from './contracts';
+import { simulateGraph } from './graph';
+import { simulateGrid } from './grid';
+import { simulateRecursion } from './recursion';
+import { upTo } from './steps';
+import { simulateTree } from './tree';
 
 /**
  * What each stepped visual looks like after a step. Steps carry ops; state
@@ -12,21 +17,40 @@ import type { OpOf } from './contracts';
  */
 
 export type SteppedKind =
-  'array' | 'stack-queue' | 'flow' | 'sequence' | 'code-walkthrough';
+  | 'array'
+  | 'stack-queue'
+  | 'hash-table'
+  | 'tree'
+  | 'graph'
+  | 'grid'
+  | 'recursion-tree'
+  | 'flow'
+  | 'sequence'
+  | 'state-machine'
+  | 'pipeline'
+  | 'event-loop'
+  | 'git-graph'
+  | 'concept-map'
+  | 'code-walkthrough';
 
-/** The steps a stepped block plays: an array's may come from its simulator. */
+/**
+ * The steps a stepped block plays: computed by its simulator when it has
+ * `simulate`. An event loop in execute mode gets its steps from the tracer.
+ */
 export function stepsOf(block: BlockOf<SteppedKind>): readonly Step<unknown>[] {
-  return block.kind === 'array' ? simulateArray(block) : block.steps;
-}
-
-function upTo<TOp>(
-  steps: readonly Step<TOp>[],
-  n: number,
-  apply: (op: TOp, current: boolean) => void,
-): void {
-  const last = Math.min(n, steps.length - 1);
-  for (let s = 0; s <= last; s++) {
-    for (const op of steps[s].ops) apply(op, s === last);
+  switch (block.kind) {
+    case 'array':
+      return simulateArray(block);
+    case 'tree':
+      return simulateTree(block);
+    case 'graph':
+      return simulateGraph(block);
+    case 'grid':
+      return simulateGrid(block);
+    case 'recursion-tree':
+      return simulateRecursion(block).steps;
+    default:
+      return block.steps;
   }
 }
 

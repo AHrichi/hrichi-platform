@@ -139,21 +139,23 @@
               (answered)="onAnswered(block.id, $event)"
             />
           }
-          @default {
-            @if (isPlayed(block)) {
-              @if ($any(block).title) {
-                <p class="visual-title">{{ $any(block).title }}</p>
-              }
-              <sl-stepped-visual
-                [block]="$any(block)"
-                [answered]="answered()"
-                [start]="startSteps()[block.id] ?? -1"
-                [seek]="seeks()[block.id] ?? null"
-                (indexChange)="onStep(block.id, $event)"
-              />
-            } @else {
-              <sl-coming-next [block]="block" />
+          @case ('chart') {
+            @if ($any(block).title) {
+              <p class="visual-title">{{ $any(block).title }}</p>
             }
+            <sl-chart-view [block]="$any(block)" />
+          }
+          @default {
+            @if ($any(block).title) {
+              <p class="visual-title">{{ $any(block).title }}</p>
+            }
+            <sl-stepped-visual
+              [block]="$any(block)"
+              [answered]="answered()"
+              [start]="startSteps()[block.id] ?? -1"
+              [seek]="seeks()[block.id] ?? null"
+              (indexChange)="onStep(block.id, $event)"
+            />
           }
         }
       </div>

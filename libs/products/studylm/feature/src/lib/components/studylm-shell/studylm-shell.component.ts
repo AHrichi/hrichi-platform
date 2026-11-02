@@ -14,6 +14,11 @@ import {
 } from '@ah/ui';
 import { StudyLmStore } from '../../store/studylm.store';
 import { SCREENS, StudyLmScreens } from '../../shell/studylm-screens';
+import {
+  type FeedbackRequest,
+  SELF_EXPLAIN_FEEDBACK,
+} from '@ah/products/studylm/learn';
+import { LessonGenerationService } from '../../services/lesson-generation.service';
 import { N8nSettingsModalComponent } from '../n8n-settings-modal/n8n-settings-modal.component';
 import { CreateSubjectModalComponent } from '../create-subject-modal/create-subject-modal.component';
 import { AddFlashcardModalComponent } from '../add-flashcard-modal/add-flashcard-modal.component';
@@ -38,7 +43,16 @@ import { ElaborationModalComponent } from '../elaboration-modal/elaboration-moda
     JsonImportModalComponent,
     ElaborationModalComponent,
   ],
-  providers: [StudyLmScreens],
+  providers: [
+    StudyLmScreens,
+    {
+      provide: SELF_EXPLAIN_FEEDBACK,
+      useFactory: () => {
+        const lessons = inject(LessonGenerationService);
+        return (request: FeedbackRequest) => lessons.feedback(request);
+      },
+    },
+  ],
   templateUrl: './studylm-shell.component.html',
   styleUrl: './studylm-shell.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

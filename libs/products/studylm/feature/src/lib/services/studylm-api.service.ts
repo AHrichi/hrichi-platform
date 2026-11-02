@@ -20,6 +20,10 @@ import {
   validateAndParseSectionFlashcards,
   validateAndParseSectionQuiz,
 } from '@ah/products/studylm/domain';
+import type {
+  GenerateRequest,
+  GenerateResponse,
+} from '@ah/products/studylm/lessons';
 
 export const DEFAULT_LOCAL_URL =
   'http://127.0.0.1:5678/webhook/study-synthesizer';
@@ -207,6 +211,51 @@ export class StudyLmApiService {
     };
   }
 
+  /**
+   * One stage of writing a lesson (generate_lesson_part). The reply's data
+   * still has to pass the lessons lib's validators.
+   */
+  async generateLessonPart(
+    request: GenerateRequest,
+    endpoint: string | undefined,
+    cancel: AbortSignal,
+  ): Promise<GenerateResponse> {
+    let text: string;
+    try {
+      const res = await this.post(
+        endpoint || DEFAULT_LOCAL_URL,
+        request,
+        GENERATE_TIMEOUT_MS,
+        cancel,
+      );
+      text = await res.text();
+    } catch (err) {
+      if (cancel.aborted) throw err;
+      throw err instanceof StudyLmAiError
+        ? err
+        : new StudyLmAiError(describeFailure(err));
+    }
+    let reply: Partial<GenerateResponse>;
+    try {
+      reply = JSON.parse(text) as Partial<GenerateResponse>;
+    } catch {
+      throw new StudyLmAiError('The workflow’s reply was not JSON.');
+    }
+    if (typeof reply.code !== 'string') {
+      throw new StudyLmAiError(
+        'The workflow doesn’t know how to write lessons yet. Re-import tools/scripts/studylm_workflow.json into n8n.',
+      );
+    }
+    return {
+      success: reply.success === true,
+      code: reply.code,
+      provider: reply.provider ?? 'n8n',
+      specVersion: reply.specVersion ?? 0,
+      data: reply.data ?? null,
+      message: reply.message ?? null,
+    };
+  }
+
   /** Posts to n8n and returns the reply's text, or rejects with a StudyLmAiError. */
   private async request(
     endpoint: string | undefined,
@@ -231,6 +280,7 @@ export class StudyLmApiService {
     url: string,
     body: unknown,
     timeoutMs: number,
+    cancel?: AbortSignal,
   ): Promise<Response> {
     const send = () =>
       fetch(url, {
@@ -240,7 +290,9 @@ export class StudyLmApiService {
           'ngrok-skip-browser-warning': 'true',
         },
         body: JSON.stringify(body),
-        signal: AbortSignal.timeout(timeoutMs),
+        signal: cancel
+          ? AbortSignal.any([AbortSignal.timeout(timeoutMs), cancel])
+          : AbortSignal.timeout(timeoutMs),
       });
     let res: Response;
     try {

@@ -2,6 +2,7 @@ import type { Block, BlockKind, BlockOf } from '../spec/blocks';
 import { LIMITS } from '../spec/primitives';
 import type { Step } from '../spec/step';
 import { type IssueList, pointer } from './issues';
+import { bucketOf } from '../engines/hash';
 import { applyArrayOp, applyStackQueueOp } from '../engines/replay';
 
 /**
@@ -450,22 +451,7 @@ const stackQueue: Check<'stack-queue'> = (block, at, out) => {
   });
 };
 
-export function bucketOf(
-  key: string,
-  hash: BlockOf<'hash-table'>['hash'],
-  buckets: number,
-): number | null {
-  if (hash === 'mod') {
-    if (!/^-?\d+$/.test(key)) return null;
-    return ((Number(key) % buckets) + buckets) % buckets;
-  }
-  if (hash === 'char-sum-mod') {
-    let sum = 0;
-    for (const char of key) sum += char.codePointAt(0) ?? 0;
-    return sum % buckets;
-  }
-  return null;
-}
+export { bucketOf };
 
 const hashTable: Check<'hash-table'> = (block, at, out) => {
   atLeastOneStep(block.steps, at, out);

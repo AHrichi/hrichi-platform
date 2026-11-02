@@ -1,5 +1,7 @@
 # StudyLM lesson generation: the n8n contract
 
+StudyLM calls this action when a learner presses **Write a Lesson** on a roadmap section, and for feedback on self-explanations (ADR-0023). If the workflow in n8n predates the action, StudyLM asks you to re-import it.
+
 StudyLM's AI runs in the n8n workflow defined by `tools/scripts/update-studylm-workflow.mjs`, which writes `tools/scripts/studylm_workflow.json`. The `study-synthesizer` webhook keeps its existing actions (`ping`, `generate_roadmap`, `generate_section_flashcards`, `generate_section_quiz`, `elaborate_concept`, `synthesize_sources`). Lessons use one more: `generate_lesson_part`.
 
 ## Request
