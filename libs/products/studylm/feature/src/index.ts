@@ -5,7 +5,6 @@ export * from './lib/services/studylm-storage.service';
 export * from './lib/components/studylm-shell/studylm-shell.component';
 export * from './lib/components/roadmap-explorer/roadmap-explorer.component';
 export * from './lib/components/source-manager/source-manager.component';
-export * from './lib/components/study-brief/study-brief.component';
 export * from './lib/components/flashcard-deck/flashcard-deck.component';
 export * from './lib/components/quiz-arena/quiz-arena.component';
 export * from './lib/components/create-subject-modal/create-subject-modal.component';

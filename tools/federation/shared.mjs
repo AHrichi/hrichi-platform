@@ -70,6 +70,8 @@ export const skip = [
   'xlsx',
   // LuxPath's own dependencies, bundled into the remote so esbuild bundles it cleanly
   'leaflet',
+  // StudyLM's lesson contracts: bundled into the remote, where esbuild tree-shakes them.
+  'valibot',
 ];
 
 // https://native-federation.com/docs/v4/angular-adapter/configuration/

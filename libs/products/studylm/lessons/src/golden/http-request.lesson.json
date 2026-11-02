@@ -1,0 +1,675 @@
+{
+  "specVersion": 1,
+  "id": "http-request",
+  "sectionId": "golden-http-request",
+  "title": "What happens when you load a page",
+  "tier": "intermediate",
+  "minutes": 20,
+  "objectives": [
+    "Name the systems a request passes through, in order",
+    "Explain how a cache in front of the database saves work",
+    "Compare HTTP/1.1, HTTP/2 and HTTP/3"
+  ],
+  "sections": [
+    {
+      "id": "hook",
+      "title": "One click, many systems",
+      "intent": "hook",
+      "blocks": [
+        {
+          "id": "hook-text",
+          "kind": "prose",
+          "markdown": "You open a profile page and it appears in a fraction of a second. In that time your browser found the server, opened a secure connection, and the server asked a cache and maybe a database for the data.\n\nBefore you watch it happen, guess the order."
+        },
+        {
+          "id": "order-first-load",
+          "kind": "order-steps",
+          "prompt": "Put these in the order they happen when you first open https://api.example.com/users/42.",
+          "items": [
+            { "id": "dns", "text": "Look up the server's IP address (DNS)" },
+            { "id": "tcp", "text": "Open a TCP connection" },
+            { "id": "tls", "text": "Agree on encryption keys (TLS handshake)" },
+            { "id": "request", "text": "Send the HTTP request" },
+            {
+              "id": "respond",
+              "text": "The server builds and sends the response"
+            },
+            { "id": "render", "text": "The browser shows the result" }
+          ],
+          "explanation": "The browser needs an address before it can connect, a connection before it can encrypt, and encryption before it sends anything private. Only then does HTTP start."
+        }
+      ]
+    },
+    {
+      "id": "conversation",
+      "title": "The conversation",
+      "intent": "explain",
+      "blocks": [
+        {
+          "id": "request-sequence",
+          "kind": "sequence",
+          "title": "Who talks to whom",
+          "actors": [
+            { "id": "browser", "label": "Browser", "type": "browser" },
+            { "id": "dns", "label": "DNS resolver", "type": "external" },
+            { "id": "server", "label": "API server", "type": "server" },
+            { "id": "db", "label": "Database", "type": "database" }
+          ],
+          "messages": [
+            {
+              "id": "m-lookup",
+              "from": "browser",
+              "to": "dns",
+              "label": "Where is api.example.com?",
+              "style": "sync"
+            },
+            {
+              "id": "m-address",
+              "from": "dns",
+              "to": "browser",
+              "label": "203.0.113.10",
+              "style": "reply"
+            },
+            {
+              "id": "m-get",
+              "from": "browser",
+              "to": "server",
+              "label": "GET /users/42",
+              "style": "sync"
+            },
+            {
+              "id": "m-query",
+              "from": "server",
+              "to": "db",
+              "label": "SELECT * FROM users WHERE id = 42",
+              "style": "sync"
+            },
+            {
+              "id": "m-row",
+              "from": "db",
+              "to": "server",
+              "label": "1 row",
+              "style": "reply"
+            },
+            {
+              "id": "m-ok",
+              "from": "server",
+              "to": "browser",
+              "label": "200 OK + JSON",
+              "style": "reply"
+            }
+          ],
+          "steps": [
+            {
+              "id": "lookup",
+              "title": "Find the server",
+              "narration": "The browser only knows a name. It asks a DNS resolver for the server's IP address.",
+              "focus": ["m-lookup"],
+              "ops": [
+                {
+                  "op": "show",
+                  "message": "m-lookup",
+                  "actor": null,
+                  "text": null
+                }
+              ],
+              "pauseFor": null
+            },
+            {
+              "id": "address",
+              "title": "An address comes back",
+              "narration": "The resolver answers with an IP address. The browser caches it, so the next request skips this step.",
+              "focus": ["m-address"],
+              "ops": [
+                {
+                  "op": "show",
+                  "message": "m-address",
+                  "actor": null,
+                  "text": null
+                }
+              ],
+              "pauseFor": null
+            },
+            {
+              "id": "get",
+              "title": "The request",
+              "narration": "After the TCP and TLS handshakes, the browser sends the HTTP request: a method, a path and headers.",
+              "focus": ["m-get"],
+              "ops": [
+                {
+                  "op": "show",
+                  "message": "m-get",
+                  "actor": null,
+                  "text": null
+                },
+                {
+                  "op": "note",
+                  "message": null,
+                  "actor": "server",
+                  "text": "Checks the auth token"
+                }
+              ],
+              "pauseFor": null
+            },
+            {
+              "id": "query",
+              "title": "Ask the database",
+              "narration": "The server needs the user's data, so it queries the database and waits.",
+              "focus": ["m-query"],
+              "ops": [
+                {
+                  "op": "show",
+                  "message": "m-query",
+                  "actor": null,
+                  "text": null
+                }
+              ],
+              "pauseFor": null
+            },
+            {
+              "id": "row",
+              "title": "The data",
+              "narration": "The database returns the matching row.",
+              "focus": ["m-row"],
+              "ops": [
+                {
+                  "op": "show",
+                  "message": "m-row",
+                  "actor": null,
+                  "text": null
+                }
+              ],
+              "pauseFor": null
+            },
+            {
+              "id": "ok",
+              "title": "The response",
+              "narration": "The server turns the row into JSON and replies with status 200. The browser can now show the profile.",
+              "focus": ["m-ok"],
+              "ops": [
+                { "op": "show", "message": "m-ok", "actor": null, "text": null }
+              ],
+              "pauseFor": null
+            }
+          ]
+        },
+        {
+          "id": "http-versions",
+          "kind": "compare",
+          "title": "Three versions of HTTP",
+          "columns": ["HTTP/1.1", "HTTP/2", "HTTP/3"],
+          "rows": [
+            { "label": "Transport", "cells": ["TCP", "TCP", "QUIC, over UDP"] },
+            {
+              "label": "Requests on one connection",
+              "cells": [
+                "One at a time",
+                "Many at once (multiplexed)",
+                "Many at once (multiplexed)"
+              ]
+            },
+            {
+              "label": "Head-of-line blocking",
+              "cells": [
+                "Yes, per connection",
+                "Yes, at the TCP level when a packet is lost",
+                "No: a lost packet stalls only its own stream"
+              ]
+            },
+            {
+              "label": "Header compression",
+              "cells": ["None", "HPACK", "QPACK"]
+            },
+            {
+              "label": "Encryption",
+              "cells": [
+                "Optional",
+                "In practice always: browsers require TLS",
+                "Always: TLS 1.3 is part of QUIC"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "versions-quiz",
+          "kind": "quiz",
+          "question": "What does HTTP/2 add over HTTP/1.1?",
+          "code": null,
+          "options": [
+            "Many requests at once over one connection",
+            "UDP instead of TCP",
+            "Encryption for the first time",
+            "Shorter status codes"
+          ],
+          "correct": [0],
+          "explanation": "HTTP/2 multiplexes streams over one TCP connection. UDP arrives with HTTP/3, and HTTPS existed long before HTTP/2."
+        }
+      ]
+    },
+    {
+      "id": "caching",
+      "title": "A cache in front of the database",
+      "intent": "example",
+      "blocks": [
+        {
+          "id": "second-request",
+          "kind": "predict",
+          "question": "A minute later the same profile is requested again. Which systems does the request reach?",
+          "options": [
+            "CDN, API, Redis and Postgres",
+            "CDN, API and Redis",
+            "Only the CDN",
+            "Only Postgres"
+          ],
+          "answer": 1,
+          "expected": null,
+          "reveal": { "block": "cache-flow", "step": "hit" },
+          "explanation": "The CDN can't keep this private response, so the request reaches the API. The API finds the user in Redis and never touches Postgres."
+        },
+        {
+          "id": "cache-flow",
+          "kind": "flow",
+          "title": "GET /users/42, twice",
+          "direction": "lr",
+          "nodes": [
+            {
+              "id": "browser",
+              "label": "Browser",
+              "type": "browser",
+              "note": null
+            },
+            {
+              "id": "cdn",
+              "label": "CDN edge",
+              "type": "gateway",
+              "note": "Can't cache private data"
+            },
+            { "id": "api", "label": "API", "type": "server", "note": null },
+            {
+              "id": "cache",
+              "label": "Redis",
+              "type": "cache",
+              "note": "In memory"
+            },
+            {
+              "id": "db",
+              "label": "Postgres",
+              "type": "database",
+              "note": "On disk"
+            }
+          ],
+          "edges": [
+            {
+              "id": "e-browser-cdn",
+              "from": "browser",
+              "to": "cdn",
+              "label": "HTTPS"
+            },
+            { "id": "e-cdn-api", "from": "cdn", "to": "api", "label": "HTTPS" },
+            {
+              "id": "e-api-cache",
+              "from": "api",
+              "to": "cache",
+              "label": "TCP"
+            },
+            { "id": "e-api-db", "from": "api", "to": "db", "label": "SQL" }
+          ],
+          "steps": [
+            {
+              "id": "to-edge",
+              "title": "To the nearest edge",
+              "narration": "The browser's request reaches the closest CDN server.",
+              "focus": ["browser", "cdn"],
+              "ops": [
+                {
+                  "op": "send",
+                  "node": null,
+                  "edge": "e-browser-cdn",
+                  "packet": "GET /users/42",
+                  "payload": null
+                }
+              ],
+              "pauseFor": null
+            },
+            {
+              "id": "to-api",
+              "title": "Forwarded",
+              "narration": "The response is private to this user, so the CDN can't answer from its cache. It forwards the request to the API.",
+              "focus": ["cdn", "api"],
+              "ops": [
+                {
+                  "op": "process",
+                  "node": "cdn",
+                  "edge": null,
+                  "packet": "private: no cache",
+                  "payload": null
+                },
+                {
+                  "op": "send",
+                  "node": null,
+                  "edge": "e-cdn-api",
+                  "packet": "GET /users/42",
+                  "payload": null
+                }
+              ],
+              "pauseFor": null
+            },
+            {
+              "id": "ask-cache",
+              "title": "Try the cache first",
+              "narration": "The API asks Redis first: reading from memory takes well under a millisecond.",
+              "focus": ["api", "cache"],
+              "ops": [
+                {
+                  "op": "send",
+                  "node": null,
+                  "edge": "e-api-cache",
+                  "packet": "GET user:42",
+                  "payload": null
+                }
+              ],
+              "pauseFor": null
+            },
+            {
+              "id": "miss",
+              "title": "A miss",
+              "narration": "User 42 isn't cached yet, so Redis answers with nothing.",
+              "focus": ["cache"],
+              "ops": [
+                {
+                  "op": "respond",
+                  "node": null,
+                  "edge": "e-api-cache",
+                  "packet": "nil",
+                  "payload": null
+                }
+              ],
+              "pauseFor": null
+            },
+            {
+              "id": "ask-db",
+              "title": "Ask the database",
+              "narration": "The API falls back to Postgres, which reads the row from disk or its own buffers.",
+              "focus": ["api", "db"],
+              "ops": [
+                {
+                  "op": "send",
+                  "node": null,
+                  "edge": "e-api-db",
+                  "packet": "SELECT … id = 42",
+                  "payload": null
+                }
+              ],
+              "pauseFor": null
+            },
+            {
+              "id": "row",
+              "title": "The row",
+              "narration": "Postgres returns the user.",
+              "focus": ["db"],
+              "ops": [
+                {
+                  "op": "respond",
+                  "node": null,
+                  "edge": "e-api-db",
+                  "packet": "1 row",
+                  "payload": "{\"id\": 42, \"name\": \"Ada\"}"
+                }
+              ],
+              "pauseFor": null
+            },
+            {
+              "id": "fill-cache",
+              "title": "Fill the cache",
+              "narration": "The API stores the user in Redis with a time to live, so the next request can skip the database.",
+              "focus": ["cache"],
+              "ops": [
+                {
+                  "op": "store",
+                  "node": "cache",
+                  "edge": null,
+                  "packet": "user:42, TTL 300 s",
+                  "payload": "{\"id\": 42, \"name\": \"Ada\"}"
+                }
+              ],
+              "pauseFor": null
+            },
+            {
+              "id": "reply",
+              "title": "Back to the browser",
+              "narration": "The JSON travels back through the CDN to the browser.",
+              "focus": ["api", "cdn", "browser"],
+              "ops": [
+                {
+                  "op": "respond",
+                  "node": null,
+                  "edge": "e-cdn-api",
+                  "packet": "200 OK",
+                  "payload": "{\"id\": 42, \"name\": \"Ada\"}"
+                },
+                {
+                  "op": "respond",
+                  "node": null,
+                  "edge": "e-browser-cdn",
+                  "packet": "200 OK",
+                  "payload": null
+                }
+              ],
+              "pauseFor": null
+            },
+            {
+              "id": "again",
+              "title": "A minute later",
+              "narration": "The same profile is requested again and travels the same way to the API.",
+              "focus": ["browser", "cdn", "api"],
+              "ops": [
+                {
+                  "op": "send",
+                  "node": null,
+                  "edge": "e-browser-cdn",
+                  "packet": "GET /users/42",
+                  "payload": null
+                },
+                {
+                  "op": "send",
+                  "node": null,
+                  "edge": "e-cdn-api",
+                  "packet": "GET /users/42",
+                  "payload": null
+                }
+              ],
+              "pauseFor": null
+            },
+            {
+              "id": "hit",
+              "title": "A hit",
+              "narration": "This time Redis has the user. The API answers without touching Postgres, which is spared the work.",
+              "focus": ["cache"],
+              "ops": [
+                {
+                  "op": "send",
+                  "node": null,
+                  "edge": "e-api-cache",
+                  "packet": "GET user:42",
+                  "payload": null
+                },
+                {
+                  "op": "respond",
+                  "node": null,
+                  "edge": "e-api-cache",
+                  "packet": "hit",
+                  "payload": "{\"id\": 42, \"name\": \"Ada\"}"
+                },
+                {
+                  "op": "respond",
+                  "node": null,
+                  "edge": "e-cdn-api",
+                  "packet": "200 OK",
+                  "payload": null
+                },
+                {
+                  "op": "respond",
+                  "node": null,
+                  "edge": "e-browser-cdn",
+                  "packet": "200 OK",
+                  "payload": null
+                }
+              ],
+              "pauseFor": null
+            }
+          ]
+        },
+        {
+          "id": "middleware",
+          "kind": "pipeline",
+          "title": "Inside the API: POST /users",
+          "stages": [
+            { "id": "parse", "label": "Parse", "detail": "Bytes to an object" },
+            {
+              "id": "auth",
+              "label": "Authenticate",
+              "detail": "Who is asking?"
+            },
+            {
+              "id": "validate",
+              "label": "Validate",
+              "detail": "Is the input well formed?"
+            },
+            { "id": "handler", "label": "Handler", "detail": "Does the work" },
+            {
+              "id": "serialize",
+              "label": "Serialize",
+              "detail": "Object to JSON"
+            }
+          ],
+          "steps": [
+            {
+              "id": "raw",
+              "title": "Raw bytes arrive",
+              "narration": "The body arrives as text. Nothing has checked it yet.",
+              "focus": ["parse"],
+              "ops": [
+                {
+                  "op": "enter",
+                  "stage": "parse",
+                  "data": "'{\"name\": \"Ada\"}'"
+                }
+              ],
+              "pauseFor": null
+            },
+            {
+              "id": "parsed",
+              "title": "Parsed",
+              "narration": "The JSON parser turns the text into an object the code can read.",
+              "focus": ["parse"],
+              "ops": [
+                {
+                  "op": "transform",
+                  "stage": "parse",
+                  "data": "{ name: 'Ada' }"
+                }
+              ],
+              "pauseFor": null
+            },
+            {
+              "id": "authenticated",
+              "title": "Authenticated",
+              "narration": "The token in the Authorization header is valid, so the request now carries a user.",
+              "focus": ["auth"],
+              "ops": [
+                {
+                  "op": "transform",
+                  "stage": "auth",
+                  "data": "{ name: 'Ada' }, user: admin"
+                }
+              ],
+              "pauseFor": null
+            },
+            {
+              "id": "validated",
+              "title": "Validated",
+              "narration": "name is a non-empty string, so the request may go on. A bad body would stop here with 400.",
+              "focus": ["validate"],
+              "ops": [
+                {
+                  "op": "transform",
+                  "stage": "validate",
+                  "data": "{ name: 'Ada' } ✓"
+                }
+              ],
+              "pauseFor": null
+            },
+            {
+              "id": "handled",
+              "title": "Handled",
+              "narration": "The handler inserts the user and gets back the new id.",
+              "focus": ["handler"],
+              "ops": [
+                {
+                  "op": "transform",
+                  "stage": "handler",
+                  "data": "{ id: 42, name: 'Ada' }"
+                }
+              ],
+              "pauseFor": null
+            },
+            {
+              "id": "sent",
+              "title": "Sent",
+              "narration": "The object becomes JSON and leaves with status 201 Created.",
+              "focus": ["serialize"],
+              "ops": [
+                {
+                  "op": "emit",
+                  "stage": "serialize",
+                  "data": "201 {\"id\":42,\"name\":\"Ada\"}"
+                }
+              ],
+              "pauseFor": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "explain-it",
+      "title": "Explain it",
+      "intent": "practice",
+      "blocks": [
+        {
+          "id": "why-cache",
+          "kind": "self-explain",
+          "prompt": "Why does the API check Redis before Postgres, and what can go wrong with that?",
+          "rubric": [
+            "Redis keeps data in memory, so reads are much faster than from Postgres",
+            "Cache hits spare the database, so it can serve more users",
+            "Cached data can be stale until it expires or is invalidated"
+          ],
+          "modelAnswer": "Redis holds data in memory, so a hit answers in well under a millisecond and spares Postgres a query. That keeps responses fast and lets the database serve more users. The cost is staleness: if the user changes their name, the cache serves the old one until the entry expires or the app deletes it."
+        }
+      ]
+    }
+  ],
+  "cards": [
+    {
+      "type": "fact",
+      "front": "What does DNS do when you open a website?",
+      "back": "It turns the host name into an IP address the browser can connect to."
+    },
+    {
+      "type": "concept",
+      "front": "What is the cache-aside pattern?",
+      "back": "The app reads the cache first; on a miss it reads the database and stores the result in the cache, usually with a time to live."
+    },
+    {
+      "type": "fact",
+      "front": "Which transport does HTTP/3 use?",
+      "back": "QUIC, which runs over UDP and builds in TLS 1.3."
+    },
+    {
+      "type": "concept",
+      "front": "What is the main risk of caching database reads?",
+      "back": "Stale data: the cache can serve an old value until it expires or is invalidated."
+    }
+  ]
+}

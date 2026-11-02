@@ -1,0 +1,184 @@
+{
+  "specVersion": 1,
+  "id": "binary-search",
+  "sectionId": "golden-binary-search",
+  "title": "Binary search: halving your way to the answer",
+  "tier": "beginner",
+  "minutes": 15,
+  "objectives": [
+    "Explain why binary search needs a sorted array",
+    "Follow lo, hi and mid as the search narrows",
+    "Write binary search without off-by-one errors"
+  ],
+  "sections": [
+    {
+      "id": "hook",
+      "title": "Guess the number",
+      "intent": "hook",
+      "blocks": [
+        {
+          "id": "hook-text",
+          "kind": "prose",
+          "markdown": "I am thinking of a number from 1 to 100. After each guess I say *higher* or *lower*. Guessing 1, 2, 3… could take 100 tries. Guessing **50** first throws away half the numbers at once, and halving every time, you never need more than **7** guesses.\n\nBinary search is that strategy, applied to a sorted array."
+        },
+        {
+          "id": "predict-steps",
+          "kind": "predict",
+          "question": "How many comparisons does binary search need to find 9 in [1, 3, 5, 7, 9, 11, 13]?",
+          "options": ["2", "3", "4", "7"],
+          "answer": 1,
+          "expected": null,
+          "reveal": { "block": "search-array", "step": null },
+          "explanation": "It checks 7 (too small), then 11 (too big), then 9: three comparisons. Scanning from the left would take five."
+        }
+      ]
+    },
+    {
+      "id": "see-it",
+      "title": "Watch the range shrink",
+      "intent": "explain",
+      "blocks": [
+        {
+          "id": "promise",
+          "kind": "callout",
+          "tone": "key-idea",
+          "title": "One promise",
+          "text": "If the target is in the array, it lies between lo and hi. Each comparison moves lo or hi past mid, so the range halves while the promise still holds."
+        },
+        {
+          "id": "search-array",
+          "kind": "array",
+          "title": "Searching for 9",
+          "values": [1, 3, 5, 7, 9, 11, 13],
+          "pointers": ["lo", "hi", "mid"],
+          "simulate": {
+            "algorithm": "binary-search",
+            "target": 9,
+            "window": null
+          },
+          "steps": []
+        }
+      ]
+    },
+    {
+      "id": "trace-it",
+      "title": "The code, line by line",
+      "intent": "example",
+      "blocks": [
+        {
+          "id": "search-trace",
+          "kind": "code-trace",
+          "title": "binarySearch, executed",
+          "language": "javascript",
+          "code": "function binarySearch(values, target) {\n  let lo = 0;\n  let hi = values.length - 1;\n  while (lo <= hi) {\n    const mid = Math.floor((lo + hi) / 2);\n    if (values[mid] === target) return mid;\n    if (values[mid] < target) lo = mid + 1;\n    else hi = mid - 1;\n  }\n  return -1;\n}",
+          "mode": "execute",
+          "call": "binarySearch([1, 3, 5, 7, 9, 11, 13], 9)",
+          "frames": []
+        },
+        {
+          "id": "loop-condition",
+          "kind": "quiz",
+          "question": "Why does the loop run while lo <= hi, not while lo < hi?",
+          "code": null,
+          "options": [
+            "With lo < hi, a range of one element is never checked, so a target in the last position is missed",
+            "lo <= hi makes the loop faster",
+            "lo < hi would loop forever",
+            "There is no difference"
+          ],
+          "correct": [0],
+          "explanation": "When lo equals hi, one candidate remains. lo <= hi still checks it; lo < hi would stop and report not found."
+        }
+      ]
+    },
+    {
+      "id": "your-turn",
+      "title": "Your turn",
+      "intent": "practice",
+      "blocks": [
+        {
+          "id": "arrange-search",
+          "kind": "parsons",
+          "prompt": "Arrange the lines into a working binary search, and fill in the blanks.",
+          "language": "javascript",
+          "lines": [
+            {
+              "id": "l1",
+              "code": "function binarySearch(values, target) {",
+              "indent": 0
+            },
+            { "id": "l2", "code": "let lo = 0;", "indent": 1 },
+            { "id": "l3", "code": "let hi = values.length - 1;", "indent": 1 },
+            { "id": "l4", "code": "while (lo <= hi) {", "indent": 1 },
+            {
+              "id": "l5",
+              "code": "const mid = Math.floor((lo + hi) / ___);",
+              "indent": 2
+            },
+            {
+              "id": "l6",
+              "code": "if (values[mid] === target) return mid;",
+              "indent": 2
+            },
+            {
+              "id": "l7",
+              "code": "if (values[mid] < target) lo = mid + ___;",
+              "indent": 2
+            },
+            { "id": "l8", "code": "else hi = mid - 1;", "indent": 2 },
+            { "id": "l9", "code": "}", "indent": 1 },
+            { "id": "l10", "code": "return -1;", "indent": 1 },
+            { "id": "l11", "code": "}", "indent": 0 }
+          ],
+          "distractors": [
+            "while (lo < hi) {",
+            "if (values[mid] < target) hi = mid - 1;"
+          ],
+          "blanks": [
+            { "line": "l5", "answer": "2" },
+            { "line": "l7", "answer": "1" }
+          ],
+          "explanation": "mid is the middle of the range. When the middle value is too small, the target can only be to its right, so lo moves to mid + 1."
+        }
+      ]
+    },
+    {
+      "id": "recap",
+      "title": "Recap",
+      "intent": "recap",
+      "blocks": [
+        {
+          "id": "complexity",
+          "kind": "quiz",
+          "question": "How many steps does binary search take on n sorted items, at most?",
+          "code": null,
+          "options": ["About 1", "About log₂ n", "About n / 2", "About n"],
+          "correct": [1],
+          "explanation": "Each comparison halves the range, so n items run out after about log₂ n halvings: 20 steps for a million items."
+        }
+      ]
+    }
+  ],
+  "cards": [
+    {
+      "type": "fact",
+      "front": "What must be true of the input to binary search?",
+      "back": "It must be sorted (and indexable), or halving the range would throw the target away."
+    },
+    {
+      "type": "concept",
+      "front": "Why is binary search O(log n)?",
+      "back": "Each comparison halves the range of candidates, so n items take about log₂ n comparisons."
+    },
+    {
+      "type": "procedure",
+      "front": "In binary search, what happens when values[mid] is smaller than the target?",
+      "back": "lo moves to mid + 1: the target can only be to the right of mid."
+    },
+    {
+      "type": "fact",
+      "front": "Why loop while lo <= hi?",
+      "back": "So a one-element range (lo == hi) is still checked."
+    }
+  ]
+}

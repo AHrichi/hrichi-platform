@@ -1,0 +1,327 @@
+{
+  "specVersion": 1,
+  "id": "event-loop",
+  "sectionId": "golden-event-loop",
+  "title": "The event loop: why setTimeout(fn, 0) runs last",
+  "tier": "intermediate",
+  "minutes": 20,
+  "objectives": [
+    "Predict the order of synchronous code, promise callbacks and timers",
+    "Explain the call stack, task queue and microtask queue",
+    "Describe how a promise settles"
+  ],
+  "sections": [
+    {
+      "id": "hook",
+      "title": "A surprising order",
+      "intent": "hook",
+      "blocks": [
+        {
+          "id": "hook-text",
+          "kind": "prose",
+          "markdown": "A timer of **0 milliseconds** should fire right away. Yet in JavaScript it often fires after code written below it. The reason is the *event loop*: one thread, and two queues it drains in a strict order.\n\nBefore reading on, predict the output below."
+        },
+        {
+          "id": "guess-output",
+          "kind": "predict-output",
+          "language": "javascript",
+          "code": "console.log('A');\nsetTimeout(() => console.log('B'), 0);\nPromise.resolve().then(() => console.log('C'));\nconsole.log('D');",
+          "mode": "execute",
+          "expected": "A\nD\nC\nB",
+          "explanation": "A and D are synchronous and run first. The promise callback is a microtask, and microtasks run before the next task. The timer callback is a task, so B comes last."
+        }
+      ]
+    },
+    {
+      "id": "the-loop",
+      "title": "One thread, two queues",
+      "intent": "explain",
+      "blocks": [
+        {
+          "id": "read-code",
+          "kind": "code-walkthrough",
+          "title": "Four lines, three destinations",
+          "language": "javascript",
+          "code": "console.log('A');\nsetTimeout(() => console.log('B'), 0);\nPromise.resolve().then(() => console.log('C'));\nconsole.log('D');",
+          "steps": [
+            {
+              "id": "sync-a",
+              "title": "Runs now",
+              "narration": "console.log('A') is ordinary synchronous code: it runs immediately.",
+              "focus": [],
+              "ops": [{ "op": "lines", "from": 1, "to": 1, "text": null }],
+              "pauseFor": null
+            },
+            {
+              "id": "timer",
+              "title": "Handed to the browser",
+              "narration": "setTimeout gives the callback to the browser's timer. When the timer expires, the callback joins the task queue.",
+              "focus": [],
+              "ops": [
+                { "op": "lines", "from": 2, "to": 2, "text": null },
+                { "op": "note", "from": 2, "to": null, "text": "task queue" }
+              ],
+              "pauseFor": null
+            },
+            {
+              "id": "then",
+              "title": "A microtask",
+              "narration": "The promise is already resolved, so .then queues its callback in the microtask queue.",
+              "focus": [],
+              "ops": [
+                { "op": "lines", "from": 3, "to": 3, "text": null },
+                {
+                  "op": "note",
+                  "from": 3,
+                  "to": null,
+                  "text": "microtask queue"
+                }
+              ],
+              "pauseFor": null
+            },
+            {
+              "id": "sync-d",
+              "title": "Runs now",
+              "narration": "console.log('D') is synchronous too, so it prints before either queue gets a turn.",
+              "focus": [],
+              "ops": [{ "op": "lines", "from": 4, "to": 4, "text": null }],
+              "pauseFor": null
+            }
+          ]
+        },
+        {
+          "id": "loop",
+          "kind": "event-loop",
+          "title": "The loop at work",
+          "code": "console.log('A');\nsetTimeout(() => console.log('B'), 0);\nPromise.resolve().then(() => console.log('C'));\nconsole.log('D');",
+          "mode": "scripted",
+          "steps": [
+            {
+              "id": "start",
+              "title": "The script starts",
+              "narration": "The whole script runs as the first task, on the call stack.",
+              "focus": [],
+              "ops": [{ "op": "push-stack", "label": "script" }],
+              "pauseFor": null
+            },
+            {
+              "id": "log-a",
+              "title": "Log A",
+              "narration": "console.log('A') runs and returns at once.",
+              "focus": [],
+              "ops": [
+                { "op": "push-stack", "label": "console.log('A')" },
+                { "op": "log", "label": "A" },
+                { "op": "pop-stack", "label": null }
+              ],
+              "pauseFor": null
+            },
+            {
+              "id": "set-timer",
+              "title": "Start the timer",
+              "narration": "setTimeout hands the callback to the browser and returns immediately; the script doesn't wait.",
+              "focus": [],
+              "ops": [
+                { "op": "push-stack", "label": "setTimeout(cb, 0)" },
+                { "op": "web-api", "label": "timer 0 ms → log('B')" },
+                { "op": "pop-stack", "label": null }
+              ],
+              "pauseFor": null
+            },
+            {
+              "id": "timer-done",
+              "title": "The timer expires",
+              "narration": "The timer expires straight away, so the browser puts its callback in the task queue, where it waits its turn.",
+              "focus": [],
+              "ops": [{ "op": "queue-task", "label": "() => log('B')" }],
+              "pauseFor": null
+            },
+            {
+              "id": "then",
+              "title": "Queue the promise callback",
+              "narration": "The promise is already resolved, so its callback goes straight to the microtask queue.",
+              "focus": [],
+              "ops": [
+                { "op": "push-stack", "label": "Promise.resolve().then(cb)" },
+                { "op": "queue-microtask", "label": "() => log('C')" },
+                { "op": "pop-stack", "label": null }
+              ],
+              "pauseFor": null
+            },
+            {
+              "id": "log-d",
+              "title": "Log D",
+              "narration": "console.log('D') runs. Both callbacks are still waiting.",
+              "focus": [],
+              "ops": [
+                { "op": "push-stack", "label": "console.log('D')" },
+                { "op": "log", "label": "D" },
+                { "op": "pop-stack", "label": null }
+              ],
+              "pauseFor": null
+            },
+            {
+              "id": "script-done",
+              "title": "The stack empties",
+              "narration": "The script finishes and the call stack is empty. Now the loop drains every microtask before taking the next task.",
+              "focus": [],
+              "ops": [{ "op": "pop-stack", "label": null }],
+              "pauseFor": null
+            },
+            {
+              "id": "run-c",
+              "title": "Microtasks first",
+              "narration": "The promise callback runs and logs C.",
+              "focus": [],
+              "ops": [
+                { "op": "run-microtask", "label": null },
+                { "op": "log", "label": "C" },
+                { "op": "pop-stack", "label": null }
+              ],
+              "pauseFor": null
+            },
+            {
+              "id": "run-b",
+              "title": "Then the next task",
+              "narration": "With the microtask queue empty, the loop takes the oldest task: the timer callback logs B.",
+              "focus": [],
+              "ops": [
+                { "op": "run-task", "label": null },
+                { "op": "log", "label": "B" },
+                { "op": "pop-stack", "label": null }
+              ],
+              "pauseFor": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "promises",
+      "title": "How a promise settles",
+      "intent": "example",
+      "blocks": [
+        {
+          "id": "promise-states",
+          "kind": "state-machine",
+          "title": "A promise's life",
+          "states": [
+            {
+              "id": "pending",
+              "label": "pending",
+              "initial": true,
+              "final": false
+            },
+            {
+              "id": "fulfilled",
+              "label": "fulfilled",
+              "initial": false,
+              "final": true
+            },
+            {
+              "id": "rejected",
+              "label": "rejected",
+              "initial": false,
+              "final": true
+            }
+          ],
+          "transitions": [
+            {
+              "id": "t-resolve",
+              "from": "pending",
+              "to": "fulfilled",
+              "event": "resolve"
+            },
+            {
+              "id": "t-reject",
+              "from": "pending",
+              "to": "rejected",
+              "event": "reject"
+            }
+          ],
+          "steps": [
+            {
+              "id": "settle",
+              "title": "Resolved",
+              "narration": "resolve(value) moves the promise from pending to fulfilled, and queues its .then callbacks as microtasks.",
+              "focus": ["t-resolve", "fulfilled"],
+              "ops": [
+                { "op": "fire", "transition": "t-resolve", "event": null }
+              ],
+              "pauseFor": null
+            },
+            {
+              "id": "too-late",
+              "title": "Too late to reject",
+              "narration": "A settled promise never changes again: calling reject now does nothing.",
+              "focus": ["fulfilled"],
+              "ops": [
+                { "op": "reject", "transition": null, "event": "reject" }
+              ],
+              "pauseFor": null
+            }
+          ]
+        },
+        {
+          "id": "queues-cloze",
+          "kind": "cloze",
+          "text": "Promise callbacks wait in the {{q1}} queue, which is emptied {{q2}} the next task runs. setTimeout callbacks wait in the {{q3}} queue.",
+          "blanks": [
+            { "id": "q1", "answers": ["microtask"] },
+            { "id": "q2", "answers": ["before"] },
+            { "id": "q3", "answers": ["task", "macrotask", "callback"] }
+          ],
+          "explanation": "After every task the loop runs all microtasks, then takes one task. That is why promise callbacks beat timers."
+        }
+      ]
+    },
+    {
+      "id": "recap",
+      "title": "Recap",
+      "intent": "recap",
+      "blocks": [
+        {
+          "id": "rule",
+          "kind": "callout",
+          "tone": "key-idea",
+          "title": "The rule",
+          "text": "Run the current task to the end, then every microtask, then the next task. Rendering happens between tasks, so long tasks freeze the page."
+        },
+        {
+          "id": "micro-first",
+          "kind": "quiz",
+          "question": "What logs first?",
+          "code": {
+            "language": "javascript",
+            "code": "setTimeout(() => console.log('timeout'), 0);\nqueueMicrotask(() => console.log('micro'));"
+          },
+          "options": ["timeout", "micro"],
+          "correct": [1],
+          "explanation": "queueMicrotask adds a microtask, and microtasks run before the next task, even one queued earlier."
+        }
+      ]
+    }
+  ],
+  "cards": [
+    {
+      "type": "concept",
+      "front": "In which order does the event loop run tasks and microtasks?",
+      "back": "It finishes the current task, runs every queued microtask, then takes the next task."
+    },
+    {
+      "type": "fact",
+      "front": "Which queue do promise callbacks (.then, await continuations) go to?",
+      "back": "The microtask queue."
+    },
+    {
+      "type": "fact",
+      "front": "What does setTimeout(fn, 0) guarantee?",
+      "back": "Only that fn runs in a later task, after the current code and its microtasks; never immediately."
+    },
+    {
+      "type": "concept",
+      "front": "Can a fulfilled promise become rejected?",
+      "back": "No. Once settled, a promise never changes state."
+    }
+  ]
+}

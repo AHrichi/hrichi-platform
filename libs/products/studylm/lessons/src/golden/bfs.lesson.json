@@ -1,0 +1,248 @@
+{
+  "specVersion": 1,
+  "id": "bfs",
+  "sectionId": "golden-bfs",
+  "title": "Breadth-first search: exploring in rings",
+  "tier": "intermediate",
+  "minutes": 20,
+  "objectives": [
+    "Explain why BFS finds shortest paths in unweighted graphs",
+    "Follow the queue as BFS explores",
+    "Choose between BFS and DFS"
+  ],
+  "sections": [
+    {
+      "id": "hook",
+      "title": "The way out of a maze",
+      "intent": "hook",
+      "blocks": [
+        {
+          "id": "hook-text",
+          "kind": "prose",
+          "markdown": "Drop ink at the start of a maze and it spreads one cell at a time in every direction. The first moment the ink touches the exit, it has found a shortest route.\n\nBreadth-first search works the same way: it explores everything 1 step away, then 2 steps, then 3."
+        },
+        {
+          "id": "maze-guess",
+          "kind": "predict",
+          "question": "In the maze below, moving up, down, left or right, how many moves is the shortest path from S to G?",
+          "options": null,
+          "answer": null,
+          "expected": "14",
+          "reveal": { "block": "maze", "step": null },
+          "explanation": "The only way across is the gap in the middle row, then up and around the right-hand wall: 14 moves."
+        }
+      ]
+    },
+    {
+      "id": "rings",
+      "title": "Rings of distance",
+      "intent": "explain",
+      "blocks": [
+        {
+          "id": "friends",
+          "kind": "graph",
+          "title": "BFS from A",
+          "directed": false,
+          "weighted": false,
+          "nodes": [
+            { "id": "a", "label": "A" },
+            { "id": "b", "label": "B" },
+            { "id": "c", "label": "C" },
+            { "id": "d", "label": "D" },
+            { "id": "e", "label": "E" },
+            { "id": "f", "label": "F" }
+          ],
+          "edges": [
+            { "id": "ab", "from": "a", "to": "b", "weight": null },
+            { "id": "ac", "from": "a", "to": "c", "weight": null },
+            { "id": "bd", "from": "b", "to": "d", "weight": null },
+            { "id": "cd", "from": "c", "to": "d", "weight": null },
+            { "id": "ce", "from": "c", "to": "e", "weight": null },
+            { "id": "df", "from": "d", "to": "f", "weight": null },
+            { "id": "ef", "from": "e", "to": "f", "weight": null }
+          ],
+          "simulate": { "algorithm": "bfs", "start": "a" },
+          "steps": []
+        },
+        {
+          "id": "frontier",
+          "kind": "stack-queue",
+          "title": "The queue behind it",
+          "mode": "queue",
+          "initial": [],
+          "steps": [
+            {
+              "id": "seed",
+              "title": "Start at A",
+              "narration": "The queue holds the frontier: nodes found but not yet explored. It starts with A.",
+              "focus": [],
+              "ops": [{ "op": "enqueue", "value": "A" }],
+              "pauseFor": null
+            },
+            {
+              "id": "visit-a",
+              "title": "Explore A",
+              "narration": "Take A from the front and add its neighbours B and C to the back: both are 1 step away.",
+              "focus": [],
+              "ops": [
+                { "op": "dequeue", "value": null },
+                { "op": "enqueue", "value": "B" },
+                { "op": "enqueue", "value": "C" }
+              ],
+              "pauseFor": null
+            },
+            {
+              "id": "visit-b",
+              "title": "Explore B",
+              "narration": "B's new neighbour is D, 2 steps from A. It goes behind C.",
+              "focus": [],
+              "ops": [
+                { "op": "dequeue", "value": null },
+                { "op": "enqueue", "value": "D" }
+              ],
+              "pauseFor": null
+            },
+            {
+              "id": "visit-c",
+              "title": "Explore C",
+              "narration": "C reaches D, already queued, and E, which is new.",
+              "focus": [],
+              "ops": [
+                { "op": "dequeue", "value": null },
+                { "op": "enqueue", "value": "E" }
+              ],
+              "pauseFor": null
+            },
+            {
+              "id": "visit-d",
+              "title": "Explore D",
+              "narration": "D finds F, 3 steps from A. Every node 2 steps away came out of the queue before it.",
+              "focus": [],
+              "ops": [
+                { "op": "dequeue", "value": null },
+                { "op": "enqueue", "value": "F" }
+              ],
+              "pauseFor": null
+            },
+            {
+              "id": "visit-e",
+              "title": "Explore E",
+              "narration": "E's neighbours are all known, so nothing is added.",
+              "focus": [],
+              "ops": [{ "op": "dequeue", "value": null }],
+              "pauseFor": null
+            },
+            {
+              "id": "visit-f",
+              "title": "Explore F",
+              "narration": "The queue empties: every node was reached in order of distance, A, B, C, D, E, F.",
+              "focus": [],
+              "ops": [{ "op": "dequeue", "value": null }],
+              "pauseFor": null
+            }
+          ]
+        },
+        {
+          "id": "which-structure",
+          "kind": "quiz",
+          "question": "Which data structure holds BFS's frontier?",
+          "code": null,
+          "options": ["A stack", "A queue", "A heap", "A hash table"],
+          "correct": [1],
+          "explanation": "A queue is first in, first out, so nodes leave in the order they were found: nearest first. A stack would give depth-first search."
+        }
+      ]
+    },
+    {
+      "id": "maze-run",
+      "title": "Solving the maze",
+      "intent": "example",
+      "blocks": [
+        {
+          "id": "maze",
+          "kind": "grid",
+          "title": "BFS spreading through the maze",
+          "rows": ["S..#...", ".#.#.#.", ".#...#.", ".##.##.", "...#..G"],
+          "simulate": { "algorithm": "grid-bfs", "a": null, "b": null },
+          "steps": []
+        },
+        {
+          "id": "why-shortest",
+          "kind": "quiz",
+          "question": "Why does BFS find a shortest path in an unweighted maze?",
+          "code": null,
+          "options": [
+            "It reaches cells in order of their distance from the start",
+            "It always moves towards the goal",
+            "It tries every path and keeps the shortest",
+            "It remembers the last turn it took"
+          ],
+          "correct": [0],
+          "explanation": "Every cell at distance k is reached before any cell at distance k + 1, so the first time BFS reaches the goal, no shorter path is left."
+        }
+      ]
+    },
+    {
+      "id": "recap",
+      "title": "BFS or DFS?",
+      "intent": "recap",
+      "blocks": [
+        {
+          "id": "bfs-vs-dfs",
+          "kind": "compare",
+          "title": "Breadth first or depth first",
+          "columns": ["BFS", "DFS"],
+          "rows": [
+            { "label": "Frontier", "cells": ["Queue", "Stack, or recursion"] },
+            { "label": "Shortest path, unweighted", "cells": ["Yes", "No"] },
+            {
+              "label": "Memory",
+              "cells": [
+                "A whole ring of the frontier",
+                "One path from the start"
+              ]
+            },
+            {
+              "label": "Good for",
+              "cells": [
+                "Shortest paths, levels, nearest first",
+                "Exploring everything, cycles, topological order"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "pick-one",
+          "kind": "quiz",
+          "question": "You need the fewest friend-of-a-friend hops between two people. Which search fits?",
+          "code": null,
+          "options": ["BFS", "DFS", "Either, equally", "Binary search"],
+          "correct": [0],
+          "explanation": "Hops are unweighted steps, and BFS finds the fewest. DFS can wander down a long path first."
+        }
+      ]
+    }
+  ],
+  "cards": [
+    {
+      "type": "fact",
+      "front": "What data structure does BFS use for its frontier?",
+      "back": "A queue: first in, first out."
+    },
+    {
+      "type": "concept",
+      "front": "Why does BFS find shortest paths in unweighted graphs?",
+      "back": "It reaches nodes in order of distance from the start, so the first time it reaches the goal is via a shortest path."
+    },
+    {
+      "type": "procedure",
+      "front": "How does BFS avoid visiting a node twice?",
+      "back": "It marks nodes as seen when they are queued and skips neighbours already seen."
+    },
+    {
+      "type": "fact",
+      "front": "Which search finds shortest paths when edges have different weights?",
+      "back": "Dijkstra's algorithm (for non-negative weights), not plain BFS."
+    }
+  ]
+}

@@ -1,0 +1,351 @@
+{
+  "specVersion": 1,
+  "id": "git-branching",
+  "sectionId": "golden-git-branching",
+  "title": "Git branches are just pointers",
+  "tier": "beginner",
+  "minutes": 15,
+  "objectives": [
+    "Describe what commits, branches and HEAD are",
+    "Predict what a merge does to the history",
+    "Use branch, switch and merge in the right order"
+  ],
+  "sections": [
+    {
+      "id": "hook",
+      "title": "Sharing a change",
+      "intent": "hook",
+      "blocks": [
+        {
+          "id": "hook-text",
+          "kind": "prose",
+          "markdown": "Branches feel heavy, like copies of the whole project. They aren't: a branch is a **name pointing at one commit**, and creating one copies nothing. Once you see that, merging and rebasing stop being mysterious.\n\nFirst, the everyday loop."
+        },
+        {
+          "id": "share-order",
+          "kind": "order-steps",
+          "prompt": "Put these in the order you use them to share a change with your team.",
+          "items": [
+            { "id": "edit", "text": "Edit the files" },
+            { "id": "stage", "text": "git add (stage the changes)" },
+            { "id": "commit", "text": "git commit (record a snapshot)" },
+            { "id": "push", "text": "git push (send commits to the remote)" }
+          ],
+          "explanation": "Changes are staged, then recorded as a commit on your machine, and only pushing sends them to the shared repository."
+        }
+      ]
+    },
+    {
+      "id": "model",
+      "title": "Commits, branches and HEAD",
+      "intent": "explain",
+      "blocks": [
+        {
+          "id": "git-model",
+          "kind": "concept-map",
+          "title": "The pieces",
+          "nodes": [
+            { "id": "commit", "label": "Commit", "group": "history" },
+            {
+              "id": "snapshot",
+              "label": "Snapshot of the files",
+              "group": "history"
+            },
+            { "id": "branch", "label": "Branch", "group": "names" },
+            { "id": "head", "label": "HEAD", "group": "names" },
+            { "id": "tag", "label": "Tag", "group": "names" }
+          ],
+          "links": [
+            {
+              "id": "stores",
+              "from": "commit",
+              "to": "snapshot",
+              "label": "stores"
+            },
+            {
+              "id": "points",
+              "from": "branch",
+              "to": "commit",
+              "label": "points to"
+            },
+            {
+              "id": "refers",
+              "from": "head",
+              "to": "branch",
+              "label": "refers to"
+            },
+            {
+              "id": "names",
+              "from": "tag",
+              "to": "commit",
+              "label": "names, for ever"
+            }
+          ],
+          "steps": [
+            {
+              "id": "show-commit",
+              "title": "A commit",
+              "narration": "A commit stores a snapshot of every file, plus a link to its parent commit.",
+              "focus": ["commit", "snapshot"],
+              "ops": [
+                { "op": "reveal", "node": "commit", "link": null },
+                { "op": "reveal", "node": "snapshot", "link": null },
+                { "op": "reveal", "node": null, "link": "stores" }
+              ],
+              "pauseFor": null
+            },
+            {
+              "id": "show-branch",
+              "title": "A branch",
+              "narration": "A branch is a movable name for one commit. Committing moves it forward.",
+              "focus": ["branch"],
+              "ops": [
+                { "op": "reveal", "node": "branch", "link": null },
+                { "op": "reveal", "node": null, "link": "points" }
+              ],
+              "pauseFor": null
+            },
+            {
+              "id": "show-head",
+              "title": "HEAD",
+              "narration": "HEAD says which branch you are on: new commits go there.",
+              "focus": ["head"],
+              "ops": [
+                { "op": "reveal", "node": "head", "link": null },
+                { "op": "reveal", "node": null, "link": "refers" }
+              ],
+              "pauseFor": null
+            },
+            {
+              "id": "show-tag",
+              "title": "A tag",
+              "narration": "A tag also names a commit, but never moves: it marks releases.",
+              "focus": ["tag"],
+              "ops": [
+                { "op": "reveal", "node": "tag", "link": null },
+                { "op": "reveal", "node": null, "link": "names" }
+              ],
+              "pauseFor": null
+            }
+          ]
+        },
+        {
+          "id": "merge-guess",
+          "kind": "predict",
+          "question": "main and feature have each gained commits since they split. What does git merge feature, run on main, create?",
+          "options": [
+            "A new commit on main with two parents",
+            "Copies of feature's commits on top of main",
+            "Nothing: main just moves to feature's commit",
+            "A new branch"
+          ],
+          "answer": 0,
+          "expected": null,
+          "reveal": { "block": "history", "step": "merge" },
+          "explanation": "Both branches moved on, so git records a merge commit whose parents are the tips of both. When only feature has new commits, git can just move main forward instead."
+        },
+        {
+          "id": "history",
+          "kind": "git-graph",
+          "title": "A feature branch, merged",
+          "start": { "branch": "main", "commit": "c0" },
+          "steps": [
+            {
+              "id": "first",
+              "title": "A commit on main",
+              "narration": "A commit on main: main moves forward to c1.",
+              "focus": [],
+              "ops": [
+                {
+                  "op": "commit",
+                  "ref": null,
+                  "commit": "c1",
+                  "message": "Add login form"
+                }
+              ],
+              "pauseFor": null
+            },
+            {
+              "id": "create",
+              "title": "Create a branch",
+              "narration": "git branch feature adds a second name for c1. Nothing is copied.",
+              "focus": [],
+              "ops": [
+                {
+                  "op": "branch",
+                  "ref": "feature",
+                  "commit": null,
+                  "message": null
+                }
+              ],
+              "pauseFor": null
+            },
+            {
+              "id": "switch",
+              "title": "Switch to it",
+              "narration": "git switch feature moves HEAD, so new commits land on feature.",
+              "focus": [],
+              "ops": [
+                {
+                  "op": "checkout",
+                  "ref": "feature",
+                  "commit": null,
+                  "message": null
+                }
+              ],
+              "pauseFor": null
+            },
+            {
+              "id": "work",
+              "title": "Work on the feature",
+              "narration": "Two commits on feature. main still points at c1.",
+              "focus": [],
+              "ops": [
+                {
+                  "op": "commit",
+                  "ref": null,
+                  "commit": "c2",
+                  "message": "Validate email"
+                },
+                {
+                  "op": "commit",
+                  "ref": null,
+                  "commit": "c3",
+                  "message": "Show errors"
+                }
+              ],
+              "pauseFor": null
+            },
+            {
+              "id": "hotfix",
+              "title": "Meanwhile, on main",
+              "narration": "Back on main, a quick fix: the two branches have now diverged.",
+              "focus": [],
+              "ops": [
+                {
+                  "op": "checkout",
+                  "ref": "main",
+                  "commit": null,
+                  "message": null
+                },
+                {
+                  "op": "commit",
+                  "ref": null,
+                  "commit": "c4",
+                  "message": "Fix typo in footer"
+                }
+              ],
+              "pauseFor": null
+            },
+            {
+              "id": "merge",
+              "title": "Merge",
+              "narration": "git merge feature creates m1, with two parents: c4 and c3. main now has both lines of work.",
+              "focus": [],
+              "ops": [
+                {
+                  "op": "merge",
+                  "ref": "feature",
+                  "commit": "m1",
+                  "message": "Merge feature into main"
+                }
+              ],
+              "pauseFor": "merge-guess"
+            },
+            {
+              "id": "release",
+              "title": "Tag the release",
+              "narration": "A tag marks m1 as version 1.0, and it will never move.",
+              "focus": [],
+              "ops": [
+                { "op": "tag", "ref": "v1.0", "commit": null, "message": null }
+              ],
+              "pauseFor": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "practice",
+      "title": "Your turn",
+      "intent": "practice",
+      "blocks": [
+        {
+          "id": "commands",
+          "kind": "cloze",
+          "text": "git {{c1}} feature creates a branch, and git {{c2}} feature moves HEAD to it.",
+          "blanks": [
+            { "id": "c1", "answers": ["branch"] },
+            { "id": "c2", "answers": ["switch", "checkout"] }
+          ],
+          "explanation": "git switch is the newer, clearer name for checking out a branch; git checkout still works."
+        },
+        {
+          "id": "parents",
+          "kind": "quiz",
+          "question": "What does a merge commit have that an ordinary commit doesn't?",
+          "code": null,
+          "options": [
+            "Two parents",
+            "No parent",
+            "A tag",
+            "A different author"
+          ],
+          "correct": [0],
+          "explanation": "It joins two lines of history, so it points back to the tips of both."
+        }
+      ]
+    },
+    {
+      "id": "recap",
+      "title": "Recap",
+      "intent": "recap",
+      "blocks": [
+        {
+          "id": "pointer",
+          "kind": "callout",
+          "tone": "key-idea",
+          "title": "Remember",
+          "text": "A branch is a movable name for a commit. Creating one is instant; committing moves it; merging joins two of them."
+        },
+        {
+          "id": "what-copies",
+          "kind": "quiz",
+          "question": "What does git branch feature copy?",
+          "code": null,
+          "options": [
+            "Nothing: it adds a name for the current commit",
+            "Every file in the project",
+            "The whole history",
+            "The files changed since main"
+          ],
+          "correct": [0],
+          "explanation": "A branch is a small pointer. The commits it points to are shared, not copied."
+        }
+      ]
+    }
+  ],
+  "cards": [
+    {
+      "type": "concept",
+      "front": "What is a git branch?",
+      "back": "A movable name pointing at one commit; committing on it moves it forward."
+    },
+    {
+      "type": "fact",
+      "front": "What does HEAD refer to?",
+      "back": "The branch (or commit) you have checked out: where new commits go."
+    },
+    {
+      "type": "fact",
+      "front": "How many parents does a merge commit have?",
+      "back": "Two: the tips of the branches it joins."
+    },
+    {
+      "type": "procedure",
+      "front": "How do you start work on a new branch?",
+      "back": "git switch -c name (or git branch name, then git switch name)."
+    }
+  ]
+}

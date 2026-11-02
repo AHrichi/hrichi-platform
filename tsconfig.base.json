@@ -27,6 +27,9 @@
       "@ah/products/dispatch/feature": [
         "./libs/products/dispatch/feature/src/index.ts"
       ],
+      "@ah/products/studylm/lessons": [
+        "./libs/products/studylm/lessons/src/index.ts"
+      ],
       "@ah/products/studylm/domain": [
         "./libs/products/studylm/domain/src/index.ts"
       ],

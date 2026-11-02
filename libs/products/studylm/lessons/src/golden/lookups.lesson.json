@@ -1,0 +1,340 @@
+{
+  "specVersion": 1,
+  "id": "lookups",
+  "sectionId": "golden-lookups",
+  "title": "Fast lookups: hash tables and search trees",
+  "tier": "intermediate",
+  "minutes": 20,
+  "objectives": [
+    "Explain how a hash table finds a key in about one step",
+    "Show what a collision is and what resizing does",
+    "Choose between a hash table and a balanced search tree"
+  ],
+  "sections": [
+    {
+      "id": "hook",
+      "title": "A million usernames",
+      "intent": "hook",
+      "blocks": [
+        {
+          "id": "hook-text",
+          "kind": "prose",
+          "markdown": "Checking whether a username is taken by scanning a list of a million names takes up to a million comparisons. A **hash table** jumps straight to the right place; a **balanced search tree** gets there in about 20 steps.\n\nBoth are everywhere: `Map`, `dict` and `HashMap` are hash tables; database indexes are trees."
+        },
+        {
+          "id": "anagram-guess",
+          "kind": "predict",
+          "question": "With 5 buckets and a hash that adds up the character codes, do \"cat\" and \"act\" land in the same bucket?",
+          "options": ["Yes", "No"],
+          "answer": 0,
+          "expected": null,
+          "reveal": { "block": "hash-demo", "step": "insert-act" },
+          "explanation": "Both have the same letters, so the same sum: 312. 312 mod 5 is 2 for both. That's a collision."
+        }
+      ]
+    },
+    {
+      "id": "hashing",
+      "title": "Hashing into buckets",
+      "intent": "explain",
+      "blocks": [
+        {
+          "id": "hash-demo",
+          "kind": "hash-table",
+          "title": "Character-sum hash, 5 buckets",
+          "buckets": 5,
+          "hash": "char-sum-mod",
+          "steps": [
+            {
+              "id": "insert-cat",
+              "title": "Insert cat",
+              "narration": "c + a + t is 99 + 97 + 116 = 312, and 312 mod 5 is 2, so \"cat\" goes into bucket 2.",
+              "focus": [],
+              "ops": [
+                {
+                  "op": "insert",
+                  "key": "cat",
+                  "value": "meow",
+                  "bucket": 2,
+                  "size": null
+                }
+              ],
+              "pauseFor": null
+            },
+            {
+              "id": "insert-dog",
+              "title": "Insert dog",
+              "narration": "\"dog\" sums to 314, so it goes into bucket 4.",
+              "focus": [],
+              "ops": [
+                {
+                  "op": "insert",
+                  "key": "dog",
+                  "value": "woof",
+                  "bucket": 4,
+                  "size": null
+                }
+              ],
+              "pauseFor": null
+            },
+            {
+              "id": "insert-act",
+              "title": "A collision",
+              "narration": "\"act\" has the same letters as \"cat\", so the same sum and the same bucket. Bucket 2 now holds a short list of two entries.",
+              "focus": [],
+              "ops": [
+                {
+                  "op": "insert",
+                  "key": "act",
+                  "value": "a play",
+                  "bucket": 2,
+                  "size": null
+                }
+              ],
+              "pauseFor": null
+            },
+            {
+              "id": "lookup-act",
+              "title": "Look up act",
+              "narration": "The hash points straight to bucket 2. Only the two keys there are compared, not the whole table.",
+              "focus": [],
+              "ops": [
+                {
+                  "op": "lookup",
+                  "key": "act",
+                  "value": null,
+                  "bucket": 2,
+                  "size": null
+                }
+              ],
+              "pauseFor": null
+            },
+            {
+              "id": "grow",
+              "title": "Resize to 7 buckets",
+              "narration": "Growing the table rehashes every key: dog moves to bucket 6. But cat and act still share bucket 4, because this hash ignores letter order.",
+              "focus": [],
+              "ops": [
+                {
+                  "op": "resize",
+                  "key": null,
+                  "value": null,
+                  "bucket": null,
+                  "size": 7
+                }
+              ],
+              "pauseFor": null
+            }
+          ]
+        },
+        {
+          "id": "weak-hash",
+          "kind": "callout",
+          "tone": "pitfall",
+          "title": "A weak hash",
+          "text": "A hash that ignores order sends every anagram to the same bucket. Real hash functions mix in each character's position, so similar keys spread out."
+        },
+        {
+          "id": "rehash",
+          "kind": "quiz",
+          "question": "\"tac\" also sums to 312. With 7 buckets, which bucket does it go to?",
+          "code": null,
+          "options": ["Bucket 2", "Bucket 4", "Bucket 6", "Bucket 0"],
+          "correct": [1],
+          "explanation": "312 mod 7 is 4 (7 × 44 = 308), the same bucket as \"cat\" and \"act\": anagrams always collide under this hash."
+        }
+      ]
+    },
+    {
+      "id": "trees",
+      "title": "Searching a tree",
+      "intent": "example",
+      "blocks": [
+        {
+          "id": "bst-search",
+          "kind": "tree",
+          "title": "Searching for 7",
+          "variant": "bst",
+          "nodes": [
+            { "id": "n8", "label": "8", "parent": null, "side": null },
+            { "id": "n3", "label": "3", "parent": "n8", "side": "left" },
+            { "id": "n10", "label": "10", "parent": "n8", "side": "right" },
+            { "id": "n1", "label": "1", "parent": "n3", "side": "left" },
+            { "id": "n6", "label": "6", "parent": "n3", "side": "right" },
+            { "id": "n14", "label": "14", "parent": "n10", "side": "right" },
+            { "id": "n4", "label": "4", "parent": "n6", "side": "left" },
+            { "id": "n7", "label": "7", "parent": "n6", "side": "right" },
+            { "id": "n13", "label": "13", "parent": "n14", "side": "left" }
+          ],
+          "simulate": null,
+          "steps": [
+            {
+              "id": "at-8",
+              "title": "Start at the root",
+              "narration": "7 is less than 8, so it can only be in the left subtree. The whole right side is skipped.",
+              "focus": ["n8"],
+              "ops": [
+                { "op": "visit", "node": "n8", "other": null, "value": null },
+                { "op": "compare", "node": "n8", "other": null, "value": "7" }
+              ],
+              "pauseFor": null
+            },
+            {
+              "id": "at-3",
+              "title": "Go right",
+              "narration": "7 is greater than 3, so go right.",
+              "focus": ["n3"],
+              "ops": [
+                { "op": "visit", "node": "n3", "other": null, "value": null },
+                { "op": "compare", "node": "n3", "other": null, "value": "7" }
+              ],
+              "pauseFor": null
+            },
+            {
+              "id": "at-6",
+              "title": "Right again",
+              "narration": "7 is greater than 6: right again.",
+              "focus": ["n6"],
+              "ops": [
+                { "op": "visit", "node": "n6", "other": null, "value": null },
+                { "op": "compare", "node": "n6", "other": null, "value": "7" }
+              ],
+              "pauseFor": null
+            },
+            {
+              "id": "found",
+              "title": "Found",
+              "narration": "Found 7 after 4 comparisons. A balanced tree with n keys needs about log₂ n, and keeps its keys in order.",
+              "focus": ["n7"],
+              "ops": [
+                { "op": "visit", "node": "n7", "other": null, "value": null },
+                {
+                  "op": "highlight",
+                  "node": "n7",
+                  "other": null,
+                  "value": null
+                }
+              ],
+              "pauseFor": null
+            }
+          ]
+        },
+        {
+          "id": "growth",
+          "kind": "chart",
+          "title": "Steps to find one key",
+          "chart": "line",
+          "xLabel": "Items (n)",
+          "yLabel": "Steps",
+          "x": { "from": 1, "to": 64 },
+          "categories": [],
+          "series": [
+            {
+              "id": "s-hash",
+              "label": "Hash table, average: O(1)",
+              "fn": "1",
+              "values": null
+            },
+            {
+              "id": "s-tree",
+              "label": "Balanced tree: O(log n)",
+              "fn": "log n",
+              "values": null
+            },
+            {
+              "id": "s-scan",
+              "label": "Scanning a list: O(n)",
+              "fn": "n",
+              "values": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "choose",
+      "title": "Choosing one",
+      "intent": "practice",
+      "blocks": [
+        {
+          "id": "hash-vs-tree",
+          "kind": "compare",
+          "title": "Hash table or balanced search tree",
+          "columns": ["Hash table", "Balanced search tree"],
+          "rows": [
+            { "label": "Average lookup", "cells": ["O(1)", "O(log n)"] },
+            {
+              "label": "Worst-case lookup",
+              "cells": ["O(n), if keys pile into one bucket", "O(log n)"]
+            },
+            {
+              "label": "Keys in order",
+              "cells": ["No", "Yes, by in-order traversal"]
+            },
+            {
+              "label": "Range queries (all keys from a to b)",
+              "cells": ["Not efficiently", "Efficient"]
+            }
+          ]
+        },
+        {
+          "id": "range-query",
+          "kind": "quiz",
+          "question": "You need every username between \"ada\" and \"bob\", in order. Which structure fits?",
+          "code": null,
+          "options": [
+            "A hash table",
+            "A balanced search tree",
+            "Either, equally",
+            "Neither"
+          ],
+          "correct": [1],
+          "explanation": "A search tree keeps keys sorted, so it can walk from \"ada\" to \"bob\" in order. A hash table scatters keys and would have to check them all."
+        }
+      ]
+    },
+    {
+      "id": "recap",
+      "title": "Recap",
+      "intent": "recap",
+      "blocks": [
+        {
+          "id": "worst-case",
+          "kind": "quiz",
+          "question": "What makes a hash table lookup slow down to O(n)?",
+          "code": null,
+          "options": [
+            "Many keys colliding in the same bucket",
+            "Having too few keys",
+            "Keys inserted in sorted order",
+            "Using string keys"
+          ],
+          "correct": [0],
+          "explanation": "If many keys land in one bucket, a lookup has to compare against all of them. Good hashes and resizing keep buckets short."
+        }
+      ]
+    }
+  ],
+  "cards": [
+    {
+      "type": "concept",
+      "front": "How does a hash table find a key in about one step?",
+      "back": "A hash function turns the key into a bucket number, so the lookup goes straight to that bucket."
+    },
+    {
+      "type": "fact",
+      "front": "What is a hash collision?",
+      "back": "Two different keys that hash to the same bucket."
+    },
+    {
+      "type": "concept",
+      "front": "When is a balanced search tree better than a hash table?",
+      "back": "When you need keys in order or range queries; it also guarantees O(log n) in the worst case."
+    },
+    {
+      "type": "procedure",
+      "front": "What happens when a hash table resizes?",
+      "back": "It allocates more buckets and rehashes every key into them, which keeps buckets short."
+    }
+  ]
+}

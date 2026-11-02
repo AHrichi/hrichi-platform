@@ -1,0 +1,353 @@
+{
+  "specVersion": 1,
+  "id": "recursion",
+  "sectionId": "golden-recursion",
+  "title": "Recursion: the call stack and the call tree",
+  "tier": "beginner",
+  "minutes": 20,
+  "objectives": [
+    "Trace a recursive function frame by frame",
+    "Tell a base case from a recursive case",
+    "Explain why naive Fibonacci is slow, and how memoisation fixes it"
+  ],
+  "sections": [
+    {
+      "id": "hook",
+      "title": "A function that calls itself",
+      "intent": "hook",
+      "blocks": [
+        {
+          "id": "hook-text",
+          "kind": "prose",
+          "markdown": "A function that calls itself sounds like it should loop forever. It doesn't, as long as each call works on a **smaller** problem and one case, the **base case**, answers without calling again.\n\nEvery call waits for the one it made, so the computer keeps a stack of unfinished calls."
+        },
+        {
+          "id": "count-calls",
+          "kind": "predict",
+          "question": "fib(n) returns fib(n - 1) + fib(n - 2), and fib(0) and fib(1) return n. How many calls does fib(4) make, counting the first?",
+          "options": ["4", "5", "9", "16"],
+          "answer": 2,
+          "expected": null,
+          "reveal": { "block": "fib-tree", "step": null },
+          "explanation": "fib(4) calls fib(3) and fib(2); fib(3) calls fib(2) and fib(1); each fib(2) calls fib(1) and fib(0). That is 1 + 2 + 4 + 2 = 9 calls, with fib(2) computed twice."
+        }
+      ]
+    },
+    {
+      "id": "frames",
+      "title": "One frame per call",
+      "intent": "explain",
+      "blocks": [
+        {
+          "id": "factorial-trace",
+          "kind": "code-trace",
+          "title": "factorial(3), frame by frame",
+          "language": "python",
+          "code": "def factorial(n):\n    if n <= 1:\n        return 1\n    return n * factorial(n - 1)\n\nprint(factorial(3))",
+          "mode": "scripted",
+          "call": null,
+          "frames": [
+            {
+              "id": "f1",
+              "line": 6,
+              "narration": "The program calls factorial(3).",
+              "vars": [],
+              "stack": ["<module>"],
+              "output": null
+            },
+            {
+              "id": "f2",
+              "line": 2,
+              "narration": "A new frame starts with n = 3. That isn't the base case.",
+              "vars": [{ "scope": "factorial(3)", "name": "n", "value": "3" }],
+              "stack": ["<module>", "factorial(3)"],
+              "output": null
+            },
+            {
+              "id": "f3",
+              "line": 4,
+              "narration": "To return 3 * factorial(2), it must call factorial(2) first and wait.",
+              "vars": [{ "scope": "factorial(3)", "name": "n", "value": "3" }],
+              "stack": ["<module>", "factorial(3)"],
+              "output": null
+            },
+            {
+              "id": "f4",
+              "line": 2,
+              "narration": "factorial(2) gets its own frame and its own n = 2. The n = 3 above is untouched.",
+              "vars": [
+                { "scope": "factorial(3)", "name": "n", "value": "3" },
+                { "scope": "factorial(2)", "name": "n", "value": "2" }
+              ],
+              "stack": ["<module>", "factorial(3)", "factorial(2)"],
+              "output": null
+            },
+            {
+              "id": "f5",
+              "line": 4,
+              "narration": "2 isn't 1 or less, so factorial(2) calls factorial(1) and waits.",
+              "vars": [
+                { "scope": "factorial(3)", "name": "n", "value": "3" },
+                { "scope": "factorial(2)", "name": "n", "value": "2" }
+              ],
+              "stack": ["<module>", "factorial(3)", "factorial(2)"],
+              "output": null
+            },
+            {
+              "id": "f6",
+              "line": 2,
+              "narration": "A third frame, with n = 1.",
+              "vars": [
+                { "scope": "factorial(3)", "name": "n", "value": "3" },
+                { "scope": "factorial(2)", "name": "n", "value": "2" },
+                { "scope": "factorial(1)", "name": "n", "value": "1" }
+              ],
+              "stack": [
+                "<module>",
+                "factorial(3)",
+                "factorial(2)",
+                "factorial(1)"
+              ],
+              "output": null
+            },
+            {
+              "id": "f7",
+              "line": 3,
+              "narration": "The base case: factorial(1) returns 1 without calling again.",
+              "vars": [
+                { "scope": "factorial(3)", "name": "n", "value": "3" },
+                { "scope": "factorial(2)", "name": "n", "value": "2" },
+                { "scope": "factorial(1)", "name": "n", "value": "1" }
+              ],
+              "stack": [
+                "<module>",
+                "factorial(3)",
+                "factorial(2)",
+                "factorial(1)"
+              ],
+              "output": null
+            },
+            {
+              "id": "f8",
+              "line": 4,
+              "narration": "factorial(1)'s frame is gone. factorial(2) finishes its line: 2 * 1 = 2.",
+              "vars": [
+                { "scope": "factorial(3)", "name": "n", "value": "3" },
+                { "scope": "factorial(2)", "name": "n", "value": "2" }
+              ],
+              "stack": ["<module>", "factorial(3)", "factorial(2)"],
+              "output": null
+            },
+            {
+              "id": "f9",
+              "line": 4,
+              "narration": "factorial(3) gets 2 back and returns 3 * 2 = 6.",
+              "vars": [{ "scope": "factorial(3)", "name": "n", "value": "3" }],
+              "stack": ["<module>", "factorial(3)"],
+              "output": null
+            },
+            {
+              "id": "f10",
+              "line": 6,
+              "narration": "Back at the top, print receives 6 and shows it. Every frame is gone.",
+              "vars": [],
+              "stack": ["<module>"],
+              "output": "6"
+            }
+          ]
+        },
+        {
+          "id": "call-stack",
+          "kind": "stack-queue",
+          "title": "The call stack",
+          "mode": "stack",
+          "initial": [],
+          "steps": [
+            {
+              "id": "push-3",
+              "title": "factorial(3) starts",
+              "narration": "Each call pushes a frame on top of the stack.",
+              "focus": [],
+              "ops": [{ "op": "push", "value": "factorial(3)" }],
+              "pauseFor": null
+            },
+            {
+              "id": "push-2",
+              "title": "factorial(2) starts",
+              "narration": "factorial(3) is waiting, so factorial(2) goes on top of it.",
+              "focus": [],
+              "ops": [{ "op": "push", "value": "factorial(2)" }],
+              "pauseFor": null
+            },
+            {
+              "id": "push-1",
+              "title": "factorial(1) starts",
+              "narration": "The stack is three frames deep: one per unfinished call.",
+              "focus": [],
+              "ops": [{ "op": "push", "value": "factorial(1)" }],
+              "pauseFor": null
+            },
+            {
+              "id": "pop-1",
+              "title": "The base case returns 1",
+              "narration": "The top frame returns first, and its frame is popped.",
+              "focus": [],
+              "ops": [{ "op": "pop", "value": null }],
+              "pauseFor": null
+            },
+            {
+              "id": "pop-2",
+              "title": "factorial(2) returns 2",
+              "narration": "Now factorial(2) is on top again; it finishes and pops.",
+              "focus": [],
+              "ops": [{ "op": "pop", "value": null }],
+              "pauseFor": null
+            },
+            {
+              "id": "pop-3",
+              "title": "factorial(3) returns 6",
+              "narration": "Last in, first out: the first call is the last to finish.",
+              "focus": [],
+              "ops": [{ "op": "pop", "value": null }],
+              "pauseFor": null
+            }
+          ]
+        },
+        {
+          "id": "first-to-finish",
+          "kind": "quiz",
+          "question": "factorial(4) calls factorial(3), which calls factorial(2), and so on. Which call returns first?",
+          "code": null,
+          "options": [
+            "factorial(4)",
+            "factorial(3)",
+            "factorial(1)",
+            "They all return together"
+          ],
+          "correct": [2],
+          "explanation": "factorial(1) is the base case and the top of the stack: it returns first, and each caller below it finishes in turn."
+        }
+      ]
+    },
+    {
+      "id": "the-tree",
+      "title": "When calls branch",
+      "intent": "example",
+      "blocks": [
+        {
+          "id": "fib-tree",
+          "kind": "recursion-tree",
+          "title": "fib(4) without memoisation",
+          "fn": "fib(n)",
+          "simulate": { "algorithm": "fibonacci", "n": 4, "memo": false },
+          "calls": [],
+          "steps": []
+        },
+        {
+          "id": "blow-up",
+          "kind": "callout",
+          "tone": "pitfall",
+          "title": "Repeated work explodes",
+          "text": "Naive fib(n) recomputes the same values again and again: fib(30) makes over 2.6 million calls. Caching each result (memoisation) computes each of fib(0) to fib(30) once: 31 values."
+        },
+        {
+          "id": "fib-memo",
+          "kind": "recursion-tree",
+          "title": "fib(4) with memoisation",
+          "fn": "fib(n)",
+          "simulate": { "algorithm": "fibonacci", "n": 4, "memo": true },
+          "calls": [],
+          "steps": []
+        }
+      ]
+    },
+    {
+      "id": "sort-cases",
+      "title": "Your turn",
+      "intent": "practice",
+      "blocks": [
+        {
+          "id": "cases",
+          "kind": "categorize",
+          "prompt": "Is each line a base case or a recursive case?",
+          "categories": [
+            { "id": "base", "label": "Base case" },
+            { "id": "recursive", "label": "Recursive case" }
+          ],
+          "items": [
+            { "id": "i1", "text": "if n <= 1: return 1", "category": "base" },
+            {
+              "id": "i2",
+              "text": "return n * factorial(n - 1)",
+              "category": "recursive"
+            },
+            {
+              "id": "i3",
+              "text": "if not items: return 0",
+              "category": "base"
+            },
+            {
+              "id": "i4",
+              "text": "return items[0] + total(items[1:])",
+              "category": "recursive"
+            },
+            {
+              "id": "i5",
+              "text": "if node is None: return 0",
+              "category": "base"
+            },
+            {
+              "id": "i6",
+              "text": "return 1 + max(depth(node.left), depth(node.right))",
+              "category": "recursive"
+            }
+          ],
+          "explanation": "A base case answers directly. A recursive case calls the function again on a smaller input: n - 1, the rest of the list, or a subtree."
+        }
+      ]
+    },
+    {
+      "id": "recap",
+      "title": "Recap",
+      "intent": "recap",
+      "blocks": [
+        {
+          "id": "no-base",
+          "kind": "quiz",
+          "question": "What happens when a recursive function has no base case?",
+          "code": null,
+          "options": [
+            "It recurses until the call stack overflows; Python raises RecursionError",
+            "It returns None",
+            "Python refuses to run it",
+            "It loops forever without using memory"
+          ],
+          "correct": [0],
+          "explanation": "Each call adds a frame. With nothing to stop them, frames pile up until the stack limit is reached."
+        }
+      ]
+    }
+  ],
+  "cards": [
+    {
+      "type": "concept",
+      "front": "What two parts does every recursive function need?",
+      "back": "A base case that answers directly, and a recursive case that calls itself on a smaller input."
+    },
+    {
+      "type": "fact",
+      "front": "In what order do recursive calls finish?",
+      "back": "Last in, first out: the innermost call returns first, like a stack."
+    },
+    {
+      "type": "concept",
+      "front": "Why is naive recursive Fibonacci exponential?",
+      "back": "Each call branches into two and the same subproblems are recomputed many times."
+    },
+    {
+      "type": "procedure",
+      "front": "How does memoisation speed up recursion?",
+      "back": "Store each result the first time it is computed and return the stored value on later calls."
+    }
+  ]
+}

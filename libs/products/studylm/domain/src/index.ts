@@ -6,7 +6,6 @@ export * from './lib/models/quiz.model';
 export * from './lib/models/synthesis.model';
 export * from './lib/models/subject.model';
 export * from './lib/models/elaboration.model';
-export * from './lib/data/sample-decks.data';
 export * from './lib/utils/export-study';
 export * from './lib/utils/schema-validator';
 export * from './lib/utils/elaboration-validator';

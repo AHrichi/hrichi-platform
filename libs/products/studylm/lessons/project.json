@@ -1,0 +1,22 @@
+{
+  "name": "product-studylm-lessons",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/products/studylm/lessons/src",
+  "prefix": "ah",
+  "projectType": "library",
+  "tags": [
+    "scope:product-studylm",
+    "scope:shared",
+    "type:domain",
+    "runtime:agnostic"
+  ],
+  "targets": {
+    "test": {
+      "inputs": [
+        "default",
+        "^production",
+        "{workspaceRoot}/tools/scripts/studylm_workflow.json"
+      ]
+    }
+  }
+}

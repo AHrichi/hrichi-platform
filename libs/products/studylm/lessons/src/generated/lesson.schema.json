@@ -1,0 +1,4036 @@
+{
+  "type": "object",
+  "properties": {
+    "specVersion": {
+      "const": 1
+    },
+    "id": {
+      "type": "string",
+      "description": "Kebab-case id: lowercase letters, digits and dashes, starting with a letter, at most 32 characters. Unique within the lesson."
+    },
+    "sectionId": {
+      "type": "string",
+      "description": "The roadmap section this lesson teaches. At most 64 characters."
+    },
+    "title": {
+      "type": "string",
+      "description": "The lesson title. At most 80 characters."
+    },
+    "tier": {
+      "enum": [
+        "beginner",
+        "intermediate",
+        "expert"
+      ],
+      "type": "string",
+      "description": "The level the lesson is written for."
+    },
+    "minutes": {
+      "type": "integer",
+      "description": "Minutes a focused learner needs for the whole lesson. A whole number from 5 to 60."
+    },
+    "objectives": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "description": "What the learner can do afterwards, starting with a verb. At most 160 characters."
+      },
+      "description": "Learning objectives. 1 to 5 items."
+    },
+    "sections": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Kebab-case id: lowercase letters, digits and dashes, starting with a letter, at most 32 characters. Unique within the lesson."
+          },
+          "title": {
+            "type": "string",
+            "description": "The section heading. At most 80 characters."
+          },
+          "intent": {
+            "enum": [
+              "hook",
+              "explain",
+              "example",
+              "practice",
+              "recap"
+            ],
+            "type": "string",
+            "description": "hook: a question or problem that makes the topic matter; explain: how it works; example: a worked example; practice: the learner does it; recap: retrieval of the key points."
+          },
+          "blocks": {
+            "type": "array",
+            "items": {
+              "anyOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "Kebab-case id: lowercase letters, digits and dashes, starting with a letter, at most 32 characters. Unique within the lesson."
+                    },
+                    "kind": {
+                      "const": "prose"
+                    },
+                    "markdown": {
+                      "type": "string",
+                      "description": "Explanation in a small Markdown subset: paragraphs, **bold**, *italic*, `inline code`, lists starting with \"- \" or \"1. \", and [links](https://...). No HTML, no headings, no images, no tables. At most 1500 characters."
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "kind",
+                    "markdown"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "Kebab-case id: lowercase letters, digits and dashes, starting with a letter, at most 32 characters. Unique within the lesson."
+                    },
+                    "kind": {
+                      "const": "callout"
+                    },
+                    "tone": {
+                      "enum": [
+                        "key-idea",
+                        "analogy",
+                        "pitfall",
+                        "tip",
+                        "definition"
+                      ],
+                      "type": "string",
+                      "description": "key-idea: the one thing to remember; analogy: an everyday comparison; pitfall: a common mistake; tip: practical advice; definition: a term."
+                    },
+                    "title": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "description": "A short heading. At most 80 characters."
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "text": {
+                      "type": "string",
+                      "description": "The callout, in plain text. At most 400 characters."
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "kind",
+                    "tone",
+                    "title",
+                    "text"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "Kebab-case id: lowercase letters, digits and dashes, starting with a letter, at most 32 characters. Unique within the lesson."
+                    },
+                    "kind": {
+                      "const": "compare"
+                    },
+                    "title": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "description": "A short caption shown above the visual. At most 80 characters."
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "columns": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "description": "A thing being compared. At most 60 characters."
+                      },
+                      "description": "The things being compared, as column headings. 2 to 4 items."
+                    },
+                    "rows": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "label": {
+                            "type": "string",
+                            "description": "The aspect compared in this row. At most 60 characters."
+                          },
+                          "cells": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "description": "The value for one column. At most 160 characters."
+                            },
+                            "description": "One cell per column, in column order."
+                          }
+                        },
+                        "required": [
+                          "label",
+                          "cells"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "description": "The aspects compared. 1 to 8 items."
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "kind",
+                    "title",
+                    "columns",
+                    "rows"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "Kebab-case id: lowercase letters, digits and dashes, starting with a letter, at most 32 characters. Unique within the lesson."
+                    },
+                    "kind": {
+                      "const": "code-walkthrough"
+                    },
+                    "title": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "description": "A short caption shown above the visual. At most 80 characters."
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "language": {
+                      "enum": [
+                        "javascript",
+                        "typescript",
+                        "python",
+                        "java",
+                        "go",
+                        "rust",
+                        "c",
+                        "cpp",
+                        "csharp",
+                        "sql",
+                        "bash",
+                        "html",
+                        "css",
+                        "json",
+                        "yaml",
+                        "text"
+                      ],
+                      "type": "string",
+                      "description": "The language of the code."
+                    },
+                    "code": {
+                      "type": "string",
+                      "description": "Source code: at most 30 lines of 100 characters, indented with spaces, no tabs. Lines are numbered from 1. At most 2400 characters."
+                    },
+                    "steps": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "Kebab-case id: lowercase letters, digits and dashes, starting with a letter, at most 32 characters. Unique within the lesson."
+                          },
+                          "title": {
+                            "type": "string",
+                            "description": "A few words naming the step. At most 80 characters."
+                          },
+                          "narration": {
+                            "type": "string",
+                            "description": "What happens in this step and why, in at most 40 words. At most 280 characters."
+                          },
+                          "focus": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "description": "The id of an element declared in this block."
+                            },
+                            "description": "Ids of the parts to highlight in this step (nodes, edges, messages and so on). At most 8."
+                          },
+                          "ops": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "op": {
+                                  "enum": [
+                                    "lines",
+                                    "note"
+                                  ],
+                                  "type": "string"
+                                },
+                                "from": {
+                                  "anyOf": [
+                                    {
+                                      "type": "integer",
+                                      "description": "First line, from 1."
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                },
+                                "to": {
+                                  "anyOf": [
+                                    {
+                                      "type": "integer",
+                                      "description": "Last line, for `lines`; null for `note`."
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                },
+                                "text": {
+                                  "anyOf": [
+                                    {
+                                      "type": "string",
+                                      "description": "The note, for `note`; null for `lines`. At most 200 characters."
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                }
+                              },
+                              "required": [
+                                "op",
+                                "from",
+                                "to",
+                                "text"
+                              ],
+                              "additionalProperties": false
+                            },
+                            "description": "`lines` (from, to) highlights a range; `note` (from, text) pins a note to a line. Leave `focus` empty: code has no ids. At most 6 per step."
+                          },
+                          "pauseFor": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "description": "The id of a check block in the same section the learner answers before this step plays, or null."
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "title",
+                          "narration",
+                          "focus",
+                          "ops",
+                          "pauseFor"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "description": "The steps, in order. At most 40. Each step's ops apply on top of the previous steps."
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "kind",
+                    "title",
+                    "language",
+                    "code",
+                    "steps"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "Kebab-case id: lowercase letters, digits and dashes, starting with a letter, at most 32 characters. Unique within the lesson."
+                    },
+                    "kind": {
+                      "const": "code-trace"
+                    },
+                    "title": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "description": "A short caption shown above the visual. At most 80 characters."
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "language": {
+                      "enum": [
+                        "javascript",
+                        "typescript",
+                        "python",
+                        "java",
+                        "go",
+                        "rust",
+                        "c",
+                        "cpp",
+                        "csharp",
+                        "sql",
+                        "bash",
+                        "html",
+                        "css",
+                        "json",
+                        "yaml",
+                        "text"
+                      ],
+                      "type": "string",
+                      "description": "The language of the code."
+                    },
+                    "code": {
+                      "type": "string",
+                      "description": "Source code: at most 30 lines of 100 characters, indented with spaces, no tabs. Lines are numbered from 1. At most 2400 characters."
+                    },
+                    "mode": {
+                      "enum": [
+                        "execute",
+                        "scripted"
+                      ],
+                      "type": "string",
+                      "description": "execute: JavaScript only; the app runs the code and records every frame itself, so leave frames empty. scripted: any language; you write the frames."
+                    },
+                    "call": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "description": "For execute: the call that starts the run, such as \"binarySearch([1, 3, 5], 5)\". Null if the code runs on its own. At most 200 characters."
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "frames": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "Kebab-case id: lowercase letters, digits and dashes, starting with a letter, at most 32 characters. Unique within the lesson."
+                          },
+                          "line": {
+                            "type": "integer",
+                            "description": "The line about to run, from 1."
+                          },
+                          "narration": {
+                            "type": "string",
+                            "description": "What this line does, in at most 40 words. At most 280 characters."
+                          },
+                          "vars": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "scope": {
+                                  "type": "string",
+                                  "description": "The function the variable belongs to, or \"global\". At most 40 characters."
+                                },
+                                "name": {
+                                  "type": "string",
+                                  "description": "The variable name. At most 40 characters."
+                                },
+                                "value": {
+                                  "type": "string",
+                                  "description": "Its value, written as the language would print it. At most 80 characters."
+                                }
+                              },
+                              "required": [
+                                "scope",
+                                "name",
+                                "value"
+                              ],
+                              "additionalProperties": false
+                            },
+                            "description": "The variables in scope as the line is about to run, at most 12."
+                          },
+                          "stack": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "description": "A function name, with its arguments if short. At most 40 characters."
+                            },
+                            "description": "The call stack as the line is about to run, outermost first, innermost last."
+                          },
+                          "output": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "description": "Everything printed so far, lines joined with \\n; null before anything is printed. At most 200 characters."
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "line",
+                          "narration",
+                          "vars",
+                          "stack",
+                          "output"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "description": "For scripted: the frames in order, at most 40. Empty for execute."
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "kind",
+                    "title",
+                    "language",
+                    "code",
+                    "mode",
+                    "call",
+                    "frames"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "Kebab-case id: lowercase letters, digits and dashes, starting with a letter, at most 32 characters. Unique within the lesson."
+                    },
+                    "kind": {
+                      "const": "array"
+                    },
+                    "title": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "description": "A short caption shown above the visual. At most 80 characters."
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "values": {
+                      "type": "array",
+                      "items": {
+                        "anyOf": [
+                          {
+                            "type": "number"
+                          },
+                          {
+                            "type": "string"
+                          }
+                        ]
+                      },
+                      "description": "The array, all numbers or all strings. 1 to 16 items."
+                    },
+                    "pointers": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "description": "A pointer name such as \"lo\", \"hi\", \"mid\", \"i\" or \"j\". At most 12 characters."
+                      },
+                      "description": "The pointer names the steps use, at most 4."
+                    },
+                    "simulate": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "algorithm": {
+                              "enum": [
+                                "bubble-sort",
+                                "insertion-sort",
+                                "selection-sort",
+                                "merge-sort",
+                                "quick-sort",
+                                "binary-search",
+                                "linear-search",
+                                "two-pointers-pair-sum",
+                                "sliding-window-max-sum",
+                                "prefix-sum",
+                                "reverse"
+                              ],
+                              "type": "string"
+                            },
+                            "target": {
+                              "anyOf": [
+                                {
+                                  "type": "number",
+                                  "description": "The value searched for, or the pair sum. Null if unused."
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "window": {
+                              "anyOf": [
+                                {
+                                  "type": "integer",
+                                  "description": "The window size for a sliding window. Null if unused."
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            }
+                          },
+                          "required": [
+                            "algorithm",
+                            "target",
+                            "window"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "steps": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "Kebab-case id: lowercase letters, digits and dashes, starting with a letter, at most 32 characters. Unique within the lesson."
+                          },
+                          "title": {
+                            "type": "string",
+                            "description": "A few words naming the step. At most 80 characters."
+                          },
+                          "narration": {
+                            "type": "string",
+                            "description": "What happens in this step and why, in at most 40 words. At most 280 characters."
+                          },
+                          "focus": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "description": "The id of an element declared in this block."
+                            },
+                            "description": "Ids of the parts to highlight in this step (nodes, edges, messages and so on). At most 8."
+                          },
+                          "ops": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "op": {
+                                  "enum": [
+                                    "compare",
+                                    "swap",
+                                    "set",
+                                    "mark",
+                                    "unmark",
+                                    "pointer",
+                                    "range",
+                                    "found",
+                                    "not-found"
+                                  ],
+                                  "type": "string"
+                                },
+                                "i": {
+                                  "anyOf": [
+                                    {
+                                      "type": "integer"
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                },
+                                "j": {
+                                  "anyOf": [
+                                    {
+                                      "type": "integer"
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                },
+                                "value": {
+                                  "anyOf": [
+                                    {
+                                      "anyOf": [
+                                        {
+                                          "type": "number"
+                                        },
+                                        {
+                                          "type": "string"
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                },
+                                "name": {
+                                  "anyOf": [
+                                    {
+                                      "type": "string",
+                                      "description": "A pointer name or a mark label. At most 16 characters."
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                }
+                              },
+                              "required": [
+                                "op",
+                                "i",
+                                "j",
+                                "value",
+                                "name"
+                              ],
+                              "additionalProperties": false
+                            },
+                            "description": "compare (i, j); swap (i, j); set (i, value); mark (i, name: label); unmark (i); pointer (name, i, or i null to hide it); range (i to j, the active part); found (i); not-found. Unused fields are null. At most 6 per step."
+                          },
+                          "pauseFor": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "description": "The id of a check block in the same section the learner answers before this step plays, or null."
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "title",
+                          "narration",
+                          "focus",
+                          "ops",
+                          "pauseFor"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "description": "The steps, in order. At most 40. Each step's ops apply on top of the previous steps."
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "kind",
+                    "title",
+                    "values",
+                    "pointers",
+                    "simulate",
+                    "steps"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "Kebab-case id: lowercase letters, digits and dashes, starting with a letter, at most 32 characters. Unique within the lesson."
+                    },
+                    "kind": {
+                      "const": "stack-queue"
+                    },
+                    "title": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "description": "A short caption shown above the visual. At most 80 characters."
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "mode": {
+                      "enum": [
+                        "stack",
+                        "queue",
+                        "deque"
+                      ],
+                      "type": "string",
+                      "description": "stack: push, pop, peek at the top (the end). queue: enqueue at the back, dequeue and peek at the front. deque: enqueue, dequeue, push-front, pop-back, peek."
+                    },
+                    "initial": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "description": "A value. At most 24 characters."
+                      },
+                      "description": "The starting contents, bottom or front first."
+                    },
+                    "steps": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "Kebab-case id: lowercase letters, digits and dashes, starting with a letter, at most 32 characters. Unique within the lesson."
+                          },
+                          "title": {
+                            "type": "string",
+                            "description": "A few words naming the step. At most 80 characters."
+                          },
+                          "narration": {
+                            "type": "string",
+                            "description": "What happens in this step and why, in at most 40 words. At most 280 characters."
+                          },
+                          "focus": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "description": "The id of an element declared in this block."
+                            },
+                            "description": "Ids of the parts to highlight in this step (nodes, edges, messages and so on). At most 8."
+                          },
+                          "ops": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "op": {
+                                  "enum": [
+                                    "push",
+                                    "pop",
+                                    "enqueue",
+                                    "dequeue",
+                                    "peek",
+                                    "push-front",
+                                    "pop-back"
+                                  ],
+                                  "type": "string"
+                                },
+                                "value": {
+                                  "anyOf": [
+                                    {
+                                      "type": "string",
+                                      "description": "The value pushed or enqueued; null otherwise. At most 24 characters."
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                }
+                              },
+                              "required": [
+                                "op",
+                                "value"
+                              ],
+                              "additionalProperties": false
+                            },
+                            "description": "One operation; value only for adding ones. At most 6 per step."
+                          },
+                          "pauseFor": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "description": "The id of a check block in the same section the learner answers before this step plays, or null."
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "title",
+                          "narration",
+                          "focus",
+                          "ops",
+                          "pauseFor"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "description": "The steps, in order. At most 40. Each step's ops apply on top of the previous steps."
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "kind",
+                    "title",
+                    "mode",
+                    "initial",
+                    "steps"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "Kebab-case id: lowercase letters, digits and dashes, starting with a letter, at most 32 characters. Unique within the lesson."
+                    },
+                    "kind": {
+                      "const": "hash-table"
+                    },
+                    "title": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "description": "A short caption shown above the visual. At most 80 characters."
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "buckets": {
+                      "type": "integer",
+                      "description": "The starting number of buckets."
+                    },
+                    "hash": {
+                      "enum": [
+                        "mod",
+                        "char-sum-mod",
+                        "given"
+                      ],
+                      "type": "string",
+                      "description": "mod: integer keys, key % buckets. char-sum-mod: the sum of the key's character codes % buckets, so anagrams collide. given: you supply each bucket."
+                    },
+                    "steps": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "Kebab-case id: lowercase letters, digits and dashes, starting with a letter, at most 32 characters. Unique within the lesson."
+                          },
+                          "title": {
+                            "type": "string",
+                            "description": "A few words naming the step. At most 80 characters."
+                          },
+                          "narration": {
+                            "type": "string",
+                            "description": "What happens in this step and why, in at most 40 words. At most 280 characters."
+                          },
+                          "focus": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "description": "The id of an element declared in this block."
+                            },
+                            "description": "Ids of the parts to highlight in this step (nodes, edges, messages and so on). At most 8."
+                          },
+                          "ops": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "op": {
+                                  "enum": [
+                                    "insert",
+                                    "lookup",
+                                    "delete",
+                                    "resize"
+                                  ],
+                                  "type": "string"
+                                },
+                                "key": {
+                                  "anyOf": [
+                                    {
+                                      "type": "string",
+                                      "description": "The key; null for resize. At most 24 characters."
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                },
+                                "value": {
+                                  "anyOf": [
+                                    {
+                                      "type": "string",
+                                      "description": "The value stored by insert; null otherwise. At most 24 characters."
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                },
+                                "bucket": {
+                                  "anyOf": [
+                                    {
+                                      "type": "integer",
+                                      "description": "The bucket the key hashes to. Required with \"given\"; with \"mod\" or \"char-sum-mod\", null or the computed bucket."
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                },
+                                "size": {
+                                  "anyOf": [
+                                    {
+                                      "type": "integer",
+                                      "description": "The new bucket count, for resize; null otherwise."
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                }
+                              },
+                              "required": [
+                                "op",
+                                "key",
+                                "value",
+                                "bucket",
+                                "size"
+                              ],
+                              "additionalProperties": false
+                            },
+                            "description": "One operation on the table. At most 6 per step."
+                          },
+                          "pauseFor": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "description": "The id of a check block in the same section the learner answers before this step plays, or null."
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "title",
+                          "narration",
+                          "focus",
+                          "ops",
+                          "pauseFor"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "description": "The steps, in order. At most 40. Each step's ops apply on top of the previous steps."
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "kind",
+                    "title",
+                    "buckets",
+                    "hash",
+                    "steps"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "Kebab-case id: lowercase letters, digits and dashes, starting with a letter, at most 32 characters. Unique within the lesson."
+                    },
+                    "kind": {
+                      "const": "tree"
+                    },
+                    "title": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "description": "A short caption shown above the visual. At most 80 characters."
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "variant": {
+                      "enum": [
+                        "bst",
+                        "binary",
+                        "min-heap",
+                        "max-heap",
+                        "general"
+                      ],
+                      "type": "string"
+                    },
+                    "nodes": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "Kebab-case id: lowercase letters, digits and dashes, starting with a letter, at most 32 characters. Unique within the lesson."
+                          },
+                          "label": {
+                            "type": "string",
+                            "description": "What the node shows; a number for bst and heaps. At most 16 characters."
+                          },
+                          "parent": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "description": "The parent node id; null for the root."
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "side": {
+                            "anyOf": [
+                              {
+                                "enum": [
+                                  "left",
+                                  "right"
+                                ],
+                                "type": "string",
+                                "description": "For binary trees, heaps and bst: which child it is. Null for the root and general trees."
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "label",
+                          "parent",
+                          "side"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "description": "The tree as a flat list, parents before children, at most 15 nodes."
+                    },
+                    "simulate": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "algorithm": {
+                              "enum": [
+                                "bst-insert",
+                                "bst-search",
+                                "inorder",
+                                "preorder",
+                                "postorder",
+                                "level-order",
+                                "heap-push",
+                                "heap-pop"
+                              ],
+                              "type": "string"
+                            },
+                            "values": {
+                              "type": "array",
+                              "items": {
+                                "type": "number"
+                              },
+                              "description": "Values to insert or push, or the one value to search for. Empty for traversals."
+                            }
+                          },
+                          "required": [
+                            "algorithm",
+                            "values"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "steps": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "Kebab-case id: lowercase letters, digits and dashes, starting with a letter, at most 32 characters. Unique within the lesson."
+                          },
+                          "title": {
+                            "type": "string",
+                            "description": "A few words naming the step. At most 80 characters."
+                          },
+                          "narration": {
+                            "type": "string",
+                            "description": "What happens in this step and why, in at most 40 words. At most 280 characters."
+                          },
+                          "focus": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "description": "The id of an element declared in this block."
+                            },
+                            "description": "Ids of the parts to highlight in this step (nodes, edges, messages and so on). At most 8."
+                          },
+                          "ops": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "op": {
+                                  "enum": [
+                                    "visit",
+                                    "compare",
+                                    "insert",
+                                    "remove",
+                                    "swap",
+                                    "highlight",
+                                    "emit"
+                                  ],
+                                  "type": "string"
+                                },
+                                "node": {
+                                  "anyOf": [
+                                    {
+                                      "type": "string",
+                                      "description": "The id of an element declared in this block."
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                },
+                                "other": {
+                                  "anyOf": [
+                                    {
+                                      "type": "string",
+                                      "description": "Second node for compare or swap; the parent for insert."
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                },
+                                "value": {
+                                  "anyOf": [
+                                    {
+                                      "type": "string",
+                                      "description": "The label of an inserted node, the value compared, or the value emitted. At most 24 characters."
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                }
+                              },
+                              "required": [
+                                "op",
+                                "node",
+                                "other",
+                                "value"
+                              ],
+                              "additionalProperties": false
+                            },
+                            "description": "visit (node); compare (node, value); insert (node: the new id, other: its parent, value: its label); remove (node); swap (node, other); highlight (node); emit (node, value: appended to the output). At most 6 per step."
+                          },
+                          "pauseFor": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "description": "The id of a check block in the same section the learner answers before this step plays, or null."
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "title",
+                          "narration",
+                          "focus",
+                          "ops",
+                          "pauseFor"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "description": "The steps, in order. At most 40. Each step's ops apply on top of the previous steps."
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "kind",
+                    "title",
+                    "variant",
+                    "nodes",
+                    "simulate",
+                    "steps"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "Kebab-case id: lowercase letters, digits and dashes, starting with a letter, at most 32 characters. Unique within the lesson."
+                    },
+                    "kind": {
+                      "const": "graph"
+                    },
+                    "title": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "description": "A short caption shown above the visual. At most 80 characters."
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "directed": {
+                      "type": "boolean"
+                    },
+                    "weighted": {
+                      "type": "boolean"
+                    },
+                    "nodes": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "Kebab-case id: lowercase letters, digits and dashes, starting with a letter, at most 32 characters. Unique within the lesson."
+                          },
+                          "label": {
+                            "type": "string",
+                            "description": "What the node shows. At most 16 characters."
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "label"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "description": "The nodes. 1 to 14 items."
+                    },
+                    "edges": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "Kebab-case id: lowercase letters, digits and dashes, starting with a letter, at most 32 characters. Unique within the lesson."
+                          },
+                          "from": {
+                            "type": "string",
+                            "description": "The id of an element declared in this block."
+                          },
+                          "to": {
+                            "type": "string",
+                            "description": "The id of an element declared in this block."
+                          },
+                          "weight": {
+                            "anyOf": [
+                              {
+                                "type": "number",
+                                "description": "The weight if weighted, otherwise null."
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "from",
+                          "to",
+                          "weight"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "description": "The edges, at most 24."
+                    },
+                    "simulate": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "algorithm": {
+                              "enum": [
+                                "bfs",
+                                "dfs",
+                                "dijkstra",
+                                "topological-sort"
+                              ],
+                              "type": "string"
+                            },
+                            "start": {
+                              "anyOf": [
+                                {
+                                  "type": "string",
+                                  "description": "The start node; null for topological sort."
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            }
+                          },
+                          "required": [
+                            "algorithm",
+                            "start"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "steps": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "Kebab-case id: lowercase letters, digits and dashes, starting with a letter, at most 32 characters. Unique within the lesson."
+                          },
+                          "title": {
+                            "type": "string",
+                            "description": "A few words naming the step. At most 80 characters."
+                          },
+                          "narration": {
+                            "type": "string",
+                            "description": "What happens in this step and why, in at most 40 words. At most 280 characters."
+                          },
+                          "focus": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "description": "The id of an element declared in this block."
+                            },
+                            "description": "Ids of the parts to highlight in this step (nodes, edges, messages and so on). At most 8."
+                          },
+                          "ops": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "op": {
+                                  "enum": [
+                                    "visit",
+                                    "enqueue",
+                                    "dequeue",
+                                    "push",
+                                    "pop",
+                                    "relax",
+                                    "mark-edge",
+                                    "set-distance",
+                                    "emit"
+                                  ],
+                                  "type": "string"
+                                },
+                                "node": {
+                                  "anyOf": [
+                                    {
+                                      "type": "string",
+                                      "description": "The id of an element declared in this block."
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                },
+                                "edge": {
+                                  "anyOf": [
+                                    {
+                                      "type": "string",
+                                      "description": "The id of an element declared in this block."
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                },
+                                "value": {
+                                  "anyOf": [
+                                    {
+                                      "type": "string",
+                                      "description": "A distance, or a value appended to the output. At most 24 characters."
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                }
+                              },
+                              "required": [
+                                "op",
+                                "node",
+                                "edge",
+                                "value"
+                              ],
+                              "additionalProperties": false
+                            },
+                            "description": "visit, enqueue, dequeue, push, pop (node); relax or mark-edge (edge); set-distance (node, value); emit (node or value). At most 6 per step."
+                          },
+                          "pauseFor": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "description": "The id of a check block in the same section the learner answers before this step plays, or null."
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "title",
+                          "narration",
+                          "focus",
+                          "ops",
+                          "pauseFor"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "description": "The steps, in order. At most 40. Each step's ops apply on top of the previous steps."
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "kind",
+                    "title",
+                    "directed",
+                    "weighted",
+                    "nodes",
+                    "edges",
+                    "simulate",
+                    "steps"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "Kebab-case id: lowercase letters, digits and dashes, starting with a letter, at most 32 characters. Unique within the lesson."
+                    },
+                    "kind": {
+                      "const": "grid"
+                    },
+                    "title": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "description": "A short caption shown above the visual. At most 80 characters."
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "rows": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "description": "One row, one character per cell: \".\" open, \"#\" wall, \"S\" start, \"G\" goal, or a digit."
+                      },
+                      "description": "The grid, top row first, at most 10 rows of equal length. Empty only for lcs."
+                    },
+                    "simulate": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "algorithm": {
+                              "enum": [
+                                "grid-bfs",
+                                "flood-fill",
+                                "a-star",
+                                "unique-paths",
+                                "min-path-sum",
+                                "lcs"
+                              ],
+                              "type": "string"
+                            },
+                            "a": {
+                              "anyOf": [
+                                {
+                                  "type": "string",
+                                  "description": "For lcs: the first string. At most 8 characters."
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "b": {
+                              "anyOf": [
+                                {
+                                  "type": "string",
+                                  "description": "For lcs: the second string. At most 8 characters."
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            }
+                          },
+                          "required": [
+                            "algorithm",
+                            "a",
+                            "b"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "steps": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "Kebab-case id: lowercase letters, digits and dashes, starting with a letter, at most 32 characters. Unique within the lesson."
+                          },
+                          "title": {
+                            "type": "string",
+                            "description": "A few words naming the step. At most 80 characters."
+                          },
+                          "narration": {
+                            "type": "string",
+                            "description": "What happens in this step and why, in at most 40 words. At most 280 characters."
+                          },
+                          "focus": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "description": "The id of an element declared in this block."
+                            },
+                            "description": "Ids of the parts to highlight in this step (nodes, edges, messages and so on). At most 8."
+                          },
+                          "ops": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "op": {
+                                  "enum": [
+                                    "visit",
+                                    "frontier",
+                                    "set",
+                                    "path",
+                                    "compare",
+                                    "wall"
+                                  ],
+                                  "type": "string"
+                                },
+                                "row": {
+                                  "anyOf": [
+                                    {
+                                      "type": "integer"
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                },
+                                "col": {
+                                  "anyOf": [
+                                    {
+                                      "type": "integer"
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                },
+                                "value": {
+                                  "anyOf": [
+                                    {
+                                      "type": "string",
+                                      "description": "A value written into the cell by set. At most 8 characters."
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                }
+                              },
+                              "required": [
+                                "op",
+                                "row",
+                                "col",
+                                "value"
+                              ],
+                              "additionalProperties": false
+                            },
+                            "description": "visit, frontier, path, compare, wall (row, col); set (row, col, value). Rows and columns count from 0. At most 6 per step."
+                          },
+                          "pauseFor": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "description": "The id of a check block in the same section the learner answers before this step plays, or null."
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "title",
+                          "narration",
+                          "focus",
+                          "ops",
+                          "pauseFor"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "description": "The steps, in order. At most 40. Each step's ops apply on top of the previous steps."
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "kind",
+                    "title",
+                    "rows",
+                    "simulate",
+                    "steps"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "Kebab-case id: lowercase letters, digits and dashes, starting with a letter, at most 32 characters. Unique within the lesson."
+                    },
+                    "kind": {
+                      "const": "recursion-tree"
+                    },
+                    "title": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "description": "A short caption shown above the visual. At most 80 characters."
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "fn": {
+                      "type": "string",
+                      "description": "The function, such as \"fib(n)\". At most 24 characters."
+                    },
+                    "simulate": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "algorithm": {
+                              "enum": [
+                                "fibonacci",
+                                "factorial",
+                                "power",
+                                "subsets"
+                              ],
+                              "type": "string"
+                            },
+                            "n": {
+                              "type": "integer",
+                              "description": "The argument: fibonacci up to 6, factorial and power up to 8, subsets up to 3."
+                            },
+                            "memo": {
+                              "type": "boolean",
+                              "description": "Whether results are cached."
+                            }
+                          },
+                          "required": [
+                            "algorithm",
+                            "n",
+                            "memo"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "calls": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "Kebab-case id: lowercase letters, digits and dashes, starting with a letter, at most 32 characters. Unique within the lesson."
+                          },
+                          "label": {
+                            "type": "string",
+                            "description": "The call, such as \"fib(3)\". At most 24 characters."
+                          },
+                          "parent": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "description": "The calling call; null for the first."
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "label",
+                          "parent"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "description": "For scripted trees: every call, at most 31. Empty with simulate."
+                    },
+                    "steps": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "Kebab-case id: lowercase letters, digits and dashes, starting with a letter, at most 32 characters. Unique within the lesson."
+                          },
+                          "title": {
+                            "type": "string",
+                            "description": "A few words naming the step. At most 80 characters."
+                          },
+                          "narration": {
+                            "type": "string",
+                            "description": "What happens in this step and why, in at most 40 words. At most 280 characters."
+                          },
+                          "focus": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "description": "The id of an element declared in this block."
+                            },
+                            "description": "Ids of the parts to highlight in this step (nodes, edges, messages and so on). At most 8."
+                          },
+                          "ops": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "op": {
+                                  "enum": [
+                                    "call",
+                                    "return",
+                                    "memo-hit"
+                                  ],
+                                  "type": "string"
+                                },
+                                "call": {
+                                  "anyOf": [
+                                    {
+                                      "type": "string",
+                                      "description": "The id of an element declared in this block."
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                },
+                                "value": {
+                                  "anyOf": [
+                                    {
+                                      "type": "string",
+                                      "description": "The value returned, for return and memo-hit. At most 24 characters."
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                }
+                              },
+                              "required": [
+                                "op",
+                                "call",
+                                "value"
+                              ],
+                              "additionalProperties": false
+                            },
+                            "description": "call (call): the call starts, as a child of the innermost open call; return (call, value): the innermost open call returns; memo-hit (call, value): the call is answered from the cache. At most 6 per step."
+                          },
+                          "pauseFor": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "description": "The id of a check block in the same section the learner answers before this step plays, or null."
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "title",
+                          "narration",
+                          "focus",
+                          "ops",
+                          "pauseFor"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "description": "The steps, in order. At most 40. Each step's ops apply on top of the previous steps."
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "kind",
+                    "title",
+                    "fn",
+                    "simulate",
+                    "calls",
+                    "steps"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "Kebab-case id: lowercase letters, digits and dashes, starting with a letter, at most 32 characters. Unique within the lesson."
+                    },
+                    "kind": {
+                      "const": "flow"
+                    },
+                    "title": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "description": "A short caption shown above the visual. At most 80 characters."
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "direction": {
+                      "enum": [
+                        "lr",
+                        "tb"
+                      ],
+                      "type": "string",
+                      "description": "lr: left to right; tb: top to bottom."
+                    },
+                    "nodes": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "Kebab-case id: lowercase letters, digits and dashes, starting with a letter, at most 32 characters. Unique within the lesson."
+                          },
+                          "label": {
+                            "type": "string",
+                            "description": "The component's name. At most 24 characters."
+                          },
+                          "type": {
+                            "enum": [
+                              "user",
+                              "browser",
+                              "client",
+                              "gateway",
+                              "server",
+                              "service",
+                              "function",
+                              "database",
+                              "cache",
+                              "queue",
+                              "storage",
+                              "external",
+                              "process"
+                            ],
+                            "type": "string"
+                          },
+                          "note": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "description": "A short detail shown under the label. At most 80 characters."
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "label",
+                          "type",
+                          "note"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "description": "The components. 2 to 14 items."
+                    },
+                    "edges": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "Kebab-case id: lowercase letters, digits and dashes, starting with a letter, at most 32 characters. Unique within the lesson."
+                          },
+                          "from": {
+                            "type": "string",
+                            "description": "The id of an element declared in this block."
+                          },
+                          "to": {
+                            "type": "string",
+                            "description": "The id of an element declared in this block."
+                          },
+                          "label": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "description": "The protocol or channel, such as \"HTTPS\". At most 24 characters."
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "from",
+                          "to",
+                          "label"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "description": "The connections. 1 to 24 items."
+                    },
+                    "steps": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "Kebab-case id: lowercase letters, digits and dashes, starting with a letter, at most 32 characters. Unique within the lesson."
+                          },
+                          "title": {
+                            "type": "string",
+                            "description": "A few words naming the step. At most 80 characters."
+                          },
+                          "narration": {
+                            "type": "string",
+                            "description": "What happens in this step and why, in at most 40 words. At most 280 characters."
+                          },
+                          "focus": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "description": "The id of an element declared in this block."
+                            },
+                            "description": "Ids of the parts to highlight in this step (nodes, edges, messages and so on). At most 8."
+                          },
+                          "ops": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "op": {
+                                  "enum": [
+                                    "send",
+                                    "respond",
+                                    "process",
+                                    "store",
+                                    "fail",
+                                    "highlight"
+                                  ],
+                                  "type": "string"
+                                },
+                                "node": {
+                                  "anyOf": [
+                                    {
+                                      "type": "string",
+                                      "description": "The id of an element declared in this block."
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                },
+                                "edge": {
+                                  "anyOf": [
+                                    {
+                                      "type": "string",
+                                      "description": "The id of an element declared in this block."
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                },
+                                "packet": {
+                                  "anyOf": [
+                                    {
+                                      "type": "string",
+                                      "description": "The packet's label, such as \"GET /users\". At most 32 characters."
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                },
+                                "payload": {
+                                  "anyOf": [
+                                    {
+                                      "type": "string",
+                                      "description": "A preview of what the packet carries, such as a JSON snippet. At most 160 characters."
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                }
+                              },
+                              "required": [
+                                "op",
+                                "node",
+                                "edge",
+                                "packet",
+                                "payload"
+                              ],
+                              "additionalProperties": false
+                            },
+                            "description": "send (edge, packet, payload): a packet travels from the edge's from to its to; respond (edge, packet, payload): it travels back from to to from; process or store (node, packet); fail (node or edge, packet); highlight (node or edge). At most 6 per step."
+                          },
+                          "pauseFor": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "description": "The id of a check block in the same section the learner answers before this step plays, or null."
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "title",
+                          "narration",
+                          "focus",
+                          "ops",
+                          "pauseFor"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "description": "The steps, in order. At most 40. Each step's ops apply on top of the previous steps."
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "kind",
+                    "title",
+                    "direction",
+                    "nodes",
+                    "edges",
+                    "steps"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "Kebab-case id: lowercase letters, digits and dashes, starting with a letter, at most 32 characters. Unique within the lesson."
+                    },
+                    "kind": {
+                      "const": "sequence"
+                    },
+                    "title": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "description": "A short caption shown above the visual. At most 80 characters."
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "actors": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "Kebab-case id: lowercase letters, digits and dashes, starting with a letter, at most 32 characters. Unique within the lesson."
+                          },
+                          "label": {
+                            "type": "string",
+                            "description": "The actor's name. At most 24 characters."
+                          },
+                          "type": {
+                            "enum": [
+                              "user",
+                              "browser",
+                              "client",
+                              "server",
+                              "service",
+                              "database",
+                              "cache",
+                              "queue",
+                              "external"
+                            ],
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "label",
+                          "type"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "description": "The participants, left to right. 2 to 7 items."
+                    },
+                    "messages": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "Kebab-case id: lowercase letters, digits and dashes, starting with a letter, at most 32 characters. Unique within the lesson."
+                          },
+                          "from": {
+                            "type": "string",
+                            "description": "The id of an element declared in this block."
+                          },
+                          "to": {
+                            "type": "string",
+                            "description": "The id of an element declared in this block."
+                          },
+                          "label": {
+                            "type": "string",
+                            "description": "What is sent, such as \"SELECT * FROM users\". At most 48 characters."
+                          },
+                          "style": {
+                            "enum": [
+                              "sync",
+                              "async",
+                              "reply",
+                              "self"
+                            ],
+                            "type": "string",
+                            "description": "sync: a call that waits; async: fire and forget; reply: an answer; self: from and to are the same actor."
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "from",
+                          "to",
+                          "label",
+                          "style"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "description": "The messages, in the order they happen. 1 to 20 items."
+                    },
+                    "steps": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "Kebab-case id: lowercase letters, digits and dashes, starting with a letter, at most 32 characters. Unique within the lesson."
+                          },
+                          "title": {
+                            "type": "string",
+                            "description": "A few words naming the step. At most 80 characters."
+                          },
+                          "narration": {
+                            "type": "string",
+                            "description": "What happens in this step and why, in at most 40 words. At most 280 characters."
+                          },
+                          "focus": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "description": "The id of an element declared in this block."
+                            },
+                            "description": "Ids of the parts to highlight in this step (nodes, edges, messages and so on). At most 8."
+                          },
+                          "ops": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "op": {
+                                  "enum": [
+                                    "show",
+                                    "highlight",
+                                    "note"
+                                  ],
+                                  "type": "string"
+                                },
+                                "message": {
+                                  "anyOf": [
+                                    {
+                                      "type": "string",
+                                      "description": "The id of an element declared in this block."
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                },
+                                "actor": {
+                                  "anyOf": [
+                                    {
+                                      "type": "string",
+                                      "description": "The id of an element declared in this block."
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                },
+                                "text": {
+                                  "anyOf": [
+                                    {
+                                      "type": "string",
+                                      "description": "The note, for note. At most 120 characters."
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                }
+                              },
+                              "required": [
+                                "op",
+                                "message",
+                                "actor",
+                                "text"
+                              ],
+                              "additionalProperties": false
+                            },
+                            "description": "show (message): the message appears; highlight (message or actor); note (actor, text). At most 6 per step."
+                          },
+                          "pauseFor": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "description": "The id of a check block in the same section the learner answers before this step plays, or null."
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "title",
+                          "narration",
+                          "focus",
+                          "ops",
+                          "pauseFor"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "description": "The steps, in order. At most 40. Each step's ops apply on top of the previous steps."
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "kind",
+                    "title",
+                    "actors",
+                    "messages",
+                    "steps"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "Kebab-case id: lowercase letters, digits and dashes, starting with a letter, at most 32 characters. Unique within the lesson."
+                    },
+                    "kind": {
+                      "const": "state-machine"
+                    },
+                    "title": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "description": "A short caption shown above the visual. At most 80 characters."
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "states": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "Kebab-case id: lowercase letters, digits and dashes, starting with a letter, at most 32 characters. Unique within the lesson."
+                          },
+                          "label": {
+                            "type": "string",
+                            "description": "The state's name. At most 24 characters."
+                          },
+                          "initial": {
+                            "type": "boolean",
+                            "description": "Exactly one state is initial."
+                          },
+                          "final": {
+                            "type": "boolean"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "label",
+                          "initial",
+                          "final"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "description": "The states. 2 to 10 items."
+                    },
+                    "transitions": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "Kebab-case id: lowercase letters, digits and dashes, starting with a letter, at most 32 characters. Unique within the lesson."
+                          },
+                          "from": {
+                            "type": "string",
+                            "description": "The id of an element declared in this block."
+                          },
+                          "to": {
+                            "type": "string",
+                            "description": "The id of an element declared in this block."
+                          },
+                          "event": {
+                            "type": "string",
+                            "description": "The event that triggers it. At most 24 characters."
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "from",
+                          "to",
+                          "event"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "description": "The transitions. 1 to 16 items."
+                    },
+                    "steps": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "Kebab-case id: lowercase letters, digits and dashes, starting with a letter, at most 32 characters. Unique within the lesson."
+                          },
+                          "title": {
+                            "type": "string",
+                            "description": "A few words naming the step. At most 80 characters."
+                          },
+                          "narration": {
+                            "type": "string",
+                            "description": "What happens in this step and why, in at most 40 words. At most 280 characters."
+                          },
+                          "focus": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "description": "The id of an element declared in this block."
+                            },
+                            "description": "Ids of the parts to highlight in this step (nodes, edges, messages and so on). At most 8."
+                          },
+                          "ops": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "op": {
+                                  "enum": [
+                                    "fire",
+                                    "reject"
+                                  ],
+                                  "type": "string"
+                                },
+                                "transition": {
+                                  "anyOf": [
+                                    {
+                                      "type": "string",
+                                      "description": "For fire: the transition taken."
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                },
+                                "event": {
+                                  "anyOf": [
+                                    {
+                                      "type": "string",
+                                      "description": "For reject: an event the current state does not handle. At most 24 characters."
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                }
+                              },
+                              "required": [
+                                "op",
+                                "transition",
+                                "event"
+                              ],
+                              "additionalProperties": false
+                            },
+                            "description": "fire (transition): it must leave the current state; reject (event): an event the current state ignores. At most 6 per step."
+                          },
+                          "pauseFor": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "description": "The id of a check block in the same section the learner answers before this step plays, or null."
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "title",
+                          "narration",
+                          "focus",
+                          "ops",
+                          "pauseFor"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "description": "The steps, in order. At most 40. Each step's ops apply on top of the previous steps."
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "kind",
+                    "title",
+                    "states",
+                    "transitions",
+                    "steps"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "Kebab-case id: lowercase letters, digits and dashes, starting with a letter, at most 32 characters. Unique within the lesson."
+                    },
+                    "kind": {
+                      "const": "pipeline"
+                    },
+                    "title": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "description": "A short caption shown above the visual. At most 80 characters."
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "stages": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "Kebab-case id: lowercase letters, digits and dashes, starting with a letter, at most 32 characters. Unique within the lesson."
+                          },
+                          "label": {
+                            "type": "string",
+                            "description": "The stage's name. At most 24 characters."
+                          },
+                          "detail": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "description": "What the stage does. At most 120 characters."
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "label",
+                          "detail"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "description": "The stages, in order. 2 to 8 items."
+                    },
+                    "steps": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "Kebab-case id: lowercase letters, digits and dashes, starting with a letter, at most 32 characters. Unique within the lesson."
+                          },
+                          "title": {
+                            "type": "string",
+                            "description": "A few words naming the step. At most 80 characters."
+                          },
+                          "narration": {
+                            "type": "string",
+                            "description": "What happens in this step and why, in at most 40 words. At most 280 characters."
+                          },
+                          "focus": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "description": "The id of an element declared in this block."
+                            },
+                            "description": "Ids of the parts to highlight in this step (nodes, edges, messages and so on). At most 8."
+                          },
+                          "ops": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "op": {
+                                  "enum": [
+                                    "enter",
+                                    "transform",
+                                    "emit",
+                                    "fail"
+                                  ],
+                                  "type": "string"
+                                },
+                                "stage": {
+                                  "anyOf": [
+                                    {
+                                      "type": "string",
+                                      "description": "The id of an element declared in this block."
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                },
+                                "data": {
+                                  "anyOf": [
+                                    {
+                                      "type": "string",
+                                      "description": "The data as it looks after this op. At most 160 characters."
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                }
+                              },
+                              "required": [
+                                "op",
+                                "stage",
+                                "data"
+                              ],
+                              "additionalProperties": false
+                            },
+                            "description": "enter (stage, data); transform (stage, data); emit (stage, data): the result leaves the pipeline; fail (stage, data). At most 6 per step."
+                          },
+                          "pauseFor": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "description": "The id of a check block in the same section the learner answers before this step plays, or null."
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "title",
+                          "narration",
+                          "focus",
+                          "ops",
+                          "pauseFor"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "description": "The steps, in order. At most 40. Each step's ops apply on top of the previous steps."
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "kind",
+                    "title",
+                    "stages",
+                    "steps"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "Kebab-case id: lowercase letters, digits and dashes, starting with a letter, at most 32 characters. Unique within the lesson."
+                    },
+                    "kind": {
+                      "const": "event-loop"
+                    },
+                    "title": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "description": "A short caption shown above the visual. At most 80 characters."
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "description": "Source code: at most 30 lines of 100 characters, indented with spaces, no tabs. Lines are numbered from 1. At most 2400 characters."
+                    },
+                    "mode": {
+                      "enum": [
+                        "execute",
+                        "scripted"
+                      ],
+                      "type": "string",
+                      "description": "execute: the app runs the JavaScript and records the steps, so leave steps empty. scripted: you write the steps."
+                    },
+                    "steps": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "Kebab-case id: lowercase letters, digits and dashes, starting with a letter, at most 32 characters. Unique within the lesson."
+                          },
+                          "title": {
+                            "type": "string",
+                            "description": "A few words naming the step. At most 80 characters."
+                          },
+                          "narration": {
+                            "type": "string",
+                            "description": "What happens in this step and why, in at most 40 words. At most 280 characters."
+                          },
+                          "focus": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "description": "The id of an element declared in this block."
+                            },
+                            "description": "Ids of the parts to highlight in this step (nodes, edges, messages and so on). At most 8."
+                          },
+                          "ops": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "op": {
+                                  "enum": [
+                                    "push-stack",
+                                    "pop-stack",
+                                    "web-api",
+                                    "queue-task",
+                                    "queue-microtask",
+                                    "run-task",
+                                    "run-microtask",
+                                    "log"
+                                  ],
+                                  "type": "string"
+                                },
+                                "label": {
+                                  "anyOf": [
+                                    {
+                                      "type": "string",
+                                      "description": "The frame, callback or text logged. Null only for pop-stack, run-task and run-microtask. At most 48 characters."
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                }
+                              },
+                              "required": [
+                                "op",
+                                "label"
+                              ],
+                              "additionalProperties": false
+                            },
+                            "description": "push-stack (label); pop-stack; web-api (label: a timer or request handed to the browser); queue-task or queue-microtask (label); run-task and run-microtask move the oldest callback onto the stack; log (label). A task runs only when the stack and the microtask queue are empty. At most 6 per step."
+                          },
+                          "pauseFor": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "description": "The id of a check block in the same section the learner answers before this step plays, or null."
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "title",
+                          "narration",
+                          "focus",
+                          "ops",
+                          "pauseFor"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "description": "The steps, in order. At most 40. Each step's ops apply on top of the previous steps."
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "kind",
+                    "title",
+                    "code",
+                    "mode",
+                    "steps"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "Kebab-case id: lowercase letters, digits and dashes, starting with a letter, at most 32 characters. Unique within the lesson."
+                    },
+                    "kind": {
+                      "const": "git-graph"
+                    },
+                    "title": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "description": "A short caption shown above the visual. At most 80 characters."
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "start": {
+                      "type": "object",
+                      "properties": {
+                        "branch": {
+                          "type": "string",
+                          "description": "The first branch, usually \"main\". At most 24 characters."
+                        },
+                        "commit": {
+                          "type": "string",
+                          "description": "The id of the first commit."
+                        }
+                      },
+                      "required": [
+                        "branch",
+                        "commit"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "steps": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "Kebab-case id: lowercase letters, digits and dashes, starting with a letter, at most 32 characters. Unique within the lesson."
+                          },
+                          "title": {
+                            "type": "string",
+                            "description": "A few words naming the step. At most 80 characters."
+                          },
+                          "narration": {
+                            "type": "string",
+                            "description": "What happens in this step and why, in at most 40 words. At most 280 characters."
+                          },
+                          "focus": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "description": "The id of an element declared in this block."
+                            },
+                            "description": "Ids of the parts to highlight in this step (nodes, edges, messages and so on). At most 8."
+                          },
+                          "ops": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "op": {
+                                  "enum": [
+                                    "commit",
+                                    "branch",
+                                    "checkout",
+                                    "merge",
+                                    "rebase",
+                                    "tag",
+                                    "reset"
+                                  ],
+                                  "type": "string"
+                                },
+                                "ref": {
+                                  "anyOf": [
+                                    {
+                                      "type": "string",
+                                      "description": "The branch or tag name, for branch, checkout, merge, rebase and tag. At most 24 characters."
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                },
+                                "commit": {
+                                  "anyOf": [
+                                    {
+                                      "type": "string",
+                                      "description": "The id of the new commit, for commit and merge; the target, for reset."
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                },
+                                "message": {
+                                  "anyOf": [
+                                    {
+                                      "type": "string",
+                                      "description": "The commit message, for commit and merge. At most 48 characters."
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                }
+                              },
+                              "required": [
+                                "op",
+                                "ref",
+                                "commit",
+                                "message"
+                              ],
+                              "additionalProperties": false
+                            },
+                            "description": "commit (commit, message) on the current branch; branch (ref) at HEAD; checkout (ref); merge (ref, commit, message) into the current branch; rebase (ref): replay the current branch onto ref; tag (ref); reset (commit). At most 6 per step."
+                          },
+                          "pauseFor": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "description": "The id of a check block in the same section the learner answers before this step plays, or null."
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "title",
+                          "narration",
+                          "focus",
+                          "ops",
+                          "pauseFor"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "description": "The steps, in order. At most 40. Each step's ops apply on top of the previous steps."
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "kind",
+                    "title",
+                    "start",
+                    "steps"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "Kebab-case id: lowercase letters, digits and dashes, starting with a letter, at most 32 characters. Unique within the lesson."
+                    },
+                    "kind": {
+                      "const": "concept-map"
+                    },
+                    "title": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "description": "A short caption shown above the visual. At most 80 characters."
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "nodes": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "Kebab-case id: lowercase letters, digits and dashes, starting with a letter, at most 32 characters. Unique within the lesson."
+                          },
+                          "label": {
+                            "type": "string",
+                            "description": "The concept. At most 32 characters."
+                          },
+                          "group": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "description": "A group name; nodes in a group share a colour. At most 24 characters."
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "label",
+                          "group"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "description": "The concepts. 2 to 14 items."
+                    },
+                    "links": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "Kebab-case id: lowercase letters, digits and dashes, starting with a letter, at most 32 characters. Unique within the lesson."
+                          },
+                          "from": {
+                            "type": "string",
+                            "description": "The id of an element declared in this block."
+                          },
+                          "to": {
+                            "type": "string",
+                            "description": "The id of an element declared in this block."
+                          },
+                          "label": {
+                            "type": "string",
+                            "description": "How they relate, such as \"points to\". At most 32 characters."
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "from",
+                          "to",
+                          "label"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "description": "The relations. 1 to 20 items."
+                    },
+                    "steps": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "Kebab-case id: lowercase letters, digits and dashes, starting with a letter, at most 32 characters. Unique within the lesson."
+                          },
+                          "title": {
+                            "type": "string",
+                            "description": "A few words naming the step. At most 80 characters."
+                          },
+                          "narration": {
+                            "type": "string",
+                            "description": "What happens in this step and why, in at most 40 words. At most 280 characters."
+                          },
+                          "focus": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "description": "The id of an element declared in this block."
+                            },
+                            "description": "Ids of the parts to highlight in this step (nodes, edges, messages and so on). At most 8."
+                          },
+                          "ops": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "op": {
+                                  "enum": [
+                                    "reveal",
+                                    "highlight"
+                                  ],
+                                  "type": "string"
+                                },
+                                "node": {
+                                  "anyOf": [
+                                    {
+                                      "type": "string",
+                                      "description": "The id of an element declared in this block."
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                },
+                                "link": {
+                                  "anyOf": [
+                                    {
+                                      "type": "string",
+                                      "description": "The id of an element declared in this block."
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                }
+                              },
+                              "required": [
+                                "op",
+                                "node",
+                                "link"
+                              ],
+                              "additionalProperties": false
+                            },
+                            "description": "reveal (node or link): it appears; highlight (node or link). Empty steps show the whole map at once. At most 6 per step."
+                          },
+                          "pauseFor": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "description": "The id of a check block in the same section the learner answers before this step plays, or null."
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "title",
+                          "narration",
+                          "focus",
+                          "ops",
+                          "pauseFor"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "description": "The steps, in order. At most 40. Each step's ops apply on top of the previous steps."
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "kind",
+                    "title",
+                    "nodes",
+                    "links",
+                    "steps"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "Kebab-case id: lowercase letters, digits and dashes, starting with a letter, at most 32 characters. Unique within the lesson."
+                    },
+                    "kind": {
+                      "const": "chart"
+                    },
+                    "title": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "description": "A short caption shown above the visual. At most 80 characters."
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "chart": {
+                      "enum": [
+                        "line",
+                        "bar"
+                      ],
+                      "type": "string",
+                      "description": "line: values over x; bar: one value per category."
+                    },
+                    "xLabel": {
+                      "type": "string",
+                      "description": "The x axis label. At most 32 characters."
+                    },
+                    "yLabel": {
+                      "type": "string",
+                      "description": "The y axis label. At most 32 characters."
+                    },
+                    "x": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "from": {
+                              "type": "integer",
+                              "description": "The first x."
+                            },
+                            "to": {
+                              "type": "integer",
+                              "description": "The last x, at most 63 after from."
+                            }
+                          },
+                          "required": [
+                            "from",
+                            "to"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "categories": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "description": "A category. At most 24 characters."
+                      },
+                      "description": "For bar: the categories. Empty for line."
+                    },
+                    "series": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "Kebab-case id: lowercase letters, digits and dashes, starting with a letter, at most 32 characters. Unique within the lesson."
+                          },
+                          "label": {
+                            "type": "string",
+                            "description": "The series name, shown in the legend. At most 32 characters."
+                          },
+                          "fn": {
+                            "anyOf": [
+                              {
+                                "enum": [
+                                  "1",
+                                  "log n",
+                                  "n",
+                                  "n log n",
+                                  "n^2",
+                                  "n^3",
+                                  "2^n",
+                                  "n!"
+                                ],
+                                "type": "string",
+                                "description": "For line: a growth function the app computes. Null when values are given."
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "values": {
+                            "anyOf": [
+                              {
+                                "type": "array",
+                                "items": {
+                                  "type": "number"
+                                },
+                                "description": "The values: one per x for line, one per category for bar. Null when fn is given."
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "label",
+                          "fn",
+                          "values"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "description": "The series. 1 to 5 items."
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "kind",
+                    "title",
+                    "chart",
+                    "xLabel",
+                    "yLabel",
+                    "x",
+                    "categories",
+                    "series"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "Kebab-case id: lowercase letters, digits and dashes, starting with a letter, at most 32 characters. Unique within the lesson."
+                    },
+                    "kind": {
+                      "const": "predict"
+                    },
+                    "question": {
+                      "type": "string",
+                      "description": "The question. At most 300 characters."
+                    },
+                    "options": {
+                      "anyOf": [
+                        {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "description": "An answer option. At most 160 characters."
+                          },
+                          "description": "Options to choose from; null for a free answer. 2 to 5 items."
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "answer": {
+                      "anyOf": [
+                        {
+                          "type": "integer",
+                          "description": "The index of the right option, from 0; null for a free answer."
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "expected": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "description": "The expected free answer; null when options are given. At most 160 characters."
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "reveal": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "block": {
+                              "type": "string",
+                              "description": "The visual in this lesson that shows the answer."
+                            },
+                            "step": {
+                              "anyOf": [
+                                {
+                                  "type": "string",
+                                  "description": "The step of that visual that shows it, or null."
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            }
+                          },
+                          "required": [
+                            "block",
+                            "step"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "explanation": {
+                      "type": "string",
+                      "description": "Why the answer is right, shown after answering. At most 400 characters."
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "kind",
+                    "question",
+                    "options",
+                    "answer",
+                    "expected",
+                    "reveal",
+                    "explanation"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "Kebab-case id: lowercase letters, digits and dashes, starting with a letter, at most 32 characters. Unique within the lesson."
+                    },
+                    "kind": {
+                      "const": "quiz"
+                    },
+                    "question": {
+                      "type": "string",
+                      "description": "The question. At most 300 characters."
+                    },
+                    "code": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "language": {
+                              "enum": [
+                                "javascript",
+                                "typescript",
+                                "python",
+                                "java",
+                                "go",
+                                "rust",
+                                "c",
+                                "cpp",
+                                "csharp",
+                                "sql",
+                                "bash",
+                                "html",
+                                "css",
+                                "json",
+                                "yaml",
+                                "text"
+                              ],
+                              "type": "string",
+                              "description": "The language of the code."
+                            },
+                            "code": {
+                              "type": "string",
+                              "description": "Source code: at most 30 lines of 100 characters, indented with spaces, no tabs. Lines are numbered from 1. At most 2400 characters."
+                            }
+                          },
+                          "required": [
+                            "language",
+                            "code"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "options": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "description": "An answer option. At most 160 characters."
+                      },
+                      "description": "The options. 2 to 6 items."
+                    },
+                    "correct": {
+                      "type": "array",
+                      "items": {
+                        "type": "integer"
+                      },
+                      "description": "The indexes of every right option, from 0. 1 to 5 items."
+                    },
+                    "explanation": {
+                      "type": "string",
+                      "description": "Why the answer is right, shown after answering. At most 400 characters."
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "kind",
+                    "question",
+                    "code",
+                    "options",
+                    "correct",
+                    "explanation"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "Kebab-case id: lowercase letters, digits and dashes, starting with a letter, at most 32 characters. Unique within the lesson."
+                    },
+                    "kind": {
+                      "const": "self-explain"
+                    },
+                    "prompt": {
+                      "type": "string",
+                      "description": "An open question asking the learner to explain why or how, in their own words. At most 300 characters."
+                    },
+                    "rubric": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "description": "A point a good answer makes. At most 160 characters."
+                      },
+                      "description": "What a good answer covers. 2 to 5 items."
+                    },
+                    "modelAnswer": {
+                      "type": "string",
+                      "description": "A model answer, shown after the learner answers. At most 600 characters."
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "kind",
+                    "prompt",
+                    "rubric",
+                    "modelAnswer"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "Kebab-case id: lowercase letters, digits and dashes, starting with a letter, at most 32 characters. Unique within the lesson."
+                    },
+                    "kind": {
+                      "const": "order-steps"
+                    },
+                    "prompt": {
+                      "type": "string",
+                      "description": "The question. At most 300 characters."
+                    },
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "Kebab-case id: lowercase letters, digits and dashes, starting with a letter, at most 32 characters. Unique within the lesson."
+                          },
+                          "text": {
+                            "type": "string",
+                            "description": "An answer option. At most 160 characters."
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "text"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "description": "The items in the right order; the app shuffles them. 3 to 8 items."
+                    },
+                    "explanation": {
+                      "type": "string",
+                      "description": "Why the answer is right, shown after answering. At most 400 characters."
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "kind",
+                    "prompt",
+                    "items",
+                    "explanation"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "Kebab-case id: lowercase letters, digits and dashes, starting with a letter, at most 32 characters. Unique within the lesson."
+                    },
+                    "kind": {
+                      "const": "categorize"
+                    },
+                    "prompt": {
+                      "type": "string",
+                      "description": "The question. At most 300 characters."
+                    },
+                    "categories": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "Kebab-case id: lowercase letters, digits and dashes, starting with a letter, at most 32 characters. Unique within the lesson."
+                          },
+                          "label": {
+                            "type": "string",
+                            "description": "The category. At most 32 characters."
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "label"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "description": "The categories. 2 to 4 items."
+                    },
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "Kebab-case id: lowercase letters, digits and dashes, starting with a letter, at most 32 characters. Unique within the lesson."
+                          },
+                          "text": {
+                            "type": "string",
+                            "description": "The item to sort. At most 120 characters."
+                          },
+                          "category": {
+                            "type": "string",
+                            "description": "The id of its category."
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "text",
+                          "category"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "description": "The items, each with its category; every category is used. 4 to 10 items."
+                    },
+                    "explanation": {
+                      "type": "string",
+                      "description": "Why the answer is right, shown after answering. At most 400 characters."
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "kind",
+                    "prompt",
+                    "categories",
+                    "items",
+                    "explanation"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "Kebab-case id: lowercase letters, digits and dashes, starting with a letter, at most 32 characters. Unique within the lesson."
+                    },
+                    "kind": {
+                      "const": "parsons"
+                    },
+                    "prompt": {
+                      "type": "string",
+                      "description": "The question. At most 300 characters."
+                    },
+                    "language": {
+                      "enum": [
+                        "javascript",
+                        "typescript",
+                        "python",
+                        "java",
+                        "go",
+                        "rust",
+                        "c",
+                        "cpp",
+                        "csharp",
+                        "sql",
+                        "bash",
+                        "html",
+                        "css",
+                        "json",
+                        "yaml",
+                        "text"
+                      ],
+                      "type": "string",
+                      "description": "The language of the code."
+                    },
+                    "lines": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "Kebab-case id: lowercase letters, digits and dashes, starting with a letter, at most 32 characters. Unique within the lesson."
+                          },
+                          "code": {
+                            "type": "string",
+                            "description": "One line of the solution without its indent. Write ___ where the learner fills in a blank. At most 100 characters."
+                          },
+                          "indent": {
+                            "type": "integer",
+                            "description": "The indent level, 0 to 4."
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "code",
+                          "indent"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "description": "The solution's lines in the right order; the app shuffles them. 3 to 14 items."
+                    },
+                    "distractors": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "description": "A plausible wrong line. At most 100 characters."
+                      },
+                      "description": "Wrong lines mixed in, at most 3."
+                    },
+                    "blanks": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "line": {
+                            "type": "string",
+                            "description": "The id of a line containing ___."
+                          },
+                          "answer": {
+                            "type": "string",
+                            "description": "What fills the blank. At most 48 characters."
+                          }
+                        },
+                        "required": [
+                          "line",
+                          "answer"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "description": "One entry per ___, in reading order (faded Parsons problems)."
+                    },
+                    "explanation": {
+                      "type": "string",
+                      "description": "Why the answer is right, shown after answering. At most 400 characters."
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "kind",
+                    "prompt",
+                    "language",
+                    "lines",
+                    "distractors",
+                    "blanks",
+                    "explanation"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "Kebab-case id: lowercase letters, digits and dashes, starting with a letter, at most 32 characters. Unique within the lesson."
+                    },
+                    "kind": {
+                      "const": "predict-output"
+                    },
+                    "language": {
+                      "enum": [
+                        "javascript",
+                        "typescript",
+                        "python",
+                        "java",
+                        "go",
+                        "rust",
+                        "c",
+                        "cpp",
+                        "csharp",
+                        "sql",
+                        "bash",
+                        "html",
+                        "css",
+                        "json",
+                        "yaml",
+                        "text"
+                      ],
+                      "type": "string",
+                      "description": "The language of the code."
+                    },
+                    "code": {
+                      "type": "string",
+                      "description": "Source code: at most 30 lines of 100 characters, indented with spaces, no tabs. Lines are numbered from 1. At most 2400 characters."
+                    },
+                    "mode": {
+                      "enum": [
+                        "execute",
+                        "given"
+                      ],
+                      "type": "string",
+                      "description": "execute: JavaScript only; the app runs the code to confirm the output. given: the output is as you write it."
+                    },
+                    "expected": {
+                      "type": "string",
+                      "description": "Exactly what the code prints, lines joined with \\n. At most 400 characters."
+                    },
+                    "explanation": {
+                      "type": "string",
+                      "description": "Why the answer is right, shown after answering. At most 400 characters."
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "kind",
+                    "language",
+                    "code",
+                    "mode",
+                    "expected",
+                    "explanation"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "Kebab-case id: lowercase letters, digits and dashes, starting with a letter, at most 32 characters. Unique within the lesson."
+                    },
+                    "kind": {
+                      "const": "cloze"
+                    },
+                    "text": {
+                      "type": "string",
+                      "description": "A sentence or short paragraph with blanks written as {{blank-id}}, each id declared in blanks. At most 600 characters."
+                    },
+                    "blanks": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "Kebab-case id: lowercase letters, digits and dashes, starting with a letter, at most 32 characters. Unique within the lesson."
+                          },
+                          "answers": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "description": "An accepted answer. At most 48 characters."
+                            },
+                            "description": "Accepted answers, compared without case. 1 to 4 items."
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "answers"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "description": "The blanks. 1 to 6 items."
+                    },
+                    "explanation": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "description": "Why the answer is right, shown after answering. At most 400 characters."
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "kind",
+                    "text",
+                    "blanks",
+                    "explanation"
+                  ],
+                  "additionalProperties": false
+                }
+              ]
+            },
+            "description": "The blocks, in order. 1 to 6 items."
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "intent",
+          "blocks"
+        ],
+        "additionalProperties": false
+      },
+      "description": "The lesson's sections. 1 to 8 items."
+    },
+    "cards": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "enum": [
+              "concept",
+              "fact",
+              "procedure"
+            ],
+            "type": "string"
+          },
+          "front": {
+            "type": "string",
+            "description": "The question side: one idea, answerable from memory. At most 200 characters."
+          },
+          "back": {
+            "type": "string",
+            "description": "The answer side. At most 400 characters."
+          }
+        },
+        "required": [
+          "type",
+          "front",
+          "back"
+        ],
+        "additionalProperties": false
+      },
+      "description": "Flashcards for spaced review, at most 12: the facts and ideas worth keeping for weeks."
+    }
+  },
+  "required": [
+    "specVersion",
+    "id",
+    "sectionId",
+    "title",
+    "tier",
+    "minutes",
+    "objectives",
+    "sections",
+    "cards"
+  ],
+  "additionalProperties": false
+}
