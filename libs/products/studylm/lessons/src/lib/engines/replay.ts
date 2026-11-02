@@ -32,6 +32,22 @@ function upTo<TOp>(
 
 // --- array ------------------------------------------------------------------
 
+/**
+ * What one array op does to the values. The validator replays with this
+ * too, so a block it accepts plays exactly as it was checked.
+ */
+export function applyArrayOp(
+  values: (number | string)[],
+  op: OpOf<'array'>,
+): void {
+  if (op.op === 'swap' && op.i !== null && op.j !== null) {
+    [values[op.i], values[op.j]] = [values[op.j], values[op.i]];
+  }
+  if (op.op === 'set' && op.i !== null && op.value !== null) {
+    values[op.i] = op.value;
+  }
+}
+
 export interface ArrayState {
   values: (number | string)[];
   /** Pointer name → index, for the pointers on show. */
@@ -72,11 +88,11 @@ export function arrayStateAt(
         if (current) state.compared = [i, j];
         break;
       case 'swap':
-        [state.values[i], state.values[j]] = [state.values[j], state.values[i]];
+        applyArrayOp(state.values, op);
         if (current) state.swapped = [i, j];
         break;
       case 'set':
-        if (op.value !== null) state.values[i] = op.value;
+        applyArrayOp(state.values, op);
         if (current) state.changed.push(i);
         break;
       case 'mark':
@@ -117,37 +133,46 @@ export interface StackQueueState {
   } | null;
 }
 
+/**
+ * What one stack or queue op does: the items change, and it reports the
+ * value it added, removed or read, and at which end. Shared with the
+ * validator, like applyArrayOp.
+ */
+export function applyStackQueueOp(
+  items: string[],
+  op: OpOf<'stack-queue'>,
+  mode: BlockOf<'stack-queue'>['mode'],
+): { value: string | null; end: 'front' | 'back' } {
+  switch (op.op) {
+    case 'push':
+    case 'enqueue':
+      items.push(op.value ?? '');
+      return { value: op.value, end: 'back' };
+    case 'push-front':
+      items.unshift(op.value ?? '');
+      return { value: op.value, end: 'front' };
+    case 'pop':
+    case 'pop-back':
+      return { value: items.pop() ?? null, end: 'back' };
+    case 'dequeue':
+      return { value: items.shift() ?? null, end: 'front' };
+    case 'peek': {
+      const end = mode === 'stack' ? 'back' : 'front';
+      return {
+        value: (end === 'back' ? items.at(-1) : items[0]) ?? null,
+        end,
+      };
+    }
+  }
+}
+
 export function stackQueueStateAt(
   block: BlockOf<'stack-queue'>,
   n: number,
 ): StackQueueState {
   const state: StackQueueState = { items: [...block.initial], last: null };
-  const peekEnd = block.mode === 'stack' ? 'back' : 'front';
   upTo(block.steps, n, (op, current) => {
-    let value: string | null = op.value;
-    let end: 'front' | 'back' = 'back';
-    switch (op.op) {
-      case 'push':
-      case 'enqueue':
-        state.items.push(op.value ?? '');
-        break;
-      case 'push-front':
-        state.items.unshift(op.value ?? '');
-        end = 'front';
-        break;
-      case 'pop':
-      case 'pop-back':
-        value = state.items.pop() ?? null;
-        break;
-      case 'dequeue':
-        value = state.items.shift() ?? null;
-        end = 'front';
-        break;
-      case 'peek':
-        end = peekEnd;
-        value = (end === 'back' ? state.items.at(-1) : state.items[0]) ?? null;
-        break;
-    }
+    const { value, end } = applyStackQueueOp(state.items, op, block.mode);
     if (current) state.last = { op: op.op, value, end };
   });
   return state;

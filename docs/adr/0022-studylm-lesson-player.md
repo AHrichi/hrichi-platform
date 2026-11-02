@@ -42,4 +42,4 @@ ADR-0021 defined the lesson format, the checks and seven built-in lessons, but S
 - **e2e:** StudyLM is served in `shell-e2e`. Its spec answers every n8n request itself, so no real n8n is called.
 - **Storybook:** stories for the player wait for screenshot baselines, which need Docker (`tools/scripts/visual-baselines.mjs`).
 - **Not drawn yet:** kinds without a renderer (trees, graphs, grids, recursion trees, hash tables, event loop, git graph, state machine, pipeline, concept map, chart, code trace) follow with the engines phase.
-- **Validation:** `validate/semantic.ts` still replays blocks with its own checks; the new reducers are tested against the same golden lessons.
+- **Validation:** `validate/semantic.ts` applies array and stack/queue ops through the player's own functions (`applyArrayOp`, `applyStackQueueOp`), so a block plays exactly as it was checked.
