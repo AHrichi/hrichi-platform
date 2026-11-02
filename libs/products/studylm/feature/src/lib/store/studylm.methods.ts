@@ -202,6 +202,9 @@ export function withStudyLmMethods() {
               .subjects()
               .filter((s) => s.id !== subjectId);
             storageService.deleteSubject(subjectId).catch(warnStorageFailure);
+            storageService
+              .deleteGeneratedLessons(subjectId)
+              .catch(warnStorageFailure);
 
             if (remaining.length === 0) {
               const fresh: StudySubject = {

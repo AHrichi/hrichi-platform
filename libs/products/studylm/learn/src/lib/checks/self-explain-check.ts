@@ -2,12 +2,17 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  inject,
   input,
   linkedSignal,
   output,
   signal,
 } from '@angular/core';
-import type { BlockOf } from '@ah/products/studylm/lessons';
+import type {
+  BlockOf,
+  SelfExplainFeedback,
+} from '@ah/products/studylm/lessons';
+import { SELF_EXPLAIN_FEEDBACK } from './feedback';
 import { CHECK_STYLES, type CheckRecord } from './check-shared';
 
 interface SelfExplainAnswer {
@@ -81,7 +86,43 @@ interface SelfExplainAnswer {
           <button type="button" class="ghost" (click)="again()">
             Write it again
           </button>
+          @if (askAi && !feedback()) {
+            <button
+              type="button"
+              class="ghost"
+              (click)="getFeedback()"
+              [disabled]="asking()"
+            >
+              {{ asking() ? 'Asking the AI…' : 'Get feedback from the AI' }}
+            </button>
+          }
         </div>
+        @if (feedback(); as f) {
+          <div class="model" role="status">
+            <p class="kind">
+              AI feedback:
+              {{
+                f.verdict === 'correct'
+                  ? 'right'
+                  : f.verdict === 'partial'
+                    ? 'partly right'
+                    : 'not yet'
+              }}
+            </p>
+            @for (s of f.strengths; track $index) {
+              <p>✓ {{ s }}</p>
+            }
+            @for (g of f.gaps; track $index) {
+              <p>△ {{ g }}</p>
+            }
+            @if (f.hint) {
+              <p>Hint: {{ f.hint }}</p>
+            }
+          </div>
+        }
+        @if (feedbackError(); as e) {
+          <p role="alert">{{ e }}</p>
+        }
       }
     }
   `,
@@ -117,6 +158,11 @@ export class SelfExplainCheck {
   );
   protected readonly done = linkedSignal(() => this.saved() !== null);
   protected readonly comparing = signal(false);
+  /** Optional: provided by the app when it can reach the AI. */
+  protected readonly askAi = inject(SELF_EXPLAIN_FEEDBACK, { optional: true });
+  protected readonly asking = signal(false);
+  protected readonly feedback = signal<SelfExplainFeedback | null>(null);
+  protected readonly feedbackError = signal<string | null>(null);
   protected readonly correct = computed(
     () => this.covered().length * 2 >= this.block().rubric.length,
   );
@@ -137,7 +183,31 @@ export class SelfExplainCheck {
     });
   }
 
+  protected async getFeedback(): Promise<void> {
+    if (!this.askAi) return;
+    const block = this.block();
+    this.asking.set(true);
+    this.feedbackError.set(null);
+    try {
+      this.feedback.set(
+        await this.askAi({
+          prompt: block.prompt,
+          rubric: [...block.rubric],
+          modelAnswer: block.modelAnswer,
+          answer: this.text().slice(0, 1200),
+        }),
+      );
+    } catch (error) {
+      this.feedbackError.set(
+        error instanceof Error ? error.message : 'The AI couldn’t be reached.',
+      );
+    } finally {
+      this.asking.set(false);
+    }
+  }
+
   protected again(): void {
+    this.feedback.set(null);
     this.done.set(false);
     this.comparing.set(false);
     this.covered.set([]);

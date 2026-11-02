@@ -17,6 +17,7 @@ import {
 } from '@ah/ui';
 import { StudyLmStore } from '../../store/studylm.store';
 import { StudyLmScreens } from '../../shell/studylm-screens';
+import { LessonGenerationService } from '../../services/lesson-generation.service';
 import type { RoadmapSection } from '@ah/products/studylm/domain';
 
 @Component({
@@ -39,6 +40,7 @@ import type { RoadmapSection } from '@ah/products/studylm/domain';
 export class RoadmapExplorerComponent {
   readonly store = inject(StudyLmStore);
   private readonly screens = inject(StudyLmScreens);
+  private readonly lessons = inject(LessonGenerationService);
 
   /**
    * Set of section IDs that are currently expanded.
@@ -148,6 +150,36 @@ export class RoadmapExplorerComponent {
   onGenerateQuiz(sectionId: string): void {
     this.expandSection(sectionId);
     void this.store.generateQuizForSection(sectionId);
+  }
+
+  /** Whether this section's lesson is saved, being written, or failed. */
+  lessonState(section: RoadmapSection): {
+    status: string | null;
+    saved: boolean;
+    error: string | null;
+  } {
+    const subject = this.store.activeSubject();
+    if (!subject) return { status: null, saved: false, error: null };
+    const id = this.lessons.idFor(subject, section);
+    const job = this.lessons.jobs()[id];
+    return {
+      status: job?.status ?? null,
+      saved: this.lessons.saved().has(id),
+      error: job?.error ?? null,
+    };
+  }
+
+  writeLesson(section: RoadmapSection): void {
+    const subject = this.store.activeSubject();
+    if (!subject) return;
+    const id = this.lessons.start(subject, section);
+    void this.screens.go('learn', id);
+  }
+
+  openLesson(section: RoadmapSection): void {
+    const subject = this.store.activeSubject();
+    if (subject)
+      void this.screens.go('learn', this.lessons.idFor(subject, section));
   }
 
   onStudySectionCards(section: RoadmapSection): void {

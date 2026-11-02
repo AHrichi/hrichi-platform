@@ -370,6 +370,53 @@
                           </p>
                         }
 
+                        <!-- An interactive lesson the AI writes for this section -->
+                        @let lesson = lessonState(section);
+                        @if (
+                          lesson.status === 'planning' ||
+                          lesson.status === 'writing'
+                        ) {
+                          <button
+                            type="button"
+                            ahButton="secondary"
+                            size="sm"
+                            (click)="openLesson(section)"
+                          >
+                            <span>Writing lesson…</span>
+                          </button>
+                        } @else if (lesson.saved) {
+                          <button
+                            type="button"
+                            ahButton="primary"
+                            size="sm"
+                            (click)="openLesson(section)"
+                          >
+                            <span>Open Lesson</span>
+                          </button>
+                          <button
+                            type="button"
+                            ahButton="ghost"
+                            size="sm"
+                            (click)="writeLesson(section)"
+                          >
+                            <span>Rewrite Lesson</span>
+                          </button>
+                        } @else {
+                          <button
+                            type="button"
+                            ahButton="primary"
+                            size="sm"
+                            (click)="writeLesson(section)"
+                          >
+                            <span>Write a Lesson</span>
+                          </button>
+                        }
+                        @if (lesson.status === 'failed') {
+                          <p class="section-error" role="alert">
+                            {{ lesson.error }}
+                          </p>
+                        }
+
                         <!-- Interactive Study Navigation Links -->
                         @if (getSectionCardCount(section.id); as cardCount) {
                           <button

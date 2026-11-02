@@ -3,6 +3,8 @@ import Dexie, { type Table } from 'dexie';
 import { APP_MODE } from '@ah/platform/app-mode';
 import { databaseName } from '@ah/platform/storage';
 import type { StudySubject } from '@ah/products/studylm/domain';
+import type { Lesson } from '@ah/products/studylm/lessons';
+import type { LessonDraft } from './lesson-generator';
 
 export interface StudyLmSettingRecord {
   key: string;
@@ -20,10 +22,23 @@ export interface LessonProgress {
   updatedAt: string;
 }
 
+/** A lesson the AI wrote for one roadmap section, and how it was written. */
+export interface GeneratedLessonRecord {
+  /** `gen-…`, from the subject and section (lessonIdFor). */
+  id: string;
+  subjectId: string;
+  /** The roadmap section it was written for. */
+  sectionId: string;
+  draft: LessonDraft;
+  lesson: Lesson;
+  generatedAt: string;
+}
+
 export class StudyLmDatabase extends Dexie {
   subjects!: Table<StudySubject, string>;
   settings!: Table<StudyLmSettingRecord, string>;
   lessonProgress!: Table<LessonProgress, string>;
+  lessons!: Table<GeneratedLessonRecord, string>;
 
   constructor(name = 'StudyLmDatabase') {
     super(name);
@@ -33,6 +48,8 @@ export class StudyLmDatabase extends Dexie {
     });
     // Version 2 adds lesson progress; subjects and settings are unchanged.
     this.version(2).stores({ lessonProgress: 'lessonId' });
+    // Version 3 adds the lessons the AI writes.
+    this.version(3).stores({ lessons: 'id, subjectId' });
   }
 }
 
@@ -45,6 +62,7 @@ export class StudyLmStorageService {
   private readonly memorySubjects = new Map<string, StudySubject>();
   private readonly memorySettings = new Map<string, unknown>();
   private readonly memoryProgress = new Map<string, LessonProgress>();
+  private readonly memoryLessons = new Map<string, GeneratedLessonRecord>();
 
   /** The portfolio's demo keeps its own database (see databaseName). */
   private open(): Promise<StudyLmDatabase | null> {
@@ -164,6 +182,56 @@ export class StudyLmStorageService {
         await db.lessonProgress.put(progress);
       } catch {
         // Kept in memory for this visit
+      }
+    }
+  }
+
+  async getGeneratedLesson(id: string): Promise<GeneratedLessonRecord | null> {
+    const db = await this.open();
+    try {
+      return (
+        (db ? await db.lessons.get(id) : undefined) ??
+        this.memoryLessons.get(id) ??
+        null
+      );
+    } catch {
+      return this.memoryLessons.get(id) ?? null;
+    }
+  }
+
+  async listGeneratedLessons(): Promise<GeneratedLessonRecord[]> {
+    const db = await this.open();
+    try {
+      return db
+        ? await db.lessons.toArray()
+        : Array.from(this.memoryLessons.values());
+    } catch {
+      return Array.from(this.memoryLessons.values());
+    }
+  }
+
+  async saveGeneratedLesson(record: GeneratedLessonRecord): Promise<void> {
+    this.memoryLessons.set(record.id, record);
+    const db = await this.open();
+    if (db) {
+      try {
+        await db.lessons.put(record);
+      } catch {
+        // Kept in memory for this visit
+      }
+    }
+  }
+
+  async deleteGeneratedLessons(subjectId: string): Promise<void> {
+    for (const [id, record] of this.memoryLessons) {
+      if (record.subjectId === subjectId) this.memoryLessons.delete(id);
+    }
+    const db = await this.open();
+    if (db) {
+      try {
+        await db.lessons.where('subjectId').equals(subjectId).delete();
+      } catch {
+        // Nothing else to do
       }
     }
   }
