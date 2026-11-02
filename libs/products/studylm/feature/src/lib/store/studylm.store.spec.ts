@@ -66,8 +66,9 @@ function subject(id: string, flashcards: StudyFlashcard[] = []): StudySubject {
 
 /** A store whose AI answers when the test says so. */
 async function setup(saved: StudySubject[]) {
-  let answer: (result: GenerateSectionFlashcardsResponse) => void = () => {};
-  let fail: (error: Error) => void = () => {};
+  let answer: (result: GenerateSectionFlashcardsResponse) => void = () =>
+    undefined;
+  let fail: (error: Error) => void = () => undefined;
   const api = {
     getDefaultConfig: async () => ({
       mode: 'local' as const,

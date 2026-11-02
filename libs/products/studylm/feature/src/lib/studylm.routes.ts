@@ -17,6 +17,19 @@ export const studyLmRoutes: Routes = [
           ),
       },
       {
+        path: 'learn',
+        title: 'Lessons · StudyLM',
+        loadComponent: () =>
+          import('./screens/learn/learn-screen').then((m) => m.LearnScreen),
+      },
+      {
+        // The screen sets the lesson's own title once it has loaded.
+        path: 'learn/:lessonId',
+        title: 'Lesson · StudyLM',
+        loadComponent: () =>
+          import('./screens/learn/lesson-screen').then((m) => m.LessonScreen),
+      },
+      {
         path: 'flashcards',
         title: 'Flashcards · StudyLM',
         loadComponent: () =>

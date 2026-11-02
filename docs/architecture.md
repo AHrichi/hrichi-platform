@@ -269,6 +269,7 @@ flowchart TD
   data-access --> domain
   data-access --> contracts
   data-access --> api-client
+  ui --> domain
   ui --> tokens
   ui --> util
   domain --> util
@@ -277,7 +278,7 @@ flowchart TD
 
 Rules:
 
-- **`ui` libs are presentational.** They never import `data-access`.
+- **`ui` libs are presentational.** They may render `domain` types, but never import `data-access`.
 - **`domain` libs are pure TypeScript.** No Angular, so they are testable in isolation and reusable in Nest.
 - **Isolation between products and labs:** `product-*` and `lab-*` scopes **never import each other**. They may only use `shared`, `platform` and `design-system`.
 - **Runtime separation:** `runtime:browser` and `runtime:node` never mix. `contracts` is `runtime:agnostic` and type-only, so Angular and Nest share DTOs with no runtime coupling.

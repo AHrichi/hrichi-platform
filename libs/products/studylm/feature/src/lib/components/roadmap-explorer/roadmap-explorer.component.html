@@ -81,6 +81,26 @@
     </div>
   </header>
 
+  @if (store.roadmapError(); as error) {
+    <div class="rejection-alert-wrapper">
+      <ah-alert variant="danger" title="The AI couldn’t make a roadmap">
+        <p class="rejection-text">{{ error }}</p>
+        <p class="rejection-hint">
+          Nothing was changed. Try again once n8n is reachable, or open the
+          <a routerLink="../learn">built-in lessons</a>, which work offline.
+        </p>
+        <button
+          type="button"
+          ahButton="secondary"
+          size="sm"
+          (click)="onGenerateRoadmap()"
+        >
+          Try again
+        </button>
+      </ah-alert>
+    </div>
+  }
+
   <!-- Rejection Alert -->
   @if (store.roadmapRejectionReason(); as rejection) {
     <div class="rejection-alert-wrapper">

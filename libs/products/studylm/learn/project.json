@@ -1,0 +1,9 @@
+{
+  "name": "product-studylm-learn",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/products/studylm/learn/src",
+  "prefix": "sl",
+  "projectType": "library",
+  "tags": ["scope:product-studylm", "type:ui", "runtime:browser"],
+  "targets": {}
+}

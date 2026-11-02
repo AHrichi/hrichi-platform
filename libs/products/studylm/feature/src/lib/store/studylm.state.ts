@@ -27,6 +27,8 @@ export interface StudyLmState {
   generatingFlashcardSectionIds: string[];
   generatingQuizSectionIds: string[];
   roadmapRejectionReason: string | null;
+  /** Why the AI couldn't make a roadmap (not a refused topic). */
+  roadmapError: string | null;
   isSynthesizing: boolean;
   /** Why the last synthesis failed, shown with a retry. */
   synthesisError: string | null;
@@ -87,6 +89,7 @@ export const initialStudyLmState: StudyLmState = {
   generatingFlashcardSectionIds: [],
   generatingQuizSectionIds: [],
   roadmapRejectionReason: null,
+  roadmapError: null,
   isSynthesizing: false,
   synthesisError: null,
   synthesisProvider: 'Groq LPU (openai/gpt-oss-120b)',

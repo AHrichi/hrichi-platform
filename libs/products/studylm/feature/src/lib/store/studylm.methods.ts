@@ -257,6 +257,7 @@ export function withStudyLmMethods() {
             patchState(state, {
               isGeneratingRoadmap: true,
               roadmapRejectionReason: null,
+              roadmapError: null,
             });
 
             try {
@@ -268,12 +269,20 @@ export function withStudyLmMethods() {
                 endpoint,
               );
 
-              if (res.code === 'NON_SE_TOPIC' || !res.success || !res.roadmap) {
+              if (res.code === 'NON_SE_TOPIC') {
                 patchState(state, {
                   isGeneratingRoadmap: false,
                   roadmapRejectionReason:
                     res.message ||
                     'Subject rejected: Please provide a valid Software Engineering or Computer Science topic.',
+                });
+                return;
+              }
+              if (!res.success || !res.roadmap) {
+                patchState(state, {
+                  isGeneratingRoadmap: false,
+                  roadmapError:
+                    res.message || 'The AI replied without a usable roadmap.',
                 });
                 return;
               }
@@ -298,7 +307,7 @@ export function withStudyLmMethods() {
                   : 'Roadmap generation failed';
               patchState(state, {
                 isGeneratingRoadmap: false,
-                roadmapRejectionReason: msg,
+                roadmapError: msg,
               });
             }
           },

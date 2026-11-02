@@ -175,8 +175,10 @@ export default [
             },
             {
               sourceTag: 'type:ui',
+              // Presentational components may render domain models (pure TS).
               onlyDependOnLibsWithTags: [
                 'type:ui',
+                'type:domain',
                 'type:engine',
                 'type:util',
                 'type:tokens',

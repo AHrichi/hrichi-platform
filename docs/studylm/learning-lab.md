@@ -129,6 +129,8 @@ Each kind's purpose, when to use and avoid it, and its rules are in the generate
 
 ## StudyLM problems to fix first
 
+All fixed in the Learn phase (ADR-0022).
+
 **Data:**
 
 - Generated content is written into whichever subject is open when the reply arrives.
@@ -156,12 +158,12 @@ Each kind's purpose, when to use and avoid it, and its rules are in the generate
 ## Roadmap
 
 1. **Contracts** (done): the lesson format, validators, prompt kit, workflow action and golden lessons.
-2. **Learn:**
+2. **Learn** (done, ADR-0022):
    - The repairs above.
    - Routed lazy screens, like Basecamp's.
-   - The step player, layered layout and the core renderers: prose, callout, code-walkthrough, array with simulators, flow, sequence, predict and quiz.
-   - Golden lessons replace the canned fallbacks.
-   - Storybook stories and e2e tests.
+   - The step player, layered layout and renderers: prose, callout, compare, code walkthrough, array with simulators, stack and queue, flow, sequence, and all eight check kinds.
+   - Built-in lessons that work offline in place of the canned fallbacks.
+   - e2e tests. Storybook stories wait for screenshot baselines, which need Docker.
 3. **Focus and Today:** timer modes, picture-in-picture, wake lock, chime and notifications, stats, streaks and XP.
 4. **Practice and review:** FSRS, cards from lessons, Parsons, predict-output and interleaving.
 5. **Plan:** the bootcamp planner.

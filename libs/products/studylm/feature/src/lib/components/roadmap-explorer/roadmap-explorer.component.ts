@@ -6,6 +6,7 @@ import {
   signal,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import {
   AhAccordionItem,
   AhAlert,
@@ -29,6 +30,7 @@ import type { RoadmapSection } from '@ah/products/studylm/domain';
     AhButton,
     AhEmptyState,
     AhProgressBar,
+    RouterLink,
   ],
   templateUrl: './roadmap-explorer.component.html',
   styleUrls: ['./roadmap-explorer.component.scss'],
