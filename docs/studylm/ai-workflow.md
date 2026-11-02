@@ -46,22 +46,23 @@ The workflow puts the input in the user message as data, fenced in `<data>` tags
 | `OK`                    | `data` fits the task's schema. The app still runs the matching validator for the semantic checks.                 |
 | `SPEC_MISMATCH`         | The app and the workflow serve different spec versions: re-import the workflow.                                   |
 | `BAD_INPUT`             | An unknown task or kind, or input that is missing or too large.                                                   |
-| `AI_FAILOVER_EXHAUSTED` | All four models failed, or replied with JSON that doesn't fit the schema. The app waits 20 s and tries once more. |
+| `AI_FAILOVER_EXHAUSTED` | All five models failed, or replied with JSON that doesn't fit the schema. The app waits 20 s and tries once more. |
 
 ## Models and failover
 
-Groq's free tier gives each model its own budget of 8K tokens a minute, and a lesson outline alone asks for about 5K. So every request climbs a ladder of four models until one answers with JSON that fits:
+Groq's free tier gives each model its own budget of 8K tokens a minute, and a lesson outline alone asks for about 5K. So every request climbs a ladder of five models until one answers with JSON that fits:
 
-| Attempt | Model                                                       | How it gets the schema                   |
-| ------- | ----------------------------------------------------------- | ---------------------------------------- |
-| 1–2     | Groq `openai/gpt-oss-120b`, `openai/gpt-oss-20b`            | Strict structured output (`json_schema`) |
-| 3       | Groq `qwen/qwen3.8-27b`                                     | In the prompt, with `json_object` mode   |
-| 4       | Google `gemini-flash-latest` (the Google Gemini credential) | In the prompt, with a JSON response type |
+| Attempt | Model                                                       | How it gets the schema                                        |
+| ------- | ----------------------------------------------------------- | ------------------------------------------------------------- |
+| 1–2     | Groq `openai/gpt-oss-120b`, `openai/gpt-oss-20b`            | Strict structured output (`json_schema`), except for outlines |
+| 3       | Groq `qwen/qwen3.8-27b`                                     | In the prompt, with `json_object` mode                        |
+| 4       | Google `gemini-flash-latest` (the Google Gemini credential) | In the prompt, with a JSON response type                      |
+| 5       | Google `gemini-3.5-flash-lite`                              | In the prompt, with a JSON response type                      |
 
-- **Order.** Groq attempts go 120b, 20b, Qwen. Blocks are written two at a time, one per lane, and lane 1 starts on 20b, so two blocks in flight draw on two budgets. Gemini, on Google's quota, is always last.
+- **Order.** Groq attempts go 120b, 20b, Qwen. Blocks are written two at a time, one per lane, and lane 1 starts on 20b, so two blocks in flight draw on two budgets. Gemini, on Google's quota, comes last: Flash, then Flash-Lite for when Flash is in high demand. Each Gemini call is retried once after 3 s.
 - **Budget.** gpt-oss runs with `reasoning_effort: "low"`, and every call caps its tokens (outline 4,500, block and repair 3,000, feedback 1,500, older actions 6,000), so a call fits the per-minute budget.
-- **Checks.** After each attempt, **Check Attempt n** parses the reply and tests it against the task's schema. It first drops keys the schema doesn't have and nulls missing fields that may be null. When Groq refuses a reply for not fitting the schema, the check salvages what it generated from the error. Qwen loops under strict mode, so it never gets it.
-- **Exhausted.** If all four fail, the reply is `AI_FAILOVER_EXHAUSTED`. The app never receives canned content dressed up as AI output.
+- **Checks.** After each attempt, **Check Attempt n** parses the reply and tests it against the task's schema. It first drops keys the schema doesn't have and nulls missing fields that may be null. When Groq refuses a reply for not fitting the schema, the check salvages what it generated from the error. Qwen loops under strict mode, and gpt-oss drops fields from whole outlines under it, so those get the schema in the prompt.
+- **Exhausted.** If all five fail, the reply is `AI_FAILOVER_EXHAUSTED`. The app never receives canned content dressed up as AI output.
 
 The older actions (roadmaps, flashcards, quizzes, hints) climb the same ladder without a schema: any reply that parses as JSON is used.
 
@@ -77,7 +78,8 @@ The older actions (roadmaps, flashcards, quizzes, hints) climb the same ladder w
 - a good reply, and lane 1 starting on another model;
 - failover after an unparsable reply, a reply that breaks the schema, or an HTTP error;
 - salvaging a reply Groq refused for one stray key;
-- the whole ladder down to Gemini, and every model failing;
+- the whole ladder down to Gemini, then Flash-Lite, and every model failing;
+- outlines going to gpt-oss with the schema in the prompt;
 - version and input refusals;
 - `ping` and `generate_roadmap` unchanged.
 

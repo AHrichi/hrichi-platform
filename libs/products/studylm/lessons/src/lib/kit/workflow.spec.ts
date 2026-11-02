@@ -279,6 +279,52 @@ describe('The n8n workflow', () => {
     );
   });
 
+  it('falls back to Gemini Flash-Lite when Flash is busy too', async () => {
+    let geminiCalls = 0;
+    const { response } = await run(blockRequest, (request) => {
+      if (modelOf(request) !== 'gemini' || geminiCalls++ === 0) {
+        throw new Error('503');
+      }
+      return answer(request, JSON.stringify(example));
+    });
+    expect(response).toMatchObject({
+      code: 'OK',
+      provider: 'Google Gemini (gemini-3.5-flash-lite)',
+    });
+  });
+
+  it('gives gpt-oss the outline schema in the prompt, not strict mode', async () => {
+    const requests: Json[] = [];
+    await run(
+      {
+        action: 'generate_lesson_part',
+        task: 'lesson-outline',
+        specVersion: kit.specVersion,
+        input: {
+          subject: 'Algorithms',
+          sectionTitle: 'Binary search',
+          sectionSummary: 'Halving a sorted array.',
+          subtopics: [],
+          tier: 'beginner',
+          minutes: 15,
+        },
+      },
+      (request) => {
+        requests.push(request);
+        throw new Error('429');
+      },
+    );
+    const [first] = requests;
+    expect(first).toMatchObject({
+      model: BIG,
+      response_format: { type: 'json_object' },
+      max_completion_tokens: 4500,
+    });
+    expect((first['messages'] as { content: string }[])[0].content).toContain(
+      'matches this JSON Schema',
+    );
+  });
+
   it('says so when every model fails', async () => {
     const { response } = await run(blockRequest, reply('nope'));
     expect(response).toMatchObject({

@@ -68,6 +68,13 @@ export function parseMarkdown(source: string): MarkdownBlock[] {
   return blocks;
 }
 
+/**
+ * A link: `[words](target)`. Spec notation like `O.[[Get]](P, Receiver)`
+ * isn't one, since the words can't hold brackets and the target no spaces.
+ */
+export const LINKS = /\[([^\]]+)\]\(([^)\s]+)\)/g;
+const LINK = new RegExp(`^${LINKS.source}`);
+
 export function parseInline(source: string): Inline[] {
   const out: Inline[] = [];
   let text = '';
@@ -119,7 +126,7 @@ export function parseInline(source: string): Inline[] {
     }
 
     if (rest[0] === '[') {
-      const link = /^\[([^\]]+)\]\(([^)\s]+)\)/.exec(rest);
+      const link = LINK.exec(rest);
       if (link) {
         pushText();
         const href = safeHref(link[2]);

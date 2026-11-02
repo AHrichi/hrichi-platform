@@ -13,17 +13,19 @@ const KIT = JSON.parse(
   ),
 );
 /**
- * Every request climbs a ladder of four models until one answers with
- * JSON that fits: three on Groq, then Gemini. Groq's free tier gives each
- * model its own budget of 8K tokens a minute, so spreading calls across
- * them (and blocks across two lanes) keeps one busy model from failing a
- * lesson; Gemini, on Google's quota, is the last resort.
+ * Every request climbs a ladder of five models until one answers with
+ * JSON that fits: three on Groq, then two on Gemini. Groq's free tier gives
+ * each model its own budget of 8K tokens a minute, so spreading calls
+ * across them (and blocks across two lanes) keeps one busy model from
+ * failing a lesson; Gemini, on Google's quota, is the last resort, with
+ * Flash-Lite behind Flash for when Flash is in high demand.
  */
 const MODELS = {
   big: 'openai/gpt-oss-120b',
   small: 'openai/gpt-oss-20b',
   qwen: 'qwen/qwen3.8-27b',
   gemini: 'gemini-flash-latest',
+  geminiLite: 'gemini-3.5-flash-lite',
 };
 const GROQ_CREDENTIAL = { id: 'jVafRHRNVmsszaE8', name: 'Groq' };
 const GEMINI_CREDENTIAL = { id: 'dISTV0tMmBYHUXlX', name: 'Google Gemini' };
@@ -31,7 +33,12 @@ const ATTEMPTS = [
   { node: 'AI Attempt 1 (Groq)', provider: 'groq' },
   { node: 'AI Attempt 2 (Groq)', provider: 'groq' },
   { node: 'AI Attempt 3 (Groq)', provider: 'groq' },
-  { node: 'AI Attempt 4 (Gemini)', provider: 'gemini' },
+  { node: 'AI Attempt 4 (Gemini)', provider: 'gemini', model: MODELS.gemini },
+  {
+    node: 'AI Attempt 5 (Gemini Lite)',
+    provider: 'gemini',
+    model: MODELS.geminiLite,
+  },
 ];
 
 // The functions below run inside n8n's Code nodes; they are serialised
@@ -39,17 +46,19 @@ const ATTEMPTS = [
 
 /**
  * The calls to make, in order: one per Groq model in `spec.order`, then
- * Gemini. gpt-oss gets the schema as strict structured output; Qwen loops
- * under it, so it and Gemini get the schema in the prompt instead and
- * the reply is checked here. Low reasoning effort and a tight token cap
- * keep each call inside the free tier's per-minute budget.
+ * Gemini Flash and Flash-Lite. With `spec.strict`, gpt-oss gets the schema
+ * as strict structured output; Qwen loops under it, and gpt-oss still drops
+ * fields from long replies like outlines, so otherwise the schema goes in
+ * the prompt and the reply is checked here. Low reasoning effort and a
+ * tight token cap keep each call inside the free tier's per-minute budget.
  */
 function ladder(spec, models) {
   const prompted = spec.schema
     ? `${spec.system}\n\nReply with one JSON object that matches this JSON Schema:\n${JSON.stringify(spec.schema)}`
     : spec.system;
   const groq = (model) => {
-    const strict = model.startsWith('openai/gpt-oss') && spec.schema;
+    const strict =
+      spec.strict && model.startsWith('openai/gpt-oss') && spec.schema;
     const body = {
       model,
       messages: [
@@ -68,19 +77,21 @@ function ladder(spec, models) {
     if (model.startsWith('openai/gpt-oss')) body.reasoning_effort = 'low';
     return { label: `Groq LPU (${model})`, body };
   };
-  return [
-    ...spec.order.map(groq),
-    {
-      label: `Google Gemini (${models.gemini})`,
-      body: {
-        systemInstruction: { parts: [{ text: prompted }] },
-        contents: [{ role: 'user', parts: [{ text: spec.user }] }],
-        generationConfig: {
-          maxOutputTokens: 16000,
-          responseMimeType: 'application/json',
-        },
+  const gemini = (model) => ({
+    label: `Google Gemini (${model})`,
+    body: {
+      systemInstruction: { parts: [{ text: prompted }] },
+      contents: [{ role: 'user', parts: [{ text: spec.user }] }],
+      generationConfig: {
+        maxOutputTokens: 16000,
+        responseMimeType: 'application/json',
       },
     },
+  });
+  return [
+    ...spec.order.map(groq),
+    gemini(models.gemini),
+    gemini(models.geminiLite),
   ];
 }
 
@@ -275,12 +286,18 @@ function lessonPart(body, kit, models) {
     'block-repair': 3000,
     'self-explain-feedback': 1500,
   }[body.task];
+  // gpt-oss drops fields from whole outlines under strict mode; with the
+  // schema in the prompt, the check here catches what it misses.
+  const strict = body.task !== 'lesson-outline';
   return {
     action: 'generate_lesson_part',
     task: body.task,
     specVersion: kit.specVersion,
     schema,
-    attempts: ladder({ system, user, schema, name, order, maxTokens }, models),
+    attempts: ladder(
+      { system, user, schema, name, order, maxTokens, strict },
+      models,
+    ),
   };
 }
 
@@ -294,21 +311,26 @@ const usableName = (i) => `Attempt ${i + 1} Usable?`;
  * salvage what Groq generated before refusing it.
  */
 function attemptNodes() {
-  return ATTEMPTS.flatMap(({ node, provider }, i) => {
+  return ATTEMPTS.flatMap(({ node, provider, model }, i) => {
     const x = 760 + i * 660;
+    // Gemini's "high demand" errors pass in seconds; Groq's rate limits don't.
+    const retry =
+      provider === 'gemini'
+        ? { retryOnFail: true, maxTries: 2, waitBetweenTries: 3000 }
+        : {};
     const call = {
       parameters: {
         method: 'POST',
         url:
           provider === 'groq'
             ? 'https://api.groq.com/openai/v1/chat/completions'
-            : `https://generativelanguage.googleapis.com/v1beta/models/${MODELS.gemini}:generateContent`,
+            : `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
         authentication: 'predefinedCredentialType',
         nodeCredentialType: provider === 'groq' ? 'groqApi' : 'googlePalmApi',
         sendBody: true,
         specifyBody: 'json',
         jsonBody: `={{ JSON.stringify($('Format Multi-AI Prompts').first().json.attempts[${i}].body) }}`,
-        options: { timeout: provider === 'groq' ? 30000 : 45000 },
+        options: { timeout: provider === 'groq' ? 25000 : 30000 },
       },
       id: `ai-attempt-${i + 1}`,
       name: node,
@@ -316,6 +338,7 @@ function attemptNodes() {
       typeVersion: 4.2,
       position: [x, 200],
       onError: 'continueErrorOutput',
+      ...retry,
       credentials:
         provider === 'groq'
           ? { groqApi: GROQ_CREDENTIAL }
@@ -435,7 +458,7 @@ if (action === 'generate_lesson_part') {
 }
 
 if (action === 'ping') {
-  const providers = [MODELS.big, MODELS.small, MODELS.qwen].map((m) => 'Groq LPU (' + m + ')').concat('Google Gemini (' + MODELS.gemini + ')');
+  const providers = [MODELS.big, MODELS.small, MODELS.qwen].map((m) => 'Groq LPU (' + m + ')').concat([MODELS.gemini, MODELS.geminiLite].map((m) => 'Google Gemini (' + m + ')'));
   return [{
     json: {
       action: 'ping',
@@ -763,7 +786,7 @@ if (parsed === null) {
         provider: 'StudyLM workflow',
         specVersion: promptItem.specVersion,
         data: null,
-        message: 'All four AI models failed or returned output that does not fit the schema. Free-tier models may be busy; try again in a minute.'
+        message: 'Every AI model failed or returned output that does not fit the schema. Free-tier models may be busy; try again in a minute.'
       }
     }];
   }
