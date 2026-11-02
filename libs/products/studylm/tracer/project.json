@@ -1,0 +1,8 @@
+{
+  "name": "product-studylm-tracer",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/products/studylm/tracer/src",
+  "projectType": "library",
+  "tags": ["scope:product-studylm", "type:engine", "runtime:agnostic"],
+  "targets": {}
+}

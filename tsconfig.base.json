@@ -30,6 +30,9 @@
       "@ah/products/studylm/learn": [
         "./libs/products/studylm/learn/src/index.ts"
       ],
+      "@ah/products/studylm/tracer": [
+        "./libs/products/studylm/tracer/src/index.ts"
+      ],
       "@ah/products/studylm/lessons": [
         "./libs/products/studylm/lessons/src/index.ts"
       ],

@@ -72,6 +72,9 @@ export const skip = [
   'leaflet',
   // StudyLM's lesson contracts: bundled into the remote, where esbuild tree-shakes them.
   'valibot',
+  // StudyLM's JavaScript tracer: an interpreter and its parser, used only there.
+  'sval',
+  'acorn',
 ];
 
 // https://native-federation.com/docs/v4/angular-adapter/configuration/
