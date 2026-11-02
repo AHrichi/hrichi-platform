@@ -3,6 +3,7 @@ import { LIMITS } from '../spec/primitives';
 import type { Step } from '../spec/step';
 import { type IssueList, pointer } from './issues';
 import { bucketOf } from '../engines/hash';
+import { LINKS } from '../engines/markdown';
 import { applyArrayOp, applyStackQueueOp } from '../engines/replay';
 
 /**
@@ -220,7 +221,11 @@ const prose: Check<'prose'> = (block, at, out) => {
       'Remove the image: describe it, or use a visual block.',
     );
   }
-  if (/\]\((?!https:\/\/)/.test(block.markdown)) {
+  // Links as the renderer reads them; a code span can't hold one.
+  const targets = [
+    ...block.markdown.replace(/`[^`]*`/g, '').matchAll(LINKS),
+  ].map((match) => match[2]);
+  if (targets.some((target) => !target.startsWith('https://'))) {
     out.error(path, 'bad-format', 'Links must start with https://.');
   }
 };

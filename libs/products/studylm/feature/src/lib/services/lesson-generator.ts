@@ -53,7 +53,31 @@ export interface LessonDraft {
   provider: string;
 }
 
+/** One worker per lane, so blocks written side by side use different models. */
 const MAX_CONCURRENT = 2;
+/**
+ * When every model in the workflow failed, which on free tiers usually
+ * means their per-minute token budgets ran out, a call waits this long
+ * and tries once more.
+ */
+export const BUSY_RETRY_MS = 20_000;
+
+/** Waits, unless the signal aborts first. */
+export type Pause = (ms: number, signal: AbortSignal) => Promise<void>;
+
+const pauseFor: Pause = (ms, signal) =>
+  new Promise((resolve, reject) => {
+    signal.throwIfAborted();
+    const timer = setTimeout(resolve, ms);
+    signal.addEventListener(
+      'abort',
+      () => {
+        clearTimeout(timer);
+        reject(signal.reason);
+      },
+      { once: true },
+    );
+  });
 
 /**
  * Writes a lesson in stages (ADR-0021): an outline, then each block against
@@ -62,7 +86,10 @@ const MAX_CONCURRENT = 2;
  * never filled in.
  */
 export class LessonGenerator {
-  constructor(private readonly ask: AskWorkflow) {}
+  constructor(
+    private readonly ask: AskWorkflow,
+    private readonly pause: Pause = pauseFor,
+  ) {}
 
   async outline(
     topic: LessonTopic,
@@ -112,7 +139,7 @@ export class LessonGenerator {
     const queue = outline.sections.flatMap((section) =>
       section.blocks.map((planned) => ({ section, planned })),
     );
-    const worker = async () => {
+    const worker = async (lane: 0 | 1) => {
       for (let next = queue.shift(); next; next = queue.shift()) {
         signal.throwIfAborted();
         draft.blocks[next.planned.id] = { state: 'writing' };
@@ -123,11 +150,14 @@ export class LessonGenerator {
           next.section,
           next.planned,
           signal,
+          lane,
         );
         publish();
       }
     };
-    await Promise.all(Array.from({ length: MAX_CONCURRENT }, worker));
+    await Promise.all(
+      Array.from({ length: MAX_CONCURRENT }, (_, i) => worker(i ? 1 : 0)),
+    );
     return draft;
   }
 
@@ -138,6 +168,7 @@ export class LessonGenerator {
     section: LessonOutline['sections'][number],
     planned: PlannedBlock,
     signal: AbortSignal,
+    lane: 0 | 1 = 0,
   ): Promise<BlockStatus> {
     const checks = section.blocks
       .filter((b) => (CHECK_KINDS as readonly string[]).includes(b.kind))
@@ -161,6 +192,7 @@ export class LessonGenerator {
           context: neighbours.slice(0, 8),
         },
         signal,
+        lane,
       );
     } catch (error) {
       if (signal.aborted) throw error;
@@ -220,14 +252,19 @@ export class LessonGenerator {
     task: T,
     input: TaskInput<T>,
     signal: AbortSignal,
+    lane?: 0 | 1,
   ): Promise<GenerateResponse> {
-    const request = buildGenerateRequest(task, input);
+    const request = buildGenerateRequest(task, input, lane);
     if (!request.ok) {
       throw new LessonGenerationError(
         `StudyLM built a request the workflow would refuse: ${firstIssue(request)}`,
       );
     }
-    const reply = await this.ask(request.value as GenerateRequest, signal);
+    let reply = await this.ask(request.value as GenerateRequest, signal);
+    if (reply.code === 'AI_FAILOVER_EXHAUSTED') {
+      await this.pause(BUSY_RETRY_MS, signal);
+      reply = await this.ask(request.value as GenerateRequest, signal);
+    }
     if (reply.code === 'SPEC_MISMATCH') {
       throw new LessonGenerationError(
         `Your n8n workflow serves lesson format ${reply.specVersion}; StudyLM uses ${SPEC_VERSION}. Re-import tools/scripts/studylm_workflow.json into n8n.`,
@@ -237,7 +274,7 @@ export class LessonGenerator {
       throw new LessonGenerationError(
         reply.message ??
           (reply.code === 'AI_FAILOVER_EXHAUSTED'
-            ? 'Both AI models failed to answer.'
+            ? 'Every AI model failed to answer, twice. Free-tier models may be busy; try again in a minute.'
             : `The workflow answered ${reply.code}.`),
       );
     }

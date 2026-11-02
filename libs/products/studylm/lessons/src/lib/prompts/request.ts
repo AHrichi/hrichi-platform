@@ -95,6 +95,11 @@ export interface GenerateRequest<T extends GenerateTask = GenerateTask> {
   task: T;
   specVersion: number;
   input: TaskInput<T>;
+  /**
+   * Blocks written side by side go in different lanes, which start on
+   * different models, so they draw on different free-tier rate limits.
+   */
+  lane?: 0 | 1;
 }
 
 /** The workflow's reply; `data` still has to pass the matching validator. */
@@ -116,6 +121,7 @@ export interface GenerateResponse {
 export function buildGenerateRequest<T extends GenerateTask>(
   task: T,
   input: TaskInput<T>,
+  lane?: 0 | 1,
 ): ValidationResult<GenerateRequest<T>> {
   const parsed = v.safeParse(TASK_INPUT_SCHEMAS[task], input);
   if (!parsed.success) {
@@ -129,6 +135,7 @@ export function buildGenerateRequest<T extends GenerateTask>(
       task,
       specVersion: SPEC_VERSION,
       input: parsed.output as TaskInput<T>,
+      ...(lane === undefined ? {} : { lane }),
     },
   };
 }

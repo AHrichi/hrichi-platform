@@ -249,6 +249,17 @@ const CASES: Case[] = [
     { path: '/sections/0/blocks/0/markdown', code: 'markup' },
   ],
   [
+    'a link that is not https',
+    'binary-search',
+    (l) =>
+      edit(
+        l,
+        '/sections/0/blocks/0/markdown',
+        'See [the spec](http://tc39.es/ecma262/).',
+      ),
+    { path: '/sections/0/blocks/0/markdown', code: 'bad-format' },
+  ],
+  [
     'a quiz with no wrong option',
     'git-branching',
     (l) => edit(l, '/sections/2/blocks/1/correct', [0, 1, 2, 3]),
@@ -282,6 +293,17 @@ describe('Lesson validation', () => {
     expect(issue.message).toBe(
       '"cat" hashes to bucket 2 with char-sum-mod over 5 buckets, not 3.',
     );
+  });
+
+  // A lesson on the ECMAScript spec wrote this; it was taken for a link.
+  it('lets spec notation and code spans through as text, not links', () => {
+    const lesson = golden('binary-search');
+    edit(
+      lesson,
+      '/sections/0/blocks/0/markdown',
+      'Step 2 returns O.[[Get]](P, Receiver), or `O.[[Get]](P)` for short. [MDN](https://developer.mozilla.org/) has more.',
+    );
+    expect(validateLesson(lesson)).toMatchObject({ ok: true });
   });
 
   it('warns, without failing, when a lesson asks nothing', () => {

@@ -9,6 +9,7 @@ import {
 } from '@ah/products/studylm/lessons';
 import {
   assembleLesson,
+  BUSY_RETRY_MS,
   formatId,
   LessonGenerationError,
   LessonGenerator,
@@ -157,6 +158,50 @@ describe('LessonGenerator', () => {
     await expect(
       generator.outline(topic, new AbortController().signal),
     ).rejects.toThrow(/Re-import/);
+  });
+
+  it('writes blocks side by side in two lanes', async () => {
+    const { ask, calls } = fakeWorkflow();
+    await generate(new LessonGenerator(ask));
+    const lanes = new Set(
+      calls.filter((c) => c.task === 'lesson-block').map((c) => c.lane),
+    );
+    expect(lanes).toEqual(new Set([0, 1]));
+  });
+
+  it('waits and tries once more when every model was busy', async () => {
+    const { ask } = fakeWorkflow();
+    const busy = {
+      ...ok(null),
+      success: false,
+      code: 'AI_FAILOVER_EXHAUSTED' as const,
+      message: 'All four AI models failed.',
+    };
+    let outlineCalls = 0;
+    const pauses: number[] = [];
+    const generator = new LessonGenerator(
+      async (request, signal) => {
+        if (request.task === 'lesson-outline' && outlineCalls++ === 0) {
+          return busy;
+        }
+        return ask(request, signal);
+      },
+      async (ms) => {
+        pauses.push(ms);
+      },
+    );
+    await expect(
+      generator.outline(topic, new AbortController().signal),
+    ).resolves.toMatchObject({ provider: 'test model' });
+    expect(pauses).toEqual([BUSY_RETRY_MS]);
+
+    const always = new LessonGenerator(
+      async () => busy,
+      async () => undefined,
+    );
+    await expect(
+      always.outline(topic, new AbortController().signal),
+    ).rejects.toThrow('All four AI models failed.');
   });
 
   it('stops when cancelled', async () => {
