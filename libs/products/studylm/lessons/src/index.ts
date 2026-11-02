@@ -8,3 +8,8 @@ export * from './lib/validate/validate';
 export * from './lib/catalog/cards';
 export type * from './lib/engines/contracts';
 export * from './lib/prompts/request';
+export * from './lib/library';
+export * from './lib/engines/array-simulators';
+export * from './lib/engines/replay';
+export * from './lib/engines/layout';
+export * from './lib/engines/markdown';

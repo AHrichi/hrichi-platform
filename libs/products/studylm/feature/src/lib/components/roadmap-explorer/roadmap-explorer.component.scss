@@ -422,3 +422,9 @@
 .empty-roadmap-container {
   padding: var(--space-8, 2rem) 0;
 }
+
+.section-error {
+  margin: var(--space-2) 0;
+  color: var(--color-danger-default);
+  font-size: var(--font-size-200);
+}

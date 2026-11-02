@@ -16,6 +16,11 @@ import type {
 /**
  * Safely extracts and parses JSON even if an LLM wraps the response in markdown code blocks.
  */
+/** Whether `value` is a string with something other than spaces in it. */
+function text(value: unknown): boolean {
+  return typeof value === 'string' && value.trim().length > 0;
+}
+
 export function extractAndParseJson<T>(raw: string | unknown): T {
   if (typeof raw !== 'string') {
     return raw as T;
@@ -171,8 +176,10 @@ export function validateAndParseSectionFlashcards(
       ? (data['docsGrounded'] as string[])
       : [];
 
-    const flashcards: StudyFlashcard[] = rawList.map((cRaw, i) => {
-      const c = cRaw as Record<string, unknown>;
+    // A card without both sides is dropped, never filled in.
+    const flashcards: StudyFlashcard[] = rawList.flatMap((cRaw, i) => {
+      const c = (cRaw ?? {}) as Record<string, unknown>;
+      if (!text(c['front']) || !text(c['back'])) return [];
       return {
         id: String(c['id'] || `fc-${sectionId}-${Date.now()}-${i}`),
         tier: parseTier(c['tier']),
@@ -228,22 +235,24 @@ export function validateAndParseSectionQuiz(
       ? (data['docsGrounded'] as string[])
       : [];
 
-    const quiz: StudyQuizQuestion[] = rawList.map((qRaw, i) => {
-      const q = qRaw as Record<string, unknown>;
+    // A question needs its text, four options and a correct index; one
+    // that lacks any is dropped, never completed with made-up options.
+    const quiz: StudyQuizQuestion[] = rawList.flatMap((qRaw, i) => {
+      const q = (qRaw ?? {}) as Record<string, unknown>;
       const rawOpts = Array.isArray(q['options']) ? q['options'] : [];
-      const opts: [string, string, string, string] = [
-        String(rawOpts[0] || 'Option A'),
-        String(rawOpts[1] || 'Option B'),
-        String(rawOpts[2] || 'Option C'),
-        String(rawOpts[3] || 'Option D'),
-      ];
-
-      const cIdx =
-        typeof q['correctIndex'] === 'number' &&
-        q['correctIndex'] >= 0 &&
-        q['correctIndex'] <= 3
-          ? q['correctIndex']
-          : 0;
+      const cIdx = q['correctIndex'];
+      if (
+        !text(q['question']) ||
+        rawOpts.length !== 4 ||
+        !rawOpts.every(text) ||
+        typeof cIdx !== 'number' ||
+        !Number.isInteger(cIdx) ||
+        cIdx < 0 ||
+        cIdx > 3
+      ) {
+        return [];
+      }
+      const opts = rawOpts.map(String) as [string, string, string, string];
 
       return {
         id: String(q['id'] || `qz-${sectionId}-${Date.now()}-${i}`),

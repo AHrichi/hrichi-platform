@@ -17,6 +17,7 @@ import {
   type AhSelectOption,
 } from '@ah/ui';
 import { StudyLmStore } from '../../store/studylm.store';
+import { StudyLmScreens } from '../../shell/studylm-screens';
 import {
   COMPETENCY_TIERS,
   type CompetencyTier,
@@ -43,6 +44,7 @@ import {
 })
 export class FlashcardDeckComponent {
   readonly store = inject(StudyLmStore);
+  protected readonly screens = inject(StudyLmScreens);
   readonly tiersInfo = COMPETENCY_TIERS;
 
   readonly tierOptions: { label: string; value: CompetencyTier | 'all' }[] = [
@@ -156,9 +158,14 @@ export class FlashcardDeckComponent {
 
   @HostListener('window:keydown', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent): void {
+    // Typing in a field, or anything behind an open dialog, isn't for the deck.
+    const target = event.target;
     if (
-      event.target instanceof HTMLInputElement ||
-      event.target instanceof HTMLTextAreaElement
+      target instanceof HTMLInputElement ||
+      target instanceof HTMLTextAreaElement ||
+      target instanceof HTMLSelectElement ||
+      (target instanceof HTMLElement && target.isContentEditable) ||
+      document.querySelector('[role="dialog"]')
     ) {
       return;
     }

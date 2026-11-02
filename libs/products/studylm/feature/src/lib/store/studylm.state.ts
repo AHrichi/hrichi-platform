@@ -6,9 +6,6 @@ import type {
   StudySubject,
 } from '@ah/products/studylm/domain';
 
-export type StudyLmTab =
-  'roadmap' | 'flashcards' | 'quiz' | 'sources' | 'stats';
-
 export interface StudyLmCardFilter {
   tier: CompetencyTier | 'all';
   sectionId: string | 'all';
@@ -25,13 +22,16 @@ export interface StudyLmState {
   subjects: StudySubject[];
   activeSubjectId: string;
   activeTier: CompetencyTier | 'all';
-  activeTab: StudyLmTab;
   selectedSectionId: string | null;
   isGeneratingRoadmap: boolean;
   generatingFlashcardSectionIds: string[];
   generatingQuizSectionIds: string[];
   roadmapRejectionReason: string | null;
+  /** Why the AI couldn't make a roadmap (not a refused topic). */
+  roadmapError: string | null;
   isSynthesizing: boolean;
+  /** Why the last synthesis failed, shown with a retry. */
+  synthesisError: string | null;
   synthesisProvider: string;
   activeCardIndex: number;
   isCardFlipped: boolean;
@@ -84,13 +84,14 @@ export const initialStudyLmState: StudyLmState = {
   ],
   activeSubjectId: initialSubjectId,
   activeTier: 'all',
-  activeTab: 'roadmap',
   selectedSectionId: null,
   isGeneratingRoadmap: false,
   generatingFlashcardSectionIds: [],
   generatingQuizSectionIds: [],
   roadmapRejectionReason: null,
+  roadmapError: null,
   isSynthesizing: false,
+  synthesisError: null,
   synthesisProvider: 'Groq LPU (openai/gpt-oss-120b)',
   activeCardIndex: 0,
   isCardFlipped: false,
@@ -113,8 +114,9 @@ export const initialStudyLmState: StudyLmState = {
     tunnelUrl: '',
     customUrl: '',
     activeEndpoint: 'http://127.0.0.1:5678/webhook/study-synthesizer',
-    isConnected: true,
-    isChecking: false,
+    // Unknown until the first ping answers (withStudyLmHooks).
+    isConnected: false,
+    isChecking: true,
   },
   showSettingsModal: false,
   showAddSourceModal: false,

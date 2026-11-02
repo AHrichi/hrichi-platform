@@ -58,21 +58,14 @@
         type="button"
         class="n8n-indicator-btn"
         [class.connected]="store.n8nConfig().isConnected"
+        [class.checking]="store.n8nConfig().isChecking"
         (click)="openSettingsModal()"
         title="Configure n8n AI webhook endpoint"
-        [attr.aria-label]="
-          'n8n AI Engine status: ' +
-          (store.n8nConfig().isConnected ? 'Online' : 'Offline')
-        "
+        [attr.aria-label]="'n8n AI Engine status: ' + connection()"
       >
         <span class="status-dot"></span>
-        <span class="btn-label-desktop"
-          >n8n Engine:
-          {{ store.n8nConfig().isConnected ? 'Online' : 'Offline' }}</span
-        >
-        <span class="btn-label-mobile">{{
-          store.n8nConfig().isConnected ? 'Online' : 'Offline'
-        }}</span>
+        <span class="btn-label-desktop">n8n Engine: {{ connection() }}</span>
+        <span class="btn-label-mobile">{{ connection() }}</span>
         <span class="gear-icon" aria-hidden="true">⚙️</span>
       </button>
 
@@ -135,35 +128,26 @@
     />
   </section>
 
-  <!-- Section Tabs Navigation -->
-  <div class="tabs-wrapper">
-    <ah-tabs
-      [tabs]="navTabs()"
-      [selectedId]="store.activeTab()"
-      (selectedIdChange)="onTabChange($event)"
-    />
-  </div>
-
-  <!-- Main Active Content View -->
-  <main class="studylm-main-content">
-    @switch (store.activeTab()) {
-      @case ('roadmap') {
-        <studylm-roadmap-explorer />
-      }
-      @case ('flashcards') {
-        <ah-flashcard-deck />
-      }
-      @case ('quiz') {
-        <ah-quiz-arena />
-      }
-      @case ('sources') {
-        <ah-source-manager />
-      }
-      @case ('stats') {
-        <ah-study-stats />
-      }
+  <nav class="screens" ahScrollHint aria-label="StudyLM screens">
+    @for (screen of screens(); track screen.id) {
+      <a
+        [routerLink]="screen.id"
+        routerLinkActive="is-active"
+        ariaCurrentWhenActive="page"
+      >
+        <span aria-hidden="true">{{ screen.icon }}</span>
+        {{ screen.label }}
+        @if (screen.count > 0) {
+          <span class="count">{{ screen.count }}</span>
+        }
+      </a>
     }
-  </main>
+  </nav>
+
+  <!-- The portfolio already has a <main>; an embedded app must not add one. -->
+  <div class="studylm-main-content">
+    <router-outlet />
+  </div>
 
   <!-- Modals -->
   @if (store.showSettingsModal()) {

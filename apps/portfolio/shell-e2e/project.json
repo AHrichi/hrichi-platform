@@ -7,7 +7,8 @@
     "shell",
     "lab-sky",
     "product-lighting",
-    "product-basecamp"
+    "product-basecamp",
+    "product-studylm"
   ],
   "// targets": "to see all targets run: nx show project shell-e2e --web",
   "targets": {}

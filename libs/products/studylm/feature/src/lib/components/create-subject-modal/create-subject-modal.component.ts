@@ -14,6 +14,7 @@ import {
 } from '@angular/forms/signals';
 import { AhAlert, AhButton, AhModal } from '@ah/ui';
 import { StudyLmStore } from '../../store/studylm.store';
+import { StudyLmScreens } from '../../shell/studylm-screens';
 import {
   SE_DOMAINS,
   type SoftwareEngineeringDomain,
@@ -35,6 +36,7 @@ interface CreateSubjectModel {
 })
 export class CreateSubjectModalComponent {
   readonly store = inject(StudyLmStore);
+  private readonly screens = inject(StudyLmScreens);
   readonly domains = SE_DOMAINS;
 
   readonly model = signal<CreateSubjectModel>({
@@ -72,6 +74,7 @@ export class CreateSubjectModalComponent {
     }
 
     this.close();
+    void this.screens.go('roadmap');
   }
 
   close(): void {

@@ -57,6 +57,13 @@ export default defineConfig({
       cwd: workspaceRoot,
     },
     {
+      // StudyLM: its spec stubs every n8n request, so no real n8n is called.
+      command: 'pnpm exec nx run product-studylm:serve-static',
+      url: 'http://localhost:4307/remoteEntry.json',
+      reuseExistingServer: true,
+      cwd: workspaceRoot,
+    },
+    {
       command: isCI
         ? 'pnpm exec nx run shell:serve-static'
         : 'pnpm exec nx run shell:serve',

@@ -5,7 +5,7 @@ import {
   type,
   withMethods,
 } from '@ngrx/signals';
-import type { StudyLmState, StudyLmTab } from './studylm.state';
+import type { StudyLmState } from './studylm.state';
 import { StudyLmApiService } from '../services/studylm-api.service';
 import { StudyLmStorageService } from '../services/studylm-storage.service';
 import {
@@ -34,6 +34,39 @@ function warnStorageFailure(error: unknown): void {
   console.warn('[studylm] could not persist a change', error);
 }
 
+/** Keys in the settings table. */
+export const ACTIVE_SUBJECT_SETTING = 'activeSubjectId';
+export const N8N_SETTING = 'n8n';
+
+function failureMessage(err: unknown, fallback: string): string {
+  return err instanceof Error ? err.message : fallback;
+}
+
+/**
+ * A regenerated roadmap keeps the learner's approvals: a section with the
+ * same code as an approved one starts approved.
+ */
+export function keepApprovals(
+  next: CurriculumRoadmap,
+  previous: CurriculumRoadmap | null | undefined,
+): CurriculumRoadmap {
+  const approved = new Set(
+    (previous?.branches ?? []).flatMap((b) =>
+      b.sections.filter((sec) => sec.approved).map((sec) => sec.code),
+    ),
+  );
+  if (approved.size === 0) return next;
+  return {
+    ...next,
+    branches: next.branches.map((b) => ({
+      ...b,
+      sections: b.sections.map((sec) =>
+        approved.has(sec.code) ? { ...sec, approved: true } : sec,
+      ),
+    })),
+  };
+}
+
 export function withStudyLmMethods() {
   return signalStoreFeature(
     { state: type<StudyLmState>() },
@@ -43,10 +76,14 @@ export function withStudyLmMethods() {
         apiService = inject(StudyLmApiService),
         storageService = inject(StudyLmStorageService),
       ) => {
-        function updateActiveSubject(
+        /**
+         * Replies change the subject that asked for them, by id: the
+         * learner may have opened another subject while waiting.
+         */
+        function updateSubject(
+          id: string,
           updater: (current: StudySubject) => StudySubject,
         ) {
-          const id = state.activeSubjectId();
           let targetSubject: StudySubject | null = null;
           const updatedList = state.subjects().map((s) => {
             if (s.id !== id) return s;
@@ -60,11 +97,37 @@ export function withStudyLmMethods() {
           }
         }
 
-        return {
-          setActiveTab(activeTab: StudyLmTab) {
-            patchState(state, { activeTab });
-          },
+        function updateActiveSubject(
+          updater: (current: StudySubject) => StudySubject,
+        ) {
+          updateSubject(state.activeSubjectId(), updater);
+        }
 
+        /** Changes one roadmap section of a subject. */
+        function updateSection(
+          subjectId: string,
+          sectionId: string,
+          change: Partial<RoadmapSection>,
+        ) {
+          updateSubject(subjectId, (curr) =>
+            curr.roadmap
+              ? {
+                  ...curr,
+                  roadmap: {
+                    ...curr.roadmap,
+                    branches: curr.roadmap.branches.map((b) => ({
+                      ...b,
+                      sections: b.sections.map((sec) =>
+                        sec.id === sectionId ? { ...sec, ...change } : sec,
+                      ),
+                    })),
+                  },
+                }
+              : curr,
+          );
+        }
+
+        return {
           setActiveTier(activeTier: CompetencyTier | 'all') {
             patchState(state, {
               activeTier,
@@ -75,6 +138,9 @@ export function withStudyLmMethods() {
           },
 
           setActiveSubject(activeSubjectId: string) {
+            storageService
+              .saveSetting(ACTIVE_SUBJECT_SETTING, activeSubjectId)
+              .catch(warnStorageFailure);
             patchState(state, {
               activeSubjectId,
               selectedSectionId: null,
@@ -125,7 +191,6 @@ export function withStudyLmMethods() {
               subjects: [...state.subjects(), newSubj],
               activeSubjectId: newSubj.id,
               showCreateSubjectModal: false,
-              activeTab: 'roadmap',
               roadmapRejectionReason: null,
             });
 
@@ -192,6 +257,7 @@ export function withStudyLmMethods() {
             patchState(state, {
               isGeneratingRoadmap: true,
               roadmapRejectionReason: null,
+              roadmapError: null,
             });
 
             try {
@@ -203,7 +269,7 @@ export function withStudyLmMethods() {
                 endpoint,
               );
 
-              if (res.code === 'NON_SE_TOPIC' || !res.success || !res.roadmap) {
+              if (res.code === 'NON_SE_TOPIC') {
                 patchState(state, {
                   isGeneratingRoadmap: false,
                   roadmapRejectionReason:
@@ -212,14 +278,22 @@ export function withStudyLmMethods() {
                 });
                 return;
               }
+              if (!res.success || !res.roadmap) {
+                patchState(state, {
+                  isGeneratingRoadmap: false,
+                  roadmapError:
+                    res.message || 'The AI replied without a usable roadmap.',
+                });
+                return;
+              }
 
               const newRoadmap: CurriculumRoadmap = res.roadmap;
 
-              updateActiveSubject((curr) => ({
+              updateSubject(id, (curr) => ({
                 ...curr,
                 title: newRoadmap.canonicalSubject || curr.title,
                 domain: newRoadmap.domain || curr.domain,
-                roadmap: newRoadmap,
+                roadmap: keepApprovals(newRoadmap, curr.roadmap),
               }));
 
               patchState(state, {
@@ -233,7 +307,7 @@ export function withStudyLmMethods() {
                   : 'Roadmap generation failed';
               patchState(state, {
                 isGeneratingRoadmap: false,
-                roadmapRejectionReason: msg,
+                roadmapError: msg,
               });
             }
           },
@@ -272,9 +346,8 @@ export function withStudyLmMethods() {
           },
 
           async generateFlashcardsForSection(sectionId: string) {
-            const subject = state
-              .subjects()
-              .find((s) => s.id === state.activeSubjectId());
+            const subjectId = state.activeSubjectId();
+            const subject = state.subjects().find((s) => s.id === subjectId);
             if (!subject || !subject.roadmap) return;
 
             let targetBranchTitle = 'Curriculum Branch';
@@ -317,7 +390,7 @@ export function withStudyLmMethods() {
                 }),
               );
 
-              updateActiveSubject((curr) => {
+              updateSubject(subjectId, (curr) => {
                 const existingOtherCards = curr.flashcards.filter(
                   (c) => c.sectionId !== sectionId,
                 );
@@ -333,6 +406,7 @@ export function withStudyLmMethods() {
                         approved: true,
                         flashcardsStatus: 'ready' as const,
                         flashcardsProvider: res.provider,
+                        lastError: undefined,
                       };
                     }),
                   }),
@@ -347,7 +421,11 @@ export function withStudyLmMethods() {
                 };
               });
             } catch (err) {
-              console.error('Failed to generate flashcards for section:', err);
+              // The section keeps its cards and says what went wrong.
+              updateSection(subjectId, sectionId, {
+                flashcardsStatus: 'error',
+                lastError: failureMessage(err, 'Flashcard generation failed'),
+              });
             } finally {
               patchState(state, {
                 generatingFlashcardSectionIds: state
@@ -358,9 +436,8 @@ export function withStudyLmMethods() {
           },
 
           async generateQuizForSection(sectionId: string) {
-            const subject = state
-              .subjects()
-              .find((s) => s.id === state.activeSubjectId());
+            const subjectId = state.activeSubjectId();
+            const subject = state.subjects().find((s) => s.id === subjectId);
             if (!subject || !subject.roadmap) return;
 
             let targetBranchTitle = 'Curriculum Branch';
@@ -403,7 +480,7 @@ export function withStudyLmMethods() {
                 }),
               );
 
-              updateActiveSubject((curr) => {
+              updateSubject(subjectId, (curr) => {
                 const existingOtherQuestions = curr.quizQuestions.filter(
                   (q) => q.sectionId !== sectionId,
                 );
@@ -422,6 +499,7 @@ export function withStudyLmMethods() {
                         approved: true,
                         quizStatus: 'ready' as const,
                         quizProvider: res.provider,
+                        lastError: undefined,
                       };
                     }),
                   }),
@@ -436,7 +514,10 @@ export function withStudyLmMethods() {
                 };
               });
             } catch (err) {
-              console.error('Failed to generate quiz for section:', err);
+              updateSection(subjectId, sectionId, {
+                quizStatus: 'error',
+                lastError: failureMessage(err, 'Quiz generation failed'),
+              });
             } finally {
               patchState(state, {
                 generatingQuizSectionIds: state
@@ -457,7 +538,7 @@ export function withStudyLmMethods() {
               return;
             }
 
-            patchState(state, { isSynthesizing: true });
+            patchState(state, { isSynthesizing: true, synthesisError: null });
             try {
               const endpoint = state.n8nConfig().activeEndpoint;
               const res = await apiService.synthesize(
@@ -472,7 +553,7 @@ export function withStudyLmMethods() {
                 endpoint,
               );
 
-              updateActiveSubject((curr) => ({
+              updateSubject(subject.id, (curr) => ({
                 ...curr,
                 overview: res.overview,
                 flashcards: res.flashcards,
@@ -488,8 +569,11 @@ export function withStudyLmMethods() {
                 activeQuizIndex: 0,
                 quizSubmitted: false,
               });
-            } catch {
-              patchState(state, { isSynthesizing: false });
+            } catch (err) {
+              patchState(state, {
+                isSynthesizing: false,
+                synthesisError: failureMessage(err, 'Synthesis failed'),
+              });
             }
           },
 
@@ -607,7 +691,7 @@ export function withStudyLmMethods() {
                     overviewSummary: data.roadmap.overviewSummary || '',
                     branches: data.roadmap.branches || [],
                   }
-                : curr.roadmap;
+                : (curr.roadmap ?? null);
 
               return {
                 ...curr,
@@ -858,6 +942,14 @@ export function withStudyLmMethods() {
             patchState(state, (s) => ({
               n8nConfig: { ...s.n8nConfig, ...config },
             }));
+            if (config.mode !== undefined) {
+              // The tunnel address comes from site config on each load, so
+              // only the learner's own choices are kept.
+              const { mode, localUrl, customUrl } = state.n8nConfig();
+              storageService
+                .saveSetting(N8N_SETTING, { mode, localUrl, customUrl })
+                .catch(warnStorageFailure);
+            }
           },
 
           exportAnki(subjectTitle: string, cards: StudyFlashcard[]) {

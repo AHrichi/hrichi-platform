@@ -1,0 +1,179 @@
+@let l = lesson();
+<header class="intro">
+  <p class="meta">
+    <span class="tier">{{ l.tier }}</span>
+    <span>{{ l.minutes }} min</span>
+    @if (score().total) {
+      <span>{{ score().answered }} of {{ score().total }} checks done</span>
+    }
+  </p>
+  <h2>{{ l.title }}</h2>
+  <p class="label">By the end you can:</p>
+  <ul class="objectives">
+    @for (objective of l.objectives; track $index) {
+      <li>{{ objective }}</li>
+    }
+  </ul>
+  <nav class="outline" aria-label="Sections">
+    @for (section of l.sections; track section.id; let i = $index) {
+      <button type="button" (click)="scrollTo('section-' + section.id)">
+        {{ i + 1 }}. {{ section.title }}
+      </button>
+    }
+  </nav>
+</header>
+
+@for (section of l.sections; track section.id; let i = $index) {
+  <section
+    class="section"
+    [id]="'section-' + section.id"
+    [attr.aria-labelledby]="'title-' + section.id"
+  >
+    <p class="intent">{{ section.intent }}</p>
+    <h3 [id]="'title-' + section.id">{{ i + 1 }}. {{ section.title }}</h3>
+    @for (block of section.blocks; track block.id) {
+      <div class="block" [id]="'block-' + block.id">
+        @switch (block.kind) {
+          @case ('prose') {
+            <sl-markdown [source]="$any(block).markdown" />
+          }
+          @case ('callout') {
+            @let tone = tones[$any(block).tone];
+            <aside class="callout" [attr.data-tone]="$any(block).tone">
+              <p class="callout-title">
+                <span aria-hidden="true">{{ tone.icon }}</span>
+                {{ $any(block).title ?? tone.label }}
+              </p>
+              <p>{{ $any(block).text }}</p>
+            </aside>
+          }
+          @case ('compare') {
+            <div
+              class="table-wrap"
+              tabindex="0"
+              [attr.aria-label]="$any(block).title ?? 'Comparison'"
+            >
+              <table>
+                @if ($any(block).title) {
+                  <caption>
+                    {{
+                      $any(block).title
+                    }}
+                  </caption>
+                }
+                <thead>
+                  <tr>
+                    <td></td>
+                    @for (column of $any(block).columns; track $index) {
+                      <th scope="col">{{ column }}</th>
+                    }
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (row of $any(block).rows; track $index) {
+                    <tr>
+                      <th scope="row">{{ row.label }}</th>
+                      @for (cell of row.cells; track $index) {
+                        <td>{{ cell }}</td>
+                      }
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          }
+          @case ('quiz') {
+            <sl-quiz
+              [block]="$any(block)"
+              [saved]="record(block.id)"
+              (answered)="onAnswered(block.id, $event)"
+            />
+          }
+          @case ('predict') {
+            <sl-predict
+              [block]="$any(block)"
+              [saved]="record(block.id)"
+              (answered)="onAnswered(block.id, $event)"
+              (reveal)="reveal(block)"
+            />
+          }
+          @case ('self-explain') {
+            <sl-self-explain
+              [block]="$any(block)"
+              [saved]="record(block.id)"
+              (answered)="onAnswered(block.id, $event)"
+            />
+          }
+          @case ('order-steps') {
+            <sl-order-steps
+              [block]="$any(block)"
+              [saved]="record(block.id)"
+              (answered)="onAnswered(block.id, $event)"
+            />
+          }
+          @case ('categorize') {
+            <sl-categorize
+              [block]="$any(block)"
+              [saved]="record(block.id)"
+              (answered)="onAnswered(block.id, $event)"
+            />
+          }
+          @case ('parsons') {
+            <sl-parsons
+              [block]="$any(block)"
+              [saved]="record(block.id)"
+              (answered)="onAnswered(block.id, $event)"
+            />
+          }
+          @case ('predict-output') {
+            <sl-predict-output
+              [block]="$any(block)"
+              [saved]="record(block.id)"
+              (answered)="onAnswered(block.id, $event)"
+            />
+          }
+          @case ('cloze') {
+            <sl-cloze
+              [block]="$any(block)"
+              [saved]="record(block.id)"
+              (answered)="onAnswered(block.id, $event)"
+            />
+          }
+          @default {
+            @if (isPlayed(block)) {
+              @if ($any(block).title) {
+                <p class="visual-title">{{ $any(block).title }}</p>
+              }
+              <sl-stepped-visual
+                [block]="$any(block)"
+                [answered]="answered()"
+                [start]="startSteps()[block.id] ?? -1"
+                [seek]="seeks()[block.id] ?? null"
+                (indexChange)="onStep(block.id, $event)"
+              />
+            } @else {
+              <sl-coming-next [block]="block" />
+            }
+          }
+        }
+      </div>
+    }
+  </section>
+}
+
+<footer class="summary" aria-labelledby="summary-title">
+  <h3 id="summary-title">Wrap-up</h3>
+  @if (score().total) {
+    <p>
+      You answered {{ score().answered }} of {{ score().total }} checks,
+      {{ score().right }} right the last time you tried them.
+    </p>
+  }
+  @if (completedAt()) {
+    <p class="done" role="status">✓ Lesson complete.</p>
+  } @else {
+    <button type="button" class="primary" (click)="complete()">
+      Mark this lesson complete
+    </button>
+  }
+</footer>

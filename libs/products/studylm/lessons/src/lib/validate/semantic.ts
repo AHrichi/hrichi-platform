@@ -2,6 +2,7 @@ import type { Block, BlockKind, BlockOf } from '../spec/blocks';
 import { LIMITS } from '../spec/primitives';
 import type { Step } from '../spec/step';
 import { type IssueList, pointer } from './issues';
+import { applyArrayOp, applyStackQueueOp } from '../engines/replay';
 
 /**
  * Rules a schema can't express: references resolve, operations are legal
@@ -374,15 +375,11 @@ const array: Check<'array'> = (block, at, out) => {
         index('j');
         break;
       case 'swap':
-        if (index('i') && index('j')) {
-          const i = op.i as number;
-          const j = op.j as number;
-          [values[i], values[j]] = [values[j], values[i]];
-        }
+        if (index('i') && index('j')) applyArrayOp(values, op);
         break;
       case 'set':
         if (index('i') && need(op.value, path, 'value', 'set', out)) {
-          values[op.i as number] = op.value as number | string;
+          applyArrayOp(values, op);
         }
         break;
       case 'mark':
@@ -438,8 +435,7 @@ const stackQueue: Check<'stack-queue'> = (block, at, out) => {
         out.error(path, 'too-many', `Keep at most ${LIMITS.stackDepth} items.`);
         return;
       }
-      if (op.op === 'push-front') items.unshift(op.value as string);
-      else items.push(op.value as string);
+      applyStackQueueOp(items, op, block.mode);
       return;
     }
     if (items.length === 0) {
@@ -450,8 +446,7 @@ const stackQueue: Check<'stack-queue'> = (block, at, out) => {
       );
       return;
     }
-    if (op.op === 'pop' || op.op === 'pop-back') items.pop();
-    if (op.op === 'dequeue') items.shift();
+    applyStackQueueOp(items, op, block.mode);
   });
 };
 

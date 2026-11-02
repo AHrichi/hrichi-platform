@@ -81,6 +81,26 @@
     </div>
   </header>
 
+  @if (store.roadmapError(); as error) {
+    <div class="rejection-alert-wrapper">
+      <ah-alert variant="danger" title="The AI couldn’t make a roadmap">
+        <p class="rejection-text">{{ error }}</p>
+        <p class="rejection-hint">
+          Nothing was changed. Try again once n8n is reachable, or open the
+          <a routerLink="../learn">built-in lessons</a>, which work offline.
+        </p>
+        <button
+          type="button"
+          ahButton="secondary"
+          size="sm"
+          (click)="onGenerateRoadmap()"
+        >
+          Try again
+        </button>
+      </ah-alert>
+    </div>
+  }
+
   <!-- Rejection Alert -->
   @if (store.roadmapRejectionReason(); as rejection) {
     <div class="rejection-alert-wrapper">
@@ -308,7 +328,9 @@
                                 ? 'Generating Cards...'
                                 : section.flashcardsStatus === 'ready'
                                   ? 'Regenerate Flashcards'
-                                  : 'Generate Flashcards'
+                                  : section.flashcardsStatus === 'error'
+                                    ? 'Retry Flashcards'
+                                    : 'Generate Flashcards'
                             }}
                           </span>
                         </button>
@@ -331,10 +353,22 @@
                                 ? 'Generating Quiz...'
                                 : section.quizStatus === 'ready'
                                   ? 'Regenerate Quiz'
-                                  : 'Generate Quiz'
+                                  : section.quizStatus === 'error'
+                                    ? 'Retry Quiz'
+                                    : 'Generate Quiz'
                             }}
                           </span>
                         </button>
+
+                        @if (
+                          section.lastError &&
+                          (section.flashcardsStatus === 'error' ||
+                            section.quizStatus === 'error')
+                        ) {
+                          <p class="section-error" role="alert">
+                            {{ section.lastError }}
+                          </p>
+                        }
 
                         <!-- Interactive Study Navigation Links -->
                         @if (getSectionCardCount(section.id); as cardCount) {

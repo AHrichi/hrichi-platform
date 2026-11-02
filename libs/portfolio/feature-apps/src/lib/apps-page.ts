@@ -391,7 +391,7 @@ export class AppsPage {
           features: [
             'حاجز ذكي يضمن اقتصار المواضيع على هندسة البرمجيات وتطوير الأنظمة',
             'تفكيك المناهج إلى فصول وأقسام ذرية مستندة إلى التوثيق الرسمي (MDN, React, PostgreSQL)',
-            'توليد بطاقات استذكار فنية معمقة مع أمثلة برمجية وجداول تكرار متباعد',
+            'بطاقات استذكار فنية مع أمثلة برمجية، ودروس تفاعلية خطوة بخطوة',
             'اختبارات تشخيصية بـ 4 خيارات مع شرح مفصل لسبب صحة الجواب وخطأ الخيارات الأخرى',
           ],
           architectureNotes:
@@ -600,7 +600,7 @@ export class AppsPage {
           features: [
             "Garde-fou thématique validant rigoureusement les sujets d'ingénierie logicielle",
             'Décomposition en chapitres et sections atomiques adossées aux documentations officielles',
-            'Flashcards techniques approfondies avec extraits de code et répétition espacée Leitner',
+            'Flashcards techniques approfondies avec extraits de code, et leçons interactives pas à pas',
             'Quiz diagnostiques à 4 choix avec explications détaillées de chaque distracteur',
           ],
           architectureNotes:
@@ -806,7 +806,7 @@ export class AppsPage {
         features: [
           'Software Engineering Topic Guardrail: Intelligent validator rejecting non-SE subjects',
           'Pedagogical Roadmap Deconstruction citing official documentation (MDN, React, PostgreSQL)',
-          'Uncapped Technical Flashcards with code snippets and Leitner spaced-repetition ratings',
+          'Technical flashcards with code snippets, and interactive step-by-step lessons',
           'Diagnostic 4-Option Quizzes with comprehensive explanations for every distractor',
         ],
         architectureNotes:

@@ -35,6 +35,13 @@
     </div>
   </div>
 
+  @if (store.synthesisError(); as error) {
+    <p class="synthesis-error" role="alert">
+      Synthesis failed: {{ error }} Your subject is unchanged; try again when
+      n8n is reachable.
+    </p>
+  }
+
   @if (store.activeSources().length === 0) {
     <div class="empty-sources-card">
       <div class="empty-icon">📂</div>
