@@ -58,4 +58,19 @@ describe('StudyLmStorageService', () => {
     expect(await storage('embedded-demo').getAllSubjects()).toEqual([SUBJECT]);
     expect(await names()).toEqual(['StudyLmDatabase']);
   });
+
+  it('keeps lesson progress across visits', async () => {
+    const progress = {
+      lessonId: 'binary-search',
+      steps: { 'search-array': 3 },
+      checks: { 'first-guess': { answer: 2, correct: true } },
+      completedAt: null,
+      updatedAt: '2026-11-02T10:00:00.000Z',
+    };
+    await storage('embedded-demo').saveLessonProgress(progress);
+    // A new visit opens the same database afresh.
+    expect(
+      await storage('embedded-demo').getLessonProgress('binary-search'),
+    ).toEqual(progress);
+  });
 });

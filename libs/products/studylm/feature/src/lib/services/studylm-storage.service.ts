@@ -9,9 +9,21 @@ export interface StudyLmSettingRecord {
   value: unknown;
 }
 
+/** How far a learner got in one lesson, saved as they go. */
+export interface LessonProgress {
+  lessonId: string;
+  /** The step each stepped block was left on. */
+  steps: Record<string, number>;
+  /** Each check's answer, and whether it was right. */
+  checks: Record<string, { answer: unknown; correct: boolean }>;
+  completedAt: string | null;
+  updatedAt: string;
+}
+
 export class StudyLmDatabase extends Dexie {
   subjects!: Table<StudySubject, string>;
   settings!: Table<StudyLmSettingRecord, string>;
+  lessonProgress!: Table<LessonProgress, string>;
 
   constructor(name = 'StudyLmDatabase') {
     super(name);
@@ -19,6 +31,8 @@ export class StudyLmDatabase extends Dexie {
       subjects: 'id, title, domain, createdAt',
       settings: 'key',
     });
+    // Version 2 adds lesson progress; subjects and settings are unchanged.
+    this.version(2).stores({ lessonProgress: 'lessonId' });
   }
 }
 
@@ -30,6 +44,7 @@ export class StudyLmStorageService {
   private database: Promise<StudyLmDatabase | null> | null = null;
   private readonly memorySubjects = new Map<string, StudySubject>();
   private readonly memorySettings = new Map<string, unknown>();
+  private readonly memoryProgress = new Map<string, LessonProgress>();
 
   /** The portfolio's demo keeps its own database (see databaseName). */
   private open(): Promise<StudyLmDatabase | null> {
@@ -113,6 +128,42 @@ export class StudyLmStorageService {
         await db.settings.put({ key, value });
       } catch {
         // Fallback silently
+      }
+    }
+  }
+
+  async getLessonProgress(lessonId: string): Promise<LessonProgress | null> {
+    const db = await this.open();
+    try {
+      return (
+        (db ? await db.lessonProgress.get(lessonId) : undefined) ??
+        this.memoryProgress.get(lessonId) ??
+        null
+      );
+    } catch {
+      return this.memoryProgress.get(lessonId) ?? null;
+    }
+  }
+
+  async getAllLessonProgress(): Promise<LessonProgress[]> {
+    const db = await this.open();
+    try {
+      return db
+        ? await db.lessonProgress.toArray()
+        : Array.from(this.memoryProgress.values());
+    } catch {
+      return Array.from(this.memoryProgress.values());
+    }
+  }
+
+  async saveLessonProgress(progress: LessonProgress): Promise<void> {
+    this.memoryProgress.set(progress.lessonId, progress);
+    const db = await this.open();
+    if (db) {
+      try {
+        await db.lessonProgress.put(progress);
+      } catch {
+        // Kept in memory for this visit
       }
     }
   }
