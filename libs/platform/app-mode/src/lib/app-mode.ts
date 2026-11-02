@@ -9,6 +9,9 @@ import {
  * - 'embedded-demo': Running inside the portfolio with isolated IndexedDB (ah-demo-<app>)
  *   and seeded demo data.
  * - 'standalone': Running as an independent web app or desktop build with user's own data.
+ *
+ * The portfolio provides it at its root: services `providedIn: 'root'` are
+ * created there and never see a route's providers.
  */
 export type AppMode = 'embedded-demo' | 'standalone';
 

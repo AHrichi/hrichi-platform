@@ -1,6 +1,7 @@
 import { inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { APP_MODE } from '@ah/platform/app-mode';
+import { databaseName } from '@ah/platform/storage';
 import {
   type MaterialItem,
   type ProjectItem,
@@ -19,27 +20,34 @@ const MATERIALS = 'materials';
 @Injectable({ providedIn: 'root' })
 export class LightingDbService {
   private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
-  private readonly name =
-    inject(APP_MODE, { optional: true }) === 'embedded-demo'
-      ? 'ah-demo-lighting'
-      : 'luxpath_lighting_db_v1';
+  private readonly mode = inject(APP_MODE);
+  /** Known once the database is open. */
+  private name: string | null = null;
   private database: Promise<IDBDatabase> | null = null;
 
   private open(): Promise<IDBDatabase> {
-    this.database ??= new Promise((resolve, reject) => {
-      // Version 2 adds the materials store; projects are kept as they are.
-      const request = indexedDB.open(this.name, 2);
-      request.onupgradeneeded = () => {
-        const db = request.result;
-        for (const name of [STORE, MATERIALS]) {
-          if (!db.objectStoreNames.contains(name)) {
-            db.createObjectStore(name, { keyPath: 'id' });
-          }
-        }
-      };
-      request.onsuccess = () => resolve(request.result);
-      request.onerror = () => reject(request.error);
-    });
+    this.database ??= databaseName(
+      this.mode,
+      'lighting',
+      'luxpath_lighting_db_v1',
+    ).then(
+      (name) =>
+        new Promise((resolve, reject) => {
+          this.name = name;
+          // Version 2 adds the materials store; projects are kept as they are.
+          const request = indexedDB.open(name, 2);
+          request.onupgradeneeded = () => {
+            const db = request.result;
+            for (const store of [STORE, MATERIALS]) {
+              if (!db.objectStoreNames.contains(store)) {
+                db.createObjectStore(store, { keyPath: 'id' });
+              }
+            }
+          };
+          request.onsuccess = () => resolve(request.result);
+          request.onerror = () => reject(request.error);
+        }),
+    );
     return this.database;
   }
 
@@ -73,7 +81,7 @@ export class LightingDbService {
   /** The project last opened on this device, so a reload reopens it. */
   get lastProjectId(): string | null {
     try {
-      return this.isBrowser ? localStorage.getItem(this.activeKey) : null;
+      return this.activeKey ? localStorage.getItem(this.activeKey) : null;
     } catch {
       return null;
     }
@@ -81,14 +89,15 @@ export class LightingDbService {
 
   set lastProjectId(id: string | null) {
     try {
-      if (this.isBrowser && id) localStorage.setItem(this.activeKey, id);
+      if (this.activeKey && id) localStorage.setItem(this.activeKey, id);
     } catch {
       // Blocked storage: the first project opens next time instead.
     }
   }
 
-  private get activeKey(): string {
-    return `${this.name}.active-project`;
+  /** Named after the database, which loading the projects opens first. */
+  private get activeKey(): string | null {
+    return this.name && `${this.name}.active-project`;
   }
 
   async saveProject(project: ProjectItem): Promise<void> {

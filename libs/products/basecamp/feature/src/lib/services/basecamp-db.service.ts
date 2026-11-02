@@ -1,6 +1,7 @@
 import { inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { APP_MODE } from '@ah/platform/app-mode';
+import { databaseName } from '@ah/platform/storage';
 import type { Forecast, GearItem, Trip } from '@ah/products/basecamp/domain';
 
 const TRIPS = 'trips';
@@ -17,26 +18,33 @@ type StoreName = typeof TRIPS | typeof GEAR | typeof FORECASTS;
 @Injectable({ providedIn: 'root' })
 export class BasecampDbService {
   private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
-  private readonly name =
-    inject(APP_MODE, { optional: true }) === 'embedded-demo'
-      ? 'ah-demo-basecamp'
-      : 'basecamp_db_v1';
+  private readonly mode = inject(APP_MODE);
+  /** Known once the database is open. */
+  private name: string | null = null;
   private database: Promise<IDBDatabase> | null = null;
 
   private open(): Promise<IDBDatabase> {
-    this.database ??= new Promise((resolve, reject) => {
-      const request = indexedDB.open(this.name, 1);
-      request.onupgradeneeded = () => {
-        const db = request.result;
-        for (const name of [TRIPS, GEAR, FORECASTS]) {
-          if (!db.objectStoreNames.contains(name)) {
-            db.createObjectStore(name, { keyPath: 'id' });
-          }
-        }
-      };
-      request.onsuccess = () => resolve(request.result);
-      request.onerror = () => reject(request.error);
-    });
+    this.database ??= databaseName(
+      this.mode,
+      'basecamp',
+      'basecamp_db_v1',
+    ).then(
+      (name) =>
+        new Promise((resolve, reject) => {
+          this.name = name;
+          const request = indexedDB.open(name, 1);
+          request.onupgradeneeded = () => {
+            const db = request.result;
+            for (const store of [TRIPS, GEAR, FORECASTS]) {
+              if (!db.objectStoreNames.contains(store)) {
+                db.createObjectStore(store, { keyPath: 'id' });
+              }
+            }
+          };
+          request.onsuccess = () => resolve(request.result);
+          request.onerror = () => reject(request.error);
+        }),
+    );
     return this.database;
   }
 
@@ -119,7 +127,7 @@ export class BasecampDbService {
   /** The trip last opened on this device, so a reload reopens it. */
   get lastTripId(): string | null {
     try {
-      return this.isBrowser ? localStorage.getItem(this.activeKey) : null;
+      return this.activeKey ? localStorage.getItem(this.activeKey) : null;
     } catch {
       return null;
     }
@@ -127,13 +135,14 @@ export class BasecampDbService {
 
   set lastTripId(id: string | null) {
     try {
-      if (this.isBrowser && id) localStorage.setItem(this.activeKey, id);
+      if (this.activeKey && id) localStorage.setItem(this.activeKey, id);
     } catch {
       // Blocked storage: the first trip opens next time instead.
     }
   }
 
-  private get activeKey(): string {
-    return `${this.name}.active-trip`;
+  /** Named after the database, which loading the trips opens first. */
+  private get activeKey(): string | null {
+    return this.name && `${this.name}.active-trip`;
   }
 }
