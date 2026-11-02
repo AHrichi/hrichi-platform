@@ -1,4 +1,6 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
+import { APP_MODE } from '@ah/platform/app-mode';
+import { databaseName } from '@ah/platform/storage';
 import {
   AiRelationshipAnalysis,
   AnalyticsBasisMode,
@@ -66,6 +68,7 @@ export interface SavedWhatsAppConversationFull {
 
 @Injectable({ providedIn: 'root' })
 export class WhatsappArchiveDbService {
+  private readonly mode = inject(APP_MODE);
   private dbPromise: Promise<IDBDatabase | null> | null = null;
 
   /**
@@ -351,30 +354,34 @@ export class WhatsappArchiveDbService {
       return this.dbPromise;
     }
 
-    this.dbPromise = new Promise<IDBDatabase | null>((resolve) => {
-      try {
-        const request = window.indexedDB.open(DB_NAME, DB_VERSION);
+    // The portfolio's demo keeps its own database (see databaseName).
+    this.dbPromise = databaseName(this.mode, 'whatsapp', DB_NAME).then(
+      (name) =>
+        new Promise<IDBDatabase | null>((resolve) => {
+          try {
+            const request = window.indexedDB.open(name, DB_VERSION);
 
-        request.onupgradeneeded = () => {
-          const db = request.result;
-          if (!db.objectStoreNames.contains(SUMMARIES_STORE)) {
-            db.createObjectStore(SUMMARIES_STORE, { keyPath: 'id' });
-          }
-          if (!db.objectStoreNames.contains(PAYLOADS_STORE)) {
-            db.createObjectStore(PAYLOADS_STORE, { keyPath: 'id' });
-          }
-        };
+            request.onupgradeneeded = () => {
+              const db = request.result;
+              if (!db.objectStoreNames.contains(SUMMARIES_STORE)) {
+                db.createObjectStore(SUMMARIES_STORE, { keyPath: 'id' });
+              }
+              if (!db.objectStoreNames.contains(PAYLOADS_STORE)) {
+                db.createObjectStore(PAYLOADS_STORE, { keyPath: 'id' });
+              }
+            };
 
-        request.onsuccess = () => resolve(request.result);
-        request.onerror = () => {
-          this.dbPromise = null;
-          resolve(null);
-        };
-      } catch {
-        this.dbPromise = null;
-        resolve(null);
-      }
-    });
+            request.onsuccess = () => resolve(request.result);
+            request.onerror = () => {
+              this.dbPromise = null;
+              resolve(null);
+            };
+          } catch {
+            this.dbPromise = null;
+            resolve(null);
+          }
+        }),
+    );
 
     return this.dbPromise;
   }

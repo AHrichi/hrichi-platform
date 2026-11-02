@@ -1,5 +1,4 @@
 import { Route } from '@angular/router';
-import { provideAppMode } from '@ah/platform/app-mode';
 import { federatedRoutes, LabFrame } from '@ah/platform/federation';
 import { labs } from '@ah/shared/content';
 
@@ -45,20 +44,17 @@ export const appRoutes: Route[] = [
   },
   {
     path: 'apps/strategy',
-    providers: [provideAppMode('embedded-demo')],
     loadChildren: federatedRoutes('product-strategy'),
     title: 'StrategyApp · Financial Planning & Projections · Ahmed Hrichi',
   },
   {
     path: 'apps/dispatch',
-    providers: [provideAppMode('embedded-demo')],
     loadChildren: federatedRoutes('product-dispatch'),
     title:
       'PulseOps · Commercial Operations & Dispatch Control Center · Ahmed Hrichi',
   },
   {
     path: 'apps/studylm',
-    providers: [provideAppMode('embedded-demo')],
     loadChildren: federatedRoutes('product-studylm'),
     title:
       'StudyLM · AI-Powered Multi-Tier Learning & Drill Arena · Ahmed Hrichi',
@@ -67,7 +63,6 @@ export const appRoutes: Route[] = [
   { path: 'apps/study', redirectTo: 'apps/studylm', pathMatch: 'full' },
   {
     path: 'apps/whatsapp',
-    providers: [provideAppMode('embedded-demo')],
     loadChildren: federatedRoutes('product-whatsapp'),
     title:
       'ChatPulse · WhatsApp Chat & AI Relationship Intelligence · Ahmed Hrichi',
@@ -75,7 +70,6 @@ export const appRoutes: Route[] = [
   { path: 'apps/chatpulse', redirectTo: 'apps/whatsapp', pathMatch: 'full' },
   {
     path: 'apps/lighting',
-    providers: [provideAppMode('embedded-demo')],
     loadChildren: federatedRoutes('product-lighting'),
     title:
       'LuxPath · Public & Solar Street Lighting Field Engineering Platform · Ahmed Hrichi',
@@ -83,7 +77,6 @@ export const appRoutes: Route[] = [
   { path: 'apps/luxpath', redirectTo: 'apps/lighting', pathMatch: 'full' },
   {
     path: 'apps/basecamp',
-    providers: [provideAppMode('embedded-demo')],
     loadChildren: federatedRoutes('product-basecamp'),
     title: 'Basecamp · Camping Trip Planner · Ahmed Hrichi',
   },

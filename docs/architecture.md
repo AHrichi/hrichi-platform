@@ -91,6 +91,9 @@ Pages: Home, Experience, Case Studies, Labs, Apps, Services, How I Work, Contact
 **Demo mode:** an `APP_MODE` injection token (`'embedded-demo' | 'standalone'`) swaps providers:
 
 - **`embedded-demo`:** seeded sample data, an isolated IndexedDB name (`ah-demo-<app>`), no Firebase or login, and a "Reset demo" button.
+  - The portfolio provides it at its root, because services `providedIn: 'root'` never see a route's providers.
+  - `databaseName()` in `@ah/platform/storage` picks the name.
+  - Until November 2026 the demos saved into their standalone names. A browser that already has one of those, and no demo database, keeps using it. Nothing is copied, because on the portfolio's origin it only ever held demo data.
 - **`standalone`:** keeps Firebase on the free Spark plan, so the in-progress migration in `VERIFICATION_CHECKLIST.md` still applies.
 
 ### 2.4 Conversion layer
@@ -213,6 +216,7 @@ hrichi-platform/
 │   ├── platform/
 │   │   ├── federation/               manifest types, federatedRoute(), error boundary, inspector
 │   │   ├── app-mode/                 APP_MODE token, demo/standalone providers
+│   │   ├── storage/                  each app's IndexedDB name, demo or standalone
 │   │   ├── desktop/                  shared Electron main + typed preload bridge + auto-update
 │   │   ├── mobile/                   Capacitor bootstrap, Ionic config
 │   │   └── pwa/                      service worker config, Background Sync helper

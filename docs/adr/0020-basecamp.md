@@ -23,7 +23,7 @@ It has to work at a campsite with no signal, cost nothing to host, and need no a
   - pure-TypeScript `product-basecamp-domain` and `product-basecamp-feature`;
   - English, French and Arabic through `BasecampI18n` and `PreferencesStore` (ADR-0018).
 - **Local-first:**
-  - Trips, gear and the last forecast per trip live in IndexedDB. The portfolio's demo uses its own database, `ah-demo-basecamp` (ADR-0002).
+  - Trips, gear and the last forecast per trip live in IndexedDB. The portfolio's demo uses its own database, `ah-demo-basecamp` (ADR-0002). A browser that used the demo before November 2026 keeps the `basecamp_db_v1` it saved into then.
   - A new device starts empty, and a sample weekend in the Aïn Draham forest loads on request.
 - **Weather from Open-Meteo:**
   - It is free, needs no key, is licensed CC BY 4.0, and is credited on the screen and in `THIRD_PARTY_NOTICES.md`.
