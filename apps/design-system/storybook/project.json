@@ -5,7 +5,11 @@
   "sourceRoot": "apps/design-system/storybook/.storybook",
   "tags": ["scope:design-system", "type:app", "runtime:browser"],
   "// implicitDependencies": "Storybook finds stories by glob, so Nx can't see these.",
-  "implicitDependencies": ["design-system-ui", "three-angular"],
+  "implicitDependencies": [
+    "design-system-ui",
+    "three-angular",
+    "product-studylm-learn"
+  ],
   "targets": {
     "storybook": {
       "executor": "nx:run-commands",

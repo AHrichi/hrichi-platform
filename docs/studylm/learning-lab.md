@@ -167,5 +167,5 @@ All fixed in the Learn phase (ADR-0022).
 3. **Focus and Today:** timer modes, picture-in-picture, wake lock, chime and notifications, stats, streaks and XP.
 4. **Practice and review:** FSRS, cards from lessons, Parsons, predict-output and interleaving.
 5. **Plan:** the bootcamp planner.
-6. **Engines:** the JavaScript tracer (Sval worker), event-loop simulation, and the graph, tree and grid simulators.
-7. **Live generation:** `generate_lesson_part` from the app, with the repair loop and self-explanation feedback.
+6. **Engines** (done, ADR-0023): the JavaScript tracer (Sval on the main thread, with a step budget), event-loop simulation, and the tree, graph, grid and recursion simulators. Every block kind renders.
+7. **Live generation** (done, ADR-0023): `generate_lesson_part` from the app, with the repair loop and self-explanation feedback.
