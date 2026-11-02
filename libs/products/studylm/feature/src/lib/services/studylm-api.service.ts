@@ -28,8 +28,11 @@ import type {
 export const DEFAULT_LOCAL_URL =
   'http://127.0.0.1:5678/webhook/study-synthesizer';
 
-/** Generation can take a while on the free model pool; a ping can't. */
-const GENERATE_TIMEOUT_MS = 60_000;
+/**
+ * Generation can take a while on the free model pool: the workflow may try
+ * four models in turn (30 s each on Groq, 45 s on Gemini). A ping can't.
+ */
+const GENERATE_TIMEOUT_MS = 150_000;
 const PING_TIMEOUT_MS = 8_000;
 
 /**
