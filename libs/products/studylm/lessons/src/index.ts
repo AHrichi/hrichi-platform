@@ -13,3 +13,15 @@ export * from './lib/engines/array-simulators';
 export * from './lib/engines/replay';
 export * from './lib/engines/layout';
 export * from './lib/engines/markdown';
+export * from './lib/engines/steps';
+export * from './lib/engines/tree';
+export * from './lib/engines/graph';
+export * from './lib/engines/grid';
+export * from './lib/engines/recursion';
+export {
+  applyHashOp,
+  hashStateAt,
+  type HashEntry,
+  type HashState,
+} from './lib/engines/hash';
+export * from './lib/engines/systems';
