@@ -99,7 +99,8 @@ const labelOf = (fn: unknown, fallback: string) =>
   typeof fn === 'function' && fn.name ? fn.name : fallback;
 
 /** A Promise whose reactions run on the virtual loop's microtask queue. */
-export function promiseOn(loop: VirtualLoop) {
+/** Typed loosely on purpose: it only goes into the sandbox. */
+export function promiseOn(loop: VirtualLoop): unknown {
   type State = 'pending' | 'fulfilled' | 'rejected';
   type Reaction = () => void;
 

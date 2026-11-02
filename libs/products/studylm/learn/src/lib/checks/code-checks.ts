@@ -15,6 +15,7 @@ import {
   markParsons,
   type ParsonsAnswer,
 } from './marking';
+import { expectedOutput } from '../player/executed';
 
 interface PoolLine {
   /** A solution line's id, or `distractor-<n>`. */
@@ -300,7 +301,16 @@ function hash(text: string): number {
       >
         @if (result() === false) {
           <p>It prints:</p>
-          <pre dir="ltr"><code>{{ b.expected }}</code></pre>
+          <pre dir="ltr"><code>{{ run().expected }}</code></pre>
+        }
+        @if (run().executed) {
+          <p class="source">
+            {{
+              run().corrected
+                ? 'Checked by running the code, which corrected the lesson’s written answer.'
+                : 'Checked by running the code.'
+            }}
+          </p>
         }
       </sl-check-feedback>
     }
@@ -312,6 +322,8 @@ export class PredictOutputCheck {
   readonly saved = input<CheckRecord | null>(null);
   readonly answered = output<CheckRecord>();
 
+  /** For JavaScript, what the code really prints, from the tracer. */
+  protected readonly run = computed(() => expectedOutput(this.block()));
   protected readonly text = linkedSignal(
     () => (this.saved()?.answer as string | undefined) ?? '',
   );
@@ -321,7 +333,10 @@ export class PredictOutputCheck {
 
   protected submit(): void {
     const answer = this.text();
-    const correct = markOutput(this.block(), answer);
+    const correct = markOutput(
+      { ...this.block(), expected: this.run().expected },
+      answer,
+    );
     this.result.set(correct);
     this.answered.emit({ answer, correct });
   }
