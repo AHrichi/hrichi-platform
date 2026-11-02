@@ -15,6 +15,7 @@ import {
   type AhSelectOption,
 } from '@ah/ui';
 import { StudyLmStore } from '../../store/studylm.store';
+import { StudyLmScreens } from '../../shell/studylm-screens';
 import {
   COMPETENCY_TIERS,
   type CompetencyTier,
@@ -39,6 +40,7 @@ import {
 })
 export class QuizArenaComponent {
   readonly store = inject(StudyLmStore);
+  protected readonly screens = inject(StudyLmScreens);
   readonly tiersInfo = COMPETENCY_TIERS;
 
   readonly tierOptions: { label: string; value: CompetencyTier | 'all' }[] = [

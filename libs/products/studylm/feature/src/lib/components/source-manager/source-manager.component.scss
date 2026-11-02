@@ -587,3 +587,9 @@
     }
   }
 }
+
+.synthesis-error {
+  margin: var(--space-2) 0;
+  color: var(--color-danger-default);
+  font-size: var(--font-size-200);
+}

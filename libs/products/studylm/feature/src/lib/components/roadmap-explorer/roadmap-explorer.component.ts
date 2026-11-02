@@ -15,6 +15,7 @@ import {
   AhProgressBar,
 } from '@ah/ui';
 import { StudyLmStore } from '../../store/studylm.store';
+import { StudyLmScreens } from '../../shell/studylm-screens';
 import type { RoadmapSection } from '@ah/products/studylm/domain';
 
 @Component({
@@ -35,6 +36,7 @@ import type { RoadmapSection } from '@ah/products/studylm/domain';
 })
 export class RoadmapExplorerComponent {
   readonly store = inject(StudyLmStore);
+  private readonly screens = inject(StudyLmScreens);
 
   /**
    * Set of section IDs that are currently expanded.
@@ -149,13 +151,13 @@ export class RoadmapExplorerComponent {
   onStudySectionCards(section: RoadmapSection): void {
     this.store.setCardSectionFilter(section.id);
     this.store.setSelectedSection(section.id);
-    this.store.setActiveTab('flashcards');
+    void this.screens.go('flashcards');
   }
 
   onTakeSectionQuiz(section: RoadmapSection): void {
     this.store.setQuizSectionFilter(section.id);
     this.store.setSelectedSection(section.id);
-    this.store.setActiveTab('quiz');
+    void this.screens.go('quiz');
   }
 
   getSectionCardCount(sectionId: string): number {

@@ -346,8 +346,42 @@
   }
 }
 
-.tabs-wrapper {
-  width: 100%;
+.screens {
+  display: flex;
+  gap: var(--space-1);
+  border-block-end: 1px solid var(--color-border-default);
+  overflow-x: auto;
+  scrollbar-width: none;
+
+  a {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-3);
+    border-block-end: 2px solid transparent;
+    color: var(--color-text-muted);
+    font-size: var(--font-size-200);
+    font-weight: var(--font-weight-medium);
+    text-decoration: none;
+    white-space: nowrap;
+
+    &:hover {
+      color: var(--color-text-default);
+    }
+
+    &.is-active {
+      border-block-end-color: var(--color-accent-default);
+      color: var(--color-text-default);
+    }
+  }
+
+  .count {
+    padding: 0 var(--space-2);
+    border-radius: var(--radius-pill);
+    background: var(--color-bg-raised);
+    font-size: var(--font-size-100);
+  }
 }
 
 .studylm-main-content {

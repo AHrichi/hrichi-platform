@@ -89,18 +89,74 @@ export class JsonImportModalComponent {
       return;
     }
 
+    let parsed: unknown;
     try {
-      const parsed = JSON.parse(jsonStr) as StudyLmJsonImport;
-      this.store.importFromJson(parsed);
-      this.errorStatus.set(null);
-      this.close();
+      parsed = JSON.parse(jsonStr);
     } catch (err) {
       const msg = err instanceof Error ? err.message : 'Invalid JSON format';
       this.errorStatus.set(`JSON Parse Error: ${msg}`);
+      return;
     }
+    const checked = checkImport(parsed);
+    if ('error' in checked) {
+      this.errorStatus.set(checked.error);
+      return;
+    }
+    this.store.importFromJson(checked.data);
+    if (checked.skipped > 0) {
+      // Stay open so the learner sees what was left out.
+      this.errorStatus.set(
+        `Imported the rest; skipped ${checked.skipped} incomplete card${checked.skipped === 1 ? '' : 's'} or question${checked.skipped === 1 ? '' : 's'}.`,
+      );
+      return;
+    }
+    this.errorStatus.set(null);
+    this.close();
   }
 
   close(): void {
     this.store.setShowJsonImportModal(false);
   }
+}
+
+/**
+ * Keeps only what StudyLM can use: complete cards and questions, and a
+ * roadmap whose branches are a list. Anything else is reported, not guessed.
+ */
+function checkImport(
+  value: unknown,
+): { data: StudyLmJsonImport; skipped: number } | { error: string } {
+  if (typeof value !== 'object' || value === null || Array.isArray(value)) {
+    return { error: 'The file must hold one JSON object, like the sample.' };
+  }
+  const data = value as StudyLmJsonImport;
+  if (data.roadmap && !Array.isArray(data.roadmap.branches)) {
+    return { error: 'roadmap.branches must be a list.' };
+  }
+  const givenCards = Array.isArray(data.flashcards) ? data.flashcards : [];
+  const givenQuiz = Array.isArray(data.quiz) ? data.quiz : [];
+  const cards = givenCards.filter((c) => filled(c?.front) && filled(c?.back));
+  const quiz = givenQuiz.filter(
+    (q) =>
+      filled(q?.question) &&
+      Array.isArray(q.options) &&
+      q.options.length === 4 &&
+      q.options.every(filled) &&
+      Number.isInteger(q.correctIndex) &&
+      (q.correctIndex as number) >= 0 &&
+      (q.correctIndex as number) <= 3,
+  );
+  if (!data.roadmap && !data.overview && cards.length + quiz.length === 0) {
+    return {
+      error: 'Nothing to import: no complete cards, questions or roadmap.',
+    };
+  }
+  return {
+    data: { ...data, flashcards: cards, quiz },
+    skipped: givenCards.length + givenQuiz.length - cards.length - quiz.length,
+  };
+}
+
+function filled(value: unknown): boolean {
+  return typeof value === 'string' && value.trim().length > 0;
 }

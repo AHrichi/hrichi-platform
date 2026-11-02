@@ -17,7 +17,7 @@ import type {
 export interface SubjectMasteryStats {
   id: string;
   title: string;
-  domain: string;
+  domain: string | undefined;
   sectionsTotal: number;
   sectionsSynthesized: number;
   sectionsApproved: number;

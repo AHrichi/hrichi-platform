@@ -2,9 +2,9 @@
   "extends": "../../../../tsconfig.base.json",
   "compilerOptions": {
     "isolatedModules": true,
-    "strict": false,
+    "strict": true,
     "noImplicitOverride": true,
-    "noPropertyAccessFromIndexSignature": false,
+    "noPropertyAccessFromIndexSignature": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "module": "preserve"
@@ -13,7 +13,7 @@
     "enableI18nLegacyMessageIdFormat": false,
     "strictInjectionParameters": true,
     "strictInputAccessModifiers": true,
-    "strictTemplates": false
+    "strictTemplates": true
   },
   "files": [],
   "include": [],

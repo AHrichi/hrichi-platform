@@ -308,7 +308,9 @@
                                 ? 'Generating Cards...'
                                 : section.flashcardsStatus === 'ready'
                                   ? 'Regenerate Flashcards'
-                                  : 'Generate Flashcards'
+                                  : section.flashcardsStatus === 'error'
+                                    ? 'Retry Flashcards'
+                                    : 'Generate Flashcards'
                             }}
                           </span>
                         </button>
@@ -331,10 +333,22 @@
                                 ? 'Generating Quiz...'
                                 : section.quizStatus === 'ready'
                                   ? 'Regenerate Quiz'
-                                  : 'Generate Quiz'
+                                  : section.quizStatus === 'error'
+                                    ? 'Retry Quiz'
+                                    : 'Generate Quiz'
                             }}
                           </span>
                         </button>
+
+                        @if (
+                          section.lastError &&
+                          (section.flashcardsStatus === 'error' ||
+                            section.quizStatus === 'error')
+                        ) {
+                          <p class="section-error" role="alert">
+                            {{ section.lastError }}
+                          </p>
+                        }
 
                         <!-- Interactive Study Navigation Links -->
                         @if (getSectionCardCount(section.id); as cardCount) {
