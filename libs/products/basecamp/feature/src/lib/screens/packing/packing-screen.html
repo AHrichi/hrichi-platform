@@ -28,14 +28,26 @@
           />
         </div>
       }
-      <label class="check">
-        <input
-          type="checkbox"
-          [checked]="hidePacked()"
-          (change)="hidePacked.set(checked($event))"
-        />
-        {{ t().packing.hidePacked }}
-      </label>
+      <div class="summary-actions">
+        <label class="check">
+          <input
+            type="checkbox"
+            [checked]="hidePacked()"
+            (change)="hidePacked.set(checked($event))"
+          />
+          {{ t().packing.hidePacked }}
+        </label>
+        @if (trip.people.length > 1) {
+          <button
+            ahButton="ghost"
+            size="sm"
+            type="button"
+            (click)="distributeShared()"
+          >
+            ⇄ {{ t().packing.distributeShared }}
+          </button>
+        }
+      </div>
       @if (progress().total && progress().packed === progress().total) {
         <p class="done" role="status">🎉 {{ t().packing.allPacked }}</p>
       }
@@ -46,69 +58,254 @@
         class="panel group"
         [attr.aria-labelledby]="'bc-cat-' + group.category"
       >
-        <h3 [id]="'bc-cat-' + group.category">
-          {{ t().categories[group.category] }}
-        </h3>
-        <ul class="items" role="list">
-          @for (row of group.items; track row.item.id) {
-            <li [class.packed]="row.item.packed">
-              <label class="tick">
-                <input
-                  type="checkbox"
-                  [checked]="row.item.packed"
-                  (change)="store.setPacked(row.item.id, checked($event))"
-                />
-                <span class="name">
-                  {{ row.name }}
-                  @if (row.item.quantity > 1) {
-                    <span class="qty"
-                      >× <bdi>{{ row.item.quantity }}</bdi></span
+        <div class="category-header">
+          <h3 [id]="'bc-cat-' + group.category">
+            {{ t().categories[group.category] }}
+          </h3>
+          @if (trip.people.length && hasSharedItems(group)) {
+            <select
+              class="category-assign"
+              [attr.aria-label]="t().packing.assignCategory(t().categories[group.category])"
+              (change)="assignCategory(group.category, $event)"
+            >
+              <option value="" disabled selected>{{ t().packing.assignGroup }}</option>
+              <option value="*unassign*">{{ t().packing.anyone }}</option>
+              @for (p of trip.people; track p.id) {
+                <option [value]="p.id">{{ p.name }}</option>
+              }
+            </select>
+          }
+        </div>
+
+        @if (isConsolidated()) {
+          @if (group.sharedItems.length) {
+            <ul class="items" role="list">
+              @for (row of group.sharedItems; track row.item.id) {
+                <li [class.packed]="row.item.packed">
+                  <label class="tick">
+                    <input
+                      type="checkbox"
+                      [checked]="row.item.packed"
+                      (change)="store.setPacked(row.item.id, checked($event))"
+                    />
+                    <span class="name">
+                      {{ row.name }}
+                      @if (row.item.quantity > 1) {
+                        <span class="qty"
+                          >× <bdi>{{ row.item.quantity }}</bdi></span
+                        >
+                      }
+                    </span>
+                  </label>
+                  <span class="tags">
+                    <span class="tag shared">👥 {{ t().packing.shared }}</span>
+                    @if (row.item.source === 'weather') {
+                      <span class="tag weather"
+                        >🌦️ {{ t().packing.fromWeather }}</span
+                      >
+                    }
+                    @if (row.owned) {
+                      <span class="tag own">✓ {{ t().packing.own }}</span>
+                    }
+                  </span>
+                  @if (trip.people.length) {
+                    <select
+                      class="who"
+                      [attr.aria-label]="t().packing.who + ': ' + row.name"
+                      (change)="assign(row.item, $event)"
                     >
+                      <option value="" [selected]="!row.item.personId">
+                        {{ t().packing.anyone }}
+                      </option>
+                      @for (p of trip.people; track p.id) {
+                        <option
+                          [value]="p.id"
+                          [selected]="p.id === row.item.personId"
+                        >
+                          {{ p.name }}
+                        </option>
+                      }
+                    </select>
+                  }
+                  @if (trip.people.length > 1) {
+                    <button
+                      ahButton="ghost"
+                      size="sm"
+                      type="button"
+                      class="split-btn"
+                      [attr.aria-label]="t().packing.splitItem(row.name)"
+                      (click)="openSplit(row.item)"
+                    >
+                      ✂ {{ t().packing.split }}
+                    </button>
+                  }
+                  @if (row.item.source === 'custom') {
+                    <button
+                      type="button"
+                      class="remove"
+                      [attr.aria-label]="t().packing.remove(row.name)"
+                      (click)="store.removeItem(row.item.id)"
+                    >
+                      ✕
+                    </button>
+                  }
+                </li>
+              }
+            </ul>
+          }
+
+          @if (group.personalCards.length) {
+            @if (group.sharedItems.length) {
+              <div class="sub-head">
+                <h4>👤 {{ t().packing.personalGear }}</h4>
+                <span class="sub-hint">{{ t().packing.eachCamperBrings }}</span>
+              </div>
+            }
+            <div class="personal-cards" role="list">
+              @for (card of group.personalCards; track card.key) {
+                <div class="personal-card" [class.all-packed]="card.allPacked">
+                  <div class="personal-card-top">
+                    <label class="tick">
+                      <input
+                        type="checkbox"
+                        [checked]="card.allPacked"
+                        [indeterminate]="card.hasPacked && !card.allPacked"
+                        (change)="toggleAllCampers(card, checked($event))"
+                      />
+                      <span class="name">{{ card.name }}</span>
+                    </label>
+
+                    <div class="card-badges">
+                      <span class="tag personal">👤 {{ t().packing.eachPersonBadge }}</span>
+                      @if (card.source === 'weather') {
+                        <span class="tag weather"
+                          >🌦️ {{ t().packing.fromWeather }}</span
+                        >
+                      }
+                      @if (card.owned) {
+                        <span class="tag own">✓ {{ t().packing.own }}</span>
+                      }
+                      <span class="ratio-badge" [class.all]="card.allPacked">
+                        {{ card.packedCount }}/{{ card.totalCampers }}
+                      </span>
+                      @if (card.source === 'custom') {
+                        <button
+                          type="button"
+                          class="remove"
+                          [attr.aria-label]="t().packing.remove(card.name)"
+                          (click)="removePersonalGroup(card)"
+                        >
+                          ✕
+                        </button>
+                      }
+                    </div>
+                  </div>
+
+                  <div
+                    class="camper-chips"
+                    role="group"
+                    [attr.aria-label]="card.name + ' ' + t().packing.camperStatus"
+                  >
+                    @for (c of card.campers; track c.personId) {
+                      <button
+                        type="button"
+                        class="camper-chip"
+                        [class.packed]="c.packed"
+                        [attr.aria-pressed]="c.packed"
+                        [attr.aria-label]="c.personName + ': ' + (c.packed ? t().packing.packedBadge : t().packing.notPacked)"
+                        (click)="store.setPacked(c.item.id, !c.packed)"
+                      >
+                        <span class="chip-status" aria-hidden="true">{{ c.packed ? '✓' : '○' }}</span>
+                        <span class="chip-name">{{ c.personName }}</span>
+                      </button>
+                    }
+                  </div>
+                </div>
+              }
+            </div>
+          }
+        } @else {
+          <ul class="items" role="list">
+            @for (row of group.items; track row.item.id) {
+              <li [class.packed]="row.item.packed">
+                <label class="tick">
+                  <input
+                    type="checkbox"
+                    [checked]="row.item.packed"
+                    (change)="store.setPacked(row.item.id, checked($event))"
+                  />
+                  <span class="name">
+                    {{ row.name }}
+                    @if (row.item.quantity > 1) {
+                      <span class="qty"
+                        >× <bdi>{{ row.item.quantity }}</bdi></span
+                      >
+                    }
+                  </span>
+                </label>
+                <span class="tags">
+                  @if (row.personal) {
+                    <span class="tag personal">👤 {{ t().packing.personal }}</span>
+                  } @else {
+                    <span class="tag shared">👥 {{ t().packing.shared }}</span>
+                  }
+                  @if (row.item.source === 'weather') {
+                    <span class="tag weather"
+                      >🌦️ {{ t().packing.fromWeather }}</span
+                    >
+                  }
+                  @if (row.owned) {
+                    <span class="tag own">✓ {{ t().packing.own }}</span>
                   }
                 </span>
-              </label>
-              <span class="tags">
-                @if (row.item.source === 'weather') {
-                  <span class="tag weather"
-                    >🌦️ {{ t().packing.fromWeather }}</span
+                @if (trip.people.length) {
+                  <select
+                    class="who"
+                    [class.personal-who]="row.personal"
+                    [attr.aria-label]="t().packing.who + ': ' + row.name"
+                    (change)="assign(row.item, $event)"
                   >
+                    @if (!row.personal) {
+                      <option value="" [selected]="!row.item.personId">
+                        {{ t().packing.anyone }}
+                      </option>
+                    }
+                    @for (p of trip.people; track p.id) {
+                      <option
+                        [value]="p.id"
+                        [selected]="p.id === row.item.personId"
+                      >
+                        {{ p.name }}
+                      </option>
+                    }
+                  </select>
                 }
-                @if (row.owned) {
-                  <span class="tag own">✓ {{ t().packing.own }}</span>
+                @if (trip.people.length > 1 && !row.personal) {
+                  <button
+                    ahButton="ghost"
+                    size="sm"
+                    type="button"
+                    class="split-btn"
+                    [attr.aria-label]="t().packing.splitItem(row.name)"
+                    (click)="openSplit(row.item)"
+                  >
+                    ✂ {{ t().packing.split }}
+                  </button>
                 }
-              </span>
-              @if (trip.people.length) {
-                <select
-                  class="who"
-                  [attr.aria-label]="t().packing.who + ': ' + row.name"
-                  (change)="assign(row.item, $event)"
-                >
-                  <option value="" [selected]="!row.item.personId">
-                    {{ t().packing.anyone }}
-                  </option>
-                  @for (p of trip.people; track p.id) {
-                    <option
-                      [value]="p.id"
-                      [selected]="p.id === row.item.personId"
-                    >
-                      {{ p.name }}
-                    </option>
-                  }
-                </select>
-              }
-              @if (row.item.source === 'custom') {
-                <button
-                  type="button"
-                  class="remove"
-                  [attr.aria-label]="t().packing.remove(row.name)"
-                  (click)="store.removeItem(row.item.id)"
-                >
-                  ✕
-                </button>
-              }
-            </li>
-          }
-        </ul>
+                @if (row.item.source === 'custom') {
+                  <button
+                    type="button"
+                    class="remove"
+                    [attr.aria-label]="t().packing.remove(row.name)"
+                    (click)="store.removeItem(row.item.id)"
+                  >
+                    ✕
+                  </button>
+                }
+              </li>
+            }
+          </ul>
+        }
       </section>
     }
 
@@ -146,6 +343,15 @@
             (input)="newQuantity.set(+value($event))"
           />
         </label>
+        @if (trip.people.length > 1) {
+          <label>
+            <span>{{ t().packing.forWho }}</span>
+            <select (change)="newMode.set($any(value($event)))">
+              <option value="shared">{{ t().packing.sharedGroup }}</option>
+              <option value="each">{{ t().packing.eachPerson }}</option>
+            </select>
+          </label>
+        }
         <button ahButton type="submit">+ {{ t().common.add }}</button>
       </div>
     </form>
@@ -160,3 +366,68 @@
     </p>
   }
 </section>
+
+<ah-modal
+  [closeLabel]="t().common.close"
+  [open]="splitDraft() !== null"
+  (openChange)="$event || splitDraft.set(null)"
+  [title]="t().packing.splitTitle(splitItemName())"
+>
+  @if (splitDraft(); as draft) {
+    <div class="split-form">
+      <p class="muted">
+        {{ t().packing.splitHint(draft.totalQuantity) }}
+      </p>
+      @if ((store.activeTrip()?.people ?? []).length > 1) {
+        <div class="split-actions-bar">
+          <button ahButton="secondary" size="sm" type="button" (click)="splitEvenly()">
+            {{ t().packing.splitEvenly }}
+          </button>
+        </div>
+      }
+      <div class="split-list">
+        @for (p of store.activeTrip()?.people ?? []; track p.id) {
+          <label class="split-row">
+            <span>{{ p.name }}</span>
+            <input
+              type="number"
+              min="0"
+              [max]="draft.totalQuantity"
+              [value]="draft.allocations[p.id] ?? 0"
+              (input)="setSplitQty(p.id, +value($event))"
+            />
+          </label>
+        }
+        <label class="split-row unassigned">
+          <span>{{ t().packing.unassigned }}</span>
+          <input
+            type="number"
+            min="0"
+            [max]="draft.totalQuantity"
+            [value]="draft.allocations['unassigned'] ?? 0"
+            (input)="setSplitQty('unassigned', +value($event))"
+          />
+        </label>
+      </div>
+      <p
+        class="split-total"
+        [class.mismatch]="splitTotal() !== draft.totalQuantity"
+      >
+        {{ t().packing.allocated(splitTotal(), draft.totalQuantity) }}
+      </p>
+    </div>
+  }
+  <div modal-actions class="modal-actions">
+    <button ahButton="ghost" type="button" (click)="splitDraft.set(null)">
+      {{ t().common.cancel }}
+    </button>
+    <button
+      ahButton
+      type="button"
+      [disabled]="splitTotal() === 0"
+      (click)="saveSplit()"
+    >
+      {{ t().packing.applySplit }}
+    </button>
+  </div>
+</ah-modal>

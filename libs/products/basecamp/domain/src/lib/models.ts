@@ -25,6 +25,8 @@ export interface Person {
   name: string;
 }
 
+export type GearScope = 'personal' | 'shared';
+
 export interface Campsite {
   lat: number;
   lng: number;
@@ -43,9 +45,14 @@ export interface PackingItem {
   category: PackingCategory;
   quantity: number;
   packed: boolean;
-  /** Who brings it, or null for anyone. */
+  /** Who brings it, or null for anyone / group. */
   personId: string | null;
   source: 'list' | 'weather' | 'custom';
+  /**
+   * 'personal': each camper has their own (e.g. sleeping gear, clothes).
+   * 'shared': communal gear split or assigned among the group (e.g. cooking, tent).
+   */
+  scope?: GearScope;
 }
 
 export interface Trip {
@@ -74,6 +81,8 @@ export interface GearItem {
   category: PackingCategory;
   condition: GearCondition;
   notes: string;
+  /** Who owns it, if tracked in a group. */
+  owner?: string;
 }
 
 /** One day of forecast for the campsite. */

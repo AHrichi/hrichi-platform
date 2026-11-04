@@ -20,6 +20,9 @@
               <span [class]="'condition ' + item.condition">{{
                 t().gear.conditions[item.condition]
               }}</span>
+              @if (item.owner) {
+                · {{ t().gear.ownedBy(item.owner) }}
+              }
             </span>
             @if (item.notes) {
               <span class="notes">{{ item.notes }}</span>
@@ -119,6 +122,15 @@
             </option>
           }
         </select>
+      </label>
+      <label class="wide">
+        <span>{{ t().gear.owner }}</span>
+        <input
+          type="text"
+          [placeholder]="t().gear.ownerPlaceholder"
+          [value]="d.owner ?? ''"
+          (input)="patch({ owner: value($event) })"
+        />
       </label>
       <label class="wide">
         <span>{{ t().gear.notes }}</span>

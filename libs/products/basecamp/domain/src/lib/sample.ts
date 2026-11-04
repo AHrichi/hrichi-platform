@@ -1,5 +1,5 @@
 import type { Trip } from './models';
-import { packingFor } from './packing';
+import { isPersonal, packingFor } from './packing';
 import { addDays } from './weather';
 
 /**
@@ -16,15 +16,36 @@ export function sampleTrip(
     { id: id(), name: 'Lina' },
     { id: id(), name: 'Yassine' },
   ];
-  // Some of it is shared out and packed already.
-  const packing = packingFor(
+  // Generated with people: each person has their own sleeping gear and personal items!
+  const raw = packingFor(
     { people: 3, nights: 2, type: 'mountain' },
     id,
-  ).map((item, i) => ({
-    ...item,
-    personId: people[i % 3].id,
-    packed: i % 4 === 0,
-  }));
+    people,
+  );
+  // Shared gear is split and assigned:
+  // - Kitchen/cooking handled by Sami
+  // - Shelter handled by Lina
+  // - Water, light, and first aid handled by Yassine
+  const packing = raw.map((item, i) => {
+    if (isPersonal(item)) {
+      return { ...item, packed: i % 4 === 0 };
+    }
+    let personId = item.personId;
+    if (item.category === 'kitchen') {
+      personId = people[0].id;
+    } else if (item.category === 'shelter') {
+      personId = people[1].id;
+    } else if (
+      item.category === 'water' ||
+      item.category === 'light' ||
+      item.category === 'firstAid'
+    ) {
+      personId = people[2].id;
+    } else {
+      personId = people[i % 3].id;
+    }
+    return { ...item, personId, packed: i % 4 === 0 };
+  });
   const now = new Date().toISOString();
   return {
     id: id(),

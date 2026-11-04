@@ -7,13 +7,20 @@ import {
   withState,
 } from '@ngrx/signals';
 import {
+  assignCategory,
+  distributeSharedGear,
   type Forecast,
   type GearItem,
+  isPersonal,
+  type ItemSplitPortion,
+  normalizePacking,
   packingFor,
+  type PackingCategory,
   type PackingItem,
   progress,
   resizePacking,
   sampleTrip,
+  splitItem,
   type Trip,
   tripDays,
   weatherAdditions,
@@ -187,9 +194,27 @@ export const BasecampStore = signalStore(
       async load(): Promise<void> {
         patchState(store, { isLoading: true });
         const [trips, gear] = await Promise.all([db.trips(), db.gear()]);
-        patchState(store, { trips, gear, isLoading: false });
+        const normalizedTrips = trips.map((trip) => {
+          const normalized = normalizePacking(
+            trip.packing,
+            party(trip),
+            trip.people,
+            () => newId('item'),
+          );
+          return { ...trip, packing: normalized };
+        });
+        patchState(store, { trips: normalizedTrips, gear, isLoading: false });
+        for (let i = 0; i < trips.length; i++) {
+          if (
+            JSON.stringify(trips[i].packing) !==
+            JSON.stringify(normalizedTrips[i].packing)
+          ) {
+            void db.saveTrip(normalizedTrips[i]);
+          }
+        }
         const last = db.lastTripId;
-        const first = trips.find((t) => t.id === last) ?? trips[0];
+        const first =
+          normalizedTrips.find((t) => t.id === last) ?? normalizedTrips[0];
         if (first) await open(first.id);
       },
 
@@ -205,7 +230,7 @@ export const BasecampStore = signalStore(
         await add({
           ...draft,
           id: newId('trip'),
-          packing: packingFor(party(draft), () => newId('item')),
+          packing: packingFor(party(draft), () => newId('item'), draft.people),
           createdAt: now,
           updatedAt: now,
         });
@@ -215,15 +240,17 @@ export const BasecampStore = signalStore(
       async update(id: string, draft: TripDraft): Promise<void> {
         const trip = store.trips().find((t) => t.id === id);
         if (!trip) return;
-        const ids = new Set(draft.people.map((p) => p.id));
         const moved =
           trip.campsite.lat !== draft.campsite.lat ||
           trip.campsite.lng !== draft.campsite.lng;
         await save({
           ...trip,
           ...draft,
-          packing: resizePacking(trip.packing, party(draft)).map((p) =>
-            p.personId && !ids.has(p.personId) ? { ...p, personId: null } : p,
+          packing: resizePacking(
+            trip.packing,
+            party(draft),
+            draft.people,
+            () => newId('item'),
           ),
         });
         if (moved && store.activeTripId() === id) {
@@ -248,9 +275,37 @@ export const BasecampStore = signalStore(
       },
 
       assign(itemId: string, personId: string | null): Promise<void> {
-        return patchPacking((list) =>
-          list.map((p) => (p.id === itemId ? { ...p, personId } : p)),
-        );
+        return patchPacking((list) => {
+          const target = list.find((p) => p.id === itemId);
+          if (!target) return list;
+
+          // Enforce 1-to-1 constraint for personal items:
+          // A camper cannot have two of the same personal item (e.g. 2 sleeping bags)
+          if (isPersonal(target)) {
+            if (!personId) {
+              return list;
+            }
+            const existing = list.find(
+              (p) =>
+                p.id !== itemId &&
+                p.key === target.key &&
+                p.personId === personId,
+            );
+            if (existing) {
+              // Swap owners between target and existing so both campers retain exactly one
+              const previousOwner = target.personId;
+              return list.map((p) => {
+                if (p.id === itemId) return { ...p, personId };
+                if (p.id === existing.id) {
+                  return { ...p, personId: previousOwner };
+                }
+                return p;
+              });
+            }
+          }
+
+          return list.map((p) => (p.id === itemId ? { ...p, personId } : p));
+        });
       },
 
       setQuantity(itemId: string, quantity: number): Promise<void> {
@@ -261,15 +316,64 @@ export const BasecampStore = signalStore(
         );
       },
 
-      addItem(item: Pick<PackingItem, 'label' | 'category' | 'quantity'>) {
+      splitItem(itemId: string, splits: readonly ItemSplitPortion[]): Promise<void> {
+        return patchPacking((list) =>
+          splitItem(list, itemId, splits, () => newId('item')),
+        );
+      },
+
+      assignCategory(
+        category: PackingCategory,
+        personId: string | null,
+      ): Promise<void> {
+        return patchPacking((list) =>
+          assignCategory(list, category, personId),
+        );
+      },
+
+      distributeSharedGear(): Promise<void> {
+        const trip = store.activeTrip();
+        if (!trip || !trip.people.length) return Promise.resolve();
+        return patchPacking((list) =>
+          distributeSharedGear(list, trip.people),
+        );
+      },
+
+      addItem(item: {
+        label: string;
+        category: PackingCategory;
+        quantity: number;
+        mode?: 'shared' | 'each' | 'person';
+        personId?: string | null;
+      }): Promise<void> {
+        const trip = store.activeTrip();
+        const mode = item.mode ?? (item.personId ? 'person' : 'shared');
+        if (mode === 'each' && trip?.people.length) {
+          return patchPacking((list) => [
+            ...list,
+            ...trip.people.map((p) => ({
+              id: newId('item'),
+              label: item.label,
+              category: item.category,
+              quantity: item.quantity,
+              packed: false,
+              personId: p.id,
+              source: 'custom' as const,
+              scope: 'personal' as const,
+            })),
+          ]);
+        }
         return patchPacking((list) => [
           ...list,
           {
-            ...item,
             id: newId('item'),
+            label: item.label,
+            category: item.category,
+            quantity: item.quantity,
             packed: false,
-            personId: null,
-            source: 'custom',
+            personId: item.personId ?? null,
+            source: 'custom' as const,
+            scope: mode === 'shared' ? ('shared' as const) : ('personal' as const),
           },
         ]);
       },
@@ -281,13 +385,17 @@ export const BasecampStore = signalStore(
       rebuildPacking(): Promise<void> {
         const trip = store.activeTrip();
         if (!trip) return Promise.resolve();
-        const fresh = packingFor(party(trip), () => newId('item'));
+        const fresh = packingFor(party(trip), () => newId('item'), trip.people);
         return save({
           ...trip,
           packing: [
             ...fresh,
-            ...weatherAdditions(fresh, store.forecastDays(), party(trip), () =>
-              newId('item'),
+            ...weatherAdditions(
+              fresh,
+              store.forecastDays(),
+              party(trip),
+              () => newId('item'),
+              trip.people,
             ),
           ],
         });
@@ -330,6 +438,7 @@ export const BasecampStore = signalStore(
           tripDays(forecast.days, current.start, current.nights),
           party(current),
           () => newId('item'),
+          current.people,
         );
         if (extra.length) {
           await save({ ...current, packing: [...current.packing, ...extra] });

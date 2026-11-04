@@ -1,10 +1,14 @@
-import type { DayForecast, GearItem, PackingItem } from './models';
+import type { DayForecast, GearItem, PackingItem, Person } from './models';
 import {
+  assignCategory,
+  distributeSharedGear,
   GEAR_KEYS,
+  isPersonal,
   ownedFor,
   packingFor,
   progress,
   resizePacking,
+  splitItem,
   weatherAdditions,
 } from './packing';
 
@@ -43,6 +47,47 @@ describe('Packing lists', () => {
     expect(qty(big, 'food')).toBe(20);
   });
 
+  it('gives each person their own sleeping gear while keeping cooking shared', () => {
+    const people: Person[] = [
+      { id: 'p1', name: 'Sami' },
+      { id: 'p2', name: 'Lina' },
+    ];
+    const list = packingFor(
+      { people: 2, nights: 2, type: 'tent' },
+      id,
+      people,
+    );
+
+    // Sleeping gear: each one has their own
+    const sleepingBags = list.filter((i) => i.key === 'sleepingBag');
+    expect(sleepingBags).toHaveLength(2);
+    expect(sleepingBags.map((i) => i.personId)).toEqual(['p1', 'p2']);
+    expect(sleepingBags.every((i) => i.quantity === 1 && i.scope === 'personal')).toBe(true);
+
+    const sleepingPads = list.filter((i) => i.key === 'sleepingPad');
+    expect(sleepingPads).toHaveLength(2);
+    expect(sleepingPads.map((i) => i.personId)).toEqual(['p1', 'p2']);
+
+    const pillows = list.filter((i) => i.key === 'pillow');
+    expect(pillows).toHaveLength(2);
+    expect(pillows.map((i) => i.personId)).toEqual(['p1', 'p2']);
+
+    // Cooking gear: shared (single item, unassigned so one person can handle it)
+    const stove = list.filter((i) => i.key === 'stove');
+    expect(stove).toHaveLength(1);
+    expect(stove[0].scope).toBe('shared');
+    expect(stove[0].personId).toBeNull();
+
+    const pot = list.filter((i) => i.key === 'pot');
+    expect(pot).toHaveLength(1);
+    expect(pot[0].scope).toBe('shared');
+
+    // Socks: personal, quantity is nights + 1 per person
+    const socks = list.filter((i) => i.key === 'socks');
+    expect(socks).toHaveLength(2);
+    expect(socks.every((s) => s.quantity === 3 && s.scope === 'personal')).toBe(true);
+  });
+
   it('follows the trip type', () => {
     const beach = packingFor({ people: 2, nights: 2, type: 'beach' }, id);
     const winter = packingFor({ people: 2, nights: 2, type: 'winter' }, id);
@@ -75,6 +120,22 @@ describe('Packing lists', () => {
     expect(weatherAdditions(list, [], party, id)).toEqual([]);
   });
 
+  it('adds weather items per person when people are present', () => {
+    const people: Person[] = [
+      { id: 'p1', name: 'Sami' },
+      { id: 'p2', name: 'Lina' },
+    ];
+    const party = { people: 2, nights: 2, type: 'mountain' as const };
+    const list = packingFor(party, id, people);
+    const frosty = [day({ minC: -1 })];
+    const added = weatherAdditions(list, frosty, party, id, people);
+
+    // hotWaterBottle and thermals are personal -> 1 per person
+    const bottles = added.filter((i) => i.key === 'hotWaterBottle');
+    expect(bottles).toHaveLength(2);
+    expect(bottles.map((b) => b.personId)).toEqual(['p1', 'p2']);
+  });
+
   it('resizes list items but leaves packed and custom ones', () => {
     const list = packingFor({ people: 2, nights: 1, type: 'tent' }, id);
     const packedWater = list.map((i) =>
@@ -97,6 +158,105 @@ describe('Packing lists', () => {
     expect(qty(resized, 'sleepingBag')).toBe(4);
     expect(qty(resized, 'water')).toBe(qty(list, 'water'));
     expect(resized.at(-1)).toEqual(custom);
+  });
+
+  it('resizes and adjusts personal items when campers are added or removed', () => {
+    const initialPeople: Person[] = [{ id: 'p1', name: 'Sami' }];
+    const list = packingFor({ people: 1, nights: 2, type: 'tent' }, id, initialPeople);
+
+    expect(list.filter((i) => i.key === 'sleepingBag')).toHaveLength(1);
+
+    // Add Lina
+    const updatedPeople: Person[] = [
+      { id: 'p1', name: 'Sami' },
+      { id: 'p2', name: 'Lina' },
+    ];
+    const expanded = resizePacking(
+      list,
+      { people: 2, nights: 2, type: 'tent' },
+      updatedPeople,
+      id,
+    );
+
+    const sleepingBags = expanded.filter((i) => i.key === 'sleepingBag');
+    expect(sleepingBags).toHaveLength(2);
+    expect(sleepingBags.map((i) => i.personId)).toEqual(['p1', 'p2']);
+
+    // Remove Sami
+    const soloLina: Person[] = [{ id: 'p2', name: 'Lina' }];
+    const reduced = resizePacking(
+      expanded,
+      { people: 1, nights: 2, type: 'tent' },
+      soloLina,
+      id,
+    );
+    const soloBags = reduced.filter((i) => i.key === 'sleepingBag');
+    expect(soloBags).toHaveLength(1);
+    expect(soloBags[0].personId).toBe('p2');
+  });
+
+  it('splits an item between more than one person', () => {
+    const people: Person[] = [
+      { id: 'p1', name: 'Sami' },
+      { id: 'p2', name: 'Lina' },
+    ];
+    const list = packingFor({ people: 4, nights: 2, type: 'tent' }, id);
+    const tentItem = find(list, 'tent');
+    expect(tentItem.quantity).toBe(2);
+
+    // Split 2 tents: 1 for Sami, 1 for Lina
+    const splitResult = splitItem(
+      list,
+      tentItem.id,
+      [
+        { personId: people[0].id, quantity: 1 },
+        { personId: people[1].id, quantity: 1 },
+      ],
+      id,
+    );
+
+    const tents = splitResult.filter((i) => i.key === 'tent');
+    expect(tents).toHaveLength(2);
+    expect(tents[0].personId).toBe(people[0].id);
+    expect(tents[0].quantity).toBe(1);
+    expect(tents[1].personId).toBe(people[1].id);
+    expect(tents[1].quantity).toBe(1);
+  });
+
+  it('assigns all shared items in a category to one person', () => {
+    const people: Person[] = [
+      { id: 'p1', name: 'Sami' },
+      { id: 'p2', name: 'Lina' },
+    ];
+    const list = packingFor({ people: 2, nights: 2, type: 'tent' }, id, people);
+
+    // Cooking handled by Sami
+    const assigned = assignCategory(list, 'kitchen', 'p1');
+    const kitchenItems = assigned.filter((i) => i.category === 'kitchen');
+    expect(kitchenItems.every((i) => i.personId === 'p1')).toBe(true);
+
+    // Sleeping gear is untouched (personal to each)
+    const sleepingBags = assigned.filter((i) => i.key === 'sleepingBag');
+    expect(sleepingBags.find((s) => s.personId === 'p2')).toBeDefined();
+  });
+
+  it('distributes unassigned shared gear evenly among party members', () => {
+    const people: Person[] = [
+      { id: 'p1', name: 'Sami' },
+      { id: 'p2', name: 'Lina' },
+    ];
+    const list = packingFor({ people: 2, nights: 2, type: 'tent' }, id, people);
+    const distributed = distributeSharedGear(list, people);
+
+    const sharedItems = distributed.filter((i) => !isPersonal(i));
+    expect(sharedItems.length).toBeGreaterThan(0);
+    expect(sharedItems.every((i) => i.personId === 'p1' || i.personId === 'p2')).toBe(true);
+
+    // Both Sami and Lina get shared items assigned
+    const samiShared = sharedItems.filter((i) => i.personId === 'p1');
+    const linaShared = sharedItems.filter((i) => i.personId === 'p2');
+    expect(samiShared.length).toBeGreaterThan(0);
+    expect(linaShared.length).toBeGreaterThan(0);
   });
 
   it('counts progress for everyone and per person', () => {
@@ -122,5 +282,70 @@ describe('Packing lists', () => {
     expect(ownedFor(find(list, 'tent'), gear)?.name).toBe('Old blue tent');
     expect(ownedFor(find(list, 'stove'), gear)).toBeUndefined();
     expect(new Set(GEAR_KEYS.map((g) => g.key)).size).toBe(GEAR_KEYS.length);
+  });
+
+  it('guarantees logically that one person cannot be assigned two sleeping bags', () => {
+    const people: Person[] = [
+      { id: 'p1', name: 'Sami' },
+      { id: 'p2', name: 'Lina' },
+    ];
+    // Malformed/old packing list where Sami has TWO sleeping bags and Lina has NONE:
+    const faultyList: PackingItem[] = [
+      {
+        id: 'item-1',
+        key: 'sleepingBag',
+        category: 'sleep',
+        quantity: 1,
+        packed: false,
+        personId: 'p1',
+        source: 'list',
+        scope: 'personal',
+      },
+      {
+        id: 'item-2',
+        key: 'sleepingBag',
+        category: 'sleep',
+        quantity: 1,
+        packed: true,
+        personId: 'p1',
+        source: 'list',
+        scope: 'personal',
+      },
+    ];
+
+    const party = { people: 2, nights: 1, type: 'tent' as const };
+    const fixed = resizePacking(faultyList, party, people, id);
+
+    const sleepingBags = fixed.filter((i) => i.key === 'sleepingBag');
+    // Must be exactly 2 sleeping bags: 1 for Sami, 1 for Lina
+    expect(sleepingBags).toHaveLength(2);
+
+    const samiBags = sleepingBags.filter((i) => i.personId === 'p1');
+    const linaBags = sleepingBags.filter((i) => i.personId === 'p2');
+    expect(samiBags).toHaveLength(1);
+    expect(linaBags).toHaveLength(1);
+    expect(samiBags[0].quantity).toBe(1);
+    expect(linaBags[0].quantity).toBe(1);
+  });
+
+  it('prevents splitting personal items like sleeping bags', () => {
+    const people: Person[] = [
+      { id: 'p1', name: 'Sami' },
+      { id: 'p2', name: 'Lina' },
+    ];
+    const list = packingFor({ people: 2, nights: 1, type: 'tent' }, id, people);
+    const sleepingBag = find(list, 'sleepingBag');
+
+    const result = splitItem(
+      list,
+      sleepingBag.id,
+      [
+        { personId: 'p1', quantity: 1 },
+        { personId: 'p2', quantity: 1 },
+      ],
+      id,
+    );
+    // Splitting personal items is rejected: original list unchanged
+    expect(result).toEqual(list);
   });
 });

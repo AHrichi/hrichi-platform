@@ -81,6 +81,7 @@ export function asTrip(value: unknown): Trip | null {
       ...p,
       personId: p.personId && ids.has(p.personId) ? p.personId : null,
       source: p.source ?? 'custom',
+      scope: p.scope,
     })),
     notes: isText(t.notes) ? t.notes : '',
     createdAt: isText(t.createdAt) ? t.createdAt : new Date(0).toISOString(),
