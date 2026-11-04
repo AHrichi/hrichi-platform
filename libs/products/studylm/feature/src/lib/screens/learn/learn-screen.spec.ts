@@ -166,7 +166,7 @@ describe('LearnScreen', () => {
     expect(screen.tierFilter()).toBe('all');
     expect(screen.statusFilter()).toBe('all');
     expect(screen.sourceFilter()).toBe('all');
-    expect(screen.pageSize()).toBe(6);
+    expect(screen.pageSize()).toBe(12);
     expect(screen.currentPage()).toBe(1);
     expect(screen.hasActiveFilters()).toBe(false);
   });
@@ -230,8 +230,8 @@ describe('LearnScreen', () => {
     screen.onPageChange(3);
     expect(screen.currentPage()).toBe(3);
 
-    screen.onPageSizeChange(12);
-    expect(screen.pageSize()).toBe(12);
+    screen.onPageSizeChange(24);
+    expect(screen.pageSize()).toBe(24);
     expect(screen.currentPage()).toBe(1);
   });
 

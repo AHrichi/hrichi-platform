@@ -65,8 +65,9 @@
   min-width: 0;
   max-width: 100%;
   box-sizing: border-box;
+  overflow: hidden;
 
-  @media (max-width: 1140px) {
+  @media (max-width: 1260px) {
     display: grid;
     grid-template-columns: 1fr auto;
     grid-template-areas:
@@ -83,8 +84,9 @@
   align-items: center;
   gap: var(--space-3, 0.75rem);
   flex-shrink: 0;
+  min-width: 0;
 
-  @media (max-width: 1140px) {
+  @media (max-width: 1260px) {
     grid-area: brand;
     gap: var(--space-2, 0.5rem);
     min-width: 0;
@@ -96,7 +98,7 @@
   flex-shrink: 0;
   line-height: 1;
 
-  @media (max-width: 1140px) {
+  @media (max-width: 1260px) {
     font-size: 1.35rem;
   }
 }
@@ -120,7 +122,7 @@
     color: var(--color-text-default);
     line-height: 1.2;
 
-    @media (max-width: 1140px) {
+    @media (max-width: 1260px) {
       font-size: var(--font-size-300, 1.1rem);
     }
   }
@@ -147,7 +149,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
 
-  @media (max-width: 1260px) {
+  @media (max-width: 1360px) {
     display: none;
   }
 }
@@ -156,14 +158,15 @@
   display: flex;
   align-items: center;
   gap: var(--space-2, 0.5rem);
-  flex: 1 1 auto;
+  flex: 0 1 380px;
   min-width: 0;
-  max-width: min(440px, 38vw);
+  max-width: 380px;
 
-  @media (max-width: 1140px) {
+  @media (max-width: 1260px) {
     grid-area: switcher;
     width: 100%;
     max-width: 100%;
+    flex: 1 1 auto;
     margin-top: 2px;
   }
 
@@ -171,10 +174,10 @@
     flex: 1 1 auto;
     min-width: 0 !important;
     min-inline-size: 0 !important;
-    max-width: 320px;
-    width: 100%;
+    max-width: 240px;
+    width: 0;
 
-    @media (max-width: 1140px) {
+    @media (max-width: 1260px) {
       flex: 1 1 auto;
       min-width: 0 !important;
       min-inline-size: 0 !important;
@@ -191,7 +194,7 @@
       display: none;
     }
 
-    @media (max-width: 1140px) {
+    @media (max-width: 1260px) {
       .new-label-desktop {
         display: none;
       }
@@ -249,7 +252,7 @@
   margin-left: auto;
   flex-shrink: 0;
 
-  @media (max-width: 1140px) {
+  @media (max-width: 1260px) {
     grid-area: actions;
     margin-left: 0;
     justify-self: end;
@@ -309,7 +312,7 @@
     opacity: 0.8;
   }
 
-  @media (max-width: 1140px) {
+  @media (max-width: 1260px) {
     padding: 0.25rem 0.6rem;
 
     .btn-label-desktop {
@@ -329,7 +332,7 @@
     display: none;
   }
 
-  @media (max-width: 1140px) {
+  @media (max-width: 1260px) {
     .export-label-desktop {
       display: none;
     }

@@ -40,6 +40,11 @@ export interface LessonCardItem {
   sectionId?: string | null;
 }
 
+export interface LessonGroup {
+  subject: string;
+  cards: LessonCardItem[];
+}
+
 /** Your lessons by subject, then the built-in ones, with search, filters, pagination, and bulk generation. */
 @Component({
   selector: 'ah-studylm-learn-screen',
@@ -274,8 +279,8 @@ export interface LessonCardItem {
         }
       </ah-empty-state>
     } @else {
-      <!-- Lessons Grid -->
-      <section class="lessons-container" aria-label="Lessons list">
+      <!-- Lessons Grid & Subject Groups -->
+      <div class="lessons-container" aria-label="Lessons list">
         <div class="results-meta">
           <span class="count-label">
             Showing <strong>{{ pagedLessons().length }}</strong> of
@@ -284,25 +289,45 @@ export interface LessonCardItem {
           </span>
         </div>
 
-        <ul class="grid">
-          @for (lesson of pagedLessons(); track lesson.id) {
-            <ng-container
-              *ngTemplateOutlet="card; context: { $implicit: lesson }"
-            />
-          }
-        </ul>
+        @for (group of pagedYours(); track group.subject) {
+          <section class="group" [attr.aria-label]="group.subject">
+            <h3 class="group-title">{{ group.subject }}</h3>
+            <ul class="grid">
+              @for (lesson of group.cards; track lesson.id) {
+                <ng-container
+                  *ngTemplateOutlet="card; context: { $implicit: lesson }"
+                />
+              }
+            </ul>
+          </section>
+        }
+
+        @if (pagedBuiltin().length > 0) {
+          <section class="group" aria-label="Built-in lessons">
+            @if (hasYours()) {
+              <h3 class="group-title">Built-in lessons</h3>
+            }
+            <ul class="grid">
+              @for (lesson of pagedBuiltin(); track lesson.id) {
+                <ng-container
+                  *ngTemplateOutlet="card; context: { $implicit: lesson }"
+                />
+              }
+            </ul>
+          </section>
+        }
 
         <!-- Pagination Controls -->
         <ah-pagination
           [totalItems]="filteredLessons().length"
           [pageSize]="pageSize()"
           [currentPage]="currentPage()"
-          [pageSizeOptions]="[6, 12, 24]"
+          [pageSizeOptions]="[12, 24, 48]"
           itemLabel="lessons"
           (pageChange)="onPageChange($event)"
           (pageSizeChange)="onPageSizeChange($event)"
         />
-      </section>
+      </div>
     }
 
     <!-- Single Lesson Card Template -->
@@ -614,7 +639,16 @@ export interface LessonCardItem {
     /* Lessons Grid and Cards */
     .lessons-container {
       display: grid;
-      gap: var(--space-4);
+      gap: var(--space-5);
+    }
+    .group {
+      display: grid;
+      gap: var(--space-3);
+    }
+    .group-title {
+      font-size: var(--font-size-400);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text-default);
     }
     .results-meta {
       display: flex;
@@ -772,7 +806,7 @@ export class LearnScreen {
   readonly tierFilter = signal<string>('all');
   readonly statusFilter = signal<string>('all');
   readonly sourceFilter = signal<string>('all');
-  readonly pageSize = signal<number>(6);
+  readonly pageSize = signal<number>(12);
   readonly currentPage = signal<number>(1);
 
   protected readonly lessons = resource({
@@ -895,6 +929,30 @@ export class LearnScreen {
     const page = Math.min(Math.max(1, this.currentPage()), totalPages);
     const start = (page - 1) * size;
     return list.slice(start, start + size);
+  });
+
+  protected readonly pagedYours = computed<LessonGroup[]>(() => {
+    const generated = this.pagedLessons().filter(
+      (item) => item.source === 'generated',
+    );
+    const groups = new Map<string, LessonCardItem[]>();
+    for (const item of generated) {
+      const list = groups.get(item.subject) ?? [];
+      list.push(item);
+      groups.set(item.subject, list);
+    }
+    return Array.from(groups.entries()).map(([subject, cards]) => ({
+      subject,
+      cards,
+    }));
+  });
+
+  protected readonly pagedBuiltin = computed<LessonCardItem[]>(() => {
+    return this.pagedLessons().filter((item) => item.source === 'built-in');
+  });
+
+  protected readonly hasYours = computed(() => {
+    return this.filteredLessons().some((item) => item.source === 'generated');
   });
 
   onSearchInput(event: Event): void {
