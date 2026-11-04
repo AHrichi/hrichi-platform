@@ -52,17 +52,15 @@ describe('Packing lists', () => {
       { id: 'p1', name: 'Sami' },
       { id: 'p2', name: 'Lina' },
     ];
-    const list = packingFor(
-      { people: 2, nights: 2, type: 'tent' },
-      id,
-      people,
-    );
+    const list = packingFor({ people: 2, nights: 2, type: 'tent' }, id, people);
 
     // Sleeping gear: each one has their own
     const sleepingBags = list.filter((i) => i.key === 'sleepingBag');
     expect(sleepingBags).toHaveLength(2);
     expect(sleepingBags.map((i) => i.personId)).toEqual(['p1', 'p2']);
-    expect(sleepingBags.every((i) => i.quantity === 1 && i.scope === 'personal')).toBe(true);
+    expect(
+      sleepingBags.every((i) => i.quantity === 1 && i.scope === 'personal'),
+    ).toBe(true);
 
     const sleepingPads = list.filter((i) => i.key === 'sleepingPad');
     expect(sleepingPads).toHaveLength(2);
@@ -85,7 +83,9 @@ describe('Packing lists', () => {
     // Socks: personal, quantity is nights + 1 per person
     const socks = list.filter((i) => i.key === 'socks');
     expect(socks).toHaveLength(2);
-    expect(socks.every((s) => s.quantity === 3 && s.scope === 'personal')).toBe(true);
+    expect(socks.every((s) => s.quantity === 3 && s.scope === 'personal')).toBe(
+      true,
+    );
   });
 
   it('follows the trip type', () => {
@@ -162,7 +162,11 @@ describe('Packing lists', () => {
 
   it('resizes and adjusts personal items when campers are added or removed', () => {
     const initialPeople: Person[] = [{ id: 'p1', name: 'Sami' }];
-    const list = packingFor({ people: 1, nights: 2, type: 'tent' }, id, initialPeople);
+    const list = packingFor(
+      { people: 1, nights: 2, type: 'tent' },
+      id,
+      initialPeople,
+    );
 
     expect(list.filter((i) => i.key === 'sleepingBag')).toHaveLength(1);
 
@@ -250,7 +254,9 @@ describe('Packing lists', () => {
 
     const sharedItems = distributed.filter((i) => !isPersonal(i));
     expect(sharedItems.length).toBeGreaterThan(0);
-    expect(sharedItems.every((i) => i.personId === 'p1' || i.personId === 'p2')).toBe(true);
+    expect(
+      sharedItems.every((i) => i.personId === 'p1' || i.personId === 'p2'),
+    ).toBe(true);
 
     // Both Sami and Lina get shared items assigned
     const samiShared = sharedItems.filter((i) => i.personId === 'p1');

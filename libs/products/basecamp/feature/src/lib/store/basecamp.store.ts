@@ -246,11 +246,8 @@ export const BasecampStore = signalStore(
         await save({
           ...trip,
           ...draft,
-          packing: resizePacking(
-            trip.packing,
-            party(draft),
-            draft.people,
-            () => newId('item'),
+          packing: resizePacking(trip.packing, party(draft), draft.people, () =>
+            newId('item'),
           ),
         });
         if (moved && store.activeTripId() === id) {
@@ -316,7 +313,10 @@ export const BasecampStore = signalStore(
         );
       },
 
-      splitItem(itemId: string, splits: readonly ItemSplitPortion[]): Promise<void> {
+      splitItem(
+        itemId: string,
+        splits: readonly ItemSplitPortion[],
+      ): Promise<void> {
         return patchPacking((list) =>
           splitItem(list, itemId, splits, () => newId('item')),
         );
@@ -326,17 +326,13 @@ export const BasecampStore = signalStore(
         category: PackingCategory,
         personId: string | null,
       ): Promise<void> {
-        return patchPacking((list) =>
-          assignCategory(list, category, personId),
-        );
+        return patchPacking((list) => assignCategory(list, category, personId));
       },
 
       distributeSharedGear(): Promise<void> {
         const trip = store.activeTrip();
         if (!trip || !trip.people.length) return Promise.resolve();
-        return patchPacking((list) =>
-          distributeSharedGear(list, trip.people),
-        );
+        return patchPacking((list) => distributeSharedGear(list, trip.people));
       },
 
       addItem(item: {
@@ -373,7 +369,8 @@ export const BasecampStore = signalStore(
             packed: false,
             personId: item.personId ?? null,
             source: 'custom' as const,
-            scope: mode === 'shared' ? ('shared' as const) : ('personal' as const),
+            scope:
+              mode === 'shared' ? ('shared' as const) : ('personal' as const),
           },
         ]);
       },

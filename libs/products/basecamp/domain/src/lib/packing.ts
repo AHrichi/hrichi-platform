@@ -163,7 +163,12 @@ export const PACKING_TEMPLATES: readonly Template[] = [
   { key: 'starChart', category: 'stargazing', quantity: one, scope: 'shared' },
   { key: 'redLight', category: 'stargazing', quantity: one, scope: 'shared' },
   { key: 'binoculars', category: 'stargazing', quantity: one, scope: 'shared' },
-  { key: 'campChair', category: 'stargazing', quantity: each, scope: 'personal' },
+  {
+    key: 'campChair',
+    category: 'stargazing',
+    quantity: each,
+    scope: 'personal',
+  },
   { key: 'blanket', category: 'stargazing', quantity: tents, scope: 'shared' },
 ];
 

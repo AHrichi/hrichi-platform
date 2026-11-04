@@ -224,7 +224,10 @@ export class PackingScreen {
   protected readonly splitTotal = computed(() => {
     const draft = this.splitDraft();
     if (!draft) return 0;
-    return Object.values(draft.allocations).reduce((sum, q) => sum + (q || 0), 0);
+    return Object.values(draft.allocations).reduce(
+      (sum, q) => sum + (q || 0),
+      0,
+    );
   });
 
   protected splitItemName(): string {

@@ -65,10 +65,14 @@
           @if (trip.people.length && hasSharedItems(group)) {
             <select
               class="category-assign"
-              [attr.aria-label]="t().packing.assignCategory(t().categories[group.category])"
+              [attr.aria-label]="
+                t().packing.assignCategory(t().categories[group.category])
+              "
               (change)="assignCategory(group.category, $event)"
             >
-              <option value="" disabled selected>{{ t().packing.assignGroup }}</option>
+              <option value="" disabled selected>
+                {{ t().packing.assignGroup }}
+              </option>
               <option value="*unassign*">{{ t().packing.anyone }}</option>
               @for (p of trip.people; track p.id) {
                 <option [value]="p.id">{{ p.name }}</option>
@@ -176,7 +180,9 @@
                     </label>
 
                     <div class="card-badges">
-                      <span class="tag personal">👤 {{ t().packing.eachPersonBadge }}</span>
+                      <span class="tag personal"
+                        >👤 {{ t().packing.eachPersonBadge }}</span
+                      >
                       @if (card.source === 'weather') {
                         <span class="tag weather"
                           >🌦️ {{ t().packing.fromWeather }}</span
@@ -204,7 +210,9 @@
                   <div
                     class="camper-chips"
                     role="group"
-                    [attr.aria-label]="card.name + ' ' + t().packing.camperStatus"
+                    [attr.aria-label]="
+                      card.name + ' ' + t().packing.camperStatus
+                    "
                   >
                     @for (c of card.campers; track c.personId) {
                       <button
@@ -212,10 +220,18 @@
                         class="camper-chip"
                         [class.packed]="c.packed"
                         [attr.aria-pressed]="c.packed"
-                        [attr.aria-label]="c.personName + ': ' + (c.packed ? t().packing.packedBadge : t().packing.notPacked)"
+                        [attr.aria-label]="
+                          c.personName +
+                          ': ' +
+                          (c.packed
+                            ? t().packing.packedBadge
+                            : t().packing.notPacked)
+                        "
                         (click)="store.setPacked(c.item.id, !c.packed)"
                       >
-                        <span class="chip-status" aria-hidden="true">{{ c.packed ? '✓' : '○' }}</span>
+                        <span class="chip-status" aria-hidden="true">{{
+                          c.packed ? '✓' : '○'
+                        }}</span>
                         <span class="chip-name">{{ c.personName }}</span>
                       </button>
                     }
@@ -245,7 +261,9 @@
                 </label>
                 <span class="tags">
                   @if (row.personal) {
-                    <span class="tag personal">👤 {{ t().packing.personal }}</span>
+                    <span class="tag personal"
+                      >👤 {{ t().packing.personal }}</span
+                    >
                   } @else {
                     <span class="tag shared">👥 {{ t().packing.shared }}</span>
                   }
@@ -380,7 +398,12 @@
       </p>
       @if ((store.activeTrip()?.people ?? []).length > 1) {
         <div class="split-actions-bar">
-          <button ahButton="secondary" size="sm" type="button" (click)="splitEvenly()">
+          <button
+            ahButton="secondary"
+            size="sm"
+            type="button"
+            (click)="splitEvenly()"
+          >
             {{ t().packing.splitEvenly }}
           </button>
         </div>
