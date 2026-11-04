@@ -80,6 +80,21 @@ export const appRoutes: Route[] = [
     loadChildren: federatedRoutes('product-basecamp'),
     title: 'Basecamp · Camping Trip Planner · Ahmed Hrichi',
   },
+  {
+    path: 'apps/alarm-engine',
+    loadChildren: () =>
+      import('@ah/products/alarm-engine/feature').then(
+        (m) => m.ALARM_ENGINE_ROUTES,
+      ),
+    title:
+      'Nightly Alarm Decision Engine · Spaced Repetition & Daily Schedules · Ahmed Hrichi',
+  },
+  { path: 'apps/alarm', redirectTo: 'apps/alarm-engine', pathMatch: 'full' },
+  {
+    path: 'apps/nightly-alarm',
+    redirectTo: 'apps/alarm-engine',
+    pathMatch: 'full',
+  },
   { path: 'apps/solarlux', redirectTo: 'apps/lighting', pathMatch: 'full' },
   // The hello demo was replaced by the full applications & labs hub; redirect.
   { path: 'labs/hello', redirectTo: 'apps', pathMatch: 'full' },

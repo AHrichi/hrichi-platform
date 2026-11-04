@@ -105,6 +105,15 @@ export default [
               ],
             },
             {
+              sourceTag: 'scope:product-alarm-engine',
+              onlyDependOnLibsWithTags: [
+                'scope:product-alarm-engine',
+                'scope:shared',
+                'scope:platform',
+                'scope:design-system',
+              ],
+            },
+            {
               sourceTag: 'scope:product-whatsapp',
               onlyDependOnLibsWithTags: [
                 'scope:product-whatsapp',

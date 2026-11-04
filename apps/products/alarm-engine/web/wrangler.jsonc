@@ -1,0 +1,10 @@
+{
+  "$schema": "../../../../node_modules/wrangler/config-schema.json",
+  "name": "product-alarm-engine",
+  "compatibility_date": "2026-11-01",
+  "assets": {
+    "directory": "../../../../dist/apps/products/alarm-engine/web/browser",
+    "html_handling": "drop-trailing-slash",
+    "not_found_handling": "single-page-application"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "name": "product-alarm-engine-feature",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/products/alarm-engine/feature/src",
+  "prefix": "ah",
+  "projectType": "library",
+  "tags": ["scope:product-alarm-engine", "type:feature", "runtime:browser"],
+  "targets": {}
+}

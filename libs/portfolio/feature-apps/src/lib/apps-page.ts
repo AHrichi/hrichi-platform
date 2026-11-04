@@ -719,6 +719,38 @@ export class AppsPage {
           'Offline-first: trips, gear and the last forecast live in IndexedDB, and the sky is computed on the device.',
       },
       {
+        id: 'alarm-engine',
+        title: 'Nightly Alarm Decision Engine',
+        category: 'production',
+        badge: { label: '🌙 Bedtime Protocol', variant: 'accent', pulse: true },
+        eyebrow: 'Spaced Repetition & Daily Habit Scheduling · D-3 / D-7 / D-14',
+        summary:
+          'A repeatable bedtime decision algorithm that eliminates random alarms. Answer a short questionnaire about today’s study performance, and the engine calculates D-3/D-7/D-14 spaced repetition reviews, flags weak subtopics, detects 6-chapter Consolidation milestones, and generates the exact alarm title strings for tomorrow with 1-click copy.',
+        route: '/apps/alarm-engine',
+        icon: '⏰',
+        ctaLabel: 'Nightly Alarms',
+        stack: [
+          'Zoneless Angular 22',
+          'Spaced Repetition Engine',
+          'Local Storage Persistence & JSON Backup',
+          '@ah/ui Design Tokens',
+          'Mobile-First Dark Mode',
+        ],
+        features: [
+          '9-Step Interactive Nightly Ritual Checklist with real-time progress bar',
+          'Bedtime Diagnostic Questionnaire with chapter completion and quiz scoring',
+          'Auto-flags WEAK chapters (missed ≥ 3 or score < 75%) and unfinished coding carryover',
+          'Rollover Review Rule: unreviewed chapters roll into 06:00 alarm without altering original study dates',
+          'Consolidation Day detection (6-chapter milestone or ≥3 weak chapters) with milestone range Ch. A–B',
+          'Weekday energy templates: Standard, Fasting (15:15 IDE close), and Recovery (15:15 onward OFF)',
+          '1-Click Copy Title button per slot and Copy All formatted alarm schedule',
+          'Interactive Study Tracker Table with direct review toggles and full JSON backup/restore',
+          'Permanent 8-Alarm Phone Reference Guide for native Clock app setup',
+        ],
+        architectureNotes:
+          '100% private and offline-first in browser localStorage with JSON export/import. Reactive Angular 22 Zoneless signals architecture.',
+      },
+      {
         id: 'dispatch',
         title: 'PulseOps · Commercial Operations & Dispatch Control Center',
         category: 'production',

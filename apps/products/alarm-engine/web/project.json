@@ -1,0 +1,80 @@
+{
+  "name": "product-alarm-engine",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "prefix": "ah",
+  "sourceRoot": "apps/products/alarm-engine/web/src",
+  "tags": ["scope:product-alarm-engine", "type:app", "runtime:browser"],
+  "targets": {
+    "build": {
+      "executor": "@angular/build:application",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "outputPath": "dist/apps/products/alarm-engine/web",
+        "browser": "apps/products/alarm-engine/web/src/main.ts",
+        "tsConfig": "apps/products/alarm-engine/web/tsconfig.app.json",
+        "inlineStyleLanguage": "scss",
+        "assets": [
+          {
+            "glob": "**/*",
+            "input": "apps/products/alarm-engine/web/public"
+          }
+        ],
+        "styles": [
+          "libs/design-system/tokens/src/generated/tokens.css",
+          "libs/design-system/ui/src/styles/index.scss",
+          "apps/products/alarm-engine/web/src/styles.scss"
+        ]
+      },
+      "configurations": {
+        "production": {
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "1.5mb",
+              "maximumError": "2mb"
+            }
+          ],
+          "outputHashing": "all"
+        },
+        "development": {
+          "optimization": false,
+          "extractLicenses": false,
+          "sourceMap": true
+        }
+      }
+    },
+    "serve": {
+      "executor": "@angular/build:dev-server",
+      "configurations": {
+        "production": {
+          "buildTarget": "product-alarm-engine:build:production"
+        },
+        "development": {
+          "buildTarget": "product-alarm-engine:build:development"
+        }
+      },
+      "defaultConfiguration": "development",
+      "options": {
+        "port": 4320
+      }
+    },
+    "deploy": {
+      "dependsOn": ["build"],
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "node tools/scripts/prepare-hosting.mjs dist/apps/products/alarm-engine/web/browser --env production --app product-alarm-engine --cors",
+          "wrangler deploy --config apps/products/alarm-engine/web/wrangler.jsonc"
+        ],
+        "parallel": false
+      },
+      "inputs": [
+        "production",
+        "^production",
+        "{workspaceRoot}/tools/scripts/prepare-hosting.mjs"
+      ]
+    }
+  }
+}

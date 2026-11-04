@@ -1,0 +1,14 @@
+{
+  "name": "product-alarm-engine-domain",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/products/alarm-engine/domain/src",
+  "prefix": "ah",
+  "projectType": "library",
+  "tags": [
+    "scope:product-alarm-engine",
+    "scope:shared",
+    "type:domain",
+    "runtime:agnostic"
+  ],
+  "targets": {}
+}

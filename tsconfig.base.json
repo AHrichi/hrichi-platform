@@ -60,6 +60,12 @@
       "@ah/products/lighting/feature": [
         "./libs/products/lighting/feature/src/index.ts"
       ],
+      "@ah/products/alarm-engine/domain": [
+        "./libs/products/alarm-engine/domain/src/index.ts"
+      ],
+      "@ah/products/alarm-engine/feature": [
+        "./libs/products/alarm-engine/feature/src/index.ts"
+      ],
       "@ah/platform/app-mode": ["./libs/platform/app-mode/src/index.ts"],
       "@ah/platform/federation": ["./libs/platform/federation/src/index.ts"],
       "@ah/platform/inspector": ["./libs/platform/inspector/src/index.ts"],
