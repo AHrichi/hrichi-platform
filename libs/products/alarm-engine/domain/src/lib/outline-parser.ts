@@ -49,13 +49,20 @@ export function parseChapterOutline(
     // Strip CSV delimiters if line is structured like '1, "Title", ...'
     if (line.includes(',') || line.includes('\t') || line.includes(';')) {
       const sep = line.includes('\t') ? '\t' : line.includes(';') ? ';' : ',';
-      const parts = line.split(sep).map((p) => p.trim().replace(/^["']|["']$/g, '').trim());
+      const parts = line.split(sep).map((p) =>
+        p
+          .trim()
+          .replace(/^["']|["']$/g, '')
+          .trim(),
+      );
       if (parts.length >= 2) {
         // If first part is a number and second part has text
         const numPart = parseInt(parts[0], 10);
         if (!isNaN(numPart) && parts[1].length >= 2) {
           line = `${numPart}. ${parts[1]}`;
-        } else if (parts[0].match(/^(?:chapter|ch\.?|module|lecture|slide)\s*\d+/i)) {
+        } else if (
+          parts[0].match(/^(?:chapter|ch\.?|module|lecture|slide)\s*\d+/i)
+        ) {
           line = parts.join(' - ');
         }
       }
@@ -93,7 +100,9 @@ export function parseChapterOutline(
     }
 
     // Regex 2: Number prefix: e.g. "1. Title", "1) Title", "1 - Title", "1: Title"
-    const numberPrefixMatch = line.match(/^(\d+)(?:[:.)\-–—]|\s*[:.\-–—]|\s+)\s*(.*)$/);
+    const numberPrefixMatch = line.match(
+      /^(\d+)(?:[:.)\-–—]|\s*[:.\-–—]|\s+)\s*(.*)$/,
+    );
     if (numberPrefixMatch) {
       const num = parseInt(numberPrefixMatch[1], 10);
       let title = numberPrefixMatch[2].trim();

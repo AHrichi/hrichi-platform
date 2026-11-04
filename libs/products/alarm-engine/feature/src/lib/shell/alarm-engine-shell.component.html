@@ -18,9 +18,21 @@
     <div class="header-content">
       <div class="header-titles">
         <div class="header-badge-row">
-          <ah-badge [variant]="'accent'">{{ store.dict().meta.badgeAlgorithm }}</ah-badge>
-          <ah-badge [variant]="'neutral'">{{ store.isDark() ? store.dict().meta.badgeDarkMode : (store.activeLanguage() === 'fr' ? 'Mode Clair' : store.activeLanguage() === 'ar' ? 'الوضع النهاري' : 'Light Mode') }}</ah-badge>
-          <ah-badge [variant]="'info'">{{ store.dict().meta.badgeSpacedRepetition }}</ah-badge>
+          <ah-badge [variant]="'accent'">{{
+            store.dict().meta.badgeAlgorithm
+          }}</ah-badge>
+          <ah-badge [variant]="'neutral'">{{
+            store.isDark()
+              ? store.dict().meta.badgeDarkMode
+              : store.activeLanguage() === 'fr'
+                ? 'Mode Clair'
+                : store.activeLanguage() === 'ar'
+                  ? 'الوضع النهاري'
+                  : 'Light Mode'
+          }}</ah-badge>
+          <ah-badge [variant]="'info'">{{
+            store.dict().meta.badgeSpacedRepetition
+          }}</ah-badge>
         </div>
         <h1 class="app-title">{{ store.dict().meta.title }}</h1>
         <p class="app-tagline">{{ store.dict().meta.tagline }}</p>
@@ -29,7 +41,11 @@
       <div class="header-actions">
         @if (!store.isEmbedded()) {
           <!-- Language Switcher (Standalone Only - Parent Controls Embedded) -->
-          <div class="lang-switcher" role="group" [attr.aria-label]="store.dict().actions.language">
+          <div
+            class="lang-switcher"
+            role="group"
+            [attr.aria-label]="store.dict().actions.language"
+          >
             @for (lang of languages; track lang.id) {
               <button
                 type="button"
@@ -101,7 +117,9 @@
           [class.topic-pill--active]="store.selectedTopicId() === 'all'"
           (click)="store.setSelectedTopicId('all')"
         >
-          🌐 {{ store.dict().actions.viewAllTopics }} ({{ store.chapters().length }})
+          🌐 {{ store.dict().actions.viewAllTopics }} ({{
+            store.chapters().length
+          }})
         </button>
         @for (topic of store.topics(); track topic.id) {
           <button
@@ -110,7 +128,10 @@
             [class.topic-pill--active]="store.selectedTopicId() === topic.id"
             (click)="store.setSelectedTopicId(topic.id)"
           >
-            <span class="topic-dot" [style.background-color]="topic.color || '#6366f1'"></span>
+            <span
+              class="topic-dot"
+              [style.background-color]="topic.color || '#6366f1'"
+            ></span>
             {{ topic.name }}
           </button>
         }
@@ -129,7 +150,10 @@
       <div class="topic-syllabus-banner">
         <div class="topic-banner-header">
           <div class="topic-banner-title-group">
-            <span class="topic-dot-lg" [style.background-color]="activeTopic.color || '#6366f1'"></span>
+            <span
+              class="topic-dot-lg"
+              [style.background-color]="activeTopic.color || '#6366f1'"
+            ></span>
             <div class="topic-banner-text">
               <div class="topic-name-row">
                 <h2 class="topic-banner-name">{{ activeTopic.name }}</h2>
@@ -150,16 +174,24 @@
 
           <div class="topic-banner-stats">
             <div class="stat-bubble">
-              <span class="stat-num">{{ store.topicSyllabusStats().completed }}/{{ store.topicSyllabusStats().total }}</span>
+              <span class="stat-num"
+                >{{ store.topicSyllabusStats().completed }}/{{
+                  store.topicSyllabusStats().total
+                }}</span
+              >
               <span class="stat-lbl">Completed</span>
             </div>
             <div class="stat-bubble">
-              <span class="stat-num">{{ store.topicSyllabusStats().percent }}%</span>
+              <span class="stat-num"
+                >{{ store.topicSyllabusStats().percent }}%</span
+              >
               <span class="stat-lbl">Syllabus</span>
             </div>
             @if (store.topicSyllabusStats().weak > 0) {
               <div class="stat-bubble stat-bubble--weak">
-                <span class="stat-num">{{ store.topicSyllabusStats().weak }}</span>
+                <span class="stat-num">{{
+                  store.topicSyllabusStats().weak
+                }}</span>
                 <span class="stat-lbl">Weak Ch.</span>
               </div>
             }
@@ -181,26 +213,41 @@
     <!-- Push & Alarm Notification Status Bar -->
     <aside
       class="notification-bar"
-      [class.notification-bar--active]="store.notificationsEnabled() && store.notificationPermission() === 'granted'"
-      [class.notification-bar--denied]="store.notificationPermission() === 'denied'"
+      [class.notification-bar--active]="
+        store.notificationsEnabled() &&
+        store.notificationPermission() === 'granted'
+      "
+      [class.notification-bar--denied]="
+        store.notificationPermission() === 'denied'
+      "
       aria-label="Alarm Push Notifications"
     >
       <div class="notification-bar-content">
-        <span class="notification-icon">{{ store.notificationsEnabled() ? '🔔' : '🔕' }}</span>
+        <span class="notification-icon">{{
+          store.notificationsEnabled() ? '🔔' : '🔕'
+        }}</span>
         <div class="notification-info">
           <div class="notification-title-line">
-            <strong class="notification-heading">{{ store.dict().notifications.title }}</strong>
+            <strong class="notification-heading">{{
+              store.dict().notifications.title
+            }}</strong>
             <span
               class="notification-status-badge"
-              [class.notification-status-badge--granted]="store.notificationPermission() === 'granted' && store.notificationsEnabled()"
-              [class.notification-status-badge--denied]="store.notificationPermission() === 'denied'"
+              [class.notification-status-badge--granted]="
+                store.notificationPermission() === 'granted' &&
+                store.notificationsEnabled()
+              "
+              [class.notification-status-badge--denied]="
+                store.notificationPermission() === 'denied'
+              "
             >
               {{
                 store.notificationPermission() === 'unsupported'
                   ? store.dict().notifications.statusUnsupported
                   : store.notificationPermission() === 'denied'
                     ? store.dict().notifications.statusDenied
-                    : store.notificationsEnabled() && store.notificationPermission() === 'granted'
+                    : store.notificationsEnabled() &&
+                        store.notificationPermission() === 'granted'
                       ? store.dict().notifications.statusGranted
                       : store.dict().notifications.statusDefault
               }}
@@ -209,10 +256,13 @@
           @if (store.nextUpcomingAlarm(); as next) {
             <p class="notification-upcoming">
               ⏰ {{ store.dict().notifications.nextAlarmAlert }}:
-              <strong>{{ next.time }} ({{ next.remainingText }})</strong> — {{ next.title }}
+              <strong>{{ next.time }} ({{ next.remainingText }})</strong> —
+              {{ next.title }}
             </p>
           } @else {
-            <p class="notification-desc">{{ store.dict().notifications.subtitle }}</p>
+            <p class="notification-desc">
+              {{ store.dict().notifications.subtitle }}
+            </p>
           }
         </div>
       </div>
@@ -224,10 +274,17 @@
           [class.notification-toggle-btn--active]="store.notificationsEnabled()"
           (click)="store.toggleNotifications()"
         >
-          {{ store.notificationsEnabled() ? store.dict().notifications.disableBtn : store.dict().notifications.enableBtn }}
+          {{
+            store.notificationsEnabled()
+              ? store.dict().notifications.disableBtn
+              : store.dict().notifications.enableBtn
+          }}
         </button>
 
-        @if (store.notificationsEnabled() && store.notificationPermission() === 'granted') {
+        @if (
+          store.notificationsEnabled() &&
+          store.notificationPermission() === 'granted'
+        ) {
           <button
             type="button"
             class="notification-test-btn"
@@ -290,14 +347,26 @@
 
     <!-- KPI Metric Cards Grid -->
     <div class="kpi-grid">
-      <div class="kpi-card" [class.kpi-card--danger]="store.decision().isConsolidation">
+      <div
+        class="kpi-card"
+        [class.kpi-card--danger]="store.decision().isConsolidation"
+      >
         <div class="kpi-card-header">
           <span class="kpi-label">{{ store.dict().kpi.tomorrowProtocol }}</span>
-          <span class="kpi-icon">{{ store.decision().isConsolidation ? '🎯' : store.decision().effectiveDayType === 'Fasting' ? '🍃' : store.decision().effectiveDayType === 'Recovery' ? '🌿' : '⚡' }}</span>
+          <span class="kpi-icon">{{
+            store.decision().isConsolidation
+              ? '🎯'
+              : store.decision().effectiveDayType === 'Fasting'
+                ? '🍃'
+                : store.decision().effectiveDayType === 'Recovery'
+                  ? '🌿'
+                  : '⚡'
+          }}</span>
         </div>
         <div class="kpi-value">{{ store.decision().effectiveDayType }}</div>
         <div class="kpi-subtext">
-          {{ store.decision().tomorrowWeekday }}, {{ store.decision().tomorrowDate }}
+          {{ store.decision().tomorrowWeekday }},
+          {{ store.decision().tomorrowDate }}
         </div>
       </div>
 
@@ -308,7 +377,10 @@
         </div>
         <div class="kpi-value">
           Ch. {{ store.decision().targetChapter }}
-          <span class="kpi-badge-status" [class.kpi-badge-status--repeat]="store.decision().isRepeat">
+          <span
+            class="kpi-badge-status"
+            [class.kpi-badge-status--repeat]="store.decision().isRepeat"
+          >
             {{ store.decision().isRepeat ? 'REPEAT' : 'NEW' }}
           </span>
         </div>
@@ -317,9 +389,14 @@
         </div>
       </div>
 
-      <div class="kpi-card" [class.kpi-card--warning]="store.weakChapters().length > 0">
+      <div
+        class="kpi-card"
+        [class.kpi-card--warning]="store.weakChapters().length > 0"
+      >
         <div class="kpi-card-header">
-          <span class="kpi-label">{{ store.dict().kpi.activeWeakChapters }}</span>
+          <span class="kpi-label">{{
+            store.dict().kpi.activeWeakChapters
+          }}</span>
           <span class="kpi-icon">⚠️</span>
         </div>
         <div class="kpi-value">{{ store.weakChapters().length }}</div>
@@ -336,11 +413,14 @@
 
       <div class="kpi-card">
         <div class="kpi-card-header">
-          <span class="kpi-label">{{ store.dict().kpi.milestoneConsolidation }}</span>
+          <span class="kpi-label">{{
+            store.dict().kpi.milestoneConsolidation
+          }}</span>
           <span class="kpi-icon">🏁</span>
         </div>
         <div class="kpi-value">
-          {{ store.chaptersUntilMilestone() }} {{ store.dict().kpi.chaptersLeft }}
+          {{ store.chaptersUntilMilestone() }}
+          {{ store.dict().kpi.chaptersLeft }}
         </div>
         <div class="kpi-subtext">
           <ah-tooltip
@@ -391,7 +471,9 @@
             </div>
             <div class="checklist-progress-meta">
               <span class="checklist-count-badge">
-                {{ store.checklistCompletedCount() }}/9 ({{ store.checklistProgressPercent() }}%)
+                {{ store.checklistCompletedCount() }}/9 ({{
+                  store.checklistProgressPercent()
+                }}%)
               </span>
               <button
                 ahButton="ghost"
@@ -407,9 +489,15 @@
                 class="collapse-toggle-btn"
                 [attr.aria-expanded]="!store.isSectionCollapsed('checklist')"
                 (click)="store.toggleSection('checklist')"
-                [title]="store.isSectionCollapsed('checklist') ? store.dict().collapse.expand : store.dict().collapse.collapse"
+                [title]="
+                  store.isSectionCollapsed('checklist')
+                    ? store.dict().collapse.expand
+                    : store.dict().collapse.collapse
+                "
               >
-                <span class="collapse-icon">{{ store.isSectionCollapsed('checklist') ? '▼' : '▲' }}</span>
+                <span class="collapse-icon">{{
+                  store.isSectionCollapsed('checklist') ? '▼' : '▲'
+                }}</span>
               </button>
             </div>
           </div>
@@ -418,7 +506,9 @@
             <ah-progress-bar
               [value]="store.checklistProgressPercent()"
               [max]="100"
-              [variant]="store.checklistProgressPercent() === 100 ? 'success' : 'accent'"
+              [variant]="
+                store.checklistProgressPercent() === 100 ? 'success' : 'accent'
+              "
               class="checklist-progress-bar"
             />
 
@@ -428,7 +518,12 @@
                 [class.checklist-item--done]="store.checklist()[0]"
                 (click)="store.toggleChecklistStep(0)"
               >
-                <input type="checkbox" [checked]="store.checklist()[0]" (click)="$event.stopPropagation()" (change)="store.toggleChecklistStep(0)" />
+                <input
+                  type="checkbox"
+                  [checked]="store.checklist()[0]"
+                  (click)="$event.stopPropagation()"
+                  (change)="store.toggleChecklistStep(0)"
+                />
                 <span>{{ store.dict().checklist.step1 }}</span>
               </li>
               <li
@@ -436,7 +531,12 @@
                 [class.checklist-item--done]="store.checklist()[1]"
                 (click)="store.toggleChecklistStep(1)"
               >
-                <input type="checkbox" [checked]="store.checklist()[1]" (click)="$event.stopPropagation()" (change)="store.toggleChecklistStep(1)" />
+                <input
+                  type="checkbox"
+                  [checked]="store.checklist()[1]"
+                  (click)="$event.stopPropagation()"
+                  (change)="store.toggleChecklistStep(1)"
+                />
                 <span>{{ store.dict().checklist.step2 }}</span>
               </li>
               <li
@@ -444,7 +544,12 @@
                 [class.checklist-item--done]="store.checklist()[2]"
                 (click)="store.toggleChecklistStep(2)"
               >
-                <input type="checkbox" [checked]="store.checklist()[2]" (click)="$event.stopPropagation()" (change)="store.toggleChecklistStep(2)" />
+                <input
+                  type="checkbox"
+                  [checked]="store.checklist()[2]"
+                  (click)="$event.stopPropagation()"
+                  (change)="store.toggleChecklistStep(2)"
+                />
                 <span>
                   <ah-tooltip
                     [title]="store.dict().tooltips.d3Title"
@@ -461,7 +566,12 @@
                 [class.checklist-item--done]="store.checklist()[3]"
                 (click)="store.toggleChecklistStep(3)"
               >
-                <input type="checkbox" [checked]="store.checklist()[3]" (click)="$event.stopPropagation()" (change)="store.toggleChecklistStep(3)" />
+                <input
+                  type="checkbox"
+                  [checked]="store.checklist()[3]"
+                  (click)="$event.stopPropagation()"
+                  (change)="store.toggleChecklistStep(3)"
+                />
                 <span>
                   <ah-tooltip
                     [title]="store.dict().tooltips.d7Title"
@@ -478,7 +588,12 @@
                 [class.checklist-item--done]="store.checklist()[4]"
                 (click)="store.toggleChecklistStep(4)"
               >
-                <input type="checkbox" [checked]="store.checklist()[4]" (click)="$event.stopPropagation()" (change)="store.toggleChecklistStep(4)" />
+                <input
+                  type="checkbox"
+                  [checked]="store.checklist()[4]"
+                  (click)="$event.stopPropagation()"
+                  (change)="store.toggleChecklistStep(4)"
+                />
                 <span>
                   <ah-tooltip
                     [title]="store.dict().tooltips.d14Title"
@@ -495,7 +610,12 @@
                 [class.checklist-item--done]="store.checklist()[5]"
                 (click)="store.toggleChecklistStep(5)"
               >
-                <input type="checkbox" [checked]="store.checklist()[5]" (click)="$event.stopPropagation()" (change)="store.toggleChecklistStep(5)" />
+                <input
+                  type="checkbox"
+                  [checked]="store.checklist()[5]"
+                  (click)="$event.stopPropagation()"
+                  (change)="store.toggleChecklistStep(5)"
+                />
                 <span>{{ store.dict().checklist.step6 }}</span>
               </li>
               <li
@@ -503,7 +623,12 @@
                 [class.checklist-item--done]="store.checklist()[6]"
                 (click)="store.toggleChecklistStep(6)"
               >
-                <input type="checkbox" [checked]="store.checklist()[6]" (click)="$event.stopPropagation()" (change)="store.toggleChecklistStep(6)" />
+                <input
+                  type="checkbox"
+                  [checked]="store.checklist()[6]"
+                  (click)="$event.stopPropagation()"
+                  (change)="store.toggleChecklistStep(6)"
+                />
                 <span>
                   <ah-tooltip
                     [title]="store.dict().tooltips.consolidationTitle"
@@ -519,7 +644,12 @@
                 [class.checklist-item--done]="store.checklist()[7]"
                 (click)="store.toggleChecklistStep(7)"
               >
-                <input type="checkbox" [checked]="store.checklist()[7]" (click)="$event.stopPropagation()" (change)="store.toggleChecklistStep(7)" />
+                <input
+                  type="checkbox"
+                  [checked]="store.checklist()[7]"
+                  (click)="$event.stopPropagation()"
+                  (change)="store.toggleChecklistStep(7)"
+                />
                 <span>{{ store.dict().checklist.step8 }}</span>
               </li>
               <li
@@ -527,16 +657,28 @@
                 [class.checklist-item--done]="store.checklist()[8]"
                 (click)="store.toggleChecklistStep(8)"
               >
-                <input type="checkbox" [checked]="store.checklist()[8]" (click)="$event.stopPropagation()" (change)="store.toggleChecklistStep(8)" />
+                <input
+                  type="checkbox"
+                  [checked]="store.checklist()[8]"
+                  (click)="$event.stopPropagation()"
+                  (change)="store.toggleChecklistStep(8)"
+                />
                 <span>{{ store.dict().checklist.step9 }}</span>
               </li>
             </ul>
           } @else {
-            <div class="section-collapsed-summary" (click)="store.toggleSection('checklist')">
+            <div
+              class="section-collapsed-summary"
+              (click)="store.toggleSection('checklist')"
+            >
               <span class="summary-pill">
-                {{ store.checklistCompletedCount() }}/9 steps completed ({{ store.checklistProgressPercent() }}%)
+                {{ store.checklistCompletedCount() }}/9 steps completed ({{
+                  store.checklistProgressPercent()
+                }}%)
               </span>
-              <span class="summary-hint">👉 {{ store.dict().collapse.collapsedSummary }}</span>
+              <span class="summary-hint"
+                >👉 {{ store.dict().collapse.collapsedSummary }}</span
+              >
             </div>
           }
         </article>
@@ -547,8 +689,12 @@
             <div class="header-with-icon">
               <span class="card-icon">🌙</span>
               <div>
-                <h2 class="card-title">{{ store.dict().questionnaire.title }}</h2>
-                <p class="card-subtitle">{{ store.dict().questionnaire.subtitle }}</p>
+                <h2 class="card-title">
+                  {{ store.dict().questionnaire.title }}
+                </h2>
+                <p class="card-subtitle">
+                  {{ store.dict().questionnaire.subtitle }}
+                </p>
               </div>
             </div>
             <button
@@ -556,127 +702,237 @@
               class="collapse-toggle-btn"
               [attr.aria-expanded]="!store.isSectionCollapsed('questionnaire')"
               (click)="store.toggleSection('questionnaire')"
-              [title]="store.isSectionCollapsed('questionnaire') ? store.dict().collapse.expand : store.dict().collapse.collapse"
+              [title]="
+                store.isSectionCollapsed('questionnaire')
+                  ? store.dict().collapse.expand
+                  : store.dict().collapse.collapse
+              "
             >
-              <span class="collapse-icon">{{ store.isSectionCollapsed('questionnaire') ? '▼' : '▲' }}</span>
+              <span class="collapse-icon">{{
+                store.isSectionCollapsed('questionnaire') ? '▼' : '▲'
+              }}</span>
             </button>
           </div>
 
           @if (!store.isSectionCollapsed('questionnaire')) {
             <form class="questionnaire-form" (submit)="$event.preventDefault()">
-            <!-- Row: Date & Topic -->
-            <div class="form-row-2">
-              <div class="form-group">
-                <label for="tonightDate">{{ store.dict().questionnaire.tonightDate }}</label>
-                <input
-                  id="tonightDate"
-                  type="date"
-                  class="custom-input"
-                  [value]="store.questionnaire().tonightDate"
-                  (change)="store.setTonightDate($any($event.target).value)"
-                />
-                <span class="input-hint">{{ store.dict().questionnaire.defaultsToday }}</span>
-              </div>
+              <!-- Row: Date & Topic -->
+              <div class="form-row-2">
+                <div class="form-group">
+                  <label for="tonightDate">{{
+                    store.dict().questionnaire.tonightDate
+                  }}</label>
+                  <input
+                    id="tonightDate"
+                    type="date"
+                    class="custom-input"
+                    [value]="store.questionnaire().tonightDate"
+                    (change)="store.setTonightDate($any($event.target).value)"
+                  />
+                  <span class="input-hint">{{
+                    store.dict().questionnaire.defaultsToday
+                  }}</span>
+                </div>
 
-              <div class="form-group">
-                <label for="questionnaireTopic">{{ store.dict().questionnaire.topic }}</label>
-                <select
-                  id="questionnaireTopic"
-                  class="custom-select"
-                  [value]="store.questionnaire().topicId || 'general'"
-                  (change)="store.setQuestionnaireTopic($any($event.target).value)"
-                >
-                  @for (topic of store.topics(); track topic.id) {
-                    <option [value]="topic.id">{{ topic.name }}</option>
-                  }
-                </select>
-              </div>
-            </div>
-
-            <!-- Row: Target Chapter Number & Title -->
-            <div class="form-row-2">
-              <div class="form-group">
-                <label for="targetChapter">{{ store.dict().questionnaire.targetChapterNum }}</label>
-                <input
-                  id="targetChapter"
-                  type="number"
-                  min="1"
-                  class="custom-input"
-                  [value]="store.questionnaire().targetChapterNumber"
-                  (input)="store.setTargetChapter(+$any($event.target).value)"
-                />
-                <span class="input-hint">{{ store.dict().questionnaire.highestCompletedPlusOne }}</span>
-              </div>
-
-              <div class="form-group">
-                <label for="targetChapterTitle">{{ store.dict().questionnaire.targetChapterTitle }}</label>
-                <input
-                  id="targetChapterTitle"
-                  type="text"
-                  class="custom-input"
-                  [placeholder]="store.dict().questionnaire.targetChapterTitlePlaceholder"
-                  [value]="store.questionnaire().targetChapterTitle || ''"
-                  (input)="store.setTargetChapterTitle($any($event.target).value)"
-                />
-              </div>
-            </div>
-
-            <!-- Question 2: Did you finish today's chapter? -->
-            <div class="form-group">
-              <label class="group-title">{{ store.dict().questionnaire.didYouFinish }}</label>
-              <div class="segmented-grid segmented-grid--4">
-                @for (opt of completionOptions(); track opt.value) {
-                  <button
-                    type="button"
-                    class="segmented-btn"
-                    [class.segmented-btn--active]="store.questionnaire().completionStatus === opt.value"
-                    (click)="store.setCompletionStatus(opt.value)"
+                <div class="form-group">
+                  <label for="questionnaireTopic">{{
+                    store.dict().questionnaire.topic
+                  }}</label>
+                  <select
+                    id="questionnaireTopic"
+                    class="custom-select"
+                    [value]="store.questionnaire().topicId || 'general'"
+                    (change)="
+                      store.setQuestionnaireTopic($any($event.target).value)
+                    "
                   >
-                    <span class="opt-icon">{{ opt.icon }}</span>
-                    <span class="opt-label">{{ opt.label }}</span>
-                  </button>
-                }
+                    @for (topic of store.topics(); track topic.id) {
+                      <option [value]="topic.id">{{ topic.name }}</option>
+                    }
+                  </select>
+                </div>
               </div>
 
-              <!-- Notice depending on completion choice -->
-              @if (store.questionnaire().completionStatus === 'YES') {
-                <div class="status-callout status-callout--success">
-                  {{ store.dict().questionnaire.advancesNotice }}
+              <!-- Row: Target Chapter Number & Title -->
+              <div class="form-row-2">
+                <div class="form-group">
+                  <label for="targetChapter">{{
+                    store.dict().questionnaire.targetChapterNum
+                  }}</label>
+                  <input
+                    id="targetChapter"
+                    type="number"
+                    min="1"
+                    class="custom-input"
+                    [value]="store.questionnaire().targetChapterNumber"
+                    (input)="store.setTargetChapter(+$any($event.target).value)"
+                  />
+                  <span class="input-hint">{{
+                    store.dict().questionnaire.highestCompletedPlusOne
+                  }}</span>
                 </div>
-              } @else if (store.questionnaire().completionStatus === 'NO') {
-                <div class="status-callout status-callout--warning">
-                  {{ store.dict().questionnaire.repeatNotice }}
-                </div>
-              } @else if (store.questionnaire().completionStatus === 'CONSOLIDATION_COMPLETED_TODAY') {
-                <div class="status-callout status-callout--accent">
-                  {{ store.dict().questionnaire.consolidationNotice }}
-                </div>
-              } @else if (store.questionnaire().completionStatus === 'MISSED_GOALS') {
-                <div class="status-callout status-callout--adaptive">
-                  {{ store.dict().questionnaire.missedNotice }}
-                </div>
-              }
-            </div>
 
-            <!-- Sub-Question: Adaptive Reason if MISSED_GOALS -->
-            @if (store.questionnaire().completionStatus === 'MISSED_GOALS') {
-              <div class="form-group adaptive-group">
-                <label class="group-title">
-                  <ah-tooltip
-                    [title]="store.dict().tooltips.adaptiveTitle"
-                    [body]="store.dict().tooltips.adaptiveBody"
-                    [meaning]="store.dict().tooltips.adaptiveMeaning"
-                  >
-                    {{ store.dict().questionnaire.missedReasonLabel }}
-                  </ah-tooltip>
-                </label>
-                <div class="segmented-grid segmented-grid--3">
-                  @for (opt of missedReasonOptions(); track opt.value) {
+                <div class="form-group">
+                  <label for="targetChapterTitle">{{
+                    store.dict().questionnaire.targetChapterTitle
+                  }}</label>
+                  <input
+                    id="targetChapterTitle"
+                    type="text"
+                    class="custom-input"
+                    [placeholder]="
+                      store.dict().questionnaire.targetChapterTitlePlaceholder
+                    "
+                    [value]="store.questionnaire().targetChapterTitle || ''"
+                    (input)="
+                      store.setTargetChapterTitle($any($event.target).value)
+                    "
+                  />
+                </div>
+              </div>
+
+              <!-- Question 2: Did you finish today's chapter? -->
+              <div class="form-group">
+                <label class="group-title">{{
+                  store.dict().questionnaire.didYouFinish
+                }}</label>
+                <div class="segmented-grid segmented-grid--4">
+                  @for (opt of completionOptions(); track opt.value) {
                     <button
                       type="button"
                       class="segmented-btn"
-                      [class.segmented-btn--active]="store.questionnaire().missedReason === opt.value"
-                      (click)="store.setMissedReason(opt.value)"
+                      [class.segmented-btn--active]="
+                        store.questionnaire().completionStatus === opt.value
+                      "
+                      (click)="store.setCompletionStatus(opt.value)"
+                    >
+                      <span class="opt-icon">{{ opt.icon }}</span>
+                      <span class="opt-label">{{ opt.label }}</span>
+                    </button>
+                  }
+                </div>
+
+                <!-- Notice depending on completion choice -->
+                @if (store.questionnaire().completionStatus === 'YES') {
+                  <div class="status-callout status-callout--success">
+                    {{ store.dict().questionnaire.advancesNotice }}
+                  </div>
+                } @else if (store.questionnaire().completionStatus === 'NO') {
+                  <div class="status-callout status-callout--warning">
+                    {{ store.dict().questionnaire.repeatNotice }}
+                  </div>
+                } @else if (
+                  store.questionnaire().completionStatus ===
+                  'CONSOLIDATION_COMPLETED_TODAY'
+                ) {
+                  <div class="status-callout status-callout--accent">
+                    {{ store.dict().questionnaire.consolidationNotice }}
+                  </div>
+                } @else if (
+                  store.questionnaire().completionStatus === 'MISSED_GOALS'
+                ) {
+                  <div class="status-callout status-callout--adaptive">
+                    {{ store.dict().questionnaire.missedNotice }}
+                  </div>
+                }
+              </div>
+
+              <!-- Sub-Question: Adaptive Reason if MISSED_GOALS -->
+              @if (store.questionnaire().completionStatus === 'MISSED_GOALS') {
+                <div class="form-group adaptive-group">
+                  <label class="group-title">
+                    <ah-tooltip
+                      [title]="store.dict().tooltips.adaptiveTitle"
+                      [body]="store.dict().tooltips.adaptiveBody"
+                      [meaning]="store.dict().tooltips.adaptiveMeaning"
+                    >
+                      {{ store.dict().questionnaire.missedReasonLabel }}
+                    </ah-tooltip>
+                  </label>
+                  <div class="segmented-grid segmented-grid--3">
+                    @for (opt of missedReasonOptions(); track opt.value) {
+                      <button
+                        type="button"
+                        class="segmented-btn"
+                        [class.segmented-btn--active]="
+                          store.questionnaire().missedReason === opt.value
+                        "
+                        (click)="store.setMissedReason(opt.value)"
+                      >
+                        <span class="opt-icon">{{ opt.icon }}</span>
+                        <span class="opt-label">{{ opt.label }}</span>
+                      </button>
+                    }
+                  </div>
+                </div>
+              }
+
+              <!-- Question 3: Quiz Performance Today -->
+              <div class="form-group">
+                <div class="label-with-meta">
+                  <label class="group-title">{{
+                    store.dict().questionnaire.quizPerformance
+                  }}</label>
+                  @if (
+                    store.questionnaire().quizQuestionsMissed >= 3 ||
+                    store.questionnaire().quizScorePercent < 75
+                  ) {
+                    <span class="inline-weak-tag"
+                      >⚠️ {{ store.dict().questionnaire.weakWarning }}</span
+                    >
+                  } @else {
+                    <span class="inline-pass-tag"
+                      >✓ {{ store.dict().questionnaire.strongPass }}</span
+                    >
+                  }
+                </div>
+
+                <div class="form-row-2">
+                  <div class="field-box">
+                    <label for="quizMissed">{{
+                      store.dict().questionnaire.questionsMissed
+                    }}</label>
+                    <input
+                      id="quizMissed"
+                      type="number"
+                      min="0"
+                      class="custom-input"
+                      [value]="store.questionnaire().quizQuestionsMissed"
+                      (input)="store.setQuizMissed(+$any($event.target).value)"
+                    />
+                  </div>
+
+                  <div class="field-box">
+                    <label for="quizScore">{{
+                      store.dict().questionnaire.quizScore
+                    }}</label>
+                    <input
+                      id="quizScore"
+                      type="number"
+                      min="0"
+                      max="100"
+                      class="custom-input"
+                      [value]="store.questionnaire().quizScorePercent"
+                      (input)="store.setQuizScore(+$any($event.target).value)"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <!-- Question 4: Coding Progress Today -->
+              <div class="form-group">
+                <label class="group-title">{{
+                  store.dict().questionnaire.codingProgress
+                }}</label>
+                <div class="segmented-grid segmented-grid--2">
+                  @for (opt of codingOptions(); track opt.value) {
+                    <button
+                      type="button"
+                      class="segmented-btn"
+                      [class.segmented-btn--active]="
+                        store.questionnaire().codingProgress === opt.value
+                      "
+                      (click)="store.setCodingProgress(opt.value)"
                     >
                       <span class="opt-icon">{{ opt.icon }}</span>
                       <span class="opt-label">{{ opt.label }}</span>
@@ -684,159 +940,152 @@
                   }
                 </div>
               </div>
-            }
 
-            <!-- Question 3: Quiz Performance Today -->
-            <div class="form-group">
-              <div class="label-with-meta">
-                <label class="group-title">{{ store.dict().questionnaire.quizPerformance }}</label>
-                @if (store.questionnaire().quizQuestionsMissed >= 3 || store.questionnaire().quizScorePercent < 75) {
-                  <span class="inline-weak-tag">⚠️ {{ store.dict().questionnaire.weakWarning }}</span>
-                } @else {
-                  <span class="inline-pass-tag">✓ {{ store.dict().questionnaire.strongPass }}</span>
-                }
-              </div>
-
-              <div class="form-row-2">
-                <div class="field-box">
-                  <label for="quizMissed">{{ store.dict().questionnaire.questionsMissed }}</label>
-                  <input
-                    id="quizMissed"
-                    type="number"
-                    min="0"
-                    class="custom-input"
-                    [value]="store.questionnaire().quizQuestionsMissed"
-                    (input)="store.setQuizMissed(+$any($event.target).value)"
-                  />
-                </div>
-
-                <div class="field-box">
-                  <label for="quizScore">{{ store.dict().questionnaire.quizScore }}</label>
-                  <input
-                    id="quizScore"
-                    type="number"
-                    min="0"
-                    max="100"
-                    class="custom-input"
-                    [value]="store.questionnaire().quizScorePercent"
-                    (input)="store.setQuizScore(+$any($event.target).value)"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <!-- Question 4: Coding Progress Today -->
-            <div class="form-group">
-              <label class="group-title">{{ store.dict().questionnaire.codingProgress }}</label>
-              <div class="segmented-grid segmented-grid--2">
-                @for (opt of codingOptions(); track opt.value) {
-                  <button
-                    type="button"
-                    class="segmented-btn"
-                    [class.segmented-btn--active]="store.questionnaire().codingProgress === opt.value"
-                    (click)="store.setCodingProgress(opt.value)"
+              <!-- Question 5: Today's Due Reviews Check-Off -->
+              <div class="form-group">
+                <div class="label-with-meta">
+                  <label class="group-title">{{
+                    store.dict().questionnaire.spacedReviewsDue
+                  }}</label>
+                  <span class="due-badge"
+                    >{{ store.dueReviewsTonight().length }} due</span
                   >
-                    <span class="opt-icon">{{ opt.icon }}</span>
-                    <span class="opt-label">{{ opt.label }}</span>
-                  </button>
+                </div>
+
+                <div class="rollover-explainer">
+                  <ah-tooltip
+                    [title]="store.dict().tooltips.rolloverTitle"
+                    [body]="store.dict().tooltips.rolloverBody"
+                    [meaning]="store.dict().tooltips.rolloverMeaning"
+                  >
+                    <strong
+                      >{{
+                        store.dict().questionnaire.rolloverRuleTitle
+                      }}:</strong
+                    >
+                    {{ store.dict().questionnaire.rolloverRuleDesc }}
+                  </ah-tooltip>
+                </div>
+
+                @if (store.dueReviewsTonight().length === 0) {
+                  <div class="empty-reviews-box">
+                    {{ store.dict().questionnaire.noReviewsDue }}
+                  </div>
+                } @else {
+                  <div class="reviews-checklist">
+                    @for (
+                      item of store.dueReviewsTonight();
+                      track item.chapterNumber + item.type
+                    ) {
+                      @let key =
+                        'Ch' +
+                        item.chapterNumber +
+                        '_' +
+                        (item.type === 'D-3'
+                          ? 'D3'
+                          : item.type === 'D-7'
+                            ? 'D7'
+                            : 'D14');
+                      @let isChecked =
+                        store
+                          .questionnaire()
+                          .completedReviewsTonight.includes(key);
+                      <label
+                        class="review-check-card"
+                        [class.review-check-card--checked]="isChecked"
+                      >
+                        <input
+                          type="checkbox"
+                          [checked]="isChecked"
+                          (change)="store.toggleDueReviewChecked(key)"
+                        />
+                        <div class="review-check-info">
+                          <strong
+                            >Ch. {{ item.chapterNumber }} ({{
+                              item.type
+                            }})</strong
+                          >
+                          <span class="due-date-str"
+                            >Due: {{ item.dueDate }}
+                            {{ item.isOverdue ? '⚠️ Overdue' : '' }}</span
+                          >
+                        </div>
+                      </label>
+                    }
+                  </div>
                 }
               </div>
-            </div>
 
-            <!-- Question 5: Today's Due Reviews Check-Off -->
-            <div class="form-group">
-              <div class="label-with-meta">
-                <label class="group-title">{{ store.dict().questionnaire.spacedReviewsDue }}</label>
-                <span class="due-badge">{{ store.dueReviewsTonight().length }} due</span>
+              <!-- Question 6: Weak Subtopics & Error Notes -->
+              <div class="form-group">
+                <label for="errorNotes">{{
+                  store.dict().questionnaire.errorNotesLabel
+                }}</label>
+                <textarea
+                  id="errorNotes"
+                  rows="2"
+                  class="custom-textarea"
+                  [placeholder]="
+                    store.dict().questionnaire.errorNotesPlaceholder
+                  "
+                  [value]="store.questionnaire().errorNotes"
+                  (input)="store.setErrorNotes($any($event.target).value)"
+                ></textarea>
+                <span class="input-hint">{{
+                  store.dict().questionnaire.errorNotesHint
+                }}</span>
               </div>
 
-              <div class="rollover-explainer">
-                <ah-tooltip
-                  [title]="store.dict().tooltips.rolloverTitle"
-                  [body]="store.dict().tooltips.rolloverBody"
-                  [meaning]="store.dict().tooltips.rolloverMeaning"
-                >
-                  <strong>{{ store.dict().questionnaire.rolloverRuleTitle }}:</strong> {{ store.dict().questionnaire.rolloverRuleDesc }}
-                </ah-tooltip>
-              </div>
-
-              @if (store.dueReviewsTonight().length === 0) {
-                <div class="empty-reviews-box">
-                  {{ store.dict().questionnaire.noReviewsDue }}
-                </div>
-              } @else {
-                <div class="reviews-checklist">
-                  @for (item of store.dueReviewsTonight(); track item.chapterNumber + item.type) {
-                    @let key = 'Ch' + item.chapterNumber + '_' + (item.type === 'D-3' ? 'D3' : item.type === 'D-7' ? 'D7' : 'D14');
-                    @let isChecked = store.questionnaire().completedReviewsTonight.includes(key);
-                    <label class="review-check-card" [class.review-check-card--checked]="isChecked">
-                      <input
-                        type="checkbox"
-                        [checked]="isChecked"
-                        (change)="store.toggleDueReviewChecked(key)"
-                      />
-                      <div class="review-check-info">
-                        <strong>Ch. {{ item.chapterNumber }} ({{ item.type }})</strong>
-                        <span class="due-date-str">Due: {{ item.dueDate }} {{ item.isOverdue ? '⚠️ Overdue' : '' }}</span>
-                      </div>
-                    </label>
+              <!-- Question 7: Tomorrow's Day Type Selector -->
+              <div class="form-group">
+                <label class="group-title">{{
+                  store.dict().questionnaire.tomorrowDayType
+                }}</label>
+                <div class="segmented-grid segmented-grid--5">
+                  @for (opt of dayTypeOptions(); track opt.value) {
+                    <button
+                      type="button"
+                      class="segmented-btn"
+                      [class.segmented-btn--active]="
+                        store.questionnaire().dayTypeSelection === opt.value
+                      "
+                      (click)="store.setDayTypeSelection(opt.value)"
+                    >
+                      <span class="opt-icon">{{ opt.icon }}</span>
+                      <span class="opt-label">{{ opt.label }}</span>
+                    </button>
                   }
                 </div>
-              }
-            </div>
-
-            <!-- Question 6: Weak Subtopics & Error Notes -->
-            <div class="form-group">
-              <label for="errorNotes">{{ store.dict().questionnaire.errorNotesLabel }}</label>
-              <textarea
-                id="errorNotes"
-                rows="2"
-                class="custom-textarea"
-                [placeholder]="store.dict().questionnaire.errorNotesPlaceholder"
-                [value]="store.questionnaire().errorNotes"
-                (input)="store.setErrorNotes($any($event.target).value)"
-              ></textarea>
-              <span class="input-hint">{{ store.dict().questionnaire.errorNotesHint }}</span>
-            </div>
-
-            <!-- Question 7: Tomorrow's Day Type Selector -->
-            <div class="form-group">
-              <label class="group-title">{{ store.dict().questionnaire.tomorrowDayType }}</label>
-              <div class="segmented-grid segmented-grid--5">
-                @for (opt of dayTypeOptions(); track opt.value) {
-                  <button
-                    type="button"
-                    class="segmented-btn"
-                    [class.segmented-btn--active]="store.questionnaire().dayTypeSelection === opt.value"
-                    (click)="store.setDayTypeSelection(opt.value)"
-                  >
-                    <span class="opt-icon">{{ opt.icon }}</span>
-                    <span class="opt-label">{{ opt.label }}</span>
-                  </button>
-                }
               </div>
-            </div>
 
-            <!-- Commit Button -->
-            <button
-              ahButton="primary"
-              size="md"
-              type="button"
-              class="commit-button"
-              (click)="store.commitNightlyRitual()"
-            >
-              💾 {{ store.dict().actions.saveAndCommit }}
-            </button>
-          </form>
+              <!-- Commit Button -->
+              <button
+                ahButton="primary"
+                size="md"
+                type="button"
+                class="commit-button"
+                (click)="store.commitNightlyRitual()"
+              >
+                💾 {{ store.dict().actions.saveAndCommit }}
+              </button>
+            </form>
           } @else {
-            <div class="section-collapsed-summary" (click)="store.toggleSection('questionnaire')">
+            <div
+              class="section-collapsed-summary"
+              (click)="store.toggleSection('questionnaire')"
+            >
               <span class="summary-pill">
-                Ch. {{ store.questionnaire().targetChapterNumber }}: {{ store.questionnaire().targetChapterTitle || 'Active Chapter' }}
+                Ch. {{ store.questionnaire().targetChapterNumber }}:
+                {{
+                  store.questionnaire().targetChapterTitle || 'Active Chapter'
+                }}
               </span>
               <span class="summary-pill summary-pill--status">
                 {{ store.questionnaire().completionStatus }}
               </span>
-              <span class="summary-hint">👉 {{ store.dict().collapse.collapsedSummary }}</span>
+              <span class="summary-hint"
+                >👉 {{ store.dict().collapse.collapsedSummary }}</span
+              >
             </div>
           }
         </article>
@@ -853,8 +1102,11 @@
                   <h2 class="card-title">{{ store.dict().schedule.title }}</h2>
                 </div>
                 <p class="schedule-meta-line">
-                  {{ store.decision().tomorrowWeekday }}, {{ store.decision().tomorrowDate }} ·
-                  <span class="schedule-daytype-tag">{{ store.decision().effectiveDayType }}</span>
+                  {{ store.decision().tomorrowWeekday }},
+                  {{ store.decision().tomorrowDate }} ·
+                  <span class="schedule-daytype-tag">{{
+                    store.decision().effectiveDayType
+                  }}</span>
                 </p>
               </div>
 
@@ -863,9 +1115,15 @@
                 class="collapse-toggle-btn schedule-collapse-toggle-mobile"
                 [attr.aria-expanded]="!store.isSectionCollapsed('schedule')"
                 (click)="store.toggleSection('schedule')"
-                [title]="store.isSectionCollapsed('schedule') ? store.dict().collapse.expand : store.dict().collapse.collapse"
+                [title]="
+                  store.isSectionCollapsed('schedule')
+                    ? store.dict().collapse.expand
+                    : store.dict().collapse.collapse
+                "
               >
-                <span class="collapse-icon">{{ store.isSectionCollapsed('schedule') ? '▼' : '▲' }}</span>
+                <span class="collapse-icon">{{
+                  store.isSectionCollapsed('schedule') ? '▼' : '▲'
+                }}</span>
               </button>
             </div>
 
@@ -890,7 +1148,9 @@
                 [title]="store.dict().actions.downloadIcs"
               >
                 <span class="btn-icon">📅</span>
-                <span class="btn-text">{{ store.dict().actions.downloadIcs }}</span>
+                <span class="btn-text">{{
+                  store.dict().actions.downloadIcs
+                }}</span>
               </button>
               <button
                 ahButton="ghost"
@@ -907,76 +1167,111 @@
                 class="collapse-toggle-btn schedule-collapse-toggle-desktop"
                 [attr.aria-expanded]="!store.isSectionCollapsed('schedule')"
                 (click)="store.toggleSection('schedule')"
-                [title]="store.isSectionCollapsed('schedule') ? store.dict().collapse.expand : store.dict().collapse.collapse"
+                [title]="
+                  store.isSectionCollapsed('schedule')
+                    ? store.dict().collapse.expand
+                    : store.dict().collapse.collapse
+                "
               >
-                <span class="collapse-icon">{{ store.isSectionCollapsed('schedule') ? '▼' : '▲' }}</span>
+                <span class="collapse-icon">{{
+                  store.isSectionCollapsed('schedule') ? '▼' : '▲'
+                }}</span>
               </button>
             </div>
           </div>
 
           @if (!store.isSectionCollapsed('schedule')) {
             <!-- Insights & Rationale Banners -->
-          @if (store.decision().insights.length > 0) {
-            <div class="insights-container">
-              @for (insight of store.decision().insights; track insight.title) {
-                <div
-                  class="insight-box"
-                  [class.insight-box--adaptive]="insight.type === 'adaptive-reset'"
-                  [class.insight-box--warning]="insight.variant === 'warning'"
-                  [class.insight-box--success]="insight.variant === 'success'"
-                >
-                  <div class="insight-title-row">
-                    <span class="insight-icon">{{ insight.type === 'adaptive-reset' ? '🌿' : insight.type === 'consolidation' ? '🎯' : insight.type === 'energy' ? '⚡' : '💡' }}</span>
-                    <strong>{{ insight.title }}</strong>
+            @if (store.decision().insights.length > 0) {
+              <div class="insights-container">
+                @for (
+                  insight of store.decision().insights;
+                  track insight.title
+                ) {
+                  <div
+                    class="insight-box"
+                    [class.insight-box--adaptive]="
+                      insight.type === 'adaptive-reset'
+                    "
+                    [class.insight-box--warning]="insight.variant === 'warning'"
+                    [class.insight-box--success]="insight.variant === 'success'"
+                  >
+                    <div class="insight-title-row">
+                      <span class="insight-icon">{{
+                        insight.type === 'adaptive-reset'
+                          ? '🌿'
+                          : insight.type === 'consolidation'
+                            ? '🎯'
+                            : insight.type === 'energy'
+                              ? '⚡'
+                              : '💡'
+                      }}</span>
+                      <strong>{{ insight.title }}</strong>
+                    </div>
+                    <p class="insight-message">{{ insight.message }}</p>
                   </div>
-                  <p class="insight-message">{{ insight.message }}</p>
+                }
+              </div>
+            }
+
+            <!-- Generated Alarm Slots List -->
+            <div class="alarm-slots-list">
+              @for (slot of store.decision().alarms; track slot.time) {
+                <div class="alarm-slot-card">
+                  <div class="alarm-slot-time-col">
+                    <span class="slot-time">{{ slot.time }}</span>
+                    <span
+                      class="slot-badge"
+                      [class]="'slot-badge--' + slot.badgeVariant"
+                    >
+                      {{ slot.badgeLabel }}
+                    </span>
+                  </div>
+
+                  <div class="alarm-slot-content-col">
+                    <div class="slot-title-row">
+                      <h3 class="slot-title">{{ slot.title }}</h3>
+                      <button
+                        ahButton="ghost"
+                        size="sm"
+                        type="button"
+                        class="copy-slot-btn"
+                        [class.copy-slot-btn--copied]="
+                          store.copiedSlotTime() === slot.time
+                        "
+                        (click)="store.copyAlarmTitle(slot.title, slot.time)"
+                      >
+                        {{
+                          store.copiedSlotTime() === slot.time
+                            ? '✓ Copied'
+                            : '📋 ' + store.dict().actions.copySlot
+                        }}
+                      </button>
+                    </div>
+                    <p class="slot-desc">{{ slot.description }}</p>
+                  </div>
                 </div>
               }
             </div>
-          }
 
-          <!-- Generated Alarm Slots List -->
-          <div class="alarm-slots-list">
-            @for (slot of store.decision().alarms; track slot.time) {
-              <div class="alarm-slot-card">
-                <div class="alarm-slot-time-col">
-                  <span class="slot-time">{{ slot.time }}</span>
-                  <span class="slot-badge" [class]="'slot-badge--' + slot.badgeVariant">
-                    {{ slot.badgeLabel }}
-                  </span>
-                </div>
-
-                <div class="alarm-slot-content-col">
-                  <div class="slot-title-row">
-                    <h3 class="slot-title">{{ slot.title }}</h3>
-                    <button
-                      ahButton="ghost"
-                      size="sm"
-                      type="button"
-                      class="copy-slot-btn"
-                      [class.copy-slot-btn--copied]="store.copiedSlotTime() === slot.time"
-                      (click)="store.copyAlarmTitle(slot.title, slot.time)"
-                    >
-                      {{ store.copiedSlotTime() === slot.time ? '✓ Copied' : '📋 ' + store.dict().actions.copySlot }}
-                    </button>
-                  </div>
-                  <p class="slot-desc">{{ slot.description }}</p>
-                </div>
-              </div>
-            }
-          </div>
-
-          <!-- Phone Setup Tip Footnote -->
-          <footer class="schedule-footnote">
-            <span class="footnote-bulb">💡</span>
-            <p>{{ store.dict().schedule.oneMinuteSetupNotice }}</p>
-          </footer>
+            <!-- Phone Setup Tip Footnote -->
+            <footer class="schedule-footnote">
+              <span class="footnote-bulb">💡</span>
+              <p>{{ store.dict().schedule.oneMinuteSetupNotice }}</p>
+            </footer>
           } @else {
-            <div class="section-collapsed-summary" (click)="store.toggleSection('schedule')">
+            <div
+              class="section-collapsed-summary"
+              (click)="store.toggleSection('schedule')"
+            >
               <span class="summary-pill">
-                {{ store.decision().alarms.length }} Alarms Scheduled ({{ store.decision().effectiveDayType }})
+                {{ store.decision().alarms.length }} Alarms Scheduled ({{
+                  store.decision().effectiveDayType
+                }})
               </span>
-              <span class="summary-hint">👉 {{ store.dict().collapse.collapsedSummary }}</span>
+              <span class="summary-hint"
+                >👉 {{ store.dict().collapse.collapsedSummary }}</span
+              >
             </div>
           }
         </article>
@@ -993,16 +1288,25 @@
             </div>
             <div class="header-actions-right">
               @if (store.highCollisionDaysCount() > 0) {
-                <span class="high-load-pill">⚠️ {{ store.highCollisionDaysCount() }} Heavy Load Day(s)</span>
+                <span class="high-load-pill"
+                  >⚠️ {{ store.highCollisionDaysCount() }} Heavy Load
+                  Day(s)</span
+                >
               }
               <button
                 type="button"
                 class="collapse-toggle-btn"
                 [attr.aria-expanded]="!store.isSectionCollapsed('outlook')"
                 (click)="store.toggleSection('outlook')"
-                [title]="store.isSectionCollapsed('outlook') ? store.dict().collapse.expand : store.dict().collapse.collapse"
+                [title]="
+                  store.isSectionCollapsed('outlook')
+                    ? store.dict().collapse.expand
+                    : store.dict().collapse.collapse
+                "
               >
-                <span class="collapse-icon">{{ store.isSectionCollapsed('outlook') ? '▼' : '▲' }}</span>
+                <span class="collapse-icon">{{
+                  store.isSectionCollapsed('outlook') ? '▼' : '▲'
+                }}</span>
               </button>
             </div>
           </div>
@@ -1019,16 +1323,24 @@
                 >
                   <div class="outlook-day-header">
                     <div>
-                      <strong class="outlook-day-name">{{ day.dayOfWeek }}</strong>
+                      <strong class="outlook-day-name">{{
+                        day.dayOfWeek
+                      }}</strong>
                       <span class="outlook-day-date">{{ day.date }}</span>
                     </div>
                     <div class="outlook-badge-col">
                       @if (day.isToday) {
-                        <span class="day-badge day-badge--today">{{ store.dict().outlook.todayBadge }}</span>
+                        <span class="day-badge day-badge--today">{{
+                          store.dict().outlook.todayBadge
+                        }}</span>
                       } @else if (day.isTomorrow) {
-                        <span class="day-badge day-badge--tomorrow">{{ store.dict().outlook.tomorrowBadge }}</span>
+                        <span class="day-badge day-badge--tomorrow">{{
+                          store.dict().outlook.tomorrowBadge
+                        }}</span>
                       }
-                      <span class="day-badge day-badge--type">{{ day.dayType }}</span>
+                      <span class="day-badge day-badge--type">{{
+                        day.dayType
+                      }}</span>
                     </div>
                   </div>
 
@@ -1045,20 +1357,29 @@
 
                   <div class="outlook-reviews-list">
                     @if (day.reviews.length === 0) {
-                      <span class="no-reviews-text">🌱 {{ store.dict().outlook.noReviews }}</span>
+                      <span class="no-reviews-text"
+                        >🌱 {{ store.dict().outlook.noReviews }}</span
+                      >
                     } @else {
-                      @for (rev of day.reviews; track rev.chapterNumber + rev.type) {
+                      @for (
+                        rev of day.reviews;
+                        track rev.chapterNumber + rev.type
+                      ) {
                         <button
                           type="button"
                           class="outlook-review-pill"
                           [class.outlook-review-pill--d3]="rev.type === 'D-3'"
                           [class.outlook-review-pill--d7]="rev.type === 'D-7'"
                           [class.outlook-review-pill--d14]="rev.type === 'D-14'"
-                          (click)="store.openRecallModal(rev.chapterNumber, rev.type)"
+                          (click)="
+                            store.openRecallModal(rev.chapterNumber, rev.type)
+                          "
                           title="Click to open Active Retrieval Challenge"
                         >
                           <span class="rev-type">{{ rev.type }}</span>
-                          <span class="rev-ch">Ch. {{ rev.chapterNumber }}</span>
+                          <span class="rev-ch"
+                            >Ch. {{ rev.chapterNumber }}</span
+                          >
                           <span class="rev-icon">⚡</span>
                         </button>
                       }
@@ -1068,9 +1389,14 @@
               }
             </div>
           } @else {
-            <div class="section-collapsed-summary" (click)="store.toggleSection('outlook')">
+            <div
+              class="section-collapsed-summary"
+              (click)="store.toggleSection('outlook')"
+            >
               <span class="summary-pill">7-Day Spaced Repetition Forecast</span>
-              <span class="summary-hint">👉 {{ store.dict().collapse.collapsedSummary }}</span>
+              <span class="summary-hint"
+                >👉 {{ store.dict().collapse.collapsedSummary }}</span
+              >
             </div>
           }
         </article>
@@ -1098,7 +1424,9 @@
               [class.filter-pill--active]="store.trackerFilter() === 'all'"
               (click)="store.trackerFilter.set('all')"
             >
-              {{ store.dict().tracker.filterAll }} ({{ store.chapters().length }})
+              {{ store.dict().tracker.filterAll }} ({{
+                store.chapters().length
+              }})
             </button>
             <button
               type="button"
@@ -1106,7 +1434,9 @@
               [class.filter-pill--active]="store.trackerFilter() === 'weak'"
               (click)="store.trackerFilter.set('weak')"
             >
-              {{ store.dict().tracker.filterWeak }} ({{ store.weakChapters().length }})
+              {{ store.dict().tracker.filterWeak }} ({{
+                store.weakChapters().length
+              }})
             </button>
             <button
               type="button"
@@ -1114,15 +1444,21 @@
               [class.filter-pill--active]="store.trackerFilter() === 'due'"
               (click)="store.trackerFilter.set('due')"
             >
-              {{ store.dict().tracker.filterDue }} ({{ store.dueReviewsTonight().length }})
+              {{ store.dict().tracker.filterDue }} ({{
+                store.dueReviewsTonight().length
+              }})
             </button>
             <button
               type="button"
               class="filter-pill"
-              [class.filter-pill--active]="store.trackerFilter() === 'carryover'"
+              [class.filter-pill--active]="
+                store.trackerFilter() === 'carryover'
+              "
               (click)="store.trackerFilter.set('carryover')"
             >
-              {{ store.dict().tracker.filterCarryover }} ({{ store.carryoverChapters().length }})
+              {{ store.dict().tracker.filterCarryover }} ({{
+                store.carryoverChapters().length
+              }})
             </button>
           </div>
 
@@ -1141,7 +1477,9 @@
       @if (store.chapters().length === 0) {
         <div class="tracker-empty-state">
           <div class="empty-state-icon">📚</div>
-          <h3 class="empty-state-title">{{ store.dict().tracker.emptyTitle }}</h3>
+          <h3 class="empty-state-title">
+            {{ store.dict().tracker.emptyTitle }}
+          </h3>
           <p class="empty-state-desc">{{ store.dict().tracker.emptyDesc }}</p>
           <div class="empty-state-actions">
             <button
@@ -1214,7 +1552,9 @@
                     <div class="col-chapter-title">{{ ch.title }}</div>
                   </td>
                   <td class="col-topic">
-                    <span class="topic-tag">{{ ch.topicName || 'General' }}</span>
+                    <span class="topic-tag">{{
+                      ch.topicName || 'General'
+                    }}</span>
                   </td>
                   <td class="col-date">{{ ch.originalStudyDate }}</td>
 
@@ -1224,10 +1564,29 @@
                       type="button"
                       class="review-pill"
                       [class.review-pill--done]="ch.d3Completed"
-                      [class.review-pill--due]="!ch.d3Completed && isReviewDue(ch, 'D-3', store.questionnaire().tonightDate)"
-                      (click)="store.toggleChapterReview(ch.chapterNumber, 'D-3')"
+                      [class.review-pill--due]="
+                        !ch.d3Completed &&
+                        isReviewDue(
+                          ch,
+                          'D-3',
+                          store.questionnaire().tonightDate
+                        )
+                      "
+                      (click)="
+                        store.toggleChapterReview(ch.chapterNumber, 'D-3')
+                      "
                     >
-                      {{ ch.d3Completed ? '✓ ' + store.dict().tracker.badgeDone : isReviewDue(ch, 'D-3', store.questionnaire().tonightDate) ? '⚠️ ' + store.dict().tracker.badgeDue : ch.d3Date }}
+                      {{
+                        ch.d3Completed
+                          ? '✓ ' + store.dict().tracker.badgeDone
+                          : isReviewDue(
+                                ch,
+                                'D-3',
+                                store.questionnaire().tonightDate
+                              )
+                            ? '⚠️ ' + store.dict().tracker.badgeDue
+                            : ch.d3Date
+                      }}
                     </button>
                   </td>
 
@@ -1237,10 +1596,29 @@
                       type="button"
                       class="review-pill"
                       [class.review-pill--done]="ch.d7Completed"
-                      [class.review-pill--due]="!ch.d7Completed && isReviewDue(ch, 'D-7', store.questionnaire().tonightDate)"
-                      (click)="store.toggleChapterReview(ch.chapterNumber, 'D-7')"
+                      [class.review-pill--due]="
+                        !ch.d7Completed &&
+                        isReviewDue(
+                          ch,
+                          'D-7',
+                          store.questionnaire().tonightDate
+                        )
+                      "
+                      (click)="
+                        store.toggleChapterReview(ch.chapterNumber, 'D-7')
+                      "
                     >
-                      {{ ch.d7Completed ? '✓ ' + store.dict().tracker.badgeDone : isReviewDue(ch, 'D-7', store.questionnaire().tonightDate) ? '⚠️ ' + store.dict().tracker.badgeDue : ch.d7Date }}
+                      {{
+                        ch.d7Completed
+                          ? '✓ ' + store.dict().tracker.badgeDone
+                          : isReviewDue(
+                                ch,
+                                'D-7',
+                                store.questionnaire().tonightDate
+                              )
+                            ? '⚠️ ' + store.dict().tracker.badgeDue
+                            : ch.d7Date
+                      }}
                     </button>
                   </td>
 
@@ -1250,33 +1628,62 @@
                       type="button"
                       class="review-pill"
                       [class.review-pill--done]="ch.d14Completed"
-                      [class.review-pill--due]="!ch.d14Completed && isReviewDue(ch, 'D-14', store.questionnaire().tonightDate)"
-                      (click)="store.toggleChapterReview(ch.chapterNumber, 'D-14')"
+                      [class.review-pill--due]="
+                        !ch.d14Completed &&
+                        isReviewDue(
+                          ch,
+                          'D-14',
+                          store.questionnaire().tonightDate
+                        )
+                      "
+                      (click)="
+                        store.toggleChapterReview(ch.chapterNumber, 'D-14')
+                      "
                     >
-                      {{ ch.d14Completed ? '✓ ' + store.dict().tracker.badgeDone : isReviewDue(ch, 'D-14', store.questionnaire().tonightDate) ? '⚠️ ' + store.dict().tracker.badgeDue : ch.d14Date }}
+                      {{
+                        ch.d14Completed
+                          ? '✓ ' + store.dict().tracker.badgeDone
+                          : isReviewDue(
+                                ch,
+                                'D-14',
+                                store.questionnaire().tonightDate
+                              )
+                            ? '⚠️ ' + store.dict().tracker.badgeDue
+                            : ch.d14Date
+                      }}
                     </button>
                   </td>
 
                   <!-- Quiz -->
                   <td class="col-quiz">
-                    <span class="quiz-badge" [class.quiz-badge--weak]="ch.isWeak">
-                      {{ ch.quizScorePercent }}% ({{ ch.quizQuestionsMissed }} missed)
+                    <span
+                      class="quiz-badge"
+                      [class.quiz-badge--weak]="ch.isWeak"
+                    >
+                      {{ ch.quizScorePercent }}% ({{ ch.quizQuestionsMissed }}
+                      missed)
                     </span>
                   </td>
 
                   <!-- Status Flags -->
                   <td class="col-flags">
                     @if (ch.isWeak) {
-                      <span class="flag-badge flag-badge--weak">{{ store.dict().tracker.badgeWeak }}</span>
+                      <span class="flag-badge flag-badge--weak">{{
+                        store.dict().tracker.badgeWeak
+                      }}</span>
                     }
                     @if (ch.codingCarryover) {
-                      <span class="flag-badge flag-badge--carryover">{{ store.dict().tracker.badgeCarryover }}</span>
+                      <span class="flag-badge flag-badge--carryover">{{
+                        store.dict().tracker.badgeCarryover
+                      }}</span>
                     }
                   </td>
 
                   <!-- Notes -->
                   <td class="col-notes">
-                    <span class="notes-snippet" [title]="ch.errorNotes">{{ ch.errorNotes || '—' }}</span>
+                    <span class="notes-snippet" [title]="ch.errorNotes">{{
+                      ch.errorNotes || '—'
+                    }}</span>
                   </td>
 
                   <!-- Actions -->
@@ -1320,7 +1727,9 @@
           <div class="guide-hero-icon">📖</div>
           <div class="guide-hero-text">
             <h2 class="guide-hero-title">{{ store.dict().guide.heroTitle }}</h2>
-            <p class="guide-hero-subtitle">{{ store.dict().guide.heroSubtitle }}</p>
+            <p class="guide-hero-subtitle">
+              {{ store.dict().guide.heroSubtitle }}
+            </p>
           </div>
         </div>
         <div class="guide-hero-actions">
@@ -1336,19 +1745,32 @@
 
       <!-- 5 CORE PRINCIPLES -->
       <section class="guide-section">
-        <div class="guide-section-header guide-section-header--collapsible" (click)="store.toggleSection('guidePrinciples')">
+        <div
+          class="guide-section-header guide-section-header--collapsible"
+          (click)="store.toggleSection('guidePrinciples')"
+        >
           <div class="guide-header-title-group">
             <span class="guide-section-icon">💎</span>
-            <h3 class="guide-section-title">{{ store.dict().guide.philosophyTitle }}</h3>
+            <h3 class="guide-section-title">
+              {{ store.dict().guide.philosophyTitle }}
+            </h3>
           </div>
           <button
             type="button"
             class="collapse-toggle-btn"
             [attr.aria-expanded]="!store.isSectionCollapsed('guidePrinciples')"
-            (click)="$event.stopPropagation(); store.toggleSection('guidePrinciples')"
-            [title]="store.isSectionCollapsed('guidePrinciples') ? store.dict().collapse.expand : store.dict().collapse.collapse"
+            (click)="
+              $event.stopPropagation(); store.toggleSection('guidePrinciples')
+            "
+            [title]="
+              store.isSectionCollapsed('guidePrinciples')
+                ? store.dict().collapse.expand
+                : store.dict().collapse.collapse
+            "
           >
-            <span class="collapse-icon">{{ store.isSectionCollapsed('guidePrinciples') ? '▼' : '▲' }}</span>
+            <span class="collapse-icon">{{
+              store.isSectionCollapsed('guidePrinciples') ? '▼' : '▲'
+            }}</span>
           </button>
         </div>
         @if (!store.isSectionCollapsed('guidePrinciples')) {
@@ -1356,41 +1778,61 @@
             <div class="principle-card">
               <div class="principle-header">
                 <span class="principle-icon">⏰</span>
-                <h4 class="principle-title">{{ store.dict().guide.principle1Title }}</h4>
+                <h4 class="principle-title">
+                  {{ store.dict().guide.principle1Title }}
+                </h4>
               </div>
-              <p class="principle-body">{{ store.dict().guide.principle1Body }}</p>
+              <p class="principle-body">
+                {{ store.dict().guide.principle1Body }}
+              </p>
             </div>
 
             <div class="principle-card">
               <div class="principle-header">
                 <span class="principle-icon">🧠</span>
-                <h4 class="principle-title">{{ store.dict().guide.principle2Title }}</h4>
+                <h4 class="principle-title">
+                  {{ store.dict().guide.principle2Title }}
+                </h4>
               </div>
-              <p class="principle-body">{{ store.dict().guide.principle2Body }}</p>
+              <p class="principle-body">
+                {{ store.dict().guide.principle2Body }}
+              </p>
             </div>
 
             <div class="principle-card">
               <div class="principle-header">
                 <span class="principle-icon">🏁</span>
-                <h4 class="principle-title">{{ store.dict().guide.principle3Title }}</h4>
+                <h4 class="principle-title">
+                  {{ store.dict().guide.principle3Title }}
+                </h4>
               </div>
-              <p class="principle-body">{{ store.dict().guide.principle3Body }}</p>
+              <p class="principle-body">
+                {{ store.dict().guide.principle3Body }}
+              </p>
             </div>
 
             <div class="principle-card">
               <div class="principle-header">
                 <span class="principle-icon">🌿</span>
-                <h4 class="principle-title">{{ store.dict().guide.principle4Title }}</h4>
+                <h4 class="principle-title">
+                  {{ store.dict().guide.principle4Title }}
+                </h4>
               </div>
-              <p class="principle-body">{{ store.dict().guide.principle4Body }}</p>
+              <p class="principle-body">
+                {{ store.dict().guide.principle4Body }}
+              </p>
             </div>
 
             <div class="principle-card">
               <div class="principle-header">
                 <span class="principle-icon">🔄</span>
-                <h4 class="principle-title">{{ store.dict().guide.principle5Title }}</h4>
+                <h4 class="principle-title">
+                  {{ store.dict().guide.principle5Title }}
+                </h4>
               </div>
-              <p class="principle-body">{{ store.dict().guide.principle5Body }}</p>
+              <p class="principle-body">
+                {{ store.dict().guide.principle5Body }}
+              </p>
             </div>
           </div>
         }
@@ -1398,185 +1840,283 @@
 
       <!-- 1-WEEK WALKTHROUGH TIMELINE -->
       <section class="guide-section">
-        <div class="guide-section-header guide-section-header--collapsible" (click)="store.toggleSection('guideTimeline')">
+        <div
+          class="guide-section-header guide-section-header--collapsible"
+          (click)="store.toggleSection('guideTimeline')"
+        >
           <div class="guide-header-title-group">
             <span class="guide-section-icon">📅</span>
             <div>
-              <h3 class="guide-section-title">{{ store.dict().guide.timelineTitle }}</h3>
-              <p class="guide-section-subtitle">{{ store.dict().guide.timelineSubtitle }}</p>
+              <h3 class="guide-section-title">
+                {{ store.dict().guide.timelineTitle }}
+              </h3>
+              <p class="guide-section-subtitle">
+                {{ store.dict().guide.timelineSubtitle }}
+              </p>
             </div>
           </div>
           <button
             type="button"
             class="collapse-toggle-btn"
             [attr.aria-expanded]="!store.isSectionCollapsed('guideTimeline')"
-            (click)="$event.stopPropagation(); store.toggleSection('guideTimeline')"
-            [title]="store.isSectionCollapsed('guideTimeline') ? store.dict().collapse.expand : store.dict().collapse.collapse"
+            (click)="
+              $event.stopPropagation(); store.toggleSection('guideTimeline')
+            "
+            [title]="
+              store.isSectionCollapsed('guideTimeline')
+                ? store.dict().collapse.expand
+                : store.dict().collapse.collapse
+            "
           >
-            <span class="collapse-icon">{{ store.isSectionCollapsed('guideTimeline') ? '▼' : '▲' }}</span>
+            <span class="collapse-icon">{{
+              store.isSectionCollapsed('guideTimeline') ? '▼' : '▲'
+            }}</span>
           </button>
         </div>
 
         @if (!store.isSectionCollapsed('guideTimeline')) {
           <div class="timeline-grid">
-          <!-- Monday -->
-          <div class="timeline-day-card timeline-day-card--fasting">
-            <div class="timeline-day-header">
-              <span class="day-badge day-badge--fasting">{{ store.dict().guide.monBadge }}</span>
-              <h4 class="day-title">{{ store.dict().guide.monTitle }}</h4>
+            <!-- Monday -->
+            <div class="timeline-day-card timeline-day-card--fasting">
+              <div class="timeline-day-header">
+                <span class="day-badge day-badge--fasting">{{
+                  store.dict().guide.monBadge
+                }}</span>
+                <h4 class="day-title">{{ store.dict().guide.monTitle }}</h4>
+              </div>
+              <div class="timeline-block block-happened">
+                <span class="block-label"
+                  >📝 {{ store.dict().tracker.thStatus }}:</span
+                >
+                <p class="block-text">
+                  {{ store.dict().guide.monWhatHappened }}
+                </p>
+              </div>
+              <div class="timeline-block block-reaction">
+                <span class="block-label">⚙️ Algorithm:</span>
+                <p class="block-text">
+                  {{ store.dict().guide.monAlgorithmReaction }}
+                </p>
+              </div>
+              <div class="timeline-block block-alarm">
+                <span class="block-label">⏰ Alarm Preview:</span>
+                <code class="alarm-code">{{
+                  store.dict().guide.monAlarmPreview
+                }}</code>
+              </div>
             </div>
-            <div class="timeline-block block-happened">
-              <span class="block-label">📝 {{ store.dict().tracker.thStatus }}:</span>
-              <p class="block-text">{{ store.dict().guide.monWhatHappened }}</p>
-            </div>
-            <div class="timeline-block block-reaction">
-              <span class="block-label">⚙️ Algorithm:</span>
-              <p class="block-text">{{ store.dict().guide.monAlgorithmReaction }}</p>
-            </div>
-            <div class="timeline-block block-alarm">
-              <span class="block-label">⏰ Alarm Preview:</span>
-              <code class="alarm-code">{{ store.dict().guide.monAlarmPreview }}</code>
-            </div>
-          </div>
 
-          <!-- Tuesday -->
-          <div class="timeline-day-card timeline-day-card--weak">
-            <div class="timeline-day-header">
-              <span class="day-badge day-badge--weak">{{ store.dict().guide.tueBadge }}</span>
-              <h4 class="day-title">{{ store.dict().guide.tueTitle }}</h4>
+            <!-- Tuesday -->
+            <div class="timeline-day-card timeline-day-card--weak">
+              <div class="timeline-day-header">
+                <span class="day-badge day-badge--weak">{{
+                  store.dict().guide.tueBadge
+                }}</span>
+                <h4 class="day-title">{{ store.dict().guide.tueTitle }}</h4>
+              </div>
+              <div class="timeline-block block-happened">
+                <span class="block-label"
+                  >📝 {{ store.dict().tracker.thStatus }}:</span
+                >
+                <p class="block-text">
+                  {{ store.dict().guide.tueWhatHappened }}
+                </p>
+              </div>
+              <div class="timeline-block block-reaction">
+                <span class="block-label">⚙️ Algorithm:</span>
+                <p class="block-text">
+                  {{ store.dict().guide.tueAlgorithmReaction }}
+                </p>
+              </div>
+              <div class="timeline-block block-alarm">
+                <span class="block-label">⏰ Alarm Preview:</span>
+                <code class="alarm-code">{{
+                  store.dict().guide.tueAlarmPreview
+                }}</code>
+              </div>
             </div>
-            <div class="timeline-block block-happened">
-              <span class="block-label">📝 {{ store.dict().tracker.thStatus }}:</span>
-              <p class="block-text">{{ store.dict().guide.tueWhatHappened }}</p>
-            </div>
-            <div class="timeline-block block-reaction">
-              <span class="block-label">⚙️ Algorithm:</span>
-              <p class="block-text">{{ store.dict().guide.tueAlgorithmReaction }}</p>
-            </div>
-            <div class="timeline-block block-alarm">
-              <span class="block-label">⏰ Alarm Preview:</span>
-              <code class="alarm-code">{{ store.dict().guide.tueAlarmPreview }}</code>
-            </div>
-          </div>
 
-          <!-- Wednesday -->
-          <div class="timeline-day-card">
-            <div class="timeline-day-header">
-              <span class="day-badge day-badge--standard">{{ store.dict().guide.wedBadge }}</span>
-              <h4 class="day-title">{{ store.dict().guide.wedTitle }}</h4>
+            <!-- Wednesday -->
+            <div class="timeline-day-card">
+              <div class="timeline-day-header">
+                <span class="day-badge day-badge--standard">{{
+                  store.dict().guide.wedBadge
+                }}</span>
+                <h4 class="day-title">{{ store.dict().guide.wedTitle }}</h4>
+              </div>
+              <div class="timeline-block block-happened">
+                <span class="block-label"
+                  >📝 {{ store.dict().tracker.thStatus }}:</span
+                >
+                <p class="block-text">
+                  {{ store.dict().guide.wedWhatHappened }}
+                </p>
+              </div>
+              <div class="timeline-block block-reaction">
+                <span class="block-label">⚙️ Algorithm:</span>
+                <p class="block-text">
+                  {{ store.dict().guide.wedAlgorithmReaction }}
+                </p>
+              </div>
+              <div class="timeline-block block-alarm">
+                <span class="block-label">⏰ Alarm Preview:</span>
+                <code class="alarm-code">{{
+                  store.dict().guide.wedAlarmPreview
+                }}</code>
+              </div>
             </div>
-            <div class="timeline-block block-happened">
-              <span class="block-label">📝 {{ store.dict().tracker.thStatus }}:</span>
-              <p class="block-text">{{ store.dict().guide.wedWhatHappened }}</p>
-            </div>
-            <div class="timeline-block block-reaction">
-              <span class="block-label">⚙️ Algorithm:</span>
-              <p class="block-text">{{ store.dict().guide.wedAlgorithmReaction }}</p>
-            </div>
-            <div class="timeline-block block-alarm">
-              <span class="block-label">⏰ Alarm Preview:</span>
-              <code class="alarm-code">{{ store.dict().guide.wedAlarmPreview }}</code>
-            </div>
-          </div>
 
-          <!-- Thursday -->
-          <div class="timeline-day-card timeline-day-card--due">
-            <div class="timeline-day-header">
-              <span class="day-badge day-badge--due">{{ store.dict().guide.thuBadge }}</span>
-              <h4 class="day-title">{{ store.dict().guide.thuTitle }}</h4>
+            <!-- Thursday -->
+            <div class="timeline-day-card timeline-day-card--due">
+              <div class="timeline-day-header">
+                <span class="day-badge day-badge--due">{{
+                  store.dict().guide.thuBadge
+                }}</span>
+                <h4 class="day-title">{{ store.dict().guide.thuTitle }}</h4>
+              </div>
+              <div class="timeline-block block-happened">
+                <span class="block-label"
+                  >📝 {{ store.dict().tracker.thStatus }}:</span
+                >
+                <p class="block-text">
+                  {{ store.dict().guide.thuWhatHappened }}
+                </p>
+              </div>
+              <div class="timeline-block block-reaction">
+                <span class="block-label">⚙️ Algorithm:</span>
+                <p class="block-text">
+                  {{ store.dict().guide.thuAlgorithmReaction }}
+                </p>
+              </div>
+              <div class="timeline-block block-alarm">
+                <span class="block-label">⏰ Alarm Preview:</span>
+                <code class="alarm-code">{{
+                  store.dict().guide.thuAlarmPreview
+                }}</code>
+              </div>
             </div>
-            <div class="timeline-block block-happened">
-              <span class="block-label">📝 {{ store.dict().tracker.thStatus }}:</span>
-              <p class="block-text">{{ store.dict().guide.thuWhatHappened }}</p>
-            </div>
-            <div class="timeline-block block-reaction">
-              <span class="block-label">⚙️ Algorithm:</span>
-              <p class="block-text">{{ store.dict().guide.thuAlgorithmReaction }}</p>
-            </div>
-            <div class="timeline-block block-alarm">
-              <span class="block-label">⏰ Alarm Preview:</span>
-              <code class="alarm-code">{{ store.dict().guide.thuAlarmPreview }}</code>
-            </div>
-          </div>
 
-          <!-- Friday -->
-          <div class="timeline-day-card timeline-day-card--recovery">
-            <div class="timeline-day-header">
-              <span class="day-badge day-badge--recovery">{{ store.dict().guide.friBadge }}</span>
-              <h4 class="day-title">{{ store.dict().guide.friTitle }}</h4>
+            <!-- Friday -->
+            <div class="timeline-day-card timeline-day-card--recovery">
+              <div class="timeline-day-header">
+                <span class="day-badge day-badge--recovery">{{
+                  store.dict().guide.friBadge
+                }}</span>
+                <h4 class="day-title">{{ store.dict().guide.friTitle }}</h4>
+              </div>
+              <div class="timeline-block block-happened">
+                <span class="block-label"
+                  >📝 {{ store.dict().tracker.thStatus }}:</span
+                >
+                <p class="block-text">
+                  {{ store.dict().guide.friWhatHappened }}
+                </p>
+              </div>
+              <div class="timeline-block block-reaction">
+                <span class="block-label">⚙️ Algorithm:</span>
+                <p class="block-text">
+                  {{ store.dict().guide.friAlgorithmReaction }}
+                </p>
+              </div>
+              <div class="timeline-block block-alarm">
+                <span class="block-label">⏰ Alarm Preview:</span>
+                <code class="alarm-code">{{
+                  store.dict().guide.friAlarmPreview
+                }}</code>
+              </div>
             </div>
-            <div class="timeline-block block-happened">
-              <span class="block-label">📝 {{ store.dict().tracker.thStatus }}:</span>
-              <p class="block-text">{{ store.dict().guide.friWhatHappened }}</p>
-            </div>
-            <div class="timeline-block block-reaction">
-              <span class="block-label">⚙️ Algorithm:</span>
-              <p class="block-text">{{ store.dict().guide.friAlgorithmReaction }}</p>
-            </div>
-            <div class="timeline-block block-alarm">
-              <span class="block-label">⏰ Alarm Preview:</span>
-              <code class="alarm-code">{{ store.dict().guide.friAlarmPreview }}</code>
-            </div>
-          </div>
 
-          <!-- Saturday -->
-          <div class="timeline-day-card timeline-day-card--missed">
-            <div class="timeline-day-header">
-              <span class="day-badge day-badge--missed">{{ store.dict().guide.satBadge }}</span>
-              <h4 class="day-title">{{ store.dict().guide.satTitle }}</h4>
+            <!-- Saturday -->
+            <div class="timeline-day-card timeline-day-card--missed">
+              <div class="timeline-day-header">
+                <span class="day-badge day-badge--missed">{{
+                  store.dict().guide.satBadge
+                }}</span>
+                <h4 class="day-title">{{ store.dict().guide.satTitle }}</h4>
+              </div>
+              <div class="timeline-block block-happened">
+                <span class="block-label"
+                  >📝 {{ store.dict().tracker.thStatus }}:</span
+                >
+                <p class="block-text">
+                  {{ store.dict().guide.satWhatHappened }}
+                </p>
+              </div>
+              <div class="timeline-block block-reaction">
+                <span class="block-label">⚙️ Algorithm:</span>
+                <p class="block-text">
+                  {{ store.dict().guide.satAlgorithmReaction }}
+                </p>
+              </div>
+              <div class="timeline-block block-alarm">
+                <span class="block-label">⏰ Alarm Preview:</span>
+                <code class="alarm-code">{{
+                  store.dict().guide.satAlarmPreview
+                }}</code>
+              </div>
             </div>
-            <div class="timeline-block block-happened">
-              <span class="block-label">📝 {{ store.dict().tracker.thStatus }}:</span>
-              <p class="block-text">{{ store.dict().guide.satWhatHappened }}</p>
-            </div>
-            <div class="timeline-block block-reaction">
-              <span class="block-label">⚙️ Algorithm:</span>
-              <p class="block-text">{{ store.dict().guide.satAlgorithmReaction }}</p>
-            </div>
-            <div class="timeline-block block-alarm">
-              <span class="block-label">⏰ Alarm Preview:</span>
-              <code class="alarm-code">{{ store.dict().guide.satAlarmPreview }}</code>
-            </div>
-          </div>
 
-          <!-- Sunday -->
-          <div class="timeline-day-card timeline-day-card--consolidation">
-            <div class="timeline-day-header">
-              <span class="day-badge day-badge--consolidation">{{ store.dict().guide.sunBadge }}</span>
-              <h4 class="day-title">{{ store.dict().guide.sunTitle }}</h4>
-            </div>
-            <div class="timeline-block block-happened">
-              <span class="block-label">📝 {{ store.dict().tracker.thStatus }}:</span>
-              <p class="block-text">{{ store.dict().guide.sunWhatHappened }}</p>
-            </div>
-            <div class="timeline-block block-reaction">
-              <span class="block-label">⚙️ Algorithm:</span>
-              <p class="block-text">{{ store.dict().guide.sunAlgorithmReaction }}</p>
-            </div>
-            <div class="timeline-block block-alarm">
-              <span class="block-label">⏰ Alarm Preview:</span>
-              <code class="alarm-code">{{ store.dict().guide.sunAlarmPreview }}</code>
+            <!-- Sunday -->
+            <div class="timeline-day-card timeline-day-card--consolidation">
+              <div class="timeline-day-header">
+                <span class="day-badge day-badge--consolidation">{{
+                  store.dict().guide.sunBadge
+                }}</span>
+                <h4 class="day-title">{{ store.dict().guide.sunTitle }}</h4>
+              </div>
+              <div class="timeline-block block-happened">
+                <span class="block-label"
+                  >📝 {{ store.dict().tracker.thStatus }}:</span
+                >
+                <p class="block-text">
+                  {{ store.dict().guide.sunWhatHappened }}
+                </p>
+              </div>
+              <div class="timeline-block block-reaction">
+                <span class="block-label">⚙️ Algorithm:</span>
+                <p class="block-text">
+                  {{ store.dict().guide.sunAlgorithmReaction }}
+                </p>
+              </div>
+              <div class="timeline-block block-alarm">
+                <span class="block-label">⏰ Alarm Preview:</span>
+                <code class="alarm-code">{{
+                  store.dict().guide.sunAlarmPreview
+                }}</code>
+              </div>
             </div>
           </div>
-        </div>
-      }
+        }
       </section>
 
       <!-- DAILY 3-STEP EXECUTION CHEAT SHEET -->
       <section class="guide-section">
-        <div class="guide-section-header guide-section-header--collapsible" (click)="store.toggleSection('guideRoutine')">
+        <div
+          class="guide-section-header guide-section-header--collapsible"
+          (click)="store.toggleSection('guideRoutine')"
+        >
           <div class="guide-header-title-group">
             <span class="guide-section-icon">⚡</span>
-            <h3 class="guide-section-title">{{ store.dict().guide.routineTitle }}</h3>
+            <h3 class="guide-section-title">
+              {{ store.dict().guide.routineTitle }}
+            </h3>
           </div>
           <button
             type="button"
             class="collapse-toggle-btn"
             [attr.aria-expanded]="!store.isSectionCollapsed('guideRoutine')"
-            (click)="$event.stopPropagation(); store.toggleSection('guideRoutine')"
-            [title]="store.isSectionCollapsed('guideRoutine') ? store.dict().collapse.expand : store.dict().collapse.collapse"
+            (click)="
+              $event.stopPropagation(); store.toggleSection('guideRoutine')
+            "
+            [title]="
+              store.isSectionCollapsed('guideRoutine')
+                ? store.dict().collapse.expand
+                : store.dict().collapse.collapse
+            "
           >
-            <span class="collapse-icon">{{ store.isSectionCollapsed('guideRoutine') ? '▼' : '▲' }}</span>
+            <span class="collapse-icon">{{
+              store.isSectionCollapsed('guideRoutine') ? '▼' : '▲'
+            }}</span>
           </button>
         </div>
 
@@ -1585,7 +2125,9 @@
             <div class="cheat-card">
               <div class="cheat-header">
                 <span class="cheat-num">1</span>
-                <h4 class="cheat-title">{{ store.dict().guide.morningTitle }}</h4>
+                <h4 class="cheat-title">
+                  {{ store.dict().guide.morningTitle }}
+                </h4>
               </div>
               <p class="cheat-desc">{{ store.dict().guide.morningDesc }}</p>
             </div>
@@ -1601,7 +2143,9 @@
             <div class="cheat-card">
               <div class="cheat-header">
                 <span class="cheat-num">3</span>
-                <h4 class="cheat-title">{{ store.dict().guide.bedtimeTitle }}</h4>
+                <h4 class="cheat-title">
+                  {{ store.dict().guide.bedtimeTitle }}
+                </h4>
               </div>
               <p class="cheat-desc">{{ store.dict().guide.bedtimeDesc }}</p>
             </div>
@@ -1622,7 +2166,9 @@
           <div>
             <h2 class="card-title">Permanent Phone Alarms Quick Reference</h2>
             <p class="card-subtitle">
-              Set up these 8 recurring alarms once in your native Clock app. Every night, copy tomorrow's generated exact title into the matching alarm slot in under 60 seconds!
+              Set up these 8 recurring alarms once in your native Clock app.
+              Every night, copy tomorrow's generated exact title into the
+              matching alarm slot in under 60 seconds!
             </p>
           </div>
         </div>
@@ -1653,14 +2199,23 @@
   <!-- ==================================================================== -->
   <ah-modal
     [open]="store.isChapterModalOpen()"
-    [title]="store.editingChapter() ? store.dict().modal.editChapterTitle : store.dict().modal.addChapterTitle"
+    [title]="
+      store.editingChapter()
+        ? store.dict().modal.editChapterTitle
+        : store.dict().modal.addChapterTitle
+    "
     (closed)="store.isChapterModalOpen.set(false)"
   >
     @if (store.editingChapter(); as chapter) {
-      <form class="modal-form" (submit)="$event.preventDefault(); store.saveChapterModal(chapter)">
+      <form
+        class="modal-form"
+        (submit)="$event.preventDefault(); store.saveChapterModal(chapter)"
+      >
         <div class="form-row-2">
           <div class="form-group">
-            <label for="modalChNum">{{ store.dict().modal.chapterNumber }}</label>
+            <label for="modalChNum">{{
+              store.dict().modal.chapterNumber
+            }}</label>
             <input
               id="modalChNum"
               type="number"
@@ -1688,7 +2243,9 @@
         </div>
 
         <div class="form-group">
-          <label for="modalChTitle">{{ store.dict().modal.chapterTitle }}</label>
+          <label for="modalChTitle">{{
+            store.dict().modal.chapterTitle
+          }}</label>
           <input
             id="modalChTitle"
             type="text"
@@ -1720,21 +2277,38 @@
         <div class="form-row-3 auto-computed-row">
           <div class="auto-date-field">
             <span class="auto-date-label">D-3 (+3d)</span>
-            <input type="text" class="custom-input custom-input--readonly" [value]="chapter.d3Date" readonly />
+            <input
+              type="text"
+              class="custom-input custom-input--readonly"
+              [value]="chapter.d3Date"
+              readonly
+            />
           </div>
           <div class="auto-date-field">
             <span class="auto-date-label">D-7 (+7d)</span>
-            <input type="text" class="custom-input custom-input--readonly" [value]="chapter.d7Date" readonly />
+            <input
+              type="text"
+              class="custom-input custom-input--readonly"
+              [value]="chapter.d7Date"
+              readonly
+            />
           </div>
           <div class="auto-date-field">
             <span class="auto-date-label">D-14 (+14d)</span>
-            <input type="text" class="custom-input custom-input--readonly" [value]="chapter.d14Date" readonly />
+            <input
+              type="text"
+              class="custom-input custom-input--readonly"
+              [value]="chapter.d14Date"
+              readonly
+            />
           </div>
         </div>
 
         <div class="form-row-2">
           <div class="form-group">
-            <label for="modalQuizScore">{{ store.dict().modal.quizScore }}</label>
+            <label for="modalQuizScore">{{
+              store.dict().modal.quizScore
+            }}</label>
             <input
               id="modalQuizScore"
               type="number"
@@ -1747,7 +2321,9 @@
           </div>
 
           <div class="form-group">
-            <label for="modalMissed">{{ store.dict().modal.questionsMissed }}</label>
+            <label for="modalMissed">{{
+              store.dict().modal.questionsMissed
+            }}</label>
             <input
               id="modalMissed"
               type="number"
@@ -1806,13 +2382,19 @@
   <!-- ==================================================================== -->
   <ah-modal
     [open]="store.isNewTopicModalOpen()"
-    [title]="store.editingTopic() ? store.dict().topicModal.modalTitleEdit : store.dict().topicModal.modalTitleCreate"
+    [title]="
+      store.editingTopic()
+        ? store.dict().topicModal.modalTitleEdit
+        : store.dict().topicModal.modalTitleCreate
+    "
     (closed)="store.isNewTopicModalOpen.set(false)"
   >
     <div class="modal-form">
       <!-- Topic Name -->
       <div class="form-group">
-        <label for="newTopicName">{{ store.dict().topicModal.nameLabel }}</label>
+        <label for="newTopicName">{{
+          store.dict().topicModal.nameLabel
+        }}</label>
         <input
           id="newTopicName"
           type="text"
@@ -1825,7 +2407,9 @@
 
       <!-- Topic Description / Summary -->
       <div class="form-group">
-        <label for="newTopicDesc">{{ store.dict().topicModal.descLabel }}</label>
+        <label for="newTopicDesc">{{
+          store.dict().topicModal.descLabel
+        }}</label>
         <textarea
           id="newTopicDesc"
           rows="2"
@@ -1840,7 +2424,17 @@
       <div class="form-group">
         <label>{{ store.dict().topicModal.colorLabel }}</label>
         <div class="color-options-row">
-          @for (c of ['#6366f1', '#06b6d4', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6']; track c) {
+          @for (
+            c of [
+              '#6366f1',
+              '#06b6d4',
+              '#10b981',
+              '#f59e0b',
+              '#ec4899',
+              '#8b5cf6',
+            ];
+            track c
+          ) {
             <button
               type="button"
               class="color-choice-btn"
@@ -1858,8 +2452,12 @@
           <div class="doc-parser-title-group">
             <span class="doc-parser-icon">📄</span>
             <div>
-              <h4 class="doc-parser-heading">{{ store.dict().topicModal.docParserTitle }}</h4>
-              <p class="doc-parser-subtext">{{ store.dict().topicModal.docParserSubtitle }}</p>
+              <h4 class="doc-parser-heading">
+                {{ store.dict().topicModal.docParserTitle }}
+              </h4>
+              <p class="doc-parser-subtext">
+                {{ store.dict().topicModal.docParserSubtitle }}
+              </p>
             </div>
           </div>
 
@@ -1889,7 +2487,9 @@
         @if (showN8nSettings()) {
           <div class="n8n-config-box">
             <div class="form-group">
-              <label for="n8nWebhookUrlInput">{{ store.dict().topicModal.n8nWebhookUrlLabel }}</label>
+              <label for="n8nWebhookUrlInput">{{
+                store.dict().topicModal.n8nWebhookUrlLabel
+              }}</label>
               <div class="n8n-url-input-row">
                 <input
                   id="n8nWebhookUrlInput"
@@ -1936,10 +2536,14 @@
                 (click)="docExtractionPrompt.set('')"
                 title="Clear prompt"
                 [disabled]="store.isParsingDoc()"
-              >✕</button>
+              >
+                ✕
+              </button>
             }
           </div>
-          <span class="doc-prompt-hint">{{ store.dict().topicModal.docPromptHint }}</span>
+          <span class="doc-prompt-hint">{{
+            store.dict().topicModal.docPromptHint
+          }}</span>
         </div>
 
         <!-- Dropzone / File Picker -->
@@ -1967,17 +2571,26 @@
             <div class="dropzone-loading" role="status" aria-live="polite">
               <span class="loading-spinner-ring" aria-hidden="true"></span>
               <div class="loading-text-group">
-                <span class="loading-title">{{ store.dict().topicModal.parsingInProgress }}</span>
+                <span class="loading-title">{{
+                  store.dict().topicModal.parsingInProgress
+                }}</span>
                 @if (parsingFileName(); as name) {
                   <span class="loading-filename">{{ name }}</span>
                 }
               </div>
             </div>
           } @else {
-            <div class="dropzone-content" (click)="!store.isParsingDoc() && docFileInput.click()">
+            <div
+              class="dropzone-content"
+              (click)="!store.isParsingDoc() && docFileInput.click()"
+            >
               <span class="dropzone-icon" aria-hidden="true">📥</span>
-              <span class="dropzone-label">{{ store.dict().topicModal.docUploadLabel }}</span>
-              <span class="dropzone-hint">{{ store.dict().topicModal.docUploadHint }}</span>
+              <span class="dropzone-label">{{
+                store.dict().topicModal.docUploadLabel
+              }}</span>
+              <span class="dropzone-hint">{{
+                store.dict().topicModal.docUploadHint
+              }}</span>
             </div>
           }
         </div>
@@ -1987,7 +2600,9 @@
             <div class="doc-parse-error-content">
               <span class="error-icon" aria-hidden="true">⚠️</span>
               <div class="error-text">
-                <strong class="error-heading">{{ store.dict().topicModal.parseErrorTitle }}</strong>
+                <strong class="error-heading">{{
+                  store.dict().topicModal.parseErrorTitle
+                }}</strong>
                 <p class="error-detail">{{ err }}</p>
               </div>
             </div>
@@ -1996,7 +2611,9 @@
               class="dismiss-error-btn"
               (click)="store.docParseError.set(null)"
               aria-label="Dismiss error"
-            >✕</button>
+            >
+              ✕
+            </button>
           </div>
         }
       </div>
@@ -2004,10 +2621,13 @@
       <!-- Chapters / Syllabus Outline Textarea -->
       <div class="form-group">
         <div class="label-with-meta">
-          <label for="newTopicSyllabus">{{ store.dict().topicModal.syllabusLabel }}</label>
+          <label for="newTopicSyllabus">{{
+            store.dict().topicModal.syllabusLabel
+          }}</label>
           @if (parsedOutlineCount() > 0) {
             <span class="syllabus-detected-badge">
-              ✓ {{ parsedOutlineCount() }} {{ store.dict().topicModal.parsedCountNotice }}
+              ✓ {{ parsedOutlineCount() }}
+              {{ store.dict().topicModal.parsedCountNotice }}
             </span>
           }
         </div>
@@ -2019,13 +2639,17 @@
           [value]="newTopicSyllabus()"
           (input)="newTopicSyllabus.set($any($event.target).value)"
         ></textarea>
-        <span class="input-hint">{{ store.dict().topicModal.syllabusHint }}</span>
+        <span class="input-hint">{{
+          store.dict().topicModal.syllabusHint
+        }}</span>
       </div>
 
       <!-- Syllabus Schedule Mode -->
       @if (parsedOutlineCount() > 0) {
         <div class="form-group">
-          <label class="group-title">{{ store.dict().topicModal.scheduleModeLabel }}</label>
+          <label class="group-title">{{
+            store.dict().topicModal.scheduleModeLabel
+          }}</label>
           <div class="segmented-grid segmented-grid--2">
             <button
               type="button"
@@ -2034,16 +2658,22 @@
               (click)="newTopicImportMode.set('queue')"
             >
               <span class="opt-icon">⏳</span>
-              <span class="opt-label">{{ store.dict().topicModal.scheduleModeQueue }}</span>
+              <span class="opt-label">{{
+                store.dict().topicModal.scheduleModeQueue
+              }}</span>
             </button>
             <button
               type="button"
               class="segmented-btn"
-              [class.segmented-btn--active]="newTopicImportMode() === 'backfill'"
+              [class.segmented-btn--active]="
+                newTopicImportMode() === 'backfill'
+              "
               (click)="newTopicImportMode.set('backfill')"
             >
               <span class="opt-icon">⚡</span>
-              <span class="opt-label">{{ store.dict().topicModal.scheduleModeBackfill }}</span>
+              <span class="opt-label">{{
+                store.dict().topicModal.scheduleModeBackfill
+              }}</span>
             </button>
           </div>
         </div>
@@ -2057,11 +2687,7 @@
         >
           {{ store.dict().topicModal.cancel }}
         </button>
-        <button
-          ahButton="primary"
-          type="button"
-          (click)="submitTopicModal()"
-        >
+        <button ahButton="primary" type="button" (click)="submitTopicModal()">
           💾 {{ store.dict().topicModal.save }}
         </button>
       </div>
@@ -2086,7 +2712,9 @@
           }
         </div>
 
-        <h3 class="recall-chapter-title">Ch. {{ prompt.chapterNumber }}: {{ prompt.chapterTitle }}</h3>
+        <h3 class="recall-chapter-title">
+          Ch. {{ prompt.chapterNumber }}: {{ prompt.chapterTitle }}
+        </h3>
 
         @if (prompt.topicDescription) {
           <p class="recall-topic-desc">{{ prompt.topicDescription }}</p>
@@ -2094,7 +2722,9 @@
 
         @if (prompt.errorNotes) {
           <div class="recall-error-box">
-            <strong class="recall-error-title">⚠️ {{ store.dict().recallModal.errorNotesLabel }}:</strong>
+            <strong class="recall-error-title"
+              >⚠️ {{ store.dict().recallModal.errorNotesLabel }}:</strong
+            >
             <span class="recall-error-text">{{ prompt.errorNotes }}</span>
           </div>
         }
@@ -2160,7 +2790,7 @@
             type="file"
             accept=".json"
             (change)="handleFileUpload($event)"
-            style="display: none;"
+            style="display: none"
           />
         </label>
       </div>
@@ -2184,11 +2814,7 @@
         >
           {{ store.dict().modal.cancel }}
         </button>
-        <button
-          ahButton="primary"
-          type="button"
-          (click)="handleImportJson()"
-        >
+        <button ahButton="primary" type="button" (click)="handleImportJson()">
           {{ store.dict().modal.importJson }}
         </button>
       </div>

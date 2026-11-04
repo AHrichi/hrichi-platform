@@ -1,4 +1,11 @@
-import { computed, effect, inject, Injectable, OnDestroy, signal } from '@angular/core';
+import {
+  computed,
+  effect,
+  inject,
+  Injectable,
+  OnDestroy,
+  signal,
+} from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import {
   addDays,
@@ -75,10 +82,14 @@ export class AlarmEngineStore implements OnDestroy {
     selectedTopicId: 'all',
     topics: DEFAULT_TOPICS,
   });
-  readonly questionnaire = signal<QuestionnaireInput>(createDefaultQuestionnaire());
+  readonly questionnaire = signal<QuestionnaireInput>(
+    createDefaultQuestionnaire(),
+  );
 
   // UI state signals
-  readonly activeTab = signal<'decision' | 'tracker' | 'guide' | 'reference'>('decision');
+  readonly activeTab = signal<'decision' | 'tracker' | 'guide' | 'reference'>(
+    'decision',
+  );
   readonly copiedMessage = signal<string | null>(null);
   readonly copiedSlotTime = signal<string | null>(null);
   readonly isBackupModalOpen = signal<boolean>(false);
@@ -102,8 +113,12 @@ export class AlarmEngineStore implements OnDestroy {
   });
 
   // Push / Alarm Notifications state
-  readonly notificationPermission = signal<NotificationPermission | 'unsupported'>('default');
-  readonly notificationsEnabled = computed<boolean>(() => !!this.systemState().notificationsEnabled);
+  readonly notificationPermission = signal<
+    NotificationPermission | 'unsupported'
+  >('default');
+  readonly notificationsEnabled = computed<boolean>(
+    () => !!this.systemState().notificationsEnabled,
+  );
   private lastAlertMinute = '';
   private notificationIntervalId: ReturnType<typeof setInterval> | null = null;
 
@@ -138,7 +153,9 @@ export class AlarmEngineStore implements OnDestroy {
   // Topics computed
   readonly topics = computed<Topic[]>(() => {
     const customTopics = this.systemState().topics;
-    return customTopics && customTopics.length > 0 ? customTopics : DEFAULT_TOPICS;
+    return customTopics && customTopics.length > 0
+      ? customTopics
+      : DEFAULT_TOPICS;
   });
 
   readonly selectedTopicId = computed<string>(() => {
@@ -233,7 +250,11 @@ export class AlarmEngineStore implements OnDestroy {
     }
   });
 
-  readonly nextUpcomingAlarm = computed<{ time: string; title: string; remainingText: string } | null>(() => {
+  readonly nextUpcomingAlarm = computed<{
+    time: string;
+    title: string;
+    remainingText: string;
+  } | null>(() => {
     const alarms = this.decision().alarms;
     if (!alarms || alarms.length === 0) return null;
 
@@ -243,7 +264,8 @@ export class AlarmEngineStore implements OnDestroy {
     for (const alarm of alarms) {
       const parts = alarm.time.split(':');
       if (parts.length === 2) {
-        const alarmMinutes = parseInt(parts[0], 10) * 60 + parseInt(parts[1], 10);
+        const alarmMinutes =
+          parseInt(parts[0], 10) * 60 + parseInt(parts[1], 10);
         if (alarmMinutes > currentMinutes) {
           const diffMinutes = alarmMinutes - currentMinutes;
           const h = Math.floor(diffMinutes / 60);
@@ -277,7 +299,10 @@ export class AlarmEngineStore implements OnDestroy {
   readonly topicSyllabusStats = computed(() => {
     const selectedId = this.selectedTopicId();
     const allCh = this.chapters();
-    const filtered = selectedId === 'all' ? allCh : allCh.filter((c) => c.topicId === selectedId);
+    const filtered =
+      selectedId === 'all'
+        ? allCh
+        : allCh.filter((c) => c.topicId === selectedId);
     const total = filtered.length;
     const completed = filtered.filter((c) => !!c.originalStudyDate).length;
     const weak = filtered.filter((c) => c.isWeak).length;
@@ -336,13 +361,17 @@ export class AlarmEngineStore implements OnDestroy {
       return;
     }
     this.notificationPermission.set(Notification.permission);
-    if (this.systemState().notificationsEnabled && Notification.permission === 'granted') {
+    if (
+      this.systemState().notificationsEnabled &&
+      Notification.permission === 'granted'
+    ) {
       this.startAlarmTicker();
     }
   }
 
   private startAlarmTicker(): void {
-    if (this.notificationIntervalId !== null || typeof window === 'undefined') return;
+    if (this.notificationIntervalId !== null || typeof window === 'undefined')
+      return;
     this.notificationIntervalId = setInterval(() => {
       this.checkScheduledAlarmNow();
     }, 30000);
@@ -357,7 +386,11 @@ export class AlarmEngineStore implements OnDestroy {
   }
 
   private checkScheduledAlarmNow(): void {
-    if (!this.notificationsEnabled() || this.notificationPermission() !== 'granted') return;
+    if (
+      !this.notificationsEnabled() ||
+      this.notificationPermission() !== 'granted'
+    )
+      return;
     const now = new Date();
     const hours = String(now.getHours()).padStart(2, '0');
     const minutes = String(now.getMinutes()).padStart(2, '0');
@@ -367,7 +400,9 @@ export class AlarmEngineStore implements OnDestroy {
     const alertKey = `${dateYmd}_${currentHhMm}`;
     if (this.lastAlertMinute === alertKey) return;
 
-    const matchingSlot = this.decision().alarms.find((a) => a.time === currentHhMm);
+    const matchingSlot = this.decision().alarms.find(
+      (a) => a.time === currentHhMm,
+    );
     if (matchingSlot) {
       this.lastAlertMinute = alertKey;
       this.sendNotification(
@@ -638,8 +673,12 @@ export class AlarmEngineStore implements OnDestroy {
           };
         });
 
-        const existingNums = new Set(existingInTopic.map((c) => c.chapterNumber));
-        const uniqueToAdd = newChapters.filter((c) => !existingNums.has(c.chapterNumber));
+        const existingNums = new Set(
+          existingInTopic.map((c) => c.chapterNumber),
+        );
+        const uniqueToAdd = newChapters.filter(
+          (c) => !existingNums.has(c.chapterNumber),
+        );
 
         this.chapters.update((prev) => [...prev, ...uniqueToAdd]);
         importedCount = uniqueToAdd.length;
@@ -670,7 +709,10 @@ export class AlarmEngineStore implements OnDestroy {
     );
   }
 
-  async parseDocumentFile(file: File, userPrompt?: string): Promise<DocParseResult> {
+  async parseDocumentFile(
+    file: File,
+    userPrompt?: string,
+  ): Promise<DocParseResult> {
     this.isParsingDoc.set(true);
     this.docParseError.set(null);
 
@@ -731,7 +773,10 @@ export class AlarmEngineStore implements OnDestroy {
           this.docParseError.set(errMsg);
         }
       } catch (webhookErr) {
-        const msg = webhookErr instanceof Error ? webhookErr.message : 'n8n connection failed';
+        const msg =
+          webhookErr instanceof Error
+            ? webhookErr.message
+            : 'n8n connection failed';
         console.warn('n8n connection warning:', msg);
         // Do not block fallback on connection error
       }
@@ -747,7 +792,8 @@ export class AlarmEngineStore implements OnDestroy {
           );
           return parsed;
         } else {
-          const finalError = this.docParseError() || this.dict().topicModal.parseErrorNotice;
+          const finalError =
+            this.docParseError() || this.dict().topicModal.parseErrorNotice;
           this.docParseError.set(finalError);
           this.showToast(`⚠️ ${finalError}`);
           return {
@@ -794,10 +840,16 @@ export class AlarmEngineStore implements OnDestroy {
     const decision = this.decision();
     const tonight = this.questionnaire().tonightDate;
     const tomorrow = decision.tomorrowDate || addDays(tonight, 1);
-    const icsContent = generateAlarmIcs(tomorrow, decision.alarms, 'Nightly Alarm Schedule');
+    const icsContent = generateAlarmIcs(
+      tomorrow,
+      decision.alarms,
+      'Nightly Alarm Schedule',
+    );
 
     if (typeof window !== 'undefined') {
-      const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+      const blob = new Blob([icsContent], {
+        type: 'text/calendar;charset=utf-8',
+      });
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
@@ -810,7 +862,10 @@ export class AlarmEngineStore implements OnDestroy {
     }
   }
 
-  openRecallModal(chapterNumber: number, reviewType: 'D-3' | 'D-7' | 'D-14'): void {
+  openRecallModal(
+    chapterNumber: number,
+    reviewType: 'D-3' | 'D-7' | 'D-14',
+  ): void {
     const ch = this.chapters().find((c) => c.chapterNumber === chapterNumber);
     if (!ch) return;
 
@@ -861,12 +916,12 @@ export class AlarmEngineStore implements OnDestroy {
     } else {
       this.chapters.update((chapters) =>
         chapters.map((c) =>
-          c.chapterNumber === prompt.chapterNumber
-            ? { ...c, isWeak: true }
-            : c,
+          c.chapterNumber === prompt.chapterNumber ? { ...c, isWeak: true } : c,
         ),
       );
-      this.showToast(`Ch. ${prompt.chapterNumber} retained for Consolidation reinforcement ⚠️`);
+      this.showToast(
+        `Ch. ${prompt.chapterNumber} retained for Consolidation reinforcement ⚠️`,
+      );
     }
 
     this.closeRecallModal();
@@ -1036,7 +1091,8 @@ export class AlarmEngineStore implements OnDestroy {
         ? q.targetChapterNumber + 1
         : q.completionStatus === 'NO' || q.completionStatus === 'MISSED_GOALS'
           ? q.targetChapterNumber
-          : updatedChapters.reduce((m, c) => Math.max(m, c.chapterNumber), 0) + 1;
+          : updatedChapters.reduce((m, c) => Math.max(m, c.chapterNumber), 0) +
+            1;
 
     this.questionnaire.set({
       tonightDate: q.tonightDate,
@@ -1058,7 +1114,10 @@ export class AlarmEngineStore implements OnDestroy {
   }
 
   // Direct Study Tracker mutations
-  toggleChapterReview(chapterNumber: number, type: 'D-3' | 'D-7' | 'D-14'): void {
+  toggleChapterReview(
+    chapterNumber: number,
+    type: 'D-3' | 'D-7' | 'D-14',
+  ): void {
     this.chapters.update((list) =>
       list.map((ch) => {
         if (ch.chapterNumber !== chapterNumber) return ch;

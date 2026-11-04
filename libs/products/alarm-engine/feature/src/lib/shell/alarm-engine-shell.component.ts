@@ -7,13 +7,7 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import {
-  AhButton,
-  AhTooltip,
-  Badge,
-  Modal,
-  ProgressBar,
-} from '@ah/ui';
+import { AhButton, AhTooltip, Badge, Modal, ProgressBar } from '@ah/ui';
 import {
   Chapter,
   DayTypeSelection,
@@ -59,7 +53,11 @@ export class AlarmEngineShellComponent {
     return parseChapterOutline(this.newTopicSyllabus()).length;
   });
 
-  readonly languages: readonly { id: AlarmLanguage; label: string; flag: string }[] = [
+  readonly languages: readonly {
+    id: AlarmLanguage;
+    label: string;
+    flag: string;
+  }[] = [
     { id: 'en', label: 'English', flag: '🇬🇧' },
     { id: 'fr', label: 'Français', flag: '🇫🇷' },
     { id: 'ar', label: 'العربية', flag: '🇲🇦' },
@@ -95,8 +93,16 @@ export class AlarmEngineShellComponent {
   readonly completionOptions = computed<
     readonly { value: TodayCompletionStatus; label: string; icon: string }[]
   >(() => [
-    { value: 'YES', label: this.store.dict().questionnaire.optFinished, icon: '✅' },
-    { value: 'NO', label: this.store.dict().questionnaire.optRepeat, icon: '🔁' },
+    {
+      value: 'YES',
+      label: this.store.dict().questionnaire.optFinished,
+      icon: '✅',
+    },
+    {
+      value: 'NO',
+      label: this.store.dict().questionnaire.optRepeat,
+      icon: '🔁',
+    },
     {
       value: 'CONSOLIDATION_COMPLETED_TODAY',
       label: this.store.dict().questionnaire.optConsolidation,
@@ -130,7 +136,11 @@ export class AlarmEngineShellComponent {
   ]);
 
   readonly codingOptions = computed(() => [
-    { value: 'CLEAN' as const, label: this.store.dict().questionnaire.codingClean, icon: '✨' },
+    {
+      value: 'CLEAN' as const,
+      label: this.store.dict().questionnaire.codingClean,
+      icon: '✨',
+    },
     {
       value: 'CARRYOVER' as const,
       label: this.store.dict().questionnaire.codingCarryover,
@@ -232,12 +242,21 @@ export class AlarmEngineShellComponent {
     if (this.store.isParsingDoc()) return;
     this.parsingFileName.set(file.name);
     try {
-      const res = await this.store.parseDocumentFile(file, this.docExtractionPrompt());
+      const res = await this.store.parseDocumentFile(
+        file,
+        this.docExtractionPrompt(),
+      );
       if (res.success) {
-        if (res.topicName && (!this.newTopicName() || this.newTopicName() === '')) {
+        if (
+          res.topicName &&
+          (!this.newTopicName() || this.newTopicName() === '')
+        ) {
           this.newTopicName.set(res.topicName);
         }
-        if (res.topicDescription && (!this.newTopicDesc() || this.newTopicDesc() === '')) {
+        if (
+          res.topicDescription &&
+          (!this.newTopicDesc() || this.newTopicDesc() === '')
+        ) {
           this.newTopicDesc.set(res.topicDescription);
         }
         if (res.outlineText) {

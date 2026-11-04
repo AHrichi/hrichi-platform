@@ -17,10 +17,22 @@ describe('parseChapterOutline', () => {
 
     const items = parseChapterOutline(raw);
     expect(items.length).toBe(4);
-    expect(items[0]).toEqual({ chapterNumber: 1, title: 'Introduction to Distributed Systems' });
-    expect(items[1]).toEqual({ chapterNumber: 2, title: 'Remote Procedure Calls (RPC)' });
-    expect(items[2]).toEqual({ chapterNumber: 3, title: 'Primary-Backup Replication' });
-    expect(items[3]).toEqual({ chapterNumber: 4, title: 'Raft Consensus Algorithm' });
+    expect(items[0]).toEqual({
+      chapterNumber: 1,
+      title: 'Introduction to Distributed Systems',
+    });
+    expect(items[1]).toEqual({
+      chapterNumber: 2,
+      title: 'Remote Procedure Calls (RPC)',
+    });
+    expect(items[2]).toEqual({
+      chapterNumber: 3,
+      title: 'Primary-Backup Replication',
+    });
+    expect(items[3]).toEqual({
+      chapterNumber: 4,
+      title: 'Raft Consensus Algorithm',
+    });
   });
 
   it('parses "Chapter X:" and "Ch. X -" prefixes', () => {
@@ -33,7 +45,10 @@ ch 3: Concurrency Basics
     const items = parseChapterOutline(raw);
     expect(items.length).toBe(3);
     expect(items[0]).toEqual({ chapterNumber: 1, title: 'Network Primitives' });
-    expect(items[1]).toEqual({ chapterNumber: 2, title: 'Memory Layout & Cache Lines' });
+    expect(items[1]).toEqual({
+      chapterNumber: 2,
+      title: 'Memory Layout & Cache Lines',
+    });
     expect(items[2]).toEqual({ chapterNumber: 3, title: 'Concurrency Basics' });
   });
 
@@ -46,9 +61,15 @@ ch 3: Concurrency Basics
 
     const items = parseChapterOutline(raw, 5);
     expect(items.length).toBe(3);
-    expect(items[0]).toEqual({ chapterNumber: 5, title: 'Distributed Locking' });
+    expect(items[0]).toEqual({
+      chapterNumber: 5,
+      title: 'Distributed Locking',
+    });
     expect(items[1]).toEqual({ chapterNumber: 6, title: 'Event Sourcing' });
-    expect(items[2]).toEqual({ chapterNumber: 7, title: 'Log-Structured Merge Trees' });
+    expect(items[2]).toEqual({
+      chapterNumber: 7,
+      title: 'Log-Structured Merge Trees',
+    });
   });
 
   it('ignores comments and blank lines', () => {

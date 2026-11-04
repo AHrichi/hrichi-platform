@@ -241,9 +241,7 @@ export function computeNightlyDecision(
     `Chapter ${targetChapter}`;
 
   const topicName =
-    questionnaire.topicName ||
-    existingTargetChapter?.topicName ||
-    'General';
+    questionnaire.topicName || existingTargetChapter?.topicName || 'General';
 
   // Check weak chapters
   const weakChapters = updatedChapters.filter((ch) => ch.isWeak);
@@ -356,7 +354,10 @@ export function computeNightlyDecision(
         `Accumulated ${weakChapters.length} weak chapters (Ch. ${weakChapterNumbers.join(', ')}).`,
       );
     }
-    if (questionnaire.dayTypeSelection === 'Consolidation' && !autoConsolidationTriggered) {
+    if (
+      questionnaire.dayTypeSelection === 'Consolidation' &&
+      !autoConsolidationTriggered
+    ) {
       reasons.push('Manual Consolidation override selected.');
     }
 
@@ -478,7 +479,8 @@ export function computeNightlyDecision(
   let consolidationReason: string | undefined;
   if (isConsolidation) {
     if (milestoneReached && weakThresholdReached) {
-      consolidationReason = 'Milestone (6 completed) & Weak Threshold (3+ weak)';
+      consolidationReason =
+        'Milestone (6 completed) & Weak Threshold (3+ weak)';
     } else if (milestoneReached) {
       consolidationReason = 'Milestone (6 completed chapters)';
     } else if (weakThresholdReached) {
@@ -563,7 +565,9 @@ function generateAlarmSlots(params: AlarmGenParams): AlarmSlot[] {
   const blindLabel = isRepeat
     ? `REPEAT Ch. ${targetChapter}${titleSuffix}`
     : `Ch. ${targetChapter}${titleSuffix}`;
-  const pairedStr = pairedCoding ? pairedCoding.label : `Ch. ${Math.max(1, targetChapter - 1)}`;
+  const pairedStr = pairedCoding
+    ? pairedCoding.label
+    : `Ch. ${Math.max(1, targetChapter - 1)}`;
   const errorSuffix = errorNotes ? ` [${errorNotes}]` : '';
   const errorParen = errorNotes ? ` / ${errorNotes}` : '';
 
@@ -571,16 +575,25 @@ function generateAlarmSlots(params: AlarmGenParams): AlarmSlot[] {
   const d7Str = dueD7.length > 0 ? dueD7.join(', ') : 'None';
   const d14Str = dueD14.length > 0 ? dueD14.join(', ') : 'None';
 
-  const combinedD3D7 = Array.from(new Set([...dueD3, ...dueD7])).sort((a, b) => a - b);
-  const combinedD3D7Str = combinedD3D7.length > 0 ? combinedD3D7.join(', ') : 'None';
+  const combinedD3D7 = Array.from(new Set([...dueD3, ...dueD7])).sort(
+    (a, b) => a - b,
+  );
+  const combinedD3D7Str =
+    combinedD3D7.length > 0 ? combinedD3D7.join(', ') : 'None';
 
-  const combinedAll = Array.from(new Set([...dueD3, ...dueD7, ...dueD14])).sort((a, b) => a - b);
-  const combinedAllStr = combinedAll.length > 0 ? combinedAll.join(', ') : 'None';
+  const combinedAll = Array.from(new Set([...dueD3, ...dueD7, ...dueD14])).sort(
+    (a, b) => a - b,
+  );
+  const combinedAllStr =
+    combinedAll.length > 0 ? combinedAll.join(', ') : 'None';
 
   const weakListStr =
-    weakChapterNumbers.length > 0 ? `Ch. ${weakChapterNumbers.join(', ')}` : 'None';
+    weakChapterNumbers.length > 0
+      ? `Ch. ${weakChapterNumbers.join(', ')}`
+      : 'None';
 
-  const isFastingWeekday = tomorrowWeekday === 'Monday' || tomorrowWeekday === 'Thursday';
+  const isFastingWeekday =
+    tomorrowWeekday === 'Monday' || tomorrowWeekday === 'Thursday';
   const isRecoveryWeekday = tomorrowWeekday === 'Friday';
 
   // --------------------------------------------------------------------------
@@ -596,28 +609,32 @@ function generateAlarmSlots(params: AlarmGenParams): AlarmSlot[] {
           title: `Weak Flashcards (${weakListStr}) + Mixed Quiz Ch. ${milestoneStart}–${milestoneEnd}`,
           badgeVariant: 'warning',
           badgeLabel: 'Consolidation · Fasting',
-          description: 'Spaced review of flagged weak chapters followed by 6-chapter milestone quiz.',
+          description:
+            'Spaced review of flagged weak chapters followed by 6-chapter milestone quiz.',
         },
         {
           time: '09:30',
           title: `Guided Coding: Challenge Ch. ${milestoneStart}–${milestoneEnd}`,
           badgeVariant: 'warning',
           badgeLabel: 'Consolidation · Fasting',
-          description: 'Multi-chapter practical coding challenge during high morning focus.',
+          description:
+            'Multi-chapter practical coding challenge during high morning focus.',
         },
         {
           time: '15:15',
           title: `CLOSE IDE: Error Analysis (${errorNotes || 'Deep Dive'})`,
           badgeVariant: 'danger',
           badgeLabel: 'Energy Lock',
-          description: 'Close code editor. Passive bug post-mortem and conceptual notes review.',
+          description:
+            'Close code editor. Passive bug post-mortem and conceptual notes review.',
         },
         {
           time: '16:15',
           title: 'YouTube Queue Check',
           badgeVariant: 'info',
           badgeLabel: 'Fasting Queue',
-          description: 'Curated technical video reviews and educational queue processing.',
+          description:
+            'Curated technical video reviews and educational queue processing.',
         },
         {
           time: '19:30',
@@ -637,28 +654,32 @@ function generateAlarmSlots(params: AlarmGenParams): AlarmSlot[] {
           title: `Consolidation Recall: Weak Flashcards (${weakListStr})`,
           badgeVariant: 'success',
           badgeLabel: 'Consolidation · Recovery',
-          description: 'Active flashcard recall explicitly targeting weak chapters.',
+          description:
+            'Active flashcard recall explicitly targeting weak chapters.',
         },
         {
           time: '08:15',
           title: `Mixed Quiz: Ch. ${milestoneStart}–${milestoneEnd} (6-Ch Milestone)`,
           badgeVariant: 'success',
           badgeLabel: 'Consolidation · Recovery',
-          description: 'Comprehensive diagnostic quiz across the last 6 chapters.',
+          description:
+            'Comprehensive diagnostic quiz across the last 6 chapters.',
         },
         {
           time: '10:00',
           title: `Practical Coding Challenge: Ch. ${milestoneStart}–${milestoneEnd}`,
           badgeVariant: 'success',
           badgeLabel: 'Consolidation · Recovery',
-          description: 'Integrated implementation exercise covering milestone chapters.',
+          description:
+            'Integrated implementation exercise covering milestone chapters.',
         },
         {
           time: '15:15',
           title: 'OFF — Recovery',
           badgeVariant: 'neutral',
           badgeLabel: 'Recovery Rest',
-          description: 'Work day ends. Full mental and physical rest until Saturday.',
+          description:
+            'Work day ends. Full mental and physical rest until Saturday.',
         },
       ];
     }
@@ -670,42 +691,48 @@ function generateAlarmSlots(params: AlarmGenParams): AlarmSlot[] {
         title: `Consolidation Recall: Weak Flashcards (${weakListStr}) | Mixed Review`,
         badgeVariant: 'danger',
         badgeLabel: 'Consolidation',
-        description: 'Targeted flashcard review of weak chapters and cumulative recall.',
+        description:
+          'Targeted flashcard review of weak chapters and cumulative recall.',
       },
       {
         time: '08:15',
         title: `Mixed Quiz: Ch. ${milestoneStart}–${milestoneEnd} (6-Ch Milestone)`,
         badgeVariant: 'danger',
         badgeLabel: 'Consolidation',
-        description: 'Comprehensive mixed evaluation covering previous 6 chapters.',
+        description:
+          'Comprehensive mixed evaluation covering previous 6 chapters.',
       },
       {
         time: '10:00',
         title: `Practical Coding Challenge: Ch. ${milestoneStart}–${milestoneEnd}`,
         badgeVariant: 'danger',
         badgeLabel: 'Consolidation',
-        description: 'Real-world coding challenge applying cross-chapter concepts.',
+        description:
+          'Real-world coding challenge applying cross-chapter concepts.',
       },
       {
         time: '15:15',
         title: `Error Analysis${errorSuffix} / Upwork`,
         badgeVariant: 'accent',
         badgeLabel: 'Consolidation',
-        description: 'Deep-dive into recorded bugs, edge cases, and client proposals.',
+        description:
+          'Deep-dive into recorded bugs, edge cases, and client proposals.',
       },
       {
         time: '17:00',
         title: `Teaching Lock: Synthesis Short Ch. ${milestoneStart}–${milestoneEnd}`,
         badgeVariant: 'accent',
         badgeLabel: 'Synthesis Lock',
-        description: 'Summarize the core breakthrough from this milestone in 60 seconds.',
+        description:
+          'Summarize the core breakthrough from this milestone in 60 seconds.',
       },
       {
         time: '19:30',
         title: 'Job Applications + Upwork Bids',
         badgeVariant: 'neutral',
         badgeLabel: 'Outbound',
-        description: 'Outbound applications, customized pitches, and client proposals.',
+        description:
+          'Outbound applications, customized pitches, and client proposals.',
       },
     ];
   }
@@ -722,28 +749,32 @@ function generateAlarmSlots(params: AlarmGenParams): AlarmSlot[] {
           title: `GENTLE CATCH-UP: Ch. ${targetChapter}${titleSuffix} (Low-Friction Foundation)`,
           badgeVariant: 'success',
           badgeLabel: 'Adaptive Reset',
-          description: 'Zero-pressure review of core concepts. Emergency recovery protocol active.',
+          description:
+            'Zero-pressure review of core concepts. Emergency recovery protocol active.',
         },
         {
           time: '08:15',
           title: `Light Recall / Flashcards: D-3 (${d3Str})`,
           badgeVariant: 'info',
           badgeLabel: 'Triage Flashcards',
-          description: 'Prioritize only steepest-curve D-3 flashcards to protect memory without stress.',
+          description:
+            'Prioritize only steepest-curve D-3 flashcards to protect memory without stress.',
         },
         {
           time: '10:00',
           title: `Micro-Drill: Ch. ${targetChapter} (1 Victory)`,
           badgeVariant: 'accent',
           badgeLabel: 'Micro Focus',
-          description: 'One single small code victory or reading block to restore rhythm.',
+          description:
+            'One single small code victory or reading block to restore rhythm.',
         },
         {
           time: '15:15',
           title: 'OFF — Full Recovery & Rest',
           badgeVariant: 'neutral',
           badgeLabel: 'Rest Lock',
-          description: 'Day complete. Rest, recharge, and return refreshed tomorrow without guilt.',
+          description:
+            'Day complete. Rest, recharge, and return refreshed tomorrow without guilt.',
         },
       ];
     }
@@ -755,28 +786,32 @@ function generateAlarmSlots(params: AlarmGenParams): AlarmSlot[] {
           title: `DE-ESCALATE: Ch. ${targetChapter}${titleSuffix} | D-3 Recall (${d3Str})`,
           badgeVariant: 'warning',
           badgeLabel: 'De-escalation',
-          description: 'Gentle start. New chapters paused; focus exclusively on solidifying today’s chapter.',
+          description:
+            'Gentle start. New chapters paused; focus exclusively on solidifying today’s chapter.',
         },
         {
           time: '08:15',
           title: `Light Review: Ch. ${targetChapter} Core Concepts (No Quiz Pressure)`,
           badgeVariant: 'warning',
           badgeLabel: 'Stress Free',
-          description: 'Review notes, diagrams, and mental models without grading pressure.',
+          description:
+            'Review notes, diagrams, and mental models without grading pressure.',
         },
         {
           time: '10:00',
           title: `Focused Coding: Ch. ${targetChapter} Step-by-Step`,
           badgeVariant: 'accent',
           badgeLabel: 'Paced Coding',
-          description: 'Slow-paced implementation block tackling the single hardest subtopic.',
+          description:
+            'Slow-paced implementation block tackling the single hardest subtopic.',
         },
         {
           time: '15:15',
           title: `CLOSE IDE: Passive Review${errorParen}`,
           badgeVariant: 'danger',
           badgeLabel: 'Energy Lock',
-          description: 'Close editor to prevent mental fatigue. Passive reading only.',
+          description:
+            'Close editor to prevent mental fatigue. Passive reading only.',
         },
         {
           time: '19:30',
@@ -795,28 +830,32 @@ function generateAlarmSlots(params: AlarmGenParams): AlarmSlot[] {
         title: `CATCH-UP: Ch. ${targetChapter}${titleSuffix} | D-3: ${d3Str} | D-7: ${d7Str}`,
         badgeVariant: 'accent',
         badgeLabel: 'Catch-Up Launch',
-        description: 'Review critical due flashcards and re-engage with today’s target chapter.',
+        description:
+          'Review critical due flashcards and re-engage with today’s target chapter.',
       },
       {
         time: '08:15',
         title: `Blind Recall Reset: Ch. ${targetChapter}${titleSuffix} + Quiz`,
         badgeVariant: 'accent',
         badgeLabel: 'Targeted Recall',
-        description: 'Diagnostic quiz and closed-book retrieval practice to pinpoint gaps.',
+        description:
+          'Diagnostic quiz and closed-book retrieval practice to pinpoint gaps.',
       },
       {
         time: '10:00',
         title: `Coding Catch-Up: ${pairedStr} + Ch. ${targetChapter}`,
         badgeVariant: 'accent',
         badgeLabel: 'Focused Build',
-        description: 'Finish incomplete coding exercises before moving on to new chapters.',
+        description:
+          'Finish incomplete coding exercises before moving on to new chapters.',
       },
       {
         time: '15:15',
         title: `Testing & Bug Triaging${errorSuffix} / Upwork`,
         badgeVariant: 'accent',
         badgeLabel: 'Hardening',
-        description: 'Fix open bugs, test edge cases, and handle client proposals.',
+        description:
+          'Fix open bugs, test edge cases, and handle client proposals.',
       },
       {
         time: '17:00',
@@ -845,28 +884,32 @@ function generateAlarmSlots(params: AlarmGenParams): AlarmSlot[] {
         title: `D-3/D-7 Recall (${combinedD3D7Str}) + ${nextLabel} + Blind Test`,
         badgeVariant: 'warning',
         badgeLabel: 'Fasting Launch',
-        description: 'Morning spaced reviews followed by active chapter introduction.',
+        description:
+          'Morning spaced reviews followed by active chapter introduction.',
       },
       {
         time: '09:30',
         title: `Guided Coding: ${pairedStr} + Ch. ${targetChapter}`,
         badgeVariant: 'warning',
         badgeLabel: 'Fasting Focus',
-        description: 'Guided paired programming block during peak fasting alertness.',
+        description:
+          'Guided paired programming block during peak fasting alertness.',
       },
       {
         time: '15:15',
         title: `CLOSE IDE: Passive Review (Ch. ${targetChapter}${errorParen})`,
         badgeVariant: 'danger',
         badgeLabel: 'Energy Lock',
-        description: 'Close code editor. Passive concept review, documentation, and error inspection.',
+        description:
+          'Close code editor. Passive concept review, documentation, and error inspection.',
       },
       {
         time: '16:15',
         title: 'YouTube Queue Check',
         badgeVariant: 'info',
         badgeLabel: 'Fasting Queue',
-        description: 'Curated technical video reviews and educational queue processing.',
+        description:
+          'Curated technical video reviews and educational queue processing.',
       },
       {
         time: '19:30',
@@ -888,7 +931,8 @@ function generateAlarmSlots(params: AlarmGenParams): AlarmSlot[] {
         title: `Recall (${combinedAllStr}) + ${nextLabel}`,
         badgeVariant: 'success',
         badgeLabel: 'Recovery Launch',
-        description: 'Gentle spaced repetition recall followed by new chapter foundation.',
+        description:
+          'Gentle spaced repetition recall followed by new chapter foundation.',
       },
       {
         time: '08:15',
@@ -902,14 +946,16 @@ function generateAlarmSlots(params: AlarmGenParams): AlarmSlot[] {
         title: `Interleaved Coding: ${pairedStr} + Ch. ${targetChapter}`,
         badgeVariant: 'success',
         badgeLabel: 'Interleaved Coding',
-        description: 'Hands-on coding block interleaving prior concepts with target chapter.',
+        description:
+          'Hands-on coding block interleaving prior concepts with target chapter.',
       },
       {
         time: '15:15',
         title: 'OFF — Recovery',
         badgeVariant: 'neutral',
         badgeLabel: 'Weekend Rest',
-        description: 'Complete shutdown. Recharge cognitive energy for the weekend sprint.',
+        description:
+          'Complete shutdown. Recharge cognitive energy for the weekend sprint.',
       },
     ];
   }
@@ -923,7 +969,8 @@ function generateAlarmSlots(params: AlarmGenParams): AlarmSlot[] {
       title: `D-3: ${d3Str} | D-7: ${d7Str} | D-14: ${d14Str} | ${nextLabel}`,
       badgeVariant: 'accent',
       badgeLabel: 'Spaced Repetition',
-      description: 'Systematic D-3, D-7, and D-14 spaced review check-off + daily launch.',
+      description:
+        'Systematic D-3, D-7, and D-14 spaced review check-off + daily launch.',
     },
     {
       time: '08:15',
@@ -937,28 +984,32 @@ function generateAlarmSlots(params: AlarmGenParams): AlarmSlot[] {
       title: `Coding: ${pairedStr} + Ch. ${targetChapter}`,
       badgeVariant: 'accent',
       badgeLabel: 'Deep Coding',
-      description: 'Core implementation session pairing weak/carryover/previous code with new topics.',
+      description:
+        'Core implementation session pairing weak/carryover/previous code with new topics.',
     },
     {
       time: '15:15',
       title: `Testing / Refactoring${errorSuffix} / Upwork`,
       badgeVariant: 'accent',
       badgeLabel: 'Refactor & Bid',
-      description: 'Test suite hardening, refactoring weak subtopics, and Upwork client proposals.',
+      description:
+        'Test suite hardening, refactoring weak subtopics, and Upwork client proposals.',
     },
     {
       time: '17:00',
       title: `Teaching Lock: YouTube Short Ch. ${targetChapter}`,
       badgeVariant: 'accent',
       badgeLabel: 'Feynman Lock',
-      description: 'Synthesize the concept into a concise 60-second explanation.',
+      description:
+        'Synthesize the concept into a concise 60-second explanation.',
     },
     {
       time: '19:30',
       title: 'Job Applications + Upwork Bids',
       badgeVariant: 'neutral',
       badgeLabel: 'Outbound',
-      description: 'Career outbound pipeline: tailored proposals and applications.',
+      description:
+        'Career outbound pipeline: tailored proposals and applications.',
     },
   ];
 }

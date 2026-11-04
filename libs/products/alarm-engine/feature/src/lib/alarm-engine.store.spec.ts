@@ -9,6 +9,9 @@ describe('AlarmEngineStore', () => {
 
   beforeEach(() => {
     localStorage.clear();
+    vi.spyOn(globalThis, 'fetch').mockRejectedValue(
+      new Error('n8n offline in unit tests'),
+    );
     TestBed.configureTestingModule({
       providers: [AlarmEngineStore],
     });
@@ -60,7 +63,9 @@ describe('AlarmEngineStore', () => {
     const initialD3 = ch1.d3Completed;
 
     store.toggleChapterReview(ch1.chapterNumber, 'D-3');
-    const updatedCh1 = store.chapters().find((c) => c.chapterNumber === ch1.chapterNumber);
+    const updatedCh1 = store
+      .chapters()
+      .find((c) => c.chapterNumber === ch1.chapterNumber);
     expect(updatedCh1?.d3Completed).toBe(!initialD3);
   });
 
@@ -78,7 +83,9 @@ describe('AlarmEngineStore', () => {
 
   it('supports creating and filtering by topics', () => {
     store.addTopic('Distributed Systems', '#06b6d4');
-    expect(store.topics().some((t) => t.id === 'distributed-systems')).toBe(true);
+    expect(store.topics().some((t) => t.id === 'distributed-systems')).toBe(
+      true,
+    );
 
     store.setSelectedTopicId('distributed-systems');
     expect(store.selectedTopicId()).toBe('distributed-systems');
@@ -88,7 +95,9 @@ describe('AlarmEngineStore', () => {
     expect(store.dict().meta.title).toBe('Nightly Alarm Decision Engine');
 
     store.setLanguage('fr');
-    expect(store.dict().meta.title).toBe('Moteur de Décision des Alarmes Nocturnes');
+    expect(store.dict().meta.title).toBe(
+      'Moteur de Décision des Alarmes Nocturnes',
+    );
 
     store.setLanguage('ar');
     expect(store.dict().meta.title).toBe('محرك قرارات منبهات الليل');
@@ -148,9 +157,13 @@ describe('AlarmEngineStore', () => {
 
     const topic = store.topics().find((t) => t.id === 'distributed-systems');
     expect(topic).toBeDefined();
-    expect(topic?.description).toBe('MIT 6.824: Fault tolerance, consensus, and scale.');
+    expect(topic?.description).toBe(
+      'MIT 6.824: Fault tolerance, consensus, and scale.',
+    );
 
-    const topicChapters = store.chapters().filter((c) => c.topicId === 'distributed-systems');
+    const topicChapters = store
+      .chapters()
+      .filter((c) => c.topicId === 'distributed-systems');
     expect(topicChapters.length).toBe(4);
     expect(topicChapters[0].title).toBe('Introduction & RPCs');
     expect(topicChapters[2].title).toBe('Raft Consensus Algorithm');

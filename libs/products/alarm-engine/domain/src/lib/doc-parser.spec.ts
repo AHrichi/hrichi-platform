@@ -83,8 +83,12 @@ Slide 4: Caching Invalidation Patterns
       expect(result.success).toBe(true);
       expect(result.topicName).toBe('System Design Deep Dive');
       expect(result.totalChapters).toBe(4);
-      expect(result.outlineText).toContain('1. High Availability & Load Balancing');
-      expect(result.outlineText).toContain('3. Message Queues & Event Streaming');
+      expect(result.outlineText).toContain(
+        '1. High Availability & Load Balancing',
+      );
+      expect(result.outlineText).toContain(
+        '3. Message Queues & Event Streaming',
+      );
     });
 
     it('handles CSV / Excel rows', () => {
@@ -114,7 +118,8 @@ Chapter,Title
 
   describe('extractUniversalTextFromBuffer', () => {
     it('extracts plain text / markdown files', async () => {
-      const content = '# TypeScript Mastery\n1. Type Narrowing\n2. Conditional Types';
+      const content =
+        '# TypeScript Mastery\n1. Type Narrowing\n2. Conditional Types';
       const buf = new TextEncoder().encode(content);
       const text = await extractUniversalTextFromBuffer(buf, 'course.md');
       expect(text).toContain('# TypeScript Mastery');

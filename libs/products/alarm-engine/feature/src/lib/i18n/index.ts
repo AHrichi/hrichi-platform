@@ -8,8 +8,9 @@ import { frDictionary } from './fr';
 import { arDictionary } from './ar';
 import type { AlarmEngineDictionary, AlarmLanguage } from './i18n.types';
 
-export const ALARM_DICTIONARIES: Record<AlarmLanguage, AlarmEngineDictionary> = {
-  en: enDictionary,
-  fr: frDictionary,
-  ar: arDictionary,
-};
+export const ALARM_DICTIONARIES: Record<AlarmLanguage, AlarmEngineDictionary> =
+  {
+    en: enDictionary,
+    fr: frDictionary,
+    ar: arDictionary,
+  };

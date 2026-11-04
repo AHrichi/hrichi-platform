@@ -3,6 +3,7 @@ import {
   Component,
   computed,
   inject,
+  signal,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Seo } from '@ah/portfolio/util-seo';
@@ -174,6 +175,10 @@ export class AppsPage {
           architectureTitle: 'الهندسة المعمارية والأمان:',
           howToTestTitle: 'طريقة التجربة:',
           launchPrefix: 'تشغيل',
+          expandTicket: 'توسيع',
+          collapseTicket: 'طي',
+          expandAll: 'توسيع الكل',
+          collapseAll: 'طي الكل',
         };
       case 'fr':
         return {
@@ -196,6 +201,10 @@ export class AppsPage {
           architectureTitle: 'Architecture & Sécurité :',
           howToTestTitle: 'Comment tester :',
           launchPrefix: 'Lancer',
+          expandTicket: 'Développer',
+          collapseTicket: 'Réduire',
+          expandAll: 'Tout développer',
+          collapseAll: 'Tout réduire',
         };
       case 'en':
       default:
@@ -219,9 +228,59 @@ export class AppsPage {
           architectureTitle: 'Architecture & Quota Safeguards:',
           howToTestTitle: 'How to test:',
           launchPrefix: 'Launch',
+          expandTicket: 'Expand',
+          collapseTicket: 'Collapse',
+          expandAll: 'Expand all',
+          collapseAll: 'Collapse all',
         };
     }
   });
+
+  /** Set of ticket/card IDs that are currently collapsed. */
+  readonly collapsedCardIds = signal<Set<string>>(new Set());
+
+  isCollapsed(id: string): boolean {
+    return this.collapsedCardIds().has(id);
+  }
+
+  toggleCard(id: string, event?: Event): void {
+    event?.stopPropagation();
+    this.collapsedCardIds.update((current) => {
+      const next = new Set(current);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      return next;
+    });
+  }
+
+  onHeaderClick(appId: string, event: MouseEvent): void {
+    const target = event.target as HTMLElement | null;
+    if (target?.closest('a, button')) {
+      return;
+    }
+    this.toggleCard(appId);
+  }
+
+  readonly allAppIds = computed(() => [
+    ...this.productionApps().map((a) => a.id),
+    ...this.engineeringLabs().map((l) => l.id),
+  ]);
+
+  readonly areAllCollapsed = computed(() => {
+    const all = this.allAppIds();
+    return all.length > 0 && all.every((id) => this.collapsedCardIds().has(id));
+  });
+
+  toggleAll(): void {
+    if (this.areAllCollapsed()) {
+      this.collapsedCardIds.set(new Set());
+    } else {
+      this.collapsedCardIds.set(new Set(this.allAppIds()));
+    }
+  }
 
   protected readonly productionApps = computed<AppItem[]>(() => {
     const l = this.currentLang();
@@ -723,7 +782,8 @@ export class AppsPage {
         title: 'Nightly Alarm Decision Engine',
         category: 'production',
         badge: { label: '🌙 Bedtime Protocol', variant: 'accent', pulse: true },
-        eyebrow: 'Spaced Repetition & Daily Habit Scheduling · D-3 / D-7 / D-14',
+        eyebrow:
+          'Spaced Repetition & Daily Habit Scheduling · D-3 / D-7 / D-14',
         summary:
           'A repeatable bedtime decision algorithm that eliminates random alarms. Answer a short questionnaire about today’s study performance, and the engine calculates D-3/D-7/D-14 spaced repetition reviews, flags weak subtopics, detects 6-chapter Consolidation milestones, and generates the exact alarm title strings for tomorrow with 1-click copy.',
         route: '/apps/alarm-engine',

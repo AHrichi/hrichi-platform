@@ -32,10 +32,7 @@
         "name": "Webhook Ingest",
         "type": "n8n-nodes-base.webhook",
         "typeVersion": 2,
-        "position": [
-          100,
-          300
-        ],
+        "position": [100, 300],
         "webhookId": "chapter-doc-parser-webhook-id"
       },
       {
@@ -46,10 +43,7 @@
         "name": "Extract Text & Prepare AI",
         "type": "n8n-nodes-base.code",
         "typeVersion": 2,
-        "position": [
-          340,
-          300
-        ]
+        "position": [340, 300]
       },
       {
         "parameters": {
@@ -68,10 +62,7 @@
         "name": "AI Curriculum Extraction (Groq)",
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.2,
-        "position": [
-          580,
-          300
-        ],
+        "position": [580, 300],
         "onError": "continueRegularOutput",
         "credentials": {
           "groqApi": {
@@ -88,10 +79,7 @@
         "name": "Format & Normalize Curriculum",
         "type": "n8n-nodes-base.code",
         "typeVersion": 2,
-        "position": [
-          820,
-          300
-        ]
+        "position": [820, 300]
       },
       {
         "parameters": {
@@ -125,10 +113,7 @@
         "name": "Return Structured Chapters",
         "type": "n8n-nodes-base.respondToWebhook",
         "typeVersion": 1.1,
-        "position": [
-          1060,
-          300
-        ]
+        "position": [1060, 300]
       }
     ],
     "connections": {

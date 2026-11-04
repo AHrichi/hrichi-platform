@@ -78,8 +78,65 @@
           <span>Approve All Sections</span>
         </button>
       }
+
+      @if (store.activeRoadmap() && bulk.pendingSections().length > 0) {
+        <button
+          type="button"
+          ahButton="secondary"
+          size="md"
+          [disabled]="bulk.isGenerating()"
+          (click)="onBulkGenerateLessons()"
+          title="Generate lessons for all pending sections in batches with automatic retries"
+        >
+          <span>{{
+            bulk.isGenerating()
+              ? 'Generating Lessons (' +
+                (bulk.progress()?.percentage ?? 0) +
+                '%)...'
+              : 'Bulk Generate Lessons (' + bulk.pendingSections().length + ')'
+          }}</span>
+        </button>
+      }
     </div>
   </header>
+
+  @if (
+    bulk.isGenerating() ||
+    (bulk.statusMessage() && bulk.failedItems().length > 0)
+  ) {
+    <div class="bulk-generation-banner">
+      <div class="bulk-banner-header">
+        <span class="bulk-status-title">⚡ Bulk Lesson Generation</span>
+        @if (bulk.isGenerating()) {
+          <button
+            type="button"
+            ahButton="ghost"
+            size="sm"
+            (click)="onCancelBulkGenerate()"
+          >
+            Cancel
+          </button>
+        }
+      </div>
+      @if (bulk.isGenerating() && bulk.progress(); as p) {
+        <ah-progress-bar
+          [value]="p.percentage"
+          [label]="
+            'Batch ' +
+            p.currentBatch +
+            ' of ' +
+            p.totalBatches +
+            ' (' +
+            p.percentage +
+            '%)'
+          "
+          size="sm"
+          [showValue]="true"
+        />
+      }
+      <p class="bulk-banner-message">{{ bulk.statusMessage() }}</p>
+    </div>
+  }
 
   @if (store.roadmapError(); as error) {
     <div class="rejection-alert-wrapper">
@@ -171,11 +228,16 @@
               @for (section of branch.sections; track section.id) {
                 <article
                   class="section-card"
+                  [id]="'section-' + section.id"
                   [class.is-expanded]="isSectionExpanded(section.id)"
                   [class.is-collapsed]="!isSectionExpanded(section.id)"
                   [class.is-approved]="section.approved"
                   [class.has-cards]="section.flashcardsStatus === 'ready'"
                   [class.has-quiz]="section.quizStatus === 'ready'"
+                  [class.is-focused]="
+                    focusedSectionId() === section.id ||
+                    store.selectedSectionId() === section.id
+                  "
                 >
                   <!-- Interactive Section Header -->
                   <div

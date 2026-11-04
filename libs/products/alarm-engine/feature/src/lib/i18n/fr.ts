@@ -3,7 +3,8 @@ import type { AlarmEngineDictionary } from './i18n.types';
 export const frDictionary: AlarmEngineDictionary = {
   meta: {
     title: 'Moteur de Décision des Alarmes Nocturnes',
-    tagline: 'Votre rituel de 60 secondes avant de dormir : enregistrez votre étude, calculez la répétition espacée (J+3, J+7, J+14), détectez les consolidations et copiez les titres exacts pour vos réveils.',
+    tagline:
+      'Votre rituel de 60 secondes avant de dormir : enregistrez votre étude, calculez la répétition espacée (J+3, J+7, J+14), détectez les consolidations et copiez les titres exacts pour vos réveils.',
     badgeAlgorithm: 'Algorithme Nocturne',
     badgeDarkMode: 'Mode Sombre & Clair',
     badgeSpacedRepetition: 'Répétition Espacée J+3 / J+7 / J+14',
@@ -29,11 +30,14 @@ export const frDictionary: AlarmEngineDictionary = {
   },
   stepsGuide: {
     step1Title: 'Bilan du Jour',
-    step1Desc: 'Notez le chapitre étudié, le score au quiz et les reports éventuels.',
+    step1Desc:
+      'Notez le chapitre étudié, le score au quiz et les reports éventuels.',
     step2Title: 'Répétitions Dues',
-    step2Desc: 'Cochez les révisions dues. Les révisions non cochées sont reportées sans stress.',
+    step2Desc:
+      'Cochez les révisions dues. Les révisions non cochées sont reportées sans stress.',
     step3Title: 'Copier les Alarmes',
-    step3Desc: 'Copiez en 1 clic les libellés générés pour vos alarmes récurrentes de demain.',
+    step3Desc:
+      'Copiez en 1 clic les libellés générés pour vos alarmes récurrentes de demain.',
   },
   kpi: {
     tomorrowProtocol: 'Protocole de Demain',
@@ -49,7 +53,7 @@ export const frDictionary: AlarmEngineDictionary = {
   nav: {
     decision: 'Décision Nocturne',
     tracker: 'Suivi des Études',
-    guide: 'Guide d\'Utilisation & Exemple 1 Semaine',
+    guide: "Guide d'Utilisation & Exemple 1 Semaine",
     reference: 'Guide des 8 Alarmes',
     decisionShort: 'Décision',
     trackerShort: 'Suivi',
@@ -62,8 +66,9 @@ export const frDictionary: AlarmEngineDictionary = {
     collapsedSummary: 'Cliquer pour afficher cette section',
   },
   notifications: {
-    title: 'Notifications d\'Alarmes Push',
-    subtitle: 'Recevez des alertes dans votre navigateur calquées sur vos alarmes réelles (06:00, 08:15, 10:00, etc.)',
+    title: "Notifications d'Alarmes Push",
+    subtitle:
+      'Recevez des alertes dans votre navigateur calquées sur vos alarmes réelles (06:00, 08:15, 10:00, etc.)',
     enableBtn: 'Activer les Notifications',
     disableBtn: 'Désactiver les Notifications',
     testBtn: '🔔 Tester une Notification',
@@ -72,28 +77,31 @@ export const frDictionary: AlarmEngineDictionary = {
     statusDefault: 'Autorisation Requise',
     statusUnsupported: 'Navigateur Non Compatible',
     nextAlarmAlert: 'Prochaine alerte programmée',
-    testNotificationTitle: '⏰ Test d\'Alerte Moteur d\'Alarmes',
-    testNotificationBody: 'Les notifications fonctionnent ! Vous recevrez des alertes aux heures précises de vos alarmes.',
-    permissionDeniedNotice: 'Les notifications sont bloquées dans les paramètres de votre navigateur. Veuillez les autoriser.',
-    enabledNotice: 'Notifications push activées ! Les alertes retentiront aux heures d\'alarmes prévues.',
+    testNotificationTitle: "⏰ Test d'Alerte Moteur d'Alarmes",
+    testNotificationBody:
+      'Les notifications fonctionnent ! Vous recevrez des alertes aux heures précises de vos alarmes.',
+    permissionDeniedNotice:
+      'Les notifications sont bloquées dans les paramètres de votre navigateur. Veuillez les autoriser.',
+    enabledNotice:
+      "Notifications push activées ! Les alertes retentiront aux heures d'alarmes prévues.",
     disabledNotice: 'Notifications push désactivées.',
   },
   checklist: {
     title: 'Checklist du Rituel Nocturne',
     resetTooltip: 'Remettre la checklist à 0/9',
     step1: "1. Enregistrer le chapitre terminé et sa date d'étude originale",
-    step2: "2. Enregistrer le score au quiz et les points fragiles",
+    step2: '2. Enregistrer le score au quiz et les points fragiles',
     step3: '3. Vérifier les chapitres dus pour les flashcards J+3',
     step4: '4. Vérifier les chapitres dus pour les quiz J+7',
     step5: '5. Vérifier les chapitres dus pour le rappel oral J+14',
     step6: '6. Déterminer le type de journée de demain',
     step7: '7. Vérifier si demain est une journée de consolidation',
     step8: '8. Générer et mettre à jour les titres des alarmes',
-    step9: '9. Vérifier les alarmes dans l\'horloge du téléphone',
+    step9: "9. Vérifier les alarmes dans l'horloge du téléphone",
   },
   questionnaire: {
     title: 'Diagnostic Nocturne',
-    subtitle: 'Répondez à 3 questions rapides sur votre travail aujourd\'hui',
+    subtitle: "Répondez à 3 questions rapides sur votre travail aujourd'hui",
     tonightDate: 'Date de Ce Soir',
     defaultsToday: 'Date du jour par défaut',
     topic: 'Matière / Sujet',
@@ -106,11 +114,15 @@ export const frDictionary: AlarmEngineDictionary = {
     optRepeat: 'Répéter le Chapitre',
     optConsolidation: 'Consolidation Terminée',
     optMissed: 'Objectifs Manqués / Décrochage',
-    advancesNotice: 'Passe au chapitre suivant pour demain et planifie les révisions J+3, J+7 et J+14.',
-    repeatNotice: 'Maintient ce chapitre demain pour consolider la maîtrise avant d\'avancer.',
-    consolidationNotice: 'Valide le cycle de consolidation de 6 chapitres, réinitialise les alertes et reprend de nouveaux chapitres.',
-    missedNotice: 'Protocole adaptatif activé : suspend les nouveaux chapitres, allège la charge de demain et prévient la surcharge.',
-    missedReasonLabel: 'Que s\'est-il passé aujourd\'hui ?',
+    advancesNotice:
+      'Passe au chapitre suivant pour demain et planifie les révisions J+3, J+7 et J+14.',
+    repeatNotice:
+      "Maintient ce chapitre demain pour consolider la maîtrise avant d'avancer.",
+    consolidationNotice:
+      'Valide le cycle de consolidation de 6 chapitres, réinitialise les alertes et reprend de nouveaux chapitres.',
+    missedNotice:
+      'Protocole adaptatif activé : suspend les nouveaux chapitres, allège la charge de demain et prévient la surcharge.',
+    missedReasonLabel: "Que s'est-il passé aujourd'hui ?",
     missedReasonOffTrack: 'Décrochage / Distraction (Rattrapage ciblé)',
     missedReasonOverwhelmed: 'Fatigue Mentale / Surcharge (Allégement doux)',
     missedReasonEmergency: 'Imprévu Majeur / Maladie (Journée Récupération)',
@@ -124,25 +136,31 @@ export const frDictionary: AlarmEngineDictionary = {
     codingCarryover: 'Incomplet — Reporté à Demain',
     spacedReviewsDue: 'Répétitions Dues Ce Soir',
     rolloverRuleTitle: 'Règle de Report (Rollover)',
-    rolloverRuleDesc: 'Si vous laissez une révision non cochée ce soir, sa date d\'étude initiale ne change JAMAIS ; elle est automatiquement intégrée dans l\'alarme de 06:00 demain.',
+    rolloverRuleDesc:
+      "Si vous laissez une révision non cochée ce soir, sa date d'étude initiale ne change JAMAIS ; elle est automatiquement intégrée dans l'alarme de 06:00 demain.",
     noReviewsDue: '🎉 Aucune révision espacée en attente pour ce soir !',
     errorNotesLabel: 'Sous-thèmes Fragiles / Erreurs',
-    errorNotesPlaceholder: 'Ex: Gestion des erreurs async/await, arithmétique de pointeurs...',
-    errorNotesHint: 'Injecté directement dans les libellés de test et refactoring de demain.',
+    errorNotesPlaceholder:
+      'Ex: Gestion des erreurs async/await, arithmétique de pointeurs...',
+    errorNotesHint:
+      'Injecté directement dans les libellés de test et refactoring de demain.',
     tomorrowDayType: 'Sélecteur de Type de Journée',
   },
   schedule: {
     title: 'Programme des Alarmes de Demain',
     subtitle: 'Libellés exacts générés pour vos alarmes récurrentes',
-    oneMinuteSetupNotice: 'Configurez vos alarmes récurrentes une fois pour toutes dans l\'application Horloge de votre téléphone. Chaque soir, copiez-collez les titres en moins de 60 secondes !',
+    oneMinuteSetupNotice:
+      "Configurez vos alarmes récurrentes une fois pour toutes dans l'application Horloge de votre téléphone. Chaque soir, copiez-collez les titres en moins de 60 secondes !",
     copiedToast: 'Copié dans le presse-papier : ',
-    allCopiedToast: 'Tous les titres d\'alarmes ont été copiés !',
+    allCopiedToast: "Tous les titres d'alarmes ont été copiés !",
   },
   tracker: {
     title: 'Tableau de Suivi des Études (Vérité)',
-    subtitle: 'Dates immuables, planning de répétition espacée et scores de maîtrise',
+    subtitle:
+      'Dates immuables, planning de répétition espacée et scores de maîtrise',
     emptyTitle: 'Aucun Chapitre Enregistré',
-    emptyDesc: 'Commencez sur une base saine ! Complétez le rituel de ce soir ou cliquez sur "Nouveau Chapitre" pour enregistrer votre premier cours.',
+    emptyDesc:
+      'Commencez sur une base saine ! Complétez le rituel de ce soir ou cliquez sur "Nouveau Chapitre" pour enregistrer votre premier cours.',
     startFirstChapter: 'Ajouter le 1er Chapitre',
     filterAll: 'Tous les Chapitres',
     filterWeak: 'Fragiles Seulement',
@@ -170,151 +188,216 @@ export const frDictionary: AlarmEngineDictionary = {
     chapterNumber: 'Numéro de Chapitre',
     chapterTitle: 'Titre du Chapitre',
     topic: 'Sujet / Matière',
-    studyDate: 'Date d\'Étude Initiale',
-    autoFillNotice: '⚡ Les dates J+3 (+3j), J+7 (+7j) et J+14 (+14j) sont calculées automatiquement dès le choix de la date d\'étude.',
+    studyDate: "Date d'Étude Initiale",
+    autoFillNotice:
+      "⚡ Les dates J+3 (+3j), J+7 (+7j) et J+14 (+14j) sont calculées automatiquement dès le choix de la date d'étude.",
     d3Label: 'Date J+3 (Flashcards)',
     d7Label: 'Date J+7 (Quiz)',
     d14Label: 'Date J+14 (Rappel Oral)',
     quizScore: 'Score Quiz (%)',
     questionsMissed: 'Questions Manquées',
     codingCarryover: 'Code Reporté',
-    errorNotes: 'Notes d\'Erreurs / Fragilités',
+    errorNotes: "Notes d'Erreurs / Fragilités",
     cancel: 'Annuler',
     save: 'Enregistrer',
     backupTitle: 'Sauvegarde & Restauration JSON',
-    backupDesc: 'Copiez votre sauvegarde JSON ou collez une sauvegarde précédente pour restaurer l\'intégralité de vos données.',
+    backupDesc:
+      "Copiez votre sauvegarde JSON ou collez une sauvegarde précédente pour restaurer l'intégralité de vos données.",
     copyJson: 'Copier JSON',
     importJson: 'Importer JSON',
     uploadFile: 'Charger un fichier (.json)',
   },
   tooltips: {
     d3Title: 'Rappel J+3 (Flashcards)',
-    d3Body: 'Premier palier de répétition espacée (+3 jours). Révise les cartes flash pour enrayer la chute rapide de la mémoire.',
+    d3Body:
+      'Premier palier de répétition espacée (+3 jours). Révise les cartes flash pour enrayer la chute rapide de la mémoire.',
     d3Formula: 'dateEtude + 3 jours',
-    d3Meaning: 'Stabilise les nouvelles synapses avant l\'oubli massif.',
+    d3Meaning: "Stabilise les nouvelles synapses avant l'oubli massif.",
     d7Title: 'Quiz Diagnostic J+7',
-    d7Body: 'Deuxième palier (+7 jours). Test d\'auto-évaluation pour vérifier la compréhension et isoler les faiblesses.',
+    d7Body:
+      "Deuxième palier (+7 jours). Test d'auto-évaluation pour vérifier la compréhension et isoler les faiblesses.",
     d7Formula: 'dateEtude + 7 jours',
-    d7Meaning: 'La récupération active renforce l\'empreinte mnésique.',
+    d7Meaning: "La récupération active renforce l'empreinte mnésique.",
     d14Title: 'Rappel Oral Feynman J+14',
-    d14Body: 'Troisième palier (+14 jours). Explication orale synthétique à livre fermé pour ancrer la mémoire à long terme.',
+    d14Body:
+      'Troisième palier (+14 jours). Explication orale synthétique à livre fermé pour ancrer la mémoire à long terme.',
     d14Formula: 'dateEtude + 14 jours',
-    d14Meaning: 'Valide la maîtrise conceptuelle totale par l\'enseignement.',
+    d14Meaning: "Valide la maîtrise conceptuelle totale par l'enseignement.",
     consolidationTitle: 'Journée de Consolidation',
-    consolidationBody: 'Déclenchée tous les 6 chapitres ou si 3+ chapitres sont fragiles. Suspend les nouveaux chapitres pour réviser et coder.',
-    consolidationMeaning: 'Élimine l\'illusion de compétence et solidifie les bases.',
+    consolidationBody:
+      'Déclenchée tous les 6 chapitres ou si 3+ chapitres sont fragiles. Suspend les nouveaux chapitres pour réviser et coder.',
+    consolidationMeaning:
+      "Élimine l'illusion de compétence et solidifie les bases.",
     rolloverTitle: 'Règle de Report (Zéro Pénalité)',
-    rolloverBody: 'Une révision non cochée ce soir est reportée dans l\'alarme de 06:00 de demain sans altérer la date historique.',
-    rolloverMeaning: 'Garde la visibilité des tâches sans fausser l\'historique.',
-    blindRecallTitle: 'Rappel à l\'Aveugle',
-    blindRecallBody: 'Pratique de récupération effectuée sans notes ni complétion automatique.',
-    blindRecallMeaning: 'Maximise l\'effort d\'extraction pour un apprentissage durable.',
+    rolloverBody:
+      "Une révision non cochée ce soir est reportée dans l'alarme de 06:00 de demain sans altérer la date historique.",
+    rolloverMeaning:
+      "Garde la visibilité des tâches sans fausser l'historique.",
+    blindRecallTitle: "Rappel à l'Aveugle",
+    blindRecallBody:
+      'Pratique de récupération effectuée sans notes ni complétion automatique.',
+    blindRecallMeaning:
+      "Maximise l'effort d'extraction pour un apprentissage durable.",
     adaptiveTitle: 'Protocole Adaptatif (Zéro Culpabilité)',
-    adaptiveBody: 'Si l\'objectif n\'a pas été atteint, l\'application allège demain, met en pause les nouveaux chapitres et évite l\'effet avalanche.',
-    adaptiveMeaning: 'La régularité bienveillante surpasse la perfection rigide.',
+    adaptiveBody:
+      "Si l'objectif n'a pas été atteint, l'application allège demain, met en pause les nouveaux chapitres et évite l'effet avalanche.",
+    adaptiveMeaning:
+      'La régularité bienveillante surpasse la perfection rigide.',
   },
   guide: {
-    tabTitle: 'Comment utiliser l\'application (Exemple 1 Semaine)',
-    heroTitle: 'L\'Algorithme Nocturne Répétable',
-    heroSubtitle: 'Maîtrisez n\'importe quel sujet technique complexe en moins de 60 secondes chaque soir en reliant la science de la répétition espacée directement aux alarmes récurrentes de votre téléphone.',
-    loadSimulationBtn: 'Charger l\'Exemple 1 Semaine dans le Suivi',
-    simulationLoadedNotice: 'Exemple d\'une semaine chargé dans votre Suivi des Études ! Explorez le Suivi ou la Décision Nocturne.',
+    tabTitle: "Comment utiliser l'application (Exemple 1 Semaine)",
+    heroTitle: "L'Algorithme Nocturne Répétable",
+    heroSubtitle:
+      "Maîtrisez n'importe quel sujet technique complexe en moins de 60 secondes chaque soir en reliant la science de la répétition espacée directement aux alarmes récurrentes de votre téléphone.",
+    loadSimulationBtn: "Charger l'Exemple 1 Semaine dans le Suivi",
+    simulationLoadedNotice:
+      "Exemple d'une semaine chargé dans votre Suivi des Études ! Explorez le Suivi ou la Décision Nocturne.",
     philosophyTitle: '5 Principes Clés pour une Efficacité Maximale',
-    principle1Title: '1. Configurez vos alarmes une seule fois sur votre téléphone',
-    principle1Body: 'Réglez les 8 alarmes récurrentes une fois pour toutes dans l\'application Horloge (06:00, 08:15, 09:30/10:00, 15:15, 16:15, 17:00, 19:30). Chaque soir avant de dormir, l\'application génère les libellés exacts. Copiez-collez simplement dans le créneau correspondant. Zéro friction.',
-    principle2Title: '2. La Triade Espacée d\'Ebbinghaus (J+3, J+7, J+14)',
-    principle2Body: '• Flashcards J+3 (+3j) : stoppe la chute brutale de la mémoire initiale.\n• Quiz Diagnostic J+7 (+7j) : exploite l\'effet de test pour isoler les faiblesses.\n• Rappel Oral Feynman J+14 (+14j) : ancre durablement le savoir par l\'explication à livre fermé.',
-    principle3Title: '3. Les Paliers de Consolidation (Fin de l\'Illusion de Compétence)',
-    principle3Body: 'Tous les 6 chapitres terminés OU dès que 3+ chapitres sont fragiles, l\'algorithme stoppe les nouveaux cours. La journée bascule en quiz croisé sur 6 chapitres, défi de code pratique et analyse d\'erreurs.',
-    principle4Title: '4. Protocole Adaptatif Zéro Culpabilité (Flexibilité Totale)',
-    principle4Body: 'En cas d\'imprévu, maladie ou fatigue mentale, ne paniquez jamais. Choisissez "Objectifs Manqués" : l\'application allège la journée de demain et suspend les nouveaux chapitres pour préserver votre élan.',
+    principle1Title:
+      '1. Configurez vos alarmes une seule fois sur votre téléphone',
+    principle1Body:
+      "Réglez les 8 alarmes récurrentes une fois pour toutes dans l'application Horloge (06:00, 08:15, 09:30/10:00, 15:15, 16:15, 17:00, 19:30). Chaque soir avant de dormir, l'application génère les libellés exacts. Copiez-collez simplement dans le créneau correspondant. Zéro friction.",
+    principle2Title: "2. La Triade Espacée d'Ebbinghaus (J+3, J+7, J+14)",
+    principle2Body:
+      "• Flashcards J+3 (+3j) : stoppe la chute brutale de la mémoire initiale.\n• Quiz Diagnostic J+7 (+7j) : exploite l'effet de test pour isoler les faiblesses.\n• Rappel Oral Feynman J+14 (+14j) : ancre durablement le savoir par l'explication à livre fermé.",
+    principle3Title:
+      "3. Les Paliers de Consolidation (Fin de l'Illusion de Compétence)",
+    principle3Body:
+      "Tous les 6 chapitres terminés OU dès que 3+ chapitres sont fragiles, l'algorithme stoppe les nouveaux cours. La journée bascule en quiz croisé sur 6 chapitres, défi de code pratique et analyse d'erreurs.",
+    principle4Title:
+      '4. Protocole Adaptatif Zéro Culpabilité (Flexibilité Totale)',
+    principle4Body:
+      'En cas d\'imprévu, maladie ou fatigue mentale, ne paniquez jamais. Choisissez "Objectifs Manqués" : l\'application allège la journée de demain et suspend les nouveaux chapitres pour préserver votre élan.',
     principle5Title: '5. La Règle de Report (Zéro Pénalité)',
-    principle5Body: 'Si une révision due n\'est pas cochée ce soir, sa date d\'étude initiale ne change JAMAIS. Elle est automatiquement reportée dans le titre de l\'alarme de 06:00 de demain.',
+    principle5Body:
+      "Si une révision due n'est pas cochée ce soir, sa date d'étude initiale ne change JAMAIS. Elle est automatiquement reportée dans le titre de l'alarme de 06:00 de demain.",
     timelineTitle: 'Parcours Concret sur 1 Semaine (Lundi au Dimanche)',
-    timelineSubtitle: 'Découvrez comment l\'algorithme s\'adapte jour après jour face aux notes fragiles, contraintes de jeûne, imprévus et consolidation.',
+    timelineSubtitle:
+      "Découvrez comment l'algorithme s'adapte jour après jour face aux notes fragiles, contraintes de jeûne, imprévus et consolidation.",
     monBadge: 'Lundi · Lancement Jour de Jeûne',
     monTitle: 'Ch. 1 : Architecture TCP/IP & Sockets',
-    monWhatHappened: 'Début du sujet Systèmes Distribués. Chapitre 1 terminé proprement. Quiz : 95% (Succès). Aucun code reporté.',
-    monAlgorithmReaction: 'L\'algorithme enregistre la date, calcule automatiquement J+3 (Jeu), J+7 (Lun), J+14 (Lun+1s) et prépare le Ch. 2 pour demain.',
-    monAlarmPreview: 'Demain 06:00 -> J+3: Aucun | J+7: Aucun | NOUVEAU: Ch. 2 (Mémoire & Pointeurs)',
+    monWhatHappened:
+      'Début du sujet Systèmes Distribués. Chapitre 1 terminé proprement. Quiz : 95% (Succès). Aucun code reporté.',
+    monAlgorithmReaction:
+      "L'algorithme enregistre la date, calcule automatiquement J+3 (Jeu), J+7 (Lun), J+14 (Lun+1s) et prépare le Ch. 2 pour demain.",
+    monAlarmPreview:
+      'Demain 06:00 -> J+3: Aucun | J+7: Aucun | NOUVEAU: Ch. 2 (Mémoire & Pointeurs)',
     tueBadge: 'Mardi · Jour Standard · Alerte Note Fragile !',
     tueTitle: 'Ch. 2 : Gestion Mémoire & Arithmétique de Pointeurs',
-    tueWhatHappened: 'Sujet difficile ! Chapitre lu, mais score au Quiz de 65% (4 erreurs !) et exercices de code inachevés.',
-    tueAlgorithmReaction: 'L\'algorithme marque automatiquement Ch. 2 comme FRAGILE et REPORTÉ. Il planifie le Ch. 2 en binôme dans la session de code de mercredi.',
-    tueAlarmPreview: 'Demain 10:00 -> Code : Ch. 2 (Reporté / Fragile) + Ch. 3 (Concurrence)',
+    tueWhatHappened:
+      'Sujet difficile ! Chapitre lu, mais score au Quiz de 65% (4 erreurs !) et exercices de code inachevés.',
+    tueAlgorithmReaction:
+      "L'algorithme marque automatiquement Ch. 2 comme FRAGILE et REPORTÉ. Il planifie le Ch. 2 en binôme dans la session de code de mercredi.",
+    tueAlarmPreview:
+      'Demain 10:00 -> Code : Ch. 2 (Reporté / Fragile) + Ch. 3 (Concurrence)',
     wedBadge: 'Mercredi · Jour Standard · Réparation en Binôme',
     wedTitle: 'Ch. 3 : Concurrence & Caches Sans Verrou',
-    wedWhatHappened: 'Ch. 3 terminé et le bug de pointeurs du Ch. 2 résolu pendant le bloc de code. Quiz : 88%.',
-    wedAlgorithmReaction: 'Avance le cours cible au Ch. 4. Conserve l\'historique fragile pour la future consolidation.',
-    wedAlarmPreview: 'Demain est Jeudi (Jeûne) -> Active les créneaux adaptés et l\'arrêt IDE à 15:15.',
+    wedWhatHappened:
+      'Ch. 3 terminé et le bug de pointeurs du Ch. 2 résolu pendant le bloc de code. Quiz : 88%.',
+    wedAlgorithmReaction:
+      "Avance le cours cible au Ch. 4. Conserve l'historique fragile pour la future consolidation.",
+    wedAlarmPreview:
+      "Demain est Jeudi (Jeûne) -> Active les créneaux adaptés et l'arrêt IDE à 15:15.",
     thuBadge: 'Jeudi · Jour de Jeûne · 1ère Révision J+3 Due !',
-    thuTitle: 'Ch. 4 : Boucles d\'Événements (+ Ch. 1 J+3)',
-    thuWhatHappened: 'Exactement 3 jours se sont écoulés depuis lundi ! Le Ch. 1 est DÛ pour les flashcards J+3.',
-    thuAlgorithmReaction: 'Détecte le J+3 du Ch. 1 et l\'injecte dans l\'alarme de 06:00. Applique le verrou d\'énergie : FERMER IDE à 15:15 pour revue passive.',
-    thuAlarmPreview: '06:00 -> Rappel J+3/J+7 (Ch. 1) + NOUVEAU: Ch. 4 | 15:15 -> FERMER IDE : Revue Passive',
+    thuTitle: "Ch. 4 : Boucles d'Événements (+ Ch. 1 J+3)",
+    thuWhatHappened:
+      'Exactement 3 jours se sont écoulés depuis lundi ! Le Ch. 1 est DÛ pour les flashcards J+3.',
+    thuAlgorithmReaction:
+      "Détecte le J+3 du Ch. 1 et l'injecte dans l'alarme de 06:00. Applique le verrou d'énergie : FERMER IDE à 15:15 pour revue passive.",
+    thuAlarmPreview:
+      '06:00 -> Rappel J+3/J+7 (Ch. 1) + NOUVEAU: Ch. 4 | 15:15 -> FERMER IDE : Revue Passive',
     friBadge: 'Vendredi · Récupération · Arrêt Strict à 15:15',
     friTitle: 'Ch. 5 : WebSockets & Moniteurs Heartbeat',
-    friWhatHappened: 'Étude des bases du Ch. 5. Quiz : 85%. Contraintes de récupération du vendredi actives.',
-    friAlgorithmReaction: 'Limite les blocs de code intensifs le matin. À 15:15, coupure totale : OFF — Récupération pour recharger les réserves cognitives.',
-    friAlarmPreview: '15:15 -> OFF — Récupération (Repos complet tout le week-end)',
+    friWhatHappened:
+      'Étude des bases du Ch. 5. Quiz : 85%. Contraintes de récupération du vendredi actives.',
+    friAlgorithmReaction:
+      'Limite les blocs de code intensifs le matin. À 15:15, coupure totale : OFF — Récupération pour recharger les réserves cognitives.',
+    friAlarmPreview:
+      '15:15 -> OFF — Récupération (Repos complet tout le week-end)',
     satBadge: 'Samedi · Jour Standard · Objectif Manqué (Protocole Adaptatif)',
     satTitle: 'Report Ch. 5 & Imprévu Majeur',
-    satWhatHappened: 'Migraine sévère et imprévu familial. Impossible d\'étudier comme prévu.',
-    satAlgorithmReaction: 'L\'utilisateur sélectionne "Objectifs Manqués" -> "Fatigue Mentale". L\'algorithme suspend les nouveaux cours, élimine la culpabilité et adapte dimanche.',
-    satAlarmPreview: 'Demain 06:00 -> DÉ-ESCALADE: Ch. 5 (Bases Douces) | 08:15 -> Revue Légère (Sans Pression)',
+    satWhatHappened:
+      "Migraine sévère et imprévu familial. Impossible d'étudier comme prévu.",
+    satAlgorithmReaction:
+      'L\'utilisateur sélectionne "Objectifs Manqués" -> "Fatigue Mentale". L\'algorithme suspend les nouveaux cours, élimine la culpabilité et adapte dimanche.',
+    satAlarmPreview:
+      'Demain 06:00 -> DÉ-ESCALADE: Ch. 5 (Bases Douces) | 08:15 -> Revue Légère (Sans Pression)',
     sunBadge: 'Dimanche · Journée de Consolidation des 6 Chapitres !',
     sunTitle: 'Palier des 6 Chapitres Atteint',
-    sunWhatHappened: 'Ch. 5 achevé sereinement. Cela fait 6 chapitres terminés depuis le début (Ch. 1 à 6) !',
-    sunAlgorithmReaction: 'DÉCLENCHEMENT CONSOLIDATION ! Aucun nouveau cours demain. La journée entière est dédiée au quiz croisé, défi pratique et synthèse Feynman.',
-    sunAlarmPreview: '06:00 -> Rappel Consolidation : Flashcards Fragiles (Ch. 2) | 08:15 -> Quiz Croisé Ch. 1–6 | 10:00 -> Défi Pratique Ch. 1–6',
-    routineTitle: 'L\'Aide-Mémoire Quotidien en 3 Étapes',
+    sunWhatHappened:
+      'Ch. 5 achevé sereinement. Cela fait 6 chapitres terminés depuis le début (Ch. 1 à 6) !',
+    sunAlgorithmReaction:
+      'DÉCLENCHEMENT CONSOLIDATION ! Aucun nouveau cours demain. La journée entière est dédiée au quiz croisé, défi pratique et synthèse Feynman.',
+    sunAlarmPreview:
+      '06:00 -> Rappel Consolidation : Flashcards Fragiles (Ch. 2) | 08:15 -> Quiz Croisé Ch. 1–6 | 10:00 -> Défi Pratique Ch. 1–6',
+    routineTitle: "L'Aide-Mémoire Quotidien en 3 Étapes",
     morningTitle: '1. Réveil & Lancement (06:00 - 06:45)',
-    morningDesc: 'Réveillez-vous avec le libellé de l\'alarme. Faites 20 min de flashcards J+3/J+7 dues, puis 10 min de survol conceptuel du chapitre du jour.',
+    morningDesc:
+      "Réveillez-vous avec le libellé de l'alarme. Faites 20 min de flashcards J+3/J+7 dues, puis 10 min de survol conceptuel du chapitre du jour.",
     workTitle: '2. Pratique & Code (08:15 & 10:00)',
-    workDesc: '08:15 : Quiz diagnostic à livre fermé. 10:00 : Session de code intensif associant les notions fragiles d\'hier au nouveau cours.',
+    workDesc:
+      "08:15 : Quiz diagnostic à livre fermé. 10:00 : Session de code intensif associant les notions fragiles d'hier au nouveau cours.",
     bedtimeTitle: '3. Rituel Nocturne en 60 Secondes (22:30)',
-    bedtimeDesc: 'Ouvrez cette application sur votre téléphone. Touchez 3 réponses. Cliquez sur "Tout Copier". Collez dans vos alarmes de demain. Dormez l\'esprit serein.',
+    bedtimeDesc:
+      'Ouvrez cette application sur votre téléphone. Touchez 3 réponses. Cliquez sur "Tout Copier". Collez dans vos alarmes de demain. Dormez l\'esprit serein.',
   },
   topicModal: {
     modalTitleCreate: 'Créer un Sujet & Importer le Syllabus',
     modalTitleEdit: 'Modifier le Sujet & Gérer le Syllabus',
     nameLabel: 'Nom du Sujet / Cours',
-    namePlaceholder: 'ex: Systèmes Distribués, MIT 6.824, Architecture Réseau...',
+    namePlaceholder:
+      'ex: Systèmes Distribués, MIT 6.824, Architecture Réseau...',
     descLabel: 'Description / Objectifs du Sujet',
-    descPlaceholder: 'Bref résumé des concepts clés et enjeux majeurs (ex: Algorithmes de consensus Raft/Paxos, tolérance aux pannes).',
+    descPlaceholder:
+      'Bref résumé des concepts clés et enjeux majeurs (ex: Algorithmes de consensus Raft/Paxos, tolérance aux pannes).',
     colorLabel: 'Couleur Thème',
     syllabusLabel: 'Liste des Chapitres / Syllabus (Optionnel - Un par ligne)',
-    syllabusPlaceholder: '1. Introduction aux Systèmes Distribués\n2. RPC & Sérialisation Réseau\n3. Réplication Primaire-Secondaire\n4. Algorithme de Consensus Raft\n5. Stockage Clé-Valeur Résilient\n6. MapReduce & Calcul Parallèle',
-    syllabusHint: 'Collez le sommaire de votre manuel ou le plan de votre cours. La numérotation est détectée automatiquement.',
+    syllabusPlaceholder:
+      '1. Introduction aux Systèmes Distribués\n2. RPC & Sérialisation Réseau\n3. Réplication Primaire-Secondaire\n4. Algorithme de Consensus Raft\n5. Stockage Clé-Valeur Résilient\n6. MapReduce & Calcul Parallèle',
+    syllabusHint:
+      'Collez le sommaire de votre manuel ou le plan de votre cours. La numérotation est détectée automatiquement.',
     parsedCountNotice: 'Chapitres détectés prêts à être importés',
-    scheduleModeLabel: 'Mode d\'Importation du Syllabus',
-    scheduleModeQueue: 'Ajouter en file d\'attente (Non étudiés, prêts pour l\'étude du soir)',
-    scheduleModeBackfill: 'Enregistrer comme complétés (Générer les révisions espacées)',
+    scheduleModeLabel: "Mode d'Importation du Syllabus",
+    scheduleModeQueue:
+      "Ajouter en file d'attente (Non étudiés, prêts pour l'étude du soir)",
+    scheduleModeBackfill:
+      'Enregistrer comme complétés (Générer les révisions espacées)',
     cancel: 'Annuler',
     save: 'Enregistrer le Sujet & Syllabus',
-    docParserTitle: '📄 Extraire le Syllabus depuis Tout Fichier (Workflow n8n)',
-    docParserSubtitle: 'Téléversez tout document, présentation, tableur, notes ou fichier de syllabus (.md, .pdf, .docx, .doc, .xlsx, .pptx, etc.) pour extraire automatiquement les chapitres et descriptions sans saisie manuelle.',
-    docUploadLabel: 'Déposer ou Parcourir Tout Fichier (.md, .pdf, .docx, .xlsx, .pptx, etc.)',
-    docUploadHint: 'Prend en charge tous les types de fichiers : PDF, Markdown, Word, PowerPoint, Excel, CSV, Texte, etc. Extraction directe ou via webhook n8n.',
-    docPromptLabel: 'Prompt d\'Extraction IA & Filtre de Section (Optionnel)',
-    docPromptPlaceholder: 'ex. "Extraire uniquement les chapitres 3 à 7", "Se concentrer sur les systèmes distribués", "Omettre les annexes"',
-    docPromptHint: 'L\'IA filtrera et adaptera intelligemment le programme selon vos instructions.',
-    parseErrorTitle: 'Erreur d\'Extraction du Document',
+    docParserTitle:
+      '📄 Extraire le Syllabus depuis Tout Fichier (Workflow n8n)',
+    docParserSubtitle:
+      'Téléversez tout document, présentation, tableur, notes ou fichier de syllabus (.md, .pdf, .docx, .doc, .xlsx, .pptx, etc.) pour extraire automatiquement les chapitres et descriptions sans saisie manuelle.',
+    docUploadLabel:
+      'Déposer ou Parcourir Tout Fichier (.md, .pdf, .docx, .xlsx, .pptx, etc.)',
+    docUploadHint:
+      'Prend en charge tous les types de fichiers : PDF, Markdown, Word, PowerPoint, Excel, CSV, Texte, etc. Extraction directe ou via webhook n8n.',
+    docPromptLabel: "Prompt d'Extraction IA & Filtre de Section (Optionnel)",
+    docPromptPlaceholder:
+      'ex. "Extraire uniquement les chapitres 3 à 7", "Se concentrer sur les systèmes distribués", "Omettre les annexes"',
+    docPromptHint:
+      "L'IA filtrera et adaptera intelligemment le programme selon vos instructions.",
+    parseErrorTitle: "Erreur d'Extraction du Document",
     n8nWebhookUrlLabel: 'URL du Webhook n8n',
     n8nWebhookPlaceholder: 'http://localhost:5678/webhook/parse-chapter-doc',
     downloadWorkflowBtn: '📥 Télécharger Workflow n8n (.json)',
     parseBtn: '⚡ Extraire les Chapitres',
     parsingInProgress: 'Extraction en cours...',
     parseSuccessNotice: 'Chapitres extraits avec succès depuis le document !',
-    parseErrorNotice: 'Impossible d\'analyser le document. Vérifiez le webhook n8n ou le format.',
+    parseErrorNotice:
+      "Impossible d'analyser le document. Vérifiez le webhook n8n ou le format.",
     workflowGuideTitle: 'Comment utiliser avec n8n :',
-    workflowGuideStep1: '1. Téléchargez le fichier JSON du workflow ci-dessus et importez-le dans n8n.',
-    workflowGuideStep2: '2. Activez le workflow dans n8n (Chemin du webhook : /webhook/parse-chapter-doc).',
-    workflowGuideStep3: '3. Déposez votre document ici pour remplir automatiquement le sujet, le résumé et tous les chapitres !',
+    workflowGuideStep1:
+      '1. Téléchargez le fichier JSON du workflow ci-dessus et importez-le dans n8n.',
+    workflowGuideStep2:
+      '2. Activez le workflow dans n8n (Chemin du webhook : /webhook/parse-chapter-doc).',
+    workflowGuideStep3:
+      '3. Déposez votre document ici pour remplir automatiquement le sujet, le résumé et tous les chapitres !',
   },
   outlook: {
     title: 'Prévisions à 7 Jours & Détection des Collisions de Révision',
-    subtitle: 'Anticipez les cumuls de révisions J+3, J+7 et J+14 pour préserver votre clarté mentale',
+    subtitle:
+      'Anticipez les cumuls de révisions J+3, J+7 et J+14 pour préserver votre clarté mentale',
     collisionAlert: 'Forte Collision de Révisions (>= 3 chapitres)',
     milestoneAlert: 'Étape de Consolidation (Palier 6 cours)',
     reviewsScheduled: 'révisions prévues',
@@ -324,15 +407,19 @@ export const frDictionary: AlarmEngineDictionary = {
   },
   recallModal: {
     title: 'Diagnostic de Rappel Actif & Flashcards Express',
-    subtitle: 'Testez votre restitution mentale avant de consulter vos notes ou solutions',
+    subtitle:
+      'Testez votre restitution mentale avant de consulter vos notes ou solutions',
     topicLabel: 'Sujet',
     chapterLabel: 'Chapitre',
     quizScoreLabel: 'Dernier Quiz',
     errorNotesLabel: 'Points Fragiles & Cas Limites Enregistrés',
     promptChallengeTitle: 'Défi de Restitution Active',
-    d3PromptText: 'Rappel Actif : Sans regarder vos notes, écrivez ou énoncez à voix haute les 3 concepts fondamentaux, formules ou structures de ce cours.',
-    d7PromptText: 'Synthèse & Examen : Expliquez les cas d\'erreur, les conditions limites et les liens avec les chapitres précédents.',
-    d14PromptText: 'Rappel Oral Feynman : Enseignez ce sujet en moins de 90 secondes avec des mots simples comme à un collègue débutant.',
+    d3PromptText:
+      'Rappel Actif : Sans regarder vos notes, écrivez ou énoncez à voix haute les 3 concepts fondamentaux, formules ou structures de ce cours.',
+    d7PromptText:
+      "Synthèse & Examen : Expliquez les cas d'erreur, les conditions limites et les liens avec les chapitres précédents.",
+    d14PromptText:
+      'Rappel Oral Feynman : Enseignez ce sujet en moins de 90 secondes avec des mots simples comme à un collègue débutant.',
     actionMastered: 'Maîtrisé ✓ (Marquer Terminé)',
     actionReinforce: 'À Renforcer ⚠️ (Conserver Fragile)',
     close: 'Fermer',

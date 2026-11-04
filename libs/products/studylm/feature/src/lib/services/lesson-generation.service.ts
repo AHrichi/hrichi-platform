@@ -62,17 +62,82 @@ export class LessonGenerationService {
   /** Starts writing; returns the lesson id at once, so a screen can follow. */
   start(subject: StudySubject, section: RoadmapSection): string {
     const id = this.idFor(subject, section);
+    void this.generateLesson(subject, section).catch(() => undefined);
+    return id;
+  }
+
+  /**
+   * Generates a lesson and returns a Promise that resolves when finished,
+   * or throws if generation failed (so retry mechanisms can retry it).
+   */
+  async generateLesson(
+    subject: StudySubject,
+    section: RoadmapSection,
+    signal?: AbortSignal,
+  ): Promise<Lesson> {
+    const id = this.idFor(subject, section);
     this.running.get(id)?.abort();
     const controller = new AbortController();
     this.running.set(id, controller);
+
+    if (signal) {
+      if (signal.aborted) {
+        controller.abort();
+      } else {
+        signal.addEventListener('abort', () => controller.abort(), {
+          once: true,
+        });
+      }
+    }
+
     this.setJob(id, {
       status: 'planning',
       draft: null,
       lesson: null,
       error: null,
     });
-    void this.run(id, subject, section, controller.signal);
-    return id;
+
+    try {
+      const { outline, provider } = await this.generator.outline(
+        {
+          subject: subject.title,
+          sectionTitle: section.title,
+          sectionSummary: section.summary,
+          subtopics: section.subtopics,
+          tier: section.difficultyTier,
+        },
+        controller.signal,
+      );
+      const draft = await this.generator.write(
+        outline,
+        section.difficultyTier,
+        provider,
+        controller.signal,
+        (current) =>
+          this.setJob(id, {
+            status: 'writing',
+            draft: current,
+            lesson: assembleLesson(id, formatId(section.id), current),
+            error: null,
+          }),
+      );
+      const lesson = assembleLesson(id, formatId(section.id), draft);
+      await this.finish(id, subject.id, section.id, draft);
+      return lesson;
+    } catch (error) {
+      const job = this.jobs()[id];
+      this.setJob(id, {
+        status: controller.signal.aborted ? 'cancelled' : 'failed',
+        draft: job?.draft ?? null,
+        lesson: job?.lesson ?? null,
+        error: controller.signal.aborted ? null : messageOf(error),
+      });
+      throw error;
+    } finally {
+      if (this.running.get(id)?.signal === controller.signal) {
+        this.running.delete(id);
+      }
+    }
   }
 
   /** AI feedback on a self-explanation, for the lesson checks. */
@@ -115,50 +180,6 @@ export class LessonGenerationService {
       draft.blocks[blockId] = { state: 'skipped', reason: messageOf(error) };
     }
     await this.finish(id, record.subjectId, record.sectionId, draft);
-  }
-
-  private async run(
-    id: string,
-    subject: StudySubject,
-    section: RoadmapSection,
-    cancel: AbortSignal,
-  ): Promise<void> {
-    try {
-      const { outline, provider } = await this.generator.outline(
-        {
-          subject: subject.title,
-          sectionTitle: section.title,
-          sectionSummary: section.summary,
-          subtopics: section.subtopics,
-          tier: section.difficultyTier,
-        },
-        cancel,
-      );
-      const draft = await this.generator.write(
-        outline,
-        section.difficultyTier,
-        provider,
-        cancel,
-        (current) =>
-          this.setJob(id, {
-            status: 'writing',
-            draft: current,
-            lesson: assembleLesson(id, formatId(section.id), current),
-            error: null,
-          }),
-      );
-      await this.finish(id, subject.id, section.id, draft);
-    } catch (error) {
-      const job = this.jobs()[id];
-      this.setJob(id, {
-        status: cancel.aborted ? 'cancelled' : 'failed',
-        draft: job?.draft ?? null,
-        lesson: job?.lesson ?? null,
-        error: cancel.aborted ? null : messageOf(error),
-      });
-    } finally {
-      if (this.running.get(id)?.signal === cancel) this.running.delete(id);
-    }
   }
 
   private async finish(

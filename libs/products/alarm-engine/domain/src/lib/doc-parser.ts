@@ -4,7 +4,9 @@ import { parseChapterOutline } from './outline-parser';
 /**
  * Decompresses raw deflate data using standard Web DecompressionStream API.
  */
-async function decompressDeflateRaw(compressedBytes: Uint8Array): Promise<string> {
+async function decompressDeflateRaw(
+  compressedBytes: Uint8Array,
+): Promise<string> {
   if (typeof DecompressionStream === 'undefined') {
     return '';
   }
@@ -34,7 +36,12 @@ export async function extractUniversalTextFromBuffer(
   buffer: ArrayBuffer | Uint8Array,
   fileName = '',
 ): Promise<string> {
-  if (!buffer || (buffer instanceof ArrayBuffer ? buffer.byteLength === 0 : buffer.length === 0)) {
+  if (
+    !buffer ||
+    (buffer instanceof ArrayBuffer
+      ? buffer.byteLength === 0
+      : buffer.length === 0)
+  ) {
     return '';
   }
 
@@ -44,7 +51,13 @@ export async function extractUniversalTextFromBuffer(
 
   // 1. Check for PKZip archive (DOCX, PPTX, XLSX, ODT, ODS, ODP)
   // Magic bytes: 0x50 0x4B 0x03 0x04 ("PK\x03\x04")
-  if (len > 30 && u8[0] === 0x50 && u8[1] === 0x4b && u8[2] === 0x03 && u8[3] === 0x04) {
+  if (
+    len > 30 &&
+    u8[0] === 0x50 &&
+    u8[1] === 0x4b &&
+    u8[2] === 0x03 &&
+    u8[3] === 0x04
+  ) {
     try {
       const view = new DataView(u8.buffer, u8.byteOffset, u8.byteLength);
       let offset = 0;
@@ -64,10 +77,13 @@ export async function extractUniversalTextFromBuffer(
           const dataOffset = offset + 30 + nameLen + extraLen;
 
           const isDocx = entryName === 'word/document.xml';
-          const isPptx = entryName.startsWith('ppt/slides/slide') && entryName.endsWith('.xml');
+          const isPptx =
+            entryName.startsWith('ppt/slides/slide') &&
+            entryName.endsWith('.xml');
           const isXlsx =
             entryName === 'xl/sharedStrings.xml' ||
-            (entryName.startsWith('xl/worksheets/sheet') && entryName.endsWith('.xml'));
+            (entryName.startsWith('xl/worksheets/sheet') &&
+              entryName.endsWith('.xml'));
           const isOdt = entryName === 'content.xml';
 
           if (isDocx || isPptx || isXlsx || isOdt) {
@@ -85,14 +101,19 @@ export async function extractUniversalTextFromBuffer(
                 const paras = xml.split(/<\/w:p>/);
                 for (const p of paras) {
                   const m = p.match(/<w:t[^>]*>([^<]*)<\/w:t>/g) || [];
-                  const line = m.map((t) => t.replace(/<[^>]+>/g, '')).join('').trim();
+                  const line = m
+                    .map((t) => t.replace(/<[^>]+>/g, ''))
+                    .join('')
+                    .trim();
                   if (line) textParts.push(line);
                 }
               } else if (isPptx) {
                 const numMatch = entryName.match(/slide(\d+)\.xml/);
                 const slideNum = numMatch ? parseInt(numMatch[1], 10) : 999;
                 const m = xml.match(/<a:t[^>]*>([^<]*)<\/a:t>/g) || [];
-                const lines = m.map((t) => t.replace(/<[^>]+>/g, '').trim()).filter(Boolean);
+                const lines = m
+                  .map((t) => t.replace(/<[^>]+>/g, '').trim())
+                  .filter(Boolean);
                 if (lines.length > 0) {
                   slides.push({ slideNum, text: lines });
                 }
@@ -103,7 +124,8 @@ export async function extractUniversalTextFromBuffer(
                   if (val && !textParts.includes(val)) textParts.push(val);
                 }
               } else if (isOdt) {
-                const m = xml.match(/<text:[ph][^>]*>([^<]*)<\/text:[ph]>/g) || [];
+                const m =
+                  xml.match(/<text:[ph][^>]*>([^<]*)<\/text:[ph]>/g) || [];
                 for (const t of m) {
                   const val = t.replace(/<[^>]+>/g, '').trim();
                   if (val) textParts.push(val);
@@ -139,7 +161,11 @@ export async function extractUniversalTextFromBuffer(
   // 2. Check for PDF (%PDF- header or .pdf extension)
   const isPdf =
     ext === 'pdf' ||
-    (len >= 4 && u8[0] === 0x25 && u8[1] === 0x50 && u8[2] === 0x44 && u8[3] === 0x46);
+    (len >= 4 &&
+      u8[0] === 0x25 &&
+      u8[1] === 0x50 &&
+      u8[2] === 0x44 &&
+      u8[3] === 0x46);
   if (isPdf) {
     const rawBinary = Array.from(u8)
       .map((b) => String.fromCharCode(b))
@@ -149,8 +175,16 @@ export async function extractUniversalTextFromBuffer(
     // Extract text in parentheses (text) Tj or ' or "
     const tjMatches = rawBinary.match(/\(([^)]{2,})\)\s*(?:Tj|'|")/g) || [];
     for (const m of tjMatches) {
-      const str = m.replace(/^\(/, '').replace(/\)\s*(?:Tj|'|")$/, '').trim();
-      if (str && str.length >= 2 && !str.startsWith('/') && !str.startsWith('%')) {
+      const str = m
+        .replace(/^\(/, '')
+        .replace(/\)\s*(?:Tj|'|")$/, '')
+        .trim();
+      if (
+        str &&
+        str.length >= 2 &&
+        !str.startsWith('/') &&
+        !str.startsWith('%')
+      ) {
         textPieces.push(str);
       }
     }
@@ -193,7 +227,9 @@ export async function extractUniversalTextFromBuffer(
     const sep = ext === 'tsv' || rawStr.includes('\t') ? '\t' : ',';
     const lines = rawStr.split(/\r?\n/).filter((l) => l.trim().length > 0);
     const parsed = lines.map((line) => {
-      const cols = line.split(sep).map((c) => c.replace(/^["']|["']$/g, '').trim());
+      const cols = line
+        .split(sep)
+        .map((c) => c.replace(/^["']|["']$/g, '').trim());
       if (cols.length >= 2 && cols[0].match(/^\d+$/)) {
         return `${cols[0]}. ${cols[1]}`;
       }
@@ -216,7 +252,11 @@ export async function extractUniversalTextFromBuffer(
             if (typeof item === 'string') return `${idx + 1}. ${item}`;
             if (typeof item === 'object' && item) {
               const title =
-                item.title || item.name || item.chapter || item.topic || JSON.stringify(item);
+                item.title ||
+                item.name ||
+                item.chapter ||
+                item.topic ||
+                JSON.stringify(item);
               return `${item.chapterNumber || idx + 1}. ${title}`;
             }
             return String(item);
@@ -224,7 +264,8 @@ export async function extractUniversalTextFromBuffer(
           .join('\n');
       }
       if (parsed && typeof parsed === 'object') {
-        const list = parsed.chapters || parsed.syllabus || parsed.outline || parsed.topics;
+        const list =
+          parsed.chapters || parsed.syllabus || parsed.outline || parsed.topics;
         if (Array.isArray(list)) {
           return list
             .map((c, i) =>
@@ -287,7 +328,10 @@ export async function extractUniversalTextFromBuffer(
       strings.push(cur.trim());
     }
     return strings
-      .filter((s) => s.length >= 3 && !s.match(/^[^\w\s]+$/) && !s.startsWith('<?xml'))
+      .filter(
+        (s) =>
+          s.length >= 3 && !s.match(/^[^\w\s]+$/) && !s.startsWith('<?xml'),
+      )
       .join('\n');
   }
 
@@ -361,7 +405,11 @@ export function parseDocumentText(
 
     // Filter out top-level title line if matched
     const stripped = l.replace(/^#+\s*/, '').trim();
-    if (detectedTitle && (stripped.toLowerCase() === detectedTitle.toLowerCase() || l.startsWith('# '))) {
+    if (
+      detectedTitle &&
+      (stripped.toLowerCase() === detectedTitle.toLowerCase() ||
+        l.startsWith('# '))
+    ) {
       return false;
     }
 
@@ -375,12 +423,16 @@ export function parseDocumentText(
   if (userPrompt && userPrompt.trim()) {
     const promptLower = userPrompt.toLowerCase();
     // Range filter: e.g. "chapter 3 to 7", "from 3 to 6", "3 to 5"
-    const rangeMatch = promptLower.match(/(?:chapters?|ch\.?|from)\s*(\d+)\s*(?:to|through|-|–)\s*(\d+)/i);
+    const rangeMatch = promptLower.match(
+      /(?:chapters?|ch\.?|from)\s*(\d+)\s*(?:to|through|-|–)\s*(\d+)/i,
+    );
     if (rangeMatch) {
       const start = parseInt(rangeMatch[1], 10);
       const end = parseInt(rangeMatch[2], 10);
       if (!isNaN(start) && !isNaN(end) && start <= end) {
-        const filtered = parsedItems.filter((c) => c.chapterNumber >= start && c.chapterNumber <= end);
+        const filtered = parsedItems.filter(
+          (c) => c.chapterNumber >= start && c.chapterNumber <= end,
+        );
         if (filtered.length > 0) {
           parsedItems = filtered;
         }

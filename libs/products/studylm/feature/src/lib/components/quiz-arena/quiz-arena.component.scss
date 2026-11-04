@@ -21,6 +21,60 @@
   }
 }
 
+.section-hub-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3, 0.75rem);
+  flex-wrap: wrap;
+  padding: var(--space-2, 0.5rem) var(--space-4, 1rem);
+  background: color-mix(
+    in srgb,
+    var(--color-accent-subtle) 18%,
+    var(--color-bg-surface)
+  );
+  border: 1px solid
+    color-mix(in srgb, var(--color-accent-default) 35%, transparent);
+  border-radius: var(--radius-md);
+
+  .hub-details {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2, 0.5rem);
+    min-width: 0;
+  }
+
+  .hub-pill {
+    font-size: var(--font-size-xs, 0.7rem);
+    font-weight: var(--font-weight-bold, 700);
+    padding: 2px 7px;
+    border-radius: var(--radius-sm);
+    background: color-mix(
+      in srgb,
+      var(--color-accent-default) 20%,
+      transparent
+    );
+    color: var(--color-accent-default);
+    white-space: nowrap;
+  }
+
+  .hub-name {
+    font-size: var(--font-size-sm, 0.85rem);
+    font-weight: var(--font-weight-medium, 500);
+    color: var(--color-text-default);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .hub-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2, 0.5rem);
+    flex-shrink: 0;
+  }
+}
+
 .tier-and-section-controls {
   display: flex;
   flex-wrap: wrap;

@@ -97,9 +97,9 @@ describe('Nightly Alarm Decision Engine Algorithm', () => {
       quizQuestionsMissed: 3, // >= 3
     };
     const res2 = applyQuestionnaireToChapters(sampleChapters, inputWeakMissed);
-    expect(res2.updatedChapters.find((c) => c.chapterNumber === 4)?.isWeak).toBe(
-      true,
-    );
+    expect(
+      res2.updatedChapters.find((c) => c.chapterNumber === 4)?.isWeak,
+    ).toBe(true);
 
     const inputStrong: QuestionnaireInput = {
       ...inputWeakScore,
@@ -107,9 +107,9 @@ describe('Nightly Alarm Decision Engine Algorithm', () => {
       quizQuestionsMissed: 1,
     };
     const res3 = applyQuestionnaireToChapters(sampleChapters, inputStrong);
-    expect(res3.updatedChapters.find((c) => c.chapterNumber === 4)?.isWeak).toBe(
-      false,
-    );
+    expect(
+      res3.updatedChapters.find((c) => c.chapterNumber === 4)?.isWeak,
+    ).toBe(false);
   });
 
   it('implements Rollover Rule: unchecked reviews roll into tomorrow 06:00 alarm without changing originalStudyDate', () => {
@@ -379,12 +379,16 @@ describe('Nightly Alarm Decision Engine Algorithm', () => {
       expect(decision.detectedDayType).toBe('Recovery');
 
       const alarm6 = decision.alarms.find((a) => a.time === '06:00');
-      expect(alarm6?.title).toContain('GENTLE CATCH-UP: Ch. 4 - Async Concurrency');
+      expect(alarm6?.title).toContain(
+        'GENTLE CATCH-UP: Ch. 4 - Async Concurrency',
+      );
 
       const alarm15 = decision.alarms.find((a) => a.time === '15:15');
       expect(alarm15?.title).toContain('OFF — Full Recovery');
 
-      const adaptiveInsight = decision.insights.find((i) => i.type === 'adaptive-reset');
+      const adaptiveInsight = decision.insights.find(
+        (i) => i.type === 'adaptive-reset',
+      );
       expect(adaptiveInsight).toBeDefined();
       expect(adaptiveInsight?.title).toContain('Zero-Guilt Emergency Recovery');
     });
@@ -420,8 +424,12 @@ describe('Nightly Alarm Decision Engine Algorithm', () => {
       const alarm8 = decision.alarms.find((a) => a.time === '08:15');
       expect(alarm8?.title).toContain('Light Review: Ch. 4 Core Concepts');
 
-      const adaptiveInsight = decision.insights.find((i) => i.type === 'adaptive-reset');
-      expect(adaptiveInsight?.title).toContain('Cognitive Anti-Avalanche Protocol');
+      const adaptiveInsight = decision.insights.find(
+        (i) => i.type === 'adaptive-reset',
+      );
+      expect(adaptiveInsight?.title).toContain(
+        'Cognitive Anti-Avalanche Protocol',
+      );
     });
 
     it('generates focused catch-up schedule without guilt when OFF_TRACK is logged', () => {
@@ -451,7 +459,9 @@ describe('Nightly Alarm Decision Engine Algorithm', () => {
       const alarm6 = decision.alarms.find((a) => a.time === '06:00');
       expect(alarm6?.title).toContain('CATCH-UP: Ch. 4 - Async Concurrency');
 
-      const adaptiveInsight = decision.insights.find((i) => i.type === 'adaptive-reset');
+      const adaptiveInsight = decision.insights.find(
+        (i) => i.type === 'adaptive-reset',
+      );
       expect(adaptiveInsight?.title).toContain('Focused Catch-Up Protocol');
     });
   });

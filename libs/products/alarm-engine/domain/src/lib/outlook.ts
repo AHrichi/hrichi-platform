@@ -1,5 +1,10 @@
 import { addDays, getWeekdayName, isDateOnOrBefore } from './dates';
-import type { Chapter, DayReviewForecast, DayType, DueReviewItem } from './models';
+import type {
+  Chapter,
+  DayReviewForecast,
+  DayType,
+  DueReviewItem,
+} from './models';
 
 /**
  * Determines the standard day type for a given day of the week.
@@ -8,7 +13,14 @@ import type { Chapter, DayReviewForecast, DayType, DueReviewItem } from './model
  * - Fri -> 'Recovery'
  */
 export function getStandardDayTypeFromWeekday(
-  dayOfWeek: 'Monday' | 'Tuesday' | 'Wednesday' | 'Thursday' | 'Friday' | 'Saturday' | 'Sunday',
+  dayOfWeek:
+    | 'Monday'
+    | 'Tuesday'
+    | 'Wednesday'
+    | 'Thursday'
+    | 'Friday'
+    | 'Saturday'
+    | 'Sunday',
 ): DayType {
   switch (dayOfWeek) {
     case 'Monday':
@@ -48,7 +60,10 @@ export function computeSevenDayOutlook(
 
       // Check D-3
       if (!ch.d3Completed) {
-        if (ch.d3Date === date || (offset === 0 && isDateOnOrBefore(ch.d3Date, date))) {
+        if (
+          ch.d3Date === date ||
+          (offset === 0 && isDateOnOrBefore(ch.d3Date, date))
+        ) {
           reviews.push({
             chapterNumber: ch.chapterNumber,
             chapterTitle: ch.title,
@@ -62,7 +77,10 @@ export function computeSevenDayOutlook(
 
       // Check D-7
       if (!ch.d7Completed) {
-        if (ch.d7Date === date || (offset === 0 && isDateOnOrBefore(ch.d7Date, date))) {
+        if (
+          ch.d7Date === date ||
+          (offset === 0 && isDateOnOrBefore(ch.d7Date, date))
+        ) {
           reviews.push({
             chapterNumber: ch.chapterNumber,
             chapterTitle: ch.title,
@@ -76,7 +94,10 @@ export function computeSevenDayOutlook(
 
       // Check D-14
       if (!ch.d14Completed) {
-        if (ch.d14Date === date || (offset === 0 && isDateOnOrBefore(ch.d14Date, date))) {
+        if (
+          ch.d14Date === date ||
+          (offset === 0 && isDateOnOrBefore(ch.d14Date, date))
+        ) {
           reviews.push({
             chapterNumber: ch.chapterNumber,
             chapterTitle: ch.title,
@@ -90,9 +111,13 @@ export function computeSevenDayOutlook(
     }
 
     // Check if 6-chapter consolidation milestone lands here
-    const completedChaptersCount = chapters.filter((c) => !!c.originalStudyDate).length;
-    const chaptersSinceLast = completedChaptersCount - lastConsolidationAtChapter;
-    const isMilestoneDay = chaptersSinceLast > 0 && chaptersSinceLast % 6 === 0 && offset === 1;
+    const completedChaptersCount = chapters.filter(
+      (c) => !!c.originalStudyDate,
+    ).length;
+    const chaptersSinceLast =
+      completedChaptersCount - lastConsolidationAtChapter;
+    const isMilestoneDay =
+      chaptersSinceLast > 0 && chaptersSinceLast % 6 === 0 && offset === 1;
 
     const dayType: DayType = isMilestoneDay ? 'Consolidation' : standardDayType;
 

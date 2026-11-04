@@ -422,10 +422,14 @@ return [{
       main: [[{ node: 'Extract Text & Prepare AI', type: 'main', index: 0 }]],
     },
     'Extract Text & Prepare AI': {
-      main: [[{ node: 'AI Curriculum Extraction (Groq)', type: 'main', index: 0 }]],
+      main: [
+        [{ node: 'AI Curriculum Extraction (Groq)', type: 'main', index: 0 }],
+      ],
     },
     'AI Curriculum Extraction (Groq)': {
-      main: [[{ node: 'Format & Normalize Curriculum', type: 'main', index: 0 }]],
+      main: [
+        [{ node: 'Format & Normalize Curriculum', type: 'main', index: 0 }],
+      ],
     },
     'Format & Normalize Curriculum': {
       main: [[{ node: 'Return Structured Chapters', type: 'main', index: 0 }]],
@@ -441,10 +445,15 @@ if (!fs.existsSync(outputDir)) {
 const outputPath = path.join(outputDir, 'chapter-doc-parser.json');
 const workflowJsonString = JSON.stringify([workflow], null, 2);
 fs.writeFileSync(outputPath, workflowJsonString, 'utf8');
-console.log('✓ n8n AI Chapter Doc Parser workflow generated successfully at:', outputPath);
+console.log(
+  '✓ n8n AI Chapter Doc Parser workflow generated successfully at:',
+  outputPath,
+);
 
 // Also sync with the domain bundled raw file for 1-click in-app download
-const rawTsPath = path.resolve('libs/products/alarm-engine/domain/src/lib/n8n-workflow-raw.ts');
+const rawTsPath = path.resolve(
+  'libs/products/alarm-engine/domain/src/lib/n8n-workflow-raw.ts',
+);
 fs.writeFileSync(
   rawTsPath,
   `export const CHAPTER_DOC_PARSER_RAW_JSON = ${JSON.stringify(workflowJsonString)};\n`,

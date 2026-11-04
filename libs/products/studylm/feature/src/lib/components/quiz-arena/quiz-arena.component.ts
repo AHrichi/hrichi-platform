@@ -2,9 +2,12 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  effect,
   inject,
 } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
+import { ActivatedRoute } from '@angular/router';
 import {
   AhBadge,
   AhButton,
@@ -16,9 +19,11 @@ import {
 } from '@ah/ui';
 import { StudyLmStore } from '../../store/studylm.store';
 import { StudyLmScreens } from '../../shell/studylm-screens';
+import { LessonGenerationService } from '../../services/lesson-generation.service';
 import {
   COMPETENCY_TIERS,
   type CompetencyTier,
+  type RoadmapSection,
   type StudyQuizQuestion,
 } from '@ah/products/studylm/domain';
 
@@ -41,7 +46,53 @@ import {
 export class QuizArenaComponent {
   readonly store = inject(StudyLmStore);
   protected readonly screens = inject(StudyLmScreens);
+  private readonly lessonService = inject(LessonGenerationService);
+  private readonly route = inject(ActivatedRoute);
+  private readonly queryParams = toSignal(this.route.queryParamMap);
   readonly tiersInfo = COMPETENCY_TIERS;
+
+  constructor() {
+    effect(() => {
+      const qSec = this.queryParams()?.get('section');
+      if (qSec && qSec !== this.store.quizFilter().sectionId) {
+        this.store.setQuizSectionFilter(qSec);
+      }
+    });
+  }
+
+  readonly activeSection = computed<RoadmapSection | null>(() => {
+    const filterSecId = this.store.quizFilter().sectionId;
+    if (filterSecId && filterSecId !== 'all') {
+      return this.store.allSections().find((s) => s.id === filterSecId) ?? null;
+    }
+    const current = this.store.currentQuizQuestion();
+    if (current?.sectionId) {
+      return (
+        this.store.allSections().find((s) => s.id === current.sectionId) ?? null
+      );
+    }
+    return null;
+  });
+
+  goToLesson(section: RoadmapSection): void {
+    const subject = this.store.activeSubject();
+    if (!subject) return;
+    const lessonId = this.lessonService.idFor(subject, section);
+    if (!this.lessonService.saved().has(lessonId)) {
+      this.lessonService.start(subject, section);
+    }
+    void this.screens.goToLesson(lessonId);
+  }
+
+  goToFlashcards(section: RoadmapSection): void {
+    this.store.setCardSectionFilter(section.id);
+    void this.screens.goToSectionFlashcards(section.id);
+  }
+
+  goToRoadmap(section: RoadmapSection): void {
+    this.store.setSelectedSection(section.id);
+    void this.screens.goToSectionRoadmap(section.id);
+  }
 
   readonly tierOptions: { label: string; value: CompetencyTier | 'all' }[] = [
     { label: 'All Tiers', value: 'all' },

@@ -87,7 +87,8 @@ export interface DocParseResult {
   error?: string;
 }
 
-export const DEFAULT_N8N_WEBHOOK_URL = 'http://localhost:5678/webhook/parse-chapter-doc';
+export const DEFAULT_N8N_WEBHOOK_URL =
+  'http://localhost:5678/webhook/parse-chapter-doc';
 
 export interface NightlySystemState {
   /** Tracks when the last Consolidation Day occurred (by chapter milestone, e.g. 0, 6, 12) */
@@ -107,21 +108,11 @@ export interface NightlySystemState {
 }
 
 export type TodayCompletionStatus =
-  | 'YES'
-  | 'NO'
-  | 'MISSED_GOALS'
-  | 'CONSOLIDATION_COMPLETED_TODAY';
+  'YES' | 'NO' | 'MISSED_GOALS' | 'CONSOLIDATION_COMPLETED_TODAY';
 
-export type MissedGoalReason =
-  | 'OFF_TRACK'
-  | 'OVERWHELMED'
-  | 'EMERGENCY';
+export type MissedGoalReason = 'OFF_TRACK' | 'OVERWHELMED' | 'EMERGENCY';
 
-export type DayType =
-  | 'Standard'
-  | 'Fasting'
-  | 'Recovery'
-  | 'Consolidation';
+export type DayType = 'Standard' | 'Fasting' | 'Recovery' | 'Consolidation';
 
 export type DayTypeSelection = 'Auto-Detect' | DayType;
 
@@ -154,13 +145,21 @@ export interface QuestionnaireInput {
 export interface AlarmSlot {
   time: string; // "06:00", "08:15", etc.
   title: string;
-  badgeVariant: 'accent' | 'warning' | 'success' | 'danger' | 'info' | 'neutral';
+  badgeVariant:
+    'accent' | 'warning' | 'success' | 'danger' | 'info' | 'neutral';
   badgeLabel: string;
   description: string;
 }
 
 export interface AlgorithmInsight {
-  type: 'consolidation' | 'day-type' | 'carryover' | 'rollover' | 'pairing' | 'energy' | 'adaptive-reset';
+  type:
+    | 'consolidation'
+    | 'day-type'
+    | 'carryover'
+    | 'rollover'
+    | 'pairing'
+    | 'energy'
+    | 'adaptive-reset';
   title: string;
   message: string;
   variant: 'info' | 'success' | 'warning' | 'danger';
@@ -230,49 +229,57 @@ export const PERMANENT_PHONE_ALARMS: readonly PermanentAlarmReference[] = [
     time: '06:00',
     name: 'Morning Recall & Daily Launch',
     daysActive: 'Every Day (Mon - Sun)',
-    purpose: 'Spaced repetition recall (D-3, D-7, D-14) + launch new/repeat chapter foundation.',
+    purpose:
+      'Spaced repetition recall (D-3, D-7, D-14) + launch new/repeat chapter foundation.',
   },
   {
     time: '08:15',
     name: 'Blind Recall & Quiz',
     daysActive: 'Standard & Recovery Days (Tue, Wed, Fri, Sat, Sun)',
-    purpose: 'Closed-book active recall and diagnostic quiz for the active chapter.',
+    purpose:
+      'Closed-book active recall and diagnostic quiz for the active chapter.',
   },
   {
     time: '09:30',
     name: 'Guided Coding (Fasting)',
     daysActive: 'Fasting Days (Mon, Thu)',
-    purpose: 'Paced, guided coding session paired with prior weak/carryover chapter during fasting state.',
+    purpose:
+      'Paced, guided coding session paired with prior weak/carryover chapter during fasting state.',
   },
   {
     time: '10:00',
     name: 'Interleaved Coding Challenge',
     daysActive: 'Standard & Recovery Days (Tue, Wed, Fri, Sat, Sun)',
-    purpose: 'Deep implementation block pairing previous/weak/carryover concepts with new chapter code.',
+    purpose:
+      'Deep implementation block pairing previous/weak/carryover concepts with new chapter code.',
   },
   {
     time: '15:15',
     name: 'Afternoon Transition / Testing / Off',
     daysActive: 'Every Day (Mon - Sun)',
-    purpose: 'Energy checkpoint: Testing/Refactoring on Standard days, CLOSE IDE passive review on Fasting days, 100% OFF on Recovery Friday.',
+    purpose:
+      'Energy checkpoint: Testing/Refactoring on Standard days, CLOSE IDE passive review on Fasting days, 100% OFF on Recovery Friday.',
     energyConstraint: 'Fasting: Close IDE! Recovery: Day finishes here.',
   },
   {
     time: '16:15',
     name: 'YouTube Queue Check (Fasting)',
     daysActive: 'Fasting Days (Mon, Thu)',
-    purpose: 'Curated technical video reviews and educational queue processing.',
+    purpose:
+      'Curated technical video reviews and educational queue processing.',
   },
   {
     time: '17:00',
     name: 'Teaching Lock: YouTube Short',
     daysActive: 'Standard Days (Tue, Wed, Sat, Sun)',
-    purpose: 'Feynman Technique: record or script a 60-second explanation of today’s concept to lock in mastery.',
+    purpose:
+      'Feynman Technique: record or script a 60-second explanation of today’s concept to lock in mastery.',
   },
   {
     time: '19:30',
     name: 'Job Applications & Upwork Bids',
     daysActive: 'Standard & Fasting Days (Mon, Tue, Wed, Thu, Sat, Sun)',
-    purpose: 'Career outbound pipeline: customized proposals, applications, client follow-ups.',
+    purpose:
+      'Career outbound pipeline: customized proposals, applications, client follow-ups.',
   },
 ];

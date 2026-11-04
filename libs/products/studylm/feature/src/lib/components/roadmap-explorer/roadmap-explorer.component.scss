@@ -93,6 +93,40 @@
   gap: var(--space-3, 0.75rem);
 }
 
+.bulk-generation-banner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2, 0.5rem);
+  padding: var(--space-3, 0.75rem) var(--space-4, 1rem);
+  background: color-mix(
+    in srgb,
+    var(--color-accent-subtle) 20%,
+    var(--color-bg-surface)
+  );
+  border: 1px solid var(--color-accent-default);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-2, 0.5rem);
+
+  .bulk-banner-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .bulk-status-title {
+    font-weight: var(--font-weight-semibold, 600);
+    font-size: var(--font-size-200, 0.85rem);
+    color: var(--color-text-default);
+  }
+
+  .bulk-banner-message {
+    margin: 0;
+    font-size: var(--font-size-100, 0.75rem);
+    color: var(--color-text-muted);
+  }
+}
+
 .rejection-alert-wrapper {
   margin-bottom: var(--space-2, 0.5rem);
 }
@@ -194,12 +228,32 @@
     border-left: 3px solid var(--color-success-default);
   }
 
+  &.is-focused {
+    border-color: var(--color-accent-default);
+    box-shadow:
+      0 0 0 2px color-mix(in srgb, var(--color-accent-default) 40%, transparent),
+      0 4px 16px rgba(0, 0, 0, 0.15);
+    animation: section-focus-pulse 1.8s ease-in-out;
+  }
+
   &.has-cards.has-quiz {
     background: color-mix(
       in srgb,
       var(--color-success-default) 6%,
       var(--color-bg-raised)
     );
+  }
+}
+
+@keyframes section-focus-pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.015);
+  }
+  100% {
+    transform: scale(1);
   }
 }
 

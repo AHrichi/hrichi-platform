@@ -1,7 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import { calculateSpacedRepetitionDates } from './dates';
 import type { Chapter } from './models';
-import { computeSevenDayOutlook, getStandardDayTypeFromWeekday } from './outlook';
+import {
+  computeSevenDayOutlook,
+  getStandardDayTypeFromWeekday,
+} from './outlook';
 
 describe('computeSevenDayOutlook', () => {
   it('identifies weekday day types correctly', () => {
@@ -35,7 +38,9 @@ describe('computeSevenDayOutlook', () => {
     expect(outlook.length).toBe(7);
     expect(outlook[0].isToday).toBe(true);
     expect(outlook[0].date).toBe('2026-11-04');
-    expect(outlook[0].reviews.some((r) => r.chapterNumber === 1 && r.type === 'D-3')).toBe(true);
+    expect(
+      outlook[0].reviews.some((r) => r.chapterNumber === 1 && r.type === 'D-3'),
+    ).toBe(true);
   });
 
   it('detects high review load when 3 or more reviews collide on the same day', () => {

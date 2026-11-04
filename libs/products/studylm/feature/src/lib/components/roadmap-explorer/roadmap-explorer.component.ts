@@ -5,8 +5,9 @@ import {
   inject,
   signal,
 } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import {
   AhAccordionItem,
   AhAlert,
@@ -18,6 +19,7 @@ import {
 import { StudyLmStore } from '../../store/studylm.store';
 import { StudyLmScreens } from '../../shell/studylm-screens';
 import { LessonGenerationService } from '../../services/lesson-generation.service';
+import { BulkGenerationService } from '../../services/bulk-generation.service';
 import type { RoadmapSection } from '@ah/products/studylm/domain';
 
 @Component({
@@ -39,13 +41,21 @@ import type { RoadmapSection } from '@ah/products/studylm/domain';
 })
 export class RoadmapExplorerComponent {
   readonly store = inject(StudyLmStore);
+  readonly bulk = inject(BulkGenerationService);
   private readonly screens = inject(StudyLmScreens);
   private readonly lessons = inject(LessonGenerationService);
+  private readonly route = inject(ActivatedRoute);
+  private readonly queryParams = toSignal(this.route.queryParamMap);
 
   /**
    * Set of section IDs that are currently expanded.
    */
   readonly expandedSectionIds = signal<Set<string>>(new Set<string>());
+
+  /**
+   * Currently focused/highlighted section from navigation.
+   */
+  readonly focusedSectionId = signal<string | null>(null);
 
   private lastSubjectId: string | null = null;
 
@@ -68,6 +78,25 @@ export class RoadmapExplorerComponent {
       const selectedId = this.store.selectedSectionId();
       if (selectedId && !this.expandedSectionIds().has(selectedId)) {
         this.expandSection(selectedId);
+      }
+    });
+
+    // Auto-focus and expand section requested via query params
+    effect(() => {
+      const qSection = this.queryParams()?.get('section');
+      if (qSection) {
+        this.store.setSelectedSection(qSection);
+        this.expandSection(qSection);
+        this.focusedSectionId.set(qSection);
+        setTimeout(() => {
+          const el = document.getElementById(`section-${qSection}`);
+          el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 150);
+        setTimeout(() => {
+          if (this.focusedSectionId() === qSection) {
+            this.focusedSectionId.set(null);
+          }
+        }, 3000);
       }
     });
   }
@@ -142,6 +171,18 @@ export class RoadmapExplorerComponent {
     this.store.approveAllSections();
   }
 
+  onBulkGenerateLessons(): void {
+    void this.bulk.bulkGenerateLessons({
+      batchSize: 2,
+      maxRetries: 2,
+      retryDelayMs: 1200,
+    });
+  }
+
+  onCancelBulkGenerate(): void {
+    this.bulk.cancel();
+  }
+
   onGenerateFlashcards(sectionId: string): void {
     this.expandSection(sectionId);
     void this.store.generateFlashcardsForSection(sectionId);
@@ -185,13 +226,13 @@ export class RoadmapExplorerComponent {
   onStudySectionCards(section: RoadmapSection): void {
     this.store.setCardSectionFilter(section.id);
     this.store.setSelectedSection(section.id);
-    void this.screens.go('flashcards');
+    void this.screens.goToSectionFlashcards(section.id);
   }
 
   onTakeSectionQuiz(section: RoadmapSection): void {
     this.store.setQuizSectionFilter(section.id);
     this.store.setSelectedSection(section.id);
-    void this.screens.go('quiz');
+    void this.screens.goToSectionQuiz(section.id);
   }
 
   getSectionCardCount(sectionId: string): number {

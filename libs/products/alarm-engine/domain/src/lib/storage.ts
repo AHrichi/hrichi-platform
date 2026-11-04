@@ -1,4 +1,9 @@
-import type { Chapter, NightlyAppState, NightlySystemState, QuestionnaireInput } from './models';
+import type {
+  Chapter,
+  NightlyAppState,
+  NightlySystemState,
+  QuestionnaireInput,
+} from './models';
 import { createStarterAppState } from './sample-data';
 
 export const STORAGE_KEY = 'nightly_alarm_engine_v1';
@@ -35,14 +40,17 @@ export function loadAppState(): NightlyAppState {
             ? parsed.systemState.checklistState
             : new Array(9).fill(false),
           selectedTopicId:
-            parsed.systemState.selectedTopicId ?? starter.systemState.selectedTopicId ?? 'all',
-          topics: Array.isArray(parsed.systemState.topics) && parsed.systemState.topics.length > 0
-            ? parsed.systemState.topics
-            : starter.systemState.topics,
+            parsed.systemState.selectedTopicId ??
+            starter.systemState.selectedTopicId ??
+            'all',
+          topics:
+            Array.isArray(parsed.systemState.topics) &&
+            parsed.systemState.topics.length > 0
+              ? parsed.systemState.topics
+              : starter.systemState.topics,
           notificationsEnabled:
             parsed.systemState.notificationsEnabled ?? false,
-          collapsedSections:
-            parsed.systemState.collapsedSections ?? {},
+          collapsedSections: parsed.systemState.collapsedSections ?? {},
         },
         questionnaire: parsed.questionnaire ?? starter.questionnaire,
         lastDecision: parsed.lastDecision,

@@ -49,6 +49,45 @@
     </div>
   </header>
 
+  <!-- Section Hub Navigation Strip -->
+  @if (activeSection(); as sec) {
+    <div class="section-hub-bar" aria-label="Section navigation">
+      <div class="hub-details">
+        <span class="hub-pill">Section {{ sec.code }}</span>
+        <span class="hub-name">{{ sec.title }}</span>
+      </div>
+      <div class="hub-actions">
+        <button
+          type="button"
+          ahButton="ghost"
+          size="sm"
+          (click)="goToLesson(sec)"
+          title="Open or write interactive lesson for this section"
+        >
+          <span>📖 Open Lesson</span>
+        </button>
+        <button
+          type="button"
+          ahButton="ghost"
+          size="sm"
+          (click)="goToQuiz(sec)"
+          title="Take diagnostic quiz for this section"
+        >
+          <span>🎯 Take Quiz</span>
+        </button>
+        <button
+          type="button"
+          ahButton="ghost"
+          size="sm"
+          (click)="goToRoadmap(sec)"
+          title="View this card on the Roadmap"
+        >
+          <span>🗺️ Roadmap</span>
+        </button>
+      </div>
+    </div>
+  }
+
   <!-- Deck Body -->
   @if (store.currentCard(); as card) {
     <div class="active-card-workspace">

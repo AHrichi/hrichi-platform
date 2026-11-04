@@ -1,23 +1,31 @@
 import { calculateSpacedRepetitionDates, todayYmd } from './dates';
-import type { Chapter, NightlyAppState, QuestionnaireInput, Topic } from './models';
+import type {
+  Chapter,
+  NightlyAppState,
+  QuestionnaireInput,
+  Topic,
+} from './models';
 
 export const DEFAULT_TOPICS: Topic[] = [
   {
     id: 'general',
     name: 'General',
-    description: 'Core engineering foundations, multidisciplinary reading, and general technical skills.',
+    description:
+      'Core engineering foundations, multidisciplinary reading, and general technical skills.',
     color: '#6366f1',
   },
   {
     id: 'system-design',
     name: 'System Design',
-    description: 'Distributed systems, high-availability architecture, caching, consensus, and database scaling.',
+    description:
+      'Distributed systems, high-availability architecture, caching, consensus, and database scaling.',
     color: '#06b6d4',
   },
   {
     id: 'algorithms',
     name: 'Algorithms & Structures',
-    description: 'Data structures, dynamic programming, graph algorithms, and computational complexity analysis.',
+    description:
+      'Data structures, dynamic programming, graph algorithms, and computational complexity analysis.',
     color: '#10b981',
   },
 ];
@@ -238,7 +246,9 @@ export function createOneWeekWalkthroughChapters(): Chapter[] {
   ];
 }
 
-export function createDefaultQuestionnaire(tonightDate = todayYmd()): QuestionnaireInput {
+export function createDefaultQuestionnaire(
+  tonightDate = todayYmd(),
+): QuestionnaireInput {
   return {
     tonightDate,
     targetChapterNumber: 1,

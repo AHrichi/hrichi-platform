@@ -30,6 +30,7 @@ export default [
                 'scope:shared',
                 'scope:platform',
                 'scope:design-system',
+                'scope:product-alarm-engine',
               ],
             },
             {

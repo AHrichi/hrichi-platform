@@ -2,7 +2,11 @@
  * Robust date utilities for YYYY-MM-DD date strings without UTC/local time shift bugs.
  */
 
-export function parseYmd(dateStr: string): { year: number; month: number; day: number } {
+export function parseYmd(dateStr: string): {
+  year: number;
+  month: number;
+  day: number;
+} {
   const parts = dateStr.split('-').map((p) => parseInt(p, 10));
   if (parts.length !== 3 || parts.some(isNaN)) {
     const today = new Date();
@@ -39,10 +43,27 @@ export function addDays(dateStr: string, days: number): string {
   );
 }
 
-export function getWeekdayName(dateStr: string): 'Monday' | 'Tuesday' | 'Wednesday' | 'Thursday' | 'Friday' | 'Saturday' | 'Sunday' {
+export function getWeekdayName(
+  dateStr: string,
+):
+  | 'Monday'
+  | 'Tuesday'
+  | 'Wednesday'
+  | 'Thursday'
+  | 'Friday'
+  | 'Saturday'
+  | 'Sunday' {
   const { year, month, day } = parseYmd(dateStr);
   const date = new Date(year, month - 1, day);
-  const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'] as const;
+  const days = [
+    'Sunday',
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+  ] as const;
   return days[date.getDay()];
 }
 
@@ -61,7 +82,10 @@ export function calculateSpacedRepetitionDates(studyDate: string): {
 /**
  * Returns true if candidateDate is <= asOfDate.
  */
-export function isDateOnOrBefore(candidateDate: string, asOfDate: string): boolean {
+export function isDateOnOrBefore(
+  candidateDate: string,
+  asOfDate: string,
+): boolean {
   return candidateDate.localeCompare(asOfDate) <= 0;
 }
 

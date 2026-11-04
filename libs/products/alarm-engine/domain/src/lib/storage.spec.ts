@@ -1,5 +1,11 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { exportBackup, importBackup, loadAppState, saveAppState, STORAGE_KEY } from './storage';
+import {
+  exportBackup,
+  importBackup,
+  loadAppState,
+  saveAppState,
+  STORAGE_KEY,
+} from './storage';
 import { createStarterAppState } from './sample-data';
 
 describe('Alarm Engine Storage & Backup', () => {
