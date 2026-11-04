@@ -149,8 +149,9 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  max-width: 240px;
 
-  @media (max-width: 1360px) {
+  @media (max-width: 1440px) {
     display: none;
   }
 }
@@ -161,9 +162,9 @@
   display: flex;
   align-items: center;
   gap: var(--space-2, 0.5rem);
-  flex: 0 1 380px;
+  flex: 1 1 auto;
   min-width: 0;
-  max-width: 380px;
+  max-width: 480px;
 
   @media (max-width: 1260px) {
     grid-area: switcher;
@@ -177,9 +178,9 @@
     position: relative;
     z-index: 61;
     flex: 1 1 auto;
-    min-width: 0 !important;
+    min-width: 120px !important;
     min-inline-size: 0 !important;
-    max-width: 240px;
+    max-width: 320px;
     width: 0;
 
     @media (max-width: 1260px) {
@@ -199,7 +200,7 @@
       display: none;
     }
 
-    @media (max-width: 1260px) {
+    @media (max-width: 1360px) {
       .new-label-desktop {
         display: none;
       }
@@ -253,9 +254,10 @@
 .nav-actions {
   display: flex;
   align-items: center;
-  gap: var(--space-3, 0.75rem);
+  gap: var(--space-2, 0.5rem);
   margin-left: auto;
   flex-shrink: 0;
+  min-width: 0;
 
   @media (max-width: 1260px) {
     grid-area: actions;
@@ -280,7 +282,9 @@
   cursor: pointer;
   transition: all var(--motion-duration-fast) ease;
   white-space: nowrap;
+  flex-shrink: 0;
 
+  .btn-label-compact,
   .btn-label-mobile {
     display: none;
   }
@@ -317,10 +321,27 @@
     opacity: 0.8;
   }
 
-  @media (max-width: 1260px) {
-    padding: 0.25rem 0.6rem;
+  @media (max-width: 1400px) {
+    padding: 0.3rem 0.65rem;
 
     .btn-label-desktop {
+      display: none;
+    }
+    .btn-label-compact {
+      display: inline;
+    }
+    .btn-label-mobile {
+      display: none;
+    }
+  }
+
+  @media (max-width: 640px) {
+    padding: 0.25rem 0.55rem;
+
+    .btn-label-desktop {
+      display: none;
+    }
+    .btn-label-compact {
       display: none;
     }
     .btn-label-mobile {
@@ -333,12 +354,28 @@
   flex-shrink: 0;
   white-space: nowrap;
 
+  .export-label-compact,
   .export-label-mobile {
     display: none;
   }
 
-  @media (max-width: 1260px) {
+  @media (max-width: 1400px) {
     .export-label-desktop {
+      display: none;
+    }
+    .export-label-compact {
+      display: inline;
+    }
+    .export-label-mobile {
+      display: none;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .export-label-desktop {
+      display: none;
+    }
+    .export-label-compact {
       display: none;
     }
     .export-label-mobile {
@@ -347,6 +384,8 @@
   }
 
   @media (max-width: 400px) {
+    .export-label-desktop,
+    .export-label-compact,
     .export-label-mobile {
       display: none;
     }
