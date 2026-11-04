@@ -122,8 +122,10 @@
   position: absolute;
   top: calc(100% + var(--space-1));
   left: 0;
-  right: 0;
-  z-index: 50;
+  min-inline-size: 100%;
+  inline-size: max-content;
+  max-inline-size: max(100%, min(90vw, 380px));
+  z-index: 1000;
   background: var(--color-bg-surface);
   border: 1px solid var(--color-border-default);
   border-radius: var(--radius-md);
@@ -131,6 +133,11 @@
   max-block-size: 260px;
   overflow-y: auto;
   animation: ah-select-fade-in var(--motion-duration-fast) ease;
+}
+
+:host-context([dir='rtl']) .ah-select-popover {
+  left: auto;
+  right: 0;
 }
 
 @keyframes ah-select-fade-in {

@@ -104,6 +104,10 @@
     .app-card__header {
       cursor: pointer;
     }
+
+    .app-card__body {
+      display: none !important;
+    }
   }
 }
 
@@ -187,6 +191,11 @@
   inline-size: 100%;
   min-inline-size: 0;
   padding-block-start: var(--space-4);
+
+  &.is-collapsed,
+  &[hidden] {
+    display: none !important;
+  }
 }
 
 .app-card__identity {
@@ -387,6 +396,10 @@
     &--collapsed {
       padding: var(--space-3) var(--space-4);
       gap: 0;
+
+      .app-card__body {
+        display: none !important;
+      }
     }
   }
   .app-card__header {
