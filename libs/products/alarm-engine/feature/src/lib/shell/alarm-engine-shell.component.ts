@@ -61,6 +61,8 @@ export class AlarmEngineShellComponent {
     { id: 'en', label: 'English', flag: '🇬🇧' },
     { id: 'fr', label: 'Français', flag: '🇫🇷' },
     { id: 'ar', label: 'العربية', flag: '🇲🇦' },
+    { id: 'it', label: 'Italiano', flag: '🇮🇹' },
+    { id: 'de', label: 'Deutsch', flag: '🇩🇪' },
   ];
 
   readonly navTabs = computed(() => [

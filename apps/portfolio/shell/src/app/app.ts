@@ -53,6 +53,8 @@ export class App {
     { id: 'fr', label: 'FR', name: 'Français' },
     { id: 'ar', label: 'ع', name: 'العربية' },
     { id: 'en', label: 'EN', name: 'English' },
+    { id: 'it', label: 'IT', name: 'Italiano' },
+    { id: 'de', label: 'DE', name: 'Deutsch' },
   ] as const;
   protected readonly nav = computed(() => {
     const nav = this.copy().nav;

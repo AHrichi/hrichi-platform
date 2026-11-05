@@ -1,4 +1,4 @@
-export type LightingLanguage = 'fr' | 'ar' | 'en';
+export type LightingLanguage = 'fr' | 'ar' | 'en' | 'it' | 'de';
 
 export type PoleType =
   | 'grid_ac'

@@ -28,7 +28,11 @@
                 ? 'Mode Clair'
                 : store.activeLanguage() === 'ar'
                   ? 'الوضع النهاري'
-                  : 'Light Mode'
+                  : store.activeLanguage() === 'it'
+                    ? 'Modalità Chiara'
+                    : store.activeLanguage() === 'de'
+                      ? 'Heller Modus'
+                      : 'Light Mode'
           }}</ah-badge>
           <ah-badge [variant]="'info'">{{
             store.dict().meta.badgeSpacedRepetition

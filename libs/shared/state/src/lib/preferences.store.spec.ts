@@ -164,13 +164,37 @@ describe('PreferencesStore', () => {
 
   it('falls back to English for a language the site does not speak', () => {
     const { store } = setup('https://site.test/', undefined, {
-      language: 'de-DE',
+      language: 'ja-JP',
       dark: false,
     });
 
     store.restore();
 
     expect(store.language()).toBe('en');
+  });
+
+  it('restores Italian when browser speaks it', () => {
+    const { store, docEl } = setup('https://site.test/', undefined, {
+      language: 'it-IT',
+      dark: false,
+    });
+    store.restore();
+    expect(store.language()).toBe('it');
+    expect(store.isRtl()).toBe(false);
+    expect(docEl.getAttribute('dir')).toBe('ltr');
+    expect(docEl.getAttribute('lang')).toBe('it');
+  });
+
+  it('restores German when browser speaks it', () => {
+    const { store, docEl } = setup('https://site.test/', undefined, {
+      language: 'de-DE',
+      dark: false,
+    });
+    store.restore();
+    expect(store.language()).toBe('de');
+    expect(store.isRtl()).toBe(false);
+    expect(docEl.getAttribute('dir')).toBe('ltr');
+    expect(docEl.getAttribute('lang')).toBe('de');
   });
 
   it('prefers the stored language and remembers a new choice', () => {

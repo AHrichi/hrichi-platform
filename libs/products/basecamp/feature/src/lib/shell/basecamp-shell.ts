@@ -46,6 +46,8 @@ const LANGUAGES: readonly { id: SiteLanguage; label: string }[] = [
   { id: 'fr', label: 'FR' },
   { id: 'ar', label: 'ع' },
   { id: 'en', label: 'EN' },
+  { id: 'it', label: 'IT' },
+  { id: 'de', label: 'DE' },
 ];
 
 @Component({

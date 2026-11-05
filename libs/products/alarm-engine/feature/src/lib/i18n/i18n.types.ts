@@ -1,4 +1,4 @@
-export type AlarmLanguage = 'en' | 'fr' | 'ar';
+export type AlarmLanguage = 'en' | 'fr' | 'ar' | 'it' | 'de';
 
 export interface AlarmEngineDictionary {
   meta: {

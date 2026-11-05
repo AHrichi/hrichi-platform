@@ -2,10 +2,18 @@ import { computed, inject, Injectable } from '@angular/core';
 import { PreferencesStore, type SiteLanguage } from '@ah/shared/state';
 import type { CalcNote } from '@ah/products/lighting/domain';
 import { AR } from './copy.ar';
+import { DE } from './copy.de';
 import { EN, type LuxPathCopy } from './copy.en';
 import { FR } from './copy.fr';
+import { IT } from './copy.it';
 
-const COPY: Record<SiteLanguage, LuxPathCopy> = { en: EN, fr: FR, ar: AR };
+const COPY: Record<SiteLanguage, LuxPathCopy> = {
+  en: EN,
+  fr: FR,
+  ar: AR,
+  it: IT,
+  de: DE,
+};
 
 /**
  * Arabic keeps Latin digits and a decimal point, as engineering documents
@@ -15,6 +23,8 @@ const LOCALES: Record<SiteLanguage, string> = {
   en: 'en-GB',
   fr: 'fr-FR',
   ar: 'ar-u-nu-latn',
+  it: 'it-IT',
+  de: 'de-DE',
 };
 
 /**

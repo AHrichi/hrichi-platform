@@ -7,7 +7,7 @@ import {
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Seo } from '@ah/portfolio/util-seo';
-import { PreferencesStore } from '@ah/shared/state';
+import { PreferencesStore, type SiteLanguage } from '@ah/shared/state';
 import { AhButton, AhScrollHint, Badge, SectionHeading, Tag } from '@ah/ui';
 
 interface AppItem {
@@ -37,7 +37,7 @@ type LabText = Pick<
   badge: string;
 };
 
-const LAB_COPY: Partial<Record<'en' | 'fr' | 'ar', Record<string, LabText>>> = {
+const LAB_COPY: Partial<Record<SiteLanguage, Record<string, LabText>>> = {
   fr: {
     sky: {
       title: 'Sky Lab · Planétarium 3D interactif et éphémérides',
@@ -133,6 +133,100 @@ const LAB_COPY: Partial<Record<'en' | 'fr' | 'ar', Record<string, LabText>>> = {
         'يعرض أنماط الحالة الحديثة في Angular دون zone.js، بين التركيب الوظيفي الخفيف والثوابت المتينة.',
     },
   },
+  it: {
+    sky: {
+      title: 'Sky Lab · Planetario 3D interattivo ed effemeridi celesti',
+      badge: '🌌 Motore 3D WebGL',
+      eyebrow: 'Astronomia e Grafica 3D · WebGL & Orekit Spring Boot',
+      summary:
+        'Scegli qualsiasi punto sulla Terra, scendi dall’orbita al suolo ed esplora la volta celeste in tempo reale: 5.000 stelle reali, costellazioni, fasi lunari esatte, pianeti visibili, Via Lattea e sciami meteorici.',
+      features: [
+        'Globo terrestre 3D con discesa orbitale fluida fino alla prospettiva dell’osservatore',
+        'Cielo stellato in tempo reale con 5.000 stelle reali e tracciati delle costellazioni',
+        'Effemeridi esatte di fasi lunari e posizioni planetarie per qualsiasi data storica o futura',
+        'Crepuscoli astronomici, finestre di buio profondo e pianificatore delle migliori notti',
+      ],
+      architectureNotes:
+        'Motore Three.js framework-free con rendering on-demand, pausa automatica fuori schermo e adattamento prestazionale per garantire 60 fps su smartphone e desktop.',
+    },
+    rxjs: {
+      title: 'Laboratorio RxJS · Operatori di flusso e architettura reattiva',
+      badge: '🧪 Lab Reattivo',
+      eyebrow: 'Programmazione Reattiva · Diagrammi a biglie e contropressione',
+      summary:
+        'Un laboratorio interattivo per padroneggiare i flussi RxJS complessi: diagrammi a biglie (marble) animati, comparatore di operatori, strategie di contropressione, subject multicast e interoperabilità con i Signals.',
+      features: [
+        'Diagrammi marble dal vivo con emissioni asincrone e propagazione degli errori',
+        'Confronto contropressione: debounceTime, throttleTime, auditTime, sampleTime',
+        'Simulatore di combinazione operatori: switchMap, mergeMap, concatMap, exhaustMap',
+        'Pattern di resilienza enterprise: retry con backoff esponenziale e deduplicazione richieste',
+      ],
+      architectureNotes:
+        'Visualizzatore reattivo zoneless che collega gli Observable RxJS direttamente ai Signals di Angular senza overhead di zone.js.',
+    },
+    ngrx: {
+      title: 'Laboratorio NgRx · SignalStore e architettura Redux',
+      badge: '🏛️ Lab Architetturale',
+      eyebrow: 'Architettura di Stato · NgRx Store e @ngrx/signals',
+      summary:
+        'Un banco di prova completo sulle architetture di stato: flusso unidirezionale Redux visualizzato, effetti asincroni, SignalStore dichiarativo con normalizzazione delle entità e matrice comparativa.',
+      features: [
+        'Ciclo Redux interattivo in 4 fasi (Dispatch Action → Reducer → Selector → Effect)',
+        'SignalStore dichiarativo con withEntities(), withComputed() e pipeline rxMethod()',
+        'Pannello di time-travel debugging: snapshot di stato, replay e rollback',
+        'Confronto dettagliato: NgRx Store, SignalStore e stato basato su servizi',
+      ],
+      architectureNotes:
+        'Dimostra i moderni pattern di stato di Angular senza zone.js, combinando composizione funzionale leggera e invarianti enterprise rigorosi.',
+    },
+  },
+  de: {
+    sky: {
+      title: 'Sky Lab · Interaktives 3D-Planetarium & Himmelsephemeriden',
+      badge: '🌌 3D-WebGL-Engine',
+      eyebrow: 'Astronomie & 3D-Computergrafik · WebGL & Orekit Spring Boot',
+      summary:
+        'Wähle einen beliebigen Ort auf der Erde, tauche vom Orbit auf Bodenhöhe ab und erkunde den Nachthimmel in Echtzeit: 5.000 reale Sterne, Sternbilder, exakte Mondphasen, sichtbare Planeten, Milchstraße und Sternschnuppen.',
+      features: [
+        'Interaktiver 3D-Erdglobus mit stufenlosem Orbitalflug bis zur Beobachterperspektive',
+        'Echtzeit-Sternenhimmel aus 5.000 realen Sternen mit projizierten Sternbildfiguren',
+        'Exakte Mondphasen- und Planetenpositionsberechnungen für beliebige historische oder künftige Daten',
+        'Astronomische Dämmerung, Dunkelfenster und Beobachtungsplaner',
+      ],
+      architectureNotes:
+        'Framework-freie Three.js-Engine mit On-Demand-Rendering, Off-Screen-Pause und automatischer Leistungsskalierung für stabile 60 fps auf Mobilgeräten und Desktops.',
+    },
+    rxjs: {
+      title: 'RxJS-Praxislabor · Stream-Operatoren & Reaktive Architektur',
+      badge: '🧪 Reaktives Labor',
+      eyebrow: 'Reaktive Programmierung · Marble-Diagramme & Gegendruck',
+      summary:
+        'Ein interaktives Experimentierfeld zur Beherrschung von RxJS-Datenströmen: Animierte Marble-Diagramme, Operator-Vergleiche, Backpressure-Strategien, Multicast-Subjects und Signal-Interoperabilität.',
+      features: [
+        'Interaktive Marble-Diagramme mit asynchronen Emissionen und Fehlerfortpflanzung',
+        'Backpressure-Direktvergleich: debounceTime, throttleTime, auditTime, sampleTime',
+        'Operator-Simulator im Vergleich: switchMap, mergeMap, concatMap, exhaustMap',
+        'Resiliente Produktions-Muster: Exponentielles Retry-Backoff und Request-Deduplizierung',
+      ],
+      architectureNotes:
+        'Zoneless reaktive Pipeline, die RxJS-Observables ohne Zone.js-Overhead direkt mit Angular Signals verbindet.',
+    },
+    ngrx: {
+      title: 'NgRx-Zustandslabor · SignalStore & Redux-Workbench',
+      badge: '🏛️ Architektur-Labor',
+      eyebrow: 'State-Architektur · NgRx Store & @ngrx/signals',
+      summary:
+        'Umfassende Workbench für Enterprise-State-Architekturen: Unidirektionaler Redux-Datenfluss visualisiert, asynchrone Effekte, deklarativer SignalStore mit Entitäts-Normalisierung und Vergleichsmatrix.',
+      features: [
+        'Interaktiver 4-Stufen-Redux-Zyklus (Action Dispatch → Reducer Transition → Selector Query → Effect Execution)',
+        'Deklarativer SignalStore mit withEntities(), withComputed() und rxMethod() Pipelines',
+        'Time-Travel-Debugging: State-Snapshots, Replay-Steuerung und Rollback',
+        'Architektur-Vergleich: NgRx Store vs. SignalStore vs. Service-basierter State',
+      ],
+      architectureNotes:
+        'Demonstriert moderne Angular-State-Muster ohne Zone.js – verbindet leichtgewichtige funktionale Komposition mit robusten Enterprise-Invarianten.',
+    },
+  },
 };
 
 @Component({
@@ -205,6 +299,58 @@ export class AppsPage {
           collapseTicket: 'Réduire',
           expandAll: 'Tout développer',
           collapseAll: 'Tout réduire',
+        };
+      case 'it':
+        return {
+          heroEyebrow: 'Architettura del Portfolio & Soluzioni',
+          heroHeading: 'Applicazioni & Laboratori Interattivi',
+          heroLead:
+            'Esplora piattaforme pronte per la produzione e banchi di prova ingegneristici specializzati realizzati con Angular 22 Zoneless, Native Federation, Three.js WebGL, NestJS e architetture di stato reattive. Ogni sistema qui sotto è completamente interattivo e documentato.',
+          jumpProduction: 'Applicazioni di Produzione',
+          jumpLabs: 'Laboratori di Ingegneria',
+          prodEyebrow: 'Piattaforme Aziendali & Industriali',
+          prodHeading: 'Applicazioni in Produzione',
+          prodLead:
+            'Sistemi full-stack progettati per flussi operativi reali, logistica distribuita ed elaborazione orientata alla massima privacy.',
+          labsEyebrow: 'Ricerca Applicata & Strumenti',
+          labsHeading: 'Laboratori di Ingegneria Interattivi',
+          labsLead:
+            'Banchi di lavoro pratici che dimostrano la computer grafica 3D WebGL, complessi flussi reattivi RxJS e moderne architetture di stato.',
+          keyCapabilities: 'Caratteristiche e Funzionalità Chiave:',
+          interactiveExperiments: 'Esperimenti Interattivi:',
+          architectureTitle: 'Architettura & Protezione Quote:',
+          howToTestTitle: 'Come testare:',
+          launchPrefix: 'Avvia',
+          expandTicket: 'Espandi',
+          collapseTicket: 'Riduci',
+          expandAll: 'Espandi tutto',
+          collapseAll: 'Riduci tutto',
+        };
+      case 'de':
+        return {
+          heroEyebrow: 'Portfolio-Architektur & Softwarelösungen',
+          heroHeading: 'Anwendungen & Interaktive Labore',
+          heroLead:
+            'Erkunden Sie produktionsreife Plattformen und spezialisierte Ingenieur-Workbenches, entwickelt mit zoneless Angular 22, Native Federation, Three.js WebGL, NestJS und reaktiven Zustandsarchitekturen. Jedes System ist vollständig interaktiv und dokumentiert.',
+          jumpProduction: 'Produktionsanwendungen',
+          jumpLabs: 'Ingenieur-Labore',
+          prodEyebrow: 'Unternehmensplattformen & Industrie',
+          prodHeading: 'Anwendungen im Produktiveinsatz',
+          prodLead:
+            'Ganzheitliche, domänengetriebene Systeme für reale Geschäftsprozesse, verteilte Abläufe und datenschutzorientierte Berechnungen.',
+          labsEyebrow: 'Angewandte Forschung & Tooling',
+          labsHeading: 'Interaktive Ingenieur-Labore',
+          labsLead:
+            'Praxisorientierte Workbenches zur Demonstration von 3D-WebGL-Computergrafik, komplexen reaktiven RxJS-Streams und modernen Zustandsarchitekturen.',
+          keyCapabilities: 'Wesentliche Fähigkeiten & Funktionen:',
+          interactiveExperiments: 'Interaktive Experimente:',
+          architectureTitle: 'Architektur & Kontingentschutz:',
+          howToTestTitle: 'Testanleitung:',
+          launchPrefix: 'Starten',
+          expandTicket: 'Erweitern',
+          collapseTicket: 'Einklappen',
+          expandAll: 'Alle erweitern',
+          collapseAll: 'Alle einklappen',
         };
       case 'en':
       default:
@@ -360,6 +506,38 @@ export class AppsPage {
           ],
           architectureNotes:
             'يعمل دون اتصال: الرحلات والمعدات وآخر توقعات في IndexedDB، وحسابات السماء على الجهاز.',
+        },
+        {
+          id: 'alarm-engine',
+          title: 'Nightly Alarm Decision Engine · محرك قرارات المنبه الليلي',
+          category: 'production',
+          badge: { label: '🌙 بروتوكول النوم', variant: 'accent', pulse: true },
+          eyebrow: 'التكرار المتباعد وجدولة العادات اليومية · د-3 / د-7 / د-14',
+          summary:
+            'خوارزمية ليلية دقيقة تنظم مواعيد الاستيقاظ والمراجعة الذكية وتنهي العشوائية. أجب عن استبيان سريع حول أداء التعلم اليوم، ليحسب المحرك مراجعات التكرار المتباعد (بعد 3 و 7 و 14 يوماً)، ويكتشف محطات التثبيت كل 6 فصول، ويولد عناوين منبهات الغد الجاهزة للنسخ بنقرة واحدة.',
+          route: '/apps/alarm-engine',
+          icon: '⏰',
+          ctaLabel: 'المنبهات الليلية',
+          stack: [
+            'Zoneless Angular 22',
+            'Spaced Repetition Engine',
+            'IndexedDB & Local Storage',
+            '@ah/ui Design Tokens',
+            'Mobile-First Dark Mode',
+          ],
+          features: [
+            'قائمة تفاعلية لطقوس النوم في 9 خطوات مع شريط تقدم لحظي',
+            'استبيان تشخيصي قبل النوم يقيس إنجاز الفصول ونتائج الاختبارات',
+            'تحديد تلقائي للفصول الضعيفة والمهام البرمجية المرحلة للغد',
+            'قاعدة الترحيل التلقائي: ترحيل المراجعات الفائتة لمنبه 06:00 دون تشويه تواريخ الدراسة الأصلية',
+            'اكتشاف أيام التثبيت الشامل (محطة 6 فصول أو 3 فصول ضعيفة فأكثر)',
+            'قوالب طاقة أيام الأسبوع: العادي، الصيام (إغلاق IDE في 15:15)، والاستشفاء',
+            'زر نسخ عنوان المنبه بنقرة واحدة لكل فترة ونسخ الجدول الكامل المنسق',
+            'جدول تتبع دراسي تفاعلي مع تبديل حالات المراجعة ونسخ احتياطي واستعادة JSON',
+            'دليل مرجعي دائم للمنبهات الثمانية لضبط تطبيق الساعة على هاتفك',
+          ],
+          architectureNotes:
+            'حوسبة محلية وخاصة 100% في التخزين المحلي للمتصفح دون إرسال أي بيانات لأي خادم.',
         },
         {
           id: 'dispatch',
@@ -568,6 +746,39 @@ export class AppsPage {
             'Conçu hors ligne : sorties, matériel et dernières prévisions dans IndexedDB, calculs du ciel sur l’appareil.',
         },
         {
+          id: 'alarm-engine',
+          title: 'Nightly Alarm Decision Engine · Moteur de Décision de Réveil',
+          category: 'production',
+          badge: { label: '🌙 Protocole Soir', variant: 'accent', pulse: true },
+          eyebrow:
+            'Répétition Espacée & Planification des Habitudes · J-3 / J-7 / J-14',
+          summary:
+            "Un algorithme structuré pour la routine du coucher éliminant les réveils aléatoires. Répondez à un court questionnaire sur l'étude du jour : le moteur calcule les révisions J-3/J-7/J-14, signale les faiblesses, détecte les paliers de consolidation à 6 chapitres et génère les intitulés exacts des réveils de demain, prêts à copier en 1 clic.",
+          route: '/apps/alarm-engine',
+          icon: '⏰',
+          ctaLabel: 'Réveils du Soir',
+          stack: [
+            'Zoneless Angular 22',
+            'Spaced Repetition Engine',
+            'Stockage Local & Sauvegarde JSON',
+            '@ah/ui Design Tokens',
+            'Dark Mode Mobile-First',
+          ],
+          features: [
+            'Checklist interactive du rituel du soir en 9 étapes avec barre de progression',
+            'Questionnaire diagnostique avec validation des chapitres et scores de quiz',
+            'Détection automatique des chapitres critiques (≥ 3 erreurs ou score < 75%) et reports de code',
+            'Règle de report Rollover : les révisions non effectuées glissent au réveil de 06h00 sans fausser les dates',
+            'Détection des journées de consolidation (palier de 6 chapitres ou ≥ 3 chapitres faibles)',
+            'Gabarits énergétiques : Standard, Jeûne (fermeture IDE 15h15) et Récupération (pause totale dès 15h15)',
+            'Bouton Copier l’intitulé en 1 clic par créneau et Copier tout le planning formaté',
+            'Tableau de suivi d’apprentissage interactif avec bascule des révisions et sauvegarde/restauration JSON',
+            'Guide de référence permanent des 8 réveils pour l’application Horloge native',
+          ],
+          architectureNotes:
+            '100% privé et hors-ligne dans le localStorage avec export/import JSON. Architecture réactive par signaux Angular 22 Zoneless.',
+        },
+        {
           id: 'dispatch',
           title:
             'PulseOps · Centre de Contrôle Opérationnel & Dispatch Logistique',
@@ -696,6 +907,505 @@ export class AppsPage {
           ],
           architectureNotes:
             'Traitement localisé en RAM sans stockage distant pour une sécurité et une confidentialité maximales.',
+        },
+      ];
+    }
+
+    if (l === 'it') {
+      return [
+        {
+          id: 'lighting',
+          title:
+            'LuxPath (SolarLux) · Piattaforma di Ingegneria per Illuminazione Pubblica e Solare',
+          category: 'production',
+          badge: {
+            label: '☀️ Suite Campo Solare & Rete',
+            variant: 'success',
+            pulse: true,
+          },
+          eyebrow:
+            'Ingegneria Civile e Fotometria sul Campo · EN 13201 / Eurocode 7 / NF EN 206',
+          summary:
+            "Suite tecnica per ingegneri e supervisori di cantieri di illuminazione pubblica (rete AC e pali solari fotovoltaici autonomi). Calcolo dell'interdistanza EN 13201, verifica geotecnica della profondità di scavo e dei plinti Eurocode 7, controllo dell'impasto calcestruzzo e cono di Abrams NF EN 206, livella digitale per la verticalità dei pali (EN 40), telemetro ottico da fotocamera e cartografia GPS offline.",
+          route: '/apps/lighting',
+          icon: '💡',
+          ctaLabel: 'LuxPath',
+          stack: [
+            'Zoneless Angular 22',
+            'Native Federation',
+            'Leaflet OpenStreetMap',
+            'DeviceOrientation Gyroscope',
+            'Camera WebRTC',
+            'IndexedDB Local Storage',
+            'Multilingue (IT/DE/FR/AR/EN)',
+            'NgRx SignalStore',
+          ],
+          features: [
+            'Motore fotometrico e spaziatura EN 13201-2: valutazione rapporti S/H, illuminamento medio ed uniformità U0 per classi stradali M, C e P',
+            'Verifica geotecnica dei plinti di fondazione Eurocode 7: momento ribaltante da vento, spinta aerodinamica del pannello e tirafondi M16-M24',
+            'Formulazione calcestruzzo e cono di Abrams NF EN 206: verifica dosaggio 350 kg/m³, Rck, rapporto A/C ≤ 0,50 e curva di disarmo a 7 giorni',
+            'Controllo verticalità e piombo EN 40: livella a bolla digitale 2D con inclinometro giroscopico e compensazione con dadi di ancoraggio',
+            'Telemetro ottico con fotocamera & clinometro trigonometrico per distanza al suolo e altezza del palo',
+            'Mappa di cantiere GPS interattiva: OpenStreetMap con posizionamento punti luce e calcolo distanze inter-palo',
+            'Dimensionamento solare fotovoltaico e batterie LiFePO4 con profili di dimmerazione notturna',
+            'Esportazione scadenze di cantiere in calendario (.ics) e invio promemoria email con un clic',
+          ],
+          architectureNotes:
+            'Architettura da campo 100% offline-first con memorizzazione locale in IndexedDB. Tutti i calcoli tecnici vengono eseguiti localmente sul dispositivo.',
+        },
+        {
+          id: 'basecamp',
+          title: 'Basecamp · Pianificatore di Spedizioni e Campeggio',
+          category: 'production',
+          badge: { label: '🏕️ Campeggio & Stelle', variant: 'success' },
+          eyebrow:
+            'Meteo · Osservazione Astronomica · Liste Bagagli · Offline-first',
+          summary:
+            "Organizza una spedizione in tenda direttamente dallo smartphone: posiziona il campo sulla mappa, monitora fino a 16 giorni di previsioni con avvisi per gelo, raffiche di vento e pioggia, individua la notte ideale per osservare le stelle (finestra di buio astronomico, fase lunare, sciami meteorici), genera la checklist per l'attrezzatura e condividi il viaggio con gli amici tramite link, senza registrazione né server.",
+          route: '/apps/basecamp',
+          icon: '🏕️',
+          ctaLabel: 'Basecamp',
+          stack: [
+            'Zoneless Angular 22',
+            'Native Federation',
+            'Leaflet OpenStreetMap',
+            'Open-Meteo API',
+            'astronomy-engine',
+            'CompressionStream share links',
+            'IndexedDB Local Storage',
+            'Multilingue (IT/DE/FR/AR/EN)',
+            'NgRx SignalStore',
+          ],
+          features: [
+            'Posizione del campo su mappa OpenStreetMap, con ricerca toponomastica e geolocalizzazione',
+            'Previsioni dettagliate Open-Meteo con allerte automatiche per gelate, raffiche di vento, precipitazioni e ondate di calore',
+            'Calcolo astronomico su smartphone: buio astronomico profondo, fase lunare, sciami di meteore e punteggio di visibilità',
+            'Collegamento diretto al laboratorio Sky Lab per visualizzare le costellazioni della notte prescelta',
+            'Checklist dinamica personalizzata in base al tipo di uscita, numero di persone e notti, con assegnazione dei compiti',
+            'Suggerimenti automatici legati alle condizioni meteo (teli antivento, strati termici, tiranti rinforzati)',
+            "Inventario dell'attrezzatura personale con identificazione immediata di elementi mancanti da noleggiare o acquistare",
+            'Condivisione istantanea tramite link compresso nel frammento URL e backup completo in formato JSON',
+          ],
+          architectureNotes:
+            'Concepito offline-first: viaggi, equipaggiamento e bollettini meteo salvati in IndexedDB; effemeridi celesti calcolate sul dispositivo.',
+        },
+        {
+          id: 'alarm-engine',
+          title:
+            'Nightly Alarm Decision Engine · Algoritmo di Pianificazione Sveglie',
+          category: 'production',
+          badge: {
+            label: '🌙 Protocollo Notturno',
+            variant: 'accent',
+            pulse: true,
+          },
+          eyebrow:
+            'Ripetizione Spaziata & Abitudini Quotidiane · D-3 / D-7 / D-14',
+          summary:
+            "Un algoritmo rigoroso per la routine serale che elimina le sveglie casuali. Rispondendo a un breve questionario sull'andamento dello studio odierno, il motore calcola le sessioni di ripetizione spaziata D-3 / D-7 / D-14, segnala gli argomenti critici, individua i traguardi di consolidamento a 6 capitoli e genera le etichette esatte per le sveglie di domani, pronte per la copia con 1 clic.",
+          route: '/apps/alarm-engine',
+          icon: '⏰',
+          ctaLabel: 'Sveglie Notturne',
+          stack: [
+            'Zoneless Angular 22',
+            'Spaced Repetition Engine',
+            'Local Storage Persistence & JSON Backup',
+            '@ah/ui Design Tokens',
+            'Mobile-First Dark Mode',
+          ],
+          features: [
+            'Checklist interattiva del rituale notturno in 9 passaggi con barra di avanzamento in tempo reale',
+            'Questionario diagnostico pre-sonno con verifica del completamento dei capitoli e punteggio del quiz',
+            'Segnalazione automatica dei capitoli CRITICI (≥ 3 errori o punteggio < 75%) e dei task pratici in sospeso',
+            'Regola di recupero Rollover: i capitoli non ripassati slittano automaticamente alla sveglia delle 06:00 senza alterare le date originali',
+            'Rilevamento delle giornate di Consolidamento (traguardo di 6 capitoli o ≥ 3 capitoli deboli) con intervallo Cap. A–B',
+            'Template energetici per i giorni feriali: Standard, Digiuno (chiusura IDE 15:15) e Recupero (stacco totale dopo le 15:15)',
+            "Pulsante di copia del titolo con 1 clic per ciascuno slot e copia dell'intero programma sveglie formattato",
+            'Tabella interattiva per il monitoraggio dello studio con attivazione manuale dei ripassi ed esportazione/ripristino JSON',
+            "Guida di riferimento permanente alle 8 sveglie per la configurazione nell'app Orologio nativa dello smartphone",
+          ],
+          architectureNotes:
+            '100% confidenziale e offline-first in localStorage con esportazione/importazione JSON. Architettura reattiva con Signals Zoneless di Angular 22.',
+        },
+        {
+          id: 'dispatch',
+          title:
+            'PulseOps · Centro di Controllo Operativo e Smistamento Logistico',
+          category: 'production',
+          badge: {
+            label: '🟢 Produzione Live',
+            variant: 'success',
+            pulse: true,
+          },
+          eyebrow: 'Logistica Commerciale e Hub Subappalti · Zone 1–4 Londra',
+          summary:
+            'Centro di comando per la supervisione logistica nel settore alberghiero e delle lavanderie commerciali. Gestione delle prese giornaliere, pianificazione degli itinerari autisti, manifesti dei laboratori in subappalto, gestione capi smarriti e reportistica automatica di fine turno.',
+          route: '/apps/dispatch',
+          icon: '🧺',
+          ctaLabel: 'PulseOps',
+          stack: [
+            'Zoneless Angular 22',
+            'Native Federation',
+            'NestJS REST API',
+            'MongoDB Atlas M0',
+            'AES-256-GCM',
+            'PBKDF2 Auth',
+            'NgRx SignalStore',
+          ],
+          features: [
+            'Kanban in tempo reale a 6 fasi (Ingresso, Lavaggio, Pronto, In Consegna, Consegnato, Fatturato)',
+            'Gestione flotta autisti in tempo reale con ottimizzazione tappe e prenotazione corrieri urgenti',
+            'Supervisione stabilimenti in subappalto con monitoraggio capacità produttiva e contestazioni qualità',
+            'Hub simulato di comunicazioni WhatsApp (canali Clienti, Autisti e Produzione con buffer circolare FIFO)',
+            'Prova di consegna digitale (POD) con firma su schermo e codice di sicurezza banchina di carico',
+            'Report automatici di cambio turno con riepilogo ordini completati, incidenti e pendenze aperte',
+          ],
+          architectureNotes:
+            'Crittografia AES-256-GCM dei dati sensibili a riposo e protezione rigorosa dei limiti di carico del database MongoDB Atlas Free Tier.',
+        },
+        {
+          id: 'strategy',
+          title:
+            'StrategyApp · Simulatore di Pianificazione Finanziaria & Patrimonio',
+          category: 'production',
+          badge: { label: '⚡ Piattaforma Interattiva', variant: 'accent' },
+          eyebrow: 'Fintech · Modelli di Scenario & Flussi di Cassa',
+          summary:
+            'Piattaforma di previsione finanziaria multi-scenario che proietta patrimonio netto, runway di emergenza e tasso di risparmio su più anni, senza mai trasmettere dati finanziari sensibili a server esterni.',
+          route: '/apps/strategy',
+          icon: '📈',
+          ctaLabel: 'StrategyApp',
+          stack: [
+            'Angular 22',
+            'NgRx SignalStore',
+            'Chart.js',
+            'IndexedDB Local Storage',
+            'PDF Export Engine',
+            '@ah/ui Design Tokens',
+          ],
+          features: [
+            'Simulazioni finanziarie multi-scenario (Base, Risparmio aggressivo, Conservativo, Transizione di carriera)',
+            'Mastro contabile a partita doppia interattivo con tracciamento per categorie di entrate e uscite',
+            'Proiezioni del patrimonio netto in tempo reale con visualizzazioni grafiche interattive',
+            'Calcolo del fondo di emergenza e avanzamento verso i traguardi finanziari',
+            'Esportazione automatizzata del report esecutivo di sintesi finanziaria in formato PDF',
+          ],
+          architectureNotes:
+            'Riservatezza assoluta: calcolo 100% lato client con persistenza locale IndexedDB e zero telemetria remota.',
+        },
+        {
+          id: 'studylm',
+          title:
+            'StudyLM · Piattaforma di Formazione ed Esercitazione in Ingegneria del Software con IA',
+          category: 'production',
+          badge: {
+            label: '🤖 Motore IA Groq 120B',
+            variant: 'accent',
+            pulse: true,
+          },
+          eyebrow:
+            'Architetto Didattico Autonomo & Valutazione Sezione per Sezione',
+          summary:
+            "Piattaforma per la padronanza dell'ingegneria del software orchestrata tramite workflow n8n e modelli Groq LPU (120B). Scompone argomenti complessi in capitoli progressivi con flashcard illimitate e quiz diagnostici a 4 scelte.",
+          route: '/apps/studylm',
+          icon: '📚',
+          ctaLabel: 'StudyLM',
+          stack: [
+            'Zoneless Angular 22',
+            'Native Federation',
+            'n8n AI Workflow Engine',
+            'Groq LPU (120B / 27B)',
+            'NgRx SignalStore',
+            'Dexie IndexedDB',
+          ],
+          features: [
+            'Guardrail tematico intelligente che convalida rigorosamente solo argomenti di ingegneria del software',
+            'Scomposizione didattica strutturata su documentazioni ufficiali (MDN, React, PostgreSQL)',
+            'Flashcard tecniche dettagliate con snippet di codice e lezioni interattive passo-passo',
+            'Quiz diagnostici a 4 opzioni con spiegazioni approfondite per ciascun distrattore',
+          ],
+          architectureNotes:
+            'Orchestrazione IA multi-livello via n8n con modello principale Groq 120B e failover automatico su Qwen 27B.',
+        },
+        {
+          id: 'whatsapp',
+          title:
+            'ChatPulse · Analizzatore di Chat WhatsApp & Intelligence Relazionale con IA',
+          category: 'production',
+          badge: {
+            label: '💬 Elaborazione ZIP Locale + IA n8n',
+            variant: 'success',
+            pulse: true,
+          },
+          eyebrow:
+            'Analisi Messaggistica Privacy-First · Telemetria Comportamentale',
+          summary:
+            "Suite di analisi per archivi WhatsApp (.txt/.zip) eseguita direttamente nella RAM del browser senza caricare file multimediali. Calcola la distribuzione dei tempi di risposta, mappe termiche delle attività 7×24, schede riassuntive stile Wrapped e integrazione webhook n8n per l'analisi comportamentale con IA.",
+          route: '/apps/whatsapp',
+          icon: '💬',
+          ctaLabel: 'ChatPulse',
+          stack: [
+            'Zoneless Angular 22',
+            'Native Federation',
+            'Web DecompressionStream',
+            'NgRx SignalStore',
+            'n8n AI Webhook',
+          ],
+          features: [
+            'Importazione ed elaborazione in-memory di archivi ZIP e TXT ignorando file multimediali pesanti',
+            'Rilevamento intelligente del formato data per iOS e Android (GG/MM vs MM/GG)',
+            'Dinamiche di risposta: tempi di reazione, promotori delle conversazioni e indice di messaggi consecutivi',
+            'Mappa termica di attività settimanale 7×24 e scheda di riepilogo annuale condivisibile',
+          ],
+          architectureNotes:
+            'Estrazione e analisi 100% lato client senza alcun caricamento di dati su server esterni.',
+        },
+      ];
+    }
+
+    if (l === 'de') {
+      return [
+        {
+          id: 'lighting',
+          title:
+            'LuxPath (SolarLux) · Feld-Engineering-Plattform für Straßen- und Solarbeleuchtung',
+          category: 'production',
+          badge: {
+            label: '☀️ Solar- & Netzbeleuchtung',
+            variant: 'success',
+            pulse: true,
+          },
+          eyebrow:
+            'Bauingenieurwesen & Feld-Photometrie · EN 13201 / Eurocode 7 / NF EN 206',
+          summary:
+            'Mobile All-in-One-Engineering-Suite für Bauleiter und Ingenieure im Bereich der Straßenbeleuchtung (konventionelles Netz und autarke Solarleuchten). Berechnung von Mastabständen nach EN 13201, geotechnische Bemessung von Fundamentblöcken nach Eurocode 7, Betonkonsistenzprüfung mit Setzkegel nach NF EN 206, digitale Mastlot-Wasserwaage (EN 40), optischer Kamera-Entfernungsmesser und Offline-GPS-Kartierung.',
+          route: '/apps/lighting',
+          icon: '💡',
+          ctaLabel: 'LuxPath',
+          stack: [
+            'Zoneless Angular 22',
+            'Native Federation',
+            'Leaflet OpenStreetMap',
+            'DeviceOrientation Gyroscope',
+            'Camera WebRTC',
+            'IndexedDB Local Storage',
+            'Mehrsprachig (DE/IT/FR/AR/EN)',
+            'NgRx SignalStore',
+          ],
+          features: [
+            'Photometrie- und Abstandsrechner nach EN 13201-2: Berechnung von S/H-Verhältnissen, mittlerer Beleuchtungsstärke und Gleichmäßigkeit U0 (Beleuchtungsklassen M, C, P)',
+            'Fundamentbemessung nach Eurocode 7: Windlastmoment, aerodynamische Segelfläche des Solarmoduls, Aushubtiefe und Ankerbolzendimensionierung (M16–M24)',
+            'Betontechnologische Prüfung nach NF EN 206: Verifizierung von Bindemittelgehalt, W/Z-Wert ≤ 0,50, Setzmaßprüfung und 7-Tage-Ausschalreife',
+            'Mastlot- und Vertikalitätsprüfung nach EN 40: Digitale 2D-Wasserwaage mit Neigungssensor, Auslenkung in mm und Justieranweisung für Fundamentmuttern',
+            'Optischer Kamera-Entfernungsmesser: Fadenkreuz-Klinometer zur trigonometrischen Ermittlung von Mastabständen und Lichthöhen',
+            'Interaktive GPS-Feldkarte: OpenStreetMap mit Markern, automatischem Geotagging und exakter intermuraler Distanzberechnung',
+            'Auslegung autonomer Photovoltaik- und LiFePO4-Batteriesysteme mit Nachtabsenkungsprofilen und Wintersolstitium-Reserven',
+            'Projektmeilensteine & E-Mail-Erinnerungen: 1-Klick-Export für Kalenderdateien (.ics) und automatische E-Mail-Verteiler an Auftraggeber',
+          ],
+          architectureNotes:
+            '100% Offline-First-Architektur mit lokaler IndexedDB-Persistenz. Sämtliche ingenieurtechnischen Berechnungen laufen clientseitig ohne Serverlatenz.',
+        },
+        {
+          id: 'basecamp',
+          title: 'Basecamp · Camping- & Outdoor-Tourenplaner',
+          category: 'production',
+          badge: { label: '🏕️ Camping & Sternenhimmel', variant: 'success' },
+          eyebrow: 'Wetter · Himmelsbeobachtung · Packlisten · Offline-First',
+          summary:
+            'Planen Sie Outdoor-Touren direkt auf dem Smartphone: Stecken Sie das Camp auf der Karte ab, verfolgen Sie bis zu 16 Tage Wetterprognosen mit Frost-, Wind- und Regenwarnungen, finden Sie die ideale Nacht zur Sternenbeobachtung (astronomische Dunkelheit, Mondphase, Meteorströme), packen Sie eine bedarfsgerechte Ausrüstungsliste und teilen Sie die Tour per Link – ohne Nutzerkonto und ohne Server.',
+          route: '/apps/basecamp',
+          icon: '🏕️',
+          ctaLabel: 'Basecamp',
+          stack: [
+            'Zoneless Angular 22',
+            'Native Federation',
+            'Leaflet OpenStreetMap',
+            'Open-Meteo API',
+            'astronomy-engine',
+            'CompressionStream share links',
+            'IndexedDB Local Storage',
+            'Mehrsprachig (DE/IT/FR/AR/EN)',
+            'NgRx SignalStore',
+          ],
+          features: [
+            'Camp-Standort auf OpenStreetMap mit Ortssuche und GPS-Zentrierung',
+            'Tagesgenaue Open-Meteo-Vorhersagen mit automatischen Warnungen vor Bodenfrost, Sturm, Starkregen und Hitze',
+            'Auf dem Gerät berechnete Beobachtungsfenster: Astronomische Dunkelheit, Mondphase, Sternschnuppen und Himmels-Score',
+            'Direkte Verlinkung ins Sky Lab zur Vorschau des Sternenhimmels der besten Nacht',
+            'Modulare Packliste nach Tourenart, Teilnehmerzahl und Übernachtungen mit individueller Zuteilung',
+            'Wetterabhängige Ausrüstungszusätze (Abspannleinen, Tarp, Kälteschutzschichten)',
+            'Persönliches Ausrüstungsinventar zur schnellen Prüfung von Leih- und Anschaffungsbedarf',
+            'Tourenfreigabe über komprimierte URL-Hash-Links und vollständige JSON-Sicherung',
+          ],
+          architectureNotes:
+            'Konsequentes Offline-First-Design: Touren, Ausrüstung und Wetterdaten in IndexedDB; Himmelsmechanik wird direkt auf dem Endgerät berechnet.',
+        },
+        {
+          id: 'alarm-engine',
+          title:
+            'Nightly Alarm Decision Engine · Entscheidungsalgorithmus für Weckzeiten',
+          category: 'production',
+          badge: {
+            label: '🌙 Abend-Protokoll',
+            variant: 'accent',
+            pulse: true,
+          },
+          eyebrow: 'Spaced Repetition & Tagesroutinen · D-3 / D-7 / D-14',
+          summary:
+            'Ein strukturierter Abend-Entscheidungsalgorithmus, der willkürliche Wecker überflüssig macht. Ein kurzer Fragebogen zur heutigen Lernleistung genügt: Die Engine berechnet automatisch Spaced-Repetition-Wiederholungen nach dem D-3/D-7/D-14-Schema, markiert Schwachstellen, erkennt 6-Kapitel-Konsolidierungsmeilensteine und generiert exakte Wecker-Titeltexte für den Folgetag mit 1-Klick-Kopierfunktion.',
+          route: '/apps/alarm-engine',
+          icon: '⏰',
+          ctaLabel: 'Abend-Wecker',
+          stack: [
+            'Zoneless Angular 22',
+            'Spaced Repetition Engine',
+            'Local Storage Persistence & JSON Backup',
+            '@ah/ui Design Tokens',
+            'Mobile-First Dark Mode',
+          ],
+          features: [
+            '9-stufige interaktive Abend-Checkliste mit Live-Fortschrittsbalken',
+            'Diagnostischer Abend-Fragebogen mit Überprüfung abgeschlossener Kapitel und Quiz-Ergebnissen',
+            'Automatische Kennzeichnung SCHWACHER Kapitel (≥ 3 Fehler oder Score < 75%) sowie offener Coding-Aufgaben',
+            'Rollover-Wiederholungsregel: Ausstehende Wiederholungen wandern in den 06:00-Uhr-Slot, ohne das ursprüngliche Lerndatum zu verfälschen',
+            'Erkennung von Konsolidierungstagen (6-Kapitel-Meilenstein oder ≥ 3 schwache Kapitel) mit Meilensteinbereich Kap. A–B',
+            'Wochentags-Energievorlagen: Standard, Fasten (IDE-Schluss 15:15 Uhr) und Erholung (ab 15:15 Uhr komplett frei)',
+            '1-Klick-Kopierfunktion für Weckertitel pro Zeitfenster sowie Gesamtexport des formatierten Weckplans',
+            'Interaktiver Lernfortschritts-Tracker mit manuellen Wiederholungs-Schaltern und vollständigem JSON-Backup/Restore',
+            'Permanenter 8-Wecker-Leitfaden für die native Uhr-App auf dem Smartphone',
+          ],
+          architectureNotes:
+            '100% lokal und privat im Browser-LocalStorage mit JSON-Export/Import. Reaktive zoneless Signals-Architektur auf Angular-22-Basis.',
+        },
+        {
+          id: 'dispatch',
+          title: 'PulseOps · Operatives Logistik- und Dispositions-Leitzentrum',
+          category: 'production',
+          badge: {
+            label: '🟢 Produktivbetrieb',
+            variant: 'success',
+            pulse: true,
+          },
+          eyebrow:
+            'Gewerbliche Logistik & Subunternehmer-Hub · London Zonen 1–4',
+          summary:
+            'Umfassende Leitstelle für die logistische Koordination im Bereich gewerblicher Wäschereien und Hotellerie. Steuerung von täglichen Warenannahmen, Tourenplanung der Fahrerflotte, Lohnwäsche-Manifeste für Subunternehmer, Nachverfolgung vermisster Artikel und automatische Schichtübergabeberichte.',
+          route: '/apps/dispatch',
+          icon: '🧺',
+          ctaLabel: 'PulseOps',
+          stack: [
+            'Zoneless Angular 22',
+            'Native Federation',
+            'NestJS REST API',
+            'MongoDB Atlas M0',
+            'AES-256-GCM',
+            'PBKDF2 Auth',
+            'NgRx SignalStore',
+          ],
+          features: [
+            '6-stufiges Echtzeit-Kanban-Board (Annahme, Wäsche, Fertig, Disponiert, Zugestellt, Abgerechnet)',
+            'Live-Flottendisposition für Fahrer mit Tourenoptimierung und Notfallkurier-Buchung',
+            'Subunternehmer-Management mit Kapazitätsüberwachung und Qualitätsreklamations-Tracking',
+            'Simulierter WhatsApp-Kommunikations-Hub (Kunden-, Fahrer- und Produktionskanäle im FIFO-Ringspeicher)',
+            'Digitaler Abliefernachweis (POD) mit digitaler Unterschrift und Rampen-Zugangscode',
+            'Automatisierte Schichtübergabe-Berichte mit abgeschlossenen Aufträgen, Vorfällen und Nachfassaktionen',
+          ],
+          architectureNotes:
+            'Strikter Schutz vor Datenbanküberlastung im MongoDB-Atlas-Free-Tier. Sensible Felder werden im Ruhezustand via AES-256-GCM verschlüsselt.',
+        },
+        {
+          id: 'strategy',
+          title: 'StrategyApp · Finanzplanungs- und Vermögensprognose-Engine',
+          category: 'production',
+          badge: { label: '⚡ Interaktive Plattform', variant: 'accent' },
+          eyebrow: 'Fintech · Szenariomodellierung & Cashflow-Buchhaltung',
+          summary:
+            'Plattform für mehrjährige finanzielle Mehr-Szenarien-Prognosen von Nettovermögen, Liquiditätsreichweite (Runway) und Sparquoten – ohne Übertragung sensibler Finanzdaten an externe Server.',
+          route: '/apps/strategy',
+          icon: '📈',
+          ctaLabel: 'StrategyApp',
+          stack: [
+            'Angular 22',
+            'NgRx SignalStore',
+            'Chart.js',
+            'IndexedDB Local Storage',
+            'PDF Export Engine',
+            '@ah/ui Design Tokens',
+          ],
+          features: [
+            'Mehr-Szenarien-Finanzsimulationen (Basis, Offensives Sparen, Konservativ, Berufliche Neuorientierung)',
+            'Interaktive doppelte Buchführung mit kategorisierter Erfassung von Einnahmen und Ausgaben',
+            'Echtzeit-Vermögensprognosen mit interaktiven SVG-/Chart-Visualisierungen',
+            'Berechnung der Notgroschen-Reichweite und Fortschrittsanzeige für finanzielle Meilensteine',
+            'Automatisierter PDF-Export für Management-Finanzberichte auf Knopfdruck',
+          ],
+          architectureNotes:
+            'Keine externe Datenübertragung: 100% clientseitige Berechnungen mit lokaler IndexedDB-Persistenz.',
+        },
+        {
+          id: 'studylm',
+          title:
+            'StudyLM · KI-gestützte Plattform für Software-Engineering-Curricula & Drill-Training',
+          category: 'production',
+          badge: {
+            label: '🤖 Groq 120B KI-Engine',
+            variant: 'accent',
+            pulse: true,
+          },
+          eyebrow:
+            'Autonomer Didaktik-Architekt & Schrittweise Wissensüberprüfung',
+          summary:
+            'Lern- und Vertiefungsplattform für Software Engineering, angetrieben von n8n-Workflows und Groq-LPU-Modellen (120B). Zerlegt komplexe Informatikthemen in progressive Kapitel mit unbegrenzten Karteikartendecks und 4-Optionen-Diagnosequizzen.',
+          route: '/apps/studylm',
+          icon: '📚',
+          ctaLabel: 'StudyLM',
+          stack: [
+            'Zoneless Angular 22',
+            'Native Federation',
+            'n8n AI Workflow Engine',
+            'Groq LPU (120B / 27B)',
+            'NgRx SignalStore',
+            'Dexie IndexedDB',
+          ],
+          features: [
+            'Intelligenter thematischer Guardrail: Schließt Nicht-Software-Engineering-Themen verlässlich aus',
+            'Didaktische Dekonstruktion auf Basis offizieller Dokumentationen (MDN, React, PostgreSQL)',
+            'Tiefgehende technische Flashcards mit Code-Beispielen und interaktive Schritt-für-Schritt-Lektionen',
+            'Diagnostische Multiple-Choice-Quizze mit detaillierter didaktischer Begründung aller Antwortoptionen',
+          ],
+          architectureNotes:
+            'Mehrstufige KI-Orchestrierung über n8n mit Groq-120B-Reasoning und automatischem Failover auf Qwen 27B.',
+        },
+        {
+          id: 'whatsapp',
+          title: 'ChatPulse · WhatsApp-Chat-Analyse & KI-Beziehungsanalytik',
+          category: 'production',
+          badge: {
+            label: '💬 Lokale ZIP-Verarbeitung + n8n-KI',
+            variant: 'success',
+            pulse: true,
+          },
+          eyebrow: 'Datenschutzorientierte Chat-Analytik · Verhaltensmetriken',
+          summary:
+            'Browserbasierte Suite zur Analyse exportierter WhatsApp-Chats (.txt/.zip) direkt im Arbeitsspeicher, ohne Upload von Mediendateien. Berechnet Antwortlatenzen, 7×24-Aktivitäts-Heatmaps, teilbare Jahresrückblick-Karten (Wrapped) und verbindet sich für KI-gestützte Einblicke mit einem n8n-Webhook.',
+          route: '/apps/whatsapp',
+          icon: '💬',
+          ctaLabel: 'ChatPulse',
+          stack: [
+            'Zoneless Angular 22',
+            'Native Federation',
+            'Web DecompressionStream',
+            'NgRx SignalStore',
+            'n8n AI Webhook',
+          ],
+          features: [
+            'Direkte ZIP- und TXT-Verarbeitung im RAM unter Auslassung speicherintensiver Mediendateien',
+            'Automatische Erkennung von iOS- und Android-Datumsformaten (TT/MM vs. MM/TT)',
+            'Analyse von Reaktionszeiten, Gesprächsinitiatoren und Double-Texting-Raten',
+            '7×24-Aktivitäts-Heatmap und teilbare interaktive Jahresrückblicks-Karte',
+          ],
+          architectureNotes:
+            'Vollständig clientseitige Archiv-Entpackung und Auswertung ohne externe Serverübertragung.',
         },
       ];
     }

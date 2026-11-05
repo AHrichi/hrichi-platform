@@ -119,10 +119,70 @@ export const SHELL_COPY: Record<SiteLanguage, ShellCopy> = {
       dismiss: 'إغلاق',
     },
   },
+  it: {
+    skip: 'Salta al contenuto',
+    mainNav: 'Menu principale',
+    nav: {
+      work: 'Progetti',
+      apps: 'App e Laboratori',
+      experience: 'Esperienza',
+      services: 'Servizi',
+      contact: 'Contatti',
+    },
+    cv: 'CV',
+    language: 'Lingua',
+    toLight: 'Passa alla modalità chiara',
+    toDark: 'Passa alla modalità scura',
+    email: 'Email',
+    source: 'Codice sorgente e ADR',
+    designSystem: 'Design system',
+    hood: 'Sotto il cofano',
+    englishOnly: 'Questa pagina è disponibile solo in inglese per il momento.',
+    update: {
+      ready: 'È disponibile una nuova versione di questo sito.',
+      broken:
+        'La copia salvata di questo sito non è aggiornata e non può essere aggiornata automaticamente.',
+      reload: 'Ricarica',
+      hardReload: 'Ricarica completa',
+      hardReloadHint:
+        'Cancella la copia offline del sito e ricarica tutto da capo.',
+      dismiss: 'Chiudi',
+    },
+  },
+  de: {
+    skip: 'Zum Inhalt springen',
+    mainNav: 'Hauptnavigation',
+    nav: {
+      work: 'Projekte',
+      apps: 'Apps & Labs',
+      experience: 'Erfahrung',
+      services: 'Leistungen',
+      contact: 'Kontakt',
+    },
+    cv: 'Lebenslauf',
+    language: 'Sprache',
+    toLight: 'Zum hellen Modus wechseln',
+    toDark: 'Zum dunklen Modus wechseln',
+    email: 'E-Mail',
+    source: 'Quellcode & ADRs',
+    designSystem: 'Design-System',
+    hood: 'Hinter den Kulissen',
+    englishOnly: 'Diese Seite ist derzeit nur auf Englisch verfügbar.',
+    update: {
+      ready: 'Eine neue Version dieser Website ist verfügbar.',
+      broken:
+        'Die gespeicherte Version dieser Website ist veraltet und kann nicht direkt aktualisiert werden.',
+      reload: 'Neu laden',
+      hardReload: 'Vollständig neu laden',
+      hardReloadHint:
+        'Löscht die Offline-Kopie der Website und lädt alles neu.',
+      dismiss: 'Schließen',
+    },
+  },
 };
 
 /**
- * Pages written in all three languages (the apps page, LuxPath, Basecamp). Every other page is English only:
+ * Pages written in all supported languages (the apps page, LuxPath, Basecamp, Alarm Engine). Every other page is English only:
  * it keeps lang="en" and left-to-right layout whatever the site language.
  */
 export function isTranslatedPage(url: string): boolean {
@@ -130,6 +190,7 @@ export function isTranslatedPage(url: string): boolean {
   return (
     path === '/apps' ||
     path.startsWith('/apps/lighting') ||
-    path.startsWith('/apps/basecamp')
+    path.startsWith('/apps/basecamp') ||
+    path.startsWith('/apps/alarm-engine')
   );
 }

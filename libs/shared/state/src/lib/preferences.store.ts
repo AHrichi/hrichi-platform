@@ -19,14 +19,20 @@ const themeStorageKey = 'ah.theme';
 export const languageStorageKey = 'preferred_language';
 
 export type ThemePreference = 'system' | 'light' | 'dark';
-export type SiteLanguage = 'fr' | 'ar' | 'en';
+export type SiteLanguage = 'fr' | 'ar' | 'en' | 'it' | 'de';
 
 export function isThemePreference(value: unknown): value is ThemePreference {
   return value === 'system' || value === 'light' || value === 'dark';
 }
 
 export function isSiteLanguage(value: unknown): value is SiteLanguage {
-  return value === 'fr' || value === 'ar' || value === 'en';
+  return (
+    value === 'fr' ||
+    value === 'ar' ||
+    value === 'en' ||
+    value === 'it' ||
+    value === 'de'
+  );
 }
 
 function applyThemeToDocument(

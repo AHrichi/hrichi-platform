@@ -1,6 +1,7 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
+import { PreferencesStore } from '@ah/shared/state';
 import { describe, expect, it } from 'vitest';
 import { AppsPage } from './apps-page';
 
@@ -143,5 +144,39 @@ describe('AppsPage', () => {
       expect(card.classList.contains('app-card--collapsed')).toBe(false);
     }
     expect(toggleAllBtn.getAttribute('aria-expanded')).toBe('true');
+  });
+
+  it('renders Italian localized content when language is it', async () => {
+    TestBed.configureTestingModule({
+      providers: [provideZonelessChangeDetection(), provideRouter([])],
+    });
+    const store = TestBed.inject(PreferencesStore);
+    store.setLanguage('it');
+    const fixture = TestBed.createComponent(AppsPage);
+    await fixture.whenStable();
+
+    const text = fixture.nativeElement.textContent;
+    expect(text).toContain('Applicazioni & Laboratori Interattivi');
+    expect(text).toContain(
+      'Piattaforma di Ingegneria per Illuminazione Pubblica e Solare',
+    );
+    expect(text).toContain('Pianificatore di Spedizioni e Campeggio');
+  });
+
+  it('renders German localized content when language is de', async () => {
+    TestBed.configureTestingModule({
+      providers: [provideZonelessChangeDetection(), provideRouter([])],
+    });
+    const store = TestBed.inject(PreferencesStore);
+    store.setLanguage('de');
+    const fixture = TestBed.createComponent(AppsPage);
+    await fixture.whenStable();
+
+    const text = fixture.nativeElement.textContent;
+    expect(text).toContain('Anwendungen & Interaktive Labore');
+    expect(text).toContain(
+      'Feld-Engineering-Plattform für Straßen- und Solarbeleuchtung',
+    );
+    expect(text).toContain('Camping- & Outdoor-Tourenplaner');
   });
 });

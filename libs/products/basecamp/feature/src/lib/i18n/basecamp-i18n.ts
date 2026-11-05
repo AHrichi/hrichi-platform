@@ -2,16 +2,26 @@ import { computed, inject, Injectable } from '@angular/core';
 import { PreferencesStore, type SiteLanguage } from '@ah/shared/state';
 import type { PackingItem } from '@ah/products/basecamp/domain';
 import { AR } from './copy.ar';
+import { DE } from './copy.de';
 import { type BasecampCopy, EN } from './copy.en';
 import { FR } from './copy.fr';
+import { IT } from './copy.it';
 
-const COPY: Record<SiteLanguage, BasecampCopy> = { en: EN, fr: FR, ar: AR };
+const COPY: Record<SiteLanguage, BasecampCopy> = {
+  en: EN,
+  fr: FR,
+  ar: AR,
+  it: IT,
+  de: DE,
+};
 
 /** Arabic keeps Latin digits, as LuxPath does, so numbers read the same. */
 const LOCALES: Record<SiteLanguage, string> = {
   en: 'en-GB',
   fr: 'fr-FR',
   ar: 'ar-u-nu-latn',
+  it: 'it-IT',
+  de: 'de-DE',
 };
 
 /**
