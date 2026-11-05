@@ -14,7 +14,7 @@
 .ah-scene__canvas {
   display: block;
   opacity: 0;
-  touch-action: pan-y;
+  touch-action: none;
 }
 :host([data-state='ready']) .ah-scene__canvas {
   opacity: 1;
