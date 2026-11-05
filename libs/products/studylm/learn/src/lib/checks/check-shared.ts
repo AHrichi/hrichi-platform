@@ -23,10 +23,37 @@ export interface CheckRecord {
         <span class="verdict-icon" aria-hidden="true">{{
           correct() ? '✓' : '✗'
         }}</span>
-        <p class="verdict">
-          {{ correct() ? 'Right! Well done.' : 'Not quite yet.' }}
-        </p>
+        <div class="verdict-text-group">
+          <p class="verdict">
+            @if (correct()) {
+              @if (isTypo()) {
+                Right! (Accepted typing variation)
+              } @else {
+                Right! Well done.
+              }
+            } @else if (askingAi()) {
+              Evaluating with AI…
+            } @else {
+              Not quite yet.
+            }
+          </p>
+          @if (correct() && isTypo()) {
+            <span class="badge-typo" aria-label="Typo tolerated"
+              >Typo Tolerated</span
+            >
+          }
+        </div>
       </div>
+
+      @if (aiFeedback(); as aiText) {
+        <div class="ai-feedback-box" role="note">
+          <div class="ai-feedback-header">
+            <span class="ai-sparkle" aria-hidden="true">✨</span>
+            <span class="ai-label">AI Answer Evaluation</span>
+          </div>
+          <p class="ai-text">{{ aiText }}</p>
+        </div>
+      }
 
       @if (explanation(); as text) {
         <div class="explanation-box">
@@ -60,6 +87,16 @@ export interface CheckRecord {
           >
             ↺ Try again
           </button>
+          @if (canAskAi() && !askingAi()) {
+            <button
+              type="button"
+              class="action-btn ai-btn"
+              (click)="askAi.emit()"
+              aria-label="Check with AI for typing issues"
+            >
+              🤖 Check with AI for typos
+            </button>
+          }
           <button
             type="button"
             class="action-btn solution-btn"
@@ -99,8 +136,50 @@ export interface CheckRecord {
       font-size: 1.25rem;
       font-weight: var(--font-weight-bold);
     }
+    .verdict-text-group {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      flex-wrap: wrap;
+    }
     .verdict {
       font-weight: var(--font-weight-bold);
+      font-size: var(--font-size-200);
+    }
+    .badge-typo {
+      font-size: 0.72rem;
+      font-weight: var(--font-weight-bold);
+      padding: 2px 8px;
+      border-radius: var(--radius-full, 9999px);
+      background: rgba(16, 185, 129, 0.15);
+      color: #065f46;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+    .ai-feedback-box {
+      display: grid;
+      gap: var(--space-1);
+      padding: var(--space-2) var(--space-3);
+      border-radius: var(--radius-sm);
+      background: rgba(99, 102, 241, 0.07);
+      border: 1px solid rgba(99, 102, 241, 0.25);
+    }
+    .ai-feedback-header {
+      display: flex;
+      align-items: center;
+      gap: var(--space-1);
+    }
+    .ai-sparkle {
+      font-size: 0.9rem;
+    }
+    .ai-label {
+      font-size: var(--font-size-100);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-accent-default, #6366f1);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .ai-text {
+      line-height: 1.5;
       font-size: var(--font-size-200);
     }
     .explanation-box {
@@ -174,6 +253,15 @@ export interface CheckRecord {
       background: var(--color-bg-raised, rgba(0, 0, 0, 0.04));
       border-color: var(--color-text-default);
     }
+    .ai-btn {
+      border-color: #8b5cf6;
+      color: #6d28d9;
+      background: rgba(139, 92, 246, 0.08);
+    }
+    .ai-btn:hover {
+      background: #8b5cf6;
+      color: #ffffff;
+    }
     .solution-btn {
       border-color: var(--color-accent-default, #6366f1);
       color: var(--color-accent-default, #6366f1);
@@ -200,8 +288,13 @@ export class CheckFeedback {
   readonly correct = input.required<boolean>();
   readonly explanation = input<string | null>(null);
   readonly solution = input<string | null>(null);
+  readonly isTypo = input<boolean>(false);
+  readonly aiFeedback = input<string | null>(null);
+  readonly askingAi = input<boolean>(false);
+  readonly canAskAi = input<boolean>(false);
   readonly solutionToggled = output<boolean>();
   readonly retry = output<void>();
+  readonly askAi = output<void>();
 
   protected readonly showingSolution = signal(false);
 

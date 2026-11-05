@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  inject,
   input,
   linkedSignal,
   output,
@@ -18,6 +19,7 @@ import {
   type ParsonsAnswer,
 } from './marking';
 import { expectedOutput } from '../player/executed';
+import { AI_ANSWER_EVALUATOR } from './feedback';
 
 interface PoolLine {
   /** A solution line's id, or `distractor-<n>`. */
@@ -367,8 +369,13 @@ function hash(text: string): number {
       <sl-check-feedback
         [correct]="result() === true"
         [explanation]="b.explanation"
+        [isTypo]="isTypo()"
+        [aiFeedback]="aiFeedback()"
+        [askingAi]="askingAi()"
+        [canAskAi]="result() === false && !askingAi() && !!askAiEvaluator"
         (solutionToggled)="showingSolution.set($event)"
         (retry)="retry()"
+        (askAi)="evaluateWithAi()"
       >
         <div solution class="solution-details">
           <p class="solution-title"><strong>Actual Program Output:</strong></p>
@@ -405,20 +412,75 @@ export class PredictOutputCheck {
     () => this.saved()?.correct ?? null,
   );
   protected readonly showingSolution = signal(false);
+  protected readonly isTypo = signal(false);
+  protected readonly aiFeedback = signal<string | null>(null);
+  protected readonly askingAi = signal(false);
+  protected readonly askAiEvaluator = inject(AI_ANSWER_EVALUATOR, {
+    optional: true,
+  });
 
-  protected submit(): void {
+  protected async submit(): Promise<void> {
     const answer = this.text();
     const correct = markOutput(
       { ...this.block(), expected: this.run().expected },
       answer,
     );
-    this.result.set(correct);
-    this.answered.emit({ answer, correct });
+    if (correct) {
+      this.result.set(true);
+      this.answered.emit({ answer, correct: true });
+      return;
+    }
+
+    if (this.askAiEvaluator) {
+      await this.evaluateWithAi(answer);
+      return;
+    }
+
+    this.result.set(false);
+    this.answered.emit({ answer, correct: false });
+  }
+
+  protected async evaluateWithAi(userAnswer?: string): Promise<void> {
+    if (!this.askAiEvaluator) return;
+    const ans = (userAnswer ?? this.text()).trim();
+    if (!ans) return;
+
+    this.askingAi.set(true);
+    try {
+      const evalRes = await this.askAiEvaluator({
+        question: 'What does this program print?',
+        expected: this.run().expected,
+        answer: ans,
+        context: this.block().code,
+      });
+
+      if (evalRes.correct) {
+        this.result.set(true);
+        this.isTypo.set(evalRes.isTypo ?? true);
+        this.aiFeedback.set(
+          evalRes.feedback ?? 'Accepted by AI as matching expected output.',
+        );
+        this.answered.emit({ answer: ans, correct: true });
+      } else {
+        this.result.set(false);
+        if (evalRes.feedback) {
+          this.aiFeedback.set(evalRes.feedback);
+        }
+        this.answered.emit({ answer: ans, correct: false });
+      }
+    } catch {
+      this.result.set(false);
+      this.answered.emit({ answer: ans, correct: false });
+    } finally {
+      this.askingAi.set(false);
+    }
   }
 
   protected retry(): void {
     this.showingSolution.set(false);
     this.result.set(null);
+    this.isTypo.set(false);
+    this.aiFeedback.set(null);
   }
 }
 
@@ -476,8 +538,13 @@ export class PredictOutputCheck {
       <sl-check-feedback
         [correct]="result() === true"
         [explanation]="b.explanation"
+        [isTypo]="isTypo()"
+        [aiFeedback]="aiFeedback()"
+        [askingAi]="askingAi()"
+        [canAskAi]="result() === false && !askingAi() && !!askAiEvaluator"
         (solutionToggled)="showingSolution.set($event)"
         (retry)="retry()"
+        (askAi)="evaluateWithAi()"
       >
         <div solution class="solution-details">
           <p class="solution-title"><strong>Completed Sentence:</strong></p>
@@ -536,6 +603,12 @@ export class ClozeCheck {
     () => this.saved()?.correct ?? null,
   );
   protected readonly showingSolution = signal(false);
+  protected readonly isTypo = signal(false);
+  protected readonly aiFeedback = signal<string | null>(null);
+  protected readonly askingAi = signal(false);
+  protected readonly askAiEvaluator = inject(AI_ANSWER_EVALUATOR, {
+    optional: true,
+  });
   protected readonly complete = computed(() =>
     this.block().blanks.every((blank) => this.filled()[blank.id]?.trim()),
   );
@@ -572,8 +645,52 @@ export class ClozeCheck {
     this.answered.emit({ answer, correct });
   }
 
+  protected async evaluateWithAi(): Promise<void> {
+    if (!this.askAiEvaluator) return;
+    const b = this.block();
+    let userSentence = b.text;
+    for (const blank of b.blanks) {
+      userSentence = userSentence.replace(
+        `{{${blank.id}}}`,
+        `[${this.filled()[blank.id] ?? ''}]`,
+      );
+    }
+
+    this.askingAi.set(true);
+    try {
+      const evalRes = await this.askAiEvaluator({
+        question: `Fill in the blanks: ${b.text}`,
+        expected: this.completedText(),
+        answer: userSentence,
+        context: b.explanation ?? undefined,
+      });
+
+      if (evalRes.correct) {
+        this.result.set(true);
+        this.isTypo.set(evalRes.isTypo ?? true);
+        this.aiFeedback.set(
+          evalRes.feedback ?? 'Accepted by AI as conceptually correct.',
+        );
+        this.answered.emit({ answer: this.filled(), correct: true });
+      } else {
+        this.result.set(false);
+        if (evalRes.feedback) {
+          this.aiFeedback.set(evalRes.feedback);
+        }
+        this.answered.emit({ answer: this.filled(), correct: false });
+      }
+    } catch {
+      this.result.set(false);
+      this.answered.emit({ answer: this.filled(), correct: false });
+    } finally {
+      this.askingAi.set(false);
+    }
+  }
+
   protected retry(): void {
     this.showingSolution.set(false);
     this.result.set(null);
+    this.isTypo.set(false);
+    this.aiFeedback.set(null);
   }
 }

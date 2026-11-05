@@ -708,6 +708,31 @@ if (action === 'generate_roadmap') {
       'Explanation / Grounding: ' + answerOrExplanation + '\\n' +
       (codeSnippet ? ('Code:\\n' + codeSnippet) : '');
   }
+} else if (action === 'evaluate_answer') {
+  const question = String(body.question || '').trim();
+  const expected = String(body.expected || '').trim();
+  const answer = String(body.answer || '').trim();
+  const context = String(body.context || '').trim();
+
+  systemPrompt = 'You are the StudyLM Pedagogical Answer Evaluator.\\n' +
+    'Your goal is to evaluate a learner\\'s answer to a software engineering study question or check.\\n\\n' +
+    'PEDAGOGICAL RULES:\\n' +
+    '1. Focus on CONCEPTUAL ACCURACY and LEARNER INTENT, NEVER reject an answer solely due to typos or typing mechanics.\\n' +
+    '2. DO NOT mark an answer wrong because of typos, spelling mistakes, phonetic spelling, casing, punctuation, formatting, singular/plural variations, or minor phrasing differences (e.g., "14 steps" vs "14", "asynchonous" vs "asynchronous", "log n" vs "O(log n)").\\n' +
+    '3. If the learner clearly knows and expresses the core concept, algorithm, number, or logic, set "correct": true.\\n' +
+    '4. If it was correct despite a typo or minor phrasing variation, set "isTypo": true and provide an encouraging note mentioning the standard spelling.\\n' +
+    '5. If the learner\\'s answer is conceptually incorrect or expresses a misconception, set "correct": false and explain the misconception concisely and constructively.\\n' +
+    '6. Return STRICT JSON ONLY matching this schema:\\n' +
+    '{\\n' +
+    '  "correct": true,\\n' +
+    '  "isTypo": false,\\n' +
+    '  "feedback": "Encouraging explanation of why the answer is right or what misconception occurred"\\n' +
+    '}';
+
+  userPrompt = 'Question / Prompt: ' + question + '\\n' +
+    'Expected / Target Answer: ' + expected + '\\n' +
+    'Learner Answer: ' + answer + '\\n' +
+    (context ? ('Context / Concept: ' + context + '\\n') : '');
 } else {
   systemPrompt = 'You are StudyLM pedagogical synthesizer. Synthesize study cards and quiz from the provided sources. Output valid JSON with overview, flashcards, quiz.';
   userPrompt = 'Subject: ' + subject + '\\n\\nSources: ' + JSON.stringify(body.sources || []);

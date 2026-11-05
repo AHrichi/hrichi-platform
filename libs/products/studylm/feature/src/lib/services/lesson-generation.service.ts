@@ -1,6 +1,10 @@
 import { inject, Injectable, signal } from '@angular/core';
 import type { RoadmapSection, StudySubject } from '@ah/products/studylm/domain';
-import type { FeedbackRequest } from '@ah/products/studylm/learn';
+import type {
+  AnswerEvaluationRequest,
+  AnswerEvaluationResult,
+  FeedbackRequest,
+} from '@ah/products/studylm/learn';
 import type { Lesson, SelfExplainFeedback } from '@ah/products/studylm/lessons';
 import { StudyLmStore } from '../store/studylm.store';
 import {
@@ -143,6 +147,29 @@ export class LessonGenerationService {
   /** AI feedback on a self-explanation, for the lesson checks. */
   feedback(request: FeedbackRequest): Promise<SelfExplainFeedback> {
     return this.generator.feedback(request, new AbortController().signal);
+  }
+
+  /** AI evaluation on a learner's answer, tolerant of typos and variations. */
+  async evaluateAnswer(
+    request: AnswerEvaluationRequest,
+  ): Promise<AnswerEvaluationResult> {
+    try {
+      const response = await this.api.evaluateAnswer(
+        request,
+        this.store.n8nConfig().activeEndpoint,
+      );
+      return {
+        correct: response.correct,
+        isTypo: response.isTypo,
+        feedback: response.feedback,
+      };
+    } catch {
+      return {
+        correct: false,
+        isTypo: false,
+        feedback: `Expected: "${request.expected}".`,
+      };
+    }
   }
 
   cancel(id: string): void {

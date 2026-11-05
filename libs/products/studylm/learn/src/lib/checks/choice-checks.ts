@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  inject,
   input,
   linkedSignal,
   output,
@@ -9,7 +10,8 @@ import {
 } from '@angular/core';
 import type { BlockOf } from '@ah/products/studylm/lessons';
 import { CHECK_STYLES, CheckFeedback, type CheckRecord } from './check-shared';
-import { markPredict, markQuiz } from './marking';
+import { fuzzyMatch, markPredict, markQuiz } from './marking';
+import { AI_ANSWER_EVALUATOR } from './feedback';
 
 /** One or more right options; checkboxes when more than one is right. */
 @Component({
@@ -208,8 +210,15 @@ export class QuizCheck {
       <sl-check-feedback
         [correct]="result() === true"
         [explanation]="b.explanation"
+        [isTypo]="isTypo()"
+        [aiFeedback]="aiFeedback()"
+        [askingAi]="askingAi()"
+        [canAskAi]="
+          result() === false && !b.options && !askingAi() && !!askAiEvaluator
+        "
         (solutionToggled)="showingSolution.set($event)"
         (retry)="retry()"
+        (askAi)="evaluateWithAi()"
       >
         <div solution class="solution-details">
           @if (b.options && b.answer !== null) {
@@ -252,21 +261,91 @@ export class PredictCheck {
     () => this.saved()?.correct ?? null,
   );
   protected readonly showingSolution = signal(false);
+  protected readonly isTypo = signal(false);
+  protected readonly aiFeedback = signal<string | null>(null);
+  protected readonly askingAi = signal(false);
+  protected readonly askAiEvaluator = inject(AI_ANSWER_EVALUATOR, {
+    optional: true,
+  });
+
   protected readonly ready = computed(() =>
     this.block().options ? this.choice() !== null : this.text().trim() !== '',
   );
 
-  protected submit(): void {
-    const answer = this.block().options
-      ? (this.choice() as number)
-      : this.text();
-    const correct = markPredict(this.block(), answer);
-    this.result.set(correct);
-    this.answered.emit({ answer, correct });
+  protected async submit(): Promise<void> {
+    const b = this.block();
+    const answer = b.options ? (this.choice() as number) : this.text();
+
+    if (typeof answer === 'number') {
+      const correct = markPredict(b, answer);
+      this.result.set(correct);
+      this.answered.emit({ answer, correct });
+      return;
+    }
+
+    // 1. Client-side fuzzy check (handles minor typos, numbers with units, casing, quotes)
+    const clientMatch = fuzzyMatch(answer, b.expected ?? '');
+    if (clientMatch.matches) {
+      this.isTypo.set(clientMatch.isTypo);
+      if (clientMatch.isTypo && clientMatch.reason) {
+        this.aiFeedback.set(clientMatch.reason);
+      }
+      this.result.set(true);
+      this.answered.emit({ answer, correct: true });
+      return;
+    }
+
+    // 2. If client-side didn't match and AI evaluator is available, evaluate with AI
+    if (this.askAiEvaluator) {
+      await this.evaluateWithAi(answer);
+      return;
+    }
+
+    this.result.set(false);
+    this.answered.emit({ answer, correct: false });
+  }
+
+  protected async evaluateWithAi(userAnswer?: string): Promise<void> {
+    if (!this.askAiEvaluator) return;
+    const b = this.block();
+    const ans = (userAnswer ?? this.text()).trim();
+    if (!ans) return;
+
+    this.askingAi.set(true);
+    try {
+      const evalRes = await this.askAiEvaluator({
+        question: b.question,
+        expected: b.expected ?? '',
+        answer: ans,
+        context: b.explanation ?? undefined,
+      });
+
+      if (evalRes.correct) {
+        this.result.set(true);
+        this.isTypo.set(evalRes.isTypo ?? true);
+        this.aiFeedback.set(
+          evalRes.feedback ?? 'Accepted by AI as conceptually correct.',
+        );
+        this.answered.emit({ answer: ans, correct: true });
+      } else {
+        this.result.set(false);
+        if (evalRes.feedback) {
+          this.aiFeedback.set(evalRes.feedback);
+        }
+        this.answered.emit({ answer: ans, correct: false });
+      }
+    } catch {
+      this.result.set(false);
+      this.answered.emit({ answer: ans, correct: false });
+    } finally {
+      this.askingAi.set(false);
+    }
   }
 
   protected retry(): void {
     this.showingSolution.set(false);
     this.result.set(null);
+    this.isTypo.set(false);
+    this.aiFeedback.set(null);
   }
 }

@@ -5,6 +5,7 @@ import {
 } from '@ah/products/studylm/lessons';
 import {
   clozeParts,
+  fuzzyMatch,
   markCategorize,
   markCloze,
   markOrder,
@@ -12,6 +13,7 @@ import {
   markParsons,
   markPredict,
   markQuiz,
+  same,
   shuffled,
 } from './marking';
 
@@ -114,5 +116,79 @@ describe('shuffled', () => {
       expect(shuffled(items, seed)).not.toEqual(items);
       expect([...shuffled(items, seed)].sort()).toEqual(items);
     }
+  });
+});
+
+describe('fuzzyMatch & typo tolerance', () => {
+  it('accepts exact matches without flagging typo', () => {
+    const res = fuzzyMatch('binary search', 'binary search');
+    expect(res.matches).toBe(true);
+    expect(res.isTypo).toBe(false);
+    expect(same('binary search', 'binary search')).toBe(true);
+  });
+
+  it('accepts minor spelling typos in short and long words', () => {
+    // 4-6 chars: 1 typo
+    expect(same('parson', 'parsons')).toBe(true);
+    expect(same('queu', 'queue')).toBe(true);
+    expect(same('stak', 'stack')).toBe(true);
+
+    // 7-11 chars: up to 2 typos
+    expect(same('asynchonous', 'asynchronous')).toBe(true);
+    expect(same('asynchronus', 'asynchronous')).toBe(true);
+    expect(same('promiss', 'promise')).toBe(true);
+    expect(same('colision', 'collision')).toBe(true);
+    expect(same('recurssion', 'recursion')).toBe(true);
+
+    // 12+ chars
+    expect(same('microtask queue', 'microtask quene')).toBe(true);
+  });
+
+  it('tolerates trailing punctuation and surrounding quotes', () => {
+    expect(same('"asynchronous"', 'asynchronous')).toBe(true);
+    expect(same("'14'", '14')).toBe(true);
+    expect(same('`log n`', 'log n')).toBe(true);
+    expect(same('14.', '14')).toBe(true);
+    expect(same('binary search;', 'binary search')).toBe(true);
+  });
+
+  it('extracts numeric values with units or word numbers', () => {
+    expect(same('14 steps', '14')).toBe(true);
+    expect(same('about 14 moves', '14')).toBe(true);
+    expect(same('fourteen', '14')).toBe(true);
+    expect(same('fourteen steps', '14')).toBe(true);
+    expect(same('0', 'zero')).toBe(true);
+
+    // Different numbers must NOT match
+    expect(same('15', '14')).toBe(false);
+    expect(same('15 steps', '14')).toBe(false);
+  });
+
+  it('normalizes algorithmic complexity notation', () => {
+    expect(same('O(log n)', 'logn')).toBe(true);
+    expect(same('log n', 'O(log n)')).toBe(true);
+    expect(same('O(n)', 'n')).toBe(true);
+    expect(same('O(n)', 'O(1)')).toBe(false);
+  });
+
+  it('recognizes CS abbreviations and technical synonyms', () => {
+    expect(same('async', 'asynchronous')).toBe(true);
+    expect(same('fn', 'function')).toBe(true);
+    expect(same('arr', 'array')).toBe(true);
+    expect(same('str', 'string')).toBe(true);
+  });
+
+  it('does NOT confuse antonyms despite low edit distance', () => {
+    expect(same('async', 'sync')).toBe(false);
+    expect(same('asynchronous', 'synchronous')).toBe(false);
+    expect(same('true', 'false')).toBe(false);
+    expect(same('push', 'pop')).toBe(false);
+    expect(same('min', 'max')).toBe(false);
+  });
+
+  it('handles singular and plural stems', () => {
+    expect(same('microtask', 'microtasks')).toBe(true);
+    expect(same('steps', 'step')).toBe(true);
+    expect(same('indexes', 'index')).toBe(true);
   });
 });

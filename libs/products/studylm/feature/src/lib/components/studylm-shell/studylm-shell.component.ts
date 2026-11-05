@@ -15,6 +15,8 @@ import {
 import { StudyLmStore } from '../../store/studylm.store';
 import { SCREENS, StudyLmScreens } from '../../shell/studylm-screens';
 import {
+  type AnswerEvaluationRequest,
+  AI_ANSWER_EVALUATOR,
   type FeedbackRequest,
   SELF_EXPLAIN_FEEDBACK,
 } from '@ah/products/studylm/learn';
@@ -52,6 +54,14 @@ import { STUDYLM_COPY } from '../../i18n/studylm-copy';
       useFactory: () => {
         const lessons = inject(LessonGenerationService);
         return (request: FeedbackRequest) => lessons.feedback(request);
+      },
+    },
+    {
+      provide: AI_ANSWER_EVALUATOR,
+      useFactory: () => {
+        const lessons = inject(LessonGenerationService);
+        return (request: AnswerEvaluationRequest) =>
+          lessons.evaluateAnswer(request);
       },
     },
   ],

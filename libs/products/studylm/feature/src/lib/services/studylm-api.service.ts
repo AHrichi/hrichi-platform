@@ -3,6 +3,8 @@ import { n8nWebhookUrl, SiteConfigService } from '@ah/shared/site-config';
 import {
   type ConceptElaborationRequest,
   type ConceptElaborationResponse,
+  type AnswerEvaluationRequest,
+  type AnswerEvaluationResponse,
   type GenerateRoadmapRequest,
   type GenerateRoadmapResponse,
   type GenerateSectionFlashcardsRequest,
@@ -15,6 +17,7 @@ import {
   type SoftwareEngineeringDomain,
   type SynthesisRequest,
   type SynthesisResponse,
+  validateAndParseAnswerEvaluation,
   validateAndParseElaboration,
   validateAndParseRoadmap,
   validateAndParseSectionFlashcards,
@@ -182,6 +185,25 @@ export class StudyLmApiService {
       throw new StudyLmAiError('The AI’s explanation could not be read.');
     }
     return parsed;
+  }
+
+  async evaluateAnswer(
+    request: Omit<AnswerEvaluationRequest, 'action'>,
+    endpoint?: string,
+  ): Promise<AnswerEvaluationResponse> {
+    const payload: AnswerEvaluationRequest = {
+      action: 'evaluate_answer',
+      question: request.question,
+      expected: request.expected,
+      answer: request.answer,
+      context: request.context,
+    };
+    try {
+      const raw = await this.request(endpoint, payload);
+      return validateAndParseAnswerEvaluation(raw, request);
+    } catch {
+      return validateAndParseAnswerEvaluation(null, request);
+    }
   }
 
   async synthesize(
