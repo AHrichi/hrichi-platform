@@ -1,279 +1,62 @@
 <figure class="constellation">
-  <div class="constellation__stage-wrapper">
-    <ah-scene
-      class="constellation__stage"
-      essential
-      [load]="loadScene"
-      [params]="params()"
-      (navigate)="open($event)"
-      (picked)="onPicked($event)"
-    >
-      <svg
-        class="constellation__svg"
-        [attr.viewBox]="viewBox"
-        role="img"
-        [attr.aria-label]="
-          copy().summaryBody(projectCount(), dependencyCount())
-        "
-      >
-        @if (showEdges()) {
-          <g class="edges">
-            @for (edge of svgEdges(); track $index) {
-              <line
-                [attr.x1]="edge.x1"
-                [attr.y1]="edge.y1"
-                [attr.x2]="edge.x2"
-                [attr.y2]="edge.y2"
-                [class.federated]="edge.kind === 'federated'"
-                [style.stroke]="'var(--' + edge.token + ')'"
-              />
-            }
-          </g>
-        }
-        @for (node of placedNodes(); track node.id) {
-          <g
-            class="node"
-            [class.app]="node.kind === 'app'"
-            [class.focus]="
-              highlight() === node.id || selectedNodeId() === node.id
-            "
-            [class.clickable]="!!nodeLinks[node.id]"
-            [style.fill]="'var(--' + node.token + ')'"
-            (click)="
-              nodeLinks[node.id] ? open(nodeLinks[node.id]) : onPicked(node.id)
-            "
-          >
-            <title>
-              {{ node.id }}{{ nodeLinks[node.id] ? ' (opens in new tab)' : '' }}
-            </title>
-            <circle
-              class="halo"
-              [attr.cx]="node.x"
-              [attr.cy]="node.y"
-              [attr.r]="node.r * 2.4"
-            />
-            <circle [attr.cx]="node.x" [attr.cy]="node.y" [attr.r]="node.r" />
-            @if (node.kind === 'app') {
-              <text [attr.x]="node.x" [attr.y]="node.y - node.r - 0.035">
-                {{ node.id }}
-              </text>
-            }
-          </g>
-        }
-      </svg>
-    </ah-scene>
-
-    <!-- Floating 3D Interaction Toolbar Overlay -->
-    <div
-      class="constellation__overlay ah-no-print"
-      aria-label="3D Graph Controls"
-    >
-      <div class="toolbar-cluster">
-        <button
-          type="button"
-          class="ctrl-btn ctrl-btn--spin"
-          [attr.aria-label]="copy().spin"
-          [title]="copy().spin"
-          (click)="fullSpin()"
-        >
-          <svg
-            width="15"
-            height="15"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2.2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
-          >
-            <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67" />
-          </svg>
-          <span>{{ copy().spin }}</span>
-        </button>
-
-        <button
-          type="button"
-          class="ctrl-btn ctrl-btn--add"
-          [disabled]="!canAddPart()"
-          [attr.aria-label]="copy().addPart"
-          [title]="copy().addPart"
-          (click)="addPart()"
-        >
-          <svg
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2.5"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
-          >
-            <line x1="12" y1="5" x2="12" y2="19" />
-            <line x1="5" y1="12" x2="19" y2="12" />
-          </svg>
-          <span>{{ copy().addPart }}</span>
-        </button>
-
-        <button
-          type="button"
-          class="ctrl-btn ctrl-btn--remove"
-          [disabled]="!canRemovePart()"
-          [attr.aria-label]="copy().removePart"
-          [title]="copy().removePart"
-          (click)="removePart()"
-        >
-          <svg
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2.5"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
-          >
-            <line x1="5" y1="12" x2="19" y2="12" />
-          </svg>
-          <span>{{ copy().removePart }}</span>
-        </button>
-
-        <button
-          type="button"
-          class="ctrl-btn ctrl-btn--reset"
-          [attr.aria-label]="copy().reset"
-          [title]="copy().reset"
-          (click)="resetGraph()"
-        >
-          <svg
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2.2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
-          >
-            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
-            <path d="M3 3v5h5" />
-          </svg>
-          <span>{{ copy().reset }}</span>
-        </button>
-      </div>
-
-      <!-- Quick Category Layer Filters -->
-      <div class="filters-cluster" role="group" aria-label="Layer Filters">
-        <button
-          type="button"
-          class="chip-btn"
-          [class.active]="selectedKind() === 'all'"
-          (click)="setFilterKind('all')"
-        >
-          {{ copy().filters.all }}
-        </button>
-        <button
-          type="button"
-          class="chip-btn"
-          [class.active]="selectedKind() === 'app'"
-          (click)="setFilterKind('app')"
-        >
-          {{ copy().filters.apps }}
-        </button>
-        <button
-          type="button"
-          class="chip-btn"
-          [class.active]="selectedKind() === 'lib'"
-          (click)="setFilterKind('lib')"
-        >
-          {{ copy().filters.libs }}
-        </button>
-        <button
-          type="button"
-          class="chip-btn"
-          [class.active]="selectedKind() === 'e2e'"
-          (click)="setFilterKind('e2e')"
-        >
-          {{ copy().filters.e2e }}
-        </button>
-        <button
-          type="button"
-          class="chip-btn chip-btn--toggle"
-          [class.active]="showEdges()"
-          (click)="toggleEdges()"
-        >
-          {{ copy().filters.edges }}
-        </button>
-        <button
-          type="button"
-          class="chip-btn chip-btn--toggle"
-          [class.active]="showStars()"
-          (click)="toggleStars()"
-        >
-          {{ copy().filters.stars }}
-        </button>
-      </div>
-
-      <!-- Toast status message -->
-      @if (statusNotice(); as notice) {
-        <div class="toast-notice" role="status" aria-live="polite">
-          {{ notice }}
-        </div>
-      }
-
-      <!-- Selected Node Card -->
-      @if (selectedNodeId(); as selId) {
-        <div class="selected-node-card">
-          <span class="selected-node-title">{{ selId }}</span>
-          @if (nodeLinks[selId]; as href) {
-            <a
-              class="selected-node-action"
-              [href]="href"
-              [target]="href.startsWith('http') ? '_blank' : '_self'"
-              [rel]="href.startsWith('http') ? 'noopener noreferrer' : null"
-            >
-              Open ↗
-            </a>
-          }
-          <button
-            type="button"
-            class="selected-node-remove"
-            title="Remove from graph"
-            (click)="removeSpecificNode(selId)"
-          >
-            ✕
-          </button>
-        </div>
-      }
-    </div>
-  </div>
-
-  <div class="gesture-hint ah-no-print">
+  <ah-scene
+    class="constellation__stage"
+    [load]="loadScene"
+    [params]="params()"
+    (navigate)="open($event)"
+  >
     <svg
-      width="14"
-      height="14"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      stroke-width="2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-      aria-hidden="true"
+      class="constellation__svg"
+      [attr.viewBox]="viewBox"
+      role="img"
+      [attr.aria-label]="summary"
     >
-      <circle cx="12" cy="12" r="10"></circle>
-      <path d="M12 8v4l3 3"></path>
+      <g class="edges">
+        @for (edge of edges; track $index) {
+          <line
+            [attr.x1]="edge.x1"
+            [attr.y1]="edge.y1"
+            [attr.x2]="edge.x2"
+            [attr.y2]="edge.y2"
+            [class.federated]="edge.kind === 'federated'"
+            [style.stroke]="'var(--' + edge.token + ')'"
+          />
+        }
+      </g>
+      @for (node of nodes; track node.id) {
+        <g
+          class="node"
+          [class.app]="node.kind === 'app'"
+          [class.focus]="highlight() === node.id"
+          [class.clickable]="!!nodeLinks[node.id]"
+          [style.fill]="'var(--' + node.token + ')'"
+          (click)="nodeLinks[node.id] ? open(nodeLinks[node.id]) : null"
+        >
+          <title>
+            {{ node.id }}{{ nodeLinks[node.id] ? ' (opens in new tab)' : '' }}
+          </title>
+          <circle
+            class="halo"
+            [attr.cx]="node.x"
+            [attr.cy]="node.y"
+            [attr.r]="node.r * 2.4"
+          />
+          <circle [attr.cx]="node.x" [attr.cy]="node.y" [attr.r]="node.r" />
+          @if (node.kind === 'app') {
+            <text [attr.x]="node.x" [attr.y]="node.y - node.r - 0.035">
+              {{ node.id }}
+            </text>
+          }
+        </g>
+      }
     </svg>
-    <span>{{ copy().hint }}</span>
-  </div>
+  </ah-scene>
 
   <figcaption class="constellation__caption">
     <p>
-      <strong>{{ copy().summaryTitle }}</strong>
-      {{ copy().summaryBody(projectCount(), dependencyCount()) }}
+      <strong>This site's real Nx graph:</strong> {{ projectCount }} projects
+      and {{ dependencyCount }} dependencies, exported from the repository at
+      build time. Click any project to open it in a new tab.
     </p>
     <ul class="legend" role="list" aria-label="Colours by scope">
       @for (item of legend; track item.label) {

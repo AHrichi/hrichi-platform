@@ -1,4 +1,4 @@
-import type { GraphEdge, GraphNode } from './graph';
+import type { GraphNode } from './graph';
 
 /** Parameters the hero passes to the WebGL scene. */
 export interface ConstellationParams {
@@ -6,18 +6,6 @@ export interface ConstellationParams {
   highlight: string | null;
   /** Active visual theme: 'light' | 'dark'. */
   theme?: 'light' | 'dark';
-  /** Active nodes to render. Defaults to constellation.nodes if omitted. */
-  nodes?: GraphNode[];
-  /** Active edges to render. Defaults to constellation.edges if omitted. */
-  edges?: GraphEdge[];
-  /** Whether edges are rendered. */
-  showEdges?: boolean;
-  /** Whether starfield is rendered. */
-  showStars?: boolean;
-  /** Trigger for 360-degree spin. */
-  spinCount?: number;
-  /** Trigger to reset camera view. */
-  resetCount?: number;
 }
 
 /**
