@@ -47,6 +47,7 @@ import {
   WhatsAppDashboardTab,
   WhatsAppStore,
 } from './whatsapp.store';
+import { WHATSAPP_COPY } from './i18n/whatsapp-copy';
 
 @Component({
   selector: 'ah-whatsapp-analyzer-page',
@@ -80,6 +81,9 @@ import {
 export class WhatsAppAnalyzerPageComponent {
   readonly store = inject(WhatsAppStore);
   readonly preferences = inject(PreferencesStore);
+  readonly copy = computed(
+    () => WHATSAPP_COPY[this.preferences.language()] ?? WHATSAPP_COPY.en,
+  );
 
   readonly localPresetUrl = DEFAULT_LOCAL_WEBHOOK_URL;
 
@@ -271,33 +275,34 @@ export class WhatsAppAnalyzerPageComponent {
       const mediaCount =
         (rep?.mediaAnalytics.totalMediaMessages || 0) +
         (rep?.mediaAnalytics.voiceNotes.length || 0);
+      const t = this.copy().tabs;
       return [
-        { id: 'overview', label: 'Overview & Volume', icon: '📊' },
+        { id: 'overview', label: t.overview, icon: '📊' },
         {
           id: 'media',
-          label: 'Media & Voice Notes',
+          label: t.media,
           icon: '🎙️',
           count:
             rep?.mediaAnalytics.totalMediaMessages ||
             (mediaCount > 0 ? mediaCount : undefined),
         },
-        { id: 'dynamics', label: 'Reply Dynamics', icon: '⚡' },
+        { id: 'dynamics', label: t.dynamics, icon: '⚡' },
         {
           id: 'lexical',
-          label: 'Words & Emojis',
+          label: t.lexical,
           icon: '🔤',
           count: rep?.topWords.length || undefined,
         },
-        { id: 'heatmap', label: '7×24 Heatmap & Streaks', icon: '🗓️' },
-        { id: 'wrapped', label: 'Wrapped Card', icon: '🎴' },
+        { id: 'heatmap', label: t.heatmap, icon: '🗓️' },
+        { id: 'wrapped', label: t.wrapped, icon: '🎴' },
         {
           id: 'ai-insights',
-          label: 'n8n AI Insights',
+          label: t.aiInsights,
           icon: hasAi ? '✅' : '🧠',
         },
         {
           id: 'transcript',
-          label: 'Transcript',
+          label: t.transcript,
           icon: '💬',
           count: rep?.totalMessages || undefined,
         },

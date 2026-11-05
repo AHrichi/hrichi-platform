@@ -1,6 +1,7 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
+import { PreferencesStore } from '@ah/shared/state';
 import { CaseStudyPage } from './case-study-page';
 import { WorkListPage } from './work-list-page';
 
@@ -46,6 +47,39 @@ describe('CaseStudyPage', () => {
 
     expect(fixture.nativeElement.querySelector('h1')?.textContent).toBe(
       'Case study not found',
+    );
+  });
+
+  it('renders translated case study and UI when language changes', async () => {
+    const fixture = TestBed.createComponent(CaseStudyPage);
+    fixture.componentRef.setInput('slug', 'schema-driven-integrations');
+    const prefs = TestBed.inject(PreferencesStore);
+
+    prefs.setLanguage('fr');
+    await fixture.whenStable();
+    expect(fixture.nativeElement.querySelector('h1')?.textContent).toContain(
+      'Plateforme d’intégrations',
+    );
+    expect(
+      fixture.nativeElement.querySelector('.back-link')?.textContent,
+    ).toContain('Toutes les études de cas');
+
+    prefs.setLanguage('ar');
+    await fixture.whenStable();
+    expect(fixture.nativeElement.querySelector('h1')?.textContent).toContain(
+      'منصة تكاملات',
+    );
+
+    prefs.setLanguage('it');
+    await fixture.whenStable();
+    expect(fixture.nativeElement.querySelector('h1')?.textContent).toContain(
+      'Piattaforma di integrazione',
+    );
+
+    prefs.setLanguage('de');
+    await fixture.whenStable();
+    expect(fixture.nativeElement.querySelector('h1')?.textContent).toContain(
+      'Modulare, schemagesteuerte Integrationsplattform',
     );
   });
 });

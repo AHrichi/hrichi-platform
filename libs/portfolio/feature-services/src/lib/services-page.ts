@@ -1,14 +1,21 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+} from '@angular/core';
 import { RouterLink } from '@angular/router';
 import {
-  caseStudyBySlug,
-  engagement,
+  getCaseStudyBySlug,
+  getEngagement,
+  getProcess,
+  getServices,
   mailto,
-  process,
-  services,
 } from '@ah/shared/content';
+import { PreferencesStore } from '@ah/shared/state';
 import { Seo } from '@ah/portfolio/util-seo';
 import { ActionLink, SectionHeading } from '@ah/ui';
+import { SERVICES_COPY } from './services-copy';
 
 @Component({
   selector: 'ah-services-page',
@@ -18,16 +25,29 @@ import { ActionLink, SectionHeading } from '@ah/ui';
   styleUrl: './services-page.scss',
 })
 export class ServicesPage {
-  protected readonly engagement = engagement;
-  protected readonly process = process;
-  protected readonly services = services.map((service) => ({
-    ...service,
-    proofStudies: service.proof.flatMap((slug) => caseStudyBySlug(slug) ?? []),
+  protected readonly preferences = inject(PreferencesStore);
+  protected readonly copy = computed(
+    () => SERVICES_COPY[this.preferences.language()] ?? SERVICES_COPY.en,
+  );
+  protected readonly engagement = computed(() =>
+    getEngagement(this.preferences.language()),
+  );
+  protected readonly process = computed(() =>
+    getProcess(this.preferences.language()),
+  );
+  protected readonly services = computed(() => {
+    const lang = this.preferences.language();
+    return getServices(lang).map((service) => ({
+      ...service,
+      proofStudies: service.proof.flatMap(
+        (slug) => getCaseStudyBySlug(slug, lang) ?? [],
+      ),
+    }));
+  });
+  protected readonly startProject = computed(() => ({
+    label: this.copy().services.startProject,
+    href: mailto(this.copy().services.projectEnquiry),
   }));
-  protected readonly startProject = {
-    label: 'Start a project',
-    href: mailto('Project enquiry'),
-  };
 
   constructor() {
     inject(Seo).update({

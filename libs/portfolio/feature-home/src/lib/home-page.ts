@@ -8,13 +8,13 @@ import {
 import { RouterLink } from '@angular/router';
 import {
   type Audience,
-  audienceCopy,
   audiences,
-  caseStudies,
-  experience,
-  profile,
+  getAudiencesCopy,
+  getCaseStudies,
+  getExperience,
+  getProfile,
+  getServices,
   rolePeriod,
-  services,
   site,
 } from '@ah/shared/content';
 import { PreferencesStore } from '@ah/shared/state';
@@ -27,6 +27,7 @@ import {
   type SegmentedOption,
 } from '@ah/ui';
 import { ConstellationFigure } from './constellation/constellation-figure';
+import { HOME_COPY } from './home-copy';
 
 @Component({
   selector: 'ah-home-page',
@@ -44,19 +45,39 @@ import { ConstellationFigure } from './constellation/constellation-figure';
 })
 export class HomePage {
   protected readonly preferences = inject(PreferencesStore);
-  protected readonly profile = profile;
-  protected readonly currentRole = experience[0];
-  protected readonly currentPeriod = rolePeriod(experience[0]);
-  protected readonly featuredServices = services.slice(0, 3);
+  protected readonly copy = computed(
+    () => HOME_COPY[this.preferences.language()] ?? HOME_COPY.en,
+  );
+  protected readonly profile = computed(() =>
+    getProfile(this.preferences.language()),
+  );
+  protected readonly currentRole = computed(
+    () => getExperience(this.preferences.language())[0],
+  );
+  protected readonly currentPeriod = computed(() =>
+    rolePeriod(this.currentRole(), this.preferences.language()),
+  );
+  protected readonly featuredServices = computed(() =>
+    getServices(this.preferences.language()).slice(0, 3),
+  );
   protected readonly repository = site.repository;
   protected readonly designSystem = site.designSystem;
-  protected readonly audienceOptions: SegmentedOption<Audience>[] =
-    audiences.map((value) => ({ value, label: audienceCopy[value].label }));
+
+  protected readonly audienceOptions = computed<SegmentedOption<Audience>[]>(
+    () => {
+      const auds = getAudiencesCopy(this.preferences.language());
+      return audiences.map((value) => ({
+        value,
+        label: auds[value].label,
+      }));
+    },
+  );
 
   /** The three case studies this audience should see first. */
   protected readonly featuredWork = computed(() => {
     const audience = this.preferences.audience();
-    return [...caseStudies]
+    const studies = getCaseStudies(this.preferences.language());
+    return [...studies]
       .sort((a, b) => a.rank[audience] - b.rank[audience])
       .slice(0, 3);
   });
@@ -64,7 +85,7 @@ export class HomePage {
   constructor() {
     const seo = inject(Seo);
     seo.update({
-      description: `${profile.role} with 5+ years of enterprise SaaS: Angular, Nx monorepos, micro-frontends, Three.js and NestJS. Case studies, services and CV.`,
+      description: `${getProfile('en').role} with 5+ years of enterprise SaaS: Angular, Nx monorepos, micro-frontends, Three.js and NestJS. Case studies, services and CV.`,
       path: '/',
       type: 'profile',
     });

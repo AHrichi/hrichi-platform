@@ -3,7 +3,7 @@
   <ah-shift-header />
 
   <!-- Module Navigation Tabs -->
-  <nav class="module-nav" aria-label="PulseOps Operations Modules">
+  <nav class="module-nav" [attr.aria-label]="copy().navAria">
     <div class="nav-track" role="tablist">
       <button
         type="button"
@@ -14,7 +14,7 @@
         (click)="store.setTab('kanban')"
       >
         <span class="tab-icon">📥</span>
-        <span class="tab-label">Order Pipeline (Kanban)</span>
+        <span class="tab-label">{{ copy().tabs.kanban }}</span>
         <span class="tab-badge">{{ store.totalOrdersCount() }}</span>
       </button>
 
@@ -27,7 +27,7 @@
         (click)="store.setTab('whatsapp')"
       >
         <span class="tab-icon">💬</span>
-        <span class="tab-label">WhatsApp Comms Hub</span>
+        <span class="tab-label">{{ copy().tabs.whatsapp }}</span>
         <span class="tab-badge pulse-badge">3</span>
       </button>
 
@@ -40,8 +40,10 @@
         (click)="store.setTab('drivers')"
       >
         <span class="tab-icon">🚚</span>
-        <span class="tab-label">Driver Fleet & Routes</span>
-        <span class="tab-badge">{{ store.activeFleetCount() }} on road</span>
+        <span class="tab-label">{{ copy().tabs.drivers }}</span>
+        <span class="tab-badge"
+          >{{ store.activeFleetCount() }} {{ copy().badges.onRoad }}</span
+        >
       </button>
 
       <button
@@ -53,7 +55,7 @@
         (click)="store.setTab('plants')"
       >
         <span class="tab-icon">🏭</span>
-        <span class="tab-label">Subcontractor Plants</span>
+        <span class="tab-label">{{ copy().tabs.plants }}</span>
         <span class="tab-badge">3</span>
       </button>
 
@@ -66,8 +68,8 @@
         (click)="store.setTab('stock')"
       >
         <span class="tab-icon">📊</span>
-        <span class="tab-label">Linen Stock Sheet</span>
-        <span class="tab-badge">Sheets Sync</span>
+        <span class="tab-label">{{ copy().tabs.stock }}</span>
+        <span class="tab-badge">{{ copy().badges.sheetsSync }}</span>
       </button>
 
       <button
@@ -79,7 +81,7 @@
         (click)="store.setTab('analytics')"
       >
         <span class="tab-icon">📈</span>
-        <span class="tab-label">Analytics & SLAs</span>
+        <span class="tab-label">{{ copy().tabs.analytics }}</span>
       </button>
     </div>
 
@@ -88,35 +90,41 @@
         type="button"
         class="ctrl-btn role-btn"
         (click)="store.openAuthModal()"
-        title="Switch User Persona (Owner, Coordinator, Driver, Subcontractor, Customer) or Sign In"
+        [attr.title]="copy().controls.roleTitle"
       >
-        👤 Role: {{ store.currentUser().role }}
+        👤 {{ copy().controls.role }}: {{ store.currentUser().role }}
       </button>
       <button
         type="button"
         class="ctrl-btn"
         (click)="store.loadSampleData()"
-        title="Load sample demonstration data"
+        [attr.title]="copy().controls.loadDemoTitle"
       >
-        📋 Load Demo
+        📋 {{ copy().controls.loadDemo }}
       </button>
       <button
         type="button"
         class="ctrl-btn"
         (click)="store.clearAllData()"
-        title="Clear all data to work from clean slate"
+        [attr.title]="copy().controls.clearDataTitle"
       >
-        🗑 Clear Data
+        🗑 {{ copy().controls.clearData }}
       </button>
       <button
         type="button"
         class="ctrl-btn"
         (click)="toggleFullscreen()"
         [attr.aria-label]="
-          isFullscreen() ? 'Exit Full Screen' : 'Enter Full Screen'
+          isFullscreen()
+            ? copy().controls.exitFullscreen
+            : copy().controls.enterFullscreen
         "
       >
-        {{ isFullscreen() ? '⤢ Exit Fullscreen' : '⤢ Fullscreen' }}
+        {{
+          isFullscreen()
+            ? copy().controls.exitFullscreen
+            : copy().controls.enterFullscreen
+        }}
       </button>
     </div>
   </nav>

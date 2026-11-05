@@ -14,14 +14,14 @@
           </span>
         </div>
         <button type="button" class="demo-reset-btn" (click)="resetDemo()">
-          🔄 Reset Demo Data
+          {{ copy().resetDemo }}
         </button>
       </div>
     }
 
     <div class="header-flex">
       <a [routerLink]="['home']" class="logo-link">
-        <h2 style="margin: 0">✨ Financial Strategy Dashboard</h2>
+        <h2 style="margin: 0">{{ copy().title }}</h2>
       </a>
       <div class="header-actions">
         @if (hasScenarios()) {
@@ -119,25 +119,25 @@
           routerLinkActive="active"
           [routerLinkActiveOptions]="{ exact: false }"
         >
-          ✏️ Scenario Builder
+          {{ copy().nav.builder }}
         </button>
         <button [routerLink]="['ledger']" routerLinkActive="active">
-          📓 Daily Ledger
+          {{ copy().nav.ledger }}
         </button>
         <button [routerLink]="['analytics']" routerLinkActive="active">
-          📈 Analytics
+          {{ copy().nav.analytics }}
         </button>
         <button [routerLink]="['compare']" routerLinkActive="active">
-          📊 Detailed Comparison
+          {{ copy().nav.compare }}
         </button>
         <button [routerLink]="['net-worth']" routerLinkActive="active">
-          🏦 Net Worth
+          {{ copy().nav.netWorth }}
         </button>
         <button [routerLink]="['what-if']" routerLinkActive="active">
-          🔮 What-If
+          {{ copy().nav.whatIf }}
         </button>
         <button [routerLink]="['help']" routerLinkActive="active">
-          ❓ Help
+          {{ copy().nav.help }}
         </button>
       </div>
     }
@@ -147,23 +147,23 @@
       <div class="reminder-overlay" (click)="dismissDailyReminder()">
         <div class="reminder-modal" (click)="$event.stopPropagation()">
           <div class="reminder-icon">📝</div>
-          <h3>Daily Reminder</h3>
-          <p>You haven't logged any transactions for today yet.</p>
-          <p class="reminder-sub">Keep your ledger up to date!</p>
+          <h3>{{ copy().reminder.title }}</h3>
+          <p>{{ copy().reminder.message }}</p>
+          <p class="reminder-sub">{{ copy().reminder.sub }}</p>
           <div class="reminder-actions">
             <button
               type="button"
               class="btn-modern btn-submit"
               (click)="goToLedger()"
             >
-              ➕ Log a Transaction
+              {{ copy().reminder.logBtn }}
             </button>
             <button
               type="button"
               class="btn-cancel"
               (click)="dismissDailyReminder()"
             >
-              Don't show today
+              {{ copy().reminder.dismissBtn }}
             </button>
           </div>
           <button

@@ -1,17 +1,39 @@
 import type { Role } from './model';
+import type { SiteLanguage } from './i18n/content-i18n.types';
+
+const MONTH_LOCALES: Record<SiteLanguage, string> = {
+  en: 'en-US',
+  fr: 'fr-FR',
+  ar: 'ar-TN',
+  it: 'it-IT',
+  de: 'de-DE',
+};
+
+const PRESENT_LABELS: Record<SiteLanguage, string> = {
+  en: 'present',
+  fr: 'actuel',
+  ar: 'حتى الآن',
+  it: 'presente',
+  de: 'heute',
+};
 
 /** "2023-10" becomes "Oct 2023"; identical on the server and in the browser. */
-export function formatMonth(isoMonth: string): string {
+export function formatMonth(
+  isoMonth: string,
+  lang: SiteLanguage = 'en',
+): string {
   const [year, month] = isoMonth.split('-').map(Number);
-  return new Date(Date.UTC(year, month - 1)).toLocaleDateString('en-US', {
+  const locale = MONTH_LOCALES[lang] ?? 'en-US';
+  return new Date(Date.UTC(year, month - 1)).toLocaleDateString(locale, {
     month: 'short',
     year: 'numeric',
     timeZone: 'UTC',
   });
 }
 
-export function rolePeriod(role: Role): string {
-  return `${formatMonth(role.start)} – ${role.end ? formatMonth(role.end) : 'present'}`;
+export function rolePeriod(role: Role, lang: SiteLanguage = 'en'): string {
+  const present = PRESENT_LABELS[lang] ?? 'present';
+  return `${formatMonth(role.start, lang)} – ${role.end ? formatMonth(role.end, lang) : present}`;
 }
 
 export const experience: readonly Role[] = [

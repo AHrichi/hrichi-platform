@@ -28,6 +28,11 @@ export interface ShellCopy {
     hardReloadHint: string;
     dismiss: string;
   };
+  notFound: {
+    title: string;
+    message: string;
+    backHome: string;
+  };
 }
 
 export const SHELL_COPY: Record<SiteLanguage, ShellCopy> = {
@@ -60,6 +65,11 @@ export const SHELL_COPY: Record<SiteLanguage, ShellCopy> = {
         'Clears the site’s offline copy, then loads everything fresh.',
       dismiss: 'Dismiss',
     },
+    notFound: {
+      title: 'Page not found',
+      message: 'That page does not exist.',
+      backHome: 'Back to the home page',
+    },
   },
   fr: {
     skip: 'Aller au contenu',
@@ -90,6 +100,11 @@ export const SHELL_COPY: Record<SiteLanguage, ShellCopy> = {
         'Efface la copie hors ligne du site, puis recharge tout depuis le réseau.',
       dismiss: 'Fermer',
     },
+    notFound: {
+      title: 'Page introuvable',
+      message: 'Cette page n’existe pas ou a été déplacée.',
+      backHome: 'Retour à la page d’accueil',
+    },
   },
   ar: {
     skip: 'الانتقال إلى المحتوى',
@@ -117,6 +132,11 @@ export const SHELL_COPY: Record<SiteLanguage, ShellCopy> = {
       hardReload: 'إعادة تحميل كاملة',
       hardReloadHint: 'تمسح النسخة المحفوظة للموقع ثم تحمّل كل شيء من جديد.',
       dismiss: 'إغلاق',
+    },
+    notFound: {
+      title: 'الصفحة غير موجودة',
+      message: 'هذه الصفحة غير متوفرة أو تم نقلها.',
+      backHome: 'العودة إلى الصفحة الرئيسية',
     },
   },
   it: {
@@ -148,6 +168,11 @@ export const SHELL_COPY: Record<SiteLanguage, ShellCopy> = {
         'Cancella la copia offline del sito e ricarica tutto da capo.',
       dismiss: 'Chiudi',
     },
+    notFound: {
+      title: 'Pagina non trovata',
+      message: 'Questa pagina non esiste o è stata spostata.',
+      backHome: 'Torna alla home page',
+    },
   },
   de: {
     skip: 'Zum Inhalt springen',
@@ -178,19 +203,19 @@ export const SHELL_COPY: Record<SiteLanguage, ShellCopy> = {
         'Löscht die Offline-Kopie der Website und lädt alles neu.',
       dismiss: 'Schließen',
     },
+    notFound: {
+      title: 'Seite nicht gefunden',
+      message: 'Diese Seite existiert nicht oder wurde verschoben.',
+      backHome: 'Zurück zur Startseite',
+    },
   },
 };
 
 /**
- * Pages written in all supported languages (the apps page, LuxPath, Basecamp, Alarm Engine). Every other page is English only:
- * it keeps lang="en" and left-to-right layout whatever the site language.
+ * All pages and applications across the platform are fully translated into
+ * English, French, Arabic, Italian, and German.
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function isTranslatedPage(url: string): boolean {
-  const path = url.split(/[?#]/)[0];
-  return (
-    path === '/apps' ||
-    path.startsWith('/apps/lighting') ||
-    path.startsWith('/apps/basecamp') ||
-    path.startsWith('/apps/alarm-engine')
-  );
+  return true;
 }

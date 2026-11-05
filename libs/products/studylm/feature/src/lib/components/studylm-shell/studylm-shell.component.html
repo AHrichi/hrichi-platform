@@ -9,7 +9,7 @@
           <h1>StudyLM</h1>
           <span class="brand-badge">Engine</span>
         </div>
-        <span class="brand-tag">Pedagogical Curriculum & Drill Engine</span>
+        <span class="brand-tag">{{ copy().tagline }}</span>
       </div>
     </div>
 
@@ -21,7 +21,7 @@
         [value]="store.activeSubjectId()"
         (valueChange)="selectSubjectId($event)"
         size="sm"
-        placeholder="Select Subject..."
+        [placeholder]="copy().selectSubject"
       />
 
       <button
@@ -33,8 +33,8 @@
         title="Create new subject curriculum"
       >
         <span class="plus-icon" aria-hidden="true">+</span>
-        <span class="new-label-desktop">New Subject</span>
-        <span class="new-label-mobile">New</span>
+        <span class="new-label-desktop">{{ copy().newSubject }}</span>
+        <span class="new-label-mobile">{{ copy().newSubject }}</span>
       </button>
 
       @if (store.activeSubject()) {
@@ -46,7 +46,7 @@
           aria-label="Delete active subject"
         >
           <span class="delete-icon" aria-hidden="true">🗑️</span>
-          <span class="delete-label">Delete</span>
+          <span class="delete-label">{{ copy().deleteSubject }}</span>
         </button>
       }
     </div>
@@ -61,11 +61,15 @@
         [class.checking]="store.n8nConfig().isChecking"
         (click)="openSettingsModal()"
         title="Configure n8n AI webhook endpoint"
-        [attr.aria-label]="'n8n AI Engine status: ' + connection()"
+        [attr.aria-label]="copy().n8nEngine + ': ' + connection()"
       >
         <span class="status-dot"></span>
-        <span class="btn-label-desktop">n8n Engine: {{ connection() }}</span>
-        <span class="btn-label-compact">n8n: {{ connection() }}</span>
+        <span class="btn-label-desktop"
+          >{{ copy().n8nEngine }}: {{ connection() }}</span
+        >
+        <span class="btn-label-compact"
+          >{{ copy().n8nEngine }}: {{ connection() }}</span
+        >
         <span class="btn-label-mobile">{{ connection() }}</span>
         <span class="gear-icon" aria-hidden="true">⚙️</span>
       </button>
@@ -81,9 +85,9 @@
         aria-label="Export Markdown Study Guide"
       >
         <span class="export-icon" aria-hidden="true">📥</span>
-        <span class="export-label-desktop">Export Guide</span>
-        <span class="export-label-compact">Export</span>
-        <span class="export-label-mobile">Guide</span>
+        <span class="export-label-desktop">{{ copy().exportGuide }}</span>
+        <span class="export-label-compact">{{ copy().exportGuide }}</span>
+        <span class="export-label-mobile">{{ copy().exportGuide }}</span>
       </button>
     </div>
   </header>
@@ -91,13 +95,13 @@
   <!-- Metric Overview Cards -->
   <section class="metrics-row" aria-label="Curriculum Overview Metrics">
     <ah-metric-card
-      label="Roadmap Sections"
+      [label]="copy().metrics.roadmap"
       [value]="store.totalSectionsCount().toString()"
-      hint="Chapters & Phases"
+      [hint]="copy().metrics.roadmapHint"
       icon="🗺️"
     />
     <ah-metric-card
-      label="Synthesis Progress"
+      [label]="copy().metrics.progress"
       [value]="store.curriculumProgressPct() + '%'"
       [hint]="
         store.synthesizedSectionsCount() +
@@ -114,7 +118,7 @@
       icon="🃏"
     />
     <ah-metric-card
-      label="Diagnostic Accuracy"
+      [label]="copy().metrics.quizAccuracy"
       [value]="
         store.quizSummary().answeredCount > 0
           ? store.quizSummary().scorePercentage + '%'

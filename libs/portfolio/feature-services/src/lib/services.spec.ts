@@ -1,6 +1,7 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
+import { PreferencesStore } from '@ah/shared/state';
 import { ContactPage } from './contact-page';
 import { SiteConfigService } from '@ah/shared/site-config';
 import { ServicesPage } from './services-page';
@@ -28,6 +29,38 @@ describe('ServicesPage', () => {
       expect(href).toMatch(/^\/work\/[a-z0-9-]+$/);
     }
   });
+
+  it('updates headings and services when language changes', async () => {
+    const fixture = TestBed.createComponent(ServicesPage);
+    const prefs = TestBed.inject(PreferencesStore);
+
+    prefs.setLanguage('fr');
+    await fixture.whenStable();
+    expect(fixture.nativeElement.querySelector('h1')?.textContent).toBe(
+      'Services',
+    );
+    expect(
+      fixture.nativeElement.querySelector('#process-heading')?.textContent,
+    ).toBe('Méthodologie de travail');
+
+    prefs.setLanguage('ar');
+    await fixture.whenStable();
+    expect(fixture.nativeElement.querySelector('h1')?.textContent).toBe(
+      'الخدمات الهندسية',
+    );
+
+    prefs.setLanguage('it');
+    await fixture.whenStable();
+    expect(fixture.nativeElement.querySelector('h1')?.textContent).toBe(
+      'Servizi',
+    );
+
+    prefs.setLanguage('de');
+    await fixture.whenStable();
+    expect(fixture.nativeElement.querySelector('h1')?.textContent).toBe(
+      'Leistungen',
+    );
+  });
 });
 
 describe('ContactPage', () => {
@@ -51,5 +84,43 @@ describe('ContactPage', () => {
       aside?.querySelector('a[href^="mailto:"]')?.getAttribute('href'),
     ).toBe('mailto:ahmed.hrichi.web@gmail.com');
     expect(aside?.textContent).toContain('linkedin.com/in/a-hrichi');
+  });
+
+  it('updates contact texts when language changes', async () => {
+    TestBed.overrideProvider(SiteConfigService, {
+      useValue: {
+        load: async () => ({
+          apiUrl: null,
+          turnstileSiteKey: null,
+          orbitApiUrl: null,
+        }),
+      },
+    });
+    const fixture = TestBed.createComponent(ContactPage);
+    const prefs = TestBed.inject(PreferencesStore);
+
+    prefs.setLanguage('fr');
+    await fixture.whenStable();
+    expect(fixture.nativeElement.querySelector('h1')?.textContent).toBe(
+      'Échangeons ensemble',
+    );
+
+    prefs.setLanguage('ar');
+    await fixture.whenStable();
+    expect(fixture.nativeElement.querySelector('h1')?.textContent).toBe(
+      'فلنتحدث معاً',
+    );
+
+    prefs.setLanguage('it');
+    await fixture.whenStable();
+    expect(fixture.nativeElement.querySelector('h1')?.textContent).toBe(
+      'Parliamone insieme',
+    );
+
+    prefs.setLanguage('de');
+    await fixture.whenStable();
+    expect(fixture.nativeElement.querySelector('h1')?.textContent).toBe(
+      'Lassen Sie uns sprechen',
+    );
   });
 });

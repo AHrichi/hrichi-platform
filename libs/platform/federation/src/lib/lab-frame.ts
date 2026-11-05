@@ -2,6 +2,7 @@ import { DOCUMENT } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   DestroyRef,
   ElementRef,
   inject,
@@ -11,6 +12,61 @@ import {
 } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { SectionHeading } from '@ah/ui';
+import { getLabIntro } from '@ah/shared/content';
+import { PreferencesStore, type SiteLanguage } from '@ah/shared/state';
+
+const LAB_FRAME_ACTIONS: Record<
+  SiteLanguage,
+  {
+    exitFullscreen: string;
+    exitFullscreenAria: string;
+    exitFullscreenTitle: string;
+    enterFullscreen: string;
+    enterFullscreenAria: string;
+    enterFullscreenTitle: string;
+  }
+> = {
+  en: {
+    exitFullscreen: 'Exit Fullscreen',
+    exitFullscreenAria: 'Exit fullscreen',
+    exitFullscreenTitle: 'Exit fullscreen (Esc)',
+    enterFullscreen: 'Fullscreen Remote',
+    enterFullscreenAria: 'View remote in fullscreen',
+    enterFullscreenTitle: 'Expand remote to fullscreen',
+  },
+  fr: {
+    exitFullscreen: 'Quitter le plein écran',
+    exitFullscreenAria: 'Quitter le mode plein écran',
+    exitFullscreenTitle: 'Quitter le plein écran (Échap)',
+    enterFullscreen: 'Plein écran',
+    enterFullscreenAria: 'Afficher le module en plein écran',
+    enterFullscreenTitle: 'Agrandir le module en plein écran',
+  },
+  ar: {
+    exitFullscreen: 'إنهاء ملء الشاشة',
+    exitFullscreenAria: 'الخروج من وضع ملء الشاشة',
+    exitFullscreenTitle: 'الخروج من ملء الشاشة (Esc)',
+    enterFullscreen: 'ملء الشاشة',
+    enterFullscreenAria: 'عرض الوحدة في ملء الشاشة',
+    enterFullscreenTitle: 'تكبير الوحدة إلى ملء الشاشة',
+  },
+  it: {
+    exitFullscreen: 'Esci da schermo intero',
+    exitFullscreenAria: 'Esci dalla modalità a schermo intero',
+    exitFullscreenTitle: 'Esci da schermo intero (Esc)',
+    enterFullscreen: 'Schermo intero',
+    enterFullscreenAria: 'Visualizza a schermo intero',
+    enterFullscreenTitle: 'Espandi a schermo intero',
+  },
+  de: {
+    exitFullscreen: 'Vollbild beenden',
+    exitFullscreenAria: 'Vollbildmodus beenden',
+    exitFullscreenTitle: 'Vollbild beenden (Esc)',
+    enterFullscreen: 'Vollbild',
+    enterFullscreenAria: 'Modul im Vollbildmodus anzeigen',
+    enterFullscreenTitle: 'Modul auf Vollbild vergrößern',
+  },
+};
 
 /**
  * A lab's page around its remote: the intro, then the remote's routes. The
@@ -27,9 +83,47 @@ import { SectionHeading } from '@ah/ui';
 })
 export class LabFrame {
   // Bound from the route's data in the shell (withComponentInputBinding).
-  readonly eyebrow = input.required<string>();
-  readonly heading = input.required<string>();
-  readonly lead = input.required<string>();
+  readonly eyebrow = input<string>();
+  readonly heading = input<string>();
+  readonly lead = input<string>();
+  readonly labKey = input<string>();
+
+  private readonly preferences = inject(PreferencesStore, { optional: true });
+
+  readonly displayEyebrow = computed(() => {
+    const lang = this.preferences?.language() ?? 'en';
+    const key = this.labKey();
+    if (key) {
+      const intro = getLabIntro(key, lang);
+      if (intro?.eyebrow) return intro.eyebrow;
+    }
+    return this.eyebrow() ?? '';
+  });
+
+  readonly displayHeading = computed(() => {
+    const lang = this.preferences?.language() ?? 'en';
+    const key = this.labKey();
+    if (key) {
+      const intro = getLabIntro(key, lang);
+      if (intro?.heading) return intro.heading;
+    }
+    return this.heading() ?? '';
+  });
+
+  readonly displayLead = computed(() => {
+    const lang = this.preferences?.language() ?? 'en';
+    const key = this.labKey();
+    if (key) {
+      const intro = getLabIntro(key, lang);
+      if (intro?.lead) return intro.lead;
+    }
+    return this.lead() ?? '';
+  });
+
+  readonly actionsCopy = computed(() => {
+    const lang = this.preferences?.language() ?? 'en';
+    return LAB_FRAME_ACTIONS[lang] ?? LAB_FRAME_ACTIONS.en;
+  });
 
   readonly isFullscreen = signal(false);
   private readonly labBody = viewChild<ElementRef<HTMLElement>>('labBody');

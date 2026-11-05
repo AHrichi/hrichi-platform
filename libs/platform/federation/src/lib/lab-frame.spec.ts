@@ -1,6 +1,7 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
+import { PreferencesStore } from '@ah/shared/state';
 import { LabFrame } from './lab-frame';
 
 describe('LabFrame', () => {
@@ -28,6 +29,23 @@ describe('LabFrame', () => {
     );
     expect(btn).not.toBeNull();
     expect(btn?.textContent).toContain('Fullscreen Remote');
+  });
+
+  it('renders translated lab intro and buttons for Italian and German', async () => {
+    const preferences = TestBed.inject(PreferencesStore);
+    const fixture = TestBed.createComponent(LabFrame);
+    fixture.componentRef.setInput('labKey', 'lab-rxjs');
+    preferences.setLanguage('it');
+    await fixture.whenStable();
+
+    const element = fixture.nativeElement as HTMLElement;
+    expect(element.textContent).toContain('Banco di prova pratico RxJS');
+    expect(element.textContent).toContain('Schermo intero');
+
+    preferences.setLanguage('de');
+    await fixture.whenStable();
+    expect(element.textContent).toContain('RxJS-Praxislabor');
+    expect(element.textContent).toContain('Vollbild');
   });
 
   it('toggles fullscreen on lab body when fullscreen button is clicked', async () => {

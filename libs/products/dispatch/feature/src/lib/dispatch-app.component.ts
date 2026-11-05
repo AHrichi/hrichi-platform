@@ -1,12 +1,15 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   ElementRef,
   inject,
   signal,
 } from '@angular/core';
 import { CommonModule, DOCUMENT } from '@angular/common';
+import { PreferencesStore } from '@ah/shared/state';
 import { DispatchStore } from './store/dispatch.store';
+import { DISPATCH_COPY } from './i18n/dispatch-copy';
 import { ShiftHeaderComponent } from './components/shift-header/shift-header.component';
 import { WhatsAppHubComponent } from './components/whatsapp-hub/whatsapp-hub.component';
 import { KanbanBoardComponent } from './components/kanban-board/kanban-board.component';
@@ -49,6 +52,10 @@ import { AuthModalComponent } from './components/auth-modal/auth-modal.component
 })
 export class PulseOpsAppComponent {
   readonly store = inject(DispatchStore);
+  private readonly preferences = inject(PreferencesStore);
+  readonly copy = computed(
+    () => DISPATCH_COPY[this.preferences.language()] ?? DISPATCH_COPY.en,
+  );
   private readonly document = inject(DOCUMENT);
   private readonly elementRef = inject(ElementRef);
   readonly isFullscreen = signal(false);

@@ -1,9 +1,16 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+} from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { profile } from '@ah/shared/content';
+import { getProfile } from '@ah/shared/content';
+import { PreferencesStore } from '@ah/shared/state';
 import { Seo } from '@ah/portfolio/util-seo';
 import { SectionHeading } from '@ah/ui';
 import { ContactForm } from './contact/contact-form';
+import { SERVICES_COPY } from './services-copy';
 
 @Component({
   selector: 'ah-contact-page',
@@ -13,7 +20,13 @@ import { ContactForm } from './contact/contact-form';
   styleUrl: './contact-page.scss',
 })
 export class ContactPage {
-  protected readonly profile = profile;
+  protected readonly preferences = inject(PreferencesStore);
+  protected readonly copy = computed(
+    () => SERVICES_COPY[this.preferences.language()] ?? SERVICES_COPY.en,
+  );
+  protected readonly profile = computed(() =>
+    getProfile(this.preferences.language()),
+  );
 
   constructor() {
     inject(Seo).update({

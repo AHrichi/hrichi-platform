@@ -1,8 +1,15 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+} from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { caseStudies } from '@ah/shared/content';
+import { getCaseStudies } from '@ah/shared/content';
+import { PreferencesStore } from '@ah/shared/state';
 import { Seo } from '@ah/portfolio/util-seo';
 import { AhButton, LinkCard, SectionHeading } from '@ah/ui';
+import { WORK_COPY } from './work-copy';
 
 @Component({
   selector: 'ah-work-list-page',
@@ -12,7 +19,13 @@ import { AhButton, LinkCard, SectionHeading } from '@ah/ui';
   styleUrl: './work-list-page.scss',
 })
 export class WorkListPage {
-  protected readonly studies = caseStudies;
+  protected readonly preferences = inject(PreferencesStore);
+  protected readonly copy = computed(
+    () => WORK_COPY[this.preferences.language()] ?? WORK_COPY.en,
+  );
+  protected readonly studies = computed(() =>
+    getCaseStudies(this.preferences.language()),
+  );
 
   constructor() {
     inject(Seo).update({

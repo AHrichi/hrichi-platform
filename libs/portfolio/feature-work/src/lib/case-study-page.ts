@@ -7,9 +7,11 @@ import {
   input,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { caseStudies, caseStudyBySlug } from '@ah/shared/content';
+import { getCaseStudies, getCaseStudyBySlug } from '@ah/shared/content';
+import { PreferencesStore } from '@ah/shared/state';
 import { Seo } from '@ah/portfolio/util-seo';
 import { Tag } from '@ah/ui';
+import { WORK_COPY } from './work-copy';
 
 @Component({
   selector: 'ah-case-study-page',
@@ -22,12 +24,17 @@ export class CaseStudyPage {
   /** Bound from the :slug route parameter. */
   readonly slug = input.required<string>();
 
-  protected readonly study = computed(() => caseStudyBySlug(this.slug()));
+  protected readonly preferences = inject(PreferencesStore);
+  protected readonly copy = computed(
+    () => WORK_COPY[this.preferences.language()] ?? WORK_COPY.en,
+  );
+  protected readonly study = computed(() =>
+    getCaseStudyBySlug(this.slug(), this.preferences.language()),
+  );
   protected readonly next = computed(() => {
-    const index = caseStudies.findIndex((s) => s.slug === this.slug());
-    return index === -1
-      ? undefined
-      : caseStudies[(index + 1) % caseStudies.length];
+    const studies = getCaseStudies(this.preferences.language());
+    const index = studies.findIndex((s) => s.slug === this.slug());
+    return index === -1 ? undefined : studies[(index + 1) % studies.length];
   });
 
   constructor() {

@@ -18,6 +18,7 @@ import {
   type FeedbackRequest,
   SELF_EXPLAIN_FEEDBACK,
 } from '@ah/products/studylm/learn';
+import { PreferencesStore } from '@ah/shared/state';
 import { LessonGenerationService } from '../../services/lesson-generation.service';
 import { N8nSettingsModalComponent } from '../n8n-settings-modal/n8n-settings-modal.component';
 import { CreateSubjectModalComponent } from '../create-subject-modal/create-subject-modal.component';
@@ -25,6 +26,7 @@ import { AddFlashcardModalComponent } from '../add-flashcard-modal/add-flashcard
 import { AddQuizModalComponent } from '../add-quiz-modal/add-quiz-modal.component';
 import { JsonImportModalComponent } from '../json-import-modal/json-import-modal.component';
 import { ElaborationModalComponent } from '../elaboration-modal/elaboration-modal.component';
+import { STUDYLM_COPY } from '../../i18n/studylm-copy';
 
 @Component({
   selector: 'ah-studylm-shell',
@@ -59,10 +61,15 @@ import { ElaborationModalComponent } from '../elaboration-modal/elaboration-moda
 })
 export class StudyLmShellComponent {
   readonly store = inject(StudyLmStore);
+  private readonly preferences = inject(PreferencesStore);
+  readonly copy = computed(
+    () => STUDYLM_COPY[this.preferences.language()] ?? STUDYLM_COPY.en,
+  );
 
   /** The screens, each with how many items it holds when that helps. */
-  readonly screens = computed(() =>
-    SCREENS.map((screen) => {
+  readonly screens = computed(() => {
+    const labels = this.copy().screens;
+    return SCREENS.map((screen) => {
       const count =
         screen.id === 'roadmap'
           ? this.store.totalSectionsCount()
@@ -73,18 +80,20 @@ export class StudyLmShellComponent {
               : screen.id === 'sources'
                 ? this.store.sourcesCount()
                 : 0;
-      return { ...screen, count };
-    }),
-  );
+      const label = labels[screen.id] ?? screen.label;
+      return { ...screen, label, count };
+    });
+  });
 
   /** "Checking…" until the first ping answers, so it never claims a connection. */
   readonly connection = computed(() => {
     const config = this.store.n8nConfig();
+    const c = this.copy();
     return config.isChecking
-      ? 'Checking…'
+      ? c.checking
       : config.isConnected
-        ? 'Online'
-        : 'Offline';
+        ? c.online
+        : c.offline;
   });
 
   readonly subjectOptions = computed<AhSelectOption[]>(() =>

@@ -1,12 +1,12 @@
 @if (status() === 'sent') {
   <div class="ah-card result" role="status">
-    <h2 class="title">Thanks, your message is on its way</h2>
+    <h2 class="title">{{ copy().form.sentTitle }}</h2>
     <p class="ah-muted">
-      It reached me directly. I'll answer at the email address you gave.
+      {{ copy().form.sentText }}
     </p>
     <div class="ah-cluster">
       <button ahButton="secondary" type="button" (click)="startOver()">
-        Send another message
+        {{ copy().form.sendAnother }}
       </button>
     </div>
   </div>
@@ -17,14 +17,14 @@
   [formRoot]="form"
   [hidden]="status() === 'sent'"
 >
-  <h2 class="title">Send a message</h2>
+  <h2 class="title">{{ copy().form.formTitle }}</h2>
 
   <!-- Disabled in the prerendered HTML: text typed before hydration would be lost. -->
   <fieldset class="fields" [disabled]="status() === 'loading' || busy()">
     <div class="field">
-      <label for="contact-intent">What is it about?</label>
+      <label for="contact-intent">{{ copy().form.intentLabel }}</label>
       <select id="contact-intent" [formField]="form.intent">
-        @for (intent of intents; track intent.value) {
+        @for (intent of intents(); track intent.value) {
           <option [value]="intent.value">{{ intent.label }}</option>
         }
       </select>
@@ -32,7 +32,7 @@
 
     <div class="row">
       <div class="field">
-        <label for="contact-name">Your name</label>
+        <label for="contact-name">{{ copy().form.nameLabel }}</label>
         <input
           id="contact-name"
           type="text"
@@ -48,7 +48,7 @@
         </p>
       </div>
       <div class="field">
-        <label for="contact-email">Your email</label>
+        <label for="contact-email">{{ copy().form.emailLabel }}</label>
         <input
           id="contact-email"
           type="email"
@@ -66,7 +66,7 @@
     </div>
 
     <div class="field">
-      <label for="contact-message">Message</label>
+      <label for="contact-message">{{ copy().form.messageLabel }}</label>
       <textarea
         id="contact-message"
         rows="6"
@@ -85,7 +85,7 @@
 
     <!-- Honeypot: hidden from people, so only bots fill it in. -->
     <div class="ah-visually-hidden" aria-hidden="true">
-      <label for="contact-website">Leave this field empty</label>
+      <label for="contact-website">{{ copy().form.honeypot }}</label>
       <input
         id="contact-website"
         type="text"
@@ -100,38 +100,40 @@
   <div class="turnstile" #turnstile>
     @if (status() === 'unavailable') {
       <p class="hint">
-        Sending from the site isn't available right now. Your email app will
-        open with this message.
+        {{ copy().form.unavailableHint }}
       </p>
     }
   </div>
 
   <div class="actions">
     @if (status() === 'unavailable') {
-      <a ahButton [href]="mailtoFallback()">Continue in your email app</a>
+      <a ahButton [href]="mailtoFallback()">{{
+        copy().form.continueInEmail
+      }}</a>
     } @else {
       <button
         ahButton
         type="submit"
         [disabled]="busy() || status() === 'loading' || !token()"
       >
-        {{ busy() ? 'Sending…' : 'Send message' }}
+        {{ busy() ? copy().form.sending : copy().form.send }}
       </button>
     }
     <p class="status" role="status" aria-live="polite">
       @switch (status()) {
         @case ('loading') {
-          Preparing the form…
+          {{ copy().form.preparing }}
         }
         @case ('waking') {
-          Waking up the free-tier server. This can take up to a minute.
+          {{ copy().form.waking }}
         }
         @case ('rejected') {
-          The spam check failed. Please complete it again.
+          {{ copy().form.rejected }}
         }
         @case ('failed') {
-          The server couldn't be reached.
-          <a [href]="mailtoFallback()">Send the same message by email</a>.
+          {{ copy().form.failed }}
+          <a [href]="mailtoFallback()">{{ copy().form.sendByEmail }}</a
+          >.
         }
       }
     </p>

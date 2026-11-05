@@ -16,11 +16,13 @@ import {
   ActivatedRoute,
 } from '@angular/router';
 import { APP_MODE } from '@ah/platform/app-mode';
+import { PreferencesStore } from '@ah/shared/state';
 import { ThemeService } from './services/theme.service';
 import { ToastService } from './services/toast.service';
 import { FinancialStore, Account, Transaction } from './financial.store';
 import { CalculatorWidgetComponent } from './components/calculator-widget/calculator-widget.component';
 import { FloatingScenarioWidgetComponent } from './components/floating-scenario-widget/floating-scenario-widget.component';
+import { STRATEGY_COPY } from './i18n/strategy-copy';
 
 interface ElectronWindow extends Window {
   require?: (module: string) => {
@@ -48,6 +50,10 @@ interface ElectronWindow extends Window {
 export class StrategyAppComponent {
   readonly appMode = inject(APP_MODE, { optional: true }) ?? 'standalone';
   readonly isEmbeddedDemo = computed(() => this.appMode === 'embedded-demo');
+  private readonly preferences = inject(PreferencesStore);
+  readonly copy = computed(
+    () => STRATEGY_COPY[this.preferences.language()] ?? STRATEGY_COPY.en,
+  );
 
   themeService = inject(ThemeService);
   toastService = inject(ToastService);

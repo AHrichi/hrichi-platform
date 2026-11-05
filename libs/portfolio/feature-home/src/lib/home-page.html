@@ -1,6 +1,6 @@
 <section class="hero ah-container" aria-labelledby="hero-heading">
   <div class="ah-stack hero__text" style="--gap: var(--space-5)">
-    <p class="ah-badge ah-badge--success">{{ profile.availability }}</p>
+    <p class="ah-badge ah-badge--success">{{ profile().availability }}</p>
     <h1 id="hero-heading">{{ preferences.copy().headline }}</h1>
     <p class="ah-lead ah-prose">{{ preferences.copy().intro }}</p>
     <div class="ah-cluster">
@@ -11,26 +11,29 @@
       />
     </div>
     <div class="ah-cluster audience">
-      <span class="ah-muted" aria-hidden="true">View as</span>
+      <span class="ah-muted" aria-hidden="true">{{ copy().viewAs }}</span>
       <ah-segmented-control
-        label="View this site as"
-        [options]="audienceOptions"
+        [label]="copy().viewAsLabel"
+        [options]="audienceOptions()"
         [value]="preferences.audience()"
         (valueChange)="preferences.setAudience($event)"
       />
     </div>
     <dl class="facts">
       <div>
-        <dt>Based in</dt>
-        <dd>{{ profile.location }}</dd>
+        <dt>{{ copy().facts.basedIn }}</dt>
+        <dd>{{ profile().location }}</dd>
       </div>
       <div>
-        <dt>Works</dt>
-        <dd>{{ profile.workSetup }}</dd>
+        <dt>{{ copy().facts.works }}</dt>
+        <dd>{{ profile().workSetup }}</dd>
       </div>
       <div>
-        <dt>Now</dt>
-        <dd>{{ currentRole.title }} at {{ currentRole.company }}</dd>
+        <dt>{{ copy().facts.now }}</dt>
+        <dd>
+          {{ currentRole().title }} {{ copy().facts.at }}
+          {{ currentRole().company }}
+        </dd>
       </div>
     </dl>
   </div>
@@ -45,9 +48,9 @@
         <div class="ah-stack" style="--gap: var(--space-6)">
           <ah-section-heading
             headingId="work-heading"
-            eyebrow="Selected work"
-            heading="Case studies"
-            lead="What I built, the decisions behind it and what changed."
+            [eyebrow]="copy().work.eyebrow"
+            [heading]="copy().work.heading"
+            [lead]="copy().work.lead"
           />
           <ul class="ah-grid" role="list">
             @for (study of featuredWork(); track study.slug) {
@@ -62,7 +65,7 @@
               </li>
             }
           </ul>
-          <a routerLink="/work">All case studies</a>
+          <a routerLink="/work">{{ copy().work.allLink }}</a>
         </div>
       </section>
     }
@@ -74,18 +77,18 @@
         <div class="ah-stack" style="--gap: var(--space-6)">
           <ah-section-heading
             headingId="services-heading"
-            eyebrow="Freelance"
-            heading="How I can help"
+            [eyebrow]="copy().services.eyebrow"
+            [heading]="copy().services.heading"
           />
           <ul class="ah-grid" role="list">
-            @for (service of featuredServices; track service.id) {
+            @for (service of featuredServices(); track service.id) {
               <li class="ah-card">
                 <h3 class="card-title">{{ service.title }}</h3>
                 <p class="ah-muted">{{ service.summary }}</p>
               </li>
             }
           </ul>
-          <a routerLink="/services">All services and how I work</a>
+          <a routerLink="/services">{{ copy().services.allLink }}</a>
         </div>
       </section>
     }
@@ -97,20 +100,20 @@
         <div class="ah-stack" style="--gap: var(--space-6)">
           <ah-section-heading
             headingId="experience-heading"
-            eyebrow="Experience"
-            heading="5+ years of Angular, from v12 to v22"
-            [lead]="profile.summary"
+            [eyebrow]="copy().experience.eyebrow"
+            [heading]="copy().experience.heading"
+            [lead]="profile().summary"
           />
           <article class="ah-card current-role">
-            <p class="ah-eyebrow">{{ currentPeriod }}</p>
+            <p class="ah-eyebrow">{{ currentPeriod() }}</p>
             <h3 class="card-title">
-              {{ currentRole.title }} · {{ currentRole.company }}
+              {{ currentRole().title }} · {{ currentRole().company }}
             </h3>
-            <p class="ah-muted">{{ currentRole.context }}</p>
+            <p class="ah-muted">{{ currentRole().context }}</p>
           </article>
           <div class="ah-cluster">
-            <a routerLink="/experience">Full experience</a>
-            <a routerLink="/cv">CV</a>
+            <a routerLink="/experience">{{ copy().experience.fullLink }}</a>
+            <a routerLink="/cv">{{ copy().experience.cvLink }}</a>
           </div>
         </div>
       </section>
@@ -123,48 +126,55 @@
         <div class="ah-stack" style="--gap: var(--space-6)">
           <ah-section-heading
             headingId="platform-heading"
-            eyebrow="Open the hood"
-            heading="This site is the proof"
-            lead="Built the way I would build a client's platform, with every decision written down."
+            [eyebrow]="copy().platform.eyebrow"
+            [heading]="copy().platform.heading"
+            [lead]="copy().platform.lead"
           />
           <ul class="ah-grid platform__facts" role="list" style="--min: 14rem">
             <li class="ah-card">
-              <h3 class="card-title">Micro-frontends</h3>
+              <h3 class="card-title">{{ copy().platform.cards.mfeTitle }}</h3>
               <p class="ah-muted">
-                Native Federation remotes, deployed on their own, each with a
-                fallback if it's down.
+                {{ copy().platform.cards.mfeText }}
               </p>
             </li>
             <li class="ah-card">
-              <h3 class="card-title">Zoneless Angular 22</h3>
+              <h3 class="card-title">
+                {{ copy().platform.cards.zonelessTitle }}
+              </h3>
               <p class="ah-muted">
-                Signals and NgRx SignalStore, no zone.js in any bundle.
+                {{ copy().platform.cards.zonelessText }}
               </p>
             </li>
             <li class="ah-card">
-              <h3 class="card-title">Prerendered & offline</h3>
+              <h3 class="card-title">
+                {{ copy().platform.cards.prerenderTitle }}
+              </h3>
               <p class="ah-muted">
-                Real HTML from a CDN, then a PWA that works offline.
+                {{ copy().platform.cards.prerenderText }}
               </p>
             </li>
             <li class="ah-card">
-              <h3 class="card-title">Strict CSP, $0 hosting</h3>
+              <h3 class="card-title">{{ copy().platform.cards.cspTitle }}</h3>
               <p class="ah-muted">
-                Hash-based security policy, deployed to Cloudflare by CI.
+                {{ copy().platform.cards.cspText }}
               </p>
             </li>
           </ul>
           <div class="ah-cluster">
-            <a routerLink="/apps" style="font-weight: var(--font-weight-bold)"
-              >Explore Apps & Labs →</a
+            <a
+              routerLink="/apps"
+              style="font-weight: var(--font-weight-bold)"
+              >{{ copy().platform.links.apps }}</a
             >
-            <a routerLink="/work/this-platform">How it's built</a>
-            <a [href]="repository" target="_blank" rel="noopener"
-              >Source and ADRs on GitHub</a
-            >
-            <a [href]="designSystem" target="_blank" rel="noopener"
-              >Design system (Storybook)</a
-            >
+            <a routerLink="/work/this-platform">{{
+              copy().platform.links.howBuilt
+            }}</a>
+            <a [href]="repository" target="_blank" rel="noopener">{{
+              copy().platform.links.source
+            }}</a>
+            <a [href]="designSystem" target="_blank" rel="noopener">{{
+              copy().platform.links.designSystem
+            }}</a>
           </div>
         </div>
       </section>

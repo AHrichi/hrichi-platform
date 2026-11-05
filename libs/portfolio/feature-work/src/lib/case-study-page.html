@@ -3,7 +3,7 @@
     <header class="ah-stack" style="--gap: var(--space-4)">
       <a routerLink="/work" class="back-link">
         <span class="back-arrow" aria-hidden="true">←</span>
-        <span>All case studies</span>
+        <span>{{ copy().detail.backToAll }}</span>
       </a>
       <p class="ah-eyebrow" [attr.title]="study.client + ' · ' + study.period">
         {{ study.client }} · {{ study.period }}
@@ -17,11 +17,11 @@
 
     <dl class="meta">
       <div>
-        <dt>Role</dt>
+        <dt>{{ copy().detail.metaRole }}</dt>
         <dd>{{ study.role }}</dd>
       </div>
       <div>
-        <dt>Stack</dt>
+        <dt>{{ copy().detail.metaStack }}</dt>
         <dd>
           <ul class="ah-cluster" role="list" style="--gap: var(--space-2)">
             @for (item of study.stack; track item) {
@@ -36,19 +36,19 @@
 
     <div class="body ah-stack ah-prose" style="--gap: var(--space-7)">
       <section aria-labelledby="context-heading" class="ah-stack">
-        <h2 id="context-heading">Context</h2>
+        <h2 id="context-heading">{{ copy().detail.context }}</h2>
         <p>{{ study.context }}</p>
       </section>
 
       <section aria-labelledby="problem-heading" class="ah-stack">
-        <h2 id="problem-heading">The problem</h2>
+        <h2 id="problem-heading">{{ copy().detail.problem }}</h2>
         <p>{{ study.problem }}</p>
       </section>
 
       <section aria-labelledby="approach-heading" class="ah-stack">
-        <h2 id="approach-heading">Decisions and why</h2>
+        <h2 id="approach-heading">{{ copy().detail.decisions }}</h2>
         <ol class="decisions" role="list">
-          @for (item of study.approach; track item.decision) {
+          @for (item of study.approach; track $index) {
             <li class="ah-card decision-card">
               <h3>{{ item.decision }}</h3>
               <p class="ah-muted">{{ item.why }}</p>
@@ -58,9 +58,9 @@
       </section>
 
       <section aria-labelledby="outcome-heading" class="ah-stack">
-        <h2 id="outcome-heading">Outcome</h2>
+        <h2 id="outcome-heading">{{ copy().detail.outcome }}</h2>
         <ul class="outcomes-list">
-          @for (item of study.outcome; track item) {
+          @for (item of study.outcome; track $index) {
             <li>{{ item }}</li>
           }
         </ul>
@@ -68,7 +68,7 @@
 
       @if (study.links?.length) {
         <section aria-labelledby="links-heading" class="ah-stack">
-          <h2 id="links-heading">Links</h2>
+          <h2 id="links-heading">{{ copy().detail.links }}</h2>
           <ul class="case-links-list">
             @for (link of study.links; track link.href) {
               <li>
@@ -88,8 +88,8 @@
     </div>
 
     @if (next(); as next) {
-      <nav class="next ah-card" aria-label="Next case study">
-        <p class="ah-eyebrow">Next case study</p>
+      <nav class="next ah-card" [attr.aria-label]="copy().detail.nextStudy">
+        <p class="ah-eyebrow">{{ copy().detail.nextStudy }}</p>
         <a
           [routerLink]="['/work', next.slug]"
           class="next-link"
@@ -103,10 +103,11 @@
   </article>
 } @else {
   <section class="ah-section ah-container ah-stack">
-    <h1>Case study not found</h1>
+    <h1>{{ copy().detail.notFoundTitle }}</h1>
     <p>
-      There's no case study at this address.
-      <a routerLink="/work">See all case studies</a>.
+      {{ copy().detail.notFoundText }}
+      <a routerLink="/work">{{ copy().detail.notFoundLink }}</a
+      >.
     </p>
   </section>
 }

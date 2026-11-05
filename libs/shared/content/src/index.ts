@@ -5,4 +5,6 @@ export * from './lib/labs';
 export * from './lib/model';
 export * from './lib/profile';
 export * from './lib/services';
+export * from './lib/i18n/content-i18n.types';
+export * from './lib/i18n/content-i18n';
 export { default as site } from './lib/site.json';

@@ -4,21 +4,23 @@
       class="lab__intro"
       headingId="lab-heading"
       [level]="1"
-      [eyebrow]="eyebrow()"
-      [heading]="heading()"
-      [lead]="lead()"
+      [eyebrow]="displayEyebrow()"
+      [heading]="displayHeading()"
+      [lead]="displayLead()"
     />
     <div class="lab__actions">
       <button
         type="button"
         class="lab__fullscreen-btn ah-button ah-button--secondary"
         [attr.aria-label]="
-          isFullscreen() ? 'Exit fullscreen' : 'View remote in fullscreen'
+          isFullscreen()
+            ? actionsCopy().exitFullscreenAria
+            : actionsCopy().enterFullscreenAria
         "
         [attr.title]="
           isFullscreen()
-            ? 'Exit fullscreen (Esc)'
-            : 'Expand remote to fullscreen'
+            ? actionsCopy().exitFullscreenTitle
+            : actionsCopy().enterFullscreenTitle
         "
         (click)="toggleFullscreen()"
       >
@@ -39,7 +41,7 @@
             <line x1="14" y1="10" x2="21" y2="3"></line>
             <line x1="3" y1="21" x2="10" y2="14"></line>
           </svg>
-          <span>Exit Fullscreen</span>
+          <span>{{ actionsCopy().exitFullscreen }}</span>
         } @else {
           <svg
             width="18"
@@ -57,7 +59,7 @@
             <line x1="21" y1="3" x2="14" y2="10"></line>
             <line x1="3" y1="21" x2="10" y2="14"></line>
           </svg>
-          <span>Fullscreen Remote</span>
+          <span>{{ actionsCopy().enterFullscreen }}</span>
         }
       </button>
     </div>
@@ -67,8 +69,8 @@
       <button
         type="button"
         class="lab__fullscreen-exit"
-        aria-label="Exit fullscreen"
-        title="Exit fullscreen (Esc)"
+        [attr.aria-label]="actionsCopy().exitFullscreenAria"
+        [attr.title]="actionsCopy().exitFullscreenTitle"
         (click)="exitFullscreen()"
       >
         <svg

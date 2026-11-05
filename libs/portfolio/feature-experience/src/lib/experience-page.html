@@ -2,20 +2,20 @@
   <div class="ah-stack" style="--gap: var(--space-5)">
     <ah-section-heading
       [level]="1"
-      eyebrow="Experience"
-      heading="Where I've worked"
-      [lead]="profile.summary"
+      [eyebrow]="copy().eyebrow"
+      [heading]="copy().heading"
+      [lead]="profile().summary"
     />
     <div class="ah-cluster cv-action-row">
       <a routerLink="/cv" ahButton="secondary" size="sm" class="cv-pill-btn">
         <span aria-hidden="true">📄</span>
-        <span>Printable CV & PDF</span>
+        <span>{{ copy().cvButton }}</span>
       </a>
     </div>
   </div>
 
   <ol class="timeline" role="list">
-    @for (role of roles; track role.company) {
+    @for (role of roles(); track role.company) {
       <li class="role">
         <header class="role__header">
           <p class="ah-eyebrow" [attr.title]="role.period">{{ role.period }}</p>
@@ -33,7 +33,7 @@
         </header>
         <p class="role-context">{{ role.context }}</p>
         <ul class="highlights" role="list">
-          @for (item of role.highlights; track item.title) {
+          @for (item of role.highlights; track $index) {
             <li class="highlight-card">
               <h3 [attr.title]="item.title">{{ item.title }}</h3>
               <p class="ah-muted">{{ item.text }}</p>
@@ -56,9 +56,9 @@
   </ol>
 
   <section aria-labelledby="skills-heading" class="ah-stack">
-    <h2 id="skills-heading">Skills</h2>
+    <h2 id="skills-heading">{{ copy().skillsHeading }}</h2>
     <div class="ah-grid" style="--min: 16rem">
-      @for (group of skills; track group.name) {
+      @for (group of skills(); track group.name) {
         <section class="ah-card skill-group-card">
           <h3 class="group-title">{{ group.name }}</h3>
           <ul class="ah-cluster" role="list" style="--gap: var(--space-2)">
@@ -78,9 +78,9 @@
       aria-labelledby="education-heading"
       class="ah-stack education-card ah-card"
     >
-      <h2 id="education-heading">Education</h2>
+      <h2 id="education-heading">{{ copy().educationHeading }}</h2>
       <ul class="plain ah-stack" role="list">
-        @for (item of education; track item.title) {
+        @for (item of education(); track item.title) {
           <li class="education-item">
             <strong>{{ item.title }}</strong
             ><br />
@@ -93,9 +93,9 @@
       aria-labelledby="languages-heading"
       class="ah-stack languages-card ah-card"
     >
-      <h2 id="languages-heading">Languages</h2>
+      <h2 id="languages-heading">{{ copy().languagesHeading }}</h2>
       <ul class="plain ah-stack" role="list">
-        @for (item of languages; track item.language) {
+        @for (item of languages(); track item.language) {
           <li class="language-item">
             <strong>{{ item.language }}</strong>
             <span class="ah-muted"> · {{ item.level }}</span>

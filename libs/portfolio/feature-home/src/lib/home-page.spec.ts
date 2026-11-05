@@ -48,4 +48,25 @@ describe('HomePage', () => {
     const ld = document.head.querySelector('script[data-ld="person"]');
     expect(JSON.parse(ld?.textContent ?? '{}')['@type']).toBe('Person');
   });
+
+  it('updates text when language is changed', async () => {
+    const { fixture, element } = await setup();
+    const prefs = TestBed.inject(PreferencesStore);
+
+    prefs.setLanguage('fr');
+    await fixture.whenStable();
+    expect(element.querySelector('dt')?.textContent).toBe('Localisation');
+
+    prefs.setLanguage('ar');
+    await fixture.whenStable();
+    expect(element.querySelector('dt')?.textContent).toBe('المقر');
+
+    prefs.setLanguage('it');
+    await fixture.whenStable();
+    expect(element.querySelector('dt')?.textContent).toBe('Sede');
+
+    prefs.setLanguage('de');
+    await fixture.whenStable();
+    expect(element.querySelector('dt')?.textContent).toBe('Standort');
+  });
 });

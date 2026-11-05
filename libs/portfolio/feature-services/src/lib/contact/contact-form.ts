@@ -24,6 +24,7 @@ import { AhButton } from '@ah/ui';
 import { LeadError, prewarm, sendLead } from './lead-client';
 import { SiteConfigService } from '@ah/shared/site-config';
 import { TurnstileService, type TurnstileWidget } from './turnstile';
+import { SERVICES_COPY } from '../services-copy';
 
 type Status =
   | 'loading'
@@ -67,11 +68,20 @@ export class ContactForm {
   private readonly widgetHost =
     viewChild.required<ElementRef<HTMLElement>>('turnstile');
 
-  protected readonly intents: { value: LeadIntent; label: string }[] = [
-    { value: 'role', label: 'A full-time role' },
-    { value: 'project', label: 'A project' },
-    { value: 'other', label: 'Something else' },
-  ];
+  protected readonly copy = computed(
+    () => SERVICES_COPY[this.preferences.language()] ?? SERVICES_COPY.en,
+  );
+
+  protected readonly intents = computed<{ value: LeadIntent; label: string }[]>(
+    () => {
+      const i = this.copy().form.intents;
+      return [
+        { value: 'role', label: i.role },
+        { value: 'project', label: i.freelance },
+        { value: 'other', label: i.general },
+      ];
+    },
+  );
 
   protected readonly model = signal({
     name: '',

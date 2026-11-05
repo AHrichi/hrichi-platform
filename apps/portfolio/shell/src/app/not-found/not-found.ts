@@ -1,5 +1,12 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+} from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { PreferencesStore } from '@ah/shared/state';
+import { SHELL_COPY } from '../shell-copy';
 
 @Component({
   selector: 'ah-not-found',
@@ -8,4 +15,9 @@ import { RouterLink } from '@angular/router';
   templateUrl: './not-found.html',
   styleUrl: './not-found.scss',
 })
-export class NotFound {}
+export class NotFound {
+  private readonly preferences = inject(PreferencesStore);
+  protected readonly copy = computed(
+    () => SHELL_COPY[this.preferences.language()].notFound,
+  );
+}

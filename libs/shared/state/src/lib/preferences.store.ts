@@ -9,8 +9,8 @@ import {
 } from '@ngrx/signals';
 import {
   type Audience,
-  audienceCopy,
   defaultAudience,
+  getAudienceCopy,
   isAudience,
 } from '@ah/shared/content';
 
@@ -75,7 +75,7 @@ export const PreferencesStore = signalStore(
     systemDark: false,
   }),
   withComputed(({ audience, theme, language, systemDark }) => ({
-    copy: computed(() => audienceCopy[audience()]),
+    copy: computed(() => getAudienceCopy(audience(), language())),
     isRtl: computed(() => language() === 'ar'),
     isDark: computed(() => {
       const pref = theme();
