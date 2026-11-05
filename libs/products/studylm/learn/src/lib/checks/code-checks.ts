@@ -5,6 +5,7 @@ import {
   input,
   linkedSignal,
   output,
+  signal,
 } from '@angular/core';
 import type { BlockOf } from '@ah/products/studylm/lessons';
 import { CHECK_STYLES, CheckFeedback, type CheckRecord } from './check-shared';
@@ -13,6 +14,7 @@ import {
   markCloze,
   markOutput,
   markParsons,
+  same,
   type ParsonsAnswer,
 } from './marking';
 import { expectedOutput } from '../player/executed';
@@ -38,7 +40,7 @@ interface PoolLine {
     <p class="question">{{ b.prompt }}</p>
     <div class="columns" dir="ltr">
       <section [attr.aria-label]="'Lines to use'">
-        <p class="label">Lines</p>
+        <p class="label">Lines to place</p>
         <ul class="list">
           @for (line of pool(); track line.id) {
             <li class="row">
@@ -59,7 +61,7 @@ interface PoolLine {
         </ul>
       </section>
       <section [attr.aria-label]="'Your answer'">
-        <p class="label">Your answer</p>
+        <p class="label">Your arranged code</p>
         <ol class="list">
           @for (
             line of solution();
@@ -67,8 +69,11 @@ interface PoolLine {
             let first = $first;
             let last = $last
           ) {
+            @let lineCorrect = isLineCorrect($index, line.id);
             <li
               class="row"
+              [class.row-correct]="result() !== null && lineCorrect"
+              [class.row-wrong]="result() !== null && !lineCorrect"
               [style.padding-inline-start.ch]="2 + line.indent * 2"
             >
               <code class="text">
@@ -87,6 +92,18 @@ interface PoolLine {
                   }
                 }
               </code>
+              @if (result() !== null) {
+                <span
+                  class="badge"
+                  [class.badge-correct]="lineCorrect"
+                  [class.badge-wrong]="!lineCorrect"
+                  [attr.aria-label]="
+                    lineCorrect ? 'Correct position' : 'Misplaced or distractor'
+                  "
+                >
+                  {{ lineCorrect ? '✓' : '✗' }}
+                </span>
+              }
               <button
                 type="button"
                 class="icon"
@@ -116,7 +133,7 @@ interface PoolLine {
               </button>
             </li>
           } @empty {
-            <li class="empty">Add lines with +.</li>
+            <li class="empty">Add lines from the left pool with +.</li>
           }
         </ol>
       </section>
@@ -136,8 +153,25 @@ interface PoolLine {
       <sl-check-feedback
         [correct]="result() === true"
         [explanation]="b.explanation"
-        (retry)="result.set(null)"
-      />
+        (solutionToggled)="showingSolution.set($event)"
+        (retry)="retry()"
+      >
+        <div solution class="solution-details">
+          <p class="solution-title"><strong>Complete Correct Code:</strong></p>
+          <pre
+            class="solution-code"
+            dir="ltr"
+          ><code>{{ solutionCode() }}</code></pre>
+          @if (b.distractors.length) {
+            <p class="solution-callout">
+              <em>Distractors (wrong lines to exclude):</em>
+              @for (dist of b.distractors; track $index) {
+                <code class="distractor-chip">{{ dist }}</code>
+              }
+            </p>
+          }
+        </div>
+      </sl-check-feedback>
     }
   `,
   styles: [
@@ -166,6 +200,17 @@ interface PoolLine {
       .empty {
         color: var(--color-text-muted);
         font-size: var(--font-size-200);
+        padding: var(--space-2);
+      }
+      .distractor-chip {
+        display: inline-block;
+        padding: 2px 6px;
+        margin: 2px;
+        border-radius: var(--radius-sm);
+        background: var(--color-danger-subtle, rgba(239, 68, 68, 0.1));
+        color: var(--color-danger-default, #ef4444);
+        font-family: var(--font-family-mono);
+        font-size: var(--font-size-100);
       }
     `,
   ],
@@ -196,6 +241,7 @@ export class ParsonsCheck {
   protected readonly result = linkedSignal<boolean | null>(
     () => this.saved()?.correct ?? null,
   );
+  protected readonly showingSolution = signal(false);
 
   private readonly byId = computed(
     () => new Map(this.lines().map((line) => [line.id, line])),
@@ -209,6 +255,25 @@ export class ParsonsCheck {
   protected readonly solution = computed(() =>
     this.chosen().flatMap((id) => this.byId().get(id) ?? []),
   );
+
+  protected readonly solutionCode = computed(() => {
+    const b = this.block();
+    const blankMap = new Map(b.blanks.map((bl) => [bl.line, bl.answer]));
+    return b.lines
+      .map((l) => {
+        let code = l.code;
+        if (blankMap.has(l.id)) {
+          code = code.replace('___', blankMap.get(l.id) ?? '');
+        }
+        return `${'  '.repeat(l.indent)}${code}`;
+      })
+      .join('\n');
+  });
+
+  protected isLineCorrect(index: number, lineId: string): boolean {
+    const b = this.block();
+    return index < b.lines.length && b.lines[index].id === lineId;
+  }
 
   /** A line split around its blank: null is where the input goes. */
   protected parts(code: string): (string | null)[] {
@@ -244,6 +309,11 @@ export class ParsonsCheck {
     const correct = markParsons(this.block(), answer);
     this.result.set(correct);
     this.answered.emit({ answer, correct });
+  }
+
+  protected retry(): void {
+    this.showingSolution.set(false);
+    this.result.set(null);
   }
 }
 
@@ -297,12 +367,16 @@ function hash(text: string): number {
       <sl-check-feedback
         [correct]="result() === true"
         [explanation]="b.explanation"
-        (retry)="result.set(null)"
+        (solutionToggled)="showingSolution.set($event)"
+        (retry)="retry()"
       >
-        @if (result() === false) {
-          <p>It prints:</p>
-          <pre dir="ltr"><code>{{ run().expected }}</code></pre>
-        }
+        <div solution class="solution-details">
+          <p class="solution-title"><strong>Actual Program Output:</strong></p>
+          <pre
+            class="solution-code"
+            dir="ltr"
+          ><code>{{ run().expected }}</code></pre>
+        </div>
         @if (run().executed) {
           <p class="source">
             {{
@@ -330,6 +404,7 @@ export class PredictOutputCheck {
   protected readonly result = linkedSignal<boolean | null>(
     () => this.saved()?.correct ?? null,
   );
+  protected readonly showingSolution = signal(false);
 
   protected submit(): void {
     const answer = this.text();
@@ -339,6 +414,11 @@ export class PredictOutputCheck {
     );
     this.result.set(correct);
     this.answered.emit({ answer, correct });
+  }
+
+  protected retry(): void {
+    this.showingSolution.set(false);
+    this.result.set(null);
   }
 }
 
@@ -353,14 +433,29 @@ export class PredictOutputCheck {
     <p class="sentence">
       @for (part of parts(); track $index) {
         @if ('blank' in part) {
-          <input
-            type="text"
-            class="gap"
-            [value]="filled()[part.blank] ?? ''"
-            (input)="fill(part.blank, $any($event.target).value)"
-            [disabled]="result() !== null"
-            [attr.aria-label]="'Gap ' + ($index + 1)"
-          />
+          @let isRight = isBlankCorrect(part.blank);
+          <span class="gap-wrapper">
+            <input
+              type="text"
+              class="gap"
+              [class.gap-correct]="isRight === true"
+              [class.gap-wrong]="isRight === false"
+              [value]="filled()[part.blank] ?? ''"
+              (input)="fill(part.blank, $any($event.target).value)"
+              [disabled]="result() !== null"
+              [attr.aria-label]="'Gap ' + ($index + 1)"
+            />
+            @if (result() !== null) {
+              <span
+                class="badge"
+                [class.badge-correct]="isRight === true"
+                [class.badge-wrong]="isRight === false"
+                [attr.aria-label]="isRight ? 'Correct' : 'Incorrect'"
+              >
+                {{ isRight ? '✓' : '✗' }}
+              </span>
+            }
+          </span>
         } @else {
           <span [textContent]="part.text"></span>
         }
@@ -381,11 +476,16 @@ export class PredictOutputCheck {
       <sl-check-feedback
         [correct]="result() === true"
         [explanation]="b.explanation"
-        (retry)="result.set(null)"
+        (solutionToggled)="showingSolution.set($event)"
+        (retry)="retry()"
       >
-        @if (result() === false) {
-          <p>Accepted: {{ answers() }}</p>
-        }
+        <div solution class="solution-details">
+          <p class="solution-title"><strong>Completed Sentence:</strong></p>
+          <p class="solution-callout">{{ completedText() }}</p>
+          <p class="solution-callout">
+            <em>Accepted answers:</em> {{ answers() }}
+          </p>
+        </div>
       </sl-check-feedback>
     }
   `,
@@ -394,11 +494,31 @@ export class PredictOutputCheck {
     `
       .sentence {
         margin: 0;
-        line-height: 2.4;
+        line-height: 2.6;
+      }
+      .gap-wrapper {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        margin-inline: var(--space-1);
       }
       .gap {
-        inline-size: 10ch;
-        margin-inline: var(--space-1);
+        inline-size: 11ch;
+        transition: all var(--motion-duration-fast, 150ms) ease;
+      }
+      .gap-correct {
+        border-color: var(--color-success-default, #10b981) !important;
+        background: var(
+          --color-success-subtle,
+          rgba(16, 185, 129, 0.1)
+        ) !important;
+      }
+      .gap-wrong {
+        border-color: var(--color-danger-default, #ef4444) !important;
+        background: var(
+          --color-danger-subtle,
+          rgba(239, 68, 68, 0.1)
+        ) !important;
       }
     `,
   ],
@@ -415,14 +535,31 @@ export class ClozeCheck {
   protected readonly result = linkedSignal<boolean | null>(
     () => this.saved()?.correct ?? null,
   );
+  protected readonly showingSolution = signal(false);
   protected readonly complete = computed(() =>
     this.block().blanks.every((blank) => this.filled()[blank.id]?.trim()),
   );
   protected readonly answers = computed(() =>
     this.block()
-      .blanks.map((blank) => blank.answers[0])
-      .join(', '),
+      .blanks.map((blank) => `${blank.id}: ${blank.answers.join(' / ')}`)
+      .join('; '),
   );
+
+  protected readonly completedText = computed(() => {
+    let text = this.block().text;
+    for (const blank of this.block().blanks) {
+      text = text.replace(`{{${blank.id}}}`, `[${blank.answers[0]}]`);
+    }
+    return text;
+  });
+
+  protected isBlankCorrect(blankId: string): boolean | null {
+    if (this.result() === null) return null;
+    const blank = this.block().blanks.find((b) => b.id === blankId);
+    if (!blank) return null;
+    const userVal = this.filled()[blankId] ?? '';
+    return blank.answers.some((ans) => same(userVal, ans));
+  }
 
   protected fill(blank: string, value: string): void {
     this.filled.update((filled) => ({ ...filled, [blank]: value }));
@@ -433,5 +570,10 @@ export class ClozeCheck {
     const correct = markCloze(this.block(), answer);
     this.result.set(correct);
     this.answered.emit({ answer, correct });
+  }
+
+  protected retry(): void {
+    this.showingSolution.set(false);
+    this.result.set(null);
   }
 }

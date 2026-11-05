@@ -109,6 +109,38 @@ export class LessonView {
       right: blocks.filter((b) => checks[b.id]?.correct).length,
     };
   });
+  protected readonly progressPercent = computed(() => {
+    const s = this.score();
+    return s.total > 0 ? Math.round((s.answered / s.total) * 100) : 0;
+  });
+
+  protected sectionCheckStats(section: Lesson['sections'][number]): {
+    total: number;
+    answered: number;
+    right: number;
+  } {
+    const checks = this.checks();
+    const sectionCheckIds = section.blocks
+      .filter((b) => (CHECK_KINDS as readonly string[]).includes(b.kind))
+      .map((b) => b.id);
+    return {
+      total: sectionCheckIds.length,
+      answered: sectionCheckIds.filter((id) => checks[id]).length,
+      right: sectionCheckIds.filter((id) => checks[id]?.correct).length,
+    };
+  }
+
+  protected intentBadge(intent: string): { icon: string; label: string } {
+    const map: Record<string, { icon: string; label: string }> = {
+      hook: { icon: '🎯', label: 'Hook & Motivation' },
+      explain: { icon: '📖', label: 'Concepts & Intuition' },
+      example: { icon: '💻', label: 'Worked Example' },
+      visual: { icon: '✨', label: 'Stepped Visual' },
+      practice: { icon: '⚡', label: 'Interactive Practice' },
+      recap: { icon: '🔄', label: 'Summary & Retrieval' },
+    };
+    return map[intent] ?? { icon: '📌', label: intent };
+  }
 
   protected record(id: string): CheckRecord | null {
     return this.checks()[id] ?? null;

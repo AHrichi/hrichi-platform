@@ -5,6 +5,7 @@ import {
   input,
   linkedSignal,
   output,
+  signal,
 } from '@angular/core';
 import type { BlockOf } from '@ah/products/studylm/lessons';
 import { CHECK_STYLES, CheckFeedback, type CheckRecord } from './check-shared';
@@ -27,14 +28,34 @@ import { markPredict, markQuiz } from './marking';
       [disabled]="result() !== null"
     >
       @for (option of b.options; track $index) {
-        <label class="option">
-          <input
-            [type]="multiple() ? 'checkbox' : 'radio'"
-            [name]="b.id"
-            [checked]="chosen().includes($index)"
-            (change)="toggle($index)"
-          />
-          {{ option }}
+        @let isPicked = chosen().includes($index);
+        @let isRight = b.correct.includes($index);
+        @let evaluated = result() !== null || showingSolution();
+        <label
+          class="option"
+          [class.option-correct]="evaluated && isRight"
+          [class.option-wrong]="evaluated && isPicked && !isRight"
+        >
+          <div class="option-label-content">
+            <input
+              [type]="multiple() ? 'checkbox' : 'radio'"
+              [name]="b.id"
+              [checked]="isPicked"
+              (change)="toggle($index)"
+            />
+            <span class="option-text">{{ option }}</span>
+          </div>
+          @if (evaluated) {
+            @if (isRight) {
+              <span class="badge badge-correct" aria-label="Correct answer"
+                >✓ Correct</span
+              >
+            } @else if (isPicked) {
+              <span class="badge badge-wrong" aria-label="Your choice"
+                >✗ Your choice</span
+              >
+            }
+          }
         </label>
       }
     </fieldset>
@@ -53,8 +74,24 @@ import { markPredict, markQuiz } from './marking';
       <sl-check-feedback
         [correct]="result() === true"
         [explanation]="b.explanation"
+        (solutionToggled)="showingSolution.set($event)"
         (retry)="retry()"
-      />
+      >
+        <div solution class="solution-details">
+          <p class="solution-title">
+            <strong
+              >Correct Answer{{ b.correct.length > 1 ? 's' : '' }}:</strong
+            >
+          </p>
+          <ul class="solution-list">
+            @for (idx of b.correct; track idx) {
+              <li>
+                <strong>{{ b.options[idx] }}</strong>
+              </li>
+            }
+          </ul>
+        </div>
+      </sl-check-feedback>
     }
   `,
   styles: CHECK_STYLES,
@@ -71,6 +108,7 @@ export class QuizCheck {
   protected readonly result = linkedSignal<boolean | null>(
     () => this.saved()?.correct ?? null,
   );
+  protected readonly showingSolution = signal(false);
 
   protected toggle(index: number): void {
     this.chosen.update((chosen) =>
@@ -90,6 +128,7 @@ export class QuizCheck {
   }
 
   protected retry(): void {
+    this.showingSolution.set(false);
     this.result.set(null);
     this.chosen.set([]);
   }
@@ -113,14 +152,34 @@ export class QuizCheck {
         [disabled]="result() !== null"
       >
         @for (option of b.options; track $index) {
-          <label class="option">
-            <input
-              type="radio"
-              [name]="b.id"
-              [checked]="choice() === $index"
-              (change)="choice.set($index)"
-            />
-            {{ option }}
+          @let isPicked = choice() === $index;
+          @let isRight = b.answer === $index;
+          @let evaluated = result() !== null || showingSolution();
+          <label
+            class="option"
+            [class.option-correct]="evaluated && isRight"
+            [class.option-wrong]="evaluated && isPicked && !isRight"
+          >
+            <div class="option-label-content">
+              <input
+                type="radio"
+                [name]="b.id"
+                [checked]="isPicked"
+                (change)="choice.set($index)"
+              />
+              <span class="option-text">{{ option }}</span>
+            </div>
+            @if (evaluated) {
+              @if (isRight) {
+                <span class="badge badge-correct" aria-label="Correct answer"
+                  >✓ Correct</span
+                >
+              } @else if (isPicked) {
+                <span class="badge badge-wrong" aria-label="Your choice"
+                  >✗ Your choice</span
+                >
+              }
+            }
           </label>
         }
       </fieldset>
@@ -149,13 +208,20 @@ export class QuizCheck {
       <sl-check-feedback
         [correct]="result() === true"
         [explanation]="b.explanation"
+        (solutionToggled)="showingSolution.set($event)"
         (retry)="retry()"
       >
-        @if (!b.options && b.expected && result() === false) {
-          <p>
-            The answer: <strong>{{ b.expected }}</strong>
-          </p>
-        }
+        <div solution class="solution-details">
+          @if (b.options && b.answer !== null) {
+            <p class="solution-callout">
+              Correct prediction: <strong>{{ b.options[b.answer] }}</strong>
+            </p>
+          } @else if (!b.options && b.expected) {
+            <p class="solution-callout">
+              Expected answer: <strong>{{ b.expected }}</strong>
+            </p>
+          }
+        </div>
         @if (b.reveal) {
           <div class="actions">
             <button type="button" class="ghost" (click)="reveal.emit()">
@@ -185,6 +251,7 @@ export class PredictCheck {
   protected readonly result = linkedSignal<boolean | null>(
     () => this.saved()?.correct ?? null,
   );
+  protected readonly showingSolution = signal(false);
   protected readonly ready = computed(() =>
     this.block().options ? this.choice() !== null : this.text().trim() !== '',
   );
@@ -199,6 +266,7 @@ export class PredictCheck {
   }
 
   protected retry(): void {
+    this.showingSolution.set(false);
     this.result.set(null);
   }
 }

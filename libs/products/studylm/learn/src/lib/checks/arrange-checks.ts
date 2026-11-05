@@ -5,6 +5,7 @@ import {
   input,
   linkedSignal,
   output,
+  signal,
 } from '@angular/core';
 import type { BlockOf } from '@ah/products/studylm/lessons';
 import { CHECK_STYLES, CheckFeedback, type CheckRecord } from './check-shared';
@@ -26,8 +27,26 @@ import { markCategorize, markOrder, shuffled } from './marking';
         let first = $first;
         let last = $last
       ) {
-        <li class="row">
+        @let isCorrect = result() !== null && b.items[$index].id === item.id;
+        <li
+          class="row"
+          [class.row-correct]="result() !== null && isCorrect"
+          [class.row-wrong]="result() !== null && !isCorrect"
+        >
+          <span class="step-num">{{ $index + 1 }}.</span>
           <span class="text">{{ item.text }}</span>
+          @if (result() !== null) {
+            <span
+              class="badge"
+              [class.badge-correct]="isCorrect"
+              [class.badge-wrong]="!isCorrect"
+              [attr.aria-label]="
+                isCorrect ? 'Correct position' : 'Misplaced step'
+              "
+            >
+              {{ isCorrect ? '✓' : '✗' }}
+            </span>
+          }
           <button
             type="button"
             class="icon"
@@ -57,11 +76,30 @@ import { markCategorize, markOrder, shuffled } from './marking';
       <sl-check-feedback
         [correct]="result() === true"
         [explanation]="b.explanation"
-        (retry)="result.set(null)"
-      />
+        (solutionToggled)="showingSolution.set($event)"
+        (retry)="retry()"
+      >
+        <div solution class="solution-details">
+          <p class="solution-title"><strong>Correct Step Order:</strong></p>
+          <ol class="solution-list">
+            @for (item of b.items; track item.id) {
+              <li>{{ item.text }}</li>
+            }
+          </ol>
+        </div>
+      </sl-check-feedback>
     }
   `,
-  styles: CHECK_STYLES,
+  styles: [
+    CHECK_STYLES,
+    `
+      .step-num {
+        font-weight: var(--font-weight-bold);
+        color: var(--color-text-muted);
+        min-inline-size: 1.5rem;
+      }
+    `,
+  ],
 })
 export class OrderStepsCheck {
   readonly block = input.required<BlockOf<'order-steps'>>();
@@ -79,6 +117,7 @@ export class OrderStepsCheck {
   protected readonly result = linkedSignal<boolean | null>(
     () => this.saved()?.correct ?? null,
   );
+  protected readonly showingSolution = signal(false);
 
   protected move(index: number, by: number): void {
     this.items.update((items) => {
@@ -94,6 +133,11 @@ export class OrderStepsCheck {
     this.result.set(correct);
     this.answered.emit({ answer, correct });
   }
+
+  protected retry(): void {
+    this.showingSolution.set(false);
+    this.result.set(null);
+  }
 }
 
 /** Sort each item into a category. */
@@ -107,7 +151,14 @@ export class OrderStepsCheck {
     <p class="question">{{ b.prompt }}</p>
     <ul class="list">
       @for (item of items(); track item.id) {
-        <li class="row">
+        @let placedCat = placed()[item.id];
+        @let isEvaluated = result() !== null;
+        @let isRight = placedCat === item.category;
+        <li
+          class="row"
+          [class.row-correct]="isEvaluated && isRight"
+          [class.row-wrong]="isEvaluated && !isRight"
+        >
           <label class="text" [for]="b.id + '-' + item.id">{{
             item.text
           }}</label>
@@ -116,23 +167,27 @@ export class OrderStepsCheck {
             [disabled]="result() !== null"
             (change)="place(item.id, $any($event.target).value)"
           >
-            <option value="" [selected]="!placed()[item.id]">Choose…</option>
+            <option value="" [selected]="!placedCat">Choose category…</option>
             @for (category of b.categories; track category.id) {
               <option
                 [value]="category.id"
-                [selected]="placed()[item.id] === category.id"
+                [selected]="placedCat === category.id"
               >
                 {{ category.label }}
               </option>
             }
           </select>
-          @if (result() !== null) {
+          @if (isEvaluated) {
             <span
-              [attr.aria-label]="
-                placed()[item.id] === item.category ? 'right' : 'wrong'
-              "
+              class="badge"
+              [class.badge-correct]="isRight"
+              [class.badge-wrong]="!isRight"
             >
-              {{ placed()[item.id] === item.category ? '✓' : '✗' }}
+              @if (isRight) {
+                ✓ {{ categoryLabel(item.category) }}
+              } @else {
+                ✗ Belongs to: {{ categoryLabel(item.category) }}
+              }
             </span>
           }
         </li>
@@ -153,11 +208,53 @@ export class OrderStepsCheck {
       <sl-check-feedback
         [correct]="result() === true"
         [explanation]="b.explanation"
-        (retry)="result.set(null)"
-      />
+        (solutionToggled)="showingSolution.set($event)"
+        (retry)="retry()"
+      >
+        <div solution class="solution-details">
+          <p class="solution-title">
+            <strong>Correct Category Groupings:</strong>
+          </p>
+          <div class="category-groups-grid">
+            @for (cat of b.categories; track cat.id) {
+              <div class="category-card">
+                <p class="category-card-title">
+                  <strong>{{ cat.label }}:</strong>
+                </p>
+                <ul class="solution-list">
+                  @for (it of itemsForCategory(cat.id); track it.id) {
+                    <li>{{ it.text }}</li>
+                  }
+                </ul>
+              </div>
+            }
+          </div>
+        </div>
+      </sl-check-feedback>
     }
   `,
-  styles: CHECK_STYLES,
+  styles: [
+    CHECK_STYLES,
+    `
+      .category-groups-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+        gap: var(--space-3);
+        margin-top: var(--space-2);
+      }
+      .category-card {
+        padding: var(--space-2) var(--space-3);
+        border: 1px solid var(--color-border-subtle, rgba(0, 0, 0, 0.08));
+        border-radius: var(--radius-sm);
+        background: var(--color-bg-surface);
+      }
+      .category-card-title {
+        margin: 0 0 var(--space-1);
+        color: var(--color-accent-default);
+        font-size: var(--font-size-200);
+      }
+    `,
+  ],
 })
 export class CategorizeCheck {
   readonly block = input.required<BlockOf<'categorize'>>();
@@ -173,9 +270,18 @@ export class CategorizeCheck {
   protected readonly result = linkedSignal<boolean | null>(
     () => this.saved()?.correct ?? null,
   );
+  protected readonly showingSolution = signal(false);
   protected readonly complete = computed(() =>
     this.block().items.every((item) => this.placed()[item.id]),
   );
+
+  protected categoryLabel(catId: string): string {
+    return this.block().categories.find((c) => c.id === catId)?.label ?? catId;
+  }
+
+  protected itemsForCategory(catId: string): BlockOf<'categorize'>['items'] {
+    return this.block().items.filter((item) => item.category === catId);
+  }
 
   protected place(item: string, category: string): void {
     this.placed.update((placed) => ({ ...placed, [item]: category }));
@@ -186,5 +292,10 @@ export class CategorizeCheck {
     const correct = markCategorize(this.block(), answer);
     this.result.set(correct);
     this.answered.emit({ answer, correct });
+  }
+
+  protected retry(): void {
+    this.showingSolution.set(false);
+    this.result.set(null);
   }
 }

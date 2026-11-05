@@ -173,9 +173,32 @@ export class LessonGenerator {
     const checks = section.blocks
       .filter((b) => (CHECK_KINDS as readonly string[]).includes(b.kind))
       .map((b) => b.id);
-    const neighbours = section.blocks
-      .filter((b) => b.id !== planned.id)
-      .map((b) => b.brief);
+    const preceding: string[] = [];
+    for (const s of outline.sections) {
+      for (const b of s.blocks) {
+        if (b.id === planned.id) break;
+        if (s.id === section.id) {
+          preceding.push(
+            clip(
+              `Taught before this in this section (${b.kind}): ${b.brief}`,
+              240,
+            ),
+          );
+        } else {
+          preceding.push(
+            clip(`Taught in section "${s.title}" (${b.kind}): ${b.brief}`, 240),
+          );
+        }
+      }
+      if (s.id === section.id) break;
+    }
+    const context: string[] = preceding.slice(-6);
+    const following = section.blocks
+      .slice(section.blocks.findIndex((b) => b.id === planned.id) + 1)
+      .map((b) => clip(`Followed later by (${b.kind}): ${b.brief}`, 240));
+    for (const f of following) {
+      if (context.length < 8) context.push(f);
+    }
     let reply: GenerateResponse;
     try {
       reply = await this.call(
@@ -189,7 +212,7 @@ export class LessonGenerator {
           blockId: planned.id,
           brief: planned.brief,
           checks,
-          context: neighbours.slice(0, 8),
+          context,
         },
         signal,
         lane,

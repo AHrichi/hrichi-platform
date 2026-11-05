@@ -19,17 +19,17 @@
         {
           "id": "hook-text",
           "kind": "prose",
-          "markdown": "I am thinking of a number from 1 to 100. After each guess I say *higher* or *lower*. Guessing 1, 2, 3… could take 100 tries. Guessing **50** first throws away half the numbers at once, and halving every time, you never need more than **7** guesses.\n\nBinary search is that strategy, applied to a sorted array."
+          "markdown": "I am thinking of a number from 1 to 100. After each guess I say *higher* or *lower*. Guessing 1, 2, 3… could take 100 tries. Guessing **50** first throws away half the numbers at once, and halving every time, you never need more than **7** guesses.\n\nBinary search is that exact strategy applied to a sorted array: inspect the middle item, discard the half that cannot contain your target, and repeat."
         },
         {
           "id": "predict-steps",
           "kind": "predict",
-          "question": "How many comparisons does binary search need to find 9 in [1, 3, 5, 7, 9, 11, 13]?",
+          "question": "If binary search checks the middle item of the active range at each step, how many comparisons are needed to find 9 in [1, 3, 5, 7, 9, 11, 13]?",
           "options": ["2", "3", "4", "7"],
           "answer": 1,
           "expected": null,
           "reveal": { "block": "search-array", "step": null },
-          "explanation": "It checks 7 (too small), then 11 (too big), then 9: three comparisons. Scanning from the left would take five."
+          "explanation": "Step 1: Check middle element 7 (too small, discard left half, search [9, 11, 13]). Step 2: Check middle element 11 (too big, discard right half, search [9]). Step 3: Check middle element 9 (target found!). Exactly 3 comparisons versus 5 for a linear scan."
         }
       ]
     },

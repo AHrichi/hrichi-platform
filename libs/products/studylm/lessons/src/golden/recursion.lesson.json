@@ -19,17 +19,17 @@
         {
           "id": "hook-text",
           "kind": "prose",
-          "markdown": "A function that calls itself sounds like it should loop forever. It doesn't, as long as each call works on a **smaller** problem and one case, the **base case**, answers without calling again.\n\nEvery call waits for the one it made, so the computer keeps a stack of unfinished calls."
+          "markdown": "A function that calls itself sounds like it should loop forever. It doesn't, as long as each recursive step works on a **strictly smaller** sub-problem and terminates at a **base case**.\n\nWhen a function branches by calling itself more than once (such as `fib(n) = fib(n - 1) + fib(n - 2)`), the execution expands into a tree of calls where each non-base call spawns two new child calls."
         },
         {
           "id": "count-calls",
           "kind": "predict",
-          "question": "fib(n) returns fib(n - 1) + fib(n - 2), and fib(0) and fib(1) return n. How many calls does fib(4) make, counting the first?",
+          "question": "fib(n) returns fib(n - 1) + fib(n - 2), and base cases fib(0) and fib(1) return n. How many total calls does fib(4) make, counting the initial call?",
           "options": ["4", "5", "9", "16"],
           "answer": 2,
           "expected": null,
           "reveal": { "block": "fib-tree", "step": null },
-          "explanation": "fib(4) calls fib(3) and fib(2); fib(3) calls fib(2) and fib(1); each fib(2) calls fib(1) and fib(0). That is 1 + 2 + 4 + 2 = 9 calls, with fib(2) computed twice."
+          "explanation": "Call tree breakdown:\n- Level 0: fib(4) [1 call]\n- Level 1: fib(3), fib(2) [2 calls]\n- Level 2: fib(2), fib(1), fib(1), fib(0) [4 calls]\n- Level 3: fib(1), fib(0) [2 calls from fib(2)]\nTotal calls: 1 + 2 + 4 + 2 = 9 calls. Notice fib(2) is redundantly recomputed multiple times."
         }
       ]
     },

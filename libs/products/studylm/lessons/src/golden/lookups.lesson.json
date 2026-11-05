@@ -19,17 +19,17 @@
         {
           "id": "hook-text",
           "kind": "prose",
-          "markdown": "Checking whether a username is taken by scanning a list of a million names takes up to a million comparisons. A **hash table** jumps straight to the right place; a **balanced search tree** gets there in about 20 steps.\n\nBoth are everywhere: `Map`, `dict` and `HashMap` are hash tables; database indexes are trees."
+          "markdown": "Checking whether a username is taken by scanning a list of a million names takes up to a million comparisons.\n\nA **hash table** solves this by converting each key into a number (its hash code) and mapping that number into a fixed list of memory slots called **buckets** (e.g. using modulo arithmetic). A **balanced search tree** organizes keys hierarchically and finds items in about 20 steps.\n\nBoth are everywhere: `Map`, `dict` and `HashMap` are hash tables; database indexes are trees."
         },
         {
           "id": "anagram-guess",
           "kind": "predict",
-          "question": "With 5 buckets and a hash that adds up the character codes, do \"cat\" and \"act\" land in the same bucket?",
+          "question": "If a simple hash function calculates a word's bucket by adding up its letter codes and finding the remainder modulo 5, will anagrams like \"cat\" and \"act\" land in the same bucket?",
           "options": ["Yes", "No"],
           "answer": 0,
           "expected": null,
           "reveal": { "block": "hash-demo", "step": "insert-act" },
-          "explanation": "Both have the same letters, so the same sum: 312. 312 mod 5 is 2 for both. That's a collision."
+          "explanation": "Yes. Because anagrams have the exact same letters, their character code sums are identical (312). 312 mod 5 is 2 for both words. When two different keys land in the same bucket, it is called a hash collision."
         }
       ]
     },

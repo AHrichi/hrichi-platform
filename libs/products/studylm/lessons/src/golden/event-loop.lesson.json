@@ -19,7 +19,7 @@
         {
           "id": "hook-text",
           "kind": "prose",
-          "markdown": "A timer of **0 milliseconds** should fire right away. Yet in JavaScript it often fires after code written below it. The reason is the *event loop*: one thread, and two queues it drains in a strict order.\n\nBefore reading on, predict the output below."
+          "markdown": "A timer of **0 milliseconds** sounds like it should fire immediately. Yet in JavaScript it often fires after code written below it.\n\nHere is why: JavaScript executes all synchronous code first on its single call stack. When synchronous code finishes, it drains high-priority **microtasks** (like `Promise.then` callbacks). Only after microtasks are completely empty does it pull from the macrotask queue (like `setTimeout` timer callbacks).\n\nKeep that execution order in mind as you predict the output below."
         },
         {
           "id": "guess-output",
@@ -28,7 +28,7 @@
           "code": "console.log('A');\nsetTimeout(() => console.log('B'), 0);\nPromise.resolve().then(() => console.log('C'));\nconsole.log('D');",
           "mode": "execute",
           "expected": "A\nD\nC\nB",
-          "explanation": "A and D are synchronous and run first. The promise callback is a microtask, and microtasks run before the next task. The timer callback is a task, so B comes last."
+          "explanation": "1. Synchronous 'A' and 'D' run immediately on the call stack.\n2. When the stack clears, microtask 'C' (Promise.then callback) runs before any macrotasks.\n3. Finally, macrotask 'B' (setTimeout callback) runs from the task queue.\nFinal output: A, D, C, B."
         }
       ]
     },

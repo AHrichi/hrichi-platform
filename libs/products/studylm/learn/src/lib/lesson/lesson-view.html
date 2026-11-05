@@ -1,36 +1,101 @@
 @let l = lesson();
 <header class="intro">
-  <p class="meta">
-    <span class="tier">{{ l.tier }}</span>
-    <span>{{ l.minutes }} min</span>
+  <div class="meta-row">
+    <div class="meta-tags">
+      <span class="tier-badge">{{ l.tier }}</span>
+      <span class="time-badge">⏱ {{ l.minutes }} min</span>
+    </div>
     @if (score().total) {
-      <span>{{ score().answered }} of {{ score().total }} checks done</span>
+      <div class="header-check-score">
+        <span
+          >✓ {{ score().answered }}/{{ score().total }} checks completed</span
+        >
+      </div>
     }
-  </p>
+  </div>
+
   <h2>{{ l.title }}</h2>
-  <p class="label">By the end you can:</p>
-  <ul class="objectives">
-    @for (objective of l.objectives; track $index) {
-      <li>{{ objective }}</li>
-    }
-  </ul>
+
+  @if (score().total) {
+    <div
+      class="lesson-progress-card"
+      role="region"
+      aria-label="Checks progress"
+    >
+      <div class="progress-info-row">
+        <span class="progress-stats-label">
+          <strong>Interactive Learning Checks:</strong>
+          {{ score().answered }} of {{ score().total }} done
+          @if (score().right > 0) {
+            <span class="mastered-count">({{ score().right }} mastered)</span>
+          }
+        </span>
+        <span class="progress-percent-val">{{ progressPercent() }}%</span>
+      </div>
+      <div class="progress-track" aria-hidden="true">
+        <div
+          class="progress-bar-fill"
+          [style.width.%]="progressPercent()"
+        ></div>
+      </div>
+    </div>
+  }
+
+  <div class="objectives-card">
+    <p class="label">🎯 By the end of this lesson, you will be able to:</p>
+    <ul class="objectives">
+      @for (objective of l.objectives; track $index) {
+        <li>{{ objective }}</li>
+      }
+    </ul>
+  </div>
+
   <nav class="outline" aria-label="Sections">
     @for (section of l.sections; track section.id; let i = $index) {
-      <button type="button" (click)="scrollTo('section-' + section.id)">
-        {{ i + 1 }}. {{ section.title }}
+      @let stats = sectionCheckStats(section);
+      <button
+        type="button"
+        class="section-pill"
+        (click)="scrollTo('section-' + section.id)"
+      >
+        <span class="pill-num">{{ i + 1 }}</span>
+        <span class="pill-title">{{ section.title }}</span>
+        @if (stats.total > 0) {
+          <span
+            class="pill-checks"
+            [class.all-done]="stats.answered === stats.total"
+          >
+            {{ stats.answered }}/{{ stats.total }}
+          </span>
+        }
       </button>
     }
   </nav>
 </header>
 
 @for (section of l.sections; track section.id; let i = $index) {
+  @let stats = sectionCheckStats(section);
+  @let badge = intentBadge(section.intent);
   <section
     class="section"
     [id]="'section-' + section.id"
     [attr.aria-labelledby]="'title-' + section.id"
   >
-    <p class="intent">{{ section.intent }}</p>
-    <h3 [id]="'title-' + section.id">{{ i + 1 }}. {{ section.title }}</h3>
+    <div class="section-header">
+      <div class="section-meta-line">
+        <span class="intent-badge">
+          <span aria-hidden="true">{{ badge.icon }}</span>
+          {{ badge.label }}
+        </span>
+        @if (stats.total > 0) {
+          <span class="section-check-tag">
+            {{ stats.answered }}/{{ stats.total }} checks done
+          </span>
+        }
+      </div>
+      <h3 [id]="'title-' + section.id">{{ i + 1 }}. {{ section.title }}</h3>
+    </div>
+
     @for (block of section.blocks; track block.id) {
       <div class="block" [id]="'block-' + block.id">
         @switch (block.kind) {
@@ -164,18 +229,39 @@
 }
 
 <footer class="summary" aria-labelledby="summary-title">
-  <h3 id="summary-title">Wrap-up</h3>
+  <div class="summary-header">
+    <span class="summary-icon" aria-hidden="true">🎉</span>
+    <div>
+      <h3 id="summary-title">Lesson Wrap-up</h3>
+      <p class="summary-subtitle">
+        Review your performance and reinforce your retention.
+      </p>
+    </div>
+  </div>
+
   @if (score().total) {
-    <p>
-      You answered {{ score().answered }} of {{ score().total }} checks,
-      {{ score().right }} right the last time you tried them.
-    </p>
+    <div class="summary-score-box">
+      <p>
+        You answered
+        <strong>{{ score().answered }} of {{ score().total }}</strong> checks
+        (<strong>{{ score().right }}</strong> correct on your latest attempt).
+      </p>
+    </div>
   }
+
   @if (completedAt()) {
-    <p class="done" role="status">✓ Lesson complete.</p>
+    <div class="done-banner" role="status">
+      <span class="done-icon" aria-hidden="true">✓</span>
+      <div>
+        <p class="done-title">Lesson Completed!</p>
+        <p class="done-sub">
+          Your progress has been recorded on your study roadmap.
+        </p>
+      </div>
+    </div>
   } @else {
     <button type="button" class="primary" (click)="complete()">
-      Mark this lesson complete
+      Mark this lesson complete ✓
     </button>
   }
 </footer>
