@@ -30,25 +30,26 @@
         </div>
       </div>
 
-      <!-- Center / Right: Language Switcher -->
-      <div
-        class="lang-switcher"
-        role="radiogroup"
-        aria-label="Interface Language"
-      >
-        @for (lang of i18n.availableLanguages; track lang.code) {
-          <button
-            type="button"
-            role="radio"
-            class="lang-pill"
-            [class.is-active]="i18n.lang() === lang.code"
-            [attr.aria-checked]="i18n.lang() === lang.code"
-            (click)="selectLanguage(lang.code)"
+      <!-- Center / Right: Language Switcher (hidden when running inside portfolio shell) -->
+      @if (!isEmbedded) {
+        <div class="lang-select-wrapper">
+          <label for="autosphere-lang-select" class="visually-hidden"
+            >Interface Language</label
           >
-            {{ lang.label }}
-          </button>
-        }
-      </div>
+          <span class="lang-globe-icon" aria-hidden="true">🌐</span>
+          <select
+            id="autosphere-lang-select"
+            class="lang-select"
+            [value]="i18n.lang()"
+            (change)="onLanguageChange($event)"
+            aria-label="Interface Language"
+          >
+            @for (lang of i18n.availableLanguages; track lang.code) {
+              <option [value]="lang.code">{{ lang.label }}</option>
+            }
+          </select>
+        </div>
+      }
 
       <!-- Actions Toolbar -->
       <div class="brand-actions">
@@ -299,13 +300,14 @@
             </g>
           </svg>
 
-          <!-- Floating 3D Studio HUD Toolbar -->
-          <div class="stage-hud-overlay">
-            <!-- Studio Lighting Modes -->
+          <!-- 3D Studio Floating HUD Controls -->
+          <!-- Top Row: Studio Lighting Rig & Vehicle Action Toggles -->
+          <div class="stage-hud-top">
+            <!-- Studio Lighting Moods -->
             <div
-              class="hud-group"
+              class="hud-group lighting"
               role="group"
-              aria-label="Studio Lighting Mode"
+              aria-label="Studio Lighting Rig"
             >
               <button
                 type="button"
@@ -336,8 +338,53 @@
               </button>
             </div>
 
-            <!-- Camera Preset View Angles -->
-            <div class="hud-group" role="group" aria-label="Camera Presets">
+            <!-- Vehicle Feature Action Toggles -->
+            <div
+              class="hud-group controls"
+              role="group"
+              aria-label="Vehicle Dynamic Features"
+            >
+              <button
+                type="button"
+                class="hud-btn"
+                [class.is-active]="turntableSpin()"
+                (click)="toggleTurntable()"
+                title="Toggle 360° Studio Turntable Rotation"
+              >
+                {{
+                  turntableSpin()
+                    ? t().hud.turntableSpinning
+                    : t().hud.turntableSpinOff
+                }}
+              </button>
+              <button
+                type="button"
+                class="hud-btn"
+                [class.is-active]="doorsOpen()"
+                (click)="toggleDoors()"
+                title="Toggle Dihedral Canopy / Inspection Mode"
+              >
+                {{ doorsOpen() ? t().hud.doorsClose : t().hud.doorsOpen }}
+              </button>
+              <button
+                type="button"
+                class="hud-btn"
+                [class.is-active]="headlightsOn()"
+                (click)="toggleHeadlights()"
+                title="Toggle Matrix LED Headlights"
+              >
+                {{ headlightsOn() ? t().hud.lightsOn : t().hud.lightsOff }}
+              </button>
+            </div>
+          </div>
+
+          <!-- Bottom Row: Camera Preset Angles & Interaction Hint -->
+          <div class="stage-hud-bottom">
+            <div
+              class="hud-group camera-presets"
+              role="group"
+              aria-label="Camera Presets"
+            >
               <button
                 type="button"
                 class="hud-btn"
@@ -384,44 +431,8 @@
                 {{ t().hud.presetTop }}
               </button>
             </div>
-
-            <!-- Interactive Vehicle Feature Toggles -->
-            <div
-              class="hud-group toggles"
-              role="group"
-              aria-label="Vehicle Controls"
-            >
-              <button
-                type="button"
-                class="hud-btn"
-                [class.is-active]="turntableSpin()"
-                (click)="toggleTurntable()"
-                title="Toggle 360° Studio Turntable Rotation"
-              >
-                {{
-                  turntableSpin()
-                    ? t().hud.turntableSpinning
-                    : t().hud.turntableSpinOff
-                }}
-              </button>
-              <button
-                type="button"
-                class="hud-btn"
-                [class.is-active]="doorsOpen()"
-                (click)="toggleDoors()"
-                title="Toggle Dihedral Doors Open/Close"
-              >
-                {{ doorsOpen() ? t().hud.doorsClose : t().hud.doorsOpen }}
-              </button>
-              <button
-                type="button"
-                class="hud-btn"
-                [class.is-active]="headlightsOn()"
-                (click)="toggleHeadlights()"
-                title="Toggle Matrix LED Headlights"
-              >
-                {{ headlightsOn() ? t().hud.lightsOn : t().hud.lightsOff }}
-              </button>
+            <div class="interaction-hint" aria-hidden="true">
+              <span>👆 Orbit · 🔍 Zoom</span>
             </div>
           </div>
         </div>

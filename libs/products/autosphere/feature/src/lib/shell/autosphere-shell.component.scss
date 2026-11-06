@@ -4,7 +4,6 @@
   min-height: 100vh;
   background-color: var(--color-bg-canvas);
   color: var(--color-text-default);
-  padding-bottom: 96px; // Space for sticky bottom dock
   box-sizing: border-box;
 
   &[dir='rtl'] {
@@ -16,10 +15,6 @@
       margin-left: 0;
       margin-right: auto;
     }
-  }
-
-  @media (max-width: 640px) {
-    padding-bottom: 72px;
   }
 }
 
@@ -113,15 +108,15 @@
   }
 }
 
-// Language Switcher Component
-.lang-switcher {
+// Compact Standalone Language Selector
+.lang-select-wrapper {
   display: inline-flex;
   align-items: center;
+  gap: var(--space-1);
   background: var(--color-bg-raised);
   border: 1px solid var(--color-border-default);
   border-radius: var(--radius-full, 9999px);
-  padding: 2px;
-  gap: 2px;
+  padding: 2px 8px 2px 10px;
   flex-shrink: 0;
 
   @media (max-width: 640px) {
@@ -129,26 +124,24 @@
   }
 }
 
-.lang-pill {
+.lang-globe-icon {
+  font-size: 0.8125rem;
+  line-height: 1;
+  pointer-events: none;
+}
+
+.lang-select {
   border: none;
   background: transparent;
-  color: var(--color-text-muted);
-  font-size: 0.75rem;
+  color: var(--color-text-default);
+  font-size: 0.8125rem;
   font-weight: 600;
-  padding: 3px 8px;
-  border-radius: var(--radius-full, 9999px);
   cursor: pointer;
-  white-space: nowrap;
-  transition: all 0.15s ease;
+  padding: 2px 4px;
+  outline: none;
 
-  &.is-active {
-    background: var(--color-bg-surface);
-    color: var(--color-text-default);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
-    font-weight: 700;
-  }
-
-  &:hover:not(.is-active) {
+  option {
+    background-color: var(--color-bg-surface);
     color: var(--color-text-default);
   }
 }
@@ -377,48 +370,101 @@
   }
 }
 
-// Floating 3D Studio HUD
-.stage-hud-overlay {
+// Floating 3D Studio HUD - Organized 2-Tier Layout
+.stage-hud-top {
+  position: absolute;
+  top: var(--space-3);
+  left: var(--space-3);
+  right: var(--space-3);
+  z-index: 10;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-2);
+  pointer-events: none;
+
+  .hud-group {
+    pointer-events: auto;
+    background: rgba(15, 23, 42, 0.82);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: var(--radius-full, 9999px);
+    padding: 3px 6px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+  }
+
+  @media (max-width: 640px) {
+    top: var(--space-2);
+    left: var(--space-2);
+    right: var(--space-2);
+    flex-wrap: wrap;
+    gap: var(--space-1);
+
+    .hud-group {
+      padding: 2px 4px;
+    }
+  }
+}
+
+.stage-hud-bottom {
   position: absolute;
   bottom: var(--space-3);
   left: 50%;
   transform: translateX(-50%);
   z-index: 10;
   display: flex;
-  gap: var(--space-2);
-  background: rgba(15, 23, 42, 0.88);
-  backdrop-filter: blur(12px);
-  padding: 4px;
-  border-radius: var(--radius-full, 9999px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+  pointer-events: none;
   max-width: 95%;
-  overflow-x: auto;
-  scrollbar-width: none;
-  -webkit-overflow-scrolling: touch;
 
-  &::-webkit-scrollbar {
-    display: none;
+  .hud-group {
+    pointer-events: auto;
+    background: rgba(15, 23, 42, 0.88);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: var(--radius-full, 9999px);
+    padding: 4px 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    max-width: 100%;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
   }
 
-  @media (max-width: 768px) {
+  @media (max-width: 640px) {
     bottom: var(--space-2);
-    padding: 3px 6px;
-    gap: 4px;
+
+    .hud-group {
+      padding: 3px 6px;
+    }
+  }
+}
+
+.interaction-hint {
+  font-size: 0.6875rem;
+  color: rgba(255, 255, 255, 0.65);
+  background: rgba(0, 0, 0, 0.5);
+  padding: 2px 8px;
+  border-radius: var(--radius-full, 9999px);
+  backdrop-filter: blur(6px);
+  user-select: none;
+  white-space: nowrap;
+
+  @media (max-width: 640px) {
+    display: none; // Keep mobile canvas clean and uncluttered
   }
 }
 
 .hud-group {
   display: flex;
   align-items: center;
-  gap: 2px;
-  border-right: 1px solid rgba(255, 255, 255, 0.15);
-  padding-right: 4px;
-
-  &:last-child {
-    border-right: none;
-    padding-right: 0;
-  }
+  gap: 3px;
 }
 
 .hud-btn {
@@ -427,7 +473,7 @@
   color: #94a3b8;
   font-size: 0.75rem;
   font-weight: 500;
-  padding: 4px 10px;
+  padding: 4px 9px;
   border-radius: var(--radius-full, 9999px);
   cursor: pointer;
   white-space: nowrap;
@@ -435,18 +481,19 @@
 
   @media (max-width: 640px) {
     font-size: 0.6875rem;
-    padding: 3px 8px;
+    padding: 3px 7px;
   }
 
   &.is-active {
     background: #ffffff;
     color: #0f172a;
     font-weight: 700;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
   }
 
   &:hover:not(.is-active) {
     color: #ffffff;
-    background: rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.1);
   }
 }
 
@@ -1435,14 +1482,14 @@
 // Sticky Bottom Dock Bar
 // -------------------------------------------------------------
 .autosphere-dock-bar {
-  position: fixed;
+  position: sticky;
   bottom: 0;
   left: 0;
   right: 0;
   background: var(--color-bg-surface);
   border-top: 1px solid var(--color-border-default);
   box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.08);
-  z-index: 30;
+  z-index: 20;
   backdrop-filter: blur(12px);
 }
 

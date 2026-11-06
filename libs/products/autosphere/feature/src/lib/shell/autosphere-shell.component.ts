@@ -40,6 +40,7 @@ import {
   type LightingMode,
 } from '../three/autosphere-3d-scene';
 import { AutoSphereI18n, type AutoSphereLanguage } from '../i18n';
+import { APP_MODE } from '@ah/platform/app-mode';
 
 export type ConfiguratorTab =
   | 'trims'
@@ -70,6 +71,8 @@ export class AutoSphereShellComponent {
   protected readonly store = inject(AutoSphereStore);
   protected readonly i18n = inject(AutoSphereI18n);
   protected readonly t = this.i18n.t;
+  protected readonly isEmbedded =
+    inject(APP_MODE, { optional: true }) === 'embedded-demo';
   private readonly destroyRef = inject(DestroyRef);
 
   protected readonly activeTab = signal<ConfiguratorTab>('trims');
@@ -81,7 +84,9 @@ export class AutoSphereShellComponent {
   // Reference to 3D WebGL Canvas
   protected readonly webglCanvas =
     viewChild<ElementRef<HTMLCanvasElement>>('webglCanvas');
-  private scene3DController: AutoSphere3DController | null = null;
+  protected readonly scene3DController = signal<AutoSphere3DController | null>(
+    null,
+  );
 
   /** Models and configuration state from reactive store */
   protected readonly models = this.store.availableModels;
@@ -137,7 +142,7 @@ export class AutoSphereShellComponent {
 
       try {
         const canvas = canvasRef.nativeElement;
-        this.scene3DController = createAutoSphere3DScene(canvas, {
+        const ctrl = createAutoSphere3DScene(canvas, {
           modelSlug: this.activeModel().slug,
           colorHex: this.activeColor().hex,
           accentHex: this.activeColor().accentHex,
@@ -151,6 +156,7 @@ export class AutoSphereShellComponent {
           doorsOpen: this.doorsOpen(),
           headlightsOn: this.headlightsOn(),
         });
+        this.scene3DController.set(ctrl);
         this.webGlActive.set(true);
       } catch (e) {
         console.warn('AutoSphere WebGL initialization skipped:', e);
@@ -160,32 +166,43 @@ export class AutoSphereShellComponent {
 
     // Reactive effect synchronizing store signals with Three.js WebGL scene
     effect(() => {
-      if (!this.scene3DController) return;
+      const ctrl = this.scene3DController();
 
-      this.scene3DController.update({
-        modelSlug: this.activeModel().slug,
-        colorHex: this.activeColor().hex,
-        accentHex: this.activeColor().accentHex,
-        finish: this.activeColor().finish,
-        wheelStyle: this.activeWheel().style,
-        upholsteryHex: this.activeUpholstery().hex,
-        ambientLightHex: this.activeAmbientLight().hex,
-        lightingMode: this.lightingMode(),
-        cameraPreset: this.cameraPreset(),
-        turntableSpin: this.turntableSpin(),
-        doorsOpen: this.doorsOpen(),
-        headlightsOn: this.headlightsOn(),
+      // Read ALL signals unconditionally so Angular tracks every dependency!
+      const modelSlug = this.activeModel().slug;
+      const colorHex = this.activeColor().hex;
+      const accentHex = this.activeColor().accentHex;
+      const finish = this.activeColor().finish;
+      const wheelStyle = this.activeWheel().style;
+      const upholsteryHex = this.activeUpholstery().hex;
+      const ambientLightHex = this.activeAmbientLight().hex;
+      const lightingMode = this.lightingMode();
+      const cameraPreset = this.cameraPreset();
+      const turntableSpin = this.turntableSpin();
+      const doorsOpen = this.doorsOpen();
+      const headlightsOn = this.headlightsOn();
+
+      if (!ctrl) return;
+
+      ctrl.update({
+        modelSlug,
+        colorHex,
+        accentHex,
+        finish,
+        wheelStyle,
+        upholsteryHex,
+        ambientLightHex,
+        lightingMode,
+        cameraPreset,
+        turntableSpin,
+        doorsOpen,
+        headlightsOn,
       });
-    });
-
-    // Effect for camera preset lerping
-    effect(() => {
-      if (!this.scene3DController) return;
-      this.scene3DController.setCameraPreset(this.cameraPreset());
+      ctrl.setCameraPreset(cameraPreset);
     });
 
     this.destroyRef.onDestroy(() => {
-      this.scene3DController?.dispose();
+      this.scene3DController()?.dispose();
     });
   }
 
@@ -339,6 +356,13 @@ export class AutoSphereShellComponent {
 
   protected selectLanguage(lang: AutoSphereLanguage): void {
     this.i18n.setLanguage(lang);
+  }
+
+  protected onLanguageChange(event: Event): void {
+    const target = event.target as HTMLSelectElement;
+    if (target?.value) {
+      this.selectLanguage(target.value as AutoSphereLanguage);
+    }
   }
 
   protected formatCurrency(amount: number): string {
