@@ -199,6 +199,74 @@ export const AUTOSPHERE_MODELS: VehicleModel[] = [
         ],
       },
     ],
+    interiorUpholsteries: [
+      {
+        id: 'upholstery-nappa-black',
+        name: 'Obsidian Nappa Leather',
+        material: 'Nappa Leather',
+        hex: '#18181b',
+        priceDelta: 0,
+        description:
+          'Perforated full-grain Bavarian Nappa leather with micro-piping and heat ventilation.',
+      },
+      {
+        id: 'upholstery-alcantara-graphite',
+        name: 'Graphite Alcantara & Carmine Stitch',
+        material: 'Alcantara Sport',
+        hex: '#3f3f46',
+        priceDelta: 1600,
+        description:
+          'Ultra-durable lightweight synthetic suede with contrast crimson stitching for optimal grip.',
+      },
+      {
+        id: 'upholstery-nordic-white',
+        name: 'Nordic Glacier Eco-Weave',
+        material: 'Nordic Eco-Weave',
+        hex: '#f4f4f5',
+        priceDelta: 1200,
+        description:
+          'Breathable Scandinavian recycled wool-blend textile with hydrophobic nano-barrier.',
+      },
+      {
+        id: 'upholstery-tuscan-cognac',
+        name: 'Tuscan Cognac Saddle Leather',
+        material: 'Nappa Leather',
+        hex: '#9a3412',
+        priceDelta: 2200,
+        description:
+          'Hand-burnished semi-aniline heritage saddle leather with bespoke diamond quilting.',
+      },
+    ],
+    interiorTrims: [
+      {
+        id: 'trim-carbon',
+        name: 'Matte 3K Twill Carbon Fiber',
+        material: 'Carbon Fiber',
+        hex: '#27272a',
+        priceDelta: 1400,
+      },
+      {
+        id: 'trim-smoked-oak',
+        name: 'Open-Pore Smoked European Oak',
+        material: 'Smoked Oak',
+        hex: '#451a03',
+        priceDelta: 850,
+      },
+      {
+        id: 'trim-brushed-titanium',
+        name: 'Satin Brushed Aerospace Titanium',
+        material: 'Brushed Titanium',
+        hex: '#71717a',
+        priceDelta: 0,
+      },
+    ],
+    ambientLightingOptions: [
+      { id: 'ambient-cyan', name: 'Cyber Cyan 490nm', hex: '#06b6d4' },
+      { id: 'ambient-crimson', name: 'Apex Crimson Red', hex: '#f43f5e' },
+      { id: 'ambient-amber', name: 'Warm Sunset Amber', hex: '#f59e0b' },
+      { id: 'ambient-aurora', name: 'Nordic Aurora Emerald', hex: '#10b981' },
+      { id: 'ambient-violet', name: 'Ultra Violet Neon', hex: '#8b5cf6' },
+    ],
     technicalSpecs: [
       {
         title: 'Performance & Drive',
@@ -387,6 +455,47 @@ export const AUTOSPHERE_MODELS: VehicleModel[] = [
           '12V / 230V high-output cargo socket (3.6 kW vehicle-to-load output)',
         ],
       },
+    ],
+    interiorUpholsteries: [
+      {
+        id: 'upholstery-rugged-charcoal',
+        name: 'Ballistic Technical Fabric & Leather',
+        material: 'Vegan Ultra-Suede',
+        hex: '#27272a',
+        priceDelta: 0,
+        description:
+          'Heavy-duty water-repellent performance cabin textile designed for rugged outdoor use.',
+      },
+      {
+        id: 'upholstery-mojave-tan',
+        name: 'Mojave Desert Warm Saddle',
+        material: 'Nappa Leather',
+        hex: '#78350f',
+        priceDelta: 1800,
+        description:
+          'Treated dirt-resistant full leather with high-wear double stitching.',
+      },
+    ],
+    interiorTrims: [
+      {
+        id: 'trim-anodized-aluminum',
+        name: 'Machined Matte Anodized Aluminum',
+        material: 'Matte Aluminum',
+        hex: '#71717a',
+        priceDelta: 0,
+      },
+      {
+        id: 'trim-smoked-oak',
+        name: 'Dark Open-Pore Smoked Oak',
+        material: 'Smoked Oak',
+        hex: '#451a03',
+        priceDelta: 750,
+      },
+    ],
+    ambientLightingOptions: [
+      { id: 'ambient-amber', name: 'Warm Sunset Amber', hex: '#f59e0b' },
+      { id: 'ambient-cyan', name: 'Glacier Blue', hex: '#06b6d4' },
+      { id: 'ambient-aurora', name: 'Alpine Forest Green', hex: '#10b981' },
     ],
     technicalSpecs: [
       {

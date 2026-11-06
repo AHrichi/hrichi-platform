@@ -33,12 +33,36 @@ describe('AutoSphereCmsService', () => {
     expect(total).toBe(expected);
   });
 
-  it('computes accurate monthly leasing payments', () => {
+  it('computes accurate monthly leasing and loan payments', () => {
     const finance = service.calculateFinance(100000, 10, 48, 0.039);
     expect(finance.cashPrice).toBe(100000);
     expect(finance.downPayment).toBe(10000);
     expect(finance.termMonths).toBe(48);
     expect(finance.monthlyLease).toBeGreaterThan(500);
+    expect(finance.monthlyLoan).toBeGreaterThan(1500);
+    expect(finance.residualValue).toBe(45000);
+  });
+
+  it('accurately simulates range based on ambient temperature and driving speed', () => {
+    const model = service.getModelBySlug('gt-v')!;
+    const trim = model.trims[0]; // base trim
+    const wheel = model.wheels[0];
+
+    const standard = service.simulateRange(trim, wheel, 20, 'mixed');
+    const winterHighway = service.simulateRange(
+      trim,
+      wheel,
+      -10,
+      'highway',
+      true,
+    );
+
+    expect(standard.simulatedRangeKm).toBeGreaterThan(
+      winterHighway.simulatedRangeKm,
+    );
+    expect(winterHighway.temperatureImpactPercent).toBeLessThan(0);
+    expect(winterHighway.speedImpactPercent).toBeLessThan(0);
+    expect(standard.fastCharge10to80Min).toBeGreaterThan(10);
   });
 
   it('supports toggling Contentful preview mode', () => {

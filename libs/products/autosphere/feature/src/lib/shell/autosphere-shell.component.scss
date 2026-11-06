@@ -16,7 +16,7 @@
   background-color: var(--color-bg-surface);
   position: sticky;
   top: 0;
-  z-index: 20;
+  z-index: 25;
 }
 
 .autosphere-brand-bar {
@@ -153,20 +153,46 @@
   }
 }
 
+.header-utility-btns {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.utility-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 12px;
+  border-radius: var(--radius-sm, 6px);
+  border: 1px solid var(--color-border-default);
+  background: var(--color-bg-surface);
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  &:hover {
+    border-color: var(--color-border-strong);
+    color: var(--color-text-default);
+    background: var(--color-bg-raised);
+  }
+}
+
 // -------------------------------------------------------------
 // Main Responsive Grid Layout
 // -------------------------------------------------------------
 .autosphere-stage-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1.35fr) minmax(360px, 1fr);
+  grid-template-columns: minmax(0, 1.35fr) minmax(380px, 1fr);
   gap: var(--space-6);
   padding: var(--space-6);
-  max-width: 1600px;
+  max-width: 1640px;
   margin: 0 auto;
   width: 100%;
   box-sizing: border-box;
 
-  @media (max-width: 1080px) {
+  @media (max-width: 1120px) {
     grid-template-columns: 1fr;
     gap: var(--space-4);
     padding: var(--space-4);
@@ -178,7 +204,7 @@
 }
 
 // -------------------------------------------------------------
-// Visualizer Hero Section (Zero CLS Stage)
+// 3D WebGL & Zero-CLS Visualizer Section
 // -------------------------------------------------------------
 .visualizer-section {
   display: flex;
@@ -203,60 +229,124 @@
   position: relative;
   width: 100%;
   aspect-ratio: 16 / 9;
-  min-height: 280px;
+  min-height: 320px;
+  max-height: 600px;
   display: flex;
   align-items: center;
   justify-content: center;
   contain: layout size; // Web vitals optimization for zero CLS
+  overflow: hidden;
 
-  &[data-angle='blueprint'] {
-    background: radial-gradient(
-      ellipse at center,
-      rgba(14, 165, 233, 0.08) 0%,
-      rgba(15, 23, 42, 0.6) 100%
-    );
+  &[data-lighting='cyberpunk'] {
+    background: radial-gradient(circle at 50% 35%, #080d1a 0%, #030712 100%);
+  }
+
+  &[data-lighting='xray'] {
+    background: radial-gradient(circle at 50% 35%, #041226 0%, #020617 100%);
   }
 }
 
-.vehicle-svg {
+// Three.js 3D WebGL Canvas
+.webgl-canvas {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   display: block;
+  z-index: 2;
+  cursor: grab;
+  touch-action: none;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+
+  &.is-ready {
+    opacity: 1;
+  }
+
+  &:active {
+    cursor: grabbing;
+  }
 }
 
-.visualizer-angle-toolbar {
+// Zero-CLS SVG Fallback & Prerender Layer
+.fallback-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  z-index: 1;
+  transition: opacity 0.3s ease;
+
+  &.is-hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+}
+
+// Floating 3D Studio HUD
+.stage-hud-overlay {
   position: absolute;
   bottom: var(--space-3);
   left: 50%;
   transform: translateX(-50%);
+  z-index: 10;
   display: flex;
   gap: var(--space-2);
-  background: rgba(15, 23, 42, 0.75);
-  backdrop-filter: blur(8px);
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(12px);
   padding: 4px;
   border-radius: var(--radius-full, 9999px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+  max-width: 95%;
+  overflow-x: auto;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  @media (max-width: 768px) {
+    bottom: var(--space-2);
+    padding: 3px;
+  }
 }
 
-.angle-btn {
+.hud-group {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  border-right: 1px solid rgba(255, 255, 255, 0.15);
+  padding-right: 4px;
+
+  &:last-child {
+    border-right: none;
+    padding-right: 0;
+  }
+}
+
+.hud-btn {
   border: none;
   background: transparent;
   color: #94a3b8;
   font-size: 0.75rem;
   font-weight: 500;
-  padding: 4px 12px;
+  padding: 4px 10px;
   border-radius: var(--radius-full, 9999px);
   cursor: pointer;
+  white-space: nowrap;
   transition: all 0.15s ease;
 
   &.is-active {
     background: #ffffff;
     color: #0f172a;
-    font-weight: 600;
+    font-weight: 700;
   }
 
   &:hover:not(.is-active) {
     color: #ffffff;
+    background: rgba(255, 255, 255, 0.08);
   }
 }
 
@@ -326,9 +416,9 @@
   border: none;
   background: transparent;
   color: var(--color-text-muted);
-  font-size: 0.875rem;
+  font-size: 0.8125rem;
   font-weight: 600;
-  padding: var(--space-3) var(--space-4);
+  padding: var(--space-3) var(--space-3);
   white-space: nowrap;
   cursor: pointer;
   border-bottom: 2px solid transparent;
@@ -348,7 +438,7 @@
 .config-content-viewport {
   padding: var(--space-5);
   overflow-y: auto;
-  max-height: 580px;
+  max-height: 620px;
 
   @media (max-width: 640px) {
     padding: var(--space-4);
@@ -375,7 +465,22 @@
   }
 }
 
-// Powertrain / Trims Cards
+// Sub-sections for Interior
+.sub-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: var(--space-2);
+}
+
+.sub-title {
+  margin: 0;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--color-text-default);
+}
+
+// Trims Cards
 .trims-grid {
   display: flex;
   flex-direction: column;
@@ -556,6 +661,154 @@
   }
 }
 
+// Interior Upholstery Grid
+.upholstery-grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.upholstery-card {
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-md, 8px);
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-bg-canvas);
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  &.is-selected {
+    border-color: var(--color-crimson-500);
+    box-shadow: 0 0 0 2px var(--color-crimson-500);
+  }
+
+  &:hover:not(.is-selected) {
+    border-color: var(--color-border-strong);
+  }
+}
+
+.upholstery-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.upholstery-color-dot {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid #ffffff;
+  box-shadow: 0 0 0 1px var(--color-border-strong);
+  flex-shrink: 0;
+}
+
+.upholstery-info {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.upholstery-name {
+  font-size: 0.9375rem;
+  font-weight: 700;
+}
+
+.upholstery-mat {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+
+.upholstery-price {
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.upholstery-desc {
+  margin: var(--space-2) 0 0;
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+  line-height: 1.4;
+}
+
+// Interior Trim Inserts
+.trim-inserts-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-2);
+
+  @media (max-width: 640px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.trim-insert-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: var(--space-3);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-md, 8px);
+  background: var(--color-bg-canvas);
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  &.is-selected {
+    border-color: var(--color-crimson-500);
+    box-shadow: 0 0 0 2px var(--color-crimson-500);
+  }
+
+  .trim-swatch {
+    width: 100%;
+    height: 24px;
+    border-radius: 4px;
+    margin-bottom: var(--space-2);
+  }
+
+  .trim-label {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--color-text-default);
+    margin-bottom: 2px;
+  }
+
+  .trim-delta {
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+  }
+}
+
+// Ambient Lights Row
+.ambient-lights-row {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.ambient-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 6px 14px;
+  border-radius: var(--radius-full, 9999px);
+  border: 1px solid var(--color-border-default);
+  background: var(--color-bg-canvas);
+  color: var(--color-text-default);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  &.is-selected {
+    border-color: var(--color-crimson-500);
+    background: var(--color-bg-surface);
+  }
+
+  .glow-orb {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+  }
+}
+
 // Packages List
 .packages-list {
   display: flex;
@@ -647,6 +900,254 @@
   }
 }
 
+// -------------------------------------------------------------
+// Simulator & Finance Styles
+// -------------------------------------------------------------
+.sim-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-3);
+  margin-bottom: var(--space-2);
+
+  @media (max-width: 640px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.sim-card {
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-border-default);
+  background: var(--color-bg-canvas);
+  border-radius: var(--radius-md, 8px);
+
+  .sim-label {
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  .sim-val {
+    font-size: 1.25rem;
+    font-weight: 800;
+    margin: 4px 0 2px;
+
+    &.highlight {
+      color: var(--color-crimson-500);
+    }
+  }
+
+  .sim-sub {
+    font-size: 0.6875rem;
+    color: var(--color-text-muted);
+  }
+}
+
+.sim-control-box {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  background: var(--color-bg-canvas);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md, 8px);
+
+  &.inline-toggle {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+}
+
+.slider-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  label {
+    font-size: 0.8125rem;
+    font-weight: 600;
+  }
+
+  .slider-badge {
+    font-size: 0.8125rem;
+    font-weight: 700;
+    color: var(--color-crimson-500);
+  }
+}
+
+.sim-slider {
+  width: 100%;
+  accent-color: var(--color-crimson-500);
+  cursor: pointer;
+}
+
+.slider-ticks {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.6875rem;
+  color: var(--color-text-muted);
+}
+
+.speed-btns-row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.speed-btn {
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-sm, 6px);
+  background: var(--color-bg-surface);
+  color: var(--color-text-default);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  &.is-active {
+    border-color: var(--color-crimson-500);
+    background: var(--color-bg-raised);
+    font-weight: 700;
+  }
+}
+
+.hvac-toggle-btn {
+  padding: 6px 14px;
+  border-radius: var(--radius-full, 9999px);
+  border: 1px solid var(--color-border-default);
+  background: var(--color-bg-surface);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  &.is-active {
+    background: var(--color-crimson-500);
+    color: #ffffff;
+    border-color: var(--color-crimson-500);
+  }
+}
+
+// Finance Section
+.finance-type-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+
+.ft-tab {
+  padding: var(--space-2);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-sm, 6px);
+  background: var(--color-bg-canvas);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.15s ease;
+
+  &.is-active {
+    border-color: var(--color-crimson-500);
+    background: var(--color-bg-surface);
+    color: var(--color-crimson-500);
+  }
+}
+
+.finance-terms-selector {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+
+  .selector-label {
+    font-size: 0.8125rem;
+    font-weight: 600;
+  }
+
+  .term-btns {
+    display: flex;
+    gap: var(--space-2);
+  }
+
+  .term-btn {
+    padding: 4px 10px;
+    border: 1px solid var(--color-border-default);
+    border-radius: 6px;
+    background: var(--color-bg-canvas);
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+
+    &.is-active {
+      background: var(--color-crimson-500);
+      color: #ffffff;
+      border-color: var(--color-crimson-500);
+    }
+  }
+}
+
+.down-payment-box {
+  padding: var(--space-3);
+  background: var(--color-bg-canvas);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md, 8px);
+}
+
+.finance-statement-card {
+  padding: var(--space-4);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-md, 8px);
+  background: var(--color-bg-canvas);
+
+  .statement-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: var(--space-3);
+  }
+
+  .statement-eyebrow {
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+  }
+
+  .statement-big-rate {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--color-crimson-500);
+    margin-top: 2px;
+  }
+
+  .statement-rows {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    border-top: 1px solid var(--color-border-subtle);
+    padding-top: var(--space-3);
+  }
+
+  .st-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8125rem;
+    color: var(--color-text-muted);
+
+    &.highlight {
+      font-weight: 700;
+      color: var(--color-text-default);
+      font-size: 0.875rem;
+      border-top: 1px dashed var(--color-border-default);
+      padding-top: var(--space-2);
+    }
+  }
+}
+
 // Specs Accordion
 .specs-accordion-list {
   display: flex;
@@ -703,7 +1204,7 @@
   justify-content: space-between;
   gap: var(--space-4);
   padding: var(--space-3) var(--space-6);
-  max-width: 1600px;
+  max-width: 1640px;
   margin: 0 auto;
 
   @media (max-width: 640px) {

@@ -70,4 +70,30 @@ describe('AutoSphereShellComponent', () => {
     component['closeOrderModal']();
     expect(component['orderModalOpen']()).toBe(false);
   });
+
+  it('should support switching tabs and configuring interior', () => {
+    component['setTab']('interior');
+    expect(component['activeTab']()).toBe('interior');
+    expect(store.cameraPreset()).toBe('interior');
+
+    const upholstery = store.activeModel().interiorUpholsteries[1];
+    component['selectUpholstery'](upholstery);
+    expect(store.activeUpholstery().id).toBe(upholstery.id);
+  });
+
+  it('should simulate range under different temperatures and speeds', () => {
+    component['setTab']('simulator');
+    component['setTemperature'](-5);
+    component['setDrivingSpeedCycle']('highway');
+    fixture.detectChanges();
+
+    const sim = store.rangeSimulation();
+    expect(sim.simulatedRangeKm).toBeLessThan(store.effectiveRangeKm());
+  });
+
+  it('should export build specification json', () => {
+    const createElementSpy = vi.spyOn(document, 'createElement');
+    component['exportBuildJson']();
+    expect(createElementSpy).toHaveBeenCalledWith('a');
+  });
 });

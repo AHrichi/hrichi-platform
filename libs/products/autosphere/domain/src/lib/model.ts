@@ -90,6 +90,34 @@ export interface VehiclePackage {
   includedFeatures: string[];
 }
 
+export interface InteriorUpholstery {
+  id: string;
+  name: string;
+  material:
+    | 'Nappa Leather'
+    | 'Alcantara Sport'
+    | 'Nordic Eco-Weave'
+    | 'Vegan Ultra-Suede';
+  hex: string;
+  priceDelta: number;
+  description: string;
+}
+
+export interface InteriorTrim {
+  id: string;
+  name: string;
+  material:
+    'Carbon Fiber' | 'Smoked Oak' | 'Brushed Titanium' | 'Matte Aluminum';
+  hex: string;
+  priceDelta: number;
+}
+
+export interface AmbientLightingOption {
+  id: string;
+  name: string;
+  hex: string;
+}
+
 export interface TechnicalSpecItem {
   label: string;
   value: string;
@@ -114,6 +142,9 @@ export interface VehicleModel {
   colorways: VehicleColorway[];
   wheels: VehicleWheel[];
   packages: VehiclePackage[];
+  interiorUpholsteries: InteriorUpholstery[];
+  interiorTrims: InteriorTrim[];
+  ambientLightingOptions: AmbientLightingOption[];
   technicalSpecs: TechnicalSpecCategory[];
   editorialSummary: ContentfulRichTextDocument;
   seoDescription: string;
@@ -125,6 +156,9 @@ export interface ConfiguratorState {
   selectedTrimId: string;
   selectedColorId: string;
   selectedWheelId: string;
+  selectedUpholsteryId?: string;
+  selectedInteriorTrimId?: string;
+  selectedAmbientLightId?: string;
   selectedPackageIds: string[];
   isPreviewMode: boolean; // Contentful Live Draft Preview
 }
@@ -132,8 +166,21 @@ export interface ConfiguratorState {
 export interface FinanceSummary {
   cashPrice: number;
   downPayment: number;
-  termMonths: 36 | 48 | 60;
+  termMonths: 24 | 36 | 48 | 60;
   monthlyLease: number;
+  monthlyLoan: number;
   annualInterestRate: number;
+  residualValue: number;
+  totalCostOfOwnership: number;
   estimatedDeliveryWeeks: number;
+}
+
+export interface RangeSimulation {
+  simulatedRangeKm: number;
+  wltpBaseRangeKm: number;
+  consumptionKwhPer100Km: number;
+  temperatureImpactPercent: number;
+  speedImpactPercent: number;
+  fastCharge10to80Min: number;
+  rangeAdded10MinKm: number;
 }

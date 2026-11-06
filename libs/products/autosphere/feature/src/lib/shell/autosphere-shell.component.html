@@ -67,22 +67,54 @@
             </button>
           }
         </div>
+
+        <!-- Quick Share & Export Actions -->
+        <div class="header-utility-btns">
+          <button
+            type="button"
+            class="utility-btn"
+            (click)="copyShareUrl()"
+            title="Copy Configurator Deep-Link to Clipboard"
+          >
+            <span
+              >🔗
+              {{ copiedShareToast() ? 'Copied Link!' : 'Share Build' }}</span
+            >
+          </button>
+          <button
+            type="button"
+            class="utility-btn"
+            (click)="exportBuildJson()"
+            title="Export Machine-Readable Build Specification (JSON)"
+          >
+            <span>📥 Export JSON</span>
+          </button>
+        </div>
       </div>
     </div>
   </header>
 
   <!-- Main Showcase Grid -->
   <main class="autosphere-stage-layout">
-    <!-- Left Column: Zero-CLS Interactive 3D/2D Visualizer Stage -->
+    <!-- Left Column: Zero-CLS Interactive 3D WebGL / SVG Visualizer Stage -->
     <section class="visualizer-section" aria-label="Vehicle Visualizer">
       <div class="visualizer-stage-card">
         <!-- Visualizer Viewport: Strict 16:9 aspect ratio container -->
         <div
           class="visualizer-canvas-container"
-          [attr.data-angle]="viewAngle()"
+          [attr.data-lighting]="lightingMode()"
         >
+          <!-- Three.js 3D WebGL Canvas Layer -->
+          <canvas
+            #webglCanvas
+            class="webgl-canvas"
+            [class.is-ready]="webGlActive()"
+          ></canvas>
+
+          <!-- Zero-CLS Vector SVG Fallback & Prerender Layer -->
           <svg
-            class="vehicle-svg"
+            class="vehicle-svg fallback-svg"
+            [class.is-hidden]="webGlActive()"
             viewBox="0 0 960 540"
             preserveAspectRatio="xMidYMid meet"
             role="img"
@@ -94,7 +126,6 @@
             "
           >
             <defs>
-              <!-- Dynamic Paint Gradients derived from activeColor -->
               <linearGradient
                 id="bodyGradient"
                 x1="0%"
@@ -121,7 +152,6 @@
                 />
               </linearGradient>
 
-              <!-- Metallic Gloss Sheen Reflection -->
               <linearGradient
                 id="glossHighlight"
                 x1="0%"
@@ -134,7 +164,6 @@
                 <stop offset="100%" stop-color="#ffffff" stop-opacity="0" />
               </linearGradient>
 
-              <!-- Glass Cockpit Gradient -->
               <linearGradient
                 id="glassGradient"
                 x1="20%"
@@ -147,14 +176,12 @@
                 <stop offset="100%" stop-color="#0284c7" stop-opacity="0.4" />
               </linearGradient>
 
-              <!-- Wheel Rim Gradient -->
               <radialGradient id="wheelHubGradient" cx="50%" cy="50%" r="50%">
                 <stop offset="0%" stop-color="#475569" />
                 <stop offset="70%" stop-color="#0f172a" />
                 <stop offset="100%" stop-color="#020617" />
               </radialGradient>
 
-              <!-- Soft Ground Shadow -->
               <radialGradient id="groundShadow" cx="50%" cy="50%" r="50%">
                 <stop offset="0%" stop-color="#000000" stop-opacity="0.65" />
                 <stop offset="60%" stop-color="#000000" stop-opacity="0.3" />
@@ -162,7 +189,6 @@
               </radialGradient>
             </defs>
 
-            <!-- Background Studio Lighting Environment -->
             <rect width="960" height="540" fill="transparent" />
             <ellipse
               cx="480"
@@ -172,648 +198,211 @@
               fill="url(#groundShadow)"
             />
 
-            <!-- CAD Grid lines in Blueprint Mode -->
-            @if (viewAngle() === 'blueprint') {
-              <g
-                class="cad-grid"
-                stroke="rgba(56, 189, 248, 0.2)"
-                stroke-width="1"
-              >
-                @for (
-                  gridX of [100, 200, 300, 400, 500, 600, 700, 800];
-                  track gridX
-                ) {
-                  <line
-                    [attr.x1]="gridX"
-                    y1="60"
-                    [attr.x2]="gridX"
-                    y2="480"
-                    stroke-dasharray="4,4"
-                  />
-                }
-                @for (gridY of [120, 200, 280, 360, 440]; track gridY) {
-                  <line
-                    x1="60"
-                    [attr.y1]="gridY"
-                    x2="900"
-                    [attr.y2]="gridY"
-                    stroke-dasharray="4,4"
-                  />
-                }
-                <!-- Blueprint Dimension Annotations -->
-                <text
-                  x="480"
-                  y="90"
-                  fill="#38bdf8"
-                  font-size="12"
-                  font-family="monospace"
-                  text-anchor="middle"
-                >
-                  WHEELBASE: 2,990 mm | OVERALL LENGTH: 4,960 mm | Cd: 0.21
-                </text>
-                <text
-                  x="480"
-                  y="475"
-                  fill="#38bdf8"
-                  font-size="12"
-                  font-family="monospace"
-                  text-anchor="middle"
-                >
-                  800V ARCHITECTURE | CELL-TO-PACK STRUCTURAL BATTERY TRAY
-                </text>
-              </g>
-            }
-
-            <!-- ANGLE 1: THREE-QUARTERS PERSPECTIVE -->
-            @if (viewAngle() === 'three-quarters') {
-              <g id="car-three-quarters" class="vehicle-geometry">
-                <!-- Vehicle Main Sculpted Body -->
-                <path
-                  d="M120 370 C 130 310, 180 270, 270 260 L 390 220 C 470 160, 620 160, 730 220 L 860 270 C 895 285, 910 320, 900 370 C 880 400, 820 415, 760 415 L 240 415 C 170 415, 130 400, 120 370 Z"
-                  fill="url(#bodyGradient)"
-                  stroke="rgba(255,255,255,0.25)"
-                  stroke-width="1.5"
-                />
-
-                <!-- Dynamic Sheen Overlay -->
-                <path
-                  d="M 270 260 L 390 220 C 470 160, 620 160, 730 220 L 820 255 C 700 230, 520 225, 360 250 Z"
-                  fill="url(#glossHighlight)"
-                />
-
-                <!-- Aerodynamic Panoramic Greenhouse / Glass Canopy -->
-                <path
-                  d="M 370 230 C 440 170, 580 165, 710 220 C 670 250, 430 260, 370 230 Z"
-                  fill="url(#glassGradient)"
-                  stroke="#38bdf8"
-                  stroke-width="1.2"
-                />
-
-                <!-- Matrix LED Headlight Signature -->
-                <polygon
-                  points="135,325 190,320 230,335 155,345"
-                  fill="#f8fafc"
-                  opacity="0.95"
-                />
-                <line
-                  x1="135"
-                  y1="325"
-                  x2="230"
-                  y2="335"
-                  stroke="#38bdf8"
-                  stroke-width="3"
-                />
-
-                <!-- Front Aerodynamic Splitter / Air Dam -->
-                <path
-                  d="M 115 385 L 240 410 L 230 420 L 110 395 Z"
-                  fill="#0f172a"
-                />
-
-                <!-- Front Wheel Arch & Wheel Assembly -->
-                <ellipse cx="270" cy="385" rx="68" ry="68" fill="#090d16" />
-                <circle
-                  cx="270"
-                  cy="385"
-                  r="54"
-                  fill="url(#wheelHubGradient)"
-                  stroke="#64748b"
-                  stroke-width="3"
-                />
-                <!-- Dynamic Brake Caliper -->
-                <rect
-                  x="250"
-                  y="355"
-                  width="16"
-                  height="30"
-                  rx="3"
-                  fill="#e11d48"
-                />
-
-                <!-- Wheel Spokes (Dynamic style) -->
-                @if (activeWheel().style === 'Aero Efficiency') {
-                  <circle
-                    cx="270"
-                    cy="385"
-                    r="42"
-                    fill="#1e293b"
-                    opacity="0.9"
-                  />
-                  <line
-                    x1="270"
-                    y1="335"
-                    x2="270"
-                    y2="435"
-                    stroke="#94a3b8"
-                    stroke-width="6"
-                  />
-                  <line
-                    x1="220"
-                    y1="385"
-                    x2="320"
-                    y2="385"
-                    stroke="#94a3b8"
-                    stroke-width="6"
-                  />
-                } @else if (activeWheel().style === 'Sport Forged') {
-                  <line
-                    x1="270"
-                    y1="335"
-                    x2="270"
-                    y2="435"
-                    stroke="#cbd5e1"
-                    stroke-width="4"
-                  />
-                  <line
-                    x1="230"
-                    y1="350"
-                    x2="310"
-                    y2="420"
-                    stroke="#cbd5e1"
-                    stroke-width="4"
-                  />
-                  <line
-                    x1="230"
-                    y1="420"
-                    x2="310"
-                    y2="350"
-                    stroke="#cbd5e1"
-                    stroke-width="4"
-                  />
-                } @else {
-                  <polygon
-                    points="270,340 310,385 270,430 230,385"
-                    fill="none"
-                    stroke="#e2e8f0"
-                    stroke-width="5"
-                  />
-                  <circle cx="270" cy="385" r="18" fill="#e11d48" />
-                }
-
-                <!-- Rear Wheel Arch & Assembly -->
-                <ellipse cx="730" cy="385" rx="68" ry="68" fill="#090d16" />
-                <circle
-                  cx="730"
-                  cy="385"
-                  r="54"
-                  fill="url(#wheelHubGradient)"
-                  stroke="#64748b"
-                  stroke-width="3"
-                />
-                <rect
-                  x="710"
-                  y="355"
-                  width="16"
-                  height="30"
-                  rx="3"
-                  fill="#e11d48"
-                />
-
-                @if (activeWheel().style === 'Aero Efficiency') {
-                  <circle
-                    cx="730"
-                    cy="385"
-                    r="42"
-                    fill="#1e293b"
-                    opacity="0.9"
-                  />
-                  <line
-                    x1="730"
-                    y1="335"
-                    x2="730"
-                    y2="435"
-                    stroke="#94a3b8"
-                    stroke-width="6"
-                  />
-                  <line
-                    x1="680"
-                    y1="385"
-                    x2="780"
-                    y2="385"
-                    stroke="#94a3b8"
-                    stroke-width="6"
-                  />
-                } @else if (activeWheel().style === 'Sport Forged') {
-                  <line
-                    x1="730"
-                    y1="335"
-                    x2="730"
-                    y2="435"
-                    stroke="#cbd5e1"
-                    stroke-width="4"
-                  />
-                  <line
-                    x1="690"
-                    y1="350"
-                    x2="770"
-                    y2="420"
-                    stroke="#cbd5e1"
-                    stroke-width="4"
-                  />
-                  <line
-                    x1="690"
-                    y1="420"
-                    x2="770"
-                    y2="350"
-                    stroke="#cbd5e1"
-                    stroke-width="4"
-                  />
-                } @else {
-                  <polygon
-                    points="730,340 770,385 730,430 690,385"
-                    fill="none"
-                    stroke="#e2e8f0"
-                    stroke-width="5"
-                  />
-                  <circle cx="730" cy="385" r="18" fill="#e11d48" />
-                }
-
-                <!-- Aero Flush Door Handle Contour -->
-                <line
-                  x1="480"
-                  y1="300"
-                  x2="520"
-                  y2="297"
-                  stroke="rgba(255,255,255,0.4)"
-                  stroke-width="2"
-                />
-                <line
-                  x1="610"
-                  y1="298"
-                  x2="650"
-                  y2="295"
-                  stroke="rgba(255,255,255,0.4)"
-                  stroke-width="2"
-                />
-
-                <!-- Rear Cyber LED Light Bar -->
-                <line
-                  x1="860"
-                  y1="280"
-                  x2="890"
-                  y2="290"
-                  stroke="#ef4444"
-                  stroke-width="4"
-                  stroke-linecap="round"
-                />
-              </g>
-            }
-
-            <!-- ANGLE 2: SIDE VIEW PROFILE -->
-            @if (viewAngle() === 'side') {
-              <g id="car-side-view" class="vehicle-geometry">
-                <!-- Vehicle Side Body Silhouette -->
-                <path
-                  d="M 90 380 C 100 350, 130 330, 200 330 L 300 325 C 370 240, 480 200, 640 200 L 720 215 C 790 240, 840 290, 870 340 L 870 380 C 850 410, 800 415, 750 415 L 210 415 C 160 415, 110 410, 90 380 Z"
-                  fill="url(#bodyGradient)"
-                  stroke="rgba(255,255,255,0.3)"
-                  stroke-width="1.5"
-                />
-
-                <!-- Side Greenhouse / Window Glass -->
-                <path
-                  d="M 320 320 L 400 230 C 470 215, 610 215, 700 235 L 730 320 Z"
-                  fill="url(#glassGradient)"
-                  stroke="#38bdf8"
-                  stroke-width="1.2"
-                />
-
-                <!-- Pillar B separator -->
-                <line
-                  x1="510"
-                  y1="218"
-                  x2="510"
-                  y2="320"
-                  stroke="#090d16"
-                  stroke-width="6"
-                />
-
-                <!-- Sleek Digital Mirror Camera -->
-                <polygon points="380,270 360,265 365,275" fill="#0f172a" />
-
-                <!-- Front Wheel Assembly -->
-                <circle cx="230" cy="390" r="58" fill="#090d16" />
-                <circle
-                  cx="230"
-                  cy="390"
-                  r="46"
-                  fill="url(#wheelHubGradient)"
-                  stroke="#64748b"
-                  stroke-width="3"
-                />
-                <rect
-                  x="210"
-                  y="365"
-                  width="14"
-                  height="26"
-                  rx="3"
-                  fill="#e11d48"
-                />
-
-                @if (activeWheel().style === 'Aero Efficiency') {
-                  <circle
-                    cx="230"
-                    cy="390"
-                    r="36"
-                    fill="#1e293b"
-                    opacity="0.9"
-                  />
-                  <line
-                    x1="230"
-                    y1="345"
-                    x2="230"
-                    y2="435"
-                    stroke="#94a3b8"
-                    stroke-width="5"
-                  />
-                  <line
-                    x1="185"
-                    y1="390"
-                    x2="275"
-                    y2="390"
-                    stroke="#94a3b8"
-                    stroke-width="5"
-                  />
-                } @else if (activeWheel().style === 'Sport Forged') {
-                  <line
-                    x1="230"
-                    y1="345"
-                    x2="230"
-                    y2="435"
-                    stroke="#cbd5e1"
-                    stroke-width="3"
-                  />
-                  <line
-                    x1="195"
-                    y1="360"
-                    x2="265"
-                    y2="420"
-                    stroke="#cbd5e1"
-                    stroke-width="3"
-                  />
-                  <line
-                    x1="195"
-                    y1="420"
-                    x2="265"
-                    y2="360"
-                    stroke="#cbd5e1"
-                    stroke-width="3"
-                  />
-                } @else {
-                  <polygon
-                    points="230,350 265,390 230,430 195,390"
-                    fill="none"
-                    stroke="#e2e8f0"
-                    stroke-width="4"
-                  />
-                }
-
-                <!-- Rear Wheel Assembly -->
-                <circle cx="730" cy="390" r="58" fill="#090d16" />
-                <circle
-                  cx="730"
-                  cy="390"
-                  r="46"
-                  fill="url(#wheelHubGradient)"
-                  stroke="#64748b"
-                  stroke-width="3"
-                />
-                <rect
-                  x="710"
-                  y="365"
-                  width="14"
-                  height="26"
-                  rx="3"
-                  fill="#e11d48"
-                />
-
-                @if (activeWheel().style === 'Aero Efficiency') {
-                  <circle
-                    cx="730"
-                    cy="390"
-                    r="36"
-                    fill="#1e293b"
-                    opacity="0.9"
-                  />
-                  <line
-                    x1="730"
-                    y1="345"
-                    x2="730"
-                    y2="435"
-                    stroke="#94a3b8"
-                    stroke-width="5"
-                  />
-                  <line
-                    x1="685"
-                    y1="390"
-                    x2="775"
-                    y2="390"
-                    stroke="#94a3b8"
-                    stroke-width="5"
-                  />
-                } @else if (activeWheel().style === 'Sport Forged') {
-                  <line
-                    x1="730"
-                    y1="345"
-                    x2="730"
-                    y2="435"
-                    stroke="#cbd5e1"
-                    stroke-width="3"
-                  />
-                  <line
-                    x1="695"
-                    y1="360"
-                    x2="765"
-                    y2="420"
-                    stroke="#cbd5e1"
-                    stroke-width="3"
-                  />
-                  <line
-                    x1="695"
-                    y1="420"
-                    x2="765"
-                    y2="360"
-                    stroke="#cbd5e1"
-                    stroke-width="3"
-                  />
-                } @else {
-                  <polygon
-                    points="730,350 765,390 730,430 695,390"
-                    fill="none"
-                    stroke="#e2e8f0"
-                    stroke-width="4"
-                  />
-                }
-
-                <!-- Underfloor 800V Structural Battery Plate -->
-                <rect
-                  x="300"
-                  y="402"
-                  width="360"
-                  height="10"
-                  rx="3"
-                  fill="#0284c7"
-                  opacity="0.7"
-                />
-                <text
-                  x="480"
-                  y="411"
-                  fill="#ffffff"
-                  font-size="8"
-                  font-family="monospace"
-                  text-anchor="middle"
-                >
-                  800V BATTERY PACK ({{ activeTrim().batteryCapacityKwh }} kWh)
-                </text>
-              </g>
-            }
-
-            <!-- ANGLE 3: CAD BLUEPRINT MODE -->
-            @if (viewAngle() === 'blueprint') {
-              <g
-                id="car-blueprint"
-                class="vehicle-geometry"
-                stroke="#38bdf8"
+            <!-- Perspective Silhouette -->
+            <g id="car-three-quarters" class="vehicle-geometry">
+              <path
+                d="M120 370 C 130 310, 180 270, 270 260 L 390 220 C 470 160, 620 160, 730 220 L 860 270 C 895 285, 910 320, 900 370 C 880 400, 820 415, 760 415 L 240 415 C 170 415, 130 400, 120 370 Z"
+                fill="url(#bodyGradient)"
+                stroke="rgba(255,255,255,0.25)"
                 stroke-width="1.5"
-                fill="none"
-              >
-                <!-- Wireframe Outline -->
-                <path
-                  d="M 90 380 C 100 350, 130 330, 200 330 L 300 325 C 370 240, 480 200, 640 200 L 720 215 C 790 240, 840 290, 870 340 L 870 380 C 850 410, 800 415, 750 415 L 210 415 C 160 415, 110 410, 90 380 Z"
-                  stroke-dasharray="8,4"
-                />
-
-                <!-- Powertrain Motor Modules -->
-                <!-- Front Inverter + Drive Unit -->
-                <rect
-                  x="180"
-                  y="350"
-                  width="70"
-                  height="45"
-                  rx="4"
-                  fill="rgba(56, 189, 248, 0.2)"
-                  stroke="#38bdf8"
-                  stroke-width="2"
-                />
-                <text
-                  x="215"
-                  y="378"
-                  fill="#38bdf8"
-                  font-size="10"
-                  font-family="monospace"
-                  text-anchor="middle"
-                >
-                  FRONT MOTOR
-                </text>
-
-                <!-- Rear Dual Motor Unit -->
-                <rect
-                  x="680"
-                  y="340"
-                  width="85"
-                  height="55"
-                  rx="4"
-                  fill="rgba(56, 189, 248, 0.2)"
-                  stroke="#38bdf8"
-                  stroke-width="2"
-                />
-                <text
-                  x="722"
-                  y="372"
-                  fill="#38bdf8"
-                  font-size="10"
-                  font-family="monospace"
-                  text-anchor="middle"
-                >
-                  REAR MOTOR
-                </text>
-
-                <!-- Cell-to-Pack Tray -->
-                <rect
-                  x="270"
-                  y="375"
-                  width="390"
-                  height="35"
-                  rx="4"
-                  fill="rgba(14, 165, 233, 0.15)"
-                  stroke="#38bdf8"
-                  stroke-width="2"
-                />
-                @for (cell of [300, 360, 420, 480, 540, 600]; track cell) {
-                  <rect
-                    [attr.x]="cell"
-                    y="380"
-                    width="45"
-                    height="25"
-                    rx="2"
-                    fill="rgba(240, 253, 250, 0.2)"
-                    stroke="#0ea5e9"
-                    stroke-width="1"
-                  />
-                }
-
-                <!-- Dimension Arrow: Wheelbase -->
-                <line
-                  x1="230"
-                  y1="440"
-                  x2="730"
-                  y2="440"
-                  stroke="#38bdf8"
-                  stroke-width="1.5"
-                  marker-start="url(#dot)"
-                  marker-end="url(#dot)"
-                />
-                <text
-                  x="480"
-                  y="435"
-                  fill="#38bdf8"
-                  font-size="12"
-                  font-family="monospace"
-                  text-anchor="middle"
-                >
-                  ← 2,990 mm WHEELBASE →
-                </text>
-              </g>
-            }
+              />
+              <path
+                d="M 270 260 L 390 220 C 470 160, 620 160, 730 220 L 820 255 C 700 230, 520 225, 360 250 Z"
+                fill="url(#glossHighlight)"
+              />
+              <path
+                d="M 370 230 C 440 170, 580 165, 710 220 C 670 250, 430 260, 370 230 Z"
+                fill="url(#glassGradient)"
+                stroke="#38bdf8"
+                stroke-width="1.2"
+              />
+              <polygon
+                points="135,325 190,320 230,335 155,345"
+                fill="#f8fafc"
+                opacity="0.95"
+              />
+              <line
+                x1="135"
+                y1="325"
+                x2="230"
+                y2="335"
+                stroke="#38bdf8"
+                stroke-width="3"
+              />
+              <path
+                d="M 115 385 L 240 410 L 230 420 L 110 395 Z"
+                fill="#0f172a"
+              />
+              <ellipse cx="270" cy="385" rx="68" ry="68" fill="#090d16" />
+              <circle
+                cx="270"
+                cy="385"
+                r="54"
+                fill="url(#wheelHubGradient)"
+                stroke="#64748b"
+                stroke-width="3"
+              />
+              <rect
+                x="250"
+                y="355"
+                width="16"
+                height="30"
+                rx="3"
+                fill="#e11d48"
+              />
+              <ellipse cx="730" cy="385" rx="68" ry="68" fill="#090d16" />
+              <circle
+                cx="730"
+                cy="385"
+                r="54"
+                fill="url(#wheelHubGradient)"
+                stroke="#64748b"
+                stroke-width="3"
+              />
+              <rect
+                x="710"
+                y="355"
+                width="16"
+                height="30"
+                rx="3"
+                fill="#e11d48"
+              />
+              <line
+                x1="860"
+                y1="280"
+                x2="890"
+                y2="290"
+                stroke="#ef4444"
+                stroke-width="4"
+                stroke-linecap="round"
+              />
+            </g>
           </svg>
 
-          <!-- Floating Angle Switcher Controls -->
-          <div
-            class="visualizer-angle-toolbar"
-            role="toolbar"
-            aria-label="Visualizer Camera Angle"
-          >
-            <button
-              type="button"
-              class="angle-btn"
-              [class.is-active]="viewAngle() === 'three-quarters'"
-              (click)="setViewAngle('three-quarters')"
-              title="3/4 Dynamic Angle"
+          <!-- Floating 3D Studio HUD Toolbar -->
+          <div class="stage-hud-overlay">
+            <!-- Studio Lighting Modes -->
+            <div
+              class="hud-group"
+              role="group"
+              aria-label="Studio Lighting Mode"
             >
-              Perspective
-            </button>
-            <button
-              type="button"
-              class="angle-btn"
-              [class.is-active]="viewAngle() === 'side'"
-              (click)="setViewAngle('side')"
-              title="Side Aero Profile"
+              <button
+                type="button"
+                class="hud-btn"
+                [class.is-active]="lightingMode() === 'daylight'"
+                (click)="setLightingMode('daylight')"
+                title="Studio Daylight Lighting (Clean High-Key)"
+              >
+                ☀️ Day
+              </button>
+              <button
+                type="button"
+                class="hud-btn"
+                [class.is-active]="lightingMode() === 'cyberpunk'"
+                (click)="setLightingMode('cyberpunk')"
+                title="Cyber Neon Night (Cyan & Magenta Glow)"
+              >
+                🌌 Cyber
+              </button>
+              <button
+                type="button"
+                class="hud-btn"
+                [class.is-active]="lightingMode() === 'xray'"
+                (click)="setLightingMode('xray')"
+                title="CAD Engineering X-Ray (Chassis & Battery Pack)"
+              >
+                🔬 X-Ray
+              </button>
+            </div>
+
+            <!-- Camera Preset View Angles -->
+            <div class="hud-group" role="group" aria-label="Camera Presets">
+              <button
+                type="button"
+                class="hud-btn"
+                [class.is-active]="cameraPreset() === 'three-quarters'"
+                (click)="setCameraPreset('three-quarters')"
+                title="Front 3/4 Dynamic Angle"
+              >
+                3/4 Dynamic
+              </button>
+              <button
+                type="button"
+                class="hud-btn"
+                [class.is-active]="cameraPreset() === 'side'"
+                (click)="setCameraPreset('side')"
+                title="Side Aerodynamic Profile"
+              >
+                Side Profile
+              </button>
+              <button
+                type="button"
+                class="hud-btn"
+                [class.is-active]="cameraPreset() === 'interior'"
+                (click)="setCameraPreset('interior')"
+                title="Driver Cockpit Interior View"
+              >
+                Cockpit
+              </button>
+              <button
+                type="button"
+                class="hud-btn"
+                [class.is-active]="cameraPreset() === 'wheels'"
+                (click)="setCameraPreset('wheels')"
+                title="Wheel & Brake Rotor Close-Up"
+              >
+                Wheels
+              </button>
+              <button
+                type="button"
+                class="hud-btn"
+                [class.is-active]="cameraPreset() === 'top'"
+                (click)="setCameraPreset('top')"
+                title="Top Aerodynamic Flow"
+              >
+                Top Flow
+              </button>
+            </div>
+
+            <!-- Interactive Vehicle Feature Toggles -->
+            <div
+              class="hud-group toggles"
+              role="group"
+              aria-label="Vehicle Controls"
             >
-              Side Profile
-            </button>
-            <button
-              type="button"
-              class="angle-btn"
-              [class.is-active]="viewAngle() === 'blueprint'"
-              (click)="setViewAngle('blueprint')"
-              title="CAD Engineering Blueprint"
-            >
-              CAD Blueprint
-            </button>
+              <button
+                type="button"
+                class="hud-btn"
+                [class.is-active]="turntableSpin()"
+                (click)="toggleTurntable()"
+                title="Toggle 360° Studio Turntable Rotation"
+              >
+                🔄 {{ turntableSpin() ? 'Spinning' : 'Spin: Off' }}
+              </button>
+              <button
+                type="button"
+                class="hud-btn"
+                [class.is-active]="doorsOpen()"
+                (click)="toggleDoors()"
+                title="Toggle Dihedral Doors Open/Close"
+              >
+                🚪 {{ doorsOpen() ? 'Close Door' : 'Open Door' }}
+              </button>
+              <button
+                type="button"
+                class="hud-btn"
+                [class.is-active]="headlightsOn()"
+                (click)="toggleHeadlights()"
+                title="Toggle Matrix LED Headlights"
+              >
+                💡 {{ headlightsOn() ? 'Lights On' : 'Lights Off' }}
+              </button>
+            </div>
           </div>
         </div>
 
-        <!-- Quick Dynamic Performance Indicators -->
+        <!-- Quick Dynamic Performance Indicators Strip -->
         <div class="visualizer-metrics-strip">
           <div class="metric-item">
             <span class="metric-label">0–100 km/h</span>
@@ -822,7 +411,7 @@
             >
           </div>
           <div class="metric-item">
-            <span class="metric-label">Effective WLTP Range</span>
+            <span class="metric-label">Effective WLTP</span>
             <span class="metric-val">{{ effectiveRange() }} km</span>
           </div>
           <div class="metric-item">
@@ -835,14 +424,16 @@
             >
           </div>
           <div class="metric-item">
-            <span class="metric-label">800V DC Fast Charge</span>
-            <span class="metric-val">10–80% in 18 min</span>
+            <span class="metric-label">800V DC Charge</span>
+            <span class="metric-val"
+              >10–80% in {{ rangeSimulation().fastCharge10to80Min }} min</span
+            >
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Right Column: Interactive Configurator Studio -->
+    <!-- Right Column: Full Interactive Configurator Studio -->
     <section
       class="configurator-section"
       aria-label="Vehicle Customization Studio"
@@ -871,7 +462,7 @@
           [attr.aria-selected]="activeTab() === 'color'"
           (click)="setTab('color')"
         >
-          2. Exterior Color
+          2. Paint Finish
         </button>
         <button
           type="button"
@@ -881,7 +472,17 @@
           [attr.aria-selected]="activeTab() === 'wheels'"
           (click)="setTab('wheels')"
         >
-          3. Wheels
+          3. Wheels & Aero
+        </button>
+        <button
+          type="button"
+          role="tab"
+          class="tab-btn"
+          [class.is-active]="activeTab() === 'interior'"
+          [attr.aria-selected]="activeTab() === 'interior'"
+          (click)="setTab('interior')"
+        >
+          4. Interior Cabin
         </button>
         <button
           type="button"
@@ -891,7 +492,27 @@
           [attr.aria-selected]="activeTab() === 'packages'"
           (click)="setTab('packages')"
         >
-          4. Packages
+          5. Packages
+        </button>
+        <button
+          type="button"
+          role="tab"
+          class="tab-btn"
+          [class.is-active]="activeTab() === 'simulator'"
+          [attr.aria-selected]="activeTab() === 'simulator'"
+          (click)="setTab('simulator')"
+        >
+          6. Range & 800V
+        </button>
+        <button
+          type="button"
+          role="tab"
+          class="tab-btn"
+          [class.is-active]="activeTab() === 'finance'"
+          [attr.aria-selected]="activeTab() === 'finance'"
+          (click)="setTab('finance')"
+        >
+          7. Finance
         </button>
         <button
           type="button"
@@ -901,11 +522,11 @@
           [attr.aria-selected]="activeTab() === 'specs'"
           (click)="setTab('specs')"
         >
-          5. Tech Specs
+          8. Tech Specs
         </button>
       </nav>
 
-      <!-- Tab Content Area -->
+      <!-- Tab Content Viewport -->
       <div class="config-content-viewport">
         <!-- TAB 1: POWERTRAIN / TRIMS -->
         @if (activeTab() === 'trims') {
@@ -973,7 +594,6 @@
               </p>
             </div>
 
-            <!-- Active Color Title & Finish -->
             <div class="selected-color-info">
               <span class="color-name">{{ activeColor().name }}</span>
               <ah-tag size="sm" tone="info">{{
@@ -983,7 +603,6 @@
             </div>
             <p class="color-description">{{ activeColor().description }}</p>
 
-            <!-- Design System Component: AhColorSwatch -->
             <div class="swatch-container">
               <ah-color-swatch
                 [items]="colorSwatchItems()"
@@ -1042,7 +661,108 @@
           </div>
         }
 
-        <!-- TAB 4: PACKAGES & AUTONOMOUS OPTIONS -->
+        <!-- TAB 4: INTERIOR CABIN & UPHOLSTERY STUDIO -->
+        @if (activeTab() === 'interior') {
+          <div class="tab-panel interior-panel" role="tabpanel">
+            <div class="panel-header">
+              <h2>Interior Upholstery & Bespoke Cabin Trim</h2>
+              <p>
+                Ergonomic sports seating, sustainable textiles, and configurable
+                ambient cabin lighting.
+              </p>
+            </div>
+
+            <!-- Upholstery Selection -->
+            <div class="sub-section">
+              <h3 class="sub-title">1. Seating & Upholstery Material</h3>
+              <div class="upholstery-grid">
+                @for (u of activeModel().interiorUpholsteries; track u.id) {
+                  <div
+                    class="upholstery-card"
+                    [class.is-selected]="u.id === activeUpholstery().id"
+                    (click)="selectUpholstery(u)"
+                    role="button"
+                    tabindex="0"
+                  >
+                    <div class="upholstery-header">
+                      <div
+                        class="upholstery-color-dot"
+                        [style.background-color]="u.hex"
+                      ></div>
+                      <div class="upholstery-info">
+                        <span class="upholstery-name">{{ u.name }}</span>
+                        <span class="upholstery-mat">{{ u.material }}</span>
+                      </div>
+                      <span class="upholstery-price">
+                        {{
+                          u.priceDelta === 0
+                            ? 'Included'
+                            : '+' + formatCurrency(u.priceDelta)
+                        }}
+                      </span>
+                    </div>
+                    <p class="upholstery-desc">{{ u.description }}</p>
+                  </div>
+                }
+              </div>
+            </div>
+
+            <!-- Interior Trim Inserts -->
+            <div class="sub-section">
+              <h3 class="sub-title">2. Dashboard & Center Console Trim</h3>
+              <div class="trim-inserts-grid">
+                @for (t of activeModel().interiorTrims; track t.id) {
+                  <button
+                    type="button"
+                    class="trim-insert-btn"
+                    [class.is-selected]="t.id === activeInteriorTrim().id"
+                    (click)="selectInteriorTrim(t)"
+                  >
+                    <span
+                      class="trim-swatch"
+                      [style.background-color]="t.hex"
+                    ></span>
+                    <span class="trim-label">{{ t.name }}</span>
+                    <span class="trim-delta">
+                      {{
+                        t.priceDelta === 0
+                          ? 'Included'
+                          : '+' + formatCurrency(t.priceDelta)
+                      }}
+                    </span>
+                  </button>
+                }
+              </div>
+            </div>
+
+            <!-- Ambient Cabin Lighting -->
+            <div class="sub-section">
+              <h3 class="sub-title">3. Active Ambient Interior Lighting</h3>
+              <div class="ambient-lights-row">
+                @for (
+                  light of activeModel().ambientLightingOptions;
+                  track light.id
+                ) {
+                  <button
+                    type="button"
+                    class="ambient-pill"
+                    [class.is-selected]="light.id === activeAmbientLight().id"
+                    (click)="selectAmbientLight(light)"
+                  >
+                    <span
+                      class="glow-orb"
+                      [style.background-color]="light.hex"
+                      [style.box-shadow]="'0 0 8px ' + light.hex"
+                    ></span>
+                    <span>{{ light.name }}</span>
+                  </button>
+                }
+              </div>
+            </div>
+          </div>
+        }
+
+        <!-- TAB 5: PACKAGES & AUTONOMOUS OPTIONS -->
         @if (activeTab() === 'packages') {
           <div class="tab-panel packages-panel" role="tabpanel">
             <div class="panel-header">
@@ -1095,7 +815,275 @@
           </div>
         }
 
-        <!-- TAB 5: TECHNICAL SPECIFICATIONS & ARCHITECTURE -->
+        <!-- TAB 6: REAL-WORLD RANGE & 800V CHARGING SIMULATOR -->
+        @if (activeTab() === 'simulator') {
+          <div class="tab-panel simulator-panel" role="tabpanel">
+            <div class="panel-header">
+              <h2>Real-World Range & 800V DC Charging Simulator</h2>
+              <p>
+                Simulate how temperature, driving style, and HVAC climate
+                control affect real battery range.
+              </p>
+            </div>
+
+            <!-- Range Comparison Cards -->
+            <div class="sim-metrics-grid">
+              <div class="sim-card">
+                <span class="sim-label">Simulated Real-World Range</span>
+                <span class="sim-val highlight"
+                  >{{ rangeSimulation().simulatedRangeKm }} km</span
+                >
+                <span class="sim-sub"
+                  >vs. {{ rangeSimulation().wltpBaseRangeKm }} km WLTP
+                  cert</span
+                >
+              </div>
+              <div class="sim-card">
+                <span class="sim-label">Expected Consumption</span>
+                <span class="sim-val"
+                  >{{ rangeSimulation().consumptionKwhPer100Km }} kWh/100
+                  km</span
+                >
+                <span class="sim-sub">Active Aerodynamic Drag</span>
+              </div>
+              <div class="sim-card">
+                <span class="sim-label">800V Fast Charge (10% → 80%)</span>
+                <span class="sim-val"
+                  >{{ rangeSimulation().fastCharge10to80Min }} min</span
+                >
+                <span class="sim-sub">At 320 kW Peak DC Station</span>
+              </div>
+              <div class="sim-card">
+                <span class="sim-label">Range Added in 10 Min</span>
+                <span class="sim-val"
+                  >+{{ rangeSimulation().rangeAdded10MinKm }} km</span
+                >
+                <span class="sim-sub">Ultra-fast HPC highway charging</span>
+              </div>
+            </div>
+
+            <!-- Temperature Slider -->
+            <div class="sim-control-box">
+              <div class="slider-header">
+                <label for="tempRange">Ambient Outside Temperature</label>
+                <span class="slider-badge"
+                  >{{ ambientTemperatureC() }}°C ({{
+                    ambientTemperatureC() < 5
+                      ? '❄️ Cold'
+                      : ambientTemperatureC() > 25
+                        ? '☀️ Hot'
+                        : '🌱 Mild'
+                  }})</span
+                >
+              </div>
+              <input
+                id="tempRange"
+                type="range"
+                min="-15"
+                max="40"
+                step="1"
+                [value]="ambientTemperatureC()"
+                (input)="setTemperature(+$any($event.target).value)"
+                class="sim-slider"
+              />
+              <div class="slider-ticks">
+                <span>-15°C (Winter)</span>
+                <span>0°C</span>
+                <span>20°C (Optimal)</span>
+                <span>40°C (Desert)</span>
+              </div>
+            </div>
+
+            <!-- Driving Speed Cycle -->
+            <div class="sim-control-box">
+              <span class="control-label"
+                >Driving Environment & Speed Cycle</span
+              >
+              <div class="speed-btns-row">
+                <button
+                  type="button"
+                  class="speed-btn"
+                  [class.is-active]="drivingSpeedCycle() === 'city'"
+                  (click)="setDrivingSpeedCycle('city')"
+                >
+                  🏙️ City (50 km/h) · High Regen (+12%)
+                </button>
+                <button
+                  type="button"
+                  class="speed-btn"
+                  [class.is-active]="drivingSpeedCycle() === 'mixed'"
+                  (click)="setDrivingSpeedCycle('mixed')"
+                >
+                  🛣️ Mixed / Suburban (90 km/h) · Standard
+                </button>
+                <button
+                  type="button"
+                  class="speed-btn"
+                  [class.is-active]="drivingSpeedCycle() === 'highway'"
+                  (click)="setDrivingSpeedCycle('highway')"
+                >
+                  ⚡ Autobahn / Highway (130 km/h) · Aero Drag (-22%)
+                </button>
+              </div>
+            </div>
+
+            <!-- Climate HVAC Toggle -->
+            <div class="sim-control-box inline-toggle">
+              <div>
+                <span class="control-label"
+                  >Cabin Climate Control & Seat Heating</span
+                >
+                <p class="control-sub">
+                  Simulates heat pump and PTC auxiliary heating load
+                </p>
+              </div>
+              <button
+                type="button"
+                class="hvac-toggle-btn"
+                [class.is-active]="hvacActive()"
+                (click)="toggleHvac()"
+              >
+                {{ hvacActive() ? 'AC / Heating: ON' : 'AC / Heating: OFF' }}
+              </button>
+            </div>
+          </div>
+        }
+
+        <!-- TAB 7: FINANCE & OWNERSHIP CALCULATOR -->
+        @if (activeTab() === 'finance') {
+          <div class="tab-panel finance-panel" role="tabpanel">
+            <div class="panel-header">
+              <h2>Financing, Leasing & Total Cost of Ownership</h2>
+              <p>
+                Transparent monthly amortization breakdown with residual value
+                guarantees.
+              </p>
+            </div>
+
+            <!-- Finance Type Switcher -->
+            <div class="finance-type-tabs">
+              <button
+                type="button"
+                class="ft-tab"
+                [class.is-active]="financeType() === 'lease'"
+                (click)="setFinanceType('lease')"
+              >
+                Operational Leasing
+              </button>
+              <button
+                type="button"
+                class="ft-tab"
+                [class.is-active]="financeType() === 'loan'"
+                (click)="setFinanceType('loan')"
+              >
+                Balloon Auto Loan
+              </button>
+              <button
+                type="button"
+                class="ft-tab"
+                [class.is-active]="financeType() === 'cash'"
+                (click)="setFinanceType('cash')"
+              >
+                Cash Purchase
+              </button>
+            </div>
+
+            <!-- Term Duration Buttons -->
+            @if (financeType() !== 'cash') {
+              <div class="finance-terms-selector">
+                <span class="selector-label">Term Duration:</span>
+                <div class="term-btns">
+                  @for (term of [24, 36, 48, 60]; track term) {
+                    <button
+                      type="button"
+                      class="term-btn"
+                      [class.is-active]="leaseTermMonths() === term"
+                      (click)="setLeaseTerm($any(term))"
+                    >
+                      {{ term }} Months
+                    </button>
+                  }
+                </div>
+              </div>
+
+              <!-- Down Payment Slider -->
+              <div class="down-payment-box">
+                <div class="slider-header">
+                  <label for="downPay">Down Payment Percentage</label>
+                  <span class="slider-badge">
+                    {{ downPaymentPercent() }}% ({{
+                      formatCurrency(finance().downPayment)
+                    }})
+                  </span>
+                </div>
+                <input
+                  id="downPay"
+                  type="range"
+                  min="0"
+                  max="35"
+                  step="5"
+                  [value]="downPaymentPercent()"
+                  (input)="setDownPayment(+$any($event.target).value)"
+                  class="sim-slider"
+                />
+              </div>
+            }
+
+            <!-- Financial Summary Breakdown Card -->
+            <div class="finance-statement-card">
+              <div class="statement-header">
+                <div>
+                  <span class="statement-eyebrow">
+                    {{
+                      financeType() === 'lease'
+                        ? 'Monthly Leasing Rate'
+                        : financeType() === 'loan'
+                          ? 'Monthly Loan Payment'
+                          : 'Outright Cash Price'
+                    }}
+                  </span>
+                  <div class="statement-big-rate">
+                    {{
+                      financeType() === 'lease'
+                        ? formatCurrency(finance().monthlyLease) + ' / mo'
+                        : financeType() === 'loan'
+                          ? formatCurrency(finance().monthlyLoan) + ' / mo'
+                          : formatCurrency(totalPrice())
+                    }}
+                  </div>
+                </div>
+                <ah-tag size="sm" tone="success">
+                  {{ finance().annualInterestRate }}% APR Guaranteed
+                </ah-tag>
+              </div>
+
+              <div class="statement-rows">
+                <div class="st-row">
+                  <span>Vehicle Net List Price:</span>
+                  <span>{{ formatCurrency(totalPrice()) }}</span>
+                </div>
+                @if (financeType() !== 'cash') {
+                  <div class="st-row">
+                    <span>Down Payment ({{ downPaymentPercent() }}%):</span>
+                    <span>{{ formatCurrency(finance().downPayment) }}</span>
+                  </div>
+                  <div class="st-row">
+                    <span>Guaranteed Residual Value (GAV):</span>
+                    <span>{{ formatCurrency(finance().residualValue) }}</span>
+                  </div>
+                  <div class="st-row highlight">
+                    <span>Total Cost of Ownership (TCO):</span>
+                    <span>{{
+                      formatCurrency(finance().totalCostOfOwnership)
+                    }}</span>
+                  </div>
+                }
+              </div>
+            </div>
+          </div>
+        }
+
+        <!-- TAB 8: TECHNICAL SPECIFICATIONS & ARCHITECTURE -->
         @if (activeTab() === 'specs') {
           <div class="tab-panel specs-panel" role="tabpanel">
             <div class="panel-header">
@@ -1138,17 +1126,32 @@
         </div>
 
         <div class="dock-lease-col">
-          <span class="dock-eyebrow"
-            >Estimated Monthly Lease ({{ finance().termMonths }} mo)</span
-          >
-          <span class="dock-lease"
-            >{{ formatCurrency(finance().monthlyLease) }} / mo</span
-          >
+          <span class="dock-eyebrow">
+            {{
+              financeType() === 'lease'
+                ? 'Leasing (' + leaseTermMonths() + ' mo)'
+                : financeType() === 'loan'
+                  ? 'Loan (' + leaseTermMonths() + ' mo)'
+                  : 'Outright Cash'
+            }}
+          </span>
+          <span class="dock-lease">
+            {{
+              financeType() === 'lease'
+                ? formatCurrency(finance().monthlyLease) + ' / mo'
+                : financeType() === 'loan'
+                  ? formatCurrency(finance().monthlyLoan) + ' / mo'
+                  : formatCurrency(totalPrice())
+            }}
+          </span>
         </div>
 
         <div class="dock-range-col">
-          <span class="dock-eyebrow">WLTP Range</span>
-          <span class="dock-range">{{ effectiveRange() }} km</span>
+          <span class="dock-eyebrow">WLTP / Real-World</span>
+          <span class="dock-range"
+            >{{ effectiveRange() }} /
+            {{ rangeSimulation().simulatedRangeKm }} km</span
+          >
         </div>
       </div>
 
@@ -1176,7 +1179,7 @@
 
           <div class="build-specs-grid">
             <div class="spec-tile">
-              <span class="tile-label">Exterior Color</span>
+              <span class="tile-label">Exterior Paint</span>
               <span class="tile-val"
                 >{{ activeColor().name }} ({{
                   activeColor().finish | titlecase
@@ -1184,8 +1187,24 @@
               >
             </div>
             <div class="spec-tile">
-              <span class="tile-label">Wheels</span>
+              <span class="tile-label">Wheels & Tires</span>
               <span class="tile-val">{{ activeWheel().name }}</span>
+            </div>
+            <div class="spec-tile">
+              <span class="tile-label">Interior Upholstery</span>
+              <span class="tile-val">{{ activeUpholstery().name }}</span>
+            </div>
+            <div class="spec-tile">
+              <span class="tile-label">Cabin Trim Insert</span>
+              <span class="tile-val">{{ activeInteriorTrim().name }}</span>
+            </div>
+            <div class="spec-tile">
+              <span class="tile-label">Simulated Range</span>
+              <span class="tile-val"
+                >{{ rangeSimulation().simulatedRangeKm }} km ({{
+                  ambientTemperatureC()
+                }}°C)</span
+              >
             </div>
             <div class="spec-tile">
               <span class="tile-label">Estimated Delivery</span>
@@ -1193,15 +1212,11 @@
                 >{{ activeModel().deliveryEstimateWeeks }} Weeks</span
               >
             </div>
-            <div class="spec-tile">
-              <span class="tile-label">WLTP Range</span>
-              <span class="tile-val">{{ effectiveRange() }} km</span>
-            </div>
           </div>
 
           @if (activePackages().length > 0) {
             <div class="selected-packages-summary">
-              <h4>Installed Packages:</h4>
+              <h4>Installed Option Packages:</h4>
               <ul>
                 @for (p of activePackages(); track p.id) {
                   <li>{{ p.name }} (+{{ formatCurrency(p.priceDelta) }})</li>
@@ -1211,7 +1226,7 @@
           }
 
           <div class="finance-breakdown">
-            <h4>Finance Terms</h4>
+            <h4>Finance Terms ({{ financeType() | uppercase }})</h4>
             <div class="finance-row">
               <span>Down Payment ({{ downPaymentPercent() }}%)</span>
               <span>{{ formatCurrency(finance().downPayment) }}</span>
@@ -1222,7 +1237,16 @@
             </div>
             <div class="finance-row total">
               <span>Monthly Rate</span>
-              <span>{{ formatCurrency(finance().monthlyLease) }} / mo</span>
+              <span
+                >{{
+                  formatCurrency(
+                    financeType() === 'lease'
+                      ? finance().monthlyLease
+                      : finance().monthlyLoan
+                  )
+                }}
+                / mo</span
+              >
             </div>
           </div>
         </div>

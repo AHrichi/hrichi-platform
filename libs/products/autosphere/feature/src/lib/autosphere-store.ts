@@ -1,15 +1,22 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import {
   AutoSphereCmsService,
+  type AmbientLightingOption,
   type FinanceSummary,
+  type InteriorTrim,
+  type InteriorUpholstery,
+  type RangeSimulation,
   type VehicleColorway,
   type VehicleModel,
   type VehiclePackage,
   type VehicleTrim,
   type VehicleWheel,
 } from '@ah/products/autosphere/domain';
+import type { CameraPreset, LightingMode } from './three/autosphere-3d-scene';
 
 export type ViewAngle = 'side' | 'three-quarters' | 'blueprint';
+export type FinanceType = 'lease' | 'loan' | 'cash';
+export type DrivingSpeedCycle = 'city' | 'mixed' | 'highway';
 
 @Injectable({
   providedIn: 'root',
@@ -20,14 +27,35 @@ export class AutoSphereStore {
   readonly availableModels = this.cms.availableModels;
   readonly isPreviewMode = this.cms.isPreviewMode;
 
+  // Selected vehicle attributes
   readonly selectedModelSlug = signal<string>('gt-v');
   readonly selectedTrimId = signal<string>('performance-awd');
   readonly selectedColorId = signal<string>('monaco');
   readonly selectedWheelId = signal<string>('wheel-20');
+  readonly selectedUpholsteryId = signal<string>('upholstery-nappa-black');
+  readonly selectedInteriorTrimId = signal<string>('trim-carbon');
+  readonly selectedAmbientLightId = signal<string>('ambient-cyan');
   readonly selectedPackageIds = signal<Set<string>>(new Set(['pilot-pack']));
+
+  // 3D Viewport & Studio Settings
   readonly viewAngle = signal<ViewAngle>('three-quarters');
-  readonly leaseTermMonths = signal<36 | 48 | 60>(48);
+  readonly cameraPreset = signal<CameraPreset>('three-quarters');
+  readonly lightingMode = signal<LightingMode>('daylight');
+  readonly turntableSpin = signal<boolean>(true);
+  readonly doorsOpen = signal<boolean>(false);
+  readonly headlightsOn = signal<boolean>(true);
+  readonly webGlEnabled = signal<boolean>(true);
+
+  // Financial Configuration
+  readonly financeType = signal<FinanceType>('lease');
+  readonly leaseTermMonths = signal<24 | 36 | 48 | 60>(48);
   readonly downPaymentPercent = signal<number>(10);
+  readonly downPaymentAmount = signal<number>(10000);
+
+  // Range Simulation Parameters
+  readonly ambientTemperatureC = signal<number>(20);
+  readonly drivingSpeedCycle = signal<DrivingSpeedCycle>('mixed');
+  readonly hvacActive = signal<boolean>(true);
 
   /** Active vehicle model resolved from CMS */
   readonly activeModel = computed<VehicleModel>(() => {
@@ -57,6 +85,35 @@ export class AutoSphereStore {
     return model.wheels.find((w) => w.id === wheelId) ?? model.wheels[0];
   });
 
+  /** Active interior upholstery */
+  readonly activeUpholstery = computed<InteriorUpholstery>(() => {
+    const model = this.activeModel();
+    const id = this.selectedUpholsteryId();
+    return (
+      model.interiorUpholsteries.find((u) => u.id === id) ??
+      model.interiorUpholsteries[0]
+    );
+  });
+
+  /** Active interior trim insert */
+  readonly activeInteriorTrim = computed<InteriorTrim>(() => {
+    const model = this.activeModel();
+    const id = this.selectedInteriorTrimId();
+    return (
+      model.interiorTrims.find((t) => t.id === id) ?? model.interiorTrims[0]
+    );
+  });
+
+  /** Active ambient cabin lighting */
+  readonly activeAmbientLight = computed<AmbientLightingOption>(() => {
+    const model = this.activeModel();
+    const id = this.selectedAmbientLightId();
+    return (
+      model.ambientLightingOptions.find((a) => a.id === id) ??
+      model.ambientLightingOptions[0]
+    );
+  });
+
   /** Active optional equipment packages */
   readonly activePackages = computed<VehiclePackage[]>(() => {
     const model = this.activeModel();
@@ -72,6 +129,8 @@ export class AutoSphereStore {
       this.activeColor(),
       this.activeWheel(),
       this.activePackages(),
+      this.activeUpholstery(),
+      this.activeInteriorTrim(),
     );
   });
 
@@ -80,6 +139,17 @@ export class AutoSphereStore {
     const trimRange = this.activeTrim().wltpRangeKm;
     const wheelImpact = this.activeWheel().rangeImpactKm;
     return Math.max(100, trimRange + wheelImpact);
+  });
+
+  /** Real-world simulated range based on temperature & speed cycle */
+  readonly rangeSimulation = computed<RangeSimulation>(() => {
+    return this.cms.simulateRange(
+      this.activeTrim(),
+      this.activeWheel(),
+      this.ambientTemperatureC(),
+      this.drivingSpeedCycle(),
+      this.hvacActive(),
+    );
   });
 
   /** Computed financial calculations */
@@ -91,6 +161,18 @@ export class AutoSphereStore {
     );
   });
 
+  /** Serialized shareable deep-link URL */
+  readonly shareableUrl = computed<string>(() => {
+    const params = new URLSearchParams({
+      model: this.selectedModelSlug(),
+      trim: this.selectedTrimId(),
+      color: this.selectedColorId(),
+      wheel: this.selectedWheelId(),
+      upholstery: this.selectedUpholsteryId(),
+    });
+    return `/apps/autosphere?${params.toString()}`;
+  });
+
   selectModel(slug: string): void {
     const model = this.cms.getModelBySlug(slug);
     if (!model) return;
@@ -99,6 +181,9 @@ export class AutoSphereStore {
     this.selectedTrimId.set(model.trims[0].id);
     this.selectedColorId.set(model.colorways[0].id);
     this.selectedWheelId.set(model.wheels[0].id);
+    this.selectedUpholsteryId.set(model.interiorUpholsteries[0]?.id ?? '');
+    this.selectedInteriorTrimId.set(model.interiorTrims[0]?.id ?? '');
+    this.selectedAmbientLightId.set(model.ambientLightingOptions[0]?.id ?? '');
     this.selectedPackageIds.set(new Set());
   }
 
@@ -114,6 +199,18 @@ export class AutoSphereStore {
     this.selectedWheelId.set(wheelId);
   }
 
+  selectUpholstery(upholsteryId: string): void {
+    this.selectedUpholsteryId.set(upholsteryId);
+  }
+
+  selectInteriorTrim(trimId: string): void {
+    this.selectedInteriorTrimId.set(trimId);
+  }
+
+  selectAmbientLight(lightId: string): void {
+    this.selectedAmbientLightId.set(lightId);
+  }
+
   togglePackage(packageId: string): void {
     const current = new Set(this.selectedPackageIds());
     if (current.has(packageId)) {
@@ -126,14 +223,58 @@ export class AutoSphereStore {
 
   setViewAngle(angle: ViewAngle): void {
     this.viewAngle.set(angle);
+    if (angle === 'blueprint') {
+      this.lightingMode.set('xray');
+      this.cameraPreset.set('side');
+    } else if (angle === 'side') {
+      this.cameraPreset.set('side');
+    } else {
+      this.cameraPreset.set('three-quarters');
+    }
   }
 
-  setLeaseTerm(months: 36 | 48 | 60): void {
+  setCameraPreset(preset: CameraPreset): void {
+    this.cameraPreset.set(preset);
+  }
+
+  setLightingMode(mode: LightingMode): void {
+    this.lightingMode.set(mode);
+  }
+
+  toggleTurntable(): void {
+    this.turntableSpin.set(!this.turntableSpin());
+  }
+
+  toggleDoors(): void {
+    this.doorsOpen.set(!this.doorsOpen());
+  }
+
+  toggleHeadlights(): void {
+    this.headlightsOn.set(!this.headlightsOn());
+  }
+
+  setFinanceType(type: FinanceType): void {
+    this.financeType.set(type);
+  }
+
+  setLeaseTerm(months: 24 | 36 | 48 | 60): void {
     this.leaseTermMonths.set(months);
   }
 
   setDownPayment(percent: number): void {
     this.downPaymentPercent.set(percent);
+  }
+
+  setTemperature(tempC: number): void {
+    this.ambientTemperatureC.set(tempC);
+  }
+
+  setDrivingSpeedCycle(cycle: DrivingSpeedCycle): void {
+    this.drivingSpeedCycle.set(cycle);
+  }
+
+  toggleHvac(): void {
+    this.hvacActive.set(!this.hvacActive());
   }
 
   togglePreviewMode(): void {

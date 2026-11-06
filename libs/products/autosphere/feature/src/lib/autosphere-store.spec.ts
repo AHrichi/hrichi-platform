@@ -36,4 +36,25 @@ describe('AutoSphereStore', () => {
     store.togglePackage('pilot-pack');
     expect(store.selectedPackageIds().has('pilot-pack')).toBe(false);
   });
+
+  it('selects interior upholstery and recalculates total price', () => {
+    const initialPrice = store.totalPrice();
+    store.selectUpholstery('upholstery-alcantara-graphite');
+    expect(store.activeUpholstery().id).toBe('upholstery-alcantara-graphite');
+    expect(store.totalPrice()).toBeGreaterThan(initialPrice);
+  });
+
+  it('computes range simulation and 3D controls', () => {
+    const sim = store.rangeSimulation();
+    expect(sim.simulatedRangeKm).toBeGreaterThan(200);
+
+    store.setLightingMode('cyberpunk');
+    expect(store.lightingMode()).toBe('cyberpunk');
+
+    store.toggleDoors();
+    expect(store.doorsOpen()).toBe(true);
+
+    store.toggleTurntable();
+    expect(store.turntableSpin()).toBe(false);
+  });
 });
