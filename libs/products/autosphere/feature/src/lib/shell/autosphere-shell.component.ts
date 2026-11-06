@@ -32,6 +32,8 @@ import type {
   VehiclePackage,
   VehicleTrim,
   VehicleWheel,
+  VehicleReservationRequest,
+  VehicleReservationResponse,
 } from '@ah/products/autosphere/domain';
 import {
   createAutoSphere3DScene,
@@ -80,6 +82,15 @@ export class AutoSphereShellComponent {
   protected readonly orderSubmitted = signal<boolean>(false);
   protected readonly copiedShareToast = signal<boolean>(false);
   protected readonly webGlActive = signal<boolean>(false);
+  protected readonly isSyncingCms = signal<boolean>(false);
+  protected readonly cmsSyncToast = signal<boolean>(false);
+  protected readonly isSubmittingOrder = signal<boolean>(false);
+  protected readonly reservationConfirmation =
+    signal<VehicleReservationResponse | null>(null);
+  protected readonly customerEmail = signal<string>(
+    'recruiter@wynwood-tech.de',
+  );
+  protected readonly cmsMetadata = this.store.cmsMetadata;
 
   // Reference to 3D WebGL Canvas
   protected readonly webglCanvas =
@@ -114,6 +125,7 @@ export class AutoSphereShellComponent {
   protected readonly lightingMode = this.store.lightingMode;
   protected readonly turntableSpin = this.store.turntableSpin;
   protected readonly doorsOpen = this.store.doorsOpen;
+  protected readonly suspensionLift = this.store.suspensionLift;
   protected readonly headlightsOn = this.store.headlightsOn;
   protected readonly shareableUrl = this.store.shareableUrl;
 
@@ -154,6 +166,7 @@ export class AutoSphereShellComponent {
           cameraPreset: this.cameraPreset(),
           turntableSpin: this.turntableSpin(),
           doorsOpen: this.doorsOpen(),
+          suspensionLift: this.suspensionLift(),
           headlightsOn: this.headlightsOn(),
         });
         this.scene3DController.set(ctrl);
@@ -180,6 +193,7 @@ export class AutoSphereShellComponent {
       const cameraPreset = this.cameraPreset();
       const turntableSpin = this.turntableSpin();
       const doorsOpen = this.doorsOpen();
+      const suspensionLift = this.suspensionLift();
       const headlightsOn = this.headlightsOn();
 
       if (!ctrl) return;
@@ -196,6 +210,7 @@ export class AutoSphereShellComponent {
         cameraPreset,
         turntableSpin,
         doorsOpen,
+        suspensionLift,
         headlightsOn,
       });
       ctrl.setCameraPreset(cameraPreset);
@@ -265,6 +280,10 @@ export class AutoSphereShellComponent {
     this.store.toggleDoors();
   }
 
+  protected toggleSuspension(): void {
+    this.store.toggleSuspension();
+  }
+
   protected toggleHeadlights(): void {
     this.store.toggleHeadlights();
   }
@@ -297,8 +316,17 @@ export class AutoSphereShellComponent {
     this.store.togglePreviewMode();
   }
 
+  protected async syncCms(): Promise<void> {
+    this.isSyncingCms.set(true);
+    await this.store.syncFromContentful();
+    this.isSyncingCms.set(false);
+    this.cmsSyncToast.set(true);
+    setTimeout(() => this.cmsSyncToast.set(false), 2600);
+  }
+
   protected openOrderModal(): void {
     this.orderSubmitted.set(false);
+    this.reservationConfirmation.set(null);
     this.orderModalOpen.set(true);
   }
 
@@ -306,8 +334,26 @@ export class AutoSphereShellComponent {
     this.orderModalOpen.set(false);
   }
 
-  protected confirmOrder(): void {
-    this.orderSubmitted.set(true);
+  protected async confirmOrder(): Promise<void> {
+    this.isSubmittingOrder.set(true);
+    try {
+      const res = await this.store.submitReservation({
+        modelName: this.activeModel().name,
+        trimName: this.activeTrim().name,
+        colorName: this.activeColor().name,
+        wheelName: this.activeWheel().name,
+        upholsteryName: this.activeUpholstery().name,
+        totalPrice: this.totalPrice(),
+        monthlyLease: this.finance().monthlyLease,
+        financeType: this.financeType(),
+        depositAmount: 500,
+        customerEmail: this.customerEmail(),
+      });
+      this.reservationConfirmation.set(res);
+      this.orderSubmitted.set(true);
+    } finally {
+      this.isSubmittingOrder.set(false);
+    }
   }
 
   protected isPackageSelected(id: string): boolean {

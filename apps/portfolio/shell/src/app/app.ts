@@ -50,12 +50,21 @@ export class App {
     () => SHELL_COPY[this.preferences.language()],
   );
   protected readonly languages = [
-    { id: 'fr', label: 'FR', name: 'Français' },
-    { id: 'ar', label: 'ع', name: 'العربية' },
-    { id: 'en', label: 'EN', name: 'English' },
-    { id: 'it', label: 'IT', name: 'Italiano' },
-    { id: 'de', label: 'DE', name: 'Deutsch' },
+    { id: 'en', label: 'EN', name: 'English', nativeName: 'English' },
+    { id: 'de', label: 'DE', name: 'Deutsch', nativeName: 'Deutsch' },
+    { id: 'fr', label: 'FR', name: 'Français', nativeName: 'Français' },
+    { id: 'it', label: 'IT', name: 'Italiano', nativeName: 'Italiano' },
+    { id: 'ar', label: 'ع', name: 'العربية', nativeName: 'العربية' },
   ] as const;
+
+  protected onLanguageSelect(event: Event): void {
+    const select = event.target as HTMLSelectElement | null;
+    if (select?.value) {
+      this.preferences.setLanguage(
+        select.value as 'en' | 'de' | 'fr' | 'it' | 'ar',
+      );
+    }
+  }
   protected readonly nav = computed(() => {
     const nav = this.copy().nav;
     return [

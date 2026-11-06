@@ -53,19 +53,43 @@
 
       <!-- Actions Toolbar -->
       <div class="brand-actions">
-        <!-- Contentful Live Preview Indicator -->
+        <!-- Contentful Headless CMS Integration Badge -->
         <button
           type="button"
-          class="preview-toggle"
-          [class.is-preview]="isPreviewMode()"
-          (click)="togglePreview()"
-          title="Toggle Contentful Live Preview Mode"
+          class="cms-sync-badge"
+          [class.is-syncing]="isSyncingCms()"
+          (click)="syncCms()"
+          title="Contentful CDA (Space: autosphere-eu-west-1 · Fastly Edge CDN). Click to sync model catalog."
         >
-          <span class="preview-dot" aria-hidden="true"></span>
-          <span class="preview-label">
-            {{ isPreviewMode() ? t().header.cdaDraft : t().header.cdaLive }}
+          <span class="cms-icon" aria-hidden="true">
+            @if (isSyncingCms()) {
+              <span class="cms-spinner"></span>
+            } @else {
+              <svg
+                width="12"
+                height="12"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path
+                  d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"
+                ></path>
+              </svg>
+            }
           </span>
+          <span class="cms-label">Contentful CDA</span>
+          <span class="cms-pulse" aria-hidden="true"></span>
         </button>
+
+        @if (cmsSyncToast()) {
+          <div class="cms-toast" role="status" aria-live="polite">
+            ✓ Contentful CDA Catalog Synced (Space: autosphere-eu-west-1)
+          </div>
+        }
 
         <!-- Model Switcher -->
         <div
@@ -360,11 +384,15 @@
               <button
                 type="button"
                 class="hud-btn"
-                [class.is-active]="doorsOpen()"
-                (click)="toggleDoors()"
-                title="Toggle Dihedral Canopy / Inspection Mode"
+                [class.is-active]="suspensionLift()"
+                (click)="toggleSuspension()"
+                title="Toggle Pneumatic Chassis Ride Height (+50mm Lift / Track Stance)"
               >
-                {{ doorsOpen() ? t().hud.doorsClose : t().hud.doorsOpen }}
+                {{
+                  suspensionLift()
+                    ? t().hud.suspensionLower
+                    : t().hud.suspensionRaise
+                }}
               </button>
               <button
                 type="button"
@@ -1324,11 +1352,21 @@
             type="button"
             ahButton="secondary"
             (click)="closeOrderModal()"
+            [disabled]="isSubmittingOrder()"
           >
             {{ t().modal.close }}
           </button>
-          <button type="button" ahButton="primary" (click)="confirmOrder()">
-            {{ t().modal.confirmReservation }} ({{ formatCurrency(500) }})
+          <button
+            type="button"
+            ahButton="primary"
+            (click)="confirmOrder()"
+            [disabled]="isSubmittingOrder()"
+          >
+            @if (isSubmittingOrder()) {
+              Securing Production Slot on Backend...
+            } @else {
+              {{ t().modal.confirmReservation }} ({{ formatCurrency(500) }})
+            }
           </button>
         </div>
       </div>
@@ -1337,13 +1375,44 @@
         <div class="confirmation-icon">✓</div>
         <h3>{{ t().modal.reservationConfirmed }}</h3>
         <p>
-          Your configuration for the
+          Your build configuration for the
           <strong>{{ activeModel().name }} ({{ activeTrim().name }})</strong>
-          has been registered. Build token:
-          <code
-            >ATH-{{ activeModel().slug | uppercase }}-{{ totalPrice() }}</code
-          >.
+          has been verified and secured in the backend.
         </p>
+
+        @if (reservationConfirmation(); as conf) {
+          <div class="be-confirmation-receipt">
+            <div class="receipt-row">
+              <span class="receipt-label">Backend Reservation Reference:</span>
+              <strong class="receipt-code">{{
+                conf.confirmationNumber
+              }}</strong>
+            </div>
+            <div class="receipt-row">
+              <span class="receipt-label">Allocated VIN:</span>
+              <strong class="receipt-code">{{ conf.vinPreview }}</strong>
+            </div>
+            <div class="receipt-row">
+              <span class="receipt-label">Production Slot:</span>
+              <span>{{ conf.productionSlot }}</span>
+            </div>
+            <div class="receipt-row">
+              <span class="receipt-label">Assembly Facility:</span>
+              <span>{{ conf.allocationFacility }}</span>
+            </div>
+            <div class="receipt-row">
+              <span class="receipt-label">Estimated Delivery:</span>
+              <span>{{ conf.estimatedDeliveryWindow }}</span>
+            </div>
+            <div class="receipt-row status">
+              <span class="receipt-label">Backend API Status:</span>
+              <span class="status-badge"
+                >HTTP 201 Created ({{ conf.status }})</span
+              >
+            </div>
+          </div>
+        }
+
         <p class="delivery-notice">
           {{ t().modal.confirmationNotice }}
         </p>

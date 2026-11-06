@@ -23,6 +23,8 @@ export const arDictionary: AutoSphereDictionary = {
     turntableSpinOff: '🔄 تدوير: إيقاف',
     doorsClose: '🚪 إغلاق الأبواب',
     doorsOpen: '🚪 فتح الأبواب',
+    suspensionRaise: '⚡ رفع الهيكل (+50 مم)',
+    suspensionLower: '🏎️ الوضع الرياضي',
     lightsOn: '💡 إضاءة المصابيح',
     lightsOff: '💡 إطفاء المصابيح',
   },

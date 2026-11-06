@@ -23,6 +23,8 @@ export const itDictionary: AutoSphereDictionary = {
     turntableSpinOff: '🔄 Rotazione: Off',
     doorsClose: '🚪 Chiudi portiere',
     doorsOpen: '🚪 Portiere ad ali',
+    suspensionRaise: '⚡ Assetto +50mm',
+    suspensionLower: '🏎️ Assetto Corsa',
     lightsOn: '💡 Fari accesi',
     lightsOff: '💡 Fari spenti',
   },

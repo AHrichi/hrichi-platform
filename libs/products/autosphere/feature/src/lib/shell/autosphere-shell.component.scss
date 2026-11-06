@@ -159,45 +159,83 @@
   }
 }
 
-// Contentful Live Preview Badge Button
-.preview-toggle {
+// Contentful CDA Integration Badge
+.cms-sync-badge {
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
   padding: 4px 10px;
   border-radius: var(--radius-full, 9999px);
-  border: 1px solid var(--color-border-default);
-  background: var(--color-bg-raised);
-  color: var(--color-text-muted);
+  border: 1px solid rgba(14, 165, 233, 0.4);
+  background: rgba(14, 165, 233, 0.08);
+  color: #0284c7;
   font-size: 0.75rem;
-  font-weight: 500;
+  font-weight: 600;
   white-space: nowrap;
   cursor: pointer;
   transition: all 0.2s ease;
 
-  .preview-dot {
-    width: 7px;
-    height: 7px;
+  [data-theme='dark'] & {
+    color: #38bdf8;
+    background: rgba(56, 189, 248, 0.12);
+    border-color: rgba(56, 189, 248, 0.35);
+  }
+
+  .cms-icon {
+    display: inline-flex;
+    align-items: center;
+    line-height: 1;
+  }
+
+  .cms-pulse {
+    width: 6px;
+    height: 6px;
     border-radius: 50%;
-    background-color: var(--color-text-muted);
-    transition: background-color 0.2s ease;
+    background-color: #10b981;
+    box-shadow: 0 0 6px #10b981;
     flex-shrink: 0;
   }
 
-  &.is-preview {
-    border-color: #38bdf8;
-    color: #38bdf8;
-    background: rgba(56, 189, 248, 0.1);
-
-    .preview-dot {
-      background-color: #38bdf8;
-      box-shadow: 0 0 6px #38bdf8;
-    }
+  .cms-spinner {
+    width: 10px;
+    height: 10px;
+    border: 2px solid currentColor;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: cms-spin 0.6s linear infinite;
   }
 
   &:hover {
-    border-color: var(--color-border-strong);
+    border-color: #0284c7;
+    transform: translateY(-1px);
   }
+
+  &.is-syncing {
+    opacity: 0.8;
+    pointer-events: none;
+  }
+}
+
+@keyframes cms-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.cms-toast {
+  position: absolute;
+  top: 100%;
+  left: var(--space-4);
+  margin-top: 6px;
+  background: #0f172a;
+  color: #f8fafc;
+  font-size: 0.75rem;
+  padding: 6px 12px;
+  border-radius: var(--radius-md, 6px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  z-index: 100;
+  white-space: nowrap;
+  animation: fadeIn 0.2s ease-out;
 }
 
 .model-switcher {
@@ -1739,6 +1777,56 @@
     font-weight: 600;
     color: var(--color-text-default);
     margin-top: var(--space-3);
+  }
+
+  .be-confirmation-receipt {
+    margin: var(--space-4) 0;
+    padding: var(--space-3) var(--space-4);
+    background: var(--color-bg-canvas);
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-md, 8px);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    text-align: left;
+    font-size: 0.875rem;
+
+    .receipt-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: var(--space-3);
+      flex-wrap: wrap;
+
+      &.status {
+        border-top: 1px dashed var(--color-border-default);
+        padding-top: var(--space-2);
+        margin-top: var(--space-1);
+      }
+    }
+
+    .receipt-label {
+      color: var(--color-text-muted);
+      font-size: 0.8125rem;
+    }
+
+    .receipt-code {
+      font-family: var(--font-mono, monospace);
+      color: var(--color-crimson-500, #e11d48);
+      font-size: 0.875rem;
+      background: rgba(225, 29, 72, 0.08);
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .status-badge {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #10b981;
+      background: rgba(16, 185, 129, 0.1);
+      padding: 2px 8px;
+      border-radius: 9999px;
+    }
   }
 
   .confirmation-action {

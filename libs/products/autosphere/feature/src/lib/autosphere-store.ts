@@ -11,6 +11,8 @@ import {
   type VehiclePackage,
   type VehicleTrim,
   type VehicleWheel,
+  type VehicleReservationRequest,
+  type VehicleReservationResponse,
 } from '@ah/products/autosphere/domain';
 import type { CameraPreset, LightingMode } from './three/autosphere-3d-scene';
 
@@ -26,6 +28,7 @@ export class AutoSphereStore {
 
   readonly availableModels = this.cms.availableModels;
   readonly isPreviewMode = this.cms.isPreviewMode;
+  readonly cmsMetadata = this.cms.cmsMetadata;
 
   // Selected vehicle attributes
   readonly selectedModelSlug = signal<string>('gt-v');
@@ -43,6 +46,7 @@ export class AutoSphereStore {
   readonly lightingMode = signal<LightingMode>('daylight');
   readonly turntableSpin = signal<boolean>(true);
   readonly doorsOpen = signal<boolean>(false);
+  readonly suspensionLift = signal<boolean>(false);
   readonly headlightsOn = signal<boolean>(true);
   readonly webGlEnabled = signal<boolean>(true);
 
@@ -246,7 +250,15 @@ export class AutoSphereStore {
   }
 
   toggleDoors(): void {
-    this.doorsOpen.set(!this.doorsOpen());
+    const next = !this.doorsOpen();
+    this.doorsOpen.set(next);
+    this.suspensionLift.set(next);
+  }
+
+  toggleSuspension(): void {
+    const next = !this.suspensionLift();
+    this.suspensionLift.set(next);
+    this.doorsOpen.set(next);
   }
 
   toggleHeadlights(): void {
@@ -279,5 +291,15 @@ export class AutoSphereStore {
 
   togglePreviewMode(): void {
     this.cms.setPreviewMode(!this.isPreviewMode());
+  }
+
+  async syncFromContentful(): Promise<void> {
+    return this.cms.syncFromContentful();
+  }
+
+  async submitReservation(
+    payload: VehicleReservationRequest,
+  ): Promise<VehicleReservationResponse> {
+    return this.cms.submitReservation(payload);
   }
 }

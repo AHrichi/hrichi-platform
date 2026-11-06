@@ -17,6 +17,7 @@ import {
   PointLight,
   RingGeometry,
   Scene,
+  SpotLight,
   Vector3,
   WebGLRenderer,
 } from 'three';
@@ -38,7 +39,8 @@ export interface AutoSphere3DParams {
   lightingMode: LightingMode;
   cameraPreset: CameraPreset;
   turntableSpin: boolean;
-  doorsOpen: boolean;
+  doorsOpen?: boolean;
+  suspensionLift?: boolean;
   headlightsOn: boolean;
 }
 
@@ -55,6 +57,7 @@ export function createAutoSphere3DScene(
 ): AutoSphere3DController {
   let isDisposed = false;
   let currentParams = { ...initialParams };
+  let isCameraTransitioning = false;
 
   // 1. WebGL Renderer Setup
   const renderer = new WebGLRenderer({
@@ -81,10 +84,14 @@ export function createAutoSphere3DScene(
   const controls = new OrbitControls(camera, canvas);
   controls.enableDamping = true;
   controls.dampingFactor = 0.05;
-  controls.minDistance = 2.2;
+  controls.minDistance = 1.8;
   controls.maxDistance = 10.0;
   controls.maxPolarAngle = Math.PI / 2 - 0.04; // Floor boundary protection
   controls.target.set(0, 0.45, 0);
+
+  controls.addEventListener('start', () => {
+    isCameraTransitioning = false;
+  });
 
   // 3. Studio Lighting Rig
   const ambientLight = new AmbientLight(0xffffff, 0.9);
@@ -178,28 +185,106 @@ export function createAutoSphere3DScene(
   });
 
   const headlightMaterial = new MeshStandardMaterial({
-    color: new Color(0xf8fafc),
-    emissive: new Color(0x38bdf8),
-    emissiveIntensity: initialParams.headlightsOn ? 4.0 : 0.2,
+    color: new Color(initialParams.headlightsOn ? 0xffffff : 0x18181b),
+    emissive: new Color(initialParams.headlightsOn ? 0xecfeff : 0x000000),
+    emissiveIntensity: initialParams.headlightsOn ? 8.0 : 0,
     roughness: 0.1,
   });
 
   const taillightMaterial = new MeshStandardMaterial({
-    color: new Color(0xef4444),
-    emissive: new Color(0xff1e27),
-    emissiveIntensity: initialParams.headlightsOn ? 3.8 : 1.2,
+    color: new Color(initialParams.headlightsOn ? 0xef4444 : 0x330005),
+    emissive: new Color(initialParams.headlightsOn ? 0xff0028 : 0x220005),
+    emissiveIntensity: initialParams.headlightsOn ? 7.0 : 0.2,
     roughness: 0.1,
+  });
+
+  const cabinDarkMaterial = new MeshStandardMaterial({
+    color: new Color(0x181c24),
+    roughness: 0.88,
+    metalness: 0.12,
+  });
+
+  const chromeMaterial = new MeshStandardMaterial({
+    color: new Color(0xd1d5db),
+    metalness: 0.95,
+    roughness: 0.15,
   });
 
   const ambientStripMaterial = new MeshStandardMaterial({
     color: new Color(initialParams.ambientLightHex),
     emissive: new Color(initialParams.ambientLightHex),
-    emissiveIntensity: 2.5,
+    emissiveIntensity: 0.7,
+    roughness: 0.2,
+    metalness: 0.1,
   });
 
   // 6. Car Scene Hierarchy
   const carRoot = new Group();
   scene.add(carRoot);
+
+  // Active Vehicle Headlight Projectors & Taillights
+  const initialLightsOn = Boolean(initialParams.headlightsOn);
+
+  // Left Headlight Projector Beam
+  const headlightSpotL = new SpotLight(
+    0xe0f2fe,
+    initialLightsOn ? 24.0 : 0,
+    14,
+    0.52,
+    0.75,
+    1.2,
+  );
+  headlightSpotL.position.set(-0.65, 0.62, -2.1);
+  const targetL = new Object3D();
+  targetL.position.set(-0.65, 0.05, -7.0);
+  carRoot.add(headlightSpotL);
+  carRoot.add(targetL);
+  headlightSpotL.target = targetL;
+
+  // Right Headlight Projector Beam
+  const headlightSpotR = new SpotLight(
+    0xe0f2fe,
+    initialLightsOn ? 24.0 : 0,
+    14,
+    0.52,
+    0.75,
+    1.2,
+  );
+  headlightSpotR.position.set(0.65, 0.62, -2.1);
+  const targetR = new Object3D();
+  targetR.position.set(0.65, 0.05, -7.0);
+  carRoot.add(headlightSpotR);
+  carRoot.add(targetR);
+  headlightSpotR.target = targetR;
+
+  // Forward Ground Illuminator
+  const headlightPuddle = new PointLight(
+    0x38bdf8,
+    initialLightsOn ? 5.0 : 0,
+    6.0,
+    1.5,
+  );
+  headlightPuddle.position.set(0, 0.35, -2.8);
+  carRoot.add(headlightPuddle);
+
+  // Rear Taillights
+  const taillightL = new PointLight(
+    0xff1122,
+    initialLightsOn ? 4.5 : 0,
+    5.0,
+    1.8,
+  );
+  taillightL.position.set(-0.65, 0.75, 2.2);
+  carRoot.add(taillightL);
+
+  const taillightR = new PointLight(
+    0xff1122,
+    initialLightsOn ? 4.5 : 0,
+    5.0,
+    1.8,
+  );
+  taillightR.position.set(0.65, 0.75, 2.2);
+  carRoot.add(taillightR);
 
   // Ground Contact Shadow
   const shadowPlaneGeo = new PlaneGeometry(2.4, 4.8);
@@ -233,6 +318,10 @@ export function createAutoSphere3DScene(
   const rimMeshes: Mesh[] = [];
   let bodyMesh: Mesh | null = null;
   let glassMesh: Mesh | null = null;
+  let chassisGroup: Object3D | null = null;
+  let steeringGroup: Object3D | null = null;
+  let baseChassisY = 0.676;
+  let baseSteeringY = 0.798;
 
   try {
     const gltfLoader = new GLTFLoader();
@@ -247,6 +336,14 @@ export function createAutoSphere3DScene(
         model.position.set(0, 0, 0);
 
         model.traverse((child: Object3D) => {
+          if (child.name === 'main') {
+            chassisGroup = child;
+            baseChassisY = child.position.y;
+          } else if (child.name === 'steering_wheel') {
+            steeringGroup = child;
+            baseSteeringY = child.position.y;
+          }
+
           if (!(child instanceof Mesh)) {
             if (child.name && child.name.startsWith('wheel_')) {
               wheelObjects.push(child);
@@ -265,23 +362,51 @@ export function createAutoSphere3DScene(
           } else if (name === 'glass') {
             glassMesh = child;
             child.material = glassMaterial;
-          } else if (name.startsWith('rim_') || name === 'trim') {
+          } else if (name.startsWith('rim_') || name === 'wheel') {
             rimMeshes.push(child);
             child.material = rimMaterial;
-          } else if (name === 'tire') {
+          } else if (
+            name === 'tire' ||
+            name === 'wipers' ||
+            name === 'grills'
+          ) {
             child.material = tireMaterial;
           } else if (name.includes('brake')) {
             child.material = caliperMaterial;
           } else if (name.includes('leather') || name === 'carpet') {
             child.material = upholsteryMaterial;
-          } else if (name.includes('carbon')) {
+          } else if (
+            name.includes('carbon') ||
+            name === 'trim' ||
+            name === 'steering_trim' ||
+            name === 'yellow_trim'
+          ) {
             child.material = trimMaterial;
-          } else if (name.includes('interior_light')) {
+          } else if (
+            name === 'interior_light' ||
+            name === 'plastic_gray' ||
+            name === 'steering_column' ||
+            name === 'nuts'
+          ) {
+            // Dark cabin plastic tub, dashboard casing, column, and pillars
+            child.material = cabinDarkMaterial;
+          } else if (
+            name === 'interior_dark' ||
+            name === 'steering_red_lights'
+          ) {
+            // True ambient LED light contour and steering shift lights
             child.material = ambientStripMaterial;
           } else if (name === 'lights' || name === 'leds') {
             child.material = headlightMaterial;
           } else if (name === 'lights_red') {
             child.material = taillightMaterial;
+          } else if (
+            name === 'metal' ||
+            name === 'chrome' ||
+            name === 'steering_metal' ||
+            name === 'centre'
+          ) {
+            child.material = chromeMaterial;
           }
         });
 
@@ -335,9 +460,21 @@ export function createAutoSphere3DScene(
     ambientStripMaterial.color.set(params.ambientLightHex);
     ambientStripMaterial.emissive.set(params.ambientLightHex);
 
-    // Update Headlights & Taillights
-    headlightMaterial.emissiveIntensity = params.headlightsOn ? 4.2 : 0.2;
-    taillightMaterial.emissiveIntensity = params.headlightsOn ? 3.8 : 1.2;
+    // Update Headlights & Taillights (Visible 3D Projectors + Emissive Shaders)
+    const lightsActive = Boolean(params.headlightsOn);
+    headlightSpotL.intensity = lightsActive ? 24.0 : 0;
+    headlightSpotR.intensity = lightsActive ? 24.0 : 0;
+    headlightPuddle.intensity = lightsActive ? 5.0 : 0;
+    taillightL.intensity = lightsActive ? 4.5 : 0;
+    taillightR.intensity = lightsActive ? 4.5 : 0;
+
+    headlightMaterial.emissiveIntensity = lightsActive ? 8.0 : 0;
+    headlightMaterial.emissive.set(lightsActive ? 0xecfeff : 0x000000);
+    headlightMaterial.color.set(lightsActive ? 0xffffff : 0x18181b);
+
+    taillightMaterial.emissiveIntensity = lightsActive ? 7.0 : 0.2;
+    taillightMaterial.emissive.set(lightsActive ? 0xff0028 : 0x220005);
+    taillightMaterial.color.set(lightsActive ? 0xef4444 : 0x330005);
 
     // Update Wheel Styles & Rims
     if (params.wheelStyle === 'aero') {
@@ -372,6 +509,7 @@ export function createAutoSphere3DScene(
       bodyMaterial.wireframe = false;
       bodyMaterial.transparent = false;
       bodyMaterial.opacity = 1.0;
+      ambientStripMaterial.emissiveIntensity = 1.2;
     } else if (mode === 'xray') {
       ambientLight.intensity = 0.7;
       keyLight.intensity = 1.2;
@@ -383,6 +521,7 @@ export function createAutoSphere3DScene(
       bodyMaterial.wireframe = true;
       bodyMaterial.transparent = true;
       bodyMaterial.opacity = 0.45;
+      ambientStripMaterial.emissiveIntensity = 0.9;
     } else {
       // Daylight Studio
       ambientLight.intensity = 1.0;
@@ -395,6 +534,7 @@ export function createAutoSphere3DScene(
       bodyMaterial.wireframe = false;
       bodyMaterial.transparent = false;
       bodyMaterial.opacity = 1.0;
+      ambientStripMaterial.emissiveIntensity = 0.7;
     }
   }
 
@@ -404,20 +544,31 @@ export function createAutoSphere3DScene(
 
   function setCameraPreset(preset: CameraPreset): void {
     currentParams.cameraPreset = preset;
+    isCameraTransitioning = true;
 
     if (preset === 'three-quarters') {
+      controls.minDistance = 1.8;
+      controls.maxDistance = 10.0;
       targetCamPos.set(3.8, 1.4, 3.8);
       targetCamLook.set(0, 0.45, 0);
     } else if (preset === 'side') {
+      controls.minDistance = 1.8;
+      controls.maxDistance = 10.0;
       targetCamPos.set(0.01, 1.1, 5.2);
       targetCamLook.set(0, 0.45, 0);
     } else if (preset === 'interior') {
-      targetCamPos.set(-0.25, 0.95, 0.2);
-      targetCamLook.set(0, 0.75, -0.6);
+      controls.minDistance = 0.05;
+      controls.maxDistance = 3.0;
+      targetCamPos.set(-0.35, 0.96, 0.12);
+      targetCamLook.set(-0.35, 0.82, -1.2);
     } else if (preset === 'wheels') {
+      controls.minDistance = 1.2;
+      controls.maxDistance = 10.0;
       targetCamPos.set(1.9, 0.5, 1.8);
       targetCamLook.set(1.0, 0.35, 1.3);
     } else if (preset === 'top') {
+      controls.minDistance = 2.5;
+      controls.maxDistance = 10.0;
       targetCamPos.set(0.01, 5.8, 0.01);
       targetCamLook.set(0, 0, 0);
     }
@@ -430,9 +581,19 @@ export function createAutoSphere3DScene(
     if (isDisposed) return;
     animationFrameId = requestAnimationFrame(animate);
 
-    // Smooth Camera Transition Lerp
-    camera.position.lerp(targetCamPos, 0.05);
-    controls.target.lerp(targetCamLook, 0.05);
+    // Smooth Camera Transition Lerp (only during preset transitions; yields immediately to user Orbit drag)
+    if (isCameraTransitioning) {
+      camera.position.lerp(targetCamPos, 0.06);
+      controls.target.lerp(targetCamLook, 0.06);
+      if (
+        camera.position.distanceTo(targetCamPos) < 0.02 &&
+        controls.target.distanceTo(targetCamLook) < 0.02
+      ) {
+        camera.position.copy(targetCamPos);
+        controls.target.copy(targetCamLook);
+        isCameraTransitioning = false;
+      }
+    }
     controls.update();
 
     // Turntable Auto-Rotation
@@ -447,16 +608,25 @@ export function createAutoSphere3DScene(
       }
     }
 
-    // Dynamic Canopy / Inspection Mode on doors toggle
-    if (glassMesh) {
-      const targetCanopyY = currentParams.doorsOpen ? 0.3 : 0;
-      glassMesh.position.y += (targetCanopyY - glassMesh.position.y) * 0.1;
+    // Dynamic Pneumatic Air Suspension Lift (+50mm / Track Stance)
+    const isLifted = Boolean(
+      currentParams.suspensionLift ?? currentParams.doorsOpen,
+    );
+    const liftOffset = isLifted ? 0.05 : 0;
+
+    if (chassisGroup) {
+      const targetY = baseChassisY + liftOffset;
+      chassisGroup.position.y += (targetY - chassisGroup.position.y) * 0.1;
+    }
+    if (steeringGroup) {
+      const targetY = baseSteeringY + liftOffset;
+      steeringGroup.position.y += (targetY - steeringGroup.position.y) * 0.1;
     }
 
-    // Cyberpunk Dynamic Pulsing Ambient Lighting
+    // Cyberpunk Dynamic Pulsing Ambient Lighting (subtle accent glow)
     if (currentParams.lightingMode === 'cyberpunk') {
       const time = performance.now() * 0.002;
-      ambientStripMaterial.emissiveIntensity = 2.2 + Math.sin(time) * 0.8;
+      ambientStripMaterial.emissiveIntensity = 1.0 + Math.sin(time) * 0.4;
     }
 
     renderer.render(scene, camera);
@@ -502,9 +672,17 @@ export function createAutoSphere3DScene(
     caliperMaterial.dispose();
     upholsteryMaterial.dispose();
     trimMaterial.dispose();
+    cabinDarkMaterial.dispose();
+    chromeMaterial.dispose();
     headlightMaterial.dispose();
     taillightMaterial.dispose();
     ambientStripMaterial.dispose();
+
+    headlightSpotL.dispose();
+    headlightSpotR.dispose();
+    headlightPuddle.dispose();
+    taillightL.dispose();
+    taillightR.dispose();
 
     renderer.dispose();
   }

@@ -25,6 +25,8 @@ export interface AutoSphereDictionary {
     turntableSpinOff: string;
     doorsClose: string;
     doorsOpen: string;
+    suspensionRaise: string;
+    suspensionLower: string;
     lightsOn: string;
     lightsOff: string;
   };

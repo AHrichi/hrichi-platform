@@ -23,6 +23,8 @@ export const deDictionary: AutoSphereDictionary = {
     turntableSpinOff: '🔄 Drehen: Aus',
     doorsClose: '🚪 Tür schließen',
     doorsOpen: '🚪 Flügeltür öffnen',
+    suspensionRaise: '⚡ Fahrwerk +50mm',
+    suspensionLower: '🏎️ Sport-Niveau',
     lightsOn: '💡 Licht an',
     lightsOff: '💡 Licht aus',
   },
