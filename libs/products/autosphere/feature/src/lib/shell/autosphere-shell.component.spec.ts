@@ -96,4 +96,34 @@ describe('AutoSphereShellComponent', () => {
     component['exportBuildJson']();
     expect(createElementSpy).toHaveBeenCalledWith('a');
   });
+
+  it('should support multi-language i18n switching and localized formatting', () => {
+    expect(component['i18n'].lang()).toBe('en');
+    expect(component['t']().tabs.trims).toBe('1. Powertrain');
+
+    // Switch to German (relevant for European automotive clients)
+    component['selectLanguage']('de');
+    fixture.detectChanges();
+    expect(component['i18n'].lang()).toBe('de');
+    expect(component['t']().tabs.trims).toBe('1. Antrieb');
+    expect(component['t']().tabs.specs).toBe('8. Technische Daten');
+    expect(component['formatCurrency'](100000)).toContain('100.000');
+
+    // Switch to French
+    component['selectLanguage']('fr');
+    fixture.detectChanges();
+    expect(component['i18n'].lang()).toBe('fr');
+    expect(component['t']().tabs.trims).toBe('1. Motorisation');
+
+    // Switch to Arabic (tests RTL detection)
+    component['selectLanguage']('ar');
+    fixture.detectChanges();
+    expect(component['i18n'].isRtl()).toBe(true);
+    expect(component['t']().tabs.trims).toBe('1. المحرك');
+
+    // Restore English
+    component['selectLanguage']('en');
+    fixture.detectChanges();
+    expect(component['i18n'].lang()).toBe('en');
+  });
 });

@@ -1,7 +1,8 @@
-<div class="autosphere-container">
+<div class="autosphere-container" [attr.dir]="i18n.isRtl() ? 'rtl' : 'ltr'">
   <!-- Top Navigation Bar -->
   <header class="autosphere-header">
     <div class="autosphere-brand-bar">
+      <!-- Left: Navigation & Branding -->
       <div class="brand-left">
         <a
           routerLink="/apps"
@@ -21,14 +22,35 @@
           >
             <polyline points="15 18 9 12 15 6"></polyline>
           </svg>
-          <span>All Apps</span>
+          <span>{{ t().header.allApps }}</span>
         </a>
         <div class="brand-title-group">
-          <span class="brand-badge">AutoSphere</span>
+          <span class="brand-badge">{{ t().header.brandBadge }}</span>
           <h1 class="brand-heading">{{ activeModel().name }}</h1>
         </div>
       </div>
 
+      <!-- Center / Right: Language Switcher -->
+      <div
+        class="lang-switcher"
+        role="radiogroup"
+        aria-label="Interface Language"
+      >
+        @for (lang of i18n.availableLanguages; track lang.code) {
+          <button
+            type="button"
+            role="radio"
+            class="lang-pill"
+            [class.is-active]="i18n.lang() === lang.code"
+            [attr.aria-checked]="i18n.lang() === lang.code"
+            (click)="selectLanguage(lang.code)"
+          >
+            {{ lang.label }}
+          </button>
+        }
+      </div>
+
+      <!-- Actions Toolbar -->
       <div class="brand-actions">
         <!-- Contentful Live Preview Indicator -->
         <button
@@ -40,11 +62,7 @@
         >
           <span class="preview-dot" aria-hidden="true"></span>
           <span class="preview-label">
-            {{
-              isPreviewMode()
-                ? 'Contentful Preview (Draft)'
-                : 'Contentful Live (CDA)'
-            }}
+            {{ isPreviewMode() ? t().header.cdaDraft : t().header.cdaLive }}
           </span>
         </button>
 
@@ -78,7 +96,9 @@
           >
             <span
               >🔗
-              {{ copiedShareToast() ? 'Copied Link!' : 'Share Build' }}</span
+              {{
+                copiedShareToast() ? t().header.copied : t().header.shareBuild
+              }}</span
             >
           </button>
           <button
@@ -87,7 +107,7 @@
             (click)="exportBuildJson()"
             title="Export Machine-Readable Build Specification (JSON)"
           >
-            <span>📥 Export JSON</span>
+            <span>📥 {{ t().header.exportJson }}</span>
           </button>
         </div>
       </div>
@@ -99,7 +119,7 @@
     <!-- Left Column: Zero-CLS Interactive 3D WebGL / SVG Visualizer Stage -->
     <section class="visualizer-section" aria-label="Vehicle Visualizer">
       <div class="visualizer-stage-card">
-        <!-- Visualizer Viewport: Strict 16:9 aspect ratio container -->
+        <!-- Visualizer Viewport: Responsive canvas container -->
         <div
           class="visualizer-canvas-container"
           [attr.data-lighting]="lightingMode()"
@@ -294,7 +314,7 @@
                 (click)="setLightingMode('daylight')"
                 title="Studio Daylight Lighting (Clean High-Key)"
               >
-                ☀️ Day
+                {{ t().hud.lightingDay }}
               </button>
               <button
                 type="button"
@@ -303,7 +323,7 @@
                 (click)="setLightingMode('cyberpunk')"
                 title="Cyber Neon Night (Cyan & Magenta Glow)"
               >
-                🌌 Cyber
+                {{ t().hud.lightingCyber }}
               </button>
               <button
                 type="button"
@@ -312,7 +332,7 @@
                 (click)="setLightingMode('xray')"
                 title="CAD Engineering X-Ray (Chassis & Battery Pack)"
               >
-                🔬 X-Ray
+                {{ t().hud.lightingXray }}
               </button>
             </div>
 
@@ -325,7 +345,7 @@
                 (click)="setCameraPreset('three-quarters')"
                 title="Front 3/4 Dynamic Angle"
               >
-                3/4 Dynamic
+                {{ t().hud.presetThreeQuarters }}
               </button>
               <button
                 type="button"
@@ -334,7 +354,7 @@
                 (click)="setCameraPreset('side')"
                 title="Side Aerodynamic Profile"
               >
-                Side Profile
+                {{ t().hud.presetSide }}
               </button>
               <button
                 type="button"
@@ -343,7 +363,7 @@
                 (click)="setCameraPreset('interior')"
                 title="Driver Cockpit Interior View"
               >
-                Cockpit
+                {{ t().hud.presetInterior }}
               </button>
               <button
                 type="button"
@@ -352,7 +372,7 @@
                 (click)="setCameraPreset('wheels')"
                 title="Wheel & Brake Rotor Close-Up"
               >
-                Wheels
+                {{ t().hud.presetWheels }}
               </button>
               <button
                 type="button"
@@ -361,7 +381,7 @@
                 (click)="setCameraPreset('top')"
                 title="Top Aerodynamic Flow"
               >
-                Top Flow
+                {{ t().hud.presetTop }}
               </button>
             </div>
 
@@ -378,7 +398,11 @@
                 (click)="toggleTurntable()"
                 title="Toggle 360° Studio Turntable Rotation"
               >
-                🔄 {{ turntableSpin() ? 'Spinning' : 'Spin: Off' }}
+                {{
+                  turntableSpin()
+                    ? t().hud.turntableSpinning
+                    : t().hud.turntableSpinOff
+                }}
               </button>
               <button
                 type="button"
@@ -387,7 +411,7 @@
                 (click)="toggleDoors()"
                 title="Toggle Dihedral Doors Open/Close"
               >
-                🚪 {{ doorsOpen() ? 'Close Door' : 'Open Door' }}
+                {{ doorsOpen() ? t().hud.doorsClose : t().hud.doorsOpen }}
               </button>
               <button
                 type="button"
@@ -396,7 +420,7 @@
                 (click)="toggleHeadlights()"
                 title="Toggle Matrix LED Headlights"
               >
-                💡 {{ headlightsOn() ? 'Lights On' : 'Lights Off' }}
+                {{ headlightsOn() ? t().hud.lightsOn : t().hud.lightsOff }}
               </button>
             </div>
           </div>
@@ -405,17 +429,17 @@
         <!-- Quick Dynamic Performance Indicators Strip -->
         <div class="visualizer-metrics-strip">
           <div class="metric-item">
-            <span class="metric-label">0–100 km/h</span>
+            <span class="metric-label">{{ t().metrics.accel0100 }}</span>
             <span class="metric-val highlight"
               >{{ activeTrim().acceleration0to100 }}s</span
             >
           </div>
           <div class="metric-item">
-            <span class="metric-label">Effective WLTP</span>
+            <span class="metric-label">{{ t().metrics.effectiveWltp }}</span>
             <span class="metric-val">{{ effectiveRange() }} km</span>
           </div>
           <div class="metric-item">
-            <span class="metric-label">Peak Power</span>
+            <span class="metric-label">{{ t().metrics.peakPower }}</span>
             <span class="metric-val"
               >{{ activeTrim().horsepower }} hp ({{
                 activeTrim().powerKw
@@ -424,10 +448,10 @@
             >
           </div>
           <div class="metric-item">
-            <span class="metric-label">800V DC Charge</span>
-            <span class="metric-val"
-              >10–80% in {{ rangeSimulation().fastCharge10to80Min }} min</span
-            >
+            <span class="metric-label">{{ t().metrics.charge800v }}</span>
+            <span class="metric-val">{{
+              t().metrics.charge1080In(rangeSimulation().fastCharge10to80Min)
+            }}</span>
           </div>
         </div>
       </div>
@@ -452,7 +476,7 @@
           [attr.aria-selected]="activeTab() === 'trims'"
           (click)="setTab('trims')"
         >
-          1. Powertrain
+          {{ t().tabs.trims }}
         </button>
         <button
           type="button"
@@ -462,7 +486,7 @@
           [attr.aria-selected]="activeTab() === 'color'"
           (click)="setTab('color')"
         >
-          2. Paint Finish
+          {{ t().tabs.color }}
         </button>
         <button
           type="button"
@@ -472,7 +496,7 @@
           [attr.aria-selected]="activeTab() === 'wheels'"
           (click)="setTab('wheels')"
         >
-          3. Wheels & Aero
+          {{ t().tabs.wheels }}
         </button>
         <button
           type="button"
@@ -482,7 +506,7 @@
           [attr.aria-selected]="activeTab() === 'interior'"
           (click)="setTab('interior')"
         >
-          4. Interior Cabin
+          {{ t().tabs.interior }}
         </button>
         <button
           type="button"
@@ -492,7 +516,7 @@
           [attr.aria-selected]="activeTab() === 'packages'"
           (click)="setTab('packages')"
         >
-          5. Packages
+          {{ t().tabs.packages }}
         </button>
         <button
           type="button"
@@ -502,7 +526,7 @@
           [attr.aria-selected]="activeTab() === 'simulator'"
           (click)="setTab('simulator')"
         >
-          6. Range & 800V
+          {{ t().tabs.simulator }}
         </button>
         <button
           type="button"
@@ -512,7 +536,7 @@
           [attr.aria-selected]="activeTab() === 'finance'"
           (click)="setTab('finance')"
         >
-          7. Finance
+          {{ t().tabs.finance }}
         </button>
         <button
           type="button"
@@ -522,7 +546,7 @@
           [attr.aria-selected]="activeTab() === 'specs'"
           (click)="setTab('specs')"
         >
-          8. Tech Specs
+          {{ t().tabs.specs }}
         </button>
       </nav>
 
@@ -532,11 +556,8 @@
         @if (activeTab() === 'trims') {
           <div class="tab-panel trims-panel" role="tabpanel">
             <div class="panel-header">
-              <h2>Select Powertrain & Architecture</h2>
-              <p>
-                Dual or Tri-motor permanent-magnet synchronous architecture with
-                silicon carbide inverters.
-              </p>
+              <h2>{{ t().trimsPanel.title }}</h2>
+              <p>{{ t().trimsPanel.subtitle }}</p>
             </div>
 
             <div class="trims-grid">
@@ -551,14 +572,14 @@
                   (keydown.space)="selectTrim(trim)"
                 >
                   <div class="trim-card-header">
-                    <div>
+                    <div class="trim-title-wrap">
                       <span class="trim-badge">{{ trim.badge }}</span>
                       <h3 class="trim-title">{{ trim.name }}</h3>
                     </div>
                     <div class="trim-price-delta">
                       {{
                         trim.priceDelta === 0
-                          ? 'Included'
+                          ? t().trimsPanel.included
                           : '+' + formatCurrency(trim.priceDelta)
                       }}
                     </div>
@@ -567,9 +588,14 @@
                   <p class="trim-powertrain">{{ trim.powertrain }}</p>
 
                   <div class="trim-spec-row">
-                    <span>{{ trim.acceleration0to100 }}s (0-100)</span>
-                    <span>{{ trim.wltpRangeKm }} km range</span>
-                    <span>{{ trim.torqueNm }} Nm torque</span>
+                    <span>{{ trim.acceleration0to100 }}s (0–100)</span>
+                    <span
+                      >{{ trim.wltpRangeKm }} km
+                      {{ t().trimsPanel.range }}</span
+                    >
+                    <span
+                      >{{ trim.torqueNm }} Nm {{ t().trimsPanel.torque }}</span
+                    >
                   </div>
 
                   <ul class="trim-highlights">
@@ -587,11 +613,8 @@
         @if (activeTab() === 'color') {
           <div class="tab-panel color-panel" role="tabpanel">
             <div class="panel-header">
-              <h2>Automotive Multi-Coat Exterior Finish</h2>
-              <p>
-                Formulated with deep optical flake pigments and hydrophobic
-                nano-ceramic clear coat.
-              </p>
+              <h2>{{ t().colorPanel.title }}</h2>
+              <p>{{ t().colorPanel.subtitle }}</p>
             </div>
 
             <div class="selected-color-info">
@@ -599,7 +622,11 @@
               <ah-tag size="sm" tone="info">{{
                 activeColor().finish | titlecase
               }}</ah-tag>
-              <span class="color-price">{{ activeColor().priceLabel }}</span>
+              <span class="color-price">{{
+                activeColor().priceDelta === 0
+                  ? t().colorPanel.includedBadge
+                  : '+' + formatCurrency(activeColor().priceDelta)
+              }}</span>
             </div>
             <p class="color-description">{{ activeColor().description }}</p>
 
@@ -619,11 +646,8 @@
         @if (activeTab() === 'wheels') {
           <div class="tab-panel wheels-panel" role="tabpanel">
             <div class="panel-header">
-              <h2>Wheels & Aerodynamic Profile</h2>
-              <p>
-                Aero-optimized wheel geometry balances cooling airflow with
-                reduced turbulence.
-              </p>
+              <h2>{{ t().wheelsPanel.title }}</h2>
+              <p>{{ t().wheelsPanel.subtitle }}</p>
             </div>
 
             <div class="wheels-grid">
@@ -639,7 +663,11 @@
                 >
                   <div class="wheel-header">
                     <h3 class="wheel-name">{{ wheel.name }}</h3>
-                    <span class="wheel-price">{{ wheel.priceLabel }}</span>
+                    <span class="wheel-price">{{
+                      wheel.priceDelta === 0
+                        ? t().trimsPanel.included
+                        : '+' + formatCurrency(wheel.priceDelta)
+                    }}</span>
                   </div>
 
                   <div class="wheel-meta">
@@ -651,8 +679,11 @@
                       [class.positive]="wheel.rangeImpactKm >= 0"
                       [class.negative]="wheel.rangeImpactKm < 0"
                     >
-                      {{ wheel.rangeImpactKm >= 0 ? '+' : ''
-                      }}{{ wheel.rangeImpactKm }} km WLTP
+                      {{
+                        wheel.rangeImpactKm >= 0
+                          ? t().wheelsPanel.neutralImpact
+                          : t().wheelsPanel.rangePenalty(wheel.rangeImpactKm)
+                      }}
                     </span>
                   </div>
                 </div>
@@ -665,16 +696,13 @@
         @if (activeTab() === 'interior') {
           <div class="tab-panel interior-panel" role="tabpanel">
             <div class="panel-header">
-              <h2>Interior Upholstery & Bespoke Cabin Trim</h2>
-              <p>
-                Ergonomic sports seating, sustainable textiles, and configurable
-                ambient cabin lighting.
-              </p>
+              <h2>{{ t().interiorPanel.title }}</h2>
+              <p>{{ t().interiorPanel.subtitle }}</p>
             </div>
 
             <!-- Upholstery Selection -->
             <div class="sub-section">
-              <h3 class="sub-title">1. Seating & Upholstery Material</h3>
+              <h3 class="sub-title">{{ t().interiorPanel.upholsteryTitle }}</h3>
               <div class="upholstery-grid">
                 @for (u of activeModel().interiorUpholsteries; track u.id) {
                   <div
@@ -696,7 +724,7 @@
                       <span class="upholstery-price">
                         {{
                           u.priceDelta === 0
-                            ? 'Included'
+                            ? t().trimsPanel.included
                             : '+' + formatCurrency(u.priceDelta)
                         }}
                       </span>
@@ -709,25 +737,25 @@
 
             <!-- Interior Trim Inserts -->
             <div class="sub-section">
-              <h3 class="sub-title">2. Dashboard & Center Console Trim</h3>
+              <h3 class="sub-title">{{ t().interiorPanel.inlaysTitle }}</h3>
               <div class="trim-inserts-grid">
-                @for (t of activeModel().interiorTrims; track t.id) {
+                @for (tr of activeModel().interiorTrims; track tr.id) {
                   <button
                     type="button"
                     class="trim-insert-btn"
-                    [class.is-selected]="t.id === activeInteriorTrim().id"
-                    (click)="selectInteriorTrim(t)"
+                    [class.is-selected]="tr.id === activeInteriorTrim().id"
+                    (click)="selectInteriorTrim(tr)"
                   >
                     <span
                       class="trim-swatch"
-                      [style.background-color]="t.hex"
+                      [style.background-color]="tr.hex"
                     ></span>
-                    <span class="trim-label">{{ t.name }}</span>
+                    <span class="trim-label">{{ tr.name }}</span>
                     <span class="trim-delta">
                       {{
-                        t.priceDelta === 0
-                          ? 'Included'
-                          : '+' + formatCurrency(t.priceDelta)
+                        tr.priceDelta === 0
+                          ? t().trimsPanel.included
+                          : '+' + formatCurrency(tr.priceDelta)
                       }}
                     </span>
                   </button>
@@ -737,7 +765,7 @@
 
             <!-- Ambient Cabin Lighting -->
             <div class="sub-section">
-              <h3 class="sub-title">3. Active Ambient Interior Lighting</h3>
+              <h3 class="sub-title">{{ t().interiorPanel.ambientTitle }}</h3>
               <div class="ambient-lights-row">
                 @for (
                   light of activeModel().ambientLightingOptions;
@@ -766,11 +794,8 @@
         @if (activeTab() === 'packages') {
           <div class="tab-panel packages-panel" role="tabpanel">
             <div class="panel-header">
-              <h2>Equipment & Autonomous Drive Packages</h2>
-              <p>
-                Hardware suites configured with over-the-air (OTA) software
-                update support.
-              </p>
+              <h2>{{ t().packagesPanel.title }}</h2>
+              <p>{{ t().packagesPanel.subtitle }}</p>
             </div>
 
             <div class="packages-list">
@@ -819,27 +844,27 @@
         @if (activeTab() === 'simulator') {
           <div class="tab-panel simulator-panel" role="tabpanel">
             <div class="panel-header">
-              <h2>Real-World Range & 800V DC Charging Simulator</h2>
-              <p>
-                Simulate how temperature, driving style, and HVAC climate
-                control affect real battery range.
-              </p>
+              <h2>{{ t().simulatorPanel.title }}</h2>
+              <p>{{ t().simulatorPanel.subtitle }}</p>
             </div>
 
             <!-- Range Comparison Cards -->
             <div class="sim-metrics-grid">
               <div class="sim-card">
-                <span class="sim-label">Simulated Real-World Range</span>
+                <span class="sim-label">{{
+                  t().simulatorPanel.projectedRange
+                }}</span>
                 <span class="sim-val highlight"
                   >{{ rangeSimulation().simulatedRangeKm }} km</span
                 >
                 <span class="sim-sub"
-                  >vs. {{ rangeSimulation().wltpBaseRangeKm }} km WLTP
-                  cert</span
+                  >vs. {{ rangeSimulation().wltpBaseRangeKm }} km WLTP</span
                 >
               </div>
               <div class="sim-card">
-                <span class="sim-label">Expected Consumption</span>
+                <span class="sim-label">{{
+                  t().simulatorPanel.efficiency
+                }}</span>
                 <span class="sim-val"
                   >{{ rangeSimulation().consumptionKwhPer100Km }} kWh/100
                   km</span
@@ -847,14 +872,16 @@
                 <span class="sim-sub">Active Aerodynamic Drag</span>
               </div>
               <div class="sim-card">
-                <span class="sim-label">800V Fast Charge (10% → 80%)</span>
+                <span class="sim-label">{{
+                  t().simulatorPanel.peakCharge
+                }}</span>
                 <span class="sim-val"
                   >{{ rangeSimulation().fastCharge10to80Min }} min</span
                 >
                 <span class="sim-sub">At 320 kW Peak DC Station</span>
               </div>
               <div class="sim-card">
-                <span class="sim-label">Range Added in 10 Min</span>
+                <span class="sim-label">+10 Min HPC Charge</span>
                 <span class="sim-val"
                   >+{{ rangeSimulation().rangeAdded10MinKm }} km</span
                 >
@@ -865,7 +892,9 @@
             <!-- Temperature Slider -->
             <div class="sim-control-box">
               <div class="slider-header">
-                <label for="tempRange">Ambient Outside Temperature</label>
+                <label for="tempRange">{{
+                  t().simulatorPanel.ambientTemp
+                }}</label>
                 <span class="slider-badge"
                   >{{ ambientTemperatureC() }}°C ({{
                     ambientTemperatureC() < 5
@@ -887,18 +916,18 @@
                 class="sim-slider"
               />
               <div class="slider-ticks">
-                <span>-15°C (Winter)</span>
+                <span>-15°C</span>
                 <span>0°C</span>
                 <span>20°C (Optimal)</span>
-                <span>40°C (Desert)</span>
+                <span>40°C</span>
               </div>
             </div>
 
             <!-- Driving Speed Cycle -->
             <div class="sim-control-box">
-              <span class="control-label"
-                >Driving Environment & Speed Cycle</span
-              >
+              <span class="control-label">{{
+                t().simulatorPanel.drivingProfile
+              }}</span>
               <div class="speed-btns-row">
                 <button
                   type="button"
@@ -906,7 +935,7 @@
                   [class.is-active]="drivingSpeedCycle() === 'city'"
                   (click)="setDrivingSpeedCycle('city')"
                 >
-                  🏙️ City (50 km/h) · High Regen (+12%)
+                  🏙️ {{ t().simulatorPanel.cityProfile }}
                 </button>
                 <button
                   type="button"
@@ -914,7 +943,7 @@
                   [class.is-active]="drivingSpeedCycle() === 'mixed'"
                   (click)="setDrivingSpeedCycle('mixed')"
                 >
-                  🛣️ Mixed / Suburban (90 km/h) · Standard
+                  🛣️ {{ t().simulatorPanel.mixedProfile }}
                 </button>
                 <button
                   type="button"
@@ -922,17 +951,17 @@
                   [class.is-active]="drivingSpeedCycle() === 'highway'"
                   (click)="setDrivingSpeedCycle('highway')"
                 >
-                  ⚡ Autobahn / Highway (130 km/h) · Aero Drag (-22%)
+                  ⚡ {{ t().simulatorPanel.highwayProfile }}
                 </button>
               </div>
             </div>
 
             <!-- Climate HVAC Toggle -->
             <div class="sim-control-box inline-toggle">
-              <div>
-                <span class="control-label"
-                  >Cabin Climate Control & Seat Heating</span
-                >
+              <div class="inline-toggle-text">
+                <span class="control-label">{{
+                  t().simulatorPanel.hvacLabel
+                }}</span>
                 <p class="control-sub">
                   Simulates heat pump and PTC auxiliary heating load
                 </p>
@@ -943,7 +972,11 @@
                 [class.is-active]="hvacActive()"
                 (click)="toggleHvac()"
               >
-                {{ hvacActive() ? 'AC / Heating: ON' : 'AC / Heating: OFF' }}
+                {{
+                  hvacActive()
+                    ? t().simulatorPanel.hvacActive
+                    : t().simulatorPanel.hvacEco
+                }}
               </button>
             </div>
           </div>
@@ -953,11 +986,8 @@
         @if (activeTab() === 'finance') {
           <div class="tab-panel finance-panel" role="tabpanel">
             <div class="panel-header">
-              <h2>Financing, Leasing & Total Cost of Ownership</h2>
-              <p>
-                Transparent monthly amortization breakdown with residual value
-                guarantees.
-              </p>
+              <h2>{{ t().financePanel.title }}</h2>
+              <p>{{ t().financePanel.subtitle }}</p>
             </div>
 
             <!-- Finance Type Switcher -->
@@ -968,7 +998,7 @@
                 [class.is-active]="financeType() === 'lease'"
                 (click)="setFinanceType('lease')"
               >
-                Operational Leasing
+                {{ t().financePanel.operationalLease }}
               </button>
               <button
                 type="button"
@@ -976,7 +1006,7 @@
                 [class.is-active]="financeType() === 'loan'"
                 (click)="setFinanceType('loan')"
               >
-                Balloon Auto Loan
+                {{ t().financePanel.balloonLoan }}
               </button>
               <button
                 type="button"
@@ -984,14 +1014,16 @@
                 [class.is-active]="financeType() === 'cash'"
                 (click)="setFinanceType('cash')"
               >
-                Cash Purchase
+                {{ t().financePanel.cashPurchase }}
               </button>
             </div>
 
             <!-- Term Duration Buttons -->
             @if (financeType() !== 'cash') {
               <div class="finance-terms-selector">
-                <span class="selector-label">Term Duration:</span>
+                <span class="selector-label">{{
+                  t().financePanel.financingTerm
+                }}</span>
                 <div class="term-btns">
                   @for (term of [24, 36, 48, 60]; track term) {
                     <button
@@ -1000,7 +1032,7 @@
                       [class.is-active]="leaseTermMonths() === term"
                       (click)="setLeaseTerm($any(term))"
                     >
-                      {{ term }} Months
+                      {{ term }} {{ t().dock.perMonth.replace('/', '') }}
                     </button>
                   }
                 </div>
@@ -1009,7 +1041,9 @@
               <!-- Down Payment Slider -->
               <div class="down-payment-box">
                 <div class="slider-header">
-                  <label for="downPay">Down Payment Percentage</label>
+                  <label for="downPay">{{
+                    t().financePanel.downPayment
+                  }}</label>
                   <span class="slider-badge">
                     {{ downPaymentPercent() }}% ({{
                       formatCurrency(finance().downPayment)
@@ -1036,35 +1070,44 @@
                   <span class="statement-eyebrow">
                     {{
                       financeType() === 'lease'
-                        ? 'Monthly Leasing Rate'
+                        ? t().financePanel.estMonthlyPayment
                         : financeType() === 'loan'
-                          ? 'Monthly Loan Payment'
-                          : 'Outright Cash Price'
+                          ? t().financePanel.estMonthlyPayment
+                          : t().financePanel.cashPrice
                     }}
                   </span>
                   <div class="statement-big-rate">
                     {{
                       financeType() === 'lease'
-                        ? formatCurrency(finance().monthlyLease) + ' / mo'
+                        ? formatCurrency(finance().monthlyLease) +
+                          ' ' +
+                          t().dock.perMonth
                         : financeType() === 'loan'
-                          ? formatCurrency(finance().monthlyLoan) + ' / mo'
+                          ? formatCurrency(finance().monthlyLoan) +
+                            ' ' +
+                            t().dock.perMonth
                           : formatCurrency(totalPrice())
                     }}
                   </div>
                 </div>
                 <ah-tag size="sm" tone="success">
-                  {{ finance().annualInterestRate }}% APR Guaranteed
+                  {{ finance().annualInterestRate }}%
+                  {{ t().financePanel.aprRate }}
                 </ah-tag>
               </div>
 
               <div class="statement-rows">
                 <div class="st-row">
-                  <span>Vehicle Net List Price:</span>
+                  <span>{{ t().dock.vehicleTotal }}:</span>
                   <span>{{ formatCurrency(totalPrice()) }}</span>
                 </div>
                 @if (financeType() !== 'cash') {
                   <div class="st-row">
-                    <span>Down Payment ({{ downPaymentPercent() }}%):</span>
+                    <span
+                      >{{ t().financePanel.downPayment }} ({{
+                        downPaymentPercent()
+                      }}%):</span
+                    >
                     <span>{{ formatCurrency(finance().downPayment) }}</span>
                   </div>
                   <div class="st-row">
@@ -1072,7 +1115,7 @@
                     <span>{{ formatCurrency(finance().residualValue) }}</span>
                   </div>
                   <div class="st-row highlight">
-                    <span>Total Cost of Ownership (TCO):</span>
+                    <span>{{ t().financePanel.fiveYearTco }}:</span>
                     <span>{{
                       formatCurrency(finance().totalCostOfOwnership)
                     }}</span>
@@ -1087,11 +1130,8 @@
         @if (activeTab() === 'specs') {
           <div class="tab-panel specs-panel" role="tabpanel">
             <div class="panel-header">
-              <h2>Engineering & Technical Data</h2>
-              <p>
-                Certified WLTP metrics, high-voltage battery architecture, and
-                dimensional tolerances.
-              </p>
+              <h2>{{ t().specsPanel.title }}</h2>
+              <p>{{ t().specsPanel.subtitle }}</p>
             </div>
 
             <div class="specs-accordion-list">
@@ -1121,7 +1161,7 @@
     <div class="dock-content">
       <div class="dock-summary">
         <div class="dock-price-col">
-          <span class="dock-eyebrow">Configured Cash Price</span>
+          <span class="dock-eyebrow">{{ t().dock.vehicleTotal }}</span>
           <span class="dock-price">{{ formatCurrency(totalPrice()) }}</span>
         </div>
 
@@ -1129,25 +1169,29 @@
           <span class="dock-eyebrow">
             {{
               financeType() === 'lease'
-                ? 'Leasing (' + leaseTermMonths() + ' mo)'
+                ? t().dock.estLease + ' (' + leaseTermMonths() + ' mo)'
                 : financeType() === 'loan'
                   ? 'Loan (' + leaseTermMonths() + ' mo)'
-                  : 'Outright Cash'
+                  : t().financePanel.cashPurchase
             }}
           </span>
           <span class="dock-lease">
             {{
               financeType() === 'lease'
-                ? formatCurrency(finance().monthlyLease) + ' / mo'
+                ? formatCurrency(finance().monthlyLease) +
+                  ' ' +
+                  t().dock.perMonth
                 : financeType() === 'loan'
-                  ? formatCurrency(finance().monthlyLoan) + ' / mo'
+                  ? formatCurrency(finance().monthlyLoan) +
+                    ' ' +
+                    t().dock.perMonth
                   : formatCurrency(totalPrice())
             }}
           </span>
         </div>
 
         <div class="dock-range-col">
-          <span class="dock-eyebrow">WLTP / Real-World</span>
+          <span class="dock-eyebrow">{{ t().dock.wltpRange }}</span>
           <span class="dock-range"
             >{{ effectiveRange() }} /
             {{ rangeSimulation().simulatedRangeKm }} km</span
@@ -1157,7 +1201,7 @@
 
       <div class="dock-actions">
         <button type="button" ahButton="primary" (click)="openOrderModal()">
-          Reserve {{ activeModel().name }}
+          {{ t().dock.orderCta }}
         </button>
       </div>
     </div>
@@ -1166,8 +1210,9 @@
   <!-- Modal Dialog: Build Summary & Order Sheet -->
   <ah-modal
     [open]="orderModalOpen()"
-    title="Build Specification & Reservation"
+    [title]="t().modal.modalTitle"
     eyebrow="AutoSphere Direct"
+    [closeLabel]="t().modal.close"
     size="lg"
     (closed)="closeOrderModal()"
   >
@@ -1179,7 +1224,7 @@
 
           <div class="build-specs-grid">
             <div class="spec-tile">
-              <span class="tile-label">Exterior Paint</span>
+              <span class="tile-label">{{ t().tabs.color }}</span>
               <span class="tile-val"
                 >{{ activeColor().name }} ({{
                   activeColor().finish | titlecase
@@ -1187,19 +1232,23 @@
               >
             </div>
             <div class="spec-tile">
-              <span class="tile-label">Wheels & Tires</span>
+              <span class="tile-label">{{ t().tabs.wheels }}</span>
               <span class="tile-val">{{ activeWheel().name }}</span>
             </div>
             <div class="spec-tile">
-              <span class="tile-label">Interior Upholstery</span>
+              <span class="tile-label">{{ t().tabs.interior }}</span>
               <span class="tile-val">{{ activeUpholstery().name }}</span>
             </div>
             <div class="spec-tile">
-              <span class="tile-label">Cabin Trim Insert</span>
+              <span class="tile-label">{{
+                t().interiorPanel.inlaysTitle
+              }}</span>
               <span class="tile-val">{{ activeInteriorTrim().name }}</span>
             </div>
             <div class="spec-tile">
-              <span class="tile-label">Simulated Range</span>
+              <span class="tile-label">{{
+                t().simulatorPanel.projectedRange
+              }}</span>
               <span class="tile-val"
                 >{{ rangeSimulation().simulatedRangeKm }} km ({{
                   ambientTemperatureC()
@@ -1207,7 +1256,7 @@
               >
             </div>
             <div class="spec-tile">
-              <span class="tile-label">Estimated Delivery</span>
+              <span class="tile-label">Delivery</span>
               <span class="tile-val"
                 >{{ activeModel().deliveryEstimateWeeks }} Weeks</span
               >
@@ -1216,27 +1265,35 @@
 
           @if (activePackages().length > 0) {
             <div class="selected-packages-summary">
-              <h4>Installed Option Packages:</h4>
+              <h4>{{ t().modal.selectedOptions }}:</h4>
               <ul>
                 @for (p of activePackages(); track p.id) {
                   <li>{{ p.name }} (+{{ formatCurrency(p.priceDelta) }})</li>
                 }
               </ul>
             </div>
+          } @else {
+            <div class="selected-packages-summary">
+              <p class="no-options-note">{{ t().modal.noOptions }}</p>
+            </div>
           }
 
           <div class="finance-breakdown">
             <h4>Finance Terms ({{ financeType() | uppercase }})</h4>
             <div class="finance-row">
-              <span>Down Payment ({{ downPaymentPercent() }}%)</span>
+              <span
+                >{{ t().financePanel.downPayment }} ({{
+                  downPaymentPercent()
+                }}%)</span
+              >
               <span>{{ formatCurrency(finance().downPayment) }}</span>
             </div>
             <div class="finance-row">
-              <span>Term Duration</span>
+              <span>{{ t().financePanel.financingTerm }}</span>
               <span>{{ finance().termMonths }} Months</span>
             </div>
             <div class="finance-row total">
-              <span>Monthly Rate</span>
+              <span>{{ t().financePanel.estMonthlyPayment }}</span>
               <span
                 >{{
                   formatCurrency(
@@ -1245,7 +1302,7 @@
                       : finance().monthlyLoan
                   )
                 }}
-                / mo</span
+                {{ t().dock.perMonth }}</span
               >
             </div>
           </div>
@@ -1257,17 +1314,17 @@
             ahButton="secondary"
             (click)="closeOrderModal()"
           >
-            Continue Customizing
+            {{ t().modal.close }}
           </button>
           <button type="button" ahButton="primary" (click)="confirmOrder()">
-            Submit Reservation (€500 Deposit)
+            {{ t().modal.confirmReservation }} ({{ formatCurrency(500) }})
           </button>
         </div>
       </div>
     } @else {
       <div class="order-confirmation">
         <div class="confirmation-icon">✓</div>
-        <h3>Reservation Confirmed!</h3>
+        <h3>{{ t().modal.reservationConfirmed }}</h3>
         <p>
           Your configuration for the
           <strong>{{ activeModel().name }} ({{ activeTrim().name }})</strong>
@@ -1277,12 +1334,11 @@
           >.
         </p>
         <p class="delivery-notice">
-          Factory production slot allocated. Estimated handover in
-          {{ activeModel().deliveryEstimateWeeks }} weeks.
+          {{ t().modal.confirmationNotice }}
         </p>
         <div class="confirmation-action">
           <button type="button" ahButton="primary" (click)="closeOrderModal()">
-            Done
+            {{ t().modal.done }}
           </button>
         </div>
       </div>

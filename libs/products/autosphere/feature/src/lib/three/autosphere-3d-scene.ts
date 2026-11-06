@@ -17,7 +17,6 @@ import {
   PointLight,
   RingGeometry,
   Scene,
-  SphereGeometry,
   TorusGeometry,
   Vector3,
   WebGLRenderer,

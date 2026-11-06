@@ -24,14 +24,11 @@ import {
   AutoSphereStore,
   type DrivingSpeedCycle,
   type FinanceType,
-  type ViewAngle,
 } from '../autosphere-store';
 import type {
   AmbientLightingOption,
   InteriorTrim,
   InteriorUpholstery,
-  VehicleColorway,
-  VehicleModel,
   VehiclePackage,
   VehicleTrim,
   VehicleWheel,
@@ -42,6 +39,7 @@ import {
   type CameraPreset,
   type LightingMode,
 } from '../three/autosphere-3d-scene';
+import { AutoSphereI18n, type AutoSphereLanguage } from '../i18n';
 
 export type ConfiguratorTab =
   | 'trims'
@@ -70,6 +68,8 @@ export type ConfiguratorTab =
 })
 export class AutoSphereShellComponent {
   protected readonly store = inject(AutoSphereStore);
+  protected readonly i18n = inject(AutoSphereI18n);
+  protected readonly t = this.i18n.t;
   private readonly destroyRef = inject(DestroyRef);
 
   protected readonly activeTab = signal<ConfiguratorTab>('trims');
@@ -337,11 +337,11 @@ export class AutoSphereShellComponent {
     URL.revokeObjectURL(url);
   }
 
+  protected selectLanguage(lang: AutoSphereLanguage): void {
+    this.i18n.setLanguage(lang);
+  }
+
   protected formatCurrency(amount: number): string {
-    return new Intl.NumberFormat('de-DE', {
-      style: 'currency',
-      currency: 'EUR',
-      maximumFractionDigits: 0,
-    }).format(amount);
+    return this.i18n.formatCurrency(amount);
   }
 }
