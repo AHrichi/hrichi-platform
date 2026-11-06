@@ -1,4 +1,9 @@
-import type { VehicleModel } from './model';
+import type {
+  EditorialArticle,
+  PressReview,
+  PromotionalCampaign,
+  VehicleModel,
+} from './model';
 
 export const AUTOSPHERE_MODELS: VehicleModel[] = [
   {
@@ -519,5 +524,315 @@ export const AUTOSPHERE_MODELS: VehicleModel[] = [
         },
       ],
     },
+  },
+];
+
+export const CONTENTFUL_CAMPAIGNS: PromotionalCampaign[] = [
+  {
+    sys: {
+      id: 'camp-launch-2026-eu',
+      type: 'Entry',
+      createdAt: '2026-03-01T08:00:00Z',
+      updatedAt: '2026-04-15T14:30:00Z',
+      revision: 4,
+      locale: 'en-US',
+      environment: 'master',
+    },
+    campaignId: 'AUT-2026-EU-LAUNCH',
+    badge: 'Limited Allocation Advantage',
+    title: '2026 European Launch Advantage',
+    description:
+      'Order an AutoSphere GT-V or AeroSport today and receive our complete home and highway charging package at no additional cost.',
+    highlightOffer:
+      'Complimentary 11kW Bi-Directional Home Wallbox + 1 Year European Fast-Charging Pass Included (€2,400 Editorial Incentive)',
+    validUntil: 'November 30, 2026',
+    disclaimer:
+      'Applies to orders placed before November 30, 2026. Fast charging pass redeemable at all Ionity, Fastned, and Porsche Turbo Charger stations across 28 European countries.',
+    active: true,
+  },
+];
+
+export const CONTENTFUL_EDITORIAL_ARTICLES: EditorialArticle[] = [
+  {
+    sys: {
+      id: 'art-800v-sic-charge',
+      type: 'Entry',
+      createdAt: '2026-02-14T09:00:00Z',
+      updatedAt: '2026-04-10T16:20:00Z',
+      revision: 7,
+      locale: 'en-US',
+      environment: 'master',
+    },
+    title:
+      '800V Silicon-Carbide Architecture: The 19-Minute Fast Charging Revolution',
+    slug: '800v-silicon-carbide-architecture',
+    category: 'Engineering',
+    readTimeMinutes: 4,
+    author: {
+      name: 'Dr. Marcus Vonberg',
+      role: 'Head of High-Voltage Powertrain Systems',
+    },
+    leadParagraph:
+      'By transitioning from 400V copper-heavy windings to 800V silicon-carbide (SiC) semiconductor inverters, our engineers doubled charging throughput while shaving 38kg off the vehicle harness.',
+    tags: ['800V Architecture', 'Silicon Carbide', 'DC Fast Charging', 'WLTP'],
+    body: {
+      nodeType: 'document',
+      data: {},
+      content: [
+        {
+          nodeType: 'heading-2',
+          content: [
+            {
+              nodeType: 'text',
+              value: 'Thermal Equilibrium at 320 kW Peak Throughput',
+            },
+          ],
+        },
+        {
+          nodeType: 'paragraph',
+          content: [
+            {
+              nodeType: 'text',
+              value:
+                'Most electric vehicles hit peak charging speed for mere seconds before thermal throttling forces power down. The AutoSphere thermal loop utilizes chilled dielectric fluid circulated through nickel-plated micro-channels embedded directly into the prismatic cell matrix.',
+            },
+          ],
+        },
+        {
+          nodeType: 'heading-3',
+          content: [{ nodeType: 'text', value: 'Key Engineering Metrics' }],
+        },
+        {
+          nodeType: 'unordered-list',
+          content: [
+            {
+              nodeType: 'list-item',
+              content: [
+                {
+                  nodeType: 'paragraph',
+                  content: [
+                    {
+                      nodeType: 'text',
+                      value:
+                        '10% to 80% State of Charge in 19 minutes flat at 350kW DC pedestals.',
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              nodeType: 'list-item',
+              content: [
+                {
+                  nodeType: 'paragraph',
+                  content: [
+                    {
+                      nodeType: 'text',
+                      value:
+                        'Flat charging plateau maintained up to 68% SOC with zero thermal throttling.',
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              nodeType: 'list-item',
+              content: [
+                {
+                  nodeType: 'paragraph',
+                  content: [
+                    {
+                      nodeType: 'text',
+                      value:
+                        'Silicon-carbide MOSFET switching efficiency rated at 99.2% under full load.',
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    sys: {
+      id: 'art-eco-weave-circularity',
+      type: 'Entry',
+      createdAt: '2026-03-02T11:30:00Z',
+      updatedAt: '2026-04-18T10:15:00Z',
+      revision: 5,
+      locale: 'en-US',
+      environment: 'master',
+    },
+    title:
+      'Nordic Glacier Eco-Weave: Circular Luxury from Upcycled Maritime Plastics',
+    slug: 'nordic-glacier-eco-weave-circular-luxury',
+    category: 'Sustainability',
+    readTimeMinutes: 3,
+    author: {
+      name: 'Elena Lindqvist',
+      role: 'Chief Color & Material Designer',
+    },
+    leadParagraph:
+      'True luxury no longer requires bovine slaughter or petrochemical leatherettes. Nordic Glacier Eco-Weave combines regenerated sea nylon with organic Scandinavian wool for unmatched haptic depth.',
+    tags: [
+      'Econyl',
+      'Circular Economy',
+      'Sustainable Cabin',
+      'Zero Deforestation',
+    ],
+    body: {
+      nodeType: 'document',
+      data: {},
+      content: [
+        {
+          nodeType: 'heading-2',
+          content: [
+            {
+              nodeType: 'text',
+              value: 'Crafting Tactile Warmth from the Ocean',
+            },
+          ],
+        },
+        {
+          nodeType: 'paragraph',
+          content: [
+            {
+              nodeType: 'text',
+              value:
+                'Every vehicle cabin upholstered in Nordic Glacier Eco-Weave diverts 14.8 kg of discarded fishing nets from the North Sea. The yarn is spun in Piedmont, Italy, and coated with a hydrophobic plant-based nano-barrier that repels espresso, wine, and denim dye transfer.',
+            },
+          ],
+        },
+        {
+          nodeType: 'paragraph',
+          content: [
+            {
+              nodeType: 'text',
+              value:
+                'The result is a breathable, temperature-neutral textile that remains cool in Mediterranean summers and warm during alpine winters, outlasting conventional automotive leather by 40,000 abrasion cycles.',
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    sys: {
+      id: 'art-nurburgring-aero-021',
+      type: 'Entry',
+      createdAt: '2026-03-20T14:45:00Z',
+      updatedAt: '2026-04-20T09:00:00Z',
+      revision: 9,
+      locale: 'en-US',
+      environment: 'master',
+    },
+    title:
+      'Track-Tested Aerodynamics: From Nürburgring Simulation to 0.208 Drag Coefficient',
+    slug: 'track-tested-aerodynamics-0208-cd',
+    category: 'Performance',
+    readTimeMinutes: 5,
+    author: {
+      name: 'Klaus Becker',
+      role: 'Head of Aerodynamic Fluid Dynamics',
+    },
+    leadParagraph:
+      'Reaching 610km of high-speed autobahn range requires obsessive drag management. Active cooling flaps, aeroblade wheels, and a flat underbody venturi tunnel deliver class-leading 0.208 Cd.',
+    tags: [
+      'Aerodynamics',
+      'Nürburgring Nordschleife',
+      'Downforce Vectoring',
+      '0.208 Cd',
+    ],
+    body: {
+      nodeType: 'document',
+      data: {},
+      content: [
+        {
+          nodeType: 'heading-2',
+          content: [
+            {
+              nodeType: 'text',
+              value: 'Active Aero Vanes & Underbody Venturis',
+            },
+          ],
+        },
+        {
+          nodeType: 'paragraph',
+          content: [
+            {
+              nodeType: 'text',
+              value:
+                'At speeds above 120 km/h, the front cooling shutters close hermetically while the rear diffuser extends by 65mm. This reduces turbulent wake behind the vehicle, adding +42 km of effective highway range without carrying an extra kilogram of battery ballast.',
+            },
+          ],
+        },
+        {
+          nodeType: 'paragraph',
+          content: [
+            {
+              nodeType: 'text',
+              value:
+                'In Sport and Apex track modes, the active rear airbrake can deploy up to 45 degrees under heavy braking, generating 180 kg of rear axle downforce into Turn 1 at the Nürburgring.',
+            },
+          ],
+        },
+      ],
+    },
+  },
+];
+
+export const CONTENTFUL_PRESS_REVIEWS: PressReview[] = [
+  {
+    sys: {
+      id: 'press-top-gear',
+      type: 'Entry',
+      createdAt: '2026-03-15T12:00:00Z',
+      updatedAt: '2026-03-15T12:00:00Z',
+      revision: 1,
+      locale: 'en-US',
+      environment: 'master',
+    },
+    publication: 'Top Gear Magazine',
+    rating: 5,
+    quote:
+      'The AutoSphere GT-V redefines what high-voltage electric grand touring feels like. Rapid, tactile, and endlessly composed across Alpine passes.',
+    author: 'Ollie Kew',
+    date: 'March 2026',
+  },
+  {
+    sys: {
+      id: 'press-auto-motor-sport',
+      type: 'Entry',
+      createdAt: '2026-03-18T10:00:00Z',
+      updatedAt: '2026-03-18T10:00:00Z',
+      revision: 1,
+      locale: 'de-DE',
+      environment: 'master',
+    },
+    publication: 'Auto Motor und Sport',
+    rating: 5,
+    quote:
+      'Deutsche Ingenieurskunst auf höchstem Niveau: Die 800V-Ladekurve hält, was sie verspricht. 10 bis 80 Prozent in unter 20 Minuten ist die neue Realität.',
+    author: 'Jochen Knecht',
+    date: 'März 2026',
+  },
+  {
+    sys: {
+      id: 'press-car-and-driver',
+      type: 'Entry',
+      createdAt: '2026-03-24T15:00:00Z',
+      updatedAt: '2026-03-24T15:00:00Z',
+      revision: 1,
+      locale: 'en-US',
+      environment: 'master',
+    },
+    publication: 'Car and Driver',
+    rating: 5,
+    quote:
+      'Sub-50ms chassis vectoring, an actual mechanical limited-slip differential, and interior ergonomics that put legacy Stuttgart and Munich marques on notice.',
+    author: 'Ezra Dyer',
+    date: 'April 2026',
   },
 ];

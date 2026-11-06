@@ -43,6 +43,42 @@ export interface ContentfulRichTextDocument {
   content: ContentfulRichTextNode[];
 }
 
+export interface EditorialArticle {
+  sys: ContentfulSys;
+  title: string;
+  slug: string;
+  category: 'Engineering' | 'Sustainability' | 'Performance' | 'Design';
+  readTimeMinutes: number;
+  author: {
+    name: string;
+    role: string;
+  };
+  leadParagraph: string;
+  body: ContentfulRichTextDocument;
+  tags: string[];
+}
+
+export interface PromotionalCampaign {
+  sys: ContentfulSys;
+  campaignId: string;
+  badge: string;
+  title: string;
+  description: string;
+  highlightOffer: string;
+  validUntil: string;
+  disclaimer: string;
+  active: boolean;
+}
+
+export interface PressReview {
+  sys: ContentfulSys;
+  publication: string;
+  rating: number;
+  quote: string;
+  author: string;
+  date: string;
+}
+
 export interface VehicleTrim {
   id: string;
   name: string;

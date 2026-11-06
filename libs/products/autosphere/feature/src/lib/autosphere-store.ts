@@ -29,6 +29,10 @@ export class AutoSphereStore {
   readonly availableModels = this.cms.availableModels;
   readonly isPreviewMode = this.cms.isPreviewMode;
   readonly cmsMetadata = this.cms.cmsMetadata;
+  readonly editorialArticles = this.cms.editorialArticles;
+  readonly activeCampaign = this.cms.activeCampaign;
+  readonly promotionalCampaigns = this.cms.promotionalCampaigns;
+  readonly pressReviews = this.cms.pressReviews;
 
   // Selected vehicle attributes
   readonly selectedModelSlug = signal<string>('gt-v');

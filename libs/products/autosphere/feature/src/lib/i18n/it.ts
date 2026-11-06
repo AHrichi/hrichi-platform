@@ -44,6 +44,7 @@ export const itDictionary: AutoSphereDictionary = {
     simulator: '6. Autonomia & 800V',
     finance: '7. Finanziamento',
     specs: '8. Dati tecnici',
+    editorial: '9. Storie & Stampa (CMS)',
   },
   trimsPanel: {
     title: 'Seleziona propulsione e architettura',

@@ -2,7 +2,7 @@
   position: fixed;
   inset-block-end: var(--space-4);
   inset-inline-end: var(--space-4);
-  z-index: 1000;
+  z-index: 99999;
   inline-size: min(44rem, calc(100vw - 2 * var(--space-4)));
   max-block-size: min(32rem, 80vh);
   display: flex;

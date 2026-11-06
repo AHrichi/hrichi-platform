@@ -46,6 +46,7 @@ export interface AutoSphereDictionary {
     simulator: string;
     finance: string;
     specs: string;
+    editorial: string;
   };
   trimsPanel: {
     title: string;

@@ -44,6 +44,7 @@ export const enDictionary: AutoSphereDictionary = {
     simulator: '6. Range & 800V',
     finance: '7. Finance',
     specs: '8. Tech Specs',
+    editorial: '9. Stories & Press (CMS)',
   },
   trimsPanel: {
     title: 'Select Powertrain & Architecture',

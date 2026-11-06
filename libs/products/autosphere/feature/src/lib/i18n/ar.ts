@@ -44,6 +44,7 @@ export const arDictionary: AutoSphereDictionary = {
     simulator: '6. المدى و800V',
     finance: '7. التمويل',
     specs: '8. المواصفات الفنية',
+    editorial: '9. المقالات والصحافة (CMS)',
   },
   trimsPanel: {
     title: 'اختر منظومة الحركة وبنية المحركات',

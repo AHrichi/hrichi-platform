@@ -44,6 +44,7 @@ export const deDictionary: AutoSphereDictionary = {
     simulator: '6. Reichweite & 800V',
     finance: '7. Finanzierung',
     specs: '8. Technische Daten',
+    editorial: '9. Magazin & Presse (CMS)',
   },
   trimsPanel: {
     title: 'Antrieb & Architektur wählen',

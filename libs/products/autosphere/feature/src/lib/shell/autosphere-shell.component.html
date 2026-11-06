@@ -139,6 +139,35 @@
     </div>
   </header>
 
+  <!-- Contentful Live Promotional Incentive Banner -->
+  @if (activeCampaign(); as camp) {
+    <aside class="cms-campaign-strip" aria-label="Manufacturer Promotion">
+      <div class="campaign-inner">
+        <div class="campaign-badge">
+          <span class="badge-icon">⚡</span>
+          <span>{{ camp.badge }}</span>
+        </div>
+        <div class="campaign-headline">
+          <strong>{{ camp.title }}</strong>
+          <span class="campaign-bullet hide-mobile">·</span>
+          <span class="campaign-sub hide-mobile">{{
+            camp.highlightOffer
+          }}</span>
+        </div>
+        <div class="campaign-actions">
+          <button
+            type="button"
+            class="campaign-btn"
+            (click)="openCampaignDetails()"
+          >
+            <span>Perks & Voucher</span>
+            <span class="cms-tag-pill">Contentful</span>
+          </button>
+        </div>
+      </div>
+    </aside>
+  }
+
   <!-- Main Showcase Grid -->
   <main class="autosphere-stage-layout">
     <!-- Left Column: Zero-CLS Interactive 3D WebGL / SVG Visualizer Stage -->
@@ -586,6 +615,16 @@
           (click)="setTab('specs')"
         >
           {{ t().tabs.specs }}
+        </button>
+        <button
+          type="button"
+          role="tab"
+          class="tab-btn"
+          [class.is-active]="activeTab() === 'editorial'"
+          [attr.aria-selected]="activeTab() === 'editorial'"
+          (click)="setTab('editorial')"
+        >
+          {{ t().tabs.editorial }}
         </button>
       </nav>
 
@@ -1191,6 +1230,161 @@
             </div>
           </div>
         }
+
+        <!-- TAB 9: CONTENTFUL HEADLESS CMS (EDITORIAL STORIES & PRESS) -->
+        @if (activeTab() === 'editorial') {
+          <div class="tab-panel editorial-panel" role="tabpanel">
+            <div class="panel-header">
+              <div class="editorial-header-row">
+                <div>
+                  <h2>Stories & Engineering Press</h2>
+                  <p>
+                    Live content powered by Contentful Content Delivery API
+                    (CDA)
+                  </p>
+                </div>
+                <div class="cms-endpoint-pill">
+                  <span class="status-dot"></span>
+                  <span>Contentful CDA v1</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Contentful Metadata Summary Card -->
+            <div class="cms-meta-summary-card">
+              <div class="cms-meta-icon">📰</div>
+              <div class="cms-meta-info">
+                <h3>Decoupled Headless CMS Architecture</h3>
+                <p>
+                  Demonstrates enterprise automotive editorial integration:
+                  technical deep-dives, environmental impact reports, and
+                  verified automotive press reviews are served as structured
+                  Contentful Rich Text AST from space
+                  <code>autosphere-eu-west-1</code>, enabling dynamic marketing
+                  updates with zero frontend redeployment.
+                </p>
+                <div class="cms-meta-tags">
+                  <span class="meta-tag">Contentful CDA</span>
+                  <span class="meta-tag">Rich Text AST</span>
+                  <span class="meta-tag">Decoupled Content</span>
+                  <span class="meta-tag">Sub-ms Cache</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Article Filter Chips -->
+            <div
+              class="editorial-filter-bar"
+              role="group"
+              aria-label="Filter Stories"
+            >
+              <button
+                type="button"
+                class="filter-chip"
+                [class.is-active]="selectedArticleTag() === 'All'"
+                (click)="setArticleTag('All')"
+              >
+                All Stories ({{ editorialArticles().length }})
+              </button>
+              <button
+                type="button"
+                class="filter-chip"
+                [class.is-active]="selectedArticleTag() === 'Engineering'"
+                (click)="setArticleTag('Engineering')"
+              >
+                ⚡ 800V Powertrain
+              </button>
+              <button
+                type="button"
+                class="filter-chip"
+                [class.is-active]="selectedArticleTag() === 'Sustainability'"
+                (click)="setArticleTag('Sustainability')"
+              >
+                🌱 Eco-Materials
+              </button>
+              <button
+                type="button"
+                class="filter-chip"
+                [class.is-active]="selectedArticleTag() === 'Performance'"
+                (click)="setArticleTag('Performance')"
+              >
+                🏎️ Active Aerodynamics
+              </button>
+            </div>
+
+            <!-- Editorial Articles Grid -->
+            <div class="editorial-articles-grid">
+              @for (art of filteredArticles(); track art.sys.id) {
+                <article class="editorial-card">
+                  <div class="editorial-card-header">
+                    <span class="editorial-tag">{{ art.category }}</span>
+                    <span class="editorial-read-time"
+                      >⏱️ {{ art.readTimeMinutes }} min read</span
+                    >
+                  </div>
+                  <h3 class="editorial-card-title">{{ art.title }}</h3>
+                  <p class="editorial-card-subtitle">{{ art.leadParagraph }}</p>
+
+                  <div class="editorial-card-footer">
+                    <div class="editorial-author-row">
+                      <span class="author-avatar">{{
+                        art.author.name.slice(0, 2)
+                      }}</span>
+                      <div class="author-text">
+                        <span class="author-name">{{ art.author.name }}</span>
+                        <small class="author-role">{{ art.author.role }}</small>
+                      </div>
+                    </div>
+                    <div class="editorial-action-btns">
+                      <button
+                        type="button"
+                        class="read-story-btn"
+                        (click)="openArticle(art)"
+                      >
+                        Read Story
+                      </button>
+                      <button
+                        type="button"
+                        class="inspect-ast-btn"
+                        (click)="inspectCmsAst(art.title, art)"
+                        title="Inspect Contentful CDA JSON AST for this entry"
+                      >
+                        JSON AST ↗
+                      </button>
+                    </div>
+                  </div>
+                </article>
+              }
+            </div>
+
+            <!-- Verified Press Reviews Section -->
+            <div class="press-section">
+              <div class="press-section-header">
+                <h3>Verified Press Reviews</h3>
+                <p>
+                  Synced dynamically from Contentful
+                  <code>pressReview</code> Content Type
+                </p>
+              </div>
+              <div class="press-reviews-grid">
+                @for (rev of pressReviews(); track rev.sys.id) {
+                  <blockquote class="press-card">
+                    <div class="press-card-top">
+                      <span class="press-pub">{{ rev.publication }}</span>
+                      <span class="press-rating">★ {{ rev.rating }}/10</span>
+                    </div>
+                    <p class="press-quote">“{{ rev.quote }}”</p>
+                    <footer class="press-footer">
+                      <cite class="press-author"
+                        >— {{ rev.author }} ({{ rev.date }})</cite
+                      >
+                    </footer>
+                  </blockquote>
+                }
+              </div>
+            </div>
+          </div>
+        }
       </div>
     </section>
   </main>
@@ -1419,6 +1613,148 @@
         <div class="confirmation-action">
           <button type="button" ahButton="primary" (click)="closeOrderModal()">
             {{ t().modal.done }}
+          </button>
+        </div>
+      </div>
+    }
+  </ah-modal>
+
+  <!-- Article Reader Modal (Contentful Rich Text AST Renderer) -->
+  <ah-modal
+    [open]="!!activeArticleModal()"
+    [title]="activeArticleModal()?.title ?? 'Article'"
+    (close)="closeArticleModal()"
+  >
+    @if (activeArticleModal(); as art) {
+      <div class="article-reader-modal">
+        <div class="article-meta-header">
+          <div class="meta-pills">
+            <span class="tag-pill">{{ art.category }}</span>
+            <span class="read-pill">⏱️ {{ art.readTimeMinutes }} min read</span>
+            <span class="cda-pill">Contentful CDA</span>
+          </div>
+          <h2 class="article-modal-title">{{ art.title }}</h2>
+          <p class="article-modal-subtitle">{{ art.leadParagraph }}</p>
+          <div class="article-author-byline">
+            <div class="byline-avatar">{{ art.author.name.slice(0, 2) }}</div>
+            <div class="byline-text">
+              <strong>{{ art.author.name }}</strong>
+              <small
+                >{{ art.author.role }} · Contentful Entry {{ art.sys.id }} (Rev
+                {{ art.sys.revision }})</small
+              >
+            </div>
+          </div>
+        </div>
+
+        <div class="article-content-body contentful-rich-text">
+          @for (block of art.body.content; track $index) {
+            @if (block.nodeType === 'heading-2') {
+              <h3 class="rich-h2">{{ getNodeText(block) }}</h3>
+            } @else if (block.nodeType === 'heading-3') {
+              <h4 class="rich-h3">{{ getNodeText(block) }}</h4>
+            } @else if (block.nodeType === 'paragraph') {
+              <p class="rich-p">{{ getNodeText(block) }}</p>
+            } @else if (block.nodeType === 'unordered-list') {
+              <ul class="rich-ul">
+                @for (item of block.content; track $index) {
+                  <li>{{ getNodeText(item) }}</li>
+                }
+              </ul>
+            }
+          }
+        </div>
+
+        <div class="article-modal-footer">
+          <button
+            type="button"
+            class="btn-inspect-raw"
+            (click)="inspectCmsAst(art.title, art)"
+          >
+            Inspect Contentful AST Payload ↗
+          </button>
+          <button
+            type="button"
+            ahButton="primary"
+            (click)="closeArticleModal()"
+          >
+            Done
+          </button>
+        </div>
+      </div>
+    }
+  </ah-modal>
+
+  <!-- Contentful CDA Raw AST JSON Inspector Modal -->
+  <ah-modal
+    [open]="!!activeCmsAstModal()"
+    [title]="
+      activeCmsAstModal()?.title
+        ? 'Contentful CDA AST: ' + activeCmsAstModal()?.title
+        : 'Contentful CDA JSON AST Inspector'
+    "
+    (close)="closeCmsAstModal()"
+  >
+    @if (activeCmsAstModal(); as ast) {
+      <div class="cms-ast-inspector-modal">
+        <div class="ast-meta-info">
+          <p>
+            Authentic JSON entity response served by the
+            <strong>Contentful Content Delivery API (CDA)</strong> from Space
+            <code>autosphere-eu-west-1</code> (Environment:
+            <code>master</code>).
+          </p>
+        </div>
+
+        <pre class="cms-ast-code"><code>{{ ast.json }}</code></pre>
+
+        <div class="ast-modal-actions">
+          <button type="button" ahButton="primary" (click)="closeCmsAstModal()">
+            Close Inspector
+          </button>
+        </div>
+      </div>
+    }
+  </ah-modal>
+
+  <!-- Promotional Campaign Details Modal -->
+  <ah-modal
+    [open]="campaignDetailsModal()"
+    title="Manufacturer Incentive Campaign"
+    (close)="closeCampaignDetails()"
+  >
+    @if (activeCampaign(); as camp) {
+      <div class="campaign-modal-content">
+        <div class="campaign-modal-header">
+          <span class="camp-badge">{{ camp.badge }}</span>
+          <h2>{{ camp.title }}</h2>
+          <p class="camp-desc">{{ camp.description }}</p>
+        </div>
+
+        <div class="camp-benefits-list">
+          <h4>Included Campaign Advantage:</h4>
+          <p class="camp-highlight">{{ camp.highlightOffer }}</p>
+        </div>
+
+        <div class="camp-promo-code-box">
+          <span class="code-label">Campaign Reference ID:</span>
+          <code class="promo-code">{{ camp.campaignId }}</code>
+        </div>
+
+        <div class="camp-footer-notes">
+          <small>
+            {{ camp.disclaimer }} Active until {{ camp.validUntil }}. Valid for
+            factory builds ordered through AutoSphere.
+          </small>
+        </div>
+
+        <div class="modal-footer-actions">
+          <button
+            type="button"
+            ahButton="primary"
+            (click)="closeCampaignDetails()"
+          >
+            Got It
           </button>
         </div>
       </div>

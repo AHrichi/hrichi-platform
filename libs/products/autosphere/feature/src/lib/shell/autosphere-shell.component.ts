@@ -27,8 +27,12 @@ import {
 } from '../autosphere-store';
 import type {
   AmbientLightingOption,
+  ContentfulRichTextNode,
+  EditorialArticle,
   InteriorTrim,
   InteriorUpholstery,
+  PressReview,
+  PromotionalCampaign,
   VehiclePackage,
   VehicleTrim,
   VehicleWheel,
@@ -52,7 +56,8 @@ export type ConfiguratorTab =
   | 'packages'
   | 'simulator'
   | 'finance'
-  | 'specs';
+  | 'specs'
+  | 'editorial';
 
 @Component({
   selector: 'ah-autosphere-shell',
@@ -91,6 +96,16 @@ export class AutoSphereShellComponent {
     'recruiter@wynwood-tech.de',
   );
   protected readonly cmsMetadata = this.store.cmsMetadata;
+  protected readonly editorialArticles = this.store.editorialArticles;
+  protected readonly activeCampaign = this.store.activeCampaign;
+  protected readonly pressReviews = this.store.pressReviews;
+  protected readonly activeArticleModal = signal<EditorialArticle | null>(null);
+  protected readonly activeCmsAstModal = signal<{
+    title: string;
+    json: string;
+  } | null>(null);
+  protected readonly campaignDetailsModal = signal<boolean>(false);
+  protected readonly selectedArticleTag = signal<string>('All');
 
   // Reference to 3D WebGL Canvas
   protected readonly webglCanvas =
@@ -178,6 +193,7 @@ export class AutoSphereShellComponent {
     });
 
     // Reactive effect synchronizing store signals with Three.js WebGL scene
+    let lastPreset: CameraPreset | null = null;
     effect(() => {
       const ctrl = this.scene3DController();
 
@@ -213,7 +229,11 @@ export class AutoSphereShellComponent {
         suspensionLift,
         headlightsOn,
       });
-      ctrl.setCameraPreset(cameraPreset);
+
+      if (cameraPreset !== lastPreset) {
+        lastPreset = cameraPreset;
+        ctrl.setCameraPreset(cameraPreset);
+      }
     });
 
     this.destroyRef.onDestroy(() => {
@@ -358,6 +378,53 @@ export class AutoSphereShellComponent {
 
   protected isPackageSelected(id: string): boolean {
     return this.store.selectedPackageIds().has(id);
+  }
+
+  protected openArticle(article: EditorialArticle): void {
+    this.activeArticleModal.set(article);
+  }
+
+  protected closeArticleModal(): void {
+    this.activeArticleModal.set(null);
+  }
+
+  protected inspectCmsAst(title: string, data: unknown): void {
+    this.activeCmsAstModal.set({
+      title,
+      json: JSON.stringify(data, null, 2),
+    });
+  }
+
+  protected closeCmsAstModal(): void {
+    this.activeCmsAstModal.set(null);
+  }
+
+  protected openCampaignDetails(): void {
+    this.campaignDetailsModal.set(true);
+  }
+
+  protected closeCampaignDetails(): void {
+    this.campaignDetailsModal.set(false);
+  }
+
+  protected setArticleTag(tag: string): void {
+    this.selectedArticleTag.set(tag);
+  }
+
+  protected filteredArticles = computed(() => {
+    const tag = this.selectedArticleTag();
+    if (tag === 'All') return this.editorialArticles();
+    return this.editorialArticles().filter(
+      (a) => a.category === tag || a.tags.includes(tag),
+    );
+  });
+
+  protected getNodeText(node: ContentfulRichTextNode): string {
+    if (node.value) return node.value;
+    if (node.content && node.content.length > 0) {
+      return node.content.map((c) => this.getNodeText(c)).join(' ');
+    }
+    return '';
   }
 
   protected copyShareUrl(): void {

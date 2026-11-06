@@ -44,6 +44,7 @@ export const frDictionary: AutoSphereDictionary = {
     simulator: '6. Autonomie & 800V',
     finance: '7. Financement',
     specs: '8. Fiche technique',
+    editorial: '9. Récits & Presse (CMS)',
   },
   trimsPanel: {
     title: 'Sélectionnez la motorisation et l’architecture',

@@ -1,10 +1,18 @@
 import { Injectable, computed, signal } from '@angular/core';
-import { AUTOSPHERE_MODELS } from './mock-cms-catalog';
+import {
+  AUTOSPHERE_MODELS,
+  CONTENTFUL_CAMPAIGNS,
+  CONTENTFUL_EDITORIAL_ARTICLES,
+  CONTENTFUL_PRESS_REVIEWS,
+} from './mock-cms-catalog';
 import type {
   ConfiguratorState,
+  EditorialArticle,
   FinanceSummary,
   InteriorTrim,
   InteriorUpholstery,
+  PressReview,
+  PromotionalCampaign,
   RangeSimulation,
   VehicleColorway,
   VehicleModel,
@@ -79,8 +87,34 @@ export class AutoSphereCmsService {
     status: 'synced',
   });
 
+  /** Editorial Articles Store */
+  private readonly articles = signal<EditorialArticle[]>(
+    CONTENTFUL_EDITORIAL_ARTICLES,
+  );
+
+  /** Promotional Campaigns Store */
+  private readonly campaigns =
+    signal<PromotionalCampaign[]>(CONTENTFUL_CAMPAIGNS);
+
+  /** Press Reviews Store */
+  private readonly press = signal<PressReview[]>(CONTENTFUL_PRESS_REVIEWS);
+
   /** Public list of available vehicle models */
   readonly availableModels = computed(() => this.models());
+
+  /** Public list of Contentful editorial stories */
+  readonly editorialArticles = computed(() => this.articles());
+
+  /** Public list of active Contentful marketing campaigns */
+  readonly promotionalCampaigns = computed(() => this.campaigns());
+
+  /** Active prominent promotional campaign */
+  readonly activeCampaign = computed(
+    () => this.campaigns().find((c) => c.active) ?? this.campaigns()[0],
+  );
+
+  /** Curated Press Reviews */
+  readonly pressReviews = computed(() => this.press());
 
   /**
    * Refreshes the model catalog from Contentful CDA / Backend API with latency simulation.

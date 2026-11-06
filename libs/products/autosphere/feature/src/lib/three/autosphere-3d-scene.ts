@@ -91,6 +91,8 @@ export function createAutoSphere3DScene(
 
   controls.addEventListener('start', () => {
     isCameraTransitioning = false;
+    targetCamPos.copy(camera.position);
+    targetCamLook.copy(controls.target);
   });
 
   // 3. Studio Lighting Rig
@@ -145,13 +147,13 @@ export function createAutoSphere3DScene(
   });
 
   const glassMaterial = new MeshPhysicalMaterial({
-    color: new Color(0xffffff),
-    metalness: 0.1,
-    roughness: 0.05,
-    transmission: 0.88,
+    color: new Color(0x1e293b),
+    metalness: 0.05,
+    roughness: 0.08,
+    transmission: 0.92,
     transparent: true,
-    opacity: 0.85,
-    ior: 1.52,
+    opacity: 0.35,
+    ior: 1.5,
   });
 
   const rimMaterial = new MeshStandardMaterial({
@@ -213,8 +215,8 @@ export function createAutoSphere3DScene(
   const ambientStripMaterial = new MeshStandardMaterial({
     color: new Color(initialParams.ambientLightHex),
     emissive: new Color(initialParams.ambientLightHex),
-    emissiveIntensity: 0.7,
-    roughness: 0.2,
+    emissiveIntensity: 0.45,
+    roughness: 0.25,
     metalness: 0.1,
   });
 
@@ -285,6 +287,16 @@ export function createAutoSphere3DScene(
   );
   taillightR.position.set(0.65, 0.75, 2.2);
   carRoot.add(taillightR);
+
+  // Soft Cockpit Ambient Lighting
+  const cockpitAmbientLight = new PointLight(
+    new Color(initialParams.ambientLightHex),
+    0.65,
+    2.2,
+    2.0,
+  );
+  cockpitAmbientLight.position.set(-0.3, 0.72, -0.2);
+  carRoot.add(cockpitAmbientLight);
 
   // Ground Contact Shadow
   const shadowPlaneGeo = new PlaneGeometry(2.4, 4.8);
@@ -376,14 +388,15 @@ export function createAutoSphere3DScene(
           } else if (name.includes('leather') || name === 'carpet') {
             child.material = upholsteryMaterial;
           } else if (
-            name.includes('carbon') ||
             name === 'trim' ||
-            name === 'steering_trim' ||
-            name === 'yellow_trim'
+            name === 'carbon_fibre_trim' ||
+            name === 'carbon fibre' ||
+            name === 'steering_carbon'
           ) {
             child.material = trimMaterial;
           } else if (
             name === 'interior_light' ||
+            name === 'interior_dark' ||
             name === 'plastic_gray' ||
             name === 'steering_column' ||
             name === 'nuts'
@@ -391,7 +404,8 @@ export function createAutoSphere3DScene(
             // Dark cabin plastic tub, dashboard casing, column, and pillars
             child.material = cabinDarkMaterial;
           } else if (
-            name === 'interior_dark' ||
+            name === 'yellow_trim' ||
+            name === 'steering_trim' ||
             name === 'steering_red_lights'
           ) {
             // True ambient LED light contour and steering shift lights
@@ -459,6 +473,8 @@ export function createAutoSphere3DScene(
     upholsteryMaterial.color.set(params.upholsteryHex);
     ambientStripMaterial.color.set(params.ambientLightHex);
     ambientStripMaterial.emissive.set(params.ambientLightHex);
+    ambientStripMaterial.emissiveIntensity = 0.45;
+    cockpitAmbientLight.color.set(params.ambientLightHex);
 
     // Update Headlights & Taillights (Visible 3D Projectors + Emissive Shaders)
     const lightsActive = Boolean(params.headlightsOn);
@@ -683,6 +699,7 @@ export function createAutoSphere3DScene(
     headlightPuddle.dispose();
     taillightL.dispose();
     taillightR.dispose();
+    cockpitAmbientLight.dispose();
 
     renderer.dispose();
   }
