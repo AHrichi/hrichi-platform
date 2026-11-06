@@ -21,7 +21,7 @@ import {
   WebGLRenderer,
 } from 'three';
 import { OrbitControls } from './orbit-controls';
-import { DRACOLoader, GLTFLoader } from './gltf-loader';
+import { GLTFLoader } from './gltf-loader';
 
 export type LightingMode = 'daylight' | 'cyberpunk' | 'xray';
 export type CameraPreset =
@@ -235,11 +235,7 @@ export function createAutoSphere3DScene(
   let glassMesh: Mesh | null = null;
 
   try {
-    const dracoLoader = new DRACOLoader();
-    dracoLoader.setDecoderPath('/draco/');
-
     const gltfLoader = new GLTFLoader();
-    gltfLoader.setDRACOLoader(dracoLoader);
 
     gltfLoader.load(
       '/models/car.glb',
