@@ -1,0 +1,1267 @@
+<div class="autosphere-container">
+  <!-- Top Navigation Bar -->
+  <header class="autosphere-header">
+    <div class="autosphere-brand-bar">
+      <div class="brand-left">
+        <a
+          routerLink="/apps"
+          class="back-link"
+          aria-label="Return to applications directory"
+        >
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <polyline points="15 18 9 12 15 6"></polyline>
+          </svg>
+          <span>All Apps</span>
+        </a>
+        <div class="brand-title-group">
+          <span class="brand-badge">AutoSphere</span>
+          <h1 class="brand-heading">{{ activeModel().name }}</h1>
+        </div>
+      </div>
+
+      <div class="brand-actions">
+        <!-- Contentful Live Preview Indicator -->
+        <button
+          type="button"
+          class="preview-toggle"
+          [class.is-preview]="isPreviewMode()"
+          (click)="togglePreview()"
+          title="Toggle Contentful Live Preview Mode"
+        >
+          <span class="preview-dot" aria-hidden="true"></span>
+          <span class="preview-label">
+            {{
+              isPreviewMode()
+                ? 'Contentful Preview (Draft)'
+                : 'Contentful Live (CDA)'
+            }}
+          </span>
+        </button>
+
+        <!-- Model Switcher -->
+        <div
+          class="model-switcher"
+          role="radiogroup"
+          aria-label="Vehicle Models"
+        >
+          @for (m of models(); track m.id) {
+            <button
+              type="button"
+              role="radio"
+              class="model-tab"
+              [class.is-active]="m.slug === activeModel().slug"
+              [attr.aria-checked]="m.slug === activeModel().slug"
+              (click)="selectModel(m.slug)"
+            >
+              {{ m.series }}
+            </button>
+          }
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Showcase Grid -->
+  <main class="autosphere-stage-layout">
+    <!-- Left Column: Zero-CLS Interactive 3D/2D Visualizer Stage -->
+    <section class="visualizer-section" aria-label="Vehicle Visualizer">
+      <div class="visualizer-stage-card">
+        <!-- Visualizer Viewport: Strict 16:9 aspect ratio container -->
+        <div
+          class="visualizer-canvas-container"
+          [attr.data-angle]="viewAngle()"
+        >
+          <svg
+            class="vehicle-svg"
+            viewBox="0 0 960 540"
+            preserveAspectRatio="xMidYMid meet"
+            role="img"
+            [attr.aria-label]="
+              activeModel().name +
+              ' in ' +
+              activeColor().name +
+              ' exterior finish'
+            "
+          >
+            <defs>
+              <!-- Dynamic Paint Gradients derived from activeColor -->
+              <linearGradient
+                id="bodyGradient"
+                x1="0%"
+                y1="0%"
+                x2="100%"
+                y2="80%"
+              >
+                <stop
+                  offset="0%"
+                  [attr.stop-color]="activeColor().hex"
+                  stop-opacity="1"
+                />
+                <stop
+                  offset="45%"
+                  [attr.stop-color]="
+                    activeColor().accentHex || activeColor().hex
+                  "
+                  stop-opacity="0.95"
+                />
+                <stop
+                  offset="100%"
+                  [attr.stop-color]="activeColor().hex"
+                  stop-opacity="0.75"
+                />
+              </linearGradient>
+
+              <!-- Metallic Gloss Sheen Reflection -->
+              <linearGradient
+                id="glossHighlight"
+                x1="0%"
+                y1="0%"
+                x2="0%"
+                y2="100%"
+              >
+                <stop offset="0%" stop-color="#ffffff" stop-opacity="0.45" />
+                <stop offset="30%" stop-color="#ffffff" stop-opacity="0.1" />
+                <stop offset="100%" stop-color="#ffffff" stop-opacity="0" />
+              </linearGradient>
+
+              <!-- Glass Cockpit Gradient -->
+              <linearGradient
+                id="glassGradient"
+                x1="20%"
+                y1="0%"
+                x2="80%"
+                y2="100%"
+              >
+                <stop offset="0%" stop-color="#0f172a" stop-opacity="0.9" />
+                <stop offset="50%" stop-color="#1e293b" stop-opacity="0.7" />
+                <stop offset="100%" stop-color="#0284c7" stop-opacity="0.4" />
+              </linearGradient>
+
+              <!-- Wheel Rim Gradient -->
+              <radialGradient id="wheelHubGradient" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#475569" />
+                <stop offset="70%" stop-color="#0f172a" />
+                <stop offset="100%" stop-color="#020617" />
+              </radialGradient>
+
+              <!-- Soft Ground Shadow -->
+              <radialGradient id="groundShadow" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#000000" stop-opacity="0.65" />
+                <stop offset="60%" stop-color="#000000" stop-opacity="0.3" />
+                <stop offset="100%" stop-color="#000000" stop-opacity="0" />
+              </radialGradient>
+            </defs>
+
+            <!-- Background Studio Lighting Environment -->
+            <rect width="960" height="540" fill="transparent" />
+            <ellipse
+              cx="480"
+              cy="460"
+              rx="420"
+              ry="32"
+              fill="url(#groundShadow)"
+            />
+
+            <!-- CAD Grid lines in Blueprint Mode -->
+            @if (viewAngle() === 'blueprint') {
+              <g
+                class="cad-grid"
+                stroke="rgba(56, 189, 248, 0.2)"
+                stroke-width="1"
+              >
+                @for (
+                  gridX of [100, 200, 300, 400, 500, 600, 700, 800];
+                  track gridX
+                ) {
+                  <line
+                    [attr.x1]="gridX"
+                    y1="60"
+                    [attr.x2]="gridX"
+                    y2="480"
+                    stroke-dasharray="4,4"
+                  />
+                }
+                @for (gridY of [120, 200, 280, 360, 440]; track gridY) {
+                  <line
+                    x1="60"
+                    [attr.y1]="gridY"
+                    x2="900"
+                    [attr.y2]="gridY"
+                    stroke-dasharray="4,4"
+                  />
+                }
+                <!-- Blueprint Dimension Annotations -->
+                <text
+                  x="480"
+                  y="90"
+                  fill="#38bdf8"
+                  font-size="12"
+                  font-family="monospace"
+                  text-anchor="middle"
+                >
+                  WHEELBASE: 2,990 mm | OVERALL LENGTH: 4,960 mm | Cd: 0.21
+                </text>
+                <text
+                  x="480"
+                  y="475"
+                  fill="#38bdf8"
+                  font-size="12"
+                  font-family="monospace"
+                  text-anchor="middle"
+                >
+                  800V ARCHITECTURE | CELL-TO-PACK STRUCTURAL BATTERY TRAY
+                </text>
+              </g>
+            }
+
+            <!-- ANGLE 1: THREE-QUARTERS PERSPECTIVE -->
+            @if (viewAngle() === 'three-quarters') {
+              <g id="car-three-quarters" class="vehicle-geometry">
+                <!-- Vehicle Main Sculpted Body -->
+                <path
+                  d="M120 370 C 130 310, 180 270, 270 260 L 390 220 C 470 160, 620 160, 730 220 L 860 270 C 895 285, 910 320, 900 370 C 880 400, 820 415, 760 415 L 240 415 C 170 415, 130 400, 120 370 Z"
+                  fill="url(#bodyGradient)"
+                  stroke="rgba(255,255,255,0.25)"
+                  stroke-width="1.5"
+                />
+
+                <!-- Dynamic Sheen Overlay -->
+                <path
+                  d="M 270 260 L 390 220 C 470 160, 620 160, 730 220 L 820 255 C 700 230, 520 225, 360 250 Z"
+                  fill="url(#glossHighlight)"
+                />
+
+                <!-- Aerodynamic Panoramic Greenhouse / Glass Canopy -->
+                <path
+                  d="M 370 230 C 440 170, 580 165, 710 220 C 670 250, 430 260, 370 230 Z"
+                  fill="url(#glassGradient)"
+                  stroke="#38bdf8"
+                  stroke-width="1.2"
+                />
+
+                <!-- Matrix LED Headlight Signature -->
+                <polygon
+                  points="135,325 190,320 230,335 155,345"
+                  fill="#f8fafc"
+                  opacity="0.95"
+                />
+                <line
+                  x1="135"
+                  y1="325"
+                  x2="230"
+                  y2="335"
+                  stroke="#38bdf8"
+                  stroke-width="3"
+                />
+
+                <!-- Front Aerodynamic Splitter / Air Dam -->
+                <path
+                  d="M 115 385 L 240 410 L 230 420 L 110 395 Z"
+                  fill="#0f172a"
+                />
+
+                <!-- Front Wheel Arch & Wheel Assembly -->
+                <ellipse cx="270" cy="385" rx="68" ry="68" fill="#090d16" />
+                <circle
+                  cx="270"
+                  cy="385"
+                  r="54"
+                  fill="url(#wheelHubGradient)"
+                  stroke="#64748b"
+                  stroke-width="3"
+                />
+                <!-- Dynamic Brake Caliper -->
+                <rect
+                  x="250"
+                  y="355"
+                  width="16"
+                  height="30"
+                  rx="3"
+                  fill="#e11d48"
+                />
+
+                <!-- Wheel Spokes (Dynamic style) -->
+                @if (activeWheel().style === 'Aero Efficiency') {
+                  <circle
+                    cx="270"
+                    cy="385"
+                    r="42"
+                    fill="#1e293b"
+                    opacity="0.9"
+                  />
+                  <line
+                    x1="270"
+                    y1="335"
+                    x2="270"
+                    y2="435"
+                    stroke="#94a3b8"
+                    stroke-width="6"
+                  />
+                  <line
+                    x1="220"
+                    y1="385"
+                    x2="320"
+                    y2="385"
+                    stroke="#94a3b8"
+                    stroke-width="6"
+                  />
+                } @else if (activeWheel().style === 'Sport Forged') {
+                  <line
+                    x1="270"
+                    y1="335"
+                    x2="270"
+                    y2="435"
+                    stroke="#cbd5e1"
+                    stroke-width="4"
+                  />
+                  <line
+                    x1="230"
+                    y1="350"
+                    x2="310"
+                    y2="420"
+                    stroke="#cbd5e1"
+                    stroke-width="4"
+                  />
+                  <line
+                    x1="230"
+                    y1="420"
+                    x2="310"
+                    y2="350"
+                    stroke="#cbd5e1"
+                    stroke-width="4"
+                  />
+                } @else {
+                  <polygon
+                    points="270,340 310,385 270,430 230,385"
+                    fill="none"
+                    stroke="#e2e8f0"
+                    stroke-width="5"
+                  />
+                  <circle cx="270" cy="385" r="18" fill="#e11d48" />
+                }
+
+                <!-- Rear Wheel Arch & Assembly -->
+                <ellipse cx="730" cy="385" rx="68" ry="68" fill="#090d16" />
+                <circle
+                  cx="730"
+                  cy="385"
+                  r="54"
+                  fill="url(#wheelHubGradient)"
+                  stroke="#64748b"
+                  stroke-width="3"
+                />
+                <rect
+                  x="710"
+                  y="355"
+                  width="16"
+                  height="30"
+                  rx="3"
+                  fill="#e11d48"
+                />
+
+                @if (activeWheel().style === 'Aero Efficiency') {
+                  <circle
+                    cx="730"
+                    cy="385"
+                    r="42"
+                    fill="#1e293b"
+                    opacity="0.9"
+                  />
+                  <line
+                    x1="730"
+                    y1="335"
+                    x2="730"
+                    y2="435"
+                    stroke="#94a3b8"
+                    stroke-width="6"
+                  />
+                  <line
+                    x1="680"
+                    y1="385"
+                    x2="780"
+                    y2="385"
+                    stroke="#94a3b8"
+                    stroke-width="6"
+                  />
+                } @else if (activeWheel().style === 'Sport Forged') {
+                  <line
+                    x1="730"
+                    y1="335"
+                    x2="730"
+                    y2="435"
+                    stroke="#cbd5e1"
+                    stroke-width="4"
+                  />
+                  <line
+                    x1="690"
+                    y1="350"
+                    x2="770"
+                    y2="420"
+                    stroke="#cbd5e1"
+                    stroke-width="4"
+                  />
+                  <line
+                    x1="690"
+                    y1="420"
+                    x2="770"
+                    y2="350"
+                    stroke="#cbd5e1"
+                    stroke-width="4"
+                  />
+                } @else {
+                  <polygon
+                    points="730,340 770,385 730,430 690,385"
+                    fill="none"
+                    stroke="#e2e8f0"
+                    stroke-width="5"
+                  />
+                  <circle cx="730" cy="385" r="18" fill="#e11d48" />
+                }
+
+                <!-- Aero Flush Door Handle Contour -->
+                <line
+                  x1="480"
+                  y1="300"
+                  x2="520"
+                  y2="297"
+                  stroke="rgba(255,255,255,0.4)"
+                  stroke-width="2"
+                />
+                <line
+                  x1="610"
+                  y1="298"
+                  x2="650"
+                  y2="295"
+                  stroke="rgba(255,255,255,0.4)"
+                  stroke-width="2"
+                />
+
+                <!-- Rear Cyber LED Light Bar -->
+                <line
+                  x1="860"
+                  y1="280"
+                  x2="890"
+                  y2="290"
+                  stroke="#ef4444"
+                  stroke-width="4"
+                  stroke-linecap="round"
+                />
+              </g>
+            }
+
+            <!-- ANGLE 2: SIDE VIEW PROFILE -->
+            @if (viewAngle() === 'side') {
+              <g id="car-side-view" class="vehicle-geometry">
+                <!-- Vehicle Side Body Silhouette -->
+                <path
+                  d="M 90 380 C 100 350, 130 330, 200 330 L 300 325 C 370 240, 480 200, 640 200 L 720 215 C 790 240, 840 290, 870 340 L 870 380 C 850 410, 800 415, 750 415 L 210 415 C 160 415, 110 410, 90 380 Z"
+                  fill="url(#bodyGradient)"
+                  stroke="rgba(255,255,255,0.3)"
+                  stroke-width="1.5"
+                />
+
+                <!-- Side Greenhouse / Window Glass -->
+                <path
+                  d="M 320 320 L 400 230 C 470 215, 610 215, 700 235 L 730 320 Z"
+                  fill="url(#glassGradient)"
+                  stroke="#38bdf8"
+                  stroke-width="1.2"
+                />
+
+                <!-- Pillar B separator -->
+                <line
+                  x1="510"
+                  y1="218"
+                  x2="510"
+                  y2="320"
+                  stroke="#090d16"
+                  stroke-width="6"
+                />
+
+                <!-- Sleek Digital Mirror Camera -->
+                <polygon points="380,270 360,265 365,275" fill="#0f172a" />
+
+                <!-- Front Wheel Assembly -->
+                <circle cx="230" cy="390" r="58" fill="#090d16" />
+                <circle
+                  cx="230"
+                  cy="390"
+                  r="46"
+                  fill="url(#wheelHubGradient)"
+                  stroke="#64748b"
+                  stroke-width="3"
+                />
+                <rect
+                  x="210"
+                  y="365"
+                  width="14"
+                  height="26"
+                  rx="3"
+                  fill="#e11d48"
+                />
+
+                @if (activeWheel().style === 'Aero Efficiency') {
+                  <circle
+                    cx="230"
+                    cy="390"
+                    r="36"
+                    fill="#1e293b"
+                    opacity="0.9"
+                  />
+                  <line
+                    x1="230"
+                    y1="345"
+                    x2="230"
+                    y2="435"
+                    stroke="#94a3b8"
+                    stroke-width="5"
+                  />
+                  <line
+                    x1="185"
+                    y1="390"
+                    x2="275"
+                    y2="390"
+                    stroke="#94a3b8"
+                    stroke-width="5"
+                  />
+                } @else if (activeWheel().style === 'Sport Forged') {
+                  <line
+                    x1="230"
+                    y1="345"
+                    x2="230"
+                    y2="435"
+                    stroke="#cbd5e1"
+                    stroke-width="3"
+                  />
+                  <line
+                    x1="195"
+                    y1="360"
+                    x2="265"
+                    y2="420"
+                    stroke="#cbd5e1"
+                    stroke-width="3"
+                  />
+                  <line
+                    x1="195"
+                    y1="420"
+                    x2="265"
+                    y2="360"
+                    stroke="#cbd5e1"
+                    stroke-width="3"
+                  />
+                } @else {
+                  <polygon
+                    points="230,350 265,390 230,430 195,390"
+                    fill="none"
+                    stroke="#e2e8f0"
+                    stroke-width="4"
+                  />
+                }
+
+                <!-- Rear Wheel Assembly -->
+                <circle cx="730" cy="390" r="58" fill="#090d16" />
+                <circle
+                  cx="730"
+                  cy="390"
+                  r="46"
+                  fill="url(#wheelHubGradient)"
+                  stroke="#64748b"
+                  stroke-width="3"
+                />
+                <rect
+                  x="710"
+                  y="365"
+                  width="14"
+                  height="26"
+                  rx="3"
+                  fill="#e11d48"
+                />
+
+                @if (activeWheel().style === 'Aero Efficiency') {
+                  <circle
+                    cx="730"
+                    cy="390"
+                    r="36"
+                    fill="#1e293b"
+                    opacity="0.9"
+                  />
+                  <line
+                    x1="730"
+                    y1="345"
+                    x2="730"
+                    y2="435"
+                    stroke="#94a3b8"
+                    stroke-width="5"
+                  />
+                  <line
+                    x1="685"
+                    y1="390"
+                    x2="775"
+                    y2="390"
+                    stroke="#94a3b8"
+                    stroke-width="5"
+                  />
+                } @else if (activeWheel().style === 'Sport Forged') {
+                  <line
+                    x1="730"
+                    y1="345"
+                    x2="730"
+                    y2="435"
+                    stroke="#cbd5e1"
+                    stroke-width="3"
+                  />
+                  <line
+                    x1="695"
+                    y1="360"
+                    x2="765"
+                    y2="420"
+                    stroke="#cbd5e1"
+                    stroke-width="3"
+                  />
+                  <line
+                    x1="695"
+                    y1="420"
+                    x2="765"
+                    y2="360"
+                    stroke="#cbd5e1"
+                    stroke-width="3"
+                  />
+                } @else {
+                  <polygon
+                    points="730,350 765,390 730,430 695,390"
+                    fill="none"
+                    stroke="#e2e8f0"
+                    stroke-width="4"
+                  />
+                }
+
+                <!-- Underfloor 800V Structural Battery Plate -->
+                <rect
+                  x="300"
+                  y="402"
+                  width="360"
+                  height="10"
+                  rx="3"
+                  fill="#0284c7"
+                  opacity="0.7"
+                />
+                <text
+                  x="480"
+                  y="411"
+                  fill="#ffffff"
+                  font-size="8"
+                  font-family="monospace"
+                  text-anchor="middle"
+                >
+                  800V BATTERY PACK ({{ activeTrim().batteryCapacityKwh }} kWh)
+                </text>
+              </g>
+            }
+
+            <!-- ANGLE 3: CAD BLUEPRINT MODE -->
+            @if (viewAngle() === 'blueprint') {
+              <g
+                id="car-blueprint"
+                class="vehicle-geometry"
+                stroke="#38bdf8"
+                stroke-width="1.5"
+                fill="none"
+              >
+                <!-- Wireframe Outline -->
+                <path
+                  d="M 90 380 C 100 350, 130 330, 200 330 L 300 325 C 370 240, 480 200, 640 200 L 720 215 C 790 240, 840 290, 870 340 L 870 380 C 850 410, 800 415, 750 415 L 210 415 C 160 415, 110 410, 90 380 Z"
+                  stroke-dasharray="8,4"
+                />
+
+                <!-- Powertrain Motor Modules -->
+                <!-- Front Inverter + Drive Unit -->
+                <rect
+                  x="180"
+                  y="350"
+                  width="70"
+                  height="45"
+                  rx="4"
+                  fill="rgba(56, 189, 248, 0.2)"
+                  stroke="#38bdf8"
+                  stroke-width="2"
+                />
+                <text
+                  x="215"
+                  y="378"
+                  fill="#38bdf8"
+                  font-size="10"
+                  font-family="monospace"
+                  text-anchor="middle"
+                >
+                  FRONT MOTOR
+                </text>
+
+                <!-- Rear Dual Motor Unit -->
+                <rect
+                  x="680"
+                  y="340"
+                  width="85"
+                  height="55"
+                  rx="4"
+                  fill="rgba(56, 189, 248, 0.2)"
+                  stroke="#38bdf8"
+                  stroke-width="2"
+                />
+                <text
+                  x="722"
+                  y="372"
+                  fill="#38bdf8"
+                  font-size="10"
+                  font-family="monospace"
+                  text-anchor="middle"
+                >
+                  REAR MOTOR
+                </text>
+
+                <!-- Cell-to-Pack Tray -->
+                <rect
+                  x="270"
+                  y="375"
+                  width="390"
+                  height="35"
+                  rx="4"
+                  fill="rgba(14, 165, 233, 0.15)"
+                  stroke="#38bdf8"
+                  stroke-width="2"
+                />
+                @for (cell of [300, 360, 420, 480, 540, 600]; track cell) {
+                  <rect
+                    [attr.x]="cell"
+                    y="380"
+                    width="45"
+                    height="25"
+                    rx="2"
+                    fill="rgba(240, 253, 250, 0.2)"
+                    stroke="#0ea5e9"
+                    stroke-width="1"
+                  />
+                }
+
+                <!-- Dimension Arrow: Wheelbase -->
+                <line
+                  x1="230"
+                  y1="440"
+                  x2="730"
+                  y2="440"
+                  stroke="#38bdf8"
+                  stroke-width="1.5"
+                  marker-start="url(#dot)"
+                  marker-end="url(#dot)"
+                />
+                <text
+                  x="480"
+                  y="435"
+                  fill="#38bdf8"
+                  font-size="12"
+                  font-family="monospace"
+                  text-anchor="middle"
+                >
+                  ← 2,990 mm WHEELBASE →
+                </text>
+              </g>
+            }
+          </svg>
+
+          <!-- Floating Angle Switcher Controls -->
+          <div
+            class="visualizer-angle-toolbar"
+            role="toolbar"
+            aria-label="Visualizer Camera Angle"
+          >
+            <button
+              type="button"
+              class="angle-btn"
+              [class.is-active]="viewAngle() === 'three-quarters'"
+              (click)="setViewAngle('three-quarters')"
+              title="3/4 Dynamic Angle"
+            >
+              Perspective
+            </button>
+            <button
+              type="button"
+              class="angle-btn"
+              [class.is-active]="viewAngle() === 'side'"
+              (click)="setViewAngle('side')"
+              title="Side Aero Profile"
+            >
+              Side Profile
+            </button>
+            <button
+              type="button"
+              class="angle-btn"
+              [class.is-active]="viewAngle() === 'blueprint'"
+              (click)="setViewAngle('blueprint')"
+              title="CAD Engineering Blueprint"
+            >
+              CAD Blueprint
+            </button>
+          </div>
+        </div>
+
+        <!-- Quick Dynamic Performance Indicators -->
+        <div class="visualizer-metrics-strip">
+          <div class="metric-item">
+            <span class="metric-label">0–100 km/h</span>
+            <span class="metric-val highlight"
+              >{{ activeTrim().acceleration0to100 }}s</span
+            >
+          </div>
+          <div class="metric-item">
+            <span class="metric-label">Effective WLTP Range</span>
+            <span class="metric-val">{{ effectiveRange() }} km</span>
+          </div>
+          <div class="metric-item">
+            <span class="metric-label">Peak Power</span>
+            <span class="metric-val"
+              >{{ activeTrim().horsepower }} hp ({{
+                activeTrim().powerKw
+              }}
+              kW)</span
+            >
+          </div>
+          <div class="metric-item">
+            <span class="metric-label">800V DC Fast Charge</span>
+            <span class="metric-val">10–80% in 18 min</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Right Column: Interactive Configurator Studio -->
+    <section
+      class="configurator-section"
+      aria-label="Vehicle Customization Studio"
+    >
+      <!-- Section Tab Bar -->
+      <nav
+        class="config-tabs-nav"
+        role="tablist"
+        aria-label="Configuration Options"
+      >
+        <button
+          type="button"
+          role="tab"
+          class="tab-btn"
+          [class.is-active]="activeTab() === 'trims'"
+          [attr.aria-selected]="activeTab() === 'trims'"
+          (click)="setTab('trims')"
+        >
+          1. Powertrain
+        </button>
+        <button
+          type="button"
+          role="tab"
+          class="tab-btn"
+          [class.is-active]="activeTab() === 'color'"
+          [attr.aria-selected]="activeTab() === 'color'"
+          (click)="setTab('color')"
+        >
+          2. Exterior Color
+        </button>
+        <button
+          type="button"
+          role="tab"
+          class="tab-btn"
+          [class.is-active]="activeTab() === 'wheels'"
+          [attr.aria-selected]="activeTab() === 'wheels'"
+          (click)="setTab('wheels')"
+        >
+          3. Wheels
+        </button>
+        <button
+          type="button"
+          role="tab"
+          class="tab-btn"
+          [class.is-active]="activeTab() === 'packages'"
+          [attr.aria-selected]="activeTab() === 'packages'"
+          (click)="setTab('packages')"
+        >
+          4. Packages
+        </button>
+        <button
+          type="button"
+          role="tab"
+          class="tab-btn"
+          [class.is-active]="activeTab() === 'specs'"
+          [attr.aria-selected]="activeTab() === 'specs'"
+          (click)="setTab('specs')"
+        >
+          5. Tech Specs
+        </button>
+      </nav>
+
+      <!-- Tab Content Area -->
+      <div class="config-content-viewport">
+        <!-- TAB 1: POWERTRAIN / TRIMS -->
+        @if (activeTab() === 'trims') {
+          <div class="tab-panel trims-panel" role="tabpanel">
+            <div class="panel-header">
+              <h2>Select Powertrain & Architecture</h2>
+              <p>
+                Dual or Tri-motor permanent-magnet synchronous architecture with
+                silicon carbide inverters.
+              </p>
+            </div>
+
+            <div class="trims-grid">
+              @for (trim of activeModel().trims; track trim.id) {
+                <div
+                  class="trim-card"
+                  [class.is-selected]="trim.id === activeTrim().id"
+                  (click)="selectTrim(trim)"
+                  role="button"
+                  tabindex="0"
+                  (keydown.enter)="selectTrim(trim)"
+                  (keydown.space)="selectTrim(trim)"
+                >
+                  <div class="trim-card-header">
+                    <div>
+                      <span class="trim-badge">{{ trim.badge }}</span>
+                      <h3 class="trim-title">{{ trim.name }}</h3>
+                    </div>
+                    <div class="trim-price-delta">
+                      {{
+                        trim.priceDelta === 0
+                          ? 'Included'
+                          : '+' + formatCurrency(trim.priceDelta)
+                      }}
+                    </div>
+                  </div>
+
+                  <p class="trim-powertrain">{{ trim.powertrain }}</p>
+
+                  <div class="trim-spec-row">
+                    <span>{{ trim.acceleration0to100 }}s (0-100)</span>
+                    <span>{{ trim.wltpRangeKm }} km range</span>
+                    <span>{{ trim.torqueNm }} Nm torque</span>
+                  </div>
+
+                  <ul class="trim-highlights">
+                    @for (h of trim.highlights; track h) {
+                      <li>{{ h }}</li>
+                    }
+                  </ul>
+                </div>
+              }
+            </div>
+          </div>
+        }
+
+        <!-- TAB 2: EXTERIOR COLOR VIA DESIGN SYSTEM AHCOLORSWATCH -->
+        @if (activeTab() === 'color') {
+          <div class="tab-panel color-panel" role="tabpanel">
+            <div class="panel-header">
+              <h2>Automotive Multi-Coat Exterior Finish</h2>
+              <p>
+                Formulated with deep optical flake pigments and hydrophobic
+                nano-ceramic clear coat.
+              </p>
+            </div>
+
+            <!-- Active Color Title & Finish -->
+            <div class="selected-color-info">
+              <span class="color-name">{{ activeColor().name }}</span>
+              <ah-tag size="sm" tone="info">{{
+                activeColor().finish | titlecase
+              }}</ah-tag>
+              <span class="color-price">{{ activeColor().priceLabel }}</span>
+            </div>
+            <p class="color-description">{{ activeColor().description }}</p>
+
+            <!-- Design System Component: AhColorSwatch -->
+            <div class="swatch-container">
+              <ah-color-swatch
+                [items]="colorSwatchItems()"
+                [value]="activeColor().id"
+                label="Exterior Vehicle Paint Color"
+                size="lg"
+                (selectionChange)="onColorChange($event)"
+              />
+            </div>
+          </div>
+        }
+
+        <!-- TAB 3: WHEEL DESIGN & AERODYNAMICS -->
+        @if (activeTab() === 'wheels') {
+          <div class="tab-panel wheels-panel" role="tabpanel">
+            <div class="panel-header">
+              <h2>Wheels & Aerodynamic Profile</h2>
+              <p>
+                Aero-optimized wheel geometry balances cooling airflow with
+                reduced turbulence.
+              </p>
+            </div>
+
+            <div class="wheels-grid">
+              @for (wheel of activeModel().wheels; track wheel.id) {
+                <div
+                  class="wheel-card"
+                  [class.is-selected]="wheel.id === activeWheel().id"
+                  (click)="selectWheel(wheel)"
+                  role="button"
+                  tabindex="0"
+                  (keydown.enter)="selectWheel(wheel)"
+                  (keydown.space)="selectWheel(wheel)"
+                >
+                  <div class="wheel-header">
+                    <h3 class="wheel-name">{{ wheel.name }}</h3>
+                    <span class="wheel-price">{{ wheel.priceLabel }}</span>
+                  </div>
+
+                  <div class="wheel-meta">
+                    <ah-tag size="sm"
+                      >{{ wheel.sizeInches }}" {{ wheel.style }}</ah-tag
+                    >
+                    <span
+                      class="range-impact"
+                      [class.positive]="wheel.rangeImpactKm >= 0"
+                      [class.negative]="wheel.rangeImpactKm < 0"
+                    >
+                      {{ wheel.rangeImpactKm >= 0 ? '+' : ''
+                      }}{{ wheel.rangeImpactKm }} km WLTP
+                    </span>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        }
+
+        <!-- TAB 4: PACKAGES & AUTONOMOUS OPTIONS -->
+        @if (activeTab() === 'packages') {
+          <div class="tab-panel packages-panel" role="tabpanel">
+            <div class="panel-header">
+              <h2>Equipment & Autonomous Drive Packages</h2>
+              <p>
+                Hardware suites configured with over-the-air (OTA) software
+                update support.
+              </p>
+            </div>
+
+            <div class="packages-list">
+              @for (pkg of activeModel().packages; track pkg.id) {
+                <div
+                  class="package-card"
+                  [class.is-selected]="isPackageSelected(pkg.id)"
+                  (click)="togglePackage(pkg)"
+                  role="button"
+                  tabindex="0"
+                  (keydown.enter)="togglePackage(pkg)"
+                  (keydown.space)="togglePackage(pkg)"
+                >
+                  <div class="package-header">
+                    <div class="package-title-group">
+                      <span class="package-category">{{ pkg.category }}</span>
+                      <h3 class="package-name">{{ pkg.name }}</h3>
+                    </div>
+                    <div class="package-status-col">
+                      <span class="package-price"
+                        >+{{ formatCurrency(pkg.priceDelta) }}</span
+                      >
+                      <span
+                        class="check-box"
+                        [class.is-checked]="isPackageSelected(pkg.id)"
+                      >
+                        {{ isPackageSelected(pkg.id) ? '✓' : '+' }}
+                      </span>
+                    </div>
+                  </div>
+
+                  <p class="package-desc">{{ pkg.description }}</p>
+
+                  <ul class="package-features">
+                    @for (feat of pkg.includedFeatures; track feat) {
+                      <li>{{ feat }}</li>
+                    }
+                  </ul>
+                </div>
+              }
+            </div>
+          </div>
+        }
+
+        <!-- TAB 5: TECHNICAL SPECIFICATIONS & ARCHITECTURE -->
+        @if (activeTab() === 'specs') {
+          <div class="tab-panel specs-panel" role="tabpanel">
+            <div class="panel-header">
+              <h2>Engineering & Technical Data</h2>
+              <p>
+                Certified WLTP metrics, high-voltage battery architecture, and
+                dimensional tolerances.
+              </p>
+            </div>
+
+            <div class="specs-accordion-list">
+              @for (category of technicalSpecs(); track category.title) {
+                <ah-accordion-item [title]="category.title" [expanded]="true">
+                  <div class="spec-table">
+                    @for (item of category.specs; track item.label) {
+                      <div class="spec-row">
+                        <span class="spec-label">{{ item.label }}</span>
+                        <span class="spec-value"
+                          >{{ item.value }} {{ item.unit ?? '' }}</span
+                        >
+                      </div>
+                    }
+                  </div>
+                </ah-accordion-item>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    </section>
+  </main>
+
+  <!-- Sticky Bottom Pricing, Leasing & Order Bar -->
+  <footer class="autosphere-dock-bar">
+    <div class="dock-content">
+      <div class="dock-summary">
+        <div class="dock-price-col">
+          <span class="dock-eyebrow">Configured Cash Price</span>
+          <span class="dock-price">{{ formatCurrency(totalPrice()) }}</span>
+        </div>
+
+        <div class="dock-lease-col">
+          <span class="dock-eyebrow"
+            >Estimated Monthly Lease ({{ finance().termMonths }} mo)</span
+          >
+          <span class="dock-lease"
+            >{{ formatCurrency(finance().monthlyLease) }} / mo</span
+          >
+        </div>
+
+        <div class="dock-range-col">
+          <span class="dock-eyebrow">WLTP Range</span>
+          <span class="dock-range">{{ effectiveRange() }} km</span>
+        </div>
+      </div>
+
+      <div class="dock-actions">
+        <button type="button" ahButton="primary" (click)="openOrderModal()">
+          Reserve {{ activeModel().name }}
+        </button>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Modal Dialog: Build Summary & Order Sheet -->
+  <ah-modal
+    [open]="orderModalOpen()"
+    title="Build Specification & Reservation"
+    eyebrow="AutoSphere Direct"
+    size="lg"
+    (closed)="closeOrderModal()"
+  >
+    @if (!orderSubmitted()) {
+      <div class="order-modal-content">
+        <div class="build-summary-box">
+          <h3>{{ activeModel().name }} - {{ activeTrim().name }}</h3>
+          <p class="build-tagline">{{ activeModel().tagline }}</p>
+
+          <div class="build-specs-grid">
+            <div class="spec-tile">
+              <span class="tile-label">Exterior Color</span>
+              <span class="tile-val"
+                >{{ activeColor().name }} ({{
+                  activeColor().finish | titlecase
+                }})</span
+              >
+            </div>
+            <div class="spec-tile">
+              <span class="tile-label">Wheels</span>
+              <span class="tile-val">{{ activeWheel().name }}</span>
+            </div>
+            <div class="spec-tile">
+              <span class="tile-label">Estimated Delivery</span>
+              <span class="tile-val"
+                >{{ activeModel().deliveryEstimateWeeks }} Weeks</span
+              >
+            </div>
+            <div class="spec-tile">
+              <span class="tile-label">WLTP Range</span>
+              <span class="tile-val">{{ effectiveRange() }} km</span>
+            </div>
+          </div>
+
+          @if (activePackages().length > 0) {
+            <div class="selected-packages-summary">
+              <h4>Installed Packages:</h4>
+              <ul>
+                @for (p of activePackages(); track p.id) {
+                  <li>{{ p.name }} (+{{ formatCurrency(p.priceDelta) }})</li>
+                }
+              </ul>
+            </div>
+          }
+
+          <div class="finance-breakdown">
+            <h4>Finance Terms</h4>
+            <div class="finance-row">
+              <span>Down Payment ({{ downPaymentPercent() }}%)</span>
+              <span>{{ formatCurrency(finance().downPayment) }}</span>
+            </div>
+            <div class="finance-row">
+              <span>Term Duration</span>
+              <span>{{ finance().termMonths }} Months</span>
+            </div>
+            <div class="finance-row total">
+              <span>Monthly Rate</span>
+              <span>{{ formatCurrency(finance().monthlyLease) }} / mo</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer-actions">
+          <button
+            type="button"
+            ahButton="secondary"
+            (click)="closeOrderModal()"
+          >
+            Continue Customizing
+          </button>
+          <button type="button" ahButton="primary" (click)="confirmOrder()">
+            Submit Reservation (€500 Deposit)
+          </button>
+        </div>
+      </div>
+    } @else {
+      <div class="order-confirmation">
+        <div class="confirmation-icon">✓</div>
+        <h3>Reservation Confirmed!</h3>
+        <p>
+          Your configuration for the
+          <strong>{{ activeModel().name }} ({{ activeTrim().name }})</strong>
+          has been registered. Build token:
+          <code
+            >ATH-{{ activeModel().slug | uppercase }}-{{ totalPrice() }}</code
+          >.
+        </p>
+        <p class="delivery-notice">
+          Factory production slot allocated. Estimated handover in
+          {{ activeModel().deliveryEstimateWeeks }} weeks.
+        </p>
+        <div class="confirmation-action">
+          <button type="button" ahButton="primary" (click)="closeOrderModal()">
+            Done
+          </button>
+        </div>
+      </div>
+    }
+  </ah-modal>
+</div>

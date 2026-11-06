@@ -1,0 +1,9 @@
+{
+  "name": "product-autosphere-feature",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/products/autosphere/feature/src",
+  "prefix": "ah",
+  "projectType": "library",
+  "tags": ["scope:product-autosphere", "type:feature", "runtime:browser"],
+  "targets": {}
+}

@@ -69,3 +69,11 @@ export { Pagination as AhPagination } from './lib/pagination/pagination';
 
 export * from './lib/scroll-hint/scroll-hint';
 export { ScrollHint as AhScrollHint } from './lib/scroll-hint/scroll-hint';
+
+export * from './lib/color-swatch/color-swatch';
+export {
+  ColorSwatch as AhColorSwatch,
+  type ColorSwatchItem as AhColorSwatchItem,
+  type SwatchFinish as AhSwatchFinish,
+  type SwatchSize as AhSwatchSize,
+} from './lib/color-swatch/color-swatch';

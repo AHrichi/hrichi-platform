@@ -1,3 +1,4 @@
+export * from './lib/app-visibility';
 export * from './lib/audiences';
 export * from './lib/case-studies';
 export * from './lib/experience';

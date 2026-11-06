@@ -7,6 +7,7 @@ import {
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Seo } from '@ah/portfolio/util-seo';
+import { isAppEnabled } from '@ah/shared/content';
 import { PreferencesStore, type SiteLanguage } from '@ah/shared/state';
 import { AhButton, AhScrollHint, Badge, SectionHeading, Tag } from '@ah/ui';
 
@@ -428,10 +429,14 @@ export class AppsPage {
     }
   }
 
+  private filterApps(apps: AppItem[]): AppItem[] {
+    return apps.filter((app) => isAppEnabled(app.id));
+  }
+
   protected readonly productionApps = computed<AppItem[]>(() => {
     const l = this.currentLang();
     if (l === 'ar') {
-      return [
+      return this.filterApps([
         {
           id: 'lighting',
           title:
@@ -471,6 +476,41 @@ export class AppsPage {
           ],
           architectureNotes:
             'معمارية تعمل 100% دون الحاجة إلى إنترنت، مع حفظ المشاريع وسجلات الفحص محلياً في IndexedDB.',
+        },
+        {
+          id: 'autosphere',
+          title:
+            'AutoSphere · صالة عرض رقمية وتطبيق ضبط سيارات كهربائية ثلاثي الأبعاد',
+          category: 'production',
+          badge: {
+            label: '🚗 Contentful CDA + سيارات 800V',
+            variant: 'accent',
+            pulse: true,
+          },
+          eyebrow:
+            'التجربة الرقمية للسيارات · إدارة المحتوى دون رأس Contentful وتكوين فوري',
+          summary:
+            'صالة عرض سيارات وتطبيق ضبط سيارات كهربائية فوري مبني لتحقيق صفر تحول في التصميم (CLS = 0) وسرعة استجابة فائقة (INP < 50ms). يتكامل مع CMS بدون رأس Contentful مع معاينة مباشرة وتزامن في الكتالوج، واختيار محركات 800V، وعينات ألوان طلاء متعددة، وحساب تأثير العجلات على مدى WLTP، وحسابات تأجير فوري.',
+          route: '/apps/autosphere',
+          icon: '⚡',
+          ctaLabel: 'AutoSphere',
+          stack: [
+            'Zoneless Angular 22 Signals',
+            'Contentful CDA & Live Preview',
+            'Design System (@ah/ui)',
+            'Vector SVG Zero-CLS Engine',
+            'Core Web Vitals Optimized',
+          ],
+          features: [
+            'تكامل Contentful Headless CMS: معاينة المسودات وتزامن بيانات الفئات والألوان والخيارات',
+            'منصة عرض متجهية Zero-CLS بنسبة 16:9 وزوايا ثلاثية الأبعاد ومخطط هندسي',
+            'محرك دهان ديناميكي بتأثيرات لماعة وميتاليك ومطفأة عبر نظام التصميم',
+            'إعادة حساب مدى WLTP فوري وفق ديناميكا الهواء وأبعاد العجلات',
+            'حساب خطة التمويل والتأجير الشهري التفاعلي',
+            'إصدار كود حجز وتخصيص سيارة مع دفعة مقدمة رمزية',
+          ],
+          architectureNotes:
+            'مخزن إشارات تفاعلي zoneless متصل مباشرة بـ Contentful CDA بدون أي طلبات صور معطلة للحصول على LCP < 0.4 ثانية.',
         },
         {
           id: 'basecamp',
@@ -665,11 +705,11 @@ export class AppsPage {
           architectureNotes:
             'معالجة سحابية صفرية؛ يتم التحليل بالكامل داخل متصفح المستخدم دون تخزين على أي خادم.',
         },
-      ];
+      ]);
     }
 
     if (l === 'fr') {
-      return [
+      return this.filterApps([
         {
           id: 'lighting',
           title:
@@ -709,6 +749,42 @@ export class AppsPage {
           ],
           architectureNotes:
             'Architecture 100% hors-ligne avec persistance locale IndexedDB et calculs locaux sans aucun serveur externe requis.',
+        },
+        {
+          id: 'autosphere',
+          title:
+            'AutoSphere · Showroom Digital Automobile Headless & Configurateur 3D',
+          category: 'production',
+          badge: {
+            label: '🚗 Contentful CDA + VE 800V',
+            variant: 'accent',
+            pulse: true,
+          },
+          eyebrow:
+            'Expérience Numérique Automobile · CMS Headless & Configurateur VE',
+          summary:
+            'Showroom automobile haute performance et configurateur VE en temps réel conçu pour un CLS nul (CLS = 0) et une réactivité optimale (INP < 50ms). Intègre le CMS headless Contentful (CDA & Live Preview) pour la gestion dynamique du catalogue, le choix des motorisations 800V, des nuanciers multi-finitions, le calcul de l’impact aérodynamique sur l’autonomie WLTP et la simulation de leasing.',
+          route: '/apps/autosphere',
+          icon: '⚡',
+          ctaLabel: 'AutoSphere',
+          stack: [
+            'Zoneless Angular 22 Signals',
+            'Contentful CDA & Live Preview',
+            'Design System (@ah/ui)',
+            'Moteur Vectoriel SVG Zero-CLS',
+            'Optimisation Core Web Vitals',
+            'Tokens Design System',
+          ],
+          features: [
+            'Intégration CMS Headless Contentful : Live Preview des brouillons et synchronisation des finitions, teintes et options',
+            'Visualiseur Responsive Zero-CLS : Scène vectorielle 16:9 avec angles 3/4 dynamique, profil aérodynamique et plan CAD blueprint',
+            'Moteur de Teintes Dynamique : Finitions vernies, métallisées, mates et nacrées via le composant ColorSwatch du Design System',
+            'Autonomie WLTP & Aérodynamisme : Recalcul instantané de l’autonomie selon le diamètre des jantes et la traînée aéro',
+            'Moteur Financier & Leasing : Mensualité de leasing calculée en temps réel selon l’apport, la durée et les packs d’options',
+            'Fiche de Spécification & Réservation : Modal avec récapitulatif complet et génération de jeton de fabrication unique',
+          ],
+          architectureNotes:
+            'Store réactif zoneless Signals sous Angular 22 connecté à Contentful. Rendu vectoriel instantané sans requêtes d’images bloquantes pour un LCP < 0,4s.',
         },
         {
           id: 'basecamp',
@@ -908,11 +984,11 @@ export class AppsPage {
           architectureNotes:
             'Traitement localisé en RAM sans stockage distant pour une sécurité et une confidentialité maximales.',
         },
-      ];
+      ]);
     }
 
     if (l === 'it') {
-      return [
+      return this.filterApps([
         {
           id: 'lighting',
           title:
@@ -952,6 +1028,41 @@ export class AppsPage {
           ],
           architectureNotes:
             'Architettura da campo 100% offline-first con memorizzazione locale in IndexedDB. Tutti i calcoli tecnici vengono eseguiti localmente sul dispositivo.',
+        },
+        {
+          id: 'autosphere',
+          title:
+            'AutoSphere · Showroom Digitale Headless & Configuratore Auto Elettriche 3D',
+          category: 'production',
+          badge: {
+            label: '🚗 Contentful CDA + EV 800V',
+            variant: 'accent',
+            pulse: true,
+          },
+          eyebrow:
+            'Automotive Digital Experience · Headless CMS & Configuratore Real-Time',
+          summary:
+            'Showroom digitale ad alte prestazioni e configuratore dinamico per veicoli elettrici con Cumulative Layout Shift nullo (CLS = 0) e latenza ultra-bassa (INP < 50ms). Integrazione con Contentful Headless CMS (CDA & Live Preview), architettura 800V, campioni colore multi-finitura, impatto aerodinamico dei cerchi su autonomia WLTP e calcolatore leasing istantaneo.',
+          route: '/apps/autosphere',
+          icon: '⚡',
+          ctaLabel: 'AutoSphere',
+          stack: [
+            'Zoneless Angular 22 Signals',
+            'Contentful CDA & Live Preview',
+            'Design System (@ah/ui)',
+            'Vector SVG Zero-CLS Engine',
+            'Core Web Vitals Optimized',
+          ],
+          features: [
+            'Integrazione CMS Headless Contentful: Live preview e sincronizzazione schema catalogo',
+            'Visualizzatore Responsive Zero-CLS: Canvas 16:9 con vista 3/4 dinamica, profilo aerodinamico e blueprint CAD',
+            'Motore Finiture Dinamico: Vernici lucide, metallizzate, opache e perlate tramite AhColorSwatch',
+            'Autonomia WLTP & Aerodinamica: Ricalcolo in tempo reale in base a diametro cerchi e resistenza aerodinamica',
+            'Calcolatore Leasing e Finanziamento: Rata mensile stimata istantanea in base ad anticipo e durata',
+            'Riepilogo Specifica & Prenotazione: Finestra modale interattiva con generazione build token',
+          ],
+          architectureNotes:
+            'Store reattivo con Angular Signals privo di zone.js connesso a Contentful CDA per un LCP < 0,4s.',
         },
         {
           id: 'basecamp',
@@ -1160,11 +1271,11 @@ export class AppsPage {
           architectureNotes:
             'Estrazione e analisi 100% lato client senza alcun caricamento di dati su server esterni.',
         },
-      ];
+      ]);
     }
 
     if (l === 'de') {
-      return [
+      return this.filterApps([
         {
           id: 'lighting',
           title:
@@ -1204,6 +1315,42 @@ export class AppsPage {
           ],
           architectureNotes:
             '100% Offline-First-Architektur mit lokaler IndexedDB-Persistenz. Sämtliche ingenieurtechnischen Berechnungen laufen clientseitig ohne Serverlatenz.',
+        },
+        {
+          id: 'autosphere',
+          title:
+            'AutoSphere · Headless Digital Showroom & 3D-Fahrzeugkonfigurator',
+          category: 'production',
+          badge: {
+            label: '🚗 Contentful CDA + 800V EV',
+            variant: 'accent',
+            pulse: true,
+          },
+          eyebrow:
+            'Automotive Digital Experience · Headless CMS & Echtzeit-Konfigurator',
+          summary:
+            'Leistungsstarker digitaler Showroom und dynamischer EV-Konfigurator mit garantiertem Null-CLS (CLS = 0) und minimaler Latenz (INP < 50ms). Nahtlose Contentful Headless-CMS-Integration (CDA & Live Preview) zur Echtzeit-Katalogverwaltung, 800V-Antriebswahl, dynamische Mehrschichtlack-Swatches, Aero-Radeinfluss auf WLTP-Reichweite und Leasingrechner.',
+          route: '/apps/autosphere',
+          icon: '⚡',
+          ctaLabel: 'AutoSphere',
+          stack: [
+            'Zoneless Angular 22 Signals',
+            'Contentful CDA & Live Preview',
+            'Design System (@ah/ui)',
+            'Vector SVG Zero-CLS Engine',
+            'Core Web Vitals Optimiert',
+            'Design System Tokens',
+          ],
+          features: [
+            'Contentful Headless CMS: Live-Entwurfsvorschau und CDA-Katalogsynchronisierung für Modellvarianten, Farben und Pakete',
+            'Zero-CLS Visualizer: Reaktionsschnelle 16:9-Bühne mit 3/4-Perspektive, Seitenprofil und technischer CAD-Blueprint-Ansicht',
+            'Lackierungs-Shader: Mehrschicht-Gloss, Metallic, Matt und Perleffekt über das Design-System AhColorSwatch',
+            'WLTP-Reichweitenanpassung: Berechnung aerodynamischer Einflüsse je nach Felgengröße und Rollwiderstand',
+            'Echtzeit-Finanzierungsrechner: Sofortige Leasingratenberechnung basierend auf Anzahlung, Laufzeit und Ausstattung',
+            'Konfigurationsabschluss & Reservierung: Interaktives Datenblatt mit Bau-Token-Generierung und 500 € Anzahlung',
+          ],
+          architectureNotes:
+            'Zoneless Angular 22 SignalStore direkt an Contentful CDA angebunden. Vektorielle Vorausschau ohne blockierende Bilddownloads für LCP < 0,4s.',
         },
         {
           id: 'basecamp',
@@ -1407,11 +1554,11 @@ export class AppsPage {
           architectureNotes:
             'Vollständig clientseitige Archiv-Entpackung und Auswertung ohne externe Serverübertragung.',
         },
-      ];
+      ]);
     }
 
     // Default: English
-    return [
+    return this.filterApps([
       {
         id: 'lighting',
         title:
@@ -1451,6 +1598,42 @@ export class AppsPage {
         ],
         architectureNotes:
           '100% offline-first field architecture storing projects, poles, and calculation logs in local IndexedDB. All calculations execute locally on device with zero required cloud roundtrips.',
+      },
+      {
+        id: 'autosphere',
+        title:
+          'AutoSphere · Headless Digital Automotive Showroom & 3D Configurator',
+        category: 'production',
+        badge: {
+          label: '🚗 Contentful CDA + 800V EV',
+          variant: 'accent',
+          pulse: true,
+        },
+        eyebrow:
+          'Automotive Digital Experience · Headless CMS & Real-time EV Configurator',
+        summary:
+          'A high-performance automotive digital showroom and dynamic EV configurator engineered for zero Cumulative Layout Shift (CLS = 0) and sub-50ms Interaction to Next Paint (INP). Integrates Contentful Headless CMS (Content Delivery API & Live Preview) for real-time catalog changes, reactive 800V powertrain selection, interactive multi-finish paint swatches with sheen shaders, aerodynamic wheel drag impact on WLTP range, autonomous driving packages, and instant lease financing calculations.',
+        route: '/apps/autosphere',
+        icon: '⚡',
+        ctaLabel: 'AutoSphere',
+        stack: [
+          'Zoneless Angular 22 Signals',
+          'Contentful CDA & Live Preview',
+          'Design System (@ah/ui)',
+          'Vector SVG Zero-CLS Engine',
+          'Core Web Vitals Optimized',
+          'Tailwind CSS & Token System',
+        ],
+        features: [
+          'Contentful Headless CMS Integration: Live draft preview and CDA GraphQL/REST schema synchronization for vehicle trims, colorways, and option packs',
+          'Zero CLS Responsive Visualizer: 16:9 vector stage with perspective 3/4 view, side aero profile, and CAD engineering blueprint modes',
+          'Dynamic Exterior Paint Engine: Multi-coat gloss, metallic, matte, and pearl finish shaders driven by design system color swatches',
+          'Real-Time WLTP Range & Aero Sizing: Dynamically recalculates usable battery range based on wheel diameter and aerodynamic drag factors',
+          'Instant Leasing & Financing Engine: Live monthly rate computation based on down payment, term duration, and optional equipment packages',
+          'Direct Build Spec & Reservation: Interactive modal specification sheet generating unique factory build tokens and €500 deposit allocation',
+        ],
+        architectureNotes:
+          'Pure Angular 22 zoneless Signals reactive store directly linked to Contentful CDA. Zero blocking image requests on initial render ensures exceptional Largest Contentful Paint (LCP < 0.4s).',
       },
       {
         id: 'basecamp',
@@ -1646,7 +1829,7 @@ export class AppsPage {
         architectureNotes:
           '100% client-side archive extraction and parsing with zero server uploads.',
       },
-    ];
+    ]);
   });
 
   private readonly labsEn: AppItem[] = [
@@ -1736,12 +1919,13 @@ export class AppsPage {
   /** The labs in the site's language: English, with French and Arabic text over it. */
   protected readonly engineeringLabs = computed<AppItem[]>(() => {
     const copy = LAB_COPY[this.currentLang()];
-    return this.labsEn.map((lab) => {
+    const all = this.labsEn.map((lab) => {
       const text = copy?.[lab.id];
       return text
         ? { ...lab, ...text, badge: { ...lab.badge, label: text.badge } }
         : lab;
     });
+    return all.filter((lab) => isAppEnabled(lab.id));
   });
 
   constructor() {

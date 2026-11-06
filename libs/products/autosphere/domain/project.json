@@ -1,0 +1,14 @@
+{
+  "name": "product-autosphere-domain",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/products/autosphere/domain/src",
+  "prefix": "ah",
+  "projectType": "library",
+  "tags": [
+    "scope:product-autosphere",
+    "scope:shared",
+    "type:domain",
+    "runtime:agnostic"
+  ],
+  "targets": {}
+}

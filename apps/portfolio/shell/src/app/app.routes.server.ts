@@ -1,5 +1,5 @@
 import { RenderMode, ServerRoute } from '@angular/ssr';
-import { caseStudies } from '@ah/shared/content';
+import { caseStudies, isAppEnabled } from '@ah/shared/content';
 
 /**
  * Static-first SSR (ADR-0003): Static pages like the home page, case studies,
@@ -8,6 +8,32 @@ import { caseStudies } from '@ah/shared/content';
  * They are served with 0ms compute latency from Cloudflare edge storage and
  * hydrated with event replay on the client.
  */
+const enabledOptionalRoutes: ServerRoute[] = [];
+if (isAppEnabled('alarm-engine')) {
+  enabledOptionalRoutes.push({
+    path: 'apps/alarm-engine',
+    renderMode: RenderMode.Prerender,
+  });
+}
+if (isAppEnabled('sky')) {
+  enabledOptionalRoutes.push({
+    path: 'labs/sky',
+    renderMode: RenderMode.Prerender,
+  });
+}
+if (isAppEnabled('rxjs')) {
+  enabledOptionalRoutes.push({
+    path: 'labs/rxjs',
+    renderMode: RenderMode.Prerender,
+  });
+}
+if (isAppEnabled('ngrx')) {
+  enabledOptionalRoutes.push({
+    path: 'labs/ngrx',
+    renderMode: RenderMode.Prerender,
+  });
+}
+
 export const serverRoutes: ServerRoute[] = [
   { path: '', renderMode: RenderMode.Prerender },
   { path: 'work', renderMode: RenderMode.Prerender },
@@ -22,9 +48,6 @@ export const serverRoutes: ServerRoute[] = [
   { path: 'contact', renderMode: RenderMode.Prerender },
   { path: 'cv', renderMode: RenderMode.Prerender },
   { path: 'apps', renderMode: RenderMode.Prerender },
-  { path: 'apps/alarm-engine', renderMode: RenderMode.Prerender },
-  { path: 'labs/sky', renderMode: RenderMode.Prerender },
-  { path: 'labs/rxjs', renderMode: RenderMode.Prerender },
-  { path: 'labs/ngrx', renderMode: RenderMode.Prerender },
+  ...enabledOptionalRoutes,
   { path: '**', renderMode: RenderMode.Prerender },
 ];

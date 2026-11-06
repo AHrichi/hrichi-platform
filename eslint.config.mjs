@@ -31,6 +31,7 @@ export default [
                 'scope:platform',
                 'scope:design-system',
                 'scope:product-alarm-engine',
+                'scope:product-autosphere',
               ],
             },
             {
@@ -118,6 +119,15 @@ export default [
               sourceTag: 'scope:product-whatsapp',
               onlyDependOnLibsWithTags: [
                 'scope:product-whatsapp',
+                'scope:shared',
+                'scope:platform',
+                'scope:design-system',
+              ],
+            },
+            {
+              sourceTag: 'scope:product-autosphere',
+              onlyDependOnLibsWithTags: [
+                'scope:product-autosphere',
                 'scope:shared',
                 'scope:platform',
                 'scope:design-system',

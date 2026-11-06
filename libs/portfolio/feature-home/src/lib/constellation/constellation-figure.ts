@@ -18,6 +18,7 @@ import {
   viewBox,
 } from '@ah/three/constellation';
 import { SceneHost } from '@ah/three/angular';
+import { isRouteEnabled } from '@ah/shared/content';
 import { PreferencesStore } from '@ah/shared/state';
 
 /** What each linked project is called in the caption. */
@@ -62,7 +63,13 @@ export class ConstellationFigure {
 
   protected readonly viewBox = viewBox;
   protected readonly legend = legend;
-  protected readonly nodeLinks = nodeLinks;
+  protected readonly nodeLinks: Readonly<Record<string, string | undefined>> =
+    Object.fromEntries(
+      Object.entries(nodeLinks).map(([id, url]) => [
+        id,
+        isRouteEnabled(url) ? url : undefined,
+      ]),
+    );
   protected readonly projectCount = constellation.nodes.length;
   protected readonly dependencyCount = constellation.edges.length;
   protected readonly summary = `Graph of this website's ${this.projectCount} Nx projects and their ${this.dependencyCount} dependencies, coloured by scope.`;
@@ -78,7 +85,7 @@ export class ConstellationFigure {
     token: placed[s].token,
   }));
   protected readonly links = constellation.nodes
-    .filter((node) => linkLabels[node.id])
+    .filter((node) => linkLabels[node.id] && isRouteEnabled(nodeLinks[node.id]))
     .map((node) => ({
       id: node.id,
       href: nodeLinks[node.id],
@@ -95,8 +102,12 @@ export class ConstellationFigure {
   protected readonly loadScene = () =>
     import('@ah/three/scenes/constellation').then((m) => m.constellationScene);
 
-  protected open(href: string): void {
+  protected open(href: string | undefined): void {
     if (typeof window !== 'undefined' && href) {
+      if (!isRouteEnabled(href)) {
+        void this.router.navigateByUrl('/apps');
+        return;
+      }
       if (href.startsWith('http')) {
         window.open(href, '_blank', 'noopener,noreferrer');
       } else {

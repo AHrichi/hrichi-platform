@@ -14,12 +14,15 @@ describe('AppsPage', () => {
     await fixture.whenStable();
 
     const text = fixture.nativeElement.textContent;
-    expect(text).toContain('PulseOps');
-    expect(text).toContain('StrategyApp');
-    expect(text).toContain('StudyLM');
+    expect(text).toContain('LuxPath (SolarLux)');
+    expect(text).toContain('AutoSphere');
     expect(text).toContain('Sky Lab');
     expect(text).toContain('RxJS Interactive Lab');
     expect(text).toContain('NgRx State Architecture Lab');
+    // Disabled apps should be hidden
+    expect(text).not.toContain('PulseOps');
+    expect(text).not.toContain('StrategyApp');
+    expect(text).not.toContain('StudyLM');
   });
 
   it('starts with all tickets expanded by default', async () => {
@@ -160,7 +163,7 @@ describe('AppsPage', () => {
     expect(text).toContain(
       'Piattaforma di Ingegneria per Illuminazione Pubblica e Solare',
     );
-    expect(text).toContain('Pianificatore di Spedizioni e Campeggio');
+    expect(text).not.toContain('Pianificatore di Spedizioni e Campeggio');
   });
 
   it('renders German localized content when language is de', async () => {
@@ -177,6 +180,6 @@ describe('AppsPage', () => {
     expect(text).toContain(
       'Feld-Engineering-Plattform für Straßen- und Solarbeleuchtung',
     );
-    expect(text).toContain('Camping- & Outdoor-Tourenplaner');
+    expect(text).not.toContain('Camping- & Outdoor-Tourenplaner');
   });
 });
