@@ -21,7 +21,7 @@ import {
   Vector3,
   WebGLRenderer,
 } from 'three';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { OrbitControls } from './orbit-controls';
 
 export type LightingMode = 'daylight' | 'cyberpunk' | 'xray';
 export type CameraPreset =
