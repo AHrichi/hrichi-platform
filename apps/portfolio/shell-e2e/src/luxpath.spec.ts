@@ -1,4 +1,5 @@
 import { loadSampleProjects } from './support/luxpath';
+import { chooseLanguage } from './support/site';
 import { expect, test } from './support/test';
 
 test.describe('LuxPath inside the portfolio', () => {
@@ -10,13 +11,13 @@ test.describe('LuxPath inside the portfolio', () => {
       page.getByRole('heading', { level: 2, name: 'Calculators' }),
     ).toBeVisible();
 
-    await page.getByRole('button', { name: 'Français' }).click();
+    await chooseLanguage(page, 'fr');
     await expect(
       page.getByRole('heading', { level: 2, name: 'Calculs' }),
     ).toBeVisible();
     await expect(page.locator('html')).toHaveAttribute('lang', 'fr');
 
-    await page.getByRole('button', { name: 'العربية' }).click();
+    await chooseLanguage(page, 'ar');
     await expect(
       page.getByRole('heading', { level: 2, name: 'الحسابات' }),
     ).toBeVisible();
@@ -77,18 +78,17 @@ test.describe('LuxPath inside the portfolio', () => {
   });
 });
 
-test('an English-only page says so in French and stays left to right', async ({
+test('a content page follows the site language and stays left to right in French', async ({
   page,
 }) => {
   await page.goto('/experience');
-  await page.getByRole('button', { name: 'Français' }).click();
+  await chooseLanguage(page, 'fr');
 
-  await expect(page.getByRole('note')).toContainText(
-    'Cette page n’existe qu’en anglais',
-  );
-  await expect(page.locator('main')).toHaveAttribute('lang', 'en');
-  await expect(page.locator('main')).toHaveAttribute('dir', 'ltr');
+  await expect(page.locator('html')).toHaveAttribute('lang', 'fr');
+  await expect(page.locator('html')).toHaveAttribute('dir', 'ltr');
   await expect(
     page.getByRole('navigation', { name: 'Principale' }),
   ).toBeVisible();
+  // Every page is translated now, so no "English only" note shows.
+  await expect(page.getByRole('note')).toHaveCount(0);
 });

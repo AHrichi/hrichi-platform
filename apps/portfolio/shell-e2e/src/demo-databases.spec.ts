@@ -32,23 +32,14 @@ const OLD_PROJECT = {
 };
 
 test.describe('the portfolio’s demo databases', () => {
-  test('a new visitor gets each app’s demo database', async ({ page }) => {
+  // Basecamp's demo database is checked in basecamp.spec.ts, which runs
+  // while Basecamp is public.
+  test('a new visitor gets LuxPath’s demo database', async ({ page }) => {
     await loadSampleProjects(page);
-    await page.goto('/apps/basecamp/trips');
-    await page.getByRole('button', { name: 'Load a sample trip' }).click();
-    await expect(
-      page.getByRole('heading', {
-        level: 3,
-        name: 'Aïn Draham forest weekend',
-      }),
-    ).toBeVisible();
 
     const names = await databases(page);
-    expect(names).toEqual(
-      expect.arrayContaining(['ah-demo-basecamp', 'ah-demo-lighting']),
-    );
-    // Not the names the apps use for real data.
-    expect(names).not.toContain('basecamp_db_v1');
+    expect(names).toContain('ah-demo-lighting');
+    // Not the name the app uses for real data.
     expect(names).not.toContain('luxpath_lighting_db_v1');
   });
 

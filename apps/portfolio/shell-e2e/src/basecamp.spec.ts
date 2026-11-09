@@ -1,6 +1,7 @@
 import AxeBuilder from '@axe-core/playwright';
 import { readFileSync } from 'node:fs';
 import type { Page } from '@playwright/test';
+import { appIsPublic, chooseLanguage } from './support/site';
 import { expect, test } from './support/test';
 
 /** `YYYY-MM-DD`, `days` from today in the browser's (and this machine's) zone. */
@@ -42,8 +43,24 @@ async function loadSample(page: Page): Promise<void> {
 }
 
 test.describe('Basecamp', () => {
+  // A hidden app's routes redirect to /apps: nothing to test until it is
+  // public again. Switching the flag back on runs the suite again.
+  // eslint-disable-next-line playwright/no-skipped-test
+  test.skip(
+    !appIsPublic('basecamp'),
+    'Basecamp is hidden (PORTFOLIO_APPS_CONFIG)',
+  );
   // page.route can't see requests made through the service worker.
   test.use({ serviceWorkers: 'block' });
+
+  test('keeps the demo trip in its own demo database', async ({ page }) => {
+    await loadSample(page);
+    const names = await page.evaluate(async () =>
+      (await indexedDB.databases()).map((db) => db.name ?? ''),
+    );
+    expect(names).toContain('ah-demo-basecamp');
+    expect(names).not.toContain('basecamp_db_v1');
+  });
 
   test('starts empty, loads a sample trip, and passes axe', async ({
     page,
@@ -215,7 +232,7 @@ test.describe('Basecamp', () => {
   }) => {
     await stubForecast(page);
     await page.goto('/apps/basecamp/trips');
-    await page.getByRole('button', { name: 'العربية' }).click();
+    await chooseLanguage(page, 'ar');
     await expect(
       page.getByRole('heading', { level: 2, name: 'الرحلات' }),
     ).toBeVisible();
