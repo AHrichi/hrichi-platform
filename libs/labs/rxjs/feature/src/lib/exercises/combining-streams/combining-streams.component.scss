@@ -107,6 +107,10 @@
   border: 1px solid var(--color-border-default);
 }
 
+.visualization-panel {
+  margin-block: var(--space-4, 16px);
+}
+
 .result-box {
   background-color: var(--color-bg-surface);
   border: 1px solid var(--color-border-default);

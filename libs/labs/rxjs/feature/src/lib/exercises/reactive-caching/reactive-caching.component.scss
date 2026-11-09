@@ -128,8 +128,12 @@
   color: #16a34a;
 }
 
+.visualization-panel {
+  margin-block: var(--space-4, 16px);
+}
+
 .log-box p.network {
-  color: #2563eb;
+  color: var(--color-info-default);
 }
 
 .log-type {

@@ -1,15 +1,5 @@
 import { Routes } from '@angular/router';
 import { RxjsPracticePadComponent } from './rxjs-practice-pad.component';
-import { ErrorHandlingComponent } from './exercises/error-handling/error-handling.component';
-import { CombiningStreamsComponent } from './exercises/combining-streams/combining-streams.component';
-import { TransformingStreamsComponent } from './exercises/transforming-streams/transforming-streams.component';
-import { SharingDataComponent } from './exercises/sharing-data/sharing-data.component';
-import { SignalsComponent } from './exercises/signals/signals.component';
-import { RxjsVsSignalsComponent } from './exercises/rxjs-vs-signals/rxjs-vs-signals.component';
-import { MulticastingComponent } from './exercises/multicasting/multicasting.component';
-import { ReactiveCachingComponent } from './exercises/reactive-caching/reactive-caching.component';
-import { BulkOperationsComponent } from './exercises/bulk-operations/bulk-operations.component';
-import { QuizComponent } from './exercises/quiz/quiz.component';
 
 export const rxjsLabRoutes: Routes = [
   {
@@ -23,52 +13,80 @@ export const rxjsLabRoutes: Routes = [
       },
       {
         path: 'error-handling',
-        component: ErrorHandlingComponent,
+        loadComponent: () =>
+          import('./exercises/error-handling/error-handling.component').then(
+            (m) => m.ErrorHandlingComponent,
+          ),
         title: 'RxJS | Error Handling',
       },
       {
         path: 'combining-streams',
-        component: CombiningStreamsComponent,
+        loadComponent: () =>
+          import(
+            './exercises/combining-streams/combining-streams.component'
+          ).then((m) => m.CombiningStreamsComponent),
         title: 'RxJS | Combining Streams',
       },
       {
         path: 'transforming-streams',
-        component: TransformingStreamsComponent,
+        loadComponent: () =>
+          import(
+            './exercises/transforming-streams/transforming-streams.component'
+          ).then((m) => m.TransformingStreamsComponent),
         title: 'RxJS | Transforming Streams',
       },
       {
         path: 'sharing-data',
-        component: SharingDataComponent,
+        loadComponent: () =>
+          import('./exercises/sharing-data/sharing-data.component').then(
+            (m) => m.SharingDataComponent,
+          ),
         title: 'RxJS | Sharing Data',
       },
       {
         path: 'signals',
-        component: SignalsComponent,
+        loadComponent: () =>
+          import('./exercises/signals/signals.component').then(
+            (m) => m.SignalsComponent,
+          ),
         title: 'Angular | Signals',
       },
       {
         path: 'rxjs-vs-signals',
-        component: RxjsVsSignalsComponent,
+        loadComponent: () =>
+          import('./exercises/rxjs-vs-signals/rxjs-vs-signals.component').then(
+            (m) => m.RxjsVsSignalsComponent,
+          ),
         title: 'Angular | RxJS vs Signals',
       },
       {
         path: 'multicasting',
-        component: MulticastingComponent,
+        loadComponent: () =>
+          import('./exercises/multicasting/multicasting.component').then(
+            (m) => m.MulticastingComponent,
+          ),
         title: 'RxJS | Multicasting',
       },
       {
         path: 'reactive-caching',
-        component: ReactiveCachingComponent,
+        loadComponent: () =>
+          import(
+            './exercises/reactive-caching/reactive-caching.component'
+          ).then((m) => m.ReactiveCachingComponent),
         title: 'RxJS | Reactive Caching',
       },
       {
         path: 'bulk-operations',
-        component: BulkOperationsComponent,
+        loadComponent: () =>
+          import('./exercises/bulk-operations/bulk-operations.component').then(
+            (m) => m.BulkOperationsComponent,
+          ),
         title: 'RxJS | Bulk Operations',
       },
       {
         path: 'quiz',
-        component: QuizComponent,
+        loadComponent: () =>
+          import('./exercises/quiz/quiz.component').then((m) => m.QuizComponent),
         title: 'RxJS | Challenge',
       },
     ],

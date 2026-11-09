@@ -2,6 +2,7 @@
 import {
   Component,
   ChangeDetectionStrategy,
+  computed,
   inject,
   signal,
   effect,
@@ -9,7 +10,17 @@ import {
 import { CommonModule } from '@angular/common';
 import { Observable, of } from 'rxjs';
 import { shareReplay, tap, catchError } from 'rxjs/operators';
-import { AhButton, SectionHeading, SegmentedOption, Tag } from '@ah/ui';
+import {
+  AhButton,
+  AhCodeBlock,
+  AhMarbleDiagram,
+  type AhMarbleItem,
+  type AhOperatorTransform,
+  type AhStreamLane,
+  SectionHeading,
+  SegmentedOption,
+  Tag,
+} from '@ah/ui';
 import { UserDataService, User } from '../../shared/services/user-data.service';
 import { NotificationService } from '../../shared/services/notification.service';
 import { UseCaseFocusComponent } from '../../shared/ui/use-case-focus/use-case-focus.component';
@@ -23,7 +34,15 @@ interface LogEntry {
 @Component({
   selector: 'app-reactive-caching',
   standalone: true,
-  imports: [CommonModule, UseCaseFocusComponent, AhButton, Tag, SectionHeading],
+  imports: [
+    CommonModule,
+    UseCaseFocusComponent,
+    AhButton,
+    Tag,
+    SectionHeading,
+    AhMarbleDiagram,
+    AhCodeBlock,
+  ],
   templateUrl: './reactive-caching.component.html',
   styleUrls: ['./reactive-caching.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -48,6 +67,55 @@ export class ReactiveCachingComponent {
   currentUser = signal<User | undefined>(undefined);
   isLoading = signal(false);
   showCode = signal(false);
+
+  readonly cachingLanes = computed<readonly AhStreamLane[]>(() => {
+    const cacheMarbles: AhMarbleItem[] = [];
+    const networkMarbles: AhMarbleItem[] = [];
+
+    this.logs().forEach((log, idx) => {
+      const pos = Math.min(15 + idx * 14, 94);
+      if (log.type === 'network') {
+        networkMarbles.push({
+          id: `net-${log.id}`,
+          value: 'HTTP',
+          positionPercent: pos,
+          variant: 'info',
+          tooltip: log.message,
+        });
+      } else {
+        cacheMarbles.push({
+          id: `cache-${log.id}`,
+          value: 'CACHE',
+          positionPercent: pos,
+          variant: 'success',
+          tooltip: log.message,
+        });
+      }
+    });
+
+    return [
+      {
+        id: 'network-lane',
+        label: 'Network Stream (Cold Request)',
+        badge: 'Uncached API',
+        marbles: networkMarbles,
+      },
+      {
+        id: 'cache-lane',
+        label: 'Replayed Cache Stream (shareReplay)',
+        badge: 'Zero Latency',
+        isPrimary: true,
+        marbles: cacheMarbles,
+      },
+    ];
+  });
+
+  readonly cachingOperator: AhOperatorTransform = {
+    name: 'shareReplay({ bufferSize: 1, refCount: false })',
+    description:
+      'Caches the most recent emission and replays it synchronously to future subscribers without repeating the upstream execution.',
+    formula: 'First subscriber: HTTP -> Cache; Subsequent: Replay from memory',
+  };
 
   readonly codeSnippet = `// ⚡ Production Pattern: In-Memory Stream Cache with shareReplay
 @Injectable({ providedIn: 'root' })

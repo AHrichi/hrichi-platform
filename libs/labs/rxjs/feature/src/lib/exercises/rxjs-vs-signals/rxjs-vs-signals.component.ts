@@ -26,7 +26,13 @@ import {
   switchMap,
   take,
 } from 'rxjs/operators';
-import { AhButton, SectionHeading, SegmentedOption, Tag } from '@ah/ui';
+import {
+  AhButton,
+  AhCodeBlock,
+  SectionHeading,
+  SegmentedOption,
+  Tag,
+} from '@ah/ui';
 import { UseCaseFocusComponent } from '../../shared/ui/use-case-focus/use-case-focus.component';
 
 export interface ArchitectureScenario {
@@ -44,7 +50,14 @@ export interface ArchitectureScenario {
 @Component({
   selector: 'ah-rxjs-vs-signals',
   standalone: true,
-  imports: [CommonModule, UseCaseFocusComponent, AhButton, Tag, SectionHeading],
+  imports: [
+    CommonModule,
+    UseCaseFocusComponent,
+    AhButton,
+    Tag,
+    SectionHeading,
+    AhCodeBlock,
+  ],
   templateUrl: './rxjs-vs-signals.component.html',
   styleUrls: ['./rxjs-vs-signals.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

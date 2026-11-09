@@ -89,6 +89,16 @@
           }
         </div>
 
+        <!-- Live Marble Diagram Visualization -->
+        <div class="visualization-panel">
+          <ah-marble-diagram
+            title="Reactive Cache Stream Timeline"
+            description="Visualizing the transition from initial network latency to synchronous zero-latency replay"
+            [streams]="cachingLanes()"
+            [operator]="cachingOperator"
+          />
+        </div>
+
         <!-- Log Display -->
         <div class="log-box">
           <h4>Audit Trail</h4>
@@ -108,7 +118,7 @@
           {{ showCode() ? 'Hide' : 'Show' }} Enterprise Cache Pattern
         </button>
         @if (showCode()) {
-          <pre><code>{{ codeSnippet }}</code></pre>
+          <ah-code-block [code]="codeSnippet" language="typescript" />
         }
       </div>
     </div>

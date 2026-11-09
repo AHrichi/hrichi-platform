@@ -4,15 +4,16 @@
       @if (isSidebarOpen()) {
         <div>
           <h1 class="title">RxJS Practice Pad</h1>
-          <p class="subtitle">Your personal RxJS laboratory</p>
+          <p class="subtitle">Interactive stream laboratory</p>
         </div>
       }
       <div class="sidebar-actions">
         <button
           class="action-btn toggle-btn"
           (click)="toggleSidebar()"
-          aria-label="Toggle sidebar"
-          [attr.title]="isSidebarOpen() ? 'Collapse sidebar' : 'Expand sidebar'"
+          [attr.aria-expanded]="isSidebarOpen()"
+          aria-label="Toggle navigation drawer"
+          [attr.title]="isSidebarOpen() ? 'Collapse navigation' : 'Expand navigation'"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"

@@ -14,7 +14,13 @@ import { ServiceSenderComponent } from './service-sender/service-sender.componen
 import { ServiceReceiverComponent } from './service-receiver/service-receiver.component';
 import { NotificationService } from '../../shared/services/notification.service';
 import { ViewChildExampleComponent } from './view-child-example/view-child-example.component';
-import { AhButton, SectionHeading, SegmentedOption, Tag } from '@ah/ui';
+import {
+  AhButton,
+  AhCodeBlock,
+  SectionHeading,
+  SegmentedOption,
+  Tag,
+} from '@ah/ui';
 import { UseCaseFocusComponent } from '../../shared/ui/use-case-focus/use-case-focus.component';
 
 @Component({
@@ -30,6 +36,7 @@ import { UseCaseFocusComponent } from '../../shared/ui/use-case-focus/use-case-f
     AhButton,
     Tag,
     SectionHeading,
+    AhCodeBlock,
   ],
   templateUrl: './sharing-data.component.html',
   styleUrls: ['./sharing-data.component.scss'],
@@ -45,6 +52,39 @@ export class SharingDataComponent {
     { value: 'viewChild', label: 'Component Query (viewChild)' },
   ];
   readonly activeCase = signal<string>('all');
+
+  readonly codeSnippets = {
+    input: `// child.component.ts (Angular 22 Signal Input)
+data = input.required<string>();
+
+// parent.component.html
+<app-child [data]="parentData()" />`,
+    output: `// child.component.ts (Angular 22 Output)
+notifyParent = output<string>();
+
+emitEvent() {
+  this.notifyParent.emit('Value from child');
+}
+
+// parent.component.html
+<app-child (notifyParent)="handleEvent($event)" />`,
+    service: `// data.service.ts
+@Injectable({ providedIn: 'root' })
+export class DataSharingService {
+  private messageSubject = new BehaviorSubject<string>('Initial');
+  readonly message$ = this.messageSubject.asObservable();
+
+  sendMessage(msg: string) {
+    this.messageSubject.next(msg);
+  }
+}`,
+    viewChild: `// parent.component.ts (Angular 22 viewChild signal query)
+readonly child = viewChild.required(ViewChildExampleComponent);
+
+triggerChild() {
+  this.child().someMethod();
+}`,
+  };
 
   // --- Child Component Instance via modern Angular viewChild() signal query ---
   readonly childComponent = viewChild(ViewChildExampleComponent);

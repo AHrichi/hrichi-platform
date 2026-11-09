@@ -105,6 +105,16 @@
             </div>
           </div>
 
+          <!-- Live Marble Diagram Visualization -->
+          <div class="visualization-panel">
+            <ah-marble-diagram
+              title="forkJoin Concurrency Timeline"
+              description="Parallel execution locks step until all observables finish and then emits simultaneously"
+              [streams]="forkJoinLanes()"
+              [operator]="forkJoinOperator"
+            />
+          </div>
+
           <div class="code-example">
             <button
               type="button"
@@ -115,7 +125,7 @@
               {{ showCode()['forkJoin'] ? 'Hide' : 'Show' }} Code Example
             </button>
             @if (showCode()['forkJoin']) {
-              <pre><code>{{ codeSnippets.forkJoin }}</code></pre>
+              <ah-code-block [code]="codeSnippets.forkJoin" language="typescript" />
             }
           </div>
         </div>
@@ -202,7 +212,7 @@
               {{ showCode()['bufferCount'] ? 'Hide' : 'Show' }} Code Example
             </button>
             @if (showCode()['bufferCount']) {
-              <pre><code>{{ codeSnippets.bufferCount }}</code></pre>
+              <ah-code-block [code]="codeSnippets.bufferCount" language="typescript" />
             }
           </div>
         </div>

@@ -72,7 +72,16 @@
         </div>
 
         <div class="code-example">
-          <pre><code>{{ codeSnippets.pitfall }}</code></pre>
+          <ah-code-block [code]="codeSnippets.pitfall" language="typescript" />
+        </div>
+
+        <div class="visualization-panel">
+          <ah-marble-diagram
+            title="Inner vs. Outer Stream Resilience"
+            description="Isolating catchError inside switchMap prevents catastrophic termination of outer UI streams"
+            [streams]="pitfallLanes"
+            [operator]="pitfallOperator"
+          />
         </div>
       </div>
     </div>
@@ -157,7 +166,7 @@
               {{ showCode()['replace'] ? 'Hide' : 'Show' }} Code Example
             </button>
             @if (showCode()['replace']) {
-              <pre><code>{{ codeSnippets.replace }}</code></pre>
+              <ah-code-block [code]="codeSnippets.replace" language="typescript" />
             }
           </div>
         </div>
@@ -232,7 +241,7 @@
               {{ showCode()['rethrow'] ? 'Hide' : 'Show' }} Code Example
             </button>
             @if (showCode()['rethrow']) {
-              <pre><code>{{ codeSnippets.rethrow }}</code></pre>
+              <ah-code-block [code]="codeSnippets.rethrow" language="typescript" />
             }
           </div>
         </div>
@@ -308,7 +317,7 @@
               {{ showCode()['retry'] ? 'Hide' : 'Show' }} Code Example
             </button>
             @if (showCode()['retry']) {
-              <pre><code>{{ codeSnippets.retry }}</code></pre>
+              <ah-code-block [code]="codeSnippets.retry" language="typescript" />
             }
           </div>
         </div>
@@ -386,7 +395,7 @@
               {{ showCode()['retryWhen'] ? 'Hide' : 'Show' }} Code Example
             </button>
             @if (showCode()['retryWhen']) {
-              <pre><code>{{ codeSnippets.retryWhen }}</code></pre>
+              <ah-code-block [code]="codeSnippets.retryWhen" language="typescript" />
             }
           </div>
         </div>

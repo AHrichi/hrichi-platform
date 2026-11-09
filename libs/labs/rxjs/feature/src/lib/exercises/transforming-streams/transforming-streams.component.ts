@@ -2,6 +2,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   signal,
   WritableSignal,
 } from '@angular/core';
@@ -17,7 +18,17 @@ import {
   exhaustMap,
   finalize,
 } from 'rxjs/operators';
-import { AhButton, SectionHeading, SegmentedOption, Tag } from '@ah/ui';
+import {
+  AhButton,
+  AhCodeBlock,
+  AhMarbleDiagram,
+  type AhMarbleItem,
+  type AhOperatorTransform,
+  type AhStreamLane,
+  SectionHeading,
+  SegmentedOption,
+  Tag,
+} from '@ah/ui';
 import { UseCaseFocusComponent } from '../../shared/ui/use-case-focus/use-case-focus.component';
 
 // --- Interfaces for Visualization ---
@@ -54,7 +65,14 @@ interface SignalMap {
 @Component({
   selector: 'app-transforming-streams',
   standalone: true,
-  imports: [UseCaseFocusComponent, AhButton, Tag, SectionHeading],
+  imports: [
+    UseCaseFocusComponent,
+    AhButton,
+    Tag,
+    SectionHeading,
+    AhMarbleDiagram,
+    AhCodeBlock,
+  ],
   templateUrl: './transforming-streams.component.html',
   styleUrls: ['./transforming-streams.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -113,6 +131,115 @@ export class TransformingStreamsComponent {
   exhaustMapAllOutputMarbles = signal<Marble[]>([]);
   exhaustMapLogs = signal<StreamLog[]>([]);
   showExhaustMapCode = signal(false);
+
+  // --- Computed Stream Lanes for Marble Diagrams ---
+  readonly concatMapLanes = computed<readonly AhStreamLane[]>(() => {
+    const src: AhMarbleItem[] = this.concatMapSourceMarbles().map((m, idx) => ({
+      id: `concat-src-${m.id}`,
+      value: m.value,
+      positionPercent: Math.min(15 + idx * 25, 90),
+      variant: 'data-1',
+      tooltip: `Source emission #${m.value}`,
+    }));
+    const out: AhMarbleItem[] = this.concatMapAllOutputMarbles().map((m, idx) => ({
+      id: `concat-out-${m.id}`,
+      value: m.value.includes('Val') ? m.value.split('Val')[1].trim() : m.value,
+      positionPercent: Math.min(10 + idx * 10, 94),
+      variant: 'accent',
+      tooltip: `Sequential output: ${m.value}`,
+    }));
+    return [
+      { id: 'src', label: 'Source Stream', badge: 'Triggers', marbles: src },
+      { id: 'out', label: 'Ordered Output (concatMap)', badge: 'Sequential', isPrimary: true, marbles: out },
+    ];
+  });
+
+  readonly concatMapOperator: AhOperatorTransform = {
+    name: 'concatMap(val => inner$)',
+    description: 'Sequentially processes each inner Observable in strict FIFO order.',
+    formula: 'Stream(n) waits for Stream(n-1) to complete',
+  };
+
+  readonly switchMapLanes = computed<readonly AhStreamLane[]>(() => {
+    const src: AhMarbleItem[] = this.switchMapSourceMarbles().map((m, idx) => ({
+      id: `switch-src-${m.id}`,
+      value: m.value,
+      positionPercent: Math.min(15 + idx * 25, 90),
+      variant: 'data-1',
+      tooltip: `Source emission #${m.value}`,
+    }));
+    const out: AhMarbleItem[] = this.switchMapAllOutputMarbles().map((m, idx) => ({
+      id: `switch-out-${m.id}`,
+      value: m.value.includes('Val') ? m.value.split('Val')[1].trim() : m.value,
+      positionPercent: Math.min(10 + idx * 10, 94),
+      variant: 'accent',
+      tooltip: `Switched output: ${m.value}`,
+    }));
+    return [
+      { id: 'src', label: 'Source Stream', badge: 'Triggers', marbles: src },
+      { id: 'out', label: 'Latest Output (switchMap)', badge: 'Unsubscribed Prev', isPrimary: true, marbles: out },
+    ];
+  });
+
+  readonly switchMapOperator: AhOperatorTransform = {
+    name: 'switchMap(val => inner$)',
+    description: 'Cancels the previous inner subscription immediately upon receiving a new source value.',
+    formula: 'Unsubscribe active -> Subscribe latest',
+  };
+
+  readonly mergeMapLanes = computed<readonly AhStreamLane[]>(() => {
+    const src: AhMarbleItem[] = this.mergeMapSourceMarbles().map((m, idx) => ({
+      id: `merge-src-${m.id}`,
+      value: m.value,
+      positionPercent: Math.min(15 + idx * 25, 90),
+      variant: 'data-1',
+      tooltip: `Source emission #${m.value}`,
+    }));
+    const out: AhMarbleItem[] = this.mergeMapAllOutputMarbles().map((m, idx) => ({
+      id: `merge-out-${m.id}`,
+      value: m.value.includes('Val') ? m.value.split('Val')[1].trim() : m.value,
+      positionPercent: Math.min(10 + idx * 10, 94),
+      variant: 'accent',
+      tooltip: `Concurrent output: ${m.value}`,
+    }));
+    return [
+      { id: 'src', label: 'Source Stream', badge: 'Triggers', marbles: src },
+      { id: 'out', label: 'Parallel Output (mergeMap)', badge: 'Interleaved', isPrimary: true, marbles: out },
+    ];
+  });
+
+  readonly mergeMapOperator: AhOperatorTransform = {
+    name: 'mergeMap(val => inner$)',
+    description: 'Subscribes concurrently to all inner Observables and emits their values in parallel as they arrive.',
+    formula: 'Concurrent streams -> Interleaved outputs',
+  };
+
+  readonly exhaustMapLanes = computed<readonly AhStreamLane[]>(() => {
+    const src: AhMarbleItem[] = this.exhaustMapSourceMarbles().map((m, idx) => ({
+      id: `exhaust-src-${m.id}`,
+      value: m.value,
+      positionPercent: Math.min(15 + idx * 25, 90),
+      variant: 'data-1',
+      tooltip: `Source emission #${m.value}`,
+    }));
+    const out: AhMarbleItem[] = this.exhaustMapAllOutputMarbles().map((m, idx) => ({
+      id: `exhaust-out-${m.id}`,
+      value: m.value.includes('Val') ? m.value.split('Val')[1].trim() : m.value,
+      positionPercent: Math.min(10 + idx * 10, 94),
+      variant: 'accent',
+      tooltip: `Guarded output: ${m.value}`,
+    }));
+    return [
+      { id: 'src', label: 'Source Stream', badge: 'Triggers', marbles: src },
+      { id: 'out', label: 'Ignored Spam Output (exhaustMap)', badge: 'Guarded', isPrimary: true, marbles: out },
+    ];
+  });
+
+  readonly exhaustMapOperator: AhOperatorTransform = {
+    name: 'exhaustMap(val => inner$)',
+    description: 'Ignores incoming source emissions while a previously started inner Observable is still executing.',
+    formula: 'Active stream ? Drop new : Execute',
+  };
 
   private marbleCounter = 0;
 

@@ -22,13 +22,30 @@ import {
   delayWhen,
   scan,
 } from 'rxjs/operators';
-import { AhButton, SectionHeading, SegmentedOption, Tag } from '@ah/ui';
+import {
+  AhButton,
+  AhCodeBlock,
+  AhMarbleDiagram,
+  type AhOperatorTransform,
+  type AhStreamLane,
+  SectionHeading,
+  SegmentedOption,
+  Tag,
+} from '@ah/ui';
 import { UseCaseFocusComponent } from '../../shared/ui/use-case-focus/use-case-focus.component';
 
 @Component({
   selector: 'app-error-handling',
   standalone: true,
-  imports: [CommonModule, UseCaseFocusComponent, AhButton, Tag, SectionHeading],
+  imports: [
+    CommonModule,
+    UseCaseFocusComponent,
+    AhButton,
+    Tag,
+    SectionHeading,
+    AhMarbleDiagram,
+    AhCodeBlock,
+  ],
   templateUrl: './error-handling.component.html',
   styleUrls: ['./error-handling.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -126,6 +143,39 @@ searchKeystrokes$.pipe(
     )
   )
 );`,
+  };
+
+  readonly pitfallLanes: readonly AhStreamLane[] = [
+    {
+      id: 'outer-stream',
+      label: 'Outer Search Stream (keystrokes$)',
+      badge: 'User Events',
+      marbles: [
+        { id: 'k1', value: 'a', positionPercent: 15, variant: 'data-1', tooltip: 'Keypress "a"' },
+        { id: 'k2', value: 'ab', positionPercent: 40, variant: 'data-1', tooltip: 'Keypress "ab"' },
+        { id: 'k3', value: 'abc', positionPercent: 78, variant: 'data-1', tooltip: 'Keypress "abc"' },
+      ],
+      isCompleted: false,
+    },
+    {
+      id: 'inner-stream',
+      label: 'Inner HTTP Stream (fetch$)',
+      badge: 'Inner catchError',
+      marbles: [
+        { id: 'h1', value: '200', positionPercent: 25, variant: 'success', tooltip: '200 OK' },
+        { id: 'h2', value: '500', positionPercent: 52, variant: 'danger', tooltip: '500 Internal Error' },
+        { id: 'h3', value: '[]', positionPercent: 58, variant: 'warning', tooltip: 'Fallback empty array' },
+        { id: 'h4', value: '200', positionPercent: 88, variant: 'success', tooltip: 'Subsequent search works!' },
+      ],
+      isCompleted: true,
+    },
+  ];
+
+  readonly pitfallOperator: AhOperatorTransform = {
+    name: 'switchMap(q => http.get(q).pipe(catchError(fallback)))',
+    description:
+      'Catching errors INSIDE the switchMap maintains outer stream vitality, allowing future user keystrokes to succeed.',
+    formula: 'Inner error caught -> Outer stream stays alive',
   };
 
   toggleCode(key: string) {

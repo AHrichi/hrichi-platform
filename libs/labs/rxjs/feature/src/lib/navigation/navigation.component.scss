@@ -1,87 +1,160 @@
-/* src/app/navigation/navigation.component.scss */
-.nav-menu {
-  width: 100%;
+:host {
+  display: block;
+  inline-size: 100%;
 }
 
-.nav-menu ul {
+.nav-menu {
+  inline-size: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4, 16px);
+}
+
+.nav-category {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1, 4px);
+}
+
+.category-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-inline: var(--space-3, 12px);
+  padding-block: var(--space-2, 8px) var(--space-1, 4px);
+}
+
+.category-title {
+  font-size: var(--font-size-75, 0.75rem);
+  font-weight: var(--font-weight-semibold, 600);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-muted);
+}
+
+.category-divider {
+  block-size: 1px;
+  inline-size: 40px;
+  margin-inline: auto;
+  margin-block: var(--space-2, 8px);
+  background-color: var(--color-border-subtle, var(--color-border-default));
+  opacity: 0.6;
+}
+
+.exercise-list {
   list-style: none;
   padding: 0;
   margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
-.nav-menu li a {
+.exercise-item {
+  inline-size: 100%;
+}
+
+.exercise-item a {
   display: flex;
   align-items: center;
-  gap: var(--space-4, 16px);
-  padding: var(--space-3, 12px) var(--space-4, 16px);
+  gap: var(--space-3, 12px);
+  padding: var(--space-2, 8px) var(--space-3, 12px);
+  min-block-size: 44px;
   text-decoration: none;
-  color: var(--color-text-muted, #4a5568);
+  color: var(--color-text-muted);
   font-weight: var(--font-weight-medium, 500);
   font-family: var(--font-family-sans, system-ui, sans-serif);
   border-radius: var(--radius-sm, 6px);
+  border: 1px solid transparent;
   transition:
-    background-color var(--motion-duration-fast, 0.2s) ease,
-    color var(--motion-duration-fast, 0.2s) ease;
-  margin-bottom: var(--space-1, 4px);
+    background-color var(--motion-duration-fast, 0.15s) ease,
+    color var(--motion-duration-fast, 0.15s) ease,
+    border-color var(--motion-duration-fast, 0.15s) ease;
 
   &:hover {
-    background-color: var(--color-bg-canvas, #e2e8f0);
-    color: var(--color-text-default, #1a202c);
+    background-color: var(--color-bg-canvas);
+    color: var(--color-text-default);
 
-    svg {
-      color: var(--color-text-default, #1a202c);
+    .icon-wrapper {
+      color: var(--color-accent-default);
     }
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-focus-ring);
+    outline-offset: 2px;
   }
 
   &.active {
-    background-color: var(--color-accent-default, #b3122e);
-    color: var(--color-accent-on, white);
+    background-color: var(--color-accent-default);
+    color: var(--color-accent-on);
+    border-color: var(--color-accent-default);
 
-    svg {
-      color: var(--color-accent-on, white);
+    .icon-wrapper {
+      color: var(--color-accent-on);
     }
 
     .description {
-      color: var(--color-accent-on, rgba(255, 255, 255, 0.85));
-      opacity: 0.85;
+      color: var(--color-accent-on);
+      opacity: 0.9;
     }
   }
 }
 
-.nav-menu.closed li a {
+.nav-menu.closed .exercise-item a {
   justify-content: center;
-  padding: var(--space-3, 12px);
+  padding: var(--space-2, 8px);
 }
 
-.nav-menu svg {
-  width: 20px;
-  height: 20px;
-  color: var(--color-text-muted, #718096);
+.icon-wrapper {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 20px;
+  block-size: 20px;
+  color: var(--color-text-muted);
   flex-shrink: 0;
-  transition: color var(--motion-duration-fast, 0.2s) ease;
+  transition: color var(--motion-duration-fast, 0.15s) ease;
+
+  svg {
+    inline-size: 20px;
+    block-size: 20px;
+  }
 }
 
 .link-text {
   display: flex;
   flex-direction: column;
+  min-inline-size: 0;
+}
+
+.link-label {
+  font-size: var(--font-size-100, 0.875rem);
+  line-height: var(--line-height-tight, 1.25);
+  font-weight: var(--font-weight-medium, 500);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .description {
   display: block;
-  font-size: var(--font-size-100, 0.8rem);
+  font-size: var(--font-size-75, 0.75rem);
   font-weight: var(--font-weight-regular, 400);
-  color: var(--color-text-muted, #a0aec0);
-  margin-top: 2px;
+  color: var(--color-text-muted);
+  margin-block-start: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 @media (max-width: 768px) {
-  .nav-menu ul {
-    display: flex;
+  .nav-menu {
     flex-direction: row;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
-    gap: var(--space-2, 8px);
-    padding: var(--space-1, 4px) 0;
+    gap: var(--space-4, 16px);
+    padding-block: var(--space-1, 4px);
     scrollbar-width: none;
 
     &::-webkit-scrollbar {
@@ -89,18 +162,39 @@
     }
   }
 
-  .nav-menu li {
+  .nav-category {
+    flex-direction: row;
+    align-items: center;
+    gap: var(--space-2, 8px);
     flex-shrink: 0;
   }
 
-  .nav-menu li a {
-    white-space: nowrap;
-    padding: var(--space-2, 8px) var(--space-3, 12px);
-    margin-bottom: 0;
-    font-size: var(--font-size-100, 0.85rem);
+  .category-header {
+    display: none;
+  }
 
-    .description {
-      display: none;
-    }
+  .category-divider {
+    display: none;
+  }
+
+  .exercise-list {
+    flex-direction: row;
+    gap: var(--space-2, 8px);
+  }
+
+  .exercise-item {
+    inline-size: auto;
+    flex-shrink: 0;
+  }
+
+  .exercise-item a {
+    white-space: nowrap;
+    padding-inline: var(--space-3, 12px);
+    padding-block: var(--space-2, 8px);
+    font-size: var(--font-size-100, 0.85rem);
+  }
+
+  .description {
+    display: none;
   }
 }

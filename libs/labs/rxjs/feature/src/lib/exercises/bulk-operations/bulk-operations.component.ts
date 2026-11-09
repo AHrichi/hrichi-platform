@@ -2,13 +2,24 @@
 import {
   Component,
   ChangeDetectionStrategy,
+  computed,
   signal,
   inject,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Observable, forkJoin, from, of } from 'rxjs';
 import { bufferCount, concatMap, tap, finalize, toArray } from 'rxjs/operators';
-import { AhButton, SectionHeading, SegmentedOption, Tag } from '@ah/ui';
+import {
+  AhButton,
+  AhCodeBlock,
+  AhMarbleDiagram,
+  type AhMarbleItem,
+  type AhOperatorTransform,
+  type AhStreamLane,
+  SectionHeading,
+  SegmentedOption,
+  Tag,
+} from '@ah/ui';
 import {
   FileProcessingService,
   File,
@@ -23,7 +34,15 @@ interface FileItem extends File {
 @Component({
   selector: 'app-bulk-operations',
   standalone: true,
-  imports: [CommonModule, UseCaseFocusComponent, AhButton, Tag, SectionHeading],
+  imports: [
+    CommonModule,
+    UseCaseFocusComponent,
+    AhButton,
+    Tag,
+    SectionHeading,
+    AhMarbleDiagram,
+    AhCodeBlock,
+  ],
   templateUrl: './bulk-operations.component.html',
   styleUrls: ['./bulk-operations.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -84,6 +103,67 @@ from(largeFileList).pipe(
   bufferCountFiles = signal<FileItem[]>(this.createInitialFiles());
   bufferCountResults = signal<string[][]>([]);
   isBufferCountProcessing = signal(false);
+
+  readonly forkJoinLanes = computed<readonly AhStreamLane[]>(() => {
+    const lanes: AhStreamLane[] = this.forkJoinFiles().map((file) => ({
+      id: `file-${file.id}`,
+      label: file.name,
+      badge: file.status,
+      marbles:
+        file.status === 'done'
+          ? [
+              {
+                id: `done-${file.id}`,
+                value: '✓',
+                positionPercent: 75,
+                variant: 'success',
+                tooltip: `${file.name} resolved`,
+              },
+            ]
+          : file.status === 'processing'
+            ? [
+                {
+                  id: `proc-${file.id}`,
+                  value: '...',
+                  positionPercent: 40,
+                  variant: 'warning',
+                  tooltip: `${file.name} downloading...`,
+                },
+              ]
+            : [],
+      isCompleted: file.status === 'done',
+    }));
+
+    const files = this.forkJoinFiles();
+    const allDone = files.length > 0 && files.every((f) => f.status === 'done');
+    lanes.push({
+      id: 'forkjoin-output',
+      label: 'Combined Parallel Output',
+      badge: 'forkJoin$',
+      isPrimary: true,
+      marbles: allDone
+        ? [
+            {
+              id: 'fj-out',
+              value: `[${files.length} items]`,
+              positionPercent: 88,
+              variant: 'accent',
+              tooltip: 'All parallel streams completed. Emitted single combined dictionary.',
+            },
+          ]
+        : [],
+      isCompleted: allDone,
+    });
+
+    return lanes;
+  });
+
+  readonly forkJoinOperator: AhOperatorTransform = {
+    name: 'forkJoin([file1$, file2$, file3$])',
+    description:
+      'Waits for all parallel source observables to complete, then emits a single dictionary/array containing their final values.',
+    formula: 'All complete ? Emit combined array : Await remaining streams',
+  };
 
   // --- forkJoin Example ---
   processAllWithForkJoin() {

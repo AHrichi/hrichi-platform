@@ -76,11 +76,7 @@
               {{ showInputCode() ? 'Hide' : 'Show' }} Code
             </button>
             @if (showInputCode()) {
-              <pre><code>// child.component.ts (Angular 22 Signal Input)
-data = input.required&lt;string&gt;();
-
-// parent.component.html
-&lt;app-child [data]="parentData()" /&gt;</code></pre>
+              <ah-code-block [code]="codeSnippets.input" language="typescript" />
             }
           </div>
         </div>
@@ -134,12 +130,7 @@ data = input.required&lt;string&gt;();
               {{ showOutputCode() ? 'Hide' : 'Show' }} Code
             </button>
             @if (showOutputCode()) {
-              <pre><code>// child.component.ts (Angular 22 Output)
-dataEvent = output&lt;string&gt;();
-
-sendMessage() {{ '{' }}
-  this.dataEvent.emit(this.message);
-{{ '}' }}</code></pre>
+              <ah-code-block [code]="codeSnippets.output" language="typescript" />
             }
           </div>
         </div>
@@ -187,13 +178,7 @@ sendMessage() {{ '{' }}
               {{ showServiceCode() ? 'Hide' : 'Show' }} Code
             </button>
             @if (showServiceCode()) {
-              <pre><code>// data.service.ts
-private messageSubject = new BehaviorSubject&lt;string&gt;('Initial');
-message$ = this.messageSubject.asObservable();
-
-sendMessage(message: string) {{ '{' }}
-  this.messageSubject.next(message);
-{{ '}' }}</code></pre>
+              <ah-code-block [code]="codeSnippets.service" language="typescript" />
             }
           </div>
         </div>
@@ -249,12 +234,7 @@ sendMessage(message: string) {{ '{' }}
               {{ showViewChildCode() ? 'Hide' : 'Show' }} Code
             </button>
             @if (showViewChildCode()) {
-              <pre><code>// parent.component.ts (Angular 22 viewChild signal query)
-readonly child = viewChild(ChildComponent);
-
-triggerAction() {{ '{' }}
-  this.child()?.highlight();
-{{ '}' }}</code></pre>
+              <ah-code-block [code]="codeSnippets.viewChild" language="typescript" />
             }
           </div>
         </div>

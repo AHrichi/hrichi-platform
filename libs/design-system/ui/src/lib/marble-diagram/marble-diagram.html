@@ -1,0 +1,126 @@
+<div class="diagram-card">
+  @if (title() || description()) {
+    <header class="diagram-header">
+      <div class="header-main">
+        @if (title()) {
+          <h3 class="diagram-title">{{ title() }}</h3>
+        }
+        @if (description()) {
+          <p class="diagram-description">{{ description() }}</p>
+        }
+      </div>
+    </header>
+  }
+
+  <!-- Live screen reader announcements for stream emissions -->
+  <div class="sr-only" role="status" aria-live="polite">
+    {{ announcements() }}
+  </div>
+
+  <div class="streams-container">
+    @for (stream of streams(); track stream.id; let streamIdx = $index) {
+      <!-- Operator transform block if specified before the last stream (typically the output) -->
+      @if (operator(); as op) {
+        @if (streamIdx === streams().length - 1 && streams().length > 1) {
+          <div class="operator-divider">
+            <div class="operator-box">
+              <span class="operator-name">{{ op.name }}</span>
+              @if (op.formula) {
+                <code class="operator-formula">{{ op.formula }}</code>
+              }
+              @if (op.description) {
+                <span class="operator-desc">{{ op.description }}</span>
+              }
+            </div>
+            <div class="operator-arrow-down" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <polyline points="19 12 12 19 5 12"></polyline>
+              </svg>
+            </div>
+          </div>
+        }
+      }
+
+      <div
+        class="stream-lane"
+        [class.stream-lane--primary]="stream.isPrimary"
+        [class.stream-lane--completed]="stream.isCompleted"
+        [class.stream-lane--error]="!!stream.error"
+      >
+        <div class="stream-info">
+          <div class="stream-label-group">
+            <span class="stream-label">{{ stream.label }}</span>
+            @if (stream.badge) {
+              <span class="stream-badge">{{ stream.badge }}</span>
+            }
+          </div>
+          @if (stream.description) {
+            <span class="stream-desc">{{ stream.description }}</span>
+          }
+        </div>
+
+        <div class="timeline-wrapper">
+          <div class="timeline-track" role="list" [attr.aria-label]="stream.label + ' timeline'">
+            <!-- Time tick grid lines -->
+            @if (showTimeTicks()) {
+              <div class="timeline-ticks" aria-hidden="true">
+                <span class="tick" style="left: 20%"></span>
+                <span class="tick" style="left: 40%"></span>
+                <span class="tick" style="left: 60%"></span>
+                <span class="tick" style="left: 80%"></span>
+              </div>
+            }
+
+            <!-- Axis Line & Arrow Head -->
+            <div class="axis-line" aria-hidden="true">
+              <span class="axis-arrow"></span>
+            </div>
+
+            <!-- Marbles -->
+            @for (marble of stream.marbles; track marble.id; let marbleIdx = $index) {
+              <button
+                type="button"
+                role="listitem"
+                class="marble-node"
+                [class]="getVariantClass(marble.variant)"
+                [class.marble--selected]="selectedMarbleId() === marble.id"
+                [class.marble--emitting]="marble.isEmitting"
+                [class.shape-square]="marble.shape === 'square'"
+                [class.shape-diamond]="marble.shape === 'diamond'"
+                [style.left.%]="getPosition(marble, marbleIdx, stream.marbles.length)"
+                [style.backgroundColor]="marble.color || null"
+                [attr.title]="marble.tooltip || (stream.label + ' emission: ' + marble.value)"
+                [attr.aria-label]="stream.label + ' emission ' + marble.value"
+                (click)="onMarbleClick(stream.id, marble)"
+              >
+                <span class="marble-value">{{ marble.value }}</span>
+              </button>
+            }
+
+            <!-- Stream End Marker: Completion (vertical bar) or Error (cross) -->
+            @if (stream.isCompleted) {
+              <div
+                class="stream-terminal terminal-completed"
+                title="Stream completed"
+                aria-label="Stream completed"
+              >
+                <span class="completion-bar"></span>
+              </div>
+            }
+
+            @if (stream.error) {
+              <div
+                class="stream-terminal terminal-error"
+                [attr.title]="'Error: ' + stream.error"
+                [attr.aria-label]="'Stream error: ' + stream.error"
+              >
+                <span class="error-cross">✕</span>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+</div>

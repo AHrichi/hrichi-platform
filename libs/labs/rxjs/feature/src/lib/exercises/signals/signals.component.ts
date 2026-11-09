@@ -13,7 +13,13 @@ import {
 import { toSignal, toObservable, rxResource } from '@angular/core/rxjs-interop';
 import { interval, Observable, Subject, timer } from 'rxjs';
 import { tap, switchMap, takeUntil, map, debounceTime } from 'rxjs/operators';
-import { AhButton, SectionHeading, SegmentedOption, Tag } from '@ah/ui';
+import {
+  AhButton,
+  AhCodeBlock,
+  SectionHeading,
+  SegmentedOption,
+  Tag,
+} from '@ah/ui';
 import { NotificationService } from '../../shared/services/notification.service';
 import { UseCaseFocusComponent } from '../../shared/ui/use-case-focus/use-case-focus.component';
 
@@ -39,7 +45,13 @@ export interface UserProfile {
 @Component({
   selector: 'app-signals',
   standalone: true,
-  imports: [UseCaseFocusComponent, AhButton, Tag, SectionHeading],
+  imports: [
+    UseCaseFocusComponent,
+    AhButton,
+    Tag,
+    SectionHeading,
+    AhCodeBlock,
+  ],
   templateUrl: './signals.component.html',
   styleUrls: ['./signals.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -56,6 +68,39 @@ export class SignalsComponent {
     { value: 'toObservable', label: 'toObservable()' },
   ];
   readonly activeCase = signal<string>('all');
+
+  readonly codeSnippets = {
+    toSignal: `// Convert interval Observable to synchronous Signal
+counter$ = interval(1000);
+counterSignal = toSignal(this.counter$, { initialValue: 0 });`,
+    linkedSignal: `// Automatically synchronizes when source signal updates, but allows local mutation
+planTier = signal<PlanTier>('Pro');
+defaultSeats = computed(() => this.planTier() === 'Enterprise' ? 50 : 5);
+allocatedSeats = linkedSignal({
+  source: this.defaultSeats,
+  computation: (seats) => seats,
+});`,
+    rxResource: `// Modern RxJS-backed data loading with automatic cancellation
+userProfileResource = rxResource<UserProfile, { id: number }>({
+  params: () => ({ id: this.selectedUserId() }),
+  stream: ({ params }) => this.http.get<UserProfile>('/api/users/' + params.id),
+});`,
+    resource: `// Modern async/Promise-backed resource with native AbortSignal
+articleResource = resource({
+  params: () => ({ topic: this.resourceSearchTopic() }),
+  loader: async ({ params, abortSignal }) => {
+    const res = await fetch('/api/articles?topic=' + params.topic, { signal: abortSignal });
+    return res.json();
+  },
+});`,
+    interop: `// Seamless bidirectional bridge: toObservable() + toSignal()
+searchQuery = signal('Angular 22');
+searchQuery$ = toObservable(this.searchQuery);
+debouncedSearch = toSignal(
+  this.searchQuery$.pipe(debounceTime(350), map(q => q.trim())),
+  { initialValue: 'ANGULAR 22' }
+);`,
+  };
 
   // --- 1. Writable Signals (The "Source of Truth") ---
   firstName = signal('John');

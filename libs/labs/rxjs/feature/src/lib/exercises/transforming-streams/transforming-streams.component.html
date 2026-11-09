@@ -165,6 +165,14 @@
               </p>
             }
           </div>
+          <div class="visualization-panel">
+            <ah-marble-diagram
+              title="concatMap Stream Lifecycle"
+              description="Sequential execution: subsequent inner streams queue until active stream completes"
+              [streams]="concatMapLanes()"
+              [operator]="concatMapOperator"
+            />
+          </div>
           <div class="code-example">
             <button
               type="button"
@@ -175,7 +183,7 @@
               {{ showConcatMapCode() ? 'Hide' : 'Show' }} Code
             </button>
             @if (showConcatMapCode()) {
-              <pre><code>{{ codeSnippets.concatMap }}</code></pre>
+              <ah-code-block [code]="codeSnippets.concatMap" language="typescript" />
             }
           </div>
         </div>
@@ -269,6 +277,14 @@
               </p>
             }
           </div>
+          <div class="visualization-panel">
+            <ah-marble-diagram
+              title="switchMap Stream Lifecycle"
+              description="Cancellation policy: active inner stream is unsubscribed upon new source emission"
+              [streams]="switchMapLanes()"
+              [operator]="switchMapOperator"
+            />
+          </div>
           <div class="code-example">
             <button
               type="button"
@@ -279,7 +295,7 @@
               {{ showSwitchMapCode() ? 'Hide' : 'Show' }} Code
             </button>
             @if (showSwitchMapCode()) {
-              <pre><code>{{ codeSnippets.switchMap }}</code></pre>
+              <ah-code-block [code]="codeSnippets.switchMap" language="typescript" />
             }
           </div>
         </div>
@@ -373,6 +389,14 @@
               </p>
             }
           </div>
+          <div class="visualization-panel">
+            <ah-marble-diagram
+              title="mergeMap Stream Lifecycle"
+              description="Concurrent interleaving: parallel inner streams emit independently as values resolve"
+              [streams]="mergeMapLanes()"
+              [operator]="mergeMapOperator"
+            />
+          </div>
           <div class="code-example">
             <button
               type="button"
@@ -383,7 +407,7 @@
               {{ showMergeMapCode() ? 'Hide' : 'Show' }} Code
             </button>
             @if (showMergeMapCode()) {
-              <pre><code>{{ codeSnippets.mergeMap }}</code></pre>
+              <ah-code-block [code]="codeSnippets.mergeMap" language="typescript" />
             }
           </div>
         </div>
@@ -477,6 +501,14 @@
               </p>
             }
           </div>
+          <div class="visualization-panel">
+            <ah-marble-diagram
+              title="exhaustMap Stream Lifecycle"
+              description="Spam prevention: new source emissions dropped while inner stream is in flight"
+              [streams]="exhaustMapLanes()"
+              [operator]="exhaustMapOperator"
+            />
+          </div>
           <div class="code-example">
             <button
               type="button"
@@ -487,7 +519,7 @@
               {{ showExhaustMapCode() ? 'Hide' : 'Show' }} Code
             </button>
             @if (showExhaustMapCode()) {
-              <pre><code>{{ codeSnippets.exhaustMap }}</code></pre>
+              <ah-code-block [code]="codeSnippets.exhaustMap" language="typescript" />
             }
           </div>
         </div>

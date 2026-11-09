@@ -87,9 +87,9 @@
         <div class="card question-card">
           <p class="question-text">{{ currentQuestion().text }}</p>
 
-          @if (currentQuestion().codeSnippet) {
+          @if (currentQuestion().codeSnippet; as snippet) {
             <div class="code-example">
-              <pre><code>{{ currentQuestion().codeSnippet }}</code></pre>
+              <ah-code-block [code]="snippet" language="typescript" />
             </div>
           }
 

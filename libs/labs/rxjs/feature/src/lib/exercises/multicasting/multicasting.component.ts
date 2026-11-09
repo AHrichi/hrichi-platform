@@ -21,7 +21,13 @@ import {
   connectable,
   Connectable,
 } from 'rxjs';
-import { AhButton, SectionHeading, SegmentedOption, Tag } from '@ah/ui';
+import {
+  AhButton,
+  AhCodeBlock,
+  SectionHeading,
+  SegmentedOption,
+  Tag,
+} from '@ah/ui';
 import { NotificationService } from '../../shared/services/notification.service';
 import { UseCaseFocusComponent } from '../../shared/ui/use-case-focus/use-case-focus.component';
 
@@ -44,7 +50,13 @@ type ExampleType = 'cold' | 'hot' | 'connectable' | SubjectType;
 @Component({
   selector: 'app-multicasting',
   standalone: true,
-  imports: [UseCaseFocusComponent, AhButton, Tag, SectionHeading],
+  imports: [
+    UseCaseFocusComponent,
+    AhButton,
+    Tag,
+    SectionHeading,
+    AhCodeBlock,
+  ],
   templateUrl: './multicasting.component.html',
   styleUrls: ['./multicasting.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

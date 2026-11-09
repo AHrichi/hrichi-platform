@@ -241,10 +241,7 @@
           </div>
 
           <div class="code-example">
-            <pre><code>// Convert interval Observable to synchronous Signal
-counter$ = interval(1000);
-counterSignal = toSignal(this.counter$, &#123; initialValue: 0 &#125;);
-isEven = computed(() => this.counterSignal() % 2 === 0);</code></pre>
+            <ah-code-block [code]="codeSnippets.toSignal" language="typescript" />
           </div>
         </div>
       </div>
@@ -359,15 +356,7 @@ isEven = computed(() => this.counterSignal() % 2 === 0);</code></pre>
           </div>
 
           <div class="code-example">
-            <pre><code>planTier = signal&lt;PlanTier&gt;('Pro');
-
-computeCredits = linkedSignal&lt;PlanTier, number&gt;(&#123;
-  source: () => this.planTier(),
-  computation: (tier) => (tier === 'Enterprise' ? 100 : tier === 'Pro' ? 25 : 5),
-&#125;);
-
-// Direct mutation allowed without breaking reactivity:
-computeCredits.update(c => c + 5);</code></pre>
+            <ah-code-block [code]="codeSnippets.linkedSignal" language="typescript" />
           </div>
         </div>
       </div>
@@ -463,10 +452,7 @@ computeCredits.update(c => c + 5);</code></pre>
           </div>
 
           <div class="code-example">
-            <pre><code>userProfileResource = rxResource&lt;UserProfile, &#123; id: number &#125;&gt;(&#123;
-  params: () => (&#123; id: this.selectedUserId() &#125;),
-  stream: (&#123; params &#125;) => this.http.get&lt;UserProfile&gt;(`/api/users/$&#123;params.id&#125;`),
-&#125;);</code></pre>
+            <ah-code-block [code]="codeSnippets.rxResource" language="typescript" />
           </div>
         </div>
       </div>
@@ -572,13 +558,7 @@ computeCredits.update(c => c + 5);</code></pre>
           </div>
 
           <div class="code-example">
-            <pre><code>articleResource = resource(&#123;
-  params: () => (&#123; topic: this.topic() &#125;),
-  loader: async (&#123; params, abortSignal &#125;) => &#123;
-    const res = await fetch(`/api/articles?q=$&#123;params.topic&#125;`, &#123; signal: abortSignal &#125;);
-    return res.json();
-  &#125;
-&#125;);</code></pre>
+            <ah-code-block [code]="codeSnippets.resource" language="typescript" />
           </div>
         </div>
       </div>
@@ -634,16 +614,7 @@ computeCredits.update(c => c + 5);</code></pre>
           </div>
 
           <div class="code-example">
-            <pre><code>searchQuery = signal('Angular 22');
-searchQuery$ = toObservable(this.searchQuery);
-
-debouncedSearch = toSignal(
-  this.searchQuery$.pipe(
-    debounceTime(350),
-    map(q => q.toUpperCase().trim()),
-  ),
-  &#123; initialValue: 'ANGULAR 22' &#125;
-);</code></pre>
+            <ah-code-block [code]="codeSnippets.interop" language="typescript" />
           </div>
         </div>
       </div>

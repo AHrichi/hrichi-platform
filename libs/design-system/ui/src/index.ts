@@ -77,3 +77,13 @@ export {
   type SwatchFinish as AhSwatchFinish,
   type SwatchSize as AhSwatchSize,
 } from './lib/color-swatch/color-swatch';
+
+export * from './lib/marble-diagram/marble-diagram';
+export {
+  MarbleDiagram as AhMarbleDiagram,
+  type MarbleItem as AhMarbleItem,
+  type StreamLane as AhStreamLane,
+  type OperatorTransform as AhOperatorTransform,
+  type MarbleVariant as AhMarbleVariant,
+  type MarbleShape as AhMarbleShape,
+} from './lib/marble-diagram/marble-diagram';

@@ -78,7 +78,7 @@
               {{ showCode()['cold'] ? 'Hide' : 'Show' }} Code Example
             </button>
             @if (showCode()['cold']) {
-              <pre><code>{{ codeSnippets.cold }}</code></pre>
+              <ah-code-block [code]="codeSnippets.cold" language="typescript" />
             }
           </div>
         </div>
@@ -161,7 +161,7 @@
               {{ showCode()['hot'] ? 'Hide' : 'Show' }} Code Example
             </button>
             @if (showCode()['hot']) {
-              <pre><code>{{ codeSnippets.hot }}</code></pre>
+              <ah-code-block [code]="codeSnippets.hot" language="typescript" />
             }
           </div>
         </div>
@@ -261,7 +261,7 @@
               {{ showCode()['hot'] ? 'Hide' : 'Show' }} Code Example
             </button>
             @if (showCode()['hot']) {
-              <pre><code>{{ codeSnippets.hot }}</code></pre>
+              <ah-code-block [code]="codeSnippets.hot" language="typescript" />
             }
           </div>
         </div>
@@ -363,7 +363,7 @@
               {{ showCode()['subject'] ? 'Hide' : 'Show' }} Code Example
             </button>
             @if (showCode()['subject']) {
-              <pre><code>{{ codeSnippets.subject }}</code></pre>
+              <ah-code-block [code]="codeSnippets.subject" language="typescript" />
             }
           </div>
         </div>
@@ -490,7 +490,7 @@
               {{ showCode()['behaviorSubject'] ? 'Hide' : 'Show' }} Code Example
             </button>
             @if (showCode()['behaviorSubject']) {
-              <pre><code>{{ codeSnippets.behaviorSubject }}</code></pre>
+              <ah-code-block [code]="codeSnippets.behaviorSubject" language="typescript" />
             }
           </div>
         </div>
@@ -620,7 +620,7 @@
               {{ showCode()['replaySubject'] ? 'Hide' : 'Show' }} Code Example
             </button>
             @if (showCode()['replaySubject']) {
-              <pre><code>{{ codeSnippets.replaySubject }}</code></pre>
+              <ah-code-block [code]="codeSnippets.replaySubject" language="typescript" />
             }
           </div>
         </div>
@@ -722,7 +722,7 @@
               {{ showCode()['asyncSubject'] ? 'Hide' : 'Show' }} Code Example
             </button>
             @if (showCode()['asyncSubject']) {
-              <pre><code>{{ codeSnippets.asyncSubject }}</code></pre>
+              <ah-code-block [code]="codeSnippets.asyncSubject" language="typescript" />
             }
           </div>
         </div>

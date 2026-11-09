@@ -38,7 +38,7 @@
         </div>
 
         <div class="code-example">
-          <pre><code>{{ codeSnippets.comparison }}</code></pre>
+          <ah-code-block [code]="codeSnippets.comparison" language="typescript" />
         </div>
       </div>
     </div>
@@ -140,22 +140,18 @@
               size="sm"
               (click)="resetWithLatestFrom()"
             >
-              Reset
+              Reset Stream State
             </button>
           </div>
 
-          <div class="result-box">
-            <h4>Output Stream</h4>
-            @if (outputValues().length > 0) {
-              @for (value of outputValues(); track $index) {
-                <p class="result-item">{{ value }}</p>
-              }
-            } @else {
-              <p class="placeholder-text">
-                Emit from the primary stream after setting a secondary value to
-                see combined emissions.
-              </p>
-            }
+          <!-- Live Marble Diagram Visualization -->
+          <div class="visualization-panel">
+            <ah-marble-diagram
+              title="withLatestFrom Marble Visualizer"
+              description="Primary stream drives emissions; secondary stream provides instant snapshot"
+              [streams]="withLatestFromLanes()"
+              [operator]="withLatestFromOperator"
+            />
           </div>
 
           <div class="code-example">
@@ -168,7 +164,7 @@
               {{ showCode()['withLatestFrom'] ? 'Hide' : 'Show' }} Code Example
             </button>
             @if (showCode()['withLatestFrom']) {
-              <pre><code>{{ codeSnippets.withLatestFrom }}</code></pre>
+              <ah-code-block [code]="codeSnippets.withLatestFrom" language="typescript" />
             }
           </div>
         </div>
@@ -269,22 +265,18 @@
               size="sm"
               (click)="resetCombineLatest()"
             >
-              Reset
+              Reset Stream State
             </button>
           </div>
 
-          <div class="result-box">
-            <h4>Output Stream</h4>
-            @if (combineLatestOutput().length > 0) {
-              @for (value of combineLatestOutput(); track $index) {
-                <p class="result-item">{{ value }}</p>
-              }
-            } @else {
-              <p class="placeholder-text">
-                Both sources must emit at least once for combineLatest to
-                produce its first value.
-              </p>
-            }
+          <!-- Live Marble Diagram Visualization -->
+          <div class="visualization-panel">
+            <ah-marble-diagram
+              title="combineLatest Marble Visualizer"
+              description="Multi-source democratic synchronization: emits whenever any stream updates"
+              [streams]="combineLatestLanes()"
+              [operator]="combineLatestOperator"
+            />
           </div>
 
           <div class="code-example">
@@ -297,7 +289,7 @@
               {{ showCode()['combineLatest'] ? 'Hide' : 'Show' }} Code Example
             </button>
             @if (showCode()['combineLatest']) {
-              <pre><code>{{ codeSnippets.combineLatest }}</code></pre>
+              <ah-code-block [code]="codeSnippets.combineLatest" language="typescript" />
             }
           </div>
         </div>
