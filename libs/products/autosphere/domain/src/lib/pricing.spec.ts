@@ -1,6 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import { AUTOSPHERE_MODELS } from './mock-cms-catalog';
-import { calculateFinance, calculateTotalPrice, simulateRange } from './pricing';
+import {
+  calculateFinance,
+  calculateTotalPrice,
+  simulateRange,
+} from './pricing';
 
 const gtv = AUTOSPHERE_MODELS.find((m) => m.slug === 'gt-v')!;
 

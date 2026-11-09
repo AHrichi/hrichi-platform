@@ -4,10 +4,6 @@
   "sourceRoot": "libs/products/dispatch/domain/src",
   "prefix": "ah",
   "projectType": "library",
-  "tags": [
-    "scope:product-dispatch",
-    "type:domain",
-    "runtime:agnostic"
-  ],
+  "tags": ["scope:product-dispatch", "type:domain", "runtime:agnostic"],
   "targets": {}
 }

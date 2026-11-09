@@ -21,9 +21,7 @@
       <div class="sky__toolbar">
         <button type="button" class="sky__primary" (click)="toggleView()">
           {{
-            store.view() === 'earth'
-              ? copy().lookUpAtSky
-              : copy().backToEarth
+            store.view() === 'earth' ? copy().lookUpAtSky : copy().backToEarth
           }}
         </button>
         @if (store.view() === 'sky') {

@@ -8,7 +8,10 @@ describe('SaveBar logic', () => {
       emitted = req;
     };
 
-    const request: SaveRequest = { label: 'Spacing · M3 · 28 m', replace: true };
+    const request: SaveRequest = {
+      label: 'Spacing · M3 · 28 m',
+      replace: true,
+    };
     saveHandler(request);
 
     expect(emitted).toEqual({

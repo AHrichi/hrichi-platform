@@ -4,10 +4,6 @@
   "sourceRoot": "libs/products/alarm-engine/domain/src",
   "prefix": "ah",
   "projectType": "library",
-  "tags": [
-    "scope:product-alarm-engine",
-    "type:domain",
-    "runtime:agnostic"
-  ],
+  "tags": ["scope:product-alarm-engine", "type:domain", "runtime:agnostic"],
   "targets": {}
 }

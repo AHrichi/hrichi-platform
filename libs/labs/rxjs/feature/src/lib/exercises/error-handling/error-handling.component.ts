@@ -164,9 +164,27 @@ searchKeystrokes$.pipe(
         label: c.outerLaneLabel,
         badge: c.outerLaneBadge,
         marbles: [
-          { id: 'k1', value: 'a', positionPercent: 15, variant: 'data-1', tooltip: 'Keypress "a"' },
-          { id: 'k2', value: 'ab', positionPercent: 42, variant: 'data-1', tooltip: 'Keypress "ab"' },
-          { id: 'k3', value: 'abc', positionPercent: 78, variant: 'data-1', tooltip: 'Keypress "abc"' },
+          {
+            id: 'k1',
+            value: 'a',
+            positionPercent: 15,
+            variant: 'data-1',
+            tooltip: 'Keypress "a"',
+          },
+          {
+            id: 'k2',
+            value: 'ab',
+            positionPercent: 42,
+            variant: 'data-1',
+            tooltip: 'Keypress "ab"',
+          },
+          {
+            id: 'k3',
+            value: 'abc',
+            positionPercent: 78,
+            variant: 'data-1',
+            tooltip: 'Keypress "abc"',
+          },
         ],
         isCompleted: false,
       },
@@ -175,10 +193,34 @@ searchKeystrokes$.pipe(
         label: c.innerLaneLabel,
         badge: c.innerLaneBadge,
         marbles: [
-          { id: 'h1', value: '200', positionPercent: 22, variant: 'success', tooltip: '200 OK' },
-          { id: 'h2', value: '500', positionPercent: 48, variant: 'danger', tooltip: '500 Internal Error' },
-          { id: 'h3', value: '[]', positionPercent: 64, variant: 'warning', tooltip: 'Fallback empty array' },
-          { id: 'h4', value: '200', positionPercent: 84, variant: 'success', tooltip: 'Subsequent search works!' },
+          {
+            id: 'h1',
+            value: '200',
+            positionPercent: 22,
+            variant: 'success',
+            tooltip: '200 OK',
+          },
+          {
+            id: 'h2',
+            value: '500',
+            positionPercent: 48,
+            variant: 'danger',
+            tooltip: '500 Internal Error',
+          },
+          {
+            id: 'h3',
+            value: '[]',
+            positionPercent: 64,
+            variant: 'warning',
+            tooltip: 'Fallback empty array',
+          },
+          {
+            id: 'h4',
+            value: '200',
+            positionPercent: 84,
+            variant: 'success',
+            tooltip: 'Subsequent search works!',
+          },
         ],
         isCompleted: true,
       },
@@ -211,7 +253,9 @@ searchKeystrokes$.pipe(
             return this.copy().errorHandling.replace.successMsg;
           }),
           catchError((error) =>
-            of(`${this.copy().errorHandling.replace.errorPrefix} ${error.message}`),
+            of(
+              `${this.copy().errorHandling.replace.errorPrefix} ${error.message}`,
+            ),
           ),
           finalize(() => this.isLoadingReplace.set(false)),
         );

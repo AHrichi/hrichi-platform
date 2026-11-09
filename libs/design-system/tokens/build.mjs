@@ -128,6 +128,9 @@ const contrastPairs = [
   ['color-accent-on-solid', 'color-accent-solid-hover'],
   ['color-text-inverse', 'color-bg-inverse'],
   ['color-bg-canvas', 'color-success-default'],
+  ['color-bg-canvas', 'color-warning-default'],
+  ['color-bg-canvas', 'color-info-default'],
+  ['color-bg-canvas', 'color-danger-default'],
 ];
 
 // WCAG 2.2 1.4.11: graphics and the boundaries of controls need 3:1 against

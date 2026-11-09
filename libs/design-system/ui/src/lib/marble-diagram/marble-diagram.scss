@@ -64,7 +64,8 @@
   border-radius: var(--radius-md);
 
   &--primary {
-    border-inline-start: var(--border-width-strong) solid var(--color-accent-default);
+    border-inline-start: var(--border-width-strong) solid
+      var(--color-accent-default);
   }
 
   &--completed {
@@ -242,22 +243,26 @@
 
 .marble--success {
   background-color: var(--color-success-default);
-  color: var(--color-neutral-0);
+  /* The page colour reads on the status colour in both themes (gated). */
+  color: var(--color-bg-canvas);
 }
 
 .marble--warning {
   background-color: var(--color-warning-default);
-  color: var(--color-neutral-0);
+  /* The page colour reads on the status colour in both themes (gated). */
+  color: var(--color-bg-canvas);
 }
 
 .marble--info {
   background-color: var(--color-info-default);
-  color: var(--color-neutral-0);
+  /* The page colour reads on the status colour in both themes (gated). */
+  color: var(--color-bg-canvas);
 }
 
 .marble--danger {
   background-color: var(--color-danger-default);
-  color: var(--color-neutral-0);
+  /* The page colour reads on the status colour in both themes (gated). */
+  color: var(--color-bg-canvas);
 }
 
 .marble--neutral {
@@ -493,7 +498,8 @@
 }
 
 .marble--emitting {
-  animation: marblePulse var(--motion-duration-slow) var(--motion-easing-standard);
+  animation: marblePulse var(--motion-duration-slow)
+    var(--motion-easing-standard);
 }
 
 @media (prefers-reduced-motion: reduce) {

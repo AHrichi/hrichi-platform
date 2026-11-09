@@ -19,7 +19,9 @@
     <div class="card-content">
       <div class="config-group">
         <div class="config-item">
-          <label for="file-count">{{ copy().bulkOperations.totalFilesLabel }}</label>
+          <label for="file-count">{{
+            copy().bulkOperations.totalFilesLabel
+          }}</label>
           <input
             id="file-count"
             type="number"
@@ -28,7 +30,9 @@
           />
         </div>
         <div class="config-item">
-          <label for="batch-size">{{ copy().bulkOperations.batchSizeLabel }}</label>
+          <label for="batch-size">{{
+            copy().bulkOperations.batchSizeLabel
+          }}</label>
           <input
             id="batch-size"
             type="number"
@@ -95,7 +99,9 @@
             <div class="result-box">
               <h4>{{ copy().bulkOperations.forkJoin.finalResultTitle }}</h4>
               @if (isForkJoinProcessing()) {
-                <p class="loading-text">{{ copy().bulkOperations.forkJoin.processingParallelText }}</p>
+                <p class="loading-text">
+                  {{ copy().bulkOperations.forkJoin.processingParallelText }}
+                </p>
               }
               @for (result of forkJoinResults(); track $index) {
                 <p class="result-item">{{ result }}</p>
@@ -127,7 +133,10 @@
               }}
             </button>
             @if (showCode()['forkJoin']) {
-              <ah-code-block [code]="codeSnippets.forkJoin" language="typescript" />
+              <ah-code-block
+                [code]="codeSnippets.forkJoin"
+                language="typescript"
+              />
             }
           </div>
         </div>
@@ -186,13 +195,19 @@
               }
             </div>
             <div class="result-box">
-              <h4>{{ copy().bulkOperations.bufferCount.batchedResultsTitle }}</h4>
+              <h4>
+                {{ copy().bulkOperations.bufferCount.batchedResultsTitle }}
+              </h4>
               @if (isBufferCountProcessing()) {
-                <p class="loading-text">{{ copy().bulkOperations.bufferCount.processingBatchText }}</p>
+                <p class="loading-text">
+                  {{ copy().bulkOperations.bufferCount.processingBatchText }}
+                </p>
               }
               @for (batch of bufferCountResults(); track $index) {
                 <div class="batch-group">
-                  <strong>{{ copy().bulkOperations.bufferCount.batchLabel($index + 1) }}</strong>
+                  <strong>{{
+                    copy().bulkOperations.bufferCount.batchLabel($index + 1)
+                  }}</strong>
                   @for (result of batch; track $index) {
                     <p class="result-item">{{ result }}</p>
                   }
@@ -215,7 +230,10 @@
               }}
             </button>
             @if (showCode()['bufferCount']) {
-              <ah-code-block [code]="codeSnippets.bufferCount" language="typescript" />
+              <ah-code-block
+                [code]="codeSnippets.bufferCount"
+                language="typescript"
+              />
             }
           </div>
         </div>

@@ -42,8 +42,7 @@ export class CreateSubjectModalComponent {
   private readonly screens = inject(StudyLmScreens);
   private readonly preferences = inject(PreferencesStore, { optional: true });
   readonly copy = computed(
-    () =>
-      STUDYLM_COPY[this.preferences?.language() ?? 'en'] ?? STUDYLM_COPY.en,
+    () => STUDYLM_COPY[this.preferences?.language() ?? 'en'] ?? STUDYLM_COPY.en,
   );
   readonly domains = SE_DOMAINS;
 

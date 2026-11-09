@@ -148,16 +148,31 @@ export class TransformingStreamsComponent {
       variant: 'data-1',
       tooltip: `Source emission #${m.value}`,
     }));
-    const out: AhMarbleItem[] = this.concatMapAllOutputMarbles().map((m, idx) => ({
-      id: `concat-out-${m.id}`,
-      value: m.value.includes('Val') ? m.value.split('Val')[1].trim() : m.value,
-      positionPercent: Math.min(10 + idx * 10, 94),
-      variant: 'accent',
-      tooltip: `Sequential output: ${m.value}`,
-    }));
+    const out: AhMarbleItem[] = this.concatMapAllOutputMarbles().map(
+      (m, idx) => ({
+        id: `concat-out-${m.id}`,
+        value: m.value.includes('Val')
+          ? m.value.split('Val')[1].trim()
+          : m.value,
+        positionPercent: Math.min(10 + idx * 10, 94),
+        variant: 'accent',
+        tooltip: `Sequential output: ${m.value}`,
+      }),
+    );
     return [
-      { id: 'src', label: t.sourceStreamLabel, badge: t.triggersBadge, marbles: src },
-      { id: 'out', label: t.concatMap.outLaneLabel, badge: t.concatMap.outLaneBadge, isPrimary: true, marbles: out },
+      {
+        id: 'src',
+        label: t.sourceStreamLabel,
+        badge: t.triggersBadge,
+        marbles: src,
+      },
+      {
+        id: 'out',
+        label: t.concatMap.outLaneLabel,
+        badge: t.concatMap.outLaneBadge,
+        isPrimary: true,
+        marbles: out,
+      },
     ];
   });
 
@@ -176,16 +191,31 @@ export class TransformingStreamsComponent {
       variant: 'data-1',
       tooltip: `Source emission #${m.value}`,
     }));
-    const out: AhMarbleItem[] = this.switchMapAllOutputMarbles().map((m, idx) => ({
-      id: `switch-out-${m.id}`,
-      value: m.value.includes('Val') ? m.value.split('Val')[1].trim() : m.value,
-      positionPercent: Math.min(10 + idx * 10, 94),
-      variant: 'accent',
-      tooltip: `Switched output: ${m.value}`,
-    }));
+    const out: AhMarbleItem[] = this.switchMapAllOutputMarbles().map(
+      (m, idx) => ({
+        id: `switch-out-${m.id}`,
+        value: m.value.includes('Val')
+          ? m.value.split('Val')[1].trim()
+          : m.value,
+        positionPercent: Math.min(10 + idx * 10, 94),
+        variant: 'accent',
+        tooltip: `Switched output: ${m.value}`,
+      }),
+    );
     return [
-      { id: 'src', label: t.sourceStreamLabel, badge: t.triggersBadge, marbles: src },
-      { id: 'out', label: t.switchMap.outLaneLabel, badge: t.switchMap.outLaneBadge, isPrimary: true, marbles: out },
+      {
+        id: 'src',
+        label: t.sourceStreamLabel,
+        badge: t.triggersBadge,
+        marbles: src,
+      },
+      {
+        id: 'out',
+        label: t.switchMap.outLaneLabel,
+        badge: t.switchMap.outLaneBadge,
+        isPrimary: true,
+        marbles: out,
+      },
     ];
   });
 
@@ -204,16 +234,31 @@ export class TransformingStreamsComponent {
       variant: 'data-1',
       tooltip: `Source emission #${m.value}`,
     }));
-    const out: AhMarbleItem[] = this.mergeMapAllOutputMarbles().map((m, idx) => ({
-      id: `merge-out-${m.id}`,
-      value: m.value.includes('Val') ? m.value.split('Val')[1].trim() : m.value,
-      positionPercent: Math.min(10 + idx * 10, 94),
-      variant: 'accent',
-      tooltip: `Concurrent output: ${m.value}`,
-    }));
+    const out: AhMarbleItem[] = this.mergeMapAllOutputMarbles().map(
+      (m, idx) => ({
+        id: `merge-out-${m.id}`,
+        value: m.value.includes('Val')
+          ? m.value.split('Val')[1].trim()
+          : m.value,
+        positionPercent: Math.min(10 + idx * 10, 94),
+        variant: 'accent',
+        tooltip: `Concurrent output: ${m.value}`,
+      }),
+    );
     return [
-      { id: 'src', label: t.sourceStreamLabel, badge: t.triggersBadge, marbles: src },
-      { id: 'out', label: t.mergeMap.outLaneLabel, badge: t.mergeMap.outLaneBadge, isPrimary: true, marbles: out },
+      {
+        id: 'src',
+        label: t.sourceStreamLabel,
+        badge: t.triggersBadge,
+        marbles: src,
+      },
+      {
+        id: 'out',
+        label: t.mergeMap.outLaneLabel,
+        badge: t.mergeMap.outLaneBadge,
+        isPrimary: true,
+        marbles: out,
+      },
     ];
   });
 
@@ -225,23 +270,40 @@ export class TransformingStreamsComponent {
 
   readonly exhaustMapLanes = computed<readonly AhStreamLane[]>(() => {
     const t = this.copy().transformingStreams;
-    const src: AhMarbleItem[] = this.exhaustMapSourceMarbles().map((m, idx) => ({
-      id: `exhaust-src-${m.id}`,
-      value: m.value,
-      positionPercent: Math.min(15 + idx * 25, 90),
-      variant: 'data-1',
-      tooltip: `Source emission #${m.value}`,
-    }));
-    const out: AhMarbleItem[] = this.exhaustMapAllOutputMarbles().map((m, idx) => ({
-      id: `exhaust-out-${m.id}`,
-      value: m.value.includes('Val') ? m.value.split('Val')[1].trim() : m.value,
-      positionPercent: Math.min(10 + idx * 10, 94),
-      variant: 'accent',
-      tooltip: `Guarded output: ${m.value}`,
-    }));
+    const src: AhMarbleItem[] = this.exhaustMapSourceMarbles().map(
+      (m, idx) => ({
+        id: `exhaust-src-${m.id}`,
+        value: m.value,
+        positionPercent: Math.min(15 + idx * 25, 90),
+        variant: 'data-1',
+        tooltip: `Source emission #${m.value}`,
+      }),
+    );
+    const out: AhMarbleItem[] = this.exhaustMapAllOutputMarbles().map(
+      (m, idx) => ({
+        id: `exhaust-out-${m.id}`,
+        value: m.value.includes('Val')
+          ? m.value.split('Val')[1].trim()
+          : m.value,
+        positionPercent: Math.min(10 + idx * 10, 94),
+        variant: 'accent',
+        tooltip: `Guarded output: ${m.value}`,
+      }),
+    );
     return [
-      { id: 'src', label: t.sourceStreamLabel, badge: t.triggersBadge, marbles: src },
-      { id: 'out', label: t.exhaustMap.outLaneLabel, badge: t.exhaustMap.outLaneBadge, isPrimary: true, marbles: out },
+      {
+        id: 'src',
+        label: t.sourceStreamLabel,
+        badge: t.triggersBadge,
+        marbles: src,
+      },
+      {
+        id: 'out',
+        label: t.exhaustMap.outLaneLabel,
+        badge: t.exhaustMap.outLaneBadge,
+        isPrimary: true,
+        marbles: out,
+      },
     ];
   });
 

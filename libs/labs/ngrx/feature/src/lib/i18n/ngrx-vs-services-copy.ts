@@ -56,10 +56,7 @@ export interface NgrxVsServicesCopy {
     q3Strict: string;
     recommendedLabel: string;
     inspectBtn: string;
-    recommendations: Record<
-      PatternKey,
-      { winner: string; rationale: string }
-    >;
+    recommendations: Record<PatternKey, { winner: string; rationale: string }>;
   };
   detail: {
     eyebrow: string;
@@ -154,7 +151,8 @@ export const NGRX_VS_SERVICES_COPY: Record<SiteLanguage, NgrxVsServicesCopy> = {
     lead: 'A recruiter-ready, senior-level evaluation: when to use plain Services (Signals/RxJS), when to pick NgRx SignalStore, and when to reach for the Global Redux Store.',
     spectrum: {
       title: 'The Angular State Architecture Spectrum',
-      subtitle: 'From Lightweight UI Reactivity to Mission-Critical Enterprise Orchestration',
+      subtitle:
+        'From Lightweight UI Reactivity to Mission-Critical Enterprise Orchestration',
       tier1Num: 'Tier 1',
       tier1Title: 'Component Signal',
       tier1Desc: 'Local UI flags, toggles, forms',
@@ -170,7 +168,8 @@ export const NGRX_VS_SERVICES_COPY: Record<SiteLanguage, NgrxVsServicesCopy> = {
     },
     advisor: {
       title: 'State Architecture Advisor',
-      subtitle: 'Answer 3 questions to generate an architectural recommendation for your project.',
+      subtitle:
+        'Answer 3 questions to generate an architectural recommendation for your project.',
       badge: 'Interactive Wizard',
       q1Label: '1. State Scope & Sharing:',
       q1Local: 'Feature / Component Local',
@@ -188,19 +187,23 @@ export const NGRX_VS_SERVICES_COPY: Record<SiteLanguage, NgrxVsServicesCopy> = {
       recommendations: {
         'global-store': {
           winner: 'NgRx Global Store + Effects',
-          rationale: 'Your requirement for strict compliance, time-travel auditability, or cross-feature event choreography makes the classic NgRx Store and Effects the safest choice. Actions document every transaction in Redux DevTools.',
+          rationale:
+            'Your requirement for strict compliance, time-travel auditability, or cross-feature event choreography makes the classic NgRx Store and Effects the safest choice. Actions document every transaction in Redux DevTools.',
         },
         'service-signals': {
           winner: 'Service with Signals (signal & computed)',
-          rationale: 'For co-located UI state or single-feature components with straightforward CRUD, a plain injectable Service with Signals offers zero boilerplate and instantaneous push-pull reactivity with 0kB overhead.',
+          rationale:
+            'For co-located UI state or single-feature components with straightforward CRUD, a plain injectable Service with Signals offers zero boilerplate and instantaneous push-pull reactivity with 0kB overhead.',
         },
         'service-rxjs': {
           winner: 'Service with RxJS (BehaviorSubject)',
-          rationale: 'When you need complex stream coordination, debounced search, or WebSockets within a local component without global entity indexing, an RxJS Service leverages full operator power.',
+          rationale:
+            'When you need complex stream coordination, debounced search, or WebSockets within a local component without global entity indexing, an RxJS Service leverages full operator power.',
         },
         'signal-store': {
           winner: 'NgRx SignalStore (@ngrx/signals)',
-          rationale: 'The modern gold standard for Angular 22 Zoneless! SignalStore provides modular state composition (withEntities, withMethods, rxMethod), type-safety, and native signals with a tiny 1.5kB footprint.',
+          rationale:
+            'The modern gold standard for Angular 22 Zoneless! SignalStore provides modular state composition (withEntities, withMethods, rxMethod), type-safety, and native signals with a tiny 1.5kB footprint.',
         },
       },
     },
@@ -217,7 +220,8 @@ export const NGRX_VS_SERVICES_COPY: Record<SiteLanguage, NgrxVsServicesCopy> = {
       {
         key: 'service-signals',
         name: 'Service with Signals',
-        tagline: 'Pure Angular 22 signals, writable signal() and derived computed().',
+        tagline:
+          'Pure Angular 22 signals, writable signal() and derived computed().',
         badge: 'simplest',
         bundleWeight: '0 kB (Built-in)',
         reactivityModel: 'Push-Pull Glitch-Free',
@@ -239,7 +243,8 @@ export const NGRX_VS_SERVICES_COPY: Record<SiteLanguage, NgrxVsServicesCopy> = {
       {
         key: 'service-rxjs',
         name: 'Service with RxJS',
-        tagline: 'Observable event streaming with BehaviorSubject and higher-order operators.',
+        tagline:
+          'Observable event streaming with BehaviorSubject and higher-order operators.',
         badge: 'stream-heavy',
         bundleWeight: '~4 kB (RxJS)',
         reactivityModel: 'Push Stream Observables',
@@ -260,7 +265,8 @@ export const NGRX_VS_SERVICES_COPY: Record<SiteLanguage, NgrxVsServicesCopy> = {
       {
         key: 'signal-store',
         name: 'NgRx SignalStore',
-        tagline: 'Modern functional composition: withEntities, withMethods, rxMethod & withHooks.',
+        tagline:
+          'Modern functional composition: withEntities, withMethods, rxMethod & withHooks.',
         badge: 'recommended',
         bundleWeight: '~1.5 kB (@ngrx/signals)',
         reactivityModel: 'Native Signals + rxMethod',
@@ -281,7 +287,8 @@ export const NGRX_VS_SERVICES_COPY: Record<SiteLanguage, NgrxVsServicesCopy> = {
       {
         key: 'global-store',
         name: 'NgRx Global Store + Effects',
-        tagline: 'Classic Redux: ActionGroups, Feature Reducers, Memoized Selectors, and Effects.',
+        tagline:
+          'Classic Redux: ActionGroups, Feature Reducers, Memoized Selectors, and Effects.',
         badge: 'enterprise',
         bundleWeight: '~15-20 kB (@ngrx/store+effects)',
         reactivityModel: 'Action-Driven Redux',
@@ -360,26 +367,37 @@ export const NGRX_VS_SERVICES_COPY: Record<SiteLanguage, NgrxVsServicesCopy> = {
         {
           id: 'signals-vs-ngrx',
           question: 'Does Angular Signals replace NgRx in Angular 22?',
-          answer: 'No. Angular Signals is a fine-grained reactivity and change detection primitive (solving how the UI updates synchronously without Zone.js overhead). NgRx is a state architecture framework (solving how state is organized, normalized in O(1) dictionaries, shared across lazy features, audited via DevTools, and coordinated across complex asynchronous streams). They work in synergy: NgRx exposes signals for template binding.',
-          takeaway: 'Use Signals to expose data to templates; use NgRx to architect, normalize, and coordinate state lifecycle.',
+          answer:
+            'No. Angular Signals is a fine-grained reactivity and change detection primitive (solving how the UI updates synchronously without Zone.js overhead). NgRx is a state architecture framework (solving how state is organized, normalized in O(1) dictionaries, shared across lazy features, audited via DevTools, and coordinated across complex asynchronous streams). They work in synergy: NgRx exposes signals for template binding.',
+          takeaway:
+            'Use Signals to expose data to templates; use NgRx to architect, normalize, and coordinate state lifecycle.',
         },
         {
           id: 'anti-pattern',
-          question: 'When is NgRx considered an anti-pattern or over-engineering?',
-          answer: 'NgRx is an anti-pattern for simple CRUD applications with independent pages, isolated forms, and zero cross-feature state sharing. Writing Actions, Reducers, and Selectors just to toggle an isModalOpen boolean or submit a 3-field form introduces needless ceremony and indirection without tangible benefit.',
-          takeaway: 'Default to simple Signal Services or Component state; promote to SignalStore when state is shared or requires normalized caching.',
+          question:
+            'When is NgRx considered an anti-pattern or over-engineering?',
+          answer:
+            'NgRx is an anti-pattern for simple CRUD applications with independent pages, isolated forms, and zero cross-feature state sharing. Writing Actions, Reducers, and Selectors just to toggle an isModalOpen boolean or submit a 3-field form introduces needless ceremony and indirection without tangible benefit.',
+          takeaway:
+            'Default to simple Signal Services or Component state; promote to SignalStore when state is shared or requires normalized caching.',
         },
         {
           id: 'signalstore-vs-global',
-          question: 'Why choose NgRx SignalStore over traditional NgRx Global Store?',
-          answer: 'SignalStore reduces boilerplate by ~80% while retaining full type-safety and immutability. It requires no action types or reducer switch statements, is 100% tree-shakeable, supports modular plugin composition (withEntities, withComputed, withMethods), and connects seamlessly to RxJS via rxMethod.',
-          takeaway: 'For new Angular features in 2026, SignalStore is the recommended default standard.',
+          question:
+            'Why choose NgRx SignalStore over traditional NgRx Global Store?',
+          answer:
+            'SignalStore reduces boilerplate by ~80% while retaining full type-safety and immutability. It requires no action types or reducer switch statements, is 100% tree-shakeable, supports modular plugin composition (withEntities, withComputed, withMethods), and connects seamlessly to RxJS via rxMethod.',
+          takeaway:
+            'For new Angular features in 2026, SignalStore is the recommended default standard.',
         },
         {
           id: 'optimistic-rollback',
-          question: 'How do you handle optimistic UI updates with rollback in NgRx?',
-          answer: 'In SignalStore, call patchState(store, updateEntity(optimisticData)) immediately upon user action. The rxMethod then triggers the backend HTTP call; if the network call fails, the tapResponse error callback executes patchState(store, updateEntity(previousSnapshot)) and displays a user error toast.',
-          takeaway: 'Always capture previous state before optimistic mutations to enable instant rollback upon error.',
+          question:
+            'How do you handle optimistic UI updates with rollback in NgRx?',
+          answer:
+            'In SignalStore, call patchState(store, updateEntity(optimisticData)) immediately upon user action. The rxMethod then triggers the backend HTTP call; if the network call fails, the tapResponse error callback executes patchState(store, updateEntity(previousSnapshot)) and displays a user error toast.',
+          takeaway:
+            'Always capture previous state before optimistic mutations to enable instant rollback upon error.',
         },
       ],
     },
@@ -390,7 +408,8 @@ export const NGRX_VS_SERVICES_COPY: Record<SiteLanguage, NgrxVsServicesCopy> = {
     lead: 'Une évaluation niveau Senior Architect : quand utiliser de simples Services (Signals/RxJS), quand adopter NgRx SignalStore et quand opter pour le Global Store Redux.',
     spectrum: {
       title: 'Le spectre de l’architecture d’état Angular',
-      subtitle: 'De la réactivité UI légère à l’orchestration critique d’entreprise',
+      subtitle:
+        'De la réactivité UI légère à l’orchestration critique d’entreprise',
       tier1Num: 'Niveau 1',
       tier1Title: 'Signal de composant',
       tier1Desc: 'Drapeaux UI locaux, bascules, formulaires',
@@ -406,7 +425,8 @@ export const NGRX_VS_SERVICES_COPY: Record<SiteLanguage, NgrxVsServicesCopy> = {
     },
     advisor: {
       title: 'Conseiller d’architecture d’état',
-      subtitle: 'Répondez à 3 questions pour générer une recommandation architecturale adaptée à votre projet.',
+      subtitle:
+        'Répondez à 3 questions pour générer une recommandation architecturale adaptée à votre projet.',
       badge: 'Assistant interactif',
       q1Label: '1. Portée & partage de l’état :',
       q1Local: 'Local au composant / module',
@@ -424,19 +444,23 @@ export const NGRX_VS_SERVICES_COPY: Record<SiteLanguage, NgrxVsServicesCopy> = {
       recommendations: {
         'global-store': {
           winner: 'NgRx Global Store + Effects',
-          rationale: 'Vos exigences de conformité stricte, d’audit temporel ou de chorégraphie d’événements inter-modules font du Store NgRx classique avec Effects le choix le plus sûr.',
+          rationale:
+            'Vos exigences de conformité stricte, d’audit temporel ou de chorégraphie d’événements inter-modules font du Store NgRx classique avec Effects le choix le plus sûr.',
         },
         'service-signals': {
           winner: 'Service avec Signaux (signal & computed)',
-          rationale: 'Pour un état UI localisé ou un CRUD simple, un Service injectable avec Signaux offre zéro boilerplate et une réactivité push-pull instantanée sans surcoût.',
+          rationale:
+            'Pour un état UI localisé ou un CRUD simple, un Service injectable avec Signaux offre zéro boilerplate et une réactivité push-pull instantanée sans surcoût.',
         },
         'service-rxjs': {
           winner: 'Service avec RxJS (BehaviorSubject)',
-          rationale: 'Lorsque vous devez coordonner des flux complexes, une recherche debouncée ou des WebSockets localement sans indexation globale d’entités, un Service RxJS exploite toute la puissance des opérateurs.',
+          rationale:
+            'Lorsque vous devez coordonner des flux complexes, une recherche debouncée ou des WebSockets localement sans indexation globale d’entités, un Service RxJS exploite toute la puissance des opérateurs.',
         },
         'signal-store': {
           winner: 'NgRx SignalStore (@ngrx/signals)',
-          rationale: 'Le standard d’excellence pour Angular 22 Zoneless ! SignalStore offre une composition modulaire (withEntities, withMethods, rxMethod), un typage fort et des signaux natifs pour seulement ~1,5 ko.',
+          rationale:
+            'Le standard d’excellence pour Angular 22 Zoneless ! SignalStore offre une composition modulaire (withEntities, withMethods, rxMethod), un typage fort et des signaux natifs pour seulement ~1,5 ko.',
         },
       },
     },
@@ -453,7 +477,8 @@ export const NGRX_VS_SERVICES_COPY: Record<SiteLanguage, NgrxVsServicesCopy> = {
       {
         key: 'service-signals',
         name: 'Service avec Signaux',
-        tagline: 'Signaux Angular 22 purs : signal() modifiable et computed() dérivé.',
+        tagline:
+          'Signaux Angular 22 purs : signal() modifiable et computed() dérivé.',
         badge: 'simplest',
         bundleWeight: '0 kB (Intégré)',
         reactivityModel: 'Push-Pull sans glitch',
@@ -475,7 +500,8 @@ export const NGRX_VS_SERVICES_COPY: Record<SiteLanguage, NgrxVsServicesCopy> = {
       {
         key: 'service-rxjs',
         name: 'Service avec RxJS',
-        tagline: 'Flux d’événements Observable avec BehaviorSubject et opérateurs d’ordre supérieur.',
+        tagline:
+          'Flux d’événements Observable avec BehaviorSubject et opérateurs d’ordre supérieur.',
         badge: 'stream-heavy',
         bundleWeight: '~4 kB (RxJS)',
         reactivityModel: 'Flux Push Observables',
@@ -496,7 +522,8 @@ export const NGRX_VS_SERVICES_COPY: Record<SiteLanguage, NgrxVsServicesCopy> = {
       {
         key: 'signal-store',
         name: 'NgRx SignalStore',
-        tagline: 'Composition fonctionnelle moderne : withEntities, withMethods, rxMethod & withHooks.',
+        tagline:
+          'Composition fonctionnelle moderne : withEntities, withMethods, rxMethod & withHooks.',
         badge: 'recommended',
         bundleWeight: '~1.5 kB (@ngrx/signals)',
         reactivityModel: 'Signaux natifs + rxMethod',
@@ -517,7 +544,8 @@ export const NGRX_VS_SERVICES_COPY: Record<SiteLanguage, NgrxVsServicesCopy> = {
       {
         key: 'global-store',
         name: 'NgRx Global Store + Effects',
-        tagline: 'Redux classique : ActionGroups, Feature Reducers, Selectors mémoïsés et Effects.',
+        tagline:
+          'Redux classique : ActionGroups, Feature Reducers, Selectors mémoïsés et Effects.',
         badge: 'enterprise',
         bundleWeight: '~15-20 kB (@ngrx/store+effects)',
         reactivityModel: 'Redux piloté par Actions',
@@ -596,26 +624,37 @@ export const NGRX_VS_SERVICES_COPY: Record<SiteLanguage, NgrxVsServicesCopy> = {
         {
           id: 'signals-vs-ngrx',
           question: 'Les Signaux Angular remplacent-ils NgRx dans Angular 22 ?',
-          answer: 'Non. Les Signaux Angular sont une primitive de réactivité fine et de détection de changements (résolvant la mise à jour synchrone de l’UI sans Zone.js). NgRx est un framework d’architecture d’état (organisant, normalisant en O(1), partageant entre routes lazy et coordonnant les flux asynchrones complexes). Les deux fonctionnent en synergie : NgRx expose des signaux pour le template.',
-          takeaway: 'Utilisez les Signaux pour lier les données aux templates ; utilisez NgRx pour structurer, normaliser et orchestrer le cycle de vie de l’état.',
+          answer:
+            'Non. Les Signaux Angular sont une primitive de réactivité fine et de détection de changements (résolvant la mise à jour synchrone de l’UI sans Zone.js). NgRx est un framework d’architecture d’état (organisant, normalisant en O(1), partageant entre routes lazy et coordonnant les flux asynchrones complexes). Les deux fonctionnent en synergie : NgRx expose des signaux pour le template.',
+          takeaway:
+            'Utilisez les Signaux pour lier les données aux templates ; utilisez NgRx pour structurer, normaliser et orchestrer le cycle de vie de l’état.',
         },
         {
           id: 'anti-pattern',
-          question: 'Quand NgRx est-il considéré comme un anti-pattern ou de la sur-ingénierie ?',
-          answer: 'NgRx est un anti-pattern pour les applications CRUD simples aux pages indépendantes et sans partage d’état transversal. Écrire des Actions, Reducers et Selectors juste pour ouvrir une modale ou soumettre un formulaire à 3 champs introduit une cérémonie inutile.',
-          takeaway: 'Commencez par un Service à Signaux ou un état composant ; passez à SignalStore lorsque l’état est partagé ou nécessite une normalisation.',
+          question:
+            'Quand NgRx est-il considéré comme un anti-pattern ou de la sur-ingénierie ?',
+          answer:
+            'NgRx est un anti-pattern pour les applications CRUD simples aux pages indépendantes et sans partage d’état transversal. Écrire des Actions, Reducers et Selectors juste pour ouvrir une modale ou soumettre un formulaire à 3 champs introduit une cérémonie inutile.',
+          takeaway:
+            'Commencez par un Service à Signaux ou un état composant ; passez à SignalStore lorsque l’état est partagé ou nécessite une normalisation.',
         },
         {
           id: 'signalstore-vs-global',
-          question: 'Pourquoi choisir NgRx SignalStore plutôt que le Global Store NgRx traditionnel ?',
-          answer: 'SignalStore réduit le boilerplate d’environ 80 % tout en conservant le typage fort et l’immuabilité. Il ne nécessite ni types d’actions ni switch de reducer, est 100 % tree-shakeable, compose des plugins modulaires (withEntities, withComputed, withMethods) et s’intègre à RxJS via rxMethod.',
-          takeaway: 'Pour les nouvelles fonctionnalités Angular en 2026, SignalStore est le standard recommandé par défaut.',
+          question:
+            'Pourquoi choisir NgRx SignalStore plutôt que le Global Store NgRx traditionnel ?',
+          answer:
+            'SignalStore réduit le boilerplate d’environ 80 % tout en conservant le typage fort et l’immuabilité. Il ne nécessite ni types d’actions ni switch de reducer, est 100 % tree-shakeable, compose des plugins modulaires (withEntities, withComputed, withMethods) et s’intègre à RxJS via rxMethod.',
+          takeaway:
+            'Pour les nouvelles fonctionnalités Angular en 2026, SignalStore est le standard recommandé par défaut.',
         },
         {
           id: 'optimistic-rollback',
-          question: 'Comment gérer les mises à jour UI optimistes avec annulation (rollback) dans NgRx ?',
-          answer: 'Dans SignalStore, appelez patchState(store, updateEntity(optimisticData)) dès l’action utilisateur. La rxMethod lance ensuite l’appel HTTP ; en cas d’échec réseau, le bloc error de tapResponse restaure patchState(store, updateEntity(previousSnapshot)) et affiche une notification d’erreur.',
-          takeaway: 'Capturez toujours l’instantané précédent avant une mutation optimiste pour permettre un retour arrière instantané.',
+          question:
+            'Comment gérer les mises à jour UI optimistes avec annulation (rollback) dans NgRx ?',
+          answer:
+            'Dans SignalStore, appelez patchState(store, updateEntity(optimisticData)) dès l’action utilisateur. La rxMethod lance ensuite l’appel HTTP ; en cas d’échec réseau, le bloc error de tapResponse restaure patchState(store, updateEntity(previousSnapshot)) et affiche une notification d’erreur.',
+          takeaway:
+            'Capturez toujours l’instantané précédent avant une mutation optimiste pour permettre un retour arrière instantané.',
         },
       ],
     },
@@ -660,19 +699,23 @@ export const NGRX_VS_SERVICES_COPY: Record<SiteLanguage, NgrxVsServicesCopy> = {
       recommendations: {
         'global-store': {
           winner: 'NgRx Global Store + Effects',
-          rationale: 'متطلباتك للامتثال الصارم أو التدقيق عبر الزمن أو تنسيق الأحداث عبر الميزات تجعل مخزن NgRx الكلاسيكي مع التأثيرات الخيار الأكثر أمانًا.',
+          rationale:
+            'متطلباتك للامتثال الصارم أو التدقيق عبر الزمن أو تنسيق الأحداث عبر الميزات تجعل مخزن NgRx الكلاسيكي مع التأثيرات الخيار الأكثر أمانًا.',
         },
         'service-signals': {
           winner: 'Service with Signals (signal & computed)',
-          rationale: 'للحالة المحلية للواجهة أو المكونات ذات عمليات CRUD المباشرة، توفر الخدمة القابلة للحقن مع الإشارات تفاعلية فورية دون أي شيفرة نمطية أو عبء إضافي.',
+          rationale:
+            'للحالة المحلية للواجهة أو المكونات ذات عمليات CRUD المباشرة، توفر الخدمة القابلة للحقن مع الإشارات تفاعلية فورية دون أي شيفرة نمطية أو عبء إضافي.',
         },
         'service-rxjs': {
           winner: 'Service with RxJS (BehaviorSubject)',
-          rationale: 'عندما تحتاج إلى تنسيق تدفقات معقدة أو بحث مؤجل أو WebSockets داخل نطاق محلي دون فهرسة كيانات عالمية، تمنحك خدمة RxJS القوة الكاملة للمعاملات.',
+          rationale:
+            'عندما تحتاج إلى تنسيق تدفقات معقدة أو بحث مؤجل أو WebSockets داخل نطاق محلي دون فهرسة كيانات عالمية، تمنحك خدمة RxJS القوة الكاملة للمعاملات.',
         },
         'signal-store': {
           winner: 'NgRx SignalStore (@ngrx/signals)',
-          rationale: 'المعيار الذهبي الحديث لـ Angular 22 بدون Zone.js! يوفر SignalStore تركيبًا معياريًا للحالة (withEntities وwithMethods وrxMethod) وأمان أنواع كامل بحجم خفيف جدًا (~1.5 ك.ب).',
+          rationale:
+            'المعيار الذهبي الحديث لـ Angular 22 بدون Zone.js! يوفر SignalStore تركيبًا معياريًا للحالة (withEntities وwithMethods وrxMethod) وأمان أنواع كامل بحجم خفيف جدًا (~1.5 ك.ب).',
         },
       },
     },
@@ -689,7 +732,8 @@ export const NGRX_VS_SERVICES_COPY: Record<SiteLanguage, NgrxVsServicesCopy> = {
       {
         key: 'service-signals',
         name: 'خدمة مع الإشارات (Signals)',
-        tagline: 'إشارات Angular 22 نقية: signal() القابلة للكتابة وcomputed() المشتقة.',
+        tagline:
+          'إشارات Angular 22 نقية: signal() القابلة للكتابة وcomputed() المشتقة.',
         badge: 'simplest',
         bundleWeight: '0 kB (مدمج)',
         reactivityModel: 'دفع-سحب خالٍ من الوميض',
@@ -711,7 +755,8 @@ export const NGRX_VS_SERVICES_COPY: Record<SiteLanguage, NgrxVsServicesCopy> = {
       {
         key: 'service-rxjs',
         name: 'خدمة مع RxJS',
-        tagline: 'تدفق أحداث Observable باستخدام BehaviorSubject ومعاملات الرتب العليا.',
+        tagline:
+          'تدفق أحداث Observable باستخدام BehaviorSubject ومعاملات الرتب العليا.',
         badge: 'stream-heavy',
         bundleWeight: '~4 kB (RxJS)',
         reactivityModel: 'تدفقات دفع Observable',
@@ -732,7 +777,8 @@ export const NGRX_VS_SERVICES_COPY: Record<SiteLanguage, NgrxVsServicesCopy> = {
       {
         key: 'signal-store',
         name: 'NgRx SignalStore',
-        tagline: 'تركيب وظيفي حديث: withEntities وwithMethods وrxMethod وwithHooks.',
+        tagline:
+          'تركيب وظيفي حديث: withEntities وwithMethods وrxMethod وwithHooks.',
         badge: 'recommended',
         bundleWeight: '~1.5 kB (@ngrx/signals)',
         reactivityModel: 'إشارات أصلية + rxMethod',
@@ -753,7 +799,8 @@ export const NGRX_VS_SERVICES_COPY: Record<SiteLanguage, NgrxVsServicesCopy> = {
       {
         key: 'global-store',
         name: 'NgRx Global Store + Effects',
-        tagline: 'نمط Redux الكلاسيكي: مجموعات الإجراءات والمختزلات والمحددات والتأثيرات.',
+        tagline:
+          'نمط Redux الكلاسيكي: مجموعات الإجراءات والمختزلات والمحددات والتأثيرات.',
         badge: 'enterprise',
         bundleWeight: '~15-20 kB (@ngrx/store+effects)',
         reactivityModel: 'Redux موجّه بالإجراءات',
@@ -832,26 +879,36 @@ export const NGRX_VS_SERVICES_COPY: Record<SiteLanguage, NgrxVsServicesCopy> = {
         {
           id: 'signals-vs-ngrx',
           question: 'هل تغني إشارات Angular عن NgRx في Angular 22؟',
-          answer: 'لا. إشارات Angular هي أداة أولية للتفاعلية الدقيقة واكتشاف التغييرات في الواجهة دون عبء Zone.js. أما NgRx فهو إطار معماري لإدارة الحالة (ينظم الحالة ويطبّعها في قواميس O(1) ويشاركها عبر الميزات الكسولة ويدققها عبر DevTools وينسق التدفقات غير المتزامنة). كلاهما يعمل بتكامل: NgRx يصدر إشارات لربط القوالب.',
-          takeaway: 'استخدم الإشارات لعرض البيانات في القوالب؛ واستخدم NgRx لهندسة وتطبيع وتنسيق دورة حياة الحالة.',
+          answer:
+            'لا. إشارات Angular هي أداة أولية للتفاعلية الدقيقة واكتشاف التغييرات في الواجهة دون عبء Zone.js. أما NgRx فهو إطار معماري لإدارة الحالة (ينظم الحالة ويطبّعها في قواميس O(1) ويشاركها عبر الميزات الكسولة ويدققها عبر DevTools وينسق التدفقات غير المتزامنة). كلاهما يعمل بتكامل: NgRx يصدر إشارات لربط القوالب.',
+          takeaway:
+            'استخدم الإشارات لعرض البيانات في القوالب؛ واستخدم NgRx لهندسة وتطبيع وتنسيق دورة حياة الحالة.',
         },
         {
           id: 'anti-pattern',
           question: 'متى يُعتبر استخدام NgRx مبالغة هندسية أو نمطًا غير مناسب؟',
-          answer: 'يُعد NgRx نمطًا غير مناسب لتطبيقات CRUD البسيطة ذات الصفحات المستقلة والنماذج المعزولة التي لا تتشارك الحالة. كتابة إجراءات ومختزلات ومحددات لمجرد فتح نافذة منبثقة يضيف تعقيدًا غير مبرر.',
-          takeaway: 'ابدأ بخدمات الإشارات البسيطة أو حالة المكوّن؛ وانتقل إلى SignalStore عندما تصبح الحالة مشتركة أو تحتاج إلى تطبيع.',
+          answer:
+            'يُعد NgRx نمطًا غير مناسب لتطبيقات CRUD البسيطة ذات الصفحات المستقلة والنماذج المعزولة التي لا تتشارك الحالة. كتابة إجراءات ومختزلات ومحددات لمجرد فتح نافذة منبثقة يضيف تعقيدًا غير مبرر.',
+          takeaway:
+            'ابدأ بخدمات الإشارات البسيطة أو حالة المكوّن؛ وانتقل إلى SignalStore عندما تصبح الحالة مشتركة أو تحتاج إلى تطبيع.',
         },
         {
           id: 'signalstore-vs-global',
-          question: 'لماذا نختار NgRx SignalStore بدلًا من مخزن NgRx العالمي التقليدي؟',
-          answer: 'يقلل SignalStore الشيفرة النمطية بنسبة ~80% مع الحفاظ على أمان الأنواع وعدم القابلية للتغيير. لا يتطلب تعريف أنواع إجراءات أو جمل switch، ويدعم التشذيب الكامل (Tree-shaking) وتركيب الإضافات (withEntities وwithComputed وwithMethods) والتكامل مع RxJS عبر rxMethod.',
-          takeaway: 'للميزات الجديدة في Angular 22، يُعد SignalStore المعيار الافتراضي الموصى به.',
+          question:
+            'لماذا نختار NgRx SignalStore بدلًا من مخزن NgRx العالمي التقليدي؟',
+          answer:
+            'يقلل SignalStore الشيفرة النمطية بنسبة ~80% مع الحفاظ على أمان الأنواع وعدم القابلية للتغيير. لا يتطلب تعريف أنواع إجراءات أو جمل switch، ويدعم التشذيب الكامل (Tree-shaking) وتركيب الإضافات (withEntities وwithComputed وwithMethods) والتكامل مع RxJS عبر rxMethod.',
+          takeaway:
+            'للميزات الجديدة في Angular 22، يُعد SignalStore المعيار الافتراضي الموصى به.',
         },
         {
           id: 'optimistic-rollback',
-          question: 'كيف تتعامل مع التحديثات المتفائلة للواجهة (Optimistic UI) مع التراجع عند الفشل في NgRx؟',
-          answer: 'في SignalStore، استدعِ patchState(store, updateEntity(optimisticData)) فور تفاعل المستخدم. ثم يطلق rxMethod طلب الشبكة؛ وإذا فشل الطلب، ينفذ معالج الخطأ في tapResponse التراجع إلى اللقطة السابقة ويعرض تنبيهًا للمستخدم.',
-          takeaway: 'احتفظ دائمًا بنسخة من الحالة السابقة قبل التعديل المتفائل لتمكين التراجع الفوري عند حدوث خطأ.',
+          question:
+            'كيف تتعامل مع التحديثات المتفائلة للواجهة (Optimistic UI) مع التراجع عند الفشل في NgRx؟',
+          answer:
+            'في SignalStore، استدعِ patchState(store, updateEntity(optimisticData)) فور تفاعل المستخدم. ثم يطلق rxMethod طلب الشبكة؛ وإذا فشل الطلب، ينفذ معالج الخطأ في tapResponse التراجع إلى اللقطة السابقة ويعرض تنبيهًا للمستخدم.',
+          takeaway:
+            'احتفظ دائمًا بنسخة من الحالة السابقة قبل التعديل المتفائل لتمكين التراجع الفوري عند حدوث خطأ.',
         },
       ],
     },
@@ -862,7 +919,8 @@ export const NGRX_VS_SERVICES_COPY: Record<SiteLanguage, NgrxVsServicesCopy> = {
     lead: 'Una valutazione di livello Senior Architect: quando usare semplici Servizi (Signals/RxJS), quando scegliere NgRx SignalStore e quando adottare il Global Redux Store.',
     spectrum: {
       title: 'Lo spettro dell’architettura di stato in Angular',
-      subtitle: 'Dalla reattività UI leggera all’orchestrazione enterprise mission-critical',
+      subtitle:
+        'Dalla reattività UI leggera all’orchestrazione enterprise mission-critical',
       tier1Num: 'Livello 1',
       tier1Title: 'Signal di componente',
       tier1Desc: 'Flag UI locali, toggle, form',
@@ -878,7 +936,8 @@ export const NGRX_VS_SERVICES_COPY: Record<SiteLanguage, NgrxVsServicesCopy> = {
     },
     advisor: {
       title: 'Consulente di architettura dello stato',
-      subtitle: 'Rispondi a 3 domande per generare una raccomandazione architetturale per il tuo progetto.',
+      subtitle:
+        'Rispondi a 3 domande per generare una raccomandazione architetturale per il tuo progetto.',
       badge: 'Wizard interattivo',
       q1Label: '1. Ambito & condivisione dello stato:',
       q1Local: 'Locale a feature / componente',
@@ -896,19 +955,23 @@ export const NGRX_VS_SERVICES_COPY: Record<SiteLanguage, NgrxVsServicesCopy> = {
       recommendations: {
         'global-store': {
           winner: 'NgRx Global Store + Effects',
-          rationale: 'I requisiti di conformità rigorosa, auditabilità time-travel o coreografia di eventi cross-feature rendono il classico NgRx Store con Effects la scelta più sicura.',
+          rationale:
+            'I requisiti di conformità rigorosa, auditabilità time-travel o coreografia di eventi cross-feature rendono il classico NgRx Store con Effects la scelta più sicura.',
         },
         'service-signals': {
           winner: 'Service with Signals (signal & computed)',
-          rationale: 'Per stato UI co-locato o componenti con CRUD lineare, un semplice Servizio iniettabile con Signals offre zero boilerplate e reattività push-pull istantanea a costo 0 kB.',
+          rationale:
+            'Per stato UI co-locato o componenti con CRUD lineare, un semplice Servizio iniettabile con Signals offre zero boilerplate e reattività push-pull istantanea a costo 0 kB.',
         },
         'service-rxjs': {
           winner: 'Service with RxJS (BehaviorSubject)',
-          rationale: 'Quando servono coordinamento complesso di stream, ricerca con debounce o WebSocket in un componente locale senza indicizzazione globale, un Servizio RxJS sfrutta tutta la potenza degli operatori.',
+          rationale:
+            'Quando servono coordinamento complesso di stream, ricerca con debounce o WebSocket in un componente locale senza indicizzazione globale, un Servizio RxJS sfrutta tutta la potenza degli operatori.',
         },
         'signal-store': {
           winner: 'NgRx SignalStore (@ngrx/signals)',
-          rationale: 'Il moderno punto di riferimento per Angular 22 Zoneless! SignalStore offre composizione modulare (withEntities, withMethods, rxMethod), type-safety e signal nativi in soli ~1,5 kB.',
+          rationale:
+            'Il moderno punto di riferimento per Angular 22 Zoneless! SignalStore offre composizione modulare (withEntities, withMethods, rxMethod), type-safety e signal nativi in soli ~1,5 kB.',
         },
       },
     },
@@ -925,7 +988,8 @@ export const NGRX_VS_SERVICES_COPY: Record<SiteLanguage, NgrxVsServicesCopy> = {
       {
         key: 'service-signals',
         name: 'Servizio con Signals',
-        tagline: 'Puri signal Angular 22: signal() scrivibile e computed() derivato.',
+        tagline:
+          'Puri signal Angular 22: signal() scrivibile e computed() derivato.',
         badge: 'simplest',
         bundleWeight: '0 kB (Integrato)',
         reactivityModel: 'Push-Pull Glitch-Free',
@@ -947,7 +1011,8 @@ export const NGRX_VS_SERVICES_COPY: Record<SiteLanguage, NgrxVsServicesCopy> = {
       {
         key: 'service-rxjs',
         name: 'Servizio con RxJS',
-        tagline: 'Streaming di eventi Observable con BehaviorSubject e operatori di ordine superiore.',
+        tagline:
+          'Streaming di eventi Observable con BehaviorSubject e operatori di ordine superiore.',
         badge: 'stream-heavy',
         bundleWeight: '~4 kB (RxJS)',
         reactivityModel: 'Stream Push Observable',
@@ -968,7 +1033,8 @@ export const NGRX_VS_SERVICES_COPY: Record<SiteLanguage, NgrxVsServicesCopy> = {
       {
         key: 'signal-store',
         name: 'NgRx SignalStore',
-        tagline: 'Composizione funzionale moderna: withEntities, withMethods, rxMethod & withHooks.',
+        tagline:
+          'Composizione funzionale moderna: withEntities, withMethods, rxMethod & withHooks.',
         badge: 'recommended',
         bundleWeight: '~1.5 kB (@ngrx/signals)',
         reactivityModel: 'Signal nativi + rxMethod',
@@ -989,7 +1055,8 @@ export const NGRX_VS_SERVICES_COPY: Record<SiteLanguage, NgrxVsServicesCopy> = {
       {
         key: 'global-store',
         name: 'NgRx Global Store + Effects',
-        tagline: 'Redux classico: ActionGroups, Feature Reducers, Selector memoizzati ed Effects.',
+        tagline:
+          'Redux classico: ActionGroups, Feature Reducers, Selector memoizzati ed Effects.',
         badge: 'enterprise',
         bundleWeight: '~15-20 kB (@ngrx/store+effects)',
         reactivityModel: 'Redux guidato da Action',
@@ -1068,26 +1135,37 @@ export const NGRX_VS_SERVICES_COPY: Record<SiteLanguage, NgrxVsServicesCopy> = {
         {
           id: 'signals-vs-ngrx',
           question: 'Angular Signals sostituisce NgRx in Angular 22?',
-          answer: 'No. Angular Signals è una primitiva di reattività fine e change detection (risolve come la UI si aggiorna in modo sincrono senza Zone.js). NgRx è un framework di architettura dello stato (risolve come lo stato è organizzato, normalizzato in dizionari O(1), condiviso tra feature lazy, ispezionato via DevTools e coordinato su flussi asincroni complessi). Lavorano in sinergia: NgRx espone signal per il binding nei template.',
-          takeaway: 'Usa i Signals per esporre i dati ai template; usa NgRx per progettare, normalizzare e coordinare il ciclo di vita dello stato.',
+          answer:
+            'No. Angular Signals è una primitiva di reattività fine e change detection (risolve come la UI si aggiorna in modo sincrono senza Zone.js). NgRx è un framework di architettura dello stato (risolve come lo stato è organizzato, normalizzato in dizionari O(1), condiviso tra feature lazy, ispezionato via DevTools e coordinato su flussi asincroni complessi). Lavorano in sinergia: NgRx espone signal per il binding nei template.',
+          takeaway:
+            'Usa i Signals per esporre i dati ai template; usa NgRx per progettare, normalizzare e coordinare il ciclo di vita dello stato.',
         },
         {
           id: 'anti-pattern',
-          question: 'Quando NgRx è considerato un anti-pattern o over-engineering?',
-          answer: 'NgRx è un anti-pattern per semplici applicazioni CRUD con pagine indipendenti, form isolati e zero condivisione di stato tra feature. Scrivere Action, Reducer e Selector solo per commutare un booleano isModalOpen o inviare un form a 3 campi introduce cerimonia inutile.',
-          takeaway: 'Usa per default semplici Servizi a Signal o stato di componente; passa a SignalStore quando lo stato è condiviso o richiede caching normalizzato.',
+          question:
+            'Quando NgRx è considerato un anti-pattern o over-engineering?',
+          answer:
+            'NgRx è un anti-pattern per semplici applicazioni CRUD con pagine indipendenti, form isolati e zero condivisione di stato tra feature. Scrivere Action, Reducer e Selector solo per commutare un booleano isModalOpen o inviare un form a 3 campi introduce cerimonia inutile.',
+          takeaway:
+            'Usa per default semplici Servizi a Signal o stato di componente; passa a SignalStore quando lo stato è condiviso o richiede caching normalizzato.',
         },
         {
           id: 'signalstore-vs-global',
-          question: 'Perché scegliere NgRx SignalStore rispetto al tradizionale NgRx Global Store?',
-          answer: 'SignalStore riduce il boilerplate di circa l’80% mantenendo piena type-safety e immutabilità. Non richiede tipi di action o switch nei reducer, è 100% tree-shakeable, supporta la composizione modulare di plugin (withEntities, withComputed, withMethods) e si collega a RxJS tramite rxMethod.',
-          takeaway: 'Per le nuove feature Angular nel 2026, SignalStore è lo standard predefinito raccomandato.',
+          question:
+            'Perché scegliere NgRx SignalStore rispetto al tradizionale NgRx Global Store?',
+          answer:
+            'SignalStore riduce il boilerplate di circa l’80% mantenendo piena type-safety e immutabilità. Non richiede tipi di action o switch nei reducer, è 100% tree-shakeable, supporta la composizione modulare di plugin (withEntities, withComputed, withMethods) e si collega a RxJS tramite rxMethod.',
+          takeaway:
+            'Per le nuove feature Angular nel 2026, SignalStore è lo standard predefinito raccomandato.',
         },
         {
           id: 'optimistic-rollback',
-          question: 'Come gestisci gli aggiornamenti UI ottimistici con rollback in NgRx?',
-          answer: 'In SignalStore chiama patchState(store, updateEntity(optimisticData)) subito dopo l’azione utente. La rxMethod avvia poi la chiamata HTTP; se la rete fallisce, il callback error di tapResponse esegue patchState(store, updateEntity(previousSnapshot)) e mostra un toast di errore.',
-          takeaway: 'Salva sempre lo stato precedente prima di una mutazione ottimistica per consentire un rollback istantaneo in caso di errore.',
+          question:
+            'Come gestisci gli aggiornamenti UI ottimistici con rollback in NgRx?',
+          answer:
+            'In SignalStore chiama patchState(store, updateEntity(optimisticData)) subito dopo l’azione utente. La rxMethod avvia poi la chiamata HTTP; se la rete fallisce, il callback error di tapResponse esegue patchState(store, updateEntity(previousSnapshot)) e mostra un toast di errore.',
+          takeaway:
+            'Salva sempre lo stato precedente prima di una mutazione ottimistica per consentire un rollback istantaneo in caso di errore.',
         },
       ],
     },
@@ -1098,7 +1176,8 @@ export const NGRX_VS_SERVICES_COPY: Record<SiteLanguage, NgrxVsServicesCopy> = {
     lead: 'Eine fundierte Senior-Architect-Bewertung: Wann einfache Services (Signals/RxJS) genügen, wann NgRx SignalStore glänzt und wann der globale Redux Store gefragt ist.',
     spectrum: {
       title: 'Das Angular-State-Architektur-Spektrum',
-      subtitle: 'Von leichtgewichtiger UI-Reaktivität bis zur unternehmenskritischen Orchestrierung',
+      subtitle:
+        'Von leichtgewichtiger UI-Reaktivität bis zur unternehmenskritischen Orchestrierung',
       tier1Num: 'Stufe 1',
       tier1Title: 'Komponenten-Signal',
       tier1Desc: 'Lokale UI-Flags, Toggles, Formulare',
@@ -1114,7 +1193,8 @@ export const NGRX_VS_SERVICES_COPY: Record<SiteLanguage, NgrxVsServicesCopy> = {
     },
     advisor: {
       title: 'State-Architektur-Berater',
-      subtitle: 'Beantworten Sie 3 Fragen, um eine Architekturempfehlung für Ihr Projekt zu erhalten.',
+      subtitle:
+        'Beantworten Sie 3 Fragen, um eine Architekturempfehlung für Ihr Projekt zu erhalten.',
       badge: 'Interaktiver Assistent',
       q1Label: '1. State-Umfang & gemeinsame Nutzung:',
       q1Local: 'Lokal in Feature / Komponente',
@@ -1132,19 +1212,23 @@ export const NGRX_VS_SERVICES_COPY: Record<SiteLanguage, NgrxVsServicesCopy> = {
       recommendations: {
         'global-store': {
           winner: 'NgRx Global Store + Effects',
-          rationale: 'Ihre Anforderungen an strikte Compliance, Time-Travel-Auditierbarkeit oder Feature-übergreifende Event-Choreografie machen den klassischen NgRx Store mit Effects zur sichersten Wahl.',
+          rationale:
+            'Ihre Anforderungen an strikte Compliance, Time-Travel-Auditierbarkeit oder Feature-übergreifende Event-Choreografie machen den klassischen NgRx Store mit Effects zur sichersten Wahl.',
         },
         'service-signals': {
           winner: 'Service with Signals (signal & computed)',
-          rationale: 'Für lokalen UI-State oder einzelne Feature-Komponenten mit einfachem CRUD bietet ein injizierbarer Service mit Signals null Boilerplate und sofortige Push-Pull-Reaktivität bei 0 kB Zusatzgewicht.',
+          rationale:
+            'Für lokalen UI-State oder einzelne Feature-Komponenten mit einfachem CRUD bietet ein injizierbarer Service mit Signals null Boilerplate und sofortige Push-Pull-Reaktivität bei 0 kB Zusatzgewicht.',
         },
         'service-rxjs': {
           winner: 'Service with RxJS (BehaviorSubject)',
-          rationale: 'Wenn Sie komplexe Stream-Koordination, Debounced-Suche oder WebSockets lokal benötigen, schöpft ein RxJS-Service die volle Operator-Stärke aus.',
+          rationale:
+            'Wenn Sie komplexe Stream-Koordination, Debounced-Suche oder WebSockets lokal benötigen, schöpft ein RxJS-Service die volle Operator-Stärke aus.',
         },
         'signal-store': {
           winner: 'NgRx SignalStore (@ngrx/signals)',
-          rationale: 'Der moderne Goldstandard für Zoneless Angular 22! SignalStore bietet modulare State-Komposition (withEntities, withMethods, rxMethod), Typsicherheit und native Signals bei nur ~1,5 kB.',
+          rationale:
+            'Der moderne Goldstandard für Zoneless Angular 22! SignalStore bietet modulare State-Komposition (withEntities, withMethods, rxMethod), Typsicherheit und native Signals bei nur ~1,5 kB.',
         },
       },
     },
@@ -1161,7 +1245,8 @@ export const NGRX_VS_SERVICES_COPY: Record<SiteLanguage, NgrxVsServicesCopy> = {
       {
         key: 'service-signals',
         name: 'Service mit Signals',
-        tagline: 'Reine Angular-22-Signals: schreibbares signal() und abgeleitetes computed().',
+        tagline:
+          'Reine Angular-22-Signals: schreibbares signal() und abgeleitetes computed().',
         badge: 'simplest',
         bundleWeight: '0 kB (Integriert)',
         reactivityModel: 'Push-Pull Glitch-frei',
@@ -1183,7 +1268,8 @@ export const NGRX_VS_SERVICES_COPY: Record<SiteLanguage, NgrxVsServicesCopy> = {
       {
         key: 'service-rxjs',
         name: 'Service mit RxJS',
-        tagline: 'Observable-Event-Streaming mit BehaviorSubject und Higher-Order-Operatoren.',
+        tagline:
+          'Observable-Event-Streaming mit BehaviorSubject und Higher-Order-Operatoren.',
         badge: 'stream-heavy',
         bundleWeight: '~4 kB (RxJS)',
         reactivityModel: 'Push-Stream-Observables',
@@ -1204,7 +1290,8 @@ export const NGRX_VS_SERVICES_COPY: Record<SiteLanguage, NgrxVsServicesCopy> = {
       {
         key: 'signal-store',
         name: 'NgRx SignalStore',
-        tagline: 'Moderne funktionale Komposition: withEntities, withMethods, rxMethod & withHooks.',
+        tagline:
+          'Moderne funktionale Komposition: withEntities, withMethods, rxMethod & withHooks.',
         badge: 'recommended',
         bundleWeight: '~1.5 kB (@ngrx/signals)',
         reactivityModel: 'Native Signals + rxMethod',
@@ -1225,7 +1312,8 @@ export const NGRX_VS_SERVICES_COPY: Record<SiteLanguage, NgrxVsServicesCopy> = {
       {
         key: 'global-store',
         name: 'NgRx Global Store + Effects',
-        tagline: 'Klassisches Redux: ActionGroups, Feature Reducers, memoisierte Selectors und Effects.',
+        tagline:
+          'Klassisches Redux: ActionGroups, Feature Reducers, memoisierte Selectors und Effects.',
         badge: 'enterprise',
         bundleWeight: '~15-20 kB (@ngrx/store+effects)',
         reactivityModel: 'Action-getriebenes Redux',
@@ -1304,26 +1392,36 @@ export const NGRX_VS_SERVICES_COPY: Record<SiteLanguage, NgrxVsServicesCopy> = {
         {
           id: 'signals-vs-ngrx',
           question: 'Ersetzen Angular Signals in Angular 22 NgRx?',
-          answer: 'Nein. Angular Signals sind ein feingranulares Reaktivitäts- und Change-Detection-Primitiv (sie lösen, wie die UI synchron ohne Zone.js aktualisiert wird). NgRx ist ein State-Architektur-Framework (es löst, wie State strukturiert, in O(1)-Wörterbüchern normalisiert, über Lazy-Features geteilt und über asynchrone Streams koordiniert wird). Beide ergänzen sich: NgRx stellt Signals für das Template bereit.',
-          takeaway: 'Nutzen Sie Signals zur Datenbindung im Template; nutzen Sie NgRx zur Strukturierung, Normalisierung und Orchestrierung des State-Lebenszyklus.',
+          answer:
+            'Nein. Angular Signals sind ein feingranulares Reaktivitäts- und Change-Detection-Primitiv (sie lösen, wie die UI synchron ohne Zone.js aktualisiert wird). NgRx ist ein State-Architektur-Framework (es löst, wie State strukturiert, in O(1)-Wörterbüchern normalisiert, über Lazy-Features geteilt und über asynchrone Streams koordiniert wird). Beide ergänzen sich: NgRx stellt Signals für das Template bereit.',
+          takeaway:
+            'Nutzen Sie Signals zur Datenbindung im Template; nutzen Sie NgRx zur Strukturierung, Normalisierung und Orchestrierung des State-Lebenszyklus.',
         },
         {
           id: 'anti-pattern',
           question: 'Wann gilt NgRx als Anti-Pattern oder Over-Engineering?',
-          answer: 'NgRx ist ein Anti-Pattern für einfache CRUD-Apps mit unabhängigen Seiten, isolierten Formularen und ohne Feature-übergreifenden State. Actions, Reducers und Selectors nur für ein Modal-Flag oder ein 3-Felder-Formular zu schreiben, erzeugt unnötige Indirektion.',
-          takeaway: 'Starten Sie mit einfachen Signal-Services oder Komponenten-State; wechseln Sie zu SignalStore, sobald State geteilt oder normalisiert gecacht werden muss.',
+          answer:
+            'NgRx ist ein Anti-Pattern für einfache CRUD-Apps mit unabhängigen Seiten, isolierten Formularen und ohne Feature-übergreifenden State. Actions, Reducers und Selectors nur für ein Modal-Flag oder ein 3-Felder-Formular zu schreiben, erzeugt unnötige Indirektion.',
+          takeaway:
+            'Starten Sie mit einfachen Signal-Services oder Komponenten-State; wechseln Sie zu SignalStore, sobald State geteilt oder normalisiert gecacht werden muss.',
         },
         {
           id: 'signalstore-vs-global',
-          question: 'Warum NgRx SignalStore gegenüber dem klassischen NgRx Global Store wählen?',
-          answer: 'SignalStore reduziert Boilerplate um rund 80 % bei voller Typsicherheit und Unveränderlichkeit. Er benötigt keine Action-Typen oder Reducer-Switches, ist zu 100 % tree-shakeable, unterstützt modulare Plugins (withEntities, withComputed, withMethods) und bindet RxJS nahtlos über rxMethod ein.',
-          takeaway: 'Für neue Angular-Features im Jahr 2026 ist SignalStore der empfohlene Standard.',
+          question:
+            'Warum NgRx SignalStore gegenüber dem klassischen NgRx Global Store wählen?',
+          answer:
+            'SignalStore reduziert Boilerplate um rund 80 % bei voller Typsicherheit und Unveränderlichkeit. Er benötigt keine Action-Typen oder Reducer-Switches, ist zu 100 % tree-shakeable, unterstützt modulare Plugins (withEntities, withComputed, withMethods) und bindet RxJS nahtlos über rxMethod ein.',
+          takeaway:
+            'Für neue Angular-Features im Jahr 2026 ist SignalStore der empfohlene Standard.',
         },
         {
           id: 'optimistic-rollback',
-          question: 'Wie setzt man optimistische UI-Updates mit Rollback in NgRx um?',
-          answer: 'In SignalStore rufen Sie direkt bei der Nutzeraktion patchState(store, updateEntity(optimisticData)) auf. Die rxMethod startet danach den HTTP-Aufruf; schlägt dieser fehl, setzt der error-Callback von tapResponse den Zustand per patchState(store, updateEntity(previousSnapshot)) zurück und zeigt eine Fehlermeldung an.',
-          takeaway: 'Sichern Sie vor optimistischen Mutationen immer den vorherigen Snapshot, um im Fehlerfall sofort zurückrollen zu können.',
+          question:
+            'Wie setzt man optimistische UI-Updates mit Rollback in NgRx um?',
+          answer:
+            'In SignalStore rufen Sie direkt bei der Nutzeraktion patchState(store, updateEntity(optimisticData)) auf. Die rxMethod startet danach den HTTP-Aufruf; schlägt dieser fehl, setzt der error-Callback von tapResponse den Zustand per patchState(store, updateEntity(previousSnapshot)) zurück und zeigt eine Fehlermeldung an.',
+          takeaway:
+            'Sichern Sie vor optimistischen Mutationen immer den vorherigen Snapshot, um im Fehlerfall sofort zurückrollen zu können.',
         },
       ],
     },

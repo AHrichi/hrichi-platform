@@ -46,13 +46,7 @@ export interface UserProfile {
 @Component({
   selector: 'app-signals',
   standalone: true,
-  imports: [
-    UseCaseFocusComponent,
-    AhButton,
-    Tag,
-    SectionHeading,
-    AhCodeBlock,
-  ],
+  imports: [UseCaseFocusComponent, AhButton, Tag, SectionHeading, AhCodeBlock],
   templateUrl: './signals.component.html',
   styleUrls: ['./signals.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

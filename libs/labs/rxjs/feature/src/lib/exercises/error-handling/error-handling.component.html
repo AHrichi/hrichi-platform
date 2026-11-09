@@ -25,7 +25,9 @@
       <div class="card-content">
         <div class="config-group">
           <div class="config-item">
-            <label for="retry-delay">{{ copy().errorHandling.retryDelayLabel }}</label>
+            <label for="retry-delay">{{
+              copy().errorHandling.retryDelayLabel
+            }}</label>
             <input
               id="retry-delay"
               type="number"
@@ -34,7 +36,9 @@
             />
           </div>
           <div class="config-item">
-            <label for="max-retries">{{ copy().errorHandling.maxRetriesLabel }}</label>
+            <label for="max-retries">{{
+              copy().errorHandling.maxRetriesLabel
+            }}</label>
             <input
               id="max-retries"
               type="number"
@@ -158,7 +162,10 @@
               }}
             </button>
             @if (showCode()['replace']) {
-              <ah-code-block [code]="codeSnippets.replace" language="typescript" />
+              <ah-code-block
+                [code]="codeSnippets.replace"
+                language="typescript"
+              />
             }
           </div>
         </div>
@@ -232,7 +239,10 @@
               }}
             </button>
             @if (showCode()['rethrow']) {
-              <ah-code-block [code]="codeSnippets.rethrow" language="typescript" />
+              <ah-code-block
+                [code]="codeSnippets.rethrow"
+                language="typescript"
+              />
             }
           </div>
         </div>
@@ -308,7 +318,10 @@
               }}
             </button>
             @if (showCode()['retry']) {
-              <ah-code-block [code]="codeSnippets.retry" language="typescript" />
+              <ah-code-block
+                [code]="codeSnippets.retry"
+                language="typescript"
+              />
             }
           </div>
         </div>
@@ -330,7 +343,9 @@
         <div class="card-content">
           <div class="everyday-example">
             <p>
-              <strong>{{ copy().errorHandling.retryWhen.migrationStrong }}</strong>
+              <strong>{{
+                copy().errorHandling.retryWhen.migrationStrong
+              }}</strong>
               {{ copy().errorHandling.retryWhen.migrationText }}
             </p>
           </div>
@@ -360,7 +375,11 @@
             } @else {
               @if (isLoadingRetryWhen()) {
                 <p class="loading-text">
-                  {{ copy().errorHandling.retryWhen.attemptingText(retryWhenCount()) }}
+                  {{
+                    copy().errorHandling.retryWhen.attemptingText(
+                      retryWhenCount()
+                    )
+                  }}
                 </p>
               } @else {
                 <p class="placeholder-text">
@@ -384,7 +403,10 @@
               }}
             </button>
             @if (showCode()['retryWhen']) {
-              <ah-code-block [code]="codeSnippets.retryWhen" language="typescript" />
+              <ah-code-block
+                [code]="codeSnippets.retryWhen"
+                language="typescript"
+              />
             }
           </div>
         </div>

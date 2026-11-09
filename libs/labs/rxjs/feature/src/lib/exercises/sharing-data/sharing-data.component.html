@@ -33,9 +33,13 @@
             </p>
           </div>
           <div class="parent-box">
-            <p><strong>{{ copy().sharingData.parentComponentLabel }}</strong></p>
+            <p>
+              <strong>{{ copy().sharingData.parentComponentLabel }}</strong>
+            </p>
             <div class="config-item">
-              <label for="parent-input">{{ copy().sharingData.input.dataToSendLabel }}</label>
+              <label for="parent-input">{{
+                copy().sharingData.input.dataToSendLabel
+              }}</label>
               <div class="input-with-button">
                 <input
                   id="parent-input"
@@ -70,10 +74,17 @@
               size="sm"
               (click)="toggleCode('Input')"
             >
-              {{ showInputCode() ? copy().common.hideCode : copy().common.showCode }}
+              {{
+                showInputCode()
+                  ? copy().common.hideCode
+                  : copy().common.showCode
+              }}
             </button>
             @if (showInputCode()) {
-              <ah-code-block [code]="codeSnippets.input" language="typescript" />
+              <ah-code-block
+                [code]="codeSnippets.input"
+                language="typescript"
+              />
             }
           </div>
         </div>
@@ -100,10 +111,14 @@
             </p>
           </div>
           <div class="parent-box">
-            <p><strong>{{ copy().sharingData.parentComponentLabel }}</strong></p>
+            <p>
+              <strong>{{ copy().sharingData.parentComponentLabel }}</strong>
+            </p>
             <p>
               {{ copy().sharingData.receivedLabel }}
-              <span class="data-display">{{ dataFromChild() || copy().common.na }}</span>
+              <span class="data-display">{{
+                dataFromChild() || copy().common.na
+              }}</span>
             </p>
 
             <div class="child-container">
@@ -120,10 +135,17 @@
               size="sm"
               (click)="toggleCode('Output')"
             >
-              {{ showOutputCode() ? copy().common.hideCode : copy().common.showCode }}
+              {{
+                showOutputCode()
+                  ? copy().common.hideCode
+                  : copy().common.showCode
+              }}
             </button>
             @if (showOutputCode()) {
-              <ah-code-block [code]="codeSnippets.output" language="typescript" />
+              <ah-code-block
+                [code]="codeSnippets.output"
+                language="typescript"
+              />
             }
           </div>
         </div>
@@ -164,10 +186,17 @@
               size="sm"
               (click)="toggleCode('Service')"
             >
-              {{ showServiceCode() ? copy().common.hideCode : copy().common.showCode }}
+              {{
+                showServiceCode()
+                  ? copy().common.hideCode
+                  : copy().common.showCode
+              }}
             </button>
             @if (showServiceCode()) {
-              <ah-code-block [code]="codeSnippets.service" language="typescript" />
+              <ah-code-block
+                [code]="codeSnippets.service"
+                language="typescript"
+              />
             }
           </div>
         </div>
@@ -194,7 +223,9 @@
             </p>
           </div>
           <div class="parent-box">
-            <p><strong>{{ copy().sharingData.parentComponentLabel }}</strong></p>
+            <p>
+              <strong>{{ copy().sharingData.parentComponentLabel }}</strong>
+            </p>
             <div class="button-group">
               <button
                 type="button"
@@ -216,10 +247,17 @@
               size="sm"
               (click)="toggleCode('ViewChild')"
             >
-              {{ showViewChildCode() ? copy().common.hideCode : copy().common.showCode }}
+              {{
+                showViewChildCode()
+                  ? copy().common.hideCode
+                  : copy().common.showCode
+              }}
             </button>
             @if (showViewChildCode()) {
-              <ah-code-block [code]="codeSnippets.viewChild" language="typescript" />
+              <ah-code-block
+                [code]="codeSnippets.viewChild"
+                language="typescript"
+              />
             }
           </div>
         </div>

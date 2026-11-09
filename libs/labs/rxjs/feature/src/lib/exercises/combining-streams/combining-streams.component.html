@@ -31,7 +31,10 @@
         </div>
 
         <div class="code-example">
-          <ah-code-block [code]="codeSnippets.comparison" language="typescript" />
+          <ah-code-block
+            [code]="codeSnippets.comparison"
+            language="typescript"
+          />
         </div>
       </div>
     </div>
@@ -63,7 +66,9 @@
 
           <div class="stream-controls">
             <div class="stream-control">
-              <h4>{{ copy().combiningStreams.withLatestFrom.primaryStreamTitle }}</h4>
+              <h4>
+                {{ copy().combiningStreams.withLatestFrom.primaryStreamTitle }}
+              </h4>
               <div class="button-group">
                 <button
                   type="button"
@@ -92,7 +97,11 @@
               </div>
             </div>
             <div class="stream-control">
-              <h4>{{ copy().combiningStreams.withLatestFrom.secondaryStreamTitle }}</h4>
+              <h4>
+                {{
+                  copy().combiningStreams.withLatestFrom.secondaryStreamTitle
+                }}
+              </h4>
               <div class="button-group">
                 <button
                   type="button"
@@ -115,7 +124,9 @@
           </div>
 
           <div class="state-display">
-            <strong>{{ copy().combiningStreams.withLatestFrom.latestFromSecondaryLabel }}</strong>
+            <strong>{{
+              copy().combiningStreams.withLatestFrom.latestFromSecondaryLabel
+            }}</strong>
             <span class="state-value">{{
               latestSecondaryValue() || copy().common.na
             }}</span>
@@ -136,7 +147,9 @@
           <div class="visualization-panel">
             <ah-marble-diagram
               [title]="copy().combiningStreams.withLatestFrom.marbleTitle"
-              [description]="copy().combiningStreams.withLatestFrom.marbleDescription"
+              [description]="
+                copy().combiningStreams.withLatestFrom.marbleDescription
+              "
               [streams]="withLatestFromLanes()"
               [operator]="withLatestFromOperator()"
             />
@@ -156,7 +169,10 @@
               }}
             </button>
             @if (showCode()['withLatestFrom']) {
-              <ah-code-block [code]="codeSnippets.withLatestFrom" language="typescript" />
+              <ah-code-block
+                [code]="codeSnippets.withLatestFrom"
+                language="typescript"
+              />
             }
           </div>
         </div>
@@ -237,12 +253,20 @@
           </div>
 
           <div class="state-display">
-            <strong>{{ copy().combiningStreams.combineLatest.latestFromSource1Label }}</strong>
-            <span class="state-value">{{ latestSource1Value() || copy().common.na }}</span>
+            <strong>{{
+              copy().combiningStreams.combineLatest.latestFromSource1Label
+            }}</strong>
+            <span class="state-value">{{
+              latestSource1Value() || copy().common.na
+            }}</span>
           </div>
           <div class="state-display">
-            <strong>{{ copy().combiningStreams.combineLatest.latestFromSource2Label }}</strong>
-            <span class="state-value">{{ latestSource2Value() ?? copy().common.na }}</span>
+            <strong>{{
+              copy().combiningStreams.combineLatest.latestFromSource2Label
+            }}</strong>
+            <span class="state-value">{{
+              latestSource2Value() ?? copy().common.na
+            }}</span>
           </div>
 
           <div class="button-group reset-group">
@@ -260,7 +284,9 @@
           <div class="visualization-panel">
             <ah-marble-diagram
               [title]="copy().combiningStreams.combineLatest.marbleTitle"
-              [description]="copy().combiningStreams.combineLatest.marbleDescription"
+              [description]="
+                copy().combiningStreams.combineLatest.marbleDescription
+              "
               [streams]="combineLatestLanes()"
               [operator]="combineLatestOperator()"
             />
@@ -280,7 +306,10 @@
               }}
             </button>
             @if (showCode()['combineLatest']) {
-              <ah-code-block [code]="codeSnippets.combineLatest" language="typescript" />
+              <ah-code-block
+                [code]="codeSnippets.combineLatest"
+                language="typescript"
+              />
             }
           </div>
         </div>

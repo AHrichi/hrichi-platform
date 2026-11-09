@@ -8,10 +8,7 @@ import { AhButton, SectionHeading, Tag } from '@ah/ui';
 import { injectNgrxLabCopy } from '../../i18n/ngrx-lab-copy';
 
 export type PatternKey =
-  | 'service-signals'
-  | 'service-rxjs'
-  | 'signal-store'
-  | 'global-store';
+  'service-signals' | 'service-rxjs' | 'signal-store' | 'global-store';
 
 export interface ArchitectureComparison {
   key: PatternKey;
@@ -22,10 +19,7 @@ export interface ArchitectureComparison {
   reactivityModel: string;
   learningCurve: 'Gentle' | 'Moderate' | 'Steep';
   timeTravelSupport:
-    | 'None'
-    | 'Manual'
-    | 'Custom Plugin'
-    | 'Full Redux DevTools';
+    'None' | 'Manual' | 'Custom Plugin' | 'Full Redux DevTools';
   whenToUse: string[];
   whenToAvoid: string[];
   codeSample: string;

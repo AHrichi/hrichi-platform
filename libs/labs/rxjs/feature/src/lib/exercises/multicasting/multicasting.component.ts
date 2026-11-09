@@ -52,13 +52,7 @@ type ExampleType = 'cold' | 'hot' | 'connectable' | SubjectType;
 @Component({
   selector: 'app-multicasting',
   standalone: true,
-  imports: [
-    UseCaseFocusComponent,
-    AhButton,
-    Tag,
-    SectionHeading,
-    AhCodeBlock,
-  ],
+  imports: [UseCaseFocusComponent, AhButton, Tag, SectionHeading, AhCodeBlock],
   templateUrl: './multicasting.component.html',
   styleUrls: ['./multicasting.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

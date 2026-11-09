@@ -26,8 +26,7 @@ export class StudyStatsComponent {
   private readonly screens = inject(StudyLmScreens);
   private readonly preferences = inject(PreferencesStore, { optional: true });
   readonly copy = computed(
-    () =>
-      STUDYLM_COPY[this.preferences?.language() ?? 'en'] ?? STUDYLM_COPY.en,
+    () => STUDYLM_COPY[this.preferences?.language() ?? 'en'] ?? STUDYLM_COPY.en,
   );
 
   selectSubjectAndTab(subjectId: string, screen: StudyLmScreen): void {

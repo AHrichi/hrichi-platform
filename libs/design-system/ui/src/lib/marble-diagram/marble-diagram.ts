@@ -135,7 +135,11 @@ export class MarbleDiagram {
     this.marbleClick.emit({ streamId, marble });
   }
 
-  protected getPosition(marble: MarbleItem, index: number, total: number): number {
+  protected getPosition(
+    marble: MarbleItem,
+    index: number,
+    total: number,
+  ): number {
     if (typeof marble.positionPercent === 'number') {
       return Math.min(Math.max(marble.positionPercent, 6), 88);
     }

@@ -154,7 +154,8 @@ from(largeFileList).pipe(
               value: `[${files.length} items]`,
               positionPercent: 88,
               variant: 'accent',
-              tooltip: 'All parallel streams completed. Emitted single combined dictionary.',
+              tooltip:
+                'All parallel streams completed. Emitted single combined dictionary.',
             },
           ]
         : [],

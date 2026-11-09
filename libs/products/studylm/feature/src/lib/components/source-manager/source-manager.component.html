@@ -254,11 +254,7 @@
         @if (preview.url) {
           <div class="source-url-banner">
             <span>{{ copy().sources.externalReference }}</span>
-            <a
-              [href]="preview.url"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
+            <a [href]="preview.url" target="_blank" rel="noopener noreferrer">
               {{ preview.url }}
             </a>
           </div>

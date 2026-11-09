@@ -38,14 +38,15 @@ describe('app-visibility', () => {
     expect(isRouteEnabled('/apps/luxpath')).toBe(true);
     expect(isRouteEnabled('/apps/autosphere')).toBe(true);
     expect(isRouteEnabled('/labs/sky')).toBe(true);
+    // StudyLM went public once its go-live gate landed.
+    expect(isRouteEnabled('/apps/studylm')).toBe(true);
+    expect(isRouteEnabled('/apps/study')).toBe(true);
 
     // Disabled routes
     expect(isRouteEnabled('/apps/strategy')).toBe(false);
     expect(isRouteEnabled('/apps/dispatch')).toBe(false);
     expect(isRouteEnabled('/apps/whatsapp')).toBe(false);
     expect(isRouteEnabled('/apps/chatpulse')).toBe(false);
-    expect(isRouteEnabled('/apps/studylm')).toBe(false);
-    expect(isRouteEnabled('/apps/study')).toBe(false);
     expect(isRouteEnabled('/apps/basecamp')).toBe(false);
     expect(isRouteEnabled('/apps/alarm-engine')).toBe(false);
     expect(isRouteEnabled('/apps/alarm')).toBe(false);

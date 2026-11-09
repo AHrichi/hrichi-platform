@@ -261,8 +261,7 @@ export const SKY_LAB_COPY: Record<SiteLanguage, SkyLabCopy> = {
     sunset: 'Coucher du soleil',
     sunDoesNotSet: 'Le Soleil ne se couche pas',
     trulyDark: 'Nuit noire',
-    notTonight:
-      'Pas ce soir : le Soleil reste à moins de 18° sous l’horizon',
+    notTonight: 'Pas ce soir : le Soleil reste à moins de 18° sous l’horizon',
     sunrise: 'Lever du soleil',
     moon: 'Lune',
     moonFact: (phase, pct, rise, set) =>
@@ -373,8 +372,7 @@ export const SKY_LAB_COPY: Record<SiteLanguage, SkyLabCopy> = {
     planets: 'الكواكب',
     planetUpNow: (alt, dir, mag) =>
       `مرتفع الآن، ${alt}° باتجاه ${dir}، القدر ${mag}`,
-    planetBelowHorizon: (rise, set) =>
-      `تحت الأفق · يشرق ${rise}، يغرب ${set}`,
+    planetBelowHorizon: (rise, set) => `تحت الأفق · يشرق ${rise}، يغرب ${set}`,
     meteorShowers: 'زخات الشهب',
     showerText: (rate, rad, speed, parent) =>
       `حوالي ${rate} في الساعة تحت سماء صافية · نقطة الإشعاع ${rad} · ${speed} كم/ث، من ${parent}`,
@@ -468,8 +466,7 @@ export const SKY_LAB_COPY: Record<SiteLanguage, SkyLabCopy> = {
     sunset: 'Tramonto',
     sunDoesNotSet: 'Il Sole non tramonta',
     trulyDark: 'Buio vero',
-    notTonight:
-      'Non stasera: il Sole resta a meno di 18° sotto l’orizzonte',
+    notTonight: 'Non stasera: il Sole resta a meno di 18° sotto l’orizzonte',
     sunrise: 'Alba',
     moon: 'Luna',
     moonFact: (phase, pct, rise, set) =>

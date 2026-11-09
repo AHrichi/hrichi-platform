@@ -4,10 +4,6 @@
   "sourceRoot": "libs/products/lighting/domain/src",
   "prefix": "ah",
   "projectType": "library",
-  "tags": [
-    "scope:product-lighting",
-    "type:domain",
-    "runtime:agnostic"
-  ],
+  "tags": ["scope:product-lighting", "type:domain", "runtime:agnostic"],
   "targets": {}
 }

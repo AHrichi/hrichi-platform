@@ -81,7 +81,12 @@
           ></div>
         </div>
         <p class="question-counter">
-          {{ copy().quiz.questionProgress(currentQuestionIndex() + 1, questions().length) }}
+          {{
+            copy().quiz.questionProgress(
+              currentQuestionIndex() + 1,
+              questions().length
+            )
+          }}
         </p>
 
         <div class="card question-card">
@@ -132,7 +137,8 @@
               />
               @if (isAnswered()) {
                 <span class="answer-reveal" [class.correct]="isCorrect()">
-                  {{ copy().quiz.correctAnswerLabel }} {{ currentQuestion().answer }}
+                  {{ copy().quiz.correctAnswerLabel }}
+                  {{ currentQuestion().answer }}
                 </span>
               }
             </div>

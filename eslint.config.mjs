@@ -156,7 +156,13 @@ export default [
             // The API shares only contracts with the browser apps (ADR-0010).
             {
               sourceTag: 'scope:api',
-              onlyDependOnLibsWithTags: ['scope:api', 'scope:shared'],
+              onlyDependOnLibsWithTags: [
+                'scope:api',
+                'scope:shared',
+                // The PulseOps backend (`api-dispatch`) shares its models and
+                // rules with the PulseOps frontend through its domain lib.
+                'scope:product-dispatch',
+              ],
             },
             // Layers: dependencies only point down.
             {

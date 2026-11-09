@@ -47,8 +47,7 @@ export class RoadmapExplorerComponent {
   readonly bulk = inject(BulkGenerationService);
   private readonly preferences = inject(PreferencesStore, { optional: true });
   readonly copy = computed(
-    () =>
-      STUDYLM_COPY[this.preferences?.language() ?? 'en'] ?? STUDYLM_COPY.en,
+    () => STUDYLM_COPY[this.preferences?.language() ?? 'en'] ?? STUDYLM_COPY.en,
   );
   private readonly screens = inject(StudyLmScreens);
   private readonly lessons = inject(LessonGenerationService);

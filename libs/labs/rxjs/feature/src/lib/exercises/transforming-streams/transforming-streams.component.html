@@ -19,7 +19,9 @@
     <div class="card-content">
       <div class="config-group">
         <div class="config-item">
-          <label for="source-emissions">{{ copy().transformingStreams.sourceEmissionsLabel }}</label>
+          <label for="source-emissions">{{
+            copy().transformingStreams.sourceEmissionsLabel
+          }}</label>
           <input
             id="source-emissions"
             type="number"
@@ -28,7 +30,9 @@
           />
         </div>
         <div class="config-item">
-          <label for="source-interval">{{ copy().transformingStreams.sourceIntervalLabel }}</label>
+          <label for="source-interval">{{
+            copy().transformingStreams.sourceIntervalLabel
+          }}</label>
           <input
             id="source-interval"
             type="number"
@@ -37,7 +41,9 @@
           />
         </div>
         <div class="config-item">
-          <label for="inner-values">{{ copy().transformingStreams.innerValuesLabel }}</label>
+          <label for="inner-values">{{
+            copy().transformingStreams.innerValuesLabel
+          }}</label>
           <input
             id="inner-values"
             type="number"
@@ -46,7 +52,9 @@
           />
         </div>
         <div class="config-item">
-          <label for="inner-interval">{{ copy().transformingStreams.innerIntervalLabel }}</label>
+          <label for="inner-interval">{{
+            copy().transformingStreams.innerIntervalLabel
+          }}</label>
           <input
             id="inner-interval"
             type="number"
@@ -98,7 +106,9 @@
             </p>
           </div>
           <div class="timeline-group">
-            <div class="timeline-label">{{ copy().transformingStreams.sourceStreamLabel }}</div>
+            <div class="timeline-label">
+              {{ copy().transformingStreams.sourceStreamLabel }}
+            </div>
             <div class="timeline source-timeline">
               @for (marble of concatMapSourceMarbles(); track marble.id) {
                 <div
@@ -111,7 +121,9 @@
             </div>
           </div>
           <div class="timeline-group">
-            <div class="timeline-label">{{ copy().transformingStreams.innerStreamsLabel }}</div>
+            <div class="timeline-label">
+              {{ copy().transformingStreams.innerStreamsLabel }}
+            </div>
             <div class="inner-streams-container">
               @for (stream of concatMapInnerStreams(); track stream.id) {
                 <div
@@ -127,7 +139,9 @@
             </div>
           </div>
           <div class="timeline-group">
-            <div class="timeline-label">{{ copy().transformingStreams.outputAnimatedLabel }}</div>
+            <div class="timeline-label">
+              {{ copy().transformingStreams.outputAnimatedLabel }}
+            </div>
             <div class="timeline">
               @for (marble of concatMapOutputMarbles(); track marble.id) {
                 <div
@@ -140,7 +154,9 @@
             </div>
           </div>
           <div class="timeline-group">
-            <div class="timeline-label">{{ copy().transformingStreams.finalOutputLabel }}</div>
+            <div class="timeline-label">
+              {{ copy().transformingStreams.finalOutputLabel }}
+            </div>
             <div class="timeline final-output-timeline">
               @for (marble of concatMapAllOutputMarbles(); track marble.id) {
                 <div
@@ -164,7 +180,9 @@
           <div class="visualization-panel">
             <ah-marble-diagram
               [title]="copy().transformingStreams.concatMap.marbleTitle"
-              [description]="copy().transformingStreams.concatMap.marbleDescription"
+              [description]="
+                copy().transformingStreams.concatMap.marbleDescription
+              "
               [streams]="concatMapLanes()"
               [operator]="concatMapOperator()"
             />
@@ -176,10 +194,17 @@
               size="sm"
               (click)="toggleCode('concatMap')"
             >
-              {{ showConcatMapCode() ? copy().common.hideCode : copy().common.showCode }}
+              {{
+                showConcatMapCode()
+                  ? copy().common.hideCode
+                  : copy().common.showCode
+              }}
             </button>
             @if (showConcatMapCode()) {
-              <ah-code-block [code]="codeSnippets.concatMap" language="typescript" />
+              <ah-code-block
+                [code]="codeSnippets.concatMap"
+                language="typescript"
+              />
             }
           </div>
         </div>
@@ -206,7 +231,9 @@
             </p>
           </div>
           <div class="timeline-group">
-            <div class="timeline-label">{{ copy().transformingStreams.sourceStreamLabel }}</div>
+            <div class="timeline-label">
+              {{ copy().transformingStreams.sourceStreamLabel }}
+            </div>
             <div class="timeline source-timeline">
               @for (marble of switchMapSourceMarbles(); track marble.id) {
                 <div
@@ -219,7 +246,9 @@
             </div>
           </div>
           <div class="timeline-group">
-            <div class="timeline-label">{{ copy().transformingStreams.innerStreamsLabel }}</div>
+            <div class="timeline-label">
+              {{ copy().transformingStreams.innerStreamsLabel }}
+            </div>
             <div class="inner-streams-container">
               @for (stream of switchMapInnerStreams(); track stream.id) {
                 <div
@@ -235,7 +264,9 @@
             </div>
           </div>
           <div class="timeline-group">
-            <div class="timeline-label">{{ copy().transformingStreams.outputAnimatedLabel }}</div>
+            <div class="timeline-label">
+              {{ copy().transformingStreams.outputAnimatedLabel }}
+            </div>
             <div class="timeline">
               @for (marble of switchMapOutputMarbles(); track marble.id) {
                 <div
@@ -248,7 +279,9 @@
             </div>
           </div>
           <div class="timeline-group">
-            <div class="timeline-label">{{ copy().transformingStreams.finalOutputLabel }}</div>
+            <div class="timeline-label">
+              {{ copy().transformingStreams.finalOutputLabel }}
+            </div>
             <div class="timeline final-output-timeline">
               @for (marble of switchMapAllOutputMarbles(); track marble.id) {
                 <div
@@ -272,7 +305,9 @@
           <div class="visualization-panel">
             <ah-marble-diagram
               [title]="copy().transformingStreams.switchMap.marbleTitle"
-              [description]="copy().transformingStreams.switchMap.marbleDescription"
+              [description]="
+                copy().transformingStreams.switchMap.marbleDescription
+              "
               [streams]="switchMapLanes()"
               [operator]="switchMapOperator()"
             />
@@ -284,10 +319,17 @@
               size="sm"
               (click)="toggleCode('switchMap')"
             >
-              {{ showSwitchMapCode() ? copy().common.hideCode : copy().common.showCode }}
+              {{
+                showSwitchMapCode()
+                  ? copy().common.hideCode
+                  : copy().common.showCode
+              }}
             </button>
             @if (showSwitchMapCode()) {
-              <ah-code-block [code]="codeSnippets.switchMap" language="typescript" />
+              <ah-code-block
+                [code]="codeSnippets.switchMap"
+                language="typescript"
+              />
             }
           </div>
         </div>
@@ -314,7 +356,9 @@
             </p>
           </div>
           <div class="timeline-group">
-            <div class="timeline-label">{{ copy().transformingStreams.sourceStreamLabel }}</div>
+            <div class="timeline-label">
+              {{ copy().transformingStreams.sourceStreamLabel }}
+            </div>
             <div class="timeline source-timeline">
               @for (marble of mergeMapSourceMarbles(); track marble.id) {
                 <div
@@ -327,7 +371,9 @@
             </div>
           </div>
           <div class="timeline-group">
-            <div class="timeline-label">{{ copy().transformingStreams.innerStreamsLabel }}</div>
+            <div class="timeline-label">
+              {{ copy().transformingStreams.innerStreamsLabel }}
+            </div>
             <div class="inner-streams-container">
               @for (stream of mergeMapInnerStreams(); track stream.id) {
                 <div
@@ -343,7 +389,9 @@
             </div>
           </div>
           <div class="timeline-group">
-            <div class="timeline-label">{{ copy().transformingStreams.outputAnimatedLabel }}</div>
+            <div class="timeline-label">
+              {{ copy().transformingStreams.outputAnimatedLabel }}
+            </div>
             <div class="timeline">
               @for (marble of mergeMapOutputMarbles(); track marble.id) {
                 <div
@@ -356,7 +404,9 @@
             </div>
           </div>
           <div class="timeline-group">
-            <div class="timeline-label">{{ copy().transformingStreams.finalOutputLabel }}</div>
+            <div class="timeline-label">
+              {{ copy().transformingStreams.finalOutputLabel }}
+            </div>
             <div class="timeline final-output-timeline">
               @for (marble of mergeMapAllOutputMarbles(); track marble.id) {
                 <div
@@ -380,7 +430,9 @@
           <div class="visualization-panel">
             <ah-marble-diagram
               [title]="copy().transformingStreams.mergeMap.marbleTitle"
-              [description]="copy().transformingStreams.mergeMap.marbleDescription"
+              [description]="
+                copy().transformingStreams.mergeMap.marbleDescription
+              "
               [streams]="mergeMapLanes()"
               [operator]="mergeMapOperator()"
             />
@@ -392,10 +444,17 @@
               size="sm"
               (click)="toggleCode('mergeMap')"
             >
-              {{ showMergeMapCode() ? copy().common.hideCode : copy().common.showCode }}
+              {{
+                showMergeMapCode()
+                  ? copy().common.hideCode
+                  : copy().common.showCode
+              }}
             </button>
             @if (showMergeMapCode()) {
-              <ah-code-block [code]="codeSnippets.mergeMap" language="typescript" />
+              <ah-code-block
+                [code]="codeSnippets.mergeMap"
+                language="typescript"
+              />
             }
           </div>
         </div>
@@ -422,7 +481,9 @@
             </p>
           </div>
           <div class="timeline-group">
-            <div class="timeline-label">{{ copy().transformingStreams.sourceStreamLabel }}</div>
+            <div class="timeline-label">
+              {{ copy().transformingStreams.sourceStreamLabel }}
+            </div>
             <div class="timeline source-timeline">
               @for (marble of exhaustMapSourceMarbles(); track marble.id) {
                 <div
@@ -435,7 +496,9 @@
             </div>
           </div>
           <div class="timeline-group">
-            <div class="timeline-label">{{ copy().transformingStreams.innerStreamsLabel }}</div>
+            <div class="timeline-label">
+              {{ copy().transformingStreams.innerStreamsLabel }}
+            </div>
             <div class="inner-streams-container">
               @for (stream of exhaustMapInnerStreams(); track stream.id) {
                 <div
@@ -451,7 +514,9 @@
             </div>
           </div>
           <div class="timeline-group">
-            <div class="timeline-label">{{ copy().transformingStreams.outputAnimatedLabel }}</div>
+            <div class="timeline-label">
+              {{ copy().transformingStreams.outputAnimatedLabel }}
+            </div>
             <div class="timeline">
               @for (marble of exhaustMapOutputMarbles(); track marble.id) {
                 <div
@@ -464,7 +529,9 @@
             </div>
           </div>
           <div class="timeline-group">
-            <div class="timeline-label">{{ copy().transformingStreams.finalOutputLabel }}</div>
+            <div class="timeline-label">
+              {{ copy().transformingStreams.finalOutputLabel }}
+            </div>
             <div class="timeline final-output-timeline">
               @for (marble of exhaustMapAllOutputMarbles(); track marble.id) {
                 <div
@@ -488,7 +555,9 @@
           <div class="visualization-panel">
             <ah-marble-diagram
               [title]="copy().transformingStreams.exhaustMap.marbleTitle"
-              [description]="copy().transformingStreams.exhaustMap.marbleDescription"
+              [description]="
+                copy().transformingStreams.exhaustMap.marbleDescription
+              "
               [streams]="exhaustMapLanes()"
               [operator]="exhaustMapOperator()"
             />
@@ -500,10 +569,17 @@
               size="sm"
               (click)="toggleCode('exhaustMap')"
             >
-              {{ showExhaustMapCode() ? copy().common.hideCode : copy().common.showCode }}
+              {{
+                showExhaustMapCode()
+                  ? copy().common.hideCode
+                  : copy().common.showCode
+              }}
             </button>
             @if (showExhaustMapCode()) {
-              <ah-code-block [code]="codeSnippets.exhaustMap" language="typescript" />
+              <ah-code-block
+                [code]="codeSnippets.exhaustMap"
+                language="typescript"
+              />
             }
           </div>
         </div>

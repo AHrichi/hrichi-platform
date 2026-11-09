@@ -4,10 +4,6 @@
   "sourceRoot": "libs/products/whatsapp/domain/src",
   "prefix": "ah",
   "projectType": "library",
-  "tags": [
-    "scope:product-whatsapp",
-    "type:domain",
-    "runtime:agnostic"
-  ],
+  "tags": ["scope:product-whatsapp", "type:domain", "runtime:agnostic"],
   "targets": {}
 }

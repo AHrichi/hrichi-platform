@@ -53,7 +53,9 @@
 
           @for (subscriber of subscribers().cold; track subscriber.id) {
             <div class="timeline-group">
-              <div class="timeline-label">{{ copy().multicasting.executionLabel(subscriber.id) }}</div>
+              <div class="timeline-label">
+                {{ copy().multicasting.executionLabel(subscriber.id) }}
+              </div>
               <div class="timeline subscriber-timeline">
                 @for (marble of subscriber.marbles; track marble.id) {
                   <div class="marble" [style.background]="marble.color">
@@ -124,7 +126,9 @@
           </div>
 
           <div class="timeline-group">
-            <div class="timeline-label">{{ copy().multicasting.sharedSourceStreamLabel }}</div>
+            <div class="timeline-label">
+              {{ copy().multicasting.sharedSourceStreamLabel }}
+            </div>
             <div class="timeline source-timeline">
               @for (marble of sourceMarbles().hot; track marble.id) {
                 <div class="marble" [style.background]="marble.color">
@@ -223,7 +227,9 @@
           </div>
 
           <div class="timeline-group">
-            <div class="timeline-label">{{ copy().multicasting.sourceStreamLabel }}</div>
+            <div class="timeline-label">
+              {{ copy().multicasting.sourceStreamLabel }}
+            </div>
             <div class="timeline source-timeline">
               @for (marble of sourceMarbles().connectable; track marble.id) {
                 <div class="marble" [style.background]="marble.color">
@@ -326,7 +332,9 @@
           </div>
 
           <div class="timeline-group">
-            <div class="timeline-label">{{ copy().multicasting.sourceStreamLabel }}</div>
+            <div class="timeline-label">
+              {{ copy().multicasting.sourceStreamLabel }}
+            </div>
             <div class="timeline source-timeline">
               @for (marble of sourceMarbles().subject; track marble.id) {
                 <div class="marble" [style.background]="marble.color">
@@ -363,7 +371,10 @@
               }}
             </button>
             @if (showCode()['subject']) {
-              <ah-code-block [code]="codeSnippets.subject" language="typescript" />
+              <ah-code-block
+                [code]="codeSnippets.subject"
+                language="typescript"
+              />
             }
           </div>
         </div>
@@ -378,7 +389,9 @@
       >
         <div class="card-header">
           <div class="card-title-row">
-            <h3><code>{{ copy().multicasting.behaviorSubject.title }}</code></h3>
+            <h3>
+              <code>{{ copy().multicasting.behaviorSubject.title }}</code>
+            </h3>
             @if (activeCase() === 'behaviorSubject') {
               <ah-tag>{{ copy().common.focusedView }}</ah-tag>
             }
@@ -388,7 +401,9 @@
         <div class="card-content">
           <div class="config-group inline-config">
             <div class="config-item">
-              <label for="behavior-initial">{{ copy().multicasting.initialValueLabel }}</label>
+              <label for="behavior-initial">{{
+                copy().multicasting.initialValueLabel
+              }}</label>
               <input
                 id="behavior-initial"
                 type="number"
@@ -448,7 +463,9 @@
           </div>
 
           <div class="timeline-group">
-            <div class="timeline-label">{{ copy().multicasting.sourceStreamLabel }}</div>
+            <div class="timeline-label">
+              {{ copy().multicasting.sourceStreamLabel }}
+            </div>
             <div class="timeline source-timeline">
               @for (
                 marble of sourceMarbles().behaviorSubject;
@@ -491,7 +508,10 @@
               }}
             </button>
             @if (showCode()['behaviorSubject']) {
-              <ah-code-block [code]="codeSnippets.behaviorSubject" language="typescript" />
+              <ah-code-block
+                [code]="codeSnippets.behaviorSubject"
+                language="typescript"
+              />
             }
           </div>
         </div>
@@ -503,7 +523,9 @@
       <div class="card" [class.focused-card]="activeCase() === 'replaySubject'">
         <div class="card-header">
           <div class="card-title-row">
-            <h3><code>{{ copy().multicasting.replaySubject.title }}</code></h3>
+            <h3>
+              <code>{{ copy().multicasting.replaySubject.title }}</code>
+            </h3>
             @if (activeCase() === 'replaySubject') {
               <ah-tag>{{ copy().common.focusedView }}</ah-tag>
             }
@@ -513,7 +535,9 @@
         <div class="card-content">
           <div class="config-group inline-config">
             <div class="config-item">
-              <label for="replay-buffer">{{ copy().multicasting.bufferSizeLabel }}</label>
+              <label for="replay-buffer">{{
+                copy().multicasting.bufferSizeLabel
+              }}</label>
               <input
                 id="replay-buffer"
                 type="number"
@@ -582,7 +606,9 @@
           </div>
 
           <div class="timeline-group">
-            <div class="timeline-label">{{ copy().multicasting.sourceStreamLabel }}</div>
+            <div class="timeline-label">
+              {{ copy().multicasting.sourceStreamLabel }}
+            </div>
             <div class="timeline source-timeline">
               @for (marble of sourceMarbles().replaySubject; track marble.id) {
                 <div class="marble" [style.background]="marble.color">
@@ -622,7 +648,10 @@
               }}
             </button>
             @if (showCode()['replaySubject']) {
-              <ah-code-block [code]="codeSnippets.replaySubject" language="typescript" />
+              <ah-code-block
+                [code]="codeSnippets.replaySubject"
+                language="typescript"
+              />
             }
           </div>
         </div>
@@ -634,7 +663,9 @@
       <div class="card" [class.focused-card]="activeCase() === 'asyncSubject'">
         <div class="card-header">
           <div class="card-title-row">
-            <h3><code>{{ copy().multicasting.asyncSubject.title }}</code></h3>
+            <h3>
+              <code>{{ copy().multicasting.asyncSubject.title }}</code>
+            </h3>
             @if (activeCase() === 'asyncSubject') {
               <ah-tag>{{ copy().common.focusedView }}</ah-tag>
             }
@@ -688,7 +719,9 @@
           </div>
 
           <div class="timeline-group">
-            <div class="timeline-label">{{ copy().multicasting.sourceStreamLabel }}</div>
+            <div class="timeline-label">
+              {{ copy().multicasting.sourceStreamLabel }}
+            </div>
             <div class="timeline source-timeline">
               @for (marble of sourceMarbles().asyncSubject; track marble.id) {
                 <div class="marble" [style.background]="marble.color">
@@ -725,7 +758,10 @@
               }}
             </button>
             @if (showCode()['asyncSubject']) {
-              <ah-code-block [code]="codeSnippets.asyncSubject" language="typescript" />
+              <ah-code-block
+                [code]="codeSnippets.asyncSubject"
+                language="typescript"
+              />
             }
           </div>
         </div>

@@ -116,8 +116,7 @@ export class SkyLabPage {
   private readonly window = this.document.defaultView;
 
   protected readonly copy = computed(
-    () =>
-      SKY_LAB_COPY[this.preferences?.language() ?? 'en'] ?? SKY_LAB_COPY.en,
+    () => SKY_LAB_COPY[this.preferences?.language() ?? 'en'] ?? SKY_LAB_COPY.en,
   );
 
   protected readonly cities = cities;
@@ -177,7 +176,9 @@ export class SkyLabPage {
 
   protected readonly zoneLabel = computed(() => {
     const c = this.copy();
-    return this.zone() ? c.localTimeIn(this.store.place().name) : c.yourTimeZone;
+    return this.zone()
+      ? c.localTimeIn(this.store.place().name)
+      : c.yourTimeZone;
   });
   protected readonly when = computed(() =>
     formatDateTime(this.date(), this.zone()),
@@ -343,7 +344,9 @@ export class SkyLabPage {
     }
     if (id.startsWith('constellation:')) {
       const abbreviation = id.slice('constellation:'.length);
-      const overhead = night.constellations.find((cItem) => cItem.id === abbreviation);
+      const overhead = night.constellations.find(
+        (cItem) => cItem.id === abbreviation,
+      );
       return {
         title: constellationName(abbreviation),
         subtitle: c.constellation,

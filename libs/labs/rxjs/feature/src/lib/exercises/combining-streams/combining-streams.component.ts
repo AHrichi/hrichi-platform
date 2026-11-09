@@ -188,7 +188,8 @@ combineLatest([
 
   readonly withLatestFromOperator = computed<AhOperatorTransform>(() => ({
     name: 'withLatestFrom(secondary$)',
-    description: this.copy().combiningStreams.withLatestFrom.operatorDescription,
+    description:
+      this.copy().combiningStreams.withLatestFrom.operatorDescription,
     formula: 'output = [primary, latest secondary]',
   }));
 

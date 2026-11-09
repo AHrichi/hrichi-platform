@@ -239,14 +239,16 @@ export const TIER3_COPY: Record<SiteLanguage, Tier3Copy> = {
       statusPrefix: 'Status:',
       writable: {
         title: '1. Writable Signals: signal()',
-        description: 'The fundamental sources of truth in modern Angular. Directly mutate state and notify fine-grained dependencies.',
+        description:
+          'The fundamental sources of truth in modern Angular. Directly mutate state and notify fine-grained dependencies.',
         firstNameLabel: 'First Name:',
         lastNameLabel: 'Last Name:',
         quantityLabel: 'Quantity:',
       },
       computed: {
         title: '2. Computed Signals: computed()',
-        description: 'Derive read-only values memoized on change. Evaluated lazily and re-computed only when dependencies change.',
+        description:
+          'Derive read-only values memoized on change. Evaluated lazily and re-computed only when dependencies change.',
         fullNameLabel: 'Full Name:',
         isStockLowLabel: 'Is Stock Low?',
         stockMessageLabel: 'Stock Message:',
@@ -255,13 +257,16 @@ export const TIER3_COPY: Record<SiteLanguage, Tier3Copy> = {
       },
       effect: {
         title: '3. Effects: effect()',
-        description: 'Side-effects scheduled on microtask ticks whenever tracked signals change.',
+        description:
+          'Side-effects scheduled on microtask ticks whenever tracked signals change.',
         auditTrailTitle: 'Effect Audit Trail',
       },
       toSignal: {
         title: '4. RxJS Interop: toSignal()',
-        description: 'Converts an RxJS Observable into a reactive read-only Signal with automatic subscription cleanup.',
-        analogyText: 'Subscribing to a publication (Observable). Each new release is placed directly in your mailbox (Signal), ready to read synchronously without manual subscription boilerplates.',
+        description:
+          'Converts an RxJS Observable into a reactive read-only Signal with automatic subscription cleanup.',
+        analogyText:
+          'Subscribing to a publication (Observable). Each new release is placed directly in your mailbox (Signal), ready to read synchronously without manual subscription boilerplates.',
         streamLabel: 'RxJS interval(1000) Observable Stream',
         resultingSignalLabel: 'Resulting Signal (counterSignal):',
         computedEvenLabel: 'Computed from Signal (isEven):',
@@ -270,9 +275,11 @@ export const TIER3_COPY: Record<SiteLanguage, Tier3Copy> = {
       },
       linkedSignal: {
         title: '5. Angular 22: linkedSignal()',
-        description: 'A writable signal that resets to a computed default whenever its source dependency changes, while still supporting direct user mutations.',
+        description:
+          'A writable signal that resets to a computed default whenever its source dependency changes, while still supporting direct user mutations.',
         whyStrong: 'Why linkedSignal?',
-        whyText: 'With computed(), state is strictly read-only. With separate writable signals and effects, synchronization is prone to glitches. linkedSignal() solves this cleanly.',
+        whyText:
+          'With computed(), state is strictly read-only. With separate writable signals and effects, synchronization is prone to glitches. linkedSignal() solves this cleanly.',
         choosePlanLabel: 'Choose Plan Tier:',
         starterBtn: 'Starter (5)',
         proBtn: 'Pro (25)',
@@ -284,9 +291,11 @@ export const TIER3_COPY: Record<SiteLanguage, Tier3Copy> = {
       },
       rxResource: {
         title: '6. Angular 22: rxResource() Async Loader',
-        description: 'Bridges asynchronous RxJS streams directly into declarative Signals with loading flags, cancellation, and error boundaries.',
+        description:
+          'Bridges asynchronous RxJS streams directly into declarative Signals with loading flags, cancellation, and error boundaries.',
         zonelessStrong: 'Async Data in Zoneless Angular:',
-        zonelessText: 'rxResource() executes an RxJS loader stream, exposing synchronous signals for value(), isLoading(), and status() with zero zone.js.',
+        zonelessText:
+          'rxResource() executes an RxJS loader stream, exposing synchronous signals for value(), isLoading(), and status() with zero zone.js.',
         selectUserIdLabel: 'Select User ID:',
         userBtn: (id) => `User ${id}`,
         reloadStreamBtn: 'Reload Stream',
@@ -294,16 +303,19 @@ export const TIER3_COPY: Record<SiteLanguage, Tier3Copy> = {
       },
       resource: {
         title: '7. Angular 22: resource() Promise Loader',
-        description: 'Async loader using native async/await Promises with automatic AbortSignal cancellation support.',
+        description:
+          'Async loader using native async/await Promises with automatic AbortSignal cancellation support.',
         promisesStrong: 'Native Promises in Zoneless:',
-        promisesText: 'While rxResource() wraps RxJS Observables, resource() connects directly to standard fetch() or async/await functions, passing an AbortSignal that aborts if the parameter changes before completion.',
+        promisesText:
+          'While rxResource() wraps RxJS Observables, resource() connects directly to standard fetch() or async/await functions, passing an AbortSignal that aborts if the parameter changes before completion.',
         selectTopicLabel: 'Select Search Topic:',
         reloadBtn: 'Reload',
         executingLoaderText: 'Executing async loader...',
       },
       toObservable: {
         title: '7. Bidirectional Interop: toObservable() + toSignal()',
-        description: 'Signal input piped through RxJS operators (like debounceTime), then mirrored back into a Signal.',
+        description:
+          'Signal input piped through RxJS operators (like debounceTime), then mirrored back into a Signal.',
         typeToSearchLabel: 'Type to search (debounced 350ms):',
         searchPlaceholder: 'Type search terms...',
         rawInputLabel: 'Raw Signal Input:',
@@ -327,7 +339,8 @@ export const TIER3_COPY: Record<SiteLanguage, Tier3Copy> = {
       coexistence: {
         title: 'Architectural Philosophy: "Events In, State Out"',
         badge: 'Core Foundation',
-        description: 'Signals and RxJS are not competing rivals; they solve fundamentally different problems in application architecture.',
+        description:
+          'Signals and RxJS are not competing rivals; they solve fundamentally different problems in application architecture.',
         step1Badge: '1. Events In (RxJS)',
         step1Title: 'Asynchronous Coordination',
         step1Items: [
@@ -347,12 +360,15 @@ export const TIER3_COPY: Record<SiteLanguage, Tier3Copy> = {
           'Signal I/O (input, output, model)',
         ],
         ruleStrong: 'The Universal Rule of Thumb:',
-        ruleQuote: '"Use RxJS for events over time; use Signals for values over time."',
-        ruleText: 'If you need time, cancellation, or concurrency control, reach for RxJS. If you are holding, deriving, or displaying synchronous UI state, reach for Signals.',
+        ruleQuote:
+          '"Use RxJS for events over time; use Signals for values over time."',
+        ruleText:
+          'If you need time, cancellation, or concurrency control, reach for RxJS. If you are holding, deriving, or displaying synchronous UI state, reach for Signals.',
       },
       decisionMatrix: {
         title: 'Interactive Decision Matrix',
-        description: 'Select a common production requirement to compare the RxJS, Signals, and Hybrid approaches.',
+        description:
+          'Select a common production requirement to compare the RxJS, Signals, and Hybrid approaches.',
         categoryPrefix: 'Category:',
         recommendedPrefix: 'Recommended:',
         rxjsApproachTitle: 'RxJS Approach',
@@ -366,74 +382,103 @@ export const TIER3_COPY: Record<SiteLanguage, Tier3Copy> = {
           title: 'Typeahead / Search Autocomplete',
           category: 'Hybrid',
           winner: 'Hybrid (Both)',
-          summary: 'Handling asynchronous key events with debounce and cancellation, then projecting the result into synchronous UI state.',
-          rxjsApproach: 'searchInput$.pipe(debounceTime(300), distinctUntilChanged(), switchMap(q => api.search(q)))',
-          signalsApproach: 'Signals do not natively support time-based throttling or debouncing without external timer plumbing.',
-          hybridApproach: 'query = signal(""); query$ = toObservable(this.query); results = toSignal(this.query$.pipe(debounceTime(300), switchMap(q => api.search(q))), { initialValue: [] })',
-          ruleOfThumb: 'Use RxJS to coordinate the asynchronous event stream over time, then terminate with toSignal() for clean, zoneless template rendering.',
+          summary:
+            'Handling asynchronous key events with debounce and cancellation, then projecting the result into synchronous UI state.',
+          rxjsApproach:
+            'searchInput$.pipe(debounceTime(300), distinctUntilChanged(), switchMap(q => api.search(q)))',
+          signalsApproach:
+            'Signals do not natively support time-based throttling or debouncing without external timer plumbing.',
+          hybridApproach:
+            'query = signal(""); query$ = toObservable(this.query); results = toSignal(this.query$.pipe(debounceTime(300), switchMap(q => api.search(q))), { initialValue: [] })',
+          ruleOfThumb:
+            'Use RxJS to coordinate the asynchronous event stream over time, then terminate with toSignal() for clean, zoneless template rendering.',
         },
         {
           id: 'derived',
           title: 'Cart Total & Price Calculations',
           category: 'State',
           winner: 'Signals',
-          summary: 'Deriving synchronous computation from multiple state sources (items, quantity, discount, tax).',
-          rxjsApproach: 'combineLatest([items$, discount$, tax$]).pipe(map(([items, d, t]) => calculate(items, d, t))) — requires subscription, pipe, and manual change detection triggers in zoneless.',
-          signalsApproach: 'total = computed(() => calculate(this.items(), this.discount(), this.tax())) — automatic dynamic dependency tracking, synchronous pull, zero subscriptions, zero memory leaks.',
-          hybridApproach: 'Pure Signals win hands-down here. No RxJS needed for synchronous in-memory state derivation.',
-          ruleOfThumb: 'If state is synchronous in memory, always prefer signal() and computed().',
+          summary:
+            'Deriving synchronous computation from multiple state sources (items, quantity, discount, tax).',
+          rxjsApproach:
+            'combineLatest([items$, discount$, tax$]).pipe(map(([items, d, t]) => calculate(items, d, t))) — requires subscription, pipe, and manual change detection triggers in zoneless.',
+          signalsApproach:
+            'total = computed(() => calculate(this.items(), this.discount(), this.tax())) — automatic dynamic dependency tracking, synchronous pull, zero subscriptions, zero memory leaks.',
+          hybridApproach:
+            'Pure Signals win hands-down here. No RxJS needed for synchronous in-memory state derivation.',
+          ruleOfThumb:
+            'If state is synchronous in memory, always prefer signal() and computed().',
         },
         {
           id: 'websockets',
           title: 'Real-Time WebSockets & Event Feeds',
           category: 'Events',
           winner: 'RxJS',
-          summary: 'Continuous stream of push-based network packets, reconnection backoff, heartbeat intervals, and message filtering.',
-          rxjsApproach: 'webSocket$.pipe(retry({ delay: 2000 }), filter(isRelevant), scan(accumulateFeed, [])) — RxJS is designed specifically for push-based streams over time.',
-          signalsApproach: 'Signals only represent the latest discrete value; they do not natively model multi-emission push streams, dropouts, or packet queues.',
-          hybridApproach: 'Manage the socket lifecycle and buffering in RxJS, then expose feed = toSignal(feed$) for declarative template binding.',
-          ruleOfThumb: 'Whenever events are pushed over time (sockets, message buses, sensor feeds), RxJS is the gold standard.',
+          summary:
+            'Continuous stream of push-based network packets, reconnection backoff, heartbeat intervals, and message filtering.',
+          rxjsApproach:
+            'webSocket$.pipe(retry({ delay: 2000 }), filter(isRelevant), scan(accumulateFeed, [])) — RxJS is designed specifically for push-based streams over time.',
+          signalsApproach:
+            'Signals only represent the latest discrete value; they do not natively model multi-emission push streams, dropouts, or packet queues.',
+          hybridApproach:
+            'Manage the socket lifecycle and buffering in RxJS, then expose feed = toSignal(feed$) for declarative template binding.',
+          ruleOfThumb:
+            'Whenever events are pushed over time (sockets, message buses, sensor feeds), RxJS is the gold standard.',
         },
         {
           id: 'spam-prevention',
           title: 'Form Submission & Double-Click Prevention',
           category: 'Events',
           winner: 'RxJS',
-          summary: 'Ensuring an in-flight submission blocks any rapid duplicate button clicks until the backend response returns.',
-          rxjsApproach: 'submitClick$.pipe(exhaustMap(() => authService.login(credentials))) — exhaustMap automatically discards clicks while the inner request is active.',
-          signalsApproach: 'Requires manual flag management: isSubmitting = signal(false); if (this.isSubmitting()) return; this.isSubmitting.set(true); try { ... } finally { this.isSubmitting.set(false); }',
-          hybridApproach: 'Use exhaustMap or a resource with disabled button state.',
-          ruleOfThumb: 'Use exhaustMap when concurrency requires ignoring incoming triggers during an active asynchronous operation.',
+          summary:
+            'Ensuring an in-flight submission blocks any rapid duplicate button clicks until the backend response returns.',
+          rxjsApproach:
+            'submitClick$.pipe(exhaustMap(() => authService.login(credentials))) — exhaustMap automatically discards clicks while the inner request is active.',
+          signalsApproach:
+            'Requires manual flag management: isSubmitting = signal(false); if (this.isSubmitting()) return; this.isSubmitting.set(true); try { ... } finally { this.isSubmitting.set(false); }',
+          hybridApproach:
+            'Use exhaustMap or a resource with disabled button state.',
+          ruleOfThumb:
+            'Use exhaustMap when concurrency requires ignoring incoming triggers during an active asynchronous operation.',
         },
         {
           id: 'dependent-reset',
           title: 'Dependent State Reset (e.g. Master-Detail)',
           category: 'State',
           winner: 'Signals',
-          summary: 'Changing a parent category resets the selected item to a default, while still permitting user selection.',
-          rxjsApproach: 'Historically required nested subjects or complex switchMap state resets in a service.',
-          signalsApproach: 'selectedItem = linkedSignal({ source: () => this.category(), computation: (cat) => cat.defaultItem }) — resets automatically on source change, yet directly writable with selectedItem.set()!',
-          hybridApproach: 'Pure Angular 22 linkedSignal() is the cleanest pattern for this in the entire frontend ecosystem.',
-          ruleOfThumb: 'Use linkedSignal() for writable local state that must stay in sync with a source dependency.',
+          summary:
+            'Changing a parent category resets the selected item to a default, while still permitting user selection.',
+          rxjsApproach:
+            'Historically required nested subjects or complex switchMap state resets in a service.',
+          signalsApproach:
+            'selectedItem = linkedSignal({ source: () => this.category(), computation: (cat) => cat.defaultItem }) — resets automatically on source change, yet directly writable with selectedItem.set()!',
+          hybridApproach:
+            'Pure Angular 22 linkedSignal() is the cleanest pattern for this in the entire frontend ecosystem.',
+          ruleOfThumb:
+            'Use linkedSignal() for writable local state that must stay in sync with a source dependency.',
         },
       ],
       derivedState: {
         title: 'Live Sandbox: Derived State (combineLatest vs computed)',
-        description: 'Deriving a synchronous total from base price, discount, and tax rate. Compare the clean ergonomics of Signals against stream piping.',
+        description:
+          'Deriving a synchronous total from base price, discount, and tax rate. Compare the clean ergonomics of Signals against stream piping.',
         basePriceLabel: 'Base Price ($):',
         discountLabel: 'Discount ($):',
         taxRateLabel: 'Tax Rate (20%):',
         fixed20Badge: '20% Fixed',
         signalsComputedLabel: 'Signals (computed)',
         syncPullBadge: 'Synchronous Pull',
-        signalsNote: 'Evaluated lazily, glitch-free, memoized, zero subscription cleanup required.',
+        signalsNote:
+          'Evaluated lazily, glitch-free, memoized, zero subscription cleanup required.',
         rxjsCombineLabel: 'RxJS (combineLatest)',
         pushStreamBadge: 'Push Stream',
-        rxjsNote: 'Requires 3 BehaviorSubjects, combineLatest, map pipe, and toSignal or async pipe.',
+        rxjsNote:
+          'Requires 3 BehaviorSubjects, combineLatest, map pipe, and toSignal or async pipe.',
       },
       searchDebounce: {
         title: 'Live Sandbox: Time-Based Search (Hybrid Interop)',
-        description: 'Signals have no native concept of time delays or debouncing. We use toObservable() to leverage RxJS time operators, then store the result in a Signal via toSignal().',
+        description:
+          'Signals have no native concept of time delays or debouncing. We use toObservable() to leverage RxJS time operators, then store the result in a Signal via toSignal().',
         inputLabel: 'Type rapidly to observe debounce (400ms):',
         inputPlaceholder: 'Type query...',
         rawSignalLabel: 'Raw Keystroke Signal (Immediate):',
@@ -441,7 +486,8 @@ export const TIER3_COPY: Record<SiteLanguage, Tier3Copy> = {
       },
       asyncResource: {
         title: 'Live Sandbox: Async Data with rxResource()',
-        description: 'Angular 22 introduces resource() and rxResource() to unify async data fetching with signals. It manages loading indicators, params reactivity, and cancellation automatically.',
+        description:
+          'Angular 22 introduces resource() and rxResource() to unify async data fetching with signals. It manages loading indicators, params reactivity, and cancellation automatically.',
         selectLocationLabel: 'Select Location:',
         parisBtn: 'Paris',
         tokyoBtn: 'Tokyo',
@@ -452,7 +498,8 @@ export const TIER3_COPY: Record<SiteLanguage, Tier3Copy> = {
       },
       linkedState: {
         title: 'Live Sandbox: Dependent State with linkedSignal()',
-        description: "In Angular applications, a classic bug is resetting child state when parent state changes. Angular 22's linkedSignal() provides an auto-resetting writable signal.",
+        description:
+          "In Angular applications, a classic bug is resetting child state when parent state changes. Angular 22's linkedSignal() provides an auto-resetting writable signal.",
         selectPlanLabel: 'Select Plan Tier (Parent State):',
         basicBtn: 'Basic (20GB)',
         proBtn: 'Pro (100GB)',
@@ -478,7 +525,8 @@ export const TIER3_COPY: Record<SiteLanguage, Tier3Copy> = {
         midBtn: 'Start Mid-level Track',
         seniorTitle: 'Senior',
         seniorBadge: 'Architecture & Interop',
-        seniorDesc: 'Zoneless execution, linkedSignal, rxResource, and edge cases.',
+        seniorDesc:
+          'Zoneless execution, linkedSignal, rxResource, and edge cases.',
         seniorBtn: 'Start Senior Track',
       },
       questionProgress: (current, total) => `Question ${current} of ${total}`,
@@ -527,7 +575,12 @@ export const TIER3_COPY: Record<SiteLanguage, Tier3Copy> = {
           type: 'multiple-choice',
           difficulty: 'Beginner',
           text: 'What does the `$` suffix traditionally signify on a variable name in RxJS?',
-          options: ['A Subject', 'A final value', 'An Observable', 'A private property'],
+          options: [
+            'A Subject',
+            'A final value',
+            'An Observable',
+            'A private property',
+          ],
           answer: 'An Observable',
           relatedRoute: '/multicasting',
         },
@@ -571,7 +624,12 @@ export const TIER3_COPY: Record<SiteLanguage, Tier3Copy> = {
           type: 'multiple-choice',
           difficulty: 'Mid-level',
           text: "Which Subject is best for storing a user's authentication status that new components can check upon creation?",
-          options: ['Subject', 'AsyncSubject', 'BehaviorSubject', 'ReplaySubject'],
+          options: [
+            'Subject',
+            'AsyncSubject',
+            'BehaviorSubject',
+            'ReplaySubject',
+          ],
           answer: 'BehaviorSubject',
           relatedRoute: '/multicasting',
         },
@@ -598,7 +656,12 @@ export const TIER3_COPY: Record<SiteLanguage, Tier3Copy> = {
           type: 'multiple-choice',
           difficulty: 'Senior',
           text: 'Which Subject type will give a new subscriber the last 3 emitted values?',
-          options: ['Subject', 'AsyncSubject', 'BehaviorSubject(3)', 'ReplaySubject(3)'],
+          options: [
+            'Subject',
+            'AsyncSubject',
+            'BehaviorSubject(3)',
+            'ReplaySubject(3)',
+          ],
           answer: 'ReplaySubject(3)',
           relatedRoute: '/multicasting',
         },
@@ -624,7 +687,12 @@ export const TIER3_COPY: Record<SiteLanguage, Tier3Copy> = {
           type: 'multiple-choice',
           difficulty: 'Senior',
           text: 'In RxJS marble testing, what does the character `|` signify?',
-          options: ['An error', 'A value emission', 'Completion of the stream', 'A subscription point'],
+          options: [
+            'An error',
+            'A value emission',
+            'Completion of the stream',
+            'A subscription point',
+          ],
           answer: 'Completion of the stream',
           relatedRoute: '/multicasting',
         },
@@ -642,7 +710,12 @@ export const TIER3_COPY: Record<SiteLanguage, Tier3Copy> = {
           type: 'multiple-choice',
           difficulty: 'Senior',
           text: 'In Angular 22, which function from @angular/core/rxjs-interop loads asynchronous data from an RxJS stream into declarative signals with automatic loading and reload capabilities?',
-          options: ['toSignal()', 'rxResource()', 'toObservable()', 'outputFromObservable()'],
+          options: [
+            'toSignal()',
+            'rxResource()',
+            'toObservable()',
+            'outputFromObservable()',
+          ],
           answer: 'rxResource()',
           relatedRoute: '/signals',
         },
@@ -668,14 +741,16 @@ export const TIER3_COPY: Record<SiteLanguage, Tier3Copy> = {
       statusPrefix: 'Statut :',
       writable: {
         title: '1. Signals modifiables : signal()',
-        description: 'Les sources de vérité fondamentales dans Angular moderne. Mutent directement l’état et notifient finement les dépendances.',
+        description:
+          'Les sources de vérité fondamentales dans Angular moderne. Mutent directement l’état et notifient finement les dépendances.',
         firstNameLabel: 'Prénom :',
         lastNameLabel: 'Nom :',
         quantityLabel: 'Quantité :',
       },
       computed: {
         title: '2. Signals calculés : computed()',
-        description: 'Dérivent des valeurs en lecture seule mémoïsées. Évalués paresseusement et recalculés uniquement lorsque leurs dépendances changent.',
+        description:
+          'Dérivent des valeurs en lecture seule mémoïsées. Évalués paresseusement et recalculés uniquement lorsque leurs dépendances changent.',
         fullNameLabel: 'Nom complet :',
         isStockLowLabel: 'Stock faible ?',
         stockMessageLabel: 'Message de stock :',
@@ -684,13 +759,16 @@ export const TIER3_COPY: Record<SiteLanguage, Tier3Copy> = {
       },
       effect: {
         title: '3. Effets : effect()',
-        description: 'Effets de bord planifiés dès que les signaux suivis changent.',
+        description:
+          'Effets de bord planifiés dès que les signaux suivis changent.',
         auditTrailTitle: 'Journal d’audit des effets',
       },
       toSignal: {
         title: '4. Interopérabilité RxJS : toSignal()',
-        description: 'Convertit un Observable RxJS en un Signal réactif en lecture seule avec nettoyage automatique de l’abonnement.',
-        analogyText: 'S’abonner à un magazine (Observable) : chaque nouveau numéro est déposé dans votre boîte aux lettres (Signal), prêt à être lu de manière synchrone.',
+        description:
+          'Convertit un Observable RxJS en un Signal réactif en lecture seule avec nettoyage automatique de l’abonnement.',
+        analogyText:
+          'S’abonner à un magazine (Observable) : chaque nouveau numéro est déposé dans votre boîte aux lettres (Signal), prêt à être lu de manière synchrone.',
         streamLabel: 'Flux Observable RxJS interval(1000)',
         resultingSignalLabel: 'Signal résultant (counterSignal) :',
         computedEvenLabel: 'Calculé depuis le Signal (isEven) :',
@@ -699,23 +777,28 @@ export const TIER3_COPY: Record<SiteLanguage, Tier3Copy> = {
       },
       linkedSignal: {
         title: '5. Angular 22 : linkedSignal()',
-        description: 'Un signal modifiable qui se réinitialise à une valeur par défaut calculée lorsque sa dépendance source change, tout en permettant des modifications directes.',
+        description:
+          'Un signal modifiable qui se réinitialise à une valeur par défaut calculée lorsque sa dépendance source change, tout en permettant des modifications directes.',
         whyStrong: 'Pourquoi linkedSignal ?',
-        whyText: 'Avec computed(), l’état est en lecture seule. Avec des signaux séparés et des effets, la synchronisation crée des glitches. linkedSignal() résout cela élégamment.',
+        whyText:
+          'Avec computed(), l’état est en lecture seule. Avec des signaux séparés et des effets, la synchronisation crée des glitches. linkedSignal() résout cela élégamment.',
         choosePlanLabel: 'Choisir le forfait :',
         starterBtn: 'Starter (5)',
         proBtn: 'Pro (25)',
         enterpriseBtn: 'Enterprise (100)',
-        adjustCreditsLabel: 'Ajuster les crédits de calcul (Mutation directe) :',
+        adjustCreditsLabel:
+          'Ajuster les crédits de calcul (Mutation directe) :',
         overriddenBadge: 'Personnalisé',
         resetDefaultBtn: 'Réinitialiser par défaut',
         planDefaultBadge: 'Valeur par défaut du forfait',
       },
       rxResource: {
         title: '6. Angular 22 : Chargeur asynchrone rxResource()',
-        description: 'Relie directement les flux RxJS asynchrones à des Signals déclaratifs avec état de chargement, annulation et gestion d’erreurs.',
+        description:
+          'Relie directement les flux RxJS asynchrones à des Signals déclaratifs avec état de chargement, annulation et gestion d’erreurs.',
         zonelessStrong: 'Données asynchrones en Angular Zoneless :',
-        zonelessText: 'rxResource() exécute un flux RxJS et expose des signaux synchrones value(), isLoading() et status() sans zone.js.',
+        zonelessText:
+          'rxResource() exécute un flux RxJS et expose des signaux synchrones value(), isLoading() et status() sans zone.js.',
         selectUserIdLabel: 'Sélectionner l’ID utilisateur :',
         userBtn: (id) => `Utilisateur ${id}`,
         reloadStreamBtn: 'Recharger le flux',
@@ -723,16 +806,20 @@ export const TIER3_COPY: Record<SiteLanguage, Tier3Copy> = {
       },
       resource: {
         title: '7. Angular 22 : Chargeur Promise resource()',
-        description: 'Chargeur asynchrone utilisant des Promises async/await natives avec annulation automatique via AbortSignal.',
+        description:
+          'Chargeur asynchrone utilisant des Promises async/await natives avec annulation automatique via AbortSignal.',
         promisesStrong: 'Promises natives en mode Zoneless :',
-        promisesText: 'Tandis que rxResource() encapsule des Observables RxJS, resource() se connecte directement à fetch() ou async/await en passant un AbortSignal.',
+        promisesText:
+          'Tandis que rxResource() encapsule des Observables RxJS, resource() se connecte directement à fetch() ou async/await en passant un AbortSignal.',
         selectTopicLabel: 'Choisir le sujet :',
         reloadBtn: 'Recharger',
         executingLoaderText: 'Exécution du chargeur asynchrone...',
       },
       toObservable: {
-        title: '7. Interopérabilité bidirectionnelle : toObservable() + toSignal()',
-        description: 'Un Signal d’entrée passé dans des opérateurs RxJS (comme debounceTime), puis reconverti en Signal.',
+        title:
+          '7. Interopérabilité bidirectionnelle : toObservable() + toSignal()',
+        description:
+          'Un Signal d’entrée passé dans des opérateurs RxJS (comme debounceTime), puis reconverti en Signal.',
         typeToSearchLabel: 'Tapez pour rechercher (debounce 350 ms) :',
         searchPlaceholder: 'Saisissez des termes...',
         rawInputLabel: 'Signal d’entrée brut :',
@@ -754,9 +841,11 @@ export const TIER3_COPY: Record<SiteLanguage, Tier3Copy> = {
         coexistence: 'Philosophie de coexistence',
       },
       coexistence: {
-        title: 'Philosophie d’architecture : « Événements en entrée, État en sortie »',
+        title:
+          'Philosophie d’architecture : « Événements en entrée, État en sortie »',
         badge: 'Fondation clé',
-        description: 'Les Signals et RxJS ne sont pas des rivaux : ils résolvent des problèmes fondamentalement complémentaires.',
+        description:
+          'Les Signals et RxJS ne sont pas des rivaux : ils résolvent des problèmes fondamentalement complémentaires.',
         step1Badge: '1. Événements en entrée (RxJS)',
         step1Title: 'Coordination asynchrone',
         step1Items: [
@@ -776,12 +865,15 @@ export const TIER3_COPY: Record<SiteLanguage, Tier3Copy> = {
           'Entrées/Sorties Signal (input, output, model)',
         ],
         ruleStrong: 'La règle d’or universelle :',
-        ruleQuote: '« Utilisez RxJS pour les événements dans le temps ; utilisez les Signals pour les valeurs dans le temps. »',
-        ruleText: 'Si vous avez besoin de gestion du temps, d’annulation ou de concurrence, choisissez RxJS. Pour stocker, dériver ou afficher un état UI synchrone, choisissez les Signals.',
+        ruleQuote:
+          '« Utilisez RxJS pour les événements dans le temps ; utilisez les Signals pour les valeurs dans le temps. »',
+        ruleText:
+          'Si vous avez besoin de gestion du temps, d’annulation ou de concurrence, choisissez RxJS. Pour stocker, dériver ou afficher un état UI synchrone, choisissez les Signals.',
       },
       decisionMatrix: {
         title: 'Matrice de décision interactive',
-        description: 'Sélectionnez un besoin courant en production pour comparer les approches RxJS, Signals et Hybride.',
+        description:
+          'Sélectionnez un besoin courant en production pour comparer les approches RxJS, Signals et Hybride.',
         categoryPrefix: 'Catégorie :',
         recommendedPrefix: 'Recommandé :',
         rxjsApproachTitle: 'Approche RxJS',
@@ -795,74 +887,103 @@ export const TIER3_COPY: Record<SiteLanguage, Tier3Copy> = {
           title: 'Autocomplétion / Recherche instantanée',
           category: 'Hybrid',
           winner: 'Hybrid (Both)',
-          summary: 'Gestion des frappes clavier asynchrones avec debounce et annulation, puis projection du résultat dans un état UI synchrone.',
-          rxjsApproach: 'searchInput$.pipe(debounceTime(300), distinctUntilChanged(), switchMap(q => api.search(q)))',
-          signalsApproach: 'Les Signals ne gèrent pas nativement le throttling ou le debouncing temporel sans minuterie externe.',
-          hybridApproach: 'query = signal(""); query$ = toObservable(this.query); results = toSignal(this.query$.pipe(debounceTime(300), switchMap(q => api.search(q))), { initialValue: [] })',
-          ruleOfThumb: 'Utilisez RxJS pour coordonner le flux d’événements asynchrones dans le temps, puis terminez avec toSignal() pour un rendu zoneless propre.',
+          summary:
+            'Gestion des frappes clavier asynchrones avec debounce et annulation, puis projection du résultat dans un état UI synchrone.',
+          rxjsApproach:
+            'searchInput$.pipe(debounceTime(300), distinctUntilChanged(), switchMap(q => api.search(q)))',
+          signalsApproach:
+            'Les Signals ne gèrent pas nativement le throttling ou le debouncing temporel sans minuterie externe.',
+          hybridApproach:
+            'query = signal(""); query$ = toObservable(this.query); results = toSignal(this.query$.pipe(debounceTime(300), switchMap(q => api.search(q))), { initialValue: [] })',
+          ruleOfThumb:
+            'Utilisez RxJS pour coordonner le flux d’événements asynchrones dans le temps, puis terminez avec toSignal() pour un rendu zoneless propre.',
         },
         {
           id: 'derived',
           title: 'Total du panier et calculs de prix',
           category: 'State',
           winner: 'Signals',
-          summary: 'Dérivation synchrone à partir de plusieurs sources d’état (articles, quantité, remise, taxes).',
-          rxjsApproach: 'combineLatest([items$, discount$, tax$]).pipe(map(...)) — nécessite abonnement, pipe et gestion manuelle.',
-          signalsApproach: 'total = computed(() => calculate(this.items(), this.discount(), this.tax())) — suivi dynamique automatique, lecture synchrone, zéro abonnement.',
-          hybridApproach: 'Les Signals purs l’emportent largement ici. Aucun besoin de RxJS pour dériver un état synchrone en mémoire.',
-          ruleOfThumb: 'Si l’état est synchrone en mémoire, privilégiez toujours signal() et computed().',
+          summary:
+            'Dérivation synchrone à partir de plusieurs sources d’état (articles, quantité, remise, taxes).',
+          rxjsApproach:
+            'combineLatest([items$, discount$, tax$]).pipe(map(...)) — nécessite abonnement, pipe et gestion manuelle.',
+          signalsApproach:
+            'total = computed(() => calculate(this.items(), this.discount(), this.tax())) — suivi dynamique automatique, lecture synchrone, zéro abonnement.',
+          hybridApproach:
+            'Les Signals purs l’emportent largement ici. Aucun besoin de RxJS pour dériver un état synchrone en mémoire.',
+          ruleOfThumb:
+            'Si l’état est synchrone en mémoire, privilégiez toujours signal() et computed().',
         },
         {
           id: 'websockets',
           title: 'WebSockets temps réel et flux d’événements',
           category: 'Events',
           winner: 'RxJS',
-          summary: 'Flux continu de paquets réseau poussés, reconnexion automatique, battements de cœur et filtrage de messages.',
-          rxjsApproach: 'webSocket$.pipe(retry({ delay: 2000 }), filter(isRelevant), scan(accumulateFeed, [])) — RxJS est conçu pour les flux push dans le temps.',
-          signalsApproach: 'Les Signals ne représentent que la dernière valeur discrète et ne modélisent pas nativement les files de paquets.',
-          hybridApproach: 'Gérez le cycle de vie du socket dans RxJS, puis exposez feed = toSignal(feed$) pour le template.',
-          ruleOfThumb: 'Dès que des événements sont poussés au fil du temps (sockets, bus de messages), RxJS reste la référence.',
+          summary:
+            'Flux continu de paquets réseau poussés, reconnexion automatique, battements de cœur et filtrage de messages.',
+          rxjsApproach:
+            'webSocket$.pipe(retry({ delay: 2000 }), filter(isRelevant), scan(accumulateFeed, [])) — RxJS est conçu pour les flux push dans le temps.',
+          signalsApproach:
+            'Les Signals ne représentent que la dernière valeur discrète et ne modélisent pas nativement les files de paquets.',
+          hybridApproach:
+            'Gérez le cycle de vie du socket dans RxJS, puis exposez feed = toSignal(feed$) pour le template.',
+          ruleOfThumb:
+            'Dès que des événements sont poussés au fil du temps (sockets, bus de messages), RxJS reste la référence.',
         },
         {
           id: 'spam-prevention',
           title: 'Soumission de formulaire et anti double-clic',
           category: 'Events',
           winner: 'RxJS',
-          summary: 'Garantir qu’une soumission en cours ignore les clics répétés jusqu’à la réponse du serveur.',
-          rxjsApproach: 'submitClick$.pipe(exhaustMap(() => authService.login(credentials))) — exhaustMap ignore automatiquement les clics tant que la requête est active.',
-          signalsApproach: 'Nécessite une gestion manuelle de drapeau booléen isSubmitting avec bloc try/finally.',
-          hybridApproach: 'Utilisez exhaustMap ou une ressource avec bouton désactivé.',
-          ruleOfThumb: 'Utilisez exhaustMap lorsque la concurrence impose d’ignorer les déclencheurs entrants pendant une opération active.',
+          summary:
+            'Garantir qu’une soumission en cours ignore les clics répétés jusqu’à la réponse du serveur.',
+          rxjsApproach:
+            'submitClick$.pipe(exhaustMap(() => authService.login(credentials))) — exhaustMap ignore automatiquement les clics tant que la requête est active.',
+          signalsApproach:
+            'Nécessite une gestion manuelle de drapeau booléen isSubmitting avec bloc try/finally.',
+          hybridApproach:
+            'Utilisez exhaustMap ou une ressource avec bouton désactivé.',
+          ruleOfThumb:
+            'Utilisez exhaustMap lorsque la concurrence impose d’ignorer les déclencheurs entrants pendant une opération active.',
         },
         {
           id: 'dependent-reset',
           title: 'Réinitialisation d’état dépendant (Master-Detail)',
           category: 'State',
           winner: 'Signals',
-          summary: 'Changer une catégorie parente réinitialise l’élément sélectionné par défaut, tout en permettant la sélection manuelle.',
-          rxjsApproach: 'Nécessitait historiquement des Subjects imbriqués ou des switchMap complexes.',
-          signalsApproach: 'selectedItem = linkedSignal({ source: () => this.category(), computation: (cat) => cat.defaultItem }) — se réinitialise automatiquement tout en restant modifiable !',
-          hybridApproach: 'linkedSignal() d’Angular 22 est le modèle le plus propre de tout l’écosystème frontend.',
-          ruleOfThumb: 'Utilisez linkedSignal() pour un état local modifiable qui doit rester synchronisé avec une source.',
+          summary:
+            'Changer une catégorie parente réinitialise l’élément sélectionné par défaut, tout en permettant la sélection manuelle.',
+          rxjsApproach:
+            'Nécessitait historiquement des Subjects imbriqués ou des switchMap complexes.',
+          signalsApproach:
+            'selectedItem = linkedSignal({ source: () => this.category(), computation: (cat) => cat.defaultItem }) — se réinitialise automatiquement tout en restant modifiable !',
+          hybridApproach:
+            'linkedSignal() d’Angular 22 est le modèle le plus propre de tout l’écosystème frontend.',
+          ruleOfThumb:
+            'Utilisez linkedSignal() pour un état local modifiable qui doit rester synchronisé avec une source.',
         },
       ],
       derivedState: {
         title: 'Bac à sable : État dérivé (combineLatest vs computed)',
-        description: 'Calculer un total synchrone à partir du prix de base, de la remise et de la TVA. Comparez l’ergonomie des Signals face aux flux.',
+        description:
+          'Calculer un total synchrone à partir du prix de base, de la remise et de la TVA. Comparez l’ergonomie des Signals face aux flux.',
         basePriceLabel: 'Prix de base ($) :',
         discountLabel: 'Remise ($) :',
         taxRateLabel: 'Taux de TVA (20 %) :',
         fixed20Badge: '20 % Fixe',
         signalsComputedLabel: 'Signals (computed)',
         syncPullBadge: 'Lecture synchrone',
-        signalsNote: 'Évalué paresseusement, sans glitch, mémoïsé, aucun nettoyage d’abonnement requis.',
+        signalsNote:
+          'Évalué paresseusement, sans glitch, mémoïsé, aucun nettoyage d’abonnement requis.',
         rxjsCombineLabel: 'RxJS (combineLatest)',
         pushStreamBadge: 'Flux Push',
-        rxjsNote: 'Nécessite 3 BehaviorSubjects, combineLatest, map et toSignal ou le pipe async.',
+        rxjsNote:
+          'Nécessite 3 BehaviorSubjects, combineLatest, map et toSignal ou le pipe async.',
       },
       searchDebounce: {
         title: 'Bac à sable : Recherche temporisée (Interop hybride)',
-        description: 'Les Signals n’ont pas de notion native de délai. On utilise toObservable() pour les opérateurs temporels RxJS, puis toSignal() pour l’affichage.',
+        description:
+          'Les Signals n’ont pas de notion native de délai. On utilise toObservable() pour les opérateurs temporels RxJS, puis toSignal() pour l’affichage.',
         inputLabel: 'Tapez rapidement pour observer le debounce (400 ms) :',
         inputPlaceholder: 'Saisissez une requête...',
         rawSignalLabel: 'Signal de frappe brut (Immédiat) :',
@@ -870,7 +991,8 @@ export const TIER3_COPY: Record<SiteLanguage, Tier3Copy> = {
       },
       asyncResource: {
         title: 'Bac à sable : Données asynchrones avec rxResource()',
-        description: 'Angular 22 introduit resource() et rxResource() pour unifier le chargement asynchrone et les Signals avec gestion automatique du chargement et de l’annulation.',
+        description:
+          'Angular 22 introduit resource() et rxResource() pour unifier le chargement asynchrone et les Signals avec gestion automatique du chargement et de l’annulation.',
         selectLocationLabel: 'Choisir une ville :',
         parisBtn: 'Paris',
         tokyoBtn: 'Tokyo',
@@ -881,7 +1003,8 @@ export const TIER3_COPY: Record<SiteLanguage, Tier3Copy> = {
       },
       linkedState: {
         title: 'Bac à sable : État dépendant avec linkedSignal()',
-        description: 'Réinitialiser un état enfant lorsque le parent change est un classique. linkedSignal() d’Angular 22 fournit un signal modifiable auto-réinitialisé.',
+        description:
+          'Réinitialiser un état enfant lorsque le parent change est un classique. linkedSignal() d’Angular 22 fournit un signal modifiable auto-réinitialisé.',
         selectPlanLabel: 'Choisir le forfait (État parent) :',
         basicBtn: 'Basic (20 Go)',
         proBtn: 'Pro (100 Go)',
@@ -907,7 +1030,8 @@ export const TIER3_COPY: Record<SiteLanguage, Tier3Copy> = {
         midBtn: 'Démarrer le parcours Intermédiaire',
         seniorTitle: 'Senior',
         seniorBadge: 'Architecture & Interop',
-        seniorDesc: 'Exécution zoneless, linkedSignal, rxResource et cas avancés.',
+        seniorDesc:
+          'Exécution zoneless, linkedSignal, rxResource et cas avancés.',
         seniorBtn: 'Démarrer le parcours Senior',
       },
       questionProgress: (current, total) => `Question ${current} sur ${total}`,
@@ -956,7 +1080,12 @@ export const TIER3_COPY: Record<SiteLanguage, Tier3Copy> = {
           type: 'multiple-choice',
           difficulty: 'Beginner',
           text: 'Que signifie traditionnellement le suffixe `$` sur un nom de variable en RxJS ?',
-          options: ['Un Subject', 'Une valeur finale', 'Un Observable', 'Une propriété privée'],
+          options: [
+            'Un Subject',
+            'Une valeur finale',
+            'Un Observable',
+            'Une propriété privée',
+          ],
           answer: 'Un Observable',
           relatedRoute: '/multicasting',
         },
@@ -1000,7 +1129,12 @@ export const TIER3_COPY: Record<SiteLanguage, Tier3Copy> = {
           type: 'multiple-choice',
           difficulty: 'Mid-level',
           text: 'Quel Subject est le plus adapté pour stocker l’état d’authentification qu’un nouveau composant doit lire dès sa création ?',
-          options: ['Subject', 'AsyncSubject', 'BehaviorSubject', 'ReplaySubject'],
+          options: [
+            'Subject',
+            'AsyncSubject',
+            'BehaviorSubject',
+            'ReplaySubject',
+          ],
           answer: 'BehaviorSubject',
           relatedRoute: '/multicasting',
         },
@@ -1027,7 +1161,12 @@ export const TIER3_COPY: Record<SiteLanguage, Tier3Copy> = {
           type: 'multiple-choice',
           difficulty: 'Senior',
           text: 'Quel type de Subject fournit à un nouvel abonné les 3 dernières valeurs émises ?',
-          options: ['Subject', 'AsyncSubject', 'BehaviorSubject(3)', 'ReplaySubject(3)'],
+          options: [
+            'Subject',
+            'AsyncSubject',
+            'BehaviorSubject(3)',
+            'ReplaySubject(3)',
+          ],
           answer: 'ReplaySubject(3)',
           relatedRoute: '/multicasting',
         },
@@ -1053,7 +1192,12 @@ export const TIER3_COPY: Record<SiteLanguage, Tier3Copy> = {
           type: 'multiple-choice',
           difficulty: 'Senior',
           text: 'Dans les tests de billes (marble testing) RxJS, que représente le caractère `|` ?',
-          options: ['Une erreur', 'Une émission de valeur', 'La complétion du flux', 'Un point d’abonnement'],
+          options: [
+            'Une erreur',
+            'Une émission de valeur',
+            'La complétion du flux',
+            'Un point d’abonnement',
+          ],
           answer: 'La complétion du flux',
           relatedRoute: '/multicasting',
         },
@@ -1071,7 +1215,12 @@ export const TIER3_COPY: Record<SiteLanguage, Tier3Copy> = {
           type: 'multiple-choice',
           difficulty: 'Senior',
           text: 'Dans Angular 22, quelle fonction de @angular/core/rxjs-interop charge des données asynchrones depuis un flux RxJS dans des signaux déclaratifs ?',
-          options: ['toSignal()', 'rxResource()', 'toObservable()', 'outputFromObservable()'],
+          options: [
+            'toSignal()',
+            'rxResource()',
+            'toObservable()',
+            'outputFromObservable()',
+          ],
           answer: 'rxResource()',
           relatedRoute: '/signals',
         },
@@ -1097,14 +1246,16 @@ export const TIER3_COPY: Record<SiteLanguage, Tier3Copy> = {
       statusPrefix: 'الحالة:',
       writable: {
         title: '1. الإشارات القابلة للكتابة: signal()',
-        description: 'مصادر الحقيقة الأساسية في Angular الحديث. عدّل الحالة مباشرة وأشعر التبعيات بدقة.',
+        description:
+          'مصادر الحقيقة الأساسية في Angular الحديث. عدّل الحالة مباشرة وأشعر التبعيات بدقة.',
         firstNameLabel: 'الاسم الأول:',
         lastNameLabel: 'اسم العائلة:',
         quantityLabel: 'الكمية:',
       },
       computed: {
         title: '2. الإشارات المحسوبة: computed()',
-        description: 'اشتقاق قيم للقراءة فقط مخزنة مؤقتًا عند التغيير. تُقيّم بشكل كسول ولا يعاد حسابها إلا عند تغير تبعياتها.',
+        description:
+          'اشتقاق قيم للقراءة فقط مخزنة مؤقتًا عند التغيير. تُقيّم بشكل كسول ولا يعاد حسابها إلا عند تغير تبعياتها.',
         fullNameLabel: 'الاسم الكامل:',
         isStockLowLabel: 'هل المخزون منخفض؟',
         stockMessageLabel: 'رسالة المخزون:',
@@ -1113,13 +1264,16 @@ export const TIER3_COPY: Record<SiteLanguage, Tier3Copy> = {
       },
       effect: {
         title: '3. التأثيرات: effect()',
-        description: 'آثار جانبية تُجدول تلقائيًا كلما تغيرت الإشارات المتتبعة.',
+        description:
+          'آثار جانبية تُجدول تلقائيًا كلما تغيرت الإشارات المتتبعة.',
         auditTrailTitle: 'سجل تدقيق التأثيرات',
       },
       toSignal: {
         title: '4. تكامل RxJS: toSignal()',
-        description: 'يحوّل Observable في RxJS إلى إشارة تفاعلية للقراءة فقط مع تنظيف تلقائي للاشتراك.',
-        analogyText: 'الاشتراك في مجلة دورية (Observable): يتم وضع كل عدد جديد مباشرة في صندوق بريدك (Signal) ليكون جاهزًا للقراءة المتزامنة فورًا.',
+        description:
+          'يحوّل Observable في RxJS إلى إشارة تفاعلية للقراءة فقط مع تنظيف تلقائي للاشتراك.',
+        analogyText:
+          'الاشتراك في مجلة دورية (Observable): يتم وضع كل عدد جديد مباشرة في صندوق بريدك (Signal) ليكون جاهزًا للقراءة المتزامنة فورًا.',
         streamLabel: 'تدفق Observable لـ interval(1000) في RxJS',
         resultingSignalLabel: 'الإشارة الناتجة (counterSignal):',
         computedEvenLabel: 'محسوب من الإشارة (isEven):',
@@ -1128,9 +1282,11 @@ export const TIER3_COPY: Record<SiteLanguage, Tier3Copy> = {
       },
       linkedSignal: {
         title: '5. Angular 22: linkedSignal()',
-        description: 'إشارة قابلة للكتابة تعيد تعيين نفسها إلى قيمة افتراضية محسوبة كلما تغيرت تبعية المصدر، مع دعم التعديل المباشر.',
+        description:
+          'إشارة قابلة للكتابة تعيد تعيين نفسها إلى قيمة افتراضية محسوبة كلما تغيرت تبعية المصدر، مع دعم التعديل المباشر.',
         whyStrong: 'لماذا linkedSignal؟',
-        whyText: 'مع computed() تكون الحالة للقراءة فقط، ومع الإشارات المنفصلة والتأثيرات قد تحدث اختلالات تزامن. تحل linkedSignal() ذلك بأناقة.',
+        whyText:
+          'مع computed() تكون الحالة للقراءة فقط، ومع الإشارات المنفصلة والتأثيرات قد تحدث اختلالات تزامن. تحل linkedSignal() ذلك بأناقة.',
         choosePlanLabel: 'اختر فئة الخطة:',
         starterBtn: 'Starter (5)',
         proBtn: 'Pro (25)',
@@ -1142,9 +1298,11 @@ export const TIER3_COPY: Record<SiteLanguage, Tier3Copy> = {
       },
       rxResource: {
         title: '6. Angular 22: محمّل rxResource() غير المتزامن',
-        description: 'يربط تدفقات RxJS غير المتزامنة مباشرة بإشارات تصريحية مع مؤشرات التحميل والإلغاء وحدود الأخطاء.',
+        description:
+          'يربط تدفقات RxJS غير المتزامنة مباشرة بإشارات تصريحية مع مؤشرات التحميل والإلغاء وحدود الأخطاء.',
         zonelessStrong: 'البيانات غير المتزامنة بدون Zone.js:',
-        zonelessText: 'ينفذ rxResource() تدفق محمّل RxJS، ويوفر إشارات متزامنة لـ value() وisLoading() وstatus() بدون zone.js.',
+        zonelessText:
+          'ينفذ rxResource() تدفق محمّل RxJS، ويوفر إشارات متزامنة لـ value() وisLoading() وstatus() بدون zone.js.',
         selectUserIdLabel: 'اختر معرّف المستخدم:',
         userBtn: (id) => `المستخدم ${id}`,
         reloadStreamBtn: 'إعادة تحميل التدفق',
@@ -1152,16 +1310,19 @@ export const TIER3_COPY: Record<SiteLanguage, Tier3Copy> = {
       },
       resource: {
         title: '7. Angular 22: محمّل الوعود resource()',
-        description: 'محمّل غير متزامن يستخدم وعود async/await الأصلية مع دعم الإلغاء التلقائي عبر AbortSignal.',
+        description:
+          'محمّل غير متزامن يستخدم وعود async/await الأصلية مع دعم الإلغاء التلقائي عبر AbortSignal.',
         promisesStrong: 'الوعود الأصلية في وضع Zoneless:',
-        promisesText: 'بينما يغلف rxResource() تدفقات RxJS، يتصل resource() مباشرة بـ fetch() أو دوال async/await ويمرر AbortSignal للإلغاء التلقائي.',
+        promisesText:
+          'بينما يغلف rxResource() تدفقات RxJS، يتصل resource() مباشرة بـ fetch() أو دوال async/await ويمرر AbortSignal للإلغاء التلقائي.',
         selectTopicLabel: 'اختر موضوع البحث:',
         reloadBtn: 'إعادة تحميل',
         executingLoaderText: 'جارٍ تنفيذ المحمّل غير المتزامن...',
       },
       toObservable: {
         title: '7. التكامل ثنائي الاتجاه: toObservable() + toSignal()',
-        description: 'تمرير إشارة إدخال عبر معاملات RxJS الزمنية (مثل debounceTime) ثم إعادتها إلى إشارة.',
+        description:
+          'تمرير إشارة إدخال عبر معاملات RxJS الزمنية (مثل debounceTime) ثم إعادتها إلى إشارة.',
         typeToSearchLabel: 'اكتب للبحث (تأخير 350 مللي ثانية):',
         searchPlaceholder: 'اكتب عبارات البحث...',
         rawInputLabel: 'إشارة الإدخال الخام:',
@@ -1185,7 +1346,8 @@ export const TIER3_COPY: Record<SiteLanguage, Tier3Copy> = {
       coexistence: {
         title: 'الفلسفة المعمارية: "الأحداث داخلة، الحالة خارجة"',
         badge: 'الأساس الجوهري',
-        description: 'ليست Signals وRxJS متنافسين؛ بل يحلان مشكلتين مختلفتين جوهريًا في معمارية التطبيقات.',
+        description:
+          'ليست Signals وRxJS متنافسين؛ بل يحلان مشكلتين مختلفتين جوهريًا في معمارية التطبيقات.',
         step1Badge: '1. الأحداث داخلة (RxJS)',
         step1Title: 'التنسيق غير المتزامن',
         step1Items: [
@@ -1205,12 +1367,15 @@ export const TIER3_COPY: Record<SiteLanguage, Tier3Copy> = {
           'مدخلات ومخرجات الإشارات (input, output, model)',
         ],
         ruleStrong: 'القاعدة الذهبية الشاملة:',
-        ruleQuote: '"استخدم RxJS للأحداث عبر الزمن؛ واستخدم Signals للقيم عبر الزمن."',
-        ruleText: 'إذا كنت بحاجة إلى التحكم في الوقت أو الإلغاء أو التزامن، فاستخدم RxJS. وإذا كنت تحتفظ بحالة متزامنة أو تشتقها أو تعرضها في الواجهة، فاستخدم Signals.',
+        ruleQuote:
+          '"استخدم RxJS للأحداث عبر الزمن؛ واستخدم Signals للقيم عبر الزمن."',
+        ruleText:
+          'إذا كنت بحاجة إلى التحكم في الوقت أو الإلغاء أو التزامن، فاستخدم RxJS. وإذا كنت تحتفظ بحالة متزامنة أو تشتقها أو تعرضها في الواجهة، فاستخدم Signals.',
       },
       decisionMatrix: {
         title: 'مصفوفة القرار التفاعلية',
-        description: 'اختر متطلبًا شائعًا في بيئة الإنتاج لمقارنة نهج RxJS وSignals والنهج الهجين.',
+        description:
+          'اختر متطلبًا شائعًا في بيئة الإنتاج لمقارنة نهج RxJS وSignals والنهج الهجين.',
         categoryPrefix: 'الفئة:',
         recommendedPrefix: 'الموصى به:',
         rxjsApproachTitle: 'نهج RxJS',
@@ -1224,74 +1389,101 @@ export const TIER3_COPY: Record<SiteLanguage, Tier3Copy> = {
           title: 'الإكمال التلقائي للبحث (Typeahead)',
           category: 'Hybrid',
           winner: 'Hybrid (Both)',
-          summary: 'التعامل مع أحداث الكتابة غير المتزامنة مع التأخير والإلغاء، ثم عرض النتيجة في حالة واجهة متزامنة.',
-          rxjsApproach: 'searchInput$.pipe(debounceTime(300), distinctUntilChanged(), switchMap(q => api.search(q)))',
-          signalsApproach: 'لا تدعم الإشارات أصليًا التأخير الزمني (debouncing) بدون مؤقتات خارجية.',
-          hybridApproach: 'query = signal(""); query$ = toObservable(this.query); results = toSignal(this.query$.pipe(debounceTime(300), switchMap(q => api.search(q))), { initialValue: [] })',
-          ruleOfThumb: 'استخدم RxJS لتنسيق تدفق الأحداث غير المتزامنة عبر الزمن، ثم أنهِ بـ toSignal() لعرض سلس في القالب.',
+          summary:
+            'التعامل مع أحداث الكتابة غير المتزامنة مع التأخير والإلغاء، ثم عرض النتيجة في حالة واجهة متزامنة.',
+          rxjsApproach:
+            'searchInput$.pipe(debounceTime(300), distinctUntilChanged(), switchMap(q => api.search(q)))',
+          signalsApproach:
+            'لا تدعم الإشارات أصليًا التأخير الزمني (debouncing) بدون مؤقتات خارجية.',
+          hybridApproach:
+            'query = signal(""); query$ = toObservable(this.query); results = toSignal(this.query$.pipe(debounceTime(300), switchMap(q => api.search(q))), { initialValue: [] })',
+          ruleOfThumb:
+            'استخدم RxJS لتنسيق تدفق الأحداث غير المتزامنة عبر الزمن، ثم أنهِ بـ toSignal() لعرض سلس في القالب.',
         },
         {
           id: 'derived',
           title: 'إجمالي السلة وحسابات الأسعار',
           category: 'State',
           winner: 'Signals',
-          summary: 'اشتقاق حساب متزامن من عدة مصادر حالة (العناصر، الكمية، الخصم، الضريبة).',
-          rxjsApproach: 'combineLatest([items$, discount$, tax$]).pipe(map(...)) — يتطلب اشتراكًا وإدارة يدوية.',
-          signalsApproach: 'total = computed(() => calculate(this.items(), this.discount(), this.tax())) — تتبع ديناميكي تلقائي للتبعيات وبدون اشتراكات.',
-          hybridApproach: 'الإشارات النقية تفوز هنا بجدارة؛ لا حاجة لـ RxJS لاشتقاق الحالة المتزامنة في الذاكرة.',
-          ruleOfThumb: 'إذا كانت الحالة متزامنة في الذاكرة، ففضّل دائمًا signal() وcomputed().',
+          summary:
+            'اشتقاق حساب متزامن من عدة مصادر حالة (العناصر، الكمية، الخصم، الضريبة).',
+          rxjsApproach:
+            'combineLatest([items$, discount$, tax$]).pipe(map(...)) — يتطلب اشتراكًا وإدارة يدوية.',
+          signalsApproach:
+            'total = computed(() => calculate(this.items(), this.discount(), this.tax())) — تتبع ديناميكي تلقائي للتبعيات وبدون اشتراكات.',
+          hybridApproach:
+            'الإشارات النقية تفوز هنا بجدارة؛ لا حاجة لـ RxJS لاشتقاق الحالة المتزامنة في الذاكرة.',
+          ruleOfThumb:
+            'إذا كانت الحالة متزامنة في الذاكرة، ففضّل دائمًا signal() وcomputed().',
         },
         {
           id: 'websockets',
           title: 'اتصالات WebSockets والتدفقات الفورية',
           category: 'Events',
           winner: 'RxJS',
-          summary: 'تدفق مستمر من حزم الشبكة المدفوعة، وإعادة الاتصال التلقائي، وتصفية الرسائل.',
-          rxjsApproach: 'webSocket$.pipe(retry({ delay: 2000 }), filter(isRelevant), scan(accumulateFeed, [])) — صُمم RxJS خصيصًا للتدفقات المدفوعة عبر الزمن.',
-          signalsApproach: 'تمثل الإشارات أحدث قيمة منفصلة فقط ولا تنمذج طوابير الحزم المتعددة.',
-          hybridApproach: 'أدر دورة حياة الاتصال في RxJS، ثم اعرض النتيجة عبر feed = toSignal(feed$).',
-          ruleOfThumb: 'كلما تم دفع الأحداث عبر الزمن (مقابس الشبكة، ناقلات الرسائل)، فإن RxJS هو المعيار الذهبي.',
+          summary:
+            'تدفق مستمر من حزم الشبكة المدفوعة، وإعادة الاتصال التلقائي، وتصفية الرسائل.',
+          rxjsApproach:
+            'webSocket$.pipe(retry({ delay: 2000 }), filter(isRelevant), scan(accumulateFeed, [])) — صُمم RxJS خصيصًا للتدفقات المدفوعة عبر الزمن.',
+          signalsApproach:
+            'تمثل الإشارات أحدث قيمة منفصلة فقط ولا تنمذج طوابير الحزم المتعددة.',
+          hybridApproach:
+            'أدر دورة حياة الاتصال في RxJS، ثم اعرض النتيجة عبر feed = toSignal(feed$).',
+          ruleOfThumb:
+            'كلما تم دفع الأحداث عبر الزمن (مقابس الشبكة، ناقلات الرسائل)، فإن RxJS هو المعيار الذهبي.',
         },
         {
           id: 'spam-prevention',
           title: 'إرسال النماذج ومنع النقر المزدوج',
           category: 'Events',
           winner: 'RxJS',
-          summary: 'ضمان تجاهل النقرات المتكررة السريعة أثناء وجود طلب إرسال قيد التنفيذ.',
-          rxjsApproach: 'submitClick$.pipe(exhaustMap(() => authService.login(credentials))) — يتجاهل exhaustMap النقرات تلقائيًا أثناء نشاط الطلب الداخلي.',
-          signalsApproach: 'يتطلب إدارة يدوية لمتغير حالة isSubmitting مع كتل try/finally.',
+          summary:
+            'ضمان تجاهل النقرات المتكررة السريعة أثناء وجود طلب إرسال قيد التنفيذ.',
+          rxjsApproach:
+            'submitClick$.pipe(exhaustMap(() => authService.login(credentials))) — يتجاهل exhaustMap النقرات تلقائيًا أثناء نشاط الطلب الداخلي.',
+          signalsApproach:
+            'يتطلب إدارة يدوية لمتغير حالة isSubmitting مع كتل try/finally.',
           hybridApproach: 'استخدم exhaustMap أو موردًا مع تعطيل زر الإرسال.',
-          ruleOfThumb: 'استخدم exhaustMap عندما يتطلب التزامن تجاهل المشغّلات الواردة أثناء عملية غير متزامنة نشطة.',
+          ruleOfThumb:
+            'استخدم exhaustMap عندما يتطلب التزامن تجاهل المشغّلات الواردة أثناء عملية غير متزامنة نشطة.',
         },
         {
           id: 'dependent-reset',
           title: 'إعادة تعيين الحالة التابعة (Master-Detail)',
           category: 'State',
           winner: 'Signals',
-          summary: 'تغيير الفئة الأب يعيد تعيين العنصر المحدد إلى الافتراضي، مع السماح للمستخدم بالاختيار.',
+          summary:
+            'تغيير الفئة الأب يعيد تعيين العنصر المحدد إلى الافتراضي، مع السماح للمستخدم بالاختيار.',
           rxjsApproach: 'كان يتطلب سابقًا Subjects متداخلة أو switchMap معقدة.',
-          signalsApproach: 'selectedItem = linkedSignal({ source: () => this.category(), computation: (cat) => cat.defaultItem }) — يعيد التعيين تلقائيًا مع بقائه قابلاً للكتابة!',
-          hybridApproach: 'دالة linkedSignal() في Angular 22 هي أنظف نمط لهذا السيناريو.',
-          ruleOfThumb: 'استخدم linkedSignal() للحالة المحلية القابلة للكتابة التي يجب أن تظل متزامنة مع تبعية مصدر.',
+          signalsApproach:
+            'selectedItem = linkedSignal({ source: () => this.category(), computation: (cat) => cat.defaultItem }) — يعيد التعيين تلقائيًا مع بقائه قابلاً للكتابة!',
+          hybridApproach:
+            'دالة linkedSignal() في Angular 22 هي أنظف نمط لهذا السيناريو.',
+          ruleOfThumb:
+            'استخدم linkedSignal() للحالة المحلية القابلة للكتابة التي يجب أن تظل متزامنة مع تبعية مصدر.',
         },
       ],
       derivedState: {
         title: 'بيئة تفاعلية: الحالة المشتقة (combineLatest مقابل computed)',
-        description: 'اشتقاق إجمالي متزامن من السعر الأساسي والخصم ونسبة الضريبة. قارن بساطة Signals مقابل أنابيب التدفقات.',
+        description:
+          'اشتقاق إجمالي متزامن من السعر الأساسي والخصم ونسبة الضريبة. قارن بساطة Signals مقابل أنابيب التدفقات.',
         basePriceLabel: 'السعر الأساسي ($):',
         discountLabel: 'الخصم ($):',
         taxRateLabel: 'نسبة الضريبة (20%):',
         fixed20Badge: '20% ثابتة',
         signalsComputedLabel: 'الإشارات (computed)',
         syncPullBadge: 'سحب متزامن',
-        signalsNote: 'تقييم كسول، خالٍ من الاختلالات، مخزن مؤقتًا، ولا يتطلب إلغاء اشتراك.',
+        signalsNote:
+          'تقييم كسول، خالٍ من الاختلالات، مخزن مؤقتًا، ولا يتطلب إلغاء اشتراك.',
         rxjsCombineLabel: 'RxJS (combineLatest)',
         pushStreamBadge: 'تدفق دفع',
-        rxjsNote: 'يتطلب 3 BehaviorSubjects وcombineLatest وmap وtoSignal أو أنبوب async.',
+        rxjsNote:
+          'يتطلب 3 BehaviorSubjects وcombineLatest وmap وtoSignal أو أنبوب async.',
       },
       searchDebounce: {
         title: 'بيئة تفاعلية: البحث المؤجل زمنيًا (تكامل هجين)',
-        description: 'ليس لدى الإشارات مفهوم أصلي للتأخير الزمني. نستخدم toObservable() للاستفادة من معاملات الوقت في RxJS ثم نخزن النتيجة في إشارة عبر toSignal().',
+        description:
+          'ليس لدى الإشارات مفهوم أصلي للتأخير الزمني. نستخدم toObservable() للاستفادة من معاملات الوقت في RxJS ثم نخزن النتيجة في إشارة عبر toSignal().',
         inputLabel: 'اكتب بسرعة لملاحظة التأخير الزمني (400 مللي ثانية):',
         inputPlaceholder: 'اكتب استعلام البحث...',
         rawSignalLabel: 'إشارة الكتابة الخام (فورية):',
@@ -1299,7 +1491,8 @@ export const TIER3_COPY: Record<SiteLanguage, Tier3Copy> = {
       },
       asyncResource: {
         title: 'بيئة تفاعلية: البيانات غير المتزامنة باستخدام rxResource()',
-        description: 'يقدم Angular 22 دالتي resource() وrxResource() لتوحيد جلب البيانات غير المتزامنة مع الإشارات وإدارة التحميل والإلغاء تلقائيًا.',
+        description:
+          'يقدم Angular 22 دالتي resource() وrxResource() لتوحيد جلب البيانات غير المتزامنة مع الإشارات وإدارة التحميل والإلغاء تلقائيًا.',
         selectLocationLabel: 'اختر الموقع:',
         parisBtn: 'باريس',
         tokyoBtn: 'طوكيو',
@@ -1310,7 +1503,8 @@ export const TIER3_COPY: Record<SiteLanguage, Tier3Copy> = {
       },
       linkedState: {
         title: 'بيئة تفاعلية: الحالة التابعة باستخدام linkedSignal()',
-        description: 'في تطبيقات Angular، يُعد إعادة تعيين حالة الابن عند تغير حالة الأب تحديًا كلاسيكيًا. توفر linkedSignal() إشارة قابلة للكتابة تعيد تعيين نفسها تلقائيًا.',
+        description:
+          'في تطبيقات Angular، يُعد إعادة تعيين حالة الابن عند تغير حالة الأب تحديًا كلاسيكيًا. توفر linkedSignal() إشارة قابلة للكتابة تعيد تعيين نفسها تلقائيًا.',
         selectPlanLabel: 'اختر فئة الخطة (حالة الأب):',
         basicBtn: 'Basic (20GB)',
         proBtn: 'Pro (100GB)',
@@ -1328,15 +1522,18 @@ export const TIER3_COPY: Record<SiteLanguage, Tier3Copy> = {
       tracks: {
         beginnerTitle: 'مبتدئ',
         beginnerBadge: 'الأساسيات',
-        beginnerDesc: 'الـ Observables والمعاملات الأساسية ومشاركة البيانات الأولية.',
+        beginnerDesc:
+          'الـ Observables والمعاملات الأساسية ومشاركة البيانات الأولية.',
         beginnerBtn: 'بدء مسار المبتدئين',
         midTitle: 'متوسط',
         midBadge: 'المعاملات والـ Subjects',
-        midDesc: 'التحويل عالي الرتبة، والبث المتعدد، والتخزين المؤقت، والدفعات.',
+        midDesc:
+          'التحويل عالي الرتبة، والبث المتعدد، والتخزين المؤقت، والدفعات.',
         midBtn: 'بدء المسار المتوسط',
         seniorTitle: 'متقدم (Senior)',
         seniorBadge: 'المعمارية والتكامل',
-        seniorDesc: 'التنفيذ بدون Zone، وlinkedSignal، وrxResource، والحالات الدقيقة.',
+        seniorDesc:
+          'التنفيذ بدون Zone، وlinkedSignal، وrxResource، والحالات الدقيقة.',
         seniorBtn: 'بدء المسار المتقدم',
       },
       questionProgress: (current, total) => `السؤال ${current} من ${total}`,
@@ -1429,7 +1626,12 @@ export const TIER3_COPY: Record<SiteLanguage, Tier3Copy> = {
           type: 'multiple-choice',
           difficulty: 'Mid-level',
           text: 'أي Subject هو الأفضل لتخزين حالة مصادقة المستخدم بحيث تتمكن المكوّنات الجديدة من قراءتها فور إنشائها؟',
-          options: ['Subject', 'AsyncSubject', 'BehaviorSubject', 'ReplaySubject'],
+          options: [
+            'Subject',
+            'AsyncSubject',
+            'BehaviorSubject',
+            'ReplaySubject',
+          ],
           answer: 'BehaviorSubject',
           relatedRoute: '/multicasting',
         },
@@ -1456,7 +1658,12 @@ export const TIER3_COPY: Record<SiteLanguage, Tier3Copy> = {
           type: 'multiple-choice',
           difficulty: 'Senior',
           text: 'أي نوع Subject يمنح المشترك الجديد آخر 3 قيم تم إصدارها؟',
-          options: ['Subject', 'AsyncSubject', 'BehaviorSubject(3)', 'ReplaySubject(3)'],
+          options: [
+            'Subject',
+            'AsyncSubject',
+            'BehaviorSubject(3)',
+            'ReplaySubject(3)',
+          ],
           answer: 'ReplaySubject(3)',
           relatedRoute: '/multicasting',
         },
@@ -1500,7 +1707,12 @@ export const TIER3_COPY: Record<SiteLanguage, Tier3Copy> = {
           type: 'multiple-choice',
           difficulty: 'Senior',
           text: 'في Angular 22، أي دالة من @angular/core/rxjs-interop تحمّل البيانات غير المتزامنة من تدفق RxJS إلى إشارات تصريحية؟',
-          options: ['toSignal()', 'rxResource()', 'toObservable()', 'outputFromObservable()'],
+          options: [
+            'toSignal()',
+            'rxResource()',
+            'toObservable()',
+            'outputFromObservable()',
+          ],
           answer: 'rxResource()',
           relatedRoute: '/signals',
         },
@@ -1526,29 +1738,35 @@ export const TIER3_COPY: Record<SiteLanguage, Tier3Copy> = {
       statusPrefix: 'Stato:',
       writable: {
         title: '1. Signal scrivibili: signal()',
-        description: 'Le fonti di verità fondamentali in Angular moderno. Mutano direttamente lo stato e notificano le dipendenze a grana fine.',
+        description:
+          'Le fonti di verità fondamentali in Angular moderno. Mutano direttamente lo stato e notificano le dipendenze a grana fine.',
         firstNameLabel: 'Nome:',
         lastNameLabel: 'Cognome:',
         quantityLabel: 'Quantità:',
       },
       computed: {
         title: '2. Signal calcolati: computed()',
-        description: 'Derivano valori in sola lettura memoizzati al cambiamento. Valutati in modo pigro e ricalcolati solo quando cambiano le dipendenze.',
+        description:
+          'Derivano valori in sola lettura memoizzati al cambiamento. Valutati in modo pigro e ricalcolati solo quando cambiano le dipendenze.',
         fullNameLabel: 'Nome completo:',
         isStockLowLabel: 'Scorte in esaurimento?',
         stockMessageLabel: 'Messaggio scorte:',
-        lowStockMsg: (qty) => `Solo ${qty} rimasti in magazzino - ordina presto!`,
+        lowStockMsg: (qty) =>
+          `Solo ${qty} rimasti in magazzino - ordina presto!`,
         inStockMsg: (qty) => `${qty} disponibili.`,
       },
       effect: {
         title: '3. Effetti: effect()',
-        description: 'Effetti collaterali pianificati ogni volta che i signal tracciati cambiano.',
+        description:
+          'Effetti collaterali pianificati ogni volta che i signal tracciati cambiano.',
         auditTrailTitle: 'Registro di audit degli effetti',
       },
       toSignal: {
         title: '4. Interoperabilità RxJS: toSignal()',
-        description: 'Converte un Observable RxJS in un Signal reattivo in sola lettura con pulizia automatica della sottoscrizione.',
-        analogyText: 'Abbonarsi a una rivista (Observable): ogni nuova uscita viene depositata nella cassetta della posta (Signal), pronta per essere letta in modo sincrono.',
+        description:
+          'Converte un Observable RxJS in un Signal reattivo in sola lettura con pulizia automatica della sottoscrizione.',
+        analogyText:
+          'Abbonarsi a una rivista (Observable): ogni nuova uscita viene depositata nella cassetta della posta (Signal), pronta per essere letta in modo sincrono.',
         streamLabel: 'Flusso Observable RxJS interval(1000)',
         resultingSignalLabel: 'Signal risultante (counterSignal):',
         computedEvenLabel: 'Calcolato dal Signal (isEven):',
@@ -1557,9 +1775,11 @@ export const TIER3_COPY: Record<SiteLanguage, Tier3Copy> = {
       },
       linkedSignal: {
         title: '5. Angular 22: linkedSignal()',
-        description: 'Un signal scrivibile che si ripristina a un valore predefinito calcolato quando cambia la sua dipendenza sorgente, pur supportando modifiche dirette.',
+        description:
+          'Un signal scrivibile che si ripristina a un valore predefinito calcolato quando cambia la sua dipendenza sorgente, pur supportando modifiche dirette.',
         whyStrong: 'Perché linkedSignal?',
-        whyText: 'Con computed() lo stato è di sola lettura. Con signal separati ed effect la sincronizzazione è soggetta a glitch. linkedSignal() risolve il problema in modo pulito.',
+        whyText:
+          'Con computed() lo stato è di sola lettura. Con signal separati ed effect la sincronizzazione è soggetta a glitch. linkedSignal() risolve il problema in modo pulito.',
         choosePlanLabel: 'Scegli il piano:',
         starterBtn: 'Starter (5)',
         proBtn: 'Pro (25)',
@@ -1571,9 +1791,11 @@ export const TIER3_COPY: Record<SiteLanguage, Tier3Copy> = {
       },
       rxResource: {
         title: '6. Angular 22: Loader asincrono rxResource()',
-        description: 'Collega flussi RxJS asincroni direttamente in Signal dichiarativi con stati di caricamento, cancellazione e gestione errori.',
+        description:
+          'Collega flussi RxJS asincroni direttamente in Signal dichiarativi con stati di caricamento, cancellazione e gestione errori.',
         zonelessStrong: 'Dati asincroni in Angular Zoneless:',
-        zonelessText: 'rxResource() esegue un flusso loader RxJS esponendo signal sincroni per value(), isLoading() e status() senza zone.js.',
+        zonelessText:
+          'rxResource() esegue un flusso loader RxJS esponendo signal sincroni per value(), isLoading() e status() senza zone.js.',
         selectUserIdLabel: 'Seleziona ID Utente:',
         userBtn: (id) => `Utente ${id}`,
         reloadStreamBtn: 'Ricarica flusso',
@@ -1581,16 +1803,19 @@ export const TIER3_COPY: Record<SiteLanguage, Tier3Copy> = {
       },
       resource: {
         title: '7. Angular 22: Loader Promise resource()',
-        description: 'Loader asincrono basato su Promise async/await native con supporto automatico di cancellazione tramite AbortSignal.',
+        description:
+          'Loader asincrono basato su Promise async/await native con supporto automatico di cancellazione tramite AbortSignal.',
         promisesStrong: 'Promise native in modalità Zoneless:',
-        promisesText: 'Mentre rxResource() incapsula Observable RxJS, resource() si collega direttamente a fetch() o funzioni async/await passando un AbortSignal.',
+        promisesText:
+          'Mentre rxResource() incapsula Observable RxJS, resource() si collega direttamente a fetch() o funzioni async/await passando un AbortSignal.',
         selectTopicLabel: 'Seleziona argomento:',
         reloadBtn: 'Ricarica',
         executingLoaderText: 'Esecuzione loader asincrono...',
       },
       toObservable: {
         title: '7. Interoperabilità bidirezionale: toObservable() + toSignal()',
-        description: 'Un Signal di input passato attraverso operatori RxJS (come debounceTime) e poi riconvertito in Signal.',
+        description:
+          'Un Signal di input passato attraverso operatori RxJS (come debounceTime) e poi riconvertito in Signal.',
         typeToSearchLabel: 'Digita per cercare (debounce 350ms):',
         searchPlaceholder: 'Digita termini di ricerca...',
         rawInputLabel: 'Signal di input grezzo:',
@@ -1612,9 +1837,11 @@ export const TIER3_COPY: Record<SiteLanguage, Tier3Copy> = {
         coexistence: 'Filosofia di coesistenza',
       },
       coexistence: {
-        title: 'Filosofia architetturale: "Eventi in ingresso, Stato in uscita"',
+        title:
+          'Filosofia architetturale: "Eventi in ingresso, Stato in uscita"',
         badge: 'Fondamento chiave',
-        description: 'Signals e RxJS non sono rivali: risolvono problemi fondamentalmente diversi nell’architettura delle applicazioni.',
+        description:
+          'Signals e RxJS non sono rivali: risolvono problemi fondamentalmente diversi nell’architettura delle applicazioni.',
         step1Badge: '1. Eventi in ingresso (RxJS)',
         step1Title: 'Coordinamento asincrono',
         step1Items: [
@@ -1634,12 +1861,15 @@ export const TIER3_COPY: Record<SiteLanguage, Tier3Copy> = {
           'I/O reattivo (input, output, model)',
         ],
         ruleStrong: 'La regola d’oro universale:',
-        ruleQuote: '"Usa RxJS per gli eventi nel tempo; usa i Signals per i valori nel tempo."',
-        ruleText: 'Se hai bisogno di tempo, cancellazione o controllo della concorrenza, scegli RxJS. Se stai mantenendo, derivando o mostrando stato UI sincrono, scegli i Signals.',
+        ruleQuote:
+          '"Usa RxJS per gli eventi nel tempo; usa i Signals per i valori nel tempo."',
+        ruleText:
+          'Se hai bisogno di tempo, cancellazione o controllo della concorrenza, scegli RxJS. Se stai mantenendo, derivando o mostrando stato UI sincrono, scegli i Signals.',
       },
       decisionMatrix: {
         title: 'Matrice decisionale interattiva',
-        description: 'Seleziona un requisito comune in produzione per confrontare gli approcci RxJS, Signals e Ibrido.',
+        description:
+          'Seleziona un requisito comune in produzione per confrontare gli approcci RxJS, Signals e Ibrido.',
         categoryPrefix: 'Categoria:',
         recommendedPrefix: 'Consigliato:',
         rxjsApproachTitle: 'Approccio RxJS',
@@ -1653,74 +1883,103 @@ export const TIER3_COPY: Record<SiteLanguage, Tier3Copy> = {
           title: 'Typeahead / Autocompletamento ricerca',
           category: 'Hybrid',
           winner: 'Hybrid (Both)',
-          summary: 'Gestire eventi di digitazione asincroni con debounce e cancellazione, proiettando il risultato nello stato UI sincrono.',
-          rxjsApproach: 'searchInput$.pipe(debounceTime(300), distinctUntilChanged(), switchMap(q => api.search(q)))',
-          signalsApproach: 'I Signals non supportano nativamente throttling o debouncing temporale senza timer esterni.',
-          hybridApproach: 'query = signal(""); query$ = toObservable(this.query); results = toSignal(this.query$.pipe(debounceTime(300), switchMap(q => api.search(q))), { initialValue: [] })',
-          ruleOfThumb: 'Usa RxJS per coordinare il flusso di eventi asincroni nel tempo, poi termina con toSignal() per il template.',
+          summary:
+            'Gestire eventi di digitazione asincroni con debounce e cancellazione, proiettando il risultato nello stato UI sincrono.',
+          rxjsApproach:
+            'searchInput$.pipe(debounceTime(300), distinctUntilChanged(), switchMap(q => api.search(q)))',
+          signalsApproach:
+            'I Signals non supportano nativamente throttling o debouncing temporale senza timer esterni.',
+          hybridApproach:
+            'query = signal(""); query$ = toObservable(this.query); results = toSignal(this.query$.pipe(debounceTime(300), switchMap(q => api.search(q))), { initialValue: [] })',
+          ruleOfThumb:
+            'Usa RxJS per coordinare il flusso di eventi asincroni nel tempo, poi termina con toSignal() per il template.',
         },
         {
           id: 'derived',
           title: 'Totale carrello e calcoli di prezzo',
           category: 'State',
           winner: 'Signals',
-          summary: 'Derivare calcoli sincroni da più sorgenti di stato (articoli, quantità, sconto, tasse).',
-          rxjsApproach: 'combineLatest([items$, discount$, tax$]).pipe(map(...)) — richiede sottoscrizione e gestione manuale.',
-          signalsApproach: 'total = computed(() => calculate(this.items(), this.discount(), this.tax())) — tracciamento automatico delle dipendenze, pull sincrono, zero leak.',
-          hybridApproach: 'I puri Signals vincono nettamente qui. Nessun bisogno di RxJS per derivazioni sincrone in memoria.',
-          ruleOfThumb: 'Se lo stato è sincrono in memoria, preferisci sempre signal() e computed().',
+          summary:
+            'Derivare calcoli sincroni da più sorgenti di stato (articoli, quantità, sconto, tasse).',
+          rxjsApproach:
+            'combineLatest([items$, discount$, tax$]).pipe(map(...)) — richiede sottoscrizione e gestione manuale.',
+          signalsApproach:
+            'total = computed(() => calculate(this.items(), this.discount(), this.tax())) — tracciamento automatico delle dipendenze, pull sincrono, zero leak.',
+          hybridApproach:
+            'I puri Signals vincono nettamente qui. Nessun bisogno di RxJS per derivazioni sincrone in memoria.',
+          ruleOfThumb:
+            'Se lo stato è sincrono in memoria, preferisci sempre signal() e computed().',
         },
         {
           id: 'websockets',
           title: 'WebSocket in tempo reale e feed di eventi',
           category: 'Events',
           winner: 'RxJS',
-          summary: 'Flusso continuo di pacchetti di rete push, backoff di riconnessione, heartbeat e filtraggio messaggi.',
-          rxjsApproach: 'webSocket$.pipe(retry({ delay: 2000 }), filter(isRelevant), scan(accumulateFeed, [])) — RxJS è progettato per flussi push nel tempo.',
-          signalsApproach: 'I Signals rappresentano solo l’ultimo valore discreto e non modellano code di pacchetti multi-emissione.',
-          hybridApproach: 'Gestisci il ciclo di vita del socket in RxJS, poi esponi feed = toSignal(feed$) per il template.',
-          ruleOfThumb: 'Ogni volta che gli eventi vengono inviati nel tempo (socket, message bus), RxJS è lo standard di riferimento.',
+          summary:
+            'Flusso continuo di pacchetti di rete push, backoff di riconnessione, heartbeat e filtraggio messaggi.',
+          rxjsApproach:
+            'webSocket$.pipe(retry({ delay: 2000 }), filter(isRelevant), scan(accumulateFeed, [])) — RxJS è progettato per flussi push nel tempo.',
+          signalsApproach:
+            'I Signals rappresentano solo l’ultimo valore discreto e non modellano code di pacchetti multi-emissione.',
+          hybridApproach:
+            'Gestisci il ciclo di vita del socket in RxJS, poi esponi feed = toSignal(feed$) per il template.',
+          ruleOfThumb:
+            'Ogni volta che gli eventi vengono inviati nel tempo (socket, message bus), RxJS è lo standard di riferimento.',
         },
         {
           id: 'spam-prevention',
           title: 'Invio form e prevenzione doppio clic',
           category: 'Events',
           winner: 'RxJS',
-          summary: 'Garantire che un invio in corso blocchi i clic duplicati rapidi finché il backend non risponde.',
-          rxjsApproach: 'submitClick$.pipe(exhaustMap(() => authService.login(credentials))) — exhaustMap scarta automaticamente i clic mentre la richiesta è attiva.',
-          signalsApproach: 'Richiede gestione manuale di flag booleani isSubmitting con blocchi try/finally.',
-          hybridApproach: 'Usa exhaustMap oppure una resource con pulsante disabilitato.',
-          ruleOfThumb: 'Usa exhaustMap quando la concorrenza richiede di ignorare nuovi trigger durante un’operazione asincrona attiva.',
+          summary:
+            'Garantire che un invio in corso blocchi i clic duplicati rapidi finché il backend non risponde.',
+          rxjsApproach:
+            'submitClick$.pipe(exhaustMap(() => authService.login(credentials))) — exhaustMap scarta automaticamente i clic mentre la richiesta è attiva.',
+          signalsApproach:
+            'Richiede gestione manuale di flag booleani isSubmitting con blocchi try/finally.',
+          hybridApproach:
+            'Usa exhaustMap oppure una resource con pulsante disabilitato.',
+          ruleOfThumb:
+            'Usa exhaustMap quando la concorrenza richiede di ignorare nuovi trigger durante un’operazione asincrona attiva.',
         },
         {
           id: 'dependent-reset',
           title: 'Reset dello stato dipendente (Master-Detail)',
           category: 'State',
           winner: 'Signals',
-          summary: 'Cambiare una categoria padre ripristina l’elemento selezionato al valore predefinito, consentendo comunque la selezione manuale.',
-          rxjsApproach: 'Storicamente richiedeva Subject annidati o complessi reset con switchMap.',
-          signalsApproach: 'selectedItem = linkedSignal({ source: () => this.category(), computation: (cat) => cat.defaultItem }) — si ripristina automaticamente restando scrivibile!',
-          hybridApproach: 'linkedSignal() di Angular 22 è il pattern più pulito dell’intero ecosistema frontend.',
-          ruleOfThumb: 'Usa linkedSignal() per uno stato locale scrivibile che deve restare sincronizzato con una dipendenza sorgente.',
+          summary:
+            'Cambiare una categoria padre ripristina l’elemento selezionato al valore predefinito, consentendo comunque la selezione manuale.',
+          rxjsApproach:
+            'Storicamente richiedeva Subject annidati o complessi reset con switchMap.',
+          signalsApproach:
+            'selectedItem = linkedSignal({ source: () => this.category(), computation: (cat) => cat.defaultItem }) — si ripristina automaticamente restando scrivibile!',
+          hybridApproach:
+            'linkedSignal() di Angular 22 è il pattern più pulito dell’intero ecosistema frontend.',
+          ruleOfThumb:
+            'Usa linkedSignal() per uno stato locale scrivibile che deve restare sincronizzato con una dipendenza sorgente.',
         },
       ],
       derivedState: {
         title: 'Sandbox live: Stato derivato (combineLatest vs computed)',
-        description: 'Derivare un totale sincrono da prezzo base, sconto e aliquota fiscale. Confronta l’ergonomia dei Signals rispetto alle pipe RxJS.',
+        description:
+          'Derivare un totale sincrono da prezzo base, sconto e aliquota fiscale. Confronta l’ergonomia dei Signals rispetto alle pipe RxJS.',
         basePriceLabel: 'Prezzo base ($):',
         discountLabel: 'Sconto ($):',
         taxRateLabel: 'Aliquota IVA (20%):',
         fixed20Badge: '20% Fisso',
         signalsComputedLabel: 'Signals (computed)',
         syncPullBadge: 'Pull sincrono',
-        signalsNote: 'Valutato pigramente, glitch-free, memoizzato, nessuna pulizia di sottoscrizione richiesta.',
+        signalsNote:
+          'Valutato pigramente, glitch-free, memoizzato, nessuna pulizia di sottoscrizione richiesta.',
         rxjsCombineLabel: 'RxJS (combineLatest)',
         pushStreamBadge: 'Flusso Push',
-        rxjsNote: 'Richiede 3 BehaviorSubject, combineLatest, map pipe e toSignal o async pipe.',
+        rxjsNote:
+          'Richiede 3 BehaviorSubject, combineLatest, map pipe e toSignal o async pipe.',
       },
       searchDebounce: {
         title: 'Sandbox live: Ricerca temporizzata (Interop ibrida)',
-        description: 'I Signals non hanno un concetto nativo di ritardo temporale. Usiamo toObservable() per gli operatori temporali RxJS e poi toSignal().',
+        description:
+          'I Signals non hanno un concetto nativo di ritardo temporale. Usiamo toObservable() per gli operatori temporali RxJS e poi toSignal().',
         inputLabel: 'Digita rapidamente per osservare il debounce (400ms):',
         inputPlaceholder: 'Digita query...',
         rawSignalLabel: 'Signal digitazione grezzo (Immediato):',
@@ -1728,7 +1987,8 @@ export const TIER3_COPY: Record<SiteLanguage, Tier3Copy> = {
       },
       asyncResource: {
         title: 'Sandbox live: Dati asincroni con rxResource()',
-        description: 'Angular 22 introduce resource() e rxResource() per unificare il caricamento dati asincrono con i signal, gestendo loading e cancellazione.',
+        description:
+          'Angular 22 introduce resource() e rxResource() per unificare il caricamento dati asincrono con i signal, gestendo loading e cancellazione.',
         selectLocationLabel: 'Seleziona località:',
         parisBtn: 'Parigi',
         tokyoBtn: 'Tokyo',
@@ -1739,7 +1999,8 @@ export const TIER3_COPY: Record<SiteLanguage, Tier3Copy> = {
       },
       linkedState: {
         title: 'Sandbox live: Stato dipendente con linkedSignal()',
-        description: 'Un bug classico è reimpostare lo stato figlio quando cambia lo stato padre. linkedSignal() di Angular 22 fornisce un signal scrivibile auto-ripristinante.',
+        description:
+          'Un bug classico è reimpostare lo stato figlio quando cambia lo stato padre. linkedSignal() di Angular 22 fornisce un signal scrivibile auto-ripristinante.',
         selectPlanLabel: 'Seleziona piano (Stato padre):',
         basicBtn: 'Basic (20GB)',
         proBtn: 'Pro (100GB)',
@@ -1757,15 +2018,18 @@ export const TIER3_COPY: Record<SiteLanguage, Tier3Copy> = {
       tracks: {
         beginnerTitle: 'Principiante',
         beginnerBadge: 'Fondamentali',
-        beginnerDesc: 'Observable, operatori di base e condivisione dati primaria.',
+        beginnerDesc:
+          'Observable, operatori di base e condivisione dati primaria.',
         beginnerBtn: 'Avvia percorso Principiante',
         midTitle: 'Intermedio',
         midBadge: 'Operatori & Subject',
-        midDesc: 'Mappatura di ordine superiore, multicasting, caching e batching.',
+        midDesc:
+          'Mappatura di ordine superiore, multicasting, caching e batching.',
         midBtn: 'Avvia percorso Intermedio',
         seniorTitle: 'Senior',
         seniorBadge: 'Architettura & Interop',
-        seniorDesc: 'Esecuzione zoneless, linkedSignal, rxResource e casi limite.',
+        seniorDesc:
+          'Esecuzione zoneless, linkedSignal, rxResource e casi limite.',
         seniorBtn: 'Avvia percorso Senior',
       },
       questionProgress: (current, total) => `Domanda ${current} di ${total}`,
@@ -1814,7 +2078,12 @@ export const TIER3_COPY: Record<SiteLanguage, Tier3Copy> = {
           type: 'multiple-choice',
           difficulty: 'Beginner',
           text: 'Cosa indica tradizionalmente il suffisso `$` nel nome di una variabile in RxJS?',
-          options: ['Un Subject', 'Un valore finale', 'Un Observable', 'Una proprietà privata'],
+          options: [
+            'Un Subject',
+            'Un valore finale',
+            'Un Observable',
+            'Una proprietà privata',
+          ],
           answer: 'Un Observable',
           relatedRoute: '/multicasting',
         },
@@ -1858,7 +2127,12 @@ export const TIER3_COPY: Record<SiteLanguage, Tier3Copy> = {
           type: 'multiple-choice',
           difficulty: 'Mid-level',
           text: 'Quale Subject è più adatto per memorizzare lo stato di autenticazione di un utente che i nuovi componenti devono leggere alla creazione?',
-          options: ['Subject', 'AsyncSubject', 'BehaviorSubject', 'ReplaySubject'],
+          options: [
+            'Subject',
+            'AsyncSubject',
+            'BehaviorSubject',
+            'ReplaySubject',
+          ],
           answer: 'BehaviorSubject',
           relatedRoute: '/multicasting',
         },
@@ -1885,7 +2159,12 @@ export const TIER3_COPY: Record<SiteLanguage, Tier3Copy> = {
           type: 'multiple-choice',
           difficulty: 'Senior',
           text: 'Quale tipo di Subject fornirà a un nuovo sottoscrittore gli ultimi 3 valori emessi?',
-          options: ['Subject', 'AsyncSubject', 'BehaviorSubject(3)', 'ReplaySubject(3)'],
+          options: [
+            'Subject',
+            'AsyncSubject',
+            'BehaviorSubject(3)',
+            'ReplaySubject(3)',
+          ],
           answer: 'ReplaySubject(3)',
           relatedRoute: '/multicasting',
         },
@@ -1911,7 +2190,12 @@ export const TIER3_COPY: Record<SiteLanguage, Tier3Copy> = {
           type: 'multiple-choice',
           difficulty: 'Senior',
           text: 'Nel marble testing di RxJS, cosa indica il carattere `|`?',
-          options: ['Un errore', 'Un’emissione di valore', 'Il completamento del flusso', 'Un punto di sottoscrizione'],
+          options: [
+            'Un errore',
+            'Un’emissione di valore',
+            'Il completamento del flusso',
+            'Un punto di sottoscrizione',
+          ],
           answer: 'Il completamento del flusso',
           relatedRoute: '/multicasting',
         },
@@ -1929,7 +2213,12 @@ export const TIER3_COPY: Record<SiteLanguage, Tier3Copy> = {
           type: 'multiple-choice',
           difficulty: 'Senior',
           text: 'In Angular 22, quale funzione di @angular/core/rxjs-interop carica dati asincroni da un flusso RxJS in signal dichiarativi?',
-          options: ['toSignal()', 'rxResource()', 'toObservable()', 'outputFromObservable()'],
+          options: [
+            'toSignal()',
+            'rxResource()',
+            'toObservable()',
+            'outputFromObservable()',
+          ],
           answer: 'rxResource()',
           relatedRoute: '/signals',
         },
@@ -1955,14 +2244,16 @@ export const TIER3_COPY: Record<SiteLanguage, Tier3Copy> = {
       statusPrefix: 'Status:',
       writable: {
         title: '1. Beschreibbare Signals: signal()',
-        description: 'Die grundlegenden „Sources of Truth“ in modernem Angular. Mutieren Zustand direkt und benachrichtigen feingranulare Abhängigkeiten.',
+        description:
+          'Die grundlegenden „Sources of Truth“ in modernem Angular. Mutieren Zustand direkt und benachrichtigen feingranulare Abhängigkeiten.',
         firstNameLabel: 'Vorname:',
         lastNameLabel: 'Nachname:',
         quantityLabel: 'Menge:',
       },
       computed: {
         title: '2. Berechnete Signals: computed()',
-        description: 'Leiten schreibgeschützte, memoisierte Werte ab. Werden verzögert (lazy) ausgewertet und nur bei Änderung ihrer Abhängigkeiten neu berechnet.',
+        description:
+          'Leiten schreibgeschützte, memoisierte Werte ab. Werden verzögert (lazy) ausgewertet und nur bei Änderung ihrer Abhängigkeiten neu berechnet.',
         fullNameLabel: 'Vollständiger Name:',
         isStockLowLabel: 'Niedriger Lagerbestand?',
         stockMessageLabel: 'Bestandsmeldung:',
@@ -1971,13 +2262,16 @@ export const TIER3_COPY: Record<SiteLanguage, Tier3Copy> = {
       },
       effect: {
         title: '3. Effekte: effect()',
-        description: 'Seiteneffekte, die ausgeführt werden, sobald sich überwachte Signals ändern.',
+        description:
+          'Seiteneffekte, die ausgeführt werden, sobald sich überwachte Signals ändern.',
         auditTrailTitle: 'Effekt-Audit-Protokoll',
       },
       toSignal: {
         title: '4. RxJS-Interop: toSignal()',
-        description: 'Konvertiert ein RxJS-Observable in ein reaktives schreibgeschütztes Signal mit automatischer Abo-Bereinigung.',
-        analogyText: 'Ein Zeitschriften-Abo (Observable): Jede neue Ausgabe landet direkt in Ihrem Briefkasten (Signal) und kann jederzeit synchron gelesen werden.',
+        description:
+          'Konvertiert ein RxJS-Observable in ein reaktives schreibgeschütztes Signal mit automatischer Abo-Bereinigung.',
+        analogyText:
+          'Ein Zeitschriften-Abo (Observable): Jede neue Ausgabe landet direkt in Ihrem Briefkasten (Signal) und kann jederzeit synchron gelesen werden.',
         streamLabel: 'RxJS interval(1000) Observable-Stream',
         resultingSignalLabel: 'Resultierendes Signal (counterSignal):',
         computedEvenLabel: 'Berechnet aus Signal (isEven):',
@@ -1986,9 +2280,11 @@ export const TIER3_COPY: Record<SiteLanguage, Tier3Copy> = {
       },
       linkedSignal: {
         title: '5. Angular 22: linkedSignal()',
-        description: 'Ein beschreibbares Signal, das sich auf einen berechneten Standardwert zurücksetzt, sobald sich seine Quell-Abhängigkeit ändert, aber direkte Änderungen erlaubt.',
+        description:
+          'Ein beschreibbares Signal, das sich auf einen berechneten Standardwert zurücksetzt, sobald sich seine Quell-Abhängigkeit ändert, aber direkte Änderungen erlaubt.',
         whyStrong: 'Warum linkedSignal?',
-        whyText: 'Mit computed() ist der Zustand schreibgeschützt. Mit getrennten Signals und Effekten entstehen leicht Synchronisationsfehler. linkedSignal() löst dies sauber.',
+        whyText:
+          'Mit computed() ist der Zustand schreibgeschützt. Mit getrennten Signals und Effekten entstehen leicht Synchronisationsfehler. linkedSignal() löst dies sauber.',
         choosePlanLabel: 'Tarifstufe wählen:',
         starterBtn: 'Starter (5)',
         proBtn: 'Pro (25)',
@@ -2000,9 +2296,11 @@ export const TIER3_COPY: Record<SiteLanguage, Tier3Copy> = {
       },
       rxResource: {
         title: '6. Angular 22: Asynchroner Loader rxResource()',
-        description: 'Verbindet asynchrone RxJS-Streams direkt mit deklarativen Signals inklusive Ladezustand, Abbruch und Fehlergrenzen.',
+        description:
+          'Verbindet asynchrone RxJS-Streams direkt mit deklarativen Signals inklusive Ladezustand, Abbruch und Fehlergrenzen.',
         zonelessStrong: 'Asynchrone Daten in Zoneless Angular:',
-        zonelessText: 'rxResource() führt einen RxJS-Loader-Stream aus und stellt synchrone Signals für value(), isLoading() und status() ganz ohne zone.js bereit.',
+        zonelessText:
+          'rxResource() führt einen RxJS-Loader-Stream aus und stellt synchrone Signals für value(), isLoading() und status() ganz ohne zone.js bereit.',
         selectUserIdLabel: 'Benutzer-ID wählen:',
         userBtn: (id) => `Benutzer ${id}`,
         reloadStreamBtn: 'Stream neu laden',
@@ -2010,16 +2308,19 @@ export const TIER3_COPY: Record<SiteLanguage, Tier3Copy> = {
       },
       resource: {
         title: '7. Angular 22: Promise-Loader resource()',
-        description: 'Asynchroner Loader auf Basis nativer async/await-Promises mit automatischer AbortSignal-Unterstützung.',
+        description:
+          'Asynchroner Loader auf Basis nativer async/await-Promises mit automatischer AbortSignal-Unterstützung.',
         promisesStrong: 'Native Promises im Zoneless-Modus:',
-        promisesText: 'Während rxResource() RxJS-Observables kapselt, verbindet sich resource() direkt mit fetch() oder async/await und übergibt ein AbortSignal.',
+        promisesText:
+          'Während rxResource() RxJS-Observables kapselt, verbindet sich resource() direkt mit fetch() oder async/await und übergibt ein AbortSignal.',
         selectTopicLabel: 'Suchthema wählen:',
         reloadBtn: 'Neu laden',
         executingLoaderText: 'Asynchroner Loader wird ausgeführt...',
       },
       toObservable: {
         title: '7. Bidirektionale Interop: toObservable() + toSignal()',
-        description: 'Ein Signal-Input wird durch RxJS-Operatoren (wie debounceTime) geleitet und anschließend zurück in ein Signal gespiegelt.',
+        description:
+          'Ein Signal-Input wird durch RxJS-Operatoren (wie debounceTime) geleitet und anschließend zurück in ein Signal gespiegelt.',
         typeToSearchLabel: 'Tippen zum Suchen (350 ms Debounce):',
         searchPlaceholder: 'Suchbegriffe eingeben...',
         rawInputLabel: 'Rohes Signal-Input:',
@@ -2043,7 +2344,8 @@ export const TIER3_COPY: Record<SiteLanguage, Tier3Copy> = {
       coexistence: {
         title: 'Architektur-Philosophie: „Events rein, State raus“',
         badge: 'Kernfundament',
-        description: 'Signals und RxJS sind keine Konkurrenten; sie lösen grundlegend unterschiedliche Probleme in der Anwendungsarchitektur.',
+        description:
+          'Signals und RxJS sind keine Konkurrenten; sie lösen grundlegend unterschiedliche Probleme in der Anwendungsarchitektur.',
         step1Badge: '1. Events rein (RxJS)',
         step1Title: 'Asynchrone Koordination',
         step1Items: [
@@ -2063,12 +2365,15 @@ export const TIER3_COPY: Record<SiteLanguage, Tier3Copy> = {
           'Signal-I/O (input, output, model)',
         ],
         ruleStrong: 'Die universelle Faustregel:',
-        ruleQuote: '„Nutzen Sie RxJS für Ereignisse über die Zeit; nutzen Sie Signals für Werte über die Zeit.“',
-        ruleText: 'Wenn Sie Zeitsteuerung, Abbruch oder Nebenläufigkeit benötigen, greifen Sie zu RxJS. Wenn Sie synchronen UI-Zustand halten, ableiten oder anzeigen, greifen Sie zu Signals.',
+        ruleQuote:
+          '„Nutzen Sie RxJS für Ereignisse über die Zeit; nutzen Sie Signals für Werte über die Zeit.“',
+        ruleText:
+          'Wenn Sie Zeitsteuerung, Abbruch oder Nebenläufigkeit benötigen, greifen Sie zu RxJS. Wenn Sie synchronen UI-Zustand halten, ableiten oder anzeigen, greifen Sie zu Signals.',
       },
       decisionMatrix: {
         title: 'Interaktive Entscheidungsmatrix',
-        description: 'Wählen Sie eine typische Produktionsanforderung, um den RxJS-, Signals- und Hybrid-Ansatz zu vergleichen.',
+        description:
+          'Wählen Sie eine typische Produktionsanforderung, um den RxJS-, Signals- und Hybrid-Ansatz zu vergleichen.',
         categoryPrefix: 'Kategorie:',
         recommendedPrefix: 'Empfohlen:',
         rxjsApproachTitle: 'RxJS-Ansatz',
@@ -2082,82 +2387,114 @@ export const TIER3_COPY: Record<SiteLanguage, Tier3Copy> = {
           title: 'Typeahead / Such-Autovervollständigung',
           category: 'Hybrid',
           winner: 'Hybrid (Both)',
-          summary: 'Asynchrone Tastatureingaben mit Debounce und Abbruch verarbeiten und das Ergebnis in synchronen UI-Zustand projizieren.',
-          rxjsApproach: 'searchInput$.pipe(debounceTime(300), distinctUntilChanged(), switchMap(q => api.search(q)))',
-          signalsApproach: 'Signals unterstützen ohne externe Timer-Logik kein zeitbasiertes Throttling oder Debouncing.',
-          hybridApproach: 'query = signal(""); query$ = toObservable(this.query); results = toSignal(this.query$.pipe(debounceTime(300), switchMap(q => api.search(q))), { initialValue: [] })',
-          ruleOfThumb: 'Nutzen Sie RxJS zur zeitlichen Koordination des asynchronen Event-Streams und schliessen Sie mit toSignal() für das Template ab.',
+          summary:
+            'Asynchrone Tastatureingaben mit Debounce und Abbruch verarbeiten und das Ergebnis in synchronen UI-Zustand projizieren.',
+          rxjsApproach:
+            'searchInput$.pipe(debounceTime(300), distinctUntilChanged(), switchMap(q => api.search(q)))',
+          signalsApproach:
+            'Signals unterstützen ohne externe Timer-Logik kein zeitbasiertes Throttling oder Debouncing.',
+          hybridApproach:
+            'query = signal(""); query$ = toObservable(this.query); results = toSignal(this.query$.pipe(debounceTime(300), switchMap(q => api.search(q))), { initialValue: [] })',
+          ruleOfThumb:
+            'Nutzen Sie RxJS zur zeitlichen Koordination des asynchronen Event-Streams und schliessen Sie mit toSignal() für das Template ab.',
         },
         {
           id: 'derived',
           title: 'Warenkorb-Summe & Preisberechnungen',
           category: 'State',
           winner: 'Signals',
-          summary: 'Synchrone Berechnung aus mehreren Zustandsquellen (Artikel, Menge, Rabatt, Steuer).',
-          rxjsApproach: 'combineLatest([items$, discount$, tax$]).pipe(map(...)) — erfordert Abonnement und manuelle Bereinigung.',
-          signalsApproach: 'total = computed(() => calculate(this.items(), this.discount(), this.tax())) — automatisches Dependency-Tracking, synchroner Pull, null Subscriptions.',
-          hybridApproach: 'Reine Signals gewinnen hier klar. Für synchrone In-Memory-Ableitungen ist kein RxJS nötig.',
-          ruleOfThumb: 'Wenn Zustand synchron im Speicher liegt, bevorzugen Sie immer signal() und computed().',
+          summary:
+            'Synchrone Berechnung aus mehreren Zustandsquellen (Artikel, Menge, Rabatt, Steuer).',
+          rxjsApproach:
+            'combineLatest([items$, discount$, tax$]).pipe(map(...)) — erfordert Abonnement und manuelle Bereinigung.',
+          signalsApproach:
+            'total = computed(() => calculate(this.items(), this.discount(), this.tax())) — automatisches Dependency-Tracking, synchroner Pull, null Subscriptions.',
+          hybridApproach:
+            'Reine Signals gewinnen hier klar. Für synchrone In-Memory-Ableitungen ist kein RxJS nötig.',
+          ruleOfThumb:
+            'Wenn Zustand synchron im Speicher liegt, bevorzugen Sie immer signal() und computed().',
         },
         {
           id: 'websockets',
           title: 'Echtzeit-WebSockets & Event-Feeds',
           category: 'Events',
           winner: 'RxJS',
-          summary: 'Kontinuierlicher Strom von Push-Netzwerkpaketen, Reconnect-Backoff, Heartbeats und Nachrichtenfilterung.',
-          rxjsApproach: 'webSocket$.pipe(retry({ delay: 2000 }), filter(isRelevant), scan(accumulateFeed, [])) — RxJS ist speziell für Push-Streams über die Zeit gebaut.',
-          signalsApproach: 'Signals repräsentieren nur den jeweils neuesten Einzelwert und modellieren keine Paket-Warteschlangen.',
-          hybridApproach: 'Verwalten Sie den Socket-Lebenszyklus in RxJS und stellen Sie feed = toSignal(feed$) für das Template bereit.',
-          ruleOfThumb: 'Immer wenn Ereignisse über die Zeit gepusht werden (Sockets, Message-Busse), ist RxJS der Goldstandard.',
+          summary:
+            'Kontinuierlicher Strom von Push-Netzwerkpaketen, Reconnect-Backoff, Heartbeats und Nachrichtenfilterung.',
+          rxjsApproach:
+            'webSocket$.pipe(retry({ delay: 2000 }), filter(isRelevant), scan(accumulateFeed, [])) — RxJS ist speziell für Push-Streams über die Zeit gebaut.',
+          signalsApproach:
+            'Signals repräsentieren nur den jeweils neuesten Einzelwert und modellieren keine Paket-Warteschlangen.',
+          hybridApproach:
+            'Verwalten Sie den Socket-Lebenszyklus in RxJS und stellen Sie feed = toSignal(feed$) für das Template bereit.',
+          ruleOfThumb:
+            'Immer wenn Ereignisse über die Zeit gepusht werden (Sockets, Message-Busse), ist RxJS der Goldstandard.',
         },
         {
           id: 'spam-prevention',
           title: 'Formular-Übermittlung & Doppelklick-Schutz',
           category: 'Events',
           winner: 'RxJS',
-          summary: 'Sicherstellen, dass eine laufende Übermittlung schnelle Doppelklicks blockiert, bis die Serverantwort eintrifft.',
-          rxjsApproach: 'submitClick$.pipe(exhaustMap(() => authService.login(credentials))) — exhaustMap verwirft Klicks automatisch, solange der Request aktiv ist.',
-          signalsApproach: 'Erfordert manuelle Flag-Verwaltung (isSubmitting) mit try/finally-Blöcken.',
-          hybridApproach: 'Nutzen Sie exhaustMap oder eine Resource mit deaktiviertem Button-Status.',
-          ruleOfThumb: 'Nutzen Sie exhaustMap, wenn eingehende Auslöser während einer laufenden asynchronen Operation ignoriert werden müssen.',
+          summary:
+            'Sicherstellen, dass eine laufende Übermittlung schnelle Doppelklicks blockiert, bis die Serverantwort eintrifft.',
+          rxjsApproach:
+            'submitClick$.pipe(exhaustMap(() => authService.login(credentials))) — exhaustMap verwirft Klicks automatisch, solange der Request aktiv ist.',
+          signalsApproach:
+            'Erfordert manuelle Flag-Verwaltung (isSubmitting) mit try/finally-Blöcken.',
+          hybridApproach:
+            'Nutzen Sie exhaustMap oder eine Resource mit deaktiviertem Button-Status.',
+          ruleOfThumb:
+            'Nutzen Sie exhaustMap, wenn eingehende Auslöser während einer laufenden asynchronen Operation ignoriert werden müssen.',
         },
         {
           id: 'dependent-reset',
           title: 'Zurücksetzen abhängiger Zustände (Master-Detail)',
           category: 'State',
           winner: 'Signals',
-          summary: 'Der Wechsel einer übergeordneten Kategorie setzt das ausgewählte Element auf den Standard zurück, erlaubt aber weiterhin manuelle Auswahl.',
-          rxjsApproach: 'Erforderte früher verschachtelte Subjects oder komplexe switchMap-Resets.',
-          signalsApproach: 'selectedItem = linkedSignal({ source: () => this.category(), computation: (cat) => cat.defaultItem }) — setzt sich automatisch zurück und bleibt direkt beschreibbar!',
-          hybridApproach: 'Angular 22 linkedSignal() ist hierfür das sauberste Muster im gesamten Frontend-Ökosystem.',
-          ruleOfThumb: 'Nutzen Sie linkedSignal() für beschreibbaren lokalen Zustand, der mit einer Quell-Abhängigkeit synchron bleiben muss.',
+          summary:
+            'Der Wechsel einer übergeordneten Kategorie setzt das ausgewählte Element auf den Standard zurück, erlaubt aber weiterhin manuelle Auswahl.',
+          rxjsApproach:
+            'Erforderte früher verschachtelte Subjects oder komplexe switchMap-Resets.',
+          signalsApproach:
+            'selectedItem = linkedSignal({ source: () => this.category(), computation: (cat) => cat.defaultItem }) — setzt sich automatisch zurück und bleibt direkt beschreibbar!',
+          hybridApproach:
+            'Angular 22 linkedSignal() ist hierfür das sauberste Muster im gesamten Frontend-Ökosystem.',
+          ruleOfThumb:
+            'Nutzen Sie linkedSignal() für beschreibbaren lokalen Zustand, der mit einer Quell-Abhängigkeit synchron bleiben muss.',
         },
       ],
       derivedState: {
-        title: 'Live-Sandbox: Abgeleiteter Zustand (combineLatest vs. computed)',
-        description: 'Berechnung einer synchronen Gesamtsumme aus Grundpreis, Rabatt und Steuersatz. Vergleichen Sie die Ergonomie von Signals mit Stream-Pipes.',
+        title:
+          'Live-Sandbox: Abgeleiteter Zustand (combineLatest vs. computed)',
+        description:
+          'Berechnung einer synchronen Gesamtsumme aus Grundpreis, Rabatt und Steuersatz. Vergleichen Sie die Ergonomie von Signals mit Stream-Pipes.',
         basePriceLabel: 'Grundpreis ($):',
         discountLabel: 'Rabatt ($):',
         taxRateLabel: 'Steuersatz (20 %):',
         fixed20Badge: '20 % Fest',
         signalsComputedLabel: 'Signals (computed)',
         syncPullBadge: 'Synchroner Pull',
-        signalsNote: 'Lazy ausgewertet, glitch-frei, memoisiert, keine Abo-Bereinigung erforderlich.',
+        signalsNote:
+          'Lazy ausgewertet, glitch-frei, memoisiert, keine Abo-Bereinigung erforderlich.',
         rxjsCombineLabel: 'RxJS (combineLatest)',
         pushStreamBadge: 'Push-Stream',
-        rxjsNote: 'Erfordert 3 BehaviorSubjects, combineLatest, map-Pipe sowie toSignal oder AsyncPipe.',
+        rxjsNote:
+          'Erfordert 3 BehaviorSubjects, combineLatest, map-Pipe sowie toSignal oder AsyncPipe.',
       },
       searchDebounce: {
         title: 'Live-Sandbox: Zeitbasierte Suche (Hybrid-Interop)',
-        description: 'Signals kennen nativ keine Zeitverzögerung. Wir nutzen toObservable() für RxJS-Zeitoperatoren und speichern das Ergebnis über toSignal().',
-        inputLabel: 'Tippen Sie schnell, um das Debouncing (400 ms) zu beobachten:',
+        description:
+          'Signals kennen nativ keine Zeitverzögerung. Wir nutzen toObservable() für RxJS-Zeitoperatoren und speichern das Ergebnis über toSignal().',
+        inputLabel:
+          'Tippen Sie schnell, um das Debouncing (400 ms) zu beobachten:',
         inputPlaceholder: 'Suchbegriff eingeben...',
         rawSignalLabel: 'Rohes Tastatur-Signal (Sofort):',
         debouncedSignalLabel: 'Entprelltes + normalisiertes Signal (toSignal):',
       },
       asyncResource: {
         title: 'Live-Sandbox: Asynchrone Daten mit rxResource()',
-        description: 'Angular 22 führt resource() und rxResource() ein, um asynchronen Datenabruf und Signals inklusive Ladestatus und Abbruch zu vereinen.',
+        description:
+          'Angular 22 führt resource() und rxResource() ein, um asynchronen Datenabruf und Signals inklusive Ladestatus und Abbruch zu vereinen.',
         selectLocationLabel: 'Ort auswählen:',
         parisBtn: 'Paris',
         tokyoBtn: 'Tokio',
@@ -2168,7 +2505,8 @@ export const TIER3_COPY: Record<SiteLanguage, Tier3Copy> = {
       },
       linkedState: {
         title: 'Live-Sandbox: Abhängiger Zustand mit linkedSignal()',
-        description: 'Ein klassischer Fehler in Angular-Apps ist das Zurücksetzen von Kind-Zustand bei Änderung des Eltern-Zustands. linkedSignal() löst dies deklarativ.',
+        description:
+          'Ein klassischer Fehler in Angular-Apps ist das Zurücksetzen von Kind-Zustand bei Änderung des Eltern-Zustands. linkedSignal() löst dies deklarativ.',
         selectPlanLabel: 'Tarifstufe wählen (Eltern-Zustand):',
         basicBtn: 'Basic (20 GB)',
         proBtn: 'Pro (100 GB)',
@@ -2186,7 +2524,8 @@ export const TIER3_COPY: Record<SiteLanguage, Tier3Copy> = {
       tracks: {
         beginnerTitle: 'Einsteiger',
         beginnerBadge: 'Grundlagen',
-        beginnerDesc: 'Observables, Basis-Operatoren und einfacher Datenaustausch.',
+        beginnerDesc:
+          'Observables, Basis-Operatoren und einfacher Datenaustausch.',
         beginnerBtn: 'Einsteiger-Track starten',
         midTitle: 'Fortgeschritten',
         midBadge: 'Operatoren & Subjects',
@@ -2194,7 +2533,8 @@ export const TIER3_COPY: Record<SiteLanguage, Tier3Copy> = {
         midBtn: 'Fortgeschrittenen-Track starten',
         seniorTitle: 'Senior',
         seniorBadge: 'Architektur & Interop',
-        seniorDesc: 'Zoneless-Ausführung, linkedSignal, rxResource und Grenzfälle.',
+        seniorDesc:
+          'Zoneless-Ausführung, linkedSignal, rxResource und Grenzfälle.',
         seniorBtn: 'Senior-Track starten',
       },
       questionProgress: (current, total) => `Frage ${current} von ${total}`,
@@ -2202,14 +2542,16 @@ export const TIER3_COPY: Record<SiteLanguage, Tier3Copy> = {
       correctAnswerLabel: 'Richtige Antwort:',
       submitAnswerBtn: 'Antwort absenden',
       correctToast: 'Richtig!',
-      incorrectToast: 'Nicht ganz! Schauen Sie sich das Konzept noch einmal an.',
+      incorrectToast:
+        'Nicht ganz! Schauen Sie sich das Konzept noch einmal an.',
       correctFeedback: 'Richtig! Gut gemacht.',
       incorrectFeedback: 'Nicht ganz. Dieses Konzept wird behandelt in:',
       reviewConceptBtn: 'Konzept wiederholen',
       nextQuestionBtn: 'Nächste Frage',
       finishQuizBtn: 'Quiz beenden',
       quizCompleteTitle: 'Quiz abgeschlossen!',
-      scoreText: (score, total) => `Sie haben ${score} von ${total} Punkten erreicht`,
+      scoreText: (score, total) =>
+        `Sie haben ${score} von ${total} Punkten erreicht`,
       tryAnotherBtn: 'Anderes Level versuchen',
       questions: [
         {
@@ -2243,7 +2585,12 @@ export const TIER3_COPY: Record<SiteLanguage, Tier3Copy> = {
           type: 'multiple-choice',
           difficulty: 'Beginner',
           text: 'Was kennzeichnet traditionell das Suffix `$` am Ende eines Variablennamens in RxJS?',
-          options: ['Ein Subject', 'Einen Endwert', 'Ein Observable', 'Eine private Eigenschaft'],
+          options: [
+            'Ein Subject',
+            'Einen Endwert',
+            'Ein Observable',
+            'Eine private Eigenschaft',
+          ],
           answer: 'Ein Observable',
           relatedRoute: '/multicasting',
         },
@@ -2287,7 +2634,12 @@ export const TIER3_COPY: Record<SiteLanguage, Tier3Copy> = {
           type: 'multiple-choice',
           difficulty: 'Mid-level',
           text: 'Welches Subject eignet sich am besten, um den Authentifizierungsstatus zu speichern, den neue Komponenten sofort beim Erstellen abfragen?',
-          options: ['Subject', 'AsyncSubject', 'BehaviorSubject', 'ReplaySubject'],
+          options: [
+            'Subject',
+            'AsyncSubject',
+            'BehaviorSubject',
+            'ReplaySubject',
+          ],
           answer: 'BehaviorSubject',
           relatedRoute: '/multicasting',
         },
@@ -2314,7 +2666,12 @@ export const TIER3_COPY: Record<SiteLanguage, Tier3Copy> = {
           type: 'multiple-choice',
           difficulty: 'Senior',
           text: 'Welcher Subject-Typ liefert einem neuen Abonnenten sofort die letzten 3 emittierten Werte?',
-          options: ['Subject', 'AsyncSubject', 'BehaviorSubject(3)', 'ReplaySubject(3)'],
+          options: [
+            'Subject',
+            'AsyncSubject',
+            'BehaviorSubject(3)',
+            'ReplaySubject(3)',
+          ],
           answer: 'ReplaySubject(3)',
           relatedRoute: '/multicasting',
         },
@@ -2340,7 +2697,12 @@ export const TIER3_COPY: Record<SiteLanguage, Tier3Copy> = {
           type: 'multiple-choice',
           difficulty: 'Senior',
           text: 'Was bedeutet das Zeichen `|` beim RxJS-Marble-Testing?',
-          options: ['Einen Fehler', 'Eine Wert-Emission', 'Den Abschluss des Streams', 'Einen Abonnement-Zeitpunkt'],
+          options: [
+            'Einen Fehler',
+            'Eine Wert-Emission',
+            'Den Abschluss des Streams',
+            'Einen Abonnement-Zeitpunkt',
+          ],
           answer: 'Den Abschluss des Streams',
           relatedRoute: '/multicasting',
         },
@@ -2358,7 +2720,12 @@ export const TIER3_COPY: Record<SiteLanguage, Tier3Copy> = {
           type: 'multiple-choice',
           difficulty: 'Senior',
           text: 'Welche Funktion aus @angular/core/rxjs-interop lädt in Angular 22 asynchrone Daten aus einem RxJS-Stream in deklarative Signals?',
-          options: ['toSignal()', 'rxResource()', 'toObservable()', 'outputFromObservable()'],
+          options: [
+            'toSignal()',
+            'rxResource()',
+            'toObservable()',
+            'outputFromObservable()',
+          ],
           answer: 'rxResource()',
           relatedRoute: '/signals',
         },

@@ -165,8 +165,7 @@ const seededFlashcards: StudyFlashcard[] = [
     category: 'Event Loop',
     front:
       'Under what condition does the microtask queue run relative to the current macrotask in the ECMAScript event loop?',
-    back:
-      'Microtasks (Promises, queueMicrotask, MutationObserver) drain completely after the current macrotask completes and before any subsequent macrotask or browser rendering tick begins.',
+    back: 'Microtasks (Promises, queueMicrotask, MutationObserver) drain completely after the current macrotask completes and before any subsequent macrotask or browser rendering tick begins.',
     sourceCitation: 'HTML Living Standard § 8.1.6 Event loops',
     codeSnippet:
       'console.log("1");\nsetTimeout(() => console.log("2"), 0);\nPromise.resolve().then(() => console.log("3"));\nconsole.log("4");\n// Output: 1, 4, 3, 2',
@@ -182,8 +181,7 @@ const seededFlashcards: StudyFlashcard[] = [
     category: 'V8 Engine',
     front:
       'What triggers a deoptimization (bailout) in V8 TurboFan compiled machine code?',
-    back:
-      'A type-feedback violation — when dynamic property shapes (Hidden Classes/Shapes) or operand types deviate from the recorded feedback vector upon which TurboFan speculative optimizations were based.',
+    back: 'A type-feedback violation — when dynamic property shapes (Hidden Classes/Shapes) or operand types deviate from the recorded feedback vector upon which TurboFan speculative optimizations were based.',
     sourceCitation: 'V8 Dev Blog: An Overview of the TurboFan Compiler',
     codeSnippet:
       'function compute(a) { return a.x + 1; }\ncompute({ x: 10 }); // Monomorphic feedback recorded\ncompute({ x: "invalid" }); // Deopt: type violation',
@@ -199,8 +197,7 @@ const seededFlashcards: StudyFlashcard[] = [
     category: 'Garbage Collection',
     front:
       'How does V8 prevent UI jank during the Major Mark-Sweep-Compact phase in Orinoco?',
-    back:
-      'Through concurrent marking on worker threads while main thread JS executes, incremental marking pauses interleaved with the event loop, and parallel sweeping/compaction.',
+    back: 'Through concurrent marking on worker threads while main thread JS executes, incremental marking pauses interleaved with the event loop, and parallel sweeping/compaction.',
     sourceCitation: 'V8 Dev Blog: Trash talk: the Orinoco garbage collector',
     codeSnippet:
       '// WeakRef allows holding a reference without preventing GC\nconst cache = new Map();\nfunction cacheValue(key, obj) {\n  cache.set(key, new WeakRef(obj));\n}',

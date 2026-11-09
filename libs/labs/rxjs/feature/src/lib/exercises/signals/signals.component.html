@@ -28,7 +28,9 @@
         <div class="card-content">
           <div class="config-group">
             <div class="config-item">
-              <label for="first-name">{{ copy().signals.writable.firstNameLabel }}</label>
+              <label for="first-name">{{
+                copy().signals.writable.firstNameLabel
+              }}</label>
               <input
                 id="first-name"
                 type="text"
@@ -37,7 +39,9 @@
               />
             </div>
             <div class="config-item">
-              <label for="last-name">{{ copy().signals.writable.lastNameLabel }}</label>
+              <label for="last-name">{{
+                copy().signals.writable.lastNameLabel
+              }}</label>
               <input
                 id="last-name"
                 type="text"
@@ -46,7 +50,9 @@
               />
             </div>
             <div class="config-item">
-              <span class="field-label">{{ copy().signals.writable.quantityLabel }}</span>
+              <span class="field-label">{{
+                copy().signals.writable.quantityLabel
+              }}</span>
               <div class="quantity-control">
                 <button
                   type="button"
@@ -85,7 +91,9 @@
         <div class="card-content">
           <div class="computed-grid">
             <div class="computed-item">
-              <span class="field-label">{{ copy().signals.computed.fullNameLabel }}</span>
+              <span class="field-label">{{
+                copy().signals.computed.fullNameLabel
+              }}</span>
               <div
                 class="data-display highlight-on-change"
                 [class.changed]="fullName()"
@@ -94,7 +102,9 @@
               </div>
             </div>
             <div class="computed-item">
-              <span class="field-label">{{ copy().signals.computed.isStockLowLabel }}</span>
+              <span class="field-label">{{
+                copy().signals.computed.isStockLowLabel
+              }}</span>
               <div
                 class="data-display highlight-on-change"
                 [class.changed]="isStockLow()"
@@ -103,7 +113,9 @@
               </div>
             </div>
             <div class="computed-item full-width">
-              <span class="field-label">{{ copy().signals.computed.stockMessageLabel }}</span>
+              <span class="field-label">{{
+                copy().signals.computed.stockMessageLabel
+              }}</span>
               <div
                 class="data-display highlight-on-change"
                 [class.changed]="stockMessage()"
@@ -173,9 +185,9 @@
 
           <div class="computed-grid">
             <div class="computed-item">
-              <span class="field-label"
-                >{{ copy().signals.toSignal.resultingSignalLabel }}</span
-              >
+              <span class="field-label">{{
+                copy().signals.toSignal.resultingSignalLabel
+              }}</span>
               <div
                 class="data-display highlight-on-change"
                 [class.changed]="counterSignal()"
@@ -184,9 +196,9 @@
               </div>
             </div>
             <div class="computed-item">
-              <span class="field-label"
-                >{{ copy().signals.toSignal.computedEvenLabel }}</span
-              >
+              <span class="field-label">{{
+                copy().signals.toSignal.computedEvenLabel
+              }}</span>
               <div
                 class="data-display highlight-on-change"
                 [class.changed]="isEven()"
@@ -227,7 +239,10 @@
           </div>
 
           <div class="code-example">
-            <ah-code-block [code]="codeSnippets.toSignal" language="typescript" />
+            <ah-code-block
+              [code]="codeSnippets.toSignal"
+              language="typescript"
+            />
           </div>
         </div>
       </div>
@@ -259,7 +274,9 @@
 
           <div class="config-group">
             <div class="config-item">
-              <span class="field-label">{{ copy().signals.linkedSignal.choosePlanLabel }}</span>
+              <span class="field-label">{{
+                copy().signals.linkedSignal.choosePlanLabel
+              }}</span>
               <div class="button-group-inline">
                 <button
                   type="button"
@@ -293,9 +310,9 @@
             </div>
 
             <div class="config-item">
-              <span class="field-label"
-                >{{ copy().signals.linkedSignal.adjustCreditsLabel }}</span
-              >
+              <span class="field-label">{{
+                copy().signals.linkedSignal.adjustCreditsLabel
+              }}</span>
               <div class="quantity-control">
                 <button
                   type="button"
@@ -319,7 +336,9 @@
               </div>
               <div class="credits-status-row">
                 @if (isCustom) {
-                  <ah-tag>{{ copy().signals.linkedSignal.overriddenBadge }}</ah-tag>
+                  <ah-tag>{{
+                    copy().signals.linkedSignal.overriddenBadge
+                  }}</ah-tag>
                   <button
                     type="button"
                     ahButton="ghost"
@@ -329,14 +348,19 @@
                     {{ copy().signals.linkedSignal.resetDefaultBtn }}
                   </button>
                 } @else {
-                  <span class="default-badge">{{ copy().signals.linkedSignal.planDefaultBadge }}</span>
+                  <span class="default-badge">{{
+                    copy().signals.linkedSignal.planDefaultBadge
+                  }}</span>
                 }
               </div>
             </div>
           </div>
 
           <div class="code-example">
-            <ah-code-block [code]="codeSnippets.linkedSignal" language="typescript" />
+            <ah-code-block
+              [code]="codeSnippets.linkedSignal"
+              language="typescript"
+            />
           </div>
         </div>
       </div>
@@ -369,7 +393,9 @@
 
           <div class="resource-panel">
             <div class="resource-controls">
-              <span class="field-label">{{ copy().signals.rxResource.selectUserIdLabel }}</span>
+              <span class="field-label">{{
+                copy().signals.rxResource.selectUserIdLabel
+              }}</span>
               <div class="button-group-inline">
                 <button
                   type="button"
@@ -416,7 +442,9 @@
                 <div class="profile-card">
                   <div class="profile-header">
                     <span class="profile-name">{{ profile.name }}</span>
-                    <ah-tag>{{ copy().signals.statusPrefix }} {{ status }}</ah-tag>
+                    <ah-tag
+                      >{{ copy().signals.statusPrefix }} {{ status }}</ah-tag
+                    >
                   </div>
                   <p class="profile-role">{{ profile.role }}</p>
                   <p class="profile-quota">{{ profile.quota }}</p>
@@ -426,7 +454,10 @@
           </div>
 
           <div class="code-example">
-            <ah-code-block [code]="codeSnippets.rxResource" language="typescript" />
+            <ah-code-block
+              [code]="codeSnippets.rxResource"
+              language="typescript"
+            />
           </div>
         </div>
       </div>
@@ -458,7 +489,9 @@
 
           <div class="resource-panel">
             <div class="resource-controls">
-              <span class="field-label">{{ copy().signals.resource.selectTopicLabel }}</span>
+              <span class="field-label">{{
+                copy().signals.resource.selectTopicLabel
+              }}</span>
               <div class="button-group-inline">
                 <button
                   type="button"
@@ -515,7 +548,9 @@
                 <div class="profile-card">
                   <div class="profile-header">
                     <span class="profile-name">{{ art.title }}</span>
-                    <ah-tag>{{ copy().signals.statusPrefix }} {{ artStatus }}</ah-tag>
+                    <ah-tag
+                      >{{ copy().signals.statusPrefix }} {{ artStatus }}</ah-tag
+                    >
                   </div>
                   <p class="profile-role">{{ art.summary }}</p>
                   <p class="profile-quota">{{ art.readTime }}</p>
@@ -525,7 +560,10 @@
           </div>
 
           <div class="code-example">
-            <ah-code-block [code]="codeSnippets.resource" language="typescript" />
+            <ah-code-block
+              [code]="codeSnippets.resource"
+              language="typescript"
+            />
           </div>
         </div>
       </div>
@@ -549,24 +587,30 @@
 
           <div class="config-group">
             <div class="config-item">
-              <label for="search-input"
-                >{{ copy().signals.toObservable.typeToSearchLabel }}</label
-              >
+              <label for="search-input">{{
+                copy().signals.toObservable.typeToSearchLabel
+              }}</label>
               <input
                 id="search-input"
                 type="text"
                 [value]="query"
                 (input)="onSearchChange($event)"
-                [attr.placeholder]="copy().signals.toObservable.searchPlaceholder"
+                [attr.placeholder]="
+                  copy().signals.toObservable.searchPlaceholder
+                "
               />
             </div>
             <div class="computed-grid">
               <div class="computed-item">
-                <span class="field-label">{{ copy().signals.toObservable.rawInputLabel }}</span>
+                <span class="field-label">{{
+                  copy().signals.toObservable.rawInputLabel
+                }}</span>
                 <div class="data-display">{{ query }}</div>
               </div>
               <div class="computed-item">
-                <span class="field-label">{{ copy().signals.toObservable.debouncedSignalLabel }}</span>
+                <span class="field-label">{{
+                  copy().signals.toObservable.debouncedSignalLabel
+                }}</span>
                 <div class="data-display highlight-on-change">
                   {{ debounced }}
                 </div>
@@ -575,7 +619,10 @@
           </div>
 
           <div class="code-example">
-            <ah-code-block [code]="codeSnippets.interop" language="typescript" />
+            <ah-code-block
+              [code]="codeSnippets.interop"
+              language="typescript"
+            />
           </div>
         </div>
       </div>

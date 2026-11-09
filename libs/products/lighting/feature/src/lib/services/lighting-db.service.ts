@@ -155,11 +155,7 @@ export class LightingDbService {
     if (!this.isBrowser) {
       return null;
     }
-    const record = await this.request(
-      'readonly',
-      (s) => s.get(poleId),
-      PHOTOS,
-    );
+    const record = await this.request('readonly', (s) => s.get(poleId), PHOTOS);
     return (record as PolePhotoRecord | undefined) ?? null;
   }
 

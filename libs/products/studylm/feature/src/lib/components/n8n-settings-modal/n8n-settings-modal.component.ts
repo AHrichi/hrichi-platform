@@ -49,8 +49,7 @@ export class N8nSettingsModalComponent {
   private readonly apiService = inject(StudyLmApiService);
   private readonly preferences = inject(PreferencesStore, { optional: true });
   readonly copy = computed(
-    () =>
-      STUDYLM_COPY[this.preferences?.language() ?? 'en'] ?? STUDYLM_COPY.en,
+    () => STUDYLM_COPY[this.preferences?.language() ?? 'en'] ?? STUDYLM_COPY.en,
   );
 
   readonly modeOptions = computed<

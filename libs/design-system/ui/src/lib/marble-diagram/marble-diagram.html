@@ -1,6 +1,6 @@
 <div class="diagram-card">
   @if (title() || description()) {
-    <header class="diagram-header">
+    <div class="diagram-header">
       <div class="header-main">
         @if (title()) {
           <h3 class="diagram-title">{{ title() }}</h3>
@@ -9,7 +9,7 @@
           <p class="diagram-description">{{ description() }}</p>
         }
       </div>
-    </header>
+    </div>
   }
 
   <!-- Live screen reader announcements for stream emissions -->
@@ -36,7 +36,14 @@
               }
             </div>
             <div class="operator-arrow-down" aria-hidden="true">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
                 <line x1="12" y1="5" x2="12" y2="19"></line>
                 <polyline points="19 12 12 19 5 12"></polyline>
               </svg>
@@ -64,7 +71,11 @@
         </div>
 
         <div class="timeline-wrapper">
-          <div class="timeline-track" role="list" [attr.aria-label]="stream.label + ' timeline'">
+          <div
+            class="timeline-track"
+            role="group"
+            [attr.aria-label]="stream.label + ' timeline'"
+          >
             <!-- Time tick grid lines -->
             @if (showTimeTicks()) {
               <div class="timeline-ticks" aria-hidden="true">
@@ -81,19 +92,26 @@
             </div>
 
             <!-- Marbles -->
-            @for (marble of stream.marbles; track marble.id; let marbleIdx = $index) {
+            @for (
+              marble of stream.marbles;
+              track marble.id;
+              let marbleIdx = $index
+            ) {
               <button
                 type="button"
-                role="listitem"
                 class="marble-node"
                 [class]="getVariantClass(marble.variant)"
                 [class.marble--selected]="selectedMarbleId() === marble.id"
                 [class.marble--emitting]="marble.isEmitting"
                 [class.shape-square]="marble.shape === 'square'"
                 [class.shape-diamond]="marble.shape === 'diamond'"
-                [style.left.%]="getPosition(marble, marbleIdx, stream.marbles.length)"
+                [style.left.%]="
+                  getPosition(marble, marbleIdx, stream.marbles.length)
+                "
                 [style.backgroundColor]="marble.color || null"
-                [attr.title]="marble.tooltip || (stream.label + ' emission: ' + marble.value)"
+                [attr.title]="
+                  marble.tooltip || stream.label + ' emission: ' + marble.value
+                "
                 [attr.aria-label]="stream.label + ' emission ' + marble.value"
                 (click)="onMarbleClick(stream.id, marble)"
               >
@@ -105,20 +123,22 @@
             @if (stream.isCompleted) {
               <div
                 class="stream-terminal terminal-completed"
+                role="img"
                 title="Stream completed"
                 aria-label="Stream completed"
               >
-                <span class="completion-bar"></span>
+                <span class="completion-bar" aria-hidden="true"></span>
               </div>
             }
 
             @if (stream.error) {
               <div
                 class="stream-terminal terminal-error"
+                role="img"
                 [attr.title]="'Error: ' + stream.error"
                 [attr.aria-label]="'Stream error: ' + stream.error"
               >
-                <span class="error-cross">✕</span>
+                <span class="error-cross" aria-hidden="true">✕</span>
               </div>
             }
           </div>
@@ -128,8 +148,15 @@
   </div>
 
   @if (activeMarble(); as active) {
-    <div class="marble-inspector" role="status" aria-label="Selected marble details">
-      <div class="inspector-badge" [class]="getVariantClass(active.marble.variant)">
+    <div
+      class="marble-inspector"
+      role="status"
+      aria-label="Selected marble details"
+    >
+      <div
+        class="inspector-badge"
+        [class]="getVariantClass(active.marble.variant)"
+      >
         <span class="inspector-value">{{ active.marble.value }}</span>
       </div>
       <div class="inspector-content">

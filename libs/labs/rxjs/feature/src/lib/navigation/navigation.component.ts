@@ -1,4 +1,9 @@
-import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  input,
+} from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { Tag } from '@ah/ui';
 import { injectRxjsLabCopy } from '../i18n/rxjs-lab-copy';

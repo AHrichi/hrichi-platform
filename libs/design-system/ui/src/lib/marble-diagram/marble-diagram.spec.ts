@@ -1,4 +1,8 @@
-import { Component, provideZonelessChangeDetection, signal } from '@angular/core';
+import {
+  Component,
+  provideZonelessChangeDetection,
+  signal,
+} from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { describe, expect, it } from 'vitest';
 import {
@@ -22,7 +26,9 @@ import {
 })
 class TestHost {
   readonly title = signal<string>('Combining Streams');
-  readonly description = signal<string>('Visualizing combineLatest stream sync');
+  readonly description = signal<string>(
+    'Visualizing combineLatest stream sync',
+  );
   readonly streams = signal<readonly StreamLane[]>([
     {
       id: 'stream-a',
@@ -73,7 +79,9 @@ describe('MarbleDiagram', () => {
     expect(title?.textContent?.trim()).toBe('Combining Streams');
 
     const desc = hostElem.querySelector('.diagram-description');
-    expect(desc?.textContent?.trim()).toBe('Visualizing combineLatest stream sync');
+    expect(desc?.textContent?.trim()).toBe(
+      'Visualizing combineLatest stream sync',
+    );
 
     // Check lanes count
     const lanes = hostElem.querySelectorAll('.stream-lane');
@@ -131,7 +139,9 @@ describe('MarbleDiagram', () => {
     const hostElem: HTMLElement = fixture.nativeElement;
     expect(hostElem.querySelector('.marble-inspector')).toBeNull();
 
-    const firstMarble = hostElem.querySelector('.marble-node') as HTMLButtonElement;
+    const firstMarble = hostElem.querySelector(
+      '.marble-node',
+    ) as HTMLButtonElement;
     firstMarble.click();
     await fixture.whenStable();
 
@@ -140,7 +150,9 @@ describe('MarbleDiagram', () => {
     expect(inspector?.textContent).toContain('Stream A (Timer)');
     expect(inspector?.textContent).toContain('1');
 
-    const dismiss = hostElem.querySelector('.inspector-dismiss') as HTMLButtonElement;
+    const dismiss = hostElem.querySelector(
+      '.inspector-dismiss',
+    ) as HTMLButtonElement;
     dismiss.click();
     await fixture.whenStable();
 
@@ -154,7 +166,9 @@ describe('MarbleDiagram', () => {
     const fixture = TestBed.createComponent(TestHost);
     await fixture.whenStable();
 
-    const liveRegion = fixture.nativeElement.querySelector('.sr-only[role="status"]');
+    const liveRegion = fixture.nativeElement.querySelector(
+      '.sr-only[role="status"]',
+    );
     expect(liveRegion).toBeTruthy();
     const text = liveRegion?.textContent || '';
     expect(text).toContain('Stream A (Timer) emitted 2');

@@ -13,7 +13,9 @@
           (click)="toggleSidebar()"
           [attr.aria-expanded]="isSidebarOpen()"
           [attr.aria-label]="copy().shell.toggleDrawerAria"
-          [attr.title]="isSidebarOpen() ? copy().shell.collapseNav : copy().shell.expandNav"
+          [attr.title]="
+            isSidebarOpen() ? copy().shell.collapseNav : copy().shell.expandNav
+          "
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"

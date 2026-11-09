@@ -22,17 +22,17 @@ export const rxjsLabRoutes: Routes = [
       {
         path: 'combining-streams',
         loadComponent: () =>
-          import(
-            './exercises/combining-streams/combining-streams.component'
-          ).then((m) => m.CombiningStreamsComponent),
+          import('./exercises/combining-streams/combining-streams.component').then(
+            (m) => m.CombiningStreamsComponent,
+          ),
         title: 'RxJS | Combining Streams',
       },
       {
         path: 'transforming-streams',
         loadComponent: () =>
-          import(
-            './exercises/transforming-streams/transforming-streams.component'
-          ).then((m) => m.TransformingStreamsComponent),
+          import('./exercises/transforming-streams/transforming-streams.component').then(
+            (m) => m.TransformingStreamsComponent,
+          ),
         title: 'RxJS | Transforming Streams',
       },
       {
@@ -70,9 +70,9 @@ export const rxjsLabRoutes: Routes = [
       {
         path: 'reactive-caching',
         loadComponent: () =>
-          import(
-            './exercises/reactive-caching/reactive-caching.component'
-          ).then((m) => m.ReactiveCachingComponent),
+          import('./exercises/reactive-caching/reactive-caching.component').then(
+            (m) => m.ReactiveCachingComponent,
+          ),
         title: 'RxJS | Reactive Caching',
       },
       {
@@ -86,7 +86,9 @@ export const rxjsLabRoutes: Routes = [
       {
         path: 'quiz',
         loadComponent: () =>
-          import('./exercises/quiz/quiz.component').then((m) => m.QuizComponent),
+          import('./exercises/quiz/quiz.component').then(
+            (m) => m.QuizComponent,
+          ),
         title: 'RxJS | Challenge',
       },
     ],

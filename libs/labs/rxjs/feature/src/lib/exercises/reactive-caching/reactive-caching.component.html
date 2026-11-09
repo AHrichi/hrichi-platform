@@ -71,15 +71,26 @@
           <h4>{{ copy().reactiveCaching.currentUserDataTitle }}</h4>
           @if (currentUser(); as user) {
             <div class="user-data">
-              <p><strong>{{ copy().reactiveCaching.idLabel }}</strong> {{ user.id }}</p>
-              <p><strong>{{ copy().reactiveCaching.nameLabel }}</strong> {{ user.name }}</p>
-              <p><strong>{{ copy().reactiveCaching.emailLabel }}</strong> {{ user.email }}</p>
+              <p>
+                <strong>{{ copy().reactiveCaching.idLabel }}</strong>
+                {{ user.id }}
+              </p>
+              <p>
+                <strong>{{ copy().reactiveCaching.nameLabel }}</strong>
+                {{ user.name }}
+              </p>
+              <p>
+                <strong>{{ copy().reactiveCaching.emailLabel }}</strong>
+                {{ user.email }}
+              </p>
             </div>
           } @else {
             @if (isLoading()) {
               <p class="loading-text">{{ copy().common.loading }}</p>
             } @else {
-              <p class="placeholder-text">{{ copy().reactiveCaching.selectUserPlaceholder }}</p>
+              <p class="placeholder-text">
+                {{ copy().reactiveCaching.selectUserPlaceholder }}
+              </p>
             }
           }
         </div>
@@ -103,7 +114,9 @@
               {{ log.message }}
             </p>
           } @empty {
-            <p class="placeholder-text">{{ copy().reactiveCaching.noFetchRecorded }}</p>
+            <p class="placeholder-text">
+              {{ copy().reactiveCaching.noFetchRecorded }}
+            </p>
           }
         </div>
       </div>

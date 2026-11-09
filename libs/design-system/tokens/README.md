@@ -13,10 +13,10 @@ CI rebuilds the tokens and fails if the committed output differs.
 
 ## Tiers
 
-| Tier | File | Example | Who uses it |
-| --- | --- | --- | --- |
-| Primitive | `tokens/primitives.json` | `--color-crimson-600`, `--space-4`, `--z-modal` | Semantic tokens; non-colour primitives (space, radius, z, motion…) directly |
-| Semantic | `tokens/semantic.{light,dark}.json` | `--color-text-muted`, `--color-border-control`, `--shadow-overlay` | Components and apps |
+| Tier      | File                                | Example                                                            | Who uses it                                                                 |
+| --------- | ----------------------------------- | ------------------------------------------------------------------ | --------------------------------------------------------------------------- |
+| Primitive | `tokens/primitives.json`            | `--color-crimson-600`, `--space-4`, `--z-modal`                    | Semantic tokens; non-colour primitives (space, radius, z, motion…) directly |
+| Semantic  | `tokens/semantic.{light,dark}.json` | `--color-text-muted`, `--color-border-control`, `--shadow-overlay` | Components and apps                                                         |
 
 Components use **semantic** colour tokens only, so dark mode and themes come for free. Reach for a colour primitive only where no semantic token fits (e.g. print styles).
 

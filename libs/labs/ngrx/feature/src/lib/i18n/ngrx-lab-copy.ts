@@ -31,24 +31,24 @@ export type {
 } from './ngrx-vs-services-copy';
 
 export interface NgrxLabCopy
-  extends SharedAndStoreBundle,
-    SignalStoreAndEffectsBundle {
+  extends SharedAndStoreBundle, SignalStoreAndEffectsBundle {
   ngrxVsServices: NgrxVsServicesCopy;
 }
 
 const LANGUAGES: readonly SiteLanguage[] = ['en', 'fr', 'ar', 'it', 'de'];
 
-export const NGRX_LAB_COPY: Record<SiteLanguage, NgrxLabCopy> = LANGUAGES.reduce(
-  (acc, lang) => {
-    acc[lang] = {
-      ...SHARED_AND_STORE_COPY[lang],
-      ...SIGNAL_STORE_AND_EFFECTS_COPY[lang],
-      ngrxVsServices: NGRX_VS_SERVICES_COPY[lang],
-    };
-    return acc;
-  },
-  {} as Record<SiteLanguage, NgrxLabCopy>,
-);
+export const NGRX_LAB_COPY: Record<SiteLanguage, NgrxLabCopy> =
+  LANGUAGES.reduce(
+    (acc, lang) => {
+      acc[lang] = {
+        ...SHARED_AND_STORE_COPY[lang],
+        ...SIGNAL_STORE_AND_EFFECTS_COPY[lang],
+        ngrxVsServices: NGRX_VS_SERVICES_COPY[lang],
+      };
+      return acc;
+    },
+    {} as Record<SiteLanguage, NgrxLabCopy>,
+  );
 
 export function getNgrxLabCopy(lang: SiteLanguage = 'en'): NgrxLabCopy {
   return NGRX_LAB_COPY[lang] ?? NGRX_LAB_COPY.en;

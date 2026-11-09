@@ -1,4 +1,8 @@
-<nav class="nav-menu" [class.closed]="!isOpen()" [attr.aria-label]="copy().nav.ariaLabel">
+<nav
+  class="nav-menu"
+  [class.closed]="!isOpen()"
+  [attr.aria-label]="copy().nav.ariaLabel"
+>
   @for (category of categories(); track category.id) {
     <div class="nav-category">
       @if (isOpen()) {
@@ -22,56 +26,150 @@
               <span class="icon-wrapper" aria-hidden="true">
                 @switch (exercise.icon) {
                   @case ('alert-circle') {
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
                       <circle cx="12" cy="12" r="10"></circle>
                       <line x1="12" y1="8" x2="12" y2="12"></line>
                       <line x1="12" y1="16" x2="12.01" y2="16"></line>
                     </svg>
                   }
                   @case ('git-merge') {
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
                       <path d="M18 8L22 12L18 16"></path>
                       <path d="M2 12H22"></path>
                       <path d="M6 8L2 12L6 16"></path>
                     </svg>
                   }
                   @case ('git-branch') {
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M12 20v-6M12 8V2M20 12h-6M8 12H2M16 16l3-3-1.5-1.5-3 3L16 16zM8 8l-3 3 1.5 1.5 3-3L8 8z"></path>
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <path
+                        d="M12 20v-6M12 8V2M20 12h-6M8 12H2M16 16l3-3-1.5-1.5-3 3L16 16zM8 8l-3 3 1.5 1.5 3-3L8 8z"
+                      ></path>
                     </svg>
                   }
                   @case ('share-2') {
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
                       <path d="M12 18L12 6M6 12L18 12"></path>
                     </svg>
                   }
                   @case ('cast') {
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
                       <path d="M4 12v-2a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v2"></path>
                       <path d="M4 12v2a4 4 0 0 0 4 4h8a4 4 0 0 0 4-4v-2"></path>
                       <circle cx="12" cy="12" r="2"></circle>
                     </svg>
                   }
                   @case ('database') {
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M20 12v2a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4v-2"></path>
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <path
+                        d="M20 12v2a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4v-2"
+                      ></path>
                       <path d="M20 8v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                       <line x1="2" y1="12" x2="22" y2="12"></line>
                     </svg>
                   }
                   @case ('layers') {
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <rect
+                        x="3"
+                        y="3"
+                        width="18"
+                        height="18"
+                        rx="2"
+                        ry="2"
+                      ></rect>
                       <line x1="8" y1="12" x2="16" y2="12"></line>
                     </svg>
                   }
                   @case ('zap') {
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <polygon
+                        points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"
+                      ></polygon>
                     </svg>
                   }
                   @case ('refresh-cw') {
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
                       <circle cx="18" cy="18" r="3"></circle>
                       <circle cx="6" cy="6" r="3"></circle>
                       <path d="M13 6h3a2 2 0 0 1 2 2v7"></path>
@@ -79,8 +177,19 @@
                     </svg>
                   }
                   @case ('award') {
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <path
+                        d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"
+                      ></path>
                       <path d="M9.5 14.5l1.5 1.5 4-4"></path>
                     </svg>
                   }

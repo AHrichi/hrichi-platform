@@ -28,10 +28,15 @@
         <div class="card-content">
           <div class="coexistence-diagram">
             <div class="diagram-step events-step">
-              <div class="step-badge">{{ copy().rxjsVsSignals.coexistence.step1Badge }}</div>
+              <div class="step-badge">
+                {{ copy().rxjsVsSignals.coexistence.step1Badge }}
+              </div>
               <h4>{{ copy().rxjsVsSignals.coexistence.step1Title }}</h4>
               <ul>
-                @for (item of copy().rxjsVsSignals.coexistence.step1Items; track item) {
+                @for (
+                  item of copy().rxjsVsSignals.coexistence.step1Items;
+                  track item
+                ) {
                   <li>{{ item }}</li>
                 }
               </ul>
@@ -53,10 +58,15 @@
             </div>
 
             <div class="diagram-step state-step">
-              <div class="step-badge">{{ copy().rxjsVsSignals.coexistence.step2Badge }}</div>
+              <div class="step-badge">
+                {{ copy().rxjsVsSignals.coexistence.step2Badge }}
+              </div>
               <h4>{{ copy().rxjsVsSignals.coexistence.step2Title }}</h4>
               <ul>
-                @for (item of copy().rxjsVsSignals.coexistence.step2Items; track item) {
+                @for (
+                  item of copy().rxjsVsSignals.coexistence.step2Items;
+                  track item
+                ) {
                   <li>{{ item }}</li>
                 }
               </ul>
@@ -109,8 +119,14 @@
             <div class="detail-header">
               <h4>{{ current.title }}</h4>
               <div class="detail-tags">
-                <ah-tag>{{ copy().rxjsVsSignals.decisionMatrix.categoryPrefix }} {{ current.category }}</ah-tag>
-                <ah-tag>{{ copy().rxjsVsSignals.decisionMatrix.recommendedPrefix }} {{ current.winner }}</ah-tag>
+                <ah-tag
+                  >{{ copy().rxjsVsSignals.decisionMatrix.categoryPrefix }}
+                  {{ current.category }}</ah-tag
+                >
+                <ah-tag
+                  >{{ copy().rxjsVsSignals.decisionMatrix.recommendedPrefix }}
+                  {{ current.winner }}</ah-tag
+                >
               </div>
             </div>
 
@@ -120,7 +136,9 @@
               <div class="approach-box rxjs-box">
                 <div class="box-title">
                   <span class="icon">🌊</span>
-                  <strong>{{ copy().rxjsVsSignals.decisionMatrix.rxjsApproachTitle }}</strong>
+                  <strong>{{
+                    copy().rxjsVsSignals.decisionMatrix.rxjsApproachTitle
+                  }}</strong>
                 </div>
                 <code>{{ current.rxjsApproach }}</code>
               </div>
@@ -128,7 +146,9 @@
               <div class="approach-box signals-box">
                 <div class="box-title">
                   <span class="icon">⚡</span>
-                  <strong>{{ copy().rxjsVsSignals.decisionMatrix.signalsApproachTitle }}</strong>
+                  <strong>{{
+                    copy().rxjsVsSignals.decisionMatrix.signalsApproachTitle
+                  }}</strong>
                 </div>
                 <code>{{ current.signalsApproach }}</code>
               </div>
@@ -136,14 +156,19 @@
               <div class="approach-box hybrid-box">
                 <div class="box-title">
                   <span class="icon">✨</span>
-                  <strong>{{ copy().rxjsVsSignals.decisionMatrix.hybridApproachTitle }}</strong>
+                  <strong>{{
+                    copy().rxjsVsSignals.decisionMatrix.hybridApproachTitle
+                  }}</strong>
                 </div>
                 <code>{{ current.hybridApproach }}</code>
               </div>
             </div>
 
             <div class="takeaway-banner">
-              <strong>{{ copy().rxjsVsSignals.decisionMatrix.takeawayStrong }}</strong> {{ current.ruleOfThumb }}
+              <strong>{{
+                copy().rxjsVsSignals.decisionMatrix.takeawayStrong
+              }}</strong>
+              {{ current.ruleOfThumb }}
             </div>
           </div>
         </div>
@@ -165,7 +190,9 @@
         <div class="card-content">
           <div class="config-group">
             <div class="config-item">
-              <label for="base-price-input">{{ copy().rxjsVsSignals.derivedState.basePriceLabel }}</label>
+              <label for="base-price-input">{{
+                copy().rxjsVsSignals.derivedState.basePriceLabel
+              }}</label>
               <input
                 id="base-price-input"
                 type="number"
@@ -176,7 +203,9 @@
               />
             </div>
             <div class="config-item">
-              <label for="discount-input">{{ copy().rxjsVsSignals.derivedState.discountLabel }}</label>
+              <label for="discount-input">{{
+                copy().rxjsVsSignals.derivedState.discountLabel
+              }}</label>
               <input
                 id="discount-input"
                 type="number"
@@ -187,33 +216,52 @@
               />
             </div>
             <div class="config-item">
-              <span class="field-label">{{ copy().rxjsVsSignals.derivedState.taxRateLabel }}</span>
-              <div class="readonly-badge">{{ copy().rxjsVsSignals.derivedState.fixed20Badge }}</div>
+              <span class="field-label">{{
+                copy().rxjsVsSignals.derivedState.taxRateLabel
+              }}</span>
+              <div class="readonly-badge">
+                {{ copy().rxjsVsSignals.derivedState.fixed20Badge }}
+              </div>
             </div>
           </div>
 
           <div class="results-comparison">
             <div class="result-tile signal-result">
               <div class="result-header">
-                <span class="tag-label">{{ copy().rxjsVsSignals.derivedState.signalsComputedLabel }}</span>
-                <span class="tag-status">{{ copy().rxjsVsSignals.derivedState.syncPullBadge }}</span>
+                <span class="tag-label">{{
+                  copy().rxjsVsSignals.derivedState.signalsComputedLabel
+                }}</span>
+                <span class="tag-status">{{
+                  copy().rxjsVsSignals.derivedState.syncPullBadge
+                }}</span>
               </div>
               <div class="total-number">${{ computedTotal() }}</div>
-              <p class="result-note">{{ copy().rxjsVsSignals.derivedState.signalsNote }}</p>
+              <p class="result-note">
+                {{ copy().rxjsVsSignals.derivedState.signalsNote }}
+              </p>
             </div>
 
             <div class="result-tile rxjs-result">
               <div class="result-header">
-                <span class="tag-label">{{ copy().rxjsVsSignals.derivedState.rxjsCombineLabel }}</span>
-                <span class="tag-status">{{ copy().rxjsVsSignals.derivedState.pushStreamBadge }}</span>
+                <span class="tag-label">{{
+                  copy().rxjsVsSignals.derivedState.rxjsCombineLabel
+                }}</span>
+                <span class="tag-status">{{
+                  copy().rxjsVsSignals.derivedState.pushStreamBadge
+                }}</span>
               </div>
               <div class="total-number">${{ rxjsTotalSignal() }}</div>
-              <p class="result-note">{{ copy().rxjsVsSignals.derivedState.rxjsNote }}</p>
+              <p class="result-note">
+                {{ copy().rxjsVsSignals.derivedState.rxjsNote }}
+              </p>
             </div>
           </div>
 
           <div class="code-example">
-            <ah-code-block [code]="codeSnippets.derived" language="typescript" />
+            <ah-code-block
+              [code]="codeSnippets.derived"
+              language="typescript"
+            />
           </div>
         </div>
       </div>
@@ -237,24 +285,32 @@
         <div class="card-content">
           <div class="config-group">
             <div class="config-item">
-              <label for="search-hybrid-input">{{ copy().rxjsVsSignals.searchDebounce.inputLabel }}</label>
+              <label for="search-hybrid-input">{{
+                copy().rxjsVsSignals.searchDebounce.inputLabel
+              }}</label>
               <input
                 id="search-hybrid-input"
                 type="text"
                 [value]="searchQuery()"
                 (input)="onSearchInput($event)"
-                [placeholder]="copy().rxjsVsSignals.searchDebounce.inputPlaceholder"
+                [placeholder]="
+                  copy().rxjsVsSignals.searchDebounce.inputPlaceholder
+                "
               />
             </div>
           </div>
 
           <div class="computed-grid">
             <div class="computed-item">
-              <span class="field-label">{{ copy().rxjsVsSignals.searchDebounce.rawSignalLabel }}</span>
+              <span class="field-label">{{
+                copy().rxjsVsSignals.searchDebounce.rawSignalLabel
+              }}</span>
               <div class="data-display">{{ searchQuery() }}</div>
             </div>
             <div class="computed-item">
-              <span class="field-label">{{ copy().rxjsVsSignals.searchDebounce.debouncedSignalLabel }}</span>
+              <span class="field-label">{{
+                copy().rxjsVsSignals.searchDebounce.debouncedSignalLabel
+              }}</span>
               <div class="data-display highlight-on-change">
                 {{ debouncedQuery() }}
               </div>
@@ -262,7 +318,10 @@
           </div>
 
           <div class="code-example">
-            <ah-code-block [code]="codeSnippets.debounce" language="typescript" />
+            <ah-code-block
+              [code]="codeSnippets.debounce"
+              language="typescript"
+            />
           </div>
         </div>
       </div>
@@ -289,7 +348,9 @@
           @let status = cityWeather.status();
 
           <div class="resource-toolbar">
-            <span class="field-label">{{ copy().rxjsVsSignals.asyncResource.selectLocationLabel }}</span>
+            <span class="field-label">{{
+              copy().rxjsVsSignals.asyncResource.selectLocationLabel
+            }}</span>
             <div class="button-group-inline">
               <button
                 type="button"
@@ -336,13 +397,18 @@
             @if (isLoading) {
               <div class="loading-state">
                 <span class="spinner"></span>
-                <span>{{ copy().rxjsVsSignals.asyncResource.fetchingWeatherText }}</span>
+                <span>{{
+                  copy().rxjsVsSignals.asyncResource.fetchingWeatherText
+                }}</span>
               </div>
             } @else if (weather) {
               <div class="weather-card">
                 <div class="weather-header">
                   <span class="city-name">{{ weather.city }}</span>
-                  <ah-tag>{{ copy().rxjsVsSignals.asyncResource.statusPrefix }} {{ status }}</ah-tag>
+                  <ah-tag
+                    >{{ copy().rxjsVsSignals.asyncResource.statusPrefix }}
+                    {{ status }}</ah-tag
+                  >
                 </div>
                 <div class="weather-temp">{{ weather.temp }}</div>
                 <div class="weather-condition">{{ weather.condition }}</div>
@@ -351,7 +417,10 @@
           </div>
 
           <div class="code-example">
-            <ah-code-block [code]="codeSnippets.resource" language="typescript" />
+            <ah-code-block
+              [code]="codeSnippets.resource"
+              language="typescript"
+            />
           </div>
         </div>
       </div>
@@ -376,7 +445,9 @@
 
           <div class="config-group">
             <div class="config-item">
-              <span class="field-label">{{ copy().rxjsVsSignals.linkedState.selectPlanLabel }}</span>
+              <span class="field-label">{{
+                copy().rxjsVsSignals.linkedState.selectPlanLabel
+              }}</span>
               <div class="button-group-inline">
                 <button
                   type="button"
@@ -406,7 +477,9 @@
             </div>
 
             <div class="config-item">
-              <span class="field-label">{{ copy().rxjsVsSignals.linkedState.adjustQuotaLabel }}</span>
+              <span class="field-label">{{
+                copy().rxjsVsSignals.linkedState.adjustQuotaLabel
+              }}</span>
               <div class="quantity-control">
                 <button
                   type="button"
@@ -430,7 +503,9 @@
               </div>
               <div class="quota-status-row">
                 @if (overridden) {
-                  <ah-tag>{{ copy().rxjsVsSignals.linkedState.customOverrideBadge }}</ah-tag>
+                  <ah-tag>{{
+                    copy().rxjsVsSignals.linkedState.customOverrideBadge
+                  }}</ah-tag>
                   <button
                     type="button"
                     ahButton="ghost"
@@ -440,7 +515,9 @@
                     {{ copy().rxjsVsSignals.linkedState.resetPlanDefaultBtn }}
                   </button>
                 } @else {
-                  <span class="default-badge">{{ copy().rxjsVsSignals.linkedState.planDefaultBadge }}</span>
+                  <span class="default-badge">{{
+                    copy().rxjsVsSignals.linkedState.planDefaultBadge
+                  }}</span>
                 }
               </div>
             </div>

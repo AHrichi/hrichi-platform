@@ -4,10 +4,6 @@
   "sourceRoot": "libs/products/basecamp/domain/src",
   "prefix": "ah",
   "projectType": "library",
-  "tags": [
-    "scope:product-basecamp",
-    "type:domain",
-    "runtime:agnostic"
-  ],
+  "tags": ["scope:product-basecamp", "type:domain", "runtime:agnostic"],
   "targets": {}
 }
