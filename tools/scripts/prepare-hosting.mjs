@@ -224,10 +224,9 @@ const tiles = 'https://tile.openstreetmap.org';
 const geocoder = 'https://nominatim.openstreetmap.org';
 // Basecamp's forecast for a campsite (Open-Meteo: free, no key).
 const weather = 'https://api.open-meteo.com';
+// Allow ngrok tunnels and local endpoints for user-configurable AI webhooks (e.g. StudyLM n8n integration).
 const devConnectSources =
-  values.env === 'development'
-    ? ' https://*.ngrok-free.dev https://*.ngrok.app https://*.ngrok.io http://127.0.0.1:* http://localhost:*'
-    : '';
+  ' https://*.ngrok-free.dev https://*.ngrok.app https://*.ngrok.io http://127.0.0.1:* http://localhost:*';
 const csp = [
   "default-src 'self'",
   // blob: is required by es-module-shims in shim mode (ADR-0006).
