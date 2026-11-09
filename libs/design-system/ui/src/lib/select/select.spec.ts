@@ -66,4 +66,74 @@ describe('Select', () => {
     ).toBeNull();
     expect(trigger.textContent).toContain('Angular');
   });
+
+  describe('keyboard (select-only combobox)', () => {
+    const key = (el: HTMLElement, k: string) =>
+      el.dispatchEvent(
+        new KeyboardEvent('keydown', {
+          key: k,
+          bubbles: true,
+          cancelable: true,
+        }),
+      );
+
+    async function openWithKeyboard() {
+      const fixture = TestBed.createComponent(TestHostComponent);
+      await fixture.whenStable();
+      const trigger: HTMLButtonElement =
+        fixture.nativeElement.querySelector('.ah-select-trigger');
+      key(trigger, 'ArrowDown');
+      await fixture.whenStable();
+      return { fixture, trigger };
+    }
+
+    it('announces the active option through aria-activedescendant', async () => {
+      const { fixture, trigger } = await openWithKeyboard();
+      const active = trigger.getAttribute('aria-activedescendant');
+      expect(active).toBeTruthy();
+      const option = fixture.nativeElement.querySelector(`#${active}`);
+      expect(option.textContent).toContain('JavaScript');
+      expect(option.getAttribute('role')).toBe('option');
+    });
+
+    it('skips disabled options and stops at the last enabled one', async () => {
+      const { fixture, trigger } = await openWithKeyboard();
+      key(trigger, 'ArrowDown');
+      key(trigger, 'ArrowDown');
+      await fixture.whenStable();
+      const active = trigger.getAttribute('aria-activedescendant');
+      expect(
+        fixture.nativeElement.querySelector(`#${active}`).textContent,
+      ).toContain('Angular');
+    });
+
+    it('jumps by typeahead and selects with Enter', async () => {
+      const { fixture, trigger } = await openWithKeyboard();
+      key(trigger, 'a');
+      key(trigger, 'Enter');
+      await fixture.whenStable();
+      expect(fixture.componentInstance.selectedValue()).toBe('ng');
+      expect(trigger.getAttribute('aria-expanded')).toBe('false');
+    });
+
+    it('closes on Escape without letting the event reach a parent dialog', async () => {
+      const { fixture, trigger } = await openWithKeyboard();
+      let reachedParent = false;
+      fixture.nativeElement.addEventListener('keydown', () => {
+        reachedParent = true;
+      });
+      key(trigger, 'Escape');
+      await fixture.whenStable();
+      expect(trigger.getAttribute('aria-expanded')).toBe('false');
+      expect(reachedParent).toBe(false);
+    });
+
+    it('labels the trigger with a real <label>', async () => {
+      const fixture = TestBed.createComponent(TestHostComponent);
+      await fixture.whenStable();
+      const label = fixture.nativeElement.querySelector('label');
+      const trigger = fixture.nativeElement.querySelector('.ah-select-trigger');
+      expect(label.getAttribute('for')).toBe(trigger.id);
+    });
+  });
 });

@@ -39,7 +39,7 @@
   background: transparent;
   border: none;
   padding: 0;
-  text-align: left;
+  text-align: start;
   color: var(--color-text-default);
   cursor: pointer;
   outline: none;
@@ -130,7 +130,7 @@
 
   .ah-accordion-meta,
   .ah-accordion-actions {
-    margin-left: auto;
+    margin-inline-start: auto;
   }
 }
 

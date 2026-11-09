@@ -149,8 +149,12 @@
               <button
                 type="button"
                 class="card-action-btn hint-btn"
+                [disabled]="!store.aiReady()"
                 (click)="$event.stopPropagation(); requestHint(card)"
-                title="Need a hint? Request pedagogical clues without spoiling the answer"
+                [attr.title]="
+                  store.aiStatus() ??
+                  'Need a hint? Request pedagogical clues without spoiling the answer'
+                "
               >
                 <span class="btn-icon">💡</span>
                 <span>Hint</span>
@@ -193,8 +197,12 @@
               <button
                 type="button"
                 class="card-action-btn deepdive-btn"
+                [disabled]="!store.aiReady()"
                 (click)="$event.stopPropagation(); requestDeepDive(card)"
-                title="Deep dive: view architectural breakdown, flowchart, and verified code"
+                [attr.title]="
+                  store.aiStatus() ??
+                  'Deep dive: view architectural breakdown, flowchart, and verified code'
+                "
               >
                 <span class="btn-icon">🔍</span>
                 <span>Deep Dive & Diagram</span>
@@ -221,7 +229,7 @@
             </div>
 
             @if (card.codeSnippet) {
-              <div class="card-code-section" (click)="$event.stopPropagation()">
+              <div class="card-code-section">
                 <div class="code-section-header">
                   <span class="code-section-title">Verified Code Example</span>
                   <span class="code-section-hint">Interactive snippet</span>

@@ -49,7 +49,7 @@
               />
             </div>
             <div class="config-item">
-              <label>Quantity:</label>
+              <span class="field-label">Quantity:</span>
               <div class="quantity-control">
                 <button
                   type="button"
@@ -91,7 +91,7 @@
         <div class="card-content">
           <div class="computed-grid">
             <div class="computed-item">
-              <label>Full Name:</label>
+              <span class="field-label">Full Name:</span>
               <div
                 class="data-display highlight-on-change"
                 [class.changed]="fullName()"
@@ -100,7 +100,7 @@
               </div>
             </div>
             <div class="computed-item">
-              <label>Is Stock Low?</label>
+              <span class="field-label">Is Stock Low?</span>
               <div
                 class="data-display highlight-on-change"
                 [class.changed]="isStockLow()"
@@ -109,7 +109,7 @@
               </div>
             </div>
             <div class="computed-item full-width">
-              <label>Stock Message:</label>
+              <span class="field-label">Stock Message:</span>
               <div
                 class="data-display highlight-on-change"
                 [class.changed]="stockMessage()"
@@ -187,7 +187,9 @@
 
           <div class="computed-grid">
             <div class="computed-item">
-              <label>Resulting Signal (<code>counterSignal</code>):</label>
+              <span class="field-label"
+                >Resulting Signal (<code>counterSignal</code>):</span
+              >
               <div
                 class="data-display highlight-on-change"
                 [class.changed]="counterSignal()"
@@ -196,7 +198,9 @@
               </div>
             </div>
             <div class="computed-item">
-              <label>Computed from Signal (<code>isEven</code>):</label>
+              <span class="field-label"
+                >Computed from Signal (<code>isEven</code>):</span
+              >
               <div
                 class="data-display highlight-on-change"
                 [class.changed]="isEven()"
@@ -278,7 +282,7 @@ isEven = computed(() => this.counterSignal() % 2 === 0);</code></pre>
 
           <div class="config-group">
             <div class="config-item">
-              <label>Choose Plan Tier:</label>
+              <span class="field-label">Choose Plan Tier:</span>
               <div class="button-group-inline">
                 <button
                   type="button"
@@ -312,7 +316,9 @@ isEven = computed(() => this.counterSignal() % 2 === 0);</code></pre>
             </div>
 
             <div class="config-item">
-              <label>Adjust Compute Credits (Direct Mutation):</label>
+              <span class="field-label"
+                >Adjust Compute Credits (Direct Mutation):</span
+              >
               <div class="quantity-control">
                 <button
                   type="button"
@@ -400,7 +406,7 @@ computeCredits.update(c => c + 5);</code></pre>
 
           <div class="resource-panel">
             <div class="resource-controls">
-              <label>Select User ID:</label>
+              <span class="field-label">Select User ID:</span>
               <div class="button-group-inline">
                 <button
                   type="button"
@@ -499,7 +505,7 @@ computeCredits.update(c => c + 5);</code></pre>
 
           <div class="resource-panel">
             <div class="resource-controls">
-              <label>Select Search Topic:</label>
+              <span class="field-label">Select Search Topic:</span>
               <div class="button-group-inline">
                 <button
                   type="button"
@@ -615,11 +621,11 @@ computeCredits.update(c => c + 5);</code></pre>
             </div>
             <div class="computed-grid">
               <div class="computed-item">
-                <label>Raw Signal Input:</label>
+                <span class="field-label">Raw Signal Input:</span>
                 <div class="data-display">{{ query }}</div>
               </div>
               <div class="computed-item">
-                <label>Debounced + UpperCase Signal:</label>
+                <span class="field-label">Debounced + UpperCase Signal:</span>
                 <div class="data-display highlight-on-change">
                   {{ debounced }}
                 </div>

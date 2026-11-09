@@ -462,3 +462,8 @@
   white-space: nowrap;
   border-width: 0;
 }
+
+/* Demo visitors: the same pill, as a status rather than a button. */
+.n8n-indicator-btn--static {
+  cursor: default;
+}

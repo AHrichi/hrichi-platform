@@ -403,14 +403,6 @@ export class AppsPage {
     });
   }
 
-  onHeaderClick(appId: string, event: MouseEvent): void {
-    const target = event.target as HTMLElement | null;
-    if (target?.closest('a, button')) {
-      return;
-    }
-    this.toggleCard(appId);
-  }
-
   readonly allAppIds = computed(() => [
     ...this.productionApps().map((a) => a.id),
     ...this.engineeringLabs().map((l) => l.id),
@@ -647,13 +639,12 @@ export class AppsPage {
           title: 'StudyLM · منصة التقييم والتدريب الهندسي بالذكاء الاصطناعي',
           category: 'production',
           badge: {
-            label: '🤖 محرك الذكاء الاصطناعي Groq 120B',
+            label: 'دروس تفاعلية بدون اتصال وتدريبات برمجية',
             variant: 'accent',
-            pulse: true,
           },
-          eyebrow: 'بناء المناهج البرمجية وتقييم الكفاءات التقنية خطوة بخطوة',
+          eyebrow: 'دروس تطبيقية مرئية ومسارات تدريبية خطوة بخطوة',
           summary:
-            'منصة إتقان هندسة البرمجيات تعتمد على مسارات عمل n8n ونماذج Groq LPU (120B). تفكك المواضيع المعقدة إلى فصول تدريجية مع أسئلة تشخيصية وبطاقات استذكار موثقة من المراجع الرسمية.',
+            'منصة تعليمية تفاعلية تتضمن 7 دروس مبنية بدون اتصال بالإنترنت، مع محاكاة مرئية متدرجة، وتتبع لتنفيذ الشيفرة البرمجية، بالإضافة إلى تدريبات ذكية وبطاقات استذكار موثقة.',
           route: '/apps/studylm',
           icon: '📚',
           ctaLabel: 'StudyLM',
@@ -661,7 +652,7 @@ export class AppsPage {
             'Zoneless Angular 22',
             'Native Federation',
             'n8n AI Workflow Engine',
-            'Groq LPU (120B / 27B)',
+            'Multi-Model AI (Llama & Qwen)',
             'NgRx SignalStore',
             'Dexie IndexedDB',
           ],
@@ -925,13 +916,12 @@ export class AppsPage {
             "StudyLM · Moteur d'Évaluation & Parcours d'Ingénierie Logicielle IA",
           category: 'production',
           badge: {
-            label: '🤖 Moteur Groq 120B IA',
+            label: 'Leçons interactives hors-ligne & entraînements',
             variant: 'accent',
-            pulse: true,
           },
-          eyebrow: 'Architecte Pédagogique Autonome & Quiz Diagnostiques',
+          eyebrow: 'Leçons visuelles progressives & traceur de code',
           summary:
-            "Plateforme de montée en compétences logicielles orchestrée par n8n et les modèles Groq LPU (120B). Décompose les sujets d'ingénierie en chapitres progressifs avec flashcards illimitées et quiz diagnostiques à 4 options.",
+            "Plateforme d'apprentissage interactive incluant 7 leçons intégrées hors-ligne, des simulations visuelles séquencées, des prédictions actives et un traceur d'exécution de code — accompagnés de parcours et flashcards techniques.",
           route: '/apps/studylm',
           icon: '📚',
           ctaLabel: 'StudyLM',
@@ -939,7 +929,7 @@ export class AppsPage {
             'Zoneless Angular 22',
             'Native Federation',
             'n8n AI Workflow Engine',
-            'Groq LPU (120B / 27B)',
+            'Multi-Model AI (Llama & Qwen)',
             'NgRx SignalStore',
             'Dexie IndexedDB',
           ],
@@ -1210,14 +1200,13 @@ export class AppsPage {
             'StudyLM · Piattaforma di Formazione ed Esercitazione in Ingegneria del Software con IA',
           category: 'production',
           badge: {
-            label: '🤖 Motore IA Groq 120B',
+            label: 'Lezioni interattive offline ed esercitazioni',
             variant: 'accent',
-            pulse: true,
           },
           eyebrow:
-            'Architetto Didattico Autonomo & Valutazione Sezione per Sezione',
+            'Simulazioni visive progressive e tracciatore di codice',
           summary:
-            "Piattaforma per la padronanza dell'ingegneria del software orchestrata tramite workflow n8n e modelli Groq LPU (120B). Scompone argomenti complessi in capitoli progressivi con flashcard illimitate e quiz diagnostici a 4 scelte.",
+            "Piattaforma di apprendimento interattiva con 7 lezioni integrate offline, simulazioni visive a step, verifiche predittive e tracciatore di esecuzione del codice — abbinati a percorsi didattici e flashcard tecniche.",
           route: '/apps/studylm',
           icon: '📚',
           ctaLabel: 'StudyLM',
@@ -1225,7 +1214,7 @@ export class AppsPage {
             'Zoneless Angular 22',
             'Native Federation',
             'n8n AI Workflow Engine',
-            'Groq LPU (120B / 27B)',
+            'Multi-Model AI (Llama & Qwen)',
             'NgRx SignalStore',
             'Dexie IndexedDB',
           ],
@@ -1495,14 +1484,13 @@ export class AppsPage {
             'StudyLM · KI-gestützte Plattform für Software-Engineering-Curricula & Drill-Training',
           category: 'production',
           badge: {
-            label: '🤖 Groq 120B KI-Engine',
+            label: 'Interaktive Offline-Lektionen & Übungen',
             variant: 'accent',
-            pulse: true,
           },
           eyebrow:
-            'Autonomer Didaktik-Architekt & Schrittweise Wissensüberprüfung',
+            'Schrittweise visuelle Simulationen & Code-Tracer',
           summary:
-            'Lern- und Vertiefungsplattform für Software Engineering, angetrieben von n8n-Workflows und Groq-LPU-Modellen (120B). Zerlegt komplexe Informatikthemen in progressive Kapitel mit unbegrenzten Karteikartendecks und 4-Optionen-Diagnosequizzen.',
+            'Interaktive Lernplattform mit 7 integrierten Offline-Lektionen, schrittweisen visuellen Simulationen, interaktiven Vorhersagen und einem Code-Ausführungs-Tracer — ergänzt durch didaktische Roadmaps und Fach-Flashcards.',
           route: '/apps/studylm',
           icon: '📚',
           ctaLabel: 'StudyLM',
@@ -1510,7 +1498,7 @@ export class AppsPage {
             'Zoneless Angular 22',
             'Native Federation',
             'n8n AI Workflow Engine',
-            'Groq LPU (120B / 27B)',
+            'Multi-Model AI (Llama & Qwen)',
             'NgRx SignalStore',
             'Dexie IndexedDB',
           ],
@@ -1769,14 +1757,13 @@ export class AppsPage {
           'StudyLM · Grounded AI Software Engineering Curriculum & Drill Engine',
         category: 'production',
         badge: {
-          label: '🤖 Groq 120B AI Engine',
+          label: 'Interactive Offline Lessons & Drills',
           variant: 'accent',
-          pulse: true,
         },
         eyebrow:
-          'Autonomous Curriculum Architect & Section-by-Section Assessment Engine',
+          'Stepped Architectural Visuals & Execution Code Tracer',
         summary:
-          'A software engineering mastery platform powered by self-hosted n8n workflows and Groq LPU models (120B). Deconstructs complex SE topics into progressive pedagogical branches with uncapped flashcard decks and 4-option diagnostic quizzes.',
+          'An interactive learning platform featuring 7 built-in offline lessons, stepped visual simulations, prediction checks, and a live code execution tracer — paired with an optional AI curriculum engine for grounded roadmaps and quizzes.',
         route: '/apps/studylm',
         icon: '📚',
         ctaLabel: 'StudyLM',
@@ -1784,18 +1771,18 @@ export class AppsPage {
           'Zoneless Angular 22',
           'Native Federation',
           'n8n AI Workflow Engine',
-          'Groq LPU (120B / 27B)',
+          'Multi-Model AI (Llama & Qwen)',
           'NgRx SignalStore',
           'Dexie IndexedDB',
         ],
         features: [
+          '7 interactive offline lessons with stepped architectural visuals and execution code tracer',
           'Software Engineering Topic Guardrail: Intelligent validator rejecting non-SE subjects',
           'Pedagogical Roadmap Deconstruction citing official documentation (MDN, React, PostgreSQL)',
-          'Technical flashcards with code snippets, and interactive step-by-step lessons',
-          'Diagnostic 4-Option Quizzes with comprehensive explanations for every distractor',
+          'Technical flashcards with verified code snippets and diagnostic 4-option quizzes',
         ],
         architectureNotes:
-          'Multi-tier AI orchestration via n8n with primary Groq 120B reasoning and automated failover.',
+          'Multi-tier AI orchestration via n8n with automated failover and zero telemetry without consent.',
       },
       {
         id: 'whatsapp',

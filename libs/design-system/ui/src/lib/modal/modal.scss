@@ -1,191 +1,219 @@
-:host {
-  display: contents;
-}
-
-.ah-modal-backdrop {
-  position: fixed;
-  inset: 0;
-  background: rgba(15, 15, 18, 0.72);
-  backdrop-filter: blur(4px);
-  z-index: 9998;
-  animation: ah-fade-in var(--motion-duration-fast) ease-out;
-}
-
-.ah-modal-dialog {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 9999;
-  display: flex;
-  flex-direction: column;
-  max-block-size: min(90dvh, 52rem);
-  inline-size: min(92vw, 36rem);
-  background: var(--color-bg-surface);
-  border: 1px solid var(--color-border-default);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-raised);
-  overflow: hidden;
-  animation: ah-modal-pop var(--motion-duration-base)
-    var(--motion-easing-standard);
-}
-
-.ah-modal--sm {
-  inline-size: min(92vw, 24rem);
-}
-
-.ah-modal--md {
-  inline-size: min(92vw, 36rem);
-}
-
-.ah-modal--lg {
-  inline-size: min(94vw, 48rem);
-}
-
-.ah-modal--xl {
-  inline-size: min(96vw, 64rem);
-}
-
-.ah-modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: var(--space-3);
-  padding: var(--space-5);
-  border-block-end: 1px solid var(--color-border-default);
-  background: var(--color-bg-raised);
-  flex-shrink: 0;
-}
-
-.ah-modal-title-wrap {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1);
-  min-width: 0;
-  overflow-wrap: break-word;
-}
-
-.ah-modal-title {
-  margin: 0;
-  font-size: var(--font-size-400);
-  font-weight: var(--font-weight-bold);
-  color: var(--color-text-default);
-  line-height: var(--font-line-height-snug);
-  overflow-wrap: break-word;
-}
-
-.ah-modal-close-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  inline-size: 2rem;
-  block-size: 2rem;
-  padding: 0;
-  border: 1px solid var(--color-border-default);
-  border-radius: var(--radius-md);
-  background: var(--color-bg-surface);
-  color: var(--color-text-muted);
-  cursor: pointer;
-  font-size: 0.9rem;
-  transition: all var(--motion-duration-fast) ease;
-  flex-shrink: 0;
-}
-
-.ah-modal-close-btn:hover {
-  background: var(--color-bg-surface);
-  color: var(--color-text-default);
-  border-color: var(--color-border-strong);
-}
-
-.ah-modal-close-btn:focus-visible {
-  outline: 2px solid var(--color-focus-ring);
-  outline-offset: 2px;
-}
-
-.ah-modal-body {
-  padding: var(--space-5);
-  overflow-y: auto;
-  overflow-x: hidden;
-  flex: 1 1 auto;
-  min-block-size: 0;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-  overflow-wrap: break-word;
-}
-
-.ah-modal-footer {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  gap: var(--space-3);
-  padding-block: var(--space-4);
-  padding-inline: var(--space-5);
-  border-block-start: 1px solid var(--color-border-default);
-  background: var(--color-bg-raised);
-  flex-shrink: 0;
-  flex-wrap: wrap;
-}
-
-.ah-modal-footer:empty {
-  display: none;
-}
-
-@keyframes ah-fade-in {
-  from {
-    opacity: 0;
+@layer components {
+  :host {
+    display: contents;
   }
-  to {
-    opacity: 1;
-  }
-}
 
-@keyframes ah-modal-pop {
-  from {
-    opacity: 0;
-    transform: translate(-50%, -46%) scale(0.97);
-  }
-  to {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
-  }
-}
-
-@keyframes ah-sheet-slide-up {
-  from {
-    transform: translateY(100%);
-  }
-  to {
-    transform: translateY(0);
-  }
-}
-
-@media (max-width: 640px) {
+  /*
+   * The native dialog: centred by the browser in the top layer. It is a
+   * transparent frame so a click on it (outside .ah-modal-surface) means the
+   * backdrop was clicked.
+   */
   .ah-modal-dialog {
-    top: auto;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    transform: none;
-    inline-size: 100vw;
-    max-inline-size: 100vw;
-    max-block-size: 92dvh;
-    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-    border-bottom: none;
-    padding-bottom: env(safe-area-inset-bottom, 0);
-    animation: ah-sheet-slide-up var(--motion-duration-base)
-      var(--motion-easing-standard);
+    inline-size: min(92vw, 36rem);
+    max-inline-size: none;
+    max-block-size: min(90dvh, 52rem);
+    padding: 0;
+    margin: auto;
+    border: none;
+    background: transparent;
+    color: var(--color-text-default);
+    overflow: visible;
+
+    &::backdrop {
+      background: var(--color-overlay-scrim);
+      backdrop-filter: blur(4px);
+    }
+
+    &[open] {
+      display: flex;
+      animation: ah-modal-pop var(--motion-duration-base)
+        var(--motion-easing-enter);
+
+      &::backdrop {
+        animation: ah-fade-in var(--motion-duration-fast)
+          var(--motion-easing-enter);
+      }
+    }
+
+    &:focus-visible {
+      outline: none;
+    }
+  }
+
+  .ah-modal-surface {
+    display: flex;
+    flex-direction: column;
+    inline-size: 100%;
+    max-block-size: inherit;
+    background: var(--color-bg-surface);
+    border: var(--border-width-hairline) solid var(--color-border-default);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-modal);
+    /* Clip the rounded corners without clipping popovers: they use the top
+       layer or position: fixed. */
+    overflow: clip;
+  }
+
+  .ah-modal--sm {
+    inline-size: min(92vw, 24rem);
+  }
+
+  .ah-modal--md {
+    inline-size: min(92vw, 36rem);
+  }
+
+  .ah-modal--lg {
+    inline-size: min(94vw, 48rem);
+  }
+
+  .ah-modal--xl {
+    inline-size: min(96vw, 64rem);
   }
 
   .ah-modal-header {
-    padding: var(--space-4);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--space-3);
+    padding: var(--space-5);
+    border-block-end: var(--border-width-hairline) solid
+      var(--color-border-default);
+    background: var(--color-bg-raised);
+    flex-shrink: 0;
+  }
+
+  .ah-modal-title-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    min-inline-size: 0;
+    overflow-wrap: break-word;
+  }
+
+  .ah-modal-title {
+    margin: 0;
+    font-size: var(--font-size-400);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text-default);
+    line-height: var(--font-line-height-snug);
+    overflow-wrap: break-word;
+  }
+
+  .ah-modal-close-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    inline-size: var(--control-height-md);
+    block-size: var(--control-height-md);
+    margin: calc(var(--space-2) * -1);
+    padding: 0;
+    border: var(--border-width-hairline) solid transparent;
+    border-radius: var(--radius-md);
+    background: transparent;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    font-size: var(--font-size-200);
+    transition-property: color, background-color, border-color;
+    transition-duration: var(--motion-duration-fast);
+    transition-timing-function: var(--motion-easing-standard);
+    flex-shrink: 0;
+
+    &:hover {
+      background: var(--color-bg-surface);
+      color: var(--color-text-default);
+      border-color: var(--color-border-strong);
+    }
+
+    &:focus-visible {
+      outline: var(--focus-ring-width) solid var(--color-focus-ring);
+      outline-offset: 2px;
+    }
   }
 
   .ah-modal-body {
-    padding: var(--space-4);
+    padding: var(--space-5);
+    overflow-y: auto;
+    overflow-x: hidden;
+    flex: 1 1 auto;
+    min-block-size: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    overflow-wrap: break-word;
   }
 
   .ah-modal-footer {
-    padding: var(--space-3) var(--space-4);
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: var(--space-3);
+    padding-block: var(--space-4);
+    padding-inline: var(--space-5);
+    border-block-start: var(--border-width-hairline) solid
+      var(--color-border-default);
+    background: var(--color-bg-raised);
+    flex-shrink: 0;
+    flex-wrap: wrap;
+  }
+
+  .ah-modal-footer:empty {
+    display: none;
+  }
+
+  /* Phones: a bottom sheet. */
+  @media (max-width: 40rem) {
+    .ah-modal-dialog,
+    .ah-modal--sm,
+    .ah-modal--md,
+    .ah-modal--lg,
+    .ah-modal--xl {
+      inline-size: 100vw;
+      max-block-size: 92dvh;
+      margin-block-end: 0;
+      margin-inline: 0;
+
+      &[open] {
+        animation-name: ah-sheet-slide-up;
+      }
+    }
+
+    .ah-modal-surface {
+      border-end-start-radius: 0;
+      border-end-end-radius: 0;
+      border-block-end: none;
+      padding-block-end: env(safe-area-inset-bottom, 0);
+    }
+
+    .ah-modal-header {
+      padding: var(--space-4);
+    }
+
+    .ah-modal-body {
+      padding: var(--space-4);
+    }
+
+    .ah-modal-footer {
+      padding-block: var(--space-3);
+      padding-inline: var(--space-4);
+    }
+  }
+
+  @keyframes ah-fade-in {
+    from {
+      opacity: 0;
+    }
+  }
+
+  @keyframes ah-modal-pop {
+    from {
+      opacity: 0;
+      transform: translateY(1rem) scale(0.97);
+    }
+  }
+
+  @keyframes ah-sheet-slide-up {
+    from {
+      transform: translateY(100%);
+    }
   }
 }

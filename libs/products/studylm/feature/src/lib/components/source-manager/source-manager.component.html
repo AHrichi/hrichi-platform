@@ -57,7 +57,15 @@
   } @else {
     <div class="sources-grid">
       @for (source of store.activeSources(); track source.id) {
-        <article class="source-card" (click)="previewSource(source)">
+        <article
+          class="source-card"
+          tabindex="0"
+          role="button"
+          [attr.aria-label]="'Preview source ' + source.title"
+          (click)="previewSource(source)"
+          (keydown.enter)="previewSource(source)"
+          (keydown.space)="$event.preventDefault(); previewSource(source)"
+        >
           <div class="card-top">
             <span class="type-badge type-{{ source.type }}">
               {{ getSourceIcon(source.type) }} {{ source.type | uppercase }}
@@ -81,11 +89,11 @@
 
           <p class="source-excerpt">{{ source.content | slice: 0 : 180 }}...</p>
 
-          <div class="card-footer" (click)="$event.stopPropagation()">
+          <div class="card-footer">
             <button
               type="button"
               class="action-btn preview-btn"
-              (click)="previewSource(source)"
+              (click)="$event.stopPropagation(); previewSource(source)"
             >
               Read Document
             </button>
@@ -116,176 +124,154 @@
   }
 
   <!-- Add / Edit Source Modal -->
-  @if (store.showAddSourceModal()) {
-    <div class="modal-backdrop" (click)="cancelAdd()">
-      <div class="modal-container" (click)="$event.stopPropagation()">
-        <header class="modal-header">
-          <div class="header-titles">
-            <span class="eyebrow">Ingestion Pipeline</span>
-            <h2>
-              {{
-                store.editingSource()
-                  ? 'Edit Knowledge Source'
-                  : 'Add Knowledge Source'
-              }}
-            </h2>
-          </div>
-          <button type="button" class="close-btn" (click)="cancelAdd()">
-            ✕
-          </button>
-        </header>
-
-        <form
-          [formRoot]="sourceForm"
-          (ngSubmit)="submitSource()"
-          class="source-form"
-          novalidate
-        >
-          <div class="form-body">
-            <div class="type-selector">
-              <label>Source Type</label>
-              <div class="type-buttons">
-                <button
-                  type="button"
-                  class="type-btn"
-                  [class.active]="model().type === 'document'"
-                  (click)="setType('document')"
-                >
-                  📄 Document / Text
-                </button>
-                <button
-                  type="button"
-                  class="type-btn"
-                  [class.active]="model().type === 'slide'"
-                  (click)="setType('slide')"
-                >
-                  📑 Slide Presentation
-                </button>
-                <button
-                  type="button"
-                  class="type-btn"
-                  [class.active]="model().type === 'link'"
-                  (click)="setType('link')"
-                >
-                  🔗 Web Documentation Link
-                </button>
-                <button
-                  type="button"
-                  class="type-btn"
-                  [class.active]="model().type === 'note'"
-                  (click)="setType('note')"
-                >
-                  📝 Personal Note
-                </button>
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label for="sourceTitle">Source Title / Reference Name *</label>
-              <input
-                id="sourceTitle"
-                type="text"
-                [formField]="sourceForm.title"
-                placeholder="e.g. Raft Consensus Paper, or Angular 19 Zoneless Architecture"
-              />
-            </div>
-
-            @if (model().type === 'link') {
-              <div class="form-group">
-                <label for="sourceUrl">Reference URL (Optional)</label>
-                <input
-                  id="sourceUrl"
-                  type="url"
-                  [formField]="sourceForm.url"
-                  placeholder="https://angular.dev/guide/signals"
-                />
-              </div>
-            }
-
-            <div class="form-group">
-              <label for="sourceContent"
-                >Content / Slides / Notes / Extracted Text *</label
-              >
-              <textarea
-                id="sourceContent"
-                rows="8"
-                [formField]="sourceForm.content"
-                placeholder="Paste the full text, markdown, slide contents, or summary to ground AI generation..."
-              ></textarea>
-            </div>
-          </div>
-
-          <footer class="modal-footer">
-            <button type="button" class="btn-secondary" (click)="cancelAdd()">
-              Cancel
-            </button>
-            <button type="submit" class="btn-primary">
-              {{
-                store.editingSource()
-                  ? 'Update Source'
-                  : 'Add to StudyLM Sources'
-              }}
-            </button>
-          </footer>
-        </form>
-      </div>
-    </div>
-  }
-
-  <!-- Source Detail Preview Drawer / Modal -->
-  @if (store.selectedSourceForPreview()) {
-    <div class="modal-backdrop" (click)="closePreview()">
-      <div
-        class="modal-container preview-modal"
-        (click)="$event.stopPropagation()"
-      >
-        <header class="modal-header">
-          <div class="header-titles">
-            <span
-              class="type-badge type-{{
-                store.selectedSourceForPreview()?.type
-              }}"
+  <ah-modal
+    [open]="store.showAddSourceModal()"
+    [title]="
+      store.editingSource()
+        ? 'Edit Knowledge Source'
+        : 'Add Knowledge Source'
+    "
+    eyebrow="Ingestion Pipeline"
+    size="lg"
+    (closed)="cancelAdd()"
+  >
+    <form
+      [formRoot]="sourceForm"
+      (ngSubmit)="submitSource()"
+      class="source-form"
+      novalidate
+    >
+      <div class="form-body">
+        <div class="type-selector">
+          <span class="section-label">Source Type</span>
+          <div class="type-buttons">
+            <button
+              type="button"
+              class="type-btn"
+              [class.active]="model().type === 'document'"
+              (click)="setType('document')"
             >
-              {{
-                getSourceIcon(
-                  store.selectedSourceForPreview()?.type || 'document'
-                )
-              }}
-              {{ store.selectedSourceForPreview()?.type | uppercase }} &bull;
-              {{ store.selectedSourceForPreview()?.wordCount }} words
-            </span>
-            <h2>{{ store.selectedSourceForPreview()?.title }}</h2>
-          </div>
-          <button type="button" class="close-btn" (click)="closePreview()">
-            ✕
-          </button>
-        </header>
-
-        <div class="modal-body preview-body">
-          @if (store.selectedSourceForPreview()?.url) {
-            <div class="source-url-banner">
-              <span>External Reference:</span>
-              <a
-                [href]="store.selectedSourceForPreview()?.url"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {{ store.selectedSourceForPreview()?.url }}
-              </a>
-            </div>
-          }
-
-          <div class="document-text-viewer">
-            <pre>{{ store.selectedSourceForPreview()?.content }}</pre>
+              📄 Document / Text
+            </button>
+            <button
+              type="button"
+              class="type-btn"
+              [class.active]="model().type === 'slide'"
+              (click)="setType('slide')"
+            >
+              📑 Slide Presentation
+            </button>
+            <button
+              type="button"
+              class="type-btn"
+              [class.active]="model().type === 'link'"
+              (click)="setType('link')"
+            >
+              🔗 Web Documentation Link
+            </button>
+            <button
+              type="button"
+              class="type-btn"
+              [class.active]="model().type === 'note'"
+              (click)="setType('note')"
+            >
+              📝 Personal Note
+            </button>
           </div>
         </div>
 
-        <footer class="modal-footer">
-          <button type="button" class="btn-primary" (click)="closePreview()">
-            Done Reading
-          </button>
-        </footer>
+        <div class="form-group">
+          <label for="sourceTitle">Source Title / Reference Name *</label>
+          <input
+            id="sourceTitle"
+            type="text"
+            [formField]="sourceForm.title"
+            placeholder="e.g. Raft Consensus Paper, or Angular 19 Zoneless Architecture"
+          />
+        </div>
+
+        @if (model().type === 'link') {
+          <div class="form-group">
+            <label for="sourceUrl">Reference URL (Optional)</label>
+            <input
+              id="sourceUrl"
+              type="url"
+              [formField]="sourceForm.url"
+              placeholder="https://angular.dev/guide/signals"
+            />
+          </div>
+        }
+
+        <div class="form-group">
+          <label for="sourceContent"
+            >Content / Slides / Notes / Extracted Text *</label
+          >
+          <textarea
+            id="sourceContent"
+            rows="8"
+            [formField]="sourceForm.content"
+            placeholder="Paste the full text, markdown, slide contents, or summary to ground AI generation..."
+          ></textarea>
+        </div>
       </div>
-    </div>
-  }
+
+      <div modal-actions class="modal-footer">
+        <button type="button" class="btn-secondary" (click)="cancelAdd()">
+          Cancel
+        </button>
+        <button type="submit" class="btn-primary">
+          {{
+            store.editingSource()
+              ? 'Update Source'
+              : 'Add to StudyLM Sources'
+          }}
+        </button>
+      </div>
+    </form>
+  </ah-modal>
+
+  <!-- Source Detail Preview Drawer / Modal -->
+  <ah-modal
+    [open]="!!store.selectedSourceForPreview()"
+    [title]="store.selectedSourceForPreview()?.title || ''"
+    [eyebrow]="
+      store.selectedSourceForPreview()
+        ? getSourceIcon(store.selectedSourceForPreview()!.type) +
+          ' ' +
+          (store.selectedSourceForPreview()!.type | uppercase) +
+          ' • ' +
+          store.selectedSourceForPreview()!.wordCount +
+          ' words'
+        : ''
+    "
+    size="lg"
+    (closed)="closePreview()"
+  >
+    @if (store.selectedSourceForPreview(); as preview) {
+      <div class="modal-body preview-body">
+        @if (preview.url) {
+          <div class="source-url-banner">
+            <span>External Reference:</span>
+            <a
+              [href]="preview.url"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {{ preview.url }}
+            </a>
+          </div>
+        }
+
+        <div class="document-text-viewer">
+          <pre>{{ preview.content }}</pre>
+        </div>
+      </div>
+
+      <div modal-actions class="modal-footer">
+        <button type="button" class="btn-primary" (click)="closePreview()">
+          Done Reading
+        </button>
+      </div>
+    }
+  </ah-modal>
 </div>

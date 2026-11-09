@@ -16,13 +16,13 @@ describe('AppsPage', () => {
     const text = fixture.nativeElement.textContent;
     expect(text).toContain('LuxPath (SolarLux)');
     expect(text).toContain('AutoSphere');
+    expect(text).toContain('StudyLM');
     expect(text).toContain('Sky Lab');
     expect(text).toContain('RxJS Interactive Lab');
     expect(text).toContain('NgRx State Architecture Lab');
     // Disabled apps should be hidden
     expect(text).not.toContain('PulseOps');
     expect(text).not.toContain('StrategyApp');
-    expect(text).not.toContain('StudyLM');
   });
 
   it('starts with all tickets expanded by default', async () => {
@@ -84,7 +84,7 @@ describe('AppsPage', () => {
     expect(firstCard.querySelector('.app-quick-launch-btn')).toBeFalsy();
   });
 
-  it('toggles ticket collapse state when header is clicked', async () => {
+  it('toggles ticket collapse state with its toggle button only', async () => {
     TestBed.configureTestingModule({
       providers: [provideZonelessChangeDetection(), provideRouter([])],
     });
@@ -92,20 +92,25 @@ describe('AppsPage', () => {
     await fixture.whenStable();
 
     const firstCard = fixture.nativeElement.querySelector('.app-card');
-    const header = firstCard.querySelector('.app-card__header');
+    const toggle = firstCard.querySelector('.app-card__toggle-btn');
     const title = firstCard.querySelector('.app-title');
 
     expect(firstCard.classList.contains('app-card--collapsed')).toBe(false);
 
-    // Click on title inside header
+    // The header is not a click target (mouse-only behaviour removed).
     title.click();
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect(firstCard.classList.contains('app-card--collapsed')).toBe(false);
+
+    toggle.click();
     fixture.detectChanges();
     await fixture.whenStable();
 
     expect(firstCard.classList.contains('app-card--collapsed')).toBe(true);
+    expect(toggle.getAttribute('aria-expanded')).toBe('false');
 
-    // Click header again to expand
-    header.click();
+    toggle.click();
     fixture.detectChanges();
     await fixture.whenStable();
 

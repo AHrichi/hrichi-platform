@@ -36,9 +36,11 @@ import type {
   VehiclePackage,
   VehicleTrim,
   VehicleWheel,
+} from '@ah/products/autosphere/domain';
+import type {
   VehicleReservationRequest,
   VehicleReservationResponse,
-} from '@ah/products/autosphere/domain';
+} from '../data/cms-client';
 import {
   createAutoSphere3DScene,
   type AutoSphere3DController,

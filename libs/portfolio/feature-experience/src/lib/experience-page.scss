@@ -31,7 +31,7 @@
     content: '';
     position: absolute;
     top: 6px;
-    left: -6px;
+    inset-inline-start: -6px;
     width: 10px;
     height: 10px;
     border-radius: var(--radius-pill);

@@ -1,4 +1,5 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
+import { APP_MODE } from '@ah/platform/app-mode';
 import type { RoadmapSection, StudySubject } from '@ah/products/studylm/domain';
 import type { Lesson } from '@ah/products/studylm/lessons';
 import { StudyLmStore } from '../store/studylm.store';
@@ -9,6 +10,13 @@ import {
   type BatchItemError,
   type BatchExecutionResult,
 } from './batch-execution';
+
+/**
+ * Inside the portfolio (embedded-demo) a visitor shares the owner's free
+ * model quota with everyone else, so one click writes at most this many
+ * lessons. The standalone app has no cap.
+ */
+export const DEMO_BULK_LIMIT = 3;
 
 export interface BulkGenerationState {
   isGenerating: boolean;
@@ -24,6 +32,8 @@ export interface BulkGenerationState {
 export class BulkGenerationService {
   private readonly lessonService = inject(LessonGenerationService);
   private readonly store = inject(StudyLmStore);
+  private readonly demo =
+    inject(APP_MODE, { optional: true }) === 'embedded-demo';
 
   readonly isGenerating = signal<boolean>(false);
   readonly progress = signal<BatchExecutionProgress | null>(null);
@@ -68,9 +78,10 @@ export class BulkGenerationService {
       throw new Error('No active subject selected for bulk generation');
     }
 
-    const sections =
+    const pending =
       options.sections ??
       this.pendingSections().filter((s) => s.approved !== false);
+    const sections = this.demo ? pending.slice(0, DEMO_BULK_LIMIT) : pending;
 
     if (sections.length === 0) {
       this.statusMessage.set('All sections already have lessons generated.');

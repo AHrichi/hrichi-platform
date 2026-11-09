@@ -64,7 +64,8 @@ export class FlowChart {
 
   readonly showMermaidSource = signal<boolean>(false);
   readonly customDirection = signal<'horizontal' | 'vertical' | null>(null);
-  readonly selectedNodeId = signal<string | null>(null);
+  /** The selected step, two-way (`[(selectedNodeId)]`), so pages can react to it. */
+  readonly selectedNodeId = model<string | null>(null);
   readonly zoom = signal<number>(1);
   readonly copiedMermaid = signal<boolean>(false);
 

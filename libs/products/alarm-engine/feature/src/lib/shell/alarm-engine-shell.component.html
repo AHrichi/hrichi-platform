@@ -2444,6 +2444,8 @@
               class="color-choice-btn"
               [style.background-color]="c"
               [class.color-choice-btn--active]="newTopicColor() === c"
+              [attr.aria-label]="'Colour ' + c"
+              [attr.aria-pressed]="newTopicColor() === c"
               (click)="newTopicColor.set(c)"
             ></button>
           }

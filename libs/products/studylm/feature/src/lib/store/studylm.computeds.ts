@@ -57,6 +57,18 @@ export function withStudyLmComputeds() {
       const activeCardIndex = state.activeCardIndex;
       const activeQuizIndex = state.activeQuizIndex;
 
+      /** The AI answered its last ping: AI buttons are enabled. */
+      const aiReady = computed(() => state.n8nConfig().isConnected);
+      /** Why AI buttons are off, for the learner; null while ready or checking. */
+      const aiStatus = computed<string | null>(() => {
+        const cfg = state.n8nConfig();
+        if (cfg.isConnected || cfg.isChecking) return null;
+        return (
+          cfg.lastError ??
+          'The AI assistant isn’t reachable right now. Lessons, flashcards and quizzes you already have still work.'
+        );
+      });
+
       const activeSubject = computed<StudySubject | null>(() => {
         const id = activeSubjectId();
         const list = subjects();
@@ -383,6 +395,8 @@ export function withStudyLmComputeds() {
         quizSummary,
         subjectStatsList,
         overallStats,
+        aiReady,
+        aiStatus,
       };
     }),
   );

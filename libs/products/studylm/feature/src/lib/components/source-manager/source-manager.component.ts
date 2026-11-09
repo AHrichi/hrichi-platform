@@ -5,6 +5,7 @@ import {
   signal,
 } from '@angular/core';
 import { DecimalPipe, SlicePipe, UpperCasePipe } from '@angular/common';
+import { AhModal } from '@ah/ui';
 import {
   form,
   FormField,
@@ -21,7 +22,14 @@ import type {
 
 @Component({
   selector: 'ah-source-manager',
-  imports: [FormField, FormRoot, DecimalPipe, SlicePipe, UpperCasePipe],
+  imports: [
+    FormField,
+    FormRoot,
+    DecimalPipe,
+    SlicePipe,
+    UpperCasePipe,
+    AhModal,
+  ],
   templateUrl: './source-manager.component.html',
   styleUrl: './source-manager.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

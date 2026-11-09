@@ -1,13 +1,14 @@
 <div class="swatch-list" [class]="'swatch-list--' + size()">
   @for (item of items(); track item.id; let idx = $index) {
     <button
+      #swatch
       type="button"
       role="radio"
       class="swatch-btn"
       [class.is-selected]="value() === item.id"
       [class]="'swatch-btn--' + (item.finish ?? 'gloss')"
       [attr.aria-checked]="value() === item.id"
-      [attr.tabindex]="value() === item.id ? 0 : -1"
+      [attr.tabindex]="idx === tabStop() ? 0 : -1"
       [attr.aria-label]="
         item.name +
         (item.finish ? ' (' + item.finish + ')' : '') +

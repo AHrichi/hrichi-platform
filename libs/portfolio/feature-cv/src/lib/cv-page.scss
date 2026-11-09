@@ -129,7 +129,7 @@
     max-inline-size: none;
     gap: var(--space-4);
     font-size: 9.5pt;
-    color: #18181b;
+    color: var(--color-neutral-900);
   }
 
   .cv a {
@@ -139,6 +139,6 @@
 
   .cv h2,
   .cv__role {
-    color: #b3122e;
+    color: var(--color-crimson-600);
   }
 }

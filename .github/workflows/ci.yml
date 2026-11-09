@@ -56,6 +56,8 @@ jobs:
       - name: Zoneless guard (ADR-0004)
         run: pnpm check:zoneless
       - run: pnpm nx format:check
+      - name: Styles use design tokens and logical properties (stylelint.config.mjs)
+        run: pnpm lint:styles
       - name: Design tokens are committed up to date (and pass the contrast gate)
         run: |
           pnpm nx run design-system-tokens:build-tokens --skip-nx-cache

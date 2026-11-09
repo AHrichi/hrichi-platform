@@ -3,6 +3,7 @@ import {
   patchState,
   signalStore,
   withComputed,
+  withHooks,
   withMethods,
   withState,
 } from '@ngrx/signals';
@@ -28,6 +29,7 @@ export interface LightingState {
   /** Sunlight mode: maximum contrast for reading the screen outdoors. */
   isHighContrast: boolean;
   isLoading: boolean;
+  error: string | null;
   selectedPoleId: string | null;
   /** The user's own materials and their edits to catalogue items. */
   userMaterials: MaterialItem[];
@@ -39,6 +41,7 @@ const initialState: LightingState = {
   poleFilter: 'all',
   isHighContrast: false,
   isLoading: false,
+  error: null,
   selectedPoleId: null,
   userMaterials: [],
 };
@@ -140,6 +143,7 @@ export const LightingStore = signalStore(
   }),
   withMethods((store) => {
     const db = inject(LightingDbService);
+    let writeQueue: Promise<void> = Promise.resolve();
 
     /** Saves a changed project, then shows it; IndexedDB is the source of truth. */
     async function commit(project: ProjectItem): Promise<void> {
@@ -147,17 +151,28 @@ export const LightingStore = signalStore(
       await db.saveProject(saved);
       patchState(store, {
         projects: store.projects().map((p) => (p.id === saved.id ? saved : p)),
+        error: null,
       });
     }
 
-    /** Applies a change to the active project, if there is one. */
-    async function edit(
+    /** Applies a change to the active project, serialized so rapid edits apply to latest state. */
+    function edit(
       change: (project: ProjectItem) => ProjectItem,
     ): Promise<void> {
-      const project = store.activeProject();
-      if (project) {
-        await commit(change(project));
-      }
+      const task = async () => {
+        try {
+          const project = store.activeProject();
+          if (project) {
+            await commit(change(project));
+          }
+        } catch (err) {
+          patchState(store, {
+            error: err instanceof Error ? err.message : String(err),
+          });
+        }
+      };
+      writeQueue = writeQueue.then(task, task);
+      return writeQueue;
     }
 
     return {
@@ -478,5 +493,10 @@ export const LightingStore = signalStore(
         });
       },
     };
+  }),
+  withHooks({
+    onInit(store) {
+      void store.loadProjects();
+    },
   }),
 );

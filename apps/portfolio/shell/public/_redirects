@@ -1,4 +1,5 @@
-# Client-rendered routes (RenderMode.Client) get the CSR shell; everything else
-# is either a prerendered page or a real 404 (wrangler.jsonc: 404-page).
-# The target has no .html: html_handling would answer /index.csr.html with a 307.
-/labs/* /index.csr 200
+# Every shell route is either a prerendered page or a real 404
+# (wrangler.jsonc: 404-page). Labs used to be rewritten to the CSR shell here
+# (`/labs/* /index.csr 200`); that rule predates lab prerendering and made
+# production serve an empty page for every lab, so it is gone. Add a rule
+# only for a route that is RenderMode.Client.

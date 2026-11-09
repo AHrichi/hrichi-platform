@@ -6,7 +6,6 @@
   "projectType": "library",
   "tags": [
     "scope:product-whatsapp",
-    "scope:shared",
     "type:domain",
     "runtime:agnostic"
   ],

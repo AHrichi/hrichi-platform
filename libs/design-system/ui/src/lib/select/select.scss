@@ -1,8 +1,8 @@
 :host {
   display: inline-block;
-  min-inline-size: 180px;
+  min-inline-size: 11.25rem;
   position: relative;
-  font-family: var(--font-family-sans, sans-serif);
+  font-family: var(--font-family-sans);
 }
 
 .ah-select-container {
@@ -15,7 +15,7 @@
 }
 
 .ah-select-label {
-  font-size: var(--font-size-xs);
+  font-size: var(--font-size-100);
   font-weight: var(--font-weight-medium);
   color: var(--color-text-muted);
 }
@@ -27,16 +27,15 @@
   gap: var(--space-2);
   inline-size: 100%;
   min-inline-size: 0;
-  min-block-size: 40px;
+  min-block-size: var(--control-height-md);
   padding: var(--space-2) var(--space-3);
   background: var(--color-bg-surface);
-  border: 1px solid var(--color-border-default);
+  border: var(--border-width-hairline) solid var(--color-border-control);
   border-radius: var(--radius-md);
   color: var(--color-text-default);
-  font-size: var(--font-size-sm);
+  font-size: var(--font-size-200);
   font-family: inherit;
   cursor: pointer;
-  outline: none;
   transition:
     border-color var(--motion-duration-fast) ease,
     background var(--motion-duration-fast) ease;
@@ -49,11 +48,12 @@
 
   &:focus-visible {
     border-color: var(--color-accent-default);
-    box-shadow: 0 0 0 2px var(--color-focus-ring);
+    outline: var(--focus-ring-width) solid var(--color-focus-ring);
+    outline-offset: 2px;
   }
 
   &:disabled {
-    opacity: 0.5;
+    opacity: var(--opacity-disabled);
     cursor: not-allowed;
     background: var(--color-bg-canvas);
   }
@@ -69,16 +69,20 @@
   }
 }
 
+:host(.ah-select--invalid) .ah-select-trigger {
+  border-color: var(--color-danger-default);
+}
+
 :host(.ah-select--sm) .ah-select-trigger {
   padding: var(--space-1) var(--space-2);
-  font-size: var(--font-size-xs);
-  min-block-size: 32px;
+  font-size: var(--font-size-100);
+  min-block-size: var(--control-height-sm);
 }
 
 :host(.ah-select--lg) .ah-select-trigger {
   padding: var(--space-3) var(--space-4);
-  font-size: var(--font-size-base);
-  min-block-size: 48px;
+  font-size: var(--font-size-300);
+  min-block-size: var(--control-height-lg);
 }
 
 .ah-select-trigger-content {
@@ -118,26 +122,25 @@
   }
 }
 
+/* Shown in the top layer (popover="manual"); select.ts sets the fixed
+   coordinates inline, so a dialog or a scrolling parent never clips it. */
 .ah-select-popover {
-  position: absolute;
-  top: calc(100% + var(--space-1));
-  left: 0;
-  min-inline-size: 100%;
+  position: fixed;
+  inset: auto;
+  margin: 0;
+  padding: 0;
   inline-size: max-content;
-  max-inline-size: max(100%, min(90vw, 380px));
-  z-index: 1000;
+  max-inline-size: min(90vw, 23.75rem);
+  max-block-size: 16.25rem;
+  z-index: var(--z-dropdown);
   background: var(--color-bg-surface);
-  border: 1px solid var(--color-border-default);
+  color: var(--color-text-default);
+  border: var(--border-width-hairline) solid var(--color-border-default);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-overlay);
-  max-block-size: 260px;
   overflow-y: auto;
-  animation: ah-select-fade-in var(--motion-duration-fast) ease;
-}
-
-:host-context([dir='rtl']) .ah-select-popover {
-  left: auto;
-  right: 0;
+  animation: ah-select-fade-in var(--motion-duration-fast)
+    var(--motion-easing-enter);
 }
 
 @keyframes ah-select-fade-in {
@@ -163,8 +166,8 @@
   border-radius: var(--radius-sm);
   cursor: pointer;
   color: var(--color-text-default);
-  font-size: var(--font-size-sm);
-  transition: background var(--motion-duration-fast) ease;
+  font-size: var(--font-size-200);
+  transition: background-color var(--motion-duration-fast) ease;
   user-select: none;
 
   &:hover,
@@ -179,7 +182,7 @@
   }
 
   &--disabled {
-    opacity: 0.4;
+    opacity: var(--opacity-disabled);
     cursor: not-allowed;
     pointer-events: none;
   }
@@ -205,7 +208,7 @@
 }
 
 .ah-select-option-hint {
-  font-size: var(--font-size-xs);
+  font-size: var(--font-size-100);
   color: var(--color-text-muted);
   line-height: 1.2;
 }
@@ -213,6 +216,12 @@
 .ah-select-check {
   font-weight: var(--font-weight-bold);
   color: var(--color-accent-default);
-  font-size: 0.875rem;
+  font-size: var(--font-size-200);
   flex-shrink: 0;
+}
+
+@media (forced-colors: active) {
+  .ah-select-option--active {
+    outline: var(--border-width-strong) solid Highlight;
+  }
 }

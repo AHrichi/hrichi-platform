@@ -1,11 +1,11 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  DestroyRef,
   computed,
-  effect,
   inject,
+  linkedSignal,
   signal,
-  untracked,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -57,12 +57,41 @@ export class ConcreteScreen {
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
 
-  protected readonly volume = signal(1.2);
-  protected readonly exposure = signal<ConcreteExposure>('XC2');
-  protected readonly cement = signal(350);
-  protected readonly water = signal(168);
-  protected readonly slump = signal(7);
-  protected readonly days = signal(7);
+  private readonly query = toSignal(this.route.queryParamMap);
+  private readonly destroyRef = inject(DestroyRef);
+  private planTimer: ReturnType<typeof setTimeout> | null = null;
+
+  private readonly savedCalc = computed(() => {
+    const editId = this.query()?.get('edit') ?? null;
+    const saved = this.store.calculations().find((c) => c.id === editId);
+    return saved?.kind === 'concrete' ? saved : null;
+  });
+
+  protected readonly editingId = computed(() => this.savedCalc()?.id ?? null);
+  protected readonly editingLabel = computed(
+    () => this.savedCalc()?.label ?? null,
+  );
+
+  protected readonly volume = linkedSignal<number>(
+    () =>
+      this.savedCalc()?.inputs.volumeM3 ??
+      (this.store.stats().totalConcreteVolumeM3 || 1.2),
+  );
+  protected readonly exposure = linkedSignal<ConcreteExposure>(
+    () => this.savedCalc()?.inputs.exposure ?? 'XC2',
+  );
+  protected readonly cement = linkedSignal<number>(
+    () => this.savedCalc()?.inputs.measuredCementKg ?? 350,
+  );
+  protected readonly water = linkedSignal<number>(
+    () => this.savedCalc()?.inputs.measuredWaterLiters ?? 168,
+  );
+  protected readonly slump = linkedSignal<number>(
+    () => this.savedCalc()?.inputs.slumpTestCm ?? 7,
+  );
+  protected readonly days = linkedSignal<number>(
+    () => this.savedCalc()?.inputs.curingAgeDays ?? 7,
+  );
   protected readonly pouredOn = signal(
     addDays(new Date().toISOString().slice(0, 10), -7),
   );
@@ -86,39 +115,11 @@ export class ConcreteScreen {
       `${this.t().nav.concrete} · ${this.i18n.num(this.cement(), 0)} kg/m³ · E/C ${this.i18n.num(this.result().providedWaterCementRatio, 2)} · ${this.result().slumpClassification}`,
   );
 
-  protected readonly editingId = signal<string | null>(null);
-  protected readonly editingLabel = signal<string | null>(null);
   protected readonly planned = signal(false);
 
-  private readonly query = toSignal(this.route.queryParamMap);
-
   constructor() {
-    effect(() => {
-      const editId = this.query()?.get('edit') ?? null;
-      const saved = this.store.calculations().find((c) => c.id === editId);
-      untracked(() => {
-        if (saved?.kind === 'concrete' && saved.id !== this.editingId()) {
-          const i = saved.inputs;
-          this.editingId.set(saved.id);
-          this.editingLabel.set(saved.label);
-          this.volume.set(i.volumeM3);
-          this.exposure.set(i.exposure);
-          this.cement.set(i.measuredCementKg ?? 350);
-          this.water.set(i.measuredWaterLiters ?? 175);
-          this.slump.set(i.slumpTestCm ?? 7);
-          this.days.set(i.curingAgeDays ?? 7);
-        }
-      });
-    });
-
-    // Start from the project's concrete volume, if its poles have blocks.
-    effect(() => {
-      const volume = this.store.stats().totalConcreteVolumeM3;
-      untracked(() => {
-        if (volume > 0 && !this.editingId()) {
-          this.volume.set(volume);
-        }
-      });
+    this.destroyRef.onDestroy(() => {
+      if (this.planTimer) clearTimeout(this.planTimer);
     });
   }
 
@@ -129,8 +130,6 @@ export class ConcreteScreen {
       label: request.label,
       inputs: this.params(),
     });
-    this.editingId.set(id);
-    this.editingLabel.set(request.label);
     void this.router.navigate([], {
       relativeTo: this.route,
       queryParams: { edit: id },
@@ -139,8 +138,6 @@ export class ConcreteScreen {
   }
 
   protected stopEditing(): void {
-    this.editingId.set(null);
-    this.editingLabel.set(null);
     void this.router.navigate([], {
       relativeTo: this.route,
       queryParams: {},

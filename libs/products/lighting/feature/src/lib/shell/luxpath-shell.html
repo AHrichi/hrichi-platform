@@ -87,11 +87,12 @@
       </a>
     }
     <button
+      #moreBtn
       type="button"
       [class.is-active]="inSecondary()"
       [attr.aria-expanded]="moreOpen()"
       aria-controls="lp-more"
-      (click)="moreOpen.set(!moreOpen())"
+      (click)="toggleMore(moreBtn)"
     >
       <span class="icon" aria-hidden="true">⋯</span>
       <span class="label">{{ t().nav.more }}</span>
@@ -100,7 +101,13 @@
 
   @if (moreOpen()) {
     <div class="scrim" aria-hidden="true" (click)="closeMore()"></div>
-    <div class="more" id="lp-more" (keydown.escape)="closeMore()">
+    <div
+      #moreSheet
+      class="more"
+      id="lp-more"
+      tabindex="-1"
+      (keydown.escape)="closeMore()"
+    >
       @for (item of secondary; track item.id) {
         <a
           [routerLink]="item.id"

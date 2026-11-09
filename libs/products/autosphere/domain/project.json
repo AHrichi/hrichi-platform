@@ -4,11 +4,6 @@
   "sourceRoot": "libs/products/autosphere/domain/src",
   "prefix": "ah",
   "projectType": "library",
-  "tags": [
-    "scope:product-autosphere",
-    "scope:shared",
-    "type:domain",
-    "runtime:agnostic"
-  ],
+  "tags": ["scope:product-autosphere", "type:domain", "runtime:agnostic"],
   "targets": {}
 }

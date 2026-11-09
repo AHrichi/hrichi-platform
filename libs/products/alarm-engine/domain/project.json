@@ -6,7 +6,6 @@
   "projectType": "library",
   "tags": [
     "scope:product-alarm-engine",
-    "scope:shared",
     "type:domain",
     "runtime:agnostic"
   ],

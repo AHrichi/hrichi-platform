@@ -1,15 +1,21 @@
-// Local stand-in for the production static host (Cloudflare). It applies the
-// same rules the host must follow:
-//   1. Prerendered routes are served from <route>/index.html.
-//   2. Any other route falls back to index.csr.html (client-rendered routes).
-//   3. Every response allows cross-origin reads, so the shell can load remotes.
-//   4. Hashed assets are immutable; HTML and federation metadata are no-cache.
-//   5. Text responses are brotli/gzip compressed, ahead of time like
+// Local stand-in for the production static host (Cloudflare Workers static
+// assets). It follows the same rules, so e2e tests and Lighthouse CI measure
+// what production serves, including its mistakes:
+//   1. `_redirects` rules run first, before any asset: 200 rules rewrite,
+//      3xx rules redirect (`*` splats and `:placeholders` supported).
+//   2. Assets: the exact file, then <path>.html, then <path>/index.html
+//      (prerendered routes).
+//   3. Not found: `404.html` with a 404 status when the build has one
+//      (not_found_handling: 404-page), else `index.html` (single-page-app).
+//   4. Every matching `_headers` rule applies (CSP, immutable caching ...).
+//      Anything without a Cache-Control rule gets the host's default,
+//      `public, max-age=0, must-revalidate`. The serve-static targets write
+//      `_headers` first with prepare-hosting.mjs --headers-only (ADR-0006).
+//   5. Every response allows cross-origin reads, so a local shell can load
+//      local remotes on other ports. (In production the remotes' `_headers`
+//      say so.)
+//   6. Text responses are brotli/gzip compressed, ahead of time like
 //      Cloudflare's edge, so Lighthouse never measures compression latency.
-//   6. The headers of a `_headers` file's `/*` rule (the CSP among them) go on
-//      every response, so e2e tests and Lighthouse run under the real policy.
-//      The serve-static targets write one first with prepare-hosting.mjs
-//      --headers-only (ADR-0006).
 //
 // Usage: node tools/scripts/serve-static.mjs <build/browser dir> <port>
 import { createServer } from 'node:http';
@@ -84,40 +90,106 @@ async function isFile(path) {
   }
 }
 
-async function resolveFile(urlPath) {
+/** The asset for a URL path, or null. Never escapes the root. */
+async function findAsset(urlPath) {
   const target = resolve(root, `.${decodeURIComponent(urlPath)}`);
   if (target !== root && !target.startsWith(root + sep)) {
     return null;
   }
-  if (await isFile(target)) {
-    return target;
+  for (const candidate of [
+    target,
+    `${target}.html`,
+    join(target, 'index.html'),
+  ]) {
+    if (await isFile(candidate)) {
+      return candidate;
+    }
   }
-  if (extname(urlPath)) {
-    return null;
-  }
-  const prerendered = join(target, 'index.html');
-  if (await isFile(prerendered)) {
-    return prerendered;
-  }
-  if (await isFile(join(root, 'index.csr.html'))) {
-    return join(root, 'index.csr.html');
-  }
-  return join(root, 'index.html');
+  return null;
 }
 
-function cacheControl(file) {
-  const ext = extname(file);
-  if (ext === '.html' || ext === '.json' || ext === '.webmanifest') {
-    return 'no-cache';
+/** Cloudflare-style path pattern (`*` splat, `:name`) to a RegExp. */
+function patternToRegExp(pattern) {
+  const source = pattern
+    .split(/(\*|:[A-Za-z]\w*)/)
+    .map((part) => {
+      if (part === '*') return '(?<splat>.*)';
+      if (part.startsWith(':')) return `(?<${part.slice(1)}>[^/]+)`;
+      return part.replace(/[.+?^${}()|[\]\\]/g, '\\$&');
+    })
+    .join('');
+  return new RegExp(`^${source}$`);
+}
+
+/** `_redirects`: [{ match, to, status }], in file order. */
+async function readRedirects() {
+  let text;
+  try {
+    text = await readFile(join(root, '_redirects'), 'utf8');
+  } catch {
+    return [];
   }
-  return 'public, max-age=31536000, immutable';
+  return text
+    .split('\n')
+    .map((line) => line.trim())
+    .filter((line) => line && !line.startsWith('#'))
+    .map((line) => {
+      const [from, to, status = '302'] = line.split(/\s+/);
+      return { match: patternToRegExp(from), to, status: Number(status) };
+    });
+}
+
+function applyRedirect(pathname) {
+  for (const { match, to, status } of redirects) {
+    const found = match.exec(pathname);
+    if (found) {
+      const target = to.replace(
+        /:([A-Za-z]\w*)/g,
+        (_, name) => found.groups?.[name] ?? '',
+      );
+      return { target, status };
+    }
+  }
+  return null;
+}
+
+/** Every `_headers` rule matching the path, merged in file order. */
+function headersFor(pathname) {
+  const merged = {};
+  for (const { match, headers } of headerRules) {
+    if (match.test(pathname)) {
+      Object.assign(merged, headers);
+    }
+  }
+  if (!Object.keys(merged).some((h) => h.toLowerCase() === 'cache-control')) {
+    merged['Cache-Control'] = 'public, max-age=0, must-revalidate';
+  }
+  return merged;
 }
 
 const server = createServer(async (req, res) => {
-  const { pathname } = new URL(req.url ?? '/', 'http://localhost');
-  const file = await resolveFile(pathname);
+  const { pathname, search } = new URL(req.url ?? '/', 'http://localhost');
   res.setHeader('Access-Control-Allow-Origin', '*');
 
+  let assetPath = pathname;
+  const redirect = applyRedirect(pathname);
+  if (redirect && redirect.status >= 300 && redirect.status < 400) {
+    res.writeHead(redirect.status, { Location: redirect.target + search });
+    res.end();
+    return;
+  }
+  if (redirect) {
+    assetPath = redirect.target;
+  }
+
+  let status = 200;
+  let file = await findAsset(assetPath);
+  if (!file && (await isFile(join(root, '404.html')))) {
+    status = 404;
+    file = join(root, '404.html');
+  } else if (!file && !extname(assetPath)) {
+    file = await findAsset('/index.html');
+  }
   if (!file) {
     res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
     res.end('Not found');
@@ -125,49 +197,50 @@ const server = createServer(async (req, res) => {
   }
   const { body, br, gzip } = await load(file);
   const headers = {
-    ...siteHeaders,
+    ...headersFor(pathname),
     'Content-Type': contentTypes[extname(file)] ?? 'application/octet-stream',
-    'Cache-Control': cacheControl(file),
     Vary: 'Accept-Encoding',
   };
   const accepts = String(req.headers['accept-encoding'] ?? '');
   if (br && accepts.includes('br')) {
-    res.writeHead(200, { ...headers, 'Content-Encoding': 'br' });
+    res.writeHead(status, { ...headers, 'Content-Encoding': 'br' });
     res.end(br);
   } else if (gzip && accepts.includes('gzip')) {
-    res.writeHead(200, { ...headers, 'Content-Encoding': 'gzip' });
+    res.writeHead(status, { ...headers, 'Content-Encoding': 'gzip' });
     res.end(gzip);
   } else {
-    res.writeHead(200, headers);
+    res.writeHead(status, headers);
     res.end(body);
   }
 });
 
-/** The `/*` rule of `_headers`, as Cloudflare would apply it to every path. */
-async function readSiteHeaders() {
+/** `_headers`: [{ match, headers }], one per path rule, in file order. */
+async function readHeaderRules() {
   let text;
   try {
     text = await readFile(join(root, '_headers'), 'utf8');
   } catch {
-    return {};
+    return [];
   }
-  const headers = {};
-  let everyPath = false;
+  const rules = [];
   for (const line of text.split('\n')) {
-    if (!line.trim()) {
+    if (!line.trim() || line.trim().startsWith('#')) {
       continue;
     }
     if (!/^\s/.test(line)) {
-      everyPath = line.trim() === '/*';
-    } else if (everyPath) {
+      rules.push({ match: patternToRegExp(line.trim()), headers: {} });
+    } else if (rules.length) {
       const colon = line.indexOf(':');
-      headers[line.slice(0, colon).trim()] = line.slice(colon + 1).trim();
+      rules.at(-1).headers[line.slice(0, colon).trim()] = line
+        .slice(colon + 1)
+        .trim();
     }
   }
-  return headers;
+  return rules;
 }
 
-const siteHeaders = await readSiteHeaders();
+const redirects = await readRedirects();
+const headerRules = await readHeaderRules();
 await warmUp(root);
 server.listen(port, async () => {
   console.log(`Serving ${root} on http://localhost:${port}`);

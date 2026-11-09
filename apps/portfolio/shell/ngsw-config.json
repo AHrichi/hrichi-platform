@@ -12,8 +12,14 @@
           "/index.csr.html",
           "/manifest.webmanifest",
           "/*.css",
-          "/*.js",
-          "!/three.*.js"
+          "/main-*.js",
+          "/polyfills-*.js",
+          "/_angular_*.js",
+          "/_ah_*.js",
+          "/_ngrx_signals.*.js",
+          "/rxjs.*.js",
+          "/rxjs_*.js",
+          "!/_ngrx_signals_testing.*.js"
         ]
       }
     },
@@ -23,6 +29,14 @@
       "updateMode": "lazy",
       "resources": {
         "files": ["/three.*.js"]
+      }
+    },
+    {
+      "name": "routes",
+      "installMode": "lazy",
+      "updateMode": "prefetch",
+      "resources": {
+        "files": ["/*.js", "!/_ngrx_signals_testing.*.js"]
       }
     },
     {
@@ -61,5 +75,6 @@
         "timeout": "3s"
       }
     }
-  ]
+  ],
+  "navigationRequestStrategy": "freshness"
 }

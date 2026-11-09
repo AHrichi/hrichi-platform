@@ -28,7 +28,6 @@
         [formField]="quizForm.question"
         class="form-textarea"
         placeholder="e.g. Which of the following is true regarding microtask queue execution order in ECMAScript?"
-        autofocus
       ></textarea>
     </div>
 
@@ -44,8 +43,8 @@
     </div>
 
     <div class="options-container">
-      <label class="section-label"
-        >Options (Select the correct radio button) *</label
+      <span class="section-label"
+        >Options (Select the correct radio button) *</span
       >
 
       <div class="option-row" [class.is-correct]="model().correctIndex === 0">

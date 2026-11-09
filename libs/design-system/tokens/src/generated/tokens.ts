@@ -42,6 +42,10 @@ export const primitives = {
   "color-violet-300": "#c4b5fd",
   "color-violet-700": "#6d28d9",
   "color-violet-950": "#2e1065",
+  "color-red-50": "#fef2f2",
+  "color-red-300": "#fca5a5",
+  "color-red-700": "#b91c1c",
+  "color-red-950": "#450a0a",
   "font-family-sans": "'Inter Variable', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif",
   "font-family-mono": "ui-monospace, 'Cascadia Code', 'JetBrains Mono', Consolas, monospace",
   "font-size-100": "0.8125rem",
@@ -58,6 +62,10 @@ export const primitives = {
   "font-line-height-tight": 1.15,
   "font-line-height-snug": 1.35,
   "font-line-height-normal": 1.6,
+  "font-letter-spacing-tight": "-0.02em",
+  "font-letter-spacing-normal": "0",
+  "font-letter-spacing-wide": "0.04em",
+  "font-letter-spacing-caps": "0.08em",
   "space-0": "0",
   "space-1": "0.25rem",
   "space-2": "0.5rem",
@@ -79,7 +87,44 @@ export const primitives = {
   "motion-duration-fast": "120ms",
   "motion-duration-base": "200ms",
   "motion-duration-slow": "320ms",
-  "motion-easing-standard": "cubic-bezier(0.2, 0, 0, 1)"
+  "motion-easing-standard": [
+    0.2,
+    0,
+    0,
+    1
+  ],
+  "motion-easing-enter": [
+    0,
+    0,
+    0.2,
+    1
+  ],
+  "motion-easing-exit": [
+    0.4,
+    0,
+    1,
+    1
+  ],
+  "border-width-hairline": "1px",
+  "border-width-strong": "2px",
+  "focus-ring-width": "2px",
+  "focus-ring-offset": "3px",
+  "opacity-disabled": 0.5,
+  "control-height-sm": "2rem",
+  "control-height-md": "2.75rem",
+  "control-height-lg": "3rem",
+  "z-base": 0,
+  "z-raised": 10,
+  "z-sticky": 50,
+  "z-dropdown": 1000,
+  "z-overlay": 1100,
+  "z-modal": 1200,
+  "z-toast": 1300,
+  "z-tooltip": 1400,
+  "breakpoint-sm": "40rem",
+  "breakpoint-md": "48rem",
+  "breakpoint-lg": "64rem",
+  "breakpoint-xl": "80rem"
 } as const;
 
 export const lightTheme = {
@@ -92,6 +137,7 @@ export const lightTheme = {
   "color-text-inverse": "#f7f7f8",
   "color-border-default": "#dcdce0",
   "color-border-strong": "#c2c2c8",
+  "color-border-control": "#74747d",
   "color-accent-default": "#b3122e",
   "color-accent-hover": "#960f27",
   "color-accent-subtle": "#fdf2f4",
@@ -102,8 +148,8 @@ export const lightTheme = {
   "color-warning-subtle": "#fffbeb",
   "color-info-default": "#0369a1",
   "color-info-subtle": "#f0f9ff",
-  "color-danger-default": "#b3122e",
-  "color-danger-subtle": "#fdf2f4",
+  "color-danger-default": "#b91c1c",
+  "color-danger-subtle": "#fef2f2",
   "color-focus-ring": "#d03553",
   "color-stage-bg": "#0f0f12",
   "color-stage-text": "#f7f7f8",
@@ -116,7 +162,10 @@ export const lightTheme = {
   "color-data-5": "#c4b5fd",
   "color-data-6": "#c2c2c8",
   "color-data-7": "#4ade80",
-  "shadow-raised": "0 1px 2px rgb(15 15 18 / 6%), 0 4px 16px rgb(15 15 18 / 6%)"
+  "color-overlay-scrim": "rgb(15 15 18 / 55%)",
+  "shadow-raised": "0 1px 2px rgb(15 15 18 / 6%), 0 4px 16px rgb(15 15 18 / 6%)",
+  "shadow-overlay": "0 4px 12px rgb(15 15 18 / 10%), 0 12px 32px rgb(15 15 18 / 12%)",
+  "shadow-modal": "0 8px 24px rgb(15 15 18 / 14%), 0 24px 64px rgb(15 15 18 / 18%)"
 } as const;
 
 export const darkTheme = {
@@ -129,6 +178,7 @@ export const darkTheme = {
   "color-text-inverse": "#18181b",
   "color-border-default": "#26262b",
   "color-border-strong": "#3d3d44",
+  "color-border-control": "#74747d",
   "color-accent-default": "#e66f85",
   "color-accent-hover": "#ee9aa8",
   "color-accent-subtle": "#3a0811",
@@ -139,8 +189,8 @@ export const darkTheme = {
   "color-warning-subtle": "#451a03",
   "color-info-default": "#93c5fd",
   "color-info-subtle": "#0c4a6e",
-  "color-danger-default": "#e66f85",
-  "color-danger-subtle": "#3a0811",
+  "color-danger-default": "#fca5a5",
+  "color-danger-subtle": "#450a0a",
   "color-focus-ring": "#ee9aa8",
   "color-stage-bg": "#0f0f12",
   "color-stage-text": "#f7f7f8",
@@ -153,7 +203,10 @@ export const darkTheme = {
   "color-data-5": "#c4b5fd",
   "color-data-6": "#c2c2c8",
   "color-data-7": "#4ade80",
-  "shadow-raised": "0 1px 2px rgb(0 0 0 / 40%), 0 4px 16px rgb(0 0 0 / 30%)"
+  "color-overlay-scrim": "rgb(0 0 0 / 65%)",
+  "shadow-raised": "0 1px 2px rgb(0 0 0 / 40%), 0 4px 16px rgb(0 0 0 / 30%)",
+  "shadow-overlay": "0 4px 12px rgb(0 0 0 / 45%), 0 12px 32px rgb(0 0 0 / 40%)",
+  "shadow-modal": "0 8px 24px rgb(0 0 0 / 55%), 0 24px 64px rgb(0 0 0 / 50%)"
 } as const;
 
 export type SemanticToken = keyof typeof lightTheme;

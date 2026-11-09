@@ -1,4 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/angular-vite';
+import { expect, userEvent, within } from 'storybook/test';
 import { ColorSwatch, type ColorSwatchItem } from './color-swatch';
 
 const mockPalette: ColorSwatchItem[] = [
@@ -85,4 +86,21 @@ export const Sizes: StoryObj<ColorSwatch> = {
       </div>
     `,
   }),
+};
+
+/**
+ * With nothing selected the first swatch is still in the tab order; arrow
+ * keys move focus and selection together.
+ */
+export const KeyboardFromNoSelection: StoryObj<ColorSwatch> = {
+  args: { value: '' },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const radios = canvas.getAllByRole('radio');
+    await userEvent.tab();
+    await expect(radios[0]).toHaveFocus();
+    await userEvent.keyboard('{ArrowRight}');
+    await expect(radios[1]).toHaveFocus();
+    await expect(radios[1]).toHaveAttribute('aria-checked', 'true');
+  },
 };

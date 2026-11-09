@@ -107,7 +107,9 @@ export interface SynthesisResponse {
   quiz: StudyQuizQuestion[];
 }
 
-export type N8nConnectionMode = 'local' | 'tunnel' | 'custom' | 'fallback';
+/** `unavailable`: this deployment has no AI endpoint; AI features are off. */
+export type N8nConnectionMode =
+  'local' | 'tunnel' | 'custom' | 'fallback' | 'unavailable';
 
 export interface N8nConnectionConfig {
   mode: N8nConnectionMode;

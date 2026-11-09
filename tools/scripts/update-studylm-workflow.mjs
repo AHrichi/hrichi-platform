@@ -735,7 +735,14 @@ if (action === 'generate_roadmap') {
     (context ? ('Context / Concept: ' + context + '\\n') : '');
 } else {
   systemPrompt = 'You are StudyLM pedagogical synthesizer. Synthesize study cards and quiz from the provided sources. Output valid JSON with overview, flashcards, quiz.';
-  userPrompt = 'Subject: ' + subject + '\\n\\nSources: ' + JSON.stringify(body.sources || []);
+  const cappedSources = (Array.isArray(body.sources) ? body.sources.slice(0, 5) : []).map(function(s) {
+    return {
+      title: String(s && s.title || '').slice(0, 150),
+      type: s && s.type || 'document',
+      content: String(s && s.content || '').slice(0, 4000)
+    };
+  });
+  userPrompt = 'Subject: ' + String(subject).slice(0, 200) + '\\n\\nSources: ' + JSON.stringify(cappedSources);
 }
 
 return [{
@@ -855,7 +862,10 @@ return [{
             responseCode: 200,
             responseHeaders: {
               entries: [
-                { name: 'Access-Control-Allow-Origin', value: '*' },
+                {
+                  name: 'Access-Control-Allow-Origin',
+                  value: 'https://portfolio.ahmed-hrichi.workers.dev',
+                },
                 { name: 'Access-Control-Allow-Headers', value: '*' },
                 {
                   name: 'Access-Control-Allow-Methods',

@@ -1,9 +1,15 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  ElementRef,
+  computed,
+  inject,
   input,
+  model,
   output,
+  viewChildren,
 } from '@angular/core';
+import { isRtl } from '../direction';
 
 export type SwatchFinish = 'gloss' | 'metallic' | 'matte' | 'pearl';
 export type SwatchSize = 'sm' | 'md' | 'lg';
@@ -18,8 +24,14 @@ export interface ColorSwatchItem {
 }
 
 /**
- * Accessible color swatch selector conforming to WAI-ARIA Radio Group pattern.
- * Supports metallic, matte, gloss and pearl automotive/product finishes.
+ * Colour swatch picker following the WAI-ARIA radio group pattern:
+ * - one tab stop: the selected swatch, or the first one when nothing is
+ *   selected yet, so the group is always reachable by keyboard;
+ * - arrow keys move focus and selection together (mirrored right-to-left),
+ *   Home/End jump to the ends;
+ * - `value` is two-way (`[(value)]`); `selectionChange` also reports the
+ *   chosen item.
+ * Supports metallic, matte, gloss and pearl finishes.
  */
 @Component({
   selector: 'ah-color-swatch',
@@ -34,17 +46,30 @@ export interface ColorSwatchItem {
 })
 export class ColorSwatch {
   readonly items = input<readonly ColorSwatchItem[]>([]);
-  readonly value = input<string>('');
+  readonly value = model<string>('');
   readonly label = input<string>('Color options');
   readonly size = input<SwatchSize>('md');
   readonly disabled = input<boolean>(false);
 
   readonly selectionChange = output<ColorSwatchItem>();
 
+  private readonly buttons =
+    viewChildren<ElementRef<HTMLButtonElement>>('swatch');
+  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
+
+  /** Index of the one swatch in the tab order. */
+  protected readonly tabStop = computed(() =>
+    Math.max(
+      0,
+      this.items().findIndex((item) => item.id === this.value()),
+    ),
+  );
+
   protected select(item: ColorSwatchItem): void {
     if (this.disabled() || this.value() === item.id) {
       return;
     }
+    this.value.set(item.id);
     this.selectionChange.emit(item);
   }
 
@@ -52,13 +77,16 @@ export class ColorSwatch {
     const list = this.items();
     if (!list.length || this.disabled()) return;
 
+    // Right-to-left, the right arrow goes to the previous swatch.
+    const forward = isRtl(this.host.nativeElement) ? 'ArrowLeft' : 'ArrowRight';
+    const back = forward === 'ArrowLeft' ? 'ArrowRight' : 'ArrowLeft';
     let targetIndex = -1;
     switch (event.key) {
-      case 'ArrowRight':
+      case forward:
       case 'ArrowDown':
         targetIndex = (index + 1) % list.length;
         break;
-      case 'ArrowLeft':
+      case back:
       case 'ArrowUp':
         targetIndex = (index - 1 + list.length) % list.length;
         break;
@@ -76,6 +104,7 @@ export class ColorSwatch {
     const nextItem = list[targetIndex];
     if (nextItem) {
       this.select(nextItem);
+      this.buttons()[targetIndex]?.nativeElement.focus();
     }
   }
 }

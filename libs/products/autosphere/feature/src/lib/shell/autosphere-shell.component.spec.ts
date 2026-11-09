@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { AutoSphereShellComponent } from './autosphere-shell.component';
 import { AutoSphereStore } from '../autosphere-store';
-import { AutoSphereCmsService } from '@ah/products/autosphere/domain';
+import { AutoSphereCmsService } from '../data/cms-client';
 
 describe('AutoSphereShellComponent', () => {
   let component: AutoSphereShellComponent;

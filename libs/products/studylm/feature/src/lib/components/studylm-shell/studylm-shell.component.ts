@@ -12,7 +12,9 @@ import {
   AhSelect,
   type AhSelectOption,
 } from '@ah/ui';
+import { APP_MODE } from '@ah/platform/app-mode';
 import { StudyLmStore } from '../../store/studylm.store';
+import { isLocalPage } from '../../services/studylm-api.service';
 import { SCREENS, StudyLmScreens } from '../../shell/studylm-screens';
 import {
   type AnswerEvaluationRequest,
@@ -72,6 +74,12 @@ import { STUDYLM_COPY } from '../../i18n/studylm-copy';
 export class StudyLmShellComponent {
   readonly store = inject(StudyLmStore);
   private readonly preferences = inject(PreferencesStore);
+  /**
+   * The n8n settings (tunnel, localhost, custom webhook) are for the owner.
+   * Visitors of the portfolio demo see the status only.
+   */
+  readonly canConfigureAi =
+    inject(APP_MODE) !== 'embedded-demo' || isLocalPage();
   readonly copy = computed(
     () => STUDYLM_COPY[this.preferences.language()] ?? STUDYLM_COPY.en,
   );
@@ -133,7 +141,7 @@ export class StudyLmShellComponent {
   }
 
   openSettingsModal(): void {
-    this.store.setShowSettingsModal(true);
+    if (this.canConfigureAi) this.store.setShowSettingsModal(true);
   }
 
   exportStudyGuide(): void {

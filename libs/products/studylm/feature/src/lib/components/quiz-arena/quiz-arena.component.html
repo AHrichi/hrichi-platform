@@ -128,8 +128,12 @@
             <button
               type="button"
               class="quiz-action-btn hint-btn"
+              [disabled]="!store.aiReady()"
               (click)="requestHint(q)"
-              title="Need a hint? Get pedagogical guidance without spoiling the answer"
+              [attr.title]="
+                store.aiStatus() ??
+                'Need a hint? Get pedagogical guidance without spoiling the answer'
+              "
             >
               <span class="btn-icon">💡</span>
               <span>Need a Hint?</span>
@@ -156,7 +160,7 @@
         }
 
         <!-- 4 Options -->
-        <div class="options-list">
+        <div class="options-list" role="group" aria-label="Answer options">
           @for (option of q.options; track $index) {
             <button
               type="button"
@@ -166,7 +170,7 @@
               [class.is-wrong]="
                 q.isAnswered && q.userSelectedIndex === $index && !q.isCorrect
               "
-              [disabled]="q.isAnswered"
+              [attr.aria-disabled]="q.isAnswered ? 'true' : null"
               (click)="selectOption($index)"
             >
               <span class="option-letter">{{ getOptionLetter($index) }}</span>
@@ -191,6 +195,8 @@
             class="explanation-box"
             [class.correct-box]="q.isCorrect"
             [class.wrong-box]="!q.isCorrect"
+            role="status"
+            aria-live="polite"
           >
             <div class="explanation-header">
               <span class="explanation-title">
@@ -203,8 +209,12 @@
               <button
                 type="button"
                 class="quiz-action-btn deepdive-btn"
+                [disabled]="!store.aiReady()"
                 (click)="requestDeepDive(q)"
-                title="Deep dive: view architectural breakdown, flowchart, and verified code"
+                [attr.title]="
+                  store.aiStatus() ??
+                  'Deep dive: view architectural breakdown, flowchart, and verified code'
+                "
               >
                 <span class="btn-icon">🔍</span>
                 <span>Deep Dive & Diagram</span>

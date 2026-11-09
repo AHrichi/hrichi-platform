@@ -53,26 +53,40 @@
 
     <!-- Global Header Actions -->
     <div class="nav-actions">
-      <!-- n8n Gateway Connection Pill -->
-      <button
-        type="button"
-        class="n8n-indicator-btn"
-        [class.connected]="store.n8nConfig().isConnected"
-        [class.checking]="store.n8nConfig().isChecking"
-        (click)="openSettingsModal()"
-        title="Configure n8n AI webhook endpoint"
-        [attr.aria-label]="copy().n8nEngine + ': ' + connection()"
-      >
-        <span class="status-dot"></span>
-        <span class="btn-label-desktop"
-          >{{ copy().n8nEngine }}: {{ connection() }}</span
+      <!-- AI connection: a settings button for the owner, a status for
+           demo visitors. -->
+      @if (!canConfigureAi) {
+        <span
+          class="n8n-indicator-btn n8n-indicator-btn--static"
+          role="status"
+          [class.connected]="store.n8nConfig().isConnected"
+          [class.checking]="store.n8nConfig().isChecking"
+          [attr.title]="store.aiStatus()"
         >
-        <span class="btn-label-compact"
-          >{{ copy().n8nEngine }}: {{ connection() }}</span
+          <span class="status-dot" aria-hidden="true"></span>
+          <span>{{ copy().n8nEngine }}: {{ connection() }}</span>
+        </span>
+      } @else {
+        <button
+          type="button"
+          class="n8n-indicator-btn"
+          [class.connected]="store.n8nConfig().isConnected"
+          [class.checking]="store.n8nConfig().isChecking"
+          (click)="openSettingsModal()"
+          title="Configure n8n AI webhook endpoint"
+          [attr.aria-label]="copy().n8nEngine + ': ' + connection()"
         >
-        <span class="btn-label-mobile">{{ connection() }}</span>
-        <span class="gear-icon" aria-hidden="true">⚙️</span>
-      </button>
+          <span class="status-dot"></span>
+          <span class="btn-label-desktop"
+            >{{ copy().n8nEngine }}: {{ connection() }}</span
+          >
+          <span class="btn-label-compact"
+            >{{ copy().n8nEngine }}: {{ connection() }}</span
+          >
+          <span class="btn-label-mobile">{{ connection() }}</span>
+          <span class="gear-icon" aria-hidden="true">⚙️</span>
+        </button>
+      }
 
       <!-- Markdown Guide Export -->
       <button
@@ -156,7 +170,7 @@
   </div>
 
   <!-- Modals -->
-  @if (store.showSettingsModal()) {
+  @if (canConfigureAi && store.showSettingsModal()) {
     <ah-n8n-settings-modal />
   }
 

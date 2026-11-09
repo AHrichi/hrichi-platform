@@ -31,10 +31,15 @@ async function loadTokens(theme) {
   }));
 }
 
-/** `{color.neutral.900}` becomes `var(--color-neutral-900)`; anything else is the resolved value. */
+/**
+ * `{color.neutral.900}` becomes `var(--color-neutral-900)`; a DTCG cubicBezier
+ * array becomes `cubic-bezier(…)`; anything else is the resolved value.
+ */
 function cssValue({ original, value }) {
   const reference = /^\{([^}]+)\}$/.exec(String(original));
-  return reference ? `var(--${reference[1].replaceAll('.', '-')})` : value;
+  if (reference) return `var(--${reference[1].replaceAll('.', '-')})`;
+  if (Array.isArray(value)) return `cubic-bezier(${value.join(', ')})`;
+  return value;
 }
 
 const declarations = (tokens, indent) =>
@@ -51,7 +56,7 @@ const banner =
 // Apps load tokens.css first, so this statement fixes the layer order for
 // the whole design system (see libs/design-system/ui/src/styles).
 const css = `${banner}
-@layer reset, tokens, base, layout, components, utilities;
+@layer reset, tokens, base, layout, components, utilities, overrides;
 
 @layer tokens {
   :root {
@@ -67,6 +72,7 @@ ${declarations(darkSemantic, '      ')}
   }
 
   :root[data-theme='dark'] {
+    color-scheme: dark;
 ${declarations(darkSemantic, '    ')}
   }
 
@@ -110,17 +116,66 @@ const contrastPairs = [
   ['color-danger-default', 'color-bg-surface'],
   ['color-stage-text', 'color-stage-bg'],
   ['color-stage-muted', 'color-stage-bg'],
+  // Status text on its own tint (badges, alerts).
+  ['color-success-default', 'color-success-subtle'],
+  ['color-warning-default', 'color-warning-subtle'],
+  ['color-info-default', 'color-info-subtle'],
+  ['color-danger-default', 'color-danger-subtle'],
+  ['color-accent-default', 'color-accent-subtle'],
+  // Filled surfaces with text on them.
+  ['color-accent-on', 'color-accent-hover'],
+  ['color-text-inverse', 'color-bg-inverse'],
+  ['color-bg-canvas', 'color-success-default'],
 ];
 
-// WCAG 2.2 1.4.11: graphics need 3:1 against what they're drawn on.
-const graphicPairs = [1, 2, 3, 4, 5, 6, 7].map((n) => [
-  `color-data-${n}`,
-  'color-stage-bg',
-]);
+// WCAG 2.2 1.4.11: graphics and the boundaries of controls need 3:1 against
+// what they're drawn on.
+const surfaces = ['color-bg-canvas', 'color-bg-surface', 'color-bg-raised'];
+const graphicPairs = [
+  ...[1, 2, 3, 4, 5, 6, 7].map((n) => [`color-data-${n}`, 'color-stage-bg']),
+  ...surfaces.map((bg) => ['color-border-control', bg]),
+  ...surfaces.map((bg) => ['color-focus-ring', bg]),
+];
 
-function luminance(hex) {
-  const [r, g, b] = [1, 3, 5].map((i) => {
-    const c = parseInt(hex.slice(i, i + 2), 16) / 255;
+/**
+ * sRGB channels (0-255) of an opaque colour: `#rgb`, `#rrggbb`, or
+ * `rgb()`/`rgba()` in comma or space syntax. Anything else, or anything
+ * translucent, throws: the gate must never pass a colour it can't read.
+ */
+function parseColor(value, name) {
+  const text = String(value).trim();
+  let channels;
+  let alpha = 1;
+  const hex = /^#([0-9a-f]{3,8})$/i.exec(text);
+  const fn = /^rgba?\(\s*([^)]+)\)$/i.exec(text);
+  if (hex && [3, 6, 8].includes(hex[1].length)) {
+    const digits =
+      hex[1].length === 3 ? [...hex[1]].map((d) => d + d).join('') : hex[1];
+    channels = [0, 2, 4].map((i) => parseInt(digits.slice(i, i + 2), 16));
+    if (digits.length === 8) alpha = parseInt(digits.slice(6, 8), 16) / 255;
+  } else if (fn) {
+    const parts = fn[1].split(/[\s,/]+/).filter(Boolean);
+    channels = parts.slice(0, 3).map(Number);
+    if (parts[3] !== undefined) {
+      alpha = parts[3].endsWith('%')
+        ? parseFloat(parts[3]) / 100
+        : Number(parts[3]);
+    }
+  }
+  if (!channels || channels.some((c) => !Number.isFinite(c))) {
+    throw new Error(`Contrast gate can't read ${name} = "${text}".`);
+  }
+  if (alpha < 1) {
+    throw new Error(
+      `Contrast gate can't rate translucent ${name} = "${text}"; gate an opaque colour.`,
+    );
+  }
+  return channels;
+}
+
+function luminance(value, name) {
+  const [r, g, b] = parseColor(value, name).map((channel) => {
+    const c = channel / 255;
     return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
   });
   return 0.2126 * r + 0.7152 * g + 0.0722 * b;
@@ -137,9 +192,15 @@ for (const [theme, tokens] of [
     [graphicPairs, 3],
   ]) {
     for (const [fg, bg] of pairs) {
-      const [l1, l2] = [luminance(values[fg]), luminance(values[bg])].sort(
-        (a, b) => b - a,
-      );
+      for (const name of [fg, bg]) {
+        if (!(name in values)) {
+          throw new Error(`Contrast gate: ${theme} has no token ${name}.`);
+        }
+      }
+      const [l1, l2] = [
+        luminance(values[fg], `${theme} ${fg}`),
+        luminance(values[bg], `${theme} ${bg}`),
+      ].sort((a, b) => b - a);
       const ratio = (l1 + 0.05) / (l2 + 0.05);
       if (ratio < minimum) {
         failures.push(

@@ -2,66 +2,160 @@
   "color": {
     "$type": "color",
     "crimson": {
-      "50": { "$value": "#fdf2f4" },
-      "100": { "$value": "#fbe3e7" },
-      "200": { "$value": "#f6c7cf" },
-      "300": { "$value": "#ee9aa8" },
+      "50": {
+        "$value": "#fdf2f4"
+      },
+      "100": {
+        "$value": "#fbe3e7"
+      },
+      "200": {
+        "$value": "#f6c7cf"
+      },
+      "300": {
+        "$value": "#ee9aa8"
+      },
       "400": {
         "$value": "#e66f85",
         "$description": "Dark-theme accent; 5:1 on bg.raised"
       },
-      "500": { "$value": "#d03553" },
+      "500": {
+        "$value": "#d03553"
+      },
       "600": {
         "$value": "#b3122e",
         "$description": "Brand accent, taken from the CV"
       },
-      "700": { "$value": "#960f27" },
-      "800": { "$value": "#7a0e22" },
-      "900": { "$value": "#3a0811" }
+      "700": {
+        "$value": "#960f27"
+      },
+      "800": {
+        "$value": "#7a0e22"
+      },
+      "900": {
+        "$value": "#3a0811"
+      }
     },
     "neutral": {
-      "0": { "$value": "#ffffff" },
-      "50": { "$value": "#f7f7f8" },
-      "100": { "$value": "#eeeef0" },
-      "200": { "$value": "#dcdce0" },
-      "300": { "$value": "#c2c2c8" },
-      "400": { "$value": "#9a9aa3" },
-      "500": { "$value": "#74747d" },
-      "600": { "$value": "#56565e" },
-      "700": { "$value": "#3d3d44" },
-      "800": { "$value": "#26262b" },
-      "900": { "$value": "#18181b" },
-      "950": { "$value": "#0f0f12" }
+      "0": {
+        "$value": "#ffffff"
+      },
+      "50": {
+        "$value": "#f7f7f8"
+      },
+      "100": {
+        "$value": "#eeeef0"
+      },
+      "200": {
+        "$value": "#dcdce0"
+      },
+      "300": {
+        "$value": "#c2c2c8"
+      },
+      "400": {
+        "$value": "#9a9aa3"
+      },
+      "500": {
+        "$value": "#74747d"
+      },
+      "600": {
+        "$value": "#56565e"
+      },
+      "700": {
+        "$value": "#3d3d44"
+      },
+      "800": {
+        "$value": "#26262b"
+      },
+      "900": {
+        "$value": "#18181b"
+      },
+      "950": {
+        "$value": "#0f0f12"
+      }
     },
     "green": {
-      "50": { "$value": "#ecfdf5" },
-      "400": { "$value": "#4ade80" },
-      "600": { "$value": "#15803d" },
-      "950": { "$value": "#052e16" }
+      "50": {
+        "$value": "#ecfdf5"
+      },
+      "400": {
+        "$value": "#4ade80"
+      },
+      "600": {
+        "$value": "#15803d"
+      },
+      "950": {
+        "$value": "#052e16"
+      }
     },
     "amber": {
-      "50": { "$value": "#fffbeb" },
-      "300": { "$value": "#fcd34d" },
-      "700": { "$value": "#b45309" },
-      "950": { "$value": "#451a03" }
+      "50": {
+        "$value": "#fffbeb"
+      },
+      "300": {
+        "$value": "#fcd34d"
+      },
+      "700": {
+        "$value": "#b45309"
+      },
+      "950": {
+        "$value": "#451a03"
+      }
     },
     "teal": {
-      "50": { "$value": "#f0fdfa" },
-      "300": { "$value": "#5eead4" },
-      "700": { "$value": "#0f766e" },
-      "950": { "$value": "#042f2e" }
+      "50": {
+        "$value": "#f0fdfa"
+      },
+      "300": {
+        "$value": "#5eead4"
+      },
+      "700": {
+        "$value": "#0f766e"
+      },
+      "950": {
+        "$value": "#042f2e"
+      }
     },
     "blue": {
-      "50": { "$value": "#f0f9ff" },
-      "300": { "$value": "#93c5fd" },
-      "700": { "$value": "#0369a1" },
-      "950": { "$value": "#0c4a6e" }
+      "50": {
+        "$value": "#f0f9ff"
+      },
+      "300": {
+        "$value": "#93c5fd"
+      },
+      "700": {
+        "$value": "#0369a1"
+      },
+      "950": {
+        "$value": "#0c4a6e"
+      }
     },
     "violet": {
-      "50": { "$value": "#f5f3ff" },
-      "300": { "$value": "#c4b5fd" },
-      "700": { "$value": "#6d28d9" },
-      "950": { "$value": "#2e1065" }
+      "50": {
+        "$value": "#f5f3ff"
+      },
+      "300": {
+        "$value": "#c4b5fd"
+      },
+      "700": {
+        "$value": "#6d28d9"
+      },
+      "950": {
+        "$value": "#2e1065"
+      }
+    },
+    "red": {
+      "50": {
+        "$value": "#fef2f2"
+      },
+      "300": {
+        "$value": "#fca5a5"
+      },
+      "700": {
+        "$value": "#b91c1c"
+      },
+      "950": {
+        "$value": "#450a0a"
+      }
     }
   },
   "font": {
@@ -75,66 +169,250 @@
       }
     },
     "size": {
+      "100": {
+        "$value": "0.8125rem"
+      },
+      "200": {
+        "$value": "0.9375rem"
+      },
+      "300": {
+        "$value": "clamp(1rem, 0.96rem + 0.18vw, 1.0625rem)"
+      },
+      "400": {
+        "$value": "clamp(1.125rem, 1.07rem + 0.27vw, 1.25rem)"
+      },
+      "500": {
+        "$value": "clamp(1.375rem, 1.26rem + 0.54vw, 1.625rem)"
+      },
+      "600": {
+        "$value": "clamp(1.75rem, 1.52rem + 1.05vw, 2.375rem)"
+      },
+      "700": {
+        "$value": "clamp(2.25rem, 1.84rem + 1.85vw, 3.5rem)"
+      },
       "$type": "dimension",
-      "$description": "Fluid type scale: min at 360px, max at 1280px viewport",
-      "100": { "$value": "0.8125rem" },
-      "200": { "$value": "0.9375rem" },
-      "300": { "$value": "clamp(1rem, 0.96rem + 0.18vw, 1.0625rem)" },
-      "400": { "$value": "clamp(1.125rem, 1.07rem + 0.27vw, 1.25rem)" },
-      "500": { "$value": "clamp(1.375rem, 1.26rem + 0.54vw, 1.625rem)" },
-      "600": { "$value": "clamp(1.75rem, 1.52rem + 1.05vw, 2.375rem)" },
-      "700": { "$value": "clamp(2.25rem, 1.84rem + 1.85vw, 3.5rem)" }
+      "$description": "Fluid type scale: min at 360px, max at 1280px viewport"
     },
     "weight": {
       "$type": "fontWeight",
-      "regular": { "$value": 400 },
-      "medium": { "$value": 500 },
-      "semibold": { "$value": 600 },
-      "bold": { "$value": 700 }
+      "regular": {
+        "$value": 400
+      },
+      "medium": {
+        "$value": 500
+      },
+      "semibold": {
+        "$value": 600
+      },
+      "bold": {
+        "$value": 700
+      }
     },
     "line-height": {
       "$type": "number",
-      "tight": { "$value": 1.15 },
-      "snug": { "$value": 1.35 },
-      "normal": { "$value": 1.6 }
+      "tight": {
+        "$value": 1.15
+      },
+      "snug": {
+        "$value": 1.35
+      },
+      "normal": {
+        "$value": 1.6
+      }
+    },
+    "letter-spacing": {
+      "$type": "dimension",
+      "tight": {
+        "$value": "-0.02em"
+      },
+      "normal": {
+        "$value": "0"
+      },
+      "wide": {
+        "$value": "0.04em"
+      },
+      "caps": {
+        "$value": "0.08em"
+      }
     }
   },
   "space": {
-    "$type": "dimension",
-    "0": { "$value": "0" },
-    "1": { "$value": "0.25rem" },
-    "2": { "$value": "0.5rem" },
-    "3": { "$value": "0.75rem" },
-    "4": { "$value": "1rem" },
-    "5": { "$value": "1.5rem" },
-    "6": { "$value": "2rem" },
-    "7": { "$value": "2.5rem" },
-    "8": { "$value": "3rem" },
-    "9": { "$value": "4rem" },
-    "10": { "$value": "6rem" }
+    "0": {
+      "$value": "0"
+    },
+    "1": {
+      "$value": "0.25rem"
+    },
+    "2": {
+      "$value": "0.5rem"
+    },
+    "3": {
+      "$value": "0.75rem"
+    },
+    "4": {
+      "$value": "1rem"
+    },
+    "5": {
+      "$value": "1.5rem"
+    },
+    "6": {
+      "$value": "2rem"
+    },
+    "7": {
+      "$value": "2.5rem"
+    },
+    "8": {
+      "$value": "3rem"
+    },
+    "9": {
+      "$value": "4rem"
+    },
+    "10": {
+      "$value": "6rem"
+    },
+    "$type": "dimension"
   },
   "radius": {
     "$type": "dimension",
-    "sm": { "$value": "0.375rem" },
-    "md": { "$value": "0.625rem" },
-    "lg": { "$value": "1rem" },
-    "pill": { "$value": "999px" }
+    "sm": {
+      "$value": "0.375rem"
+    },
+    "md": {
+      "$value": "0.625rem"
+    },
+    "lg": {
+      "$value": "1rem"
+    },
+    "pill": {
+      "$value": "999px"
+    }
   },
   "layout": {
     "$type": "dimension",
-    "content": { "$value": "72rem" },
-    "prose": { "$value": "42rem" },
-    "gutter": { "$value": "clamp(1rem, 0.6rem + 1.8vw, 2rem)" }
+    "content": {
+      "$value": "72rem"
+    },
+    "prose": {
+      "$value": "42rem"
+    },
+    "gutter": {
+      "$value": "clamp(1rem, 0.6rem + 1.8vw, 2rem)"
+    }
   },
   "motion": {
     "duration": {
       "$type": "duration",
-      "fast": { "$value": "120ms" },
-      "base": { "$value": "200ms" },
-      "slow": { "$value": "320ms" }
+      "fast": {
+        "$value": "120ms"
+      },
+      "base": {
+        "$value": "200ms"
+      },
+      "slow": {
+        "$value": "320ms"
+      }
     },
     "easing": {
-      "standard": { "$value": "cubic-bezier(0.2, 0, 0, 1)" }
+      "$type": "cubicBezier",
+      "standard": {
+        "$value": [0.2, 0, 0, 1],
+        "$description": "Most UI movement"
+      },
+      "enter": {
+        "$value": [0, 0, 0.2, 1],
+        "$description": "Things arriving: decelerate"
+      },
+      "exit": {
+        "$value": [0.4, 0, 1, 1],
+        "$description": "Things leaving: accelerate"
+      }
+    }
+  },
+  "border": {
+    "width": {
+      "$type": "dimension",
+      "hairline": {
+        "$value": "1px"
+      },
+      "strong": {
+        "$value": "2px"
+      }
+    }
+  },
+  "focus": {
+    "ring": {
+      "$type": "dimension",
+      "width": {
+        "$value": "2px"
+      },
+      "offset": {
+        "$value": "3px"
+      }
+    }
+  },
+  "opacity": {
+    "$type": "number",
+    "disabled": {
+      "$value": 0.5
+    }
+  },
+  "control": {
+    "height": {
+      "$type": "dimension",
+      "$description": "Interactive control heights; md is the 44px touch target",
+      "sm": {
+        "$value": "2rem"
+      },
+      "md": {
+        "$value": "2.75rem"
+      },
+      "lg": {
+        "$value": "3rem"
+      }
+    }
+  },
+  "z": {
+    "$type": "number",
+    "$description": "Stacking order; use these instead of raw z-index values",
+    "base": {
+      "$value": 0
+    },
+    "raised": {
+      "$value": 10
+    },
+    "sticky": {
+      "$value": 50
+    },
+    "dropdown": {
+      "$value": 1000
+    },
+    "overlay": {
+      "$value": 1100
+    },
+    "modal": {
+      "$value": 1200
+    },
+    "toast": {
+      "$value": 1300
+    },
+    "tooltip": {
+      "$value": 1400
+    }
+  },
+  "breakpoint": {
+    "$type": "dimension",
+    "$description": "For container queries and TS; CSS media queries can't read custom properties, so use the same values literally there",
+    "sm": {
+      "$value": "40rem"
+    },
+    "md": {
+      "$value": "48rem"
+    },
+    "lg": {
+      "$value": "64rem"
+    },
+    "xl": {
+      "$value": "80rem"
     }
   }
 }

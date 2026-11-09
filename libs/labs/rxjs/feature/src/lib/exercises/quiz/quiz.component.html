@@ -9,7 +9,7 @@
   @switch (quizState()) {
     @case ('selecting') {
       <div class="difficulty-selection">
-        <div class="card difficulty-card" (click)="startQuiz('Beginner')">
+        <div class="card difficulty-card">
           <div class="card-header">
             <div class="card-title-row">
               <h3>Beginner</h3>
@@ -18,13 +18,18 @@
             <p>Observables, basic operators, and primary data sharing.</p>
           </div>
           <div class="card-content">
-            <button type="button" ahButton="primary" size="sm">
+            <button
+              type="button"
+              ahButton="primary"
+              size="sm"
+              (click)="startQuiz('Beginner')"
+            >
               Start Beginner Track
             </button>
           </div>
         </div>
 
-        <div class="card difficulty-card" (click)="startQuiz('Mid-level')">
+        <div class="card difficulty-card">
           <div class="card-header">
             <div class="card-title-row">
               <h3>Mid-level</h3>
@@ -33,13 +38,18 @@
             <p>Higher-order mapping, multicasting, caching, and batching.</p>
           </div>
           <div class="card-content">
-            <button type="button" ahButton="primary" size="sm">
+            <button
+              type="button"
+              ahButton="primary"
+              size="sm"
+              (click)="startQuiz('Mid-level')"
+            >
               Start Mid-level Track
             </button>
           </div>
         </div>
 
-        <div class="card difficulty-card" (click)="startQuiz('Senior')">
+        <div class="card difficulty-card">
           <div class="card-header">
             <div class="card-title-row">
               <h3>Senior</h3>
@@ -48,7 +58,12 @@
             <p>Zoneless execution, linkedSignal, rxResource, and edge cases.</p>
           </div>
           <div class="card-content">
-            <button type="button" ahButton="primary" size="sm">
+            <button
+              type="button"
+              ahButton="primary"
+              size="sm"
+              (click)="startQuiz('Senior')"
+            >
               Start Senior Track
             </button>
           </div>

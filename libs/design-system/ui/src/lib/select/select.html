@@ -1,12 +1,14 @@
 <div class="ah-select-container">
   @if (label()) {
-    <!-- The trigger is a button, so it's named by aria-labelledby, not a <label>. -->
-    <span [id]="selectId + '-label'" class="ah-select-label">
+    <!-- A <label> focuses the trigger on click; aria-labelledby also reads
+         the current value after the label. -->
+    <label [id]="selectId + '-label'" [for]="selectId" class="ah-select-label">
       {{ label() }}
-    </span>
+    </label>
   }
 
   <button
+    #trigger
     type="button"
     class="ah-select-trigger"
     [id]="selectId"
@@ -14,20 +16,18 @@
     aria-haspopup="listbox"
     [attr.aria-expanded]="isOpen()"
     [attr.aria-controls]="listboxId"
+    [attr.aria-activedescendant]="activeDescendant()"
     [attr.aria-labelledby]="
       label() ? selectId + '-label ' + selectId : selectId
     "
-    [attr.title]="
-      selectedOption()
-        ? selectedOption()!.label +
-          (selectedOption()!.hint ? ' — ' + selectedOption()!.hint : '')
-        : placeholder()
-    "
+    [attr.aria-required]="required() || null"
+    [attr.aria-invalid]="invalid() || null"
     [disabled]="disabled()"
     (click)="toggleOpen()"
     (keydown)="onTriggerKeydown($event)"
+    (blur)="onBlur()"
   >
-    <div class="ah-select-trigger-content">
+    <span class="ah-select-trigger-content">
       @if (selectedOption(); as opt) {
         @if (opt.icon) {
           <span class="ah-select-icon" aria-hidden="true">{{ opt.icon }}</span>
@@ -36,7 +36,7 @@
       } @else {
         <span class="ah-select-placeholder">{{ placeholder() }}</span>
       }
-    </div>
+    </span>
 
     <span class="ah-select-chevron" aria-hidden="true">
       <svg viewBox="0 0 20 20" fill="currentColor" class="chevron-svg">
@@ -50,42 +50,47 @@
   </button>
 
   @if (isOpen()) {
-    <div class="ah-select-popover">
+    <div
+      #popover
+      class="ah-select-popover"
+      popover="manual"
+      [style]="placement()"
+    >
+      <!-- Options are chosen with the pointer or through the trigger's
+           keyboard handling (aria-activedescendant); they never take focus. -->
       <ul
         [id]="listboxId"
         class="ah-select-listbox"
         role="listbox"
-        tabindex="-1"
+        [attr.aria-labelledby]="label() ? selectId + '-label' : null"
       >
         @for (option of options(); track option.value; let idx = $index) {
+          <!-- eslint-disable-next-line @angular-eslint/template/click-events-have-key-events, @angular-eslint/template/interactive-supports-focus -->
           <li
+            [id]="optionId(idx)"
             class="ah-select-option"
             [class.ah-select-option--selected]="option.value === value()"
             [class.ah-select-option--active]="idx === activeIndex()"
             [class.ah-select-option--disabled]="option.disabled"
             role="option"
             [attr.aria-selected]="option.value === value()"
-            [attr.aria-disabled]="option.disabled"
-            [attr.title]="
-              option.label + (option.hint ? ' — ' + option.hint : '')
-            "
-            tabindex="-1"
+            [attr.aria-disabled]="option.disabled || null"
             (click)="selectOption(option)"
-            (keydown.enter)="selectOption(option)"
+            (mousemove)="!option.disabled && activeIndex.set(idx)"
           >
-            <div class="ah-select-option-content">
+            <span class="ah-select-option-content">
               @if (option.icon) {
                 <span class="ah-select-icon" aria-hidden="true">{{
                   option.icon
                 }}</span>
               }
-              <div class="ah-select-option-text">
+              <span class="ah-select-option-text">
                 <span class="ah-select-option-label">{{ option.label }}</span>
                 @if (option.hint) {
                   <span class="ah-select-option-hint">{{ option.hint }}</span>
                 }
-              </div>
-            </div>
+              </span>
+            </span>
 
             @if (option.value === value()) {
               <span class="ah-select-check" aria-hidden="true">✓</span>

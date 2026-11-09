@@ -6,7 +6,11 @@ import type {
 } from '@ah/products/studylm/domain';
 import type { StudyLmState } from './studylm.state';
 import { ACTIVE_SUBJECT_SETTING, N8N_SETTING } from './studylm.methods';
-import { StudyLmApiService } from '../services/studylm-api.service';
+import {
+  AI_UNAVAILABLE_MESSAGE,
+  isLocalPage,
+  StudyLmApiService,
+} from '../services/studylm-api.service';
 import { StudyLmStorageService } from '../services/studylm-storage.service';
 
 /** The connection the learner picked in Settings, kept across reloads. */
@@ -56,9 +60,13 @@ export function withStudyLmHooks() {
             .getSetting<SavedN8nChoice>(N8N_SETTING)
             .catch(() => null),
         ]).then(async ([defaultCfg, choice]) => {
-          const localUrl = choice?.localUrl || defaultCfg.localUrl;
-          const customUrl = choice?.customUrl ?? '';
-          const mode = choice?.mode ?? defaultCfg.mode;
+          const local = isLocalPage();
+          // A saved "localhost" choice only applies on the machine itself.
+          const usable =
+            choice && (local || choice.mode !== 'local') ? choice : null;
+          const localUrl = usable?.localUrl || defaultCfg.localUrl;
+          const customUrl = usable?.customUrl ?? '';
+          const mode = usable?.mode ?? defaultCfg.mode;
           const activeEndpoint =
             mode === 'custom' && customUrl
               ? customUrl
@@ -73,9 +81,13 @@ export function withStudyLmHooks() {
               customUrl,
               tunnelUrl: defaultCfg.tunnelUrl,
               activeEndpoint,
-              isChecking: true,
+              isChecking: mode !== 'unavailable',
             },
           }));
+          if (mode === 'unavailable' || !activeEndpoint) {
+            report({ isConnected: false, lastError: AI_UNAVAILABLE_MESSAGE });
+            return;
+          }
           const res = await apiService.testConnection(activeEndpoint);
           if (res.ok) {
             report({
@@ -85,9 +97,10 @@ export function withStudyLmHooks() {
             });
             return;
           }
-          // The site's tunnel is down: try n8n on this machine before giving up.
+          // The tunnel is down: on the developer's machine, try the local n8n
+          // before giving up. A public page never does (Local Network Access).
           const localRes =
-            choice || activeEndpoint === localUrl
+            !local || usable || activeEndpoint === localUrl
               ? res
               : await apiService.testConnection(localUrl);
           if (localRes !== res && localRes.ok) {

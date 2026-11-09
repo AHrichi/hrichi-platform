@@ -65,10 +65,7 @@
             [class.app-card--collapsed]="isCollapsed(app.id)"
           >
             <!-- Card Top Bar: Icon, Title, Eyebrow, Live Status & Collapse Toggle -->
-            <div
-              class="app-card__header"
-              (click)="onHeaderClick(app.id, $event)"
-            >
+            <div class="app-card__header">
               <div class="app-card__identity">
                 <span class="app-icon" aria-hidden="true">{{ app.icon }}</span>
                 <div class="app-card__titles">
@@ -237,10 +234,7 @@
             [class.app-card--collapsed]="isCollapsed(lab.id)"
           >
             <!-- Card Top Bar: Icon, Title, Eyebrow, Live Status & Collapse Toggle -->
-            <div
-              class="app-card__header"
-              (click)="onHeaderClick(lab.id, $event)"
-            >
+            <div class="app-card__header">
               <div class="app-card__identity">
                 <span class="app-icon" aria-hidden="true">{{ lab.icon }}</span>
                 <div class="app-card__titles">

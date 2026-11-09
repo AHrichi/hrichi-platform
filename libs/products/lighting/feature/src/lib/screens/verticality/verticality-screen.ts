@@ -3,11 +3,10 @@ import {
   Component,
   computed,
   DestroyRef,
-  effect,
   inject,
+  linkedSignal,
   PLATFORM_ID,
   signal,
-  untracked,
 } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { AhAlert, AhButton, AhMetricCard } from '@ah/ui';
@@ -90,9 +89,16 @@ export class VerticalityScreen {
   /** North (+) / south (−) and east (+) / west (−) lean, in degrees. */
   protected readonly pitch = signal(0.4);
   protected readonly roll = signal(-0.3);
-  protected readonly poleHeight = signal(8);
+  protected readonly poleId = linkedSignal<string>(() => {
+    const poles = this.store.activeProject()?.poles ?? [];
+    return poles[0]?.id ?? '';
+  });
+  protected readonly poleHeight = linkedSignal<number>(() => {
+    const id = this.poleId();
+    const pole = this.store.activeProject()?.poles.find((p) => p.id === id);
+    return pole?.heightMeters ?? 8;
+  });
   protected readonly boltPitch = signal(300);
-  protected readonly poleId = signal('');
   protected readonly sensor = signal<SensorState>('off');
   protected readonly certified = signal<string | null>(null);
 
@@ -170,24 +176,11 @@ export class VerticalityScreen {
   }
 
   constructor() {
-    // Start from the first pole of the project, with its height.
-    effect(() => {
-      const poles = this.store.activeProject()?.poles ?? [];
-      untracked(() => {
-        if (!poles.some((p) => p.id === this.poleId()) && poles[0]) {
-          this.selectPole(poles[0].id);
-        }
-      });
-    });
     inject(DestroyRef).onDestroy(() => this.stopSensor());
   }
 
   protected selectPole(id: string): void {
     this.poleId.set(id);
-    const pole = this.store.activeProject()?.poles.find((p) => p.id === id);
-    if (pole) {
-      this.poleHeight.set(pole.heightMeters);
-    }
   }
 
   protected async toggleSensor(): Promise<void> {

@@ -2,66 +2,148 @@
   "color": {
     "$type": "color",
     "bg": {
-      "canvas": { "$value": "{color.neutral.0}" },
-      "surface": { "$value": "{color.neutral.50}" },
-      "raised": { "$value": "{color.neutral.0}" },
-      "inverse": { "$value": "{color.neutral.900}" }
+      "canvas": {
+        "$value": "{color.neutral.0}"
+      },
+      "surface": {
+        "$value": "{color.neutral.50}"
+      },
+      "raised": {
+        "$value": "{color.neutral.0}"
+      },
+      "inverse": {
+        "$value": "{color.neutral.900}"
+      }
     },
     "text": {
-      "default": { "$value": "{color.neutral.900}" },
-      "muted": { "$value": "{color.neutral.600}" },
-      "inverse": { "$value": "{color.neutral.50}" }
+      "default": {
+        "$value": "{color.neutral.900}"
+      },
+      "muted": {
+        "$value": "{color.neutral.600}"
+      },
+      "inverse": {
+        "$value": "{color.neutral.50}"
+      }
     },
     "border": {
-      "default": { "$value": "{color.neutral.200}" },
-      "strong": { "$value": "{color.neutral.300}" }
+      "default": {
+        "$value": "{color.neutral.200}"
+      },
+      "strong": {
+        "$value": "{color.neutral.300}"
+      },
+      "control": {
+        "$value": "{color.neutral.500}",
+        "$description": "Boundary of inputs and other controls; 3:1 against every background (WCAG 1.4.11)"
+      }
     },
     "accent": {
-      "default": { "$value": "{color.crimson.600}" },
-      "hover": { "$value": "{color.crimson.700}" },
-      "subtle": { "$value": "{color.crimson.50}" },
-      "on": { "$value": "{color.neutral.0}" }
+      "default": {
+        "$value": "{color.crimson.600}"
+      },
+      "hover": {
+        "$value": "{color.crimson.700}"
+      },
+      "subtle": {
+        "$value": "{color.crimson.50}"
+      },
+      "on": {
+        "$value": "{color.neutral.0}"
+      }
     },
     "success": {
-      "default": { "$value": "{color.green.600}" },
-      "subtle": { "$value": "{color.green.50}" }
+      "default": {
+        "$value": "{color.green.600}"
+      },
+      "subtle": {
+        "$value": "{color.green.50}"
+      }
     },
     "warning": {
-      "default": { "$value": "{color.amber.700}" },
-      "subtle": { "$value": "{color.amber.50}" }
+      "default": {
+        "$value": "{color.amber.700}"
+      },
+      "subtle": {
+        "$value": "{color.amber.50}"
+      }
     },
     "info": {
-      "default": { "$value": "{color.blue.700}" },
-      "subtle": { "$value": "{color.blue.50}" }
+      "default": {
+        "$value": "{color.blue.700}"
+      },
+      "subtle": {
+        "$value": "{color.blue.50}"
+      }
     },
     "danger": {
-      "default": { "$value": "{color.crimson.600}" },
-      "subtle": { "$value": "{color.crimson.50}" }
+      "default": {
+        "$value": "{color.red.700}"
+      },
+      "subtle": {
+        "$value": "{color.red.50}"
+      }
     },
     "focus": {
-      "ring": { "$value": "{color.crimson.500}" }
+      "ring": {
+        "$value": "{color.crimson.500}"
+      }
     },
     "stage": {
       "$description": "Dark panel behind 3D scenes in both themes: additive glow needs a dark background",
-      "bg": { "$value": "{color.neutral.950}" },
-      "text": { "$value": "{color.neutral.50}" },
-      "muted": { "$value": "{color.neutral.400}" },
-      "border": { "$value": "{color.neutral.800}" }
+      "bg": {
+        "$value": "{color.neutral.950}"
+      },
+      "text": {
+        "$value": "{color.neutral.50}"
+      },
+      "muted": {
+        "$value": "{color.neutral.400}"
+      },
+      "border": {
+        "$value": "{color.neutral.800}"
+      }
     },
     "data": {
-      "$description": "Categorical palette for graphics on the stage; each needs 3:1 against stage.bg",
-      "1": { "$value": "{color.crimson.400}" },
-      "2": { "$value": "{color.amber.300}" },
-      "3": { "$value": "{color.teal.300}" },
-      "4": { "$value": "{color.blue.300}" },
-      "5": { "$value": "{color.violet.300}" },
-      "6": { "$value": "{color.neutral.300}" },
-      "7": { "$value": "{color.green.400}" }
+      "1": {
+        "$value": "{color.crimson.400}"
+      },
+      "2": {
+        "$value": "{color.amber.300}"
+      },
+      "3": {
+        "$value": "{color.teal.300}"
+      },
+      "4": {
+        "$value": "{color.blue.300}"
+      },
+      "5": {
+        "$value": "{color.violet.300}"
+      },
+      "6": {
+        "$value": "{color.neutral.300}"
+      },
+      "7": {
+        "$value": "{color.green.400}"
+      },
+      "$description": "Categorical palette for graphics on the stage; each needs 3:1 against stage.bg"
+    },
+    "overlay": {
+      "scrim": {
+        "$value": "rgb(15 15 18 / 55%)",
+        "$description": "Behind modals and sheets"
+      }
     }
   },
   "shadow": {
     "raised": {
       "$value": "0 1px 2px rgb(15 15 18 / 6%), 0 4px 16px rgb(15 15 18 / 6%)"
+    },
+    "overlay": {
+      "$value": "0 4px 12px rgb(15 15 18 / 10%), 0 12px 32px rgb(15 15 18 / 12%)"
+    },
+    "modal": {
+      "$value": "0 8px 24px rgb(15 15 18 / 14%), 0 24px 64px rgb(15 15 18 / 18%)"
     }
   }
 }

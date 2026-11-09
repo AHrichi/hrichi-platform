@@ -7,6 +7,36 @@ import {
 } from '@ngrx/signals';
 import type { StudyLmState } from './studylm.state';
 import { StudyLmApiService } from '../services/studylm-api.service';
+
+/**
+ * In-flight AI requests a learner can walk away from, per store instance:
+ * closing the explanation modal or pressing "Cancel" aborts them, so a late
+ * reply never lands on top of a newer one.
+ */
+const inFlight = new WeakMap<
+  object,
+  { roadmap?: AbortController; elaboration?: AbortController }
+>();
+function startRequest(
+  store: object,
+  kind: 'roadmap' | 'elaboration',
+): AbortController {
+  const slots = inFlight.get(store) ?? {};
+  slots[kind]?.abort();
+  const controller = new AbortController();
+  slots[kind] = controller;
+  inFlight.set(store, slots);
+  return controller;
+}
+function cancelRequest(store: object, kind: 'roadmap' | 'elaboration'): void {
+  inFlight.get(store)?.[kind]?.abort();
+}
+
+/** What a hint or deep dive is about. */
+export type ElaborationContext = Omit<
+  ConceptElaborationRequest,
+  'action' | 'mode'
+>;
 import { StudyLmStorageService } from '../services/studylm-storage.service';
 import {
   type AddSourceInput,
@@ -76,6 +106,45 @@ export function withStudyLmMethods() {
         apiService = inject(StudyLmApiService),
         storageService = inject(StudyLmStorageService),
       ) => {
+        /**
+         * A hint or a deep dive. The modal opens at once, empty: the previous
+         * concept's explanation never shows under the new title. A newer
+         * request, or closing the modal, aborts this one.
+         */
+        async function elaborate(
+          mode: ConceptElaborationRequest['mode'],
+          context: ElaborationContext,
+        ): Promise<void> {
+          const controller = startRequest(state, 'elaboration');
+          patchState(state, {
+            activeElaboration: null,
+            isLoadingElaboration: true,
+            showElaborationModal: true,
+            elaborationError: null,
+          });
+          try {
+            const res = await apiService.elaborateConcept(
+              { action: 'elaborate_concept', mode, ...context },
+              state.n8nConfig().activeEndpoint,
+              controller.signal,
+            );
+            if (controller.signal.aborted) return;
+            patchState(state, {
+              activeElaboration: res.elaboration,
+              isLoadingElaboration: false,
+            });
+          } catch (err) {
+            if (controller.signal.aborted) return;
+            patchState(state, {
+              isLoadingElaboration: false,
+              elaborationError:
+                err instanceof Error
+                  ? err.message
+                  : 'The explanation couldn’t be loaded.',
+            });
+          }
+        }
+
         /**
          * Replies change the subject that asked for them, by id: the
          * learner may have opened another subject while waiting.
@@ -262,6 +331,7 @@ export function withStudyLmMethods() {
               roadmapRejectionReason: null,
               roadmapError: null,
             });
+            const controller = startRequest(state, 'roadmap');
 
             try {
               const endpoint = state.n8nConfig().activeEndpoint;
@@ -270,7 +340,9 @@ export function withStudyLmMethods() {
                 subject.domain || 'languages-runtimes',
                 subject.description,
                 endpoint,
+                controller.signal,
               );
+              if (controller.signal.aborted) return;
 
               if (res.code === 'NON_SE_TOPIC') {
                 patchState(state, {
@@ -304,6 +376,7 @@ export function withStudyLmMethods() {
                 roadmapRejectionReason: null,
               });
             } catch (err) {
+              if (controller.signal.aborted) return;
               const msg =
                 err instanceof Error
                   ? err.message
@@ -313,6 +386,12 @@ export function withStudyLmMethods() {
                 roadmapError: msg,
               });
             }
+          },
+
+          /** Stop waiting for the roadmap; nothing the AI sends later is kept. */
+          cancelRoadmapGeneration() {
+            cancelRequest(state, 'roadmap');
+            patchState(state, { isGeneratingRoadmap: false });
           },
 
           approveSection(sectionId: string) {
@@ -988,103 +1067,19 @@ export function withStudyLmMethods() {
             URL.revokeObjectURL(url);
           },
 
-          async requestHint(context: {
-            subject: string;
-            conceptTitle: string;
-            difficultyTier?: CompetencyTier;
-            sectionCode?: string;
-            promptOrQuestion: string;
-            answerOrExplanation?: string;
-            codeSnippet?: string;
-          }) {
-            patchState(state, {
-              isLoadingElaboration: true,
-              showElaborationModal: true,
-              elaborationError: null,
-            });
-
-            const req: ConceptElaborationRequest = {
-              action: 'elaborate_concept',
-              mode: 'hint',
-              subject: context.subject,
-              conceptTitle: context.conceptTitle,
-              difficultyTier: context.difficultyTier,
-              sectionCode: context.sectionCode,
-              promptOrQuestion: context.promptOrQuestion,
-              answerOrExplanation: context.answerOrExplanation,
-              codeSnippet: context.codeSnippet,
-            };
-
-            try {
-              const res = await apiService.elaborateConcept(
-                req,
-                state.n8nConfig().activeEndpoint,
-              );
-              patchState(state, {
-                activeElaboration: res.elaboration,
-                isLoadingElaboration: false,
-              });
-            } catch (err) {
-              patchState(state, {
-                isLoadingElaboration: false,
-                elaborationError:
-                  err instanceof Error
-                    ? err.message
-                    : 'Failed to retrieve hint',
-              });
-            }
+          requestHint(context: ElaborationContext) {
+            return elaborate('hint', context);
           },
 
-          async requestDeepDive(context: {
-            subject: string;
-            conceptTitle: string;
-            difficultyTier?: CompetencyTier;
-            sectionCode?: string;
-            promptOrQuestion: string;
-            answerOrExplanation?: string;
-            codeSnippet?: string;
-          }) {
-            patchState(state, {
-              isLoadingElaboration: true,
-              showElaborationModal: true,
-              elaborationError: null,
-            });
-
-            const req: ConceptElaborationRequest = {
-              action: 'elaborate_concept',
-              mode: 'deep_dive',
-              subject: context.subject,
-              conceptTitle: context.conceptTitle,
-              difficultyTier: context.difficultyTier,
-              sectionCode: context.sectionCode,
-              promptOrQuestion: context.promptOrQuestion,
-              answerOrExplanation: context.answerOrExplanation,
-              codeSnippet: context.codeSnippet,
-            };
-
-            try {
-              const res = await apiService.elaborateConcept(
-                req,
-                state.n8nConfig().activeEndpoint,
-              );
-              patchState(state, {
-                activeElaboration: res.elaboration,
-                isLoadingElaboration: false,
-              });
-            } catch (err) {
-              patchState(state, {
-                isLoadingElaboration: false,
-                elaborationError:
-                  err instanceof Error
-                    ? err.message
-                    : 'Failed to retrieve deep dive',
-              });
-            }
+          requestDeepDive(context: ElaborationContext) {
+            return elaborate('deep_dive', context);
           },
 
           closeElaborationModal() {
+            cancelRequest(state, 'elaboration');
             patchState(state, {
               showElaborationModal: false,
+              isLoadingElaboration: false,
             });
           },
 

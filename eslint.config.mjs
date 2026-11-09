@@ -95,6 +95,10 @@ export default [
                 'scope:shared',
                 'scope:platform',
                 'scope:design-system',
+                // The campsite night plan reuses the Sky lab's astronomy
+                // (`@ah/labs/sky/domain`). Named here on purpose, instead of
+                // tagging that domain `scope:shared` for every app.
+                'scope:lab-sky',
               ],
             },
             {
@@ -251,6 +255,8 @@ export default [
             {
               sourceTag: 'runtime:agnostic',
               onlyDependOnLibsWithTags: ['runtime:agnostic'],
+              // Framework-free means no Angular, from the workspace or npm.
+              bannedExternalImports: ['@angular/*', '@ngrx/*'],
             },
           ],
         },

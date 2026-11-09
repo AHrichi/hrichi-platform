@@ -1,4 +1,5 @@
-import type { Meta, StoryObj } from '@storybook/angular';
+import type { Meta, StoryObj } from '@storybook/angular-vite';
+import { expect, userEvent, within } from 'storybook/test';
 import { Select } from './select';
 
 const meta: Meta<Select> = {
@@ -82,5 +83,25 @@ export const Disabled: Story = {
   args: {
     disabled: true,
     value: 'js',
+  },
+};
+
+/**
+ * Keyboard contract: the trigger keeps focus, arrows move the active option
+ * (announced through aria-activedescendant, skipping disabled options),
+ * Escape closes the list.
+ */
+export const KeyboardNavigation: Story = {
+  args: { value: null },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const trigger = canvas.getByRole('combobox');
+    trigger.focus();
+    await userEvent.keyboard('{ArrowDown}');
+    await expect(trigger).toHaveAttribute('aria-expanded', 'true');
+    await expect(trigger.getAttribute('aria-activedescendant')).toBeTruthy();
+    await userEvent.keyboard('{Escape}');
+    await expect(trigger).toHaveAttribute('aria-expanded', 'false');
+    await expect(trigger).toHaveFocus();
   },
 };

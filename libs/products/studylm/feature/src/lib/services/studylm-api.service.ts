@@ -32,12 +32,29 @@ export const DEFAULT_LOCAL_URL =
   'http://127.0.0.1:5678/webhook/study-synthesizer';
 
 /**
+ * Whether this page itself runs on the developer's machine. Only then may
+ * StudyLM talk to an n8n on localhost: a public page that does triggers the
+ * browser's Local Network Access prompt for every visitor.
+ */
+export function isLocalPage(): boolean {
+  if (typeof window === 'undefined') return false;
+  const host = window.location.hostname;
+  return host === 'localhost' || host === '127.0.0.1' || host === '[::1]';
+}
+
+/**
  * Generation can take a while on the free model pool: the workflow may try
  * five models in turn (25 s each on Groq, up to two 30 s tries on each
- * Gemini). A ping can't.
+ * Gemini). Hints and answer grading are short, so a learner never waits
+ * minutes for them; a ping is shorter still.
  */
 const GENERATE_TIMEOUT_MS = 210_000;
+const QUICK_TIMEOUT_MS = 40_000;
 const PING_TIMEOUT_MS = 8_000;
+
+/** Shown when this deployment has no AI endpoint configured. */
+export const AI_UNAVAILABLE_MESSAGE =
+  'The AI assistant isn’t available on this site right now. Lessons, flashcards and quizzes you already have still work.';
 
 /**
  * A call to the AI that failed. StudyLM shows the message and a retry; it
@@ -59,14 +76,20 @@ export class StudyLmApiService {
       await this.siteConfig.load(),
       'study-synthesizer',
     );
-    const isLocalhost =
-      typeof window !== 'undefined' &&
-      (window.location.hostname === 'localhost' ||
-        window.location.hostname === '127.0.0.1');
-
-    const useTunnel = !isLocalhost && tunnelUrl !== null;
-    const defaultMode: N8nConnectionMode = useTunnel ? 'tunnel' : 'local';
-    const activeUrl = useTunnel ? tunnelUrl : DEFAULT_LOCAL_URL;
+    const local = isLocalPage();
+    // On a public page: the configured tunnel, or no AI at all. Never
+    // localhost (see isLocalPage).
+    const defaultMode: N8nConnectionMode = local
+      ? 'local'
+      : tunnelUrl !== null
+        ? 'tunnel'
+        : 'unavailable';
+    const activeUrl =
+      defaultMode === 'local'
+        ? DEFAULT_LOCAL_URL
+        : defaultMode === 'tunnel'
+          ? (tunnelUrl as string)
+          : '';
 
     return {
       mode: defaultMode,
@@ -91,6 +114,9 @@ export class StudyLmApiService {
         endpoint,
         { action: 'ping' },
         PING_TIMEOUT_MS,
+        {
+          retry: true,
+        },
       );
       const latencyMs = Math.round(performance.now() - start);
       const data = (await res.json().catch(() => ({}))) as {
@@ -109,6 +135,7 @@ export class StudyLmApiService {
     domain: SoftwareEngineeringDomain = 'languages-runtimes',
     focusNotes?: string,
     endpoint?: string,
+    cancel?: AbortSignal,
   ): Promise<GenerateRoadmapResponse> {
     const payload: GenerateRoadmapRequest = {
       action: 'generate_roadmap',
@@ -116,7 +143,7 @@ export class StudyLmApiService {
       domain,
       focusNotes,
     };
-    const raw = await this.request(endpoint, payload);
+    const raw = await this.request(endpoint, payload, { cancel });
     // A refused topic is an answer, not a failure: the caller shows why.
     return validateAndParseRoadmap(raw);
   }
@@ -176,9 +203,13 @@ export class StudyLmApiService {
   async elaborateConcept(
     request: ConceptElaborationRequest,
     endpoint?: string,
+    cancel?: AbortSignal,
   ): Promise<ConceptElaborationResponse> {
     const parsed = validateAndParseElaboration(
-      await this.request(endpoint, request),
+      await this.request(endpoint, request, {
+        timeoutMs: QUICK_TIMEOUT_MS,
+        cancel,
+      }),
       request,
     );
     if (!parsed.success) {
@@ -199,7 +230,9 @@ export class StudyLmApiService {
       context: request.context,
     };
     try {
-      const raw = await this.request(endpoint, payload);
+      const raw = await this.request(endpoint, payload, {
+        timeoutMs: QUICK_TIMEOUT_MS,
+      });
       return validateAndParseAnswerEvaluation(raw, request);
     } catch {
       return validateAndParseAnswerEvaluation(null, request);
@@ -249,10 +282,10 @@ export class StudyLmApiService {
     let text: string;
     try {
       const res = await this.post(
-        endpoint || DEFAULT_LOCAL_URL,
+        requireEndpoint(endpoint),
         request,
         GENERATE_TIMEOUT_MS,
-        cancel,
+        { cancel },
       );
       text = await res.text();
     } catch (err) {
@@ -269,7 +302,7 @@ export class StudyLmApiService {
     }
     if (typeof reply.code !== 'string') {
       throw new StudyLmAiError(
-        'The workflow doesn’t know how to write lessons yet. Re-import tools/scripts/studylm_workflow.json into n8n.',
+        'The lesson writer isn’t available right now. Try again later; the built-in lessons work without it.',
       );
     }
     return {
@@ -286,27 +319,39 @@ export class StudyLmApiService {
   private async request(
     endpoint: string | undefined,
     payload: unknown,
+    {
+      timeoutMs = GENERATE_TIMEOUT_MS,
+      cancel,
+    }: { timeoutMs?: number; cancel?: AbortSignal } = {},
   ): Promise<string> {
     try {
       const res = await this.post(
-        endpoint || DEFAULT_LOCAL_URL,
+        requireEndpoint(endpoint),
         payload,
-        GENERATE_TIMEOUT_MS,
+        timeoutMs,
+        {
+          cancel,
+        },
       );
       return await res.text();
     } catch (err) {
+      if (cancel?.aborted) throw err;
       throw err instanceof StudyLmAiError
         ? err
         : new StudyLmAiError(describeFailure(err));
     }
   }
 
-  /** One retry when the network drops; a timeout or an HTTP error is final. */
+  /**
+   * POST to n8n. Only a ping is retried when the network drops: a generation
+   * request may already have reached the server, and sending it again would
+   * spend the model quota twice. A timeout or an HTTP error is final.
+   */
   private async post(
     url: string,
     body: unknown,
     timeoutMs: number,
-    cancel?: AbortSignal,
+    { cancel, retry = false }: { cancel?: AbortSignal; retry?: boolean } = {},
   ): Promise<Response> {
     const send = () =>
       fetch(url, {
@@ -324,24 +369,36 @@ export class StudyLmApiService {
     try {
       res = await send();
     } catch (err) {
-      if (!(err instanceof TypeError)) throw err;
+      if (!retry || !(err instanceof TypeError)) throw err;
       res = await send();
     }
     if (!res.ok) {
-      throw new StudyLmAiError(`n8n answered HTTP ${res.status}.`);
+      throw new StudyLmAiError(
+        res.status === 429
+          ? 'The AI assistant is busy. Wait a minute and try again.'
+          : 'The AI assistant couldn’t answer this time. Try again in a moment.',
+      );
     }
     return res;
   }
 }
 
-/** Why a call to n8n failed, in words the learner can act on. */
+/** The endpoint to call, or the "AI unavailable" error. Never a fallback. */
+function requireEndpoint(endpoint: string | undefined): string {
+  if (!endpoint) throw new StudyLmAiError(AI_UNAVAILABLE_MESSAGE);
+  return endpoint;
+}
+
+/** Why a call to the AI failed, in words the learner can act on. */
 function describeFailure(err: unknown): string {
   if (err instanceof StudyLmAiError) return err.message;
   if (err instanceof DOMException && err.name === 'TimeoutError') {
-    return 'The AI took too long to answer.';
+    return 'The AI assistant took too long to answer. Try again in a moment.';
   }
   if (err instanceof TypeError) {
-    return 'Couldn’t reach n8n. Check that it’s running and the address in Settings.';
+    return isLocalPage()
+      ? 'Couldn’t reach n8n. Check that it’s running and the address in Settings.'
+      : 'The AI assistant can’t be reached right now. Your lessons, flashcards and quizzes still work.';
   }
   return err instanceof Error ? err.message : 'The request failed.';
 }

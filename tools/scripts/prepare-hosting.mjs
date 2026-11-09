@@ -224,12 +224,16 @@ const tiles = 'https://tile.openstreetmap.org';
 const geocoder = 'https://nominatim.openstreetmap.org';
 // Basecamp's forecast for a campsite (Open-Meteo: free, no key).
 const weather = 'https://api.open-meteo.com';
+const devConnectSources =
+  values.env === 'development'
+    ? ' https://*.ngrok-free.dev https://*.ngrok.app https://*.ngrok.io http://127.0.0.1:* http://localhost:*'
+    : '';
 const csp = [
   "default-src 'self'",
   // blob: is required by es-module-shims in shim mode (ADR-0006).
   `script-src 'self' ${evaluate} ${inlineScriptHashes(dir).join(' ')} blob: ${remotes} ${turnstile}`,
   "style-src 'self' 'unsafe-inline'",
-  `connect-src 'self' ${remotes} ${apiOrigins.join(' ')} ${tiles} ${geocoder} ${weather} https://*.ngrok-free.dev https://*.ngrok.app https://*.ngrok.io http://127.0.0.1:* http://localhost:*`,
+  `connect-src 'self' ${remotes} ${apiOrigins.join(' ')} ${tiles} ${geocoder} ${weather}${devConnectSources}`,
   `frame-src ${[self, turnstile].join(' ').trim() || "'none'"}`,
   `img-src 'self' data: ${tiles}`,
   "font-src 'self'",
@@ -261,8 +265,28 @@ const rules = [
       ...(values.cors ? ['Access-Control-Allow-Origin: *'] : []),
     ],
   ],
-  // Angular names these with a content hash, so they never change.
-  ...['/chunk-*', '/main-*', '/polyfills-*', '/styles-*'].map((pattern) => [
+  // Angular and Native Federation name these with a content hash, so they
+  // never change: the app's own bundles, every shared federation bundle
+  // (`_angular_core.<hash>.js`, `_ah_ui-<hash>.js`, `three.<hash>.js` …) and
+  // a remote's exposed entries. Without this they revalidate on every visit.
+  // Unhashed files (remoteEntry.json, the manifest, HTML, fonts under
+  // media/) keep the host's default: revalidate.
+  ...[
+    '/chunk-*',
+    '/main-*',
+    '/polyfills-*',
+    '/styles-*',
+    '/_angular_*',
+    '/_ah_*',
+    '/_ngrx_*',
+    '/rxjs.*',
+    '/rxjs_*',
+    '/three.*',
+    '/web-vitals-*',
+    '/routes-*',
+    '/meta-*',
+    '/src-*',
+  ].map((pattern) => [
     pattern,
     ['Cache-Control: public, max-age=31536000, immutable'],
   ]),

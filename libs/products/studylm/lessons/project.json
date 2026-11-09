@@ -4,12 +4,7 @@
   "sourceRoot": "libs/products/studylm/lessons/src",
   "prefix": "ah",
   "projectType": "library",
-  "tags": [
-    "scope:product-studylm",
-    "scope:shared",
-    "type:domain",
-    "runtime:agnostic"
-  ],
+  "tags": ["scope:product-studylm", "type:domain", "runtime:agnostic"],
   "targets": {
     "test": {
       "inputs": [

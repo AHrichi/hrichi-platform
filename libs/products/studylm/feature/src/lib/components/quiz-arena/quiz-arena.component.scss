@@ -309,13 +309,18 @@
   word-break: break-word;
   overflow-wrap: break-word;
 
-  &:hover:not(:disabled) {
+  &:hover:not(:disabled):not([aria-disabled="true"]) {
     background: color-mix(
       in srgb,
       var(--color-accent-subtle) 25%,
       var(--color-bg-raised)
     );
     border-color: var(--color-accent-default);
+  }
+
+  &[aria-disabled="true"],
+  &:disabled {
+    cursor: default;
   }
 
   &.is-selected {

@@ -208,7 +208,7 @@
               />
             </div>
             <div class="config-item">
-              <label>Tax Rate (20%):</label>
+              <span class="field-label">Tax Rate (20%):</span>
               <div class="readonly-badge">20% Fixed</div>
             </div>
           </div>
@@ -283,11 +283,13 @@
 
           <div class="computed-grid">
             <div class="computed-item">
-              <label>Raw Keystroke Signal (Immediate):</label>
+              <span class="field-label">Raw Keystroke Signal (Immediate):</span>
               <div class="data-display">{{ searchQuery() }}</div>
             </div>
             <div class="computed-item">
-              <label>Debounced + Normalized Signal (toSignal):</label>
+              <span class="field-label"
+                >Debounced + Normalized Signal (toSignal):</span
+              >
               <div class="data-display highlight-on-change">
                 {{ debouncedQuery() }}
               </div>
@@ -327,7 +329,7 @@
           @let status = cityWeather.status();
 
           <div class="resource-toolbar">
-            <label>Select Location:</label>
+            <span class="field-label">Select Location:</span>
             <div class="button-group-inline">
               <button
                 type="button"
@@ -421,7 +423,7 @@
 
           <div class="config-group">
             <div class="config-item">
-              <label>Select Plan Tier (Parent State):</label>
+              <span class="field-label">Select Plan Tier (Parent State):</span>
               <div class="button-group-inline">
                 <button
                   type="button"
@@ -451,7 +453,9 @@
             </div>
 
             <div class="config-item">
-              <label>Adjust Storage Quota (Writable Signal Mutation):</label>
+              <span class="field-label"
+                >Adjust Storage Quota (Writable Signal Mutation):</span
+              >
               <div class="quantity-control">
                 <button
                   type="button"

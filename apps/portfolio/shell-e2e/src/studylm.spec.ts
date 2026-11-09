@@ -41,10 +41,10 @@ test('each screen has its own address and title', async ({ page }) => {
   await expect(page).toHaveTitle('Roadmap · StudyLM');
   // The pill never claims a connection it hasn't made.
   await expect(
-    page.getByRole('button', { name: /n8n AI Engine status: Offline/ }),
+    page.getByRole('button', { name: /n8n Engine: Offline/ }),
   ).toBeVisible({ timeout: 15_000 });
 
-  await page.getByRole('link', { name: 'Lessons' }).click();
+  await page.getByRole('link', { name: 'Lessons', exact: true }).click();
   await expect(page).toHaveURL(/\/apps\/studylm\/learn$/);
   await expect(page).toHaveTitle('Lessons · StudyLM');
   await expect(page.getByRole('heading', { level: 3 })).toHaveCount(7);

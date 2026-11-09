@@ -81,4 +81,30 @@ describe('ColorSwatch', () => {
 
     expect(selected?.id).toBe('monaco');
   });
+
+  it('keeps the group reachable by keyboard when nothing is selected', async () => {
+    fixture.componentRef.setInput('items', mockColors);
+    await fixture.whenStable();
+
+    const buttons = fixture.nativeElement.querySelectorAll('.swatch-btn');
+    expect(buttons[0].getAttribute('tabindex')).toBe('0');
+    expect(buttons[1].getAttribute('tabindex')).toBe('-1');
+  });
+
+  it('moves focus with the selection and mirrors arrows right-to-left', async () => {
+    fixture.componentRef.setInput('items', mockColors);
+    fixture.componentRef.setInput('value', 'monaco');
+    fixture.nativeElement.setAttribute('dir', 'rtl');
+    await fixture.whenStable();
+
+    const buttons = fixture.nativeElement.querySelectorAll('.swatch-btn');
+    buttons[1].dispatchEvent(
+      new KeyboardEvent('keydown', { key: 'ArrowRight', cancelable: true }),
+    );
+    await fixture.whenStable();
+
+    expect(component.value()).toBe('nardo');
+    expect(document.activeElement).toBe(buttons[0]);
+    expect(buttons[0].getAttribute('tabindex')).toBe('0');
+  });
 });

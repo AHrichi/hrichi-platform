@@ -1,6 +1,5 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import {
-  AutoSphereCmsService,
   type AmbientLightingOption,
   type FinanceSummary,
   type InteriorTrim,
@@ -11,9 +10,12 @@ import {
   type VehiclePackage,
   type VehicleTrim,
   type VehicleWheel,
+} from '@ah/products/autosphere/domain';
+import {
+  AutoSphereCmsService,
   type VehicleReservationRequest,
   type VehicleReservationResponse,
-} from '@ah/products/autosphere/domain';
+} from './data/cms-client';
 import type { CameraPreset, LightingMode } from './three/autosphere-3d-scene';
 
 export type ViewAngle = 'side' | 'three-quarters' | 'blueprint';

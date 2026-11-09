@@ -24,7 +24,7 @@ export const PORTFOLIO_APPS_CONFIG: Record<PortfolioAppKey, boolean> = {
   lighting: true, // LuxPath (SolarLux) · Public & Solar Street Lighting
   strategy: false, // StrategyApp · Financial Planning
   dispatch: false, // PulseOps · Logistics & Dispatch Control Center
-  studylm: false, // StudyLM · AI Software Engineering Curriculum
+  studylm: true, // StudyLM · AI Software Engineering Curriculum
   whatsapp: false, // ChatPulse · WhatsApp Intelligence Analyzer
   basecamp: false, // Basecamp · Camping Trip Planner
   'alarm-engine': false, // Nightly Alarm Decision Engine

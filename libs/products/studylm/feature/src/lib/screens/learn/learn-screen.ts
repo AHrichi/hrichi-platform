@@ -109,7 +109,10 @@ export interface LessonGroup {
                   type="button"
                   ahButton="primary"
                   size="sm"
-                  [disabled]="bulk.pendingSections().length === 0"
+                  [disabled]="
+                    bulk.pendingSections().length === 0 || !store.aiReady()
+                  "
+                  [attr.title]="store.aiStatus()"
                   (click)="startBulkGeneration()"
                 >
                   Bulk Generate ({{ bulk.pendingSections().length }})

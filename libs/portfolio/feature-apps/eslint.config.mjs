@@ -1,3 +1,3 @@
-import baseConfig from '../../../eslint.config.mjs';
+import { angularProject } from '../../../tools/eslint/angular-project.mjs';
 
-export default [...baseConfig];
+export default angularProject({ prefix: 'ah' });

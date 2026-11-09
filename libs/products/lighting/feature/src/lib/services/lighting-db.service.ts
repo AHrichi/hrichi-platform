@@ -11,6 +11,19 @@ import {
 const STORE = 'projects';
 /** Materials the user added, or catalogue items they edited (by the same id). */
 const MATERIALS = 'materials';
+/** As-built photos stored as Blobs separate from the project document. */
+const PHOTOS = 'pole_photos';
+
+export interface StoredPolePhoto {
+  id: string;
+  blob: Blob;
+  takenAt: string;
+}
+
+export interface PolePhotoRecord {
+  poleId: string;
+  photos: StoredPolePhoto[];
+}
 
 /**
  * Projects live in IndexedDB, so LuxPath works offline on site. The portfolio's
@@ -34,14 +47,17 @@ export class LightingDbService {
       (name) =>
         new Promise((resolve, reject) => {
           this.name = name;
-          // Version 2 adds the materials store; projects are kept as they are.
-          const request = indexedDB.open(name, 2);
+          // Version 3 adds the pole_photos store for Blob storage.
+          const request = indexedDB.open(name, 3);
           request.onupgradeneeded = () => {
             const db = request.result;
             for (const store of [STORE, MATERIALS]) {
               if (!db.objectStoreNames.contains(store)) {
                 db.createObjectStore(store, { keyPath: 'id' });
               }
+            }
+            if (!db.objectStoreNames.contains(PHOTOS)) {
+              db.createObjectStore(PHOTOS, { keyPath: 'poleId' });
             }
           };
           request.onsuccess = () => resolve(request.result);
@@ -132,6 +148,30 @@ export class LightingDbService {
   async deleteMaterial(id: string): Promise<void> {
     if (this.isBrowser) {
       await this.request('readwrite', (s) => s.delete(id), MATERIALS);
+    }
+  }
+
+  async getPolePhotos(poleId: string): Promise<PolePhotoRecord | null> {
+    if (!this.isBrowser) {
+      return null;
+    }
+    const record = await this.request(
+      'readonly',
+      (s) => s.get(poleId),
+      PHOTOS,
+    );
+    return (record as PolePhotoRecord | undefined) ?? null;
+  }
+
+  async savePolePhotos(record: PolePhotoRecord): Promise<void> {
+    if (this.isBrowser) {
+      await this.request('readwrite', (s) => s.put(record), PHOTOS);
+    }
+  }
+
+  async deletePolePhotos(poleId: string): Promise<void> {
+    if (this.isBrowser) {
+      await this.request('readwrite', (s) => s.delete(poleId), PHOTOS);
     }
   }
 

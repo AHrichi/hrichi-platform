@@ -6,7 +6,6 @@
   "projectType": "library",
   "tags": [
     "scope:product-dispatch",
-    "scope:shared",
     "type:domain",
     "runtime:agnostic"
   ],

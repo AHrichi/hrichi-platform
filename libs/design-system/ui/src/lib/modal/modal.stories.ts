@@ -3,6 +3,7 @@ import {
   moduleMetadata,
   type StoryObj,
 } from '@storybook/angular-vite';
+import { expect, userEvent, within } from 'storybook/test';
 import { Modal } from './modal';
 import { AhButton } from '../button/button';
 
@@ -70,5 +71,19 @@ export const LargeDataEntry: StoryObj<Modal> = {
     title: 'Record Proof of Delivery (POD)',
     eyebrow: 'Hospitality Check-in',
     size: 'lg',
+  },
+};
+
+/**
+ * Native dialog contract: focus moves into the dialog on open, and Escape
+ * closes it.
+ */
+export const KeyboardEscape: StoryObj<Modal> = {
+  play: async ({ canvasElement }) => {
+    const dialog = canvasElement.querySelector('dialog') as HTMLDialogElement;
+    await expect(dialog.open).toBe(true);
+    await expect(dialog.contains(document.activeElement)).toBe(true);
+    await userEvent.keyboard('{Escape}');
+    await expect(dialog.open).toBe(false);
   },
 };

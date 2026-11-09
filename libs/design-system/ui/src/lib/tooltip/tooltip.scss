@@ -38,8 +38,9 @@
 .ah-tooltip-box {
   position: absolute;
   bottom: calc(100% + 8px);
-  left: 50%;
-  transform: translateX(-50%);
+  /* Centred without translateX(-50%), which would not mirror in RTL. */
+  inset-inline: 0;
+  margin-inline: auto;
   z-index: 1000;
   inline-size: max-content;
   max-inline-size: min(18rem, calc(100vw - 2rem));
@@ -67,22 +68,29 @@
 .ah-tooltip-arrow {
   position: absolute;
   bottom: -5px;
-  left: 50%;
-  transform: translateX(-50%) rotate(45deg);
+  /* Centred without translateX(-50%), which would not mirror in RTL. */
+  inset-inline: 0;
+  margin-inline: auto;
+  transform: rotate(45deg);
   inline-size: 8px;
   block-size: 8px;
   background: var(--color-bg-raised);
+  /* stylelint-disable csstools/use-logical -- the rotated square's two
+     borders draw the arrow's point; mirroring them would turn it sideways. */
   border-right: 1px solid var(--color-border-default);
   border-bottom: 1px solid var(--color-border-default);
+  /* stylelint-enable csstools/use-logical */
 }
 
 .ah-tooltip-box--bottom .ah-tooltip-arrow {
   bottom: auto;
   top: -5px;
+  /* stylelint-disable csstools/use-logical -- see .ah-tooltip-arrow */
   border-right: none;
   border-bottom: none;
   border-left: 1px solid var(--color-border-default);
   border-top: 1px solid var(--color-border-default);
+  /* stylelint-enable csstools/use-logical */
 }
 
 .ah-tooltip-title {
@@ -112,10 +120,10 @@
 @keyframes ah-tooltip-in {
   from {
     opacity: 0;
-    transform: translate(-50%, 4px);
+    transform: translateY(4px);
   }
   to {
     opacity: 1;
-    transform: translate(-50%, 0);
+    transform: translateY(0);
   }
 }

@@ -80,7 +80,8 @@
   gap: 6px;
 }
 
-.config-item label {
+.config-item label,
+.config-item .field-label {
   font-size: 0.875rem;
   font-weight: 500;
   color: var(--color-text-muted);
@@ -133,7 +134,8 @@
   }
 }
 
-.computed-item label {
+.computed-item label,
+.computed-item .field-label {
   font-size: 0.875rem;
   font-weight: 500;
   color: var(--color-text-muted);
@@ -293,7 +295,8 @@
   gap: 16px;
 }
 
-.resource-controls label {
+.resource-controls label,
+.resource-controls .field-label {
   font-size: 0.875rem;
   font-weight: 500;
   color: var(--color-text-muted);

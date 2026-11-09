@@ -209,14 +209,18 @@ export class FlashcardDeckComponent {
 
   @HostListener('window:keydown', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent): void {
-    // Typing in a field, or anything behind an open dialog, isn't for the deck.
+    // Typing in a field, clicking an interactive control, or anything behind an open dialog, isn't for the deck shortcuts.
     const target = event.target;
     if (
       target instanceof HTMLInputElement ||
       target instanceof HTMLTextAreaElement ||
       target instanceof HTMLSelectElement ||
-      (target instanceof HTMLElement && target.isContentEditable) ||
-      document.querySelector('[role="dialog"]')
+      target instanceof HTMLButtonElement ||
+      (target instanceof HTMLElement && (
+        target.isContentEditable ||
+        target.closest('button, a, [role="button"], input, textarea, select, dialog')
+      )) ||
+      document.querySelector('dialog[open], [role="dialog"]')
     ) {
       return;
     }

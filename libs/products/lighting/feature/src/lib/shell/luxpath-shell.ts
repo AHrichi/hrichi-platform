@@ -1,10 +1,12 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  ElementRef,
   computed,
   effect,
   inject,
   signal,
+  viewChild,
 } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import {
@@ -80,6 +82,8 @@ export class LuxPathShell {
   protected readonly secondary = NAV.slice(4);
   protected readonly languages = LANGUAGES;
   protected readonly moreOpen = signal(false);
+  private readonly moreSheet = viewChild<ElementRef<HTMLElement>>('moreSheet');
+  private openerButton: HTMLElement | null = null;
 
   private readonly url = toSignal(
     inject(Router).events.pipe(
@@ -94,8 +98,6 @@ export class LuxPathShell {
   );
 
   constructor() {
-    void this.store.loadProjects();
-
     // Routes set the tab's title on navigation; this keeps it in step when
     // the language changes without a navigation.
     const title = inject(Title);
@@ -107,7 +109,29 @@ export class LuxPathShell {
     });
   }
 
+  protected toggleMore(trigger?: HTMLElement): void {
+    if (this.moreOpen()) {
+      this.closeMore();
+    } else {
+      this.openerButton =
+        trigger ?? (document.activeElement as HTMLElement | null);
+      this.moreOpen.set(true);
+      setTimeout(() => {
+        const sheet = this.moreSheet()?.nativeElement;
+        if (sheet) {
+          const firstLink = sheet.querySelector<HTMLElement>('a');
+          (firstLink ?? sheet).focus();
+        }
+      }, 0);
+    }
+  }
+
   protected closeMore(): void {
+    if (!this.moreOpen()) return;
     this.moreOpen.set(false);
+    if (this.openerButton) {
+      this.openerButton.focus();
+      this.openerButton = null;
+    }
   }
 }
