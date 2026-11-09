@@ -106,6 +106,10 @@
   padding: var(--space-2, 8px);
 }
 
+.nav-menu.closed .link-text {
+  display: none;
+}
+
 .icon-wrapper {
   display: inline-flex;
   align-items: center;
@@ -153,8 +157,9 @@
     flex-direction: row;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
-    gap: var(--space-4, 16px);
+    gap: var(--space-3, 12px);
     padding-block: var(--space-1, 4px);
+    padding-inline: var(--space-1);
     scrollbar-width: none;
 
     &::-webkit-scrollbar {
@@ -188,10 +193,36 @@
   }
 
   .exercise-item a {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
     white-space: nowrap;
     padding-inline: var(--space-3, 12px);
     padding-block: var(--space-2, 8px);
+    border-radius: var(--radius-pill);
+    background-color: var(--color-bg-surface);
+    border: 1px solid var(--color-border-default);
     font-size: var(--font-size-100, 0.85rem);
+    min-block-size: 38px;
+
+    &.active {
+      background-color: var(--color-accent-default);
+      color: var(--color-accent-on);
+      border-color: var(--color-accent-default);
+
+      .icon-wrapper {
+        color: var(--color-accent-on);
+      }
+    }
+  }
+
+  .nav-menu.closed .exercise-item a {
+    justify-content: flex-start;
+    padding-inline: var(--space-3, 12px);
+  }
+
+  .nav-menu.closed .link-text {
+    display: inline-flex;
   }
 
   .description {

@@ -24,12 +24,15 @@
         @if (streamIdx === streams().length - 1 && streams().length > 1) {
           <div class="operator-divider">
             <div class="operator-box">
-              <span class="operator-name">{{ op.name }}</span>
-              @if (op.formula) {
-                <code class="operator-formula">{{ op.formula }}</code>
-              }
+              <div class="operator-badge-row">
+                <span class="operator-pill">operator</span>
+                <span class="operator-name">{{ op.name }}</span>
+                @if (op.formula) {
+                  <code class="operator-formula">{{ op.formula }}</code>
+                }
+              </div>
               @if (op.description) {
-                <span class="operator-desc">{{ op.description }}</span>
+                <p class="operator-desc">{{ op.description }}</p>
               }
             </div>
             <div class="operator-arrow-down" aria-hidden="true">
@@ -123,4 +126,30 @@
       </div>
     }
   </div>
+
+  @if (activeMarble(); as active) {
+    <div class="marble-inspector" role="status" aria-label="Selected marble details">
+      <div class="inspector-badge" [class]="getVariantClass(active.marble.variant)">
+        <span class="inspector-value">{{ active.marble.value }}</span>
+      </div>
+      <div class="inspector-content">
+        <span class="inspector-stream">{{ active.streamLabel }}</span>
+        <span class="inspector-meta">
+          @if (active.marble.tooltip) {
+            {{ active.marble.tooltip }}
+          } @else {
+            Emission value: {{ active.marble.value }}
+          }
+        </span>
+      </div>
+      <button
+        type="button"
+        class="inspector-dismiss"
+        (click)="clearSelection()"
+        aria-label="Dismiss emission details"
+      >
+        ✕
+      </button>
+    </div>
+  }
 </div>

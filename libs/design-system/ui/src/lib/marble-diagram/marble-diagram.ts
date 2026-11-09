@@ -90,6 +90,26 @@ export class MarbleDiagram {
   /** Currently selected marble for active highlight. */
   readonly selectedMarbleId = signal<string | null>(null);
 
+  /** Active marble metadata for accessible inspection panel. */
+  readonly activeMarble = computed<{
+    streamLabel: string;
+    marble: MarbleItem;
+  } | null>(() => {
+    const id = this.selectedMarbleId();
+    if (!id) return null;
+    for (const stream of this.streams()) {
+      const match = stream.marbles.find((m) => m.id === id);
+      if (match) {
+        return { streamLabel: stream.label, marble: match };
+      }
+    }
+    return null;
+  });
+
+  clearSelection(): void {
+    this.selectedMarbleId.set(null);
+  }
+
   /** Screen-reader announcement log for dynamic emissions. */
   readonly announcements = computed(() => {
     const list: string[] = [];
@@ -117,11 +137,11 @@ export class MarbleDiagram {
 
   protected getPosition(marble: MarbleItem, index: number, total: number): number {
     if (typeof marble.positionPercent === 'number') {
-      return Math.min(Math.max(marble.positionPercent, 4), 94);
+      return Math.min(Math.max(marble.positionPercent, 6), 88);
     }
     if (total <= 1) return 50;
-    const step = 84 / (total + 1);
-    return Math.round(8 + (index + 1) * step);
+    const step = 76 / (total + 1);
+    return Math.round(10 + (index + 1) * step);
   }
 
   protected getVariantClass(variant?: MarbleVariant): string {

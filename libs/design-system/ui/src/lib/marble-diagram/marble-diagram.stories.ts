@@ -147,3 +147,68 @@ export const ErrorHandlingAndRecovery: StoryObj<MarbleDiagram> = {
     operator: errorOperator,
   },
 };
+
+export const CompactMobileView: StoryObj<MarbleDiagram> = {
+  parameters: {
+    viewport: {
+      defaultViewport: 'mobile1',
+    },
+  },
+  args: {
+    title: 'Mobile Reactive Stream',
+    description: 'Responsive layout with non-overlapping marbles and wrapped operator card',
+    streams: [
+      {
+        id: 'mobile-source',
+        label: 'Outer Search (keystrokes$)',
+        badge: 'User Events',
+        marbles: [
+          { id: 'mk1', value: 'q', positionPercent: 15, variant: 'data-1', tooltip: 'Keypress q' },
+          { id: 'mk2', value: 'qu', positionPercent: 42, variant: 'data-1', tooltip: 'Keypress qu' },
+          { id: 'mk3', value: 'que', positionPercent: 78, variant: 'data-1', tooltip: 'Keypress que' },
+        ],
+        isCompleted: false,
+      },
+      {
+        id: 'mobile-dest',
+        label: 'Inner HTTP (fetch$)',
+        badge: 'Inner catchError',
+        isPrimary: true,
+        marbles: [
+          { id: 'mh1', value: '200', positionPercent: 22, variant: 'success', tooltip: 'HTTP 200 OK' },
+          { id: 'mh2', value: '500', positionPercent: 48, variant: 'danger', tooltip: 'HTTP 500 Error' },
+          { id: 'mh3', value: '[]', positionPercent: 64, variant: 'warning', tooltip: 'Fallback empty array' },
+          { id: 'mh4', value: '200', positionPercent: 84, variant: 'success', tooltip: 'Subsequent search recovered' },
+        ],
+        isCompleted: true,
+      },
+    ],
+    operator: {
+      name: 'switchMap(q => http.get(q).pipe(catchError(fallback)))',
+      formula: 'Inner error caught -> Outer stream stays alive',
+      description: 'Catching errors inside the switchMap maintains outer stream vitality for future events.',
+    },
+  },
+};
+
+export const CustomShapesAndVariants: StoryObj<MarbleDiagram> = {
+  args: {
+    title: 'Custom Shapes & Color Spectrum',
+    description: 'Circles, squares, diamonds across semantic state tokens',
+    operator: null,
+    streams: [
+      {
+        id: 'shapes-stream',
+        label: 'Multi-Shape Telemetry',
+        badge: 'Sensors',
+        marbles: [
+          { id: 's1', value: 'C', shape: 'circle', positionPercent: 15, variant: 'accent', tooltip: 'Circle emission' },
+          { id: 's2', value: 'S', shape: 'square', positionPercent: 35, variant: 'warning', tooltip: 'Square packet' },
+          { id: 's3', value: 'D', shape: 'diamond', positionPercent: 55, variant: 'info', tooltip: 'Diamond milestone' },
+          { id: 's4', value: 'OK', shape: 'circle', positionPercent: 75, variant: 'success', tooltip: 'Success acknowledgement' },
+        ],
+        isCompleted: true,
+      },
+    ],
+  },
+};

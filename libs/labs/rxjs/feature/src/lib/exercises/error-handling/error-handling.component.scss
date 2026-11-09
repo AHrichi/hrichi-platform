@@ -38,14 +38,18 @@
 }
 
 .config-item input {
-  padding: 8px 12px;
+  padding-block: var(--space-2);
+  padding-inline: var(--space-3);
   border-radius: var(--radius-sm, 6px);
   border: 1px solid var(--color-border-default);
   background-color: var(--color-bg-surface);
   color: var(--color-text-default);
-  font-family: var(--font-family-sans, system-ui, sans-serif);
-  font-size: 0.875rem;
-  width: 120px;
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-200);
+  inline-size: 130px;
+  min-inline-size: 100px;
+  box-shadow: var(--shadow-raised);
+  box-sizing: border-box;
 
   &:focus {
     outline: none;
@@ -153,7 +157,7 @@
 }
 
 .architecture-card {
-  border-left: 4px solid var(--color-accent-default);
+  border-inline-start: 4px solid var(--color-accent-default);
   margin-bottom: var(--space-5, 24px);
 }
 
@@ -206,19 +210,33 @@
 
 @media (max-width: 640px) {
   .exercise-container {
-    padding: var(--space-3, 12px);
+    padding: var(--space-2) var(--space-2);
+  }
+
+  .config-group {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-2);
+  }
+
+  .config-item input {
+    inline-size: 100%;
   }
 
   .operators-grid {
     grid-template-columns: 1fr;
-    gap: var(--space-3, 12px);
+    gap: var(--space-3);
   }
 
   .card-header {
-    padding: var(--space-3, 12px) var(--space-4, 16px);
+    padding: var(--space-3);
   }
 
   .card-content {
-    padding: var(--space-3, 12px) var(--space-4, 16px);
+    padding: var(--space-3);
+  }
+
+  .button-group {
+    gap: var(--space-1);
   }
 }

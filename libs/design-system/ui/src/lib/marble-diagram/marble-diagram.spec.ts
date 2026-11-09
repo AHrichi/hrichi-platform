@@ -121,6 +121,32 @@ describe('MarbleDiagram', () => {
     expect(firstMarble.classList.contains('marble--selected')).toBe(true);
   });
 
+  it('opens and dismisses the emission inspector panel upon marble selection', async () => {
+    TestBed.configureTestingModule({
+      providers: [provideZonelessChangeDetection()],
+    });
+    const fixture = TestBed.createComponent(TestHost);
+    await fixture.whenStable();
+
+    const hostElem: HTMLElement = fixture.nativeElement;
+    expect(hostElem.querySelector('.marble-inspector')).toBeNull();
+
+    const firstMarble = hostElem.querySelector('.marble-node') as HTMLButtonElement;
+    firstMarble.click();
+    await fixture.whenStable();
+
+    const inspector = hostElem.querySelector('.marble-inspector');
+    expect(inspector).toBeTruthy();
+    expect(inspector?.textContent).toContain('Stream A (Timer)');
+    expect(inspector?.textContent).toContain('1');
+
+    const dismiss = hostElem.querySelector('.inspector-dismiss') as HTMLButtonElement;
+    dismiss.click();
+    await fixture.whenStable();
+
+    expect(hostElem.querySelector('.marble-inspector')).toBeNull();
+  });
+
   it('generates screen reader announcements for emissions, completion and errors', async () => {
     TestBed.configureTestingModule({
       providers: [provideZonelessChangeDetection()],

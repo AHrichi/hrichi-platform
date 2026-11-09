@@ -152,7 +152,7 @@ searchKeystrokes$.pipe(
       badge: 'User Events',
       marbles: [
         { id: 'k1', value: 'a', positionPercent: 15, variant: 'data-1', tooltip: 'Keypress "a"' },
-        { id: 'k2', value: 'ab', positionPercent: 40, variant: 'data-1', tooltip: 'Keypress "ab"' },
+        { id: 'k2', value: 'ab', positionPercent: 42, variant: 'data-1', tooltip: 'Keypress "ab"' },
         { id: 'k3', value: 'abc', positionPercent: 78, variant: 'data-1', tooltip: 'Keypress "abc"' },
       ],
       isCompleted: false,
@@ -162,10 +162,10 @@ searchKeystrokes$.pipe(
       label: 'Inner HTTP Stream (fetch$)',
       badge: 'Inner catchError',
       marbles: [
-        { id: 'h1', value: '200', positionPercent: 25, variant: 'success', tooltip: '200 OK' },
-        { id: 'h2', value: '500', positionPercent: 52, variant: 'danger', tooltip: '500 Internal Error' },
-        { id: 'h3', value: '[]', positionPercent: 58, variant: 'warning', tooltip: 'Fallback empty array' },
-        { id: 'h4', value: '200', positionPercent: 88, variant: 'success', tooltip: 'Subsequent search works!' },
+        { id: 'h1', value: '200', positionPercent: 22, variant: 'success', tooltip: '200 OK' },
+        { id: 'h2', value: '500', positionPercent: 48, variant: 'danger', tooltip: '500 Internal Error' },
+        { id: 'h3', value: '[]', positionPercent: 64, variant: 'warning', tooltip: 'Fallback empty array' },
+        { id: 'h4', value: '200', positionPercent: 84, variant: 'success', tooltip: 'Subsequent search works!' },
       ],
       isCompleted: true,
     },

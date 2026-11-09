@@ -87,12 +87,12 @@
                 }
               </span>
 
-              @if (isOpen()) {
-                <div class="link-text">
-                  <span class="link-label">{{ exercise.label }}</span>
+              <div class="link-text">
+                <span class="link-label">{{ exercise.label }}</span>
+                @if (isOpen()) {
                   <span class="description">{{ exercise.description }}</span>
-                </div>
-              }
+                }
+              </div>
             </a>
           </li>
         }
