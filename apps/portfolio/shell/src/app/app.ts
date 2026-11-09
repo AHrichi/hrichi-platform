@@ -1,6 +1,7 @@
 import { DOCUMENT } from '@angular/common';
 import {
   afterNextRender,
+  afterRenderEffect,
   Component,
   computed,
   ElementRef,
@@ -57,6 +58,13 @@ export class App {
     { id: 'ar', label: 'ع', name: 'العربية', nativeName: 'العربية' },
   ] as const;
 
+  /** The short code shown in the compact language button (EN, FR, ع …). */
+  protected readonly languageCode = computed(
+    () =>
+      this.languages.find((l) => l.id === this.preferences.language())?.label ??
+      'EN',
+  );
+
   protected onLanguageSelect(event: Event): void {
     const select = event.target as HTMLSelectElement | null;
     if (select?.value) {
@@ -96,7 +104,22 @@ export class App {
   /** What the Federation Inspector's State tab shows. */
   protected readonly stores: InspectableStores;
 
+  private readonly header = viewChild<ElementRef<HTMLElement>>('header');
+
   constructor() {
+    // On phones the page links scroll sideways: after each navigation, bring
+    // the current page's link into view, so the strip shows where you are.
+    afterRenderEffect(() => {
+      this.url();
+      const active =
+        this.header()?.nativeElement.querySelector<HTMLElement>('nav a.active');
+      const strip = active?.closest('ul');
+      if (!active || !strip || strip.scrollWidth <= strip.clientWidth) return;
+      const target =
+        active.offsetLeft - (strip.clientWidth - active.offsetWidth) / 2;
+      strip.scrollTo({ left: Math.max(0, target) });
+    });
+
     const preferences = inject(PreferencesStore);
     const federation = inject(FederationStore);
     this.stores = {

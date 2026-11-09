@@ -60,6 +60,15 @@ export class HomePage {
   protected readonly featuredServices = computed(() =>
     getServices(this.preferences.language()).slice(0, 3),
   );
+  /** The closing call to action: the form first, then email and the CV. */
+  protected readonly closingLinks = computed(() => {
+    const c = this.copy().closing;
+    return {
+      contact: { label: c.contact, href: '/contact' },
+      email: { label: c.email, href: 'mailto:' + this.profile().email },
+      cv: { label: c.cv, href: '/cv' },
+    };
+  });
   protected readonly repository = site.repository;
   protected readonly designSystem = site.designSystem;
 

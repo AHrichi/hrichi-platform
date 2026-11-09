@@ -5,6 +5,7 @@ import {
   inject,
   signal,
 } from '@angular/core';
+import { NgTemplateOutlet } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { Seo } from '@ah/portfolio/util-seo';
 import { isAppEnabled } from '@ah/shared/content';
@@ -233,7 +234,15 @@ const LAB_COPY: Partial<Record<SiteLanguage, Record<string, LabText>>> = {
 @Component({
   selector: 'ah-apps-page',
   standalone: true,
-  imports: [AhButton, AhScrollHint, Badge, RouterLink, SectionHeading, Tag],
+  imports: [
+    AhButton,
+    AhScrollHint,
+    Badge,
+    NgTemplateOutlet,
+    RouterLink,
+    SectionHeading,
+    Tag,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './apps-page.html',
   styleUrl: './apps-page.scss',
@@ -265,15 +274,17 @@ export class AppsPage {
           labsHeading: 'المختبرات الهندسية التفاعلية',
           labsLead:
             'بيئات عمل عملية توضح رسوميات الحاسوب ثلاثية الأبعاد WebGL، تدفقات البرمجة التفاعلية المعقدة، وهياكل الحالة الحديثة.',
-          keyCapabilities: 'المميزات والقدرات الرئيسية:',
+          keyCapabilities: 'المميزات والقدرات الرئيسية',
+          stack: 'التقنيات',
+          jumpNav: 'أقسام الصفحة',
           interactiveExperiments: 'التجارب التفاعلية:',
           architectureTitle: 'الهندسة المعمارية والأمان:',
           howToTestTitle: 'طريقة التجربة:',
           launchPrefix: 'تشغيل',
-          expandTicket: 'توسيع',
-          collapseTicket: 'طي',
-          expandAll: 'توسيع الكل',
-          collapseAll: 'طي الكل',
+          expandTicket: 'التفاصيل',
+          collapseTicket: 'إخفاء التفاصيل',
+          expandAll: 'إظهار كل التفاصيل',
+          collapseAll: 'إخفاء كل التفاصيل',
         };
       case 'fr':
         return {
@@ -291,15 +302,17 @@ export class AppsPage {
           labsHeading: "Laboratoires d'Ingénierie Interactifs",
           labsLead:
             "Bancs d'essai interactifs démontrant le rendu 3D WebGL, les flux réactifs RxJS complexes et les architectures d'état modernes.",
-          keyCapabilities: 'Capacités & Fonctionnalités Clés :',
+          keyCapabilities: 'Capacités & Fonctionnalités Clés',
+          stack: 'Stack',
+          jumpNav: 'Sections de la page',
           interactiveExperiments: 'Expériences Interactives :',
           architectureTitle: 'Architecture & Sécurité :',
           howToTestTitle: 'Comment tester :',
           launchPrefix: 'Lancer',
-          expandTicket: 'Développer',
-          collapseTicket: 'Réduire',
-          expandAll: 'Tout développer',
-          collapseAll: 'Tout réduire',
+          expandTicket: 'Détails',
+          collapseTicket: 'Masquer les détails',
+          expandAll: 'Tout afficher',
+          collapseAll: 'Tout masquer',
         };
       case 'it':
         return {
@@ -317,15 +330,17 @@ export class AppsPage {
           labsHeading: 'Laboratori di Ingegneria Interattivi',
           labsLead:
             'Banchi di lavoro pratici che dimostrano la computer grafica 3D WebGL, complessi flussi reattivi RxJS e moderne architetture di stato.',
-          keyCapabilities: 'Caratteristiche e Funzionalità Chiave:',
+          keyCapabilities: 'Caratteristiche e Funzionalità Chiave',
+          stack: 'Stack',
+          jumpNav: 'Sezioni della pagina',
           interactiveExperiments: 'Esperimenti Interattivi:',
           architectureTitle: 'Architettura & Protezione Quote:',
           howToTestTitle: 'Come testare:',
           launchPrefix: 'Avvia',
-          expandTicket: 'Espandi',
-          collapseTicket: 'Riduci',
-          expandAll: 'Espandi tutto',
-          collapseAll: 'Riduci tutto',
+          expandTicket: 'Dettagli',
+          collapseTicket: 'Nascondi dettagli',
+          expandAll: 'Mostra tutti i dettagli',
+          collapseAll: 'Nascondi tutti i dettagli',
         };
       case 'de':
         return {
@@ -343,15 +358,17 @@ export class AppsPage {
           labsHeading: 'Interaktive Ingenieur-Labore',
           labsLead:
             'Praxisorientierte Workbenches zur Demonstration von 3D-WebGL-Computergrafik, komplexen reaktiven RxJS-Streams und modernen Zustandsarchitekturen.',
-          keyCapabilities: 'Wesentliche Fähigkeiten & Funktionen:',
+          keyCapabilities: 'Wesentliche Fähigkeiten & Funktionen',
+          stack: 'Stack',
+          jumpNav: 'Seitenabschnitte',
           interactiveExperiments: 'Interaktive Experimente:',
           architectureTitle: 'Architektur & Kontingentschutz:',
           howToTestTitle: 'Testanleitung:',
           launchPrefix: 'Starten',
-          expandTicket: 'Erweitern',
-          collapseTicket: 'Einklappen',
-          expandAll: 'Alle erweitern',
-          collapseAll: 'Alle einklappen',
+          expandTicket: 'Details',
+          collapseTicket: 'Details ausblenden',
+          expandAll: 'Alle Details zeigen',
+          collapseAll: 'Alle Details ausblenden',
         };
       case 'en':
       default:
@@ -370,29 +387,34 @@ export class AppsPage {
           labsHeading: 'Interactive Engineering Labs',
           labsLead:
             'Hands-on interactive workbenches demonstrating 3D WebGL computer graphics, complex reactive streams, and modern state architectures.',
-          keyCapabilities: 'Key Capabilities & Features:',
+          keyCapabilities: 'Key Capabilities & Features',
+          stack: 'Stack',
+          jumpNav: 'Page sections',
           interactiveExperiments: 'Interactive Experiments:',
           architectureTitle: 'Architecture & Quota Safeguards:',
           howToTestTitle: 'How to test:',
           launchPrefix: 'Launch',
-          expandTicket: 'Expand',
-          collapseTicket: 'Collapse',
-          expandAll: 'Expand all',
-          collapseAll: 'Collapse all',
+          expandTicket: 'Details',
+          collapseTicket: 'Hide details',
+          expandAll: 'Show all details',
+          collapseAll: 'Hide all details',
         };
     }
   });
 
-  /** Set of ticket/card IDs that are currently collapsed. */
-  readonly collapsedCardIds = signal<Set<string>>(new Set());
+  /**
+   * Cards open compact (what it is, and how to launch it); "Details" adds
+   * the stack, capabilities and architecture notes. These are the open ones.
+   */
+  readonly expandedCardIds = signal<Set<string>>(new Set());
 
   isCollapsed(id: string): boolean {
-    return this.collapsedCardIds().has(id);
+    return !this.expandedCardIds().has(id);
   }
 
   toggleCard(id: string, event?: Event): void {
     event?.stopPropagation();
-    this.collapsedCardIds.update((current) => {
+    this.expandedCardIds.update((current) => {
       const next = new Set(current);
       if (next.has(id)) {
         next.delete(id);
@@ -410,15 +432,13 @@ export class AppsPage {
 
   readonly areAllCollapsed = computed(() => {
     const all = this.allAppIds();
-    return all.length > 0 && all.every((id) => this.collapsedCardIds().has(id));
+    return all.length > 0 && all.every((id) => this.isCollapsed(id));
   });
 
   toggleAll(): void {
-    if (this.areAllCollapsed()) {
-      this.collapsedCardIds.set(new Set());
-    } else {
-      this.collapsedCardIds.set(new Set(this.allAppIds()));
-    }
+    this.expandedCardIds.set(
+      this.areAllCollapsed() ? new Set(this.allAppIds()) : new Set(),
+    );
   }
 
   private filterApps(apps: AppItem[]): AppItem[] {
@@ -1203,10 +1223,9 @@ export class AppsPage {
             label: 'Lezioni interattive offline ed esercitazioni',
             variant: 'accent',
           },
-          eyebrow:
-            'Simulazioni visive progressive e tracciatore di codice',
+          eyebrow: 'Simulazioni visive progressive e tracciatore di codice',
           summary:
-            "Piattaforma di apprendimento interattiva con 7 lezioni integrate offline, simulazioni visive a step, verifiche predittive e tracciatore di esecuzione del codice — abbinati a percorsi didattici e flashcard tecniche.",
+            'Piattaforma di apprendimento interattiva con 7 lezioni integrate offline, simulazioni visive a step, verifiche predittive e tracciatore di esecuzione del codice — abbinati a percorsi didattici e flashcard tecniche.',
           route: '/apps/studylm',
           icon: '📚',
           ctaLabel: 'StudyLM',
@@ -1487,8 +1506,7 @@ export class AppsPage {
             label: 'Interaktive Offline-Lektionen & Übungen',
             variant: 'accent',
           },
-          eyebrow:
-            'Schrittweise visuelle Simulationen & Code-Tracer',
+          eyebrow: 'Schrittweise visuelle Simulationen & Code-Tracer',
           summary:
             'Interaktive Lernplattform mit 7 integrierten Offline-Lektionen, schrittweisen visuellen Simulationen, interaktiven Vorhersagen und einem Code-Ausführungs-Tracer — ergänzt durch didaktische Roadmaps und Fach-Flashcards.',
           route: '/apps/studylm',
@@ -1760,8 +1778,7 @@ export class AppsPage {
           label: 'Interactive Offline Lessons & Drills',
           variant: 'accent',
         },
-        eyebrow:
-          'Stepped Architectural Visuals & Execution Code Tracer',
+        eyebrow: 'Stepped Architectural Visuals & Execution Code Tracer',
         summary:
           'An interactive learning platform featuring 7 built-in offline lessons, stepped visual simulations, prediction checks, and a live code execution tracer — paired with an optional AI curriculum engine for grounded roadmaps and quizzes.',
         route: '/apps/studylm',

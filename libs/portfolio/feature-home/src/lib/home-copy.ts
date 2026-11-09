@@ -47,6 +47,15 @@ export interface HomeCopy {
       designSystem: string;
     };
   };
+  /** The page's last word: how to get in touch. */
+  closing: {
+    eyebrow: string;
+    heading: string;
+    lead: string;
+    contact: string;
+    email: string;
+    cv: string;
+  };
 }
 
 export const HOME_COPY: Record<SiteLanguage, HomeCopy> = {
@@ -92,11 +101,19 @@ export const HOME_COPY: Record<SiteLanguage, HomeCopy> = {
         cspText: 'Hash-based security policy, deployed to Cloudflare by CI.',
       },
       links: {
-        apps: 'Explore Apps & Labs →',
+        apps: 'Explore Apps & Labs',
         howBuilt: 'How it’s built',
         source: 'Source and ADRs on GitHub',
         designSystem: 'Design system (Storybook)',
       },
+    },
+    closing: {
+      eyebrow: 'Contact',
+      heading: 'Let’s build something together',
+      lead: 'Hiring for an Angular role, or need a hand with a platform? I reply within one working day.',
+      contact: 'Send a message',
+      email: 'Email me',
+      cv: 'Download CV',
     },
   },
   fr: {
@@ -144,11 +161,19 @@ export const HOME_COPY: Record<SiteLanguage, HomeCopy> = {
           'Sécurité par hachages sha256, déploiement sur Cloudflare par CI.',
       },
       links: {
-        apps: 'Explorer les Apps & Labs →',
+        apps: 'Explorer les Apps & Labs',
         howBuilt: 'Comment c’est construit',
         source: 'Code source et ADR sur GitHub',
         designSystem: 'Design system (Storybook)',
       },
+    },
+    closing: {
+      eyebrow: 'Contact',
+      heading: 'Construisons quelque chose ensemble',
+      lead: 'Vous recrutez sur Angular, ou votre plateforme a besoin d’un coup de main ? Je réponds sous un jour ouvré.',
+      contact: 'Envoyer un message',
+      email: 'M’écrire',
+      cv: 'Télécharger le CV',
     },
   },
   ar: {
@@ -195,11 +220,19 @@ export const HOME_COPY: Record<SiteLanguage, HomeCopy> = {
           'سياسة حماية مشددة بالبصمات المشفرة مع نشر آلي على Cloudflare.',
       },
       links: {
-        apps: 'استكشاف التطبيقات والمختبرات ←',
+        apps: 'استكشاف التطبيقات والمختبرات',
         howBuilt: 'كيف تم البناء',
         source: 'الشيفرة المصدرية وADR على GitHub',
         designSystem: 'نظام التصميم (Storybook)',
       },
+    },
+    closing: {
+      eyebrow: 'تواصل',
+      heading: 'لنبنِ شيئًا معًا',
+      lead: 'تبحث عن مطوّر Angular، أو تحتاج مساعدة في منصتك؟ أردّ خلال يوم عمل واحد.',
+      contact: 'أرسل رسالة',
+      email: 'راسلني',
+      cv: 'تحميل السيرة الذاتية',
     },
   },
   it: {
@@ -247,11 +280,19 @@ export const HOME_COPY: Record<SiteLanguage, HomeCopy> = {
           'Politica di sicurezza basata su hash, distribuita su Cloudflare via CI.',
       },
       links: {
-        apps: 'Esplora App e Laboratori →',
+        apps: 'Esplora App e Laboratori',
         howBuilt: 'Come è sviluppato',
         source: 'Codice sorgente e ADR su GitHub',
         designSystem: 'Design system (Storybook)',
       },
+    },
+    closing: {
+      eyebrow: 'Contatti',
+      heading: 'Costruiamo qualcosa insieme',
+      lead: 'Cerchi uno sviluppatore Angular, o la tua piattaforma ha bisogno di una mano? Rispondo entro un giorno lavorativo.',
+      contact: 'Invia un messaggio',
+      email: 'Scrivimi',
+      cv: 'Scarica il CV',
     },
   },
   de: {
@@ -297,11 +338,19 @@ export const HOME_COPY: Record<SiteLanguage, HomeCopy> = {
           'Hash-basierte Sicherheitsrichtlinie, kontinuierlich via GitHub Actions auf Cloudflare deployt.',
       },
       links: {
-        apps: 'Apps & Labs entdecken →',
+        apps: 'Apps & Labs entdecken',
         howBuilt: 'Architektur & Aufbau',
         source: 'Quellcode & ADRs auf GitHub',
         designSystem: 'Design-System (Storybook)',
       },
+    },
+    closing: {
+      eyebrow: 'Kontakt',
+      heading: 'Lassen Sie uns etwas bauen',
+      lead: 'Sie suchen einen Angular-Entwickler oder brauchen Unterstützung bei Ihrer Plattform? Ich antworte innerhalb eines Werktags.',
+      contact: 'Nachricht senden',
+      email: 'E-Mail schreiben',
+      cv: 'Lebenslauf herunterladen',
     },
   },
 };

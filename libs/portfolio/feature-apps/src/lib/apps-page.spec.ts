@@ -25,133 +25,87 @@ describe('AppsPage', () => {
     expect(text).not.toContain('StrategyApp');
   });
 
-  it('starts with all tickets expanded by default', async () => {
+  async function setup() {
     TestBed.configureTestingModule({
       providers: [provideZonelessChangeDetection(), provideRouter([])],
     });
     const fixture = TestBed.createComponent(AppsPage);
     await fixture.whenStable();
+    const el: HTMLElement = fixture.nativeElement;
+    return { fixture, el };
+  }
 
-    const cards: HTMLElement[] = Array.from(
-      fixture.nativeElement.querySelectorAll('.app-card'),
-    );
+  it('opens every card compact, with its Launch action visible', async () => {
+    const { el } = await setup();
+    const cards = Array.from(el.querySelectorAll<HTMLElement>('.app-card'));
     expect(cards.length).toBeGreaterThan(0);
+    for (const card of cards) {
+      expect(card.classList.contains('app-card--collapsed')).toBe(true);
+      expect(card.querySelector('.app-summary')).toBeTruthy();
+      const launch = card.querySelector('.app-launch-btn');
+      expect(launch?.getAttribute('href')).toMatch(/^\/(apps|labs)\//);
+      expect(
+        (card.querySelector('.app-card__body') as HTMLElement).hidden,
+      ).toBe(true);
+      expect(
+        card
+          .querySelector('.app-card__toggle-btn')
+          ?.getAttribute('aria-expanded'),
+      ).toBe('false');
+    }
+  });
+
+  it('shows and hides one card’s details with its Details button', async () => {
+    const { fixture, el } = await setup();
+    const card = el.querySelector('.app-card') as HTMLElement;
+    const toggle = card.querySelector(
+      '.app-card__toggle-btn',
+    ) as HTMLButtonElement;
+    const body = card.querySelector('.app-card__body') as HTMLElement;
+    expect(toggle.getAttribute('aria-controls')).toBe(body.id);
+
+    toggle.click();
+    await fixture.whenStable();
+    expect(body.hidden).toBe(false);
+    expect(toggle.getAttribute('aria-expanded')).toBe('true');
+    expect(toggle.textContent).toContain('Hide details');
+    // Launch stays where it was: above the details.
+    expect(card.querySelector('.app-launch-btn')).toBeTruthy();
+
+    toggle.click();
+    await fixture.whenStable();
+    expect(body.hidden).toBe(true);
+    expect(toggle.getAttribute('aria-expanded')).toBe('false');
+  });
+
+  it('does not toggle when the title is clicked', async () => {
+    const { fixture, el } = await setup();
+    const card = el.querySelector('.app-card') as HTMLElement;
+    (card.querySelector('.app-title') as HTMLElement).click();
+    await fixture.whenStable();
+    expect(card.classList.contains('app-card--collapsed')).toBe(true);
+  });
+
+  it('shows and hides every card’s details from the toolbar', async () => {
+    const { fixture, el } = await setup();
+    const toggleAll = el.querySelector(
+      '.apps-toggle-all-btn',
+    ) as HTMLButtonElement;
+    expect(toggleAll.getAttribute('aria-expanded')).toBe('false');
+
+    toggleAll.click();
+    await fixture.whenStable();
+    const cards = Array.from(el.querySelectorAll<HTMLElement>('.app-card'));
     for (const card of cards) {
       expect(card.classList.contains('app-card--collapsed')).toBe(false);
     }
+    expect(toggleAll.getAttribute('aria-expanded')).toBe('true');
 
-    const toggleBtns = fixture.nativeElement.querySelectorAll(
-      '.app-card__toggle-btn',
-    );
-    expect(toggleBtns[0].getAttribute('aria-expanded')).toBe('true');
-  });
-
-  it('collapses and expands an individual ticket when toggle button is clicked', async () => {
-    TestBed.configureTestingModule({
-      providers: [provideZonelessChangeDetection(), provideRouter([])],
-    });
-    const fixture = TestBed.createComponent(AppsPage);
+    toggleAll.click();
     await fixture.whenStable();
-
-    const firstCard = fixture.nativeElement.querySelector('.app-card');
-    const firstToggleBtn = firstCard.querySelector('.app-card__toggle-btn');
-    const firstBody = firstCard.querySelector('.app-card__body');
-
-    expect(firstCard.classList.contains('app-card--collapsed')).toBe(false);
-    expect(firstBody.hidden).toBe(false);
-
-    // Click to collapse
-    firstToggleBtn.click();
-    fixture.detectChanges();
-    await fixture.whenStable();
-
-    expect(firstCard.classList.contains('app-card--collapsed')).toBe(true);
-    expect(firstBody.hidden).toBe(true);
-    expect(firstToggleBtn.getAttribute('aria-expanded')).toBe('false');
-
-    // Quick launch button should now be visible in the header
-    const quickLaunch = firstCard.querySelector('.app-quick-launch-btn');
-    expect(quickLaunch).toBeTruthy();
-
-    // Click to expand again
-    firstToggleBtn.click();
-    fixture.detectChanges();
-    await fixture.whenStable();
-
-    expect(firstCard.classList.contains('app-card--collapsed')).toBe(false);
-    expect(firstBody.hidden).toBe(false);
-    expect(firstToggleBtn.getAttribute('aria-expanded')).toBe('true');
-    expect(firstCard.querySelector('.app-quick-launch-btn')).toBeFalsy();
-  });
-
-  it('toggles ticket collapse state with its toggle button only', async () => {
-    TestBed.configureTestingModule({
-      providers: [provideZonelessChangeDetection(), provideRouter([])],
-    });
-    const fixture = TestBed.createComponent(AppsPage);
-    await fixture.whenStable();
-
-    const firstCard = fixture.nativeElement.querySelector('.app-card');
-    const toggle = firstCard.querySelector('.app-card__toggle-btn');
-    const title = firstCard.querySelector('.app-title');
-
-    expect(firstCard.classList.contains('app-card--collapsed')).toBe(false);
-
-    // The header is not a click target (mouse-only behaviour removed).
-    title.click();
-    fixture.detectChanges();
-    await fixture.whenStable();
-    expect(firstCard.classList.contains('app-card--collapsed')).toBe(false);
-
-    toggle.click();
-    fixture.detectChanges();
-    await fixture.whenStable();
-
-    expect(firstCard.classList.contains('app-card--collapsed')).toBe(true);
-    expect(toggle.getAttribute('aria-expanded')).toBe('false');
-
-    toggle.click();
-    fixture.detectChanges();
-    await fixture.whenStable();
-
-    expect(firstCard.classList.contains('app-card--collapsed')).toBe(false);
-  });
-
-  it('collapses and expands all tickets using the toolbar toggle-all button', async () => {
-    TestBed.configureTestingModule({
-      providers: [provideZonelessChangeDetection(), provideRouter([])],
-    });
-    const fixture = TestBed.createComponent(AppsPage);
-    await fixture.whenStable();
-
-    const toggleAllBtn = fixture.nativeElement.querySelector(
-      '.apps-toggle-all-btn',
-    );
-    expect(toggleAllBtn).toBeTruthy();
-    expect(toggleAllBtn.getAttribute('aria-expanded')).toBe('true');
-
-    // Click Collapse All
-    toggleAllBtn.click();
-    fixture.detectChanges();
-    await fixture.whenStable();
-
-    const cards: HTMLElement[] = Array.from(
-      fixture.nativeElement.querySelectorAll('.app-card'),
-    );
     for (const card of cards) {
       expect(card.classList.contains('app-card--collapsed')).toBe(true);
     }
-    expect(toggleAllBtn.getAttribute('aria-expanded')).toBe('false');
-
-    // Click Expand All
-    toggleAllBtn.click();
-    fixture.detectChanges();
-    await fixture.whenStable();
-
-    for (const card of cards) {
-      expect(card.classList.contains('app-card--collapsed')).toBe(false);
-    }
-    expect(toggleAllBtn.getAttribute('aria-expanded')).toBe('true');
   });
 
   it('renders Italian localized content when language is it', async () => {

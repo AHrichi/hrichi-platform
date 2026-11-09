@@ -1,16 +1,24 @@
 <div class="ah-section ah-container ah-stack" style="--gap: var(--space-8)">
+  <!-- Hero Section Heading -->
+  <ah-section-heading
+    [level]="1"
+    [eyebrow]="t().heroEyebrow"
+    [heading]="t().heroHeading"
+    [lead]="t().heroLead"
+  />
+
   <!-- Jump to a section. routerLink keeps the page: a bare #hash resolves against <base href="/"> and opens home. -->
   <div class="apps-top-toolbar">
-    <nav class="apps-nav-bar" aria-label="Solutions Filter" ahScrollHint>
+    <nav class="apps-nav-bar" [attr.aria-label]="t().jumpNav" ahScrollHint>
       @if (productionApps().length > 0) {
         <a routerLink="." fragment="production-apps" class="apps-jump-link">
-          <span>🚀</span> {{ t().jumpProduction }}
+          <span aria-hidden="true">🚀</span> {{ t().jumpProduction }}
           <span class="jump-count">{{ productionApps().length }}</span>
         </a>
       }
       @if (engineeringLabs().length > 0) {
         <a routerLink="." fragment="engineering-labs" class="apps-jump-link">
-          <span>🔬</span> {{ t().jumpLabs }}
+          <span aria-hidden="true">🔬</span> {{ t().jumpLabs }}
           <span class="jump-count">{{ engineeringLabs().length }}</span>
         </a>
       }
@@ -33,14 +41,6 @@
     </div>
   </div>
 
-  <!-- Hero Section Heading -->
-  <ah-section-heading
-    [level]="1"
-    [eyebrow]="t().heroEyebrow"
-    [heading]="t().heroHeading"
-    [lead]="t().heroLead"
-  />
-
   <!-- SECTION 1: Production Applications -->
   @if (productionApps().length > 0) {
     <section
@@ -60,151 +60,9 @@
 
       <div class="apps-grid">
         @for (app of productionApps(); track app.id) {
-          <article
-            class="app-card ah-card"
-            [class.app-card--collapsed]="isCollapsed(app.id)"
-          >
-            <!-- Card Top Bar: Icon, Title, Eyebrow, Live Status & Collapse Toggle -->
-            <div class="app-card__header">
-              <div class="app-card__identity">
-                <span class="app-icon" aria-hidden="true">{{ app.icon }}</span>
-                <div class="app-card__titles">
-                  <p class="app-eyebrow" [attr.title]="app.eyebrow">
-                    {{ app.eyebrow }}
-                  </p>
-                  <h3
-                    [id]="'card-title-' + app.id"
-                    class="app-title"
-                    [attr.title]="app.title"
-                  >
-                    {{ app.title }}
-                  </h3>
-                </div>
-              </div>
-
-              <div class="app-card__header-right">
-                <div class="app-card__badge-wrap">
-                  <ah-badge
-                    [variant]="app.badge.variant"
-                    [dot]="true"
-                    [pulse]="app.badge.pulse ?? false"
-                    size="md"
-                  >
-                    {{ app.badge.label }}
-                  </ah-badge>
-                </div>
-
-                @if (isCollapsed(app.id)) {
-                  <a
-                    [routerLink]="app.route"
-                    ahButton="primary"
-                    size="sm"
-                    class="app-quick-launch-btn"
-                    (click)="$event.stopPropagation()"
-                  >
-                    {{ t().launchPrefix }} {{ arrow() }}
-                  </a>
-                }
-
-                <button
-                  type="button"
-                  class="app-card__toggle-btn"
-                  [attr.aria-expanded]="!isCollapsed(app.id)"
-                  [attr.aria-controls]="'card-body-' + app.id"
-                  [attr.aria-label]="
-                    (isCollapsed(app.id)
-                      ? t().expandTicket
-                      : t().collapseTicket) +
-                    ': ' +
-                    app.title
-                  "
-                  (click)="toggleCard(app.id, $event)"
-                >
-                  <span
-                    class="toggle-chevron"
-                    [class.is-rotated]="!isCollapsed(app.id)"
-                    aria-hidden="true"
-                    >▸</span
-                  >
-                  <span class="toggle-text">{{
-                    isCollapsed(app.id) ? t().expandTicket : t().collapseTicket
-                  }}</span>
-                </button>
-              </div>
-            </div>
-
-            <!-- Collapsible Card Body -->
-            <div
-              [id]="'card-body-' + app.id"
-              class="app-card__body"
-              [class.is-collapsed]="isCollapsed(app.id)"
-              [hidden]="isCollapsed(app.id)"
-              role="region"
-              [attr.aria-labelledby]="'card-title-' + app.id"
-            >
-              <!-- Summary / Business Problem Solved -->
-              <p class="app-summary">{{ app.summary }}</p>
-
-              <!-- Tech Stack Tags -->
-              <div class="app-stack-row">
-                <span class="stack-label">Stack:</span>
-                <ul
-                  class="ah-cluster"
-                  role="list"
-                  style="--gap: var(--space-2)"
-                >
-                  @for (tech of app.stack; track tech) {
-                    <li>
-                      <ah-tag [attr.title]="tech">{{ tech }}</ah-tag>
-                    </li>
-                  }
-                </ul>
-              </div>
-
-              <!-- Feature Highlights List -->
-              <div class="app-features-box">
-                <h4 class="box-title">{{ t().keyCapabilities }}</h4>
-                <ul class="features-list">
-                  @for (feature of app.features; track feature) {
-                    <li [attr.title]="feature">
-                      <span class="check-icon" aria-hidden="true">✓</span>
-                      <span>{{ feature }}</span>
-                    </li>
-                  }
-                </ul>
-              </div>
-
-              <!-- Architecture & Security Callout -->
-              <div class="app-callout app-callout--arch">
-                <strong>{{ t().architectureTitle }}</strong>
-                <p>{{ app.architectureNotes }}</p>
-              </div>
-
-              <!-- Credentials / Exploration Hint -->
-              @if (app.credentialsNote) {
-                <div class="app-callout app-callout--demo">
-                  <span class="hint-icon" aria-hidden="true">💡</span>
-                  <p>
-                    <strong>{{ t().howToTestTitle }}</strong>
-                    {{ app.credentialsNote }}
-                  </p>
-                </div>
-              }
-
-              <!-- Launch Button Footer -->
-              <div class="app-card__actions">
-                <a
-                  [routerLink]="app.route"
-                  ahButton="primary"
-                  size="md"
-                  class="app-launch-btn"
-                >
-                  {{ t().launchPrefix }} {{ app.ctaLabel || app.title }}
-                  {{ arrow() }}
-                </a>
-              </div>
-            </div>
-          </article>
+          <ng-container
+            *ngTemplateOutlet="appCard; context: { $implicit: app }"
+          />
         }
       </div>
     </section>
@@ -229,141 +87,109 @@
 
       <div class="apps-grid">
         @for (lab of engineeringLabs(); track lab.id) {
-          <article
-            class="app-card ah-card"
-            [class.app-card--collapsed]="isCollapsed(lab.id)"
-          >
-            <!-- Card Top Bar: Icon, Title, Eyebrow, Live Status & Collapse Toggle -->
-            <div class="app-card__header">
-              <div class="app-card__identity">
-                <span class="app-icon" aria-hidden="true">{{ lab.icon }}</span>
-                <div class="app-card__titles">
-                  <p class="app-eyebrow" [attr.title]="lab.eyebrow">
-                    {{ lab.eyebrow }}
-                  </p>
-                  <h3
-                    [id]="'card-title-' + lab.id"
-                    class="app-title"
-                    [attr.title]="lab.title"
-                  >
-                    {{ lab.title }}
-                  </h3>
-                </div>
-              </div>
-
-              <div class="app-card__header-right">
-                <div class="app-card__badge-wrap">
-                  <ah-badge
-                    [variant]="lab.badge.variant"
-                    [dot]="true"
-                    size="md"
-                  >
-                    {{ lab.badge.label }}
-                  </ah-badge>
-                </div>
-
-                @if (isCollapsed(lab.id)) {
-                  <a
-                    [routerLink]="lab.route"
-                    ahButton="primary"
-                    size="sm"
-                    class="app-quick-launch-btn"
-                    (click)="$event.stopPropagation()"
-                  >
-                    {{ t().launchPrefix }} {{ arrow() }}
-                  </a>
-                }
-
-                <button
-                  type="button"
-                  class="app-card__toggle-btn"
-                  [attr.aria-expanded]="!isCollapsed(lab.id)"
-                  [attr.aria-controls]="'card-body-' + lab.id"
-                  [attr.aria-label]="
-                    (isCollapsed(lab.id)
-                      ? t().expandTicket
-                      : t().collapseTicket) +
-                    ': ' +
-                    lab.title
-                  "
-                  (click)="toggleCard(lab.id, $event)"
-                >
-                  <span
-                    class="toggle-chevron"
-                    [class.is-rotated]="!isCollapsed(lab.id)"
-                    aria-hidden="true"
-                    >▸</span
-                  >
-                  <span class="toggle-text">{{
-                    isCollapsed(lab.id) ? t().expandTicket : t().collapseTicket
-                  }}</span>
-                </button>
-              </div>
-            </div>
-
-            <!-- Collapsible Card Body -->
-            <div
-              [id]="'card-body-' + lab.id"
-              class="app-card__body"
-              [class.is-collapsed]="isCollapsed(lab.id)"
-              [hidden]="isCollapsed(lab.id)"
-              role="region"
-              [attr.aria-labelledby]="'card-title-' + lab.id"
-            >
-              <!-- Summary / Business Problem Solved -->
-              <p class="app-summary">{{ lab.summary }}</p>
-
-              <!-- Tech Stack Tags -->
-              <div class="app-stack-row">
-                <span class="stack-label">Stack:</span>
-                <ul
-                  class="ah-cluster"
-                  role="list"
-                  style="--gap: var(--space-2)"
-                >
-                  @for (tech of lab.stack; track tech) {
-                    <li>
-                      <ah-tag [attr.title]="tech">{{ tech }}</ah-tag>
-                    </li>
-                  }
-                </ul>
-              </div>
-
-              <!-- Feature Highlights List -->
-              <div class="app-features-box">
-                <h4 class="box-title">{{ t().interactiveExperiments }}</h4>
-                <ul class="features-list">
-                  @for (feature of lab.features; track feature) {
-                    <li [attr.title]="feature">
-                      <span class="check-icon" aria-hidden="true">✓</span>
-                      <span>{{ feature }}</span>
-                    </li>
-                  }
-                </ul>
-              </div>
-
-              <!-- Architecture Callout -->
-              <div class="app-callout app-callout--arch">
-                <strong>{{ t().architectureTitle }}</strong>
-                <p>{{ lab.architectureNotes }}</p>
-              </div>
-
-              <!-- Launch Button Footer -->
-              <div class="app-card__actions">
-                <a
-                  [routerLink]="lab.route"
-                  ahButton="primary"
-                  size="md"
-                  class="app-launch-btn"
-                >
-                  {{ t().launchPrefix }} {{ lab.ctaLabel || lab.title }}
-                  {{ arrow() }}
-                </a>
-              </div>
-            </div>
-          </article>
+          <ng-container
+            *ngTemplateOutlet="appCard; context: { $implicit: lab }"
+          />
         }
       </div>
     </section>
   }
 </div>
+
+<!-- One card for products and labs. Always visible: what it is and how to
+     open it. Behind "Details": stack, capabilities and architecture notes. -->
+<ng-template #appCard let-app>
+  <article
+    class="app-card ah-card"
+    [class.app-card--collapsed]="isCollapsed(app.id)"
+    [attr.aria-labelledby]="'card-title-' + app.id"
+  >
+    <div class="app-card__header">
+      <span class="app-icon" aria-hidden="true">{{ app.icon }}</span>
+      <div class="app-card__titles">
+        <p class="app-eyebrow">{{ app.eyebrow }}</p>
+        <h3 [id]="'card-title-' + app.id" class="app-title">
+          {{ app.title }}
+        </h3>
+      </div>
+      <ah-badge
+        class="app-card__badge"
+        [variant]="app.badge.variant"
+        [dot]="true"
+        [pulse]="app.badge.pulse ?? false"
+        size="md"
+      >
+        {{ app.badge.label }}
+      </ah-badge>
+    </div>
+
+    <p class="app-summary">{{ app.summary }}</p>
+
+    <div class="app-card__actions">
+      <a [routerLink]="app.route" ahButton="primary" class="app-launch-btn">
+        {{ t().launchPrefix }} {{ app.ctaLabel || app.title }}
+        <span aria-hidden="true">{{ arrow() }}</span>
+      </a>
+      <button
+        type="button"
+        ahButton="ghost"
+        class="app-card__toggle-btn"
+        [attr.aria-expanded]="!isCollapsed(app.id)"
+        [attr.aria-controls]="'card-body-' + app.id"
+        (click)="toggleCard(app.id)"
+      >
+        {{ isCollapsed(app.id) ? t().expandTicket : t().collapseTicket }}
+        <span
+          class="toggle-chevron"
+          [class.is-rotated]="!isCollapsed(app.id)"
+          aria-hidden="true"
+          >▾</span
+        >
+      </button>
+    </div>
+
+    <div
+      [id]="'card-body-' + app.id"
+      class="app-card__body"
+      [hidden]="isCollapsed(app.id)"
+    >
+      <div class="app-stack-row">
+        <h4 class="box-title">{{ t().stack }}</h4>
+        <ul class="ah-cluster" role="list" style="--gap: var(--space-2)">
+          @for (tech of app.stack; track tech) {
+            <li>
+              <ah-tag>{{ tech }}</ah-tag>
+            </li>
+          }
+        </ul>
+      </div>
+
+      <div class="app-features-box">
+        <h4 class="box-title">{{ t().keyCapabilities }}</h4>
+        <ul class="features-list" role="list">
+          @for (feature of app.features; track feature) {
+            <li>
+              <span class="check-icon" aria-hidden="true">✓</span>
+              <span>{{ feature }}</span>
+            </li>
+          }
+        </ul>
+      </div>
+
+      <div class="app-callout app-callout--arch">
+        <strong>{{ t().architectureTitle }}</strong>
+        <p>{{ app.architectureNotes }}</p>
+      </div>
+
+      @if (app.credentialsNote) {
+        <div class="app-callout app-callout--demo">
+          <span class="hint-icon" aria-hidden="true">💡</span>
+          <p>
+            <strong>{{ t().howToTestTitle }}</strong>
+            {{ app.credentialsNote }}
+          </p>
+        </div>
+      }
+    </div>
+  </article>
+</ng-template>

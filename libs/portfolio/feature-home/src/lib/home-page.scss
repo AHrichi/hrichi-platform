@@ -4,7 +4,7 @@
   // Top-aligned: centring would move the figure when the web font changes
   // the text column's height (a 0.24 CLS on a cold cache).
   align-items: start;
-  padding-block: var(--space-9) var(--space-8);
+  padding-block: clamp(var(--space-6), 6vw, var(--space-9)) var(--space-8);
 
   @media (min-width: 60rem) {
     grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
@@ -41,4 +41,75 @@
 
 .ah-section + .ah-section {
   border-block-start: 1px solid var(--color-border-default);
+}
+
+/* Links that close a section: the main one (.ah-more-link) first, then
+   quieter related links. */
+.section-actions {
+  --gap: var(--space-2) var(--space-5);
+}
+
+.quiet-link {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: 2.75rem;
+  color: var(--color-text-muted);
+  font-weight: var(--font-weight-medium);
+  text-decoration: underline;
+  text-decoration-color: var(--color-border-strong);
+  text-underline-offset: 0.25em;
+  transition-property: color, text-decoration-color;
+  transition-duration: var(--motion-duration-fast);
+
+  &:hover {
+    color: var(--color-text-default);
+    text-decoration-color: currentColor;
+  }
+}
+
+/* Last section: one clear next step. */
+.closing__panel {
+  display: grid;
+  gap: var(--space-6);
+  align-items: center;
+  padding: clamp(var(--space-5), 4vw, var(--space-8));
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-lg);
+  background:
+    radial-gradient(
+      circle at 100% 0%,
+      color-mix(in srgb, var(--color-accent-default) 14%, transparent),
+      transparent 55%
+    ),
+    var(--color-bg-raised);
+
+  @media (min-width: 60rem) {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+}
+
+.closing__text h2 {
+  font-size: var(--font-size-600);
+}
+
+.closing__lead {
+  max-inline-size: 38rem;
+  font-size: var(--font-size-300);
+}
+
+.closing__actions {
+  --gap: var(--space-3);
+}
+
+@media (max-width: 40rem) {
+  /* Thumb-friendly: full-width stacked actions on phones. */
+  .hero__actions,
+  .closing__actions {
+    flex-direction: column;
+    align-items: stretch;
+
+    > * {
+      display: grid;
+    }
+  }
 }

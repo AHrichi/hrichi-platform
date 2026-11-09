@@ -1,16 +1,24 @@
 <div class="ah-section ah-container ah-stack" style="--gap: var(--space-7)">
-  <ah-section-heading
-    [level]="1"
-    [eyebrow]="copy().contact.eyebrow"
-    [heading]="copy().contact.heading"
-    [lead]="copy().contact.lead"
-  />
-  <p class="ah-badge ah-badge--success">{{ profile().availability }}</p>
+  <div class="ah-stack intro" style="--gap: var(--space-4)">
+    <ah-section-heading
+      [level]="1"
+      [eyebrow]="copy().contact.eyebrow"
+      [heading]="copy().contact.heading"
+      [lead]="copy().contact.lead"
+    />
+    <p class="ah-badge ah-badge--success">{{ profile().availability }}</p>
+  </div>
 
   <div class="layout">
     <ah-contact-form />
 
-    <aside class="ah-stack" [attr.aria-label]="copy().contact.otherWays">
+    <aside
+      class="ah-card ah-stack other-ways"
+      aria-labelledby="other-ways-heading"
+    >
+      <h2 id="other-ways-heading" class="other-ways__title">
+        {{ copy().contact.otherWays }}
+      </h2>
       <dl class="details">
         <div>
           <dt>{{ copy().contact.email }}</dt>
@@ -43,7 +51,7 @@
           <dd>{{ profile().timezone }}</dd>
         </div>
       </dl>
-      <p class="ah-muted">
+      <p class="ah-muted other-ways__note">
         {{ copy().contact.hiringText }}
         <a routerLink="/cv">{{ copy().contact.cvText }}</a>
         {{ copy().contact.hiringDetails }}

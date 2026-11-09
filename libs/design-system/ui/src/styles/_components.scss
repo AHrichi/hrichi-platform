@@ -19,25 +19,33 @@
     overflow-wrap: anywhere;
     cursor: pointer;
     user-select: none;
-    transition:
-      background-color var(--motion-duration-fast) var(--motion-easing-standard),
-      border-color var(--motion-duration-fast) var(--motion-easing-standard),
-      color var(--motion-duration-fast) var(--motion-easing-standard);
+    transition-property: background-color, border-color, color, transform;
+    transition-duration: var(--motion-duration-fast);
+    transition-timing-function: var(--motion-easing-standard);
+
+    &:active:not(:disabled) {
+      transform: translateY(1px);
+    }
+
+    &:focus-visible {
+      outline: var(--focus-ring-width) solid var(--color-focus-ring);
+      outline-offset: 2px;
+    }
 
     &:disabled,
     &[aria-disabled='true'] {
-      opacity: 0.5;
+      opacity: var(--opacity-disabled);
       cursor: not-allowed;
       pointer-events: none;
     }
 
     &--primary {
-      background: var(--color-accent-default);
-      color: var(--color-accent-on);
+      background: var(--color-accent-solid);
+      color: var(--color-accent-on-solid);
 
       &:hover {
-        background: var(--color-accent-hover);
-        color: var(--color-accent-on);
+        background: var(--color-accent-solid-hover);
+        color: var(--color-accent-on-solid);
       }
     }
 
@@ -91,11 +99,28 @@
     &:hover,
     &:focus-within {
       border-color: var(--color-accent-default);
+      background: var(--color-bg-surface);
+    }
+
+    &:hover .ah-card__link {
+      color: var(--color-accent-default);
+    }
+
+    /* The focus ring goes around the whole card, not the title text. */
+    &:has(.ah-card__link:focus-visible) {
+      outline: var(--focus-ring-width) solid var(--color-focus-ring);
+      outline-offset: 2px;
     }
 
     .ah-card__link {
       color: inherit;
       text-decoration: none;
+      transition: color var(--motion-duration-fast)
+        var(--motion-easing-standard);
+
+      &:focus-visible {
+        outline: none;
+      }
 
       &::after {
         content: '';
@@ -103,6 +128,42 @@
         inset: 0;
         border-radius: inherit;
       }
+    }
+  }
+
+  /* "See more" link closing a section: one style everywhere, with an arrow
+     that nudges forward on hover (mirrored right-to-left). */
+  .ah-more-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-block-size: 2.75rem;
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-accent-default);
+    text-decoration: none;
+
+    &::after {
+      content: '→';
+      transition: transform var(--motion-duration-fast)
+        var(--motion-easing-standard);
+    }
+
+    &:hover {
+      color: var(--color-accent-hover);
+      text-decoration: underline;
+      text-underline-offset: 0.2em;
+
+      &::after {
+        transform: translateX(0.2em);
+      }
+    }
+
+    [dir='rtl'] &::after {
+      content: '←';
+    }
+
+    [dir='rtl'] &:hover::after {
+      transform: translateX(-0.2em);
     }
   }
 

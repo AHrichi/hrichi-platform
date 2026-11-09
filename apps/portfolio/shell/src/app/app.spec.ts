@@ -26,8 +26,12 @@ describe('App', () => {
       'Experience',
       'Services',
       'Contact',
-      'CV',
     ]);
+    // The CV is a header action next to the language and theme switches, so
+    // it stays visible on phones while the page links scroll.
+    expect(
+      element.querySelector('.site-header__actions a')?.textContent?.trim(),
+    ).toBe('CV');
     expect(element.querySelector('.ah-skip-link')?.getAttribute('href')).toBe(
       '#main',
     );
@@ -49,7 +53,6 @@ describe('App', () => {
       'Esperienza',
       'Servizi',
       'Contatti',
-      'CV',
     ]);
 
     preferences.setLanguage('de');
@@ -63,7 +66,9 @@ describe('App', () => {
       'Erfahrung',
       'Leistungen',
       'Kontakt',
-      'Lebenslauf',
     ]);
+    expect(
+      element.querySelector('.site-header__actions a')?.textContent?.trim(),
+    ).toBe('Lebenslauf');
   });
 });

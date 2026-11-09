@@ -3,7 +3,7 @@
     <p class="ah-badge ah-badge--success">{{ profile().availability }}</p>
     <h1 id="hero-heading">{{ preferences.copy().headline }}</h1>
     <p class="ah-lead ah-prose">{{ preferences.copy().intro }}</p>
-    <div class="ah-cluster">
+    <div class="ah-cluster hero__actions">
       <ah-action-link [link]="preferences.copy().primaryCta" />
       <ah-action-link
         [link]="preferences.copy().secondaryCta"
@@ -65,7 +65,9 @@
               </li>
             }
           </ul>
-          <a routerLink="/work">{{ copy().work.allLink }}</a>
+          <a class="ah-more-link" routerLink="/work">{{
+            copy().work.allLink
+          }}</a>
         </div>
       </section>
     }
@@ -88,7 +90,9 @@
               </li>
             }
           </ul>
-          <a routerLink="/services">{{ copy().services.allLink }}</a>
+          <a class="ah-more-link" routerLink="/services">{{
+            copy().services.allLink
+          }}</a>
         </div>
       </section>
     }
@@ -111,9 +115,13 @@
             </h3>
             <p class="ah-muted">{{ currentRole().context }}</p>
           </article>
-          <div class="ah-cluster">
-            <a routerLink="/experience">{{ copy().experience.fullLink }}</a>
-            <a routerLink="/cv">{{ copy().experience.cvLink }}</a>
+          <div class="ah-cluster section-actions">
+            <a class="ah-more-link" routerLink="/experience">{{
+              copy().experience.fullLink
+            }}</a>
+            <a class="ah-more-link" routerLink="/cv">{{
+              copy().experience.cvLink
+            }}</a>
           </div>
         </div>
       </section>
@@ -160,24 +168,48 @@
               </p>
             </li>
           </ul>
-          <div class="ah-cluster">
-            <a
-              routerLink="/apps"
-              style="font-weight: var(--font-weight-bold)"
-              >{{ copy().platform.links.apps }}</a
-            >
-            <a routerLink="/work/this-platform">{{
+          <div class="ah-cluster section-actions">
+            <a class="ah-more-link" routerLink="/apps">{{
+              copy().platform.links.apps
+            }}</a>
+            <a class="quiet-link" routerLink="/work/this-platform">{{
               copy().platform.links.howBuilt
             }}</a>
-            <a [href]="repository" target="_blank" rel="noopener">{{
-              copy().platform.links.source
-            }}</a>
-            <a [href]="designSystem" target="_blank" rel="noopener">{{
-              copy().platform.links.designSystem
-            }}</a>
+            <a
+              class="quiet-link"
+              [href]="repository"
+              target="_blank"
+              rel="noopener"
+              >{{ copy().platform.links.source }}</a
+            >
+            <a
+              class="quiet-link"
+              [href]="designSystem"
+              target="_blank"
+              rel="noopener"
+              >{{ copy().platform.links.designSystem }}</a
+            >
           </div>
         </div>
       </section>
     }
   }
 }
+
+<section
+  class="ah-section ah-container closing"
+  aria-labelledby="closing-heading"
+>
+  <div class="closing__panel">
+    <div class="ah-stack closing__text" style="--gap: var(--space-3)">
+      <p class="ah-eyebrow">{{ copy().closing.eyebrow }}</p>
+      <h2 id="closing-heading">{{ copy().closing.heading }}</h2>
+      <p class="ah-muted closing__lead">{{ copy().closing.lead }}</p>
+    </div>
+    <div class="ah-cluster closing__actions">
+      <ah-action-link [link]="closingLinks().contact" />
+      <ah-action-link [link]="closingLinks().email" variant="secondary" />
+      <ah-action-link [link]="closingLinks().cv" variant="ghost" />
+    </div>
+  </div>
+</section>

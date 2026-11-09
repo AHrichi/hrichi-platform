@@ -33,6 +33,12 @@
     gap: var(--gap, var(--space-5));
   }
 
+  /* A grid item that wraps a card (<li><ah-link-card>) passes its full row
+     height on, so cards in a row line up. */
+  .ah-grid > li:not(.ah-card) {
+    display: grid;
+  }
+
   .ah-section {
     padding-block: var(--space-9);
   }

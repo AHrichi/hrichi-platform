@@ -29,9 +29,14 @@
   }
 }
 
+/* Label, control, then a reserved line for the error. */
 .field {
   display: grid;
-  gap: var(--space-2);
+  gap: var(--space-1);
+
+  label {
+    margin-block-end: var(--space-1);
+  }
 }
 
 label {
@@ -43,15 +48,38 @@ input,
 select,
 textarea {
   inline-size: 100%;
-  padding: var(--space-3);
-  border: 1px solid var(--color-border-strong);
+  min-block-size: var(--control-height-md);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-border-control);
   border-radius: var(--radius-md);
   background: var(--color-bg-canvas);
   color: var(--color-text-default);
+  font: inherit;
+  transition-property: border-color, box-shadow;
+  transition-duration: var(--motion-duration-fast);
+
+  &:hover:not(:disabled) {
+    border-color: var(--color-text-muted);
+  }
+
+  &:focus-visible {
+    border-color: var(--color-accent-default);
+    outline: var(--focus-ring-width) solid var(--color-focus-ring);
+    outline-offset: 1px;
+  }
+
+  &:disabled {
+    opacity: var(--opacity-disabled);
+    cursor: not-allowed;
+  }
 
   &[aria-invalid='true'] {
-    border-color: var(--color-accent-default);
+    border-color: var(--color-danger-default);
   }
+}
+
+select {
+  cursor: pointer;
 }
 
 textarea {
@@ -60,8 +88,9 @@ textarea {
 
 .error {
   min-block-size: 1.25em;
+  margin: 0;
   font-size: var(--font-size-100);
-  color: var(--color-accent-default);
+  color: var(--color-danger-default);
 }
 
 // Turnstile's widget is 65px tall; reserving it keeps the page from shifting.
@@ -84,9 +113,4 @@ textarea {
 .status {
   font-size: var(--font-size-200);
   color: var(--color-text-muted);
-}
-
-.ah-button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
 }

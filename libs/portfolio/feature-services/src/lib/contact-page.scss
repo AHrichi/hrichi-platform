@@ -20,3 +20,36 @@ dd {
   margin: 0;
   overflow-wrap: anywhere;
 }
+
+/* Other ways to reach me: a quiet card next to the form. */
+.other-ways {
+  --gap: var(--space-4);
+}
+
+.other-ways__title {
+  font-size: var(--font-size-400);
+}
+
+.details {
+  gap: var(--space-3);
+
+  > div {
+    display: grid;
+    gap: var(--space-1);
+    padding-block-end: var(--space-3);
+    border-block-end: 1px solid var(--color-border-default);
+  }
+
+  > div:last-child {
+    padding-block-end: 0;
+    border-block-end: none;
+  }
+
+  dd {
+    font-weight: var(--font-weight-medium);
+  }
+}
+
+.other-ways__note {
+  font-size: var(--font-size-200);
+}

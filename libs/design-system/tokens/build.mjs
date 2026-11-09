@@ -124,6 +124,8 @@ const contrastPairs = [
   ['color-accent-default', 'color-accent-subtle'],
   // Filled surfaces with text on them.
   ['color-accent-on', 'color-accent-hover'],
+  ['color-accent-on-solid', 'color-accent-solid'],
+  ['color-accent-on-solid', 'color-accent-solid-hover'],
   ['color-text-inverse', 'color-bg-inverse'],
   ['color-bg-canvas', 'color-success-default'],
 ];

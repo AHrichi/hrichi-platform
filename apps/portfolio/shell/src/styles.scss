@@ -15,133 +15,166 @@ main {
   flex: 1 0 auto;
 }
 
+/*
+ * Header. Desktop: brand · page links · actions, on one row.
+ * Phones: brand and actions (CV, language, theme) stay on the first row, so
+ * the CV is always one tap away; the page links get their own row and scroll
+ * sideways when they don't fit.
+ */
 .site-header {
   position: sticky;
   inset-block-start: 0;
-  z-index: 50;
+  z-index: var(--z-sticky);
   background: color-mix(in srgb, var(--color-bg-canvas) 88%, transparent);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-block-end: 1px solid var(--color-border-default);
-  padding-inline: env(safe-area-inset-left, 0) env(safe-area-inset-right, 0);
+  padding-inline-start: env(safe-area-inset-left, 0);
+  padding-inline-end: env(safe-area-inset-right, 0);
 }
 
 .site-header__inner {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-areas: 'brand nav actions';
   align-items: center;
-  justify-content: space-between;
-  gap: var(--space-3) var(--space-5);
-  padding-block: var(--space-3);
+  gap: var(--space-2) var(--space-5);
+  min-block-size: 4rem;
+  padding-block: var(--space-2);
 }
 
 .brand {
+  grid-area: brand;
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
+  min-block-size: 2.75rem;
   font-weight: var(--font-weight-bold);
   color: var(--color-text-default);
   text-decoration: none;
   letter-spacing: -0.01em;
-}
+  white-space: nowrap;
 
-.site-header nav a:not(.ah-button) {
-  color: var(--color-text-muted);
-  text-decoration: none;
-  font-size: var(--font-size-200);
-  font-weight: var(--font-weight-medium);
-
-  &:hover,
-  &.active {
+  &:hover {
     color: var(--color-text-default);
   }
 }
 
-@media (max-width: 768px) {
-  .site-header__inner {
-    padding-block: var(--space-2);
-    gap: var(--space-2);
+.site-header nav {
+  grid-area: nav;
+  justify-self: end;
+  min-inline-size: 0;
+}
+
+.site-header nav ul.ah-cluster {
+  --gap: var(--space-1);
+  flex-wrap: nowrap;
+}
+
+.site-header nav a {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: 2.5rem;
+  padding-inline: var(--space-3);
+  border-radius: var(--radius-pill);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-200);
+  font-weight: var(--font-weight-medium);
+  text-decoration: none;
+  white-space: nowrap;
+  transition-property: color, background-color;
+  transition-duration: var(--motion-duration-fast);
+  transition-timing-function: var(--motion-easing-standard);
+
+  &:hover {
+    color: var(--color-text-default);
+    background: var(--color-bg-surface);
   }
 
-  .brand {
-    font-size: var(--font-size-200);
-    gap: var(--space-2);
-    min-height: 40px;
+  &.active {
+    color: var(--color-text-default);
+    background: var(--color-bg-raised);
+    font-weight: var(--font-weight-semibold);
+  }
+}
 
-    img {
-      width: 24px;
-      height: 24px;
-    }
+.site-header__actions {
+  grid-area: actions;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+
+  .ah-button {
+    white-space: nowrap;
+  }
+
+  /* On the CV page itself the button stops shouting: outlined, like the
+     current page link. */
+  .ah-button.is-current {
+    background: transparent;
+    border-color: var(--color-accent-default);
+    color: var(--color-accent-default);
+  }
+}
+
+@media (max-width: 60rem) {
+  .site-header__inner {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      'brand actions'
+      'nav nav';
+    gap: 0 var(--space-3);
+    padding-block: var(--space-1) 0;
   }
 
   .site-header nav {
-    inline-size: 100%;
-    position: relative;
+    justify-self: stretch;
+    /* Bleed to the screen edges so the strip scrolls edge to edge. */
+    margin-inline: calc(var(--layout-gutter) * -1);
   }
 
   .site-header nav ul.ah-cluster {
-    inline-size: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    gap: var(--space-1);
     overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    flex-wrap: nowrap;
-    padding-block: 4px;
-    padding-inline: var(--space-1);
     scrollbar-width: none;
+    padding-block: var(--space-1) var(--space-2);
+    padding-inline: calc(var(--layout-gutter) - var(--space-3));
+
     &::-webkit-scrollbar {
       display: none;
     }
   }
 
-  // The nav scrolls sideways on phones: items keep their width and one line,
-  // or a longer label (the Arabic CV button) wraps and stretches the header.
   .site-header nav ul.ah-cluster > li {
     flex-shrink: 0;
   }
 
-  .site-header nav .ah-button {
-    white-space: nowrap;
-  }
-
-  .site-header nav a:not(.ah-button) {
-    display: inline-flex;
-    align-items: center;
+  .site-header nav a {
     font-size: var(--font-size-100);
-    padding: 0.45rem var(--space-3);
-    border-radius: var(--radius-pill);
-    white-space: nowrap;
-    color: var(--color-text-muted);
-    min-height: 36px;
-    box-sizing: border-box;
-    transition: var(--motion-duration-fast) var(--motion-easing-standard);
-    transition-property: color, background-color, border-color, box-shadow, transform;
-
-    &:hover {
-      color: var(--color-text-default);
-      background: var(--color-bg-raised);
-    }
-
-    &.active {
-      color: var(--color-accent-default);
-      background: color-mix(
-        in srgb,
-        var(--color-accent-default) 14%,
-        transparent
-      );
-      font-weight: var(--font-weight-semibold);
-    }
   }
+}
 
-  .theme-toggle {
-    inline-size: 2.25rem;
-    block-size: 2.25rem;
-    min-width: 2.25rem;
-    min-height: 2.25rem;
-    flex-shrink: 0;
-    margin-inline-start: auto;
+@media (max-width: 24rem) {
+  .brand__name {
+    /* Very narrow phones: the monogram is enough next to the actions. */
+    font-size: var(--font-size-200);
+  }
+}
+
+/* Header controls share one size and one set of states. */
+.theme-toggle,
+.lang-picker {
+  block-size: 2.5rem;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-pill);
+  background: var(--color-bg-surface);
+  color: var(--color-text-default);
+  transition-property: background-color, border-color, color;
+  transition-duration: var(--motion-duration-fast);
+  transition-timing-function: var(--motion-easing-standard);
+
+  &:hover {
+    background: var(--color-bg-raised);
+    border-color: var(--color-text-muted);
   }
 }
 
@@ -149,29 +182,16 @@ main {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  inline-size: 2.25rem;
-  block-size: 2.25rem;
+  inline-size: 2.5rem;
   padding: 0;
-  border: 1px solid var(--color-border-strong);
-  border-radius: var(--radius-pill);
-  background: var(--color-bg-surface);
-  color: var(--color-text-default);
   cursor: pointer;
-  transition:
-    background-color var(--motion-duration-fast) var(--motion-easing-standard),
-    border-color var(--motion-duration-fast) var(--motion-easing-standard),
-    color var(--motion-duration-fast) var(--motion-easing-standard),
-    transform var(--motion-duration-fast) var(--motion-easing-standard);
 
-  &:hover {
-    background: var(--color-bg-raised);
-    border-color: var(--color-accent-default);
-    color: var(--color-accent-default);
-    transform: scale(1.06);
+  &:active {
+    background: var(--color-bg-canvas);
   }
 
   &:focus-visible {
-    outline: 2px solid var(--color-focus-ring);
+    outline: var(--focus-ring-width) solid var(--color-focus-ring);
     outline-offset: 2px;
   }
 
@@ -185,55 +205,48 @@ main {
   position: relative;
   display: inline-flex;
   align-items: center;
-  border: 1px solid var(--color-border-default);
-  border-radius: var(--radius-pill);
-  background: var(--color-bg-surface);
-  color: var(--color-text-default);
-  transition: var(--motion-duration-fast) ease;
-  transition-property: color, background-color, border-color, box-shadow, transform;
-  min-height: 2.25rem;
-  padding: 0 var(--space-2);
+  gap: var(--space-1);
+  padding-inline: var(--space-3) var(--space-2);
+  cursor: pointer;
 
-  &:hover,
   &:focus-within {
-    border-color: var(--color-border-strong);
-    box-shadow: 0 0 0 2px var(--color-focus-ring);
+    outline: var(--focus-ring-width) solid var(--color-focus-ring);
+    outline-offset: 2px;
   }
 
-  &__icon {
+  &__icon,
+  &__arrow {
     display: inline-flex;
     align-items: center;
     color: var(--color-text-muted);
-    margin-inline-end: 2px;
     pointer-events: none;
   }
 
-  &__select {
-    appearance: none;
-    -webkit-appearance: none;
-    background: transparent;
-    border: none;
-    color: inherit;
-    font: inherit;
+  &__code {
+    min-inline-size: 1.5rem;
     font-size: var(--font-size-100);
-    font-weight: var(--font-weight-medium);
-    padding: var(--space-1) var(--space-4) var(--space-1) var(--space-1);
+    font-weight: var(--font-weight-semibold);
+    text-align: center;
+    pointer-events: none;
+  }
+
+  /* Transparent, on top of the whole pill: the native select still opens,
+     takes the keyboard and announces the language. */
+  &__select {
+    position: absolute;
+    inset: 0;
+    inline-size: 100%;
+    block-size: 100%;
+    opacity: 0;
+    appearance: none;
+    border: none;
     cursor: pointer;
-    outline: none;
+    font: inherit;
 
     option {
       background: var(--color-bg-surface);
       color: var(--color-text-default);
     }
-  }
-
-  &__arrow {
-    position: absolute;
-    inset-inline-end: var(--space-2);
-    display: inline-flex;
-    align-items: center;
-    color: var(--color-text-muted);
-    pointer-events: none;
   }
 }
 

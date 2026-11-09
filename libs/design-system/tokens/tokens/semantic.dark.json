@@ -50,6 +50,17 @@
       },
       "on": {
         "$value": "{color.neutral.950}"
+      },
+      "solid": {
+        "$value": "{color.crimson.600}",
+        "$description": "Fill of primary buttons and other solid accent surfaces, in both themes"
+      },
+      "solid-hover": {
+        "$value": "{color.crimson.500}"
+      },
+      "on-solid": {
+        "$value": "{color.neutral.0}",
+        "$description": "Text on accent.solid"
       }
     },
     "success": {
