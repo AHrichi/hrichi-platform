@@ -1,4 +1,4 @@
-import type { Page } from '@playwright/test';
+import { expect, type Page } from '@playwright/test';
 import { isAppEnabled, type PortfolioAppKey } from '@ah/shared/content';
 
 export type SiteLanguage = 'en' | 'fr' | 'de' | 'it' | 'ar';
@@ -11,7 +11,15 @@ export async function chooseLanguage(
   page: Page,
   language: SiteLanguage,
 ): Promise<void> {
-  await page.locator('#shell-lang-select').selectOption(language);
+  // Right after a prerendered page loads, Angular may not have hydrated the
+  // select yet, so the first change can be lost: pick again until the page
+  // has switched (<html lang> follows the site language).
+  await expect(async () => {
+    await page.locator('#shell-lang-select').selectOption(language);
+    await expect(page.locator('html')).toHaveAttribute('lang', language, {
+      timeout: 1_000,
+    });
+  }).toPass({ timeout: 15_000 });
 }
 
 /**
