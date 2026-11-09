@@ -1,25 +1,25 @@
 <!-- src/app/exercises/transforming-streams/transforming-streams.component.html -->
 <div class="exercise-container">
   <ah-section-heading
-    eyebrow="Chapter 6 · Higher-Order Mapping"
-    heading="Exercise: Transforming Streams"
-    lead="Explore how concatMap, switchMap, mergeMap, and exhaustMap handle concurrent inner streams. Filter to a single operator to inspect its timeline and marble behavior in full detail."
+    [eyebrow]="copy().transformingStreams.eyebrow"
+    [heading]="copy().transformingStreams.heading"
+    [lead]="copy().transformingStreams.lead"
   />
 
   <ah-use-case-focus
-    [options]="focusOptions"
+    [options]="focusOptions()"
     [(value)]="activeCase"
-    ariaLabel="Filter transforming operator"
+    [ariaLabel]="copy().transformingStreams.focusAriaLabel"
   />
 
   <div class="card config-card">
     <div class="card-header">
-      <h3>Source Stream Configuration</h3>
+      <h3>{{ copy().transformingStreams.configTitle }}</h3>
     </div>
     <div class="card-content">
       <div class="config-group">
         <div class="config-item">
-          <label for="source-emissions">Source Emissions:</label>
+          <label for="source-emissions">{{ copy().transformingStreams.sourceEmissionsLabel }}</label>
           <input
             id="source-emissions"
             type="number"
@@ -28,7 +28,7 @@
           />
         </div>
         <div class="config-item">
-          <label for="source-interval">Source Interval (ms):</label>
+          <label for="source-interval">{{ copy().transformingStreams.sourceIntervalLabel }}</label>
           <input
             id="source-interval"
             type="number"
@@ -37,7 +37,7 @@
           />
         </div>
         <div class="config-item">
-          <label for="inner-values">Values per Inner Stream:</label>
+          <label for="inner-values">{{ copy().transformingStreams.innerValuesLabel }}</label>
           <input
             id="inner-values"
             type="number"
@@ -46,7 +46,7 @@
           />
         </div>
         <div class="config-item">
-          <label for="inner-interval">Inner Interval (ms):</label>
+          <label for="inner-interval">{{ copy().transformingStreams.innerIntervalLabel }}</label>
           <input
             id="inner-interval"
             type="number"
@@ -63,7 +63,7 @@
           (click)="startEmitting()"
           [disabled]="isEmitting()"
         >
-          Start Emitting
+          {{ copy().transformingStreams.startEmittingBtn }}
         </button>
         <button
           type="button"
@@ -71,7 +71,7 @@
           size="sm"
           (click)="resetAll()"
         >
-          Reset All
+          {{ copy().common.resetAll }}
         </button>
       </div>
     </div>
@@ -83,26 +83,22 @@
       <div class="card" [class.focused-card]="activeCase() === 'concatMap'">
         <div class="card-header">
           <div class="card-title-row">
-            <h3>The <code>concatMap</code> Operator</h3>
+            <h3>{{ copy().transformingStreams.concatMap.title }}</h3>
             @if (activeCase() === 'concatMap') {
-              <ah-tag>Focused View</ah-tag>
+              <ah-tag>{{ copy().common.focusedView }}</ah-tag>
             }
           </div>
-          <p>
-            Maps each source value to an inner Observable and processes them in
-            sequence. Guarantees order.
-          </p>
+          <p>{{ copy().transformingStreams.concatMap.description }}</p>
         </div>
         <div class="card-content">
           <div class="everyday-example">
             <p>
-              <strong>Analogy:</strong> A meticulous chef following a recipe.
-              They complete one step (e.g., chopping vegetables) before starting
-              the next (e.g., sautéing). The order is crucial.
+              <strong>{{ copy().transformingStreams.analogyStrong }}</strong>
+              {{ copy().transformingStreams.concatMap.analogyText }}
             </p>
           </div>
           <div class="timeline-group">
-            <div class="timeline-label">Source Stream</div>
+            <div class="timeline-label">{{ copy().transformingStreams.sourceStreamLabel }}</div>
             <div class="timeline source-timeline">
               @for (marble of concatMapSourceMarbles(); track marble.id) {
                 <div
@@ -115,7 +111,7 @@
             </div>
           </div>
           <div class="timeline-group">
-            <div class="timeline-label">Inner Streams</div>
+            <div class="timeline-label">{{ copy().transformingStreams.innerStreamsLabel }}</div>
             <div class="inner-streams-container">
               @for (stream of concatMapInnerStreams(); track stream.id) {
                 <div
@@ -131,7 +127,7 @@
             </div>
           </div>
           <div class="timeline-group">
-            <div class="timeline-label">Output Stream (Animated)</div>
+            <div class="timeline-label">{{ copy().transformingStreams.outputAnimatedLabel }}</div>
             <div class="timeline">
               @for (marble of concatMapOutputMarbles(); track marble.id) {
                 <div
@@ -144,7 +140,7 @@
             </div>
           </div>
           <div class="timeline-group">
-            <div class="timeline-label">Final Output</div>
+            <div class="timeline-label">{{ copy().transformingStreams.finalOutputLabel }}</div>
             <div class="timeline final-output-timeline">
               @for (marble of concatMapAllOutputMarbles(); track marble.id) {
                 <div
@@ -157,7 +153,7 @@
             </div>
           </div>
           <div class="log-box">
-            <h4>Logs</h4>
+            <h4>{{ copy().transformingStreams.logsLabel }}</h4>
             @for (log of concatMapLogs(); track $index) {
               <p>
                 <span class="log-time">{{ log.time }}</span>
@@ -167,10 +163,10 @@
           </div>
           <div class="visualization-panel">
             <ah-marble-diagram
-              title="concatMap Stream Lifecycle"
-              description="Sequential execution: subsequent inner streams queue until active stream completes"
+              [title]="copy().transformingStreams.concatMap.marbleTitle"
+              [description]="copy().transformingStreams.concatMap.marbleDescription"
               [streams]="concatMapLanes()"
-              [operator]="concatMapOperator"
+              [operator]="concatMapOperator()"
             />
           </div>
           <div class="code-example">
@@ -180,7 +176,7 @@
               size="sm"
               (click)="toggleCode('concatMap')"
             >
-              {{ showConcatMapCode() ? 'Hide' : 'Show' }} Code
+              {{ showConcatMapCode() ? copy().common.hideCode : copy().common.showCode }}
             </button>
             @if (showConcatMapCode()) {
               <ah-code-block [code]="codeSnippets.concatMap" language="typescript" />
@@ -195,26 +191,22 @@
       <div class="card" [class.focused-card]="activeCase() === 'switchMap'">
         <div class="card-header">
           <div class="card-title-row">
-            <h3>The <code>switchMap</code> Operator</h3>
+            <h3>{{ copy().transformingStreams.switchMap.title }}</h3>
             @if (activeCase() === 'switchMap') {
-              <ah-tag>Focused View</ah-tag>
+              <ah-tag>{{ copy().common.focusedView }}</ah-tag>
             }
           </div>
-          <p>
-            Switches to a new inner Observable when the source emits, cancelling
-            the previous one. Ideal for cancellation.
-          </p>
+          <p>{{ copy().transformingStreams.switchMap.description }}</p>
         </div>
         <div class="card-content">
           <div class="everyday-example">
             <p>
-              <strong>Analogy:</strong> Typing in a search bar. You only care
-              about the results for the latest thing you typed. Old searches are
-              cancelled and discarded.
+              <strong>{{ copy().transformingStreams.analogyStrong }}</strong>
+              {{ copy().transformingStreams.switchMap.analogyText }}
             </p>
           </div>
           <div class="timeline-group">
-            <div class="timeline-label">Source Stream</div>
+            <div class="timeline-label">{{ copy().transformingStreams.sourceStreamLabel }}</div>
             <div class="timeline source-timeline">
               @for (marble of switchMapSourceMarbles(); track marble.id) {
                 <div
@@ -227,7 +219,7 @@
             </div>
           </div>
           <div class="timeline-group">
-            <div class="timeline-label">Inner Streams</div>
+            <div class="timeline-label">{{ copy().transformingStreams.innerStreamsLabel }}</div>
             <div class="inner-streams-container">
               @for (stream of switchMapInnerStreams(); track stream.id) {
                 <div
@@ -243,7 +235,7 @@
             </div>
           </div>
           <div class="timeline-group">
-            <div class="timeline-label">Output Stream (Animated)</div>
+            <div class="timeline-label">{{ copy().transformingStreams.outputAnimatedLabel }}</div>
             <div class="timeline">
               @for (marble of switchMapOutputMarbles(); track marble.id) {
                 <div
@@ -256,7 +248,7 @@
             </div>
           </div>
           <div class="timeline-group">
-            <div class="timeline-label">Final Output</div>
+            <div class="timeline-label">{{ copy().transformingStreams.finalOutputLabel }}</div>
             <div class="timeline final-output-timeline">
               @for (marble of switchMapAllOutputMarbles(); track marble.id) {
                 <div
@@ -269,7 +261,7 @@
             </div>
           </div>
           <div class="log-box">
-            <h4>Logs</h4>
+            <h4>{{ copy().transformingStreams.logsLabel }}</h4>
             @for (log of switchMapLogs(); track $index) {
               <p>
                 <span class="log-time">{{ log.time }}</span>
@@ -279,10 +271,10 @@
           </div>
           <div class="visualization-panel">
             <ah-marble-diagram
-              title="switchMap Stream Lifecycle"
-              description="Cancellation policy: active inner stream is unsubscribed upon new source emission"
+              [title]="copy().transformingStreams.switchMap.marbleTitle"
+              [description]="copy().transformingStreams.switchMap.marbleDescription"
               [streams]="switchMapLanes()"
-              [operator]="switchMapOperator"
+              [operator]="switchMapOperator()"
             />
           </div>
           <div class="code-example">
@@ -292,7 +284,7 @@
               size="sm"
               (click)="toggleCode('switchMap')"
             >
-              {{ showSwitchMapCode() ? 'Hide' : 'Show' }} Code
+              {{ showSwitchMapCode() ? copy().common.hideCode : copy().common.showCode }}
             </button>
             @if (showSwitchMapCode()) {
               <ah-code-block [code]="codeSnippets.switchMap" language="typescript" />
@@ -307,26 +299,22 @@
       <div class="card" [class.focused-card]="activeCase() === 'mergeMap'">
         <div class="card-header">
           <div class="card-title-row">
-            <h3>The <code>mergeMap</code> Operator</h3>
+            <h3>{{ copy().transformingStreams.mergeMap.title }}</h3>
             @if (activeCase() === 'mergeMap') {
-              <ah-tag>Focused View</ah-tag>
+              <ah-tag>{{ copy().common.focusedView }}</ah-tag>
             }
           </div>
-          <p>
-            Runs multiple inner Observables concurrently without cancelling or
-            queuing. Order depends on timing.
-          </p>
+          <p>{{ copy().transformingStreams.mergeMap.description }}</p>
         </div>
         <div class="card-content">
           <div class="everyday-example">
             <p>
-              <strong>Analogy:</strong> A busy intersection with multiple lanes
-              flowing at the same time. Cars from all directions merge into the
-              main flow as they arrive.
+              <strong>{{ copy().transformingStreams.analogyStrong }}</strong>
+              {{ copy().transformingStreams.mergeMap.analogyText }}
             </p>
           </div>
           <div class="timeline-group">
-            <div class="timeline-label">Source Stream</div>
+            <div class="timeline-label">{{ copy().transformingStreams.sourceStreamLabel }}</div>
             <div class="timeline source-timeline">
               @for (marble of mergeMapSourceMarbles(); track marble.id) {
                 <div
@@ -339,7 +327,7 @@
             </div>
           </div>
           <div class="timeline-group">
-            <div class="timeline-label">Inner Streams</div>
+            <div class="timeline-label">{{ copy().transformingStreams.innerStreamsLabel }}</div>
             <div class="inner-streams-container">
               @for (stream of mergeMapInnerStreams(); track stream.id) {
                 <div
@@ -355,7 +343,7 @@
             </div>
           </div>
           <div class="timeline-group">
-            <div class="timeline-label">Output Stream (Animated)</div>
+            <div class="timeline-label">{{ copy().transformingStreams.outputAnimatedLabel }}</div>
             <div class="timeline">
               @for (marble of mergeMapOutputMarbles(); track marble.id) {
                 <div
@@ -368,7 +356,7 @@
             </div>
           </div>
           <div class="timeline-group">
-            <div class="timeline-label">Final Output</div>
+            <div class="timeline-label">{{ copy().transformingStreams.finalOutputLabel }}</div>
             <div class="timeline final-output-timeline">
               @for (marble of mergeMapAllOutputMarbles(); track marble.id) {
                 <div
@@ -381,7 +369,7 @@
             </div>
           </div>
           <div class="log-box">
-            <h4>Logs</h4>
+            <h4>{{ copy().transformingStreams.logsLabel }}</h4>
             @for (log of mergeMapLogs(); track $index) {
               <p>
                 <span class="log-time">{{ log.time }}</span>
@@ -391,10 +379,10 @@
           </div>
           <div class="visualization-panel">
             <ah-marble-diagram
-              title="mergeMap Stream Lifecycle"
-              description="Concurrent interleaving: parallel inner streams emit independently as values resolve"
+              [title]="copy().transformingStreams.mergeMap.marbleTitle"
+              [description]="copy().transformingStreams.mergeMap.marbleDescription"
               [streams]="mergeMapLanes()"
-              [operator]="mergeMapOperator"
+              [operator]="mergeMapOperator()"
             />
           </div>
           <div class="code-example">
@@ -404,7 +392,7 @@
               size="sm"
               (click)="toggleCode('mergeMap')"
             >
-              {{ showMergeMapCode() ? 'Hide' : 'Show' }} Code
+              {{ showMergeMapCode() ? copy().common.hideCode : copy().common.showCode }}
             </button>
             @if (showMergeMapCode()) {
               <ah-code-block [code]="codeSnippets.mergeMap" language="typescript" />
@@ -419,26 +407,22 @@
       <div class="card" [class.focused-card]="activeCase() === 'exhaustMap'">
         <div class="card-header">
           <div class="card-title-row">
-            <h3>The <code>exhaustMap</code> Operator</h3>
+            <h3>{{ copy().transformingStreams.exhaustMap.title }}</h3>
             @if (activeCase() === 'exhaustMap') {
-              <ah-tag>Focused View</ah-tag>
+              <ah-tag>{{ copy().common.focusedView }}</ah-tag>
             }
           </div>
-          <p>
-            Ignores new source values while an inner Observable is currently
-            active. Ideal for spam prevention.
-          </p>
+          <p>{{ copy().transformingStreams.exhaustMap.description }}</p>
         </div>
         <div class="card-content">
           <div class="everyday-example">
             <p>
-              <strong>Analogy:</strong> A revolving door that only lets one
-              person enter at a time. Anyone attempting to enter while it is
-              turning must wait or is turned away.
+              <strong>{{ copy().transformingStreams.analogyStrong }}</strong>
+              {{ copy().transformingStreams.exhaustMap.analogyText }}
             </p>
           </div>
           <div class="timeline-group">
-            <div class="timeline-label">Source Stream</div>
+            <div class="timeline-label">{{ copy().transformingStreams.sourceStreamLabel }}</div>
             <div class="timeline source-timeline">
               @for (marble of exhaustMapSourceMarbles(); track marble.id) {
                 <div
@@ -451,7 +435,7 @@
             </div>
           </div>
           <div class="timeline-group">
-            <div class="timeline-label">Inner Streams</div>
+            <div class="timeline-label">{{ copy().transformingStreams.innerStreamsLabel }}</div>
             <div class="inner-streams-container">
               @for (stream of exhaustMapInnerStreams(); track stream.id) {
                 <div
@@ -467,7 +451,7 @@
             </div>
           </div>
           <div class="timeline-group">
-            <div class="timeline-label">Output Stream (Animated)</div>
+            <div class="timeline-label">{{ copy().transformingStreams.outputAnimatedLabel }}</div>
             <div class="timeline">
               @for (marble of exhaustMapOutputMarbles(); track marble.id) {
                 <div
@@ -480,7 +464,7 @@
             </div>
           </div>
           <div class="timeline-group">
-            <div class="timeline-label">Final Output</div>
+            <div class="timeline-label">{{ copy().transformingStreams.finalOutputLabel }}</div>
             <div class="timeline final-output-timeline">
               @for (marble of exhaustMapAllOutputMarbles(); track marble.id) {
                 <div
@@ -493,7 +477,7 @@
             </div>
           </div>
           <div class="log-box">
-            <h4>Logs</h4>
+            <h4>{{ copy().transformingStreams.logsLabel }}</h4>
             @for (log of exhaustMapLogs(); track $index) {
               <p>
                 <span class="log-time">{{ log.time }}</span>
@@ -503,10 +487,10 @@
           </div>
           <div class="visualization-panel">
             <ah-marble-diagram
-              title="exhaustMap Stream Lifecycle"
-              description="Spam prevention: new source emissions dropped while inner stream is in flight"
+              [title]="copy().transformingStreams.exhaustMap.marbleTitle"
+              [description]="copy().transformingStreams.exhaustMap.marbleDescription"
               [streams]="exhaustMapLanes()"
-              [operator]="exhaustMapOperator"
+              [operator]="exhaustMapOperator()"
             />
           </div>
           <div class="code-example">
@@ -516,7 +500,7 @@
               size="sm"
               (click)="toggleCode('exhaustMap')"
             >
-              {{ showExhaustMapCode() ? 'Hide' : 'Show' }} Code
+              {{ showExhaustMapCode() ? copy().common.hideCode : copy().common.showCode }}
             </button>
             @if (showExhaustMapCode()) {
               <ah-code-block [code]="codeSnippets.exhaustMap" language="typescript" />

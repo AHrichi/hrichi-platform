@@ -1,6 +1,6 @@
 <div class="service-box">
-  <p><strong>Receiver Component</strong></p>
+  <p><strong>{{ copy().sharingData.receiverComponentLabel }}</strong></p>
   <p>
-    Received: <span class="data-display">{{ dataService.data$ | async }}</span>
+    {{ copy().sharingData.receivedLabel }} <span class="data-display">{{ dataService.data$ | async }}</span>
   </p>
 </div>

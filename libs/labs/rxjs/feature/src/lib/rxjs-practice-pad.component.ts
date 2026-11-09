@@ -7,6 +7,7 @@ import {
   signal,
 } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { injectRxjsLabCopy } from './i18n/rxjs-lab-copy';
 import { NavigationComponent } from './navigation/navigation.component';
 import { ToasterComponent } from './shared/ui/toaster/toaster.component';
 
@@ -18,6 +19,7 @@ import { ToasterComponent } from './shared/ui/toaster/toaster.component';
   styleUrl: './rxjs-practice-pad.component.scss',
 })
 export class RxjsPracticePadComponent {
+  readonly copy = injectRxjsLabCopy();
   title = 'rxjs-practice-pad';
   isSidebarOpen = signal(true);
   isFullscreen = signal(false);

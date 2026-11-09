@@ -1,6 +1,7 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { Tag } from '@ah/ui';
+import { injectRxjsLabCopy } from '../i18n/rxjs-lab-copy';
 
 export interface LabExerciseItem {
   readonly path: string;
@@ -26,88 +27,8 @@ export interface LabCategory {
 })
 export class NavigationComponent {
   readonly isOpen = input.required<boolean>();
-
-  readonly categories: readonly LabCategory[] = [
-    {
-      id: 'foundations',
-      title: 'Core Mechanics',
-      badge: 'Tier 1',
-      exercises: [
-        {
-          path: './error-handling',
-          label: 'Error Handling',
-          description: 'catchError, retry, throwError',
-          icon: 'alert-circle',
-        },
-        {
-          path: './combining-streams',
-          label: 'Combining Streams',
-          description: 'withLatestFrom, combineLatest',
-          icon: 'git-merge',
-        },
-        {
-          path: './transforming-streams',
-          label: 'Transforming Streams',
-          description: 'concatMap, switchMap, mergeMap',
-          icon: 'git-branch',
-        },
-        {
-          path: './sharing-data',
-          label: 'Sharing Data',
-          description: 'Subject, BehaviorSubject',
-          icon: 'share-2',
-        },
-      ],
-    },
-    {
-      id: 'architecture',
-      title: 'Production Resilience',
-      badge: 'Tier 2',
-      exercises: [
-        {
-          path: './multicasting',
-          label: 'Multicasting',
-          description: 'Hot vs Cold, shareReplay',
-          icon: 'cast',
-        },
-        {
-          path: './reactive-caching',
-          label: 'Reactive Caching',
-          description: 'Cache-then-network, TTL',
-          icon: 'database',
-        },
-        {
-          path: './bulk-operations',
-          label: 'Bulk Operations',
-          description: 'forkJoin, bufferCount, toArray',
-          icon: 'layers',
-        },
-      ],
-    },
-    {
-      id: 'angular22',
-      title: 'Angular 22 & Interop',
-      badge: 'Tier 3',
-      exercises: [
-        {
-          path: './signals',
-          label: 'Power of Signals',
-          description: 'signal, linkedSignal, rxResource',
-          icon: 'zap',
-        },
-        {
-          path: './rxjs-vs-signals',
-          label: 'RxJS vs Signals',
-          description: 'Mental models & Coexistence',
-          icon: 'refresh-cw',
-        },
-        {
-          path: './quiz',
-          label: 'RxJS Challenge',
-          description: 'Interactive mastery test',
-          icon: 'award',
-        },
-      ],
-    },
-  ];
+  readonly copy = injectRxjsLabCopy();
+  readonly categories = computed<readonly LabCategory[]>(
+    () => this.copy().nav.categories,
+  );
 }

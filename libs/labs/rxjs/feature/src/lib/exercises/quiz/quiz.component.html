@@ -1,9 +1,9 @@
 <!-- src/app/exercises/quiz/quiz.component.html -->
 <div class="exercise-container">
   <ah-section-heading
-    eyebrow="Knowledge Assessment"
-    heading="RxJS & Angular Reactivity Challenge"
-    lead="Test your mastery of stream transformation, multicasting, error recovery, caching, and modern Angular 22 Signals."
+    [eyebrow]="copy().quiz.eyebrow"
+    [heading]="copy().quiz.heading"
+    [lead]="copy().quiz.lead"
   />
 
   @switch (quizState()) {
@@ -12,10 +12,10 @@
         <div class="card difficulty-card">
           <div class="card-header">
             <div class="card-title-row">
-              <h3>Beginner</h3>
-              <ah-tag>Fundamentals</ah-tag>
+              <h3>{{ copy().quiz.tracks.beginnerTitle }}</h3>
+              <ah-tag>{{ copy().quiz.tracks.beginnerBadge }}</ah-tag>
             </div>
-            <p>Observables, basic operators, and primary data sharing.</p>
+            <p>{{ copy().quiz.tracks.beginnerDesc }}</p>
           </div>
           <div class="card-content">
             <button
@@ -24,7 +24,7 @@
               size="sm"
               (click)="startQuiz('Beginner')"
             >
-              Start Beginner Track
+              {{ copy().quiz.tracks.beginnerBtn }}
             </button>
           </div>
         </div>
@@ -32,10 +32,10 @@
         <div class="card difficulty-card">
           <div class="card-header">
             <div class="card-title-row">
-              <h3>Mid-level</h3>
-              <ah-tag>Operators &amp; Subjects</ah-tag>
+              <h3>{{ copy().quiz.tracks.midTitle }}</h3>
+              <ah-tag>{{ copy().quiz.tracks.midBadge }}</ah-tag>
             </div>
-            <p>Higher-order mapping, multicasting, caching, and batching.</p>
+            <p>{{ copy().quiz.tracks.midDesc }}</p>
           </div>
           <div class="card-content">
             <button
@@ -44,7 +44,7 @@
               size="sm"
               (click)="startQuiz('Mid-level')"
             >
-              Start Mid-level Track
+              {{ copy().quiz.tracks.midBtn }}
             </button>
           </div>
         </div>
@@ -52,10 +52,10 @@
         <div class="card difficulty-card">
           <div class="card-header">
             <div class="card-title-row">
-              <h3>Senior</h3>
-              <ah-tag>Architecture &amp; Interop</ah-tag>
+              <h3>{{ copy().quiz.tracks.seniorTitle }}</h3>
+              <ah-tag>{{ copy().quiz.tracks.seniorBadge }}</ah-tag>
             </div>
-            <p>Zoneless execution, linkedSignal, rxResource, and edge cases.</p>
+            <p>{{ copy().quiz.tracks.seniorDesc }}</p>
           </div>
           <div class="card-content">
             <button
@@ -64,7 +64,7 @@
               size="sm"
               (click)="startQuiz('Senior')"
             >
-              Start Senior Track
+              {{ copy().quiz.tracks.seniorBtn }}
             </button>
           </div>
         </div>
@@ -81,7 +81,7 @@
           ></div>
         </div>
         <p class="question-counter">
-          Question {{ currentQuestionIndex() + 1 }} of {{ questions().length }}
+          {{ copy().quiz.questionProgress(currentQuestionIndex() + 1, questions().length) }}
         </p>
 
         <div class="card question-card">
@@ -128,11 +128,11 @@
                 (input)="selectAnswer(blankInput.value)"
                 (keydown.enter)="submitAnswer()"
                 [disabled]="isAnswered()"
-                placeholder="Type your answer and press Enter..."
+                [placeholder]="copy().quiz.answerPlaceholder"
               />
               @if (isAnswered()) {
                 <span class="answer-reveal" [class.correct]="isCorrect()">
-                  Correct answer: {{ currentQuestion().answer }}
+                  {{ copy().quiz.correctAnswerLabel }} {{ currentQuestion().answer }}
                 </span>
               }
             </div>
@@ -148,7 +148,7 @@
               (click)="submitAnswer()"
               [disabled]="selectedAnswer() === null"
             >
-              Submit Answer
+              {{ copy().quiz.submitAnswerBtn }}
             </button>
           </div>
         }
@@ -156,10 +156,10 @@
         @if (isAnswered()) {
           <div class="feedback-container">
             @if (isCorrect()) {
-              <p class="feedback correct">Correct! Well done.</p>
+              <p class="feedback correct">{{ copy().quiz.correctFeedback }}</p>
             } @else {
               <p class="feedback incorrect">
-                Not quite. This concept is covered in:
+                {{ copy().quiz.incorrectFeedback }}
               </p>
               <button
                 type="button"
@@ -167,7 +167,7 @@
                 size="sm"
                 (click)="navigateToConcept(currentQuestion().relatedRoute)"
               >
-                Review Concept
+                {{ copy().quiz.reviewConceptBtn }}
               </button>
             }
             <button
@@ -178,8 +178,8 @@
             >
               {{
                 currentQuestionIndex() < questions().length - 1
-                  ? 'Next Question'
-                  : 'Finish Quiz'
+                  ? copy().quiz.nextQuestionBtn
+                  : copy().quiz.finishQuizBtn
               }}
             </button>
           </div>
@@ -188,12 +188,12 @@
     }
     @case ('finished') {
       <div class="card results-card">
-        <h3>Quiz Complete!</h3>
+        <h3>{{ copy().quiz.quizCompleteTitle }}</h3>
         <p class="score">
-          You scored {{ score() }} out of {{ questions().length }}
+          {{ copy().quiz.scoreText(score(), questions().length) }}
         </p>
         <button type="button" ahButton="primary" size="sm" (click)="restart()">
-          Try Another Level
+          {{ copy().quiz.tryAnotherBtn }}
         </button>
       </div>
     }

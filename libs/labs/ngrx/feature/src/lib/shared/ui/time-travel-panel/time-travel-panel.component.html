@@ -2,8 +2,8 @@
   <div class="panel-header">
     <div class="title-meta">
       <span class="icon">⏱️</span>
-      <h4 class="title">Time-Travel State History</h4>
-      <ah-tag>{{ history().length }} actions recorded</ah-tag>
+      <h4 class="title">{{ copy().title }}</h4>
+      <ah-tag>{{ copy().actionsRecorded(history().length) }}</ah-tag>
     </div>
 
     <div class="scrubber-controls">
@@ -13,12 +13,12 @@
         size="sm"
         [disabled]="currentIndex() <= 0"
         (click)="stepPrevious()"
-        aria-label="Step backward one action"
+        [attr.aria-label]="copy().backAriaLabel"
       >
-        ◀ Back
+        {{ copy().backBtn }}
       </button>
       <span class="index-indicator">
-        Snapshot {{ currentIndex() + 1 }} / {{ history().length }}
+        {{ copy().snapshotIndicator(currentIndex() + 1, history().length) }}
       </span>
       <button
         type="button"
@@ -26,9 +26,9 @@
         size="sm"
         [disabled]="currentIndex() >= history().length - 1"
         (click)="stepNext()"
-        aria-label="Step forward one action"
+        [attr.aria-label]="copy().forwardAriaLabel"
       >
-        Forward ▶
+        {{ copy().forwardBtn }}
       </button>
       <button
         type="button"
@@ -37,7 +37,7 @@
         [disabled]="currentIndex() === history().length - 1"
         (click)="jumpToLatest()"
       >
-        Latest ⏭️
+        {{ copy().latestBtn }}
       </button>
     </div>
   </div>
@@ -68,11 +68,11 @@
 
   <div class="active-snapshot-view">
     <div class="snapshot-header">
-      <span class="view-title"
-        >Snapshot State (#{{ currentSnapshot()?.id ?? 0 }})</span
-      >
+      <span class="view-title">{{
+        copy().snapshotStateTitle(currentSnapshot()?.id ?? 0)
+      }}</span>
       @if (isTimeTravelling()) {
-        <ah-tag>⚠️ Time Travelling</ah-tag>
+        <ah-tag>{{ copy().timeTravellingBadge }}</ah-tag>
       }
     </div>
     <pre class="json-code"><code>{{ formattedSnapshot() }}</code></pre>

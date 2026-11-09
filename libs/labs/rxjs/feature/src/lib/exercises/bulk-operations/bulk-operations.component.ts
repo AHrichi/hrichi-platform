@@ -24,6 +24,7 @@ import {
   FileProcessingService,
   File,
 } from '../../shared/services/file-processing.service';
+import { injectRxjsLabCopy } from '../../i18n/rxjs-lab-copy';
 import { NotificationService } from '../../shared/services/notification.service';
 import { UseCaseFocusComponent } from '../../shared/ui/use-case-focus/use-case-focus.component';
 
@@ -48,15 +49,19 @@ interface FileItem extends File {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BulkOperationsComponent {
+  readonly copy = injectRxjsLabCopy();
   private fileService = inject(FileProcessingService);
   private notificationService = inject(NotificationService);
 
   // --- Focus View Options ---
-  readonly focusOptions: readonly SegmentedOption<string>[] = [
-    { value: 'all', label: 'All Bulk Operations' },
-    { value: 'forkJoin', label: 'forkJoin (Parallel)' },
-    { value: 'bufferCount', label: 'bufferCount (Batched)' },
-  ];
+  readonly focusOptions = computed<readonly SegmentedOption<string>[]>(() => {
+    const opts = this.copy().bulkOperations.focusOptions;
+    return [
+      { value: 'all', label: opts.all },
+      { value: 'forkJoin', label: opts.forkJoin },
+      { value: 'bufferCount', label: opts.bufferCount },
+    ];
+  });
   readonly activeCase = signal<string>('all');
 
   // --- Code Snippets & Visibility ---
@@ -105,10 +110,11 @@ from(largeFileList).pipe(
   isBufferCountProcessing = signal(false);
 
   readonly forkJoinLanes = computed<readonly AhStreamLane[]>(() => {
+    const b = this.copy().bulkOperations;
     const lanes: AhStreamLane[] = this.forkJoinFiles().map((file) => ({
       id: `file-${file.id}`,
       label: file.name,
-      badge: file.status,
+      badge: b.statusLabels[file.status],
       marbles:
         file.status === 'done'
           ? [
@@ -138,8 +144,8 @@ from(largeFileList).pipe(
     const allDone = files.length > 0 && files.every((f) => f.status === 'done');
     lanes.push({
       id: 'forkjoin-output',
-      label: 'Combined Parallel Output',
-      badge: 'forkJoin$',
+      label: b.forkJoin.outputLaneLabel,
+      badge: b.forkJoin.outputLaneBadge,
       isPrimary: true,
       marbles: allDone
         ? [
@@ -158,12 +164,14 @@ from(largeFileList).pipe(
     return lanes;
   });
 
-  readonly forkJoinOperator: AhOperatorTransform = {
-    name: 'forkJoin([file1$, file2$, file3$])',
-    description:
-      'Waits for all parallel source observables to complete, then emits a single dictionary/array containing their final values.',
-    formula: 'All complete ? Emit combined array : Await remaining streams',
-  };
+  readonly forkJoinOperator = computed<AhOperatorTransform>(() => {
+    const fj = this.copy().bulkOperations.forkJoin;
+    return {
+      name: 'forkJoin([file1$, file2$, file3$])',
+      description: fj.operatorDescription,
+      formula: fj.operatorFormula,
+    };
+  });
 
   // --- forkJoin Example ---
   processAllWithForkJoin() {

@@ -1,25 +1,25 @@
 <!-- src/app/exercises/bulk-operations/bulk-operations.component.html -->
 <div class="exercise-container">
   <ah-section-heading
-    eyebrow="Chapter 7 · Concurrency & Batching"
-    heading="Exercise: Bulk Operations"
-    lead="Handle multiple asynchronous streams in parallel with forkJoin or process items sequentially in chunks with bufferCount."
+    [eyebrow]="copy().bulkOperations.eyebrow"
+    [heading]="copy().bulkOperations.heading"
+    [lead]="copy().bulkOperations.lead"
   />
 
   <ah-use-case-focus
-    [options]="focusOptions"
+    [options]="focusOptions()"
     [(value)]="activeCase"
-    ariaLabel="Filter bulk operation"
+    [ariaLabel]="copy().bulkOperations.focusAriaLabel"
   />
 
   <div class="card config-card">
     <div class="card-header">
-      <h3>Configuration</h3>
+      <h3>{{ copy().bulkOperations.configTitle }}</h3>
     </div>
     <div class="card-content">
       <div class="config-group">
         <div class="config-item">
-          <label for="file-count">Total Files:</label>
+          <label for="file-count">{{ copy().bulkOperations.totalFilesLabel }}</label>
           <input
             id="file-count"
             type="number"
@@ -28,7 +28,7 @@
           />
         </div>
         <div class="config-item">
-          <label for="batch-size">Batch Size (for bufferCount):</label>
+          <label for="batch-size">{{ copy().bulkOperations.batchSizeLabel }}</label>
           <input
             id="batch-size"
             type="number"
@@ -46,22 +46,18 @@
       <div class="card" [class.focused-card]="activeCase() === 'forkJoin'">
         <div class="card-header">
           <div class="card-title-row">
-            <h3><code>forkJoin</code>: All or Nothing</h3>
+            <h3>{{ copy().bulkOperations.forkJoin.title }}</h3>
             @if (activeCase() === 'forkJoin') {
-              <ah-tag>Focused View</ah-tag>
+              <ah-tag>{{ copy().common.focusedView }}</ah-tag>
             }
           </div>
-          <p>
-            Waits for multiple Observables to complete and then emits an array
-            of their last values.
-          </p>
+          <p>{{ copy().bulkOperations.forkJoin.description }}</p>
         </div>
         <div class="card-content">
           <div class="everyday-example">
             <p>
-              <strong>Analogy:</strong> Ordering a multi-course meal. You have
-              to wait for the appetizer, main course, and dessert to all be
-              ready before the full meal is served.
+              <strong>{{ copy().bulkOperations.analogyStrong }}</strong>
+              {{ copy().bulkOperations.forkJoin.analogyText }}
             </p>
           </div>
           <div class="button-group">
@@ -72,7 +68,7 @@
               (click)="processAllWithForkJoin()"
               [disabled]="isForkJoinProcessing()"
             >
-              Process All Files
+              {{ copy().bulkOperations.forkJoin.processAllBtn }}
             </button>
             <button
               type="button"
@@ -80,24 +76,26 @@
               size="sm"
               (click)="reset('forkJoin')"
             >
-              Reset
+              {{ copy().common.reset }}
             </button>
           </div>
 
           <div class="display-grid">
             <div class="file-list">
-              <h4>Files to Process:</h4>
+              <h4>{{ copy().bulkOperations.filesToProcessTitle }}</h4>
               @for (file of forkJoinFiles(); track file.id) {
                 <div class="file-item" [ngClass]="file.status">
                   <span>{{ file.name }}</span>
-                  <span class="status-indicator">{{ file.status }}</span>
+                  <span class="status-indicator">{{
+                    copy().bulkOperations.statusLabels[file.status]
+                  }}</span>
                 </div>
               }
             </div>
             <div class="result-box">
-              <h4>Final Result (emitted once all are done):</h4>
+              <h4>{{ copy().bulkOperations.forkJoin.finalResultTitle }}</h4>
               @if (isForkJoinProcessing()) {
-                <p class="loading-text">Processing in parallel...</p>
+                <p class="loading-text">{{ copy().bulkOperations.forkJoin.processingParallelText }}</p>
               }
               @for (result of forkJoinResults(); track $index) {
                 <p class="result-item">{{ result }}</p>
@@ -108,10 +106,10 @@
           <!-- Live Marble Diagram Visualization -->
           <div class="visualization-panel">
             <ah-marble-diagram
-              title="forkJoin Concurrency Timeline"
-              description="Parallel execution locks step until all observables finish and then emits simultaneously"
+              [title]="copy().bulkOperations.forkJoin.marbleTitle"
+              [description]="copy().bulkOperations.forkJoin.marbleDescription"
               [streams]="forkJoinLanes()"
-              [operator]="forkJoinOperator"
+              [operator]="forkJoinOperator()"
             />
           </div>
 
@@ -122,7 +120,11 @@
               size="sm"
               (click)="toggleCode('forkJoin')"
             >
-              {{ showCode()['forkJoin'] ? 'Hide' : 'Show' }} Code Example
+              {{
+                showCode()['forkJoin']
+                  ? copy().common.hideCodeExample
+                  : copy().common.showCodeExample
+              }}
             </button>
             @if (showCode()['forkJoin']) {
               <ah-code-block [code]="codeSnippets.forkJoin" language="typescript" />
@@ -137,23 +139,18 @@
       <div class="card" [class.focused-card]="activeCase() === 'bufferCount'">
         <div class="card-header">
           <div class="card-title-row">
-            <h3><code>bufferCount</code>: Batch Processing</h3>
+            <h3>{{ copy().bulkOperations.bufferCount.title }}</h3>
             @if (activeCase() === 'bufferCount') {
-              <ah-tag>Focused View</ah-tag>
+              <ah-tag>{{ copy().common.focusedView }}</ah-tag>
             }
           </div>
-          <p>
-            Collects values from the source Observable into a buffer until it
-            reaches a specified size, then processes that batch before moving to
-            the next.
-          </p>
+          <p>{{ copy().bulkOperations.bufferCount.description }}</p>
         </div>
         <div class="card-content">
           <div class="everyday-example">
             <p>
-              <strong>Analogy:</strong> A factory assembly line that waits to
-              fill a box with {{ batchSize() }} items before sealing it and
-              sending it to shipping.
+              <strong>{{ copy().bulkOperations.analogyStrong }}</strong>
+              {{ copy().bulkOperations.bufferCount.analogyText(batchSize()) }}
             </p>
           </div>
           <div class="button-group">
@@ -164,7 +161,7 @@
               (click)="processInBatches()"
               [disabled]="isBufferCountProcessing()"
             >
-              Process in Batches
+              {{ copy().bulkOperations.bufferCount.processBatchesBtn }}
             </button>
             <button
               type="button"
@@ -172,28 +169,30 @@
               size="sm"
               (click)="reset('bufferCount')"
             >
-              Reset
+              {{ copy().common.reset }}
             </button>
           </div>
 
           <div class="display-grid">
             <div class="file-list">
-              <h4>Files to Process:</h4>
+              <h4>{{ copy().bulkOperations.filesToProcessTitle }}</h4>
               @for (file of bufferCountFiles(); track file.id) {
                 <div class="file-item" [ngClass]="file.status">
                   <span>{{ file.name }}</span>
-                  <span class="status-indicator">{{ file.status }}</span>
+                  <span class="status-indicator">{{
+                    copy().bulkOperations.statusLabels[file.status]
+                  }}</span>
                 </div>
               }
             </div>
             <div class="result-box">
-              <h4>Batched Results:</h4>
+              <h4>{{ copy().bulkOperations.bufferCount.batchedResultsTitle }}</h4>
               @if (isBufferCountProcessing()) {
-                <p class="loading-text">Processing batch...</p>
+                <p class="loading-text">{{ copy().bulkOperations.bufferCount.processingBatchText }}</p>
               }
               @for (batch of bufferCountResults(); track $index) {
                 <div class="batch-group">
-                  <strong>Batch {{ $index + 1 }}:</strong>
+                  <strong>{{ copy().bulkOperations.bufferCount.batchLabel($index + 1) }}</strong>
                   @for (result of batch; track $index) {
                     <p class="result-item">{{ result }}</p>
                   }
@@ -209,7 +208,11 @@
               size="sm"
               (click)="toggleCode('bufferCount')"
             >
-              {{ showCode()['bufferCount'] ? 'Hide' : 'Show' }} Code Example
+              {{
+                showCode()['bufferCount']
+                  ? copy().common.hideCodeExample
+                  : copy().common.showCodeExample
+              }}
             </button>
             @if (showCode()['bufferCount']) {
               <ah-code-block [code]="codeSnippets.bufferCount" language="typescript" />

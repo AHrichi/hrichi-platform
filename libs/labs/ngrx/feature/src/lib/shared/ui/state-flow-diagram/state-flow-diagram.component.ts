@@ -1,5 +1,11 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  input,
+} from '@angular/core';
 import { AhTag } from '@ah/ui';
+import { injectNgrxLabCopy } from '../../../i18n/ngrx-lab-copy';
 
 export type FlowStage =
   | 'idle'
@@ -18,25 +24,14 @@ export type FlowStage =
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StateFlowDiagramComponent {
+  private readonly labCopy = injectNgrxLabCopy();
+  readonly copy = computed(() => this.labCopy().stateFlowDiagram);
+
   readonly activeStage = input<FlowStage>('idle');
   readonly showEffect = input<boolean>(true);
 
   stageLabel(): string {
-    switch (this.activeStage()) {
-      case 'dispatch':
-        return 'Dispatching Action';
-      case 'effect':
-        return 'Intercepted by Effect (Async)';
-      case 'reducer':
-        return 'Pure State Transition';
-      case 'store':
-        return 'Store Tree Updated';
-      case 'selector':
-        return 'Emitting Memoized Slices';
-      case 'component':
-        return 'Component Re-rendered';
-      default:
-        return 'Idle (Awaiting Action)';
-    }
+    const stages = this.copy().stages;
+    return stages[this.activeStage()] ?? stages.idle;
   }
 }

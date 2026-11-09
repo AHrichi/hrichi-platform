@@ -20,6 +20,8 @@ import {
 import { StudyLmStore } from '../../store/studylm.store';
 import { StudyLmScreens } from '../../shell/studylm-screens';
 import { LessonGenerationService } from '../../services/lesson-generation.service';
+import { PreferencesStore } from '@ah/shared/state';
+import { STUDYLM_COPY } from '../../i18n/studylm-copy';
 import {
   COMPETENCY_TIERS,
   type CompetencyTier,
@@ -46,6 +48,11 @@ import {
 export class QuizArenaComponent {
   readonly store = inject(StudyLmStore);
   protected readonly screens = inject(StudyLmScreens);
+  private readonly preferences = inject(PreferencesStore, { optional: true });
+  readonly copy = computed(
+    () =>
+      STUDYLM_COPY[this.preferences?.language() ?? 'en'] ?? STUDYLM_COPY.en,
+  );
   private readonly lessonService = inject(LessonGenerationService);
   private readonly route = inject(ActivatedRoute);
   private readonly queryParams = toSignal(this.route.queryParamMap);
@@ -94,24 +101,32 @@ export class QuizArenaComponent {
     void this.screens.goToSectionRoadmap(section.id);
   }
 
-  readonly tierOptions: { label: string; value: CompetencyTier | 'all' }[] = [
-    { label: 'All Tiers', value: 'all' },
-    { label: 'Beginner', value: 'beginner' },
-    { label: 'Intermediate', value: 'intermediate' },
-    { label: 'Expert', value: 'expert' },
-  ];
+  readonly tierOptions = computed<
+    { label: string; value: CompetencyTier | 'all' }[]
+  >(() => {
+    const q = this.copy().quiz;
+    return [
+      { label: q.allTiers, value: 'all' },
+      { label: q.beginner, value: 'beginner' },
+      { label: q.intermediate, value: 'intermediate' },
+      { label: q.expert, value: 'expert' },
+    ];
+  });
 
-  readonly sectionOptions = computed<AhSelectOption[]>(() => [
-    {
-      value: 'all',
-      label: `All Sections (${this.store.activeQuizQuestions().length} questions)`,
-    },
-    ...this.store.allSections().map((sec) => ({
-      value: sec.id,
-      label: `${sec.code} - ${sec.title}`,
-      hint: `${sec.difficultyTier.toUpperCase()}${sec.officialDocs[0] ? ' · ' + sec.officialDocs[0].title : ''}`,
-    })),
-  ]);
+  readonly sectionOptions = computed<AhSelectOption[]>(() => {
+    const q = this.copy().quiz;
+    return [
+      {
+        value: 'all',
+        label: `${q.allSections} (${this.store.activeQuizQuestions().length} ${q.questionsUnit})`,
+      },
+      ...this.store.allSections().map((sec) => ({
+        value: sec.id,
+        label: `${sec.code} - ${sec.title}`,
+        hint: `${sec.difficultyTier.toUpperCase()}${sec.officialDocs[0] ? ' · ' + sec.officialDocs[0].title : ''}`,
+      })),
+    ];
+  });
 
   onSectionSelect(sectionId: string | null): void {
     this.store.setQuizSectionFilter(sectionId || 'all');

@@ -20,6 +20,7 @@ import {
   SegmentedOption,
   Tag,
 } from '@ah/ui';
+import { injectRxjsLabCopy } from '../../i18n/rxjs-lab-copy';
 import { NotificationService } from '../../shared/services/notification.service';
 import { UseCaseFocusComponent } from '../../shared/ui/use-case-focus/use-case-focus.component';
 
@@ -57,16 +58,21 @@ export interface UserProfile {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SignalsComponent {
+  readonly copy = injectRxjsLabCopy();
+
   // --- Focus View Options ---
-  readonly focusOptions: readonly SegmentedOption<string>[] = [
-    { value: 'all', label: 'All Signal Topics' },
-    { value: 'basics', label: 'Signal Basics' },
-    { value: 'toSignal', label: 'toSignal()' },
-    { value: 'linkedSignal', label: 'linkedSignal()' },
-    { value: 'rxResource', label: 'rxResource()' },
-    { value: 'resource', label: 'resource() [Promise]' },
-    { value: 'toObservable', label: 'toObservable()' },
-  ];
+  readonly focusOptions = computed<readonly SegmentedOption<string>[]>(() => {
+    const opts = this.copy().signals.focusOptions;
+    return [
+      { value: 'all', label: opts.all },
+      { value: 'basics', label: opts.basics },
+      { value: 'toSignal', label: opts.toSignal },
+      { value: 'linkedSignal', label: opts.linkedSignal },
+      { value: 'rxResource', label: opts.rxResource },
+      { value: 'resource', label: opts.resource },
+      { value: 'toObservable', label: opts.toObservable },
+    ];
+  });
   readonly activeCase = signal<string>('all');
 
   readonly codeSnippets = {
@@ -112,8 +118,8 @@ debouncedSearch = toSignal(
   isStockLow = computed(() => this.quantity() <= 5);
   stockMessage = computed(() =>
     this.isStockLow()
-      ? `Only ${this.quantity()} left in stock - order soon!`
-      : `${this.quantity()} in stock.`,
+      ? this.copy().signals.computed.lowStockMsg(this.quantity())
+      : this.copy().signals.computed.inStockMsg(this.quantity()),
   );
 
   // --- 3. Effect (Side Effect) ---

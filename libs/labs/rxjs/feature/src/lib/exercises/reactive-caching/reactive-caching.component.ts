@@ -21,6 +21,7 @@ import {
   SegmentedOption,
   Tag,
 } from '@ah/ui';
+import { injectRxjsLabCopy } from '../../i18n/rxjs-lab-copy';
 import { UserDataService, User } from '../../shared/services/user-data.service';
 import { NotificationService } from '../../shared/services/notification.service';
 import { UseCaseFocusComponent } from '../../shared/ui/use-case-focus/use-case-focus.component';
@@ -48,16 +49,20 @@ interface LogEntry {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ReactiveCachingComponent {
+  readonly copy = injectRxjsLabCopy();
   private userDataService = inject(UserDataService);
   private notificationService = inject(NotificationService);
 
   // --- Focus View Options ---
-  readonly focusOptions: readonly SegmentedOption<string>[] = [
-    { value: 'all', label: 'All Users (1, 2, 3)' },
-    { value: 'user-1', label: 'User 1 (Alice)' },
-    { value: 'user-2', label: 'User 2 (Bob)' },
-    { value: 'user-3', label: 'User 3 (Charlie)' },
-  ];
+  readonly focusOptions = computed<readonly SegmentedOption<string>[]>(() => {
+    const opts = this.copy().reactiveCaching.focusOptions;
+    return [
+      { value: 'all', label: opts.all },
+      { value: 'user-1', label: opts.user1 },
+      { value: 'user-2', label: opts.user2 },
+      { value: 'user-3', label: opts.user3 },
+    ];
+  });
   readonly activeCase = signal<string>('all');
 
   private cache = new Map<number, Observable<User | undefined>>();
@@ -93,29 +98,32 @@ export class ReactiveCachingComponent {
       }
     });
 
+    const c = this.copy().reactiveCaching;
     return [
       {
         id: 'network-lane',
-        label: 'Network Stream (Cold Request)',
-        badge: 'Uncached API',
+        label: c.networkLaneLabel,
+        badge: c.networkLaneBadge,
         marbles: networkMarbles,
       },
       {
         id: 'cache-lane',
-        label: 'Replayed Cache Stream (shareReplay)',
-        badge: 'Zero Latency',
+        label: c.cacheLaneLabel,
+        badge: c.cacheLaneBadge,
         isPrimary: true,
         marbles: cacheMarbles,
       },
     ];
   });
 
-  readonly cachingOperator: AhOperatorTransform = {
-    name: 'shareReplay({ bufferSize: 1, refCount: false })',
-    description:
-      'Caches the most recent emission and replays it synchronously to future subscribers without repeating the upstream execution.',
-    formula: 'First subscriber: HTTP -> Cache; Subsequent: Replay from memory',
-  };
+  readonly cachingOperator = computed<AhOperatorTransform>(() => {
+    const c = this.copy().reactiveCaching;
+    return {
+      name: 'shareReplay({ bufferSize: 1, refCount: false })',
+      description: c.operatorDescription,
+      formula: c.operatorFormula,
+    };
+  });
 
   readonly codeSnippet = `// ⚡ Production Pattern: In-Memory Stream Cache with shareReplay
 @Injectable({ providedIn: 'root' })

@@ -1,15 +1,15 @@
 <!-- src/app/exercises/signals/signals.component.html -->
 <div class="exercise-container">
   <ah-section-heading
-    eyebrow="Angular 22 · Reactive Primitives"
-    heading="Exercise: Signals & Reactive Interop"
-    lead="Explore fine-grained signals, derived computeds, side-effects, linkedSignal resets, and bidirectional RxJS interop with toSignal, toObservable, and rxResource."
+    [eyebrow]="copy().signals.eyebrow"
+    [heading]="copy().signals.heading"
+    [lead]="copy().signals.lead"
   />
 
   <ah-use-case-focus
-    [options]="focusOptions"
+    [options]="focusOptions()"
     [(value)]="activeCase"
-    ariaLabel="Filter signal topic"
+    [ariaLabel]="copy().signals.focusAriaLabel"
   />
 
   <div class="operators-grid" [class.single-case]="activeCase() !== 'all'">
@@ -18,20 +18,17 @@
       <div class="card" [class.focused-card]="activeCase() === 'basics'">
         <div class="card-header">
           <div class="card-title-row">
-            <h3>1. Writable Signals: <code>signal()</code></h3>
+            <h3>{{ copy().signals.writable.title }}</h3>
             @if (activeCase() === 'basics') {
-              <ah-tag>Focused View</ah-tag>
+              <ah-tag>{{ copy().common.focusedView }}</ah-tag>
             }
           </div>
-          <p>
-            The fundamental sources of truth in modern Angular. Directly mutate
-            state and notify fine-grained dependencies.
-          </p>
+          <p>{{ copy().signals.writable.description }}</p>
         </div>
         <div class="card-content">
           <div class="config-group">
             <div class="config-item">
-              <label for="first-name">First Name:</label>
+              <label for="first-name">{{ copy().signals.writable.firstNameLabel }}</label>
               <input
                 id="first-name"
                 type="text"
@@ -40,7 +37,7 @@
               />
             </div>
             <div class="config-item">
-              <label for="last-name">Last Name:</label>
+              <label for="last-name">{{ copy().signals.writable.lastNameLabel }}</label>
               <input
                 id="last-name"
                 type="text"
@@ -49,7 +46,7 @@
               />
             </div>
             <div class="config-item">
-              <span class="field-label">Quantity:</span>
+              <span class="field-label">{{ copy().signals.writable.quantityLabel }}</span>
               <div class="quantity-control">
                 <button
                   type="button"
@@ -78,20 +75,17 @@
       <div class="card" [class.focused-card]="activeCase() === 'basics'">
         <div class="card-header">
           <div class="card-title-row">
-            <h3>2. Computed Signals: <code>computed()</code></h3>
+            <h3>{{ copy().signals.computed.title }}</h3>
             @if (activeCase() === 'basics') {
-              <ah-tag>Focused View</ah-tag>
+              <ah-tag>{{ copy().common.focusedView }}</ah-tag>
             }
           </div>
-          <p>
-            Derive read-only values memoized on change. Evaluated lazily and
-            re-computed only when dependencies change.
-          </p>
+          <p>{{ copy().signals.computed.description }}</p>
         </div>
         <div class="card-content">
           <div class="computed-grid">
             <div class="computed-item">
-              <span class="field-label">Full Name:</span>
+              <span class="field-label">{{ copy().signals.computed.fullNameLabel }}</span>
               <div
                 class="data-display highlight-on-change"
                 [class.changed]="fullName()"
@@ -100,7 +94,7 @@
               </div>
             </div>
             <div class="computed-item">
-              <span class="field-label">Is Stock Low?</span>
+              <span class="field-label">{{ copy().signals.computed.isStockLowLabel }}</span>
               <div
                 class="data-display highlight-on-change"
                 [class.changed]="isStockLow()"
@@ -109,7 +103,7 @@
               </div>
             </div>
             <div class="computed-item full-width">
-              <span class="field-label">Stock Message:</span>
+              <span class="field-label">{{ copy().signals.computed.stockMessageLabel }}</span>
               <div
                 class="data-display highlight-on-change"
                 [class.changed]="stockMessage()"
@@ -126,19 +120,16 @@
       <div class="card" [class.focused-card]="activeCase() === 'basics'">
         <div class="card-header">
           <div class="card-title-row">
-            <h3>3. Effects: <code>effect()</code></h3>
+            <h3>{{ copy().signals.effect.title }}</h3>
             @if (activeCase() === 'basics') {
-              <ah-tag>Focused View</ah-tag>
+              <ah-tag>{{ copy().common.focusedView }}</ah-tag>
             }
           </div>
-          <p>
-            Side-effects scheduled on microtask ticks whenever tracked signals
-            change.
-          </p>
+          <p>{{ copy().signals.effect.description }}</p>
         </div>
         <div class="card-content">
           <div class="log-box">
-            <h4>Effect Audit Trail</h4>
+            <h4>{{ copy().signals.effect.auditTrailTitle }}</h4>
             @for (log of logs(); track log.id) {
               <p class="log-entry">{{ log.message }}</p>
             }
@@ -152,29 +143,24 @@
       <div class="card" [class.focused-card]="activeCase() === 'toSignal'">
         <div class="card-header">
           <div class="card-title-row">
-            <h3>4. RxJS Interop: <code>toSignal()</code></h3>
+            <h3>{{ copy().signals.toSignal.title }}</h3>
             @if (activeCase() === 'toSignal') {
-              <ah-tag>Focused View</ah-tag>
+              <ah-tag>{{ copy().common.focusedView }}</ah-tag>
             }
           </div>
-          <p>
-            Converts an RxJS Observable into a reactive read-only Signal with
-            automatic subscription cleanup.
-          </p>
+          <p>{{ copy().signals.toSignal.description }}</p>
         </div>
         <div class="card-content">
           <div class="everyday-example">
             <p>
-              <strong>Analogy:</strong> Subscribing to a publication
-              (Observable). Each new release is placed directly in your mailbox
-              (Signal), ready to read synchronously without manual subscription
-              boilerplates.
+              <strong>{{ copy().signals.analogyStrong }}</strong>
+              {{ copy().signals.toSignal.analogyText }}
             </p>
           </div>
 
           <div class="timeline-group">
             <div class="timeline-label">
-              RxJS <code>interval(1000)</code> Observable Stream
+              {{ copy().signals.toSignal.streamLabel }}
             </div>
             <div class="timeline">
               @for (marble of observableMarbles(); track marble.id) {
@@ -188,7 +174,7 @@
           <div class="computed-grid">
             <div class="computed-item">
               <span class="field-label"
-                >Resulting Signal (<code>counterSignal</code>):</span
+                >{{ copy().signals.toSignal.resultingSignalLabel }}</span
               >
               <div
                 class="data-display highlight-on-change"
@@ -199,7 +185,7 @@
             </div>
             <div class="computed-item">
               <span class="field-label"
-                >Computed from Signal (<code>isEven</code>):</span
+                >{{ copy().signals.toSignal.computedEvenLabel }}</span
               >
               <div
                 class="data-display highlight-on-change"
@@ -218,7 +204,7 @@
                 size="sm"
                 (click)="startCounter()"
               >
-                Start Stream
+                {{ copy().signals.toSignal.startStreamBtn }}
               </button>
             } @else {
               <button
@@ -227,7 +213,7 @@
                 size="sm"
                 (click)="stopCounter()"
               >
-                Stop Stream
+                {{ copy().signals.toSignal.stopStreamBtn }}
               </button>
             }
             <button
@@ -236,7 +222,7 @@
               size="sm"
               (click)="resetCounter()"
             >
-              Reset
+              {{ copy().common.reset }}
             </button>
           </div>
 
@@ -252,16 +238,12 @@
       <div class="card" [class.focused-card]="activeCase() === 'linkedSignal'">
         <div class="card-header">
           <div class="card-title-row">
-            <h3>5. Angular 22: <code>linkedSignal()</code></h3>
+            <h3>{{ copy().signals.linkedSignal.title }}</h3>
             @if (activeCase() === 'linkedSignal') {
-              <ah-tag>Focused View</ah-tag>
+              <ah-tag>{{ copy().common.focusedView }}</ah-tag>
             }
           </div>
-          <p>
-            A writable signal that resets to a computed default whenever its
-            source dependency changes, while still supporting direct user
-            mutations.
-          </p>
+          <p>{{ copy().signals.linkedSignal.description }}</p>
         </div>
         <div class="card-content">
           @let currentTier = planTier();
@@ -270,16 +252,14 @@
 
           <div class="everyday-example">
             <p>
-              <strong>Why linkedSignal?</strong> With <code>computed()</code>,
-              state is strictly read-only. With separate writable signals and
-              effects, synchronization is prone to glitches.
-              <code>linkedSignal()</code> solves this cleanly.
+              <strong>{{ copy().signals.linkedSignal.whyStrong }}</strong>
+              {{ copy().signals.linkedSignal.whyText }}
             </p>
           </div>
 
           <div class="config-group">
             <div class="config-item">
-              <span class="field-label">Choose Plan Tier:</span>
+              <span class="field-label">{{ copy().signals.linkedSignal.choosePlanLabel }}</span>
               <div class="button-group-inline">
                 <button
                   type="button"
@@ -289,7 +269,7 @@
                   size="sm"
                   (click)="selectPlanTier('Starter')"
                 >
-                  Starter (5)
+                  {{ copy().signals.linkedSignal.starterBtn }}
                 </button>
                 <button
                   type="button"
@@ -297,7 +277,7 @@
                   size="sm"
                   (click)="selectPlanTier('Pro')"
                 >
-                  Pro (25)
+                  {{ copy().signals.linkedSignal.proBtn }}
                 </button>
                 <button
                   type="button"
@@ -307,14 +287,14 @@
                   size="sm"
                   (click)="selectPlanTier('Enterprise')"
                 >
-                  Enterprise (100)
+                  {{ copy().signals.linkedSignal.enterpriseBtn }}
                 </button>
               </div>
             </div>
 
             <div class="config-item">
               <span class="field-label"
-                >Adjust Compute Credits (Direct Mutation):</span
+                >{{ copy().signals.linkedSignal.adjustCreditsLabel }}</span
               >
               <div class="quantity-control">
                 <button
@@ -339,17 +319,17 @@
               </div>
               <div class="credits-status-row">
                 @if (isCustom) {
-                  <ah-tag>Overridden</ah-tag>
+                  <ah-tag>{{ copy().signals.linkedSignal.overriddenBadge }}</ah-tag>
                   <button
                     type="button"
                     ahButton="ghost"
                     size="sm"
                     (click)="resetCreditsToDefault()"
                   >
-                    Reset to default
+                    {{ copy().signals.linkedSignal.resetDefaultBtn }}
                   </button>
                 } @else {
-                  <span class="default-badge">Plan default</span>
+                  <span class="default-badge">{{ copy().signals.linkedSignal.planDefaultBadge }}</span>
                 }
               </div>
             </div>
@@ -367,15 +347,12 @@
       <div class="card" [class.focused-card]="activeCase() === 'rxResource'">
         <div class="card-header">
           <div class="card-title-row">
-            <h3>6. Angular 22: <code>rxResource()</code> Async Loader</h3>
+            <h3>{{ copy().signals.rxResource.title }}</h3>
             @if (activeCase() === 'rxResource') {
-              <ah-tag>Focused View</ah-tag>
+              <ah-tag>{{ copy().common.focusedView }}</ah-tag>
             }
           </div>
-          <p>
-            Bridges asynchronous RxJS streams directly into declarative Signals
-            with loading flags, cancellation, and error boundaries.
-          </p>
+          <p>{{ copy().signals.rxResource.description }}</p>
         </div>
         <div class="card-content">
           @let resource = userProfileResource;
@@ -385,17 +362,14 @@
 
           <div class="everyday-example">
             <p>
-              <strong>Async Data in Zoneless Angular:</strong>
-              <code>rxResource()</code> executes an RxJS loader stream, exposing
-              synchronous signals for <code>value()</code>,
-              <code>isLoading()</code>, and <code>status()</code> with zero
-              <code>zone.js</code>.
+              <strong>{{ copy().signals.rxResource.zonelessStrong }}</strong>
+              {{ copy().signals.rxResource.zonelessText }}
             </p>
           </div>
 
           <div class="resource-panel">
             <div class="resource-controls">
-              <span class="field-label">Select User ID:</span>
+              <span class="field-label">{{ copy().signals.rxResource.selectUserIdLabel }}</span>
               <div class="button-group-inline">
                 <button
                   type="button"
@@ -403,7 +377,7 @@
                   size="sm"
                   (click)="selectUser(1)"
                 >
-                  User 1
+                  {{ copy().signals.rxResource.userBtn(1) }}
                 </button>
                 <button
                   type="button"
@@ -411,7 +385,7 @@
                   size="sm"
                   (click)="selectUser(2)"
                 >
-                  User 2
+                  {{ copy().signals.rxResource.userBtn(2) }}
                 </button>
                 <button
                   type="button"
@@ -419,7 +393,7 @@
                   size="sm"
                   (click)="selectUser(3)"
                 >
-                  User 3
+                  {{ copy().signals.rxResource.userBtn(3) }}
                 </button>
                 <button
                   type="button"
@@ -427,7 +401,7 @@
                   size="sm"
                   (click)="reloadUserResource()"
                 >
-                  Reload Stream
+                  {{ copy().signals.rxResource.reloadStreamBtn }}
                 </button>
               </div>
             </div>
@@ -436,13 +410,13 @@
               @if (loading) {
                 <div class="loading-state">
                   <span class="spinner"></span>
-                  <span>Streaming data via RxJS...</span>
+                  <span>{{ copy().signals.rxResource.streamingDataText }}</span>
                 </div>
               } @else if (profile) {
                 <div class="profile-card">
                   <div class="profile-header">
                     <span class="profile-name">{{ profile.name }}</span>
-                    <ah-tag>Status: {{ status }}</ah-tag>
+                    <ah-tag>{{ copy().signals.statusPrefix }} {{ status }}</ah-tag>
                   </div>
                   <p class="profile-role">{{ profile.role }}</p>
                   <p class="profile-quota">{{ profile.quota }}</p>
@@ -463,15 +437,12 @@
       <div class="card" [class.focused-card]="activeCase() === 'resource'">
         <div class="card-header">
           <div class="card-title-row">
-            <h3>7. Angular 22: <code>resource()</code> Promise Loader</h3>
+            <h3>{{ copy().signals.resource.title }}</h3>
             @if (activeCase() === 'resource') {
-              <ah-tag>Focused View</ah-tag>
+              <ah-tag>{{ copy().common.focusedView }}</ah-tag>
             }
           </div>
-          <p>
-            Async loader using native async/await Promises with automatic
-            AbortSignal cancellation support.
-          </p>
+          <p>{{ copy().signals.resource.description }}</p>
         </div>
         <div class="card-content">
           @let art = articleResource.value();
@@ -480,18 +451,14 @@
 
           <div class="everyday-example">
             <p>
-              <strong>Native Promises in Zoneless:</strong> While
-              <code>rxResource()</code> wraps RxJS Observables,
-              <code>resource()</code> connects directly to standard
-              <code>fetch()</code> or async/await functions, passing an
-              <code>AbortSignal</code> that aborts if the parameter changes
-              before completion.
+              <strong>{{ copy().signals.resource.promisesStrong }}</strong>
+              {{ copy().signals.resource.promisesText }}
             </p>
           </div>
 
           <div class="resource-panel">
             <div class="resource-controls">
-              <span class="field-label">Select Search Topic:</span>
+              <span class="field-label">{{ copy().signals.resource.selectTopicLabel }}</span>
               <div class="button-group-inline">
                 <button
                   type="button"
@@ -533,7 +500,7 @@
                   size="sm"
                   (click)="reloadArticleResource()"
                 >
-                  Reload
+                  {{ copy().signals.resource.reloadBtn }}
                 </button>
               </div>
             </div>
@@ -542,13 +509,13 @@
               @if (isArtLoading) {
                 <div class="loading-state">
                   <span class="spinner"></span>
-                  <span>Executing async loader...</span>
+                  <span>{{ copy().signals.resource.executingLoaderText }}</span>
                 </div>
               } @else if (art) {
                 <div class="profile-card">
                   <div class="profile-header">
                     <span class="profile-name">{{ art.title }}</span>
-                    <ah-tag>Status: {{ artStatus }}</ah-tag>
+                    <ah-tag>{{ copy().signals.statusPrefix }} {{ artStatus }}</ah-tag>
                   </div>
                   <p class="profile-role">{{ art.summary }}</p>
                   <p class="profile-quota">{{ art.readTime }}</p>
@@ -569,18 +536,12 @@
       <div class="card" [class.focused-card]="activeCase() === 'toObservable'">
         <div class="card-header">
           <div class="card-title-row">
-            <h3>
-              7. Bidirectional Interop: <code>toObservable()</code> +
-              <code>toSignal()</code>
-            </h3>
+            <h3>{{ copy().signals.toObservable.title }}</h3>
             @if (activeCase() === 'toObservable') {
-              <ah-tag>Focused View</ah-tag>
+              <ah-tag>{{ copy().common.focusedView }}</ah-tag>
             }
           </div>
-          <p>
-            Signal input piped through RxJS operators (like
-            <code>debounceTime</code>), then mirrored back into a Signal.
-          </p>
+          <p>{{ copy().signals.toObservable.description }}</p>
         </div>
         <div class="card-content">
           @let query = searchQuery();
@@ -589,23 +550,23 @@
           <div class="config-group">
             <div class="config-item">
               <label for="search-input"
-                >Type to search (debounced 350ms):</label
+                >{{ copy().signals.toObservable.typeToSearchLabel }}</label
               >
               <input
                 id="search-input"
                 type="text"
                 [value]="query"
                 (input)="onSearchChange($event)"
-                placeholder="Type search terms..."
+                [attr.placeholder]="copy().signals.toObservable.searchPlaceholder"
               />
             </div>
             <div class="computed-grid">
               <div class="computed-item">
-                <span class="field-label">Raw Signal Input:</span>
+                <span class="field-label">{{ copy().signals.toObservable.rawInputLabel }}</span>
                 <div class="data-display">{{ query }}</div>
               </div>
               <div class="computed-item">
-                <span class="field-label">Debounced + UpperCase Signal:</span>
+                <span class="field-label">{{ copy().signals.toObservable.debouncedSignalLabel }}</span>
                 <div class="data-display highlight-on-change">
                   {{ debounced }}
                 </div>

@@ -32,7 +32,10 @@ export const sharedMappings = mappingsFromWorkspace({ singleton: true })
     '@ah/platform/app-mode',
     '@ah/platform/federation',
     '@ah/platform/inspector',
-    '@ah/shared/*',
+    '@ah/shared/content',
+    '@ah/shared/state',
+    '@ah/shared/site-config',
+    '@ah/shared/contracts',
     '@ah/ui',
     '@ah/design-system/*',
   ])

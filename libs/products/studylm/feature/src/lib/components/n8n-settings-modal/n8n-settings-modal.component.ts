@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   inject,
   signal,
 } from '@angular/core';
@@ -15,6 +16,8 @@ import {
 } from '@ah/ui';
 import { StudyLmStore } from '../../store/studylm.store';
 import { StudyLmApiService } from '../../services/studylm-api.service';
+import { PreferencesStore } from '@ah/shared/state';
+import { STUDYLM_COPY } from '../../i18n/studylm-copy';
 import type { N8nConnectionMode } from '@ah/products/studylm/domain';
 
 interface N8nFormModel {
@@ -44,12 +47,22 @@ interface N8nFormModel {
 export class N8nSettingsModalComponent {
   readonly store = inject(StudyLmStore);
   private readonly apiService = inject(StudyLmApiService);
+  private readonly preferences = inject(PreferencesStore, { optional: true });
+  readonly copy = computed(
+    () =>
+      STUDYLM_COPY[this.preferences?.language() ?? 'en'] ?? STUDYLM_COPY.en,
+  );
 
-  readonly modeOptions: { label: string; value: N8nConnectionMode }[] = [
-    { label: 'Cloud Tunnel (ngrok)', value: 'tunnel' },
-    { label: 'Localhost (Docker)', value: 'local' },
-    { label: 'Custom Webhook', value: 'custom' },
-  ];
+  readonly modeOptions = computed<
+    { label: string; value: N8nConnectionMode }[]
+  >(() => {
+    const m = this.copy().modals;
+    return [
+      { label: m.modeTunnel, value: 'tunnel' },
+      { label: m.modeLocal, value: 'local' },
+      { label: m.modeCustom, value: 'custom' },
+    ];
+  });
 
   readonly model = signal<N8nFormModel>({
     mode: this.store.n8nConfig().mode,

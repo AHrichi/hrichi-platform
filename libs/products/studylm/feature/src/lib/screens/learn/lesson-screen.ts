@@ -21,6 +21,8 @@ import { LessonGenerationService } from '../../services/lesson-generation.servic
 import { StudyLmStorageService } from '../../services/studylm-storage.service';
 import { StudyLmStore } from '../../store/studylm.store';
 import { StudyLmScreens } from '../../shell/studylm-screens';
+import { PreferencesStore } from '@ah/shared/state';
+import { STUDYLM_COPY } from '../../i18n/studylm-copy';
 
 /** One lesson, opened where the learner left it, or followed as it's written. */
 @Component({
@@ -29,12 +31,13 @@ import { StudyLmScreens } from '../../shell/studylm-screens';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <nav class="lesson-top-nav" aria-label="Lesson navigation">
-      <a class="back" routerLink="..">← All lessons</a>
+      <a class="back" routerLink="..">{{ copy().learn.allLessonsBack }}</a>
 
       @if (relatedSection(); as sec) {
         <div class="section-hub-nav">
           <span class="hub-label"
-            >Section {{ sec.code }}: <strong>{{ sec.title }}</strong></span
+            >{{ copy().learn.sectionPrefix }} {{ sec.code }}:
+            <strong>{{ sec.title }}</strong></span
           >
           <div class="hub-btn-group">
             <button
@@ -43,7 +46,7 @@ import { StudyLmScreens } from '../../shell/studylm-screens';
               (click)="goToRoadmap(sec.id)"
               title="Locate and open this section on the Roadmap"
             >
-              🗺️ Roadmap
+              🗺️ {{ copy().learn.jumpRoadmap }}
             </button>
             <button
               type="button"
@@ -51,7 +54,7 @@ import { StudyLmScreens } from '../../shell/studylm-screens';
               (click)="goToFlashcards(sec.id)"
               title="Practice flashcards for this section"
             >
-              🃏 Flashcards ({{ sectionCardsCount() }})
+              🃏 {{ copy().screens.flashcards }} ({{ sectionCardsCount() }})
             </button>
             <button
               type="button"
@@ -59,7 +62,7 @@ import { StudyLmScreens } from '../../shell/studylm-screens';
               (click)="goToQuiz(sec.id)"
               title="Take diagnostic quiz for this section"
             >
-              🎯 Quiz ({{ sectionQuizCount() }})
+              🎯 {{ copy().screens.quiz }} ({{ sectionQuizCount() }})
             </button>
           </div>
         </div>
@@ -76,8 +79,15 @@ import { StudyLmScreens } from '../../shell/studylm-screens';
           <p class="title">
             {{
               j.status === 'planning'
-                ? 'Planning the lesson…'
-                : 'Writing block ' + done() + ' of ' + planned().length + '…'
+                ? copy().learn.planningLesson
+                : copy().learn.writingBlockPrefix +
+                  ' ' +
+                  done() +
+                  ' ' +
+                  copy().learn.of +
+                  ' ' +
+                  planned().length +
+                  '…'
             }}
           </p>
           <ol class="blocks">
@@ -88,15 +98,18 @@ import { StudyLmScreens } from '../../shell/studylm-screens';
               </li>
             }
           </ol>
-          <button type="button" class="ghost" (click)="cancel()">Cancel</button>
+          <button type="button" class="ghost" (click)="cancel()">
+            {{ copy().learn.cancel }}
+          </button>
         </section>
       } @else if (j.status === 'failed') {
         <p class="error" role="alert">
-          The lesson couldn’t be written: {{ j.error }}
-          <a routerLink="../../roadmap">Back to the roadmap</a> to try again.
+          {{ copy().learn.errorWritingPrefix }} {{ j.error }}
+          <a routerLink="../../roadmap">{{ copy().learn.backToRoadmap }}</a>
+          {{ copy().learn.toTryAgain }}
         </p>
       } @else if (j.status === 'cancelled') {
-        <p class="error" role="status">Writing was cancelled.</p>
+        <p class="error" role="status">{{ copy().learn.writingCancelled }}</p>
       }
     }
 
@@ -104,8 +117,11 @@ import { StudyLmScreens } from '../../shell/studylm-screens';
       <section class="skipped" aria-label="Skipped blocks">
         <p>
           {{ skipped().length }}
-          {{ skipped().length === 1 ? 'block was' : 'blocks were' }} left out:
-          the AI's version failed the checks, even after a repair.
+          {{
+            skipped().length === 1
+              ? copy().learn.skippedBlockSingular
+              : copy().learn.skippedBlockPlural
+          }}
         </p>
         <ul>
           @for (s of skipped(); track s.id) {
@@ -118,7 +134,7 @@ import { StudyLmScreens } from '../../shell/studylm-screens';
                 (click)="retry(s.id)"
                 [disabled]="busy()"
               >
-                Try this block again
+                {{ copy().learn.tryBlockAgain }}
               </button>
             </li>
           }
@@ -133,20 +149,21 @@ import { StudyLmScreens } from '../../shell/studylm-screens';
         (progressChange)="save($event)"
       />
     } @else if (data.isLoading()) {
-      <p role="status">Loading the lesson…</p>
+      <p role="status">{{ copy().learn.loadingLesson }}</p>
     } @else if (!job()) {
-      <p role="alert">There’s no lesson at this address.</p>
+      <p role="alert">{{ copy().learn.noLessonAtAddress }}</p>
     }
 
     <!-- Next steps for reinforcing this lesson -->
     @if (relatedSection(); as sec) {
       <aside class="lesson-next-steps" aria-label="Practice next steps">
         <div class="next-steps-header">
-          <span class="next-steps-tag">Practice & Reinforce</span>
-          <h4>Continue mastering {{ sec.code }}: {{ sec.title }}</h4>
+          <span class="next-steps-tag">{{ copy().learn.practiceTag }}</span>
+          <h4>
+            {{ copy().learn.continueMastering }} {{ sec.code }}: {{ sec.title }}
+          </h4>
           <p>
-            Test your recall with flashcards and check your conceptual
-            understanding with quiz questions designed for this section.
+            {{ copy().learn.nextStepsDesc }}
           </p>
         </div>
         <div class="next-steps-buttons">
@@ -155,21 +172,21 @@ import { StudyLmScreens } from '../../shell/studylm-screens';
             class="next-step-btn primary"
             (click)="goToFlashcards(sec.id)"
           >
-            🃏 Practice Flashcards ({{ sectionCardsCount() }})
+            {{ copy().learn.practiceFlashcardsBtn }} ({{ sectionCardsCount() }})
           </button>
           <button
             type="button"
             class="next-step-btn secondary"
             (click)="goToQuiz(sec.id)"
           >
-            🎯 Take Diagnostic Quiz ({{ sectionQuizCount() }})
+            {{ copy().learn.takeDiagnosticQuizBtn }} ({{ sectionQuizCount() }})
           </button>
           <button
             type="button"
             class="next-step-btn ghost"
             (click)="goToRoadmap(sec.id)"
           >
-            🗺️ Back to Roadmap Card
+            {{ copy().learn.backToRoadmapCardBtn }}
           </button>
         </div>
       </aside>
@@ -375,6 +392,11 @@ export class LessonScreen {
   private readonly generation = inject(LessonGenerationService);
   protected readonly store = inject(StudyLmStore);
   protected readonly screens = inject(StudyLmScreens);
+  private readonly preferences = inject(PreferencesStore, { optional: true });
+  readonly copy = computed(
+    () =>
+      STUDYLM_COPY[this.preferences?.language() ?? 'en'] ?? STUDYLM_COPY.en,
+  );
 
   protected readonly icons: Record<string, string> = {
     pending: '○',

@@ -3,8 +3,8 @@
   <header class="deck-controls-bar">
     <div class="tier-and-section-controls">
       <ah-segmented-control
-        label="Filter Flashcards by Tier"
-        [options]="tierOptions"
+        [label]="copy().flashcards.filterByTierLabel"
+        [options]="tierOptions()"
         [value]="store.activeTier()"
         (valueChange)="setTier($event)"
       />
@@ -16,7 +16,7 @@
           [value]="store.cardFilter().sectionId"
           (valueChange)="onSectionSelect($event)"
           size="sm"
-          placeholder="Filter by section..."
+          [placeholder]="copy().flashcards.filterBySectionPlaceholder"
         />
       }
     </div>
@@ -27,7 +27,7 @@
           type="search"
           [value]="store.cardFilter().searchQuery"
           (input)="onSearch($event)"
-          placeholder="Filter cards..."
+          [placeholder]="copy().flashcards.filterCardsPlaceholder"
           class="search-input"
         />
       </div>
@@ -38,12 +38,12 @@
         size="sm"
         (click)="openAddCardModal()"
       >
-        <span>+ Add Card</span>
+        <span>{{ copy().flashcards.addCard }}</span>
       </button>
 
       @if (store.filteredCards().length > 0) {
         <button type="button" ahButton="ghost" size="sm" (click)="exportAnki()">
-          <span>Export Anki</span>
+          <span>{{ copy().flashcards.exportAnki }}</span>
         </button>
       }
     </div>
@@ -53,7 +53,9 @@
   @if (activeSection(); as sec) {
     <div class="section-hub-bar" aria-label="Section navigation">
       <div class="hub-details">
-        <span class="hub-pill">Section {{ sec.code }}</span>
+        <span class="hub-pill"
+          >{{ copy().flashcards.sectionPrefix }} {{ sec.code }}</span
+        >
         <span class="hub-name">{{ sec.title }}</span>
       </div>
       <div class="hub-actions">
@@ -64,7 +66,7 @@
           (click)="goToLesson(sec)"
           title="Open or write interactive lesson for this section"
         >
-          <span>📖 Open Lesson</span>
+          <span>{{ copy().flashcards.openLesson }}</span>
         </button>
         <button
           type="button"
@@ -73,7 +75,7 @@
           (click)="goToQuiz(sec)"
           title="Take diagnostic quiz for this section"
         >
-          <span>🎯 Take Quiz</span>
+          <span>{{ copy().flashcards.takeQuiz }}</span>
         </button>
         <button
           type="button"
@@ -82,7 +84,7 @@
           (click)="goToRoadmap(sec)"
           title="View this card on the Roadmap"
         >
-          <span>🗺️ Roadmap</span>
+          <span>{{ copy().flashcards.roadmap }}</span>
         </button>
       </div>
     </div>
@@ -95,12 +97,16 @@
       <div class="card-meta-bar">
         <div class="meta-left">
           <span class="card-counter">
-            Card {{ store.activeCardIndex() + 1 }} of
+            {{ copy().flashcards.cardWord }} {{ store.activeCardIndex() + 1 }}
+            {{ copy().flashcards.of }}
             {{ store.filteredCards().length }}
           </span>
           @if (card.sectionCode) {
             <ah-badge variant="neutral" size="sm">
-              <span>Section {{ card.sectionCode }}</span>
+              <span
+                >{{ copy().flashcards.sectionPrefix }}
+                {{ card.sectionCode }}</span
+              >
             </ah-badge>
           }
           <ah-badge
@@ -125,7 +131,11 @@
             (click)="store.toggleCardBookmark(card.id)"
             title="Bookmark this card"
           >
-            {{ card.isBookmarked ? '★ Bookmarked' : '☆ Bookmark' }}
+            {{
+              card.isBookmarked
+                ? copy().flashcards.bookmarked
+                : copy().flashcards.bookmark
+            }}
           </button>
         </div>
       </div>
@@ -144,7 +154,9 @@
                 <span class="category-name" [attr.title]="card.category">{{
                   card.category
                 }}</span>
-                <span class="face-label">PROMPT</span>
+                <span class="face-label">{{
+                  copy().flashcards.promptLabel
+                }}</span>
               </div>
               <button
                 type="button"
@@ -157,7 +169,7 @@
                 "
               >
                 <span class="btn-icon">💡</span>
-                <span>Hint</span>
+                <span>{{ copy().flashcards.hint }}</span>
               </button>
             </div>
 
@@ -181,7 +193,7 @@
             </div>
 
             <div class="flip-hint">
-              <span>Press Space or Click to reveal answer</span>
+              <span>{{ copy().flashcards.flipToReveal }}</span>
             </div>
           </div>
 
@@ -192,7 +204,9 @@
                 <span class="category-name" [attr.title]="card.category">{{
                   card.category
                 }}</span>
-                <span class="face-label">EXPLANATION</span>
+                <span class="face-label">{{
+                  copy().flashcards.explanationLabel
+                }}</span>
               </div>
               <button
                 type="button"
@@ -205,7 +219,7 @@
                 "
               >
                 <span class="btn-icon">🔍</span>
-                <span>Deep Dive & Diagram</span>
+                <span>{{ copy().flashcards.deepDive }}</span>
               </button>
             </div>
 
@@ -231,8 +245,12 @@
             @if (card.codeSnippet) {
               <div class="card-code-section">
                 <div class="code-section-header">
-                  <span class="code-section-title">Verified Code Example</span>
-                  <span class="code-section-hint">Interactive snippet</span>
+                  <span class="code-section-title">{{
+                    copy().flashcards.verifiedCodeTitle
+                  }}</span>
+                  <span class="code-section-hint">{{
+                    copy().flashcards.interactiveSnippet
+                  }}</span>
                 </div>
                 <ah-code-block
                   [code]="card.codeSnippet"
@@ -247,7 +265,9 @@
 
             @if (getCardDocLink(card); as doc) {
               <div class="citation-tag">
-                <span class="citation-label">Grounded Citation:</span>
+                <span class="citation-label">{{
+                  copy().flashcards.groundedCitation
+                }}</span>
                 <a
                   [href]="doc.url"
                   target="_blank"
@@ -264,7 +284,9 @@
               </div>
             } @else if (card.sourceCitation) {
               <div class="citation-tag">
-                <span class="citation-label">Grounded Citation:</span>
+                <span class="citation-label">{{
+                  copy().flashcards.groundedCitation
+                }}</span>
                 <span class="citation-val" [attr.title]="card.sourceCitation">{{
                   card.sourceCitation
                 }}</span>
@@ -272,9 +294,9 @@
             }
 
             <div class="flip-hint">
-              <span class="hint-pill"
-                >Click or Space to flip back to question 🔄</span
-              >
+              <span class="hint-pill">{{
+                copy().flashcards.flipBackHint
+              }}</span>
             </div>
           </div>
         </ah-flip-card>
@@ -289,7 +311,7 @@
             size="sm"
             (click)="store.prevCard(store.filteredCards().length)"
           >
-            <span>← Previous</span>
+            <span>{{ copy().flashcards.previous }}</span>
           </button>
           <button
             type="button"
@@ -297,39 +319,41 @@
             size="sm"
             (click)="store.nextCard(store.filteredCards().length)"
           >
-            <span>Next →</span>
+            <span>{{ copy().flashcards.next }}</span>
           </button>
         </div>
 
         <div class="spaced-repetition-ratings">
-          <span class="rate-label">Self-Assessment:</span>
+          <span class="rate-label">{{
+            copy().flashcards.selfAssessment
+          }}</span>
           <button
             type="button"
             class="rate-btn rate-again"
             (click)="rate('again')"
           >
-            <span class="shortcut">1</span> Again
+            <span class="shortcut">1</span> {{ copy().flashcards.again }}
           </button>
           <button
             type="button"
             class="rate-btn rate-hard"
             (click)="rate('hard')"
           >
-            <span class="shortcut">2</span> Hard
+            <span class="shortcut">2</span> {{ copy().flashcards.hard }}
           </button>
           <button
             type="button"
             class="rate-btn rate-good"
             (click)="rate('good')"
           >
-            <span class="shortcut">3</span> Good
+            <span class="shortcut">3</span> {{ copy().flashcards.good }}
           </button>
           <button
             type="button"
             class="rate-btn rate-easy"
             (click)="rate('easy')"
           >
-            <span class="shortcut">4</span> Easy
+            <span class="shortcut">4</span> {{ copy().flashcards.easy }}
           </button>
         </div>
       </footer>
@@ -338,10 +362,10 @@
     <!-- Empty State -->
     <div class="empty-deck-wrapper">
       <ah-empty-state
-        title="No Flashcards Available"
-        description="Generate flashcards for any section in the Curriculum Roadmap tab, or add cards manually."
+        [title]="copy().flashcards.emptyTitle"
+        [description]="copy().flashcards.emptyDescription"
         icon="🃏"
-        actionLabel="Go to Roadmap"
+        [actionLabel]="copy().flashcards.emptyAction"
         (actionClick)="screens.go('roadmap')"
       />
     </div>

@@ -8,7 +8,6 @@ import {
   createActionGroup,
   createFeature,
   createReducer,
-  createSelector,
   emptyProps,
   on,
   props,
@@ -23,6 +22,7 @@ import {
   StateFlowDiagramComponent,
 } from '../../shared/ui/state-flow-diagram/state-flow-diagram.component';
 import { UseCaseFocusComponent } from '../../shared/ui/use-case-focus/use-case-focus.component';
+import { injectNgrxLabCopy } from '../../i18n/ngrx-lab-copy';
 
 export interface CartItem {
   id: string;
@@ -109,14 +109,20 @@ export const cartFeature = createFeature({
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StoreFlowComponent {
-  readonly focusOptions: readonly SegmentedOption<string>[] = [
-    { value: 'all', label: 'All Concepts' },
-    { value: 'concept', label: 'Unidirectional Flow Model' },
-    { value: 'actions', label: 'Action Groups' },
-    { value: 'reducers', label: 'Feature Reducers' },
-    { value: 'selectors', label: 'Memoized Selectors' },
-    { value: 'time-travel', label: 'Time-Travel' },
-  ];
+  private readonly labCopy = injectNgrxLabCopy();
+  readonly copy = computed(() => this.labCopy().storeFlow);
+
+  readonly focusOptions = computed<readonly SegmentedOption<string>[]>(() => {
+    const opts = this.copy().focusOptions;
+    return [
+      { value: 'all', label: opts.all },
+      { value: 'concept', label: opts.concept },
+      { value: 'actions', label: opts.actions },
+      { value: 'reducers', label: opts.reducers },
+      { value: 'selectors', label: opts.selectors },
+      { value: 'time-travel', label: opts.timeTravel },
+    ];
+  });
 
   readonly activeCase = signal('all');
   readonly currentStage = signal<FlowStage>('idle');

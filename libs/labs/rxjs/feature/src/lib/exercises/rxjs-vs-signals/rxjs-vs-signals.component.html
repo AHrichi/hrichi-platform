@@ -1,14 +1,14 @@
 <div class="exercise-container">
   <ah-section-heading
-    eyebrow="Angular 22 Architecture · Reactive Paradigms"
-    heading="RxJS vs Angular Signals: Coexistence Guide"
-    lead="Master the reactive spectrum in modern Angular. Understand the fundamental trade-offs, when to use RxJS, when to use Signals, and how the 'Events In, State Out' pattern provides rock-solid zoneless architecture."
+    [eyebrow]="copy().rxjsVsSignals.eyebrow"
+    [heading]="copy().rxjsVsSignals.heading"
+    [lead]="copy().rxjsVsSignals.lead"
   />
 
   <ah-use-case-focus
-    [options]="focusOptions"
+    [options]="focusOptions()"
     [(value)]="activeCase"
-    ariaLabel="Filter architecture topic"
+    [ariaLabel]="copy().rxjsVsSignals.focusAriaLabel"
   />
 
   <div class="architecture-grid" [class.single-case]="activeCase() !== 'all'">
@@ -20,25 +20,20 @@
       >
         <div class="card-header">
           <div class="card-title-row">
-            <h3>Architectural Philosophy: "Events In, State Out"</h3>
-            <ah-tag>Core Foundation</ah-tag>
+            <h3>{{ copy().rxjsVsSignals.coexistence.title }}</h3>
+            <ah-tag>{{ copy().rxjsVsSignals.coexistence.badge }}</ah-tag>
           </div>
-          <p>
-            Signals and RxJS are not competing rivals; they solve fundamentally
-            different problems in application architecture.
-          </p>
+          <p>{{ copy().rxjsVsSignals.coexistence.description }}</p>
         </div>
         <div class="card-content">
           <div class="coexistence-diagram">
             <div class="diagram-step events-step">
-              <div class="step-badge">1. Events In (RxJS)</div>
-              <h4>Asynchronous Coordination</h4>
+              <div class="step-badge">{{ copy().rxjsVsSignals.coexistence.step1Badge }}</div>
+              <h4>{{ copy().rxjsVsSignals.coexistence.step1Title }}</h4>
               <ul>
-                <li>User keystrokes, clicks, scrolls</li>
-                <li>WebSocket & Server-Sent Events</li>
-                <li>Debounce, throttle, debounceTime</li>
-                <li>Retries, timeouts & exponential backoff</li>
-                <li>Concurrency: switchMap, exhaustMap, concatMap</li>
+                @for (item of copy().rxjsVsSignals.coexistence.step1Items; track item) {
+                  <li>{{ item }}</li>
+                }
               </ul>
             </div>
 
@@ -58,27 +53,20 @@
             </div>
 
             <div class="diagram-step state-step">
-              <div class="step-badge">2. State Out (Signals)</div>
-              <h4>Synchronous UI State</h4>
+              <div class="step-badge">{{ copy().rxjsVsSignals.coexistence.step2Badge }}</div>
+              <h4>{{ copy().rxjsVsSignals.coexistence.step2Title }}</h4>
               <ul>
-                <li>Component and view model state</li>
-                <li>Synchronous derivations (computed)</li>
-                <li>Template bindings & zoneless CD</li>
-                <li>Automatic cleanup (zero memory leaks)</li>
-                <li>Signal I/O (input, output, model)</li>
+                @for (item of copy().rxjsVsSignals.coexistence.step2Items; track item) {
+                  <li>{{ item }}</li>
+                }
               </ul>
             </div>
           </div>
 
           <div class="rule-summary">
-            <strong>The Universal Rule of Thumb:</strong>
-            <em
-              >"Use RxJS for events over time; use Signals for values over
-              time."</em
-            >
-            If you need time, cancellation, or concurrency control, reach for
-            RxJS. If you are holding, deriving, or displaying synchronous UI
-            state, reach for Signals.
+            <strong>{{ copy().rxjsVsSignals.coexistence.ruleStrong }}</strong>
+            <em>{{ copy().rxjsVsSignals.coexistence.ruleQuote }}</em>
+            {{ copy().rxjsVsSignals.coexistence.ruleText }}
           </div>
         </div>
       </div>
@@ -92,19 +80,16 @@
       >
         <div class="card-header">
           <div class="card-title-row">
-            <h3>Interactive Decision Matrix</h3>
+            <h3>{{ copy().rxjsVsSignals.decisionMatrix.title }}</h3>
             @if (activeCase() === 'decision-matrix') {
-              <ah-tag>Focused View</ah-tag>
+              <ah-tag>{{ copy().common.focusedView }}</ah-tag>
             }
           </div>
-          <p>
-            Select a common production requirement to compare the RxJS, Signals,
-            and Hybrid approaches.
-          </p>
+          <p>{{ copy().rxjsVsSignals.decisionMatrix.description }}</p>
         </div>
         <div class="card-content">
           <div class="scenario-pills">
-            @for (sc of scenarios; track sc.id) {
+            @for (sc of scenarios(); track sc.id) {
               <button
                 type="button"
                 class="scenario-pill-btn"
@@ -124,8 +109,8 @@
             <div class="detail-header">
               <h4>{{ current.title }}</h4>
               <div class="detail-tags">
-                <ah-tag>Category: {{ current.category }}</ah-tag>
-                <ah-tag>Recommended: {{ current.winner }}</ah-tag>
+                <ah-tag>{{ copy().rxjsVsSignals.decisionMatrix.categoryPrefix }} {{ current.category }}</ah-tag>
+                <ah-tag>{{ copy().rxjsVsSignals.decisionMatrix.recommendedPrefix }} {{ current.winner }}</ah-tag>
               </div>
             </div>
 
@@ -135,7 +120,7 @@
               <div class="approach-box rxjs-box">
                 <div class="box-title">
                   <span class="icon">🌊</span>
-                  <strong>RxJS Approach</strong>
+                  <strong>{{ copy().rxjsVsSignals.decisionMatrix.rxjsApproachTitle }}</strong>
                 </div>
                 <code>{{ current.rxjsApproach }}</code>
               </div>
@@ -143,7 +128,7 @@
               <div class="approach-box signals-box">
                 <div class="box-title">
                   <span class="icon">⚡</span>
-                  <strong>Signals Approach</strong>
+                  <strong>{{ copy().rxjsVsSignals.decisionMatrix.signalsApproachTitle }}</strong>
                 </div>
                 <code>{{ current.signalsApproach }}</code>
               </div>
@@ -151,14 +136,14 @@
               <div class="approach-box hybrid-box">
                 <div class="box-title">
                   <span class="icon">✨</span>
-                  <strong>Best Practice / Hybrid</strong>
+                  <strong>{{ copy().rxjsVsSignals.decisionMatrix.hybridApproachTitle }}</strong>
                 </div>
                 <code>{{ current.hybridApproach }}</code>
               </div>
             </div>
 
             <div class="takeaway-banner">
-              <strong>Architecture Takeaway:</strong> {{ current.ruleOfThumb }}
+              <strong>{{ copy().rxjsVsSignals.decisionMatrix.takeawayStrong }}</strong> {{ current.ruleOfThumb }}
             </div>
           </div>
         </div>
@@ -170,23 +155,17 @@
       <div class="card" [class.focused-card]="activeCase() === 'derived-state'">
         <div class="card-header">
           <div class="card-title-row">
-            <h3>
-              Live Sandbox: Derived State (<code>combineLatest</code> vs
-              <code>computed</code>)
-            </h3>
+            <h3>{{ copy().rxjsVsSignals.derivedState.title }}</h3>
             @if (activeCase() === 'derived-state') {
-              <ah-tag>Focused View</ah-tag>
+              <ah-tag>{{ copy().common.focusedView }}</ah-tag>
             }
           </div>
-          <p>
-            Deriving a synchronous total from base price, discount, and tax
-            rate. Compare the clean ergonomics of Signals against stream piping.
-          </p>
+          <p>{{ copy().rxjsVsSignals.derivedState.description }}</p>
         </div>
         <div class="card-content">
           <div class="config-group">
             <div class="config-item">
-              <label for="base-price-input">Base Price ($):</label>
+              <label for="base-price-input">{{ copy().rxjsVsSignals.derivedState.basePriceLabel }}</label>
               <input
                 id="base-price-input"
                 type="number"
@@ -197,7 +176,7 @@
               />
             </div>
             <div class="config-item">
-              <label for="discount-input">Discount ($):</label>
+              <label for="discount-input">{{ copy().rxjsVsSignals.derivedState.discountLabel }}</label>
               <input
                 id="discount-input"
                 type="number"
@@ -208,34 +187,28 @@
               />
             </div>
             <div class="config-item">
-              <span class="field-label">Tax Rate (20%):</span>
-              <div class="readonly-badge">20% Fixed</div>
+              <span class="field-label">{{ copy().rxjsVsSignals.derivedState.taxRateLabel }}</span>
+              <div class="readonly-badge">{{ copy().rxjsVsSignals.derivedState.fixed20Badge }}</div>
             </div>
           </div>
 
           <div class="results-comparison">
             <div class="result-tile signal-result">
               <div class="result-header">
-                <span class="tag-label">Signals (computed)</span>
-                <span class="tag-status">Synchronous Pull</span>
+                <span class="tag-label">{{ copy().rxjsVsSignals.derivedState.signalsComputedLabel }}</span>
+                <span class="tag-status">{{ copy().rxjsVsSignals.derivedState.syncPullBadge }}</span>
               </div>
               <div class="total-number">${{ computedTotal() }}</div>
-              <p class="result-note">
-                Evaluated lazily, glitch-free, memoized, zero subscription
-                cleanup required.
-              </p>
+              <p class="result-note">{{ copy().rxjsVsSignals.derivedState.signalsNote }}</p>
             </div>
 
             <div class="result-tile rxjs-result">
               <div class="result-header">
-                <span class="tag-label">RxJS (combineLatest)</span>
-                <span class="tag-status">Push Stream</span>
+                <span class="tag-label">{{ copy().rxjsVsSignals.derivedState.rxjsCombineLabel }}</span>
+                <span class="tag-status">{{ copy().rxjsVsSignals.derivedState.pushStreamBadge }}</span>
               </div>
               <div class="total-number">${{ rxjsTotalSignal() }}</div>
-              <p class="result-note">
-                Requires 3 BehaviorSubjects, combineLatest, map pipe, and
-                toSignal or async pipe.
-              </p>
+              <p class="result-note">{{ copy().rxjsVsSignals.derivedState.rxjsNote }}</p>
             </div>
           </div>
 
@@ -254,42 +227,34 @@
       >
         <div class="card-header">
           <div class="card-title-row">
-            <h3>Live Sandbox: Time-Based Search (Hybrid Interop)</h3>
+            <h3>{{ copy().rxjsVsSignals.searchDebounce.title }}</h3>
             @if (activeCase() === 'search-debounce') {
-              <ah-tag>Focused View</ah-tag>
+              <ah-tag>{{ copy().common.focusedView }}</ah-tag>
             }
           </div>
-          <p>
-            Signals have no native concept of time delays or debouncing. We use
-            <code>toObservable()</code> to leverage RxJS time operators, then
-            store the result in a Signal via <code>toSignal()</code>.
-          </p>
+          <p>{{ copy().rxjsVsSignals.searchDebounce.description }}</p>
         </div>
         <div class="card-content">
           <div class="config-group">
             <div class="config-item">
-              <label for="search-hybrid-input"
-                >Type rapidly to observe debounce (400ms):</label
-              >
+              <label for="search-hybrid-input">{{ copy().rxjsVsSignals.searchDebounce.inputLabel }}</label>
               <input
                 id="search-hybrid-input"
                 type="text"
                 [value]="searchQuery()"
                 (input)="onSearchInput($event)"
-                placeholder="Type query..."
+                [placeholder]="copy().rxjsVsSignals.searchDebounce.inputPlaceholder"
               />
             </div>
           </div>
 
           <div class="computed-grid">
             <div class="computed-item">
-              <span class="field-label">Raw Keystroke Signal (Immediate):</span>
+              <span class="field-label">{{ copy().rxjsVsSignals.searchDebounce.rawSignalLabel }}</span>
               <div class="data-display">{{ searchQuery() }}</div>
             </div>
             <div class="computed-item">
-              <span class="field-label"
-                >Debounced + Normalized Signal (toSignal):</span
-              >
+              <span class="field-label">{{ copy().rxjsVsSignals.searchDebounce.debouncedSignalLabel }}</span>
               <div class="data-display highlight-on-change">
                 {{ debouncedQuery() }}
               </div>
@@ -311,17 +276,12 @@
       >
         <div class="card-header">
           <div class="card-title-row">
-            <h3>Live Sandbox: Async Data with <code>rxResource()</code></h3>
+            <h3>{{ copy().rxjsVsSignals.asyncResource.title }}</h3>
             @if (activeCase() === 'async-resource') {
-              <ah-tag>Focused View</ah-tag>
+              <ah-tag>{{ copy().common.focusedView }}</ah-tag>
             }
           </div>
-          <p>
-            Angular 22 introduces <code>resource()</code> and
-            <code>rxResource()</code> to unify async data fetching with signals.
-            It manages loading indicators, params reactivity, and cancellation
-            automatically.
-          </p>
+          <p>{{ copy().rxjsVsSignals.asyncResource.description }}</p>
         </div>
         <div class="card-content">
           @let weather = cityWeather.value();
@@ -329,7 +289,7 @@
           @let status = cityWeather.status();
 
           <div class="resource-toolbar">
-            <span class="field-label">Select Location:</span>
+            <span class="field-label">{{ copy().rxjsVsSignals.asyncResource.selectLocationLabel }}</span>
             <div class="button-group-inline">
               <button
                 type="button"
@@ -339,7 +299,7 @@
                 size="sm"
                 (click)="setCity('paris')"
               >
-                Paris
+                {{ copy().rxjsVsSignals.asyncResource.parisBtn }}
               </button>
               <button
                 type="button"
@@ -349,7 +309,7 @@
                 size="sm"
                 (click)="setCity('tokyo')"
               >
-                Tokyo
+                {{ copy().rxjsVsSignals.asyncResource.tokyoBtn }}
               </button>
               <button
                 type="button"
@@ -359,7 +319,7 @@
                 size="sm"
                 (click)="setCity('nyc')"
               >
-                New York
+                {{ copy().rxjsVsSignals.asyncResource.nycBtn }}
               </button>
               <button
                 type="button"
@@ -367,7 +327,7 @@
                 size="sm"
                 (click)="reloadWeather()"
               >
-                Reload Stream
+                {{ copy().rxjsVsSignals.asyncResource.reloadStreamBtn }}
               </button>
             </div>
           </div>
@@ -376,13 +336,13 @@
             @if (isLoading) {
               <div class="loading-state">
                 <span class="spinner"></span>
-                <span>Fetching weather stream via rxResource...</span>
+                <span>{{ copy().rxjsVsSignals.asyncResource.fetchingWeatherText }}</span>
               </div>
             } @else if (weather) {
               <div class="weather-card">
                 <div class="weather-header">
                   <span class="city-name">{{ weather.city }}</span>
-                  <ah-tag>Status: {{ status }}</ah-tag>
+                  <ah-tag>{{ copy().rxjsVsSignals.asyncResource.statusPrefix }} {{ status }}</ah-tag>
                 </div>
                 <div class="weather-temp">{{ weather.temp }}</div>
                 <div class="weather-condition">{{ weather.condition }}</div>
@@ -402,19 +362,12 @@
       <div class="card" [class.focused-card]="activeCase() === 'linked-state'">
         <div class="card-header">
           <div class="card-title-row">
-            <h3>
-              Live Sandbox: Dependent State with <code>linkedSignal()</code>
-            </h3>
+            <h3>{{ copy().rxjsVsSignals.linkedState.title }}</h3>
             @if (activeCase() === 'linked-state') {
-              <ah-tag>Focused View</ah-tag>
+              <ah-tag>{{ copy().common.focusedView }}</ah-tag>
             }
           </div>
-          <p>
-            In Angular applications, a classic bug is resetting child state when
-            parent state changes. Angular 22's
-            <code>linkedSignal()</code> provides an auto-resetting writable
-            signal.
-          </p>
+          <p>{{ copy().rxjsVsSignals.linkedState.description }}</p>
         </div>
         <div class="card-content">
           @let plan = selectedPlan();
@@ -423,7 +376,7 @@
 
           <div class="config-group">
             <div class="config-item">
-              <span class="field-label">Select Plan Tier (Parent State):</span>
+              <span class="field-label">{{ copy().rxjsVsSignals.linkedState.selectPlanLabel }}</span>
               <div class="button-group-inline">
                 <button
                   type="button"
@@ -431,7 +384,7 @@
                   size="sm"
                   (click)="setPlan('Basic')"
                 >
-                  Basic (20GB)
+                  {{ copy().rxjsVsSignals.linkedState.basicBtn }}
                 </button>
                 <button
                   type="button"
@@ -439,7 +392,7 @@
                   size="sm"
                   (click)="setPlan('Pro')"
                 >
-                  Pro (100GB)
+                  {{ copy().rxjsVsSignals.linkedState.proBtn }}
                 </button>
                 <button
                   type="button"
@@ -447,15 +400,13 @@
                   size="sm"
                   (click)="setPlan('Enterprise')"
                 >
-                  Enterprise (500GB)
+                  {{ copy().rxjsVsSignals.linkedState.enterpriseBtn }}
                 </button>
               </div>
             </div>
 
             <div class="config-item">
-              <span class="field-label"
-                >Adjust Storage Quota (Writable Signal Mutation):</span
-              >
+              <span class="field-label">{{ copy().rxjsVsSignals.linkedState.adjustQuotaLabel }}</span>
               <div class="quantity-control">
                 <button
                   type="button"
@@ -479,17 +430,17 @@
               </div>
               <div class="quota-status-row">
                 @if (overridden) {
-                  <ah-tag>Custom Override</ah-tag>
+                  <ah-tag>{{ copy().rxjsVsSignals.linkedState.customOverrideBadge }}</ah-tag>
                   <button
                     type="button"
                     ahButton="ghost"
                     size="sm"
                     (click)="resetQuota()"
                   >
-                    Reset to plan default
+                    {{ copy().rxjsVsSignals.linkedState.resetPlanDefaultBtn }}
                   </button>
                 } @else {
-                  <span class="default-badge">Plan default</span>
+                  <span class="default-badge">{{ copy().rxjsVsSignals.linkedState.planDefaultBadge }}</span>
                 }
               </div>
             </div>

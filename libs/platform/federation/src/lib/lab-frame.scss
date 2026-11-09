@@ -1,7 +1,7 @@
 .lab {
   display: grid;
   gap: var(--space-5);
-  padding-block: var(--space-7) var(--space-8);
+  padding-block: var(--space-6) var(--space-4);
   min-inline-size: 0;
   max-inline-size: 100%;
 }
@@ -31,15 +31,18 @@
   cursor: pointer;
 }
 .lab__body {
-  min-block-size: 100svh;
   position: relative;
   min-inline-size: 0;
   max-inline-size: 100%;
+
+  &:empty {
+    min-block-size: 75svh;
+  }
 }
 
 @media (max-width: 768px) {
   .lab {
-    padding-block: var(--space-4) var(--space-6);
+    padding-block: var(--space-4) var(--space-3);
     gap: var(--space-3);
   }
   .lab__header {

@@ -1,18 +1,20 @@
 <ah-modal
   [open]="store.showSettingsModal()"
-  title="n8n Synthesis Engine Settings"
-  eyebrow="Engine Infrastructure Configuration"
+  [title]="copy().modals.n8nTitle"
+  [eyebrow]="copy().modals.n8nEyebrow"
   size="md"
   (closed)="close()"
 >
   <div class="n8n-settings-body">
     <div class="status-summary">
-      <span class="status-label">Current Connection:</span>
+      <span class="status-label">{{ copy().modals.currentConnection }}</span>
       <ah-badge
         [variant]="store.n8nConfig().isConnected ? 'success' : 'danger'"
         size="sm"
       >
-        <span>{{ store.n8nConfig().isConnected ? 'Online' : 'Offline' }}</span>
+        <span>{{
+          store.n8nConfig().isConnected ? copy().online : copy().offline
+        }}</span>
       </ah-badge>
       @if (store.n8nConfig().lastPingMs) {
         <span class="ping-tag">({{ store.n8nConfig().lastPingMs }}ms)</span>
@@ -33,8 +35,8 @@
     >
       <div class="form-group">
         <ah-segmented-control
-          label="Routing Mode"
-          [options]="modeOptions"
+          [label]="copy().modals.routingMode"
+          [options]="modeOptions()"
           [value]="model().mode"
           (valueChange)="setMode($event)"
         />
@@ -42,7 +44,7 @@
 
       @if (model().mode === 'tunnel') {
         <div class="form-group">
-          <label for="tunnelUrl">ngrok / Cloud Tunnel URL *</label>
+          <label for="tunnelUrl">{{ copy().modals.tunnelUrlLabel }}</label>
           <input
             id="tunnelUrl"
             type="url"
@@ -55,7 +57,7 @@
 
       @if (model().mode === 'local') {
         <div class="form-group">
-          <label for="localUrl">Localhost Docker Webhook *</label>
+          <label for="localUrl">{{ copy().modals.localUrlLabel }}</label>
           <input
             id="localUrl"
             type="url"
@@ -68,7 +70,7 @@
 
       @if (model().mode === 'custom') {
         <div class="form-group">
-          <label for="customUrl">Custom Webhook URL *</label>
+          <label for="customUrl">{{ copy().modals.customUrlLabel }}</label>
           <input
             id="customUrl"
             type="url"
@@ -83,7 +85,7 @@
 
   <div slot="footer" class="modal-footer-actions">
     <button type="button" ahButton="ghost" size="md" (click)="close()">
-      <span>Cancel</span>
+      <span>{{ copy().modals.cancel }}</span>
     </button>
     <button
       type="button"
@@ -92,10 +94,12 @@
       [disabled]="isTesting()"
       (click)="testConnection()"
     >
-      <span>{{ isTesting() ? 'Pinging...' : 'Test Connection' }}</span>
+      <span>{{
+        isTesting() ? copy().modals.pinging : copy().modals.testConnection
+      }}</span>
     </button>
     <button type="button" ahButton="primary" size="md" (click)="saveSettings()">
-      <span>Save Settings</span>
+      <span>{{ copy().modals.saveSettings }}</span>
     </button>
   </div>
 </ah-modal>

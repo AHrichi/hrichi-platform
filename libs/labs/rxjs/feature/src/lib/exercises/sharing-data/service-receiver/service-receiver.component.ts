@@ -1,5 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { AsyncPipe } from '@angular/common';
+import { injectRxjsLabCopy } from '../../../i18n/rxjs-lab-copy';
 import { DataSharingService } from '../../../shared/services/data-sharing.service';
 
 @Component({
@@ -10,5 +11,6 @@ import { DataSharingService } from '../../../shared/services/data-sharing.servic
   styleUrls: ['./service-receiver.component.scss'],
 })
 export class ServiceReceiverComponent {
+  readonly copy = injectRxjsLabCopy();
   dataService = inject(DataSharingService);
 }

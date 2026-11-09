@@ -3,8 +3,8 @@
   <header class="quiz-header-bar">
     <div class="tier-and-section-controls">
       <ah-segmented-control
-        label="Filter Quiz Questions by Tier"
-        [options]="tierOptions"
+        [label]="copy().quiz.filterByTierLabel"
+        [options]="tierOptions()"
         [value]="store.activeTier()"
         (valueChange)="setTier($event)"
       />
@@ -16,7 +16,7 @@
           [value]="store.quizFilter().sectionId"
           (valueChange)="onSectionSelect($event)"
           size="sm"
-          placeholder="Filter by section..."
+          [placeholder]="copy().quiz.filterBySectionPlaceholder"
         />
       }
     </div>
@@ -28,7 +28,7 @@
         size="sm"
         (click)="openAddQuestionModal()"
       >
-        <span>+ Add Question</span>
+        <span>{{ copy().quiz.addQuestion }}</span>
       </button>
       <button
         type="button"
@@ -36,7 +36,7 @@
         size="sm"
         (click)="openImportModal()"
       >
-        <span>📥 Import JSON</span>
+        <span>{{ copy().quiz.importJson }}</span>
       </button>
     </div>
   </header>
@@ -45,7 +45,9 @@
   @if (activeSection(); as sec) {
     <div class="section-hub-bar" aria-label="Section navigation">
       <div class="hub-details">
-        <span class="hub-pill">Section {{ sec.code }}</span>
+        <span class="hub-pill"
+          >{{ copy().quiz.sectionPrefix }} {{ sec.code }}</span
+        >
         <span class="hub-name">{{ sec.title }}</span>
       </div>
       <div class="hub-actions">
@@ -56,7 +58,7 @@
           (click)="goToLesson(sec)"
           title="Open or write interactive lesson for this section"
         >
-          <span>📖 Open Lesson</span>
+          <span>{{ copy().quiz.openLesson }}</span>
         </button>
         <button
           type="button"
@@ -65,7 +67,7 @@
           (click)="goToFlashcards(sec)"
           title="Practice flashcards for this section"
         >
-          <span>🃏 Flashcards</span>
+          <span>{{ copy().quiz.flashcards }}</span>
         </button>
         <button
           type="button"
@@ -74,7 +76,7 @@
           (click)="goToRoadmap(sec)"
           title="View this card on the Roadmap"
         >
-          <span>🗺️ Roadmap</span>
+          <span>{{ copy().quiz.roadmap }}</span>
         </button>
       </div>
     </div>
@@ -87,12 +89,13 @@
       <div class="quiz-meta-bar">
         <div class="meta-left">
           <span class="question-counter">
-            Question {{ store.activeQuizIndex() + 1 }} of
+            {{ copy().quiz.questionWord }} {{ store.activeQuizIndex() + 1 }}
+            {{ copy().quiz.of }}
             {{ store.filteredQuiz().length }}
           </span>
           @if (q.sectionCode) {
             <ah-badge variant="neutral" size="sm">
-              <span>Section {{ q.sectionCode }}</span>
+              <span>{{ copy().quiz.sectionPrefix }} {{ q.sectionCode }}</span>
             </ah-badge>
           }
           <ah-badge
@@ -111,7 +114,8 @@
 
         <div class="meta-right">
           <span class="score-badge">
-            Score: {{ store.quizSummary().correctCount }} /
+            {{ copy().quiz.scoreLabel }}
+            {{ store.quizSummary().correctCount }} /
             {{ store.quizSummary().answeredCount }}
             @if (store.quizSummary().answeredCount > 0) {
               ({{ store.quizSummary().scorePercentage }}%)
@@ -136,7 +140,7 @@
               "
             >
               <span class="btn-icon">💡</span>
-              <span>Need a Hint?</span>
+              <span>{{ copy().quiz.needHint }}</span>
             </button>
           }
         </div>
@@ -144,10 +148,12 @@
         @if (q.codeSnippet) {
           <div class="question-code-section">
             <div class="code-section-header">
-              <span class="code-section-title">Code Under Evaluation</span>
-              <span class="code-section-hint"
-                >Analyze the snippet to determine outcome</span
-              >
+              <span class="code-section-title">{{
+                copy().quiz.codeUnderEvaluation
+              }}</span>
+              <span class="code-section-hint">{{
+                copy().quiz.analyzeSnippetHint
+              }}</span>
             </div>
             <ah-code-block
               [code]="q.codeSnippet"
@@ -180,9 +186,13 @@
 
               @if (q.isAnswered) {
                 @if ($index === q.correctIndex) {
-                  <span class="feedback-icon correct-icon">✓ Correct</span>
+                  <span class="feedback-icon correct-icon">{{
+                    copy().quiz.correctBadge
+                  }}</span>
                 } @else if (q.userSelectedIndex === $index) {
-                  <span class="feedback-icon wrong-icon">✕ Incorrect</span>
+                  <span class="feedback-icon wrong-icon">{{
+                    copy().quiz.incorrectBadge
+                  }}</span>
                 }
               }
             </button>
@@ -202,8 +212,8 @@
               <span class="explanation-title">
                 {{
                   q.isCorrect
-                    ? '✓ Correct Assessment'
-                    : '✕ Specification Misconception'
+                    ? copy().quiz.correctAssessment
+                    : copy().quiz.misconception
                 }}
               </span>
               <button
@@ -217,13 +227,15 @@
                 "
               >
                 <span class="btn-icon">🔍</span>
-                <span>Deep Dive & Diagram</span>
+                <span>{{ copy().quiz.deepDive }}</span>
               </button>
             </div>
             <p class="explanation-text">{{ q.explanation }}</p>
             @if (getQuestionDocLink(q); as doc) {
               <div class="citation-row">
-                <span class="citation-label">Grounded Reference:</span>
+                <span class="citation-label">{{
+                  copy().quiz.groundedReference
+                }}</span>
                 <a
                   [href]="doc.url"
                   target="_blank"
@@ -237,7 +249,9 @@
               </div>
             } @else if (q.sourceCitation) {
               <div class="citation-row">
-                <span class="citation-label">Grounded Reference:</span>
+                <span class="citation-label">{{
+                  copy().quiz.groundedReference
+                }}</span>
                 <span class="citation-text">{{ q.sourceCitation }}</span>
               </div>
             }
@@ -254,7 +268,7 @@
             size="sm"
             (click)="onPrevQuestion()"
           >
-            <span>← Previous</span>
+            <span>{{ copy().quiz.previous }}</span>
           </button>
           <button
             type="button"
@@ -262,7 +276,7 @@
             size="sm"
             (click)="onNextQuestion()"
           >
-            <span>Next Question →</span>
+            <span>{{ copy().quiz.nextQuestion }}</span>
           </button>
         </div>
 
@@ -273,7 +287,7 @@
             size="sm"
             (click)="onResetQuiz()"
           >
-            <span>Reset Test</span>
+            <span>{{ copy().quiz.resetTest }}</span>
           </button>
           @if (
             !store.quizSubmitted() && store.quizSummary().answeredCount > 0
@@ -284,7 +298,7 @@
               size="sm"
               (click)="onSubmitQuiz()"
             >
-              <span>Submit Session</span>
+              <span>{{ copy().quiz.submitSession }}</span>
             </button>
           }
         </div>
@@ -294,10 +308,10 @@
     <!-- Empty State -->
     <div class="empty-quiz-wrapper">
       <ah-empty-state
-        title="No Quiz Questions Available"
-        description="Generate diagnostic quizzes for any section in the Curriculum Roadmap tab, or add questions manually."
+        [title]="copy().quiz.emptyTitle"
+        [description]="copy().quiz.emptyDescription"
         icon="🎯"
-        actionLabel="Go to Roadmap"
+        [actionLabel]="copy().quiz.emptyAction"
         (actionClick)="screens.go('roadmap')"
       />
     </div>

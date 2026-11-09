@@ -1,16 +1,14 @@
 <ah-modal
   [open]="store.showCreateSubjectModal()"
-  title="New Software Engineering Subject"
-  eyebrow="Pedagogical Curriculum Deconstruction"
+  [title]="copy().modals.createSubjectTitle"
+  [eyebrow]="copy().modals.createSubjectEyebrow"
   size="lg"
   (closed)="close()"
 >
   <div class="create-subject-body">
-    <ah-alert variant="info" title="Software Engineering Guardrail">
+    <ah-alert variant="info" [title]="copy().modals.guardrailTitle">
       <p class="guardrail-desc">
-        StudyLM is strictly calibrated for Software Engineering, Computer
-        Science, and System Architecture concepts (e.g., JavaScript internals,
-        React/Angular architectures, Distributed Consensus, PostgreSQL MVCC).
+        {{ copy().modals.guardrailDesc }}
       </p>
     </ah-alert>
 
@@ -21,7 +19,7 @@
       novalidate
     >
       <div class="form-group">
-        <label for="subjDomain">Software Engineering Domain *</label>
+        <label for="subjDomain">{{ copy().modals.domainLabel }}</label>
         <select
           id="subjDomain"
           [formField]="subjectForm.domain"
@@ -34,32 +32,30 @@
       </div>
 
       <div class="form-group">
-        <label for="subjTitle">Subject / Concept Name *</label>
+        <label for="subjTitle">{{ copy().modals.subjectNameLabel }}</label>
         <input
           id="subjTitle"
           type="text"
           [formField]="subjectForm.title"
           class="form-input"
-          placeholder="e.g. JavaScript Internals & V8, Distributed Consensus (Raft), PostgreSQL Indexing"
+          [placeholder]="copy().modals.subjectNamePlaceholder"
         />
       </div>
 
       <div class="form-group">
-        <label for="subjDesc">Focus Notes & Constraints (Optional)</label>
+        <label for="subjDesc">{{ copy().modals.focusNotesLabel }}</label>
         <textarea
           id="subjDesc"
           rows="2"
           [formField]="subjectForm.description"
           class="form-textarea"
-          placeholder="e.g. Focus deeply on memory layouts, garbage collection, event loop microtasks, and gotchas."
+          [placeholder]="copy().modals.focusNotesPlaceholder"
         ></textarea>
       </div>
 
       <!-- Suggested Topics Quick Pick -->
       <div class="suggested-topics-section">
-        <span class="suggested-label"
-          >Or Pick a Standard Curriculum Track:</span
-        >
+        <span class="suggested-label">{{ copy().modals.suggestedLabel }}</span>
         <div class="suggested-chips">
           @for (d of domains; track d.id) {
             @for (top of d.suggestedTopics; track top) {
@@ -79,7 +75,7 @@
 
   <div slot="footer" class="modal-footer-actions">
     <button type="button" ahButton="ghost" size="md" (click)="close()">
-      <span>Cancel</span>
+      <span>{{ copy().modals.cancel }}</span>
     </button>
     <button
       type="button"
@@ -87,7 +83,7 @@
       size="md"
       (click)="submitSubject(false)"
     >
-      <span>Create Blank</span>
+      <span>{{ copy().modals.createBlank }}</span>
     </button>
     <button
       type="button"
@@ -95,7 +91,7 @@
       size="md"
       (click)="submitSubject(true)"
     >
-      <span>Create & Generate Roadmap</span>
+      <span>{{ copy().modals.createAndGenerate }}</span>
     </button>
   </div>
 </ah-modal>

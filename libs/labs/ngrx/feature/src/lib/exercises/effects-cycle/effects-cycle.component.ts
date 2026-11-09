@@ -10,6 +10,7 @@ import {
   StateFlowDiagramComponent,
 } from '../../shared/ui/state-flow-diagram/state-flow-diagram.component';
 import { UseCaseFocusComponent } from '../../shared/ui/use-case-focus/use-case-focus.component';
+import { injectNgrxLabCopy } from '../../i18n/ngrx-lab-copy';
 
 export interface EffectLog {
   id: number;
@@ -32,13 +33,19 @@ export interface EffectLog {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EffectsCycleComponent {
-  readonly focusOptions: readonly SegmentedOption<string>[] = [
-    { value: 'all', label: 'All Effect Concepts' },
-    { value: 'simulation', label: 'Simulation Runner' },
-    { value: 'operators', label: 'Concurrency Flattening' },
-    { value: 'dead-stream', label: 'The Dead Stream Trap' },
-    { value: 'timeline', label: 'Stream Timeline' },
-  ];
+  private readonly labCopy = injectNgrxLabCopy();
+  readonly copy = computed(() => this.labCopy().effectsCycle);
+
+  readonly focusOptions = computed<readonly SegmentedOption<string>[]>(() => {
+    const opts = this.copy().focusOptions;
+    return [
+      { value: 'all', label: opts.all },
+      { value: 'simulation', label: opts.simulation },
+      { value: 'operators', label: opts.operators },
+      { value: 'dead-stream', label: opts.deadStream },
+      { value: 'timeline', label: opts.timeline },
+    ];
+  });
 
   readonly activeCase = signal('all');
   readonly currentStage = signal<FlowStage>('idle');

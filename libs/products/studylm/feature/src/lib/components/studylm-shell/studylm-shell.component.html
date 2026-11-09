@@ -7,7 +7,7 @@
       <div class="brand-titles">
         <div class="brand-title-line">
           <h1>StudyLM</h1>
-          <span class="brand-badge">Engine</span>
+          <span class="brand-badge">{{ copy().shell.engineBadge }}</span>
         </div>
         <span class="brand-tag">{{ copy().tagline }}</span>
       </div>
@@ -105,16 +105,19 @@
       [value]="store.curriculumProgressPct() + '%'"
       [hint]="
         store.synthesizedSectionsCount() +
-        ' of ' +
+        ' ' +
+        copy().shell.of +
+        ' ' +
         store.totalSectionsCount() +
-        ' Ready'
+        ' ' +
+        copy().shell.ready
       "
       icon="⚡"
     />
     <ah-metric-card
-      label="Flashcard Bank"
+      [label]="copy().shell.flashcardBank"
       [value]="store.flashcards().length.toString()"
-      [hint]="store.cardMasteryStats().mastered + ' Mastered'"
+      [hint]="store.cardMasteryStats().mastered + ' ' + copy().shell.mastered"
       icon="🃏"
     />
     <ah-metric-card
@@ -128,7 +131,8 @@
         store.quizSummary().correctCount +
         ' / ' +
         store.quizSummary().answeredCount +
-        ' Correct'
+        ' ' +
+        copy().shell.correct
       "
       icon="🎯"
     />

@@ -71,9 +71,10 @@ import { STUDYLM_COPY } from '../../i18n/studylm-copy';
 })
 export class StudyLmShellComponent {
   readonly store = inject(StudyLmStore);
-  private readonly preferences = inject(PreferencesStore);
+  private readonly preferences = inject(PreferencesStore, { optional: true });
   readonly copy = computed(
-    () => STUDYLM_COPY[this.preferences.language()] ?? STUDYLM_COPY.en,
+    () =>
+      STUDYLM_COPY[this.preferences?.language() ?? 'en'] ?? STUDYLM_COPY.en,
   );
 
   /** The screens, each with how many items it holds when that helps. */

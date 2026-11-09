@@ -1,6 +1,6 @@
 <div class="service-box">
-  <p><strong>Sender Component</strong></p>
+  <p><strong>{{ copy().sharingData.senderComponentLabel }}</strong></p>
   <button type="button" ahButton="primary" size="sm" (click)="sendData()">
-    Send via Service
+    {{ copy().sharingData.service.sendViaServiceBtn }}
   </button>
 </div>

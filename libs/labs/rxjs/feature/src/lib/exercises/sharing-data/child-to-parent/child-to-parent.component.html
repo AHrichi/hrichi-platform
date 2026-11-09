@@ -1,6 +1,6 @@
 <div class="child-box">
-  <p><strong>Child Component</strong></p>
+  <p><strong>{{ copy().sharingData.childComponentLabel }}</strong></p>
   <button type="button" ahButton="primary" size="sm" (click)="sendData()">
-    Send Data to Parent
+    {{ copy().sharingData.output.sendDataToParentBtn }}
   </button>
 </div>

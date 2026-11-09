@@ -34,6 +34,7 @@ import {
   Tag,
 } from '@ah/ui';
 import { UseCaseFocusComponent } from '../../shared/ui/use-case-focus/use-case-focus.component';
+import { injectRxjsLabCopy } from '../../i18n/rxjs-lab-copy';
 
 export interface ArchitectureScenario {
   id: string;
@@ -63,16 +64,21 @@ export interface ArchitectureScenario {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RxjsVsSignalsComponent {
+  readonly copy = injectRxjsLabCopy();
+
   // --- Focus View Options ---
-  readonly focusOptions: readonly SegmentedOption<string>[] = [
-    { value: 'all', label: 'All Architectures' },
-    { value: 'decision-matrix', label: 'Decision Matrix' },
-    { value: 'search-debounce', label: 'Search & Debounce' },
-    { value: 'derived-state', label: 'Derived Calculations' },
-    { value: 'async-resource', label: 'Async Data Fetching' },
-    { value: 'linked-state', label: 'Resetting Dependent State' },
-    { value: 'coexistence', label: 'Coexistence Philosophy' },
-  ];
+  readonly focusOptions = computed<readonly SegmentedOption<string>[]>(() => {
+    const opts = this.copy().rxjsVsSignals.focusOptions;
+    return [
+      { value: 'all', label: opts.all },
+      { value: 'decision-matrix', label: opts.decisionMatrix },
+      { value: 'search-debounce', label: opts.searchDebounce },
+      { value: 'derived-state', label: opts.derivedState },
+      { value: 'async-resource', label: opts.asyncResource },
+      { value: 'linked-state', label: opts.linkedState },
+      { value: 'coexistence', label: opts.coexistence },
+    ];
+  });
   readonly activeCase = signal<string>('all');
 
   readonly codeSnippets = {
@@ -122,95 +128,15 @@ customQuota = linkedSignal({
   };
 
   // --- Scenarios Data for Interactive Decision Tool ---
-  readonly scenarios: readonly ArchitectureScenario[] = [
-    {
-      id: 'search',
-      title: 'Typeahead / Search Autocomplete',
-      category: 'Hybrid',
-      winner: 'Hybrid (Both)',
-      summary:
-        'Handling asynchronous key events with debounce and cancellation, then projecting the result into synchronous UI state.',
-      rxjsApproach:
-        'searchInput$.pipe(debounceTime(300), distinctUntilChanged(), switchMap(q => api.search(q)))',
-      signalsApproach:
-        'Signals do not natively support time-based throttling or debouncing without external timer plumbing.',
-      hybridApproach:
-        'query = signal(""); query$ = toObservable(this.query); results = toSignal(this.query$.pipe(debounceTime(300), switchMap(q => api.search(q))), { initialValue: [] })',
-      ruleOfThumb:
-        'Use RxJS to coordinate the asynchronous event stream over time, then terminate with toSignal() for clean, zoneless template rendering.',
-    },
-    {
-      id: 'derived',
-      title: 'Cart Total & Price Calculations',
-      category: 'State',
-      winner: 'Signals',
-      summary:
-        'Deriving synchronous computation from multiple state sources (items, quantity, discount, tax).',
-      rxjsApproach:
-        'combineLatest([items$, discount$, tax$]).pipe(map(([items, d, t]) => calculate(items, d, t))) — requires subscription, pipe, and manual change detection triggers in zoneless.',
-      signalsApproach:
-        'total = computed(() => calculate(this.items(), this.discount(), this.tax())) — automatic dynamic dependency tracking, synchronous pull, zero subscriptions, zero memory leaks.',
-      hybridApproach:
-        'Pure Signals win hands-down here. No RxJS needed for synchronous in-memory state derivation.',
-      ruleOfThumb:
-        'If state is synchronous in memory, always prefer signal() and computed().',
-    },
-    {
-      id: 'websockets',
-      title: 'Real-Time WebSockets & Event Feeds',
-      category: 'Events',
-      winner: 'RxJS',
-      summary:
-        'Continuous stream of push-based network packets, reconnection backoff, heartbeat intervals, and message filtering.',
-      rxjsApproach:
-        'webSocket$.pipe(retry({ delay: 2000 }), filter(isRelevant), scan(accumulateFeed, [])) — RxJS is designed specifically for push-based streams over time.',
-      signalsApproach:
-        'Signals only represent the latest discrete value; they do not natively model multi-emission push streams, dropouts, or packet queues.',
-      hybridApproach:
-        'Manage the socket lifecycle and buffering in RxJS, then expose feed = toSignal(feed$) for declarative template binding.',
-      ruleOfThumb:
-        'Whenever events are pushed over time (sockets, message buses, sensor feeds), RxJS is the gold standard.',
-    },
-    {
-      id: 'spam-prevention',
-      title: 'Form Submission & Double-Click Prevention',
-      category: 'Events',
-      winner: 'RxJS',
-      summary:
-        'Ensuring an in-flight submission blocks any rapid duplicate button clicks until the backend response returns.',
-      rxjsApproach:
-        'submitClick$.pipe(exhaustMap(() => authService.login(credentials))) — exhaustMap automatically discards clicks while the inner request is active.',
-      signalsApproach:
-        'Requires manual flag management: isSubmitting = signal(false); if (this.isSubmitting()) return; this.isSubmitting.set(true); try { ... } finally { this.isSubmitting.set(false); }',
-      hybridApproach:
-        'Use exhaustMap or a resource with disabled button state.',
-      ruleOfThumb:
-        'Use exhaustMap when concurrency requires ignoring incoming triggers during an active asynchronous operation.',
-    },
-    {
-      id: 'dependent-reset',
-      title: 'Dependent State Reset (e.g. Master-Detail)',
-      category: 'State',
-      winner: 'Signals',
-      summary:
-        'Changing a parent category resets the selected item to a default, while still permitting user selection.',
-      rxjsApproach:
-        'Historically required nested subjects or complex switchMap state resets in a service.',
-      signalsApproach:
-        'selectedItem = linkedSignal({ source: () => this.category(), computation: (cat) => cat.defaultItem }) — resets automatically on source change, yet directly writable with selectedItem.set()!',
-      hybridApproach:
-        'Pure Angular 22 linkedSignal() is the cleanest pattern for this in the entire frontend ecosystem.',
-      ruleOfThumb:
-        'Use linkedSignal() for writable local state that must stay in sync with a source dependency.',
-    },
-  ];
+  readonly scenarios = computed<readonly ArchitectureScenario[]>(
+    () => this.copy().rxjsVsSignals.scenarios,
+  );
 
   selectedScenarioId = signal<string>('search');
-  selectedScenario = computed(
-    () =>
-      this.scenarios.find((s) => s.id === this.selectedScenarioId()) ??
-      this.scenarios[0],
-  );
+  selectedScenario = computed(() => {
+    const list = this.scenarios();
+    return list.find((s) => s.id === this.selectedScenarioId()) ?? list[0];
+  });
 
   // --- Live Sandbox 1: Derived Calculations (combineLatest vs computed) ---
   basePrice = signal(100);

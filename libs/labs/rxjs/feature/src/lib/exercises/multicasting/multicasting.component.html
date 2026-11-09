@@ -1,15 +1,15 @@
 <!-- src/app/exercises/multicasting/multicasting.component.html -->
 <div class="exercise-container">
   <ah-section-heading
-    eyebrow="Chapter 8 · Multicasting"
-    heading="Exercise: Multicasting"
-    lead="Explore how to share a single Observable execution with multiple Observers. Filter to a single multicasting pattern to inspect subscriber timelines and marble distribution."
+    [eyebrow]="copy().multicasting.eyebrow"
+    [heading]="copy().multicasting.heading"
+    [lead]="copy().multicasting.lead"
   />
 
   <ah-use-case-focus
-    [options]="focusOptions"
+    [options]="focusOptions()"
     [(value)]="activeCase"
-    ariaLabel="Filter multicasting pattern"
+    [ariaLabel]="copy().multicasting.focusAriaLabel"
   />
 
   <div class="operators-grid" [class.single-case]="activeCase() !== 'all'">
@@ -18,22 +18,18 @@
       <div class="card" [class.focused-card]="activeCase() === 'cold'">
         <div class="card-header">
           <div class="card-title-row">
-            <h3>Cold Observable</h3>
+            <h3>{{ copy().multicasting.cold.title }}</h3>
             @if (activeCase() === 'cold') {
-              <ah-tag>Focused View</ah-tag>
+              <ah-tag>{{ copy().common.focusedView }}</ah-tag>
             }
           </div>
-          <p>
-            Each subscriber gets its own independent execution of the
-            Observable.
-          </p>
+          <p>{{ copy().multicasting.cold.description }}</p>
         </div>
         <div class="card-content">
           <div class="everyday-example">
             <p>
-              <strong>Analogy:</strong> Watching a movie on Netflix. Each person
-              who clicks play starts the movie from the beginning, getting their
-              own private stream.
+              <strong>{{ copy().multicasting.analogyStrong }}</strong>
+              {{ copy().multicasting.cold.analogyText }}
             </p>
           </div>
           <div class="button-group">
@@ -43,7 +39,7 @@
               size="sm"
               (click)="addSubscriber('cold')"
             >
-              Add Subscriber
+              {{ copy().multicasting.addSubscriberBtn }}
             </button>
             <button
               type="button"
@@ -51,13 +47,13 @@
               size="sm"
               (click)="reset('cold')"
             >
-              Reset
+              {{ copy().common.reset }}
             </button>
           </div>
 
           @for (subscriber of subscribers().cold; track subscriber.id) {
             <div class="timeline-group">
-              <div class="timeline-label">{{ subscriber.id }}'s Execution</div>
+              <div class="timeline-label">{{ copy().multicasting.executionLabel(subscriber.id) }}</div>
               <div class="timeline subscriber-timeline">
                 @for (marble of subscriber.marbles; track marble.id) {
                   <div class="marble" [style.background]="marble.color">
@@ -75,7 +71,11 @@
               size="sm"
               (click)="toggleCode('cold')"
             >
-              {{ showCode()['cold'] ? 'Hide' : 'Show' }} Code Example
+              {{
+                showCode()['cold']
+                  ? copy().common.hideCodeExample
+                  : copy().common.showCodeExample
+              }}
             </button>
             @if (showCode()['cold']) {
               <ah-code-block [code]="codeSnippets.cold" language="typescript" />
@@ -90,22 +90,18 @@
       <div class="card" [class.focused-card]="activeCase() === 'hot'">
         <div class="card-header">
           <div class="card-title-row">
-            <h3>Hot Observable (with <code>share()</code>)</h3>
+            <h3>{{ copy().multicasting.hot.title }}</h3>
             @if (activeCase() === 'hot') {
-              <ah-tag>Focused View</ah-tag>
+              <ah-tag>{{ copy().common.focusedView }}</ah-tag>
             }
           </div>
-          <p>
-            All subscribers share a single execution. Late subscribers miss
-            earlier values.
-          </p>
+          <p>{{ copy().multicasting.hot.description }}</p>
         </div>
         <div class="card-content">
           <div class="everyday-example">
             <p>
-              <strong>Analogy:</strong> Tuning into a live radio broadcast.
-              Everyone hears the same song at the same time. If you tune in
-              late, you miss the beginning.
+              <strong>{{ copy().multicasting.analogyStrong }}</strong>
+              {{ copy().multicasting.hot.analogyText }}
             </p>
           </div>
           <div class="button-group">
@@ -115,7 +111,7 @@
               size="sm"
               (click)="addSubscriber('hot')"
             >
-              Add Subscriber
+              {{ copy().multicasting.addSubscriberBtn }}
             </button>
             <button
               type="button"
@@ -123,12 +119,12 @@
               size="sm"
               (click)="reset('hot')"
             >
-              Reset
+              {{ copy().common.reset }}
             </button>
           </div>
 
           <div class="timeline-group">
-            <div class="timeline-label">Shared Source Stream</div>
+            <div class="timeline-label">{{ copy().multicasting.sharedSourceStreamLabel }}</div>
             <div class="timeline source-timeline">
               @for (marble of sourceMarbles().hot; track marble.id) {
                 <div class="marble" [style.background]="marble.color">
@@ -158,7 +154,11 @@
               size="sm"
               (click)="toggleCode('hot')"
             >
-              {{ showCode()['hot'] ? 'Hide' : 'Show' }} Code Example
+              {{
+                showCode()['hot']
+                  ? copy().common.hideCodeExample
+                  : copy().common.showCodeExample
+              }}
             </button>
             @if (showCode()['hot']) {
               <ah-code-block [code]="codeSnippets.hot" language="typescript" />
@@ -173,23 +173,18 @@
       <div class="card" [class.focused-card]="activeCase() === 'connectable'">
         <div class="card-header">
           <div class="card-title-row">
-            <h3>Hot Observable (with <code>connectable</code>)</h3>
+            <h3>{{ copy().multicasting.connectable.title }}</h3>
             @if (activeCase() === 'connectable') {
-              <ah-tag>Focused View</ah-tag>
+              <ah-tag>{{ copy().common.focusedView }}</ah-tag>
             }
           </div>
-          <p>
-            Gives you manual control over when the shared execution starts via
-            <code>connect()</code>.
-          </p>
+          <p>{{ copy().multicasting.connectable.description }}</p>
         </div>
         <div class="card-content">
           <div class="everyday-example">
             <p>
-              <strong>Analogy:</strong> A movie premiere. The audience
-              (subscribers) can gather, but the movie (source) won't start until
-              the projectionist (you) hits the play button
-              (<code>connect()</code>).
+              <strong>{{ copy().multicasting.analogyStrong }}</strong>
+              {{ copy().multicasting.connectable.analogyText }}
             </p>
           </div>
           <div class="button-group">
@@ -199,7 +194,7 @@
               size="sm"
               (click)="createConnectable()"
             >
-              Create
+              {{ copy().multicasting.createBtn }}
             </button>
             <button
               type="button"
@@ -207,7 +202,7 @@
               size="sm"
               (click)="addSubscriber('connectable')"
             >
-              Add Subscriber
+              {{ copy().multicasting.addSubscriberBtn }}
             </button>
             <button
               type="button"
@@ -215,7 +210,7 @@
               size="sm"
               (click)="connectConnectable()"
             >
-              Connect
+              {{ copy().multicasting.connectBtn }}
             </button>
             <button
               type="button"
@@ -223,12 +218,12 @@
               size="sm"
               (click)="reset('connectable')"
             >
-              Reset
+              {{ copy().common.reset }}
             </button>
           </div>
 
           <div class="timeline-group">
-            <div class="timeline-label">Source Stream</div>
+            <div class="timeline-label">{{ copy().multicasting.sourceStreamLabel }}</div>
             <div class="timeline source-timeline">
               @for (marble of sourceMarbles().connectable; track marble.id) {
                 <div class="marble" [style.background]="marble.color">
@@ -258,7 +253,11 @@
               size="sm"
               (click)="toggleCode('hot')"
             >
-              {{ showCode()['hot'] ? 'Hide' : 'Show' }} Code Example
+              {{
+                showCode()['hot']
+                  ? copy().common.hideCodeExample
+                  : copy().common.showCodeExample
+              }}
             </button>
             @if (showCode()['hot']) {
               <ah-code-block [code]="codeSnippets.hot" language="typescript" />
@@ -273,15 +272,12 @@
       <div class="card" [class.focused-card]="activeCase() === 'subject'">
         <div class="card-header">
           <div class="card-title-row">
-            <h3>Standard <code>Subject</code></h3>
+            <h3>{{ copy().multicasting.subject.title }}</h3>
             @if (activeCase() === 'subject') {
-              <ah-tag>Focused View</ah-tag>
+              <ah-tag>{{ copy().common.focusedView }}</ah-tag>
             }
           </div>
-          <p>
-            Acts as both an Observable and an Observer. It has no memory; only
-            future values are received.
-          </p>
+          <p>{{ copy().multicasting.subject.description }}</p>
         </div>
         <div class="card-content">
           <div class="button-group">
@@ -291,7 +287,7 @@
               size="sm"
               (click)="createSubject('subject')"
             >
-              Create Subject
+              {{ copy().multicasting.createSubjectBtn }}
             </button>
             <button
               type="button"
@@ -300,7 +296,7 @@
               (click)="emitValue('subject')"
               [disabled]="!isSubjectCreated().subject"
             >
-              Emit Value
+              {{ copy().multicasting.emitValueBtn }}
             </button>
             <button
               type="button"
@@ -308,7 +304,7 @@
               size="sm"
               (click)="addSubscriber('subject')"
             >
-              Add Subscriber
+              {{ copy().multicasting.addSubscriberBtn }}
             </button>
             <button
               type="button"
@@ -317,7 +313,7 @@
               (click)="completeSubject('subject')"
               [disabled]="!isSubjectCreated().subject"
             >
-              Complete
+              {{ copy().multicasting.completeBtn }}
             </button>
             <button
               type="button"
@@ -325,12 +321,12 @@
               size="sm"
               (click)="reset('subject')"
             >
-              Reset
+              {{ copy().common.reset }}
             </button>
           </div>
 
           <div class="timeline-group">
-            <div class="timeline-label">Source Stream</div>
+            <div class="timeline-label">{{ copy().multicasting.sourceStreamLabel }}</div>
             <div class="timeline source-timeline">
               @for (marble of sourceMarbles().subject; track marble.id) {
                 <div class="marble" [style.background]="marble.color">
@@ -360,7 +356,11 @@
               size="sm"
               (click)="toggleCode('subject')"
             >
-              {{ showCode()['subject'] ? 'Hide' : 'Show' }} Code Example
+              {{
+                showCode()['subject']
+                  ? copy().common.hideCodeExample
+                  : copy().common.showCodeExample
+              }}
             </button>
             @if (showCode()['subject']) {
               <ah-code-block [code]="codeSnippets.subject" language="typescript" />
@@ -378,20 +378,17 @@
       >
         <div class="card-header">
           <div class="card-title-row">
-            <h3><code>BehaviorSubject</code></h3>
+            <h3><code>{{ copy().multicasting.behaviorSubject.title }}</code></h3>
             @if (activeCase() === 'behaviorSubject') {
-              <ah-tag>Focused View</ah-tag>
+              <ah-tag>{{ copy().common.focusedView }}</ah-tag>
             }
           </div>
-          <p>
-            Requires an initial value. New subscribers immediately receive the
-            *most recent* value upon subscription.
-          </p>
+          <p>{{ copy().multicasting.behaviorSubject.description }}</p>
         </div>
         <div class="card-content">
           <div class="config-group inline-config">
             <div class="config-item">
-              <label for="behavior-initial">Initial Value:</label>
+              <label for="behavior-initial">{{ copy().multicasting.initialValueLabel }}</label>
               <input
                 id="behavior-initial"
                 type="number"
@@ -407,7 +404,7 @@
               size="sm"
               (click)="createSubject('behaviorSubject')"
             >
-              Create Subject
+              {{ copy().multicasting.createSubjectBtn }}
             </button>
             <button
               type="button"
@@ -416,7 +413,7 @@
               (click)="emitValue('behaviorSubject')"
               [disabled]="!isSubjectCreated().behaviorSubject"
             >
-              Emit Value
+              {{ copy().multicasting.emitValueBtn }}
             </button>
             <button
               type="button"
@@ -424,7 +421,7 @@
               size="sm"
               (click)="addSubscriber('behaviorSubject')"
             >
-              Add Subscriber
+              {{ copy().multicasting.addSubscriberBtn }}
             </button>
             <button
               type="button"
@@ -433,7 +430,7 @@
               (click)="completeSubject('behaviorSubject')"
               [disabled]="!isSubjectCreated().behaviorSubject"
             >
-              Complete
+              {{ copy().multicasting.completeBtn }}
             </button>
             <button
               type="button"
@@ -441,17 +438,17 @@
               size="sm"
               (click)="reset('behaviorSubject')"
             >
-              Reset
+              {{ copy().common.reset }}
             </button>
           </div>
 
           <div class="special-display current-value-box">
-            <strong>Current Value:</strong>
-            {{ behaviorSubjectValue() ?? 'N/A' }}
+            <strong>{{ copy().multicasting.currentValueLabel }}</strong>
+            {{ behaviorSubjectValue() ?? copy().common.na }}
           </div>
 
           <div class="timeline-group">
-            <div class="timeline-label">Source Stream</div>
+            <div class="timeline-label">{{ copy().multicasting.sourceStreamLabel }}</div>
             <div class="timeline source-timeline">
               @for (
                 marble of sourceMarbles().behaviorSubject;
@@ -487,7 +484,11 @@
               size="sm"
               (click)="toggleCode('behaviorSubject')"
             >
-              {{ showCode()['behaviorSubject'] ? 'Hide' : 'Show' }} Code Example
+              {{
+                showCode()['behaviorSubject']
+                  ? copy().common.hideCodeExample
+                  : copy().common.showCodeExample
+              }}
             </button>
             @if (showCode()['behaviorSubject']) {
               <ah-code-block [code]="codeSnippets.behaviorSubject" language="typescript" />
@@ -502,20 +503,17 @@
       <div class="card" [class.focused-card]="activeCase() === 'replaySubject'">
         <div class="card-header">
           <div class="card-title-row">
-            <h3><code>ReplaySubject</code></h3>
+            <h3><code>{{ copy().multicasting.replaySubject.title }}</code></h3>
             @if (activeCase() === 'replaySubject') {
-              <ah-tag>Focused View</ah-tag>
+              <ah-tag>{{ copy().common.focusedView }}</ah-tag>
             }
           </div>
-          <p>
-            Buffers a specified number of values and "replays" them to new
-            subscribers.
-          </p>
+          <p>{{ copy().multicasting.replaySubject.description }}</p>
         </div>
         <div class="card-content">
           <div class="config-group inline-config">
             <div class="config-item">
-              <label for="replay-buffer">Buffer Size:</label>
+              <label for="replay-buffer">{{ copy().multicasting.bufferSizeLabel }}</label>
               <input
                 id="replay-buffer"
                 type="number"
@@ -531,7 +529,7 @@
               size="sm"
               (click)="createSubject('replaySubject')"
             >
-              Create Subject
+              {{ copy().multicasting.createSubjectBtn }}
             </button>
             <button
               type="button"
@@ -540,7 +538,7 @@
               (click)="emitValue('replaySubject')"
               [disabled]="!isSubjectCreated().replaySubject"
             >
-              Emit Value
+              {{ copy().multicasting.emitValueBtn }}
             </button>
             <button
               type="button"
@@ -548,7 +546,7 @@
               size="sm"
               (click)="addSubscriber('replaySubject')"
             >
-              Add Subscriber
+              {{ copy().multicasting.addSubscriberBtn }}
             </button>
             <button
               type="button"
@@ -557,7 +555,7 @@
               (click)="completeSubject('replaySubject')"
               [disabled]="!isSubjectCreated().replaySubject"
             >
-              Complete
+              {{ copy().multicasting.completeBtn }}
             </button>
             <button
               type="button"
@@ -565,12 +563,12 @@
               size="sm"
               (click)="reset('replaySubject')"
             >
-              Reset
+              {{ copy().common.reset }}
             </button>
           </div>
 
           <div class="special-display buffer-box">
-            <strong>Buffer:</strong>
+            <strong>{{ copy().multicasting.bufferLabel }}</strong>
             @for (value of replaySubjectBuffer(); track $index) {
               <div
                 class="marble"
@@ -579,12 +577,12 @@
                 {{ value }}
               </div>
             } @empty {
-              <span>Empty</span>
+              <span>{{ copy().multicasting.emptyLabel }}</span>
             }
           </div>
 
           <div class="timeline-group">
-            <div class="timeline-label">Source Stream</div>
+            <div class="timeline-label">{{ copy().multicasting.sourceStreamLabel }}</div>
             <div class="timeline source-timeline">
               @for (marble of sourceMarbles().replaySubject; track marble.id) {
                 <div class="marble" [style.background]="marble.color">
@@ -617,7 +615,11 @@
               size="sm"
               (click)="toggleCode('replaySubject')"
             >
-              {{ showCode()['replaySubject'] ? 'Hide' : 'Show' }} Code Example
+              {{
+                showCode()['replaySubject']
+                  ? copy().common.hideCodeExample
+                  : copy().common.showCodeExample
+              }}
             </button>
             @if (showCode()['replaySubject']) {
               <ah-code-block [code]="codeSnippets.replaySubject" language="typescript" />
@@ -632,15 +634,12 @@
       <div class="card" [class.focused-card]="activeCase() === 'asyncSubject'">
         <div class="card-header">
           <div class="card-title-row">
-            <h3><code>AsyncSubject</code></h3>
+            <h3><code>{{ copy().multicasting.asyncSubject.title }}</code></h3>
             @if (activeCase() === 'asyncSubject') {
-              <ah-tag>Focused View</ah-tag>
+              <ah-tag>{{ copy().common.focusedView }}</ah-tag>
             }
           </div>
-          <p>
-            Only emits the *last* value of the source Observable, and only when
-            the source completes.
-          </p>
+          <p>{{ copy().multicasting.asyncSubject.description }}</p>
         </div>
         <div class="card-content">
           <div class="button-group">
@@ -650,7 +649,7 @@
               size="sm"
               (click)="createSubject('asyncSubject')"
             >
-              Create Subject
+              {{ copy().multicasting.createSubjectBtn }}
             </button>
             <button
               type="button"
@@ -659,7 +658,7 @@
               (click)="emitValue('asyncSubject')"
               [disabled]="!isSubjectCreated().asyncSubject"
             >
-              Emit Value
+              {{ copy().multicasting.emitValueBtn }}
             </button>
             <button
               type="button"
@@ -667,7 +666,7 @@
               size="sm"
               (click)="addSubscriber('asyncSubject')"
             >
-              Add Subscriber
+              {{ copy().multicasting.addSubscriberBtn }}
             </button>
             <button
               type="button"
@@ -676,7 +675,7 @@
               (click)="completeSubject('asyncSubject')"
               [disabled]="!isSubjectCreated().asyncSubject"
             >
-              Complete
+              {{ copy().multicasting.completeBtn }}
             </button>
             <button
               type="button"
@@ -684,12 +683,12 @@
               size="sm"
               (click)="reset('asyncSubject')"
             >
-              Reset
+              {{ copy().common.reset }}
             </button>
           </div>
 
           <div class="timeline-group">
-            <div class="timeline-label">Source Stream</div>
+            <div class="timeline-label">{{ copy().multicasting.sourceStreamLabel }}</div>
             <div class="timeline source-timeline">
               @for (marble of sourceMarbles().asyncSubject; track marble.id) {
                 <div class="marble" [style.background]="marble.color">
@@ -719,7 +718,11 @@
               size="sm"
               (click)="toggleCode('asyncSubject')"
             >
-              {{ showCode()['asyncSubject'] ? 'Hide' : 'Show' }} Code Example
+              {{
+                showCode()['asyncSubject']
+                  ? copy().common.hideCodeExample
+                  : copy().common.showCodeExample
+              }}
             </button>
             @if (showCode()['asyncSubject']) {
               <ah-code-block [code]="codeSnippets.asyncSubject" language="typescript" />

@@ -5,7 +5,7 @@
         class="pulse-indicator"
         [class.active]="activeStage() !== 'idle'"
       ></span>
-      <h4 class="flow-title">NgRx Reactive Unidirectional Cycle</h4>
+      <h4 class="flow-title">{{ copy().title }}</h4>
     </div>
     <ah-tag [class.is-active]="activeStage() !== 'idle'">
       {{ stageLabel() }}
@@ -17,22 +17,22 @@
     <div class="stage-node" [class.current]="activeStage() === 'component'">
       <div class="node-icon">UI</div>
       <div class="node-meta">
-        <span class="node-name">Component</span>
-        <span class="node-desc">User Event</span>
+        <span class="node-name">{{ copy().nodes.componentName }}</span>
+        <span class="node-desc">{{ copy().nodes.componentDesc }}</span>
       </div>
     </div>
 
     <div class="stage-arrow" [class.pulse]="activeStage() === 'dispatch'">
       <span class="arrow-line"></span>
-      <span class="arrow-tag">dispatch()</span>
+      <span class="arrow-tag">{{ copy().arrows.dispatch }}</span>
     </div>
 
     <!-- Stage 2: Action -->
     <div class="stage-node" [class.current]="activeStage() === 'dispatch'">
       <div class="node-icon">⚡</div>
       <div class="node-meta">
-        <span class="node-name">Action</span>
-        <span class="node-desc">Unique Event</span>
+        <span class="node-name">{{ copy().nodes.actionName }}</span>
+        <span class="node-desc">{{ copy().nodes.actionDesc }}</span>
       </div>
     </div>
 
@@ -41,7 +41,7 @@
       [class.pulse]="activeStage() === 'effect' || activeStage() === 'reducer'"
     >
       <span class="arrow-line"></span>
-      <span class="arrow-tag">stream</span>
+      <span class="arrow-tag">{{ copy().arrows.stream }}</span>
     </div>
 
     <!-- Stage 3: Effect (Optional / Parallel) or Reducer -->
@@ -53,45 +53,45 @@
         >
           <div class="node-icon">🔄</div>
           <div class="node-meta">
-            <span class="node-name">Effect</span>
-            <span class="node-desc">Side-Effect / API</span>
+            <span class="node-name">{{ copy().nodes.effectName }}</span>
+            <span class="node-desc">{{ copy().nodes.effectDesc }}</span>
           </div>
         </div>
       }
       <div class="stage-node" [class.current]="activeStage() === 'reducer'">
         <div class="node-icon">⚙️</div>
         <div class="node-meta">
-          <span class="node-name">Reducer</span>
-          <span class="node-desc">Pure Transition</span>
+          <span class="node-name">{{ copy().nodes.reducerName }}</span>
+          <span class="node-desc">{{ copy().nodes.reducerDesc }}</span>
         </div>
       </div>
     </div>
 
     <div class="stage-arrow" [class.pulse]="activeStage() === 'store'">
       <span class="arrow-line"></span>
-      <span class="arrow-tag">new state</span>
+      <span class="arrow-tag">{{ copy().arrows.newState }}</span>
     </div>
 
     <!-- Stage 4: Store -->
     <div class="stage-node" [class.current]="activeStage() === 'store'">
       <div class="node-icon">📦</div>
       <div class="node-meta">
-        <span class="node-name">Store</span>
-        <span class="node-desc">Single Source</span>
+        <span class="node-name">{{ copy().nodes.storeName }}</span>
+        <span class="node-desc">{{ copy().nodes.storeDesc }}</span>
       </div>
     </div>
 
     <div class="stage-arrow" [class.pulse]="activeStage() === 'selector'">
       <span class="arrow-line"></span>
-      <span class="arrow-tag">slice</span>
+      <span class="arrow-tag">{{ copy().arrows.slice }}</span>
     </div>
 
     <!-- Stage 5: Selector -->
     <div class="stage-node" [class.current]="activeStage() === 'selector'">
       <div class="node-icon">🎯</div>
       <div class="node-meta">
-        <span class="node-name">Selector</span>
-        <span class="node-desc">Memoized Cache</span>
+        <span class="node-name">{{ copy().nodes.selectorName }}</span>
+        <span class="node-desc">{{ copy().nodes.selectorDesc }}</span>
       </div>
     </div>
   </div>

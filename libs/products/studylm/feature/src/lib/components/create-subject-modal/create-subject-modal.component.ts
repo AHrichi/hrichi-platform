@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   inject,
   signal,
 } from '@angular/core';
@@ -15,6 +16,8 @@ import {
 import { AhAlert, AhButton, AhModal } from '@ah/ui';
 import { StudyLmStore } from '../../store/studylm.store';
 import { StudyLmScreens } from '../../shell/studylm-screens';
+import { PreferencesStore } from '@ah/shared/state';
+import { STUDYLM_COPY } from '../../i18n/studylm-copy';
 import {
   SE_DOMAINS,
   type SoftwareEngineeringDomain,
@@ -37,6 +40,11 @@ interface CreateSubjectModel {
 export class CreateSubjectModalComponent {
   readonly store = inject(StudyLmStore);
   private readonly screens = inject(StudyLmScreens);
+  private readonly preferences = inject(PreferencesStore, { optional: true });
+  readonly copy = computed(
+    () =>
+      STUDYLM_COPY[this.preferences?.language() ?? 'en'] ?? STUDYLM_COPY.en,
+  );
   readonly domains = SE_DOMAINS;
 
   readonly model = signal<CreateSubjectModel>({

@@ -1,5 +1,6 @@
 // src/app/exercises/sharing-data/view-child-example/view-child-example.component.ts
 import { Component, signal } from '@angular/core';
+import { injectRxjsLabCopy } from '../../../i18n/rxjs-lab-copy';
 
 @Component({
   selector: 'app-view-child-example',
@@ -8,6 +9,7 @@ import { Component, signal } from '@angular/core';
   styleUrls: ['./view-child-example.component.scss'],
 })
 export class ViewChildExampleComponent {
+  readonly copy = injectRxjsLabCopy();
   isHighlighted = signal(false);
 
   highlight() {

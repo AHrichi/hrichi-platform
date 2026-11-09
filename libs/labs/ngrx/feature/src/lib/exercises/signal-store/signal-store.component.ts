@@ -31,6 +31,7 @@ import {
   type SegmentedOption,
 } from '@ah/ui';
 import { UseCaseFocusComponent } from '../../shared/ui/use-case-focus/use-case-focus.component';
+import { injectNgrxLabCopy } from '../../i18n/ngrx-lab-copy';
 
 export interface DeveloperSkill {
   id: string;
@@ -162,22 +163,31 @@ export const SkillsStore = signalStore(
 export class SignalStoreComponent {
   readonly store = inject(SkillsStore);
 
-  readonly focusOptions: readonly SegmentedOption<string>[] = [
-    { value: 'all', label: 'All SignalStore Features' },
-    { value: 'concept', label: 'SignalStore Philosophy' },
-    { value: 'entities', label: 'withEntities Normalization' },
-    { value: 'rx-method', label: 'rxMethod Stream Interop' },
-    { value: 'signal-state', label: 'signalState Local State' },
-  ];
+  private readonly labCopy = injectNgrxLabCopy();
+  readonly copy = computed(() => this.labCopy().signalStore);
+
+  readonly focusOptions = computed<readonly SegmentedOption<string>[]>(() => {
+    const opts = this.copy().focusOptions;
+    return [
+      { value: 'all', label: opts.all },
+      { value: 'concept', label: opts.concept },
+      { value: 'entities', label: opts.entities },
+      { value: 'rx-method', label: opts.rxMethod },
+      { value: 'signal-state', label: opts.signalState },
+    ];
+  });
 
   readonly activeCase = signal('all');
 
-  readonly categories = [
-    { id: 'all', label: 'All Categories' },
-    { id: 'core', label: 'Core Angular' },
-    { id: 'reactive', label: 'Reactive / NgRx' },
-    { id: 'architectural', label: 'Architecture' },
-  ] as const;
+  readonly categories = computed(() => {
+    const cats = this.copy().categories;
+    return [
+      { id: 'all', label: cats.all },
+      { id: 'core', label: cats.core },
+      { id: 'reactive', label: cats.reactive },
+      { id: 'architectural', label: cats.architectural },
+    ] as const;
+  });
 
   // 3. Demonstrating signalState for local UI micro-state
   readonly localUiState = signalState({

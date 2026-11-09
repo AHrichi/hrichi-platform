@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   inject,
   signal,
 } from '@angular/core';
@@ -14,6 +15,8 @@ import {
   required,
 } from '@angular/forms/signals';
 import { StudyLmStore } from '../../store/studylm.store';
+import { PreferencesStore } from '@ah/shared/state';
+import { STUDYLM_COPY } from '../../i18n/studylm-copy';
 import type {
   AddSourceInput,
   SourceType,
@@ -36,6 +39,11 @@ import type {
 })
 export class SourceManagerComponent {
   readonly store = inject(StudyLmStore);
+  private readonly preferences = inject(PreferencesStore, { optional: true });
+  readonly copy = computed(
+    () =>
+      STUDYLM_COPY[this.preferences?.language() ?? 'en'] ?? STUDYLM_COPY.en,
+  );
 
   readonly model = signal<AddSourceInput>({
     title: '',

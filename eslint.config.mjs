@@ -179,6 +179,8 @@ export default [
               onlyDependOnLibsWithTags: [
                 'type:platform',
                 'type:ui',
+                'type:data-access',
+                'type:content',
                 'type:util',
                 'type:contracts',
                 'type:tokens',

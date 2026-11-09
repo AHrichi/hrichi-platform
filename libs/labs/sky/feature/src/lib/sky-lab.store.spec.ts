@@ -1,6 +1,8 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { cities, gmst, placeAt, placeFromCity } from '@ah/labs/sky/domain';
+import type { SiteLanguage } from '@ah/shared/state';
+import { SKY_LAB_COPY } from './sky-lab-copy';
 import { earthFrame, SkyLabStore, skyFrame } from './sky-lab.store';
 
 const augustNight = Date.parse('2026-08-12T22:00:00Z');
@@ -61,5 +63,29 @@ describe('frames for the scene', () => {
 
   it('turns the Earth by sidereal time', () => {
     expect(earthFrame(augustNight).gmst).toBe(gmst(new Date(augustNight)));
+  });
+});
+
+describe('SKY_LAB_COPY', () => {
+  const languages: SiteLanguage[] = ['en', 'fr', 'ar', 'it', 'de'];
+
+  it.each(languages)('provides complete localized copy for %s', (lang) => {
+    const copy = SKY_LAB_COPY[lang];
+    expect(copy.lookUpAtSky.length).toBeGreaterThan(0);
+    expect(copy.backToEarth.length).toBeGreaterThan(0);
+    expect(copy.twilight.night.length).toBeGreaterThan(0);
+    expect(copy.localTimeIn('Tunis')).toContain('Tunis');
+    expect(copy.highInThe(45, 'S')).toContain('45');
+    expect(copy.lit('80%')).toContain('80%');
+    expect(copy.moonFact('Full Moon', '100%', '20:00', '06:00')).toContain(
+      '100%',
+    );
+    expect(copy.planetUpNow(30, 'SE', '-2.1')).toContain('-2.1');
+    expect(copy.planetBelowHorizon('22:00', '05:00')).toContain('22:00');
+    expect(copy.showerText(90, copy.radiantUp(50), 59, '109P')).toContain('90');
+    expect(copy.planetSubtitle('-1.5')).toContain('-1.5');
+    expect(copy.starSubtitle('Orion', '0.1')).toContain('Orion');
+    expect(copy.moonlessDark('4h 30m')).toContain('4h 30m');
+    expect(copy.moonPct('12%')).toContain('12%');
   });
 });

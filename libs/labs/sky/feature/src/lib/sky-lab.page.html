@@ -13,10 +13,7 @@
           (picked)="picked($event)"
         >
           <div class="sky__fallback">
-            <p>
-              The 3D sky needs WebGL. Tonight's sky is described next to it, and
-              the time and place controls still work.
-            </p>
+            <p>{{ copy().webglFallback }}</p>
           </div>
         </ah-scene>
       </div>
@@ -24,13 +21,15 @@
       <div class="sky__toolbar">
         <button type="button" class="sky__primary" (click)="toggleView()">
           {{
-            store.view() === 'earth' ? 'Look up at the sky' : 'Back to Earth'
+            store.view() === 'earth'
+              ? copy().lookUpAtSky
+              : copy().backToEarth
           }}
         </button>
         @if (store.view() === 'sky') {
           <ah-segmented-control
-            label="Face"
-            [options]="directions"
+            [label]="copy().face"
+            [options]="directions()"
             [value]="facing()"
             (valueChange)="face($event)"
           />
@@ -38,12 +37,12 @@
       </div>
 
       <fieldset class="sky__group">
-        <legend>Time</legend>
+        <legend>{{ copy().time }}</legend>
         <p class="sky__when">{{ when() }}</p>
         <div class="sky__row">
           <label class="sky__field">
             <span
-              >Date and time
+              >{{ copy().dateAndTime }}
               <span class="ah-muted">({{ zoneLabel() }})</span></span
             >
             <input
@@ -52,17 +51,17 @@
               (change)="setTime($event)"
             />
           </label>
-          <button type="button" (click)="store.now()">Now</button>
+          <button type="button" (click)="store.now()">{{ copy().now }}</button>
         </div>
         <ah-segmented-control
-          label="Speed"
-          [options]="speeds"
+          [label]="copy().speed"
+          [options]="speeds()"
           [value]="speed()"
           (valueChange)="setSpeed($event)"
         />
         @if (tonightRange(); as range) {
           <label class="sky__field">
-            <span>Through tonight, sunset to sunrise</span>
+            <span>{{ copy().throughTonight }}</span>
             <input
               type="range"
               step="60000"
@@ -77,14 +76,14 @@
       </fieldset>
 
       <fieldset class="sky__group sky__layers">
-        <legend>Show</legend>
+        <legend>{{ copy().show }}</legend>
         <label
           ><input
             type="checkbox"
             [checked]="store.layers().constellations"
             (change)="toggleLayer('constellations')"
           />
-          Constellations</label
+          {{ copy().constellations }}</label
         >
         <label
           ><input
@@ -92,7 +91,7 @@
             [checked]="store.layers().labels"
             (change)="toggleLayer('labels')"
           />
-          Names</label
+          {{ copy().names }}</label
         >
         <label
           ><input
@@ -100,18 +99,20 @@
             [checked]="store.layers().milkyWay"
             (change)="toggleLayer('milkyWay')"
           />
-          Milky Way</label
+          {{ copy().milkyWay }}</label
         >
       </fieldset>
     </div>
 
-    <aside class="sky__panel" aria-label="Your sky">
+    <aside class="sky__panel" [attr.aria-label]="copy().yourSky">
       <section class="sky__section" aria-labelledby="sky-place">
         <h2 id="sky-place" class="sky__heading">{{ store.place().name }}</h2>
-        <label class="sky__field" for="sky-city">Campsite or city</label>
+        <label class="sky__field" for="sky-city">{{
+          copy().campsiteOrCity
+        }}</label>
         <select id="sky-city" (change)="chooseCity($event)">
           <option value="" disabled [selected]="!store.place().timeZone">
-            Choose a city
+            {{ copy().chooseACity }}
           </option>
           @for (city of cities; track city.name) {
             <option
@@ -125,27 +126,22 @@
           }
         </select>
         <div class="sky__row">
-          <button type="button" (click)="locate()">Use my location</button>
+          <button type="button" (click)="locate()">
+            {{ copy().useMyLocation }}
+          </button>
         </div>
         @switch (store.locating()) {
           @case ('asking') {
-            <p class="ah-muted">Waiting for your browser…</p>
+            <p class="ah-muted">{{ copy().locatingAsking }}</p>
           }
           @case ('denied') {
-            <p class="ah-muted">
-              Location access was declined; pick a city or click the globe.
-            </p>
+            <p class="ah-muted">{{ copy().locatingDenied }}</p>
           }
           @case ('unavailable') {
-            <p class="ah-muted">
-              Your location isn't available; pick a city or click the globe.
-            </p>
+            <p class="ah-muted">{{ copy().locatingUnavailable }}</p>
           }
           @default {
-            <p class="ah-muted">
-              Or click anywhere on the globe. Your location stays in your
-              browser.
-            </p>
+            <p class="ah-muted">{{ copy().locatingDefault }}</p>
           }
         }
       </section>
@@ -164,12 +160,16 @@
               }
             </dl>
           }
-          <button type="button" (click)="store.select(null)">Close</button>
+          <button type="button" (click)="store.select(null)">
+            {{ copy().close }}
+          </button>
         </section>
       }
 
       <section class="sky__section" aria-labelledby="sky-tonight">
-        <h2 id="sky-tonight" class="sky__heading">What's up tonight</h2>
+        <h2 id="sky-tonight" class="sky__heading">
+          {{ copy().whatsUpTonight }}
+        </h2>
         <dl class="sky__facts">
           @for (fact of tonight().facts; track fact.label) {
             <div>
@@ -178,7 +178,7 @@
             </div>
           }
         </dl>
-        <h3 class="sky__subheading">Planets</h3>
+        <h3 class="sky__subheading">{{ copy().planets }}</h3>
         <ul class="sky__list" role="list">
           @for (planet of tonight().planets; track planet.name) {
             <li>
@@ -187,7 +187,7 @@
           }
         </ul>
         @if (tonight().showers.length) {
-          <h3 class="sky__subheading">Meteor showers</h3>
+          <h3 class="sky__subheading">{{ copy().meteorShowers }}</h3>
           <ul class="sky__list" role="list">
             @for (shower of tonight().showers; track shower.name) {
               <li>
@@ -196,28 +196,24 @@
             }
           </ul>
         }
-        <h3 class="sky__subheading">Constellations up high</h3>
-        <p>{{ tonight().constellations || 'None high up right now.' }}</p>
+        <h3 class="sky__subheading">{{ copy().constellationsUpHigh }}</h3>
+        <p>{{ tonight().constellations || copy().noneHighUp }}</p>
       </section>
 
       @if (planner().status !== 'off') {
         <section class="sky__section" aria-labelledby="sky-planner">
-          <h2 id="sky-planner" class="sky__heading">Best nights to go</h2>
+          <h2 id="sky-planner" class="sky__heading">
+            {{ copy().bestNightsToGo }}
+          </h2>
           @switch (planner().status) {
             @case ('loading') {
-              <p class="ah-muted">Asking the night planner…</p>
+              <p class="ah-muted">{{ copy().plannerLoading }}</p>
             }
             @case ('waking') {
-              <p class="ah-muted">
-                Waking the free-tier night planner (Spring Boot on Render); this
-                takes up to a minute…
-              </p>
+              <p class="ah-muted">{{ copy().plannerWaking }}</p>
             }
             @case ('unavailable') {
-              <p class="ah-muted">
-                The night planner didn't answer. Tonight's sky above still
-                works.
-              </p>
+              <p class="ah-muted">{{ copy().plannerUnavailable }}</p>
             }
           }
           @if (planner().nights.length) {
@@ -233,7 +229,7 @@
                     <span class="sky__night-date"
                       >{{ night.label }}
                       @if (night.best) {
-                        <span class="sky__badge">Best</span>
+                        <span class="sky__badge">{{ copy().best }}</span>
                       }
                     </span>
                     <span class="sky__night-facts"
@@ -247,27 +243,19 @@
                 </li>
               }
             </ol>
-            <p class="ah-muted sky__note">
-              From the night planner: Orekit on Spring Boot. A full bar is six
-              hours of moonless darkness.
-            </p>
+            <p class="ah-muted sky__note">{{ copy().plannerNote }}</p>
           }
         </section>
       }
 
       <p class="sky__share">
-        <a [href]="shareLink()">Link to this sky</a>
+        <a [href]="shareLink()">{{ copy().linkToThisSky }}</a>
         <button type="button" (click)="copyLink()">
-          {{ copied() ? 'Copied' : 'Copy link' }}
+          {{ copied() ? copy().copied : copy().copyLink }}
         </button>
       </p>
     </aside>
   </div>
 
-  <p class="sky__credits ah-muted">
-    Stars: XHIP via d3-celestial. Sun, Moon and planets: Astronomy Engine.
-    Meteor showers: International Meteor Organization. Coastlines: Natural
-    Earth. Drag to look around, scroll or pinch to zoom, click a star, planet or
-    constellation.
-  </p>
+  <p class="sky__credits ah-muted">{{ copy().credits }}</p>
 </div>

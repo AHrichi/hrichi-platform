@@ -1,10 +1,12 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   input,
   model,
 } from '@angular/core';
 import { AhButton, SegmentedControl, Tag, type SegmentedOption } from '@ah/ui';
+import { injectNgrxLabCopy } from '../../../i18n/ngrx-lab-copy';
 
 @Component({
   selector: 'ah-ngrx-use-case-focus',
@@ -14,9 +16,16 @@ import { AhButton, SegmentedControl, Tag, type SegmentedOption } from '@ah/ui';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UseCaseFocusComponent {
+  private readonly labCopy = injectNgrxLabCopy();
+  readonly copy = computed(() => this.labCopy().useCaseFocus);
+
   readonly options = input.required<readonly SegmentedOption<string>[]>();
   readonly value = model.required<string>();
-  readonly ariaLabel = input<string>('Filter displayed use case');
+  readonly ariaLabel = input<string>('');
+
+  readonly resolvedAriaLabel = computed(
+    () => this.ariaLabel() || this.copy().defaultAriaLabel,
+  );
 
   onValueChange(next: string): void {
     this.value.set(next);

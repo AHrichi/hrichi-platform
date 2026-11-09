@@ -1,15 +1,15 @@
 <!-- src/app/exercises/error-handling/error-handling.component.html -->
 <div class="exercise-container">
   <ah-section-heading
-    eyebrow="Chapter 4 · Resilient Streams"
-    heading="Exercise: Error Handling"
-    lead="Master error recovery with catchError (fallback replacement), throwError (catch & rethrow), and modern delay-based retry policies."
+    [eyebrow]="copy().errorHandling.eyebrow"
+    [heading]="copy().errorHandling.heading"
+    [lead]="copy().errorHandling.lead"
   />
 
   <ah-use-case-focus
-    [options]="focusOptions"
+    [options]="focusOptions()"
     [(value)]="activeCase"
-    ariaLabel="Filter error handling strategy"
+    [ariaLabel]="copy().errorHandling.focusAriaLabel"
   />
 
   <!-- Shared Configuration for Retry Strategies -->
@@ -20,12 +20,12 @@
   ) {
     <div class="card config-card">
       <div class="card-header">
-        <h3>Retry Configuration (Applies to retry strategies)</h3>
+        <h3>{{ copy().errorHandling.configTitle }}</h3>
       </div>
       <div class="card-content">
         <div class="config-group">
           <div class="config-item">
-            <label for="retry-delay">Retry Delay (ms):</label>
+            <label for="retry-delay">{{ copy().errorHandling.retryDelayLabel }}</label>
             <input
               id="retry-delay"
               type="number"
@@ -34,7 +34,7 @@
             />
           </div>
           <div class="config-item">
-            <label for="max-retries">Max Retries:</label>
+            <label for="max-retries">{{ copy().errorHandling.maxRetriesLabel }}</label>
             <input
               id="max-retries"
               type="number"
@@ -52,22 +52,16 @@
     <div class="card architecture-card">
       <div class="card-header">
         <div class="card-title-row">
-          <h3>Architecture Rule: Inner vs. Outer Error Handling</h3>
-          <ah-tag>Critical Best Practice</ah-tag>
+          <h3>{{ copy().errorHandling.archTitle }}</h3>
+          <ah-tag>{{ copy().errorHandling.archBadge }}</ah-tag>
         </div>
-        <p>
-          The most widespread bug in reactive Angular applications is attaching
-          <code>catchError</code> to the wrong stream level.
-        </p>
+        <p>{{ copy().errorHandling.archSubtitle }}</p>
       </div>
       <div class="card-content">
         <div class="everyday-example">
           <p>
-            <strong>The Pitfall:</strong> When an Observable encounters an
-            unhandled error notification, the contract of RxJS terminates the
-            stream permanently. If you place <code>catchError</code>
-            <em>after</em> a <code>switchMap</code> (on the outer stream), any
-            HTTP error permanently destroys user keystrokes!
+            <strong>{{ copy().errorHandling.archPitfallStrong }}</strong>
+            {{ copy().errorHandling.archPitfallText }}
           </p>
         </div>
 
@@ -77,10 +71,10 @@
 
         <div class="visualization-panel">
           <ah-marble-diagram
-            title="Inner vs. Outer Stream Resilience"
-            description="Isolating catchError inside switchMap prevents catastrophic termination of outer UI streams"
-            [streams]="pitfallLanes"
-            [operator]="pitfallOperator"
+            [title]="copy().errorHandling.marbleTitle"
+            [description]="copy().errorHandling.marbleDescription"
+            [streams]="pitfallLanes()"
+            [operator]="pitfallOperator()"
           />
         </div>
       </div>
@@ -93,24 +87,18 @@
       <div class="card" [class.focused-card]="activeCase() === 'replace'">
         <div class="card-header">
           <div class="card-title-row">
-            <h3>The <code>catchError</code> Operator (Replace Strategy)</h3>
+            <h3>{{ copy().errorHandling.replace.title }}</h3>
             @if (activeCase() === 'replace') {
-              <ah-tag>Focused View</ah-tag>
+              <ah-tag>{{ copy().common.focusedView }}</ah-tag>
             }
           </div>
-          <p>
-            Catch an error from an upstream Observable and replace it with a
-            graceful fallback value.
-          </p>
+          <p>{{ copy().errorHandling.replace.description }}</p>
         </div>
         <div class="card-content">
           <div class="everyday-example">
             <p>
-              <strong>Production Use Case:</strong> Degrading gracefully when an
-              auxiliary microservice fails (e.g. recommendation carousel,
-              profile avatar, cached weather). Return
-              <code>of(FALLBACK_DATA)</code> so the rest of the dashboard
-              remains operational.
+              <strong>{{ copy().errorHandling.useCaseStrong }}</strong>
+              {{ copy().errorHandling.replace.useCaseText }}
             </p>
           </div>
 
@@ -122,7 +110,7 @@
               (click)="fetchSuccess()"
               [disabled]="isLoadingReplace()"
             >
-              Fetch Success
+              {{ copy().errorHandling.replace.fetchSuccessBtn }}
             </button>
             <button
               type="button"
@@ -131,7 +119,7 @@
               (click)="fetchFail()"
               [disabled]="isLoadingReplace()"
             >
-              Fetch with Failure
+              {{ copy().errorHandling.replace.fetchFailBtn }}
             </button>
             <button
               type="button"
@@ -139,7 +127,7 @@
               size="sm"
               (click)="resetReplaceMessage()"
             >
-              Reset
+              {{ copy().common.reset }}
             </button>
           </div>
           <div class="result-box">
@@ -147,10 +135,10 @@
               <p class="result-item">{{ data }}</p>
             } @else {
               @if (isLoadingReplace()) {
-                <p class="loading-text">Loading...</p>
+                <p class="loading-text">{{ copy().common.loading }}</p>
               } @else {
                 <p class="placeholder-text">
-                  Click a button to test catchError replacement.
+                  {{ copy().errorHandling.replace.placeholder }}
                 </p>
               }
             }
@@ -163,7 +151,11 @@
               size="sm"
               (click)="toggleCode('replace')"
             >
-              {{ showCode()['replace'] ? 'Hide' : 'Show' }} Code Example
+              {{
+                showCode()['replace']
+                  ? copy().common.hideCodeExample
+                  : copy().common.showCodeExample
+              }}
             </button>
             @if (showCode()['replace']) {
               <ah-code-block [code]="codeSnippets.replace" language="typescript" />
@@ -178,23 +170,18 @@
       <div class="card" [class.focused-card]="activeCase() === 'rethrow'">
         <div class="card-header">
           <div class="card-title-row">
-            <h3>The <code>throwError</code> Operator (Rethrow Strategy)</h3>
+            <h3>{{ copy().errorHandling.rethrow.title }}</h3>
             @if (activeCase() === 'rethrow') {
-              <ah-tag>Focused View</ah-tag>
+              <ah-tag>{{ copy().common.focusedView }}</ah-tag>
             }
           </div>
-          <p>
-            Perform a logging side-effect or telemetry dispatch when an error
-            occurs, then rethrow it downstream.
-          </p>
+          <p>{{ copy().errorHandling.rethrow.description }}</p>
         </div>
         <div class="card-content">
           <div class="everyday-example">
             <p>
-              <strong>Production Use Case:</strong> HTTP interceptors, global
-              telemetry error loggers, or form submission boundaries where a
-              toast is displayed, but the caller still needs the rejected
-              Promise or error notification.
+              <strong>{{ copy().errorHandling.useCaseStrong }}</strong>
+              {{ copy().errorHandling.rethrow.useCaseText }}
             </p>
           </div>
 
@@ -206,7 +193,7 @@
               (click)="fetchWithRethrow()"
               [disabled]="isLoadingRethrow()"
             >
-              Fetch with Rethrow
+              {{ copy().errorHandling.rethrow.fetchRethrowBtn }}
             </button>
             <button
               type="button"
@@ -214,7 +201,7 @@
               size="sm"
               (click)="resetRethrowMessage()"
             >
-              Reset
+              {{ copy().common.reset }}
             </button>
           </div>
           <div class="result-box">
@@ -222,10 +209,10 @@
               <p class="result-item">{{ data }}</p>
             } @else {
               @if (isLoadingRethrow()) {
-                <p class="loading-text">Loading...</p>
+                <p class="loading-text">{{ copy().common.loading }}</p>
               } @else {
                 <p class="placeholder-text">
-                  Click to trigger an error that is logged and rethrown.
+                  {{ copy().errorHandling.rethrow.placeholder }}
                 </p>
               }
             }
@@ -238,7 +225,11 @@
               size="sm"
               (click)="toggleCode('rethrow')"
             >
-              {{ showCode()['rethrow'] ? 'Hide' : 'Show' }} Code Example
+              {{
+                showCode()['rethrow']
+                  ? copy().common.hideCodeExample
+                  : copy().common.showCodeExample
+              }}
             </button>
             @if (showCode()['rethrow']) {
               <ah-code-block [code]="codeSnippets.rethrow" language="typescript" />
@@ -253,22 +244,18 @@
       <div class="card" [class.focused-card]="activeCase() === 'retry'">
         <div class="card-header">
           <div class="card-title-row">
-            <h3>The <code>retry</code> Operator (Modern Strategy)</h3>
+            <h3>{{ copy().errorHandling.retry.title }}</h3>
             @if (activeCase() === 'retry') {
-              <ah-tag>Focused View</ah-tag>
+              <ah-tag>{{ copy().common.focusedView }}</ah-tag>
             }
           </div>
-          <p>
-            Retry a failing stream with configurable attempts and a delay timer
-            (modern RxJS 7+ configuration).
-          </p>
+          <p>{{ copy().errorHandling.retry.description }}</p>
         </div>
         <div class="card-content">
           <div class="everyday-example">
             <p>
-              <strong>Production Use Case:</strong> Network instability on
-              mobile devices, transient gateway errors (HTTP 502/503/504), rate
-              limit cooldowns (HTTP 429), or WebSocket reconnection handshakes.
+              <strong>{{ copy().errorHandling.useCaseStrong }}</strong>
+              {{ copy().errorHandling.retry.useCaseText }}
             </p>
           </div>
 
@@ -280,7 +267,7 @@
               (click)="fetchWithRetry()"
               [disabled]="isLoadingRetry()"
             >
-              Attempt Fetch (retries {{ maxRetries() }}x)
+              {{ copy().errorHandling.retry.attemptFetchBtn(maxRetries()) }}
             </button>
             <button
               type="button"
@@ -288,7 +275,7 @@
               size="sm"
               (click)="resetRetryMessage()"
             >
-              Reset
+              {{ copy().common.reset }}
             </button>
           </div>
           <div class="result-box">
@@ -297,11 +284,11 @@
             } @else {
               @if (isLoadingRetry()) {
                 <p class="loading-text">
-                  Attempting fetch (Attempt: {{ retryCount() }})...
+                  {{ copy().errorHandling.retry.attemptingText(retryCount()) }}
                 </p>
               } @else {
                 <p class="placeholder-text">
-                  Click to trigger modern retry policy.
+                  {{ copy().errorHandling.retry.placeholder }}
                 </p>
               }
             }
@@ -314,7 +301,11 @@
               size="sm"
               (click)="toggleCode('retry')"
             >
-              {{ showCode()['retry'] ? 'Hide' : 'Show' }} Code Example
+              {{
+                showCode()['retry']
+                  ? copy().common.hideCodeExample
+                  : copy().common.showCodeExample
+              }}
             </button>
             @if (showCode()['retry']) {
               <ah-code-block [code]="codeSnippets.retry" language="typescript" />
@@ -329,24 +320,18 @@
       <div class="card" [class.focused-card]="activeCase() === 'retryWhen'">
         <div class="card-header">
           <div class="card-title-row">
-            <h3>The <code>retryWhen</code> Operator (Legacy)</h3>
+            <h3>{{ copy().errorHandling.retryWhen.title }}</h3>
             @if (activeCase() === 'retryWhen') {
-              <ah-tag>Focused View</ah-tag>
+              <ah-tag>{{ copy().common.focusedView }}</ah-tag>
             }
           </div>
-          <p>
-            Demonstrates delayed retry using RxJS 6 retryWhen and delayWhen
-            notification streams.
-          </p>
+          <p>{{ copy().errorHandling.retryWhen.description }}</p>
         </div>
         <div class="card-content">
           <div class="everyday-example">
             <p>
-              <strong>Migration Note:</strong> In modern Angular / RxJS 7+,
-              <code>retryWhen</code> is officially deprecated in favor of
-              <code>retry(&#123; delay &#125;)</code>. Use
-              <code>retry(&#123; delay &#125;)</code> for cleaner, type-safe
-              retry logic.
+              <strong>{{ copy().errorHandling.retryWhen.migrationStrong }}</strong>
+              {{ copy().errorHandling.retryWhen.migrationText }}
             </p>
           </div>
 
@@ -358,7 +343,7 @@
               (click)="fetchWithRetryWhen()"
               [disabled]="isLoadingRetryWhen()"
             >
-              Attempt Fetch with RetryWhen
+              {{ copy().errorHandling.retryWhen.attemptFetchBtn }}
             </button>
             <button
               type="button"
@@ -366,7 +351,7 @@
               size="sm"
               (click)="resetRetryWhenMessage()"
             >
-              Reset
+              {{ copy().common.reset }}
             </button>
           </div>
           <div class="result-box">
@@ -375,11 +360,11 @@
             } @else {
               @if (isLoadingRetryWhen()) {
                 <p class="loading-text">
-                  Attempting fetch (Attempt: {{ retryWhenCount() }})...
+                  {{ copy().errorHandling.retryWhen.attemptingText(retryWhenCount()) }}
                 </p>
               } @else {
                 <p class="placeholder-text">
-                  Click to trigger legacy retryWhen stream.
+                  {{ copy().errorHandling.retryWhen.placeholder }}
                 </p>
               }
             }
@@ -392,7 +377,11 @@
               size="sm"
               (click)="toggleCode('retryWhen')"
             >
-              {{ showCode()['retryWhen'] ? 'Hide' : 'Show' }} Code Example
+              {{
+                showCode()['retryWhen']
+                  ? copy().common.hideCodeExample
+                  : copy().common.showCodeExample
+              }}
             </button>
             @if (showCode()['retryWhen']) {
               <ah-code-block [code]="codeSnippets.retryWhen" language="typescript" />

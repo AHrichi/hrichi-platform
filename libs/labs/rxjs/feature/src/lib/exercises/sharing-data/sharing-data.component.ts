@@ -2,6 +2,7 @@
 import {
   Component,
   ChangeDetectionStrategy,
+  computed,
   signal,
   inject,
   viewChild,
@@ -21,6 +22,7 @@ import {
   SegmentedOption,
   Tag,
 } from '@ah/ui';
+import { injectRxjsLabCopy } from '../../i18n/rxjs-lab-copy';
 import { UseCaseFocusComponent } from '../../shared/ui/use-case-focus/use-case-focus.component';
 
 @Component({
@@ -43,14 +45,19 @@ import { UseCaseFocusComponent } from '../../shared/ui/use-case-focus/use-case-f
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SharingDataComponent {
+  readonly copy = injectRxjsLabCopy();
+
   // --- Focus View Options ---
-  readonly focusOptions: readonly SegmentedOption<string>[] = [
-    { value: 'all', label: 'All Communication Patterns' },
-    { value: 'input', label: 'Parent to Child (input)' },
-    { value: 'output', label: 'Child to Parent (output)' },
-    { value: 'service', label: 'Shared Service' },
-    { value: 'viewChild', label: 'Component Query (viewChild)' },
-  ];
+  readonly focusOptions = computed<readonly SegmentedOption<string>[]>(() => {
+    const opts = this.copy().sharingData.focusOptions;
+    return [
+      { value: 'all', label: opts.all },
+      { value: 'input', label: opts.input },
+      { value: 'output', label: opts.output },
+      { value: 'service', label: opts.service },
+      { value: 'viewChild', label: opts.viewChild },
+    ];
+  });
   readonly activeCase = signal<string>('all');
 
   readonly codeSnippets = {

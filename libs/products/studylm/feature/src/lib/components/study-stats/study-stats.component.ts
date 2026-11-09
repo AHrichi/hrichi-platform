@@ -1,4 +1,9 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+} from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { StudyLmStore } from '../../store/studylm.store';
 import { AhBadge, AhButton, AhMetricCard, AhProgressBar } from '@ah/ui';
@@ -6,6 +11,8 @@ import {
   type StudyLmScreen,
   StudyLmScreens,
 } from '../../shell/studylm-screens';
+import { PreferencesStore } from '@ah/shared/state';
+import { STUDYLM_COPY } from '../../i18n/studylm-copy';
 
 @Component({
   selector: 'ah-study-stats',
@@ -17,6 +24,11 @@ import {
 export class StudyStatsComponent {
   readonly store = inject(StudyLmStore);
   private readonly screens = inject(StudyLmScreens);
+  private readonly preferences = inject(PreferencesStore, { optional: true });
+  readonly copy = computed(
+    () =>
+      STUDYLM_COPY[this.preferences?.language() ?? 'en'] ?? STUDYLM_COPY.en,
+  );
 
   selectSubjectAndTab(subjectId: string, screen: StudyLmScreen): void {
     this.store.setActiveSubject(subjectId);

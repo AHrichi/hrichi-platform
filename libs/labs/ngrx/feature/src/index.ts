@@ -7,3 +7,5 @@ export * from './lib/exercises/ngrx-vs-services/ngrx-vs-services.component';
 export * from './lib/shared/ui/use-case-focus/use-case-focus.component';
 export * from './lib/shared/ui/state-flow-diagram/state-flow-diagram.component';
 export * from './lib/shared/ui/time-travel-panel/time-travel-panel.component';
+export * from './lib/i18n/ngrx-lab-copy';
+

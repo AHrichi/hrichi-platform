@@ -2,11 +2,10 @@
   <!-- Overall Analytics Header -->
   <header class="stats-header">
     <div class="header-titles">
-      <span class="eyebrow">Learning Analytics & Retention Engine</span>
-      <h2>Study Mastery & Progress Dashboard</h2>
+      <span class="eyebrow">{{ copy().stats.eyebrow }}</span>
+      <h2>{{ copy().stats.title }}</h2>
       <p class="stats-subtitle">
-        Across your subjects: roadmap progress, how well you know your
-        flashcards, and your quiz accuracy.
+        {{ copy().stats.subtitle }}
       </p>
     </div>
   </header>
@@ -18,36 +17,42 @@
       aria-label="Platform Wide Learning Stats"
     >
       <ah-metric-card
-        label="Tracked Subjects"
+        [label]="copy().stats.trackedSubjects"
         [value]="overall.totalSubjects.toString()"
-        hint="Active Learning Tracks"
+        [hint]="copy().stats.trackedSubjectsHint"
         icon="📚"
       />
       <ah-metric-card
-        label="Overall Synthesis"
+        [label]="copy().stats.overallSynthesis"
         [value]="overall.overallCurriculumPct + '%'"
         [hint]="
           overall.totalSynthesizedSections +
-          ' of ' +
+          ' ' +
+          copy().stats.of +
+          ' ' +
           overall.totalSections +
-          ' Sections Ready'
+          ' ' +
+          copy().stats.sectionsReady
         "
         icon="🗺️"
       />
       <ah-metric-card
-        label="Card Mastery"
+        [label]="copy().stats.cardMastery"
         [value]="overall.totalCardsMastered + ' / ' + overall.totalFlashcards"
-        hint="Rated good or easy 3+ times"
+        [hint]="copy().stats.cardMasteryHint"
         icon="🃏"
       />
       <ah-metric-card
-        label="Diagnostic Accuracy"
+        [label]="copy().stats.diagnosticAccuracy"
         [value]="overall.overallQuizAccuracyPct + '%'"
         [hint]="
           overall.totalQuizCorrect +
-          ' of ' +
+          ' ' +
+          copy().stats.of +
+          ' ' +
           overall.totalQuizAnswered +
-          ' Correct'
+          ' ' +
+          copy().stats.correct
         "
         icon="🎯"
       />
@@ -57,9 +62,10 @@
   <!-- Per-Subject Breakdown Section -->
   <section class="subjects-stats-section">
     <div class="section-title-row">
-      <h3>Subject-by-Subject Breakdown</h3>
+      <h3>{{ copy().stats.breakdownTitle }}</h3>
       <span class="subject-count-badge"
-        >{{ store.subjectStatsList().length }} Subjects</span
+        >{{ store.subjectStatsList().length }}
+        {{ copy().stats.subjectsUnit }}</span
       >
     </div>
 
@@ -78,7 +84,7 @@
                 </ah-badge>
                 @if (subj.id === store.activeSubjectId()) {
                   <ah-badge variant="accent" size="sm">
-                    <span>Active Track</span>
+                    <span>{{ copy().stats.activeTrack }}</span>
                   </ah-badge>
                 }
               </div>
@@ -92,7 +98,7 @@
                 (click)="selectSubjectAndTab(subj.id, 'roadmap')"
                 title="Open Roadmap for this subject"
               >
-                <span>🗺️ Roadmap</span>
+                <span>{{ copy().stats.roadmapBtn }}</span>
               </button>
               <button
                 type="button"
@@ -101,7 +107,7 @@
                 (click)="selectSubjectAndTab(subj.id, 'flashcards')"
                 title="Study Flashcards for this subject"
               >
-                <span>🃏 Cards</span>
+                <span>{{ copy().stats.cardsBtn }}</span>
               </button>
               <button
                 type="button"
@@ -110,7 +116,7 @@
                 (click)="selectSubjectAndTab(subj.id, 'quiz')"
                 title="Take Quiz for this subject"
               >
-                <span>🎯 Quiz</span>
+                <span>{{ copy().stats.quizBtn }}</span>
               </button>
             </div>
           </header>
@@ -119,10 +125,14 @@
             <!-- Curriculum Synthesis Progress -->
             <div class="stat-progress-item">
               <div class="progress-labels">
-                <span class="stat-name">Curriculum Synthesis</span>
+                <span class="stat-name">{{
+                  copy().stats.curriculumSynthesis
+                }}</span>
                 <span class="stat-val">
                   {{ subj.sectionsSynthesized }} /
-                  {{ subj.sectionsTotal }} Sections ({{ subj.synthesisPct }}%)
+                  {{ subj.sectionsTotal }} {{ copy().stats.sectionsUnit }} ({{
+                    subj.synthesisPct
+                  }}%)
                 </span>
               </div>
               <ah-progress-bar
@@ -135,10 +145,10 @@
             <!-- Flashcard Bank & Mastery -->
             <div class="stat-row-metrics">
               <div class="sub-stat-box">
-                <span class="sub-label">Flashcard Deck</span>
+                <span class="sub-label">{{ copy().stats.flashcardDeck }}</span>
                 <span class="sub-value">{{ subj.cardsTotal }}</span>
                 <span class="sub-sub">
-                  {{ subj.cardsMastered }} Mastered ({{
+                  {{ subj.cardsMastered }} {{ copy().stats.mastered }} ({{
                     subj.cardsTotal > 0
                       ? ((subj.cardsMastered / subj.cardsTotal) * 100
                         | number: '1.0-0')
@@ -149,20 +159,23 @@
 
               <!-- Quiz Diagnostics -->
               <div class="sub-stat-box">
-                <span class="sub-label">Quiz Accuracy</span>
+                <span class="sub-label">{{ copy().stats.quizAccuracy }}</span>
                 <span class="sub-value">{{
                   subj.quizAnswered > 0 ? subj.quizAccuracyPct + '%' : 'N/A'
                 }}</span>
                 <span class="sub-sub">
-                  {{ subj.quizCorrect }} / {{ subj.quizAnswered }} Answered
+                  {{ subj.quizCorrect }} / {{ subj.quizAnswered }}
+                  {{ copy().stats.answered }}
                 </span>
               </div>
 
               <!-- Reference Docs -->
               <div class="sub-stat-box">
-                <span class="sub-label">Sources Attached</span>
+                <span class="sub-label">{{
+                  copy().stats.sourcesAttached
+                }}</span>
                 <span class="sub-value">{{ subj.sourcesCount }}</span>
-                <span class="sub-sub">Grounded Ingests</span>
+                <span class="sub-sub">{{ copy().stats.groundedIngests }}</span>
               </div>
             </div>
           </div>

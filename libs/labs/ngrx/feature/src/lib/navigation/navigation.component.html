@@ -1,20 +1,20 @@
-<nav class="sub-nav" aria-label="NgRx lab modules">
+<nav class="sub-nav" [attr.aria-label]="copy().ariaLabel">
   <div class="links-group">
     <a routerLink="store-flow" routerLinkActive="active" class="nav-tab">
-      Store Flow &amp; Time-Travel
+      {{ copy().storeFlow }}
     </a>
     <a routerLink="signal-store" routerLinkActive="active" class="nav-tab">
-      SignalStore &amp; Entities
+      {{ copy().signalStore }}
     </a>
     <a routerLink="effects-cycle" routerLinkActive="active" class="nav-tab">
-      Effects &amp; Async
+      {{ copy().effectsCycle }}
     </a>
     <a
       routerLink="ngrx-vs-services"
       routerLinkActive="active"
       class="nav-tab highlight"
     >
-      NgRx vs Services Guide
+      {{ copy().ngrxVsServices }}
     </a>
   </div>
 </nav>

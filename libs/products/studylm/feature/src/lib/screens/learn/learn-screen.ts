@@ -21,6 +21,8 @@ import {
 } from '../../services/studylm-storage.service';
 import { BulkGenerationService } from '../../services/bulk-generation.service';
 import { StudyLmScreens } from '../../shell/studylm-screens';
+import { PreferencesStore } from '@ah/shared/state';
+import { STUDYLM_COPY } from '../../i18n/studylm-copy';
 
 const TIER_ORDER = ['beginner', 'intermediate', 'advanced', 'expert'];
 
@@ -60,12 +62,9 @@ export interface LessonGroup {
   template: `
     <header class="head">
       <div class="head-titles">
-        <h2>Lessons</h2>
+        <h2>{{ copy().learn.heading }}</h2>
         <p>
-          Each lesson explains one idea with visuals you step through, and asks
-          you to predict, explain and practise as you go. Write one for any
-          roadmap section from the Roadmap screen; the built-in ones work
-          offline.
+          {{ copy().learn.description }}
         </p>
       </div>
 
@@ -76,20 +75,21 @@ export interface LessonGroup {
             <div class="bulk-text">
               <div class="bulk-title-row">
                 <span class="bulk-badge-icon" aria-hidden="true">⚡</span>
-                <span class="bulk-title">Bulk Lesson Generation</span>
-                <span class="bulk-pill">Batches of 2 • Auto-retry</span>
+                <span class="bulk-title">{{ copy().learn.bulkTitle }}</span>
+                <span class="bulk-pill">{{ copy().learn.bulkPill }}</span>
               </div>
               <p class="bulk-subtitle">
                 @if (bulk.isGenerating()) {
-                  Generating lessons in concurrent batches with automatic
-                  backoff retry...
+                  {{ copy().learn.bulkGeneratingSubtitle }}
                 } @else if (bulk.pendingSections().length > 0) {
-                  {{ bulk.pendingSections().length }} section(s) in "{{
+                  {{ bulk.pendingSections().length }}
+                  {{ copy().learn.bulkReadyPrefix }} "{{
                     store.activeSubject()?.title
-                  }}" ready to generate.
+                  }}" {{ copy().learn.bulkReadySuffix }}
                 } @else {
-                  All roadmap sections in "{{ store.activeSubject()?.title }}"
-                  have lessons!
+                  {{ copy().learn.bulkAllDonePrefix }} "{{
+                    store.activeSubject()?.title
+                  }}" {{ copy().learn.bulkAllDoneSuffix }}
                 }
               </p>
             </div>
@@ -102,7 +102,7 @@ export interface LessonGroup {
                   size="sm"
                   (click)="cancelBulkGeneration()"
                 >
-                  Cancel
+                  {{ copy().learn.cancel }}
                 </button>
               } @else {
                 <button
@@ -115,7 +115,9 @@ export interface LessonGroup {
                   [attr.title]="store.aiStatus()"
                   (click)="startBulkGeneration()"
                 >
-                  Bulk Generate ({{ bulk.pendingSections().length }})
+                  {{ copy().learn.bulkGenerateBtn }} ({{
+                    bulk.pendingSections().length
+                  }})
                 </button>
               }
             </div>
@@ -128,7 +130,13 @@ export interface LessonGroup {
                   <ah-progress-bar
                     [value]="p.percentage"
                     [label]="
-                      'Batch ' + p.currentBatch + ' of ' + p.totalBatches
+                      copy().learn.batch +
+                      ' ' +
+                      p.currentBatch +
+                      ' ' +
+                      copy().learn.of +
+                      ' ' +
+                      p.totalBatches
                     "
                     size="sm"
                     [showValue]="true"
@@ -140,7 +148,8 @@ export interface LessonGroup {
                 <span class="status-msg">{{ bulk.statusMessage() }}</span>
                 @if (bulk.retryingCount() > 0) {
                   <span class="retry-indicator">
-                    ⚠️ {{ bulk.retryingCount() }} retry attempt(s)
+                    ⚠️ {{ bulk.retryingCount() }}
+                    {{ copy().learn.retryAttempts }}
                   </span>
                 }
               </div>
@@ -148,14 +157,16 @@ export interface LessonGroup {
               @if (bulk.failedItems().length > 0) {
                 <div class="bulk-failures-list" role="alert">
                   <strong
-                    >Failed to write
-                    {{ bulk.failedItems().length }} lesson(s):</strong
+                    >{{ copy().learn.failedToWritePrefix }}
+                    {{ bulk.failedItems().length }}
+                    {{ copy().learn.failedToWriteSuffix }}</strong
                   >
                   <ul>
                     @for (item of bulk.failedItems(); track item.item.id) {
                       <li>
                         <strong>{{ item.item.title }}</strong
-                        >: {{ item.error }} ({{ item.attempts }} attempts)
+                        >: {{ item.error }} ({{ item.attempts }}
+                        {{ copy().learn.attempts }})
                       </li>
                     }
                   </ul>
@@ -174,10 +185,10 @@ export interface LessonGroup {
         <input
           type="search"
           class="search-input"
-          placeholder="Search lessons by title, topic, or objective..."
+          [placeholder]="copy().learn.searchPlaceholder"
           [value]="search()"
           (input)="onSearchInput($event)"
-          aria-label="Search lessons"
+          [attr.aria-label]="copy().learn.searchPlaceholder"
         />
         @if (search()) {
           <button
@@ -193,52 +204,60 @@ export interface LessonGroup {
 
       <div class="filter-controls">
         <div class="filter-field">
-          <label for="filter-tier" class="filter-label">Tier</label>
+          <label for="filter-tier" class="filter-label">{{
+            copy().learn.tierLabel
+          }}</label>
           <select
             id="filter-tier"
             class="filter-select"
             [value]="tierFilter()"
             (change)="onTierSelect($event)"
           >
-            <option value="all">All Tiers</option>
-            <option value="beginner">Beginner</option>
-            <option value="intermediate">Intermediate</option>
-            <option value="advanced">Advanced</option>
-            <option value="expert">Expert</option>
+            <option value="all">{{ copy().learn.allTiers }}</option>
+            <option value="beginner">{{ copy().learn.beginner }}</option>
+            <option value="intermediate">
+              {{ copy().learn.intermediate }}
+            </option>
+            <option value="advanced">{{ copy().learn.advanced }}</option>
+            <option value="expert">{{ copy().learn.expert }}</option>
           </select>
         </div>
 
         <div class="filter-field">
-          <label for="filter-status" class="filter-label">Status</label>
+          <label for="filter-status" class="filter-label">{{
+            copy().learn.statusLabel
+          }}</label>
           <select
             id="filter-status"
             class="filter-select"
             [value]="statusFilter()"
             (change)="onStatusSelect($event)"
           >
-            <option value="all">All Statuses</option>
-            <option value="not-started">Not Started</option>
-            <option value="in-progress">In Progress</option>
-            <option value="completed">Completed</option>
+            <option value="all">{{ copy().learn.allStatuses }}</option>
+            <option value="not-started">{{ copy().learn.notStarted }}</option>
+            <option value="in-progress">{{ copy().learn.inProgress }}</option>
+            <option value="completed">{{ copy().learn.completed }}</option>
           </select>
         </div>
 
         <div class="filter-field">
-          <label for="filter-source" class="filter-label">Source</label>
+          <label for="filter-source" class="filter-label">{{
+            copy().learn.sourceLabel
+          }}</label>
           <select
             id="filter-source"
             class="filter-select"
             [value]="sourceFilter()"
             (change)="onSourceSelect($event)"
           >
-            <option value="all">All Lessons</option>
+            <option value="all">{{ copy().learn.allLessons }}</option>
             @if (store.activeSubject(); as activeSub) {
               <option value="active-subject">
-                Active ({{ activeSub.title }})
+                {{ copy().learn.activePrefix }} ({{ activeSub.title }})
               </option>
             }
-            <option value="generated">AI Generated</option>
-            <option value="built-in">Built-in (Offline)</option>
+            <option value="generated">{{ copy().learn.aiGenerated }}</option>
+            <option value="built-in">{{ copy().learn.builtInOffline }}</option>
           </select>
         </div>
 
@@ -250,7 +269,7 @@ export interface LessonGroup {
             class="btn-reset-filters"
             (click)="clearFilters()"
           >
-            Reset Filters
+            {{ copy().learn.resetFilters }}
           </button>
         }
       </div>
@@ -258,16 +277,18 @@ export interface LessonGroup {
 
     <!-- Results Section -->
     @if (lessons.isLoading()) {
-      <p role="status" class="status-msg-block">Loading the lessons…</p>
+      <p role="status" class="status-msg-block">
+        {{ copy().learn.loadingLessons }}
+      </p>
     } @else if (lessons.error()) {
       <p role="alert" class="status-msg-block error">
-        The lessons couldn’t be loaded. Reload to try again.
+        {{ copy().learn.loadError }}
       </p>
     } @else if (filteredLessons().length === 0) {
       <ah-empty-state
         icon="🔍"
-        title="No matching lessons found"
-        description="Try adjusting your search terms or relaxing your filter criteria."
+        [title]="copy().learn.emptyTitle"
+        [description]="copy().learn.emptyDescription"
       >
         @if (hasActiveFilters()) {
           <button
@@ -277,7 +298,7 @@ export interface LessonGroup {
             size="sm"
             (click)="clearFilters()"
           >
-            Clear all filters
+            {{ copy().learn.clearAllFilters }}
           </button>
         }
       </ah-empty-state>
@@ -286,9 +307,14 @@ export interface LessonGroup {
       <div class="lessons-container" aria-label="Lessons list">
         <div class="results-meta">
           <span class="count-label">
-            Showing <strong>{{ pagedLessons().length }}</strong> of
+            {{ copy().learn.showing }}
+            <strong>{{ pagedLessons().length }}</strong> {{ copy().learn.of }}
             <strong>{{ filteredLessons().length }}</strong>
-            {{ filteredLessons().length === 1 ? 'lesson' : 'lessons' }}
+            {{
+              filteredLessons().length === 1
+                ? copy().learn.lessonSingular
+                : copy().learn.lessonPlural
+            }}
           </span>
         </div>
 
@@ -306,9 +332,14 @@ export interface LessonGroup {
         }
 
         @if (pagedBuiltin().length > 0) {
-          <section class="group" aria-label="Built-in lessons">
+          <section
+            class="group"
+            [attr.aria-label]="copy().learn.builtInLessonsHeading"
+          >
             @if (hasYours()) {
-              <h3 class="group-title">Built-in lessons</h3>
+              <h3 class="group-title">
+                {{ copy().learn.builtInLessonsHeading }}
+              </h3>
             }
             <ul class="grid">
               @for (lesson of pagedBuiltin(); track lesson.id) {
@@ -326,7 +357,7 @@ export interface LessonGroup {
           [pageSize]="pageSize()"
           [currentPage]="currentPage()"
           [pageSizeOptions]="[12, 24, 48]"
-          itemLabel="lessons"
+          [itemLabel]="copy().learn.lessonPlural"
           (pageChange)="onPageChange($event)"
           (pageSizeChange)="onPageSizeChange($event)"
         />
@@ -339,14 +370,18 @@ export interface LessonGroup {
         <div class="card-head">
           <p class="meta">
             <span class="tier">{{ lesson.tier }}</span>
-            <span>{{ lesson.minutes }} min</span>
+            <span>{{ lesson.minutes }} {{ copy().learn.minUnit }}</span>
           </p>
           <span
             class="source-pill"
             [class.is-generated]="lesson.source === 'generated'"
             [title]="lesson.subject"
           >
-            {{ lesson.source === 'generated' ? lesson.subject : 'Built-in' }}
+            {{
+              lesson.source === 'generated'
+                ? lesson.subject
+                : copy().learn.builtInBadge
+            }}
           </span>
         </div>
 
@@ -366,11 +401,14 @@ export interface LessonGroup {
           [class.is-started]="lesson.started && !lesson.done"
         >
           @if (lesson.done) {
-            <span class="done-check" aria-hidden="true">✓</span> Complete
+            <span class="done-check" aria-hidden="true">✓</span>
+            {{ copy().learn.complete }}
           } @else if (lesson.started) {
-            In progress: {{ lesson.answered }} of {{ lesson.checks }} checks
+            {{ copy().learn.inProgressPrefix }} {{ lesson.answered }}
+            {{ copy().learn.of }} {{ lesson.checks }}
+            {{ copy().learn.checksSuffix }}
           } @else {
-            Not started
+            {{ copy().learn.notStartedCard }}
           }
         </p>
 
@@ -382,7 +420,7 @@ export interface LessonGroup {
               (click)="goToSectionCards($event, secId)"
               title="Study flashcards for this topic"
             >
-              <span>🃏 Cards</span>
+              <span>🃏 {{ copy().learn.jumpCards }}</span>
             </button>
             <button
               type="button"
@@ -390,7 +428,7 @@ export interface LessonGroup {
               (click)="goToSectionQuiz($event, secId)"
               title="Take quiz for this topic"
             >
-              <span>🎯 Quiz</span>
+              <span>🎯 {{ copy().learn.jumpQuiz }}</span>
             </button>
             <button
               type="button"
@@ -398,7 +436,7 @@ export interface LessonGroup {
               (click)="goToSectionRoadmap($event, secId)"
               title="View on Roadmap"
             >
-              <span>🗺️ Roadmap</span>
+              <span>🗺️ {{ copy().learn.jumpRoadmap }}</span>
             </button>
           </div>
         }
@@ -804,6 +842,11 @@ export class LearnScreen {
   protected readonly store = inject(StudyLmStore);
   protected readonly bulk = inject(BulkGenerationService);
   protected readonly screens = inject(StudyLmScreens);
+  private readonly preferences = inject(PreferencesStore, { optional: true });
+  readonly copy = computed(
+    () =>
+      STUDYLM_COPY[this.preferences?.language() ?? 'en'] ?? STUDYLM_COPY.en,
+  );
 
   readonly search = signal<string>('');
   readonly tierFilter = signal<string>('all');

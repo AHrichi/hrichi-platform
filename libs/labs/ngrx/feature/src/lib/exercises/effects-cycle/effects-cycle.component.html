@@ -1,14 +1,14 @@
 <div class="exercise-container">
   <ah-section-heading
-    eyebrow="NgRx Effects & Async Pipelines"
-    heading="Side-Effect Model & Concurrency Strategies"
-    lead="Isolate impure asynchronous side-effects (HTTP, WebSockets, LocalStorage) from pure UI components with functional effects, ofType filtering, and tapResponse."
+    [eyebrow]="copy().eyebrow"
+    [heading]="copy().heading"
+    [lead]="copy().lead"
   />
 
   <ah-ngrx-use-case-focus
-    [options]="focusOptions"
+    [options]="focusOptions()"
     [(value)]="activeCase"
-    ariaLabel="Focus on NgRx Effects concepts"
+    [ariaLabel]="copy().focusAriaLabel"
   />
 
   <!-- Visual State Flow with Active Effect Branch -->
@@ -19,19 +19,18 @@
     @if (activeCase() === 'all' || activeCase() === 'simulation') {
       <div class="card" [class.focused-card]="activeCase() === 'simulation'">
         <div class="card-header">
-          <span class="badge">1. Interactive Effect Runner</span>
-          <h3>Simulate Async Authentication Flow</h3>
+          <span class="badge">{{ copy().simulationCard.badge }}</span>
+          <h3>{{ copy().simulationCard.title }}</h3>
         </div>
         <p class="description">
-          Test how effects handle async network latency, success, and errors
-          without ever breaking the component or killing the stream.
+          {{ copy().simulationCard.description }}
         </p>
 
         <div class="config-controls">
           <div class="config-group">
-            <span class="config-title"
-              >Concurrency Flattening Operator (4 Strategies):</span
-            >
+            <span class="config-title">{{
+              copy().simulationCard.operatorConfigTitle
+            }}</span>
             <div class="pills-row">
               <button
                 type="button"
@@ -39,7 +38,7 @@
                 [class.active]="operator() === 'exhaustMap'"
                 (click)="operator.set('exhaustMap')"
               >
-                exhaustMap (Ignore rapid duplicates)
+                {{ copy().simulationCard.exhaustMapPill }}
               </button>
               <button
                 type="button"
@@ -47,7 +46,7 @@
                 [class.active]="operator() === 'switchMap'"
                 (click)="operator.set('switchMap')"
               >
-                switchMap (Cancel previous in-flight)
+                {{ copy().simulationCard.switchMapPill }}
               </button>
               <button
                 type="button"
@@ -55,7 +54,7 @@
                 [class.active]="operator() === 'concatMap'"
                 (click)="operator.set('concatMap')"
               >
-                concatMap (Queue sequentially)
+                {{ copy().simulationCard.concatMapPill }}
               </button>
               <button
                 type="button"
@@ -63,13 +62,15 @@
                 [class.active]="operator() === 'mergeMap'"
                 (click)="operator.set('mergeMap')"
               >
-                mergeMap (Run in parallel)
+                {{ copy().simulationCard.mergeMapPill }}
               </button>
             </div>
           </div>
 
           <div class="config-group">
-            <span class="config-title">Outcome Simulation:</span>
+            <span class="config-title">{{
+              copy().simulationCard.outcomeConfigTitle
+            }}</span>
             <div class="pills-row">
               <button
                 type="button"
@@ -77,7 +78,7 @@
                 [class.active]="outcome() === 'success'"
                 (click)="outcome.set('success')"
               >
-                200 Success
+                {{ copy().simulationCard.successPill }}
               </button>
               <button
                 type="button"
@@ -85,7 +86,7 @@
                 [class.active]="outcome() === 'error'"
                 (click)="outcome.set('error')"
               >
-                401 Unauthorized
+                {{ copy().simulationCard.errorPill }}
               </button>
             </div>
           </div>
@@ -98,28 +99,32 @@
             [disabled]="isBusy() && operator() === 'exhaustMap'"
             (click)="triggerEffect()"
           >
-            {{ isBusy() ? 'Effect in Progress...' : 'Dispatch [Auth] Login' }}
+            {{
+              isBusy()
+                ? copy().simulationCard.effectInProgressBtn
+                : copy().simulationCard.dispatchLoginBtn
+            }}
           </button>
           <button
             type="button"
             ahButton="secondary"
             [disabled]="isBusy() && operator() === 'exhaustMap'"
             (click)="rapidFireDispatches()"
-            title="Dispatch 3 actions in rapid succession to test concurrency"
+            [title]="copy().simulationCard.rapidFireTitle"
           >
-            🔥 Rapid-Fire 3 Actions
+            {{ copy().simulationCard.rapidFireBtn }}
           </button>
           <button type="button" ahButton="ghost" (click)="clearLogs()">
-            Clear Timeline
+            {{ copy().simulationCard.clearTimelineBtn }}
           </button>
         </div>
 
         <!-- Effect Pipeline Code Snippet -->
         <div class="code-preview">
-          <span class="preview-title"
-            >Modern Functional Effect Definition:</span
-          >
-          <pre><code>{{ effectCodeSnippet }}</code></pre>
+          <span class="preview-title">{{
+            copy().simulationCard.codePreviewTitle
+          }}</span>
+          <pre><code>{{ effectCodeSnippet() }}</code></pre>
         </div>
       </div>
     }
@@ -128,13 +133,13 @@
     @if (activeCase() === 'all' || activeCase() === 'timeline') {
       <div class="card" [class.focused-card]="activeCase() === 'timeline'">
         <div class="card-header">
-          <span class="badge">2. Live Event Stream Log</span>
-          <h3>Pipeline Trace &amp; tapResponse Audit</h3>
+          <span class="badge">{{ copy().timelineCard.badge }}</span>
+          <h3>{{ copy().timelineCard.title }}</h3>
         </div>
         <p class="description">
-          Notice that when an HTTP call fails,
-          <code>tapResponse</code> catches the error and dispatches a failure
-          action. The outer effect stream stays alive!
+          {{ copy().timelineCard.descriptionPart1 }}
+          <code>tapResponse</code>
+          {{ copy().timelineCard.descriptionPart2 }}
         </p>
 
         <div class="timeline-list">
@@ -146,19 +151,20 @@
             </div>
           } @empty {
             <div class="empty-state">
-              No events yet. Click "Dispatch [Auth] Login" above to start the
-              cycle.
+              {{ copy().timelineCard.emptyTimeline }}
             </div>
           }
         </div>
 
         <!-- TapResponse explanation note -->
         <div class="audit-note">
-          <strong>Why tapResponse instead of catchError?</strong><br />
-          Standard RxJS <code>catchError()</code> can accidentally complete the
-          stream if not nested inside <code>switchMap</code>.
-          <code>tapResponse</code> guarantees error handling isolation and
-          enforces exhaustiveness for success and failure handlers.
+          <strong>{{ copy().timelineCard.auditNoteStrong }}</strong
+          ><br />
+          {{ copy().timelineCard.auditNotePart1 }}
+          <code>catchError()</code>
+          {{ copy().timelineCard.auditNotePart2 }}
+          <code>switchMap</code>. <code>tapResponse</code>
+          {{ copy().timelineCard.auditNotePart3 }}
         </div>
       </div>
     }
@@ -167,42 +173,32 @@
     @if (activeCase() === 'all' || activeCase() === 'operators') {
       <div class="card" [class.focused-card]="activeCase() === 'operators'">
         <div class="card-header">
-          <span class="badge">3. Concurrency Cheatsheet</span>
-          <h3>Choosing the Right Operator</h3>
+          <span class="badge">{{ copy().operatorsCard.badge }}</span>
+          <h3>{{ copy().operatorsCard.title }}</h3>
         </div>
 
         <div class="operator-guide-list">
           <div class="operator-item">
             <span class="op-name">exhaustMap</span>
-            <span class="op-desc"
-              >Ignores new source emissions until current inner observable
-              completes. Perfect for submit buttons, logins, and checkout
-              actions to prevent double submissions.</span
-            >
+            <span class="op-desc">{{
+              copy().operatorsCard.exhaustMapDesc
+            }}</span>
           </div>
           <div class="operator-item">
             <span class="op-name">switchMap</span>
-            <span class="op-desc"
-              >Unsubscribes from previous inner request when a new action
-              arrives. Perfect for search/autocomplete filters where only the
-              latest query matters.</span
-            >
+            <span class="op-desc">{{
+              copy().operatorsCard.switchMapDesc
+            }}</span>
           </div>
           <div class="operator-item">
             <span class="op-name">concatMap</span>
-            <span class="op-desc"
-              >Buffers incoming actions and processes them sequentially in
-              strict order. Perfect for queued file uploads or chronological
-              transactions.</span
-            >
+            <span class="op-desc">{{
+              copy().operatorsCard.concatMapDesc
+            }}</span>
           </div>
           <div class="operator-item">
             <span class="op-name">mergeMap</span>
-            <span class="op-desc"
-              >Executes all inner requests concurrently. Perfect for independent
-              background syncs where ordering and duplicate prevention do not
-              matter.</span
-            >
+            <span class="op-desc">{{ copy().operatorsCard.mergeMapDesc }}</span>
           </div>
         </div>
       </div>
@@ -212,19 +208,20 @@
     @if (activeCase() === 'all' || activeCase() === 'dead-stream') {
       <div class="card" [class.focused-card]="activeCase() === 'dead-stream'">
         <div class="card-header">
-          <span class="badge">Production Reliability</span>
-          <h3>The "Dead Stream" Trap &amp; Why tapResponse is Vital</h3>
+          <span class="badge">{{ copy().deadStreamCard.badge }}</span>
+          <h3>{{ copy().deadStreamCard.title }}</h3>
         </div>
         <p class="description">
-          The #1 most common junior/intermediate bug in NgRx is putting
-          <code>catchError()</code> directly on the outer
-          <code>actions$.pipe(...)</code> stream instead of the inner HTTP
-          observable.
+          {{ copy().deadStreamCard.descriptionPart1 }}
+          <code>catchError()</code>
+          {{ copy().deadStreamCard.descriptionPart2 }}
+          <code>actions$.pipe(...)</code>
+          {{ copy().deadStreamCard.descriptionPart3 }}
         </p>
 
         <div class="comparison-boxes">
           <div class="cmp-box fatal">
-            <span class="cmp-tag">❌ Fatal: Outer catchError Kills Effect</span>
+            <span class="cmp-tag">{{ copy().deadStreamCard.fatalTag }}</span>
             <pre><code>actions$.pipe(
   ofType(AuthActions.login),
   switchMap(() => api.login()),
@@ -235,7 +232,7 @@
           </div>
 
           <div class="cmp-box safe">
-            <span class="cmp-tag">✅ Production Safe: tapResponse</span>
+            <span class="cmp-tag">{{ copy().deadStreamCard.safeTag }}</span>
             <pre><code>actions$.pipe(
   ofType(AuthActions.login),
   switchMap(() => api.login().pipe(

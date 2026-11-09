@@ -1,10 +1,12 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   input,
   output,
 } from '@angular/core';
 import { AhButton, Tag } from '@ah/ui';
+import { injectNgrxLabCopy } from '../../../i18n/ngrx-lab-copy';
 
 export interface ActionRecord<T = unknown> {
   id: number;
@@ -22,6 +24,9 @@ export interface ActionRecord<T = unknown> {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TimeTravelPanelComponent {
+  private readonly labCopy = injectNgrxLabCopy();
+  readonly copy = computed(() => this.labCopy().timeTravelPanel);
+
   readonly history = input.required<readonly ActionRecord[]>();
   readonly currentIndex = input.required<number>();
   readonly timeTravelIndexChange = output<number>();

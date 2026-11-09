@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   effect,
   inject,
   signal,
@@ -20,6 +21,8 @@ import { StudyLmStore } from '../../store/studylm.store';
 import { StudyLmScreens } from '../../shell/studylm-screens';
 import { LessonGenerationService } from '../../services/lesson-generation.service';
 import { BulkGenerationService } from '../../services/bulk-generation.service';
+import { PreferencesStore } from '@ah/shared/state';
+import { STUDYLM_COPY } from '../../i18n/studylm-copy';
 import type { RoadmapSection } from '@ah/products/studylm/domain';
 
 @Component({
@@ -42,6 +45,11 @@ import type { RoadmapSection } from '@ah/products/studylm/domain';
 export class RoadmapExplorerComponent {
   readonly store = inject(StudyLmStore);
   readonly bulk = inject(BulkGenerationService);
+  private readonly preferences = inject(PreferencesStore, { optional: true });
+  readonly copy = computed(
+    () =>
+      STUDYLM_COPY[this.preferences?.language() ?? 'en'] ?? STUDYLM_COPY.en,
+  );
   private readonly screens = inject(StudyLmScreens);
   private readonly lessons = inject(LessonGenerationService);
   private readonly route = inject(ActivatedRoute);

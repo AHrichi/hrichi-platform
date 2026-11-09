@@ -33,10 +33,10 @@ import {
   starAt,
   starLabel,
   toLocalInput,
-  type Twilight,
 } from '@ah/labs/sky/domain';
 import type { Night } from '@ah/shared/api-client';
 import { SiteConfigService } from '@ah/shared/site-config';
+import { PreferencesStore } from '@ah/shared/state';
 import { SceneHost } from '@ah/three/angular';
 import type { SkyLabel, SkySceneParams } from '@ah/three/scenes/sky';
 import { SegmentedControl, type SegmentedOption } from '@ah/ui';
@@ -47,14 +47,7 @@ import {
   type Speed,
 } from './sky-lab.store';
 import { NightPlannerApi } from './night-planner-api';
-
-const twilightNames: Record<Twilight, string> = {
-  day: 'Daytime',
-  civil: 'Civil twilight',
-  nautical: 'Nautical twilight',
-  astronomical: 'Astronomical twilight',
-  night: 'Full darkness',
-};
+import { SKY_LAB_COPY } from './sky-lab-copy';
 
 /** Names drawn on the sky: every constellation and the brightest named stars. */
 const skyLabels: SkyLabel[] = [
@@ -118,25 +111,37 @@ function darkestMoment(night: Night): number {
 })
 export class SkyLabPage {
   protected readonly store = inject(SkyLabStore);
+  private readonly preferences = inject(PreferencesStore, { optional: true });
   private readonly document = inject(DOCUMENT);
   private readonly window = this.document.defaultView;
+
+  protected readonly copy = computed(
+    () =>
+      SKY_LAB_COPY[this.preferences?.language() ?? 'en'] ?? SKY_LAB_COPY.en,
+  );
 
   protected readonly cities = cities;
   protected readonly copied = signal(false);
 
-  protected readonly speeds: SegmentedOption<`${Speed}`>[] = [
-    { value: '0', label: 'Paused' },
-    { value: '1', label: 'Live' },
-    { value: '60', label: '×60' },
-    { value: '600', label: '×600' },
-    { value: '3600', label: '×3600' },
-  ];
-  protected readonly directions: SegmentedOption<string>[] = [
-    { value: '0', label: 'N' },
-    { value: '90', label: 'E' },
-    { value: '180', label: 'S' },
-    { value: '270', label: 'W' },
-  ];
+  protected readonly speeds = computed<SegmentedOption<`${Speed}`>[]>(() => {
+    const s = this.copy().speeds;
+    return [
+      { value: '0', label: s.paused },
+      { value: '1', label: s.live },
+      { value: '60', label: s.x60 },
+      { value: '600', label: s.x600 },
+      { value: '3600', label: s.x3600 },
+    ];
+  });
+  protected readonly directions = computed<SegmentedOption<string>[]>(() => {
+    const d = this.copy().directions;
+    return [
+      { value: '0', label: d.n },
+      { value: '90', label: d.e },
+      { value: '180', label: d.s },
+      { value: '270', label: d.w },
+    ];
+  });
   protected readonly speed = computed(
     () => String(this.store.speed()) as `${Speed}`,
   );
@@ -170,9 +175,10 @@ export class SkyLabPage {
     nightSummary(this.store.place(), this.date()),
   );
 
-  protected readonly zoneLabel = computed(() =>
-    this.zone() ? `local time in ${this.store.place().name}` : 'your time zone',
-  );
+  protected readonly zoneLabel = computed(() => {
+    const c = this.copy();
+    return this.zone() ? c.localTimeIn(this.store.place().name) : c.yourTimeZone;
+  });
   protected readonly when = computed(() =>
     formatDateTime(this.date(), this.zone()),
   );
@@ -183,41 +189,59 @@ export class SkyLabPage {
   /** Changes rarely, so screen readers aren't told every second. */
   protected readonly status = computed(() => {
     const sky = this.sky();
-    return `${this.store.place().name} · ${twilightNames[sky.twilight]} · ${moonPhaseName(sky.moon.phase)}, ${formatPercent(sky.moon.illumination)} lit`;
+    const c = this.copy();
+    return `${this.store.place().name} · ${c.twilight[sky.twilight]} · ${moonPhaseName(sky.moon.phase)}, ${c.lit(formatPercent(sky.moon.illumination))}`;
   });
 
   protected readonly tonight = computed(() => {
     const night = this.night();
     const zone = this.zone();
+    const c = this.copy();
     const time = (date: Date | null) => (date ? formatTime(date, zone) : '—');
     const facts: Fact[] = [
       {
-        label: 'Sunset',
-        value: night.sunset ? time(night.sunset) : 'The Sun doesn’t set',
+        label: c.sunset,
+        value: night.sunset ? time(night.sunset) : c.sunDoesNotSet,
       },
       {
-        label: 'Truly dark',
+        label: c.trulyDark,
         value:
           night.darkStart && night.darkEnd
             ? `${time(night.darkStart)} – ${time(night.darkEnd)} (${formatDuration(night.darkEnd.getTime() - night.darkStart.getTime())})`
-            : 'Not tonight: the Sun stays less than 18° below the horizon',
+            : c.notTonight,
       },
-      { label: 'Sunrise', value: time(night.sunrise) },
+      { label: c.sunrise, value: time(night.sunrise) },
       {
-        label: 'Moon',
-        value: `${night.moon.phaseName}, ${formatPercent(night.moon.illumination)} lit · rises ${time(night.moon.rise)}, sets ${time(night.moon.set)}`,
+        label: c.moon,
+        value: c.moonFact(
+          night.moon.phaseName,
+          formatPercent(night.moon.illumination),
+          time(night.moon.rise),
+          time(night.moon.set),
+        ),
       },
     ];
     const planets = night.planets.map((planet) => ({
       name: planet.name,
       text:
         planet.altitude > 0
-          ? `up now, ${Math.round(planet.altitude)}° high in the ${formatCompass(planet.azimuth)}, magnitude ${formatMagnitude(planet.magnitude)}`
-          : `below the horizon · rises ${time(planet.rise)}, sets ${time(planet.set)}`,
+          ? c.planetUpNow(
+              Math.round(planet.altitude),
+              formatCompass(planet.azimuth),
+              formatMagnitude(planet.magnitude),
+            )
+          : c.planetBelowHorizon(time(planet.rise), time(planet.set)),
     }));
     const showers = night.showers.map(({ shower, rate, radiantAltitude }) => ({
       name: shower.name,
-      text: `about ${Math.round(rate)} an hour under a perfect sky · radiant ${radiantAltitude > 0 ? `${Math.round(radiantAltitude)}° up` : 'below the horizon'} · ${shower.speed} km/s, from ${shower.parent}`,
+      text: c.showerText(
+        Math.round(rate),
+        radiantAltitude > 0
+          ? c.radiantUp(Math.round(radiantAltitude))
+          : c.radiantBelowHorizon,
+        shower.speed,
+        shower.parent,
+      ),
     }));
     return {
       facts,
@@ -257,33 +281,34 @@ export class SkyLabPage {
     const sky = this.sky();
     const night = this.night();
     const zone = this.zone();
+    const c = this.copy();
     const time = (date: Date | null) => (date ? formatTime(date, zone) : '—');
     const position = (altitude: number, azimuth: number): Fact => ({
-      label: 'Where',
+      label: c.where,
       value:
         altitude > 0
-          ? `${Math.round(altitude)}° high in the ${formatCompass(azimuth)}`
-          : 'Below the horizon',
+          ? c.highInThe(Math.round(altitude), formatCompass(azimuth))
+          : c.belowTheHorizon,
     });
     if (id === 'moon') {
       return {
-        title: 'The Moon',
-        subtitle: `${moonPhaseName(sky.moon.phase)}, ${formatPercent(sky.moon.illumination)} lit`,
+        title: c.theMoon,
+        subtitle: `${moonPhaseName(sky.moon.phase)}, ${c.lit(formatPercent(sky.moon.illumination))}`,
         facts: [
           position(sky.moon.altitude, sky.moon.azimuth),
-          { label: 'Rises', value: time(night.moon.rise) },
-          { label: 'Sets', value: time(night.moon.set) },
+          { label: c.rises, value: time(night.moon.rise) },
+          { label: c.sets, value: time(night.moon.set) },
         ],
       };
     }
     if (id === 'sun') {
       return {
-        title: 'The Sun',
-        subtitle: twilightNames[sky.twilight],
+        title: c.theSun,
+        subtitle: c.twilight[sky.twilight],
         facts: [
           position(sky.sun.altitude, sky.sun.azimuth),
-          { label: 'Sets', value: time(night.sunset) },
-          { label: 'Rises', value: time(night.sunrise) },
+          { label: c.sets, value: time(night.sunset) },
+          { label: c.rises, value: time(night.sunrise) },
         ],
       };
     }
@@ -294,11 +319,11 @@ export class SkyLabPage {
       }
       return {
         title: planet.name,
-        subtitle: `Planet · magnitude ${formatMagnitude(planet.magnitude)}`,
+        subtitle: c.planetSubtitle(formatMagnitude(planet.magnitude)),
         facts: [
           position(planet.altitude, planet.azimuth),
-          { label: 'Rises', value: time(planet.rise) },
-          { label: 'Sets', value: time(planet.set) },
+          { label: c.rises, value: time(planet.rise) },
+          { label: c.sets, value: time(planet.set) },
         ],
       };
     }
@@ -306,19 +331,22 @@ export class SkyLabPage {
       const index = Number(id.slice('star:'.length));
       const star = starAt(index);
       return {
-        title: starLabel(index) ?? 'A star',
+        title: starLabel(index) ?? c.aStar,
         subtitle: star
-          ? `In ${constellationName(star.constellation)} · magnitude ${formatMagnitude(star.mag)}`
-          : 'Too faint to have a name in this catalogue',
+          ? c.starSubtitle(
+              constellationName(star.constellation),
+              formatMagnitude(star.mag),
+            )
+          : c.starTooFaint,
         facts: [],
       };
     }
     if (id.startsWith('constellation:')) {
       const abbreviation = id.slice('constellation:'.length);
-      const overhead = night.constellations.find((c) => c.id === abbreviation);
+      const overhead = night.constellations.find((cItem) => cItem.id === abbreviation);
       return {
         title: constellationName(abbreviation),
-        subtitle: 'Constellation',
+        subtitle: c.constellation,
         facts: overhead ? [position(overhead.altitude, overhead.azimuth)] : [],
       };
     }
@@ -330,6 +358,7 @@ export class SkyLabPage {
   /** The night planner's nights, best three marked, each with a time to jump to. */
   protected readonly planner = computed(() => {
     const { status, nights } = this.store.planner();
+    const c = this.copy();
     const best = new Set(
       nights
         .filter((night) => night.score > 0)
@@ -344,9 +373,9 @@ export class SkyLabPage {
         label: formatDay(night.date),
         dark:
           night.darkMinutes > 0
-            ? `${formatDuration(night.darkMinutes * 60_000)} of moonless dark`
-            : 'No moonless darkness',
-        moon: `Moon ${formatPercent(night.moonIllumination)}`,
+            ? c.moonlessDark(formatDuration(night.darkMinutes * 60_000))
+            : c.noMoonlessDarkness,
+        moon: c.moonPct(formatPercent(night.moonIllumination)),
         shower: night.showers[0]?.name ?? null,
         score: night.score,
         best: best.has(night.date),
@@ -484,7 +513,7 @@ export class SkyLabPage {
       ({ coords }) => {
         this.store.setLocating('idle');
         this.store.setPlace(
-          placeAt(coords.latitude, coords.longitude, 'Your location'),
+          placeAt(coords.latitude, coords.longitude, this.copy().yourLocation),
         );
       },
       (error) =>

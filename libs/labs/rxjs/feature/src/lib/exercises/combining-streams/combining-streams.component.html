@@ -1,15 +1,15 @@
 <!-- src/app/exercises/combining-streams/combining-streams.component.html -->
 <div class="exercise-container">
   <ah-section-heading
-    eyebrow="Chapter 5 · Stream Combination"
-    heading="Exercise: Combining Streams"
-    lead="Explore the difference between trigger-based sampling with withLatestFrom and multi-source reactivity with combineLatest."
+    [eyebrow]="copy().combiningStreams.eyebrow"
+    [heading]="copy().combiningStreams.heading"
+    [lead]="copy().combiningStreams.lead"
   />
 
   <ah-use-case-focus
-    [options]="focusOptions"
+    [options]="focusOptions()"
     [(value)]="activeCase"
-    ariaLabel="Filter combining operator"
+    [ariaLabel]="copy().combiningStreams.focusAriaLabel"
   />
 
   <!-- Comparison Guide Card -->
@@ -17,23 +17,16 @@
     <div class="card comparison-card">
       <div class="card-header">
         <div class="card-title-row">
-          <h3>Combination Mental Model: Master-Slave vs. Democratic</h3>
-          <ah-tag>Architecture Guide</ah-tag>
+          <h3>{{ copy().combiningStreams.comparisonTitle }}</h3>
+          <ah-tag>{{ copy().combiningStreams.comparisonBadge }}</ah-tag>
         </div>
-        <p>
-          Choosing the right combination operator prevents redundant network
-          calls, timing glitches, and silent deadlocks.
-        </p>
+        <p>{{ copy().combiningStreams.comparisonSubtitle }}</p>
       </div>
       <div class="card-content">
         <div class="everyday-example">
           <p>
-            <strong>The Core Distinction:</strong>
-            <code>withLatestFrom</code> is a <em>master-slave</em> relationship
-            (only the master stream triggers emissions).
-            <code>combineLatest</code> is <em>democratic</em> (any source
-            emission triggers a recalculation, provided all sources have emitted
-            at least once).
+            <strong>{{ copy().combiningStreams.distinctionStrong }}</strong>
+            {{ copy().combiningStreams.distinctionText }}
           </p>
         </div>
 
@@ -53,29 +46,24 @@
       >
         <div class="card-header">
           <div class="card-title-row">
-            <h3>The <code>withLatestFrom</code> Operator</h3>
+            <h3>{{ copy().combiningStreams.withLatestFrom.title }}</h3>
             @if (activeCase() === 'withLatestFrom') {
-              <ah-tag>Focused View</ah-tag>
+              <ah-tag>{{ copy().common.focusedView }}</ah-tag>
             }
           </div>
-          <p>
-            Emits only when the primary stream emits, combining its value with
-            the latest value from the secondary stream.
-          </p>
+          <p>{{ copy().combiningStreams.withLatestFrom.description }}</p>
         </div>
         <div class="card-content">
           <div class="everyday-example">
             <p>
-              <strong>Production Use Case:</strong> User clicks a "Save" button.
-              The click event is the primary trigger, and it samples the latest
-              form values and auth credentials without creating multiple
-              triggers when the form inputs change.
+              <strong>{{ copy().combiningStreams.useCaseStrong }}</strong>
+              {{ copy().combiningStreams.withLatestFrom.useCaseText }}
             </p>
           </div>
 
           <div class="stream-controls">
             <div class="stream-control">
-              <h4>Primary Stream (Trigger)</h4>
+              <h4>{{ copy().combiningStreams.withLatestFrom.primaryStreamTitle }}</h4>
               <div class="button-group">
                 <button
                   type="button"
@@ -83,7 +71,7 @@
                   size="sm"
                   (click)="emitPrimary('A')"
                 >
-                  Emit "A"
+                  {{ copy().combiningStreams.emitPrefix }} "A"
                 </button>
                 <button
                   type="button"
@@ -91,7 +79,7 @@
                   size="sm"
                   (click)="emitPrimary('B')"
                 >
-                  Emit "B"
+                  {{ copy().combiningStreams.emitPrefix }} "B"
                 </button>
                 <button
                   type="button"
@@ -99,12 +87,12 @@
                   size="sm"
                   (click)="emitPrimary('C')"
                 >
-                  Emit "C"
+                  {{ copy().combiningStreams.emitPrefix }} "C"
                 </button>
               </div>
             </div>
             <div class="stream-control">
-              <h4>Secondary Stream (Sampled)</h4>
+              <h4>{{ copy().combiningStreams.withLatestFrom.secondaryStreamTitle }}</h4>
               <div class="button-group">
                 <button
                   type="button"
@@ -112,7 +100,7 @@
                   size="sm"
                   (click)="emitSecondary('1')"
                 >
-                  Emit "1"
+                  {{ copy().combiningStreams.emitPrefix }} "1"
                 </button>
                 <button
                   type="button"
@@ -120,16 +108,16 @@
                   size="sm"
                   (click)="emitSecondary('2')"
                 >
-                  Emit "2"
+                  {{ copy().combiningStreams.emitPrefix }} "2"
                 </button>
               </div>
             </div>
           </div>
 
           <div class="state-display">
-            <strong>Latest from Secondary:</strong>
+            <strong>{{ copy().combiningStreams.withLatestFrom.latestFromSecondaryLabel }}</strong>
             <span class="state-value">{{
-              latestSecondaryValue() || 'N/A'
+              latestSecondaryValue() || copy().common.na
             }}</span>
           </div>
 
@@ -140,17 +128,17 @@
               size="sm"
               (click)="resetWithLatestFrom()"
             >
-              Reset Stream State
+              {{ copy().common.resetStreamState }}
             </button>
           </div>
 
           <!-- Live Marble Diagram Visualization -->
           <div class="visualization-panel">
             <ah-marble-diagram
-              title="withLatestFrom Marble Visualizer"
-              description="Primary stream drives emissions; secondary stream provides instant snapshot"
+              [title]="copy().combiningStreams.withLatestFrom.marbleTitle"
+              [description]="copy().combiningStreams.withLatestFrom.marbleDescription"
               [streams]="withLatestFromLanes()"
-              [operator]="withLatestFromOperator"
+              [operator]="withLatestFromOperator()"
             />
           </div>
 
@@ -161,7 +149,11 @@
               size="sm"
               (click)="toggleCode('withLatestFrom')"
             >
-              {{ showCode()['withLatestFrom'] ? 'Hide' : 'Show' }} Code Example
+              {{
+                showCode()['withLatestFrom']
+                  ? copy().common.hideCodeExample
+                  : copy().common.showCodeExample
+              }}
             </button>
             @if (showCode()['withLatestFrom']) {
               <ah-code-block [code]="codeSnippets.withLatestFrom" language="typescript" />
@@ -176,29 +168,24 @@
       <div class="card" [class.focused-card]="activeCase() === 'combineLatest'">
         <div class="card-header">
           <div class="card-title-row">
-            <h3>The <code>combineLatest</code> Operator</h3>
+            <h3>{{ copy().combiningStreams.combineLatest.title }}</h3>
             @if (activeCase() === 'combineLatest') {
-              <ah-tag>Focused View</ah-tag>
+              <ah-tag>{{ copy().common.focusedView }}</ah-tag>
             }
           </div>
-          <p>
-            Emits an array of the latest values from all source streams whenever
-            any source stream emits (once each has emitted at least once).
-          </p>
+          <p>{{ copy().combiningStreams.combineLatest.description }}</p>
         </div>
         <div class="card-content">
           <div class="everyday-example">
             <p>
-              <strong>Production Use Case:</strong> Complex dashboard filters
-              where changing the search box, the dropdown category, or the date
-              range should immediately recalculate and re-fetch filtered grid
-              items.
+              <strong>{{ copy().combiningStreams.useCaseStrong }}</strong>
+              {{ copy().combiningStreams.combineLatest.useCaseText }}
             </p>
           </div>
 
           <div class="stream-controls">
             <div class="stream-control">
-              <h4>Source 1 (Strings)</h4>
+              <h4>{{ copy().combiningStreams.combineLatest.source1Title }}</h4>
               <div class="button-group">
                 <button
                   type="button"
@@ -206,7 +193,7 @@
                   size="sm"
                   (click)="emitSource1('Red')"
                 >
-                  Emit "Red"
+                  {{ copy().combiningStreams.emitPrefix }} "Red"
                 </button>
                 <button
                   type="button"
@@ -214,7 +201,7 @@
                   size="sm"
                   (click)="emitSource1('Green')"
                 >
-                  Emit "Green"
+                  {{ copy().combiningStreams.emitPrefix }} "Green"
                 </button>
                 <button
                   type="button"
@@ -222,12 +209,12 @@
                   size="sm"
                   (click)="emitSource1('Blue')"
                 >
-                  Emit "Blue"
+                  {{ copy().combiningStreams.emitPrefix }} "Blue"
                 </button>
               </div>
             </div>
             <div class="stream-control">
-              <h4>Source 2 (Numbers)</h4>
+              <h4>{{ copy().combiningStreams.combineLatest.source2Title }}</h4>
               <div class="button-group">
                 <button
                   type="button"
@@ -235,7 +222,7 @@
                   size="sm"
                   (click)="emitSource2(10)"
                 >
-                  Emit 10
+                  {{ copy().combiningStreams.emitPrefix }} 10
                 </button>
                 <button
                   type="button"
@@ -243,19 +230,19 @@
                   size="sm"
                   (click)="emitSource2(20)"
                 >
-                  Emit 20
+                  {{ copy().combiningStreams.emitPrefix }} 20
                 </button>
               </div>
             </div>
           </div>
 
           <div class="state-display">
-            <strong>Latest from Source 1:</strong>
-            <span class="state-value">{{ latestSource1Value() || 'N/A' }}</span>
+            <strong>{{ copy().combiningStreams.combineLatest.latestFromSource1Label }}</strong>
+            <span class="state-value">{{ latestSource1Value() || copy().common.na }}</span>
           </div>
           <div class="state-display">
-            <strong>Latest from Source 2:</strong>
-            <span class="state-value">{{ latestSource2Value() ?? 'N/A' }}</span>
+            <strong>{{ copy().combiningStreams.combineLatest.latestFromSource2Label }}</strong>
+            <span class="state-value">{{ latestSource2Value() ?? copy().common.na }}</span>
           </div>
 
           <div class="button-group reset-group">
@@ -265,17 +252,17 @@
               size="sm"
               (click)="resetCombineLatest()"
             >
-              Reset Stream State
+              {{ copy().common.resetStreamState }}
             </button>
           </div>
 
           <!-- Live Marble Diagram Visualization -->
           <div class="visualization-panel">
             <ah-marble-diagram
-              title="combineLatest Marble Visualizer"
-              description="Multi-source democratic synchronization: emits whenever any stream updates"
+              [title]="copy().combiningStreams.combineLatest.marbleTitle"
+              [description]="copy().combiningStreams.combineLatest.marbleDescription"
               [streams]="combineLatestLanes()"
-              [operator]="combineLatestOperator"
+              [operator]="combineLatestOperator()"
             />
           </div>
 
@@ -286,7 +273,11 @@
               size="sm"
               (click)="toggleCode('combineLatest')"
             >
-              {{ showCode()['combineLatest'] ? 'Hide' : 'Show' }} Code Example
+              {{
+                showCode()['combineLatest']
+                  ? copy().common.hideCodeExample
+                  : copy().common.showCodeExample
+              }}
             </button>
             @if (showCode()['combineLatest']) {
               <ah-code-block [code]="codeSnippets.combineLatest" language="typescript" />

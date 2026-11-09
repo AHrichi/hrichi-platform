@@ -19,6 +19,7 @@ import {
   SegmentedOption,
   Tag,
 } from '@ah/ui';
+import { injectRxjsLabCopy } from '../../i18n/rxjs-lab-copy';
 import { UseCaseFocusComponent } from '../../shared/ui/use-case-focus/use-case-focus.component';
 
 @Component({
@@ -37,12 +38,17 @@ import { UseCaseFocusComponent } from '../../shared/ui/use-case-focus/use-case-f
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CombiningStreamsComponent {
+  readonly copy = injectRxjsLabCopy();
+
   // --- Focus View Options ---
-  readonly focusOptions: readonly SegmentedOption<string>[] = [
-    { value: 'all', label: 'All Combining Operators' },
-    { value: 'withLatestFrom', label: 'withLatestFrom' },
-    { value: 'combineLatest', label: 'combineLatest' },
-  ];
+  readonly focusOptions = computed<readonly SegmentedOption<string>[]>(() => {
+    const opts = this.copy().combiningStreams.focusOptions;
+    return [
+      { value: 'all', label: opts.all },
+      { value: 'withLatestFrom', label: opts.withLatestFrom },
+      { value: 'combineLatest', label: opts.combineLatest },
+    ];
+  });
   readonly activeCase = signal<string>('all');
 
   // --- Code Snippets & Visibility ---
@@ -156,35 +162,35 @@ combineLatest([
       }),
     );
 
+    const c = this.copy().combiningStreams.withLatestFrom;
     return [
       {
         id: 'primary',
-        label: 'Primary Stream (Trigger)',
-        badge: 'Master',
+        label: c.primaryLaneLabel,
+        badge: c.primaryLaneBadge,
         marbles: primaryMarbles,
       },
       {
         id: 'secondary',
-        label: 'Secondary Stream (Sampled)',
-        badge: 'Snapshot',
+        label: c.secondaryLaneLabel,
+        badge: c.secondaryLaneBadge,
         marbles: secondaryMarbles,
       },
       {
         id: 'output',
-        label: 'Combined Output (withLatestFrom)',
-        badge: 'Result',
+        label: c.outputLaneLabel,
+        badge: c.outputLaneBadge,
         isPrimary: true,
         marbles: outputMarbles,
       },
     ];
   });
 
-  readonly withLatestFromOperator: AhOperatorTransform = {
+  readonly withLatestFromOperator = computed<AhOperatorTransform>(() => ({
     name: 'withLatestFrom(secondary$)',
-    description:
-      'Emits ONLY when the primary trigger stream emits, reading the most recent value from secondary$.',
+    description: this.copy().combiningStreams.withLatestFrom.operatorDescription,
     formula: 'output = [primary, latest secondary]',
-  };
+  }));
 
   readonly combineLatestLanes = computed<readonly AhStreamLane[]>(() => {
     const s1Val = this.latestSource1Value();
@@ -225,35 +231,35 @@ combineLatest([
       }),
     );
 
+    const c = this.copy().combiningStreams.combineLatest;
     return [
       {
         id: 'source-1',
-        label: 'Source 1 (Strings)',
-        badge: 'Stream A',
+        label: c.source1LaneLabel,
+        badge: c.source1LaneBadge,
         marbles: s1Marbles,
       },
       {
         id: 'source-2',
-        label: 'Source 2 (Numbers)',
-        badge: 'Stream B',
+        label: c.source2LaneLabel,
+        badge: c.source2LaneBadge,
         marbles: s2Marbles,
       },
       {
         id: 'combined-output',
-        label: 'Combined Stream (combineLatest$)',
-        badge: 'Democratic Output',
+        label: c.outputLaneLabel,
+        badge: c.outputLaneBadge,
         isPrimary: true,
         marbles: outMarbles,
       },
     ];
   });
 
-  readonly combineLatestOperator: AhOperatorTransform = {
+  readonly combineLatestOperator = computed<AhOperatorTransform>(() => ({
     name: 'combineLatest([source1$, source2$])',
-    description:
-      'Re-emits whenever EITHER source emits, as long as each source has emitted at least once.',
+    description: this.copy().combiningStreams.combineLatest.operatorDescription,
     formula: 'output = [latest A, latest B]',
-  };
+  }));
 
   constructor() {
     // Subscription for withLatestFrom example

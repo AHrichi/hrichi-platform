@@ -1,5 +1,6 @@
 import { Component, output } from '@angular/core';
 import { AhButton } from '@ah/ui';
+import { injectRxjsLabCopy } from '../../../i18n/rxjs-lab-copy';
 
 @Component({
   selector: 'app-child-to-parent',
@@ -9,6 +10,7 @@ import { AhButton } from '@ah/ui';
   styleUrls: ['./child-to-parent.component.scss'],
 })
 export class ChildToParentComponent {
+  readonly copy = injectRxjsLabCopy();
   dataEvent = output<string>();
 
   sendData() {

@@ -12,6 +12,10 @@ import { AhButton, AhCodeBlock, SectionHeading, Tag } from '@ah/ui';
 import { QuizService } from '../../shared/services/quiz.service';
 import { QuizQuestion, Difficulty } from '../../shared/models/quiz.model';
 import { NotificationService } from '../../shared/services/notification.service';
+import {
+  injectRxjsLabCopy,
+  injectRxjsLabLanguage,
+} from '../../i18n/rxjs-lab-copy';
 
 type QuizState = 'selecting' | 'in-progress' | 'finished';
 
@@ -24,13 +28,21 @@ type QuizState = 'selecting' | 'in-progress' | 'finished';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class QuizComponent {
+  readonly copy = injectRxjsLabCopy();
+  private readonly lang = injectRxjsLabLanguage();
   private quizService = inject(QuizService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private notificationService = inject(NotificationService);
 
   quizState = signal<QuizState>('selecting');
-  questions = signal<QuizQuestion[]>([]);
+  selectedDifficulty = signal<Difficulty | null>(null);
+  questions = computed<QuizQuestion[]>(() => {
+    const diff = this.selectedDifficulty();
+    return diff
+      ? this.quizService.getQuestionsByDifficulty(diff, this.lang())
+      : [];
+  });
   currentQuestionIndex = signal(0);
   userAnswers = signal<Record<number, string>>({});
   selectedAnswer = signal<string | null>(null);
@@ -58,7 +70,7 @@ export class QuizComponent {
   });
 
   startQuiz(difficulty: Difficulty) {
-    this.questions.set(this.quizService.getQuestionsByDifficulty(difficulty));
+    this.selectedDifficulty.set(difficulty);
     this.quizState.set('in-progress');
   }
 
@@ -77,12 +89,9 @@ export class QuizComponent {
 
     if (this.isCorrect()) {
       this.score.update((s) => s + 1);
-      this.notificationService.show('Correct!', 'success');
+      this.notificationService.show(this.copy().quiz.correctToast, 'success');
     } else {
-      this.notificationService.show(
-        'Not quite! Review the concept for help.',
-        'error',
-      );
+      this.notificationService.show(this.copy().quiz.incorrectToast, 'error');
     }
     this.selectedAnswer.set(null);
   }
@@ -102,7 +111,7 @@ export class QuizComponent {
 
   restart() {
     this.quizState.set('selecting');
-    this.questions.set([]);
+    this.selectedDifficulty.set(null);
     this.currentQuestionIndex.set(0);
     this.userAnswers.set({});
     this.selectedAnswer.set(null);

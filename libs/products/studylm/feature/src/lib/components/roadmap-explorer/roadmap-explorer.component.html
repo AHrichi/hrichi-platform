@@ -4,7 +4,7 @@
     <div class="header-main">
       <div class="title-row">
         <h2 class="subject-title">
-          {{ store.activeSubject()?.title || 'Technical Roadmap' }}
+          {{ store.activeSubject()?.title || copy().roadmap.defaultTitle }}
         </h2>
         <div class="badges-row">
           @if (store.activeSubject()?.domain) {
@@ -16,7 +16,10 @@
           }
           @if (store.activeRoadmap(); as rm) {
             <ah-badge variant="success" size="sm">
-              <span>{{ store.totalSectionsCount() }} Sections</span>
+              <span
+                >{{ store.totalSectionsCount() }}
+                {{ copy().roadmap.sections }}</span
+              >
             </ah-badge>
           }
         </div>
@@ -26,7 +29,9 @@
         <p class="overview-summary">{{ rm.overviewSummary }}</p>
         @if (rm.officialDocPortal) {
           <div class="portal-link-row">
-            <span class="portal-label">Grounding Portal:</span>
+            <span class="portal-label">{{
+              copy().roadmap.groundingPortal
+            }}</span>
             <a
               [href]="rm.officialDocPortal"
               target="_blank"
@@ -41,7 +46,7 @@
         <p class="overview-summary">
           {{
             store.activeSubject()?.description ||
-              'Decompose this software engineering concept into progressive chapters, atomic sections, and authoritative documentation references.'
+              copy().roadmap.defaultDescription
           }}
         </p>
       }
@@ -58,10 +63,10 @@
       >
         <span>{{
           store.isGeneratingRoadmap()
-            ? 'Generating Roadmap...'
+            ? copy().roadmap.generatingRoadmap
             : store.activeRoadmap()
-              ? 'Resynthesize Roadmap'
-              : 'Generate Roadmap'
+              ? copy().roadmap.resynthesizeRoadmap
+              : copy().roadmap.generateRoadmap
         }}</span>
       </button>
 
@@ -75,7 +80,7 @@
           size="md"
           (click)="onApproveAll()"
         >
-          <span>Approve All Sections</span>
+          <span>{{ copy().roadmap.approveAllSections }}</span>
         </button>
       }
 
@@ -90,10 +95,14 @@
         >
           <span>{{
             bulk.isGenerating()
-              ? 'Generating Lessons (' +
+              ? copy().roadmap.generatingLessons +
+                ' (' +
                 (bulk.progress()?.percentage ?? 0) +
                 '%)...'
-              : 'Bulk Generate Lessons (' + bulk.pendingSections().length + ')'
+              : copy().roadmap.bulkGenerateLessons +
+                ' (' +
+                bulk.pendingSections().length +
+                ')'
           }}</span>
         </button>
       }
@@ -106,7 +115,9 @@
   ) {
     <div class="bulk-generation-banner">
       <div class="bulk-banner-header">
-        <span class="bulk-status-title">⚡ Bulk Lesson Generation</span>
+        <span class="bulk-status-title">{{
+          copy().roadmap.bulkBannerTitle
+        }}</span>
         @if (bulk.isGenerating()) {
           <button
             type="button"
@@ -114,7 +125,7 @@
             size="sm"
             (click)="onCancelBulkGenerate()"
           >
-            Cancel
+            {{ copy().roadmap.cancel }}
           </button>
         }
       </div>
@@ -122,9 +133,12 @@
         <ah-progress-bar
           [value]="p.percentage"
           [label]="
-            'Batch ' +
+            copy().roadmap.batch +
+            ' ' +
             p.currentBatch +
-            ' of ' +
+            ' ' +
+            copy().roadmap.of +
+            ' ' +
             p.totalBatches +
             ' (' +
             p.percentage +
@@ -140,10 +154,12 @@
 
   @if (store.aiStatus(); as status) {
     <div class="rejection-alert-wrapper" role="status">
-      <ah-alert variant="info" title="AI features are paused">
+      <ah-alert variant="info" [title]="copy().roadmap.aiPausedTitle">
         <p class="rejection-text">{{ status }}</p>
         <p class="rejection-hint">
-          The <a routerLink="../learn">built-in lessons</a> work without it.
+          {{ copy().roadmap.aiPausedHintPrefix }}
+          <a routerLink="../learn">{{ copy().roadmap.builtInLessonsLink }}</a>
+          {{ copy().roadmap.aiPausedHintSuffix }}
         </p>
       </ah-alert>
     </div>
@@ -151,11 +167,12 @@
 
   @if (store.roadmapError(); as error) {
     <div class="rejection-alert-wrapper">
-      <ah-alert variant="danger" title="The AI couldn’t make a roadmap">
+      <ah-alert variant="danger" [title]="copy().roadmap.roadmapErrorTitle">
         <p class="rejection-text">{{ error }}</p>
         <p class="rejection-hint">
-          Nothing was changed. Try again in a moment, or open the
-          <a routerLink="../learn">built-in lessons</a>, which work offline.
+          {{ copy().roadmap.roadmapErrorHintPrefix }}
+          <a routerLink="../learn">{{ copy().roadmap.builtInLessonsLink }}</a
+          >{{ copy().roadmap.roadmapErrorHintSuffix }}
         </p>
         <button
           type="button"
@@ -164,7 +181,7 @@
           [disabled]="store.isGeneratingRoadmap()"
           (click)="onGenerateRoadmap()"
         >
-          Try again
+          {{ copy().roadmap.tryAgain }}
         </button>
       </ah-alert>
     </div>
@@ -175,15 +192,12 @@
     <div class="rejection-alert-wrapper">
       <ah-alert
         variant="warning"
-        title="Software Engineering Topic Required"
+        [title]="copy().roadmap.topicRequiredTitle"
         [dismissible]="true"
       >
         <p class="rejection-text">{{ rejection }}</p>
         <p class="rejection-hint">
-          StudyLM utilizes specialized technical engines grounded in
-          authoritative software engineering specifications (e.g. JavaScript V8,
-          Angular Signals, PostgreSQL MVCC, Distributed Systems). Please select
-          a valid Software Engineering domain topic.
+          {{ copy().roadmap.topicRequiredHint }}
         </p>
       </ah-alert>
     </div>
@@ -193,10 +207,12 @@
   @if (store.activeRoadmap(); as rm) {
     <div class="curriculum-progress-card">
       <div class="progress-meta">
-        <span class="progress-title">Curriculum Synthesis Progress</span>
+        <span class="progress-title">{{
+          copy().roadmap.synthesisProgressTitle
+        }}</span>
         <span class="progress-count">
           {{ store.synthesizedSectionsCount() }} /
-          {{ store.totalSectionsCount() }} Sections Ready ({{
+          {{ store.totalSectionsCount() }} {{ copy().roadmap.sectionsReady }} ({{
             store.curriculumProgressPct()
           }}%)
         </span>
@@ -220,7 +236,8 @@
             <!-- Branch toolbar to toggle all sections in this branch -->
             <div class="branch-sections-toolbar">
               <span class="sections-count-pill"
-                >{{ branch.sections.length }} sections</span
+                >{{ branch.sections.length }}
+                {{ copy().roadmap.sectionsLower }}</span
               >
               <button
                 type="button"
@@ -230,8 +247,8 @@
               >
                 <span>{{
                   areAllSectionsExpanded(branch.sections)
-                    ? 'Collapse all sections'
-                    : 'Expand all sections'
+                    ? copy().roadmap.collapseAllSections
+                    : copy().roadmap.expandAllSections
                 }}</span>
               </button>
             </div>
@@ -293,11 +310,11 @@
 
                       @if (section.approved) {
                         <ah-badge variant="success" size="sm">
-                          <span>Approved</span>
+                          <span>{{ copy().roadmap.approved }}</span>
                         </ah-badge>
                       } @else {
                         <ah-badge variant="neutral" size="sm">
-                          <span>Pending Review</span>
+                          <span>{{ copy().roadmap.pendingReview }}</span>
                         </ah-badge>
                       }
 
@@ -307,7 +324,10 @@
                           size="sm"
                           class="cards-count-badge"
                         >
-                          <span>🗂️ {{ cardCount }} cards</span>
+                          <span
+                            >🗂️ {{ cardCount }}
+                            {{ copy().roadmap.cardsLower }}</span
+                          >
                         </ah-badge>
                       }
                       @if (getSectionQuizCount(section.id); as quizCount) {
@@ -316,7 +336,10 @@
                           size="sm"
                           class="quiz-count-badge"
                         >
-                          <span>📝 {{ quizCount }} quiz</span>
+                          <span
+                            >📝 {{ quizCount }}
+                            {{ copy().roadmap.quizLower }}</span
+                          >
                         </ah-badge>
                       }
                     </div>
@@ -336,7 +359,9 @@
                       <!-- Subtopics Chips -->
                       @if (section.subtopics.length > 0) {
                         <div class="subtopics-list">
-                          <span class="subtopics-label">Subtopics:</span>
+                          <span class="subtopics-label">{{
+                            copy().roadmap.subtopicsLabel
+                          }}</span>
                           <div class="chips-row">
                             @for (sub of section.subtopics; track sub) {
                               <span class="subtopic-chip" [attr.title]="sub">{{
@@ -350,7 +375,9 @@
                       <!-- Grounding Official Docs -->
                       @if (section.officialDocs.length > 0) {
                         <div class="docs-list">
-                          <span class="docs-label">Official Grounding:</span>
+                          <span class="docs-label">{{
+                            copy().roadmap.officialGroundingLabel
+                          }}</span>
                           <ul class="docs-links">
                             @for (doc of section.officialDocs; track doc.url) {
                               <li>
@@ -380,7 +407,7 @@
                             size="sm"
                             (click)="onApproveSection(section.id)"
                           >
-                            <span>Approve Section</span>
+                            <span>{{ copy().roadmap.approveSection }}</span>
                           </button>
                         }
 
@@ -402,12 +429,12 @@
                           <span>
                             {{
                               isSectionGeneratingCards(section.id)
-                                ? 'Generating Cards...'
+                                ? copy().roadmap.generatingCards
                                 : section.flashcardsStatus === 'ready'
-                                  ? 'Regenerate Flashcards'
+                                  ? copy().roadmap.regenerateFlashcards
                                   : section.flashcardsStatus === 'error'
-                                    ? 'Retry Flashcards'
-                                    : 'Generate Flashcards'
+                                    ? copy().roadmap.retryFlashcards
+                                    : copy().roadmap.generateFlashcards
                             }}
                           </span>
                         </button>
@@ -430,12 +457,12 @@
                           <span>
                             {{
                               isSectionGeneratingQuiz(section.id)
-                                ? 'Generating Quiz...'
+                                ? copy().roadmap.generatingQuiz
                                 : section.quizStatus === 'ready'
-                                  ? 'Regenerate Quiz'
+                                  ? copy().roadmap.regenerateQuiz
                                   : section.quizStatus === 'error'
-                                    ? 'Retry Quiz'
-                                    : 'Generate Quiz'
+                                    ? copy().roadmap.retryQuiz
+                                    : copy().roadmap.generateQuiz
                             }}
                           </span>
                         </button>
@@ -462,7 +489,7 @@
                             size="sm"
                             (click)="openLesson(section)"
                           >
-                            <span>Writing lesson…</span>
+                            <span>{{ copy().roadmap.writingLesson }}</span>
                           </button>
                         } @else if (lesson.saved) {
                           <button
@@ -471,7 +498,7 @@
                             size="sm"
                             (click)="openLesson(section)"
                           >
-                            <span>Open Lesson</span>
+                            <span>{{ copy().roadmap.openLesson }}</span>
                           </button>
                           <button
                             type="button"
@@ -479,7 +506,7 @@
                             size="sm"
                             (click)="writeLesson(section)"
                           >
-                            <span>Rewrite Lesson</span>
+                            <span>{{ copy().roadmap.rewriteLesson }}</span>
                           </button>
                         } @else {
                           <button
@@ -488,7 +515,7 @@
                             size="sm"
                             (click)="writeLesson(section)"
                           >
-                            <span>Write a Lesson</span>
+                            <span>{{ copy().roadmap.writeLesson }}</span>
                           </button>
                         }
                         @if (lesson.status === 'failed') {
@@ -505,7 +532,11 @@
                             size="sm"
                             (click)="onStudySectionCards(section)"
                           >
-                            <span>Study Cards ({{ cardCount }})</span>
+                            <span
+                              >{{ copy().roadmap.studyCards }} ({{
+                                cardCount
+                              }})</span
+                            >
                           </button>
                         }
 
@@ -516,7 +547,11 @@
                             size="sm"
                             (click)="onTakeSectionQuiz(section)"
                           >
-                            <span>Take Quiz ({{ quizCount }})</span>
+                            <span
+                              >{{ copy().roadmap.takeQuiz }} ({{
+                                quizCount
+                              }})</span
+                            >
                           </button>
                         }
                       </div>
@@ -533,10 +568,10 @@
     <!-- Empty State -->
     <div class="empty-roadmap-container">
       <ah-empty-state
-        title="No Curriculum Roadmap Yet"
-        description="StudyLM uses multi-model free-tier AI engines grounded in official specifications to break down software engineering concepts into structured chapters and atomic sections."
+        [title]="copy().roadmap.emptyTitle"
+        [description]="copy().roadmap.emptyDescription"
         icon="🗺️"
-        actionLabel="Generate Technical Roadmap"
+        [actionLabel]="copy().roadmap.emptyAction"
         (actionClick)="onGenerateRoadmap()"
       />
     </div>

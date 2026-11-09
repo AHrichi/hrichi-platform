@@ -1,4 +1,5 @@
 import { Component, input } from '@angular/core';
+import { injectRxjsLabCopy } from '../../../i18n/rxjs-lab-copy';
 
 @Component({
   selector: 'app-parent-to-child',
@@ -7,5 +8,6 @@ import { Component, input } from '@angular/core';
   styleUrls: ['./parent-to-child.component.scss'],
 })
 export class ParentToChildComponent {
+  readonly copy = injectRxjsLabCopy();
   data = input.required<string>();
 }

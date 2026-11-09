@@ -1,5 +1,5 @@
-<nav class="nav-menu" [class.closed]="!isOpen()" aria-label="RxJS Lab navigation">
-  @for (category of categories; track category.id) {
+<nav class="nav-menu" [class.closed]="!isOpen()" [attr.aria-label]="copy().nav.ariaLabel">
+  @for (category of categories(); track category.id) {
     <div class="nav-category">
       @if (isOpen()) {
         <div class="category-header">

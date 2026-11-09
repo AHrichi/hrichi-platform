@@ -13,6 +13,7 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AhButton, SegmentedControl, SegmentedOption, Tag } from '@ah/ui';
+import { injectRxjsLabCopy } from '../../../i18n/rxjs-lab-copy';
 
 @Component({
   selector: 'ah-use-case-focus',
@@ -23,10 +24,15 @@ import { AhButton, SegmentedControl, SegmentedOption, Tag } from '@ah/ui';
   styleUrl: './use-case-focus.component.scss',
 })
 export class UseCaseFocusComponent implements OnInit {
+  readonly copy = injectRxjsLabCopy();
   readonly options = input.required<readonly SegmentedOption<string>[]>();
   readonly value = model.required<string>();
-  readonly ariaLabel = input<string>('Filter use cases');
+  readonly ariaLabel = input<string>('');
   readonly queryParamName = input<string>('case');
+
+  readonly effectiveAriaLabel = computed(
+    () => this.ariaLabel() || this.copy().common.filterUseCases,
+  );
 
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);

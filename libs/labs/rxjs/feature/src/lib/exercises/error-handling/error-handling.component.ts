@@ -1,5 +1,10 @@
 // src/app/exercises/error-handling/error-handling.component.ts
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  signal,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   Subject,
@@ -32,6 +37,7 @@ import {
   SegmentedOption,
   Tag,
 } from '@ah/ui';
+import { injectRxjsLabCopy } from '../../i18n/rxjs-lab-copy';
 import { UseCaseFocusComponent } from '../../shared/ui/use-case-focus/use-case-focus.component';
 
 @Component({
@@ -51,14 +57,19 @@ import { UseCaseFocusComponent } from '../../shared/ui/use-case-focus/use-case-f
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ErrorHandlingComponent {
+  readonly copy = injectRxjsLabCopy();
+
   // --- Focus View Options ---
-  readonly focusOptions: readonly SegmentedOption<string>[] = [
-    { value: 'all', label: 'All Error Strategies' },
-    { value: 'replace', label: 'Catch & Replace' },
-    { value: 'rethrow', label: 'Catch & Rethrow' },
-    { value: 'retry', label: 'Modern Retry' },
-    { value: 'retryWhen', label: 'Legacy RetryWhen' },
-  ];
+  readonly focusOptions = computed<readonly SegmentedOption<string>[]>(() => {
+    const opts = this.copy().errorHandling.focusOptions;
+    return [
+      { value: 'all', label: opts.all },
+      { value: 'replace', label: opts.replace },
+      { value: 'rethrow', label: opts.rethrow },
+      { value: 'retry', label: opts.retry },
+      { value: 'retryWhen', label: opts.retryWhen },
+    ];
+  });
   readonly activeCase = signal<string>('all');
 
   // --- Signals for retry strategy configuration ---
@@ -145,38 +156,43 @@ searchKeystrokes$.pipe(
 );`,
   };
 
-  readonly pitfallLanes: readonly AhStreamLane[] = [
-    {
-      id: 'outer-stream',
-      label: 'Outer Search Stream (keystrokes$)',
-      badge: 'User Events',
-      marbles: [
-        { id: 'k1', value: 'a', positionPercent: 15, variant: 'data-1', tooltip: 'Keypress "a"' },
-        { id: 'k2', value: 'ab', positionPercent: 42, variant: 'data-1', tooltip: 'Keypress "ab"' },
-        { id: 'k3', value: 'abc', positionPercent: 78, variant: 'data-1', tooltip: 'Keypress "abc"' },
-      ],
-      isCompleted: false,
-    },
-    {
-      id: 'inner-stream',
-      label: 'Inner HTTP Stream (fetch$)',
-      badge: 'Inner catchError',
-      marbles: [
-        { id: 'h1', value: '200', positionPercent: 22, variant: 'success', tooltip: '200 OK' },
-        { id: 'h2', value: '500', positionPercent: 48, variant: 'danger', tooltip: '500 Internal Error' },
-        { id: 'h3', value: '[]', positionPercent: 64, variant: 'warning', tooltip: 'Fallback empty array' },
-        { id: 'h4', value: '200', positionPercent: 84, variant: 'success', tooltip: 'Subsequent search works!' },
-      ],
-      isCompleted: true,
-    },
-  ];
+  readonly pitfallLanes = computed<readonly AhStreamLane[]>(() => {
+    const c = this.copy().errorHandling;
+    return [
+      {
+        id: 'outer-stream',
+        label: c.outerLaneLabel,
+        badge: c.outerLaneBadge,
+        marbles: [
+          { id: 'k1', value: 'a', positionPercent: 15, variant: 'data-1', tooltip: 'Keypress "a"' },
+          { id: 'k2', value: 'ab', positionPercent: 42, variant: 'data-1', tooltip: 'Keypress "ab"' },
+          { id: 'k3', value: 'abc', positionPercent: 78, variant: 'data-1', tooltip: 'Keypress "abc"' },
+        ],
+        isCompleted: false,
+      },
+      {
+        id: 'inner-stream',
+        label: c.innerLaneLabel,
+        badge: c.innerLaneBadge,
+        marbles: [
+          { id: 'h1', value: '200', positionPercent: 22, variant: 'success', tooltip: '200 OK' },
+          { id: 'h2', value: '500', positionPercent: 48, variant: 'danger', tooltip: '500 Internal Error' },
+          { id: 'h3', value: '[]', positionPercent: 64, variant: 'warning', tooltip: 'Fallback empty array' },
+          { id: 'h4', value: '200', positionPercent: 84, variant: 'success', tooltip: 'Subsequent search works!' },
+        ],
+        isCompleted: true,
+      },
+    ];
+  });
 
-  readonly pitfallOperator: AhOperatorTransform = {
-    name: 'switchMap(q => http.get(q).pipe(catchError(fallback)))',
-    description:
-      'Catching errors INSIDE the switchMap maintains outer stream vitality, allowing future user keystrokes to succeed.',
-    formula: 'Inner error caught -> Outer stream stays alive',
-  };
+  readonly pitfallOperator = computed<AhOperatorTransform>(() => {
+    const c = this.copy().errorHandling;
+    return {
+      name: 'switchMap(q => http.get(q).pipe(catchError(fallback)))',
+      description: c.operatorDescription,
+      formula: c.operatorFormula,
+    };
+  });
 
   toggleCode(key: string) {
     this.showCode.update((state) => ({ ...state, [key]: !state[key] }));
@@ -192,9 +208,11 @@ searchKeystrokes$.pipe(
             if (shouldFail) {
               throw new Error('Server is on fire!');
             }
-            return '✅ Data fetched successfully!';
+            return this.copy().errorHandling.replace.successMsg;
           }),
-          catchError((error) => of(`❌ Error handled: ${error.message}`)),
+          catchError((error) =>
+            of(`${this.copy().errorHandling.replace.errorPrefix} ${error.message}`),
+          ),
           finalize(() => this.isLoadingReplace.set(false)),
         );
       }),
@@ -222,7 +240,7 @@ searchKeystrokes$.pipe(
         );
       }),
       catchError((error) =>
-        of(`❌ Rethrown error captured by UI: ${error.message}`),
+        of(`${this.copy().errorHandling.rethrow.errorPrefix} ${error.message}`),
       ),
     ),
     this.resetRethrow.pipe(map(() => null)),
@@ -253,7 +271,10 @@ searchKeystrokes$.pipe(
           }),
           catchError((error) =>
             of(
-              `❌ Failed after ${this.retryCount()} attempts. Error: ${error.message}`,
+              this.copy().errorHandling.retry.failedMsg(
+                this.retryCount(),
+                error.message,
+              ),
             ),
           ),
           finalize(() => this.isLoadingRetry.set(false)),
@@ -295,7 +316,7 @@ searchKeystrokes$.pipe(
             ),
           ),
           catchError((error) =>
-            of(`❌ Failed after retries. Error: ${error.message}`),
+            of(this.copy().errorHandling.retryWhen.failedMsg(error.message)),
           ),
           finalize(() => this.isLoadingRetryWhen.set(false)),
         );

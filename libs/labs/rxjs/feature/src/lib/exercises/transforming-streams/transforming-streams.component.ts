@@ -29,6 +29,7 @@ import {
   SegmentedOption,
   Tag,
 } from '@ah/ui';
+import { injectRxjsLabCopy } from '../../i18n/rxjs-lab-copy';
 import { UseCaseFocusComponent } from '../../shared/ui/use-case-focus/use-case-focus.component';
 
 // --- Interfaces for Visualization ---
@@ -78,14 +79,19 @@ interface SignalMap {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TransformingStreamsComponent {
+  readonly copy = injectRxjsLabCopy();
+
   // --- Focus View Options ---
-  readonly focusOptions: readonly SegmentedOption<string>[] = [
-    { value: 'all', label: 'All Operators' },
-    { value: 'concatMap', label: 'concatMap' },
-    { value: 'switchMap', label: 'switchMap' },
-    { value: 'mergeMap', label: 'mergeMap' },
-    { value: 'exhaustMap', label: 'exhaustMap' },
-  ];
+  readonly focusOptions = computed<readonly SegmentedOption<string>[]>(() => {
+    const opts = this.copy().transformingStreams.focusOptions;
+    return [
+      { value: 'all', label: opts.all },
+      { value: 'concatMap', label: opts.concatMap },
+      { value: 'switchMap', label: opts.switchMap },
+      { value: 'mergeMap', label: opts.mergeMap },
+      { value: 'exhaustMap', label: opts.exhaustMap },
+    ];
+  });
   readonly activeCase = signal<string>('all');
 
   // --- Source for all strategies ---
@@ -134,6 +140,7 @@ export class TransformingStreamsComponent {
 
   // --- Computed Stream Lanes for Marble Diagrams ---
   readonly concatMapLanes = computed<readonly AhStreamLane[]>(() => {
+    const t = this.copy().transformingStreams;
     const src: AhMarbleItem[] = this.concatMapSourceMarbles().map((m, idx) => ({
       id: `concat-src-${m.id}`,
       value: m.value,
@@ -149,18 +156,19 @@ export class TransformingStreamsComponent {
       tooltip: `Sequential output: ${m.value}`,
     }));
     return [
-      { id: 'src', label: 'Source Stream', badge: 'Triggers', marbles: src },
-      { id: 'out', label: 'Ordered Output (concatMap)', badge: 'Sequential', isPrimary: true, marbles: out },
+      { id: 'src', label: t.sourceStreamLabel, badge: t.triggersBadge, marbles: src },
+      { id: 'out', label: t.concatMap.outLaneLabel, badge: t.concatMap.outLaneBadge, isPrimary: true, marbles: out },
     ];
   });
 
-  readonly concatMapOperator: AhOperatorTransform = {
+  readonly concatMapOperator = computed<AhOperatorTransform>(() => ({
     name: 'concatMap(val => inner$)',
-    description: 'Sequentially processes each inner Observable in strict FIFO order.',
+    description: this.copy().transformingStreams.concatMap.operatorDescription,
     formula: 'Stream(n) waits for Stream(n-1) to complete',
-  };
+  }));
 
   readonly switchMapLanes = computed<readonly AhStreamLane[]>(() => {
+    const t = this.copy().transformingStreams;
     const src: AhMarbleItem[] = this.switchMapSourceMarbles().map((m, idx) => ({
       id: `switch-src-${m.id}`,
       value: m.value,
@@ -176,18 +184,19 @@ export class TransformingStreamsComponent {
       tooltip: `Switched output: ${m.value}`,
     }));
     return [
-      { id: 'src', label: 'Source Stream', badge: 'Triggers', marbles: src },
-      { id: 'out', label: 'Latest Output (switchMap)', badge: 'Unsubscribed Prev', isPrimary: true, marbles: out },
+      { id: 'src', label: t.sourceStreamLabel, badge: t.triggersBadge, marbles: src },
+      { id: 'out', label: t.switchMap.outLaneLabel, badge: t.switchMap.outLaneBadge, isPrimary: true, marbles: out },
     ];
   });
 
-  readonly switchMapOperator: AhOperatorTransform = {
+  readonly switchMapOperator = computed<AhOperatorTransform>(() => ({
     name: 'switchMap(val => inner$)',
-    description: 'Cancels the previous inner subscription immediately upon receiving a new source value.',
+    description: this.copy().transformingStreams.switchMap.operatorDescription,
     formula: 'Unsubscribe active -> Subscribe latest',
-  };
+  }));
 
   readonly mergeMapLanes = computed<readonly AhStreamLane[]>(() => {
+    const t = this.copy().transformingStreams;
     const src: AhMarbleItem[] = this.mergeMapSourceMarbles().map((m, idx) => ({
       id: `merge-src-${m.id}`,
       value: m.value,
@@ -203,18 +212,19 @@ export class TransformingStreamsComponent {
       tooltip: `Concurrent output: ${m.value}`,
     }));
     return [
-      { id: 'src', label: 'Source Stream', badge: 'Triggers', marbles: src },
-      { id: 'out', label: 'Parallel Output (mergeMap)', badge: 'Interleaved', isPrimary: true, marbles: out },
+      { id: 'src', label: t.sourceStreamLabel, badge: t.triggersBadge, marbles: src },
+      { id: 'out', label: t.mergeMap.outLaneLabel, badge: t.mergeMap.outLaneBadge, isPrimary: true, marbles: out },
     ];
   });
 
-  readonly mergeMapOperator: AhOperatorTransform = {
+  readonly mergeMapOperator = computed<AhOperatorTransform>(() => ({
     name: 'mergeMap(val => inner$)',
-    description: 'Subscribes concurrently to all inner Observables and emits their values in parallel as they arrive.',
+    description: this.copy().transformingStreams.mergeMap.operatorDescription,
     formula: 'Concurrent streams -> Interleaved outputs',
-  };
+  }));
 
   readonly exhaustMapLanes = computed<readonly AhStreamLane[]>(() => {
+    const t = this.copy().transformingStreams;
     const src: AhMarbleItem[] = this.exhaustMapSourceMarbles().map((m, idx) => ({
       id: `exhaust-src-${m.id}`,
       value: m.value,
@@ -230,16 +240,16 @@ export class TransformingStreamsComponent {
       tooltip: `Guarded output: ${m.value}`,
     }));
     return [
-      { id: 'src', label: 'Source Stream', badge: 'Triggers', marbles: src },
-      { id: 'out', label: 'Ignored Spam Output (exhaustMap)', badge: 'Guarded', isPrimary: true, marbles: out },
+      { id: 'src', label: t.sourceStreamLabel, badge: t.triggersBadge, marbles: src },
+      { id: 'out', label: t.exhaustMap.outLaneLabel, badge: t.exhaustMap.outLaneBadge, isPrimary: true, marbles: out },
     ];
   });
 
-  readonly exhaustMapOperator: AhOperatorTransform = {
+  readonly exhaustMapOperator = computed<AhOperatorTransform>(() => ({
     name: 'exhaustMap(val => inner$)',
-    description: 'Ignores incoming source emissions while a previously started inner Observable is still executing.',
+    description: this.copy().transformingStreams.exhaustMap.operatorDescription,
     formula: 'Active stream ? Drop new : Execute',
-  };
+  }));
 
   private marbleCounter = 0;
 

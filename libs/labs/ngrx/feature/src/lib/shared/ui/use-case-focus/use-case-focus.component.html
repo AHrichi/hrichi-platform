@@ -1,24 +1,26 @@
 <div class="use-case-focus-wrapper">
   <div class="control-row">
-    <span class="control-label" id="focus-label">Focus View:</span>
+    <span class="control-label" id="focus-label">{{
+      copy().focusViewLabel
+    }}</span>
     <ah-segmented-control
       [options]="options()"
       [(value)]="value"
-      [label]="ariaLabel()"
+      [label]="resolvedAriaLabel()"
     />
   </div>
 
   @if (value() !== 'all') {
     <div class="active-badge-group">
-      <ah-tag> Focused: {{ getActiveLabel() }} </ah-tag>
+      <ah-tag> {{ copy().focusedPrefix }} {{ getActiveLabel() }} </ah-tag>
       <button
         type="button"
         ahButton="ghost"
         size="sm"
         (click)="resetToAll()"
-        aria-label="Show all use cases"
+        [attr.aria-label]="copy().showAllAriaLabel"
       >
-        Show All
+        {{ copy().showAll }}
       </button>
     </div>
   }

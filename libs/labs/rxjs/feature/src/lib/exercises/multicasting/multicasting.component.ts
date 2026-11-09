@@ -2,6 +2,7 @@
 import {
   Component,
   ChangeDetectionStrategy,
+  computed,
   signal,
   inject,
   OnDestroy,
@@ -28,6 +29,7 @@ import {
   SegmentedOption,
   Tag,
 } from '@ah/ui';
+import { injectRxjsLabCopy } from '../../i18n/rxjs-lab-copy';
 import { NotificationService } from '../../shared/services/notification.service';
 import { UseCaseFocusComponent } from '../../shared/ui/use-case-focus/use-case-focus.component';
 
@@ -62,17 +64,22 @@ type ExampleType = 'cold' | 'hot' | 'connectable' | SubjectType;
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MulticastingComponent implements OnDestroy {
+  readonly copy = injectRxjsLabCopy();
+
   // --- Focus View Options ---
-  readonly focusOptions: readonly SegmentedOption<string>[] = [
-    { value: 'all', label: 'All Multicasting' },
-    { value: 'cold', label: 'Cold Observable' },
-    { value: 'hot', label: 'Hot (share)' },
-    { value: 'connectable', label: 'Connectable' },
-    { value: 'subject', label: 'Subject' },
-    { value: 'behaviorSubject', label: 'BehaviorSubject' },
-    { value: 'replaySubject', label: 'ReplaySubject' },
-    { value: 'asyncSubject', label: 'AsyncSubject' },
-  ];
+  readonly focusOptions = computed<readonly SegmentedOption<string>[]>(() => {
+    const opts = this.copy().multicasting.focusOptions;
+    return [
+      { value: 'all', label: opts.all },
+      { value: 'cold', label: opts.cold },
+      { value: 'hot', label: opts.hot },
+      { value: 'connectable', label: opts.connectable },
+      { value: 'subject', label: opts.subject },
+      { value: 'behaviorSubject', label: opts.behaviorSubject },
+      { value: 'replaySubject', label: opts.replaySubject },
+      { value: 'asyncSubject', label: opts.asyncSubject },
+    ];
+  });
   readonly activeCase = signal<string>('all');
 
   // --- Code Snippets & Visibility ---

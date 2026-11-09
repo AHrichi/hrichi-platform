@@ -1,14 +1,14 @@
 <div class="exercise-container">
   <ah-section-heading
-    eyebrow="NgRx Store Core"
-    heading="Unidirectional Architecture & Selector Memoization"
-    lead="Explore how Actions, pure Reducers, and memoized Selectors synchronize state with predictable immutability and time-travel auditability."
+    [eyebrow]="copy().eyebrow"
+    [heading]="copy().heading"
+    [lead]="copy().lead"
   />
 
   <ah-ngrx-use-case-focus
-    [options]="focusOptions"
+    [options]="focusOptions()"
     [(value)]="activeCase"
-    ariaLabel="Focus on specific NgRx Store concept"
+    [ariaLabel]="copy().focusAriaLabel"
   />
 
   <!-- Real-time Animated State Flow Cycle -->
@@ -23,40 +23,33 @@
         [class.focused-card]="activeCase() === 'concept'"
       >
         <div class="card-header">
-          <span class="badge">Core Architecture</span>
-          <h3>The Redux Mental Model: The Bank Ledger Analogy</h3>
+          <span class="badge">{{ copy().conceptCard.badge }}</span>
+          <h3>{{ copy().conceptCard.title }}</h3>
         </div>
         <p class="description">
-          In simple apps, developers mutate variables directly (<code
-            >state.balance = 5000</code
-          >). In large enterprise apps, direct mutation creates hidden side
-          effects, race conditions, and un-debuggable state.
+          {{ copy().conceptCard.descriptionPrefix
+          }}<code>state.balance = 5000</code
+          >{{ copy().conceptCard.descriptionSuffix }}
         </p>
 
         <div class="pillars-grid">
           <div class="pillar-box">
             <span class="pillar-icon">🏛️</span>
-            <strong>1. Single Source of Truth</strong>
-            <p>
-              The entire application state is stored in a single immutable
-              object tree inside the Store.
-            </p>
+            <strong>{{ copy().conceptCard.pillar1Title }}</strong>
+            <p>{{ copy().conceptCard.pillar1Desc }}</p>
           </div>
           <div class="pillar-box">
             <span class="pillar-icon">🧾</span>
-            <strong>2. State is Read-Only</strong>
-            <p>
-              To change state, you cannot assign properties. You must issue an
-              Action voucher capturing intent.
-            </p>
+            <strong>{{ copy().conceptCard.pillar2Title }}</strong>
+            <p>{{ copy().conceptCard.pillar2Desc }}</p>
           </div>
           <div class="pillar-box">
             <span class="pillar-icon">⚙️</span>
-            <strong>3. Pure Transitions</strong>
+            <strong>{{ copy().conceptCard.pillar3Title }}</strong>
             <p>
-              Reducers are strictly pure functions:
-              <code>(state, action) =&gt; newState</code> with zero
-              side-effects.
+              {{ copy().conceptCard.pillar3DescPrefix }}
+              <code>(state, action) =&gt; newState</code>
+              {{ copy().conceptCard.pillar3DescSuffix }}
             </p>
           </div>
         </div>
@@ -64,12 +57,14 @@
         <div class="concept-callout">
           <div class="callout-icon">💡</div>
           <div class="callout-body">
-            <strong>Why Immutability Matters:</strong>
-            Because reducers return a <em>new state reference</em> (via object
-            spread <code>&#123; ...state &#125;</code>), components and
-            selectors can perform instant $O(1)$ reference comparisons (<code
-              >prevState === nextState</code
-            >) rather than deeply checking thousands of nested properties!
+            <strong>{{ copy().conceptCard.calloutStrong }}</strong>
+            {{ copy().conceptCard.calloutPart1 }}
+            <em>{{ copy().conceptCard.calloutEm }}</em>
+            {{ copy().conceptCard.calloutPart2 }}
+            <code>&#123; ...state &#125;</code
+            >{{ copy().conceptCard.calloutPart3
+            }}<code>prevState === nextState</code
+            >{{ copy().conceptCard.calloutPart4 }}
           </div>
         </div>
       </div>
@@ -79,12 +74,11 @@
     @if (activeCase() === 'all' || activeCase() === 'actions') {
       <div class="card" [class.focused-card]="activeCase() === 'actions'">
         <div class="card-header">
-          <span class="badge">1. Action Group (createActionGroup)</span>
-          <h3>Dispatch Typed Actions</h3>
+          <span class="badge">{{ copy().actionsCard.badge }}</span>
+          <h3>{{ copy().actionsCard.title }}</h3>
         </div>
         <p class="description">
-          Actions represent unique events in the application lifecycle. They
-          contain a type tag and a typed payload.
+          {{ copy().actionsCard.description }}
         </p>
 
         <div class="actions-toolbar">
@@ -94,7 +88,7 @@
             size="sm"
             (click)="dispatchAddItem('p3', 'RxJS to Signals Migration', 65)"
           >
-            + Add Book ($65)
+            {{ copy().actionsCard.addBookBtn }}
           </button>
           <button
             type="button"
@@ -102,7 +96,7 @@
             size="sm"
             (click)="dispatchApplyCoupon('SUMMER25', 25)"
           >
-            Apply 25% Coupon
+            {{ copy().actionsCard.applyCouponBtn }}
           </button>
           <button
             type="button"
@@ -110,7 +104,7 @@
             size="sm"
             (click)="dispatchClearCart()"
           >
-            Clear Cart
+            {{ copy().actionsCard.clearCartBtn }}
           </button>
           <button
             type="button"
@@ -118,25 +112,26 @@
             size="sm"
             (click)="dispatchUnrelatedAction()"
           >
-            Dispatch Unrelated Action
+            {{ copy().actionsCard.unrelatedActionBtn }}
           </button>
         </div>
 
         <div class="hygiene-explainer">
-          <span class="hygiene-title"
-            >⚡ Action Hygiene Rule: Events, Not Commands</span
-          >
+          <span class="hygiene-title">{{ copy().actionsCard.hygieneTitle }}</span>
           <p>
-            Name actions after
-            <strong>events that happened in the UI</strong> (e.g.
-            <code>[Cart Page] Add Book Clicked</code>), not commands (e.g.
-            <code>[Cart] Set State</code>). This makes Redux DevTools logs read
-            like a chronological storyboard of user interactions.
+            {{ copy().actionsCard.hygienePart1 }}
+            <strong>{{ copy().actionsCard.hygieneStrong }}</strong>
+            (e.g. <code>[Cart Page] Add Book Clicked</code>){{
+              copy().actionsCard.hygienePart2
+            }}
+            <code>[Cart] Set State</code>{{ copy().actionsCard.hygienePart3 }}
           </p>
         </div>
 
         <div class="code-preview">
-          <span class="preview-title">Action Definition Code:</span>
+          <span class="preview-title">{{
+            copy().actionsCard.codePreviewTitle
+          }}</span>
           <pre><code>{{ actionGroupSnippet }}</code></pre>
         </div>
       </div>
@@ -146,13 +141,13 @@
     @if (activeCase() === 'all' || activeCase() === 'reducers') {
       <div class="card" [class.focused-card]="activeCase() === 'reducers'">
         <div class="card-header">
-          <span class="badge">2. Pure Reducer (createFeature)</span>
-          <h3>Current Immutable State</h3>
+          <span class="badge">{{ copy().reducersCard.badge }}</span>
+          <h3>{{ copy().reducersCard.title }}</h3>
         </div>
         <p class="description">
-          Reducers are pure functions:
-          <code>(state, action) =&gt; newState</code>. They never mutate state
-          directly.
+          {{ copy().reducersCard.descriptionPrefix }}
+          <code>(state, action) =&gt; newState</code
+          >{{ copy().reducersCard.descriptionSuffix }}
         </p>
 
         <div class="cart-items-list">
@@ -170,33 +165,32 @@
                 size="sm"
                 (click)="dispatchRemoveItem(item.id)"
               >
-                Remove
+                {{ copy().reducersCard.removeBtn }}
               </button>
             </div>
           } @empty {
             <div class="empty-state">
-              Cart is empty. Add items above to populate state.
+              {{ copy().reducersCard.emptyCart }}
             </div>
           }
         </div>
 
         @if (currentState().couponCode) {
           <div class="coupon-banner">
-            Coupon Applied:
+            {{ copy().reducersCard.couponAppliedLabel }}
             <strong>{{ currentState().couponCode }}</strong> ({{
               currentState().discountPercent
-            }}% OFF)
+            }}{{ copy().reducersCard.offSuffix }})
           </div>
         }
 
         <div class="immutability-note">
-          <span class="note-title">🛡️ Pure Function Guarantees:</span>
+          <span class="note-title">{{ copy().reducersCard.noteTitle }}</span>
           <p>
-            Notice how the reducer never calls <code>items.push()</code>. It
-            always returns a new object
+            {{ copy().reducersCard.notePart1 }} <code>items.push()</code
+            >{{ copy().reducersCard.notePart2 }}
             <code>&#123; ...state, items: [...state.items, newItem] &#125;</code
-            >. This guarantees previous state snapshots remain intact for
-            time-travel debugging!
+            >{{ copy().reducersCard.notePart3 }}
           </p>
         </div>
       </div>
@@ -206,29 +200,33 @@
     @if (activeCase() === 'all' || activeCase() === 'selectors') {
       <div class="card" [class.focused-card]="activeCase() === 'selectors'">
         <div class="card-header">
-          <span class="badge">3. Memoized Selectors (createSelector)</span>
-          <h3>Selector Projection &amp; Cache Efficiency</h3>
+          <span class="badge">{{ copy().selectorsCard.badge }}</span>
+          <h3>{{ copy().selectorsCard.title }}</h3>
         </div>
         <p class="description">
-          Selectors compute derived slices. If their input arguments have not
-          changed by reference, their projector is skipped and the cached value
-          is returned instantly.
+          {{ copy().selectorsCard.description }}
         </p>
 
         <div class="selector-metrics-grid">
           <div class="metric-box">
             <span class="metric-icon">📦</span>
-            <span class="metric-label">Items Count</span>
+            <span class="metric-label">{{
+              copy().selectorsCard.itemsCountLabel
+            }}</span>
             <span class="metric-value">{{ totalItemCount() }}</span>
           </div>
           <div class="metric-box">
             <span class="metric-icon">💲</span>
-            <span class="metric-label">Subtotal</span>
+            <span class="metric-label">{{
+              copy().selectorsCard.subtotalLabel
+            }}</span>
             <span class="metric-value">\${{ subtotal() }}</span>
           </div>
           <div class="metric-box highlight">
             <span class="metric-icon">🏷️</span>
-            <span class="metric-label">Discounted Total</span>
+            <span class="metric-label">{{
+              copy().selectorsCard.discountedTotalLabel
+            }}</span>
             <span class="metric-value">\${{ discountedTotal() }}</span>
           </div>
         </div>
@@ -240,27 +238,28 @@
           >
             @if (lastActionMemoStatus() === 'hit') {
               <span
-                >⚡ Last Action:
-                <strong>CACHE HIT (Projector Skipped)</strong></span
+                >⚡ {{ copy().selectorsCard.lastActionPrefix }}
+                <strong>{{ copy().selectorsCard.cacheHitStrong }}</strong></span
               >
             } @else {
-              <span>🔄 Last Action: <strong>PROJECTOR EXECUTED</strong></span>
+              <span
+                >🔄 {{ copy().selectorsCard.lastActionPrefix }}
+                <strong>{{
+                  copy().selectorsCard.projectorExecutedStrong
+                }}</strong></span
+              >
             }
           </div>
           <div class="audit-row">
-            <span>Projector Executions:</span>
+            <span>{{ copy().selectorsCard.projectorExecutionsLabel }}</span>
             <span class="count">{{ projectorRuns() }}</span>
           </div>
           <div class="audit-row">
-            <span>Cache Hits (Skipped recomputation):</span>
+            <span>{{ copy().selectorsCard.cacheHitsLabel }}</span>
             <span class="count success">{{ cacheHits() }}</span>
           </div>
           <div class="audit-note">
-            <small
-              >Tip: Clicking "Dispatch Unrelated Action" dispatches an event
-              that does not touch the cart. Notice that cache hits increase
-              while projector runs stay the same!</small
-            >
+            <small>{{ copy().selectorsCard.tipText }}</small>
           </div>
         </div>
       </div>

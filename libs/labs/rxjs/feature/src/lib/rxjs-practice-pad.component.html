@@ -3,8 +3,8 @@
     <div class="sidebar-header">
       @if (isSidebarOpen()) {
         <div>
-          <h1 class="title">RxJS Practice Pad</h1>
-          <p class="subtitle">Interactive stream laboratory</p>
+          <h1 class="title">{{ copy().shell.title }}</h1>
+          <p class="subtitle">{{ copy().shell.subtitle }}</p>
         </div>
       }
       <div class="sidebar-actions">
@@ -12,8 +12,8 @@
           class="action-btn toggle-btn"
           (click)="toggleSidebar()"
           [attr.aria-expanded]="isSidebarOpen()"
-          aria-label="Toggle navigation drawer"
-          [attr.title]="isSidebarOpen() ? 'Collapse navigation' : 'Expand navigation'"
+          [attr.aria-label]="copy().shell.toggleDrawerAria"
+          [attr.title]="isSidebarOpen() ? copy().shell.collapseNav : copy().shell.expandNav"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
