@@ -20,6 +20,7 @@ import {
   computeStreak,
   type Concept,
   type ConceptDraft,
+  type ConceptLink,
   conceptFromDraft,
   countedDays,
   draftConceptFrom,
@@ -29,6 +30,8 @@ import {
   type GardenTheme,
   learnedMorning,
   levelOf,
+  type LinkRelation,
+  linkRecord,
   milestonesOf,
   themesOf,
   localDateOf,
@@ -101,6 +104,7 @@ export interface LearningState {
   sessions: ReviewSession[];
   events: ReviewEvent[];
   teachBacks: TeachBack[];
+  links: ConceptLink[];
   settings: LearnerSettings;
   /** Bumped by the clock so "today" moves on at the day boundary. */
   now: string;
@@ -126,6 +130,7 @@ const initialState: LearningState = {
   sessions: [],
   events: [],
   teachBacks: [],
+  links: [],
   settings: DEFAULT_SETTINGS,
   now: new Date().toISOString(),
   revising: [],
@@ -201,11 +206,35 @@ export const LearningStore = signalStore(
     milestones: computed(() => milestonesOf(progress())),
     themes: computed(() => themesOf(progress())),
   })),
-  withComputed(({ concepts, captures }) => ({
+  withComputed(({ concepts, captures, links }) => ({
     /** The digest: drafts the AI wrote, waiting to be kept or discarded. */
     drafts: computed(() => concepts().filter((c) => c.status === 'draft')),
     /** The library: concepts the learner kept. */
     library: computed(() => concepts().filter((c) => c.status !== 'draft')),
+    /**
+     * The AI's link suggestions between concepts the learner kept; one to a
+     * draft waits until the draft is kept.
+     */
+    linkSuggestions: computed(() => {
+      const kept = new Map(
+        concepts()
+          .filter((c) => c.status !== 'draft' && !c.deletedAt)
+          .map((c) => [c.id, c]),
+      );
+      return links()
+        .filter(
+          (link) =>
+            !link.confirmed &&
+            !link.deletedAt &&
+            kept.has(link.from) &&
+            kept.has(link.to),
+        )
+        .map((link) => ({
+          link,
+          from: kept.get(link.from) as Concept,
+          to: kept.get(link.to) as Concept,
+        }));
+    }),
     /** Captures not yet turned into drafts, or that need the learner. */
     inProgress: computed(() =>
       captures().filter((capture) => capture.status !== 'ready'),
@@ -234,6 +263,7 @@ export const LearningStore = signalStore(
         sessions,
         events,
         teachBacks,
+        links,
         settings,
       ] = await Promise.all([
         local.concepts(),
@@ -244,6 +274,7 @@ export const LearningStore = signalStore(
         local.sessions(),
         local.events(),
         local.teachBacks(),
+        local.links(),
         local.getMeta<Partial<LearnerSettings>>('learner'),
       ]);
       patchState(store, {
@@ -253,6 +284,7 @@ export const LearningStore = signalStore(
         sessions,
         events,
         teachBacks,
+        links,
         settings: { ...DEFAULT_SETTINGS, ...settings },
         now: new Date().toISOString(),
         pending,
@@ -490,6 +522,7 @@ export const LearningStore = signalStore(
           cap: store.settings().dailyCap,
           newPerDay: store.settings().newPerDay,
           teachBacks: store.teachBacks(),
+          links: store.links(),
         });
         const session = await local.saveSession({
           id: crypto.randomUUID(),
@@ -694,6 +727,46 @@ export const LearningStore = signalStore(
         await refresh();
         syncSoon();
         return { transcript, feedback, problem };
+      },
+
+      /** "Yes, they're related": the link starts giving contrast cards. */
+      async confirmLink(link: ConceptLink): Promise<void> {
+        const { local } = await runtime.open();
+        await local.saveLink({ ...link, confirmed: true });
+        await refresh();
+        syncSoon();
+      },
+
+      /** "Not really": the suggestion goes, on every device. */
+      async dismissLink(link: ConceptLink): Promise<void> {
+        const { local } = await runtime.open();
+        await local.saveLink({ ...link, deletedAt: new Date().toISOString() });
+        await refresh();
+        syncSoon();
+      },
+
+      /** The learner's own link, confirmed at once. Replaces one between the same two. */
+      async addLink(
+        from: string,
+        to: string,
+        relation: LinkRelation,
+      ): Promise<void> {
+        if (from === to) return;
+        const { local } = await runtime.open();
+        const now = new Date();
+        for (const old of store.links()) {
+          const same =
+            (old.from === from && old.to === to) ||
+            (old.from === to && old.to === from);
+          if (same) {
+            await local.saveLink({ ...old, deletedAt: now.toISOString() });
+          }
+        }
+        await local.saveLink(
+          linkRecord({ from, to, relation, by: 'user', now }),
+        );
+        await refresh();
+        syncSoon();
       },
 
       async saveSettings(change: Partial<LearnerSettings>): Promise<void> {

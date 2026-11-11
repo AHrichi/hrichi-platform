@@ -155,6 +155,41 @@
     </section>
   }
 
+  @if (store.linkSuggestions().length) {
+    <section aria-labelledby="links-title">
+      <h2 id="links-title">Connections to check</h2>
+      <ul class="captures" role="list">
+        @for (item of store.linkSuggestions(); track item.link.id) {
+          <li class="card capture-item">
+            <p class="capture-text">
+              {{
+                describe(item.link.relation, item.from.title, item.to.title)
+              }}?
+            </p>
+            <div class="decide">
+              <button
+                ahButton="ghost"
+                size="sm"
+                type="button"
+                (click)="store.dismissLink(item.link)"
+              >
+                Not really
+              </button>
+              <button
+                ahButton="secondary"
+                size="sm"
+                type="button"
+                (click)="store.confirmLink(item.link)"
+              >
+                Link them
+              </button>
+            </div>
+          </li>
+        }
+      </ul>
+    </section>
+  }
+
   @if (store.inProgress().length) {
     <section aria-labelledby="progress-title">
       <h2 id="progress-title">On their way</h2>
@@ -215,7 +250,12 @@
     </section>
   }
 
-  @if (store.ready() && !top() && !store.inProgress().length) {
+  @if (
+    store.ready() &&
+    !top() &&
+    !store.inProgress().length &&
+    !store.linkSuggestions().length
+  ) {
     <p class="empty">
       Nothing waiting. Capture an idea above; the AI turns it into a short
       explanation and questions for your daily set.

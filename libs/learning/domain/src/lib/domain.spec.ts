@@ -60,6 +60,7 @@ describe('records', () => {
       'concept',
       'capture',
       'session',
+      'link',
       'event',
       'teachback',
     ]);

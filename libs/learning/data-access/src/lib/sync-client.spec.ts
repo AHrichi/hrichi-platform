@@ -2,6 +2,7 @@ import 'fake-indexeddb/auto';
 import {
   FIXTURE_IDS,
   incomingWins,
+  linkRecord,
   type PulledRecord,
   sampleCapture,
   sampleConcept,
@@ -80,6 +81,8 @@ class FakeServer {
         put({ kind: 'session', seq: 0, by: deviceId, data });
       for (const data of request.push.events)
         put({ kind: 'event', seq: 0, by: deviceId, data });
+      for (const data of request.push.links)
+        put({ kind: 'link', seq: 0, by: deviceId, data });
       for (const data of request.push.teachbacks)
         put({ kind: 'teachback', seq: 0, by: deviceId, data });
       const changes = [...this.records.values()]
@@ -207,6 +210,33 @@ describe('LearningSyncClient with two devices', () => {
     expect(await laptop.store.teachBacks()).toEqual([sampleTeachBack()]);
     expect(await phone.store.pendingCount()).toBe(0);
     expect(server.records.size).toBe(1);
+  });
+
+  it('syncs a link and its dismissal', async () => {
+    const server = new FakeServer();
+    const phone = await device(server, FIXTURE_IDS.deviceA);
+    const laptop = await device(server, FIXTURE_IDS.deviceB);
+    const link = await phone.store.saveLink(
+      linkRecord({
+        from: FIXTURE_IDS.concept,
+        to: FIXTURE_IDS.capture,
+        relation: 'similar',
+        by: 'ai',
+        now: new Date(),
+      }),
+    );
+    await phone.client.sync();
+    await laptop.client.sync();
+    expect(await laptop.store.links()).toEqual([link]);
+
+    tick();
+    await laptop.store.saveLink({
+      ...link,
+      deletedAt: new Date().toISOString(),
+    });
+    await laptop.client.sync();
+    await phone.client.sync();
+    expect(await phone.store.links()).toEqual([]);
   });
 
   it('keeps changes queued while offline and sends them later', async () => {

@@ -79,6 +79,7 @@ export class SyncService {
     for (const session of request.push.sessions) {
       await putMutable('session', session);
     }
+    for (const link of request.push.links) await putMutable('link', link);
     for (const event of request.push.events) {
       const seq = await this.repository.nextSeq();
       const outcome = await this.repository.putAppendOnly({

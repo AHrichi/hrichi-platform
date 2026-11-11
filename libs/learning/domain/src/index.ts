@@ -13,6 +13,7 @@ export * from './lib/ai/decisions';
 export * from './lib/ai/draft-concept';
 export * from './lib/ai/grading';
 export * from './lib/ai/teach-back';
+export * from './lib/ai/links';
 export * from './lib/schedule/memory';
 export * from './lib/schedule/composer';
 export * from './lib/schedule/streak';

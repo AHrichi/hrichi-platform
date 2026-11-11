@@ -68,6 +68,8 @@ interface Card {
   teach: boolean;
   /** What a teach-back is compared with. */
   points: string[];
+  /** Asked as a contrast card: the linked concept to compare with. */
+  contrast: Concept | null;
 }
 
 interface TeachResult {
@@ -208,6 +210,11 @@ export class TodayScreen {
     const concept = this.store.concepts().find((c) => c.id === item.conceptId);
     const prompt = concept?.prompts.find((p) => p.id === item.promptId);
     if (!concept || !prompt || concept.deletedAt) return null;
+    const other = item.contrastWith
+      ? this.store
+          .concepts()
+          .find((c) => c.id === item.contrastWith && !c.deletedAt)
+      : undefined;
     return {
       item,
       concept,
@@ -215,6 +222,7 @@ export class TodayScreen {
       retry,
       teach: !!item.teach && !retry,
       points: teachPoints(concept),
+      contrast: !retry && other ? other : null,
     };
   }
 
@@ -261,7 +269,9 @@ export class TodayScreen {
     }
     this.revealed.set(true);
     const answer = this.answer().trim();
-    if (!card || !answer || card.prompt.type === 'quick_fire') return;
+    // A comparison has no key points of its own to grade by.
+    if (!card || !answer || card.contrast) return;
+    if (card.prompt.type === 'quick_fire') return;
     this.checking.set(true);
     void this.store.grade(card.prompt, answer).then((grade) => {
       // Ignore a late reply for a card that's gone.
@@ -316,6 +326,7 @@ export class TodayScreen {
         retry: true,
         teach: false,
         points: card.points,
+        contrast: null,
       });
     }
     if (!card.retry) this.done.update((n) => n + 1);

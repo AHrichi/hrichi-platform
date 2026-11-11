@@ -79,6 +79,61 @@
           </button>
         </div>
         <p class="essence">{{ concept.explanation.essence }}</p>
+        @if (linksOf(concept.id); as links) {
+          @if (links.length) {
+            <ul class="links" role="list" aria-label="Linked concepts">
+              @for (entry of links; track entry.link.id) {
+                <li>
+                  <span>{{ entry.text }}</span>
+                  <button
+                    ahButton="ghost"
+                    size="sm"
+                    type="button"
+                    (click)="store.dismissLink(entry.link)"
+                    [attr.aria-label]="'Remove the link: ' + entry.text"
+                  >
+                    Unlink
+                  </button>
+                </li>
+              }
+            </ul>
+          }
+        }
+        @if (store.library().length > 1) {
+          <details class="link-add">
+            <summary>Link to another concept</summary>
+            <div class="link-form">
+              <label>
+                <span>Concept</span>
+                <select #other>
+                  @for (candidate of store.library(); track candidate.id) {
+                    @if (candidate.id !== concept.id) {
+                      <option [value]="candidate.id">
+                        {{ candidate.title }}
+                      </option>
+                    }
+                  }
+                </select>
+              </label>
+              <label>
+                <span>How they relate</span>
+                <select #relation>
+                  @for (choice of relations; track choice.value) {
+                    <option [value]="choice.value">{{ choice.label }}</option>
+                  }
+                </select>
+              </label>
+              <button
+                ahButton="secondary"
+                size="sm"
+                type="button"
+                (click)="link(concept.id, other.value, relation.value)"
+              >
+                Link
+              </button>
+            </div>
+          </details>
+        }
         @for (prompt of concept.prompts; track prompt.id) {
           <details class="prompt">
             <summary>{{ prompt.question }}</summary>

@@ -1,6 +1,8 @@
+import { CONTRAST_RELATIONS } from '../ai/links';
 import { localDateOf } from '../local-date';
 import type {
   Concept,
+  ConceptLink,
   PlannedItem,
   RecallPrompt,
   ReviewEvent,
@@ -48,6 +50,8 @@ export interface ComposeInput {
   exclude?: ReadonlySet<string>;
   /** Earlier teach-backs, so a concept isn't explained again too soon. */
   teachBacks?: readonly TeachBack[];
+  /** Links between concepts, for the contrast card. */
+  links?: readonly ConceptLink[];
 }
 
 export interface ComposedSet {
@@ -203,7 +207,55 @@ export function composeDailySet(input: ComposeInput): ComposedSet {
   }
   const teach = pickTeachBack(planned, input);
   if (teach !== -1) planned[teach] = { ...planned[teach], teach: true };
+  const contrast = pickContrast(planned, { ...input, concepts: live });
+  if (contrast) {
+    planned[contrast.index] = {
+      ...planned[contrast.index],
+      contrastWith: contrast.with,
+    };
+  }
   return { planned, lighter };
+}
+
+/**
+ * At most one contrast card per set (design §5.2): a planned concept with
+ * a confirmed "similar" or "contrasts" link to another concept that has
+ * been reviewed. A partner that is in the set too is preferred, since both
+ * are fresh in mind. Never the opener or the teach-back card.
+ */
+export function pickContrast(
+  planned: readonly PlannedItem[],
+  input: Pick<ComposeInput, 'memory' | 'links' | 'concepts'>,
+): { index: number; with: string } | null {
+  const live = new Set(
+    input.concepts
+      .filter((concept) => concept.status === 'active' && !concept.deletedAt)
+      .map((concept) => concept.id),
+  );
+  const links = (input.links ?? []).filter(
+    (link) =>
+      link.confirmed &&
+      !link.deletedAt &&
+      CONTRAST_RELATIONS.includes(link.relation),
+  );
+  if (!links.length) return null;
+  const inSet = new Set(planned.map((item) => item.conceptId));
+  let best: { index: number; with: string } | null = null;
+  let bestScore = 0;
+  for (const [index, item] of planned.entries()) {
+    if (item.teach || (index === 0 && planned.length > 1)) continue;
+    for (const link of links) {
+      if (link.from !== item.conceptId && link.to !== item.conceptId) continue;
+      const other = link.from === item.conceptId ? link.to : link.from;
+      if (!live.has(other) || !input.memory.get(other)?.reps) continue;
+      const score = inSet.has(other) ? 2 : 1;
+      if (score > bestScore) {
+        best = { index, with: other };
+        bestScore = score;
+      }
+    }
+  }
+  return best;
 }
 
 /**

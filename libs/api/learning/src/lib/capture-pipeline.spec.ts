@@ -7,6 +7,7 @@ import {
   GOLDEN_CONCEPTS,
   MIN_SECRET_LENGTH,
   sampleCapture,
+  sampleConcept,
   SERVER_WRITER,
 } from '@ah/learning/domain';
 import {
@@ -104,6 +105,56 @@ describe('CapturePipeline', () => {
     expect(repository.records.get(`concept:${concept.id}`)?.by).toBe(
       SERVER_WRITER,
     );
+  });
+
+  it('suggests a link to a related concept the learner kept', async () => {
+    const { pipeline, ai, seed, repository, concepts } = setup();
+    const kept = sampleConcept({
+      id: crypto.randomUUID(),
+      title: 'Trade-off',
+      explanation: {
+        ...sampleConcept().explanation,
+        essence: golden.explained.essence,
+      },
+    });
+    await repository.putMutable({
+      kind: 'concept',
+      id: kept.id,
+      seq: await repository.nextSeq(),
+      by: FIXTURE_IDS.deviceA,
+      updatedAt: kept.updatedAt,
+      data: kept,
+    });
+    ai.decisions.answers = {
+      ...learnable,
+      link0: {
+        type: 'choice',
+        choice: 'similar',
+        confidence: 0.9,
+        probabilities: {},
+      },
+    };
+    ai.model
+      .add('extract_concepts', extracted)
+      .add('explain_concept', golden.explained);
+    await seed(sampleCapture());
+    await pipeline.runOnce();
+
+    const draft = (await concepts()).find((c) => c.status === 'draft');
+    const links = [...repository.records.values()].filter(
+      (record) => record.kind === 'link',
+    );
+    expect(links).toHaveLength(1);
+    expect(links[0]).toMatchObject({
+      by: SERVER_WRITER,
+      data: {
+        from: draft?.id,
+        to: kept.id,
+        relation: 'similar',
+        by: 'ai',
+        confirmed: false,
+      },
+    });
   });
 
   it('reuses an existing topic and tells the model about it', async () => {

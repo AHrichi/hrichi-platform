@@ -2,6 +2,7 @@ import Dexie, { type Table } from 'dexie';
 import type {
   Capture,
   Concept,
+  ConceptLink,
   ReviewSession,
   RecordKind,
   ReviewEvent,
@@ -54,6 +55,7 @@ export class LearningDatabase extends Dexie {
   audio!: Table<AudioRow, string>;
   sessions!: Table<LocalRow<ReviewSession>, string>;
   teachbacks!: Table<LocalRow<TeachBack>, string>;
+  links!: Table<LocalRow<ConceptLink>, string>;
   outbox!: Table<OutboxRow, string>;
   meta!: Table<MetaRow, string>;
 
@@ -75,5 +77,7 @@ export class LearningDatabase extends Dexie {
     this.version(3).stores({ sessions: 'id, data.localDate' });
     // Version 4 (L5) adds teach-backs.
     this.version(4).stores({ teachbacks: 'id, data.conceptId' });
+    // Version 5 (L5) adds links between concepts.
+    this.version(5).stores({ links: 'id, data.from, data.to' });
   }
 }

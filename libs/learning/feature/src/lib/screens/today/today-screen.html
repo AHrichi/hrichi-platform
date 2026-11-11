@@ -103,6 +103,13 @@
         <p class="question">
           Explain “{{ current.concept.title }}” as if to someone new to it.
         </p>
+      } @else if (current.contrast; as other) {
+        <p class="chip chip--contrast">Compare</p>
+        <p class="question">
+          How is “{{ current.concept.title }}” different from “{{
+            other.title
+          }}”?
+        </p>
       } @else {
         <p class="chip">
           {{ typeLabels[current.prompt.type] }}
@@ -199,7 +206,9 @@
           <p class="essence">{{ current.concept.explanation.essence }}</p>
         </div>
       } @else if (
-        current.prompt.type === 'quick_fire' && current.prompt.options
+        current.prompt.type === 'quick_fire' &&
+        current.prompt.options &&
+        !current.contrast
       ) {
         <div class="options">
           @for (option of current.prompt.options; track option) {
@@ -233,7 +242,23 @@
         </label>
       }
 
-      @if (revealed() && !current.teach) {
+      @if (revealed() && current.contrast; as other) {
+        <div class="reveal">
+          @if (answer().trim()) {
+            <p class="hint">You said: {{ answer() }}</p>
+          }
+          <dl class="compare">
+            <div>
+              <dt>{{ current.concept.title }}</dt>
+              <dd>{{ current.concept.explanation.essence }}</dd>
+            </div>
+            <div>
+              <dt>{{ other.title }}</dt>
+              <dd>{{ other.explanation.essence }}</dd>
+            </div>
+          </dl>
+        </div>
+      } @else if (revealed() && !current.teach) {
         <div class="reveal">
           @if (current.prompt.type !== 'quick_fire') {
             @if (answer().trim()) {

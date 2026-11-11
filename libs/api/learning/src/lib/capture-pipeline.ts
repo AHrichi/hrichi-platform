@@ -21,8 +21,13 @@ import {
   ExtractedConceptsSchema,
   gateQuestions,
   gateState,
+  linkCandidates,
+  linkQuestions,
+  linkRecord,
+  linkState,
   type MutableKind,
   readGate,
+  readLinks,
   readTriage,
   type RecordOfKind,
   repairCall,
@@ -330,6 +335,7 @@ export class CapturePipeline {
         );
       }
       for (const draft of drafts) await this.write('concept', draft);
+      await this.suggestLinks(drafts);
       current = await this.write('capture', {
         ...current,
         status: notes.length ? 'needs_look' : 'ready',
@@ -354,6 +360,49 @@ export class CapturePipeline {
             ? message
             : `${message} (try ${attempts} of ${MAX_ATTEMPTS})`,
       });
+    }
+  }
+
+  /**
+   * Suggests links from each new draft to concepts the learner kept and to
+   * its siblings (design §6.3): a word-overlap shortlist, then one decision
+   * call per draft. Best effort: a failure here never fails the capture.
+   */
+  private async suggestLinks(drafts: readonly Concept[]): Promise<void> {
+    try {
+      const kept = (
+        await this.repository.findByStatus('concept', ['active'], 500)
+      )
+        .map((record) => record.data)
+        .filter((concept) => !concept.deletedAt);
+      const linked = new Set<string>();
+      for (const draft of drafts) {
+        const others = [
+          ...kept,
+          ...drafts.filter((sibling) => sibling.id !== draft.id),
+        ].filter((other) => !linked.has(`${other.id}:${draft.id}`));
+        const candidates = linkCandidates(draft, others);
+        if (!candidates.length) continue;
+        const decision = await this.ai.decisions.decide(
+          linkState(draft, candidates),
+          linkQuestions(draft, candidates),
+        );
+        for (const suggestion of readLinks(decision.answers, candidates)) {
+          linked.add(`${draft.id}:${suggestion.to}`);
+          await this.write(
+            'link',
+            linkRecord({
+              from: draft.id,
+              to: suggestion.to,
+              relation: suggestion.relation,
+              by: 'ai',
+              now: this.now(),
+            }),
+          );
+        }
+      }
+    } catch (error) {
+      this.logger.warn(`Link suggestions skipped: ${String(error)}`);
     }
   }
 

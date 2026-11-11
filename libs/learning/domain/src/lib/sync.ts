@@ -1,6 +1,7 @@
 import * as v from 'valibot';
 import {
   CaptureSchema,
+  ConceptLinkSchema,
   ConceptSchema,
   ReviewSessionSchema,
   type RecordKind,
@@ -27,6 +28,7 @@ export const SYNC_LIMITS = {
   pushSessions: 100,
   pushEvents: 1000,
   pushTeachBacks: 200,
+  pushLinks: 200,
   /** Records per pull; `more` says another request is needed. */
   pull: 500,
 } as const;
@@ -52,6 +54,10 @@ export const SyncRequestSchema = v.strictObject({
       v.maxLength(SYNC_LIMITS.pushEvents),
     ),
     /** Optional, so a device from before L5 still syncs. */
+    links: v.optional(
+      v.pipe(v.array(ConceptLinkSchema), v.maxLength(SYNC_LIMITS.pushLinks)),
+      [],
+    ),
     teachbacks: v.optional(
       v.pipe(v.array(TeachBackSchema), v.maxLength(SYNC_LIMITS.pushTeachBacks)),
       [],
@@ -104,6 +110,7 @@ export function emptyPush(): SyncRequest['push'] {
     captures: [],
     sessions: [],
     events: [],
+    links: [],
     teachbacks: [],
   };
 }

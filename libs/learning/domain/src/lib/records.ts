@@ -185,6 +185,11 @@ export const PlannedItemSchema = v.strictObject({
    * in their own words. The prompt is still the one the review counts for.
    */
   teach: v.optional(v.boolean()),
+  /**
+   * Asked as a contrast card (design §5.2): how this concept differs from
+   * a linked one. The review counts for this concept only.
+   */
+  contrastWith: v.optional(Id),
 });
 
 export const SESSION_KINDS = ['daily', 'bonus'] as const;
@@ -221,6 +226,32 @@ export const ReviewEventSchema = v.strictObject({
   /** Time from showing the prompt to grading it. */
   ms: v.pipe(v.number(), v.integer(), v.minValue(0), v.maxValue(3_600_000)),
 });
+
+export const LINK_RELATIONS = [
+  'similar',
+  'contrasts',
+  'prerequisite',
+  'example_of',
+  'causes',
+] as const;
+
+/**
+ * A link between two concepts (design §4.1). The AI suggests them when it
+ * drafts a concept (unconfirmed until the learner says yes); the learner
+ * can add their own. Dismissing one deletes it (a tombstone, like any
+ * record). `similar` and `contrasts` read both ways.
+ */
+export const ConceptLinkSchema = v.pipe(
+  v.strictObject({
+    ...envelope,
+    from: Id,
+    to: Id,
+    relation: v.picklist(LINK_RELATIONS),
+    by: v.picklist(['ai', 'user']),
+    confirmed: v.boolean(),
+  }),
+  v.check((link) => link.from !== link.to, 'A concept can’t link to itself.'),
+);
 
 export const CLARITY_BANDS = ['unclear', 'partly', 'clear'] as const;
 export const TEACH_MODALITIES = ['voice', 'text'] as const;
@@ -268,6 +299,8 @@ export type CaptureModality = (typeof CAPTURE_MODALITIES)[number];
 export type PlannedItem = v.InferOutput<typeof PlannedItemSchema>;
 export type ReviewSession = v.InferOutput<typeof ReviewSessionSchema>;
 export type TeachBack = v.InferOutput<typeof TeachBackSchema>;
+export type ConceptLink = v.InferOutput<typeof ConceptLinkSchema>;
+export type LinkRelation = (typeof LINK_RELATIONS)[number];
 export type Clarity = (typeof CLARITY_BANDS)[number];
 
 /** Records that change and merge last-writer-wins. */
@@ -276,6 +309,7 @@ export const MUTABLE_KINDS = [
   'concept',
   'capture',
   'session',
+  'link',
 ] as const;
 /** Records that are only ever added. */
 export const APPEND_ONLY_KINDS = ['event', 'teachback'] as const;
@@ -290,6 +324,7 @@ export interface RecordOfKind {
   concept: Concept;
   capture: Capture;
   session: ReviewSession;
+  link: ConceptLink;
   event: ReviewEvent;
   teachback: TeachBack;
 }
@@ -299,6 +334,7 @@ export const RECORD_SCHEMAS = {
   concept: ConceptSchema,
   capture: CaptureSchema,
   session: ReviewSessionSchema,
+  link: ConceptLinkSchema,
   event: ReviewEventSchema,
   teachback: TeachBackSchema,
 } as const;

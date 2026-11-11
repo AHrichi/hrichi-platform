@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { type CaptureItem, decodeHandoff } from '@ah/learning/contracts';
-import type { Capture, Concept } from '@ah/learning/domain';
+import { type Capture, type Concept, describeLink } from '@ah/learning/domain';
 import { AhButton } from '@ah/ui';
 import { VoiceRecorder } from '../../capture/voice-recorder';
 import { LearningStore } from '../../store/learning.store';
@@ -47,6 +47,7 @@ export class InboxScreen {
   protected readonly recorder = inject(VoiceRecorder);
   protected readonly text = signal('');
   protected readonly statusLabels = STATUS_LABELS;
+  protected readonly describe = describeLink;
   protected readonly micMessage = signal<string | null>(null);
 
   /** The draft on top of the digest. */

@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   inject,
   signal,
 } from '@angular/core';
@@ -12,7 +13,14 @@ import {
   required,
 } from '@angular/forms/signals';
 import { RouterLink } from '@angular/router';
-import { type ConceptDraft, LIMITS } from '@ah/learning/domain';
+import {
+  type ConceptDraft,
+  type ConceptLink,
+  describeLink,
+  LIMITS,
+  LINK_RELATIONS,
+  type LinkRelation,
+} from '@ah/learning/domain';
 import { AhButton, AhEmptyState } from '@ah/ui';
 import { LearningStore } from '../../store/learning.store';
 
@@ -50,6 +58,14 @@ const FIELDS: readonly DraftField[] = [
   },
 ];
 
+const RELATION_LABELS: Record<LinkRelation, string> = {
+  similar: 'Easy to mix up',
+  contrasts: 'Opposites or alternatives',
+  prerequisite: 'This one comes first',
+  example_of: 'This is an example of it',
+  causes: 'This one leads to it',
+};
+
 const emptyDraft = (): ConceptDraft => ({
   title: '',
   essence: '',
@@ -73,6 +89,27 @@ export class ConceptsScreen {
   protected readonly store = inject(LearningStore);
   protected readonly fields = FIELDS;
   protected readonly adding = signal(false);
+  protected readonly relations = LINK_RELATIONS.map((value) => ({
+    value,
+    label: RELATION_LABELS[value],
+  }));
+  /** Confirmed links, per concept, as sentences. */
+  private readonly links = computed(() => {
+    const titles = new Map(
+      this.store.library().map((concept) => [concept.id, concept.title]),
+    );
+    const byConcept = new Map<string, { link: ConceptLink; text: string }[]>();
+    for (const link of this.store.links()) {
+      const a = titles.get(link.from);
+      const b = titles.get(link.to);
+      if (!link.confirmed || link.deletedAt || !a || !b) continue;
+      const entry = { link, text: describeLink(link.relation, a, b) };
+      for (const id of [link.from, link.to]) {
+        byConcept.set(id, [...(byConcept.get(id) ?? []), entry]);
+      }
+    }
+    return byConcept;
+  });
   protected readonly saving = signal(false);
 
   protected readonly draft = signal<ConceptDraft>(emptyDraft());
@@ -102,6 +139,16 @@ export class ConceptsScreen {
       this.saving.set(false);
     }
     return undefined;
+  }
+
+  protected linksOf(conceptId: string): { link: ConceptLink; text: string }[] {
+    return this.links().get(conceptId) ?? [];
+  }
+
+  protected link(from: string, to: string, relation: string): void {
+    const known = LINK_RELATIONS.find((value) => value === relation);
+    if (!to || !known) return;
+    void this.store.addLink(from, to, known);
   }
 
   protected cancel(): void {
