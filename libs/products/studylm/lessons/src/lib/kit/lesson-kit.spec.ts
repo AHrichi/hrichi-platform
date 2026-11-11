@@ -1,8 +1,8 @@
+import { strictJsonSchema, strictnessProblems } from '@ah/shared/ai-schema';
 import { BLOCK_KINDS } from '../spec/blocks';
 import { LessonSchema } from '../spec/lesson';
 import { validateBlock } from '../validate/validate';
 import { buildLessonKit, catalogMarkdown } from './lesson-kit';
-import { strictJsonSchema, strictnessProblems } from './strict-schema';
 
 /**
  * The generated files are Vitest file snapshots: CI fails when they drift

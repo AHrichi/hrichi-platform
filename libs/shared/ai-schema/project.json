@@ -1,0 +1,9 @@
+{
+  "name": "shared-ai-schema",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/shared/ai-schema/src",
+  "projectType": "library",
+  "tags": ["scope:shared", "type:util", "runtime:agnostic"],
+  "// targets": "to see all targets run: nx show project shared-ai-schema --web",
+  "targets": {}
+}

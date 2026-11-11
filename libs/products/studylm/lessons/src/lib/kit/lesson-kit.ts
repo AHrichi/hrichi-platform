@@ -1,3 +1,4 @@
+import { type JsonSchema, strictJsonSchema } from '@ah/shared/ai-schema';
 import { GOLDEN_LESSONS } from '../../golden';
 import { CATALOG } from '../catalog/cards';
 import {
@@ -21,7 +22,6 @@ import {
   repairSystemPrompt,
   TASK_INSTRUCTIONS,
 } from '../prompts/system';
-import { type JsonSchema, strictJsonSchema } from './strict-schema';
 
 /**
  * Everything the n8n workflow needs to generate lesson parts: the system
