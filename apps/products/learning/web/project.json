@@ -43,7 +43,7 @@
       "dependsOn": ["build"],
       "executor": "nx:run-commands",
       "options": {
-        "command": "node tools/scripts/prepare-hosting.mjs dist/apps/products/learning/web/browser --env development --cors --site-config && node tools/scripts/serve-static.mjs dist/apps/products/learning/web/browser 4311"
+        "command": "node tools/scripts/prepare-hosting.mjs dist/apps/products/learning/web/browser --env development --cors --site-config --microphone && node tools/scripts/serve-static.mjs dist/apps/products/learning/web/browser 4311"
       }
     },
     "esbuild": {
@@ -112,7 +112,7 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "node tools/scripts/prepare-hosting.mjs dist/apps/products/learning/web/browser --env production --app product-learning --cors --site-config",
+          "node tools/scripts/prepare-hosting.mjs dist/apps/products/learning/web/browser --env production --app product-learning --cors --site-config --microphone",
           "wrangler deploy --config apps/products/learning/web/wrangler.jsonc"
         ],
         "parallel": false

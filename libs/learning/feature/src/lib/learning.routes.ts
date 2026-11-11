@@ -6,7 +6,13 @@ export const LEARNING_ROUTES: Routes = [
     path: '',
     component: LearningShell,
     children: [
-      { path: '', pathMatch: 'full', redirectTo: 'concepts' },
+      { path: '', pathMatch: 'full', redirectTo: 'inbox' },
+      {
+        path: 'inbox',
+        title: 'Inbox · Learning',
+        loadComponent: () =>
+          import('./screens/inbox/inbox-screen').then((m) => m.InboxScreen),
+      },
       {
         path: 'concepts',
         title: 'Concepts · Learning',
@@ -23,7 +29,7 @@ export const LEARNING_ROUTES: Routes = [
             (m) => m.DevicesScreen,
           ),
       },
-      { path: '**', redirectTo: 'concepts' },
+      { path: '**', redirectTo: 'inbox' },
     ],
   },
 ];

@@ -1,9 +1,18 @@
 <div class="shell">
   <header class="bar">
-    <a class="brand" routerLink="concepts">
+    <a class="brand" routerLink="inbox">
       <span aria-hidden="true">✦</span> Learning
     </a>
     <nav class="nav" aria-label="Learning">
+      <a
+        routerLink="inbox"
+        routerLinkActive="is-active"
+        ariaCurrentWhenActive="page"
+        >Inbox
+        @if (store.drafts().length) {
+          <span class="badge">{{ store.drafts().length }}</span>
+        }
+      </a>
       <a
         routerLink="concepts"
         routerLinkActive="is-active"
@@ -28,6 +37,8 @@
       {{ s.label }}
     </button>
   </header>
+
+  <p class="notice" role="status" aria-live="polite">{{ store.notice() }}</p>
 
   <main class="main">
     @if (store.fatal(); as fatal) {

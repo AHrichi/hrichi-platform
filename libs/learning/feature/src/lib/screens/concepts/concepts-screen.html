@@ -52,16 +52,16 @@
     </form>
   }
 
-  @if (store.ready() && !store.concepts().length && !adding()) {
+  @if (store.ready() && !store.library().length && !adding()) {
     <ah-empty-state
       icon="✦"
-      title="Nothing to learn yet"
-      description="Add the first idea you want to keep. Each one gets a question you will answer in your daily set."
+      title="Nothing kept yet"
+      description="Capture ideas in the Inbox and keep the ones you want, or add one here by hand."
     />
   }
 
   <ul class="list" role="list">
-    @for (concept of store.concepts(); track concept.id) {
+    @for (concept of store.library(); track concept.id) {
       <li class="card concept">
         <div class="concept-head">
           <h2>{{ concept.title }}</h2>

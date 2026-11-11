@@ -82,20 +82,24 @@ libs/learning/
 ├── contracts/     type:contracts runtime:agnostic  (L4) type-only DTOs for the client lib and the event group. Until then
 │                                                   the sync and pairing contracts are valibot schemas in domain, which
 │                                                   the API validates with (`ValibotPipe`)
-├── ai-kit/        type:domain   runtime:agnostic   prompts, per-task strict schemas, semantic checks, golden concepts,
-│                                                   generated kit (Vitest file snapshots, like the lessons lib)
+│   └── src/lib/ai/                                 the AI kit, a folder of domain rather than its own lib (domain libs
+│                                                   may only import util libs): task schemas, prompts, semantic checks,
+│                                                   decision questions and readers, grading by key points, 12 golden
+│                                                   concepts; `generated/learning-kit.json` is a Vitest file snapshot
 ├── data-access/   type:data-access runtime:browser Dexie database, outbox, sync client, HTTP client. Framework-free:
 │                                                   data-access may not import platform libs, so the feature wires it
 ├── client/        type:client   runtime:browser    the ONLY lib host apps may import: capture(), stateFor(),
 │                                                   <ah-learn-this>, <ah-learning-today>
 ├── ui/            type:ui                          swipe card, progress dots, flame, completion, garden (SVG)
 └── feature/       type:feature                     LearningStore (SignalStore), runtime wiring (APP_MODE, databaseName,
-                                                    site config) and the screens: concepts and devices in L1; capture,
-                                                    digest, review, garden and settings join in later phases
+                                                    site config) and the screens: Inbox (capture, digest, in progress)
+                                                    and the voice recorder in L2, concepts and devices in L1; review,
+                                                    garden and settings join in later phases
 apps/products/learning/web/                         remote `product-learning` (port 4311) + standalone PWA
 apps/learning-edge/                                 Cloudflare Worker (Cron Trigger + KV + Telegram webhook)
 libs/api/learning/                                  Nest module: sync, pipeline, grading, pairing
-libs/api/ai/                                        Nest model ladder (Groq → Gemini), reused by the planned `assistant`
+libs/api/ai/        type:util  runtime:node          model ladder (Groq → Gemini), Whisper → Gemini transcription, and the
+                                                    DecisionModel port (Jev, ladder fallback); reused by the planned `assistant`
 libs/shared/ai-schema/                              extracted from product-studylm-lessons: valibot → strict JSON Schema
                                                     post-processing + the strictness spec
 ```
@@ -181,7 +185,8 @@ POST /learning/captures/:id/audio   (L2: multipart, ≤ 2 min, opus/webm)
 
 - **Append-only records** (events, ledger, teach-backs) are idempotent by `id`, so merging them is a set union. When events arrive out of order from another device, only that concept's memory state is replayed again.
 - **Topics and concepts** merge last-writer-wins per record: the later `updatedAt` (compared as instants), then the larger writer id, so every device and the server pick the same version in any order. A pulled version that wins also drops the local change it beat from the outbox. From L2, when the AI writes too, concepts merge per field group (`explanation`, `prompts`, `status`, `topic`), and **a user edit always beats an AI rewrite:** the pipeline writes only when `concept.version` is still the one it read.
-- **When it runs:** after each session or capture, when the app opens, and on `online`. It is never polled. The review never waits on sync.
+- **When it runs:** after each session or capture, when the app opens, on `online` and when the tab becomes visible. The one follow-up: while a capture is `queued` or `processing` on the server, the device syncs again 15 s later, so its drafts arrive without a refresh. Otherwise nothing polls. The review never waits on sync.
+- **Voice notes:** the audio waits on the device (an `audio` table) until its capture is on the server, then goes to `POST /learning/captures/:id/audio` and is deleted from the device.
 
 ---
 
@@ -248,18 +253,18 @@ capture accepted (202) ─► transcribe ─► triage ─► extract-concepts �
 
 Two kinds of model do the work. A **generative ladder** writes text. A **decision model** (Jev, §6.4) answers typed questions about text that already exists. Every decision task has a ladder fallback, so Jev is never a single point of failure.
 
-| Task                 | Input                                                                | Output                                                                                                       | Model                                        |
-| -------------------- | -------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ | -------------------------------------------- |
-| transcribe           | audio ≤ 2 min                                                        | text                                                                                                         | Groq `whisper-large-v3-turbo` → Gemini audio |
-| `triage`             | capture text                                                         | `choice`: learnable idea / to-do or reminder / noise. Non-learnable captures ask before processing.          | **Jev** → ladder                             |
-| `extract-concepts`   | capture text, source excerpt, existing topic names                   | 1–3 concepts: title, type, topic (existing or new), span                                                     | ladder                                       |
-| `explain-concept`    | concept, span, type, learner level                                   | Explanation + 3–6 prompts with `keyPoints` (type mix fixed by concept type)                                  | ladder                                       |
-| `quality-gate`       | the concept's explanation and prompts, the source span               | `noul` per check: faithful to the source, misconception really wrong, question leaks no answer, plain enough | **Jev** → ladder                             |
-| `repair`             | the object + issues (`path`, `message`)                              | corrected object                                                                                             | ladder                                       |
-| `link-suggest`       | concept + up to 20 candidates (lexical prefilter on titles/essences) | one `choice` per candidate: a relation or `none`, with probabilities; duplicate check by `noul`              | **Jev** → ladder                             |
-| `grade-answer`       | prompt, key points, learner's answer                                 | `noul` per key point ("does the answer state …?") → verdict, missed points, suggested rating                 | **Jev** → ladder, 6 s budget                 |
-| `teachback-feedback` | concept, key points, transcript                                      | `noul` per key point + `score` for clarity (coarse, 3 bands)                                                 | **Jev** → ladder                             |
-| `revise-explanation` | explanation, instruction ("simpler", "focus on the formula")         | new Explanation version                                                                                      | ladder                                       |
+| Task                            | Input                                                                | Output                                                                                                       | Model                                        |
+| ------------------------------- | -------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ | -------------------------------------------- |
+| transcribe                      | audio ≤ 2 min                                                        | text                                                                                                         | Groq `whisper-large-v3-turbo` → Gemini audio |
+| `triage`                        | capture text                                                         | `choice`: learnable idea / to-do or reminder / noise. Non-learnable captures ask before processing.          | **Jev** → ladder                             |
+| `extract-concepts`              | capture text, source excerpt, existing topic names                   | 1–3 concepts: title, type, topic (existing or new), span                                                     | ladder                                       |
+| `explain-concept`               | concept, span, type, learner level                                   | Explanation + 3–6 prompts with `keyPoints` (type mix fixed by concept type)                                  | ladder                                       |
+| `quality-gate`                  | the concept's explanation and prompts, the source span               | `noul` per check: faithful to the source, misconception really wrong, question leaks no answer, plain enough | **Jev** → ladder                             |
+| `repair`                        | the object + issues (`path`, `message`)                              | corrected object                                                                                             | ladder                                       |
+| `link-suggest` (L5, with links) | concept + up to 20 candidates (lexical prefilter on titles/essences) | one `choice` per candidate: a relation or `none`, with probabilities; duplicate check by `noul`              | **Jev** → ladder                             |
+| `grade-answer`                  | prompt, key points, learner's answer                                 | `noul` per key point ("does the answer state …?") → verdict, missed points, suggested rating                 | **Jev** → ladder, 6 s budget                 |
+| `teachback-feedback` (L5)       | concept, key points, transcript                                      | `noul` per key point + `score` for clarity (coarse, 3 bands)                                                 | **Jev** → ladder                             |
+| `revise-explanation`            | explanation, instruction ("simpler", "focus on the formula")         | new Explanation version                                                                                      | ladder                                       |
 
 - **Schemas:** each task has its own small valibot schema in `learning/ai-kit`, compiled to the strict subset by `@ah/shared/ai-schema`. Everything carries a `specVersion` and is snapshot-tested, exactly as the lessons kit is.
 - **Prompts live on the server.** The client sends `{ task, input }` only, so the API can't be used as a free model proxy. User text is fenced as data.
@@ -273,7 +278,8 @@ Two kinds of model do the work. A **generative ladder** writes text. A **decisio
   - `quick_fire` is never the only prompt.
   - A model-declared `uncertain: true` sends the concept to **Needs a quick look**.
 - **Honest failure, as in StudyLM.** When the ladder is exhausted, the capture is marked `failed` and retried with backoff (1 min, 10 min, next wake). After 3 tries it shows a Retry button. Nothing is ever filled in, and the raw capture is never lost.
-- **Durability without a queue service:** the capture document is the job. The Nest process runs it right after accepting it. A sweep at boot and every 5 min while awake picks up `queued` or `structuring` jobs older than 2 min. Captures sent while Render sleeps are processed on its next wake.
+- **Durability without a queue service:** the capture record is the job (`queued` → `processing` → `ready` or `needs_look`; `failed` after 3 attempts). A sync that stores a capture starts the pipeline; a sweep at boot and every 5 min while awake runs anything still `queued` and keeps drafts older than 48 hours. Captures sent while Render sleeps are processed on its next wake. Pipeline writes go through the same `WriteLock` as syncs, stamped by a fixed server writer id.
+- **Triage** asks only whether to go on: a capture the decision model confidently calls a to-do or noise waits as `needs_look` with "Process anyway". If the decision model fails, the capture goes on.
 - **Golden concepts:** about 12 hand-written concepts covering every concept type, each with its explanation and prompts, passing every check. They serve as the validators' ground truth, the prompts' examples, the demo content and the e2e fixtures.
 
 ### 6.3 Grading never blocks the review
@@ -318,9 +324,15 @@ Two kinds of model do the work. A **generative ladder** writes text. A **decisio
   - Calls go through Vercel's AI Gateway or TypeSafe's API, with the key held in Render and Worker secrets.
 - **Privacy:** answers and capture text go to one more processor. For a personal tool this is acceptable. The rule that audio is never sent stays.
 
-**How it is adopted: a spike in L2, then a go/no-go decision.**
+**How it is adopted: a spike in L2, then a go/no-go decision.** The harness is built; the measurement needs a TypeSafe key:
 
-1. Label a set by hand: about 150 answers to golden-concept prompts (right, partly right, wrong, off-topic, and paraphrases of right answers), plus about 40 deliberately broken explanations for the quality gate.
+```bash
+LEARNING_JEV_SPIKE=1 TYPESAFE_API_KEY=… GROQ_API_KEY=… pnpm nx test api-learning --testFile=jev-spike
+```
+
+It writes `tmp/jev-spike/report.json` with each model's agreement, false-"nailed" rate, unsure rate, median latency and gate detection, and a `go` per task.
+
+1. **The labelled set** (`libs/api/learning/src/lib/spike/`): 116 answers to the 29 graded prompts of the golden concepts (a paraphrase that states every key point, a partial answer, a wrong one, and an off-topic reply), each labelled with the key points it states; and 48 quality-gate cases (each golden concept clean, with a false claim, with a true statement passed off as the misconception, and with a leaky prompt). A spec keeps the labels valid in CI.
 2. Measure per question type: agreement with the labels, false accepts at the chosen thresholds, latency from the Worker, and cost. Compare with the ladder on the same set.
 3. **Go when** grading agrees with the labels at least 85 % of the time with ≤ 10 % false "nailed", and median latency is under 1 s. Otherwise grading stays on the ladder and Jev keeps only the tasks it passed.
 4. **Ongoing:** every swipe that disagrees with Jev's suggestion is stored as a label. A monthly check re-measures agreement, so drift shows up in your own data.
@@ -416,15 +428,15 @@ Render must not be woken on a timer: its 750 h a month are shared with the Orbit
 
 ## 12. Free-tier budget (personal use)
 
-| Resource                 | Expected use                                                             | Limit that matters                                                                                                                                   |
-| ------------------------ | ------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Model tokens per capture | extract ~1.5 K + explain ~2.5 K per concept + links ~1 K ≈ **5–8 K**     | Groq: about 8 K tokens a minute per model. Two concepts a minute, with the ladder and pacing absorbing bursts of 20 captures a day.                  |
-| Grading                  | ≤ 2 free-recall answers per set, ~1 K each                               | negligible                                                                                                                                           |
-| Jev decisions            | grading, triage, quality gate and links ≈ **150 K input tokens a month** | No free tier is published. At about $0.04 per million input tokens (Vercel AI Gateway), that is under $0.01 a month, but it needs a billing account. |
-| Transcription            | ≤ 20 voice notes a day, ≤ 2 min each                                     | Groq's free audio limits (**to check before L2**)                                                                                                    |
-| Render                   | 2–4 wakes a day × ~15 min ≈ **30 h/month**                               | 750 h shared with Orbit API                                                                                                                          |
-| Atlas                    | ~50 MB after years of use                                                | 512 MB                                                                                                                                               |
-| Worker and KV            | 96 cron runs a day, < 50 KV writes a day                                 | 100 K requests a day, 1 K writes a day                                                                                                               |
+| Resource                 | Expected use                                                             | Limit that matters                                                                                                                                           |
+| ------------------------ | ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Model tokens per capture | extract ~1.5 K + explain ~2.5 K per concept + links ~1 K ≈ **5–8 K**     | Groq: about 8 K tokens a minute per model. Two concepts a minute, with the ladder and pacing absorbing bursts of 20 captures a day.                          |
+| Grading                  | ≤ 2 free-recall answers per set, ~1 K each                               | negligible                                                                                                                                                   |
+| Jev decisions            | grading, triage, quality gate and links ≈ **150 K input tokens a month** | No free tier is published. At about $0.04 per million input tokens (Vercel AI Gateway), that is under $0.01 a month, but it needs a billing account.         |
+| Transcription            | ≤ 20 voice notes a day, ≤ 2 min each                                     | Groq's free Whisper tier: about 2,000 requests a day and 7,200 audio seconds an hour (third-party listings, checked 2026-11-11; confirm in the Groq console) |
+| Render                   | 2–4 wakes a day × ~15 min ≈ **30 h/month**                               | 750 h shared with Orbit API                                                                                                                                  |
+| Atlas                    | ~50 MB after years of use                                                | 512 MB                                                                                                                                                       |
+| Worker and KV            | 96 cron runs a day, < 50 KV writes a day                                 | 100 K requests a day, 1 K writes a day                                                                                                                       |
 
 If free-model quality proves too weak for explanations, the ladder can take a paid rung (for example Claude Haiku 5.5) for `explain-concept` only. The strict schemas already fit Claude's structured outputs.
 
@@ -483,6 +495,11 @@ Accepted on 2026-11-11:
 Still open:
 
 5. **Jev for the judging tasks (proposed):** grading, triage, the quality gate, links and teach-back clarity go to Jev behind a `DecisionModel` port, with the generative ladder as fallback. It is adopted per task only if it passes the L2 spike (§6.4). It needs a paid account at under $0.01 a month, which is the engine's only non-free dependency.
+
+## Sources on Groq's free speech-to-text (checked 2026-11-11)
+
+- [Free Whisper API: Groq, Deepgram, AssemblyAI compared](https://dev.to/build996/free-whisper-api-groq-deepgram-assemblyai-compared-562m) and [Groq rate limits](https://www.developersdigest.tech/rate-limits/groq): about 2,000 requests a day and 7,200 audio seconds an hour on the free tier; third-party, so confirm in the Groq console.
+- [Groq speech-to-text docs](https://console.groq.com/docs/speech-to-text.md): the OpenAI-compatible `audio/transcriptions` endpoint and `whisper-large-v3-turbo`.
 
 ## Sources on Jev (checked 2026-11-11)
 

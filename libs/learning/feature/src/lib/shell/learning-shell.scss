@@ -87,6 +87,34 @@
   color: var(--color-text-muted);
 }
 
+.badge {
+  margin-inline-start: var(--space-1);
+  padding-inline: var(--space-2);
+  border-radius: var(--radius-pill);
+  background: var(--color-accent-solid);
+  color: var(--color-accent-on-solid);
+  font-size: var(--font-size-100);
+}
+
+.notice {
+  position: fixed;
+  inset-block-end: var(--space-5);
+  inset-inline: 0;
+  z-index: 2;
+  inline-size: fit-content;
+  margin-inline: auto;
+  padding-block: var(--space-2);
+  padding-inline: var(--space-4);
+  border-radius: var(--radius-pill);
+  background: var(--color-bg-inverse);
+  color: var(--color-text-inverse);
+  font-weight: var(--font-weight-medium);
+
+  &:empty {
+    display: none;
+  }
+}
+
 .main {
   padding-block-start: var(--space-5);
 }

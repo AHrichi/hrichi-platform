@@ -1,0 +1,199 @@
+<section class="screen" aria-labelledby="inbox-title">
+  <h1 id="inbox-title" class="visually-hidden">Inbox</h1>
+
+  <form
+    class="card capture"
+    (submit)="save($event)"
+    aria-label="Capture an idea"
+  >
+    <label for="capture-text" class="visually-hidden"
+      >An idea to remember</label
+    >
+    <textarea
+      #textBox
+      id="capture-text"
+      rows="2"
+      maxlength="4000"
+      placeholder="An idea to remember…"
+      [value]="text()"
+      (input)="text.set($any($event.target).value)"
+      (keydown)="keydown($event)"
+      [disabled]="recorder.state() === 'recording'"
+    ></textarea>
+    <div class="capture-actions">
+      @if (recorder.state() === 'recording') {
+        <span class="recording" role="status">
+          <span class="dot" aria-hidden="true"></span>
+          Recording {{ recorder.seconds() }} s
+        </span>
+        <button
+          ahButton="ghost"
+          size="sm"
+          type="button"
+          (click)="cancelRecording()"
+        >
+          Cancel
+        </button>
+      }
+      <button
+        type="button"
+        class="mic"
+        [class.is-recording]="recorder.state() === 'recording'"
+        [attr.aria-pressed]="recorder.state() === 'recording'"
+        [attr.aria-label]="
+          recorder.state() === 'recording'
+            ? 'Stop and save the voice note'
+            : 'Record a voice note'
+        "
+        (pointerdown)="micDown($event)"
+        (pointerup)="micUp()"
+        (click)="micToggle($event)"
+      >
+        <span aria-hidden="true">🎙</span>
+      </button>
+      <button
+        ahButton
+        type="submit"
+        [disabled]="!text().trim() || recorder.state() === 'recording'"
+      >
+        Save
+      </button>
+    </div>
+    @if (micMessage(); as message) {
+      <p class="hint" role="alert">{{ message }}</p>
+    } @else {
+      <p class="hint">Tap the mic to talk, or hold it and let go to save.</p>
+    }
+  </form>
+
+  @if (top(); as concept) {
+    <section class="digest" aria-labelledby="digest-title">
+      <h2 id="digest-title">
+        New ideas to keep <span class="count">{{ store.drafts().length }}</span>
+      </h2>
+      <lrn-swipe-card
+        class="card draft"
+        [disabled]="revising()"
+        (swiped)="decide(concept, $event)"
+        [label]="concept.title + '. Swipe right to keep, left to discard.'"
+      >
+        <h3>{{ concept.title }}</h3>
+        <p class="essence">{{ concept.explanation.essence }}</p>
+        @if (concept.explanation.analogy; as analogy) {
+          <p class="analogy">{{ analogy }}</p>
+        }
+        @if (concept.explanation.simple; as simple) {
+          <details>
+            <summary>The simple version</summary>
+            <p>{{ simple }}</p>
+            @if (concept.explanation.misconception; as mistake) {
+              <p class="hint">Common mistake: {{ mistake }}</p>
+            }
+          </details>
+        }
+        @if (sample(); as prompt) {
+          <details class="prompt">
+            <summary>You’ll be asked: {{ prompt.question }}</summary>
+            <p>{{ prompt.answer }}</p>
+          </details>
+        }
+        @if (revising()) {
+          <p class="hint" role="status">Making it simpler…</p>
+        }
+      </lrn-swipe-card>
+      <div class="decide">
+        <button
+          ahButton="secondary"
+          type="button"
+          (click)="store.discard(concept.id)"
+          [disabled]="revising()"
+        >
+          ← Discard
+        </button>
+        <button
+          ahButton="ghost"
+          type="button"
+          (click)="store.simpler(concept.id)"
+          [disabled]="revising()"
+        >
+          Simpler
+        </button>
+        <button
+          ahButton
+          type="button"
+          (click)="store.keep(concept.id)"
+          [disabled]="revising()"
+        >
+          Keep →
+        </button>
+      </div>
+    </section>
+  }
+
+  @if (store.inProgress().length) {
+    <section aria-labelledby="progress-title">
+      <h2 id="progress-title">On their way</h2>
+      <ul class="captures" role="list">
+        @for (capture of store.inProgress(); track capture.id) {
+          <li class="card capture-item">
+            <p class="capture-text">
+              {{
+                capture.transcript ??
+                  capture.text ??
+                  (capture.hasAudio
+                    ? 'Voice note (uploads when you’re online)'
+                    : '')
+              }}
+            </p>
+            <p [class]="'status status--' + capture.status">
+              {{ statusLabels[capture.status] }}
+            </p>
+            @if (capture.error; as error) {
+              <p class="hint">{{ error }}</p>
+            }
+            @if (
+              capture.status === 'failed' || capture.status === 'needs_look'
+            ) {
+              <div class="decide">
+                @if (capture.status === 'failed') {
+                  <button
+                    ahButton="secondary"
+                    size="sm"
+                    type="button"
+                    (click)="store.retryCapture(capture.id)"
+                  >
+                    Retry
+                  </button>
+                } @else if (!capture.conceptIds.length) {
+                  <button
+                    ahButton="secondary"
+                    size="sm"
+                    type="button"
+                    (click)="store.processAnyway(capture.id)"
+                  >
+                    Process anyway
+                  </button>
+                }
+                <button
+                  ahButton="ghost"
+                  size="sm"
+                  type="button"
+                  (click)="store.dismissCapture(capture.id)"
+                >
+                  {{ capture.conceptIds.length ? 'Done' : 'Remove' }}
+                </button>
+              </div>
+            }
+          </li>
+        }
+      </ul>
+    </section>
+  }
+
+  @if (store.ready() && !top() && !store.inProgress().length) {
+    <p class="empty">
+      Nothing waiting. Capture an idea above; the AI turns it into a short
+      explanation and questions for your daily set.
+    </p>
+  }
+</section>

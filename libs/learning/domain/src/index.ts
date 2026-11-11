@@ -11,4 +11,5 @@ export * from './lib/ai/golden';
 export * from './lib/ai/kit';
 export * from './lib/ai/decisions';
 export * from './lib/ai/draft-concept';
+export * from './lib/ai/grading';
 export * from './lib/testing/fixtures';
