@@ -1,4 +1,4 @@
-import type { ReviewEvent, ReviewSession } from '../records';
+import type { ReviewEvent, ReviewSession, TeachBack } from '../records';
 
 /**
  * XP, computed from events through a versioned table (design §5.3): effort
@@ -6,7 +6,7 @@ import type { ReviewEvent, ReviewSession } from '../records';
  * one, and nothing pays for reading. Changing the table changes every
  * device's XP at once, with no migration.
  */
-export const XP_RULES_VERSION = 1;
+export const XP_RULES_VERSION = 2;
 
 export const XP_RULES = {
   rating: { again: 2, hard: 8, good: 6, easy: 4 },
@@ -14,13 +14,22 @@ export const XP_RULES = {
   answered: 4,
   /** Finishing a Daily Set that had cards in it. */
   setFinished: 15,
+  /** Explaining a concept in your own words weighs most (design §5.3). */
+  teachBack: 12,
+  /** On top, when the explanation was judged clear. */
+  teachBackClear: 6,
 } as const;
 
 export function xpOf(
   events: readonly ReviewEvent[],
   sessions: readonly ReviewSession[],
+  teachBacks: readonly TeachBack[] = [],
 ): number {
   let xp = 0;
+  for (const teachBack of teachBacks) {
+    xp += XP_RULES.teachBack;
+    if (teachBack.clarity === 'clear') xp += XP_RULES.teachBackClear;
+  }
   for (const event of events) {
     xp += XP_RULES.rating[event.rating];
     if (event.answer) xp += XP_RULES.answered;

@@ -4,6 +4,7 @@ import {
   MIN_SECRET_LENGTH,
   sampleConcept,
   sampleEvent,
+  sampleTeachBack,
   sampleTopic,
   SYNC_LIMITS,
   type SyncRequest,
@@ -86,6 +87,17 @@ describe('SyncService', () => {
     expect(repository.records.size).toBe(1);
     // The retry sees the first copy (it wasn't written by this request).
     expect(retry.pull[0].data).toMatchObject({ rating: 'good' });
+  });
+
+  it('carries a teach-back to the other device, once', async () => {
+    const { service, repository } = setup();
+    await service.sync(deviceA, push(0, { teachbacks: [sampleTeachBack()] }));
+    await service.sync(deviceA, push(0, { teachbacks: [sampleTeachBack()] }));
+    expect(repository.records.size).toBe(1);
+    const pulled = await service.sync(deviceB, push(0, {}));
+    expect(pulled.pull).toEqual([
+      expect.objectContaining({ kind: 'teachback', by: FIXTURE_IDS.deviceA }),
+    ]);
   });
 
   it('refuses versions stamped far in the future', async () => {

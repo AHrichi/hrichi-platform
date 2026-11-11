@@ -26,6 +26,10 @@ export const LIMITS = {
   url: 2048,
   captureText: 4000,
   captureError: 300,
+  /** What the learner says or types in a teach-back. */
+  teachBack: 2000,
+  /** Points a teach-back is checked against. */
+  teachPoints: 6,
 } as const;
 
 /**
@@ -176,6 +180,11 @@ export const CaptureSchema = v.strictObject({
 export const PlannedItemSchema = v.strictObject({
   conceptId: Id,
   promptId: Id,
+  /**
+   * Asked as a teach-back (design §5.2): the learner explains the concept
+   * in their own words. The prompt is still the one the review counts for.
+   */
+  teach: v.optional(v.boolean()),
 });
 
 export const SESSION_KINDS = ['daily', 'bonus'] as const;
@@ -213,6 +222,36 @@ export const ReviewEventSchema = v.strictObject({
   ms: v.pipe(v.number(), v.integer(), v.minValue(0), v.maxValue(3_600_000)),
 });
 
+export const CLARITY_BANDS = ['unclear', 'partly', 'clear'] as const;
+export const TEACH_MODALITIES = ['voice', 'text'] as const;
+
+/**
+ * A teach-back (design §4.1): the learner explains a concept in their own
+ * words, by voice or typing. Append-only, like review events. `covered`
+ * and `gaps` quote the concept's own key points; clarity is a coarse band,
+ * null when no model judged it or the model was unsure.
+ */
+export const TeachBackSchema = v.strictObject({
+  id: Id,
+  conceptId: Id,
+  /** The set it was part of, or null when started from the Library. */
+  sessionId: v.nullable(Id),
+  at: Timestamp,
+  localDate: LocalDate,
+  modality: v.picklist(TEACH_MODALITIES),
+  transcript: required(LIMITS.teachBack),
+  clarity: v.nullable(v.picklist(CLARITY_BANDS)),
+  // A point is a key point, or the essence when a concept has none.
+  covered: v.pipe(
+    v.array(required(LIMITS.essence)),
+    v.maxLength(LIMITS.teachPoints),
+  ),
+  gaps: v.pipe(
+    v.array(required(LIMITS.essence)),
+    v.maxLength(LIMITS.teachPoints),
+  ),
+});
+
 export type Topic = v.InferOutput<typeof TopicSchema>;
 export type ConceptType = (typeof CONCEPT_TYPES)[number];
 export type ConceptStatus = (typeof CONCEPT_STATUSES)[number];
@@ -228,6 +267,8 @@ export type CaptureStatus = (typeof CAPTURE_STATUSES)[number];
 export type CaptureModality = (typeof CAPTURE_MODALITIES)[number];
 export type PlannedItem = v.InferOutput<typeof PlannedItemSchema>;
 export type ReviewSession = v.InferOutput<typeof ReviewSessionSchema>;
+export type TeachBack = v.InferOutput<typeof TeachBackSchema>;
+export type Clarity = (typeof CLARITY_BANDS)[number];
 
 /** Records that change and merge last-writer-wins. */
 export const MUTABLE_KINDS = [
@@ -237,7 +278,7 @@ export const MUTABLE_KINDS = [
   'session',
 ] as const;
 /** Records that are only ever added. */
-export const APPEND_ONLY_KINDS = ['event'] as const;
+export const APPEND_ONLY_KINDS = ['event', 'teachback'] as const;
 export const RECORD_KINDS = [...MUTABLE_KINDS, ...APPEND_ONLY_KINDS] as const;
 
 export type MutableKind = (typeof MUTABLE_KINDS)[number];
@@ -250,6 +291,7 @@ export interface RecordOfKind {
   capture: Capture;
   session: ReviewSession;
   event: ReviewEvent;
+  teachback: TeachBack;
 }
 
 export const RECORD_SCHEMAS = {
@@ -258,6 +300,7 @@ export const RECORD_SCHEMAS = {
   capture: CaptureSchema,
   session: ReviewSessionSchema,
   event: ReviewEventSchema,
+  teachback: TeachBackSchema,
 } as const;
 
 export function isMutableKind(kind: RecordKind): kind is MutableKind {

@@ -91,6 +91,18 @@ export class SyncService {
       });
       if (outcome === 'stored') written.add(seq);
     }
+    for (const teachBack of request.push.teachbacks) {
+      const seq = await this.repository.nextSeq();
+      const outcome = await this.repository.putAppendOnly({
+        kind: 'teachback',
+        id: teachBack.id,
+        seq,
+        by: caller.deviceId,
+        updatedAt: teachBack.at,
+        data: teachBack,
+      });
+      if (outcome === 'stored') written.add(seq);
+    }
 
     const changes = await this.repository.changesSince(
       request.cursor,

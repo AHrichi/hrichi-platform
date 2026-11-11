@@ -5,6 +5,7 @@ import type {
   ReviewSession,
   RecordKind,
   ReviewEvent,
+  TeachBack,
   Topic,
 } from '@ah/learning/domain';
 
@@ -52,6 +53,7 @@ export class LearningDatabase extends Dexie {
   captures!: Table<LocalRow<Capture>, string>;
   audio!: Table<AudioRow, string>;
   sessions!: Table<LocalRow<ReviewSession>, string>;
+  teachbacks!: Table<LocalRow<TeachBack>, string>;
   outbox!: Table<OutboxRow, string>;
   meta!: Table<MetaRow, string>;
 
@@ -71,5 +73,7 @@ export class LearningDatabase extends Dexie {
     });
     // Version 3 (L3) adds the Daily Sets.
     this.version(3).stores({ sessions: 'id, data.localDate' });
+    // Version 4 (L5) adds teach-backs.
+    this.version(4).stores({ teachbacks: 'id, data.conceptId' });
   }
 }

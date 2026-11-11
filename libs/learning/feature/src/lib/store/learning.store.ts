@@ -37,6 +37,11 @@ import {
   type ReviewEvent,
   type ReviewSession,
   SERVER_WRITER,
+  LIMITS,
+  TEACH_BACK_MIN_CHARS,
+  type TeachBack,
+  type TeachBackFeedback,
+  teachPoints,
   xpOf,
 } from '@ah/learning/domain';
 import { demoDraftSource } from './demo-seed';
@@ -95,6 +100,7 @@ export interface LearningState {
   captures: Capture[];
   sessions: ReviewSession[];
   events: ReviewEvent[];
+  teachBacks: TeachBack[];
   settings: LearnerSettings;
   /** Bumped by the clock so "today" moves on at the day boundary. */
   now: string;
@@ -119,6 +125,7 @@ const initialState: LearningState = {
   captures: [],
   sessions: [],
   events: [],
+  teachBacks: [],
   settings: DEFAULT_SETTINGS,
   now: new Date().toISOString(),
   revising: [],
@@ -154,7 +161,7 @@ function messageOf(error: unknown): string {
 export const LearningStore = signalStore(
   { providedIn: 'root' },
   withState<LearningState>(initialState),
-  withComputed(({ concepts, sessions, events, now }) => {
+  withComputed(({ concepts, sessions, events, teachBacks, now }) => {
     const timeZone = deviceTimeZone();
     const today = computed(() => localDateOf(new Date(now()), timeZone));
     const memory = computed(() => memoryOf(concepts(), events()));
@@ -166,8 +173,8 @@ export const LearningStore = signalStore(
       streak: computed(() =>
         computeStreak(days().counted, days().full, today(), days().doubled),
       ),
-      xp: computed(() => levelOf(xpOf(events(), sessions()))),
-      xpTotal: computed(() => xpOf(events(), sessions())),
+      xp: computed(() => levelOf(xpOf(events(), sessions(), teachBacks()))),
+      xpTotal: computed(() => xpOf(events(), sessions(), teachBacks())),
       progress: computed(() => ({
         events: events(),
         sessions: sessions(),
@@ -178,7 +185,8 @@ export const LearningStore = signalStore(
           today(),
           days().doubled,
         ).longest,
-        level: levelOf(xpOf(events(), sessions())).level,
+        level: levelOf(xpOf(events(), sessions(), teachBacks())).level,
+        teachBacks: teachBacks(),
       })),
       todaySet: computed(
         () =>
@@ -225,6 +233,7 @@ export const LearningStore = signalStore(
         session,
         sessions,
         events,
+        teachBacks,
         settings,
       ] = await Promise.all([
         local.concepts(),
@@ -234,6 +243,7 @@ export const LearningStore = signalStore(
         local.session(),
         local.sessions(),
         local.events(),
+        local.teachBacks(),
         local.getMeta<Partial<LearnerSettings>>('learner'),
       ]);
       patchState(store, {
@@ -242,6 +252,7 @@ export const LearningStore = signalStore(
         captures,
         sessions,
         events,
+        teachBacks,
         settings: { ...DEFAULT_SETTINGS, ...settings },
         now: new Date().toISOString(),
         pending,
@@ -478,6 +489,7 @@ export const LearningStore = signalStore(
           timeZone: store.timeZone(),
           cap: store.settings().dailyCap,
           newPerDay: store.settings().newPerDay,
+          teachBacks: store.teachBacks(),
         });
         const session = await local.saveSession({
           id: crypto.randomUUID(),
@@ -527,7 +539,11 @@ export const LearningStore = signalStore(
           deletedAt: null,
           localDate: store.today(),
           kind: 'bonus',
-          planned,
+          // A bonus round stays quick: no teach-back in it.
+          planned: planned.map(({ conceptId, promptId }) => ({
+            conceptId,
+            promptId,
+          })),
           lighter: false,
           startedAt: now.toISOString(),
           completedAt: null,
@@ -605,6 +621,79 @@ export const LearningStore = signalStore(
         } catch {
           return null;
         }
+      },
+
+      /**
+       * A teach-back (design §6.3): the recording is transcribed, then the
+       * explanation is judged by the concept's key points and clarity. It is
+       * kept (and synced) whenever there is text, judged or not; feedback
+       * is null without a pairing, a connection, or an answer in time.
+       */
+      async teachBack(input: {
+        concept: Concept;
+        sessionId: string | null;
+        text?: string;
+        audio?: { bytes: ArrayBuffer; mimeType: string };
+        budgetMs?: number;
+      }): Promise<{
+        transcript: string | null;
+        feedback: TeachBackFeedback | null;
+        problem: string | null;
+      }> {
+        const { api, local } = await runtime.open();
+        const pairing = await local.session();
+        const budget = () => AbortSignal.timeout(input.budgetMs ?? 15_000);
+        let transcript = input.text?.trim() || null;
+        let problem: string | null = null;
+        if (!transcript && input.audio) {
+          if (!api || !pairing) {
+            return {
+              transcript: null,
+              feedback: null,
+              problem:
+                'Hearing a recording needs this device paired. Type it instead, or rate yourself.',
+            };
+          }
+          try {
+            transcript =
+              (await api.transcribe(input.audio, pairing.token, budget()))
+                .text || null;
+          } catch {
+            problem = 'The recording couldn’t be transcribed. Rate yourself.';
+          }
+        }
+        if (!transcript) {
+          return { transcript: null, feedback: null, problem };
+        }
+        const points = teachPoints(input.concept);
+        let feedback: TeachBackFeedback | null = null;
+        if (api && pairing && transcript.length >= TEACH_BACK_MIN_CHARS) {
+          try {
+            feedback = await api.teachBack(
+              { title: input.concept.title, points, transcript },
+              pairing.token,
+              budget(),
+            );
+          } catch {
+            problem = 'No feedback this time. Compare with the key points.';
+          }
+        }
+        const at = new Date();
+        await local.appendTeachBack({
+          id: crypto.randomUUID(),
+          conceptId: input.concept.id,
+          sessionId: input.sessionId,
+          at: at.toISOString(),
+          localDate: localDateOf(at, store.timeZone()),
+          modality: input.audio && !input.text ? 'voice' : 'text',
+          transcript: transcript.slice(0, LIMITS.teachBack),
+          clarity: feedback?.clarity ?? null,
+          covered: feedback?.covered ?? [],
+          gaps: feedback?.gaps ?? [],
+        });
+        await refresh();
+        syncSoon();
+        return { transcript, feedback, problem };
       },
 
       async saveSettings(change: Partial<LearnerSettings>): Promise<void> {

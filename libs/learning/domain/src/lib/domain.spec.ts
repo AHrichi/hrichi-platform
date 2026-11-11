@@ -61,6 +61,7 @@ describe('records', () => {
       'capture',
       'session',
       'event',
+      'teachback',
     ]);
   });
 });

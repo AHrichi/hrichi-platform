@@ -98,15 +98,109 @@
       (swiped)="grade($event)"
       label="The current card. After revealing: right for got it, up for shaky, left for missed."
     >
-      <p class="chip">
-        {{ typeLabels[current.prompt.type] }}
-        @if (current.retry) {
-          · again
-        }
-      </p>
-      <p class="question">{{ current.prompt.question }}</p>
+      @if (current.teach) {
+        <p class="chip chip--teach">Teach it back</p>
+        <p class="question">
+          Explain “{{ current.concept.title }}” as if to someone new to it.
+        </p>
+      } @else {
+        <p class="chip">
+          {{ typeLabels[current.prompt.type] }}
+          @if (current.retry) {
+            · again
+          }
+        </p>
+        <p class="question">{{ current.prompt.question }}</p>
+      }
 
-      @if (current.prompt.type === 'quick_fire' && current.prompt.options) {
+      @if (current.teach && !revealed()) {
+        <p class="hint">
+          Out loud or typed, in plain words. About a minute is plenty.
+        </p>
+        @if (recorder.supported && recorder.state() !== 'denied') {
+          <div class="record">
+            @if (recorder.state() === 'recording') {
+              <button ahButton="secondary" type="button" (click)="stopTeach()">
+                <span aria-hidden="true">■</span> Stop
+              </button>
+              <span class="hint" role="timer" aria-live="off"
+                >{{ recorder.seconds() }} s of {{ teachSeconds }}</span
+              >
+            } @else if (spoken(); as recording) {
+              <span class="hint" role="status"
+                >Recorded {{ recording.seconds.toFixed(0) }} s</span
+              >
+              <button ahButton="ghost" type="button" (click)="startTeach()">
+                Record again
+              </button>
+            } @else {
+              <button
+                ahButton="secondary"
+                type="button"
+                (click)="startTeach()"
+                [disabled]="recorder.state() === 'starting'"
+              >
+                <span aria-hidden="true">🎙</span> Say it
+              </button>
+            }
+          </div>
+        } @else if (recorder.state() === 'denied') {
+          <p class="hint">The microphone is blocked here. Type it instead.</p>
+        }
+        <label class="answer">
+          <span class="visually-hidden">Your explanation</span>
+          <textarea
+            rows="3"
+            placeholder="Or type your explanation…"
+            [value]="answer()"
+            (input)="answer.set($any($event.target).value)"
+            (keydown.control.enter)="reveal()"
+            (keydown.meta.enter)="reveal()"
+          ></textarea>
+        </label>
+      } @else if (current.teach) {
+        <div class="reveal">
+          @if (checking()) {
+            <p class="hint" role="status">Listening and checking…</p>
+          } @else if (teachResult(); as result) {
+            @if (result.transcript) {
+              <p class="hint">You said: {{ result.transcript }}</p>
+            }
+            @if (result.feedback; as fb) {
+              @if (fb.clarity) {
+                <p
+                  [class]="'verdict verdict--' + clarityTone[fb.clarity]"
+                  role="status"
+                >
+                  {{ clarityLabels[fb.clarity] }}
+                </p>
+              }
+              @if (fb.gaps.length) {
+                <p>Not mentioned: {{ fb.gaps.join('; ') }}.</p>
+              } @else if (fb.covered.length === current.points.length) {
+                <p>You covered every key point.</p>
+              }
+            } @else if (result.problem) {
+              <p class="hint" role="status">{{ result.problem }}</p>
+            }
+          }
+          <p class="hint">A good explanation covers:</p>
+          <ul class="points">
+            @for (point of current.points; track point) {
+              <li
+                [class.is-covered]="
+                  teachResult()?.feedback?.covered?.includes(point)
+                "
+              >
+                {{ point }}
+              </li>
+            }
+          </ul>
+          <p class="essence">{{ current.concept.explanation.essence }}</p>
+        </div>
+      } @else if (
+        current.prompt.type === 'quick_fire' && current.prompt.options
+      ) {
         <div class="options">
           @for (option of current.prompt.options; track option) {
             <button
@@ -139,7 +233,7 @@
         </label>
       }
 
-      @if (revealed()) {
+      @if (revealed() && !current.teach) {
         <div class="reveal">
           @if (current.prompt.type !== 'quick_fire') {
             @if (answer().trim()) {
@@ -173,8 +267,22 @@
     </lrn-swipe-card>
 
     @if (!revealed()) {
-      <button ahButton type="button" class="reveal-button" (click)="reveal()">
-        Show the answer
+      <button
+        ahButton
+        type="button"
+        class="reveal-button"
+        (click)="reveal()"
+        [disabled]="recorder.state() === 'starting'"
+      >
+        @if (!current.teach) {
+          Show the answer
+        } @else if (answer().trim() || spoken()) {
+          Check my explanation
+        } @else if (recorder.state() === 'recording') {
+          Stop and check
+        } @else {
+          Show the key points
+        }
       </button>
     } @else {
       <div class="grades">

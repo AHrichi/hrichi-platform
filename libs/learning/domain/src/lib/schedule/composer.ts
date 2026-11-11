@@ -5,6 +5,7 @@ import type {
   RecallPrompt,
   ReviewEvent,
   ReviewSession,
+  TeachBack,
 } from '../records';
 import { type MemoryState, retrievability } from './memory';
 
@@ -27,6 +28,10 @@ export const DEFAULT_NEW_PER_DAY = 2;
 const PULL_AHEAD_DAYS = 3;
 const MAX_FREE_RECALL = 2;
 const MIN_CAP = 3;
+/** A concept is taught back at most this often. */
+export const TEACH_EVERY_DAYS = 7;
+/** From Leaf up: a concept the learner has started to own (design §5.2). */
+const TEACH_MIN_STABILITY = 3;
 
 export interface ComposeInput {
   concepts: readonly Concept[];
@@ -41,6 +46,8 @@ export interface ComposeInput {
   newPerDay?: number;
   /** Concepts already in today's sets (for a bonus round). */
   exclude?: ReadonlySet<string>;
+  /** Earlier teach-backs, so a concept isn't explained again too soon. */
+  teachBacks?: readonly TeachBack[];
 }
 
 export interface ComposedSet {
@@ -194,5 +201,37 @@ export function composeDailySet(input: ComposeInput): ComposedSet {
     if (prompt.type === 'free_recall') freeRecall += 1;
     planned.push({ conceptId: concept.id, promptId: prompt.id });
   }
+  const teach = pickTeachBack(planned, input);
+  if (teach !== -1) planned[teach] = { ...planned[teach], teach: true };
   return { planned, lighter };
+}
+
+/**
+ * At most one teach-back per set (design §5.2): the most mature concept at
+ * Leaf or above that wasn't taught back in the last week, never the
+ * opening card (which is there for momentum). -1 when none qualifies.
+ */
+export function pickTeachBack(
+  planned: readonly PlannedItem[],
+  input: Pick<ComposeInput, 'memory' | 'teachBacks' | 'localDate'>,
+): number {
+  const since = addDays(input.localDate, -TEACH_EVERY_DAYS);
+  const recent = new Set(
+    (input.teachBacks ?? [])
+      .filter((teachBack) => teachBack.localDate > since)
+      .map((teachBack) => teachBack.conceptId),
+  );
+  let best = -1;
+  let bestStability = 0;
+  planned.forEach((item, index) => {
+    if (index === 0 && planned.length > 1) return;
+    const state = input.memory.get(item.conceptId);
+    if (!state?.reps || state.stability < TEACH_MIN_STABILITY) return;
+    if (recent.has(item.conceptId)) return;
+    if (state.stability > bestStability) {
+      best = index;
+      bestStability = state.stability;
+    }
+  });
+  return best;
 }

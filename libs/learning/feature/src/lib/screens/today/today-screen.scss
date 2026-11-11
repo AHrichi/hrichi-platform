@@ -70,6 +70,32 @@
   letter-spacing: 0.04em;
 }
 
+.chip--teach {
+  background: var(--color-success-subtle);
+}
+
+.record {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+.points {
+  display: grid;
+  gap: var(--space-1);
+  margin: 0;
+  padding-inline-start: var(--space-5);
+
+  .is-covered {
+    color: var(--color-success-default);
+  }
+
+  .is-covered::marker {
+    content: '✓ ';
+  }
+}
+
 .question {
   font-size: var(--font-size-500);
   font-weight: var(--font-weight-semibold);

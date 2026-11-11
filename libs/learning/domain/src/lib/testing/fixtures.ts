@@ -1,4 +1,10 @@
-import type { Capture, Concept, ReviewEvent, Topic } from '../records';
+import type {
+  Capture,
+  Concept,
+  ReviewEvent,
+  TeachBack,
+  Topic,
+} from '../records';
 
 /**
  * Valid records for tests in every learning lib. Ids are fixed UUIDs, so a
@@ -11,6 +17,7 @@ export const FIXTURE_IDS = {
   session: '0b6f0c30-0000-4000-8000-000000000004',
   event: '0b6f0c30-0000-4000-8000-000000000005',
   capture: '0b6f0c30-0000-4000-8000-000000000006',
+  teachBack: '0b6f0c30-0000-4000-8000-000000000007',
   deviceA: '0b6f0c30-0000-4000-8000-00000000000a',
   deviceB: '0b6f0c30-0000-4000-8000-00000000000b',
 } as const;
@@ -95,6 +102,23 @@ export function sampleCapture(overrides: Partial<Capture> = {}): Capture {
     force: false,
     conceptIds: [],
     capturedAt: '2026-11-11T08:00:00.000Z',
+    ...overrides,
+  };
+}
+
+export function sampleTeachBack(overrides: Partial<TeachBack> = {}): TeachBack {
+  return {
+    id: FIXTURE_IDS.teachBack,
+    conceptId: FIXTURE_IDS.concept,
+    sessionId: FIXTURE_IDS.session,
+    at: '2026-11-12T07:32:00.000Z',
+    localDate: '2026-11-12',
+    modality: 'voice',
+    transcript:
+      'When you pick one thing you lose the next best option, that is the cost.',
+    clarity: 'clear',
+    covered: ['next best alternative', 'given up by choosing'],
+    gaps: [],
     ...overrides,
   };
 }

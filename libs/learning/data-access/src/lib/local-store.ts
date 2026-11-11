@@ -9,6 +9,7 @@ import {
   type ReviewEvent,
   SYNC_LIMITS,
   type SyncRequest,
+  type TeachBack,
   type Topic,
 } from '@ah/learning/domain';
 import type {
@@ -148,6 +149,31 @@ export class LearningLocalStore {
     return rows.map((row) => row.data);
   }
 
+  async teachBacks(): Promise<TeachBack[]> {
+    const rows = await this.db.teachbacks.toArray();
+    return rows.map((row) => row.data).sort((a, b) => a.at.localeCompare(b.at));
+  }
+
+  /** A teach-back is only ever added, like a review event. */
+  async appendTeachBack(teachBack: TeachBack): Promise<void> {
+    const writer = await this.writer();
+    await this.db.transaction(
+      'rw',
+      this.db.teachbacks,
+      this.db.outbox,
+      async () => {
+        if (await this.db.teachbacks.get(teachBack.id)) return;
+        await this.db.teachbacks.add({
+          id: teachBack.id,
+          by: writer,
+          updatedAt: teachBack.at,
+          data: teachBack,
+        });
+        await this.queue('teachback', teachBack.id);
+      },
+    );
+  }
+
   async saveSession(session: ReviewSession): Promise<ReviewSession> {
     return this.saveMutable('session', session);
   }
@@ -233,6 +259,7 @@ export class LearningLocalStore {
       captures: [],
       sessions: [],
       events: [],
+      teachbacks: [],
     };
     const snapshot: OutboxSnapshot = new Map();
     const limits = {
@@ -241,6 +268,7 @@ export class LearningLocalStore {
       capture: SYNC_LIMITS.pushCaptures,
       session: SYNC_LIMITS.pushSessions,
       event: SYNC_LIMITS.pushEvents,
+      teachback: SYNC_LIMITS.pushTeachBacks,
     };
     for (const entry of queued) {
       const row = await this.tableOf(entry.kind).get(entry.id);
@@ -255,6 +283,7 @@ export class LearningLocalStore {
           capture: push.captures,
           session: push.sessions,
           event: push.events,
+          teachback: push.teachbacks,
         } as const
       )[entry.kind] as unknown[];
       if (list.length >= limits[entry.kind]) continue;
@@ -294,6 +323,7 @@ export class LearningLocalStore {
         this.db.captures,
         this.db.sessions,
         this.db.events,
+        this.db.teachbacks,
         this.db.outbox,
       ],
       async () => {
@@ -301,7 +331,9 @@ export class LearningLocalStore {
           const table = this.tableOf(record.kind);
           const current = await table.get(record.data.id);
           const updatedAt =
-            record.kind === 'event' ? record.data.at : record.data.updatedAt;
+            record.kind === 'event' || record.kind === 'teachback'
+              ? record.data.at
+              : record.data.updatedAt;
           const row = {
             id: record.data.id,
             by: record.by,
@@ -311,7 +343,8 @@ export class LearningLocalStore {
             LocalRow<Concept> &
             LocalRow<Capture> &
             LocalRow<ReviewSession> &
-            LocalRow<ReviewEvent>;
+            LocalRow<ReviewEvent> &
+            LocalRow<TeachBack>;
           if (isMutableKind(record.kind)) {
             if (!incomingWins(current, row)) continue;
             await table.put(row);
@@ -334,11 +367,13 @@ export class LearningLocalStore {
       capture: this.db.captures,
       session: this.db.sessions,
       event: this.db.events,
+      teachback: this.db.teachbacks,
     }[kind] as LearningDatabase['concepts'] &
       LearningDatabase['topics'] &
       LearningDatabase['captures'] &
       LearningDatabase['sessions'] &
-      LearningDatabase['events'];
+      LearningDatabase['events'] &
+      LearningDatabase['teachbacks'];
   }
 
   private async queue(kind: RecordKind, id: string): Promise<void> {

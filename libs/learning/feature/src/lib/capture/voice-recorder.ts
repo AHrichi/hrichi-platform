@@ -37,6 +37,7 @@ export class VoiceRecorder {
   private stopped: Promise<RecordedAudio | null> | null = null;
   private resolveStop: ((audio: RecordedAudio | null) => void) | null = null;
   private discard = false;
+  private limit = MAX_SECONDS;
 
   get supported(): boolean {
     return (
@@ -45,7 +46,8 @@ export class VoiceRecorder {
     );
   }
 
-  async start(): Promise<void> {
+  /** Starts recording; it stops on its own after `maxSeconds`. */
+  async start(maxSeconds = MAX_SECONDS): Promise<void> {
     if (!this.supported) {
       this.state.set('unsupported');
       return;
@@ -72,11 +74,12 @@ export class VoiceRecorder {
     this.recorder.onstop = () => void this.finish();
     this.recorder.start();
     this.startedAt = Date.now();
+    this.limit = maxSeconds;
     this.seconds.set(0);
     this.ticker = setInterval(() => {
       const seconds = Math.floor((Date.now() - this.startedAt) / 1000);
       this.seconds.set(seconds);
-      if (seconds >= MAX_SECONDS) void this.stop();
+      if (seconds >= this.limit) void this.stop();
     }, 250);
     this.state.set('recording');
   }
@@ -88,6 +91,11 @@ export class VoiceRecorder {
     }
     this.recorder.stop();
     return this.stopped ?? null;
+  }
+
+  /** The current recording, once it ends: stopped, cancelled or timed out. */
+  whenStopped(): Promise<RecordedAudio | null> {
+    return this.stopped ?? Promise.resolve(null);
   }
 
   cancel(): void {

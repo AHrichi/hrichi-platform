@@ -1,4 +1,4 @@
-import type { ReviewEvent, ReviewSession } from '../records';
+import type { ReviewEvent, ReviewSession, TeachBack } from '../records';
 import { type MasteryTier, type MemoryState, tierOf } from './memory';
 
 /**
@@ -20,6 +20,7 @@ export interface Progress {
   memory: ReadonlyMap<string, MemoryState>;
   longestStreak: number;
   level: number;
+  teachBacks?: readonly TeachBack[];
 }
 
 function tierCount(
@@ -68,6 +69,14 @@ export function milestonesOf(progress: Progress): Milestone[] {
       title: 'First bloom',
       how: 'Get a concept to Bloom.',
       earned: bloom >= 1,
+    },
+    {
+      id: 'crystal-clear',
+      title: 'Crystal clear',
+      how: 'Teach a concept back clearly.',
+      earned: (progress.teachBacks ?? []).some(
+        (teachBack) => teachBack.clarity === 'clear',
+      ),
     },
     {
       id: 'month',

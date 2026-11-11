@@ -6,6 +6,7 @@ import {
   sampleCapture,
   sampleConcept,
   sampleEvent,
+  sampleTeachBack,
   sampleTopic,
   type SyncRequest,
   type SyncResponse,
@@ -54,11 +55,14 @@ class FakeServer {
         const key = `${record.kind}:${record.data.id}`;
         const current = this.records.get(key);
         const revision = (r: PulledRecord) => ({
-          updatedAt: r.kind === 'event' ? r.data.at : r.data.updatedAt,
+          updatedAt:
+            r.kind === 'event' || r.kind === 'teachback'
+              ? r.data.at
+              : r.data.updatedAt,
           by: r.by,
         });
         const wins =
-          record.kind === 'event'
+          record.kind === 'event' || record.kind === 'teachback'
             ? !current
             : incomingWins(current && revision(current), revision(record));
         const seq = ++this.seq;
@@ -76,6 +80,8 @@ class FakeServer {
         put({ kind: 'session', seq: 0, by: deviceId, data });
       for (const data of request.push.events)
         put({ kind: 'event', seq: 0, by: deviceId, data });
+      for (const data of request.push.teachbacks)
+        put({ kind: 'teachback', seq: 0, by: deviceId, data });
       const changes = [...this.records.values()]
         .filter((record) => record.seq > request.cursor)
         .sort((a, b) => a.seq - b.seq);
@@ -187,6 +193,20 @@ describe('LearningSyncClient with two devices', () => {
 
     expect(await phone.store.concepts()).toEqual([]);
     expect(server.records.size).toBe(2);
+  });
+
+  it('carries a teach-back to the other device, once', async () => {
+    const server = new FakeServer();
+    const phone = await device(server, FIXTURE_IDS.deviceA);
+    const laptop = await device(server, FIXTURE_IDS.deviceB);
+    await phone.store.appendTeachBack(sampleTeachBack());
+    await phone.store.appendTeachBack(sampleTeachBack());
+    await phone.client.sync();
+    await laptop.client.sync();
+
+    expect(await laptop.store.teachBacks()).toEqual([sampleTeachBack()]);
+    expect(await phone.store.pendingCount()).toBe(0);
+    expect(server.records.size).toBe(1);
   });
 
   it('keeps changes queued while offline and sends them later', async () => {

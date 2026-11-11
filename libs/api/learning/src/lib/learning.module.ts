@@ -95,7 +95,8 @@ export class LearningModule {
         {
           provide: GradingService,
           inject: [LEARNING_AI],
-          useFactory: (ai: AiProviders) => new GradingService(ai.decisions),
+          useFactory: (ai: AiProviders) =>
+            new GradingService(ai.decisions, ai.transcriber),
         },
         {
           provide: SyncService,

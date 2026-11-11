@@ -2,12 +2,15 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  DestroyRef,
   inject,
   signal,
 } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import {
   choosePrompt,
+  CLARITY_LABELS,
+  type Clarity,
   composeDailySet,
   type Concept,
   type MasteryTier,
@@ -17,9 +20,16 @@ import {
   type RecallPrompt,
   type ReviewEvent,
   type ReviewSession,
+  TEACH_BACK_SECONDS,
+  type TeachBackFeedback,
+  teachPoints,
   tierOf,
 } from '@ah/learning/domain';
 import { AhButton } from '@ah/ui';
+import {
+  type RecordedAudio,
+  VoiceRecorder,
+} from '../../capture/voice-recorder';
 import { LearningStore } from '../../store/learning.store';
 import { SwipeCard, type SwipeDirection } from '../../ui/swipe-card';
 
@@ -54,7 +64,24 @@ interface Card {
   prompt: RecallPrompt;
   /** A missed card asked again at the end, with another prompt. */
   retry: boolean;
+  /** Asked as a teach-back: explain it in your own words. */
+  teach: boolean;
+  /** What a teach-back is compared with. */
+  points: string[];
 }
+
+interface TeachResult {
+  transcript: string | null;
+  feedback: TeachBackFeedback | null;
+  problem: string | null;
+}
+
+/** Clarity bands in the verdict colours. */
+const CLARITY_TONE: Record<Clarity, 'nailed' | 'close' | 'missed'> = {
+  clear: 'nailed',
+  partly: 'close',
+  unclear: 'missed',
+};
 
 interface Feedback {
   verdict: 'nailed' | 'close' | 'missed' | null;
@@ -78,8 +105,15 @@ export class TodayScreen {
   protected readonly store = inject(LearningStore);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
+  protected readonly recorder = inject(VoiceRecorder);
   protected readonly typeLabels = TYPE_LABELS;
   protected readonly tierNames = TIER_NAMES;
+  protected readonly clarityLabels = CLARITY_LABELS;
+  protected readonly clarityTone = CLARITY_TONE;
+  protected readonly teachSeconds = TEACH_BACK_SECONDS;
+  /** A teach-back's recording, until it is checked. */
+  protected readonly spoken = signal<RecordedAudio | null>(null);
+  protected readonly teachResult = signal<TeachResult | null>(null);
 
   protected readonly session = signal<ReviewSession | null>(null);
   protected readonly queue = signal<Card[]>([]);
@@ -129,6 +163,9 @@ export class TodayScreen {
 
   constructor() {
     void this.start(() => this.store.startToday());
+    inject(DestroyRef).onDestroy(() => {
+      if (this.recorder.state() === 'recording') this.recorder.cancel();
+    });
   }
 
   protected async startBonus(): Promise<void> {
@@ -171,13 +208,58 @@ export class TodayScreen {
     const concept = this.store.concepts().find((c) => c.id === item.conceptId);
     const prompt = concept?.prompts.find((p) => p.id === item.promptId);
     if (!concept || !prompt || concept.deletedAt) return null;
-    return { item, concept, prompt, retry };
+    return {
+      item,
+      concept,
+      prompt,
+      retry,
+      teach: !!item.teach && !retry,
+      points: teachPoints(concept),
+    };
+  }
+
+  /** Records the explanation; it stops on its own after about a minute and a half. */
+  protected async startTeach(): Promise<void> {
+    const card = this.card();
+    this.spoken.set(null);
+    await this.recorder.start(TEACH_BACK_SECONDS);
+    if (this.recorder.state() !== 'recording') return;
+    const audio = await this.recorder.whenStopped();
+    if (this.card() === card) this.spoken.set(audio);
+  }
+
+  protected stopTeach(): void {
+    void this.recorder.stop();
+  }
+
+  protected async revealTeach(card: Card): Promise<void> {
+    if (this.recorder.state() === 'recording') {
+      await this.recorder.stop();
+      await this.recorder.whenStopped();
+    }
+    const text = this.answer().trim();
+    const audio = this.spoken();
+    this.revealed.set(true);
+    if (!text && !audio) return;
+    this.checking.set(true);
+    const result = await this.store.teachBack({
+      concept: card.concept,
+      sessionId: this.session()?.id ?? null,
+      ...(text ? { text } : audio ? { audio } : {}),
+    });
+    if (this.card() !== card) return;
+    this.checking.set(false);
+    this.teachResult.set(result);
   }
 
   protected reveal(): void {
     if (this.revealed()) return;
-    this.revealed.set(true);
     const card = this.card();
+    if (card?.teach) {
+      void this.revealTeach(card);
+      return;
+    }
+    this.revealed.set(true);
     const answer = this.answer().trim();
     if (!card || !answer || card.prompt.type === 'quick_fire') return;
     this.checking.set(true);
@@ -212,7 +294,9 @@ export class TodayScreen {
       conceptId: card.concept.id,
       promptId: card.prompt.id,
       rating,
-      answer: this.picked() ?? (this.answer().trim() || null),
+      answer:
+        this.picked() ??
+        (this.teachResult()?.transcript || this.answer().trim() || null),
       ms: Date.now() - this.shownAt,
     });
     const rest = this.queue().slice(1);
@@ -230,6 +314,8 @@ export class TodayScreen {
         concept: card.concept,
         prompt: other,
         retry: true,
+        teach: false,
+        points: card.points,
       });
     }
     if (!card.retry) this.done.update((n) => n + 1);
@@ -276,6 +362,8 @@ export class TodayScreen {
     this.picked.set(null);
     this.feedback.set(null);
     this.checking.set(false);
+    this.spoken.set(null);
+    this.teachResult.set(null);
     this.shownAt = Date.now();
   }
 

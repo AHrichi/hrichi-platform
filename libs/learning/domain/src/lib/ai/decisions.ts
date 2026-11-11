@@ -16,6 +16,12 @@ export type Question =
       type: 'choice';
       instructions: string;
       criteria: Record<string, string | null>;
+    }
+  | {
+      type: 'score';
+      instructions: string;
+      /** 2–10 levels, lowest first. */
+      criteria: string[];
     };
 
 export type Answer =

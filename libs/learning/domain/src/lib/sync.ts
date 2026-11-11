@@ -6,6 +6,7 @@ import {
   type RecordKind,
   type RecordOfKind,
   ReviewEventSchema,
+  TeachBackSchema,
   TopicSchema,
 } from './records';
 
@@ -25,6 +26,7 @@ export const SYNC_LIMITS = {
   pushCaptures: 100,
   pushSessions: 100,
   pushEvents: 1000,
+  pushTeachBacks: 200,
   /** Records per pull; `more` says another request is needed. */
   pull: 500,
 } as const;
@@ -48,6 +50,11 @@ export const SyncRequestSchema = v.strictObject({
     events: v.pipe(
       v.array(ReviewEventSchema),
       v.maxLength(SYNC_LIMITS.pushEvents),
+    ),
+    /** Optional, so a device from before L5 still syncs. */
+    teachbacks: v.optional(
+      v.pipe(v.array(TeachBackSchema), v.maxLength(SYNC_LIMITS.pushTeachBacks)),
+      [],
     ),
   }),
 });
@@ -91,5 +98,12 @@ export interface SyncResponse {
 export const TOKEN_RENEW_WINDOW_MS = 30 * 24 * 60 * 60_000;
 
 export function emptyPush(): SyncRequest['push'] {
-  return { topics: [], concepts: [], captures: [], sessions: [], events: [] };
+  return {
+    topics: [],
+    concepts: [],
+    captures: [],
+    sessions: [],
+    events: [],
+    teachbacks: [],
+  };
 }

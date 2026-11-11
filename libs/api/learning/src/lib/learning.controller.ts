@@ -46,6 +46,9 @@ import {
   GradeRequestSchema,
   type GradeResponse,
   GradingService,
+  type TeachBackRequest,
+  TeachBackRequestSchema,
+  type TeachBackResponse,
 } from './grading.service';
 import { PairingService } from './pairing.service';
 import { SyncService } from './sync.service';
@@ -53,6 +56,8 @@ import { ValibotPipe } from './valibot.pipe';
 
 /** Voice notes are at most 2 minutes of opus: well under this. */
 export const MAX_AUDIO_BYTES = 5 * 1024 * 1024;
+/** A teach-back is about a minute (TEACH_BACK_SECONDS caps it at 90 s). */
+export const MAX_TEACH_AUDIO_BYTES = 2 * 1024 * 1024;
 
 /** What multer hands over for one uploaded file. */
 interface UploadedAudio {
@@ -172,6 +177,41 @@ export class LearningController {
     @Body(new ValibotPipe(GradeRequestSchema)) body: GradeRequest,
   ): Promise<GradeResponse> {
     return this.aiCall(() => this.grading.grade(body));
+  }
+
+  /** A teach-back's recording, as text, so the learner sees what was heard. */
+  @Post('transcribe')
+  @HttpCode(200)
+  @UseGuards(DeviceGuard)
+  @Throttle({ default: { limit: 30, ttl: 60 * 60_000 } })
+  @UseInterceptors(
+    FileInterceptor('audio', {
+      limits: { fileSize: MAX_TEACH_AUDIO_BYTES, files: 1 },
+    }),
+  )
+  transcribe(
+    @UploadedFile() file: UploadedAudio | undefined,
+  ): Promise<{ text: string }> {
+    if (!file?.buffer?.length || !file.mimetype.startsWith('audio/')) {
+      throw new BadRequestException('Send the recording as an "audio" file.');
+    }
+    return this.aiCall(async () => ({
+      text: await this.grading.transcribe({
+        bytes: new Uint8Array(file.buffer),
+        mimeType: file.mimetype,
+      }),
+    }));
+  }
+
+  /** A teach-back, judged by its key points and clarity (design §6.3). */
+  @Post('teach-back')
+  @HttpCode(200)
+  @UseGuards(DeviceGuard)
+  @Throttle({ default: { limit: 30, ttl: 60 * 60_000 } })
+  teachBack(
+    @Body(new ValibotPipe(TeachBackRequestSchema)) body: TeachBackRequest,
+  ): Promise<TeachBackResponse> {
+    return this.aiCall(() => this.grading.teachBack(body));
   }
 
   private async aiCall<T>(work: () => Promise<T>): Promise<T> {

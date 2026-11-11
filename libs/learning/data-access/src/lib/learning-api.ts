@@ -6,6 +6,7 @@ import type {
   PairingStarted,
   SyncRequest,
   SyncResponse,
+  TeachBackFeedback,
 } from '@ah/learning/domain';
 
 export type LearningApiErrorKind =
@@ -117,6 +118,30 @@ export class LearningApi {
     suggested: 'again' | 'hard' | 'good' | null;
   }> {
     return this.call('POST', '/grade', request, token, signal);
+  }
+
+  /** A teach-back's recording, as text. */
+  transcribe(
+    audio: { bytes: ArrayBuffer; mimeType: string },
+    token: string,
+    signal?: AbortSignal,
+  ): Promise<{ text: string }> {
+    const form = new FormData();
+    form.append(
+      'audio',
+      new Blob([audio.bytes], { type: audio.mimeType }),
+      'teach-back',
+    );
+    return this.call('POST', '/transcribe', form, token, signal);
+  }
+
+  /** Judges a teach-back by its points and clarity. */
+  teachBack(
+    request: { title: string; points: string[]; transcript: string },
+    token: string,
+    signal?: AbortSignal,
+  ): Promise<TeachBackFeedback> {
+    return this.call('POST', '/teach-back', request, token, signal);
   }
 
   devices(token: string): Promise<DeviceSummary[]> {
