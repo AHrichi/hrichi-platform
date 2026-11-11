@@ -101,6 +101,24 @@ export class LearningApi {
     );
   }
 
+  /** Grades a typed answer; callers give it a short deadline. */
+  grade(
+    request: {
+      question: string;
+      expected: string;
+      keyPoints: string[];
+      answer: string;
+    },
+    token: string,
+    signal?: AbortSignal,
+  ): Promise<{
+    verdict: 'nailed' | 'close' | 'missed' | null;
+    missed: string[];
+    suggested: 'again' | 'hard' | 'good' | null;
+  }> {
+    return this.call('POST', '/grade', request, token, signal);
+  }
+
   devices(token: string): Promise<DeviceSummary[]> {
     return this.call('GET', '/devices', undefined, token);
   }
@@ -119,6 +137,7 @@ export class LearningApi {
     path: string,
     body?: unknown,
     token?: string,
+    signal?: AbortSignal,
   ): Promise<T> {
     let response: Response;
     try {
@@ -137,7 +156,9 @@ export class LearningApi {
             : body instanceof FormData
               ? body
               : JSON.stringify(body),
-        signal: AbortSignal.timeout(TIMEOUT_MS),
+        signal: signal
+          ? AbortSignal.any([signal, AbortSignal.timeout(TIMEOUT_MS)])
+          : AbortSignal.timeout(TIMEOUT_MS),
       });
     } catch {
       throw new LearningApiError(

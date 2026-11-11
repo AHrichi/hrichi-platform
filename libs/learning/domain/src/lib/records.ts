@@ -172,6 +172,30 @@ export const CaptureSchema = v.strictObject({
   capturedAt: Timestamp,
 });
 
+/** One card of a set: a concept and the prompt it is asked with. */
+export const PlannedItemSchema = v.strictObject({
+  conceptId: Id,
+  promptId: Id,
+});
+
+export const SESSION_KINDS = ['daily', 'bonus'] as const;
+export const MAX_SET_SIZE = 15;
+
+/**
+ * A Daily Set, frozen when the day's first session starts (design §5.2), so
+ * the promise of N cards holds on every device even as more become due.
+ */
+export const ReviewSessionSchema = v.strictObject({
+  ...envelope,
+  localDate: LocalDate,
+  kind: v.picklist(SESSION_KINDS),
+  planned: v.pipe(v.array(PlannedItemSchema), v.maxLength(MAX_SET_SIZE)),
+  /** Adaptive load made it smaller ("Lighter set today"). */
+  lighter: v.boolean(),
+  startedAt: Timestamp,
+  completedAt: v.nullable(Timestamp),
+});
+
 export const RATINGS = ['again', 'hard', 'good', 'easy'] as const;
 
 /** One answer in a review. Append-only: never edited, never deleted. */
@@ -202,9 +226,16 @@ export type ReviewEvent = v.InferOutput<typeof ReviewEventSchema>;
 export type Capture = v.InferOutput<typeof CaptureSchema>;
 export type CaptureStatus = (typeof CAPTURE_STATUSES)[number];
 export type CaptureModality = (typeof CAPTURE_MODALITIES)[number];
+export type PlannedItem = v.InferOutput<typeof PlannedItemSchema>;
+export type ReviewSession = v.InferOutput<typeof ReviewSessionSchema>;
 
 /** Records that change and merge last-writer-wins. */
-export const MUTABLE_KINDS = ['topic', 'concept', 'capture'] as const;
+export const MUTABLE_KINDS = [
+  'topic',
+  'concept',
+  'capture',
+  'session',
+] as const;
 /** Records that are only ever added. */
 export const APPEND_ONLY_KINDS = ['event'] as const;
 export const RECORD_KINDS = [...MUTABLE_KINDS, ...APPEND_ONLY_KINDS] as const;
@@ -217,6 +248,7 @@ export interface RecordOfKind {
   topic: Topic;
   concept: Concept;
   capture: Capture;
+  session: ReviewSession;
   event: ReviewEvent;
 }
 
@@ -224,6 +256,7 @@ export const RECORD_SCHEMAS = {
   topic: TopicSchema,
   concept: ConceptSchema,
   capture: CaptureSchema,
+  session: ReviewSessionSchema,
   event: ReviewEventSchema,
 } as const;
 

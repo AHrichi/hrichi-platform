@@ -1,5 +1,6 @@
 export * from './lib/capture-pipeline';
 export * from './lib/device.guard';
+export * from './lib/grading.service';
 export * from './lib/learning.controller';
 export * from './lib/learning.module';
 export * from './lib/learning.repository';

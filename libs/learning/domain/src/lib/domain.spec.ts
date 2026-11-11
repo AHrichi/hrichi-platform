@@ -59,6 +59,7 @@ describe('records', () => {
       'topic',
       'concept',
       'capture',
+      'session',
       'event',
     ]);
   });
@@ -153,6 +154,7 @@ describe('SyncRequestSchema', () => {
         topics: [sampleTopic()],
         concepts: [sampleConcept()],
         captures: [sampleCapture()],
+        sessions: [],
         events: [sampleEvent()],
       },
     };

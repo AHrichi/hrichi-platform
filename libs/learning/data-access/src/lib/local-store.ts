@@ -1,6 +1,7 @@
 import {
   type Capture,
   type Concept,
+  type ReviewSession,
   incomingWins,
   isMutableKind,
   type PulledRecord,
@@ -124,6 +125,23 @@ export class LearningLocalStore {
     return this.saveMutable('concept', concept);
   }
 
+  async sessions(): Promise<ReviewSession[]> {
+    const rows = await this.db.sessions.toArray();
+    return rows
+      .map((row) => row.data)
+      .filter((session) => !session.deletedAt)
+      .sort((a, b) => a.startedAt.localeCompare(b.startedAt));
+  }
+
+  async events(): Promise<ReviewEvent[]> {
+    const rows = await this.db.events.toArray();
+    return rows.map((row) => row.data);
+  }
+
+  async saveSession(session: ReviewSession): Promise<ReviewSession> {
+    return this.saveMutable('session', session);
+  }
+
   async saveCapture(capture: Capture): Promise<Capture> {
     return this.saveMutable('capture', capture);
   }
@@ -169,10 +187,9 @@ export class LearningLocalStore {
     );
   }
 
-  private async saveMutable<T extends Topic | Concept | Capture>(
-    kind: 'topic' | 'concept' | 'capture',
-    record: T,
-  ): Promise<T> {
+  private async saveMutable<
+    T extends Topic | Concept | Capture | ReviewSession,
+  >(kind: 'topic' | 'concept' | 'capture' | 'session', record: T): Promise<T> {
     const writer = await this.writer();
     const table = this.tableOf(kind);
     const previous = await table.get(record.id);
@@ -183,7 +200,10 @@ export class LearningLocalStore {
         by: writer,
         updatedAt: stamped.updatedAt,
         data: stamped,
-      } as LocalRow<Topic> & LocalRow<Concept> & LocalRow<Capture>);
+      } as LocalRow<Topic> &
+        LocalRow<Concept> &
+        LocalRow<Capture> &
+        LocalRow<ReviewSession>);
       await this.queue(kind, stamped.id);
     });
     return stamped;
@@ -201,6 +221,7 @@ export class LearningLocalStore {
       topics: [],
       concepts: [],
       captures: [],
+      sessions: [],
       events: [],
     };
     const snapshot: OutboxSnapshot = new Map();
@@ -208,6 +229,7 @@ export class LearningLocalStore {
       topic: SYNC_LIMITS.pushTopics,
       concept: SYNC_LIMITS.pushConcepts,
       capture: SYNC_LIMITS.pushCaptures,
+      session: SYNC_LIMITS.pushSessions,
       event: SYNC_LIMITS.pushEvents,
     };
     for (const entry of queued) {
@@ -221,6 +243,7 @@ export class LearningLocalStore {
           topic: push.topics,
           concept: push.concepts,
           capture: push.captures,
+          session: push.sessions,
           event: push.events,
         } as const
       )[entry.kind] as unknown[];
@@ -259,6 +282,7 @@ export class LearningLocalStore {
         this.db.topics,
         this.db.concepts,
         this.db.captures,
+        this.db.sessions,
         this.db.events,
         this.db.outbox,
       ],
@@ -276,6 +300,7 @@ export class LearningLocalStore {
           } as LocalRow<Topic> &
             LocalRow<Concept> &
             LocalRow<Capture> &
+            LocalRow<ReviewSession> &
             LocalRow<ReviewEvent>;
           if (isMutableKind(record.kind)) {
             if (!incomingWins(current, row)) continue;
@@ -297,10 +322,12 @@ export class LearningLocalStore {
       topic: this.db.topics,
       concept: this.db.concepts,
       capture: this.db.captures,
+      session: this.db.sessions,
       event: this.db.events,
     }[kind] as LearningDatabase['concepts'] &
       LearningDatabase['topics'] &
       LearningDatabase['captures'] &
+      LearningDatabase['sessions'] &
       LearningDatabase['events'];
   }
 

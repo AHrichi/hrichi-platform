@@ -41,6 +41,12 @@ import {
   DeviceGuard,
 } from './device.guard';
 import { CapturePipeline, PipelineError } from './capture-pipeline';
+import {
+  type GradeRequest,
+  GradeRequestSchema,
+  type GradeResponse,
+  GradingService,
+} from './grading.service';
 import { PairingService } from './pairing.service';
 import { SyncService } from './sync.service';
 import { ValibotPipe } from './valibot.pipe';
@@ -71,6 +77,7 @@ export class LearningController {
     @Inject(PairingService) private readonly pairing: PairingService,
     @Inject(SyncService) private readonly syncService: SyncService,
     @Inject(CapturePipeline) private readonly pipeline: CapturePipeline,
+    @Inject(GradingService) private readonly grading: GradingService,
   ) {}
 
   /** Sends a code to the owner's Telegram. */
@@ -154,6 +161,17 @@ export class LearningController {
     @Body(new ValibotPipe(ReviseRequestSchema)) body: ReviseRequest,
   ): Promise<Concept> {
     return this.aiCall(() => this.pipeline.revise(id, body.instruction));
+  }
+
+  /** A typed answer, graded by its key points (design §6.3). */
+  @Post('grade')
+  @HttpCode(200)
+  @UseGuards(DeviceGuard)
+  @Throttle({ default: { limit: 120, ttl: 60 * 60_000 } })
+  grade(
+    @Body(new ValibotPipe(GradeRequestSchema)) body: GradeRequest,
+  ): Promise<GradeResponse> {
+    return this.aiCall(() => this.grading.grade(body));
   }
 
   private async aiCall<T>(work: () => Promise<T>): Promise<T> {

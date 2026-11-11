@@ -2,6 +2,7 @@ import Dexie, { type Table } from 'dexie';
 import type {
   Capture,
   Concept,
+  ReviewSession,
   RecordKind,
   ReviewEvent,
   Topic,
@@ -50,6 +51,7 @@ export class LearningDatabase extends Dexie {
   events!: Table<LocalRow<ReviewEvent>, string>;
   captures!: Table<LocalRow<Capture>, string>;
   audio!: Table<AudioRow, string>;
+  sessions!: Table<LocalRow<ReviewSession>, string>;
   outbox!: Table<OutboxRow, string>;
   meta!: Table<MetaRow, string>;
 
@@ -67,5 +69,7 @@ export class LearningDatabase extends Dexie {
       captures: 'id, data.status',
       audio: 'captureId',
     });
+    // Version 3 (L3) adds the Daily Sets.
+    this.version(3).stores({ sessions: 'id, data.localDate' });
   }
 }

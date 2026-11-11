@@ -72,6 +72,8 @@ class FakeServer {
         put({ kind: 'concept', seq: 0, by: deviceId, data });
       for (const data of request.push.captures)
         put({ kind: 'capture', seq: 0, by: deviceId, data });
+      for (const data of request.push.sessions)
+        put({ kind: 'session', seq: 0, by: deviceId, data });
       for (const data of request.push.events)
         put({ kind: 'event', seq: 0, by: deviceId, data });
       const changes = [...this.records.values()]

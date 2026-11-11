@@ -2,6 +2,7 @@ import * as v from 'valibot';
 import {
   CaptureSchema,
   ConceptSchema,
+  ReviewSessionSchema,
   type RecordKind,
   type RecordOfKind,
   ReviewEventSchema,
@@ -22,6 +23,7 @@ export const SYNC_LIMITS = {
   pushTopics: 200,
   pushConcepts: 200,
   pushCaptures: 100,
+  pushSessions: 100,
   pushEvents: 1000,
   /** Records per pull; `more` says another request is needed. */
   pull: 500,
@@ -38,6 +40,10 @@ export const SyncRequestSchema = v.strictObject({
     captures: v.pipe(
       v.array(CaptureSchema),
       v.maxLength(SYNC_LIMITS.pushCaptures),
+    ),
+    sessions: v.pipe(
+      v.array(ReviewSessionSchema),
+      v.maxLength(SYNC_LIMITS.pushSessions),
     ),
     events: v.pipe(
       v.array(ReviewEventSchema),
@@ -85,5 +91,5 @@ export interface SyncResponse {
 export const TOKEN_RENEW_WINDOW_MS = 30 * 24 * 60 * 60_000;
 
 export function emptyPush(): SyncRequest['push'] {
-  return { topics: [], concepts: [], captures: [], events: [] };
+  return { topics: [], concepts: [], captures: [], sessions: [], events: [] };
 }

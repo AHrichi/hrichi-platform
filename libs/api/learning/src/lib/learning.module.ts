@@ -1,7 +1,8 @@
 import { type DynamicModule, Module } from '@nestjs/common';
 import type { Db } from 'mongodb';
-import { type AiKeys, buildAiProviders } from '@ah/api/ai';
+import { type AiKeys, type AiProviders, buildAiProviders } from '@ah/api/ai';
 import { CapturePipeline } from './capture-pipeline';
+import { GradingService } from './grading.service';
 import {
   DeviceGuard,
   LEARNING_CLOCK,
@@ -26,6 +27,9 @@ import { WriteLock } from './write-lock';
 
 /** Provided by the app: the MongoDB database the learning collections live in. */
 export const LEARNING_MONGO_DB = Symbol('LEARNING_MONGO_DB');
+
+/** The model providers, built once from the keys. */
+export const LEARNING_AI = Symbol('LEARNING_AI');
 
 export interface LearningModuleOptions {
   /** Signs device tokens; at least 32 characters (MIN_SECRET_LENGTH). */
@@ -75,19 +79,23 @@ export class LearningModule {
         },
         { provide: WriteLock, useValue: new WriteLock() },
         {
+          provide: LEARNING_AI,
+          useFactory: () => buildAiProviders(options.ai),
+        },
+        {
           provide: CapturePipeline,
-          inject: [LEARNING_REPOSITORY, WriteLock, LEARNING_CLOCK],
+          inject: [LEARNING_REPOSITORY, WriteLock, LEARNING_AI, LEARNING_CLOCK],
           useFactory: (
             repository: LearningRepository,
             lock: WriteLock,
+            ai: AiProviders,
             now: () => Date,
-          ) =>
-            new CapturePipeline(
-              repository,
-              lock,
-              buildAiProviders(options.ai),
-              now,
-            ),
+          ) => new CapturePipeline(repository, lock, ai, now),
+        },
+        {
+          provide: GradingService,
+          inject: [LEARNING_AI],
+          useFactory: (ai: AiProviders) => new GradingService(ai.decisions),
         },
         {
           provide: SyncService,
