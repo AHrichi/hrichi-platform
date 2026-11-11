@@ -1,11 +1,14 @@
 <section class="screen" aria-labelledby="concepts-title">
   <div class="head">
     <h1 id="concepts-title">Library</h1>
-    @if (!adding()) {
-      <button ahButton type="button" (click)="adding.set(true)">
-        Add a concept
-      </button>
-    }
+    <div class="head-actions">
+      <a ahButton="ghost" routerLink="../garden">Garden</a>
+      @if (!adding()) {
+        <button ahButton type="button" (click)="adding.set(true)">
+          Add a concept
+        </button>
+      }
+    </div>
   </div>
 
   @if (adding()) {

@@ -97,5 +97,51 @@
     <p class="hint">At most two a day, and none once today’s set is done.</p>
   </fieldset>
 
+  <fieldset class="card">
+    <legend>Garden look</legend>
+    <div class="segmented" role="radiogroup" aria-label="Garden look">
+      @for (unlock of store.themes(); track unlock.theme) {
+        <button
+          type="button"
+          role="radio"
+          class="segment"
+          [class.is-on]="store.settings().gardenTheme === unlock.theme"
+          [attr.aria-checked]="store.settings().gardenTheme === unlock.theme"
+          [disabled]="!unlock.unlocked"
+          [attr.title]="unlock.unlocked ? null : unlock.how"
+          (click)="setTheme(unlock.theme)"
+        >
+          {{ unlock.title }}
+        </button>
+      }
+    </div>
+    @if (nextTheme(); as next) {
+      <p class="hint">Next: {{ next.title }}. {{ next.how }}</p>
+    }
+  </fieldset>
+
+  <section class="card" aria-labelledby="milestones-title">
+    <h2 id="milestones-title">Milestones</h2>
+    <ul class="milestones" role="list">
+      @for (milestone of store.milestones(); track milestone.id) {
+        <li [class.is-earned]="milestone.earned">
+          <span class="mark" aria-hidden="true">{{
+            milestone.earned ? '✓' : '○'
+          }}</span>
+          <span>
+            {{ milestone.title }}
+            <span class="visually-hidden">{{
+              milestone.earned ? ', earned' : ', not yet'
+            }}</span>
+          </span>
+          @if (!milestone.earned) {
+            <span class="hint">{{ milestone.how }}</span>
+          }
+        </li>
+      }
+    </ul>
+  </section>
+
+  <a ahButton="secondary" routerLink="../garden">Garden</a>
   <a ahButton="secondary" routerLink="../devices">Devices and pairing</a>
 </section>

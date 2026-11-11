@@ -11,6 +11,7 @@ import {
   maxLength,
   required,
 } from '@angular/forms/signals';
+import { RouterLink } from '@angular/router';
 import { type ConceptDraft, LIMITS } from '@ah/learning/domain';
 import { AhButton, AhEmptyState } from '@ah/ui';
 import { LearningStore } from '../../store/learning.store';
@@ -63,7 +64,7 @@ const emptyDraft = (): ConceptDraft => ({
  */
 @Component({
   selector: 'lrn-concepts-screen',
-  imports: [AhButton, AhEmptyState, FormField, FormRoot],
+  imports: [AhButton, AhEmptyState, FormField, FormRoot, RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './concepts-screen.html',
   styleUrl: './concepts-screen.scss',

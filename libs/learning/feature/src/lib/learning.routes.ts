@@ -36,6 +36,12 @@ export const LEARNING_ROUTES: Routes = [
           ),
       },
       {
+        path: 'garden',
+        title: 'Garden · Learning',
+        loadComponent: () =>
+          import('./screens/garden/garden-screen').then((m) => m.GardenScreen),
+      },
+      {
         path: 'settings',
         title: 'Settings · Learning',
         loadComponent: () =>

@@ -68,6 +68,51 @@ legend {
   }
 }
 
+.segment:disabled {
+  color: var(--color-text-muted);
+  cursor: not-allowed;
+}
+
+h2 {
+  margin: 0;
+  font-size: var(--font-size-400);
+}
+
+.milestones {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    align-items: baseline;
+    color: var(--color-text-muted);
+  }
+
+  .is-earned {
+    color: var(--color-text-default);
+    font-weight: var(--font-weight-medium);
+  }
+}
+
+.mark {
+  inline-size: 1.25rem;
+  text-align: center;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
 .hint {
   margin: 0;
   color: var(--color-text-muted);

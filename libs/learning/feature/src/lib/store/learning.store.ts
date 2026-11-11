@@ -16,6 +16,7 @@ import { LearningApiError, type SyncOutcome } from '@ah/learning/data-access';
 import {
   type Capture,
   composeDailySet,
+  type Topic,
   computeStreak,
   type Concept,
   type ConceptDraft,
@@ -25,8 +26,11 @@ import {
   DEFAULT_CAP,
   DEFAULT_NEW_PER_DAY,
   type DeviceSummary,
+  type GardenTheme,
   learnedMorning,
   levelOf,
+  milestonesOf,
+  themesOf,
   localDateOf,
   memoryOf,
   type RecallPrompt,
@@ -65,6 +69,8 @@ export interface LearnerSettings {
   evening: string | null;
   /** "YYYY-MM-DD": no nudges and no streak pressure until then. */
   vacationUntil: string | null;
+  /** The garden's look; themes unlock with progress (design §3). */
+  gardenTheme: GardenTheme;
 }
 
 export const DEFAULT_SETTINGS: LearnerSettings = {
@@ -73,6 +79,7 @@ export const DEFAULT_SETTINGS: LearnerSettings = {
   morning: null,
   evening: '20:30',
   vacationUntil: null,
+  gardenTheme: 'meadow',
 };
 
 export function deviceTimeZone(): string {
@@ -84,6 +91,7 @@ export interface LearningState {
   /** The database couldn't be opened (private mode, storage blocked). */
   fatal: string | null;
   concepts: Concept[];
+  topics: Topic[];
   captures: Capture[];
   sessions: ReviewSession[];
   events: ReviewEvent[];
@@ -107,6 +115,7 @@ const initialState: LearningState = {
   ready: false,
   fatal: null,
   concepts: [],
+  topics: [],
   captures: [],
   sessions: [],
   events: [],
@@ -155,10 +164,22 @@ export const LearningStore = signalStore(
       today,
       memory,
       streak: computed(() =>
-        computeStreak(days().counted, days().full, today()),
+        computeStreak(days().counted, days().full, today(), days().doubled),
       ),
       xp: computed(() => levelOf(xpOf(events(), sessions()))),
       xpTotal: computed(() => xpOf(events(), sessions())),
+      progress: computed(() => ({
+        events: events(),
+        sessions: sessions(),
+        memory: memory(),
+        longestStreak: computeStreak(
+          days().counted,
+          days().full,
+          today(),
+          days().doubled,
+        ).longest,
+        level: levelOf(xpOf(events(), sessions())).level,
+      })),
       todaySet: computed(
         () =>
           sessions().find(
@@ -168,6 +189,10 @@ export const LearningStore = signalStore(
       ),
     };
   }),
+  withComputed(({ progress }) => ({
+    milestones: computed(() => milestonesOf(progress())),
+    themes: computed(() => themesOf(progress())),
+  })),
   withComputed(({ concepts, captures }) => ({
     /** The digest: drafts the AI wrote, waiting to be kept or discarded. */
     drafts: computed(() => concepts().filter((c) => c.status === 'draft')),
@@ -192,18 +217,28 @@ export const LearningStore = signalStore(
 
     async function refresh(): Promise<void> {
       const { local, unavailable } = await runtime.open();
-      const [concepts, captures, pending, session, sessions, events, settings] =
-        await Promise.all([
-          local.concepts(),
-          local.captures(),
-          local.pendingCount(),
-          local.session(),
-          local.sessions(),
-          local.events(),
-          local.getMeta<Partial<LearnerSettings>>('learner'),
-        ]);
+      const [
+        concepts,
+        topics,
+        captures,
+        pending,
+        session,
+        sessions,
+        events,
+        settings,
+      ] = await Promise.all([
+        local.concepts(),
+        local.topics(),
+        local.captures(),
+        local.pendingCount(),
+        local.session(),
+        local.sessions(),
+        local.events(),
+        local.getMeta<Partial<LearnerSettings>>('learner'),
+      ]);
       patchState(store, {
         concepts,
+        topics,
         captures,
         sessions,
         events,

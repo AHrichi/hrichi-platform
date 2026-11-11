@@ -5,7 +5,7 @@ import {
   inject,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { learnedMorning } from '@ah/learning/domain';
+import { type GardenTheme, learnedMorning } from '@ah/learning/domain';
 import { AhButton } from '@ah/ui';
 import {
   type LearnerSettings,
@@ -30,6 +30,14 @@ export class SettingsScreen {
   protected readonly learned = computed(() =>
     learnedMorning(this.store.sessions(), this.store.timeZone()),
   );
+
+  protected readonly nextTheme = computed(() =>
+    this.store.themes().find((unlock) => !unlock.unlocked),
+  );
+
+  protected setTheme(gardenTheme: GardenTheme): void {
+    void this.store.saveSettings({ gardenTheme });
+  }
 
   protected setCap(dailyCap: LearnerSettings['dailyCap']): void {
     void this.store.saveSettings({ dailyCap });

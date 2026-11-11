@@ -5,7 +5,7 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import {
   choosePrompt,
   composeDailySet,
@@ -69,7 +69,7 @@ interface Feedback {
  */
 @Component({
   selector: 'lrn-today-screen',
-  imports: [AhButton, SwipeCard],
+  imports: [AhButton, RouterLink, SwipeCard],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './today-screen.html',
   styleUrl: './today-screen.scss',

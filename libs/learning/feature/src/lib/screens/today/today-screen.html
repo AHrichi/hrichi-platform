@@ -52,6 +52,12 @@
         Tomorrow: {{ tomorrow() }} card{{ tomorrow() === 1 ? '' : 's' }} · about
         {{ tomorrowMinutes() }} min
       </p>
+      @if (store.streak().repairOffer; as offer) {
+        <p class="repair" role="status">
+          Your {{ offer.streakBefore }}-day streak ended yesterday. Finish a
+          bonus round today to repair it (once a month).
+        </p>
+      }
       <div class="actions">
         <button ahButton type="button" (click)="close()">Close</button>
         <button
@@ -62,6 +68,7 @@
         >
           Bonus round
         </button>
+        <a ahButton="ghost" routerLink="../garden">See the garden</a>
       </div>
     </div>
   } @else if (card(); as current) {

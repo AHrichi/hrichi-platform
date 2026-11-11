@@ -17,4 +17,5 @@ export * from './lib/schedule/composer';
 export * from './lib/schedule/streak';
 export * from './lib/schedule/xp';
 export * from './lib/schedule/nudge';
+export * from './lib/schedule/milestones';
 export * from './lib/testing/fixtures';
