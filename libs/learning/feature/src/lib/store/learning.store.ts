@@ -19,6 +19,7 @@ import {
   DEFAULT_CAP,
   DEFAULT_NEW_PER_DAY,
   type DeviceSummary,
+  learnedMorning,
   levelOf,
   localDateOf,
   memoryOf,
@@ -266,6 +267,30 @@ export const LearningStore = signalStore(
       }
     }
 
+    /** Tells the edge Worker what it needs to time nudges (design §10). */
+    async function pushNudgeState(): Promise<void> {
+      const { edge, local } = await runtime.open();
+      const session = await local.session();
+      if (!edge || !session) return;
+      const settings = store.settings();
+      const today = store.todaySet();
+      await edge.putNudgeState(
+        {
+          timeZone: store.timeZone(),
+          morning:
+            settings.morning ??
+            learnedMorning(store.sessions(), store.timeZone()) ??
+            '08:00',
+          evening: settings.evening,
+          setSize: today?.planned.length ?? settings.dailyCap,
+          streak: store.streak().current,
+          doneDate: today?.completedAt ? today.localDate : null,
+          vacationUntil: settings.vacationUntil,
+        },
+        session.token,
+      );
+    }
+
     function newCapture(fields: Partial<Capture>): Capture {
       const at = new Date().toISOString();
       return {
@@ -322,6 +347,8 @@ export const LearningStore = signalStore(
           await refresh();
           patchState(store, { ready: true });
           await syncNow();
+          // Keeps the Worker's view of the day current, e.g. a new time zone.
+          void pushNudgeState();
         } catch (error) {
           patchState(store, { ready: true, fatal: messageOf(error) });
         }
@@ -442,6 +469,7 @@ export const LearningStore = signalStore(
         });
         await refresh();
         syncSoon();
+        void pushNudgeState();
       },
 
       /**
@@ -483,6 +511,7 @@ export const LearningStore = signalStore(
         const settings = { ...store.settings(), ...change };
         await local.setMeta('learner', settings);
         patchState(store, { settings });
+        void pushNudgeState();
       },
 
       /** A typed capture: saved at once, processed by the server (design 1). */

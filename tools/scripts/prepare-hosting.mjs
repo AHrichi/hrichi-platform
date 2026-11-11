@@ -124,16 +124,17 @@ if (values['site-config']) {
     apiUrl = null,
     turnstileSiteKey = null,
     orbitApiUrl = null,
+    learningEdgeUrl = null,
   } = environment;
   const n8nUrl = process.env.N8N_URL || environment.n8nUrl || null;
   if (writeFiles) {
     writeFileSync(
       join(dir, 'site-config.json'),
-      `${JSON.stringify({ apiUrl, turnstileSiteKey, orbitApiUrl, n8nUrl }, null, 2)}
+      `${JSON.stringify({ apiUrl, turnstileSiteKey, orbitApiUrl, n8nUrl, learningEdgeUrl }, null, 2)}
 `,
     );
   }
-  for (const url of [apiUrl, orbitApiUrl, n8nUrl]) {
+  for (const url of [apiUrl, orbitApiUrl, n8nUrl, learningEdgeUrl]) {
     if (url) {
       apiOrigins.push(new URL(url).origin);
     }

@@ -1,0 +1,23 @@
+{
+  // The Learning Engine's edge Worker (design §10): timed Telegram nudges,
+  // so the Render API is never woken on a timer. Before the first deploy:
+  //   pnpm wrangler kv namespace create learning-nudges   → put its id below
+  //   pnpm wrangler secret put LEARNING_TOKEN_SECRET     (same as the API's)
+  //   pnpm wrangler secret put TELEGRAM_BOT_TOKEN
+  //   pnpm wrangler secret put TELEGRAM_CHAT_ID
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "learning-edge",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-11-01",
+  "triggers": { "crons": ["*/15 * * * *"] },
+  "kv_namespaces": [
+    {
+      "binding": "NUDGES",
+      "id": "00000000000000000000000000000000",
+    },
+  ],
+  "vars": {
+    // Pages allowed to send the nudge state (comma-separated).
+    "ALLOWED_ORIGINS": "https://product-learning.ahmed-hrichi.workers.dev,http://localhost:4311",
+  },
+}

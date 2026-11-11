@@ -10,6 +10,8 @@ export interface SiteConfig {
   orbitApiUrl: string | null;
   /** Self-hosted n8n, for StudyLM's and ChatPulse's AI webhooks. */
   n8nUrl: string | null;
+  /** The Learning Engine's edge Worker, for Telegram nudges (ADR-0024). */
+  learningEdgeUrl: string | null;
 }
 
 const disabled: SiteConfig = {
@@ -17,6 +19,7 @@ const disabled: SiteConfig = {
   turnstileSiteKey: null,
   orbitApiUrl: null,
   n8nUrl: null,
+  learningEdgeUrl: null,
 };
 
 /** The URL of an n8n webhook, or null when no n8n is configured. */
@@ -48,6 +51,7 @@ export class SiteConfigService {
         turnstileSiteKey: config.turnstileSiteKey ?? null,
         orbitApiUrl: config.orbitApiUrl ?? null,
         n8nUrl: config.n8nUrl ?? null,
+        learningEdgeUrl: config.learningEdgeUrl ?? null,
       }))
       .catch(() => disabled);
     return this.config;

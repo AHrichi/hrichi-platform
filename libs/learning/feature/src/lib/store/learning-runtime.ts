@@ -1,6 +1,7 @@
 import { isPlatformBrowser } from '@angular/common';
 import { inject, Injectable, PLATFORM_ID } from '@angular/core';
 import {
+  EdgeClient,
   LearningApi,
   LearningDatabase,
   LearningLocalStore,
@@ -17,6 +18,8 @@ export interface LearningRuntimeParts {
   local: LearningLocalStore;
   api: LearningApi | null;
   client: LearningSyncClient | null;
+  /** The edge Worker for nudges; null until it is deployed. */
+  edge: EdgeClient | null;
   /** Set when `api` is null. */
   unavailable: SyncUnavailable | null;
 }
@@ -45,11 +48,18 @@ export class LearningRuntime {
     const name = await databaseName(this.mode, 'learning', 'LearningDatabase');
     const local = new LearningLocalStore(new LearningDatabase(name));
     if (this.mode !== 'standalone') {
-      return { local, api: null, client: null, unavailable: 'demo' };
+      return {
+        local,
+        api: null,
+        client: null,
+        edge: null,
+        unavailable: 'demo',
+      };
     }
-    const { apiUrl } = await this.siteConfig.load();
+    const { apiUrl, learningEdgeUrl } = await this.siteConfig.load();
+    const edge = learningEdgeUrl ? new EdgeClient(learningEdgeUrl) : null;
     if (!apiUrl) {
-      return { local, api: null, client: null, unavailable: 'no-server' };
+      return { local, api: null, client: null, edge, unavailable: 'no-server' };
     }
     const api = new LearningApi(apiUrl);
     const client = new LearningSyncClient(
@@ -57,6 +67,6 @@ export class LearningRuntime {
       (request, token) => api.sync(request, token),
       (captureId, audio, token) => api.uploadAudio(captureId, audio, token),
     );
-    return { local, api, client, unavailable: null };
+    return { local, api, client, edge, unavailable: null };
   }
 }

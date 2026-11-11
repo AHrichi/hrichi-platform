@@ -1,0 +1,23 @@
+{
+  "name": "learning-edge",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/learning-edge/src",
+  "projectType": "application",
+  "tags": ["scope:learning", "type:app", "runtime:agnostic"],
+  "// targets": "No deploy target on purpose: the Worker needs a KV namespace and secrets first (ADR-0024). Deploy by hand with `pnpm wrangler deploy --config apps/learning-edge/wrangler.jsonc`.",
+  "targets": {
+    "bundle": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "wrangler deploy --dry-run --outdir dist/apps/learning-edge --config apps/learning-edge/wrangler.jsonc"
+      }
+    },
+    "serve": {
+      "continuous": true,
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "wrangler dev --config apps/learning-edge/wrangler.jsonc --test-scheduled"
+      }
+    }
+  }
+}

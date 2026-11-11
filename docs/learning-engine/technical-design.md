@@ -194,7 +194,7 @@ POST /learning/captures/:id/audio   (L2: multipart, ≤ 2 min, opus/webm)
 
 ### 5.1 FSRS
 
-- **Library:** [ts-fsrs](https://github.com/open-spaced-repetition/ts-fsrs) (MIT, FSRS-6, already picked in StudyLM's design). Desired retention is 0.90, and the user can set it between 0.80 and 0.95.
+- **Library:** [ts-fsrs](https://github.com/open-spaced-repetition/ts-fsrs) 5.4.2 (MIT, FSRS-6, already picked in StudyLM's design), pinned: 6.0 was two weeks old with a new dependency when L3 was built. Fuzz and minute-level learning steps are off, so a replay is deterministic and works in whole days. Desired retention is 0.90.
 - **Memory per concept.** Every prompt answers for the same concept. That way prompt formats rotate without resetting memory.
 - **Swipes map to ratings:**
   - left = `again`
@@ -284,7 +284,7 @@ Two kinds of model do the work. A **generative ladder** writes text. A **decisio
 
 ### 6.3 Grading never blocks the review
 
-- **Typed answers are graded at the edge.** The `learning-edge` Worker is always on, so grading never waits for Render to wake. It checks the device token and sends the answer to Jev, getting one `noul` per key point. Expected time end to end is under 1 s.
+- **Typed answers are graded by `POST /learning/grade` in Nest (L3)**, one `noul` per key point through the decision model: Jev when `TYPESAFE_API_KEY` is set, the generative ladder otherwise. The plan is to move grading to the always-on `learning-edge` Worker once the Jev spike says go, so it never waits for Render to wake.
 - **Voice answers** are transcribed first, which goes through Nest. When the review screen opens it pre-warms `/health`, the platform's existing pre-warm-on-intent pattern.
 - **From key points to a verdict, in code:**
   - every key point has p ≥ 0.7 → **nailed**
@@ -355,7 +355,8 @@ It writes `tmp/jev-spike/report.json` with each model's agreement, false-"nailed
 
 ## 8. Review UI (mobile first)
 
-- **Screens:** `/today` (opens straight on card 1), `/digest`, `/capture`, `/garden`, `/settings` and `/pair`. Each has its own URL and lazy chunk, like Basecamp and StudyLM.
+- **Screens (as built):** `/today` (the home screen, straight on card 1), `/inbox` (capture, the digest and captures on their way), `/concepts` (shown as Library), `/settings` (set size, new concepts a day, reminders, away-until) and `/devices` under Settings. `/garden` comes in L5. Each has its own URL and lazy chunk, like Basecamp and StudyLM.
+- **Review flow:** quick-fire cards are answered by picking an option; others take an optional typed answer, revealed with a button (Ctrl/⌘ + Enter). Right, up and left grade got it, shaky and missed. A missed card returns once at the end with another prompt. A day with nothing due counts once the app is opened (an empty set, finished at once).
 - **Swipe:** Pointer Events with a distance-or-velocity threshold. The card follows the finger with CSS transforms and flies off with the Web Animations API. Rotation is limited to 8°.
 - **Swipes are never the only input.** Buttons sit under the card, and on desktop `←` `↑` `→` grade and `Space` reveals.
 - **Reduced motion:** a reactive `prefers-reduced-motion` signal (as in the StudyLM player) swaps the fly-off animation for an instant change.
@@ -395,11 +396,13 @@ It writes `tmp/jev-spike/report.json` with each model's agreement, false-"nailed
 
 Render must not be woken on a timer: its 750 h a month are shared with the Orbit API. So nudges live on Cloudflare:
 
-- **`apps/learning-edge`:** a Worker with a Cron Trigger every 15 min and one KV namespace, deployed with wrangler like the remotes.
-- **Nudge state in KV:** timezone, morning and evening times, last active date, the date of the last completed set, the streak, today's count, a snooze and a send log.
-  - The learning app writes it with a small authenticated `PUT` after each session and each settings change. That is a handful of writes a day, far below the free plan's limit of 1,000.
+- **`apps/learning-edge`:** a Worker with a Cron Trigger every 15 min and one KV namespace (`NUDGES`). It has no `deploy` target on purpose: it needs its KV namespace and secrets first, then `pnpm wrangler deploy --config apps/learning-edge/wrangler.jsonc` (setup steps in its `wrangler.jsonc`). `nx run learning-edge:bundle` checks the bundle (about 11 KiB gzipped).
+- **Nudge state in KV** (`NudgeStateSchema`): time zone, morning and evening times, today's set size, the streak, the day the set was last finished and an away-until date; plus a send log.
+  - The learning app writes it with `PUT /state` and its device token after each set, each settings change and on start. That is a handful of writes a day, far below the free plan's limit of 1,000.
+  - The Worker checks tokens with the shared secret and no database, so a revoked device can still send it until its token expires; at worst it moves a reminder.
+  - The app finds the Worker through `learningEdgeUrl` in `site-config.json` (`localhost:8787` in development, unset in production until deployed).
 - **Each cron run** is a pure decision function: "is it nudge time in the user's timezone, is today's set still open, is the daily budget (≤ 2) left?"
-  - If yes, it sends a Telegram message through the Bot API, with a button linking to `/today`. Example: "☕ Your 3-min set is ready. Keep the 🔥 12 alive."
+  - If yes, it sends a Telegram message through the Bot API. Example: "☕ Your set is ready: 7 cards, about 3 min. Keep the 🔥 12 alive." A morning nudge waits at most 3 hours after its time.
 - **Learned time:** the app computes the median start time of the last 14 sessions, minus 10 min, and writes it as the morning time.
 - **No nudges** in vacation mode, and none once the set is done.
 - **Why Telegram and not Web Push:**

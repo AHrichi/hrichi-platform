@@ -1,15 +1,17 @@
 {
-  "$comment": "Per-environment runtime config, written to site-config.json by tools/scripts/prepare-hosting.mjs --site-config. Development uses Cloudflare's public always-pass Turnstile test key. null disables a feature's live path (the contact form falls back to email, the Orbit lab to its bundled snapshot). n8nUrl is the self-hosted n8n for StudyLM and ChatPulse; production takes it from the N8N_URL environment variable (a CI secret), so the tunnel address stays out of the repository.",
+  "$comment": "Per-environment runtime config, written to site-config.json by tools/scripts/prepare-hosting.mjs --site-config. Development uses Cloudflare's public always-pass Turnstile test key. null disables a feature's live path (the contact form falls back to email, the Orbit lab to its bundled snapshot). n8nUrl is the self-hosted n8n for StudyLM and ChatPulse; production takes it from the N8N_URL environment variable (a CI secret), so the tunnel address stays out of the repository. learningEdgeUrl is the Learning Engine's edge Worker (wrangler dev serves it on :8787); null in production until it is deployed (ADR-0024).",
   "development": {
     "apiUrl": "http://localhost:3000",
     "turnstileSiteKey": "1x00000000000000000000AA",
     "orbitApiUrl": "http://localhost:8081",
-    "n8nUrl": "http://127.0.0.1:5678"
+    "n8nUrl": "http://127.0.0.1:5678",
+    "learningEdgeUrl": "http://localhost:8787"
   },
   "production": {
     "apiUrl": "https://ahmed-hrichi-api.onrender.com",
     "turnstileSiteKey": "0x4AAAAAAFnL_vOz5m0JX351",
     "orbitApiUrl": "https://ahmed-hrichi-orbit.onrender.com",
-    "n8nUrl": null
+    "n8nUrl": null,
+    "learningEdgeUrl": null
   }
 }
