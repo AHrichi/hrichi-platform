@@ -1,4 +1,6 @@
 import type { LeadsModuleOptions } from '@ah/api/leads';
+import type { LearningModuleOptions } from '@ah/api/learning';
+import { MIN_SECRET_LENGTH } from '@ah/learning/domain';
 
 export interface ApiConfig {
   port: number;
@@ -9,6 +11,8 @@ export interface ApiConfig {
     authSecret: string;
     encryptionKey: string;
   };
+  /** The Learning Engine; off until LEARNING_TOKEN_SECRET is set (ADR-0024). */
+  learning: LearningModuleOptions | null;
 }
 
 /**
@@ -75,6 +79,7 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): ApiConfig {
         env['DISPATCH_ENCRYPTION_KEY']?.trim() ||
         '0123456789abcdef0123456789abcdef', // 32 hex chars / 16 bytes minimum
     },
+    learning: learningConfig(env, problems),
   };
 
   if (!Number.isInteger(config.port) || config.port <= 0) {
@@ -83,8 +88,40 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): ApiConfig {
   if (config.leads.n8n && !config.leads.n8n.webhookUrl.startsWith('https://')) {
     problems.push('N8N_WEBHOOK_URL must use https');
   }
+  if (config.learning) {
+    config.learning.telegram = config.leads.telegram;
+  }
   if (problems.length) {
     throw new Error(`Invalid configuration:\n  - ${problems.join('\n  - ')}`);
   }
   return config;
+}
+
+/**
+ * The Learning Engine is optional: without LEARNING_TOKEN_SECRET its routes
+ * aren't registered and nothing else changes. Pairing codes go to the same
+ * Telegram chat as lead alerts; LEARNING_LOG_PAIRING_CODES logs them
+ * instead, for local development, and is refused in production.
+ */
+function learningConfig(
+  env: NodeJS.ProcessEnv,
+  problems: string[],
+): LearningModuleOptions | null {
+  const tokenSecret = env['LEARNING_TOKEN_SECRET']?.trim() ?? '';
+  const logPairingCodes = env['LEARNING_LOG_PAIRING_CODES']?.trim() === 'true';
+  if (!tokenSecret) {
+    if (logPairingCodes) {
+      problems.push('LEARNING_LOG_PAIRING_CODES needs LEARNING_TOKEN_SECRET');
+    }
+    return null;
+  }
+  if (tokenSecret.length < MIN_SECRET_LENGTH) {
+    problems.push(
+      `LEARNING_TOKEN_SECRET needs at least ${MIN_SECRET_LENGTH} characters`,
+    );
+  }
+  if (logPairingCodes && env['NODE_ENV'] === 'production') {
+    problems.push('LEARNING_LOG_PAIRING_CODES is for development only');
+  }
+  return { tokenSecret, telegram: null, logPairingCodes };
 }

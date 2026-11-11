@@ -31,6 +31,36 @@ describe('loadConfig', () => {
     );
   });
 
+  it('leaves the Learning Engine off until it has a long enough secret', () => {
+    expect(loadConfig(base).learning).toBeNull();
+    expect(() =>
+      loadConfig({ ...base, LEARNING_TOKEN_SECRET: 'too-short' }),
+    ).toThrow(/LEARNING_TOKEN_SECRET needs at least 32 characters/);
+
+    const config = loadConfig({
+      ...base,
+      LEARNING_TOKEN_SECRET: 'x'.repeat(32),
+      TELEGRAM_BOT_TOKEN: 'T',
+      TELEGRAM_CHAT_ID: '42',
+    });
+    expect(config.learning).toEqual({
+      tokenSecret: 'x'.repeat(32),
+      telegram: { botToken: 'T', chatId: '42' },
+      logPairingCodes: false,
+    });
+  });
+
+  it('refuses logged pairing codes in production', () => {
+    expect(() =>
+      loadConfig({
+        ...base,
+        NODE_ENV: 'production',
+        LEARNING_TOKEN_SECRET: 'x'.repeat(32),
+        LEARNING_LOG_PAIRING_CODES: 'true',
+      }),
+    ).toThrow(/LEARNING_LOG_PAIRING_CODES is for development only/);
+  });
+
   it('parses channels and a comma-separated CORS allowlist', () => {
     const config = loadConfig({
       ...base,

@@ -7,9 +7,9 @@
       "scope": "api",
       "layer": "app",
       "runtime": "node",
-      "x": 0.581,
-      "y": 0.557,
-      "z": 0.582
+      "x": -0.002,
+      "y": 0.961,
+      "z": -0.137
     },
     {
       "id": "api-dispatch",
@@ -17,9 +17,9 @@
       "scope": "api",
       "layer": "feature",
       "runtime": "node",
-      "x": 0.61,
-      "y": 0.222,
-      "z": 0.744
+      "x": -0.249,
+      "y": 0.604,
+      "z": -0.709
     },
     {
       "id": "api-leads",
@@ -27,9 +27,19 @@
       "scope": "api",
       "layer": "feature",
       "runtime": "node",
-      "x": 0.558,
-      "y": 0.766,
-      "z": 0.3
+      "x": -0.147,
+      "y": 0.905,
+      "z": 0.332
+    },
+    {
+      "id": "api-learning",
+      "kind": "lib",
+      "scope": "api",
+      "layer": "feature",
+      "runtime": "node",
+      "x": 0.249,
+      "y": 0.939,
+      "z": 0.142
     },
     {
       "id": "design-system",
@@ -37,9 +47,9 @@
       "scope": "design-system",
       "layer": "app",
       "runtime": "browser",
-      "x": -0.622,
-      "y": 0.319,
-      "z": 0.509
+      "x": -0.493,
+      "y": 0.432,
+      "z": -0.479
     },
     {
       "id": "design-system-e2e",
@@ -47,9 +57,9 @@
       "scope": "test",
       "layer": "e2e",
       "runtime": "node",
-      "x": -0.738,
-      "y": -0.032,
-      "z": 0.655
+      "x": -0.878,
+      "y": 0.243,
+      "z": -0.326
     },
     {
       "id": "design-system-tokens",
@@ -57,9 +67,9 @@
       "scope": "design-system",
       "layer": "tokens",
       "runtime": "agnostic",
-      "x": -0.597,
-      "y": 0.692,
-      "z": 0.178
+      "x": -0.433,
+      "y": 0.779,
+      "z": -0.071
     },
     {
       "id": "design-system-ui",
@@ -67,9 +77,9 @@
       "scope": "design-system",
       "layer": "ui",
       "runtime": "browser",
-      "x": -0.153,
-      "y": 0.074,
-      "z": -0.142
+      "x": 0.064,
+      "y": 0.004,
+      "z": 0.003
     },
     {
       "id": "lab-ngrx",
@@ -77,9 +87,9 @@
       "scope": "lab-ngrx",
       "layer": "app",
       "runtime": "browser",
-      "x": 0.531,
-      "y": 0.227,
-      "z": -0.754
+      "x": 0.882,
+      "y": -0.034,
+      "z": -0.149
     },
     {
       "id": "lab-ngrx-feature",
@@ -87,9 +97,9 @@
       "scope": "lab-ngrx",
       "layer": "feature",
       "runtime": "browser",
-      "x": 0.35,
-      "y": 0.644,
-      "z": -0.479
+      "x": 0.656,
+      "y": 0.226,
+      "z": -0.496
     },
     {
       "id": "lab-rxjs",
@@ -97,9 +107,9 @@
       "scope": "lab-rxjs",
       "layer": "app",
       "runtime": "browser",
-      "x": 0.7,
-      "y": 0.318,
-      "z": -0.49
+      "x": 0.536,
+      "y": 0.068,
+      "z": 0.762
     },
     {
       "id": "lab-rxjs-feature",
@@ -107,9 +117,9 @@
       "scope": "lab-rxjs",
       "layer": "feature",
       "runtime": "browser",
-      "x": 0.486,
-      "y": 0.687,
-      "z": -0.132
+      "x": 0.251,
+      "y": 0.519,
+      "z": 0.64
     },
     {
       "id": "lab-sky",
@@ -117,9 +127,9 @@
       "scope": "lab-sky",
       "layer": "app",
       "runtime": "browser",
-      "x": -0.388,
-      "y": 0.012,
-      "z": -0.729
+      "x": 0.286,
+      "y": -0.114,
+      "z": 0.764
     },
     {
       "id": "lab-sky-domain",
@@ -127,9 +137,9 @@
       "scope": "lab-sky",
       "layer": "domain",
       "runtime": "agnostic",
-      "x": -0.893,
-      "y": 0.351,
-      "z": -0.061
+      "x": -0.926,
+      "y": -0.018,
+      "z": 0.15
     },
     {
       "id": "lab-sky-feature",
@@ -137,9 +147,19 @@
       "scope": "lab-sky",
       "layer": "feature",
       "runtime": "browser",
-      "x": -0.588,
-      "y": 0.322,
-      "z": 0.254
+      "x": -0.552,
+      "y": 0.335,
+      "z": 0.313
+    },
+    {
+      "id": "learning-domain",
+      "kind": "lib",
+      "scope": "learning",
+      "layer": "domain",
+      "runtime": "agnostic",
+      "x": 0.398,
+      "y": 0.867,
+      "z": -0.259
     },
     {
       "id": "orbit-api",
@@ -147,9 +167,9 @@
       "scope": "orbit",
       "layer": "app",
       "runtime": "jvm",
-      "x": 0.265,
-      "y": 0.46,
-      "z": 0.828
+      "x": -0.572,
+      "y": 0.572,
+      "z": 0.57
     },
     {
       "id": "platform-app-mode",
@@ -157,9 +177,9 @@
       "scope": "platform",
       "layer": "platform",
       "runtime": "browser",
-      "x": -0.104,
-      "y": -0.698,
-      "z": -0.276
+      "x": 0.122,
+      "y": -0.754,
+      "z": 0
     },
     {
       "id": "platform-federation",
@@ -167,9 +187,9 @@
       "scope": "platform",
       "layer": "platform",
       "runtime": "browser",
-      "x": 0.373,
-      "y": -0.269,
-      "z": -0.605
+      "x": 0.475,
+      "y": -0.445,
+      "z": 0.38
     },
     {
       "id": "platform-inspector",
@@ -177,9 +197,9 @@
       "scope": "platform",
       "layer": "platform",
       "runtime": "browser",
-      "x": 0.788,
-      "y": -0.084,
-      "z": -0.483
+      "x": 0.81,
+      "y": -0.339,
+      "z": -0.249
     },
     {
       "id": "platform-maps",
@@ -187,9 +207,9 @@
       "scope": "platform",
       "layer": "ui",
       "runtime": "browser",
-      "x": -0.902,
-      "y": -0.017,
-      "z": -0.035
+      "x": -0.402,
+      "y": -0.587,
+      "z": -0.493
     },
     {
       "id": "platform-storage",
@@ -197,9 +217,9 @@
       "scope": "platform",
       "layer": "platform",
       "runtime": "browser",
-      "x": -0.537,
-      "y": -0.739,
-      "z": 0.057
+      "x": -0.204,
+      "y": -0.826,
+      "z": -0.369
     },
     {
       "id": "portfolio-feature-apps",
@@ -207,9 +227,9 @@
       "scope": "portfolio",
       "layer": "feature",
       "runtime": "browser",
-      "x": -0.095,
-      "y": 0.45,
-      "z": -0.75
+      "x": 0.756,
+      "y": 0.326,
+      "z": 0.24
     },
     {
       "id": "portfolio-feature-cv",
@@ -217,9 +237,9 @@
       "scope": "portfolio",
       "layer": "feature",
       "runtime": "browser",
-      "x": -0.318,
-      "y": 0.549,
-      "z": -0.554
+      "x": 0.559,
+      "y": 0.326,
+      "z": 0.548
     },
     {
       "id": "portfolio-feature-experience",
@@ -227,9 +247,9 @@
       "scope": "portfolio",
       "layer": "feature",
       "runtime": "browser",
-      "x": -0.36,
-      "y": 0.332,
-      "z": -0.71
+      "x": 0.856,
+      "y": 0.09,
+      "z": 0.139
     },
     {
       "id": "portfolio-feature-home",
@@ -237,9 +257,9 @@
       "scope": "portfolio",
       "layer": "feature",
       "runtime": "browser",
-      "x": -0.108,
-      "y": 0.741,
-      "z": -0.26
+      "x": 0.503,
+      "y": 0.55,
+      "z": -0.14
     },
     {
       "id": "portfolio-feature-services",
@@ -247,9 +267,9 @@
       "scope": "portfolio",
       "layer": "feature",
       "runtime": "browser",
-      "x": 0.536,
-      "y": 0.353,
-      "z": -0.279
+      "x": 0.159,
+      "y": 0.228,
+      "z": 0.676
     },
     {
       "id": "portfolio-feature-work",
@@ -257,9 +277,9 @@
       "scope": "portfolio",
       "layer": "feature",
       "runtime": "browser",
-      "x": -0.098,
-      "y": 0.192,
-      "z": -0.869
+      "x": 0.779,
+      "y": 0.307,
+      "z": -0.041
     },
     {
       "id": "portfolio-util-seo",
@@ -267,9 +287,9 @@
       "scope": "portfolio",
       "layer": "util",
       "runtime": "browser",
-      "x": 0.04,
-      "y": 0.713,
-      "z": -0.602
+      "x": 0.627,
+      "y": 0.595,
+      "z": 0.321
     },
     {
       "id": "product-alarm-engine",
@@ -277,9 +297,9 @@
       "scope": "product-alarm-engine",
       "layer": "app",
       "runtime": "browser",
-      "x": 0.946,
-      "y": -0.06,
-      "z": -0.097
+      "x": -0.117,
+      "y": -0.175,
+      "z": 0.9
     },
     {
       "id": "product-alarm-engine-domain",
@@ -287,9 +307,9 @@
       "scope": "product-alarm-engine",
       "layer": "domain",
       "runtime": "agnostic",
-      "x": 0.92,
-      "y": 0.005,
-      "z": 0.302
+      "x": -0.773,
+      "y": -0.311,
+      "z": 0.493
     },
     {
       "id": "product-alarm-engine-feature",
@@ -297,9 +317,9 @@
       "scope": "product-alarm-engine",
       "layer": "feature",
       "runtime": "browser",
-      "x": 0.67,
-      "y": -0.305,
-      "z": -0.222
+      "x": -0.227,
+      "y": -0.511,
+      "z": 0.537
     },
     {
       "id": "product-autosphere-domain",
@@ -307,9 +327,9 @@
       "scope": "product-autosphere",
       "layer": "domain",
       "runtime": "agnostic",
-      "x": -0.733,
-      "y": -0.539,
-      "z": 0.314
+      "x": 0.476,
+      "y": 0.1,
+      "z": -0.832
     },
     {
       "id": "product-autosphere-feature",
@@ -317,9 +337,9 @@
       "scope": "product-autosphere",
       "layer": "feature",
       "runtime": "browser",
-      "x": -0.51,
-      "y": -0.552,
-      "z": -0.319
+      "x": 0.554,
+      "y": -0.32,
+      "z": -0.478
     },
     {
       "id": "product-basecamp",
@@ -327,9 +347,9 @@
       "scope": "product-basecamp",
       "layer": "app",
       "runtime": "browser",
-      "x": -0.275,
-      "y": -0.352,
-      "z": -0.757
+      "x": 0.285,
+      "y": -0.606,
+      "z": 0.553
     },
     {
       "id": "product-basecamp-domain",
@@ -337,9 +357,9 @@
       "scope": "product-basecamp",
       "layer": "domain",
       "runtime": "agnostic",
-      "x": -0.802,
-      "y": 0.29,
-      "z": -0.433
+      "x": -0.613,
+      "y": -0.165,
+      "z": 0.696
     },
     {
       "id": "product-basecamp-feature",
@@ -347,9 +367,9 @@
       "scope": "product-basecamp",
       "layer": "feature",
       "runtime": "browser",
-      "x": -0.688,
-      "y": -0.195,
-      "z": -0.397
+      "x": -0.412,
+      "y": -0.591,
+      "z": 0.227
     },
     {
       "id": "product-dispatch",
@@ -357,9 +377,9 @@
       "scope": "product-dispatch",
       "layer": "app",
       "runtime": "browser",
-      "x": 0.432,
-      "y": -0.758,
-      "z": -0.137
+      "x": -0.097,
+      "y": -0.832,
+      "z": 0.208
     },
     {
       "id": "product-dispatch-domain",
@@ -367,9 +387,9 @@
       "scope": "product-dispatch",
       "layer": "domain",
       "runtime": "agnostic",
-      "x": 0.611,
-      "y": -0.188,
-      "z": 0.75
+      "x": -0.66,
+      "y": 0.137,
+      "z": -0.679
     },
     {
       "id": "product-dispatch-feature",
@@ -377,9 +397,9 @@
       "scope": "product-dispatch",
       "layer": "feature",
       "runtime": "browser",
-      "x": 0.481,
-      "y": -0.53,
-      "z": 0.385
+      "x": -0.614,
+      "y": -0.408,
+      "z": -0.262
     },
     {
       "id": "product-lighting",
@@ -387,9 +407,9 @@
       "scope": "product-lighting",
       "layer": "app",
       "runtime": "browser",
-      "x": -0.265,
-      "y": -0.565,
-      "z": -0.614
+      "x": 0.641,
+      "y": -0.608,
+      "z": -0.056
     },
     {
       "id": "product-lighting-domain",
@@ -397,9 +417,9 @@
       "scope": "product-lighting",
       "layer": "domain",
       "runtime": "agnostic",
-      "x": -0.918,
-      "y": -0.236,
-      "z": 0.225
+      "x": 0.372,
+      "y": -0.306,
+      "z": -0.831
     },
     {
       "id": "product-lighting-feature",
@@ -407,9 +427,9 @@
       "scope": "product-lighting",
       "layer": "feature",
       "runtime": "browser",
-      "x": -0.698,
-      "y": -0.429,
-      "z": -0.191
+      "x": 0.225,
+      "y": -0.629,
+      "z": -0.481
     },
     {
       "id": "product-strategy",
@@ -417,9 +437,9 @@
       "scope": "product-strategy",
       "layer": "app",
       "runtime": "browser",
-      "x": 0.55,
-      "y": -0.595,
-      "z": -0.451
+      "x": 0.086,
+      "y": -0.724,
+      "z": 0.551
     },
     {
       "id": "product-studylm",
@@ -427,9 +447,9 @@
       "scope": "product-studylm",
       "layer": "app",
       "runtime": "browser",
-      "x": 0.146,
-      "y": -0.797,
-      "z": -0.338
+      "x": 0.458,
+      "y": -0.713,
+      "z": -0.217
     },
     {
       "id": "product-studylm-domain",
@@ -437,9 +457,9 @@
       "scope": "product-studylm",
       "layer": "domain",
       "runtime": "agnostic",
-      "x": -0.37,
-      "y": -0.528,
-      "z": 0.752
+      "x": -0.037,
+      "y": -0.267,
+      "z": -0.932
     },
     {
       "id": "product-studylm-feature",
@@ -447,9 +467,9 @@
       "scope": "product-studylm",
       "layer": "feature",
       "runtime": "browser",
-      "x": -0.236,
-      "y": -0.661,
-      "z": 0.349
+      "x": -0.116,
+      "y": -0.501,
+      "z": -0.559
     },
     {
       "id": "product-studylm-learn",
@@ -457,9 +477,9 @@
       "scope": "product-studylm",
       "layer": "ui",
       "runtime": "browser",
-      "x": -0.443,
-      "y": -0.203,
-      "z": 0.812
+      "x": -0.306,
+      "y": 0.039,
+      "z": -0.885
     },
     {
       "id": "product-studylm-lessons",
@@ -467,9 +487,9 @@
       "scope": "product-studylm",
       "layer": "domain",
       "runtime": "agnostic",
-      "x": -0.07,
-      "y": -0.476,
-      "z": 0.855
+      "x": -0.497,
+      "y": -0.273,
+      "z": -0.784
     },
     {
       "id": "product-studylm-tracer",
@@ -477,9 +497,9 @@
       "scope": "product-studylm",
       "layer": "engine",
       "runtime": "agnostic",
-      "x": -0.143,
-      "y": 0.002,
-      "z": 0.99
+      "x": 0.034,
+      "y": 0.231,
+      "z": -0.948
     },
     {
       "id": "product-whatsapp",
@@ -487,9 +507,9 @@
       "scope": "product-whatsapp",
       "layer": "app",
       "runtime": "browser",
-      "x": 0.149,
-      "y": -0.662,
-      "z": -0.581
+      "x": 0.359,
+      "y": -0.798,
+      "z": 0.194
     },
     {
       "id": "product-whatsapp-domain",
@@ -497,9 +517,9 @@
       "scope": "product-whatsapp",
       "layer": "domain",
       "runtime": "agnostic",
-      "x": 0.158,
-      "y": -0.881,
-      "z": 0.406
+      "x": -0.708,
+      "y": -0.669,
+      "z": -0.033
     },
     {
       "id": "product-whatsapp-feature",
@@ -507,9 +527,9 @@
       "scope": "product-whatsapp",
       "layer": "feature",
       "runtime": "browser",
-      "x": -0.064,
-      "y": -0.811,
-      "z": 0.045
+      "x": -0.267,
+      "y": -0.764,
+      "z": -0.003
     },
     {
       "id": "shared-ai-schema",
@@ -517,9 +537,9 @@
       "scope": "shared",
       "layer": "util",
       "runtime": "agnostic",
-      "x": 0.267,
-      "y": -0.202,
-      "z": 0.939
+      "x": -0.839,
+      "y": -0.177,
+      "z": -0.48
     },
     {
       "id": "shared-api-client",
@@ -527,9 +547,9 @@
       "scope": "shared",
       "layer": "contracts",
       "runtime": "agnostic",
-      "x": -0.165,
-      "y": 0.361,
-      "z": 0.867
+      "x": -0.863,
+      "y": 0.318,
+      "z": 0.365
     },
     {
       "id": "shared-content",
@@ -537,9 +557,9 @@
       "scope": "shared",
       "layer": "content",
       "runtime": "agnostic",
-      "x": 0.184,
-      "y": 0.294,
-      "z": -0.729
+      "x": 0.701,
+      "y": 0.061,
+      "z": 0.419
     },
     {
       "id": "shared-contracts",
@@ -547,9 +567,9 @@
       "scope": "shared",
       "layer": "contracts",
       "runtime": "agnostic",
-      "x": 0.828,
-      "y": 0.45,
-      "z": 0.191
+      "x": -0.185,
+      "y": 0.63,
+      "z": 0.682
     },
     {
       "id": "shared-site-config",
@@ -557,9 +577,9 @@
       "scope": "shared",
       "layer": "data-access",
       "runtime": "browser",
-      "x": 0.165,
-      "y": -0.462,
-      "z": 0.588
+      "x": -0.709,
+      "y": -0.311,
+      "z": 0.138
     },
     {
       "id": "shared-state",
@@ -567,9 +587,9 @@
       "scope": "shared",
       "layer": "data-access",
       "runtime": "browser",
-      "x": -0.014,
-      "y": -0.082,
-      "z": -0.338
+      "x": 0.251,
+      "y": -0.177,
+      "z": 0.136
     },
     {
       "id": "shell",
@@ -577,9 +597,9 @@
       "scope": "portfolio",
       "layer": "app",
       "runtime": "browser",
-      "x": 0.142,
-      "y": -0.113,
-      "z": -0.646
+      "x": 0.564,
+      "y": -0.251,
+      "z": 0.25
     },
     {
       "id": "shell-e2e",
@@ -587,9 +607,9 @@
       "scope": "test",
       "layer": "e2e",
       "runtime": "node",
-      "x": 0.03,
-      "y": -0.362,
-      "z": -0.85
+      "x": 0.719,
+      "y": -0.482,
+      "z": 0.362
     },
     {
       "id": "strategy-domain",
@@ -597,9 +617,9 @@
       "scope": "product-strategy",
       "layer": "domain",
       "runtime": "browser",
-      "x": 0.83,
-      "y": -0.391,
-      "z": 0.361
+      "x": -0.393,
+      "y": 0.127,
+      "z": 0.861
     },
     {
       "id": "strategy-feature",
@@ -607,9 +627,9 @@
       "scope": "product-strategy",
       "layer": "feature",
       "runtime": "browser",
-      "x": 0.564,
-      "y": -0.584,
-      "z": -0.007
+      "x": -0.112,
+      "y": -0.386,
+      "z": 0.708
     },
     {
       "id": "three-angular",
@@ -617,9 +637,9 @@
       "scope": "platform",
       "layer": "ui",
       "runtime": "browser",
-      "x": -0.345,
-      "y": 0.783,
-      "z": 0.384
+      "x": -0.212,
+      "y": 0.798,
+      "z": -0.308
     },
     {
       "id": "three-constellation",
@@ -627,9 +647,9 @@
       "scope": "platform",
       "layer": "engine",
       "runtime": "browser",
-      "x": 0.102,
-      "y": 0.93,
-      "z": 0.251
+      "x": 0.268,
+      "y": 0.648,
+      "z": -0.643
     },
     {
       "id": "three-engine",
@@ -637,9 +657,9 @@
       "scope": "platform",
       "layer": "engine",
       "runtime": "browser",
-      "x": -0.065,
-      "y": 0.755,
-      "z": 0.641
+      "x": -0.561,
+      "y": 0.718,
+      "z": -0.412
     },
     {
       "id": "three-scene-constellation",
@@ -647,9 +667,9 @@
       "scope": "platform",
       "layer": "engine",
       "runtime": "browser",
-      "x": -0.211,
-      "y": 0.939,
-      "z": 0.158
+      "x": -0.017,
+      "y": 0.797,
+      "z": -0.516
     },
     {
       "id": "three-scene-sky",
@@ -657,9 +677,9 @@
       "scope": "platform",
       "layer": "engine",
       "runtime": "browser",
-      "x": -0.479,
-      "y": 0.569,
-      "z": 0.643
+      "x": -0.764,
+      "y": 0.591,
+      "z": -0.006
     }
   ],
   "edges": [
@@ -674,373 +694,368 @@
       "static"
     ],
     [
+      0,
+      3,
+      "static"
+    ],
+    [
+      0,
+      15,
+      "static"
+    ],
+    [
       1,
-      36,
+      38,
       "static"
     ],
     [
       2,
-      54,
+      56,
       "static"
     ],
     [
       3,
-      5,
+      15,
       "static"
     ],
     [
-      3,
-      6,
-      "implicit"
-    ],
-    [
-      3,
+      4,
       6,
       "static"
     ],
     [
-      3,
-      45,
-      "implicit"
-    ],
-    [
-      3,
-      61,
+      4,
+      7,
       "implicit"
     ],
     [
       4,
-      3,
+      7,
+      "static"
+    ],
+    [
+      4,
+      47,
       "implicit"
     ],
     [
-      6,
+      4,
+      63,
+      "implicit"
+    ],
+    [
       5,
-      "static"
+      4,
+      "implicit"
     ],
     [
       7,
-      8,
-      "dynamic"
-    ],
-    [
-      7,
-      16,
-      "static"
-    ],
-    [
-      7,
-      53,
-      "static"
-    ],
-    [
-      8,
       6,
       "static"
     ],
     [
       8,
-      56,
-      "static"
-    ],
-    [
       9,
-      10,
       "dynamic"
     ],
     [
-      9,
-      16,
+      8,
+      18,
       "static"
     ],
     [
-      9,
-      53,
-      "static"
-    ],
-    [
-      10,
-      6,
-      "static"
-    ],
-    [
-      10,
-      56,
-      "static"
-    ],
-    [
-      11,
-      13,
-      "dynamic"
-    ],
-    [
-      11,
-      16,
-      "static"
-    ],
-    [
-      11,
-      53,
-      "static"
-    ],
-    [
-      13,
-      6,
-      "static"
-    ],
-    [
-      13,
-      12,
-      "static"
-    ],
-    [
-      13,
-      52,
-      "static"
-    ],
-    [
-      13,
+      8,
       55,
       "static"
     ],
     [
-      13,
-      56,
+      9,
+      7,
       "static"
     ],
     [
-      13,
-      61,
+      9,
+      58,
       "static"
     ],
     [
-      13,
-      65,
-      "static"
-    ],
-    [
-      13,
-      65,
+      10,
+      11,
       "dynamic"
     ],
     [
-      16,
-      6,
-      "static"
-    ],
-    [
-      16,
-      53,
-      "static"
-    ],
-    [
-      16,
-      56,
-      "static"
-    ],
-    [
-      17,
-      16,
-      "static"
-    ],
-    [
+      10,
       18,
-      6,
       "static"
     ],
     [
-      19,
-      15,
+      10,
+      55,
       "static"
     ],
     [
-      20,
-      6,
+      11,
+      7,
       "static"
     ],
     [
-      20,
-      26,
+      11,
+      58,
       "static"
     ],
     [
-      20,
-      53,
-      "static"
-    ],
-    [
-      20,
-      56,
-      "static"
-    ],
-    [
-      21,
-      6,
-      "static"
-    ],
-    [
-      21,
-      26,
-      "static"
-    ],
-    [
-      21,
-      53,
-      "static"
-    ],
-    [
-      21,
-      56,
-      "static"
-    ],
-    [
-      22,
-      6,
-      "static"
-    ],
-    [
-      22,
-      26,
-      "static"
-    ],
-    [
-      22,
-      53,
-      "static"
-    ],
-    [
-      22,
-      56,
-      "static"
-    ],
-    [
-      23,
-      6,
-      "static"
-    ],
-    [
-      23,
-      26,
-      "static"
-    ],
-    [
-      23,
-      53,
-      "static"
-    ],
-    [
-      23,
-      56,
-      "static"
-    ],
-    [
-      23,
-      61,
-      "static"
-    ],
-    [
-      23,
-      62,
-      "static"
-    ],
-    [
-      23,
-      64,
+      12,
+      14,
       "dynamic"
     ],
     [
-      24,
-      6,
+      12,
+      18,
       "static"
     ],
     [
-      24,
-      26,
+      12,
+      55,
       "static"
     ],
     [
-      24,
-      53,
+      14,
+      7,
       "static"
     ],
     [
-      24,
+      14,
+      13,
+      "static"
+    ],
+    [
+      14,
       54,
       "static"
     ],
     [
+      14,
+      57,
+      "static"
+    ],
+    [
+      14,
+      58,
+      "static"
+    ],
+    [
+      14,
+      63,
+      "static"
+    ],
+    [
+      14,
+      67,
+      "static"
+    ],
+    [
+      14,
+      67,
+      "dynamic"
+    ],
+    [
+      18,
+      7,
+      "static"
+    ],
+    [
+      18,
+      55,
+      "static"
+    ],
+    [
+      18,
+      58,
+      "static"
+    ],
+    [
+      19,
+      18,
+      "static"
+    ],
+    [
+      20,
+      7,
+      "static"
+    ],
+    [
+      21,
+      17,
+      "static"
+    ],
+    [
+      22,
+      7,
+      "static"
+    ],
+    [
+      22,
+      28,
+      "static"
+    ],
+    [
+      22,
+      55,
+      "static"
+    ],
+    [
+      22,
+      58,
+      "static"
+    ],
+    [
+      23,
+      7,
+      "static"
+    ],
+    [
+      23,
+      28,
+      "static"
+    ],
+    [
+      23,
+      55,
+      "static"
+    ],
+    [
+      23,
+      58,
+      "static"
+    ],
+    [
+      24,
+      7,
+      "static"
+    ],
+    [
+      24,
+      28,
+      "static"
+    ],
+    [
       24,
       55,
       "static"
     ],
     [
       24,
-      56,
+      58,
       "static"
     ],
     [
       25,
-      6,
+      7,
       "static"
     ],
     [
       25,
-      26,
-      "static"
-    ],
-    [
-      25,
-      53,
-      "static"
-    ],
-    [
-      25,
-      56,
-      "static"
-    ],
-    [
-      26,
-      53,
-      "static"
-    ],
-    [
-      27,
-      16,
-      "static"
-    ],
-    [
-      27,
-      29,
-      "dynamic"
-    ],
-    [
-      29,
-      6,
-      "static"
-    ],
-    [
-      29,
-      15,
-      "static"
-    ],
-    [
-      29,
       28,
       "static"
     ],
     [
-      29,
+      25,
+      55,
+      "static"
+    ],
+    [
+      25,
+      58,
+      "static"
+    ],
+    [
+      25,
+      63,
+      "static"
+    ],
+    [
+      25,
+      64,
+      "static"
+    ],
+    [
+      25,
+      66,
+      "dynamic"
+    ],
+    [
+      26,
+      7,
+      "static"
+    ],
+    [
+      26,
+      28,
+      "static"
+    ],
+    [
+      26,
+      55,
+      "static"
+    ],
+    [
+      26,
       56,
       "static"
     ],
     [
+      26,
+      57,
+      "static"
+    ],
+    [
+      26,
+      58,
+      "static"
+    ],
+    [
+      27,
+      7,
+      "static"
+    ],
+    [
+      27,
+      28,
+      "static"
+    ],
+    [
+      27,
+      55,
+      "static"
+    ],
+    [
+      27,
+      58,
+      "static"
+    ],
+    [
+      28,
+      55,
+      "static"
+    ],
+    [
+      29,
+      18,
+      "static"
+    ],
+    [
+      29,
       31,
-      6,
+      "dynamic"
+    ],
+    [
+      31,
+      7,
       "static"
     ],
     [
       31,
-      15,
+      17,
       "static"
     ],
     [
@@ -1050,127 +1065,122 @@
     ],
     [
       31,
-      56,
+      58,
       "static"
     ],
     [
-      32,
-      15,
-      "static"
-    ],
-    [
-      32,
-      16,
-      "static"
-    ],
-    [
-      32,
-      34,
-      "dynamic"
-    ],
-    [
-      32,
-      56,
-      "static"
-    ],
-    [
-      34,
-      6,
-      "static"
-    ],
-    [
-      34,
-      12,
-      "static"
-    ],
-    [
-      34,
-      15,
-      "static"
-    ],
-    [
-      34,
-      18,
-      "static"
-    ],
-    [
-      34,
-      19,
-      "static"
-    ],
-    [
-      34,
       33,
+      7,
+      "static"
+    ],
+    [
+      33,
+      17,
+      "static"
+    ],
+    [
+      33,
+      32,
+      "static"
+    ],
+    [
+      33,
+      58,
       "static"
     ],
     [
       34,
-      56,
+      17,
       "static"
     ],
     [
-      35,
-      15,
+      34,
+      18,
       "static"
     ],
     [
-      35,
-      16,
-      "static"
-    ],
-    [
-      35,
-      37,
-      "dynamic"
-    ],
-    [
-      37,
-      6,
-      "static"
-    ],
-    [
-      37,
+      34,
       36,
-      "static"
-    ],
-    [
-      37,
-      55,
-      "static"
-    ],
-    [
-      37,
-      56,
-      "static"
-    ],
-    [
-      38,
-      15,
-      "static"
-    ],
-    [
-      38,
-      16,
-      "static"
-    ],
-    [
-      38,
-      40,
       "dynamic"
     ],
     [
+      34,
+      58,
+      "static"
+    ],
+    [
+      36,
+      7,
+      "static"
+    ],
+    [
+      36,
+      13,
+      "static"
+    ],
+    [
+      36,
+      17,
+      "static"
+    ],
+    [
+      36,
+      20,
+      "static"
+    ],
+    [
+      36,
+      21,
+      "static"
+    ],
+    [
+      36,
+      35,
+      "static"
+    ],
+    [
+      36,
+      58,
+      "static"
+    ],
+    [
+      37,
+      17,
+      "static"
+    ],
+    [
+      37,
+      18,
+      "static"
+    ],
+    [
+      37,
+      39,
+      "dynamic"
+    ],
+    [
+      39,
+      7,
+      "static"
+    ],
+    [
+      39,
       38,
-      56,
+      "static"
+    ],
+    [
+      39,
+      57,
+      "static"
+    ],
+    [
+      39,
+      58,
       "static"
     ],
     [
       40,
-      6,
-      "static"
-    ],
-    [
-      40,
-      15,
+      17,
       "static"
     ],
     [
@@ -1180,367 +1190,392 @@
     ],
     [
       40,
-      19,
-      "static"
-    ],
-    [
-      40,
-      39,
-      "static"
-    ],
-    [
-      40,
-      56,
-      "static"
-    ],
-    [
-      41,
-      15,
-      "static"
-    ],
-    [
-      41,
-      16,
-      "static"
-    ],
-    [
-      41,
-      60,
+      42,
       "dynamic"
     ],
     [
-      42,
-      15,
+      40,
+      58,
       "static"
     ],
     [
       42,
-      16,
+      7,
       "static"
     ],
     [
       42,
-      44,
-      "dynamic"
-    ],
-    [
-      44,
-      6,
+      17,
       "static"
     ],
     [
-      44,
-      15,
+      42,
+      20,
       "static"
     ],
     [
-      44,
-      19,
+      42,
+      21,
       "static"
     ],
     [
-      44,
+      42,
+      41,
+      "static"
+    ],
+    [
+      42,
+      58,
+      "static"
+    ],
+    [
       43,
+      17,
+      "static"
+    ],
+    [
+      43,
+      18,
+      "static"
+    ],
+    [
+      43,
+      62,
+      "dynamic"
+    ],
+    [
+      44,
+      17,
       "static"
     ],
     [
       44,
-      45,
+      18,
       "static"
     ],
     [
       44,
       46,
-      "static"
+      "dynamic"
     ],
     [
-      44,
-      55,
-      "static"
-    ],
-    [
-      44,
-      56,
-      "static"
-    ],
-    [
-      45,
       46,
+      7,
       "static"
     ],
     [
+      46,
+      17,
+      "static"
+    ],
+    [
+      46,
+      21,
+      "static"
+    ],
+    [
+      46,
       45,
+      "static"
+    ],
+    [
+      46,
       47,
       "static"
     ],
     [
       46,
-      51,
-      "static"
-    ],
-    [
       48,
-      15,
       "static"
     ],
     [
+      46,
+      57,
+      "static"
+    ],
+    [
+      46,
+      58,
+      "static"
+    ],
+    [
+      47,
       48,
-      16,
       "static"
     ],
     [
-      48,
-      50,
-      "dynamic"
-    ],
-    [
-      48,
-      56,
-      "static"
-    ],
-    [
-      50,
-      6,
-      "static"
-    ],
-    [
-      50,
-      15,
-      "static"
-    ],
-    [
-      50,
-      19,
-      "static"
-    ],
-    [
-      50,
+      47,
       49,
       "static"
     ],
     [
-      50,
-      55,
-      "static"
-    ],
-    [
-      50,
-      56,
-      "static"
-    ],
-    [
-      52,
-      14,
-      "implicit"
-    ],
-    [
-      56,
+      48,
       53,
       "static"
     ],
     [
-      57,
-      6,
-      "static"
-    ],
-    [
-      57,
-      7,
-      "federated"
-    ],
-    [
-      57,
-      9,
-      "federated"
-    ],
-    [
-      57,
-      11,
-      "federated"
-    ],
-    [
-      57,
-      15,
-      "static"
-    ],
-    [
-      57,
-      16,
-      "static"
-    ],
-    [
-      57,
+      50,
       17,
       "static"
     ],
     [
-      57,
-      20,
+      50,
+      18,
+      "static"
+    ],
+    [
+      50,
+      52,
       "dynamic"
     ],
     [
-      57,
+      50,
+      58,
+      "static"
+    ],
+    [
+      52,
+      7,
+      "static"
+    ],
+    [
+      52,
+      17,
+      "static"
+    ],
+    [
+      52,
       21,
-      "dynamic"
+      "static"
     ],
     [
+      52,
+      51,
+      "static"
+    ],
+    [
+      52,
       57,
+      "static"
+    ],
+    [
+      52,
+      58,
+      "static"
+    ],
+    [
+      54,
+      16,
+      "implicit"
+    ],
+    [
+      58,
+      55,
+      "static"
+    ],
+    [
+      59,
+      7,
+      "static"
+    ],
+    [
+      59,
+      8,
+      "federated"
+    ],
+    [
+      59,
+      10,
+      "federated"
+    ],
+    [
+      59,
+      12,
+      "federated"
+    ],
+    [
+      59,
+      17,
+      "static"
+    ],
+    [
+      59,
+      18,
+      "static"
+    ],
+    [
+      59,
+      19,
+      "static"
+    ],
+    [
+      59,
       22,
       "dynamic"
     ],
     [
-      57,
+      59,
       23,
       "dynamic"
     ],
     [
-      57,
+      59,
       24,
       "dynamic"
     ],
     [
-      57,
+      59,
       25,
       "dynamic"
     ],
     [
-      57,
-      29,
+      59,
+      26,
       "dynamic"
     ],
     [
-      57,
+      59,
+      27,
+      "dynamic"
+    ],
+    [
+      59,
       31,
       "dynamic"
     ],
     [
-      57,
-      32,
+      59,
+      33,
+      "dynamic"
+    ],
+    [
+      59,
+      34,
       "federated"
     ],
     [
-      57,
-      35,
+      59,
+      37,
       "federated"
     ],
     [
-      57,
-      38,
+      59,
+      40,
       "federated"
     ],
     [
-      57,
-      41,
+      59,
+      43,
       "federated"
     ],
     [
-      57,
-      42,
+      59,
+      44,
       "federated"
     ],
     [
-      57,
-      48,
+      59,
+      50,
       "federated"
     ],
     [
-      57,
-      53,
+      59,
+      55,
       "static"
     ],
     [
-      57,
-      56,
-      "static"
-    ],
-    [
+      59,
       58,
-      11,
-      "implicit"
-    ],
-    [
-      58,
-      32,
-      "implicit"
-    ],
-    [
-      58,
-      38,
-      "implicit"
-    ],
-    [
-      58,
-      42,
-      "implicit"
-    ],
-    [
-      58,
-      53,
-      "static"
-    ],
-    [
-      58,
-      57,
-      "implicit"
-    ],
-    [
-      60,
-      6,
       "static"
     ],
     [
       60,
-      15,
-      "static"
+      12,
+      "implicit"
     ],
     [
       60,
-      56,
+      34,
+      "implicit"
+    ],
+    [
+      60,
+      40,
+      "implicit"
+    ],
+    [
+      60,
+      44,
+      "implicit"
+    ],
+    [
+      60,
+      55,
       "static"
     ],
     [
       60,
       59,
-      "static"
+      "implicit"
     ],
     [
-      61,
       62,
+      7,
       "static"
     ],
     [
+      62,
+      17,
+      "static"
+    ],
+    [
+      62,
+      58,
+      "static"
+    ],
+    [
+      62,
       61,
+      "static"
+    ],
+    [
       63,
+      64,
       "static"
     ],
     [
-      61,
-      64,
+      63,
+      65,
+      "static"
+    ],
+    [
+      63,
+      66,
       "dynamic"
     ],
     [
-      64,
-      5,
+      66,
+      6,
       "static"
     ],
     [
+      66,
       64,
-      62,
       "static"
     ],
     [
-      64,
-      63,
-      "static"
-    ],
-    [
+      66,
       65,
-      5,
       "static"
     ],
     [
+      67,
+      6,
+      "static"
+    ],
+    [
+      67,
       65,
-      63,
       "static"
     ]
   ]

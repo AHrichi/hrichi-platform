@@ -15,6 +15,7 @@ import { AppModule } from './app.module';
 import { loadConfig } from './config';
 import { configureApp } from './configure-app';
 import { DISPATCH_MONGO_DB, MongoDispatchRepository } from '@ah/api/dispatch';
+import { LEARNING_MONGO_DB } from '@ah/api/learning';
 import { MONGO_CLIENT } from './mongo.module';
 
 const config = loadConfig({
@@ -42,6 +43,8 @@ describe('API over HTTP', () => {
       .overrideProvider(DISPATCH_MONGO_DB)
       .useValue({})
       .overrideProvider(MongoDispatchRepository)
+      .useValue({})
+      .overrideProvider(LEARNING_MONGO_DB)
       .useValue({})
       .overrideProvider(LEADS_REPOSITORY)
       .useValue(repository)
@@ -89,6 +92,13 @@ describe('API over HTTP', () => {
       .expect(400);
 
     expect(repository.leads.size).toBe(0);
+  });
+
+  it('has no Learning Engine routes without LEARNING_TOKEN_SECRET', async () => {
+    await request(app.getHttpServer())
+      .post('/learning/pairing')
+      .send({ deviceName: 'Phone' })
+      .expect(404);
   });
 
   it('only allows the configured origin to read responses', async () => {

@@ -25,7 +25,7 @@ It is a personal tool with one owner, English only. Three constraints shape it:
 - **A module of its own, under `scope:learning`.** Its libs are:
   - `domain`, `contracts` and `ai-kit`, all `runtime:agnostic`, so Nest and the browser run the same scheduler and checks;
   - `data-access`, `ui` and the `feature-*` libs;
-  - one remote, `product-learning` (a working name), which also runs as a standalone PWA.
+  - one remote, `product-learning`, which also runs as a standalone PWA.
 - **Products reach it only through a client lib.** The lib is tagged `scope:learning-client` and `type:client`, and every `scope:product-*` may depend on that scope and no other part of the engine.
   - `type:client` may use contracts, utilities, platform services, presentational components and tokens. App and feature layers may use it.
   - `scope:api` may use `scope:learning`; the runtime rules still keep browser libs out of Nest.
@@ -51,4 +51,4 @@ It is a personal tool with one owner, English only. Three constraints shape it:
   - voice capture needs `microphone=(self)` on the learning app's origin in `prepare-hosting.mjs` (L2);
   - `connect-src` needs the API and Worker origins (L1).
 - **One owner, paired devices.** A 6-digit code is approved through the Telegram bot, then the device gets an HMAC-signed token that both Nest and the Worker can check.
-- **The name** of the app, the remote and the Worker is still open, and must be chosen before L1 creates them.
+- **Names:** the remote is `product-learning`, the Worker `learning-edge`, the Dexie database `LearningDatabase` and the libs `@ah/learning/*`.

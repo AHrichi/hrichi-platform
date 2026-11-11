@@ -1,6 +1,6 @@
 # Learning Engine: technical design
 
-- **Status:** Accepted for decisions 1–3 in §15, recorded in [ADR-0024](../adr/0024-learning-engine.md). Jev (decision 5) and the name (decision 4) are still open.
+- **Status:** Accepted for decisions 1–3 in §15, recorded in [ADR-0024](../adr/0024-learning-engine.md). Decision 4 (the name) is settled; Jev (decision 5) is still open.
 - **Date:** 2026-11-11
 - **Product design:** the approved blueprint: zero-friction capture, a capped Daily Set, a forgiving habit loop and an engine that host apps plug into.
 - **Audience:** one owner (a personal tool), English only.
@@ -463,10 +463,10 @@ Accepted on 2026-11-11:
 1. **The AI pipeline runs in Nest on Render**, which wakes on demand. n8n stays off the capture path because it is unavailable while you are away from the PC.
 2. **Nudges go out through a Telegram bot from a Cloudflare edge Worker.** Web Push can be added later behind the same decision function.
 3. **The engine replaces StudyLM's planned FSRS and streak phases.** StudyLM's `learning-lab.md` roadmap is updated to point here when L4 lands.
+4. **Name:** the remote is `product-learning`, the Worker `learning-edge` and the database `LearningDatabase` (accepted the same day).
 
 Still open:
 
-4. **Name:** `product-learning` remains the working id. Choose the product name before the remote and the Worker are created in L1.
 5. **Jev for the judging tasks (proposed):** grading, triage, the quality gate, links and teach-back clarity go to Jev behind a `DecisionModel` port, with the generative ladder as fallback. It is adopted per task only if it passes the L2 spike (§6.4). It needs a paid account at under $0.01 a month, which is the engine's only non-free dependency.
 
 ## Sources on Jev (checked 2026-11-11)
