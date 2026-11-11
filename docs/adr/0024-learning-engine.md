@@ -50,5 +50,6 @@ It is a personal tool with one owner, English only. Three constraints shape it:
 - **Platform changes come later:**
   - voice capture needs `microphone=(self)` on the learning app's origin in `prepare-hosting.mjs` (L2);
   - `connect-src` needs the API and Worker origins (L1).
-- **One owner, paired devices.** A 6-digit code is approved through the Telegram bot, then the device gets an HMAC-signed token that both Nest and the Worker can check.
+- **One owner, paired devices.** The API sends a 6-digit code to the owner's Telegram chat, the owner types it into the device, and the device gets an HMAC-signed token that both Nest and the Worker can check (design §11).
+- **Turning it on (L1):** set `LEARNING_TOKEN_SECRET` (at least 32 characters) on Render and add the learning app's origin to `CORS_ORIGINS`. Without the secret the `/learning` routes don't exist. `product-learning` has a `deploy` target, so the CI deploy job publishes it once this lands on `main`; it stays out of `tools/federation/remotes.json` until the portfolio embeds it (L4).
 - **Names:** the remote is `product-learning`, the Worker `learning-edge`, the Dexie database `LearningDatabase` and the libs `@ah/learning/*`.

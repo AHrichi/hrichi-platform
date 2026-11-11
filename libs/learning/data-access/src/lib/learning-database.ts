@@ -1,0 +1,54 @@
+import Dexie, { type Table } from 'dexie';
+import type {
+  Concept,
+  RecordKind,
+  ReviewEvent,
+  Topic,
+} from '@ah/learning/domain';
+
+/** A record as this device keeps it: the data plus who wrote this version. */
+export interface LocalRow<T> {
+  id: string;
+  /** The device that wrote this version (LOCAL_WRITER before pairing). */
+  by: string;
+  updatedAt: string;
+  data: T;
+}
+
+/** A local change waiting to be pushed. */
+export interface OutboxRow {
+  /** `<kind>:<id>`: a record is queued once, however often it changes. */
+  key: string;
+  kind: RecordKind;
+  id: string;
+  /** Bumped on every change, so a change made during a sync isn't lost. */
+  queuedAt: number;
+}
+
+export interface MetaRow {
+  key: string;
+  value: unknown;
+}
+
+/**
+ * The Learning Engine's database on this device (design §4.2). The app
+ * names it through `databaseName`, so the portfolio's demo opens its own.
+ */
+export class LearningDatabase extends Dexie {
+  topics!: Table<LocalRow<Topic>, string>;
+  concepts!: Table<LocalRow<Concept>, string>;
+  events!: Table<LocalRow<ReviewEvent>, string>;
+  outbox!: Table<OutboxRow, string>;
+  meta!: Table<MetaRow, string>;
+
+  constructor(name = 'LearningDatabase') {
+    super(name);
+    this.version(1).stores({
+      topics: 'id',
+      concepts: 'id, data.topicId, data.status',
+      events: 'id, data.conceptId, data.localDate',
+      outbox: 'key, kind',
+      meta: 'key',
+    });
+  }
+}

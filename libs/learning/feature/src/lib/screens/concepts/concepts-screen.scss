@@ -1,0 +1,82 @@
+@use '../form' as lrn;
+
+.screen {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  align-items: center;
+  justify-content: space-between;
+
+  h1 {
+    margin: 0;
+    font-size: var(--font-size-600);
+  }
+}
+
+.card {
+  @include lrn.card;
+}
+
+.editor {
+  display: grid;
+  gap: var(--space-3);
+
+  h2 {
+    margin: 0;
+    font-size: var(--font-size-400);
+  }
+}
+
+.field {
+  @include lrn.field;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.list {
+  display: grid;
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.concept-head {
+  display: flex;
+  gap: var(--space-2);
+  align-items: baseline;
+  justify-content: space-between;
+
+  h2 {
+    margin: 0;
+    font-size: var(--font-size-400);
+  }
+}
+
+.essence {
+  margin-block: var(--space-2);
+  color: var(--color-text-muted);
+}
+
+.prompt {
+  padding-block: var(--space-2);
+  border-block-start: 1px solid var(--color-border-default);
+
+  summary {
+    cursor: pointer;
+    font-weight: var(--font-weight-medium);
+  }
+
+  p {
+    margin-block: var(--space-2) 0;
+  }
+}

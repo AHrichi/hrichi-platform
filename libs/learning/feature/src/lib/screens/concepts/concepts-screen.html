@@ -1,0 +1,88 @@
+<section class="screen" aria-labelledby="concepts-title">
+  <div class="head">
+    <h1 id="concepts-title">Concepts</h1>
+    @if (!adding()) {
+      <button ahButton type="button" (click)="adding.set(true)">
+        Add a concept
+      </button>
+    }
+  </div>
+
+  @if (adding()) {
+    <form class="card editor" [formRoot]="form" aria-labelledby="add-title">
+      <h2 id="add-title">New concept</h2>
+
+      @for (field of fields; track field.key) {
+        @let control = form[field.key];
+        <div class="field">
+          <label [for]="'concept-' + field.key">{{ field.label }}</label>
+          @if (!field.multiline) {
+            <input
+              [id]="'concept-' + field.key"
+              [formField]="control"
+              [placeholder]="field.hint"
+              autocomplete="off"
+              [attr.aria-invalid]="control().touched() && control().invalid()"
+              [attr.aria-describedby]="'concept-' + field.key + '-error'"
+            />
+          } @else {
+            <textarea
+              [id]="'concept-' + field.key"
+              [formField]="control"
+              [placeholder]="field.hint"
+              rows="2"
+              [attr.aria-invalid]="control().touched() && control().invalid()"
+              [attr.aria-describedby]="'concept-' + field.key + '-error'"
+            ></textarea>
+          }
+          <p class="error" [id]="'concept-' + field.key + '-error'">
+            @if (control().touched() && control().invalid()) {
+              {{ control().errors()[0]?.message || 'This is too long.' }}
+            }
+          </p>
+        </div>
+      }
+
+      <div class="actions">
+        <button ahButton type="submit" [disabled]="saving()">Save</button>
+        <button ahButton="ghost" type="button" (click)="cancel()">
+          Cancel
+        </button>
+      </div>
+    </form>
+  }
+
+  @if (store.ready() && !store.concepts().length && !adding()) {
+    <ah-empty-state
+      icon="✦"
+      title="Nothing to learn yet"
+      description="Add the first idea you want to keep. Each one gets a question you will answer in your daily set."
+    />
+  }
+
+  <ul class="list" role="list">
+    @for (concept of store.concepts(); track concept.id) {
+      <li class="card concept">
+        <div class="concept-head">
+          <h2>{{ concept.title }}</h2>
+          <button
+            ahButton="ghost"
+            size="sm"
+            type="button"
+            (click)="remove(concept.id, concept.title)"
+            [attr.aria-label]="'Delete ' + concept.title"
+          >
+            Delete
+          </button>
+        </div>
+        <p class="essence">{{ concept.explanation.essence }}</p>
+        @for (prompt of concept.prompts; track prompt.id) {
+          <details class="prompt">
+            <summary>{{ prompt.question }}</summary>
+            <p>{{ prompt.answer }}</p>
+          </details>
+        }
+      </li>
+    }
+  </ul>
+</section>

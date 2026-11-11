@@ -79,14 +79,19 @@ The libs follow the platform's conventions (§4.2/§4.3 of the architecture doc)
 libs/learning/
 ├── domain/        type:domain   runtime:agnostic   entities, valibot schemas, FSRS wrapper, Daily Set composer,
 │                                                   streak/XP/mastery rules. Pure TS, shared by Angular and Nest.
-├── contracts/     type:contracts runtime:agnostic  API DTOs, sync protocol, event group (type-only)
+├── contracts/     type:contracts runtime:agnostic  (L4) type-only DTOs for the client lib and the event group. Until then
+│                                                   the sync and pairing contracts are valibot schemas in domain, which
+│                                                   the API validates with (`ValibotPipe`)
 ├── ai-kit/        type:domain   runtime:agnostic   prompts, per-task strict schemas, semantic checks, golden concepts,
 │                                                   generated kit (Vitest file snapshots, like the lessons lib)
-├── data-access/   type:data-access runtime:browser Dexie database, outbox, sync client, LearningStore (SignalStore)
+├── data-access/   type:data-access runtime:browser Dexie database, outbox, sync client, HTTP client. Framework-free:
+│                                                   data-access may not import platform libs, so the feature wires it
 ├── client/        type:client   runtime:browser    the ONLY lib host apps may import: capture(), stateFor(),
 │                                                   <ah-learn-this>, <ah-learning-today>
 ├── ui/            type:ui                          swipe card, progress dots, flame, completion, garden (SVG)
-└── feature-{capture,digest,review,garden,settings}/ type:feature
+└── feature/       type:feature                     LearningStore (SignalStore), runtime wiring (APP_MODE, databaseName,
+                                                    site config) and the screens: concepts and devices in L1; capture,
+                                                    digest, review, garden and settings join in later phases
 apps/products/learning/web/                         remote `product-learning` (port 4311) + standalone PWA
 apps/learning-edge/                                 Cloudflare Worker (Cron Trigger + KV + Telegram webhook)
 libs/api/learning/                                  Nest module: sync, pipeline, grading, pairing
@@ -97,8 +102,8 @@ libs/shared/ai-schema/                              extracted from product-study
 
 **Boundary rules (added to `eslint.config.mjs`):**
 
-- `scope:product-*` may also depend on `scope:learning` **only when the lib is also `type:client`**. Bloat is capped by lint: a host app can never reach the store, the database or the screens.
-- `scope:learning` may depend on `shared`, `platform` and `design-system`, and never on a product.
+- `scope:product-*` may also depend on `scope:learning-client`, the tag only the client lib carries (it is also `type:client`). Bloat is capped by lint: a host app can never reach the store, the database or the screens.
+- `scope:learning` may depend on `shared`, `platform` and `design-system`, and never on a product. `scope:learning-client` may also reach `scope:learning`.
 - `scope:api` may depend on `learning/domain`, `learning/contracts` and `learning/ai-kit`, which are all `runtime:agnostic`. The scheduler and the checks run the **same code** on both sides.
 
 ---
@@ -107,7 +112,7 @@ libs/shared/ai-schema/                              extracted from product-study
 
 ### 4.1 Entities as stored
 
-The entities from the blueprint, shaped for a document store and for sync. Every record has a client-generated ULID `id`, `updatedAt` and a nullable `deletedAt` (tombstone). Server-stored records also carry a server `seq` used as the change cursor.
+The entities from the blueprint, shaped for a document store and for sync. Every record has a client-generated UUID `id` (`crypto.randomUUID()`), `updatedAt` and a nullable `deletedAt` (tombstone). Server-stored records also carry a server `seq` used as the change cursor.
 
 ```ts
 Capture        { id; modality: 'text'|'voice'|'share'|'host'|'telegram'; text|null; audioRef|null; transcript|null;
@@ -149,9 +154,11 @@ Each device caches them, and they can always be rebuilt. If the rules or the FSR
 ### 4.2 Storage
 
 - **Browser:** `LearningDatabase` (Dexie), named through `databaseName(mode, 'learning', 'LearningDatabase')`.
-  - Tables: `concepts 'id, topicId, status, seq'`, `events 'id, conceptId, at, synced'`, `memory 'conceptId, dueAt'`, `sessions 'id, localDate'`, `captures 'id, status'`, `outbox 'id, kind, createdAt'`, `topics`, `links`, `ledger`, `profile`.
+  - Rows are `{ id, by, updatedAt, data }`: the record plus the device that wrote this version, which the merge rule needs.
+  - Version 1 (L1): `topics 'id'`, `concepts 'id, data.topicId, data.status'`, `events 'id, data.conceptId, data.localDate'`, `outbox 'key, kind'` (one row per changed record, `key` = `<kind>:<id>`, with a `queuedAt` that a change during a sync bumps) and `meta 'key'` (the pairing and the cursor).
+  - Later versions add `sessions`, `captures`, `memory`, `links`, `ledger` and `profile`.
   - Audio waits in the outbox as a `Blob` until it is uploaded.
-- **Server:** Atlas collections `learning_captures`, `learning_concepts`, `learning_links`, `learning_topics`, `learning_review_events`, `learning_teachbacks`, `learning_ledger`, `learning_profile` and `learning_devices`, plus a counter document for `seq`.
+- **Server:** one Atlas collection, `learning_records`, holds every synced kind (`_id` = `<kind>:<id>`, a unique index on `seq`), so the change feed is one indexed range scan. Beside it: `learning_devices`, `learning_pairings` (a TTL index removes expired ones) and `learning_counters` (the `seq` counter).
   - Audio is deleted after transcription.
   - **Size:** about 3 KB per concept and 200 B per event. 10,000 concepts and 100,000 events come to about 50 MB, a tenth of the free tier.
 
@@ -160,14 +167,20 @@ Each device caches them, and they can always be rebuilt. If the rules or the FSR
 There is one owner on a few devices, so sync stays simple and free of conflicts by construction:
 
 ```
-POST /learning/sync
-  → { cursor, deviceId, push: { captures[], conceptEdits[], events[], teachbacks[], ledger[], profile|null } }
-  ← { cursor', pull: { concepts[], topics[], links[], captures[] (status changes), events[] (other devices), ledger[] } }
-POST /learning/captures/:id/audio   (multipart, ≤ 2 min, opus/webm)
+POST /learning/sync                 (Bearer device token; the device id comes from the token)
+  → { cursor, push: { topics[], concepts[], events[] } }                       // L1; captures, links, ledger,
+  ← { cursor', more, pull: [{ kind, seq, by, data }], rejected[], serverTime,   // teach-backs and the profile
+      renewedToken | null }                                                    // join as their phases land
+POST /learning/captures/:id/audio   (L2: multipart, ≤ 2 min, opus/webm)
 ```
 
+- **The server stamps** each stored version with the writer (`by`, from the token) and a `seq`. A pull returns at most 500 records after the cursor; `more` asks for another round. Versions the request itself wrote are left out of its pull.
+- **Syncs run one at a time** in the API process, so seq numbers are written in order and a cursor never skips one. Render runs one instance; a second would need a lock in the database.
+- **Clocks:** a version stamped more than 10 minutes in the future is refused (`rejected`, `clock_ahead`), or nothing could ever replace it. A local edit is stamped at least 1 ms after the version it replaces, so an edit right after pulling from a device whose clock runs ahead still wins.
+- **Tokens** last 180 days; a sync in the last 30 returns a fresh one, so a device in use never has to pair again.
+
 - **Append-only records** (events, ledger, teach-backs) are idempotent by `id`, so merging them is a set union. When events arrive out of order from another device, only that concept's memory state is replayed again.
-- **Concept edits** use last-writer-wins per field group (`explanation`, `prompts`, `status`, `topic`) by `updatedAt`. **A user edit always beats an AI rewrite:** the pipeline writes only when `concept.version` is still the one it read.
+- **Topics and concepts** merge last-writer-wins per record: the later `updatedAt` (compared as instants), then the larger writer id, so every device and the server pick the same version in any order. A pulled version that wins also drops the local change it beat from the outbox. From L2, when the AI writes too, concepts merge per field group (`explanation`, `prompts`, `status`, `topic`), and **a user edit always beats an AI rewrite:** the pipeline writes only when `concept.version` is still the one it read.
 - **When it runs:** after each session or capture, when the app opens, and on `online`. It is never polled. The review never waits on sync.
 
 ---
@@ -387,8 +400,10 @@ Render must not be woken on a timer: its 750 h a month are shared with the Orbit
 
 ## 11. Security
 
-- **One owner, paired devices.** In the learning app, `/pair` shows a 6-digit code. You send `/pair 123456` to your bot, which answers only your `TELEGRAM_CHAT_ID`. The device then receives a token.
-- **Tokens** are stateless and HMAC-signed (`deviceId.expiry.sig`, 180 days, the same idea as Dispatch's session tokens). A secret shared by Nest and the Worker validates them with no database lookup.
+- **One owner, paired devices.** On the Devices screen a device asks for a code. The API sends a 6-digit code to your Telegram chat (the bot and `TELEGRAM_CHAT_ID` the lead alerts use), never to the device; you type it in, and the device receives a token.
+  - A code works once, for 10 minutes, and five wrong codes end the pairing. Only its SHA-256 hash is stored.
+  - Without a bot, `LEARNING_LOG_PAIRING_CODES=true` writes codes to the API log for local development; config refuses it in production.
+- **Tokens** are stateless and HMAC-signed with Web Crypto (`v1.<deviceId>.<expiry>.<sig>`, 180 days and renewed by sync; the same idea as Dispatch's session tokens). A secret shared by Nest and the Worker validates them with no database lookup.
   - Revocation goes in a KV list and in `learning_devices`. `/devices` in the bot lists devices and revokes them.
 - **API protections:**
   - Every `/learning/*` route requires the token, with throttling (`@nestjs/throttler`).
