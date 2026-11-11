@@ -187,7 +187,8 @@
   justify-content: space-between;
 }
 
-.meta-left {
+.meta-left,
+.meta-right {
   display: flex;
   align-items: center;
   gap: var(--space-2, 0.5rem);

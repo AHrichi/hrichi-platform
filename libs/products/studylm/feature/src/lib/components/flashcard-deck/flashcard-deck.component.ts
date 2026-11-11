@@ -6,6 +6,9 @@ import {
   effect,
   inject,
 } from '@angular/core';
+import { type CaptureItem, LearnThis } from '@ah/learning/client';
+import { APP_MODE } from '@ah/platform/app-mode';
+import { isAppEnabled } from '@ah/shared/content';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
@@ -44,6 +47,7 @@ import {
     AhEmptyState,
     AhSegmentedControl,
     AhSelect,
+    LearnThis,
   ],
   templateUrl: './flashcard-deck.component.html',
   styleUrl: './flashcard-deck.component.scss',
@@ -53,6 +57,36 @@ export class FlashcardDeckComponent {
   readonly store = inject(StudyLmStore);
   protected readonly screens = inject(StudyLmScreens);
   private readonly preferences = inject(PreferencesStore, { optional: true });
+  /**
+   * The Learning Engine is reachable: always from standalone StudyLM (it
+   * opens the learning app), and inside the portfolio only while the
+   * learning app is visible there.
+   */
+  protected readonly learningOn =
+    (inject(APP_MODE, { optional: true }) ?? 'standalone') === 'standalone' ||
+    isAppEnabled('learning');
+
+  /** The current card as a capture for the Learning Engine (ADR-0024). */
+  protected learnItems(card: {
+    id: string;
+    front: string;
+    back: string;
+    category: string;
+  }): CaptureItem[] {
+    return [
+      {
+        text: `${card.front}\n${card.back}`,
+        source: {
+          app: 'studylm',
+          objectType: 'flashcard',
+          objectId: card.id.slice(0, 120),
+          deepLink: null,
+          excerpt: card.category.slice(0, 500),
+        },
+      },
+    ];
+  }
+
   readonly copy = computed(
     () => STUDYLM_COPY[this.preferences?.language() ?? 'en'] ?? STUDYLM_COPY.en,
   );

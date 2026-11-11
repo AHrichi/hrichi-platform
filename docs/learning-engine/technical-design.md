@@ -369,26 +369,29 @@ It writes `tmp/jev-spike/report.json` with each model's agreement, false-"nailed
 
 ## 9. Integration with host apps
 
-**The client library (`@ah/learning/client`, about 5 KB, no Dexie) is the whole contract:**
+**The client library is the whole contract (L4, as built).** `@ah/learning/client` is tagged `scope:learning-client` and `type:client`, so lint lets products import it and nothing else of the engine. It never opens the engine's database. Its types and the hand-off format live in `@ah/learning/contracts` (`type:contracts`, with a small pure codec).
 
-| Verb      | API                                                     | Behaviour                                                                                                                                                                                                                                                                                                                             |
-| --------- | ------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Capture   | `capture({ text, source })`, `<ah-learn-this [source]>` | **Paired origin** (the shell, or the learning app's own): `POST` to Nest, with a tiny per-origin outbox when offline. **Unpaired origin** (for example standalone StudyLM): opens `https://<learning-app>/capture#text=…&src=…`. The fragment never reaches a server, and the paired learning app saves it. Zero setup on any origin. |
-| Query     | `stateFor(sourceRef)` → `{ tier, due } \| null`         | Paired origins only, otherwise `null`, so hosts hide their badges.                                                                                                                                                                                                                                                                    |
-| Embed     | `<ah-learning-today>`                                   | A chip showing today's count and the flame, linking to `/today`. **The review itself never embeds in another app.** That keeps hosts small, and the habit lives in one place.                                                                                                                                                         |
-| Subscribe | `learningEvents` group in `@ah/shared/contracts`        | `conceptCaptured`, `dailySetCompleted`, `conceptMastered`, `streakExtended`, through the SignalStore Events plugin, so remotes in the shell react with no imports (architecture §5.4).                                                                                                                                                |
+| Verb      | API                                                                | Behaviour                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| --------- | ------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Capture   | `LearningClient.capture(items)`, `<ah-learn-this [items] [label]>` | Hands up to 10 `{ text, source }` items to the learning app's Inbox as `#capture=<base64url JSON>`. The fragment never reaches a server. Inside the portfolio it is an in-app navigation to `/apps/learning`; anywhere else it opens the deployed app in a new tab. The Inbox asks "Save N ideas from StudyLM?" before saving anything, since the link could have come from any page; sources are re-validated and only `http(s)` deep links are kept. |
+| Embed     | `<ah-learning-today>`                                              | A chip with the streak and the cards left today, linking to `/today`. It reads a small public summary the learning app keeps in localStorage (`ah.learning.today`), so it shows only on the same origin (the portfolio) and renders nothing elsewhere. **The review itself never embeds in another app.**                                                                                                                                              |
+| Query     | (deferred)                                                         | `stateFor(sourceRef)` would need the engine's data on the host's origin; no host needs it yet.                                                                                                                                                                                                                                                                                                                                                         |
+| Subscribe | (deferred)                                                         | The SignalStore Events plugin isn't used anywhere in the platform yet, so no event group was added without a consumer.                                                                                                                                                                                                                                                                                                                                 |
 
-**StudyLM, the first host:**
+**Share sheet:** the installed app has a `share_target` (GET, so no service worker is needed): `/inbox?title&text&url` shows the same "Save this idea?" card. GET puts the shared text in the query string, which the static host sees; the app removes it from the address at once. A POST target with a service worker would avoid that, later.
 
-- At the end of a lesson, its `CardSeed`s become "Add to my reviews". That sends a `host` capture with the seeds as structured input, which skips `extract-concepts`.
-- Each flashcard gets `<ah-learn-this>`.
-- **Decision 3:** the engine replaces StudyLM's planned FSRS (Practice and review phase) and streaks/XP (Focus and Today phase). StudyLM's `learning-lab.md` roadmap would point to the engine, and `masteryCount` stays only for StudyLM's own drill mode.
+**StudyLM, the first host (as built):**
 
-**Portfolio demo:**
+- A lesson offers "Add to my daily reviews", which sends its card seeds (front and back) as captures whose source is the lesson and its address. They go through the pipeline like any capture.
+- Each flashcard has a "Learn this" button. Both labels are in StudyLM's five languages.
+- Inside the portfolio both appear only while the learning app is visible there; standalone StudyLM always shows them.
+- **Decision 3:** the engine replaces StudyLM's planned FSRS and streaks/XP; `learning-lab.md` now points here, and `masteryCount` stays only for StudyLM's own drill mode.
 
-- In `embedded-demo` mode the app opens `ah-demo-learning`, seeded with the golden concepts and 30 days of synthetic events, so the streak and the garden look alive.
-- Capture plays recorded fixture replies.
-- The demo never syncs, never pairs and never calls AI. It is labelled as a demo.
+**Portfolio demo (as built):**
+
+- `product-learning` is in `tools/federation/remotes.json`, the shell's manifest and routes (`/apps/learning`), the constellation's links and `app-visibility.ts`, where it is **hidden** (`learning: false`) until you switch it on.
+- In `embedded-demo` mode the app opens `ah-demo-learning`, seeded once with 10 golden concepts, about a month of reviews on a spacing ladder and a 12-day streak, so Today, tiers and Settings look like real use.
+- A capture in the demo turns at once into one of the 2 spare golden concepts, and says so. The demo never syncs, pairs or calls the AI.
 
 ---
 

@@ -108,6 +108,8 @@
       "@ah/learning/domain": ["./libs/learning/domain/src/index.ts"],
       "@ah/learning/data-access": ["./libs/learning/data-access/src/index.ts"],
       "@ah/learning/feature": ["./libs/learning/feature/src/index.ts"],
+      "@ah/learning/contracts": ["./libs/learning/contracts/src/index.ts"],
+      "@ah/learning/client": ["./libs/learning/client/src/index.ts"],
       "@ah/shared/api-client": ["./libs/shared/api-client/src/index.ts"],
       "@ah/labs/sky/domain": ["./libs/labs/sky/domain/src/index.ts"],
       "@ah/labs/sky/feature": ["./libs/labs/sky/feature/src/index.ts"],

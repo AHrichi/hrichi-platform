@@ -1,0 +1,8 @@
+{
+  "name": "learning-contracts",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/learning/contracts/src",
+  "projectType": "library",
+  "tags": ["scope:learning", "type:contracts", "runtime:agnostic"],
+  "targets": {}
+}

@@ -7,6 +7,11 @@ import {
   withMethods,
   withState,
 } from '@ngrx/signals';
+import {
+  type CaptureItem,
+  type LearningTodaySummary,
+  TODAY_SUMMARY_KEY,
+} from '@ah/learning/contracts';
 import { LearningApiError, type SyncOutcome } from '@ah/learning/data-access';
 import {
   type Capture,
@@ -16,6 +21,7 @@ import {
   type ConceptDraft,
   conceptFromDraft,
   countedDays,
+  draftConceptFrom,
   DEFAULT_CAP,
   DEFAULT_NEW_PER_DAY,
   type DeviceSummary,
@@ -29,6 +35,7 @@ import {
   SERVER_WRITER,
   xpOf,
 } from '@ah/learning/domain';
+import { demoDraftSource } from './demo-seed';
 import { LearningRuntime, type SyncUnavailable } from './learning-runtime';
 
 export type SyncState =
@@ -208,6 +215,38 @@ export const LearningStore = signalStore(
           ? { id: session.deviceId, name: session.deviceName }
           : null,
       });
+      publishTodaySummary();
+    }
+
+    /**
+     * Today's set for host apps on this origin (the portfolio's chip), in
+     * localStorage: a small public summary, never the database.
+     */
+    function publishTodaySummary(): void {
+      const today = store.todaySet();
+      const done = today
+        ? new Set(
+            store
+              .events()
+              .filter((event) => event.sessionId === today.id)
+              .map((event) => event.conceptId),
+          ).size
+        : 0;
+      const summary: LearningTodaySummary = {
+        localDate: store.today(),
+        total: today?.planned.length ?? 0,
+        done,
+        streak: store.streak().current,
+        updatedAt: new Date().toISOString(),
+      };
+      try {
+        globalThis.localStorage?.setItem(
+          TODAY_SUMMARY_KEY,
+          JSON.stringify(summary),
+        );
+      } catch {
+        // Storage blocked: the chip simply doesn't show.
+      }
     }
 
     function applyOutcome(outcome: SyncOutcome): void {
@@ -310,6 +349,33 @@ export const LearningStore = signalStore(
         capturedAt: at,
         ...fields,
       };
+    }
+
+    /**
+     * The demo has no server: a capture turns at once into one of the
+     * spare golden concepts, and says so (design §9).
+     */
+    async function demoProcess(capture: Capture): Promise<void> {
+      const { local, unavailable } = await runtime.open();
+      if (unavailable !== 'demo') return;
+      const done = store.captures().filter((c) => c.status === 'ready').length;
+      const golden = demoDraftSource(done);
+      const draft = draftConceptFrom({
+        title: golden.title,
+        type: golden.type,
+        topicId: null,
+        span: golden.span,
+        captureId: capture.id,
+        explained: golden.explained,
+        now: new Date(),
+      });
+      await local.saveConcept(draft);
+      await local.saveCapture({
+        ...capture,
+        status: 'ready',
+        conceptIds: [draft.id],
+        error: 'Demo: the real app sends your words to the AI.',
+      });
     }
 
     async function updateCapture(
@@ -517,11 +583,33 @@ export const LearningStore = signalStore(
       /** A typed capture: saved at once, processed by the server (design 1). */
       async capture(text: string): Promise<void> {
         const { local } = await runtime.open();
-        await local.saveCapture(
+        const capture = await local.saveCapture(
           newCapture({ text: text.trim().slice(0, 4000) }),
         );
+        await demoProcess(capture);
         await refresh();
         notify('Got it ✓');
+        syncSoon();
+      },
+
+      /** Ideas another app or the share sheet sent, once the learner says yes. */
+      async captureItems(
+        items: readonly CaptureItem[],
+        modality: 'host' | 'share',
+      ): Promise<void> {
+        const { local } = await runtime.open();
+        for (const item of items) {
+          const capture = await local.saveCapture(
+            newCapture({
+              modality,
+              text: item.text.slice(0, 4000),
+              source: item.source,
+            }),
+          );
+          await demoProcess(capture);
+        }
+        await refresh();
+        notify(items.length === 1 ? 'Got it ✓' : `Got ${items.length} ✓`);
         syncSoon();
       },
 

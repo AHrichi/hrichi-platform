@@ -7,5 +7,6 @@
   "product-studylm": "http://localhost:4307/remoteEntry.json",
   "product-whatsapp": "http://localhost:4308/remoteEntry.json",
   "product-lighting": "http://localhost:4309/remoteEntry.json",
-  "product-basecamp": "http://localhost:4310/remoteEntry.json"
+  "product-basecamp": "http://localhost:4310/remoteEntry.json",
+  "product-learning": "http://localhost:4311/remoteEntry.json"
 }

@@ -28,6 +28,7 @@ const linkLabels: Record<string, string> = {
   'product-dispatch': 'PulseOps · Commercial dispatch control center',
   'product-lighting': 'LuxPath · Street lighting field kit',
   'product-basecamp': 'Basecamp · Camping trip planner',
+  'product-learning': 'Learning Engine · Capture and daily review',
   'lab-rxjs': 'RxJS practice pad',
   'lab-sky': 'Sky lab',
   'design-system': 'Design system & Storybook',

@@ -10,6 +10,9 @@ import {
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, RouterLink } from '@angular/router';
+import { type CaptureItem, LearnThis } from '@ah/learning/client';
+import { APP_MODE } from '@ah/platform/app-mode';
+import { isAppEnabled } from '@ah/shared/content';
 import { map } from 'rxjs';
 import {
   LessonView,
@@ -27,7 +30,7 @@ import { STUDYLM_COPY } from '../../i18n/studylm-copy';
 /** One lesson, opened where the learner left it, or followed as it's written. */
 @Component({
   selector: 'ah-studylm-lesson-screen',
-  imports: [LessonView, RouterLink],
+  imports: [LearnThis, LessonView, RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <nav class="lesson-top-nav" aria-label="Lesson navigation">
@@ -154,6 +157,17 @@ import { STUDYLM_COPY } from '../../i18n/studylm-copy';
       <p role="alert">{{ copy().learn.noLessonAtAddress }}</p>
     }
 
+    @if (learningOn && reviewItems().length) {
+      <div class="add-to-reviews">
+        <ah-learn-this
+          [items]="reviewItems()"
+          [label]="copy().learn.addToReviews"
+          variant="primary"
+          size="md"
+        />
+      </div>
+    }
+
     <!-- Next steps for reinforcing this lesson -->
     @if (relatedSection(); as sec) {
       <aside class="lesson-next-steps" aria-label="Practice next steps">
@@ -196,6 +210,10 @@ import { STUDYLM_COPY } from '../../i18n/studylm-copy';
     :host {
       display: grid;
       gap: var(--space-4);
+    }
+    .add-to-reviews {
+      display: flex;
+      justify-content: center;
     }
     .lesson-top-nav {
       display: flex;
@@ -393,6 +411,35 @@ export class LessonScreen {
   protected readonly store = inject(StudyLmStore);
   protected readonly screens = inject(StudyLmScreens);
   private readonly preferences = inject(PreferencesStore, { optional: true });
+  /**
+   * The Learning Engine is reachable: always from standalone StudyLM (it
+   * opens the learning app), and inside the portfolio only while the
+   * learning app is visible there.
+   */
+  protected readonly learningOn =
+    (inject(APP_MODE, { optional: true }) ?? 'standalone') === 'standalone' ||
+    isAppEnabled('learning');
+
+  /**
+   * The lesson's card seeds as captures for the Learning Engine, so a
+   * finished lesson can join the daily set (ADR-0024).
+   */
+  protected readonly reviewItems = computed<CaptureItem[]>(() => {
+    const lesson = this.lesson();
+    if (!lesson) return [];
+    const href = globalThis.location?.href ?? '';
+    return lesson.cards.map((card) => ({
+      text: `${card.front}\n${card.back}`,
+      source: {
+        app: 'studylm',
+        objectType: 'lesson',
+        objectId: lesson.id.slice(0, 120),
+        deepLink: /^https?:\/\//.test(href) ? href : null,
+        excerpt: lesson.title.slice(0, 500),
+      },
+    }));
+  });
+
   readonly copy = computed(
     () => STUDYLM_COPY[this.preferences?.language() ?? 'en'] ?? STUDYLM_COPY.en,
   );

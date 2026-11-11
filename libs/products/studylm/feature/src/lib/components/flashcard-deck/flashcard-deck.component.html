@@ -124,6 +124,13 @@
         </div>
 
         <div class="meta-right">
+          @if (learningOn) {
+            <ah-learn-this
+              [items]="learnItems(card)"
+              [label]="copy().flashcards.learnThis"
+              variant="ghost"
+            />
+          }
           <button
             type="button"
             class="bookmark-btn"

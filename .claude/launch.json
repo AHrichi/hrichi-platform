@@ -60,6 +60,16 @@
         "4311"
       ],
       "port": 4311
+    },
+    {
+      "name": "studylm (static build)",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "tools/scripts/serve-static.mjs",
+        "dist/apps/products/studylm/web/browser",
+        "4307"
+      ],
+      "port": 4307
     }
   ]
 }

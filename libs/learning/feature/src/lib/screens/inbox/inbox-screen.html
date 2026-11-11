@@ -1,6 +1,31 @@
 <section class="screen" aria-labelledby="inbox-title">
   <h1 id="inbox-title" class="visually-hidden">Inbox</h1>
 
+  @if (incoming(); as inc) {
+    <section class="card incoming" aria-labelledby="incoming-title">
+      <h2 id="incoming-title">
+        Save
+        {{ inc.items.length === 1 ? 'this idea' : inc.items.length + ' ideas' }}
+        from {{ inc.from }}?
+      </h2>
+      <ul class="incoming-list" role="list">
+        @for (item of inc.items; track $index) {
+          <li>
+            {{
+              item.text.length > 160 ? item.text.slice(0, 160) + '…' : item.text
+            }}
+          </li>
+        }
+      </ul>
+      <div class="decide">
+        <button ahButton="ghost" type="button" (click)="dismissIncoming()">
+          Discard
+        </button>
+        <button ahButton type="button" (click)="acceptIncoming()">Save</button>
+      </div>
+    </section>
+  }
+
   <form
     class="card capture"
     (submit)="save($event)"
