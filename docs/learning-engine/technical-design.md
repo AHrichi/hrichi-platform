@@ -119,7 +119,7 @@ libs/shared/ai-schema/                              extracted from product-study
 The entities from the blueprint, shaped for a document store and for sync. Every record has a client-generated UUID `id` (`crypto.randomUUID()`), `updatedAt` and a nullable `deletedAt` (tombstone). Server-stored records also carry a server `seq` used as the change cursor.
 
 ```ts
-Capture        { id; modality: 'text'|'voice'|'share'|'host'|'telegram'; text|null; audioRef|null; transcript|null;
+Capture        { id; modality: 'text'|'voice'|'share'|'host'; text|null; audioRef|null; transcript|null;
                  source: SourceRef|null; status: 'queued'|'transcribing'|'structuring'|'ready'|'needs_look'|'failed';
                  attempts; error|null; conceptIds[]; capturedAt }
 Concept        { id; captureId; title; topicId; type: 'definition'|'process'|'cause_effect'|'fact'|'skill'|'comparison';
@@ -131,13 +131,16 @@ Concept        { id; captureId; title; topicId; type: 'definition'|'process'|'ca
 Explanation    { version; essence; simple; analogy; misconception; ownWords|null; by: 'ai'|'user'; specVersion }
 RecallPrompt   { id; type: 'free_recall'|'cloze'|'why'|'apply'|'contrast'|'spot_error'|'quick_fire';
                  question; answer; options|null; keyPoints[];   // 1–4 short statements a good answer contains (§6.4)
-                 relatedConceptId|null; retired; flags[] }
-ConceptLink    { id; from; to; relation: 'similar'|'contrasts'|'prerequisite'|'example_of'|'causes'; by; confirmed }
+                 retired; flags[] }
+ConceptLink    { id; from; to; relation: 'similar'|'contrasts'|'prerequisite'|'example_of'|'causes';
+                 by: 'ai'|'user'; confirmed }                         // L5; a dismissed suggestion is a tombstone
 Topic          { id; name; parentId|null; hue; autoCreated }
 ReviewEvent    { id; conceptId; promptId; sessionId; at; localDate; rating: 'again'|'hard'|'good'|'easy';
                  answer|null; aiVerdict|null; ms; deviceId }          // append-only
 ReviewSession  { id; localDate; kind: 'daily'|'bonus'|'warmup'; planned[]; startedAt; completedAt|null }
-TeachBack      { id; conceptId; transcript; clarity: 1..5; gaps[]; at }
+                 // planned: { conceptId; promptId; teach?; contrastWith? } (L5)
+TeachBack      { id; conceptId; sessionId|null; at; localDate; modality: 'voice'|'text'; transcript;
+                 clarity: 'unclear'|'partly'|'clear'|null; covered[]; gaps[] }   // L5, append-only
 LedgerEntry    { id; at; kind: 'freeze_earned'|'freeze_used'|'repair'|'unlock'|'milestone'; ref|null }  // append-only
 LearnerProfile { dailyCap: 5|7|10; newPerDay; streakMode: 'daily'|'weekly'; weeklyTarget; desiredRetention: 0.9;
                  timezone; dayStartsAt: '04:00'; nudge: { morning|null; evening|null; learned: boolean };
@@ -155,12 +158,14 @@ Device         { id; name; tokenHash; pairedAt; revokedAt|null }
 
 Each device caches them, and they can always be rebuilt. If the rules or the FSRS parameters change, recomputing applies the change everywhere, with no migration.
 
+**As built (L5):** a Telegram message becomes a `text` or `voice` capture whose source app is `telegram`. A contrast card is built from a confirmed link and both concepts' essences, so prompts carry no `relatedConceptId` and nothing is generated for it. Freezes and repairs are computed from events and sets, so there is no ledger table; settings stay on the device, in `meta`.
+
 ### 4.2 Storage
 
 - **Browser:** `LearningDatabase` (Dexie), named through `databaseName(mode, 'learning', 'LearningDatabase')`.
   - Rows are `{ id, by, updatedAt, data }`: the record plus the device that wrote this version, which the merge rule needs.
   - Version 1 (L1): `topics 'id'`, `concepts 'id, data.topicId, data.status'`, `events 'id, data.conceptId, data.localDate'`, `outbox 'key, kind'` (one row per changed record, `key` = `<kind>:<id>`, with a `queuedAt` that a change during a sync bumps) and `meta 'key'` (the pairing and the cursor).
-  - Later versions add `sessions`, `captures`, `memory`, `links`, `ledger` and `profile`.
+  - Version 2 (L2) adds `captures` and `audio`, version 3 (L3) `sessions`, version 4 (L5) `teachbacks` and version 5 (L5) `links`. Memory stays derived.
   - Audio waits in the outbox as a `Blob` until it is uploaded.
 - **Server:** one Atlas collection, `learning_records`, holds every synced kind (`_id` = `<kind>:<id>`, a unique index on `seq`), so the change feed is one indexed range scan. Beside it: `learning_devices`, `learning_pairings` (a TTL index removes expired ones) and `learning_counters` (the `seq` counter).
   - Audio is deleted after transcription.
@@ -172,10 +177,13 @@ There is one owner on a few devices, so sync stays simple and free of conflicts 
 
 ```
 POST /learning/sync                 (Bearer device token; the device id comes from the token)
-  → { cursor, push: { topics[], concepts[], events[] } }                       // L1; captures, links, ledger,
-  ← { cursor', more, pull: [{ kind, seq, by, data }], rejected[], serverTime,   // teach-backs and the profile
-      renewedToken | null }                                                    // join as their phases land
+  → { cursor, push: { topics[], concepts[], captures[], sessions[], events[],
+                      links[], teachbacks[] } }        // links and teach-backs (L5) may be left out
+  ← { cursor', more, pull: [{ kind, seq, by, data }], rejected[], serverTime, renewedToken | null }
 POST /learning/captures/:id/audio   (L2: multipart, ≤ 2 min, opus/webm)
+POST /learning/grade                (L3: a typed answer, by its key points)
+POST /learning/transcribe           (L5: a teach-back's recording, ≤ 2 MB; nothing is stored)
+POST /learning/teach-back           (L5: a teach-back, by its key points and clarity)
 ```
 
 - **The server stamps** each stored version with the writer (`by`, from the token) and a `seq`. A pull returns at most 500 records after the cursor; `more` asks for another round. Versions the request itself wrote are left out of its pull.
@@ -184,7 +192,7 @@ POST /learning/captures/:id/audio   (L2: multipart, ≤ 2 min, opus/webm)
 - **Tokens** last 180 days; a sync in the last 30 returns a fresh one, so a device in use never has to pair again.
 
 - **Append-only records** (events, ledger, teach-backs) are idempotent by `id`, so merging them is a set union. When events arrive out of order from another device, only that concept's memory state is replayed again.
-- **Topics and concepts** merge last-writer-wins per record: the later `updatedAt` (compared as instants), then the larger writer id, so every device and the server pick the same version in any order. A pulled version that wins also drops the local change it beat from the outbox. From L2, when the AI writes too, concepts merge per field group (`explanation`, `prompts`, `status`, `topic`), and **a user edit always beats an AI rewrite:** the pipeline writes only when `concept.version` is still the one it read.
+- **Topics, concepts, captures, sets and links** merge last-writer-wins per record: the later `updatedAt` (compared as instants), then the larger writer id, so every device and the server pick the same version in any order. A pulled version that wins also drops the local change it beat from the outbox. From L2, when the AI writes too, concepts merge per field group (`explanation`, `prompts`, `status`, `topic`), and **a user edit always beats an AI rewrite:** the pipeline writes only when `concept.version` is still the one it read.
 - **When it runs:** after each session or capture, when the app opens, on `online` and when the tab becomes visible. The one follow-up: while a capture is `queued` or `processing` on the server, the device syncs again 15 s later, so its drafts arrive without a refresh. Otherwise nothing polls. The review never waits on sync.
 - **Voice notes:** the audio waits on the device (an `audio` table) until its capture is on the server, then goes to `POST /learning/captures/:id/audio` and is deleted from the device.
 
@@ -210,8 +218,10 @@ POST /learning/captures/:id/audio   (L2: multipart, ≤ 2 min, opus/webm)
 1. **Day boundary:** the day starts at 04:00 in the profile's timezone, so a late-night session counts for the day before.
 2. **Due pool:** concepts due by the end of the day, ordered by lowest retrievability.
 3. **Slots** (cap 7): about 60 % from the due pool, about 25 % interleaved from other topics (including a `contrast` prompt when a linked concept is also due), and new concepts up to `min(newPerDay = 2, ~15 % of cap)`. Free slots are filled from the due pool, then from concepts almost due.
+   - **Contrast card (as built, L5):** at most one per set, for a planned concept with a confirmed `similar` or `contrasts` link to another reviewed concept, preferably one in the same set; never the opener or the teach-back card. It asks how the two differ, reveals both essences side by side, and counts for the planned concept only.
 4. **Order:** two cards in a row never share a topic when the pool allows it. The set starts with an easy card (highest retrievability) for momentum.
 5. **Prompt choice per concept:** the least-used type that isn't the one used last time. At most 2 `free_recall` per set (to stay inside 3 minutes) and at most 1 teach-back (only for concepts at Leaf or above).
+   - **Teach-back (as built, L5):** the most mature concept at Leaf or above that wasn't taught back in the last 7 days, never the opener. Bonus rounds have none.
 6. **Adaptive load:** if more than 40 % were missed over the last 3 sessions, or a session was abandoned, the cap drops by 2 (minimum 3) and no new concepts come in. The UI says "Lighter set today".
 7. **Backlog stays invisible.** Overdue concepts simply stay due, and FSRS handles long gaps. No count of what's owed is ever shown.
 
@@ -224,7 +234,7 @@ The set is frozen when the day's first session starts, so the promise of 7 cards
   - **Full day:** the Daily Set was completed.
   - Both count toward the streak.
 - **Freezes:** 1 `freeze_earned` per 7 consecutive days, at most 2 banked. A one-day gap uses one automatically (`freeze_used`).
-- **Repair:** once every 30 days, completing two sets the day after a break writes `repair`.
+- **Repair (as built, L5):** a missed day with no freeze left is repaired when the next day has two finished, non-empty sets, at most once every 30 days. The completion screen offers it the day after the break. It is computed like freezes, with no ledger.
 - **Weekly mode:** the streak counts weeks with at least `weeklyTarget` active days.
 - **Mastery tier from FSRS stability:**
   - Seed (never reviewed)
@@ -233,7 +243,8 @@ The set is frozen when the day's first session starts, so the promise of 7 cards
   - Bloom (21–90 d)
   - Golden (≥ 90 d)
   - **Wilting:** retrievability now < 0.80.
-- **XP:** a versioned table. Teach-back and correct `hard` answers weigh most, and nothing pays for reading.
+- **XP:** a versioned table. Teach-back and correct `hard` answers weigh most, and nothing pays for reading. Rules v2 (L5): again 2, hard 8, good 6, easy 4; +4 for answering before revealing; +15 per finished Daily Set; +12 per teach-back, +6 more when it was clear.
+- **Milestones and garden looks (L5):** first set, a week, 100 answers, ten leaves, first bloom, crystal clear (a clear teach-back), a month and golden. They unlock the autumn (level 3), night (a 7-day streak) and aurora (a Golden concept) looks. All are computed from events, so nothing can be bought or lost.
 
 ---
 
@@ -293,6 +304,8 @@ Two kinds of model do the work. A **generative ladder** writes text. A **decisio
   - any key point in the uncertain band (0.35–0.7) → no verdict is shown
 - **Budget:** 6 s. A late or failed verdict is dropped silently, and the swipe self-grade works as usual.
 - **The swipe is always the rating.** The AI only suggests. Each swipe that disagrees with the suggestion is logged as a labelled example (§6.4).
+- **Teach-back (as built, L5):** a recording goes to `POST /learning/transcribe` (90 s at most), then `POST /learning/teach-back` asks one `noul` per point (the concept's live key points, or its essence when it has none) and one `score` for clarity in three bands: muddled, getting there, crystal clear. A band shows only at confidence ≥ 0.5. The feedback names the points left out, in the concept's own words. A typed teach-back skips transcription. Offline or unpaired it is still kept, and the learner compares it with the key points. Budget: 15 s.
+- **Links (as built, L5):** when the pipeline drafts a concept, a word-overlap shortlist (title, essence and key points; up to 5 concepts, kept ones and the draft's siblings) goes to one decision call, with a `choice` per candidate: none, similar, contrasts, prerequisite, example_of or causes. Confident answers (≥ 0.65, at most 3) are stored unconfirmed and asked about in the Inbox once both concepts are kept. Best effort: it never fails a capture.
 
 ### 6.4 Jev: a decision model for the judging tasks (proposed, decision 5)
 
@@ -347,7 +360,7 @@ It writes `tmp/jev-spike/report.json` with each model's agreement, false-"nailed
 | PWA shortcuts                     | Manifest `shortcuts`: long-press the home-screen icon for **Capture** or **Today's set**.                                                                                                                                                                                                                    | L2    |
 | Share sheet (Android)             | Manifest `share_target` with **GET** (title, text, url) → `/capture#…`. GET needs no custom service worker code. Files (screenshots) need a POST target and an `importScripts` shim around ngsw, so they come later.                                                                                         | L4    |
 | Host apps                         | `<ah-learn-this [source]>` and `capture()` from `@ah/learning/client` (§9).                                                                                                                                                                                                                                  | L4    |
-| Telegram                          | Send or forward text or a voice note to your bot. The edge Worker stores the update (voice as its Telegram `file_id`, never the audio) and replies "Got it ✓". Nest pulls the inbox on wake, the ADR-0010 backstop pattern.                                                                                  | L5    |
+| Telegram                          | Send or forward text or a voice note to your bot. The edge Worker stores the update (voice as its Telegram `file_id`, never the audio) and replies "Got it ✓". Nest pulls the inbox on wake, the ADR-0010 backstop pattern (as built, §10).                                                                  | L5    |
 
 **Required platform change:** voice capture needs `microphone=(self)` on the learning app's origin in `prepare-hosting.mjs`. Other apps stay at `()`.
 
@@ -355,7 +368,7 @@ It writes `tmp/jev-spike/report.json` with each model's agreement, false-"nailed
 
 ## 8. Review UI (mobile first)
 
-- **Screens (as built):** `/today` (the home screen, straight on card 1), `/inbox` (capture, the digest and captures on their way), `/concepts` (shown as Library), `/settings` (set size, new concepts a day, reminders, away-until) and `/devices` under Settings. `/garden` comes in L5. Each has its own URL and lazy chunk, like Basecamp and StudyLM.
+- **Screens (as built):** `/today` (the home screen, straight on card 1), `/inbox` (capture, the digest and captures on their way), `/concepts` (shown as Library), `/settings` (set size, new concepts a day, reminders, away-until) and `/devices` under Settings; `/garden` (L5) is linked from the Library, the completion screen and Settings. Each has its own URL and lazy chunk, like Basecamp and StudyLM.
 - **Review flow:** quick-fire cards are answered by picking an option; others take an optional typed answer, revealed with a button (Ctrl/⌘ + Enter). Right, up and left grade got it, shaky and missed. A missed card returns once at the end with another prompt. A day with nothing due counts once the app is opened (an empty set, finished at once).
 - **Swipe:** Pointer Events with a distance-or-velocity threshold. The card follows the finger with CSS transforms and flies off with the Web Animations API. Rotation is limited to 8°.
 - **Swipes are never the only input.** Buttons sit under the card, and on desktop `←` `↑` `→` grade and `Space` reveals.
@@ -363,7 +376,8 @@ It writes `tmp/jev-spike/report.json` with each model's agreement, false-"nailed
 - **Celebration:** confetti (`canvas-confetti`, already a dependency) is lazy-loaded at completion and skipped under reduced motion.
 - **Offline first:** the set, the prompts and the explanations are all local. Only grading and sync need the network.
 - **Accessibility:** progress dots form a labelled progressbar, the reveal moves focus to the answer, and axe runs in e2e and Storybook. The colour rules of the design system apply, including the `--color-data-*` restriction to stage panels.
-- **Garden (L5):** deterministic SVG, laid out from topic and concept ids, with no Three.js so it stays light on phones. Tiers and wilting come from the derived memory state.
+- **Garden (as built, L5):** a plant per topic and a leaf per concept, drawn as SVG from the derived memory state, with no Three.js so it stays light on phones. A leaf's shape follows its tier, it droops when retrievability falls below 0.80, and a plant draws at most 14 leaves (the rest are counted). The drawing is hidden from screen readers; a visually hidden list says the same. The looks only swap colour tokens.
+- **Teach-back and contrast cards (L5):** "Teach it back" asks for an explanation out loud (90 s at most) or typed, then shows the clarity band, the points left out and the key points. "Compare" asks how two linked concepts differ and reveals both essences side by side. Both are graded with the same swipe.
 
 ---
 
@@ -408,6 +422,12 @@ Render must not be woken on a timer: its 750 h a month are shared with the Orbit
   - If yes, it sends a Telegram message through the Bot API. Example: "☕ Your set is ready: 7 cards, about 3 min. Keep the 🔥 12 alive." A morning nudge waits at most 3 hours after its time.
 - **Learned time:** the app computes the median start time of the last 14 sessions, minus 10 min, and writes it as the morning time.
 - **No nudges** in vacation mode, and none once the set is done.
+- **Sunday recap (as built, L5):** the nudge state also carries this week's numbers (`week`: active days, cards, concepts kept, teach-backs, concepts at Leaf or better) and whether the recap is wanted (Settings, on by default). From 18:00 on Sunday, local time, the cron sends it once a week; the week's Monday is kept in KV. Away mode silences it, and a week with no reviews gets a short, kind line.
+- **Telegram capture (as built, L5):** `POST /telegram` is the bot's webhook (`setWebhook` with a `secret_token`, steps in `wrangler.jsonc`).
+  - Only updates carrying `TELEGRAM_WEBHOOK_SECRET` are read, and only messages from `TELEGRAM_CHAT_ID` are kept; everything else gets a 200, so Telegram doesn't retry it.
+  - Text, captions and voice notes up to 2 min go to KV as `inbox:<update_id>`, a voice note as its `file_id` only; a repeated update keeps its first copy. Commands get a short help reply.
+  - The API reads `GET /inbox` and clears `POST /inbox/ack` with its own token: signed with the shared secret for the server's writer id, valid 5 minutes. Pairing never gives that id to a device.
+  - The API pulls at boot and on each 5-minute sweep when `LEARNING_EDGE_URL` is set, so a message waits in KV at most until Render's next wake. A voice note is fetched by `file_id` (`getFile`, with the bot token) and transcribed; one that fails stays in KV for the next pull.
 - **Why Telegram and not Web Push:**
   - Push needs a server-held subscription plus VAPID signing from the Worker.
   - Delivery to an installed PWA on Android is less reliable than Telegram.
@@ -427,6 +447,7 @@ Render must not be woken on a timer: its 750 h a month are shared with the Orbit
   - Every `/learning/*` route requires the token, with throttling (`@nestjs/throttler`).
   - Task inputs are capped (16,000 characters, 2 min of audio).
   - CORS is limited to the shell's and the learning app's origins.
+- **Telegram webhook (L5):** the secret header is compared in constant time, and the chat id must be the owner's. The inbox endpoints accept only the API's own token.
 - **Content Security Policy:** `connect-src` gains the API and Worker origins, and `microphone=(self)` is added for the learning app.
 - **Privacy:** audio is deleted after transcription, and capture text never goes into a URL query (fragments only). The demo is fully local.
 
@@ -442,7 +463,7 @@ Render must not be woken on a timer: its 750 h a month are shared with the Orbit
 | Transcription            | ≤ 20 voice notes a day, ≤ 2 min each                                     | Groq's free Whisper tier: about 2,000 requests a day and 7,200 audio seconds an hour (third-party listings, checked 2026-11-11; confirm in the Groq console) |
 | Render                   | 2–4 wakes a day × ~15 min ≈ **30 h/month**                               | 750 h shared with Orbit API                                                                                                                                  |
 | Atlas                    | ~50 MB after years of use                                                | 512 MB                                                                                                                                                       |
-| Worker and KV            | 96 cron runs a day, < 50 KV writes a day                                 | 100 K requests a day, 1 K writes a day                                                                                                                       |
+| Worker and KV            | 96 cron runs a day, < 50 KV writes a day (+1 per Telegram message)       | 100 K requests a day, 1 K writes a day                                                                                                                       |
 
 If free-model quality proves too weak for explanations, the ladder can take a paid rung (for example Claude Haiku 5.5) for `explain-concept` only. The strict schemas already fit Claude's structured outputs.
 
