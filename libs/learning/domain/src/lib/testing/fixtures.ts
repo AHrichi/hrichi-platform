@@ -1,4 +1,4 @@
-import type { Concept, ReviewEvent, Topic } from '../records';
+import type { Capture, Concept, ReviewEvent, Topic } from '../records';
 
 /**
  * Valid records for tests in every learning lib. Ids are fixed UUIDs, so a
@@ -10,6 +10,7 @@ export const FIXTURE_IDS = {
   prompt: '0b6f0c30-0000-4000-8000-000000000003',
   session: '0b6f0c30-0000-4000-8000-000000000004',
   event: '0b6f0c30-0000-4000-8000-000000000005',
+  capture: '0b6f0c30-0000-4000-8000-000000000006',
   deviceA: '0b6f0c30-0000-4000-8000-00000000000a',
   deviceB: '0b6f0c30-0000-4000-8000-00000000000b',
 } as const;
@@ -74,6 +75,26 @@ export function sampleEvent(overrides: Partial<ReviewEvent> = {}): ReviewEvent {
     rating: 'good',
     answer: null,
     ms: 8200,
+    ...overrides,
+  };
+}
+
+export function sampleCapture(overrides: Partial<Capture> = {}): Capture {
+  return {
+    id: FIXTURE_IDS.capture,
+    updatedAt: '2026-11-11T08:00:00.000Z',
+    deletedAt: null,
+    modality: 'text',
+    text: 'Opportunity cost is the value of the next best thing you give up when you choose.',
+    hasAudio: false,
+    transcript: null,
+    source: null,
+    status: 'queued',
+    attempts: 0,
+    error: null,
+    force: false,
+    conceptIds: [],
+    capturedAt: '2026-11-11T08:00:00.000Z',
     ...overrides,
   };
 }

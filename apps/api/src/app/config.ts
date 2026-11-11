@@ -123,5 +123,15 @@ function learningConfig(
   if (logPairingCodes && env['NODE_ENV'] === 'production') {
     problems.push('LEARNING_LOG_PAIRING_CODES is for development only');
   }
-  return { tokenSecret, telegram: null, logPairingCodes };
+  const optional = (name: string) => env[name]?.trim() || null;
+  return {
+    tokenSecret,
+    telegram: null,
+    logPairingCodes,
+    ai: {
+      groq: optional('GROQ_API_KEY'),
+      gemini: optional('GEMINI_API_KEY'),
+      typesafe: optional('TYPESAFE_API_KEY'),
+    },
+  };
 }

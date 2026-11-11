@@ -47,6 +47,7 @@ describe('loadConfig', () => {
       tokenSecret: 'x'.repeat(32),
       telegram: { botToken: 'T', chatId: '42' },
       logPairingCodes: false,
+      ai: { groq: null, gemini: null, typesafe: null },
     });
   });
 

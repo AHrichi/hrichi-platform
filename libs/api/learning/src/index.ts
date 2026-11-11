@@ -1,3 +1,4 @@
+export * from './lib/capture-pipeline';
 export * from './lib/device.guard';
 export * from './lib/learning.controller';
 export * from './lib/learning.module';
@@ -5,7 +6,9 @@ export * from './lib/learning.repository';
 export * from './lib/mongo-learning.repository';
 export * from './lib/pairing-notifier';
 export * from './lib/pairing.service';
+export * from './lib/pipeline.scheduler';
 export * from './lib/sync.service';
 export * from './lib/valibot.pipe';
+export * from './lib/write-lock';
 export * from './lib/testing/fakes';
 export * from './lib/testing/in-memory-learning.repository';

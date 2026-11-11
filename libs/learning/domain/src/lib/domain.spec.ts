@@ -15,6 +15,7 @@ import {
 import { SyncRequestSchema, SYNC_LIMITS } from './sync';
 import {
   FIXTURE_IDS,
+  sampleCapture,
   sampleConcept,
   sampleEvent,
   sampleTopic,
@@ -54,7 +55,12 @@ describe('records', () => {
   });
 
   it('has a schema for every kind', () => {
-    expect(Object.keys(RECORD_SCHEMAS)).toEqual(['topic', 'concept', 'event']);
+    expect(Object.keys(RECORD_SCHEMAS)).toEqual([
+      'topic',
+      'concept',
+      'capture',
+      'event',
+    ]);
   });
 });
 
@@ -146,6 +152,7 @@ describe('SyncRequestSchema', () => {
       push: {
         topics: [sampleTopic()],
         concepts: [sampleConcept()],
+        captures: [sampleCapture()],
         events: [sampleEvent()],
       },
     };

@@ -1,5 +1,6 @@
 import Dexie, { type Table } from 'dexie';
 import type {
+  Capture,
   Concept,
   RecordKind,
   ReviewEvent,
@@ -25,6 +26,15 @@ export interface OutboxRow {
   queuedAt: number;
 }
 
+/** A voice note's audio, kept until the server has it (design §7). */
+export interface AudioRow {
+  captureId: string;
+  /** Raw bytes; Blobs don't survive every IndexedDB implementation. */
+  bytes: ArrayBuffer;
+  mimeType: string;
+  createdAt: string;
+}
+
 export interface MetaRow {
   key: string;
   value: unknown;
@@ -38,6 +48,8 @@ export class LearningDatabase extends Dexie {
   topics!: Table<LocalRow<Topic>, string>;
   concepts!: Table<LocalRow<Concept>, string>;
   events!: Table<LocalRow<ReviewEvent>, string>;
+  captures!: Table<LocalRow<Capture>, string>;
+  audio!: Table<AudioRow, string>;
   outbox!: Table<OutboxRow, string>;
   meta!: Table<MetaRow, string>;
 
@@ -49,6 +61,11 @@ export class LearningDatabase extends Dexie {
       events: 'id, data.conceptId, data.localDate',
       outbox: 'key, kind',
       meta: 'key',
+    });
+    // Version 2 (L2) adds captures and the audio of voice notes.
+    this.version(2).stores({
+      captures: 'id, data.status',
+      audio: 'captureId',
     });
   }
 }

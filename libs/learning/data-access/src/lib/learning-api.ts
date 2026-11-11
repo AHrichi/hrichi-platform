@@ -1,4 +1,6 @@
 import type {
+  Capture,
+  Concept,
   DevicePaired,
   DeviceSummary,
   PairingStarted,
@@ -65,6 +67,40 @@ export class LearningApi {
     return this.call('POST', '/sync', request, token);
   }
 
+  /** A voice note's audio; 404 means its capture hasn't synced yet. */
+  uploadAudio(
+    captureId: string,
+    audio: { bytes: ArrayBuffer; mimeType: string },
+    token: string,
+  ): Promise<Capture> {
+    const form = new FormData();
+    form.append(
+      'audio',
+      new Blob([audio.bytes], { type: audio.mimeType }),
+      'voice-note',
+    );
+    return this.call(
+      'POST',
+      `/captures/${encodeURIComponent(captureId)}/audio`,
+      form,
+      token,
+    );
+  }
+
+  /** "Make it simpler": the server rewrites the explanation. */
+  revise(
+    conceptId: string,
+    instruction: string,
+    token: string,
+  ): Promise<Concept> {
+    return this.call(
+      'POST',
+      `/concepts/${encodeURIComponent(conceptId)}/revise`,
+      { instruction },
+      token,
+    );
+  }
+
   devices(token: string): Promise<DeviceSummary[]> {
     return this.call('GET', '/devices', undefined, token);
   }
@@ -89,10 +125,18 @@ export class LearningApi {
       response = await this.fetchFn(`${this.base}${path}`, {
         method,
         headers: {
-          ...(body === undefined ? {} : { 'content-type': 'application/json' }),
+          // FormData sets its own multipart content type and boundary.
+          ...(body === undefined || body instanceof FormData
+            ? {}
+            : { 'content-type': 'application/json' }),
           ...(token ? { authorization: `Bearer ${token}` } : {}),
         },
-        body: body === undefined ? undefined : JSON.stringify(body),
+        body:
+          body === undefined
+            ? undefined
+            : body instanceof FormData
+              ? body
+              : JSON.stringify(body),
         signal: AbortSignal.timeout(TIMEOUT_MS),
       });
     } catch {

@@ -1,4 +1,5 @@
 import {
+  type Capture,
   type Concept,
   incomingWins,
   isMutableKind,
@@ -10,6 +11,7 @@ import {
   type Topic,
 } from '@ah/learning/domain';
 import type {
+  AudioRow,
   LearningDatabase,
   LocalRow,
   OutboxRow,
@@ -91,6 +93,23 @@ export class LearningLocalStore {
       .sort((a, b) => a.name.localeCompare(b.name));
   }
 
+  async captures(): Promise<Capture[]> {
+    const rows = await this.db.captures.toArray();
+    return rows
+      .map((row) => row.data)
+      .filter((capture) => !capture.deletedAt)
+      .sort((a, b) => b.capturedAt.localeCompare(a.capturedAt));
+  }
+
+  /** Voice notes whose audio the server doesn't have yet. */
+  async pendingAudio(): Promise<AudioRow[]> {
+    return this.db.audio.orderBy('captureId').toArray();
+  }
+
+  async dropAudio(captureId: string): Promise<void> {
+    await this.db.audio.delete(captureId);
+  }
+
   async pendingCount(): Promise<number> {
     return this.db.outbox.count();
   }
@@ -103,6 +122,24 @@ export class LearningLocalStore {
 
   async saveConcept(concept: Concept): Promise<Concept> {
     return this.saveMutable('concept', concept);
+  }
+
+  async saveCapture(capture: Capture): Promise<Capture> {
+    return this.saveMutable('capture', capture);
+  }
+
+  /** A voice note: its audio first, then the capture that waits for it. */
+  async addVoiceCapture(
+    capture: Capture,
+    audio: { bytes: ArrayBuffer; mimeType: string },
+  ): Promise<Capture> {
+    await this.db.audio.put({
+      captureId: capture.id,
+      bytes: audio.bytes,
+      mimeType: audio.mimeType,
+      createdAt: this.now().toISOString(),
+    });
+    return this.saveMutable('capture', capture);
   }
 
   /** A tombstone: the deletion syncs like any other change. */
@@ -132,8 +169,8 @@ export class LearningLocalStore {
     );
   }
 
-  private async saveMutable<T extends Topic | Concept>(
-    kind: 'topic' | 'concept',
+  private async saveMutable<T extends Topic | Concept | Capture>(
+    kind: 'topic' | 'concept' | 'capture',
     record: T,
   ): Promise<T> {
     const writer = await this.writer();
@@ -146,7 +183,7 @@ export class LearningLocalStore {
         by: writer,
         updatedAt: stamped.updatedAt,
         data: stamped,
-      } as LocalRow<Topic> & LocalRow<Concept>);
+      } as LocalRow<Topic> & LocalRow<Concept> & LocalRow<Capture>);
       await this.queue(kind, stamped.id);
     });
     return stamped;
@@ -160,11 +197,17 @@ export class LearningLocalStore {
     snapshot: OutboxSnapshot;
   }> {
     const queued = await this.db.outbox.orderBy('key').toArray();
-    const push: SyncRequest['push'] = { topics: [], concepts: [], events: [] };
+    const push: SyncRequest['push'] = {
+      topics: [],
+      concepts: [],
+      captures: [],
+      events: [],
+    };
     const snapshot: OutboxSnapshot = new Map();
     const limits = {
       topic: SYNC_LIMITS.pushTopics,
       concept: SYNC_LIMITS.pushConcepts,
+      capture: SYNC_LIMITS.pushCaptures,
       event: SYNC_LIMITS.pushEvents,
     };
     for (const entry of queued) {
@@ -177,6 +220,7 @@ export class LearningLocalStore {
         {
           topic: push.topics,
           concept: push.concepts,
+          capture: push.captures,
           event: push.events,
         } as const
       )[entry.kind] as unknown[];
@@ -211,7 +255,13 @@ export class LearningLocalStore {
     let changed = 0;
     await this.db.transaction(
       'rw',
-      [this.db.topics, this.db.concepts, this.db.events, this.db.outbox],
+      [
+        this.db.topics,
+        this.db.concepts,
+        this.db.captures,
+        this.db.events,
+        this.db.outbox,
+      ],
       async () => {
         for (const record of records) {
           const table = this.tableOf(record.kind);
@@ -223,7 +273,10 @@ export class LearningLocalStore {
             by: record.by,
             updatedAt,
             data: record.data,
-          } as LocalRow<Topic> & LocalRow<Concept> & LocalRow<ReviewEvent>;
+          } as LocalRow<Topic> &
+            LocalRow<Concept> &
+            LocalRow<Capture> &
+            LocalRow<ReviewEvent>;
           if (isMutableKind(record.kind)) {
             if (!incomingWins(current, row)) continue;
             await table.put(row);
@@ -243,9 +296,11 @@ export class LearningLocalStore {
     return {
       topic: this.db.topics,
       concept: this.db.concepts,
+      capture: this.db.captures,
       event: this.db.events,
     }[kind] as LearningDatabase['concepts'] &
       LearningDatabase['topics'] &
+      LearningDatabase['captures'] &
       LearningDatabase['events'];
   }
 

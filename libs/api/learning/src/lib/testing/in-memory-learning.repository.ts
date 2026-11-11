@@ -2,6 +2,7 @@ import {
   type AppendOnlyKind,
   incomingWins,
   type MutableKind,
+  type RecordKind,
 } from '@ah/learning/domain';
 import type {
   Device,
@@ -47,6 +48,37 @@ export class InMemoryLearningRepository implements LearningRepository {
       .sort((a, b) => a.seq - b.seq)
       .slice(0, limit)
       .map((record) => structuredClone(record));
+  }
+
+  async getRecord<K extends RecordKind>(
+    kind: K,
+    id: string,
+  ): Promise<StoredRecord<K> | null> {
+    const record = this.records.get(`${kind}:${id}`);
+    return record ? (structuredClone(record) as StoredRecord<K>) : null;
+  }
+
+  async findByStatus<K extends 'capture' | 'concept'>(
+    kind: K,
+    statuses: readonly string[],
+    limit: number,
+  ): Promise<StoredRecord<K>[]> {
+    return [...this.records.values()]
+      .filter(
+        (record) =>
+          record.kind === kind &&
+          statuses.includes((record.data as { status: string }).status),
+      )
+      .sort((a, b) => a.seq - b.seq)
+      .slice(0, limit)
+      .map((record) => structuredClone(record) as StoredRecord<K>);
+  }
+
+  async liveTopics(): Promise<StoredRecord<'topic'>[]> {
+    return [...this.records.values()]
+      .filter((record) => record.kind === 'topic')
+      .map((record) => structuredClone(record) as StoredRecord<'topic'>)
+      .filter((record) => !record.data.deletedAt);
   }
 
   async createDevice(device: Device): Promise<void> {

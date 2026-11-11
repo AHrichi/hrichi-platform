@@ -1,5 +1,7 @@
 import { type DynamicModule, Module } from '@nestjs/common';
 import type { Db } from 'mongodb';
+import { type AiKeys, buildAiProviders } from '@ah/api/ai';
+import { CapturePipeline } from './capture-pipeline';
 import {
   DeviceGuard,
   LEARNING_CLOCK,
@@ -18,7 +20,9 @@ import {
   TelegramPairingNotifier,
 } from './pairing-notifier';
 import { PairingService } from './pairing.service';
+import { PipelineScheduler } from './pipeline.scheduler';
 import { SyncService } from './sync.service';
+import { WriteLock } from './write-lock';
 
 /** Provided by the app: the MongoDB database the learning collections live in. */
 export const LEARNING_MONGO_DB = Symbol('LEARNING_MONGO_DB');
@@ -30,6 +34,8 @@ export interface LearningModuleOptions {
   telegram: { botToken: string; chatId: string } | null;
   /** Development only: log pairing codes instead of sending them. */
   logPairingCodes: boolean;
+  /** Model provider keys; without any, captures wait (design §6). */
+  ai: AiKeys;
 }
 
 @Module({})
@@ -67,12 +73,41 @@ export class LearningModule {
           ) =>
             new PairingService(repository, notifier, options.tokenSecret, now),
         },
+        { provide: WriteLock, useValue: new WriteLock() },
+        {
+          provide: CapturePipeline,
+          inject: [LEARNING_REPOSITORY, WriteLock, LEARNING_CLOCK],
+          useFactory: (
+            repository: LearningRepository,
+            lock: WriteLock,
+            now: () => Date,
+          ) =>
+            new CapturePipeline(
+              repository,
+              lock,
+              buildAiProviders(options.ai),
+              now,
+            ),
+        },
         {
           provide: SyncService,
-          inject: [LEARNING_REPOSITORY, LEARNING_CLOCK],
-          useFactory: (repository: LearningRepository, now: () => Date) =>
-            new SyncService(repository, options.tokenSecret, now),
+          inject: [
+            LEARNING_REPOSITORY,
+            LEARNING_CLOCK,
+            WriteLock,
+            CapturePipeline,
+          ],
+          useFactory: (
+            repository: LearningRepository,
+            now: () => Date,
+            lock: WriteLock,
+            pipeline: CapturePipeline,
+          ) =>
+            new SyncService(repository, options.tokenSecret, now, lock, () => {
+              void pipeline.kick();
+            }),
         },
+        PipelineScheduler,
         DeviceGuard,
       ],
     };

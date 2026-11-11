@@ -65,6 +65,7 @@ export class MongoLearningRepository implements LearningRepository {
     await this.records.createIndexes([
       { key: { seq: 1 }, name: 'seq', unique: true },
       { key: { kind: 1, id: 1 }, name: 'kind_id' },
+      { key: { kind: 1, 'data.status': 1, seq: 1 }, name: 'kind_status' },
     ]);
     // Expired pairings disappear on their own.
     await this.pairings.createIndexes([
@@ -134,6 +135,34 @@ export class MongoLearningRepository implements LearningRepository {
       .limit(limit)
       .toArray();
     return documents.map(toRecord);
+  }
+
+  async getRecord<K extends RecordKind>(
+    kind: K,
+    id: string,
+  ): Promise<StoredRecord<K> | null> {
+    const found = await this.records.findOne({ _id: `${kind}:${id}` });
+    return found ? (toRecord(found) as StoredRecord<K>) : null;
+  }
+
+  async findByStatus<K extends 'capture' | 'concept'>(
+    kind: K,
+    statuses: readonly string[],
+    limit: number,
+  ): Promise<StoredRecord<K>[]> {
+    const found = await this.records
+      .find({ kind, 'data.status': { $in: [...statuses] } })
+      .sort({ seq: 1 })
+      .limit(limit)
+      .toArray();
+    return found.map((document) => toRecord(document) as StoredRecord<K>);
+  }
+
+  async liveTopics(): Promise<StoredRecord<'topic'>[]> {
+    const found = await this.records
+      .find({ kind: 'topic', 'data.deletedAt': null })
+      .toArray();
+    return found.map((document) => toRecord(document) as StoredRecord<'topic'>);
   }
 
   async createDevice({ id, ...device }: Device): Promise<void> {

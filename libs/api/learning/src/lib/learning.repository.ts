@@ -58,6 +58,19 @@ export interface LearningRepository {
   ): Promise<PutOutcome>;
   /** Records with `seq > cursor`, oldest first. */
   changesSince(cursor: number, limit: number): Promise<StoredRecord[]>;
+  /** The stored version of one record. */
+  getRecord<K extends RecordKind>(
+    kind: K,
+    id: string,
+  ): Promise<StoredRecord<K> | null>;
+  /** Records of a kind whose `data.status` is one of `statuses`, oldest first. */
+  findByStatus<K extends 'capture' | 'concept'>(
+    kind: K,
+    statuses: readonly string[],
+    limit: number,
+  ): Promise<StoredRecord<K>[]>;
+  /** Every live (not deleted) topic. */
+  liveTopics(): Promise<StoredRecord<'topic'>[]>;
 
   createDevice(device: Device): Promise<void>;
   findDevice(id: string): Promise<Device | null>;

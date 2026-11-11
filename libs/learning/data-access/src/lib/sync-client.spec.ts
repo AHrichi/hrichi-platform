@@ -3,6 +3,7 @@ import {
   FIXTURE_IDS,
   incomingWins,
   type PulledRecord,
+  sampleCapture,
   sampleConcept,
   sampleEvent,
   sampleTopic,
@@ -12,7 +13,11 @@ import {
 import { LearningApiError } from './learning-api';
 import { LearningDatabase } from './learning-database';
 import { LearningLocalStore, LOCAL_WRITER } from './local-store';
-import { LearningSyncClient, type SyncTransport } from './sync-client';
+import {
+  type AudioUploader,
+  LearningSyncClient,
+  type SyncTransport,
+} from './sync-client';
 
 /**
  * The server's semantics in a few lines (the real one is SyncService in
@@ -24,6 +29,19 @@ class FakeServer {
   readonly records = new Map<string, PulledRecord>();
   offline = false;
   revoked = new Set<string>();
+
+  readonly audio = new Map<string, string>();
+
+  /** Takes audio only for a capture it already has, like the real API. */
+  uploaderFor(): AudioUploader {
+    return async (captureId, audio) => {
+      if (this.offline) throw new LearningApiError('network', 'offline');
+      if (!this.records.has(`capture:${captureId}`)) {
+        throw new LearningApiError('refused', 'not yet', 404);
+      }
+      this.audio.set(captureId, audio.mimeType);
+    };
+  }
 
   transportFor(deviceId: string): SyncTransport {
     return async (request: SyncRequest): Promise<SyncResponse> => {
@@ -52,6 +70,8 @@ class FakeServer {
         put({ kind: 'topic', seq: 0, by: deviceId, data });
       for (const data of request.push.concepts)
         put({ kind: 'concept', seq: 0, by: deviceId, data });
+      for (const data of request.push.captures)
+        put({ kind: 'capture', seq: 0, by: deviceId, data });
       for (const data of request.push.events)
         put({ kind: 'event', seq: 0, by: deviceId, data });
       const changes = [...this.records.values()]
@@ -87,7 +107,11 @@ async function device(server: FakeServer, deviceId: string, paired = true) {
   }
   return {
     store,
-    client: new LearningSyncClient(store, server.transportFor(deviceId)),
+    client: new LearningSyncClient(
+      store,
+      server.transportFor(deviceId),
+      server.uploaderFor(),
+    ),
   };
 }
 
@@ -224,6 +248,30 @@ describe('LearningSyncClient with two devices', () => {
     await phone.store.saveConcept(sampleConcept({ title: 'Changed mid-sync' }));
     await phone.store.acknowledge(snapshot);
     expect(await phone.store.pendingCount()).toBe(1);
+  });
+
+  it('sends a voice note’s audio after its capture, then forgets it', async () => {
+    const server = new FakeServer();
+    const phone = await device(server, FIXTURE_IDS.deviceA);
+    await phone.store.addVoiceCapture(
+      sampleCapture({ modality: 'voice', text: null, hasAudio: true }),
+      { bytes: new Uint8Array([1, 2, 3]).buffer, mimeType: 'audio/webm' },
+    );
+    expect(await phone.store.pendingAudio()).toHaveLength(1);
+
+    server.offline = true;
+    await phone.client.sync();
+    expect(await phone.store.pendingAudio()).toHaveLength(1);
+
+    server.offline = false;
+    expect(await phone.client.sync()).toMatchObject({
+      status: 'synced',
+      pushed: 1,
+      uploaded: 1,
+    });
+    expect(server.audio.get(FIXTURE_IDS.capture)).toBe('audio/webm');
+    expect(await phone.store.pendingAudio()).toEqual([]);
+    expect((await phone.store.captures())[0].hasAudio).toBe(true);
   });
 
   it('writes as the local writer before pairing', async () => {

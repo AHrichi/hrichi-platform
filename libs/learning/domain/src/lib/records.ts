@@ -24,7 +24,16 @@ export const LIMITS = {
   sources: 5,
   excerpt: 500,
   url: 2048,
+  captureText: 4000,
+  captureError: 300,
 } as const;
+
+/**
+ * The writer id of versions the API writes (the capture pipeline). Device
+ * ids are random UUIDs; this fixed one sorts below them, which only matters
+ * on an exact timestamp tie.
+ */
+export const SERVER_WRITER = '00000000-0000-4000-8000-000000000000';
 
 const Id = v.pipe(v.string(), v.uuid());
 const Timestamp = v.pipe(v.string(), v.isoTimestamp());
@@ -125,6 +134,44 @@ export const ConceptSchema = v.strictObject({
   createdAt: Timestamp,
 });
 
+export const CAPTURE_MODALITIES = ['text', 'voice', 'share', 'host'] as const;
+
+export const CAPTURE_STATUSES = [
+  /** Waiting for the pipeline (or, for voice, for its audio). */
+  'queued',
+  /** The pipeline is working on it. */
+  'processing',
+  /** Its concepts are in the digest. */
+  'ready',
+  /** Processed, but a person should look first (see `error`). */
+  'needs_look',
+  /** The AI failed three times; the learner can retry. */
+  'failed',
+] as const;
+
+/**
+ * A raw capture, kept exactly as given (design §1): the AI's concepts can be
+ * regenerated from it later. The device creates it; the pipeline moves its
+ * status on.
+ */
+export const CaptureSchema = v.strictObject({
+  ...envelope,
+  modality: v.picklist(CAPTURE_MODALITIES),
+  /** What was typed or shared; null for a voice note until transcribed. */
+  text: v.nullable(text(LIMITS.captureText)),
+  /** A voice note waits for its audio upload before processing. */
+  hasAudio: v.boolean(),
+  transcript: v.nullable(text(LIMITS.captureText)),
+  source: v.nullable(SourceRefSchema),
+  status: v.picklist(CAPTURE_STATUSES),
+  attempts: v.pipe(v.number(), v.integer(), v.minValue(0), v.maxValue(10)),
+  error: v.nullable(text(LIMITS.captureError)),
+  /** Process even if triage thinks it isn't learnable. */
+  force: v.boolean(),
+  conceptIds: v.pipe(v.array(Id), v.maxLength(3)),
+  capturedAt: Timestamp,
+});
+
 export const RATINGS = ['again', 'hard', 'good', 'easy'] as const;
 
 /** One answer in a review. Append-only: never edited, never deleted. */
@@ -152,9 +199,12 @@ export type SourceRef = v.InferOutput<typeof SourceRefSchema>;
 export type Concept = v.InferOutput<typeof ConceptSchema>;
 export type Rating = (typeof RATINGS)[number];
 export type ReviewEvent = v.InferOutput<typeof ReviewEventSchema>;
+export type Capture = v.InferOutput<typeof CaptureSchema>;
+export type CaptureStatus = (typeof CAPTURE_STATUSES)[number];
+export type CaptureModality = (typeof CAPTURE_MODALITIES)[number];
 
 /** Records that change and merge last-writer-wins. */
-export const MUTABLE_KINDS = ['topic', 'concept'] as const;
+export const MUTABLE_KINDS = ['topic', 'concept', 'capture'] as const;
 /** Records that are only ever added. */
 export const APPEND_ONLY_KINDS = ['event'] as const;
 export const RECORD_KINDS = [...MUTABLE_KINDS, ...APPEND_ONLY_KINDS] as const;
@@ -166,12 +216,14 @@ export type RecordKind = (typeof RECORD_KINDS)[number];
 export interface RecordOfKind {
   topic: Topic;
   concept: Concept;
+  capture: Capture;
   event: ReviewEvent;
 }
 
 export const RECORD_SCHEMAS = {
   topic: TopicSchema,
   concept: ConceptSchema,
+  capture: CaptureSchema,
   event: ReviewEventSchema,
 } as const;
 

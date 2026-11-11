@@ -7,8 +7,22 @@ export type SyncTransport = (
   token: string,
 ) => Promise<SyncResponse>;
 
+/** Sends one voice note's audio; throws LearningApiError like the API does. */
+export type AudioUploader = (
+  captureId: string,
+  audio: { bytes: ArrayBuffer; mimeType: string },
+  token: string,
+) => Promise<unknown>;
+
 export type SyncOutcome =
-  | { status: 'synced'; pushed: number; pulled: number; rejected: Rejection[] }
+  | {
+      status: 'synced';
+      pushed: number;
+      pulled: number;
+      rejected: Rejection[];
+      /** Voice notes whose audio reached the server this time. */
+      uploaded: number;
+    }
   /** Not paired, or the pairing ended (the session is cleared). */
   | { status: 'unpaired' }
   /** Couldn't sync now; everything stays queued for the next try. */
@@ -29,6 +43,7 @@ export class LearningSyncClient {
   constructor(
     private readonly store: LearningLocalStore,
     private readonly transport: SyncTransport,
+    private readonly uploadAudio: AudioUploader | null = null,
   ) {}
 
   /** Concurrent calls share one run. */
@@ -86,6 +101,36 @@ export class LearningSyncClient {
 
       if (!response.more && (await this.store.pendingCount()) === 0) break;
     }
-    return { status: 'synced', pushed, pulled, rejected };
+    const uploaded = await this.uploadPendingAudio(session.token);
+    if (uploaded === 'unpaired') return { status: 'unpaired' };
+    return { status: 'synced', pushed, pulled, rejected, uploaded };
+  }
+
+  /**
+   * After the captures are on the server, their audio follows. A 404 means
+   * the capture hasn't arrived yet (the next sync tries again); a network
+   * error stops for now. Uploaded audio is deleted from the device.
+   */
+  private async uploadPendingAudio(
+    token: string,
+  ): Promise<number | 'unpaired'> {
+    if (!this.uploadAudio) return 0;
+    let uploaded = 0;
+    for (const audio of await this.store.pendingAudio()) {
+      try {
+        await this.uploadAudio(audio.captureId, audio, token);
+        await this.store.dropAudio(audio.captureId);
+        uploaded += 1;
+      } catch (error) {
+        if (!(error instanceof LearningApiError)) throw error;
+        if (error.kind === 'unauthorized') {
+          await this.store.clearSession();
+          return 'unpaired';
+        }
+        if (error.kind === 'network') break;
+        // refused (the capture isn't there yet) or a server error: try later.
+      }
+    }
+    return uploaded;
   }
 }

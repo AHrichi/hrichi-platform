@@ -52,8 +52,10 @@ export class LearningRuntime {
       return { local, api: null, client: null, unavailable: 'no-server' };
     }
     const api = new LearningApi(apiUrl);
-    const client = new LearningSyncClient(local, (request, token) =>
-      api.sync(request, token),
+    const client = new LearningSyncClient(
+      local,
+      (request, token) => api.sync(request, token),
+      (captureId, audio, token) => api.uploadAudio(captureId, audio, token),
     );
     return { local, api, client, unavailable: null };
   }

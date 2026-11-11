@@ -1,6 +1,7 @@
 import {
   isFromTheFuture,
   type MutableKind,
+  PAIRING,
   type PulledRecord,
   type Rejection,
   signDeviceToken,
@@ -8,9 +9,9 @@ import {
   type SyncRequest,
   type SyncResponse,
   TOKEN_RENEW_WINDOW_MS,
-  PAIRING,
 } from '@ah/learning/domain';
 import type { LearningRepository, StoredRecord } from './learning.repository';
+import { WriteLock } from './write-lock';
 
 export interface SyncCaller {
   deviceId: string;
@@ -19,27 +20,20 @@ export interface SyncCaller {
 
 /**
  * Applies a device's push, then returns what changed after its cursor
- * (design §4.3).
- *
- * Syncs run one at a time in this process. Sequence numbers are taken in
- * order and written before the next sync starts, so a reader never sees
- * seq 11 while seq 10 is still being written and skips it for good. The
- * API runs as a single instance on Render; a second instance would need
- * a lock in the database instead.
+ * (design §4.3). Writes go through the shared WriteLock.
  */
 export class SyncService {
-  private queue: Promise<unknown> = Promise.resolve();
-
   constructor(
     private readonly repository: LearningRepository,
     private readonly tokenSecret: string,
     private readonly now: () => Date = () => new Date(),
+    private readonly lock: WriteLock = new WriteLock(),
+    /** Called after a sync stored a capture, so the pipeline starts. */
+    private readonly onCaptures: () => void = () => undefined,
   ) {}
 
   sync(caller: SyncCaller, request: SyncRequest): Promise<SyncResponse> {
-    const run = this.queue.then(() => this.run(caller, request));
-    this.queue = run.catch(() => undefined);
-    return run;
+    return this.lock.run(() => this.run(caller, request));
   }
 
   private async run(
@@ -50,6 +44,7 @@ export class SyncService {
     const rejected: Rejection[] = [];
     // Versions this request wrote; the device already has them.
     const written = new Set<number>();
+    let capturesStored = false;
 
     const putMutable = async <K extends MutableKind>(
       kind: K,
@@ -68,12 +63,19 @@ export class SyncService {
         updatedAt: data.updatedAt,
         data,
       } as StoredRecord<K>);
-      if (outcome === 'stored') written.add(seq);
+      if (outcome === 'stored') {
+        written.add(seq);
+        if (kind === 'capture') capturesStored = true;
+      }
     };
 
     for (const topic of request.push.topics) await putMutable('topic', topic);
-    for (const concept of request.push.concepts)
+    for (const concept of request.push.concepts) {
       await putMutable('concept', concept);
+    }
+    for (const capture of request.push.captures) {
+      await putMutable('capture', capture);
+    }
     for (const event of request.push.events) {
       const seq = await this.repository.nextSeq();
       const outcome = await this.repository.putAppendOnly({
@@ -94,6 +96,7 @@ export class SyncService {
     const more = changes.length > SYNC_LIMITS.pull;
     const page = changes.slice(0, SYNC_LIMITS.pull);
     const cursor = page.length ? page[page.length - 1].seq : request.cursor;
+    if (capturesStored) this.onCaptures();
 
     return {
       cursor,
