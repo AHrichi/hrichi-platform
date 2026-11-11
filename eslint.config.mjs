@@ -23,6 +23,9 @@ export default [
               bannedExternalImports: ['zone.js', 'zone.js/*'],
             },
             // Scopes: labs and products stay isolated from each other.
+            // Products may also use the Learning Engine, but only through its
+            // client lib (`scope:learning-client`), never its store, database
+            // or screens (ADR-0024).
             {
               sourceTag: 'scope:portfolio',
               onlyDependOnLibsWithTags: [
@@ -68,6 +71,7 @@ export default [
                 'scope:shared',
                 'scope:platform',
                 'scope:design-system',
+                'scope:learning-client',
               ],
             },
             {
@@ -77,6 +81,7 @@ export default [
                 'scope:shared',
                 'scope:platform',
                 'scope:design-system',
+                'scope:learning-client',
               ],
             },
             {
@@ -86,6 +91,7 @@ export default [
                 'scope:shared',
                 'scope:platform',
                 'scope:design-system',
+                'scope:learning-client',
               ],
             },
             {
@@ -99,6 +105,7 @@ export default [
                 // (`@ah/labs/sky/domain`). Named here on purpose, instead of
                 // tagging that domain `scope:shared` for every app.
                 'scope:lab-sky',
+                'scope:learning-client',
               ],
             },
             {
@@ -108,6 +115,7 @@ export default [
                 'scope:shared',
                 'scope:platform',
                 'scope:design-system',
+                'scope:learning-client',
               ],
             },
             {
@@ -117,6 +125,7 @@ export default [
                 'scope:shared',
                 'scope:platform',
                 'scope:design-system',
+                'scope:learning-client',
               ],
             },
             {
@@ -126,12 +135,36 @@ export default [
                 'scope:shared',
                 'scope:platform',
                 'scope:design-system',
+                'scope:learning-client',
               ],
             },
             {
               sourceTag: 'scope:product-autosphere',
               onlyDependOnLibsWithTags: [
                 'scope:product-autosphere',
+                'scope:shared',
+                'scope:platform',
+                'scope:design-system',
+                'scope:learning-client',
+              ],
+            },
+            // The Learning Engine (ADR-0024): its own scope, like a product.
+            {
+              sourceTag: 'scope:learning',
+              onlyDependOnLibsWithTags: [
+                'scope:learning',
+                'scope:shared',
+                'scope:platform',
+                'scope:design-system',
+              ],
+            },
+            // Its client lib may reach the engine's contracts; products reach
+            // nothing else of the engine.
+            {
+              sourceTag: 'scope:learning-client',
+              onlyDependOnLibsWithTags: [
+                'scope:learning-client',
+                'scope:learning',
                 'scope:shared',
                 'scope:platform',
                 'scope:design-system',
@@ -162,6 +195,9 @@ export default [
                 // The PulseOps backend (`api-dispatch`) shares its models and
                 // rules with the PulseOps frontend through its domain lib.
                 'scope:product-dispatch',
+                // The Learning Engine's scheduler, contracts and AI kit run the
+                // same code in Nest and the browser (runtime:agnostic, ADR-0024).
+                'scope:learning',
               ],
             },
             // Layers: dependencies only point down.
@@ -178,6 +214,7 @@ export default [
                 'type:tokens',
                 'type:content',
                 'type:engine',
+                'type:client',
               ],
             },
             {
@@ -203,6 +240,21 @@ export default [
                 'type:domain',
                 'type:util',
                 'type:contracts',
+                'type:client',
+              ],
+            },
+            // A client lib is a small facade over another scope's API: it may
+            // use contracts, utilities, platform services and presentational
+            // components, never that scope's store or screens.
+            {
+              sourceTag: 'type:client',
+              onlyDependOnLibsWithTags: [
+                'type:client',
+                'type:contracts',
+                'type:util',
+                'type:platform',
+                'type:ui',
+                'type:tokens',
               ],
             },
             {

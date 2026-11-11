@@ -29,6 +29,7 @@ Each ADR records one decision, why it was made, and what a spike proved. New ADR
 | [0021](0021-studylm-learning-lab.md)           | StudyLM Learning Lab: typed lessons the AI fills and the app checks, simulators, kit     |
 | [0022](0022-studylm-lesson-player.md)          | StudyLM lesson player: honest AI failures, routed screens, step player, checks, progress |
 | [0023](0023-studylm-generated-lessons.md)      | StudyLM writes lessons, plays every visual, runs JS with a tracer, no eval or worker     |
+| [0024](0024-learning-engine.md)                | Learning Engine: own scope, client-only access for products, local-first sync, Nest AI   |
 
 ## Proposed (written when the area is built)
 

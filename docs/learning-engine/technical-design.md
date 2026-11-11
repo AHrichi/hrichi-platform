@@ -1,6 +1,6 @@
 # Learning Engine: technical design
 
-- **Status:** Proposed. Decisions 1–3 in §15 are accepted; ADR-0024 records them in L0.
+- **Status:** Accepted for decisions 1–3 in §15, recorded in [ADR-0024](../adr/0024-learning-engine.md). Jev (decision 5) and the name (decision 4) are still open.
 - **Date:** 2026-11-11
 - **Product design:** the approved blueprint: zero-friction capture, a capped Daily Set, a forgiving habit loop and an engine that host apps plug into.
 - **Audience:** one owner (a personal tool), English only.
