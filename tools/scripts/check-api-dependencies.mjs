@@ -16,9 +16,7 @@ const { dependencies = {} } = JSON.parse(
 const builtins = new Set(builtinModules);
 
 const required = new Set();
-for (const [, specifier] of bundle.matchAll(
-  /\brequire\(["']([^"']+)["']\)/g,
-)) {
+for (const [, specifier] of bundle.matchAll(/\brequire\(["']([^"']+)["']\)/g)) {
   if (/^(\.|\/|node:)/.test(specifier)) continue;
   const parts = specifier.split('/');
   const name = specifier.startsWith('@')
