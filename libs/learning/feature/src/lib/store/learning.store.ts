@@ -10,11 +10,23 @@ import {
 import { LearningApiError, type SyncOutcome } from '@ah/learning/data-access';
 import {
   type Capture,
+  composeDailySet,
+  computeStreak,
   type Concept,
   type ConceptDraft,
   conceptFromDraft,
+  countedDays,
+  DEFAULT_CAP,
+  DEFAULT_NEW_PER_DAY,
   type DeviceSummary,
+  levelOf,
+  localDateOf,
+  memoryOf,
+  type RecallPrompt,
+  type ReviewEvent,
+  type ReviewSession,
   SERVER_WRITER,
+  xpOf,
 } from '@ah/learning/domain';
 import { LearningRuntime, type SyncUnavailable } from './learning-runtime';
 
@@ -35,12 +47,41 @@ export interface PairingState {
   error: string | null;
 }
 
+/** This device's learning settings (design §4.1 LearnerProfile). */
+export interface LearnerSettings {
+  dailyCap: 5 | 7 | 10;
+  newPerDay: number;
+  /** "HH:MM", or null to learn it from when you usually study. */
+  morning: string | null;
+  /** "HH:MM", or null for no evening reminder. */
+  evening: string | null;
+  /** "YYYY-MM-DD": no nudges and no streak pressure until then. */
+  vacationUntil: string | null;
+}
+
+export const DEFAULT_SETTINGS: LearnerSettings = {
+  dailyCap: DEFAULT_CAP as 7,
+  newPerDay: DEFAULT_NEW_PER_DAY,
+  morning: null,
+  evening: '20:30',
+  vacationUntil: null,
+};
+
+export function deviceTimeZone(): string {
+  return Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
+}
+
 export interface LearningState {
   ready: boolean;
   /** The database couldn't be opened (private mode, storage blocked). */
   fatal: string | null;
   concepts: Concept[];
   captures: Capture[];
+  sessions: ReviewSession[];
+  events: ReviewEvent[];
+  settings: LearnerSettings;
+  /** Bumped by the clock so "today" moves on at the day boundary. */
+  now: string;
   /** Concepts the server is rewriting ("make it simpler"). */
   revising: string[];
   /** A short confirmation for the live region ("Got it"). */
@@ -59,6 +100,10 @@ const initialState: LearningState = {
   fatal: null,
   concepts: [],
   captures: [],
+  sessions: [],
+  events: [],
+  settings: DEFAULT_SETTINGS,
+  now: new Date().toISOString(),
   revising: [],
   notice: null,
   pending: 0,
@@ -92,6 +137,29 @@ function messageOf(error: unknown): string {
 export const LearningStore = signalStore(
   { providedIn: 'root' },
   withState<LearningState>(initialState),
+  withComputed(({ concepts, sessions, events, now }) => {
+    const timeZone = deviceTimeZone();
+    const today = computed(() => localDateOf(new Date(now()), timeZone));
+    const memory = computed(() => memoryOf(concepts(), events()));
+    const days = computed(() => countedDays(events(), sessions()));
+    return {
+      timeZone: computed(() => timeZone),
+      today,
+      memory,
+      streak: computed(() =>
+        computeStreak(days().counted, days().full, today()),
+      ),
+      xp: computed(() => levelOf(xpOf(events(), sessions()))),
+      xpTotal: computed(() => xpOf(events(), sessions())),
+      todaySet: computed(
+        () =>
+          sessions().find(
+            (session) =>
+              session.kind === 'daily' && session.localDate === today(),
+          ) ?? null,
+      ),
+    };
+  }),
   withComputed(({ concepts, captures }) => ({
     /** The digest: drafts the AI wrote, waiting to be kept or discarded. */
     drafts: computed(() => concepts().filter((c) => c.status === 'draft')),
@@ -116,15 +184,23 @@ export const LearningStore = signalStore(
 
     async function refresh(): Promise<void> {
       const { local, unavailable } = await runtime.open();
-      const [concepts, captures, pending, session] = await Promise.all([
-        local.concepts(),
-        local.captures(),
-        local.pendingCount(),
-        local.session(),
-      ]);
+      const [concepts, captures, pending, session, sessions, events, settings] =
+        await Promise.all([
+          local.concepts(),
+          local.captures(),
+          local.pendingCount(),
+          local.session(),
+          local.sessions(),
+          local.events(),
+          local.getMeta<Partial<LearnerSettings>>('learner'),
+        ]);
       patchState(store, {
         concepts,
         captures,
+        sessions,
+        events,
+        settings: { ...DEFAULT_SETTINGS, ...settings },
+        now: new Date().toISOString(),
         pending,
         unavailable,
         device: session
@@ -253,6 +329,161 @@ export const LearningStore = signalStore(
 
       syncNow,
       syncSoon,
+
+      /**
+       * Today's Daily Set: the one already frozen for today (on any device),
+       * or a new one composed now and saved, so it syncs.
+       */
+      async startToday(): Promise<ReviewSession> {
+        const { local } = await runtime.open();
+        await refresh();
+        const existing = store.todaySet();
+        if (existing) return existing;
+        const now = new Date();
+        const { planned, lighter } = composeDailySet({
+          concepts: store.concepts(),
+          memory: store.memory(),
+          sessions: store.sessions(),
+          events: store.events(),
+          localDate: store.today(),
+          now,
+          timeZone: store.timeZone(),
+          cap: store.settings().dailyCap,
+          newPerDay: store.settings().newPerDay,
+        });
+        const session = await local.saveSession({
+          id: crypto.randomUUID(),
+          updatedAt: now.toISOString(),
+          deletedAt: null,
+          localDate: store.today(),
+          kind: 'daily',
+          planned,
+          lighter,
+          startedAt: now.toISOString(),
+          // A day with nothing due still counts: the set is done at once.
+          completedAt: planned.length ? null : now.toISOString(),
+        });
+        await refresh();
+        syncSoon();
+        return session;
+      },
+
+      /** More cards after the Daily Set, for those who want them. */
+      async startBonus(): Promise<ReviewSession | null> {
+        const { local } = await runtime.open();
+        const inToday = new Set(
+          store
+            .sessions()
+            .filter((session) => session.localDate === store.today())
+            .flatMap((session) =>
+              session.planned.map((item) => item.conceptId),
+            ),
+        );
+        const now = new Date();
+        const { planned } = composeDailySet({
+          concepts: store.concepts(),
+          memory: store.memory(),
+          sessions: [],
+          events: store.events(),
+          localDate: store.today(),
+          now,
+          timeZone: store.timeZone(),
+          cap: 5,
+          newPerDay: 0,
+          exclude: inToday,
+        });
+        if (!planned.length) return null;
+        const session = await local.saveSession({
+          id: crypto.randomUUID(),
+          updatedAt: now.toISOString(),
+          deletedAt: null,
+          localDate: store.today(),
+          kind: 'bonus',
+          planned,
+          lighter: false,
+          startedAt: now.toISOString(),
+          completedAt: null,
+        });
+        await refresh();
+        syncSoon();
+        return session;
+      },
+
+      /** One graded card (append-only, design §4.3). */
+      async recordAnswer(input: {
+        session: ReviewSession;
+        conceptId: string;
+        promptId: string;
+        rating: ReviewEvent['rating'];
+        answer: string | null;
+        ms: number;
+      }): Promise<void> {
+        const { local } = await runtime.open();
+        const at = new Date();
+        await local.appendEvent({
+          id: crypto.randomUUID(),
+          conceptId: input.conceptId,
+          promptId: input.promptId,
+          sessionId: input.session.id,
+          at: at.toISOString(),
+          localDate: localDateOf(at, store.timeZone()),
+          rating: input.rating,
+          answer: input.answer?.trim().slice(0, 1200) || null,
+          ms: Math.min(3_600_000, Math.max(0, Math.round(input.ms))),
+        });
+        await refresh();
+      },
+
+      async completeSession(session: ReviewSession): Promise<void> {
+        const { local } = await runtime.open();
+        await local.saveSession({
+          ...session,
+          completedAt: new Date().toISOString(),
+        });
+        await refresh();
+        syncSoon();
+      },
+
+      /**
+       * AI feedback on a typed answer, within `budgetMs`; null when there is
+       * no connection, no pairing, or no answer in time (design §6.3).
+       */
+      async grade(
+        prompt: RecallPrompt,
+        answer: string,
+        budgetMs = 6000,
+      ): Promise<{
+        verdict: 'nailed' | 'close' | 'missed' | null;
+        missed: string[];
+        suggested: 'again' | 'hard' | 'good' | null;
+      } | null> {
+        const { api, local } = await runtime.open();
+        const session = await local.session();
+        if (!api || !session || !prompt.keyPoints.length || !answer.trim()) {
+          return null;
+        }
+        try {
+          return await api.grade(
+            {
+              question: prompt.question,
+              expected: prompt.answer,
+              keyPoints: prompt.keyPoints,
+              answer,
+            },
+            session.token,
+            AbortSignal.timeout(budgetMs),
+          );
+        } catch {
+          return null;
+        }
+      },
+
+      async saveSettings(change: Partial<LearnerSettings>): Promise<void> {
+        const { local } = await runtime.open();
+        const settings = { ...store.settings(), ...change };
+        await local.setMeta('learner', settings);
+        patchState(store, { settings });
+      },
 
       /** A typed capture: saved at once, processed by the server (design 1). */
       async capture(text: string): Promise<void> {

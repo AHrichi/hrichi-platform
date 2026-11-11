@@ -1,9 +1,15 @@
 <div class="shell">
   <header class="bar">
-    <a class="brand" routerLink="inbox">
+    <a class="brand" routerLink="today">
       <span aria-hidden="true">✦</span> Learning
     </a>
     <nav class="nav" aria-label="Learning">
+      <a
+        routerLink="today"
+        routerLinkActive="is-active"
+        ariaCurrentWhenActive="page"
+        >Today</a
+      >
       <a
         routerLink="inbox"
         routerLinkActive="is-active"
@@ -17,13 +23,14 @@
         routerLink="concepts"
         routerLinkActive="is-active"
         ariaCurrentWhenActive="page"
-        >Concepts</a
+        >Library</a
       >
       <a
-        routerLink="devices"
+        routerLink="settings"
         routerLinkActive="is-active"
         ariaCurrentWhenActive="page"
-        >Devices</a
+        aria-label="Settings"
+        ><span aria-hidden="true">⚙</span></a
       >
     </nav>
     @let s = status();

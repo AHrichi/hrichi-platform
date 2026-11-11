@@ -1,0 +1,203 @@
+<section class="screen" aria-labelledby="today-title">
+  <h1 id="today-title" class="visually-hidden">Today</h1>
+
+  @if (finished()) {
+    <div class="card done" role="status">
+      @if (session()?.planned?.length) {
+        <p class="done-mark" aria-hidden="true">✓</p>
+        <h2>Done for today</h2>
+      } @else {
+        <p class="done-mark" aria-hidden="true">☕</p>
+        <h2>Nothing due today</h2>
+        <p class="hint">
+          Capture something new in the Inbox, or come back tomorrow. Today still
+          counts.
+        </p>
+      }
+      <p class="flame">
+        <span aria-hidden="true">🔥</span>
+        {{ store.streak().current }} day{{
+          store.streak().current === 1 ? '' : 's'
+        }}
+        @if (store.streak().freezesBanked) {
+          <span class="freezes">
+            · <span aria-hidden="true">❄️</span>
+            {{ store.streak().freezesBanked }} freeze{{
+              store.streak().freezesBanked === 1 ? '' : 's'
+            }}
+            banked
+          </span>
+        }
+      </p>
+      @for (grew of grewTo(); track grew.title) {
+        <p class="insight">
+          “{{ grew.title }}” reached <strong>{{ tierNames[grew.tier] }}</strong
+          >.
+        </p>
+      } @empty {
+        @if (strongCount()) {
+          <p class="insight">
+            {{ strongCount() }} concept{{
+              strongCount() === 1 ? ' is' : 's are'
+            }}
+            at Leaf or better.
+          </p>
+        }
+      }
+      <p class="hint">
+        Level {{ store.xp().level }} · {{ store.xp().into }} /
+        {{ store.xp().span }} XP
+      </p>
+      <p class="hint">
+        Tomorrow: {{ tomorrow() }} card{{ tomorrow() === 1 ? '' : 's' }} · about
+        {{ tomorrowMinutes() }} min
+      </p>
+      <div class="actions">
+        <button ahButton type="button" (click)="close()">Close</button>
+        <button
+          ahButton="ghost"
+          type="button"
+          (click)="startBonus()"
+          [disabled]="busy()"
+        >
+          Bonus round
+        </button>
+      </div>
+    </div>
+  } @else if (card(); as current) {
+    <div
+      class="progress"
+      role="progressbar"
+      aria-label="Today’s set"
+      [attr.aria-valuenow]="done()"
+      aria-valuemin="0"
+      [attr.aria-valuemax]="total()"
+    >
+      @for (filled of dots(); track $index) {
+        <span class="dot" [class.is-done]="filled"></span>
+      }
+      <span class="flame-small" aria-hidden="true"
+        >🔥 {{ store.streak().current }}</span
+      >
+    </div>
+    @if (session()?.lighter) {
+      <p class="hint">Lighter set today.</p>
+    }
+
+    <lrn-swipe-card
+      class="card review"
+      [allowUp]="true"
+      [disabled]="!revealed() || busy()"
+      (swiped)="grade($event)"
+      label="The current card. After revealing: right for got it, up for shaky, left for missed."
+    >
+      <p class="chip">
+        {{ typeLabels[current.prompt.type] }}
+        @if (current.retry) {
+          · again
+        }
+      </p>
+      <p class="question">{{ current.prompt.question }}</p>
+
+      @if (current.prompt.type === 'quick_fire' && current.prompt.options) {
+        <div class="options">
+          @for (option of current.prompt.options; track option) {
+            <button
+              type="button"
+              class="option"
+              [class.is-right]="revealed() && option === current.prompt.answer"
+              [class.is-wrong]="
+                revealed() &&
+                option === picked() &&
+                option !== current.prompt.answer
+              "
+              [disabled]="revealed()"
+              (click)="pick(option)"
+            >
+              {{ option }}
+            </button>
+          }
+        </div>
+      } @else if (!revealed()) {
+        <label class="answer">
+          <span class="visually-hidden">Your answer (optional)</span>
+          <textarea
+            rows="2"
+            placeholder="Type your answer (optional)…"
+            [value]="answer()"
+            (input)="answer.set($any($event.target).value)"
+            (keydown.control.enter)="reveal()"
+            (keydown.meta.enter)="reveal()"
+          ></textarea>
+        </label>
+      }
+
+      @if (revealed()) {
+        <div class="reveal">
+          @if (current.prompt.type !== 'quick_fire') {
+            @if (answer().trim()) {
+              <p class="hint">You said: {{ answer() }}</p>
+            }
+            <p class="expected">{{ current.prompt.answer }}</p>
+          }
+          @if (checking()) {
+            <p class="hint" role="status">Checking your answer…</p>
+          } @else if (feedback(); as fb) {
+            <p [class]="'verdict verdict--' + fb.verdict" role="status">
+              @switch (fb.verdict) {
+                @case ('nailed') {
+                  Nailed it.
+                }
+                @case ('close') {
+                  Close. You missed: {{ fb.missed.join('; ') }}.
+                }
+                @case ('missed') {
+                  Not this time.
+                }
+              }
+            </p>
+          }
+          <p class="essence">{{ current.concept.explanation.essence }}</p>
+          @if (current.concept.explanation.analogy; as analogy) {
+            <p class="hint">{{ analogy }}</p>
+          }
+        </div>
+      }
+    </lrn-swipe-card>
+
+    @if (!revealed()) {
+      <button ahButton type="button" class="reveal-button" (click)="reveal()">
+        Show the answer
+      </button>
+    } @else {
+      <div class="grades">
+        <button
+          ahButton="secondary"
+          type="button"
+          (click)="grade('left')"
+          [disabled]="busy()"
+        >
+          ← Missed
+        </button>
+        <button
+          ahButton="secondary"
+          type="button"
+          (click)="grade('up')"
+          [disabled]="busy()"
+        >
+          ↑ Shaky
+        </button>
+        <button
+          ahButton
+          type="button"
+          (click)="grade('right')"
+          [disabled]="busy()"
+        >
+          Got it →
+        </button>
+      </div>
+    }
+  } @else {
+    <p class="hint" role="status">Getting today’s set ready…</p>
+  }
+</section>

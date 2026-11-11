@@ -67,6 +67,16 @@ export class LearningLocalStore {
     await this.db.meta.bulkDelete([META_SESSION, META_CURSOR]);
   }
 
+  /** A device-level setting kept beside the records (never synced). */
+  async getMeta<T>(key: string): Promise<T | null> {
+    const row = await this.db.meta.get(`setting:${key}`);
+    return (row?.value as T | undefined) ?? null;
+  }
+
+  async setMeta(key: string, value: unknown): Promise<void> {
+    await this.db.meta.put({ key: `setting:${key}`, value });
+  }
+
   async cursor(): Promise<number> {
     const row = await this.db.meta.get(META_CURSOR);
     return typeof row?.value === 'number' ? row.value : 0;
