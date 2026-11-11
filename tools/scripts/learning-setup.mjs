@@ -137,13 +137,21 @@ console.log(
     : '  new: LEARNING_TOKEN_SECRET (generated)',
 );
 
-// 2. AI keys.
+// 2. AI keys, unless the models go through n8n.
 console.log('\n2/5 AI keys');
 const keys = {};
-for (const name of Object.keys(checks)) keys[name] = await aiKey(name);
-if (!keys.GROQ_API_KEY && !keys.GEMINI_API_KEY) {
+const relay = !!(known('LEARNING_N8N_URL') && known('LEARNING_N8N_SECRET'));
+if (relay) {
   console.log(
-    '  Without Groq or Gemini, captures wait and say so. Rerun to add one.',
+    '  ok: the models go through n8n (LEARNING_N8N_URL); keys here are optional',
+  );
+}
+for (const name of Object.keys(checks)) {
+  keys[name] = relay && !known(name) ? '' : await aiKey(name);
+}
+if (!relay && !keys.GROQ_API_KEY && !keys.GEMINI_API_KEY) {
+  console.log(
+    '  Without Groq, Gemini or the n8n relay (node tools/n8n/install-learning-ai.mjs), captures wait.',
   );
 }
 writeEnvValues(

@@ -97,6 +97,32 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): ApiConfig {
   return config;
 }
 
+/**
+ * The n8n relay (ADR-0024): model calls go through n8n, which holds the
+ * Groq and Gemini keys. Both values or neither.
+ */
+function n8nRelay(
+  url: string | null,
+  secret: string | null,
+  problems: string[],
+): { url: string; secret: string } | null {
+  if (!url && !secret) return null;
+  if (!url || !secret) {
+    problems.push('LEARNING_N8N_URL and LEARNING_N8N_SECRET go together');
+    return null;
+  }
+  if (secret.length < MIN_SECRET_LENGTH) {
+    problems.push(
+      `LEARNING_N8N_SECRET needs at least ${MIN_SECRET_LENGTH} characters`,
+    );
+  }
+  if (!/^https:\/\/|^http:\/\/(localhost|127\.0\.0\.1)[:/]/.test(url)) {
+    problems.push('LEARNING_N8N_URL must be an https URL');
+    return null;
+  }
+  return { url: url.replace(/\/+$/, ''), secret };
+}
+
 /** The edge Worker's URL, for Telegram capture: https, or http on localhost. */
 function edgeUrl(value: string | null, problems: string[]): string | null {
   if (!value) return null;
@@ -148,6 +174,11 @@ function learningConfig(
       groq: optional('GROQ_API_KEY'),
       gemini: optional('GEMINI_API_KEY'),
       typesafe: optional('TYPESAFE_API_KEY'),
+      n8n: n8nRelay(
+        optional('LEARNING_N8N_URL'),
+        optional('LEARNING_N8N_SECRET'),
+        problems,
+      ),
     },
     edgeUrl: edgeUrl(optional('LEARNING_EDGE_URL'), problems),
   };

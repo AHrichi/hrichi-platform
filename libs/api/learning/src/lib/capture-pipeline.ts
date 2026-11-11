@@ -51,6 +51,8 @@ export interface PipelineAi {
   ladder: ModelLadder;
   transcriber: Transcriber & { readonly configured: boolean };
   decisions: DecisionModel;
+  /** False while the models can't be reached (n8n off): captures wait. */
+  reachable?: () => Promise<boolean>;
 }
 
 /** A problem the learner should see, with no stack trace. */
@@ -251,6 +253,15 @@ export class CapturePipeline {
     if (!this.ai.ladder.configured) {
       const waiting = 'Waiting: this server has no AI keys set up yet.';
       // Written once, not on every sweep: each write syncs to every device.
+      if (capture.error !== waiting) {
+        await this.write('capture', { ...capture, error: waiting });
+      }
+      return;
+    }
+    if (this.ai.reachable && !(await this.ai.reachable())) {
+      // Not an attempt: nothing failed, the models are just out of reach.
+      const waiting =
+        'Waiting: the AI runs through n8n, which is offline. It carries on when n8n is back.';
       if (capture.error !== waiting) {
         await this.write('capture', { ...capture, error: waiting });
       }

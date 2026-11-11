@@ -27,7 +27,7 @@ import { LABELLED_ANSWERS, OFF_TOPIC } from './labelled-answers';
  * measurement calls real models, so it runs only on request:
  *
  *   LEARNING_JEV_SPIKE=1 TYPESAFE_API_KEY=… [GROQ_API_KEY=…] [GEMINI_API_KEY=…] \
- *     pnpm nx test api-learning --testFile=jev-spike
+ *     pnpm nx test api-learning -- jev-spike
  *
  * It writes tmp/jev-spike/report.json and prints the go/no-go per task.
  */

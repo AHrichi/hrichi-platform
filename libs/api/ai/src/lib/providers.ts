@@ -6,6 +6,7 @@ import {
 } from './decision';
 import { ModelLadder } from './ladder';
 import { GeminiModel, type GenerativeModel, GroqChatModel } from './models';
+import { N8nRelay, type N8nRelayOptions } from './n8n-relay';
 import {
   FallbackTranscriber,
   GeminiTranscriber,
@@ -18,6 +19,11 @@ export interface AiKeys {
   gemini: string | null;
   /** TypeSafe (Jev). Unset, decisions go to the generative ladder. */
   typesafe: string | null;
+  /**
+   * The n8n relay: Groq and Gemini through the keys n8n holds, for a
+   * provider whose key isn't set here. Captures wait while n8n is off.
+   */
+  n8n?: N8nRelayOptions | null;
 }
 
 /** The models, as StudyLM's workflow orders them (docs/studylm/ai-workflow.md). */
@@ -35,6 +41,11 @@ export interface AiProviders {
   decisions: DecisionModel;
   /** For logs and the health of the pipeline: which providers are set up. */
   summary: string;
+  /**
+   * Whether the models can be reached now: always with a key here; through
+   * the relay only while n8n answers.
+   */
+  reachable: () => Promise<boolean>;
 }
 
 type Fetch = typeof fetch;
@@ -43,27 +54,45 @@ export function buildAiProviders(
   keys: AiKeys,
   fetchFn: Fetch = (input, init) => fetch(input, init),
 ): AiProviders {
+  const relay = keys.n8n ? new N8nRelay(keys.n8n, fetchFn) : null;
+  // A key here wins; without one, the provider goes through n8n's key.
+  const groq = keys.groq
+    ? { key: keys.groq, fetch: fetchFn }
+    : relay
+      ? { key: 'held-by-n8n', fetch: relay.fetch }
+      : null;
+  const gemini = keys.gemini
+    ? { key: keys.gemini, fetch: fetchFn }
+    : relay
+      ? { key: 'held-by-n8n', fetch: relay.fetch }
+      : null;
   const generative: GenerativeModel[] = [];
-  if (keys.groq) {
+  if (groq) {
     generative.push(
-      new GroqChatModel(MODELS.big, keys.groq, fetchFn),
-      new GroqChatModel(MODELS.small, keys.groq, fetchFn),
-      new GroqChatModel(MODELS.qwen, keys.groq, fetchFn),
+      new GroqChatModel(MODELS.big, groq.key, groq.fetch),
+      new GroqChatModel(MODELS.small, groq.key, groq.fetch),
+      new GroqChatModel(MODELS.qwen, groq.key, groq.fetch),
     );
   }
-  if (keys.gemini) {
+  if (gemini) {
     generative.push(
-      new GeminiModel(MODELS.gemini, keys.gemini, fetchFn),
-      new GeminiModel(MODELS.geminiLite, keys.gemini, fetchFn),
+      new GeminiModel(MODELS.gemini, gemini.key, gemini.fetch),
+      new GeminiModel(MODELS.geminiLite, gemini.key, gemini.fetch),
     );
   }
   const ladder = new ModelLadder(generative);
+  // Whisper takes multipart, which the relay doesn't carry: through n8n,
+  // Gemini transcribes (a JSON call).
   const transcriber = new FallbackTranscriber([
     ...(keys.groq
       ? [new GroqWhisperTranscriber(keys.groq, undefined, fetchFn)]
       : []),
-    ...(keys.gemini
-      ? [new GeminiTranscriber(keys.gemini, undefined, fetchFn)]
+    // Flash-Lite after Flash, which is often busy.
+    ...(gemini
+      ? [
+          new GeminiTranscriber(gemini.key, MODELS.gemini, gemini.fetch),
+          new GeminiTranscriber(gemini.key, MODELS.geminiLite, gemini.fetch),
+        ]
       : []),
   ]);
   const decisions = new FallbackDecisionModel([
@@ -73,11 +102,18 @@ export function buildAiProviders(
     new LadderDecisionModel(ladder),
   ]);
   const summary = [
-    keys.groq ? 'Groq' : null,
-    keys.gemini ? 'Gemini' : null,
+    keys.groq ? 'Groq' : relay ? 'Groq through n8n' : null,
+    keys.gemini ? 'Gemini' : relay ? 'Gemini through n8n' : null,
     keys.typesafe ? 'Jev' : null,
   ]
     .filter(Boolean)
     .join(', ');
-  return { ladder, transcriber, decisions, summary: summary || 'none' };
+  const direct = !!(keys.groq || keys.gemini);
+  return {
+    ladder,
+    transcriber,
+    decisions,
+    summary: summary || 'none',
+    reachable: async () => direct || (relay ? relay.reachable() : false),
+  };
 }

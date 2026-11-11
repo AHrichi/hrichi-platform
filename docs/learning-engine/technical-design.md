@@ -256,6 +256,8 @@ Captures happen on the go, when the PC that runs n8n may be off. Nest on Render 
 
 n8n stays available for extras that are allowed to be late (a weekly email recap, for instance). It is never on the capture path.
 
+**As built: the n8n relay (after L5).** The pipeline stays in Nest, but the model keys can stay in n8n. Each provider call goes, signed (HMAC over timestamp and body, as the lead pipeline signs), to n8n's `learning-ai` webhook. n8n checks the signature, allows only Groq chat completions and Gemini `generateContent`, adds the credential it holds and returns the provider's status and body. The ladder, schemas, checks and decisions don't change. A cached ping (1 minute) tells the pipeline whether n8n is up: while the PC is off, captures wait without spending a try. Whisper's multipart upload isn't relayed, so Gemini transcribes (Flash, then Flash-Lite). `LEARNING_RELAY_LIVE=1 pnpm nx test api-learning -- relay-live` runs a capture and a teach-back through it with real models.
+
 ### 6.2 Stages
 
 ```
@@ -340,7 +342,7 @@ Two kinds of model do the work. A **generative ladder** writes text. A **decisio
 **How it is adopted: a spike in L2, then a go/no-go decision.** The harness is built; the measurement needs a TypeSafe key:
 
 ```bash
-LEARNING_JEV_SPIKE=1 TYPESAFE_API_KEY=… GROQ_API_KEY=… pnpm nx test api-learning --testFile=jev-spike
+LEARNING_JEV_SPIKE=1 TYPESAFE_API_KEY=… GROQ_API_KEY=… pnpm nx test api-learning -- jev-spike
 ```
 
 It writes `tmp/jev-spike/report.json` with each model's agreement, false-"nailed" rate, unsure rate, median latency and gate detection, and a `go` per task.

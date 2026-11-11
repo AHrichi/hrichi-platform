@@ -276,6 +276,19 @@ describe('CapturePipeline', () => {
     ]);
   });
 
+  it('waits without spending a try while n8n is offline', async () => {
+    const ai = { ...fakeAi(), reachable: async () => false };
+    const { pipeline, seed, capture } = setup(ai);
+    await seed(sampleCapture());
+    await pipeline.runOnce();
+    await pipeline.runOnce();
+    expect(await capture()).toMatchObject({
+      status: 'queued',
+      attempts: 0,
+      error: expect.stringContaining('n8n'),
+    });
+  });
+
   it('waits, saying so once, when the server has no AI keys', async () => {
     const ai = { ...fakeAi(), ladder: new ModelLadder([]) };
     const { pipeline, seed, capture, repository } = setup(ai);

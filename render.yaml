@@ -55,6 +55,12 @@ services:
         sync: false
       - key: TYPESAFE_API_KEY
         sync: false
+      # Or no model keys here: the n8n relay uses the ones n8n holds
+      # (`node tools/n8n/install-learning-ai.mjs`).
+      - key: LEARNING_N8N_URL
+        sync: false
+      - key: LEARNING_N8N_SECRET
+        sync: false
 
   # The Orbit API (ADR-0013, ADR-0017): Spring Boot 4 + Orekit, the Sky lab's
   # night planner. Pure computation: no database, no secrets.
