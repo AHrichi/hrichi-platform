@@ -9,6 +9,7 @@ export * from './lib/pairing-notifier';
 export * from './lib/pairing.service';
 export * from './lib/pipeline.scheduler';
 export * from './lib/sync.service';
+export * from './lib/telegram-inbox';
 export * from './lib/valibot.pipe';
 export * from './lib/write-lock';
 export * from './lib/testing/fakes';

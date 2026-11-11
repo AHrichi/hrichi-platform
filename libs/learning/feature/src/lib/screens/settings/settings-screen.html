@@ -94,8 +94,24 @@
         (change)="setVacation($any($event.target).value)"
       />
     </div>
+    <label class="toggle">
+      <input
+        type="checkbox"
+        [checked]="store.settings().weeklyRecap"
+        (change)="setRecap($any($event.target).checked)"
+      />
+      <span>A short recap of my week, Sunday evening</span>
+    </label>
     <p class="hint">At most two a day, and none once today’s set is done.</p>
   </fieldset>
+
+  <section class="card" aria-labelledby="telegram-title">
+    <h2 id="telegram-title">Capture from Telegram</h2>
+    <p class="hint">
+      Send or forward a message or a voice note to your bot. It lands in the
+      Inbox, explained, the next time the server is awake.
+    </p>
+  </section>
 
   <fieldset class="card">
     <legend>Garden look</legend>

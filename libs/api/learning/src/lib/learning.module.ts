@@ -23,6 +23,7 @@ import {
 import { PairingService } from './pairing.service';
 import { PipelineScheduler } from './pipeline.scheduler';
 import { SyncService } from './sync.service';
+import { TelegramInbox } from './telegram-inbox';
 import { WriteLock } from './write-lock';
 
 /** Provided by the app: the MongoDB database the learning collections live in. */
@@ -40,6 +41,11 @@ export interface LearningModuleOptions {
   logPairingCodes: boolean;
   /** Model provider keys; without any, captures wait (design §6). */
   ai: AiKeys;
+  /**
+   * The edge Worker, for Telegram capture (design §9); null: none. Voice
+   * notes also need the Telegram bot token above.
+   */
+  edgeUrl: string | null;
 }
 
 @Module({})
@@ -115,6 +121,20 @@ export class LearningModule {
             new SyncService(repository, options.tokenSecret, now, lock, () => {
               void pipeline.kick();
             }),
+        },
+        {
+          provide: TelegramInbox,
+          inject: [CapturePipeline, LEARNING_CLOCK],
+          useFactory: (pipeline: CapturePipeline, now: () => Date) =>
+            new TelegramInbox(
+              {
+                edgeUrl: options.edgeUrl,
+                botToken: options.telegram?.botToken ?? null,
+                tokenSecret: options.tokenSecret,
+              },
+              pipeline,
+              now,
+            ),
         },
         PipelineScheduler,
         DeviceGuard,

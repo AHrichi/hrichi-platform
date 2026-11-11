@@ -58,6 +58,10 @@ export class SettingsScreen {
     void this.store.saveSettings({ evening: value || null });
   }
 
+  protected setRecap(weeklyRecap: boolean): void {
+    void this.store.saveSettings({ weeklyRecap });
+  }
+
   protected setVacation(value: string): void {
     void this.store.saveSettings({ vacationUntil: value || null });
   }

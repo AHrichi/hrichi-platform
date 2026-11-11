@@ -97,6 +97,22 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): ApiConfig {
   return config;
 }
 
+/** The edge Worker's URL, for Telegram capture: https, or http on localhost. */
+function edgeUrl(value: string | null, problems: string[]): string | null {
+  if (!value) return null;
+  try {
+    const url = new URL(value);
+    const local = ['localhost', '127.0.0.1'].includes(url.hostname);
+    if (url.protocol === 'https:' || (local && url.protocol === 'http:')) {
+      return value.replace(/\/+$/, '');
+    }
+  } catch {
+    // Reported below.
+  }
+  problems.push('LEARNING_EDGE_URL must be an https URL');
+  return null;
+}
+
 /**
  * The Learning Engine is optional: without LEARNING_TOKEN_SECRET its routes
  * aren't registered and nothing else changes. Pairing codes go to the same
@@ -133,5 +149,6 @@ function learningConfig(
       gemini: optional('GEMINI_API_KEY'),
       typesafe: optional('TYPESAFE_API_KEY'),
     },
+    edgeUrl: edgeUrl(optional('LEARNING_EDGE_URL'), problems),
   };
 }

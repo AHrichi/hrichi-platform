@@ -141,6 +141,18 @@ export class CapturePipeline {
     return processed;
   }
 
+  /**
+   * A capture that came another way (the Telegram inbox), stored as the
+   * server's version and processed. Adding it again changes nothing.
+   */
+  async addCapture(capture: Capture): Promise<Capture> {
+    const stored = await this.repository.getRecord('capture', capture.id);
+    if (stored) return stored.data;
+    const written = await this.write('capture', capture);
+    void this.kick();
+    return written;
+  }
+
   /** The learner's voice note: transcribed now, then processed. */
   async receiveAudio(captureId: string, clip: AudioClip): Promise<Capture> {
     const stored = await this.repository.getRecord('capture', captureId);

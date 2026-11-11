@@ -45,6 +45,7 @@ import {
   type TeachBack,
   type TeachBackFeedback,
   teachPoints,
+  weekStats,
   xpOf,
 } from '@ah/learning/domain';
 import { demoDraftSource } from './demo-seed';
@@ -79,6 +80,8 @@ export interface LearnerSettings {
   vacationUntil: string | null;
   /** The garden's look; themes unlock with progress (design §3). */
   gardenTheme: GardenTheme;
+  /** A short recap of the week on Telegram, Sunday evening (design §10). */
+  weeklyRecap: boolean;
 }
 
 export const DEFAULT_SETTINGS: LearnerSettings = {
@@ -88,6 +91,7 @@ export const DEFAULT_SETTINGS: LearnerSettings = {
   evening: '20:30',
   vacationUntil: null,
   gardenTheme: 'meadow',
+  weeklyRecap: true,
 };
 
 export function deviceTimeZone(): string {
@@ -403,6 +407,15 @@ export const LearningStore = signalStore(
           streak: store.streak().current,
           doneDate: today?.completedAt ? today.localDate : null,
           vacationUntil: settings.vacationUntil,
+          recap: settings.weeklyRecap,
+          week: weekStats({
+            events: store.events(),
+            concepts: store.concepts(),
+            memory: store.memory(),
+            teachBacks: store.teachBacks(),
+            today: store.today(),
+            timeZone: store.timeZone(),
+          }),
         },
         session.token,
       );

@@ -68,6 +68,20 @@ legend {
   }
 }
 
+.toggle {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+  min-height: 2.75rem;
+  cursor: pointer;
+
+  input {
+    inline-size: 1.25rem;
+    block-size: 1.25rem;
+    accent-color: var(--color-accent-solid);
+  }
+}
+
 .segment:disabled {
   color: var(--color-text-muted);
   cursor: not-allowed;

@@ -345,6 +345,8 @@ describe('nudges', () => {
     streak: 12,
     doneDate: null,
     vacationUntil: null,
+    recap: false,
+    week: null,
   };
   // November in Paris is UTC+1.
   const at = (clock: string) => new Date(`2026-11-12T${clock}:00+01:00`);

@@ -1,6 +1,12 @@
 import * as v from 'valibot';
 import { isValidTimeZone, localDateOf } from '../local-date';
-import type { ReviewSession } from '../records';
+import type {
+  Concept,
+  ReviewEvent,
+  ReviewSession,
+  TeachBack,
+} from '../records';
+import { type MemoryState, tierOf } from './memory';
 
 /**
  * Nudges (design §10). The app sends this small state to the edge Worker
@@ -11,6 +17,22 @@ import type { ReviewSession } from '../records';
 
 const Clock = v.pipe(v.string(), v.regex(/^([01]\d|2[0-3]):[0-5]\d$/));
 const LocalDate = v.pipe(v.string(), v.isoDate());
+const Count = v.pipe(v.number(), v.integer(), v.minValue(0), v.maxValue(1e6));
+
+/** The week so far (Monday to today), for the Sunday recap (design §10). */
+export const WeekStatsSchema = v.strictObject({
+  /** The Monday the week started on. */
+  start: LocalDate,
+  /** Days with at least one review. */
+  days: v.pipe(v.number(), v.integer(), v.minValue(0), v.maxValue(7)),
+  reviews: Count,
+  /** Concepts kept this week. */
+  kept: Count,
+  teachBacks: Count,
+  /** Concepts at Leaf or better now. */
+  strong: Count,
+});
+export type WeekStats = v.InferOutput<typeof WeekStatsSchema>;
 
 export const NudgeStateSchema = v.strictObject({
   timeZone: v.pipe(v.string(), v.maxLength(64), v.check(isValidTimeZone)),
@@ -24,6 +46,9 @@ export const NudgeStateSchema = v.strictObject({
   /** The learner's day the Daily Set was last finished. */
   doneDate: v.nullable(LocalDate),
   vacationUntil: v.nullable(LocalDate),
+  /** The Sunday recap is wanted. Optional: older apps don't send it. */
+  recap: v.optional(v.boolean(), false),
+  week: v.optional(v.nullable(WeekStatsSchema), null),
 });
 
 export type NudgeState = v.InferOutput<typeof NudgeStateSchema>;
@@ -94,6 +119,88 @@ export function nudgeDue(
     };
   }
   return null;
+}
+
+/** The Monday of the week `localDate` is in. */
+export function weekStart(localDate: string): string {
+  const date = new Date(`${localDate}T12:00:00Z`);
+  const back = (date.getUTCDay() + 6) % 7;
+  date.setUTCDate(date.getUTCDate() - back);
+  return date.toISOString().slice(0, 10);
+}
+
+export function weekStats(input: {
+  events: readonly ReviewEvent[];
+  concepts: readonly Concept[];
+  memory: ReadonlyMap<string, MemoryState>;
+  teachBacks: readonly TeachBack[];
+  today: string;
+  timeZone: string;
+}): WeekStats {
+  const start = weekStart(input.today);
+  const inWeek = (localDate: string) =>
+    localDate >= start && localDate <= input.today;
+  const events = input.events.filter((event) => inWeek(event.localDate));
+  return {
+    start,
+    days: new Set(events.map((event) => event.localDate)).size,
+    reviews: events.length,
+    kept: input.concepts.filter(
+      (concept) =>
+        !concept.deletedAt &&
+        concept.status !== 'draft' &&
+        !!concept.confirmedAt &&
+        inWeek(localDateOf(new Date(concept.confirmedAt), input.timeZone)),
+    ).length,
+    teachBacks: input.teachBacks.filter((t) => inWeek(t.localDate)).length,
+    strong: [...input.memory.values()].filter((state) =>
+      ['leaf', 'bloom', 'golden'].includes(tierOf(state)),
+    ).length,
+  };
+}
+
+/** Sunday, from this time on (the learner's wall clock). */
+export const RECAP_AT = '18:00';
+
+const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? '' : 's'}`;
+
+/**
+ * The Sunday recap (design §10): once a week, on Sunday evening, unless
+ * it's off or the learner is away. A week the app heard nothing about
+ * still gets a short, kind message, never a guilt trip.
+ */
+export function recapDue(
+  state: NudgeState,
+  lastSentWeek: string | null,
+  now: Date,
+): { week: string; text: string } | null {
+  if (!state.recap) return null;
+  const today = localDateOf(now, state.timeZone);
+  if (state.vacationUntil && state.vacationUntil >= today) return null;
+  const isSunday = new Date(`${today}T12:00:00Z`).getUTCDay() === 0;
+  if (!isSunday || wallClock(now, state.timeZone) < minutes(RECAP_AT)) {
+    return null;
+  }
+  const week = weekStart(today);
+  if (lastSentWeek === week) return null;
+  const stats = state.week?.start === week ? state.week : null;
+  const garden = stats?.strong ?? state.week?.strong ?? 0;
+  const lines: string[] = [];
+  if (!stats?.reviews) {
+    lines.push('🌱 A quiet week. Your garden is still there whenever you are.');
+  } else {
+    lines.push(
+      `🌱 Your week: ${plural(stats.days, 'day')}, ${plural(stats.reviews, 'card')}.`,
+    );
+    const extras = [
+      stats.kept ? `${plural(stats.kept, 'new concept')} kept` : '',
+      stats.teachBacks ? `${plural(stats.teachBacks, 'teach-back')}` : '',
+    ].filter(Boolean);
+    if (extras.length) lines.push(`${extras.join(', ')}.`);
+  }
+  if (garden) lines.push(`${plural(garden, 'concept')} at Leaf or better.`);
+  if (state.streak) lines.push(`🔥 ${state.streak}`);
+  return { week, text: lines.join(' ') };
 }
 
 /**
