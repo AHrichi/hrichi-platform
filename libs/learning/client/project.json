@@ -1,0 +1,9 @@
+{
+  "name": "learning-client",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/learning/client/src",
+  "prefix": "ah",
+  "projectType": "library",
+  "tags": ["scope:learning-client", "type:client", "runtime:browser"],
+  "targets": {}
+}

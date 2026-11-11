@@ -1,0 +1,134 @@
+@use '../form' as lrn;
+
+.screen {
+  display: grid;
+  gap: var(--space-4);
+
+  h1 {
+    margin: 0;
+    font-size: var(--font-size-600);
+  }
+}
+
+.card {
+  @include lrn.card;
+  display: grid;
+  gap: var(--space-3);
+  margin: 0;
+}
+
+legend {
+  padding-inline: var(--space-1);
+  font-weight: var(--font-weight-semibold);
+}
+
+.stats p {
+  margin: 0;
+}
+
+.field {
+  @include lrn.field;
+
+  select {
+    inline-size: 100%;
+    min-height: 2.75rem;
+    padding-inline: var(--space-3);
+    border: 1px solid var(--color-border-control);
+    border-radius: var(--radius-md);
+    background: var(--color-bg-canvas);
+    color: var(--color-text-default);
+    font: inherit;
+  }
+}
+
+.segmented {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.segment {
+  flex: 1;
+  min-height: 2.75rem;
+  border: 1px solid var(--color-border-control);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-surface);
+  color: var(--color-text-default);
+  font: inherit;
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+
+  &.is-on {
+    border-color: var(--color-accent-solid);
+    background: var(--color-accent-subtle);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-focus-ring);
+    outline-offset: 2px;
+  }
+}
+
+.toggle {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+  min-height: 2.75rem;
+  cursor: pointer;
+
+  input {
+    inline-size: 1.25rem;
+    block-size: 1.25rem;
+    accent-color: var(--color-accent-solid);
+  }
+}
+
+.segment:disabled {
+  color: var(--color-text-muted);
+  cursor: not-allowed;
+}
+
+h2 {
+  margin: 0;
+  font-size: var(--font-size-400);
+}
+
+.milestones {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    align-items: baseline;
+    color: var(--color-text-muted);
+  }
+
+  .is-earned {
+    color: var(--color-text-default);
+    font-weight: var(--font-weight-medium);
+  }
+}
+
+.mark {
+  inline-size: 1.25rem;
+  text-align: center;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.hint {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-200);
+}

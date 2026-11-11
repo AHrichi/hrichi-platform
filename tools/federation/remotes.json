@@ -35,5 +35,9 @@
   "product-basecamp": {
     "development": "http://localhost:4310",
     "production": "https://product-basecamp.ahmed-hrichi.workers.dev"
+  },
+  "product-learning": {
+    "development": "http://localhost:4311",
+    "production": "https://product-learning.ahmed-hrichi.workers.dev"
   }
 }

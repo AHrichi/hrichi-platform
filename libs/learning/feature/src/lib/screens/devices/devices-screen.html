@@ -1,0 +1,155 @@
+<section class="screen" aria-labelledby="devices-title">
+  <h1 id="devices-title">Devices</h1>
+
+  @switch (store.unavailable()) {
+    @case ('demo') {
+      <ah-alert variant="info" title="This is the demo">
+        It keeps everything in this browser and never syncs. The real app pairs
+        your phone and laptop through your own Telegram bot.
+      </ah-alert>
+    }
+    @case ('no-server') {
+      <ah-alert variant="info" title="Sync isn’t set up here">
+        This deployment has no API, so your concepts stay on this device.
+      </ah-alert>
+    }
+    @default {
+      @if (store.device(); as device) {
+        <div class="card status">
+          <p>
+            This device is <strong>{{ device.name }}</strong
+            >.
+            @if (store.sync().at; as at) {
+              Last synced {{ at | date: 'shortTime' }}.
+            }
+          </p>
+          @if (store.sync().message; as message) {
+            <ah-alert variant="warning">{{ message }}</ah-alert>
+          }
+          <button
+            ahButton="secondary"
+            type="button"
+            [disabled]="store.sync().state === 'syncing'"
+            (click)="store.syncNow()"
+          >
+            Sync now
+          </button>
+        </div>
+
+        <h2>Paired devices</h2>
+        <ul class="devices" role="list">
+          @for (item of store.devices(); track item.id) {
+            <li class="card device">
+              <div>
+                <p class="device-name">
+                  {{ item.name }}
+                  @if (item.current) {
+                    <span class="tag">this one</span>
+                  }
+                </p>
+                <p class="hint">
+                  Paired {{ item.pairedAt | date: 'mediumDate' }}
+                  @if (item.lastSeenAt; as seen) {
+                    · seen {{ seen | date: 'mediumDate' }}
+                  }
+                </p>
+              </div>
+              <button
+                ahButton="ghost"
+                size="sm"
+                type="button"
+                (click)="remove(item.id, item.name, item.current)"
+              >
+                {{ item.current ? 'Unpair' : 'Remove' }}
+              </button>
+            </li>
+          }
+        </ul>
+      } @else if (!store.pairing().pairingId) {
+        <form class="card pairing" [formRoot]="nameForm">
+          <h2>Pair this device</h2>
+          <p class="hint">
+            Pairing syncs your concepts between your devices. A code goes to
+            your Telegram; type it here.
+          </p>
+          <div class="field">
+            <label for="device-name">Device name</label>
+            <input
+              id="device-name"
+              [formField]="nameForm.name"
+              autocomplete="off"
+              [attr.aria-invalid]="
+                nameForm.name().touched() && nameForm.name().invalid()
+              "
+              aria-describedby="device-name-error"
+            />
+            <p class="error" id="device-name-error">
+              @if (nameForm.name().touched() && nameForm.name().invalid()) {
+                {{
+                  nameForm.name().errors()[0]?.message ||
+                    'That name is too long.'
+                }}
+              }
+            </p>
+          </div>
+          @if (store.pairing().error; as error) {
+            <ah-alert variant="danger">{{ error }}</ah-alert>
+          }
+          <button ahButton type="submit" [disabled]="store.pairing().busy">
+            {{ store.pairing().busy ? 'Sending…' : 'Send me a code' }}
+          </button>
+          @if (store.pairing().busy) {
+            <p class="hint" role="status">
+              The server may take up to a minute to wake up.
+            </p>
+          }
+        </form>
+      } @else {
+        <form class="card pairing" [formRoot]="codeForm">
+          <h2>Type the code from Telegram</h2>
+          <p class="hint">
+            @if (store.pairing().expiresAt; as expires) {
+              It works for 10 minutes, until {{ expires | date: 'shortTime' }}.
+            } @else {
+              It works for 10 minutes.
+            }
+          </p>
+          <div class="field">
+            <label for="pairing-code">Code</label>
+            <input
+              id="pairing-code"
+              class="code"
+              [formField]="codeForm.code"
+              inputmode="numeric"
+              autocomplete="one-time-code"
+              [attr.aria-invalid]="
+                codeForm.code().touched() && codeForm.code().invalid()
+              "
+              aria-describedby="pairing-code-error"
+            />
+            <p class="error" id="pairing-code-error">
+              @if (codeForm.code().touched() && codeForm.code().invalid()) {
+                {{ codeForm.code().errors()[0]?.message }}
+              }
+            </p>
+          </div>
+          @if (store.pairing().error; as error) {
+            <ah-alert variant="danger">{{ error }}</ah-alert>
+          }
+          <div class="actions">
+            <button ahButton type="submit" [disabled]="store.pairing().busy">
+              {{ store.pairing().busy ? 'Pairing…' : 'Pair' }}
+            </button>
+            <button
+              ahButton="ghost"
+              type="button"
+              (click)="store.cancelPairing()"
+            >
+              Start over
+            </button>
+          </div>
+        </form>
+      }
+    }
+  }
+</section>

@@ -1,0 +1,9 @@
+{
+  "name": "learning-feature",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/learning/feature/src",
+  "prefix": "lrn",
+  "projectType": "library",
+  "tags": ["scope:learning", "type:feature", "runtime:browser"],
+  "targets": {}
+}

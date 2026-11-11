@@ -1,0 +1,135 @@
+@use '../form' as lrn;
+
+.screen {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.links {
+  display: grid;
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--font-size-200);
+
+  li {
+    display: flex;
+    gap: var(--space-2);
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.link-add summary {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-200);
+  cursor: pointer;
+}
+
+.link-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  align-items: end;
+  padding-block-start: var(--space-2);
+
+  label {
+    display: grid;
+    gap: var(--space-1);
+    flex: 1 1 10rem;
+    font-size: var(--font-size-200);
+  }
+
+  select {
+    min-height: 2.25rem;
+    padding-inline: var(--space-2);
+    border: 1px solid var(--color-border-control);
+    border-radius: var(--radius-md);
+    background: var(--color-bg-canvas);
+    color: var(--color-text-default);
+    font: inherit;
+  }
+}
+
+.head-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  align-items: center;
+  justify-content: space-between;
+
+  h1 {
+    margin: 0;
+    font-size: var(--font-size-600);
+  }
+}
+
+.card {
+  @include lrn.card;
+}
+
+.editor {
+  display: grid;
+  gap: var(--space-3);
+
+  h2 {
+    margin: 0;
+    font-size: var(--font-size-400);
+  }
+}
+
+.field {
+  @include lrn.field;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.list {
+  display: grid;
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.concept-head {
+  display: flex;
+  gap: var(--space-2);
+  align-items: baseline;
+  justify-content: space-between;
+
+  h2 {
+    margin: 0;
+    font-size: var(--font-size-400);
+  }
+}
+
+.essence {
+  margin-block: var(--space-2);
+  color: var(--color-text-muted);
+}
+
+.prompt {
+  padding-block: var(--space-2);
+  border-block-start: 1px solid var(--color-border-default);
+
+  summary {
+    cursor: pointer;
+    font-weight: var(--font-weight-medium);
+  }
+
+  p {
+    margin-block: var(--space-2) 0;
+  }
+}

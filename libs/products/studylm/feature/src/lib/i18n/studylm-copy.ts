@@ -164,6 +164,8 @@ export interface StudyLmCopy {
     practiceFlashcardsBtn: string;
     takeDiagnosticQuizBtn: string;
     backToRoadmapCardBtn: string;
+    /** Sends the lesson's cards to the Learning Engine (ADR-0024). */
+    addToReviews: string;
   };
   flashcards: {
     filterByTierLabel: string;
@@ -185,6 +187,8 @@ export interface StudyLmCopy {
     of: string;
     bookmarked: string;
     bookmark: string;
+    /** Sends this card to the Learning Engine (ADR-0024). */
+    learnThis: string;
     promptLabel: string;
     hint: string;
     flipToReveal: string;
@@ -508,6 +512,7 @@ export const STUDYLM_COPY: Record<SiteLanguage, StudyLmCopy> = {
       practiceFlashcardsBtn: '🃏 Practice Flashcards',
       takeDiagnosticQuizBtn: '🎯 Take Diagnostic Quiz',
       backToRoadmapCardBtn: '🗺️ Back to Roadmap Card',
+      addToReviews: 'Add to my daily reviews',
     },
     flashcards: {
       filterByTierLabel: 'Filter Flashcards by Tier',
@@ -529,6 +534,7 @@ export const STUDYLM_COPY: Record<SiteLanguage, StudyLmCopy> = {
       of: 'of',
       bookmarked: '★ Bookmarked',
       bookmark: '☆ Bookmark',
+      learnThis: 'Learn this',
       promptLabel: 'PROMPT',
       hint: 'Hint',
       flipToReveal: 'Press Space or Click to reveal answer',
@@ -862,6 +868,7 @@ export const STUDYLM_COPY: Record<SiteLanguage, StudyLmCopy> = {
       practiceFlashcardsBtn: '🃏 Pratiquer les cartes',
       takeDiagnosticQuizBtn: '🎯 Passer le quiz diagnostique',
       backToRoadmapCardBtn: '🗺️ Retour à la carte du parcours',
+      addToReviews: 'Ajouter à mes révisions du jour',
     },
     flashcards: {
       filterByTierLabel: 'Filtrer les cartes par niveau',
@@ -883,6 +890,7 @@ export const STUDYLM_COPY: Record<SiteLanguage, StudyLmCopy> = {
       of: 'sur',
       bookmarked: '★ Favori',
       bookmark: '☆ Favori',
+      learnThis: 'Apprendre',
       promptLabel: 'QUESTION',
       hint: 'Indice',
       flipToReveal: 'Appuyez sur Espace ou cliquez pour révéler la réponse',
@@ -1214,6 +1222,7 @@ export const STUDYLM_COPY: Record<SiteLanguage, StudyLmCopy> = {
       practiceFlashcardsBtn: '🃏 التدرب على البطاقات',
       takeDiagnosticQuizBtn: '🎯 خوض الاختبار التشخيصي',
       backToRoadmapCardBtn: '🗺️ العودة إلى بطاقة الخارطة',
+      addToReviews: 'أضِف إلى مراجعاتي اليومية',
     },
     flashcards: {
       filterByTierLabel: 'تصفية البطاقات حسب المستوى',
@@ -1235,6 +1244,7 @@ export const STUDYLM_COPY: Record<SiteLanguage, StudyLmCopy> = {
       of: 'من',
       bookmarked: '★ محفوظة',
       bookmark: '☆ حفظ',
+      learnThis: 'تعلّم هذا',
       promptLabel: 'السؤال',
       hint: 'تلميح',
       flipToReveal: 'اضغط المسافة أو انقر لإظهار الإجابة',
@@ -1568,6 +1578,7 @@ export const STUDYLM_COPY: Record<SiteLanguage, StudyLmCopy> = {
       practiceFlashcardsBtn: '🃏 Pratica Flashcard',
       takeDiagnosticQuizBtn: '🎯 Fai il Quiz Diagnostico',
       backToRoadmapCardBtn: '🗺️ Torna alla scheda Roadmap',
+      addToReviews: 'Aggiungi alle revisioni quotidiane',
     },
     flashcards: {
       filterByTierLabel: 'Filtra Flashcard per livello',
@@ -1589,6 +1600,7 @@ export const STUDYLM_COPY: Record<SiteLanguage, StudyLmCopy> = {
       of: 'di',
       bookmarked: '★ Salvata',
       bookmark: '☆ Salva',
+      learnThis: 'Impara',
       promptLabel: 'DOMANDA',
       hint: 'Suggerimento',
       flipToReveal: 'Premi Spazio o clicca per rivelare la risposta',
@@ -1922,6 +1934,7 @@ export const STUDYLM_COPY: Record<SiteLanguage, StudyLmCopy> = {
       practiceFlashcardsBtn: '🃏 Karteikarten üben',
       takeDiagnosticQuizBtn: '🎯 Diagnose-Quiz starten',
       backToRoadmapCardBtn: '🗺️ Zurück zum Lehrplan',
+      addToReviews: 'Zu meinen täglichen Wiederholungen',
     },
     flashcards: {
       filterByTierLabel: 'Karteikarten nach Stufe filtern',
@@ -1943,6 +1956,7 @@ export const STUDYLM_COPY: Record<SiteLanguage, StudyLmCopy> = {
       of: 'von',
       bookmarked: '★ Gemerkt',
       bookmark: '☆ Merken',
+      learnThis: 'Lernen',
       promptLabel: 'FRAGE',
       hint: 'Hinweis',
       flipToReveal: 'Leertaste drücken oder klicken, um Antwort aufzudecken',

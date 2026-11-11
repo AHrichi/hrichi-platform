@@ -1,0 +1,163 @@
+<section class="screen" aria-labelledby="settings-title">
+  <h1 id="settings-title">Settings</h1>
+
+  <div class="card stats">
+    <p>
+      <span aria-hidden="true">🔥</span> {{ store.streak().current }} day streak
+      · best {{ store.streak().longest }}
+    </p>
+    <p class="hint">
+      Level {{ store.xp().level }} · {{ store.xpTotal() }} XP ·
+      {{ store.streak().freezesBanked }} freeze{{
+        store.streak().freezesBanked === 1 ? '' : 's'
+      }}
+      banked
+    </p>
+  </div>
+
+  <fieldset class="card">
+    <legend>Cards a day</legend>
+    <div class="segmented" role="radiogroup" aria-label="Cards a day">
+      @for (cap of caps; track cap) {
+        <button
+          type="button"
+          role="radio"
+          class="segment"
+          [class.is-on]="store.settings().dailyCap === cap"
+          [attr.aria-checked]="store.settings().dailyCap === cap"
+          (click)="setCap(cap)"
+        >
+          {{ cap }}
+        </button>
+      }
+    </div>
+    <div class="field">
+      <label for="new-per-day">New concepts a day, at most</label>
+      <input
+        id="new-per-day"
+        type="number"
+        min="0"
+        max="3"
+        [value]="store.settings().newPerDay"
+        (change)="setNew($any($event.target).value)"
+      />
+    </div>
+    <p class="hint">A smaller set you finish beats a bigger one you skip.</p>
+  </fieldset>
+
+  <fieldset class="card">
+    <legend>Reminders on Telegram</legend>
+    <div class="field">
+      <label for="morning-mode">Morning nudge</label>
+      <select
+        id="morning-mode"
+        #mode
+        [value]="store.settings().morning ? 'fixed' : 'learned'"
+        (change)="setMorning(mode.value, store.settings().morning ?? '08:00')"
+      >
+        <option value="learned">
+          When I usually study{{
+            learned()
+              ? ' (around ' + learned() + ')'
+              : ' (learned after 3 sets)'
+          }}
+        </option>
+        <option value="fixed">At a time I choose</option>
+      </select>
+    </div>
+    @if (store.settings().morning; as morning) {
+      <div class="field">
+        <label for="morning-time">Morning time</label>
+        <input
+          id="morning-time"
+          type="time"
+          [value]="morning"
+          (change)="setMorning('fixed', $any($event.target).value)"
+        />
+      </div>
+    }
+    <div class="field">
+      <label for="evening-time">Evening reminder (empty for none)</label>
+      <input
+        id="evening-time"
+        type="time"
+        [value]="store.settings().evening ?? ''"
+        (change)="setEvening($any($event.target).value)"
+      />
+    </div>
+    <div class="field">
+      <label for="vacation">Away until (no reminders, no pressure)</label>
+      <input
+        id="vacation"
+        type="date"
+        [value]="store.settings().vacationUntil ?? ''"
+        (change)="setVacation($any($event.target).value)"
+      />
+    </div>
+    <label class="toggle">
+      <input
+        type="checkbox"
+        [checked]="store.settings().weeklyRecap"
+        (change)="setRecap($any($event.target).checked)"
+      />
+      <span>A short recap of my week, Sunday evening</span>
+    </label>
+    <p class="hint">At most two a day, and none once today’s set is done.</p>
+  </fieldset>
+
+  <section class="card" aria-labelledby="telegram-title">
+    <h2 id="telegram-title">Capture from Telegram</h2>
+    <p class="hint">
+      Send or forward a message or a voice note to your bot. It lands in the
+      Inbox, explained, the next time the server is awake.
+    </p>
+  </section>
+
+  <fieldset class="card">
+    <legend>Garden look</legend>
+    <div class="segmented" role="radiogroup" aria-label="Garden look">
+      @for (unlock of store.themes(); track unlock.theme) {
+        <button
+          type="button"
+          role="radio"
+          class="segment"
+          [class.is-on]="store.settings().gardenTheme === unlock.theme"
+          [attr.aria-checked]="store.settings().gardenTheme === unlock.theme"
+          [disabled]="!unlock.unlocked"
+          [attr.title]="unlock.unlocked ? null : unlock.how"
+          (click)="setTheme(unlock.theme)"
+        >
+          {{ unlock.title }}
+        </button>
+      }
+    </div>
+    @if (nextTheme(); as next) {
+      <p class="hint">Next: {{ next.title }}. {{ next.how }}</p>
+    }
+  </fieldset>
+
+  <section class="card" aria-labelledby="milestones-title">
+    <h2 id="milestones-title">Milestones</h2>
+    <ul class="milestones" role="list">
+      @for (milestone of store.milestones(); track milestone.id) {
+        <li [class.is-earned]="milestone.earned">
+          <span class="mark" aria-hidden="true">{{
+            milestone.earned ? '✓' : '○'
+          }}</span>
+          <span>
+            {{ milestone.title }}
+            <span class="visually-hidden">{{
+              milestone.earned ? ', earned' : ', not yet'
+            }}</span>
+          </span>
+          @if (!milestone.earned) {
+            <span class="hint">{{ milestone.how }}</span>
+          }
+        </li>
+      }
+    </ul>
+  </section>
+
+  <a ahButton="secondary" routerLink="../garden">Garden</a>
+  <a ahButton="secondary" routerLink="../devices">Devices and pairing</a>
+</section>

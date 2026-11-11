@@ -28,6 +28,7 @@ describe('SiteConfigService', () => {
       turnstileSiteKey: null,
       orbitApiUrl: 'https://orbit.example',
       n8nUrl: null,
+      learningEdgeUrl: null,
     });
     await service.load();
     expect(fetch).toHaveBeenCalledTimes(1);
@@ -44,6 +45,7 @@ describe('SiteConfigService', () => {
       turnstileSiteKey: null,
       orbitApiUrl: null,
       n8nUrl: null,
+      learningEdgeUrl: null,
     });
   });
 

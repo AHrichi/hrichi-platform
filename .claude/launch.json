@@ -50,6 +50,26 @@
         "6007"
       ],
       "port": 6007
+    },
+    {
+      "name": "learning (static build)",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "tools/scripts/serve-static.mjs",
+        "dist/apps/products/learning/web/browser",
+        "4311"
+      ],
+      "port": 4311
+    },
+    {
+      "name": "studylm (static build)",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "tools/scripts/serve-static.mjs",
+        "dist/apps/products/studylm/web/browser",
+        "4307"
+      ],
+      "port": 4307
     }
   ]
 }

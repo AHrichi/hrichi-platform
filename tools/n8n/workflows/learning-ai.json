@@ -1,0 +1,460 @@
+{
+  "id": "LearningAiRelay1",
+  "name": "Learning Engine AI relay",
+  "active": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "learning-ai",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "f6720cad-0579-579f-a9d1-74fd3d5f4ab3",
+      "name": "Call from the API",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [0, 0],
+      "webhookId": "3c9d2f41-7a5e-4b8c-9d1f-6e2a0b7c4d58"
+    },
+    {
+      "parameters": {
+        "action": "hmac",
+        "type": "SHA256",
+        "value": "={{ $json.headers['x-learning-timestamp'] }}.{{ JSON.stringify($json.body) }}",
+        "dataPropertyName": "expectedSignature",
+        "encoding": "hex"
+      },
+      "id": "57cc9507-ee08-5fca-ae86-ef93bf2e0211",
+      "name": "Sign the body",
+      "type": "n8n-nodes-base.crypto",
+      "typeVersion": 2,
+      "position": [220, 0],
+      "credentials": {
+        "crypto": {
+          "id": "LearningAiHmac01",
+          "name": "Learning AI secret"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "a9bcad4b-513c-5f75-aab2-92b42e7036c6",
+              "leftValue": "={{ $json.headers['x-learning-signature'] }}",
+              "rightValue": "=sha256={{ $json.expectedSignature }}",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "75f00467-70e0-5a28-b1b8-4784de220a4f",
+              "leftValue": "={{ Math.abs(Date.now() - Number($json.headers['x-learning-timestamp'])) }}",
+              "rightValue": 300000,
+              "operator": {
+                "type": "number",
+                "operation": "lt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "5927ead6-3a05-5e45-8ea7-903744aa4ab2",
+      "name": "Signed in the last 5 minutes?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [440, 0]
+    },
+    {
+      "parameters": {
+        "options": {
+          "responseCode": 401
+        },
+        "respondWith": "noData"
+      },
+      "id": "32988ddd-0936-59c9-9ef9-d9632ce60aa9",
+      "name": "Reject",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [660, 200]
+    },
+    {
+      "parameters": {
+        "jsCode": "// The API's signature was checked before this node. Only these two calls\n// are relayed, so the webhook can't be used as a general model proxy.\nconst call = $input.first().json.body ?? {};\nconst routes = {\n  groq: {\n    origin: 'https://api.groq.com',\n    path: /^\\/openai\\/v1\\/chat\\/completions$/,\n  },\n  gemini: {\n    origin: 'https://generativelanguage.googleapis.com',\n    path: /^\\/v1beta\\/models\\/[\\w.-]+:generateContent$/,\n  },\n};\nif (call.provider === 'ping') return [{ json: { route: 'ping' } }];\nconst known = typeof call.provider === 'string' && Object.hasOwn(routes, call.provider);\nconst route = known ? routes[call.provider] : null;\nconst fits =\n  route &&\n  typeof call.path === 'string' &&\n  route.path.test(call.path) &&\n  call.body !== null &&\n  typeof call.body === 'object';\nif (!fits) return [{ json: { route: 'bad' } }];\nreturn [\n  {\n    json: { route: call.provider, url: route.origin + call.path, body: call.body },\n  },\n];\n"
+      },
+      "id": "15c358ca-99e7-5d18-8083-f117669bea99",
+      "name": "Route the call",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [660, -100]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "64e83021-ef6b-583a-a0cc-e1b6e8ed0dc8",
+              "leftValue": "={{ $json.route }}",
+              "rightValue": "groq",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "69690e2a-cc48-5d01-9dd4-63f4a7cb7b64",
+      "name": "To Groq?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [880, -100]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "e77d5702-39f5-50bf-8a99-7605a52b5756",
+              "leftValue": "={{ $json.route }}",
+              "rightValue": "gemini",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "fd0f984d-5971-5581-b83f-5aaefcaae7ac",
+      "name": "To Gemini?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [1100, 0]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "eb4d18e6-11e1-59da-8362-b35517328b12",
+              "leftValue": "={{ $json.route }}",
+              "rightValue": "ping",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "f1ddce7a-4601-505f-b888-fccb6608166c",
+      "name": "Ping?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [1320, 100]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $json.url }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "groqApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.body) }}",
+        "options": {
+          "timeout": 60000,
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true
+            }
+          }
+        }
+      },
+      "id": "8ce85562-5c32-5dcb-9e8e-7a583030f4e8",
+      "name": "Groq",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1100, -200],
+      "onError": "continueErrorOutput",
+      "credentials": {
+        "groqApi": {
+          "id": "jVafRHRNVmsszaE8",
+          "name": "Groq"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $json.url }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googlePalmApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.body) }}",
+        "options": {
+          "timeout": 90000,
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true
+            }
+          }
+        }
+      },
+      "id": "815a6bba-b9cf-54d1-902a-527c070f9930",
+      "name": "Gemini",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1320, -100],
+      "onError": "continueErrorOutput",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "dISTV0tMmBYHUXlX",
+          "name": "Google Gemini"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "responseCode": 200
+        },
+        "respondWith": "json",
+        "responseBody": "={{ { status: $json.statusCode, body: $json.body } }}"
+      },
+      "id": "59248673-a073-557c-986a-8d0854c9a2b6",
+      "name": "Reply",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1580, -200]
+    },
+    {
+      "parameters": {
+        "options": {
+          "responseCode": 502
+        },
+        "respondWith": "json",
+        "responseBody": "={{ { error: $json.error?.message ?? 'The provider call failed.' } }}"
+      },
+      "id": "5dd26532-d7a5-50a4-94db-c3f9e7f80c08",
+      "name": "Relay failed",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1580, -20]
+    },
+    {
+      "parameters": {
+        "options": {
+          "responseCode": 200
+        },
+        "respondWith": "json",
+        "responseBody": "={{ { status: 200, body: { pong: true } } }}"
+      },
+      "id": "140bd2c4-b332-5d1c-ba30-6c4734e7846d",
+      "name": "Pong",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1580, 100]
+    },
+    {
+      "parameters": {
+        "options": {
+          "responseCode": 400
+        },
+        "respondWith": "json",
+        "responseBody": "={{ { error: 'This relay calls Groq chat and Gemini generateContent only.' } }}"
+      },
+      "id": "df023243-f20c-554d-a5a9-48acc976cbc0",
+      "name": "Bad call",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1580, 240]
+    }
+  ],
+  "connections": {
+    "Call from the API": {
+      "main": [
+        [
+          {
+            "node": "Sign the body",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sign the body": {
+      "main": [
+        [
+          {
+            "node": "Signed in the last 5 minutes?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Signed in the last 5 minutes?": {
+      "main": [
+        [
+          {
+            "node": "Route the call",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reject",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route the call": {
+      "main": [
+        [
+          {
+            "node": "To Groq?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "To Groq?": {
+      "main": [
+        [
+          {
+            "node": "Groq",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "To Gemini?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "To Gemini?": {
+      "main": [
+        [
+          {
+            "node": "Gemini",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Ping?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ping?": {
+      "main": [
+        [
+          {
+            "node": "Pong",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Bad call",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq": {
+      "main": [
+        [
+          {
+            "node": "Reply",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Relay failed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini": {
+      "main": [
+        [
+          {
+            "node": "Reply",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Relay failed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {}
+}

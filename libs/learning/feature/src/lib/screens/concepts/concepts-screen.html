@@ -1,0 +1,146 @@
+<section class="screen" aria-labelledby="concepts-title">
+  <div class="head">
+    <h1 id="concepts-title">Library</h1>
+    <div class="head-actions">
+      <a ahButton="ghost" routerLink="../garden">Garden</a>
+      @if (!adding()) {
+        <button ahButton type="button" (click)="adding.set(true)">
+          Add a concept
+        </button>
+      }
+    </div>
+  </div>
+
+  @if (adding()) {
+    <form class="card editor" [formRoot]="form" aria-labelledby="add-title">
+      <h2 id="add-title">New concept</h2>
+
+      @for (field of fields; track field.key) {
+        @let control = form[field.key];
+        <div class="field">
+          <label [for]="'concept-' + field.key">{{ field.label }}</label>
+          @if (!field.multiline) {
+            <input
+              [id]="'concept-' + field.key"
+              [formField]="control"
+              [placeholder]="field.hint"
+              autocomplete="off"
+              [attr.aria-invalid]="control().touched() && control().invalid()"
+              [attr.aria-describedby]="'concept-' + field.key + '-error'"
+            />
+          } @else {
+            <textarea
+              [id]="'concept-' + field.key"
+              [formField]="control"
+              [placeholder]="field.hint"
+              rows="2"
+              [attr.aria-invalid]="control().touched() && control().invalid()"
+              [attr.aria-describedby]="'concept-' + field.key + '-error'"
+            ></textarea>
+          }
+          <p class="error" [id]="'concept-' + field.key + '-error'">
+            @if (control().touched() && control().invalid()) {
+              {{ control().errors()[0]?.message || 'This is too long.' }}
+            }
+          </p>
+        </div>
+      }
+
+      <div class="actions">
+        <button ahButton type="submit" [disabled]="saving()">Save</button>
+        <button ahButton="ghost" type="button" (click)="cancel()">
+          Cancel
+        </button>
+      </div>
+    </form>
+  }
+
+  @if (store.ready() && !store.library().length && !adding()) {
+    <ah-empty-state
+      icon="✦"
+      title="Nothing kept yet"
+      description="Capture ideas in the Inbox and keep the ones you want, or add one here by hand."
+    />
+  }
+
+  <ul class="list" role="list">
+    @for (concept of store.library(); track concept.id) {
+      <li class="card concept">
+        <div class="concept-head">
+          <h2>{{ concept.title }}</h2>
+          <button
+            ahButton="ghost"
+            size="sm"
+            type="button"
+            (click)="remove(concept.id, concept.title)"
+            [attr.aria-label]="'Delete ' + concept.title"
+          >
+            Delete
+          </button>
+        </div>
+        <p class="essence">{{ concept.explanation.essence }}</p>
+        @if (linksOf(concept.id); as links) {
+          @if (links.length) {
+            <ul class="links" role="list" aria-label="Linked concepts">
+              @for (entry of links; track entry.link.id) {
+                <li>
+                  <span>{{ entry.text }}</span>
+                  <button
+                    ahButton="ghost"
+                    size="sm"
+                    type="button"
+                    (click)="store.dismissLink(entry.link)"
+                    [attr.aria-label]="'Remove the link: ' + entry.text"
+                  >
+                    Unlink
+                  </button>
+                </li>
+              }
+            </ul>
+          }
+        }
+        @if (store.library().length > 1) {
+          <details class="link-add">
+            <summary>Link to another concept</summary>
+            <div class="link-form">
+              <label>
+                <span>Concept</span>
+                <select #other>
+                  @for (candidate of store.library(); track candidate.id) {
+                    @if (candidate.id !== concept.id) {
+                      <option [value]="candidate.id">
+                        {{ candidate.title }}
+                      </option>
+                    }
+                  }
+                </select>
+              </label>
+              <label>
+                <span>How they relate</span>
+                <select #relation>
+                  @for (choice of relations; track choice.value) {
+                    <option [value]="choice.value">{{ choice.label }}</option>
+                  }
+                </select>
+              </label>
+              <button
+                ahButton="secondary"
+                size="sm"
+                type="button"
+                (click)="link(concept.id, other.value, relation.value)"
+              >
+                Link
+              </button>
+            </div>
+          </details>
+        }
+        @for (prompt of concept.prompts; track prompt.id) {
+          <details class="prompt">
+            <summary>{{ prompt.question }}</summary>
+            <p>{{ prompt.answer }}</p>
+          </details>
+        }
+      </li>
+    }
+  </ul>
+</section>

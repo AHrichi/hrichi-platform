@@ -1,0 +1,29 @@
+{
+  // The Learning Engine's edge Worker (design §9, §10): timed Telegram
+  // nudges and the Sunday recap, so the Render API is never woken on a
+  // timer, and the bot's webhook for Telegram capture.
+  // `node tools/scripts/learning-setup.mjs` does all of the below. By hand:
+  //   pnpm wrangler kv namespace create learning-nudges   → put its id below
+  //   pnpm wrangler secret put LEARNING_TOKEN_SECRET     (same as the API's)
+  //   pnpm wrangler secret put TELEGRAM_BOT_TOKEN
+  //   pnpm wrangler secret put TELEGRAM_CHAT_ID
+  //   pnpm wrangler secret put TELEGRAM_WEBHOOK_SECRET   (a random string)
+  // Then point the bot at the Worker (once), with the same secret:
+  //   curl -s "https://api.telegram.org/bot<TOKEN>/setWebhook"   //     -d url=https://learning-edge.<account>.workers.dev/telegram   //     -d secret_token=<TELEGRAM_WEBHOOK_SECRET> -d 'allowed_updates=["message"]'
+  // and set LEARNING_EDGE_URL on the API so it pulls the inbox.
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "learning-edge",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-11-01",
+  "triggers": { "crons": ["*/15 * * * *"] },
+  "kv_namespaces": [
+    {
+      "binding": "NUDGES",
+      "id": "94057825242143d0b5b5417bd80ae7e9",
+    },
+  ],
+  "vars": {
+    // Pages allowed to send the nudge state (comma-separated).
+    "ALLOWED_ORIGINS": "https://product-learning.ahmed-hrichi.workers.dev,http://localhost:4311",
+  },
+}

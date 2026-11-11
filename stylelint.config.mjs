@@ -16,6 +16,8 @@ const STRICT = [
   'libs/platform/**/*.scss',
   'libs/labs/sky/**/*.scss',
   'apps/labs/**/*.scss',
+  'libs/learning/**/*.scss',
+  'apps/products/learning/**/*.scss',
 ];
 
 const COLOR_PROPS = [

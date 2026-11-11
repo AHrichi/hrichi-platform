@@ -1,0 +1,57 @@
+<div class="shell">
+  <header class="bar">
+    <a class="brand" routerLink="today">
+      <span aria-hidden="true">✦</span> Learning
+    </a>
+    <nav class="nav" aria-label="Learning">
+      <a
+        routerLink="today"
+        routerLinkActive="is-active"
+        ariaCurrentWhenActive="page"
+        >Today</a
+      >
+      <a
+        routerLink="inbox"
+        routerLinkActive="is-active"
+        ariaCurrentWhenActive="page"
+        >Inbox
+        @if (store.drafts().length) {
+          <span class="badge">{{ store.drafts().length }}</span>
+        }
+      </a>
+      <a
+        routerLink="concepts"
+        routerLinkActive="is-active"
+        ariaCurrentWhenActive="page"
+        >Library</a
+      >
+      <a
+        routerLink="settings"
+        routerLinkActive="is-active"
+        ariaCurrentWhenActive="page"
+        aria-label="Settings"
+        ><span aria-hidden="true">⚙</span></a
+      >
+    </nav>
+    @let s = status();
+    <button
+      type="button"
+      [class]="'pill pill--' + s.tone"
+      [disabled]="!s.canSync"
+      (click)="store.syncNow()"
+      [attr.aria-label]="s.canSync ? s.label + '. Sync now' : s.label"
+    >
+      {{ s.label }}
+    </button>
+  </header>
+
+  <p class="notice" role="status" aria-live="polite">{{ store.notice() }}</p>
+
+  <main class="main">
+    @if (store.fatal(); as fatal) {
+      <p class="fatal" role="alert">{{ fatal }}</p>
+    } @else {
+      <router-outlet />
+    }
+  </main>
+</div>

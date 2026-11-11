@@ -1,0 +1,540 @@
+# Learning Engine: technical design
+
+- **Status:** Accepted for decisions 1–3 in §15, recorded in [ADR-0024](../adr/0024-learning-engine.md). Decision 4 (the name) is settled; Jev (decision 5) is still open.
+- **Date:** 2026-11-11
+- **Product design:** the approved blueprint: zero-friction capture, a capped Daily Set, a forgiving habit loop and an engine that host apps plug into.
+- **Audience:** one owner (a personal tool), English only.
+
+The Learning Engine turns quick captures (typed or spoken) into Feynman explanations and recall prompts, then serves a short daily review scheduled with spaced repetition. It is a module with its own data and logic. The other apps in the platform reach it through a small client library.
+
+The design follows four rules from the blueprint: **capture in 5 seconds, review in 3 minutes, an end to every session, and no punishment for missed days.** It also follows what the platform already does: local-first apps, valibot contracts, AI that fails honestly, zero-cost hosting and strict module boundaries.
+
+---
+
+## 1. What the platform already gives us
+
+| Finding                                                                                                                                                                                                                | Consequence for the engine                                                                                                                       |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Nx 24 monorepo, Angular 22 zoneless, Native Federation remotes, each deployed to Cloudflare as static assets (ADR-0001/0002/0007).                                                                                     | The engine's UI is one more remote, `product-learning`, that also runs as a standalone installable PWA.                                          |
+| Products are local-first: Dexie per app, with `databaseName(mode, app, …)` keeping portfolio demos apart from real data (`@ah/platform/storage`, `@ah/platform/app-mode`).                                             | The client stores everything in Dexie and works offline. The demo in the portfolio never touches real data.                                      |
+| `product-*` scopes never import each other. They may use only `shared`, `platform` and `design-system` (`eslint.config.mjs`).                                                                                          | The engine needs its own scope, and a lint rule that lets products import **only its client library**.                                           |
+| StudyLM already has typed AI contracts: valibot schemas compiled to the strict structured-output subset, semantic validators, one repair round, golden fixtures, and errors instead of canned content (ADR-0021/0023). | The engine reuses that pattern. The generic schema compiler is extracted from `product-studylm-lessons` into a shared lib.                       |
+| StudyLM's design planned FSRS (`ts-fsrs`), streaks with a weekly freeze, and XP, but never built them. Its cards only count `masteryCount` from 0 to 5.                                                                | The engine delivers these once, for every app. StudyLM becomes its first host.                                                                   |
+| AI runs in n8n on your PC behind ngrok, on Groq and Gemini free tiers.                                                                                                                                                 | n8n is offline when the PC is off, which is exactly when you capture on the go. The capture pipeline needs a host that is always reachable (§6). |
+| NestJS BFF on Render free (sleeps after 15 min, about 1 min to wake, 750 h a month shared with Orbit API), with MongoDB Atlas free (512 MB). Telegram alerts already go out directly from Nest (`TelegramChannel`).    | The server is the sync point and the pipeline host. It is woken on demand and never kept alive. Telegram is a channel you already use.           |
+| `prepare-hosting.mjs` sends `Permissions-Policy: … microphone=()`.                                                                                                                                                     | Voice capture needs `microphone=(self)` on the learning app's origin. This is a required change.                                                 |
+
+---
+
+## 2. Architecture overview
+
+```mermaid
+flowchart LR
+  subgraph Phone["Phone / desktop browser"]
+    LA["Learning app (remote + standalone PWA)<br/>capture · digest · Daily Set · garden"]
+    HA["Host apps (StudyLM, …)<br/>@ah/learning/client only"]
+    DX[("Dexie: LearningDatabase<br/>concepts · events · outbox")]
+    LA <--> DX
+    HA -- "capture (paired) or deep link #capture" --> LA
+  end
+
+  subgraph CF["Cloudflare (free)"]
+    STATIC["Static assets"]
+    EDGE["learning-edge Worker<br/>Cron every 15 min · KV<br/>nudges · Telegram webhook"]
+  end
+
+  subgraph RD["Render free"]
+    API["NestJS: api/learning<br/>sync · pipeline · grading · pairing"]
+  end
+
+  DB[("Atlas: learning_* collections")]
+  LLM["Groq (gpt-oss, Whisper) · Gemini<br/>model ladder"]
+  TG["Telegram bot"]
+  JEV["Jev decision model<br/>(TypeSafe, typed answers)"]
+
+  LA -- "sync (push outbox, pull changes)" --> API
+  LA -- "nudge state (tiny PUT) · grade typed answer" --> EDGE
+  API --> DB
+  API --> LLM
+  API -- "triage · quality gate · links" --> JEV
+  EDGE -- "grade-answer" --> JEV
+  EDGE -- "Bot API: nudges, 'Got it ✓'" --> TG
+  TG -- "webhook: text/voice capture (V2)" --> EDGE
+  API -- "pull Telegram inbox on wake" --> EDGE
+```
+
+**Where each piece of work runs:**
+
+- **Browser:** capture (saved instantly to an outbox), the Daily Set (composed and played offline), streaks and XP (computed from local data), and the garden.
+- **Nest:** the AI pipeline, answer grading, sync, and device pairing. It wakes only when you use the app.
+- **Edge Worker:** timed nudges, sub-second grading of typed answers through Jev (§6.3), and later the Telegram capture inbox. It is always on and free, and never wakes Render.
+
+---
+
+## 3. Code layout and module boundaries
+
+The libs follow the platform's conventions (§4.2/§4.3 of the architecture doc) under a new **`scope:learning`**:
+
+```
+libs/learning/
+├── domain/        type:domain   runtime:agnostic   entities, valibot schemas, FSRS wrapper, Daily Set composer,
+│                                                   streak/XP/mastery rules. Pure TS, shared by Angular and Nest.
+├── contracts/     type:contracts runtime:agnostic  (L4) type-only DTOs for the client lib and the event group. Until then
+│                                                   the sync and pairing contracts are valibot schemas in domain, which
+│                                                   the API validates with (`ValibotPipe`)
+│   └── src/lib/ai/                                 the AI kit, a folder of domain rather than its own lib (domain libs
+│                                                   may only import util libs): task schemas, prompts, semantic checks,
+│                                                   decision questions and readers, grading by key points, 12 golden
+│                                                   concepts; `generated/learning-kit.json` is a Vitest file snapshot
+├── data-access/   type:data-access runtime:browser Dexie database, outbox, sync client, HTTP client. Framework-free:
+│                                                   data-access may not import platform libs, so the feature wires it
+├── client/        type:client   runtime:browser    the ONLY lib host apps may import: capture(), stateFor(),
+│                                                   <ah-learn-this>, <ah-learning-today>
+├── ui/            type:ui                          swipe card, progress dots, flame, completion, garden (SVG)
+└── feature/       type:feature                     LearningStore (SignalStore), runtime wiring (APP_MODE, databaseName,
+                                                    site config) and the screens: Inbox (capture, digest, in progress)
+                                                    and the voice recorder in L2, concepts and devices in L1; review,
+                                                    garden and settings join in later phases
+apps/products/learning/web/                         remote `product-learning` (port 4311) + standalone PWA
+apps/learning-edge/                                 Cloudflare Worker (Cron Trigger + KV + Telegram webhook)
+libs/api/learning/                                  Nest module: sync, pipeline, grading, pairing
+libs/api/ai/        type:util  runtime:node          model ladder (Groq → Gemini), Whisper → Gemini transcription, and the
+                                                    DecisionModel port (Jev, ladder fallback); reused by the planned `assistant`
+libs/shared/ai-schema/                              extracted from product-studylm-lessons: valibot → strict JSON Schema
+                                                    post-processing + the strictness spec
+```
+
+**Boundary rules (added to `eslint.config.mjs`):**
+
+- `scope:product-*` may also depend on `scope:learning-client`, the tag only the client lib carries (it is also `type:client`). Bloat is capped by lint: a host app can never reach the store, the database or the screens.
+- `scope:learning` may depend on `shared`, `platform` and `design-system`, and never on a product. `scope:learning-client` may also reach `scope:learning`.
+- `scope:api` may depend on `learning/domain`, `learning/contracts` and `learning/ai-kit`, which are all `runtime:agnostic`. The scheduler and the checks run the **same code** on both sides.
+
+---
+
+## 4. Data
+
+### 4.1 Entities as stored
+
+The entities from the blueprint, shaped for a document store and for sync. Every record has a client-generated UUID `id` (`crypto.randomUUID()`), `updatedAt` and a nullable `deletedAt` (tombstone). Server-stored records also carry a server `seq` used as the change cursor.
+
+```ts
+Capture        { id; modality: 'text'|'voice'|'share'|'host'; text|null; audioRef|null; transcript|null;
+                 source: SourceRef|null; status: 'queued'|'transcribing'|'structuring'|'ready'|'needs_look'|'failed';
+                 attempts; error|null; conceptIds[]; capturedAt }
+Concept        { id; captureId; title; topicId; type: 'definition'|'process'|'cause_effect'|'fact'|'skill'|'comparison';
+                 difficulty: 1..5; status: 'draft'|'active'|'suspended'|'archived'; confirmedAt|null;
+                 explanation: Explanation;            // current version, embedded
+                 explanationHistory: Explanation[];   // last 3
+                 prompts: RecallPrompt[];             // embedded, 3–6
+                 sources: SourceRef[]; version }      // version guards AI rewrites against user edits
+Explanation    { version; essence; simple; analogy; misconception; ownWords|null; by: 'ai'|'user'; specVersion }
+RecallPrompt   { id; type: 'free_recall'|'cloze'|'why'|'apply'|'contrast'|'spot_error'|'quick_fire';
+                 question; answer; options|null; keyPoints[];   // 1–4 short statements a good answer contains (§6.4)
+                 retired; flags[] }
+ConceptLink    { id; from; to; relation: 'similar'|'contrasts'|'prerequisite'|'example_of'|'causes';
+                 by: 'ai'|'user'; confirmed }                         // L5; a dismissed suggestion is a tombstone
+Topic          { id; name; parentId|null; hue; autoCreated }
+ReviewEvent    { id; conceptId; promptId; sessionId; at; localDate; rating: 'again'|'hard'|'good'|'easy';
+                 answer|null; aiVerdict|null; ms; deviceId }          // append-only
+ReviewSession  { id; localDate; kind: 'daily'|'bonus'|'warmup'; planned[]; startedAt; completedAt|null }
+                 // planned: { conceptId; promptId; teach?; contrastWith? } (L5)
+TeachBack      { id; conceptId; sessionId|null; at; localDate; modality: 'voice'|'text'; transcript;
+                 clarity: 'unclear'|'partly'|'clear'|null; covered[]; gaps[] }   // L5, append-only
+LedgerEntry    { id; at; kind: 'freeze_earned'|'freeze_used'|'repair'|'unlock'|'milestone'; ref|null }  // append-only
+LearnerProfile { dailyCap: 5|7|10; newPerDay; streakMode: 'daily'|'weekly'; weeklyTarget; desiredRetention: 0.9;
+                 timezone; dayStartsAt: '04:00'; nudge: { morning|null; evening|null; learned: boolean };
+                 vacationUntil|null }
+SourceRef      { app; objectType; objectId; deepLink; excerpt; status: 'live'|'removed' }
+Device         { id; name; tokenHash; pairedAt; revokedAt|null }
+```
+
+**Derived, never synced as truth:**
+
+- `MemoryState` (stability, difficulty, due date, retrievability, tier) per concept: replayed from `ReviewEvent`s through ts-fsrs.
+- `Streak`: from `ReviewEvent.localDate` plus the ledger.
+- XP and level: from events through a versioned rules table.
+- Mastery tier: from FSRS stability (§5.3).
+
+Each device caches them, and they can always be rebuilt. If the rules or the FSRS parameters change, recomputing applies the change everywhere, with no migration.
+
+**As built (L5):** a Telegram message becomes a `text` or `voice` capture whose source app is `telegram`. A contrast card is built from a confirmed link and both concepts' essences, so prompts carry no `relatedConceptId` and nothing is generated for it. Freezes and repairs are computed from events and sets, so there is no ledger table; settings stay on the device, in `meta`.
+
+### 4.2 Storage
+
+- **Browser:** `LearningDatabase` (Dexie), named through `databaseName(mode, 'learning', 'LearningDatabase')`.
+  - Rows are `{ id, by, updatedAt, data }`: the record plus the device that wrote this version, which the merge rule needs.
+  - Version 1 (L1): `topics 'id'`, `concepts 'id, data.topicId, data.status'`, `events 'id, data.conceptId, data.localDate'`, `outbox 'key, kind'` (one row per changed record, `key` = `<kind>:<id>`, with a `queuedAt` that a change during a sync bumps) and `meta 'key'` (the pairing and the cursor).
+  - Version 2 (L2) adds `captures` and `audio`, version 3 (L3) `sessions`, version 4 (L5) `teachbacks` and version 5 (L5) `links`. Memory stays derived.
+  - Audio waits in the outbox as a `Blob` until it is uploaded.
+- **Server:** one Atlas collection, `learning_records`, holds every synced kind (`_id` = `<kind>:<id>`, a unique index on `seq`), so the change feed is one indexed range scan. Beside it: `learning_devices`, `learning_pairings` (a TTL index removes expired ones) and `learning_counters` (the `seq` counter).
+  - Audio is deleted after transcription.
+  - **Size:** about 3 KB per concept and 200 B per event. 10,000 concepts and 100,000 events come to about 50 MB, a tenth of the free tier.
+
+### 4.3 Sync protocol
+
+There is one owner on a few devices, so sync stays simple and free of conflicts by construction:
+
+```
+POST /learning/sync                 (Bearer device token; the device id comes from the token)
+  → { cursor, push: { topics[], concepts[], captures[], sessions[], events[],
+                      links[], teachbacks[] } }        // links and teach-backs (L5) may be left out
+  ← { cursor', more, pull: [{ kind, seq, by, data }], rejected[], serverTime, renewedToken | null }
+POST /learning/captures/:id/audio   (L2: multipart, ≤ 2 min, opus/webm)
+POST /learning/grade                (L3: a typed answer, by its key points)
+POST /learning/transcribe           (L5: a teach-back's recording, ≤ 2 MB; nothing is stored)
+POST /learning/teach-back           (L5: a teach-back, by its key points and clarity)
+```
+
+- **The server stamps** each stored version with the writer (`by`, from the token) and a `seq`. A pull returns at most 500 records after the cursor; `more` asks for another round. Versions the request itself wrote are left out of its pull.
+- **Syncs run one at a time** in the API process, so seq numbers are written in order and a cursor never skips one. Render runs one instance; a second would need a lock in the database.
+- **Clocks:** a version stamped more than 10 minutes in the future is refused (`rejected`, `clock_ahead`), or nothing could ever replace it. A local edit is stamped at least 1 ms after the version it replaces, so an edit right after pulling from a device whose clock runs ahead still wins.
+- **Tokens** last 180 days; a sync in the last 30 returns a fresh one, so a device in use never has to pair again.
+
+- **Append-only records** (events, ledger, teach-backs) are idempotent by `id`, so merging them is a set union. When events arrive out of order from another device, only that concept's memory state is replayed again.
+- **Topics, concepts, captures, sets and links** merge last-writer-wins per record: the later `updatedAt` (compared as instants), then the larger writer id, so every device and the server pick the same version in any order. A pulled version that wins also drops the local change it beat from the outbox. From L2, when the AI writes too, concepts merge per field group (`explanation`, `prompts`, `status`, `topic`), and **a user edit always beats an AI rewrite:** the pipeline writes only when `concept.version` is still the one it read.
+- **When it runs:** after each session or capture, when the app opens, on `online` and when the tab becomes visible. The one follow-up: while a capture is `queued` or `processing` on the server, the device syncs again 15 s later, so its drafts arrive without a refresh. Otherwise nothing polls. The review never waits on sync.
+- **Voice notes:** the audio waits on the device (an `audio` table) until its capture is on the server, then goes to `POST /learning/captures/:id/audio` and is deleted from the device.
+
+---
+
+## 5. Scheduling: FSRS, the Daily Set and streaks
+
+### 5.1 FSRS
+
+- **Library:** [ts-fsrs](https://github.com/open-spaced-repetition/ts-fsrs) 5.4.2 (MIT, FSRS-6, already picked in StudyLM's design), pinned: 6.0 was two weeks old with a new dependency when L3 was built. Fuzz and minute-level learning steps are off, so a replay is deterministic and works in whole days. Desired retention is 0.90.
+- **Memory per concept.** Every prompt answers for the same concept. That way prompt formats rotate without resetting memory.
+- **Swipes map to ratings:**
+  - left = `again`
+  - up = `hard`
+  - right = `good`
+  - right, when the AI verdict is "nailed" and the answer was fast, = `easy`, shown as a "⚡ easy" hint you can undo
+- **Concepts start the day after you keep them**, as the blueprint says.
+
+### 5.2 Daily Set composer (pure function in `learning/domain`)
+
+`compose(states, profile, history, localDate) → ReviewSession.planned` is deterministic: the same input gives the same set.
+
+1. **Day boundary:** the day starts at 04:00 in the profile's timezone, so a late-night session counts for the day before.
+2. **Due pool:** concepts due by the end of the day, ordered by lowest retrievability.
+3. **Slots** (cap 7): about 60 % from the due pool, about 25 % interleaved from other topics (including a `contrast` prompt when a linked concept is also due), and new concepts up to `min(newPerDay = 2, ~15 % of cap)`. Free slots are filled from the due pool, then from concepts almost due.
+   - **Contrast card (as built, L5):** at most one per set, for a planned concept with a confirmed `similar` or `contrasts` link to another reviewed concept, preferably one in the same set; never the opener or the teach-back card. It asks how the two differ, reveals both essences side by side, and counts for the planned concept only.
+4. **Order:** two cards in a row never share a topic when the pool allows it. The set starts with an easy card (highest retrievability) for momentum.
+5. **Prompt choice per concept:** the least-used type that isn't the one used last time. At most 2 `free_recall` per set (to stay inside 3 minutes) and at most 1 teach-back (only for concepts at Leaf or above).
+   - **Teach-back (as built, L5):** the most mature concept at Leaf or above that wasn't taught back in the last 7 days, never the opener. Bonus rounds have none.
+6. **Adaptive load:** if more than 40 % were missed over the last 3 sessions, or a session was abandoned, the cap drops by 2 (minimum 3) and no new concepts come in. The UI says "Lighter set today".
+7. **Backlog stays invisible.** Overdue concepts simply stay due, and FSRS handles long gaps. No count of what's owed is ever shown.
+
+The set is frozen when the day's first session starts, so the promise of 7 cards holds even when more become due during the day. Missed cards return once at the end of the session with a different prompt type.
+
+### 5.3 Streaks, XP and mastery (pure rules, computed from events)
+
+- **Days:**
+  - **Ember day:** at least 1 review event on the local date.
+  - **Full day:** the Daily Set was completed.
+  - Both count toward the streak.
+- **Freezes:** 1 `freeze_earned` per 7 consecutive days, at most 2 banked. A one-day gap uses one automatically (`freeze_used`).
+- **Repair (as built, L5):** a missed day with no freeze left is repaired when the next day has two finished, non-empty sets, at most once every 30 days. The completion screen offers it the day after the break. It is computed like freezes, with no ledger.
+- **Weekly mode:** the streak counts weeks with at least `weeklyTarget` active days.
+- **Mastery tier from FSRS stability:**
+  - Seed (never reviewed)
+  - Sprout (< 3 d)
+  - Leaf (3–21 d)
+  - Bloom (21–90 d)
+  - Golden (≥ 90 d)
+  - **Wilting:** retrievability now < 0.80.
+- **XP:** a versioned table. Teach-back and correct `hard` answers weigh most, and nothing pays for reading. Rules v2 (L5): again 2, hard 8, good 6, easy 4; +4 for answering before revealing; +15 per finished Daily Set; +12 per teach-back, +6 more when it was clear.
+- **Milestones and garden looks (L5):** first set, a week, 100 answers, ten leaves, first bloom, crystal clear (a clear teach-back), a month and golden. They unlock the autumn (level 3), night (a 7-day streak) and aurora (a Golden concept) looks. All are computed from events, so nothing can be bought or lost.
+
+---
+
+## 6. AI pipeline
+
+### 6.1 Where it runs: Nest, not n8n (decision 1)
+
+Captures happen on the go, when the PC that runs n8n may be off. Nest on Render wakes on the capture request itself, and the architecture already plans a Gemini → Groq ladder in Nest for the `assistant` module. The ladder is built once in `libs/api/ai` and serves both.
+
+n8n stays available for extras that are allowed to be late (a weekly email recap, for instance). It is never on the capture path.
+
+**As built: the n8n relay (after L5).** The pipeline stays in Nest, but the model keys can stay in n8n. Each provider call goes, signed (HMAC over timestamp and body, as the lead pipeline signs), to n8n's `learning-ai` webhook. n8n checks the signature, allows only Groq chat completions and Gemini `generateContent`, adds the credential it holds and returns the provider's status and body. The ladder, schemas, checks and decisions don't change. A cached ping (1 minute) tells the pipeline whether n8n is up: while the PC is off, captures wait without spending a try. Whisper's multipart upload isn't relayed, so Gemini transcribes (Flash, then Flash-Lite). `LEARNING_RELAY_LIVE=1 pnpm nx test api-learning -- relay-live` runs a capture and a teach-back through it with real models.
+
+### 6.2 Stages
+
+```
+capture accepted (202) ─► transcribe ─► triage ─► extract-concepts ─► explain-concept ×N ─► checks + quality gate ─► repair ≤1 ─► link-suggest ─► draft (digest)
+```
+
+Two kinds of model do the work. A **generative ladder** writes text. A **decision model** (Jev, §6.4) answers typed questions about text that already exists. Every decision task has a ladder fallback, so Jev is never a single point of failure.
+
+| Task                            | Input                                                                | Output                                                                                                       | Model                                        |
+| ------------------------------- | -------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ | -------------------------------------------- |
+| transcribe                      | audio ≤ 2 min                                                        | text                                                                                                         | Groq `whisper-large-v3-turbo` → Gemini audio |
+| `triage`                        | capture text                                                         | `choice`: learnable idea / to-do or reminder / noise. Non-learnable captures ask before processing.          | **Jev** → ladder                             |
+| `extract-concepts`              | capture text, source excerpt, existing topic names                   | 1–3 concepts: title, type, topic (existing or new), span                                                     | ladder                                       |
+| `explain-concept`               | concept, span, type, learner level                                   | Explanation + 3–6 prompts with `keyPoints` (type mix fixed by concept type)                                  | ladder                                       |
+| `quality-gate`                  | the concept's explanation and prompts, the source span               | `noul` per check: faithful to the source, misconception really wrong, question leaks no answer, plain enough | **Jev** → ladder                             |
+| `repair`                        | the object + issues (`path`, `message`)                              | corrected object                                                                                             | ladder                                       |
+| `link-suggest` (L5, with links) | concept + up to 20 candidates (lexical prefilter on titles/essences) | one `choice` per candidate: a relation or `none`, with probabilities; duplicate check by `noul`              | **Jev** → ladder                             |
+| `grade-answer`                  | prompt, key points, learner's answer                                 | `noul` per key point ("does the answer state …?") → verdict, missed points, suggested rating                 | **Jev** → ladder, 6 s budget                 |
+| `teachback-feedback` (L5)       | concept, key points, transcript                                      | `noul` per key point + `score` for clarity (coarse, 3 bands)                                                 | **Jev** → ladder                             |
+| `revise-explanation`            | explanation, instruction ("simpler", "focus on the formula")         | new Explanation version                                                                                      | ladder                                       |
+
+- **Schemas:** each task has its own small valibot schema in `learning/ai-kit`, compiled to the strict subset by `@ah/shared/ai-schema`. Everything carries a `specVersion` and is snapshot-tested, exactly as the lessons kit is.
+- **Prompts live on the server.** The client sends `{ task, input }` only, so the API can't be used as a free model proxy. User text is fenced as data.
+- **Semantic checks**, each returning `{ path, code, message }` for the repair call:
+  - The essence is ≤ 20 words and the simple explanation ≤ 80.
+  - A cloze has exactly one blank, and its answer appeared in the original sentence.
+  - A multiple-choice answer is among 3–4 unique options.
+  - No question contains its own answer.
+  - `contrast` needs a real related concept.
+  - `spot_error` must differ from its correction.
+  - `quick_fire` is never the only prompt.
+  - A model-declared `uncertain: true` sends the concept to **Needs a quick look**.
+- **Honest failure, as in StudyLM.** When the ladder is exhausted, the capture is marked `failed` and retried with backoff (1 min, 10 min, next wake). After 3 tries it shows a Retry button. Nothing is ever filled in, and the raw capture is never lost.
+- **Durability without a queue service:** the capture record is the job (`queued` → `processing` → `ready` or `needs_look`; `failed` after 3 attempts). A sync that stores a capture starts the pipeline; a sweep at boot and every 5 min while awake runs anything still `queued` and keeps drafts older than 48 hours. Captures sent while Render sleeps are processed on its next wake. Pipeline writes go through the same `WriteLock` as syncs, stamped by a fixed server writer id.
+- **Triage** asks only whether to go on: a capture the decision model confidently calls a to-do or noise waits as `needs_look` with "Process anyway". If the decision model fails, the capture goes on.
+- **Golden concepts:** about 12 hand-written concepts covering every concept type, each with its explanation and prompts, passing every check. They serve as the validators' ground truth, the prompts' examples, the demo content and the e2e fixtures.
+
+### 6.3 Grading never blocks the review
+
+- **Typed answers are graded by `POST /learning/grade` in Nest (L3)**, one `noul` per key point through the decision model: Jev when `TYPESAFE_API_KEY` is set, the generative ladder otherwise. The plan is to move grading to the always-on `learning-edge` Worker once the Jev spike says go, so it never waits for Render to wake.
+- **Voice answers** are transcribed first, which goes through Nest. When the review screen opens it pre-warms `/health`, the platform's existing pre-warm-on-intent pattern.
+- **From key points to a verdict, in code:**
+  - every key point has p ≥ 0.7 → **nailed**
+  - at least one has p ≥ 0.7 → **close, you missed X** (X is the key point text itself, so nothing is generated)
+  - none does → **missed**
+  - any key point in the uncertain band (0.35–0.7) → no verdict is shown
+- **Budget:** 6 s. A late or failed verdict is dropped silently, and the swipe self-grade works as usual.
+- **The swipe is always the rating.** The AI only suggests. Each swipe that disagrees with the suggestion is logged as a labelled example (§6.4).
+- **Teach-back (as built, L5):** a recording goes to `POST /learning/transcribe` (90 s at most), then `POST /learning/teach-back` asks one `noul` per point (the concept's live key points, or its essence when it has none) and one `score` for clarity in three bands: muddled, getting there, crystal clear. A band shows only at confidence ≥ 0.5. The feedback names the points left out, in the concept's own words. A typed teach-back skips transcription. Offline or unpaired it is still kept, and the learner compares it with the key points. Budget: 15 s.
+- **Links (as built, L5):** when the pipeline drafts a concept, a word-overlap shortlist (title, essence and key points; up to 5 concepts, kept ones and the draft's siblings) goes to one decision call, with a `choice` per candidate: none, similar, contrasts, prerequisite, example_of or causes. Confident answers (≥ 0.65, at most 3) are stored unconfirmed and asked about in the Inbox once both concepts are kept. Best effort: it never fails a capture.
+
+### 6.4 Jev: a decision model for the judging tasks (proposed, decision 5)
+
+[Jev](https://docs.typesafe.ai) by TypeSafe AI came out in early access on 2026-09-15. It is a "System One" model: you send a `state` (text or JSON) and typed questions, and every question is answered in parallel with a typed value. It never writes prose.
+
+| Type     | Returns                                                    | Used for                                                            |
+| -------- | ---------------------------------------------------------- | ------------------------------------------------------------------- |
+| `noul`   | probability that a statement is true (0–1)                 | key point covered, faithful to the source, answer leaked, duplicate |
+| `choice` | one option of 1–255, with `confidence` and `probabilities` | triage, link relation, topic among existing topics                  |
+| `score`  | a level on an ordered scale of 2–10, with `probabilities`  | clarity of a teach-back, in coarse bands only                       |
+
+**Why it fits:** half of the engine's AI tasks are judgments, not writing.
+
+- **Speed:** the vendor reports 70–500 ms, against several seconds for a ladder call. That is what makes grading during a swipe feasible.
+- **Probabilities:** answers come with probabilities, which give the thresholds for "no verdict" and "needs a quick look".
+- **Structured by design:** typed answers mean no parsing, no repair round and no malformed JSON.
+- **Cheaper:** about $0.04 per million input tokens through Vercel's AI Gateway.
+- **Better feedback:** **key points** turn grading into a list of yes/no questions. "You missed X" quotes the concept's own key point, so feedback can't be made up.
+
+**What the evidence says, and how the design copes:**
+
+- **Results are mixed.** Accuracy varies widely between reviewers: one third-party benchmark ranked it last of twelve systems on LegalBench, while others scored it well on classification sets. Rubric agreement is modest (κ ≈ 0.30–0.47), one tester measured a 16 % false-accept rate when it served as a gate, and its `score` levels are weakly calibrated numerically.
+  - → Jev only ever **suggests** (grading) or **adds** a check (quality gate). The deterministic checks in code stay. Scores are used in coarse bands only, never as a number.
+- **No counting, arithmetic or date comparison.** → Word limits, blank counts and option checks stay in code (§6.2).
+- **Unrelated context lowers accuracy.** → Each request carries only the prompt, the key points and the answer, never the whole concept.
+- **Early access only:** no free tier is published, and there are no self-hosted weights.
+  - → Jev sits behind a `DecisionModel` port in `libs/api/ai`. Its fallback adapter asks the generative ladder the same typed questions through a strict JSON schema, without calibrated probabilities, so the uncertain band shows no verdict.
+  - Turning Jev off is one config change.
+  - Calls go through Vercel's AI Gateway or TypeSafe's API, with the key held in Render and Worker secrets.
+- **Privacy:** answers and capture text go to one more processor. For a personal tool this is acceptable. The rule that audio is never sent stays.
+
+**How it is adopted: a spike in L2, then a go/no-go decision.** The harness is built; the measurement needs a TypeSafe key:
+
+```bash
+LEARNING_JEV_SPIKE=1 TYPESAFE_API_KEY=… GROQ_API_KEY=… pnpm nx test api-learning -- jev-spike
+```
+
+It writes `tmp/jev-spike/report.json` with each model's agreement, false-"nailed" rate, unsure rate, median latency and gate detection, and a `go` per task.
+
+1. **The labelled set** (`libs/api/learning/src/lib/spike/`): 116 answers to the 29 graded prompts of the golden concepts (a paraphrase that states every key point, a partial answer, a wrong one, and an off-topic reply), each labelled with the key points it states; and 48 quality-gate cases (each golden concept clean, with a false claim, with a true statement passed off as the misconception, and with a leaky prompt). A spec keeps the labels valid in CI.
+2. Measure per question type: agreement with the labels, false accepts at the chosen thresholds, latency from the Worker, and cost. Compare with the ladder on the same set.
+3. **Go when** grading agrees with the labels at least 85 % of the time with ≤ 10 % false "nailed", and median latency is under 1 s. Otherwise grading stays on the ladder and Jev keeps only the tasks it passed.
+4. **Ongoing:** every swipe that disagrees with Jev's suggestion is stored as a label. A monthly check re-measures agreement, so drift shows up in your own data.
+
+---
+
+## 7. Capture surfaces
+
+| Surface                           | Mechanism                                                                                                                                                                                                                                                                                                    | Phase |
+| --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----- |
+| Quick capture in the learning app | A floating ✦ button. A tap opens an autofocused text sheet with a draft saved on every keystroke. Holding it records voice (`MediaRecorder`, opus) and saves on release. The capture is written to Dexie and the outbox first, then shows "Got it ✓" and a 10 ms vibration (`navigator.vibrate` on Android). | L2    |
+| PWA shortcuts                     | Manifest `shortcuts`: long-press the home-screen icon for **Capture** or **Today's set**.                                                                                                                                                                                                                    | L2    |
+| Share sheet (Android)             | Manifest `share_target` with **GET** (title, text, url) → `/capture#…`. GET needs no custom service worker code. Files (screenshots) need a POST target and an `importScripts` shim around ngsw, so they come later.                                                                                         | L4    |
+| Host apps                         | `<ah-learn-this [source]>` and `capture()` from `@ah/learning/client` (§9).                                                                                                                                                                                                                                  | L4    |
+| Telegram                          | Send or forward text or a voice note to your bot. The edge Worker stores the update (voice as its Telegram `file_id`, never the audio) and replies "Got it ✓". Nest pulls the inbox on wake, the ADR-0010 backstop pattern (as built, §10).                                                                  | L5    |
+
+**Required platform change:** voice capture needs `microphone=(self)` on the learning app's origin in `prepare-hosting.mjs`. Other apps stay at `()`.
+
+---
+
+## 8. Review UI (mobile first)
+
+- **Screens (as built):** `/today` (the home screen, straight on card 1), `/inbox` (capture, the digest and captures on their way), `/concepts` (shown as Library), `/settings` (set size, new concepts a day, reminders, away-until) and `/devices` under Settings; `/garden` (L5) is linked from the Library, the completion screen and Settings. Each has its own URL and lazy chunk, like Basecamp and StudyLM.
+- **Review flow:** quick-fire cards are answered by picking an option; others take an optional typed answer, revealed with a button (Ctrl/⌘ + Enter). Right, up and left grade got it, shaky and missed. A missed card returns once at the end with another prompt. A day with nothing due counts once the app is opened (an empty set, finished at once).
+- **Swipe:** Pointer Events with a distance-or-velocity threshold. The card follows the finger with CSS transforms and flies off with the Web Animations API. Rotation is limited to 8°.
+- **Swipes are never the only input.** Buttons sit under the card, and on desktop `←` `↑` `→` grade and `Space` reveals.
+- **Reduced motion:** a reactive `prefers-reduced-motion` signal (as in the StudyLM player) swaps the fly-off animation for an instant change.
+- **Celebration:** confetti (`canvas-confetti`, already a dependency) is lazy-loaded at completion and skipped under reduced motion.
+- **Offline first:** the set, the prompts and the explanations are all local. Only grading and sync need the network.
+- **Accessibility:** progress dots form a labelled progressbar, the reveal moves focus to the answer, and axe runs in e2e and Storybook. The colour rules of the design system apply, including the `--color-data-*` restriction to stage panels.
+- **Garden (as built, L5):** a plant per topic and a leaf per concept, drawn as SVG from the derived memory state, with no Three.js so it stays light on phones. A leaf's shape follows its tier, it droops when retrievability falls below 0.80, and a plant draws at most 14 leaves (the rest are counted). The drawing is hidden from screen readers; a visually hidden list says the same. The looks only swap colour tokens.
+- **Teach-back and contrast cards (L5):** "Teach it back" asks for an explanation out loud (90 s at most) or typed, then shows the clarity band, the points left out and the key points. "Compare" asks how two linked concepts differ and reveals both essences side by side. Both are graded with the same swipe.
+
+---
+
+## 9. Integration with host apps
+
+**The client library is the whole contract (L4, as built).** `@ah/learning/client` is tagged `scope:learning-client` and `type:client`, so lint lets products import it and nothing else of the engine. It never opens the engine's database. Its types and the hand-off format live in `@ah/learning/contracts` (`type:contracts`, with a small pure codec).
+
+| Verb      | API                                                                | Behaviour                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| --------- | ------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Capture   | `LearningClient.capture(items)`, `<ah-learn-this [items] [label]>` | Hands up to 10 `{ text, source }` items to the learning app's Inbox as `#capture=<base64url JSON>`. The fragment never reaches a server. Inside the portfolio it is an in-app navigation to `/apps/learning`; anywhere else it opens the deployed app in a new tab. The Inbox asks "Save N ideas from StudyLM?" before saving anything, since the link could have come from any page; sources are re-validated and only `http(s)` deep links are kept. |
+| Embed     | `<ah-learning-today>`                                              | A chip with the streak and the cards left today, linking to `/today`. It reads a small public summary the learning app keeps in localStorage (`ah.learning.today`), so it shows only on the same origin (the portfolio) and renders nothing elsewhere. **The review itself never embeds in another app.**                                                                                                                                              |
+| Query     | (deferred)                                                         | `stateFor(sourceRef)` would need the engine's data on the host's origin; no host needs it yet.                                                                                                                                                                                                                                                                                                                                                         |
+| Subscribe | (deferred)                                                         | The SignalStore Events plugin isn't used anywhere in the platform yet, so no event group was added without a consumer.                                                                                                                                                                                                                                                                                                                                 |
+
+**Share sheet:** the installed app has a `share_target` (GET, so no service worker is needed): `/inbox?title&text&url` shows the same "Save this idea?" card. GET puts the shared text in the query string, which the static host sees; the app removes it from the address at once. A POST target with a service worker would avoid that, later.
+
+**StudyLM, the first host (as built):**
+
+- A lesson offers "Add to my daily reviews", which sends its card seeds (front and back) as captures whose source is the lesson and its address. They go through the pipeline like any capture.
+- Each flashcard has a "Learn this" button. Both labels are in StudyLM's five languages.
+- Inside the portfolio both appear only while the learning app is visible there; standalone StudyLM always shows them.
+- **Decision 3:** the engine replaces StudyLM's planned FSRS and streaks/XP; `learning-lab.md` now points here, and `masteryCount` stays only for StudyLM's own drill mode.
+
+**Portfolio demo (as built):**
+
+- `product-learning` is in `tools/federation/remotes.json`, the shell's manifest and routes (`/apps/learning`), the constellation's links and `app-visibility.ts`, where it is **hidden** (`learning: false`) until you switch it on.
+- In `embedded-demo` mode the app opens `ah-demo-learning`, seeded once with 10 golden concepts, about a month of reviews on a spacing ladder and a 12-day streak, so Today, tiers and Settings look like real use.
+- A capture in the demo turns at once into one of the 2 spare golden concepts, and says so. The demo never syncs, pairs or calls the AI.
+
+---
+
+## 10. Nudges: the edge Worker (decision 2)
+
+Render must not be woken on a timer: its 750 h a month are shared with the Orbit API. So nudges live on Cloudflare:
+
+- **`apps/learning-edge`:** a Worker with a Cron Trigger every 15 min and one KV namespace (`NUDGES`). It has no `deploy` target on purpose: it needs its KV namespace and secrets first, then `pnpm wrangler deploy --config apps/learning-edge/wrangler.jsonc` (setup steps in its `wrangler.jsonc`). `nx run learning-edge:bundle` checks the bundle (about 11 KiB gzipped).
+- **Nudge state in KV** (`NudgeStateSchema`): time zone, morning and evening times, today's set size, the streak, the day the set was last finished and an away-until date; plus a send log.
+  - The learning app writes it with `PUT /state` and its device token after each set, each settings change and on start. That is a handful of writes a day, far below the free plan's limit of 1,000.
+  - The Worker checks tokens with the shared secret and no database, so a revoked device can still send it until its token expires; at worst it moves a reminder.
+  - The app finds the Worker through `learningEdgeUrl` in `site-config.json` (`localhost:8787` in development, unset in production until deployed).
+- **Each cron run** is a pure decision function: "is it nudge time in the user's timezone, is today's set still open, is the daily budget (≤ 2) left?"
+  - If yes, it sends a Telegram message through the Bot API. Example: "☕ Your set is ready: 7 cards, about 3 min. Keep the 🔥 12 alive." A morning nudge waits at most 3 hours after its time.
+- **Learned time:** the app computes the median start time of the last 14 sessions, minus 10 min, and writes it as the morning time.
+- **No nudges** in vacation mode, and none once the set is done.
+- **Sunday recap (as built, L5):** the nudge state also carries this week's numbers (`week`: active days, cards, concepts kept, teach-backs, concepts at Leaf or better) and whether the recap is wanted (Settings, on by default). From 18:00 on Sunday, local time, the cron sends it once a week; the week's Monday is kept in KV. Away mode silences it, and a week with no reviews gets a short, kind line.
+- **Telegram capture (as built, L5):** `POST /telegram` is the bot's webhook (`setWebhook` with a `secret_token`, steps in `wrangler.jsonc`).
+  - Only updates carrying `TELEGRAM_WEBHOOK_SECRET` are read, and only messages from `TELEGRAM_CHAT_ID` are kept; everything else gets a 200, so Telegram doesn't retry it.
+  - Text, captions and voice notes up to 2 min go to KV as `inbox:<update_id>`, a voice note as its `file_id` only; a repeated update keeps its first copy. Commands get a short help reply.
+  - The API reads `GET /inbox` and clears `POST /inbox/ack` with its own token: signed with the shared secret for the server's writer id, valid 5 minutes. Pairing never gives that id to a device.
+  - The API pulls at boot and on each 5-minute sweep when `LEARNING_EDGE_URL` is set, so a message waits in KV at most until Render's next wake. A voice note is fetched by `file_id` (`getFile`, with the bot token) and transcribed; one that fails stays in KV for the next pull.
+- **Why Telegram and not Web Push:**
+  - Push needs a server-held subscription plus VAPID signing from the Worker.
+  - Delivery to an installed PWA on Android is less reliable than Telegram.
+  - You already use the bot for alerts.
+  - Web Push can be added later behind the same decision function.
+
+---
+
+## 11. Security
+
+- **One owner, paired devices.** On the Devices screen a device asks for a code. The API sends a 6-digit code to your Telegram chat (the bot and `TELEGRAM_CHAT_ID` the lead alerts use), never to the device; you type it in, and the device receives a token.
+  - A code works once, for 10 minutes, and five wrong codes end the pairing. Only its SHA-256 hash is stored.
+  - Without a bot, `LEARNING_LOG_PAIRING_CODES=true` writes codes to the API log for local development; config refuses it in production.
+- **Tokens** are stateless and HMAC-signed with Web Crypto (`v1.<deviceId>.<expiry>.<sig>`, 180 days and renewed by sync; the same idea as Dispatch's session tokens). A secret shared by Nest and the Worker validates them with no database lookup.
+  - Revocation goes in a KV list and in `learning_devices`. `/devices` in the bot lists devices and revokes them.
+- **API protections:**
+  - Every `/learning/*` route requires the token, with throttling (`@nestjs/throttler`).
+  - Task inputs are capped (16,000 characters, 2 min of audio).
+  - CORS is limited to the shell's and the learning app's origins.
+- **Telegram webhook (L5):** the secret header is compared in constant time, and the chat id must be the owner's. The inbox endpoints accept only the API's own token.
+- **Content Security Policy:** `connect-src` gains the API and Worker origins, and `microphone=(self)` is added for the learning app.
+- **Privacy:** audio is deleted after transcription, and capture text never goes into a URL query (fragments only). The demo is fully local.
+
+---
+
+## 12. Free-tier budget (personal use)
+
+| Resource                 | Expected use                                                             | Limit that matters                                                                                                                                           |
+| ------------------------ | ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Model tokens per capture | extract ~1.5 K + explain ~2.5 K per concept + links ~1 K ≈ **5–8 K**     | Groq: about 8 K tokens a minute per model. Two concepts a minute, with the ladder and pacing absorbing bursts of 20 captures a day.                          |
+| Grading                  | ≤ 2 free-recall answers per set, ~1 K each                               | negligible                                                                                                                                                   |
+| Jev decisions            | grading, triage, quality gate and links ≈ **150 K input tokens a month** | No free tier is published. At about $0.04 per million input tokens (Vercel AI Gateway), that is under $0.01 a month, but it needs a billing account.         |
+| Transcription            | ≤ 20 voice notes a day, ≤ 2 min each                                     | Groq's free Whisper tier: about 2,000 requests a day and 7,200 audio seconds an hour (third-party listings, checked 2026-11-11; confirm in the Groq console) |
+| Render                   | 2–4 wakes a day × ~15 min ≈ **30 h/month**                               | 750 h shared with Orbit API                                                                                                                                  |
+| Atlas                    | ~50 MB after years of use                                                | 512 MB                                                                                                                                                       |
+| Worker and KV            | 96 cron runs a day, < 50 KV writes a day (+1 per Telegram message)       | 100 K requests a day, 1 K writes a day                                                                                                                       |
+
+If free-model quality proves too weak for explanations, the ladder can take a paid rung (for example Claude Haiku 5.5) for `explain-concept` only. The strict schemas already fit Claude's structured outputs.
+
+---
+
+## 13. Testing
+
+- **`learning/domain` (Vitest):**
+  - Composer invariants as property tests: the cap holds, at most 2 new concepts, no adjacent same-topic cards when avoidable, and a deterministic result for the same input.
+  - Streak edge cases: daylight-saving changes, changing timezones, the 04:00 boundary, freezes, repair and weekly mode.
+  - FSRS replay is independent of the order events arrive in.
+- **`learning/ai-kit`:**
+  - Strictness spec for every schema, reusing the lessons rule check.
+  - The golden concepts pass every check with zero warnings.
+  - Broken fixtures assert the issue path and code.
+  - Generated-kit snapshot drift fails CI.
+- **`api/learning`:**
+  - In-memory repositories, following `libs/api/leads/src/lib/testing`.
+  - The pipeline against a fake ladder: good reply, unparsable reply, schema break, repair, exhausted ladder with backoff.
+  - Sync idempotency and the edit-beats-AI version guard.
+  - Token issue, expiry and revocation.
+- **`learning-edge`:** the cron decision function is pure and tested across timezones. Telegram and Jev are tested through a fake `fetch`.
+- **Decision model:**
+  - The key-points-to-verdict mapping and its thresholds are pure functions, tested at the band edges.
+  - Both `DecisionModel` adapters (Jev and the ladder fallback) run the same contract tests against recorded replies.
+  - The labelled set from the L2 spike is kept as a regression benchmark. Re-run it after any Jev version bump (the reply's `model` field names the build).
+- **e2e (Playwright in `shell-e2e`, API stubbed):** capture text → keep it in the digest → advance a day with `page.clock` → seven swipes on a touch-emulated mobile viewport → completion → streak 1. Axe runs on every screen.
+- **Storybook:** swipe card, progress dots, flame, completion and garden, with axe on each story.
+
+---
+
+## 14. Delivery phases
+
+Each phase ships on its own and leaves `main` green.
+
+| Phase               | Scope                                                                                                                                                                                                                                               | Done when                                                                     |
+| ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| **L0 Decisions**    | ADR-0024. Extract `@ah/shared/ai-schema` from `product-studylm-lessons` (no behaviour change; its 116 tests stay green). Add the lint boundary rules.                                                                                               | ADR merged, lessons tests unchanged                                           |
+| **L1 Backbone**     | `learning/domain` and `learning/contracts`, Nest `api/learning` (pairing, sync, concepts), Dexie data access with the outbox, an empty remote with `/pair`. Manual text concepts only.                                                              | Two devices pair and stay in sync offline and online                          |
+| **L2 Capture**      | `ai-kit`, golden concepts, `libs/api/ai` ladder, text and voice capture, pipeline, digest with swipe-to-keep and "simpler please", PWA shortcuts, `microphone=(self)`. **Jev spike** (§6.4): `DecisionModel` port, labelled set, go/no-go per task. | A 15 s voice note becomes kept concepts with no typing; Jev go/no-go recorded |
+| **L3 Daily Set** ⭐ | Composer, review screen, grading, completion screen, streaks and freezes, XP, `learning-edge` nudges on Telegram.                                                                                                                                   | **You use it daily.** This is the first adherence milestone.                  |
+| **L4 Integration**  | `@ah/learning/client`, StudyLM hooks, `<ah-learning-today>`, the events group, the share target, the portfolio demo with seeded data.                                                                                                               | "Learn this" in StudyLM lands in tomorrow's set                               |
+| **L5 Delight**      | Garden, teach-back, contrast and interleaving prompts, weekly recap on Telegram, Telegram capture, repair window, cosmetics.                                                                                                                        | Set by the blueprint's success metrics                                        |
+
+---
+
+## 15. Decisions
+
+Accepted on 2026-11-11:
+
+1. **The AI pipeline runs in Nest on Render**, which wakes on demand. n8n stays off the capture path because it is unavailable while you are away from the PC.
+2. **Nudges go out through a Telegram bot from a Cloudflare edge Worker.** Web Push can be added later behind the same decision function.
+3. **The engine replaces StudyLM's planned FSRS and streak phases.** StudyLM's `learning-lab.md` roadmap is updated to point here when L4 lands.
+4. **Name:** the remote is `product-learning`, the Worker `learning-edge` and the database `LearningDatabase` (accepted the same day).
+
+Still open:
+
+5. **Jev for the judging tasks (proposed):** grading, triage, the quality gate, links and teach-back clarity go to Jev behind a `DecisionModel` port, with the generative ladder as fallback. It is adopted per task only if it passes the L2 spike (§6.4). It needs a paid account at under $0.01 a month, which is the engine's only non-free dependency.
+
+## Sources on Groq's free speech-to-text (checked 2026-11-11)
+
+- [Free Whisper API: Groq, Deepgram, AssemblyAI compared](https://dev.to/build996/free-whisper-api-groq-deepgram-assemblyai-compared-562m) and [Groq rate limits](https://www.developersdigest.tech/rate-limits/groq): about 2,000 requests a day and 7,200 audio seconds an hour on the free tier; third-party, so confirm in the Groq console.
+- [Groq speech-to-text docs](https://console.groq.com/docs/speech-to-text.md): the OpenAI-compatible `audio/transcriptions` endpoint and `whisper-large-v3-turbo`.
+
+## Sources on Jev (checked 2026-11-11)
+
+- [TypeSafe docs: introduction](https://docs.typesafe.ai) and [quick start](https://docs.typesafe.ai/introduction/quickstart.md): question types, `POST /v1/systemone`, the response shape.
+- [AI/ML API reference for Jev 1.13](https://docs.aimlapi.com/api-references/decision-models/typesafe/jev-1.13): request and response fields, a 262 K context window.
+- [Vercel AI Gateway: `typesafe-ai/jev`](https://vercel.com/ai-gateway/models/jev.md): price per input token, `decide()` in the AI SDK.
+- [Let's Data Science: launch report](https://letsdatascience.com/news/typesafe-ai-launches-jev-decision-model-889a38c0): vendor latency of 70–500 ms, early access.
+- [Vals AI: independent evaluation](https://vals.ai/blogs/independent-evaluation-of-jev) and [Towards AI: "A decision model as a gate"](https://pub.towardsai.net/a-decision-model-as-a-gate-fast-well-calibrated-and-still-wrong-16-of-the-time-2ddb226b1ed5): mixed accuracy, a 16 % false-accept rate, modest rubric agreement.
+- [OrcaRouter: Jev limitations](https://www.orcarouter.ai/blog/jev-limitations): no arithmetic, counting or date comparison, and accuracy drops with unrelated context.

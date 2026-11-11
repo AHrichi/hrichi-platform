@@ -232,6 +232,14 @@ const webhookUrl = await collect(
 const webhookSecret =
   known('N8N_WEBHOOK_SECRET') || randomBytes(32).toString('hex');
 
+const leadKeys = new Set([
+  'MONGODB_URI',
+  'TURNSTILE_SECRET',
+  'TELEGRAM_BOT_TOKEN',
+  'TELEGRAM_CHAT_ID',
+  'N8N_WEBHOOK_URL',
+  'N8N_WEBHOOK_SECRET',
+]);
 writeFileSync(
   file,
   [
@@ -244,6 +252,10 @@ writeFileSync(
     `TELEGRAM_CHAT_ID=${telegramChatId}`,
     `N8N_WEBHOOK_URL=${webhookUrl}`,
     `N8N_WEBHOOK_SECRET=${webhookSecret}`,
+    // Keys other scripts keep here (learning-setup.mjs) stay as they are.
+    ...Object.entries(saved)
+      .filter(([key]) => !leadKeys.has(key))
+      .map(([key, value]) => `${key}=${value}`),
     '',
   ].join('\n'),
 );

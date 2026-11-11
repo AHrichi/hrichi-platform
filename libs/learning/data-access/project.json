@@ -1,0 +1,9 @@
+{
+  "name": "learning-data-access",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/learning/data-access/src",
+  "projectType": "library",
+  "tags": ["scope:learning", "type:data-access", "runtime:browser"],
+  "// targets": "to see all targets run: nx show project learning-data-access --web",
+  "targets": {}
+}

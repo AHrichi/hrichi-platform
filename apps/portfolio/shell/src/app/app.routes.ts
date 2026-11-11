@@ -103,6 +103,12 @@ export const appRoutes: Route[] = [
     title: 'Basecamp · Camping Trip Planner · Ahmed Hrichi',
   },
   {
+    path: 'apps/learning',
+    canMatch: [appAvailableGuard('learning')],
+    loadChildren: federatedRoutes('product-learning'),
+    title: 'Learning Engine · Capture and Daily Review · Ahmed Hrichi',
+  },
+  {
     path: 'apps/alarm-engine',
     canMatch: [appAvailableGuard('alarm-engine')],
     loadChildren: () =>

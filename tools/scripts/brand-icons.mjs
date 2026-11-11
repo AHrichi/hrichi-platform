@@ -11,7 +11,9 @@ const brand = 'libs/design-system/tokens/brand';
 const mark = readFileSync(join(brand, 'mark.svg'), 'utf8');
 const fullBleed = readFileSync(join(brand, 'mark-full-bleed.svg'), 'utf8');
 const shellPublic = 'apps/portfolio/shell/public';
-const appPublics = [shellPublic];
+// The Learning Engine installs as its own PWA (ADR-0024), with the same mark.
+const learningPublic = 'apps/products/learning/web/public';
+const appPublics = [shellPublic, learningPublic];
 
 const browser = await chromium.launch();
 const page = await browser.newPage();
@@ -58,18 +60,19 @@ try {
     writeFileSync(join(dir, 'favicon.ico'), favicon);
   }
 
-  const icons = join(shellPublic, 'icons');
-  mkdirSync(icons, { recursive: true });
-  writeFileSync(join(icons, 'icon-192x192.png'), await png(mark, 192));
-  writeFileSync(join(icons, 'icon-512x512.png'), await png(mark, 512));
-  writeFileSync(
-    join(icons, 'maskable-512x512.png'),
-    await png(fullBleed, 512, false),
-  );
-  writeFileSync(
-    join(icons, 'apple-touch-icon.png'),
-    await png(fullBleed, 180, false),
-  );
+  const pngs = {
+    'icon-192x192.png': await png(mark, 192),
+    'icon-512x512.png': await png(mark, 512),
+    'maskable-512x512.png': await png(fullBleed, 512, false),
+    'apple-touch-icon.png': await png(fullBleed, 180, false),
+  };
+  for (const dir of appPublics) {
+    const icons = join(dir, 'icons');
+    mkdirSync(icons, { recursive: true });
+    for (const [name, data] of Object.entries(pngs)) {
+      writeFileSync(join(icons, name), data);
+    }
+  }
   console.log(`Brand icons written to ${appPublics.join(', ')}`);
 } finally {
   await browser.close();

@@ -1,0 +1,343 @@
+<section class="screen" aria-labelledby="today-title">
+  <h1 id="today-title" class="visually-hidden">Today</h1>
+
+  @if (finished()) {
+    <div class="card done" role="status">
+      @if (session()?.planned?.length) {
+        <p class="done-mark" aria-hidden="true">✓</p>
+        <h2>Done for today</h2>
+      } @else {
+        <p class="done-mark" aria-hidden="true">☕</p>
+        <h2>Nothing due today</h2>
+        <p class="hint">
+          Capture something new in the Inbox, or come back tomorrow. Today still
+          counts.
+        </p>
+      }
+      <p class="flame">
+        <span aria-hidden="true">🔥</span>
+        {{ store.streak().current }} day{{
+          store.streak().current === 1 ? '' : 's'
+        }}
+        @if (store.streak().freezesBanked) {
+          <span class="freezes">
+            · <span aria-hidden="true">❄️</span>
+            {{ store.streak().freezesBanked }} freeze{{
+              store.streak().freezesBanked === 1 ? '' : 's'
+            }}
+            banked
+          </span>
+        }
+      </p>
+      @for (grew of grewTo(); track grew.title) {
+        <p class="insight">
+          “{{ grew.title }}” reached <strong>{{ tierNames[grew.tier] }}</strong
+          >.
+        </p>
+      } @empty {
+        @if (strongCount()) {
+          <p class="insight">
+            {{ strongCount() }} concept{{
+              strongCount() === 1 ? ' is' : 's are'
+            }}
+            at Leaf or better.
+          </p>
+        }
+      }
+      <p class="hint">
+        Level {{ store.xp().level }} · {{ store.xp().into }} /
+        {{ store.xp().span }} XP
+      </p>
+      <p class="hint">
+        Tomorrow: {{ tomorrow() }} card{{ tomorrow() === 1 ? '' : 's' }} · about
+        {{ tomorrowMinutes() }} min
+      </p>
+      @if (store.streak().repairOffer; as offer) {
+        <p class="repair" role="status">
+          Your {{ offer.streakBefore }}-day streak ended yesterday. Finish a
+          bonus round today to repair it (once a month).
+        </p>
+      }
+      <div class="actions">
+        <button ahButton type="button" (click)="close()">Close</button>
+        <button
+          ahButton="ghost"
+          type="button"
+          (click)="startBonus()"
+          [disabled]="busy()"
+        >
+          Bonus round
+        </button>
+        <a ahButton="ghost" routerLink="../garden">See the garden</a>
+      </div>
+    </div>
+  } @else if (card(); as current) {
+    <div
+      class="progress"
+      role="progressbar"
+      aria-label="Today’s set"
+      [attr.aria-valuenow]="done()"
+      aria-valuemin="0"
+      [attr.aria-valuemax]="total()"
+    >
+      @for (filled of dots(); track $index) {
+        <span class="dot" [class.is-done]="filled"></span>
+      }
+      <span class="flame-small" aria-hidden="true"
+        >🔥 {{ store.streak().current }}</span
+      >
+    </div>
+    @if (session()?.lighter) {
+      <p class="hint">Lighter set today.</p>
+    }
+
+    <lrn-swipe-card
+      class="card review"
+      [allowUp]="true"
+      [disabled]="!revealed() || busy()"
+      (swiped)="grade($event)"
+      label="The current card. After revealing: right for got it, up for shaky, left for missed."
+    >
+      @if (current.teach) {
+        <p class="chip chip--teach">Teach it back</p>
+        <p class="question">
+          Explain “{{ current.concept.title }}” as if to someone new to it.
+        </p>
+      } @else if (current.contrast; as other) {
+        <p class="chip chip--contrast">Compare</p>
+        <p class="question">
+          How is “{{ current.concept.title }}” different from “{{
+            other.title
+          }}”?
+        </p>
+      } @else {
+        <p class="chip">
+          {{ typeLabels[current.prompt.type] }}
+          @if (current.retry) {
+            · again
+          }
+        </p>
+        <p class="question">{{ current.prompt.question }}</p>
+      }
+
+      @if (current.teach && !revealed()) {
+        <p class="hint">
+          Out loud or typed, in plain words. About a minute is plenty.
+        </p>
+        @if (recorder.supported && recorder.state() !== 'denied') {
+          <div class="record">
+            @if (recorder.state() === 'recording') {
+              <button ahButton="secondary" type="button" (click)="stopTeach()">
+                <span aria-hidden="true">■</span> Stop
+              </button>
+              <span class="hint" role="timer" aria-live="off"
+                >{{ recorder.seconds() }} s of {{ teachSeconds }}</span
+              >
+            } @else if (spoken(); as recording) {
+              <span class="hint" role="status"
+                >Recorded {{ recording.seconds.toFixed(0) }} s</span
+              >
+              <button ahButton="ghost" type="button" (click)="startTeach()">
+                Record again
+              </button>
+            } @else {
+              <button
+                ahButton="secondary"
+                type="button"
+                (click)="startTeach()"
+                [disabled]="recorder.state() === 'starting'"
+              >
+                <span aria-hidden="true">🎙</span> Say it
+              </button>
+            }
+          </div>
+        } @else if (recorder.state() === 'denied') {
+          <p class="hint">The microphone is blocked here. Type it instead.</p>
+        }
+        <label class="answer">
+          <span class="visually-hidden">Your explanation</span>
+          <textarea
+            rows="3"
+            placeholder="Or type your explanation…"
+            [value]="answer()"
+            (input)="answer.set($any($event.target).value)"
+            (keydown.control.enter)="reveal()"
+            (keydown.meta.enter)="reveal()"
+          ></textarea>
+        </label>
+      } @else if (current.teach) {
+        <div class="reveal">
+          @if (checking()) {
+            <p class="hint" role="status">Listening and checking…</p>
+          } @else if (teachResult(); as result) {
+            @if (result.transcript) {
+              <p class="hint">You said: {{ result.transcript }}</p>
+            }
+            @if (result.feedback; as fb) {
+              @if (fb.clarity) {
+                <p
+                  [class]="'verdict verdict--' + clarityTone[fb.clarity]"
+                  role="status"
+                >
+                  {{ clarityLabels[fb.clarity] }}
+                </p>
+              }
+              @if (fb.gaps.length) {
+                <p>Not mentioned: {{ fb.gaps.join('; ') }}.</p>
+              } @else if (fb.covered.length === current.points.length) {
+                <p>You covered every key point.</p>
+              }
+            } @else if (result.problem) {
+              <p class="hint" role="status">{{ result.problem }}</p>
+            }
+          }
+          <p class="hint">A good explanation covers:</p>
+          <ul class="points">
+            @for (point of current.points; track point) {
+              <li
+                [class.is-covered]="
+                  teachResult()?.feedback?.covered?.includes(point)
+                "
+              >
+                {{ point }}
+              </li>
+            }
+          </ul>
+          <p class="essence">{{ current.concept.explanation.essence }}</p>
+        </div>
+      } @else if (
+        current.prompt.type === 'quick_fire' &&
+        current.prompt.options &&
+        !current.contrast
+      ) {
+        <div class="options">
+          @for (option of current.prompt.options; track option) {
+            <button
+              type="button"
+              class="option"
+              [class.is-right]="revealed() && option === current.prompt.answer"
+              [class.is-wrong]="
+                revealed() &&
+                option === picked() &&
+                option !== current.prompt.answer
+              "
+              [disabled]="revealed()"
+              (click)="pick(option)"
+            >
+              {{ option }}
+            </button>
+          }
+        </div>
+      } @else if (!revealed()) {
+        <label class="answer">
+          <span class="visually-hidden">Your answer (optional)</span>
+          <textarea
+            rows="2"
+            placeholder="Type your answer (optional)…"
+            [value]="answer()"
+            (input)="answer.set($any($event.target).value)"
+            (keydown.control.enter)="reveal()"
+            (keydown.meta.enter)="reveal()"
+          ></textarea>
+        </label>
+      }
+
+      @if (revealed() && current.contrast; as other) {
+        <div class="reveal">
+          @if (answer().trim()) {
+            <p class="hint">You said: {{ answer() }}</p>
+          }
+          <dl class="compare">
+            <div>
+              <dt>{{ current.concept.title }}</dt>
+              <dd>{{ current.concept.explanation.essence }}</dd>
+            </div>
+            <div>
+              <dt>{{ other.title }}</dt>
+              <dd>{{ other.explanation.essence }}</dd>
+            </div>
+          </dl>
+        </div>
+      } @else if (revealed() && !current.teach) {
+        <div class="reveal">
+          @if (current.prompt.type !== 'quick_fire') {
+            @if (answer().trim()) {
+              <p class="hint">You said: {{ answer() }}</p>
+            }
+            <p class="expected">{{ current.prompt.answer }}</p>
+          }
+          @if (checking()) {
+            <p class="hint" role="status">Checking your answer…</p>
+          } @else if (feedback(); as fb) {
+            <p [class]="'verdict verdict--' + fb.verdict" role="status">
+              @switch (fb.verdict) {
+                @case ('nailed') {
+                  Nailed it.
+                }
+                @case ('close') {
+                  Close. You missed: {{ fb.missed.join('; ') }}.
+                }
+                @case ('missed') {
+                  Not this time.
+                }
+              }
+            </p>
+          }
+          <p class="essence">{{ current.concept.explanation.essence }}</p>
+          @if (current.concept.explanation.analogy; as analogy) {
+            <p class="hint">{{ analogy }}</p>
+          }
+        </div>
+      }
+    </lrn-swipe-card>
+
+    @if (!revealed()) {
+      <button
+        ahButton
+        type="button"
+        class="reveal-button"
+        (click)="reveal()"
+        [disabled]="recorder.state() === 'starting'"
+      >
+        @if (!current.teach) {
+          Show the answer
+        } @else if (answer().trim() || spoken()) {
+          Check my explanation
+        } @else if (recorder.state() === 'recording') {
+          Stop and check
+        } @else {
+          Show the key points
+        }
+      </button>
+    } @else {
+      <div class="grades">
+        <button
+          ahButton="secondary"
+          type="button"
+          (click)="grade('left')"
+          [disabled]="busy()"
+        >
+          ← Missed
+        </button>
+        <button
+          ahButton="secondary"
+          type="button"
+          (click)="grade('up')"
+          [disabled]="busy()"
+        >
+          ↑ Shaky
+        </button>
+        <button
+          ahButton
+          type="button"
+          (click)="grade('right')"
+          [disabled]="busy()"
+        >
+          Got it →
+        </button>
+      </div>
+    }
+  } @else {
+    <p class="hint" role="status">Getting today’s set ready…</p>
+  }
+</section>

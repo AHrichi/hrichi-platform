@@ -19,6 +19,8 @@
 //                         shows each story in a same-origin iframe, ADR-0015)
 //   --allow-eval          Allow 'unsafe-eval' (Storybook compiles story templates
 //                         with Angular's JIT compiler in the browser, ADR-0015)
+//   --microphone          Let the page use the microphone (the Learning Engine's
+//                         voice capture, ADR-0024); every other app keeps it off
 //   --headers-only        Write only _headers, still allowing the origins that
 //                         --federation and --site-config name. serve-static.mjs
 //                         applies it, so e2e tests and Lighthouse run under the
@@ -54,6 +56,7 @@ const { positionals, values } = parseArgs({
     'frame-self': { type: 'boolean', default: false },
     'allow-eval': { type: 'boolean', default: false },
     'headers-only': { type: 'boolean', default: false },
+    microphone: { type: 'boolean', default: false },
   },
 });
 const writeFiles = !values['headers-only'];
@@ -121,16 +124,17 @@ if (values['site-config']) {
     apiUrl = null,
     turnstileSiteKey = null,
     orbitApiUrl = null,
+    learningEdgeUrl = null,
   } = environment;
   const n8nUrl = process.env.N8N_URL || environment.n8nUrl || null;
   if (writeFiles) {
     writeFileSync(
       join(dir, 'site-config.json'),
-      `${JSON.stringify({ apiUrl, turnstileSiteKey, orbitApiUrl, n8nUrl }, null, 2)}
+      `${JSON.stringify({ apiUrl, turnstileSiteKey, orbitApiUrl, n8nUrl, learningEdgeUrl }, null, 2)}
 `,
     );
   }
-  for (const url of [apiUrl, orbitApiUrl, n8nUrl]) {
+  for (const url of [apiUrl, orbitApiUrl, n8nUrl, learningEdgeUrl]) {
     if (url) {
       apiOrigins.push(new URL(url).origin);
     }
@@ -260,7 +264,8 @@ const rules = [
       'Referrer-Policy: strict-origin-when-cross-origin',
       // The Sky lab's "Use my location" asks the page's own origin (ADR-0016);
       // LuxPath uses the camera, and WebXR for its AR tape measure.
-      'Permissions-Policy: camera=(self), microphone=(), geolocation=(self), xr-spatial-tracking=(self)',
+      // The Learning Engine records voice notes (--microphone, ADR-0024).
+      `Permissions-Policy: camera=(self), microphone=${values.microphone ? '(self)' : '()'}, geolocation=(self), xr-spatial-tracking=(self)`,
       ...(values.cors ? ['Access-Control-Allow-Origin: *'] : []),
     ],
   ],

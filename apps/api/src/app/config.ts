@@ -1,4 +1,6 @@
 import type { LeadsModuleOptions } from '@ah/api/leads';
+import type { LearningModuleOptions } from '@ah/api/learning';
+import { MIN_SECRET_LENGTH } from '@ah/learning/domain';
 
 export interface ApiConfig {
   port: number;
@@ -9,6 +11,8 @@ export interface ApiConfig {
     authSecret: string;
     encryptionKey: string;
   };
+  /** The Learning Engine; off until LEARNING_TOKEN_SECRET is set (ADR-0024). */
+  learning: LearningModuleOptions | null;
 }
 
 /**
@@ -75,6 +79,7 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): ApiConfig {
         env['DISPATCH_ENCRYPTION_KEY']?.trim() ||
         '0123456789abcdef0123456789abcdef', // 32 hex chars / 16 bytes minimum
     },
+    learning: learningConfig(env, problems),
   };
 
   if (!Number.isInteger(config.port) || config.port <= 0) {
@@ -83,8 +88,98 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): ApiConfig {
   if (config.leads.n8n && !config.leads.n8n.webhookUrl.startsWith('https://')) {
     problems.push('N8N_WEBHOOK_URL must use https');
   }
+  if (config.learning) {
+    config.learning.telegram = config.leads.telegram;
+  }
   if (problems.length) {
     throw new Error(`Invalid configuration:\n  - ${problems.join('\n  - ')}`);
   }
   return config;
+}
+
+/**
+ * The n8n relay (ADR-0024): model calls go through n8n, which holds the
+ * Groq and Gemini keys. Both values or neither.
+ */
+function n8nRelay(
+  url: string | null,
+  secret: string | null,
+  problems: string[],
+): { url: string; secret: string } | null {
+  if (!url && !secret) return null;
+  if (!url || !secret) {
+    problems.push('LEARNING_N8N_URL and LEARNING_N8N_SECRET go together');
+    return null;
+  }
+  if (secret.length < MIN_SECRET_LENGTH) {
+    problems.push(
+      `LEARNING_N8N_SECRET needs at least ${MIN_SECRET_LENGTH} characters`,
+    );
+  }
+  if (!/^https:\/\/|^http:\/\/(localhost|127\.0\.0\.1)[:/]/.test(url)) {
+    problems.push('LEARNING_N8N_URL must be an https URL');
+    return null;
+  }
+  return { url: url.replace(/\/+$/, ''), secret };
+}
+
+/** The edge Worker's URL, for Telegram capture: https, or http on localhost. */
+function edgeUrl(value: string | null, problems: string[]): string | null {
+  if (!value) return null;
+  try {
+    const url = new URL(value);
+    const local = ['localhost', '127.0.0.1'].includes(url.hostname);
+    if (url.protocol === 'https:' || (local && url.protocol === 'http:')) {
+      return value.replace(/\/+$/, '');
+    }
+  } catch {
+    // Reported below.
+  }
+  problems.push('LEARNING_EDGE_URL must be an https URL');
+  return null;
+}
+
+/**
+ * The Learning Engine is optional: without LEARNING_TOKEN_SECRET its routes
+ * aren't registered and nothing else changes. Pairing codes go to the same
+ * Telegram chat as lead alerts; LEARNING_LOG_PAIRING_CODES logs them
+ * instead, for local development, and is refused in production.
+ */
+function learningConfig(
+  env: NodeJS.ProcessEnv,
+  problems: string[],
+): LearningModuleOptions | null {
+  const tokenSecret = env['LEARNING_TOKEN_SECRET']?.trim() ?? '';
+  const logPairingCodes = env['LEARNING_LOG_PAIRING_CODES']?.trim() === 'true';
+  if (!tokenSecret) {
+    if (logPairingCodes) {
+      problems.push('LEARNING_LOG_PAIRING_CODES needs LEARNING_TOKEN_SECRET');
+    }
+    return null;
+  }
+  if (tokenSecret.length < MIN_SECRET_LENGTH) {
+    problems.push(
+      `LEARNING_TOKEN_SECRET needs at least ${MIN_SECRET_LENGTH} characters`,
+    );
+  }
+  if (logPairingCodes && env['NODE_ENV'] === 'production') {
+    problems.push('LEARNING_LOG_PAIRING_CODES is for development only');
+  }
+  const optional = (name: string) => env[name]?.trim() || null;
+  return {
+    tokenSecret,
+    telegram: null,
+    logPairingCodes,
+    ai: {
+      groq: optional('GROQ_API_KEY'),
+      gemini: optional('GEMINI_API_KEY'),
+      typesafe: optional('TYPESAFE_API_KEY'),
+      n8n: n8nRelay(
+        optional('LEARNING_N8N_URL'),
+        optional('LEARNING_N8N_SECRET'),
+        problems,
+      ),
+    },
+    edgeUrl: edgeUrl(optional('LEARNING_EDGE_URL'), problems),
+  };
 }
