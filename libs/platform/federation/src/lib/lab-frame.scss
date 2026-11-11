@@ -30,14 +30,15 @@
   font-size: var(--font-size-200);
   cursor: pointer;
 }
+/* The lab arrives after hydration, from another origin. Reserve a screen
+   for it up front, so the prerendered page doesn't put the footer right
+   under the intro and then push it away (a 0.33 CLS on /labs/sky). Not
+   \`:empty\`: the body always holds <router-outlet>, so it never matches. */
 .lab__body {
   position: relative;
   min-inline-size: 0;
   max-inline-size: 100%;
-
-  &:empty {
-    min-block-size: 75svh;
-  }
+  min-block-size: 100svh;
 }
 
 @media (max-width: 768px) {

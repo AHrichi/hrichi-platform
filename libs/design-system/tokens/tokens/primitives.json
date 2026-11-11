@@ -162,7 +162,7 @@
     "family": {
       "$type": "fontFamily",
       "sans": {
-        "$value": "'Inter Variable', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif"
+        "$value": "'Inter Variable', 'Inter Fallback', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif"
       },
       "mono": {
         "$value": "ui-monospace, 'Cascadia Code', 'JetBrains Mono', Consolas, monospace"

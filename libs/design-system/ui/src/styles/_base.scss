@@ -1,3 +1,19 @@
+/*
+ * Inter arrives after first paint (font-display: swap). Until then text uses
+ * this face: a local Arial-metric sans scaled to Inter's metrics, so lines
+ * wrap the same before and after the swap and nothing below them moves (CLS).
+ * Liberation Sans and Arimo share Arial's metrics on Linux.
+ */
+@font-face {
+  font-family: 'Inter Fallback';
+  src:
+    local('Arial'), local('ArialMT'), local('Liberation Sans'), local('Arimo');
+  size-adjust: 107.06%;
+  ascent-override: 90.49%;
+  descent-override: 22.56%;
+  line-gap-override: 0%;
+}
+
 @layer base {
   html {
     font-family: var(--font-family-sans);

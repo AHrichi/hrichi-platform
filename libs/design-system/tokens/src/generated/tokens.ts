@@ -46,7 +46,7 @@ export const primitives = {
   "color-red-300": "#fca5a5",
   "color-red-700": "#b91c1c",
   "color-red-950": "#450a0a",
-  "font-family-sans": "'Inter Variable', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif",
+  "font-family-sans": "'Inter Variable', 'Inter Fallback', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif",
   "font-family-mono": "ui-monospace, 'Cascadia Code', 'JetBrains Mono', Consolas, monospace",
   "font-size-100": "0.8125rem",
   "font-size-200": "0.9375rem",
