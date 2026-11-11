@@ -1,7 +1,8 @@
 {
   // The Learning Engine's edge Worker (design §9, §10): timed Telegram
   // nudges and the Sunday recap, so the Render API is never woken on a
-  // timer, and the bot's webhook for Telegram capture. Before the first deploy:
+  // timer, and the bot's webhook for Telegram capture.
+  // `node tools/scripts/learning-setup.mjs` does all of the below. By hand:
   //   pnpm wrangler kv namespace create learning-nudges   → put its id below
   //   pnpm wrangler secret put LEARNING_TOKEN_SECRET     (same as the API's)
   //   pnpm wrangler secret put TELEGRAM_BOT_TOKEN

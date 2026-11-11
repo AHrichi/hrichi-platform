@@ -18,12 +18,16 @@ services:
         - apps/api/**
         - libs/api/**
         - libs/shared/contracts/**
+        # Libraries the API imports from outside libs/api.
+        - libs/learning/domain/**
+        - libs/shared/ai-schema/**
+        - libs/products/dispatch/domain/**
         - package.json
         - pnpm-lock.yaml
         - render.yaml
     envVars:
       - key: CORS_ORIGINS
-        value: https://portfolio.ahmed-hrichi.workers.dev,http://localhost:4200
+        value: https://portfolio.ahmed-hrichi.workers.dev,https://product-learning.ahmed-hrichi.workers.dev,http://localhost:4200,http://localhost:4311
       - key: MONGODB_DB
         value: portfolio
       - key: MONGODB_URI
@@ -37,6 +41,19 @@ services:
       - key: N8N_WEBHOOK_URL
         sync: false
       - key: N8N_WEBHOOK_SECRET
+        sync: false
+      # The Learning Engine (ADR-0024). Its secrets are in .env.render after
+      # `node tools/scripts/learning-setup.mjs`; without LEARNING_TOKEN_SECRET
+      # the /learning routes don't exist.
+      - key: LEARNING_EDGE_URL
+        value: https://learning-edge.ahmed-hrichi.workers.dev
+      - key: LEARNING_TOKEN_SECRET
+        sync: false
+      - key: GROQ_API_KEY
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: TYPESAFE_API_KEY
         sync: false
 
   # The Orbit API (ADR-0013, ADR-0017): Spring Boot 4 + Orekit, the Sky lab's
