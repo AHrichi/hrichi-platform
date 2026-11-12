@@ -1,8 +1,8 @@
 # AI handoff: Learning Engine (hrichi-platform)
 
-This is a briefing for an AI assistant that picks up the Learning Engine. Read it first, then `docs/learning-engine/technical-design.md` (the design, with "as built" notes per phase), `docs/adr/0024-learning-engine.md` (decisions and setup) and `docs/architecture.md` (the platform). Last updated 2026-11-12.
+This is a briefing for an AI assistant that picks up the Learning Engine. Read it first, then `docs/learning-engine/technical-design.md` (the design, with "as built" notes per phase), `docs/adr/0024-learning-engine.md` (decisions and setup) and `docs/architecture.md` (the platform). Last updated 2026-11-12 (StudyLM link).
 
-The open task is **merging the engine with StudyLM** (section 10); it needs a decision from the owner before code. Telegram (section 9) is parked: on 2026-11-12 the owner reported it works and asked for no changes for now, so leave the bot, the Worker's webhook and the owner's n8n workflows as they are.
+The StudyLM merge (section 10) is built as **shared data, two apps**, the owner's choice on 2026-11-12; it goes live after a Render redeploy (section 11). Telegram (section 9) is parked: on 2026-11-12 the owner reported it works and asked for no changes for now, so leave the bot, the Worker's webhook and the owner's n8n workflows as they are.
 
 ## 1. What this is
 
@@ -50,7 +50,8 @@ Atlas (learning_records)          Cloudflare Worker learning-edge (always on)
 - `libs/learning/domain` (`scope:learning`, pure TS): records and valibot schemas, sync contract, FSRS memory (`ts-fsrs` 5.4.2, pinned), composer (teach-back and contrast picks), streaks/repair, XP v2, milestones, nudges and the weekly recap, AI task schemas and the decision questions (grading, teach-back, links), the Telegram inbox contract (`edge-inbox.ts`).
 - `libs/learning/data-access`: Dexie database (version 5: topics, concepts, events, captures, audio, sessions, teachbacks, links, outbox, meta), sync client, API and edge clients.
 - `libs/learning/feature`: SignalStore and screens (Today, Inbox, Library, Garden, Settings, Devices).
-- `libs/learning/contracts`, `libs/learning/client` (`scope:learning-client`): the only engine libs a product may import (`<ah-learn-this>`, `<ah-learning-today>`, URL-fragment hand-off).
+- `libs/learning/contracts`, `libs/learning/client` (`scope:learning-client`): the only engine libs a product may import (`<ah-learn-this>`, `<ah-learning-today>`, URL-fragment hand-off, and the host link: `LearningLink`, `provideLearningHost`, `HostLinkCore`).
+- Host links (StudyLM): `libs/learning/contracts/src/lib/host.ts` (DTOs, origins, fragment codecs), `libs/learning/domain/src/lib/host.ts` (schemas, derived ids, `hostReviewEvents`, `hostProgress`), `libs/api/learning/src/lib/host.{controller,service}.ts`, the learning app's `/connect` screen, StudyLM's `StudyLmReviews` and Progress panel.
 - `libs/api/learning`: controller, sync, pairing, capture pipeline, grading/teach-back, Telegram inbox pull, Mongo and in-memory repositories.
 - `libs/api/ai`: model ladder, Groq/Gemini models, transcribers, decision models (Jev + ladder), `N8nRelay`.
 - `apps/products/learning/web`, `apps/learning-edge`, `apps/api`.
@@ -66,8 +67,8 @@ Atlas (learning_records)          Cloudflare Worker learning-edge (always on)
 ## 6. Checks and commands
 
 ```bash
-pnpm nx run-many -t lint test build -p learning-domain learning-data-access learning-feature learning-client learning-contracts product-learning learning-edge api-ai api-learning api
-pnpm exec stylelint "libs/learning/**/*.scss"
+pnpm nx run-many -t lint test build -p learning-domain learning-data-access learning-feature learning-client learning-contracts product-learning learning-edge api-ai api-learning api product-studylm-feature product-studylm
+pnpm exec stylelint "libs/learning/**/*.scss" "libs/products/studylm/feature/src/lib/components/reviews-panel/*.scss"
 LEARNING_RELAY_LIVE=1 pnpm nx test api-learning -- relay-live   # real models through n8n
 node tools/scripts/prepare-hosting.mjs dist/apps/products/learning/web/browser --env development --cors --site-config --microphone   # then preview "learning (static build)" on :4311
 ```
@@ -108,22 +109,27 @@ node tools/scripts/prepare-hosting.mjs dist/apps/products/learning/web/browser -
 2. **Outbound:** send nudges, the recap and pairing codes from the owner's bot: set the Worker's `TELEGRAM_BOT_TOKEN` to that bot's token, and give the API a `LEARNING_TELEGRAM_BOT_TOKEN` override for pairing codes (lead alerts stay on the lead bot). Then remove the lead bot's webhook (`deleteWebhook`) and retire or keep `/telegram`.
 3. **Reminders:** one set of study reminders, not two. Either the engine's nudges go off and n8n 13 adds "Today: N cards, about M min" from the engine (a small read endpoint on the Worker, which already has the nudge state), or n8n 13 stays as it is and the engine's nudges are turned off in Settings by default.
 
-## 10. Open task B: "merge this with StudyLM"
+## 10. StudyLM and the engine: shared data, two apps (built 2026-11-12)
 
-The owner's wording; what it should mean isn't settled. Ask first.
+**The owner's choice (2026-11-12):** asked what "merge this with StudyLM" should mean, the owner picked **shared data, two apps** over one app (Today, Inbox, Library and Garden as StudyLM tabs) and one study plan (the halal engine's `curriculum.json` driving both). Design: `technical-design.md` §9 "Linked hosts"; decision: ADR-0024, "Shared data with StudyLM".
 
-**Today:** StudyLM (`apps/products/studylm/web`, `libs/products/studylm/{domain,feature,learn,lessons,tracer}`) has a roadmap, lessons (generated by its n8n `study-synthesizer` workflow), flashcards, quiz, sources and stats, all local to its own IndexedDB. Its only links to the engine are "Learn this" on a flashcard and "Add to my daily reviews" on a lesson: both hand items to the learning app's Inbox through a URL fragment (`@ah/learning/client`). Decision 3 (ADR-0024): the engine replaced StudyLM's planned FSRS and streaks.
+**How it works:** StudyLM and the learning app stay on separate origins, so they share data through the API with a **host link**:
 
-**Options:**
+1. In StudyLM, Progress → "Connect to my daily reviews" opens the learning app at `/connect`. On a paired device, "Link StudyLM" creates a host link (`POST /learning/hosts`) and sends it back to StudyLM's own origin in the fragment. It shows under ⚙ → Devices as "StudyLM on … · linked app" and can be unlinked there or with "Disconnect" in StudyLM.
+2. From then on StudyLM sends, with no taps: the cards of a lesson when it's marked complete (and, right after linking, of lessons finished before), a flashcard rated "again", and a quiz question answered wrong. They become captures with derived ids (each card once, ever), go through the pipeline, wait as drafts in the Inbox and are kept on their own after 48 hours.
+3. Every flashcard rating and first quiz answer is reported; it becomes a review event once its card is a kept concept (counts for memory, the streak and XP, not for today's set). Answers on untracked items don't count: FSRS must know which concept was recalled.
+4. StudyLM's Progress screen shows the streak, today's set and its cards by tier. Its outbox lives in localStorage, so offline and a sleeping Render lose nothing.
 
-1. **One app:** StudyLM gets Today, Inbox, Library and Garden as its own tabs. Lint forbids products importing `learning-feature`; either StudyLM becomes the engine's host (a boundary change and an ADR amendment), or both live under one shell route with shared navigation.
-2. **Shared data, two apps:** every StudyLM lesson's cards become engine concepts automatically (no "Learn this" taps), quiz answers count as review events, and StudyLM's stats show the engine's memory tiers and streak.
-3. **One study plan:** the halal engine's `curriculum.json` drives StudyLM's roadmap and the engine's topics, so posting, studying and reviewing follow the same day.
+**Checked:** unit tests for every layer, the HTTP test `links StudyLM…` in `apps/api/src/app/learning.http.spec.ts`, and a browser run of both static builds against the real API on :3000 (in-memory storage, scripted AI): pair, link, finish a lesson (4 cards to drafts), keep them, rate a flashcard "again" then "good" (counted, pulled by the learning app, Sprout in StudyLM), disconnect.
 
-A reasonable path is 2 first (least risk), then 1 if the owner wants a single app.
+**Not done / possible next steps:**
+
+- **One app** or **one study plan** (the other two options) remain open if the owner wants them later; "one app" would need a boundary change and an ADR amendment.
+- Lesson checks inside a lesson (predict, quiz blocks) aren't reported; only flashcards and the quiz arena are.
+- StudyLM shows tiers on its Progress screen only, not on each flashcard (`LearningLink.itemState()` is ready for a per-card chip).
 
 ## 11. Next steps
 
-1. Owner: pair the phone and the PC; capture one idea in the Inbox and check a draft arrives (n8n must be running).
-2. Owner decision: what "merge with StudyLM" means (section 10).
-3. Then implement on a branch with a PR; auto-merge is available once both checks pass.
+1. **Deploy the API:** Render's auto-deploy hasn't fired since 2026-10-27 (section 8), so after this merges, press Manual Deploy on `ahmed-hrichi-api` (no new variables: CORS lets StudyLM in by itself). The static apps deploy from CI.
+2. Owner: pair the phone and the PC (⚙ → Devices and pairing → Send me a code).
+3. Owner, once per browser: StudyLM → Progress → "Connect to my daily reviews" → "Link StudyLM". n8n must be running for the cards to turn into drafts.
