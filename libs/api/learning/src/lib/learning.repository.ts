@@ -22,6 +22,11 @@ export interface StoredRecord<K extends RecordKind = RecordKind> {
 export interface Device {
   id: string;
   name: string;
+  /**
+   * Null for a paired device. A host app's link (design §9) names the app:
+   * its token reaches only the host routes, never sync.
+   */
+  host: string | null;
   pairedAt: Date;
   lastSeenAt: Date | null;
   revokedAt: Date | null;
@@ -71,6 +76,8 @@ export interface LearningRepository {
   ): Promise<StoredRecord<K>[]>;
   /** Every live (not deleted) topic. */
   liveTopics(): Promise<StoredRecord<'topic'>[]>;
+  /** Every stored record of a kind, deleted ones too (a host's progress). */
+  recordsOfKind<K extends RecordKind>(kind: K): Promise<StoredRecord<K>[]>;
 
   createDevice(device: Device): Promise<void>;
   findDevice(id: string): Promise<Device | null>;

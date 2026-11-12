@@ -165,7 +165,7 @@ All fixed in the Learn phase (ADR-0022).
    - Built-in lessons that work offline in place of the canned fallbacks.
    - e2e tests. Storybook stories wait for screenshot baselines, which need Docker.
 3. **Focus and Today:** timer modes, picture-in-picture, wake lock, chime and notifications, and stats. Streaks and XP now come from the [Learning Engine](../learning-engine/technical-design.md) (ADR-0024).
-4. **Practice and review:** Parsons, predict-output and interleaving. Spaced review (FSRS) and cards from lessons moved to the [Learning Engine](../learning-engine/technical-design.md): a lesson's "Add to my daily reviews" and each flashcard's "Learn this" send them there (ADR-0024).
+4. **Practice and review:** Parsons, predict-output and interleaving. Spaced review (FSRS) and cards from lessons moved to the [Learning Engine](../learning-engine/technical-design.md): a lesson's "Add to my daily reviews" and each flashcard's "Learn this" send them there (ADR-0024). Linked to the engine (Progress → "Connect to my daily reviews", design §9 "Linked hosts"), StudyLM sends finished lessons' cards and missed questions by itself, counts flashcard and quiz answers as reviews, and shows the engine's streak and tiers.
 5. **Plan:** the bootcamp planner.
 6. **Engines** (done, ADR-0023): the JavaScript tracer (Sval on the main thread, with a step budget), event-loop simulation, and the tree, graph, grid and recursion simulators. Every block kind renders.
 7. **Live generation** (done, ADR-0023): `generate_lesson_part` from the app, with the repair loop and self-explanation feedback.

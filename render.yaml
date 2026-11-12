@@ -20,6 +20,7 @@ services:
         - libs/shared/contracts/**
         # Libraries the API imports from outside libs/api.
         - libs/learning/domain/**
+        - libs/learning/contracts/**
         - libs/shared/ai-schema/**
         - libs/products/dispatch/domain/**
         - package.json

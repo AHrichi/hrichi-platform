@@ -36,6 +36,15 @@ export const LEARNING_ROUTES: Routes = [
           ),
       },
       {
+        // A host app asks to link (design §9); reached from the host only.
+        path: 'connect',
+        title: 'Link an app · Learning',
+        loadComponent: () =>
+          import('./screens/connect/connect-screen').then(
+            (m) => m.ConnectScreen,
+          ),
+      },
+      {
         path: 'garden',
         title: 'Garden · Learning',
         loadComponent: () =>

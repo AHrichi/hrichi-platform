@@ -20,7 +20,8 @@ import { guessDeviceName } from '../../store/device-name';
 import { LearningStore } from '../../store/learning.store';
 
 /**
- * Pairing and devices (design §11). The code goes to the owner's Telegram,
+ * Pairing and devices (design §11), and the apps linked to the engine
+ * (design §9), which are unlinked here too. The code goes to the owner's Telegram,
  * never to this screen: only someone who can read that chat can pair.
  */
 @Component({
@@ -77,10 +78,17 @@ export class DevicesScreen {
     return undefined;
   }
 
-  protected remove(id: string, name: string, current: boolean): void {
+  protected remove(
+    id: string,
+    name: string,
+    current: boolean,
+    host = false,
+  ): void {
     const question = current
       ? 'Unpair this device? Its concepts stay here but stop syncing.'
-      : `Remove “${name}”? It stops syncing until it is paired again.`;
+      : host
+        ? `Unlink “${name}”? It stops adding cards and answers until you link it again.`
+        : `Remove “${name}”? It stops syncing until it is paired again.`;
     if (globalThis.confirm?.(question)) void this.store.removeDevice(id);
   }
 }

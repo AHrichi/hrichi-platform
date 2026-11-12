@@ -1,0 +1,144 @@
+// Design tokens and logical properties only (stylelint).
+.reviews-panel {
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-lg);
+  background: var(--color-bg-surface);
+
+  p {
+    margin: 0;
+  }
+}
+
+.panel-head {
+  display: grid;
+  gap: var(--space-1);
+
+  h3 {
+    margin: 0;
+    color: var(--color-text-default);
+    font-size: var(--font-size-400);
+  }
+}
+
+.eyebrow {
+  color: var(--color-accent-default);
+  font-size: var(--font-size-100);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.intro {
+  max-inline-size: 72ch;
+  color: var(--color-text-default);
+}
+
+.hint {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-200);
+}
+
+.note {
+  padding-block: var(--space-2);
+  padding-inline: var(--space-3);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-200);
+
+  &.ok {
+    background: var(--color-success-subtle);
+    color: var(--color-text-default);
+  }
+
+  &.warn {
+    background: var(--color-warning-subtle);
+    color: var(--color-text-default);
+  }
+}
+
+.numbers {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+  gap: var(--space-3);
+  margin: 0;
+}
+
+.number {
+  display: grid;
+  gap: var(--space-1);
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-canvas);
+
+  dt {
+    color: var(--color-text-muted);
+    font-size: var(--font-size-200);
+
+    // "in reviews" doubles as a label here.
+    &::first-letter {
+      text-transform: uppercase;
+    }
+  }
+
+  dd {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1);
+    align-items: baseline;
+    margin: 0;
+  }
+}
+
+.value {
+  color: var(--color-text-default);
+  font-size: var(--font-size-500);
+  font-weight: var(--font-weight-semibold);
+}
+
+.unit {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-200);
+}
+
+.tiers-title {
+  margin: 0;
+  color: var(--color-text-default);
+  font-size: var(--font-size-300);
+}
+
+.tiers {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tier {
+  display: inline-flex;
+  gap: var(--space-2);
+  align-items: center;
+  padding-block: var(--space-1);
+  padding-inline: var(--space-3);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-pill);
+  color: var(--color-text-default);
+  font-size: var(--font-size-200);
+
+  &.empty {
+    color: var(--color-text-muted);
+  }
+}
+
+.tier-count {
+  font-weight: var(--font-weight-semibold);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
