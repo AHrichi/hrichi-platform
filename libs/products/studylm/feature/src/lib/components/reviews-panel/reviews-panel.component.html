@@ -15,7 +15,12 @@
           {{ copy().connect }}
         </button>
       </div>
-      <p class="hint">{{ copy().connectHint }}</p>
+      <p class="hint">
+        {{ copy().connectHint }}
+        <a [href]="guideUrl" target="_blank" rel="noopener">{{
+          copy().howItWorks
+        }}</a>
+      </p>
     } @else {
       @if (link.justLinked()) {
         <p class="note ok" role="status">{{ copy().linkedNow }}</p>
@@ -113,9 +118,14 @@
           {{ copy().disconnect }}
         </button>
       </div>
-      @if (link.stateAt(); as at) {
-        <p class="hint">{{ copy().updated }} {{ at | date: 'short' }}</p>
-      }
+      <p class="hint">
+        @if (link.stateAt(); as at) {
+          {{ copy().updated }} {{ at | date: 'short' }} ·
+        }
+        <a [href]="guideUrl" target="_blank" rel="noopener">{{
+          copy().howItWorks
+        }}</a>
+      </p>
     }
   </section>
 }

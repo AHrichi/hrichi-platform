@@ -341,6 +341,7 @@ export interface StudyLmCopy {
     disconnect: string;
     disconnectConfirm: string;
     sentToReviews: string;
+    howItWorks: string;
   };
   modals: {
     n8nTitle: string;
@@ -737,6 +738,7 @@ export const STUDYLM_COPY: Record<SiteLanguage, StudyLmCopy> = {
       disconnectConfirm:
         'Disconnect StudyLM from your daily reviews? Cards already sent stay there.',
       sentToReviews: 'In your reviews',
+      howItWorks: 'How it works',
     },
     modals: {
       n8nTitle: 'n8n Synthesis Engine Settings',
@@ -1135,6 +1137,7 @@ export const STUDYLM_COPY: Record<SiteLanguage, StudyLmCopy> = {
       disconnectConfirm:
         'Délier StudyLM de vos révisions du jour ? Les cartes déjà envoyées y restent.',
       sentToReviews: 'Dans vos révisions',
+      howItWorks: 'Comment ça marche',
     },
     modals: {
       n8nTitle: 'Paramètres du moteur de synthèse n8n',
@@ -1527,6 +1530,7 @@ export const STUDYLM_COPY: Record<SiteLanguage, StudyLmCopy> = {
       disconnectConfirm:
         'إلغاء ربط StudyLM بمراجعاتك اليومية؟ تبقى البطاقات المُرسلة هناك.',
       sentToReviews: 'في مراجعاتك',
+      howItWorks: 'كيف يعمل',
     },
     modals: {
       n8nTitle: 'إعدادات محرك التوليف n8n',
@@ -1926,6 +1930,7 @@ export const STUDYLM_COPY: Record<SiteLanguage, StudyLmCopy> = {
       disconnectConfirm:
         'Scollegare StudyLM dai ripassi quotidiani? Le schede già inviate restano lì.',
       sentToReviews: 'Nei tuoi ripassi',
+      howItWorks: 'Come funziona',
     },
     modals: {
       n8nTitle: 'Impostazioni motore di sintesi n8n',
@@ -2326,6 +2331,7 @@ export const STUDYLM_COPY: Record<SiteLanguage, StudyLmCopy> = {
       disconnectConfirm:
         'StudyLM von deinen täglichen Wiederholungen trennen? Bereits gesendete Karten bleiben dort.',
       sentToReviews: 'In deinen Wiederholungen',
+      howItWorks: 'So funktioniert es',
     },
     modals: {
       n8nTitle: 'n8n-Synthese-Engine Einstellungen',

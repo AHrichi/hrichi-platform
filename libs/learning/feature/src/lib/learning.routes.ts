@@ -45,6 +45,12 @@ export const LEARNING_ROUTES: Routes = [
           ),
       },
       {
+        path: 'guide',
+        title: 'Guide · Learning',
+        loadComponent: () =>
+          import('./screens/guide/guide-screen').then((m) => m.GuideScreen),
+      },
+      {
         path: 'garden',
         title: 'Garden · Learning',
         loadComponent: () =>

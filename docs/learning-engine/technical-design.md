@@ -370,7 +370,7 @@ It writes `tmp/jev-spike/report.json` with each model's agreement, false-"nailed
 
 ## 8. Review UI (mobile first)
 
-- **Screens (as built):** `/today` (the home screen, straight on card 1), `/inbox` (capture, the digest and captures on their way), `/concepts` (shown as Library), `/settings` (set size, new concepts a day, reminders, away-until) and `/devices` under Settings; `/garden` (L5) is linked from the Library, the completion screen and Settings. Each has its own URL and lazy chunk, like Basecamp and StudyLM.
+- **Screens (as built):** `/today` (the home screen, straight on card 1), `/inbox` (capture, the digest and captures on their way), `/concepts` (shown as Library), `/settings` (set size, new concepts a day, reminders, away-until) and `/devices` under Settings; `/garden` (L5) is linked from the Library, the completion screen and Settings; `/guide` (how to use it, and how it works with StudyLM) is the bar's “?” and is linked from an empty Today, Settings and StudyLM's Progress panel. Each has its own URL and lazy chunk, like Basecamp and StudyLM.
 - **Review flow:** quick-fire cards are answered by picking an option; others take an optional typed answer, revealed with a button (Ctrl/⌘ + Enter). Right, up and left grade got it, shaky and missed. A missed card returns once at the end with another prompt. A day with nothing due counts once the app is opened (an empty set, finished at once).
 - **Swipe:** Pointer Events with a distance-or-velocity threshold. The card follows the finger with CSS transforms and flies off with the Web Animations API. Rotation is limited to 8°.
 - **Swipes are never the only input.** Buttons sit under the card, and on desktop `←` `↑` `→` grade and `Space` reveals.
@@ -423,9 +423,9 @@ It writes `tmp/jev-spike/report.json` with each model's agreement, false-"nailed
 
 **Portfolio demo (as built):**
 
-- `product-learning` is in `tools/federation/remotes.json`, the shell's manifest and routes (`/apps/learning`), the constellation's links and `app-visibility.ts`. It was hidden (`learning: false`) until 2026-11-12, when it went public with a card in the apps catalog (five languages) and an e2e spec (`shell-e2e/src/learning.spec.ts`: the catalog opens the seeded demo, and StudyLM's hand-off lands in its Inbox).
-- In `embedded-demo` mode the app opens `ah-demo-learning`, seeded once with 10 golden concepts, about a month of reviews on a spacing ladder and a 12-day streak, so Today, tiers and Settings look like real use.
-- A capture in the demo turns at once into one of the 2 spare golden concepts, and says so. The demo never syncs, pairs or calls the AI.
+- `product-learning` is in `tools/federation/remotes.json`, the shell's manifest and routes (`/apps/learning`), the constellation's links and `app-visibility.ts`. It was hidden (`learning: false`) until 2026-11-12, when it went public with a card in the apps catalog (five languages) and an e2e spec (`shell-e2e/src/learning.spec.ts`: the catalog opens the portfolio copy, StudyLM's hand-off lands in its Inbox, and the guide reads well and passes axe).
+- In `embedded-demo` mode the app opens `ah-demo-learning`, which **starts empty** (since 2026-11-12, at the owner's request): no sample data, an empty Today that points to the guide, and a note on the guide saying what this copy can't do. Until then it was seeded with a month of sample reviews; a browser that still has that data (the `demo-seeded` flag) gets the database wiped once (`openDemo`).
+- A capture in the portfolio copy turns at once into one of the 12 golden concepts, in turn, and says so. It never syncs, pairs or calls the AI.
 
 ---
 
@@ -526,7 +526,7 @@ Each phase ships on its own and leaves `main` green.
 | **L1 Backbone**     | `learning/domain` and `learning/contracts`, Nest `api/learning` (pairing, sync, concepts), Dexie data access with the outbox, an empty remote with `/pair`. Manual text concepts only.                                                              | Two devices pair and stay in sync offline and online                          |
 | **L2 Capture**      | `ai-kit`, golden concepts, `libs/api/ai` ladder, text and voice capture, pipeline, digest with swipe-to-keep and "simpler please", PWA shortcuts, `microphone=(self)`. **Jev spike** (§6.4): `DecisionModel` port, labelled set, go/no-go per task. | A 15 s voice note becomes kept concepts with no typing; Jev go/no-go recorded |
 | **L3 Daily Set** ⭐ | Composer, review screen, grading, completion screen, streaks and freezes, XP, `learning-edge` nudges on Telegram.                                                                                                                                   | **You use it daily.** This is the first adherence milestone.                  |
-| **L4 Integration**  | `@ah/learning/client`, StudyLM hooks, `<ah-learning-today>`, the events group, the share target, the portfolio demo with seeded data.                                                                                                               | "Learn this" in StudyLM lands in tomorrow's set                               |
+| **L4 Integration**  | `@ah/learning/client`, StudyLM hooks, `<ah-learning-today>`, the events group, the share target, the portfolio demo (seeded at first; empty since 2026-11-12).                                                                                      | "Learn this" in StudyLM lands in tomorrow's set                               |
 | **L5 Delight**      | Garden, teach-back, contrast and interleaving prompts, weekly recap on Telegram, Telegram capture, repair window, cosmetics.                                                                                                                        | Set by the blueprint's success metrics                                        |
 
 ---
