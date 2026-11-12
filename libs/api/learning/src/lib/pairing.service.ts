@@ -100,6 +100,7 @@ export class PairingService {
     await this.repository.createDevice({
       id: deviceId,
       name: pairing.deviceName,
+      host: null,
       pairedAt: now,
       lastSeenAt: now,
       revokedAt: null,
@@ -125,6 +126,7 @@ export class PairingService {
         name: device.name,
         pairedAt: device.pairedAt.toISOString(),
         lastSeenAt: device.lastSeenAt?.toISOString() ?? null,
+        host: device.host,
         current: device.id === currentDeviceId,
       }));
   }

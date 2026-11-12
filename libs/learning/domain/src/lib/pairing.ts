@@ -48,6 +48,8 @@ export interface DeviceSummary {
   name: string;
   pairedAt: string;
   lastSeenAt: string | null;
+  /** A host app's link (design §9), e.g. `studylm`; null for a device. */
+  host: string | null;
   /** The device asking. */
   current: boolean;
 }

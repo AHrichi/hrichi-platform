@@ -12,6 +12,7 @@ import {
   MONGO_DB,
 } from '@ah/api/leads';
 import {
+  CapturePipeline,
   FakePairingNotifier,
   InMemoryLearningRepository,
   LEARNING_MONGO_DB,
@@ -21,6 +22,7 @@ import {
 import {
   emptyPush,
   FIXTURE_IDS,
+  hostCaptureId,
   sampleConcept,
   sampleTopic,
 } from '@ah/learning/domain';
@@ -177,5 +179,149 @@ describe('Learning Engine over HTTP', () => {
       .send({ code: wrong })
       .expect(400);
     expect(repository.devices.size).toBe(0);
+  });
+
+  it('links StudyLM: its cards and answers reach the engine, and nothing else', async () => {
+    const phone = await pair('Phone');
+    const linked = await request(app.getHttpServer())
+      .post('/learning/hosts')
+      .set('authorization', `Bearer ${phone}`)
+      .send({ app: 'studylm', name: 'StudyLM on Chrome' })
+      .expect(201);
+    const host = linked.body.token as string;
+    const as = (token: string) => ({ authorization: `Bearer ${token}` });
+
+    // StudyLM's own origin gets through CORS.
+    const preflight = await request(app.getHttpServer())
+      .options('/learning/host/captures')
+      .set('origin', 'https://product-studylm.ahmed-hrichi.workers.dev')
+      .set('access-control-request-method', 'POST')
+      .set('access-control-request-headers', 'authorization,content-type');
+    expect(preflight.headers['access-control-allow-origin']).toBe(
+      'https://product-studylm.ahmed-hrichi.workers.dev',
+    );
+
+    const card = {
+      text: 'What does BFS use for its frontier? A queue.',
+      source: {
+        app: 'studylm',
+        objectType: 'flashcard',
+        objectId: 'fc-1',
+        deepLink: null,
+        excerpt: null,
+      },
+    };
+    const send = () =>
+      request(app.getHttpServer())
+        .post('/learning/host/captures')
+        .set(as(host))
+        .send({ items: [card] })
+        .expect(200);
+    expect((await send()).body).toEqual({ stored: 1, known: 0 });
+    expect((await send()).body).toEqual({ stored: 0, known: 1 });
+    // Without AI keys the capture waits; let that run finish first.
+    await app.get(CapturePipeline).kick();
+
+    const answer = (id: string) =>
+      request(app.getHttpServer())
+        .post('/learning/host/answers')
+        .set(as(host))
+        .send({
+          timeZone: 'UTC',
+          answers: [
+            {
+              id,
+              objectType: 'flashcard',
+              objectId: 'fc-1',
+              rating: 'good',
+              at: new Date(Date.now() - 60_000).toISOString(),
+              ms: 3000,
+            },
+          ],
+        })
+        .expect(200);
+    // Not in the reviews yet: nothing to count.
+    expect((await answer(FIXTURE_IDS.event)).body).toEqual({
+      counted: 0,
+      skipped: 1,
+    });
+
+    // The pipeline turned it into a concept, and it was kept.
+    const captureId = await hostCaptureId('studylm', 'flashcard', 'fc-1');
+    const stored = await repository.getRecord('capture', captureId);
+    const later = new Date(Date.now() + 1000).toISOString();
+    await repository.putMutable({
+      kind: 'concept',
+      id: FIXTURE_IDS.concept,
+      seq: await repository.nextSeq(),
+      by: FIXTURE_IDS.deviceA,
+      updatedAt: later,
+      data: sampleConcept({ updatedAt: later }),
+    });
+    await repository.putMutable({
+      kind: 'capture',
+      id: captureId,
+      seq: await repository.nextSeq(),
+      by: FIXTURE_IDS.deviceA,
+      updatedAt: later,
+      data: {
+        ...(stored?.data as NonNullable<typeof stored>['data']),
+        status: 'ready',
+        updatedAt: later,
+        conceptIds: [FIXTURE_IDS.concept],
+      },
+    });
+    expect((await answer(FIXTURE_IDS.session)).body).toEqual({
+      counted: 1,
+      skipped: 0,
+    });
+    // The phone pulls the answer as a review event.
+    const pulled = await sync(phone, { cursor: 0, push: emptyPush() }).expect(
+      200,
+    );
+    expect(
+      pulled.body.pull.filter((r: { kind: string }) => r.kind === 'event'),
+    ).toHaveLength(1);
+
+    const state = await request(app.getHttpServer())
+      .get('/learning/host/state?timeZone=UTC')
+      .set(as(host))
+      .expect(200);
+    expect(state.body.items[0]).toMatchObject({
+      objectId: 'fc-1',
+      stage: 'reviewing',
+    });
+    expect(state.body.streak.todayCounted).toBe(true);
+
+    // A host link reaches the host routes only, and a device can't use them.
+    await sync(host, { cursor: 0, push: emptyPush() }).expect(401);
+    await request(app.getHttpServer())
+      .post('/learning/hosts')
+      .set(as(host))
+      .send({ app: 'studylm', name: 'again' })
+      .expect(401);
+    await request(app.getHttpServer())
+      .get('/learning/host/state?timeZone=UTC')
+      .set(as(phone))
+      .expect(401);
+    await request(app.getHttpServer())
+      .post('/learning/hosts')
+      .set(as(phone))
+      .send({ app: 'nope', name: 'Nope' })
+      .expect(400);
+    await request(app.getHttpServer())
+      .get('/learning/host/state?timeZone=Mars/Base')
+      .set(as(host))
+      .expect(400);
+
+    // Disconnect ends the link.
+    await request(app.getHttpServer())
+      .delete('/learning/host')
+      .set(as(host))
+      .expect(204);
+    await request(app.getHttpServer())
+      .get('/learning/host/state?timeZone=UTC')
+      .set(as(host))
+      .expect(401);
   });
 });

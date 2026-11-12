@@ -2,7 +2,9 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  effect,
   inject,
+  untracked,
 } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import {
@@ -22,6 +24,7 @@ import {
 } from '@ah/products/studylm/learn';
 import { PreferencesStore } from '@ah/shared/state';
 import { LessonGenerationService } from '../../services/lesson-generation.service';
+import { StudyLmReviews } from '../../services/studylm-reviews.service';
 import { N8nSettingsModalComponent } from '../n8n-settings-modal/n8n-settings-modal.component';
 import { CreateSubjectModalComponent } from '../create-subject-modal/create-subject-modal.component';
 import { AddFlashcardModalComponent } from '../add-flashcard-modal/add-flashcard-modal.component';
@@ -75,6 +78,18 @@ export class StudyLmShellComponent {
   readonly copy = computed(
     () => STUDYLM_COPY[this.preferences?.language() ?? 'en'] ?? STUDYLM_COPY.en,
   );
+
+  constructor() {
+    // Created with the shell, so a link the learning app just sent back
+    // (`#learning-link=…`) is read on any screen; then the lessons finished
+    // before linking join the reviews (design §9).
+    const reviews = inject(StudyLmReviews);
+    effect(() => {
+      if (reviews.justLinked()) {
+        untracked(() => void reviews.sendFinishedLessons());
+      }
+    });
+  }
 
   /** The screens, each with how many items it holds when that helps. */
   readonly screens = computed(() => {

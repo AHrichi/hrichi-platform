@@ -1,5 +1,6 @@
 import type { LeadsModuleOptions } from '@ah/api/leads';
 import type { LearningModuleOptions } from '@ah/api/learning';
+import { hostOrigins } from '@ah/learning/contracts';
 import { MIN_SECRET_LENGTH } from '@ah/learning/domain';
 
 export interface ApiConfig {
@@ -90,6 +91,11 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): ApiConfig {
   }
   if (config.learning) {
     config.learning.telegram = config.leads.telegram;
+    // Host apps linked to the Learning Engine (StudyLM) call its host
+    // routes from their own origins (design §9), so they are always in.
+    config.corsOrigins = [
+      ...new Set([...config.corsOrigins, ...hostOrigins()]),
+    ];
   }
   if (problems.length) {
     throw new Error(`Invalid configuration:\n  - ${problems.join('\n  - ')}`);

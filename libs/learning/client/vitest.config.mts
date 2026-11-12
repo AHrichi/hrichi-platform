@@ -12,7 +12,7 @@ export default defineConfig(() => ({
     globals: true,
     environment: 'node',
     include: ['{src,tests}/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
-    // The client is Angular glue; its contract is tested in learning-contracts.
+    // The hand-off codec is tested in learning-contracts; the link's core here.
     passWithNoTests: true,
     reporters: ['default'],
     coverage: {

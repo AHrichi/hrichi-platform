@@ -7,9 +7,9 @@
       "scope": "api",
       "layer": "app",
       "runtime": "node",
-      "x": 0.618,
-      "y": 0.743,
-      "z": -0.151
+      "x": 0.671,
+      "y": 0.605,
+      "z": -0.346
     },
     {
       "id": "api-ai",
@@ -17,9 +17,9 @@
       "scope": "api",
       "layer": "util",
       "runtime": "node",
-      "x": 0.857,
-      "y": 0.485,
-      "z": -0.119
+      "x": 0.788,
+      "y": 0.522,
+      "z": 0.265
     },
     {
       "id": "api-dispatch",
@@ -27,9 +27,9 @@
       "scope": "api",
       "layer": "feature",
       "runtime": "node",
-      "x": 0.742,
-      "y": 0.609,
-      "z": 0.238
+      "x": 0.643,
+      "y": 0.744,
+      "z": 0.041
     },
     {
       "id": "api-leads",
@@ -37,9 +37,9 @@
       "scope": "api",
       "layer": "feature",
       "runtime": "node",
-      "x": 0.267,
-      "y": 0.864,
-      "z": -0.382
+      "x": 0.334,
+      "y": 0.8,
+      "z": -0.466
     },
     {
       "id": "api-learning",
@@ -47,9 +47,9 @@
       "scope": "api",
       "layer": "feature",
       "runtime": "node",
-      "x": 0.644,
-      "y": 0.612,
-      "z": -0.439
+      "x": 0.857,
+      "y": 0.461,
+      "z": -0.135
     },
     {
       "id": "design-system",
@@ -57,9 +57,9 @@
       "scope": "design-system",
       "layer": "app",
       "runtime": "browser",
-      "x": 0.15,
-      "y": 0.466,
-      "z": 0.679
+      "x": 0.029,
+      "y": 0.417,
+      "z": 0.725
     },
     {
       "id": "design-system-e2e",
@@ -67,9 +67,9 @@
       "scope": "test",
       "layer": "e2e",
       "runtime": "node",
-      "x": 0.557,
-      "y": 0.462,
-      "z": 0.659
+      "x": 0.405,
+      "y": 0.44,
+      "z": 0.773
     },
     {
       "id": "design-system-tokens",
@@ -77,9 +77,9 @@
       "scope": "design-system",
       "layer": "tokens",
       "runtime": "agnostic",
-      "x": -0.192,
-      "y": 0.791,
-      "z": 0.417
+      "x": -0.27,
+      "y": 0.744,
+      "z": 0.459
     },
     {
       "id": "design-system-ui",
@@ -87,9 +87,9 @@
       "scope": "design-system",
       "layer": "ui",
       "runtime": "browser",
-      "x": -0.145,
-      "y": -0.039,
-      "z": 0.148
+      "x": -0.162,
+      "y": -0.058,
+      "z": 0.149
     },
     {
       "id": "lab-ngrx",
@@ -97,9 +97,9 @@
       "scope": "lab-ngrx",
       "layer": "app",
       "runtime": "browser",
-      "x": -0.848,
-      "y": 0.12,
-      "z": -0.305
+      "x": -0.786,
+      "y": 0.023,
+      "z": -0.452
     },
     {
       "id": "lab-ngrx-feature",
@@ -107,9 +107,9 @@
       "scope": "lab-ngrx",
       "layer": "feature",
       "runtime": "browser",
-      "x": -0.63,
-      "y": 0.574,
-      "z": -0.191
+      "x": -0.672,
+      "y": 0.491,
+      "z": -0.265
     },
     {
       "id": "lab-rxjs",
@@ -117,9 +117,9 @@
       "scope": "lab-rxjs",
       "layer": "app",
       "runtime": "browser",
-      "x": -0.547,
-      "y": -0.144,
-      "z": 0.699
+      "x": -0.612,
+      "y": -0.334,
+      "z": 0.554
     },
     {
       "id": "lab-rxjs-feature",
@@ -127,9 +127,9 @@
       "scope": "lab-rxjs",
       "layer": "feature",
       "runtime": "browser",
-      "x": -0.216,
-      "y": 0.13,
-      "z": 0.834
+      "x": -0.344,
+      "y": 0.018,
+      "z": 0.801
     },
     {
       "id": "lab-sky",
@@ -137,9 +137,9 @@
       "scope": "lab-sky",
       "layer": "app",
       "runtime": "browser",
-      "x": -0.893,
-      "y": -0.059,
-      "z": -0.14
+      "x": -0.881,
+      "y": -0.042,
+      "z": -0.192
     },
     {
       "id": "lab-sky-domain",
@@ -147,9 +147,9 @@
       "scope": "lab-sky",
       "layer": "domain",
       "runtime": "agnostic",
-      "x": -0.381,
-      "y": 0.267,
-      "z": -0.791
+      "x": -0.412,
+      "y": 0.431,
+      "z": -0.702
     },
     {
       "id": "lab-sky-feature",
@@ -157,9 +157,9 @@
       "scope": "lab-sky",
       "layer": "feature",
       "runtime": "browser",
-      "x": -0.322,
-      "y": 0.57,
-      "z": -0.352
+      "x": -0.372,
+      "y": 0.593,
+      "z": -0.191
     },
     {
       "id": "learning-client",
@@ -167,9 +167,9 @@
       "scope": "learning-client",
       "layer": "client",
       "runtime": "browser",
-      "x": 0.602,
-      "y": -0.548,
-      "z": 0.305
+      "x": 0.618,
+      "y": -0.511,
+      "z": 0.166
     },
     {
       "id": "learning-contracts",
@@ -177,9 +177,9 @@
       "scope": "learning",
       "layer": "contracts",
       "runtime": "agnostic",
-      "x": 0.898,
-      "y": -0.36,
-      "z": -0.077
+      "x": 0.887,
+      "y": -0.008,
+      "z": -0.287
     },
     {
       "id": "learning-data-access",
@@ -187,9 +187,9 @@
       "scope": "learning",
       "layer": "data-access",
       "runtime": "browser",
-      "x": 0.733,
-      "y": -0.057,
-      "z": -0.66
+      "x": 0.73,
+      "y": -0.015,
+      "z": -0.653
     },
     {
       "id": "learning-domain",
@@ -197,9 +197,9 @@
       "scope": "learning",
       "layer": "domain",
       "runtime": "agnostic",
-      "x": 0.788,
-      "y": 0.243,
-      "z": -0.469
+      "x": 0.81,
+      "y": 0.235,
+      "z": -0.448
     },
     {
       "id": "learning-edge",
@@ -207,9 +207,9 @@
       "scope": "learning",
       "layer": "app",
       "runtime": "agnostic",
-      "x": 0.535,
-      "y": 0.39,
-      "z": -0.739
+      "x": 0.536,
+      "y": 0.471,
+      "z": -0.68
     },
     {
       "id": "learning-feature",
@@ -217,9 +217,9 @@
       "scope": "learning",
       "layer": "feature",
       "runtime": "browser",
-      "x": 0.505,
-      "y": -0.447,
-      "z": -0.448
+      "x": 0.572,
+      "y": -0.359,
+      "z": -0.477
     },
     {
       "id": "orbit-api",
@@ -227,9 +227,9 @@
       "scope": "orbit",
       "layer": "app",
       "runtime": "jvm",
-      "x": -0.059,
-      "y": 0.875,
-      "z": -0.481
+      "x": -0.26,
+      "y": 0.848,
+      "z": -0.461
     },
     {
       "id": "platform-app-mode",
@@ -237,9 +237,9 @@
       "scope": "platform",
       "layer": "platform",
       "runtime": "browser",
-      "x": -0.057,
-      "y": -0.716,
-      "z": -0.021
+      "x": -0.04,
+      "y": -0.672,
+      "z": -0.145
     },
     {
       "id": "platform-federation",
@@ -247,9 +247,9 @@
       "scope": "platform",
       "layer": "platform",
       "runtime": "browser",
-      "x": -0.588,
-      "y": -0.479,
-      "z": -0.024
+      "x": -0.481,
+      "y": -0.525,
+      "z": -0.212
     },
     {
       "id": "platform-inspector",
@@ -257,9 +257,9 @@
       "scope": "platform",
       "layer": "platform",
       "runtime": "browser",
-      "x": -0.46,
-      "y": -0.455,
-      "z": 0.654
+      "x": -0.336,
+      "y": -0.83,
+      "z": -0.281
     },
     {
       "id": "platform-maps",
@@ -267,9 +267,9 @@
       "scope": "platform",
       "layer": "ui",
       "runtime": "browser",
-      "x": 0.259,
-      "y": -0.805,
-      "z": 0.206
+      "x": 0.411,
+      "y": -0.72,
+      "z": 0.16
     },
     {
       "id": "platform-storage",
@@ -277,9 +277,9 @@
       "scope": "platform",
       "layer": "platform",
       "runtime": "browser",
-      "x": 0.451,
-      "y": -0.757,
-      "z": -0.004
+      "x": 0.447,
+      "y": -0.736,
+      "z": -0.104
     },
     {
       "id": "portfolio-feature-apps",
@@ -287,9 +287,9 @@
       "scope": "portfolio",
       "layer": "feature",
       "runtime": "browser",
-      "x": -0.834,
-      "y": 0.264,
-      "z": 0.046
+      "x": -0.842,
+      "y": 0.224,
+      "z": 0.019
     },
     {
       "id": "portfolio-feature-cv",
@@ -297,9 +297,9 @@
       "scope": "portfolio",
       "layer": "feature",
       "runtime": "browser",
-      "x": -0.721,
-      "y": 0.057,
-      "z": 0.528
+      "x": -0.729,
+      "y": -0.046,
+      "z": 0.499
     },
     {
       "id": "portfolio-feature-experience",
@@ -307,9 +307,9 @@
       "scope": "portfolio",
       "layer": "feature",
       "runtime": "browser",
-      "x": -0.78,
-      "y": 0.267,
-      "z": 0.331
+      "x": -0.828,
+      "y": 0.149,
+      "z": 0.294
     },
     {
       "id": "portfolio-feature-home",
@@ -317,9 +317,9 @@
       "scope": "portfolio",
       "layer": "feature",
       "runtime": "browser",
-      "x": -0.395,
-      "y": 0.5,
-      "z": 0.482
+      "x": -0.454,
+      "y": 0.441,
+      "z": 0.478
     },
     {
       "id": "portfolio-feature-services",
@@ -327,9 +327,9 @@
       "scope": "portfolio",
       "layer": "feature",
       "runtime": "browser",
-      "x": -0.608,
-      "y": 0.274,
-      "z": -0.327
+      "x": -0.603,
+      "y": 0.196,
+      "z": -0.331
     },
     {
       "id": "portfolio-feature-work",
@@ -337,9 +337,9 @@
       "scope": "portfolio",
       "layer": "feature",
       "runtime": "browser",
-      "x": -0.579,
-      "y": 0.251,
-      "z": 0.582
+      "x": -0.65,
+      "y": 0.174,
+      "z": 0.531
     },
     {
       "id": "portfolio-util-seo",
@@ -347,9 +347,9 @@
       "scope": "portfolio",
       "layer": "util",
       "runtime": "browser",
-      "x": -0.708,
-      "y": 0.562,
-      "z": 0.243
+      "x": -0.761,
+      "y": 0.479,
+      "z": 0.242
     },
     {
       "id": "product-alarm-engine",
@@ -357,9 +357,9 @@
       "scope": "product-alarm-engine",
       "layer": "app",
       "runtime": "browser",
-      "x": -0.617,
-      "y": -0.034,
-      "z": -0.715
+      "x": -0.143,
+      "y": -0.16,
+      "z": -0.914
     },
     {
       "id": "product-alarm-engine-domain",
@@ -367,9 +367,9 @@
       "scope": "product-alarm-engine",
       "layer": "domain",
       "runtime": "agnostic",
-      "x": -0.03,
-      "y": 0.198,
-      "z": -0.935
+      "x": 0.121,
+      "y": 0.294,
+      "z": -0.897
     },
     {
       "id": "product-alarm-engine-feature",
@@ -377,9 +377,9 @@
       "scope": "product-alarm-engine",
       "layer": "feature",
       "runtime": "browser",
-      "x": -0.445,
-      "y": -0.251,
-      "z": -0.574
+      "x": -0.392,
+      "y": -0.123,
+      "z": -0.649
     },
     {
       "id": "product-autosphere-domain",
@@ -387,9 +387,9 @@
       "scope": "product-autosphere",
       "layer": "domain",
       "runtime": "agnostic",
-      "x": 0.157,
-      "y": 0.043,
-      "z": 0.96
+      "x": 0.041,
+      "y": 0.049,
+      "z": 0.962
     },
     {
       "id": "product-autosphere-feature",
@@ -397,9 +397,9 @@
       "scope": "product-autosphere",
       "layer": "feature",
       "runtime": "browser",
-      "x": -0.146,
-      "y": -0.358,
-      "z": 0.709
+      "x": -0.26,
+      "y": -0.396,
+      "z": 0.652
     },
     {
       "id": "product-basecamp",
@@ -407,9 +407,9 @@
       "scope": "product-basecamp",
       "layer": "app",
       "runtime": "browser",
-      "x": -0.666,
-      "y": -0.547,
-      "z": -0.272
+      "x": -0.647,
+      "y": -0.441,
+      "z": -0.428
     },
     {
       "id": "product-basecamp-domain",
@@ -417,9 +417,9 @@
       "scope": "product-basecamp",
       "layer": "domain",
       "runtime": "agnostic",
-      "x": -0.15,
-      "y": -0.172,
-      "z": -0.938
+      "x": -0.21,
+      "y": 0.18,
+      "z": -0.909
     },
     {
       "id": "product-basecamp-feature",
@@ -427,9 +427,9 @@
       "scope": "product-basecamp",
       "layer": "feature",
       "runtime": "browser",
-      "x": -0.159,
-      "y": -0.54,
-      "z": -0.481
+      "x": -0.136,
+      "y": -0.364,
+      "z": -0.578
     },
     {
       "id": "product-dispatch",
@@ -437,9 +437,9 @@
       "scope": "product-dispatch",
       "layer": "app",
       "runtime": "browser",
-      "x": 0.076,
-      "y": -0.726,
-      "z": -0.445
+      "x": 0.191,
+      "y": -0.779,
+      "z": -0.372
     },
     {
       "id": "product-dispatch-domain",
@@ -447,9 +447,9 @@
       "scope": "product-dispatch",
       "layer": "domain",
       "runtime": "agnostic",
-      "x": 0.934,
-      "y": 0.196,
-      "z": 0.114
+      "x": 0.909,
+      "y": 0.242,
+      "z": 0.133
     },
     {
       "id": "product-dispatch-feature",
@@ -457,9 +457,9 @@
       "scope": "product-dispatch",
       "layer": "feature",
       "runtime": "browser",
-      "x": 0.637,
-      "y": -0.276,
-      "z": -0.298
+      "x": 0.672,
+      "y": -0.377,
+      "z": -0.133
     },
     {
       "id": "product-learning",
@@ -467,9 +467,9 @@
       "scope": "learning",
       "layer": "app",
       "runtime": "browser",
-      "x": -0.23,
-      "y": -0.757,
-      "z": -0.301
+      "x": -0.064,
+      "y": -0.647,
+      "z": -0.528
     },
     {
       "id": "product-lighting",
@@ -477,9 +477,9 @@
       "scope": "product-lighting",
       "layer": "app",
       "runtime": "browser",
-      "x": -0.461,
-      "y": -0.668,
-      "z": 0.376
+      "x": -0.462,
+      "y": -0.658,
+      "z": 0.348
     },
     {
       "id": "product-lighting-domain",
@@ -487,9 +487,9 @@
       "scope": "product-lighting",
       "layer": "domain",
       "runtime": "agnostic",
-      "x": 0.227,
-      "y": -0.374,
-      "z": 0.867
+      "x": 0.076,
+      "y": -0.295,
+      "z": 0.908
     },
     {
       "id": "product-lighting-feature",
@@ -497,9 +497,9 @@
       "scope": "product-lighting",
       "layer": "feature",
       "runtime": "browser",
-      "x": 0.057,
-      "y": -0.673,
-      "z": 0.499
+      "x": -0.009,
+      "y": -0.656,
+      "z": 0.49
     },
     {
       "id": "product-strategy",
@@ -507,9 +507,9 @@
       "scope": "product-strategy",
       "layer": "app",
       "runtime": "browser",
-      "x": -0.481,
-      "y": -0.601,
-      "z": -0.496
+      "x": -0.368,
+      "y": -0.543,
+      "z": -0.643
     },
     {
       "id": "product-studylm",
@@ -517,9 +517,9 @@
       "scope": "product-studylm",
       "layer": "app",
       "runtime": "browser",
-      "x": -0.233,
-      "y": -0.756,
-      "z": 0.39
+      "x": -0.068,
+      "y": -0.83,
+      "z": 0.097
     },
     {
       "id": "product-studylm-domain",
@@ -527,9 +527,9 @@
       "scope": "product-studylm",
       "layer": "domain",
       "runtime": "agnostic",
-      "x": 0.784,
-      "y": 0.029,
-      "z": 0.551
+      "x": 0.656,
+      "y": -0.31,
+      "z": 0.644
     },
     {
       "id": "product-studylm-feature",
@@ -537,9 +537,9 @@
       "scope": "product-studylm",
       "layer": "feature",
       "runtime": "browser",
-      "x": 0.307,
-      "y": -0.439,
-      "z": 0.404
+      "x": 0.288,
+      "y": -0.5,
+      "z": 0.386
     },
     {
       "id": "product-studylm-learn",
@@ -547,9 +547,9 @@
       "scope": "product-studylm",
       "layer": "ui",
       "runtime": "browser",
-      "x": 0.549,
-      "y": 0.056,
-      "z": 0.749
+      "x": 0.509,
+      "y": 0.021,
+      "z": 0.77
     },
     {
       "id": "product-studylm-lessons",
@@ -557,9 +557,9 @@
       "scope": "product-studylm",
       "layer": "domain",
       "runtime": "agnostic",
-      "x": 0.861,
-      "y": -0.176,
-      "z": 0.355
+      "x": 0.82,
+      "y": -0.144,
+      "z": 0.453
     },
     {
       "id": "product-studylm-tracer",
@@ -567,9 +567,9 @@
       "scope": "product-studylm",
       "layer": "engine",
       "runtime": "agnostic",
-      "x": 0.642,
-      "y": -0.278,
-      "z": 0.703
+      "x": 0.71,
+      "y": 0.303,
+      "z": 0.613
     },
     {
       "id": "product-whatsapp",
@@ -577,9 +577,9 @@
       "scope": "product-whatsapp",
       "layer": "app",
       "runtime": "browser",
-      "x": -0.388,
-      "y": -0.819,
-      "z": 0.009
+      "x": -0.398,
+      "y": -0.797,
+      "z": 0.117
     },
     {
       "id": "product-whatsapp-domain",
@@ -587,9 +587,9 @@
       "scope": "product-whatsapp",
       "layer": "domain",
       "runtime": "agnostic",
-      "x": 0.619,
-      "y": -0.694,
-      "z": -0.325
+      "x": 0.32,
+      "y": -0.543,
+      "z": 0.723
     },
     {
       "id": "product-whatsapp-feature",
@@ -597,9 +597,9 @@
       "scope": "product-whatsapp",
       "layer": "feature",
       "runtime": "browser",
-      "x": 0.173,
-      "y": -0.757,
-      "z": -0.226
+      "x": 0.105,
+      "y": -0.77,
+      "z": 0.25
     },
     {
       "id": "shared-ai-schema",
@@ -607,9 +607,9 @@
       "scope": "shared",
       "layer": "util",
       "runtime": "agnostic",
-      "x": 0.966,
-      "y": 0.05,
-      "z": -0.134
+      "x": 0.963,
+      "y": 0.017,
+      "z": 0.053
     },
     {
       "id": "shared-api-client",
@@ -617,9 +617,9 @@
       "scope": "shared",
       "layer": "contracts",
       "runtime": "agnostic",
-      "x": 0.127,
-      "y": 0.613,
-      "z": -0.722
+      "x": 0.041,
+      "y": 0.909,
+      "z": -0.302
     },
     {
       "id": "shared-content",
@@ -627,9 +627,9 @@
       "scope": "shared",
       "layer": "content",
       "runtime": "agnostic",
-      "x": -0.734,
-      "y": -0.011,
-      "z": 0.241
+      "x": -0.746,
+      "y": -0.105,
+      "z": 0.167
     },
     {
       "id": "shared-contracts",
@@ -637,9 +637,9 @@
       "scope": "shared",
       "layer": "contracts",
       "runtime": "agnostic",
-      "x": -0.217,
-      "y": 0.654,
-      "z": -0.654
+      "x": -0.049,
+      "y": 0.628,
+      "z": -0.681
     },
     {
       "id": "shared-site-config",
@@ -647,9 +647,9 @@
       "scope": "shared",
       "layer": "data-access",
       "runtime": "browser",
-      "x": 0.256,
-      "y": -0.198,
-      "z": -0.643
+      "x": 0.276,
+      "y": -0.503,
+      "z": -0.346
     },
     {
       "id": "shared-state",
@@ -657,9 +657,9 @@
       "scope": "shared",
       "layer": "data-access",
       "runtime": "browser",
-      "x": -0.352,
-      "y": -0.19,
-      "z": 0.052
+      "x": -0.363,
+      "y": -0.215,
+      "z": 0.051
     },
     {
       "id": "shell",
@@ -667,9 +667,9 @@
       "scope": "portfolio",
       "layer": "app",
       "runtime": "browser",
-      "x": -0.606,
-      "y": -0.286,
-      "z": 0.134
+      "x": -0.586,
+      "y": -0.341,
+      "z": -0.01
     },
     {
       "id": "shell-e2e",
@@ -677,9 +677,9 @@
       "scope": "test",
       "layer": "e2e",
       "runtime": "node",
-      "x": -0.781,
-      "y": -0.494,
-      "z": 0.233
+      "x": -0.746,
+      "y": -0.557,
+      "z": 0.068
     },
     {
       "id": "strategy-domain",
@@ -687,9 +687,9 @@
       "scope": "product-strategy",
       "layer": "domain",
       "runtime": "browser",
-      "x": 0.292,
-      "y": -0.083,
-      "z": -0.935
+      "x": 0.382,
+      "y": -0.046,
+      "z": -0.888
     },
     {
       "id": "strategy-feature",
@@ -697,9 +697,9 @@
       "scope": "product-strategy",
       "layer": "feature",
       "runtime": "browser",
-      "x": -0.071,
-      "y": -0.433,
-      "z": -0.694
+      "x": 0.109,
+      "y": -0.386,
+      "z": -0.706
     },
     {
       "id": "three-angular",
@@ -707,9 +707,9 @@
       "scope": "platform",
       "layer": "ui",
       "runtime": "browser",
-      "x": -0.011,
-      "y": 0.878,
-      "z": 0.27
+      "x": -0.072,
+      "y": 0.856,
+      "z": 0.343
     },
     {
       "id": "three-constellation",
@@ -717,9 +717,9 @@
       "scope": "platform",
       "layer": "engine",
       "runtime": "browser",
-      "x": -0.006,
-      "y": 0.706,
-      "z": 0.693
+      "x": -0.061,
+      "y": 0.682,
+      "z": 0.711
     },
     {
       "id": "three-engine",
@@ -727,9 +727,9 @@
       "scope": "platform",
       "layer": "engine",
       "runtime": "browser",
-      "x": 0.343,
-      "y": 0.918,
-      "z": 0.126
+      "x": 0.299,
+      "y": 0.925,
+      "z": 0.169
     },
     {
       "id": "three-scene-constellation",
@@ -737,9 +737,9 @@
       "scope": "platform",
       "layer": "engine",
       "runtime": "browser",
-      "x": 0.24,
-      "y": 0.8,
-      "z": 0.486
+      "x": 0.189,
+      "y": 0.785,
+      "z": 0.517
     },
     {
       "id": "three-scene-sky",
@@ -747,9 +747,9 @@
       "scope": "platform",
       "layer": "engine",
       "runtime": "browser",
-      "x": -0.106,
-      "y": 0.94,
-      "z": -0.067
+      "x": -0.139,
+      "y": 0.944,
+      "z": 0.029
     }
   ],
   "edges": [
@@ -766,6 +766,11 @@
     [
       0,
       4,
+      "static"
+    ],
+    [
+      0,
+      17,
       "static"
     ],
     [
@@ -791,6 +796,11 @@
     [
       4,
       1,
+      "static"
+    ],
+    [
+      4,
+      17,
       "static"
     ],
     [
@@ -951,6 +961,11 @@
     [
       16,
       23,
+      "static"
+    ],
+    [
+      18,
+      17,
       "static"
     ],
     [
@@ -1410,6 +1425,11 @@
     ],
     [
       51,
+      16,
+      "static"
+    ],
+    [
+      51,
       23,
       "static"
     ],
@@ -1422,6 +1442,11 @@
       51,
       53,
       "dynamic"
+    ],
+    [
+      51,
+      64,
+      "static"
     ],
     [
       53,

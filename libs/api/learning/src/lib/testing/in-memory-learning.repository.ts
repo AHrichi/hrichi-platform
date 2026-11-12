@@ -81,6 +81,15 @@ export class InMemoryLearningRepository implements LearningRepository {
       .filter((record) => !record.data.deletedAt);
   }
 
+  async recordsOfKind<K extends RecordKind>(
+    kind: K,
+  ): Promise<StoredRecord<K>[]> {
+    return [...this.records.values()]
+      .filter((record) => record.kind === kind)
+      .sort((a, b) => a.seq - b.seq)
+      .map((record) => structuredClone(record) as StoredRecord<K>);
+  }
+
   async createDevice(device: Device): Promise<void> {
     this.devices.set(device.id, structuredClone(device));
   }

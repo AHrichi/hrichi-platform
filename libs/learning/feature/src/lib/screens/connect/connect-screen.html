@@ -1,0 +1,81 @@
+<section class="screen" aria-labelledby="connect-title">
+  @if (request(); as req) {
+    <h1 id="connect-title">Link {{ appName() }}</h1>
+
+    @switch (store.unavailable()) {
+      @case ('demo') {
+        <ah-alert variant="info" title="This is the demo">
+          The demo keeps everything in this browser, so it can't link apps. The
+          real app links {{ appName() }} to your daily reviews.
+        </ah-alert>
+      }
+      @case ('no-server') {
+        <ah-alert variant="info" title="Linking needs the server">
+          This deployment has no API, so {{ appName() }} can't reach your
+          reviews from here.
+        </ah-alert>
+      }
+      @default {
+        @if (!store.ready()) {
+          <p role="status">Opening your reviews…</p>
+        } @else if (store.device()) {
+          <div class="card ask">
+            <p>{{ appName() }} on this browser will be able to:</p>
+            <ul>
+              <li>
+                add the cards of the lessons you finish, and the questions you
+                miss, to your daily reviews;
+              </li>
+              <li>count your answers there as reviews, once a card is in;</li>
+              <li>show your streak, today's set and how your cards grow.</li>
+            </ul>
+            <p class="hint">
+              It can't read or change anything else. You can remove the link
+              under Devices at any time.
+            </p>
+            @if (error(); as message) {
+              <ah-alert variant="danger">{{ message }}</ah-alert>
+            }
+            <div class="actions">
+              <button
+                ahButton
+                type="button"
+                [disabled]="busy()"
+                (click)="allow()"
+              >
+                {{ busy() ? 'Linking…' : 'Link ' + appName() }}
+              </button>
+              <button
+                ahButton="ghost"
+                type="button"
+                [disabled]="busy()"
+                (click)="decline()"
+              >
+                Not now
+              </button>
+            </div>
+            @if (busy()) {
+              <p class="hint" role="status">
+                The server may take up to a minute to wake up.
+              </p>
+            }
+          </div>
+        } @else {
+          <ah-alert variant="info" title="Pair this device first">
+            Linking happens on a paired device, so your reviews stay yours. Pair
+            this one under
+            <a routerLink="../devices">Devices</a>, then press “Connect” in
+            {{ appName() }} again.
+          </ah-alert>
+        }
+      }
+    }
+  } @else {
+    <h1 id="connect-title">Link an app</h1>
+    <p class="hint">
+      There is nothing to link here. Apps such as StudyLM open this page when
+      you press “Connect” in them.
+    </p>
+    <a class="back" routerLink="../today">Back to today</a>
+  }
+</section>

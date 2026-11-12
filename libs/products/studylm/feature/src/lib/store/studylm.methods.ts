@@ -38,6 +38,7 @@ export type ElaborationContext = Omit<
   'action' | 'mode'
 >;
 import { StudyLmStorageService } from '../services/studylm-storage.service';
+import { StudyLmReviews } from '../services/studylm-reviews.service';
 import {
   type AddSourceInput,
   type CompetencyTier,
@@ -105,6 +106,8 @@ export function withStudyLmMethods() {
         state,
         apiService = inject(StudyLmApiService),
         storageService = inject(StudyLmStorageService),
+        // Optional: a store built outside the app (tests) has no link.
+        reviews = inject(StudyLmReviews, { optional: true }),
       ) => {
         /**
          * A hint or a deep dive. The modal opens at once, empty: the previous
@@ -822,6 +825,12 @@ export function withStudyLmMethods() {
             rating: MasteryRating,
             totalFiltered: number,
           ) {
+            const card = state
+              .subjects()
+              .find((subject) => subject.id === state.activeSubjectId())
+              ?.flashcards.find((c) => c.id === cardId);
+            // Linked to the Learning Engine, the rating counts as a review.
+            if (card) reviews?.cardRated(card, rating);
             updateActiveSubject((curr) => ({
               ...curr,
               flashcards: curr.flashcards.map((c) => {
@@ -879,6 +888,17 @@ export function withStudyLmMethods() {
           },
 
           selectQuizAnswer(questionId: string, answerIndex: number) {
+            const question = state
+              .subjects()
+              .find((subject) => subject.id === state.activeSubjectId())
+              ?.quizQuestions.find((q) => q.id === questionId);
+            // The first answer counts as a review once linked (design §9).
+            if (question && !question.isAnswered) {
+              reviews?.quizAnswered(
+                question,
+                answerIndex === question.correctIndex,
+              );
+            }
             updateActiveSubject((curr) => ({
               ...curr,
               quizQuestions: curr.quizQuestions.map((q) => {

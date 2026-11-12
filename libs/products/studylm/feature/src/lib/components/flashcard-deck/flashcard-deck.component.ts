@@ -23,6 +23,7 @@ import {
   type AhSelectOption,
 } from '@ah/ui';
 import { StudyLmStore } from '../../store/studylm.store';
+import { flashcardItem } from '../../services/studylm-reviews.service';
 import { StudyLmScreens } from '../../shell/studylm-screens';
 import { LessonGenerationService } from '../../services/lesson-generation.service';
 import { PreferencesStore } from '@ah/shared/state';
@@ -73,18 +74,7 @@ export class FlashcardDeckComponent {
     back: string;
     category: string;
   }): CaptureItem[] {
-    return [
-      {
-        text: `${card.front}\n${card.back}`,
-        source: {
-          app: 'studylm',
-          objectType: 'flashcard',
-          objectId: card.id.slice(0, 120),
-          deepLink: null,
-          excerpt: card.category.slice(0, 500),
-        },
-      },
-    ];
+    return [flashcardItem(card)];
   }
 
   readonly copy = computed(

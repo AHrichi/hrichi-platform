@@ -13,10 +13,18 @@ import {
 } from '../../shell/studylm-screens';
 import { PreferencesStore } from '@ah/shared/state';
 import { STUDYLM_COPY } from '../../i18n/studylm-copy';
+import { ReviewsPanelComponent } from '../reviews-panel/reviews-panel.component';
 
 @Component({
   selector: 'ah-study-stats',
-  imports: [AhBadge, AhButton, AhMetricCard, AhProgressBar, DecimalPipe],
+  imports: [
+    AhBadge,
+    AhButton,
+    AhMetricCard,
+    AhProgressBar,
+    DecimalPipe,
+    ReviewsPanelComponent,
+  ],
   templateUrl: './study-stats.component.html',
   styleUrl: './study-stats.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -28,7 +28,10 @@ interface RecordDocument {
   data: RecordOfKind[RecordKind];
 }
 
-type DeviceDocument = Omit<Device, 'id'> & { _id: string };
+type DeviceDocument = Omit<Device, 'id' | 'host'> & {
+  _id: string;
+  host?: string | null;
+};
 type PairingDocument = Omit<Pairing, 'id'> & { _id: string };
 interface CounterDocument {
   _id: string;
@@ -38,6 +41,11 @@ interface CounterDocument {
 function toRecord(document: RecordDocument): StoredRecord {
   const { kind, id, seq, by, updatedAt, data } = document;
   return { kind, id, seq, by, updatedAt, data } as StoredRecord;
+}
+
+/** Devices paired before host links have no `host`: they are devices. */
+function toDevice({ _id, ...device }: DeviceDocument): Device {
+  return { id: _id, ...device, host: device.host ?? null };
 }
 
 function toDocument(record: StoredRecord): RecordDocument {
@@ -165,6 +173,13 @@ export class MongoLearningRepository implements LearningRepository {
     return found.map((document) => toRecord(document) as StoredRecord<'topic'>);
   }
 
+  async recordsOfKind<K extends RecordKind>(
+    kind: K,
+  ): Promise<StoredRecord<K>[]> {
+    const found = await this.records.find({ kind }).sort({ seq: 1 }).toArray();
+    return found.map((document) => toRecord(document) as StoredRecord<K>);
+  }
+
   async createDevice({ id, ...device }: Device): Promise<void> {
     await this.devices.insertOne({ _id: id, ...device });
   }
@@ -172,13 +187,12 @@ export class MongoLearningRepository implements LearningRepository {
   async findDevice(id: string): Promise<Device | null> {
     const found = await this.devices.findOne({ _id: id });
     if (!found) return null;
-    const { _id, ...device } = found;
-    return { id: _id, ...device };
+    return toDevice(found);
   }
 
   async listDevices(): Promise<Device[]> {
     const found = await this.devices.find().sort({ pairedAt: 1 }).toArray();
-    return found.map(({ _id, ...device }) => ({ id: _id, ...device }));
+    return found.map(toDevice);
   }
 
   async revokeDevice(id: string, at: Date): Promise<boolean> {

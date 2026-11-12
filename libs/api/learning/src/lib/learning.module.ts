@@ -5,9 +5,12 @@ import { CapturePipeline } from './capture-pipeline';
 import { GradingService } from './grading.service';
 import {
   DeviceGuard,
+  HostGuard,
   LEARNING_CLOCK,
   LEARNING_TOKEN_SECRET,
 } from './device.guard';
+import { HostController } from './host.controller';
+import { HostService } from './host.service';
 import { LearningController } from './learning.controller';
 import {
   LEARNING_REPOSITORY,
@@ -53,7 +56,7 @@ export class LearningModule {
   static register(options: LearningModuleOptions): DynamicModule {
     return {
       module: LearningModule,
-      controllers: [LearningController],
+      controllers: [LearningController, HostController],
       providers: [
         { provide: LEARNING_TOKEN_SECRET, useValue: options.tokenSecret },
         { provide: LEARNING_CLOCK, useValue: () => new Date() },
@@ -123,6 +126,24 @@ export class LearningModule {
             }),
         },
         {
+          provide: HostService,
+          inject: [
+            LEARNING_REPOSITORY,
+            LEARNING_CLOCK,
+            WriteLock,
+            CapturePipeline,
+          ],
+          useFactory: (
+            repository: LearningRepository,
+            now: () => Date,
+            lock: WriteLock,
+            pipeline: CapturePipeline,
+          ) =>
+            new HostService(repository, options.tokenSecret, now, lock, () => {
+              void pipeline.kick();
+            }),
+        },
+        {
           provide: TelegramInbox,
           inject: [CapturePipeline, LEARNING_CLOCK],
           useFactory: (pipeline: CapturePipeline, now: () => Date) =>
@@ -138,6 +159,7 @@ export class LearningModule {
         },
         PipelineScheduler,
         DeviceGuard,
+        HostGuard,
       ],
     };
   }

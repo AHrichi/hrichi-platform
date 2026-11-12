@@ -22,6 +22,10 @@ import { CATALOG, loadBuiltInLessons } from '@ah/products/studylm/lessons';
 import type { RoadmapSection } from '@ah/products/studylm/domain';
 import { LessonGenerationService } from '../../services/lesson-generation.service';
 import { StudyLmStorageService } from '../../services/studylm-storage.service';
+import {
+  lessonCardItems,
+  StudyLmReviews,
+} from '../../services/studylm-reviews.service';
 import { StudyLmStore } from '../../store/studylm.store';
 import { StudyLmScreens } from '../../shell/studylm-screens';
 import { PreferencesStore } from '@ah/shared/state';
@@ -162,6 +166,7 @@ import { STUDYLM_COPY } from '../../i18n/studylm-copy';
         <ah-learn-this
           [items]="reviewItems()"
           [label]="copy().learn.addToReviews"
+          [sentLabel]="copy().reviews.sentToReviews"
           variant="primary"
           size="md"
         />
@@ -426,19 +431,9 @@ export class LessonScreen {
    */
   protected readonly reviewItems = computed<CaptureItem[]>(() => {
     const lesson = this.lesson();
-    if (!lesson) return [];
-    const href = globalThis.location?.href ?? '';
-    return lesson.cards.map((card) => ({
-      text: `${card.front}\n${card.back}`,
-      source: {
-        app: 'studylm',
-        objectType: 'lesson',
-        objectId: lesson.id.slice(0, 120),
-        deepLink: /^https?:\/\//.test(href) ? href : null,
-        excerpt: lesson.title.slice(0, 500),
-      },
-    }));
+    return lesson ? lessonCardItems(lesson) : [];
   });
+  private readonly reviews = inject(StudyLmReviews);
 
   readonly copy = computed(
     () => STUDYLM_COPY[this.preferences?.language() ?? 'en'] ?? STUDYLM_COPY.en,
@@ -577,5 +572,11 @@ export class LessonScreen {
       ...progress,
       updatedAt: new Date().toISOString(),
     });
+    // A finished lesson's cards join the daily reviews once linked; each
+    // card goes once, so saving again later sends nothing.
+    const lesson = this.lesson();
+    if (progress.completedAt && lesson && !this.busy()) {
+      this.reviews.lessonFinished(lesson);
+    }
   }
 }

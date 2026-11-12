@@ -52,6 +52,22 @@ describe('loadConfig', () => {
     });
   });
 
+  it('lets linked host apps in through CORS while the Learning Engine is on', () => {
+    expect(loadConfig(base).corsOrigins).not.toContain(
+      'https://product-studylm.ahmed-hrichi.workers.dev',
+    );
+    const config = loadConfig({
+      ...base,
+      CORS_ORIGINS: 'https://portfolio.example,http://localhost:4307',
+      LEARNING_TOKEN_SECRET: 'x'.repeat(32),
+    });
+    expect(config.corsOrigins).toEqual([
+      'https://portfolio.example',
+      'http://localhost:4307',
+      'https://product-studylm.ahmed-hrichi.workers.dev',
+    ]);
+  });
+
   it('refuses logged pairing codes in production', () => {
     expect(() =>
       loadConfig({

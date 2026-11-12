@@ -92,6 +92,30 @@ function contract(
       expect((await repository.changesSince(7, 10)).map((r) => r.seq)).toEqual([
         9,
       ]);
+      expect(
+        (await repository.recordsOfKind('event')).map((r) => r.id),
+      ).toEqual([FIXTURE_IDS.event]);
+      expect(
+        (await repository.recordsOfKind('concept')).map((r) => r.data.title),
+      ).toEqual(['v9']);
+    });
+
+    it('tells a host app’s link from a device', async () => {
+      const pairedAt = new Date('2026-11-11T08:00:00Z');
+      await repository.createDevice({
+        id: FIXTURE_IDS.deviceB,
+        name: 'StudyLM on Chrome',
+        host: 'studylm',
+        pairedAt,
+        lastSeenAt: null,
+        revokedAt: null,
+      });
+      expect((await repository.findDevice(FIXTURE_IDS.deviceB))?.host).toBe(
+        'studylm',
+      );
+      expect((await repository.listDevices()).map((d) => d.host)).toEqual([
+        'studylm',
+      ]);
     });
 
     it('keeps devices and pairings', async () => {
@@ -99,6 +123,7 @@ function contract(
       await repository.createDevice({
         id: FIXTURE_IDS.deviceA,
         name: 'Phone',
+        host: null,
         pairedAt,
         lastSeenAt: null,
         revokedAt: null,

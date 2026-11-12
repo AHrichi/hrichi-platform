@@ -1,0 +1,121 @@
+@if (link.available) {
+  <section class="reviews-panel" aria-labelledby="reviews-panel-title">
+    <header class="panel-head">
+      <span class="eyebrow">{{ copy().eyebrow }}</span>
+      <h3 id="reviews-panel-title">{{ copy().title }}</h3>
+    </header>
+
+    @if (!link.linked()) {
+      <p class="intro">{{ copy().intro }}</p>
+      @if (link.problem() === 'ended') {
+        <p class="note warn" role="status">{{ copy().ended }}</p>
+      }
+      <div class="actions">
+        <button ahButton type="button" (click)="link.connect()">
+          {{ copy().connect }}
+        </button>
+      </div>
+      <p class="hint">{{ copy().connectHint }}</p>
+    } @else {
+      @if (link.justLinked()) {
+        <p class="note ok" role="status">{{ copy().linkedNow }}</p>
+      }
+
+      @if (link.state(); as state) {
+        <dl class="numbers">
+          <div class="number">
+            <dt>{{ copy().streak }}</dt>
+            <dd>
+              <span class="value"
+                ><span aria-hidden="true">🔥</span>
+                {{ state.streak.current }}</span
+              >
+              <span class="unit">{{ copy().dayUnit }}</span>
+            </dd>
+          </div>
+          <div class="number">
+            <dt>{{ copy().todaySet }}</dt>
+            <dd>
+              @if (state.today; as today) {
+                <span class="value">{{ today.done }} / {{ today.total }}</span>
+                <span class="unit">{{
+                  today.finished ? copy().finished : copy().cardsUnit
+                }}</span>
+              } @else {
+                <span class="unit">{{ copy().notStarted }}</span>
+              }
+            </dd>
+          </div>
+          <div class="number">
+            <dt>{{ copy().inReviews }}</dt>
+            <dd>
+              <span class="value">{{ counts().reviewing }}</span>
+              <span class="unit">{{ copy().cardsUnit }}</span>
+            </dd>
+          </div>
+        </dl>
+
+        <h4 class="tiers-title">{{ copy().tiersTitle }}</h4>
+        @if (hasCards()) {
+          <ul class="tiers" role="list">
+            @for (tier of tiers(); track tier.id) {
+              <li class="tier" [class.empty]="!tier.count">
+                <span class="tier-name"
+                  ><span aria-hidden="true">{{ tier.icon }}</span>
+                  {{ tier.label }}</span
+                >
+                <span class="tier-count">{{ tier.count }}</span>
+              </li>
+            }
+          </ul>
+          <p class="hint">
+            {{ counts().reviewing }} {{ copy().inReviews }} ·
+            {{ counts().onTheirWay }} {{ copy().onTheirWay }} ·
+            {{ state.wilting }} {{ copy().fading }}
+          </p>
+        } @else {
+          <p class="hint">{{ copy().nothingYet }}</p>
+        }
+      } @else if (link.busy()) {
+        <p class="hint" role="status">{{ copy().refreshing }}</p>
+      }
+
+      @if (link.pending()) {
+        <p class="hint">{{ link.pending() }} {{ copy().waitingToSend }}</p>
+      }
+      @switch (link.problem()) {
+        @case ('offline') {
+          <p class="note warn" role="status">{{ copy().offline }}</p>
+        }
+        @case ('failed') {
+          <p class="note warn" role="status">{{ copy().failed }}</p>
+        }
+      }
+
+      <div class="actions">
+        <a ahButton [href]="reviewsUrl" target="_blank" rel="noopener">
+          {{ copy().openReviews }}
+        </a>
+        <button
+          ahButton="secondary"
+          type="button"
+          [disabled]="link.busy()"
+          (click)="link.refresh()"
+        >
+          {{ link.busy() ? copy().refreshing : copy().refresh }}
+        </button>
+        <button
+          ahButton="ghost"
+          type="button"
+          [disabled]="link.busy()"
+          (click)="disconnect()"
+        >
+          {{ copy().disconnect }}
+        </button>
+      </div>
+      @if (link.stateAt(); as at) {
+        <p class="hint">{{ copy().updated }} {{ at | date: 'short' }}</p>
+      }
+    }
+  </section>
+}

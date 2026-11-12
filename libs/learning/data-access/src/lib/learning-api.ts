@@ -1,3 +1,4 @@
+import type { HostLinked, HostLinkRequest } from '@ah/learning/contracts';
 import type {
   Capture,
   Concept,
@@ -142,6 +143,11 @@ export class LearningApi {
     signal?: AbortSignal,
   ): Promise<TeachBackFeedback> {
     return this.call('POST', '/teach-back', request, token, signal);
+  }
+
+  /** Lets a host app in (design §9): a link for the host routes only. */
+  linkHost(request: HostLinkRequest, token: string): Promise<HostLinked> {
+    return this.call('POST', '/hosts', request, token);
   }
 
   devices(token: string): Promise<DeviceSummary[]> {

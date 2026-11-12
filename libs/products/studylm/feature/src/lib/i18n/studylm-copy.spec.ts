@@ -14,6 +14,7 @@ describe('STUDYLM_COPY i18n dictionary', () => {
     'sources',
     'stats',
     'modals',
+    'reviews',
   ] as const;
 
   it('defines non-empty translations for all 5 languages across all sections', () => {

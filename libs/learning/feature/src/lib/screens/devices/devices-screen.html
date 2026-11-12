@@ -36,7 +36,7 @@
           </button>
         </div>
 
-        <h2>Paired devices</h2>
+        <h2>Paired devices and linked apps</h2>
         <ul class="devices" role="list">
           @for (item of store.devices(); track item.id) {
             <li class="card device">
@@ -46,9 +46,13 @@
                   @if (item.current) {
                     <span class="tag">this one</span>
                   }
+                  @if (item.host) {
+                    <span class="tag">linked app</span>
+                  }
                 </p>
                 <p class="hint">
-                  Paired {{ item.pairedAt | date: 'mediumDate' }}
+                  {{ item.host ? 'Linked' : 'Paired' }}
+                  {{ item.pairedAt | date: 'mediumDate' }}
                   @if (item.lastSeenAt; as seen) {
                     · seen {{ seen | date: 'mediumDate' }}
                   }
@@ -58,9 +62,9 @@
                 ahButton="ghost"
                 size="sm"
                 type="button"
-                (click)="remove(item.id, item.name, item.current)"
+                (click)="remove(item.id, item.name, item.current, !!item.host)"
               >
-                {{ item.current ? 'Unpair' : 'Remove' }}
+                {{ item.current ? 'Unpair' : item.host ? 'Unlink' : 'Remove' }}
               </button>
             </li>
           }

@@ -307,6 +307,41 @@ export interface StudyLmCopy {
     sourcesAttached: string;
     groundedIngests: string;
   };
+  reviews: {
+    eyebrow: string;
+    title: string;
+    intro: string;
+    connect: string;
+    connectHint: string;
+    linkedNow: string;
+    streak: string;
+    dayUnit: string;
+    todaySet: string;
+    notStarted: string;
+    finished: string;
+    cardsUnit: string;
+    openReviews: string;
+    tiersTitle: string;
+    tierSeed: string;
+    tierSprout: string;
+    tierLeaf: string;
+    tierBloom: string;
+    tierGolden: string;
+    inReviews: string;
+    onTheirWay: string;
+    fading: string;
+    waitingToSend: string;
+    nothingYet: string;
+    refresh: string;
+    refreshing: string;
+    updated: string;
+    offline: string;
+    failed: string;
+    ended: string;
+    disconnect: string;
+    disconnectConfirm: string;
+    sentToReviews: string;
+  };
   modals: {
     n8nTitle: string;
     n8nEyebrow: string;
@@ -660,6 +695,48 @@ export const STUDYLM_COPY: Record<SiteLanguage, StudyLmCopy> = {
       answered: 'Answered',
       sourcesAttached: 'Sources Attached',
       groundedIngests: 'Grounded Ingests',
+    },
+    reviews: {
+      eyebrow: 'Learning Engine',
+      title: 'Daily reviews',
+      intro:
+        'Link StudyLM to your Learning Engine. The cards of lessons you finish, and the questions you miss, join your daily reviews, and your answers here count as reviews.',
+      connect: 'Connect to my daily reviews',
+      connectHint:
+        'Opens the learning app once, on a paired device, to allow it.',
+      linkedNow:
+        'Linked. Your lessons and answers now reach your daily reviews.',
+      streak: 'Streak',
+      dayUnit: 'days',
+      todaySet: "Today's set",
+      notStarted: 'Not started yet',
+      finished: 'Done ✓',
+      cardsUnit: 'cards',
+      openReviews: 'Open my reviews',
+      tiersTitle: 'Your StudyLM cards',
+      tierSeed: 'Seed',
+      tierSprout: 'Sprout',
+      tierLeaf: 'Leaf',
+      tierBloom: 'Bloom',
+      tierGolden: 'Golden',
+      inReviews: 'in reviews',
+      onTheirWay: 'on their way',
+      fading: 'fading',
+      waitingToSend: 'waiting to send',
+      nothingYet:
+        'No cards yet. Finish a lesson or miss a question, and it joins your reviews.',
+      refresh: 'Refresh',
+      refreshing: 'Updating…',
+      updated: 'Updated',
+      offline: 'Offline. Everything is kept and sent when you are back online.',
+      failed:
+        "The server didn't answer. It may be waking up; try again in a minute.",
+      ended:
+        'The link has ended (removed or expired). Connect again to keep sending.',
+      disconnect: 'Disconnect',
+      disconnectConfirm:
+        'Disconnect StudyLM from your daily reviews? Cards already sent stay there.',
+      sentToReviews: 'In your reviews',
     },
     modals: {
       n8nTitle: 'n8n Synthesis Engine Settings',
@@ -1017,6 +1094,48 @@ export const STUDYLM_COPY: Record<SiteLanguage, StudyLmCopy> = {
       sourcesAttached: 'Sources jointes',
       groundedIngests: 'Ingestions ancrées',
     },
+    reviews: {
+      eyebrow: 'Moteur d’apprentissage',
+      title: 'Révisions du jour',
+      intro:
+        'Reliez StudyLM à votre moteur d’apprentissage. Les cartes des leçons que vous terminez, et les questions que vous ratez, rejoignent vos révisions du jour, et vos réponses ici comptent comme des révisions.',
+      connect: 'Relier à mes révisions du jour',
+      connectHint:
+        'Ouvre une fois l’app d’apprentissage, sur un appareil associé, pour l’autoriser.',
+      linkedNow:
+        'C’est relié. Vos leçons et vos réponses rejoignent désormais vos révisions du jour.',
+      streak: 'Série',
+      dayUnit: 'jours',
+      todaySet: 'Cartes du jour',
+      notStarted: 'Pas encore commencé',
+      finished: 'Terminé ✓',
+      cardsUnit: 'cartes',
+      openReviews: 'Ouvrir mes révisions',
+      tiersTitle: 'Vos cartes StudyLM',
+      tierSeed: 'Graine',
+      tierSprout: 'Pousse',
+      tierLeaf: 'Feuille',
+      tierBloom: 'Fleur',
+      tierGolden: 'Doré',
+      inReviews: 'en révision',
+      onTheirWay: 'en route',
+      fading: 'qui s’effacent',
+      waitingToSend: 'en attente d’envoi',
+      nothingYet:
+        'Pas encore de cartes. Terminez une leçon ou ratez une question, et elle rejoint vos révisions.',
+      refresh: 'Actualiser',
+      refreshing: 'Mise à jour…',
+      updated: 'Mis à jour',
+      offline: 'Hors ligne. Tout est gardé et envoyé à votre retour en ligne.',
+      failed:
+        'Le serveur n’a pas répondu. Il se réveille peut-être ; réessayez dans une minute.',
+      ended:
+        'Le lien a pris fin (retiré ou expiré). Reliez de nouveau pour continuer.',
+      disconnect: 'Délier',
+      disconnectConfirm:
+        'Délier StudyLM de vos révisions du jour ? Les cartes déjà envoyées y restent.',
+      sentToReviews: 'Dans vos révisions',
+    },
     modals: {
       n8nTitle: 'Paramètres du moteur de synthèse n8n',
       n8nEyebrow: 'Configuration de l’infrastructure',
@@ -1370,6 +1489,44 @@ export const STUDYLM_COPY: Record<SiteLanguage, StudyLmCopy> = {
       answered: 'مجاب عنها',
       sourcesAttached: 'المصادر المرفقة',
       groundedIngests: 'مدخلات موثقة',
+    },
+    reviews: {
+      eyebrow: 'محرّك التعلّم',
+      title: 'المراجعات اليومية',
+      intro:
+        'اربط StudyLM بمحرّك التعلّم. بطاقات الدروس التي تُنهيها، والأسئلة التي تُخطئ فيها، تنضمّ إلى مراجعاتك اليومية، وتُحتسب إجاباتك هنا مراجعات.',
+      connect: 'اربط بمراجعاتي اليومية',
+      connectHint: 'يفتح تطبيق التعلّم مرة واحدة، على جهاز مقترن، للسماح بذلك.',
+      linkedNow: 'تمّ الربط. تصل دروسك وإجاباتك الآن إلى مراجعاتك اليومية.',
+      streak: 'السلسلة',
+      dayUnit: 'أيام',
+      todaySet: 'مجموعة اليوم',
+      notStarted: 'لم تبدأ بعد',
+      finished: 'اكتملت ✓',
+      cardsUnit: 'بطاقات',
+      openReviews: 'افتح مراجعاتي',
+      tiersTitle: 'بطاقاتك من StudyLM',
+      tierSeed: 'بذرة',
+      tierSprout: 'برعم',
+      tierLeaf: 'ورقة',
+      tierBloom: 'زهرة',
+      tierGolden: 'ذهبية',
+      inReviews: 'قيد المراجعة',
+      onTheirWay: 'في الطريق',
+      fading: 'تتلاشى',
+      waitingToSend: 'بانتظار الإرسال',
+      nothingYet:
+        'لا بطاقات بعد. أنهِ درسًا أو أخطئ في سؤال، فينضمّ إلى مراجعاتك.',
+      refresh: 'تحديث',
+      refreshing: 'جارٍ التحديث…',
+      updated: 'آخر تحديث',
+      offline: 'غير متصل. يُحفظ كل شيء ويُرسل عند عودتك إلى الاتصال.',
+      failed: 'لم يُجب الخادم. ربما يستيقظ؛ حاول مجددًا بعد دقيقة.',
+      ended: 'انتهى الربط (أُزيل أو انتهت صلاحيته). اربط من جديد للمتابعة.',
+      disconnect: 'إلغاء الربط',
+      disconnectConfirm:
+        'إلغاء ربط StudyLM بمراجعاتك اليومية؟ تبقى البطاقات المُرسلة هناك.',
+      sentToReviews: 'في مراجعاتك',
     },
     modals: {
       n8nTitle: 'إعدادات محرك التوليف n8n',
@@ -1727,6 +1884,49 @@ export const STUDYLM_COPY: Record<SiteLanguage, StudyLmCopy> = {
       sourcesAttached: 'Fonti allegate',
       groundedIngests: 'Fonti acquisite',
     },
+    reviews: {
+      eyebrow: 'Motore di apprendimento',
+      title: 'Ripassi quotidiani',
+      intro:
+        'Collega StudyLM al tuo motore di apprendimento. Le schede delle lezioni che finisci, e le domande che sbagli, entrano nei ripassi quotidiani, e le tue risposte qui contano come ripassi.',
+      connect: 'Collega ai miei ripassi quotidiani',
+      connectHint:
+        'Apre una volta l’app di apprendimento, su un dispositivo associato, per consentirlo.',
+      linkedNow:
+        'Collegato. Lezioni e risposte ora arrivano ai tuoi ripassi quotidiani.',
+      streak: 'Serie',
+      dayUnit: 'giorni',
+      todaySet: 'Set di oggi',
+      notStarted: 'Non ancora iniziato',
+      finished: 'Fatto ✓',
+      cardsUnit: 'schede',
+      openReviews: 'Apri i miei ripassi',
+      tiersTitle: 'Le tue schede StudyLM',
+      tierSeed: 'Seme',
+      tierSprout: 'Germoglio',
+      tierLeaf: 'Foglia',
+      tierBloom: 'Fiore',
+      tierGolden: 'Dorata',
+      inReviews: 'in ripasso',
+      onTheirWay: 'in arrivo',
+      fading: 'che sbiadiscono',
+      waitingToSend: 'da inviare',
+      nothingYet:
+        'Ancora nessuna scheda. Finisci una lezione o sbaglia una domanda, ed entra nei ripassi.',
+      refresh: 'Aggiorna',
+      refreshing: 'Aggiornamento…',
+      updated: 'Aggiornato',
+      offline:
+        'Offline. Tutto resta salvato e viene inviato quando torni online.',
+      failed:
+        'Il server non ha risposto. Forse si sta svegliando; riprova tra un minuto.',
+      ended:
+        'Il collegamento è terminato (rimosso o scaduto). Collega di nuovo per continuare.',
+      disconnect: 'Scollega',
+      disconnectConfirm:
+        'Scollegare StudyLM dai ripassi quotidiani? Le schede già inviate restano lì.',
+      sentToReviews: 'Nei tuoi ripassi',
+    },
     modals: {
       n8nTitle: 'Impostazioni motore di sintesi n8n',
       n8nEyebrow: 'Configurazione infrastruttura motore',
@@ -2083,6 +2283,49 @@ export const STUDYLM_COPY: Record<SiteLanguage, StudyLmCopy> = {
       answered: 'Beantwortet',
       sourcesAttached: 'Verknüpfte Quellen',
       groundedIngests: 'Verankerte Quellen',
+    },
+    reviews: {
+      eyebrow: 'Lern-Engine',
+      title: 'Tägliche Wiederholungen',
+      intro:
+        'Verbinde StudyLM mit deiner Lern-Engine. Die Karten abgeschlossener Lektionen und die Fragen, die du falsch beantwortest, kommen in deine täglichen Wiederholungen, und deine Antworten hier zählen als Wiederholungen.',
+      connect: 'Mit meinen Wiederholungen verbinden',
+      connectHint:
+        'Öffnet einmal die Lern-App auf einem gekoppelten Gerät, um es zu erlauben.',
+      linkedNow:
+        'Verbunden. Deine Lektionen und Antworten landen jetzt in deinen täglichen Wiederholungen.',
+      streak: 'Serie',
+      dayUnit: 'Tage',
+      todaySet: 'Heutiges Set',
+      notStarted: 'Noch nicht begonnen',
+      finished: 'Erledigt ✓',
+      cardsUnit: 'Karten',
+      openReviews: 'Meine Wiederholungen öffnen',
+      tiersTitle: 'Deine StudyLM-Karten',
+      tierSeed: 'Samen',
+      tierSprout: 'Spross',
+      tierLeaf: 'Blatt',
+      tierBloom: 'Blüte',
+      tierGolden: 'Golden',
+      inReviews: 'in Wiederholung',
+      onTheirWay: 'unterwegs',
+      fading: 'verblassen',
+      waitingToSend: 'warten auf Versand',
+      nothingYet:
+        'Noch keine Karten. Schließe eine Lektion ab oder beantworte eine Frage falsch, dann kommt sie in deine Wiederholungen.',
+      refresh: 'Aktualisieren',
+      refreshing: 'Wird aktualisiert…',
+      updated: 'Aktualisiert',
+      offline:
+        'Offline. Alles bleibt gespeichert und wird gesendet, sobald du wieder online bist.',
+      failed:
+        'Der Server hat nicht geantwortet. Vielleicht wacht er gerade auf; versuch es in einer Minute erneut.',
+      ended:
+        'Die Verbindung ist beendet (entfernt oder abgelaufen). Verbinde erneut, um weiterzusenden.',
+      disconnect: 'Trennen',
+      disconnectConfirm:
+        'StudyLM von deinen täglichen Wiederholungen trennen? Bereits gesendete Karten bleiben dort.',
+      sentToReviews: 'In deinen Wiederholungen',
     },
     modals: {
       n8nTitle: 'n8n-Synthese-Engine Einstellungen',

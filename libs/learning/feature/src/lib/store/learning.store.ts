@@ -9,6 +9,8 @@ import {
 } from '@ngrx/signals';
 import {
   type CaptureItem,
+  type HostApp,
+  type HostLinked,
   type LearningTodaySummary,
   TODAY_SUMMARY_KEY,
 } from '@ah/learning/contracts';
@@ -41,6 +43,7 @@ import {
   type ReviewSession,
   SERVER_WRITER,
   LIMITS,
+  PAIRING,
   TEACH_BACK_MIN_CHARS,
   type TeachBack,
   type TeachBackFeedback,
@@ -1008,6 +1011,33 @@ export const LearningStore = signalStore(
           patchState(store, {
             sync: { ...store.sync(), message: messageOf(error) },
           });
+        }
+      },
+
+      /**
+       * Lets a host app in (design §9) from this paired device. Throws a
+       * message to show when it can't: not paired, no server, refused.
+       */
+      async linkHost(app: HostApp, name: string): Promise<HostLinked> {
+        const { api, local } = await runtime.open();
+        const session = await local.session();
+        if (!api || !session) {
+          throw new Error('Pair this device first, under Devices.');
+        }
+        try {
+          return await api.linkHost(
+            { app, name: name.slice(0, PAIRING.deviceName) },
+            session.token,
+          );
+        } catch (error) {
+          if (
+            error instanceof LearningApiError &&
+            error.kind === 'unauthorized'
+          ) {
+            await local.clearSession();
+            await refresh();
+          }
+          throw error;
         }
       },
 
