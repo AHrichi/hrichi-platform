@@ -695,7 +695,7 @@ export class AppsPage {
           },
           eyebrow: 'مجموعات يومية بخوارزمية FSRS، وشرح بصوتك، وحديقة للمعرفة',
           summary:
-            'محرّك شخصي للتكرار المتباعد تلتقط فيه كل التطبيقات الأفكار: اكتب فكرة أو قلها، فتحصل على شرح قصير بأسلوب فاينمان وأسئلة استرجاع، ثم راجع مجموعة يومية محدودة تستغرق نحو 3 دقائق تُجدولها خوارزمية FSRS. هذا العرض يحتوي على شهر من المراجعات ولا يغادر متصفحك أبدًا.',
+            'محرّك شخصي للتكرار المتباعد تلتقط فيه كل التطبيقات الأفكار: اكتب فكرة أو قلها، فتحصل على شرح قصير بأسلوب فاينمان وأسئلة استرجاع، ثم راجع مجموعة يومية محدودة تستغرق نحو 3 دقائق تُجدولها خوارزمية FSRS. يبدأ هنا فارغًا ويبقى في متصفحك، مع دليل لاستخدامه ولطريقة عمله مع StudyLM.',
           route: '/apps/learning',
           icon: '🧠',
           ctaLabel: 'Learning Engine',
@@ -1004,7 +1004,7 @@ export class AppsPage {
           eyebrow:
             'Séries quotidiennes FSRS, restitution orale et jardin des connaissances',
           summary:
-            'Un moteur personnel de répétition espacée dans lequel chaque app peut capturer : tapez ou dites une idée, recevez une courte explication à la Feynman et des questions de rappel, puis révisez une série quotidienne plafonnée d’environ 3 minutes, planifiée avec FSRS. Cette démo contient un mois de révisions et ne quitte jamais votre navigateur.',
+            'Un moteur personnel de répétition espacée dans lequel chaque app peut capturer : tapez ou dites une idée, recevez une courte explication à la Feynman et des questions de rappel, puis révisez une série quotidienne plafonnée d’environ 3 minutes, planifiée avec FSRS. Ici, il démarre vide et reste dans votre navigateur, avec un guide d’utilisation et de son fonctionnement avec StudyLM.',
           route: '/apps/learning',
           icon: '🧠',
           ctaLabel: 'Learning Engine',
@@ -1320,7 +1320,7 @@ export class AppsPage {
           eyebrow:
             'Set quotidiani FSRS, spiegazione a voce e giardino della conoscenza',
           summary:
-            'Un motore personale di ripetizione dilazionata in cui ogni app può catturare: scrivi o di’ un’idea, ricevi una breve spiegazione alla Feynman e domande di richiamo, poi ripassa un set quotidiano limitato di circa 3 minuti, pianificato con FSRS. Questa demo contiene un mese di ripassi e non lascia mai il tuo browser.',
+            'Un motore personale di ripetizione dilazionata in cui ogni app può catturare: scrivi o di’ un’idea, ricevi una breve spiegazione alla Feynman e domande di richiamo, poi ripassa un set quotidiano limitato di circa 3 minuti, pianificato con FSRS. Qui parte vuoto e resta nel tuo browser, con una guida all’uso e al funzionamento con StudyLM.',
           route: '/apps/learning',
           icon: '🧠',
           ctaLabel: 'Learning Engine',
@@ -1635,7 +1635,7 @@ export class AppsPage {
           eyebrow:
             'Tägliche FSRS-Sets, Erklären mit eigenen Worten und ein Wissensgarten',
           summary:
-            'Eine persönliche Engine für verteilte Wiederholung, in die jede App Ideen erfasst: Tippe oder sprich eine Idee, erhalte eine kurze Feynman-Erklärung und Abruffragen und wiederhole dann ein begrenztes Tagesset von etwa 3 Minuten, geplant mit FSRS. Diese Demo enthält einen Monat Wiederholungen und verlässt nie deinen Browser.',
+            'Eine persönliche Engine für verteilte Wiederholung, in die jede App Ideen erfasst: Tippe oder sprich eine Idee, erhalte eine kurze Feynman-Erklärung und Abruffragen und wiederhole dann ein begrenztes Tagesset von etwa 3 Minuten, geplant mit FSRS. Hier startet sie leer und bleibt in deinem Browser, mit einer Anleitung zur Nutzung und zum Zusammenspiel mit StudyLM.',
           route: '/apps/learning',
           icon: '🧠',
           ctaLabel: 'Learning Engine',
@@ -1938,7 +1938,7 @@ export class AppsPage {
         },
         eyebrow: 'FSRS Daily Sets, Teach-Back and a Knowledge Garden',
         summary:
-          'A personal spaced-repetition engine every app captures into: type or say an idea, get a short Feynman explanation and recall questions, then review a capped Daily Set of about 3 minutes, scheduled with FSRS. This demo is seeded with a month of reviews and never leaves your browser.',
+          'A personal spaced-repetition engine every app captures into: type or say an idea, get a short Feynman explanation and recall questions, then review a capped Daily Set of about 3 minutes, scheduled with FSRS. Here it starts empty and stays in your browser, with a guide to using it and to how it works with StudyLM.',
         route: '/apps/learning',
         icon: '🧠',
         ctaLabel: 'Learning Engine',

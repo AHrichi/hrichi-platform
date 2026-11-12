@@ -51,7 +51,7 @@ import {
   weekStats,
   xpOf,
 } from '@ah/learning/domain';
-import { demoDraftSource } from './demo-seed';
+import { demoDraftSource } from './demo';
 import { LearningRuntime, type SyncUnavailable } from './learning-runtime';
 
 export type SyncState =
@@ -446,8 +446,8 @@ export const LearningStore = signalStore(
     }
 
     /**
-     * The demo has no server: a capture turns at once into one of the
-     * spare golden concepts, and says so (design §9).
+     * The portfolio copy has no server: a capture turns at once into one
+     * of the ready-made concepts, and says so (design §9).
      */
     async function demoProcess(capture: Capture): Promise<void> {
       const { local, unavailable } = await runtime.open();

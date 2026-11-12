@@ -1,0 +1,171 @@
+<article class="screen" aria-labelledby="guide-title">
+  <header class="intro">
+    <h1 id="guide-title">How the Learning Engine works</h1>
+    <p>
+      Keep what you learn. Capture an idea in a few seconds; the engine explains
+      it simply and asks you about it again just before you would forget, in a
+      short daily set of about three minutes.
+    </p>
+    @if (store.unavailable() === 'demo') {
+      <p class="note" role="note">
+        <strong>In the portfolio,</strong> this copy keeps everything in this
+        browser and never syncs. A capture turns into a ready-made sample
+        concept instead of going to the AI, and pairing is off. The steps below
+        describe the full app.
+      </p>
+    }
+  </header>
+
+  <nav class="toc" aria-label="On this page">
+    <a href="#start" (click)="jump($event, 'start')">Get started</a>
+    <a href="#daily" (click)="jump($event, 'daily')">The daily set</a>
+    <a href="#habit" (click)="jump($event, 'habit')">Streaks and the garden</a>
+    <a href="#studylm" (click)="jump($event, 'studylm')">With StudyLM</a>
+    <a href="#data" (click)="jump($event, 'data')">Your data</a>
+  </nav>
+
+  <section id="start" class="card" aria-labelledby="start-title">
+    <h2 id="start-title" tabindex="-1">Get started</h2>
+    <ol class="steps">
+      <li>
+        <h3>Pair your devices</h3>
+        <p>
+          Open <a routerLink="../devices">Settings → Devices</a> and press “Send
+          me a code”. The code arrives in your Telegram chat; type it here. Pair
+          your phone and your computer the same way and they stay in sync.
+        </p>
+      </li>
+      <li>
+        <h3>Capture an idea</h3>
+        <p>
+          In the <a routerLink="../inbox">Inbox</a>, type what you want to
+          remember and press Save (or Ctrl/⌘ + Enter). Tap the mic to talk, or
+          hold it and let go to save a voice note of up to two minutes. You can
+          also share text from your phone's share sheet once the app is
+          installed, send it to your Telegram bot, or send it from StudyLM.
+        </p>
+      </li>
+      <li>
+        <h3>Keep the drafts you want</h3>
+        <p>
+          The AI turns a capture into one to three concepts, each with a plain
+          explanation and recall questions. They wait under “New ideas to keep”:
+          swipe right or press Keep, swipe left or press Discard, or ask for
+          something simpler. Drafts you leave alone are kept after 48 hours.
+        </p>
+      </li>
+    </ol>
+  </section>
+
+  <section id="daily" class="card" aria-labelledby="daily-title">
+    <h2 id="daily-title" tabindex="-1">The daily set</h2>
+    <p>
+      <a routerLink="../today">Today</a> holds a short set: 5, 7 or 10 cards
+      (choose in Settings), about three minutes. Answer in your head or type it,
+      then reveal the answer and grade yourself:
+    </p>
+    <ul class="keys">
+      <li><kbd>→</kbd> or swipe right: got it</li>
+      <li><kbd>↑</kbd> or swipe up: shaky</li>
+      <li><kbd>←</kbd> or swipe left: missed</li>
+      <li><kbd>Space</kbd> reveals the answer</li>
+    </ul>
+    <p>
+      A missed card comes back once at the end with another question. The
+      schedule (FSRS) spaces each concept out as you remember it better. New
+      concepts start the day after you keep them, at most two a day, and some
+      cards ask you to <em>teach it back</em> out loud or to compare two related
+      ideas. When nothing is due, opening the app still counts.
+    </p>
+  </section>
+
+  <section id="habit" class="card" aria-labelledby="habit-title">
+    <h2 id="habit-title" tabindex="-1">Streaks and the garden</h2>
+    <ul>
+      <li>
+        A day counts when you answer at least one card. Every seven days in a
+        row earns a freeze (two at most), used by itself on a day you miss.
+      </li>
+      <li>
+        No freeze left? Finish two sets the next day to repair the streak, once
+        a month.
+      </li>
+      <li>
+        The <a routerLink="../garden">garden</a> grows a plant per topic and a
+        leaf per concept: seed, sprout, leaf, bloom, golden, as your memory of
+        it lasts longer. A drooping leaf is fading; it will be in a set soon.
+      </li>
+      <li>
+        In <a routerLink="../settings">Settings</a>: set size, new concepts a
+        day, Telegram reminders, a Sunday recap, and an away mode that pauses
+        everything.
+      </li>
+    </ul>
+  </section>
+
+  <section id="studylm" class="card" aria-labelledby="studylm-title">
+    <h2 id="studylm-title" tabindex="-1">With StudyLM</h2>
+    <p>
+      StudyLM teaches; the Learning Engine makes it stick. They are separate
+      apps that share your reviews in one of two ways.
+    </p>
+
+    <h3>Linked (recommended)</h3>
+    <ol>
+      <li>
+        In StudyLM, open <strong>Progress</strong> and press “Connect to my
+        daily reviews”.
+      </li>
+      <li>
+        This app opens on its “Link StudyLM” page. On a paired device, press
+        “Link StudyLM”; you go back to StudyLM. Do this once per browser.
+      </li>
+    </ol>
+    <p>From then on, with nothing to tap:</p>
+    <ul>
+      <li>
+        when you mark a lesson complete, its cards come here (lessons you
+        finished before linking come too);
+      </li>
+      <li>
+        a flashcard you rate “Again” and a quiz question you get wrong come here
+        as cards, so what you miss comes back;
+      </li>
+      <li>
+        they arrive as drafts in the Inbox and are kept by themselves after 48
+        hours;
+      </li>
+      <li>
+        once a card is kept, your flashcard ratings and quiz answers on it in
+        StudyLM count as reviews: they move its schedule and your streak.
+        Answers on questions the engine doesn't track don't count, because it
+        has to know which idea you recalled;
+      </li>
+      <li>
+        StudyLM's Progress screen shows your streak, today's set and how its
+        cards grow.
+      </li>
+    </ul>
+    <p>
+      To stop, press “Disconnect” in StudyLM, or unlink it under
+      <a routerLink="../devices">Settings → Devices</a>.
+    </p>
+
+    <h3>Not linked</h3>
+    <p>
+      “Learn this” on a flashcard or “Add to my daily reviews” on a lesson opens
+      this app's Inbox, which asks before saving anything.
+    </p>
+  </section>
+
+  <section id="data" class="card" aria-labelledby="data-title">
+    <h2 id="data-title" tabindex="-1">Your data</h2>
+    <p>
+      Everything lives on your device first and works offline. Paired devices
+      sync through your own server; reminders come from a small worker that only
+      knows your schedule. Voice notes are deleted once transcribed.
+    </p>
+  </section>
+
+  <p class="back"><a routerLink="../today">Back to today</a></p>
+</article>

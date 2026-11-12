@@ -37,7 +37,7 @@ test.describe('Learning Engine', () => {
   // page.route can't see requests made through the service worker.
   test.use({ serviceWorkers: 'block' });
 
-  test('opens from the catalog on its seeded demo, which never syncs', async ({
+  test('opens from the catalog empty, in its own database, never synced', async ({
     page,
   }) => {
     const api = await blockApi(page);
@@ -45,12 +45,13 @@ test.describe('Learning Engine', () => {
     await page.getByRole('link', { name: 'Launch Learning Engine' }).click();
     await expect(page).toHaveURL(/\/apps\/learning\/today$/);
     await expect(page).toHaveTitle('Today · Learning');
-    // A month of reviews: either today's set or its finished state shows.
+    // No sample data: nothing is due, and the guide is one click away.
     await expect(
-      page
-        .getByRole('progressbar', { name: 'Today’s set' })
-        .or(page.getByRole('heading', { name: /for today|due today/ })),
+      page.getByRole('heading', { name: 'Nothing due today' }),
     ).toBeVisible({ timeout: 15_000 });
+    await expect(
+      page.getByRole('link', { name: 'How the Learning Engine works' }),
+    ).toBeVisible();
 
     const names = await page.evaluate(async () =>
       (await indexedDB.databases()).map((db) => db.name ?? ''),
@@ -80,5 +81,37 @@ test.describe('Learning Engine', () => {
     await expect(handOff).toBeVisible({ timeout: 15_000 });
     await handOff.getByRole('button', { name: 'Save', exact: true }).click();
     await expect(page.getByText('Got 4 ✓')).toBeVisible();
+  });
+
+  test('explains how to use it and how it works with StudyLM', async ({
+    page,
+  }) => {
+    await page.goto('/apps/learning/today');
+    await page.getByRole('link', { name: 'Guide', exact: true }).click();
+    await expect(page).toHaveURL(/\/apps\/learning\/guide$/);
+    await expect(page).toHaveTitle('Guide · Learning');
+    await expect(
+      page.getByRole('heading', { name: 'How the Learning Engine works' }),
+    ).toBeVisible({ timeout: 15_000 });
+    // In the portfolio, the page says what this copy can't do.
+    await expect(page.getByText('In the portfolio,')).toBeVisible();
+
+    // The contents scroll within the page instead of leaving it.
+    await page
+      .getByRole('navigation', { name: 'On this page' })
+      .getByRole('link', { name: 'With StudyLM' })
+      .click();
+    await expect(page).toHaveURL(/\/apps\/learning\/guide$/);
+    await expect(
+      page.getByRole('heading', { name: 'With StudyLM', level: 2 }),
+    ).toBeFocused();
+    await expect(
+      page.getByRole('heading', { name: 'Linked (recommended)' }),
+    ).toBeInViewport();
+
+    const axe = await new AxeBuilder({ page })
+      .include('lrn-learning-shell')
+      .analyze();
+    expect(axe.violations).toEqual([]);
   });
 });

@@ -10,7 +10,7 @@ import {
 import { APP_MODE } from '@ah/platform/app-mode';
 import { databaseName } from '@ah/platform/storage';
 import { SiteConfigService } from '@ah/shared/site-config';
-import { seedDemo } from './demo-seed';
+import { openDemo } from './demo';
 
 /** Why this device can't sync, when it can't. */
 export type SyncUnavailable = 'demo' | 'no-server';
@@ -47,20 +47,16 @@ export class LearningRuntime {
       throw new Error('This browser keeps no data for the Learning Engine.');
     }
     const name = await databaseName(this.mode, 'learning', 'LearningDatabase');
-    const local = new LearningLocalStore(new LearningDatabase(name));
     if (this.mode !== 'standalone') {
-      await seedDemo(
-        local,
-        Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC',
-      );
       return {
-        local,
+        local: await openDemo(name),
         api: null,
         client: null,
         edge: null,
         unavailable: 'demo',
       };
     }
+    const local = new LearningLocalStore(new LearningDatabase(name));
     const { apiUrl, learningEdgeUrl } = await this.siteConfig.load();
     const edge = learningEdgeUrl ? new EdgeClient(learningEdgeUrl) : null;
     if (!apiUrl) {

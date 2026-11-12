@@ -39,7 +39,10 @@ const TIER_ICONS: Record<HostTier, string> = {
 })
 export class ReviewsPanelComponent implements OnInit {
   protected readonly link = inject(LearningLink);
-  protected readonly reviewsUrl = inject(LearningClient).urlFor('today');
+  private readonly client = inject(LearningClient);
+  protected readonly reviewsUrl = this.client.urlFor('today');
+  /** The learning app's guide, which explains the link step by step. */
+  protected readonly guideUrl = this.client.urlFor('guide');
   private readonly preferences = inject(PreferencesStore, { optional: true });
   protected readonly copy = computed(
     () =>
