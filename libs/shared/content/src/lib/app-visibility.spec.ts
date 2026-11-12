@@ -41,6 +41,8 @@ describe('app-visibility', () => {
     // StudyLM went public once its go-live gate landed.
     expect(isRouteEnabled('/apps/studylm')).toBe(true);
     expect(isRouteEnabled('/apps/study')).toBe(true);
+    // The Learning Engine's seeded demo went public with the StudyLM link.
+    expect(isRouteEnabled('/apps/learning')).toBe(true);
 
     // Disabled routes
     expect(isRouteEnabled('/apps/strategy')).toBe(false);

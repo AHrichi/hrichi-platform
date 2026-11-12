@@ -686,6 +686,37 @@ export class AppsPage {
             'تنسيق ذكاء اصطناعي متعدد المستويات عبر n8n مع تبديل تلقائي بين النماذج لضمان التوافر.',
         },
         {
+          id: 'learning',
+          title: 'Learning Engine · التقط أي فكرة وراجعها في 3 دقائق',
+          category: 'production',
+          badge: {
+            label: 'تكرار متباعد مع شروحات بالذكاء الاصطناعي',
+            variant: 'success',
+          },
+          eyebrow: 'مجموعات يومية بخوارزمية FSRS، وشرح بصوتك، وحديقة للمعرفة',
+          summary:
+            'محرّك شخصي للتكرار المتباعد تلتقط فيه كل التطبيقات الأفكار: اكتب فكرة أو قلها، فتحصل على شرح قصير بأسلوب فاينمان وأسئلة استرجاع، ثم راجع مجموعة يومية محدودة تستغرق نحو 3 دقائق تُجدولها خوارزمية FSRS. هذا العرض يحتوي على شهر من المراجعات ولا يغادر متصفحك أبدًا.',
+          route: '/apps/learning',
+          icon: '🧠',
+          ctaLabel: 'Learning Engine',
+          stack: [
+            'Zoneless Angular 22',
+            'Native Federation',
+            'ts-fsrs (FSRS-6)',
+            'NgRx SignalStore',
+            'Dexie IndexedDB',
+            'NestJS · Cloudflare Workers',
+          ],
+          features: [
+            'مجموعة يومية من 5 إلى 10 بطاقات، تُسحب يمينًا أو أعلى أو يسارًا، مع لوحة المفاتيح والأزرار',
+            'شروحات بأسلوب فاينمان وأسئلة استرجاع يكتبها الذكاء الاصطناعي وتتحقق منها مخططات صارمة',
+            'سلاسل متسامحة مع أيام تجميد ونافذة إصلاح، ونقاط خبرة، وحديقة تُرسم من مستويات الذاكرة',
+            'شرح بالصوت أو بالكتابة، وبطاقات مقارنة، وبطاقات من StudyLM تنضم إلى المراجعات',
+          ],
+          architectureNotes:
+            'محلي أولًا: Dexie على كل جهاز مع صندوق صادر ومزامنة آمنة عند التكرار عبر NestJS؛ وتُشتق ذاكرة FSRS والسلاسل ونقاط الخبرة من أحداث مراجعة تُضاف فقط ولا تُخزَّن أبدًا.',
+        },
+        {
           id: 'whatsapp',
           title: 'ChatPulse · محلل محادثات واتساب وذكاء العلاقات',
           category: 'production',
@@ -961,6 +992,38 @@ export class AppsPage {
           ],
           architectureNotes:
             'Orchestration IA multi-paliers via n8n avec basculement automatique Groq 120B / Qwen 27B.',
+        },
+        {
+          id: 'learning',
+          title: 'Learning Engine · Tout capturer, réviser en 3 minutes',
+          category: 'production',
+          badge: {
+            label: 'Répétition espacée avec explications IA',
+            variant: 'success',
+          },
+          eyebrow:
+            'Séries quotidiennes FSRS, restitution orale et jardin des connaissances',
+          summary:
+            'Un moteur personnel de répétition espacée dans lequel chaque app peut capturer : tapez ou dites une idée, recevez une courte explication à la Feynman et des questions de rappel, puis révisez une série quotidienne plafonnée d’environ 3 minutes, planifiée avec FSRS. Cette démo contient un mois de révisions et ne quitte jamais votre navigateur.',
+          route: '/apps/learning',
+          icon: '🧠',
+          ctaLabel: 'Learning Engine',
+          stack: [
+            'Zoneless Angular 22',
+            'Native Federation',
+            'ts-fsrs (FSRS-6)',
+            'NgRx SignalStore',
+            'Dexie IndexedDB',
+            'NestJS · Cloudflare Workers',
+          ],
+          features: [
+            'Série quotidienne de 5 à 10 cartes, à glisser à droite, en haut ou à gauche, avec clavier et boutons',
+            'Explications à la Feynman et questions de rappel écrites par l’IA, validées par des schémas stricts',
+            'Séries indulgentes avec jokers et fenêtre de réparation, XP et un jardin dessiné à partir de la mémoire',
+            'Restitution à voix haute ou par écrit, cartes de contraste, et cartes StudyLM qui rejoignent les révisions',
+          ],
+          architectureNotes:
+            'Local d’abord : Dexie sur chaque appareil avec une file d’envoi et une synchronisation idempotente via NestJS ; la mémoire FSRS, les séries et l’XP sont déduits d’événements de révision en ajout seul, jamais stockés.',
         },
         {
           id: 'whatsapp',
@@ -1247,6 +1310,38 @@ export class AppsPage {
             'Orchestrazione IA multi-livello via n8n con modello principale Groq 120B e failover automatico su Qwen 27B.',
         },
         {
+          id: 'learning',
+          title: 'Learning Engine · Cattura tutto, ripassa in 3 minuti',
+          category: 'production',
+          badge: {
+            label: 'Ripetizione dilazionata con spiegazioni IA',
+            variant: 'success',
+          },
+          eyebrow:
+            'Set quotidiani FSRS, spiegazione a voce e giardino della conoscenza',
+          summary:
+            'Un motore personale di ripetizione dilazionata in cui ogni app può catturare: scrivi o di’ un’idea, ricevi una breve spiegazione alla Feynman e domande di richiamo, poi ripassa un set quotidiano limitato di circa 3 minuti, pianificato con FSRS. Questa demo contiene un mese di ripassi e non lascia mai il tuo browser.',
+          route: '/apps/learning',
+          icon: '🧠',
+          ctaLabel: 'Learning Engine',
+          stack: [
+            'Zoneless Angular 22',
+            'Native Federation',
+            'ts-fsrs (FSRS-6)',
+            'NgRx SignalStore',
+            'Dexie IndexedDB',
+            'NestJS · Cloudflare Workers',
+          ],
+          features: [
+            'Set quotidiano di 5–10 schede, da scorrere a destra, in alto o a sinistra, con tastiera e pulsanti',
+            'Spiegazioni alla Feynman e domande di richiamo scritte dall’IA, validate da schemi rigorosi',
+            'Serie indulgenti con jolly e finestra di recupero, XP e un giardino disegnato dalla memoria',
+            'Spiegazione a voce o per iscritto, schede di confronto e schede StudyLM che entrano nei ripassi',
+          ],
+          architectureNotes:
+            'Local-first: Dexie su ogni dispositivo con una coda di invio e una sincronizzazione idempotente tramite NestJS; memoria FSRS, serie e XP derivano da eventi di ripasso solo in aggiunta, mai salvati.',
+        },
+        {
           id: 'whatsapp',
           title:
             'ChatPulse · Analizzatore di Chat WhatsApp & Intelligence Relazionale con IA',
@@ -1530,6 +1625,38 @@ export class AppsPage {
             'Mehrstufige KI-Orchestrierung über n8n mit Groq-120B-Reasoning und automatischem Failover auf Qwen 27B.',
         },
         {
+          id: 'learning',
+          title: 'Learning Engine · Alles erfassen, in 3 Minuten wiederholen',
+          category: 'production',
+          badge: {
+            label: 'Verteilte Wiederholung mit KI-Erklärungen',
+            variant: 'success',
+          },
+          eyebrow:
+            'Tägliche FSRS-Sets, Erklären mit eigenen Worten und ein Wissensgarten',
+          summary:
+            'Eine persönliche Engine für verteilte Wiederholung, in die jede App Ideen erfasst: Tippe oder sprich eine Idee, erhalte eine kurze Feynman-Erklärung und Abruffragen und wiederhole dann ein begrenztes Tagesset von etwa 3 Minuten, geplant mit FSRS. Diese Demo enthält einen Monat Wiederholungen und verlässt nie deinen Browser.',
+          route: '/apps/learning',
+          icon: '🧠',
+          ctaLabel: 'Learning Engine',
+          stack: [
+            'Zoneless Angular 22',
+            'Native Federation',
+            'ts-fsrs (FSRS-6)',
+            'NgRx SignalStore',
+            'Dexie IndexedDB',
+            'NestJS · Cloudflare Workers',
+          ],
+          features: [
+            'Tagesset mit 5–10 Karten, nach rechts, oben oder links wischen, mit Tastatur und Schaltflächen',
+            'Von der KI geschriebene Feynman-Erklärungen und Abruffragen, geprüft mit strengen Schemas',
+            'Nachsichtige Serien mit Freezes und Reparaturfenster, XP und ein Garten aus den Gedächtnisstufen',
+            'Erklären per Stimme oder Text, Kontrastkarten und StudyLM-Karten, die in die Wiederholungen kommen',
+          ],
+          architectureNotes:
+            'Local-first: Dexie auf jedem Gerät mit Ausgangswarteschlange und idempotenter Synchronisierung über NestJS; FSRS-Gedächtnis, Serien und XP werden aus nur angehängten Wiederholungsereignissen abgeleitet, nie gespeichert.',
+        },
+        {
           id: 'whatsapp',
           title: 'ChatPulse · WhatsApp-Chat-Analyse & KI-Beziehungsanalytik',
           category: 'production',
@@ -1800,6 +1927,37 @@ export class AppsPage {
         ],
         architectureNotes:
           'Multi-tier AI orchestration via n8n with automated failover and zero telemetry without consent.',
+      },
+      {
+        id: 'learning',
+        title: 'Learning Engine · Capture Anything, Review in 3 Minutes',
+        category: 'production',
+        badge: {
+          label: 'Spaced Repetition with AI Explanations',
+          variant: 'success',
+        },
+        eyebrow: 'FSRS Daily Sets, Teach-Back and a Knowledge Garden',
+        summary:
+          'A personal spaced-repetition engine every app captures into: type or say an idea, get a short Feynman explanation and recall questions, then review a capped Daily Set of about 3 minutes, scheduled with FSRS. This demo is seeded with a month of reviews and never leaves your browser.',
+        route: '/apps/learning',
+        icon: '🧠',
+        ctaLabel: 'Learning Engine',
+        stack: [
+          'Zoneless Angular 22',
+          'Native Federation',
+          'ts-fsrs (FSRS-6)',
+          'NgRx SignalStore',
+          'Dexie IndexedDB',
+          'NestJS · Cloudflare Workers',
+        ],
+        features: [
+          'A Daily Set of 5–10 cards, swiped right, up or left, with keyboard and button fallbacks',
+          'AI-written Feynman explanations and recall prompts, validated against strict schemas',
+          'Forgiving streaks with freezes and a repair window, XP and a Knowledge Garden drawn from memory tiers',
+          'Teach-back by voice or text, contrast cards, and StudyLM cards that join the reviews',
+        ],
+        architectureNotes:
+          'Local-first: Dexie on each device with an outbox and idempotent sync through NestJS; FSRS memory, streaks and XP are derived from append-only review events, never stored.',
       },
       {
         id: 'whatsapp',

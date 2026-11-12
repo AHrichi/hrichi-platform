@@ -64,6 +64,13 @@ export default defineConfig({
       cwd: workspaceRoot,
     },
     {
+      // The Learning Engine's demo: its own database, never synced.
+      command: 'pnpm exec nx run product-learning:serve-static',
+      url: 'http://localhost:4311/remoteEntry.json',
+      reuseExistingServer: true,
+      cwd: workspaceRoot,
+    },
+    {
       command: isCI
         ? 'pnpm exec nx run shell:serve-static'
         : 'pnpm exec nx run shell:serve',
