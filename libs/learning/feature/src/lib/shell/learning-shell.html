@@ -47,11 +47,12 @@
 
   <p class="notice" role="status" aria-live="polite">{{ store.notice() }}</p>
 
-  <main class="main">
+  <!-- The portfolio has its own <main>; embedded, this one is no landmark. -->
+  <div class="main" [attr.role]="standalone ? 'main' : null">
     @if (store.fatal(); as fatal) {
       <p class="fatal" role="alert">{{ fatal }}</p>
     } @else {
       <router-outlet />
     }
-  </main>
+  </div>
 </div>

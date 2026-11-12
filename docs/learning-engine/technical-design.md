@@ -423,7 +423,7 @@ It writes `tmp/jev-spike/report.json` with each model's agreement, false-"nailed
 
 **Portfolio demo (as built):**
 
-- `product-learning` is in `tools/federation/remotes.json`, the shell's manifest and routes (`/apps/learning`), the constellation's links and `app-visibility.ts`, where it is **hidden** (`learning: false`) until you switch it on.
+- `product-learning` is in `tools/federation/remotes.json`, the shell's manifest and routes (`/apps/learning`), the constellation's links and `app-visibility.ts`. It was hidden (`learning: false`) until 2026-11-12, when it went public with a card in the apps catalog (five languages) and an e2e spec (`shell-e2e/src/learning.spec.ts`: the catalog opens the seeded demo, and StudyLM's hand-off lands in its Inbox).
 - In `embedded-demo` mode the app opens `ah-demo-learning`, seeded once with 10 golden concepts, about a month of reviews on a spacing ladder and a 12-day streak, so Today, tiers and Settings look like real use.
 - A capture in the demo turns at once into one of the 2 spare golden concepts, and says so. The demo never syncs, pairs or calls the AI.
 

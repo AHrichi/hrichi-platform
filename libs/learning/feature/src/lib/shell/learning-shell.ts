@@ -5,6 +5,7 @@ import {
   inject,
 } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { APP_MODE } from '@ah/platform/app-mode';
 import { LearningStore } from '../store/learning.store';
 
 /** The app's frame: the bar with the sync status, and the screen below. */
@@ -17,6 +18,8 @@ import { LearningStore } from '../store/learning.store';
 })
 export class LearningShell {
   protected readonly store = inject(LearningStore);
+  /** Standalone, the app's content is the page's main landmark. */
+  protected readonly standalone = inject(APP_MODE) === 'standalone';
 
   /** One short status for the pill, and whether tapping it syncs. */
   protected readonly status = computed(() => {

@@ -28,7 +28,7 @@ export const PORTFOLIO_APPS_CONFIG: Record<PortfolioAppKey, boolean> = {
   studylm: true, // StudyLM · AI Software Engineering Curriculum
   whatsapp: false, // ChatPulse · WhatsApp Intelligence Analyzer
   basecamp: false, // Basecamp · Camping Trip Planner
-  learning: false, // Learning Engine · Capture, daily review, streaks (ADR-0024)
+  learning: true, // Learning Engine · Capture, daily review, streaks (ADR-0024)
   'alarm-engine': false, // Nightly Alarm Decision Engine
 
   // --- Interactive Engineering Labs ---
