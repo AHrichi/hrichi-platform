@@ -69,6 +69,12 @@ jobs:
       - run: pnpm nx affected -t lint test build
         env:
           MONGODB_TEST_URI: mongodb://localhost:27017
+      # Render installs only the API's production dependencies; a runtime
+      # package left in devDependencies would crash it on start.
+      - name: The API's production install has every package its bundle requires
+        run: |
+          pnpm nx build api
+          node tools/scripts/check-api-dependencies.mjs
       # orbit-api's tests rewrite openapi.json; the TypeScript types follow it.
       - name: The Orbit API contract and its TypeScript types are committed (ADR-0013)
         run: |
