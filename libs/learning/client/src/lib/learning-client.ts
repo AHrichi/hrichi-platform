@@ -13,9 +13,14 @@ import {
   HANDOFF_KEY,
   type LearningTodaySummary,
   readTodaySummary,
+  resolveStandaloneLearningUrl,
   TODAY_SUMMARY_KEY,
 } from '@ah/learning/contracts';
 import { APP_MODE } from '@ah/platform/app-mode';
+
+function isLocalHostname(hostname: string): boolean {
+  return hostname === 'localhost' || hostname === '127.0.0.1';
+}
 
 /**
  * Where the learning app lives. Inside the portfolio it is a route of the
@@ -25,11 +30,11 @@ import { APP_MODE } from '@ah/platform/app-mode';
 export const LEARNING_APP_URL = new InjectionToken<string>('LEARNING_APP_URL', {
   providedIn: 'root',
   factory: () => {
-    if (inject(APP_MODE) === 'embedded-demo') return '/apps/learning';
+    if (inject(APP_MODE, { optional: true }) === 'embedded-demo') {
+      return '/apps/learning';
+    }
     const host = inject(DOCUMENT).defaultView?.location.hostname ?? '';
-    return host === 'localhost' || host === '127.0.0.1'
-      ? 'http://localhost:4311'
-      : 'https://product-learning.ahmed-hrichi.workers.dev';
+    return resolveStandaloneLearningUrl(isLocalHostname(host));
   },
 });
 
@@ -45,6 +50,10 @@ export class LearningClient {
   private readonly router = inject(Router);
   private readonly window = inject(DOCUMENT).defaultView;
   private readonly summary = signal<LearningTodaySummary | null>(this.read());
+
+  /** True when the host runs inside the portfolio's embedded demo shell. */
+  readonly isEmbeddedDemo =
+    (inject(APP_MODE, { optional: true }) ?? 'standalone') === 'embedded-demo';
 
   /** Today's set, when the learning app runs on this origin. */
   readonly today = this.summary.asReadonly();
@@ -64,15 +73,38 @@ export class LearningClient {
     return `${this.appUrl.replace(/\/+$/, '')}/${path}`;
   }
 
+  /** The standalone learning app's address for `path`, even inside a demo shell. */
+  standaloneUrlFor(path: string, isLocalHost = false): string {
+    return `${resolveStandaloneLearningUrl(isLocalHost)}/${path}`;
+  }
+
+  /**
+   * Builds the Inbox hand-off URL (`#capture=...`), or `null` when no item has
+   * text to capture. The fragment never reaches a server.
+   */
+  captureHref(
+    items: CaptureItem | readonly CaptureItem[],
+    options?: { standalone?: boolean; isLocalHost?: boolean },
+  ): string | null {
+    const list = Array.isArray(items) ? items : [items as CaptureItem];
+    if (!list.some((item) => item.text.trim())) return null;
+    const inboxUrl = options?.standalone
+      ? this.standaloneUrlFor('inbox', options.isLocalHost)
+      : this.urlFor('inbox');
+    return `${inboxUrl}#${HANDOFF_KEY}=${encodeHandoff(list)}`;
+  }
+
   /**
    * Hands captures to the learning app: an in-app navigation inside the
-   * portfolio, a new tab anywhere else. The text rides in the fragment,
-   * which never reaches a server.
+   * portfolio, a new tab for the standalone engine. The text rides in the
+   * fragment, which never reaches a server.
    */
-  capture(items: CaptureItem | readonly CaptureItem[]): void {
-    const list = Array.isArray(items) ? items : [items as CaptureItem];
-    if (!list.some((item) => item.text.trim())) return;
-    const url = `${this.urlFor('inbox')}#${HANDOFF_KEY}=${encodeHandoff(list)}`;
+  capture(
+    items: CaptureItem | readonly CaptureItem[],
+    options?: { standalone?: boolean; isLocalHost?: boolean },
+  ): void {
+    const url = this.captureHref(items, options);
+    if (!url) return;
     if (url.startsWith('/')) {
       void this.router.navigateByUrl(url);
     } else {

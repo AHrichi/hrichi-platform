@@ -6,23 +6,12 @@ import {
   type Signal,
   signal,
 } from '@angular/core';
+import {
+  LEARNING_STANDALONE_ORIGINS,
+  resolveStandaloneLearningUrl,
+} from '@ah/learning/contracts';
 
-/**
- * Standalone origins for the Learning Engine (`product-learning` in
- * `tools/federation/remotes.json`). Used inside embedded-demo notices so
- * learners can jump straight to the full standalone app.
- */
-export const LEARNING_STANDALONE_ORIGINS = {
-  dev: 'http://localhost:4311',
-  prod: 'https://product-learning.ahmed-hrichi.workers.dev',
-} as const;
-
-/** Resolves the standalone Learning Engine URL for local vs production hosts. */
-export function resolveStandaloneLearningUrl(isLocalHost: boolean): string {
-  return isLocalHost
-    ? LEARNING_STANDALONE_ORIGINS.dev
-    : LEARNING_STANDALONE_ORIGINS.prod;
-}
+export { LEARNING_STANDALONE_ORIGINS, resolveStandaloneLearningUrl };
 
 /**
  * Provides the standalone Learning Engine URL without causing SSR hydration

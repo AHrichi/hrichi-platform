@@ -342,6 +342,8 @@ export interface StudyLmCopy {
     disconnect: string;
     disconnectConfirm: string;
     sentToReviews: string;
+    tryInDemo: string;
+    standaloneHint: string;
     howItWorks: string;
   };
   modals: {
@@ -740,6 +742,8 @@ export const STUDYLM_COPY: Record<SiteLanguage, StudyLmCopy> = {
       disconnectConfirm:
         'Disconnect StudyLM from your daily reviews? Cards already sent stay there.',
       sentToReviews: 'In your reviews',
+      tryInDemo: 'Try in demo',
+      standaloneHint: 'Standalone app, opens in a new tab',
       howItWorks: 'How it works',
     },
     modals: {
@@ -1140,6 +1144,8 @@ export const STUDYLM_COPY: Record<SiteLanguage, StudyLmCopy> = {
       disconnectConfirm:
         'Délier StudyLM de vos révisions du jour ? Les cartes déjà envoyées y restent.',
       sentToReviews: 'Dans vos révisions',
+      tryInDemo: 'Essayer en démo',
+      standaloneHint: 'Application autonome, ouvre un nouvel onglet',
       howItWorks: 'Comment ça marche',
     },
     modals: {
@@ -1534,6 +1540,8 @@ export const STUDYLM_COPY: Record<SiteLanguage, StudyLmCopy> = {
       disconnectConfirm:
         'إلغاء ربط StudyLM بمراجعاتك اليومية؟ تبقى البطاقات المُرسلة هناك.',
       sentToReviews: 'في مراجعاتك',
+      tryInDemo: 'تجربة في العرض التجريبي',
+      standaloneHint: 'التطبيق المستقل، يفتح في تبويب جديد',
       howItWorks: 'كيف يعمل',
     },
     modals: {
@@ -1935,6 +1943,8 @@ export const STUDYLM_COPY: Record<SiteLanguage, StudyLmCopy> = {
       disconnectConfirm:
         'Scollegare StudyLM dai ripassi quotidiani? Le schede già inviate restano lì.',
       sentToReviews: 'Nei tuoi ripassi',
+      tryInDemo: 'Prova nella demo',
+      standaloneHint: 'App standalone, si apre in una nuova scheda',
       howItWorks: 'Come funziona',
     },
     modals: {
@@ -2337,6 +2347,8 @@ export const STUDYLM_COPY: Record<SiteLanguage, StudyLmCopy> = {
       disconnectConfirm:
         'StudyLM von deinen täglichen Wiederholungen trennen? Bereits gesendete Karten bleiben dort.',
       sentToReviews: 'In deinen Wiederholungen',
+      tryInDemo: 'In der Demo testen',
+      standaloneHint: 'Eigenständige App, öffnet in einem neuen Tab',
       howItWorks: 'So funktioniert es',
     },
     modals: {

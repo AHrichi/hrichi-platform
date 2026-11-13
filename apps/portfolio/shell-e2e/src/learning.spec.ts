@@ -105,7 +105,17 @@ test.describe('Learning Engine', () => {
   }) => {
     await n8nDown(page);
     await page.goto('/apps/studylm/learn/bfs');
-    await page.getByRole('button', { name: 'Add to my daily reviews' }).click();
+    const standaloneLink = page.getByRole('link', {
+      name: /Add to my daily reviews/,
+    });
+    await expect(standaloneLink).toHaveAttribute(
+      'href',
+      /^http:\/\/localhost:4311\/inbox#capture=/,
+    );
+    await expect(standaloneLink).toHaveAttribute('target', '_blank');
+    await expect(standaloneLink).toHaveAttribute('rel', /noopener/);
+
+    await page.getByRole('button', { name: 'Try in demo' }).click();
 
     await expect(page).toHaveURL(/\/apps\/learning\/inbox$/);
     const handOff = page.getByRole('region', {
