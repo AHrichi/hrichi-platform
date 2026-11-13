@@ -146,8 +146,8 @@ describe('StudyLM Sync over HTTP', () => {
           progress: [
             {
               lessonId: 'gen-subj-1-sec-1',
-              steps: { s1: 2 },
-              checks: {},
+              steps: { s0: -1, s1: 2 },
+              checks: { c1: { answer: 0, correct: true } },
               completedAt: null,
               updatedAt: '2026-11-13T10:07:00.000Z',
             },

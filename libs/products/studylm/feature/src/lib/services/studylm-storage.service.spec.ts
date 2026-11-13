@@ -2,8 +2,12 @@ import 'fake-indexeddb/auto';
 import { IDBFactory } from 'fake-indexeddb';
 import Dexie from 'dexie';
 import { Injector, runInInjectionContext } from '@angular/core';
+import * as v from 'valibot';
 import { APP_MODE, type AppMode } from '@ah/platform/app-mode';
-import type { StudySubject } from '@ah/products/studylm/domain';
+import {
+  StudyLmSyncRequestSchema,
+  type StudySubject,
+} from '@ah/products/studylm/domain';
 import {
   type GeneratedLessonRecord,
   StudyLmDatabase,
@@ -179,5 +183,32 @@ describe('StudyLmStorageService', () => {
     expect((await service.getSubject(SUBJECT.id))?.title).toBe(
       'Graphs (Edited)',
     );
+  });
+
+  it('normalizes legacy or pre-queued syncOutbox records so batches always match the sync contract', async () => {
+    const db = new StudyLmDatabase();
+    await db.syncOutbox.put({
+      key: 'progress:gen-step-minus-one',
+      kind: 'progress',
+      id: 'gen-step-minus-one',
+      updatedAt: '2026-11-13T12:00:00.000Z',
+      data: {
+        lessonId: 'gen-step-minus-one',
+        steps: { visual: -1 },
+        checks: { c1: { answer: undefined, correct: true } },
+        completedAt: null,
+        updatedAt: '2026-11-13T12:00:00.000Z',
+      },
+    });
+    db.close();
+
+    const service = storage('standalone');
+    const batch = await service.readOutboxBatch();
+    const parsed = v.safeParse(StudyLmSyncRequestSchema, {
+      cursor: 0,
+      push: batch.push,
+    });
+    expect(parsed.success).toBe(true);
+    expect(batch.push.progress[0]?.steps).toEqual({ visual: -1 });
   });
 });

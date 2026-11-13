@@ -4,6 +4,7 @@ import {
   incomingStudyLmWins,
   isStudyLmFutureTimestamp,
   isSyncedSettingKey,
+  normalizeStudyLmRecord,
   StudyLmPairingConfirmSchema,
   StudyLmPairingStartSchema,
   StudyLmSyncRequestSchema,
@@ -121,5 +122,40 @@ describe('StudyLM sync domain contracts', () => {
         new Date('2026-11-13T10:00:00.000Z'),
       ),
     ).toBe(false);
+  });
+
+  it('accepts StepTimeline -1 indices, omitted optional answers/overviews, and normalizes legacy records', () => {
+    const legacySubject = normalizeStudyLmRecord(
+      'subject',
+      'subj-legacy',
+      {
+        id: 'subj-legacy',
+        title: 'Legacy Subject',
+        flashcards: [{ front: 'Q', back: 'A' }],
+      },
+      '2026-11-13T10:00:00.000Z',
+    );
+    const legacyProgress = normalizeStudyLmRecord(
+      'progress',
+      'gen-legacy',
+      {
+        lessonId: 'gen-legacy',
+        steps: { v1: -1, v2: 1.9, bad: 'NaN' },
+        checks: { c1: { correct: true } },
+      },
+      '2026-11-13T10:00:00.000Z',
+    );
+
+    const parsed = v.safeParse(StudyLmSyncRequestSchema, {
+      cursor: 0,
+      push: {
+        ...emptyStudyLmPush(),
+        subjects: [legacySubject],
+        progress: [legacyProgress],
+      },
+    });
+    expect(parsed.success).toBe(true);
+    expect(legacyProgress.steps).toEqual({ v1: -1, v2: 1 });
+    expect(legacyProgress.checks['c1']?.answer).toBeNull();
   });
 });
