@@ -130,6 +130,26 @@
         {{ t().launchPrefix }} {{ app.ctaLabel || app.title }}
         <span aria-hidden="true">{{ arrow() }}</span>
       </a>
+      @if (standaloneUrl(app.id); as standaloneHref) {
+        <a
+          [href]="standaloneHref"
+          target="_blank"
+          rel="noopener noreferrer"
+          ahButton="secondary"
+          class="app-standalone-btn"
+          [attr.aria-label]="
+            standaloneCopy().standaloneCta +
+            ': ' +
+            (app.ctaLabel || app.title) +
+            ' (' +
+            standaloneCopy().opensNewTab +
+            ')'
+          "
+        >
+          {{ standaloneCopy().standaloneCta }}
+          <span aria-hidden="true">{{ externalArrow() }}</span>
+        </a>
+      }
       <button
         type="button"
         ahButton="ghost"

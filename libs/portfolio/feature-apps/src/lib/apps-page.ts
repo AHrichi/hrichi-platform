@@ -1,11 +1,12 @@
 import {
+  afterNextRender,
   ChangeDetectionStrategy,
   Component,
   computed,
   inject,
   signal,
 } from '@angular/core';
-import { NgTemplateOutlet } from '@angular/common';
+import { DOCUMENT, NgTemplateOutlet } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { Seo } from '@ah/portfolio/util-seo';
 import { isAppEnabled } from '@ah/shared/content';
@@ -231,6 +232,90 @@ const LAB_COPY: Partial<Record<SiteLanguage, Record<string, LabText>>> = {
   },
 };
 
+const STANDALONE_APP_ORIGINS: Readonly<
+  Record<string, { readonly dev: string; readonly prod: string }>
+> = {
+  lighting: {
+    dev: 'http://localhost:4309',
+    prod: 'https://product-lighting.ahmed-hrichi.workers.dev',
+  },
+  strategy: {
+    dev: 'http://localhost:4303',
+    prod: 'https://product-strategy.ahmed-hrichi.workers.dev',
+  },
+  dispatch: {
+    dev: 'http://localhost:4306',
+    prod: 'https://product-dispatch.ahmed-hrichi.workers.dev',
+  },
+  studylm: {
+    dev: 'http://localhost:4307',
+    prod: 'https://product-studylm.ahmed-hrichi.workers.dev',
+  },
+  whatsapp: {
+    dev: 'http://localhost:4308',
+    prod: 'https://product-whatsapp.ahmed-hrichi.workers.dev',
+  },
+  basecamp: {
+    dev: 'http://localhost:4310',
+    prod: 'https://product-basecamp.ahmed-hrichi.workers.dev',
+  },
+  learning: {
+    dev: 'http://localhost:4311',
+    prod: 'https://product-learning.ahmed-hrichi.workers.dev',
+  },
+  sky: {
+    dev: 'http://localhost:4302',
+    prod: 'https://lab-sky.ahmed-hrichi.workers.dev',
+  },
+  rxjs: {
+    dev: 'http://localhost:4304',
+    prod: 'https://lab-rxjs.ahmed-hrichi.workers.dev',
+  },
+  ngrx: {
+    dev: 'http://localhost:4305',
+    prod: 'https://lab-ngrx.ahmed-hrichi.workers.dev',
+  },
+};
+
+/**
+ * Resolves the standalone origin for a federated app or lab (`tools/federation/remotes.json`),
+ * or `null` when an app runs only inside the portfolio shell.
+ */
+export function resolveStandaloneAppUrl(
+  id: string,
+  isLocalHost: boolean,
+): string | null {
+  const origin = STANDALONE_APP_ORIGINS[id];
+  if (!origin) return null;
+  return isLocalHost ? origin.dev : origin.prod;
+}
+
+const STANDALONE_COPY: Record<
+  SiteLanguage,
+  { readonly standaloneCta: string; readonly opensNewTab: string }
+> = {
+  ar: {
+    standaloneCta: 'فتح التطبيق المستقل',
+    opensNewTab: 'يفتح في تبويب جديد',
+  },
+  fr: {
+    standaloneCta: 'Ouvrir en autonome',
+    opensNewTab: 'ouvre un nouvel onglet',
+  },
+  it: {
+    standaloneCta: 'Apri standalone',
+    opensNewTab: 'si apre in una nuova scheda',
+  },
+  de: {
+    standaloneCta: 'Eigenständig öffnen',
+    opensNewTab: 'öffnet in einem neuen Tab',
+  },
+  en: {
+    standaloneCta: 'Open standalone',
+    opensNewTab: 'opens in a new tab',
+  },
+};
+
 @Component({
   selector: 'ah-apps-page',
   standalone: true,
@@ -248,12 +333,25 @@ const LAB_COPY: Partial<Record<SiteLanguage, Record<string, LabText>>> = {
   styleUrl: './apps-page.scss',
 })
 export class AppsPage {
+  private readonly document = inject(DOCUMENT);
+  private readonly isLocalHost = signal(false);
   /** The site's language, set by the header's switch (PreferencesStore). */
   readonly currentLang = inject(PreferencesStore).language;
+  protected readonly standaloneCopy = computed(
+    () => STANDALONE_COPY[this.currentLang()] ?? STANDALONE_COPY.en,
+  );
   /** "Go" arrows point the way the text reads. */
   protected readonly arrow = computed(() =>
     this.currentLang() === 'ar' ? '←' : '→',
   );
+  /** External-launch arrows match reading direction. */
+  protected readonly externalArrow = computed(() =>
+    this.currentLang() === 'ar' ? '↖' : '↗',
+  );
+
+  standaloneUrl(id: string): string | null {
+    return resolveStandaloneAppUrl(id, this.isLocalHost());
+  }
 
   readonly t = computed(() => {
     const l = this.currentLang();
@@ -2096,6 +2194,11 @@ export class AppsPage {
       description:
         'Explore live production applications and interactive engineering laboratories: LuxPath public lighting, Basecamp camping planner, PulseOps commercial dispatch, StrategyApp financial planning, Sky Lab 3D planetarium, RxJS and NgRx architectures.',
       path: '/apps',
+    });
+
+    afterNextRender(() => {
+      const host = this.document.defaultView?.location.hostname ?? '';
+      this.isLocalHost.set(host === 'localhost' || host === '127.0.0.1');
     });
   }
 }

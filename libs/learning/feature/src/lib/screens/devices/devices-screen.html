@@ -4,8 +4,18 @@
   @switch (store.unavailable()) {
     @case ('demo') {
       <ah-alert variant="info" title="This is the demo" [headingLevel]="null">
-        It keeps everything in this browser and never syncs. The real app pairs
-        your phone and laptop through your own Telegram bot.
+        It keeps everything in this browser and never syncs.
+        <a
+          class="demo-link"
+          [href]="standaloneUrl()"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Open the real Learning Engine<span class="visually-hidden">
+            (opens in a new tab)</span
+          >
+        </a>
+        to pair your phone and laptop through your own Telegram bot.
       </ah-alert>
     }
     @case ('no-server') {

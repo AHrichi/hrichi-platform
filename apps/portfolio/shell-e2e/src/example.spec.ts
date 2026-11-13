@@ -1,3 +1,4 @@
+import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from './support/test';
 
 const recruiterHeadline =
@@ -87,4 +88,30 @@ test('shows a fallback when a remote is unreachable', async ({ page }) => {
     page.getByRole('heading', { name: "This section didn't load" }),
   ).toBeVisible();
   await expect(page.getByRole('link', { name: 'Work' })).toBeVisible();
+});
+
+test('apps catalog provides direct standalone links and passes accessibility checks', async ({
+  page,
+}) => {
+  await page.goto('/apps');
+
+  const cases: ReadonlyArray<readonly [string, string]> = [
+    ['Open standalone: LuxPath (opens in a new tab)', 'http://localhost:4309'],
+    ['Open standalone: StudyLM (opens in a new tab)', 'http://localhost:4307'],
+    [
+      'Open standalone: Learning Engine (opens in a new tab)',
+      'http://localhost:4311',
+    ],
+    ['Open standalone: Sky Lab (opens in a new tab)', 'http://localhost:4302'],
+  ];
+
+  for (const [name, href] of cases) {
+    const link = page.getByRole('link', { name });
+    await expect(link).toHaveAttribute('href', href);
+    await expect(link).toHaveAttribute('target', '_blank');
+    await expect(link).toHaveAttribute('rel', /noopener/);
+  }
+
+  const axe = await new AxeBuilder({ page }).include('main').analyze();
+  expect(axe.violations).toEqual([]);
 });

@@ -87,6 +87,7 @@ export interface StudyLmCopy {
     writeLesson: string;
     studyCards: string;
     takeQuiz: string;
+    moreActions: string;
     emptyTitle: string;
     emptyDescription: string;
     emptyAction: string;
@@ -464,6 +465,7 @@ export const STUDYLM_COPY: Record<SiteLanguage, StudyLmCopy> = {
       writeLesson: 'Write a Lesson',
       studyCards: 'Study Cards',
       takeQuiz: 'Take Quiz',
+      moreActions: 'More section actions',
       emptyTitle: 'No Curriculum Roadmap Yet',
       emptyDescription:
         'StudyLM uses multi-model free-tier AI engines grounded in official specifications to break down software engineering concepts into structured chapters and atomic sections.',
@@ -862,6 +864,7 @@ export const STUDYLM_COPY: Record<SiteLanguage, StudyLmCopy> = {
       writeLesson: 'Rédiger une leçon',
       studyCards: 'Étudier les cartes',
       takeQuiz: 'Passer le quiz',
+      moreActions: 'Plus d’actions',
       emptyTitle: 'Aucune feuille de route pour l’instant',
       emptyDescription:
         'StudyLM utilise des moteurs IA multi-modèles ancrés dans les spécifications officielles pour découper les concepts logiciels en chapitres structurés.',
@@ -1261,6 +1264,7 @@ export const STUDYLM_COPY: Record<SiteLanguage, StudyLmCopy> = {
       writeLesson: 'كتابة درس',
       studyCards: 'دراسة البطاقات',
       takeQuiz: 'بدء الاختبار',
+      moreActions: 'المزيد من الإجراءات',
       emptyTitle: 'لا توجد خارطة تعلم بعد',
       emptyDescription:
         'يستخدم StudyLM محركات ذكاء اصطناعي متعددة النماذج وموثقة بالمصادر الرسمية لتقسيم مفاهيم هندسة البرمجيات إلى فصول وأقسام منظمة.',
@@ -1654,6 +1658,7 @@ export const STUDYLM_COPY: Record<SiteLanguage, StudyLmCopy> = {
       writeLesson: 'Scrivi una lezione',
       studyCards: 'Studia carte',
       takeQuiz: 'Fai il quiz',
+      moreActions: 'Altre azioni',
       emptyTitle: 'Nessuna roadmap presente',
       emptyDescription:
         'StudyLM usa motori IA multi-modello basati su specifiche ufficiali per suddividere i concetti di ingegneria del software in capitoli strutturati e sezioni atomiche.',
@@ -2054,6 +2059,7 @@ export const STUDYLM_COPY: Record<SiteLanguage, StudyLmCopy> = {
       writeLesson: 'Lektion schreiben',
       studyCards: 'Karten lernen',
       takeQuiz: 'Quiz starten',
+      moreActions: 'Weitere Aktionen',
       emptyTitle: 'Noch kein Lehrplan vorhanden',
       emptyDescription:
         'StudyLM nutzt KI-Engines auf Basis offizieller Spezifikationen, um Software-Engineering-Konzepte in strukturierte Kapitel und atomare Abschnitte zu gliedern.',

@@ -3,7 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { PreferencesStore } from '@ah/shared/state';
 import { describe, expect, it } from 'vitest';
-import { AppsPage } from './apps-page';
+import { AppsPage, resolveStandaloneAppUrl } from './apps-page';
 
 describe('AppsPage', () => {
   it('renders production applications and engineering labs', async () => {
@@ -140,5 +140,40 @@ describe('AppsPage', () => {
       'Feld-Engineering-Plattform für Straßen- und Solarbeleuchtung',
     );
     expect(text).not.toContain('Camping- & Outdoor-Tourenplaner');
+  });
+
+  it('resolves standalone URLs only for federated remotes', () => {
+    expect(resolveStandaloneAppUrl('studylm', false)).toBe(
+      'https://product-studylm.ahmed-hrichi.workers.dev',
+    );
+    expect(resolveStandaloneAppUrl('studylm', true)).toBe(
+      'http://localhost:4307',
+    );
+    expect(resolveStandaloneAppUrl('learning', false)).toBe(
+      'https://product-learning.ahmed-hrichi.workers.dev',
+    );
+    expect(resolveStandaloneAppUrl('learning', true)).toBe(
+      'http://localhost:4311',
+    );
+    expect(resolveStandaloneAppUrl('sky', false)).toBe(
+      'https://lab-sky.ahmed-hrichi.workers.dev',
+    );
+    expect(resolveStandaloneAppUrl('autosphere', false)).toBeNull();
+  });
+
+  it('renders a standalone link for every federated app card and omits it for shell-only apps', async () => {
+    const { el } = await setup();
+    const standaloneLinks = Array.from(
+      el.querySelectorAll<HTMLAnchorElement>('.app-standalone-btn'),
+    );
+    const cards = Array.from(el.querySelectorAll<HTMLElement>('.app-card'));
+    // Enabled federated apps: lighting, studylm, learning, sky, rxjs, ngrx (autosphere is shell-only).
+    expect(standaloneLinks.length).toBe(cards.length - 1);
+    for (const link of standaloneLinks) {
+      expect(link.getAttribute('target')).toBe('_blank');
+      expect(link.getAttribute('rel')).toContain('noopener');
+      expect(link.getAttribute('href')).toMatch(/^https?:\/\//);
+      expect(link.getAttribute('aria-label')).toContain('Open standalone:');
+    }
   });
 });
