@@ -170,6 +170,8 @@ import { STUDYLM_COPY } from '../../i18n/studylm-copy';
         <ah-learn-this
           [items]="reviewItems()"
           [label]="copy().learn.addToReviews"
+          [demoLabel]="copy().reviews.tryInDemo"
+          [standaloneHint]="copy().reviews.standaloneHint"
           [sentLabel]="copy().reviews.sentToReviews"
           variant="primary"
           size="md"

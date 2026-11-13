@@ -1,4 +1,6 @@
-import { defineConfig } from 'vitest/config';
+/// <reference types='vitest' />
+import { defineConfig } from 'vite';
+import angular from '@analogjs/vite-plugin-angular';
 
 export default defineConfig(() => ({
   root: import.meta.dirname,
@@ -6,14 +8,14 @@ export default defineConfig(() => ({
   resolve: {
     tsconfigPaths: true,
   },
+  plugins: [angular({ tsconfig: `${import.meta.dirname}/tsconfig.spec.json` })],
   test: {
     name: 'learning-client',
     watch: false,
     globals: true,
-    environment: 'node',
+    environment: 'jsdom',
     include: ['{src,tests}/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
-    // The hand-off codec is tested in learning-contracts; the link's core here.
-    passWithNoTests: true,
+    setupFiles: ['src/test-setup.ts'],
     reporters: ['default'],
     coverage: {
       reportsDirectory: '../../../coverage/libs/learning/client',
