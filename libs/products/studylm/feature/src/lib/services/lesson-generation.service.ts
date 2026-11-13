@@ -1,4 +1,4 @@
-import { inject, Injectable, signal } from '@angular/core';
+import { effect, inject, Injectable, signal } from '@angular/core';
 import type { RoadmapSection, StudySubject } from '@ah/products/studylm/domain';
 import type {
   AnswerEvaluationRequest,
@@ -19,6 +19,7 @@ import {
   type GeneratedLessonRecord,
   StudyLmStorageService,
 } from './studylm-storage.service';
+import { StudyLmSyncService } from './studylm-sync.service';
 
 /** A lesson being written, as the screens follow it. */
 export interface LessonJob {
@@ -39,6 +40,7 @@ export class LessonGenerationService {
   private readonly api = inject(StudyLmApiService);
   private readonly storage = inject(StudyLmStorageService);
   private readonly store = inject(StudyLmStore);
+  private readonly sync = inject(StudyLmSyncService, { optional: true });
   private readonly running = new Map<string, AbortController>();
 
   readonly jobs = signal<Record<string, LessonJob>>({});
@@ -54,6 +56,19 @@ export class LessonGenerationService {
   );
 
   constructor() {
+    this.refreshSaved();
+    if (this.sync) {
+      let appliedPullRev = 0;
+      effect(() => {
+        const rev = this.sync?.lessonsPulledRevision() ?? 0;
+        if (rev === 0 || rev === appliedPullRev) return;
+        appliedPullRev = rev;
+        this.refreshSaved();
+      });
+    }
+  }
+
+  refreshSaved(): void {
     void this.storage
       .listGeneratedLessons()
       .then((records) => this.saved.set(new Set(records.map((r) => r.id))));

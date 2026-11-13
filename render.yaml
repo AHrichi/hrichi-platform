@@ -23,6 +23,7 @@ services:
         - libs/learning/contracts/**
         - libs/shared/ai-schema/**
         - libs/products/dispatch/domain/**
+        - libs/products/studylm/domain/**
         - package.json
         - pnpm-lock.yaml
         - render.yaml

@@ -50,6 +50,27 @@ describe('loadConfig', () => {
       edgeUrl: null,
       ai: { groq: null, gemini: null, typesafe: null, n8n: null },
     });
+    expect(config.studylm).toEqual({
+      tokenSecret: 'x'.repeat(32),
+      telegram: { botToken: 'T', chatId: '42' },
+      logPairingCodes: false,
+    });
+  });
+
+  it('allows configuring StudyLM sync independently via STUDYLM_TOKEN_SECRET', () => {
+    const config = loadConfig({
+      ...base,
+      STUDYLM_TOKEN_SECRET: 's'.repeat(32),
+    });
+    expect(config.learning).toBeNull();
+    expect(config.studylm).toEqual({
+      tokenSecret: 's'.repeat(32),
+      telegram: null,
+      logPairingCodes: false,
+    });
+    expect(config.corsOrigins).toContain(
+      'https://product-studylm.ahmed-hrichi.workers.dev',
+    );
   });
 
   it('lets linked host apps in through CORS while the Learning Engine is on', () => {

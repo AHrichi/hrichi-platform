@@ -10,6 +10,8 @@ export function configureApp(
 ): NestExpressApplication {
   // Render terminates TLS in front of the app; trust it for the client IP.
   app.set('trust proxy', 1);
+  // StudyLM sync batches generated lessons and roadmaps above Express's 100kb default.
+  app.useBodyParser('json', { limit: '2mb' });
   app.use(helmet());
   app.enableCors({
     origin: config.corsOrigins,

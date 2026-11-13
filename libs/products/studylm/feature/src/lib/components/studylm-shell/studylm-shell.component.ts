@@ -28,7 +28,9 @@ import {
 import { PreferencesStore } from '@ah/shared/state';
 import { LessonGenerationService } from '../../services/lesson-generation.service';
 import { StudyLmReviews } from '../../services/studylm-reviews.service';
+import { StudyLmSyncService } from '../../services/studylm-sync.service';
 import { N8nSettingsModalComponent } from '../n8n-settings-modal/n8n-settings-modal.component';
+import { StudyLmSyncModalComponent } from '../studylm-sync-modal/studylm-sync-modal.component';
 import { CreateSubjectModalComponent } from '../create-subject-modal/create-subject-modal.component';
 import { AddFlashcardModalComponent } from '../add-flashcard-modal/add-flashcard-modal.component';
 import { AddQuizModalComponent } from '../add-quiz-modal/add-quiz-modal.component';
@@ -48,6 +50,7 @@ import { STUDYLM_COPY } from '../../i18n/studylm-copy';
     AhButton,
     AhSelect,
     N8nSettingsModalComponent,
+    StudyLmSyncModalComponent,
     CreateSubjectModalComponent,
     AddFlashcardModalComponent,
     AddQuizModalComponent,
@@ -78,6 +81,7 @@ import { STUDYLM_COPY } from '../../i18n/studylm-copy';
 })
 export class StudyLmShellComponent {
   readonly store = inject(StudyLmStore);
+  readonly sync = inject(StudyLmSyncService, { optional: true });
   protected readonly learningOn =
     (inject(APP_MODE, { optional: true }) ?? 'standalone') === 'standalone' ||
     isAppEnabled('learning');
@@ -154,8 +158,28 @@ export class StudyLmShellComponent {
     this.store.setShowCreateSubjectModal(true);
   }
 
+  readonly syncLabel = computed(() => {
+    const c = this.copy().sync;
+    switch (this.sync?.status()) {
+      case 'synced':
+        return c.navSynced;
+      case 'syncing':
+        return c.navSyncing;
+      case 'offline':
+        return c.navOffline;
+      case 'failed':
+        return c.navFailed;
+      default:
+        return c.navLocal;
+    }
+  });
+
   openSettingsModal(): void {
     this.store.setShowSettingsModal(true);
+  }
+
+  openSyncModal(): void {
+    this.sync?.openModal();
   }
 
   exportStudyGuide(): void {

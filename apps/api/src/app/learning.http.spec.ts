@@ -20,6 +20,11 @@ import {
   PAIRING_NOTIFIER,
 } from '@ah/api/learning';
 import {
+  InMemoryStudyLmRepository,
+  STUDYLM_MONGO_DB,
+  STUDYLM_REPOSITORY,
+} from '@ah/api/studylm';
+import {
   emptyPush,
   FIXTURE_IDS,
   hostCaptureId,
@@ -75,6 +80,10 @@ describe('Learning Engine over HTTP', () => {
       .useValue({})
       .overrideProvider(LEARNING_REPOSITORY)
       .useValue(repository)
+      .overrideProvider(STUDYLM_MONGO_DB)
+      .useValue({})
+      .overrideProvider(STUDYLM_REPOSITORY)
+      .useValue(new InMemoryStudyLmRepository())
       .overrideProvider(PAIRING_NOTIFIER)
       .useValue(notifier)
       .compile();

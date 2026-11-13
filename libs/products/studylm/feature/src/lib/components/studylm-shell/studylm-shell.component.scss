@@ -267,7 +267,8 @@
   }
 }
 
-.n8n-indicator-btn {
+.n8n-indicator-btn,
+.sync-indicator-btn {
   display: inline-flex;
   align-items: center;
   gap: var(--space-2, 0.5rem);
@@ -297,7 +298,8 @@
     flex-shrink: 0;
   }
 
-  &.connected {
+  &.connected,
+  &.synced {
     background: color-mix(
       in srgb,
       var(--color-success-default) 15%,
@@ -313,6 +315,24 @@
     .status-dot {
       background: var(--color-success-default);
       box-shadow: 0 0 6px var(--color-success-default);
+    }
+  }
+
+  &.warning {
+    background: color-mix(
+      in srgb,
+      var(--color-warning-default) 15%,
+      transparent
+    );
+    border-color: color-mix(
+      in srgb,
+      var(--color-warning-default) 40%,
+      transparent
+    );
+    color: var(--color-warning-default);
+
+    .status-dot {
+      background: var(--color-warning-default);
     }
   }
 

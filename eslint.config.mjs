@@ -198,6 +198,9 @@ export default [
                 // The Learning Engine's scheduler, contracts and AI kit run the
                 // same code in Nest and the browser (runtime:agnostic, ADR-0024).
                 'scope:learning',
+                // StudyLM sync contracts and domain models (runtime:agnostic)
+                // shared between Nest and the browser app.
+                'scope:product-studylm',
               ],
             },
             // Layers: dependencies only point down.

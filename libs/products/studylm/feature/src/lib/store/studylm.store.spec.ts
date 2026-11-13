@@ -1,6 +1,11 @@
 // JIT for the injectables the store's dependencies declare.
 import '@angular/compiler';
-import { Injector } from '@angular/core';
+import {
+  Injector,
+  signal,
+  ɵChangeDetectionScheduler,
+  ɵEffectScheduler,
+} from '@angular/core';
 import type {
   CurriculumRoadmap,
   GenerateSectionFlashcardsResponse,
@@ -10,6 +15,7 @@ import type {
 } from '@ah/products/studylm/domain';
 import { StudyLmApiService } from '../services/studylm-api.service';
 import { StudyLmStorageService } from '../services/studylm-storage.service';
+import { StudyLmSyncService } from '../services/studylm-sync.service';
 import { keepApprovals } from './studylm.methods';
 import { StudyLmStore } from './studylm.store';
 
@@ -156,5 +162,77 @@ describe('keepApprovals', () => {
       true,
       false,
     ]);
+  });
+});
+
+describe('StudyLmStore sync pull refresh', () => {
+  it('reloads subjects and active subject when subjectsPulledRevision increments', async () => {
+    const subjectsPulledRevision = signal(0);
+    const storedSubjects = [subject('remote-1'), subject('remote-2')];
+    const scheduled: Array<{ run?: () => void }> = [];
+
+    const injector = Injector.create({
+      providers: [
+        {
+          provide: ɵChangeDetectionScheduler,
+          useValue: { notify: () => undefined },
+        },
+        {
+          provide: ɵEffectScheduler,
+          useValue: {
+            add: (effectRef: { run?: () => void }) => {
+              scheduled.push(effectRef);
+            },
+          },
+        },
+        {
+          provide: StudyLmApiService,
+          useValue: {
+            getDefaultConfig: async () => ({
+              mode: 'tunnel',
+              tunnelUrl: '',
+              localUrl: '',
+              customUrl: '',
+              isConnected: false,
+              isChecking: false,
+            }),
+            testConnection: async () => ({ ok: false, latencyMs: 0 }),
+          },
+        },
+        {
+          provide: StudyLmStorageService,
+          useValue: {
+            getAllSubjects: async () => storedSubjects,
+            getSetting: async (key: string) =>
+              key === 'activeSubjectId' ? 'remote-2' : null,
+            saveSetting: async () => undefined,
+          },
+        },
+        {
+          provide: StudyLmSyncService,
+          useValue: {
+            init: async () => undefined,
+            subjectsPulledRevision,
+          },
+        },
+        StudyLmStore,
+      ],
+    });
+
+    const store = injector.get(StudyLmStore);
+    await settle();
+
+    storedSubjects[0] = { ...storedSubjects[0], title: 'Subject remote-1 v2' };
+    subjectsPulledRevision.set(1);
+    for (const eff of scheduled) {
+      eff.run?.();
+    }
+    await settle();
+
+    expect(store.subjects().map((s) => s.title)).toEqual([
+      'Subject remote-1 v2',
+      'Subject remote-2',
+    ]);
+    expect(store.activeSubjectId()).toBe('remote-2');
   });
 });

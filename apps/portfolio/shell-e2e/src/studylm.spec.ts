@@ -388,3 +388,174 @@ test('every built-in lesson plays every visual to its end', async ({
   }
   expect(errors).toEqual([]);
 });
+
+const apiOrigin = development.apiUrl ?? 'http://localhost:3000';
+
+test('standalone StudyLM pairs a device and pulls remote lessons without n8n', async ({
+  page,
+}) => {
+  await page.goto('/apps/studylm/roadmap');
+  await expect(
+    page.getByRole('button', { name: /n8n Engine: Offline/ }),
+  ).toBeVisible({ timeout: 15_000 });
+  await expect(page.getByRole('button', { name: /^Sync:/ })).toHaveCount(0);
+
+  await page.route('http://localhost:4307/site-config.json', (route) =>
+    route.fulfill({ json: development }),
+  );
+  await page.route(`${apiOrigin}/studylm/pairing`, (route) =>
+    route.fulfill({
+      status: 201,
+      json: {
+        pairingId: '11111111-1111-4111-8111-111111111111',
+        expiresAt: '2026-11-13T23:59:59.000Z',
+      },
+    }),
+  );
+  await page.route(`${apiOrigin}/studylm/pairing/*/confirm`, (route) =>
+    route.fulfill({
+      json: {
+        deviceId: '22222222-2222-4222-8222-222222222222',
+        deviceName: 'Phone Browser',
+        token: 'v1.22222222-2222-4222-8222-222222222222.2000000000.sig',
+        expiresAt: '2027-05-01T00:00:00.000Z',
+      },
+    }),
+  );
+  await page.route(`${apiOrigin}/studylm/devices`, (route) =>
+    route.fulfill({
+      json: [
+        {
+          id: '22222222-2222-4222-8222-222222222222',
+          name: 'Phone Browser',
+          pairedAt: '2026-11-13T12:00:00.000Z',
+          lastSeenAt: '2026-11-13T12:00:00.000Z',
+          current: true,
+        },
+      ],
+    }),
+  );
+  await page.route(`${apiOrigin}/studylm/sync`, (route) =>
+    route.fulfill({
+      json: {
+        cursor: 2,
+        more: false,
+        rejected: [],
+        pull: [
+          {
+            kind: 'subject',
+            id: 'subj-synced-1',
+            seq: 1,
+            by: '11111111-1111-4111-8111-111111111111',
+            updatedAt: '2026-11-13T12:00:00.000Z',
+            data: {
+              id: 'subj-synced-1',
+              title: 'Distributed Consensus',
+              sources: [],
+              overview: null,
+              roadmap: {
+                subject: 'Distributed Consensus',
+                canonicalSubject: 'Distributed Consensus',
+                domain: 'distributed-systems',
+                branches: [
+                  {
+                    id: 'br-1',
+                    title: 'Consensus',
+                    sections: [
+                      {
+                        id: 'sec-raft-1',
+                        code: '1.1',
+                        title: 'Raft Leader Election',
+                        summary: 'How Raft elects a single leader per term.',
+                        difficultyTier: 'intermediate',
+                        subtopics: ['Terms', 'Randomized timers'],
+                      },
+                    ],
+                  },
+                ],
+              },
+              flashcards: [],
+              quizQuestions: [],
+              createdAt: '2026-11-13T11:55:00.000Z',
+              updatedAt: '2026-11-13T12:00:00.000Z',
+              deletedAt: null,
+            },
+          },
+          {
+            kind: 'lesson',
+            id: 'gen-synced-raft',
+            seq: 2,
+            by: '11111111-1111-4111-8111-111111111111',
+            updatedAt: '2026-11-13T12:01:00.000Z',
+            data: {
+              id: 'gen-synced-raft',
+              subjectId: 'subj-synced-1',
+              sectionId: 'sec-raft-1',
+              draft: {
+                outline: { sections: [] },
+                tier: 'intermediate',
+                blocks: {},
+              },
+              lesson: {
+                id: 'gen-synced-raft',
+                title: 'Raft Leader Election',
+                tier: 'intermediate',
+                minutes: 10,
+                objectives: ['Understand Raft terms'],
+                sections: [
+                  {
+                    id: 's1',
+                    title: 'Terms and leaders',
+                    intent: 'hook',
+                    blocks: [
+                      {
+                        kind: 'prose',
+                        id: 'b1',
+                        markdown:
+                          'Raft divides time into monotonically increasing terms.',
+                      },
+                    ],
+                  },
+                ],
+              },
+              generatedAt: '2026-11-13T12:01:00.000Z',
+              updatedAt: '2026-11-13T12:01:00.000Z',
+              deletedAt: null,
+            },
+          },
+        ],
+      },
+    }),
+  );
+
+  await page.goto('http://localhost:4307/roadmap');
+  await page
+    .getByRole('button', { name: /Sync: Local/ })
+    .click({ timeout: 15_000 });
+  await page.getByLabel('Device name').fill('Phone Browser');
+  await page.getByRole('button', { name: 'Send code to Telegram' }).click();
+  await page.getByLabel('6-digit code').fill('123456');
+  await page.getByRole('button', { name: 'Confirm & pair device' }).click();
+
+  await expect(page.getByRole('button', { name: /Sync: Synced/ })).toBeVisible({
+    timeout: 10_000,
+  });
+  await page.getByRole('button', { name: 'Close', exact: true }).last().click();
+
+  await page.getByRole('link', { name: 'Lessons', exact: true }).click();
+  await expect(
+    page.getByRole('heading', { level: 3, name: 'Distributed Consensus' }),
+  ).toBeVisible({ timeout: 10_000 });
+  await expect(page.getByText('Raft Leader Election')).toBeVisible();
+
+  await page.goto('http://localhost:4307/learn/gen-synced-raft');
+  await expect(page.getByRole('button', { name: /Sync: Synced/ })).toBeVisible({
+    timeout: 10_000,
+  });
+  await expect(
+    page.getByRole('heading', { level: 2, name: 'Raft Leader Election' }),
+  ).toBeVisible({ timeout: 10_000 });
+  await expect(
+    page.getByText('Raft divides time into monotonically increasing terms.'),
+  ).toBeVisible();
+});

@@ -16,6 +16,7 @@ import { loadConfig } from './config';
 import { configureApp } from './configure-app';
 import { DISPATCH_MONGO_DB, MongoDispatchRepository } from '@ah/api/dispatch';
 import { LEARNING_MONGO_DB } from '@ah/api/learning';
+import { STUDYLM_MONGO_DB } from '@ah/api/studylm';
 import { MONGO_CLIENT } from './mongo.module';
 
 const config = loadConfig({
@@ -45,6 +46,8 @@ describe('API over HTTP', () => {
       .overrideProvider(MongoDispatchRepository)
       .useValue({})
       .overrideProvider(LEARNING_MONGO_DB)
+      .useValue({})
+      .overrideProvider(STUDYLM_MONGO_DB)
       .useValue({})
       .overrideProvider(LEADS_REPOSITORY)
       .useValue(repository)

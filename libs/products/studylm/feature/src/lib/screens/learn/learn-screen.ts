@@ -20,6 +20,7 @@ import {
   StudyLmStorageService,
 } from '../../services/studylm-storage.service';
 import { BulkGenerationService } from '../../services/bulk-generation.service';
+import { StudyLmSyncService } from '../../services/studylm-sync.service';
 import { StudyLmScreens } from '../../shell/studylm-screens';
 import { PreferencesStore } from '@ah/shared/state';
 import { STUDYLM_COPY } from '../../i18n/studylm-copy';
@@ -839,6 +840,7 @@ export interface LessonGroup {
 })
 export class LearnScreen {
   private readonly storage = inject(StudyLmStorageService);
+  private readonly sync = inject(StudyLmSyncService, { optional: true });
   protected readonly store = inject(StudyLmStore);
   protected readonly bulk = inject(BulkGenerationService);
   protected readonly screens = inject(StudyLmScreens);
@@ -855,6 +857,10 @@ export class LearnScreen {
   readonly currentPage = signal<number>(1);
 
   protected readonly lessons = resource({
+    params: () => ({
+      lessonsRev: this.sync?.lessonsPulledRevision() ?? 0,
+      progressRev: this.sync?.progressPulledRevision() ?? 0,
+    }),
     loader: async () => {
       const [lessons, progress, generated] = await Promise.all([
         loadBuiltInLessons(),

@@ -1,7 +1,9 @@
 import type { LeadsModuleOptions } from '@ah/api/leads';
 import type { LearningModuleOptions } from '@ah/api/learning';
+import type { StudyLmModuleOptions } from '@ah/api/studylm';
 import { hostOrigins } from '@ah/learning/contracts';
 import { MIN_SECRET_LENGTH } from '@ah/learning/domain';
+import { STUDYLM_ORIGINS } from '@ah/products/studylm/domain';
 
 export interface ApiConfig {
   port: number;
@@ -14,6 +16,8 @@ export interface ApiConfig {
   };
   /** The Learning Engine; off until LEARNING_TOKEN_SECRET is set (ADR-0024). */
   learning: LearningModuleOptions | null;
+  /** Cross-device StudyLM sync; enabled via STUDYLM_TOKEN_SECRET or LEARNING_TOKEN_SECRET. */
+  studylm: StudyLmModuleOptions | null;
 }
 
 /**
@@ -81,6 +85,7 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): ApiConfig {
         '0123456789abcdef0123456789abcdef', // 32 hex chars / 16 bytes minimum
     },
     learning: learningConfig(env, problems),
+    studylm: studylmConfig(env, problems),
   };
 
   if (!Number.isInteger(config.port) || config.port <= 0) {
@@ -95,6 +100,12 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): ApiConfig {
     // routes from their own origins (design §9), so they are always in.
     config.corsOrigins = [
       ...new Set([...config.corsOrigins, ...hostOrigins()]),
+    ];
+  }
+  if (config.studylm) {
+    config.studylm.telegram = config.leads.telegram;
+    config.corsOrigins = [
+      ...new Set([...config.corsOrigins, ...STUDYLM_ORIGINS]),
     ];
   }
   if (problems.length) {
@@ -187,5 +198,45 @@ function learningConfig(
       ),
     },
     edgeUrl: edgeUrl(optional('LEARNING_EDGE_URL'), problems),
+  };
+}
+
+/**
+ * StudyLM cross-device sync shares Telegram pairing and falls back to
+ * LEARNING_TOKEN_SECRET so Render deploys work without adding a new secret.
+ */
+function studylmConfig(
+  env: NodeJS.ProcessEnv,
+  problems: string[],
+): StudyLmModuleOptions | null {
+  const explicitSecret = env['STUDYLM_TOKEN_SECRET']?.trim() ?? '';
+  const sharedSecret = env['LEARNING_TOKEN_SECRET']?.trim() ?? '';
+  const tokenSecret = explicitSecret || sharedSecret;
+  const logPairingCodes =
+    env['STUDYLM_LOG_PAIRING_CODES']?.trim() === 'true' ||
+    env['LEARNING_LOG_PAIRING_CODES']?.trim() === 'true';
+  if (!tokenSecret) {
+    if (logPairingCodes) {
+      problems.push(
+        'STUDYLM_LOG_PAIRING_CODES needs STUDYLM_TOKEN_SECRET or LEARNING_TOKEN_SECRET',
+      );
+    }
+    return null;
+  }
+  if (explicitSecret && explicitSecret.length < MIN_SECRET_LENGTH) {
+    problems.push(
+      `STUDYLM_TOKEN_SECRET needs at least ${MIN_SECRET_LENGTH} characters`,
+    );
+  }
+  if (
+    env['STUDYLM_LOG_PAIRING_CODES']?.trim() === 'true' &&
+    env['NODE_ENV'] === 'production'
+  ) {
+    problems.push('STUDYLM_LOG_PAIRING_CODES is for development only');
+  }
+  return {
+    tokenSecret,
+    telegram: null,
+    logPairingCodes,
   };
 }
