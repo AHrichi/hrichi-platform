@@ -1,0 +1,192 @@
+<ah-modal
+  [open]="true"
+  [eyebrow]="copy().eyebrow"
+  [title]="copy().title"
+  [closeLabel]="copy().close"
+  size="md"
+  (closed)="close()"
+>
+  <div class="sync-modal-body">
+    <div class="status-banner">
+      <p class="intro-text">{{ copy().intro }}</p>
+      <ah-badge [variant]="badge().variant" size="sm">
+        {{ badge().label }}
+      </ah-badge>
+    </div>
+
+    @if (sync.errorMessage(); as error) {
+      <ah-alert variant="danger">{{ error }}</ah-alert>
+    }
+
+    @if (sync.device(); as device) {
+      <section class="sync-card" aria-label="Device status">
+        <div class="sync-card-main">
+          <div>
+            <p class="device-title">
+              {{ copy().thisDevice }}: <strong>{{ device.name }}</strong>
+            </p>
+            <p class="hint-text">
+              @if (sync.lastSyncAt(); as at) {
+                {{ copy().lastSynced }} {{ at | date: 'short' }}
+              } @else {
+                {{ copy().notSyncedYet }}
+              }
+            </p>
+            @if (sync.lastPullSummary(); as pull) {
+              @if (pull.subjects + pull.lessons + pull.progress > 0) {
+                <p class="hint-text">
+                  {{ copy().pulledSummary }}
+                  {{ pull.subjects }} {{ copy().subjectsUnit }} ·
+                  {{ pull.lessons }} {{ copy().lessonsUnit }} ·
+                  {{ pull.progress }} {{ copy().progressUnit }}
+                </p>
+              }
+            }
+          </div>
+
+          <button
+            ahButton="secondary"
+            size="sm"
+            type="button"
+            [disabled]="sync.status() === 'syncing'"
+            (click)="syncNow()"
+          >
+            {{
+              sync.status() === 'syncing' ? copy().syncingNow : copy().syncNow
+            }}
+          </button>
+        </div>
+      </section>
+
+      <section class="devices-section" aria-label="Paired devices">
+        <h3 class="section-heading">{{ copy().devicesTitle }}</h3>
+        @if (sync.devicesLoading()) {
+          <p class="hint-text">{{ copy().loadingDevices }}</p>
+        } @else {
+          <ul class="devices-list">
+            @for (item of sync.devices(); track item.id) {
+              <li class="device-row">
+                <div class="device-meta">
+                  <div class="device-name-line">
+                    <span class="device-name">{{ item.name }}</span>
+                    @if (item.current) {
+                      <ah-badge variant="accent" size="sm">
+                        {{ copy().currentBadge }}
+                      </ah-badge>
+                    }
+                  </div>
+                  @if (item.lastSeenAt; as seen) {
+                    <p class="hint-text">
+                      {{ copy().lastSeen }} {{ seen | date: 'mediumDate' }}
+                    </p>
+                  }
+                </div>
+
+                <button
+                  ahButton="ghost"
+                  size="sm"
+                  type="button"
+                  [disabled]="revokingId() === item.id"
+                  (click)="revoke(item.id, item.current)"
+                >
+                  {{
+                    revokingId() === item.id ? copy().revoking : copy().revoke
+                  }}
+                </button>
+              </li>
+            }
+          </ul>
+        }
+      </section>
+    } @else if (!sync.pairing().pairingId) {
+      <form class="sync-form" [formRoot]="nameForm">
+        <div class="form-field">
+          <label for="studylm-sync-device-name">
+            {{ copy().deviceNameLabel }}
+          </label>
+          <input
+            id="studylm-sync-device-name"
+            class="form-input"
+            type="text"
+            autocomplete="off"
+            [formField]="nameForm.name"
+            [attr.aria-invalid]="
+              nameForm.name().touched() && nameForm.name().invalid()
+            "
+          />
+          <p class="hint-text">{{ copy().deviceNameHint }}</p>
+        </div>
+
+        @if (sync.pairing().error; as err) {
+          <ah-alert variant="danger">{{ err }}</ah-alert>
+        }
+
+        <div class="form-actions">
+          <button
+            ahButton="primary"
+            type="submit"
+            [disabled]="sync.pairing().busy"
+          >
+            {{ sync.pairing().busy ? copy().sendingCode : copy().sendCode }}
+          </button>
+        </div>
+      </form>
+    } @else {
+      <form class="sync-form" [formRoot]="codeForm">
+        <p class="intro-text">{{ copy().codePrompt }}</p>
+
+        <div class="form-field">
+          <label for="studylm-sync-code">{{ copy().codeLabel }}</label>
+          <input
+            id="studylm-sync-code"
+            class="form-input code-input"
+            type="text"
+            inputmode="numeric"
+            autocomplete="one-time-code"
+            [placeholder]="copy().codePlaceholder"
+            [formField]="codeForm.code"
+            [attr.aria-invalid]="
+              codeForm.code().touched() && codeForm.code().invalid()
+            "
+          />
+        </div>
+
+        @if (sync.pairing().error; as err) {
+          <ah-alert variant="danger">{{ err }}</ah-alert>
+        }
+
+        <div class="form-actions">
+          <button
+            ahButton="primary"
+            type="submit"
+            [disabled]="sync.pairing().busy"
+          >
+            {{ sync.pairing().busy ? copy().confirming : copy().confirmCode }}
+          </button>
+          <button
+            ahButton="ghost"
+            type="button"
+            [disabled]="sync.pairing().busy"
+            (click)="sendCode()"
+          >
+            {{ copy().resendCode }}
+          </button>
+          <button
+            ahButton="ghost"
+            type="button"
+            [disabled]="sync.pairing().busy"
+            (click)="sync.cancelPairing()"
+          >
+            {{ copy().cancelPairing }}
+          </button>
+        </div>
+      </form>
+    }
+  </div>
+
+  <div modal-actions class="modal-footer-actions">
+    <button ahButton="secondary" type="button" (click)="close()">
+      {{ copy().close }}
+    </button>
+  </div>
+</ah-modal>

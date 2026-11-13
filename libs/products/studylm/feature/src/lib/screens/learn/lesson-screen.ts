@@ -26,6 +26,7 @@ import {
 import type { RoadmapSection } from '@ah/products/studylm/domain';
 import { LessonGenerationService } from '../../services/lesson-generation.service';
 import { StudyLmStorageService } from '../../services/studylm-storage.service';
+import { StudyLmSyncService } from '../../services/studylm-sync.service';
 import {
   lessonCardItems,
   StudyLmReviews,
@@ -419,6 +420,7 @@ export class LessonScreen {
 
   private readonly storage = inject(StudyLmStorageService);
   private readonly generation = inject(LessonGenerationService);
+  private readonly sync = inject(StudyLmSyncService, { optional: true });
   protected readonly store = inject(StudyLmStore);
   protected readonly screens = inject(StudyLmScreens);
   private readonly preferences = inject(PreferencesStore, { optional: true });
@@ -553,6 +555,31 @@ export class LessonScreen {
   });
 
   constructor() {
+    if (this.sync) {
+      let appliedLessonsRev = this.sync.lessonsPulledRevision();
+      let appliedProgressRev = this.sync.progressPulledRevision();
+      effect(() => {
+        const lRev = this.sync?.lessonsPulledRevision() ?? 0;
+        const pRev = this.sync?.progressPulledRevision() ?? 0;
+        const lessonUpdated = lRev !== appliedLessonsRev;
+        const progressUpdated = pRev !== appliedProgressRev;
+        if (!lessonUpdated && !progressUpdated) return;
+        appliedLessonsRev = lRev;
+        appliedProgressRev = pRev;
+        const id = this.lessonId();
+        const busy = untracked(() => this.busy());
+        const pulledLessons = untracked(
+          () => this.sync?.lastPulledLessonIds() ?? new Set<string>(),
+        );
+        if (
+          !busy &&
+          (progressUpdated || (lessonUpdated && pulledLessons.has(id)))
+        ) {
+          this.data.reload();
+        }
+      });
+    }
+
     const title = inject(Title);
     effect(() => {
       const name = this.lesson()?.title;

@@ -374,6 +374,52 @@ export interface StudyLmCopy {
     createBlank: string;
     createAndGenerate: string;
   };
+  sync: {
+    navPrefix: string;
+    navLocal: string;
+    navSyncing: string;
+    navSynced: string;
+    navOffline: string;
+    navFailed: string;
+    navTooltip: string;
+    eyebrow: string;
+    title: string;
+    intro: string;
+    badgeUnpaired: string;
+    badgeSyncing: string;
+    badgeSynced: string;
+    badgeOffline: string;
+    badgeFailed: string;
+    deviceNameLabel: string;
+    deviceNameHint: string;
+    sendCode: string;
+    sendingCode: string;
+    codePrompt: string;
+    codeLabel: string;
+    codePlaceholder: string;
+    confirmCode: string;
+    confirming: string;
+    resendCode: string;
+    cancelPairing: string;
+    thisDevice: string;
+    lastSynced: string;
+    notSyncedYet: string;
+    syncNow: string;
+    syncingNow: string;
+    pulledSummary: string;
+    subjectsUnit: string;
+    lessonsUnit: string;
+    progressUnit: string;
+    devicesTitle: string;
+    loadingDevices: string;
+    currentBadge: string;
+    lastSeen: string;
+    revoke: string;
+    revoking: string;
+    revokeThisConfirm: string;
+    revokeOtherConfirm: string;
+    close: string;
+  };
 }
 
 export const STUDYLM_COPY: Record<SiteLanguage, StudyLmCopy> = {
@@ -777,6 +823,56 @@ export const STUDYLM_COPY: Record<SiteLanguage, StudyLmCopy> = {
       createBlank: 'Create Blank',
       createAndGenerate: 'Create & Generate Roadmap',
     },
+    sync: {
+      navPrefix: 'Sync',
+      navLocal: 'Local',
+      navSyncing: 'Syncing…',
+      navSynced: 'Synced',
+      navOffline: 'Offline',
+      navFailed: 'Retry',
+      navTooltip: 'Cloud sync across your devices',
+      eyebrow: 'Cross-Device Sync',
+      title: 'Study Everywhere, Stay in Sync',
+      intro:
+        'Pair your devices via your Telegram bot so subjects, generated lessons, flashcards, quizzes, and lesson progress stay identical on laptop and phone.',
+      badgeUnpaired: 'This device only',
+      badgeSyncing: 'Syncing',
+      badgeSynced: 'Synced',
+      badgeOffline: 'Offline',
+      badgeFailed: 'Sync failed',
+      deviceNameLabel: 'Device name',
+      deviceNameHint:
+        'Shown in your paired devices list so you recognize this browser later.',
+      sendCode: 'Send code to Telegram',
+      sendingCode: 'Sending code…',
+      codePrompt:
+        'Enter the 6-digit confirmation code sent to your Telegram bot.',
+      codeLabel: '6-digit code',
+      codePlaceholder: '123456',
+      confirmCode: 'Confirm & pair device',
+      confirming: 'Confirming…',
+      resendCode: 'Send new code',
+      cancelPairing: 'Change name',
+      thisDevice: 'This device',
+      lastSynced: 'Last synced',
+      notSyncedYet: 'Just paired — waiting for first sync',
+      syncNow: 'Sync now',
+      syncingNow: 'Syncing…',
+      pulledSummary: 'Last pull:',
+      subjectsUnit: 'subjects',
+      lessonsUnit: 'lessons',
+      progressUnit: 'progress',
+      devicesTitle: 'Paired devices',
+      loadingDevices: 'Loading devices…',
+      currentBadge: 'This device',
+      lastSeen: 'Last active',
+      revoke: 'Unpair',
+      revoking: 'Unpairing…',
+      revokeThisConfirm:
+        'Disconnect this device from cloud sync? Your local lessons stay saved in this browser.',
+      revokeOtherConfirm: 'Remove this device from cloud sync?',
+      close: 'Close',
+    },
   },
   fr: {
     tagline: 'Moteur pédagogique de cours et d’entraînement',
@@ -1179,6 +1275,56 @@ export const STUDYLM_COPY: Record<SiteLanguage, StudyLmCopy> = {
       createBlank: 'Créer à vide',
       createAndGenerate: 'Créer & générer le parcours',
     },
+    sync: {
+      navPrefix: 'Synchro',
+      navLocal: 'Local',
+      navSyncing: 'Synchro…',
+      navSynced: 'Synchronisé',
+      navOffline: 'Hors-ligne',
+      navFailed: 'Réessayer',
+      navTooltip: 'Synchronisation cloud multi-appareils',
+      eyebrow: 'Synchronisation multi-appareils',
+      title: 'Étudiez partout avec les mêmes cours',
+      intro:
+        'Associez vos appareils via votre bot Telegram pour retrouver matières, leçons générées, cartes, quiz et progression sur ordinateur et téléphone.',
+      badgeUnpaired: 'Appareil local uniquement',
+      badgeSyncing: 'Synchronisation',
+      badgeSynced: 'Synchronisé',
+      badgeOffline: 'Hors-ligne',
+      badgeFailed: 'Échec de synchro',
+      deviceNameLabel: 'Nom de l’appareil',
+      deviceNameHint:
+        'Affiché dans votre liste d’appareils associés pour identifier ce navigateur.',
+      sendCode: 'Envoyer un code sur Telegram',
+      sendingCode: 'Envoi du code…',
+      codePrompt:
+        'Saisissez le code de confirmation à 6 chiffres reçu sur votre bot Telegram.',
+      codeLabel: 'Code à 6 chiffres',
+      codePlaceholder: '123456',
+      confirmCode: 'Confirmer et associer',
+      confirming: 'Confirmation…',
+      resendCode: 'Renvoyer un code',
+      cancelPairing: 'Changer le nom',
+      thisDevice: 'Cet appareil',
+      lastSynced: 'Dernière synchronisation',
+      notSyncedYet: 'Associé — en attente de synchronisation',
+      syncNow: 'Synchroniser',
+      syncingNow: 'Synchronisation…',
+      pulledSummary: 'Dernière réception :',
+      subjectsUnit: 'matières',
+      lessonsUnit: 'leçons',
+      progressUnit: 'progressions',
+      devicesTitle: 'Appareils associés',
+      loadingDevices: 'Chargement des appareils…',
+      currentBadge: 'Cet appareil',
+      lastSeen: 'Dernière activité',
+      revoke: 'Dissocier',
+      revoking: 'Suppression…',
+      revokeThisConfirm:
+        'Déconnecter cet appareil de la synchronisation ? Vos leçons locales restent dans ce navigateur.',
+      revokeOtherConfirm: 'Retirer cet appareil de la synchronisation ?',
+      close: 'Fermer',
+    },
   },
   ar: {
     tagline: 'محرك المسارات التعليمية والتدريب التفاعلي',
@@ -1574,6 +1720,56 @@ export const STUDYLM_COPY: Record<SiteLanguage, StudyLmCopy> = {
       suggestedLabel: 'أو اختر مساراً دراسياً قياسياً:',
       createBlank: 'إنشاء فارغ',
       createAndGenerate: 'إنشاء وتوليد الخارطة',
+    },
+    sync: {
+      navPrefix: 'المزامنة',
+      navLocal: 'محلي',
+      navSyncing: 'تتم المزامنة…',
+      navSynced: 'متزامن',
+      navOffline: 'غير متصل',
+      navFailed: 'إعادة',
+      navTooltip: 'مزامنة سحابية بين أجهزتك',
+      eyebrow: 'مزامنة عبر الأجهزة',
+      title: 'ادرس من أي جهاز بنفس الدروس',
+      intro:
+        'اربط أجهزتك عبر بوت Telegram لتبقى المواد والدروس المولّدة والبطاقات والاختبارات وتقدمك متطابقة بين الحاسوب والهاتف.',
+      badgeUnpaired: 'هذا الجهاز فقط',
+      badgeSyncing: 'تتم المزامنة',
+      badgeSynced: 'متزامن',
+      badgeOffline: 'غير متصل',
+      badgeFailed: 'فشلت المزامنة',
+      deviceNameLabel: 'اسم الجهاز',
+      deviceNameHint:
+        'يظهر في قائمة الأجهزة المرتبطة لتمييز هذا المتصفح لاحقاً.',
+      sendCode: 'إرسال الرمز إلى Telegram',
+      sendingCode: 'جارٍ الإرسال…',
+      codePrompt:
+        'أدخل رمز التأكيد المكوّن من 6 أرقام المرسل إلى بوت Telegram الخاص بك.',
+      codeLabel: 'رمز من 6 أرقام',
+      codePlaceholder: '123456',
+      confirmCode: 'تأكيد وربط الجهاز',
+      confirming: 'جارٍ التأكيد…',
+      resendCode: 'إرسال رمز جديد',
+      cancelPairing: 'تغيير الاسم',
+      thisDevice: 'هذا الجهاز',
+      lastSynced: 'آخر مزامنة',
+      notSyncedYet: 'تم الربط — بانتظار المزامنة الأولى',
+      syncNow: 'مزامنة الآن',
+      syncingNow: 'تتم المزامنة…',
+      pulledSummary: 'آخر استلام:',
+      subjectsUnit: 'مواد',
+      lessonsUnit: 'دروس',
+      progressUnit: 'تقدم',
+      devicesTitle: 'الأجهزة المرتبطة',
+      loadingDevices: 'جارٍ تحميل الأجهزة…',
+      currentBadge: 'الجهاز الحالي',
+      lastSeen: 'آخر نشاط',
+      revoke: 'فصل',
+      revoking: 'جارٍ الفصل…',
+      revokeThisConfirm:
+        'هل تريد فصل هذا الجهاز عن المزامنة السحابية؟ ستبقى دروسك المحلية محفوظة في هذا المتصفح.',
+      revokeOtherConfirm: 'هل تريد إزالة هذا الجهاز من المزامنة السحابية؟',
+      close: 'إغلاق',
     },
   },
   it: {
@@ -1978,6 +2174,56 @@ export const STUDYLM_COPY: Record<SiteLanguage, StudyLmCopy> = {
       createBlank: 'Crea vuota',
       createAndGenerate: 'Crea e genera Roadmap',
     },
+    sync: {
+      navPrefix: 'Sincronia',
+      navLocal: 'Locale',
+      navSyncing: 'Sincronizzo…',
+      navSynced: 'Sincronizzato',
+      navOffline: 'Offline',
+      navFailed: 'Riprova',
+      navTooltip: 'Sincronizzazione cloud tra dispositivi',
+      eyebrow: 'Sincronizzazione multi-dispositivo',
+      title: 'Studia ovunque con gli stessi contenuti',
+      intro:
+        'Associa i tuoi dispositivi tramite il tuo bot Telegram per mantenere materie, lezioni generate, flashcard, quiz e progressi identici su PC e telefono.',
+      badgeUnpaired: 'Solo su questo dispositivo',
+      badgeSyncing: 'Sincronizzazione',
+      badgeSynced: 'Sincronizzato',
+      badgeOffline: 'Offline',
+      badgeFailed: 'Errore di sincronia',
+      deviceNameLabel: 'Nome dispositivo',
+      deviceNameHint:
+        'Mostrato nell’elenco dei dispositivi associati per riconoscere questo browser.',
+      sendCode: 'Invia codice su Telegram',
+      sendingCode: 'Invio codice…',
+      codePrompt:
+        'Inserisci il codice di conferma a 6 cifre inviato al tuo bot Telegram.',
+      codeLabel: 'Codice a 6 cifre',
+      codePlaceholder: '123456',
+      confirmCode: 'Conferma e associa',
+      confirming: 'Conferma…',
+      resendCode: 'Invia nuovo codice',
+      cancelPairing: 'Cambia nome',
+      thisDevice: 'Questo dispositivo',
+      lastSynced: 'Ultima sincronizzazione',
+      notSyncedYet: 'Associato — in attesa della prima sincronia',
+      syncNow: 'Sincronizza ora',
+      syncingNow: 'Sincronizzazione…',
+      pulledSummary: 'Ricevuti:',
+      subjectsUnit: 'materie',
+      lessonsUnit: 'lezioni',
+      progressUnit: 'progressi',
+      devicesTitle: 'Dispositivi associati',
+      loadingDevices: 'Caricamento dispositivi…',
+      currentBadge: 'Questo dispositivo',
+      lastSeen: 'Ultima attività',
+      revoke: 'Disassocia',
+      revoking: 'Rimozione…',
+      revokeThisConfirm:
+        'Disconnettere questo dispositivo dalla sincronia cloud? Le lezioni locali restano salvate in questo browser.',
+      revokeOtherConfirm: 'Rimuovere questo dispositivo dalla sincronia cloud?',
+      close: 'Chiudi',
+    },
   },
   de: {
     tagline: 'Pädagogische Lehrplan- & Übungs-Engine',
@@ -2381,6 +2627,56 @@ export const STUDYLM_COPY: Record<SiteLanguage, StudyLmCopy> = {
       suggestedLabel: 'Oder wählen Sie einen Standard-Lehrplan:',
       createBlank: 'Leer erstellen',
       createAndGenerate: 'Erstellen & Lehrplan generieren',
+    },
+    sync: {
+      navPrefix: 'Sync',
+      navLocal: 'Lokal',
+      navSyncing: 'Synchronisiere…',
+      navSynced: 'Synchronisiert',
+      navOffline: 'Offline',
+      navFailed: 'Erneut',
+      navTooltip: 'Cloud-Synchronisierung zwischen Geräten',
+      eyebrow: 'Geräteübergreifende Synchronisierung',
+      title: 'Überall mit demselben Lernstand lernen',
+      intro:
+        'Kopple deine Geräte über deinen Telegram-Bot, damit Fächer, generierte Lektionen, Lernkarten, Quizze und Fortschritt auf Laptop und Handy gleich bleiben.',
+      badgeUnpaired: 'Nur dieses Gerät',
+      badgeSyncing: 'Synchronisiere',
+      badgeSynced: 'Synchronisiert',
+      badgeOffline: 'Offline',
+      badgeFailed: 'Sync fehlgeschlagen',
+      deviceNameLabel: 'Gerätename',
+      deviceNameHint: 'Wird in der Liste deiner gekoppelten Geräte angezeigt.',
+      sendCode: 'Code an Telegram senden',
+      sendingCode: 'Code wird gesendet…',
+      codePrompt:
+        'Gib den 6-stelligen Bestätigungscode aus deinem Telegram-Bot ein.',
+      codeLabel: '6-stelliger Code',
+      codePlaceholder: '123456',
+      confirmCode: 'Bestätigen & koppeln',
+      confirming: 'Bestätige…',
+      resendCode: 'Neuen Code senden',
+      cancelPairing: 'Namen ändern',
+      thisDevice: 'Dieses Gerät',
+      lastSynced: 'Zuletzt synchronisiert',
+      notSyncedYet: 'Gekoppelt — warte auf ersten Sync',
+      syncNow: 'Jetzt synchronisieren',
+      syncingNow: 'Synchronisiere…',
+      pulledSummary: 'Zuletzt empfangen:',
+      subjectsUnit: 'Fächer',
+      lessonsUnit: 'Lektionen',
+      progressUnit: 'Fortschritt',
+      devicesTitle: 'Gekoppelte Geräte',
+      loadingDevices: 'Geräte werden geladen…',
+      currentBadge: 'Dieses Gerät',
+      lastSeen: 'Zuletzt aktiv',
+      revoke: 'Trennen',
+      revoking: 'Wird getrennt…',
+      revokeThisConfirm:
+        'Dieses Gerät von der Cloud-Synchronisierung trennen? Deine lokalen Lektionen bleiben in diesem Browser erhalten.',
+      revokeOtherConfirm:
+        'Dieses Gerät aus der Cloud-Synchronisierung entfernen?',
+      close: 'Schließen',
     },
   },
 };

@@ -1,8 +1,9 @@
-import { inject } from '@angular/core';
+import { effect, inject, untracked } from '@angular/core';
 import { patchState, signalStoreFeature, type, withHooks } from '@ngrx/signals';
 import type {
   N8nConnectionConfig,
   N8nConnectionMode,
+  StudySubject,
 } from '@ah/products/studylm/domain';
 import type { StudyLmState } from './studylm.state';
 import { ACTIVE_SUBJECT_SETTING, N8N_SETTING } from './studylm.methods';
@@ -12,12 +13,36 @@ import {
   StudyLmApiService,
 } from '../services/studylm-api.service';
 import { StudyLmStorageService } from '../services/studylm-storage.service';
+import { StudyLmSyncService } from '../services/studylm-sync.service';
 
 /** The connection the learner picked in Settings, kept across reloads. */
 interface SavedN8nChoice {
   mode: N8nConnectionMode;
   localUrl: string;
   customUrl: string;
+}
+
+async function hydrateSubjectsFromStorage(
+  storageService: StudyLmStorageService,
+  apply: (subjects: StudySubject[], activeSubjectId: string) => void,
+  fallbackActiveId?: () => string | null,
+): Promise<void> {
+  try {
+    const [saved, lastId] = await Promise.all([
+      storageService.getAllSubjects(),
+      storageService.getSetting<string>(ACTIVE_SUBJECT_SETTING),
+    ]);
+    if (!saved || saved.length === 0) return;
+    const current = fallbackActiveId?.() ?? null;
+    const activeSubjectId = saved.some((s) => s.id === lastId)
+      ? (lastId as string)
+      : current && saved.some((s) => s.id === current)
+        ? current
+        : saved[0].id;
+    apply(saved, activeSubjectId);
+  } catch {
+    // Keep current subjects if storage read fails
+  }
 }
 
 export function withStudyLmHooks() {
@@ -28,25 +53,32 @@ export function withStudyLmHooks() {
         store,
         apiService = inject(StudyLmApiService),
         storageService = inject(StudyLmStorageService),
+        syncService = inject(StudyLmSyncService, { optional: true }),
       ) {
         // 1. Hydrate subjects from IndexedDB, reopening the last one.
-        Promise.all([
-          storageService.getAllSubjects(),
-          storageService.getSetting<string>(ACTIVE_SUBJECT_SETTING),
-        ])
-          .then(([saved, lastId]) => {
-            if (saved && saved.length > 0) {
-              patchState(store, {
-                subjects: saved,
-                activeSubjectId: saved.some((s) => s.id === lastId)
-                  ? (lastId as string)
-                  : saved[0].id,
-              });
-            }
-          })
-          .catch(() => {
-            // Keep initial in-memory subjects
+        void hydrateSubjectsFromStorage(
+          storageService,
+          (subjects, activeSubjectId) =>
+            patchState(store, { subjects, activeSubjectId }),
+        );
+
+        // 1b. Start cross-device sync in standalone mode and refresh on remote pulls.
+        if (syncService) {
+          void syncService.init();
+          let appliedPullRev = 0;
+          effect(() => {
+            const rev = syncService.subjectsPulledRevision();
+            if (rev === 0 || rev === appliedPullRev) return;
+            appliedPullRev = rev;
+            const currentActive = untracked(() => store.activeSubjectId());
+            void hydrateSubjectsFromStorage(
+              storageService,
+              (subjects, activeSubjectId) =>
+                patchState(store, { subjects, activeSubjectId }),
+              () => currentActive,
+            );
           });
+        }
 
         // 2. Pick the endpoint (the learner's choice, else site config), then check it.
         const report = (change: Partial<N8nConnectionConfig>) =>

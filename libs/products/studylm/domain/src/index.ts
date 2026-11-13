@@ -5,6 +5,7 @@ export * from './lib/models/flashcard.model';
 export * from './lib/models/quiz.model';
 export * from './lib/models/synthesis.model';
 export * from './lib/models/subject.model';
+export * from './lib/models/sync.model';
 export * from './lib/models/elaboration.model';
 export * from './lib/models/answer-evaluation.model';
 export * from './lib/utils/export-study';

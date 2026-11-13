@@ -56,6 +56,27 @@
       @if (learningOn) {
         <ah-learning-today />
       }
+      @if (sync?.available()) {
+        <button
+          type="button"
+          class="sync-indicator-btn"
+          [class.synced]="sync?.status() === 'synced'"
+          [class.syncing]="sync?.status() === 'syncing'"
+          [class.warning]="
+            sync?.status() === 'offline' || sync?.status() === 'failed'
+          "
+          (click)="openSyncModal()"
+          [title]="copy().sync.navTooltip"
+          [attr.aria-label]="copy().sync.navPrefix + ': ' + syncLabel()"
+        >
+          <span class="status-dot" aria-hidden="true"></span>
+          <span class="btn-label-desktop"
+            >{{ copy().sync.navPrefix }}: {{ syncLabel() }}</span
+          >
+          <span class="btn-label-compact">{{ syncLabel() }}</span>
+          <span class="btn-label-mobile">{{ copy().sync.navPrefix }}</span>
+        </button>
+      }
       <!-- AI connection: configure n8n AI webhook -->
       <button
         type="button"
@@ -165,6 +186,9 @@
   <!-- Modals -->
   @if (store.showSettingsModal()) {
     <ah-n8n-settings-modal />
+  }
+  @if (sync?.showSyncModal()) {
+    <ah-studylm-sync-modal />
   }
 
   @if (store.showCreateSubjectModal()) {
