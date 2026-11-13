@@ -24,6 +24,15 @@ import { BulkGenerationService } from '../../services/bulk-generation.service';
 import { PreferencesStore } from '@ah/shared/state';
 import { STUDYLM_COPY } from '../../i18n/studylm-copy';
 import type { RoadmapSection } from '@ah/products/studylm/domain';
+import {
+  SectionActionsMenuComponent,
+  type SectionActionMenuItem,
+} from '../section-actions-menu/section-actions-menu';
+import {
+  type PrimarySectionAction,
+  type SectionActionKind,
+  partitionSectionActions,
+} from './section-actions';
 
 @Component({
   selector: 'studylm-roadmap-explorer',
@@ -37,6 +46,7 @@ import type { RoadmapSection } from '@ah/products/studylm/domain';
     AhEmptyState,
     AhProgressBar,
     RouterLink,
+    SectionActionsMenuComponent,
   ],
   templateUrl: './roadmap-explorer.component.html',
   styleUrls: ['./roadmap-explorer.component.scss'],
@@ -250,5 +260,72 @@ export class RoadmapExplorerComponent {
   getSectionQuizCount(sectionId: string): number {
     return this.store.quizQuestions().filter((q) => q.sectionId === sectionId)
       .length;
+  }
+
+  protected readonly sectionActionMap = computed(() => {
+    const roadmapCopy = this.copy().roadmap;
+    const aiReady = this.store.aiReady();
+    const map = new Map<
+      string,
+      {
+        primary: readonly PrimarySectionAction[];
+        overflow: readonly SectionActionMenuItem[];
+      }
+    >();
+    for (const branch of this.store.activeBranches()) {
+      for (const section of branch.sections) {
+        const lesson = this.lessonState(section);
+        const groups = partitionSectionActions(
+          {
+            section,
+            lessonSaved: lesson.saved,
+            lessonStatus: lesson.status,
+            cardCount: this.getSectionCardCount(section.id),
+            quizCount: this.getSectionQuizCount(section.id),
+            generatingCards: this.isSectionGeneratingCards(section.id),
+            generatingQuiz: this.isSectionGeneratingQuiz(section.id),
+            aiReady,
+          },
+          roadmapCopy,
+        );
+        map.set(section.id, {
+          primary: groups.primary,
+          overflow: groups.overflow.map((item) => ({
+            ...item,
+            action: () => this.runSectionAction(section, item.kind),
+          })),
+        });
+      }
+    }
+    return map;
+  });
+
+  protected runSectionAction(
+    section: RoadmapSection,
+    kind: SectionActionKind,
+  ): void {
+    switch (kind) {
+      case 'open-lesson':
+        this.openLesson(section);
+        break;
+      case 'write-lesson':
+        this.writeLesson(section);
+        break;
+      case 'study-cards':
+        this.onStudySectionCards(section);
+        break;
+      case 'generate-cards':
+        this.onGenerateFlashcards(section.id);
+        break;
+      case 'take-quiz':
+        this.onTakeSectionQuiz(section);
+        break;
+      case 'generate-quiz':
+        this.onGenerateQuiz(section.id);
+        break;
+      case 'approve':
+        this.onApproveSection(section.id);
+        break;
+    }
   }
 }

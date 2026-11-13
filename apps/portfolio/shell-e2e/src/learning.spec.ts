@@ -317,6 +317,12 @@ test.describe('Learning Engine', () => {
 
     await page.goto('/apps/learning/devices');
     await expect(page.getByText('This is the demo')).toBeVisible();
+    await expect(
+      page.getByRole('link', { name: /Open the real Learning Engine/ }),
+    ).toHaveAttribute('href', 'http://localhost:4311');
+    await expect(
+      page.getByRole('link', { name: /Open the real Learning Engine/ }),
+    ).toHaveAttribute('target', '_blank');
     axe = await new AxeBuilder({ page })
       .include('lrn-learning-shell')
       .analyze();

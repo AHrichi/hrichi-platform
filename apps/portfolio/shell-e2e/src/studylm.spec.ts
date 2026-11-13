@@ -217,6 +217,52 @@ async function n8nWorking(page: Page, calls: string[]): Promise<void> {
       json = reply(id === 'predict-steps' ? { ...block, answer: 9 } : block);
     } else if (request.task === 'block-repair') {
       json = reply(blocks.get(request.input?.block?.id ?? ''));
+    } else if (request.action === 'generate_section_flashcards') {
+      json = {
+        success: true,
+        provider: 'stub',
+        sectionId: 'sec-1-1',
+        docsGrounded: ['Algorithms'],
+        flashcards: [
+          {
+            id: 'fc-sec-1-1-a',
+            tier: 'beginner',
+            front: 'What does binary search halve each step?',
+            back: 'The remaining sorted search interval.',
+            category: 'Searching',
+          },
+          {
+            id: 'fc-sec-1-1-b',
+            tier: 'beginner',
+            front: 'What is binary search time complexity?',
+            back: 'O(log n) comparisons on a sorted array.',
+            category: 'Searching',
+          },
+        ],
+      };
+    } else if (request.action === 'generate_section_quiz') {
+      json = {
+        success: true,
+        provider: 'stub',
+        sectionId: 'sec-1-1',
+        docsGrounded: ['Algorithms'],
+        quiz: [
+          {
+            id: 'qz-sec-1-1-a',
+            tier: 'beginner',
+            question: 'Which precondition does binary search require?',
+            options: [
+              'A sorted array',
+              'Unique values only',
+              'Power-of-two length',
+              'Linked list nodes',
+            ],
+            correctIndex: 0,
+            explanation:
+              'Ordering lets mid comparisons discard half the range.',
+          },
+        ],
+      };
     }
     await route.fulfill({ json });
   };
@@ -251,6 +297,68 @@ test('writes a lesson for a roadmap section, repairing a broken block', async ({
   await expect(
     page.getByRole('heading', { level: 3, name: 'Algorithms' }),
   ).toBeVisible();
+
+  // Roadmap section card keeps primary + study actions upfront and tucks overwrite actions into an overflow menu.
+  await page
+    .getByRole('navigation', { name: 'StudyLM screens' })
+    .getByRole('link', { name: /^Roadmap/ })
+    .click();
+  const sectionCard = page.locator('#section-sec-1-1');
+  await sectionCard.getByRole('button', { name: 'Approve Section' }).click();
+  await sectionCard
+    .getByRole('button', { name: 'Generate Flashcards' })
+    .click();
+  await expect(
+    sectionCard.getByRole('button', { name: 'Study Cards (2)' }),
+  ).toBeVisible();
+  await sectionCard.getByRole('button', { name: 'Generate Quiz' }).click();
+  await expect(
+    sectionCard.getByRole('button', { name: 'Take Quiz (1)' }),
+  ).toBeVisible();
+
+  const primaryActions = sectionCard.locator('.section-actions-primary button');
+  await expect(primaryActions).toHaveCount(3);
+  await expect(
+    sectionCard.getByRole('button', { name: 'Open Lesson' }),
+  ).toBeVisible();
+  await expect(
+    sectionCard.getByRole('button', { name: 'Rewrite Lesson' }),
+  ).toHaveCount(0);
+  await expect(
+    sectionCard.getByRole('button', { name: 'Regenerate Flashcards' }),
+  ).toHaveCount(0);
+
+  const moreBtn = sectionCard.getByRole('button', {
+    name: 'More section actions',
+  });
+  await moreBtn.click();
+  const menu = page.getByRole('menu', { name: 'More section actions' });
+  await expect(menu).toBeVisible();
+  await expect(
+    menu.getByRole('menuitem', { name: 'Rewrite Lesson' }),
+  ).toBeVisible();
+  await expect(
+    menu.getByRole('menuitem', { name: 'Regenerate Flashcards' }),
+  ).toBeVisible();
+  await expect(
+    menu.getByRole('menuitem', { name: 'Regenerate Quiz' }),
+  ).toBeVisible();
+
+  const axeOpen = await new AxeBuilder({ page })
+    .include('studylm-roadmap-explorer')
+    .analyze();
+  expect(axeOpen.violations).toEqual([]);
+
+  await page.keyboard.press('Escape');
+  await expect(menu).toHaveCount(0);
+  await expect(moreBtn).toBeFocused();
+
+  await moreBtn.click();
+  await menu.getByRole('menuitem', { name: 'Regenerate Flashcards' }).click();
+  await expect(menu).toHaveCount(0);
+  expect(
+    n8nCalls.filter((c) => c.includes('generate_section_flashcards')).length,
+  ).toBeGreaterThanOrEqual(2);
 });
 
 test('every built-in lesson plays every visual to its end', async ({

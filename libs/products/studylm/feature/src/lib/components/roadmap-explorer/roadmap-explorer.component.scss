@@ -448,29 +448,24 @@
 
 .section-actions {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
+  justify-content: space-between;
   gap: var(--space-2, 0.5rem);
   padding-top: var(--space-2, 0.5rem);
   border-top: 1px solid var(--color-border-default);
 
   @media (max-width: 640px) {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    width: 100%;
-
-    button {
-      width: 100%;
-      justify-content: center;
-      text-align: center;
-      font-size: var(--font-size-xs, 0.75rem);
-      padding: 0.45rem 0.5rem;
-    }
+    align-items: flex-start;
   }
+}
 
-  @media (max-width: 400px) {
-    grid-template-columns: 1fr;
-  }
+.section-actions-primary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2, 0.5rem);
+  flex: 1 1 auto;
+  min-inline-size: 0;
 }
 
 .empty-roadmap-container {

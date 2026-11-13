@@ -16,6 +16,7 @@ import {
 import { AhAlert, AhButton } from '@ah/ui';
 import { guessDeviceName } from '../../store/device-name';
 import { LearningStore } from '../../store/learning.store';
+import { injectStandaloneLearningUrl } from '../../store/standalone-url';
 
 /**
  * A host app asks to link (design §9): `/connect#link=…`. On a paired
@@ -32,6 +33,7 @@ import { LearningStore } from '../../store/learning.store';
 })
 export class ConnectScreen {
   protected readonly store = inject(LearningStore);
+  protected readonly standaloneUrl = injectStandaloneLearningUrl();
   protected readonly request = signal<ConnectRequest | null>(this.read());
   protected readonly appName = computed(() => {
     const request = this.request();

@@ -5,8 +5,18 @@
     @switch (store.unavailable()) {
       @case ('demo') {
         <ah-alert variant="info" title="This is the demo" [headingLevel]="null">
-          The demo keeps everything in this browser, so it can't link apps. The
-          real app links {{ appName() }} to your daily reviews.
+          The demo keeps everything in this browser, so it can't link apps.
+          <a
+            class="demo-link"
+            [href]="standaloneUrl()"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Open the real Learning Engine<span class="visually-hidden">
+              (opens in a new tab)</span
+            >
+          </a>
+          to link {{ appName() }} to your daily reviews.
         </ah-alert>
       }
       @case ('no-server') {

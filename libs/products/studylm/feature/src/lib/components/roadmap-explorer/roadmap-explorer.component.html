@@ -289,9 +289,9 @@
 
                       <div class="code-and-title">
                         <span class="section-code">{{ section.code }}</span>
-                        <h4 class="section-title" [attr.title]="section.title">
+                        <h3 class="section-title" [attr.title]="section.title">
                           {{ section.title }}
-                        </h4>
+                        </h3>
                       </div>
                     </div>
 
@@ -399,163 +399,47 @@
                         </div>
                       }
 
-                      <!-- Action Buttons -->
-                      <div class="section-actions">
-                        @if (!section.approved) {
-                          <button
-                            type="button"
-                            ahButton="ghost"
-                            size="sm"
-                            (click)="onApproveSection(section.id)"
-                          >
-                            <span>{{ copy().roadmap.approveSection }}</span>
-                          </button>
-                        }
+                      <!-- Action Bar: primary + study upfront, regenerate in overflow -->
+                      @let lesson = lessonState(section);
+                      @if (sectionActionMap().get(section.id); as actions) {
+                        <div class="section-actions">
+                          <div class="section-actions-primary">
+                            @for (btn of actions.primary; track btn.id) {
+                              <button
+                                type="button"
+                                [ahButton]="btn.variant"
+                                size="sm"
+                                [disabled]="btn.disabled"
+                                (click)="runSectionAction(section, btn.kind)"
+                              >
+                                <span>{{ btn.label }}</span>
+                              </button>
+                            }
+                          </div>
 
-                        <!-- Separate Flashcards Button -->
-                        <button
-                          type="button"
-                          [ahButton]="
-                            section.flashcardsStatus === 'ready'
-                              ? 'secondary'
-                              : 'primary'
-                          "
-                          size="sm"
-                          [disabled]="
-                            isSectionGeneratingCards(section.id) ||
-                            !store.aiReady()
-                          "
-                          (click)="onGenerateFlashcards(section.id)"
-                        >
-                          <span>
-                            {{
-                              isSectionGeneratingCards(section.id)
-                                ? copy().roadmap.generatingCards
-                                : section.flashcardsStatus === 'ready'
-                                  ? copy().roadmap.regenerateFlashcards
-                                  : section.flashcardsStatus === 'error'
-                                    ? copy().roadmap.retryFlashcards
-                                    : copy().roadmap.generateFlashcards
-                            }}
-                          </span>
-                        </button>
+                          @if (actions.overflow.length > 0) {
+                            <studylm-section-actions-menu
+                              [items]="actions.overflow"
+                              [label]="copy().roadmap.moreActions"
+                            />
+                          }
+                        </div>
+                      }
 
-                        <!-- Separate Quiz Button -->
-                        <button
-                          type="button"
-                          [ahButton]="
-                            section.quizStatus === 'ready'
-                              ? 'secondary'
-                              : 'primary'
-                          "
-                          size="sm"
-                          [disabled]="
-                            isSectionGeneratingQuiz(section.id) ||
-                            !store.aiReady()
-                          "
-                          (click)="onGenerateQuiz(section.id)"
-                        >
-                          <span>
-                            {{
-                              isSectionGeneratingQuiz(section.id)
-                                ? copy().roadmap.generatingQuiz
-                                : section.quizStatus === 'ready'
-                                  ? copy().roadmap.regenerateQuiz
-                                  : section.quizStatus === 'error'
-                                    ? copy().roadmap.retryQuiz
-                                    : copy().roadmap.generateQuiz
-                            }}
-                          </span>
-                        </button>
-
-                        @if (
-                          section.lastError &&
-                          (section.flashcardsStatus === 'error' ||
-                            section.quizStatus === 'error')
-                        ) {
-                          <p class="section-error" role="alert">
-                            {{ section.lastError }}
-                          </p>
-                        }
-
-                        <!-- An interactive lesson the AI writes for this section -->
-                        @let lesson = lessonState(section);
-                        @if (
-                          lesson.status === 'planning' ||
-                          lesson.status === 'writing'
-                        ) {
-                          <button
-                            type="button"
-                            ahButton="secondary"
-                            size="sm"
-                            (click)="openLesson(section)"
-                          >
-                            <span>{{ copy().roadmap.writingLesson }}</span>
-                          </button>
-                        } @else if (lesson.saved) {
-                          <button
-                            type="button"
-                            ahButton="primary"
-                            size="sm"
-                            (click)="openLesson(section)"
-                          >
-                            <span>{{ copy().roadmap.openLesson }}</span>
-                          </button>
-                          <button
-                            type="button"
-                            ahButton="ghost"
-                            size="sm"
-                            (click)="writeLesson(section)"
-                          >
-                            <span>{{ copy().roadmap.rewriteLesson }}</span>
-                          </button>
-                        } @else {
-                          <button
-                            type="button"
-                            ahButton="primary"
-                            size="sm"
-                            (click)="writeLesson(section)"
-                          >
-                            <span>{{ copy().roadmap.writeLesson }}</span>
-                          </button>
-                        }
-                        @if (lesson.status === 'failed') {
-                          <p class="section-error" role="alert">
-                            {{ lesson.error }}
-                          </p>
-                        }
-
-                        <!-- Interactive Study Navigation Links -->
-                        @if (getSectionCardCount(section.id); as cardCount) {
-                          <button
-                            type="button"
-                            ahButton="ghost"
-                            size="sm"
-                            (click)="onStudySectionCards(section)"
-                          >
-                            <span
-                              >{{ copy().roadmap.studyCards }} ({{
-                                cardCount
-                              }})</span
-                            >
-                          </button>
-                        }
-
-                        @if (getSectionQuizCount(section.id); as quizCount) {
-                          <button
-                            type="button"
-                            ahButton="ghost"
-                            size="sm"
-                            (click)="onTakeSectionQuiz(section)"
-                          >
-                            <span
-                              >{{ copy().roadmap.takeQuiz }} ({{
-                                quizCount
-                              }})</span
-                            >
-                          </button>
-                        }
-                      </div>
+                      @if (
+                        section.lastError &&
+                        (section.flashcardsStatus === 'error' ||
+                          section.quizStatus === 'error')
+                      ) {
+                        <p class="section-error" role="alert">
+                          {{ section.lastError }}
+                        </p>
+                      }
+                      @if (lesson.status === 'failed') {
+                        <p class="section-error" role="alert">
+                          {{ lesson.error }}
+                        </p>
+                      }
                     </div>
                   </div>
                 </article>

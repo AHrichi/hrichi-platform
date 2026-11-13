@@ -1,0 +1,83 @@
+<button
+  #trigger
+  type="button"
+  ahButton="ghost"
+  size="sm"
+  class="menu-trigger"
+  [class.is-open]="isOpen()"
+  aria-haspopup="menu"
+  [attr.aria-expanded]="isOpen()"
+  [attr.aria-controls]="menuId"
+  [attr.aria-label]="label()"
+  [attr.title]="label()"
+  (click)="toggle()"
+  (keydown)="onTriggerKeydown($event)"
+>
+  <svg
+    class="dots-icon"
+    viewBox="0 0 20 20"
+    fill="currentColor"
+    aria-hidden="true"
+  >
+    <circle cx="4" cy="10" r="1.5" />
+    <circle cx="10" cy="10" r="1.5" />
+    <circle cx="16" cy="10" r="1.5" />
+  </svg>
+</button>
+
+@if (isOpen()) {
+  <div
+    #popover
+    [id]="menuId"
+    class="actions-menu-popover"
+    popover="manual"
+    role="menu"
+    tabindex="-1"
+    [attr.aria-label]="label()"
+    [style]="placement()"
+    (keydown)="onMenuKeydown($event)"
+  >
+    @for (item of items(); track item.id) {
+      <button
+        #menuItem
+        type="button"
+        role="menuitem"
+        class="actions-menu-item"
+        [disabled]="!!item.disabled"
+        [attr.tabindex]="focusedIndex() === $index ? 0 : -1"
+        (click)="select(item)"
+      >
+        @if (item.icon === 'open') {
+          <svg
+            class="item-icon"
+            viewBox="0 0 16 16"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M5 11L11 5" />
+            <path d="M6.5 5H11v4.5" />
+          </svg>
+        } @else {
+          <svg
+            class="item-icon"
+            viewBox="0 0 16 16"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M13.5 8a5.5 5.5 0 1 1-1.4-3.65" />
+            <path d="M13.5 2.75v2.75h-2.75" />
+          </svg>
+        }
+        <span>{{ item.label }}</span>
+      </button>
+    }
+  </div>
+}

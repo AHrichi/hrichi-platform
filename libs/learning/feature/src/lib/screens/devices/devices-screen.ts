@@ -18,6 +18,7 @@ import { PAIRING } from '@ah/learning/domain';
 import { AhAlert, AhButton } from '@ah/ui';
 import { guessDeviceName } from '../../store/device-name';
 import { LearningStore } from '../../store/learning.store';
+import { injectStandaloneLearningUrl } from '../../store/standalone-url';
 
 /**
  * Pairing and devices (design §11), and the apps linked to the engine
@@ -33,6 +34,7 @@ import { LearningStore } from '../../store/learning.store';
 })
 export class DevicesScreen {
   protected readonly store = inject(LearningStore);
+  protected readonly standaloneUrl = injectStandaloneLearningUrl();
 
   protected readonly nameModel = signal({
     name:
