@@ -2,18 +2,51 @@
   <h1 id="settings-title">Settings</h1>
 
   <div class="card stats">
-    <p>
-      <span aria-hidden="true">🔥</span> {{ store.streak().current }} day streak
-      · best {{ store.streak().longest }}
-    </p>
-    <p class="hint">
-      Level {{ store.xp().level }} · {{ store.xpTotal() }} XP ·
-      {{ store.streak().freezesBanked }} freeze{{
-        store.streak().freezesBanked === 1 ? '' : 's'
-      }}
-      banked
-    </p>
+    <div class="streak-row">
+      <lrn-streak-flame [streak]="store.streak()" />
+      <span class="hint">· best {{ store.streak().longest }}</span>
+    </div>
+    <p class="hint">Level {{ store.xp().level }} · {{ store.xpTotal() }} XP</p>
   </div>
+
+  <fieldset class="card">
+    <legend>Streak goal</legend>
+    <div class="segmented" role="radiogroup" aria-label="Streak mode">
+      @for (mode of streakModes; track mode) {
+        <button
+          type="button"
+          role="radio"
+          class="segment"
+          [class.is-on]="store.settings().streakMode === mode"
+          [attr.aria-checked]="store.settings().streakMode === mode"
+          (click)="setStreakMode(mode)"
+        >
+          {{ mode === 'daily' ? 'Every day' : 'Weekly target' }}
+        </button>
+      }
+    </div>
+    @if (store.settings().streakMode === 'weekly') {
+      <div class="field">
+        <label for="weekly-target">Days a week (Mon–Sun)</label>
+        <input
+          id="weekly-target"
+          type="number"
+          min="1"
+          max="7"
+          [value]="store.settings().weeklyTarget"
+          (change)="setWeeklyTarget($any($event.target).value)"
+        />
+      </div>
+      <p class="hint">
+        Counts completed weeks without requiring every single day.
+      </p>
+    } @else {
+      <p class="hint">
+        One freeze banked every 7 consecutive days keeps a miss from breaking
+        your streak.
+      </p>
+    }
+  </fieldset>
 
   <fieldset class="card">
     <legend>Cards a day</legend>

@@ -1,8 +1,12 @@
 import * as v from 'valibot';
 import {
+  type EdgeDevice,
+  EdgeDevicesSyncSchema,
   EDGE_INBOX_PAGE,
   EdgeInboxAckSchema,
   type EdgeInboxItem,
+  type EdgeRevocation,
+  EdgeRevocationAckSchema,
   inboxKey,
   LIMITS,
   type NudgeLog,
@@ -47,6 +51,9 @@ const STATE_KEY = 'state';
 const LOG_KEY = 'log';
 /** The Monday of the last week a recap went out for. */
 const RECAP_KEY = 'recap';
+const DEVICES_KEY = 'devices';
+const revokedKey = (deviceId: string) => `revoked:${deviceId}`;
+const revokeKey = (deviceId: string) => `revoke:${deviceId}`;
 /** Telegram updates are small; anything bigger isn't one. */
 const MAX_UPDATE_BYTES = 64 * 1024;
 
@@ -102,6 +109,15 @@ export async function handleRequest(
   if (url.pathname === '/inbox/ack' && request.method === 'POST') {
     return handleAck(request, env, now);
   }
+  if (url.pathname === '/devices' && request.method === 'PUT') {
+    return handlePutDevices(request, env, now);
+  }
+  if (url.pathname === '/revocations' && request.method === 'GET') {
+    return handleRevocations(request, env, now);
+  }
+  if (url.pathname === '/revocations/ack' && request.method === 'POST') {
+    return handleRevocationsAck(request, env, now);
+  }
   if (url.pathname !== '/state' || request.method !== 'PUT') {
     return json({ message: 'Not found.' }, 404, cors);
   }
@@ -113,6 +129,9 @@ export async function handleRequest(
     : null;
   if (!claims)
     return json({ message: 'This device is not paired.' }, 401, cors);
+  if (await env.NUDGES.get(revokedKey(claims.deviceId))) {
+    return json({ message: 'This device was revoked.' }, 401, cors);
+  }
 
   const text = await request.text();
   if (text.length > 4096) return json({ message: 'Too large.' }, 413, cors);
@@ -222,7 +241,7 @@ interface TelegramUpdate {
 }
 
 const HELP =
-  'Send me an idea, a quote or a voice note (up to 2 minutes), or forward a message. It goes to your Learning Inbox, where the AI explains it.';
+  'Send me an idea, a quote or a voice note (up to 2 minutes), or forward a message. It goes to your Learning Inbox, where the AI explains it. Commands: /devices, /revoke <number or id>.';
 
 /**
  * `POST /telegram`, the bot's webhook (design §9). Only updates carrying
@@ -265,6 +284,18 @@ export async function handleTelegram(
 
   const words = (message.text ?? message.caption ?? '').trim();
   if (!message.voice && (words.startsWith('/') || !words)) {
+    const command = words.split(/\s+/)[0]?.split('@')[0]?.toLowerCase() ?? '';
+    if (command === '/devices') {
+      await reply(await formatDevicesList(env.NUDGES));
+      return json({ ok: true }, 200, {});
+    }
+    if (command === '/revoke') {
+      const target = words
+        .slice(words.toLowerCase().indexOf('/revoke') + '/revoke'.length)
+        .trim();
+      await reply(await revokeFromTelegram(env.NUDGES, target, now()));
+      return json({ ok: true }, 200, {});
+    }
     await reply(HELP);
     return json({ ok: true }, 200, {});
   }
@@ -347,6 +378,140 @@ export async function handleAck(
     return json({ message: 'Send JSON.' }, 400, {});
   }
   const parsed = v.safeParse(EdgeInboxAckSchema, body);
+  if (!parsed.success) return json({ message: 'Send { keys }.' }, 400, {});
+  for (const key of parsed.output.keys) await env.NUDGES.delete(key);
+  return new Response(null, { status: 204 });
+}
+
+async function readDevices(kv: KvStore): Promise<EdgeDevice[]> {
+  const raw = await kv.get(DEVICES_KEY);
+  if (!raw) return [];
+  try {
+    return JSON.parse(raw) as EdgeDevice[];
+  } catch {
+    return [];
+  }
+}
+
+async function formatDevicesList(kv: KvStore): Promise<string> {
+  const active = (await readDevices(kv)).filter((d) => !d.revokedAt);
+  if (!active.length) return 'No active paired devices or linked apps.';
+  const lines = active.map((d, i) => {
+    const kind = d.host ? ` (${d.host})` : '';
+    const date = d.pairedAt.slice(0, 10);
+    return `${i + 1}. ${d.name}${kind} — paired ${date} [${d.id.slice(0, 8)}]`;
+  });
+  return [
+    'Paired devices and linked apps:',
+    ...lines,
+    'Send /revoke <number or id> to revoke one.',
+  ].join('\n');
+}
+
+async function revokeFromTelegram(
+  kv: KvStore,
+  arg: string,
+  at: Date,
+): Promise<string> {
+  if (!arg) return 'Usage: /revoke <number or id> (send /devices to list).';
+  const devices = await readDevices(kv);
+  const active = devices.filter((d) => !d.revokedAt);
+  let target: EdgeDevice | undefined;
+  if (/^\d+$/.test(arg)) {
+    target = active[Number(arg) - 1];
+  } else {
+    const needle = arg.toLowerCase();
+    const matches = active.filter(
+      (d) =>
+        d.id.toLowerCase() === needle || d.id.toLowerCase().startsWith(needle),
+    );
+    if (matches.length > 1) {
+      return 'More than one device matches that prefix. Send the number from /devices or the full id.';
+    }
+    target = matches[0];
+  }
+  if (!target) {
+    return 'No active device matched that. Send /devices to list them.';
+  }
+  const revokedAt = at.toISOString();
+  await kv.put(revokedKey(target.id), revokedAt);
+  const revocation: EdgeRevocation = {
+    key: revokeKey(target.id),
+    deviceId: target.id,
+    revokedAt,
+  };
+  await kv.put(revocation.key, JSON.stringify(revocation));
+  const updated = devices.map((d) =>
+    d.id === target.id ? { ...d, revokedAt } : d,
+  );
+  await kv.put(DEVICES_KEY, JSON.stringify(updated));
+  return `Revoked ${target.name} ✓`;
+}
+
+/** `PUT /devices`: the API mirrors active and revoked device state to KV. */
+async function handlePutDevices(
+  request: Request,
+  env: Env,
+  now: () => Date,
+): Promise<Response> {
+  if (!(await isServer(request, env, now))) {
+    return json({ message: 'Only the API updates devices.' }, 401, {});
+  }
+  let body: unknown;
+  try {
+    body = JSON.parse(await request.text());
+  } catch {
+    return json({ message: 'Send JSON.' }, 400, {});
+  }
+  const parsed = v.safeParse(EdgeDevicesSyncSchema, body);
+  if (!parsed.success) {
+    return json({ message: 'The devices payload is invalid.' }, 400, {});
+  }
+  await env.NUDGES.put(DEVICES_KEY, JSON.stringify(parsed.output.devices));
+  for (const device of parsed.output.devices) {
+    if (device.revokedAt) {
+      await env.NUDGES.put(revokedKey(device.id), device.revokedAt);
+    } else {
+      await env.NUDGES.delete(revokedKey(device.id));
+    }
+  }
+  return new Response(null, { status: 204 });
+}
+
+/** `GET /revocations`: the API pulls Telegram-triggered revocations. */
+async function handleRevocations(
+  request: Request,
+  env: Env,
+  now: () => Date,
+): Promise<Response> {
+  if (!(await isServer(request, env, now))) {
+    return json({ message: 'Only the API reads revocations.' }, 401, {});
+  }
+  const listed = await env.NUDGES.list({ prefix: 'revoke:', limit: 100 });
+  const revocations: EdgeRevocation[] = [];
+  for (const { name } of listed.keys) {
+    const value = await env.NUDGES.get(name);
+    if (value) revocations.push(JSON.parse(value) as EdgeRevocation);
+  }
+  return json({ revocations }, 200, {});
+}
+
+/** `POST /revocations/ack`: the API has revoked these devices in MongoDB. */
+async function handleRevocationsAck(
+  request: Request,
+  env: Env,
+  now: () => Date,
+): Promise<Response> {
+  if (!(await isServer(request, env, now))) {
+    return json({ message: 'Only the API acknowledges revocations.' }, 401, {});
+  }
+  let body: unknown;
+  try {
+    body = JSON.parse(await request.text());
+  } catch {
+    return json({ message: 'Send JSON.' }, 400, {});
+  }
+  const parsed = v.safeParse(EdgeRevocationAckSchema, body);
   if (!parsed.success) return json({ message: 'Send { keys }.' }, 400, {});
   for (const key of parsed.output.keys) await env.NUDGES.delete(key);
   return new Response(null, { status: 204 });

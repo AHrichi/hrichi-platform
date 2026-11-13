@@ -15,6 +15,7 @@ export const LIMITS = {
   conceptTitle: 120,
   essence: 280,
   explanation: 1200,
+  explanationHistory: 3,
   question: 400,
   answer: 1200,
   keyPoint: 160,
@@ -31,6 +32,18 @@ export const LIMITS = {
   /** Points a teach-back is checked against. */
   teachPoints: 6,
 } as const;
+
+/** Singleton UUID for the learner's synced profile settings record. */
+export const SETTINGS_RECORD_ID = '00000000-0000-4000-8000-000000000001';
+
+export const GARDEN_THEMES = ['meadow', 'autumn', 'night', 'aurora'] as const;
+export type GardenTheme = (typeof GARDEN_THEMES)[number];
+
+export const STREAK_MODES = ['daily', 'weekly'] as const;
+export type StreakMode = (typeof STREAK_MODES)[number];
+
+export const AI_VERDICTS = ['nailed', 'close', 'missed'] as const;
+export type AiVerdict = (typeof AI_VERDICTS)[number];
 
 /**
  * The writer id of versions the API writes (the capture pipeline). Device
@@ -121,6 +134,35 @@ export const SourceRefSchema = v.strictObject({
   excerpt: v.nullable(text(LIMITS.excerpt)),
 });
 
+export const ExplanationSnapshotSchema = v.strictObject({
+  essence: required(LIMITS.essence),
+  simple: v.nullable(text(LIMITS.explanation)),
+  analogy: v.nullable(text(LIMITS.explanation)),
+  misconception: v.nullable(text(LIMITS.explanation)),
+  ownWords: v.nullable(text(LIMITS.explanation)),
+  by: v.picklist(['ai', 'user']),
+  savedAt: Timestamp,
+});
+
+export const CONCEPT_FIELD_GROUPS = [
+  'explanation',
+  'prompts',
+  'status',
+  'topic',
+] as const;
+
+export const FieldRevisionSchema = v.strictObject({
+  updatedAt: Timestamp,
+  by: required(80),
+});
+
+export const ConceptFieldRevisionsSchema = v.strictObject({
+  explanation: v.optional(FieldRevisionSchema),
+  prompts: v.optional(FieldRevisionSchema),
+  status: v.optional(FieldRevisionSchema),
+  topic: v.optional(FieldRevisionSchema),
+});
+
 export const ConceptSchema = v.strictObject({
   ...envelope,
   topicId: v.nullable(Id),
@@ -128,6 +170,17 @@ export const ConceptSchema = v.strictObject({
   type: v.picklist(CONCEPT_TYPES),
   status: v.picklist(CONCEPT_STATUSES),
   explanation: ExplanationSchema,
+  /** Up to 3 prior explanations kept before rewrites or manual edits (§4.1). */
+  explanationHistory: v.optional(
+    v.pipe(
+      v.array(ExplanationSnapshotSchema),
+      v.maxLength(LIMITS.explanationHistory),
+    ),
+  ),
+  /** Monotonic edit counter; guards async AI rewrites against concurrent edits. */
+  version: v.optional(v.pipe(v.number(), v.integer(), v.minValue(1))),
+  /** Per-group revision stamps so offline edits in separate groups merge cleanly. */
+  fieldRevisions: v.optional(ConceptFieldRevisionsSchema),
   prompts: v.pipe(
     v.array(RecallPromptSchema),
     v.minLength(1),
@@ -225,6 +278,24 @@ export const ReviewEventSchema = v.strictObject({
   answer: v.nullable(text(LIMITS.answer)),
   /** Time from showing the prompt to grading it. */
   ms: v.pipe(v.number(), v.integer(), v.minValue(0), v.maxValue(3_600_000)),
+  /** Optional AI grading verdict alongside the learner's swipe, to log calibration disagreements. */
+  aiVerdict: v.optional(v.nullable(v.picklist(AI_VERDICTS))),
+});
+
+const Clock = v.pipe(v.string(), v.regex(/^([01]\d|2[0-3]):[0-5]\d$/));
+
+/** Synced learner preferences and streak mode (design §4.1 LearnerProfile). */
+export const SettingsRecordSchema = v.strictObject({
+  ...envelope,
+  dailyCap: v.union([v.literal(5), v.literal(7), v.literal(10)]),
+  newPerDay: v.pipe(v.number(), v.integer(), v.minValue(0), v.maxValue(3)),
+  streakMode: v.picklist(STREAK_MODES),
+  weeklyTarget: v.pipe(v.number(), v.integer(), v.minValue(1), v.maxValue(7)),
+  morning: v.nullable(Clock),
+  evening: v.nullable(Clock),
+  vacationUntil: v.nullable(LocalDate),
+  gardenTheme: v.picklist(GARDEN_THEMES),
+  weeklyRecap: v.boolean(),
 });
 
 export const LINK_RELATIONS = [
@@ -288,11 +359,20 @@ export type ConceptType = (typeof CONCEPT_TYPES)[number];
 export type ConceptStatus = (typeof CONCEPT_STATUSES)[number];
 export type PromptType = (typeof PROMPT_TYPES)[number];
 export type Explanation = v.InferOutput<typeof ExplanationSchema>;
+export type ExplanationSnapshot = v.InferOutput<
+  typeof ExplanationSnapshotSchema
+>;
+export type ConceptFieldGroup = (typeof CONCEPT_FIELD_GROUPS)[number];
+export type FieldRevision = v.InferOutput<typeof FieldRevisionSchema>;
+export type ConceptFieldRevisions = v.InferOutput<
+  typeof ConceptFieldRevisionsSchema
+>;
 export type RecallPrompt = v.InferOutput<typeof RecallPromptSchema>;
 export type SourceRef = v.InferOutput<typeof SourceRefSchema>;
 export type Concept = v.InferOutput<typeof ConceptSchema>;
 export type Rating = (typeof RATINGS)[number];
 export type ReviewEvent = v.InferOutput<typeof ReviewEventSchema>;
+export type SettingsRecord = v.InferOutput<typeof SettingsRecordSchema>;
 export type Capture = v.InferOutput<typeof CaptureSchema>;
 export type CaptureStatus = (typeof CAPTURE_STATUSES)[number];
 export type CaptureModality = (typeof CAPTURE_MODALITIES)[number];
@@ -303,6 +383,18 @@ export type ConceptLink = v.InferOutput<typeof ConceptLinkSchema>;
 export type LinkRelation = (typeof LINK_RELATIONS)[number];
 export type Clarity = (typeof CLARITY_BANDS)[number];
 
+/** Whether the learner's swipe strongly disagreed with the AI's check (§6.3). */
+export function isRatingDisagreement(
+  rating: Rating,
+  aiVerdict: AiVerdict | null | undefined,
+): boolean {
+  if (!aiVerdict) return false;
+  if (aiVerdict === 'nailed' && (rating === 'again' || rating === 'hard')) {
+    return true;
+  }
+  return aiVerdict === 'missed' && (rating === 'good' || rating === 'easy');
+}
+
 /** Records that change and merge last-writer-wins. */
 export const MUTABLE_KINDS = [
   'topic',
@@ -310,6 +402,7 @@ export const MUTABLE_KINDS = [
   'capture',
   'session',
   'link',
+  'settings',
 ] as const;
 /** Records that are only ever added. */
 export const APPEND_ONLY_KINDS = ['event', 'teachback'] as const;
@@ -325,6 +418,7 @@ export interface RecordOfKind {
   capture: Capture;
   session: ReviewSession;
   link: ConceptLink;
+  settings: SettingsRecord;
   event: ReviewEvent;
   teachback: TeachBack;
 }
@@ -335,6 +429,7 @@ export const RECORD_SCHEMAS = {
   capture: CaptureSchema,
   session: ReviewSessionSchema,
   link: ConceptLinkSchema,
+  settings: SettingsRecordSchema,
   event: ReviewEventSchema,
   teachback: TeachBackSchema,
 } as const;

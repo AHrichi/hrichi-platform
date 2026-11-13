@@ -1,4 +1,4 @@
-import type { ReviewEvent, ReviewSession } from '../records';
+import type { ReviewEvent, ReviewSession, StreakMode } from '../records';
 
 /**
  * Streaks that forgive (design §5.3), computed from events and sets, never
@@ -6,15 +6,21 @@ import type { ReviewEvent, ReviewSession } from '../records';
  *
  * - A day counts with at least one card answered (an "ember" day), or a
  *   finished set, including an empty one on a day with nothing due.
- * - Every 7 counted days in a row earns a freeze; at most 2 wait in the bank.
- * - A missed day uses a freeze when one is banked.
- * - Otherwise a repair saves it, once every 30 days: finish two sets on the
- *   day after the miss (the Daily Set and a bonus round).
- * - Otherwise the streak ends. Today never breaks it: it isn't over yet.
+ * - Daily mode: every 7 counted days in a row earns a freeze (at most 2 banked);
+ *   a missed day spends a freeze, or a 30-day repair (two sets next day);
+ *   today never breaks the streak.
+ * - Weekly mode: a calendar week (Mon–Sun) counts once `weeklyTarget` days are
+ *   counted in that week; the current week never breaks the streak.
  */
 export const FREEZE_EVERY = 7;
 export const MAX_FREEZES = 2;
 export const REPAIR_EVERY_DAYS = 30;
+export const DEFAULT_WEEKLY_TARGET = 5;
+
+export interface StreakOptions {
+  mode?: StreakMode;
+  weeklyTarget?: number;
+}
 
 export interface StreakSummary {
   current: number;
@@ -32,12 +38,22 @@ export interface StreakSummary {
   todayCounted: boolean;
   /** Today's Daily Set is finished. */
   todayFull: boolean;
+  mode: StreakMode;
+  weeklyTarget: number;
+  /** Counted days so far in the current Mon–Sun week. */
+  thisWeekCount: number;
 }
 
 function addDays(localDate: string, days: number): string {
   const date = new Date(`${localDate}T00:00:00Z`);
   date.setUTCDate(date.getUTCDate() + days);
   return date.toISOString().slice(0, 10);
+}
+
+function weekStartOf(localDate: string): string {
+  const day = new Date(`${localDate}T00:00:00Z`).getUTCDay();
+  const offset = (day + 6) % 7; // Monday = 0, Sunday = 6
+  return addDays(localDate, -offset);
 }
 
 function daysBetween(a: string, b: string): number {
@@ -73,8 +89,17 @@ export function computeStreak(
   full: ReadonlySet<string>,
   today: string,
   doubled: ReadonlySet<string> = new Set(),
+  options?: StreakOptions,
 ): StreakSummary {
+  const mode: StreakMode = options?.mode ?? 'daily';
+  const weeklyTarget = Math.max(
+    1,
+    Math.min(7, Math.round(options?.weeklyTarget ?? DEFAULT_WEEKLY_TARGET)),
+  );
   const days = [...counted].filter((day) => day <= today).sort();
+  const currentWeek = weekStartOf(today);
+  const thisWeekCount = days.filter((day) => day >= currentWeek).length;
+
   const summary: StreakSummary = {
     current: 0,
     longest: 0,
@@ -84,8 +109,35 @@ export function computeStreak(
     repairOffer: null,
     todayCounted: counted.has(today),
     todayFull: full.has(today),
+    mode,
+    weeklyTarget,
+    thisWeekCount,
   };
   if (!days.length) return summary;
+
+  if (mode === 'weekly') {
+    const perWeek = new Map<string, number>();
+    for (const day of days) {
+      const w = weekStartOf(day);
+      perWeek.set(w, (perWeek.get(w) ?? 0) + 1);
+    }
+    let weekRun = 0;
+    for (
+      let week = weekStartOf(days[0]);
+      week <= currentWeek;
+      week = addDays(week, 7)
+    ) {
+      const count = perWeek.get(week) ?? 0;
+      if (count >= weeklyTarget) {
+        weekRun += 1;
+      } else if (week < currentWeek) {
+        weekRun = 0;
+      }
+      summary.longest = Math.max(summary.longest, weekRun);
+    }
+    summary.current = weekRun;
+    return summary;
+  }
 
   let run = 0;
   let lastRepair: string | null = null;

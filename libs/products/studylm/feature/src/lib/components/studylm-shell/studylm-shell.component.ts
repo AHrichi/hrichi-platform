@@ -7,6 +7,9 @@ import {
   untracked,
 } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { LearningToday } from '@ah/learning/client';
+import { APP_MODE } from '@ah/platform/app-mode';
+import { isAppEnabled } from '@ah/shared/content';
 import {
   AhButton,
   AhMetricCard,
@@ -39,6 +42,7 @@ import { STUDYLM_COPY } from '../../i18n/studylm-copy';
     RouterOutlet,
     RouterLink,
     RouterLinkActive,
+    LearningToday,
     AhScrollHint,
     AhMetricCard,
     AhButton,
@@ -74,6 +78,9 @@ import { STUDYLM_COPY } from '../../i18n/studylm-copy';
 })
 export class StudyLmShellComponent {
   readonly store = inject(StudyLmStore);
+  protected readonly learningOn =
+    (inject(APP_MODE, { optional: true }) ?? 'standalone') === 'standalone' ||
+    isAppEnabled('learning');
   private readonly preferences = inject(PreferencesStore, { optional: true });
   readonly copy = computed(
     () => STUDYLM_COPY[this.preferences?.language() ?? 'en'] ?? STUDYLM_COPY.en,

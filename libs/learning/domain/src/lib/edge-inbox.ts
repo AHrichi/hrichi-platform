@@ -52,6 +52,34 @@ export const EdgeInboxAckSchema = v.strictObject({
   ),
 });
 
+export const EdgeDeviceSchema = v.strictObject({
+  id: v.pipe(v.string(), v.uuid()),
+  name: v.pipe(v.string(), v.trim(), v.minLength(1), v.maxLength(80)),
+  host: v.nullable(v.pipe(v.string(), v.maxLength(40))),
+  pairedAt: v.pipe(v.string(), v.isoTimestamp()),
+  lastSeenAt: v.nullable(v.pipe(v.string(), v.isoTimestamp())),
+  revokedAt: v.nullable(v.pipe(v.string(), v.isoTimestamp())),
+});
+export type EdgeDevice = v.InferOutput<typeof EdgeDeviceSchema>;
+
+export const EdgeDevicesSyncSchema = v.strictObject({
+  devices: v.pipe(v.array(EdgeDeviceSchema), v.maxLength(100)),
+});
+
+export const EdgeRevocationSchema = v.strictObject({
+  key: v.pipe(v.string(), v.startsWith('revoke:'), v.maxLength(64)),
+  deviceId: v.pipe(v.string(), v.uuid()),
+  revokedAt: v.pipe(v.string(), v.isoTimestamp()),
+});
+export type EdgeRevocation = v.InferOutput<typeof EdgeRevocationSchema>;
+
+export const EdgeRevocationAckSchema = v.strictObject({
+  keys: v.pipe(
+    v.array(v.pipe(v.string(), v.startsWith('revoke:'), v.maxLength(64))),
+    v.maxLength(100),
+  ),
+});
+
 /** The KV key of a Telegram update: padded, so keys list in arrival order. */
 export function inboxKey(updateId: number): string {
   return `inbox:${String(updateId).padStart(12, '0')}`;

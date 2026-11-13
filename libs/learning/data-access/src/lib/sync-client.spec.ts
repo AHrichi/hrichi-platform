@@ -3,7 +3,10 @@ import {
   FIXTURE_IDS,
   incomingWins,
   linkRecord,
+  mergeConcepts,
   type PulledRecord,
+  SETTINGS_RECORD_ID,
+  type SettingsRecord,
   sampleCapture,
   sampleConcept,
   sampleEvent,
@@ -62,11 +65,34 @@ class FakeServer {
               : r.data.updatedAt,
           by: r.by,
         });
+        const seq = ++this.seq;
+        if (record.kind === 'concept' && current?.kind === 'concept') {
+          const merged = mergeConcepts(
+            {
+              updatedAt: current.data.updatedAt,
+              by: current.by,
+              data: current.data,
+            },
+            {
+              updatedAt: record.data.updatedAt,
+              by: record.by,
+              data: record.data,
+            },
+          );
+          if (!merged.fromIncoming) return;
+          this.records.set(key, {
+            kind: 'concept',
+            seq,
+            by: merged.by,
+            data: merged.concept,
+          });
+          if (!merged.keptCurrent) written.add(seq);
+          return;
+        }
         const wins =
           record.kind === 'event' || record.kind === 'teachback'
             ? !current
             : incomingWins(current && revision(current), revision(record));
-        const seq = ++this.seq;
         if (!wins) return;
         this.records.set(key, { ...record, seq } as PulledRecord);
         written.add(seq);
@@ -85,6 +111,8 @@ class FakeServer {
         put({ kind: 'link', seq: 0, by: deviceId, data });
       for (const data of request.push.teachbacks)
         put({ kind: 'teachback', seq: 0, by: deviceId, data });
+      for (const data of request.push.settings ?? [])
+        put({ kind: 'settings', seq: 0, by: deviceId, data });
       const changes = [...this.records.values()]
         .filter((record) => record.seq > request.cursor)
         .sort((a, b) => a.seq - b.seq);
@@ -333,5 +361,54 @@ describe('LearningSyncClient with two devices', () => {
     const { push } = await loose.store.readOutbox();
     expect(push.topics).toHaveLength(1);
     expect(LOCAL_WRITER).toBe('local');
+  });
+
+  it('syncs settings records and merges concept field groups across devices', async () => {
+    const server = new FakeServer();
+    const phone = await device(server, FIXTURE_IDS.deviceA);
+    const laptop = await device(server, FIXTURE_IDS.deviceB);
+
+    const base = sampleConcept({ status: 'draft', topicId: null });
+    await phone.store.saveConcept(base);
+    await phone.client.sync();
+    await laptop.client.sync();
+
+    const settings: SettingsRecord = {
+      id: SETTINGS_RECORD_ID,
+      updatedAt: clock.toISOString(),
+      deletedAt: null,
+      dailyCap: 10,
+      newPerDay: 2,
+      streakMode: 'weekly',
+      weeklyTarget: 4,
+      morning: '08:30',
+      evening: null,
+      vacationUntil: null,
+      gardenTheme: 'aurora',
+      weeklyRecap: true,
+    };
+    tick();
+    await phone.store.saveSettingsRecord(settings);
+    tick();
+    await laptop.store.saveConcept(
+      { ...base, status: 'active', confirmedAt: clock.toISOString() },
+      ['status'],
+    );
+    tick();
+    await phone.store.saveConcept({ ...base, topicId: FIXTURE_IDS.topic }, [
+      'topic',
+    ]);
+
+    await laptop.client.sync();
+    await phone.client.sync();
+    await laptop.client.sync();
+
+    expect((await laptop.store.settingsRecord())?.streakMode).toBe('weekly');
+    const onPhone = (await phone.store.concepts())[0];
+    const onLaptop = (await laptop.store.concepts())[0];
+    expect(onPhone.status).toBe('active');
+    expect(onPhone.topicId).toBe(FIXTURE_IDS.topic);
+    expect(onLaptop.status).toBe('active');
+    expect(onLaptop.topicId).toBe(FIXTURE_IDS.topic);
   });
 });

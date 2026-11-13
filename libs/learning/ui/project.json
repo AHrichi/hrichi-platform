@@ -1,0 +1,9 @@
+{
+  "name": "learning-ui",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/learning/ui/src",
+  "prefix": "lrn",
+  "projectType": "library",
+  "tags": ["scope:learning", "type:ui", "runtime:browser"],
+  "targets": {}
+}

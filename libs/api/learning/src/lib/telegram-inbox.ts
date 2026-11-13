@@ -9,6 +9,7 @@ import {
   signDeviceToken,
 } from '@ah/learning/domain';
 import type { CapturePipeline } from './capture-pipeline';
+import type { EdgeDeviceSync } from './edge-devices';
 
 type Fetch = typeof fetch;
 
@@ -42,6 +43,7 @@ export class TelegramInbox {
     private readonly pipeline: CapturePipeline,
     private readonly now: () => Date = () => new Date(),
     private readonly fetchFn: Fetch = (input, init) => fetch(input, init),
+    private readonly edgeDevices: EdgeDeviceSync | null = null,
   ) {
     this.base = options.edgeUrl?.replace(/\/+$/, '') || null;
   }
@@ -60,6 +62,9 @@ export class TelegramInbox {
 
   private async pullOnce(): Promise<number> {
     if (!this.base) return 0;
+    if (this.edgeDevices?.configured) {
+      await this.edgeDevices.pullRevocations();
+    }
     const token = await signDeviceToken(this.options.tokenSecret, {
       deviceId: SERVER_TOKEN_SUBJECT,
       expiresAt: new Date(this.now().getTime() + SERVER_TOKEN_TTL_MS),
@@ -95,6 +100,9 @@ export class TelegramInbox {
         signal: AbortSignal.timeout(15_000),
       });
       if (!ack.ok) throw new Error(`The ack answered ${ack.status}`);
+    }
+    if (this.edgeDevices?.configured) {
+      await this.edgeDevices.pushDevices();
     }
     return done.length;
   }

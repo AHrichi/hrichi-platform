@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -14,12 +15,15 @@ import {
 } from '@angular/forms/signals';
 import { RouterLink } from '@angular/router';
 import {
+  type Concept,
   type ConceptDraft,
+  type ConceptFieldGroup,
   type ConceptLink,
   describeLink,
   LIMITS,
   LINK_RELATIONS,
   type LinkRelation,
+  type RecallPrompt,
 } from '@ah/learning/domain';
 import { AhButton, AhEmptyState } from '@ah/ui';
 import { LearningStore } from '../../store/learning.store';
@@ -73,22 +77,83 @@ const emptyDraft = (): ConceptDraft => ({
   answer: '',
 });
 
+const LIBRARY_STATUSES = ['active', 'suspended', 'archived'] as const;
+type LibraryStatus = (typeof LIBRARY_STATUSES)[number];
+
+const STATUS_LABELS: Record<LibraryStatus, string> = {
+  active: 'Active',
+  suspended: 'Paused',
+  archived: 'Archived',
+};
+
+interface ConceptEditDraft {
+  id: string;
+  title: string;
+  topicId: string;
+  newTopic: string;
+  status: LibraryStatus;
+  essence: string;
+  simple: string;
+  analogy: string;
+  misconception: string;
+  ownWords: string;
+  prompts: RecallPrompt[];
+}
+
 /**
- * Concepts on this device, and a form to add one by hand. Phase L2
- * replaces typing with capture: a sentence or a voice note in, a Feynman
- * explanation and questions out.
+ * Concepts on this device: search and filter, edit explanations and
+ * recall prompts (keeping prior versions), organize by topic, or add by hand.
  */
 @Component({
   selector: 'lrn-concepts-screen',
-  imports: [AhButton, AhEmptyState, FormField, FormRoot, RouterLink],
+  imports: [AhButton, AhEmptyState, DatePipe, FormField, FormRoot, RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './concepts-screen.html',
   styleUrl: './concepts-screen.scss',
 })
 export class ConceptsScreen {
   protected readonly store = inject(LearningStore);
+  protected readonly limits = LIMITS;
   protected readonly fields = FIELDS;
+  protected readonly statuses = LIBRARY_STATUSES;
+  protected readonly statusLabels = STATUS_LABELS;
   protected readonly adding = signal(false);
+  protected readonly query = signal('');
+  protected readonly topicFilter = signal<'all' | 'none' | string>('all');
+  protected readonly statusFilter = signal<'all' | LibraryStatus>('all');
+  protected readonly editing = signal<ConceptEditDraft | null>(null);
+  protected readonly editError = signal<string | null>(null);
+  protected readonly editSaving = signal(false);
+
+  protected readonly topicNames = computed(
+    () => new Map(this.store.topics().map((t) => [t.id, t.name])),
+  );
+
+  protected readonly filtered = computed(() => {
+    const q = this.query().trim().toLowerCase();
+    const topic = this.topicFilter();
+    const status = this.statusFilter();
+    return this.store.library().filter((concept) => {
+      if (status !== 'all' && concept.status !== status) return false;
+      if (topic === 'none' && concept.topicId !== null) return false;
+      if (topic !== 'all' && topic !== 'none' && concept.topicId !== topic) {
+        return false;
+      }
+      if (!q) return true;
+      const haystack = [
+        concept.title,
+        concept.explanation.essence,
+        concept.explanation.simple ?? '',
+        concept.explanation.analogy ?? '',
+        concept.explanation.ownWords ?? '',
+        ...concept.prompts.flatMap((p) => [p.question, p.answer]),
+      ]
+        .join(' ')
+        .toLowerCase();
+      return haystack.includes(q);
+    });
+  });
+
   protected readonly relations = LINK_RELATIONS.map((value) => ({
     value,
     label: RELATION_LABELS[value],
@@ -154,6 +219,183 @@ export class ConceptsScreen {
   protected cancel(): void {
     this.form().reset(emptyDraft());
     this.adding.set(false);
+  }
+
+  protected clearFilters(): void {
+    this.query.set('');
+    this.topicFilter.set('all');
+    this.statusFilter.set('all');
+  }
+
+  protected startEdit(concept: Concept): void {
+    this.editError.set(null);
+    this.editing.set({
+      id: concept.id,
+      title: concept.title,
+      topicId: concept.topicId ?? '',
+      newTopic: '',
+      status: concept.status === 'draft' ? 'active' : concept.status,
+      essence: concept.explanation.essence,
+      simple: concept.explanation.simple ?? '',
+      analogy: concept.explanation.analogy ?? '',
+      misconception: concept.explanation.misconception ?? '',
+      ownWords: concept.explanation.ownWords ?? '',
+      prompts: concept.prompts.map((p) => ({
+        ...p,
+        keyPoints: [...p.keyPoints],
+      })),
+    });
+  }
+
+  protected cancelEdit(): void {
+    this.editing.set(null);
+    this.editError.set(null);
+  }
+
+  protected patchEdit(patch: Partial<ConceptEditDraft>): void {
+    this.editing.update((draft) => (draft ? { ...draft, ...patch } : null));
+  }
+
+  protected patchPrompt(index: number, patch: Partial<RecallPrompt>): void {
+    this.editing.update((draft) => {
+      if (!draft) return null;
+      const prompts = draft.prompts.map((prompt, i) =>
+        i === index ? { ...prompt, ...patch } : prompt,
+      );
+      return { ...draft, prompts };
+    });
+  }
+
+  protected addPromptToEdit(): void {
+    this.editing.update((draft) => {
+      if (!draft || draft.prompts.length >= LIMITS.prompts) return draft;
+      return {
+        ...draft,
+        prompts: [
+          ...draft.prompts,
+          {
+            id: crypto.randomUUID(),
+            type: 'free_recall',
+            question: '',
+            answer: '',
+            options: null,
+            keyPoints: [],
+            retired: false,
+          },
+        ],
+      };
+    });
+  }
+
+  protected removePromptFromEdit(index: number): void {
+    this.editing.update((draft) => {
+      if (!draft || draft.prompts.length <= 1) return draft;
+      return {
+        ...draft,
+        prompts: draft.prompts.filter((_, i) => i !== index),
+      };
+    });
+  }
+
+  protected async saveEdit(original: Concept): Promise<void> {
+    const draft = this.editing();
+    if (!draft || draft.id !== original.id || this.editSaving()) return;
+    const title = draft.title.trim();
+    const essence = draft.essence.trim();
+    if (!title || title.length > LIMITS.conceptTitle) {
+      this.editError.set(
+        `Give the concept a title (1–${LIMITS.conceptTitle} characters).`,
+      );
+      return;
+    }
+    if (!essence || essence.length > LIMITS.essence) {
+      this.editError.set(
+        `Give a one-line essence (1–${LIMITS.essence} characters).`,
+      );
+      return;
+    }
+    const prompts = draft.prompts.map((prompt) => ({
+      ...prompt,
+      question: prompt.question.trim(),
+      answer: prompt.answer.trim(),
+    }));
+    if (
+      !prompts.length ||
+      prompts.some(
+        (p) =>
+          !p.question ||
+          p.question.length > LIMITS.question ||
+          !p.answer ||
+          p.answer.length > LIMITS.answer,
+      )
+    ) {
+      this.editError.set(
+        'Every question needs non-empty question and answer text within limits.',
+      );
+      return;
+    }
+
+    this.editError.set(null);
+    this.editSaving.set(true);
+    try {
+      let topicId: string | null = draft.topicId || null;
+      if (draft.topicId === '__new__' && draft.newTopic.trim()) {
+        topicId = (await this.store.addTopic(draft.newTopic)).id;
+      } else if (topicId === '__new__') {
+        topicId = original.topicId;
+      }
+
+      const cleanOpt = (value: string) =>
+        value.trim().slice(0, LIMITS.explanation) || null;
+      const nextExplanation = {
+        essence,
+        simple: cleanOpt(draft.simple),
+        analogy: cleanOpt(draft.analogy),
+        misconception: cleanOpt(draft.misconception),
+        ownWords: cleanOpt(draft.ownWords),
+        by: original.explanation.by,
+      };
+      const explanationChanged =
+        nextExplanation.essence !== original.explanation.essence ||
+        nextExplanation.simple !== original.explanation.simple ||
+        nextExplanation.analogy !== original.explanation.analogy ||
+        nextExplanation.misconception !== original.explanation.misconception ||
+        nextExplanation.ownWords !== original.explanation.ownWords;
+      if (explanationChanged) {
+        nextExplanation.by = 'user';
+      }
+
+      const groups: ConceptFieldGroup[] = [];
+      if (title !== original.title || explanationChanged) {
+        groups.push('explanation');
+      }
+      if (JSON.stringify(prompts) !== JSON.stringify(original.prompts)) {
+        groups.push('prompts');
+      }
+      if (draft.status !== original.status) {
+        groups.push('status');
+      }
+      if (topicId !== original.topicId) {
+        groups.push('topic');
+      }
+
+      if (groups.length) {
+        await this.store.updateConcept(
+          original.id,
+          {
+            title,
+            topicId,
+            status: draft.status,
+            explanation: nextExplanation,
+            prompts,
+          },
+          groups,
+        );
+      }
+      this.editing.set(null);
+    } finally {
+      this.editSaving.set(false);
+    }
   }
 
   protected remove(id: string, title: string): void {

@@ -6,6 +6,7 @@ import type {
   ReviewSession,
   RecordKind,
   ReviewEvent,
+  SettingsRecord,
   TeachBack,
   Topic,
 } from '@ah/learning/domain';
@@ -56,6 +57,7 @@ export class LearningDatabase extends Dexie {
   sessions!: Table<LocalRow<ReviewSession>, string>;
   teachbacks!: Table<LocalRow<TeachBack>, string>;
   links!: Table<LocalRow<ConceptLink>, string>;
+  settings!: Table<LocalRow<SettingsRecord>, string>;
   outbox!: Table<OutboxRow, string>;
   meta!: Table<MetaRow, string>;
 
@@ -79,5 +81,7 @@ export class LearningDatabase extends Dexie {
     this.version(4).stores({ teachbacks: 'id, data.conceptId' });
     // Version 5 (L5) adds links between concepts.
     this.version(5).stores({ links: 'id, data.from, data.to' });
+    // Version 6 adds synced profile & streak settings.
+    this.version(6).stores({ settings: 'id' });
   }
 }

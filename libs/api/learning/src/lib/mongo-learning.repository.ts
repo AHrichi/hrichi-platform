@@ -122,6 +122,18 @@ export class MongoLearningRepository implements LearningRepository {
     }
   }
 
+  async putMergedConcept(
+    record: StoredRecord<'concept'>,
+    expectedSeq: number,
+  ): Promise<PutOutcome> {
+    const document = toDocument(record as StoredRecord);
+    const result = await this.records.updateOne(
+      { _id: document._id, seq: expectedSeq },
+      { $set: document },
+    );
+    return result.modifiedCount === 1 ? 'stored' : 'kept';
+  }
+
   async putAppendOnly<K extends AppendOnlyKind>(
     record: StoredRecord<K>,
   ): Promise<PutOutcome> {

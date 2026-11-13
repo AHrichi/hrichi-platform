@@ -17,7 +17,20 @@
 
 <div class="ah-alert-body">
   @if (title()) {
-    <h4 class="ah-alert-title">{{ title() }}</h4>
+    @switch (headingLevel()) {
+      @case (2) {
+        <h2 class="ah-alert-title">{{ title() }}</h2>
+      }
+      @case (3) {
+        <h3 class="ah-alert-title">{{ title() }}</h3>
+      }
+      @case (4) {
+        <h4 class="ah-alert-title">{{ title() }}</h4>
+      }
+      @default {
+        <div class="ah-alert-title">{{ title() }}</div>
+      }
+    }
   }
   <div class="ah-alert-message">
     <ng-content />

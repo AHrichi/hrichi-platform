@@ -1,0 +1,58 @@
+<div class="card done" role="status">
+  @if (hadCards()) {
+    <p class="done-mark" aria-hidden="true">✓</p>
+    <h2>Done for today</h2>
+  } @else {
+    <p class="done-mark" aria-hidden="true">☕</p>
+    <h2>Nothing due today</h2>
+    <p class="hint">
+      Capture something new in the Inbox, or come back tomorrow. Today still
+      counts.
+    </p>
+    <ng-content select="[emptyHint]" />
+  }
+
+  <lrn-streak-flame [streak]="streak()" />
+
+  @for (grew of grewTo(); track grew.title) {
+    <p class="insight">
+      “{{ grew.title }}” reached <strong>{{ tierNames[grew.tier] }}</strong
+      >.
+    </p>
+  } @empty {
+    @if (strongCount()) {
+      <p class="insight">
+        {{ strongCount() }} concept{{ strongCount() === 1 ? ' is' : 's are' }}
+        at Leaf or better.
+      </p>
+    }
+  }
+
+  <p class="hint">
+    Level {{ xp().level }} · {{ xp().into }} / {{ xp().span }} XP
+  </p>
+  <p class="hint">
+    Tomorrow: {{ tomorrow() }} card{{ tomorrow() === 1 ? '' : 's' }} · about
+    {{ tomorrowMinutes() }} min
+  </p>
+
+  @if (streak().repairOffer; as offer) {
+    <p class="repair">
+      Your {{ offer.streakBefore }}-day streak ended yesterday. Finish a bonus
+      round today to repair it (once a month).
+    </p>
+  }
+
+  <div class="actions">
+    <button ahButton type="button" (click)="closed.emit()">Close</button>
+    <button
+      ahButton="ghost"
+      type="button"
+      (click)="bonusRequested.emit()"
+      [disabled]="busy()"
+    >
+      Bonus round
+    </button>
+    <ng-content select="[actions]" />
+  </div>
+</div>

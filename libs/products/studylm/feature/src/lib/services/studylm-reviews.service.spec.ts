@@ -9,6 +9,7 @@ import type {
 import { StudyLmStorageService } from './studylm-storage.service';
 import {
   lessonCardItems,
+  lessonCheckItem,
   quizItem,
   StudyLmReviews,
 } from './studylm-reviews.service';
@@ -142,5 +143,32 @@ describe('StudyLmReviews', () => {
     expect(keys.some((k) => k.startsWith('lesson-card:recursion:'))).toBe(
       false,
     );
+  });
+
+  it('builds check captures and reports missed and passed lesson checks', () => {
+    const { reviews, sent, answers } = setup(true);
+    const lesson = { id: 'bfs', title: 'Breadth-First Search' };
+    const quizBlock = {
+      id: 'chk-1',
+      kind: 'quiz' as const,
+      question: 'Which structure drives BFS?',
+      code: null,
+      options: ['Stack', 'Queue'],
+      correct: [1],
+      explanation: 'FIFO order visits level by level.',
+    };
+    const item = lessonCheckItem(lesson, quizBlock, null);
+    expect(item.source.objectType).toBe('lesson-check');
+    expect(item.source.objectId).toBe('bfs:chk-1');
+    expect(item.text).toContain('Which structure drives BFS?');
+    expect(item.text).toContain('Queue');
+
+    reviews.lessonCheckAnswered(lesson, quizBlock, false);
+    reviews.lessonCheckAnswered(lesson, quizBlock, true);
+    expect(sent).toEqual([['lesson-check:bfs:chk-1']]);
+    expect(answers).toEqual([
+      'lesson-check:bfs:chk-1:again',
+      'lesson-check:bfs:chk-1:good',
+    ]);
   });
 });

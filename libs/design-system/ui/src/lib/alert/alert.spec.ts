@@ -36,4 +36,27 @@ describe('Alert', () => {
 
     expect(hostElem.hasAttribute('hidden')).toBe(true);
   });
+
+  it('supports configurable headingLevel without emitting skipped headings', async () => {
+    @Component({
+      imports: [Alert],
+      template: `<ah-alert title="Banner" [headingLevel]="null"
+        >Body</ah-alert
+      >`,
+    })
+    class PlainHost {}
+
+    TestBed.configureTestingModule({
+      providers: [provideZonelessChangeDetection()],
+    });
+    const fixture = TestBed.createComponent(PlainHost);
+    await fixture.whenStable();
+
+    expect(fixture.nativeElement.querySelector('h4')).toBeNull();
+    expect(
+      fixture.nativeElement
+        .querySelector('.ah-alert-title')
+        ?.textContent?.trim(),
+    ).toBe('Banner');
+  });
 });

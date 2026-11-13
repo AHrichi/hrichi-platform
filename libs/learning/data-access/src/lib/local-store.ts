@@ -1,15 +1,20 @@
 import {
   type Capture,
   type Concept,
+  type ConceptFieldGroup,
   type ConceptLink,
   type ReviewSession,
+  SETTINGS_RECORD_ID,
+  type SettingsRecord,
   incomingWins,
   isMutableKind,
+  mergeConcepts,
   type PulledRecord,
   type RecordKind,
   type ReviewEvent,
   SYNC_LIMITS,
   type SyncRequest,
+  stampConceptGroups,
   type TeachBack,
   type Topic,
 } from '@ah/learning/domain';
@@ -133,8 +138,30 @@ export class LearningLocalStore {
     return this.saveMutable('topic', topic);
   }
 
-  async saveConcept(concept: Concept): Promise<Concept> {
-    return this.saveMutable('concept', concept);
+  async saveConcept(
+    concept: Concept,
+    groups?: readonly ConceptFieldGroup[],
+  ): Promise<Concept> {
+    if (!groups?.length) return this.saveMutable('concept', concept);
+    return this.saveMutable('concept', concept, (previous, updatedAt, writer) =>
+      stampConceptGroups(
+        concept,
+        groups,
+        { updatedAt, by: writer },
+        previous
+          ? { updatedAt: previous.updatedAt, by: previous.by }
+          : undefined,
+      ),
+    );
+  }
+
+  async settingsRecord(): Promise<SettingsRecord | null> {
+    const row = await this.db.settings.get(SETTINGS_RECORD_ID);
+    return row && !row.data.deletedAt ? row.data : null;
+  }
+
+  async saveSettingsRecord(settings: SettingsRecord): Promise<SettingsRecord> {
+    return this.saveMutable('settings', settings);
   }
 
   async sessions(): Promise<ReviewSession[]> {
@@ -234,15 +261,23 @@ export class LearningLocalStore {
   }
 
   private async saveMutable<
-    T extends Topic | Concept | Capture | ReviewSession | ConceptLink,
+    T extends
+      Topic | Concept | Capture | ReviewSession | ConceptLink | SettingsRecord,
   >(
-    kind: 'topic' | 'concept' | 'capture' | 'session' | 'link',
+    kind: 'topic' | 'concept' | 'capture' | 'session' | 'link' | 'settings',
     record: T,
+    prepare?: (
+      previous: LocalRow<T> | undefined,
+      updatedAt: string,
+      writer: string,
+    ) => T,
   ): Promise<T> {
     const writer = await this.writer();
     const table = this.tableOf(kind);
-    const previous = await table.get(record.id);
-    const stamped = { ...record, updatedAt: this.stamp(previous?.updatedAt) };
+    const previous = (await table.get(record.id)) as LocalRow<T> | undefined;
+    const updatedAt = this.stamp(previous?.updatedAt);
+    const prepared = prepare ? prepare(previous, updatedAt, writer) : record;
+    const stamped = { ...prepared, updatedAt };
     await this.db.transaction('rw', table, this.db.outbox, async () => {
       await table.put({
         id: stamped.id,
@@ -253,7 +288,8 @@ export class LearningLocalStore {
         LocalRow<Concept> &
         LocalRow<Capture> &
         LocalRow<ReviewSession> &
-        LocalRow<ConceptLink>);
+        LocalRow<ConceptLink> &
+        LocalRow<SettingsRecord>);
       await this.queue(kind, stamped.id);
     });
     return stamped;
@@ -275,6 +311,7 @@ export class LearningLocalStore {
       events: [],
       links: [],
       teachbacks: [],
+      settings: [],
     };
     const snapshot: OutboxSnapshot = new Map();
     const limits = {
@@ -285,6 +322,7 @@ export class LearningLocalStore {
       event: SYNC_LIMITS.pushEvents,
       teachback: SYNC_LIMITS.pushTeachBacks,
       link: SYNC_LIMITS.pushLinks,
+      settings: SYNC_LIMITS.pushSettings,
     };
     for (const entry of queued) {
       const row = await this.tableOf(entry.kind).get(entry.id);
@@ -301,6 +339,7 @@ export class LearningLocalStore {
           event: push.events,
           teachback: push.teachbacks,
           link: push.links,
+          settings: (push.settings ??= []),
         } as const
       )[entry.kind] as unknown[];
       if (list.length >= limits[entry.kind]) continue;
@@ -328,7 +367,8 @@ export class LearningLocalStore {
   /**
    * Merges versions from the server: a mutable record is replaced when the
    * pulled version wins (incomingWins), which also drops the local change
-   * it beat from the outbox; an event is added once.
+   * it beat from the outbox; concepts merge field-group by field-group;
+   * an event is added once.
    */
   async applyPull(records: PulledRecord[]): Promise<number> {
     let changed = 0;
@@ -342,6 +382,7 @@ export class LearningLocalStore {
         this.db.events,
         this.db.teachbacks,
         this.db.links,
+        this.db.settings,
         this.db.outbox,
       ],
       async () => {
@@ -363,11 +404,29 @@ export class LearningLocalStore {
             LocalRow<ReviewSession> &
             LocalRow<ReviewEvent> &
             LocalRow<TeachBack> &
-            LocalRow<ConceptLink>;
+            LocalRow<ConceptLink> &
+            LocalRow<SettingsRecord>;
           if (isMutableKind(record.kind)) {
-            if (!incomingWins(current, row)) continue;
-            await table.put(row);
-            await this.db.outbox.delete(`${record.kind}:${record.data.id}`);
+            if (record.kind === 'concept' && current) {
+              const merged = mergeConcepts(
+                current as LocalRow<Concept>,
+                row as LocalRow<Concept>,
+              );
+              if (!merged.fromIncoming) continue;
+              await table.put({
+                ...row,
+                by: merged.by,
+                updatedAt: merged.updatedAt,
+                data: merged.concept,
+              } as typeof row);
+              if (!merged.keptCurrent) {
+                await this.db.outbox.delete(`${record.kind}:${record.data.id}`);
+              }
+            } else {
+              if (!incomingWins(current, row)) continue;
+              await table.put(row);
+              await this.db.outbox.delete(`${record.kind}:${record.data.id}`);
+            }
           } else {
             if (current) continue;
             await table.add(row);
@@ -388,13 +447,15 @@ export class LearningLocalStore {
       event: this.db.events,
       teachback: this.db.teachbacks,
       link: this.db.links,
+      settings: this.db.settings,
     }[kind] as LearningDatabase['concepts'] &
       LearningDatabase['topics'] &
       LearningDatabase['captures'] &
       LearningDatabase['sessions'] &
       LearningDatabase['events'] &
       LearningDatabase['teachbacks'] &
-      LearningDatabase['links'];
+      LearningDatabase['links'] &
+      LearningDatabase['settings'];
   }
 
   private async queue(kind: RecordKind, id: string): Promise<void> {

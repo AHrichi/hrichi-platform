@@ -1,95 +1,37 @@
 <section class="screen" aria-labelledby="today-title">
   <h1 id="today-title" class="visually-hidden">Today</h1>
 
+  @if (autoEasyTitle(); as promotedTitle) {
+    <div class="undo-banner" role="status">
+      <span>⚡ “{{ promotedTitle }}” counted as Easy.</span>
+      <button ahButton="ghost" size="sm" type="button" (click)="undoAutoEasy()">
+        Undo (count as Got it)
+      </button>
+    </div>
+  }
+
   @if (finished()) {
-    <div class="card done" role="status">
-      @if (session()?.planned?.length) {
-        <p class="done-mark" aria-hidden="true">✓</p>
-        <h2>Done for today</h2>
-      } @else {
-        <p class="done-mark" aria-hidden="true">☕</p>
-        <h2>Nothing due today</h2>
-        <p class="hint">
-          Capture something new in the Inbox, or come back tomorrow. Today still
-          counts.
-        </p>
-        <p class="hint">
-          New here? <a routerLink="../guide">How the Learning Engine works</a>
-        </p>
-      }
-      <p class="flame">
-        <span aria-hidden="true">🔥</span>
-        {{ store.streak().current }} day{{
-          store.streak().current === 1 ? '' : 's'
-        }}
-        @if (store.streak().freezesBanked) {
-          <span class="freezes">
-            · <span aria-hidden="true">❄️</span>
-            {{ store.streak().freezesBanked }} freeze{{
-              store.streak().freezesBanked === 1 ? '' : 's'
-            }}
-            banked
-          </span>
-        }
-      </p>
-      @for (grew of grewTo(); track grew.title) {
-        <p class="insight">
-          “{{ grew.title }}” reached <strong>{{ tierNames[grew.tier] }}</strong
-          >.
-        </p>
-      } @empty {
-        @if (strongCount()) {
-          <p class="insight">
-            {{ strongCount() }} concept{{
-              strongCount() === 1 ? ' is' : 's are'
-            }}
-            at Leaf or better.
-          </p>
-        }
-      }
-      <p class="hint">
-        Level {{ store.xp().level }} · {{ store.xp().into }} /
-        {{ store.xp().span }} XP
-      </p>
-      <p class="hint">
-        Tomorrow: {{ tomorrow() }} card{{ tomorrow() === 1 ? '' : 's' }} · about
-        {{ tomorrowMinutes() }} min
-      </p>
-      @if (store.streak().repairOffer; as offer) {
-        <p class="repair" role="status">
-          Your {{ offer.streakBefore }}-day streak ended yesterday. Finish a
-          bonus round today to repair it (once a month).
-        </p>
-      }
-      <div class="actions">
-        <button ahButton type="button" (click)="close()">Close</button>
-        <button
-          ahButton="ghost"
-          type="button"
-          (click)="startBonus()"
-          [disabled]="busy()"
-        >
-          Bonus round
-        </button>
-        <a ahButton="ghost" routerLink="../garden">See the garden</a>
-      </div>
-    </div>
-  } @else if (card(); as current) {
-    <div
-      class="progress"
-      role="progressbar"
-      aria-label="Today’s set"
-      [attr.aria-valuenow]="done()"
-      aria-valuemin="0"
-      [attr.aria-valuemax]="total()"
+    <lrn-set-completion
+      [hadCards]="!!session()?.planned?.length"
+      [streak]="store.streak()"
+      [grewTo]="grewTo()"
+      [strongCount]="strongCount()"
+      [xp]="store.xp()"
+      [tomorrow]="tomorrow()"
+      [tomorrowMinutes]="tomorrowMinutes()"
+      [busy]="busy()"
+      (closed)="close()"
+      (bonusRequested)="startBonus()"
     >
-      @for (filled of dots(); track $index) {
-        <span class="dot" [class.is-done]="filled"></span>
-      }
-      <span class="flame-small" aria-hidden="true"
-        >🔥 {{ store.streak().current }}</span
-      >
-    </div>
+      <p emptyHint class="hint">
+        New here? <a routerLink="../guide">How the Learning Engine works</a>
+      </p>
+      <a actions ahButton="ghost" routerLink="../garden">See the garden</a>
+    </lrn-set-completion>
+  } @else if (card(); as current) {
+    <lrn-progress-dots [total]="total()" [done]="done()">
+      <lrn-streak-flame [streak]="store.streak()" [compact]="true" />
+    </lrn-progress-dots>
     @if (session()?.lighter) {
       <p class="hint">Lighter set today.</p>
     }
@@ -97,7 +39,8 @@
     <lrn-swipe-card
       class="card review"
       [allowUp]="true"
-      [disabled]="!revealed() || busy()"
+      [disabled]="busy()"
+      [swipeDisabled]="!revealed()"
       (swiped)="grade($event)"
       label="The current card. After revealing: right for got it, up for shaky, left for missed."
     >
@@ -243,6 +186,41 @@
             (keydown.meta.enter)="reveal()"
           ></textarea>
         </label>
+        @if (
+          !current.contrast &&
+          recorder.supported &&
+          recorder.state() !== 'denied'
+        ) {
+          <div class="record">
+            @if (recorder.state() === 'recording') {
+              <button
+                ahButton="secondary"
+                size="sm"
+                type="button"
+                (click)="stopVoiceAnswer()"
+              >
+                <span aria-hidden="true">■</span> Stop
+              </button>
+              <span class="hint" role="timer" aria-live="off">
+                {{ recorder.seconds() }} s
+              </span>
+            } @else {
+              <button
+                ahButton="ghost"
+                size="sm"
+                type="button"
+                (click)="startVoiceAnswer()"
+                [disabled]="recorder.state() === 'starting' || transcribing()"
+              >
+                <span aria-hidden="true">🎙</span>
+                {{ transcribing() ? 'Transcribing…' : 'Answer by voice' }}
+              </button>
+            }
+          </div>
+        }
+        @if (voiceProblem(); as problem) {
+          <p class="hint" role="status">{{ problem }}</p>
+        }
       }
 
       @if (revealed() && current.contrast; as other) {
@@ -317,7 +295,7 @@
         <button
           ahButton="secondary"
           type="button"
-          (click)="grade('left')"
+          (click)="submitRating('again')"
           [disabled]="busy()"
         >
           ← Missed
@@ -325,7 +303,7 @@
         <button
           ahButton="secondary"
           type="button"
-          (click)="grade('up')"
+          (click)="submitRating('hard')"
           [disabled]="busy()"
         >
           ↑ Shaky
@@ -333,10 +311,18 @@
         <button
           ahButton
           type="button"
-          (click)="grade('right')"
+          (click)="submitRating('good')"
           [disabled]="busy()"
         >
           Got it →
+        </button>
+        <button
+          ahButton="secondary"
+          type="button"
+          (click)="submitRating('easy')"
+          [disabled]="busy()"
+        >
+          ⚡ Easy
         </button>
       </div>
     }

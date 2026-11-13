@@ -94,11 +94,14 @@ export class LearningApi {
     conceptId: string,
     instruction: string,
     token: string,
+    expectedVersion?: number,
   ): Promise<Concept> {
     return this.call(
       'POST',
       `/concepts/${encodeURIComponent(conceptId)}/revise`,
-      { instruction },
+      expectedVersion === undefined
+        ? { instruction }
+        : { instruction, expectedVersion },
       token,
     );
   }

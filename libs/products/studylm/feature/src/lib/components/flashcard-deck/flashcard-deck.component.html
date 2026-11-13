@@ -121,6 +121,20 @@
           >
             <span>{{ card.tier | uppercase }}</span>
           </ah-badge>
+          @if (engineTier(card.id); as tier) {
+            <ah-badge
+              class="engine-tier-badge"
+              [variant]="tier.variant"
+              size="sm"
+              [attr.data-tier]="tier.tier"
+              [title]="tier.label"
+            >
+              <span
+                ><span aria-hidden="true">{{ tier.icon }}</span>
+                {{ tier.label }}</span
+              >
+            </ah-badge>
+          }
         </div>
 
         <div class="meta-right">

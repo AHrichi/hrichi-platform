@@ -1,0 +1,18 @@
+.flame-compact {
+  display: inline-flex;
+  gap: var(--space-1);
+  align-items: center;
+  font-weight: var(--font-weight-medium);
+}
+
+.flame-full {
+  margin: 0;
+  font-size: var(--font-size-500);
+  font-weight: var(--font-weight-semibold);
+}
+
+.meta {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-300);
+  font-weight: var(--font-weight-regular);
+}

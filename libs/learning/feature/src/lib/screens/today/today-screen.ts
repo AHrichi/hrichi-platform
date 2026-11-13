@@ -8,6 +8,7 @@ import {
 } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import {
+  type AiVerdict,
   choosePrompt,
   CLARITY_LABELS,
   type Clarity,
@@ -31,7 +32,13 @@ import {
   VoiceRecorder,
 } from '../../capture/voice-recorder';
 import { LearningStore } from '../../store/learning.store';
-import { SwipeCard, type SwipeDirection } from '../../ui/swipe-card';
+import {
+  ProgressDots,
+  SetCompletion,
+  StreakFlame,
+  SwipeCard,
+  type SwipeDirection,
+} from '@ah/learning/ui';
 
 const TYPE_LABELS: Record<PromptType, string> = {
   free_recall: 'Explain',
@@ -50,13 +57,6 @@ const RATING_BY_SWIPE: Record<SwipeDirection, ReviewEvent['rating']> = {
 };
 
 const TIER_ORDER: MasteryTier[] = ['seed', 'sprout', 'leaf', 'bloom', 'golden'];
-const TIER_NAMES: Record<MasteryTier, string> = {
-  seed: 'Seed',
-  sprout: 'Sprout',
-  leaf: 'Leaf',
-  bloom: 'Bloom',
-  golden: 'Golden',
-};
 
 interface Card {
   item: PlannedItem;
@@ -78,8 +78,30 @@ interface TeachResult {
   problem: string | null;
 }
 
+const VOICE_ANSWER_SECONDS = 60;
+const AUTO_EASY_MS = 6000;
+const AUTO_EASY_UNDO_MS = 3500;
+
+interface PendingAutoEasy {
+  payload: {
+    session: ReviewSession;
+    conceptId: string;
+    promptId: string;
+    answer: string | null;
+    ms: number;
+    aiVerdict?: AiVerdict | null;
+  };
+  timer: ReturnType<typeof setTimeout>;
+}
+
 /** Clarity bands in the verdict colours. */
 const CLARITY_TONE: Record<Clarity, 'nailed' | 'close' | 'missed'> = {
+  clear: 'nailed',
+  partly: 'close',
+  unclear: 'missed',
+};
+
+const CLARITY_VERDICT: Record<Clarity, AiVerdict> = {
   clear: 'nailed',
   partly: 'close',
   unclear: 'missed',
@@ -92,13 +114,20 @@ interface Feedback {
 
 /**
  * The Daily Set (design §2): one card per screen, think, reveal, swipe.
- * Right is "got it", up is "shaky", left is "missed"; buttons and arrow
- * keys do the same. A missed card comes back once at the end, asked
- * another way. When the set is done, it says so and stops.
+ * Right is "got it", up is "shaky", left is "missed", and Easy is available
+ * explicitly or auto-promoted on fast nailed answers with an undo toast.
+ * A missed card comes back once at the end, asked another way.
  */
 @Component({
   selector: 'lrn-today-screen',
-  imports: [AhButton, RouterLink, SwipeCard],
+  imports: [
+    AhButton,
+    ProgressDots,
+    RouterLink,
+    SetCompletion,
+    StreakFlame,
+    SwipeCard,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './today-screen.html',
   styleUrl: './today-screen.scss',
@@ -109,13 +138,15 @@ export class TodayScreen {
   private readonly route = inject(ActivatedRoute);
   protected readonly recorder = inject(VoiceRecorder);
   protected readonly typeLabels = TYPE_LABELS;
-  protected readonly tierNames = TIER_NAMES;
   protected readonly clarityLabels = CLARITY_LABELS;
   protected readonly clarityTone = CLARITY_TONE;
   protected readonly teachSeconds = TEACH_BACK_SECONDS;
   /** A teach-back's recording, until it is checked. */
   protected readonly spoken = signal<RecordedAudio | null>(null);
   protected readonly teachResult = signal<TeachResult | null>(null);
+  protected readonly transcribing = signal(false);
+  protected readonly voiceProblem = signal<string | null>(null);
+  protected readonly autoEasyTitle = signal<string | null>(null);
 
   protected readonly session = signal<ReviewSession | null>(null);
   protected readonly queue = signal<Card[]>([]);
@@ -134,9 +165,6 @@ export class TodayScreen {
 
   protected readonly card = computed(() => this.queue()[0] ?? null);
   protected readonly total = computed(() => this.done() + this.queue().length);
-  protected readonly dots = computed(() =>
-    Array.from({ length: this.total() }, (_, i) => i < this.done()),
-  );
   protected readonly tomorrow = computed(() => {
     const today = this.store.today();
     const next = new Date(`${today}T12:00:00Z`);
@@ -162,15 +190,18 @@ export class TodayScreen {
   private shownAt = Date.now();
   private retried = new Set<string>();
   private tiersBefore = new Map<string, MasteryTier>();
+  private pendingEasy: PendingAutoEasy | null = null;
 
   constructor() {
     void this.start(() => this.store.startToday());
     inject(DestroyRef).onDestroy(() => {
       if (this.recorder.state() === 'recording') this.recorder.cancel();
+      void this.flushPendingEasy();
     });
   }
 
   protected async startBonus(): Promise<void> {
+    await this.flushPendingEasy();
     this.finished.set(false);
     await this.start(() => this.store.startBonus());
   }
@@ -178,6 +209,7 @@ export class TodayScreen {
   private async start(
     open: () => Promise<ReviewSession | null>,
   ): Promise<void> {
+    await this.flushPendingEasy();
     this.busy.set(true);
     const session = await open();
     this.busy.set(false);
@@ -240,6 +272,38 @@ export class TodayScreen {
     void this.recorder.stop();
   }
 
+  /** Records a spoken answer on a regular review card and transcribes it into `answer`. */
+  protected async startVoiceAnswer(): Promise<void> {
+    const card = this.card();
+    this.voiceProblem.set(null);
+    await this.recorder.start(VOICE_ANSWER_SECONDS);
+    if (this.recorder.state() !== 'recording') return;
+    const audio = await this.recorder.whenStopped();
+    if (!audio || this.card() !== card) return;
+    await this.transcribeRecordedAnswer(card, audio);
+  }
+
+  protected stopVoiceAnswer(): void {
+    void this.recorder.stop();
+  }
+
+  private async transcribeRecordedAnswer(
+    card: Card,
+    audio: RecordedAudio,
+  ): Promise<string | null> {
+    this.transcribing.set(true);
+    const result = await this.store.transcribe(audio);
+    if (this.card() !== card) return null;
+    this.transcribing.set(false);
+    if (result.text) {
+      this.answer.set(result.text);
+      this.voiceProblem.set(null);
+      return result.text;
+    }
+    this.voiceProblem.set(result.problem);
+    return null;
+  }
+
   protected async revealTeach(card: Card): Promise<void> {
     if (this.recorder.state() === 'recording') {
       await this.recorder.stop();
@@ -260,25 +324,32 @@ export class TodayScreen {
     this.teachResult.set(result);
   }
 
-  protected reveal(): void {
+  protected async reveal(): Promise<void> {
     if (this.revealed()) return;
     const card = this.card();
     if (card?.teach) {
-      void this.revealTeach(card);
+      await this.revealTeach(card);
       return;
     }
+    if (card && this.recorder.state() === 'recording') {
+      await this.recorder.stop();
+      const audio = await this.recorder.whenStopped();
+      if (audio && this.card() === card && !this.answer().trim()) {
+        await this.transcribeRecordedAnswer(card, audio);
+      }
+    }
+    if (this.card() !== card) return;
     this.revealed.set(true);
     const answer = this.answer().trim();
     // A comparison has no key points of its own to grade by.
     if (!card || !answer || card.contrast) return;
     if (card.prompt.type === 'quick_fire') return;
     this.checking.set(true);
-    void this.store.grade(card.prompt, answer).then((grade) => {
-      // Ignore a late reply for a card that's gone.
-      if (this.card() !== card) return;
-      this.checking.set(false);
-      if (grade?.verdict) this.feedback.set(grade);
-    });
+    const grade = await this.store.grade(card.prompt, answer);
+    // Ignore a late reply for a card that's gone.
+    if (this.card() !== card) return;
+    this.checking.set(false);
+    if (grade?.verdict) this.feedback.set(grade);
   }
 
   /** Quick-fire: picking an option is the answer. */
@@ -293,22 +364,48 @@ export class TodayScreen {
     this.revealed.set(true);
   }
 
-  protected async grade(direction: SwipeDirection): Promise<void> {
+  protected grade(direction: SwipeDirection): Promise<void> {
+    return this.submitRating(RATING_BY_SWIPE[direction]);
+  }
+
+  protected async submitRating(rating: ReviewEvent['rating']): Promise<void> {
     const card = this.card();
     const session = this.session();
     if (!card || !session || !this.revealed() || this.busy()) return;
     this.busy.set(true);
-    const rating = RATING_BY_SWIPE[direction];
-    await this.store.recordAnswer({
+    await this.flushPendingEasy();
+
+    const ms = Date.now() - this.shownAt;
+    const textAnswer =
+      this.picked() ??
+      (this.teachResult()?.transcript || this.answer().trim() || null);
+    const aiVerdict = this.verdictFor(card);
+    const fastNailed =
+      rating === 'good' &&
+      !card.retry &&
+      !card.teach &&
+      aiVerdict === 'nailed' &&
+      ms < AUTO_EASY_MS;
+
+    const payload = {
       session,
       conceptId: card.concept.id,
       promptId: card.prompt.id,
-      rating,
-      answer:
-        this.picked() ??
-        (this.teachResult()?.transcript || this.answer().trim() || null),
-      ms: Date.now() - this.shownAt,
-    });
+      answer: textAnswer,
+      ms,
+      ...(aiVerdict ? { aiVerdict } : {}),
+    };
+
+    if (fastNailed) {
+      const timer = setTimeout(() => {
+        void this.flushPendingEasy();
+      }, AUTO_EASY_UNDO_MS);
+      this.pendingEasy = { payload, timer };
+      this.autoEasyTitle.set(card.concept.title);
+    } else {
+      await this.store.recordAnswer({ ...payload, rating });
+    }
+
     const rest = this.queue().slice(1);
     // A miss comes back once, at the end, asked another way.
     if (
@@ -336,11 +433,38 @@ export class TodayScreen {
     if (!rest.length) await this.finish();
   }
 
-  protected close(): void {
+  protected async undoAutoEasy(): Promise<void> {
+    const pending = this.pendingEasy;
+    if (!pending) return;
+    clearTimeout(pending.timer);
+    this.pendingEasy = null;
+    this.autoEasyTitle.set(null);
+    await this.store.recordAnswer({ ...pending.payload, rating: 'good' });
+  }
+
+  private async flushPendingEasy(): Promise<void> {
+    const pending = this.pendingEasy;
+    if (!pending) return;
+    clearTimeout(pending.timer);
+    this.pendingEasy = null;
+    this.autoEasyTitle.set(null);
+    await this.store.recordAnswer({ ...pending.payload, rating: 'easy' });
+  }
+
+  private verdictFor(card: Card): AiVerdict | null {
+    const direct = this.feedback()?.verdict;
+    if (direct) return direct;
+    const clarity = card.teach ? this.teachResult()?.feedback?.clarity : null;
+    return clarity ? CLARITY_VERDICT[clarity] : null;
+  }
+
+  protected async close(): Promise<void> {
+    await this.flushPendingEasy();
     void this.router.navigate(['../inbox'], { relativeTo: this.route });
   }
 
   private async finish(): Promise<void> {
+    await this.flushPendingEasy();
     const session = this.session();
     if (session && !session.completedAt) {
       await this.store.completeSession(session);
@@ -375,6 +499,8 @@ export class TodayScreen {
     this.checking.set(false);
     this.spoken.set(null);
     this.teachResult.set(null);
+    this.transcribing.set(false);
+    this.voiceProblem.set(null);
     this.shownAt = Date.now();
   }
 

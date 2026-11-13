@@ -107,6 +107,7 @@
       "@ah/shared/ai-schema": ["./libs/shared/ai-schema/src/index.ts"],
       "@ah/learning/domain": ["./libs/learning/domain/src/index.ts"],
       "@ah/learning/data-access": ["./libs/learning/data-access/src/index.ts"],
+      "@ah/learning/ui": ["./libs/learning/ui/src/index.ts"],
       "@ah/learning/feature": ["./libs/learning/feature/src/index.ts"],
       "@ah/learning/contracts": ["./libs/learning/contracts/src/index.ts"],
       "@ah/learning/client": ["./libs/learning/client/src/index.ts"],

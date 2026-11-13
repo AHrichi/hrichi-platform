@@ -14,7 +14,7 @@ import { type Capture, type Concept, describeLink } from '@ah/learning/domain';
 import { AhButton } from '@ah/ui';
 import { VoiceRecorder } from '../../capture/voice-recorder';
 import { LearningStore } from '../../store/learning.store';
-import { SwipeCard, type SwipeDirection } from '../../ui/swipe-card';
+import { SwipeCard, type SwipeDirection } from '@ah/learning/ui';
 
 /** Holding the mic longer than this means "record while held". */
 const HOLD_MS = 350;

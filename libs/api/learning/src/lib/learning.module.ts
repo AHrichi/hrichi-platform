@@ -2,6 +2,7 @@ import { type DynamicModule, Module } from '@nestjs/common';
 import type { Db } from 'mongodb';
 import { type AiKeys, type AiProviders, buildAiProviders } from '@ah/api/ai';
 import { CapturePipeline } from './capture-pipeline';
+import { EdgeDeviceSync } from './edge-devices';
 import { GradingService } from './grading.service';
 import {
   DeviceGuard,
@@ -77,14 +78,37 @@ export class LearningModule {
               : new TelegramPairingNotifier(options.telegram),
         },
         {
+          provide: EdgeDeviceSync,
+          inject: [LEARNING_REPOSITORY, LEARNING_CLOCK],
+          useFactory: (repository: LearningRepository, now: () => Date) =>
+            new EdgeDeviceSync(
+              { edgeUrl: options.edgeUrl, tokenSecret: options.tokenSecret },
+              repository,
+              now,
+            ),
+        },
+        {
           provide: PairingService,
-          inject: [LEARNING_REPOSITORY, PAIRING_NOTIFIER, LEARNING_CLOCK],
+          inject: [
+            LEARNING_REPOSITORY,
+            PAIRING_NOTIFIER,
+            LEARNING_CLOCK,
+            EdgeDeviceSync,
+          ],
           useFactory: (
             repository: LearningRepository,
             notifier: PairingNotifier,
             now: () => Date,
+            edgeDevices: EdgeDeviceSync,
           ) =>
-            new PairingService(repository, notifier, options.tokenSecret, now),
+            new PairingService(
+              repository,
+              notifier,
+              options.tokenSecret,
+              now,
+              undefined,
+              edgeDevices,
+            ),
         },
         { provide: WriteLock, useValue: new WriteLock() },
         {
@@ -132,21 +156,34 @@ export class LearningModule {
             LEARNING_CLOCK,
             WriteLock,
             CapturePipeline,
+            EdgeDeviceSync,
           ],
           useFactory: (
             repository: LearningRepository,
             now: () => Date,
             lock: WriteLock,
             pipeline: CapturePipeline,
+            edgeDevices: EdgeDeviceSync,
           ) =>
-            new HostService(repository, options.tokenSecret, now, lock, () => {
-              void pipeline.kick();
-            }),
+            new HostService(
+              repository,
+              options.tokenSecret,
+              now,
+              lock,
+              () => {
+                void pipeline.kick();
+              },
+              edgeDevices,
+            ),
         },
         {
           provide: TelegramInbox,
-          inject: [CapturePipeline, LEARNING_CLOCK],
-          useFactory: (pipeline: CapturePipeline, now: () => Date) =>
+          inject: [CapturePipeline, LEARNING_CLOCK, EdgeDeviceSync],
+          useFactory: (
+            pipeline: CapturePipeline,
+            now: () => Date,
+            edgeDevices: EdgeDeviceSync,
+          ) =>
             new TelegramInbox(
               {
                 edgeUrl: options.edgeUrl,
@@ -155,6 +192,8 @@ export class LearningModule {
               },
               pipeline,
               now,
+              undefined,
+              edgeDevices,
             ),
         },
         PipelineScheduler,

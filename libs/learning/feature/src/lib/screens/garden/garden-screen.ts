@@ -4,8 +4,9 @@ import {
   computed,
   inject,
 } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { type MasteryTier, retrievability, tierOf } from '@ah/learning/domain';
+import { type GardenPlant, KnowledgeGarden } from '@ah/learning/ui';
 import { AhButton } from '@ah/ui';
 import { LearningStore } from '../../store/learning.store';
 
@@ -26,27 +27,6 @@ const TIER_NAMES: Record<MasteryTier, string> = {
   golden: 'Golden',
 };
 
-interface Leaf {
-  id: string;
-  title: string;
-  tier: MasteryTier;
-  wilting: boolean;
-  /** Position along the stem and side, for the drawing. */
-  x: number;
-  y: number;
-  side: -1 | 1;
-}
-
-interface Plant {
-  key: string;
-  name: string;
-  leaves: Leaf[];
-  hidden: number;
-  wilting: number;
-  counts: string;
-  stemTop: number;
-}
-
 /**
  * The Knowledge Garden (design §3): a plant per topic and a leaf per
  * concept, shaped by its mastery tier (Seed → Golden). Concepts whose
@@ -55,16 +35,17 @@ interface Plant {
  */
 @Component({
   selector: 'lrn-garden-screen',
-  imports: [AhButton, RouterLink],
+  imports: [AhButton, KnowledgeGarden, RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './garden-screen.html',
   styleUrl: './garden-screen.scss',
 })
 export class GardenScreen {
   protected readonly store = inject(LearningStore);
-  protected readonly tierNames = TIER_NAMES;
+  private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
 
-  protected readonly plants = computed<Plant[]>(() => {
+  protected readonly plants = computed<GardenPlant[]>(() => {
     const now = new Date(this.store.now());
     const memory = this.store.memory();
     const names = new Map(this.store.topics().map((t) => [t.id, t.name]));
@@ -126,4 +107,8 @@ export class GardenScreen {
           b.leaves.length - a.leaves.length || a.name.localeCompare(b.name),
       );
   });
+
+  protected goToday(): void {
+    void this.router.navigate(['../today'], { relativeTo: this.route });
+  }
 }

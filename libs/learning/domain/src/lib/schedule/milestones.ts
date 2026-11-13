@@ -1,4 +1,10 @@
-import type { ReviewEvent, ReviewSession, TeachBack } from '../records';
+import {
+  GARDEN_THEMES,
+  type GardenTheme,
+  type ReviewEvent,
+  type ReviewSession,
+  type TeachBack,
+} from '../records';
 import { type MasteryTier, type MemoryState, tierOf } from './memory';
 
 /**
@@ -93,8 +99,7 @@ export function milestonesOf(progress: Progress): Milestone[] {
   ];
 }
 
-export const GARDEN_THEMES = ['meadow', 'autumn', 'night', 'aurora'] as const;
-export type GardenTheme = (typeof GARDEN_THEMES)[number];
+export { GARDEN_THEMES, type GardenTheme };
 
 export interface ThemeUnlock {
   theme: GardenTheme;

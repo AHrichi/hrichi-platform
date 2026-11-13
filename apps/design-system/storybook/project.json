@@ -6,6 +6,7 @@
   "tags": ["scope:design-system", "type:app", "runtime:browser"],
   "implicitDependencies": [
     "design-system-ui",
+    "learning-ui",
     "three-angular",
     "product-studylm-learn"
   ],

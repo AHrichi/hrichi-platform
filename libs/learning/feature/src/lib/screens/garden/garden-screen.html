@@ -1,7 +1,4 @@
-<section
-  [class]="'screen theme-' + store.settings().gardenTheme"
-  aria-labelledby="garden-title"
->
+<section class="screen" aria-labelledby="garden-title">
   <div class="head">
     <h1 id="garden-title">Garden</h1>
     <a ahButton="ghost" size="sm" routerLink="../concepts">Library</a>
@@ -11,103 +8,9 @@
     blooms and, after months, golden. A drooping leaf wants a review.
   </p>
 
-  @if (!plants().length) {
-    <p class="empty">
-      Nothing planted yet. Keep a few ideas from the Inbox and they appear here
-      after your first reviews.
-    </p>
-  }
-
-  <ul class="plots" role="list">
-    @for (plant of plants(); track plant.key) {
-      <li class="plot">
-        <svg viewBox="0 0 120 140" aria-hidden="true" focusable="false">
-          <rect class="soil" x="10" y="124" width="100" height="12" rx="6" />
-          <path class="stem" [attr.d]="'M60 126 L60 ' + plant.stemTop" />
-          @for (leaf of plant.leaves; track leaf.id) {
-            <g
-              [attr.transform]="
-                'translate(' +
-                leaf.x +
-                ' ' +
-                leaf.y +
-                ') rotate(' +
-                (leaf.wilting ? leaf.side * 55 : leaf.side * -25) +
-                ')'
-              "
-              [class.is-wilting]="leaf.wilting"
-            >
-              @switch (leaf.tier) {
-                @case ('seed') {
-                  <circle class="seed" [attr.cx]="leaf.side * 6" cy="0" r="3" />
-                }
-                @case ('sprout') {
-                  <ellipse
-                    class="leaf"
-                    [attr.cx]="leaf.side * 8"
-                    cy="0"
-                    rx="7"
-                    ry="3"
-                  />
-                }
-                @case ('leaf') {
-                  <ellipse
-                    class="leaf"
-                    [attr.cx]="leaf.side * 12"
-                    cy="0"
-                    rx="12"
-                    ry="5"
-                  />
-                }
-                @default {
-                  <ellipse
-                    class="leaf"
-                    [attr.cx]="leaf.side * 10"
-                    cy="0"
-                    rx="10"
-                    ry="4"
-                  />
-                  <g [attr.transform]="'translate(' + leaf.side * 22 + ' 0)'">
-                    @for (petal of [0, 72, 144, 216, 288]; track petal) {
-                      <ellipse
-                        [class]="leaf.tier === 'golden' ? 'golden' : 'bloom'"
-                        cx="0"
-                        cy="-5"
-                        rx="3"
-                        ry="5"
-                        [attr.transform]="'rotate(' + petal + ')'"
-                      />
-                    }
-                    <circle class="heart" cx="0" cy="0" r="2.5" />
-                  </g>
-                }
-              }
-            </g>
-          }
-        </svg>
-        <div class="about">
-          <h2>{{ plant.name }}</h2>
-          <p class="hint">
-            {{ plant.counts }}
-            @if (plant.hidden) {
-              · +{{ plant.hidden }} more
-            }
-          </p>
-          @if (plant.wilting) {
-            <p class="thirsty">
-              <a routerLink="../today">{{ plant.wilting }} drooping</a>
-            </p>
-          }
-          <ul class="visually-hidden">
-            @for (leaf of plant.leaves; track leaf.id) {
-              <li>
-                {{ leaf.title }}: {{ tierNames[leaf.tier]
-                }}{{ leaf.wilting ? ', due for review' : '' }}
-              </li>
-            }
-          </ul>
-        </div>
-      </li>
-    }
-  </ul>
+  <lrn-knowledge-garden
+    [plants]="plants()"
+    [theme]="store.settings().gardenTheme"
+    (reviewRequested)="goToday()"
+  />
 </section>

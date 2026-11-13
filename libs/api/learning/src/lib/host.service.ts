@@ -21,6 +21,7 @@ import {
   TOKEN_RENEW_WINDOW_MS,
 } from '@ah/learning/domain';
 import type { AuthenticatedHost } from './device.guard';
+import type { EdgeDeviceSync } from './edge-devices';
 import type { LearningRepository } from './learning.repository';
 import { WriteLock } from './write-lock';
 
@@ -38,6 +39,7 @@ export class HostService {
     private readonly lock: WriteLock = new WriteLock(),
     /** Called after new cards were stored, so the pipeline starts. */
     private readonly onCaptures: () => void = () => undefined,
+    private readonly edgeDevices: EdgeDeviceSync | null = null,
   ) {}
 
   /** A paired device lets a host app in: a revocable link of its own. */
@@ -58,6 +60,7 @@ export class HostService {
       lastSeenAt: null,
       revokedAt: null,
     });
+    await this.edgeDevices?.pushDevices();
     const token = await signDeviceToken(this.tokenSecret, {
       deviceId: hostId,
       expiresAt,
@@ -68,6 +71,7 @@ export class HostService {
   /** The host unlinks itself ("Disconnect"). */
   async unlink(host: AuthenticatedHost): Promise<void> {
     await this.repository.revokeDevice(host.deviceId, this.now());
+    await this.edgeDevices?.pushDevices();
   }
 
   /**

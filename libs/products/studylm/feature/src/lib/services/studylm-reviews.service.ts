@@ -10,12 +10,17 @@ import type {
   StudyFlashcard,
   StudyQuizQuestion,
 } from '@ah/products/studylm/domain';
-import { type Lesson, loadBuiltInLessons } from '@ah/products/studylm/lessons';
+import {
+  type Block,
+  type Lesson,
+  loadBuiltInLessons,
+} from '@ah/products/studylm/lessons';
 import { StudyLmStorageService } from './studylm-storage.service';
 
 /** Where a StudyLM card came from, as the Learning Engine names it. */
 export const REVIEW_OBJECTS = {
   lessonCard: 'lesson-card',
+  lessonCheck: 'lesson-check',
   flashcard: 'flashcard',
   quiz: 'quiz',
 } as const;
@@ -81,6 +86,96 @@ export function quizItem(
   };
 }
 
+function checkPromptAndAnswer(block: Block): {
+  question: string;
+  answer: string;
+} | null {
+  switch (block.kind) {
+    case 'quiz':
+      return {
+        question: block.question,
+        answer:
+          block.correct
+            .map((i) => block.options[i])
+            .filter(Boolean)
+            .join('; ') || block.explanation,
+      };
+    case 'predict':
+      return {
+        question: block.question,
+        answer:
+          block.expected ??
+          (block.answer !== null ? block.options?.[block.answer] : null) ??
+          block.explanation,
+      };
+    case 'self-explain':
+      return {
+        question: block.prompt,
+        answer: block.modelAnswer,
+      };
+    case 'order-steps':
+      return {
+        question: block.prompt,
+        answer: block.items.map((item) => item.text).join(' -> '),
+      };
+    case 'categorize': {
+      const catMap = new Map(block.categories.map((c) => [c.id, c.label]));
+      return {
+        question: block.prompt,
+        answer: block.items
+          .map(
+            (item) =>
+              `${item.text}: ${catMap.get(item.category) ?? item.category}`,
+          )
+          .join('; '),
+      };
+    }
+    case 'parsons':
+      return {
+        question: block.prompt,
+        answer: block.lines.map((line) => line.code).join('\n'),
+      };
+    case 'predict-output':
+      return {
+        question: `Predict output (${block.language}):\n${block.code}`,
+        answer: block.expected,
+      };
+    case 'cloze': {
+      const answer = block.blanks
+        .map((b, index) => `${index + 1}. ${b.answers[0] ?? ''}`)
+        .join('; ');
+      return {
+        question: block.text,
+        answer: answer || block.explanation || '',
+      };
+    }
+    default:
+      return null;
+  }
+}
+
+/** A lesson check block turned into a review card with its reference answer. */
+export function lessonCheckItem(
+  lesson: Pick<Lesson, 'id' | 'title'>,
+  block: Block,
+  deepLink = pageLink(),
+): HostCaptureItem {
+  const qa = checkPromptAndAnswer(block);
+  const question = qa?.question.trim() || `${lesson.title} (${block.id})`;
+  const answer = qa?.answer.trim() || '';
+  const text = (answer ? `${question}\n\n${answer}` : question).slice(0, 4000);
+  return {
+    text,
+    source: {
+      app: 'studylm',
+      objectType: REVIEW_OBJECTS.lessonCheck,
+      objectId: `${lesson.id.slice(0, 75)}:${block.id.slice(0, 44)}`,
+      deepLink,
+      excerpt: `${lesson.title}: ${question}`.slice(0, 500),
+    },
+  };
+}
+
 /**
  * StudyLM's side of the Learning Engine link (design §9, ADR-0024): what
  * StudyLM sends and reports once it is linked. Unlinked, every call does
@@ -129,6 +224,23 @@ export class StudyLmReviews {
     );
   }
 
+  /** Report a lesson check answer, sending missed checks to daily review. */
+  lessonCheckAnswered(
+    lesson: Pick<Lesson, 'id' | 'title'>,
+    block: Block,
+    correct: boolean,
+  ): void {
+    if (!this.linked()) return;
+    const item = lessonCheckItem(lesson, block);
+    if (!correct) this.link.send([item]);
+    this.link.answer(
+      REVIEW_OBJECTS.lessonCheck,
+      item.source.objectId,
+      correct ? 'good' : 'again',
+    );
+  }
+
+  /** Report a flashcard rating, sending missed cards to daily review. */
   cardRated(card: StudyFlashcard, rating: MasteryRating): void {
     if (!this.linked()) return;
     if (rating === 'again') this.link.send([flashcardItem(card)]);

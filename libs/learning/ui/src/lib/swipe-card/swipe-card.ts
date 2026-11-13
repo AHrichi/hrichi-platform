@@ -69,6 +69,8 @@ function prefersReducedMotion(): boolean {
 export class SwipeCard {
   readonly label = input('Swipe right to keep, left to discard');
   readonly disabled = input(false);
+  /** Disable swipe/arrow gestures while keeping nested controls enabled. */
+  readonly swipeDisabled = input(false);
   /** Allow an upward swipe too (the review's "shaky"). */
   readonly allowUp = input(false);
   readonly swiped = output<SwipeDirection>();
@@ -94,11 +96,11 @@ export class SwipeCard {
   });
 
   protected down(event: PointerEvent): void {
-    if (this.disabled() || event.button !== 0) return;
+    if (this.disabled() || this.swipeDisabled() || event.button !== 0) return;
     // Let buttons, links and fields inside the card work as usual.
     if (
       (event.target as HTMLElement).closest(
-        'button, a, summary, input, textarea, label',
+        'button, a, summary, input, textarea, select, label',
       )
     ) {
       return;
@@ -149,7 +151,12 @@ export class SwipeCard {
   }
 
   protected swipe(direction: SwipeDirection, event: Event): void {
-    if (this.disabled()) return;
+    if (this.disabled() || this.swipeDisabled()) return;
+    if (
+      (event.target as HTMLElement | null)?.closest?.('input, textarea, select')
+    ) {
+      return;
+    }
     event.preventDefault();
     void this.flyOff(direction);
   }
