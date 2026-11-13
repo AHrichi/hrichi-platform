@@ -87,6 +87,116 @@
 
 .field {
   @include lrn.field;
+
+  select {
+    inline-size: 100%;
+    min-height: 2.5rem;
+    padding-inline: var(--space-3);
+    border: 1px solid var(--color-border-control);
+    border-radius: var(--radius-md);
+    background: var(--color-bg-canvas);
+    color: var(--color-text-default);
+    font: inherit;
+  }
+}
+
+.filters {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  gap: var(--space-3);
+  align-items: end;
+}
+
+.filter-search {
+  grid-column: 1 / -1;
+}
+
+.empty-filter {
+  display: grid;
+  gap: var(--space-2);
+  justify-items: start;
+}
+
+.edit-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+  gap: var(--space-3);
+}
+
+.prompt-edit-list {
+  display: grid;
+  gap: var(--space-3);
+  margin: 0;
+  padding: var(--space-3);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-md);
+
+  legend {
+    padding-inline: var(--space-1);
+    font-size: var(--font-size-200);
+    font-weight: var(--font-weight-semibold);
+  }
+}
+
+.prompt-edit {
+  display: grid;
+  gap: var(--space-2);
+  padding-block-end: var(--space-2);
+  border-block-end: 1px solid var(--color-border-default);
+
+  &:last-of-type {
+    padding-block-end: 0;
+    border-block-end: 0;
+  }
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin: var(--space-1) 0 0;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-100);
+}
+
+.tag {
+  padding-inline: var(--space-2);
+  border-radius: var(--radius-pill);
+  background: var(--color-accent-subtle);
+  color: var(--color-text-default);
+  font-size: var(--font-size-100);
+  font-weight: var(--font-weight-medium);
+}
+
+.tag--muted {
+  background: var(--color-bg-surface);
+  color: var(--color-text-muted);
+}
+
+.history {
+  margin-block-end: var(--space-2);
+
+  summary {
+    color: var(--color-text-muted);
+    font-size: var(--font-size-200);
+    cursor: pointer;
+  }
+}
+
+.history-list {
+  display: grid;
+  gap: var(--space-2);
+  margin: var(--space-2) 0 0;
+  padding-inline-start: var(--space-4);
+  font-size: var(--font-size-200);
+
+  p {
+    margin: 0;
+  }
+}
+
+.is-retired summary {
+  color: var(--color-text-muted);
 }
 
 .actions {

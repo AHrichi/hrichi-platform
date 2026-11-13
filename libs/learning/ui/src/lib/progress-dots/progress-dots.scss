@@ -1,0 +1,29 @@
+.progress {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+.dots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+.dot {
+  inline-size: 0.7rem;
+  block-size: 0.7rem;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-pill);
+
+  &.is-done {
+    border-color: var(--color-accent-solid);
+    background: var(--color-accent-solid);
+  }
+}
+
+.trailing {
+  margin-inline-start: auto;
+}

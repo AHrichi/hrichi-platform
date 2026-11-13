@@ -55,90 +55,395 @@
     </form>
   }
 
+  @if (store.library().length) {
+    <div class="filters card" role="search" aria-label="Filter library">
+      <div class="field filter-search">
+        <label for="library-search">Search</label>
+        <input
+          id="library-search"
+          type="search"
+          placeholder="Search titles, explanations, questions…"
+          [value]="query()"
+          (input)="query.set($any($event.target).value)"
+        />
+      </div>
+      <div class="field">
+        <label for="library-topic">Topic</label>
+        <select
+          id="library-topic"
+          [value]="topicFilter()"
+          (change)="topicFilter.set($any($event.target).value)"
+        >
+          <option value="all">All topics</option>
+          <option value="none">Uncategorized</option>
+          @for (topic of store.topics(); track topic.id) {
+            <option [value]="topic.id">{{ topic.name }}</option>
+          }
+        </select>
+      </div>
+      <div class="field">
+        <label for="library-status">Status</label>
+        <select
+          id="library-status"
+          [value]="statusFilter()"
+          (change)="statusFilter.set($any($event.target).value)"
+        >
+          <option value="all">All</option>
+          @for (status of statuses; track status) {
+            <option [value]="status">{{ statusLabels[status] }}</option>
+          }
+        </select>
+      </div>
+    </div>
+  }
+
   @if (store.ready() && !store.library().length && !adding()) {
     <ah-empty-state
       icon="✦"
       title="Nothing kept yet"
       description="Capture ideas in the Inbox and keep the ones you want, or add one here by hand."
     />
+  } @else if (store.library().length && !filtered().length) {
+    <div class="card empty-filter" role="status">
+      <p class="essence">No concepts match that filter.</p>
+      <button ahButton="ghost" size="sm" type="button" (click)="clearFilters()">
+        Clear filters
+      </button>
+    </div>
   }
 
   <ul class="list" role="list">
-    @for (concept of store.library(); track concept.id) {
+    @for (concept of filtered(); track concept.id) {
       <li class="card concept">
-        <div class="concept-head">
-          <h2>{{ concept.title }}</h2>
-          <button
-            ahButton="ghost"
-            size="sm"
-            type="button"
-            (click)="remove(concept.id, concept.title)"
-            [attr.aria-label]="'Delete ' + concept.title"
+        @let edit = editing();
+        @if (edit && edit.id === concept.id) {
+          <form
+            class="editor"
+            (submit)="$event.preventDefault(); saveEdit(concept)"
+            [attr.aria-label]="'Edit ' + concept.title"
           >
-            Delete
-          </button>
-        </div>
-        <p class="essence">{{ concept.explanation.essence }}</p>
-        @if (linksOf(concept.id); as links) {
-          @if (links.length) {
-            <ul class="links" role="list" aria-label="Linked concepts">
-              @for (entry of links; track entry.link.id) {
-                <li>
-                  <span>{{ entry.text }}</span>
-                  <button
-                    ahButton="ghost"
-                    size="sm"
-                    type="button"
-                    (click)="store.dismissLink(entry.link)"
-                    [attr.aria-label]="'Remove the link: ' + entry.text"
-                  >
-                    Unlink
-                  </button>
-                </li>
-              }
-            </ul>
-          }
-        }
-        @if (store.library().length > 1) {
-          <details class="link-add">
-            <summary>Link to another concept</summary>
-            <div class="link-form">
-              <label>
-                <span>Concept</span>
-                <select #other>
-                  @for (candidate of store.library(); track candidate.id) {
-                    @if (candidate.id !== concept.id) {
-                      <option [value]="candidate.id">
-                        {{ candidate.title }}
-                      </option>
-                    }
+            <h2>Edit concept</h2>
+            <div class="field">
+              <label [for]="'edit-title-' + concept.id">Title</label>
+              <input
+                [id]="'edit-title-' + concept.id"
+                [value]="edit.title"
+                (input)="patchEdit({ title: $any($event.target).value })"
+                [maxLength]="limits.conceptTitle"
+              />
+            </div>
+
+            <div class="edit-row">
+              <div class="field">
+                <label [for]="'edit-topic-' + concept.id">Topic</label>
+                <select
+                  [id]="'edit-topic-' + concept.id"
+                  [value]="edit.topicId"
+                  (change)="patchEdit({ topicId: $any($event.target).value })"
+                >
+                  <option value="">Uncategorized</option>
+                  @for (topic of store.topics(); track topic.id) {
+                    <option [value]="topic.id">{{ topic.name }}</option>
+                  }
+                  <option value="__new__">+ New topic…</option>
+                </select>
+              </div>
+              <div class="field">
+                <label [for]="'edit-status-' + concept.id">Status</label>
+                <select
+                  [id]="'edit-status-' + concept.id"
+                  [value]="edit.status"
+                  (change)="patchEdit({ status: $any($event.target).value })"
+                >
+                  @for (status of statuses; track status) {
+                    <option [value]="status">{{ statusLabels[status] }}</option>
                   }
                 </select>
-              </label>
-              <label>
-                <span>How they relate</span>
-                <select #relation>
-                  @for (choice of relations; track choice.value) {
-                    <option [value]="choice.value">{{ choice.label }}</option>
-                  }
-                </select>
-              </label>
-              <button
-                ahButton="secondary"
-                size="sm"
-                type="button"
-                (click)="link(concept.id, other.value, relation.value)"
+              </div>
+            </div>
+
+            @if (edit.topicId === '__new__') {
+              <div class="field">
+                <label [for]="'edit-new-topic-' + concept.id"
+                  >New topic name</label
+                >
+                <input
+                  [id]="'edit-new-topic-' + concept.id"
+                  [value]="edit.newTopic"
+                  (input)="patchEdit({ newTopic: $any($event.target).value })"
+                  [maxLength]="limits.topicName"
+                  placeholder="e.g. Algorithms"
+                />
+              </div>
+            }
+
+            <div class="field">
+              <label [for]="'edit-essence-' + concept.id">Essence</label>
+              <textarea
+                [id]="'edit-essence-' + concept.id"
+                rows="2"
+                [value]="edit.essence"
+                (input)="patchEdit({ essence: $any($event.target).value })"
+                [maxLength]="limits.essence"
+              ></textarea>
+            </div>
+            <div class="field">
+              <label [for]="'edit-simple-' + concept.id"
+                >Plain explanation (optional)</label
               >
-                Link
+              <textarea
+                [id]="'edit-simple-' + concept.id"
+                rows="2"
+                [value]="edit.simple"
+                (input)="patchEdit({ simple: $any($event.target).value })"
+                [maxLength]="limits.explanation"
+              ></textarea>
+            </div>
+            <div class="field">
+              <label [for]="'edit-analogy-' + concept.id"
+                >Analogy (optional)</label
+              >
+              <textarea
+                [id]="'edit-analogy-' + concept.id"
+                rows="2"
+                [value]="edit.analogy"
+                (input)="patchEdit({ analogy: $any($event.target).value })"
+                [maxLength]="limits.explanation"
+              ></textarea>
+            </div>
+            <div class="field">
+              <label [for]="'edit-misconception-' + concept.id"
+                >Common trap (optional)</label
+              >
+              <textarea
+                [id]="'edit-misconception-' + concept.id"
+                rows="2"
+                [value]="edit.misconception"
+                (input)="
+                  patchEdit({ misconception: $any($event.target).value })
+                "
+                [maxLength]="limits.explanation"
+              ></textarea>
+            </div>
+            <div class="field">
+              <label [for]="'edit-own-' + concept.id"
+                >In your own words (optional)</label
+              >
+              <textarea
+                [id]="'edit-own-' + concept.id"
+                rows="2"
+                [value]="edit.ownWords"
+                (input)="patchEdit({ ownWords: $any($event.target).value })"
+                [maxLength]="limits.explanation"
+              ></textarea>
+            </div>
+
+            <fieldset class="prompt-edit-list">
+              <legend>Recall questions</legend>
+              @for (p of edit.prompts; track p.id; let idx = $index) {
+                <div class="prompt-edit">
+                  <div class="field">
+                    <label [for]="'edit-q-' + p.id"
+                      >Question {{ idx + 1 }}</label
+                    >
+                    <input
+                      [id]="'edit-q-' + p.id"
+                      [value]="p.question"
+                      (input)="
+                        patchPrompt(idx, {
+                          question: $any($event.target).value,
+                        })
+                      "
+                      [maxLength]="limits.question"
+                    />
+                  </div>
+                  <div class="field">
+                    <label [for]="'edit-a-' + p.id">Answer {{ idx + 1 }}</label>
+                    <textarea
+                      [id]="'edit-a-' + p.id"
+                      rows="2"
+                      [value]="p.answer"
+                      (input)="
+                        patchPrompt(idx, { answer: $any($event.target).value })
+                      "
+                      [maxLength]="limits.answer"
+                    ></textarea>
+                  </div>
+                  <div class="actions">
+                    <button
+                      ahButton="ghost"
+                      size="sm"
+                      type="button"
+                      (click)="patchPrompt(idx, { retired: !p.retired })"
+                    >
+                      {{ p.retired ? 'Restore prompt' : 'Retire prompt' }}
+                    </button>
+                    @if (edit.prompts.length > 1) {
+                      <button
+                        ahButton="ghost"
+                        size="sm"
+                        type="button"
+                        (click)="removePromptFromEdit(idx)"
+                      >
+                        Remove prompt
+                      </button>
+                    }
+                  </div>
+                </div>
+              }
+              @if (edit.prompts.length < limits.prompts) {
+                <button
+                  ahButton="secondary"
+                  size="sm"
+                  type="button"
+                  (click)="addPromptToEdit()"
+                >
+                  + Add question
+                </button>
+              }
+            </fieldset>
+
+            @if (editError(); as error) {
+              <p class="error" role="alert">{{ error }}</p>
+            }
+
+            <div class="actions">
+              <button ahButton type="submit" [disabled]="editSaving()">
+                Save changes
+              </button>
+              <button ahButton="ghost" type="button" (click)="cancelEdit()">
+                Cancel
               </button>
             </div>
-          </details>
-        }
-        @for (prompt of concept.prompts; track prompt.id) {
-          <details class="prompt">
-            <summary>{{ prompt.question }}</summary>
-            <p>{{ prompt.answer }}</p>
-          </details>
+          </form>
+        } @else {
+          <div class="concept-head">
+            <div>
+              <h2>{{ concept.title }}</h2>
+              @if (concept.topicId || concept.status !== 'active') {
+                <p class="meta">
+                  @if (
+                    concept.topicId && topicNames().get(concept.topicId);
+                    as topicName
+                  ) {
+                    <span class="tag">{{ topicName }}</span>
+                  }
+                  @if (concept.status !== 'active') {
+                    <span class="tag tag--muted">{{
+                      statusLabels[
+                        concept.status === 'draft' ? 'active' : concept.status
+                      ]
+                    }}</span>
+                  }
+                </p>
+              }
+            </div>
+            <div class="actions">
+              <button
+                ahButton="ghost"
+                size="sm"
+                type="button"
+                (click)="startEdit(concept)"
+                [attr.aria-label]="'Edit ' + concept.title"
+              >
+                Edit
+              </button>
+              <button
+                ahButton="ghost"
+                size="sm"
+                type="button"
+                (click)="remove(concept.id, concept.title)"
+                [attr.aria-label]="'Delete ' + concept.title"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+          <p class="essence">{{ concept.explanation.essence }}</p>
+          @if (concept.explanationHistory?.length) {
+            <details class="history">
+              <summary>
+                Previous versions ({{ concept.explanationHistory.length }})
+              </summary>
+              <ol class="history-list">
+                @for (prev of concept.explanationHistory; track prev.savedAt) {
+                  <li>
+                    <p class="meta">
+                      {{ prev.savedAt | date: 'mediumDate' }} ·
+                      {{ prev.by === 'ai' ? 'AI' : 'You' }}
+                    </p>
+                    <p>{{ prev.essence }}</p>
+                  </li>
+                }
+              </ol>
+            </details>
+          }
+          @if (linksOf(concept.id); as links) {
+            @if (links.length) {
+              <ul class="links" role="list" aria-label="Linked concepts">
+                @for (entry of links; track entry.link.id) {
+                  <li>
+                    <span>{{ entry.text }}</span>
+                    <button
+                      ahButton="ghost"
+                      size="sm"
+                      type="button"
+                      (click)="store.dismissLink(entry.link)"
+                      [attr.aria-label]="'Remove the link: ' + entry.text"
+                    >
+                      Unlink
+                    </button>
+                  </li>
+                }
+              </ul>
+            }
+          }
+          @if (store.library().length > 1) {
+            <details class="link-add">
+              <summary>Link to another concept</summary>
+              <div class="link-form">
+                <label>
+                  <span>Concept</span>
+                  <select #other>
+                    @for (candidate of store.library(); track candidate.id) {
+                      @if (candidate.id !== concept.id) {
+                        <option [value]="candidate.id">
+                          {{ candidate.title }}
+                        </option>
+                      }
+                    }
+                  </select>
+                </label>
+                <label>
+                  <span>How they relate</span>
+                  <select #relation>
+                    @for (choice of relations; track choice.value) {
+                      <option [value]="choice.value">{{ choice.label }}</option>
+                    }
+                  </select>
+                </label>
+                <button
+                  ahButton="secondary"
+                  size="sm"
+                  type="button"
+                  (click)="link(concept.id, other.value, relation.value)"
+                >
+                  Link
+                </button>
+              </div>
+            </details>
+          }
+          @for (prompt of concept.prompts; track prompt.id) {
+            <details class="prompt" [class.is-retired]="prompt.retired">
+              <summary>
+                {{ prompt.question }}
+                @if (prompt.retired) {
+                  <span class="tag tag--muted">Retired</span>
+                }
+              </summary>
+              <p>{{ prompt.answer }}</p>
+            </details>
+          }
         }
       </li>
     }

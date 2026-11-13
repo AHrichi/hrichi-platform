@@ -16,18 +16,21 @@ import {
 } from '@ah/learning/contracts';
 import { LearningApiError, type SyncOutcome } from '@ah/learning/data-access';
 import {
+  type AiVerdict,
   type Capture,
   composeDailySet,
   type Topic,
   computeStreak,
   type Concept,
   type ConceptDraft,
+  type ConceptFieldGroup,
   type ConceptLink,
   conceptFromDraft,
   countedDays,
   draftConceptFrom,
   DEFAULT_CAP,
   DEFAULT_NEW_PER_DAY,
+  DEFAULT_WEEKLY_TARGET,
   type DeviceSummary,
   type GardenTheme,
   learnedMorning,
@@ -42,13 +45,16 @@ import {
   type ReviewEvent,
   type ReviewSession,
   SERVER_WRITER,
+  SETTINGS_RECORD_ID,
   LIMITS,
   PAIRING,
+  type StreakMode,
   TEACH_BACK_MIN_CHARS,
   type TeachBack,
   type TeachBackFeedback,
   teachPoints,
   weekStats,
+  withRevisedExplanation,
   xpOf,
 } from '@ah/learning/domain';
 import { demoDraftSource } from './demo';
@@ -75,6 +81,9 @@ export interface PairingState {
 export interface LearnerSettings {
   dailyCap: 5 | 7 | 10;
   newPerDay: number;
+  /** Daily streak vs. X days per Mon–Sun week (design §3, §5). */
+  streakMode: StreakMode;
+  weeklyTarget: number;
   /** "HH:MM", or null to learn it from when you usually study. */
   morning: string | null;
   /** "HH:MM", or null for no evening reminder. */
@@ -90,6 +99,8 @@ export interface LearnerSettings {
 export const DEFAULT_SETTINGS: LearnerSettings = {
   dailyCap: DEFAULT_CAP as 7,
   newPerDay: DEFAULT_NEW_PER_DAY,
+  streakMode: 'daily',
+  weeklyTarget: DEFAULT_WEEKLY_TARGET,
   morning: null,
   evening: '20:30',
   vacationUntil: null,
@@ -173,7 +184,7 @@ function messageOf(error: unknown): string {
 export const LearningStore = signalStore(
   { providedIn: 'root' },
   withState<LearningState>(initialState),
-  withComputed(({ concepts, sessions, events, teachBacks, now }) => {
+  withComputed(({ concepts, sessions, events, teachBacks, settings, now }) => {
     const timeZone = deviceTimeZone();
     const today = computed(() => localDateOf(new Date(now()), timeZone));
     const memory = computed(() => memoryOf(concepts(), events()));
@@ -183,7 +194,10 @@ export const LearningStore = signalStore(
       today,
       memory,
       streak: computed(() =>
-        computeStreak(days().counted, days().full, today(), days().doubled),
+        computeStreak(days().counted, days().full, today(), days().doubled, {
+          mode: settings().streakMode,
+          weeklyTarget: settings().weeklyTarget,
+        }),
       ),
       xp: computed(() => levelOf(xpOf(events(), sessions(), teachBacks()))),
       xpTotal: computed(() => xpOf(events(), sessions(), teachBacks())),
@@ -271,7 +285,8 @@ export const LearningStore = signalStore(
         events,
         teachBacks,
         links,
-        settings,
+        settingsRecord,
+        legacySettings,
       ] = await Promise.all([
         local.concepts(),
         local.topics(),
@@ -282,8 +297,22 @@ export const LearningStore = signalStore(
         local.events(),
         local.teachBacks(),
         local.links(),
+        local.settingsRecord(),
         local.getMeta<Partial<LearnerSettings>>('learner'),
       ]);
+      const settings: LearnerSettings = settingsRecord
+        ? {
+            dailyCap: settingsRecord.dailyCap,
+            newPerDay: settingsRecord.newPerDay,
+            streakMode: settingsRecord.streakMode,
+            weeklyTarget: settingsRecord.weeklyTarget,
+            morning: settingsRecord.morning,
+            evening: settingsRecord.evening,
+            vacationUntil: settingsRecord.vacationUntil,
+            gardenTheme: settingsRecord.gardenTheme,
+            weeklyRecap: settingsRecord.weeklyRecap,
+          }
+        : { ...DEFAULT_SETTINGS, ...legacySettings };
       patchState(store, {
         concepts,
         topics,
@@ -292,7 +321,7 @@ export const LearningStore = signalStore(
         events,
         teachBacks,
         links,
-        settings: { ...DEFAULT_SETTINGS, ...settings },
+        settings,
         now: new Date().toISOString(),
         pending,
         unavailable,
@@ -378,9 +407,16 @@ export const LearningStore = signalStore(
         return;
       }
       patchState(store, { sync: { ...store.sync(), state: 'syncing' } });
+      const prevSettings = store.settings();
       const outcome = await client.sync();
       applyOutcome(outcome);
       await refresh();
+      if (
+        outcome.status === 'synced' &&
+        JSON.stringify(prevSettings) !== JSON.stringify(store.settings())
+      ) {
+        void pushNudgeState();
+      }
       if (followUp) clearTimeout(followUp);
       followUp = null;
       const waiting = store
@@ -487,11 +523,48 @@ export const LearningStore = signalStore(
     async function updateConcept(
       id: string,
       change: Partial<Concept>,
+      groups?: readonly ConceptFieldGroup[],
     ): Promise<void> {
       const { local } = await runtime.open();
       const concept = (await local.concepts()).find((c) => c.id === id);
       if (!concept) return;
-      await local.saveConcept({ ...concept, ...change });
+      const session = await local.session();
+      const at = new Date().toISOString();
+      const by = session?.deviceId ?? 'local';
+      let next: Concept = { ...concept, ...change };
+      const effectiveGroups = groups ? [...groups] : [];
+      if (
+        change.explanation &&
+        JSON.stringify(change.explanation) !==
+          JSON.stringify(concept.explanation)
+      ) {
+        const revised = withRevisedExplanation(
+          concept,
+          change.explanation,
+          at,
+          by,
+        );
+        next = {
+          ...next,
+          explanation: revised.explanation,
+          explanationHistory: revised.explanationHistory,
+          version: revised.version,
+          fieldRevisions: revised.fieldRevisions,
+        };
+        if (!effectiveGroups.includes('explanation')) {
+          effectiveGroups.push('explanation');
+        }
+      } else if (
+        change.title !== undefined &&
+        change.title !== concept.title &&
+        !effectiveGroups.includes('explanation')
+      ) {
+        effectiveGroups.push('explanation');
+      }
+      await local.saveConcept(
+        next,
+        effectiveGroups.length ? effectiveGroups : undefined,
+      );
       await refresh();
       syncSoon();
     }
@@ -610,6 +683,7 @@ export const LearningStore = signalStore(
         rating: ReviewEvent['rating'];
         answer: string | null;
         ms: number;
+        aiVerdict?: AiVerdict | null;
       }): Promise<void> {
         const { local } = await runtime.open();
         const at = new Date();
@@ -623,8 +697,40 @@ export const LearningStore = signalStore(
           rating: input.rating,
           answer: input.answer?.trim().slice(0, 1200) || null,
           ms: Math.min(3_600_000, Math.max(0, Math.round(input.ms))),
+          ...(input.aiVerdict !== undefined
+            ? { aiVerdict: input.aiVerdict }
+            : {}),
         });
         await refresh();
+      },
+
+      async transcribe(
+        audio: { bytes: ArrayBuffer; mimeType: string },
+        budgetMs = 15_000,
+      ): Promise<{ text: string | null; problem: string | null }> {
+        const { api, local } = await runtime.open();
+        const pairing = await local.session();
+        if (!api || !pairing) {
+          return {
+            text: null,
+            problem:
+              'Hearing a voice answer needs this device paired. Type it instead, or reveal to rate yourself.',
+          };
+        }
+        try {
+          const res = await api.transcribe(
+            audio,
+            pairing.token,
+            AbortSignal.timeout(budgetMs),
+          );
+          return { text: res.text.trim() || null, problem: null };
+        } catch {
+          return {
+            text: null,
+            problem:
+              'The recording couldn’t be transcribed. Type it or reveal to rate yourself.',
+          };
+        }
       },
 
       async completeSession(session: ReviewSession): Promise<void> {
@@ -787,9 +893,18 @@ export const LearningStore = signalStore(
 
       async saveSettings(change: Partial<LearnerSettings>): Promise<void> {
         const { local } = await runtime.open();
-        const settings = { ...store.settings(), ...change };
-        await local.setMeta('learner', settings);
+        const settings: LearnerSettings = { ...store.settings(), ...change };
+        await Promise.all([
+          local.saveSettingsRecord({
+            id: SETTINGS_RECORD_ID,
+            updatedAt: new Date().toISOString(),
+            deletedAt: null,
+            ...settings,
+          }),
+          local.setMeta('learner', settings),
+        ]);
         patchState(store, { settings });
+        syncSoon();
         void pushNudgeState();
       },
 
@@ -866,10 +981,14 @@ export const LearningStore = signalStore(
 
       /** Keep a draft: it joins the library and, from L3, the reviews. */
       async keep(id: string): Promise<void> {
-        await updateConcept(id, {
-          status: 'active',
-          confirmedAt: new Date().toISOString(),
-        });
+        await updateConcept(
+          id,
+          {
+            status: 'active',
+            confirmedAt: new Date().toISOString(),
+          },
+          ['status'],
+        );
         notify('Kept ✓');
       },
 
@@ -892,18 +1011,58 @@ export const LearningStore = signalStore(
         try {
           // The server must have the draft before it can rewrite it.
           await syncNow();
-          const concept = await api.revise(id, 'simpler', session.token);
+          const expectedVersion = store
+            .concepts()
+            .find((c) => c.id === id)?.version;
+          const concept = await api.revise(
+            id,
+            'simpler',
+            session.token,
+            expectedVersion,
+          );
           await local.applyPull([
             { kind: 'concept', seq: 0, by: SERVER_WRITER, data: concept },
           ]);
           await refresh();
         } catch (error) {
-          notify(messageOf(error));
+          if (error instanceof LearningApiError && error.status === 409) {
+            await syncNow();
+            notify('This concept changed on another device — refreshed.');
+          } else {
+            notify(messageOf(error));
+          }
         } finally {
           patchState(store, {
             revising: store.revising().filter((revising) => revising !== id),
           });
         }
+      },
+
+      updateConcept,
+
+      async addTopic(name: string): Promise<Topic> {
+        const trimmed = name.trim().slice(0, LIMITS.topicName);
+        const existing = store
+          .topics()
+          .find((t) => t.name.toLowerCase() === trimmed.toLowerCase());
+        if (existing) return existing;
+        const { local } = await runtime.open();
+        const at = new Date().toISOString();
+        const hue =
+          Math.abs(
+            [...trimmed].reduce((sum, ch) => sum * 31 + ch.charCodeAt(0), 7),
+          ) % 360;
+        const topic = await local.saveTopic({
+          id: crypto.randomUUID(),
+          updatedAt: at,
+          deletedAt: null,
+          name: trimmed,
+          parentId: null,
+          hue,
+        });
+        await refresh();
+        syncSoon();
+        return topic;
       },
 
       async addConcept(draft: ConceptDraft): Promise<void> {

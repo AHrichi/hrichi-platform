@@ -49,6 +49,7 @@ export function conceptFromDraft(
       },
     ],
     sources: [],
+    version: 1,
     confirmedAt: at,
     createdAt: at,
   };

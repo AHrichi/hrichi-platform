@@ -324,4 +324,21 @@ describe('Learning Engine over HTTP', () => {
       .set(as(host))
       .expect(401);
   });
+
+  it('rejects a revise request with 409 when expectedVersion is stale', async () => {
+    const phone = await pair('Phone');
+    await repository.putMutable({
+      kind: 'concept',
+      id: FIXTURE_IDS.concept,
+      seq: await repository.nextSeq(),
+      by: FIXTURE_IDS.deviceA,
+      updatedAt: new Date().toISOString(),
+      data: sampleConcept({ updatedAt: new Date().toISOString(), version: 2 }),
+    });
+    await request(app.getHttpServer())
+      .post(`/learning/concepts/${FIXTURE_IDS.concept}/revise`)
+      .set({ authorization: `Bearer ${phone}` })
+      .send({ instruction: 'simpler', expectedVersion: 1 })
+      .expect(409);
+  });
 });

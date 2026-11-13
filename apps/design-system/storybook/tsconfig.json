@@ -20,6 +20,7 @@
   "include": [
     ".storybook/*.ts",
     "../../../libs/design-system/ui/src/**/*.ts",
+    "../../../libs/learning/ui/src/**/*.ts",
     "../../../libs/three/angular/src/**/*.ts",
     "../../../libs/products/studylm/learn/src/**/*.ts"
   ],

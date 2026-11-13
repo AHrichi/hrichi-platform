@@ -3,13 +3,17 @@
 
   @switch (store.unavailable()) {
     @case ('demo') {
-      <ah-alert variant="info" title="This is the demo">
+      <ah-alert variant="info" title="This is the demo" [headingLevel]="null">
         It keeps everything in this browser and never syncs. The real app pairs
         your phone and laptop through your own Telegram bot.
       </ah-alert>
     }
     @case ('no-server') {
-      <ah-alert variant="info" title="Sync isn’t set up here">
+      <ah-alert
+        variant="info"
+        title="Sync isn’t set up here"
+        [headingLevel]="null"
+      >
         This deployment has no API, so your concepts stay on this device.
       </ah-alert>
     }

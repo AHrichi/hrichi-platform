@@ -413,3 +413,100 @@ describe('the Sunday recap', () => {
     expect(e.NUDGES.data.get('recap')).toBe('2026-11-09');
   });
 });
+
+describe('devices and Telegram revocation', () => {
+  async function serverToken() {
+    return signDeviceToken(secret, {
+      deviceId: SERVER_TOKEN_SUBJECT,
+      expiresAt: new Date('2027-05-01T00:00:00Z'),
+    });
+  }
+
+  it('syncs devices, rejects revoked tokens on /state, and handles /devices + /revoke', async () => {
+    const e = env();
+    const deviceA = {
+      id: FIXTURE_IDS.deviceA,
+      name: 'Pixel',
+      host: null,
+      pairedAt: '2026-11-10T08:00:00.000Z',
+      lastSeenAt: null,
+      revokedAt: null,
+    };
+    const hostApp = {
+      id: FIXTURE_IDS.deviceB,
+      name: 'StudyLM',
+      host: 'studylm',
+      pairedAt: '2026-11-11T08:00:00.000Z',
+      lastSeenAt: null,
+      revokedAt: null,
+    };
+    const putDevices = await handleRequest(
+      new Request('https://edge.example/devices', {
+        method: 'PUT',
+        headers: {
+          authorization: `Bearer ${await serverToken()}`,
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify({ devices: [deviceA, hostApp] }),
+      }),
+      e,
+      () => now,
+    );
+    expect(putDevices.status).toBe(204);
+
+    const { sent, fetchFn } = capture();
+    await handleTelegram(update({ text: '/devices' }), e, () => now, fetchFn);
+    expect(sent[0].text).toContain('1. Pixel');
+    expect(sent[0].text).toContain('2. StudyLM (studylm)');
+
+    await handleTelegram(
+      update({ text: '/revoke 1' }, { updateId: 814 }),
+      e,
+      () => now,
+      fetchFn,
+    );
+    expect(sent[1].text).toContain('Revoked Pixel ✓');
+
+    // DeviceA is immediately refused at the edge /state endpoint.
+    const rejectedState = await handleRequest(
+      put(state, await token()),
+      e,
+      () => now,
+    );
+    expect(rejectedState.status).toBe(401);
+
+    // Pending revocation is queued for the API and deleted upon ack.
+    const pulledRev = await handleRequest(
+      new Request('https://edge.example/revocations', {
+        headers: { authorization: `Bearer ${await serverToken()}` },
+      }),
+      e,
+      () => now,
+    );
+    expect(pulledRev.status).toBe(200);
+    const { revocations } = (await pulledRev.json()) as {
+      revocations: { key: string; deviceId: string }[];
+    };
+    expect(revocations).toEqual([
+      expect.objectContaining({
+        key: `revoke:${FIXTURE_IDS.deviceA}`,
+        deviceId: FIXTURE_IDS.deviceA,
+      }),
+    ]);
+
+    const ackRev = await handleRequest(
+      new Request('https://edge.example/revocations/ack', {
+        method: 'POST',
+        headers: {
+          authorization: `Bearer ${await serverToken()}`,
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify({ keys: [`revoke:${FIXTURE_IDS.deviceA}`] }),
+      }),
+      e,
+      () => now,
+    );
+    expect(ackRev.status).toBe(204);
+    expect(e.NUDGES.data.has(`revoke:${FIXTURE_IDS.deviceA}`)).toBe(false);
+  });
+});

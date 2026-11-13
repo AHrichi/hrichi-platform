@@ -6,7 +6,12 @@ import {
   effect,
   inject,
 } from '@angular/core';
-import { type CaptureItem, LearnThis } from '@ah/learning/client';
+import {
+  type CaptureItem,
+  type HostTier,
+  LearningLink,
+  LearnThis,
+} from '@ah/learning/client';
 import { APP_MODE } from '@ah/platform/app-mode';
 import { isAppEnabled } from '@ah/shared/content';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -23,7 +28,10 @@ import {
   type AhSelectOption,
 } from '@ah/ui';
 import { StudyLmStore } from '../../store/studylm.store';
-import { flashcardItem } from '../../services/studylm-reviews.service';
+import {
+  flashcardItem,
+  REVIEW_OBJECTS,
+} from '../../services/studylm-reviews.service';
 import { StudyLmScreens } from '../../shell/studylm-screens';
 import { LessonGenerationService } from '../../services/lesson-generation.service';
 import { PreferencesStore } from '@ah/shared/state';
@@ -58,6 +66,50 @@ export class FlashcardDeckComponent {
   readonly store = inject(StudyLmStore);
   protected readonly screens = inject(StudyLmScreens);
   private readonly preferences = inject(PreferencesStore, { optional: true });
+  private readonly learningLink = inject(LearningLink);
+
+  private readonly tierIcons: Record<HostTier, string> = {
+    seed: '🌰',
+    sprout: '🌱',
+    leaf: '🍃',
+    bloom: '🌸',
+    golden: '✨',
+  };
+
+  protected engineTier(cardId: string): {
+    tier: HostTier;
+    icon: string;
+    label: string;
+    variant: 'neutral' | 'info' | 'warning' | 'success' | 'accent';
+  } | null {
+    if (!this.learningOn || !this.learningLink.linked()) return null;
+    const state = this.learningLink.itemState(REVIEW_OBJECTS.flashcard, cardId);
+    if (!state?.tier) return null;
+    const c = this.copy().reviews;
+    const labels: Record<HostTier, string> = {
+      seed: c.tierSeed,
+      sprout: c.tierSprout,
+      leaf: c.tierLeaf,
+      bloom: c.tierBloom,
+      golden: c.tierGolden,
+    };
+    const variants: Record<
+      HostTier,
+      'neutral' | 'info' | 'warning' | 'success' | 'accent'
+    > = {
+      seed: 'neutral',
+      sprout: 'info',
+      leaf: 'success',
+      bloom: 'accent',
+      golden: 'warning',
+    };
+    return {
+      tier: state.tier,
+      icon: this.tierIcons[state.tier],
+      label: labels[state.tier],
+      variant: variants[state.tier],
+    };
+  }
   /**
    * The Learning Engine is reachable: always from standalone StudyLM (it
    * opens the learning app), and inside the portfolio only while the
@@ -86,6 +138,9 @@ export class FlashcardDeckComponent {
   readonly tiersInfo = COMPETENCY_TIERS;
 
   constructor() {
+    if (this.learningOn && this.learningLink.linked()) {
+      void this.learningLink.refresh();
+    }
     effect(() => {
       const qSec = this.queryParams()?.get('section');
       if (qSec && qSec !== this.store.cardFilter().sectionId) {

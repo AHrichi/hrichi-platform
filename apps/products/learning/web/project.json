@@ -7,6 +7,21 @@
   "tags": ["scope:learning", "type:app", "runtime:browser"],
   "targets": {
     "build": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build-federation"],
+      "outputs": ["{workspaceRoot}/dist/apps/products/learning/web"],
+      "defaultConfiguration": "production",
+      "options": {
+        "command": "ngsw-config dist/apps/products/learning/web/browser apps/products/learning/web/ngsw-config.json /"
+      },
+      "configurations": {
+        "production": {},
+        "development": {
+          "command": "echo Service worker is disabled in development builds"
+        }
+      }
+    },
+    "build-federation": {
       "executor": "@angular-architects/native-federation:build",
       "defaultConfiguration": "production",
       "options": {
@@ -83,7 +98,8 @@
               "maximumError": "50kb"
             }
           ],
-          "outputHashing": "all"
+          "outputHashing": "all",
+          "serviceWorker": "apps/products/learning/web/ngsw-config.json"
         },
         "development": {
           "optimization": false,

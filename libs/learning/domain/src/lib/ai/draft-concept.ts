@@ -59,6 +59,7 @@ export function draftConceptFrom(input: DraftConceptInput): Concept {
       },
     ],
     confirmedAt: null,
+    version: 1,
     createdAt: at,
   };
 }

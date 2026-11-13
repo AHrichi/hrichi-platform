@@ -6,6 +6,9 @@ import {
   sampleEvent,
   sampleTeachBack,
   sampleTopic,
+  SETTINGS_RECORD_ID,
+  type SettingsRecord,
+  stampConceptGroups,
   SYNC_LIMITS,
   type SyncRequest,
   verifyDeviceToken,
@@ -151,5 +154,73 @@ describe('SyncService', () => {
     const claims = await verifyDeviceToken(secret, renewed?.token ?? '', now);
     expect(claims?.deviceId).toBe(FIXTURE_IDS.deviceA);
     expect((await service.sync(deviceA, push(0, {}))).renewedToken).toBeNull();
+  });
+
+  it('merges concurrent concept edits by field group and syncs settings', async () => {
+    const { service } = setup();
+    const base = sampleConcept({
+      updatedAt: '2026-11-11T08:00:00Z',
+      createdAt: '2026-11-11T08:00:00Z',
+      topicId: null,
+      status: 'draft',
+    });
+    await service.sync(deviceA, push(0, { concepts: [base] }));
+
+    const fromA = stampConceptGroups(
+      {
+        ...base,
+        status: 'active',
+        confirmedAt: '2026-11-11T08:02:00Z',
+        updatedAt: '2026-11-11T08:02:00Z',
+      },
+      ['status'],
+      { updatedAt: '2026-11-11T08:02:00Z', by: FIXTURE_IDS.deviceA },
+      { updatedAt: '2026-11-11T08:00:00Z', by: FIXTURE_IDS.deviceA },
+    );
+    await service.sync(deviceA, push(1, { concepts: [fromA] }));
+
+    const fromB = stampConceptGroups(
+      {
+        ...base,
+        topicId: FIXTURE_IDS.topic,
+        updatedAt: '2026-11-11T08:01:00Z',
+      },
+      ['topic'],
+      { updatedAt: '2026-11-11T08:01:00Z', by: 'local' },
+      { updatedAt: '2026-11-11T08:00:00Z', by: 'local' },
+    );
+    const settings: SettingsRecord = {
+      id: SETTINGS_RECORD_ID,
+      updatedAt: '2026-11-11T08:03:00Z',
+      deletedAt: null,
+      dailyCap: 10,
+      newPerDay: 2,
+      streakMode: 'weekly',
+      weeklyTarget: 4,
+      morning: '08:00',
+      evening: null,
+      vacationUntil: null,
+      gardenTheme: 'aurora',
+      weeklyRecap: true,
+    };
+    const mergedResponse = await service.sync(
+      deviceB,
+      push(1, { concepts: [fromB], settings: [settings] }),
+    );
+    // B receives the mixed merge so it gets A's status alongside its own topicId.
+    const pulledConcept = mergedResponse.pull.find((r) => r.kind === 'concept');
+    expect(pulledConcept?.data).toMatchObject({
+      status: 'active',
+      topicId: FIXTURE_IDS.topic,
+    });
+
+    const pulledByA = await service.sync(deviceA, push(2, {}));
+    expect(pulledByA.pull.map((r) => r.kind)).toContain('settings');
+    expect(
+      pulledByA.pull.find((r) => r.kind === 'concept')?.data,
+    ).toMatchObject({
+      status: 'active',
+      topicId: FIXTURE_IDS.topic,
+    });
   });
 });

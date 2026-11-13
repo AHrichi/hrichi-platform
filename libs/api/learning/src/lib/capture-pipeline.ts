@@ -36,6 +36,7 @@ import {
   SERVER_WRITER,
   type Topic,
   TRIAGE_QUESTIONS,
+  withRevisedExplanation,
   wordCount,
   AI_LIMITS,
 } from '@ah/learning/domain';
@@ -61,8 +62,9 @@ export class PipelineError extends Error {
 
   constructor(
     message: string,
-    /** `not_found`: the record isn't on the server (yet). */
-    readonly reason: 'not_found' | 'unavailable' | 'bad_output' = 'bad_output',
+    /** `not_found`: the record isn't on the server (yet); `conflict`: stale version. */
+    readonly reason:
+      'not_found' | 'conflict' | 'unavailable' | 'bad_output' = 'bad_output',
   ) {
     super(message);
   }
@@ -184,13 +186,24 @@ export class CapturePipeline {
     return capture;
   }
 
-  /** "Make it simpler": a new version of a concept's explanation. */
-  async revise(conceptId: string, instruction: string): Promise<Concept> {
+  /** "Make it simpler": a new version of a concept's explanation, guarded by version. */
+  async revise(
+    conceptId: string,
+    instruction: string,
+    expectedVersion?: number,
+  ): Promise<Concept> {
     const stored = await this.repository.getRecord('concept', conceptId);
     if (!stored || stored.data.deletedAt) {
       throw new PipelineError('That concept isn’t on the server.', 'not_found');
     }
     const concept = stored.data;
+    const startVersion = concept.version ?? 1;
+    if (expectedVersion !== undefined && startVersion !== expectedVersion) {
+      throw new PipelineError(
+        'That concept was updated elsewhere. Sync and try again.',
+        'conflict',
+      );
+    }
     const result = await this.ai.ladder.run(
       reviseCall({
         title: concept.title,
@@ -211,13 +224,43 @@ export class CapturePipeline {
     ) {
       throw new PipelineError('The rewrite didn’t come out right. Try again.');
     }
-    return this.write('concept', {
-      ...concept,
-      explanation: {
-        ...concept.explanation,
-        ...parsed.output,
-        by: 'ai',
-      },
+    return this.lock.run(async () => {
+      const latest = await this.repository.getRecord('concept', conceptId);
+      if (!latest || latest.data.deletedAt) {
+        throw new PipelineError(
+          'That concept isn’t on the server.',
+          'not_found',
+        );
+      }
+      if ((latest.data.version ?? 1) !== startVersion) {
+        throw new PipelineError(
+          'That concept changed while rewriting. Try again.',
+          'conflict',
+        );
+      }
+      const after = Date.parse(latest.updatedAt) + 1;
+      const updatedAt = new Date(
+        Math.max(this.now().getTime(), after),
+      ).toISOString();
+      const revised = withRevisedExplanation(
+        latest.data,
+        {
+          ...latest.data.explanation,
+          ...parsed.output,
+          by: 'ai',
+        },
+        updatedAt,
+        SERVER_WRITER,
+      );
+      await this.repository.putMutable({
+        kind: 'concept',
+        id: revised.id,
+        seq: await this.repository.nextSeq(),
+        by: SERVER_WRITER,
+        updatedAt,
+        data: revised,
+      });
+      return revised;
     });
   }
 

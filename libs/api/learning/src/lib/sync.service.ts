@@ -1,5 +1,9 @@
 import {
+  type Concept,
+  CONCEPT_FIELD_GROUPS,
+  type ConceptFieldRevisions,
   isFromTheFuture,
+  mergeConcepts,
   type MutableKind,
   PAIRING,
   type PulledRecord,
@@ -70,8 +74,41 @@ export class SyncService {
     };
 
     for (const topic of request.push.topics) await putMutable('topic', topic);
-    for (const concept of request.push.concepts) {
-      await putMutable('concept', concept);
+    for (const rawConcept of request.push.concepts) {
+      if (isFromTheFuture(rawConcept.updatedAt, now)) {
+        rejected.push({
+          kind: 'concept',
+          id: rawConcept.id,
+          reason: 'clock_ahead',
+        });
+        continue;
+      }
+      const concept = normalizeIncomingConcept(rawConcept, caller.deviceId);
+      const current = await this.repository.getRecord('concept', concept.id);
+      if (!current) {
+        await putMutable('concept', concept);
+        continue;
+      }
+      const merged = mergeConcepts(
+        { updatedAt: current.updatedAt, by: current.by, data: current.data },
+        { updatedAt: concept.updatedAt, by: caller.deviceId, data: concept },
+      );
+      if (!merged.fromIncoming) continue;
+      const seq = await this.repository.nextSeq();
+      const outcome = await this.repository.putMergedConcept(
+        {
+          kind: 'concept',
+          id: concept.id,
+          seq,
+          by: merged.by,
+          updatedAt: merged.updatedAt,
+          data: merged.concept,
+        },
+        current.seq,
+      );
+      if (outcome === 'stored' && !merged.keptCurrent) {
+        written.add(seq);
+      }
     }
     for (const capture of request.push.captures) {
       await putMutable('capture', capture);
@@ -80,6 +117,9 @@ export class SyncService {
       await putMutable('session', session);
     }
     for (const link of request.push.links) await putMutable('link', link);
+    for (const settings of request.push.settings ?? []) {
+      await putMutable('settings', settings);
+    }
     for (const event of request.push.events) {
       const seq = await this.repository.nextSeq();
       const outcome = await this.repository.putAppendOnly({
@@ -142,4 +182,21 @@ export class SyncService {
     });
     return { token, expiresAt: expiresAt.toISOString() };
   }
+}
+
+function normalizeIncomingConcept(concept: Concept, deviceId: string): Concept {
+  if (!concept.fieldRevisions) return concept;
+  const next: ConceptFieldRevisions = {};
+  let changed = false;
+  for (const group of CONCEPT_FIELD_GROUPS) {
+    const rev = concept.fieldRevisions[group];
+    if (!rev) continue;
+    if (rev.by === 'local') {
+      next[group] = { ...rev, by: deviceId };
+      changed = true;
+    } else {
+      next[group] = rev;
+    }
+  }
+  return changed ? { ...concept, fieldRevisions: next } : concept;
 }

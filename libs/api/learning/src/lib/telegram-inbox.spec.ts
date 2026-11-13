@@ -6,6 +6,7 @@ import {
   verifyDeviceToken,
 } from '@ah/learning/domain';
 import { CapturePipeline } from './capture-pipeline';
+import { EdgeDeviceSync } from './edge-devices';
 import { TelegramInbox } from './telegram-inbox';
 import { fakeAi, FakeTranscriber } from './testing/ai-fakes';
 import { InMemoryLearningRepository } from './testing/in-memory-learning.repository';
@@ -142,5 +143,73 @@ describe('TelegramInbox', () => {
     expect(inbox.configured).toBe(false);
     expect(await inbox.pull()).toBe(0);
     expect(await capture(text.id)).toBeUndefined();
+  });
+
+  it('pulls edge revocations and pushes the current device snapshot', async () => {
+    const repository = new InMemoryLearningRepository();
+    const deviceId = '0b6f0c30-0000-4000-8000-000000000099';
+    await repository.createDevice({
+      id: deviceId,
+      name: 'Phone',
+      host: null,
+      pairedAt: new Date('2026-11-10T08:00:00Z'),
+      lastSeenAt: null,
+      revokedAt: null,
+    });
+    const pushed: unknown[] = [];
+    const acked: string[][] = [];
+    const fetchFn = (async (input: string | URL, init?: RequestInit) => {
+      const url = String(input);
+      if (url === 'https://edge.example/revocations') {
+        return Response.json({
+          revocations: [
+            {
+              key: `revoke:${deviceId}`,
+              deviceId,
+              revokedAt: '2026-11-12T07:50:00.000Z',
+            },
+          ],
+        });
+      }
+      if (url === 'https://edge.example/revocations/ack') {
+        acked.push(JSON.parse(String(init?.body)).keys);
+        return new Response(null, { status: 204 });
+      }
+      if (url === 'https://edge.example/devices') {
+        pushed.push(JSON.parse(String(init?.body)));
+        return new Response(null, { status: 204 });
+      }
+      if (url === 'https://edge.example/inbox') {
+        return Response.json({ items: [] });
+      }
+      return new Response('', { status: 404 });
+    }) as typeof fetch;
+
+    const pipeline = new CapturePipeline(
+      repository,
+      new WriteLock(),
+      fakeAi(),
+      () => now,
+    );
+    const edgeDevices = new EdgeDeviceSync(
+      { edgeUrl: 'https://edge.example', tokenSecret: secret },
+      repository,
+      () => now,
+      fetchFn,
+    );
+    const inbox = new TelegramInbox(
+      { edgeUrl: 'https://edge.example', botToken: null, tokenSecret: secret },
+      pipeline,
+      () => now,
+      fetchFn,
+      edgeDevices,
+    );
+
+    await inbox.pull();
+    expect((await repository.findDevice(deviceId))?.revokedAt).toEqual(
+      new Date('2026-11-12T07:50:00.000Z'),
+    );
+    expect(acked).toEqual([[`revoke:${deviceId}`]]);
+    expect(pushed).toHaveLength(1);
   });
 });

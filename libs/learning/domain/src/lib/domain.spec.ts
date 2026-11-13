@@ -4,12 +4,19 @@ import {
   incomingWins,
   isFromTheFuture,
   MAX_CLOCK_SKEW_MS,
+  mergeConcepts,
+  stampConceptGroups,
+  withRevisedExplanation,
 } from './merge';
 import { isValidTimeZone, localDateOf } from './local-date';
 import {
   ConceptSchema,
+  isRatingDisagreement,
+  LIMITS,
   RECORD_SCHEMAS,
   ReviewEventSchema,
+  SETTINGS_RECORD_ID,
+  SettingsRecordSchema,
   TopicSchema,
 } from './records';
 import { SyncRequestSchema, SYNC_LIMITS } from './sync';
@@ -61,9 +68,33 @@ describe('records', () => {
       'capture',
       'session',
       'link',
+      'settings',
       'event',
       'teachback',
     ]);
+  });
+
+  it('validates synced settings records and disagreement helper', () => {
+    const parsed = v.safeParse(SettingsRecordSchema, {
+      id: SETTINGS_RECORD_ID,
+      updatedAt: '2026-11-11T08:00:00Z',
+      deletedAt: null,
+      dailyCap: 7,
+      newPerDay: 2,
+      streakMode: 'weekly',
+      weeklyTarget: 5,
+      morning: '08:00',
+      evening: '20:30',
+      vacationUntil: null,
+      gardenTheme: 'meadow',
+      weeklyRecap: false,
+    });
+    expect(parsed.success).toBe(true);
+    expect(isRatingDisagreement('again', 'nailed')).toBe(true);
+    expect(isRatingDisagreement('easy', 'missed')).toBe(true);
+    expect(isRatingDisagreement('good', 'nailed')).toBe(false);
+    expect(isRatingDisagreement('good', 'close')).toBe(false);
+    expect(isRatingDisagreement('good', null)).toBe(false);
   });
 });
 
@@ -105,6 +136,55 @@ describe('merge', () => {
     const later = (ms: number) => new Date(now.getTime() + ms).toISOString();
     expect(isFromTheFuture(later(MAX_CLOCK_SKEW_MS), now)).toBe(false);
     expect(isFromTheFuture(later(MAX_CLOCK_SKEW_MS + 1000), now)).toBe(true);
+  });
+
+  it('merges concept field groups independently and preserves history up to 3', () => {
+    const base = sampleConcept({
+      title: 'Base',
+      status: 'draft',
+      topicId: null,
+      version: 1,
+    });
+    const devA = stampConceptGroups(
+      { ...base, status: 'active', confirmedAt: '2026-11-11T08:02:00Z' },
+      ['status'],
+      at('2026-11-11T08:02:00Z', FIXTURE_IDS.deviceA),
+    );
+    const devB = stampConceptGroups(
+      { ...base, topicId: FIXTURE_IDS.topic },
+      ['topic'],
+      at('2026-11-11T08:01:00Z', FIXTURE_IDS.deviceB),
+    );
+    const merged = mergeConcepts(
+      {
+        updatedAt: '2026-11-11T08:02:00Z',
+        by: FIXTURE_IDS.deviceA,
+        data: devA,
+      },
+      {
+        updatedAt: '2026-11-11T08:01:00Z',
+        by: FIXTURE_IDS.deviceB,
+        data: devB,
+      },
+    );
+    expect(merged.fromIncoming).toBe(true);
+    expect(merged.keptCurrent).toBe(true);
+    expect(merged.concept.status).toBe('active');
+    expect(merged.concept.topicId).toBe(FIXTURE_IDS.topic);
+    expect(merged.updatedAt).toBe('2026-11-11T08:02:00Z');
+
+    let revised = base;
+    for (let i = 1; i <= 4; i++) {
+      revised = withRevisedExplanation(
+        revised,
+        { ...revised.explanation, essence: `Rev ${i}` },
+        `2026-11-11T08:0${i}:00Z`,
+        FIXTURE_IDS.deviceA,
+      );
+    }
+    expect(revised.version).toBe(5);
+    expect(revised.explanationHistory).toHaveLength(LIMITS.explanationHistory);
+    expect(revised.explanationHistory?.[0].essence).toBe('Rev 3');
   });
 });
 

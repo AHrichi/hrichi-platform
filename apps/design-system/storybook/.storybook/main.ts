@@ -9,6 +9,7 @@ import { mergeConfig } from 'vite';
 const config: StorybookConfig = {
   stories: [
     '../../../../libs/design-system/ui/src/**/*.stories.ts',
+    '../../../../libs/learning/ui/src/**/*.stories.ts',
     '../../../../libs/three/angular/src/**/*.stories.ts',
     '../../../../libs/products/studylm/learn/src/**/*.stories.ts',
   ],

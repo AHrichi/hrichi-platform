@@ -16,6 +16,7 @@ import {
   type PairingStarted,
   signDeviceToken,
 } from '@ah/learning/domain';
+import type { EdgeDeviceSync } from './edge-devices';
 import type { LearningRepository } from './learning.repository';
 import type { PairingNotifier } from './pairing-notifier';
 
@@ -44,6 +45,7 @@ export class PairingService {
       randomInt(0, 10 ** PAIRING.codeLength)
         .toString()
         .padStart(PAIRING.codeLength, '0'),
+    private readonly edgeDevices: EdgeDeviceSync | null = null,
   ) {}
 
   async start(deviceName: string): Promise<PairingStarted> {
@@ -105,6 +107,7 @@ export class PairingService {
       lastSeenAt: now,
       revokedAt: null,
     });
+    await this.edgeDevices?.pushDevices();
     const token = await signDeviceToken(this.tokenSecret, {
       deviceId,
       expiresAt,
@@ -135,5 +138,6 @@ export class PairingService {
     if (!(await this.repository.revokeDevice(deviceId, this.now()))) {
       throw new NotFoundException('No paired device has that id.');
     }
+    await this.edgeDevices?.pushDevices();
   }
 }

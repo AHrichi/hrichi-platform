@@ -4,13 +4,17 @@
 
     @switch (store.unavailable()) {
       @case ('demo') {
-        <ah-alert variant="info" title="This is the demo">
+        <ah-alert variant="info" title="This is the demo" [headingLevel]="null">
           The demo keeps everything in this browser, so it can't link apps. The
           real app links {{ appName() }} to your daily reviews.
         </ah-alert>
       }
       @case ('no-server') {
-        <ah-alert variant="info" title="Linking needs the server">
+        <ah-alert
+          variant="info"
+          title="Linking needs the server"
+          [headingLevel]="null"
+        >
           This deployment has no API, so {{ appName() }} can't reach your
           reviews from here.
         </ah-alert>
@@ -61,7 +65,11 @@
             }
           </div>
         } @else {
-          <ah-alert variant="info" title="Pair this device first">
+          <ah-alert
+            variant="info"
+            title="Pair this device first"
+            [headingLevel]="null"
+          >
             Linking happens on a paired device, so your reviews stay yours. Pair
             this one under
             <a routerLink="../devices">Devices</a>, then press “Connect” in

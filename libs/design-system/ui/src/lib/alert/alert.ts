@@ -7,6 +7,7 @@ import {
 } from '@angular/core';
 
 export type AlertVariant = 'info' | 'success' | 'warning' | 'danger';
+export type AlertHeadingLevel = 2 | 3 | 4 | null;
 
 /**
  * Semantic alert banner for system feedback, guardrails, and validation errors.
@@ -29,6 +30,8 @@ export type AlertVariant = 'info' | 'success' | 'warning' | 'danger';
 export class Alert {
   readonly variant = input<AlertVariant>('info');
   readonly title = input<string>();
+  /** Semantic heading level for `title`, or `null` for plain block text inside a landmark with no matching subheading level. */
+  readonly headingLevel = input<AlertHeadingLevel>(4);
   readonly dismissible = input<boolean>(false);
 
   readonly dismissed = output<void>();

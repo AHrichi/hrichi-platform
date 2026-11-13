@@ -57,6 +57,11 @@ export interface LearningRepository {
   putMutable<K extends MutableKind>(
     record: StoredRecord<K>,
   ): Promise<PutOutcome>;
+  /** Stores a field-group merged concept if its stored seq still matches. */
+  putMergedConcept(
+    record: StoredRecord<'concept'>,
+    expectedSeq: number,
+  ): Promise<PutOutcome>;
   /** Stores an append-only record once; `kept` means it was there already. */
   putAppendOnly<K extends AppendOnlyKind>(
     record: StoredRecord<K>,

@@ -1,5 +1,6 @@
 export * from './lib/capture-pipeline';
 export * from './lib/device.guard';
+export * from './lib/edge-devices';
 export * from './lib/grading.service';
 export * from './lib/host.controller';
 export * from './lib/host.service';

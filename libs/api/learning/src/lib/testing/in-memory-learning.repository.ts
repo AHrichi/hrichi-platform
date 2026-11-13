@@ -33,6 +33,17 @@ export class InMemoryLearningRepository implements LearningRepository {
     return 'stored';
   }
 
+  async putMergedConcept(
+    record: StoredRecord<'concept'>,
+    expectedSeq: number,
+  ): Promise<PutOutcome> {
+    const key = `concept:${record.id}`;
+    const current = this.records.get(key);
+    if (!current || current.seq !== expectedSeq) return 'kept';
+    this.records.set(key, structuredClone(record) as StoredRecord);
+    return 'stored';
+  }
+
   async putAppendOnly<K extends AppendOnlyKind>(
     record: StoredRecord<K>,
   ): Promise<PutOutcome> {

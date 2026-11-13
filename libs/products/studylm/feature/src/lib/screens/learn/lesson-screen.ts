@@ -18,7 +18,11 @@ import {
   LessonView,
   type LessonProgressState,
 } from '@ah/products/studylm/learn';
-import { CATALOG, loadBuiltInLessons } from '@ah/products/studylm/lessons';
+import {
+  type Block,
+  CATALOG,
+  loadBuiltInLessons,
+} from '@ah/products/studylm/lessons';
 import type { RoadmapSection } from '@ah/products/studylm/domain';
 import { LessonGenerationService } from '../../services/lesson-generation.service';
 import { StudyLmStorageService } from '../../services/studylm-storage.service';
@@ -566,17 +570,44 @@ export class LessonScreen {
     void this.generation.retryBlock(this.lessonId(), blockId);
   }
 
+  private reportedChecksLessonId = '';
+  private reportedChecks = new Map<string, boolean>();
+
   protected save(progress: LessonProgressState): void {
     void this.storage.saveLessonProgress({
       lessonId: this.lessonId(),
       ...progress,
       updatedAt: new Date().toISOString(),
     });
-    // A finished lesson's cards join the daily reviews once linked; each
-    // card goes once, so saving again later sends nothing.
     const lesson = this.lesson();
-    if (progress.completedAt && lesson && !this.busy()) {
-      this.reviews.lessonFinished(lesson);
+    if (lesson && !this.busy()) {
+      if (this.reportedChecksLessonId !== lesson.id) {
+        this.reportedChecksLessonId = lesson.id;
+        this.reportedChecks = new Map(
+          Object.entries(this.data.value()?.progress?.checks ?? {}).map(
+            ([id, rec]) => [id, rec.correct],
+          ),
+        );
+      }
+      const blocksById = new Map<string, Block>();
+      for (const s of lesson.sections) {
+        for (const b of s.blocks) {
+          blocksById.set(b.id, b);
+        }
+      }
+      for (const [id, rec] of Object.entries(progress.checks)) {
+        if (this.reportedChecks.get(id) === rec.correct) continue;
+        this.reportedChecks.set(id, rec.correct);
+        const block = blocksById.get(id);
+        if (block) {
+          this.reviews.lessonCheckAnswered(lesson, block, rec.correct);
+        }
+      }
+      // A finished lesson's cards join the daily reviews once linked; each
+      // card goes once, so saving again later sends nothing.
+      if (progress.completedAt) {
+        this.reviews.lessonFinished(lesson);
+      }
     }
   }
 }

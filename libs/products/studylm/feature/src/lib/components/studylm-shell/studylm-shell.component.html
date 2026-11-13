@@ -53,6 +53,9 @@
 
     <!-- Global Header Actions -->
     <div class="nav-actions">
+      @if (learningOn) {
+        <ah-learning-today />
+      }
       <!-- AI connection: configure n8n AI webhook -->
       <button
         type="button"

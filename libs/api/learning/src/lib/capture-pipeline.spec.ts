@@ -346,12 +346,26 @@ describe('CapturePipeline', () => {
       analogy: 'It is like picking one toy and leaving the other.',
       misconception: 'It is not every option, only the best one.',
     });
-    const revised = await pipeline.revise(draft.id, 'simpler');
+    const revised = await pipeline.revise(
+      draft.id,
+      'simpler',
+      draft.version ?? 1,
+    );
     expect(revised.explanation.essence).toBe(
       'What you miss out on when you pick one thing.',
     );
+    expect(revised.version).toBe(2);
+    expect(revised.explanationHistory).toHaveLength(1);
+    expect(revised.explanationHistory?.[0].essence).toBe(
+      golden.explained.essence,
+    );
     expect(Date.parse(revised.updatedAt)).toBeGreaterThan(
       Date.parse(draft.updatedAt),
+    );
+    await expect(pipeline.revise(draft.id, 'simpler', 1)).rejects.toMatchObject(
+      {
+        reason: 'conflict',
+      },
     );
     await expect(
       pipeline.revise(FIXTURE_IDS.concept, 'simpler'),

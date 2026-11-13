@@ -1,14 +1,25 @@
-import { defineConfig } from 'vitest/config';
+/// <reference types='vitest' />
+import { defineConfig } from 'vite';
+import angular from '@analogjs/vite-plugin-angular';
 
-// Only the feature's pure modules have specs; the screens are covered by e2e.
-export default defineConfig({
+export default defineConfig(() => ({
   root: import.meta.dirname,
-  resolve: { tsconfigPaths: true },
+  cacheDir: '../../../node_modules/.vite/libs/learning/feature',
+  resolve: {
+    tsconfigPaths: true,
+  },
+  plugins: [angular({ tsconfig: `${import.meta.dirname}/tsconfig.spec.json` })],
   test: {
     name: 'learning-feature',
+    watch: false,
     globals: true,
-    environment: 'node',
-    include: ['src/**/*.spec.ts'],
-    passWithNoTests: true,
+    environment: 'jsdom',
+    include: ['{src,tests}/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
+    setupFiles: ['src/test-setup.ts'],
+    reporters: ['default'],
+    coverage: {
+      reportsDirectory: '../../../coverage/libs/learning/feature',
+      provider: 'v8' as const,
+    },
   },
-});
+}));

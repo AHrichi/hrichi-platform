@@ -318,6 +318,56 @@ describe('streaks', () => {
     expect(streak.current).toBe(1);
     expect(streak.longest).toBe(2);
   });
+
+  it('supports weekly streak mode (Mon–Sun target)', () => {
+    // Week 1: Nov 2 (Mon) – Nov 6 (Fri) = 5 days
+    // Week 2: Nov 9 (Mon) – Nov 11 (Wed) = 3 days so far (week not over)
+    const streak = computeStreak(
+      days(
+        '2026-11-02',
+        '2026-11-03',
+        '2026-11-04',
+        '2026-11-05',
+        '2026-11-06',
+        '2026-11-09',
+        '2026-11-10',
+        '2026-11-11',
+      ),
+      days(),
+      '2026-11-12',
+      days(),
+      { mode: 'weekly', weeklyTarget: 5 },
+    );
+    expect(streak).toMatchObject({
+      mode: 'weekly',
+      weeklyTarget: 5,
+      current: 1,
+      longest: 1,
+      thisWeekCount: 3,
+    });
+
+    // Reaching target on the current week increments immediately.
+    const reached = computeStreak(
+      days(
+        '2026-11-02',
+        '2026-11-03',
+        '2026-11-04',
+        '2026-11-05',
+        '2026-11-06',
+        '2026-11-09',
+        '2026-11-10',
+        '2026-11-11',
+        '2026-11-12',
+        '2026-11-13',
+      ),
+      days(),
+      '2026-11-13',
+      days(),
+      { mode: 'weekly', weeklyTarget: 5 },
+    );
+    expect(reached.current).toBe(2);
+    expect(reached.thisWeekCount).toBe(5);
+  });
 });
 
 describe('xp', () => {

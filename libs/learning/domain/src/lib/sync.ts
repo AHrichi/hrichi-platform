@@ -7,6 +7,7 @@ import {
   type RecordKind,
   type RecordOfKind,
   ReviewEventSchema,
+  SettingsRecordSchema,
   TeachBackSchema,
   TopicSchema,
 } from './records';
@@ -29,6 +30,7 @@ export const SYNC_LIMITS = {
   pushEvents: 1000,
   pushTeachBacks: 200,
   pushLinks: 200,
+  pushSettings: 10,
   /** Records per pull; `more` says another request is needed. */
   pull: 500,
 } as const;
@@ -60,6 +62,14 @@ export const SyncRequestSchema = v.strictObject({
     ),
     teachbacks: v.optional(
       v.pipe(v.array(TeachBackSchema), v.maxLength(SYNC_LIMITS.pushTeachBacks)),
+      [],
+    ),
+    /** Optional, so older clients keep syncing seamlessly. */
+    settings: v.optional(
+      v.pipe(
+        v.array(SettingsRecordSchema),
+        v.maxLength(SYNC_LIMITS.pushSettings),
+      ),
       [],
     ),
   }),
@@ -112,5 +122,6 @@ export function emptyPush(): SyncRequest['push'] {
     events: [],
     links: [],
     teachbacks: [],
+    settings: [],
   };
 }

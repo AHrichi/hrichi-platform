@@ -2,6 +2,7 @@ import {
   BadGatewayException,
   BadRequestException,
   Body,
+  ConflictException,
   Controller,
   Delete,
   Get,
@@ -73,6 +74,7 @@ const ReviseRequestSchema = v.strictObject({
     v.minLength(1),
     v.maxLength(MAX_INSTRUCTION),
   ),
+  expectedVersion: v.optional(v.pipe(v.number(), v.integer(), v.minValue(1))),
 });
 type ReviseRequest = v.InferOutput<typeof ReviseRequestSchema>;
 
@@ -165,7 +167,9 @@ export class LearningController {
     @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
     @Body(new ValibotPipe(ReviseRequestSchema)) body: ReviseRequest,
   ): Promise<Concept> {
-    return this.aiCall(() => this.pipeline.revise(id, body.instruction));
+    return this.aiCall(() =>
+      this.pipeline.revise(id, body.instruction, body.expectedVersion),
+    );
   }
 
   /** A typed answer, graded by its key points (design §6.3). */
@@ -221,6 +225,9 @@ export class LearningController {
       if (error instanceof PipelineError) {
         if (error.reason === 'not_found') {
           throw new NotFoundException(error.message);
+        }
+        if (error.reason === 'conflict') {
+          throw new ConflictException(error.message);
         }
         if (error.reason === 'unavailable') {
           throw new ServiceUnavailableException(error.message);
