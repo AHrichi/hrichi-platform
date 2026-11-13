@@ -103,13 +103,7 @@ export class StudyLmSyncApi {
 
     const payload = await response.json().catch(() => null);
     if (!response.ok) {
-      const serverMessage =
-        payload &&
-        typeof payload === 'object' &&
-        'message' in payload &&
-        typeof payload.message === 'string'
-          ? payload.message
-          : null;
+      const serverMessage = formatServerError(payload);
       if (response.status === 401) {
         throw new StudyLmSyncApiError(
           'unauthorized',
@@ -134,4 +128,22 @@ export class StudyLmSyncApi {
 
     return payload as T;
   }
+}
+
+function formatServerError(payload: unknown): string | null {
+  if (!payload || typeof payload !== 'object') return null;
+  const record = payload as { message?: unknown; issues?: unknown };
+  const base = typeof record.message === 'string' ? record.message : null;
+  if (!Array.isArray(record.issues) || record.issues.length === 0) {
+    return base;
+  }
+  console.warn('[studylm] sync contract rejected', record.issues);
+  const first = record.issues[0] as { path?: unknown; message?: unknown };
+  const detail = [first?.path, first?.message]
+    .filter(
+      (part): part is string => typeof part === 'string' && part.length > 0,
+    )
+    .join(': ');
+  if (!detail) return base;
+  return base ? `${base} (${detail})` : detail;
 }

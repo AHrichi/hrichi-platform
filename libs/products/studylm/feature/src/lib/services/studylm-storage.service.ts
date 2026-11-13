@@ -6,6 +6,8 @@ import {
   emptyStudyLmPush,
   incomingStudyLmWins,
   isSyncedSettingKey,
+  normalizeStudyLmRecord,
+  normalizeStudyLmTimestamp,
   STUDYLM_SYNC_LIMITS,
   type StudyLmPulledRecord,
   type StudyLmSyncKind,
@@ -13,6 +15,7 @@ import {
   type StudyLmSyncRecordOfKind,
   type StudySubject,
   type SyncedGeneratedLessonRecord,
+  type SyncedLessonProgressRecord,
   type SyncedSubjectRecord,
 } from '@ah/products/studylm/domain';
 import type { Lesson } from '@ah/products/studylm/lessons';
@@ -29,7 +32,7 @@ export interface LessonProgress {
   /** The step each stepped block was left on. */
   steps: Record<string, number>;
   /** Each check's answer, and whether it was right. */
-  checks: Record<string, { answer: unknown; correct: boolean }>;
+  checks: Record<string, { answer?: unknown; correct: boolean }>;
   completedAt: string | null;
   updatedAt: string;
 }
@@ -171,8 +174,23 @@ export class StudyLmStorageService {
   ): Promise<void> {
     if (!this.tracksSync) return;
     const key = `${kind}:${id}`;
-    const entry: StudyLmOutboxRecord<K> = { key, kind, id, updatedAt, data };
-    const meta: StudyLmSyncMetaRecord = { key, updatedAt, by: 'local' };
+    const validUpdatedAt = normalizeStudyLmTimestamp(
+      updatedAt,
+      new Date().toISOString(),
+    );
+    const normalized = normalizeStudyLmRecord(kind, id, data, validUpdatedAt);
+    const entry: StudyLmOutboxRecord<K> = {
+      key,
+      kind,
+      id,
+      updatedAt: validUpdatedAt,
+      data: normalized,
+    };
+    const meta: StudyLmSyncMetaRecord = {
+      key,
+      updatedAt: validUpdatedAt,
+      by: 'local',
+    };
     this.memoryOutbox.set(key, entry);
     this.memorySyncMeta.set(key, meta);
     const db = await this.open();
@@ -613,7 +631,14 @@ export class StudyLmStorageService {
     data: StudyLmSyncRecordOfKind[K],
   ): Promise<void> {
     const key = `${kind}:${id}`;
-    const entry: StudyLmOutboxRecord<K> = { key, kind, id, updatedAt, data };
+    const normalized = normalizeStudyLmRecord(kind, id, data, updatedAt);
+    const entry: StudyLmOutboxRecord<K> = {
+      key,
+      kind,
+      id,
+      updatedAt,
+      data: normalized,
+    };
     const meta: StudyLmSyncMetaRecord = { key, updatedAt, by: 'local' };
     this.memoryOutbox.set(key, entry);
     this.memorySyncMeta.set(key, meta);
@@ -674,7 +699,17 @@ export class StudyLmStorageService {
               : push.settings.length;
       if (bucketLength >= limitForKind) continue;
 
-      const bytes = JSON.stringify(entry.data).length;
+      const fallbackIso = safeTimestamp(
+        entry.updatedAt,
+        new Date().toISOString(),
+      );
+      const data = normalizeStudyLmRecord(
+        entry.kind,
+        entry.id,
+        entry.data,
+        fallbackIso,
+      );
+      const bytes = JSON.stringify(data).length;
       if (acknowledged.length > 0 && totalBytes + bytes > maxBytes) {
         break;
       }
@@ -683,16 +718,16 @@ export class StudyLmStorageService {
 
       switch (entry.kind) {
         case 'subject':
-          push.subjects.push(entry.data as SyncedSubjectRecord);
+          push.subjects.push(data as SyncedSubjectRecord);
           break;
         case 'lesson':
-          push.lessons.push(entry.data as SyncedGeneratedLessonRecord);
+          push.lessons.push(data as SyncedGeneratedLessonRecord);
           break;
         case 'progress':
-          push.progress.push(entry.data as LessonProgress);
+          push.progress.push(data as SyncedLessonProgressRecord);
           break;
         case 'setting':
-          push.settings.push(entry.data as StudyLmSyncRecordOfKind['setting']);
+          push.settings.push(data as StudyLmSyncRecordOfKind['setting']);
           break;
       }
     }
@@ -834,9 +869,11 @@ export class StudyLmStorageService {
   }
 }
 
-function safeTimestamp(value: string | undefined, fallback: string): string {
-  if (!value) return fallback;
-  const parsed = Date.parse(value);
-  if (Number.isNaN(parsed)) return fallback;
-  return parsed > Date.parse(fallback) ? fallback : value;
+function safeTimestamp(value: unknown, fallback: string): string {
+  const valid = normalizeStudyLmTimestamp(value, '');
+  if (!valid) return fallback;
+  const parsed = Date.parse(valid);
+  const fallbackMs = Date.parse(fallback);
+  if (!Number.isNaN(fallbackMs) && parsed > fallbackMs) return fallback;
+  return valid;
 }
