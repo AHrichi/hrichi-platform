@@ -1,0 +1,332 @@
+<section class="rel-panel" aria-label="Relationship insights">
+  @if (crisis()?.detected) {
+    <ah-alert
+      variant="warning"
+      title="Some messages mention not wanting to live"
+    >
+      <p>
+        On {{ crisis()!.dates.length }} day{{
+          crisis()!.dates.length === 1 ? '' : 's'
+        }}
+        (latest {{ crisis()!.dates[crisis()!.dates.length - 1] }}) the chat
+        contains words about self-harm. If that is current, talk to them
+        directly and gently, and don't handle it alone: free, confidential help
+        is listed at
+        <a href="https://findahelpline.com" target="_blank" rel="noopener"
+          >findahelpline.com</a
+        >. In immediate danger, call your local emergency number.
+      </p>
+    </ah-alert>
+  }
+
+  <!-- Communication balance -->
+  <div class="rel-card">
+    <header class="rel-head">
+      <span class="ah-eyebrow">HOW YOU TALK</span>
+      <h2>Communication balance</h2>
+    </header>
+    <div class="balance-grid">
+      @for (p of balance(); track p.name) {
+        <div class="balance-item" [style.--who]="p.color">
+          <strong class="who">{{ p.name }}</strong>
+          <dl>
+            <div>
+              <dt>Messages</dt>
+              <dd>{{ p.share }}%</dd>
+            </div>
+            <div>
+              <dt>Starts conversations</dt>
+              <dd>{{ p.initiation }}%</dd>
+            </div>
+            <div>
+              <dt>Typical reply</dt>
+              <dd>{{ formatDuration(p.reply) }}</dd>
+            </div>
+            <div>
+              <dt>Questions asked</dt>
+              <dd>{{ p.questions }}</dd>
+            </div>
+            <div>
+              <dt>Most active</dt>
+              <dd>{{ p.peak }}</dd>
+            </div>
+          </dl>
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- Mood timeline -->
+  <div class="rel-card">
+    <header class="rel-head">
+      <span class="ah-eyebrow">TONE OVER TIME · {{ chartRange() }}</span>
+      <h2>Mood timeline</h2>
+      <p class="muted">
+        Daily tone of each person's messages (3-day average), from the word and
+        emoji lexicon. Above the line reads warmer, below reads flatter or more
+        negative.
+      </p>
+    </header>
+    <svg
+      class="mood-chart"
+      [attr.viewBox]="'0 0 ' + chart.width + ' ' + chart.height"
+      role="img"
+      aria-label="Daily message tone per person"
+      preserveAspectRatio="none"
+    >
+      @for (b of chartBands(); track $index) {
+        <rect
+          [attr.x]="b.x"
+          y="0"
+          [attr.width]="b.width"
+          [attr.height]="chart.height"
+          [attr.class]="'band band--' + b.phase"
+        />
+      }
+      <line
+        class="zero"
+        [attr.x1]="0"
+        [attr.x2]="chart.width"
+        [attr.y1]="zeroY"
+        [attr.y2]="zeroY"
+      />
+      @for (l of chartLines(); track l.sender) {
+        <path [attr.d]="l.path" [attr.stroke]="l.color" class="line" />
+      }
+    </svg>
+    <ul class="legend">
+      @for (l of chartLines(); track l.sender) {
+        <li>
+          <span class="swatch" [style.background]="l.color"></span
+          >{{ l.sender }}
+        </li>
+      }
+      @if (store.cycleProfile()) {
+        <li><span class="swatch band--period"></span>Period</li>
+        <li>
+          <span class="swatch band--premenstrual"></span>Premenstrual window
+        </li>
+        <li><span class="swatch band--predicted_period"></span>Predicted</li>
+      }
+    </ul>
+  </div>
+
+  <!-- Check-in nudges -->
+  <div class="rel-card">
+    <header class="rel-head">
+      <span class="ah-eyebrow">CHECK-IN NUDGES</span>
+      <h2>Moments worth checking in</h2>
+      <p class="muted">
+        Stretches where someone's messages read rougher than their own usual: a
+        lower tone together with slower, shorter or fewer replies. Based on text
+        patterns only, not a diagnosis. The best follow-up is a simple "how are
+        you really doing?".
+      </p>
+    </header>
+    @if (checkIns().length === 0) {
+      <p class="empty">
+        No stretch stands out. Tone stays close to each person's usual.
+      </p>
+    } @else {
+      <ul class="checkins">
+        @for (c of checkIns(); track c.sender + c.startDate) {
+          <li class="checkin">
+            <div class="checkin-top">
+              <strong>{{ c.sender }}</strong>
+              <ah-badge variant="warning" size="sm"
+                >{{ c.flaggedDays }} days</ah-badge
+              >
+            </div>
+            <span class="dates">{{ c.startDate }} → {{ c.endDate }}</span>
+            <p>
+              Messages showed {{ c.reasonText }}. Might be worth checking in.
+            </p>
+          </li>
+        }
+      </ul>
+    }
+  </div>
+
+  <!-- AI relationship tips (when an analysis exists) -->
+  @if (store.aiAnalysis()?.relationshipTips?.length) {
+    <div class="rel-card">
+      <header class="rel-head">
+        <span class="ah-eyebrow">FROM {{ store.aiAnalysis()!.provider }}</span>
+        <h2>Ways to support each other</h2>
+      </header>
+      <ul class="tips">
+        @for (tip of store.aiAnalysis()!.relationshipTips; track tip) {
+          <li>{{ tip }}</li>
+        }
+      </ul>
+    </div>
+  }
+
+  <!-- Opt-in cycle calendar -->
+  <div class="rel-card">
+    <header class="rel-head">
+      <span class="ah-eyebrow">OPT-IN · STAYS ON THIS DEVICE</span>
+      <h2>Shared cycle calendar</h2>
+      <p class="muted">
+        Dates she chooses to share, used to predict her next window so you can
+        plan around it. ChatPulse never guesses this from the chat, and the
+        dates are never sent to any AI.
+      </p>
+    </header>
+
+    @if (!store.cycleProfile()) {
+      <form class="cycle-setup" (ngSubmit)="startCalendar()">
+        <label class="field">
+          <span>Her name</span>
+          <input
+            type="text"
+            class="input"
+            name="partnerName"
+            [ngModel]="partnerName()"
+            (ngModelChange)="partnerName.set($event)"
+          />
+        </label>
+        <label class="consent">
+          <input
+            type="checkbox"
+            name="consent"
+            [ngModel]="consentChecked()"
+            (ngModelChange)="consentChecked.set($event)"
+          />
+          <span
+            >She knows about this calendar and agreed to share these
+            dates.</span
+          >
+        </label>
+        @if (formError()) {
+          <span class="error" role="alert">{{ formError() }}</span>
+        }
+        <button ahButton type="submit" [disabled]="!consentChecked()">
+          Set up calendar
+        </button>
+      </form>
+    } @else {
+      @let profile = store.cycleProfile()!;
+      @let prediction = store.cyclePrediction();
+      <div class="cycle-summary">
+        @if (prediction?.nextStart) {
+          <div class="next">
+            <span class="label">Next period (estimate)</span>
+            <strong
+              >{{ prediction!.nextStart }} → {{ prediction!.nextEnd }}</strong
+            >
+            <span class="muted">
+              Premenstrual window from {{ prediction!.premenstrualStart }} ·
+              cycle ≈ {{ prediction!.averageCycleDays }} days
+            </span>
+          </div>
+          <ah-badge
+            size="sm"
+            [variant]="
+              prediction!.confidence === 'high'
+                ? 'success'
+                : prediction!.confidence === 'medium'
+                  ? 'info'
+                  : 'neutral'
+            "
+          >
+            {{ prediction!.confidence }} confidence ·
+            {{ prediction!.basedOnCycles }}
+            {{ prediction!.basedOnCycles === 1 ? 'cycle' : 'cycles' }}
+          </ah-badge>
+        } @else {
+          <p class="empty">
+            Add the first day of her last period to see an estimate.
+          </p>
+        }
+      </div>
+
+      <form class="cycle-add" (ngSubmit)="addPeriod()">
+        <label class="field">
+          <span>First day</span>
+          <input
+            type="date"
+            class="input"
+            name="start"
+            [ngModel]="newStart()"
+            (ngModelChange)="newStart.set($event)"
+          />
+        </label>
+        <label class="field">
+          <span>Last day (optional)</span>
+          <input
+            type="date"
+            class="input"
+            name="end"
+            [ngModel]="newEnd()"
+            (ngModelChange)="newEnd.set($event)"
+          />
+        </label>
+        <button ahButton variant="secondary" type="submit">Add dates</button>
+      </form>
+      @if (formError()) {
+        <span class="error" role="alert">{{ formError() }}</span>
+      }
+
+      @if (sortedPeriods().length) {
+        <ul class="periods">
+          @for (p of sortedPeriods(); track p.start) {
+            <li>
+              <span>{{ p.start }}{{ p.end ? ' → ' + p.end : '' }}</span>
+              <button
+                ahButton
+                variant="ghost"
+                size="sm"
+                type="button"
+                [attr.aria-label]="'Remove ' + p.start"
+                (click)="store.removeCyclePeriod(p.start)"
+              >
+                Remove
+              </button>
+            </li>
+          }
+        </ul>
+      }
+
+      <footer class="cycle-foot">
+        <span class="muted">
+          Shared by {{ profile.partnerName }} · agreed
+          {{ profile.consentConfirmedAt.slice(0, 10) }}
+        </span>
+        @if (!confirmDelete()) {
+          <button
+            ahButton
+            variant="ghost"
+            size="sm"
+            type="button"
+            (click)="confirmDelete.set(true)"
+          >
+            Delete calendar
+          </button>
+        } @else {
+          <span class="confirm">
+            Delete all dates?
+            <button
+              ahButton
+              variant="secondary"
+              size="sm"
+              type="button"
+              (click)="deleteCalendar()"
+            >
+              Yes, delete
+            </button>
+            <button
+              ahButton
+              variant="ghost"
+              size="sm"
+              type="button"
+              (click)="confirmDelete.set(false)"
+            >
+              Cancel
+            </button>
+          </span>
+        }
+      </footer>
+    }
+  </div>
+</section>

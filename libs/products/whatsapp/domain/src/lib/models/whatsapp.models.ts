@@ -1,3 +1,5 @@
+import type { WellbeingSummary } from './wellbeing.models';
+
 export type DateOrderMode = 'auto' | 'DMY' | 'MDY';
 export type ResolvedDateOrder = 'DMY' | 'MDY' | 'YMD';
 
@@ -419,9 +421,18 @@ export interface ChatAnalysisReport {
   streaksAndTimeline: StreaksAndTimelineAnalytics;
   heatmap: HeatmapAnalytics;
   wrapped: WrappedSummaryData;
+  wellbeing: WellbeingSummary;
 }
 
+/** Where relationship analysis runs: a local Ollama server or the n8n workflow. */
+export type AiProvider = 'ollama' | 'n8n';
+
 export interface N8nWebhookSettings {
+  provider: AiProvider;
+  /** Ollama base URL, e.g. http://127.0.0.1:11434. */
+  ollamaUrl: string;
+  /** Installed Ollama model tag; empty picks the best installed chat model. */
+  ollamaModel: string;
   webhookUrl: string;
   authHeaderName: string;
   authHeaderValue: string;
@@ -484,6 +495,13 @@ export interface AiWebhookPayload {
     }>;
   };
   sampledWindows: AiSampledWindow[];
+  /** Dates and reasons of check-in windows only: no message text, never cycle data. */
+  wellbeingSignals?: Array<{
+    sender: string;
+    startDate: string;
+    endDate: string;
+    reasons: string[];
+  }>;
 }
 
 export interface ParticipantBehavioralProfile {
@@ -520,4 +538,6 @@ export interface AiRelationshipAnalysis {
   flags: BehavioralFlag[];
   conflictAndRepairStyle: string;
   recommendations: string[];
+  /** Gentle, practical ways to support each other, grounded in the chat. */
+  relationshipTips: string[];
 }

@@ -1,14 +1,13 @@
 {
-  "name": "StudyLM · Grounded AI curriculum",
+  "name": "StudyLM · AI study roadmaps & drills",
   "short_name": "StudyLM",
-  "description": "Roadmaps, lessons, flashcards and quizzes for what you're studying.",
+  "description": "AI study roadmaps, flashcards and quizzes grounded in your material.",
   "id": "./",
-  "theme_color": "#16161d",
-  "background_color": "#0f0f12",
+  "theme_color": "#4f46e5",
+  "background_color": "#4f46e5",
   "display": "standalone",
-  "orientation": "any",
   "scope": "./",
-  "start_url": "./roadmap",
+  "start_url": "./",
   "icons": [
     {
       "src": "favicon.svg",

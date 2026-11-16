@@ -64,6 +64,14 @@ export default defineConfig({
       cwd: workspaceRoot,
     },
     {
+      // ChatPulse, standalone (hidden in the portfolio): its spec stubs n8n
+      // and Ollama, so no AI is ever called.
+      command: 'pnpm exec nx run product-whatsapp:serve-static',
+      url: 'http://localhost:4308/remoteEntry.json',
+      reuseExistingServer: true,
+      cwd: workspaceRoot,
+    },
+    {
       // The Learning Engine's demo: its own database, never synced.
       command: 'pnpm exec nx run product-learning:serve-static',
       url: 'http://localhost:4311/remoteEntry.json',

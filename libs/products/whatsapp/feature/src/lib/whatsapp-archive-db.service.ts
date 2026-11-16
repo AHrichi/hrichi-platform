@@ -7,14 +7,17 @@ import {
   ArchiveExtractionResult,
   AudioInsightMeta,
   ChatAnalysisReport,
+  CycleProfile,
   DateOrderMode,
   ZipMediaEntry,
 } from '@ah/products/whatsapp/domain';
 
 const DB_NAME = 'chatpulse-whatsapp-vault-v1';
-const DB_VERSION = 1;
+const DB_VERSION = 2;
 const SUMMARIES_STORE = 'summaries';
 const PAYLOADS_STORE = 'payloads';
+/** Opt-in cycle calendars, keyed by conversation id. On-device only. */
+const CYCLE_STORE = 'cycleProfiles';
 const LAST_ACTIVE_ID_KEY = 'chatpulse:whatsapp:last-active-id:v1';
 
 export interface SavedParticipantPill {
@@ -303,11 +306,12 @@ export class WhatsappArchiveDbService {
     return new Promise<boolean>((resolve) => {
       try {
         const tx = db.transaction(
-          [SUMMARIES_STORE, PAYLOADS_STORE],
+          [SUMMARIES_STORE, PAYLOADS_STORE, CYCLE_STORE],
           'readwrite',
         );
         tx.objectStore(SUMMARIES_STORE).delete(id);
         tx.objectStore(PAYLOADS_STORE).delete(id);
+        tx.objectStore(CYCLE_STORE).delete(id);
         tx.oncomplete = () => {
           if (this.getLastActiveConversationId() === id) {
             this.setLastActiveConversationId(null);
@@ -330,15 +334,62 @@ export class WhatsappArchiveDbService {
     return new Promise<boolean>((resolve) => {
       try {
         const tx = db.transaction(
-          [SUMMARIES_STORE, PAYLOADS_STORE],
+          [SUMMARIES_STORE, PAYLOADS_STORE, CYCLE_STORE],
           'readwrite',
         );
         tx.objectStore(SUMMARIES_STORE).clear();
         tx.objectStore(PAYLOADS_STORE).clear();
+        tx.objectStore(CYCLE_STORE).clear();
         tx.oncomplete = () => {
           this.setLastActiveConversationId(null);
           resolve(true);
         };
+        tx.onerror = () => resolve(false);
+      } catch {
+        resolve(false);
+      }
+    });
+  }
+
+  async loadCycleProfile(conversationId: string): Promise<CycleProfile | null> {
+    const db = await this.openDb();
+    if (!db) {
+      return null;
+    }
+    return new Promise<CycleProfile | null>((resolve) => {
+      try {
+        const req = db
+          .transaction(CYCLE_STORE, 'readonly')
+          .objectStore(CYCLE_STORE)
+          .get(conversationId);
+        req.onsuccess = () => resolve((req.result as CycleProfile) ?? null);
+        req.onerror = () => resolve(null);
+      } catch {
+        resolve(null);
+      }
+    });
+  }
+
+  async saveCycleProfile(profile: CycleProfile): Promise<boolean> {
+    return this.writeCycleStore((store) => store.put(profile));
+  }
+
+  async deleteCycleProfile(conversationId: string): Promise<boolean> {
+    return this.writeCycleStore((store) => store.delete(conversationId));
+  }
+
+  private async writeCycleStore(
+    write: (store: IDBObjectStore) => void,
+  ): Promise<boolean> {
+    const db = await this.openDb();
+    if (!db) {
+      return false;
+    }
+    return new Promise<boolean>((resolve) => {
+      try {
+        const tx = db.transaction(CYCLE_STORE, 'readwrite');
+        write(tx.objectStore(CYCLE_STORE));
+        tx.oncomplete = () => resolve(true);
         tx.onerror = () => resolve(false);
       } catch {
         resolve(false);
@@ -369,9 +420,22 @@ export class WhatsappArchiveDbService {
               if (!db.objectStoreNames.contains(PAYLOADS_STORE)) {
                 db.createObjectStore(PAYLOADS_STORE, { keyPath: 'id' });
               }
+              if (!db.objectStoreNames.contains(CYCLE_STORE)) {
+                db.createObjectStore(CYCLE_STORE, {
+                  keyPath: 'conversationId',
+                });
+              }
             };
 
-            request.onsuccess = () => resolve(request.result);
+            request.onsuccess = () => {
+              const db = request.result;
+              // Let a newer tab upgrade the schema instead of being blocked by this one.
+              db.onversionchange = () => {
+                db.close();
+                this.dbPromise = null;
+              };
+              resolve(db);
+            };
             request.onerror = () => {
               this.dbPromise = null;
               resolve(null);

@@ -10,6 +10,7 @@ import {
   ParsedChatMessage,
   VoiceNoteItem,
 } from '@ah/products/whatsapp/domain';
+import { DEFAULT_OLLAMA_URL } from './whatsapp-ollama.service';
 
 export interface AudioBatchProgressEvent {
   completedCount: number;
@@ -38,6 +39,9 @@ function isLocalhost(): boolean {
 }
 
 export const DEFAULT_N8N_WEBHOOK_SETTINGS: N8nWebhookSettings = {
+  provider: 'n8n',
+  ollamaUrl: DEFAULT_OLLAMA_URL,
+  ollamaModel: '',
   webhookUrl: DEFAULT_LOCAL_WEBHOOK_URL,
   authHeaderName: '',
   authHeaderValue: '',
@@ -65,16 +69,32 @@ export class WhatsAppAiService {
 
   async loadSettings(): Promise<N8nWebhookSettings> {
     const defaultUrl = await this.defaultWebhookUrl();
+    // Local Ollama is the default while developing; the deployed site keeps n8n.
+    const defaults: N8nWebhookSettings = {
+      ...DEFAULT_N8N_WEBHOOK_SETTINGS,
+      provider: isLocalhost() ? 'ollama' : 'n8n',
+      webhookUrl: defaultUrl,
+    };
     if (typeof window === 'undefined' || !window.localStorage) {
-      return { ...DEFAULT_N8N_WEBHOOK_SETTINGS, webhookUrl: defaultUrl };
+      return defaults;
     }
     try {
       const raw = window.localStorage.getItem(STORAGE_KEY);
       if (!raw) {
-        return { ...DEFAULT_N8N_WEBHOOK_SETTINGS, webhookUrl: defaultUrl };
+        return defaults;
       }
       const parsed = JSON.parse(raw) as Partial<N8nWebhookSettings>;
       return {
+        provider:
+          parsed.provider === 'ollama' || parsed.provider === 'n8n'
+            ? parsed.provider
+            : defaults.provider,
+        ollamaUrl:
+          typeof parsed.ollamaUrl === 'string' && parsed.ollamaUrl.trim()
+            ? parsed.ollamaUrl.trim()
+            : DEFAULT_OLLAMA_URL,
+        ollamaModel:
+          typeof parsed.ollamaModel === 'string' ? parsed.ollamaModel : '',
         webhookUrl:
           typeof parsed.webhookUrl === 'string' && parsed.webhookUrl.trim()
             ? parsed.webhookUrl.trim()
@@ -105,7 +125,7 @@ export class WhatsAppAiService {
             : null,
       };
     } catch {
-      return { ...DEFAULT_N8N_WEBHOOK_SETTINGS, webhookUrl: defaultUrl };
+      return defaults;
     }
   }
 
@@ -216,8 +236,9 @@ export class WhatsAppAiService {
       );
     }
 
+    // n8n may fall back to a local Ollama model, which can take minutes.
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 65000);
+    const timeoutId = setTimeout(() => controller.abort(), 6 * 60_000);
 
     try {
       const response = await fetch(url, {
@@ -500,7 +521,8 @@ export class WhatsAppAiService {
       }
 
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 50000);
+      // Long enough for n8n's local Ollama fallback to translate a batch.
+      const timeoutId = setTimeout(() => controller.abort(), 4 * 60_000);
       const onExternalAbort = () => controller.abort();
       externalSignal?.addEventListener('abort', onExternalAbort, {
         once: true,

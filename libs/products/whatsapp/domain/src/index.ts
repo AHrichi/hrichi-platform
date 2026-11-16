@@ -4,3 +4,8 @@ export * from './lib/utils/whatsapp-parser';
 export * from './lib/utils/stopwords.data';
 export * from './lib/utils/analytics-engine';
 export * from './lib/utils/ai-sampler';
+export * from './lib/models/wellbeing.models';
+export * from './lib/utils/sentiment-lexicon';
+export * from './lib/utils/wellbeing';
+export * from './lib/utils/cycle';
+export * from './lib/utils/ai-prompt';

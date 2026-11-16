@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <title>ChatPulse</title>
+  <rect width="64" height="64" rx="14" fill="#128c7e"/>
+  <g color="#ffffff" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M32 13 C19.8 13 11 20.9 11 30.4 C11 35.6 13.6 40.2 17.8 43.3 L15.5 52 L25 47.3 C27.2 47.9 29.6 48.2 32 48.2 C44.2 48.2 53 40.3 53 30.6 C53 20.9 44.2 13 32 13 Z"/><path d="M19 31 H25.5 L28.5 24.5 L34 38 L37.5 31 H45" stroke-width="3.6"/>
+  </g>
+</svg>

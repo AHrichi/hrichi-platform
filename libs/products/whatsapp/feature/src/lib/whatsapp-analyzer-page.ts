@@ -8,6 +8,7 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
+  AiProvider,
   AnalyticsBasisMode,
   DateOrderMode,
   formatBytesCompact,
@@ -48,6 +49,7 @@ import {
   WhatsAppStore,
 } from './whatsapp.store';
 import { WHATSAPP_COPY } from './i18n/whatsapp-copy';
+import { WhatsAppRelationshipPanel } from './relationship/relationship-panel';
 
 @Component({
   selector: 'ah-whatsapp-analyzer-page',
@@ -73,6 +75,7 @@ import { WHATSAPP_COPY } from './i18n/whatsapp-copy';
     AhTag,
     AhTooltip,
     AhTruncatedText,
+    WhatsAppRelationshipPanel,
   ],
   templateUrl: './whatsapp-analyzer-page.html',
   styleUrl: './whatsapp-analyzer-page.scss',
@@ -268,6 +271,24 @@ export class WhatsAppAnalyzerPageComponent {
     String(this.store.webhookSettings().sampleSize),
   );
 
+  readonly providerOptions: readonly SegmentedOption<AiProvider>[] = [
+    { value: 'ollama', label: '🦙 Local Ollama' },
+    { value: 'n8n', label: '🔗 n8n Webhook' },
+  ];
+
+  readonly ollamaModelOptions = computed<readonly AhSelectOption[]>(() =>
+    this.store.ollamaModels().map((m) => ({ value: m, label: m })),
+  );
+
+  readonly providerLabel = computed(() =>
+    this.store.webhookSettings().provider === 'ollama' ? 'Local Ollama' : 'n8n',
+  );
+
+  setProvider(provider: AiProvider): void {
+    this.store.updateWebhookSettings({ provider, lastTestOk: null });
+    void this.store.testWebhookConnection();
+  }
+
   readonly dashboardTabs = computed<readonly AhTabItem<WhatsAppDashboardTab>[]>(
     () => {
       const rep = this.store.report();
@@ -295,6 +316,12 @@ export class WhatsAppAnalyzerPageComponent {
         },
         { id: 'heatmap', label: t.heatmap, icon: '🗓️' },
         { id: 'wrapped', label: t.wrapped, icon: '🎴' },
+        {
+          id: 'relationship',
+          label: t.relationship,
+          icon: '💞',
+          count: rep?.wellbeing.checkInWindows.length || undefined,
+        },
         {
           id: 'ai-insights',
           label: t.aiInsights,
