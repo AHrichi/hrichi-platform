@@ -311,7 +311,11 @@ test.describe('Learning Engine', () => {
     expect(axe.violations).toEqual([]);
 
     // 6. Garden, Devices, and Connect routes
-    await page.getByRole('link', { name: 'Garden' }).click();
+    // The Settings screen's own button (the tab bar has a Garden link too).
+    await page
+      .locator('lrn-settings-screen')
+      .getByRole('link', { name: 'Garden' })
+      .click();
     await expect(page).toHaveURL(/\/apps\/learning\/garden$/);
     await expect(page.locator('lrn-knowledge-garden')).toBeVisible();
     await expect(
