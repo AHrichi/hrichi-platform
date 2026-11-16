@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <title>StudyLM</title>
+  <rect width="64" height="64" rx="14" fill="#16161d"/>
+  <g fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M32 20 C26 16 18 15.5 11 17 V47 C18 45.5 26 46 32 50 C38 46 46 45.5 53 47 V17 C46 15.5 38 16 32 20 Z"/>
+    <path d="M32 20 V50"/>
+  </g>
+  <path d="M40 17.4 V31 L44 28 L48 31 V16.6" fill="#b3122e"/>
+</svg>

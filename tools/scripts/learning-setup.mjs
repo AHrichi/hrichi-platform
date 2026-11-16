@@ -7,7 +7,9 @@
 //      against their services; Enter skips one.
 //   3. The learning-edge Worker: its KV namespace (created once, its id
 //      written to apps/learning-edge/wrangler.jsonc), then one deploy with
-//      its four secrets, then a health check.
+//      its secrets, then a health check. Its Web Push (VAPID) key pair is
+//      generated once and kept in .env.render; a new pair would cut off
+//      every device that turned notifications on.
 //   4. The Telegram webhook, pointed at the Worker with a fresh secret. A
 //      webhook that points elsewhere is left alone unless --replace-webhook.
 //   5. .env.render gains the learning keys, for Render's "Add from .env".
@@ -15,7 +17,7 @@
 // Usage: node tools/scripts/learning-setup.mjs [--replace-webhook] [--no-deploy]
 // Needs `pnpm exec wrangler login` once, and TELEGRAM_BOT_TOKEN and
 // TELEGRAM_CHAT_ID in .env.render (node tools/scripts/lead-secrets.mjs).
-import { randomBytes } from 'node:crypto';
+import { randomBytes, webcrypto } from 'node:crypto';
 import { spawnSync } from 'node:child_process';
 import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
@@ -154,9 +156,34 @@ if (!relay && !keys.GROQ_API_KEY && !keys.GEMINI_API_KEY) {
     '  Without Groq, Gemini or the n8n relay (node tools/n8n/install-learning-ai.mjs), captures wait.',
   );
 }
+// The Worker's Web Push keys (design §10): kept once made.
+async function vapidKeys() {
+  const pair = await webcrypto.subtle.generateKey(
+    { name: 'ECDSA', namedCurve: 'P-256' },
+    true,
+    ['sign', 'verify'],
+  );
+  const raw = await webcrypto.subtle.exportKey('raw', pair.publicKey);
+  const jwk = await webcrypto.subtle.exportKey('jwk', pair.privateKey);
+  return {
+    publicKey: Buffer.from(raw).toString('base64url'),
+    privateKey: jwk.d,
+  };
+}
+let vapidPublic = known('LEARNING_VAPID_PUBLIC_KEY');
+let vapidPrivate = known('LEARNING_VAPID_PRIVATE_KEY');
+if (!vapidPublic || !vapidPrivate) {
+  ({ publicKey: vapidPublic, privateKey: vapidPrivate } = await vapidKeys());
+  console.log('  new: LEARNING_VAPID_* (push notification keys, generated)');
+} else {
+  console.log('  ok: LEARNING_VAPID_* (saved)');
+}
+
 writeEnvValues(
   {
     LEARNING_TOKEN_SECRET: tokenSecret,
+    LEARNING_VAPID_PUBLIC_KEY: vapidPublic,
+    LEARNING_VAPID_PRIVATE_KEY: vapidPrivate,
     ...Object.fromEntries(Object.entries(keys).filter(([, value]) => value)),
   },
   file,
@@ -224,6 +251,8 @@ if (args.has('--no-deploy')) {
         TELEGRAM_BOT_TOKEN: botToken,
         TELEGRAM_CHAT_ID: chatId,
         TELEGRAM_WEBHOOK_SECRET: webhookSecret,
+        VAPID_PUBLIC_KEY: vapidPublic,
+        VAPID_PRIVATE_KEY: vapidPrivate,
       }),
       { mode: 0o600 },
     );

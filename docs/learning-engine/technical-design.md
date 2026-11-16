@@ -453,6 +453,13 @@ Render must not be woken on a timer: its 750 h a month are shared with the Orbit
   - Delivery to an installed PWA on Android is less reliable than Telegram.
   - You already use the bot for alerts.
   - Web Push can be added later behind the same decision function.
+- **Web Push (as built, 2026-11-16):** added behind the same decision functions, on top of Telegram (the owner's choice: both channels, Telegram unchanged).
+  - The Worker holds a VAPID key pair (`VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, made once by `learning-setup.mjs`) and sends with Web Crypto only (`apps/learning-edge/src/web-push.ts`: ES256 JWT, RFC 8291 `aes128gcm`). Without the keys, push is off and `GET /push/key` answers `null`.
+  - Routes: `GET /push/key`; `PUT`/`DELETE /push/subscription` and `POST /push/test` with `{ app, … }` and a device token; `PUT /studylm/state`. KV keeps one `push:<app>:<hash of endpoint>` per device, at most 10 per app; a 404/410 from the push service forgets it.
+  - The cron sends each nudge and the recap to Telegram and to every `learning` subscription; it counts as sent when either took it. StudyLM's study reminder (`studyReminderDue`) goes to `studylm` subscriptions only: once a day, from the chosen time for 4 hours, when nothing was studied today, "Next up: <section>" opening that lesson.
+  - The payload is the Angular service worker's notification format (`ngswPayload`), so neither app has custom service-worker code; a tap opens or focuses the app at the message's URL. StudyLM became an installable PWA for this.
+  - Tokens: a learning device token for `learning`; for `studylm`, StudyLM's sync token (signed with `LEARNING_TOKEN_SECRET` unless `STUDYLM_TOKEN_SECRET` is set, which the Worker then also needs). Revoked learning devices are refused.
+  - StudyLM also shows local notifications when AI work (a lesson, flashcards, a quiz, the roadmap, a bulk run) finishes while it is in the background; these need only the permission.
 
 ---
 

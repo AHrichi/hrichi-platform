@@ -1,0 +1,55 @@
+{
+  "name": "StudyLM · Grounded AI curriculum",
+  "short_name": "StudyLM",
+  "description": "Roadmaps, lessons, flashcards and quizzes for what you're studying.",
+  "id": "./",
+  "theme_color": "#16161d",
+  "background_color": "#0f0f12",
+  "display": "standalone",
+  "orientation": "any",
+  "scope": "./",
+  "start_url": "./roadmap",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/maskable-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Lessons",
+      "url": "./learn",
+      "icons": [{ "src": "icons/icon-192x192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Flashcards",
+      "url": "./flashcards",
+      "icons": [{ "src": "icons/icon-192x192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Quiz",
+      "url": "./quiz",
+      "icons": [{ "src": "icons/icon-192x192.png", "sizes": "192x192" }]
+    }
+  ]
+}

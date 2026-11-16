@@ -318,6 +318,21 @@
   align-items: center;
   flex-wrap: wrap;
   gap: var(--space-2, 0.5rem);
+  min-width: 0;
+
+  // Phones: the code stays beside the title; the title wraps instead.
+  @media (max-width: 640px) {
+    flex-wrap: nowrap;
+    align-items: baseline;
+
+    .section-code {
+      flex: none;
+    }
+
+    .section-title {
+      min-width: 0;
+    }
+  }
 }
 
 .section-code {
@@ -476,4 +491,56 @@
   margin: var(--space-2) 0;
   color: var(--color-danger-default);
   font-size: var(--font-size-200);
+}
+
+/*
+ * Phones: tighter cards, the badges under the title, and the section's
+ * actions as full-width buttons, big enough for a thumb.
+ */
+@media (max-width: 640px) {
+  .roadmap-header {
+    padding: var(--space-4, 1rem);
+  }
+
+  .section-card {
+    padding: var(--space-3, 0.75rem);
+
+    &.is-collapsed {
+      padding: var(--space-3, 0.75rem);
+    }
+  }
+
+  .header-left {
+    align-items: flex-start;
+  }
+
+  .section-toggle-indicator {
+    margin-top: 0.1rem;
+  }
+
+  .tier-and-status {
+    padding-inline-start: calc(1.5rem + var(--space-2, 0.5rem));
+  }
+
+  .section-actions {
+    align-items: stretch;
+  }
+
+  .section-actions-primary {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    button {
+      justify-content: center;
+      min-height: 44px;
+      width: 100%;
+      padding-inline: var(--space-2, 0.5rem);
+      white-space: nowrap;
+    }
+
+    // The main action takes the whole row.
+    button:first-child {
+      grid-column: 1 / -1;
+    }
+  }
 }

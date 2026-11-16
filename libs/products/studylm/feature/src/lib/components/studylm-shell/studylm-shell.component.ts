@@ -6,7 +6,15 @@ import {
   inject,
   untracked,
 } from '@angular/core';
-import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { toSignal } from '@angular/core/rxjs-interop';
+import {
+  NavigationEnd,
+  Router,
+  RouterLink,
+  RouterLinkActive,
+  RouterOutlet,
+} from '@angular/router';
+import { filter, map } from 'rxjs';
 import { LearningToday } from '@ah/learning/client';
 import { APP_MODE } from '@ah/platform/app-mode';
 import { isAppEnabled } from '@ah/shared/content';
@@ -18,7 +26,11 @@ import {
   type AhSelectOption,
 } from '@ah/ui';
 import { StudyLmStore } from '../../store/studylm.store';
-import { SCREENS, StudyLmScreens } from '../../shell/studylm-screens';
+import {
+  SCREENS,
+  type StudyLmScreen,
+  StudyLmScreens,
+} from '../../shell/studylm-screens';
 import {
   type AnswerEvaluationRequest,
   AI_ANSWER_EVALUATOR,
@@ -28,7 +40,9 @@ import {
 import { PreferencesStore } from '@ah/shared/state';
 import { LessonGenerationService } from '../../services/lesson-generation.service';
 import { StudyLmReviews } from '../../services/studylm-reviews.service';
+import { StudyLmNotifications } from '../../services/studylm-notifications.service';
 import { StudyLmSyncService } from '../../services/studylm-sync.service';
+import { NotificationsModalComponent } from '../notifications-modal/notifications-modal.component';
 import { N8nSettingsModalComponent } from '../n8n-settings-modal/n8n-settings-modal.component';
 import { StudyLmSyncModalComponent } from '../studylm-sync-modal/studylm-sync-modal.component';
 import { CreateSubjectModalComponent } from '../create-subject-modal/create-subject-modal.component';
@@ -37,6 +51,16 @@ import { AddQuizModalComponent } from '../add-quiz-modal/add-quiz-modal.componen
 import { JsonImportModalComponent } from '../json-import-modal/json-import-modal.component';
 import { ElaborationModalComponent } from '../elaboration-modal/elaboration-modal.component';
 import { STUDYLM_COPY } from '../../i18n/studylm-copy';
+
+/** One word each, for the phone tab bar. */
+const SHORT_LABELS: Record<StudyLmScreen, string> = {
+  roadmap: 'Roadmap',
+  learn: 'Lessons',
+  flashcards: 'Cards',
+  quiz: 'Quiz',
+  sources: 'Docs',
+  stats: 'Progress',
+};
 
 @Component({
   selector: 'ah-studylm-shell',
@@ -51,6 +75,7 @@ import { STUDYLM_COPY } from '../../i18n/studylm-copy';
     AhSelect,
     N8nSettingsModalComponent,
     StudyLmSyncModalComponent,
+    NotificationsModalComponent,
     CreateSubjectModalComponent,
     AddFlashcardModalComponent,
     AddQuizModalComponent,
@@ -82,9 +107,20 @@ import { STUDYLM_COPY } from '../../i18n/studylm-copy';
 export class StudyLmShellComponent {
   readonly store = inject(StudyLmStore);
   readonly sync = inject(StudyLmSyncService, { optional: true });
-  protected readonly learningOn =
-    (inject(APP_MODE, { optional: true }) ?? 'standalone') === 'standalone' ||
-    isAppEnabled('learning');
+  protected readonly notifications = inject(StudyLmNotifications);
+  /** Standalone (its own site or installed), not inside the portfolio. */
+  protected readonly standalone =
+    (inject(APP_MODE, { optional: true }) ?? 'standalone') === 'standalone';
+  protected readonly learningOn = this.standalone || isAppEnabled('learning');
+  private readonly router = inject(Router);
+  /** Inside a lesson, phones give the lesson the room the stats take. */
+  protected readonly inLesson = toSignal(
+    this.router.events.pipe(
+      filter((event) => event instanceof NavigationEnd),
+      map(() => /\/learn\/[^/?#]+/.test(this.router.url)),
+    ),
+    { initialValue: /\/learn\/[^/?#]+/.test(this.router.url) },
+  );
   private readonly preferences = inject(PreferencesStore, { optional: true });
   readonly copy = computed(
     () => STUDYLM_COPY[this.preferences?.language() ?? 'en'] ?? STUDYLM_COPY.en,
@@ -95,6 +131,7 @@ export class StudyLmShellComponent {
     // (`#learning-link=…`) is read on any screen; then the lessons finished
     // before linking join the reviews (design §9).
     const reviews = inject(StudyLmReviews);
+    if (this.standalone) this.notifications.start();
     effect(() => {
       if (reviews.justLinked()) {
         untracked(() => void reviews.sendFinishedLessons());
@@ -117,7 +154,7 @@ export class StudyLmShellComponent {
                 ? this.store.sourcesCount()
                 : 0;
       const label = labels[screen.id] ?? screen.label;
-      return { ...screen, label, count };
+      return { ...screen, label, short: SHORT_LABELS[screen.id], count };
     });
   });
 
