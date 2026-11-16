@@ -1,8 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <title>Ahmed Hrichi</title>
-  <rect width="64" height="64" rx="14" fill="#b3122e"/>
-  <g fill="none" stroke="#ffffff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M11 48 L20 16 L29 48 M13.8 38 H26.2"/>
-    <path d="M37 16 V48 M53 16 V48 M37 32 H53"/>
+  <title>Learning</title>
+  <rect width="64" height="64" rx="14" fill="#0f172a"/>
+  <g color="#facc15" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M25 41 C20 37.5 17 32.5 17 27 C17 18.7 23.7 12 32 12 C40.3 12 47 18.7 47 27 C47 32.5 44 37.5 39 41 V44 H25 Z"/><path d="M26 50 H38 M28.5 55 H35.5"/><path d="M32 22 V31 M28 27 H36" stroke-width="3.6"/>
   </g>
 </svg>

@@ -89,11 +89,12 @@
           size="sm"
         >
           @if (store.webhookSettings().lastTestOk === true) {
-            n8n · {{ store.webhookSettings().lastLatencyMs }}ms
+            {{ providerLabel() }} ·
+            {{ store.webhookSettings().lastLatencyMs }}ms
           } @else if (store.webhookSettings().lastTestOk === false) {
-            n8n Offline
+            {{ providerLabel() }} Offline
           } @else {
-            n8n Settings
+            AI Settings
           }
         </ah-badge>
         <span class="gear-glyph" aria-hidden="true">⚙️</span>
@@ -520,9 +521,9 @@
           (click)="store.triggerN8nAiAnalysis()"
         >
           @if (store.isAnalyzingAi()) {
-            <span>⏳ Analyzing with n8n AI...</span>
+            <span>⏳ Analyzing with {{ providerLabel() }}...</span>
           } @else {
-            <span>✨ Run n8n AI Analysis</span>
+            <span>✨ Run {{ providerLabel() }} Analysis</span>
           }
         </button>
       </div>
@@ -2485,9 +2486,11 @@
       >
         <div class="ah-card section-card ai-control-banner">
           <div class="ai-banner-info">
-            <span class="ah-eyebrow"
-              >LIVE n8n WEBHOOK · GROQ LPU 120B / LLAMA 3.3 70B</span
-            >
+            <span class="ah-eyebrow">{{
+              store.webhookSettings().provider === 'ollama'
+                ? 'LOCAL OLLAMA · RUNS ON THIS COMPUTER'
+                : 'LIVE n8n WEBHOOK · GROQ LPU 120B / LLAMA 3.3 70B'
+            }}</span>
             <h2>AI Behavioral &amp; Relationship Intelligence</h2>
             <p>
               Packages your chat's quantitative metrics alongside
@@ -2510,9 +2513,9 @@
               (click)="store.triggerN8nAiAnalysis()"
             >
               @if (store.isAnalyzingAi()) {
-                <span>⏳ Running n8n AI Analysis...</span>
+                <span>⏳ Running {{ providerLabel() }} Analysis...</span>
               } @else {
-                <span>🚀 Run n8n Webhook Analysis</span>
+                <span>🚀 Run {{ providerLabel() }} Analysis</span>
               }
             </button>
 
@@ -2754,10 +2757,23 @@
                   <li>{{ rec }}</li>
                 }
               </ul>
+
+              @if (ai.relationshipTips?.length) {
+                <h3 class="sub-heading">Ways to Support Each Other</h3>
+                <ul class="recommendations-list">
+                  @for (tip of ai.relationshipTips; track tip) {
+                    <li>{{ tip }}</li>
+                  }
+                </ul>
+              }
             </div>
           </div>
         }
       </section>
+    }
+
+    @if (store.activeTab() === 'relationship') {
+      <ah-whatsapp-relationship-panel />
     }
 
     <!-- ===================================================================== -->
@@ -2974,6 +2990,53 @@
     (closed)="store.closeSettingsModal()"
   >
     <div class="settings-modal-form">
+      <div class="field-group">
+        <span class="field-label">AI Provider</span>
+        <ah-segmented-control
+          label="AI provider"
+          [options]="providerOptions"
+          [value]="store.webhookSettings().provider"
+          (valueChange)="setProvider($event)"
+        />
+        <small class="field-hint">
+          Local Ollama keeps the analysis on this computer. Voice-note
+          transcription still uses the n8n webhook below.
+        </small>
+      </div>
+
+      @if (store.webhookSettings().provider === 'ollama') {
+        <label class="field-group">
+          <span class="field-label">Ollama URL</span>
+          <input
+            type="url"
+            class="text-input"
+            placeholder="http://127.0.0.1:11434"
+            [ngModel]="store.webhookSettings().ollamaUrl"
+            (ngModelChange)="store.updateWebhookSettings({ ollamaUrl: $event })"
+            aria-label="Ollama URL"
+          />
+        </label>
+        @if (ollamaModelOptions().length) {
+          <div class="field-group">
+            <span class="field-label">Model</span>
+            <ah-select
+              label="Ollama model"
+              [options]="ollamaModelOptions()"
+              [value]="
+                store.webhookSettings().ollamaModel || store.ollamaModels()[0]
+              "
+              (valueChange)="
+                store.updateWebhookSettings({ ollamaModel: $event ?? '' })
+              "
+            />
+            <small class="field-hint">
+              General chat models (e.g. <code>qwen2.5:7b</code>) read tone
+              better than code models.
+            </small>
+          </div>
+        }
+      }
+
       <div class="field-group">
         <span class="field-label">Quick Endpoint Presets</span>
         <ah-segmented-control

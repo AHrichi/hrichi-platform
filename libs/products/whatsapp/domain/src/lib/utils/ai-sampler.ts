@@ -159,6 +159,12 @@ export function buildAiWebhookPayload(
       })),
     },
     sampledWindows,
+    wellbeingSignals: (report.wellbeing?.checkInWindows ?? []).map((w) => ({
+      sender: w.sender,
+      startDate: w.startDate,
+      endDate: w.endDate,
+      reasons: [...w.reasons],
+    })),
   };
 }
 
@@ -380,6 +386,7 @@ export function generateLocalBehavioralAnalysis(
         : `Maintain your balanced session initiation cadence—both partners actively reopen the thread after breaks.`,
       `Use voice notes or live calls when messages exceed ${Math.max(p1?.longestMessageChars ?? 240, p2?.longestMessageChars ?? 240)} characters to preserve nuance and emotional tone.`,
     ],
+    relationshipTips: buildLocalRelationshipTips(report),
   };
 }
 
@@ -498,6 +505,12 @@ export function normalizeAiWebhookResponse(
         })
       : fallback.flags;
 
+  const tipsRaw = Array.isArray(root['relationshipTips'])
+    ? root['relationshipTips']
+        .filter((r): r is string => typeof r === 'string')
+        .slice(0, 6)
+    : [];
+
   const recsRaw = Array.isArray(root['recommendations'])
     ? root['recommendations'].filter((r): r is string => typeof r === 'string')
     : [];
@@ -551,5 +564,37 @@ export function normalizeAiWebhookResponse(
       fallback.conflictAndRepairStyle,
     ),
     recommendations: recsRaw.length > 0 ? recsRaw : fallback.recommendations,
+    relationshipTips: tipsRaw.length > 0 ? tipsRaw : fallback.relationshipTips,
   };
+}
+
+const CHECK_IN_REASON_TEXT: Record<string, string> = {
+  lower_tone: 'a lower tone',
+  slower_replies: 'slower replies',
+  shorter_messages: 'shorter messages',
+  fewer_messages: 'fewer messages',
+};
+
+function buildLocalRelationshipTips(report: ChatAnalysisReport): string[] {
+  const tips: string[] = [];
+  const latest = report.wellbeing?.checkInWindows[0];
+  if (latest) {
+    const reasons = latest.reasons
+      .map((r) => CHECK_IN_REASON_TEXT[r] ?? r)
+      .join(', ');
+    tips.push(
+      `${latest.sender}'s messages showed ${reasons} between ${latest.startDate} and ${latest.endDate}. An open "how are you really doing?" usually helps more than guessing why.`,
+    );
+  }
+  tips.push(
+    `Your most connected hour is around ${report.heatmap.peakHourLabel}; keep it for real conversation rather than logistics.`,
+  );
+  const [p1, p2] = report.participants;
+  if (p1 && p2) {
+    const slower = p1.medianReplySeconds > p2.medianReplySeconds ? p1 : p2;
+    tips.push(
+      `Reply rhythms differ (${slower.name} tends to take longer). Agree on what a slow reply means so silence isn't read as distance.`,
+    );
+  }
+  return tips.slice(0, 4);
 }

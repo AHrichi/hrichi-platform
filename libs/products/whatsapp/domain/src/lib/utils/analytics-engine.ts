@@ -24,7 +24,17 @@ import {
   WrappedSummaryData,
   ZipMediaEntry,
 } from '../models/whatsapp.models';
+import {
+  AFFECTION_REGEX,
+  APOLOGY_REGEX,
+  countRegexMatches,
+  GRATITUDE_REGEX,
+  LAUGHTER_REGEX,
+  NEGATIVE_SENTIMENT_REGEX,
+  POSITIVE_SENTIMENT_REGEX,
+} from './sentiment-lexicon';
 import { buildStopwordSet, tokenizeChatWords } from './stopwords.data';
+import { buildWellbeingSummary } from './wellbeing';
 import {
   classifyMediaText,
   countWordsInText,
@@ -63,25 +73,6 @@ const REPLY_BUCKET_DEFS: ReadonlyArray<{
   { key: '1h_to_6h', label: '1–6 hrs', maxSeconds: 21600 },
   { key: 'over_6h', label: '> 6 hrs', maxSeconds: Number.POSITIVE_INFINITY },
 ];
-
-// Multilingual lexicons (English, French, Arabic / Tunisian Derja, Spanish)
-const LAUGHTER_REGEX =
-  /\b(h+a+h+a+|h+e+h+e+|l+o+l+|l+m+a+o+|rofl|m+d+r+|p+t+d+r+|j+a+j+a+|h{3,})\b|[😂🤣😹💀😆]|ه{3,}/giu;
-
-const AFFECTION_REGEX =
-  /\b(love|miss\s+you|adore|sweetheart|darling|babe|baby|honey|xoxo|bisou|bisous|chéri|cheri|chérie|cherie|mon\s+coeu?r|mon\s+amour|je\s+t'aime|habibi|habibti|hbibi|nhbek|nhebek|n7ebek|nmout\s+alik|3aychek|ya\s+rouhi|rou7i|te\s+amo|te\s+quiero)\b|[❤♥❣]️?|[🧡💛💚💙💜🖤🤍🤎💖💗💓💞💕🥰😘😍🫶]|حبيبي|حبيبتي|نحبك|توحشتك|روحي/giu;
-
-const APOLOGY_REGEX =
-  /\b(sorry|apologize|apologies|my\s+bad|forgive\s+me|pardon|désolé|desole|désolée|desolee|excuse[-\s]?moi|smahni|sma7ni|samahni|perdon|perdón|lo\s+siento)\b|سامحني|اسف|آسف|معذرة/giu;
-
-const GRATITUDE_REGEX =
-  /\b(thanks|thank\s+you|thx|tysm|appreciate\s+it|grateful|merci|chokran|shukran|aychek|3aychek|baraka\s+allahu|yrham\s+waldik|gracias)\b|[🙏]|شكرا|شكراً|عيشك|يعطيك\s+الصحة|بارك\s+الله/giu;
-
-const POSITIVE_SENTIMENT_REGEX =
-  /\b(good|great|awesome|amazing|happy|glad|perfect|wonderful|excited|nice|best|beautiful|super|cool|yes|yay|bravo|parfait|génial|genial|magnifique|superbe|content|heureux|heureuse|top|grave|bien|behi|bahi|mezyen|mahleh|ma7leh|farhan|hmd|hamdoullah|elhamdoulilah|mabrouk|saha|excelente|genial|bueno)\b|[😊😄😁🥳🎉✨🔥👍👏💪🙌🤩]|الحمد\s+لله|مبروك|ممتاز|رائع|باهي|مزيان/giu;
-
-const NEGATIVE_SENTIMENT_REGEX =
-  /\b(bad|sad|angry|upset|tired|exhausted|hate|annoyed|frustrated|worried|anxious|stressed|sick|hurt|awful|terrible|worst|non|triste|fâché|fache|énervé|enerve|fatigué|fatigue|malade|peur|stressé|grave\s+mal|dommage|nul|ta3ben|mridh|karez|mkarez|faddit|fadd|khayeb|malo|triste|cansado)\b|[😢😭😡🤬😠😞😔😟💔😩😫😤]|تعبان|مريض|حزين|قلقان|خايب/giu;
 
 const URL_DOMAIN_REGEX =
   /https?:\/\/(?:www\.)?([a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/gi;
@@ -255,12 +246,6 @@ function entryOf<K, V>(map: Map<K, V>, key: K): V {
     throw new Error(`Missing analytics entry for ${String(key)}`);
   }
   return value;
-}
-
-function countRegexMatches(text: string, regex: RegExp): number {
-  if (!text) return 0;
-  const matches = text.match(regex);
-  return matches ? matches.length : 0;
 }
 
 /**
@@ -1754,6 +1739,7 @@ export function analyzeWhatsAppChat(
     streaksAndTimeline,
     heatmap,
     wrapped,
+    wellbeing: buildWellbeingSummary(messages),
   };
 }
 
