@@ -70,6 +70,16 @@
         "4307"
       ],
       "port": 4307
+    },
+    {
+      "name": "whatsapp (static build)",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "tools/scripts/serve-static.mjs",
+        "dist/apps/products/whatsapp/web/browser",
+        "4308"
+      ],
+      "port": 4308
     }
   ]
 }

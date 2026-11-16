@@ -9,15 +9,22 @@ import {
   buildAiWebhookPayload,
   buildMediaEntriesFromFiles,
   ChatAnalysisReport,
+  CyclePeriodEntry,
+  CyclePhase,
+  CyclePrediction,
+  CycleProfile,
   DateOrderMode,
   enrichMessageMetrics,
   extractTranscriptFromZip,
   ingestPlainTextTranscript,
   isZipBuffer,
   N8nWebhookSettings,
+  normalizeCyclePeriods,
+  overlayCyclePhases,
   ParsedChatMessage,
   ParseTranscriptResult,
   parseWhatsAppTranscript,
+  predictCycle,
   TimelinePoint,
   VoiceNoteItem,
 } from '@ah/products/whatsapp/domain';
@@ -38,6 +45,7 @@ import {
   SavedWhatsAppConversationSummary,
   WhatsappArchiveDbService,
 } from './whatsapp-archive-db.service';
+import { WhatsAppOllamaService } from './whatsapp-ollama.service';
 
 export type WhatsAppDashboardTab =
   | 'overview'
@@ -47,6 +55,7 @@ export type WhatsAppDashboardTab =
   | 'heatmap'
   | 'wrapped'
   | 'ai-insights'
+  | 'relationship'
   | 'transcript';
 
 export type TranscriptTypeFilter =
@@ -85,6 +94,10 @@ export interface WhatsAppState {
   transcriptParticipantFilter: string;
   transcriptTypeFilter: TranscriptTypeFilter;
   webhookSettings: N8nWebhookSettings;
+  /** Chat models installed in the local Ollama, best first. */
+  ollamaModels: string[];
+  /** The active conversation's opt-in cycle calendar, or null when not set up. */
+  cycleProfile: CycleProfile | null;
   isSettingsOpen: boolean;
   isTestingWebhook: boolean;
   webhookTestStatus: string | null;
@@ -121,6 +134,8 @@ const initialState: WhatsAppState = {
   transcriptParticipantFilter: 'ALL',
   transcriptTypeFilter: 'all',
   webhookSettings: { ...DEFAULT_N8N_WEBHOOK_SETTINGS },
+  ollamaModels: [],
+  cycleProfile: null,
   isSettingsOpen: false,
   isTestingWebhook: false,
   webhookTestStatus: null,
@@ -279,10 +294,34 @@ export const WhatsAppStore = signalStore(
       });
     });
 
+    const wellbeing = computed(() => report()?.wellbeing ?? null);
+
+    const cyclePrediction = computed<CyclePrediction | null>(() => {
+      const profile = store.cycleProfile();
+      return profile ? predictCycle(profile.periods) : null;
+    });
+
+    /** Cycle phase per chat day, only for shading the mood chart. */
+    const cyclePhaseByDate = computed<Record<string, CyclePhase>>(() => {
+      const profile = store.cycleProfile();
+      const prediction = cyclePrediction();
+      const w = wellbeing();
+      if (!profile || !prediction || !w) {
+        return {};
+      }
+      const dates = Array.from(
+        new Set(w.series.flatMap((s) => s.points.map((p) => p.date))),
+      );
+      return overlayCyclePhases(dates, profile.periods, prediction);
+    });
+
     return {
       hasChatLoaded,
       parsedTranscript,
       report,
+      wellbeing,
+      cyclePrediction,
+      cyclePhaseByDate,
       aiPayload,
       timelinePoints,
       filteredTranscriptMessages,
@@ -293,6 +332,7 @@ export const WhatsAppStore = signalStore(
       store,
       aiService = inject(WhatsAppAiService),
       archiveDb = inject(WhatsappArchiveDbService),
+      ollama = inject(WhatsAppOllamaService),
     ) => {
       let activeAudioAbortController: AbortController | null = null;
       let persistDebounceTimer: ReturnType<typeof setTimeout> | null = null;
@@ -336,7 +376,22 @@ export const WhatsAppStore = signalStore(
             lastSavedAtIso: savedSummary.updatedAtIso,
             savedConversations: nextList,
           });
+          if (store.cycleProfile()?.conversationId !== savedSummary.id) {
+            patchState(store, {
+              cycleProfile: await archiveDb.loadCycleProfile(savedSummary.id),
+            });
+          }
         }
+      };
+
+      const writeCycleProfile = async (
+        profile: CycleProfile,
+      ): Promise<boolean> => {
+        const ok = await archiveDb.saveCycleProfile(profile);
+        if (ok) {
+          patchState(store, { cycleProfile: profile });
+        }
+        return ok;
       };
 
       const schedulePersistCurrentConversation = (delayMs = 350): void => {
@@ -613,6 +668,7 @@ export const WhatsAppStore = signalStore(
 
           patchState(store, {
             activeConversationId: null,
+            cycleProfile: null,
             extractionResult: extraction,
             audioTranscripts: {},
             audioTranslations: {},
@@ -723,6 +779,7 @@ export const WhatsAppStore = signalStore(
           archiveDb.setLastActiveConversationId(null);
           patchState(store, {
             activeConversationId: null,
+            cycleProfile: null,
             extractionResult: null,
             audioTranscripts: {},
             audioTranslations: {},
@@ -801,7 +858,65 @@ export const WhatsAppStore = signalStore(
             transcriptTypeFilter: 'all',
             isVaultModalOpen: false,
             isLoadingVault: false,
+            cycleProfile: await archiveDb.loadCycleProfile(summary.id),
           });
+        },
+
+        /**
+         * Starts the opt-in cycle calendar. Requires an explicit confirmation that
+         * the partner knows about it and agreed to share these dates.
+         */
+        async createCycleProfile(
+          partnerName: string,
+          consentConfirmed: boolean,
+        ): Promise<boolean> {
+          const id = store.activeConversationId();
+          if (!id || !consentConfirmed || !partnerName.trim()) {
+            return false;
+          }
+          const now = new Date().toISOString();
+          return writeCycleProfile({
+            conversationId: id,
+            partnerName: partnerName.trim(),
+            consentConfirmedAt: now,
+            periods: [],
+            updatedAt: now,
+          });
+        },
+
+        async addCyclePeriod(entry: CyclePeriodEntry): Promise<boolean> {
+          const profile = store.cycleProfile();
+          if (!profile) {
+            return false;
+          }
+          const periods = normalizeCyclePeriods([...profile.periods, entry]);
+          return writeCycleProfile({
+            ...profile,
+            periods,
+            updatedAt: new Date().toISOString(),
+          });
+        },
+
+        async removeCyclePeriod(start: string): Promise<boolean> {
+          const profile = store.cycleProfile();
+          if (!profile) {
+            return false;
+          }
+          return writeCycleProfile({
+            ...profile,
+            periods: profile.periods.filter((p) => p.start !== start),
+            updatedAt: new Date().toISOString(),
+          });
+        },
+
+        async deleteCycleProfile(): Promise<void> {
+          const profile = store.cycleProfile();
+          if (!profile) {
+            return;
+          }
+          if (await archiveDb.deleteCycleProfile(profile.conversationId)) {
+            patchState(store, { cycleProfile: null });
+          }
         },
 
         async deleteSavedConversation(id: string): Promise<void> {
@@ -918,13 +1033,22 @@ export const WhatsAppStore = signalStore(
         },
 
         async testWebhookConnection(): Promise<void> {
+          const settings = store.webhookSettings();
+          const useOllama = settings.provider === 'ollama';
           patchState(store, {
             isTestingWebhook: true,
-            webhookTestStatus: 'Pinging n8n webhook endpoint...',
+            webhookTestStatus: useOllama
+              ? 'Checking local Ollama...'
+              : 'Pinging n8n webhook endpoint...',
           });
-          const result = await aiService.testConnection(
-            store.webhookSettings(),
-          );
+          let result: { ok: boolean; latencyMs: number; message: string };
+          if (useOllama) {
+            const res = await ollama.testConnection(settings.ollamaUrl);
+            patchState(store, { ollamaModels: res.models });
+            result = res;
+          } else {
+            result = await aiService.testConnection(settings);
+          }
           const updatedSettings: N8nWebhookSettings = {
             ...store.webhookSettings(),
             lastTestedAt: new Date().toISOString(),
@@ -953,11 +1077,16 @@ export const WhatsAppStore = signalStore(
           });
 
           try {
-            const analysis = await aiService.runWebhookAnalysis(
-              store.webhookSettings(),
-              rep,
-              payload,
-            );
+            const settings = store.webhookSettings();
+            const analysis =
+              settings.provider === 'ollama'
+                ? await ollama.runAnalysis(
+                    settings.ollamaUrl,
+                    settings.ollamaModel || store.ollamaModels()[0] || '',
+                    rep,
+                    payload,
+                  )
+                : await aiService.runWebhookAnalysis(settings, rep, payload);
             patchState(store, {
               isAnalyzingAi: false,
               aiAnalysis: analysis,
@@ -1016,6 +1145,10 @@ export const WhatsAppStore = signalStore(
       void aiService.loadSettings().then(async (savedSettings) => {
         patchState(store, { webhookSettings: savedSettings });
         if (typeof window === 'undefined') {
+          return;
+        }
+        if (savedSettings.provider === 'ollama') {
+          await store.testWebhookConnection();
           return;
         }
         const res = await aiService.testConnection(savedSettings);

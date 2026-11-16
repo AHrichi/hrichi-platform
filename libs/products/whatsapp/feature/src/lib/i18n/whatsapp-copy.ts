@@ -9,6 +9,7 @@ export interface WhatsAppCopy {
     heatmap: string;
     wrapped: string;
     aiInsights: string;
+    relationship: string;
     transcript: string;
   };
   mediaLabels: {
@@ -29,7 +30,8 @@ export const WHATSAPP_COPY: Record<SiteLanguage, WhatsAppCopy> = {
       lexical: 'Words & Emojis',
       heatmap: '7×24 Heatmap & Streaks',
       wrapped: 'Wrapped Card',
-      aiInsights: 'n8n AI Insights',
+      aiInsights: 'AI Insights',
+      relationship: 'Relationship',
       transcript: 'Transcript',
     },
     mediaLabels: {
@@ -48,7 +50,8 @@ export const WHATSAPP_COPY: Record<SiteLanguage, WhatsAppCopy> = {
       lexical: 'Mots & émojis',
       heatmap: 'Carte thermique 7×24 & séries',
       wrapped: 'Carte Wrapped',
-      aiInsights: 'Analyses IA n8n',
+      aiInsights: 'Analyses IA',
+      relationship: 'Relation',
       transcript: 'Transcription',
     },
     mediaLabels: {
@@ -67,7 +70,8 @@ export const WHATSAPP_COPY: Record<SiteLanguage, WhatsAppCopy> = {
       lexical: 'الكلمات والرموز التعبيرية',
       heatmap: 'خريطة النشاط 24/7',
       wrapped: 'بطاقة الحصاد (Wrapped)',
-      aiInsights: 'تحليلات الذكاء الاصطناعي n8n',
+      aiInsights: 'تحليلات الذكاء الاصطناعي',
+      relationship: 'العلاقة',
       transcript: 'سجل المحادثة الكامل',
     },
     mediaLabels: {
@@ -86,7 +90,8 @@ export const WHATSAPP_COPY: Record<SiteLanguage, WhatsAppCopy> = {
       lexical: 'Parole ed emoji',
       heatmap: 'Mappa di calore 7×24 e serie',
       wrapped: 'Card Wrapped',
-      aiInsights: 'Insight AI n8n',
+      aiInsights: 'Insight AI',
+      relationship: 'Relazione',
       transcript: 'Trascrizione',
     },
     mediaLabels: {
@@ -105,7 +110,8 @@ export const WHATSAPP_COPY: Record<SiteLanguage, WhatsAppCopy> = {
       lexical: 'Wörter & Emojis',
       heatmap: '7×24 Heatmap & Serien',
       wrapped: 'Wrapped-Karte',
-      aiInsights: 'n8n KI-Analysen',
+      aiInsights: 'KI-Analysen',
+      relationship: 'Beziehung',
       transcript: 'Transkript',
     },
     mediaLabels: {
