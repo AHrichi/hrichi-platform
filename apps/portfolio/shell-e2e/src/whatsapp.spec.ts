@@ -46,7 +46,9 @@ test('the Relationship tab shows check-ins and gates the cycle calendar on conse
   page,
 }) => {
   await aiDown(page);
-  await page.goto('/apps/whatsapp');
+  // ChatPulse is hidden in the portfolio (app-visibility.ts), so this runs
+  // against its standalone production build.
+  await page.goto('http://localhost:4308/');
 
   await page
     .locator('input[type=file]')
