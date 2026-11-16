@@ -447,6 +447,8 @@ export interface LessonGroup {
   styles: `
     :host {
       display: grid;
+      /* One column no wider than the screen, whatever a child's min-content. */
+      grid-template-columns: minmax(0, 1fr);
       gap: var(--space-5);
     }
     h2,
@@ -597,7 +599,7 @@ export interface LessonGroup {
       display: flex;
       align-items: center;
       flex: 1 1 240px;
-      min-width: 200px;
+      min-width: min(200px, 100%);
     }
     .search-icon {
       position: absolute;
@@ -652,6 +654,24 @@ export interface LessonGroup {
       display: flex;
       align-items: center;
       gap: var(--space-2);
+      min-width: 0;
+    }
+    /* Phones: one filter per row, each select as wide as the row. */
+    @media (max-width: 640px) {
+      .filter-controls {
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr);
+        gap: var(--space-2) var(--space-3);
+        width: 100%;
+      }
+      .filter-field {
+        display: contents;
+      }
+      .filter-select {
+        width: 100%;
+        min-width: 0;
+        height: 44px;
+      }
     }
     .filter-label {
       font-size: var(--font-size-100);

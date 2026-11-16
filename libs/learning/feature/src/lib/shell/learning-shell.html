@@ -1,55 +1,56 @@
-<div class="shell">
+<div class="shell" [class.is-standalone]="standalone">
   <header class="bar">
     <a class="brand" routerLink="today">
       <span aria-hidden="true">✦</span> Learning
     </a>
     <nav class="nav" aria-label="Learning">
-      <a
-        routerLink="today"
-        routerLinkActive="is-active"
-        ariaCurrentWhenActive="page"
-        >Today</a
+      @for (item of items; track item.path) {
+        <a
+          [routerLink]="item.path"
+          routerLinkActive="is-active"
+          ariaCurrentWhenActive="page"
+          [attr.aria-label]="item.iconOnly ? item.label : null"
+        >
+          <svg
+            class="icon"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+            focusable="false"
+          >
+            <path [attr.d]="item.icon" />
+          </svg>
+          <span class="label" [class.label--icon-only]="item.iconOnly">{{
+            item.label
+          }}</span>
+          @if (item.path === 'inbox' && store.drafts().length) {
+            <span class="badge"
+              >{{ store.drafts().length
+              }}<span class="visually-hidden"> drafts</span></span
+            >
+          }
+        </a>
+      }
+    </nav>
+    <div class="bar-end">
+      @let s = status();
+      <button
+        type="button"
+        [class]="'pill pill--' + s.tone"
+        [disabled]="!s.canSync"
+        (click)="store.syncNow()"
+        [attr.aria-label]="s.canSync ? s.label + '. Sync now' : s.label"
       >
+        {{ s.label }}
+      </button>
       <a
-        routerLink="inbox"
-        routerLinkActive="is-active"
-        ariaCurrentWhenActive="page"
-        >Inbox
-        @if (store.drafts().length) {
-          <span class="badge">{{ store.drafts().length }}</span>
-        }
-      </a>
-      <a
-        routerLink="concepts"
-        routerLinkActive="is-active"
-        ariaCurrentWhenActive="page"
-        >Library</a
-      >
-      <a
-        routerLink="settings"
-        routerLinkActive="is-active"
-        ariaCurrentWhenActive="page"
-        aria-label="Settings"
-        ><span aria-hidden="true">⚙</span></a
-      >
-      <a
+        class="guide"
         routerLink="guide"
         routerLinkActive="is-active"
         ariaCurrentWhenActive="page"
         aria-label="Guide"
-        ><span aria-hidden="true">?</span></a
+        >?</a
       >
-    </nav>
-    @let s = status();
-    <button
-      type="button"
-      [class]="'pill pill--' + s.tone"
-      [disabled]="!s.canSync"
-      (click)="store.syncNow()"
-      [attr.aria-label]="s.canSync ? s.label + '. Sync now' : s.label"
-    >
-      {{ s.label }}
-    </button>
+    </div>
   </header>
 
   <p class="notice" role="status" aria-live="polite">{{ store.notice() }}</p>

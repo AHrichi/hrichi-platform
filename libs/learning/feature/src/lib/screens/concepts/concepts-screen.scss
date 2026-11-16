@@ -18,6 +18,17 @@
     gap: var(--space-2);
     align-items: center;
     justify-content: space-between;
+
+    > span {
+      flex: 1 1 auto;
+      min-inline-size: 0;
+      overflow-wrap: anywhere;
+    }
+
+    // The button keeps its word on one line; the text wraps instead.
+    > button {
+      flex: none;
+    }
   }
 }
 
@@ -216,12 +227,25 @@
 .concept-head {
   display: flex;
   gap: var(--space-2);
-  align-items: baseline;
+  align-items: flex-start;
   justify-content: space-between;
+
+  > div:first-child {
+    flex: 1 1 auto;
+    min-inline-size: 0;
+  }
 
   h2 {
     margin: 0;
     font-size: var(--font-size-400);
+    overflow-wrap: anywhere;
+  }
+
+  // Edit and Delete side by side, never stacked into a narrow column.
+  .actions {
+    flex: none;
+    flex-wrap: nowrap;
+    gap: 0;
   }
 }
 

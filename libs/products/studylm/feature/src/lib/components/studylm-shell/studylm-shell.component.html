@@ -1,4 +1,4 @@
-<div class="studylm-layout">
+<div class="studylm-layout" [class.is-standalone]="standalone">
   <!-- Top Navigation & Control Bar -->
   <header class="studylm-navbar">
     <!-- Brand Lockup -->
@@ -70,11 +70,15 @@
           [attr.aria-label]="copy().sync.navPrefix + ': ' + syncLabel()"
         >
           <span class="status-dot" aria-hidden="true"></span>
+          <svg class="icon-mobile" viewBox="0 0 24 24" aria-hidden="true">
+            <path
+              d="M4 12a8 8 0 0 1 13.7-5.6L20 9M20 4v5h-5M20 12a8 8 0 0 1-13.7 5.6L4 15m0 5v-5h5"
+            />
+          </svg>
           <span class="btn-label-desktop"
             >{{ copy().sync.navPrefix }}: {{ syncLabel() }}</span
           >
           <span class="btn-label-compact">{{ syncLabel() }}</span>
-          <span class="btn-label-mobile">{{ copy().sync.navPrefix }}</span>
         </button>
       }
       <!-- AI connection: configure n8n AI webhook -->
@@ -94,9 +98,32 @@
         <span class="btn-label-compact"
           >{{ copy().n8nEngine }}: {{ connection() }}</span
         >
-        <span class="btn-label-mobile">{{ connection() }}</span>
+        <span class="btn-label-mobile" aria-hidden="true">AI</span>
         <span class="gear-icon" aria-hidden="true">⚙️</span>
       </button>
+
+      @if (standalone) {
+        <button
+          type="button"
+          class="icon-btn bell-btn"
+          (click)="notifications.open()"
+          title="Notifications"
+          [attr.aria-label]="
+            notifications.push.subscribed()
+              ? 'Notifications (on)'
+              : 'Notifications (off)'
+          "
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path
+              d="M6 16V11a6 6 0 1 1 12 0v5l1.5 2h-15L6 16Zm4 4a2 2 0 0 0 4 0"
+            />
+          </svg>
+          @if (notifications.needsAttention()) {
+            <span class="attention-dot" aria-hidden="true"></span>
+          }
+        </button>
+      }
 
       <!-- Markdown Guide Export -->
       <button
@@ -115,6 +142,36 @@
       </button>
     </div>
   </header>
+
+  <!-- Phones: the same four numbers in one compact strip. -->
+  <dl
+    class="metrics-strip"
+    [class.is-hidden-in-lesson]="inLesson()"
+    aria-label="Curriculum overview"
+  >
+    <div>
+      <dt>{{ copy().metrics.roadmap }}</dt>
+      <dd>{{ store.totalSectionsCount() }}</dd>
+    </div>
+    <div>
+      <dt>{{ copy().metrics.progress }}</dt>
+      <dd>{{ store.curriculumProgressPct() }}%</dd>
+    </div>
+    <div>
+      <dt>{{ copy().shell.flashcardBank }}</dt>
+      <dd>{{ store.flashcards().length }}</dd>
+    </div>
+    <div>
+      <dt>{{ copy().metrics.quizAccuracy }}</dt>
+      <dd>
+        {{
+          store.quizSummary().answeredCount > 0
+            ? store.quizSummary().scorePercentage + '%'
+            : '—'
+        }}
+      </dd>
+    </div>
+  </dl>
 
   <!-- Metric Overview Cards -->
   <section class="metrics-row" aria-label="Curriculum Overview Metrics">
@@ -169,8 +226,9 @@
         routerLinkActive="is-active"
         ariaCurrentWhenActive="page"
       >
-        <span aria-hidden="true">{{ screen.icon }}</span>
-        {{ screen.label }}
+        <span class="screen-icon" aria-hidden="true">{{ screen.icon }}</span>
+        <span class="screen-label">{{ screen.label }}</span>
+        <span class="screen-short" aria-hidden="true">{{ screen.short }}</span>
         @if (screen.count > 0) {
           <span class="count">{{ screen.count }}</span>
         }
@@ -189,6 +247,9 @@
   }
   @if (sync?.showSyncModal()) {
     <ah-studylm-sync-modal />
+  }
+  @if (notifications.showPanel()) {
+    <ah-studylm-notifications-modal />
   }
 
   @if (store.showCreateSubjectModal()) {

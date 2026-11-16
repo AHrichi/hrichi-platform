@@ -2,6 +2,7 @@
   "name": "StudyLM · AI study roadmaps & drills",
   "short_name": "StudyLM",
   "description": "AI study roadmaps, flashcards and quizzes grounded in your material.",
+  "id": "./",
   "theme_color": "#4f46e5",
   "background_color": "#4f46e5",
   "display": "standalone",
@@ -31,6 +32,23 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Lessons",
+      "url": "./learn",
+      "icons": [{ "src": "icons/icon-192x192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Flashcards",
+      "url": "./flashcards",
+      "icons": [{ "src": "icons/icon-192x192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Quiz",
+      "url": "./quiz",
+      "icons": [{ "src": "icons/icon-192x192.png", "sizes": "192x192" }]
     }
   ]
 }

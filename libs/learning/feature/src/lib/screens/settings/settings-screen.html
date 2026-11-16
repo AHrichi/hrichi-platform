@@ -78,8 +78,22 @@
     <p class="hint">A smaller set you finish beats a bigger one you skip.</p>
   </fieldset>
 
+  <section class="card" aria-labelledby="push-title">
+    <h2 id="push-title">Notifications on this device</h2>
+    <p class="hint">
+      The reminders below, and the Sunday recap, as notifications on this phone
+      or computer. Telegram still gets them too.
+    </p>
+    <ah-push-controls
+      [blockedBy]="pushBlocker()"
+      (turnOn)="notifications.enable()"
+      (turnOff)="notifications.disable()"
+      (sendTest)="notifications.test()"
+    />
+  </section>
+
   <fieldset class="card">
-    <legend>Reminders on Telegram</legend>
+    <legend>Reminders</legend>
     <div class="field">
       <label for="morning-mode">Morning nudge</label>
       <select

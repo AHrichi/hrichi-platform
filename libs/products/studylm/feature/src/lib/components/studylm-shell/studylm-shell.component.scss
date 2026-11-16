@@ -141,6 +141,10 @@
   text-transform: uppercase;
   letter-spacing: 0.04em;
   line-height: 1.4;
+
+  @media (max-width: 640px) {
+    display: none;
+  }
 }
 
 .brand-tag {
@@ -341,6 +345,10 @@
     opacity: 0.8;
   }
 
+  .icon-mobile {
+    display: none;
+  }
+
   @media (max-width: 1400px) {
     padding: 0.3rem 0.65rem;
 
@@ -355,19 +363,97 @@
     }
   }
 
+  // Phones: a round status button, the dot on its edge says the state.
   @media (max-width: 640px) {
-    padding: 0.25rem 0.55rem;
+    position: relative;
+    justify-content: center;
+    inline-size: 2.5rem;
+    block-size: 2.5rem;
+    padding: 0;
 
-    .btn-label-desktop {
+    .btn-label-desktop,
+    .btn-label-compact,
+    .gear-icon {
       display: none;
     }
-    .btn-label-compact {
-      display: none;
-    }
+
     .btn-label-mobile {
       display: inline;
+      font-size: var(--font-size-100);
+      font-weight: var(--font-weight-bold);
+    }
+
+    .icon-mobile {
+      display: block;
+      inline-size: 1.15rem;
+      block-size: 1.15rem;
+      fill: none;
+      stroke: currentcolor;
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .status-dot {
+      position: absolute;
+      inset-block-start: 0.2rem;
+      inset-inline-end: 0.2rem;
+      inline-size: 0.55rem;
+      block-size: 0.55rem;
+      box-shadow: 0 0 0 2px var(--color-bg-surface);
     }
   }
+}
+
+.icon-btn {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  inline-size: 2.25rem;
+  block-size: 2.25rem;
+  flex: none;
+  padding: 0;
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--color-text-default);
+  cursor: pointer;
+  transition: background-color var(--motion-duration-fast) ease;
+
+  svg {
+    inline-size: 1.15rem;
+    block-size: 1.15rem;
+    fill: none;
+    stroke: currentcolor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  &:hover {
+    background: var(--color-bg-raised);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-focus-ring);
+    outline-offset: 2px;
+  }
+
+  @media (max-width: 640px) {
+    inline-size: 2.5rem;
+    block-size: 2.5rem;
+  }
+}
+
+.attention-dot {
+  position: absolute;
+  inset-block-start: 0.2rem;
+  inset-inline-end: 0.2rem;
+  inline-size: 0.55rem;
+  block-size: 0.55rem;
+  border-radius: 50%;
+  background: var(--color-accent-default);
+  box-shadow: 0 0 0 2px var(--color-bg-surface);
 }
 
 .btn-export-guide {
@@ -481,4 +567,143 @@
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border-width: 0;
+}
+
+// Phones: the four numbers in one strip instead of four tall cards.
+.metrics-strip {
+  display: none;
+  margin: 0;
+
+  @media (max-width: 640px) {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-md);
+    background: var(--color-bg-surface);
+
+    > div {
+      display: grid;
+      gap: 0.1rem;
+      align-content: center;
+      min-inline-size: 0;
+      padding: var(--space-2);
+      text-align: center;
+
+      + div {
+        border-inline-start: 1px solid var(--color-border-default);
+      }
+    }
+
+    // Two short lines rather than one cut-off label.
+    dt {
+      display: -webkit-box;
+      overflow: hidden;
+      color: var(--color-text-muted);
+      font-size: 0.68rem;
+      line-height: 1.2;
+      overflow-wrap: anywhere;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+    }
+
+    dd {
+      margin: 0;
+      color: var(--color-text-default);
+      font-size: var(--font-size-300);
+      font-weight: var(--font-weight-bold);
+      font-variant-numeric: tabular-nums;
+    }
+  }
+}
+
+.metrics-row {
+  @media (max-width: 640px) {
+    display: none;
+  }
+}
+
+.metrics-strip.is-hidden-in-lesson {
+  @media (max-width: 640px) {
+    display: none;
+  }
+}
+
+.screen-short {
+  display: none;
+}
+
+/*
+ * Phones, standalone: the screens become a tab bar fixed to the bottom
+ * edge, in reach of the thumb and clear of the home indicator. Inside the
+ * portfolio the row stays at the top, as the site has its own layout.
+ */
+@media (max-width: 640px) {
+  .studylm-layout.is-standalone {
+    --studylm-tabbar: 3.75rem;
+
+    padding-block-start: calc(env(safe-area-inset-top, 0) + var(--space-3));
+    padding-block-end: calc(
+      var(--studylm-tabbar) + env(safe-area-inset-bottom, 0) + var(--space-6)
+    );
+
+    .screens {
+      position: fixed;
+      inset-block-end: 0;
+      inset-inline: 0;
+      z-index: 70;
+      display: grid;
+      grid-auto-columns: minmax(0, 1fr);
+      grid-auto-flow: column;
+      gap: 0;
+      padding-block-end: env(safe-area-inset-bottom, 0);
+      padding-inline: 0;
+      overflow: visible;
+      border-block-end: 0;
+      border-block-start: 1px solid var(--color-border-default);
+      background: color-mix(in srgb, var(--color-bg-canvas) 92%, transparent);
+      backdrop-filter: blur(12px);
+
+      a {
+        position: relative;
+        display: grid;
+        gap: 0.1rem;
+        justify-items: center;
+        align-content: center;
+        min-block-size: var(--studylm-tabbar);
+        min-inline-size: 0;
+        padding: var(--space-1) 0;
+        border-block-end: 0;
+        font-size: 0.65rem;
+        letter-spacing: -0.01em;
+        line-height: 1.1;
+
+        &.is-active {
+          color: var(--color-accent-default);
+
+          .screen-icon {
+            transform: translateY(-1px) scale(1.08);
+          }
+        }
+      }
+
+      .screen-icon {
+        font-size: 1.25rem;
+        line-height: 1;
+        transition: transform var(--motion-duration-fast) ease;
+      }
+
+      .screen-label,
+      .count {
+        display: none;
+      }
+
+      .screen-short {
+        display: block;
+        overflow: hidden;
+        max-inline-size: 100%;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+    }
+  }
 }

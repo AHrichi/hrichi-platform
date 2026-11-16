@@ -59,6 +59,8 @@ const APPS = {
     bg: '#4f46e5',
     fg: '#ffffff',
     theme: '#4f46e5',
+    // Keeps its shortcuts and id (push notifications, ADR-0024 §10).
+    keepManifest: true,
     glyph: `<path d="M32 20 C26 15.5 18 15.5 11 18 V48 C18 45.5 26 45.5 32 50 C38 45.5 46 45.5 53 48 V18 C46 15.5 38 15.5 32 20 Z"/><path d="M32 20 V50"/>`,
   },
   whatsapp: {

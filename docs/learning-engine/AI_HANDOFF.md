@@ -128,6 +128,13 @@ node tools/scripts/prepare-hosting.mjs dist/apps/products/learning/web/browser -
 - Lesson checks inside a lesson (predict, quiz blocks) aren't reported; only flashcards and the quiz arena are.
 - StudyLM shows tiers on its Progress screen only, not on each flashcard (`LearningLink.itemState()` is ready for a per-card chip).
 
+## 10b. Mobile and push notifications (built 2026-11-16)
+
+- **Mobile:** both apps have a bottom tab bar on phones when standalone (inside the portfolio the top navigation stays). StudyLM's header packs its status into round buttons, shows the four metrics as one strip and hides it inside a lesson; roadmap actions are full-width buttons. Learning's Library keeps Edit/Delete and Unlink on one line.
+- **Push:** design §10 "Web Push (as built)". Shared browser code: `libs/platform/web-push` (`WebPush`, `WebPushDevice`, `PushRelayClient`, `<ah-push-controls>`). Learning: ⚙ → "Notifications on this device" (needs a paired device). StudyLM: the bell → reminder time, push on/off, "when AI work finishes" (push needs StudyLM sync pairing; the AI alerts don't).
+- **To go live:** rerun `node tools/scripts/learning-setup.mjs` (it generates the VAPID keys once into `.env.render` and deploys the Worker with them and the new allowed origins), then let CI deploy both apps. iPhone needs the app added to the Home Screen first.
+- **Checked:** unit tests (crypto round trip, routes, cron, reminder decision, browser helper), and both production builds receiving a CDP-delivered push in full Chromium. Not checked: a real push service delivery (FCM/APNs) to a phone; do that once the Worker has its keys (⚙ → Send a test).
+
 ## 11. Next steps
 
 1. **Deploy the API:** Render's auto-deploy hasn't fired since 2026-10-27 (section 8), so after this merges, press Manual Deploy on `ahmed-hrichi-api` (no new variables: CORS lets StudyLM in by itself). The static apps deploy from CI.

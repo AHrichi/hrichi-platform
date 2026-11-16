@@ -12,12 +12,25 @@ import {
   type NudgeLog,
   type NudgeState,
   NudgeStateSchema,
+  ngswPayload,
   nudgeDue,
+  nudgePush,
+  PUSH_MAX_SUBSCRIPTIONS,
+  type PushApp,
+  PushEndpointSchema,
+  type PushMessage,
+  PushRegistrationSchema,
+  pushKey,
   recapDue,
   SERVER_TOKEN_SUBJECT,
+  type StoredPushSubscription,
+  type StudyReminderState,
+  StudyReminderStateSchema,
+  studyReminderDue,
   TELEGRAM_VOICE_MAX_SECONDS,
   verifyDeviceToken,
 } from '@ah/learning/domain';
+import { sendPush, type VapidKeys } from './web-push';
 
 /** The slice of Workers KV this Worker uses. */
 export interface KvStore {
@@ -41,8 +54,21 @@ export interface Env {
    * header on every update. Unset, the webhook is off.
    */
   TELEGRAM_WEBHOOK_SECRET?: string;
-  /** Comma-separated origins allowed to send the nudge state. */
+  /** Comma-separated origins allowed to call the Worker from a page. */
   ALLOWED_ORIGINS: string;
+  /**
+   * Web Push (VAPID, base64url). Unset, push is off and only Telegram is
+   * used. `learning-setup.mjs --push` generates and stores them.
+   */
+  VAPID_PUBLIC_KEY?: string;
+  VAPID_PRIVATE_KEY?: string;
+  /** The contact push services see; a `mailto:` or `https:` URL. */
+  VAPID_SUBJECT?: string;
+  /**
+   * Only when StudyLM's tokens use their own secret: by default the API
+   * signs them with LEARNING_TOKEN_SECRET too.
+   */
+  STUDYLM_TOKEN_SECRET?: string;
 }
 
 type Fetch = typeof fetch;
@@ -54,6 +80,9 @@ const RECAP_KEY = 'recap';
 const DEVICES_KEY = 'devices';
 const revokedKey = (deviceId: string) => `revoked:${deviceId}`;
 const revokeKey = (deviceId: string) => `revoke:${deviceId}`;
+/** StudyLM's study reminder state and the local date it last went out. */
+const STUDY_STATE_KEY = 'studylm:state';
+const STUDY_LOG_KEY = 'studylm:log';
 /** Telegram updates are small; anything bigger isn't one. */
 const MAX_UPDATE_BYTES = 64 * 1024;
 
@@ -69,7 +98,7 @@ function corsHeaders(request: Request, env: Env): Record<string, string> {
   return allowed.includes(origin)
     ? {
         'access-control-allow-origin': origin,
-        'access-control-allow-methods': 'PUT, OPTIONS',
+        'access-control-allow-methods': 'GET, PUT, POST, DELETE, OPTIONS',
         'access-control-allow-headers': 'authorization, content-type',
         'access-control-max-age': '86400',
         vary: 'origin',
@@ -94,6 +123,7 @@ export async function handleRequest(
   request: Request,
   env: Env,
   now: () => Date = () => new Date(),
+  fetchFn: Fetch = (input, init) => fetch(input, init),
 ): Promise<Response> {
   const cors = corsHeaders(request, env);
   const url = new URL(request.url);
@@ -117,6 +147,23 @@ export async function handleRequest(
   }
   if (url.pathname === '/revocations/ack' && request.method === 'POST') {
     return handleRevocationsAck(request, env, now);
+  }
+  if (url.pathname === '/push/key' && request.method === 'GET') {
+    return json({ publicKey: vapidKeys(env)?.publicKey ?? null }, 200, cors);
+  }
+  if (url.pathname === '/push/subscription') {
+    if (request.method === 'PUT') {
+      return handlePushRegister(request, env, now, cors);
+    }
+    if (request.method === 'DELETE') {
+      return handlePushUnregister(request, env, now, cors);
+    }
+  }
+  if (url.pathname === '/push/test' && request.method === 'POST') {
+    return handlePushTest(request, env, now, cors, fetchFn);
+  }
+  if (url.pathname === '/studylm/state' && request.method === 'PUT') {
+    return handleStudyState(request, env, now, cors);
   }
   if (url.pathname !== '/state' || request.method !== 'PUT') {
     return json({ message: 'Not found.' }, 404, cors);
@@ -181,8 +228,10 @@ async function sendTelegram(
 
 /**
  * The Cron Trigger, every 15 minutes: send a nudge when `nudgeDue` says so
- * and the Sunday recap when `recapDue` does, and remember each, so a nudge
- * goes out at most once a day per kind and the recap once a week.
+ * and the Sunday recap when `recapDue` does, to Telegram and to every
+ * device with push on, and remember each, so a nudge goes out at most once
+ * a day per kind and the recap once a week. StudyLM's study reminder goes
+ * out by push only, once a day, when `studyReminderDue` says so.
  */
 export async function handleScheduled(
   env: Env,
@@ -190,30 +239,318 @@ export async function handleScheduled(
   fetchFn: Fetch = (input, init) => fetch(input, init),
 ): Promise<'sent' | 'quiet' | 'no-state'> {
   const stored = await env.NUDGES.get(STATE_KEY);
-  if (!stored) return 'no-state';
-  const { state } = JSON.parse(stored) as StoredState;
+  const studyText = await env.NUDGES.get(STUDY_STATE_KEY);
+  if (!stored && !studyText) return 'no-state';
   let sentAny = false;
 
-  const recap = recapDue(state, await env.NUDGES.get(RECAP_KEY), now);
-  if (recap) {
-    await sendTelegram(env, fetchFn, recap.text);
-    await env.NUDGES.put(RECAP_KEY, recap.week);
-    sentAny = true;
+  if (stored) {
+    const { state } = JSON.parse(stored) as StoredState;
+    const recap = recapDue(state, await env.NUDGES.get(RECAP_KEY), now);
+    if (recap) {
+      await deliver(
+        env,
+        fetchFn,
+        recap.text,
+        nudgePush('recap', recap.text),
+        now,
+      );
+      await env.NUDGES.put(RECAP_KEY, recap.week);
+      sentAny = true;
+    }
+
+    const logText = await env.NUDGES.get(LOG_KEY);
+    const log = logText ? (JSON.parse(logText) as NudgeLog) : null;
+    const due = nudgeDue(state, log, now);
+    if (due) {
+      await deliver(env, fetchFn, due.text, nudgePush(due.kind, due.text), now);
+      const sent = log?.localDate === due.localDate ? log.sent : [];
+      await env.NUDGES.put(
+        LOG_KEY,
+        JSON.stringify({ localDate: due.localDate, sent: [...sent, due.kind] }),
+      );
+      sentAny = true;
+    }
   }
 
-  const logText = await env.NUDGES.get(LOG_KEY);
-  const log = logText ? (JSON.parse(logText) as NudgeLog) : null;
-  const due = nudgeDue(state, log, now);
-  if (due) {
-    await sendTelegram(env, fetchFn, due.text);
-    const sent = log?.localDate === due.localDate ? log.sent : [];
-    await env.NUDGES.put(
-      LOG_KEY,
-      JSON.stringify({ localDate: due.localDate, sent: [...sent, due.kind] }),
+  if (studyText) {
+    const study = JSON.parse(studyText) as { state: StudyReminderState };
+    const due = studyReminderDue(
+      study.state,
+      await env.NUDGES.get(STUDY_LOG_KEY),
+      now,
     );
-    sentAny = true;
+    if (due) {
+      // Remembered even when no device took it: a reminder is never retried.
+      await pushAll(env, 'studylm', due.message, now, fetchFn);
+      await env.NUDGES.put(STUDY_LOG_KEY, due.localDate);
+      sentAny = true;
+    }
   }
   return sentAny ? 'sent' : 'quiet';
+}
+
+/**
+ * A nudge or the recap goes to Telegram and push both. It counts as sent
+ * when either channel took it; when every channel fails, the error is
+ * thrown and the next cron run tries again.
+ */
+async function deliver(
+  env: Env,
+  fetchFn: Fetch,
+  text: string,
+  message: PushMessage,
+  now: Date,
+): Promise<void> {
+  let telegramError: unknown = null;
+  if (env.TELEGRAM_BOT_TOKEN && env.TELEGRAM_CHAT_ID) {
+    try {
+      await sendTelegram(env, fetchFn, text);
+    } catch (error) {
+      telegramError = error;
+    }
+  }
+  const pushed = await pushAll(env, 'learning', message, now, fetchFn);
+  if (telegramError && pushed === 0) throw telegramError;
+}
+
+function vapidKeys(env: Env): VapidKeys | null {
+  if (!env.VAPID_PUBLIC_KEY || !env.VAPID_PRIVATE_KEY) return null;
+  return {
+    publicKey: env.VAPID_PUBLIC_KEY,
+    privateKey: env.VAPID_PRIVATE_KEY,
+    subject:
+      env.VAPID_SUBJECT || 'https://product-learning.ahmed-hrichi.workers.dev',
+  };
+}
+
+async function readSubscriptions(
+  kv: KvStore,
+  app: PushApp,
+): Promise<{ key: string; value: StoredPushSubscription }[]> {
+  const listed = await kv.list({ prefix: `push:${app}:`, limit: 100 });
+  const found: { key: string; value: StoredPushSubscription }[] = [];
+  for (const { name } of listed.keys) {
+    const raw = await kv.get(name);
+    if (!raw) continue;
+    try {
+      found.push({
+        key: name,
+        value: JSON.parse(raw) as StoredPushSubscription,
+      });
+    } catch {
+      await kv.delete(name);
+    }
+  }
+  return found;
+}
+
+/**
+ * Sends one message to every device of `app` with push on, and forgets the
+ * subscriptions the push service says are gone. Returns how many took it.
+ */
+async function pushAll(
+  env: Env,
+  app: PushApp,
+  message: PushMessage,
+  now: Date,
+  fetchFn: Fetch,
+): Promise<number> {
+  const keys = vapidKeys(env);
+  if (!keys) return 0;
+  let delivered = 0;
+  for (const { key, value } of await readSubscriptions(env.NUDGES, app)) {
+    try {
+      const result = await sendPush(
+        value.subscription,
+        ngswPayload(message),
+        keys,
+        { now, topic: message.tag },
+        fetchFn,
+      );
+      if (result.ok) delivered++;
+      else if (result.gone) await env.NUDGES.delete(key);
+    } catch {
+      // One broken subscription doesn't stop the others.
+    }
+  }
+  return delivered;
+}
+
+/**
+ * The device behind a request for `app`: a paired learning device, or a
+ * StudyLM device (its sync token or its Learning Engine link token). Never
+ * the API's own token, never a revoked device.
+ */
+async function deviceFor(
+  request: Request,
+  env: Env,
+  now: () => Date,
+  app: PushApp,
+): Promise<string | null> {
+  const header = request.headers.get('authorization') ?? '';
+  const token = header.startsWith('Bearer ') ? header.slice(7).trim() : '';
+  if (!token) return null;
+  const secrets = [env.LEARNING_TOKEN_SECRET];
+  if (app === 'studylm' && env.STUDYLM_TOKEN_SECRET) {
+    secrets.push(env.STUDYLM_TOKEN_SECRET);
+  }
+  for (const secret of secrets) {
+    const claims = await verifyDeviceToken(secret, token, now());
+    if (!claims || claims.deviceId === SERVER_TOKEN_SUBJECT) continue;
+    if (await env.NUDGES.get(revokedKey(claims.deviceId))) return null;
+    return claims.deviceId;
+  }
+  return null;
+}
+
+/** Reads a small JSON body, or answers why not. */
+async function readBody(
+  request: Request,
+  cors: Record<string, string>,
+): Promise<{ body: unknown } | { response: Response }> {
+  const text = await request.text();
+  if (text.length > 4096) {
+    return { response: json({ message: 'Too large.' }, 413, cors) };
+  }
+  try {
+    return { body: JSON.parse(text) };
+  } catch {
+    return { response: json({ message: 'Send JSON.' }, 400, cors) };
+  }
+}
+
+const notPaired = (cors: Record<string, string>) =>
+  json({ message: 'This device is not paired.' }, 401, cors);
+const noPush = (cors: Record<string, string>) =>
+  json({ message: 'Push is not set up on the Worker.' }, 503, cors);
+
+/** `PUT /push/subscription`: this device wants notifications for `app`. */
+async function handlePushRegister(
+  request: Request,
+  env: Env,
+  now: () => Date,
+  cors: Record<string, string>,
+): Promise<Response> {
+  if (!vapidKeys(env)) return noPush(cors);
+  const read = await readBody(request, cors);
+  if ('response' in read) return read.response;
+  const parsed = v.safeParse(PushRegistrationSchema, read.body);
+  if (!parsed.success) {
+    return json({ message: 'Send { app, subscription }.' }, 400, cors);
+  }
+  const { app, subscription } = parsed.output;
+  const deviceId = await deviceFor(request, env, now, app);
+  if (!deviceId) return notPaired(cors);
+
+  const key = await pushKey(app, subscription.endpoint);
+  // At most PUSH_MAX_SUBSCRIPTIONS per app: the oldest make room.
+  const others = (await readSubscriptions(env.NUDGES, app))
+    .filter((entry) => entry.key !== key)
+    .sort((a, b) => a.value.createdAt.localeCompare(b.value.createdAt));
+  const extra = others.length - (PUSH_MAX_SUBSCRIPTIONS - 1);
+  for (const old of others.slice(0, Math.max(0, extra))) {
+    await env.NUDGES.delete(old.key);
+  }
+  const stored: StoredPushSubscription = {
+    app,
+    deviceId,
+    subscription,
+    createdAt: now().toISOString(),
+  };
+  await env.NUDGES.put(key, JSON.stringify(stored));
+  return new Response(null, { status: 204, headers: cors });
+}
+
+/** `DELETE /push/subscription`: no more notifications on this device. */
+async function handlePushUnregister(
+  request: Request,
+  env: Env,
+  now: () => Date,
+  cors: Record<string, string>,
+): Promise<Response> {
+  const read = await readBody(request, cors);
+  if ('response' in read) return read.response;
+  const parsed = v.safeParse(PushEndpointSchema, read.body);
+  if (!parsed.success) {
+    return json({ message: 'Send { app, endpoint }.' }, 400, cors);
+  }
+  const { app, endpoint } = parsed.output;
+  if (!(await deviceFor(request, env, now, app))) return notPaired(cors);
+  await env.NUDGES.delete(await pushKey(app, endpoint));
+  return new Response(null, { status: 204, headers: cors });
+}
+
+/** `POST /push/test`: one notification to this device, to see it works. */
+async function handlePushTest(
+  request: Request,
+  env: Env,
+  now: () => Date,
+  cors: Record<string, string>,
+  fetchFn: Fetch,
+): Promise<Response> {
+  const keys = vapidKeys(env);
+  if (!keys) return noPush(cors);
+  const read = await readBody(request, cors);
+  if ('response' in read) return read.response;
+  const parsed = v.safeParse(PushEndpointSchema, read.body);
+  if (!parsed.success) {
+    return json({ message: 'Send { app, endpoint }.' }, 400, cors);
+  }
+  const { app, endpoint } = parsed.output;
+  if (!(await deviceFor(request, env, now, app))) return notPaired(cors);
+  const key = await pushKey(app, endpoint);
+  const raw = await env.NUDGES.get(key);
+  if (!raw) {
+    return json({ message: 'Turn notifications on first.' }, 404, cors);
+  }
+  const { subscription } = JSON.parse(raw) as StoredPushSubscription;
+  const result = await sendPush(
+    subscription,
+    ngswPayload({
+      title: 'Notifications are on ✓',
+      body:
+        app === 'learning'
+          ? 'Your Daily Set reminders will arrive here.'
+          : 'Your study reminders will arrive here.',
+      url: app === 'learning' ? '/today' : '/roadmap',
+      tag: `${app}-test`,
+    }),
+    keys,
+    { now: now(), ttlSeconds: 600 },
+    fetchFn,
+  );
+  if (result.ok) return new Response(null, { status: 204, headers: cors });
+  if (result.gone) await env.NUDGES.delete(key);
+  return json(
+    { message: `The push service answered ${result.status}.` },
+    502,
+    cors,
+  );
+}
+
+/** `PUT /studylm/state`: what StudyLM's daily reminder needs. */
+async function handleStudyState(
+  request: Request,
+  env: Env,
+  now: () => Date,
+  cors: Record<string, string>,
+): Promise<Response> {
+  if (!(await deviceFor(request, env, now, 'studylm'))) return notPaired(cors);
+  const read = await readBody(request, cors);
+  if ('response' in read) return read.response;
+  const parsed = v.safeParse(StudyReminderStateSchema, read.body);
+  if (!parsed.success) {
+    return json(
+      { message: 'The study state does not match the contract.' },
+      400,
+      cors,
+    );
+  }
+  await env.NUDGES.put(
+    STUDY_STATE_KEY,
+    JSON.stringify({ state: parsed.output, receivedAt: now().toISOString() }),
+  );
+  return new Response(null, { status: 204, headers: cors });
 }
 
 /** Compares two strings in time that doesn't depend on where they differ. */
