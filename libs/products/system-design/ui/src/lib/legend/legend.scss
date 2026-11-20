@@ -1,0 +1,76 @@
+:host {
+  display: inline-block;
+}
+
+.legend-list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+  margin: 0;
+  padding-block: var(--space-1);
+  padding-inline: var(--space-3);
+  border: var(--border-width-hairline) solid var(--color-border-default);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-raised);
+  list-style: none;
+}
+
+.legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-100);
+  color: var(--color-text-muted);
+}
+
+.marker {
+  --sd-marker-color: var(--color-scene-packet-request);
+
+  display: inline-block;
+  inline-size: 9px;
+  block-size: 9px;
+  flex-shrink: 0;
+}
+
+.marker-request {
+  --sd-marker-color: var(--color-scene-packet-request);
+}
+
+.marker-response {
+  --sd-marker-color: var(--color-scene-packet-response);
+}
+
+.marker-handshake {
+  --sd-marker-color: var(--color-scene-packet-handshake);
+}
+
+.marker-write {
+  --sd-marker-color: var(--color-scene-packet-write);
+}
+
+.marker-event {
+  --sd-marker-color: var(--color-scene-packet-event);
+}
+
+.marker-error {
+  --sd-marker-color: var(--color-scene-packet-error);
+}
+
+.shape-dot {
+  border-radius: var(--radius-pill);
+  background: var(--sd-marker-color);
+}
+
+.shape-ring {
+  box-sizing: border-box;
+  border-radius: var(--radius-pill);
+  border: var(--border-width-strong) solid var(--sd-marker-color);
+  background: transparent;
+}
+
+.shape-square {
+  border-radius: 2px;
+  background: var(--sd-marker-color);
+}
