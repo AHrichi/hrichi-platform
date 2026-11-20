@@ -1,0 +1,14 @@
+<svg
+  class="icon-svg"
+  viewBox="0 0 24 24"
+  [attr.width]="size()"
+  [attr.height]="size()"
+  [attr.role]="label() ? 'img' : null"
+  [attr.aria-label]="label() || null"
+  [attr.aria-hidden]="label() ? null : 'true'"
+  focusable="false"
+>
+  @for (d of paths(); track $index) {
+    <path class="icon-stroke" [attr.d]="d" />
+  }
+</svg>
