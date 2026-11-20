@@ -36,7 +36,7 @@ import { SdCylinderGlyph } from '../glyphs/cylinder-glyph';
 import { SdDeviceGlyph } from '../glyphs/device-glyph';
 import { SdDiskGlyph } from '../glyphs/disk-glyph';
 import { SdGlobeGlyph } from '../glyphs/globe-glyph';
-import { pointsToSvg } from '../glyphs/glyph-geometry';
+import { pointsToSvg, resolveGlyphView } from '../glyphs/glyph-geometry';
 import { SdPersonGlyph } from '../glyphs/person-glyph';
 import { SdStackGlyph } from '../glyphs/stack-glyph';
 
@@ -310,18 +310,21 @@ export class SdIsoScene {
       })
       .map((node) => {
         const info = NODE_KINDS[node.kind];
-        const parts = [`${node.label} (${info.label})`];
-        if (node.sublabel) parts.push(node.sublabel);
-        if (node.state && node.state !== 'normal')
-          parts.push(`state ${node.state}`);
-        if (node.load != null)
-          parts.push(`load ${Math.round(node.load * 100)}%`);
-        if (node.badge) parts.push(`badge ${node.badge}`);
+        const view = resolveGlyphView(node);
+        // Match the exact DOM text order inside each glyph so WCAG 2.5.3
+        // (label-content-name-mismatch) sees the visible text inside aria-label.
+        const domTextParts =
+          info.shape === 'person'
+            ? [node.label, view.loadChip?.text, view.badgeText, node.sublabel]
+            : [view.loadChip?.text, view.badgeText, node.label, node.sublabel];
+        const visibleText = domTextParts
+          .filter((x): x is string => Boolean(x))
+          .join(' ');
         return {
           node,
           shape: info.shape,
           fresh: s.fresh.has(node.id),
-          ariaLabel: parts.join(', '),
+          ariaLabel: `${visibleText} (${info.label})`,
         };
       });
   });

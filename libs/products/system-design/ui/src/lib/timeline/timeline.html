@@ -22,10 +22,11 @@
           [class.is-past]="isPast"
           [class.is-visited]="isVisited"
           [attr.aria-current]="isActive ? 'step' : null"
-          [attr.aria-label]="'Step ' + (i + 1) + ': ' + step.label"
           (click)="stepSelected.emit(i)"
         >
-          <span class="step-dot" aria-hidden="true">{{ i + 1 }}</span>
+          <span class="visually-hidden">Step </span>
+          <span class="step-dot">{{ i + 1 }}</span>
+          <span class="visually-hidden">: </span>
           <span class="step-label">{{ step.label }}</span>
         </button>
       </li>

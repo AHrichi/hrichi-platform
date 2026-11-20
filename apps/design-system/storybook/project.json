@@ -8,7 +8,8 @@
     "design-system-ui",
     "learning-ui",
     "three-angular",
-    "product-studylm-learn"
+    "product-studylm-learn",
+    "product-system-design-ui"
   ],
   "targets": {
     "storybook": {

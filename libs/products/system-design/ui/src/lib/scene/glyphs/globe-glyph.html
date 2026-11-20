@@ -76,7 +76,7 @@
         height="17"
         rx="4"
       />
-      <text class="load-text" x="0" y="3">{{ load.text }}</text>
+      <text class="load-text" x="0" y="3">{{ load.text + ' ' }}</text>
     </g>
   }
 
@@ -95,7 +95,7 @@
         height="16"
         rx="8"
       />
-      <text class="badge-text" x="0" y="3.5">{{ badge }}</text>
+      <text class="badge-text" x="0" y="3.5">{{ badge + ' ' }}</text>
     </g>
   }
 
@@ -113,7 +113,7 @@
       [attr.height]="v.labelHeight"
       rx="4"
     />
-    <text class="label-text" x="0" y="3">{{ node().label }}</text>
+    <text class="label-text" x="0" y="3">{{ node().label + ' ' }}</text>
     @if (node().sublabel; as sub) {
       <text class="sublabel-text" x="0" y="14">{{ sub }}</text>
     }

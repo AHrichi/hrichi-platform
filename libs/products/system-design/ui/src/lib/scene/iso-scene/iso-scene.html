@@ -123,29 +123,31 @@
           (keydown.enter)="onNodeActivate($event, item.node.id)"
           (keydown.space)="onNodeActivate($event, item.node.id)"
         >
-          @switch (item.shape) {
-            @case ('cube') {
-              <g sd-cube-glyph [node]="item.node" [fresh]="item.fresh" />
+          <g [attr.aria-hidden]="selectable() ? 'true' : null">
+            @switch (item.shape) {
+              @case ('cube') {
+                <g sd-cube-glyph [node]="item.node" [fresh]="item.fresh" />
+              }
+              @case ('cylinder') {
+                <g sd-cylinder-glyph [node]="item.node" [fresh]="item.fresh" />
+              }
+              @case ('device') {
+                <g sd-device-glyph [node]="item.node" [fresh]="item.fresh" />
+              }
+              @case ('stack') {
+                <g sd-stack-glyph [node]="item.node" [fresh]="item.fresh" />
+              }
+              @case ('globe') {
+                <g sd-globe-glyph [node]="item.node" [fresh]="item.fresh" />
+              }
+              @case ('person') {
+                <g sd-person-glyph [node]="item.node" [fresh]="item.fresh" />
+              }
+              @case ('disk') {
+                <g sd-disk-glyph [node]="item.node" [fresh]="item.fresh" />
+              }
             }
-            @case ('cylinder') {
-              <g sd-cylinder-glyph [node]="item.node" [fresh]="item.fresh" />
-            }
-            @case ('device') {
-              <g sd-device-glyph [node]="item.node" [fresh]="item.fresh" />
-            }
-            @case ('stack') {
-              <g sd-stack-glyph [node]="item.node" [fresh]="item.fresh" />
-            }
-            @case ('globe') {
-              <g sd-globe-glyph [node]="item.node" [fresh]="item.fresh" />
-            }
-            @case ('person') {
-              <g sd-person-glyph [node]="item.node" [fresh]="item.fresh" />
-            }
-            @case ('disk') {
-              <g sd-disk-glyph [node]="item.node" [fresh]="item.fresh" />
-            }
-          }
+          </g>
         </g>
       }
     </g>
