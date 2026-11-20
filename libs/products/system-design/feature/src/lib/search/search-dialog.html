@@ -7,6 +7,8 @@
   <div class="search-panel">
     <div class="search-bar">
       <sd-icon class="search-icon" name="search" [size]="18" />
+      <!-- ARIA combobox (list autocomplete): focus stays here; ↑/↓ move the
+           active option through aria-activedescendant. -->
       <input
         #queryInput
         type="search"
@@ -15,8 +17,8 @@
         aria-label="Search lessons and concepts"
         aria-autocomplete="list"
         aria-controls="sd-search-results"
-        [attr.aria-expanded]="hits().length > 0"
-        [attr.aria-activedescendant]="activeHitId()"
+        [attr.aria-expanded]="ordered().length > 0"
+        [attr.aria-activedescendant]="activeId()"
         [value]="query()"
         placeholder="Search lessons, keywords, concepts…"
         (input)="onInput($event)"
@@ -28,69 +30,60 @@
         aria-label="Close search"
         (click)="closeDialog()"
       >
-        Esc
+        <span aria-hidden="true">Esc</span>
       </button>
     </div>
 
-    <div id="sd-search-results" class="search-results" role="listbox">
+    <div class="search-results">
       @if (!query().trim()) {
         <p class="search-empty">
           Type a topic such as <strong>DNS</strong>, <strong>cache</strong>,
           <strong>sharding</strong> or <strong>load balancer</strong>.
         </p>
-      } @else if (hits().length === 0) {
-        <p class="search-empty">
+      } @else if (ordered().length === 0) {
+        <p class="search-empty" role="status">
           No lessons or cheatsheets matched "{{ query() }}".
         </p>
-      } @else {
-        @if (lessonHits().length > 0) {
-          <div class="result-group">
-            <p class="group-heading">Lessons</p>
-            <ul class="hit-list" role="list">
-              @for (hit of lessonHits(); track hit.id) {
-                <li>
-                  <button
-                    type="button"
-                    role="option"
-                    class="hit-btn"
-                    [id]="'sd-hit-lesson-' + hit.id"
-                    [class.is-active]="isHitActive(hit)"
-                    [attr.aria-selected]="isHitActive(hit)"
-                    (click)="selectHit(hit)"
-                  >
-                    <span class="hit-title">{{ hit.title }}</span>
-                    <span class="hit-detail">{{ hit.detail }}</span>
-                  </button>
-                </li>
-              }
-            </ul>
-          </div>
-        }
-
-        @if (cheatsheetHits().length > 0) {
-          <div class="result-group">
-            <p class="group-heading">Cheatsheets</p>
-            <ul class="hit-list" role="list">
-              @for (hit of cheatsheetHits(); track hit.id + hit.title) {
-                <li>
-                  <button
-                    type="button"
-                    role="option"
-                    class="hit-btn"
-                    [id]="'sd-hit-cheatsheet-' + hit.id"
-                    [class.is-active]="isHitActive(hit)"
-                    [attr.aria-selected]="isHitActive(hit)"
-                    (click)="selectHit(hit)"
-                  >
-                    <span class="hit-title">{{ hit.title }}</span>
-                    <span class="hit-detail">{{ hit.detail }}</span>
-                  </button>
-                </li>
-              }
-            </ul>
-          </div>
-        }
       }
+
+      <!-- The listbox holds only groups and options; each group's visible
+           heading is decorative, its name comes from aria-label. -->
+      <div
+        id="sd-search-results"
+        role="listbox"
+        aria-label="Search results"
+        [hidden]="ordered().length === 0"
+      >
+        @for (group of groups(); track group.kind) {
+          <div
+            class="result-group"
+            role="group"
+            [attr.aria-label]="group.label"
+          >
+            <div class="group-heading" aria-hidden="true">
+              {{ group.label }}
+            </div>
+            <div class="hit-list">
+              @for (item of group.items; track item.index) {
+                <div
+                  class="hit-btn"
+                  role="option"
+                  tabindex="-1"
+                  [id]="optionId(item.index)"
+                  [class.is-active]="item.index === activeIndex()"
+                  [attr.aria-selected]="item.index === activeIndex()"
+                  (mousemove)="activeIndex.set(item.index)"
+                  (click)="selectHit(item.hit)"
+                  (keydown.enter)="selectHit(item.hit)"
+                >
+                  <span class="hit-title">{{ item.hit.title }}</span>
+                  <span class="hit-detail">{{ item.hit.detail }}</span>
+                </div>
+              }
+            </div>
+          </div>
+        }
+      </div>
     </div>
   </div>
 </dialog>

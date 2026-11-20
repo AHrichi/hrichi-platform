@@ -54,28 +54,56 @@ export class SdSearchDialog {
     searchCourse(this.query(), this.store.curriculum(), this.cheatTerms()),
   );
 
-  protected readonly lessonHits = computed(() =>
-    this.hits().filter((h) => h.kind === 'lesson'),
-  );
+  /**
+   * Hits in the order they are shown (lessons, then cheatsheets), so ↑/↓
+   * follow the screen, not the raw score order.
+   */
+  protected readonly ordered = computed<readonly SearchHit[]>(() => [
+    ...this.hits().filter((h) => h.kind === 'lesson'),
+    ...this.hits().filter((h) => h.kind === 'cheatsheet'),
+  ]);
 
-  protected readonly cheatsheetHits = computed(() =>
-    this.hits().filter((h) => h.kind === 'cheatsheet'),
-  );
+  /** The visible groups, each option carrying its index in `ordered`. */
+  protected readonly groups = computed(() => {
+    const items = this.ordered().map((hit, index) => ({ hit, index }));
+    return [
+      {
+        kind: 'lesson',
+        label: 'Lessons',
+        items: items.filter((i) => i.hit.kind === 'lesson'),
+      },
+      {
+        kind: 'cheatsheet',
+        label: 'Cheatsheets',
+        items: items.filter((i) => i.hit.kind === 'cheatsheet'),
+      },
+    ].filter((g) => g.items.length > 0);
+  });
 
-  /** Resets active index to 0 whenever hits change. */
+  /** Resets to the first option whenever the results change. */
   protected readonly activeIndex = linkedSignal<readonly SearchHit[], number>({
-    source: this.hits,
+    source: this.ordered,
     computation: (list) => (list.length > 0 ? 0 : -1),
   });
 
-  protected readonly activeHitId = computed(() => {
-    const idx = this.activeIndex();
-    const list = this.hits();
-    const hit = list[idx];
-    return hit ? `sd-hit-${hit.kind}-${hit.id}` : null;
-  });
+  /** Option ids are positional, so two hits never share an id. */
+  protected optionId(index: number): string {
+    return `sd-hit-${index}`;
+  }
+
+  protected readonly activeId = computed(() =>
+    this.activeIndex() >= 0 ? this.optionId(this.activeIndex()) : null,
+  );
 
   constructor() {
+    // Keep the active option in view as ↑/↓ move it.
+    afterRenderEffect(() => {
+      const id = this.activeId();
+      if (!id) return;
+      const el = this.dialogRef()?.nativeElement.querySelector(`#${id}`);
+      el?.scrollIntoView?.({ block: 'nearest' });
+    });
+
     afterRenderEffect(() => {
       const isOpen = this.open();
       const dialog = this.dialogRef()?.nativeElement;
@@ -114,7 +142,7 @@ export class SdSearchDialog {
   }
 
   protected onInputKey(event: KeyboardEvent): void {
-    const list = this.hits();
+    const list = this.ordered();
     if (event.key === 'Escape') {
       event.preventDefault();
       this.closeDialog();
@@ -133,13 +161,6 @@ export class SdSearchDialog {
       const hit = list[this.activeIndex()] ?? list[0];
       if (hit) this.selectHit(hit);
     }
-  }
-
-  protected isHitActive(hit: SearchHit): boolean {
-    const current = this.hits()[this.activeIndex()];
-    return Boolean(
-      current && current.kind === hit.kind && current.id === hit.id,
-    );
   }
 
   protected selectHit(hit: SearchHit): void {
