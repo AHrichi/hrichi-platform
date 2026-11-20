@@ -1,0 +1,91 @@
+@let c = check();
+@let items = currentItems();
+@let res = result();
+<article class="check-card">
+  <header class="check-header">
+    <p class="check-kind">Put in order</p>
+    <h3 class="check-prompt">
+      <sd-inline-text [text]="c.prompt" />
+    </h3>
+  </header>
+
+  <ol class="order-list" aria-label="Sequence items">
+    @for (item of items; track item; let i = $index) {
+      @let isRightSpot = res !== null && c.items[i] === item;
+      @let isWrongSpot = res !== null && c.items[i] !== item;
+      <li
+        class="order-item"
+        [class.is-correct]="isRightSpot"
+        [class.is-wrong]="isWrongSpot"
+        [attr.data-item]="item"
+      >
+        <span class="order-index" aria-hidden="true">{{ i + 1 }}</span>
+        <span class="order-text">
+          <sd-inline-text [text]="item" />
+        </span>
+        <div class="order-controls">
+          <button
+            type="button"
+            class="move-btn move-up"
+            [disabled]="i === 0 || res !== null"
+            [attr.aria-label]="'Move ' + item + ' up'"
+            (click)="move(i, -1)"
+          >
+            ↑
+          </button>
+          <button
+            type="button"
+            class="move-btn move-down"
+            [disabled]="i === items.length - 1 || res !== null"
+            [attr.aria-label]="'Move ' + item + ' down'"
+            (click)="move(i, 1)"
+          >
+            ↓
+          </button>
+        </div>
+      </li>
+    }
+  </ol>
+
+  @if (res === null) {
+    <div class="check-actions">
+      <button
+        type="button"
+        class="btn btn-primary submit-btn"
+        (click)="submit()"
+      >
+        Check order
+      </button>
+    </div>
+  } @else {
+    <div
+      class="feedback-box"
+      [class.is-correct]="res.correct"
+      [class.is-wrong]="!res.correct"
+      role="status"
+    >
+      <p class="feedback-verdict">
+        {{ res.correct ? '✓ Correct order' : '✗ Wrong order' }}
+      </p>
+      @if (!res.correct) {
+        <p class="feedback-expected">
+          Right order: <strong>{{ res.expected }}</strong>
+        </p>
+      }
+      <p class="feedback-explain">
+        <sd-inline-text [text]="c.explain" />
+      </p>
+      @if (c.step; as stepId) {
+        <div class="check-actions">
+          <button
+            type="button"
+            class="btn btn-secondary review-step-btn"
+            (click)="reviewStep.emit(stepId)"
+          >
+            See it in the lesson →
+          </button>
+        </div>
+      }
+    </div>
+  }
+</article>

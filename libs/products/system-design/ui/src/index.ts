@@ -1,5 +1,6 @@
 export * from './lib/checks/check-choice';
 export * from './lib/checks/check-numeric';
+export * from './lib/checks/check-order';
 export * from './lib/checks/check-types';
 export * from './lib/coming-soon/coming-soon';
 export * from './lib/hud/hud';
