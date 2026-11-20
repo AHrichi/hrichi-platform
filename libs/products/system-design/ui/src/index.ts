@@ -14,3 +14,4 @@ export * from './lib/scene/glyphs/person-glyph';
 export * from './lib/scene/glyphs/stack-glyph';
 export * from './lib/scene/iso-scene/iso-scene';
 export * from './lib/step-panel/step-panel';
+export * from './lib/timeline/timeline';

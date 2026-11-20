@@ -1,0 +1,34 @@
+@let list = steps();
+@let current = currentIndex();
+@let reached = reachedIndex();
+<nav class="timeline-card" aria-label="In this lesson">
+  <div class="timeline-header">
+    <span class="timeline-title">In this lesson</span>
+    <span class="timeline-count">
+      Step {{ current + 1 }} of {{ list.length }}
+    </span>
+  </div>
+
+  <ol class="timeline-track">
+    @for (step of list; track step.id; let i = $index) {
+      @let isActive = i === current;
+      @let isPast = i < current;
+      @let isVisited = i <= reached;
+      <li class="timeline-item">
+        <button
+          type="button"
+          class="step-btn"
+          [class.is-active]="isActive"
+          [class.is-past]="isPast"
+          [class.is-visited]="isVisited"
+          [attr.aria-current]="isActive ? 'step' : null"
+          [attr.aria-label]="'Step ' + (i + 1) + ': ' + step.label"
+          (click)="stepSelected.emit(i)"
+        >
+          <span class="step-dot" aria-hidden="true">{{ i + 1 }}</span>
+          <span class="step-label">{{ step.label }}</span>
+        </button>
+      </li>
+    }
+  </ol>
+</nav>
