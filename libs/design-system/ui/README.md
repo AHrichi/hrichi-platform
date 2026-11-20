@@ -24,6 +24,13 @@ Apps load the styles in this order (see any app's `project.json`): Inter, then `
   - form controls implement `FormValueControl` (Signal Forms).
 - **Generic, not product-specific.** A component joins `@ah/ui` when more than one page needs it. Single-product widgets belong in that product's library.
 
+## Helpers
+
+Not every export is a component. These are plain TypeScript, with no story of their own:
+
+- **`StepTimeline`** is where a stepped visual is, and the controls that move it: step, seek, play, pause, speed (`SPEEDS`) and holds that stop playback until a check is answered. Autoplay keeps time against a wall-clock anchor, so a throttled tab catches up instead of drifting. A step shows for `STEP_MS` at 1×; pass `new StepTimeline(realClock, { stepMs })` to change that, or a fake `Clock` in tests.
+- **`injectReducedMotion()`** returns a signal that tracks `prefers-reduced-motion: reduce`. The global CSS switch doesn't reach animations started from script, so code that animates with the Web Animations API reads this. Call it in an injection context.
+
 ## Checks
 
 ```bash

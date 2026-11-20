@@ -107,6 +107,7 @@
       "@ah/api/ai": ["./libs/api/ai/src/index.ts"],
       "@ah/shared/contracts": ["./libs/shared/contracts/src/index.ts"],
       "@ah/shared/ai-schema": ["./libs/shared/ai-schema/src/index.ts"],
+      "@ah/shared/steps": ["./libs/shared/steps/src/index.ts"],
       "@ah/learning/domain": ["./libs/learning/domain/src/index.ts"],
       "@ah/learning/data-access": ["./libs/learning/data-access/src/index.ts"],
       "@ah/learning/ui": ["./libs/learning/ui/src/index.ts"],
