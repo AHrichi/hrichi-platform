@@ -149,6 +149,13 @@ export class LabScreen {
     };
   });
 
+  protected readonly inspectorTitle = computed(() => {
+    const label = this.store.selectedLabel();
+    return label
+      ? `${this.copy.inspectorHeading}: ${label}`
+      : this.copy.inspectorHeading;
+  });
+
   protected readonly traffic = this.store.effectiveTraffic;
   protected readonly rpsPosition = computed(() =>
     sliderFromRps(this.traffic().rps),

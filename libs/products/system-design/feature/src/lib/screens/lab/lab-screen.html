@@ -124,10 +124,7 @@
             tabindex="-1"
             #inspectorHeading
           >
-            {{ copy.inspectorHeading }}
-            @if (store.selectedNode()) {
-              <span>: {{ store.selectedLabel() }}</span>
-            }
+            {{ inspectorTitle() }}
           </h2>
 
           @if (store.selectedNode(); as node) {
