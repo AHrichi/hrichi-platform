@@ -27,19 +27,6 @@ describe('curriculum', () => {
     ]);
   });
 
-  it('loads the Foundations cheatsheet and extracts search terms', async () => {
-    expect(CHEATSHEETS).toHaveLength(9);
-    const meta = findCheatsheet('foundations');
-    expect(meta?.ready).toBe(true);
-    if (!meta) throw new Error('Expected foundations cheatsheet');
-    const sheet = await meta.load();
-    expect(sheet.module).toBe('foundations');
-    expect(sheet.sections.length).toBeGreaterThanOrEqual(4);
-    const terms = cheatTermsFrom(sheet);
-    expect(terms.length).toBeGreaterThan(0);
-    expect(CHEAT_TERMS.length).toBeGreaterThan(0);
-  });
-
   it('uses each lesson id once, and files each lesson under its module', () => {
     const ids = ALL_LESSONS.map((l) => l.id);
     expect(new Set(ids).size).toBe(ids.length);
@@ -63,6 +50,62 @@ describe('curriculum', () => {
     expect(await meta.load()).toBe(lesson);
   });
 });
+
+describe('cheatsheets', () => {
+  it('has exactly one ready sheet per module, in course order', () => {
+    expect(CHEATSHEETS.map((c) => c.module)).toEqual(
+      CURRICULUM.map((m) => m.id),
+    );
+    expect(CHEATSHEETS.every((c) => c.ready)).toBe(true);
+    expect(findCheatsheet('data')?.title).toBe('Data & Storage Cheatsheet');
+  });
+
+  it('keeps CHEAT_TERMS in step with the sheets (regenerate with tools/scripts/system-design-cheat-terms.mjs)', async () => {
+    const sheets = await Promise.all(CHEATSHEETS.map((c) => c.load()));
+    expect(CHEAT_TERMS).toEqual(sheets.flatMap(cheatTermsFrom));
+  });
+});
+
+describe.each(CHEATSHEETS.map((c) => [c.module, c] as const))(
+  'cheatsheet %s',
+  (module, meta) => {
+    it('loads a sheet for its own module with at least 3 sections', async () => {
+      const sheet = await meta.load();
+      expect(sheet.module).toBe(module);
+      expect(sheet.intro.length).toBeGreaterThan(20);
+      expect(sheet.sections.length).toBeGreaterThanOrEqual(3);
+      const titles = sheet.sections.map((s) => s.title);
+      expect(new Set(titles).size).toBe(titles.length);
+    });
+
+    it('fills every table row and list to shape', async () => {
+      const sheet = await meta.load();
+      for (const section of sheet.sections) {
+        if (section.kind === 'table') {
+          expect(section.rows.length).toBeGreaterThan(0);
+          for (const row of section.rows)
+            expect(row, section.title).toHaveLength(section.columns.length);
+        }
+        if (section.kind === 'numbers')
+          for (const row of section.rows)
+            expect(row[0] && row[1], section.title).toBeTruthy();
+        if (section.kind === 'list')
+          expect(section.items.length).toBeGreaterThanOrEqual(2);
+      }
+    });
+
+    it('links every pattern to a real lesson in this module', async () => {
+      const sheet = await meta.load();
+      const patterns = sheet.sections.filter((s) => s.kind === 'pattern');
+      expect(patterns.length).toBeGreaterThanOrEqual(2);
+      for (const p of patterns) {
+        const lesson = p.lesson ? findLesson(p.lesson) : undefined;
+        expect(lesson, `${p.title} → ${p.lesson}`).toBeDefined();
+        expect(lesson?.module).toBe(module);
+      }
+    });
+  },
+);
 
 // Every lesson, written or still a stand-in, must pass every rule: this is the
 // gate a content agent's lesson goes through (lesson-authoring.md §9).
