@@ -1,3 +1,5 @@
+export * from './lib/checks/check-choice';
+export * from './lib/checks/check-types';
 export * from './lib/coming-soon/coming-soon';
 export * from './lib/hud/hud';
 export * from './lib/icon/icon';
