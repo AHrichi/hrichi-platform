@@ -1,6 +1,7 @@
 export * from './lib/coming-soon/coming-soon';
 export * from './lib/icon/icon';
 export * from './lib/icon/icon-paths';
+export * from './lib/inline-text/inline-text';
 export * from './lib/scene/glyphs/cube-glyph';
 export * from './lib/scene/glyphs/cylinder-glyph';
 export * from './lib/scene/glyphs/device-glyph';

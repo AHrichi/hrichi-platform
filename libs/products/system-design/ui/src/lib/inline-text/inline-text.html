@@ -1,0 +1,16 @@
+@for (token of tokens(); track $index) {
+  @switch (token.kind) {
+    @case ('bold') {
+      <strong class="inline-bold" [textContent]="token.text"></strong>
+    }
+    @case ('code') {
+      <code class="inline-code" [textContent]="token.text"></code>
+    }
+    @case ('em') {
+      <em class="inline-em" [textContent]="token.text"></em>
+    }
+    @default {
+      <span class="inline-plain" [textContent]="token.text"></span>
+    }
+  }
+}
