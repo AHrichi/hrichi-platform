@@ -1,0 +1,282 @@
+{
+  "color": {
+    "$type": "color",
+    "bg": {
+      "canvas": {
+        "$value": "{color.paper.200}"
+      },
+      "surface": {
+        "$value": "{color.paper.100}"
+      },
+      "raised": {
+        "$value": "{color.paper.50}"
+      },
+      "inverse": {
+        "$value": "{color.paper.900}"
+      }
+    },
+    "text": {
+      "default": {
+        "$value": "{color.paper.950}"
+      },
+      "muted": {
+        "$value": "{color.paper.600}"
+      },
+      "inverse": {
+        "$value": "{color.paper.100}"
+      }
+    },
+    "border": {
+      "default": {
+        "$value": "{color.paper.300}"
+      },
+      "strong": {
+        "$value": "{color.paper.400}"
+      },
+      "control": {
+        "$value": "{color.paper.600}"
+      }
+    },
+    "accent": {
+      "default": {
+        "$value": "{color.sage.700}"
+      },
+      "hover": {
+        "$value": "{color.sage.800}"
+      },
+      "subtle": {
+        "$value": "{color.sage.50}"
+      },
+      "on": {
+        "$value": "{color.paper.50}"
+      },
+      "solid": {
+        "$value": "{color.sage.200}"
+      },
+      "solid-hover": {
+        "$value": "{color.sage.300}"
+      },
+      "on-solid": {
+        "$value": "{color.paper.950}"
+      }
+    },
+    "success": {
+      "default": {
+        "$value": "{color.sage.700}"
+      },
+      "subtle": {
+        "$value": "{color.sage.50}"
+      }
+    },
+    "warning": {
+      "default": {
+        "$value": "{color.amber.800}"
+      },
+      "subtle": {
+        "$value": "{color.amber.50}"
+      }
+    },
+    "info": {
+      "default": {
+        "$value": "{color.blue.700}"
+      },
+      "subtle": {
+        "$value": "{color.blue.50}"
+      }
+    },
+    "danger": {
+      "default": {
+        "$value": "{color.red.700}"
+      },
+      "subtle": {
+        "$value": "{color.red.50}"
+      }
+    },
+    "focus": {
+      "ring": {
+        "$value": "{color.sage.700}"
+      }
+    },
+    "scene": {
+      "$description": "Isometric scene colours; defined only by looks. Hue faces: top lightest, right darkest; ink is text on the hue",
+      "grid": {
+        "$value": "{color.paper.300}"
+      },
+      "grid-strong": {
+        "$value": "{color.paper.400}"
+      },
+      "edge": {
+        "$value": "{color.paper.600}"
+      },
+      "label-bg": {
+        "$value": "{color.paper.50}"
+      },
+      "neutral": {
+        "top": {
+          "$value": "{color.paper.50}"
+        },
+        "left": {
+          "$value": "{color.paper.300}"
+        },
+        "right": {
+          "$value": "{color.paper.400}"
+        },
+        "ink": {
+          "$value": "{color.paper.950}"
+        }
+      },
+      "amber": {
+        "top": {
+          "$value": "{color.amber.100}"
+        },
+        "left": {
+          "$value": "{color.amber.200}"
+        },
+        "right": {
+          "$value": "{color.amber.300}"
+        },
+        "ink": {
+          "$value": "{color.amber.800}"
+        }
+      },
+      "blue": {
+        "top": {
+          "$value": "{color.blue.100}"
+        },
+        "left": {
+          "$value": "{color.blue.200}"
+        },
+        "right": {
+          "$value": "{color.blue.300}"
+        },
+        "ink": {
+          "$value": "{color.blue.800}"
+        }
+      },
+      "violet": {
+        "top": {
+          "$value": "{color.violet.100}"
+        },
+        "left": {
+          "$value": "{color.violet.200}"
+        },
+        "right": {
+          "$value": "{color.violet.300}"
+        },
+        "ink": {
+          "$value": "{color.violet.800}"
+        }
+      },
+      "green": {
+        "top": {
+          "$value": "{color.sage.100}"
+        },
+        "left": {
+          "$value": "{color.sage.200}"
+        },
+        "right": {
+          "$value": "{color.sage.300}"
+        },
+        "ink": {
+          "$value": "{color.sage.800}"
+        }
+      },
+      "rose": {
+        "top": {
+          "$value": "{color.rose.100}"
+        },
+        "left": {
+          "$value": "{color.rose.200}"
+        },
+        "right": {
+          "$value": "{color.rose.300}"
+        },
+        "ink": {
+          "$value": "{color.rose.800}"
+        }
+      },
+      "teal": {
+        "top": {
+          "$value": "{color.teal.100}"
+        },
+        "left": {
+          "$value": "{color.teal.200}"
+        },
+        "right": {
+          "$value": "{color.teal.300}"
+        },
+        "ink": {
+          "$value": "{color.teal.800}"
+        }
+      },
+      "red": {
+        "top": {
+          "$value": "{color.red.100}"
+        },
+        "left": {
+          "$value": "{color.red.200}"
+        },
+        "right": {
+          "$value": "{color.red.300}"
+        },
+        "ink": {
+          "$value": "{color.red.800}"
+        }
+      },
+      "packet": {
+        "request": {
+          "$value": "{color.blue.600}"
+        },
+        "response": {
+          "$value": "{color.sage.600}"
+        },
+        "handshake": {
+          "$value": "{color.violet.600}"
+        },
+        "write": {
+          "$value": "{color.amber.700}"
+        },
+        "event": {
+          "$value": "{color.teal.700}"
+        },
+        "error": {
+          "$value": "{color.red.600}"
+        }
+      },
+      "zone": {
+        "neutral": {
+          "$value": "{color.paper.100}"
+        },
+        "amber": {
+          "$value": "{color.amber.50}"
+        },
+        "blue": {
+          "$value": "{color.blue.50}"
+        },
+        "violet": {
+          "$value": "{color.violet.50}"
+        },
+        "green": {
+          "$value": "{color.sage.50}"
+        },
+        "rose": {
+          "$value": "{color.rose.50}"
+        },
+        "teal": {
+          "$value": "{color.teal.50}"
+        },
+        "red": {
+          "$value": "{color.red.50}"
+        }
+      }
+    }
+  },
+  "font": {
+    "family": {
+      "$type": "fontFamily",
+      "mono": {
+        "$value": "'JetBrains Mono Variable', ui-monospace, 'Cascadia Code', Consolas, monospace"
+      }
+    }
+  }
+}
