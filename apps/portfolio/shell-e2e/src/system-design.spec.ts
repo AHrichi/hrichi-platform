@@ -154,6 +154,133 @@ test.describe('System Design, standalone', () => {
     expect(guideAxe.violations).toEqual([]);
   });
 
+  test('practises a finished lesson, saves the answers and keeps the best score after reload', async ({
+    page,
+  }) => {
+    // Finish the golden lesson: showing its recap step completes it.
+    await page.goto(`${STANDALONE}learn/request-journey/11`);
+    await expect(
+      page.getByRole('heading', { level: 2, name: 'Where the time went' }),
+    ).toBeVisible();
+    await expect
+      .poll(async () =>
+        page.evaluate(async () => {
+          const dbs = await indexedDB.databases();
+          const name = dbs.find((d) => d.name?.includes('system_design'))?.name;
+          if (!name) return null;
+          return new Promise<string | null>((resolve) => {
+            const req = indexedDB.open(name);
+            req.onsuccess = () => {
+              const db = req.result;
+              const get = db
+                .transaction('progress', 'readonly')
+                .objectStore('progress')
+                .get('request-journey');
+              get.onsuccess = () => {
+                db.close();
+                resolve(get.result?.completedAt ?? null);
+              };
+              get.onerror = () => {
+                db.close();
+                resolve(null);
+              };
+            };
+            req.onerror = () => resolve(null);
+          });
+        }),
+      )
+      .not.toBeNull();
+
+    // Practice home: mixed practice is unlocked, the lesson isn't practised yet.
+    await page.goto(`${STANDALONE}practice`);
+    await expect(
+      page.getByRole('heading', { level: 1, name: 'Practice' }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole('link', { name: /Start mixed practice/ }),
+    ).toBeVisible();
+    const row = page.locator('[data-lesson="request-journey"]');
+    await expect(row).toContainText('Not practised yet');
+
+    await page
+      .getByRole('link', { name: 'Practice One Request, End to End' })
+      .click();
+    await expect(page).toHaveURL(/\/practice\/request-journey$/);
+    await expect(
+      page.getByRole('heading', { level: 2, name: 'Question 1 of 4' }),
+    ).toBeVisible();
+
+    // 1. Order, submitted as scrambled: wrong.
+    await page.getByRole('button', { name: 'Check order' }).click();
+    await expect(page.getByText('✗ Wrong order')).toBeVisible();
+    await page.getByRole('button', { name: /Next question/ }).click();
+
+    // 2. Choice: right, with the explanation and a way back to the lesson.
+    await expect(
+      page.getByRole('heading', { level: 2, name: 'Question 2 of 4' }),
+    ).toBeVisible();
+    await page
+      .getByRole('radio', { name: 'DNS lookup and TCP/TLS handshakes' })
+      .check();
+    await page.getByRole('button', { name: 'Check answer' }).click();
+    await expect(page.getByText('✓ Correct')).toBeVisible();
+    await expect(
+      page.getByText(/multiple client-to-network round trips/),
+    ).toBeVisible();
+    await expect(
+      page.getByRole('button', { name: /See it in the lesson/ }),
+    ).toBeVisible();
+    const questionAxe = await new AxeBuilder({ page })
+      .include('sd-shell')
+      .analyze();
+    expect(questionAxe.violations).toEqual([]);
+    await page.getByRole('button', { name: /Next question/ }).click();
+
+    // 3. Numeric: right. 4. Choice: wrong.
+    await page.getByRole('spinbutton', { name: 'Answer in ms' }).fill('260');
+    await page.getByRole('button', { name: 'Check answer' }).click();
+    await page.getByRole('button', { name: /Next question/ }).click();
+    await page
+      .getByRole('radio', { name: /The database pushes the second page/ })
+      .check();
+    await page.getByRole('button', { name: 'Check answer' }).click();
+    await page.getByRole('button', { name: /See results/ }).click();
+
+    // Summary: score, missed list, the Learning Engine hand-off, Practice again.
+    await expect(
+      page.getByRole('heading', { level: 2, name: 'Your score' }),
+    ).toBeVisible();
+    await expect(page.getByText('2 of 4 correct')).toBeVisible();
+    await expect(page.locator('.missed-item')).toHaveCount(2);
+    await expect(
+      page.getByRole('link', { name: /See it in the lesson: One Request/ }),
+    ).toHaveCount(2);
+    await expect(
+      page.locator('ah-learn-this').getByText('Add missed to my daily reviews'),
+    ).toBeVisible();
+    await expect(
+      page.getByRole('button', { name: 'Practice again' }),
+    ).toBeVisible();
+    const summaryAxe = await new AxeBuilder({ page })
+      .include('sd-shell')
+      .analyze();
+    expect(summaryAxe.violations).toEqual([]);
+
+    // Reload: the answers were saved, so the best score shows on the home.
+    await page.reload();
+    await expect(
+      page.getByRole('heading', { level: 2, name: 'Question 1 of 4' }),
+    ).toBeVisible();
+    await page.getByRole('link', { name: /Back to practice/ }).click();
+    await expect(page).toHaveURL(/\/practice$/);
+    await expect(row).toContainText('Best');
+    await expect(row).toContainText('2 / 4');
+    const homeAxe = await new AxeBuilder({ page })
+      .include('sd-shell')
+      .analyze();
+    expect(homeAxe.violations).toEqual([]);
+  });
+
   test('phone viewport: fixed bottom transport bar steps forward and back', async ({
     page,
   }) => {

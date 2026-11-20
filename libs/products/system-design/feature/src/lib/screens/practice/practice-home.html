@@ -1,0 +1,85 @@
+@let best = scores();
+@let statuses = store.lessonStatuses();
+<article class="practice-screen" aria-labelledby="sd-practice-title">
+  <div class="practice-head">
+    <h1 id="sd-practice-title">{{ copy.home.title }}</h1>
+    <p class="intro">{{ copy.home.intro }}</p>
+  </div>
+
+  <section class="card mix-card" aria-labelledby="sd-mix-title">
+    <h2 id="sd-mix-title" class="mix-title">{{ copy.home.mixTitle }}</h2>
+    <p class="mix-body">{{ copy.home.mixBody }}</p>
+    <div class="mix-actions">
+      @if (mixReady()) {
+        <a routerLink="mix" class="btn-primary">
+          {{ copy.home.mixStart }} <span aria-hidden="true">→</span>
+        </a>
+      } @else {
+        <button
+          type="button"
+          class="btn-primary"
+          disabled
+          aria-describedby="sd-mix-hint"
+        >
+          {{ copy.home.mixStart }}
+        </button>
+        <p id="sd-mix-hint" class="mix-hint">{{ copy.home.mixLockedHint }}</p>
+      }
+    </div>
+  </section>
+
+  @for (mod of store.curriculum(); track mod.id) {
+    <section
+      class="card module-card"
+      [attr.aria-labelledby]="'sd-practice-mod-' + mod.id"
+    >
+      <h2 class="module-title" [id]="'sd-practice-mod-' + mod.id">
+        {{ (mod.number < 10 ? '0' : '') + mod.number }}. {{ mod.title }}
+      </h2>
+      <ul class="lesson-list">
+        @for (lesson of mod.lessons; track lesson.id) {
+          @let score = best[lesson.id];
+          <li class="lesson-row" [attr.data-lesson]="lesson.id">
+            <div class="lesson-info">
+              <span class="lesson-title">
+                @if (statuses[lesson.id] === 'complete') {
+                  <span class="done-mark" aria-hidden="true">✓</span>
+                }
+                {{ lesson.title }}
+              </span>
+              <span class="lesson-score">
+                @if (!lesson.ready) {
+                  {{ copy.home.soon }}
+                } @else if (score) {
+                  {{ copy.home.best }}
+                  <strong>{{ score.correct }} / {{ score.total }}</strong>
+                } @else {
+                  {{ copy.home.notYet }}
+                }
+              </span>
+            </div>
+            @if (lesson.ready) {
+              <div class="lesson-links">
+                <a
+                  class="btn-secondary"
+                  [routerLink]="lesson.id"
+                  [attr.aria-label]="copy.home.practice + ' ' + lesson.title"
+                >
+                  {{ copy.home.practice }}
+                </a>
+                <a
+                  class="text-link"
+                  [routerLink]="['learn', lesson.id]"
+                  [relativeTo]="shellRoute"
+                  [attr.aria-label]="copy.home.review + ': ' + lesson.title"
+                >
+                  {{ copy.home.review }}
+                </a>
+              </div>
+            }
+          </li>
+        }
+      </ul>
+    </section>
+  }
+</article>

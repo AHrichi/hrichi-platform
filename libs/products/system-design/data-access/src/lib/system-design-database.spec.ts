@@ -65,4 +65,24 @@ describe('SystemDesignDatabase & SystemDesignLocalStore', () => {
 
     db.close();
   });
+
+  it('keeps the practice run on an attempt and survives reopening', async () => {
+    const name = `sd-test-${Math.random()}`;
+    const first = new SystemDesignLocalStore(new SystemDesignDatabase(name));
+    await first.addAttempt({
+      lessonId: 'request-journey',
+      checkId: 'q1',
+      correct: true,
+      answer: ['a', 'b'],
+      at: '2026-11-20T11:00:00.000Z',
+      run: { id: 'run-1', kind: 'lesson', size: 4 },
+    });
+    first.db.close();
+
+    const again = new SystemDesignLocalStore(new SystemDesignDatabase(name));
+    const [row] = await again.attemptsForLesson('request-journey');
+    expect(row.run).toEqual({ id: 'run-1', kind: 'lesson', size: 4 });
+    expect(row.answer).toEqual(['a', 'b']);
+    again.db.close();
+  });
 });

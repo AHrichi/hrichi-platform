@@ -7,7 +7,10 @@ import {
   withMethods,
   withState,
 } from '@ngrx/signals';
-import type { AttemptRow } from '@ah/products/system-design/data-access';
+import type {
+  AttemptRow,
+  AttemptRun,
+} from '@ah/products/system-design/data-access';
 import {
   type CheckResponse,
   type CourseModule,
@@ -250,8 +253,16 @@ export const SystemDesignStore = signalStore(
         answer: CheckResponse,
         correct: boolean,
         at = new Date().toISOString(),
+        run?: AttemptRun,
       ): Promise<AttemptRow> {
-        const entry: AttemptRow = { lessonId, checkId, answer, correct, at };
+        const entry: AttemptRow = {
+          lessonId,
+          checkId,
+          answer,
+          correct,
+          at,
+          ...(run ? { run } : {}),
+        };
         try {
           const local = await runtime.open();
           if (local) {

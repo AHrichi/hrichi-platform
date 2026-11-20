@@ -7,9 +7,22 @@ import Dexie, { type Table } from 'dexie';
 
 export type ProgressRow = LessonProgress;
 
+/**
+ * The practice run an answer belongs to. Not indexed, so it needs no schema
+ * version: best scores group a lesson's answers by `run.id`.
+ */
+export interface AttemptRun {
+  id: string;
+  kind: 'lesson' | 'mix';
+  /** How many questions the run asked. */
+  size: number;
+}
+
 export interface AttemptRow extends Attempt {
   id?: number;
   answer: CheckResponse;
+  /** Absent on answers saved outside a practice run. */
+  run?: AttemptRun;
 }
 
 export interface DesignRow {

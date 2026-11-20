@@ -1,0 +1,27 @@
+@let m = meta();
+<article class="practice-screen" aria-labelledby="sd-practice-title">
+  <div class="practice-head">
+    <p class="eyebrow">{{ copy.run.lessonEyebrow }}</p>
+    <h1 id="sd-practice-title">{{ m?.title ?? copy.home.title }}</h1>
+    <a
+      routerLink="practice"
+      [relativeTo]="shellRoute"
+      class="text-link back-link"
+      >{{ copy.run.back }}</a
+    >
+  </div>
+
+  @if (!m) {
+    <p class="card notice" role="alert">{{ copy.run.unknownLesson }}</p>
+  } @else if (data.isLoading()) {
+    <p class="notice" role="status">{{ copy.run.loading }}</p>
+  } @else if (questions().length === 0) {
+    <p class="card notice">{{ copy.run.noQuestions }}</p>
+  } @else {
+    <sd-practice-run
+      kind="lesson"
+      [questions]="questions()"
+      (again)="again()"
+    />
+  }
+</article>

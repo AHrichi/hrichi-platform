@@ -4,8 +4,12 @@ import { LessonScreen } from './screens/lesson/lesson-screen';
 import {
   CheatsheetsPlaceholderScreen,
   LabPlaceholderScreen,
-  PracticePlaceholderScreen,
 } from './screens/placeholders';
+import {
+  LessonPractice,
+  MixedPractice,
+  PracticeHome,
+} from './screens/practice/practice-screens';
 import { SystemDesignShell } from './shell/system-design-shell';
 
 /**
@@ -36,17 +40,17 @@ export const SYSTEM_DESIGN_ROUTES: Routes = [
       },
       {
         path: 'practice',
-        component: PracticePlaceholderScreen,
+        component: PracticeHome,
         title: 'Practice · System Design',
       },
       {
         path: 'practice/mix',
-        component: PracticePlaceholderScreen,
+        component: MixedPractice,
         title: 'Mixed Practice · System Design',
       },
       {
         path: 'practice/:lessonId',
-        component: PracticePlaceholderScreen,
+        component: LessonPractice,
         title: 'Practice · System Design',
       },
       {
