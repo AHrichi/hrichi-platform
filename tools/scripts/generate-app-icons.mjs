@@ -94,6 +94,18 @@ const APPS = {
     keepManifest: true,
     glyph: `<path d="M25 41 C20 37.5 17 32.5 17 27 C17 18.7 23.7 12 32 12 C40.3 12 47 18.7 47 27 C47 32.5 44 37.5 39 41 V44 H25 Z"/><path d="M26 50 H38 M28.5 55 H35.5"/><path d="M32 22 V31 M28 27 H36" stroke-width="3.6"/>`,
   },
+  'system-design': {
+    dir: 'apps/products/system-design/web',
+    name: 'System Design · Learn how systems grow',
+    shortName: 'System Design',
+    description:
+      'Step-by-step lessons, practice and a traffic lab for system design.',
+    bg: '#f2eadd',
+    fg: '#1f1c18',
+    theme: '#1f1c18',
+    // An isometric cube: one server in a growing system.
+    glyph: `<path d="M32 12 L50 22 V42 L32 52 L14 42 V22 Z"/><path d="M14 22 L32 32 L50 22 M32 32 V52"/>`,
+  },
   'alarm-engine': {
     dir: 'apps/products/alarm-engine/web',
     name: 'Nightly Alarms · Decision engine',

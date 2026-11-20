@@ -1,0 +1,11 @@
+:host {
+  display: block;
+  min-block-size: 100dvh;
+  background: var(--color-bg-canvas);
+  color: var(--color-text-default);
+  font-family: var(--font-family-mono);
+}
+
+.main {
+  padding: var(--space-8) var(--layout-gutter);
+}

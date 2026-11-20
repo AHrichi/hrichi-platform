@@ -1,0 +1,8 @@
+{
+  "name": "product-system-design-domain",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/products/system-design/domain/src",
+  "projectType": "library",
+  "tags": ["scope:product-system-design", "type:domain", "runtime:agnostic"],
+  "targets": {}
+}

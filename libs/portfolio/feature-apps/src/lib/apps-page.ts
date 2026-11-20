@@ -263,6 +263,10 @@ const STANDALONE_APP_ORIGINS: Readonly<
     dev: 'http://localhost:4311',
     prod: 'https://product-learning.ahmed-hrichi.workers.dev',
   },
+  'system-design': {
+    dev: 'http://localhost:4312',
+    prod: 'https://product-system-design.ahmed-hrichi.workers.dev',
+  },
   sky: {
     dev: 'http://localhost:4302',
     prod: 'https://lab-sky.ahmed-hrichi.workers.dev',
@@ -784,6 +788,37 @@ export class AppsPage {
             'تنسيق ذكاء اصطناعي متعدد المستويات عبر n8n مع تبديل تلقائي بين النماذج لضمان التوافر.',
         },
         {
+          id: 'system-design',
+          title: 'System Design · افهم كيف تكبر الأنظمة',
+          category: 'production',
+          badge: {
+            label: 'دورة تفاعلية مع مختبر لحركة المرور',
+            variant: 'info',
+          },
+          eyebrow: 'دروس خطوة بخطوة على مخطط متساوي القياس متحرك',
+          summary:
+            'دورة تفاعلية في تصميم الأنظمة والبنية البرمجية: يشرح كل درس فكرة واحدة خطوة بخطوة على مخطط متساوي القياس متحرك مع مقاييس حية، ثم أسئلة تدريب وملخصات ومختبر تصميم يحاكي حركة المرور في النظام الذي تبنيه. يبقى كل شيء هنا في متصفحك.',
+          route: '/apps/system-design',
+          icon: '🧊',
+          ctaLabel: 'System Design',
+          stack: [
+            'Zoneless Angular 22',
+            'Native Federation',
+            'NgRx SignalStore',
+            'Dexie IndexedDB',
+            'SVG + Web Animations',
+            'Design tokens (paper look)',
+          ],
+          features: [
+            '44 درسًا في 9 وحدات، من طلب واحد إلى تصميم نظام محادثة',
+            'كل خطوة تغيّر المخطط ومقاييسه، مع التحكم من لوحة المفاتيح',
+            'اختبارات تدريب وملخصات قابلة للطباعة ومختبر تصميم بتحديات',
+            'تنضم الأفكار الأساسية إلى مراجعاتك اليومية في Learning Engine',
+          ],
+          architectureNotes:
+            'محتوى الدروس شيفرة مضبوطة الأنواع تُحمَّل عند الحاجة، درس لكل جزء؛ ومخطط كل خطوة دالة نقية تُعاد من عمليات المشهد، فإضافة الدروس لا تغيّر المحرك أبدًا.',
+        },
+        {
           id: 'learning',
           title: 'Learning Engine · التقط أي فكرة وراجعها في 3 دقائق',
           category: 'production',
@@ -1090,6 +1125,37 @@ export class AppsPage {
           ],
           architectureNotes:
             'Orchestration IA multi-paliers via n8n avec basculement automatique Groq 120B / Qwen 27B.',
+        },
+        {
+          id: 'system-design',
+          title: 'System Design · Comprendre comment les systèmes grandissent',
+          category: 'production',
+          badge: {
+            label: 'Cours interactif avec un labo de trafic',
+            variant: 'info',
+          },
+          eyebrow: 'Des leçons pas à pas sur un schéma isométrique animé',
+          summary:
+            'Un cours interactif de conception de systèmes et d’architecture : chaque leçon déroule une idée pas à pas sur un schéma isométrique animé, avec des métriques en direct, puis des questions d’entraînement, des fiches et un Design Lab qui simule le trafic dans le système que vous construisez. Ici, tout reste dans votre navigateur.',
+          route: '/apps/system-design',
+          icon: '🧊',
+          ctaLabel: 'System Design',
+          stack: [
+            'Zoneless Angular 22',
+            'Native Federation',
+            'NgRx SignalStore',
+            'Dexie IndexedDB',
+            'SVG + Web Animations',
+            'Design tokens (paper look)',
+          ],
+          features: [
+            '44 leçons en 9 modules, d’une simple requête à la conception d’une messagerie',
+            'Chaque étape modifie le schéma et ses métriques, au clavier aussi',
+            'Quiz d’entraînement, fiches imprimables et un Design Lab avec des défis',
+            'Les idées clés rejoignent vos révisions quotidiennes dans le Learning Engine',
+          ],
+          architectureNotes:
+            'Le contenu des leçons est du code typé, chargé à la demande, une leçon par fragment ; le schéma de chaque étape est une fonction pure rejouée à partir d’opérations de scène, si bien qu’ajouter des leçons ne modifie jamais le moteur.',
         },
         {
           id: 'learning',
@@ -1408,6 +1474,37 @@ export class AppsPage {
             'Orchestrazione IA multi-livello via n8n con modello principale Groq 120B e failover automatico su Qwen 27B.',
         },
         {
+          id: 'system-design',
+          title: 'System Design · Capire come crescono i sistemi',
+          category: 'production',
+          badge: {
+            label: 'Corso interattivo con un laboratorio di traffico',
+            variant: 'info',
+          },
+          eyebrow: 'Lezioni passo passo su un diagramma isometrico animato',
+          summary:
+            'Un corso interattivo di system design e architettura: ogni lezione segue un’idea passo passo su un diagramma isometrico animato, con metriche dal vivo, poi domande di pratica, schede riassuntive e un Design Lab che simula il traffico nel sistema che costruisci. Qui tutto resta nel tuo browser.',
+          route: '/apps/system-design',
+          icon: '🧊',
+          ctaLabel: 'System Design',
+          stack: [
+            'Zoneless Angular 22',
+            'Native Federation',
+            'NgRx SignalStore',
+            'Dexie IndexedDB',
+            'SVG + Web Animations',
+            'Design tokens (paper look)',
+          ],
+          features: [
+            '44 lezioni in 9 moduli, da una singola richiesta alla progettazione di una chat',
+            'Ogni passo cambia il diagramma e le sue metriche, anche da tastiera',
+            'Quiz di pratica, schede stampabili e un Design Lab con sfide',
+            'Le idee chiave entrano nei tuoi ripassi quotidiani nel Learning Engine',
+          ],
+          architectureNotes:
+            'Il contenuto delle lezioni è codice tipizzato, caricato su richiesta una lezione per chunk; il diagramma di ogni passo è una funzione pura ricostruita dalle operazioni di scena, quindi aggiungere lezioni non cambia mai il motore.',
+        },
+        {
           id: 'learning',
           title: 'Learning Engine · Cattura tutto, ripassa in 3 minuti',
           category: 'production',
@@ -1723,6 +1820,38 @@ export class AppsPage {
             'Mehrstufige KI-Orchestrierung über n8n mit Groq-120B-Reasoning und automatischem Failover auf Qwen 27B.',
         },
         {
+          id: 'system-design',
+          title: 'System Design · Verstehen, wie Systeme wachsen',
+          category: 'production',
+          badge: {
+            label: 'Interaktiver Kurs mit Traffic-Labor',
+            variant: 'info',
+          },
+          eyebrow:
+            'Schritt-für-Schritt-Lektionen auf einem animierten isometrischen Diagramm',
+          summary:
+            'Ein interaktiver Kurs zu Systemdesign und Architektur: Jede Lektion führt eine Idee Schritt für Schritt auf einem animierten isometrischen Diagramm mit Live-Metriken vor, dazu Übungsfragen, Spickzettel und ein Design Lab, das den Traffic durch das von dir gebaute System simuliert. Hier bleibt alles in deinem Browser.',
+          route: '/apps/system-design',
+          icon: '🧊',
+          ctaLabel: 'System Design',
+          stack: [
+            'Zoneless Angular 22',
+            'Native Federation',
+            'NgRx SignalStore',
+            'Dexie IndexedDB',
+            'SVG + Web Animations',
+            'Design tokens (paper look)',
+          ],
+          features: [
+            '44 Lektionen in 9 Modulen, von einer einzelnen Anfrage bis zum Entwurf eines Chat-Systems',
+            'Jeder Schritt verändert das Diagramm und seine Metriken, auch per Tastatur',
+            'Übungsquiz, druckbare Spickzettel und ein Design Lab mit Aufgaben',
+            'Kernideen landen in deinen täglichen Wiederholungen im Learning Engine',
+          ],
+          architectureNotes:
+            'Lektionsinhalte sind typisierter Code, bei Bedarf geladen, eine Lektion pro Chunk; das Diagramm jedes Schritts ist eine reine Funktion, die aus Szenenoperationen nachgespielt wird, daher ändern neue Lektionen nie die Engine.',
+        },
+        {
           id: 'learning',
           title: 'Learning Engine · Alles erfassen, in 3 Minuten wiederholen',
           category: 'production',
@@ -2025,6 +2154,37 @@ export class AppsPage {
         ],
         architectureNotes:
           'Multi-tier AI orchestration via n8n with automated failover and zero telemetry without consent.',
+      },
+      {
+        id: 'system-design',
+        title: 'System Design · Learn How Systems Grow',
+        category: 'production',
+        badge: {
+          label: 'Interactive Course with a Traffic Lab',
+          variant: 'info',
+        },
+        eyebrow: 'Step-by-step lessons on an animated isometric diagram',
+        summary:
+          'An interactive course on system design and architecture: each lesson walks one idea step by step on an animated isometric diagram, with live metrics, then practice questions, cheatsheets and a Design Lab that simulates traffic through the system you build. Here it stays in your browser.',
+        route: '/apps/system-design',
+        icon: '🧊',
+        ctaLabel: 'System Design',
+        stack: [
+          'Zoneless Angular 22',
+          'Native Federation',
+          'NgRx SignalStore',
+          'Dexie IndexedDB',
+          'SVG + Web Animations',
+          'Design tokens (paper look)',
+        ],
+        features: [
+          '44 lessons in 9 modules, from one request to designing a chat system',
+          'Each step changes the diagram and its metrics, with keyboard controls',
+          'Practice quizzes, printable cheatsheets and a Design Lab with challenges',
+          'Key ideas join your daily reviews in the Learning Engine',
+        ],
+        architectureNotes:
+          'Lesson content is typed code, lazily loaded one chunk per lesson; the diagram at each step is a pure function replayed from scene operations, so adding lessons never changes the engine.',
       },
       {
         id: 'learning',

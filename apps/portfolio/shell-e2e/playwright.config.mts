@@ -79,6 +79,13 @@ export default defineConfig({
       cwd: workspaceRoot,
     },
     {
+      // The System Design course (ADR-0025): static, local-first, no API.
+      command: 'pnpm exec nx run product-system-design:serve-static',
+      url: 'http://localhost:4312/remoteEntry.json',
+      reuseExistingServer: true,
+      cwd: workspaceRoot,
+    },
+    {
       command: isCI
         ? 'pnpm exec nx run shell:serve-static'
         : 'pnpm exec nx run shell:serve',

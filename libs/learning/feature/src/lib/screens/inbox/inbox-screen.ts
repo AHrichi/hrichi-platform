@@ -20,7 +20,10 @@ import { SwipeCard, type SwipeDirection } from '@ah/learning/ui';
 const HOLD_MS = 350;
 
 /** Friendly names for apps that send ideas. */
-const APP_NAMES: Record<string, string> = { studylm: 'StudyLM' };
+const APP_NAMES: Record<string, string> = {
+  studylm: 'StudyLM',
+  'system-design': 'System Design',
+};
 
 const STATUS_LABELS: Record<Capture['status'], string> = {
   queued: 'Waiting for the AI',

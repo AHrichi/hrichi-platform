@@ -10,7 +10,8 @@
     "product-basecamp",
     "product-studylm",
     "product-whatsapp",
-    "product-learning"
+    "product-learning",
+    "product-system-design"
   ],
   "// targets": "to see all targets run: nx show project shell-e2e --web",
   "targets": {}

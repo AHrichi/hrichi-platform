@@ -155,6 +155,12 @@ describe('AppsPage', () => {
     expect(resolveStandaloneAppUrl('learning', true)).toBe(
       'http://localhost:4311',
     );
+    expect(resolveStandaloneAppUrl('system-design', false)).toBe(
+      'https://product-system-design.ahmed-hrichi.workers.dev',
+    );
+    expect(resolveStandaloneAppUrl('system-design', true)).toBe(
+      'http://localhost:4312',
+    );
     expect(resolveStandaloneAppUrl('sky', false)).toBe(
       'https://lab-sky.ahmed-hrichi.workers.dev',
     );

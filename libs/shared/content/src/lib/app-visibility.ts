@@ -13,6 +13,7 @@ export type PortfolioAppKey =
   | 'whatsapp'
   | 'basecamp'
   | 'learning'
+  | 'system-design'
   | 'alarm-engine'
   | 'sky'
   | 'rxjs'
@@ -29,6 +30,7 @@ export const PORTFOLIO_APPS_CONFIG: Record<PortfolioAppKey, boolean> = {
   whatsapp: false, // ChatPulse · WhatsApp Intelligence Analyzer
   basecamp: false, // Basecamp · Camping Trip Planner
   learning: true, // Learning Engine · Capture, daily review, streaks (ADR-0024)
+  'system-design': false, // System Design course · step lessons, practice, lab (ADR-0025)
   'alarm-engine': false, // Nightly Alarm Decision Engine
 
   // --- Interactive Engineering Labs ---
@@ -75,6 +77,9 @@ export function isRouteEnabled(route: string): boolean {
     chatpulse: 'whatsapp',
     basecamp: 'basecamp',
     learning: 'learning',
+    'system-design': 'system-design',
+    sysdesign: 'system-design',
+    'scale-lab': 'system-design',
     'alarm-engine': 'alarm-engine',
     alarm: 'alarm-engine',
     'nightly-alarm': 'alarm-engine',

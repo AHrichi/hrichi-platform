@@ -1,0 +1,9 @@
+{
+  "name": "product-system-design-feature",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/products/system-design/feature/src",
+  "prefix": "sd",
+  "projectType": "library",
+  "tags": ["scope:product-system-design", "type:feature", "runtime:browser"],
+  "targets": {}
+}
