@@ -2,7 +2,7 @@
 
 A briefing for whichever AI agent or IDE (Claude Code, Antigravity, …) picks up the System Design course. It assumes no memory of earlier sessions. Read it top to bottom before touching code.
 
-Last updated 2026-11-20, after P3 and the P1A/P1B merges. Next task: **P4** (section 6).
+Last updated 2026-11-20, after P4 (on branch `feat/system-design-p4-ui-kit`). Next task: **P5** (technical-design §11 "P5").
 
 ## 0. Resume in five minutes
 
@@ -47,32 +47,33 @@ The UX was inspired by a public interactive course. **Never copy its text, scena
 
 ## 2. Status
 
-| Phase                             | State                                                                                                                                                  | Commit(s) on the branch    |
-| --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------- |
-| P0 docs and ADR                   | Done                                                                                                                                                   | `d420be1`                  |
-| P1A shared step helpers, PR 1     | Done and merged: `@ah/shared/steps` (`upTo`); `StepTimeline` (with a `stepMs` option), `Clock`, `STEP_MS`, `SPEEDS`, `injectReducedMotion` in `@ah/ui` | `4efebed`, merge `b075ea7` |
-| P1A PR 2 (switch StudyLM to them) | **Not done.** Do it only after the shell has deployed PR 1: `@ah/ui` is a federation singleton                                                         | n/a                        |
-| P1B paper look tokens and font    | Done and merged: `[data-look='paper']` light and dark, `color.scene.*` tokens, contrast gate over 4 themes, JetBrains Mono in the shell and the app    | `0367ac9`, merge `0a0cb24` |
-| P2 app skeleton and registration  | Done: the `product-system-design` remote (port 4312) and its 4 libs, registered everywhere; visibility flag **off**                                    | `e081d06`, `57bf4ed`       |
-| P3 domain core                    | Done: contracts, engines, `validateLesson`, the 44-lesson curriculum (all stand-ins, `ready: false`); 142 tests, 99% line coverage                     | `3a43a63`, `edf68af`       |
-| P4 UI kit and isometric renderer  | **Next**                                                                                                                                               | n/a                        |
-| P5 to P12                         | Not started                                                                                                                                            | n/a                        |
+| Phase                             | State                                                                                                                                                                                                                                                                                                                                                                                                                        | Commit(s) on the branch    |
+| --------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------- |
+| P0 docs and ADR                   | Done                                                                                                                                                                                                                                                                                                                                                                                                                         | `d420be1`                  |
+| P1A shared step helpers, PR 1     | Done and merged: `@ah/shared/steps` (`upTo`); `StepTimeline` (with a `stepMs` option), `Clock`, `STEP_MS`, `SPEEDS`, `injectReducedMotion` in `@ah/ui`                                                                                                                                                                                                                                                                       | `4efebed`, merge `b075ea7` |
+| P1A PR 2 (switch StudyLM to them) | **Not done.** Do it only after the shell has deployed PR 1: `@ah/ui` is a federation singleton                                                                                                                                                                                                                                                                                                                               | n/a                        |
+| P1B paper look tokens and font    | Done and merged: `[data-look='paper']` light and dark, `color.scene.*` tokens, contrast gate over 4 themes, JetBrains Mono in the shell and the app                                                                                                                                                                                                                                                                          | `0367ac9`, merge `0a0cb24` |
+| P2 app skeleton and registration  | Done: the `product-system-design` remote (port 4312) and its 4 libs, registered everywhere; visibility flag **off**                                                                                                                                                                                                                                                                                                          | `e081d06`, `57bf4ed`       |
+| P3 domain core                    | Done: contracts, engines, `validateLesson`, the 44-lesson curriculum (all stand-ins, `ready: false`); 142 tests, 99% line coverage                                                                                                                                                                                                                                                                                           | `3a43a63`, `edf68af`       |
+| P4 UI kit and isometric renderer  | Done (on `feat/system-design-p4-ui-kit`): `sd-icon` (28 icons), 7 isometric glyphs (`cube`, `cylinder`, `device`, `stack`, `globe`, `person`, `disk`), `sd-iso-scene`, `sd-inline-text`, `sd-hud`, `sd-legend`, `sd-step-panel`, `sd-timeline`, `sd-learn-list`, `sd-progress-card`, check widgets (`sd-check-choice`, `sd-check-numeric`, `sd-check-order`), 25 tests in 14 spec files, and 14 paper-look Storybook stories | `6e72713`..`101c130`       |
+| P5 feature shell & lesson player  | **Next**                                                                                                                                                                                                                                                                                                                                                                                                                     | n/a                        |
+| P6 to P12                         | Not started                                                                                                                                                                                                                                                                                                                                                                                                                  | n/a                        |
 
 **Verified:**
 
-- lint, test and build for every touched project;
-- the token gate regenerates with no diff;
-- the `nx format:check`, stylelint and zoneless checks;
+- lint, test and build for every touched project (`product-system-design`, `product-system-design-domain`, `product-system-design-data-access`, `product-system-design-ui`, `product-system-design-feature`, `shared-steps`, `design-system-ui`, `design-system-tokens`, `design-system`, `shell`);
+- the token gate regenerates with no diff, and `export-graph.mjs` regenerates `graph.json` cleanly;
+- the `nx format:check`, stylelint (STRICT on `libs/products/system-design/**/*.scss` and `apps/products/system-design/**/*.scss`) and zoneless checks;
+- `design-system:build-storybook` and Playwright axe + CSP checks (`pnpm nx e2e design-system-e2e -- --grep "System Design/UI Kit|Foundations/Paper look"`): all 14 `System Design/UI Kit` stories and `Foundations/Paper look` pass axe-core and CSP checks in both light and dark themes (30/30 passed);
 - the built app at :4312 in a browser, light and dark: paper colours, JetBrains Mono loaded, no console errors.
 
 **Not verified yet:**
 
 - the Playwright e2e (`apps/portfolio/shell-e2e/src/system-design.spec.ts` exists but hasn't run);
-- the Storybook visual baselines for the new "Foundations/Paper look" story (they must be made in CI's Linux image: `nx run design-system-e2e:update-baselines`).
+- the Storybook visual regression screenshot baselines for `"Foundations/Paper look"` and `"System Design/UI Kit"` stories (skipped locally because `VISUAL_REGRESSION` runs only in CI's Linux Playwright image: `nx run design-system-e2e:update-baselines`).
 
 **Open loose ends:**
 
-- Add the Storybook stories glob for `libs/products/system-design/ui` to `apps/design-system/storybook/.storybook/main.ts`, with `implicitDependencies: ["product-system-design-ui"]` in its `project.json`, when P4 adds the first stories.
 - P1A PR 2, above.
 - Five lint warnings existed before this work: one in `libs/design-system/ui/src/lib/modal/modal.stories.ts`, four in `apps/portfolio/shell/src/app/app-available.guard*.ts`. Leave them alone.
 
