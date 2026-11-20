@@ -1,4 +1,10 @@
 import { validateLesson } from '../validate/lesson';
+import {
+  CHEATSHEETS,
+  CHEAT_TERMS,
+  cheatTermsFrom,
+  findCheatsheet,
+} from './cheatsheets';
 import { ALL_LESSONS, CURRICULUM, findLesson, ready } from './curriculum';
 import { pendingLesson } from './lessons/pending';
 
@@ -8,6 +14,30 @@ describe('curriculum', () => {
       1, 2, 3, 4, 5, 6, 7, 8, 9,
     ]);
     expect(ALL_LESSONS).toHaveLength(44);
+  });
+
+  it('marks the 4 Foundations lessons as ready', () => {
+    const foundations = CURRICULUM[0];
+    expect(foundations.id).toBe('foundations');
+    expect(foundations.lessons.map((l) => [l.id, l.ready])).toEqual([
+      ['request-journey', true],
+      ['latency-throughput', true],
+      ['napkin-math', true],
+      ['availability', true],
+    ]);
+  });
+
+  it('loads the Foundations cheatsheet and extracts search terms', async () => {
+    expect(CHEATSHEETS).toHaveLength(9);
+    const meta = findCheatsheet('foundations');
+    expect(meta?.ready).toBe(true);
+    if (!meta) throw new Error('Expected foundations cheatsheet');
+    const sheet = await meta.load();
+    expect(sheet.module).toBe('foundations');
+    expect(sheet.sections.length).toBeGreaterThanOrEqual(4);
+    const terms = cheatTermsFrom(sheet);
+    expect(terms.length).toBeGreaterThan(0);
+    expect(CHEAT_TERMS.length).toBeGreaterThan(0);
   });
 
   it('uses each lesson id once, and files each lesson under its module', () => {

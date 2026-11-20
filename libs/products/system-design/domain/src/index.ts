@@ -22,3 +22,10 @@ export * from './lib/engine/practice';
 export * from './lib/validate/lesson';
 
 export { ALL_LESSONS, CURRICULUM, findLesson } from './lib/content/curriculum';
+export {
+  CHEATSHEETS,
+  CHEAT_TERMS,
+  type CheatsheetMeta,
+  cheatTermsFrom,
+  findCheatsheet,
+} from './lib/content/cheatsheets';

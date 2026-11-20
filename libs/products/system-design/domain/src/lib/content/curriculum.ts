@@ -23,6 +23,7 @@ type Row = [
   minutes: number,
   summary: string,
   keywords: readonly string[],
+  load?: LessonMeta['load'],
 ];
 
 const L: Record<string, Level> = {
@@ -64,7 +65,13 @@ function mod(
   hue: Hue,
   rows: readonly Row[],
 ): CourseModule {
-  return { id, number, title, hue, lessons: rows.map((r) => soon(id, r)) };
+  return {
+    id,
+    number,
+    title,
+    hue,
+    lessons: rows.map((r) => (r[6] ? ready(id, r, r[6]) : soon(id, r))),
+  };
 }
 
 export const CURRICULUM: readonly CourseModule[] = [
@@ -76,6 +83,8 @@ export const CURRICULUM: readonly CourseModule[] = [
       11,
       'Follow one page load from a tap to a rendered page, and see where the time goes.',
       ['dns', 'tcp', 'tls', 'http', 'latency', 'round trip'],
+      () =>
+        import('./lessons/foundations/request-journey').then((m) => m.lesson),
     ],
     [
       'latency-throughput',
@@ -91,6 +100,10 @@ export const CURRICULUM: readonly CourseModule[] = [
         'utilization',
         'little’s law',
       ],
+      () =>
+        import('./lessons/foundations/latency-throughput').then(
+          (m) => m.lesson,
+        ),
     ],
     [
       'napkin-math',
@@ -99,6 +112,7 @@ export const CURRICULUM: readonly CourseModule[] = [
       12,
       'Turn users into requests, bytes and machines with quick, honest estimates.',
       ['estimation', 'rps', 'storage', 'bandwidth', 'dau', 'capacity'],
+      () => import('./lessons/foundations/napkin-math').then((m) => m.lesson),
     ],
     [
       'availability',
@@ -107,6 +121,7 @@ export const CURRICULUM: readonly CourseModule[] = [
       9,
       'What 99.9% really allows, and how dependencies and redundancy change it.',
       ['availability', 'nines', 'sla', 'slo', 'error budget', 'downtime'],
+      () => import('./lessons/foundations/availability').then((m) => m.lesson),
     ],
   ]),
   mod('scaling', 2, 'Scaling', 'blue', [

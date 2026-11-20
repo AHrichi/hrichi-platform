@@ -12,6 +12,7 @@ import {
   viewChild,
 } from '@angular/core';
 import {
+  CHEAT_TERMS,
   type CheatTerm,
   searchCourse,
   type SearchHit,
@@ -35,7 +36,7 @@ import { SystemDesignStore } from '../store/system-design.store';
 })
 export class SdSearchDialog {
   readonly open = input<boolean>(false);
-  readonly cheatTerms = input<readonly CheatTerm[]>([]);
+  readonly cheatTerms = input<readonly CheatTerm[]>(CHEAT_TERMS);
 
   readonly closed = output<void>();
 
