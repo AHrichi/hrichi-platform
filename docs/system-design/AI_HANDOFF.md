@@ -7,7 +7,7 @@ This is a briefing for an AI agent that picks up the System Design course. Read 
 - [ADR-0025](../adr/0025-system-design-course.md) for the decisions;
 - `docs/architecture.md` for the platform.
 
-Last updated 2026-11-20 (P0).
+Last updated 2026-11-20 (P2).
 
 ## 1. What this is
 
@@ -23,14 +23,15 @@ It is English first, static and local-first (IndexedDB), with a paper look. It h
 
 ## 2. What is live
 
-| Phase                   | State                                                                               |
-| ----------------------- | ----------------------------------------------------------------------------------- |
-| P0 docs and ADR         | Done (this file, ADR-0025, technical design, authoring guide)                       |
-| P1A shared step helpers | PR 1 proposed as a separate session; PR 2 (switch StudyLM) waits for PR 1 to deploy |
-| P1B paper look tokens   | Proposed as a separate session                                                      |
-| P2 to P12               | Not started                                                                         |
+| Phase                        | State                                                                                                |
+| ---------------------------- | ---------------------------------------------------------------------------------------------------- |
+| P0 docs and ADR              | Done (this file, ADR-0025, technical design, authoring guide)                                        |
+| P1A shared step helpers      | PR 1 committed on its own branch (session "P1A PR1"); PR 2 (switch StudyLM) waits for PR 1 to deploy |
+| P1B paper look tokens        | In progress in its own session and branch                                                            |
+| P2 skeleton and registration | Done: placeholder shell builds, lints and tests; the flag is off                                     |
+| P3 to P12                    | Not started                                                                                          |
 
-Nothing is deployed yet. The app will deploy standalone to `https://product-system-design.ahmed-hrichi.workers.dev` once its `deploy` target lands on `main`. It stays hidden in the portfolio until P12.
+Nothing is deployed yet. Two P2 items wait for other phases: the app's `styles` line for `@fontsource-variable/jetbrains-mono` (add it once P1B has installed the package) and the Storybook stories glob for `libs/products/system-design/ui` (add it in P4 with the first stories). The app will deploy standalone to `https://product-system-design.ahmed-hrichi.workers.dev` once its `deploy` target lands on `main`. It stays hidden in the portfolio until P12.
 
 ## 3. Code map (target; see the technical design §1)
 
