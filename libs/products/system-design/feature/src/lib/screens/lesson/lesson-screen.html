@@ -1,0 +1,144 @@
+@let lesson = store.activeLesson();
+@let meta = store.activeMeta();
+@let step = currentStep();
+@let state = sceneState();
+
+@if (lesson && meta && step && state) {
+  <div class="lesson-layout" [class.is-standalone]="standalone">
+    <!-- Main column: header, stage, timeline -->
+    <div class="main-col">
+      <header class="header-card">
+        <div class="header-top">
+          @if (breadcrumb(); as crumb) {
+            <p class="breadcrumb">{{ crumb }}</p>
+          }
+          <div class="meta-chips">
+            <span class="meta-chip">
+              <sd-icon name="clock" [size]="13" />
+              {{ meta.minutes }} min
+            </span>
+            <span class="meta-chip level-chip">{{ meta.level }}</span>
+            <span class="meta-chip">{{ lesson.steps.length }} steps</span>
+            @if (!meta.ready) {
+              <span class="meta-chip soon-chip">preview</span>
+            }
+          </div>
+        </div>
+        <h1 class="lesson-title">{{ meta.title }}</h1>
+        <p class="lesson-summary">{{ meta.summary }}</p>
+      </header>
+
+      <section
+        class="stage-card"
+        [class.is-fullscreen]="stageFullscreen()"
+        aria-label="Architecture diagram stage"
+      >
+        <div class="stage-bar">
+          <sd-hud
+            class="stage-hud"
+            [hud]="lesson.hud"
+            [metrics]="state.metrics"
+            [fresh]="state.fresh"
+          />
+
+          <div class="stage-tools">
+            <button
+              type="button"
+              class="tool-btn replay-btn"
+              title="Replay packet animation (R)"
+              (click)="replayPackets()"
+            >
+              Replay
+            </button>
+            <button
+              type="button"
+              class="tool-btn pause-btn"
+              [attr.aria-pressed]="!packetPlaying()"
+              title="Pause or resume animation (Space)"
+              (click)="togglePackets()"
+            >
+              {{ packetPlaying() ? 'Pause' : 'Resume' }}
+            </button>
+            <button
+              type="button"
+              class="tool-btn expand-btn"
+              [attr.aria-expanded]="stageFullscreen()"
+              (click)="toggleFullscreen()"
+            >
+              {{ stageFullscreen() ? 'Exit full screen' : 'Expand' }}
+            </button>
+          </div>
+        </div>
+
+        <div class="stage-canvas">
+          <sd-iso-scene
+            #isoScene
+            [state]="state"
+            [playing]="packetPlaying()"
+            [speed]="timeline.speed()"
+            [reducedMotion]="reducedMotion()"
+            [label]="step.title"
+          />
+        </div>
+
+        <div class="stage-footer">
+          <sd-legend />
+        </div>
+      </section>
+
+      <sd-timeline
+        class="timeline-block"
+        [steps]="lesson.steps"
+        [currentIndex]="stepIndex()"
+        [furthestIndex]="furthestStep()"
+        (stepSelected)="goToStepIndex($event)"
+      />
+    </div>
+
+    <!-- Right column: step panel + You'll learn -->
+    <aside class="right-col" aria-label="Step details and learning goals">
+      <sd-step-panel
+        [step]="step"
+        [stepIndex]="stepIndex()"
+        [stepCount]="lesson.steps.length"
+        [nextStepLabel]="nextStepLabel()"
+        [canBack]="stepIndex() > 0"
+        [canNext]="stepIndex() < lesson.steps.length - 1"
+        [nextLessonTitle]="store.activePlace()?.next?.title ?? null"
+        (back)="stepBack()"
+        (next)="stepForward()"
+        (practiceRequested)="openPractice()"
+        (nextLessonRequested)="openNextLesson()"
+      />
+
+      <sd-learn-list [items]="lesson.learn" [learned]="state.learned" />
+    </aside>
+
+    <!-- Phone bottom navigation bar (standalone only) -->
+    @if (standalone) {
+      <div class="phone-bottom-bar" aria-label="Step navigation">
+        <button
+          type="button"
+          class="phone-nav-btn phone-back"
+          [disabled]="stepIndex() <= 0"
+          (click)="stepBack()"
+        >
+          ← Back
+        </button>
+        <span class="phone-step-indicator">
+          {{ stepIndex() + 1 }} / {{ lesson.steps.length }}
+        </span>
+        <button
+          type="button"
+          class="phone-nav-btn phone-next"
+          [disabled]="stepIndex() >= lesson.steps.length - 1"
+          (click)="stepForward()"
+        >
+          {{ nextStepLabel() ? 'Next: ' + nextStepLabel() + ' →' : 'Next →' }}
+        </button>
+      </div>
+    }
+  </div>
+} @else {
+  <p class="loading-state" role="status">Loading lesson…</p>
+}

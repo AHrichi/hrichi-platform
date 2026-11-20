@@ -1,3 +1,235 @@
-<main class="main">
-  <sd-coming-soon [heading]="copy.heading" [body]="copy.comingSoon" />
-</main>
+@let statuses = store.lessonStatuses();
+@let counts = moduleCountsMap();
+
+<div class="shell-root" [class.is-standalone]="standalone">
+  <!-- Top bar -->
+  <header class="topbar">
+    <div class="topbar-start">
+      <button
+        type="button"
+        class="menu-btn"
+        [attr.aria-expanded]="store.drawerOpen()"
+        [attr.aria-label]="copy.menuToggleLabel"
+        (click)="store.toggleDrawer()"
+      >
+        <sd-icon name="layers" [size]="18" />
+        <span class="menu-btn-text">Course</span>
+      </button>
+
+      <a class="brand" routerLink="learn">
+        <span class="brand-mark" aria-hidden="true">◆</span>
+        <span class="brand-text">
+          <span class="brand-name">{{ copy.heading }}</span>
+          <span class="brand-sub">{{ copy.brandLine }}</span>
+        </span>
+      </a>
+    </div>
+
+    <nav class="topbar-tabs" aria-label="System Design sections">
+      <a
+        routerLink="learn"
+        routerLinkActive="is-active"
+        ariaCurrentWhenActive="page"
+      >
+        {{ copy.tabs.learn }}
+      </a>
+      <a
+        routerLink="practice"
+        routerLinkActive="is-active"
+        ariaCurrentWhenActive="page"
+      >
+        {{ copy.tabs.practice }}
+      </a>
+      <a
+        routerLink="lab"
+        routerLinkActive="is-active"
+        ariaCurrentWhenActive="page"
+      >
+        {{ copy.tabs.lab }}
+      </a>
+      <a
+        routerLink="cheatsheets"
+        routerLinkActive="is-active"
+        ariaCurrentWhenActive="page"
+      >
+        {{ copy.tabs.cheatsheets }}
+      </a>
+      <a
+        routerLink="guide"
+        routerLinkActive="is-active"
+        ariaCurrentWhenActive="page"
+      >
+        {{ copy.tabs.guide }}
+      </a>
+    </nav>
+
+    <div class="topbar-end">
+      <button type="button" class="search-trigger" (click)="store.openSearch()">
+        <sd-icon name="search" [size]="15" />
+        <span class="search-trigger-text">{{ copy.searchPrompt }}</span>
+        <kbd class="search-kbd">{{ copy.searchShortcut }}</kbd>
+      </button>
+
+      <button
+        type="button"
+        class="theme-btn"
+        [attr.aria-label]="
+          preferences.isDark()
+            ? 'Switch to light theme'
+            : 'Switch to dark theme'
+        "
+        (click)="preferences.toggleTheme()"
+      >
+        {{ preferences.isDark() ? '☀ Light' : '☾ Dark' }}
+      </button>
+    </div>
+  </header>
+
+  @if (store.drawerOpen()) {
+    <div
+      class="drawer-backdrop"
+      aria-hidden="true"
+      (click)="store.closeDrawer()"
+    ></div>
+  }
+
+  <div class="workspace">
+    <!-- Left course sidebar / tablet & phone drawer -->
+    <aside
+      class="sidebar"
+      [class.is-open]="store.drawerOpen()"
+      aria-label="Course curriculum"
+    >
+      <div class="sidebar-header">
+        <span class="sidebar-title">{{ copy.courseHeading }}</span>
+        <button
+          type="button"
+          class="drawer-close-btn"
+          [attr.aria-label]="copy.closeMenuLabel"
+          (click)="store.closeDrawer()"
+        >
+          ✕
+        </button>
+      </div>
+
+      <!-- Mobile section tabs inside drawer -->
+      <nav class="drawer-tabs" aria-label="Course sections">
+        <a
+          routerLink="learn"
+          routerLinkActive="is-active"
+          (click)="store.closeDrawer()"
+        >
+          {{ copy.tabs.learn }}
+        </a>
+        <a
+          routerLink="practice"
+          routerLinkActive="is-active"
+          (click)="store.closeDrawer()"
+        >
+          {{ copy.tabs.practice }}
+        </a>
+        <a
+          routerLink="lab"
+          routerLinkActive="is-active"
+          (click)="store.closeDrawer()"
+        >
+          {{ copy.tabs.lab }}
+        </a>
+        <a
+          routerLink="cheatsheets"
+          routerLinkActive="is-active"
+          (click)="store.closeDrawer()"
+        >
+          {{ copy.tabs.cheatsheets }}
+        </a>
+        <a
+          routerLink="guide"
+          routerLinkActive="is-active"
+          (click)="store.closeDrawer()"
+        >
+          {{ copy.tabs.guide }}
+        </a>
+      </nav>
+
+      <div class="module-tree">
+        @for (mod of store.curriculum(); track mod.id) {
+          @let open = isModuleExpanded(mod.id);
+          @let count = counts.get(mod.id);
+          <div class="module-group" [attr.data-module]="mod.id">
+            <button
+              type="button"
+              class="module-folder"
+              [attr.aria-expanded]="open"
+              (click)="toggleModule(mod.id)"
+            >
+              <span
+                [class]="'folder-swatch swatch-' + mod.hue"
+                aria-hidden="true"
+              ></span>
+              <span class="module-label">
+                {{ formatModuleNumber(mod.number) }}. {{ mod.title }}
+              </span>
+              <span class="module-ratio">
+                {{ count?.done ?? 0 }}/{{ count?.total ?? mod.lessons.length }}
+              </span>
+            </button>
+
+            @if (open) {
+              <ul class="lesson-list" role="list">
+                @for (lesson of mod.lessons; track lesson.id) {
+                  @let isCurrent = store.activeLessonId() === lesson.id;
+                  @let status = statuses[lesson.id];
+                  <li>
+                    <button
+                      type="button"
+                      class="lesson-link"
+                      [class.is-active]="isCurrent"
+                      [class.is-complete]="status === 'complete'"
+                      [attr.data-lesson-id]="lesson.id"
+                      [attr.aria-current]="isCurrent ? 'page' : null"
+                      (click)="selectLesson(lesson.id)"
+                    >
+                      <span class="lesson-status-mark" aria-hidden="true">
+                        {{
+                          status === 'complete'
+                            ? '✓'
+                            : status === 'started'
+                              ? '◐'
+                              : '·'
+                        }}
+                      </span>
+                      <span class="lesson-link-title">{{ lesson.title }}</span>
+                      @if (!lesson.ready) {
+                        <span class="lesson-soon-tag">soon</span>
+                      }
+                    </button>
+                  </li>
+                }
+              </ul>
+            }
+          </div>
+        }
+      </div>
+
+      <div class="sidebar-footer">
+        <sd-progress-card
+          [progress]="store.courseProgress()"
+          [modules]="store.curriculum()"
+        />
+      </div>
+    </aside>
+
+    <!-- Main content area -->
+    <div class="main-area" [attr.role]="standalone ? 'main' : null">
+      @if (store.fatal(); as fatal) {
+        <p class="fatal-banner" role="alert">{{ fatal }}</p>
+      }
+      <router-outlet />
+    </div>
+  </div>
+
+  <sd-search-dialog
+    [open]="store.searchOpen()"
+    (closed)="store.closeSearch()"
+  />
+</div>

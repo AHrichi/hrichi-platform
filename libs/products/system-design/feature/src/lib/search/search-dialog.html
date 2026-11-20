@@ -1,0 +1,96 @@
+<dialog
+  #dialogEl
+  class="search-dialog"
+  aria-label="Search lessons and concepts"
+  (close)="closeDialog()"
+>
+  <div class="search-panel">
+    <div class="search-bar">
+      <sd-icon class="search-icon" name="search" [size]="18" />
+      <input
+        #queryInput
+        type="search"
+        class="search-input"
+        role="combobox"
+        aria-label="Search lessons and concepts"
+        aria-autocomplete="list"
+        aria-controls="sd-search-results"
+        [attr.aria-expanded]="hits().length > 0"
+        [attr.aria-activedescendant]="activeHitId()"
+        [value]="query()"
+        placeholder="Search lessons, keywords, concepts…"
+        (input)="onInput($event)"
+        (keydown)="onInputKey($event)"
+      />
+      <button
+        type="button"
+        class="close-btn"
+        aria-label="Close search"
+        (click)="closeDialog()"
+      >
+        Esc
+      </button>
+    </div>
+
+    <div id="sd-search-results" class="search-results" role="listbox">
+      @if (!query().trim()) {
+        <p class="search-empty">
+          Type a topic such as <strong>DNS</strong>, <strong>cache</strong>,
+          <strong>sharding</strong> or <strong>load balancer</strong>.
+        </p>
+      } @else if (hits().length === 0) {
+        <p class="search-empty">
+          No lessons or cheatsheets matched "{{ query() }}".
+        </p>
+      } @else {
+        @if (lessonHits().length > 0) {
+          <div class="result-group">
+            <p class="group-heading">Lessons</p>
+            <ul class="hit-list" role="list">
+              @for (hit of lessonHits(); track hit.id) {
+                <li>
+                  <button
+                    type="button"
+                    role="option"
+                    class="hit-btn"
+                    [id]="'sd-hit-lesson-' + hit.id"
+                    [class.is-active]="isHitActive(hit)"
+                    [attr.aria-selected]="isHitActive(hit)"
+                    (click)="selectHit(hit)"
+                  >
+                    <span class="hit-title">{{ hit.title }}</span>
+                    <span class="hit-detail">{{ hit.detail }}</span>
+                  </button>
+                </li>
+              }
+            </ul>
+          </div>
+        }
+
+        @if (cheatsheetHits().length > 0) {
+          <div class="result-group">
+            <p class="group-heading">Cheatsheets</p>
+            <ul class="hit-list" role="list">
+              @for (hit of cheatsheetHits(); track hit.id + hit.title) {
+                <li>
+                  <button
+                    type="button"
+                    role="option"
+                    class="hit-btn"
+                    [id]="'sd-hit-cheatsheet-' + hit.id"
+                    [class.is-active]="isHitActive(hit)"
+                    [attr.aria-selected]="isHitActive(hit)"
+                    (click)="selectHit(hit)"
+                  >
+                    <span class="hit-title">{{ hit.title }}</span>
+                    <span class="hit-detail">{{ hit.detail }}</span>
+                  </button>
+                </li>
+              }
+            </ul>
+          </div>
+        }
+      }
+    </div>
+  </div>
+</dialog>

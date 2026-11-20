@@ -122,10 +122,11 @@ export const SystemDesignStore = signalStore(
       stepCount?: number,
       nowIso = new Date().toISOString(),
     ): LessonProgress {
+      const active = store.activeLesson();
       const total =
         stepCount ??
-        (store.activeLesson()?.id === lessonId
-          ? store.activeLesson()!.steps.length
+        (active?.id === lessonId
+          ? active.steps.length
           : (lessonCache.get(lessonId)?.steps.length ?? 6));
       const clamped = Math.max(0, Math.min(stepIndex, Math.max(0, total - 1)));
       const prev = store.progressById()[lessonId];
