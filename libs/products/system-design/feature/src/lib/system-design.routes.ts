@@ -1,9 +1,10 @@
 import type { Routes } from '@angular/router';
 import { GuideScreen } from './screens/guide/guide-screen';
+import { LabHome } from './screens/lab/lab-home';
+import { LabScreen } from './screens/lab/lab-screen';
 import { LessonScreen } from './screens/lesson/lesson-screen';
 import {
   CheatsheetsPlaceholderScreen,
-  LabPlaceholderScreen,
   PracticePlaceholderScreen,
 } from './screens/placeholders';
 import { SystemDesignShell } from './shell/system-design-shell';
@@ -51,12 +52,12 @@ export const SYSTEM_DESIGN_ROUTES: Routes = [
       },
       {
         path: 'lab',
-        component: LabPlaceholderScreen,
+        component: LabHome,
         title: 'Design Lab · System Design',
       },
       {
         path: 'lab/:challengeId',
-        component: LabPlaceholderScreen,
+        component: LabScreen,
         title: 'Design Lab · System Design',
       },
       {

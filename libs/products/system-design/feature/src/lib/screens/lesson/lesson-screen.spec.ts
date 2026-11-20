@@ -29,8 +29,11 @@ describe('LessonScreen', () => {
     const router = TestBed.inject(Router);
     const store = TestBed.inject(SystemDesignStore);
 
-    // Wait for async lesson load & route redirect to settle
-    await new Promise((r) => setTimeout(r, 30));
+    // Wait for async lesson load & route redirect to settle (polls, so a
+    // busy test worker can't outrun a fixed delay).
+    for (let i = 0; i < 100 && !store.activeLesson(); i++) {
+      await new Promise((r) => setTimeout(r, 20));
+    }
     await harness.fixture.whenStable();
 
     expect(router.url).toBe('/learn/request-journey/1');

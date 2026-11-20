@@ -1,7 +1,9 @@
 import type {
   Attempt,
   CheckResponse,
+  LabDesign,
   LessonProgress,
+  Traffic,
 } from '@ah/products/system-design/domain';
 import Dexie, { type Table } from 'dexie';
 
@@ -15,8 +17,9 @@ export interface AttemptRow extends Attempt {
 export interface DesignRow {
   /** Challenge id, or `'free'` for the sandbox. */
   id: string;
-  design: unknown;
-  traffic?: unknown;
+  design: LabDesign;
+  /** The sandbox's traffic controls; challenges fix their own. */
+  traffic?: Traffic;
   updatedAt: string;
 }
 

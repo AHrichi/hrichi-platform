@@ -1,0 +1,46 @@
+<div class="lab-home">
+  <div class="intro-card">
+    <h1 class="title">{{ copy.homeHeading }}</h1>
+    <p class="intro">{{ copy.homeIntro }}</p>
+    <p class="note">{{ copy.approximations }}</p>
+  </div>
+
+  <section class="section" aria-labelledby="lab-challenges-heading">
+    <h2 id="lab-challenges-heading" class="section-title">
+      {{ copy.challengesHeading }}
+    </h2>
+    <ol class="cards">
+      @for (card of cards(); track card.challenge.id; let i = $index) {
+        <li class="card" [attr.data-challenge-id]="card.challenge.id">
+          <div class="card-top">
+            <span class="card-number">{{ i + 1 }}</span>
+            <span [class]="'status status-' + card.status">
+              {{ copy.status[card.status] }}
+            </span>
+          </div>
+          <h3 class="card-title">
+            <a class="card-link" [routerLink]="[card.challenge.id]">
+              {{ card.challenge.title }}
+            </a>
+          </h3>
+          <p class="card-brief">{{ card.challenge.brief }}</p>
+          <ul class="goal-chips" aria-label="Goals">
+            @for (goal of card.goals; track goal) {
+              <li class="goal-chip">{{ goal }}</li>
+            }
+          </ul>
+        </li>
+      }
+    </ol>
+  </section>
+
+  <section class="section sandbox" aria-labelledby="lab-sandbox-heading">
+    <h2 id="lab-sandbox-heading" class="section-title">
+      {{ copy.sandboxHeading }}
+    </h2>
+    <p class="intro">{{ copy.sandboxBody }}</p>
+    <a class="sandbox-link" [routerLink]="[sandboxId]">{{
+      copy.openSandbox
+    }}</a>
+  </section>
+</div>

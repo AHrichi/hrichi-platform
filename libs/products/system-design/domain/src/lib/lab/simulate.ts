@@ -293,7 +293,7 @@ function run(design: LabDesign, traffic: Traffic): SimResult {
     problems.push('Clients reach one entry point: add a load balancer.');
     entries = entries.slice(0, 1);
   }
-  const seeds: Flow[] = [
+  const classes: Flow[] = [
     { cls: 'static', share: s, alive: 1, syncAlive: 1, path: [], async: false },
     {
       cls: 'read',
@@ -311,7 +311,8 @@ function run(design: LabDesign, traffic: Traffic): SimResult {
       path: [],
       async: false,
     },
-  ].filter((f) => f.share > 0);
+  ];
+  const seeds = classes.filter((f) => f.share > 0);
   if (entries.length === 0) {
     problems.push(
       'Connect the client to something: no request gets an answer.',
