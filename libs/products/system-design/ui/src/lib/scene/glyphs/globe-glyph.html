@@ -1,0 +1,121 @@
+@let v = view();
+<svg:g class="glyph-inner" [class.is-fresh]="fresh()">
+  @if (v.state === 'focus') {
+    <polygon class="focus-outline" [attr.points]="v.focusRing" />
+  }
+
+  <polygon class="face left face-left" [attr.points]="plinth.left" />
+  <polygon class="face right face-right" [attr.points]="plinth.right" />
+
+  <circle
+    class="face top face-top"
+    [attr.cx]="center.x"
+    [attr.cy]="center.y"
+    [attr.r]="r"
+  />
+  <ellipse
+    class="face-detail"
+    [attr.cx]="center.x"
+    [attr.cy]="center.y"
+    [attr.rx]="r * 0.48"
+    [attr.ry]="r"
+  />
+  <ellipse
+    class="face-detail"
+    [attr.cx]="center.x"
+    [attr.cy]="center.y"
+    [attr.rx]="r"
+    [attr.ry]="r * 0.38"
+  />
+
+  @if (v.state === 'down') {
+    <g class="down-overlay">
+      <circle
+        class="down-disc"
+        [attr.cx]="v.downCenter.x"
+        [attr.cy]="v.downCenter.y"
+        r="10"
+      />
+      <path
+        class="down-mark"
+        [attr.d]="
+          'M ' +
+          (v.downCenter.x - 5) +
+          ' ' +
+          (v.downCenter.y - 5) +
+          ' L ' +
+          (v.downCenter.x + 5) +
+          ' ' +
+          (v.downCenter.y + 5) +
+          ' M ' +
+          (v.downCenter.x + 5) +
+          ' ' +
+          (v.downCenter.y - 5) +
+          ' L ' +
+          (v.downCenter.x - 5) +
+          ' ' +
+          (v.downCenter.y + 5)
+        "
+      />
+    </g>
+  }
+
+  @if (v.loadChip; as load) {
+    <g
+      class="load-chip"
+      [class.load-critical]="load.critical"
+      [attr.transform]="
+        'translate(' + v.topAnchor.x + ' ' + (v.topAnchor.y - 10) + ')'
+      "
+    >
+      <rect
+        class="load-bg"
+        [attr.x]="-load.width / 2"
+        y="-9"
+        [attr.width]="load.width"
+        height="17"
+        rx="4"
+      />
+      <text class="load-text" x="0" y="3">{{ load.text }}</text>
+    </g>
+  }
+
+  @if (v.badgeText; as badge) {
+    <g
+      class="badge-chip"
+      [attr.transform]="
+        'translate(' + (v.topAnchor.x + 24) + ' ' + (v.topAnchor.y + 6) + ')'
+      "
+    >
+      <rect
+        class="badge-bg"
+        [attr.x]="-v.badgeWidth / 2"
+        y="-8"
+        [attr.width]="v.badgeWidth"
+        height="16"
+        rx="8"
+      />
+      <text class="badge-text" x="0" y="3.5">{{ badge }}</text>
+    </g>
+  }
+
+  <g
+    class="label-chip"
+    [attr.transform]="
+      'translate(' + v.bottomAnchor.x + ' ' + (v.bottomAnchor.y + 12) + ')'
+    "
+  >
+    <rect
+      class="label-bg"
+      [attr.x]="-v.labelWidth / 2"
+      y="-10"
+      [attr.width]="v.labelWidth"
+      [attr.height]="v.labelHeight"
+      rx="4"
+    />
+    <text class="label-text" x="0" y="3">{{ node().label }}</text>
+    @if (node().sublabel; as sub) {
+      <text class="sublabel-text" x="0" y="14">{{ sub }}</text>
+    }
+  </g>
+</svg:g>

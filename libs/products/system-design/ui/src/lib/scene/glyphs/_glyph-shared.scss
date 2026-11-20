@@ -1,0 +1,223 @@
+:host {
+  --sd-top: var(--color-scene-neutral-top);
+  --sd-left: var(--color-scene-neutral-left);
+  --sd-right: var(--color-scene-neutral-right);
+  --sd-ink: var(--color-scene-neutral-ink);
+}
+
+:host(.hue-neutral),
+.hue-neutral {
+  --sd-top: var(--color-scene-neutral-top);
+  --sd-left: var(--color-scene-neutral-left);
+  --sd-right: var(--color-scene-neutral-right);
+  --sd-ink: var(--color-scene-neutral-ink);
+}
+
+:host(.hue-amber),
+.hue-amber {
+  --sd-top: var(--color-scene-amber-top);
+  --sd-left: var(--color-scene-amber-left);
+  --sd-right: var(--color-scene-amber-right);
+  --sd-ink: var(--color-scene-amber-ink);
+}
+
+:host(.hue-blue),
+.hue-blue {
+  --sd-top: var(--color-scene-blue-top);
+  --sd-left: var(--color-scene-blue-left);
+  --sd-right: var(--color-scene-blue-right);
+  --sd-ink: var(--color-scene-blue-ink);
+}
+
+:host(.hue-violet),
+.hue-violet {
+  --sd-top: var(--color-scene-violet-top);
+  --sd-left: var(--color-scene-violet-left);
+  --sd-right: var(--color-scene-violet-right);
+  --sd-ink: var(--color-scene-violet-ink);
+}
+
+:host(.hue-green),
+.hue-green {
+  --sd-top: var(--color-scene-green-top);
+  --sd-left: var(--color-scene-green-left);
+  --sd-right: var(--color-scene-green-right);
+  --sd-ink: var(--color-scene-green-ink);
+}
+
+:host(.hue-rose),
+.hue-rose {
+  --sd-top: var(--color-scene-rose-top);
+  --sd-left: var(--color-scene-rose-left);
+  --sd-right: var(--color-scene-rose-right);
+  --sd-ink: var(--color-scene-rose-ink);
+}
+
+:host(.hue-teal),
+.hue-teal {
+  --sd-top: var(--color-scene-teal-top);
+  --sd-left: var(--color-scene-teal-left);
+  --sd-right: var(--color-scene-teal-right);
+  --sd-ink: var(--color-scene-teal-ink);
+}
+
+:host(.hue-red),
+.hue-red {
+  --sd-top: var(--color-scene-red-top);
+  --sd-left: var(--color-scene-red-left);
+  --sd-right: var(--color-scene-red-right);
+  --sd-ink: var(--color-scene-red-ink);
+}
+
+:host(.state-dim),
+.state-dim {
+  opacity: 0.4;
+}
+
+.glyph-inner.is-fresh {
+  animation: sd-glyph-enter var(--motion-duration-base)
+    var(--motion-easing-enter);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .glyph-inner.is-fresh {
+    animation: none;
+  }
+}
+
+@keyframes sd-glyph-enter {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.face {
+  stroke: var(--sd-ink);
+  stroke-width: 1.5;
+  stroke-linejoin: round;
+}
+
+.top,
+.face-top {
+  fill: var(--sd-top);
+  stroke: var(--sd-ink);
+  stroke-width: 1.5;
+  stroke-linejoin: round;
+}
+
+.left,
+.face-left {
+  fill: var(--sd-left);
+  stroke: var(--sd-ink);
+  stroke-width: 1.5;
+  stroke-linejoin: round;
+}
+
+.right,
+.face-right {
+  fill: var(--sd-right);
+  stroke: var(--sd-ink);
+  stroke-width: 1.5;
+  stroke-linejoin: round;
+}
+
+.face-detail {
+  fill: none;
+  stroke: var(--sd-ink);
+  stroke-width: 1.25;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.top-icon path {
+  fill: none;
+  stroke: var(--sd-ink);
+  stroke-width: 1.85;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.focus-outline {
+  fill: none;
+  stroke: var(--color-accent-default);
+  stroke-width: 2.5;
+  stroke-dasharray: 5 3;
+  stroke-linejoin: round;
+}
+
+.down-mark {
+  fill: none;
+  stroke: var(--color-danger-default);
+  stroke-width: 2.75;
+  stroke-linecap: round;
+}
+
+.down-disc {
+  fill: var(--color-scene-label-bg);
+  stroke: var(--color-danger-default);
+  stroke-width: 1.75;
+}
+
+.label-bg {
+  fill: var(--color-scene-label-bg);
+  stroke: var(--color-border-strong);
+  stroke-width: 1;
+}
+
+.label-text {
+  fill: var(--color-text-default);
+  font-family: var(--font-family-mono);
+  font-size: 11px;
+  font-weight: var(--font-weight-semibold);
+  text-anchor: middle;
+}
+
+.sublabel-text {
+  fill: var(--color-text-muted);
+  font-family: var(--font-family-mono);
+  font-size: 9.5px;
+  text-anchor: middle;
+}
+
+.load-bg {
+  fill: var(--color-scene-label-bg);
+  stroke: var(--color-border-strong);
+  stroke-width: 1.25;
+}
+
+.load-text {
+  fill: var(--color-text-default);
+  font-family: var(--font-family-mono);
+  font-size: 10px;
+  font-weight: var(--font-weight-semibold);
+  text-anchor: middle;
+}
+
+.load-critical .load-bg {
+  fill: var(--color-scene-red-top);
+  stroke: var(--color-scene-red-ink);
+}
+
+.load-critical .load-text {
+  fill: var(--color-scene-red-ink);
+}
+
+.badge-bg {
+  fill: var(--sd-top);
+  stroke: var(--sd-ink);
+  stroke-width: 1.25;
+}
+
+.badge-text {
+  fill: var(--sd-ink);
+  font-family: var(--font-family-mono);
+  font-size: 10px;
+  font-weight: var(--font-weight-semibold);
+  text-anchor: middle;
+}
