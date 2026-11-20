@@ -80,7 +80,8 @@
         "
         (click)="preferences.toggleTheme()"
       >
-        {{ preferences.isDark() ? '☀ Light' : '☾ Dark' }}
+        <span aria-hidden="true">{{ preferences.isDark() ? '☀' : '☾' }}</span>
+        {{ preferences.isDark() ? 'Light' : 'Dark' }}
       </button>
     </div>
   </header>
@@ -108,7 +109,7 @@
           [attr.aria-label]="copy.closeMenuLabel"
           (click)="store.closeDrawer()"
         >
-          ✕
+          <span aria-hidden="true">✕</span>
         </button>
       </div>
 

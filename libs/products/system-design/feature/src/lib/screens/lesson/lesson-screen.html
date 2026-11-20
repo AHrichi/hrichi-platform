@@ -96,7 +96,11 @@
     </div>
 
     <!-- Right column: step panel + You'll learn -->
-    <aside class="right-col" aria-label="Step details and learning goals">
+    <div
+      class="right-col"
+      role="region"
+      aria-label="Step details and learning goals"
+    >
       <sd-step-panel
         [step]="step"
         [stepIndex]="stepIndex()"
@@ -112,7 +116,7 @@
       />
 
       <sd-learn-list [items]="lesson.learn" [learned]="state.learned" />
-    </aside>
+    </div>
 
     <!-- Phone bottom navigation bar (standalone only) -->
     @if (standalone) {
