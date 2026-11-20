@@ -113,7 +113,19 @@
         (next)="stepForward()"
         (practiceRequested)="openPractice()"
         (nextLessonRequested)="openNextLesson()"
-      />
+      >
+        @if (learningOn && reviewItems().length) {
+          <ah-learn-this
+            sdRecapActions
+            [items]="reviewItems()"
+            [label]="learningCopy.addToReviews"
+            [demoLabel]="learningCopy.tryInDemo"
+            [standaloneHint]="learningCopy.standaloneHint"
+            [sentLabel]="learningCopy.sentToReviews"
+            variant="primary"
+          />
+        }
+      </sd-step-panel>
 
       <sd-learn-list [items]="lesson.learn" [learned]="state.learned" />
     </div>
