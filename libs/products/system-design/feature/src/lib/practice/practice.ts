@@ -9,6 +9,7 @@ import type {
   Lesson,
   LessonMeta,
 } from '@ah/products/system-design/domain';
+import { pageLink } from '../learning/review-items';
 
 /** One question in a practice run, with what its screens need to show. */
 export interface PracticeQuestion {
@@ -92,12 +93,6 @@ export function bestLessonScores(
     }
   }
   return best;
-}
-
-/** The page address, when it is one the Learning Engine can link back to. */
-export function pageLink(): string | null {
-  const href = globalThis.location?.href ?? '';
-  return /^https?:\/\//.test(href) ? href.slice(0, 2048) : null;
 }
 
 /**
