@@ -1,0 +1,31 @@
+@let list = items();
+@let ticked = learned();
+<section class="learn-card" [attr.aria-label]="heading()">
+  <header class="learn-header">
+    <h3 class="learn-title">{{ heading() }}</h3>
+    <span class="learn-count">{{ learnedCount() }} / {{ list.length }}</span>
+  </header>
+
+  <ul class="learn-items" role="list">
+    @for (item of list; track $index; let i = $index) {
+      @let isDone = ticked.has(i);
+      <li
+        class="learn-item"
+        [class.is-learned]="isDone"
+        [attr.data-learned]="isDone"
+      >
+        <span class="learn-check" aria-hidden="true">
+          @if (isDone) {
+            <sd-icon name="check" [size]="14" />
+          }
+        </span>
+        <span class="learn-text">
+          <sd-inline-text [text]="item" />
+        </span>
+        <span class="visually-hidden">
+          {{ isDone ? '(covered)' : '(upcoming)' }}
+        </span>
+      </li>
+    }
+  </ul>
+</section>

@@ -3,6 +3,7 @@ export * from './lib/hud/hud';
 export * from './lib/icon/icon';
 export * from './lib/icon/icon-paths';
 export * from './lib/inline-text/inline-text';
+export * from './lib/learn-list/learn-list';
 export * from './lib/legend/legend';
 export * from './lib/scene/glyphs/cube-glyph';
 export * from './lib/scene/glyphs/cylinder-glyph';
