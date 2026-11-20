@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/angular-vite';
 import {
+  type CheatSection,
   courseProgress,
   CURRICULUM,
   ICON_NAMES,
@@ -8,6 +9,7 @@ import {
   sceneAt,
   type SceneState,
 } from '@ah/products/system-design/domain';
+import { SdCheatSection } from './cheat-section/cheat-section';
 import { SdCheckChoice } from './checks/check-choice';
 import { SdCheckNumeric } from './checks/check-numeric';
 import { SdCheckOrder } from './checks/check-order';
@@ -494,6 +496,58 @@ export const ComingSoonCard: Story = {
         heading="System Design"
         body="Interactive lessons on distributed systems and architecture."
       />
+    `),
+  }),
+};
+
+const storySections: readonly CheatSection[] = [
+  {
+    kind: 'numbers',
+    title: 'Hit-ratio maths',
+    rows: [
+      ['Average read latency', 'h × cache + (1 − h) × DB', 'h = hit ratio'],
+      ['90% hits, 1 ms / 20 ms', '2.9 ms', 'Misses dominate'],
+    ],
+  },
+  {
+    kind: 'table',
+    title: 'Load-balancing algorithms',
+    columns: ['Algorithm', 'How it picks', 'Watch out'],
+    rows: [
+      ['Round robin', 'Next server in turn', 'Ignores load'],
+      ['Least connections', 'Fewest open connections', 'Needs tracking'],
+    ],
+  },
+  {
+    kind: 'list',
+    title: 'Ordering rules',
+    items: [
+      'Order holds only within a partition.',
+      'Dead-letter after a few failed attempts.',
+    ],
+  },
+  {
+    kind: 'pattern',
+    title: 'Stampede protection',
+    when: 'A hot key expires and many requests miss at once.',
+    how: 'Let one request reload the key while the others wait.',
+    watch: 'Give the reload lock a lease timeout.',
+    lesson: 'caching',
+  },
+];
+
+export const CheatSections: Story = {
+  render: () => ({
+    props: { sections: storySections },
+    moduleMetadata: { imports: [SdCheatSection] },
+    template: wrapPaper(`
+      <div style="display: grid; gap: var(--space-4); max-inline-size: 56rem;">
+        @for (s of sections; track s.title; let i = $index) {
+          <sd-cheat-section [section]="s" [sectionId]="'story-cheat-' + i">
+            <a sdCheatLink href="#story-cheat-0" style="color: var(--color-accent-default);">Lesson: Caching →</a>
+          </sd-cheat-section>
+        }
+      </div>
     `),
   }),
 };

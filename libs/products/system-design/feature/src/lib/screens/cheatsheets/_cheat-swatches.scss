@@ -1,0 +1,48 @@
+// Module hue swatches for the cheatsheet screens (same scene tokens as the
+// shell's folder swatches).
+.swatch {
+  --sd-swatch: var(--color-scene-neutral-top);
+  --sd-swatch-ink: var(--color-scene-neutral-ink);
+
+  inline-size: 0.75rem;
+  block-size: 0.75rem;
+  flex-shrink: 0;
+  border: var(--border-width-hairline) solid var(--sd-swatch-ink);
+  border-radius: var(--radius-sm);
+  background: var(--sd-swatch);
+}
+
+.swatch-amber {
+  --sd-swatch: var(--color-scene-amber-top);
+  --sd-swatch-ink: var(--color-scene-amber-ink);
+}
+
+.swatch-blue {
+  --sd-swatch: var(--color-scene-blue-top);
+  --sd-swatch-ink: var(--color-scene-blue-ink);
+}
+
+.swatch-violet {
+  --sd-swatch: var(--color-scene-violet-top);
+  --sd-swatch-ink: var(--color-scene-violet-ink);
+}
+
+.swatch-green {
+  --sd-swatch: var(--color-scene-green-top);
+  --sd-swatch-ink: var(--color-scene-green-ink);
+}
+
+.swatch-rose {
+  --sd-swatch: var(--color-scene-rose-top);
+  --sd-swatch-ink: var(--color-scene-rose-ink);
+}
+
+.swatch-teal {
+  --sd-swatch: var(--color-scene-teal-top);
+  --sd-swatch-ink: var(--color-scene-teal-ink);
+}
+
+.swatch-red {
+  --sd-swatch: var(--color-scene-red-top);
+  --sd-swatch-ink: var(--color-scene-red-ink);
+}

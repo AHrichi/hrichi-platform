@@ -23,8 +23,5 @@ export const SHELL_COPY = {
     labHeading: 'Design Lab simulator',
     labBody:
       'Interactive traffic simulator and scaling challenges arrive in Phase P10.',
-    cheatsheetsHeading: 'Module cheatsheets',
-    cheatsheetsBody:
-      'Printable reference sheets for all nine modules arrive in Phase P9.',
   },
 } as const;

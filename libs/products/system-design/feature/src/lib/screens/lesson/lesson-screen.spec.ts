@@ -12,6 +12,14 @@ import { SystemDesignRuntime } from '../../store/system-design-runtime';
 import { SystemDesignStore } from '../../store/system-design.store';
 import { SYSTEM_DESIGN_ROUTES } from '../../system-design.routes';
 
+/** Polls until `ready()` holds (the store opens IndexedDB asynchronously). */
+async function until(ready: () => boolean, timeoutMs = 2000): Promise<void> {
+  const start = Date.now();
+  while (!ready() && Date.now() - start < timeoutMs)
+    await new Promise((r) => setTimeout(r, 10));
+}
+
+/** Lets pending timers and change detection run once. */
 async function settle(harness: RouterTestingHarness): Promise<void> {
   await new Promise((r) => setTimeout(r, 30));
   await harness.fixture.whenStable();
@@ -36,12 +44,13 @@ describe('LessonScreen', () => {
     const router = TestBed.inject(Router);
     const store = TestBed.inject(SystemDesignStore);
 
-    // Wait for async lesson load & route redirect to settle (polled, so a
-    // busy test worker doesn't make it flaky)
-    for (let i = 0; i < 100 && !store.activeLesson(); i++) {
-      await new Promise((r) => setTimeout(r, 10));
-      await harness.fixture.whenStable();
-    }
+    // Wait for async lesson load & route redirect to settle
+    await until(
+      () =>
+        router.url === '/learn/request-journey/1' &&
+        store.activeLessonId() === 'request-journey',
+    );
+    await harness.fixture.whenStable();
 
     expect(router.url).toBe('/learn/request-journey/1');
     expect(store.activeLessonId()).toBe('request-journey');
@@ -61,7 +70,7 @@ describe('LessonScreen', () => {
       'sd-step-panel .next-btn',
     ) as HTMLButtonElement;
     nextBtn.click();
-    await new Promise((r) => setTimeout(r, 20));
+    await until(() => router.url === '/learn/request-journey/2');
     await harness.fixture.whenStable();
 
     expect(router.url).toBe('/learn/request-journey/2');
@@ -71,7 +80,7 @@ describe('LessonScreen', () => {
     document.dispatchEvent(
       new KeyboardEvent('keydown', { key: 'ArrowRight', cancelable: true }),
     );
-    await new Promise((r) => setTimeout(r, 20));
+    await until(() => router.url === '/learn/request-journey/3');
     await harness.fixture.whenStable();
 
     expect(router.url).toBe('/learn/request-journey/3');

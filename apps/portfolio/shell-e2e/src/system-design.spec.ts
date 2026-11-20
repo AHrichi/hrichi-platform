@@ -164,6 +164,75 @@ test.describe('System Design, standalone', () => {
     await expect(page).toHaveURL(/\/learn\/request-journey\/1$/);
   });
 
+  test('opens a cheatsheet from the index, links a pattern to its lesson, and passes axe', async ({
+    page,
+  }) => {
+    await page.goto(`${STANDALONE}cheatsheets`);
+    await expect(
+      page.getByRole('heading', { level: 1, name: 'Cheatsheets' }),
+    ).toBeVisible();
+    await expect(page.locator('.module-card')).toHaveCount(9);
+    const indexAxe = await new AxeBuilder({ page })
+      .include('sd-shell')
+      .analyze();
+    expect(indexAxe.violations).toEqual([]);
+
+    await page.getByRole('link', { name: 'Reliability Cheatsheet' }).click();
+    await expect(page).toHaveURL(/\/cheatsheets\/reliability$/);
+    await expect(
+      page.getByRole('heading', { level: 1, name: 'Reliability Cheatsheet' }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole('heading', {
+        level: 2,
+        name: 'Failure Patterns & Remedies',
+      }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole('cell', { name: 'Exponential backoff with jitter' }),
+    ).toBeVisible();
+    const sheetAxe = await new AxeBuilder({ page })
+      .include('sd-shell')
+      .analyze();
+    expect(sheetAxe.violations).toEqual([]);
+
+    // Printing hides the app chrome and the sheet's own controls.
+    await page.emulateMedia({ media: 'print' });
+    await expect(page.locator('sd-shell .topbar')).toBeHidden();
+    await expect(page.locator('sd-shell .sidebar')).toBeHidden();
+    await expect(page.locator('.sheet-toolbar')).toBeHidden();
+    await expect(
+      page.getByRole('heading', { level: 1, name: 'Reliability Cheatsheet' }),
+    ).toBeVisible();
+    await page.emulateMedia({ media: 'screen' });
+
+    await page
+      .getByRole('link', { name: 'Lesson: Timeouts, Retries & Backoff →' })
+      .click();
+    await expect(page).toHaveURL(/\/learn\/timeouts-retries\/1$/);
+  });
+
+  test('search opens a cheatsheet by a table term', async ({ page }) => {
+    await page.goto(`${STANDALONE}guide`);
+    await page
+      .getByRole('button', { name: /Search lessons & concepts/i })
+      .click();
+    const searchInput = page.getByRole('combobox', {
+      name: 'Search lessons and concepts',
+    });
+    await searchInput.fill('write skew');
+    const hit = page.getByRole('option', { name: /Write skew/ });
+    await expect(hit).toBeVisible();
+    await hit.click();
+    await expect(page).toHaveURL(/\/cheatsheets\/data$/);
+    await expect(
+      page.getByRole('heading', {
+        level: 1,
+        name: 'Data & Storage Cheatsheet',
+      }),
+    ).toBeVisible();
+  });
+
   test('passes axe on Practice and Guide screens', async ({ page }) => {
     await page.goto(`${STANDALONE}practice`);
     await expect(

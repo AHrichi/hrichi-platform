@@ -1,0 +1,30 @@
+<article class="cheat-index" aria-labelledby="sd-cheat-index-title">
+  <div class="index-intro">
+    <h1 id="sd-cheat-index-title">{{ copy.indexTitle }}</h1>
+    <p class="intro-body">{{ copy.indexIntro }}</p>
+  </div>
+
+  <ul class="module-grid" [attr.aria-label]="copy.modulesLabel">
+    @for (card of cards(); track card.module) {
+      <li class="module-card" [attr.data-module]="card.module">
+        <div class="card-head">
+          <span [class]="'swatch swatch-' + card.hue" aria-hidden="true"></span>
+          <span class="module-number">
+            {{ card.number }}. {{ card.moduleTitle }}
+          </span>
+        </div>
+        <h2 class="card-title">
+          <a
+            class="card-link"
+            [routerLink]="['cheatsheets', card.module]"
+            [relativeTo]="shellRoute"
+          >
+            {{ card.title }}
+          </a>
+        </h2>
+        <p class="card-summary">{{ card.summary }}</p>
+        <p class="card-meta">{{ copy.lessonCount(card.lessons) }}</p>
+      </li>
+    }
+  </ul>
+</article>

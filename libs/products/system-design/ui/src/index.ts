@@ -1,3 +1,4 @@
+export * from './lib/cheat-section/cheat-section';
 export * from './lib/checks/check-choice';
 export * from './lib/checks/check-numeric';
 export * from './lib/checks/check-order';

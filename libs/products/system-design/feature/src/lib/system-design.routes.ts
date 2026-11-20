@@ -1,8 +1,9 @@
 import type { Routes } from '@angular/router';
 import { GuideScreen } from './screens/guide/guide-screen';
 import { LessonScreen } from './screens/lesson/lesson-screen';
+import { CheatsheetIndex } from './screens/cheatsheets/cheatsheet-index';
+import { CheatsheetScreen } from './screens/cheatsheets/cheatsheet-screen';
 import {
-  CheatsheetsPlaceholderScreen,
   LabPlaceholderScreen,
 } from './screens/placeholders';
 import {
@@ -65,12 +66,12 @@ export const SYSTEM_DESIGN_ROUTES: Routes = [
       },
       {
         path: 'cheatsheets',
-        component: CheatsheetsPlaceholderScreen,
+        component: CheatsheetIndex,
         title: 'Cheatsheets · System Design',
       },
       {
         path: 'cheatsheets/:module',
-        component: CheatsheetsPlaceholderScreen,
+        component: CheatsheetScreen,
         title: 'Cheatsheets · System Design',
       },
       {
