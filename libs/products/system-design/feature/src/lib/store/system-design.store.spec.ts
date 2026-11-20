@@ -79,6 +79,19 @@ describe('SystemDesignStore & keyboard', () => {
     );
     expect(store.attempts()).toHaveLength(1);
     expect(await h.local.allAttempts()).toHaveLength(1);
+
+    const run = { id: 'run-1', kind: 'lesson', size: 4 } as const;
+    await store.recordAttempt(
+      'request-journey',
+      'choice-rtt-bottleneck',
+      0,
+      true,
+      '2026-11-20T10:01:00.000Z',
+      run,
+    );
+    expect(store.attempts()[1].run).toEqual(run);
+    const [, saved] = await h.local.allAttempts();
+    expect(saved.run).toEqual(run);
     h.db.close();
   });
 

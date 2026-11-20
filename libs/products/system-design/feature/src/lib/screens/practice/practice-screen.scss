@@ -1,0 +1,12 @@
+@use './practice-shared';
+
+.back-link {
+  justify-self: start;
+  font-size: var(--font-size-100);
+}
+
+.notice {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-200);
+}

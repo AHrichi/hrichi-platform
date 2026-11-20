@@ -1,0 +1,116 @@
+// Shared by the Practice screens: page frame, cards, buttons and links.
+
+:host {
+  display: block;
+}
+
+.practice-screen {
+  display: grid;
+  gap: var(--space-5);
+  max-inline-size: var(--layout-prose);
+  margin-inline: auto;
+  padding-block: var(--space-4) var(--space-8);
+}
+
+.practice-head {
+  display: grid;
+  gap: var(--space-2);
+
+  h1 {
+    margin: 0;
+    font-size: var(--font-size-500);
+    font-weight: var(--font-weight-bold);
+    line-height: var(--font-line-height-snug);
+  }
+}
+
+.eyebrow {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-100);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--font-letter-spacing-wide);
+  text-transform: uppercase;
+}
+
+.intro {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-200);
+  line-height: var(--font-line-height-normal);
+}
+
+.card {
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-5);
+  border: var(--border-width-hairline) solid var(--color-border-default);
+  border-radius: var(--radius-lg);
+  background: var(--color-bg-surface);
+  box-shadow: var(--shadow-raised);
+}
+
+.btn-primary,
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  min-block-size: var(--control-height-sm);
+  padding-block: var(--space-2);
+  padding-inline: var(--space-4);
+  border: var(--border-width-hairline) solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-100);
+  font-weight: var(--font-weight-semibold);
+  text-decoration: none;
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: var(--focus-ring-width) solid var(--color-focus-ring);
+    outline-offset: var(--focus-ring-offset);
+  }
+
+  &:disabled {
+    opacity: var(--opacity-disabled);
+    cursor: not-allowed;
+  }
+}
+
+.btn-primary {
+  background: var(--color-accent-solid);
+  color: var(--color-accent-on-solid);
+
+  &:hover:not(:disabled) {
+    background: var(--color-accent-solid-hover);
+  }
+}
+
+.btn-secondary {
+  background: var(--color-bg-raised);
+  color: var(--color-text-default);
+
+  &:hover:not(:disabled) {
+    border-color: var(--color-text-muted);
+  }
+}
+
+.text-link {
+  color: var(--color-accent-default);
+  font-weight: var(--font-weight-semibold);
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+
+  &:focus-visible {
+    outline: var(--focus-ring-width) solid var(--color-focus-ring);
+    outline-offset: var(--focus-ring-offset);
+  }
+}
+
+[tabindex='-1']:focus {
+  outline: none;
+}
