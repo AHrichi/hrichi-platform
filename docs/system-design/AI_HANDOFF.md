@@ -2,13 +2,14 @@
 
 A briefing for whichever AI agent or IDE (Claude Code, Antigravity, …) picks up the System Design course. It assumes no memory of earlier sessions. Read it top to bottom before touching code.
 
-Last updated 2026-11-20, after P5 (on branch `feat/system-design-p5-shell-player`). Next task: **P6** (technical-design §11 "P6").
+Last updated 2026-11-20, during P6 (branch `feat/system-design-p6-takeover`, not pushed). Next task: **finish P6** by running its e2e (section 6), then P7–P11.
 
 ## 0. Resume in five minutes
 
-1. **Get the branch.** All the work is on the local branch `claude/system-design-learning-app-81eff3`, in the git worktree `C:\Users\Administrator\Projects\Personal\hrichi-platform\.claude\worktrees\system-design-learning-app-81eff3`. **Nothing is pushed.** Either:
+1. **Get the branch.** The latest work is on the local branch `feat/system-design-p6-takeover` (built on `feat/system-design-p4-ui-kit` → `-p5-shell-player` → `-p6-foundations-e2e`), checked out in the worktree `C:\Users\Administrator\Projects\Personal\hrichi-platform\.claude\worktrees\system-design-learning-app-81eff3`. Only P0–P3 are on GitHub (`origin/claude/system-design-learning-app-81eff3`). Either:
    - open that worktree folder directly; or
-   - push the branch once (`git push -u origin claude/system-design-learning-app-81eff3`) and check it out wherever you work.
+   - push it (`git push -u origin feat/system-design-p6-takeover`) and check it out wherever you work.
+   - **Main checkout warning:** `C:\Users\Administrator\Projects\Personal\hrichi-platform` is on `feat/system-design-p6-foundations-e2e` with uncommitted edits to 4 files; they are already committed (and improved) on `feat/system-design-p6-takeover` as `3442c1f` and `bd401ce`. Discard them there (`git restore .`) before switching, or they will conflict.
 
    Branch from it for each new phase (`feat/system-design-p4-ui-kit`, …).
 
@@ -47,18 +48,18 @@ The UX was inspired by a public interactive course. **Never copy its text, scena
 
 ## 2. Status
 
-| Phase                             | State                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                | Commit(s) on the branch    |
-| --------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------- |
-| P0 docs and ADR                   | Done                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 | `d420be1`                  |
-| P1A shared step helpers, PR 1     | Done and merged: `@ah/shared/steps` (`upTo`); `StepTimeline` (with a `stepMs` option), `Clock`, `STEP_MS`, `SPEEDS`, `injectReducedMotion` in `@ah/ui`                                                                                                                                                                                                                                                                                                                                               | `4efebed`, merge `b075ea7` |
-| P1A PR 2 (switch StudyLM to them) | **Not done.** Do it only after the shell has deployed PR 1: `@ah/ui` is a federation singleton                                                                                                                                                                                                                                                                                                                                                                                                       | n/a                        |
-| P1B paper look tokens and font    | Done and merged: `[data-look='paper']` light and dark, `color.scene.*` tokens, contrast gate over 4 themes, JetBrains Mono in the shell and the app                                                                                                                                                                                                                                                                                                                                                  | `0367ac9`, merge `0a0cb24` |
-| P2 app skeleton and registration  | Done: the `product-system-design` remote (port 4312) and its 4 libs, registered everywhere; visibility flag **off**                                                                                                                                                                                                                                                                                                                                                                                  | `e081d06`, `57bf4ed`       |
-| P3 domain core                    | Done: contracts, engines, `validateLesson`, the 44-lesson curriculum (all stand-ins, `ready: false`); 142 tests, 99% line coverage                                                                                                                                                                                                                                                                                                                                                                   | `3a43a63`, `edf68af`       |
-| P4 UI kit and isometric renderer  | Done (on `feat/system-design-p4-ui-kit`): `sd-icon` (28 icons), 7 isometric glyphs (`cube`, `cylinder`, `device`, `stack`, `globe`, `person`, `disk`), `sd-iso-scene`, `sd-inline-text`, `sd-hud`, `sd-legend`, `sd-step-panel`, `sd-timeline`, `sd-learn-list`, `sd-progress-card`, check widgets (`sd-check-choice`, `sd-check-numeric`, `sd-check-order`), 25 tests in 14 spec files, and 14 paper-look Storybook stories                                                                         | `6e72713`..`dcc42fa`       |
-| P5 feature shell & lesson player  | Done (on `feat/system-design-p5-shell-player`): Dexie v1 tables (`progress`, `attempts`, `designs`, `meta`) and `SystemDesignLocalStore`; `SystemDesignRuntime`, `SystemDesignStore`, `SdNav`, `keyboard`; responsive 3-breakpoint `sd-shell` with module folders, lesson statuses, theme toggle & search trigger; `LessonScreen` with `StepTimeline`, URL step sync, expanded stage & phone transport bar; `sd-search-dialog`; `GuideScreen`; 19 tests across 6 feature specs + 3 data-access tests | `ae28d57`..`d3f5095`       |
-| P6 Foundations content plus e2e   | **Next**                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | n/a                        |
-| P7 to P12                         | Not started                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          | n/a                        |
+| Phase                             | State                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | Commit(s) on the branch         |
+| --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------- |
+| P0 docs and ADR                   | Done                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | `d420be1`                       |
+| P1A shared step helpers, PR 1     | Done and merged: `@ah/shared/steps` (`upTo`); `StepTimeline` (with a `stepMs` option), `Clock`, `STEP_MS`, `SPEEDS`, `injectReducedMotion` in `@ah/ui`                                                                                                                                                                                                                                                                                                                                                                                                 | `4efebed`, merge `b075ea7`      |
+| P1A PR 2 (switch StudyLM to them) | **Not done.** Do it only after the shell has deployed PR 1: `@ah/ui` is a federation singleton                                                                                                                                                                                                                                                                                                                                                                                                                                                         | n/a                             |
+| P1B paper look tokens and font    | Done and merged: `[data-look='paper']` light and dark, `color.scene.*` tokens, contrast gate over 4 themes, JetBrains Mono in the shell and the app                                                                                                                                                                                                                                                                                                                                                                                                    | `0367ac9`, merge `0a0cb24`      |
+| P2 app skeleton and registration  | Done: the `product-system-design` remote (port 4312) and its 4 libs, registered everywhere; visibility flag **off**                                                                                                                                                                                                                                                                                                                                                                                                                                    | `e081d06`, `57bf4ed`            |
+| P3 domain core                    | Done: contracts, engines, `validateLesson`, the 44-lesson curriculum (all stand-ins, `ready: false`); 142 tests, 99% line coverage                                                                                                                                                                                                                                                                                                                                                                                                                     | `3a43a63`, `edf68af`            |
+| P4 UI kit and isometric renderer  | Done (on `feat/system-design-p4-ui-kit`): `sd-icon` (28 icons), 7 isometric glyphs (`cube`, `cylinder`, `device`, `stack`, `globe`, `person`, `disk`), `sd-iso-scene`, `sd-inline-text`, `sd-hud`, `sd-legend`, `sd-step-panel`, `sd-timeline`, `sd-learn-list`, `sd-progress-card`, check widgets (`sd-check-choice`, `sd-check-numeric`, `sd-check-order`), 25 tests in 14 spec files, and 14 paper-look Storybook stories                                                                                                                           | `6e72713`..`dcc42fa`            |
+| P5 feature shell & lesson player  | Done (on `feat/system-design-p5-shell-player`): Dexie v1 tables (`progress`, `attempts`, `designs`, `meta`) and `SystemDesignLocalStore`; `SystemDesignRuntime`, `SystemDesignStore`, `SdNav`, `keyboard`; responsive 3-breakpoint `sd-shell` with module folders, lesson statuses, theme toggle & search trigger; `LessonScreen` with `StepTimeline`, URL step sync, expanded stage & phone transport bar; `sd-search-dialog`; `GuideScreen`; 19 tests across 6 feature specs + 3 data-access tests                                                   | `ae28d57`..`d3f5095`            |
+| P6 Foundations content plus e2e   | **In progress** (on `feat/system-design-p6-takeover`): the 4 Foundations lessons in full (`request-journey` golden, `latency-throughput`, `napkin-math`, `availability`, all `ready: true` and passing `validateLesson`), the Foundations cheatsheet and cheatsheet registry (`CHEATSHEETS`, `CHEAT_TERMS`), the standalone e2e spec, and the search dialog rebuilt as a real ARIA combobox (listbox of labelled groups and non-focusable options, `aria-activedescendant`, screen-order arrows, unique ids). **The e2e has not run yet** (section 6). | `5afcfba`, `3442c1f`, `bd401ce` |
+| P7 to P12                         | Not started                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            | n/a                             |
 
 **Verified:**
 
@@ -70,7 +71,7 @@ The UX was inspired by a public interactive course. **Never copy its text, scena
 
 **Not verified yet:**
 
-- the Playwright e2e (`apps/portfolio/shell-e2e/src/system-design.spec.ts` exists but hasn't run);
+- the Playwright e2e (`apps/portfolio/shell-e2e/src/system-design.spec.ts`): its run on 2026-11-20 never started, because dev servers left running from the main checkout held ports 4200, 4302 and 4307–4312 (Playwright reuses any server on its ports, so it would also test the wrong build). Checked by hand instead, on a built copy at another port: the lesson player steps and updates the HUD, the search combobox works by keyboard and opens the chosen lesson, no console errors;
 - the Storybook visual regression screenshot baselines for `"Foundations/Paper look"` and `"System Design/UI Kit"` stories (skipped locally because `VISUAL_REGRESSION` runs only in CI's Linux Playwright image: `nx run design-system-e2e:update-baselines`).
 
 **Open loose ends:**
@@ -150,39 +151,19 @@ pnpm nx e2e shell-e2e -- system-design
 - **Icons:** `generate-app-icons.mjs` needs Playwright's Chromium.
 - **Learning Engine hand-off:** `source.deepLink` must be an absolute `https?://` URL, or the engine drops it.
 
-## 6. Next: P4, the UI kit and isometric renderer
+## 6. Next: finish P6, then fan out
 
-The spec is technical-design §11 "P4", with the drawing rules in §6 ("Glyphs") and the motion rules in §5 ("Motion"). Everything goes in `libs/products/system-design/ui`, each component with a `.scss` file, a spec and a story.
+1. **Free the ports.** Stop any `serve-static` / `nx run … serve` processes on 4200, 4302–4312 (PowerShell: `Get-NetTCPConnection -State Listen -LocalPort 4200,4302,4307,4308,4309,4310,4311,4312` shows them; stop those processes yourself).
+2. **Run the e2e** from the branch: `pnpm nx e2e shell-e2e --output-style=static -- system-design --reporter=line`. It builds and serves the shell and every remote first (a few minutes). Fix any failure; don't weaken ARIA to quiet axe: fix the markup.
+3. **Polish seen by hand** (optional): on step 2 of `request-journey` the URL note overlaps the "Mobile network" zone label; nudge note anchors or zone label placement.
+4. Update section 2 (P6 → Done, e2e verified) and commit.
 
-**What the domain already gives you** (import from `@ah/products/system-design/domain`):
+**Then, in parallel** (each on its own branch from the P6 branch; specs in technical-design §11):
 
-- `sceneAt(lesson, n)` → `SceneState` with `nodes`, `edges`, `zones`, `notes`, `metrics`, `packets` (current step only, sorted by `wave`), `learned`, `fresh`;
-- `iso(point, z)`, `anchorOf(node)`, `edgePoints(from, to, route)`, `pathLength`, `pointAlong(points, t)`, `sceneBounds(state)` (viewBox), `TILE_WIDTH` (64), `TILE_HEIGHT` (32), `HEIGHT_UNIT` (24);
-- `NODE_KINDS[kind]` → `{ shape, hue, icon, label }`; `ICON_NAMES`; `parseInline(text)`;
-- `fixtureLesson()` in `src/lib/testing/fixtures.ts` (not exported from the barrel; import it by path in specs, or copy it into stories).
+- **P7:** Learning Engine hand-off (`<ah-learn-this>` on the recap and practice summary; lives in the feature lib).
+- **P8:** Practice (`PracticeHome`, `LessonPractice`, `MixedPractice`, attempts).
+- **P9:** Cheatsheets screens (index, sheet, print CSS) and the other 8 sheets.
+- **P10:** Design Lab (domain `lab/` simulator with the worked example in technical-design §8 as its first spec, then the screens).
+- **P11:** content, one module per agent, following `lesson-authoring.md`.
 
-**From `@ah/ui`:** `StepTimeline` (index, playing, speed, `seek`/`forward`/`back`; `new StepTimeline(realClock, { stepMs })`), `injectReducedMotion()`, `AhButton`, `AhModal`, `AhProgressBar`, etc.
-
-**Build list, in order:**
-
-1. `sd-icon`: the 28 `IconName` line icons, 24×24, stroke `currentColor`.
-2. Glyphs: cube, cylinder, device, stack, globe, person, disk.
-   - Each is an `<g>` drawn from `iso()`, with faces classed `top`, `left` and `right` per hue.
-   - States: focus, hot, down, dim, and a load chip.
-3. `sd-iso-scene`:
-   - **Inputs:** `state`, `playing`, `speed`, `reducedMotion`. **Output:** `packetsDone`. **Method:** `replay()`.
-   - **Draw order:** zones → edges → nodes (sorted by `x + y`) → notes → packets.
-   - **Packets** animate with WAAPI along `edgePoints`, 900 ms per edge at 1×, waves in order.
-   - `role="img"` plus a visually hidden description list.
-4. `sd-hud`, `sd-legend`, `sd-inline-text`, `sd-step-panel` (with an `<ng-content select="[sdRecapActions]">` slot), `sd-timeline`, `sd-learn-list`, `sd-progress-card`.
-5. Check widgets: `sd-check-choice`, `sd-check-numeric`, `sd-check-order` (up/down buttons, no drag).
-6. `system-design-ui.stories.ts`: deterministic stories (animations finished), each wrapped in `<div data-look="paper">`. Register the glob (section 2, loose ends).
-
-**Done when:**
-
-- lint, test and build pass for `product-system-design-ui`;
-- stylelint is clean;
-- the stories pass axe in light and dark;
-- baselines come from CI.
-
-**Then:** P5 (shell and lesson player) → P6 (the 4 Foundations lessons in full, plus e2e). After that P7 (Learning Engine), P8 (Practice), P9 (Cheatsheets), P10 (Design Lab) and P11 (content, one module per agent) can run in parallel; P12 goes live. Phase details are in technical-design §11.
+P12 (go live) comes last. P1A PR 2 (switch StudyLM to the shared helpers) waits until the shell has deployed the new `@ah/ui`.
