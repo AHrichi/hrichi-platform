@@ -5,6 +5,7 @@ export * from './lib/icon/icon-paths';
 export * from './lib/inline-text/inline-text';
 export * from './lib/learn-list/learn-list';
 export * from './lib/legend/legend';
+export * from './lib/progress-card/progress-card';
 export * from './lib/scene/glyphs/cube-glyph';
 export * from './lib/scene/glyphs/cylinder-glyph';
 export * from './lib/scene/glyphs/device-glyph';
