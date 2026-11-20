@@ -178,6 +178,92 @@ test.describe('System Design, standalone', () => {
   });
 });
 
+test.describe('System Design, Design Lab', () => {
+  test('solves first-users with a load balancer and a second server; goals tick, the design autosaves and axe is clean', async ({
+    page,
+  }) => {
+    await page.goto(`${STANDALONE}lab`);
+    await expect(
+      page.getByRole('heading', { level: 1, name: 'Design Lab' }),
+    ).toBeVisible();
+    const homeAxe = await new AxeBuilder({ page })
+      .include('sd-shell')
+      .analyze();
+    expect(homeAxe.violations).toEqual([]);
+
+    await page.getByRole('link', { name: 'First users' }).click();
+    await expect(page).toHaveURL(/\/lab\/first-users$/);
+    await expect(
+      page.getByRole('heading', { level: 1, name: 'First users' }),
+    ).toBeVisible();
+
+    const verdict = page.getByTestId('lab-verdict');
+    const p95Goal = page.locator('[data-goal-id="maxP95"]');
+    await expect(verdict).toHaveText('Not solved yet.');
+    await expect(p95Goal).toHaveAttribute('data-met', 'false');
+    await expect(page.locator('sd-hud')).toContainText('282 ms');
+
+    const palette = page.getByRole('region', { name: 'Add a component' });
+    await palette.getByRole('button', { name: /^Add Load balancer/ }).click();
+    await palette.getByRole('button', { name: /^Add Web server/ }).click();
+
+    await expect(p95Goal).toHaveAttribute('data-met', 'true');
+    await expect(page.locator('[data-goal-id="maxCost"]')).toHaveAttribute(
+      'data-met',
+      'true',
+    );
+    await expect(verdict).toHaveText('Solved: every goal is met.');
+    await expect(page.locator('sd-hud')).toContainText('118 ms');
+
+    // Scene nodes work from the keyboard.
+    await page.locator('.node-slot[data-slot-id="server-1"]').focus();
+    await page.keyboard.press('Enter');
+    await expect(
+      page.getByRole('heading', { level: 2, name: 'Inspector: Web server 1' }),
+    ).toBeVisible();
+
+    const labAxe = await new AxeBuilder({ page }).include('sd-shell').analyze();
+    expect(labAxe.violations).toEqual([]);
+
+    // The design autosaves to the designs table.
+    await expect
+      .poll(async () =>
+        page.evaluate(async () => {
+          const dbs = await indexedDB.databases();
+          const name = dbs.find((d) => d.name?.includes('system_design'))?.name;
+          if (!name) return -1;
+          return new Promise<number>((resolve) => {
+            const req = indexedDB.open(name);
+            req.onsuccess = () => {
+              const db = req.result;
+              const get = db
+                .transaction('designs', 'readonly')
+                .objectStore('designs')
+                .get('first-users');
+              get.onsuccess = () => {
+                db.close();
+                resolve(get.result?.design?.nodes?.length ?? 0);
+              };
+              get.onerror = () => {
+                db.close();
+                resolve(-1);
+              };
+            };
+            req.onerror = () => resolve(-1);
+          });
+        }),
+      )
+      .toBe(5);
+
+    await page.reload();
+    await expect(verdict).toHaveText('Solved: every goal is met.');
+    await page.getByRole('link', { name: 'All challenges' }).click();
+    await expect(
+      page.locator('[data-challenge-id="first-users"] .status'),
+    ).toHaveText('Solved');
+  });
+});
+
 test.describe('System Design, inside the portfolio', () => {
   // eslint-disable-next-line playwright/no-skipped-test
   test.skip(!appIsPublic('system-design'), 'Hidden until go-live (P12).');

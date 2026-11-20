@@ -10,8 +10,8 @@ import type { LabDesign, SimResult } from './model';
 import { HOT_UTILIZATION, hitRatioOf, labNodeLabel } from './simulate';
 
 /** Grid cells between two occupied tier columns, and between rows. */
-export const LAB_COLUMN_GAP = 2;
-export const LAB_ROW_GAP = 2;
+export const LAB_COLUMN_GAP = 3;
+export const LAB_ROW_GAP = 3;
 /** The most packets one edge animates at a time. */
 export const MAX_PACKETS_PER_EDGE = 6;
 

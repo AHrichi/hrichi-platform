@@ -174,10 +174,10 @@ describe('lab scene', () => {
     const d = addNode(addNode(SINGLE, 'load-balancer').design, 'server').design;
     const at = labLayout(d);
     expect(at.get('client')).toEqual({ x: 0, y: 0 });
-    expect(at.get('load-balancer-1')).toEqual({ x: 2, y: 0 });
-    expect(at.get('server-1')).toEqual({ x: 4, y: -1 });
-    expect(at.get('server-2')).toEqual({ x: 4, y: 1 });
-    expect(at.get('database-1')).toEqual({ x: 6, y: 0 });
+    expect(at.get('load-balancer-1')).toEqual({ x: 3, y: 0 });
+    expect(at.get('server-1')).toEqual({ x: 6, y: -1.5 });
+    expect(at.get('server-2')).toEqual({ x: 6, y: 1.5 });
+    expect(at.get('database-1')).toEqual({ x: 9, y: 0 });
   });
 
   it('shows load, hot and down states, and packets proportional to traffic', () => {
