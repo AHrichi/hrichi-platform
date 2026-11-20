@@ -1,0 +1,71 @@
+@let c = check();
+@let res = result();
+<article class="check-card">
+  <header class="check-header">
+    <p class="check-kind">Back-of-the-envelope</p>
+    <h3 class="check-prompt">
+      <sd-inline-text [text]="c.prompt" />
+    </h3>
+  </header>
+
+  <div class="numeric-row">
+    <label class="numeric-label" [for]="inputId()">
+      <span class="visually-hidden">Answer in {{ c.unit }}</span>
+      <input
+        type="number"
+        step="any"
+        class="numeric-input"
+        [id]="inputId()"
+        [value]="rawValue()"
+        [disabled]="res !== null"
+        placeholder="0"
+        (input)="onInput($event)"
+        (keydown.enter)="submit()"
+      />
+    </label>
+    <span class="unit-badge">{{ c.unit }}</span>
+  </div>
+
+  @if (res === null) {
+    <div class="check-actions">
+      <button
+        type="button"
+        class="btn btn-primary submit-btn"
+        [disabled]="parsedValue() === null"
+        (click)="submit()"
+      >
+        Check answer
+      </button>
+    </div>
+  } @else {
+    <div
+      class="feedback-box"
+      [class.is-correct]="res.correct"
+      [class.is-wrong]="!res.correct"
+      role="status"
+    >
+      <p class="feedback-verdict">
+        {{ res.correct ? '✓ Correct' : '✗ Outside range' }}
+      </p>
+      <p class="feedback-expected">
+        Target: <strong>{{ res.expected }}</strong> (within ±{{
+          tolerancePercent()
+        }}%)
+      </p>
+      <p class="feedback-explain">
+        <sd-inline-text [text]="c.explain" />
+      </p>
+      @if (c.step; as stepId) {
+        <div class="check-actions">
+          <button
+            type="button"
+            class="btn btn-secondary review-step-btn"
+            (click)="reviewStep.emit(stepId)"
+          >
+            See it in the lesson →
+          </button>
+        </div>
+      }
+    </div>
+  }
+</article>
