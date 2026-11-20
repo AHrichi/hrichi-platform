@@ -498,3 +498,31 @@
     padding: var(--space-3);
   }
 }
+
+/* Printing (cheatsheets): only the page's content, on white. */
+@media print {
+  :host {
+    min-block-size: 0;
+    background: transparent;
+  }
+
+  .shell-root {
+    display: block;
+    min-block-size: 0;
+  }
+
+  .topbar,
+  .sidebar,
+  .drawer-backdrop,
+  sd-search-dialog {
+    display: none !important;
+  }
+
+  .workspace {
+    display: block;
+  }
+
+  .main-area {
+    padding: 0;
+  }
+}
