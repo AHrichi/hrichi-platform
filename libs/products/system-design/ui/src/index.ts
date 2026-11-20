@@ -1,4 +1,5 @@
 export * from './lib/coming-soon/coming-soon';
+export * from './lib/hud/hud';
 export * from './lib/icon/icon';
 export * from './lib/icon/icon-paths';
 export * from './lib/inline-text/inline-text';
