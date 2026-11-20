@@ -10,6 +10,7 @@ import {
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
+import { LearnThis } from '@ah/learning/client';
 import { APP_MODE } from '@ah/platform/app-mode';
 import {
   CURRICULUM,
@@ -26,8 +27,11 @@ import {
   SdStepPanel,
   SdTimeline,
 } from '@ah/products/system-design/ui';
+import { isAppEnabled } from '@ah/shared/content';
 import { injectReducedMotion, realClock, StepTimeline } from '@ah/ui';
+import { LEARNING_COPY } from '../../copy/learning-copy';
 import { handleSystemDesignKey } from '../../keyboard/keyboard';
+import { lessonReviewItems } from '../../learning/review-items';
 import { SdNav } from '../../services/sd-nav';
 import { SystemDesignStore } from '../../store/system-design.store';
 
@@ -42,6 +46,7 @@ import { SystemDesignStore } from '../../store/system-design.store';
 @Component({
   selector: 'sd-lesson-screen',
   imports: [
+    LearnThis,
     SdHud,
     SdIcon,
     SdIsoScene,
@@ -61,6 +66,9 @@ export class LessonScreen {
   protected readonly store = inject(SystemDesignStore);
   protected readonly standalone =
     (inject(APP_MODE, { optional: true }) ?? 'standalone') === 'standalone';
+  /** The Learning Engine hand-off shows standalone, or when the engine is public. */
+  protected readonly learningOn = this.standalone || isAppEnabled('learning');
+  protected readonly learningCopy = LEARNING_COPY;
   protected readonly reducedMotion = injectReducedMotion();
   protected readonly timeline = new StepTimeline(realClock, { stepMs: 3600 });
   protected readonly packetPlaying = signal(true);
@@ -83,6 +91,14 @@ export class LessonScreen {
     const lesson = this.store.activeLesson();
     if (!lesson) return null;
     return lesson.steps[this.stepIndex()] ?? lesson.steps[0] ?? null;
+  });
+
+  /** The lesson's review cards, offered on the recap step only. */
+  protected readonly reviewItems = computed(() => {
+    const lesson = this.store.activeLesson();
+    const meta = this.store.activeMeta();
+    if (!lesson || !meta || this.currentStep()?.kind !== 'recap') return [];
+    return lessonReviewItems(lesson, meta);
   });
 
   protected readonly nextStepLabel = computed(() => {

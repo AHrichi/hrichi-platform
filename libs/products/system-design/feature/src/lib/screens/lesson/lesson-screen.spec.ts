@@ -1,7 +1,9 @@
 import 'fake-indexeddb/auto';
 import { TestBed } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
 import { provideRouter, Router } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
+import { LearnThis, textKey } from '@ah/learning/client';
 import {
   SystemDesignDatabase,
   SystemDesignLocalStore,
@@ -9,6 +11,11 @@ import {
 import { SystemDesignRuntime } from '../../store/system-design-runtime';
 import { SystemDesignStore } from '../../store/system-design.store';
 import { SYSTEM_DESIGN_ROUTES } from '../../system-design.routes';
+
+async function settle(harness: RouterTestingHarness): Promise<void> {
+  await new Promise((r) => setTimeout(r, 30));
+  await harness.fixture.whenStable();
+}
 
 describe('LessonScreen', () => {
   it('redirects /learn to the first lesson, renders stage/panel/timeline and advances step via Next or keyboard', async () => {
@@ -66,6 +73,64 @@ describe('LessonScreen', () => {
 
     expect(router.url).toBe('/learn/request-journey/3');
     expect(store.activeStepIndex()).toBe(2);
+
+    db.close();
+  });
+
+  it('offers "Add to my daily reviews" with the lesson cards on the recap step only', async () => {
+    const db = new SystemDesignDatabase(`sd-lesson-${Math.random()}`);
+    const local = new SystemDesignLocalStore(db);
+
+    TestBed.configureTestingModule({
+      providers: [
+        provideRouter(SYSTEM_DESIGN_ROUTES),
+        {
+          provide: SystemDesignRuntime,
+          useValue: { open: () => Promise.resolve(local) },
+        },
+      ],
+    });
+
+    const harness = await RouterTestingHarness.create(
+      '/learn/request-journey/11',
+    );
+    await settle(harness);
+
+    const store = TestBed.inject(SystemDesignStore);
+    const rootEl = harness.routeNativeElement as HTMLElement;
+    expect(store.activeStepIndex()).toBe(10);
+    expect(
+      rootEl.querySelector('sd-step-panel .recap-actions ah-learn-this'),
+    ).not.toBeNull();
+    expect(rootEl.querySelector('ah-learn-this')?.textContent).toContain(
+      'Add to my daily reviews',
+    );
+
+    const learnThis = harness.fixture.debugElement
+      .query(By.directive(LearnThis))
+      .injector.get(LearnThis);
+    const items = learnThis.items();
+    const lesson = store.activeLesson();
+    expect(lesson).not.toBeNull();
+    expect(items).toHaveLength(lesson?.cards.length ?? -1);
+    const first = lesson?.cards[0];
+    expect(items[0]).toEqual({
+      text: `${first?.front}
+${first?.back}`,
+      source: {
+        app: 'system-design',
+        objectType: 'lesson-card',
+        objectId: `request-journey:${textKey(first?.front ?? '')}`,
+        deepLink: expect.any(String),
+        excerpt: 'One Request, End to End',
+      },
+    });
+
+    // Back to a non-recap step: the button is gone.
+    await harness.navigateByUrl('/learn/request-journey/10');
+    await settle(harness);
+    expect(store.activeStepIndex()).toBe(9);
+    expect(rootEl.querySelector('ah-learn-this')).toBeNull();
 
     db.close();
   });

@@ -98,6 +98,39 @@ test.describe('System Design, standalone', () => {
     );
   });
 
+  test('the recap hands the lesson cards to the learning app’s inbox', async ({
+    page,
+    context,
+  }) => {
+    await page.goto(`${STANDALONE}learn/request-journey/10`);
+    await expect(
+      page.getByRole('button', { name: /Add to my daily reviews/ }),
+    ).toHaveCount(0);
+
+    await page.goto(`${STANDALONE}learn/request-journey/11`);
+    const addToReviews = page.getByRole('button', {
+      name: /Add to my daily reviews/,
+    });
+    await expect(addToReviews).toBeVisible();
+    const recapAxe = await new AxeBuilder({ page })
+      .include('sd-step-panel')
+      .analyze();
+    expect(recapAxe.violations).toEqual([]);
+
+    const [inbox] = await Promise.all([
+      context.waitForEvent('page'),
+      addToReviews.click(),
+    ]);
+    await expect(inbox).toHaveURL(
+      /^http:\/\/localhost:4311\/inbox(#capture=|$)/,
+    );
+    const handOff = inbox.getByRole('region', {
+      name: 'Save 4 ideas from System Design?',
+    });
+    await expect(handOff).toBeVisible({ timeout: 15_000 });
+    await inbox.close();
+  });
+
   test('search finds "DNS" and opens the matching lesson', async ({ page }) => {
     await page.goto(`${STANDALONE}learn/napkin-math/1`);
     await expect(
