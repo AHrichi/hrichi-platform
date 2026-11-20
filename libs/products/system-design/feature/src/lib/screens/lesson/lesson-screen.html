@@ -7,7 +7,7 @@
   <div class="lesson-layout" [class.is-standalone]="standalone">
     <!-- Main column: header, stage, timeline -->
     <div class="main-col">
-      <header class="header-card">
+      <div class="header-card">
         <div class="header-top">
           @if (breadcrumb(); as crumb) {
             <p class="breadcrumb">{{ crumb }}</p>
@@ -26,7 +26,7 @@
         </div>
         <h1 class="lesson-title">{{ meta.title }}</h1>
         <p class="lesson-summary">{{ meta.summary }}</p>
-      </header>
+      </div>
 
       <section
         class="stage-card"

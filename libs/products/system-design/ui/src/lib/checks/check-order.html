@@ -2,12 +2,12 @@
 @let items = currentItems();
 @let res = result();
 <article class="check-card">
-  <header class="check-header">
+  <div class="check-header">
     <p class="check-kind">Put in order</p>
     <h3 class="check-prompt">
       <sd-inline-text [text]="c.prompt" />
     </h3>
-  </header>
+  </div>
 
   <ol class="order-list" aria-label="Sequence items">
     @for (item of items; track item; let i = $index) {

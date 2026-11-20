@@ -1,13 +1,13 @@
 @let s = step();
 <article class="panel-card" aria-label="Step explanation">
-  <header class="panel-header">
+  <div class="panel-header">
     <span class="step-counter">
       STEP {{ stepNumber() }} / {{ stepCount() }}
     </span>
     <span [class]="'kind-badge kind-' + s.kind" [attr.data-step-kind]="s.kind">
       {{ kindLabel() }}
     </span>
-  </header>
+  </div>
 
   <h2 class="step-title" aria-live="polite">{{ s.title }}</h2>
 

@@ -1,10 +1,10 @@
 @let list = items();
 @let ticked = learned();
 <section class="learn-card" [attr.aria-label]="heading()">
-  <header class="learn-header">
+  <div class="learn-header">
     <h3 class="learn-title">{{ heading() }}</h3>
     <span class="learn-count">{{ learnedCount() }} / {{ list.length }}</span>
-  </header>
+  </div>
 
   <ul class="learn-items" role="list">
     @for (item of list; track $index; let i = $index) {

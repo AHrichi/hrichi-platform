@@ -1,12 +1,12 @@
 @let c = check();
 @let res = result();
 <article class="check-card">
-  <header class="check-header">
+  <div class="check-header">
     <p class="check-kind">Multiple choice</p>
     <h3 class="check-prompt" [id]="promptId()">
       <sd-inline-text [text]="c.prompt" />
     </h3>
-  </header>
+  </div>
 
   <fieldset
     class="options-fieldset"

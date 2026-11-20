@@ -24,13 +24,9 @@
         (input)="onInput($event)"
         (keydown)="onInputKey($event)"
       />
-      <button
-        type="button"
-        class="close-btn"
-        aria-label="Close search"
-        (click)="closeDialog()"
-      >
-        <span aria-hidden="true">Esc</span>
+      <!-- The visible "Esc" stays in the accessible name (WCAG 2.5.3). -->
+      <button type="button" class="close-btn" (click)="closeDialog()">
+        Esc<span class="ah-visually-hidden">: close search</span>
       </button>
     </div>
 
