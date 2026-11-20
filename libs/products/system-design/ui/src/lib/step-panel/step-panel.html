@@ -1,0 +1,131 @@
+@let s = step();
+<article class="panel-card" aria-label="Step explanation">
+  <header class="panel-header">
+    <span class="step-counter">
+      STEP {{ stepNumber() }} / {{ stepCount() }}
+    </span>
+    <span [class]="'kind-badge kind-' + s.kind" [attr.data-step-kind]="s.kind">
+      {{ kindLabel() }}
+    </span>
+  </header>
+
+  <h2 class="step-title" aria-live="polite">{{ s.title }}</h2>
+
+  <div class="step-body">
+    @for (paragraph of s.body; track $index) {
+      <p class="body-paragraph">
+        <sd-inline-text [text]="paragraph" />
+      </p>
+    }
+  </div>
+
+  @if (s.callouts?.length) {
+    <div class="callouts">
+      @for (callout of s.callouts; track $index) {
+        <aside
+          [class]="'callout callout-' + callout.kind"
+          [attr.data-callout-kind]="callout.kind"
+        >
+          <div class="callout-title">
+            <sd-icon [name]="calloutIcon(callout.kind)" [size]="15" />
+            <span>{{ calloutLabel(callout.kind) }}</span>
+          </div>
+          <p class="callout-text">
+            <sd-inline-text [text]="callout.text" />
+          </p>
+        </aside>
+      }
+    </div>
+  }
+
+  @if (s.changes?.length) {
+    <section class="changes" aria-label="What changed">
+      <h3 class="section-heading">What changed</h3>
+      <ul class="change-list" role="list">
+        @for (change of s.changes; track $index) {
+          <li
+            [class]="'change-item change-' + change.type"
+            [attr.data-change-type]="change.type"
+          >
+            <span class="change-symbol" aria-hidden="true">{{
+              changeSymbol(change.type)
+            }}</span>
+            <span class="change-text">
+              <sd-inline-text [text]="change.text" />
+            </span>
+          </li>
+        }
+      </ul>
+    </section>
+  }
+
+  @if (s.takeaways?.length) {
+    <section class="takeaways" aria-label="Key takeaways">
+      <h3 class="section-heading">Key takeaways</h3>
+      <ul class="takeaway-list" role="list">
+        @for (item of s.takeaways; track $index) {
+          <li class="takeaway-item">
+            <sd-icon class="takeaway-icon" name="check" [size]="16" />
+            <span><sd-inline-text [text]="item" /></span>
+          </li>
+        }
+      </ul>
+    </section>
+  }
+
+  @if (s.kind === 'recap') {
+    <div class="recap-section">
+      @if (nextLessonTitle(); as nextTitle) {
+        <div class="coming-up-box">
+          <span class="coming-up-eyebrow">Coming up next</span>
+          <button
+            type="button"
+            class="coming-up-link"
+            (click)="nextLessonRequested.emit()"
+          >
+            {{ nextTitle }} →
+          </button>
+        </div>
+      }
+
+      <div class="recap-actions">
+        <ng-content select="[sdRecapActions]" />
+        <button
+          type="button"
+          class="btn btn-secondary practice-btn"
+          (click)="practiceRequested.emit()"
+        >
+          Practice this lesson →
+        </button>
+      </div>
+    </div>
+  }
+
+  <footer class="panel-footer">
+    <div class="nav-buttons">
+      <button
+        type="button"
+        class="btn btn-secondary back-btn"
+        [disabled]="!canBack()"
+        (click)="back.emit()"
+      >
+        ← Back
+      </button>
+      <button
+        type="button"
+        class="btn btn-primary next-btn"
+        [disabled]="!canNext()"
+        (click)="next.emit()"
+      >
+        {{ nextButtonText() }}
+      </button>
+    </div>
+
+    @if (showKeyHints()) {
+      <p class="key-hints" aria-label="Keyboard shortcuts">
+        <kbd>←</kbd> <kbd>→</kbd> step · <kbd>R</kbd> replay ·
+        <kbd>Space</kbd> pause · <kbd>Ctrl K</kbd> search
+      </p>
+    }
+  </footer>
+</article>
