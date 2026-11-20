@@ -1,0 +1,200 @@
+:host {
+  display: block;
+  break-inside: avoid;
+}
+
+:host([data-kind='table']) {
+  break-inside: auto;
+}
+
+.cheat-card {
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+  border: var(--border-width-hairline) solid var(--color-border-default);
+  border-radius: var(--radius-lg);
+  background: var(--color-bg-surface);
+  box-shadow: var(--shadow-raised);
+  scroll-margin-block-start: var(--space-8);
+}
+
+.cheat-title {
+  margin: 0;
+  font-size: var(--font-size-300);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--font-line-height-snug);
+
+  &:focus-visible {
+    outline: var(--focus-ring-width) solid var(--color-focus-ring);
+    outline-offset: var(--focus-ring-offset);
+  }
+}
+
+// numbers: label · value · note
+.numbers {
+  display: grid;
+  gap: 0;
+  margin: 0;
+}
+
+.number-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr) minmax(0, 1.2fr);
+  gap: var(--space-3);
+  align-items: baseline;
+  padding-block: var(--space-2);
+  border-block-end: var(--border-width-hairline) dashed
+    var(--color-border-default);
+  font-size: var(--font-size-100);
+
+  &:last-child {
+    border-block-end: 0;
+  }
+
+  dt {
+    color: var(--color-text-default);
+  }
+
+  dd {
+    margin: 0;
+  }
+}
+
+.number-value {
+  color: var(--color-accent-default);
+  font-weight: var(--font-weight-bold);
+}
+
+.number-note {
+  color: var(--color-text-muted);
+}
+
+// table
+.table-scroll {
+  overflow-x: auto;
+  border: var(--border-width-hairline) solid var(--color-border-default);
+  border-radius: var(--radius-md);
+
+  &:focus-visible {
+    outline: var(--focus-ring-width) solid var(--color-focus-ring);
+    outline-offset: var(--focus-ring-offset);
+  }
+}
+
+table {
+  inline-size: 100%;
+  border-collapse: collapse;
+  font-size: var(--font-size-100);
+  line-height: var(--font-line-height-snug);
+}
+
+th,
+td {
+  padding: var(--space-2) var(--space-3);
+  border-block-end: var(--border-width-hairline) solid
+    var(--color-border-default);
+  text-align: start;
+  vertical-align: top;
+}
+
+thead th {
+  background: var(--color-bg-raised);
+  color: var(--color-text-muted);
+  font-weight: var(--font-weight-semibold);
+  white-space: nowrap;
+}
+
+tbody th {
+  font-weight: var(--font-weight-semibold);
+}
+
+tbody tr:last-child {
+  th,
+  td {
+    border-block-end: 0;
+  }
+}
+
+// list
+.cheat-list {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  padding-inline-start: var(--space-5);
+  font-size: var(--font-size-100);
+  line-height: var(--font-line-height-normal);
+}
+
+// pattern: When / How / Watch out
+.pattern {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+}
+
+.pattern-row {
+  display: grid;
+  grid-template-columns: 6.5rem minmax(0, 1fr);
+  gap: var(--space-3);
+  font-size: var(--font-size-100);
+  line-height: var(--font-line-height-normal);
+
+  dt {
+    color: var(--color-text-muted);
+    font-weight: var(--font-weight-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  dd {
+    margin: 0;
+  }
+
+  &.is-watch dt {
+    color: var(--color-warning-default);
+  }
+}
+
+.pattern-link:empty {
+  display: none;
+}
+
+@media (width < 600px) {
+  .number-row {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+
+  .number-note {
+    grid-column: 1 / -1;
+  }
+
+  .pattern-row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-1);
+  }
+}
+
+@media print {
+  .cheat-card {
+    padding: var(--space-2) 0;
+    border: 0;
+    box-shadow: none;
+    background: transparent;
+  }
+
+  .table-scroll {
+    overflow: visible;
+  }
+
+  .pattern-link {
+    display: none;
+  }
+
+  thead {
+    display: table-header-group;
+  }
+
+  tr {
+    break-inside: avoid;
+  }
+}

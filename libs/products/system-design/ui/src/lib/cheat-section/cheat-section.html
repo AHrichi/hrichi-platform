@@ -1,0 +1,78 @@
+@let s = section();
+@let titleId = sectionId() + '-title';
+<section class="cheat-card" [id]="sectionId()" [attr.aria-labelledby]="titleId">
+  <h2 class="cheat-title" [id]="titleId" tabindex="-1">{{ s.title }}</h2>
+
+  @switch (s.kind) {
+    @case ('numbers') {
+      <dl class="numbers">
+        @for (row of s.rows; track $index) {
+          <div class="number-row">
+            <dt>{{ row[0] }}</dt>
+            <dd class="number-value">{{ row[1] }}</dd>
+            @if (row[2]) {
+              <dd class="number-note">{{ row[2] }}</dd>
+            }
+          </div>
+        }
+      </dl>
+    }
+    @case ('table') {
+      <div
+        class="table-scroll"
+        role="region"
+        tabindex="0"
+        [attr.aria-labelledby]="titleId"
+      >
+        <table>
+          <thead>
+            <tr>
+              @for (col of s.columns; track $index) {
+                <th scope="col">{{ col }}</th>
+              }
+            </tr>
+          </thead>
+          <tbody>
+            @for (row of s.rows; track $index) {
+              <tr>
+                @for (cell of row; track $index; let first = $first) {
+                  @if (first) {
+                    <th scope="row">{{ cell }}</th>
+                  } @else {
+                    <td>{{ cell }}</td>
+                  }
+                }
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+    @case ('list') {
+      <ul class="cheat-list">
+        @for (item of s.items; track $index) {
+          <li>{{ item }}</li>
+        }
+      </ul>
+    }
+    @case ('pattern') {
+      <dl class="pattern">
+        <div class="pattern-row">
+          <dt>{{ labels().when }}</dt>
+          <dd>{{ s.when }}</dd>
+        </div>
+        <div class="pattern-row">
+          <dt>{{ labels().how }}</dt>
+          <dd>{{ s.how }}</dd>
+        </div>
+        <div class="pattern-row is-watch">
+          <dt>{{ labels().watch }}</dt>
+          <dd>{{ s.watch }}</dd>
+        </div>
+      </dl>
+      <div class="pattern-link">
+        <ng-content select="[sdCheatLink]" />
+      </div>
+    }
+  }
+</section>
