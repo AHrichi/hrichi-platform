@@ -19,12 +19,6 @@ async function until(ready: () => boolean, timeoutMs = 2000): Promise<void> {
     await new Promise((r) => setTimeout(r, 10));
 }
 
-/** Lets pending timers and change detection run once. */
-async function settle(harness: RouterTestingHarness): Promise<void> {
-  await new Promise((r) => setTimeout(r, 30));
-  await harness.fixture.whenStable();
-}
-
 describe('LessonScreen', () => {
   it('redirects /learn to the first lesson, renders stage/panel/timeline and advances step via Next or keyboard', async () => {
     const db = new SystemDesignDatabase(`sd-lesson-${Math.random()}`);
@@ -106,10 +100,17 @@ describe('LessonScreen', () => {
     const harness = await RouterTestingHarness.create(
       '/learn/request-journey/11',
     );
-    await settle(harness);
-
     const store = TestBed.inject(SystemDesignStore);
     const rootEl = harness.routeNativeElement as HTMLElement;
+    await until(
+      () =>
+        store.activeLessonId() === 'request-journey' &&
+        store.activeStepIndex() === 10 &&
+        rootEl.querySelector('sd-step-panel .recap-actions ah-learn-this') !==
+          null,
+    );
+    await harness.fixture.whenStable();
+
     expect(store.activeStepIndex()).toBe(10);
     expect(
       rootEl.querySelector('sd-step-panel .recap-actions ah-learn-this'),
@@ -140,7 +141,8 @@ ${first?.back}`,
 
     // Back to a non-recap step: the button is gone.
     await harness.navigateByUrl('/learn/request-journey/10');
-    await settle(harness);
+    await until(() => store.activeStepIndex() === 9);
+    await harness.fixture.whenStable();
     expect(store.activeStepIndex()).toBe(9);
     expect(rootEl.querySelector('ah-learn-this')).toBeNull();
 

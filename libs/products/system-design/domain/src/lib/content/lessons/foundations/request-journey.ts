@@ -35,7 +35,7 @@ export const lesson = {
     notes: [
       {
         id: 'url-note',
-        anchor: { node: 'phone' },
+        anchor: { at: { x: 3.2, y: 6.2 } },
         text: 'recipes.example/pasta',
         tone: 'info',
         icon: 'link',
