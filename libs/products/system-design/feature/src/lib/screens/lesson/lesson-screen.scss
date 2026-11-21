@@ -153,6 +153,12 @@
   display: grid;
   place-items: center;
   min-block-size: 19rem;
+  border-radius: var(--radius-md);
+
+  &:focus-visible {
+    outline: var(--focus-ring-width) solid var(--color-focus-ring);
+    outline-offset: var(--focus-ring-offset);
+  }
 }
 
 .stage-footer {
@@ -199,8 +205,22 @@
   }
 
   .stage-canvas {
-    block-size: clamp(300px, min(76vw, 68dvh), 580px);
+    block-size: auto;
     min-block-size: 0;
+    place-items: center start;
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-inline: contain;
+  }
+
+  /* Keep labels readable: the diagram never shrinks below 34rem; the
+     canvas scrolls sideways instead (Expand shows it full screen). */
+  .stage-card:not(.is-fullscreen) .stage-canvas sd-iso-scene {
+    min-inline-size: 34rem;
+  }
+
+  .stage-card {
+    padding: var(--space-3);
   }
 
   .phone-bottom-bar {

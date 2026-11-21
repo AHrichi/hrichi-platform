@@ -173,7 +173,7 @@ describe('AppsPage', () => {
       el.querySelectorAll<HTMLAnchorElement>('.app-standalone-btn'),
     );
     const cards = Array.from(el.querySelectorAll<HTMLElement>('.app-card'));
-    // Enabled federated apps: lighting, studylm, learning, sky, rxjs, ngrx (autosphere is shell-only).
+    // Enabled federated apps: lighting, studylm, learning, system-design, sky, rxjs, ngrx (autosphere is shell-only).
     expect(standaloneLinks.length).toBe(cards.length - 1);
     for (const link of standaloneLinks) {
       expect(link.getAttribute('target')).toBe('_blank');
