@@ -636,15 +636,18 @@ export const lesson = {
       back: 'Passwords need per-user salts and deliberately slow, memory-hard hashing so leaked password tables resist GPU brute-forcing.',
     },
     {
-      front: 'What is the trade-off between server sessions and stateless JWTs?',
+      front:
+        'What is the trade-off between server sessions and stateless JWTs?',
       back: 'Server sessions allow instant revocation by deleting a Redis/DB row; stateless JWTs verify locally without a lookup but stay valid until exp unless denied.',
     },
     {
-      front: 'How does the "short access + rotating refresh" pattern detect token theft?',
+      front:
+        'How does the "short access + rotating refresh" pattern detect token theft?',
       back: 'Access JWTs expire in 5–15 minutes, while each refresh use replaces the refresh token; if an already-used refresh token is replayed, the server revokes the whole token family.',
     },
     {
-      front: 'In OAuth 2.0 + OIDC, how does an ID token differ from an access token?',
+      front:
+        'In OAuth 2.0 + OIDC, how does an ID token differ from an access token?',
       back: 'The ID token is a JWT telling the client who signed in (never sent to APIs); the access token authorizes calls to protected API scopes.',
     },
     {

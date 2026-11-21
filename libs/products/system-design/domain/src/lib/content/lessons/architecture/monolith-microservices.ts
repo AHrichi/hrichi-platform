@@ -115,8 +115,14 @@ export const lesson = {
         },
       ],
       changes: [
-        { type: 'changed', text: 'Codebase split into three strict internal modules' },
-        { type: 'changed', text: 'Deploys rise to 5/week with scoped ownership' },
+        {
+          type: 'changed',
+          text: 'Codebase split into three strict internal modules',
+        },
+        {
+          type: 'changed',
+          text: 'Deploys rise to 5/week with scoped ownership',
+        },
       ],
       ops: [
         { op: 'remove-note', id: 'jam-note' },
@@ -160,7 +166,10 @@ export const lesson = {
         'Good domain boundaries keep most new features inside one team and one service, instead of forcing three squads to coordinate every change.',
       ],
       changes: [
-        { type: 'added', text: 'Catalog and Billing extracted as separate services' },
+        {
+          type: 'added',
+          text: 'Catalog and Billing extracted as separate services',
+        },
         { type: 'changed', text: 'CI/CD pipelines grow from 1 to 3' },
       ],
       ops: [
@@ -200,19 +209,39 @@ export const lesson = {
         },
         {
           op: 'add-edge',
-          edge: { id: 'shop-cat', from: 'shoppers', to: 'catalog', label: 'HTTPS' },
+          edge: {
+            id: 'shop-cat',
+            from: 'shoppers',
+            to: 'catalog',
+            label: 'HTTPS',
+          },
         },
         {
           op: 'add-edge',
-          edge: { id: 'shop-bill', from: 'shoppers', to: 'billing', label: 'HTTPS' },
+          edge: {
+            id: 'shop-bill',
+            from: 'shoppers',
+            to: 'billing',
+            label: 'HTTPS',
+          },
         },
         {
           op: 'add-edge',
-          edge: { id: 'cat-db', from: 'catalog', to: 'shared-db', label: 'SQL' },
+          edge: {
+            id: 'cat-db',
+            from: 'catalog',
+            to: 'shared-db',
+            label: 'SQL',
+          },
         },
         {
           op: 'add-edge',
-          edge: { id: 'bill-db', from: 'billing', to: 'shared-db', label: 'SQL' },
+          edge: {
+            id: 'bill-db',
+            from: 'billing',
+            to: 'shared-db',
+            label: 'SQL',
+          },
         },
         { op: 'set-metric', id: 'ops', value: '3' },
       ],
@@ -276,7 +305,10 @@ export const lesson = {
         },
       ],
       changes: [
-        { type: 'added', text: 'gRPC links between Orders, Catalog, and Billing' },
+        {
+          type: 'added',
+          text: 'gRPC links between Orders, Catalog, and Billing',
+        },
         { type: 'changed', text: 'Call cost climbs from 0.01 ms to 4–20 ms' },
       ],
       ops: [
@@ -614,7 +646,8 @@ export const lesson = {
   ],
   cards: [
     {
-      front: 'What is a modular monolith, and why build one before microservices?',
+      front:
+        'What is a modular monolith, and why build one before microservices?',
       back: 'A single deployable application divided into isolated business modules with explicit interfaces. It keeps 0.01 ms in-process calls and ACID transactions while proving domain boundaries before paying network overhead.',
     },
     {
@@ -626,7 +659,8 @@ export const lesson = {
       back: 'Services deployed separately that still share a database or must change in lockstep. Avoid it by giving each service its own private database and communicating via APIs or events.',
     },
     {
-      front: 'What extra costs do microservices introduce compared to a monolith?',
+      front:
+        'What extra costs do microservices introduce compared to a monolith?',
       back: 'Network latency and partial failures on RPCs, no cross-service SQL joins or ACID transactions (requiring sagas), plus service discovery, distributed tracing, and multiple CI/CD pipelines.',
     },
   ],

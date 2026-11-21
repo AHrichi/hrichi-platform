@@ -288,9 +288,7 @@ export const lesson = {
         'Moving sessions to Redis lets app instances come and go freely, yet every request now depends on that store.',
         'Replicate the session store across availability zones and set strict network timeouts (`~50 ms`) so a slow cache never hangs every app worker.',
       ],
-      changes: [
-        { type: 'added', text: 'Standby Redis replica for failover' },
-      ],
+      changes: [{ type: 'added', text: 'Standby Redis replica for failover' }],
       ops: [
         { op: 'remove-note', id: 'jwt-note' },
         {
@@ -469,7 +467,8 @@ export const lesson = {
       back: 'Replicate Redis across failure domains and configure strict client timeouts so the shared store does not become a single point of failure.',
     },
     {
-      front: 'Where should different kinds of application state live in a scalable design?',
+      front:
+        'Where should different kinds of application state live in a scalable design?',
       back: '• Sessions: Redis / signed tokens\n• Durable records: Database\n• Blobs & uploads: Object storage\n• Background work: Message queue',
     },
   ],

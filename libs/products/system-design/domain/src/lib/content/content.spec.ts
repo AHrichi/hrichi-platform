@@ -16,15 +16,13 @@ describe('curriculum', () => {
     expect(ALL_LESSONS).toHaveLength(44);
   });
 
-  it('marks the 4 Foundations lessons as ready', () => {
-    const foundations = CURRICULUM[0];
-    expect(foundations.id).toBe('foundations');
-    expect(foundations.lessons.map((l) => [l.id, l.ready])).toEqual([
-      ['request-journey', true],
-      ['latency-throughput', true],
-      ['napkin-math', true],
-      ['availability', true],
-    ]);
+  it('has every lesson written and ready (P11)', () => {
+    expect(ALL_LESSONS.filter((l) => !l.ready).map((l) => l.id)).toEqual([]);
+  });
+
+  it('keeps the stand-in for unwritten lessons valid', () => {
+    const meta = { ...ALL_LESSONS[0], id: 'later', title: 'Later' };
+    expect(validateLesson(meta, pendingLesson('later', 'Later'))).toEqual([]);
   });
 
   it('uses each lesson id once, and files each lesson under its module', () => {

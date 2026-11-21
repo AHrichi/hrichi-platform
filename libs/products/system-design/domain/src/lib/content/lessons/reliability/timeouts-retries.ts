@@ -67,7 +67,12 @@ export const lesson = {
     notes: [],
   },
   hud: [
-    { id: 'threads', label: 'Free threads', icon: 'layers', value: '100 / 100' },
+    {
+      id: 'threads',
+      label: 'Free threads',
+      icon: 'layers',
+      value: '100 / 100',
+    },
     { id: 'p99', label: 'Order p99', icon: 'timer', value: '120 ms' },
     { id: 'load', label: 'Fraud RPS', icon: 'gauge', value: '100' },
     { id: 'dupes', label: 'Double pay', icon: 'warning', value: '0' },
@@ -261,7 +266,10 @@ export const lesson = {
         'Add **full jitter** (`random(0, backoff)`) so clients do not wake up in synchronised waves (_thundering herd_), plus a **retry budget** capping extra traffic at `10%` of normal load.',
       ],
       changes: [
-        { type: 'added', text: 'Full-jitter exponential backoff + 10% retry budget' },
+        {
+          type: 'added',
+          text: 'Full-jitter exponential backoff + 10% retry budget',
+        },
       ],
       ops: [
         {
@@ -535,7 +543,8 @@ export const lesson = {
   ],
   cards: [
     {
-      front: 'Why can a single missing timeout bring down an entire web server?',
+      front:
+        'Why can a single missing timeout bring down an entire web server?',
       back: 'By Little’s law (L = λ × W), slow responses pin worker threads and sockets until the pool hits 100% saturation, stalling even healthy routes.',
     },
     {

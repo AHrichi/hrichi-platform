@@ -235,7 +235,10 @@ export const lesson = {
         },
       ],
       changes: [
-        { type: 'added', text: 'Cloud KMS holding master KEK for DEK wrapping' },
+        {
+          type: 'added',
+          text: 'Cloud KMS holding master KEK for DEK wrapping',
+        },
       ],
       ops: [
         { op: 'update-node', id: 'data-db', patch: { state: 'normal' } },
@@ -376,7 +379,7 @@ export const lesson = {
       id: 'hash-vs-encrypt',
       label: 'Hash ≠ Encrypt',
       kind: 'technique',
-      title: 'Hashing, encryption, and encoding do different jobs',
+      title: 'Hashing, encryption and encoding differ',
       body: [
         'Never mix up three distinct tools: **Hashing** (`SHA-256`, `Argon2id`) is **one-way**—ideal for passwords and integrity checks, never reversible.',
         '**Encryption** (`AES-256-GCM`) is **reversible only with the key**. **Encoding** (`Base64`, URL encoding) only changes format and offers **zero secrecy**.',
@@ -447,7 +450,7 @@ export const lesson = {
       id: 'commit-prevention',
       label: 'Guardrails',
       kind: 'case',
-      title: 'Block leaks pre-push and prefer short-lived tokens',
+      title: 'Block leaks early; prefer short-lived tokens',
       body: [
         'Design for human mistakes. Add **pre-commit secret scanners** and **push protection** on your Git host so commits containing `sk_live_` are blocked before upload.',
         'Better yet, replace static API keys with **short-lived workload tokens** (OIDC federation or 1-hour database leases) so leaked credentials expire automatically.',
@@ -488,7 +491,7 @@ export const lesson = {
       id: 'recap',
       label: 'Recap',
       kind: 'recap',
-      title: 'Encrypt data everywhere, keep secrets out of code',
+      title: 'Encrypt everywhere; keep secrets out of code',
       body: [
         'Protect traffic on the wire with **TLS 1.3**, protect stored data with **AES-256-GCM** + **KMS envelope encryption**, keep keys out of repos in a **Secret Manager**, and rotate fast when leaks happen.',
       ],
@@ -597,7 +600,8 @@ export const lesson = {
   ],
   cards: [
     {
-      front: 'How do encryption in transit (TLS 1.3) and encryption at rest differ?',
+      front:
+        'How do encryption in transit (TLS 1.3) and encryption at rest differ?',
       back: 'TLS protects data while traveling across networks against eavesdroppers; encryption at rest (AES-256-GCM) protects stored disks, backups, and database rows.',
     },
     {
@@ -609,7 +613,8 @@ export const lesson = {
       back: 'Hashing is one-way (passwords, integrity); encryption is two-way with a secret key (confidentiality); encoding (Base64) is public format conversion with zero secrecy.',
     },
     {
-      front: 'Why is deleting a secret from the latest Git commit not enough after a leak?',
+      front:
+        'Why is deleting a secret from the latest Git commit not enough after a leak?',
       back: 'Git history preserves every prior commit and automated bots scrape pushes within seconds—any committed secret must be immediately revoked and rotated.',
     },
     {

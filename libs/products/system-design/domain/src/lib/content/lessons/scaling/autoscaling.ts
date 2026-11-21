@@ -172,9 +172,7 @@ export const lesson = {
           text: 'Trigger scale-out early enough (e.g. 60–70% CPU) so current nodes survive the 2–5 minute boot lag.',
         },
       ],
-      changes: [
-        { type: 'added', text: 'App 3 and App 4 booting in the pool' },
-      ],
+      changes: [{ type: 'added', text: 'App 3 and App 4 booting in the pool' }],
       ops: [
         {
           op: 'add-node',
@@ -520,7 +518,8 @@ export const lesson = {
       back: 'Booting and warming up new instances takes 2–5 minutes; early triggers give existing nodes headroom to avoid queueing spikes during that lag.',
     },
     {
-      front: 'Why set both min and max instance counts on an autoscaling group?',
+      front:
+        'Why set both min and max instance counts on an autoscaling group?',
       back: '• Min floor (≥ 2): preserves redundancy during quiet hours.\n• Max cap: prevents bugs or DDoS bursts from spinning up an unlimited cloud bill.',
     },
     {
@@ -528,7 +527,8 @@ export const lesson = {
       back: 'Scaling in too soon pushes CPU back over the scale-out threshold. Prevent it with a cooldown period and conservative scale-in rules.',
     },
     {
-      front: 'Why doesn’t a relational database autoscale smoothly like stateless web servers?',
+      front:
+        'Why doesn’t a relational database autoscale smoothly like stateless web servers?',
       back: 'State on disk cannot be spawned or destroyed in seconds, and scaling app instances out multiplies database connections—requiring caches, connection pools, replicas, or sharding.',
     },
   ],

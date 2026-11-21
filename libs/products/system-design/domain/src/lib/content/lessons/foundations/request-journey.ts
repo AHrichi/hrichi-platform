@@ -362,7 +362,7 @@ export const lesson = {
     {
       id: 'mobile',
       label: 'Mobile',
-      kind: 'case',
+      kind: 'watch-out',
       title: 'Weak signal doubles every round trip',
       body: [
         'What if you are on a crowded train with **150 ms** round-trip time and packet retransmissions? DNS jumps to **150 ms**, the two handshakes double to **300 ms**, and asset transfer stretches.',

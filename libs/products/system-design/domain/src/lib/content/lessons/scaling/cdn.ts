@@ -65,7 +65,12 @@ export const lesson = {
   },
   hud: [
     { id: 'rtt', label: 'RTT', icon: 'timer', value: '280 ms' },
-    { id: 'img-load', label: 'Image load', icon: 'download', value: '1,120 ms' },
+    {
+      id: 'img-load',
+      label: 'Image load',
+      icon: 'download',
+      value: '1,120 ms',
+    },
     { id: 'origin-bw', label: 'Origin egress', icon: 'cloud', value: '100%' },
   ],
   steps: [
@@ -137,9 +142,7 @@ export const lesson = {
         'A **CDN** (_Content Delivery Network_) deploys hundreds of **edge PoPs** (_Points of Presence_) in cities worldwide—including **Sydney**.',
         'Through DNS or **Anycast** routing, Sydney browsers connect to a PoP **12 ms** away instead of crossing oceans for handshakes.',
       ],
-      changes: [
-        { type: 'added', text: 'Sydney CDN edge PoP (12 ms RTT)' },
-      ],
+      changes: [{ type: 'added', text: 'Sydney CDN edge PoP (12 ms RTT)' }],
       ops: [
         { op: 'remove-note', id: 'rtt-note' },
         { op: 'remove-edge', id: 'sydney-origin' },
@@ -223,7 +226,9 @@ export const lesson = {
         'Publish a new viral banner and **200 global PoPs** miss simultaneously, sending 200 parallel downloads straight to Frankfurt!',
         'Adding an **origin shield**—a shared intermediate cache tier near Frankfurt—coalesces all 200 edge misses into **one** origin fetch.',
       ],
-      changes: [{ type: 'added', text: 'Origin shield coalescing edge misses' }],
+      changes: [
+        { type: 'added', text: 'Origin shield coalescing edge misses' },
+      ],
       ops: [
         { op: 'remove-edge', id: 'pop-origin' },
         {
@@ -450,7 +455,8 @@ export const lesson = {
   ],
   cards: [
     {
-      front: 'Why can’t a faster origin server eliminate latency for distant global users?',
+      front:
+        'Why can’t a faster origin server eliminate latency for distant global users?',
       back: 'The speed of light through fiber sets a hard round-trip time (RTT) floor across continents; TCP/TLS handshakes and HTTP transfers multiply that RTT.',
     },
     {
@@ -458,11 +464,13 @@ export const lesson = {
       back: 'An intermediate cache tier sitting in front of your origin that coalesces simultaneous misses from many edge PoPs into one origin pull.',
     },
     {
-      front: 'Why are content-hashed filenames (e.g. app.a9f3c.js) preferred over CDN purges?',
+      front:
+        'Why are content-hashed filenames (e.g. app.a9f3c.js) preferred over CDN purges?',
       back: 'Purges take time to propagate across every PoP globally; new hashed filenames let you cache forever (`immutable`) and switch immediately on deploy.',
     },
     {
-      front: 'What Cache-Control rule protects user-specific API responses behind a CDN?',
+      front:
+        'What Cache-Control rule protects user-specific API responses behind a CDN?',
       back: 'Send `Cache-Control: private, no-store` so edge PoPs never store or leak one user’s personalised data to another.',
     },
   ],

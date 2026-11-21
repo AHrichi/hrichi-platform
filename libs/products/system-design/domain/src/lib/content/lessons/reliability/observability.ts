@@ -352,7 +352,12 @@ export const lesson = {
           label: '3.9 s lock',
           wave: 2,
         },
-        { op: 'set-metric', id: 'root-cause', value: 'DB table lock', tone: 'good' },
+        {
+          op: 'set-metric',
+          id: 'root-cause',
+          value: 'DB table lock',
+          tone: 'good',
+        },
       ],
       learns: [3],
     },
@@ -446,7 +451,12 @@ export const lesson = {
             ],
           },
         },
-        { op: 'set-metric', id: 'root-cause', value: '3 pillars', tone: 'good' },
+        {
+          op: 'set-metric',
+          id: 'root-cause',
+          value: '3 pillars',
+          tone: 'good',
+        },
       ],
       takeaways: [
         'Track RED (Rate, Errors, Duration) on services and USE (Utilisation, Saturation, Errors) on resources',
@@ -525,7 +535,8 @@ export const lesson = {
       back: 'CPU spikes do not always hurt users, while pool saturation or locks can break user latency at low CPU. Burn-rate alerts tie pages directly to error-budget loss.',
     },
     {
-      front: 'How do structured logs and distributed traces complement each other?',
+      front:
+        'How do structured logs and distributed traces complement each other?',
       back: 'Distributed traces (trace_id + spans) show where time went across hops; structured JSON logs (correlated via request_id) show the detailed events and error fields inside a hop.',
     },
     {

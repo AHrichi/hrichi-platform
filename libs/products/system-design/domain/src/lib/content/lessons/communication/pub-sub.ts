@@ -137,8 +137,14 @@ export const lesson = {
         'The broker **fans out** a copy to every subscribed service independently. Analytics stays insulated from Checkout, and Inventory and Fraud plug in without touching Checkout’s code.',
       ],
       changes: [
-        { type: 'added', text: 'OrderPlaced topic decoupling Checkout from 5 teams' },
-        { type: 'changed', text: 'Checkout emits 1 event instead of calling RPCs' },
+        {
+          type: 'added',
+          text: 'OrderPlaced topic decoupling Checkout from 5 teams',
+        },
+        {
+          type: 'changed',
+          text: 'Checkout emits 1 event instead of calling RPCs',
+        },
       ],
       ops: [
         { op: 'remove-edge', id: 'co-billing' },
@@ -200,7 +206,10 @@ export const lesson = {
       ],
       changes: [
         { type: 'added', text: 'Shipping B worker inside shipping-grp' },
-        { type: 'changed', text: 'Analytics recovers and all 5 groups read events' },
+        {
+          type: 'changed',
+          text: 'Analytics recovers and all 5 groups read events',
+        },
       ],
       ops: [
         {
@@ -265,9 +274,7 @@ export const lesson = {
         'Basic pub/sub discards messages right after delivery. A **log-based stream** (such as Kafka) appends events to an immutable disk log numbered by sequential **offsets** (`#0` .. `#1042`).',
         'Reading never deletes data: each consumer group simply persists its own cursor offset, letting fast and slow teams read independently.',
       ],
-      changes: [
-        { type: 'added', text: 'Immutable log offset tracker note' },
-      ],
+      changes: [{ type: 'added', text: 'Immutable log offset tracker note' }],
       ops: [
         { op: 'update-node', id: 'shipping', patch: { state: 'normal' } },
         { op: 'update-node', id: 'shipping-b', patch: { state: 'normal' } },
@@ -389,7 +396,12 @@ export const lesson = {
           label: 'part 0 FIFO',
           wave: 1,
         },
-        { op: 'set-metric', id: 'ordering', value: 'Per orderId', tone: 'good' },
+        {
+          op: 'set-metric',
+          id: 'ordering',
+          value: 'Per orderId',
+          tone: 'good',
+        },
         { op: 'set-metric', id: 'offset', value: '#1,043', tone: 'good' },
       ],
       learns: [3],

@@ -151,7 +151,10 @@ export const lesson = {
         'Empty responses drop from 95% to ~10%, though every single update still tears down and starts a fresh HTTP cycle.',
       ],
       changes: [
-        { type: 'changed', text: 'API holds requests open until new GPS arrives' },
+        {
+          type: 'changed',
+          text: 'API holds requests open until new GPS arrives',
+        },
       ],
       ops: [
         {
@@ -275,13 +278,20 @@ export const lesson = {
         'Connect stateful **Connection Servers** through a **Pub/Sub bus**: Server A publishes to `order:42`, and only Server B holding that buyer pushes the live frame.',
       ],
       changes: [
-        { type: 'added', text: 'WS Server B and Pub/Sub bus for cross-server fan-out' },
+        {
+          type: 'added',
+          text: 'WS Server B and Pub/Sub bus for cross-server fan-out',
+        },
       ],
       ops: [
         {
           op: 'update-node',
           id: 'api',
-          patch: { label: 'WS Server A', sublabel: 'Courier conn', badge: null },
+          patch: {
+            label: 'WS Server A',
+            sublabel: 'Courier conn',
+            badge: null,
+          },
         },
         {
           op: 'add-node',
@@ -484,7 +494,8 @@ export const lesson = {
       unit: 'RPS',
       answer: 20000,
       tolerance: 0.05,
-      explain: '60,000 buyers ÷ 3 seconds per poll = 20,000 requests per second.',
+      explain:
+        '60,000 buyers ÷ 3 seconds per poll = 20,000 requests per second.',
       step: 'short-polling',
     },
     {
@@ -543,7 +554,8 @@ export const lesson = {
       back: 'An ingest or server node publishes the event to a pub/sub topic, and whichever connection server holds that user’s open socket forwards the frame.',
     },
     {
-      front: 'How do you prevent a WebSocket reconnect storm after a disconnect?',
+      front:
+        'How do you prevent a WebSocket reconnect storm after a disconnect?',
       back: 'Clients reconnect with exponential backoff plus random jitter, and pass lastSeenSeq to backfill missed events.',
     },
     {

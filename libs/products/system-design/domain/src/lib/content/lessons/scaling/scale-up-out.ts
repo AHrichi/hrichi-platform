@@ -313,7 +313,11 @@ export const lesson = {
           edge: { id: 'app3-db', from: 'app-3', to: 'db', label: 'SQL' },
         },
         { op: 'update-node', id: 'app', patch: { load: 0.9 } },
-        { op: 'update-node', id: 'app-2', patch: { state: 'normal', load: 0.9 } },
+        {
+          op: 'update-node',
+          id: 'app-2',
+          patch: { state: 'normal', load: 0.9 },
+        },
         {
           op: 'add-note',
           note: {
@@ -459,7 +463,8 @@ export const lesson = {
       unit: '$/month',
       answer: 2560,
       tolerance: 0.05,
-      explain: '4 × $640 = $2,560/month—almost half the price of one $4,800 128-vCPU host with nearly double the capacity.',
+      explain:
+        '4 × $640 = $2,560/month—almost half the price of one $4,800 128-vCPU host with nearly double the capacity.',
       step: 'cost-curve',
     },
     {
@@ -492,7 +497,8 @@ export const lesson = {
       back: 'A load balancer to distribute traffic and stateless servers so any instance can answer any request.',
     },
     {
-      front: 'Once your app tier scales horizontally, what usually becomes the next bottleneck?',
+      front:
+        'Once your app tier scales horizontally, what usually becomes the next bottleneck?',
       back: 'The shared database behind the pool, which must then be protected with caching, connection pooling, read replicas, or sharding.',
     },
   ],

@@ -303,7 +303,10 @@ export const lesson = {
         'If `DC-East` fails, active health checks stop routing there within **10 seconds**—no cold warm-up needed, though databases must reconcile or shard writes cleanly.',
       ],
       changes: [
-        { type: 'added', text: 'Global load balancer splitting traffic 50 / 50' },
+        {
+          type: 'added',
+          text: 'Global load balancer splitting traffic 50 / 50',
+        },
         { type: 'changed', text: 'Failover time drops to ~10 s' },
       ],
       ops: [
@@ -425,7 +428,10 @@ export const lesson = {
         'Because `DC-West` ran at `45%` load, it absorbs the surge at **90%** without crashing. Had both sites run at `75%`, the surviving site would collapse immediately.',
       ],
       changes: [
-        { type: 'changed', text: 'DC-East down; DC-West jumps from 45% to 90% load' },
+        {
+          type: 'changed',
+          text: 'DC-East down; DC-West jumps from 45% to 90% load',
+        },
       ],
       ops: [
         {

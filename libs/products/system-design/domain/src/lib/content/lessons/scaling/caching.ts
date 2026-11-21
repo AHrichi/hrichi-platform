@@ -41,7 +41,12 @@ export const lesson = {
       },
     ],
     edges: [
-      { id: 'shoppers-api', from: 'shoppers', to: 'api', label: 'GET /item/99' },
+      {
+        id: 'shoppers-api',
+        from: 'shoppers',
+        to: 'api',
+        label: 'GET /item/99',
+      },
       { id: 'api-db', from: 'api', to: 'db', label: 'SELECT' },
     ],
     zones: [
@@ -71,7 +76,13 @@ export const lesson = {
         '**Catalog DB** burns 96% CPU answering identical reads.',
       ],
       ops: [
-        { op: 'packet', edge: 'shoppers-api', kind: 'request', count: 3, wave: 0 },
+        {
+          op: 'packet',
+          edge: 'shoppers-api',
+          kind: 'request',
+          count: 3,
+          wave: 0,
+        },
         {
           op: 'packet',
           edge: 'api-db',
@@ -502,11 +513,13 @@ export const lesson = {
   ],
   cards: [
     {
-      front: 'How do you calculate average read latency from a cache hit ratio h?',
+      front:
+        'How do you calculate average read latency from a cache hit ratio h?',
       back: 'Average latency = h × t(cache) + (1 − h) × t(DB). Even a small miss rate dominates average latency when DB reads are 20× slower.',
     },
     {
-      front: 'In cache-aside, why do applications usually DELETE a key on write instead of overwriting it?',
+      front:
+        'In cache-aside, why do applications usually DELETE a key on write instead of overwriting it?',
       back: 'Deleting prevents two concurrent writes from racing and leaving the older value stuck in the cache until TTL expires.',
     },
     {
@@ -514,7 +527,8 @@ export const lesson = {
       back: '• Write-through: updates cache and DB synchronously (consistent, slower writes).\n• Write-back: writes cache first and flushes to DB asynchronously (fast writes, risk of data loss on crash).',
     },
     {
-      front: 'Name three techniques to prevent a cache stampede on hot-key expiration.',
+      front:
+        'Name three techniques to prevent a cache stampede on hot-key expiration.',
       back: '1. Single-flight / request coalescing (one reload per key)\n2. Random TTL jitter\n3. Stale-while-revalidate background refresh',
     },
   ],

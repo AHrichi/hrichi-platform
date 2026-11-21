@@ -131,7 +131,10 @@ export const lesson = {
         'Checkout `p50` drops from **1,240 ms** to **45 ms**, and SMTP hiccups can no longer fail a payment.',
       ],
       changes: [
-        { type: 'added', text: 'Durable Email Queue between Checkout and SMTP' },
+        {
+          type: 'added',
+          text: 'Durable Email Queue between Checkout and SMTP',
+        },
         { type: 'changed', text: 'Checkout p50 drops to 45 ms' },
       ],
       ops: [
@@ -361,7 +364,10 @@ export const lesson = {
         'Set `maxRetries = 3`. After three failures, the broker moves the message to a **Dead-Letter Queue (`DLQ`)** so valid receipts drain cleanly and engineers can inspect or replay failures.',
       ],
       changes: [
-        { type: 'added', text: 'Dead-Letter Queue (DLQ) for failed poison pills' },
+        {
+          type: 'added',
+          text: 'Dead-Letter Queue (DLQ) for failed poison pills',
+        },
       ],
       ops: [
         {
@@ -511,7 +517,8 @@ export const lesson = {
       back: 'A malformed or unprocessable job that fails every attempt; moving it to a Dead-Letter Queue after maxRetries prevents infinite retries from blocking healthy jobs.',
     },
     {
-      front: 'How do you handle a growing queue backlog before running out of memory?',
+      front:
+        'How do you handle a growing queue backlog before running out of memory?',
       back: 'Alert on queue depth and age, autoscale workers if downstream allows, cap queue size or job TTL, and apply backpressure.',
     },
   ],

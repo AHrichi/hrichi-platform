@@ -132,6 +132,7 @@ export const CURRICULUM: readonly CourseModule[] = [
       9,
       'Bigger machines or more machines: the limits and costs of each.',
       ['vertical', 'horizontal', 'scaling', 'spof', 'capacity'],
+      () => import('./lessons/scaling/scale-up-out').then((m) => m.lesson),
     ],
     [
       'load-balancing',
@@ -148,6 +149,7 @@ export const CURRICULUM: readonly CourseModule[] = [
         'l7',
         'sticky sessions',
       ],
+      () => import('./lessons/scaling/load-balancing').then((m) => m.lesson),
     ],
     [
       'stateless-services',
@@ -156,6 +158,8 @@ export const CURRICULUM: readonly CourseModule[] = [
       9,
       'Move state out of the server so any instance can answer any request.',
       ['stateless', 'session', 'token', 'jwt', 'redis'],
+      () =>
+        import('./lessons/scaling/stateless-services').then((m) => m.lesson),
     ],
     [
       'caching',
@@ -172,6 +176,7 @@ export const CURRICULUM: readonly CourseModule[] = [
         'stampede',
         'lru',
       ],
+      () => import('./lessons/scaling/caching').then((m) => m.lesson),
     ],
     [
       'cdn',
@@ -180,6 +185,7 @@ export const CURRICULUM: readonly CourseModule[] = [
       9,
       'Put content near users so distance stops costing round trips.',
       ['cdn', 'edge', 'pop', 'cache-control', 'origin', 'purge'],
+      () => import('./lessons/scaling/cdn').then((m) => m.lesson),
     ],
     [
       'autoscaling',
@@ -188,6 +194,7 @@ export const CURRICULUM: readonly CourseModule[] = [
       9,
       'Add and remove servers with the traffic, without flapping or lag.',
       ['autoscaling', 'metrics', 'cooldown', 'warm-up', 'scheduled scaling'],
+      () => import('./lessons/scaling/autoscaling').then((m) => m.lesson),
     ],
   ]),
   mod('data', 3, 'Data & Storage', 'violet', [
@@ -206,6 +213,7 @@ export const CURRICULUM: readonly CourseModule[] = [
         'acid',
         'polyglot',
       ],
+      () => import('./lessons/data/sql-vs-nosql').then((m) => m.lesson),
     ],
     [
       'indexes',
@@ -214,6 +222,7 @@ export const CURRICULUM: readonly CourseModule[] = [
       10,
       'Turn a full table scan into a few page reads, and know what it costs writes.',
       ['index', 'b-tree', 'composite index', 'covering index', 'query plan'],
+      () => import('./lessons/data/indexes').then((m) => m.lesson),
     ],
     [
       'storage-engines',
@@ -222,6 +231,7 @@ export const CURRICULUM: readonly CourseModule[] = [
       12,
       'B-trees and LSM trees: how databases lay data on disk, and why it matters.',
       ['b-tree', 'lsm', 'wal', 'sstable', 'compaction', 'bloom filter'],
+      () => import('./lessons/data/storage-engines').then((m) => m.lesson),
     ],
     [
       'replication',
@@ -230,6 +240,7 @@ export const CURRICULUM: readonly CourseModule[] = [
       11,
       'Copy data to more machines for reads and safety, and live with lag.',
       ['replication', 'leader', 'follower', 'replica', 'lag', 'failover'],
+      () => import('./lessons/data/replication').then((m) => m.lesson),
     ],
     [
       'sharding',
@@ -245,6 +256,7 @@ export const CURRICULUM: readonly CourseModule[] = [
         'hot partition',
         'resharding',
       ],
+      () => import('./lessons/data/sharding').then((m) => m.lesson),
     ],
     [
       'consistent-hashing',
@@ -253,6 +265,7 @@ export const CURRICULUM: readonly CourseModule[] = [
       10,
       'Add or remove nodes and move only a small share of the keys.',
       ['consistent hashing', 'hash ring', 'virtual nodes', 'rebalancing'],
+      () => import('./lessons/data/consistent-hashing').then((m) => m.lesson),
     ],
     [
       'unique-ids',
@@ -261,6 +274,7 @@ export const CURRICULUM: readonly CourseModule[] = [
       9,
       'Generate ids on many machines without collisions or a single counter.',
       ['uuid', 'ulid', 'snowflake', 'id generation', 'clock skew'],
+      () => import('./lessons/data/unique-ids').then((m) => m.lesson),
     ],
     [
       'cap-consistency',
@@ -276,6 +290,7 @@ export const CURRICULUM: readonly CourseModule[] = [
         'pacelc',
         'partition',
       ],
+      () => import('./lessons/data/cap-consistency').then((m) => m.lesson),
     ],
     [
       'consensus',
@@ -291,6 +306,7 @@ export const CURRICULUM: readonly CourseModule[] = [
         'split brain',
         'fencing',
       ],
+      () => import('./lessons/data/consensus').then((m) => m.lesson),
     ],
     [
       'transactions',
@@ -299,6 +315,7 @@ export const CURRICULUM: readonly CourseModule[] = [
       12,
       'Keep concurrent writes correct: anomalies, isolation levels and locking.',
       ['transaction', 'acid', 'isolation', 'mvcc', 'lost update', 'write skew'],
+      () => import('./lessons/data/transactions').then((m) => m.lesson),
     ],
     [
       'blob-storage',
@@ -314,6 +331,7 @@ export const CURRICULUM: readonly CourseModule[] = [
         'transcoding',
         'media',
       ],
+      () => import('./lessons/data/blob-storage').then((m) => m.lesson),
     ],
   ]),
   mod('communication', 4, 'Communication', 'teal', [
@@ -324,6 +342,7 @@ export const CURRICULUM: readonly CourseModule[] = [
       11,
       'Three ways for services to talk, and when each one fits.',
       ['rest', 'rpc', 'grpc', 'graphql', 'api', 'pagination', 'idempotency'],
+      () => import('./lessons/communication/api-styles').then((m) => m.lesson),
     ],
     [
       'api-gateway',
@@ -332,6 +351,7 @@ export const CURRICULUM: readonly CourseModule[] = [
       9,
       'One front door for many services: routing, auth and limits at the edge.',
       ['api gateway', 'bff', 'routing', 'tls termination', 'edge'],
+      () => import('./lessons/communication/api-gateway').then((m) => m.lesson),
     ],
     [
       'message-queues',
@@ -347,6 +367,8 @@ export const CURRICULUM: readonly CourseModule[] = [
         'dead letter',
         'backpressure',
       ],
+      () =>
+        import('./lessons/communication/message-queues').then((m) => m.lesson),
     ],
     [
       'pub-sub',
@@ -355,6 +377,7 @@ export const CURRICULUM: readonly CourseModule[] = [
       11,
       'Publish one event and let every interested service react to it.',
       ['pub/sub', 'event', 'topic', 'kafka', 'consumer group', 'offset'],
+      () => import('./lessons/communication/pub-sub').then((m) => m.lesson),
     ],
     [
       'realtime',
@@ -363,6 +386,7 @@ export const CURRICULUM: readonly CourseModule[] = [
       10,
       'Push live updates to users, from polling to open connections.',
       ['polling', 'long polling', 'sse', 'websocket', 'realtime', 'presence'],
+      () => import('./lessons/communication/realtime').then((m) => m.lesson),
     ],
   ]),
   mod('reliability', 5, 'Reliability', 'rose', [
@@ -380,6 +404,10 @@ export const CURRICULUM: readonly CourseModule[] = [
         'rpo',
         'rto',
       ],
+      () =>
+        import('./lessons/reliability/redundancy-failover').then(
+          (m) => m.lesson,
+        ),
     ],
     [
       'rate-limiting',
@@ -388,6 +416,7 @@ export const CURRICULUM: readonly CourseModule[] = [
       11,
       'Protect a service from floods with fair, predictable limits.',
       ['rate limiting', 'token bucket', 'sliding window', '429', 'throttling'],
+      () => import('./lessons/reliability/rate-limiting').then((m) => m.lesson),
     ],
     [
       'timeouts-retries',
@@ -403,6 +432,8 @@ export const CURRICULUM: readonly CourseModule[] = [
         'idempotency key',
         'retry storm',
       ],
+      () =>
+        import('./lessons/reliability/timeouts-retries').then((m) => m.lesson),
     ],
     [
       'circuit-breakers',
@@ -417,6 +448,8 @@ export const CURRICULUM: readonly CourseModule[] = [
         'cascading failure',
         'load shedding',
       ],
+      () =>
+        import('./lessons/reliability/circuit-breakers').then((m) => m.lesson),
     ],
     [
       'observability',
@@ -425,6 +458,7 @@ export const CURRICULUM: readonly CourseModule[] = [
       10,
       'See inside a running system: what is slow, where, and why.',
       ['observability', 'logs', 'metrics', 'tracing', 'slo', 'alerting'],
+      () => import('./lessons/reliability/observability').then((m) => m.lesson),
     ],
   ]),
   mod('architecture', 6, 'Architecture', 'amber', [
@@ -441,6 +475,10 @@ export const CURRICULUM: readonly CourseModule[] = [
         'service boundaries',
         'domain',
       ],
+      () =>
+        import('./lessons/architecture/monolith-microservices').then(
+          (m) => m.lesson,
+        ),
     ],
     [
       'service-discovery',
@@ -456,6 +494,10 @@ export const CURRICULUM: readonly CourseModule[] = [
         'service mesh',
         'sidecar',
       ],
+      () =>
+        import('./lessons/architecture/service-discovery').then(
+          (m) => m.lesson,
+        ),
     ],
     [
       'sagas',
@@ -471,6 +513,7 @@ export const CURRICULUM: readonly CourseModule[] = [
         'choreography',
         'outbox',
       ],
+      () => import('./lessons/architecture/sagas').then((m) => m.lesson),
     ],
     [
       'batch-stream',
@@ -479,6 +522,7 @@ export const CURRICULUM: readonly CourseModule[] = [
       10,
       'Process data in big scheduled runs or continuously as it arrives.',
       ['batch', 'stream', 'window', 'event time', 'late data', 'exactly-once'],
+      () => import('./lessons/architecture/batch-stream').then((m) => m.lesson),
     ],
   ]),
   mod('security', 7, 'Security', 'green', [
@@ -497,6 +541,7 @@ export const CURRICULUM: readonly CourseModule[] = [
         'oidc',
         'mfa',
       ],
+      () => import('./lessons/security/authentication').then((m) => m.lesson),
     ],
     [
       'authorization',
@@ -505,6 +550,7 @@ export const CURRICULUM: readonly CourseModule[] = [
       9,
       'Decide what a signed-in user may do, on the server, every time.',
       ['authorization', 'rbac', 'abac', 'permissions', 'least privilege'],
+      () => import('./lessons/security/authorization').then((m) => m.lesson),
     ],
     [
       'encryption-secrets',
@@ -513,6 +559,8 @@ export const CURRICULUM: readonly CourseModule[] = [
       10,
       'Protect data in transit and at rest, and keep keys out of code.',
       ['encryption', 'tls', 'kms', 'secrets', 'rotation', 'hashing'],
+      () =>
+        import('./lessons/security/encryption-secrets').then((m) => m.lesson),
     ],
   ]),
   mod('shipping', 8, 'Shipping', 'teal', [
@@ -523,6 +571,7 @@ export const CURRICULUM: readonly CourseModule[] = [
       10,
       'Catch the failures that only appear when services meet.',
       ['testing', 'contract tests', 'integration', 'load testing', 'chaos'],
+      () => import('./lessons/shipping/testing-at-scale').then((m) => m.lesson),
     ],
     [
       'cicd',
@@ -538,6 +587,7 @@ export const CURRICULUM: readonly CourseModule[] = [
         'rollback',
         'migrations',
       ],
+      () => import('./lessons/shipping/cicd').then((m) => m.lesson),
     ],
   ]),
   mod('case-studies', 9, 'Case Studies', 'violet', [
@@ -548,6 +598,8 @@ export const CURRICULUM: readonly CourseModule[] = [
       10,
       'A repeatable way to go from a vague prompt to a defended design.',
       ['method', 'requirements', 'estimates', 'hld', 'lld', 'interview'],
+      () =>
+        import('./lessons/case-studies/design-method').then((m) => m.lesson),
     ],
     [
       'design-url-shortener',
@@ -556,6 +608,10 @@ export const CURRICULUM: readonly CourseModule[] = [
       14,
       'Short keys, fast redirects and click counts for 100 million links a month.',
       ['url shortener', 'base62', 'key generation', 'redirect', 'analytics'],
+      () =>
+        import('./lessons/case-studies/design-url-shortener').then(
+          (m) => m.lesson,
+        ),
     ],
     [
       'design-news-feed',
@@ -564,6 +620,8 @@ export const CURRICULUM: readonly CourseModule[] = [
       15,
       'Fresh, ranked posts for millions of followers without melting the database.',
       ['news feed', 'fan-out', 'timeline', 'ranking', 'feed cache'],
+      () =>
+        import('./lessons/case-studies/design-news-feed').then((m) => m.lesson),
     ],
     [
       'design-chat',
@@ -572,6 +630,7 @@ export const CURRICULUM: readonly CourseModule[] = [
       15,
       'One-to-one and group messages, delivered in order, online or offline.',
       ['chat', 'websocket', 'messages', 'ordering', 'presence', 'push'],
+      () => import('./lessons/case-studies/design-chat').then((m) => m.lesson),
     ],
   ]),
 ];

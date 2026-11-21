@@ -197,7 +197,7 @@ export const lesson = {
       kind: 'case',
       title: 'A flash-sale seller creates a hot partition',
       body: [
-        'Suppose instead you sharded by `seller_id` so each merchant’s dashboard lives on one shard. Then a celebrity brand drops limited sneakers: **30,000 orders/s** carry the _same_ `seller_id`.',
+        'Suppose instead you sharded by `seller_id` so each merchant’s dashboard lives on one shard. Then a viral brand drops limited sneakers: **30,000 orders/s** carry the _same_ `seller_id`.',
         'Even with hashing, identical keys always land on **Shard 2**, pushing it to **99% load** while Shards 1 and 3 sit quiet.',
       ],
       ops: [
@@ -239,7 +239,7 @@ export const lesson = {
       title: 'Pick high-cardinality or salted shard keys',
       body: [
         'A good shard key has **high cardinality** (millions of values), **even distribution**, and matches your hottest queries. Using `order_id` spreads flash-sale orders evenly.',
-        'If you must group by `seller_id`, add a **write salt** (`seller_id#0..9`) for celebrity merchants—splitting one hot key across 10 buckets at the cost of merging 10 reads on their dashboard.',
+        'If you must group by `seller_id`, add a **write salt** (`seller_id#0..9`) for hot merchants—splitting one hot key across 10 buckets at the cost of merging 10 reads on their dashboard.',
       ],
       callouts: [
         {

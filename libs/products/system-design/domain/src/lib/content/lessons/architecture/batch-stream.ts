@@ -142,7 +142,10 @@ export const lesson = {
         'Adding a live stream drops fraud detection latency from **24 hours** down to **under 2 seconds**, while batch keeps feeding finance reports.',
       ],
       changes: [
-        { type: 'added', text: 'Event Stream, Fraud Stream worker, and Alerts service' },
+        {
+          type: 'added',
+          text: 'Event Stream, Fraud Stream worker, and Alerts service',
+        },
         { type: 'changed', text: 'Alert latency drops from 24 h to 1.5 s' },
       ],
       ops: [
@@ -357,7 +360,10 @@ export const lesson = {
         '**Kappa architecture** keeps only one stream pipeline fed by a durable **append-only log** (`Event Stream`). To fix bugs or recompute reports, you simply **replay from an earlier offset**.',
       ],
       changes: [
-        { type: 'added', text: 'Unified Kappa replay path from stream to Finance Report' },
+        {
+          type: 'added',
+          text: 'Unified Kappa replay path from stream to Finance Report',
+        },
       ],
       ops: [
         { op: 'remove-note', id: 'late-note' },
@@ -560,7 +566,8 @@ export const lesson = {
       back: 'Event time is when the action happened; processing time is when the worker saw it. A watermark tracks event-time progress so windows know how long to wait for delayed data.',
     },
     {
-      front: 'Compare Lambda vs Kappa architecture, and note the exactly-once caveat.',
+      front:
+        'Compare Lambda vs Kappa architecture, and note the exactly-once caveat.',
       back: 'Lambda combines a fast stream path with a batch reconciliation path (two codebases). Kappa keeps one stream pipeline that replays a durable log. Even with exactly-once engine state, external sinks still need idempotency keys.',
     },
   ],

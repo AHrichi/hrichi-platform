@@ -246,9 +246,7 @@ export const lesson = {
         'At **600 GB/year** (`3 TB` over 5 years), links need no complex joins—every lookup is a single key fetch `short_code → long_url`.',
         'Store `(short_code PK, long_url, user_id, created_at, expires_at)` in a **NoSQL key-value store** or sharded SQL table partitioned by `short_code` hash for even write and read distribution.',
       ],
-      changes: [
-        { type: 'added', text: 'Links DB partitioned by short_code' },
-      ],
+      changes: [{ type: 'added', text: 'Links DB partitioned by short_code' }],
       ops: [
         {
           op: 'update-node',

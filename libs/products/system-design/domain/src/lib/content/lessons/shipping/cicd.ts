@@ -551,9 +551,7 @@ export const lesson = {
           text: 'Never combine a destructive schema drop with a code deploy—wait until old code is 100% retired.',
         },
       ],
-      changes: [
-        { type: 'added', text: 'Sample-size and flag-debt warning' },
-      ],
+      changes: [{ type: 'added', text: 'Sample-size and flag-debt warning' }],
       ops: [
         { op: 'remove-note', id: 'migrate-note' },
         {

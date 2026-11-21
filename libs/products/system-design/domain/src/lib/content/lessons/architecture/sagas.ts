@@ -223,7 +223,10 @@ export const lesson = {
         'While steps are running, show the booking as **Pending** to the user instead of pretending the whole trip is instantly atomic.',
       ],
       changes: [
-        { type: 'changed', text: 'Replaced 2PC locks with sequential local steps' },
+        {
+          type: 'changed',
+          text: 'Replaced 2PC locks with sequential local steps',
+        },
         { type: 'changed', text: 'Trip state marked Pending during execution' },
       ],
       ops: [
@@ -284,7 +287,10 @@ export const lesson = {
         },
       ],
       changes: [
-        { type: 'changed', text: 'Cars failure triggers reverse C2 and C1 undos' },
+        {
+          type: 'changed',
+          text: 'Cars failure triggers reverse C2 and C1 undos',
+        },
       ],
       ops: [
         {
@@ -385,8 +391,14 @@ export const lesson = {
         'Services stay loosely coupled and easy to extend—though long workflows become implicit and harder to trace across repositories.',
       ],
       changes: [
-        { type: 'added', text: 'Event Bus connecting Trip API, Flights, Hotels, Cars' },
-        { type: 'changed', text: 'Switched from central orchestrator to event reactions' },
+        {
+          type: 'added',
+          text: 'Event Bus connecting Trip API, Flights, Hotels, Cars',
+        },
+        {
+          type: 'changed',
+          text: 'Switched from central orchestrator to event reactions',
+        },
       ],
       ops: [
         { op: 'remove-note', id: 'orch-note' },
@@ -535,7 +547,10 @@ export const lesson = {
         },
       ],
       changes: [
-        { type: 'added', text: 'Outbox table + Outbox Relay publishing to Event Bus' },
+        {
+          type: 'added',
+          text: 'Outbox table + Outbox Relay publishing to Event Bus',
+        },
       ],
       ops: [
         {
@@ -707,7 +722,8 @@ export const lesson = {
   ],
   cards: [
     {
-      front: 'Why are sagas preferred over two-phase commit (2PC) across microservices?',
+      front:
+        'Why are sagas preferred over two-phase commit (2PC) across microservices?',
       back: '2PC holds database locks between prepare and commit and blocks on coordinator crashes. Sagas release locks immediately via local ACID commits and handle failures with compensating actions.',
     },
     {

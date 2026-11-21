@@ -110,6 +110,16 @@ describe('validateLesson', () => {
       'last step must be a recap',
     ],
     [
+      'a case step',
+      (l, m) => [step(l, 3, { kind: 'technique' }), m],
+      'needs at least one case step',
+    ],
+    [
+      'a watch-out step',
+      (l, m) => [step(l, 4, { kind: 'technique' }), m],
+      'needs at least one watch-out step',
+    ],
+    [
       'recap only last',
       (l, m) => [step(l, 4, { kind: 'recap', takeaways: ['a', 'b', 'c'] }), m],
       'only the last step may be a recap',

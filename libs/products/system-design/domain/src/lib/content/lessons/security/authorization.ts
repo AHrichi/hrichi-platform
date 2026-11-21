@@ -267,7 +267,7 @@ export const lesson = {
     },
     {
       id: 'ownership-check',
-      label: 'Ownership check',
+      label: 'Ownership',
       kind: 'technique',
       title: 'Check record ownership on every API query',
       body: [
@@ -437,7 +437,7 @@ export const lesson = {
     },
     {
       id: 'least-privilege',
-      label: 'Least privilege',
+      label: 'Least access',
       kind: 'technique',
       title: 'Give every caller only the minimum access needed',
       body: [
@@ -452,7 +452,11 @@ export const lesson = {
         { type: 'changed', text: 'Blast radius reduced to Single scope' },
       ],
       ops: [
-        { op: 'update-node', id: 'alice', patch: { state: 'normal', badge: null } },
+        {
+          op: 'update-node',
+          id: 'alice',
+          patch: { state: 'normal', badge: null },
+        },
         {
           op: 'update-node',
           id: 'invoices-db',
@@ -500,7 +504,7 @@ export const lesson = {
       id: 'recap',
       label: 'Recap',
       kind: 'recap',
-      title: 'Check identity, role, and ownership on the server',
+      title: 'Check identity, role and ownership server-side',
       body: [
         'Authentication proves who stepped into the building; authorization checks their role, context attributes, and resource ownership on the server before returning a single invoice.',
       ],
@@ -568,8 +572,7 @@ export const lesson = {
     {
       id: 'choice-rbac-vs-abac',
       kind: 'choice',
-      prompt:
-        'Which authorization rule requires ABAC rather than pure RBAC?',
+      prompt: 'Which authorization rule requires ABAC rather than pure RBAC?',
       options: [
         'Support reps in EU may view an invoice only when the customer has an open ticket during business hours',
         'Users with the billing_admin role may issue refunds',
@@ -610,7 +613,8 @@ export const lesson = {
   ],
   cards: [
     {
-      front: 'What is the difference between Authentication (AuthN) and Authorization (AuthZ)?',
+      front:
+        'What is the difference between Authentication (AuthN) and Authorization (AuthZ)?',
       back: 'AuthN verifies who the caller is ("user_42"); AuthZ decides what that caller is allowed to do on a given resource.',
     },
     {
@@ -626,7 +630,8 @@ export const lesson = {
       back: 'Attackers bypass the UI and send requests directly with curl or modified payloads; authorization must always be enforced server-side with deny-by-default.',
     },
     {
-      front: 'What does the principle of least privilege mean for backend services?',
+      front:
+        'What does the principle of least privilege mean for backend services?',
       back: 'Give each user, token, and service only the minimum permissions and tables required for its job—never wildcard admin access.',
     },
   ],

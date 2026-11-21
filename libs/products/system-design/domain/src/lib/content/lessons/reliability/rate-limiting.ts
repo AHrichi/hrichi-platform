@@ -130,7 +130,10 @@ export const lesson = {
         'Each key needs only one integer and an expiry TTL, making memory and lookup cost tiny.',
       ],
       changes: [
-        { type: 'added', text: '10 req/min fixed-window counter at the gateway' },
+        {
+          type: 'added',
+          text: '10 req/min fixed-window counter at the gateway',
+        },
       ],
       ops: [
         {
@@ -186,7 +189,10 @@ export const lesson = {
         'Auth Service suddenly absorbs **20 requests in 4 seconds**, double the `10/min` budget.',
       ],
       changes: [
-        { type: 'changed', text: '20 bot requests pass within 4 seconds across seam' },
+        {
+          type: 'changed',
+          text: '20 bot requests pass within 4 seconds across seam',
+        },
       ],
       ops: [
         {
@@ -398,7 +404,11 @@ export const lesson = {
         {
           op: 'update-node',
           id: 'gateway',
-          patch: { state: 'normal', label: 'Gateway 1', badge: 'Shared bucket' },
+          patch: {
+            state: 'normal',
+            label: 'Gateway 1',
+            badge: 'Shared bucket',
+          },
         },
         { op: 'packet', edge: 'gw-redis', kind: 'write', wave: 0 },
         { op: 'packet', edge: 'gw2-redis', kind: 'write', wave: 0 },
@@ -625,7 +635,8 @@ export const lesson = {
       back: 'Bucket capacity (maximum burst size) and refill rate (sustained average request rate).',
     },
     {
-      front: 'What HTTP status and headers should an over-limit API return, and what key pitfall should you avoid?',
+      front:
+        'What HTTP status and headers should an over-limit API return, and what key pitfall should you avoid?',
       back: 'Return 429 Too Many Requests with Retry-After (and X-RateLimit-Remaining). Avoid keying purely on IP when many legitimate users share a corporate or mobile NAT.',
     },
   ],

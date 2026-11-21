@@ -59,9 +59,11 @@ export function pendingLesson(id: string, title: string): Lesson {
       {
         id: 'practice',
         label: 'Practice',
-        kind: 'technique',
-        title: 'Practice what you have learned',
-        body: ['Practice draws questions from finished lessons.'],
+        kind: 'watch-out',
+        title: 'Practice only covers finished lessons',
+        body: [
+          'Practice draws questions from finished lessons, not from this one yet.',
+        ],
         ops: [],
       },
       {

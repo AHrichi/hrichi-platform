@@ -163,7 +163,10 @@ export const lesson = {
         },
       ],
       changes: [
-        { type: 'changed', text: 'Checkout retries protected by Idempotency-Key' },
+        {
+          type: 'changed',
+          text: 'Checkout retries protected by Idempotency-Key',
+        },
       ],
       ops: [
         {
@@ -206,7 +209,11 @@ export const lesson = {
       ],
       ops: [
         { op: 'remove-note', id: 'verbs-note' },
-        { op: 'update-node', id: 'phone', patch: { badge: null, state: 'normal' } },
+        {
+          op: 'update-node',
+          id: 'phone',
+          patch: { badge: null, state: 'normal' },
+        },
         {
           op: 'add-node',
           node: {
@@ -248,7 +255,13 @@ export const lesson = {
           },
         },
         { op: 'packet', edge: 'api-pricing', kind: 'request', wave: 0 },
-        { op: 'packet', edge: 'api-inventory', kind: 'event', count: 2, wave: 0 },
+        {
+          op: 'packet',
+          edge: 'api-inventory',
+          kind: 'event',
+          count: 2,
+          wave: 0,
+        },
         { op: 'set-metric', id: 'wire', value: 'JSON + gRPC' },
       ],
       learns: [1],

@@ -117,6 +117,12 @@ export function validateLesson(meta: LessonMeta, lesson: Lesson): string[] {
     bad('the first step must be a problem');
   if (steps.length && steps[steps.length - 1].kind !== 'recap')
     bad('the last step must be a recap');
+  // lesson-authoring.md §9: every lesson shows its idea under stress (a case)
+  // and names a pitfall (a watch-out).
+  if (steps.length && !steps.some((s) => s.kind === 'case'))
+    bad('needs at least one case step');
+  if (steps.length && !steps.some((s) => s.kind === 'watch-out'))
+    bad('needs at least one watch-out step');
   steps.forEach((s, i) => {
     const at = `step ${i + 1} ("${s.id}")`;
     if (s.kind === 'recap' && i !== steps.length - 1)

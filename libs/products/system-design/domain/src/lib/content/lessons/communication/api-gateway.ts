@@ -117,7 +117,10 @@ export const lesson = {
       ],
       changes: [
         { type: 'added', text: 'API Gateway as the single public entry point' },
-        { type: 'changed', text: 'Clients route via paths instead of 10 hosts' },
+        {
+          type: 'changed',
+          text: 'Clients route via paths instead of 10 hosts',
+        },
       ],
       ops: [
         { op: 'remove-edge', id: 'phone-users' },
@@ -136,7 +139,12 @@ export const lesson = {
         },
         {
           op: 'add-edge',
-          edge: { id: 'phone-gw', from: 'phone', to: 'gateway', label: 'HTTPS' },
+          edge: {
+            id: 'phone-gw',
+            from: 'phone',
+            to: 'gateway',
+            label: 'HTTPS',
+          },
         },
         {
           op: 'add-edge',
@@ -144,17 +152,38 @@ export const lesson = {
         },
         {
           op: 'add-edge',
-          edge: { id: 'gw-users', from: 'gateway', to: 'users-svc', label: '/users/*' },
+          edge: {
+            id: 'gw-users',
+            from: 'gateway',
+            to: 'users-svc',
+            label: '/users/*',
+          },
         },
         {
           op: 'add-edge',
-          edge: { id: 'gw-orders', from: 'gateway', to: 'orders-svc', label: '/orders/*' },
+          edge: {
+            id: 'gw-orders',
+            from: 'gateway',
+            to: 'orders-svc',
+            label: '/orders/*',
+          },
         },
         {
           op: 'add-edge',
-          edge: { id: 'gw-catalog', from: 'gateway', to: 'catalog-svc', label: '/catalog/*' },
+          edge: {
+            id: 'gw-catalog',
+            from: 'gateway',
+            to: 'catalog-svc',
+            label: '/catalog/*',
+          },
         },
-        { op: 'packet', edge: 'phone-gw', kind: 'request', label: '/orders', wave: 0 },
+        {
+          op: 'packet',
+          edge: 'phone-gw',
+          kind: 'request',
+          label: '/orders',
+          wave: 0,
+        },
         { op: 'packet', edge: 'gw-orders', kind: 'request', wave: 1 },
         { op: 'set-metric', id: 'entry', value: '1', tone: 'good' },
       ],
@@ -173,8 +202,16 @@ export const lesson = {
         { type: 'changed', text: 'Public TLS 1.3 terminated at the gateway' },
       ],
       ops: [
-        { op: 'update-node', id: 'phone', patch: { state: 'normal', sublabel: '1 host' } },
-        { op: 'update-node', id: 'web', patch: { state: 'normal', sublabel: '1 host' } },
+        {
+          op: 'update-node',
+          id: 'phone',
+          patch: { state: 'normal', sublabel: '1 host' },
+        },
+        {
+          op: 'update-node',
+          id: 'web',
+          patch: { state: 'normal', sublabel: '1 host' },
+        },
         {
           op: 'update-node',
           id: 'gateway',
@@ -208,7 +245,10 @@ export const lesson = {
         'Bad credentials and scraper floods are dropped at the door with `401` or `429 Too Many Requests` before touching backend databases.',
       ],
       changes: [
-        { type: 'changed', text: 'JWT auth and rate limits enforced at the edge' },
+        {
+          type: 'changed',
+          text: 'JWT auth and rate limits enforced at the edge',
+        },
       ],
       ops: [
         {
@@ -238,7 +278,12 @@ export const lesson = {
           label: 'Valid JWT',
           wave: 0,
         },
-        { op: 'set-metric', id: 'edge-checks', value: 'JWT + Limit', tone: 'good' },
+        {
+          op: 'set-metric',
+          id: 'edge-checks',
+          value: 'JWT + Limit',
+          tone: 'good',
+        },
       ],
       learns: [2],
     },
@@ -288,7 +333,13 @@ export const lesson = {
           op: 'add-edge',
           edge: { id: 'bff-catalog', from: 'mobile-bff', to: 'catalog-svc' },
         },
-        { op: 'packet', edge: 'phone-gw', kind: 'request', label: 'GET /home', wave: 0 },
+        {
+          op: 'packet',
+          edge: 'phone-gw',
+          kind: 'request',
+          label: 'GET /home',
+          wave: 0,
+        },
         { op: 'packet', edge: 'gw-bff', kind: 'request', wave: 1 },
         { op: 'packet', edge: 'bff-users', kind: 'request', wave: 2 },
         { op: 'packet', edge: 'bff-orders', kind: 'request', wave: 2 },
@@ -509,7 +560,8 @@ export const lesson = {
       back: 'Public certificates are renewed in one place and backend services avoid public TLS handshake CPU overhead.',
     },
     {
-      front: 'How do you keep an API gateway from becoming a bottleneck or SPOF?',
+      front:
+        'How do you keep an API gateway from becoming a bottleneck or SPOF?',
       back: 'Run multiple stateless gateway replicas behind an L4 load balancer, enforce upstream timeouts, and keep business logic out of the gateway.',
     },
   ],

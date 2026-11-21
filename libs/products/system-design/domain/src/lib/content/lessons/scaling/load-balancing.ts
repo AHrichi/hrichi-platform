@@ -140,7 +140,12 @@ export const lesson = {
         { op: 'packet', edge: 'lb-1', kind: 'request', wave: 0 },
         { op: 'packet', edge: 'lb-2', kind: 'request', wave: 0 },
         { op: 'packet', edge: 'lb-3', kind: 'request', wave: 0 },
-        { op: 'set-metric', id: 'balance', value: 'Even (400 ea)', tone: 'good' },
+        {
+          op: 'set-metric',
+          id: 'balance',
+          value: 'Even (400 ea)',
+          tone: 'good',
+        },
       ],
       learns: [0],
     },
@@ -182,7 +187,12 @@ export const lesson = {
         },
         { op: 'packet', edge: 'lb-2', kind: 'request', count: 2, wave: 0 },
         { op: 'packet', edge: 'lb-3', kind: 'request', count: 2, wave: 0 },
-        { op: 'set-metric', id: 'balance', value: 'By open conns', tone: 'good' },
+        {
+          op: 'set-metric',
+          id: 'balance',
+          value: 'By open conns',
+          tone: 'good',
+        },
       ],
       learns: [1],
     },
@@ -196,7 +206,10 @@ export const lesson = {
         'The load balancer runs active **health checks** (`GET /health` every `5 s`). After three missed probes, it drains `App 3` from rotation so `App 1` and `App 2` keep serving `1,200 RPS` cleanly.',
       ],
       changes: [
-        { type: 'changed', text: 'App 3 pulled from rotation after failed probes' },
+        {
+          type: 'changed',
+          text: 'App 3 pulled from rotation after failed probes',
+        },
       ],
       ops: [
         {
@@ -343,7 +356,12 @@ export const lesson = {
         },
         {
           op: 'add-edge',
-          edge: { id: 'users-lb2', from: 'users', to: 'lb-2', label: 'DNS/VIP' },
+          edge: {
+            id: 'users-lb2',
+            from: 'users',
+            to: 'lb-2',
+            label: 'DNS/VIP',
+          },
         },
         { op: 'add-edge', edge: { id: 'lb2-1', from: 'lb-2', to: 'app-1' } },
         { op: 'add-edge', edge: { id: 'lb2-2', from: 'lb-2', to: 'app-2' } },
@@ -410,11 +428,7 @@ export const lesson = {
       kind: 'choice',
       prompt:
         'Your API serves both 5 ms health pings and 10-second PDF exports on identical servers. Which balancing algorithm prevents exports from piling up on one unlucky host?',
-      options: [
-        'Least connections',
-        'Plain round robin',
-        'Client IP hashing',
-      ],
+      options: ['Least connections', 'Plain round robin', 'Client IP hashing'],
       answer: 0,
       explain:
         'Least connections tracks active open requests and steers new traffic toward servers with fewer jobs still running.',
@@ -469,15 +483,18 @@ export const lesson = {
       back: 'When request durations vary widely (e.g. file uploads, slow queries, WebSockets), so slow work does not accumulate unfairly on one backend.',
     },
     {
-      front: 'What is the main difference between an L4 and an L7 load balancer?',
+      front:
+        'What is the main difference between an L4 and an L7 load balancer?',
       back: 'L4 routes on IP and TCP/UDP port without reading payloads; L7 terminates TLS and routes using HTTP URLs, headers, and cookies.',
     },
     {
-      front: 'Why are sticky sessions usually considered an anti-pattern at scale?',
+      front:
+        'Why are sticky sessions usually considered an anti-pattern at scale?',
       back: 'They create uneven hot spots (e.g. shared corporate NAT IPs) and drop user state whenever the pinned server restarts or scales in.',
     },
     {
-      front: 'How do you prevent the load balancer itself from becoming a single point of failure?',
+      front:
+        'How do you prevent the load balancer itself from becoming a single point of failure?',
       back: 'Run multiple load balancers (active-active or active-passive) behind DNS or Anycast virtual IPs.',
     },
   ],

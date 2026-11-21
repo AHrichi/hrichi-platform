@@ -128,8 +128,14 @@ export const lesson = {
         'Each node sends a **heartbeat** every `10 s` to renew its _lease_ (an expiring registration). If a pod crashes, its `30 s` lease expires and the registry removes it.',
       ],
       changes: [
-        { type: 'added', text: 'Service Registry tracking live Inventory leases' },
-        { type: 'removed', text: 'Dead Inventory-2 instance evicted on timeout' },
+        {
+          type: 'added',
+          text: 'Service Registry tracking live Inventory leases',
+        },
+        {
+          type: 'removed',
+          text: 'Dead Inventory-2 instance evicted on timeout',
+        },
       ],
       ops: [
         { op: 'remove-node', id: 'inv-2' },
@@ -199,7 +205,10 @@ export const lesson = {
         'Traffic travels straight from caller to target in **1 hop** with no middleman bottleneck, though every programming language you use must maintain that smart client SDK.',
       ],
       changes: [
-        { type: 'added', text: 'Checkout watches Registry and calls Inv-3 directly' },
+        {
+          type: 'added',
+          text: 'Checkout watches Registry and calls Inv-3 directly',
+        },
       ],
       ops: [
         {
@@ -250,7 +259,10 @@ export const lesson = {
         'Clients stay simple in any language—plain HTTP or gRPC—at the cost of **1 extra network hop** through the load balancer.',
       ],
       changes: [
-        { type: 'added', text: 'Internal Load Balancer routing between services' },
+        {
+          type: 'added',
+          text: 'Internal Load Balancer routing between services',
+        },
         { type: 'changed', text: 'Checkout simplified; hops rise from 1 to 2' },
       ],
       ops: [
@@ -275,7 +287,12 @@ export const lesson = {
         },
         {
           op: 'add-edge',
-          edge: { id: 'co-lb', from: 'checkout', to: 'lb', label: 'http://inv' },
+          edge: {
+            id: 'co-lb',
+            from: 'checkout',
+            to: 'lb',
+            label: 'http://inv',
+          },
         },
         {
           op: 'add-edge',
@@ -317,7 +334,10 @@ export const lesson = {
         },
       ],
       changes: [
-        { type: 'changed', text: 'Switched internal LB for DNS lookup (60 s TTL)' },
+        {
+          type: 'changed',
+          text: 'Switched internal LB for DNS lookup (60 s TTL)',
+        },
       ],
       ops: [
         { op: 'remove-node', id: 'lb' },
@@ -426,7 +446,12 @@ export const lesson = {
           label: 'Retry wins',
           wave: 1,
         },
-        { op: 'set-metric', id: 'stale', value: '<1% (retried)', tone: 'normal' },
+        {
+          op: 'set-metric',
+          id: 'stale',
+          value: '<1% (retried)',
+          tone: 'normal',
+        },
       ],
     },
     {
@@ -445,8 +470,14 @@ export const lesson = {
         },
       ],
       changes: [
-        { type: 'added', text: 'Sidecar proxy handling xDS discovery and mTLS' },
-        { type: 'changed', text: 'Stale window drops below 1 s via push stream' },
+        {
+          type: 'added',
+          text: 'Sidecar proxy handling xDS discovery and mTLS',
+        },
+        {
+          type: 'changed',
+          text: 'Stale window drops below 1 s via push stream',
+        },
       ],
       ops: [
         { op: 'remove-edge', id: 'co-inv3' },
@@ -634,7 +665,8 @@ export const lesson = {
       back: 'Client OSes and runtimes cache DNS records up to (or past) their TTL, sending requests to terminated instance IPs until caches expire.',
     },
     {
-      front: 'What does a sidecar service mesh add, and what must callers still do?',
+      front:
+        'What does a sidecar service mesh add, and what must callers still do?',
       back: 'A sidecar proxy beside every pod handles registry watching, load balancing, retries, and mTLS outside app code. Callers still need short timeouts because registries lag slightly behind crashes.',
     },
   ],
