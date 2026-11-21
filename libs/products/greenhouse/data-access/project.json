@@ -1,0 +1,8 @@
+{
+  "name": "product-greenhouse-data-access",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/products/greenhouse/data-access/src",
+  "projectType": "library",
+  "tags": ["scope:product-greenhouse", "type:data-access", "runtime:browser"],
+  "targets": {}
+}
