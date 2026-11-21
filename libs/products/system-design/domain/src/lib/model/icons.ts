@@ -1,0 +1,33 @@
+/** The closed set of line icons the ui lib draws (24×24, original). */
+export const ICON_NAMES = [
+  'laptop',
+  'phone',
+  'user',
+  'globe',
+  'server',
+  'database',
+  'bolt',
+  'queue',
+  'lock',
+  'key',
+  'shield',
+  'chart',
+  'clock',
+  'cloud',
+  'file',
+  'search',
+  'gear',
+  'hash',
+  'mail',
+  'route',
+  'layers',
+  'gauge',
+  'warning',
+  'check',
+  'timer',
+  'download',
+  'link',
+  'stack',
+] as const;
+
+export type IconName = (typeof ICON_NAMES)[number];

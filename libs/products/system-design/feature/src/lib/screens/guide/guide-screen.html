@@ -1,0 +1,53 @@
+<article class="guide-screen" aria-labelledby="sd-guide-title">
+  <div class="guide-intro">
+    <h1 id="sd-guide-title">{{ copy.title }}</h1>
+    <p class="intro-body">{{ copy.intro }}</p>
+  </div>
+
+  <nav class="guide-toc" aria-label="On this page">
+    @for (section of copy.sections; track section.id) {
+      <a
+        [href]="'#' + section.id"
+        class="toc-pill"
+        (click)="jump($event, section.id)"
+      >
+        {{ section.title }}
+      </a>
+    }
+  </nav>
+
+  @for (section of copy.sections; track section.id) {
+    <section
+      [id]="section.id"
+      class="guide-card"
+      [attr.aria-labelledby]="section.id + '-title'"
+    >
+      <h2 [id]="section.id + '-title'" tabindex="-1">{{ section.title }}</h2>
+
+      @if ('items' in section) {
+        <ul class="guide-list">
+          @for (item of section.items; track $index) {
+            <li>{{ item }}</li>
+          }
+        </ul>
+      }
+
+      @if ('shortcuts' in section) {
+        <dl class="shortcut-grid">
+          @for (row of section.shortcuts; track row.key) {
+            <div class="shortcut-row">
+              <dt>
+                <kbd>{{ row.key }}</kbd>
+              </dt>
+              <dd>{{ row.action }}</dd>
+            </div>
+          }
+        </dl>
+      }
+    </section>
+  }
+
+  <p class="guide-back">
+    <a routerLink="../learn" class="back-link">← Back to lessons</a>
+  </p>
+</article>

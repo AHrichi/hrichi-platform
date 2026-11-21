@@ -1,0 +1,84 @@
+@if (meta(); as meta) {
+  <article class="sheet" aria-labelledby="sd-cheat-title">
+    <div class="sheet-toolbar">
+      <a class="back-link" routerLink="cheatsheets" [relativeTo]="shellRoute">
+        {{ copy.backToIndex }}
+      </a>
+      <span class="print-group">
+        <span id="sd-cheat-print-hint" class="print-hint">
+          {{ copy.printHint }}
+        </span>
+        <button
+          type="button"
+          class="print-btn"
+          aria-describedby="sd-cheat-print-hint"
+          (click)="print()"
+        >
+          {{ copy.print }}
+        </button>
+      </span>
+    </div>
+
+    <div class="sheet-head">
+      <p class="breadcrumb">
+        @if (courseModule(); as mod) {
+          <span [class]="'swatch swatch-' + mod.hue" aria-hidden="true"></span>
+        }
+        <span>{{ copy.breadcrumbRoot }} / {{ moduleLabel() }}</span>
+      </p>
+      <h1 id="sd-cheat-title">{{ meta.title }}</h1>
+      @if (sheet.hasValue()) {
+        <p class="sheet-intro">{{ sheet.value().intro }}</p>
+      }
+    </div>
+
+    @if (sheet.isLoading()) {
+      <p class="sheet-status" role="status">{{ copy.loading }}</p>
+    } @else if (sheet.error()) {
+      <p class="sheet-status is-error" role="alert">{{ copy.loadFailed }}</p>
+    } @else {
+      @if (sections().length > 1) {
+        <nav class="sheet-toc" [attr.aria-label]="copy.onThisPage">
+          @for (item of sections(); track item.id) {
+            <a
+              [href]="'#' + item.id"
+              class="toc-pill"
+              (click)="jump($event, item.id)"
+            >
+              {{ item.section.title }}
+            </a>
+          }
+        </nav>
+      }
+
+      <div class="sheet-sections">
+        @for (item of sections(); track item.id) {
+          <sd-cheat-section
+            [section]="item.section"
+            [sectionId]="item.id"
+            [labels]="copy.patternLabels"
+          >
+            @if (item.lesson; as lesson) {
+              <a
+                sdCheatLink
+                class="lesson-link"
+                [routerLink]="['learn', lesson.id, 1]"
+                [relativeTo]="shellRoute"
+              >
+                {{ copy.lessonLink(lesson.title) }}
+              </a>
+            }
+          </sd-cheat-section>
+        }
+      </div>
+    }
+  </article>
+} @else {
+  <section class="sheet-missing" aria-labelledby="sd-cheat-missing-title">
+    <h1 id="sd-cheat-missing-title">{{ copy.notFoundTitle }}</h1>
+    <p>{{ copy.notFoundBody }}</p>
+    <a class="back-link" routerLink="cheatsheets" [relativeTo]="shellRoute">
+      {{ copy.backToIndex }}
+    </a>
+  </section>
+}

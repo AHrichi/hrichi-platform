@@ -1,0 +1,12 @@
+{
+  "name": "product-system-design-data-access",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/products/system-design/data-access/src",
+  "projectType": "library",
+  "tags": [
+    "scope:product-system-design",
+    "type:data-access",
+    "runtime:browser"
+  ],
+  "targets": {}
+}

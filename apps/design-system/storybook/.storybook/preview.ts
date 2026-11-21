@@ -1,5 +1,7 @@
 import type { Preview } from '@storybook/angular-vite';
 import '@fontsource-variable/inter/index.css';
+// The paper look's mono face (font.family.mono under data-look="paper").
+import '@fontsource-variable/jetbrains-mono/index.css';
 // The global stylesheets every app lists in its build options.
 // eslint-disable-next-line @nx/enforce-module-boundaries -- CSS, not library code
 import '../../../../libs/design-system/tokens/src/generated/tokens.css';

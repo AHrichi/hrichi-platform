@@ -5,20 +5,30 @@
 // Light is the default; dark applies with prefers-color-scheme unless the page
 // sets data-theme="light", and always with data-theme="dark".
 //
+// Looks (tokens/look.<name>.{light,dark}.json) are opt-in restylings scoped to
+// [data-look='<name>']. They override existing tokens and may add look-only
+// color-scene-* tokens; see the README's "Looks" section.
+//
 // Usage: node libs/design-system/tokens/build.mjs
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import StyleDictionary from 'style-dictionary';
 
 const root = import.meta.dirname;
 const out = join(root, 'src/generated');
 
-async function loadTokens(theme) {
+/** The tier of a token, from the file that defined it last. */
+function tierOf(filePath) {
+  const file = filePath.split(/[\\/]/).pop();
+  if (file.startsWith('look.')) return 'look';
+  if (file.startsWith('semantic.')) return 'semantic';
+  return 'primitive';
+}
+
+/** Loads token files (relative to ./tokens) in order; on a collision the last file wins. */
+async function loadTokens(files) {
   const sd = new StyleDictionary({
-    source: [
-      join(root, 'tokens/primitives.json'),
-      join(root, `tokens/semantic.${theme}.json`),
-    ],
+    source: files.map((file) => join(root, 'tokens', file)),
     platforms: { web: { transforms: ['name/kebab'] } },
     log: { verbosity: 'silent', warnings: 'disabled' },
   });
@@ -27,8 +37,14 @@ async function loadTokens(theme) {
     name: token.name,
     value: token.$value ?? token.value,
     original: token.original.$value ?? token.original.value,
-    semantic: token.filePath.includes('semantic.'),
+    tier: tierOf(token.filePath),
   }));
+}
+
+/** `{color.neutral.900}` → `color-neutral-900`; null for a literal value. */
+function referenceOf(original) {
+  const reference = /^\{([^}]+)\}$/.exec(String(original));
+  return reference ? reference[1].replaceAll('.', '-') : null;
 }
 
 /**
@@ -36,8 +52,8 @@ async function loadTokens(theme) {
  * array becomes `cubic-bezier(…)`; anything else is the resolved value.
  */
 function cssValue({ original, value }) {
-  const reference = /^\{([^}]+)\}$/.exec(String(original));
-  if (reference) return `var(--${reference[1].replaceAll('.', '-')})`;
+  const reference = referenceOf(original);
+  if (reference) return `var(--${reference})`;
   if (Array.isArray(value)) return `cubic-bezier(${value.join(', ')})`;
   return value;
 }
@@ -45,14 +61,117 @@ function cssValue({ original, value }) {
 const declarations = (tokens, indent) =>
   tokens.map((t) => `${indent}--${t.name}: ${cssValue(t)};`).join('\n');
 
-const light = await loadTokens('light');
-const dark = await loadTokens('dark');
-const primitives = light.filter((t) => !t.semantic);
-const lightSemantic = light.filter((t) => t.semantic);
-const darkSemantic = dark.filter((t) => t.semantic);
+const asRecord = (tokens) =>
+  Object.fromEntries(tokens.map((t) => [t.name, t.value]));
+
+function fail(message) {
+  console.error(message);
+  process.exit(1);
+}
+
+const light = await loadTokens(['primitives.json', 'semantic.light.json']);
+const dark = await loadTokens(['primitives.json', 'semantic.dark.json']);
+const primitives = light.filter((t) => t.tier === 'primitive');
+const lightSemantic = light.filter((t) => t.tier === 'semantic');
+const darkSemantic = dark.filter((t) => t.tier === 'semantic');
+const primitiveNames = new Set(primitives.map((t) => t.name));
+const baseNames = new Set(light.map((t) => t.name));
+
+// A look restyles a subtree by redeclaring tokens on [data-look]. var() resolves
+// where the property is declared, so a semantic token that references another
+// semantic token would keep the base value under a look. Semantics reference
+// primitives only.
+for (const [theme, tokens] of [
+  ['light', lightSemantic],
+  ['dark', darkSemantic],
+]) {
+  for (const token of tokens) {
+    const reference = referenceOf(token.original);
+    if (reference && !primitiveNames.has(reference)) {
+      fail(
+        `semantic.${theme}.json: ${token.name} references ${reference}, which is not a primitive. Semantic tokens must reference primitives only.`,
+      );
+    }
+  }
+}
+
+// Looks: every tokens/look.<name>.{light,dark}.json pair.
+const lookNames = [
+  ...new Set(
+    readdirSync(join(root, 'tokens'))
+      .map((file) => /^look\.([a-z0-9-]+)\.(light|dark)\.json$/.exec(file))
+      .filter(Boolean)
+      .map((match) => match[1]),
+  ),
+].sort();
+
+const looks = [];
+for (const look of lookNames) {
+  const modes = {};
+  for (const mode of ['light', 'dark']) {
+    const file = `look.${look}.${mode}.json`;
+    const tokens = (
+      await loadTokens(['primitives.json', `semantic.${mode}.json`, file])
+    ).filter((t) => t.tier === 'look');
+    for (const token of tokens) {
+      if (
+        !baseNames.has(token.name) &&
+        !token.name.startsWith('color-scene-')
+      ) {
+        fail(
+          `${file}: ${token.name} is not an existing token. A look may only override tokens or add color-scene-* tokens.`,
+        );
+      }
+      const reference = referenceOf(token.original);
+      if (reference && !primitiveNames.has(reference)) {
+        fail(
+          `${file}: ${token.name} references ${reference}, which is not a primitive. Look tokens must reference primitives only.`,
+        );
+      }
+    }
+    modes[mode] = tokens;
+  }
+  const lightKeys = new Set(modes.light.map((t) => t.name));
+  const darkKeys = new Set(modes.dark.map((t) => t.name));
+  const onlyLight = [...lightKeys].filter((name) => !darkKeys.has(name));
+  const onlyDark = [...darkKeys].filter((name) => !lightKeys.has(name));
+  if (onlyLight.length || onlyDark.length) {
+    fail(
+      `Look "${look}": light and dark must define the same tokens.\n  only in light: ${onlyLight.join(', ') || '—'}\n  only in dark: ${onlyDark.join(', ') || '—'}`,
+    );
+  }
+  looks.push({ name: look, light: modes.light, dark: modes.dark });
+}
 
 const banner =
   '/* Generated by libs/design-system/tokens/build.mjs. Do not edit. */';
+
+// Light applies on the element; dark gets (0,3,0) specificity under either
+// trigger, so it beats light. Declaring on the element beats values inherited
+// from :root.
+const lookBlocks = looks
+  .map(({ name, light: lookLight, dark: lookDark }) => {
+    const self = `[data-look='${name}']`;
+    return `
+  ${self} {
+${declarations(lookLight, '    ')}
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme='light'])${self},
+    :root:not([data-theme='light']) ${self} {
+${declarations(lookDark, '      ')}
+    }
+  }
+
+  :root[data-theme='dark']${self},
+  :root[data-theme='dark'] ${self} {
+${declarations(lookDark, '    ')}
+  }
+`;
+  })
+  .join('');
+
 // Apps load tokens.css first, so this statement fixes the layer order for
 // the whole design system (see libs/design-system/ui/src/styles).
 const css = `${banner}
@@ -79,19 +198,33 @@ ${declarations(darkSemantic, '    ')}
   :root[data-theme='light'] {
     color-scheme: light;
   }
-}
+${lookBlocks}}
 `;
 
-const asRecord = (tokens) =>
-  Object.fromEntries(tokens.map((t) => [t.name, t.value]));
+const json = (value) => JSON.stringify(value, null, 2);
+const looksRecord = Object.fromEntries(
+  looks.map(({ name, light: l, dark: d }) => [
+    name,
+    { light: asRecord(l), dark: asRecord(d) },
+  ]),
+);
 const ts = `${banner.replace('/*', '//').replace(' */', '')}
-export const primitives = ${JSON.stringify(asRecord(primitives), null, 2)} as const;
+export const primitives = ${json(asRecord(primitives))} as const;
 
-export const lightTheme = ${JSON.stringify(asRecord(lightSemantic), null, 2)} as const;
+export const lightTheme = ${json(asRecord(lightSemantic))} as const;
 
-export const darkTheme = ${JSON.stringify(asRecord(darkSemantic), null, 2)} as const;
+export const darkTheme = ${json(asRecord(darkSemantic))} as const;
 
 export type SemanticToken = keyof typeof lightTheme;
+
+/** Opt-in looks, applied with data-look="<name>"; each overrides tokens in both themes. */
+export const looks = ${json(looksRecord)} as const;
+
+export type LookName = keyof typeof looks;
+
+export type LookToken = {
+  [Look in LookName]: keyof (typeof looks)[Look]['light'];
+}[LookName];
 `;
 
 // WCAG 2.2 AA: every text/background pair the UI uses needs 4.5:1 in both themes.
@@ -142,6 +275,38 @@ const graphicPairs = [
   ...surfaces.map((bg) => ['color-focus-ring', bg]),
 ];
 
+// Look-only pairs: the isometric scene. Grid lines are decoration, not gated.
+const sceneHues = [
+  'neutral',
+  'amber',
+  'blue',
+  'violet',
+  'green',
+  'rose',
+  'teal',
+  'red',
+];
+const packetKinds = [
+  'request',
+  'response',
+  'handshake',
+  'write',
+  'event',
+  'error',
+];
+const sceneTextPairs = sceneHues.map((hue) => [
+  `color-scene-${hue}-ink`,
+  `color-scene-${hue}-top`,
+]);
+const sceneGraphicPairs = [
+  ...sceneHues.map((hue) => [`color-scene-${hue}-ink`, 'color-bg-canvas']),
+  ...packetKinds.map((kind) => [
+    `color-scene-packet-${kind}`,
+    'color-bg-surface',
+  ]),
+  ['color-scene-edge', 'color-bg-surface'],
+];
+
 /**
  * sRGB channels (0-255) of an opaque colour: `#rgb`, `#rrggbb`, or
  * `rgb()`/`rgba()` in comma or space syntax. Anything else, or anything
@@ -186,15 +351,36 @@ function luminance(value, name) {
   return 0.2126 * r + 0.7152 * g + 0.0722 * b;
 }
 
+// Each look theme is the base theme with the look's overrides on top.
+const gatedThemes = [
+  ['light', asRecord(light), []],
+  ['dark', asRecord(dark), []],
+  ...looks.flatMap(({ name, light: lookLight, dark: lookDark }) => [
+    [
+      `${name} light`,
+      { ...asRecord(light), ...asRecord(lookLight) },
+      [
+        [sceneTextPairs, 4.5],
+        [sceneGraphicPairs, 3],
+      ],
+    ],
+    [
+      `${name} dark`,
+      { ...asRecord(dark), ...asRecord(lookDark) },
+      [
+        [sceneTextPairs, 4.5],
+        [sceneGraphicPairs, 3],
+      ],
+    ],
+  ]),
+];
+
 const failures = [];
-for (const [theme, tokens] of [
-  ['light', lightSemantic],
-  ['dark', darkSemantic],
-]) {
-  const values = asRecordOf(tokens);
+for (const [theme, values, extraPairs] of gatedThemes) {
   for (const [pairs, minimum] of [
     [contrastPairs, 4.5],
     [graphicPairs, 3],
+    ...extraPairs,
   ]) {
     for (const [fg, bg] of pairs) {
       for (const name of [fg, bg]) {
@@ -216,17 +402,12 @@ for (const [theme, tokens] of [
   }
 }
 if (failures.length) {
-  console.error(`Contrast below WCAG AA:\n  ${failures.join('\n  ')}`);
-  process.exit(1);
-}
-
-function asRecordOf(tokens) {
-  return Object.fromEntries(tokens.map((t) => [t.name, t.value]));
+  fail(`Contrast below WCAG AA:\n  ${failures.join('\n  ')}`);
 }
 
 mkdirSync(out, { recursive: true });
 writeFileSync(join(out, 'tokens.css'), css);
 writeFileSync(join(out, 'tokens.ts'), ts);
 console.log(
-  `Design tokens: ${primitives.length} primitives, ${lightSemantic.length} semantic (light + dark) -> ${out}`,
+  `Design tokens: ${primitives.length} primitives, ${lightSemantic.length} semantic (light + dark), ${looks.length} look(s) [${looks.map((l) => `${l.name}: ${l.light.length}`).join(', ')}]; contrast gate passed for ${gatedThemes.map(([theme]) => theme).join(', ')} -> ${out}`,
 );

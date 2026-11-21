@@ -1,0 +1,21 @@
+@let questions = data.value();
+<article class="practice-screen" aria-labelledby="sd-practice-title">
+  <div class="practice-head">
+    <p class="eyebrow">{{ copy.run.mixEyebrow }}</p>
+    <h1 id="sd-practice-title">{{ copy.run.mixTitle }}</h1>
+    <a
+      routerLink="practice"
+      [relativeTo]="shellRoute"
+      class="text-link back-link"
+      >{{ copy.run.back }}</a
+    >
+  </div>
+
+  @if (questions === undefined) {
+    <p class="notice" role="status">{{ copy.run.loading }}</p>
+  } @else if (questions.length === 0) {
+    <p class="card notice">{{ copy.run.noMix }}</p>
+  } @else {
+    <sd-practice-run kind="mix" [questions]="questions" (again)="again()" />
+  }
+</article>

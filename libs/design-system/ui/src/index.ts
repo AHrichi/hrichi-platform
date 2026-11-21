@@ -87,3 +87,6 @@ export {
   type MarbleVariant as AhMarbleVariant,
   type MarbleShape as AhMarbleShape,
 } from './lib/marble-diagram/marble-diagram';
+
+export * from './lib/step-timeline';
+export * from './lib/reduced-motion';

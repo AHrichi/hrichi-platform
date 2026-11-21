@@ -52,6 +52,10 @@ describe('app-visibility', () => {
     expect(isRouteEnabled('/apps/basecamp')).toBe(false);
     expect(isRouteEnabled('/apps/alarm-engine')).toBe(false);
     expect(isRouteEnabled('/apps/alarm')).toBe(false);
+    // The System Design course stays hidden until its go-live phase (ADR-0025).
+    expect(isRouteEnabled('/apps/system-design')).toBe(false);
+    expect(isRouteEnabled('/apps/sysdesign')).toBe(false);
+    expect(isRouteEnabled('/apps/scale-lab')).toBe(false);
 
     // General routes remain enabled
     expect(isRouteEnabled('/work')).toBe(true);

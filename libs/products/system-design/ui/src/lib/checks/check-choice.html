@@ -1,0 +1,81 @@
+@let c = check();
+@let res = result();
+<article class="check-card">
+  <div class="check-header">
+    <p class="check-kind">Multiple choice</p>
+    <h3 class="check-prompt" [id]="promptId()">
+      <sd-inline-text [text]="c.prompt" />
+    </h3>
+  </div>
+
+  <fieldset
+    class="options-fieldset"
+    [attr.aria-labelledby]="promptId()"
+    [disabled]="res !== null"
+  >
+    @for (opt of c.options; track $index; let i = $index) {
+      @let isSelected = selectedIndex() === i;
+      @let isCorrectOption = c.answer === i;
+      <label
+        class="option-row"
+        [class.is-selected]="isSelected"
+        [class.is-correct]="res !== null && isCorrectOption"
+        [class.is-wrong]="res !== null && isSelected && !isCorrectOption"
+      >
+        <input
+          type="radio"
+          class="option-radio"
+          [name]="'sd-choice-' + c.id"
+          [checked]="isSelected"
+          (change)="choose(i)"
+        />
+        <span class="option-text">
+          <sd-inline-text [text]="opt" />
+        </span>
+      </label>
+    }
+  </fieldset>
+
+  @if (res === null) {
+    <div class="check-actions">
+      <button
+        type="button"
+        class="btn btn-primary submit-btn"
+        [disabled]="selectedIndex() === null"
+        (click)="submit()"
+      >
+        Check answer
+      </button>
+    </div>
+  } @else {
+    <div
+      class="feedback-box"
+      [class.is-correct]="res.correct"
+      [class.is-wrong]="!res.correct"
+      role="status"
+    >
+      <p class="feedback-verdict">
+        {{ res.correct ? '✓ Correct' : '✗ Not quite' }}
+      </p>
+      @if (!res.correct) {
+        <p class="feedback-expected">
+          Right answer: <strong>{{ res.expected }}</strong>
+        </p>
+      }
+      <p class="feedback-explain">
+        <sd-inline-text [text]="c.explain" />
+      </p>
+      @if (c.step; as stepId) {
+        <div class="check-actions">
+          <button
+            type="button"
+            class="btn btn-secondary review-step-btn"
+            (click)="reviewStep.emit(stepId)"
+          >
+            See it in the lesson →
+          </button>
+        </div>
+      }
+    </div>
+  }
+</article>

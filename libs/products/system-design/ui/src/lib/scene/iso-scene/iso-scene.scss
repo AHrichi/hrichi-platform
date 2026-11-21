@@ -1,0 +1,311 @@
+:host {
+  display: block;
+  inline-size: 100%;
+}
+
+.scene-host {
+  position: relative;
+  inline-size: 100%;
+}
+
+.scene-svg {
+  display: block;
+  inline-size: 100%;
+  block-size: auto;
+  max-block-size: 34rem;
+}
+
+.grid-line {
+  fill: none;
+  stroke: var(--color-scene-grid);
+  stroke-width: 1;
+}
+
+.grid-line-strong {
+  stroke: var(--color-scene-grid-strong);
+}
+
+/* Zones */
+.zone {
+  --sd-zone-fill: var(--color-scene-zone-neutral);
+  --sd-zone-ink: var(--color-scene-neutral-ink);
+}
+
+.zone-hue-neutral {
+  --sd-zone-fill: var(--color-scene-zone-neutral);
+  --sd-zone-ink: var(--color-scene-neutral-ink);
+}
+
+.zone-hue-amber {
+  --sd-zone-fill: var(--color-scene-zone-amber);
+  --sd-zone-ink: var(--color-scene-amber-ink);
+}
+
+.zone-hue-blue {
+  --sd-zone-fill: var(--color-scene-zone-blue);
+  --sd-zone-ink: var(--color-scene-blue-ink);
+}
+
+.zone-hue-violet {
+  --sd-zone-fill: var(--color-scene-zone-violet);
+  --sd-zone-ink: var(--color-scene-violet-ink);
+}
+
+.zone-hue-green {
+  --sd-zone-fill: var(--color-scene-zone-green);
+  --sd-zone-ink: var(--color-scene-green-ink);
+}
+
+.zone-hue-rose {
+  --sd-zone-fill: var(--color-scene-zone-rose);
+  --sd-zone-ink: var(--color-scene-rose-ink);
+}
+
+.zone-hue-teal {
+  --sd-zone-fill: var(--color-scene-zone-teal);
+  --sd-zone-ink: var(--color-scene-teal-ink);
+}
+
+.zone-hue-red {
+  --sd-zone-fill: var(--color-scene-zone-red);
+  --sd-zone-ink: var(--color-scene-red-ink);
+}
+
+.zone-poly {
+  fill: var(--sd-zone-fill);
+  stroke: var(--sd-zone-ink);
+  stroke-width: 1.25;
+  stroke-dasharray: 5 3;
+}
+
+.zone-label {
+  fill: var(--sd-zone-ink);
+  font-family: var(--font-family-mono);
+  font-size: 10px;
+  font-weight: var(--font-weight-semibold);
+}
+
+/* Edges */
+.edge {
+  --sd-edge-color: var(--color-scene-edge);
+}
+
+.edge-line {
+  fill: none;
+  stroke: var(--sd-edge-color);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.edge-arrow {
+  fill: var(--sd-edge-color);
+  stroke: none;
+}
+
+.edge-style-dashed .edge-line {
+  stroke-dasharray: 6 4;
+}
+
+.edge-state-dim {
+  opacity: 0.4;
+}
+
+.edge-state-broken {
+  --sd-edge-color: var(--color-scene-packet-error);
+
+  .edge-line {
+    stroke-dasharray: 4 4;
+  }
+}
+
+.edge-broken-mark {
+  fill: none;
+  stroke: var(--color-scene-packet-error);
+  stroke-width: 2.25;
+  stroke-linecap: round;
+}
+
+.edge-flash-request {
+  --sd-edge-color: var(--color-scene-packet-request);
+}
+
+.edge-flash-response {
+  --sd-edge-color: var(--color-scene-packet-response);
+}
+
+.edge-flash-handshake {
+  --sd-edge-color: var(--color-scene-packet-handshake);
+}
+
+.edge-flash-write {
+  --sd-edge-color: var(--color-scene-packet-write);
+}
+
+.edge-flash-event {
+  --sd-edge-color: var(--color-scene-packet-event);
+}
+
+.edge-flash-error {
+  --sd-edge-color: var(--color-scene-packet-error);
+}
+
+.edge-label-bg {
+  fill: var(--color-scene-label-bg);
+  stroke: var(--color-border-strong);
+  stroke-width: 1;
+}
+
+.edge-label-text {
+  fill: var(--color-text-muted);
+  font-family: var(--font-family-mono);
+  font-size: 10px;
+  font-weight: var(--font-weight-medium);
+  text-anchor: middle;
+}
+
+/* Selectable nodes (Design Lab) */
+.node-slot.is-selectable {
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: var(--focus-ring-width) solid var(--color-focus-ring);
+    outline-offset: var(--focus-ring-offset);
+  }
+}
+
+/* Notes */
+.note {
+  --sd-note-bg: var(--color-scene-label-bg);
+  --sd-note-border: var(--color-border-strong);
+  --sd-note-ink: var(--color-text-default);
+}
+
+.note-tone-good {
+  --sd-note-bg: var(--color-success-subtle);
+  --sd-note-border: var(--color-success-default);
+  --sd-note-ink: var(--color-success-default);
+}
+
+.note-tone-bad {
+  --sd-note-bg: var(--color-danger-subtle);
+  --sd-note-border: var(--color-danger-default);
+  --sd-note-ink: var(--color-danger-default);
+}
+
+.note-tone-info {
+  --sd-note-bg: var(--color-info-subtle);
+  --sd-note-border: var(--color-info-default);
+  --sd-note-ink: var(--color-info-default);
+}
+
+.note-bg {
+  fill: var(--sd-note-bg);
+  stroke: var(--sd-note-border);
+  stroke-width: 1.25;
+}
+
+.note-icon path {
+  fill: none;
+  stroke: var(--sd-note-ink);
+  stroke-width: 1.85;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.note-text {
+  fill: var(--sd-note-ink);
+  font-family: var(--font-family-mono);
+  font-size: 10.5px;
+  font-weight: var(--font-weight-semibold);
+  text-anchor: middle;
+}
+
+.note-row-key,
+.note-total-key {
+  fill: var(--color-text-muted);
+  font-family: var(--font-family-mono);
+  font-size: 9.5px;
+  text-anchor: start;
+}
+
+.note-row-val,
+.note-total-val {
+  fill: var(--color-text-default);
+  font-family: var(--font-family-mono);
+  font-size: 9.5px;
+  font-weight: var(--font-weight-semibold);
+  text-anchor: end;
+}
+
+.note-total-key,
+.note-total-val {
+  font-weight: var(--font-weight-bold);
+}
+
+/* Packets */
+.packet {
+  --sd-pkt-color: var(--color-scene-packet-request);
+}
+
+.packet-request {
+  --sd-pkt-color: var(--color-scene-packet-request);
+}
+
+.packet-response {
+  --sd-pkt-color: var(--color-scene-packet-response);
+}
+
+.packet-handshake {
+  --sd-pkt-color: var(--color-scene-packet-handshake);
+}
+
+.packet-write {
+  --sd-pkt-color: var(--color-scene-packet-write);
+}
+
+.packet-event {
+  --sd-pkt-color: var(--color-scene-packet-event);
+}
+
+.packet-error {
+  --sd-pkt-color: var(--color-scene-packet-error);
+}
+
+.packet-dot,
+.packet-square {
+  fill: var(--sd-pkt-color);
+  stroke: var(--color-scene-label-bg);
+  stroke-width: 1.25;
+}
+
+.packet-ring {
+  fill: var(--color-scene-label-bg);
+  stroke: var(--sd-pkt-color);
+  stroke-width: 2.5;
+}
+
+.packet-label-bg {
+  fill: var(--color-scene-label-bg);
+  stroke: var(--sd-pkt-color);
+  stroke-width: 1;
+}
+
+.packet-label-text {
+  fill: var(--color-text-default);
+  font-family: var(--font-family-mono);
+  font-size: 9.5px;
+  font-weight: var(--font-weight-semibold);
+  text-anchor: middle;
+}
+
+.visually-hidden {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

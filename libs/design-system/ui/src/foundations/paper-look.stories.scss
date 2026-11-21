@@ -1,0 +1,129 @@
+// A look's tokens are declared on [data-look], so the subtree sets its own
+// background, colour and font instead of inheriting the page's.
+.paper {
+  display: grid;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  background: var(--color-bg-canvas);
+  color: var(--color-text-default);
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-200);
+}
+
+h2 {
+  margin: 0;
+  font-size: var(--font-size-300);
+  font-weight: var(--font-weight-semibold);
+}
+
+p {
+  margin: 0;
+}
+
+.surfaces {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: var(--space-4);
+}
+
+.surface {
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  border: var(--border-width-hairline) solid var(--color-border-default);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-raised);
+
+  &--canvas {
+    background: var(--color-bg-canvas);
+  }
+
+  &--surface {
+    background: var(--color-bg-surface);
+  }
+
+  &--raised {
+    background: var(--color-bg-raised);
+  }
+}
+
+.surface__name {
+  font-weight: var(--font-weight-semibold);
+}
+
+.muted {
+  color: var(--color-text-muted);
+}
+
+.accent {
+  color: var(--color-accent-default);
+}
+
+.hues {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
+  gap: var(--space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.hue {
+  display: grid;
+  justify-items: start;
+  gap: var(--space-2);
+}
+
+.cube {
+  inline-size: 4rem;
+  block-size: 4rem;
+}
+
+.chip {
+  padding-block: var(--space-1);
+  padding-inline: var(--space-2);
+  border-radius: var(--radius-sm);
+  font-weight: var(--font-weight-semibold);
+}
+
+.faces {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  font-size: var(--font-size-100);
+}
+
+.face,
+.packet {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.swatch {
+  inline-size: 0.875rem;
+  block-size: 0.875rem;
+  border: var(--border-width-hairline) solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+}
+
+.packets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  background: var(--color-bg-surface);
+  border: var(--border-width-hairline) solid var(--color-border-default);
+  border-radius: var(--radius-lg);
+}
+
+.dot {
+  inline-size: 0.5625rem;
+  block-size: 0.5625rem;
+  border-radius: var(--radius-pill);
+}
+
+.edge {
+  inline-size: 1.5rem;
+  block-size: 2px;
+}

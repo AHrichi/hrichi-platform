@@ -1,0 +1,9 @@
+{
+  "name": "product-system-design-ui",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/products/system-design/ui/src",
+  "prefix": "sd",
+  "projectType": "library",
+  "tags": ["scope:product-system-design", "type:ui", "runtime:browser"],
+  "targets": {}
+}

@@ -107,12 +107,25 @@
       "@ah/api/ai": ["./libs/api/ai/src/index.ts"],
       "@ah/shared/contracts": ["./libs/shared/contracts/src/index.ts"],
       "@ah/shared/ai-schema": ["./libs/shared/ai-schema/src/index.ts"],
+      "@ah/shared/steps": ["./libs/shared/steps/src/index.ts"],
       "@ah/learning/domain": ["./libs/learning/domain/src/index.ts"],
       "@ah/learning/data-access": ["./libs/learning/data-access/src/index.ts"],
       "@ah/learning/ui": ["./libs/learning/ui/src/index.ts"],
       "@ah/learning/feature": ["./libs/learning/feature/src/index.ts"],
       "@ah/learning/contracts": ["./libs/learning/contracts/src/index.ts"],
       "@ah/learning/client": ["./libs/learning/client/src/index.ts"],
+      "@ah/products/system-design/domain": [
+        "./libs/products/system-design/domain/src/index.ts"
+      ],
+      "@ah/products/system-design/data-access": [
+        "./libs/products/system-design/data-access/src/index.ts"
+      ],
+      "@ah/products/system-design/ui": [
+        "./libs/products/system-design/ui/src/index.ts"
+      ],
+      "@ah/products/system-design/feature": [
+        "./libs/products/system-design/feature/src/index.ts"
+      ],
       "@ah/shared/api-client": ["./libs/shared/api-client/src/index.ts"],
       "@ah/labs/sky/domain": ["./libs/labs/sky/domain/src/index.ts"],
       "@ah/labs/sky/feature": ["./libs/labs/sky/feature/src/index.ts"],

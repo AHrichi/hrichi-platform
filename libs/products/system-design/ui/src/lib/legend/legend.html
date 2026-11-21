@@ -1,0 +1,11 @@
+<ul class="legend-list" role="list" aria-label="Packet legend">
+  @for (item of items(); track item.kind) {
+    <li class="legend-item" [attr.data-packet-kind]="item.kind">
+      <span
+        [class]="'marker marker-' + item.kind + ' shape-' + item.shape"
+        aria-hidden="true"
+      ></span>
+      <span class="legend-label">{{ item.label }}</span>
+    </li>
+  }
+</ul>

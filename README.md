@@ -17,6 +17,7 @@ Ahmed Hrichi's portfolio, built as the kind of platform it describes: an Nx mono
 | `product-strategy`          | `apps/products/strategy/web`       | StrategyApp: Multi-Scenario Wealth & Financial Planning Engine                                 |
 | `product-studylm`           | `apps/products/studylm/web`        | StudyLM: AI study roadmaps, flashcards and quizzes, generated through an n8n workflow          |
 | `product-whatsapp`          | `apps/products/whatsapp/web`       | ChatPulse: in-browser WhatsApp export analytics (`.zip`/`.txt`) with n8n AI insights           |
+| `product-system-design`     | `apps/products/system-design/web`  | System Design course: step lessons on an isometric diagram, practice, cheatsheets, Design Lab  |
 | `product-*-domain`          | `libs/products/*/domain`           | Framework-free models, parsers and calculations for each product                               |
 | `product-*-feature`         | `libs/products/*/feature`          | Each product's routes, pages and SignalStore                                                   |
 | `lab-sky`                   | `apps/labs/sky`                    | Sky lab remote: the night sky over any place and time, from a 3D globe down to a campsite      |
@@ -71,15 +72,19 @@ pnpm nx serve shell
 
 Remote dev ports (from `tools/federation/remotes.json`):
 
-| Remote             | Port | Shell route      |
-| ------------------ | ---- | ---------------- |
-| `lab-sky`          | 4302 | `/labs/sky`      |
-| `product-strategy` | 4303 | `/apps/strategy` |
-| `lab-rxjs`         | 4304 | `/labs/rxjs`     |
-| `lab-ngrx`         | 4305 | `/labs/ngrx`     |
-| `product-dispatch` | 4306 | `/apps/dispatch` |
-| `product-studylm`  | 4307 | `/apps/studylm`  |
-| `product-whatsapp` | 4308 | `/apps/whatsapp` |
+| Remote                  | Port | Shell route           |
+| ----------------------- | ---- | --------------------- |
+| `lab-sky`               | 4302 | `/labs/sky`           |
+| `product-strategy`      | 4303 | `/apps/strategy`      |
+| `lab-rxjs`              | 4304 | `/labs/rxjs`          |
+| `lab-ngrx`              | 4305 | `/labs/ngrx`          |
+| `product-dispatch`      | 4306 | `/apps/dispatch`      |
+| `product-studylm`       | 4307 | `/apps/studylm`       |
+| `product-whatsapp`      | 4308 | `/apps/whatsapp`      |
+| `product-lighting`      | 4309 | `/apps/lighting`      |
+| `product-basecamp`      | 4310 | `/apps/basecamp`      |
+| `product-learning`      | 4311 | `/apps/learning`      |
+| `product-system-design` | 4312 | `/apps/system-design` |
 
 Build, lint, test, and enforce the zoneless rule:
 

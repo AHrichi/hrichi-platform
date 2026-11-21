@@ -1,0 +1,109 @@
+@use './cheat-swatches' as *;
+
+:host {
+  display: block;
+}
+
+.cheat-index {
+  display: grid;
+  gap: var(--space-5);
+  max-inline-size: var(--layout-content);
+  margin-inline: auto;
+  padding-block: var(--space-4) var(--space-8);
+}
+
+.index-intro {
+  display: grid;
+  gap: var(--space-3);
+
+  h1 {
+    margin: 0;
+    font-size: var(--font-size-500);
+    font-weight: var(--font-weight-bold);
+  }
+}
+
+.intro-body {
+  margin: 0;
+  max-inline-size: var(--layout-prose);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-200);
+  line-height: var(--font-line-height-normal);
+}
+
+.module-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+  gap: var(--space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+// The whole card is clickable through the title link's stretched ::after.
+.module-card {
+  position: relative;
+  display: grid;
+  grid-template-rows: auto auto 1fr auto;
+  gap: var(--space-2);
+  padding: var(--space-4) var(--space-5);
+  border: var(--border-width-hairline) solid var(--color-border-default);
+  border-radius: var(--radius-lg);
+  background: var(--color-bg-surface);
+  box-shadow: var(--shadow-raised);
+
+  &:hover {
+    border-color: var(--color-border-strong);
+  }
+
+  &:focus-within {
+    outline: var(--focus-ring-width) solid var(--color-focus-ring);
+    outline-offset: var(--focus-ring-offset);
+  }
+}
+
+.card-head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-100);
+}
+
+.card-title {
+  margin: 0;
+  font-size: var(--font-size-300);
+  font-weight: var(--font-weight-bold);
+}
+
+.card-link {
+  color: var(--color-text-default);
+  text-decoration: none;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+
+  &:focus-visible {
+    outline: none;
+  }
+}
+
+.module-card:hover .card-link {
+  color: var(--color-accent-default);
+  text-decoration: underline;
+}
+
+.card-summary {
+  margin: 0;
+  font-size: var(--font-size-100);
+  line-height: var(--font-line-height-normal);
+}
+
+.card-meta {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-100);
+}

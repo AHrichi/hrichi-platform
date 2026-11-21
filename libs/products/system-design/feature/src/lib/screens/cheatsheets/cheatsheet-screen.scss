@@ -1,0 +1,206 @@
+@use './cheat-swatches' as *;
+
+:host {
+  display: block;
+}
+
+.sheet {
+  display: grid;
+  gap: var(--space-5);
+  max-inline-size: var(--layout-content);
+  margin-inline: auto;
+  padding-block: var(--space-4) var(--space-8);
+}
+
+.sheet-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.print-group {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.print-hint {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-100);
+}
+
+.print-btn {
+  padding-block: var(--space-2);
+  padding-inline: var(--space-4);
+  border: var(--border-width-hairline) solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-surface);
+  color: var(--color-text-default);
+  font: inherit;
+  font-size: var(--font-size-100);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+
+  &:hover {
+    background: var(--color-bg-raised);
+  }
+
+  &:focus-visible {
+    outline: var(--focus-ring-width) solid var(--color-focus-ring);
+    outline-offset: var(--focus-ring-offset);
+  }
+}
+
+.sheet-head {
+  display: grid;
+  gap: var(--space-2);
+
+  h1 {
+    margin: 0;
+    font-size: var(--font-size-500);
+    font-weight: var(--font-weight-bold);
+  }
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-100);
+}
+
+.sheet-intro {
+  margin: 0;
+  max-inline-size: var(--layout-prose);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-200);
+  line-height: var(--font-line-height-normal);
+}
+
+.sheet-status {
+  margin: 0;
+  color: var(--color-text-muted);
+
+  &.is-error {
+    color: var(--color-danger-default);
+  }
+}
+
+.sheet-toc {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.toc-pill {
+  padding-block: var(--space-1);
+  padding-inline: var(--space-3);
+  border: var(--border-width-hairline) solid var(--color-border-default);
+  border-radius: var(--radius-pill);
+  background: var(--color-bg-surface);
+  color: var(--color-text-default);
+  font-size: var(--font-size-100);
+  text-decoration: none;
+
+  &:hover {
+    border-color: var(--color-border-strong);
+  }
+
+  &:focus-visible {
+    outline: var(--focus-ring-width) solid var(--color-focus-ring);
+    outline-offset: var(--focus-ring-offset);
+  }
+}
+
+.sheet-sections {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.back-link,
+.lesson-link {
+  color: var(--color-accent-default);
+  font-size: var(--font-size-100);
+  font-weight: var(--font-weight-semibold);
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+
+  &:focus-visible {
+    outline: var(--focus-ring-width) solid var(--color-focus-ring);
+    outline-offset: var(--focus-ring-offset);
+  }
+}
+
+.sheet-missing {
+  display: grid;
+  gap: var(--space-3);
+  max-inline-size: var(--layout-prose);
+  margin-inline: auto;
+  padding: var(--space-6);
+  border: var(--border-width-hairline) solid var(--color-border-default);
+  border-radius: var(--radius-lg);
+  background: var(--color-bg-surface);
+
+  h1,
+  p {
+    margin: 0;
+  }
+}
+
+// On paper: dark ink on white whatever the theme, no controls, A4 margins.
+// The shell hides its own chrome in its stylesheet.
+@page {
+  size: A4;
+  margin: 12mm;
+}
+
+@media print {
+  :host {
+    --color-text-default: var(--color-neutral-950);
+    --color-text-muted: var(--color-neutral-700);
+    --color-accent-default: var(--color-neutral-950);
+    --color-warning-default: var(--color-neutral-800);
+    --color-border-default: var(--color-neutral-300);
+    --color-border-strong: var(--color-neutral-500);
+    --color-bg-surface: var(--color-neutral-0);
+    --color-bg-raised: var(--color-neutral-100);
+    --font-size-100: 8pt;
+    --font-size-200: 9pt;
+    --font-size-300: 10.5pt;
+
+    color: var(--color-text-default);
+    font-size: 9pt;
+  }
+
+  .sheet {
+    gap: var(--space-3);
+    max-inline-size: none;
+    padding: 0;
+  }
+
+  .sheet-toolbar,
+  .sheet-toc {
+    display: none;
+  }
+
+  .sheet-head h1 {
+    font-size: 16pt;
+  }
+
+  .sheet-intro {
+    max-inline-size: none;
+    font-size: 9pt;
+  }
+
+  .sheet-sections {
+    gap: var(--space-2);
+  }
+}

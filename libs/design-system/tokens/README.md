@@ -13,10 +13,11 @@ CI rebuilds the tokens and fails if the committed output differs.
 
 ## Tiers
 
-| Tier      | File                                | Example                                                            | Who uses it                                                                 |
-| --------- | ----------------------------------- | ------------------------------------------------------------------ | --------------------------------------------------------------------------- |
-| Primitive | `tokens/primitives.json`            | `--color-crimson-600`, `--space-4`, `--z-modal`                    | Semantic tokens; non-colour primitives (space, radius, z, motion…) directly |
-| Semantic  | `tokens/semantic.{light,dark}.json` | `--color-text-muted`, `--color-border-control`, `--shadow-overlay` | Components and apps                                                         |
+| Tier      | File                                   | Example                                                            | Who uses it                                                                 |
+| --------- | -------------------------------------- | ------------------------------------------------------------------ | --------------------------------------------------------------------------- |
+| Primitive | `tokens/primitives.json`               | `--color-crimson-600`, `--space-4`, `--z-modal`                    | Semantic tokens; non-colour primitives (space, radius, z, motion…) directly |
+| Semantic  | `tokens/semantic.{light,dark}.json`    | `--color-text-muted`, `--color-border-control`, `--shadow-overlay` | Components and apps                                                         |
+| Look      | `tokens/look.<name>.{light,dark}.json` | `--color-scene-blue-top` under `[data-look='paper']`               | Overrides for an opt-in look (see Looks)                                    |
 
 Components use **semantic** colour tokens only, so dark mode and themes come for free. Reach for a colour primitive only where no semantic token fits (e.g. print styles).
 
@@ -34,12 +35,65 @@ Components use **semantic** colour tokens only, so dark mode and themes come for
 
 Light is the default. Dark applies with `prefers-color-scheme: dark` unless the page sets `data-theme="light"`, and always with `data-theme="dark"`. Both set `color-scheme`, so native controls and scrollbars follow.
 
+## Looks
+
+A look is an opt-in restyling of a subtree, applied with `data-look="<name>"` on any element (or on `<html>` for a whole page). Pages without the attribute are untouched, so existing apps and Storybook baselines don't change.
+
+| Look    | Files                                 | Used by                                                           |
+| ------- | ------------------------------------- | ----------------------------------------------------------------- |
+| `paper` | `tokens/look.paper.{light,dark}.json` | The System Design course: warm paper, JetBrains Mono, sage accent |
+
+A look file may:
+
+- override existing tokens (here `color.bg.*`, `color.text.*`, `color.border.*`, `color.accent.*`, the status colours, `color.focus.ring` and `font.family.mono`);
+- add look-only `color.scene.*` tokens (isometric diagrams): `scene.<hue>.{top,left,right,ink}` for `neutral, amber, blue, violet, green, rose, teal, red`, `scene.{grid,grid-strong,edge,label-bg}`, `scene.packet.{request,response,handshake,write,event,error}` and `scene.zone.<hue>`. Only components rendered under the look may use them.
+
+The build emits only the look's tokens, after the base blocks:
+
+```css
+[data-look='paper'] {
+  /* paper light */
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light'])[data-look='paper'],
+  :root:not([data-theme='light']) [data-look='paper'] {
+    /* paper dark */
+  }
+}
+:root[data-theme='dark'][data-look='paper'],
+:root[data-theme='dark'] [data-look='paper'] {
+  /* paper dark */
+}
+```
+
+Dark has (0,3,0) specificity under either trigger, so it beats light (0,1,0). Values declared on the element beat values inherited from `:root`, but `_base.scss` resolves `background`, `color` and `font-family` on `html`, so the element that sets `data-look` must set them again:
+
+```scss
+:host {
+  background: var(--color-bg-canvas);
+  color: var(--color-text-default);
+  font-family: var(--font-family-mono);
+}
+```
+
+`tokens.ts` exports the resolved values as `looks.<name>.{light,dark}` and the `LookName` / `LookToken` types.
+
+**Adding a look:** add `tokens/look.<name>.light.json` and `look.<name>.dark.json`, then rebuild. The build stops if:
+
+- the light and dark files don't define exactly the same tokens;
+- a look token is neither an existing token nor `color-scene-*`;
+- a look token references anything but a primitive;
+- a base semantic token references another semantic token (a scoped override couldn't reach it, because `var()` resolves where it is declared).
+
+Each look is gated in both modes (below). Fonts a look names (JetBrains Mono for `paper`) are loaded by the app's `styles` and by the Storybook preview.
+
 ## Contrast gate
 
-The build fails if a pair the UI uses drops below WCAG 2.2 AA in either theme:
+The build fails if a pair the UI uses drops below WCAG 2.2 AA in any theme (light, dark, and each look in light and dark; a look theme is its base theme with the look's overrides on top):
 
 - 4.5:1 for text: body, muted and accent text on every surface; status text on its own tint; text on filled accent, inverse and success surfaces.
 - 3:1 for graphics and control boundaries: chart colours on the stage, `border.control` and `focus.ring` on every surface.
+- Looks only: `scene.<hue>.ink` on `scene.<hue>.top` at 4.5:1; `scene.<hue>.ink` on `bg.canvas`, and every `scene.packet.*` and `scene.edge` on `bg.surface`, at 3:1. Grid lines are decoration and aren't gated.
 
 The gate **fails closed**: a colour it can't parse, a translucent colour, or a missing token stops the build instead of passing silently. Add a pair to `contrastPairs` or `graphicPairs` in `build.mjs` when the UI starts using a new combination.
 

@@ -1,0 +1,290 @@
+<div class="scene-host">
+  <svg
+    class="scene-svg"
+    [attr.viewBox]="viewBox()"
+    [attr.role]="selectable() ? 'group' : 'img'"
+    [attr.aria-label]="label()"
+  >
+    <!-- 1. Zones & ground grid -->
+    <g class="layer-zones">
+      @for (zone of zones(); track zone.id) {
+        <g
+          [attr.class]="
+            'zone zone-hue-' + zone.hue + (zone.fresh ? ' is-fresh' : '')
+          "
+          [attr.data-zone-id]="zone.id"
+        >
+          <polygon class="zone-poly" [attr.points]="zone.points" />
+          @if (zone.label; as zLabel) {
+            <text
+              class="zone-label"
+              [attr.x]="zone.labelPos.x"
+              [attr.y]="zone.labelPos.y"
+            >
+              {{ zLabel }}
+            </text>
+          }
+        </g>
+      }
+    </g>
+
+    <g class="layer-grid" aria-hidden="true">
+      @for (line of gridLines(); track line.key) {
+        <line
+          [attr.class]="
+            line.strong ? 'grid-line grid-line-strong' : 'grid-line'
+          "
+          [attr.x1]="line.x1"
+          [attr.y1]="line.y1"
+          [attr.x2]="line.x2"
+          [attr.y2]="line.y2"
+        />
+      }
+    </g>
+
+    <!-- 2. Edges -->
+    <g class="layer-edges">
+      @for (edge of edges(); track edge.id) {
+        <g
+          [attr.class]="
+            'edge edge-style-' +
+            edge.style +
+            ' edge-state-' +
+            edge.state +
+            (edge.flashKind ? ' edge-flash-' + edge.flashKind : '') +
+            (edge.fresh ? ' is-fresh' : '')
+          "
+          [attr.data-edge-id]="edge.id"
+        >
+          <polyline class="edge-line" [attr.points]="edge.polyline" />
+          @if (edge.arrowPoints) {
+            <polygon class="edge-arrow" [attr.points]="edge.arrowPoints" />
+          }
+          @if (edge.state === 'broken') {
+            <path
+              class="edge-broken-mark"
+              [attr.d]="
+                'M ' +
+                (edge.midpoint.x - 4) +
+                ' ' +
+                (edge.midpoint.y - 4) +
+                ' L ' +
+                (edge.midpoint.x + 4) +
+                ' ' +
+                (edge.midpoint.y + 4) +
+                ' M ' +
+                (edge.midpoint.x + 4) +
+                ' ' +
+                (edge.midpoint.y - 4) +
+                ' L ' +
+                (edge.midpoint.x - 4) +
+                ' ' +
+                (edge.midpoint.y + 4)
+              "
+            />
+          }
+          @if (edge.label; as eLabel) {
+            <g
+              class="edge-label-chip"
+              [attr.transform]="
+                'translate(' + edge.midpoint.x + ' ' + edge.midpoint.y + ')'
+              "
+            >
+              <rect
+                class="edge-label-bg"
+                [attr.x]="-edge.labelWidth / 2"
+                y="-8"
+                [attr.width]="edge.labelWidth"
+                height="16"
+                rx="4"
+              />
+              <text class="edge-label-text" x="0" y="3.5">{{ eLabel }}</text>
+            </g>
+          }
+        </g>
+      }
+    </g>
+
+    <!-- 3. Nodes (sorted back-to-front by x + y) -->
+    <g class="layer-nodes">
+      @for (item of sortedNodes(); track item.node.id) {
+        <g
+          class="node-slot"
+          [class.is-selectable]="selectable()"
+          [class.is-selected]="selectedNodeId() === item.node.id"
+          [attr.data-slot-id]="item.node.id"
+          [attr.role]="selectable() ? 'button' : null"
+          [attr.tabindex]="selectable() ? '0' : null"
+          [attr.aria-label]="selectable() ? item.ariaLabel : null"
+          [attr.aria-pressed]="
+            selectable() ? selectedNodeId() === item.node.id : null
+          "
+          (click)="onNodeActivate($event, item.node.id)"
+          (keydown.enter)="onNodeActivate($event, item.node.id)"
+          (keydown.space)="onNodeActivate($event, item.node.id)"
+        >
+          <g [attr.aria-hidden]="selectable() ? 'true' : null">
+            @switch (item.shape) {
+              @case ('cube') {
+                <g sd-cube-glyph [node]="item.node" [fresh]="item.fresh" />
+              }
+              @case ('cylinder') {
+                <g sd-cylinder-glyph [node]="item.node" [fresh]="item.fresh" />
+              }
+              @case ('device') {
+                <g sd-device-glyph [node]="item.node" [fresh]="item.fresh" />
+              }
+              @case ('stack') {
+                <g sd-stack-glyph [node]="item.node" [fresh]="item.fresh" />
+              }
+              @case ('globe') {
+                <g sd-globe-glyph [node]="item.node" [fresh]="item.fresh" />
+              }
+              @case ('person') {
+                <g sd-person-glyph [node]="item.node" [fresh]="item.fresh" />
+              }
+              @case ('disk') {
+                <g sd-disk-glyph [node]="item.node" [fresh]="item.fresh" />
+              }
+            }
+          </g>
+        </g>
+      }
+    </g>
+
+    <!-- 4. Notes -->
+    <g class="layer-notes">
+      @for (item of notes(); track item.id) {
+        <g
+          [attr.class]="
+            'note note-tone-' + item.tone + (item.fresh ? ' is-fresh' : '')
+          "
+          [attr.data-note-id]="item.id"
+          [attr.transform]="'translate(' + item.pos.x + ' ' + item.pos.y + ')'"
+        >
+          <rect
+            class="note-bg"
+            [attr.x]="-item.width / 2"
+            [attr.y]="-item.height / 2"
+            [attr.width]="item.width"
+            [attr.height]="item.height"
+            rx="6"
+          />
+          @if (item.iconPaths; as paths) {
+            <g
+              class="note-icon"
+              [attr.transform]="
+                'translate(' +
+                (-item.width / 2 + 6) +
+                ' ' +
+                (-item.height / 2 + 4) +
+                ') scale(0.58)'
+              "
+            >
+              @for (d of paths; track $index) {
+                <path [attr.d]="d" />
+              }
+            </g>
+          }
+          <text
+            class="note-text"
+            [attr.x]="item.iconPaths ? 6 : 0"
+            [attr.y]="-item.height / 2 + 14"
+          >
+            {{ item.note.text }}
+          </text>
+
+          @if (item.note.rows; as rows) {
+            @for (row of rows; track $index) {
+              <text
+                class="note-row-key"
+                [attr.x]="-item.width / 2 + 8"
+                [attr.y]="-item.height / 2 + 28 + $index * 15"
+              >
+                {{ row[0] }}
+              </text>
+              <text
+                class="note-row-val"
+                [attr.x]="item.width / 2 - 8"
+                [attr.y]="-item.height / 2 + 28 + $index * 15"
+              >
+                {{ row[1] }}
+              </text>
+            }
+          }
+          @if (item.note.total; as total) {
+            @let totalY =
+              -item.height / 2 + 28 + (item.note.rows?.length ?? 0) * 15;
+            <text
+              class="note-total-key"
+              [attr.x]="-item.width / 2 + 8"
+              [attr.y]="totalY"
+            >
+              {{ total[0] }}
+            </text>
+            <text
+              class="note-total-val"
+              [attr.x]="item.width / 2 - 8"
+              [attr.y]="totalY"
+            >
+              {{ total[1] }}
+            </text>
+          }
+        </g>
+      }
+    </g>
+
+    <!-- 5. Packets -->
+    <g class="layer-packets">
+      @for (pkt of packetInstances(); track pkt.key) {
+        <g
+          #packetEl
+          [attr.class]="'packet packet-' + pkt.kind"
+          [attr.data-packet-kind]="pkt.kind"
+          [attr.data-packet-edge]="pkt.edgeId"
+          [attr.transform]="
+            'translate(' + pkt.points[0].x + ' ' + pkt.points[0].y + ')'
+          "
+        >
+          @switch (pkt.kind) {
+            @case ('handshake') {
+              <circle class="packet-shape packet-ring" r="4.5" />
+            }
+            @case ('write') {
+              <rect
+                class="packet-shape packet-square"
+                x="-4.5"
+                y="-4.5"
+                width="9"
+                height="9"
+                rx="1.5"
+              />
+            }
+            @default {
+              <circle class="packet-shape packet-dot" r="4.5" />
+            }
+          }
+          @if (pkt.label; as pLabel) {
+            <g class="packet-label" transform="translate(0 -13)">
+              <rect
+                class="packet-label-bg"
+                [attr.x]="-pkt.labelWidth / 2"
+                y="-7.5"
+                [attr.width]="pkt.labelWidth"
+                height="15"
+                rx="4"
+              />
+              <text class="packet-label-text" x="0" y="3">{{ pLabel }}</text>
+            </g>
+          }
+        </g>
+      }
+    </g>
+  </svg>
+
+  <ul class="visually-hidden" aria-label="Diagram description">
+    @for (item of descriptionItems(); track $index) {
+      <li>{{ item }}</li>
+    }
+  </ul>
+</div>

@@ -1,0 +1,75 @@
+<section class="paper" aria-label="Paper look">
+  <h2>Surfaces</h2>
+  <div class="surfaces">
+    @for (surface of surfaces; track surface) {
+      <div [class]="'surface surface--' + surface">
+        <p class="surface__name">bg.{{ surface }}</p>
+        <p>Default text: requests flow left to right.</p>
+        <p class="muted">Muted text: p99 latency 120 ms</p>
+        <p class="accent">Accent text</p>
+      </div>
+    }
+  </div>
+
+  <h2>Actions</h2>
+  <div class="ah-cluster">
+    <button type="button" ahButton>Next</button>
+    <button type="button" ahButton="secondary">Back</button>
+    <button type="button" ahButton="ghost">Skip</button>
+  </div>
+
+  <h2>Scene hues</h2>
+  <ul class="hues">
+    @for (hue of hues; track hue) {
+      <li class="hue">
+        <svg
+          class="cube"
+          viewBox="0 0 64 64"
+          aria-hidden="true"
+          focusable="false"
+        >
+          <polygon
+            points="32,6 58,20 32,34 6,20"
+            [style.fill]="scene(hue, 'top')"
+          />
+          <polygon
+            points="6,20 32,34 32,60 6,46"
+            [style.fill]="scene(hue, 'left')"
+          />
+          <polygon
+            points="32,34 58,20 58,46 32,60"
+            [style.fill]="scene(hue, 'right')"
+          />
+        </svg>
+        <span
+          class="chip"
+          [style.background]="scene(hue, 'top')"
+          [style.color]="scene(hue, 'ink')"
+          >{{ hue }}</span
+        >
+        <span class="faces">
+          @for (face of faces; track face) {
+            <span class="face">
+              <span class="swatch" [style.background]="scene(hue, face)"></span>
+              {{ face }}
+            </span>
+          }
+        </span>
+      </li>
+    }
+  </ul>
+
+  <h2>Packets and edges</h2>
+  <div class="packets">
+    @for (kind of packets; track kind) {
+      <span class="packet">
+        <span class="dot" [style.background]="scene('packet', kind)"></span>
+        {{ kind }}
+      </span>
+    }
+    <span class="packet">
+      <span class="edge" [style.background]="scene('edge')"></span>
+      edge
+    </span>
+  </div>
+</section>

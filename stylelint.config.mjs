@@ -18,6 +18,8 @@ const STRICT = [
   'apps/labs/**/*.scss',
   'libs/learning/**/*.scss',
   'apps/products/learning/**/*.scss',
+  'libs/products/system-design/**/*.scss',
+  'apps/products/system-design/**/*.scss',
 ];
 
 const COLOR_PROPS = [

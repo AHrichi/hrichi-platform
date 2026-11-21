@@ -109,6 +109,12 @@ export const appRoutes: Route[] = [
     title: 'Learning Engine · Capture and Daily Review · Ahmed Hrichi',
   },
   {
+    path: 'apps/system-design',
+    canMatch: [appAvailableGuard('system-design')],
+    loadChildren: federatedRoutes('product-system-design'),
+    title: 'System Design · Interactive Course · Ahmed Hrichi',
+  },
+  {
     path: 'apps/alarm-engine',
     canMatch: [appAvailableGuard('alarm-engine')],
     loadChildren: () =>

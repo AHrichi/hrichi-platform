@@ -148,6 +148,17 @@ export default [
                 'scope:learning-client',
               ],
             },
+            // The System Design course (ADR-0025).
+            {
+              sourceTag: 'scope:product-system-design',
+              onlyDependOnLibsWithTags: [
+                'scope:product-system-design',
+                'scope:shared',
+                'scope:platform',
+                'scope:design-system',
+                'scope:learning-client',
+              ],
+            },
             // The Learning Engine (ADR-0024): its own scope, like a product.
             {
               sourceTag: 'scope:learning',

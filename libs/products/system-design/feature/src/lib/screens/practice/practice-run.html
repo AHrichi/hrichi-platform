@@ -1,0 +1,132 @@
+@if (!done()) {
+  @if (view(); as v) {
+    <section class="question" aria-labelledby="sd-practice-count">
+      <div class="question-bar">
+        <h2
+          id="sd-practice-count"
+          class="question-count"
+          tabindex="-1"
+          #focusTarget
+        >
+          {{ copy.run.progress(index() + 1, total()) }}
+        </h2>
+        @if (kind() === 'mix') {
+          <p class="question-from">
+            {{ copy.run.from }} <strong>{{ v.question.lessonTitle }}</strong>
+          </p>
+        }
+      </div>
+
+      <div
+        class="question-meter"
+        role="progressbar"
+        [attr.aria-label]="copy.run.progress(index() + 1, total())"
+        aria-valuemin="0"
+        [attr.aria-valuemax]="total()"
+        [attr.aria-valuenow]="results().length"
+      >
+        <span
+          class="question-meter-fill"
+          [style.inline-size.%]="(results().length / total()) * 100"
+        ></span>
+      </div>
+
+      @for (item of [v]; track item.key) {
+        @if (item.choice; as check) {
+          <sd-check-choice
+            [check]="check"
+            (answered)="onAnswered($event)"
+            (reviewStep)="review(item.question)"
+          />
+        } @else if (item.numeric; as check) {
+          <sd-check-numeric
+            [check]="check"
+            (answered)="onAnswered($event)"
+            (reviewStep)="review(item.question)"
+          />
+        } @else if (item.order; as check) {
+          <sd-check-order
+            [check]="check"
+            (answered)="onAnswered($event)"
+            (reviewStep)="review(item.question)"
+          />
+        }
+      }
+
+      @if (answered()) {
+        <div class="question-actions">
+          <button type="button" class="btn-primary" (click)="next()">
+            {{ isLast() ? copy.run.finish : copy.run.next }}
+            <span aria-hidden="true">→</span>
+          </button>
+        </div>
+      }
+    </section>
+  }
+} @else {
+  <section class="summary" aria-labelledby="sd-practice-summary">
+    <h2
+      id="sd-practice-summary"
+      class="summary-heading"
+      tabindex="-1"
+      #focusTarget
+    >
+      {{ copy.summary.heading }}
+    </h2>
+    <p class="score">
+      <span class="score-value" aria-hidden="true">{{
+        copy.summary.score(correctCount(), total())
+      }}</span>
+      <span class="score-label">{{
+        copy.summary.scoreLabel(correctCount(), total())
+      }}</span>
+    </p>
+
+    @if (missed().length) {
+      <h3 class="missed-heading">{{ copy.summary.missedHeading }}</h3>
+      <ul class="missed-list">
+        @for (
+          m of missed();
+          track m.question.lessonId + ':' + m.question.check.id
+        ) {
+          <li class="missed-item">
+            <p class="missed-prompt">
+              <sd-inline-text [text]="m.question.check.prompt" />
+            </p>
+            <p class="missed-answer">
+              {{ copy.summary.rightAnswer }} <strong>{{ m.expected }}</strong>
+            </p>
+            <a
+              class="missed-link"
+              [routerLink]="lessonLink(m.question)"
+              [relativeTo]="shellRoute"
+              [attr.aria-label]="
+                copy.summary.seeInLesson + ': ' + m.question.lessonTitle
+              "
+            >
+              {{ copy.summary.seeInLesson }}
+              <span aria-hidden="true">→</span>
+            </a>
+          </li>
+        }
+      </ul>
+    } @else {
+      <p class="all-right">{{ copy.summary.allRight }}</p>
+    }
+
+    <div class="summary-actions">
+      @if (learningOn && missed().length) {
+        <ah-learn-this
+          [items]="reviewItems()"
+          [label]="copy.learnThis.label"
+          [demoLabel]="copy.learnThis.demoLabel"
+          [standaloneHint]="copy.learnThis.standaloneHint"
+          [sentLabel]="copy.learnThis.sentLabel"
+        />
+      }
+      <button type="button" class="btn-primary" (click)="again.emit()">
+        {{ copy.summary.again }}
+      </button>
+    </div>
+  </section>
+}

@@ -1,0 +1,45 @@
+@let p = progress();
+<section class="progress-card" aria-label="Course progress">
+  <button
+    type="button"
+    class="progress-trigger"
+    [attr.aria-expanded]="expanded()"
+    (click)="toggle()"
+  >
+    <span class="progress-title">Progress</span>
+    <span class="progress-summary">
+      <span class="progress-total">{{ p.done }} / {{ p.total }}</span>
+      <span class="progress-chevron" aria-hidden="true">
+        {{ expanded() ? '▾' : '▸' }}
+      </span>
+    </span>
+  </button>
+
+  <ah-progress-bar
+    [value]="p.done"
+    [max]="p.total || 1"
+    label="Overall course progress"
+    size="sm"
+    variant="accent"
+  />
+
+  @if (expanded()) {
+    <ul class="module-list" role="list">
+      @for (row of rows(); track row.id) {
+        <li class="module-item" [attr.data-module-id]="row.id">
+          <div class="module-header">
+            <span class="module-name">{{ row.code }}. {{ row.title }}</span>
+            <span class="module-count">{{ row.done }} / {{ row.total }}</span>
+          </div>
+          <ah-progress-bar
+            [value]="row.done"
+            [max]="row.total || 1"
+            [label]="row.title + ' progress'"
+            size="sm"
+            variant="accent"
+          />
+        </li>
+      }
+    </ul>
+  }
+</section>

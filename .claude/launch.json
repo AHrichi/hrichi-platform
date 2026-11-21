@@ -62,6 +62,16 @@
       "port": 4311
     },
     {
+      "name": "system-design (static build)",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "tools/scripts/serve-static.mjs",
+        "dist/apps/products/system-design/web/browser",
+        "4312"
+      ],
+      "port": 4312
+    },
+    {
       "name": "studylm (static build)",
       "runtimeExecutable": "node",
       "runtimeArgs": [

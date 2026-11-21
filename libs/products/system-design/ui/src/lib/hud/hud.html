@@ -1,0 +1,16 @@
+@if (chips().length > 0) {
+  <ul class="hud-list" role="list" aria-label="System metrics">
+    @for (chip of chips(); track chip.id) {
+      <li
+        [class]="'hud-chip tone-' + chip.tone"
+        [class.is-fresh]="chip.fresh"
+        [attr.data-metric-id]="chip.id"
+        [attr.data-tone]="chip.tone"
+      >
+        <sd-icon class="hud-icon" [name]="chip.icon" [size]="15" />
+        <span class="hud-label">{{ chip.label }}</span>
+        <span class="hud-value">{{ chip.value }}</span>
+      </li>
+    }
+  </ul>
+}

@@ -1,0 +1,344 @@
+@if (!known()) {
+  <div class="card not-found">
+    <h1 class="title">{{ copy.notFoundHeading }}</h1>
+    <p class="muted">{{ copy.notFoundBody }}</p>
+    <a class="text-link" routerLink="..">{{ copy.backToLab }}</a>
+  </div>
+} @else {
+  <div class="lab">
+    <div class="card header-card">
+      <p class="breadcrumb">
+        <a class="text-link" routerLink="..">{{ copy.backToLab }}</a>
+      </p>
+      <h1 class="title">{{ title() }}</h1>
+      <p class="muted">{{ brief() }}</p>
+    </div>
+
+    <div class="bench">
+      <!-- Left: palette -->
+      <section class="card palette" aria-labelledby="lab-palette-heading">
+        <h2 id="lab-palette-heading" class="card-title">
+          {{ copy.paletteHeading }}
+        </h2>
+        <p class="muted small">{{ copy.paletteHint }}</p>
+        <ul class="palette-list">
+          @for (kind of kinds; track kind) {
+            <li>
+              <button
+                type="button"
+                class="palette-btn"
+                [attr.data-kind]="kind"
+                [disabled]="!addable(kind)"
+                (click)="add(kind)"
+              >
+                <sd-icon [name]="nodeKinds[kind].icon" [size]="16" />
+                <span class="palette-text">
+                  <span class="palette-name"
+                    ><span class="visually-hidden">{{ copy.addPrefix }} </span
+                    >{{ catalog[kind].label }}</span
+                  >
+                  <span class="palette-blurb">{{ catalog[kind].blurb }}</span>
+                </span>
+              </button>
+            </li>
+          }
+        </ul>
+      </section>
+
+      <!-- Centre: results, diagram and traffic -->
+      <section class="card stage" aria-labelledby="lab-stage-heading">
+        <h2 id="lab-stage-heading" class="visually-hidden">
+          {{ copy.stageLabel }}
+        </h2>
+        <sd-hud [hud]="hud" [metrics]="metrics()" />
+        <div class="stage-canvas">
+          <sd-iso-scene
+            [state]="store.scene()"
+            [selectable]="true"
+            [selectedNodeId]="store.selectedId()"
+            [reducedMotion]="reducedMotion()"
+            [label]="copy.stageLabel"
+            (nodeSelected)="onNodeSelected($event)"
+            (packetsDone)="onPacketsDone()"
+          />
+        </div>
+
+        <fieldset class="traffic" [disabled]="!store.isSandbox()">
+          <legend class="traffic-legend">{{ copy.trafficHeading }}</legend>
+          @if (!store.isSandbox()) {
+            <p class="muted small traffic-note">{{ copy.trafficFixed }}</p>
+          }
+          <div class="slider">
+            <label for="lab-rps">{{ copy.rps }}</label>
+            <input
+              id="lab-rps"
+              type="range"
+              min="0"
+              step="1"
+              [max]="rpsSteps"
+              [value]="rpsPosition()"
+              [attr.aria-valuetext]="rpsText()"
+              (input)="onRps($event)"
+            />
+            <output for="lab-rps">{{ rpsText() }}</output>
+          </div>
+          <div class="slider">
+            <label for="lab-reads">{{ copy.reads }}</label>
+            <input
+              id="lab-reads"
+              type="range"
+              min="0"
+              max="100"
+              step="1"
+              [value]="percent(traffic().readRatio)"
+              [attr.aria-valuetext]="percent(traffic().readRatio) + '%'"
+              (input)="onRatio($event, 'readRatio')"
+            />
+            <output for="lab-reads">{{ percent(traffic().readRatio) }}%</output>
+          </div>
+          <div class="slider">
+            <label for="lab-static">{{ copy.statics }}</label>
+            <input
+              id="lab-static"
+              type="range"
+              min="0"
+              max="100"
+              step="1"
+              [value]="percent(traffic().staticRatio)"
+              [attr.aria-valuetext]="percent(traffic().staticRatio) + '%'"
+              (input)="onRatio($event, 'staticRatio')"
+            />
+            <output for="lab-static"
+              >{{ percent(traffic().staticRatio) }}%</output
+            >
+          </div>
+        </fieldset>
+      </section>
+
+      <!-- Right: inspector, goals, problems -->
+      <div class="side">
+        <section class="card inspector" aria-labelledby="lab-inspector-heading">
+          <h2
+            id="lab-inspector-heading"
+            class="card-title"
+            tabindex="-1"
+            #inspectorHeading
+          >
+            {{ inspectorTitle() }}
+          </h2>
+
+          @if (store.selectedNode(); as node) {
+            @if (selectedLoad(); as load) {
+              <p class="muted small" data-testid="lab-load">{{ load }}</p>
+            }
+
+            <div
+              class="field"
+              role="group"
+              aria-labelledby="lab-instances-label"
+            >
+              <span id="lab-instances-label" class="field-label">{{
+                copy.instances
+              }}</span>
+              @if (catalog[node.kind].scalable) {
+                <div class="stepper">
+                  <button
+                    type="button"
+                    class="tool-btn"
+                    [attr.aria-label]="copy.fewer"
+                    [disabled]="node.instances <= minInstances"
+                    (click)="stepInstances(-1)"
+                  >
+                    −
+                  </button>
+                  <output class="stepper-value" aria-live="polite">{{
+                    node.instances
+                  }}</output>
+                  <button
+                    type="button"
+                    class="tool-btn"
+                    [attr.aria-label]="copy.more"
+                    [disabled]="node.instances >= maxInstances"
+                    (click)="stepInstances(1)"
+                  >
+                    +
+                  </button>
+                </div>
+              } @else {
+                <p class="muted small">{{ copy.fixedInstances }}</p>
+              }
+            </div>
+
+            @if (node.kind === 'cache') {
+              <div class="slider">
+                <label for="lab-hit">{{ copy.hitRatio }}</label>
+                <input
+                  id="lab-hit"
+                  type="range"
+                  min="0"
+                  max="99"
+                  step="1"
+                  [value]="percent(node.hitRatio ?? 0.8)"
+                  [attr.aria-valuetext]="percent(node.hitRatio ?? 0.8) + '%'"
+                  (input)="onHitRatio($event)"
+                />
+                <output for="lab-hit"
+                  >{{ percent(node.hitRatio ?? 0.8) }}%</output
+                >
+              </div>
+            }
+
+            <div class="field">
+              @if (store.connectTargets().length > 0) {
+                <label class="field-label" for="lab-connect">{{
+                  copy.connectTo
+                }}</label>
+                <div class="connect-row">
+                  <select
+                    id="lab-connect"
+                    class="select"
+                    [value]="connectChoice()"
+                    (change)="onConnectChoice($event)"
+                  >
+                    <option value="">{{ copy.connectPlaceholder }}</option>
+                    @for (t of store.connectTargets(); track t.id) {
+                      <option [value]="t.id">{{ t.label }}</option>
+                    }
+                  </select>
+                  <button
+                    type="button"
+                    class="tool-btn"
+                    [disabled]="!connectChoice()"
+                    (click)="connect()"
+                  >
+                    {{ copy.connect }}
+                  </button>
+                </div>
+              } @else {
+                <span class="field-label">{{ copy.connectTo }}</span>
+                <p class="muted small">{{ copy.nothingToConnect }}</p>
+              }
+            </div>
+
+            <div class="field">
+              <h3 class="field-label">{{ copy.linksHeading }}</h3>
+              @if (store.selectedLinks().length > 0) {
+                <ul class="links">
+                  @for (
+                    link of store.selectedLinks();
+                    track link.from + '>' + link.to
+                  ) {
+                    <li class="link-row">
+                      <span
+                        >{{
+                          link.direction === 'to' ? copy.linkTo : copy.linkFrom
+                        }}
+                        {{ link.other }}</span
+                      >
+                      <button
+                        type="button"
+                        class="text-btn"
+                        [attr.aria-label]="removeLabel(link)"
+                        (click)="store.unlink(link.from, link.to)"
+                      >
+                        {{ copy.removeLink }}
+                      </button>
+                    </li>
+                  }
+                </ul>
+              } @else {
+                <p class="muted small">{{ copy.noLinks }}</p>
+              }
+            </div>
+
+            <div class="field switch-row">
+              <span id="lab-down-label" class="field-label">{{
+                copy.failure
+              }}</span>
+              <button
+                type="button"
+                role="switch"
+                class="switch"
+                aria-labelledby="lab-down-label"
+                [attr.aria-checked]="!!node.down"
+                (click)="toggleDown()"
+              >
+                <span class="switch-thumb"></span>
+              </button>
+            </div>
+
+            <button type="button" class="danger-btn" (click)="remove()">
+              {{ copy.delete }} {{ store.selectedLabel() }}
+            </button>
+          } @else {
+            <p class="muted small">{{ copy.inspectorEmpty }}</p>
+          }
+        </section>
+
+        @if (store.challenge(); as challenge) {
+          <section class="card goals" aria-labelledby="lab-goals-heading">
+            <h2 id="lab-goals-heading" class="card-title">
+              {{ copy.goalsHeading }}
+            </h2>
+            @if (store.check(); as check) {
+              <ul class="goal-list">
+                @for (goal of check.goals; track goal.id) {
+                  <li
+                    class="goal"
+                    [class.is-met]="goal.met"
+                    [attr.data-goal-id]="goal.id"
+                    [attr.data-met]="goal.met"
+                  >
+                    <sd-icon
+                      class="goal-icon"
+                      [name]="goal.met ? 'check' : 'warning'"
+                      [size]="16"
+                      [label]="goal.met ? copy.goalMet : copy.goalNotMet"
+                    />
+                    <span class="goal-label">{{ goal.label }}</span>
+                    <span class="goal-actual">{{ goal.actual }}</span>
+                  </li>
+                }
+              </ul>
+              <p
+                class="verdict"
+                role="status"
+                [class.is-solved]="check.solved"
+                data-testid="lab-verdict"
+              >
+                {{ check.solved ? copy.solved : copy.unsolved }}
+              </p>
+            }
+            <details class="hint">
+              <summary>{{ copy.hint }}</summary>
+              <p class="muted small">{{ challenge.hint }}</p>
+            </details>
+            <button type="button" class="tool-btn" (click)="store.reset()">
+              {{ copy.resetStarter }}
+            </button>
+          </section>
+        }
+
+        <section class="card problems" aria-labelledby="lab-problems-heading">
+          <h2 id="lab-problems-heading" class="card-title">
+            {{ copy.problemsHeading }}
+          </h2>
+          @if (store.result().problems.length > 0) {
+            <ul class="problem-list">
+              @for (p of store.result().problems; track $index) {
+                <li>{{ p }}</li>
+              }
+            </ul>
+          } @else {
+            <p class="muted small">{{ copy.noProblems }}</p>
+          }
+          @if (store.isSandbox()) {
+            <button type="button" class="tool-btn" (click)="store.reset()">
+              {{ copy.resetSandbox }}
+            </button>
+          }
+        </section>
+      </div>
+    </div>
+  </div>
+}
