@@ -43,6 +43,10 @@ describe('app-visibility', () => {
     expect(isRouteEnabled('/apps/study')).toBe(true);
     // The Learning Engine's seeded demo went public with the StudyLM link.
     expect(isRouteEnabled('/apps/learning')).toBe(true);
+    // The System Design course went public at its go-live phase (ADR-0025, P12).
+    expect(isRouteEnabled('/apps/system-design')).toBe(true);
+    expect(isRouteEnabled('/apps/sysdesign')).toBe(true);
+    expect(isRouteEnabled('/apps/scale-lab')).toBe(true);
 
     // Disabled routes
     expect(isRouteEnabled('/apps/strategy')).toBe(false);
@@ -52,10 +56,6 @@ describe('app-visibility', () => {
     expect(isRouteEnabled('/apps/basecamp')).toBe(false);
     expect(isRouteEnabled('/apps/alarm-engine')).toBe(false);
     expect(isRouteEnabled('/apps/alarm')).toBe(false);
-    // The System Design course stays hidden until its go-live phase (ADR-0025).
-    expect(isRouteEnabled('/apps/system-design')).toBe(false);
-    expect(isRouteEnabled('/apps/sysdesign')).toBe(false);
-    expect(isRouteEnabled('/apps/scale-lab')).toBe(false);
 
     // General routes remain enabled
     expect(isRouteEnabled('/work')).toBe(true);
