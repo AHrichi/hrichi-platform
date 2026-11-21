@@ -1,0 +1,40 @@
+# Supabase CLI settings for local development of the Greenhouse Labor
+# Planner. Run the CLI with `--workdir apps/products/greenhouse` (it reads
+# this folder as its `supabase/`); see README.md.
+
+project_id = "greenhouse-labor"
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[db]
+port = 54322
+major_version = 17
+
+[db.seed]
+enabled = true
+sql_paths = ["./seed.sql"]
+
+[studio]
+enabled = true
+port = 54323
+
+[storage]
+enabled = true
+file_size_limit = "5MiB"
+
+[auth]
+enabled = true
+# The field app's dev server.
+site_url = "http://localhost:4314"
+additional_redirect_urls = ["http://localhost:4313"]
+jwt_expiry = 3600
+enable_signup = true
+
+[auth.email]
+enable_signup = true
+enable_confirmations = false

@@ -7,6 +7,7 @@ import type {
   Team,
   WeeklyTarget,
   Worker,
+  WorkerPay,
   WorkLog,
 } from './models';
 import { DEFAULT_KG_PER_HOUR } from './productivity';
@@ -21,6 +22,7 @@ export interface SampleFarm {
   greenhouses: Greenhouse[];
   teams: Team[];
   workers: Worker[];
+  pay: WorkerPay[];
   absences: Absence[];
   /** Four weeks of work logs before `weekStart`, all synced. */
   history: WorkLog[];
@@ -215,6 +217,11 @@ export function sampleFarm(weekStart: IsoDate): SampleFarm {
     greenhouses,
     teams: SAMPLE_TEAMS.map((t) => ({ ...t })),
     workers,
+    // 2.40 to 2.85 TND an hour.
+    pay: workers.map((w, i) => ({
+      workerId: w.id,
+      hourlyRate: 2.4 + ((i + 1) % 4) * 0.15,
+    })),
     absences,
     history,
     plan,
@@ -236,7 +243,6 @@ function sampleWorkers(): Worker[] {
       fullName: `${first} ${LAST_NAMES[(i * 7) % LAST_NAMES.length]}`,
       teamId,
       badgeCode: `GH-${String(n).padStart(4, '0')}`,
-      hourlyRate: 2.4 + (n % 4) * 0.15,
       active: true,
     };
   });

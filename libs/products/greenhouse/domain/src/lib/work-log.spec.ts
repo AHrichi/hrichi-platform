@@ -175,7 +175,6 @@ describe('badges', () => {
       fullName: 'Amira',
       teamId: 'team-a',
       badgeCode: 'GH-0042',
-      hourlyRate: 2.5,
       active: true,
     },
     {
@@ -183,7 +182,6 @@ describe('badges', () => {
       fullName: 'Bilel',
       teamId: 'team-a',
       badgeCode: 'GH-0043',
-      hourlyRate: 2.5,
       active: false,
     },
   ];

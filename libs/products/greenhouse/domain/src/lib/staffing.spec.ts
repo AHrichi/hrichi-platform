@@ -7,7 +7,7 @@ const WEEK = '2026-11-23';
 const TUE = '2026-11-24';
 
 function worker(id: string, teamId: string | null, active = true): Worker {
-  return { id, fullName: id, teamId, badgeCode: id, hourlyRate: 2.5, active };
+  return { id, fullName: id, teamId, badgeCode: id, active };
 }
 
 function need(date: string, teamId: string, headcount: number): TeamDayNeed {

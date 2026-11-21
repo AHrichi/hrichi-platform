@@ -50,9 +50,17 @@ export interface Worker {
   teamId: string | null;
   /** Printed as a QR code on the worker's badge. Unique per farm. */
   badgeCode: string;
+  active: boolean;
+}
+
+/**
+ * A worker's pay, kept apart from `Worker` so only managers and HR ever load
+ * it: the supervisors' phones carry the roster, never the wages.
+ */
+export interface WorkerPay {
+  workerId: string;
   /** TND per hour. */
   hourlyRate: number;
-  active: boolean;
 }
 
 /** A day off, sick leave or any reason a worker isn't there (inclusive). */
