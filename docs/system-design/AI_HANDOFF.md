@@ -2,7 +2,7 @@
 
 A briefing for whichever AI agent or IDE (Claude Code, Antigravity, …) picks up the System Design course. It assumes no memory of earlier sessions. Read it top to bottom before touching code.
 
-Last updated 2026-11-21: P0–P11 merged into `main` (PR #19, `5dd59f8`), but **the `main` deploy failed at `shell:deploy`**: the shell's CSP `_headers` line is 2,102 characters, over Cloudflare's 2,000 (the other remotes, including `product-system-design`, deployed; production still runs the previous shell). P12 is in PR #20; **don't merge it until the CSP fix lands**, or its deploy fails the same way. Next: section 6. Shared agent rules: [AGENTS.md](../../AGENTS.md).
+Last updated 2026-11-21: P0–P11 merged into `main` (PR #19, `5dd59f8`), but **the `main` deploy failed at `shell:deploy`**: the shell's CSP `_headers` line is 2,102 characters, over Cloudflare's 2,000 (the other remotes, including `product-system-design`, deployed; production still runs the previous shell). P12 is in PR #20; **don't merge it until the CSP fix (PR #21) lands and `main` deploys**, or its deploy fails the same way. Next: section 6. Shared agent rules: [AGENTS.md](../../AGENTS.md).
 
 ## 0. Resume in five minutes
 
@@ -162,7 +162,7 @@ pnpm nx e2e shell-e2e -- system-design
 
 **Running the e2e locally:** free ports 4200 and 4302–4312, then `CI=1 pnpm exec playwright test -c apps/portfolio/shell-e2e/playwright.config.mts [<spec>] --reporter=line`. Without `CI=1` the shell's dev server fails in a worktree. Don't weaken ARIA to quiet axe: fix the markup.
 
-1. **Fix the CSP header budget** in `tools/scripts/prepare-hosting.mjs` (owner's decision; don't trim the policy without it). The 11 remote origins (528 characters) appear in both `script-src` and `connect-src`. All share `ahmed-hrichi.workers.dev`, so one `https://*.ahmed-hrichi.workers.dev` source would save about 1,000 characters (the subdomain is account-scoped). Alternatives: drop the ngrok/localhost `connect-src` sources from production, or move the remotes to a custom domain. Land it on its own branch from `main`, then re-run the `main` deploy.
+1. **Merge PR #21** (`fix/shell-csp-remote-wildcard`, owner chose the wildcard): remotes on `ahmed-hrichi.workers.dev` share one `https://*.ahmed-hrichi.workers.dev` CSP source, so the shell's header line drops from 2,102 to 1,114 characters (checked on a production build). Its merge re-runs the `main` deploy; confirm `shell:deploy` passes.
    1b. **Then merge PR #20** (P12) once CI is green. Merging it makes the course public in the portfolio and deploys the shell with the new `@ah/ui`.
 2. **Check the live site** after the deploy: `/apps/system-design` in the portfolio and the standalone `product-system-design` worker.
 3. **After the shell deploys the new `@ah/ui`:** P1A PR 2 (switch StudyLM to `@ah/shared/steps` and `@ah/ui`'s `StepTimeline`).
