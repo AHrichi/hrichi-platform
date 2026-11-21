@@ -29,7 +29,6 @@ export const lesson = {
         from: { x: 0, y: 3 },
         to: { x: 2, y: 5 },
         hue: 'green',
-        label: 'Mobile network',
       },
     ],
     notes: [

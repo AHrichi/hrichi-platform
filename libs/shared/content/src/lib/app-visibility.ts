@@ -30,7 +30,7 @@ export const PORTFOLIO_APPS_CONFIG: Record<PortfolioAppKey, boolean> = {
   whatsapp: false, // ChatPulse · WhatsApp Intelligence Analyzer
   basecamp: false, // Basecamp · Camping Trip Planner
   learning: true, // Learning Engine · Capture, daily review, streaks (ADR-0024)
-  'system-design': false, // System Design course · step lessons, practice, lab (ADR-0025)
+  'system-design': true, // System Design course · step lessons, practice, lab (ADR-0025)
   'alarm-engine': false, // Nightly Alarm Decision Engine
 
   // --- Interactive Engineering Labs ---

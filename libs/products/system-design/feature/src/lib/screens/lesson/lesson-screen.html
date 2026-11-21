@@ -70,7 +70,14 @@
           </div>
         </div>
 
-        <div class="stage-canvas">
+        <!-- Focusable so keyboard users can scroll the diagram sideways on
+             phones, where it keeps a readable minimum width. -->
+        <div
+          class="stage-canvas"
+          role="group"
+          aria-label="Diagram"
+          tabindex="0"
+        >
           <sd-iso-scene
             #isoScene
             [state]="state"
