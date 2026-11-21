@@ -5,9 +5,12 @@
 //   - checks that the container reaches Ollama on the host, then pings the
 //     webhook and runs one small analysis through the AI loop
 //
-// The workflow tries Groq gpt-oss-120b, then Groq llama-3.3-70b, then the
-// local Ollama models that are installed; each answer is validated and an
-// invalid one is sent back once for repair before falling back.
+// Chat analysis tries Groq gpt-oss-120b, then gpt-oss-20b, then the best
+// installed local Ollama model; voice notes use Groq only. Each answer is
+// validated and an invalid one is sent back once for repair; a rate limit is
+// retried after the wait Groq asks for. Every request has a deadline (5 min
+// for analysis, 3 for voice notes) so n8n always answers before the app
+// gives up.
 //
 //   --no-publish        import only
 //   --test <routing>    the analysis check: cloud-first (default),
