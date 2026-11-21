@@ -215,7 +215,35 @@ function inlineScriptHashes(root) {
   return [...hashes].sort();
 }
 
-const remotes = remoteOrigins.join(' ');
+// Remotes on the same workers.dev account subdomain collapse into one
+// `https://*.<account>.workers.dev` source. Listing each one twice (script-src
+// and connect-src) pushed the header past Cloudflare's 2,000-character line
+// limit. Only this account can deploy Workers under its subdomain (ADR-0006).
+// Other origins (custom domains, localhost in development) stay listed.
+function cspSources(origins) {
+  const byAccount = new Map();
+  const rest = [];
+  for (const origin of new Set(origins)) {
+    const { protocol, host } = new URL(origin);
+    const labels = host.split('.');
+    if (
+      protocol === 'https:' &&
+      labels.length === 4 &&
+      host.endsWith('.workers.dev')
+    ) {
+      const account = labels.slice(1).join('.');
+      byAccount.set(account, [...(byAccount.get(account) ?? []), origin]);
+    } else {
+      rest.push(origin);
+    }
+  }
+  const collapsed = [...byAccount].flatMap(([account, list]) =>
+    list.length > 1 ? [`https://*.${account}`] : list,
+  );
+  return [...collapsed, ...rest];
+}
+
+const remotes = cspSources(remoteOrigins).join(' ');
 const turnstile = turnstileOrigins.join(' ');
 const self = values['frame-self'] ? "'self'" : '';
 const evaluate = values['allow-eval'] ? "'unsafe-eval'" : '';

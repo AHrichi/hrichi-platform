@@ -45,5 +45,6 @@ base-uri 'self'
 
 - `blob:` in `script-src` is a known trade-off: a blob URL can only be created by script already running on the page, so it does not open a path for injected markup.
 - Hashes change with every build, so the header is regenerated on every deploy. `tools/scripts/prepare-hosting.mjs` hashes the inline scripts of every built HTML file and writes the `_headers` file, taking the remote origins from `tools/federation/remotes.json`. It fails the deploy if a line exceeds Cloudflare's 2,000-character limit.
+- 2026-11-21: with 11 remotes the shell's line reached 2,102 characters (each origin is listed in both `script-src` and `connect-src`). Remotes sharing a `workers.dev` account subdomain are now one `https://*.ahmed-hrichi.workers.dev` source, which brings the line to 1,114. The trade-off: the shell trusts any Worker on that account, not only the listed remotes. Only the account owner can deploy there. Custom domains and development origins are still listed one by one.
 - Verified in production (`ahmed-hrichi.ah-source.workers.dev`): the policy arrives as a response header, and loading the home page, navigating to the remote and using it reported zero `securitypolicyviolation` events and no console errors.
 - Follow-up: test native import maps (`shimMode: false`), which would remove the need for `blob:`.
