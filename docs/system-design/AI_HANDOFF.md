@@ -163,7 +163,7 @@ pnpm nx e2e shell-e2e -- system-design
 
 **Running the e2e locally:** free ports 4200 and 4302–4312, then `CI=1 pnpm exec playwright test -c apps/portfolio/shell-e2e/playwright.config.mts [<spec>] --reporter=line`. Without `CI=1` the shell's dev server fails in a worktree. Don't weaken ARIA to quiet axe: fix the markup.
 
-1. **Check the live site** once the `main` deploy passes after the deploy: `/apps/system-design` in the portfolio and the standalone `product-system-design` worker.
+1. **Check the live site** once the `main` deploy passes: `/apps/system-design` in the portfolio and the standalone `product-system-design` worker.
 2. **After the shell deploys the new `@ah/ui`:** P1A PR 2 (switch StudyLM to `@ah/shared/steps` and `@ah/ui`'s `StepTimeline`).
 3. **Later, optional:**
    - the platform performance ADR (see "Open loose ends");
