@@ -2,12 +2,12 @@
 
 A briefing for whichever AI agent or IDE (Claude Code, Antigravity, …) picks up the System Design course. It assumes no memory of earlier sessions. Read it top to bottom before touching code.
 
-Last updated 2026-11-20, after verifying P6–P10 (`feat/system-design-post-p10` branched from `feat/system-design-p6-takeover`). Next: **P11** content waves (Modules 02–09) and **P12** go-live (section 6).
+Last updated 2026-11-21, after P11 (all 44 lessons ready) on `feat/system-design-p11-content`, pushed. Next: **P12** go-live (section 6). Shared agent rules: [AGENTS.md](../../AGENTS.md).
 
 ## 0. Resume in five minutes
 
-1. **Get the branch.** Work up through P10 was merged on `feat/system-design-p6-takeover` (`8aef22c`, ahead of `origin/feat/system-design-p6-takeover` after merging P7–P10), and continued on `feat/system-design-post-p10` in `C:\Users\Administrator\Projects\Personal\hrichi-platform`.
-   Branch from it for each new phase (`feat/system-design-p11-...`, …).
+1. **Get the branch.** `git fetch origin && git switch feat/system-design-p11-content` (pushed). It contains everything: P0–P10 (`feat/system-design-p6-takeover`), the post-P10 polish (`feat/system-design-post-p10`), the shared agent rules (`chore/system-design-agent-handoff`) and P11. Branch from it for each new phase (`feat/system-design-p12-…`).
+   - The main checkout (`C:\Users\Administrator\Projects\Personal\hrichi-platform`) may still sit on `feat/system-design-post-p10` with the **old, uncommitted** P11 drafts Antigravity wrote there; they are all committed (and finished) on `feat/system-design-p11-content` as `9f70f1e`. Discard them there (`git restore --staged . && git restore . && git clean -fd libs/products/system-design/domain/src/lib/content/lessons`) before switching, after the owner agrees.
 
 2. **Install:** Windows 11, Node 24, pnpm 10.34.9 (`packageManager` in `package.json`). Run `pnpm install --frozen-lockfile`.
 3. **Check that it's green:**
@@ -59,10 +59,12 @@ The UX was inspired by a public interactive course. **Never copy its text, scena
 | P8 Practice                       | Done (merged `6554f03`): `PracticeHome` (best scores, mixed-practice unlock gate), `LessonPractice`, `MixedPractice`, shared `sd-practice-run` (`sd-check-*`, `markCheck()`, explanations, "See it in the lesson", `<ah-learn-this>`), persistent `attempts` (`AttemptRun`), specs and e2e.                                                                                                                                                                                                             | `289bdd4`, `1ca0111`       |
 | P9 Cheatsheets                    | Done (merged `28d071f`): all 8 remaining module cheatsheets (`scaling`..`case-studies`), `tools/scripts/system-design-cheat-terms.mjs` generating `terms.ts`, `sd-cheat-section` UI component + story, `CheatsheetIndex` and printable A4 `CheatsheetScreen` + print CSS, specs and e2e.                                                                                                                                                                                                                | `6130303`..`8605538`       |
 | P10 Design Lab                    | Done (merged `36e0004`): `lab/` simulator (`simulate`, `checkChallenge`, auto-wiring edits, tier-column scene, catalog, 6 challenges with starter/solution specs), `LabStore` autosave to `designs`, `LabHome` and keyboard-accessible `LabScreen`, specs and `first-users` e2e.                                                                                                                                                                                                                        | `510ab4b`..`c1db9c3`       |
-| P11 Content waves (Modules 02–09) | **Next**                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                | n/a                        |
+| P11 Content waves (Modules 02–09) | Done (on `feat/system-design-p11-content`): 40 lessons in modules 02–09 (drafted by Antigravity, finished and checked here), plus `design-chat` written new; all 44 `ready: true` with lazy loaders. `validateLesson` now also requires a `case` and a `watch-out` step. Two security lessons trimmed to the length limits; the sharding hot-key example reworded.                                                                                                                                      | `9f70f1e`..HEAD            |
 | P12 Go live                       | Not started                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | n/a                        |
 
 **Verified:**
+
+- P11 on 2026-11-21: the System Design e2e: **9 passed, 1 skipped** (embedded test, until go-live); lint, test and build for the five `product-system-design*` projects (domain 240 tests incl. every lesson through `validateLesson`, feature 38, ui 29, data-access 2); format and stylelint; and an in-browser sweep of **every step of all 44 lessons** (about 380 steps) on the built app: each renders a title and a diagram with no console errors. Spot-checked desktop light, phone dark.
 
 - the System Design e2e (`apps/portfolio/shell-e2e/src/system-design.spec.ts`): **9 passed, 1 skipped** (embedded catalog test skipped until P12 go-live), covering lesson keyboard stepping/reload/recap, Learning Engine inbox hand-off, ARIA combobox search (lessons + cheatsheet terms), cheatsheets index/sheet/print/lesson-link, axe on Lesson/Practice/Guide/Cheatsheets/Lab, practice run + score persistence, phone bottom bar, and solving `first-users` in Design Lab with autosave;
 - lint, test (uncached) and build for `product-system-design`, `product-system-design-domain` (237 tests, 98.37% lines), `product-system-design-data-access` (2 tests), `product-system-design-ui` (29 tests), `product-system-design-feature` (38 tests), `shared-steps` (5 tests), `design-system-ui` (59 tests), `design-system-tokens`, `learning-feature` (23 tests), and `shell` (6 tests);
@@ -76,6 +78,8 @@ The UX was inspired by a public interactive course. **Never copy its text, scena
 - the Storybook visual regression screenshot baselines for `"Foundations/Paper look"` and `"System Design/UI Kit"` stories (skipped locally because `VISUAL_REGRESSION` runs only in CI's Linux Playwright image: `nx run design-system-e2e:update-baselines`).
 
 **Open loose ends:**
+
+- **Polish:** on a phone the diagram is small, so labels are hard to read without **Expand**; consider a larger stage or zoom on narrow screens. On step 2 of `request-journey` the URL note overlaps the "Mobile network" zone label.
 
 - P1A PR 2, above.
 - Five lint warnings existed before this work: one in `libs/design-system/ui/src/lib/modal/modal.stories.ts`, four in `apps/portfolio/shell/src/app/app-available.guard*.ts`. Leave them alone.
@@ -152,15 +156,19 @@ pnpm nx e2e shell-e2e -- system-design
 - **Icons:** `generate-app-icons.mjs` needs Playwright's Chromium.
 - **Learning Engine hand-off:** `source.deepLink` must be an absolute `https?://` URL, or the engine drops it.
 
-## 6. Next: P11 Content waves (Modules 02–09), then P12 Go live
+## 6. Next: P12 go-live
 
-**Running the e2e locally (learned in P6):**
+**Running the e2e locally:**
 
 - Free ports 4200 and 4302–4312 first: Playwright reuses any server already on a port, even one serving another checkout's build.
 - Run it as CI does: `CI=1 pnpm exec playwright test -c apps/portfolio/shell-e2e/playwright.config.mts apps/portfolio/shell-e2e/src/system-design.spec.ts --reporter=line`. Without `CI`, the shell runs its dev server, which in a worktree answers 500 ("Cannot find module '@ah/platform/federation'"); `nx e2e shell-e2e` can also hang waiting for a ready signal.
 - Don't weaken ARIA to quiet axe: fix the markup.
 
-**Next phases (technical-design §11):**
+**P12 (technical-design §11):**
 
-- **P11 (Content waves, in parallel per module):** author the remaining 40 lessons in Modules 02–09 following [lesson-authoring.md](lesson-authoring.md), flip `ready: true` in `curriculum.ts`, verify `pnpm nx test product-system-design-domain` (`validateLesson`), and step through each module at desktop and phone widths.
-- **P12 (Go live):** flip `system-design` visibility flag to `true`, verify 5-language catalog card copy and Lighthouse scores, and merge. P1A PR 2 (switch StudyLM to the shared helpers) waits until the shell has deployed the new `@ah/ui`.
+1. Open a PR from `feat/system-design-p11-content` to `main` and get CI green (it also makes the Storybook visual baselines: run `nx run design-system-e2e:update-baselines` in CI's Linux image if the Storybook job asks).
+2. Set `PORTFOLIO_APPS_CONFIG['system-design'] = true` in `libs/shared/content/src/lib/app-visibility.ts` (and its spec). The hub card, hero links and the embedded e2e test switch on by themselves; run the full `shell-e2e`.
+3. Re-check the hub card copy in all 5 languages (`libs/portfolio/feature-apps/src/lib/apps-page.ts`).
+4. Lighthouse on the standalone build (Performance ≥ 90, Accessibility 100); fix what it finds.
+5. Optional polish from "Open loose ends".
+6. After the shell has deployed the new `@ah/ui`: P1A PR 2 (switch StudyLM to `@ah/shared/steps` and `@ah/ui`'s `StepTimeline`).
