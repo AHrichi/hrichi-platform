@@ -464,7 +464,7 @@ export const lesson = {
           op: 'add-note',
           note: {
             id: 'summary',
-            anchor: { at: { x: 11, y: 5 } },
+            anchor: { at: { x: 8, y: 0 } },
             text: 'Who does what',
             rows: [
               ['Connections', 'WebSocket gateways'],
