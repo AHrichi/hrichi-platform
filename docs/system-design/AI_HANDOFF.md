@@ -2,11 +2,11 @@
 
 A briefing for whichever AI agent or IDE (Claude Code, Antigravity, …) picks up the System Design course. It assumes no memory of earlier sessions. Read it top to bottom before touching code.
 
-Last updated 2026-11-21, after P12 (go-live) on `feat/system-design-p12-go-live`, pushed. P0–P11 are in PR #19 (`feat/system-design-p11-content` → `main`); P12 sits on top of it. Next: merge #19, then P12 (section 6). Shared agent rules: [AGENTS.md](../../AGENTS.md).
+Last updated 2026-11-21: P0–P11 merged into `main` (PR #19, `5dd59f8`). P12 (go-live) is in PR #20 (`feat/system-design-p12-go-live` → `main`), waiting for CI and review. Next: section 6. Shared agent rules: [AGENTS.md](../../AGENTS.md).
 
 ## 0. Resume in five minutes
 
-1. **Get the branch.** `git fetch origin && git switch feat/system-design-p12-go-live` (pushed; P11 plus go-live). PR #19 holds P0–P11 on `feat/system-design-p11-content`. That branch contains: P0–P10 (`feat/system-design-p6-takeover`), the post-P10 polish (`feat/system-design-post-p10`), the shared agent rules (`chore/system-design-agent-handoff`) and P11. Branch from it for each new phase (`feat/system-design-p12-…`).
+1. **Get the branch.** `git fetch origin && git switch feat/system-design-p12-go-live` (pushed; PR #20). `main` already holds P0–P11 (PR #19). After #20 merges, branch new work from `main`.
    - The main checkout (`C:\Users\Administrator\Projects\Personal\hrichi-platform`) may still sit on `feat/system-design-post-p10` with the **old, uncommitted** P11 drafts Antigravity wrote there; they are all committed (and finished) on `feat/system-design-p11-content` as `9f70f1e`. Discard them there (`git restore --staged . && git restore . && git clean -fd libs/products/system-design/domain/src/lib/content/lessons`) before switching, after the owner agrees.
 
 2. **Install:** Windows 11, Node 24, pnpm 10.34.9 (`packageManager` in `package.json`). Run `pnpm install --frozen-lockfile`.
@@ -60,7 +60,7 @@ The UX was inspired by a public interactive course. **Never copy its text, scena
 | P9 Cheatsheets                    | Done (merged `28d071f`): all 8 remaining module cheatsheets (`scaling`..`case-studies`), `tools/scripts/system-design-cheat-terms.mjs` generating `terms.ts`, `sd-cheat-section` UI component + story, `CheatsheetIndex` and printable A4 `CheatsheetScreen` + print CSS, specs and e2e.                                                                                                                                                                                                                | `6130303`..`8605538`       |
 | P10 Design Lab                    | Done (merged `36e0004`): `lab/` simulator (`simulate`, `checkChallenge`, auto-wiring edits, tier-column scene, catalog, 6 challenges with starter/solution specs), `LabStore` autosave to `designs`, `LabHome` and keyboard-accessible `LabScreen`, specs and `first-users` e2e.                                                                                                                                                                                                                        | `510ab4b`..`c1db9c3`       |
 | P11 Content waves (Modules 02–09) | Done (on `feat/system-design-p11-content`): 40 lessons in modules 02–09 (drafted by Antigravity, finished and checked here), plus `design-chat` written new; all 44 `ready: true` with lazy loaders. `validateLesson` now also requires a `case` and a `watch-out` step. Two security lessons trimmed to the length limits; the sharding hot-key example reworded.                                                                                                                                      | `9f70f1e`..HEAD            |
-| P12 Go live                       | Done on `feat/system-design-p12-go-live`, **waiting to merge after #19**: visibility flag on (hub card, hero links and the embedded e2e test are live), phone diagram keeps a 34rem width and scrolls sideways, request-journey label overlap fixed, phone search button named, meta description added.                                                                                                                                                                                                 | `a04b18b`, `4258fb7`       |
+| P12 Go live                       | Done on `feat/system-design-p12-go-live`, **in PR #20, waiting for CI and review**: visibility flag on (hub card, hero links and the embedded e2e test are live), phone diagram keeps a 34rem width and scrolls sideways, request-journey label overlap fixed, phone search button named, meta description added.                                                                                                                                                                                       | `a04b18b`, `4258fb7`       |
 
 **Verified:**
 
@@ -162,8 +162,8 @@ pnpm nx e2e shell-e2e -- system-design
 
 **Running the e2e locally:** free ports 4200 and 4302–4312, then `CI=1 pnpm exec playwright test -c apps/portfolio/shell-e2e/playwright.config.mts [<spec>] --reporter=line`. Without `CI=1` the shell's dev server fails in a worktree. Don't weaken ARIA to quiet axe: fix the markup.
 
-1. **Merge PR #19** (P0–P11) once CI is green. If the Storybook job asks for new visual baselines, run `nx run design-system-e2e:update-baselines` in CI's Linux image.
-2. **Then open the P12 PR** from `feat/system-design-p12-go-live` to `main` (after #19 merges it shows only the two P12 commits). Merging it makes the course public in the portfolio.
+1. **Merge PR #20** (P12) once CI is green. Merging it makes the course public in the portfolio and deploys the shell with the new `@ah/ui`.
+2. **Check the live site** after the deploy: `/apps/system-design` in the portfolio and the standalone `product-system-design` worker.
 3. **After the shell deploys the new `@ah/ui`:** P1A PR 2 (switch StudyLM to `@ah/shared/steps` and `@ah/ui`'s `StepTimeline`).
 4. **Later, optional:**
    - the platform performance ADR (see "Open loose ends");
