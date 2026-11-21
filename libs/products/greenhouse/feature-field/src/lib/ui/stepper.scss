@@ -1,0 +1,79 @@
+// Field controls are a size up from the design system's largest, for gloves
+// and sun glare (ADR-0026).
+$touch: calc(var(--control-height-lg) + var(--space-4));
+
+:host {
+  display: block;
+}
+
+.label {
+  display: block;
+  margin-block-end: var(--space-2);
+  font-size: var(--font-size-300);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-default);
+}
+
+.controls {
+  display: grid;
+  grid-template-columns: $touch minmax(0, 1fr) $touch;
+  gap: var(--space-2);
+  align-items: stretch;
+}
+
+.bump,
+.field {
+  min-block-size: $touch;
+  border: var(--border-width-strong) solid var(--color-border-control);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-raised);
+  color: var(--color-text-default);
+  font: inherit;
+}
+
+.bump {
+  font-size: var(--font-size-600);
+  font-weight: var(--font-weight-bold);
+  line-height: 1;
+  cursor: pointer;
+  touch-action: manipulation;
+
+  &:active:not(:disabled) {
+    background: var(--color-accent-subtle);
+  }
+
+  &:disabled {
+    opacity: var(--opacity-disabled);
+    cursor: not-allowed;
+  }
+}
+
+.field {
+  inline-size: 100%;
+  padding-inline: var(--space-3);
+  font-size: var(--font-size-600);
+  font-weight: var(--font-weight-bold);
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+.bump:focus-visible,
+.field:focus-visible {
+  outline: var(--focus-ring-width) solid var(--color-focus-ring);
+  outline-offset: var(--focus-ring-offset);
+}
+
+.has-error .field {
+  border-color: var(--color-danger-default);
+}
+
+.note {
+  margin-block: var(--space-2) 0;
+  font-size: var(--font-size-200);
+  color: var(--color-text-muted);
+
+  &.is-error {
+    color: var(--color-danger-default);
+    font-weight: var(--font-weight-semibold);
+  }
+}

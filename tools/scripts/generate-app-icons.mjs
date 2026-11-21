@@ -106,6 +106,18 @@ const APPS = {
     // An isometric cube: one server in a growing system.
     glyph: `<path d="M32 12 L50 22 V42 L32 52 L14 42 V22 Z"/><path d="M14 22 L32 32 L50 22 M32 32 V52"/>`,
   },
+  'greenhouse-field': {
+    dir: 'apps/products/greenhouse/field',
+    name: 'Field log · Greenhouse work log',
+    shortName: 'Field log',
+    description:
+      'Log harvest work per worker in the greenhouse, even with no signal.',
+    bg: '#15803d',
+    fg: '#ffffff',
+    theme: '#15803d',
+    // A tunnel greenhouse with its hoops.
+    glyph: `<path d="M10 50 V32 C10 20 20 13 32 13 S54 20 54 32 V50 Z"/><path d="M22 50 V17.5 M32 50 V13 M42 50 V17.5 M10 50 H54"/>`,
+  },
   'alarm-engine': {
     dir: 'apps/products/alarm-engine/web',
     name: 'Nightly Alarms · Decision engine',

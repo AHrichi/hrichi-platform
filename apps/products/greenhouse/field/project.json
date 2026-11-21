@@ -1,0 +1,88 @@
+{
+  "name": "product-greenhouse-field",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "prefix": "gh",
+  "sourceRoot": "apps/products/greenhouse/field/src",
+  "tags": ["scope:product-greenhouse", "type:app", "runtime:browser"],
+  "targets": {
+    "build": {
+      "executor": "@angular/build:application",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "outputPath": "dist/apps/products/greenhouse/field",
+        "browser": "apps/products/greenhouse/field/src/main.ts",
+        "tsConfig": "apps/products/greenhouse/field/tsconfig.app.json",
+        "inlineStyleLanguage": "scss",
+        "assets": [
+          {
+            "glob": "**/*",
+            "input": "apps/products/greenhouse/field/public"
+          }
+        ],
+        "styles": [
+          "node_modules/@fontsource-variable/inter/index.css",
+          "libs/design-system/tokens/src/generated/tokens.css",
+          "libs/design-system/ui/src/styles/index.scss",
+          "apps/products/greenhouse/field/src/styles.scss"
+        ]
+      },
+      "configurations": {
+        "production": {
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "600kb",
+              "maximumError": "1mb"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "8kb",
+              "maximumError": "16kb"
+            }
+          ],
+          "outputHashing": "all",
+          "serviceWorker": "apps/products/greenhouse/field/ngsw-config.json"
+        },
+        "development": {
+          "optimization": false,
+          "extractLicenses": false,
+          "sourceMap": true
+        }
+      }
+    },
+    "serve": {
+      "executor": "@angular/build:dev-server",
+      "continuous": true,
+      "defaultConfiguration": "development",
+      "options": {
+        "port": 4314
+      },
+      "configurations": {
+        "production": {
+          "buildTarget": "product-greenhouse-field:build:production"
+        },
+        "development": {
+          "buildTarget": "product-greenhouse-field:build:development"
+        }
+      }
+    },
+    "serve-static": {
+      "continuous": true,
+      "dependsOn": ["build"],
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node tools/scripts/serve-static.mjs dist/apps/products/greenhouse/field/browser 4314"
+      }
+    },
+    "cap-sync": {
+      "dependsOn": ["build"],
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "cap sync",
+        "cwd": "apps/products/greenhouse/field"
+      }
+    }
+  }
+}

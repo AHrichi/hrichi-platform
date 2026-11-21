@@ -1,0 +1,42 @@
+<div class="stepper" [class.has-error]="error()">
+  <label class="label" [for]="id">{{ label() }}</label>
+  <div class="controls">
+    <button
+      type="button"
+      class="bump"
+      [attr.aria-label]="lessLabel() + ' · ' + label()"
+      [disabled]="atMin()"
+      (click)="bump(-1)"
+    >
+      <span aria-hidden="true">−</span>
+    </button>
+    <input
+      #box
+      class="field"
+      type="text"
+      autocomplete="off"
+      enterkeyhint="next"
+      [id]="id"
+      [attr.inputmode]="decimal() ? 'decimal' : 'numeric'"
+      [attr.aria-invalid]="error() ? 'true' : null"
+      [attr.aria-describedby]="error() || hint() ? id + '-note' : null"
+      [value]="text()"
+      (input)="onInput(box.value)"
+      (blur)="onBlur()"
+    />
+    <button
+      type="button"
+      class="bump"
+      [attr.aria-label]="moreLabel() + ' · ' + label()"
+      [disabled]="atMax()"
+      (click)="bump(1)"
+    >
+      <span aria-hidden="true">+</span>
+    </button>
+  </div>
+  @if (error() || hint()) {
+    <p class="note" [id]="id + '-note'" [class.is-error]="error()">
+      {{ error() || hint() }}
+    </p>
+  }
+</div>

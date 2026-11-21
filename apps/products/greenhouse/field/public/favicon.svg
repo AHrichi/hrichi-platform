@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <title>Field log</title>
+  <rect width="64" height="64" rx="14" fill="#15803d"/>
+  <g color="#ffffff" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M10 50 V32 C10 20 20 13 32 13 S54 20 54 32 V50 Z"/><path d="M22 50 V17.5 M32 50 V13 M42 50 V17.5 M10 50 H54"/>
+  </g>
+</svg>

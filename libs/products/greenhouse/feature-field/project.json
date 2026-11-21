@@ -1,0 +1,9 @@
+{
+  "name": "product-greenhouse-feature-field",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/products/greenhouse/feature-field/src",
+  "prefix": "gh",
+  "projectType": "library",
+  "tags": ["scope:product-greenhouse", "type:feature", "runtime:browser"],
+  "targets": {}
+}
