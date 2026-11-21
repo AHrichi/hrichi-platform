@@ -7,9 +7,9 @@
       "scope": "api",
       "layer": "app",
       "runtime": "node",
-      "x": 0.76,
-      "y": 0.539,
-      "z": -0.167
+      "x": 0.49,
+      "y": 0.836,
+      "z": -0.029
     },
     {
       "id": "api-ai",
@@ -17,9 +17,9 @@
       "scope": "api",
       "layer": "util",
       "runtime": "node",
-      "x": 0.638,
-      "y": 0.627,
-      "z": 0.434
+      "x": 0.156,
+      "y": 0.792,
+      "z": -0.587
     },
     {
       "id": "api-dispatch",
@@ -27,9 +27,9 @@
       "scope": "api",
       "layer": "feature",
       "runtime": "node",
-      "x": 0.505,
-      "y": 0.714,
-      "z": -0.451
+      "x": 0.655,
+      "y": 0.671,
+      "z": 0.336
     },
     {
       "id": "api-leads",
@@ -37,9 +37,9 @@
       "scope": "api",
       "layer": "feature",
       "runtime": "node",
-      "x": 0.338,
-      "y": 0.909,
-      "z": -0.077
+      "x": -0.187,
+      "y": 0.962,
+      "z": -0.021
     },
     {
       "id": "api-learning",
@@ -47,9 +47,9 @@
       "scope": "api",
       "layer": "feature",
       "runtime": "node",
-      "x": 0.872,
-      "y": 0.441,
-      "z": 0.139
+      "x": 0.548,
+      "y": 0.756,
+      "z": -0.346
     },
     {
       "id": "api-studylm",
@@ -57,9 +57,9 @@
       "scope": "api",
       "layer": "feature",
       "runtime": "node",
-      "x": 0.711,
-      "y": 0.666,
-      "z": 0.091
+      "x": 0.301,
+      "y": 0.89,
+      "z": -0.329
     },
     {
       "id": "design-system",
@@ -67,9 +67,9 @@
       "scope": "design-system",
       "layer": "app",
       "runtime": "browser",
-      "x": 0.22,
-      "y": 0.189,
-      "z": 0.735
+      "x": 0.196,
+      "y": 0.709,
+      "z": 0.165
     },
     {
       "id": "design-system-e2e",
@@ -77,9 +77,9 @@
       "scope": "test",
       "layer": "e2e",
       "runtime": "node",
-      "x": -0.023,
-      "y": 0.284,
-      "z": 0.934
+      "x": 0.384,
+      "y": 0.671,
+      "z": 0.58
     },
     {
       "id": "design-system-tokens",
@@ -87,9 +87,9 @@
       "scope": "design-system",
       "layer": "tokens",
       "runtime": "agnostic",
-      "x": 0.23,
-      "y": 0.617,
-      "z": 0.591
+      "x": -0.168,
+      "y": 0.822,
+      "z": 0.319
     },
     {
       "id": "design-system-ui",
@@ -97,9 +97,9 @@
       "scope": "design-system",
       "layer": "ui",
       "runtime": "browser",
-      "x": -0.123,
-      "y": -0.114,
-      "z": 0.122
+      "x": -0.047,
+      "y": -0.062,
+      "z": 0.072
     },
     {
       "id": "lab-ngrx",
@@ -107,9 +107,9 @@
       "scope": "lab-ngrx",
       "layer": "app",
       "runtime": "browser",
-      "x": -0.593,
-      "y": 0.187,
-      "z": -0.657
+      "x": -0.677,
+      "y": -0.391,
+      "z": -0.472
     },
     {
       "id": "lab-ngrx-feature",
@@ -117,9 +117,9 @@
       "scope": "lab-ngrx",
       "layer": "feature",
       "runtime": "browser",
-      "x": -0.31,
-      "y": 0.501,
-      "z": -0.588
+      "x": -0.653,
+      "y": -0.04,
+      "z": -0.533
     },
     {
       "id": "lab-rxjs",
@@ -127,9 +127,9 @@
       "scope": "lab-rxjs",
       "layer": "app",
       "runtime": "browser",
-      "x": -0.782,
-      "y": 0.301,
-      "z": -0.282
+      "x": -0.582,
+      "y": -0.53,
+      "z": 0.468
     },
     {
       "id": "lab-rxjs-feature",
@@ -137,9 +137,9 @@
       "scope": "lab-rxjs",
       "layer": "feature",
       "runtime": "browser",
-      "x": -0.63,
-      "y": 0.549,
-      "z": 0.175
+      "x": -0.438,
+      "y": -0.123,
+      "z": 0.742
     },
     {
       "id": "lab-sky",
@@ -147,9 +147,9 @@
       "scope": "lab-sky",
       "layer": "app",
       "runtime": "browser",
-      "x": -0.74,
-      "y": 0.054,
-      "z": -0.494
+      "x": -0.78,
+      "y": -0.421,
+      "z": -0.201
     },
     {
       "id": "lab-sky-domain",
@@ -157,9 +157,9 @@
       "scope": "lab-sky",
       "layer": "domain",
       "runtime": "agnostic",
-      "x": -0.625,
-      "y": 0.724,
-      "z": -0.117
+      "x": -0.72,
+      "y": 0.267,
+      "z": -0.53
     },
     {
       "id": "lab-sky-feature",
@@ -167,9 +167,9 @@
       "scope": "lab-sky",
       "layer": "feature",
       "runtime": "browser",
-      "x": -0.255,
-      "y": 0.632,
-      "z": -0.162
+      "x": -0.658,
+      "y": 0.336,
+      "z": 0.081
     },
     {
       "id": "learning-client",
@@ -177,9 +177,9 @@
       "scope": "learning-client",
       "layer": "client",
       "runtime": "browser",
-      "x": 0.42,
-      "y": -0.733,
-      "z": 0.064
+      "x": 0.728,
+      "y": -0.28,
+      "z": 0.002
     },
     {
       "id": "learning-contracts",
@@ -187,9 +187,9 @@
       "scope": "learning",
       "layer": "contracts",
       "runtime": "agnostic",
-      "x": 0.92,
-      "y": -0.111,
-      "z": -0.091
+      "x": 0.861,
+      "y": 0.39,
+      "z": -0.122
     },
     {
       "id": "learning-data-access",
@@ -197,9 +197,9 @@
       "scope": "learning",
       "layer": "data-access",
       "runtime": "browser",
-      "x": 0.883,
-      "y": -0.059,
-      "z": -0.417
+      "x": 0.91,
+      "y": 0.18,
+      "z": -0.355
     },
     {
       "id": "learning-domain",
@@ -207,9 +207,9 @@
       "scope": "learning",
       "layer": "domain",
       "runtime": "agnostic",
-      "x": 0.912,
-      "y": 0.193,
-      "z": -0.081
+      "x": 0.658,
+      "y": 0.526,
+      "z": -0.408
     },
     {
       "id": "learning-edge",
@@ -217,9 +217,9 @@
       "scope": "learning",
       "layer": "app",
       "runtime": "agnostic",
-      "x": 0.799,
-      "y": 0.397,
-      "z": -0.444
+      "x": 0.503,
+      "y": 0.455,
+      "z": -0.735
     },
     {
       "id": "learning-feature",
@@ -227,9 +227,9 @@
       "scope": "learning",
       "layer": "feature",
       "runtime": "browser",
-      "x": 0.651,
-      "y": -0.435,
-      "z": -0.14
+      "x": 0.754,
+      "y": -0.008,
+      "z": -0.011
     },
     {
       "id": "learning-ui",
@@ -237,9 +237,9 @@
       "scope": "learning",
       "layer": "ui",
       "runtime": "browser",
-      "x": 0.766,
-      "y": -0.095,
-      "z": 0.322
+      "x": 0.682,
+      "y": 0.53,
+      "z": 0.036
     },
     {
       "id": "orbit-api",
@@ -247,9 +247,9 @@
       "scope": "orbit",
       "layer": "app",
       "runtime": "jvm",
-      "x": 0.081,
-      "y": 0.802,
-      "z": -0.577
+      "x": -0.512,
+      "y": 0.564,
+      "z": -0.641
     },
     {
       "id": "platform-app-mode",
@@ -257,9 +257,9 @@
       "scope": "platform",
       "layer": "platform",
       "runtime": "browser",
-      "x": -0.133,
-      "y": -0.622,
-      "z": -0.242
+      "x": 0.168,
+      "y": -0.603,
+      "z": 0.041
     },
     {
       "id": "platform-federation",
@@ -267,9 +267,9 @@
       "scope": "platform",
       "layer": "platform",
       "runtime": "browser",
-      "x": -0.388,
-      "y": -0.291,
-      "z": -0.562
+      "x": -0.197,
+      "y": -0.725,
+      "z": -0.088
     },
     {
       "id": "platform-inspector",
@@ -277,9 +277,9 @@
       "scope": "platform",
       "layer": "platform",
       "runtime": "browser",
-      "x": -0.316,
-      "y": 0.215,
-      "z": -0.831
+      "x": 0.086,
+      "y": -0.953,
+      "z": -0.115
     },
     {
       "id": "platform-maps",
@@ -287,9 +287,9 @@
       "scope": "platform",
       "layer": "ui",
       "runtime": "browser",
-      "x": -0.486,
-      "y": -0.172,
-      "z": 0.681
+      "x": 0.294,
+      "y": -0.2,
+      "z": -0.784
     },
     {
       "id": "platform-storage",
@@ -297,9 +297,9 @@
       "scope": "platform",
       "layer": "platform",
       "runtime": "browser",
-      "x": 0.105,
-      "y": -0.817,
-      "z": 0.113
+      "x": 0.606,
+      "y": -0.465,
+      "z": -0.123
     },
     {
       "id": "platform-web-push",
@@ -307,9 +307,9 @@
       "scope": "platform",
       "layer": "platform",
       "runtime": "browser",
-      "x": 0.726,
-      "y": -0.492,
-      "z": 0.24
+      "x": 0.66,
+      "y": 0.289,
+      "z": 0.445
     },
     {
       "id": "portfolio-feature-apps",
@@ -317,9 +317,9 @@
       "scope": "portfolio",
       "layer": "feature",
       "runtime": "browser",
-      "x": -0.767,
-      "y": -0.384,
-      "z": 0.26
+      "x": -0.806,
+      "y": -0.332,
+      "z": 0.229
     },
     {
       "id": "portfolio-feature-cv",
@@ -327,9 +327,9 @@
       "scope": "portfolio",
       "layer": "feature",
       "runtime": "browser",
-      "x": -0.721,
-      "y": -0.194,
-      "z": 0.423
+      "x": -0.851,
+      "y": -0.158,
+      "z": 0.054
     },
     {
       "id": "portfolio-feature-experience",
@@ -337,9 +337,9 @@
       "scope": "portfolio",
       "layer": "feature",
       "runtime": "browser",
-      "x": -0.872,
-      "y": 0.154,
-      "z": 0.035
+      "x": -0.723,
+      "y": -0.245,
+      "z": 0.422
     },
     {
       "id": "portfolio-feature-home",
@@ -347,9 +347,9 @@
       "scope": "portfolio",
       "layer": "feature",
       "runtime": "browser",
-      "x": -0.538,
-      "y": 0.308,
-      "z": 0.473
+      "x": -0.623,
+      "y": 0.187,
+      "z": 0.453
     },
     {
       "id": "portfolio-feature-services",
@@ -357,9 +357,9 @@
       "scope": "portfolio",
       "layer": "feature",
       "runtime": "browser",
-      "x": -0.636,
-      "y": 0.216,
-      "z": 0.167
+      "x": -0.603,
+      "y": -0.028,
+      "z": 0.484
     },
     {
       "id": "portfolio-feature-work",
@@ -367,9 +367,9 @@
       "scope": "portfolio",
       "layer": "feature",
       "runtime": "browser",
-      "x": -0.883,
-      "y": -0.087,
-      "z": 0.18
+      "x": -0.822,
+      "y": -0.069,
+      "z": -0.147
     },
     {
       "id": "portfolio-util-seo",
@@ -377,9 +377,9 @@
       "scope": "portfolio",
       "layer": "util",
       "runtime": "browser",
-      "x": -0.833,
-      "y": 0.13,
-      "z": 0.463
+      "x": -0.924,
+      "y": 0.089,
+      "z": 0.236
     },
     {
       "id": "product-alarm-engine",
@@ -387,9 +387,9 @@
       "scope": "product-alarm-engine",
       "layer": "app",
       "runtime": "browser",
-      "x": 0.045,
-      "y": 0.172,
-      "z": -0.939
+      "x": -0.084,
+      "y": -0.491,
+      "z": -0.826
     },
     {
       "id": "product-alarm-engine-domain",
@@ -397,9 +397,9 @@
       "scope": "product-alarm-engine",
       "layer": "domain",
       "runtime": "agnostic",
-      "x": 0.172,
-      "y": 0.479,
-      "z": -0.818
+      "x": -0.247,
+      "y": 0.024,
+      "z": -0.937
     },
     {
       "id": "product-alarm-engine-feature",
@@ -407,9 +407,9 @@
       "scope": "product-alarm-engine",
       "layer": "feature",
       "runtime": "browser",
-      "x": -0.184,
-      "y": -0.047,
-      "z": -0.751
+      "x": -0.321,
+      "y": -0.45,
+      "z": -0.567
     },
     {
       "id": "product-autosphere-domain",
@@ -417,9 +417,9 @@
       "scope": "product-autosphere",
       "layer": "domain",
       "runtime": "agnostic",
-      "x": -0.32,
-      "y": -0.016,
-      "z": 0.905
+      "x": 0.348,
+      "y": 0.191,
+      "z": 0.882
     },
     {
       "id": "product-autosphere-feature",
@@ -427,9 +427,9 @@
       "scope": "product-autosphere",
       "layer": "feature",
       "runtime": "browser",
-      "x": -0.492,
-      "y": -0.489,
-      "z": 0.422
+      "x": -0.025,
+      "y": -0.339,
+      "z": 0.71
     },
     {
       "id": "product-basecamp",
@@ -437,9 +437,9 @@
       "scope": "product-basecamp",
       "layer": "app",
       "runtime": "browser",
-      "x": -0.701,
-      "y": -0.335,
-      "z": -0.535
+      "x": -0.47,
+      "y": -0.652,
+      "z": -0.37
     },
     {
       "id": "product-basecamp-domain",
@@ -447,9 +447,9 @@
       "scope": "product-basecamp",
       "layer": "domain",
       "runtime": "agnostic",
-      "x": -0.609,
-      "y": 0.609,
-      "z": -0.439
+      "x": -0.455,
+      "y": 0.195,
+      "z": -0.834
     },
     {
       "id": "product-basecamp-feature",
@@ -457,9 +457,9 @@
       "scope": "product-basecamp",
       "layer": "feature",
       "runtime": "browser",
-      "x": -0.712,
-      "y": -0.047,
-      "z": -0.153
+      "x": -0.2,
+      "y": -0.254,
+      "z": -0.635
     },
     {
       "id": "product-dispatch",
@@ -467,9 +467,9 @@
       "scope": "product-dispatch",
       "layer": "app",
       "runtime": "browser",
-      "x": 0.144,
-      "y": -0.475,
-      "z": -0.749
+      "x": 0.489,
+      "y": -0.75,
+      "z": 0.034
     },
     {
       "id": "product-dispatch-domain",
@@ -477,9 +477,9 @@
       "scope": "product-dispatch",
       "layer": "domain",
       "runtime": "agnostic",
-      "x": 0.61,
-      "y": 0.329,
-      "z": -0.672
+      "x": 0.892,
+      "y": 0.24,
+      "z": 0.339
     },
     {
       "id": "product-dispatch-feature",
@@ -487,9 +487,79 @@
       "scope": "product-dispatch",
       "layer": "feature",
       "runtime": "browser",
-      "x": 0.47,
-      "y": -0.187,
-      "z": -0.628
+      "x": 0.636,
+      "y": -0.249,
+      "z": 0.436
+    },
+    {
+      "id": "product-greenhouse",
+      "kind": "app",
+      "scope": "product-greenhouse",
+      "layer": "app",
+      "runtime": "browser",
+      "x": -0.329,
+      "y": -0.739,
+      "z": 0.436
+    },
+    {
+      "id": "product-greenhouse-data-access",
+      "kind": "lib",
+      "scope": "product-greenhouse",
+      "layer": "data-access",
+      "runtime": "browser",
+      "x": -0.175,
+      "y": 0.142,
+      "z": 0.932
+    },
+    {
+      "id": "product-greenhouse-domain",
+      "kind": "lib",
+      "scope": "product-greenhouse",
+      "layer": "domain",
+      "runtime": "agnostic",
+      "x": 0.025,
+      "y": -0.045,
+      "z": 0.962
+    },
+    {
+      "id": "product-greenhouse-feature-dashboard",
+      "kind": "lib",
+      "scope": "product-greenhouse",
+      "layer": "feature",
+      "runtime": "browser",
+      "x": -0.256,
+      "y": -0.426,
+      "z": 0.689
+    },
+    {
+      "id": "product-greenhouse-feature-field",
+      "kind": "lib",
+      "scope": "product-greenhouse",
+      "layer": "feature",
+      "runtime": "browser",
+      "x": 0.251,
+      "y": -0.375,
+      "z": 0.711
+    },
+    {
+      "id": "product-greenhouse-field",
+      "kind": "app",
+      "scope": "product-greenhouse",
+      "layer": "app",
+      "runtime": "browser",
+      "x": 0.019,
+      "y": -0.657,
+      "z": 0.656
+    },
+    {
+      "id": "product-greenhouse-supabase",
+      "kind": "lib",
+      "scope": "product-greenhouse",
+      "layer": "schema",
+      "runtime": "node",
+      "x": 0.071,
+      "y": 0.422,
+      "z": 0.877
     },
     {
       "id": "product-learning",
@@ -497,9 +567,9 @@
       "scope": "learning",
       "layer": "app",
       "runtime": "browser",
-      "x": 0.014,
-      "y": -0.609,
-      "z": -0.567
+      "x": 0.28,
+      "y": -0.725,
+      "z": -0.254
     },
     {
       "id": "product-lighting",
@@ -507,9 +577,9 @@
       "scope": "product-lighting",
       "layer": "app",
       "runtime": "browser",
-      "x": -0.441,
-      "y": -0.761,
-      "z": -0.019
+      "x": -0.191,
+      "y": -0.743,
+      "z": -0.452
     },
     {
       "id": "product-lighting-domain",
@@ -517,9 +587,9 @@
       "scope": "product-lighting",
       "layer": "domain",
       "runtime": "agnostic",
-      "x": 0.01,
-      "y": -0.191,
-      "z": 0.946
+      "x": 0.073,
+      "y": -0.129,
+      "z": -0.969
     },
     {
       "id": "product-lighting-feature",
@@ -527,9 +597,9 @@
       "scope": "product-lighting",
       "layer": "feature",
       "runtime": "browser",
-      "x": -0.262,
-      "y": -0.613,
-      "z": 0.468
+      "x": 0.21,
+      "y": -0.52,
+      "z": -0.583
     },
     {
       "id": "product-strategy",
@@ -537,9 +607,9 @@
       "scope": "product-strategy",
       "layer": "app",
       "runtime": "browser",
-      "x": -0.229,
-      "y": -0.38,
-      "z": -0.834
+      "x": 0.244,
+      "y": -0.886,
+      "z": 0.214
     },
     {
       "id": "product-studylm",
@@ -547,9 +617,9 @@
       "scope": "product-studylm",
       "layer": "app",
       "runtime": "browser",
-      "x": 0.011,
-      "y": -0.836,
-      "z": -0.213
+      "x": 0.17,
+      "y": -0.658,
+      "z": 0.341
     },
     {
       "id": "product-studylm-domain",
@@ -557,9 +627,9 @@
       "scope": "product-studylm",
       "layer": "domain",
       "runtime": "agnostic",
-      "x": 0.893,
-      "y": 0.132,
-      "z": 0.214
+      "x": 0.15,
+      "y": 0.915,
+      "z": -0.021
     },
     {
       "id": "product-studylm-feature",
@@ -567,9 +637,9 @@
       "scope": "product-studylm",
       "layer": "feature",
       "runtime": "browser",
-      "x": 0.324,
-      "y": -0.543,
-      "z": 0.263
+      "x": 0.231,
+      "y": 0.1,
+      "z": 0.029
     },
     {
       "id": "product-studylm-learn",
@@ -577,9 +647,9 @@
       "scope": "product-studylm",
       "layer": "ui",
       "runtime": "browser",
-      "x": 0.503,
-      "y": -0.14,
-      "z": 0.788
+      "x": -0.152,
+      "y": 0.81,
+      "z": -0.307
     },
     {
       "id": "product-studylm-lessons",
@@ -587,9 +657,9 @@
       "scope": "product-studylm",
       "layer": "domain",
       "runtime": "agnostic",
-      "x": 0.745,
-      "y": -0.251,
-      "z": 0.571
+      "x": -0.154,
+      "y": 0.601,
+      "z": -0.641
     },
     {
       "id": "product-studylm-tracer",
@@ -597,9 +667,9 @@
       "scope": "product-studylm",
       "layer": "engine",
       "runtime": "agnostic",
-      "x": 0.547,
-      "y": 0.248,
-      "z": 0.799
+      "x": -0.532,
+      "y": 0.766,
+      "z": -0.322
     },
     {
       "id": "product-system-design",
@@ -607,9 +677,9 @@
       "scope": "product-system-design",
       "layer": "app",
       "runtime": "browser",
-      "x": -0.597,
-      "y": -0.678,
-      "z": -0.141
+      "x": 0.034,
+      "y": -0.799,
+      "z": -0.374
     },
     {
       "id": "product-system-design-data-access",
@@ -617,9 +687,9 @@
       "scope": "product-system-design",
       "layer": "data-access",
       "runtime": "browser",
-      "x": -0.143,
-      "y": -0.632,
-      "z": 0.731
+      "x": 0.771,
+      "y": -0.268,
+      "z": -0.552
     },
     {
       "id": "product-system-design-domain",
@@ -627,9 +697,9 @@
       "scope": "product-system-design",
       "layer": "domain",
       "runtime": "agnostic",
-      "x": 0.179,
-      "y": -0.714,
-      "z": 0.612
+      "x": 0.583,
+      "y": -0.067,
+      "z": -0.77
     },
     {
       "id": "product-system-design-feature",
@@ -637,9 +707,9 @@
       "scope": "product-system-design",
       "layer": "feature",
       "runtime": "browser",
-      "x": -0.196,
-      "y": -0.735,
-      "z": 0.271
+      "x": 0.413,
+      "y": -0.437,
+      "z": -0.414
     },
     {
       "id": "product-system-design-ui",
@@ -647,9 +717,9 @@
       "scope": "product-system-design",
       "layer": "ui",
       "runtime": "browser",
-      "x": 0.029,
-      "y": -0.379,
-      "z": 0.768
+      "x": 0.61,
+      "y": 0.174,
+      "z": -0.496
     },
     {
       "id": "product-whatsapp",
@@ -657,9 +727,9 @@
       "scope": "product-whatsapp",
       "layer": "app",
       "runtime": "browser",
-      "x": -0.226,
-      "y": -0.704,
-      "z": -0.543
+      "x": -0.105,
+      "y": -0.858,
+      "z": 0.29
     },
     {
       "id": "product-whatsapp-domain",
@@ -667,9 +737,9 @@
       "scope": "product-whatsapp",
       "layer": "domain",
       "runtime": "agnostic",
-      "x": 0.704,
-      "y": -0.528,
-      "z": -0.462
+      "x": 0.627,
+      "y": -0.082,
+      "z": 0.742
     },
     {
       "id": "product-whatsapp-feature",
@@ -677,9 +747,9 @@
       "scope": "product-whatsapp",
       "layer": "feature",
       "runtime": "browser",
-      "x": 0.26,
-      "y": -0.753,
-      "z": -0.306
+      "x": 0.391,
+      "y": -0.51,
+      "z": 0.494
     },
     {
       "id": "shared-ai-schema",
@@ -687,9 +757,9 @@
       "scope": "shared",
       "layer": "util",
       "runtime": "agnostic",
-      "x": 0.797,
-      "y": 0.232,
-      "z": 0.505
+      "x": 0.167,
+      "y": 0.523,
+      "z": -0.789
     },
     {
       "id": "shared-api-client",
@@ -697,9 +767,9 @@
       "scope": "shared",
       "layer": "contracts",
       "runtime": "agnostic",
-      "x": -0.022,
-      "y": 0.933,
-      "z": -0.27
+      "x": -0.775,
+      "y": 0.498,
+      "z": -0.313
     },
     {
       "id": "shared-content",
@@ -707,9 +777,9 @@
       "scope": "shared",
       "layer": "content",
       "runtime": "agnostic",
-      "x": -0.708,
-      "y": -0.228,
-      "z": -0.006
+      "x": -0.606,
+      "y": -0.373,
+      "z": 0.031
     },
     {
       "id": "shared-contracts",
@@ -717,8 +787,8 @@
       "scope": "shared",
       "layer": "contracts",
       "runtime": "agnostic",
-      "x": -0.276,
-      "y": 0.88,
+      "x": -0.716,
+      "y": 0.607,
       "z": 0.158
     },
     {
@@ -727,9 +797,9 @@
       "scope": "shared",
       "layer": "data-access",
       "runtime": "browser",
-      "x": 0.364,
-      "y": -0.448,
-      "z": -0.323
+      "x": 0.227,
+      "y": -0.042,
+      "z": 0.643
     },
     {
       "id": "shared-state",
@@ -737,9 +807,9 @@
       "scope": "shared",
       "layer": "data-access",
       "runtime": "browser",
-      "x": -0.377,
-      "y": -0.248,
-      "z": -0.117
+      "x": -0.223,
+      "y": -0.408,
+      "z": 0.116
     },
     {
       "id": "shared-steps",
@@ -747,9 +817,9 @@
       "scope": "shared",
       "layer": "util",
       "runtime": "agnostic",
-      "x": 0.494,
-      "y": -0.517,
-      "z": 0.678
+      "x": 0.235,
+      "y": 0.187,
+      "z": -0.929
     },
     {
       "id": "shell",
@@ -757,9 +827,9 @@
       "scope": "portfolio",
       "layer": "app",
       "runtime": "browser",
-      "x": -0.556,
-      "y": -0.284,
-      "z": -0.276
+      "x": -0.382,
+      "y": -0.578,
+      "z": 0.066
     },
     {
       "id": "shell-e2e",
@@ -767,9 +837,9 @@
       "scope": "test",
       "layer": "e2e",
       "runtime": "node",
-      "x": -0.515,
-      "y": -0.616,
-      "z": -0.434
+      "x": -0.346,
+      "y": -0.847,
+      "z": -0.109
     },
     {
       "id": "strategy-domain",
@@ -777,9 +847,9 @@
       "scope": "product-strategy",
       "layer": "domain",
       "runtime": "browser",
-      "x": 0.442,
-      "y": 0.083,
-      "z": -0.872
+      "x": 0.935,
+      "y": -0.188,
+      "z": 0.283
     },
     {
       "id": "strategy-feature",
@@ -787,9 +857,9 @@
       "scope": "product-strategy",
       "layer": "feature",
       "runtime": "browser",
-      "x": 0.105,
-      "y": -0.226,
-      "z": -0.768
+      "x": 0.588,
+      "y": -0.553,
+      "z": 0.279
     },
     {
       "id": "three-angular",
@@ -797,9 +867,9 @@
       "scope": "platform",
       "layer": "ui",
       "runtime": "browser",
-      "x": -0.135,
-      "y": 0.755,
-      "z": 0.479
+      "x": -0.406,
+      "y": 0.686,
+      "z": 0.448
     },
     {
       "id": "three-constellation",
@@ -807,9 +877,9 @@
       "scope": "platform",
       "layer": "engine",
       "runtime": "browser",
-      "x": -0.347,
-      "y": 0.59,
-      "z": 0.698
+      "x": -0.486,
+      "y": 0.465,
+      "z": 0.704
     },
     {
       "id": "three-engine",
@@ -817,9 +887,9 @@
       "scope": "platform",
       "layer": "engine",
       "runtime": "browser",
-      "x": 0.258,
-      "y": 0.861,
-      "z": 0.429
+      "x": -0.016,
+      "y": 0.843,
+      "z": 0.511
     },
     {
       "id": "three-scene-constellation",
@@ -827,9 +897,9 @@
       "scope": "platform",
       "layer": "engine",
       "runtime": "browser",
-      "x": -0.034,
-      "y": 0.632,
-      "z": 0.734
+      "x": -0.21,
+      "y": 0.618,
+      "z": 0.69
     },
     {
       "id": "three-scene-sky",
@@ -837,9 +907,9 @@
       "scope": "platform",
       "layer": "engine",
       "runtime": "browser",
-      "x": 0.075,
-      "y": 0.928,
-      "z": 0.136
+      "x": -0.479,
+      "y": 0.8,
+      "z": 0.168
     }
   ],
   "edges": [
@@ -875,12 +945,12 @@
     ],
     [
       0,
-      55,
+      62,
       "static"
     ],
     [
       1,
-      68,
+      75,
       "static"
     ],
     [
@@ -890,7 +960,7 @@
     ],
     [
       3,
-      71,
+      78,
       "static"
     ],
     [
@@ -915,7 +985,7 @@
     ],
     [
       5,
-      55,
+      62,
       "static"
     ],
     [
@@ -940,17 +1010,17 @@
     ],
     [
       6,
-      57,
-      "implicit"
-    ],
-    [
-      6,
       64,
       "implicit"
     ],
     [
       6,
-      79,
+      71,
+      "implicit"
+    ],
+    [
+      6,
+      86,
       "implicit"
     ],
     [
@@ -975,7 +1045,7 @@
     ],
     [
       10,
-      70,
+      77,
       "static"
     ],
     [
@@ -985,7 +1055,7 @@
     ],
     [
       11,
-      73,
+      80,
       "static"
     ],
     [
@@ -1000,7 +1070,7 @@
     ],
     [
       12,
-      70,
+      77,
       "static"
     ],
     [
@@ -1010,7 +1080,7 @@
     ],
     [
       13,
-      73,
+      80,
       "static"
     ],
     [
@@ -1025,7 +1095,7 @@
     ],
     [
       14,
-      70,
+      77,
       "static"
     ],
     [
@@ -1040,17 +1110,7 @@
     ],
     [
       16,
-      69,
-      "static"
-    ],
-    [
-      16,
-      72,
-      "static"
-    ],
-    [
-      16,
-      73,
+      76,
       "static"
     ],
     [
@@ -1060,12 +1120,22 @@
     ],
     [
       16,
-      83,
+      80,
       "static"
     ],
     [
       16,
-      83,
+      86,
+      "static"
+    ],
+    [
+      16,
+      90,
+      "static"
+    ],
+    [
+      16,
+      90,
       "dynamic"
     ],
     [
@@ -1095,7 +1165,7 @@
     ],
     [
       20,
-      68,
+      75,
       "static"
     ],
     [
@@ -1145,7 +1215,7 @@
     ],
     [
       22,
-      72,
+      79,
       "static"
     ],
     [
@@ -1165,12 +1235,12 @@
     ],
     [
       26,
-      70,
+      77,
       "static"
     ],
     [
       26,
-      73,
+      80,
       "static"
     ],
     [
@@ -1205,12 +1275,12 @@
     ],
     [
       31,
-      70,
+      77,
       "static"
     ],
     [
       31,
-      73,
+      80,
       "static"
     ],
     [
@@ -1225,12 +1295,12 @@
     ],
     [
       32,
-      70,
+      77,
       "static"
     ],
     [
       32,
-      73,
+      80,
       "static"
     ],
     [
@@ -1245,12 +1315,12 @@
     ],
     [
       33,
-      70,
+      77,
       "static"
     ],
     [
       33,
-      73,
+      80,
       "static"
     ],
     [
@@ -1265,17 +1335,7 @@
     ],
     [
       34,
-      70,
-      "static"
-    ],
-    [
-      34,
-      73,
-      "static"
-    ],
-    [
-      34,
-      79,
+      77,
       "static"
     ],
     [
@@ -1285,7 +1345,17 @@
     ],
     [
       34,
-      82,
+      86,
+      "static"
+    ],
+    [
+      34,
+      87,
+      "static"
+    ],
+    [
+      34,
+      89,
       "dynamic"
     ],
     [
@@ -1300,22 +1370,22 @@
     ],
     [
       35,
-      70,
+      77,
       "static"
     ],
     [
       35,
-      71,
+      78,
       "static"
     ],
     [
       35,
-      72,
+      79,
       "static"
     ],
     [
       35,
-      73,
+      80,
       "static"
     ],
     [
@@ -1330,17 +1400,17 @@
     ],
     [
       36,
-      70,
+      77,
       "static"
     ],
     [
       36,
-      73,
+      80,
       "static"
     ],
     [
       37,
-      70,
+      77,
       "static"
     ],
     [
@@ -1370,7 +1440,7 @@
     ],
     [
       40,
-      73,
+      80,
       "static"
     ],
     [
@@ -1390,7 +1460,7 @@
     ],
     [
       42,
-      73,
+      80,
       "static"
     ],
     [
@@ -1410,7 +1480,7 @@
     ],
     [
       43,
-      73,
+      80,
       "static"
     ],
     [
@@ -1445,7 +1515,7 @@
     ],
     [
       45,
-      73,
+      80,
       "static"
     ],
     [
@@ -1475,18 +1545,13 @@
     ],
     [
       48,
-      72,
+      79,
       "static"
     ],
     [
       48,
-      73,
+      80,
       "static"
-    ],
-    [
-      49,
-      22,
-      "dynamic"
     ],
     [
       49,
@@ -1500,27 +1565,17 @@
     ],
     [
       49,
-      73,
-      "static"
-    ],
-    [
-      50,
-      25,
-      "static"
-    ],
-    [
-      50,
-      26,
-      "static"
-    ],
-    [
-      50,
       52,
       "dynamic"
     ],
     [
+      49,
+      80,
+      "static"
+    ],
+    [
       50,
-      73,
+      51,
       "static"
     ],
     [
@@ -1531,16 +1586,6 @@
     [
       52,
       25,
-      "static"
-    ],
-    [
-      52,
-      28,
-      "static"
-    ],
-    [
-      52,
-      29,
       "static"
     ],
     [
@@ -1550,7 +1595,7 @@
     ],
     [
       52,
-      73,
+      80,
       "static"
     ],
     [
@@ -1560,107 +1605,112 @@
     ],
     [
       53,
-      26,
-      "static"
-    ],
-    [
-      53,
-      78,
-      "dynamic"
-    ],
-    [
-      54,
-      17,
-      "static"
-    ],
-    [
-      54,
-      25,
-      "static"
-    ],
-    [
-      54,
-      26,
-      "static"
-    ],
-    [
-      54,
-      56,
-      "dynamic"
-    ],
-    [
-      54,
-      72,
-      "static"
-    ],
-    [
-      56,
-      9,
-      "static"
-    ],
-    [
-      56,
-      17,
-      "static"
-    ],
-    [
-      56,
-      25,
-      "static"
-    ],
-    [
-      56,
       29,
       "static"
     ],
     [
-      56,
-      30,
+      53,
+      50,
       "static"
     ],
     [
-      56,
+      53,
+      51,
+      "static"
+    ],
+    [
+      53,
+      80,
+      "static"
+    ],
+    [
+      54,
+      25,
+      "static"
+    ],
+    [
+      54,
+      53,
+      "static"
+    ],
+    [
+      54,
+      80,
+      "static"
+    ],
+    [
       55,
+      51,
       "static"
     ],
     [
       56,
-      57,
+      22,
+      "dynamic"
+    ],
+    [
+      56,
+      25,
       "static"
     ],
     [
       56,
-      58,
+      26,
       "static"
     ],
     [
       56,
-      70,
-      "static"
-    ],
-    [
-      56,
-      72,
-      "static"
-    ],
-    [
-      56,
-      73,
+      80,
       "static"
     ],
     [
       57,
-      58,
+      25,
+      "static"
+    ],
+    [
+      57,
+      26,
       "static"
     ],
     [
       57,
       59,
+      "dynamic"
+    ],
+    [
+      57,
+      80,
       "static"
     ],
     [
+      59,
+      9,
+      "static"
+    ],
+    [
+      59,
+      25,
+      "static"
+    ],
+    [
+      59,
+      28,
+      "static"
+    ],
+    [
+      59,
+      29,
+      "static"
+    ],
+    [
+      59,
       58,
-      68,
+      "static"
+    ],
+    [
+      59,
+      80,
       "static"
     ],
     [
@@ -1675,22 +1725,32 @@
     ],
     [
       60,
-      63,
+      85,
       "dynamic"
     ],
     [
-      60,
-      73,
+      61,
+      17,
       "static"
     ],
     [
       61,
-      62,
+      25,
       "static"
     ],
     [
-      62,
-      74,
+      61,
+      26,
+      "static"
+    ],
+    [
+      61,
+      63,
+      "dynamic"
+    ],
+    [
+      61,
+      79,
       "static"
     ],
     [
@@ -1715,7 +1775,7 @@
     ],
     [
       63,
-      61,
+      30,
       "static"
     ],
     [
@@ -1730,292 +1790,302 @@
     ],
     [
       63,
-      70,
+      65,
       "static"
     ],
     [
       63,
-      73,
-      "static"
-    ],
-    [
-      64,
-      9,
-      "static"
-    ],
-    [
-      64,
-      62,
-      "static"
-    ],
-    [
-      65,
-      25,
-      "static"
-    ],
-    [
-      65,
-      26,
-      "static"
-    ],
-    [
-      65,
-      67,
-      "dynamic"
-    ],
-    [
-      65,
-      73,
-      "static"
-    ],
-    [
-      67,
-      9,
-      "static"
-    ],
-    [
-      67,
-      25,
-      "static"
-    ],
-    [
-      67,
-      29,
-      "static"
-    ],
-    [
-      67,
-      66,
-      "static"
-    ],
-    [
-      67,
-      72,
-      "static"
-    ],
-    [
-      67,
-      73,
-      "static"
-    ],
-    [
-      69,
-      24,
-      "implicit"
-    ],
-    [
-      73,
-      70,
-      "static"
-    ],
-    [
-      75,
-      9,
-      "static"
-    ],
-    [
-      75,
-      10,
-      "federated"
-    ],
-    [
-      75,
-      12,
-      "federated"
-    ],
-    [
-      75,
-      14,
-      "federated"
-    ],
-    [
-      75,
-      25,
-      "static"
-    ],
-    [
-      75,
-      26,
-      "static"
-    ],
-    [
-      75,
-      27,
-      "static"
-    ],
-    [
-      75,
-      31,
-      "dynamic"
-    ],
-    [
-      75,
-      32,
-      "dynamic"
-    ],
-    [
-      75,
-      33,
-      "dynamic"
-    ],
-    [
-      75,
-      34,
-      "dynamic"
-    ],
-    [
-      75,
-      35,
-      "dynamic"
-    ],
-    [
-      75,
-      36,
-      "dynamic"
-    ],
-    [
-      75,
-      40,
-      "dynamic"
-    ],
-    [
-      75,
-      42,
-      "dynamic"
-    ],
-    [
-      75,
-      43,
-      "federated"
-    ],
-    [
-      75,
-      46,
-      "federated"
-    ],
-    [
-      75,
-      49,
-      "federated"
-    ],
-    [
-      75,
-      50,
-      "federated"
-    ],
-    [
-      75,
-      53,
-      "federated"
-    ],
-    [
-      75,
-      54,
-      "federated"
-    ],
-    [
-      75,
-      60,
-      "federated"
-    ],
-    [
-      75,
-      65,
-      "federated"
-    ],
-    [
-      75,
-      70,
-      "static"
-    ],
-    [
-      75,
-      73,
-      "static"
-    ],
-    [
-      76,
-      14,
-      "implicit"
-    ],
-    [
-      76,
-      43,
-      "implicit"
-    ],
-    [
-      76,
-      49,
-      "implicit"
-    ],
-    [
-      76,
-      50,
-      "implicit"
-    ],
-    [
-      76,
-      54,
-      "implicit"
-    ],
-    [
-      76,
-      60,
-      "implicit"
-    ],
-    [
-      76,
-      65,
-      "implicit"
-    ],
-    [
-      76,
-      70,
-      "static"
-    ],
-    [
-      76,
-      75,
-      "implicit"
-    ],
-    [
-      78,
-      9,
-      "static"
-    ],
-    [
-      78,
-      25,
-      "static"
-    ],
-    [
-      78,
-      73,
-      "static"
-    ],
-    [
-      78,
       77,
       "static"
     ],
     [
+      63,
       79,
+      "static"
+    ],
+    [
+      63,
       80,
       "static"
     ],
     [
-      79,
+      64,
+      65,
+      "static"
+    ],
+    [
+      64,
+      66,
+      "static"
+    ],
+    [
+      65,
+      75,
+      "static"
+    ],
+    [
+      67,
+      25,
+      "static"
+    ],
+    [
+      67,
+      26,
+      "static"
+    ],
+    [
+      67,
+      70,
+      "dynamic"
+    ],
+    [
+      67,
+      80,
+      "static"
+    ],
+    [
+      68,
+      69,
+      "static"
+    ],
+    [
+      69,
       81,
       "static"
     ],
     [
+      70,
+      9,
+      "static"
+    ],
+    [
+      70,
+      17,
+      "static"
+    ],
+    [
+      70,
+      25,
+      "static"
+    ],
+    [
+      70,
+      29,
+      "static"
+    ],
+    [
+      70,
+      68,
+      "static"
+    ],
+    [
+      70,
+      69,
+      "static"
+    ],
+    [
+      70,
+      71,
+      "static"
+    ],
+    [
+      70,
+      77,
+      "static"
+    ],
+    [
+      70,
+      80,
+      "static"
+    ],
+    [
+      71,
+      9,
+      "static"
+    ],
+    [
+      71,
+      69,
+      "static"
+    ],
+    [
+      72,
+      25,
+      "static"
+    ],
+    [
+      72,
+      26,
+      "static"
+    ],
+    [
+      72,
+      74,
+      "dynamic"
+    ],
+    [
+      72,
+      80,
+      "static"
+    ],
+    [
+      74,
+      9,
+      "static"
+    ],
+    [
+      74,
+      25,
+      "static"
+    ],
+    [
+      74,
+      29,
+      "static"
+    ],
+    [
+      74,
+      73,
+      "static"
+    ],
+    [
+      74,
       79,
+      "static"
+    ],
+    [
+      74,
+      80,
+      "static"
+    ],
+    [
+      76,
+      24,
+      "implicit"
+    ],
+    [
+      80,
+      77,
+      "static"
+    ],
+    [
       82,
+      9,
+      "static"
+    ],
+    [
+      82,
+      10,
+      "federated"
+    ],
+    [
+      82,
+      12,
+      "federated"
+    ],
+    [
+      82,
+      14,
+      "federated"
+    ],
+    [
+      82,
+      25,
+      "static"
+    ],
+    [
+      82,
+      26,
+      "static"
+    ],
+    [
+      82,
+      27,
+      "static"
+    ],
+    [
+      82,
+      31,
       "dynamic"
     ],
     [
       82,
-      8,
+      32,
+      "dynamic"
+    ],
+    [
+      82,
+      33,
+      "dynamic"
+    ],
+    [
+      82,
+      34,
+      "dynamic"
+    ],
+    [
+      82,
+      35,
+      "dynamic"
+    ],
+    [
+      82,
+      36,
+      "dynamic"
+    ],
+    [
+      82,
+      40,
+      "dynamic"
+    ],
+    [
+      82,
+      42,
+      "dynamic"
+    ],
+    [
+      82,
+      43,
+      "federated"
+    ],
+    [
+      82,
+      46,
+      "federated"
+    ],
+    [
+      82,
+      56,
+      "federated"
+    ],
+    [
+      82,
+      57,
+      "federated"
+    ],
+    [
+      82,
+      60,
+      "federated"
+    ],
+    [
+      82,
+      61,
+      "federated"
+    ],
+    [
+      82,
+      67,
+      "federated"
+    ],
+    [
+      82,
+      72,
+      "federated"
+    ],
+    [
+      82,
+      77,
       "static"
     ],
     [
@@ -2024,18 +2094,108 @@
       "static"
     ],
     [
-      82,
-      81,
+      83,
+      14,
+      "implicit"
+    ],
+    [
+      83,
+      43,
+      "implicit"
+    ],
+    [
+      83,
+      56,
+      "implicit"
+    ],
+    [
+      83,
+      57,
+      "implicit"
+    ],
+    [
+      83,
+      61,
+      "implicit"
+    ],
+    [
+      83,
+      67,
+      "implicit"
+    ],
+    [
+      83,
+      72,
+      "implicit"
+    ],
+    [
+      83,
+      77,
       "static"
     ],
     [
       83,
+      82,
+      "implicit"
+    ],
+    [
+      85,
+      9,
+      "static"
+    ],
+    [
+      85,
+      25,
+      "static"
+    ],
+    [
+      85,
+      80,
+      "static"
+    ],
+    [
+      85,
+      84,
+      "static"
+    ],
+    [
+      86,
+      87,
+      "static"
+    ],
+    [
+      86,
+      88,
+      "static"
+    ],
+    [
+      86,
+      89,
+      "dynamic"
+    ],
+    [
+      89,
       8,
       "static"
     ],
     [
-      83,
-      81,
+      89,
+      87,
+      "static"
+    ],
+    [
+      89,
+      88,
+      "static"
+    ],
+    [
+      90,
+      8,
+      "static"
+    ],
+    [
+      90,
+      88,
       "static"
     ]
   ]

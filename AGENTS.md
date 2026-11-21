@@ -13,6 +13,7 @@ The owner switches between agents mid-project. Any agent must be able to stop at
 | System Design course: design, contracts, phases             | `docs/system-design/technical-design.md`                               |
 | System Design course: writing lessons                       | `docs/system-design/lesson-authoring.md`                               |
 | Learning Engine                                             | `docs/learning-engine/AI_HANDOFF.md`, `technical-design.md`            |
+| **Greenhouse Labor Planner: status, branch, next task**     | `docs/greenhouse/AI_HANDOFF.md`, ADR-0026                              |
 
 The repo and these docs are the only memory. Don't rely on anything an earlier agent "knew".
 
