@@ -2,11 +2,11 @@
 
 A briefing for whichever AI agent or IDE (Claude Code, Antigravity, …) picks up the System Design course. It assumes no memory of earlier sessions. Read it top to bottom before touching code.
 
-Last updated 2026-11-21: P0–P11 merged into `main` (PR #19, `5dd59f8`), but **the `main` deploy failed at `shell:deploy`**: the shell's CSP `_headers` line is 2,102 characters, over Cloudflare's 2,000 (the other remotes, including `product-system-design`, deployed; production still runs the previous shell). P12 is in PR #20; **don't merge it until the CSP fix (PR #21) lands and `main` deploys**, or its deploy fails the same way. Next: section 6. Shared agent rules: [AGENTS.md](../../AGENTS.md).
+Last updated 2026-11-21: **the course is complete and merged into `main`**. P0–P11 came in through PR #19, the shell CSP fix through PR #21 and P12 (go-live) through PR #20. Work from `main`; branch from it for anything new (section 6). Shared agent rules: [AGENTS.md](../../AGENTS.md).
 
 ## 0. Resume in five minutes
 
-1. **Get the branch.** `git fetch origin && git switch feat/system-design-p12-go-live` (pushed; PR #20). `main` already holds P0–P11 (PR #19). After #20 merges, branch new work from `main`.
+1. **Get the branch.** `git fetch origin && git switch main && git pull`. Everything is merged; start new work on a new branch from `main` (`feat/system-design-…`).
    - The main checkout (`C:\Users\Administrator\Projects\Personal\hrichi-platform`) may still sit on `feat/system-design-post-p10` with the **old, uncommitted** P11 drafts Antigravity wrote there; they are all committed (and finished) on `feat/system-design-p11-content` as `9f70f1e`. Discard them there (`git restore --staged . && git restore . && git clean -fd libs/products/system-design/domain/src/lib/content/lessons`) before switching, after the owner agrees.
 
 2. **Install:** Windows 11, Node 24, pnpm 10.34.9 (`packageManager` in `package.json`). Run `pnpm install --frozen-lockfile`.
@@ -60,7 +60,7 @@ The UX was inspired by a public interactive course. **Never copy its text, scena
 | P9 Cheatsheets                    | Done (merged `28d071f`): all 8 remaining module cheatsheets (`scaling`..`case-studies`), `tools/scripts/system-design-cheat-terms.mjs` generating `terms.ts`, `sd-cheat-section` UI component + story, `CheatsheetIndex` and printable A4 `CheatsheetScreen` + print CSS, specs and e2e.                                                                                                                                                                                                                | `6130303`..`8605538`       |
 | P10 Design Lab                    | Done (merged `36e0004`): `lab/` simulator (`simulate`, `checkChallenge`, auto-wiring edits, tier-column scene, catalog, 6 challenges with starter/solution specs), `LabStore` autosave to `designs`, `LabHome` and keyboard-accessible `LabScreen`, specs and `first-users` e2e.                                                                                                                                                                                                                        | `510ab4b`..`c1db9c3`       |
 | P11 Content waves (Modules 02–09) | Done (on `feat/system-design-p11-content`): 40 lessons in modules 02–09 (drafted by Antigravity, finished and checked here), plus `design-chat` written new; all 44 `ready: true` with lazy loaders. `validateLesson` now also requires a `case` and a `watch-out` step. Two security lessons trimmed to the length limits; the sharding hot-key example reworded.                                                                                                                                      | `9f70f1e`..HEAD            |
-| P12 Go live                       | Done on `feat/system-design-p12-go-live`, **in PR #20, waiting for CI and review**: visibility flag on (hub card, hero links and the embedded e2e test are live), phone diagram keeps a 34rem width and scrolls sideways, request-journey label overlap fixed, phone search button named, meta description added.                                                                                                                                                                                       | `a04b18b`, `4258fb7`       |
+| P12 Go live                       | Merged (PR #20): visibility flag on (hub card, hero links and the embedded e2e test are live), phone diagram keeps a 34rem width and scrolls sideways, request-journey label overlap fixed, phone search button named, meta description added.                                                                                                                                                                                                                                                          | `a04b18b`, `4258fb7`       |
 
 **Verified:**
 
@@ -77,6 +77,7 @@ The UX was inspired by a public interactive course. **Never copy its text, scena
 
 **Not verified yet:**
 
+- the production deploy after #20 and #21: `shell:deploy` passing on `main`, `/apps/system-design` loading in the live portfolio with no CSP violations, and the standalone `product-system-design` worker (the CSP fix was checked on a local production build: 1,114 characters).
 - the Storybook visual regression screenshot baselines for `"Foundations/Paper look"` and `"System Design/UI Kit"` stories (skipped locally because `VISUAL_REGRESSION` runs only in CI's Linux Playwright image: `nx run design-system-e2e:update-baselines`).
 
 **Open loose ends:**
@@ -162,11 +163,9 @@ pnpm nx e2e shell-e2e -- system-design
 
 **Running the e2e locally:** free ports 4200 and 4302–4312, then `CI=1 pnpm exec playwright test -c apps/portfolio/shell-e2e/playwright.config.mts [<spec>] --reporter=line`. Without `CI=1` the shell's dev server fails in a worktree. Don't weaken ARIA to quiet axe: fix the markup.
 
-1. **Merge PR #21** (`fix/shell-csp-remote-wildcard`, owner chose the wildcard): remotes on `ahmed-hrichi.workers.dev` share one `https://*.ahmed-hrichi.workers.dev` CSP source, so the shell's header line drops from 2,102 to 1,114 characters (checked on a production build). Its merge re-runs the `main` deploy; confirm `shell:deploy` passes.
-   1b. **Then merge PR #20** (P12) once CI is green. Merging it makes the course public in the portfolio and deploys the shell with the new `@ah/ui`.
-2. **Check the live site** after the deploy: `/apps/system-design` in the portfolio and the standalone `product-system-design` worker.
-3. **After the shell deploys the new `@ah/ui`:** P1A PR 2 (switch StudyLM to `@ah/shared/steps` and `@ah/ui`'s `StepTimeline`).
-4. **Later, optional:**
+1. **Check the live site** once the `main` deploy passes after the deploy: `/apps/system-design` in the portfolio and the standalone `product-system-design` worker.
+2. **After the shell deploys the new `@ah/ui`:** P1A PR 2 (switch StudyLM to `@ah/shared/steps` and `@ah/ui`'s `StepTimeline`).
+3. **Later, optional:**
    - the platform performance ADR (see "Open loose ends");
    - French and Arabic copy;
    - push reminders;
