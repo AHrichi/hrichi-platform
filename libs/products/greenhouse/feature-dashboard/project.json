@@ -1,0 +1,9 @@
+{
+  "name": "product-greenhouse-feature-dashboard",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/products/greenhouse/feature-dashboard/src",
+  "prefix": "gh",
+  "projectType": "library",
+  "tags": ["scope:product-greenhouse", "type:feature", "runtime:browser"],
+  "targets": {}
+}

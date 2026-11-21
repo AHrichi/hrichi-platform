@@ -1,0 +1,184 @@
+@let v = view();
+@let tp = t().plan;
+
+<div class="head">
+  <div>
+    <h1 class="title">{{ tp.title }}</h1>
+    <p class="week">
+      {{ i18n.fill(tp.week, { date: i18n.date(weekStart()) }) }}
+    </p>
+  </div>
+  <div class="week-nav" role="group" [attr.aria-label]="tp.title">
+    <button type="button" class="nav" (click)="shiftWeek(-1)">
+      <span class="flip" aria-hidden="true">‹</span>
+      {{ tp.previous }}
+    </button>
+    <button
+      type="button"
+      class="nav"
+      [disabled]="isThisWeek()"
+      (click)="goToThisWeek()"
+    >
+      {{ tp.thisWeek }}
+    </button>
+    <button type="button" class="nav" (click)="shiftWeek(1)">
+      {{ tp.next }}
+      <span class="flip" aria-hidden="true">›</span>
+    </button>
+  </div>
+</div>
+
+<div class="kpis">
+  <ah-metric-card
+    [label]="t().kpi.kg"
+    [value]="i18n.num(v.plan.expectedKg)"
+    unit="kg"
+  />
+  <ah-metric-card
+    [label]="t().kpi.workerDays"
+    [value]="i18n.num(v.plan.headcountDays)"
+  />
+  <ah-metric-card
+    [label]="t().kpi.shortage"
+    [value]="i18n.num(v.gap.shortageDays)"
+    [variant]="v.gap.shortageDays > 0 ? 'danger' : 'success'"
+  />
+  <ah-metric-card
+    [label]="t().kpi.worst"
+    [value]="v.gap.worstDay ? i18n.longDay(v.gap.worstDay.date) : t().kpi.none"
+    [hint]="
+      v.gap.worstDay
+        ? '−' + i18n.num(v.gap.worstDay.shortage) + ' · ' + tp.short
+        : undefined
+    "
+    [variant]="v.gap.worstDay ? 'warning' : 'default'"
+  />
+</div>
+
+<label class="hours">
+  <span>{{ tp.hours }}</span>
+  <input
+    #hoursBox
+    type="number"
+    inputmode="decimal"
+    min="1"
+    max="12"
+    step="0.5"
+    [value]="hoursPerDay()"
+    (change)="setHours(hoursBox.value)"
+  />
+</label>
+
+<p class="hint">{{ tp.tableHint }}</p>
+@if (v.plan.issues.length > 0) {
+  <p class="issues" role="alert">
+    {{ i18n.fill(tp.issues, { n: v.plan.issues.length }) }}
+  </p>
+}
+
+<div
+  class="table-wrap"
+  tabindex="0"
+  role="region"
+  [attr.aria-label]="tp.tableLabel"
+>
+  <table class="plan">
+    <thead>
+      <tr>
+        <th scope="col" class="gh-col">{{ tp.greenhouse }}</th>
+        @for (date of dates(); track date) {
+          <th scope="col">{{ i18n.shortDay(date) }}</th>
+        }
+        <th scope="col">{{ tp.total }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (row of v.rows; track row.greenhouse.id) {
+        <tr>
+          <th scope="row" class="gh-col">
+            <strong>{{ row.greenhouse.name }}</strong>
+            <small>
+              {{ t().crops[row.greenhouse.crop] }} · {{ teamsOf(row.teamIds) }}
+            </small>
+          </th>
+          @for (cell of row.cells; track cell.date) {
+            <td>
+              <input
+                #kgBox
+                class="kg"
+                type="number"
+                inputmode="numeric"
+                min="0"
+                step="50"
+                [attr.aria-label]="cellLabel(row.greenhouse.name, cell.date)"
+                [value]="cell.expectedKg ?? ''"
+                (change)="setKg(row.greenhouse.id, cell.day, kgBox.value)"
+              />
+              @if (cell.workerDays !== null && cell.workerDays > 0) {
+                <span class="need">
+                  {{
+                    i18n.fill(tp.workers, { n: i18n.num(cell.workerDays, 1) })
+                  }}
+                </span>
+              }
+            </td>
+          }
+          <td class="total">
+            <strong>{{ i18n.num(row.expectedKg) }}</strong>
+            <span class="need">
+              {{ i18n.fill(tp.workers, { n: i18n.num(row.workerDays, 1) }) }}
+            </span>
+          </td>
+        </tr>
+      }
+    </tbody>
+    <tfoot>
+      <tr>
+        <th scope="row" class="gh-col">{{ tp.needed }}</th>
+        @for (day of v.gap.days; track day.date) {
+          <td>{{ i18n.num(day.required) }}</td>
+        }
+        <td>{{ i18n.num(v.plan.headcountDays) }}</td>
+      </tr>
+      <tr>
+        <th scope="row" class="gh-col">{{ tp.available }}</th>
+        @for (day of v.gap.days; track day.date) {
+          <td>{{ i18n.num(day.available) }}</td>
+        }
+        <td></td>
+      </tr>
+      <tr class="short-row">
+        <th scope="row" class="gh-col">{{ tp.short }}</th>
+        @for (day of v.gap.days; track day.date) {
+          <td [class.is-short]="day.shortage > 0">
+            {{ day.shortage > 0 ? '−' + i18n.num(day.shortage) : '0' }}
+          </td>
+        }
+        <td [class.is-short]="v.gap.shortageDays > 0">
+          {{ i18n.num(v.gap.shortageDays) }}
+        </td>
+      </tr>
+    </tfoot>
+  </table>
+</div>
+
+@if (rebalance()) {
+  <p class="note">{{ tp.teamGap }}</p>
+}
+
+<section class="report" aria-labelledby="gh-report-title">
+  <h2 id="gh-report-title">{{ t().report.title }}</h2>
+  <pre class="report-text">{{ report().body }}</pre>
+  <div class="report-actions">
+    <button type="button" class="action primary" (click)="copyReport()">
+      {{ copied() ? t().report.copied : t().report.copy }}
+    </button>
+    <a class="action" [href]="whatsappHref()" target="_blank" rel="noopener">
+      {{ t().report.whatsapp }}
+    </a>
+    <a class="action" [href]="mailHref()">{{ t().report.email }}</a>
+    <button type="button" class="action" (click)="print()">
+      {{ t().report.print }}
+    </button>
+  </div>
+</section>

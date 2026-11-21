@@ -20,9 +20,13 @@ const COPY: Record<SiteLanguage, FieldCopy> = {
   de: EN,
 };
 
-/** Arabic keeps Latin digits, as on the farm's scales and badges. */
+/**
+ * Arabic keeps Latin digits, as on the farm's scales and badges, and the
+ * international separators: ar-TN groups thousands with a point, which
+ * reads like millimes (60.970).
+ */
 const LOCALES: Record<SiteLanguage, string> = {
-  ar: 'ar-TN-u-nu-latn',
+  ar: 'ar-u-nu-latn',
   fr: 'fr-TN',
   en: 'en-GB',
   it: 'en-GB',

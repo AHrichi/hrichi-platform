@@ -1,0 +1,112 @@
+{
+  "name": "product-greenhouse",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "prefix": "gh",
+  "sourceRoot": "apps/products/greenhouse/dashboard/src",
+  "tags": ["scope:product-greenhouse", "type:app", "runtime:browser"],
+  "targets": {
+    "build": {
+      "executor": "@angular-architects/native-federation:build",
+      "defaultConfiguration": "production",
+      "options": {
+        "cacheExternalArtifacts": true,
+        "tsConfig": "apps/products/greenhouse/dashboard/tsconfig.federation.json"
+      },
+      "configurations": {
+        "production": {
+          "target": "product-greenhouse:esbuild:production"
+        },
+        "development": {
+          "target": "product-greenhouse:esbuild:development",
+          "dev": true
+        }
+      }
+    },
+    "serve": {
+      "executor": "@angular-architects/native-federation:build",
+      "options": {
+        "target": "product-greenhouse:serve-original:development",
+        "tsConfig": "apps/products/greenhouse/dashboard/tsconfig.federation.json",
+        "rebuildDelay": 500,
+        "cacheExternalArtifacts": true,
+        "dev": true,
+        "devServer": true,
+        "port": 0
+      }
+    },
+    "serve-static": {
+      "continuous": true,
+      "readyWhen": {
+        "signal": true
+      },
+      "dependsOn": ["build"],
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node tools/scripts/prepare-hosting.mjs dist/apps/products/greenhouse/dashboard/browser --env development --cors --site-config --headers-only && node tools/scripts/serve-static.mjs dist/apps/products/greenhouse/dashboard/browser 4313"
+      }
+    },
+    "esbuild": {
+      "executor": "@angular/build:application",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "outputPath": "dist/apps/products/greenhouse/dashboard",
+        "browser": "apps/products/greenhouse/dashboard/src/main.ts",
+        "tsConfig": "apps/products/greenhouse/dashboard/tsconfig.app.json",
+        "inlineStyleLanguage": "scss",
+        "assets": [
+          {
+            "glob": "**/*",
+            "input": "apps/products/greenhouse/dashboard/public"
+          }
+        ],
+        "styles": [
+          "node_modules/@fontsource-variable/inter/index.css",
+          "libs/design-system/tokens/src/generated/tokens.css",
+          "libs/design-system/ui/src/styles/index.scss",
+          "apps/products/greenhouse/dashboard/src/styles.scss"
+        ],
+        "polyfills": ["es-module-shims"],
+        "allowedCommonJsDependencies": []
+      },
+      "configurations": {
+        "production": {
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "1mb",
+              "maximumError": "2mb"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "12kb",
+              "maximumError": "20kb"
+            }
+          ],
+          "outputHashing": "all"
+        },
+        "development": {
+          "optimization": false,
+          "extractLicenses": false,
+          "sourceMap": true
+        }
+      }
+    },
+    "serve-original": {
+      "executor": "@angular/build:dev-server",
+      "configurations": {
+        "production": {
+          "buildTarget": "product-greenhouse:esbuild:production"
+        },
+        "development": {
+          "buildTarget": "product-greenhouse:esbuild:development"
+        }
+      },
+      "defaultConfiguration": "development",
+      "options": {
+        "port": 4313
+      }
+    }
+  }
+}
