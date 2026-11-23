@@ -1,0 +1,28 @@
+:host {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-pill);
+  background: var(--color-warning-subtle);
+  color: var(--color-warning-default);
+  font-size: var(--font-size-200);
+  font-weight: var(--font-weight-semibold);
+}
+
+:host([data-status='synced']) {
+  background: var(--color-success-subtle);
+  color: var(--color-success-default);
+}
+
+:host([data-status='rejected']) {
+  background: var(--color-danger-subtle);
+  color: var(--color-danger-default);
+}
+
+.dot {
+  inline-size: 0.5rem;
+  block-size: 0.5rem;
+  border-radius: var(--radius-pill);
+  background: currentcolor;
+}

@@ -7,9 +7,9 @@
       "scope": "api",
       "layer": "app",
       "runtime": "node",
-      "x": 0.49,
-      "y": 0.836,
-      "z": -0.029
+      "x": 0.605,
+      "y": 0.746,
+      "z": 0.049
     },
     {
       "id": "api-ai",
@@ -17,9 +17,9 @@
       "scope": "api",
       "layer": "util",
       "runtime": "node",
-      "x": 0.156,
-      "y": 0.792,
-      "z": -0.587
+      "x": 0.182,
+      "y": 0.847,
+      "z": -0.476
     },
     {
       "id": "api-dispatch",
@@ -27,9 +27,9 @@
       "scope": "api",
       "layer": "feature",
       "runtime": "node",
-      "x": 0.655,
-      "y": 0.671,
-      "z": 0.336
+      "x": 0.853,
+      "y": 0.398,
+      "z": 0.314
     },
     {
       "id": "api-leads",
@@ -37,9 +37,9 @@
       "scope": "api",
       "layer": "feature",
       "runtime": "node",
-      "x": -0.187,
-      "y": 0.962,
-      "z": -0.021
+      "x": -0.045,
+      "y": 0.93,
+      "z": -0.23
     },
     {
       "id": "api-learning",
@@ -47,9 +47,9 @@
       "scope": "api",
       "layer": "feature",
       "runtime": "node",
-      "x": 0.548,
-      "y": 0.756,
-      "z": -0.346
+      "x": 0.505,
+      "y": 0.795,
+      "z": -0.293
     },
     {
       "id": "api-studylm",
@@ -57,9 +57,9 @@
       "scope": "api",
       "layer": "feature",
       "runtime": "node",
-      "x": 0.301,
-      "y": 0.89,
-      "z": -0.329
+      "x": 0.437,
+      "y": 0.872,
+      "z": 0.216
     },
     {
       "id": "design-system",
@@ -67,9 +67,9 @@
       "scope": "design-system",
       "layer": "app",
       "runtime": "browser",
-      "x": 0.196,
-      "y": 0.709,
-      "z": 0.165
+      "x": 0.197,
+      "y": 0.637,
+      "z": 0.313
     },
     {
       "id": "design-system-e2e",
@@ -77,9 +77,9 @@
       "scope": "test",
       "layer": "e2e",
       "runtime": "node",
-      "x": 0.384,
-      "y": 0.671,
-      "z": 0.58
+      "x": 0.509,
+      "y": 0.385,
+      "z": 0.716
     },
     {
       "id": "design-system-tokens",
@@ -87,9 +87,9 @@
       "scope": "design-system",
       "layer": "tokens",
       "runtime": "agnostic",
-      "x": -0.168,
-      "y": 0.822,
-      "z": 0.319
+      "x": -0.443,
+      "y": 0.754,
+      "z": 0.029
     },
     {
       "id": "design-system-ui",
@@ -97,9 +97,9 @@
       "scope": "design-system",
       "layer": "ui",
       "runtime": "browser",
-      "x": -0.047,
+      "x": -0.05,
       "y": -0.062,
-      "z": 0.072
+      "z": 0.018
     },
     {
       "id": "lab-ngrx",
@@ -107,9 +107,9 @@
       "scope": "lab-ngrx",
       "layer": "app",
       "runtime": "browser",
-      "x": -0.677,
-      "y": -0.391,
-      "z": -0.472
+      "x": -0.691,
+      "y": -0.253,
+      "z": -0.547
     },
     {
       "id": "lab-ngrx-feature",
@@ -117,9 +117,9 @@
       "scope": "lab-ngrx",
       "layer": "feature",
       "runtime": "browser",
-      "x": -0.653,
-      "y": -0.04,
-      "z": -0.533
+      "x": -0.634,
+      "y": 0.128,
+      "z": -0.57
     },
     {
       "id": "lab-rxjs",
@@ -127,9 +127,9 @@
       "scope": "lab-rxjs",
       "layer": "app",
       "runtime": "browser",
-      "x": -0.582,
-      "y": -0.53,
-      "z": 0.468
+      "x": -0.684,
+      "y": -0.378,
+      "z": 0.458
     },
     {
       "id": "lab-rxjs-feature",
@@ -137,9 +137,9 @@
       "scope": "lab-rxjs",
       "layer": "feature",
       "runtime": "browser",
-      "x": -0.438,
-      "y": -0.123,
-      "z": 0.742
+      "x": -0.54,
+      "y": 0.005,
+      "z": 0.658
     },
     {
       "id": "lab-sky",
@@ -147,9 +147,9 @@
       "scope": "lab-sky",
       "layer": "app",
       "runtime": "browser",
-      "x": -0.78,
-      "y": -0.421,
-      "z": -0.201
+      "x": -0.783,
+      "y": -0.336,
+      "z": -0.344
     },
     {
       "id": "lab-sky-domain",
@@ -157,9 +157,9 @@
       "scope": "lab-sky",
       "layer": "domain",
       "runtime": "agnostic",
-      "x": -0.72,
-      "y": 0.267,
-      "z": -0.53
+      "x": -0.408,
+      "y": 0.268,
+      "z": -0.809
     },
     {
       "id": "lab-sky-feature",
@@ -167,9 +167,9 @@
       "scope": "lab-sky",
       "layer": "feature",
       "runtime": "browser",
-      "x": -0.658,
-      "y": 0.336,
-      "z": 0.081
+      "x": -0.482,
+      "y": 0.35,
+      "z": -0.41
     },
     {
       "id": "learning-client",
@@ -177,9 +177,9 @@
       "scope": "learning-client",
       "layer": "client",
       "runtime": "browser",
-      "x": 0.728,
-      "y": -0.28,
-      "z": 0.002
+      "x": 0.675,
+      "y": -0.374,
+      "z": 0.19
     },
     {
       "id": "learning-contracts",
@@ -187,9 +187,9 @@
       "scope": "learning",
       "layer": "contracts",
       "runtime": "agnostic",
-      "x": 0.861,
-      "y": 0.39,
-      "z": -0.122
+      "x": 0.882,
+      "y": 0.318,
+      "z": -0.097
     },
     {
       "id": "learning-data-access",
@@ -197,9 +197,9 @@
       "scope": "learning",
       "layer": "data-access",
       "runtime": "browser",
-      "x": 0.91,
-      "y": 0.18,
-      "z": -0.355
+      "x": 0.801,
+      "y": 0.34,
+      "z": -0.467
     },
     {
       "id": "learning-domain",
@@ -207,9 +207,9 @@
       "scope": "learning",
       "layer": "domain",
       "runtime": "agnostic",
-      "x": 0.658,
-      "y": 0.526,
-      "z": -0.408
+      "x": 0.665,
+      "y": 0.603,
+      "z": -0.257
     },
     {
       "id": "learning-edge",
@@ -217,9 +217,9 @@
       "scope": "learning",
       "layer": "app",
       "runtime": "agnostic",
-      "x": 0.503,
-      "y": 0.455,
-      "z": -0.735
+      "x": 0.422,
+      "y": 0.616,
+      "z": -0.641
     },
     {
       "id": "learning-feature",
@@ -227,9 +227,9 @@
       "scope": "learning",
       "layer": "feature",
       "runtime": "browser",
-      "x": 0.754,
-      "y": -0.008,
-      "z": -0.011
+      "x": 0.721,
+      "y": -0.118,
+      "z": -0.17
     },
     {
       "id": "learning-ui",
@@ -237,9 +237,9 @@
       "scope": "learning",
       "layer": "ui",
       "runtime": "browser",
-      "x": 0.682,
-      "y": 0.53,
-      "z": 0.036
+      "x": 0.701,
+      "y": 0.453,
+      "z": 0.08
     },
     {
       "id": "orbit-api",
@@ -247,9 +247,9 @@
       "scope": "orbit",
       "layer": "app",
       "runtime": "jvm",
-      "x": -0.512,
-      "y": 0.564,
-      "z": -0.641
+      "x": -0.251,
+      "y": 0.763,
+      "z": -0.596
     },
     {
       "id": "platform-app-mode",
@@ -257,9 +257,9 @@
       "scope": "platform",
       "layer": "platform",
       "runtime": "browser",
-      "x": 0.168,
-      "y": -0.603,
-      "z": 0.041
+      "x": 0.097,
+      "y": -0.621,
+      "z": 0.059
     },
     {
       "id": "platform-federation",
@@ -267,9 +267,9 @@
       "scope": "platform",
       "layer": "platform",
       "runtime": "browser",
-      "x": -0.197,
-      "y": -0.725,
-      "z": -0.088
+      "x": -0.353,
+      "y": -0.672,
+      "z": -0.123
     },
     {
       "id": "platform-inspector",
@@ -277,9 +277,9 @@
       "scope": "platform",
       "layer": "platform",
       "runtime": "browser",
-      "x": 0.086,
-      "y": -0.953,
-      "z": -0.115
+      "x": -0.685,
+      "y": -0.63,
+      "z": 0.239
     },
     {
       "id": "platform-maps",
@@ -287,9 +287,9 @@
       "scope": "platform",
       "layer": "ui",
       "runtime": "browser",
-      "x": 0.294,
-      "y": -0.2,
-      "z": -0.784
+      "x": 0.413,
+      "y": -0.162,
+      "z": -0.748
     },
     {
       "id": "platform-storage",
@@ -297,9 +297,9 @@
       "scope": "platform",
       "layer": "platform",
       "runtime": "browser",
-      "x": 0.606,
-      "y": -0.465,
-      "z": -0.123
+      "x": 0.566,
+      "y": -0.587,
+      "z": 0.019
     },
     {
       "id": "platform-web-push",
@@ -307,9 +307,9 @@
       "scope": "platform",
       "layer": "platform",
       "runtime": "browser",
-      "x": 0.66,
-      "y": 0.289,
-      "z": 0.445
+      "x": 0.777,
+      "y": 0.001,
+      "z": 0.385
     },
     {
       "id": "portfolio-feature-apps",
@@ -317,9 +317,9 @@
       "scope": "portfolio",
       "layer": "feature",
       "runtime": "browser",
-      "x": -0.806,
-      "y": -0.332,
-      "z": 0.229
+      "x": -0.751,
+      "y": -0.106,
+      "z": 0.383
     },
     {
       "id": "portfolio-feature-cv",
@@ -327,9 +327,9 @@
       "scope": "portfolio",
       "layer": "feature",
       "runtime": "browser",
-      "x": -0.851,
-      "y": -0.158,
-      "z": 0.054
+      "x": -0.87,
+      "y": -0.187,
+      "z": 0.121
     },
     {
       "id": "portfolio-feature-experience",
@@ -337,9 +337,9 @@
       "scope": "portfolio",
       "layer": "feature",
       "runtime": "browser",
-      "x": -0.723,
-      "y": -0.245,
-      "z": 0.422
+      "x": -0.812,
+      "y": 0.026,
+      "z": 0.224
     },
     {
       "id": "portfolio-feature-home",
@@ -347,9 +347,9 @@
       "scope": "portfolio",
       "layer": "feature",
       "runtime": "browser",
-      "x": -0.623,
-      "y": 0.187,
-      "z": 0.453
+      "x": -0.671,
+      "y": 0.29,
+      "z": 0.285
     },
     {
       "id": "portfolio-feature-services",
@@ -357,9 +357,9 @@
       "scope": "portfolio",
       "layer": "feature",
       "runtime": "browser",
-      "x": -0.603,
-      "y": -0.028,
-      "z": 0.484
+      "x": -0.689,
+      "y": 0.008,
+      "z": -0.302
     },
     {
       "id": "portfolio-feature-work",
@@ -367,9 +367,9 @@
       "scope": "portfolio",
       "layer": "feature",
       "runtime": "browser",
-      "x": -0.822,
-      "y": -0.069,
-      "z": -0.147
+      "x": -0.861,
+      "y": -0.036,
+      "z": -0.116
     },
     {
       "id": "portfolio-util-seo",
@@ -377,9 +377,9 @@
       "scope": "portfolio",
       "layer": "util",
       "runtime": "browser",
-      "x": -0.924,
-      "y": 0.089,
-      "z": 0.236
+      "x": -0.92,
+      "y": 0.248,
+      "z": 0.039
     },
     {
       "id": "product-alarm-engine",
@@ -387,9 +387,9 @@
       "scope": "product-alarm-engine",
       "layer": "app",
       "runtime": "browser",
-      "x": -0.084,
-      "y": -0.491,
-      "z": -0.826
+      "x": -0.21,
+      "y": -0.362,
+      "z": -0.873
     },
     {
       "id": "product-alarm-engine-domain",
@@ -397,9 +397,9 @@
       "scope": "product-alarm-engine",
       "layer": "domain",
       "runtime": "agnostic",
-      "x": -0.247,
-      "y": 0.024,
-      "z": -0.937
+      "x": 0.023,
+      "y": 0.267,
+      "z": -0.912
     },
     {
       "id": "product-alarm-engine-feature",
@@ -407,9 +407,9 @@
       "scope": "product-alarm-engine",
       "layer": "feature",
       "runtime": "browser",
-      "x": -0.321,
-      "y": -0.45,
-      "z": -0.567
+      "x": -0.318,
+      "y": -0.268,
+      "z": -0.628
     },
     {
       "id": "product-autosphere-domain",
@@ -417,9 +417,9 @@
       "scope": "product-autosphere",
       "layer": "domain",
       "runtime": "agnostic",
-      "x": 0.348,
-      "y": 0.191,
-      "z": 0.882
+      "x": 0.291,
+      "y": -0.022,
+      "z": 0.918
     },
     {
       "id": "product-autosphere-feature",
@@ -427,9 +427,9 @@
       "scope": "product-autosphere",
       "layer": "feature",
       "runtime": "browser",
-      "x": -0.025,
-      "y": -0.339,
-      "z": 0.71
+      "x": -0.123,
+      "y": -0.394,
+      "z": 0.658
     },
     {
       "id": "product-basecamp",
@@ -437,9 +437,9 @@
       "scope": "product-basecamp",
       "layer": "app",
       "runtime": "browser",
-      "x": -0.47,
-      "y": -0.652,
-      "z": -0.37
+      "x": -0.45,
+      "y": -0.577,
+      "z": -0.486
     },
     {
       "id": "product-basecamp-domain",
@@ -447,9 +447,9 @@
       "scope": "product-basecamp",
       "layer": "domain",
       "runtime": "agnostic",
-      "x": -0.455,
-      "y": 0.195,
-      "z": -0.834
+      "x": -0.21,
+      "y": 0.05,
+      "z": -0.942
     },
     {
       "id": "product-basecamp-feature",
@@ -457,9 +457,9 @@
       "scope": "product-basecamp",
       "layer": "feature",
       "runtime": "browser",
-      "x": -0.2,
-      "y": -0.254,
-      "z": -0.635
+      "x": -0.013,
+      "y": -0.335,
+      "z": -0.657
     },
     {
       "id": "product-dispatch",
@@ -467,9 +467,9 @@
       "scope": "product-dispatch",
       "layer": "app",
       "runtime": "browser",
-      "x": 0.489,
-      "y": -0.75,
-      "z": 0.034
+      "x": 0.301,
+      "y": -0.838,
+      "z": -0.192
     },
     {
       "id": "product-dispatch-domain",
@@ -477,9 +477,9 @@
       "scope": "product-dispatch",
       "layer": "domain",
       "runtime": "agnostic",
-      "x": 0.892,
-      "y": 0.24,
-      "z": 0.339
+      "x": 0.977,
+      "y": -0.043,
+      "z": 0.1
     },
     {
       "id": "product-dispatch-feature",
@@ -487,9 +487,9 @@
       "scope": "product-dispatch",
       "layer": "feature",
       "runtime": "browser",
-      "x": 0.636,
-      "y": -0.249,
-      "z": 0.436
+      "x": 0.683,
+      "y": -0.467,
+      "z": -0.15
     },
     {
       "id": "product-greenhouse",
@@ -497,9 +497,9 @@
       "scope": "product-greenhouse",
       "layer": "app",
       "runtime": "browser",
-      "x": -0.329,
-      "y": -0.739,
-      "z": 0.436
+      "x": -0.397,
+      "y": -0.682,
+      "z": 0.445
     },
     {
       "id": "product-greenhouse-data-access",
@@ -507,9 +507,9 @@
       "scope": "product-greenhouse",
       "layer": "data-access",
       "runtime": "browser",
-      "x": -0.175,
-      "y": 0.142,
-      "z": 0.932
+      "x": -0.266,
+      "y": 0.058,
+      "z": 0.924
     },
     {
       "id": "product-greenhouse-domain",
@@ -517,9 +517,9 @@
       "scope": "product-greenhouse",
       "layer": "domain",
       "runtime": "agnostic",
-      "x": 0.025,
-      "y": -0.045,
-      "z": 0.962
+      "x": -0.052,
+      "y": -0.117,
+      "z": 0.957
     },
     {
       "id": "product-greenhouse-feature-dashboard",
@@ -527,9 +527,9 @@
       "scope": "product-greenhouse",
       "layer": "feature",
       "runtime": "browser",
-      "x": -0.256,
-      "y": -0.426,
-      "z": 0.689
+      "x": -0.354,
+      "y": -0.365,
+      "z": 0.666
     },
     {
       "id": "product-greenhouse-feature-field",
@@ -537,9 +537,9 @@
       "scope": "product-greenhouse",
       "layer": "feature",
       "runtime": "browser",
-      "x": 0.251,
-      "y": -0.375,
-      "z": 0.711
+      "x": 0.152,
+      "y": -0.416,
+      "z": 0.723
     },
     {
       "id": "product-greenhouse-field",
@@ -547,9 +547,9 @@
       "scope": "product-greenhouse",
       "layer": "app",
       "runtime": "browser",
-      "x": 0.019,
-      "y": -0.657,
-      "z": 0.656
+      "x": -0.06,
+      "y": -0.663,
+      "z": 0.642
     },
     {
       "id": "product-greenhouse-supabase",
@@ -557,9 +557,19 @@
       "scope": "product-greenhouse",
       "layer": "schema",
       "runtime": "node",
-      "x": 0.071,
-      "y": 0.422,
-      "z": 0.877
+      "x": 0.042,
+      "y": 0.269,
+      "z": 0.945
+    },
+    {
+      "id": "product-greenhouse-ui",
+      "kind": "lib",
+      "scope": "product-greenhouse",
+      "layer": "ui",
+      "runtime": "browser",
+      "x": 0.203,
+      "y": 0.621,
+      "z": 0.746
     },
     {
       "id": "product-learning",
@@ -567,9 +577,9 @@
       "scope": "learning",
       "layer": "app",
       "runtime": "browser",
-      "x": 0.28,
-      "y": -0.725,
-      "z": -0.254
+      "x": 0.064,
+      "y": -0.721,
+      "z": -0.392
     },
     {
       "id": "product-lighting",
@@ -577,9 +587,9 @@
       "scope": "product-lighting",
       "layer": "app",
       "runtime": "browser",
-      "x": -0.191,
-      "y": -0.743,
-      "z": -0.452
+      "x": -0.2,
+      "y": -0.705,
+      "z": -0.5
     },
     {
       "id": "product-lighting-domain",
@@ -587,9 +597,9 @@
       "scope": "product-lighting",
       "layer": "domain",
       "runtime": "agnostic",
-      "x": 0.073,
-      "y": -0.129,
-      "z": -0.969
+      "x": 0.223,
+      "y": -0.088,
+      "z": -0.946
     },
     {
       "id": "product-lighting-feature",
@@ -597,9 +607,9 @@
       "scope": "product-lighting",
       "layer": "feature",
       "runtime": "browser",
-      "x": 0.21,
-      "y": -0.52,
-      "z": -0.583
+      "x": 0.252,
+      "y": -0.51,
+      "z": -0.593
     },
     {
       "id": "product-strategy",
@@ -607,9 +617,9 @@
       "scope": "product-strategy",
       "layer": "app",
       "runtime": "browser",
-      "x": 0.244,
-      "y": -0.886,
-      "z": 0.214
+      "x": -0.031,
+      "y": -0.823,
+      "z": 0.389
     },
     {
       "id": "product-studylm",
@@ -617,9 +627,9 @@
       "scope": "product-studylm",
       "layer": "app",
       "runtime": "browser",
-      "x": 0.17,
-      "y": -0.658,
-      "z": 0.341
+      "x": 0.102,
+      "y": -0.843,
+      "z": 0.08
     },
     {
       "id": "product-studylm-domain",
@@ -627,9 +637,9 @@
       "scope": "product-studylm",
       "layer": "domain",
       "runtime": "agnostic",
-      "x": 0.15,
-      "y": 0.915,
-      "z": -0.021
+      "x": 0.557,
+      "y": 0.543,
+      "z": 0.487
     },
     {
       "id": "product-studylm-feature",
@@ -637,9 +647,9 @@
       "scope": "product-studylm",
       "layer": "feature",
       "runtime": "browser",
-      "x": 0.231,
-      "y": 0.1,
-      "z": 0.029
+      "x": 0.29,
+      "y": -0.178,
+      "z": 0.433
     },
     {
       "id": "product-studylm-learn",
@@ -647,9 +657,9 @@
       "scope": "product-studylm",
       "layer": "ui",
       "runtime": "browser",
-      "x": -0.152,
-      "y": 0.81,
-      "z": -0.307
+      "x": -0.081,
+      "y": 0.479,
+      "z": 0.746
     },
     {
       "id": "product-studylm-lessons",
@@ -657,9 +667,9 @@
       "scope": "product-studylm",
       "layer": "domain",
       "runtime": "agnostic",
-      "x": -0.154,
-      "y": 0.601,
-      "z": -0.641
+      "x": 0.08,
+      "y": 0.742,
+      "z": 0.514
     },
     {
       "id": "product-studylm-tracer",
@@ -667,9 +677,9 @@
       "scope": "product-studylm",
       "layer": "engine",
       "runtime": "agnostic",
-      "x": -0.532,
-      "y": 0.766,
-      "z": -0.322
+      "x": -0.508,
+      "y": 0.424,
+      "z": 0.722
     },
     {
       "id": "product-system-design",
@@ -677,9 +687,9 @@
       "scope": "product-system-design",
       "layer": "app",
       "runtime": "browser",
-      "x": 0.034,
-      "y": -0.799,
-      "z": -0.374
+      "x": -0.065,
+      "y": -0.869,
+      "z": -0.227
     },
     {
       "id": "product-system-design-data-access",
@@ -687,9 +697,9 @@
       "scope": "product-system-design",
       "layer": "data-access",
       "runtime": "browser",
-      "x": 0.771,
-      "y": -0.268,
-      "z": -0.552
+      "x": 0.783,
+      "y": -0.295,
+      "z": -0.528
     },
     {
       "id": "product-system-design-domain",
@@ -697,9 +707,9 @@
       "scope": "product-system-design",
       "layer": "domain",
       "runtime": "agnostic",
-      "x": 0.583,
-      "y": -0.067,
-      "z": -0.77
+      "x": 0.689,
+      "y": -0.006,
+      "z": -0.662
     },
     {
       "id": "product-system-design-feature",
@@ -707,9 +717,9 @@
       "scope": "product-system-design",
       "layer": "feature",
       "runtime": "browser",
-      "x": 0.413,
-      "y": -0.437,
-      "z": -0.414
+      "x": 0.449,
+      "y": -0.468,
+      "z": -0.314
     },
     {
       "id": "product-system-design-ui",
@@ -717,9 +727,9 @@
       "scope": "product-system-design",
       "layer": "ui",
       "runtime": "browser",
-      "x": 0.61,
-      "y": 0.174,
-      "z": -0.496
+      "x": 0.721,
+      "y": 0.148,
+      "z": -0.301
     },
     {
       "id": "product-whatsapp",
@@ -727,9 +737,9 @@
       "scope": "product-whatsapp",
       "layer": "app",
       "runtime": "browser",
-      "x": -0.105,
-      "y": -0.858,
-      "z": 0.29
+      "x": -0.238,
+      "y": -0.867,
+      "z": 0.167
     },
     {
       "id": "product-whatsapp-domain",
@@ -737,9 +747,9 @@
       "scope": "product-whatsapp",
       "layer": "domain",
       "runtime": "agnostic",
-      "x": 0.627,
-      "y": -0.082,
-      "z": 0.742
+      "x": 0.689,
+      "y": -0.429,
+      "z": 0.548
     },
     {
       "id": "product-whatsapp-feature",
@@ -747,9 +757,9 @@
       "scope": "product-whatsapp",
       "layer": "feature",
       "runtime": "browser",
-      "x": 0.391,
-      "y": -0.51,
-      "z": 0.494
+      "x": 0.345,
+      "y": -0.713,
+      "z": 0.264
     },
     {
       "id": "shared-ai-schema",
@@ -757,9 +767,9 @@
       "scope": "shared",
       "layer": "util",
       "runtime": "agnostic",
-      "x": 0.167,
-      "y": 0.523,
-      "z": -0.789
+      "x": 0.231,
+      "y": 0.913,
+      "z": -0.082
     },
     {
       "id": "shared-api-client",
@@ -767,9 +777,9 @@
       "scope": "shared",
       "layer": "contracts",
       "runtime": "agnostic",
-      "x": -0.775,
-      "y": 0.498,
-      "z": -0.313
+      "x": -0.209,
+      "y": 0.539,
+      "z": -0.766
     },
     {
       "id": "shared-content",
@@ -777,9 +787,9 @@
       "scope": "shared",
       "layer": "content",
       "runtime": "agnostic",
-      "x": -0.606,
-      "y": -0.373,
-      "z": 0.031
+      "x": -0.655,
+      "y": -0.297,
+      "z": -0.009
     },
     {
       "id": "shared-contracts",
@@ -787,9 +797,9 @@
       "scope": "shared",
       "layer": "contracts",
       "runtime": "agnostic",
-      "x": -0.716,
-      "y": 0.607,
-      "z": 0.158
+      "x": -0.646,
+      "y": 0.615,
+      "z": -0.343
     },
     {
       "id": "shared-site-config",
@@ -797,9 +807,9 @@
       "scope": "shared",
       "layer": "data-access",
       "runtime": "browser",
-      "x": 0.227,
-      "y": -0.042,
-      "z": 0.643
+      "x": 0.246,
+      "y": -0.5,
+      "z": -0.338
     },
     {
       "id": "shared-state",
@@ -807,9 +817,9 @@
       "scope": "shared",
       "layer": "data-access",
       "runtime": "browser",
-      "x": -0.223,
-      "y": -0.408,
-      "z": 0.116
+      "x": -0.264,
+      "y": -0.385,
+      "z": 0.041
     },
     {
       "id": "shared-steps",
@@ -817,9 +827,9 @@
       "scope": "shared",
       "layer": "util",
       "runtime": "agnostic",
-      "x": 0.235,
-      "y": 0.187,
-      "z": -0.929
+      "x": 0.424,
+      "y": 0.294,
+      "z": -0.819
     },
     {
       "id": "shell",
@@ -827,9 +837,9 @@
       "scope": "portfolio",
       "layer": "app",
       "runtime": "browser",
-      "x": -0.382,
-      "y": -0.578,
-      "z": 0.066
+      "x": -0.488,
+      "y": -0.498,
+      "z": -0.025
     },
     {
       "id": "shell-e2e",
@@ -837,9 +847,9 @@
       "scope": "test",
       "layer": "e2e",
       "runtime": "node",
-      "x": -0.346,
-      "y": -0.847,
-      "z": -0.109
+      "x": -0.441,
+      "y": -0.791,
+      "z": -0.243
     },
     {
       "id": "strategy-domain",
@@ -847,9 +857,9 @@
       "scope": "product-strategy",
       "layer": "domain",
       "runtime": "browser",
-      "x": 0.935,
-      "y": -0.188,
-      "z": 0.283
+      "x": 0.632,
+      "y": -0.107,
+      "z": 0.735
     },
     {
       "id": "strategy-feature",
@@ -857,9 +867,9 @@
       "scope": "product-strategy",
       "layer": "feature",
       "runtime": "browser",
-      "x": 0.588,
-      "y": -0.553,
-      "z": 0.279
+      "x": 0.341,
+      "y": -0.544,
+      "z": 0.539
     },
     {
       "id": "three-angular",
@@ -867,9 +877,9 @@
       "scope": "platform",
       "layer": "ui",
       "runtime": "browser",
-      "x": -0.406,
-      "y": 0.686,
-      "z": 0.448
+      "x": -0.345,
+      "y": 0.786,
+      "z": 0.236
     },
     {
       "id": "three-constellation",
@@ -877,9 +887,9 @@
       "scope": "platform",
       "layer": "engine",
       "runtime": "browser",
-      "x": -0.486,
-      "y": 0.465,
-      "z": 0.704
+      "x": -0.392,
+      "y": 0.683,
+      "z": 0.561
     },
     {
       "id": "three-engine",
@@ -887,9 +897,9 @@
       "scope": "platform",
       "layer": "engine",
       "runtime": "browser",
-      "x": -0.016,
-      "y": 0.843,
-      "z": 0.511
+      "x": -0.171,
+      "y": 0.97,
+      "z": 0.121
     },
     {
       "id": "three-scene-constellation",
@@ -897,9 +907,9 @@
       "scope": "platform",
       "layer": "engine",
       "runtime": "browser",
-      "x": -0.21,
-      "y": 0.618,
-      "z": 0.69
+      "x": -0.596,
+      "y": 0.712,
+      "z": 0.309
     },
     {
       "id": "three-scene-sky",
@@ -907,9 +917,9 @@
       "scope": "platform",
       "layer": "engine",
       "runtime": "browser",
-      "x": -0.479,
-      "y": 0.8,
-      "z": 0.168
+      "x": -0.39,
+      "y": 0.814,
+      "z": -0.286
     }
   ],
   "edges": [
@@ -945,12 +955,12 @@
     ],
     [
       0,
-      62,
+      63,
       "static"
     ],
     [
       1,
-      75,
+      76,
       "static"
     ],
     [
@@ -960,7 +970,7 @@
     ],
     [
       3,
-      78,
+      79,
       "static"
     ],
     [
@@ -985,7 +995,7 @@
     ],
     [
       5,
-      62,
+      63,
       "static"
     ],
     [
@@ -1010,17 +1020,22 @@
     ],
     [
       6,
-      64,
+      56,
+      "static"
+    ],
+    [
+      6,
+      65,
       "implicit"
     ],
     [
       6,
-      71,
+      72,
       "implicit"
     ],
     [
       6,
-      86,
+      87,
       "implicit"
     ],
     [
@@ -1045,7 +1060,7 @@
     ],
     [
       10,
-      77,
+      78,
       "static"
     ],
     [
@@ -1055,7 +1070,7 @@
     ],
     [
       11,
-      80,
+      81,
       "static"
     ],
     [
@@ -1070,7 +1085,7 @@
     ],
     [
       12,
-      77,
+      78,
       "static"
     ],
     [
@@ -1080,7 +1095,7 @@
     ],
     [
       13,
-      80,
+      81,
       "static"
     ],
     [
@@ -1095,7 +1110,7 @@
     ],
     [
       14,
-      77,
+      78,
       "static"
     ],
     [
@@ -1110,12 +1125,7 @@
     ],
     [
       16,
-      76,
-      "static"
-    ],
-    [
-      16,
-      79,
+      77,
       "static"
     ],
     [
@@ -1125,17 +1135,22 @@
     ],
     [
       16,
-      86,
+      81,
       "static"
     ],
     [
       16,
-      90,
+      87,
       "static"
     ],
     [
       16,
-      90,
+      91,
+      "static"
+    ],
+    [
+      16,
+      91,
       "dynamic"
     ],
     [
@@ -1165,7 +1180,7 @@
     ],
     [
       20,
-      75,
+      76,
       "static"
     ],
     [
@@ -1215,7 +1230,7 @@
     ],
     [
       22,
-      79,
+      80,
       "static"
     ],
     [
@@ -1235,12 +1250,12 @@
     ],
     [
       26,
-      77,
+      78,
       "static"
     ],
     [
       26,
-      80,
+      81,
       "static"
     ],
     [
@@ -1275,12 +1290,12 @@
     ],
     [
       31,
-      77,
+      78,
       "static"
     ],
     [
       31,
-      80,
+      81,
       "static"
     ],
     [
@@ -1295,12 +1310,12 @@
     ],
     [
       32,
-      77,
+      78,
       "static"
     ],
     [
       32,
-      80,
+      81,
       "static"
     ],
     [
@@ -1315,12 +1330,12 @@
     ],
     [
       33,
-      77,
+      78,
       "static"
     ],
     [
       33,
-      80,
+      81,
       "static"
     ],
     [
@@ -1335,17 +1350,12 @@
     ],
     [
       34,
-      77,
+      78,
       "static"
     ],
     [
       34,
-      80,
-      "static"
-    ],
-    [
-      34,
-      86,
+      81,
       "static"
     ],
     [
@@ -1355,7 +1365,12 @@
     ],
     [
       34,
-      89,
+      88,
+      "static"
+    ],
+    [
+      34,
+      90,
       "dynamic"
     ],
     [
@@ -1366,11 +1381,6 @@
     [
       35,
       37,
-      "static"
-    ],
-    [
-      35,
-      77,
       "static"
     ],
     [
@@ -1389,6 +1399,11 @@
       "static"
     ],
     [
+      35,
+      81,
+      "static"
+    ],
+    [
       36,
       9,
       "static"
@@ -1400,17 +1415,17 @@
     ],
     [
       36,
-      77,
+      78,
       "static"
     ],
     [
       36,
-      80,
+      81,
       "static"
     ],
     [
       37,
-      77,
+      78,
       "static"
     ],
     [
@@ -1440,7 +1455,7 @@
     ],
     [
       40,
-      80,
+      81,
       "static"
     ],
     [
@@ -1460,7 +1475,7 @@
     ],
     [
       42,
-      80,
+      81,
       "static"
     ],
     [
@@ -1480,7 +1495,7 @@
     ],
     [
       43,
-      80,
+      81,
       "static"
     ],
     [
@@ -1515,7 +1530,7 @@
     ],
     [
       45,
-      80,
+      81,
       "static"
     ],
     [
@@ -1545,12 +1560,12 @@
     ],
     [
       48,
-      79,
+      80,
       "static"
     ],
     [
       48,
-      80,
+      81,
       "static"
     ],
     [
@@ -1570,7 +1585,7 @@
     ],
     [
       49,
-      80,
+      81,
       "static"
     ],
     [
@@ -1595,7 +1610,7 @@
     ],
     [
       52,
-      80,
+      81,
       "static"
     ],
     [
@@ -1620,7 +1635,7 @@
     ],
     [
       53,
-      80,
+      81,
       "static"
     ],
     [
@@ -1635,7 +1650,7 @@
     ],
     [
       54,
-      80,
+      81,
       "static"
     ],
     [
@@ -1644,26 +1659,11 @@
       "static"
     ],
     [
-      56,
+      57,
       22,
       "dynamic"
     ],
     [
-      56,
-      25,
-      "static"
-    ],
-    [
-      56,
-      26,
-      "static"
-    ],
-    [
-      56,
-      80,
-      "static"
-    ],
-    [
       57,
       25,
       "static"
@@ -1675,137 +1675,127 @@
     ],
     [
       57,
-      59,
+      81,
+      "static"
+    ],
+    [
+      58,
+      25,
+      "static"
+    ],
+    [
+      58,
+      26,
+      "static"
+    ],
+    [
+      58,
+      60,
       "dynamic"
     ],
     [
-      57,
-      80,
+      58,
+      81,
       "static"
     ],
     [
-      59,
+      60,
       9,
       "static"
     ],
     [
-      59,
+      60,
       25,
       "static"
     ],
     [
-      59,
+      60,
       28,
       "static"
     ],
     [
-      59,
+      60,
       29,
       "static"
     ],
     [
+      60,
       59,
-      58,
-      "static"
-    ],
-    [
-      59,
-      80,
       "static"
     ],
     [
       60,
+      81,
+      "static"
+    ],
+    [
+      61,
       25,
       "static"
     ],
     [
-      60,
+      61,
       26,
       "static"
     ],
     [
-      60,
-      85,
+      61,
+      86,
       "dynamic"
     ],
     [
-      61,
+      62,
       17,
       "static"
     ],
     [
-      61,
+      62,
       25,
       "static"
     ],
     [
-      61,
+      62,
       26,
       "static"
     ],
     [
-      61,
-      63,
+      62,
+      64,
       "dynamic"
     ],
     [
-      61,
-      79,
+      62,
+      80,
       "static"
     ],
     [
-      63,
+      64,
       9,
       "static"
     ],
     [
-      63,
+      64,
       17,
       "static"
     ],
     [
-      63,
+      64,
       25,
       "static"
     ],
     [
-      63,
+      64,
       29,
       "static"
     ],
     [
-      63,
+      64,
       30,
       "static"
     ],
     [
-      63,
-      62,
-      "static"
-    ],
-    [
-      63,
       64,
-      "static"
-    ],
-    [
       63,
-      65,
-      "static"
-    ],
-    [
-      63,
-      77,
-      "static"
-    ],
-    [
-      63,
-      79,
-      "static"
-    ],
-    [
-      63,
-      80,
       "static"
     ],
     [
@@ -1819,376 +1809,386 @@
       "static"
     ],
     [
-      65,
-      75,
+      64,
+      78,
       "static"
     ],
     [
-      67,
-      25,
-      "static"
-    ],
-    [
-      67,
-      26,
-      "static"
-    ],
-    [
-      67,
-      70,
-      "dynamic"
-    ],
-    [
-      67,
+      64,
       80,
       "static"
     ],
     [
-      68,
-      69,
-      "static"
-    ],
-    [
-      69,
+      64,
       81,
       "static"
     ],
     [
+      65,
+      66,
+      "static"
+    ],
+    [
+      65,
+      67,
+      "static"
+    ],
+    [
+      66,
+      76,
+      "static"
+    ],
+    [
+      68,
+      25,
+      "static"
+    ],
+    [
+      68,
+      26,
+      "static"
+    ],
+    [
+      68,
+      71,
+      "dynamic"
+    ],
+    [
+      68,
+      81,
+      "static"
+    ],
+    [
+      69,
       70,
-      9,
       "static"
     ],
     [
       70,
+      82,
+      "static"
+    ],
+    [
+      71,
+      9,
+      "static"
+    ],
+    [
+      71,
       17,
       "static"
     ],
     [
-      70,
+      71,
       25,
       "static"
     ],
     [
-      70,
+      71,
       29,
       "static"
     ],
     [
-      70,
-      68,
-      "static"
-    ],
-    [
-      70,
+      71,
       69,
       "static"
     ],
     [
-      70,
       71,
-      "static"
-    ],
-    [
       70,
-      77,
-      "static"
-    ],
-    [
-      70,
-      80,
       "static"
     ],
     [
       71,
+      72,
+      "static"
+    ],
+    [
+      71,
+      78,
+      "static"
+    ],
+    [
+      71,
+      81,
+      "static"
+    ],
+    [
+      72,
       9,
       "static"
     ],
     [
-      71,
-      69,
+      72,
+      70,
       "static"
     ],
     [
-      72,
+      73,
       25,
       "static"
     ],
     [
-      72,
+      73,
       26,
       "static"
     ],
     [
-      72,
-      74,
+      73,
+      75,
       "dynamic"
     ],
     [
-      72,
-      80,
+      73,
+      81,
       "static"
     ],
     [
-      74,
+      75,
       9,
       "static"
     ],
     [
-      74,
+      75,
       25,
       "static"
     ],
     [
-      74,
+      75,
       29,
       "static"
     ],
     [
+      75,
       74,
-      73,
       "static"
     ],
     [
-      74,
-      79,
-      "static"
-    ],
-    [
-      74,
+      75,
       80,
       "static"
     ],
     [
-      76,
+      75,
+      81,
+      "static"
+    ],
+    [
+      77,
       24,
       "implicit"
     ],
     [
-      80,
-      77,
+      81,
+      78,
       "static"
     ],
     [
-      82,
+      83,
       9,
       "static"
     ],
     [
-      82,
+      83,
       10,
       "federated"
     ],
     [
-      82,
+      83,
       12,
       "federated"
     ],
     [
-      82,
+      83,
       14,
       "federated"
     ],
     [
-      82,
+      83,
       25,
       "static"
     ],
     [
-      82,
+      83,
       26,
       "static"
     ],
     [
-      82,
+      83,
       27,
       "static"
     ],
     [
-      82,
+      83,
       31,
       "dynamic"
     ],
     [
-      82,
+      83,
       32,
       "dynamic"
     ],
     [
-      82,
+      83,
       33,
       "dynamic"
     ],
     [
-      82,
+      83,
       34,
       "dynamic"
     ],
     [
-      82,
+      83,
       35,
       "dynamic"
     ],
     [
-      82,
+      83,
       36,
       "dynamic"
     ],
     [
-      82,
+      83,
       40,
       "dynamic"
     ],
     [
-      82,
+      83,
       42,
       "dynamic"
     ],
     [
-      82,
+      83,
       43,
       "federated"
     ],
     [
-      82,
+      83,
       46,
       "federated"
     ],
     [
-      82,
-      56,
-      "federated"
-    ],
-    [
-      82,
+      83,
       57,
       "federated"
     ],
     [
-      82,
-      60,
+      83,
+      58,
       "federated"
     ],
     [
-      82,
+      83,
       61,
       "federated"
     ],
     [
-      82,
-      67,
+      83,
+      62,
       "federated"
     ],
     [
-      82,
-      72,
+      83,
+      68,
       "federated"
     ],
     [
-      82,
-      77,
-      "static"
+      83,
+      73,
+      "federated"
     ],
     [
-      82,
-      80,
+      83,
+      78,
       "static"
     ],
     [
       83,
+      81,
+      "static"
+    ],
+    [
+      84,
       14,
       "implicit"
     ],
     [
-      83,
+      84,
       43,
       "implicit"
     ],
     [
-      83,
-      56,
-      "implicit"
-    ],
-    [
-      83,
+      84,
       57,
       "implicit"
     ],
     [
-      83,
-      61,
+      84,
+      58,
       "implicit"
     ],
     [
-      83,
-      67,
+      84,
+      62,
       "implicit"
     ],
     [
-      83,
-      72,
+      84,
+      68,
       "implicit"
     ],
     [
-      83,
-      77,
+      84,
+      73,
+      "implicit"
+    ],
+    [
+      84,
+      78,
       "static"
     ],
     [
+      84,
       83,
-      82,
       "implicit"
     ],
     [
-      85,
+      86,
       9,
       "static"
     ],
     [
-      85,
+      86,
       25,
       "static"
     ],
     [
-      85,
-      80,
-      "static"
-    ],
-    [
-      85,
-      84,
+      86,
+      81,
       "static"
     ],
     [
       86,
+      85,
+      "static"
+    ],
+    [
       87,
-      "static"
-    ],
-    [
-      86,
       88,
       "static"
     ],
     [
-      86,
+      87,
       89,
+      "static"
+    ],
+    [
+      87,
+      90,
       "dynamic"
     ],
     [
-      89,
-      8,
-      "static"
-    ],
-    [
-      89,
-      87,
-      "static"
-    ],
-    [
-      89,
-      88,
-      "static"
-    ],
-    [
       90,
       8,
       "static"
@@ -2196,6 +2196,21 @@
     [
       90,
       88,
+      "static"
+    ],
+    [
+      90,
+      89,
+      "static"
+    ],
+    [
+      91,
+      8,
+      "static"
+    ],
+    [
+      91,
+      89,
       "static"
     ]
   ]

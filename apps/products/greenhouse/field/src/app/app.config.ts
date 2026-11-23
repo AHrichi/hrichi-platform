@@ -6,6 +6,8 @@ import {
 import { provideRouter, withComponentInputBinding } from '@angular/router';
 import { provideServiceWorker } from '@angular/service-worker';
 import { provideAppMode } from '@ah/platform/app-mode';
+import { provideGreenhouseBrand } from '@ah/products/greenhouse/ui';
+import { brand } from '../brand/brand';
 import {
   FIELD_ROUTES,
   GREENHOUSE_SUPABASE,
@@ -15,6 +17,8 @@ import { environment } from '../environments/environment';
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZonelessChangeDetection(),
+    // The neutral brand, or a private brand pack in a branded build.
+    provideGreenhouseBrand(brand),
     provideRouter(FIELD_ROUTES, withComponentInputBinding()),
     // With a Supabase project: supervisors sign in and send to it.
     // Without one (the demo build): the sample farm and a pretend server.

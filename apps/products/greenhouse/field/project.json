@@ -25,6 +25,7 @@
           "node_modules/@fontsource-variable/inter/index.css",
           "libs/design-system/tokens/src/generated/tokens.css",
           "libs/design-system/ui/src/styles/index.scss",
+          "libs/products/greenhouse/ui/src/styles/greenhouse.scss",
           "apps/products/greenhouse/field/src/styles.scss"
         ]
       },
@@ -99,6 +100,134 @@
               "with": "apps/products/greenhouse/field/src/environments/environment.local.ts"
             }
           ]
+        },
+        "brand-demo": {
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "600kb",
+              "maximumError": "1mb"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "8kb",
+              "maximumError": "16kb"
+            }
+          ],
+          "outputHashing": "all",
+          "serviceWorker": "apps/products/greenhouse/field/ngsw-config.json",
+          "fileReplacements": [
+            {
+              "replace": "apps/products/greenhouse/field/src/brand/brand.ts",
+              "with": "apps/products/greenhouse/brands/active/brand.ts"
+            }
+          ],
+          "styles": [
+            "node_modules/@fontsource-variable/inter/index.css",
+            "libs/design-system/tokens/src/generated/tokens.css",
+            "libs/design-system/ui/src/styles/index.scss",
+            "libs/products/greenhouse/ui/src/styles/greenhouse.scss",
+            "apps/products/greenhouse/field/src/styles.scss",
+            "apps/products/greenhouse/brands/active/brand.css"
+          ],
+          "assets": [
+            {
+              "glob": "**/*",
+              "input": "apps/products/greenhouse/field/public"
+            },
+            {
+              "glob": "**/*",
+              "input": "apps/products/greenhouse/brands/active/public"
+            }
+          ]
+        },
+        "brand-local": {
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "600kb",
+              "maximumError": "1mb"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "8kb",
+              "maximumError": "16kb"
+            }
+          ],
+          "outputHashing": "all",
+          "serviceWorker": "apps/products/greenhouse/field/ngsw-config.json",
+          "fileReplacements": [
+            {
+              "replace": "apps/products/greenhouse/field/src/environments/environment.ts",
+              "with": "apps/products/greenhouse/field/src/environments/environment.local.ts"
+            },
+            {
+              "replace": "apps/products/greenhouse/field/src/brand/brand.ts",
+              "with": "apps/products/greenhouse/brands/active/brand.ts"
+            }
+          ],
+          "styles": [
+            "node_modules/@fontsource-variable/inter/index.css",
+            "libs/design-system/tokens/src/generated/tokens.css",
+            "libs/design-system/ui/src/styles/index.scss",
+            "libs/products/greenhouse/ui/src/styles/greenhouse.scss",
+            "apps/products/greenhouse/field/src/styles.scss",
+            "apps/products/greenhouse/brands/active/brand.css"
+          ],
+          "assets": [
+            {
+              "glob": "**/*",
+              "input": "apps/products/greenhouse/field/public"
+            },
+            {
+              "glob": "**/*",
+              "input": "apps/products/greenhouse/brands/active/public"
+            }
+          ]
+        },
+        "brand-production": {
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "600kb",
+              "maximumError": "1mb"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "8kb",
+              "maximumError": "16kb"
+            }
+          ],
+          "outputHashing": "all",
+          "serviceWorker": "apps/products/greenhouse/field/ngsw-config.json",
+          "fileReplacements": [
+            {
+              "replace": "apps/products/greenhouse/field/src/environments/environment.ts",
+              "with": "apps/products/greenhouse/field/src/environments/environment.production.ts"
+            },
+            {
+              "replace": "apps/products/greenhouse/field/src/brand/brand.ts",
+              "with": "apps/products/greenhouse/brands/active/brand.ts"
+            }
+          ],
+          "styles": [
+            "node_modules/@fontsource-variable/inter/index.css",
+            "libs/design-system/tokens/src/generated/tokens.css",
+            "libs/design-system/ui/src/styles/index.scss",
+            "libs/products/greenhouse/ui/src/styles/greenhouse.scss",
+            "apps/products/greenhouse/field/src/styles.scss",
+            "apps/products/greenhouse/brands/active/brand.css"
+          ],
+          "assets": [
+            {
+              "glob": "**/*",
+              "input": "apps/products/greenhouse/field/public"
+            },
+            {
+              "glob": "**/*",
+              "input": "apps/products/greenhouse/brands/active/public"
+            }
+          ]
         }
       }
     },
@@ -121,6 +250,9 @@
         },
         "local": {
           "buildTarget": "product-greenhouse-field:build:local"
+        },
+        "brand-demo": {
+          "buildTarget": "product-greenhouse-field:build:brand-demo"
         }
       }
     },

@@ -295,6 +295,28 @@ export type SemanticToken = keyof typeof lightTheme;
 
 /** Opt-in looks, applied with data-look="<name>"; each overrides tokens in both themes. */
 export const looks = {
+  "greenhouse": {
+    "light": {
+      "color-accent-default": "#166534",
+      "color-accent-hover": "#14532d",
+      "color-accent-subtle": "#ecfdf5",
+      "color-accent-on": "#ffffff",
+      "color-accent-solid": "#166534",
+      "color-accent-solid-hover": "#14532d",
+      "color-accent-on-solid": "#ffffff",
+      "color-focus-ring": "#0369a1"
+    },
+    "dark": {
+      "color-accent-default": "#4ade80",
+      "color-accent-hover": "#86efac",
+      "color-accent-subtle": "#052e16",
+      "color-accent-on": "#0f0f12",
+      "color-accent-solid": "#166534",
+      "color-accent-solid-hover": "#15803d",
+      "color-accent-on-solid": "#ffffff",
+      "color-focus-ring": "#93c5fd"
+    }
+  },
   "paper": {
     "light": {
       "color-bg-canvas": "#f2eadd",

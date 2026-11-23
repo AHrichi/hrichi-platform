@@ -5,6 +5,7 @@ import {
   inject,
   signal,
 } from '@angular/core';
+import { GhButton } from '@ah/products/greenhouse/ui';
 import type { SignInError } from '../../auth/sign-in-error';
 import { FieldI18n } from '../../i18n/field-i18n';
 import { FieldStore } from '../../store/field.store';
@@ -15,6 +16,7 @@ import { FieldStore } from '../../store/field.store';
  */
 @Component({
   selector: 'gh-sign-in-screen',
+  imports: [GhButton],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './sign-in-screen.html',
   styleUrl: './sign-in-screen.scss',

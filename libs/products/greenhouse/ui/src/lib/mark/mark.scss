@@ -1,0 +1,22 @@
+:host {
+  display: inline-block;
+  inline-size: 2rem;
+  block-size: 2rem;
+}
+svg {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+}
+.house {
+  fill: currentcolor;
+  opacity: 0.18;
+  stroke: currentcolor;
+  stroke-width: 1.5;
+}
+.ribs {
+  fill: none;
+  stroke: currentcolor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+}

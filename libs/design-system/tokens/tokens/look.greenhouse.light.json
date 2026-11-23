@@ -1,0 +1,33 @@
+{
+  "color": {
+    "$type": "color",
+    "accent": {
+      "default": {
+        "$value": "{color.green.700}"
+      },
+      "hover": {
+        "$value": "{color.green.800}"
+      },
+      "subtle": {
+        "$value": "{color.green.50}"
+      },
+      "on": {
+        "$value": "{color.neutral.0}"
+      },
+      "solid": {
+        "$value": "{color.green.700}"
+      },
+      "solid-hover": {
+        "$value": "{color.green.800}"
+      },
+      "on-solid": {
+        "$value": "{color.neutral.0}"
+      }
+    },
+    "focus": {
+      "ring": {
+        "$value": "{color.blue.700}"
+      }
+    }
+  }
+}

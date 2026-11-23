@@ -9,6 +9,7 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
+import { GhButton } from '../button/button';
 
 /** The Shape Detection API, where the browser has it (Chrome on Android). */
 interface DetectedBarcode {
@@ -45,11 +46,12 @@ const SCAN_EVERY_MS = 250;
  */
 @Component({
   selector: 'gh-badge-scanner',
+  imports: [GhButton],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './badge-scanner.html',
   styleUrl: './badge-scanner.scss',
 })
-export class BadgeScanner {
+export class GhBadgeScanner {
   readonly scanLabel = input.required<string>();
   readonly stopLabel = input.required<string>();
   readonly hint = input.required<string>();

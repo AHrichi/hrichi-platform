@@ -328,6 +328,43 @@
     color-scheme: light;
   }
 
+  [data-look='greenhouse'] {
+    --color-accent-default: var(--color-green-700);
+    --color-accent-hover: var(--color-green-800);
+    --color-accent-subtle: var(--color-green-50);
+    --color-accent-on: var(--color-neutral-0);
+    --color-accent-solid: var(--color-green-700);
+    --color-accent-solid-hover: var(--color-green-800);
+    --color-accent-on-solid: var(--color-neutral-0);
+    --color-focus-ring: var(--color-blue-700);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme='light'])[data-look='greenhouse'],
+    :root:not([data-theme='light']) [data-look='greenhouse'] {
+      --color-accent-default: var(--color-green-400);
+      --color-accent-hover: var(--color-green-300);
+      --color-accent-subtle: var(--color-green-950);
+      --color-accent-on: var(--color-neutral-950);
+      --color-accent-solid: var(--color-green-700);
+      --color-accent-solid-hover: var(--color-green-600);
+      --color-accent-on-solid: var(--color-neutral-0);
+      --color-focus-ring: var(--color-blue-300);
+    }
+  }
+
+  :root[data-theme='dark'][data-look='greenhouse'],
+  :root[data-theme='dark'] [data-look='greenhouse'] {
+    --color-accent-default: var(--color-green-400);
+    --color-accent-hover: var(--color-green-300);
+    --color-accent-subtle: var(--color-green-950);
+    --color-accent-on: var(--color-neutral-950);
+    --color-accent-solid: var(--color-green-700);
+    --color-accent-solid-hover: var(--color-green-600);
+    --color-accent-on-solid: var(--color-neutral-0);
+    --color-focus-ring: var(--color-blue-300);
+  }
+
   [data-look='paper'] {
     --color-bg-canvas: var(--color-paper-200);
     --color-bg-surface: var(--color-paper-100);

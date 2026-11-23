@@ -1,5 +1,5 @@
 <form
-  class="card"
+  class="gh-card card"
   aria-labelledby="gh-sign-in-title"
   (submit)="$event.preventDefault(); submit(emailBox.value, passwordBox.value)"
 >
@@ -12,11 +12,11 @@
     }
   </p>
 
-  <label class="label" for="gh-email">{{ t().auth.email }}</label>
+  <label class="gh-label" for="gh-email">{{ t().auth.email }}</label>
   <input
     #emailBox
     id="gh-email"
-    class="field"
+    class="gh-input"
     type="email"
     name="email"
     autocomplete="username"
@@ -27,11 +27,11 @@
     [readOnly]="lockedEmail() !== null"
   />
 
-  <label class="label" for="gh-password">{{ t().auth.password }}</label>
+  <label class="gh-label" for="gh-password">{{ t().auth.password }}</label>
   <input
     #passwordBox
     id="gh-password"
-    class="field"
+    class="gh-input"
     type="password"
     name="password"
     autocomplete="current-password"
@@ -41,10 +41,10 @@
   />
 
   @if (errorText(); as message) {
-    <p id="gh-sign-in-error" class="error" role="alert">{{ message }}</p>
+    <p id="gh-sign-in-error" class="gh-error" role="alert">{{ message }}</p>
   }
 
-  <button type="submit" class="submit" [disabled]="busy()">
+  <button type="submit" ghButton size="field" block [disabled]="busy()">
     {{ busy() ? t().auth.busy : t().auth.submit }}
   </button>
 </form>

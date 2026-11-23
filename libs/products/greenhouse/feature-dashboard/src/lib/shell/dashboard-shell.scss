@@ -6,83 +6,11 @@
 }
 
 .dashboard {
+  display: grid;
+  gap: var(--space-4);
   max-inline-size: 80rem;
   margin-inline: auto;
   padding: var(--space-4);
-  display: grid;
-  gap: var(--space-4);
-}
-
-.bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-3);
-}
-
-.brand {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-3);
-}
-
-.logo {
-  inline-size: 2.5rem;
-  block-size: 2.5rem;
-
-  .tile {
-    fill: var(--color-green-700);
-  }
-
-  .house {
-    fill: var(--color-green-100);
-  }
-
-  .ribs {
-    fill: none;
-    stroke: var(--color-green-700);
-    stroke-width: 1.5;
-  }
-}
-
-.brand-text {
-  display: grid;
-
-  strong {
-    font-size: var(--font-size-400);
-  }
-
-  small {
-    color: var(--color-text-muted);
-  }
-}
-
-.langs {
-  display: inline-flex;
-  border: var(--border-width-hairline) solid var(--color-border-control);
-  border-radius: var(--radius-pill);
-  overflow: hidden;
-
-  button {
-    min-inline-size: var(--control-height-md);
-    min-block-size: var(--control-height-md);
-    border: 0;
-    background: transparent;
-    color: var(--color-text-default);
-    font: inherit;
-    font-weight: var(--font-weight-semibold);
-    cursor: pointer;
-
-    &[aria-pressed='true'] {
-      background: var(--color-accent-solid);
-      color: var(--color-accent-on-solid);
-    }
-
-    &:focus-visible {
-      outline: var(--focus-ring-width) solid var(--color-focus-ring);
-      outline-offset: calc(var(--focus-ring-width) * -1);
-    }
-  }
 }
 
 .demo {
@@ -94,7 +22,7 @@
 }
 
 @media print {
-  .langs,
+  gh-app-bar,
   .demo {
     display: none;
   }

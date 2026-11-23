@@ -1,0 +1,135 @@
+// The Greenhouse UI kit's shared classes (ADR-0026). Apps load this once,
+// after @ah/ui's styles; components use it through `ghButton` and the
+// `gh-card` / `gh-input` classes. Colours come from the greenhouse look
+// (`data-look="greenhouse"`) and, in a branded build, the brand pack.
+//
+// Sizes: `md` follows the design system (control.height.lg, 48px); `field`
+// is one step up (64px) for gloves, wet hands and sun glare.
+
+@layer components {
+  .gh-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    min-block-size: var(--control-height-lg);
+    padding-inline: var(--space-4);
+    border: var(--border-width-strong) solid transparent;
+    border-radius: var(--radius-md);
+    background: transparent;
+    color: var(--color-text-default);
+    font: inherit;
+    font-weight: var(--font-weight-bold);
+    line-height: var(--font-line-height-tight);
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    touch-action: manipulation;
+    transition:
+      background-color var(--motion-duration-fast) var(--motion-easing-standard),
+      border-color var(--motion-duration-fast) var(--motion-easing-standard);
+
+    &:focus-visible {
+      outline: var(--focus-ring-width) solid var(--color-focus-ring);
+      outline-offset: var(--focus-ring-offset);
+    }
+
+    &:disabled,
+    &[aria-disabled='true'] {
+      opacity: var(--opacity-disabled);
+      cursor: not-allowed;
+    }
+  }
+
+  .gh-button--primary {
+    background: var(--color-accent-solid);
+    color: var(--color-accent-on-solid);
+
+    &:hover:not(:disabled) {
+      background: var(--color-accent-solid-hover);
+    }
+  }
+
+  .gh-button--secondary {
+    border-color: var(--color-border-strong);
+    background: var(--color-bg-raised);
+
+    &:hover:not(:disabled) {
+      border-color: var(--color-accent-default);
+    }
+  }
+
+  .gh-button--danger {
+    border-color: var(--color-danger-default);
+    color: var(--color-danger-default);
+
+    &:hover:not(:disabled) {
+      background: var(--color-danger-subtle);
+    }
+  }
+
+  .gh-button--ghost {
+    color: var(--color-accent-default);
+
+    &:hover:not(:disabled) {
+      background: var(--color-accent-subtle);
+    }
+  }
+
+  .gh-button--field {
+    min-block-size: calc(var(--control-height-lg) + var(--space-4));
+    padding-inline: var(--space-5);
+    font-size: var(--font-size-400);
+  }
+
+  .gh-button--block {
+    inline-size: 100%;
+  }
+
+  .gh-card {
+    display: grid;
+    gap: var(--space-4);
+    padding: var(--space-4);
+    border: var(--border-width-hairline) solid var(--color-border-default);
+    border-radius: var(--radius-lg);
+    background: var(--color-bg-surface);
+  }
+
+  .gh-label {
+    display: block;
+    margin-block-end: var(--space-2);
+    color: var(--color-text-default);
+    font-weight: var(--font-weight-semibold);
+  }
+
+  .gh-input {
+    inline-size: 100%;
+    min-block-size: calc(var(--control-height-lg) + var(--space-4));
+    padding-inline: var(--space-3);
+    border: var(--border-width-strong) solid var(--color-border-control);
+    border-radius: var(--radius-md);
+    background: var(--color-bg-raised);
+    color: var(--color-text-default);
+    font: inherit;
+    font-size: var(--font-size-400);
+
+    &:focus-visible {
+      outline: var(--focus-ring-width) solid var(--color-focus-ring);
+      outline-offset: var(--focus-ring-offset);
+    }
+
+    &[aria-invalid='true'] {
+      border-color: var(--color-danger-default);
+    }
+
+    &:read-only {
+      color: var(--color-text-muted);
+    }
+  }
+
+  .gh-error {
+    margin: var(--space-2) 0 0;
+    color: var(--color-danger-default);
+    font-weight: var(--font-weight-semibold);
+  }
+}

@@ -7,6 +7,7 @@ import {
   signal,
 } from '@angular/core';
 import { AhMetricCard } from '@ah/ui';
+import { GhButton } from '@ah/products/greenhouse/ui';
 import {
   addDays,
   isWeekStart,
@@ -29,7 +30,7 @@ const DEFAULT_HOURS = 8;
  */
 @Component({
   selector: 'gh-plan-screen',
-  imports: [AhMetricCard],
+  imports: [AhMetricCard, GhButton],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './plan-screen.html',
   styleUrl: './plan-screen.scss',

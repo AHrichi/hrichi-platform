@@ -1,0 +1,32 @@
+:host {
+  display: inline-block;
+}
+
+.langs {
+  display: inline-flex;
+  border: var(--border-width-hairline) solid var(--color-accent-on-solid);
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+}
+
+button {
+  min-inline-size: var(--control-height-lg);
+  min-block-size: var(--control-height-lg);
+  padding-inline: var(--space-2);
+  border: 0;
+  background: transparent;
+  color: var(--color-accent-on-solid);
+  font: inherit;
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+
+  &[aria-pressed='true'] {
+    background: var(--color-accent-on-solid);
+    color: var(--color-accent-solid);
+  }
+
+  &:focus-visible {
+    outline: var(--focus-ring-width) solid var(--color-accent-on-solid);
+    outline-offset: calc(var(--focus-ring-width) * -2);
+  }
+}

@@ -1,0 +1,29 @@
+<header class="bar">
+  @if (home(); as link) {
+    <a class="identity" [routerLink]="link">
+      <ng-container [ngTemplateOutlet]="identity" />
+    </a>
+  } @else {
+    <div class="identity">
+      <ng-container [ngTemplateOutlet]="identity" />
+    </div>
+  }
+  <div class="actions">
+    <ng-content />
+  </div>
+</header>
+
+<ng-template #identity>
+  @if (brand.logo; as logo) {
+    <img class="logo" [src]="logo" [alt]="brand.logoAlt" height="32" />
+    <span class="divider" aria-hidden="true"></span>
+  } @else {
+    <gh-mark class="mark" />
+  }
+  <span class="names">
+    <strong class="product">{{ product() }}</strong>
+    @if (tagline(); as line) {
+      <small class="tagline">{{ line }}</small>
+    }
+  </span>
+</ng-template>

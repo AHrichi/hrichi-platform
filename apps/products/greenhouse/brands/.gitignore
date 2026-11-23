@@ -1,0 +1,5 @@
+# Brand packs are private: only the example pack and this folder's docs are committed.
+/*
+!/.gitignore
+!/README.md
+!/example/

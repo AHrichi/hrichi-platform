@@ -2,12 +2,18 @@
   <div class="viewer">
     <video #video class="video" muted playsinline></video>
     <p class="hint" role="status">{{ hint() }}</p>
-    <button type="button" class="action secondary" (click)="stop()">
+    <button
+      type="button"
+      ghButton="secondary"
+      size="field"
+      block
+      (click)="stop()"
+    >
       {{ stopLabel() }}
     </button>
   </div>
 } @else {
-  <button type="button" class="action primary" (click)="start()">
+  <button type="button" ghButton size="field" block (click)="start()">
     <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
       <path
         d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3"

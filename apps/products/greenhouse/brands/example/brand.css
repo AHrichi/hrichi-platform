@@ -1,0 +1,33 @@
+/*
+ * Example Farms: a teal accent over the greenhouse look. Unlayered, so it
+ * wins over the look's tokens; dark mode repeats the look's selectors.
+ */
+[data-brand='example'] {
+  --color-accent-default: #0f6e66;
+  --color-accent-hover: #0b5751;
+  --color-accent-subtle: #e6f4f2;
+  --color-accent-on: #ffffff;
+  --color-accent-solid: #0f6e66;
+  --color-accent-solid-hover: #0b5751;
+  --color-accent-on-solid: #ffffff;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) [data-brand='example'] {
+    --color-accent-default: #5cc8bc;
+    --color-accent-hover: #86d8cf;
+    --color-accent-subtle: #0b2a27;
+    --color-accent-on: #04201d;
+    --color-accent-solid: #0f6e66;
+    --color-accent-solid-hover: #138a80;
+  }
+}
+
+:root[data-theme='dark'] [data-brand='example'] {
+  --color-accent-default: #5cc8bc;
+  --color-accent-hover: #86d8cf;
+  --color-accent-subtle: #0b2a27;
+  --color-accent-on: #04201d;
+  --color-accent-solid: #0f6e66;
+  --color-accent-solid-hover: #138a80;
+}
