@@ -23,6 +23,7 @@ import { FarmStore } from '../store/farm.store';
 const SECTIONS = [
   'plan',
   'performance',
+  'hygiene',
   'absences',
   'workers',
   'teams',

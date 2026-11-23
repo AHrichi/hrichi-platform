@@ -21,6 +21,11 @@ export const GREENHOUSE_DASHBOARD_ROUTES: Routes = [
           ),
       },
       {
+        path: 'hygiene',
+        loadComponent: () =>
+          import('./hygiene/hygiene-screen').then((m) => m.HygieneScreen),
+      },
+      {
         path: 'absences',
         loadComponent: () =>
           import('./absences/absences-screen').then((m) => m.AbsencesScreen),

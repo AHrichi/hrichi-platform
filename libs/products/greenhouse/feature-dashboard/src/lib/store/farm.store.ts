@@ -10,6 +10,7 @@ import {
 import {
   DemoFarmRemote,
   type FarmAccess,
+  type FarmHygiene,
   type FarmPerformance,
   type FarmRemote,
   type FarmSetup,
@@ -25,10 +26,13 @@ import {
   type Absence,
   addDays,
   type Greenhouse,
+  type HygieneItem,
   type IsoDate,
   lastWeeks,
+  newId,
   type PlanEntry,
   type Role,
+  STANDARD_HYGIENE_ITEMS,
   startOfWeek,
   type Team,
   targetFor,
@@ -72,6 +76,10 @@ interface FarmState {
   performanceWeeks: number;
   /** Those weeks' totals; null until the screen asks for them. */
   performance: FarmPerformance | null;
+  /** The day the hygiene screen shows. */
+  hygieneDate: IsoDate;
+  /** That day's checks and the checklist; null until asked for. */
+  hygiene: FarmHygiene | null;
 }
 
 /** The performance screen opens on two months. */
@@ -112,6 +120,8 @@ export const FarmStore = signalStore(
     pending: 0,
     performanceWeeks: DEFAULT_PERFORMANCE_WEEKS,
     performance: null,
+    hygieneDate: todayOnFarm(),
+    hygiene: null,
   }),
   withProps(() => {
     const auth = inject(DashboardAuth);
@@ -141,6 +151,7 @@ export const FarmStore = signalStore(
     let remote: FarmRemote | null = null;
     let weekRequest = 0;
     let performanceRequest = 0;
+    let hygieneRequest = 0;
     let started: Promise<void> | null = null;
 
     const fail = (error: unknown): void =>
@@ -183,12 +194,26 @@ export const FarmStore = signalStore(
       if (request === performanceRequest) patchState(store, { performance });
     }
 
+    async function loadHygiene(): Promise<void> {
+      const id = farmId();
+      if (!remote || !id) return;
+      const request = ++hygieneRequest;
+      const hygiene = await remote.loadHygiene(id, store.hygieneDate());
+      if (request === hygieneRequest) patchState(store, { hygiene });
+    }
+
+    const patchHygiene = (change: (h: FarmHygiene) => FarmHygiene): void => {
+      const hygiene = store.hygiene();
+      if (hygiene) patchState(store, { hygiene: change(hygiene) });
+    };
+
     /** Reloads what is on screen in place, without the loading screen. */
     async function refresh(): Promise<void> {
       await Promise.all([
         refreshSetup(),
         loadWeek().catch(fail),
         store.performance() ? loadPerformance().catch(fail) : undefined,
+        store.hygiene() ? loadHygiene().catch(fail) : undefined,
       ]);
     }
 
@@ -226,7 +251,12 @@ export const FarmStore = signalStore(
 
     async function openFarm(access: FarmAccess): Promise<void> {
       if (!remote) return;
-      patchState(store, { access, phase: 'loading', performance: null });
+      patchState(store, {
+        access,
+        phase: 'loading',
+        performance: null,
+        hygiene: null,
+      });
       try {
         const [setup] = await Promise.all([
           remote.loadSetup(access.farmId),
@@ -311,6 +341,7 @@ export const FarmStore = signalStore(
           setup: EMPTY_SETUP,
           week: null,
           performance: null,
+          hygiene: null,
         });
       },
 
@@ -492,6 +523,56 @@ export const FarmStore = signalStore(
           ),
         }));
         return write((r, farm) => r.saveTarget(farm, target));
+      },
+
+      // Hygiene ---------------------------------------------------------------
+
+      /** Loads a day's checks (and the checklist). */
+      async showHygiene(date: IsoDate = store.hygieneDate()): Promise<void> {
+        patchState(store, { hygieneDate: date });
+        try {
+          await loadHygiene();
+        } catch (error) {
+          fail(error);
+        }
+      },
+
+      saveHygieneItem(item: HygieneItem): Promise<boolean> {
+        patchHygiene((h) => ({
+          ...h,
+          items: upsertById(h.items, item).sort(
+            (a, b) => a.sortOrder - b.sortOrder,
+          ),
+        }));
+        return write((r, farm) => r.saveHygieneItem(farm, item));
+      },
+
+      /** Starts an empty farm's checklist from the standard items. */
+      async addStandardChecklist(): Promise<boolean> {
+        const items = STANDARD_HYGIENE_ITEMS.map(
+          (standard, i): HygieneItem => ({
+            id: newId(),
+            label: { ...standard.label },
+            photoRequired: standard.photoRequired,
+            sortOrder: i + 1,
+            active: true,
+          }),
+        );
+        patchHygiene((h) => ({ ...h, items: [...h.items, ...items] }));
+        return write((r, farm) =>
+          Promise.all(items.map((item) => r.saveHygieneItem(farm, item))),
+        );
+      },
+
+      /** Links to the photos, by path; empty if they can't be had. */
+      async photoUrls(paths: readonly string[]): Promise<Map<string, string>> {
+        if (!remote || paths.length === 0) return new Map();
+        try {
+          return await remote.photoUrls(paths);
+        } catch (error) {
+          fail(error);
+          return new Map();
+        }
       },
 
       // People --------------------------------------------------------------

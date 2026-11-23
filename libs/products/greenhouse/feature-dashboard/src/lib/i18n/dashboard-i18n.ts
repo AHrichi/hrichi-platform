@@ -1,4 +1,5 @@
 import { computed, inject, Injectable } from '@angular/core';
+import { FARM_TIME_ZONE } from '@ah/products/greenhouse/domain';
 import { PreferencesStore, type SiteLanguage } from '@ah/shared/state';
 import { AR } from './copy.ar';
 import { type DashboardCopy, EN } from './copy.en';
@@ -81,6 +82,15 @@ export class DashboardI18n {
       minimumFractionDigits: 3,
       maximumFractionDigits: 3,
     }).format(value);
+  }
+
+  /** `08:42`, on the farm's clock. */
+  time(iso: string): string {
+    return new Intl.DateTimeFormat(this.locale(), {
+      hour: '2-digit',
+      minute: '2-digit',
+      timeZone: FARM_TIME_ZONE,
+    }).format(new Date(iso));
   }
 
   /** `Mon 23` */

@@ -1,0 +1,323 @@
+@let th = t().hygiene;
+@let tc = t().common;
+@let v = view();
+@let date = store.hygieneDate();
+
+<div class="head">
+  <div>
+    <h1 class="title">{{ th.title }}</h1>
+    <p class="intro">{{ th.intro }}</p>
+  </div>
+  <div class="day">
+    <p class="hint">{{ i18n.longDay(date) }}</p>
+    <div class="buttons" role="group" [attr.aria-label]="th.day">
+      <button type="button" ghButton="secondary" (click)="showDay(-1)">
+        <span class="flip" aria-hidden="true">‹</span> {{ th.previous }}
+      </button>
+      <button
+        type="button"
+        ghButton="secondary"
+        [disabled]="date === today"
+        (click)="showToday()"
+      >
+        {{ th.today }}
+      </button>
+      <button
+        type="button"
+        ghButton="secondary"
+        [disabled]="date >= today"
+        (click)="showDay(1)"
+      >
+        {{ th.next }} <span class="flip" aria-hidden="true">›</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+@if (!v) {
+  <p class="hint" role="status">{{ t().app.loading }}</p>
+} @else {
+  <div class="kpis">
+    <ah-metric-card
+      [label]="th.signed"
+      [value]="i18n.fill(th.ofTotal, { n: v.signed, total: v.rows.length })"
+      [variant]="v.signed === v.rows.length ? 'success' : 'default'"
+    />
+    <ah-metric-card
+      [label]="th.open"
+      [value]="i18n.num(v.open)"
+      [variant]="v.open > 0 ? 'warning' : 'default'"
+    />
+    <ah-metric-card
+      [label]="th.missing"
+      [value]="i18n.num(v.missing)"
+      [variant]="v.missing > 0 ? 'warning' : 'default'"
+    />
+    <ah-metric-card
+      [label]="th.failed"
+      [value]="i18n.num(v.failed)"
+      [variant]="v.failed > 0 ? 'danger' : 'success'"
+    />
+  </div>
+
+  <section aria-labelledby="gh-hyg-checks">
+    <h2 id="gh-hyg-checks" class="form-title">{{ th.checks }}</h2>
+    @if (v.rows.length === 0) {
+      <p class="empty">{{ th.noGreenhouses }}</p>
+    } @else {
+      <div
+        class="table-wrap"
+        tabindex="0"
+        role="region"
+        [attr.aria-label]="th.checks"
+      >
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">{{ t().plan.greenhouse }}</th>
+              <th scope="col">{{ th.status }}</th>
+              <th scope="col">{{ th.supervisor }}</th>
+              <th scope="col" class="num">{{ th.answered }}</th>
+              <th scope="col" class="num">{{ th.notFine }}</th>
+              <th scope="col">
+                <span class="visually-hidden">{{ tc.actions }}</span>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (row of v.rows; track row.greenhouse.id) {
+              @let isOpen = opened() === row.greenhouse.id;
+              <tr [class]="'is-' + row.status">
+                <th scope="row">{{ row.greenhouse.name }}</th>
+                <td>
+                  <span class="state">
+                    {{ th.states[row.status] }}
+                    @if (row.check?.signedAt; as signedAt) {
+                      · {{ i18n.time(signedAt) }}
+                    }
+                  </span>
+                </td>
+                <td>
+                  {{
+                    row.supervisor ?? (row.check ? th.formerMember : tc.none)
+                  }}
+                </td>
+                <td class="num">
+                  {{
+                    i18n.fill(th.ofTotal, {
+                      n: row.progress.answered,
+                      total: row.progress.total,
+                    })
+                  }}
+                </td>
+                <td class="num" [class.is-failed]="row.progress.failed > 0">
+                  {{ i18n.num(row.progress.failed) }}
+                </td>
+                <td>
+                  @if (row.check) {
+                    <button
+                      type="button"
+                      ghButton="ghost"
+                      [attr.aria-expanded]="isOpen"
+                      [attr.aria-controls]="'gh-hyg-' + row.greenhouse.id"
+                      (click)="toggle(row.greenhouse.id, row.check)"
+                    >
+                      {{ isOpen ? th.hide : th.show }}
+                    </button>
+                  }
+                </td>
+              </tr>
+              @if (isOpen && row.check) {
+                <tr class="details">
+                  <td colspan="6" [id]="'gh-hyg-' + row.greenhouse.id">
+                    <ol class="answers">
+                      @for (a of answers(row.check); track a.item.id) {
+                        <li [class.is-failed]="!a.answer.ok">
+                          <span class="verdict">
+                            <span aria-hidden="true">{{
+                              a.answer.ok ? '✓' : '✗'
+                            }}</span>
+                            {{ a.answer.ok ? th.fine : th.notFineOne }}
+                          </span>
+                          <span class="item">{{ label(a.item) }}</span>
+                          @if (a.answer.note) {
+                            <q class="note">{{ a.answer.note }}</q>
+                          }
+                          @if (a.answer.photoPaths.length > 0) {
+                            <span class="photos">
+                              @for (path of a.answer.photoPaths; track path) {
+                                @if (photoLinks().get(path); as url) {
+                                  <a
+                                    [href]="url"
+                                    target="_blank"
+                                    rel="noopener"
+                                  >
+                                    <img
+                                      [src]="url"
+                                      [alt]="th.photoOf + ' ' + label(a.item)"
+                                    />
+                                  </a>
+                                } @else {
+                                  <span class="no-photo">{{
+                                    th.photoMissing
+                                  }}</span>
+                                }
+                              }
+                            </span>
+                          }
+                        </li>
+                      }
+                    </ol>
+                  </td>
+                </tr>
+              }
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </section>
+}
+
+<section aria-labelledby="gh-hyg-items">
+  <h2 id="gh-hyg-items" class="form-title">{{ th.checklist }}</h2>
+  <p class="hint">{{ th.checklistHint }}</p>
+
+  @if (store.canEdit()) {
+    @let current = editing();
+    <form
+      #form
+      class="gh-card form"
+      novalidate
+      aria-labelledby="gh-hyg-form-title"
+      (submit)="$event.preventDefault(); save(form)"
+    >
+      <h3 id="gh-hyg-form-title" class="form-title">
+        {{ current ? th.editing : th.add }}
+      </h3>
+      @for (field of languages; track field) {
+        <div class="field">
+          <label class="gh-label" [for]="'gh-hyg-' + field">
+            {{ th.labels[field] }}
+          </label>
+          <input
+            class="gh-input"
+            maxlength="200"
+            autocomplete="off"
+            [id]="'gh-hyg-' + field"
+            [name]="field"
+            [attr.dir]="field === 'ar' ? 'rtl' : 'ltr'"
+            [attr.lang]="field"
+            [value]="current?.label?.[field] ?? ''"
+            [attr.aria-invalid]="problem(field) ? true : null"
+          />
+          @if (problem(field); as message) {
+            <p class="gh-error">{{ message }}</p>
+          }
+        </div>
+      }
+      <label class="check">
+        <input
+          type="checkbox"
+          name="photoRequired"
+          [checked]="current?.photoRequired ?? false"
+        />
+        {{ th.photoRequired }}
+      </label>
+      <div class="form-actions">
+        <button type="submit" ghButton>
+          {{ current ? tc.save : th.addSubmit }}
+        </button>
+        @if (current) {
+          <button type="button" ghButton="secondary" (click)="cancel(form)">
+            {{ tc.cancel }}
+          </button>
+        }
+      </div>
+    </form>
+  }
+
+  @if (v && items().length === 0) {
+    <div class="empty">
+      <p>{{ th.noItems }}</p>
+      @if (store.canEdit()) {
+        <button type="button" ghButton (click)="store.addStandardChecklist()">
+          {{ th.standard }}
+        </button>
+      }
+    </div>
+  } @else if (items().length > 0) {
+    <div
+      class="table-wrap"
+      tabindex="0"
+      role="region"
+      [attr.aria-label]="th.checklist"
+    >
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col" class="num">#</th>
+            <th scope="col">{{ th.item }}</th>
+            <th scope="col">{{ th.photo }}</th>
+            @if (store.canEdit()) {
+              <th scope="col">{{ tc.actions }}</th>
+            }
+          </tr>
+        </thead>
+        <tbody>
+          @for (
+            item of items();
+            track item.id;
+            let i = $index;
+            let last = $last
+          ) {
+            <tr [class.is-off]="!item.active">
+              <td class="num">{{ i + 1 }}</td>
+              <th scope="row">
+                {{ label(item) }}
+                @if (!item.active) {
+                  <small class="muted">({{ th.retired }})</small>
+                }
+              </th>
+              <td>{{ item.photoRequired ? th.photoYes : tc.none }}</td>
+              @if (store.canEdit()) {
+                <td>
+                  <div class="row-actions">
+                    <button
+                      type="button"
+                      ghButton="ghost"
+                      [disabled]="i === 0"
+                      [attr.aria-label]="th.up + ': ' + label(item)"
+                      (click)="move(item, -1)"
+                    >
+                      ↑
+                    </button>
+                    <button
+                      type="button"
+                      ghButton="ghost"
+                      [disabled]="last"
+                      [attr.aria-label]="th.down + ': ' + label(item)"
+                      (click)="move(item, 1)"
+                    >
+                      ↓
+                    </button>
+                    <button type="button" ghButton="ghost" (click)="edit(item)">
+                      {{ tc.edit }}
+                    </button>
+                    <button
+                      type="button"
+                      ghButton="ghost"
+                      (click)="setActive(item, !item.active)"
+                    >
+                      {{ item.active ? th.retire : th.restore }}
+                    </button>
+                  </div>
+                </td>
+              }
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>
