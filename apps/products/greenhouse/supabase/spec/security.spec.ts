@@ -63,8 +63,8 @@ beforeAll(async () => {
       ('${GH_A}', '${FARM_A}', 'Serre 1', 10000, 'tomato', 12),
       ('${GH_B}', '${FARM_B}', 'Serre 1', 10000, 'pepper', 10);
     insert into public.team (id, farm_id, name, supervisor_id) values
-      ('${TEAM_A}', '${FARM_A}', 'Équipe A', '${SUPERVISOR_A}'),
-      ('${TEAM_B}', '${FARM_B}', 'Équipe B', null);
+      ('${TEAM_A}', '${FARM_A}', 'Ã‰quipe A', '${SUPERVISOR_A}'),
+      ('${TEAM_B}', '${FARM_B}', 'Ã‰quipe B', null);
     insert into public.worker (id, farm_id, full_name, team_id, badge_code) values
       ('${WORKER_A}', '${FARM_A}', 'Amira Gharbi', '${TEAM_A}', 'GH-0001'),
       ('${WORKER_B}', '${FARM_B}', 'Bilel Ayari', '${TEAM_B}', 'GH-0001');
@@ -315,7 +315,7 @@ describe('work logs', () => {
       ).toMatch(/row-level security/);
     }));
 
-  it('never lets an entry point at another farm’s worker', () =>
+  it('never lets an entry point at another farmâ€™s worker', () =>
     scenario(async (s) => {
       await s.as(MANAGER_A);
       expect(
@@ -412,7 +412,7 @@ describe('the weekly plan', () => {
       ).toMatch(/check constraint/);
     }));
 
-  it('is the manager’s to write', () =>
+  it('is the managerâ€™s to write', () =>
     scenario(async (s) => {
       await s.as(SUPERVISOR_A);
       expect(
@@ -461,7 +461,7 @@ describe('hygiene checks', () => {
 describe('hygiene photos', () => {
   const upload = `insert into storage.objects (bucket_id, name) values ('hygiene-photos', $1)`;
 
-  it('go into the supervisor’s own farm folder only', () =>
+  it('go into the supervisorâ€™s own farm folder only', () =>
     scenario(async (s) => {
       await s.as(SUPERVISOR_A);
       expect(await s.count(upload, [`${FARM_A}/check-1/sink.jpg`])).toBe(1);
@@ -473,6 +473,123 @@ describe('hygiene photos', () => {
       );
       await s.as(MANAGER_B);
       expect(await s.rows(`select name from storage.objects`)).toEqual([]);
+    }));
+});
+
+describe('invitations', () => {
+  const invite = `select public.invite_member($1, $2, $3, $4) as result`;
+
+  it('adds someone with an account straight away', () =>
+    scenario(async (s) => {
+      await s.as(MANAGER_A);
+      expect(
+        await s.rows(invite, [
+          FARM_A,
+          ' Stranger@Example.test ',
+          'supervisor',
+          'New supervisor',
+        ]),
+      ).toEqual([{ result: 'added' }]);
+      expect(
+        await s.rows(`select role from public.member where user_id = $1`, [
+          STRANGER,
+        ]),
+      ).toEqual([{ role: 'supervisor' }]);
+      // Asking again changes the role.
+      expect(
+        await s.rows(invite, [FARM_A, 'stranger@example.test', 'hr', 'X']),
+      ).toEqual([{ result: 'updated' }]);
+    }));
+
+  it('holds an invitation until that email signs up', () =>
+    scenario(async (s) => {
+      await s.as(MANAGER_A);
+      expect(
+        await s.rows(invite, [
+          FARM_A,
+          'Later@Example.test',
+          'supervisor',
+          'Lina',
+        ]),
+      ).toEqual([{ result: 'invited' }]);
+      expect(await s.rows(`select email from public.invitation`)).toEqual([
+        { email: 'later@example.test' },
+      ]);
+      // Supabase Auth creates the account; the trigger claims the invitation.
+      await s.as(null);
+      await db.exec('reset role');
+      const newUser = 'd0000000-0000-4000-8000-0000000000d1';
+      await s.count(`insert into auth.users (id, email) values ($1, $2)`, [
+        newUser,
+        'LATER@example.test',
+      ]);
+      await s.as(newUser);
+      expect(
+        await s.rows(
+          `select farm_id, role, full_name from public.member where user_id = $1`,
+          [newUser],
+        ),
+      ).toEqual([{ farm_id: FARM_A, role: 'supervisor', full_name: 'Lina' }]);
+      await s.as(MANAGER_A);
+      expect(await s.rows(`select * from public.invitation`)).toEqual([]);
+    }));
+
+  it('is for managers only, and invitations stay private', () =>
+    scenario(async (s) => {
+      await s.as(MANAGER_A);
+      await s.rows(invite, [FARM_A, 'later@example.test', 'hr', 'Hana']);
+      for (const who of [SUPERVISOR_A, HR_A, MANAGER_B]) {
+        await s.as(who);
+        expect(
+          await s.error(invite, [FARM_A, 'x@example.test', 'manager', 'X']),
+        ).toMatch(/Only a manager/);
+        expect(await s.rows(`select * from public.invitation`)).toEqual([]);
+      }
+    }));
+
+  it('still keeps a manager on the farm', () =>
+    scenario(async (s) => {
+      await s.as(MANAGER_A);
+      expect(
+        await s.error(invite, [
+          FARM_A,
+          'manager-a@example.test',
+          'supervisor',
+          'Me',
+        ]),
+      ).toMatch(/at least one manager/);
+    }));
+});
+
+describe('work totals', () => {
+  it('sum a day per team and greenhouse, within the farm', () =>
+    scenario(async (s) => {
+      await s.as(MANAGER_A);
+      for (const id of [LOG_ID, 'a0000000-0000-4000-8000-00000000a302']) {
+        await s.count(insertLog, [
+          id,
+          FARM_A,
+          today(),
+          WORKER_A,
+          GH_A,
+          MANAGER_A,
+        ]);
+      }
+      const totals = `select team_id, kg, hours, crates, entries
+        from public.work_totals($1, $2, $3)`;
+      expect(await s.rows(totals, [FARM_A, today(-1), today(1)])).toEqual([
+        {
+          team_id: TEAM_A,
+          kg: '240.00',
+          hours: '16.00',
+          crates: 24,
+          entries: 2,
+        },
+      ]);
+      // The end date is excluded.
+      expect(await s.rows(totals, [FARM_A, today(-1), today()])).toEqual([]);
+      await s.as(MANAGER_B);
+      expect(await s.rows(totals, [FARM_A, today(-1), today(1)])).toEqual([]);
     }));
 });
 
