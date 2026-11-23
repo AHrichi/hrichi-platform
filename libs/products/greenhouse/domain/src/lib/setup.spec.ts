@@ -2,6 +2,7 @@ import {
   checkAbsence,
   checkEmail,
   checkGreenhouse,
+  checkTarget,
   checkTeamName,
   checkWorker,
   nextBadgeCode,
@@ -144,5 +145,25 @@ describe('checkEmail', () => {
   it('lower-cases a plausible email and refuses the rest', () => {
     expect(checkEmail(' Lina@Farm.TN ')).toBe('lina@farm.tn');
     expect(checkEmail('lina@farm')).toBeNull();
+  });
+});
+
+describe('checkTarget', () => {
+  it('reads millimes and whole kg, French commas included', () => {
+    expect(checkTarget({ costPerKg: '0,0754', kgPerWeek: '169 400' })).toEqual({
+      ok: true,
+      value: { costPerKgTarget: 0.075, kgTarget: 169400 },
+    });
+  });
+
+  it('wants a cost above zero and kg at zero or more', () => {
+    expect(checkTarget({ costPerKg: '0', kgPerWeek: '' })).toEqual({
+      ok: false,
+      errors: { costPerKg: 'invalid', kgPerWeek: 'required' },
+    });
+    expect(checkTarget({ costPerKg: '', kgPerWeek: '-5' })).toEqual({
+      ok: false,
+      errors: { costPerKg: 'required', kgPerWeek: 'invalid' },
+    });
   });
 });
