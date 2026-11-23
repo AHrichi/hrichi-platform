@@ -428,6 +428,7 @@ export class WhatsAppAiService {
         translations: Record<string, string>;
         metadata: Record<string, AudioInsightMeta>;
         provider: string;
+        backoffMs?: number;
       };
 
       try {
@@ -486,9 +487,11 @@ export class WhatsAppAiService {
         provider: lastProvider,
       });
 
-      // Breather between batches to avoid overloading the n8n webhook or hitting Groq TPM/RPM limits
+      // Breather between batches. When Groq rate-limited this batch, n8n says
+      // how long to wait (backoffMs) so the next one doesn't hit the limit too.
       if (bIdx + 1 < batches.length && !options?.signal?.aborted) {
-        await new Promise((resolve) => setTimeout(resolve, delayMs));
+        const waitMs = Math.max(delayMs, batchResult.backoffMs ?? 0);
+        await new Promise((resolve) => setTimeout(resolve, waitMs));
       }
     }
 
@@ -512,6 +515,7 @@ export class WhatsAppAiService {
     translations: Record<string, string>;
     metadata: Record<string, AudioInsightMeta>;
     provider: string;
+    backoffMs?: number;
   }> {
     let lastError: Error | null = null;
 
@@ -550,6 +554,7 @@ export class WhatsAppAiService {
 
         const raw = (await response.json()) as {
           provider?: string;
+          backoffMs?: number;
           transcripts?: Record<string, string>;
           translations?: Record<string, string>;
           details?: Record<
@@ -642,8 +647,11 @@ export class WhatsAppAiService {
           transcripts: normalizedTranscripts,
           translations: normalizedTranslations,
           metadata: normalizedMeta,
-          provider:
-            raw.provider || 'Groq Whisper v3 Turbo + Llama 3.3 70B Translation',
+          provider: raw.provider || 'Groq Whisper v3 Turbo + LLM translation',
+          backoffMs:
+            typeof raw.backoffMs === 'number'
+              ? Math.min(60_000, Math.max(0, raw.backoffMs))
+              : 0,
         };
       } catch (err) {
         clearTimeout(timeoutId);
