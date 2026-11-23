@@ -2,12 +2,15 @@ import {
   type Absence,
   addDays,
   type Greenhouse,
+  type HygieneItem,
   type Invitation,
   type IsoDate,
   type Member,
   type PlanEntry,
   type Role,
   sampleFarm,
+  sampleHygieneChecks,
+  sampleHygieneItems,
   startOfWeek,
   summarizeLogs,
   targetFor,
@@ -20,6 +23,7 @@ import {
 } from '@ah/products/greenhouse/domain';
 import type {
   FarmAccess,
+  FarmHygiene,
   FarmPerformance,
   FarmRemote,
   FarmSetup,
@@ -28,6 +32,15 @@ import type {
 } from './farm-remote';
 
 export const DEMO_FARM_ID = 'demo-farm';
+
+/** A grey square with a camera, standing in for the demo's photos. */
+const DEMO_PHOTO = `data:image/svg+xml,${encodeURIComponent(
+  '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96">' +
+    '<rect width="96" height="96" fill="#8a8f87"/>' +
+    '<rect x="26" y="36" width="44" height="30" rx="4" fill="none" stroke="#fff" stroke-width="3"/>' +
+    '<circle cx="48" cy="51" r="8" fill="none" stroke="#fff" stroke-width="3"/>' +
+    '<rect x="38" y="30" width="20" height="7" rx="2" fill="#fff"/></svg>',
+)}`;
 
 /** How far back the demo's first target goes: half a year. */
 const DEMO_TARGET_WEEKS = 26;
@@ -48,6 +61,8 @@ export class DemoFarmRemote implements FarmRemote {
   /** Absences the visitor added, and sample ones they removed. */
   private readonly addedAbsences = new Map<string, Absence>();
   private readonly removedAbsences = new Set<string>();
+  private readonly today: IsoDate;
+  private readonly hygieneItems: HygieneItem[] = sampleHygieneItems();
   /** Targets by the week they start; the sample sets one half a year ago. */
   private readonly targets = new Map<IsoDate, WeeklyTarget>();
 
@@ -55,6 +70,7 @@ export class DemoFarmRemote implements FarmRemote {
     today: IsoDate = todayOnFarm(),
     private readonly latencyMs = 250,
   ) {
+    this.today = today;
     const monday = startOfWeek(today);
     const farm = sampleFarm(monday);
     const since = addDays(monday, -7 * DEMO_TARGET_WEEKS);
@@ -146,6 +162,28 @@ export class DemoFarmRemote implements FarmRemote {
   async saveTarget(_farmId: string, target: WeeklyTarget): Promise<void> {
     await this.reply();
     this.targets.set(target.weekStart, { ...target });
+  }
+
+  async loadHygiene(_farmId: string, date: IsoDate): Promise<FarmHygiene> {
+    await this.reply();
+    return {
+      date,
+      items: this.hygieneItems
+        .map((i) => structuredClone(i))
+        .sort((a, b) => a.sortOrder - b.sortOrder),
+      checks: sampleHygieneChecks(date, this.today),
+    };
+  }
+
+  async saveHygieneItem(_farmId: string, item: HygieneItem): Promise<void> {
+    await this.reply();
+    upsert(this.hygieneItems, structuredClone(item));
+  }
+
+  /** The demo has no photo files: each path gets a drawn stand-in. */
+  async photoUrls(paths: readonly string[]): Promise<Map<string, string>> {
+    await this.reply();
+    return new Map(paths.map((path) => [path, DEMO_PHOTO]));
   }
 
   async saveGreenhouse(_farmId: string, greenhouse: Greenhouse): Promise<void> {

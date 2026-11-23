@@ -1,6 +1,8 @@
 import type {
   Absence,
   Greenhouse,
+  HygieneCheck,
+  HygieneItem,
   Invitation,
   IsoDate,
   Member,
@@ -63,6 +65,18 @@ export interface FarmPerformance {
   targets: WeeklyTarget[];
 }
 
+/** A day's hygiene checks and the checklist they answer. */
+export interface FarmHygiene {
+  date: IsoDate;
+  /** The whole checklist, inactive items included, in order. */
+  items: HygieneItem[];
+  /** The checks started that day, one per greenhouse at most. */
+  checks: HygieneCheck[];
+}
+
+/** How long a photo link the dashboard gets stays valid. */
+export const PHOTO_URL_SECONDS = 60 * 60;
+
 export type InviteResult = 'added' | 'updated' | 'invited';
 
 /**
@@ -110,6 +124,14 @@ export interface FarmRemote {
   ): Promise<FarmPerformance>;
   /** Sets the target from `target.weekStart` until the next one. */
   saveTarget(farmId: string, target: WeeklyTarget): Promise<void>;
+
+  loadHygiene(farmId: string, date: IsoDate): Promise<FarmHygiene>;
+  saveHygieneItem(farmId: string, item: HygieneItem): Promise<void>;
+  /**
+   * Links to view photos in the private bucket, valid for an hour, by
+   * path. A photo that can't be found has no link.
+   */
+  photoUrls(paths: readonly string[]): Promise<Map<string, string>>;
 
   invite(
     farmId: string,

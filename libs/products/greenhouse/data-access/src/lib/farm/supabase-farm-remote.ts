@@ -2,6 +2,7 @@ import {
   type Absence,
   addDays,
   type Greenhouse,
+  type HygieneItem,
   type Invitation,
   type IsoDate,
   type PlanEntry,
@@ -16,19 +17,27 @@ import { callPostgrest } from '../remote/postgrest';
 import { RemoteError } from '../remote/remote-error';
 import {
   type FarmAccess,
+  type FarmHygiene,
   type FarmPerformance,
   type FarmRemote,
   type FarmSetup,
   type FarmWeek,
   HISTORY_DAYS,
   type InviteResult,
+  PHOTO_URL_SECONDS,
 } from './farm-remote';
+import { HYGIENE_BUCKET } from '../remote/storage';
 import {
   absenceFrom,
   absenceRow,
   GREENHOUSE_COLUMNS,
   greenhouseFrom,
   greenhouseRow,
+  HYGIENE_CHECK_COLUMNS,
+  HYGIENE_ITEM_COLUMNS,
+  hygieneCheckFrom,
+  hygieneItemFrom,
+  hygieneItemRow,
   memberFrom,
   planFrom,
   type Row,
@@ -234,6 +243,61 @@ export class SupabaseFarmRemote implements FarmRemote {
         onConflict: 'farm_id,week_start',
       }),
     );
+  }
+
+  async loadHygiene(farmId: string, date: IsoDate): Promise<FarmHygiene> {
+    const db = this.client;
+    const [items, checks] = await Promise.all([
+      callPostgrest<Row[] | null>(
+        db
+          .from('hygiene_item')
+          .select(HYGIENE_ITEM_COLUMNS)
+          .eq('farm_id', farmId)
+          .order('sort_order'),
+      ),
+      callPostgrest<Row[] | null>(
+        db
+          .from('hygiene_check')
+          .select(HYGIENE_CHECK_COLUMNS)
+          .eq('farm_id', farmId)
+          .eq('check_date', date),
+      ),
+    ]);
+    return {
+      date,
+      items: (items ?? []).map(hygieneItemFrom),
+      checks: (checks ?? []).map(hygieneCheckFrom),
+    };
+  }
+
+  async saveHygieneItem(farmId: string, item: HygieneItem): Promise<void> {
+    await callPostgrest(
+      this.client.from('hygiene_item').upsert(hygieneItemRow(farmId, item)),
+    );
+  }
+
+  async photoUrls(paths: readonly string[]): Promise<Map<string, string>> {
+    if (paths.length === 0) return new Map();
+    let reply: Awaited<ReturnType<typeof this.signedUrls>>;
+    try {
+      reply = await this.signedUrls(paths);
+    } catch (error) {
+      throw new RemoteError('offline', String(error));
+    }
+    if (reply.error) throw new RemoteError('server', reply.error.message);
+    const links = new Map<string, string>();
+    for (const link of reply.data ?? []) {
+      if (link.path && link.signedUrl && !link.error) {
+        links.set(link.path, link.signedUrl);
+      }
+    }
+    return links;
+  }
+
+  private signedUrls(paths: readonly string[]) {
+    return this.client.storage
+      .from(HYGIENE_BUCKET)
+      .createSignedUrls([...paths], PHOTO_URL_SECONDS);
   }
 
   async saveGreenhouse(farmId: string, greenhouse: Greenhouse): Promise<void> {

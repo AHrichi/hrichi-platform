@@ -1,6 +1,9 @@
 import {
   type Absence,
   type Greenhouse,
+  type HygieneAnswer,
+  type HygieneCheck,
+  type HygieneItem,
   isCrop,
   isRole,
   type Member,
@@ -143,6 +146,90 @@ export function planRow(farmId: string, p: PlanEntry): Row {
     team_id: p.teamId,
     expected_kg: p.expectedKg,
     hours_per_day: p.hoursPerDay,
+  };
+}
+
+export const HYGIENE_ITEM_COLUMNS =
+  'id, label_ar, label_fr, label_en, photo_required, sort_order, active';
+export const HYGIENE_CHECK_COLUMNS =
+  'id, check_date, greenhouse_id, supervisor_id, answers, signed_at';
+
+export function hygieneItemFrom(row: Row): HygieneItem {
+  return {
+    id: text(row['id']),
+    label: {
+      ar: text(row['label_ar']),
+      fr: text(row['label_fr']),
+      en: text(row['label_en']),
+    },
+    photoRequired: Boolean(row['photo_required']),
+    sortOrder: Number(row['sort_order'] ?? 0),
+    active: Boolean(row['active']),
+  };
+}
+
+export function hygieneItemRow(farmId: string, item: HygieneItem): Row {
+  return {
+    id: item.id,
+    farm_id: farmId,
+    label_ar: item.label.ar,
+    label_fr: item.label.fr,
+    label_en: item.label.en,
+    photo_required: item.photoRequired,
+    sort_order: item.sortOrder,
+    active: item.active,
+  };
+}
+
+/** One answer from the `answers` JSON, which keeps the domain's names. */
+function answerFrom(value: unknown): HygieneAnswer | null {
+  if (typeof value !== 'object' || value === null) return null;
+  const a = value as Record<string, unknown>;
+  if (typeof a['itemId'] !== 'string') return null;
+  const note = typeof a['note'] === 'string' ? a['note'] : '';
+  return {
+    itemId: a['itemId'],
+    ok: a['ok'] === true,
+    ...(note ? { note } : {}),
+    photoPaths: Array.isArray(a['photoPaths'])
+      ? a['photoPaths'].filter((p): p is string => typeof p === 'string')
+      : [],
+  };
+}
+
+export function hygieneCheckFrom(row: Row): HygieneCheck {
+  const answers = Array.isArray(row['answers']) ? row['answers'] : [];
+  return {
+    id: text(row['id']),
+    date: text(row['check_date']),
+    greenhouseId: text(row['greenhouse_id']),
+    supervisorId: text(row['supervisor_id']),
+    answers: answers
+      .map(answerFrom)
+      .filter((a): a is HygieneAnswer => a !== null),
+    signedAt: maybe(row['signed_at']),
+  };
+}
+
+/** The row a supervisor sends; `supervisor_id` must be their own id (RLS). */
+export function hygieneCheckRow(
+  farmId: string,
+  check: HygieneCheck,
+  supervisorId: string,
+): Row {
+  return {
+    id: check.id,
+    farm_id: farmId,
+    check_date: check.date,
+    greenhouse_id: check.greenhouseId,
+    supervisor_id: supervisorId,
+    answers: check.answers.map((a) => ({
+      itemId: a.itemId,
+      ok: a.ok,
+      ...(a.note ? { note: a.note } : {}),
+      photoPaths: a.photoPaths,
+    })),
+    signed_at: check.signedAt,
   };
 }
 

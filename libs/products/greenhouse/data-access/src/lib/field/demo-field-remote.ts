@@ -1,4 +1,9 @@
-import type { SampleFarm, WorkLog } from '@ah/products/greenhouse/domain';
+import {
+  type HygieneCheck,
+  type SampleFarm,
+  sampleHygieneItems,
+  type WorkLog,
+} from '@ah/products/greenhouse/domain';
 import type { Roster } from './field-database';
 import { RemoteError } from '../remote/remote-error';
 import type { FieldRemote, LogChange } from './field-remote';
@@ -11,6 +16,8 @@ import type { FieldRemote, LogChange } from './field-remote';
 export class DemoFieldRemote implements FieldRemote {
   online = true;
   readonly received = new Map<string, WorkLog>();
+  readonly checks = new Map<string, HygieneCheck>();
+  readonly photos = new Set<string>();
 
   constructor(
     private readonly farm: Pick<
@@ -36,7 +43,23 @@ export class DemoFieldRemote implements FieldRemote {
       greenhouses: this.farm.greenhouses.map((g) => ({ ...g })),
       teams: this.farm.teams.map((t) => ({ ...t })),
       workers: this.farm.workers.map((w) => ({ ...w })),
+      hygieneItems: sampleHygieneItems(),
     };
+  }
+
+  async uploadPhoto(path: string): Promise<void> {
+    await this.reply();
+    this.photos.add(path);
+  }
+
+  async pushCheck(_farmId: string, check: HygieneCheck): Promise<void> {
+    await this.reply();
+    const current = this.checks.get(check.id);
+    if (current?.signedAt) {
+      if (check.signedAt) return;
+      throw new RemoteError('rejected', 'This check is signed');
+    }
+    this.checks.set(check.id, structuredClone(check));
   }
 
   private async reply(): Promise<void> {

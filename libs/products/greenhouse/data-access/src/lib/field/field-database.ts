@@ -1,5 +1,7 @@
 import type {
   Greenhouse,
+  HygieneCheck,
+  HygieneItem,
   Team,
   Worker,
   WorkLog,
@@ -34,12 +36,36 @@ export interface LogRow extends WorkLog {
   error: string | null;
 }
 
+/**
+ * A hygiene check on the phone. It syncs like a work log; once signed, the
+ * phone refuses changes, as the server does.
+ */
+export interface CheckRow extends HygieneCheck {
+  farmId: string;
+  status: LogStatus;
+  rev: number;
+  attempts: number;
+  error: string | null;
+}
+
+/** A photo taken for a check, kept on the phone until it is uploaded. */
+export interface PhotoRow {
+  /** Its path in the `hygiene-photos` bucket: `<farm>/<check>/<id>.jpg`. */
+  path: string;
+  checkId: string;
+  itemId: string;
+  blob: Blob;
+  uploaded: 0 | 1;
+}
+
 /** The farm as the phone last saw it, for scanning badges offline. */
 export interface Roster {
   farmId: string;
   greenhouses: Greenhouse[];
   teams: Team[];
   workers: Worker[];
+  /** The farm's hygiene checklist, inactive items included. */
+  hygieneItems: HygieneItem[];
   /** When it was downloaded (ISO instant). */
   fetchedAt: string;
 }
@@ -60,6 +86,9 @@ export class FieldDatabase extends Dexie {
   teams!: Table<Team, string>;
   workers!: Table<Worker, string>;
   meta!: Table<MetaRow, string>;
+  hygieneItems!: Table<HygieneItem, string>;
+  checks!: Table<CheckRow, string>;
+  photos!: Table<PhotoRow, string>;
 
   constructor(name: string) {
     super(name);
@@ -69,6 +98,12 @@ export class FieldDatabase extends Dexie {
       teams: 'id',
       workers: 'id, badgeCode',
       meta: 'key',
+    });
+    // G5: hygiene checks, and their photos until they are uploaded.
+    this.version(2).stores({
+      hygieneItems: 'id',
+      checks: 'id, status, date, [date+greenhouseId]',
+      photos: 'path, checkId, uploaded',
     });
   }
 }

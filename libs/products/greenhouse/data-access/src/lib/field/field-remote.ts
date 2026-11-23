@@ -1,4 +1,4 @@
-import type { WorkLog } from '@ah/products/greenhouse/domain';
+import type { HygieneCheck, WorkLog } from '@ah/products/greenhouse/domain';
 import type { LogOp, Roster } from './field-database';
 
 /** One pending log to send. */
@@ -18,4 +18,15 @@ export interface FieldRemote {
   pushLogs(changes: readonly LogChange[]): Promise<void>;
   /** The signed-in supervisor's farm. Throws a `RemoteError`. */
   fetchRoster(): Promise<Roster>;
+  /**
+   * Stores a photo at `path`. One already there counts as stored, so a
+   * retry is harmless. Throws a `RemoteError`.
+   */
+  uploadPhoto(path: string, photo: Blob): Promise<void>;
+  /**
+   * Saves a hygiene check (its photos uploaded first). Sending a signed
+   * check the server already has signed counts as done. Throws a
+   * `RemoteError`.
+   */
+  pushCheck(farmId: string, check: HygieneCheck): Promise<void>;
 }

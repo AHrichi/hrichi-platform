@@ -108,6 +108,32 @@ describe('DemoFarmRemote', () => {
     ).toBe(0.075);
   });
 
+  it('serves today’s hygiene checks, one left undone and one half done', async () => {
+    const demo = remote();
+    const today = await demo.loadHygiene(DEMO_FARM_ID, WEEK);
+    expect(today.items).toHaveLength(8);
+    expect(today.checks).toHaveLength(7);
+    expect(
+      today.checks.find((c) => c.greenhouseId === 'gh-7')?.signedAt,
+    ).toBeNull();
+    const yesterday = await demo.loadHygiene(DEMO_FARM_ID, '2026-11-22');
+    expect(yesterday.checks.every((c) => c.signedAt)).toBe(true);
+    expect((await demo.loadHygiene(DEMO_FARM_ID, '2026-11-24')).checks).toEqual(
+      [],
+    );
+  });
+
+  it('keeps checklist changes, and draws its photos', async () => {
+    const demo = remote();
+    const [first] = (await demo.loadHygiene(DEMO_FARM_ID, WEEK)).items;
+    if (!first) throw new Error('No sample items');
+    await demo.saveHygieneItem(DEMO_FARM_ID, { ...first, active: false });
+    const after = await demo.loadHygiene(DEMO_FARM_ID, WEEK);
+    expect(after.items.find((i) => i.id === first.id)?.active).toBe(false);
+    const urls = await demo.photoUrls(['a.jpg']);
+    expect(urls.get('a.jpg')).toMatch(/^data:image\/svg\+xml,/);
+  });
+
   it('frees a deleted team’s workers', async () => {
     const demo = remote();
     await demo.deleteTeam(DEMO_FARM_ID, 'team-a1');

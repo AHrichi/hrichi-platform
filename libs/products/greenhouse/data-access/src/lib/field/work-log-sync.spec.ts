@@ -44,6 +44,14 @@ class FakeRemote implements FieldRemote {
   async fetchRoster(): Promise<never> {
     throw new RemoteError('server', 'not used');
   }
+
+  async uploadPhoto(): Promise<never> {
+    throw new RemoteError('server', 'not used');
+  }
+
+  async pushCheck(): Promise<never> {
+    throw new RemoteError('server', 'not used');
+  }
 }
 
 let dbCount = 0;
