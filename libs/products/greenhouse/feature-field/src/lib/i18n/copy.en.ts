@@ -51,7 +51,18 @@ export const EN = {
     signOutPending: 'Send the waiting entries before signing out.',
     signInAgain: 'Sign in again',
     noFarm: 'This account is not on any farm yet. Ask your manager to add you.',
+    signUpTitle: 'Create an account',
+    signUpIntro:
+      'Use the email your manager invited. You join the farm as soon as the account exists.',
+    newPassword: 'Password (at least 8 characters)',
+    signUpSubmit: 'Create account',
+    noAccount: 'No account yet?',
+    haveAccount: 'Already have an account?',
+    createAccount: 'Create an account',
+    confirmEmail:
+      'Check your email and follow the link to confirm the account, then sign in here.',
     errors: {
+      short: 'The password needs at least 8 characters.',
       invalid: 'Wrong email or password.',
       unconfirmed: 'This account’s email is not confirmed yet.',
       offline: 'No signal. The first sign-in needs the internet.',

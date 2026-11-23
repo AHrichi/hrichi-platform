@@ -2,6 +2,7 @@ import {
   checkAbsence,
   checkEmail,
   checkGreenhouse,
+  checkPersonName,
   checkTarget,
   checkTeamName,
   checkWorker,
@@ -164,6 +165,23 @@ describe('checkTarget', () => {
     expect(checkTarget({ costPerKg: '', kgPerWeek: '-5' })).toEqual({
       ok: false,
       errors: { costPerKg: 'required', kgPerWeek: 'invalid' },
+    });
+  });
+});
+
+describe('checkPersonName', () => {
+  it('tidies spaces and wants 1 to 120 characters', () => {
+    expect(checkPersonName('  Lina   Ben Salah ')).toEqual({
+      ok: true,
+      value: 'Lina Ben Salah',
+    });
+    expect(checkPersonName(' ')).toEqual({
+      ok: false,
+      errors: { name: 'required' },
+    });
+    expect(checkPersonName('x'.repeat(121))).toEqual({
+      ok: false,
+      errors: { name: 'invalid' },
     });
   });
 });

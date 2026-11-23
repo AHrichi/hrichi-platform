@@ -3,14 +3,22 @@
   aria-labelledby="gh-sign-in-title"
   (submit)="$event.preventDefault(); submit(emailBox.value, passwordBox.value)"
 >
-  <h1 id="gh-sign-in-title" class="title">{{ t().auth.title }}</h1>
+  @let signingUp = mode() === 'sign-up' && !lockedEmail();
+  <h1 id="gh-sign-in-title" class="title">
+    {{ signingUp ? t().auth.signUpTitle : t().auth.title }}
+  </h1>
   <p class="intro">
     @if (lockedEmail(); as email) {
       {{ i18n.fill(t().auth.again, { email }) }}
+    } @else if (signingUp) {
+      {{ t().auth.signUpIntro }}
     } @else {
       {{ t().auth.intro }}
     }
   </p>
+  @if (confirm()) {
+    <p class="confirm" role="status">{{ t().auth.confirmEmail }}</p>
+  }
 
   <label class="gh-label" for="gh-email">{{ t().auth.email }}</label>
   <input
@@ -27,14 +35,16 @@
     [readOnly]="lockedEmail() !== null"
   />
 
-  <label class="gh-label" for="gh-password">{{ t().auth.password }}</label>
+  <label class="gh-label" for="gh-password">
+    {{ signingUp ? t().auth.newPassword : t().auth.password }}
+  </label>
   <input
     #passwordBox
     id="gh-password"
     class="gh-input"
     type="password"
     name="password"
-    autocomplete="current-password"
+    [attr.autocomplete]="signingUp ? 'new-password' : 'current-password'"
     dir="ltr"
     required
     [attr.aria-describedby]="errorText() ? 'gh-sign-in-error' : null"
@@ -45,6 +55,21 @@
   }
 
   <button type="submit" ghButton size="field" block [disabled]="busy()">
-    {{ busy() ? t().auth.busy : t().auth.submit }}
+    {{
+      busy()
+        ? t().auth.busy
+        : signingUp
+          ? t().auth.signUpSubmit
+          : t().auth.submit
+    }}
   </button>
+
+  @if (!lockedEmail()) {
+    <p class="switch">
+      {{ signingUp ? t().auth.haveAccount : t().auth.noAccount }}
+      <button type="button" ghButton="ghost" (click)="switchMode()">
+        {{ signingUp ? t().auth.submit : t().auth.createAccount }}
+      </button>
+    </p>
+  }
 </form>

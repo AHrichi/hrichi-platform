@@ -195,3 +195,15 @@ export function checkTarget(
     },
   };
 }
+
+/** A person's name as the farm shows it: 1 to 120 characters, spaces tidied. */
+export function checkPersonName(text: string): SetupResult<string, 'name'> {
+  const clean = name(text, 120);
+  if (!clean) {
+    return {
+      ok: false,
+      errors: { name: text.trim() ? 'invalid' : 'required' },
+    };
+  }
+  return { ok: true, value: clean };
+}

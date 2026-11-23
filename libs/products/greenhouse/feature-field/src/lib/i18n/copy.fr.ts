@@ -52,7 +52,18 @@ export const FR: FieldCopy = {
     signInAgain: 'Se reconnecter',
     noFarm:
       'Ce compte n’est rattaché à aucune ferme. Demandez à votre responsable de vous ajouter.',
+    signUpTitle: 'Créer un compte',
+    signUpIntro:
+      'Utilisez l’e-mail auquel votre responsable vous a invité. Vous rejoignez la ferme dès que le compte existe.',
+    newPassword: 'Mot de passe (8 caractères au moins)',
+    signUpSubmit: 'Créer le compte',
+    noAccount: 'Pas encore de compte ?',
+    haveAccount: 'Déjà un compte ?',
+    createAccount: 'Créer un compte',
+    confirmEmail:
+      'Ouvrez l’e-mail reçu et suivez le lien pour confirmer le compte, puis connectez-vous ici.',
     errors: {
+      short: 'Le mot de passe doit faire 8 caractères au moins.',
       invalid: 'E-mail ou mot de passe incorrect.',
       unconfirmed: 'L’e-mail de ce compte n’est pas encore confirmé.',
       offline: 'Pas de réseau. La première connexion a besoin d’internet.',

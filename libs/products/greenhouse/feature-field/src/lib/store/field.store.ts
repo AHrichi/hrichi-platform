@@ -22,6 +22,7 @@ import {
   RemoteError,
   type Roster,
   type SignInError,
+  type SignUpResult,
   photoPath,
   SupabaseFieldRemote,
   type SyncResult,
@@ -297,6 +298,28 @@ export const FieldStore = signalStore(
       }, PERIODIC_SYNC_MS);
     }
 
+    /** After a sign-in: download the farm and send anything waiting. */
+    async function openAccount(email: string): Promise<void> {
+      patchState(store, {
+        account: auth.account()?.email ?? email.trim(),
+        reauth: false,
+        status: 'loading',
+      });
+      let roster = store.roster();
+      try {
+        roster = (await downloadRoster()) ?? roster;
+      } catch {
+        // Keep the cached farm, if any; the home screen explains the rest.
+      }
+      patchState(store, {
+        roster,
+        status: roster ? 'ready' : 'no-roster',
+      });
+      await refresh();
+      failures = 0;
+      requestSync(0);
+    }
+
     function farmOf(): string {
       const farmId = store.roster()?.farmId;
       if (!farmId) throw new Error('No farm on this phone yet');
@@ -369,25 +392,20 @@ export const FieldStore = signalStore(
         }
         const error = await auth.signIn(email, password);
         if (error) return error;
-        patchState(store, {
-          account: auth.account()?.email ?? email.trim(),
-          reauth: false,
-          status: 'loading',
-        });
-        let roster = store.roster();
-        try {
-          roster = (await downloadRoster()) ?? roster;
-        } catch {
-          // Keep the cached farm, if any; the home screen explains the rest.
-        }
-        patchState(store, {
-          roster,
-          status: roster ? 'ready' : 'no-roster',
-        });
-        await refresh();
-        failures = 0;
-        requestSync(0);
+        await openAccount(email);
         return null;
+      },
+
+      /**
+       * Creates an account. With email confirmation on (the hosted
+       * project), it returns `confirm-email`: the supervisor follows the
+       * link, then signs in. A manager's invitation to that email makes
+       * them a member as the account is created.
+       */
+      async signUp(email: string, password: string): Promise<SignUpResult> {
+        const result = await auth.signUp(email, password);
+        if (result === null) await openAccount(email);
+        return result;
       },
 
       /** The session ran out: sign in again as the same account. */
