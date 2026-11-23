@@ -20,6 +20,9 @@
         "development": {
           "target": "product-greenhouse:esbuild:development",
           "dev": true
+        },
+        "brand": {
+          "target": "product-greenhouse:esbuild:brand"
         }
       }
     },
@@ -65,6 +68,7 @@
           "node_modules/@fontsource-variable/inter/index.css",
           "libs/design-system/tokens/src/generated/tokens.css",
           "libs/design-system/ui/src/styles/index.scss",
+          "libs/products/greenhouse/ui/src/styles/greenhouse.scss",
           "apps/products/greenhouse/dashboard/src/styles.scss"
         ],
         "polyfills": ["es-module-shims"],
@@ -90,6 +94,45 @@
           "optimization": false,
           "extractLicenses": false,
           "sourceMap": true
+        },
+        "brand": {
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "1mb",
+              "maximumError": "2mb"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "12kb",
+              "maximumError": "20kb"
+            }
+          ],
+          "outputHashing": "all",
+          "fileReplacements": [
+            {
+              "replace": "apps/products/greenhouse/dashboard/src/brand/brand.ts",
+              "with": "apps/products/greenhouse/brands/active/brand.ts"
+            }
+          ],
+          "styles": [
+            "node_modules/@fontsource-variable/inter/index.css",
+            "libs/design-system/tokens/src/generated/tokens.css",
+            "libs/design-system/ui/src/styles/index.scss",
+            "libs/products/greenhouse/ui/src/styles/greenhouse.scss",
+            "apps/products/greenhouse/dashboard/src/styles.scss",
+            "apps/products/greenhouse/brands/active/brand.css"
+          ],
+          "assets": [
+            {
+              "glob": "**/*",
+              "input": "apps/products/greenhouse/dashboard/public"
+            },
+            {
+              "glob": "**/*",
+              "input": "apps/products/greenhouse/brands/active/public"
+            }
+          ]
         }
       }
     },

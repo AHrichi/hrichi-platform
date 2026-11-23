@@ -6,7 +6,7 @@ import {
   model,
   signal,
 } from '@angular/core';
-import { parseNumber, stepValue } from '../store/numbers';
+import { parseNumber, stepValue } from './numbers';
 
 let nextId = 0;
 
@@ -20,7 +20,7 @@ let nextId = 0;
   templateUrl: './stepper.html',
   styleUrl: './stepper.scss',
 })
-export class Stepper {
+export class GhStepper {
   readonly label = input.required<string>();
   readonly lessLabel = input.required<string>();
   readonly moreLabel = input.required<string>();

@@ -1,31 +1,14 @@
+<gh-app-bar [product]="t().app.name" [tagline]="t().app.tagline">
+  @if (standalone) {
+    <gh-lang-switch
+      [label]="t().app.language"
+      [languages]="languages"
+      [current]="i18n.lang()"
+      (selected)="setLanguage($event)"
+    />
+  }
+</gh-app-bar>
 <div class="dashboard">
-  <header class="bar">
-    <div class="brand">
-      <svg class="logo" viewBox="0 0 32 32" aria-hidden="true">
-        <rect class="tile" width="32" height="32" rx="9" />
-        <path class="house" d="M5 25V14C5 9 10 6 16 6s11 3 11 8v11z" />
-        <path class="ribs" d="M11 25V9.5M16 25V6M21 25V9.5" />
-      </svg>
-      <span class="brand-text">
-        <strong>{{ t().app.name }}</strong>
-        <small>{{ t().app.tagline }}</small>
-      </span>
-    </div>
-    @if (standalone) {
-      <div class="langs" role="group" [attr.aria-label]="t().app.language">
-        @for (lang of languages; track lang.id) {
-          <button
-            type="button"
-            [attr.aria-pressed]="i18n.lang() === lang.id"
-            [attr.lang]="lang.id"
-            (click)="i18n.setLanguage(lang.id)"
-          >
-            {{ lang.label }}
-          </button>
-        }
-      </div>
-    }
-  </header>
   <p class="demo">{{ t().app.demo }}</p>
   <main class="main">
     <router-outlet />

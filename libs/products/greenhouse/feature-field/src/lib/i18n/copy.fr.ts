@@ -7,7 +7,7 @@ export const FR: FieldCopy = {
     language: 'Langue',
     demo: 'Ferme de démonstration',
     demoHint:
-      'Ferme et ouvriers fictifs. Les saisies restent sur cet appareil et un faux serveur.',
+      'Serre de tomates fictive de 32 hectares et ses équipes. Les saisies restent sur cet appareil et un faux serveur.',
   },
   sync: {
     title: 'Envoi',
@@ -34,6 +34,31 @@ export const FR: FieldCopy = {
     noRoster:
       'Ce téléphone n’a pas encore la liste de la ferme. Connectez-vous une fois pour la télécharger.',
     retry: 'Réessayer',
+  },
+  auth: {
+    title: 'Connexion',
+    intro:
+      'Connectez-vous une fois avec du réseau. Ensuite, l’application fonctionne sans.',
+    again:
+      'Votre session a expiré. Reconnectez-vous en tant que {email} pour envoyer les saisies en attente.',
+    email: 'E-mail',
+    password: 'Mot de passe',
+    submit: 'Se connecter',
+    busy: 'Connexion…',
+    signedInAs: 'Connecté : {email}',
+    signOut: 'Se déconnecter',
+    signOutPending: 'Envoyez les saisies en attente avant de vous déconnecter.',
+    signInAgain: 'Se reconnecter',
+    noFarm:
+      'Ce compte n’est rattaché à aucune ferme. Demandez à votre responsable de vous ajouter.',
+    errors: {
+      invalid: 'E-mail ou mot de passe incorrect.',
+      unconfirmed: 'L’e-mail de ce compte n’est pas encore confirmé.',
+      offline: 'Pas de réseau. La première connexion a besoin d’internet.',
+      other: 'Connexion impossible. Réessayez dans un instant.',
+      'other-account':
+        'Connectez-vous en tant que {email} : les saisies en attente sont les siennes.',
+    },
   },
   crops: {
     tomato: 'Tomate',

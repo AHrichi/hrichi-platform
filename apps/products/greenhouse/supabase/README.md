@@ -30,20 +30,24 @@ They need no Docker: PGlite is Postgres compiled to WebAssembly.
 
 ## Local Supabase
 
-Needs Docker. The CLI reads this folder as its `supabase/`:
+Needs Docker. The CLI reads this folder as its `supabase/`. Use `npx`, not `pnpm dlx`: the CLI downloads its binary in a postinstall script, which pnpm skips.
 
 ```bash
-pnpm dlx supabase --workdir apps/products/greenhouse start
-pnpm dlx supabase --workdir apps/products/greenhouse db reset   # migrations + seed
+npx -y supabase@3.1.0 --workdir apps/products/greenhouse start      # migrations + seed on first start
+npx -y supabase@3.1.0 --workdir apps/products/greenhouse db reset   # start over
+node apps/products/greenhouse/supabase/scripts/local-users.mjs      # test accounts on the seed farm
 ```
 
-Sign up in the field app (or in Studio at http://localhost:54323), then make yourself the seed farm's manager in Studio's SQL editor:
+`local-users.mjs` creates a manager, two supervisors and an HR account (`*@farm.test`) with one local-only password, all printed by the script. It refuses to run against anything but `127.0.0.1`.
 
-```sql
-insert into public.member (farm_id, user_id, role, full_name)
-select '00000000-0000-4000-8000-000000000001', id, 'manager', 'Your name'
-from auth.users where email = 'you@example.com';
+Then run the field app against it:
+
+```bash
+pnpm nx serve product-greenhouse-field                 # dev server on 4314, local Supabase
+pnpm nx build product-greenhouse-field -c local        # production build against local Supabase
 ```
+
+Studio is at http://127.0.0.1:54323.
 
 ## A hosted project
 

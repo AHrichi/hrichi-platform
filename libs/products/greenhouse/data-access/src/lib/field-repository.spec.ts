@@ -59,7 +59,7 @@ describe('FieldRepository', () => {
     const cached = await repo.roster();
     expect(cached?.farmId).toBe('farm-1');
     expect(cached?.workers).toHaveLength(5);
-    expect(cached?.greenhouses).toHaveLength(6);
+    expect(cached?.greenhouses).toHaveLength(8);
   });
 
   it('finds active workers by badge, however the code is written', async () => {
@@ -123,5 +123,18 @@ describe('FieldRepository', () => {
       rev: 2,
     });
     await expect(repo.updateLog('missing', { hours: 7 })).rejects.toThrow();
+  });
+
+  it('forgets the farm on sign-out, but never with entries waiting', async () => {
+    await repo.saveRoster(roster);
+    await repo.addLog('farm-1', log('a'));
+    expect(await repo.clearAccount()).toBe(false);
+    expect(await repo.roster()).not.toBeNull();
+
+    await db.logs.update('a', { status: 'synced', op: null });
+    expect(await repo.clearAccount()).toBe(true);
+    expect(await repo.roster()).toBeNull();
+    expect(await db.logs.count()).toBe(0);
+    expect(await repo.lastSyncAt()).toBeNull();
   });
 });

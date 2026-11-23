@@ -39,9 +39,10 @@ Light is the default. Dark applies with `prefers-color-scheme: dark` unless the 
 
 A look is an opt-in restyling of a subtree, applied with `data-look="<name>"` on any element (or on `<html>` for a whole page). Pages without the attribute are untouched, so existing apps and Storybook baselines don't change.
 
-| Look    | Files                                 | Used by                                                           |
-| ------- | ------------------------------------- | ----------------------------------------------------------------- |
-| `paper` | `tokens/look.paper.{light,dark}.json` | The System Design course: warm paper, JetBrains Mono, sage accent |
+| Look         | Files                                      | Used by                                                                                                                  |
+| ------------ | ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------ |
+| `paper`      | `tokens/look.paper.{light,dark}.json`      | The System Design course: warm paper, JetBrains Mono, sage accent                                                        |
+| `greenhouse` | `tokens/look.greenhouse.{light,dark}.json` | The Greenhouse Labor Planner: green accent, blue focus ring ([design system](../../../docs/greenhouse/design-system.md)) |
 
 A look file may:
 
@@ -93,7 +94,7 @@ The build fails if a pair the UI uses drops below WCAG 2.2 AA in any theme (ligh
 
 - 4.5:1 for text: body, muted and accent text on every surface; status text on its own tint; text on filled accent, inverse and success surfaces.
 - 3:1 for graphics and control boundaries: chart colours on the stage, `border.control` and `focus.ring` on every surface.
-- Looks only: `scene.<hue>.ink` on `scene.<hue>.top` at 4.5:1; `scene.<hue>.ink` on `bg.canvas`, and every `scene.packet.*` and `scene.edge` on `bg.surface`, at 3:1. Grid lines are decoration and aren't gated.
+- Looks that draw scenes (those defining `color-scene-*`): `scene.<hue>.ink` on `scene.<hue>.top` at 4.5:1; `scene.<hue>.ink` on `bg.canvas`, and every `scene.packet.*` and `scene.edge` on `bg.surface`, at 3:1. Grid lines are decoration and aren't gated.
 
 The gate **fails closed**: a colour it can't parse, a translucent colour, or a missing token stops the build instead of passing silently. Add a pair to `contrastPairs` or `graphicPairs` in `build.mjs` when the UI starts using a new combination.
 

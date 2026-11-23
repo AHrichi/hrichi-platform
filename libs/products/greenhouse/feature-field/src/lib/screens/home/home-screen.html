@@ -4,8 +4,8 @@
   }
   @case ('no-roster') {
     <div class="state">
-      <p>{{ t().home.noRoster }}</p>
-      <button type="button" class="retry" (click)="store.retryRoster()">
+      <p>{{ store.noFarm() ? t().auth.noFarm : t().home.noRoster }}</p>
+      <button type="button" ghButton (click)="store.retryRoster()">
         {{ t().home.retry }}
       </button>
     </div>

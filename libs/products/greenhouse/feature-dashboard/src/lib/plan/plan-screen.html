@@ -9,19 +9,19 @@
     </p>
   </div>
   <div class="week-nav" role="group" [attr.aria-label]="tp.title">
-    <button type="button" class="nav" (click)="shiftWeek(-1)">
+    <button type="button" ghButton="secondary" (click)="shiftWeek(-1)">
       <span class="flip" aria-hidden="true">‹</span>
       {{ tp.previous }}
     </button>
     <button
       type="button"
-      class="nav"
+      ghButton="secondary"
       [disabled]="isThisWeek()"
       (click)="goToThisWeek()"
     >
       {{ tp.thisWeek }}
     </button>
-    <button type="button" class="nav" (click)="shiftWeek(1)">
+    <button type="button" ghButton="secondary" (click)="shiftWeek(1)">
       {{ tp.next }}
       <span class="flip" aria-hidden="true">›</span>
     </button>
@@ -170,14 +170,19 @@
   <h2 id="gh-report-title">{{ t().report.title }}</h2>
   <pre class="report-text">{{ report().body }}</pre>
   <div class="report-actions">
-    <button type="button" class="action primary" (click)="copyReport()">
+    <button type="button" ghButton (click)="copyReport()">
       {{ copied() ? t().report.copied : t().report.copy }}
     </button>
-    <a class="action" [href]="whatsappHref()" target="_blank" rel="noopener">
+    <a
+      ghButton="secondary"
+      [href]="whatsappHref()"
+      target="_blank"
+      rel="noopener"
+    >
       {{ t().report.whatsapp }}
     </a>
-    <a class="action" [href]="mailHref()">{{ t().report.email }}</a>
-    <button type="button" class="action" (click)="print()">
+    <a ghButton="secondary" [href]="mailHref()">{{ t().report.email }}</a>
+    <button type="button" ghButton="secondary" (click)="print()">
       {{ t().report.print }}
     </button>
   </div>

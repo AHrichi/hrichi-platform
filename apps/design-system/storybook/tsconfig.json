@@ -23,7 +23,8 @@
     "../../../libs/learning/ui/src/**/*.ts",
     "../../../libs/three/angular/src/**/*.ts",
     "../../../libs/products/studylm/learn/src/**/*.ts",
-    "../../../libs/products/system-design/ui/src/**/*.ts"
+    "../../../libs/products/system-design/ui/src/**/*.ts",
+    "../../../libs/products/greenhouse/ui/src/**/*.ts"
   ],
   "exclude": ["../../../libs/**/*.spec.ts", "../../../libs/**/test-setup.ts"]
 }

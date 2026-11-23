@@ -1,0 +1,9 @@
+{
+  "name": "product-greenhouse-ui",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/products/greenhouse/ui/src",
+  "prefix": "gh",
+  "projectType": "library",
+  "tags": ["scope:product-greenhouse", "type:ui", "runtime:browser"],
+  "targets": {}
+}

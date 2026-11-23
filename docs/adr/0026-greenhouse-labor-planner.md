@@ -62,6 +62,10 @@ The owner's brief suggested Ionic + Capacitor for the phones, Supabase as the ba
   - Capacitor 8 wraps the same build for Android.
   - Badges are QR codes read with the `BarcodeDetector` API (Chrome on Android). Typing the code or picking from the list are fallbacks.
 
+- **A design system of its own, on the platform's** ([docs/greenhouse/design-system.md](../greenhouse/design-system.md)).
+  - It is a `greenhouse` token look: a green accent and a blue focus ring, through the contrast gate. The gate now checks the scene pairs only for looks that draw scenes.
+  - The `product-greenhouse-ui` kit is shared by both apps, with Storybook stories under Greenhouse/UI Kit.
+  - **Brand packs** dress the apps for one farm: a `brand.ts`, a CSS override of the accent tokens under `[data-brand]`, and a logo. Only an example pack is committed. A real farm's pack stays out of this public repo and is built privately (`-c brand-*`), because its logo is not ours to publish.
 - **Languages.**
   - Both apps speak Arabic, French and English through `PreferencesStore` (ADR-0018).
   - The field app defaults to Arabic until someone picks another language.

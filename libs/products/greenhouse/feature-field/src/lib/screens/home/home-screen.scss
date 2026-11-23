@@ -71,20 +71,3 @@
   text-align: center;
   color: var(--color-text-muted);
 }
-
-.retry {
-  min-block-size: var(--control-height-lg);
-  padding-inline: var(--space-5);
-  border-radius: var(--radius-md);
-  border: 0;
-  background: var(--color-accent-solid);
-  color: var(--color-accent-on-solid);
-  font: inherit;
-  font-weight: var(--font-weight-bold);
-  cursor: pointer;
-
-  &:focus-visible {
-    outline: var(--focus-ring-width) solid var(--color-focus-ring);
-    outline-offset: var(--focus-ring-offset);
-  }
-}

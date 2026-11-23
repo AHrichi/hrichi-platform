@@ -17,6 +17,7 @@ import {
   FieldRepository,
   type LogRow,
   type LogStatus,
+  RemoteError,
   type Roster,
   SupabaseFieldRemote,
   WorkLogSync,
@@ -31,7 +32,9 @@ import {
   type WorkLog,
   type WorkLogDraft,
 } from '@ah/products/greenhouse/domain';
-import { FIELD_DB, GREENHOUSE_SUPABASE } from '../field-config';
+import { FieldAuth } from '../auth/field-auth';
+import type { SignInError } from '../auth/sign-in-error';
+import { FIELD_DB } from '../field-config';
 import {
   nextRun,
   PERIODIC_SYNC_MS,
@@ -44,7 +47,17 @@ import {
 const ROSTER_MAX_AGE_MS = 12 * 60 * 60 * 1000;
 
 interface FieldState {
-  status: 'loading' | 'ready' | 'no-roster' | 'failed';
+  /** `signed-out`: the app has a server and nobody is signed in. */
+  status: 'loading' | 'ready' | 'no-roster' | 'failed' | 'signed-out';
+  /** The signed-in supervisor's email; null in the demo. */
+  account: string | null;
+  /**
+   * Signing in again after a session ran out: the same account, so waiting
+   * entries go out under the name of whoever logged them.
+   */
+  reauth: boolean;
+  /** The account isn't a member of any farm yet. */
+  noFarm: boolean;
   roster: Roster | null;
   date: IsoDate;
   /** Today's entries, every greenhouse. */
@@ -80,6 +93,9 @@ export const FieldStore = signalStore(
   { providedIn: 'root' },
   withState<FieldState>({
     status: 'loading',
+    account: null,
+    reauth: false,
+    noFarm: false,
     roster: null,
     date: todayOnFarm(),
     logs: [],
@@ -118,7 +134,7 @@ export const FieldStore = signalStore(
   })),
   withMethods((store) => {
     const mode = inject(APP_MODE);
-    const supabase = inject(GREENHOUSE_SUPABASE);
+    const auth = inject(FieldAuth);
     const doc = inject(DOCUMENT);
     const win = doc.defaultView;
 
@@ -136,12 +152,9 @@ export const FieldStore = signalStore(
         demoRemote = new DemoFieldRemote(sampleFarm(todayOnFarm()));
         return demoRemote;
       }
-      if (!supabase) return null;
-      // Loaded only when there is a server to talk to.
-      const { createClient } = await import('@supabase/supabase-js');
-      return new SupabaseFieldRemote(
-        createClient(supabase.url, supabase.anonKey),
-      );
+      if (!auth.enabled) return null;
+      // The same client signs in and sends, so requests carry the session.
+      return new SupabaseFieldRemote(await auth.getClient());
     }
 
     async function refresh(): Promise<void> {
@@ -157,10 +170,27 @@ export const FieldStore = signalStore(
 
     async function downloadRoster(): Promise<Roster | null> {
       if (!repo || !remote) return null;
-      const roster = await remote.fetchRoster();
-      await repo.saveRoster(roster);
-      patchState(store, { roster, status: 'ready' });
-      return roster;
+      try {
+        const roster = await remote.fetchRoster();
+        await repo.saveRoster(roster);
+        patchState(store, { roster, status: 'ready', noFarm: false });
+        return roster;
+      } catch (error) {
+        // Signed in, but no manager has added this account to a farm yet.
+        if (error instanceof RemoteError && error.kind === 'rejected') {
+          patchState(store, { noFarm: true });
+        }
+        throw error;
+      }
+    }
+
+    /** After a refused sync: is the session gone for good? */
+    async function checkSession(): Promise<void> {
+      if (!auth.enabled) return;
+      const account = await auth.restore();
+      if (!account) {
+        patchState(store, { status: 'signed-out', reauth: true });
+      }
     }
 
     function isOnline(): boolean {
@@ -177,7 +207,7 @@ export const FieldStore = signalStore(
     }
 
     async function runSync(): Promise<void> {
-      if (!engine) return;
+      if (!engine || store.status() === 'signed-out') return;
       if (!isOnline()) {
         // The `online` event starts the next run.
         patchState(store, { sync: 'offline' });
@@ -193,6 +223,7 @@ export const FieldStore = signalStore(
       const next = nextRun(result, failures);
       failures = next.failures;
       patchState(store, { sync: stateAfter(result) });
+      if (result.stoppedBy === 'auth') await checkSession();
       if (next.delayMs !== null) requestSync(next.delayMs);
     }
 
@@ -259,6 +290,16 @@ export const FieldStore = signalStore(
           listen();
 
           let roster = await repo.roster();
+          if (auth.enabled) {
+            // The stored session, offline or not; no network needed.
+            const account = await auth.restore();
+            patchState(store, { account: account?.email ?? null });
+            if (!account) {
+              patchState(store, { roster, status: 'signed-out' });
+              await refresh();
+              return;
+            }
+          }
           if (!roster) {
             roster = await downloadRoster().catch(() => null);
           } else if (
@@ -278,6 +319,63 @@ export const FieldStore = signalStore(
           console.error('Greenhouse field app failed to start', error);
           patchState(store, { status: 'failed' });
         }
+      },
+
+      /** Signs in, downloads the farm and sends anything waiting. */
+      async signIn(
+        email: string,
+        password: string,
+      ): Promise<SignInError | 'other-account' | null> {
+        const reauthAs = store.reauth() ? store.account() : null;
+        if (reauthAs && email.trim().toLowerCase() !== reauthAs.toLowerCase()) {
+          return 'other-account';
+        }
+        const error = await auth.signIn(email, password);
+        if (error) return error;
+        patchState(store, {
+          account: auth.account()?.email ?? email.trim(),
+          reauth: false,
+          status: 'loading',
+        });
+        let roster = store.roster();
+        try {
+          roster = (await downloadRoster()) ?? roster;
+        } catch {
+          // Keep the cached farm, if any; the home screen explains the rest.
+        }
+        patchState(store, {
+          roster,
+          status: roster ? 'ready' : 'no-roster',
+        });
+        await refresh();
+        failures = 0;
+        requestSync(0);
+        return null;
+      },
+
+      /** The session ran out: sign in again as the same account. */
+      requireSignIn(): void {
+        patchState(store, { status: 'signed-out', reauth: true });
+      },
+
+      /**
+       * Signs out and forgets the farm on this phone. Refused while entries
+       * wait: they belong to this account and must go out first.
+       */
+      async signOut(): Promise<'done' | 'pending'> {
+        if (!repo) return 'done';
+        if (!(await repo.clearAccount())) return 'pending';
+        await auth.signOut();
+        patchState(store, {
+          account: null,
+          reauth: false,
+          noFarm: false,
+          roster: null,
+          status: 'signed-out',
+          sync: 'idle',
+        });
+        await refresh();
+        return 'done';
       },
 
       async retryRoster(): Promise<void> {

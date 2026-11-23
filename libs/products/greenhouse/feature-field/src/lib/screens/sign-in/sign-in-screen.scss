@@ -1,0 +1,21 @@
+// Card, labels, inputs and the button come from the Greenhouse UI kit.
+
+:host {
+  display: block;
+}
+
+.card {
+  max-inline-size: 28rem;
+  margin-inline: auto;
+  padding-block: var(--space-5);
+}
+
+.title {
+  margin: 0;
+  font-size: var(--font-size-500);
+}
+
+.intro {
+  margin: 0;
+  color: var(--color-text-muted);
+}

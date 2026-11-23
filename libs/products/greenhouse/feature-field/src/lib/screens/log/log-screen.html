@@ -12,7 +12,7 @@
   <p class="notice" role="status">{{ notice() }}</p>
 
   @if (worker(); as w) {
-    <form class="card entry" (submit)="$event.preventDefault(); save()">
+    <form class="gh-card entry" (submit)="$event.preventDefault(); save()">
       <div class="who">
         <strong class="who-name">{{ w.fullName }}</strong>
         <span class="who-badge">{{ w.badgeCode }}</span>
@@ -64,7 +64,7 @@
       }
 
       <div class="actions">
-        <button type="submit" class="primary" [disabled]="busy()">
+        <button type="submit" ghButton size="field" [disabled]="busy()">
           {{
             confirmHigh()
               ? t().log.saveAnyway
@@ -73,13 +73,18 @@
                 : t().log.save
           }}
         </button>
-        <button type="button" class="secondary" (click)="reset()">
+        <button
+          type="button"
+          ghButton="secondary"
+          size="field"
+          (click)="reset()"
+        >
           {{ t().log.cancel }}
         </button>
       </div>
     </form>
   } @else {
-    <section class="card find" aria-labelledby="gh-next">
+    <section class="gh-card find" aria-labelledby="gh-next">
       <h2 id="gh-next" class="card-title">{{ t().log.next }}</h2>
 
       @if (canScan && !cameraBlocked()) {
@@ -96,12 +101,12 @@
       }
 
       <form class="badge-form" (submit)="$event.preventDefault(); lookup()">
-        <label class="field-label" for="gh-badge">{{ t().log.badge }}</label>
+        <label class="gh-label" for="gh-badge">{{ t().log.badge }}</label>
         <div class="badge-row">
           <input
             #badgeBox
             id="gh-badge"
-            class="text-field"
+            class="gh-input mono"
             type="text"
             autocomplete="off"
             autocapitalize="characters"
@@ -112,20 +117,20 @@
             [attr.aria-describedby]="lookupError() ? 'gh-badge-error' : null"
             (input)="setBadge(badgeBox.value)"
           />
-          <button type="submit" class="primary narrow">
+          <button type="submit" ghButton size="field">
             {{ t().log.find }}
           </button>
         </div>
         @if (lookupError(); as message) {
-          <p id="gh-badge-error" class="field-error">{{ message }}</p>
+          <p id="gh-badge-error" class="gh-error">{{ message }}</p>
         }
       </form>
 
-      <label class="field-label" for="gh-pick">{{ t().log.pick }}</label>
+      <label class="gh-label" for="gh-pick">{{ t().log.pick }}</label>
       <select
         #pickBox
         id="gh-pick"
-        class="text-field"
+        class="gh-input"
         (change)="pick(pickBox.value)"
       >
         <option value="" selected>{{ t().log.pickPlaceholder }}</option>
@@ -153,27 +158,20 @@
             <div class="row-main">
               <strong>{{ nameOf(row.workerId) }}</strong>
               <span class="row-summary">{{ summary(row) }}</span>
-              <span class="status">
-                <span class="status-dot" aria-hidden="true"></span>
-                {{ t().log.status[row.status] }}
-                @if (row.status === 'synced') {
-                  · {{ i18n.time(row.syncedAt) }}
-                }
-              </span>
+              <gh-status-chip
+                [status]="row.status"
+                [label]="statusLabel(row)"
+              />
               @if (row.error) {
                 <span class="row-error">{{ row.error }}</span>
               }
             </div>
             <div class="row-actions">
-              <button type="button" class="secondary small" (click)="edit(row)">
+              <button type="button" ghButton="secondary" (click)="edit(row)">
                 {{ t().log.edit }}
               </button>
               @if (row.syncedAt === null) {
-                <button
-                  type="button"
-                  class="danger small"
-                  (click)="remove(row)"
-                >
+                <button type="button" ghButton="danger" (click)="remove(row)">
                   {{ t().log.delete }}
                 </button>
               }

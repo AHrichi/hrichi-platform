@@ -20,8 +20,13 @@ import {
 } from '@ah/products/greenhouse/domain';
 import { fill, FieldI18n } from '../../i18n/field-i18n';
 import { FieldStore } from '../../store/field.store';
-import { BadgeScanner, canScanBadges } from '../../ui/badge-scanner';
-import { Stepper } from '../../ui/stepper';
+import {
+  canScanBadges,
+  GhBadgeScanner,
+  GhButton,
+  GhStatusChip,
+  GhStepper,
+} from '@ah/products/greenhouse/ui';
 
 const DEFAULT_HOURS = 8;
 
@@ -32,7 +37,7 @@ const DEFAULT_HOURS = 8;
  */
 @Component({
   selector: 'gh-log-screen',
-  imports: [RouterLink, BadgeScanner, Stepper],
+  imports: [RouterLink, GhBadgeScanner, GhButton, GhStatusChip, GhStepper],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './log-screen.html',
   styleUrl: './log-screen.scss',
@@ -257,6 +262,13 @@ export class LogScreen {
 
   protected nameOf(workerId: string): string {
     return this.store.workerNames().get(workerId) ?? workerId;
+  }
+
+  protected statusLabel(row: LogRow): string {
+    const word = this.t().log.status[row.status];
+    return row.status === 'synced' && row.syncedAt
+      ? `${word} · ${this.i18n.time(row.syncedAt)}`
+      : word;
   }
 
   protected summary(row: LogRow): string {

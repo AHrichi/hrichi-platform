@@ -154,6 +154,32 @@ export class FieldRepository {
     return (await this.meta<string>(META_LAST_SYNC_AT)) ?? null;
   }
 
+  /**
+   * Forgets the farm when its supervisor signs out, so the next person on
+   * this phone starts clean. Refuses while entries wait to be sent: they
+   * would go out under someone else's name.
+   */
+  async clearAccount(): Promise<boolean> {
+    const { db } = this;
+    return db.transaction(
+      'rw',
+      [db.logs, db.greenhouses, db.teams, db.workers, db.meta],
+      async () => {
+        if ((await db.logs.where('status').equals('pending').count()) > 0) {
+          return false;
+        }
+        await Promise.all([
+          db.logs.clear(),
+          db.greenhouses.clear(),
+          db.teams.clear(),
+          db.workers.clear(),
+          db.meta.clear(),
+        ]);
+        return true;
+      },
+    );
+  }
+
   private async meta<T>(key: string): Promise<T | undefined> {
     return (await this.db.meta.get(key))?.value as T | undefined;
   }

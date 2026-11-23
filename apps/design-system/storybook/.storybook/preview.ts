@@ -7,6 +7,9 @@ import '@fontsource-variable/jetbrains-mono/index.css';
 import '../../../../libs/design-system/tokens/src/generated/tokens.css';
 // eslint-disable-next-line @nx/enforce-module-boundaries -- CSS, not library code
 import '../../../../libs/design-system/ui/src/styles/index.scss';
+// The Greenhouse UI kit's shared classes (gh-button, gh-card, gh-input).
+// eslint-disable-next-line @nx/enforce-module-boundaries -- CSS, not library code
+import '../../../../libs/products/greenhouse/ui/src/styles/greenhouse.scss';
 
 const preview: Preview = {
   parameters: {

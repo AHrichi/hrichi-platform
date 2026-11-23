@@ -21,6 +21,7 @@ Ahmed Hrichi's portfolio, built as the kind of platform it describes: an Nx mono
 | `product-greenhouse`          | `apps/products/greenhouse/dashboard` | Greenhouse Labor Planner, manager side: weekly plan, staffing gap, HR shortage report (not in the shell yet) |
 | `product-greenhouse-field`    | `apps/products/greenhouse/field`     | Greenhouse Labor Planner, supervisor side: offline-first work log PWA and Capacitor app (port 4314)          |
 | `product-greenhouse-supabase` | `apps/products/greenhouse/supabase`  | Its Supabase schema, row-level security and seed, tested on PGlite                                           |
+| `product-greenhouse-ui`       | `libs/products/greenhouse/ui`        | The Greenhouse UI kit: app bar, field-size buttons and steppers, status chips, brand packs                   |
 | `product-*-domain`            | `libs/products/*/domain`             | Framework-free models, parsers and calculations for each product                                             |
 | `product-*-feature`           | `libs/products/*/feature`            | Each product's routes, pages and SignalStore                                                                 |
 | `lab-sky`                     | `apps/labs/sky`                      | Sky lab remote: the night sky over any place and time, from a 3D globe down to a campsite                    |

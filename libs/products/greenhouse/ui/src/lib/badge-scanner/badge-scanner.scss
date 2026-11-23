@@ -1,0 +1,32 @@
+:host {
+  display: block;
+}
+
+.icon {
+  inline-size: 1.75rem;
+  block-size: 1.75rem;
+  fill: none;
+  stroke: currentcolor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.viewer {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.video {
+  inline-size: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: var(--radius-lg);
+  background: var(--color-bg-inverse);
+}
+
+.hint {
+  margin: 0;
+  text-align: center;
+  font-weight: var(--font-weight-semibold);
+}

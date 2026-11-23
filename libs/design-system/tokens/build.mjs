@@ -351,7 +351,16 @@ function luminance(value, name) {
   return 0.2126 * r + 0.7152 * g + 0.0722 * b;
 }
 
-// Each look theme is the base theme with the look's overrides on top.
+// Each look theme is the base theme with the look's overrides on top. The
+// scene pairs apply to looks that draw scenes (they define color-scene-*);
+// a look without them is gated on the base pairs only.
+const scenePairsFor = (lookTokens) =>
+  lookTokens.some((token) => token.name.startsWith('color-scene-'))
+    ? [
+        [sceneTextPairs, 4.5],
+        [sceneGraphicPairs, 3],
+      ]
+    : [];
 const gatedThemes = [
   ['light', asRecord(light), []],
   ['dark', asRecord(dark), []],
@@ -359,18 +368,12 @@ const gatedThemes = [
     [
       `${name} light`,
       { ...asRecord(light), ...asRecord(lookLight) },
-      [
-        [sceneTextPairs, 4.5],
-        [sceneGraphicPairs, 3],
-      ],
+      scenePairsFor(lookLight),
     ],
     [
       `${name} dark`,
       { ...asRecord(dark), ...asRecord(lookDark) },
-      [
-        [sceneTextPairs, 4.5],
-        [sceneGraphicPairs, 3],
-      ],
+      scenePairsFor(lookDark),
     ],
   ]),
 ];
