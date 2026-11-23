@@ -599,6 +599,16 @@ export const FarmStore = signalStore(
         return write((r, farm) => r.cancelInvitation(farm, email));
       },
 
+      renameMember(userId: string, fullName: string): Promise<boolean> {
+        patchSetup((s) => ({
+          ...s,
+          members: s.members
+            .map((m) => (m.userId === userId ? { ...m, fullName } : m))
+            .sort((a, b) => a.fullName.localeCompare(b.fullName)),
+        }));
+        return write((r, farm) => r.renameMember(farm, userId, fullName));
+      },
+
       removeMember(userId: string): Promise<boolean> {
         patchSetup((s) => ({
           ...s,

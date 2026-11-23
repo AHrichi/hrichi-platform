@@ -215,5 +215,5 @@ Gotchas:
    - Put the project URL and **publishable** key (never the secret key) in the field app's `environment.production.ts`, and in a new `environment.production.ts` for the dashboard with a `production` file replacement. The dashboard's default build must stay the demo while it is the portfolio's remote; give the real one its own configuration.
    - Auth: turn email confirmations on, and set the site URL to wherever the field app is hosted.
    - The owner creates their account on the dashboard's sign-in screen, creates the farm there, and invites supervisors and HR from **People**.
-2. **Left over from G3:** a "create account" link in the field app (supervisors can use the dashboard's for now); editing a member's name. (Targets were done in G5a.)
+2. **Left over from G3:** done on the G5 branch. Supervisors can create their account in the field app, managers rename members on **People**, and targets came with G5a.
 3. **G4 Android** (the table in §2), then **G6** (go live in the portfolio).

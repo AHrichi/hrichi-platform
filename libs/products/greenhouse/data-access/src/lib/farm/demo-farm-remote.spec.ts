@@ -134,6 +134,15 @@ describe('DemoFarmRemote', () => {
     expect(urls.get('a.jpg')).toMatch(/^data:image\/svg\+xml,/);
   });
 
+  it('renames a member', async () => {
+    const demo = remote();
+    await demo.renameMember(DEMO_FARM_ID, 'demo-hr', 'Salma (RH)');
+    const setup = await demo.loadSetup();
+    expect(setup.members.find((m) => m.userId === 'demo-hr')?.fullName).toBe(
+      'Salma (RH)',
+    );
+  });
+
   it('frees a deleted team’s workers', async () => {
     const demo = remote();
     await demo.deleteTeam(DEMO_FARM_ID, 'team-a1');

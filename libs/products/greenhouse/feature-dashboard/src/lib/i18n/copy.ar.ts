@@ -292,6 +292,8 @@ export const AR: DashboardCopy = {
     invited: 'دُعي {email}: سينضمّ عند إنشاء حسابه.',
     you: 'أنت',
     cancelInvite: 'إلغاء',
+    rename: 'تغيير الاسم',
+    renameLabel: 'الاسم الجديد لـ{name}',
     removeConfirm: 'إزالة {name} من المزرعة؟ تبقى تسجيلاته السابقة.',
   },
   roles: {

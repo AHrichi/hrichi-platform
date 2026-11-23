@@ -256,6 +256,16 @@ export class DemoFarmRemote implements FarmRemote {
     if (i >= 0) this.invitations.splice(i, 1);
   }
 
+  async renameMember(
+    _farmId: string,
+    userId: string,
+    fullName: string,
+  ): Promise<void> {
+    await this.reply();
+    const member = this.members.find((m) => m.userId === userId);
+    if (member) member.fullName = fullName;
+  }
+
   async removeMember(_farmId: string, userId: string): Promise<void> {
     await this.reply();
     const i = this.members.findIndex((m) => m.userId === userId);

@@ -293,6 +293,8 @@ export const EN = {
     invited: '{email} is invited: they join when they create their account.',
     you: 'you',
     cancelInvite: 'Cancel',
+    rename: 'Rename',
+    renameLabel: 'New name for {name}',
     removeConfirm: 'Remove {name} from the farm? Their past entries stay.',
   },
   roles: {

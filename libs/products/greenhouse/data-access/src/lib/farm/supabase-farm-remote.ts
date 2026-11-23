@@ -400,6 +400,20 @@ export class SupabaseFarmRemote implements FarmRemote {
     );
   }
 
+  async renameMember(
+    farmId: string,
+    userId: string,
+    fullName: string,
+  ): Promise<void> {
+    await callPostgrest(
+      this.client
+        .from('member')
+        .update({ full_name: fullName })
+        .eq('farm_id', farmId)
+        .eq('user_id', userId),
+    );
+  }
+
   async removeMember(farmId: string, userId: string): Promise<void> {
     await callPostgrest(
       this.client

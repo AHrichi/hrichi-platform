@@ -300,6 +300,8 @@ export const FR: DashboardCopy = {
     invited: '{email} est invité : il rejoindra la ferme en créant son compte.',
     you: 'vous',
     cancelInvite: 'Annuler',
+    rename: 'Renommer',
+    renameLabel: 'Nouveau nom pour {name}',
     removeConfirm:
       'Retirer {name} de la ferme ? Ses saisies passées sont conservées.',
   },

@@ -141,4 +141,5 @@ export interface FarmRemote {
   ): Promise<InviteResult>;
   cancelInvitation(farmId: string, email: string): Promise<void>;
   removeMember(farmId: string, userId: string): Promise<void>;
+  renameMember(farmId: string, userId: string, fullName: string): Promise<void>;
 }

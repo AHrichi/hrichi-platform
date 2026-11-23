@@ -87,19 +87,61 @@
         @for (m of store.setup().members; track m.userId) {
           <tr>
             <th scope="row">
-              {{ m.fullName }}
-              @if (isMe(m)) {
-                <small class="muted">({{ tp.you }})</small>
+              @if (renaming() === m.userId) {
+                <form
+                  class="rename"
+                  novalidate
+                  (submit)="$event.preventDefault(); rename(m, nameBox.value)"
+                >
+                  <input
+                    #nameBox
+                    class="gh-input"
+                    maxlength="120"
+                    autocomplete="off"
+                    [attr.aria-label]="
+                      i18n.fill(tp.renameLabel, { name: m.fullName })
+                    "
+                    [value]="m.fullName"
+                    [attr.aria-invalid]="renameProblem() ? true : null"
+                  />
+                  <button type="submit" ghButton>{{ tc.save }}</button>
+                  <button
+                    type="button"
+                    ghButton="secondary"
+                    (click)="cancelRename()"
+                  >
+                    {{ tc.cancel }}
+                  </button>
+                  @if (renameProblem(); as problem) {
+                    <p class="gh-error">{{ tc.errors[problem] }}</p>
+                  }
+                </form>
+              } @else {
+                {{ m.fullName }}
+                @if (isMe(m)) {
+                  <small class="muted">({{ tp.you }})</small>
+                }
               }
             </th>
             <td>{{ t().roles[m.role] }}</td>
             @if (store.canEdit()) {
               <td>
-                @if (!isMe(m)) {
-                  <button type="button" ghButton="ghost" (click)="remove(m)">
-                    {{ tc.remove }}
-                  </button>
-                }
+                <div class="row-actions">
+                  @if (renaming() !== m.userId) {
+                    <button
+                      type="button"
+                      ghButton="ghost"
+                      (click)="startRename(m)"
+                    >
+                      {{ tp.rename }}
+                    </button>
+                  }
+                  @if (!isMe(m)) {
+                    <button type="button" ghButton="ghost" (click)="remove(m)">
+                      {{ tc.remove }}
+                    </button>
+                  }
+                </div>
               </td>
             }
           </tr>
