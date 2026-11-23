@@ -1,4 +1,5 @@
 export * from './lib/dates';
+export * from './lib/hygiene';
 export * from './lib/ids';
 export * from './lib/models';
 export * from './lib/performance';

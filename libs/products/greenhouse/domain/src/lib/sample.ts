@@ -1,8 +1,11 @@
 import { addDays, type IsoDate, startOfWeek, type Weekday } from './dates';
+import { STANDARD_HYGIENE_ITEMS } from './hygiene';
 import type {
   Absence,
   Crop,
   Greenhouse,
+  HygieneCheck,
+  HygieneItem,
   PlanEntry,
   Team,
   WeeklyTarget,
@@ -354,4 +357,57 @@ function hash(text: string): number {
     h = Math.imul(h ^ text.charCodeAt(i), 16_777_619);
   }
   return h >>> 0;
+}
+
+/** The demo farm's checklist: the standard items, in order. */
+export function sampleHygieneItems(): HygieneItem[] {
+  return STANDARD_HYGIENE_ITEMS.map((item, i) => ({
+    id: `hyg-${i + 1}`,
+    label: { ...item.label },
+    photoRequired: item.photoRequired,
+    sortOrder: i + 1,
+    active: true,
+  }));
+}
+
+/**
+ * The demo farm's hygiene checks on `date`. Before `today` every
+ * compartment was checked and signed; on `today` most are, B3's
+ * supervisor is halfway through and B4 hasn't started. A2 found the
+ * crates on the ground. The photos are not real files.
+ */
+export function sampleHygieneChecks(
+  date: IsoDate,
+  today: IsoDate,
+): HygieneCheck[] {
+  if (date > today) return [];
+  const items = sampleHygieneItems();
+  return SAMPLE_GREENHOUSES.flatMap((g, i): HygieneCheck[] => {
+    const isToday = date === today;
+    if (isToday && g.id === 'gh-8') return [];
+    const open = isToday && g.id === 'gh-7';
+    const answered = open ? items.slice(0, 3) : items;
+    return [
+      {
+        id: `check-${date}-${g.id}`,
+        date,
+        greenhouseId: g.id,
+        supervisorId: `sup-${i + 1}`,
+        answers: answered.map((item) => {
+          const failed = g.id === 'gh-2' && item.id === 'hyg-5';
+          return {
+            itemId: item.id,
+            ok: !failed,
+            ...(failed
+              ? { note: 'Crates stacked on the ground by row 12' }
+              : {}),
+            photoPaths: item.photoRequired
+              ? [`demo/${date}/${g.id}/${item.id}.jpg`]
+              : [],
+          };
+        }),
+        signedAt: open ? null : `${date}T07:${String(10 + i * 4)}:00.000Z`,
+      },
+    ];
+  });
 }

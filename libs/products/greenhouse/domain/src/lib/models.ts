@@ -133,6 +133,8 @@ export interface HygieneItem {
   label: { ar: string; fr: string; en: string };
   /** Whether a photo must back the answer. */
   photoRequired: boolean;
+  /** Where it comes in the checklist, lowest first. */
+  sortOrder: number;
   active: boolean;
 }
 

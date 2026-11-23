@@ -486,6 +486,71 @@ describe('hygiene checks', () => {
         ),
       ).toMatch(/row-level security/);
     }));
+
+  // The phone re-sends a signed check whose reply it lost; it relies on
+  // this error (not a silent no-op) to look and see the check is in.
+  it('refuse a re-send over a signed check, as the phone upserts it', () =>
+    scenario(async (s) => {
+      await s.as(SUPERVISOR_A);
+      const upsert = `insert into public.hygiene_check
+          (id, farm_id, check_date, greenhouse_id, supervisor_id, answers, signed_at)
+        values ($1, $2, $3, $4, $5, $6::jsonb, $7)
+        on conflict (id) do update set answers = excluded.answers,
+          signed_at = excluded.signed_at`;
+      const id = 'a0000000-0000-4000-8000-00000000a401';
+      const answers = JSON.stringify([
+        { itemId: 'x', ok: true, photoPaths: [] },
+      ]);
+      const args = [id, FARM_A, today(), GH_A, SUPERVISOR_A, answers];
+      expect(await s.count(upsert, [...args, null])).toBe(1);
+      expect(await s.count(upsert, [...args, new Date().toISOString()])).toBe(
+        1,
+      );
+      expect(
+        await s.error(upsert, [...args, new Date().toISOString()]),
+      ).toMatch(/row-level security/);
+      // Another supervisor can't start a second check of the same greenhouse.
+      await s.as(SUPERVISOR_A2);
+      expect(
+        await s.error(upsert, [
+          'a0000000-0000-4000-8000-00000000a402',
+          FARM_A,
+          today(),
+          GH_A,
+          SUPERVISOR_A2,
+          answers,
+          null,
+        ]),
+      ).toMatch(/duplicate key|unique/);
+      // HR and supervisors read the farm's checks; another farm doesn't.
+      await s.as(HR_A);
+      expect(await s.rows(`select id from public.hygiene_check`)).toEqual([
+        { id },
+      ]);
+      await s.as(MANAGER_B);
+      expect(await s.rows(`select id from public.hygiene_check`)).toEqual([]);
+    }));
+});
+
+describe('hygiene items', () => {
+  const insert = `insert into public.hygiene_item (farm_id, label_ar, label_fr, label_en)
+    values ($1, 'ع', 'fr', 'en')`;
+
+  it('are the manager’s to write and everyone’s on the farm to read', () =>
+    scenario(async (s) => {
+      for (const who of [SUPERVISOR_A, HR_A]) {
+        await s.as(who);
+        expect(await s.error(insert, [FARM_A])).toMatch(/row-level security/);
+      }
+      await s.as(MANAGER_A);
+      expect(await s.count(insert, [FARM_A])).toBe(1);
+      await s.as(SUPERVISOR_A);
+      expect(await s.rows(`select label_fr from public.hygiene_item`)).toEqual([
+        { label_fr: 'fr' },
+      ]);
+      await s.as(MANAGER_B);
+      expect(await s.rows(`select * from public.hygiene_item`)).toEqual([]);
+    }));
 });
 
 describe('hygiene photos', () => {
