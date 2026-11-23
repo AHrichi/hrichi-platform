@@ -1,0 +1,8 @@
+{
+  "name": "product-greenhouse-domain",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/products/greenhouse/domain/src",
+  "projectType": "library",
+  "tags": ["scope:product-greenhouse", "type:domain", "runtime:agnostic"],
+  "targets": {}
+}

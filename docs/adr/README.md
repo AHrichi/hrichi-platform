@@ -31,6 +31,7 @@ Each ADR records one decision, why it was made, and what a spike proved. New ADR
 | [0023](0023-studylm-generated-lessons.md)      | StudyLM writes lessons, plays every visual, runs JS with a tracer, no eval or worker      |
 | [0024](0024-learning-engine.md)                | Learning Engine: own scope, client-only access for products, local-first sync, Nest AI    |
 | [0025](0025-system-design-course.md)           | System Design course: step lessons on an isometric scene, paper look, shared step helpers |
+| [0026](0026-greenhouse-labor-planner.md)       | Greenhouse Labor Planner: pure planning maths, Supabase RLS, offline-first Capacitor app  |
 
 ## Proposed (written when the area is built)
 

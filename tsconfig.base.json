@@ -126,6 +126,18 @@
       "@ah/products/system-design/feature": [
         "./libs/products/system-design/feature/src/index.ts"
       ],
+      "@ah/products/greenhouse/domain": [
+        "./libs/products/greenhouse/domain/src/index.ts"
+      ],
+      "@ah/products/greenhouse/data-access": [
+        "./libs/products/greenhouse/data-access/src/index.ts"
+      ],
+      "@ah/products/greenhouse/feature-field": [
+        "./libs/products/greenhouse/feature-field/src/index.ts"
+      ],
+      "@ah/products/greenhouse/feature-dashboard": [
+        "./libs/products/greenhouse/feature-dashboard/src/index.ts"
+      ],
       "@ah/shared/api-client": ["./libs/shared/api-client/src/index.ts"],
       "@ah/labs/sky/domain": ["./libs/labs/sky/domain/src/index.ts"],
       "@ah/labs/sky/feature": ["./libs/labs/sky/feature/src/index.ts"],

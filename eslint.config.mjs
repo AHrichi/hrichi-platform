@@ -159,6 +159,16 @@ export default [
                 'scope:learning-client',
               ],
             },
+            // The Greenhouse Labor Planner (ADR-0026).
+            {
+              sourceTag: 'scope:product-greenhouse',
+              onlyDependOnLibsWithTags: [
+                'scope:product-greenhouse',
+                'scope:shared',
+                'scope:platform',
+                'scope:design-system',
+              ],
+            },
             // The Learning Engine (ADR-0024): its own scope, like a product.
             {
               sourceTag: 'scope:learning',

@@ -20,6 +20,8 @@ const STRICT = [
   'apps/products/learning/**/*.scss',
   'libs/products/system-design/**/*.scss',
   'apps/products/system-design/**/*.scss',
+  'libs/products/greenhouse/**/*.scss',
+  'apps/products/greenhouse/**/*.scss',
 ];
 
 const COLOR_PROPS = [

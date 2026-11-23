@@ -1,0 +1,188 @@
+<a class="back" routerLink="/">
+  <span class="arrow" aria-hidden="true">←</span>
+  {{ t().log.back }}
+</a>
+
+@if (greenhouse(); as gh) {
+  <h1 class="title">
+    {{ gh.name }}
+    <small>{{ t().crops[gh.crop] }}</small>
+  </h1>
+
+  <p class="notice" role="status">{{ notice() }}</p>
+
+  @if (worker(); as w) {
+    <form class="card entry" (submit)="$event.preventDefault(); save()">
+      <div class="who">
+        <strong class="who-name">{{ w.fullName }}</strong>
+        <span class="who-badge">{{ w.badgeCode }}</span>
+      </div>
+      @if (loggedToday(); as note) {
+        <p class="already">{{ note }}</p>
+      }
+
+      <gh-stepper
+        [label]="t().log.crates"
+        [lessLabel]="t().log.less"
+        [moreLabel]="t().log.more"
+        [(value)]="crates"
+        [max]="999"
+        [error]="error('crates')"
+        [hint]="estimate()"
+      />
+      <gh-stepper
+        [label]="t().log.rejected"
+        [lessLabel]="t().log.less"
+        [moreLabel]="t().log.more"
+        [(value)]="rejected"
+        [max]="999"
+        [error]="error('rejectedCrates')"
+      />
+      <gh-stepper
+        [label]="t().log.kg"
+        [lessLabel]="t().log.less"
+        [moreLabel]="t().log.more"
+        [(value)]="kg"
+        [step]="10"
+        [max]="5000"
+        [decimal]="true"
+        [error]="error('kg')"
+      />
+      <gh-stepper
+        [label]="t().log.hours"
+        [lessLabel]="t().log.less"
+        [moreLabel]="t().log.more"
+        [(value)]="hours"
+        [step]="0.5"
+        [max]="maxHours"
+        [decimal]="true"
+        [error]="error('hours')"
+      />
+
+      @if (confirmHigh() && highRate(); as warning) {
+        <p class="warning" role="alert">{{ warning }}</p>
+      }
+
+      <div class="actions">
+        <button type="submit" class="primary" [disabled]="busy()">
+          {{
+            confirmHigh()
+              ? t().log.saveAnyway
+              : editing()
+                ? t().log.saveChanges
+                : t().log.save
+          }}
+        </button>
+        <button type="button" class="secondary" (click)="reset()">
+          {{ t().log.cancel }}
+        </button>
+      </div>
+    </form>
+  } @else {
+    <section class="card find" aria-labelledby="gh-next">
+      <h2 id="gh-next" class="card-title">{{ t().log.next }}</h2>
+
+      @if (canScan && !cameraBlocked()) {
+        <gh-badge-scanner
+          [scanLabel]="t().log.scan"
+          [stopLabel]="t().log.stopScan"
+          [hint]="t().log.scanning"
+          (scanned)="onScanned($event)"
+          (unavailable)="cameraBlocked.set(true)"
+        />
+      }
+      @if (cameraBlocked()) {
+        <p class="muted">{{ t().log.cameraBlocked }}</p>
+      }
+
+      <form class="badge-form" (submit)="$event.preventDefault(); lookup()">
+        <label class="field-label" for="gh-badge">{{ t().log.badge }}</label>
+        <div class="badge-row">
+          <input
+            #badgeBox
+            id="gh-badge"
+            class="text-field"
+            type="text"
+            autocomplete="off"
+            autocapitalize="characters"
+            enterkeyhint="search"
+            placeholder="GH-0001"
+            [value]="badge()"
+            [attr.aria-invalid]="lookupError() ? 'true' : null"
+            [attr.aria-describedby]="lookupError() ? 'gh-badge-error' : null"
+            (input)="setBadge(badgeBox.value)"
+          />
+          <button type="submit" class="primary narrow">
+            {{ t().log.find }}
+          </button>
+        </div>
+        @if (lookupError(); as message) {
+          <p id="gh-badge-error" class="field-error">{{ message }}</p>
+        }
+      </form>
+
+      <label class="field-label" for="gh-pick">{{ t().log.pick }}</label>
+      <select
+        #pickBox
+        id="gh-pick"
+        class="text-field"
+        (change)="pick(pickBox.value)"
+      >
+        <option value="" selected>{{ t().log.pickPlaceholder }}</option>
+        @for (team of teams(); track team.label) {
+          <optgroup [label]="team.label">
+            @for (w of team.workers; track w.id) {
+              <option [value]="w.id">
+                {{ w.fullName }} · {{ w.badgeCode }}
+              </option>
+            }
+          </optgroup>
+        }
+      </select>
+    </section>
+  }
+
+  <section class="today" aria-labelledby="gh-today">
+    <h2 id="gh-today" class="card-title">{{ t().log.today }}</h2>
+    @if (entries().length === 0) {
+      <p class="muted">{{ t().log.empty }}</p>
+    } @else {
+      <ul class="entries" role="list">
+        @for (row of entries(); track row.id) {
+          <li class="row" [attr.data-status]="row.status">
+            <div class="row-main">
+              <strong>{{ nameOf(row.workerId) }}</strong>
+              <span class="row-summary">{{ summary(row) }}</span>
+              <span class="status">
+                <span class="status-dot" aria-hidden="true"></span>
+                {{ t().log.status[row.status] }}
+                @if (row.status === 'synced') {
+                  · {{ i18n.time(row.syncedAt) }}
+                }
+              </span>
+              @if (row.error) {
+                <span class="row-error">{{ row.error }}</span>
+              }
+            </div>
+            <div class="row-actions">
+              <button type="button" class="secondary small" (click)="edit(row)">
+                {{ t().log.edit }}
+              </button>
+              @if (row.syncedAt === null) {
+                <button
+                  type="button"
+                  class="danger small"
+                  (click)="remove(row)"
+                >
+                  {{ t().log.delete }}
+                </button>
+              }
+            </div>
+          </li>
+        }
+      </ul>
+    }
+  </section>
+} @else {
+  <p class="muted" role="status">{{ t().home.loading }}</p>
+}

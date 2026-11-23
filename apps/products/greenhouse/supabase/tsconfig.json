@@ -1,0 +1,15 @@
+{
+  "extends": "../../../../tsconfig.base.json",
+  "compilerOptions": {
+    "isolatedModules": true,
+    "strict": true,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "module": "preserve",
+    "outDir": "../../../../dist/out-tsc",
+    "types": ["vitest/globals", "node"]
+  },
+  "include": ["vitest.config.mts", "spec/**/*.ts"]
+}

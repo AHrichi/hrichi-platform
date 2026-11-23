@@ -90,6 +90,26 @@
         "4308"
       ],
       "port": 4308
+    },
+    {
+      "name": "greenhouse field (static build)",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "tools/scripts/serve-static.mjs",
+        "dist/apps/products/greenhouse/field/browser",
+        "4314"
+      ],
+      "port": 4314
+    },
+    {
+      "name": "greenhouse dashboard (static build)",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "tools/scripts/serve-static.mjs",
+        "dist/apps/products/greenhouse/dashboard/browser",
+        "4313"
+      ],
+      "port": 4313
     }
   ]
 }

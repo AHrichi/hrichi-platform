@@ -1,0 +1,36 @@
+@switch (store.status()) {
+  @case ('loading') {
+    <p class="state" role="status">{{ t().home.loading }}</p>
+  }
+  @case ('no-roster') {
+    <div class="state">
+      <p>{{ t().home.noRoster }}</p>
+      <button type="button" class="retry" (click)="store.retryRoster()">
+        {{ t().home.retry }}
+      </button>
+    </div>
+  }
+  @case ('failed') {
+    <div class="state" role="alert">
+      <p>{{ t().sync.error }}</p>
+    </div>
+  }
+  @default {
+    <h1 class="title">{{ t().home.title }}</h1>
+    <p class="date">{{ t().home.today }} · {{ i18n.day(store.date()) }}</p>
+    <ul class="greenhouses" role="list">
+      @for (greenhouse of store.greenhouses(); track greenhouse.id) {
+        <li>
+          <a class="greenhouse" [routerLink]="['/log', greenhouse.id]">
+            <span class="name">{{ greenhouse.name }}</span>
+            <span class="crop">{{ t().crops[greenhouse.crop] }}</span>
+            <span class="count">
+              <strong>{{ i18n.num(entriesIn(greenhouse.id)) }}</strong>
+              {{ t().home.entries }}
+            </span>
+          </a>
+        </li>
+      }
+    </ul>
+  }
+}
