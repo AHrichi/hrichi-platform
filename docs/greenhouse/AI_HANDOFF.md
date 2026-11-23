@@ -25,7 +25,7 @@ Last updated 2026-11-23:
    pnpm nx run-many -t lint test build -p "product-greenhouse*" --output-style=static
    ```
 
-   That's 8 projects and 153 tests.
+   That's 8 projects and 164 tests.
 
 4. **Read:**
    1. this file;
@@ -69,7 +69,7 @@ There is **no Ionic**: `@ionic/angular` peers on `zone.js` (ADR-0026).
 
 **Verified** (2026-11-23, G3):
 
-- Lint, test and build for all 8 `product-greenhouse*` projects (153 tests, 29 of them PGlite security tests), stylelint, `pnpm check:zoneless`, `pnpm nx format:check`; `graph.json` regenerated after `nx reset` (264 dependencies).
+- Lint, test and build for all 8 `product-greenhouse*` projects (164 tests after the clean-up below, 29 of them PGlite security tests), stylelint, `pnpm check:zoneless`, `pnpm nx format:check`; `graph.json` regenerated after `nx reset` (265 after the clean-up).
 - The new migration applies on the local Supabase stack (`migration up`).
 - The dashboard's `local` build in the browser pane, against local Supabase:
   - `manager@farm.test` signs in and the seed farm opens; 324 kg logged by the field app in G2 shows as picked on Monday;
@@ -80,6 +80,7 @@ There is **no Ionic**: `@ionic/angular` peers on `zone.js` (ADR-0026).
   - badges filtered to Équipe B print five cards; the QR path is unit-tested against `uqr`'s matrix;
   - Arabic is RTL; there are no console errors.
 - The default (demo) build shows the sample farm as before: 169,400 kg, 10 worker-days short, Friday the shortest day.
+- Architecture clean-up afterwards: `FarmStore` became an NgRx signal store with its own tests, data-access split into `auth/`, `remote/`, `field/` and `farm/`, one `newId` (with a plain-HTTP fallback), `isRole`, `upsertById` and `withoutId` in the domain, the plan's cell edit moved into the pure `withCellKg`, and unused copy removed. ADR-0026 records the layering.
 
 **Verified** (2026-11-23, G2):
 
@@ -123,16 +124,16 @@ There is **no Ionic**: `@ionic/angular` peers on `zone.js` (ADR-0026).
 
 ## 3. Code map
 
-| Area                              | Location                                     | What's there                                                                                                                                                                                             |
-| --------------------------------- | -------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Domain (pure, `runtime:agnostic`) | `libs/products/greenhouse/domain`            | `dates`, `models` (incl. `WorkerPay`, `Member`, `Invitation`), `productivity`, `planning`, `staffing`, `work-log`, `setup` (form checks, `nextBadgeCode`), `sample`                                      |
-| UI kit (prefix `gh`)              | `libs/products/greenhouse/ui`                | `gh-app-bar`, `ghButton`, `gh-stepper`, `gh-status-chip`, `gh-badge-scanner`, `gh-lang-switch`, `GREENHOUSE_BRAND`, `styles/greenhouse.scss`                                                             |
-| Data access                       | `libs/products/greenhouse/data-access`       | `FieldDatabase` v1, `FieldRepository`, `WorkLogSync`, `FieldRemote` and `RemoteError`; `FarmRemote` (dashboard); Supabase and demo remotes of each; `GreenhouseAuth` and the `GREENHOUSE_SUPABASE` token |
-| Field feature (prefix `gh`)       | `libs/products/greenhouse/feature-field`     | `FIELD_ROUTES`, `FieldStore` (sync scheduling), `FieldAuth`                                                                                                                                              |
-| Dashboard feature                 | `libs/products/greenhouse/feature-dashboard` | `GREENHOUSE_DASHBOARD_ROUTES`, `FarmStore` and `DashboardAuth`, `buildWeekView` and row helpers, `shortageReport`, the screens (plan, absences, workers, badges, teams, greenhouses, people)             |
-| Field app                         | `apps/products/greenhouse/field`             | Port 4314, `ngsw-config.json`, `capacitor.config.ts`, app mode `embedded-demo` until G2                                                                                                                  |
-| Dashboard app                     | `apps/products/greenhouse/dashboard`         | Remote `product-greenhouse`, port 4313, exposes `./routes` and `./meta`; `-c local` talks to local Supabase, the default build is the demo; no `deploy` target                                           |
-| Supabase                          | `apps/products/greenhouse/supabase`          | `migrations/`, `seed.sql`, `config.toml`, `spec/` (PGlite)                                                                                                                                               |
+| Area                              | Location                                     | What's there                                                                                                                                                                                                                                                                            |
+| --------------------------------- | -------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Domain (pure, `runtime:agnostic`) | `libs/products/greenhouse/domain`            | `dates`, `ids` (`newId`, `upsertById`, `withoutId`), `models` (incl. `WorkerPay`, `Member`, `Invitation`, `isRole`), `productivity`, `planning`, `staffing`, `work-log`, `setup` (form checks, `nextBadgeCode`), `sample`                                                               |
+| UI kit (prefix `gh`)              | `libs/products/greenhouse/ui`                | `gh-app-bar`, `ghButton`, `gh-stepper`, `gh-status-chip`, `gh-badge-scanner`, `gh-lang-switch`, `GREENHOUSE_BRAND`, `styles/greenhouse.scss`                                                                                                                                            |
+| Data access                       | `libs/products/greenhouse/data-access`       | `auth/` (`GreenhouseAuth`, `GREENHOUSE_SUPABASE`, sign-in errors), `remote/` (`RemoteError`, `callPostgrest`, `classifyFailure`, row mappers), `field/` (`FieldDatabase` v1, `FieldRepository`, `WorkLogSync`, `FieldRemote` and its adapters), `farm/` (`FarmRemote` and its adapters) |
+| Field feature (prefix `gh`)       | `libs/products/greenhouse/feature-field`     | `FIELD_ROUTES`, `FieldStore` (sync scheduling), `FieldAuth`                                                                                                                                                                                                                             |
+| Dashboard feature                 | `libs/products/greenhouse/feature-dashboard` | `GREENHOUSE_DASHBOARD_ROUTES`, `FarmStore` (signal store, `DEMO_FARM_REMOTE`), `DashboardAuth`, `buildWeekView` and row helpers, `shortageReport`, the screens (plan, absences, workers, badges, teams, greenhouses, people)                                                            |
+| Field app                         | `apps/products/greenhouse/field`             | Port 4314, `ngsw-config.json`, `capacitor.config.ts`, app mode `embedded-demo` until G2                                                                                                                                                                                                 |
+| Dashboard app                     | `apps/products/greenhouse/dashboard`         | Remote `product-greenhouse`, port 4313, exposes `./routes` and `./meta`; `-c local` talks to local Supabase, the default build is the demo; no `deploy` target                                                                                                                          |
+| Supabase                          | `apps/products/greenhouse/supabase`          | `migrations/`, `seed.sql`, `config.toml`, `spec/` (PGlite)                                                                                                                                                                                                                              |
 
 **Registration done in G1:**
 
