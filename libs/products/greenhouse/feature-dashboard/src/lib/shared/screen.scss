@@ -1,0 +1,161 @@
+// What every dashboard screen shares: the heading, the add/edit form and
+// the table. Cards, labels, inputs and buttons come from the Greenhouse UI
+// kit (greenhouse.scss).
+
+:host {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.title {
+  margin: 0;
+  font-size: var(--font-size-600);
+}
+
+.intro {
+  margin: var(--space-1) 0 0;
+  max-inline-size: 48rem;
+  color: var(--color-text-muted);
+}
+
+.form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+  align-items: start;
+  gap: var(--space-3);
+}
+
+.form-title {
+  grid-column: 1 / -1;
+  margin: 0;
+  font-size: var(--font-size-400);
+}
+
+.field {
+  display: grid;
+  gap: var(--space-1);
+
+  .gh-label {
+    margin: 0;
+  }
+}
+
+// The kit's inputs are sized for gloves; a desk needs less.
+.gh-input {
+  min-block-size: var(--control-height-lg);
+  font-size: var(--font-size-300);
+}
+
+.form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  grid-column: 1 / -1;
+  gap: var(--space-2);
+}
+
+.hint {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-200);
+}
+
+.message {
+  margin: 0;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--color-success-subtle);
+}
+
+section {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: var(--space-3);
+}
+
+.table-wrap {
+  overflow-x: auto;
+  border: var(--border-width-hairline) solid var(--color-border-default);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-raised);
+
+  &:focus-visible {
+    outline: var(--focus-ring-width) solid var(--color-focus-ring);
+    outline-offset: var(--focus-ring-offset);
+  }
+}
+
+.table {
+  inline-size: 100%;
+  border-collapse: collapse;
+
+  th,
+  td {
+    padding: var(--space-2) var(--space-3);
+    border-block-end: var(--border-width-hairline) solid
+      var(--color-border-default);
+    text-align: start;
+    vertical-align: middle;
+  }
+
+  thead th {
+    background: var(--color-bg-surface);
+    font-size: var(--font-size-200);
+  }
+
+  tbody tr:last-child > * {
+    border-block-end: 0;
+  }
+
+  .num {
+    text-align: end;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .muted {
+    color: var(--color-text-muted);
+  }
+
+  .is-off > * {
+    color: var(--color-text-muted);
+  }
+}
+
+.row-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
+
+.empty {
+  margin: 0;
+  padding: var(--space-4);
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+.code {
+  font-family: var(--font-family-mono, monospace);
+}
+
+@media print {
+  .form,
+  .filters,
+  .row-actions,
+  .no-print {
+    display: none;
+  }
+}

@@ -1,0 +1,88 @@
+// A sheet of badges, about credit-card size (54 × 86 mm), three across on
+// A4 when printed. Black on white whatever the theme (a light colour
+// scheme and the system colours): scanners need the contrast, printers
+// the ink saving.
+
+.sheet {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.badge {
+  display: grid;
+  justify-items: center;
+  align-content: start;
+  gap: var(--space-1);
+  padding: var(--space-3);
+  border: var(--border-width-hairline) dashed var(--color-border-strong);
+  border-radius: var(--radius-md);
+  background: Canvas;
+  color: CanvasText;
+  color-scheme: light;
+  text-align: center;
+  break-inside: avoid;
+
+  p {
+    margin: 0;
+  }
+}
+
+.farm {
+  font-size: var(--font-size-200);
+  font-weight: var(--font-weight-semibold);
+}
+
+.qr {
+  inline-size: 100%;
+  max-inline-size: 10rem;
+  aspect-ratio: 1;
+}
+
+.qr-bg {
+  fill: Canvas;
+}
+
+.qr-fg {
+  fill: CanvasText;
+}
+
+.name {
+  font-size: var(--font-size-400);
+  font-weight: var(--font-weight-bold);
+}
+
+.team {
+  font-size: var(--font-size-200);
+}
+
+.code {
+  font-family: var(--font-family-mono, monospace);
+  font-size: var(--font-size-300);
+  letter-spacing: 0.08em;
+}
+
+@media print {
+  @page {
+    size: A4;
+    margin: 10mm;
+  }
+
+  .sheet {
+    grid-template-columns: repeat(3, 54mm);
+    gap: 4mm;
+    justify-content: center;
+  }
+
+  .badge {
+    block-size: 86mm;
+    border-radius: 0;
+  }
+
+  .qr {
+    max-inline-size: 38mm;
+  }
+}

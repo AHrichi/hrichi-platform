@@ -9,65 +9,70 @@ import {
 import { AhMetricCard } from '@ah/ui';
 import { GhButton } from '@ah/products/greenhouse/ui';
 import {
-  addDays,
-  isWeekStart,
+  parseAmount,
   type PlanEntry,
-  sampleFarm,
-  startOfWeek,
-  todayOnFarm,
   type Weekday,
   weekDates,
 } from '@ah/products/greenhouse/domain';
 import { DashboardI18n } from '../i18n/dashboard-i18n';
-import { buildWeekView, shortageReport, withExpectedKg } from './week-view';
+import { WeekNav } from '../shared/week-nav';
+import { FarmStore } from '../store/farm.store';
+import {
+  buildWeekView,
+  pickedKg,
+  shortageReport,
+  withExpectedKg,
+  withHours,
+  withTeam,
+} from './week-view';
 
 const DEFAULT_HOURS = 8;
 
 /**
- * The manager's week: expected kg per greenhouse and day (editable), the
- * workers each needs, required against available per day, and the
- * shortage report for HR, all recomputed as the numbers change.
+ * The manager's week: expected kg per greenhouse and day, the team that
+ * picks each greenhouse, the workers each needs, required against
+ * available per day, and the shortage report for HR. Every change is
+ * saved as it is made; HR sees the same screen, read-only.
  */
 @Component({
   selector: 'gh-plan-screen',
-  imports: [AhMetricCard, GhButton],
+  imports: [AhMetricCard, GhButton, WeekNav],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './plan-screen.html',
   styleUrl: './plan-screen.scss',
 })
 export class PlanScreen {
+  protected readonly store = inject(FarmStore);
   protected readonly i18n = inject(DashboardI18n);
   protected readonly t = this.i18n.t;
   private readonly window = inject(DOCUMENT).defaultView;
 
-  protected readonly weekStart = signal(startOfWeek(todayOnFarm()));
-  protected readonly hoursPerDay = signal(DEFAULT_HOURS);
-  /** The manager's changes, per week; the demo doesn't save them. */
-  private readonly edits = signal<Record<string, PlanEntry[]>>({});
   protected readonly copied = signal(false);
+  /** Teams picked for greenhouses with nothing planned yet this week. */
+  private readonly chosenTeams = signal<Record<string, string>>({});
 
-  /** The sample farm stands in for Supabase until the dashboard reads it. */
-  private readonly farm = computed(() => sampleFarm(this.weekStart()));
-  private readonly entries = computed(() =>
-    (this.edits()[this.weekStart()] ?? this.farm().plan).map((e) => ({
-      ...e,
-      hoursPerDay: this.hoursPerDay(),
-    })),
+  private readonly entries = computed(
+    () => this.store.currentWeek()?.plan ?? [],
   );
-  protected readonly dates = computed(() => weekDates(this.weekStart()));
+  protected readonly hoursPerDay = computed(
+    () => this.entries()[0]?.hoursPerDay ?? DEFAULT_HOURS,
+  );
+  protected readonly dates = computed(() => weekDates(this.store.weekStart()));
+  protected readonly teams = computed(() => this.store.setup().teams);
   protected readonly view = computed(() => {
-    const farm = this.farm();
+    const { greenhouses, workers } = this.store.setup();
+    const week = this.store.currentWeek();
     return buildWeekView({
-      weekStart: this.weekStart(),
-      greenhouses: farm.greenhouses,
-      workers: farm.workers,
-      absences: farm.absences,
-      history: farm.history,
+      weekStart: this.store.weekStart(),
+      greenhouses,
+      workers,
+      absences: week?.absences ?? [],
+      history: week?.history ?? [],
       entries: this.entries(),
     });
   });
-  protected readonly teamNames = computed(
-    () => new Map(this.farm().teams.map((t) => [t.id, t.name])),
+  protected readonly picked = computed(() =>
+    pickedKg(this.store.currentWeek()?.history ?? []),
   );
   /** Teams short somewhere that pooling would cover. */
   protected readonly rebalance = computed(() =>
@@ -88,43 +93,80 @@ export class PlanScreen {
     return `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   });
 
-  protected shiftWeek(weeks: number): void {
-    this.weekStart.update((week) => addDays(week, 7 * weeks));
-    this.copied.set(false);
+  /** The team picking a greenhouse this week, or null if none is set. */
+  protected rowTeam(greenhouseId: string): string | null {
+    return (
+      this.entries().find((e) => e.greenhouseId === greenhouseId)?.teamId ??
+      this.chosenTeams()[greenhouseId] ??
+      null
+    );
   }
 
-  protected goToThisWeek(): void {
-    this.weekStart.set(startOfWeek(todayOnFarm()));
+  protected setTeam(greenhouseId: string, teamId: string): void {
+    if (!teamId) return;
+    this.chosenTeams.update((teams) => ({ ...teams, [greenhouseId]: teamId }));
+    const row = this.row(greenhouseId);
+    if (row.length > 0) {
+      void this.store.savePlanRow(greenhouseId, withTeam(row, teamId));
+    }
     this.copied.set(false);
-  }
-
-  protected isThisWeek(): boolean {
-    return this.weekStart() === startOfWeek(todayOnFarm());
   }
 
   protected setKg(greenhouseId: string, day: Weekday, text: string): void {
-    const value = Number(text.replace(',', '.'));
-    if (!Number.isFinite(value) || value < 0) return;
-    const week = this.weekStart();
-    if (!isWeekStart(week)) return;
-    this.edits.update((edits) => ({
-      ...edits,
-      [week]: withExpectedKg(edits[week] ?? this.farm().plan, {
-        weekStart: week,
-        greenhouseId,
-        day,
-        expectedKg: Math.round(value),
-        hoursPerDay: this.hoursPerDay(),
-      }),
-    }));
+    const row = this.row(greenhouseId);
+    let next: PlanEntry[];
+    if (!text.trim()) {
+      next = row.filter((e) => e.day !== day);
+    } else {
+      const value = parseAmount(text);
+      if (!Number.isFinite(value) || value < 0) return;
+      const expectedKg = Math.round(value);
+      const teamId = this.rowTeam(greenhouseId);
+      if (!teamId) return;
+      next = row.some((e) => e.day === day)
+        ? withExpectedKg(row, {
+            weekStart: this.store.weekStart(),
+            greenhouseId,
+            day,
+            expectedKg,
+            hoursPerDay: this.hoursPerDay(),
+          })
+        : [
+            ...row,
+            {
+              weekStart: this.store.weekStart(),
+              day,
+              greenhouseId,
+              teamId,
+              expectedKg,
+              hoursPerDay: this.hoursPerDay(),
+            },
+          ];
+    }
+    void this.store.savePlanRow(greenhouseId, next);
     this.copied.set(false);
   }
 
   protected setHours(text: string): void {
-    const value = Number(text.replace(',', '.'));
-    if (Number.isFinite(value) && value > 0 && value <= 12) {
-      this.hoursPerDay.set(value);
+    const value = parseAmount(text);
+    if (!(Number.isFinite(value) && value > 0 && value <= 12)) return;
+    const entries = withHours(this.entries(), value);
+    for (const id of new Set(entries.map((e) => e.greenhouseId))) {
+      void this.store.savePlanRow(
+        id,
+        entries.filter((e) => e.greenhouseId === id),
+      );
     }
+  }
+
+  protected copyLastWeek(): void {
+    if (
+      this.entries().length > 0 &&
+      !this.window?.confirm(this.t().plan.copyLastConfirm)
+    ) {
+      return;
+    }
+    void this.store.copyLastWeek();
   }
 
   protected async copyReport(): Promise<void> {
@@ -148,7 +190,13 @@ export class PlanScreen {
     });
   }
 
-  protected teamsOf(teamIds: string[]): string {
-    return teamIds.map((id) => this.teamNames().get(id) ?? id).join(', ');
+  protected teamName(teamId: string | null): string {
+    return (
+      this.teams().find((t) => t.id === teamId)?.name ?? this.t().common.none
+    );
+  }
+
+  private row(greenhouseId: string): PlanEntry[] {
+    return this.entries().filter((e) => e.greenhouseId === greenhouseId);
   }
 }

@@ -1,0 +1,150 @@
+@let tp = t().people;
+@let tc = t().common;
+
+<div class="head">
+  <div>
+    <h1 class="title">{{ tp.title }}</h1>
+    <p class="intro">{{ tp.intro }}</p>
+  </div>
+</div>
+
+@if (store.canEdit()) {
+  <form
+    #form
+    class="gh-card form"
+    novalidate
+    aria-labelledby="gh-invite-title"
+    (submit)="$event.preventDefault(); invite(form)"
+  >
+    <h2 id="gh-invite-title" class="form-title">{{ tp.invite }}</h2>
+    <p class="hint form-title">{{ tp.inviteHint }}</p>
+    <div class="field">
+      <label class="gh-label" for="gh-inv-name">{{ tc.name }}</label>
+      <input
+        id="gh-inv-name"
+        class="gh-input"
+        name="name"
+        maxlength="120"
+        autocomplete="off"
+        [attr.aria-invalid]="problem('name') ? true : null"
+        [attr.aria-describedby]="problem('name') ? 'gh-inv-name-error' : null"
+      />
+      @if (problem('name'); as message) {
+        <p id="gh-inv-name-error" class="gh-error">{{ message }}</p>
+      }
+    </div>
+    <div class="field">
+      <label class="gh-label" for="gh-inv-email">{{ tp.email }}</label>
+      <input
+        id="gh-inv-email"
+        class="gh-input"
+        type="email"
+        name="email"
+        dir="ltr"
+        autocomplete="off"
+        [attr.aria-invalid]="problem('email') ? true : null"
+        [attr.aria-describedby]="problem('email') ? 'gh-inv-email-error' : null"
+      />
+      @if (problem('email'); as message) {
+        <p id="gh-inv-email-error" class="gh-error">{{ message }}</p>
+      }
+    </div>
+    <div class="field">
+      <label class="gh-label" for="gh-inv-role">{{ tp.role }}</label>
+      <select id="gh-inv-role" class="gh-input" name="role">
+        @for (role of roles; track role) {
+          <option [value]="role" [selected]="role === 'supervisor'">
+            {{ t().roles[role] }}
+          </option>
+        }
+      </select>
+    </div>
+    <div class="form-actions">
+      <button type="submit" ghButton [disabled]="busy()">
+        {{ busy() ? t().auth.busy : tp.submit }}
+      </button>
+    </div>
+    @if (message(); as text) {
+      <p class="message form-title" role="status">{{ text }}</p>
+    }
+  </form>
+}
+
+<section aria-labelledby="gh-members-title">
+  <h2 id="gh-members-title" class="form-title">{{ tp.members }}</h2>
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">{{ tc.name }}</th>
+          <th scope="col">{{ tp.role }}</th>
+          @if (store.canEdit()) {
+            <th scope="col">{{ tc.actions }}</th>
+          }
+        </tr>
+      </thead>
+      <tbody>
+        @for (m of store.setup().members; track m.userId) {
+          <tr>
+            <th scope="row">
+              {{ m.fullName }}
+              @if (isMe(m)) {
+                <small class="muted">({{ tp.you }})</small>
+              }
+            </th>
+            <td>{{ t().roles[m.role] }}</td>
+            @if (store.canEdit()) {
+              <td>
+                @if (!isMe(m)) {
+                  <button type="button" ghButton="ghost" (click)="remove(m)">
+                    {{ tc.remove }}
+                  </button>
+                }
+              </td>
+            }
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</section>
+
+@if (store.canEdit()) {
+  <section aria-labelledby="gh-invitations-title">
+    <h2 id="gh-invitations-title" class="form-title">{{ tp.invitations }}</h2>
+    @if (store.setup().invitations.length === 0) {
+      <p class="hint">{{ tc.none }}</p>
+    } @else {
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">{{ tc.name }}</th>
+              <th scope="col">{{ tp.email }}</th>
+              <th scope="col">{{ tp.role }}</th>
+              <th scope="col">{{ tc.actions }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (i of store.setup().invitations; track i.email) {
+              <tr>
+                <th scope="row">{{ i.fullName }}</th>
+                <td dir="ltr">{{ i.email }}</td>
+                <td>{{ t().roles[i.role] }}</td>
+                <td>
+                  <button
+                    type="button"
+                    ghButton="ghost"
+                    (click)="store.cancelInvitation(i.email)"
+                  >
+                    {{ tp.cancelInvite }}
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </section>
+}

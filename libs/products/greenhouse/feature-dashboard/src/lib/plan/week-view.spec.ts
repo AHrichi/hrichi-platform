@@ -2,8 +2,11 @@ import { sampleFarm } from '@ah/products/greenhouse/domain';
 import {
   buildWeekView,
   type ReportCopy,
+  pickedKg,
   shortageReport,
   withExpectedKg,
+  withHours,
+  withTeam,
 } from './week-view';
 
 const WEEK = '2026-11-23';
@@ -87,6 +90,41 @@ describe('withExpectedKg', () => {
     const after =
       view(withExpectedKg(farm.plan, change)).gap.days[2]?.required ?? 0;
     expect(after).toBeGreaterThan(before);
+  });
+});
+
+describe('withTeam', () => {
+  it('gives the row one team, merging days two teams shared', () => {
+    const row = farm.plan.filter((p) => p.greenhouseId === 'gh-1');
+    const monday = row.find((p) => p.day === 1);
+    if (!monday) throw new Error('No Monday for A1');
+    const shared = [...row, { ...monday, teamId: 'team-a2', expectedKg: 500 }];
+    const next = withTeam(shared, 'team-b1');
+    expect(next).toHaveLength(row.length);
+    expect(next.every((p) => p.teamId === 'team-b1')).toBe(true);
+    expect(next.find((p) => p.day === 1)?.expectedKg).toBe(
+      monday.expectedKg + 500,
+    );
+  });
+});
+
+describe('withHours', () => {
+  it('sets every entry’s hours', () => {
+    expect(withHours(farm.plan, 7).every((p) => p.hoursPerDay === 7)).toBe(
+      true,
+    );
+  });
+});
+
+describe('pickedKg', () => {
+  it('sums the kg per greenhouse and day', () => {
+    const day = farm.history[0];
+    if (!day) throw new Error('No history');
+    const picked = pickedKg(farm.history);
+    const expected = farm.history
+      .filter((l) => l.greenhouseId === day.greenhouseId && l.date === day.date)
+      .reduce((total, l) => total + l.kg, 0);
+    expect(picked.get(`${day.greenhouseId}|${day.date}`)).toBeCloseTo(expected);
   });
 });
 

@@ -4,3 +4,8 @@ export * from './lib/field-remote';
 export * from './lib/field-repository';
 export * from './lib/supabase-field-remote';
 export * from './lib/work-log-sync';
+export * from './lib/auth/greenhouse-auth';
+export * from './lib/auth/sign-in-error';
+export * from './lib/farm/demo-farm-remote';
+export * from './lib/farm/farm-remote';
+export * from './lib/farm/supabase-farm-remote';

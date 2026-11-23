@@ -412,6 +412,36 @@ describe('the weekly plan', () => {
       ).toMatch(/check constraint/);
     }));
 
+  it('replaces a greenhouse’s row at once, for managers only', () =>
+    scenario(async (s) => {
+      const save = `select public.save_plan_row($1, '2026-11-23', $2, $3::jsonb)`;
+      const cells = (kg: number) =>
+        JSON.stringify(
+          [1, 2].map((day) => ({
+            day,
+            team_id: TEAM_A,
+            expected_kg: kg,
+            hours_per_day: 8,
+          })),
+        );
+      const row = `select day, expected_kg from public.weekly_plan
+        where greenhouse_id = $1 order by day`;
+      await s.as(MANAGER_A);
+      await s.rows(save, [FARM_A, GH_A, cells(100)]);
+      await s.rows(save, [FARM_A, GH_A, cells(250)]);
+      expect(await s.rows(row, [GH_A])).toEqual([
+        { day: 1, expected_kg: '250.00' },
+        { day: 2, expected_kg: '250.00' },
+      ]);
+      // A supervisor can't write the plan, and can't empty it either.
+      await s.as(SUPERVISOR_A);
+      expect(await s.error(save, [FARM_A, GH_A, cells(1)])).toMatch(
+        /row-level security/,
+      );
+      await s.rows(save, [FARM_A, GH_A, '[]']);
+      expect(await s.rows(row, [GH_A])).toHaveLength(2);
+    }));
+
   it('is the manager’s to write', () =>
     scenario(async (s) => {
       await s.as(SUPERVISOR_A);
@@ -473,6 +503,123 @@ describe('hygiene photos', () => {
       );
       await s.as(MANAGER_B);
       expect(await s.rows(`select name from storage.objects`)).toEqual([]);
+    }));
+});
+
+describe('invitations', () => {
+  const invite = `select public.invite_member($1, $2, $3, $4) as result`;
+
+  it('adds someone with an account straight away', () =>
+    scenario(async (s) => {
+      await s.as(MANAGER_A);
+      expect(
+        await s.rows(invite, [
+          FARM_A,
+          ' Stranger@Example.test ',
+          'supervisor',
+          'New supervisor',
+        ]),
+      ).toEqual([{ result: 'added' }]);
+      expect(
+        await s.rows(`select role from public.member where user_id = $1`, [
+          STRANGER,
+        ]),
+      ).toEqual([{ role: 'supervisor' }]);
+      // Asking again changes the role.
+      expect(
+        await s.rows(invite, [FARM_A, 'stranger@example.test', 'hr', 'X']),
+      ).toEqual([{ result: 'updated' }]);
+    }));
+
+  it('holds an invitation until that email signs up', () =>
+    scenario(async (s) => {
+      await s.as(MANAGER_A);
+      expect(
+        await s.rows(invite, [
+          FARM_A,
+          'Later@Example.test',
+          'supervisor',
+          'Lina',
+        ]),
+      ).toEqual([{ result: 'invited' }]);
+      expect(await s.rows(`select email from public.invitation`)).toEqual([
+        { email: 'later@example.test' },
+      ]);
+      // Supabase Auth creates the account; the trigger claims the invitation.
+      await s.as(null);
+      await db.exec('reset role');
+      const newUser = 'd0000000-0000-4000-8000-0000000000d1';
+      await s.count(`insert into auth.users (id, email) values ($1, $2)`, [
+        newUser,
+        'LATER@example.test',
+      ]);
+      await s.as(newUser);
+      expect(
+        await s.rows(
+          `select farm_id, role, full_name from public.member where user_id = $1`,
+          [newUser],
+        ),
+      ).toEqual([{ farm_id: FARM_A, role: 'supervisor', full_name: 'Lina' }]);
+      await s.as(MANAGER_A);
+      expect(await s.rows(`select * from public.invitation`)).toEqual([]);
+    }));
+
+  it('is for managers only, and invitations stay private', () =>
+    scenario(async (s) => {
+      await s.as(MANAGER_A);
+      await s.rows(invite, [FARM_A, 'later@example.test', 'hr', 'Hana']);
+      for (const who of [SUPERVISOR_A, HR_A, MANAGER_B]) {
+        await s.as(who);
+        expect(
+          await s.error(invite, [FARM_A, 'x@example.test', 'manager', 'X']),
+        ).toMatch(/Only a manager/);
+        expect(await s.rows(`select * from public.invitation`)).toEqual([]);
+      }
+    }));
+
+  it('still keeps a manager on the farm', () =>
+    scenario(async (s) => {
+      await s.as(MANAGER_A);
+      expect(
+        await s.error(invite, [
+          FARM_A,
+          'manager-a@example.test',
+          'supervisor',
+          'Me',
+        ]),
+      ).toMatch(/at least one manager/);
+    }));
+});
+
+describe('work totals', () => {
+  it('sum a day per team and greenhouse, within the farm', () =>
+    scenario(async (s) => {
+      await s.as(MANAGER_A);
+      for (const id of [LOG_ID, 'a0000000-0000-4000-8000-00000000a302']) {
+        await s.count(insertLog, [
+          id,
+          FARM_A,
+          today(),
+          WORKER_A,
+          GH_A,
+          MANAGER_A,
+        ]);
+      }
+      const totals = `select team_id, kg, hours, crates, entries
+        from public.work_totals($1, $2, $3)`;
+      expect(await s.rows(totals, [FARM_A, today(-1), today(1)])).toEqual([
+        {
+          team_id: TEAM_A,
+          kg: '240.00',
+          hours: '16.00',
+          crates: 24,
+          entries: 2,
+        },
+      ]);
+      // The end date is excluded.
+      expect(await s.rows(totals, [FARM_A, today(-1), today()])).toEqual([]);
+      await s.as(MANAGER_B);
+      expect(await s.rows(totals, [FARM_A, today(-1), today(1)])).toEqual([]);
     }));
 });
 

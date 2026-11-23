@@ -17,6 +17,9 @@
         "production": {
           "target": "product-greenhouse:esbuild:production"
         },
+        "local": {
+          "target": "product-greenhouse:esbuild:local"
+        },
         "development": {
           "target": "product-greenhouse:esbuild:development",
           "dev": true
@@ -90,10 +93,37 @@
           ],
           "outputHashing": "all"
         },
+        "local": {
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "1mb",
+              "maximumError": "2mb"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "12kb",
+              "maximumError": "20kb"
+            }
+          ],
+          "outputHashing": "all",
+          "fileReplacements": [
+            {
+              "replace": "apps/products/greenhouse/dashboard/src/environments/environment.ts",
+              "with": "apps/products/greenhouse/dashboard/src/environments/environment.local.ts"
+            }
+          ]
+        },
         "development": {
           "optimization": false,
           "extractLicenses": false,
-          "sourceMap": true
+          "sourceMap": true,
+          "fileReplacements": [
+            {
+              "replace": "apps/products/greenhouse/dashboard/src/environments/environment.ts",
+              "with": "apps/products/greenhouse/dashboard/src/environments/environment.local.ts"
+            }
+          ]
         },
         "brand": {
           "budgets": [
@@ -144,6 +174,9 @@
         },
         "development": {
           "buildTarget": "product-greenhouse:esbuild:development"
+        },
+        "local": {
+          "buildTarget": "product-greenhouse:esbuild:local"
         }
       },
       "defaultConfiguration": "development",

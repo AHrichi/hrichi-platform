@@ -4,16 +4,16 @@ A briefing for whichever AI agent or IDE picks up the Greenhouse Labor Planner. 
 
 Last updated 2026-11-23:
 
-- **G1 (foundation)** is in PR [#22](https://github.com/AHrichi/hrichi-platform/pull/22) (`feat/greenhouse-p1-foundation`), not merged yet.
-- **G2 (supervisor sign-in and real sync)** is done on `feat/greenhouse-p2-auth`, which branches from G1's tip. It is verified against a local Supabase stack. The hosted project is the open step (§6).
-- **Design system and brand packs** are done on `feat/greenhouse-p3-design-system`, which branches from G2's tip. That covers the `greenhouse` token look, the `product-greenhouse-ui` kit with Storybook stories, both apps moved onto it, and private brand packs. See [design-system.md](design-system.md).
+- **G1, G2 and the design system are merged into `main`.** G1 (foundation) came in through PR [#22](https://github.com/AHrichi/hrichi-platform/pull/22). G2 (supervisor sign-in and real sync, verified against local Supabase), the design system and brand packs, and the tomato demo farm came in through PR [#23](https://github.com/AHrichi/hrichi-platform/pull/23). See [design-system.md](design-system.md).
+- **G3 (the dashboard on Supabase) is done** on `feat/greenhouse-g3-dashboard-data`, verified against local Supabase (§2).
+- **Next:** the hosted Supabase project (G2b, waiting on the owner's sign-in), then G4 or G5 (§6). Start each phase on a new branch from `main`.
 
 ## 0. Resume in five minutes
 
 1. **Get the branch:**
 
    ```bash
-   git fetch origin && git switch feat/greenhouse-p2-auth
+   git fetch origin && git switch main   # or the open phase branch
    ```
 
    It was built in the worktree `.claude/worktrees/greenhouse-labor`. If that folder still exists, check `git worktree list` first: one agent per checkout.
@@ -25,7 +25,7 @@ Last updated 2026-11-23:
    pnpm nx run-many -t lint test build -p "product-greenhouse*" --output-style=static
    ```
 
-   That's 7 projects and 123 tests.
+   That's 8 projects and 153 tests.
 
 4. **Read:**
    1. this file;
@@ -51,21 +51,35 @@ There is **no Ionic**: `@ionic/angular` peers on `zone.js` (ADR-0026).
 
 ## 2. Status
 
-| Phase                               | State                                                                                                                                                                                                                                                                                                                               |
-| ----------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| G1a domain lib                      | Done. Models, ISO-day helpers on the farm clock, `buildRateTable`, `planWeek`, `teamAvailability`, `staffingGap`, `checkWorkLog` and `createWorkLog`, badge parsing, `sampleFarm(weekStart)`. 48 tests, 100% lines.                                                                                                                 |
-| G1b Supabase schema and RLS         | Done. 2 migrations, seed and 23 PGlite tests acting as each role. A mutation check (weakening the pay policy) makes the tests fail.                                                                                                                                                                                                 |
-| G1c offline store and sync          | Done. `FieldDatabase`, `FieldRepository`, `WorkLogSync`, `SupabaseFieldRemote`, `DemoFieldRemote`. 29 tests.                                                                                                                                                                                                                        |
-| G1d field app (supervisors)         | Done on the **demo** backend. Choose a greenhouse, scan, type or pick a badge, count on big steppers, save on the phone, send when online. Includes the PWA service worker and `capacitor.config.ts` (no `android/` yet).                                                                                                           |
-| G1e dashboard (manager)             | Done on the **sample farm**. Editable weekly plan, workers per cell, required, available and short per day, KPIs, the HR shortage report (copy, WhatsApp, email, print). It is a remote, not registered in the shell.                                                                                                               |
-| G2 supervisor sign-in and real sync | Done against **local** Supabase. Covers `FieldAuth` (session in localStorage, works offline), the sign-in screen, sign-in again as the same account when a session ends, sign-out (refused while entries wait), `environment.{local,production}.ts`, and `local-users.mjs`.                                                         |
-| G2c design system and brand packs   | Done. The `greenhouse` look (contrast-gated), the `product-greenhouse-ui` kit (app bar, buttons, stepper, status chip, scanner, language switch) with **Greenhouse/UI Kit** stories, both apps on the kit, and brand packs (`brands/`, private except `example/`) built with `-c brand-*`.                                          |
-| G2d tomato demo farm and pitch      | Done. `sampleFarm()` is now a made-up 32 ha tomato glasshouse: compartments A1–B4 (six truss, two cherry), one crew each plus 8 floaters, 122 workers, about 169 t a week, short on Friday. Branded app bars show the pack's organisation and wrap to two rows on phones. The pitch document lives outside the repo (a Claude doc). |
-| G2b hosted Supabase project         | **Next.** Waiting on the owner's Supabase sign-in (§6).                                                                                                                                                                                                                                                                             |
-| G3 dashboard on Supabase            | To do: setup screens (greenhouses, teams, workers, printable QR badges), plan and absences saved, the report reading real data.                                                                                                                                                                                                     |
-| G4 Android                          | To do: `cap add android`, a camera barcode plugin for phones without `BarcodeDetector`, a network-status plugin.                                                                                                                                                                                                                    |
-| G5 performance, hygiene, cost       | To do: kg/h and rejection-rate rankings and trends, the hygiene checklist with photos and sign-off, labour cost per kg against target.                                                                                                                                                                                              |
-| G6 go live in the portfolio         | To do: register `product-greenhouse` (section 3 list), a `deploy` target, the e2e, the visibility flag.                                                                                                                                                                                                                             |
+| Phase                               | State                                                                                                                                                                                                                                                                                                                                                                                                            |
+| ----------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| G1a domain lib                      | Done. Models, ISO-day helpers on the farm clock, `buildRateTable`, `planWeek`, `teamAvailability`, `staffingGap`, `checkWorkLog` and `createWorkLog`, badge parsing, `sampleFarm(weekStart)`. 48 tests, 100% lines.                                                                                                                                                                                              |
+| G1b Supabase schema and RLS         | Done. 2 migrations, seed and 23 PGlite tests acting as each role. A mutation check (weakening the pay policy) makes the tests fail.                                                                                                                                                                                                                                                                              |
+| G1c offline store and sync          | Done. `FieldDatabase`, `FieldRepository`, `WorkLogSync`, `SupabaseFieldRemote`, `DemoFieldRemote`. 29 tests.                                                                                                                                                                                                                                                                                                     |
+| G1d field app (supervisors)         | Done on the **demo** backend. Choose a greenhouse, scan, type or pick a badge, count on big steppers, save on the phone, send when online. Includes the PWA service worker and `capacitor.config.ts` (no `android/` yet).                                                                                                                                                                                        |
+| G1e dashboard (manager)             | Done on the **sample farm**. Editable weekly plan, workers per cell, required, available and short per day, KPIs, the HR shortage report (copy, WhatsApp, email, print). It is a remote, not registered in the shell.                                                                                                                                                                                            |
+| G2 supervisor sign-in and real sync | Done against **local** Supabase. Covers `FieldAuth` (session in localStorage, works offline), the sign-in screen, sign-in again as the same account when a session ends, sign-out (refused while entries wait), `environment.{local,production}.ts`, and `local-users.mjs`.                                                                                                                                      |
+| G2c design system and brand packs   | Done. The `greenhouse` look (contrast-gated), the `product-greenhouse-ui` kit (app bar, buttons, stepper, status chip, scanner, language switch) with **Greenhouse/UI Kit** stories, both apps on the kit, and brand packs (`brands/`, private except `example/`) built with `-c brand-*`.                                                                                                                       |
+| G2d tomato demo farm and pitch      | Done. `sampleFarm()` is now a made-up 32 ha tomato glasshouse: compartments A1–B4 (six truss, two cherry), one crew each plus 8 floaters, 122 workers, about 169 t a week, short on Friday. Branded app bars show the pack's organisation and wrap to two rows on phones. The pitch document lives outside the repo (a Claude doc).                                                                              |
+| G2b hosted Supabase project         | **Next.** Waiting on the owner's Supabase sign-in (§6).                                                                                                                                                                                                                                                                                                                                                          |
+| G3 dashboard on Supabase            | Done against **local** Supabase. Manager and HR sign-in (and sign-up), creating a farm, a `FarmStore` over a `FarmRemote` (Supabase or demo), screens for the plan (saved per greenhouse row, team per row, copy last week, kg picked so far), absences, workers (pay for managers and HR), printable QR badges, teams, greenhouses and people (invitations). HR and supervisors get the same screens read-only. |
+| G4 Android                          | To do: `cap add android`, a camera barcode plugin for phones without `BarcodeDetector`, a network-status plugin.                                                                                                                                                                                                                                                                                                 |
+| G5 performance, hygiene, cost       | To do: kg/h and rejection-rate rankings and trends, the hygiene checklist with photos and sign-off, labour cost per kg against target.                                                                                                                                                                                                                                                                           |
+| G6 go live in the portfolio         | To do: register `product-greenhouse` (section 3 list), a `deploy` target, the e2e, the visibility flag.                                                                                                                                                                                                                                                                                                          |
+
+**Verified** (2026-11-23, G3):
+
+- Lint, test and build for all 8 `product-greenhouse*` projects (153 tests, 29 of them PGlite security tests), stylelint, `pnpm check:zoneless`, `pnpm nx format:check`; `graph.json` regenerated after `nx reset` (264 dependencies).
+- The new migration applies on the local Supabase stack (`migration up`).
+- The dashboard's `local` build in the browser pane, against local Supabase:
+  - `manager@farm.test` signs in and the seed farm opens; 324 kg logged by the field app in G2 shows as picked on Monday;
+  - choosing Équipe A for Serre 1 and 1200 kg on Monday survives a reload (3.3 workers);
+  - a new worker gets badge GH-0013 and pay 2.7; the next suggested badge is GH-0014;
+  - an absence (Thursday, "Sick") survives a reload;
+  - inviting `lina@farm.test`, then creating that account from the sign-in screen, puts Lina on the farm as a supervisor, with the read-only notice;
+  - badges filtered to Équipe B print five cards; the QR path is unit-tested against `uqr`'s matrix;
+  - Arabic is RTL; there are no console errors.
+- The default (demo) build shows the sample farm as before: 169,400 kg, 10 worker-days short, Friday the shortest day.
 
 **Verified** (2026-11-23, G2):
 
@@ -99,6 +113,8 @@ There is **no Ionic**: `@ionic/angular` peers on `zone.js` (ADR-0026).
 **Not verified yet:**
 
 - A **hosted** Supabase project. Local is verified.
+- Invitation sign-up with email confirmation on (local has it off). The trigger runs at account creation either way.
+- Printing the badges on paper, and scanning a printed badge with a phone.
 - Signing in again after a session expires (the `auth` path) against a real server; the code path is in place, but only the error mapping is unit-tested.
 - Camera scanning with `BarcodeDetector` on a real phone. The browser pane has no camera API, and iOS Safari has no `BarcodeDetector` at all, so typing is the fallback there.
 - The Capacitor Android build, the print layout, and the WhatsApp link on a phone.
@@ -107,16 +123,16 @@ There is **no Ionic**: `@ionic/angular` peers on `zone.js` (ADR-0026).
 
 ## 3. Code map
 
-| Area                              | Location                                     | What's there                                                                                                                                 |
-| --------------------------------- | -------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| Domain (pure, `runtime:agnostic`) | `libs/products/greenhouse/domain`            | `dates`, `models` (incl. `WorkerPay`), `productivity`, `planning`, `staffing`, `work-log`, `sample`                                          |
-| UI kit (prefix `gh`)              | `libs/products/greenhouse/ui`                | `gh-app-bar`, `ghButton`, `gh-stepper`, `gh-status-chip`, `gh-badge-scanner`, `gh-lang-switch`, `GREENHOUSE_BRAND`, `styles/greenhouse.scss` |
-| Data access                       | `libs/products/greenhouse/data-access`       | `FieldDatabase` v1, `FieldRepository`, `WorkLogSync`, `FieldRemote` and `RemoteError`, Supabase and demo remotes                             |
-| Field feature (prefix `gh`)       | `libs/products/greenhouse/feature-field`     | `FIELD_ROUTES`, `FieldStore` (sync scheduling), `GREENHOUSE_SUPABASE` token, `gh-stepper`, `gh-badge-scanner`                                |
-| Dashboard feature                 | `libs/products/greenhouse/feature-dashboard` | `GREENHOUSE_DASHBOARD_ROUTES`, `buildWeekView`, `withExpectedKg`, `shortageReport`, `PlanScreen`                                             |
-| Field app                         | `apps/products/greenhouse/field`             | Port 4314, `ngsw-config.json`, `capacitor.config.ts`, app mode `embedded-demo` until G2                                                      |
-| Dashboard app                     | `apps/products/greenhouse/dashboard`         | Remote `product-greenhouse`, port 4313, exposes `./routes` and `./meta`; no `deploy` target                                                  |
-| Supabase                          | `apps/products/greenhouse/supabase`          | `migrations/`, `seed.sql`, `config.toml`, `spec/` (PGlite)                                                                                   |
+| Area                              | Location                                     | What's there                                                                                                                                                                                             |
+| --------------------------------- | -------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Domain (pure, `runtime:agnostic`) | `libs/products/greenhouse/domain`            | `dates`, `models` (incl. `WorkerPay`, `Member`, `Invitation`), `productivity`, `planning`, `staffing`, `work-log`, `setup` (form checks, `nextBadgeCode`), `sample`                                      |
+| UI kit (prefix `gh`)              | `libs/products/greenhouse/ui`                | `gh-app-bar`, `ghButton`, `gh-stepper`, `gh-status-chip`, `gh-badge-scanner`, `gh-lang-switch`, `GREENHOUSE_BRAND`, `styles/greenhouse.scss`                                                             |
+| Data access                       | `libs/products/greenhouse/data-access`       | `FieldDatabase` v1, `FieldRepository`, `WorkLogSync`, `FieldRemote` and `RemoteError`; `FarmRemote` (dashboard); Supabase and demo remotes of each; `GreenhouseAuth` and the `GREENHOUSE_SUPABASE` token |
+| Field feature (prefix `gh`)       | `libs/products/greenhouse/feature-field`     | `FIELD_ROUTES`, `FieldStore` (sync scheduling), `FieldAuth`                                                                                                                                              |
+| Dashboard feature                 | `libs/products/greenhouse/feature-dashboard` | `GREENHOUSE_DASHBOARD_ROUTES`, `FarmStore` and `DashboardAuth`, `buildWeekView` and row helpers, `shortageReport`, the screens (plan, absences, workers, badges, teams, greenhouses, people)             |
+| Field app                         | `apps/products/greenhouse/field`             | Port 4314, `ngsw-config.json`, `capacitor.config.ts`, app mode `embedded-demo` until G2                                                                                                                  |
+| Dashboard app                     | `apps/products/greenhouse/dashboard`         | Remote `product-greenhouse`, port 4313, exposes `./routes` and `./meta`; `-c local` talks to local Supabase, the default build is the demo; no `deploy` target                                           |
+| Supabase                          | `apps/products/greenhouse/supabase`          | `migrations/`, `seed.sql`, `config.toml`, `spec/` (PGlite)                                                                                                                                               |
 
 **Registration done in G1:**
 
@@ -174,12 +190,13 @@ Gotchas:
 - **Supabase CLI:** use `npx -y supabase@3.1.0 --workdir apps/products/greenhouse …`. `pnpm dlx` skips the postinstall that downloads its binary.
 - **A rebuilt app in Chrome** keeps running the old build until the service worker updates. Reload twice, or call `registration.update()` first.
 
-## 6. Next step: the hosted Supabase project, then G3
+## 6. Next step: the hosted Supabase project, then G4 or G5
 
 1. **Hosted project** (G2b). The owner signs in to supabase.com; agents can't type passwords.
    - Create a free project named `greenhouse-labor` in the region closest to Tunisia (`eu-west-3`, Paris). Use the "Generate a password" button for the database password; nothing here needs it.
-   - Run both migrations, then `seed.sql` if the demo farm is wanted, in the dashboard's SQL editor. The CLI's `db push` works too, but needs an access token and the database password.
-   - Put the project URL and **publishable** key (never the secret key) in `apps/products/greenhouse/field/src/environments/environment.production.ts`.
+   - Run the three migrations in order, then `seed.sql` if the demo farm is wanted, in the dashboard's SQL editor. The CLI's `db push` works too, but needs an access token and the database password.
+   - Put the project URL and **publishable** key (never the secret key) in the field app's `environment.production.ts`, and in a new `environment.production.ts` for the dashboard with a `production` file replacement. The dashboard's default build must stay the demo while it is the portfolio's remote; give the real one its own configuration.
    - Auth: turn email confirmations on, and set the site URL to wherever the field app is hosted.
-   - The owner creates their manager account and runs `select public.create_farm('Farm name', 'Their name')` signed in, or adds members in the SQL editor.
-2. **G3: the dashboard on Supabase.** Sign-in for managers. Setup screens for greenhouses, teams and workers, with printable QR badges and invitations for supervisors. Save the weekly plan and absences to `weekly_plan` and `absence`. The shortage report reads real data.
+   - The owner creates their account on the dashboard's sign-in screen, creates the farm there, and invites supervisors and HR from **People**.
+2. **Left over from G3:** a "create account" link in the field app (supervisors can use the dashboard's for now); editing a member's name; targets (`target` table) on the plan screen.
+3. **G4 Android** or **G5 performance, hygiene and cost** (the table in §2).

@@ -1,0 +1,151 @@
+@let tg = t().greenhouses;
+@let tc = t().common;
+@let current = editing();
+
+<div class="head">
+  <div>
+    <h1 class="title">{{ tg.title }}</h1>
+    <p class="intro">{{ tg.intro }}</p>
+  </div>
+</div>
+
+@if (store.canEdit()) {
+  <form
+    #form
+    class="gh-card form"
+    novalidate
+    aria-labelledby="gh-gh-form-title"
+    (submit)="$event.preventDefault(); save(form)"
+  >
+    <h2 id="gh-gh-form-title" class="form-title">
+      {{ current ? i18n.fill(tg.editing, { name: current.name }) : tg.add }}
+    </h2>
+    <div class="field">
+      <label class="gh-label" for="gh-gh-name">{{ tc.name }}</label>
+      <input
+        id="gh-gh-name"
+        class="gh-input"
+        name="name"
+        maxlength="60"
+        [value]="current?.name ?? ''"
+        [attr.aria-invalid]="problem('name') ? true : null"
+        [attr.aria-describedby]="problem('name') ? 'gh-gh-name-error' : null"
+      />
+      @if (problem('name'); as message) {
+        <p id="gh-gh-name-error" class="gh-error">{{ message }}</p>
+      }
+    </div>
+    <div class="field">
+      <label class="gh-label" for="gh-gh-crop">{{ tg.crop }}</label>
+      <select
+        id="gh-gh-crop"
+        class="gh-input"
+        name="crop"
+        [attr.aria-invalid]="problem('crop') ? true : null"
+      >
+        @for (crop of crops; track crop) {
+          <option
+            [value]="crop"
+            [selected]="(current?.crop ?? 'tomato') === crop"
+          >
+            {{ t().crops[crop] }}
+          </option>
+        }
+      </select>
+    </div>
+    <div class="field">
+      <label class="gh-label" for="gh-gh-area">{{ tg.area }}</label>
+      <input
+        id="gh-gh-area"
+        class="gh-input"
+        name="area"
+        inputmode="decimal"
+        [value]="current?.areaM2 ?? ''"
+        [attr.aria-invalid]="problem('area') ? true : null"
+        [attr.aria-describedby]="problem('area') ? 'gh-gh-area-error' : null"
+      />
+      @if (problem('area'); as message) {
+        <p id="gh-gh-area-error" class="gh-error">{{ message }}</p>
+      }
+    </div>
+    <div class="field">
+      <label class="gh-label" for="gh-gh-crate">{{ tg.kgPerCrate }}</label>
+      <input
+        id="gh-gh-crate"
+        class="gh-input"
+        name="kgPerCrate"
+        inputmode="decimal"
+        [value]="current?.kgPerCrate ?? ''"
+        [attr.aria-invalid]="problem('kgPerCrate') ? true : null"
+        [attr.aria-describedby]="
+          problem('kgPerCrate') ? 'gh-gh-crate-error' : null
+        "
+      />
+      @if (problem('kgPerCrate'); as message) {
+        <p id="gh-gh-crate-error" class="gh-error">{{ message }}</p>
+      }
+    </div>
+    <div class="form-actions">
+      <button type="submit" ghButton>
+        {{ current ? tc.save : tc.add }}
+      </button>
+      @if (current) {
+        <button type="button" ghButton="secondary" (click)="cancel(form)">
+          {{ tc.cancel }}
+        </button>
+      }
+    </div>
+  </form>
+}
+
+@let greenhouses = store.setup().greenhouses;
+<div class="table-wrap" tabindex="0" role="region" [attr.aria-label]="tg.title">
+  @if (greenhouses.length === 0) {
+    <p class="empty">{{ tg.none }}</p>
+  } @else {
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">{{ tc.name }}</th>
+          <th scope="col">{{ tg.crop }}</th>
+          <th scope="col" class="num">{{ tg.area }}</th>
+          <th scope="col" class="num">{{ tg.kgPerCrate }}</th>
+          @if (store.canEdit()) {
+            <th scope="col">{{ tc.actions }}</th>
+          }
+        </tr>
+      </thead>
+      <tbody>
+        @for (g of greenhouses; track g.id) {
+          <tr [class.is-off]="!g.active">
+            <th scope="row">
+              {{ g.name }}
+              @if (!g.active) {
+                <small class="muted">· {{ tg.archived }}</small>
+              }
+            </th>
+            <td>{{ t().crops[g.crop] }}</td>
+            <td class="num">{{ i18n.num(g.areaM2) }}</td>
+            <td class="num">{{ i18n.num(g.kgPerCrate, 2) }}</td>
+            @if (store.canEdit()) {
+              <td>
+                <div class="row-actions">
+                  <button type="button" ghButton="ghost" (click)="edit(g)">
+                    {{ tc.edit }}
+                  </button>
+                  <button
+                    type="button"
+                    ghButton="ghost"
+                    (click)="setActive(g, !g.active)"
+                  >
+                    {{ g.active ? tg.archive : tg.restore }}
+                  </button>
+                </div>
+              </td>
+            }
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</div>

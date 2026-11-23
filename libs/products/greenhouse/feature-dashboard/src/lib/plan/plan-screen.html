@@ -2,30 +2,8 @@
 @let tp = t().plan;
 
 <div class="head">
-  <div>
-    <h1 class="title">{{ tp.title }}</h1>
-    <p class="week">
-      {{ i18n.fill(tp.week, { date: i18n.date(weekStart()) }) }}
-    </p>
-  </div>
-  <div class="week-nav" role="group" [attr.aria-label]="tp.title">
-    <button type="button" ghButton="secondary" (click)="shiftWeek(-1)">
-      <span class="flip" aria-hidden="true">‹</span>
-      {{ tp.previous }}
-    </button>
-    <button
-      type="button"
-      ghButton="secondary"
-      [disabled]="isThisWeek()"
-      (click)="goToThisWeek()"
-    >
-      {{ tp.thisWeek }}
-    </button>
-    <button type="button" ghButton="secondary" (click)="shiftWeek(1)">
-      {{ tp.next }}
-      <span class="flip" aria-hidden="true">›</span>
-    </button>
-  </div>
+  <h1 class="title">{{ tp.title }}</h1>
+  <gh-week-nav />
 </div>
 
 <div class="kpis">
@@ -55,20 +33,31 @@
   />
 </div>
 
-<label class="hours">
-  <span>{{ tp.hours }}</span>
-  <input
-    #hoursBox
-    type="number"
-    inputmode="decimal"
-    min="1"
-    max="12"
-    step="0.5"
-    [value]="hoursPerDay()"
-    (change)="setHours(hoursBox.value)"
-  />
-</label>
+<div class="tools">
+  <label class="hours">
+    <span>{{ tp.hours }}</span>
+    <input
+      #hoursBox
+      type="number"
+      inputmode="decimal"
+      min="1"
+      max="12"
+      step="0.5"
+      [readOnly]="!store.canEdit()"
+      [value]="hoursPerDay()"
+      (change)="setHours(hoursBox.value)"
+    />
+  </label>
+  @if (store.canEdit()) {
+    <button type="button" ghButton="secondary" (click)="copyLastWeek()">
+      {{ tp.copyLast }}
+    </button>
+  }
+</div>
 
+@if (v.rows.length === 0) {
+  <p class="note">{{ tp.empty }}</p>
+}
 <p class="hint">{{ tp.tableHint }}</p>
 @if (v.plan.issues.length > 0) {
   <p class="issues" role="alert">
@@ -97,9 +86,29 @@
         <tr>
           <th scope="row" class="gh-col">
             <strong>{{ row.greenhouse.name }}</strong>
-            <small>
-              {{ t().crops[row.greenhouse.crop] }} · {{ teamsOf(row.teamIds) }}
-            </small>
+            <small>{{ t().crops[row.greenhouse.crop] }}</small>
+            @let team = rowTeam(row.greenhouse.id);
+            @if (store.canEdit()) {
+              <select
+                #teamBox
+                class="team"
+                [attr.aria-label]="
+                  i18n.fill(tp.teamFor, { greenhouse: row.greenhouse.name })
+                "
+                (change)="setTeam(row.greenhouse.id, teamBox.value)"
+              >
+                <option value="" [selected]="!team" disabled>
+                  {{ tp.pickTeam }}
+                </option>
+                @for (option of teams(); track option.id) {
+                  <option [value]="option.id" [selected]="option.id === team">
+                    {{ option.name }}
+                  </option>
+                }
+              </select>
+            } @else {
+              <small>{{ teamName(team) }}</small>
+            }
           </th>
           @for (cell of row.cells; track cell.date) {
             <td>
@@ -111,6 +120,8 @@
                 min="0"
                 step="50"
                 [attr.aria-label]="cellLabel(row.greenhouse.name, cell.date)"
+                [readOnly]="!store.canEdit()"
+                [disabled]="store.canEdit() && !team"
                 [value]="cell.expectedKg ?? ''"
                 (change)="setKg(row.greenhouse.id, cell.day, kgBox.value)"
               />
@@ -119,6 +130,11 @@
                   {{
                     i18n.fill(tp.workers, { n: i18n.num(cell.workerDays, 1) })
                   }}
+                </span>
+              }
+              @if (picked().get(row.greenhouse.id + '|' + cell.date); as kg) {
+                <span class="need picked">
+                  {{ i18n.fill(tp.picked, { kg: i18n.num(kg) }) }}
                 </span>
               }
             </td>

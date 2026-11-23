@@ -1,0 +1,115 @@
+@let tt = t().teams;
+@let tc = t().common;
+@let current = editing();
+
+<div class="head">
+  <div>
+    <h1 class="title">{{ tt.title }}</h1>
+    <p class="intro">{{ tt.intro }}</p>
+  </div>
+</div>
+
+@if (store.canEdit()) {
+  <form
+    #form
+    class="gh-card form"
+    novalidate
+    aria-labelledby="gh-team-form-title"
+    (submit)="$event.preventDefault(); save(form)"
+  >
+    <h2 id="gh-team-form-title" class="form-title">
+      {{ current ? i18n.fill(tt.editing, { name: current.name }) : tt.add }}
+    </h2>
+    <div class="field">
+      <label class="gh-label" for="gh-team-name">{{ tc.name }}</label>
+      <input
+        id="gh-team-name"
+        class="gh-input"
+        name="name"
+        maxlength="60"
+        [value]="current?.name ?? ''"
+        [attr.aria-invalid]="problem() ? true : null"
+        [attr.aria-describedby]="problem() ? 'gh-team-name-error' : null"
+      />
+      @if (problem(); as message) {
+        <p id="gh-team-name-error" class="gh-error">{{ message }}</p>
+      }
+    </div>
+    <div class="field">
+      <label class="gh-label" for="gh-team-sup">{{ tt.supervisor }}</label>
+      <select id="gh-team-sup" class="gh-input" name="supervisor">
+        <option value="" [selected]="!current?.supervisorId">
+          {{ tt.noSupervisor }}
+        </option>
+        @for (m of supervisors(); track m.userId) {
+          <option
+            [value]="m.userId"
+            [selected]="current?.supervisorId === m.userId"
+          >
+            {{ m.fullName }} · {{ t().roles[m.role] }}
+          </option>
+        }
+      </select>
+      @if (supervisors().length <= 1) {
+        <p class="hint">{{ tt.noSupervisors }}</p>
+      }
+    </div>
+    <div class="form-actions">
+      <button type="submit" ghButton>
+        {{ current ? tc.save : tc.add }}
+      </button>
+      @if (current) {
+        <button type="button" ghButton="secondary" (click)="cancel(form)">
+          {{ tc.cancel }}
+        </button>
+      }
+    </div>
+  </form>
+}
+
+@let teams = store.setup().teams;
+<div class="table-wrap" tabindex="0" role="region" [attr.aria-label]="tt.title">
+  @if (teams.length === 0) {
+    <p class="empty">{{ tt.none }}</p>
+  } @else {
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">{{ tc.name }}</th>
+          <th scope="col">{{ tt.supervisor }}</th>
+          <th scope="col" class="num">{{ tt.workers }}</th>
+          @if (store.canEdit()) {
+            <th scope="col">{{ tc.actions }}</th>
+          }
+        </tr>
+      </thead>
+      <tbody>
+        @for (team of teams; track team.id) {
+          <tr>
+            <th scope="row">{{ team.name }}</th>
+            <td [class.muted]="!team.supervisorId">
+              {{
+                team.supervisorId
+                  ? (names().get(team.supervisorId) ?? tc.none)
+                  : tt.noSupervisor
+              }}
+            </td>
+            <td class="num">{{ headcount().get(team.id) ?? 0 }}</td>
+            @if (store.canEdit()) {
+              <td>
+                <div class="row-actions">
+                  <button type="button" ghButton="ghost" (click)="edit(team)">
+                    {{ tc.edit }}
+                  </button>
+                  <button type="button" ghButton="ghost" (click)="remove(team)">
+                    {{ tc.delete }}
+                  </button>
+                </div>
+              </td>
+            }
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</div>

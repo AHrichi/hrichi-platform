@@ -1,0 +1,203 @@
+@let tw = t().workers;
+@let tc = t().common;
+@let current = editing();
+@let teams = store.setup().teams;
+
+<div class="head">
+  <div>
+    <h1 class="title">{{ tw.title }}</h1>
+    <p class="intro">{{ tw.intro }}</p>
+  </div>
+  <a
+    ghButton="secondary"
+    routerLink="../badges"
+    [queryParams]="teamFilter() ? { team: teamFilter() } : {}"
+  >
+    {{ tw.print }}
+  </a>
+</div>
+
+@if (store.canEdit()) {
+  <form
+    #form
+    class="gh-card form"
+    novalidate
+    aria-labelledby="gh-worker-form-title"
+    (submit)="$event.preventDefault(); save(form)"
+  >
+    <h2 id="gh-worker-form-title" class="form-title">
+      {{ current ? i18n.fill(tw.editing, { name: current.fullName }) : tw.add }}
+    </h2>
+    <div class="field">
+      <label class="gh-label" for="gh-w-name">{{ tw.fullName }}</label>
+      <input
+        id="gh-w-name"
+        class="gh-input"
+        name="fullName"
+        maxlength="120"
+        autocomplete="off"
+        [value]="current?.fullName ?? ''"
+        [attr.aria-invalid]="problem('fullName') ? true : null"
+        [attr.aria-describedby]="problem('fullName') ? 'gh-w-name-error' : null"
+      />
+      @if (problem('fullName'); as message) {
+        <p id="gh-w-name-error" class="gh-error">{{ message }}</p>
+      }
+    </div>
+    <div class="field">
+      <label class="gh-label" for="gh-w-badge">{{ tw.badge }}</label>
+      <input
+        id="gh-w-badge"
+        class="gh-input code"
+        name="badgeCode"
+        maxlength="32"
+        dir="ltr"
+        autocomplete="off"
+        [value]="current?.badgeCode ?? nextBadge()"
+        [attr.aria-invalid]="problem('badgeCode') ? true : null"
+        [attr.aria-describedby]="
+          problem('badgeCode') ? 'gh-w-badge-error' : null
+        "
+      />
+      @if (problem('badgeCode'); as message) {
+        <p id="gh-w-badge-error" class="gh-error">{{ message }}</p>
+      }
+    </div>
+    <div class="field">
+      <label class="gh-label" for="gh-w-team">{{ tc.team }}</label>
+      <select id="gh-w-team" class="gh-input" name="teamId">
+        <option value="" [selected]="!current?.teamId">{{ tc.noTeam }}</option>
+        @for (team of teams; track team.id) {
+          <option [value]="team.id" [selected]="current?.teamId === team.id">
+            {{ team.name }}
+          </option>
+        }
+      </select>
+    </div>
+    <div class="field">
+      <label class="gh-label" for="gh-w-pay">{{ tw.pay }}</label>
+      <input
+        id="gh-w-pay"
+        class="gh-input"
+        name="hourlyRate"
+        inputmode="decimal"
+        dir="ltr"
+        [value]="current ? (pay().get(current.id) ?? '') : ''"
+        [attr.aria-invalid]="problem('hourlyRate') ? true : null"
+        aria-describedby="gh-w-pay-hint"
+      />
+      <p id="gh-w-pay-hint" class="hint">
+        {{ problem('hourlyRate') ?? tw.payHint }}
+      </p>
+    </div>
+    @if (current) {
+      <label class="field check">
+        <span class="gh-label">{{ tc.active }}</span>
+        <input type="checkbox" name="active" [checked]="current.active" />
+      </label>
+    }
+    <div class="form-actions">
+      <button type="submit" ghButton>
+        {{ current ? tc.save : tc.add }}
+      </button>
+      @if (current) {
+        <button type="button" ghButton="secondary" (click)="cancel(form)">
+          {{ tc.cancel }}
+        </button>
+      }
+    </div>
+  </form>
+}
+
+<div class="filters">
+  <div class="field">
+    <label class="gh-label" for="gh-w-filter">{{ tc.team }}</label>
+    <select
+      #filterBox
+      id="gh-w-filter"
+      class="gh-input"
+      (change)="teamFilter.set(filterBox.value)"
+    >
+      <option value="">{{ tc.all }}</option>
+      @for (team of teams; track team.id) {
+        <option [value]="team.id">{{ team.name }}</option>
+      }
+      <option [value]="noTeam">{{ tc.noTeam }}</option>
+    </select>
+  </div>
+  <div class="field">
+    <label class="gh-label" for="gh-w-search">{{ tc.search }}</label>
+    <input
+      #searchBox
+      id="gh-w-search"
+      class="gh-input"
+      type="search"
+      autocomplete="off"
+      (input)="query.set(searchBox.value)"
+    />
+  </div>
+  <p class="hint" aria-live="polite">
+    {{
+      i18n.fill(tw.count, {
+        shown: shown().length,
+        total: store.setup().workers.length,
+      })
+    }}
+  </p>
+</div>
+
+<div class="table-wrap" tabindex="0" role="region" [attr.aria-label]="tw.title">
+  @if (shown().length === 0) {
+    <p class="empty">{{ tw.none }}</p>
+  } @else {
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">{{ tw.badge }}</th>
+          <th scope="col">{{ tw.fullName }}</th>
+          <th scope="col">{{ tc.team }}</th>
+          @if (store.canSeePay()) {
+            <th scope="col" class="num">{{ tw.pay }}</th>
+          }
+          @if (store.canEdit()) {
+            <th scope="col">{{ tc.actions }}</th>
+          }
+        </tr>
+      </thead>
+      <tbody>
+        @for (w of shown(); track w.id) {
+          <tr [class.is-off]="!w.active">
+            <td class="code" dir="ltr">{{ w.badgeCode }}</td>
+            <th scope="row">
+              {{ w.fullName }}
+              @if (!w.active) {
+                <small class="muted">· {{ tc.inactive }}</small>
+              }
+            </th>
+            <td [class.muted]="!w.teamId">
+              {{
+                w.teamId ? (teamNames().get(w.teamId) ?? tc.none) : tc.noTeam
+              }}
+            </td>
+            @if (store.canSeePay()) {
+              <td class="num">
+                @if (pay().has(w.id)) {
+                  {{ i18n.num(pay().get(w.id) ?? 0, 3) }}
+                } @else {
+                  <span class="muted">{{ tw.noPay }}</span>
+                }
+              </td>
+            }
+            @if (store.canEdit()) {
+              <td>
+                <button type="button" ghButton="ghost" (click)="edit(w)">
+                  {{ tc.edit }}
+                </button>
+              </td>
+            }
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</div>
