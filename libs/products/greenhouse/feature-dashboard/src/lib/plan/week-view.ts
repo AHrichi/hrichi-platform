@@ -145,6 +145,41 @@ export function withExpectedKg(
 }
 
 /**
+ * A greenhouse's row with one day's expected kg set, or cleared with null.
+ * A day with nothing planned yet goes to `teamId`; without a team the row
+ * stays as it is.
+ */
+export function withCellKg(
+  row: readonly PlanEntry[],
+  change: {
+    weekStart: IsoDate;
+    greenhouseId: string;
+    day: Weekday;
+    expectedKg: number | null;
+    teamId: string | null;
+    hoursPerDay: number;
+  },
+): PlanEntry[] {
+  const { day, expectedKg, teamId } = change;
+  if (expectedKg === null) return row.filter((e) => e.day !== day);
+  if (row.some((e) => e.day === day)) {
+    return withExpectedKg(row, { ...change, expectedKg });
+  }
+  if (!teamId) return [...row];
+  return [
+    ...row,
+    {
+      weekStart: change.weekStart,
+      day,
+      greenhouseId: change.greenhouseId,
+      teamId,
+      expectedKg,
+      hoursPerDay: change.hoursPerDay,
+    },
+  ];
+}
+
+/**
  * A greenhouse's row with one team picking every day. Days that had
  * several teams merge into one entry, as the plan allows one per team.
  */

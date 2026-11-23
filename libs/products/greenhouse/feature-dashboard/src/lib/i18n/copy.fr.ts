@@ -8,7 +8,6 @@ export const FR: DashboardCopy = {
     demo: 'Ferme de démonstration : serre de tomates fictive de 32 hectares, ses équipes et quatre semaines d’historique. Les modifications durent jusqu’au rechargement de la page.',
     loading: 'Ouverture de la ferme…',
     saving: 'Enregistrement…',
-    saved: 'Modifications enregistrées',
     readOnly:
       'Vous pouvez consulter les données de la ferme ; seuls les responsables les modifient.',
     failed: 'Impossible d’ouvrir la ferme.',
@@ -84,7 +83,6 @@ export const FR: DashboardCopy = {
     none: '—',
     search: 'Rechercher',
     all: 'Toutes',
-    confirmDelete: 'Supprimer {name} ?',
     errors: {
       required: 'Obligatoire.',
       invalid: 'Vérifiez cette valeur.',

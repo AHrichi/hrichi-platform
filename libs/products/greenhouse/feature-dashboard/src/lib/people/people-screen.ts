@@ -7,8 +7,8 @@ import {
 } from '@angular/core';
 import {
   checkEmail,
+  isRole,
   type Member,
-  type Role,
   ROLES,
   type SetupProblem,
 } from '@ah/products/greenhouse/domain';
@@ -16,9 +16,6 @@ import { GhButton } from '@ah/products/greenhouse/ui';
 import { DashboardI18n } from '../i18n/dashboard-i18n';
 import { formText } from '../shared/problems';
 import { FarmStore } from '../store/farm.store';
-
-const isRole = (value: unknown): value is Role =>
-  (ROLES as readonly unknown[]).includes(value);
 
 /** Who can sign in to the farm: members, invitations, and inviting. */
 @Component({

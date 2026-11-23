@@ -21,7 +21,7 @@ import {
   buildWeekView,
   pickedKg,
   shortageReport,
-  withExpectedKg,
+  withCellKg,
   withHours,
   withTeam,
 } from './week-view';
@@ -113,37 +113,19 @@ export class PlanScreen {
   }
 
   protected setKg(greenhouseId: string, day: Weekday, text: string): void {
-    const row = this.row(greenhouseId);
-    let next: PlanEntry[];
-    if (!text.trim()) {
-      next = row.filter((e) => e.day !== day);
-    } else {
-      const value = parseAmount(text);
-      if (!Number.isFinite(value) || value < 0) return;
-      const expectedKg = Math.round(value);
-      const teamId = this.rowTeam(greenhouseId);
-      if (!teamId) return;
-      next = row.some((e) => e.day === day)
-        ? withExpectedKg(row, {
-            weekStart: this.store.weekStart(),
-            greenhouseId,
-            day,
-            expectedKg,
-            hoursPerDay: this.hoursPerDay(),
-          })
-        : [
-            ...row,
-            {
-              weekStart: this.store.weekStart(),
-              day,
-              greenhouseId,
-              teamId,
-              expectedKg,
-              hoursPerDay: this.hoursPerDay(),
-            },
-          ];
-    }
-    void this.store.savePlanRow(greenhouseId, next);
+    const value = text.trim() ? parseAmount(text) : null;
+    if (value !== null && !(Number.isFinite(value) && value >= 0)) return;
+    void this.store.savePlanRow(
+      greenhouseId,
+      withCellKg(this.row(greenhouseId), {
+        weekStart: this.store.weekStart(),
+        greenhouseId,
+        day,
+        expectedKg: value === null ? null : Math.round(value),
+        teamId: this.rowTeam(greenhouseId),
+        hoursPerDay: this.hoursPerDay(),
+      }),
+    );
     this.copied.set(false);
   }
 

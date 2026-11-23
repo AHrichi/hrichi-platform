@@ -7,7 +7,6 @@ export const EN = {
     demo: 'Demo farm: a made-up 32-hectare tomato glasshouse, its crews and four weeks of history. Changes last until the page reloads.',
     loading: 'Opening the farm…',
     saving: 'Saving…',
-    saved: 'All changes saved',
     readOnly: 'You can read this farm’s data; only managers change it.',
     failed: 'The farm could not be opened.',
     retry: 'Try again',
@@ -82,7 +81,6 @@ export const EN = {
     none: '—',
     search: 'Search',
     all: 'All',
-    confirmDelete: 'Delete {name}?',
     errors: {
       required: 'Required.',
       invalid: 'Check this value.',

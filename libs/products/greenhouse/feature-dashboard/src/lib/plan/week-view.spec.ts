@@ -4,6 +4,7 @@ import {
   type ReportCopy,
   pickedKg,
   shortageReport,
+  withCellKg,
   withExpectedKg,
   withHours,
   withTeam,
@@ -90,6 +91,33 @@ describe('withExpectedKg', () => {
     const after =
       view(withExpectedKg(farm.plan, change)).gap.days[2]?.required ?? 0;
     expect(after).toBeGreaterThan(before);
+  });
+});
+
+describe('withCellKg', () => {
+  const row = farm.plan.filter((p) => p.greenhouseId === 'gh-1');
+  const change = {
+    weekStart: WEEK,
+    greenhouseId: 'gh-1',
+    expectedKg: 1000,
+    teamId: 'team-a1',
+    hoursPerDay: 8,
+  };
+
+  it('changes a planned day', () => {
+    const next = withCellKg(row, { ...change, day: 2 });
+    expect(next).toHaveLength(row.length);
+    expect(next.find((p) => p.day === 2)?.expectedKg).toBe(1000);
+  });
+
+  it('plans an empty day for the row’s team, or not at all without one', () => {
+    expect(withCellKg(row, { ...change, day: 7 })).toHaveLength(row.length + 1);
+    expect(withCellKg([], { ...change, day: 1, teamId: null })).toEqual([]);
+  });
+
+  it('clears a day', () => {
+    const next = withCellKg(row, { ...change, day: 3, expectedKg: null });
+    expect(next.some((p) => p.day === 3)).toBe(false);
   });
 });
 
