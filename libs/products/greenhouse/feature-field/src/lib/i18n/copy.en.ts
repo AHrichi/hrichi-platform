@@ -35,6 +35,29 @@ export const EN = {
     noRoster: 'This phone has no farm list yet. Connect once to download it.',
     retry: 'Try again',
   },
+  auth: {
+    title: 'Sign in',
+    intro:
+      'Sign in once while you have signal. After that the app works without it.',
+    again:
+      'Your session ended. Sign in again as {email} to send the waiting entries.',
+    email: 'Email',
+    password: 'Password',
+    submit: 'Sign in',
+    busy: 'Signing in…',
+    signedInAs: 'Signed in as {email}',
+    signOut: 'Sign out',
+    signOutPending: 'Send the waiting entries before signing out.',
+    signInAgain: 'Sign in again',
+    noFarm: 'This account is not on any farm yet. Ask your manager to add you.',
+    errors: {
+      invalid: 'Wrong email or password.',
+      unconfirmed: 'This account’s email is not confirmed yet.',
+      offline: 'No signal. The first sign-in needs the internet.',
+      other: 'Could not sign in. Try again in a moment.',
+      'other-account': 'Sign in as {email}: the waiting entries are theirs.',
+    },
+  },
   crops: {
     tomato: 'Tomato',
     'cherry-tomato': 'Cherry tomato',

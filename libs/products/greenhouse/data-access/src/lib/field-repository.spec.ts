@@ -124,4 +124,17 @@ describe('FieldRepository', () => {
     });
     await expect(repo.updateLog('missing', { hours: 7 })).rejects.toThrow();
   });
+
+  it('forgets the farm on sign-out, but never with entries waiting', async () => {
+    await repo.saveRoster(roster);
+    await repo.addLog('farm-1', log('a'));
+    expect(await repo.clearAccount()).toBe(false);
+    expect(await repo.roster()).not.toBeNull();
+
+    await db.logs.update('a', { status: 'synced', op: null });
+    expect(await repo.clearAccount()).toBe(true);
+    expect(await repo.roster()).toBeNull();
+    expect(await db.logs.count()).toBe(0);
+    expect(await repo.lastSyncAt()).toBeNull();
+  });
 });

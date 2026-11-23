@@ -201,3 +201,38 @@
 .main {
   padding: var(--space-4);
 }
+
+.account {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  margin: var(--space-2) var(--space-4) 0;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-200);
+}
+
+.link {
+  min-block-size: var(--control-height-md);
+  padding-inline: var(--space-2);
+  border: 0;
+  background: transparent;
+  color: var(--color-accent-default);
+  font: inherit;
+  font-weight: var(--font-weight-semibold);
+  text-decoration: underline;
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: var(--focus-ring-width) solid var(--color-focus-ring);
+    outline-offset: var(--focus-ring-offset);
+  }
+}
+
+.account-note {
+  margin: var(--space-1) var(--space-4) 0;
+  color: var(--color-danger-default);
+  font-size: var(--font-size-200);
+  font-weight: var(--font-weight-semibold);
+}

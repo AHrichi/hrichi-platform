@@ -33,7 +33,10 @@ export function classifyFailure({
   const message = error?.message ?? '';
   if (
     status === 0 ||
-    /failed to fetch|networkerror|fetch failed|load failed/i.test(message)
+    /failed to fetch|networkerror|fetch failed|load failed/i.test(message) ||
+    // Angular's service worker answers a request it couldn't send with an
+    // empty 504, which is how no signal looks once the app is installed.
+    (status === 504 && !code)
   ) {
     return 'offline';
   }

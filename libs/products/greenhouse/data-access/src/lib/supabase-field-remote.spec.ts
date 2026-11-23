@@ -16,6 +16,17 @@ describe('classifyFailure', () => {
       'offline',
     ],
     [
+      // What Chrome reported with the server down and the app installed.
+      'the service worker’s stand-in for no network',
+      { status: 504, error: { message: '' } },
+      'offline',
+    ],
+    [
+      'a real gateway timeout from the database',
+      { status: 504, error: { message: 'canceling statement', code: '57014' } },
+      'server',
+    ],
+    [
       'expired session',
       { status: 401, error: { message: 'JWT expired', code: 'PGRST301' } },
       'auth',

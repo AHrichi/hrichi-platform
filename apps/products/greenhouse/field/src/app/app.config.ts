@@ -6,16 +6,24 @@ import {
 import { provideRouter, withComponentInputBinding } from '@angular/router';
 import { provideServiceWorker } from '@angular/service-worker';
 import { provideAppMode } from '@ah/platform/app-mode';
-import { FIELD_ROUTES } from '@ah/products/greenhouse/feature-field';
+import {
+  FIELD_ROUTES,
+  GREENHOUSE_SUPABASE,
+} from '@ah/products/greenhouse/feature-field';
+import { environment } from '../environments/environment';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZonelessChangeDetection(),
     provideRouter(FIELD_ROUTES, withComponentInputBinding()),
-    // The sample farm and a pretend server, until supervisor sign-in lands
-    // (docs/greenhouse/AI_HANDOFF.md). Standalone mode sends to Supabase
-    // once GREENHOUSE_SUPABASE is provided.
-    provideAppMode('embedded-demo'),
+    // With a Supabase project: supervisors sign in and send to it.
+    // Without one (the demo build): the sample farm and a pretend server.
+    environment.supabase
+      ? [
+          provideAppMode('standalone'),
+          { provide: GREENHOUSE_SUPABASE, useValue: environment.supabase },
+        ]
+      : provideAppMode('embedded-demo'),
     // The app has to open inside a greenhouse with no signal.
     provideServiceWorker('ngsw-worker.js', {
       enabled: !isDevMode(),

@@ -38,12 +38,30 @@
       {{ t().sync.lastSent }}:
       {{ store.lastSyncAt() ? i18n.time(store.lastSyncAt()) : t().sync.never }}
     </p>
-    @if (canSend()) {
+    @if (store.sync() === 'auth' && store.status() !== 'signed-out') {
+      <button type="button" class="send" (click)="store.requireSignIn()">
+        {{ t().auth.signInAgain }}
+      </button>
+    } @else if (canSend()) {
       <button type="button" class="send" (click)="store.syncNow()">
         {{ t().sync.sendNow }}
       </button>
     }
   </section>
+
+  @if (store.account() && store.status() !== 'signed-out') {
+    <div class="account">
+      <span>{{
+        i18n.fill(t().auth.signedInAs, { email: store.account() ?? '' })
+      }}</span>
+      <button type="button" class="link" (click)="signOut()">
+        {{ t().auth.signOut }}
+      </button>
+    </div>
+    @if (signOutBlocked()) {
+      <p class="account-note" role="alert">{{ t().auth.signOutPending }}</p>
+    }
+  }
 
   @if (store.demo()) {
     <aside class="demo">
@@ -63,6 +81,10 @@
   }
 
   <main class="main">
-    <router-outlet />
+    @if (store.status() === 'signed-out') {
+      <gh-sign-in-screen />
+    } @else {
+      <router-outlet />
+    }
   </main>
 </div>

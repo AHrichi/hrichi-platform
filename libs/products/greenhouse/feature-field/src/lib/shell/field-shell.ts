@@ -4,16 +4,18 @@ import {
   computed,
   effect,
   inject,
+  signal,
 } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { RouterLink, RouterOutlet } from '@angular/router';
 import { FIELD_LANGUAGES, FieldI18n } from '../i18n/field-i18n';
+import { SignInScreen } from '../screens/sign-in/sign-in-screen';
 import { FieldStore } from '../store/field.store';
 
 /** The field app's frame: brand, language, and how sending is going. */
 @Component({
   selector: 'gh-field-shell',
-  imports: [RouterLink, RouterOutlet],
+  imports: [RouterLink, RouterOutlet, SignInScreen],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './field-shell.html',
   styleUrl: './field-shell.scss',
@@ -23,6 +25,12 @@ export class FieldShell {
   protected readonly i18n = inject(FieldI18n);
   protected readonly t = this.i18n.t;
   protected readonly languages = FIELD_LANGUAGES;
+  /** Sign-out was refused: entries are still waiting to be sent. */
+  protected readonly signOutBlocked = signal(false);
+
+  protected async signOut(): Promise<void> {
+    this.signOutBlocked.set((await this.store.signOut()) === 'pending');
+  }
 
   constructor() {
     // The tab and task-switcher title follow a language switch.
