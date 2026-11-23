@@ -1,11 +1,20 @@
-export * from './lib/demo-field-remote';
-export * from './lib/field-database';
-export * from './lib/field-remote';
-export * from './lib/field-repository';
-export * from './lib/supabase-field-remote';
-export * from './lib/work-log-sync';
+// Sign-in, shared by both apps.
 export * from './lib/auth/greenhouse-auth';
 export * from './lib/auth/sign-in-error';
+
+// Talking to the server: failures, and Postgres rows to the domain model.
+export * from './lib/remote/postgrest';
+export * from './lib/remote/remote-error';
+
+// The field app: the phone's database and the sync to the server.
+export * from './lib/field/demo-field-remote';
+export * from './lib/field/field-database';
+export * from './lib/field/field-remote';
+export * from './lib/field/field-repository';
+export * from './lib/field/supabase-field-remote';
+export * from './lib/field/work-log-sync';
+
+// The dashboard: the farm's setup and weeks.
 export * from './lib/farm/demo-farm-remote';
 export * from './lib/farm/farm-remote';
 export * from './lib/farm/supabase-farm-remote';

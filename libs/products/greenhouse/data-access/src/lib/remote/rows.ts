@@ -2,10 +2,9 @@ import {
   type Absence,
   type Greenhouse,
   isCrop,
+  isRole,
   type Member,
   type PlanEntry,
-  type Role,
-  ROLES,
   type Team,
   type Weekday,
   type Worker,
@@ -94,9 +93,7 @@ export function memberFrom(row: Row): Member {
   return {
     userId: text(row['user_id']),
     fullName: text(row['full_name']),
-    role: (ROLES as readonly unknown[]).includes(role)
-      ? (role as Role)
-      : 'supervisor',
+    role: isRole(role) ? role : 'supervisor',
   };
 }
 

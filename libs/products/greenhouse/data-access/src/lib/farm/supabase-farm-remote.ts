@@ -5,14 +5,14 @@ import {
   type Invitation,
   type IsoDate,
   type PlanEntry,
+  isRole,
   type Role,
-  ROLES,
   type Team,
   type Worker,
 } from '@ah/products/greenhouse/domain';
 import type { SupabaseClient } from '@supabase/supabase-js';
-import { RemoteError } from '../field-remote';
-import { callPostgrest } from '../supabase-field-remote';
+import { callPostgrest } from '../remote/postgrest';
+import { RemoteError } from '../remote/remote-error';
 import {
   type FarmAccess,
   type FarmRemote,
@@ -37,10 +37,7 @@ import {
   WORKER_COLUMNS,
   workerFrom,
   workerRow,
-} from './rows';
-
-const isRole = (value: unknown): value is Role =>
-  (ROLES as readonly unknown[]).includes(value);
+} from '../remote/rows';
 
 /**
  * The dashboard's server: Supabase as the signed-in person, so row-level

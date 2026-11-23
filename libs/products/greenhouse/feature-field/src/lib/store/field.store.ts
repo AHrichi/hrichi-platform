@@ -19,12 +19,14 @@ import {
   type LogStatus,
   RemoteError,
   type Roster,
+  type SignInError,
   SupabaseFieldRemote,
   WorkLogSync,
 } from '@ah/products/greenhouse/data-access';
 import {
   createWorkLog,
   type Greenhouse,
+  newId,
   type IsoDate,
   sampleFarm,
   todayOnFarm,
@@ -33,7 +35,6 @@ import {
   type WorkLogDraft,
 } from '@ah/products/greenhouse/domain';
 import { FieldAuth } from '../auth/field-auth';
-import type { SignInError } from '@ah/products/greenhouse/data-access';
 import { FIELD_DB } from '../field-config';
 import {
   nextRun,
@@ -70,16 +71,6 @@ interface FieldState {
   demo: boolean;
   /** Demo only: the pretend server is out of reach. */
   noSignal: boolean;
-}
-
-/** A random v4 UUID, made on the phone so a re-sent entry is recognised. */
-function newId(): string {
-  if (typeof crypto.randomUUID === 'function') return crypto.randomUUID();
-  const b = crypto.getRandomValues(new Uint8Array(16));
-  b[6] = ((b[6] ?? 0) & 0x0f) | 0x40;
-  b[8] = ((b[8] ?? 0) & 0x3f) | 0x80;
-  const hex = [...b].map((x) => x.toString(16).padStart(2, '0')).join('');
-  return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
 }
 
 /**

@@ -1,6 +1,7 @@
 import type { SampleFarm, WorkLog } from '@ah/products/greenhouse/domain';
 import type { Roster } from './field-database';
-import { type FieldRemote, type LogChange, RemoteError } from './field-remote';
+import { RemoteError } from '../remote/remote-error';
+import type { FieldRemote, LogChange } from './field-remote';
 
 /**
  * A pretend server for the portfolio demo: it answers from the sample farm

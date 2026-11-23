@@ -1,7 +1,8 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { LogChange } from './field-remote';
-import { RemoteError } from './field-remote';
-import { classifyFailure, SupabaseFieldRemote } from './supabase-field-remote';
+import { classifyFailure } from '../remote/postgrest';
+import { RemoteError } from '../remote/remote-error';
+import { SupabaseFieldRemote } from './supabase-field-remote';
 
 describe('classifyFailure', () => {
   const cases: [string, Parameters<typeof classifyFailure>[0], string][] = [

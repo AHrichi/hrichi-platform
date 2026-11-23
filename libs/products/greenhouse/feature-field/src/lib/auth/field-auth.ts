@@ -1,10 +1,5 @@
 import { Injectable } from '@angular/core';
-import {
-  type GreenhouseAccount,
-  GreenhouseAuth,
-} from '@ah/products/greenhouse/data-access';
-
-export type FieldAccount = GreenhouseAccount;
+import { GreenhouseAuth } from '@ah/products/greenhouse/data-access';
 
 /**
  * The supervisor's Supabase session. A phone signed in once stays signed
