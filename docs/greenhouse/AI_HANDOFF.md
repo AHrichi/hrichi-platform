@@ -4,9 +4,8 @@ A briefing for whichever AI agent or IDE picks up the Greenhouse Labor Planner. 
 
 Last updated 2026-11-23:
 
-- **G1 (foundation)** is in PR [#22](https://github.com/AHrichi/hrichi-platform/pull/22) (`feat/greenhouse-p1-foundation`), not merged yet.
-- **G2 (supervisor sign-in and real sync)** is done on `feat/greenhouse-p2-auth`, which branches from G1's tip. It is verified against a local Supabase stack. The hosted project is the open step (§6).
-- **Design system and brand packs** are done on `feat/greenhouse-p3-design-system`, which branches from G2's tip. That covers the `greenhouse` token look, the `product-greenhouse-ui` kit with Storybook stories, both apps moved onto it, and private brand packs. See [design-system.md](design-system.md).
+- **G1, G2 and the design system are merged into `main`.** G1 (foundation) came in through PR [#22](https://github.com/AHrichi/hrichi-platform/pull/22). G2 (supervisor sign-in and real sync, verified against local Supabase), the design system and brand packs, and the tomato demo farm came in through PR [#23](https://github.com/AHrichi/hrichi-platform/pull/23). See [design-system.md](design-system.md).
+- **Next:** the hosted Supabase project (G2b, waiting on the owner's sign-in), then G3 (§6). Start each phase on a new branch from `main`.
 
 ## 0. Resume in five minutes
 
