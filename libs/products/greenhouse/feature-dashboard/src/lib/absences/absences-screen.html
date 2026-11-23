@@ -1,0 +1,137 @@
+@let ta = t().absences;
+@let tc = t().common;
+
+<div class="head">
+  <div>
+    <h1 class="title">{{ ta.title }}</h1>
+    <p class="intro">{{ ta.intro }}</p>
+  </div>
+  <gh-week-nav />
+</div>
+
+@if (store.canEdit()) {
+  <form
+    #form
+    class="gh-card form"
+    novalidate
+    aria-labelledby="gh-abs-form-title"
+    (submit)="$event.preventDefault(); save(form)"
+  >
+    <h2 id="gh-abs-form-title" class="form-title">{{ ta.add }}</h2>
+    <div class="field">
+      <label class="gh-label" for="gh-abs-worker">{{ ta.worker }}</label>
+      <select
+        id="gh-abs-worker"
+        class="gh-input"
+        name="workerId"
+        [attr.aria-invalid]="problem('workerId') ? true : null"
+        [attr.aria-describedby]="
+          problem('workerId') ? 'gh-abs-worker-error' : null
+        "
+      >
+        <option value=""></option>
+        @for (group of groups(); track group.label) {
+          <optgroup [label]="group.label">
+            @for (w of group.workers; track w.id) {
+              <option [value]="w.id">
+                {{ w.fullName }} · {{ w.badgeCode }}
+              </option>
+            }
+          </optgroup>
+        }
+      </select>
+      @if (problem('workerId'); as message) {
+        <p id="gh-abs-worker-error" class="gh-error">{{ message }}</p>
+      }
+    </div>
+    <div class="field">
+      <label class="gh-label" for="gh-abs-from">{{ ta.from }}</label>
+      <input
+        id="gh-abs-from"
+        class="gh-input"
+        type="date"
+        name="from"
+        [attr.aria-invalid]="problem('from') ? true : null"
+        [attr.aria-describedby]="problem('from') ? 'gh-abs-from-error' : null"
+      />
+      @if (problem('from'); as message) {
+        <p id="gh-abs-from-error" class="gh-error">{{ message }}</p>
+      }
+    </div>
+    <div class="field">
+      <label class="gh-label" for="gh-abs-to">{{ ta.to }}</label>
+      <input
+        id="gh-abs-to"
+        class="gh-input"
+        type="date"
+        name="to"
+        [attr.aria-invalid]="problem('to') ? true : null"
+        [attr.aria-describedby]="problem('to') ? 'gh-abs-to-error' : null"
+      />
+      @if (problem('to'); as message) {
+        <p id="gh-abs-to-error" class="gh-error">{{ message }}</p>
+      }
+    </div>
+    <div class="field">
+      <label class="gh-label" for="gh-abs-reason">{{ ta.reason }}</label>
+      <input
+        id="gh-abs-reason"
+        class="gh-input"
+        name="reason"
+        maxlength="200"
+      />
+    </div>
+    <div class="form-actions">
+      <button type="submit" ghButton>{{ tc.add }}</button>
+    </div>
+  </form>
+}
+
+<div class="table-wrap" tabindex="0" role="region" [attr.aria-label]="ta.title">
+  @if (!store.currentWeek()) {
+    <p class="empty" role="status">{{ t().app.loading }}</p>
+  } @else if (absences().length === 0) {
+    <p class="empty">{{ ta.none }}</p>
+  } @else {
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">{{ ta.worker }}</th>
+          <th scope="col">{{ ta.from }}</th>
+          <th scope="col">{{ ta.to }}</th>
+          <th scope="col">{{ ta.reason }}</th>
+          @if (store.canEdit()) {
+            <th scope="col">{{ tc.actions }}</th>
+          }
+        </tr>
+      </thead>
+      <tbody>
+        @for (a of absences(); track a.id) {
+          @let w = worker(a.workerId);
+          <tr>
+            <th scope="row">
+              {{ w?.fullName ?? tc.none }}
+              @if (w) {
+                <small class="muted code" dir="ltr">{{ w.badgeCode }}</small>
+              }
+            </th>
+            <td>{{ i18n.longDay(a.from) }}</td>
+            <td>{{ i18n.longDay(a.to) }}</td>
+            <td [class.muted]="!a.reason">{{ a.reason ?? tc.none }}</td>
+            @if (store.canEdit()) {
+              <td>
+                <button
+                  type="button"
+                  ghButton="ghost"
+                  (click)="store.deleteAbsence(a.id)"
+                >
+                  {{ tc.delete }}
+                </button>
+              </td>
+            }
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</div>

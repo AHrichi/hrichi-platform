@@ -1,0 +1,60 @@
+@let ta = t().auth;
+@let signUp = mode() === 'sign-up';
+
+<form
+  class="gh-card card"
+  aria-labelledby="gh-auth-title"
+  (submit)="$event.preventDefault(); submit(emailBox.value, passwordBox.value)"
+>
+  <h1 id="gh-auth-title" class="title">
+    {{ signUp ? ta.signUpTitle : ta.title }}
+  </h1>
+  <p class="intro">{{ ta.intro }}</p>
+
+  @if (confirm()) {
+    <p class="done" role="status">{{ ta.confirmEmail }}</p>
+  }
+
+  <label class="gh-label" for="gh-dash-email">{{ ta.email }}</label>
+  <input
+    #emailBox
+    id="gh-dash-email"
+    class="gh-input"
+    type="email"
+    name="email"
+    autocomplete="username"
+    dir="ltr"
+    required
+  />
+
+  <label class="gh-label" for="gh-dash-password">
+    {{ signUp ? ta.newPassword : ta.password }}
+  </label>
+  <input
+    #passwordBox
+    id="gh-dash-password"
+    class="gh-input"
+    type="password"
+    name="password"
+    [attr.autocomplete]="signUp ? 'new-password' : 'current-password'"
+    [attr.minlength]="signUp ? 8 : null"
+    dir="ltr"
+    required
+    [attr.aria-describedby]="problemText() ? 'gh-dash-auth-error' : null"
+  />
+
+  @if (problemText(); as message) {
+    <p id="gh-dash-auth-error" class="gh-error" role="alert">{{ message }}</p>
+  }
+
+  <button type="submit" ghButton block [disabled]="busy()">
+    {{ busy() ? ta.busy : signUp ? ta.signUpSubmit : ta.submit }}
+  </button>
+
+  <p class="switch">
+    {{ signUp ? ta.haveAccount : ta.noAccount }}
+    <button type="button" ghButton="ghost" (click)="switchMode()">
+      {{ signUp ? ta.submit : ta.createAccount }}
+    </button>
+  </p>
+</form>

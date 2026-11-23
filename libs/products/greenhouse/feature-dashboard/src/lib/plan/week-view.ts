@@ -144,6 +144,45 @@ export function withExpectedKg(
   ];
 }
 
+/**
+ * A greenhouse's row with one team picking every day. Days that had
+ * several teams merge into one entry, as the plan allows one per team.
+ */
+export function withTeam(
+  row: readonly PlanEntry[],
+  teamId: string,
+): PlanEntry[] {
+  const byDay = new Map<Weekday, PlanEntry>();
+  for (const entry of row) {
+    const same = byDay.get(entry.day);
+    byDay.set(
+      entry.day,
+      same
+        ? { ...same, expectedKg: same.expectedKg + entry.expectedKg }
+        : { ...entry, teamId },
+    );
+  }
+  return [...byDay.values()].sort((a, b) => a.day - b.day);
+}
+
+/** The plan with every entry at these hours a day. */
+export function withHours(
+  entries: readonly PlanEntry[],
+  hoursPerDay: number,
+): PlanEntry[] {
+  return entries.map((e) => ({ ...e, hoursPerDay }));
+}
+
+/** Kg picked per greenhouse and day (`greenhouseId|date`), from logs. */
+export function pickedKg(logs: readonly WorkLog[]): Map<string, number> {
+  const picked = new Map<string, number>();
+  for (const log of logs) {
+    const key = `${log.greenhouseId}|${log.date}`;
+    picked.set(key, (picked.get(key) ?? 0) + log.kg);
+  }
+  return picked;
+}
+
 export interface ReportCopy {
   subject: string;
   heading: string;

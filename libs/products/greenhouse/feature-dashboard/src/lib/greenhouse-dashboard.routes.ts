@@ -13,6 +13,36 @@ export const GREENHOUSE_DASHBOARD_ROUTES: Routes = [
         loadComponent: () =>
           import('./plan/plan-screen').then((m) => m.PlanScreen),
       },
+      {
+        path: 'absences',
+        loadComponent: () =>
+          import('./absences/absences-screen').then((m) => m.AbsencesScreen),
+      },
+      {
+        path: 'workers',
+        loadComponent: () =>
+          import('./setup/workers-screen').then((m) => m.WorkersScreen),
+      },
+      {
+        path: 'badges',
+        loadComponent: () =>
+          import('./setup/badges-screen').then((m) => m.BadgesScreen),
+      },
+      {
+        path: 'teams',
+        loadComponent: () =>
+          import('./setup/teams-screen').then((m) => m.TeamsScreen),
+      },
+      {
+        path: 'greenhouses',
+        loadComponent: () =>
+          import('./setup/greenhouses-screen').then((m) => m.GreenhousesScreen),
+      },
+      {
+        path: 'people',
+        loadComponent: () =>
+          import('./people/people-screen').then((m) => m.PeopleScreen),
+      },
       { path: '**', redirectTo: 'plan' },
     ],
   },

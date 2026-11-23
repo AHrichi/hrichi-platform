@@ -71,7 +71,7 @@ export class SupabaseFarmRemote implements FarmRemote {
   }
 
   async createFarm(farmName: string, managerName: string): Promise<string> {
-    const id = await callPostgrest<string>(
+    const id = await callPostgrest<string | null>(
       this.client.rpc('create_farm', {
         farm_name: farmName,
         manager_name: managerName,
@@ -261,7 +261,7 @@ export class SupabaseFarmRemote implements FarmRemote {
     role: Role,
     fullName: string,
   ): Promise<InviteResult> {
-    const result = await callPostgrest<string>(
+    const result = await callPostgrest<string | null>(
       this.client.rpc('invite_member', {
         target_farm: farmId,
         invitee_email: email,

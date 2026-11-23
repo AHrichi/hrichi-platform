@@ -8,9 +8,102 @@
     />
   }
 </gh-app-bar>
+
 <div class="dashboard">
-  <p class="demo">{{ t().app.demo }}</p>
-  <main class="main">
-    <router-outlet />
-  </main>
+  @switch (store.phase()) {
+    @case ('signed-out') {
+      <gh-dashboard-sign-in />
+    }
+    @case ('no-farm') {
+      <gh-create-farm />
+    }
+    @case ('failed') {
+      <div class="gh-card status" role="alert">
+        <p>{{ problemText() ?? t().app.failed }}</p>
+        <div class="row">
+          <button type="button" ghButton (click)="store.reload()">
+            {{ t().app.retry }}
+          </button>
+          @if (store.online) {
+            <button
+              type="button"
+              ghButton="secondary"
+              (click)="store.signOut()"
+            >
+              {{ t().app.signOut }}
+            </button>
+          }
+        </div>
+      </div>
+    }
+    @case ('ready') {
+      <div class="bar">
+        <nav class="nav" [attr.aria-label]="t().nav.label">
+          @for (section of sections; track section) {
+            <a
+              class="nav-link"
+              [routerLink]="section"
+              routerLinkActive="is-active"
+              ariaCurrentWhenActive="page"
+            >
+              {{ t().nav[section] }}
+            </a>
+          }
+        </nav>
+        <div class="account">
+          @if (store.farms().length > 1) {
+            <label class="farm-pick">
+              <span class="visually-hidden">{{ t().farm.choose }}</span>
+              <select
+                #farmBox
+                class="gh-input"
+                [value]="store.access()?.farmId"
+                (change)="chooseFarm(farmBox.value)"
+              >
+                @for (farm of store.farms(); track farm.farmId) {
+                  <option [value]="farm.farmId">{{ farm.farmName }}</option>
+                }
+              </select>
+            </label>
+          } @else {
+            <strong>{{ store.access()?.farmName }}</strong>
+          }
+          <span class="role">{{ t().roles[store.role() ?? 'hr'] }}</span>
+          <span class="save" aria-live="polite">
+            {{ store.saving() ? t().app.saving : '' }}
+          </span>
+          @if (store.online) {
+            <button type="button" ghButton="ghost" (click)="store.signOut()">
+              {{ t().app.signOut }}
+            </button>
+          }
+        </div>
+      </div>
+
+      @if (!store.online) {
+        <p class="note demo">{{ t().app.demo }}</p>
+      } @else if (!store.canEdit()) {
+        <p class="note">{{ t().app.readOnly }}</p>
+      }
+      @if (problemText(); as problem) {
+        <div class="note problem" role="alert">
+          <span>{{ problem }}</span>
+          <button
+            type="button"
+            ghButton="ghost"
+            (click)="store.dismissProblem()"
+          >
+            {{ t().problems.dismiss }}
+          </button>
+        </div>
+      }
+
+      <main class="main">
+        <router-outlet />
+      </main>
+    }
+    @default {
+      <p class="status" role="status">{{ t().app.loading }}</p>
+    }
+  }
 </div>

@@ -1,0 +1,42 @@
+@let tb = t().badges;
+
+<div class="head no-print">
+  <div>
+    <h1 class="title">{{ tb.title }}</h1>
+    <p class="intro">{{ tb.intro }}</p>
+    <p class="hint">{{ i18n.fill(tb.count, { n: badges().length }) }}</p>
+  </div>
+  <div class="row-actions">
+    <a ghButton="secondary" routerLink="../workers">{{ tb.back }}</a>
+    <button type="button" ghButton (click)="print()">{{ tb.print }}</button>
+  </div>
+</div>
+
+<ul class="sheet" role="list">
+  @for (badge of badges(); track badge.worker.id) {
+    <li class="badge">
+      <p class="farm">
+        {{ brand.organisation ?? store.access()?.farmName ?? t().app.name }}
+      </p>
+      <svg
+        class="qr"
+        role="img"
+        [attr.viewBox]="'0 0 ' + badge.qr.size + ' ' + badge.qr.size"
+        [attr.aria-label]="i18n.fill(tb.qr, { code: badge.worker.badgeCode })"
+        shape-rendering="crispEdges"
+      >
+        <rect
+          [attr.width]="badge.qr.size"
+          [attr.height]="badge.qr.size"
+          class="qr-bg"
+        />
+        <path [attr.d]="badge.qr.d" class="qr-fg" />
+      </svg>
+      <p class="name">{{ badge.worker.fullName }}</p>
+      @if (badge.team) {
+        <p class="team">{{ badge.team }}</p>
+      }
+      <p class="code" dir="ltr">{{ badge.worker.badgeCode }}</p>
+    </li>
+  }
+</ul>
