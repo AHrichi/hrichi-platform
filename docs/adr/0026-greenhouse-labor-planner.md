@@ -88,6 +88,13 @@ The owner's brief suggested Ionic + Capacitor for the phones, Supabase as the ba
   - `work_totals()` sums the work log per day, team and greenhouse, so history fits under the API's 1,000-row limit.
   - Badge QR codes are drawn by `uqr` (MIT, no dependencies) as one SVG path per badge.
 
+- **Performance and labour cost** (G5, `…_performance.sql`).
+  - Rates are ratios of totals (all kg over all hours), never averages of rates. Rankings leave out anyone with fewer than 16 logged hours in the period, where a rate is mostly luck.
+  - The server sums per week and team, and per worker, with the labour cost at each worker's current rate. Pay keeps no history, so a raise reprices past weeks; a pay history table would fix that if it matters.
+  - The cost per kg counts only the hours whose worker has a rate, and the screen says what share of hours had none.
+  - A target holds from the week it is set until the next one, so changing it never rewrites the weeks before.
+  - The periods are whole weeks before this one; the week in progress would always look short.
+
 ## Consequences
 
 - One shared domain lib keeps the plan, the phone's validation and the database's checks in step. A test checks that the schema's crop list matches the domain's.
