@@ -33,7 +33,7 @@ import {
   type WorkLogDraft,
 } from '@ah/products/greenhouse/domain';
 import { FieldAuth } from '../auth/field-auth';
-import type { SignInError } from '../auth/sign-in-error';
+import type { SignInError } from '@ah/products/greenhouse/data-access';
 import { FIELD_DB } from '../field-config';
 import {
   nextRun,

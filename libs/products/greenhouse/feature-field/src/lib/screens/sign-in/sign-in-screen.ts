@@ -6,7 +6,7 @@ import {
   signal,
 } from '@angular/core';
 import { GhButton } from '@ah/products/greenhouse/ui';
-import type { SignInError } from '../../auth/sign-in-error';
+import type { SignInError } from '@ah/products/greenhouse/data-access';
 import { FieldI18n } from '../../i18n/field-i18n';
 import { FieldStore } from '../../store/field.store';
 

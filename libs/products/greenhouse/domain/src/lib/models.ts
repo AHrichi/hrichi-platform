@@ -25,7 +25,22 @@ export function isCrop(value: unknown): value is Crop {
   return (CROPS as readonly unknown[]).includes(value);
 }
 
-export type Role = 'manager' | 'supervisor' | 'hr';
+export const ROLES = ['manager', 'supervisor', 'hr'] as const;
+export type Role = (typeof ROLES)[number];
+
+/** Someone who can sign in to a farm, and as what. */
+export interface Member {
+  userId: string;
+  fullName: string;
+  role: Role;
+}
+
+/** Someone a manager asked onto the farm who has no account yet. */
+export interface Invitation {
+  email: string;
+  fullName: string;
+  role: Role;
+}
 
 export interface Greenhouse {
   id: string;
@@ -69,6 +84,8 @@ export interface Absence {
   workerId: string;
   from: IsoDate;
   to: IsoDate;
+  /** Leave, sickness, anything; optional and free text. */
+  reason?: string;
 }
 
 /**

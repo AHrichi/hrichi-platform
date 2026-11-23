@@ -86,6 +86,27 @@ function toRow({ farmId, log }: LogChange): WorkLogRow {
   };
 }
 
+/** A supabase-js query, awaited for its data, error and HTTP status. */
+export type PostgrestQuery<T> = PromiseLike<{
+  data: T;
+  error: { message: string; code?: string } | null;
+  status: number;
+}>;
+
+/** Awaits a query and turns a failure into a `RemoteError`. */
+export async function callPostgrest<T>(query: PostgrestQuery<T>): Promise<T> {
+  let reply: Awaited<typeof query>;
+  try {
+    reply = await query;
+  } catch (error) {
+    throw new RemoteError('offline', String(error));
+  }
+  if (reply.error) {
+    throw new RemoteError(classifyFailure(reply), reply.error.message);
+  }
+  return reply.data;
+}
+
 /**
  * The field app's server in standalone mode: Supabase, as the signed-in
  * supervisor, so row-level security decides what goes through.
@@ -185,23 +206,7 @@ export class SupabaseFieldRemote implements FieldRemote {
     };
   }
 
-  /** Awaits a query and turns a failure into a `RemoteError`. */
-  private async call<T>(
-    query: PromiseLike<{
-      data: T;
-      error: { message: string; code?: string } | null;
-      status: number;
-    }>,
-  ): Promise<T> {
-    let reply: Awaited<typeof query>;
-    try {
-      reply = await query;
-    } catch (error) {
-      throw new RemoteError('offline', String(error));
-    }
-    if (reply.error) {
-      throw new RemoteError(classifyFailure(reply), reply.error.message);
-    }
-    return reply.data;
+  private call<T>(query: PostgrestQuery<T>): Promise<T> {
+    return callPostgrest(query);
   }
 }

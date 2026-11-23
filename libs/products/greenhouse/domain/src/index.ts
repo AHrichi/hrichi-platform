@@ -5,3 +5,4 @@ export * from './lib/productivity';
 export * from './lib/sample';
 export * from './lib/staffing';
 export * from './lib/work-log';
+export * from './lib/setup';
