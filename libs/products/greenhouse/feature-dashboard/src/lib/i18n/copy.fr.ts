@@ -18,6 +18,7 @@ export const FR: DashboardCopy = {
   nav: {
     label: 'Sections du tableau de bord',
     plan: 'Plan',
+    performance: 'Performance',
     absences: 'Absences',
     workers: 'Ouvriers',
     teams: 'Équipes',
@@ -120,6 +121,53 @@ export const FR: DashboardCopy = {
       'Aucune serre pour l’instant. Ajoutez-les dans Serres, les équipes dans Équipes, puis planifiez la semaine ici.',
     picked: '{kg} kg récoltés',
   },
+  performance: {
+    title: 'Performance',
+    intro:
+      'Ce que la ferme a récolté ces dernières semaines entières : kg par heure de travail, caisses refusées et coût de main-d’œuvre par kg, par semaine, équipe et ouvrier.',
+    period: 'Période',
+    weeks: '{n} semaines',
+    allTeams: 'Toutes les équipes',
+    range: 'Du {from} au {to}',
+    kg: 'Kg récoltés',
+    hours: 'Heures',
+    days: 'Jours',
+    kgPerHour: 'Kg par heure',
+    rejected: 'Caisses refusées',
+    costPerKg: 'Coût main-d’œuvre par kg',
+    tndPerKg: 'TND/kg',
+    target: 'Objectif',
+    targetHint: 'Objectif {cost} TND/kg',
+    noTarget: 'Aucun objectif fixé.',
+    missingPay:
+      'Le salaire manque pour {share} des heures : le coût porte sur le reste. Renseignez-le dans Ouvriers.',
+    byWeek: 'Semaine par semaine',
+    week: 'Semaine du',
+    teams: 'Équipes',
+    rankBy: 'Classer par',
+    place: 'N°',
+    workers: 'Ouvriers',
+    workersOf: 'Ouvriers de {team}',
+    workersHint:
+      'Les meilleurs d’abord selon : {metric}, dans leur équipe actuelle.',
+    unranked: '{n} avec moins de 16 heures ne sont pas classés.',
+    showAll: 'Afficher les {n}',
+    noWork: 'Aucun travail saisi sur cette période.',
+    metrics: {
+      kgPerHour: 'Kg par heure',
+      rejectionRate: 'Caisses refusées',
+      costPerKg: 'Coût main-d’œuvre par kg',
+    },
+    status: { met: 'objectif tenu', missed: 'au-dessus de l’objectif' },
+    targetTitle: 'Objectifs',
+    targetNow:
+      'En vigueur : {cost} TND/kg et {kg} kg par semaine, depuis la semaine du {date}.',
+    targetCost: 'Coût main-d’œuvre par kg (TND)',
+    targetKg: 'Kg par semaine',
+    targetFrom:
+      'S’applique à partir de la semaine du {date}, jusqu’au prochain changement.',
+    targetSaved: 'Objectif enregistré.',
+  },
   absences: {
     title: 'Absences',
     intro:
@@ -211,6 +259,7 @@ export const FR: DashboardCopy = {
   },
   kpi: {
     kg: 'Prévu cette semaine',
+    target: 'Objectif {kg} kg',
     workerDays: 'Journées-ouvrier nécessaires',
     shortage: 'Journées-ouvrier manquantes',
     worst: 'Jour le plus tendu',

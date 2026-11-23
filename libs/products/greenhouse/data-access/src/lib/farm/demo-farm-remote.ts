@@ -9,13 +9,18 @@ import {
   type Role,
   sampleFarm,
   startOfWeek,
+  summarizeLogs,
+  targetFor,
   type Team,
   todayOnFarm,
+  type WeeklyTarget,
   type Worker,
   type WorkerPay,
+  type WorkLog,
 } from '@ah/products/greenhouse/domain';
 import type {
   FarmAccess,
+  FarmPerformance,
   FarmRemote,
   FarmSetup,
   FarmWeek,
@@ -23,6 +28,9 @@ import type {
 } from './farm-remote';
 
 export const DEMO_FARM_ID = 'demo-farm';
+
+/** How far back the demo's first target goes: half a year. */
+const DEMO_TARGET_WEEKS = 26;
 
 /**
  * A pretend server for the portfolio demo: the sample farm, with the
@@ -40,12 +48,17 @@ export class DemoFarmRemote implements FarmRemote {
   /** Absences the visitor added, and sample ones they removed. */
   private readonly addedAbsences = new Map<string, Absence>();
   private readonly removedAbsences = new Set<string>();
+  /** Targets by the week they start; the sample sets one half a year ago. */
+  private readonly targets = new Map<IsoDate, WeeklyTarget>();
 
   constructor(
     today: IsoDate = todayOnFarm(),
     private readonly latencyMs = 250,
   ) {
-    const farm = sampleFarm(startOfWeek(today));
+    const monday = startOfWeek(today);
+    const farm = sampleFarm(monday);
+    const since = addDays(monday, -7 * DEMO_TARGET_WEEKS);
+    this.targets.set(since, { ...farm.target, weekStart: since });
     this.greenhouses = farm.greenhouses;
     this.teams = farm.teams;
     this.workers = farm.workers;
@@ -106,7 +119,33 @@ export class DemoFarmRemote implements FarmRemote {
       plan: plan.map((p) => ({ ...p })),
       absences: absences.map((a) => ({ ...a })),
       history: sample.history,
+      target: this.target(weekStart),
     };
+  }
+
+  async loadPerformance(
+    _farmId: string,
+    from: IsoDate,
+    to: IsoDate,
+  ): Promise<FarmPerformance> {
+    await this.reply();
+    const pay = [...this.pay].map(([workerId, hourlyRate]) => ({
+      workerId,
+      hourlyRate,
+    }));
+    return {
+      from,
+      to,
+      ...summarizeLogs(sampleHistory(from, to), pay),
+      targets: [...this.targets.values()]
+        .filter((t) => t.weekStart <= to)
+        .sort((a, b) => a.weekStart.localeCompare(b.weekStart)),
+    };
+  }
+
+  async saveTarget(_farmId: string, target: WeeklyTarget): Promise<void> {
+    await this.reply();
+    this.targets.set(target.weekStart, { ...target });
   }
 
   async saveGreenhouse(_farmId: string, greenhouse: Greenhouse): Promise<void> {
@@ -185,9 +224,29 @@ export class DemoFarmRemote implements FarmRemote {
     if (i >= 0) this.members.splice(i, 1);
   }
 
+  private target(weekStart: IsoDate): WeeklyTarget | null {
+    const target = targetFor([...this.targets.values()], weekStart);
+    return target ? { ...target } : null;
+  }
+
   private reply(): Promise<void> {
     return new Promise((resolve) => setTimeout(resolve, this.latencyMs));
   }
+}
+
+/**
+ * The sample farm's work logs for `[from, to)`: each sample brings the four
+ * weeks before its Monday, so the history is stitched from one every four
+ * weeks, counting back from `to` (the same history the plan screen sees).
+ */
+function sampleHistory(from: IsoDate, to: IsoDate): WorkLog[] {
+  const logs: WorkLog[] = [];
+  for (let end = startOfWeek(to); end > from; end = addDays(end, -28)) {
+    logs.push(
+      ...sampleFarm(end).history.filter((l) => l.date >= from && l.date < to),
+    );
+  }
+  return logs;
 }
 
 function upsert<T extends { id: string }>(list: T[], item: T): void {

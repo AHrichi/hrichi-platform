@@ -67,6 +67,22 @@ export class DashboardI18n {
     }).format(value);
   }
 
+  /** `4.2%` from 0.042. */
+  percent(value: number, digits = 1): string {
+    return new Intl.NumberFormat(this.locale(), {
+      style: 'percent',
+      maximumFractionDigits: digits,
+    }).format(value);
+  }
+
+  /** TND to the millime: `0.075`. */
+  money(value: number): string {
+    return new Intl.NumberFormat(this.locale(), {
+      minimumFractionDigits: 3,
+      maximumFractionDigits: 3,
+    }).format(value);
+  }
+
   /** `Mon 23` */
   shortDay(date: string): string {
     return new Intl.DateTimeFormat(this.locale(), {

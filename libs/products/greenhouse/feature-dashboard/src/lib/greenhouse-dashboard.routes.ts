@@ -14,6 +14,13 @@ export const GREENHOUSE_DASHBOARD_ROUTES: Routes = [
           import('./plan/plan-screen').then((m) => m.PlanScreen),
       },
       {
+        path: 'performance',
+        loadComponent: () =>
+          import('./performance/performance-screen').then(
+            (m) => m.PerformanceScreen,
+          ),
+      },
+      {
         path: 'absences',
         loadComponent: () =>
           import('./absences/absences-screen').then((m) => m.AbsencesScreen),

@@ -10,6 +10,7 @@ import {
 import {
   DemoFarmRemote,
   type FarmAccess,
+  type FarmPerformance,
   type FarmRemote,
   type FarmSetup,
   type FarmWeek,
@@ -25,12 +26,15 @@ import {
   addDays,
   type Greenhouse,
   type IsoDate,
+  lastWeeks,
   type PlanEntry,
   type Role,
   startOfWeek,
   type Team,
+  targetFor,
   todayOnFarm,
   upsertById,
+  type WeeklyTarget,
   type Worker,
   withoutId,
 } from '@ah/products/greenhouse/domain';
@@ -64,7 +68,14 @@ interface FarmState {
   week: FarmWeek | null;
   /** Writes on their way to the server. */
   pending: number;
+  /** Whole weeks the performance screen looks back over. */
+  performanceWeeks: number;
+  /** Those weeks' totals; null until the screen asks for them. */
+  performance: FarmPerformance | null;
 }
+
+/** The performance screen opens on two months. */
+export const DEFAULT_PERFORMANCE_WEEKS = 8;
 
 const EMPTY_SETUP: FarmSetup = {
   greenhouses: [],
@@ -99,6 +110,8 @@ export const FarmStore = signalStore(
     weekStart: startOfWeek(todayOnFarm()),
     week: null,
     pending: 0,
+    performanceWeeks: DEFAULT_PERFORMANCE_WEEKS,
+    performance: null,
   }),
   withProps(() => {
     const auth = inject(DashboardAuth);
@@ -127,6 +140,7 @@ export const FarmStore = signalStore(
   withMethods((store) => {
     let remote: FarmRemote | null = null;
     let weekRequest = 0;
+    let performanceRequest = 0;
     let started: Promise<void> | null = null;
 
     const fail = (error: unknown): void =>
@@ -155,9 +169,27 @@ export const FarmStore = signalStore(
       }
     }
 
-    /** Reloads the setup and the week in place, without the loading screen. */
+    async function loadPerformance(): Promise<void> {
+      const id = farmId();
+      if (!remote || !id) return;
+      const request = ++performanceRequest;
+      const weeks = lastWeeks(todayOnFarm(), store.performanceWeeks());
+      const from = weeks[0] ?? startOfWeek(todayOnFarm());
+      const performance = await remote.loadPerformance(
+        id,
+        from,
+        addDays(from, 7 * weeks.length),
+      );
+      if (request === performanceRequest) patchState(store, { performance });
+    }
+
+    /** Reloads what is on screen in place, without the loading screen. */
     async function refresh(): Promise<void> {
-      await Promise.all([refreshSetup(), loadWeek().catch(fail)]);
+      await Promise.all([
+        refreshSetup(),
+        loadWeek().catch(fail),
+        store.performance() ? loadPerformance().catch(fail) : undefined,
+      ]);
     }
 
     /** Sends a change; on failure, says why and reloads what the server has. */
@@ -194,7 +226,7 @@ export const FarmStore = signalStore(
 
     async function openFarm(access: FarmAccess): Promise<void> {
       if (!remote) return;
-      patchState(store, { access, phase: 'loading' });
+      patchState(store, { access, phase: 'loading', performance: null });
       try {
         const [setup] = await Promise.all([
           remote.loadSetup(access.farmId),
@@ -278,6 +310,7 @@ export const FarmStore = signalStore(
           access: null,
           setup: EMPTY_SETUP,
           week: null,
+          performance: null,
         });
       },
 
@@ -419,6 +452,46 @@ export const FarmStore = signalStore(
           absences: withoutId(w.absences, absenceId),
         }));
         return write((r, farm) => r.deleteAbsence(farm, absenceId));
+      },
+
+      // Performance -----------------------------------------------------------
+
+      /** Loads the last `weeks` whole weeks (the same weeks again: a reload). */
+      async showPerformance(
+        weeks: number = store.performanceWeeks(),
+      ): Promise<void> {
+        patchState(store, { performanceWeeks: weeks });
+        try {
+          await loadPerformance();
+        } catch (error) {
+          fail(error);
+        }
+      },
+
+      /** Sets the targets from `target.weekStart` until the next one. */
+      saveTarget(target: WeeklyTarget): Promise<boolean> {
+        const performance = store.performance();
+        if (performance) {
+          patchState(store, {
+            performance: {
+              ...performance,
+              targets: [
+                ...performance.targets.filter(
+                  (t) => t.weekStart !== target.weekStart,
+                ),
+                target,
+              ].sort((a, b) => a.weekStart.localeCompare(b.weekStart)),
+            },
+          });
+        }
+        patchWeek((w) => ({
+          ...w,
+          target: targetFor(
+            [...(w.target ? [w.target] : []), target],
+            w.weekStart,
+          ),
+        }));
+        return write((r, farm) => r.saveTarget(farm, target));
       },
 
       // People --------------------------------------------------------------

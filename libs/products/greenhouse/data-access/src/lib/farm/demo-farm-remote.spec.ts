@@ -69,6 +69,45 @@ describe('DemoFarmRemote', () => {
     ).not.toContain('new');
   });
 
+  it('totals twelve weeks of sample work, priced and against a target', async () => {
+    const demo = remote();
+    const from = '2026-08-31';
+    const perf = await demo.loadPerformance(DEMO_FARM_ID, from, WEEK);
+    // 12 weeks of 8 crews.
+    expect(perf.teamWeeks).toHaveLength(12 * 8);
+    expect(perf.teamWeeks.every((t) => t.weekStart >= from)).toBe(true);
+    // Every crew worker (114), each paid.
+    expect(perf.workers).toHaveLength(114);
+    expect(perf.workers.every((w) => w.paidHours === w.hours)).toBe(true);
+    expect(perf.targets).toHaveLength(1);
+    // The last four weeks are the plan screen's history.
+    const recent = perf.teamWeeks
+      .filter((t) => t.weekStart >= '2026-10-26')
+      .reduce((kg, t) => kg + t.kg, 0);
+    const history = (await demo.loadWeek(DEMO_FARM_ID, WEEK)).history.reduce(
+      (kg, l) => kg + l.kg,
+      0,
+    );
+    expect(recent).toBeCloseTo(history, 3);
+  });
+
+  it('keeps a new target from its week on', async () => {
+    const demo = remote();
+    const before = (await demo.loadWeek(DEMO_FARM_ID, WEEK)).target;
+    expect(before?.costPerKgTarget).toBe(0.075);
+    await demo.saveTarget(DEMO_FARM_ID, {
+      weekStart: WEEK,
+      costPerKgTarget: 0.07,
+      kgTarget: 150_000,
+    });
+    expect(
+      (await demo.loadWeek(DEMO_FARM_ID, '2026-12-07')).target?.costPerKgTarget,
+    ).toBe(0.07);
+    expect(
+      (await demo.loadWeek(DEMO_FARM_ID, '2026-11-16')).target?.costPerKgTarget,
+    ).toBe(0.075);
+  });
+
   it('frees a deleted team’s workers', async () => {
     const demo = remote();
     await demo.deleteTeam(DEMO_FARM_ID, 'team-a1');

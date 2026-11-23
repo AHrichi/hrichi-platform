@@ -8,6 +8,7 @@ import {
   isRole,
   type Role,
   type Team,
+  type WeeklyTarget,
   type Worker,
 } from '@ah/products/greenhouse/domain';
 import type { SupabaseClient } from '@supabase/supabase-js';
@@ -15,6 +16,7 @@ import { callPostgrest } from '../remote/postgrest';
 import { RemoteError } from '../remote/remote-error';
 import {
   type FarmAccess,
+  type FarmPerformance,
   type FarmRemote,
   type FarmSetup,
   type FarmWeek,
@@ -30,20 +32,27 @@ import {
   memberFrom,
   planFrom,
   type Row,
+  TARGET_COLUMNS,
+  targetFrom,
+  targetRow,
   TEAM_COLUMNS,
   teamFrom,
   teamRow,
+  teamWeekFrom,
   totalsFrom,
   WORKER_COLUMNS,
   workerFrom,
   workerRow,
+  workerTotalsFrom,
 } from '../remote/rows';
 
 /**
  * The dashboard's server: Supabase as the signed-in person, so row-level
  * security decides what they read and write (HR reads, managers write).
  * Reads stay under the API's row limit (`max_rows`, 1000): a farm's
- * roster, a week's plan and absences, and five weeks of daily totals.
+ * roster, a week's plan and absences, five weeks of daily totals, and
+ * performance totals per team and week or per worker (a farm of up to a
+ * thousand workers).
  */
 export class SupabaseFarmRemote implements FarmRemote {
   constructor(private readonly client: SupabaseClient) {}
@@ -143,7 +152,7 @@ export class SupabaseFarmRemote implements FarmRemote {
   async loadWeek(farmId: string, weekStart: IsoDate): Promise<FarmWeek> {
     const db = this.client;
     const weekEnd = addDays(weekStart, 6);
-    const [plan, absences, totals] = await Promise.all([
+    const [plan, absences, totals, target] = await Promise.all([
       callPostgrest<Row[] | null>(
         db
           .from('weekly_plan')
@@ -170,13 +179,61 @@ export class SupabaseFarmRemote implements FarmRemote {
           to_date: addDays(weekStart, 7),
         }),
       ),
+      // The target in force: the latest set on or before the week.
+      callPostgrest<Row[] | null>(
+        db
+          .from('target')
+          .select(TARGET_COLUMNS)
+          .eq('farm_id', farmId)
+          .lte('week_start', weekStart)
+          .order('week_start', { ascending: false })
+          .limit(1),
+      ),
     ]);
+    const [targetRowFound] = target ?? [];
     return {
       weekStart,
       plan: (plan ?? []).map(planFrom),
       absences: (absences ?? []).map(absenceFrom),
       history: (totals ?? []).map(totalsFrom),
+      target: targetRowFound ? targetFrom(targetRowFound) : null,
     };
+  }
+
+  async loadPerformance(
+    farmId: string,
+    from: IsoDate,
+    to: IsoDate,
+  ): Promise<FarmPerformance> {
+    const db = this.client;
+    const range = { target_farm: farmId, from_date: from, to_date: to };
+    const [teamWeeks, workers, targets] = await Promise.all([
+      callPostgrest<Row[] | null>(db.rpc('team_week_totals', range)),
+      callPostgrest<Row[] | null>(db.rpc('worker_totals', range)),
+      callPostgrest<Row[] | null>(
+        db
+          .from('target')
+          .select(TARGET_COLUMNS)
+          .eq('farm_id', farmId)
+          .lte('week_start', to)
+          .order('week_start'),
+      ),
+    ]);
+    return {
+      from,
+      to,
+      teamWeeks: (teamWeeks ?? []).map(teamWeekFrom),
+      workers: (workers ?? []).map(workerTotalsFrom),
+      targets: (targets ?? []).map(targetFrom),
+    };
+  }
+
+  async saveTarget(farmId: string, target: WeeklyTarget): Promise<void> {
+    await callPostgrest(
+      this.client.from('target').upsert(targetRow(farmId, target), {
+        onConflict: 'farm_id,week_start',
+      }),
+    );
   }
 
   async saveGreenhouse(farmId: string, greenhouse: Greenhouse): Promise<void> {

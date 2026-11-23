@@ -2,8 +2,12 @@ import {
   absenceFrom,
   absenceRow,
   planRow,
+  targetFrom,
+  targetRow,
+  teamWeekFrom,
   totalsFrom,
   workerFrom,
+  workerTotalsFrom,
 } from './rows';
 
 describe('rows', () => {
@@ -75,6 +79,48 @@ describe('rows', () => {
       team_id: 't1',
       expected_kg: 4600,
       hours_per_day: 8,
+    });
+  });
+
+  it('reads performance totals and targets, numbers as strings included', () => {
+    const sums = {
+      kg: '720.00',
+      hours: '16.00',
+      crates: 104,
+      rejected_crates: 2,
+      labour_cost: '40.80000',
+      paid_hours: '16.00',
+    };
+    expect(
+      teamWeekFrom({ week_start: '2026-11-16', team_id: null, ...sums }),
+    ).toEqual({
+      weekStart: '2026-11-16',
+      teamId: null,
+      kg: 720,
+      hours: 16,
+      crates: 104,
+      rejectedCrates: 2,
+      labourCost: 40.8,
+      paidHours: 16,
+    });
+    expect(
+      workerTotalsFrom({ worker_id: 'w1', days: 2, ...sums }),
+    ).toMatchObject({ workerId: 'w1', days: 2, labourCost: 40.8 });
+    const target = targetFrom({
+      week_start: '2026-11-23',
+      cost_per_kg_target: '0.075',
+      kg_target: '160000.00',
+    });
+    expect(target).toEqual({
+      weekStart: '2026-11-23',
+      costPerKgTarget: 0.075,
+      kgTarget: 160000,
+    });
+    expect(targetRow('farm', target)).toEqual({
+      farm_id: 'farm',
+      week_start: '2026-11-23',
+      cost_per_kg_target: 0.075,
+      kg_target: 160000,
     });
   });
 });

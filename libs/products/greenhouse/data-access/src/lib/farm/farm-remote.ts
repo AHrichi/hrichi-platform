@@ -7,8 +7,11 @@ import type {
   PlanEntry,
   Role,
   Team,
+  TeamWeekTotals,
+  WeeklyTarget,
   Worker,
   WorkerPay,
+  WorkerTotals,
   WorkLog,
 } from '@ah/products/greenhouse/domain';
 
@@ -41,10 +44,24 @@ export interface FarmWeek {
    * per day, team and greenhouse (totals, not single workers' logs).
    */
   history: WorkLog[];
+  /** The target in force that week (the latest set on or before it). */
+  target: WeeklyTarget | null;
 }
 
 /** Days of history a week brings with it: four weeks of picking rates. */
 export const HISTORY_DAYS = 28;
+
+/** How the farm picked over a period, and the targets it had. */
+export interface FarmPerformance {
+  /** First day (a Monday), included. */
+  from: IsoDate;
+  /** The Monday after the last week, excluded. */
+  to: IsoDate;
+  teamWeeks: TeamWeekTotals[];
+  workers: WorkerTotals[];
+  /** Every target set up to `to`'s week (this week's, too), oldest first. */
+  targets: WeeklyTarget[];
+}
 
 export type InviteResult = 'added' | 'updated' | 'invited';
 
@@ -84,6 +101,15 @@ export interface FarmRemote {
   ): Promise<void>;
   saveAbsence(farmId: string, absence: Absence): Promise<void>;
   deleteAbsence(farmId: string, absenceId: string): Promise<void>;
+
+  /** Weekly team totals and worker totals for `[from, to)`, and targets. */
+  loadPerformance(
+    farmId: string,
+    from: IsoDate,
+    to: IsoDate,
+  ): Promise<FarmPerformance>;
+  /** Sets the target from `target.weekStart` until the next one. */
+  saveTarget(farmId: string, target: WeeklyTarget): Promise<void>;
 
   invite(
     farmId: string,

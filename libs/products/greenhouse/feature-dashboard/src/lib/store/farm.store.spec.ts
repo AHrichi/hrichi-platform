@@ -96,6 +96,23 @@ describe('FarmStore', () => {
     expect(plan.every((p) => p.weekStart === '2026-11-30')).toBe(true);
   });
 
+  it('loads the weeks asked for, and sets a target from this week on', async () => {
+    const { store } = await openStore();
+    expect(store.performance()).toBeNull();
+    await store.showPerformance(4);
+    const performance = store.performance();
+    expect(store.performanceWeeks()).toBe(4);
+    expect(performance?.teamWeeks.length).toBe(4 * 8);
+    const target = {
+      weekStart: WEEK,
+      costPerKgTarget: 0.07,
+      kgTarget: 150_000,
+    };
+    expect(await store.saveTarget(target)).toBe(true);
+    expect(store.performance()?.targets.at(-1)).toEqual(target);
+    expect(store.currentWeek()?.target).toEqual(target);
+  });
+
   it('keeps the week the manager went to last', async () => {
     const { store } = await openStore();
     const first = store.showWeek('2026-12-07');

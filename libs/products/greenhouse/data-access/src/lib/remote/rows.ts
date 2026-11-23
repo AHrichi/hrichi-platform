@@ -6,9 +6,13 @@ import {
   type Member,
   type PlanEntry,
   type Team,
+  type TeamWeekTotals,
   type Weekday,
+  type WeeklyTarget,
   type Worker,
+  type WorkerTotals,
   type WorkLog,
+  type WorkTotals,
 } from '@ah/products/greenhouse/domain';
 
 /**
@@ -139,6 +143,53 @@ export function planRow(farmId: string, p: PlanEntry): Row {
     team_id: p.teamId,
     expected_kg: p.expectedKg,
     hours_per_day: p.hoursPerDay,
+  };
+}
+
+export const TARGET_COLUMNS = 'week_start, cost_per_kg_target, kg_target';
+
+export function targetFrom(row: Row): WeeklyTarget {
+  return {
+    weekStart: text(row['week_start']),
+    costPerKgTarget: Number(row['cost_per_kg_target']),
+    kgTarget: Number(row['kg_target']),
+  };
+}
+
+export function targetRow(farmId: string, t: WeeklyTarget): Row {
+  return {
+    farm_id: farmId,
+    week_start: t.weekStart,
+    cost_per_kg_target: t.costPerKgTarget,
+    kg_target: t.kgTarget,
+  };
+}
+
+/** The sums `team_week_totals()` and `worker_totals()` share. */
+function workTotalsFrom(row: Row): WorkTotals {
+  return {
+    kg: Number(row['kg']),
+    hours: Number(row['hours']),
+    crates: Number(row['crates']),
+    rejectedCrates: Number(row['rejected_crates']),
+    labourCost: Number(row['labour_cost']),
+    paidHours: Number(row['paid_hours']),
+  };
+}
+
+export function teamWeekFrom(row: Row): TeamWeekTotals {
+  return {
+    weekStart: text(row['week_start']),
+    teamId: maybe(row['team_id']),
+    ...workTotalsFrom(row),
+  };
+}
+
+export function workerTotalsFrom(row: Row): WorkerTotals {
+  return {
+    workerId: text(row['worker_id']),
+    days: Number(row['days']),
+    ...workTotalsFrom(row),
   };
 }
 

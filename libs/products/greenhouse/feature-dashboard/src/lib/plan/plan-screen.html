@@ -7,10 +7,21 @@
 </div>
 
 <div class="kpis">
+  @let target = store.currentWeek()?.target;
   <ah-metric-card
     [label]="t().kpi.kg"
     [value]="i18n.num(v.plan.expectedKg)"
     unit="kg"
+    [hint]="
+      target && target.kgTarget > 0
+        ? i18n.fill(t().kpi.target, { kg: i18n.num(target.kgTarget) })
+        : undefined
+    "
+    [variant]="
+      target && target.kgTarget > 0 && v.plan.expectedKg < target.kgTarget
+        ? 'warning'
+        : 'default'
+    "
   />
   <ah-metric-card
     [label]="t().kpi.workerDays"
