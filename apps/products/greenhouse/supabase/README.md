@@ -6,6 +6,7 @@ The Postgres schema, row-level security and storage bucket behind the planner's 
 | --------------------------------- | ------------------------------------------------------------------------------------- |
 | `migrations/…_labor_schema.sql`   | Tables. Every reference carries the farm id, so rows can't point into another farm    |
 | `migrations/…_labor_security.sql` | Roles per farm, RLS on every table, server-side stamps, `create_farm()`, photo bucket |
+| `migrations/…_dashboard.sql`      | Invitations, `invite_member()`, `save_plan_row()`, `work_totals()`                    |
 | `seed.sql`                        | A made-up farm for local development, with no members                                 |
 | `spec/security.spec.ts`           | The migrations and seed run against PGlite, acting as each role                       |
 | `spec/supabase-stand-in.sql`      | The bits of Supabase the tests stand in for: API roles, `auth.uid()`, storage tables  |
@@ -19,6 +20,14 @@ The Postgres schema, row-level security and storage bucket behind the planner's 
 | hr         | everything, pay included     | nothing                                                                |
 
 Nobody sees another farm's rows, the anonymous key reaches no table, and pay (`worker_pay`) is never sent to supervisors' phones.
+
+## Joining a farm
+
+A manager adds people from the dashboard's **People** screen, which calls `invite_member()`. Someone who already has an account joins at once. For anyone else it leaves an `invitation`, and a trigger on `auth.users` turns that into a membership when an account with that email is created. Only managers see invitations. Email confirmation must stay **on** in a hosted project; it is what stops someone claiming an invitation for an address they don't own.
+
+## Reading weeks of history
+
+`work_totals(farm, from, to)` sums the work log per day, team and greenhouse, as the caller (RLS applies). The dashboard reads five weeks this way, a few hundred rows, which stays under the API's `max_rows` (1000). Single workers' logs would not.
 
 ## Tests
 
@@ -40,11 +49,19 @@ node apps/products/greenhouse/supabase/scripts/local-users.mjs      # test accou
 
 `local-users.mjs` creates a manager, two supervisors and an HR account (`*@farm.test`) with one local-only password, all printed by the script. It refuses to run against anything but `127.0.0.1`.
 
-Then run the field app against it:
+Then run the apps against it:
 
 ```bash
 pnpm nx serve product-greenhouse-field                 # dev server on 4314, local Supabase
 pnpm nx build product-greenhouse-field -c local        # production build against local Supabase
+pnpm nx build product-greenhouse -c local              # the dashboard against local Supabase
+pnpm nx serve-original product-greenhouse              # dashboard dev server on 4313, local Supabase
+```
+
+New migrations on a running stack, without losing its data:
+
+```bash
+npx -y supabase@3.1.0 --workdir apps/products/greenhouse migration up
 ```
 
 Studio is at http://127.0.0.1:54323.
