@@ -11,25 +11,33 @@ import {
 import { APP_MODE } from '@ah/platform/app-mode';
 import { databaseName } from '@ah/platform/storage';
 import {
+  type CheckRow,
   DemoFieldRemote,
   FieldDatabase,
   type FieldRemote,
   FieldRepository,
+  HygieneSync,
   type LogRow,
   type LogStatus,
   RemoteError,
   type Roster,
   type SignInError,
+  photoPath,
   SupabaseFieldRemote,
+  type SyncResult,
   WorkLogSync,
 } from '@ah/products/greenhouse/data-access';
 import {
+  checklist,
   createWorkLog,
   type Greenhouse,
+  type HygieneAnswer,
+  type HygieneCheck,
   newId,
   type IsoDate,
   sampleFarm,
   todayOnFarm,
+  withAnswer,
   type Worker,
   type WorkLog,
   type WorkLogDraft,
@@ -37,6 +45,7 @@ import {
 import { FieldAuth } from '../auth/field-auth';
 import { FIELD_DB } from '../field-config';
 import {
+  combineResults,
   nextRun,
   PERIODIC_SYNC_MS,
   SAVE_DEBOUNCE_MS,
@@ -63,7 +72,10 @@ interface FieldState {
   date: IsoDate;
   /** Today's entries, every greenhouse. */
   logs: LogRow[];
+  /** Work logs and hygiene checks together, by where they stand. */
   counts: Record<LogStatus, number>;
+  /** Today's hygiene checks started on this phone. */
+  checks: CheckRow[];
   lastSyncAt: string | null;
   sync: SyncState;
   online: boolean;
@@ -91,13 +103,19 @@ export const FieldStore = signalStore(
     date: todayOnFarm(),
     logs: [],
     counts: { pending: 0, synced: 0, rejected: 0 },
+    checks: [],
     lastSyncAt: null,
     sync: 'idle',
     online: true,
     demo: false,
     noSignal: false,
   }),
-  withComputed(({ roster, logs }) => ({
+  withComputed(({ roster, logs, checks }) => ({
+    /** The farm's hygiene checklist: active items, in order. */
+    hygieneItems: computed(() => checklist(roster()?.hygieneItems ?? [])),
+    checksByGreenhouse: computed(
+      () => new Map(checks().map((c) => [c.greenhouseId, c])),
+    ),
     greenhouses: computed(
       () => roster()?.greenhouses.filter((g) => g.active) ?? [],
     ),
@@ -133,6 +151,7 @@ export const FieldStore = signalStore(
     let remote: FieldRemote | null = null;
     let demoRemote: DemoFieldRemote | null = null;
     let engine: WorkLogSync | null = null;
+    let hygiene: HygieneSync | null = null;
     let timer: ReturnType<typeof setTimeout> | null = null;
     let periodic: ReturnType<typeof setInterval> | null = null;
     let failures = 0;
@@ -151,12 +170,20 @@ export const FieldStore = signalStore(
     async function refresh(): Promise<void> {
       if (!repo) return;
       const date = todayOnFarm();
-      const [logs, counts, lastSyncAt] = await Promise.all([
-        repo.logsOn(date),
-        repo.countByStatus(),
-        repo.lastSyncAt(),
-      ]);
-      patchState(store, { date, logs, counts, lastSyncAt });
+      const [logs, logCounts, checks, checkCounts, lastSyncAt] =
+        await Promise.all([
+          repo.logsOn(date),
+          repo.countByStatus(),
+          repo.checksOn(date),
+          repo.countChecks(),
+          repo.lastSyncAt(),
+        ]);
+      const counts = {
+        pending: logCounts.pending + checkCounts.pending,
+        synced: logCounts.synced + checkCounts.synced,
+        rejected: logCounts.rejected + checkCounts.rejected,
+      };
+      patchState(store, { date, logs, counts, checks, lastSyncAt });
     }
 
     async function downloadRoster(): Promise<Roster | null> {
@@ -209,13 +236,29 @@ export const FieldStore = signalStore(
         return;
       }
       patchState(store, { sync: 'syncing' });
-      const result = await engine.flush();
+      const result = await flushAll(engine);
       await refresh();
       const next = nextRun(result, failures);
       failures = next.failures;
       patchState(store, { sync: stateAfter(result) });
       if (result.stoppedBy === 'auth') await checkSession();
       if (next.delayMs !== null) requestSync(next.delayMs);
+    }
+
+    /** Work logs first, then hygiene checks unless the logs hit a wall. */
+    async function flushAll(logs: WorkLogSync): Promise<SyncResult> {
+      const first = await logs.flush();
+      if (first.stoppedBy || !hygiene) return first;
+      return combineResults(first, await hygiene.flush());
+    }
+
+    /** Saves a check on the phone; it goes out with the next sync. */
+    async function keepCheck(check: HygieneCheck): Promise<CheckRow> {
+      if (!repo) throw new Error('Not ready');
+      const row = await repo.saveCheck(farmOf(), check);
+      await refresh();
+      requestSync(SAVE_DEBOUNCE_MS);
+      return row;
     }
 
     function listen(): void {
@@ -273,6 +316,7 @@ export const FieldStore = signalStore(
           repo = new FieldRepository(db);
           remote = await createRemote();
           engine = remote ? new WorkLogSync(db, remote) : null;
+          hygiene = remote ? new HygieneSync(db, remote) : null;
           patchState(store, {
             demo: mode === 'embedded-demo',
             online: isOnline(),
@@ -296,7 +340,9 @@ export const FieldStore = signalStore(
           } else if (
             remote &&
             isOnline() &&
-            Date.now() - Date.parse(roster.fetchedAt) > ROSTER_MAX_AGE_MS
+            (Date.now() - Date.parse(roster.fetchedAt) > ROSTER_MAX_AGE_MS ||
+              // Cached before the phone kept the hygiene checklist.
+              roster.hygieneItems.length === 0)
           ) {
             void downloadRoster().catch(() => undefined);
           }
@@ -412,6 +458,81 @@ export const FieldStore = signalStore(
         const removed = await repo.deleteLog(id);
         await refresh();
         return removed;
+      },
+
+      // Hygiene checks ------------------------------------------------------
+
+      /**
+       * Today's check of a greenhouse as saved on the phone, or a new one
+       * with `idIfNew` (the screen keeps it until the first save).
+       */
+      checkOf(greenhouseId: string, idIfNew: string): HygieneCheck {
+        return (
+          store.checksByGreenhouse().get(greenhouseId) ?? {
+            id: idIfNew,
+            date: store.date(),
+            greenhouseId,
+            supervisorId: auth.account()?.id ?? 'demo-supervisor',
+            answers: [],
+            signedAt: null,
+          }
+        );
+      },
+
+      /** Records an answer (fine or not, and the note). */
+      async answer(check: HygieneCheck, answer: HygieneAnswer): Promise<void> {
+        await keepCheck({
+          ...check,
+          answers: withAnswer(check.answers, answer),
+        });
+      },
+
+      /** Keeps a photo on the phone and adds it to the item's answer. */
+      async addPhoto(
+        check: HygieneCheck,
+        answer: HygieneAnswer,
+        photo: Blob,
+      ): Promise<void> {
+        if (!repo) return;
+        const path = photoPath(farmOf(), check.id);
+        await repo.addPhoto({
+          path,
+          checkId: check.id,
+          itemId: answer.itemId,
+          blob: photo,
+        });
+        await keepCheck({
+          ...check,
+          answers: withAnswer(check.answers, {
+            ...answer,
+            photoPaths: [...answer.photoPaths, path],
+          }),
+        });
+      },
+
+      async removePhoto(
+        check: HygieneCheck,
+        answer: HygieneAnswer,
+        path: string,
+      ): Promise<void> {
+        await keepCheck({
+          ...check,
+          answers: withAnswer(check.answers, {
+            ...answer,
+            photoPaths: answer.photoPaths.filter((p) => p !== path),
+          }),
+        });
+        await repo?.deletePhoto(path);
+      },
+
+      /** The photo's image while the phone has it (until it is sent). */
+      photo(path: string): Promise<Blob | null> {
+        return repo ? repo.photo(path) : Promise.resolve(null);
+      },
+
+      /** Signs the check off; after this nothing in it changes. */
+      async sign(check: HygieneCheck): Promise<void> {
+        await keepCheck({ ...check, signedAt: new Date().toISOString() });
       },
 
       syncNow(): void {

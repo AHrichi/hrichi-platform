@@ -20,7 +20,7 @@
     <p class="date">{{ t().home.today }} · {{ i18n.day(store.date()) }}</p>
     <ul class="greenhouses" role="list">
       @for (greenhouse of store.greenhouses(); track greenhouse.id) {
-        <li>
+        <li class="card">
           <a class="greenhouse" [routerLink]="['/log', greenhouse.id]">
             <span class="name">{{ greenhouse.name }}</span>
             <span class="crop">{{ t().crops[greenhouse.crop] }}</span>
@@ -29,6 +29,16 @@
               {{ t().home.entries }}
             </span>
           </a>
+          @if (store.hygieneItems().length > 0) {
+            @let status = hygieneOf(greenhouse.id);
+            <a
+              class="hygiene"
+              [class]="'is-' + status"
+              [routerLink]="['/hygiene', greenhouse.id]"
+            >
+              {{ t().home.hygiene }} · {{ t().hygiene.status[status] }}
+            </a>
+          }
         </li>
       }
     </ul>

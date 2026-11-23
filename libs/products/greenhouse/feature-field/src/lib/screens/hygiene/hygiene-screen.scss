@@ -1,0 +1,175 @@
+// The hygiene checklist. Buttons, cards and fields come from the
+// Greenhouse UI kit; this file lays out the screen for gloved thumbs.
+
+:host {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  justify-self: start;
+  min-block-size: var(--control-height-lg);
+  color: var(--color-accent-default);
+  font-weight: var(--font-weight-semibold);
+  text-decoration: none;
+
+  &:focus-visible {
+    outline: var(--focus-ring-width) solid var(--color-focus-ring);
+    outline-offset: var(--focus-ring-offset);
+    border-radius: var(--radius-sm);
+  }
+}
+
+// The arrow points back in either reading direction.
+:host-context([dir='rtl']) .arrow {
+  display: inline-block;
+  transform: scaleX(-1);
+}
+
+.title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-2) var(--space-3);
+  margin: 0;
+  font-size: var(--font-size-600);
+
+  small {
+    color: var(--color-text-muted);
+    font-size: var(--font-size-300);
+    font-weight: var(--font-weight-regular);
+  }
+}
+
+.status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.progress,
+.hint,
+.state {
+  margin: 0;
+  color: var(--color-text-muted);
+}
+
+.signed {
+  margin: 0;
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--color-success-subtle);
+  font-weight: var(--font-weight-semibold);
+}
+
+.items {
+  display: grid;
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.item {
+  display: grid;
+  gap: var(--space-3);
+
+  &.is-failed {
+    border-inline-start: var(--space-1) solid var(--color-danger-default);
+  }
+}
+
+.label {
+  margin: 0;
+  font-size: var(--font-size-400);
+  font-weight: var(--font-weight-semibold);
+}
+
+.number {
+  color: var(--color-text-muted);
+}
+
+.needs {
+  display: block;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-200);
+  font-weight: var(--font-weight-regular);
+}
+
+.choices {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-2);
+}
+
+.choice {
+  min-block-size: calc(var(--control-height-lg) * 1.25);
+  font-size: var(--font-size-400);
+
+  &.ok[aria-pressed='true'] {
+    border-color: var(--color-success-default);
+    background: var(--color-success-subtle);
+  }
+
+  &.not-ok[aria-pressed='true'] {
+    border-color: var(--color-danger-default);
+    background: var(--color-danger-subtle);
+  }
+
+  // Once signed, the answer given stays clear; only the other one fades.
+  &[aria-pressed='true']:disabled {
+    opacity: 1;
+    cursor: default;
+  }
+}
+
+.note {
+  display: grid;
+  gap: var(--space-1);
+
+  .gh-label {
+    margin: 0;
+  }
+}
+
+.photos {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.photo {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-1);
+  margin: 0;
+
+  img {
+    inline-size: 6rem;
+    block-size: 6rem;
+    border-radius: var(--radius-md);
+    object-fit: cover;
+  }
+}
+
+.sent {
+  display: grid;
+  place-items: center;
+  inline-size: 6rem;
+  block-size: 6rem;
+  border-radius: var(--radius-md);
+  background: var(--color-bg-surface);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-200);
+  text-align: center;
+}
+
+.sign {
+  display: grid;
+  gap: var(--space-2);
+}
