@@ -1,10 +1,10 @@
 <header class="bar">
   @if (home(); as link) {
-    <a class="identity" [routerLink]="link">
+    <a class="identity" [class.has-logo]="brand.logo" [routerLink]="link">
       <ng-container [ngTemplateOutlet]="identity" />
     </a>
   } @else {
-    <div class="identity">
+    <div class="identity" [class.has-logo]="brand.logo">
       <ng-container [ngTemplateOutlet]="identity" />
     </div>
   }
@@ -22,8 +22,8 @@
   }
   <span class="names">
     <strong class="product">{{ product() }}</strong>
-    @if (tagline(); as line) {
-      <small class="tagline">{{ line }}</small>
+    @if (line(); as text) {
+      <small class="tagline">{{ text }}</small>
     }
   </span>
 </ng-template>

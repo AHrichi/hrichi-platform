@@ -16,11 +16,29 @@ describe('sampleFarm', () => {
     expect(sampleFarm('2026-11-26')).toEqual(farm);
   });
 
-  it('has three teams of twelve and two floaters, with unique badges', () => {
-    expect(farm.workers).toHaveLength(38);
-    expect(new Set(farm.workers.map((w) => w.badgeCode)).size).toBe(38);
-    expect(farm.workers.filter((w) => w.teamId === null)).toHaveLength(2);
-    expect(findWorkerByBadge(farm.workers, 'gh-0007')?.teamId).toBe('team-a');
+  it('has a crew per compartment and eight floaters, with unique badges', () => {
+    expect(farm.greenhouses.map((g) => g.name)).toEqual([
+      'A1',
+      'A2',
+      'A3',
+      'A4',
+      'B1',
+      'B2',
+      'B3',
+      'B4',
+    ]);
+    expect(
+      farm.greenhouses.every(
+        (g) => g.crop === 'tomato' || g.crop === 'cherry-tomato',
+      ),
+    ).toBe(true);
+    expect(farm.workers).toHaveLength(122);
+    expect(new Set(farm.workers.map((w) => w.fullName)).size).toBe(122);
+    expect(new Set(farm.workers.map((w) => w.badgeCode)).size).toBe(122);
+    expect(farm.workers.filter((w) => w.teamId === null)).toHaveLength(8);
+    expect(findWorkerByBadge(farm.workers, 'gh-0007')?.teamId).toBe('team-a1');
+    // Cherry crews are bigger: picking is three times slower per kg.
+    expect(farm.workers.filter((w) => w.teamId === 'team-b1')).toHaveLength(18);
   });
 
   it('keeps four weeks of history before the week, Sundays off', () => {

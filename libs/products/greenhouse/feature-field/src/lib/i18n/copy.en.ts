@@ -9,7 +9,7 @@ export const EN = {
     language: 'Language',
     demo: 'Demo farm',
     demoHint:
-      'Made-up farm and workers. Entries stay on this device and a pretend server.',
+      'A made-up 32-hectare tomato glasshouse and its crews. Entries stay on this device and a pretend server.',
   },
   sync: {
     title: 'Sending',

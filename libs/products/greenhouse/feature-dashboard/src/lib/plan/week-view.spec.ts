@@ -32,16 +32,16 @@ const format = { day: (d: string) => d, num: (n: number) => String(n) };
 describe('buildWeekView', () => {
   it('has a row per greenhouse with a cell per day', () => {
     const { rows } = view();
-    expect(rows).toHaveLength(6);
+    expect(rows).toHaveLength(8);
     expect(rows[0]?.cells).toHaveLength(7);
-    expect(rows[0]?.teamIds).toEqual(['team-a']);
+    expect(rows[0]?.teamIds).toEqual(['team-a1']);
     // Sunday is off in the sample.
     expect(rows[0]?.cells[6]).toMatchObject({
       date: '2026-11-29',
       expectedKg: null,
       workerDays: null,
     });
-    expect(rows[0]?.cells[0]?.expectedKg).toBe(2000);
+    expect(rows[0]?.cells[0]?.expectedKg).toBe(4000);
     expect(rows[0]?.workerDays).toBeGreaterThan(0);
   });
 
@@ -57,7 +57,7 @@ describe('withExpectedKg', () => {
     weekStart: WEEK,
     greenhouseId: 'gh-1',
     day: 3 as const,
-    expectedKg: 4000,
+    expectedKg: 6000,
     hoursPerDay: 8,
   };
 
@@ -66,19 +66,19 @@ describe('withExpectedKg', () => {
     expect(next).toHaveLength(farm.plan.length);
     expect(
       next.find((e) => e.greenhouseId === 'gh-1' && e.day === 3)?.expectedKg,
-    ).toBe(4000);
+    ).toBe(6000);
     expect(
       farm.plan.find((e) => e.greenhouseId === 'gh-1' && e.day === 3)
         ?.expectedKg,
-    ).not.toBe(4000);
+    ).not.toBe(6000);
   });
 
   it('plans an empty day with the greenhouse’s usual team', () => {
     const next = withExpectedKg(farm.plan, { ...change, day: 7 });
     expect(next.at(-1)).toMatchObject({
       day: 7,
-      teamId: 'team-a',
-      expectedKg: 4000,
+      teamId: 'team-a1',
+      expectedKg: 6000,
     });
   });
 

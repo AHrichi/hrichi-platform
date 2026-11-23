@@ -2,6 +2,7 @@ import { NgTemplateOutlet } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   inject,
   input,
 } from '@angular/core';
@@ -28,4 +29,8 @@ export class GhAppBar {
   readonly home = input<string | null>(null);
 
   protected readonly brand = inject(GREENHOUSE_BRAND);
+  /** A brand pack's organisation takes the tagline's place. */
+  protected readonly line = computed(
+    () => this.brand.organisation ?? this.tagline(),
+  );
 }

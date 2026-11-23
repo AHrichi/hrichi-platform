@@ -4,7 +4,7 @@ export const EN = {
     name: 'Labour planner',
     tagline: 'Greenhouse harvest staffing',
     language: 'Language',
-    demo: 'Demo farm: made-up greenhouses, teams and four weeks of history. Changes are not saved.',
+    demo: 'Demo farm: a made-up 32-hectare tomato glasshouse, its crews and four weeks of history. Changes are not saved.',
   },
   plan: {
     title: 'Weekly plan',

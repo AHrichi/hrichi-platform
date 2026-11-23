@@ -59,7 +59,7 @@ describe('FieldRepository', () => {
     const cached = await repo.roster();
     expect(cached?.farmId).toBe('farm-1');
     expect(cached?.workers).toHaveLength(5);
-    expect(cached?.greenhouses).toHaveLength(6);
+    expect(cached?.greenhouses).toHaveLength(8);
   });
 
   it('finds active workers by badge, however the code is written', async () => {

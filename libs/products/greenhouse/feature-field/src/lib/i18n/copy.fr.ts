@@ -7,7 +7,7 @@ export const FR: FieldCopy = {
     language: 'Langue',
     demo: 'Ferme de démonstration',
     demoHint:
-      'Ferme et ouvriers fictifs. Les saisies restent sur cet appareil et un faux serveur.',
+      'Serre de tomates fictive de 32 hectares et ses équipes. Les saisies restent sur cet appareil et un faux serveur.',
   },
   sync: {
     title: 'Envoi',

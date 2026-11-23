@@ -62,7 +62,8 @@ export const AppBarWithAFarmLogo: Story = {
       providers: [
         provideGreenhouseBrand({
           id: 'example',
-          organisation: 'Example Farms',
+          // No organisation line: the logo already says it.
+          organisation: null,
           logo: EXAMPLE_LOGO,
           logoAlt: 'Example Farms',
         }),

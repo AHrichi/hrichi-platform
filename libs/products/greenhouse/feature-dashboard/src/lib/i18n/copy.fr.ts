@@ -5,7 +5,7 @@ export const FR: DashboardCopy = {
     name: 'Planificateur de main-d’œuvre',
     tagline: 'Effectifs de récolte en serre',
     language: 'Langue',
-    demo: 'Ferme de démonstration : serres, équipes et quatre semaines d’historique fictifs. Les modifications ne sont pas enregistrées.',
+    demo: 'Ferme de démonstration : serre de tomates fictive de 32 hectares, ses équipes et quatre semaines d’historique. Les modifications ne sont pas enregistrées.',
   },
   plan: {
     title: 'Plan de la semaine',
