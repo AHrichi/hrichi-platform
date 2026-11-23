@@ -63,8 +63,8 @@ beforeAll(async () => {
       ('${GH_A}', '${FARM_A}', 'Serre 1', 10000, 'tomato', 12),
       ('${GH_B}', '${FARM_B}', 'Serre 1', 10000, 'pepper', 10);
     insert into public.team (id, farm_id, name, supervisor_id) values
-      ('${TEAM_A}', '${FARM_A}', 'Ã‰quipe A', '${SUPERVISOR_A}'),
-      ('${TEAM_B}', '${FARM_B}', 'Ã‰quipe B', null);
+      ('${TEAM_A}', '${FARM_A}', 'Équipe A', '${SUPERVISOR_A}'),
+      ('${TEAM_B}', '${FARM_B}', 'Équipe B', null);
     insert into public.worker (id, farm_id, full_name, team_id, badge_code) values
       ('${WORKER_A}', '${FARM_A}', 'Amira Gharbi', '${TEAM_A}', 'GH-0001'),
       ('${WORKER_B}', '${FARM_B}', 'Bilel Ayari', '${TEAM_B}', 'GH-0001');
@@ -315,7 +315,7 @@ describe('work logs', () => {
       ).toMatch(/row-level security/);
     }));
 
-  it('never lets an entry point at another farmâ€™s worker', () =>
+  it('never lets an entry point at another farm’s worker', () =>
     scenario(async (s) => {
       await s.as(MANAGER_A);
       expect(
@@ -412,7 +412,37 @@ describe('the weekly plan', () => {
       ).toMatch(/check constraint/);
     }));
 
-  it('is the managerâ€™s to write', () =>
+  it('replaces a greenhouse’s row at once, for managers only', () =>
+    scenario(async (s) => {
+      const save = `select public.save_plan_row($1, '2026-11-23', $2, $3::jsonb)`;
+      const cells = (kg: number) =>
+        JSON.stringify(
+          [1, 2].map((day) => ({
+            day,
+            team_id: TEAM_A,
+            expected_kg: kg,
+            hours_per_day: 8,
+          })),
+        );
+      const row = `select day, expected_kg from public.weekly_plan
+        where greenhouse_id = $1 order by day`;
+      await s.as(MANAGER_A);
+      await s.rows(save, [FARM_A, GH_A, cells(100)]);
+      await s.rows(save, [FARM_A, GH_A, cells(250)]);
+      expect(await s.rows(row, [GH_A])).toEqual([
+        { day: 1, expected_kg: '250.00' },
+        { day: 2, expected_kg: '250.00' },
+      ]);
+      // A supervisor can't write the plan, and can't empty it either.
+      await s.as(SUPERVISOR_A);
+      expect(await s.error(save, [FARM_A, GH_A, cells(1)])).toMatch(
+        /row-level security/,
+      );
+      await s.rows(save, [FARM_A, GH_A, '[]']);
+      expect(await s.rows(row, [GH_A])).toHaveLength(2);
+    }));
+
+  it('is the manager’s to write', () =>
     scenario(async (s) => {
       await s.as(SUPERVISOR_A);
       expect(
@@ -461,7 +491,7 @@ describe('hygiene checks', () => {
 describe('hygiene photos', () => {
   const upload = `insert into storage.objects (bucket_id, name) values ('hygiene-photos', $1)`;
 
-  it('go into the supervisorâ€™s own farm folder only', () =>
+  it('go into the supervisor’s own farm folder only', () =>
     scenario(async (s) => {
       await s.as(SUPERVISOR_A);
       expect(await s.count(upload, [`${FARM_A}/check-1/sink.jpg`])).toBe(1);

@@ -72,8 +72,16 @@ export interface FarmRemote {
     hourlyRate: number | null,
   ): Promise<void>;
 
-  /** Writes these cells of the plan; other cells stay as they are. */
-  savePlan(farmId: string, entries: readonly PlanEntry[]): Promise<void>;
+  /**
+   * Replaces one greenhouse's row of a week's plan with `entries` (all of
+   * them for that week and greenhouse), at once.
+   */
+  savePlanRow(
+    farmId: string,
+    weekStart: IsoDate,
+    greenhouseId: string,
+    entries: readonly PlanEntry[],
+  ): Promise<void>;
   saveAbsence(farmId: string, absence: Absence): Promise<void>;
   deleteAbsence(farmId: string, absenceId: string): Promise<void>;
 

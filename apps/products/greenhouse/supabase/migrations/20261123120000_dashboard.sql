@@ -3,6 +3,7 @@
 --   invitation        people a manager has asked onto the farm, by email,
 --                     before they have an account
 --   invite_member()   adds someone who has an account, invites the rest
+--   save_plan_row()   one greenhouse's week of the plan, written at once
 --   work_totals()     a day's work per team and greenhouse, so the
 --                     dashboard reads weeks of history in a few hundred
 --                     rows instead of thousands
@@ -145,3 +146,40 @@ $$;
 
 revoke all on function public.work_totals(uuid, date, date) from public;
 grant execute on function public.work_totals(uuid, date, date) to authenticated;
+
+-- Replaces one greenhouse's row of a week's plan in one go, so changing the
+-- team that picks it never leaves the row half written. Runs as the caller:
+-- row-level security keeps it to managers.
+-- cells: [{ "day": 1, "team_id": "…", "expected_kg": 4000, "hours_per_day": 8 }]
+create function public.save_plan_row(
+  target_farm uuid,
+  week date,
+  target_greenhouse uuid,
+  cells jsonb
+) returns void
+language plpgsql
+security invoker
+set search_path = ''
+as $$
+begin
+  delete from public.weekly_plan p
+  where p.farm_id = target_farm
+    and p.week_start = week
+    and p.greenhouse_id = target_greenhouse;
+  insert into public.weekly_plan (
+    farm_id, week_start, day, greenhouse_id, team_id, expected_kg, hours_per_day
+  )
+  select
+    target_farm,
+    week,
+    (c ->> 'day')::smallint,
+    target_greenhouse,
+    (c ->> 'team_id')::uuid,
+    (c ->> 'expected_kg')::numeric,
+    (c ->> 'hours_per_day')::numeric
+  from jsonb_array_elements(cells) c;
+end;
+$$;
+
+revoke all on function public.save_plan_row(uuid, date, uuid, jsonb) from public;
+grant execute on function public.save_plan_row(uuid, date, uuid, jsonb) to authenticated;

@@ -28,7 +28,13 @@ describe('DemoFarmRemote', () => {
       (p) => p.day === 5 && p.greenhouseId === 'gh-1',
     );
     if (!friday) throw new Error('No Friday cell for A1');
-    await demo.savePlan(DEMO_FARM_ID, [{ ...friday, expectedKg: 1 }]);
+    const row = week.plan.filter((p) => p.greenhouseId === 'gh-1');
+    await demo.savePlanRow(
+      DEMO_FARM_ID,
+      WEEK,
+      'gh-1',
+      row.map((p) => (p === friday ? { ...p, expectedKg: 1 } : p)),
+    );
     const again = await demo.loadWeek(DEMO_FARM_ID, WEEK);
     expect(again.plan).toHaveLength(week.plan.length);
     expect(

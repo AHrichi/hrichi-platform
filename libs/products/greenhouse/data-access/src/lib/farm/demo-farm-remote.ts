@@ -24,10 +24,6 @@ import type {
 
 export const DEMO_FARM_ID = 'demo-farm';
 
-const planKey = (
-  p: Pick<PlanEntry, 'weekStart' | 'day' | 'greenhouseId' | 'teamId'>,
-) => `${p.weekStart}|${p.day}|${p.greenhouseId}|${p.teamId}`;
-
 /**
  * A pretend server for the portfolio demo: the sample farm, with the
  * visitor as its manager. Changes stay in memory until the page reloads.
@@ -39,8 +35,8 @@ export class DemoFarmRemote implements FarmRemote {
   private readonly pay: Map<string, number>;
   private readonly members: Member[];
   private readonly invitations: Invitation[] = [];
-  /** Plan cells the visitor changed, over the sample's. */
-  private readonly plan = new Map<string, PlanEntry>();
+  /** Plan rows the visitor changed (week|greenhouse), over the sample's. */
+  private readonly rows = new Map<string, PlanEntry[]>();
   /** Absences the visitor added, and sample ones they removed. */
   private readonly addedAbsences = new Map<string, Absence>();
   private readonly removedAbsences = new Set<string>();
@@ -93,10 +89,13 @@ export class DemoFarmRemote implements FarmRemote {
   async loadWeek(_farmId: string, weekStart: IsoDate): Promise<FarmWeek> {
     await this.reply();
     const sample = sampleFarm(weekStart);
-    const plan = new Map(sample.plan.map((p) => [planKey(p), p]));
-    for (const [key, entry] of this.plan) {
-      if (entry.weekStart === weekStart) plan.set(key, entry);
-    }
+    const plan = sample.plan
+      .filter((p) => !this.rows.has(`${weekStart}|${p.greenhouseId}`))
+      .concat(
+        [...this.rows]
+          .filter(([key]) => key.startsWith(`${weekStart}|`))
+          .flatMap(([, entries]) => entries),
+      );
     const weekEnd = addDays(weekStart, 6);
     const absences = [
       ...sample.absences.filter((a) => !this.removedAbsences.has(a.id)),
@@ -104,7 +103,7 @@ export class DemoFarmRemote implements FarmRemote {
     ].filter((a) => a.from <= weekEnd && a.to >= weekStart);
     return {
       weekStart,
-      plan: [...plan.values()].map((p) => ({ ...p })),
+      plan: plan.map((p) => ({ ...p })),
       absences: absences.map((a) => ({ ...a })),
       history: sample.history,
     };
@@ -136,12 +135,17 @@ export class DemoFarmRemote implements FarmRemote {
     if (hourlyRate !== null) this.pay.set(worker.id, hourlyRate);
   }
 
-  async savePlan(
+  async savePlanRow(
     _farmId: string,
+    weekStart: IsoDate,
+    greenhouseId: string,
     entries: readonly PlanEntry[],
   ): Promise<void> {
     await this.reply();
-    for (const e of entries) this.plan.set(planKey(e), { ...e });
+    this.rows.set(
+      `${weekStart}|${greenhouseId}`,
+      entries.map((e) => ({ ...e })),
+    );
   }
 
   async saveAbsence(_farmId: string, absence: Absence): Promise<void> {

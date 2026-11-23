@@ -29,7 +29,6 @@ import {
   greenhouseRow,
   memberFrom,
   planFrom,
-  planRow,
   type Row,
   TEAM_COLUMNS,
   teamFrom,
@@ -219,13 +218,24 @@ export class SupabaseFarmRemote implements FarmRemote {
     }
   }
 
-  async savePlan(farmId: string, entries: readonly PlanEntry[]): Promise<void> {
-    if (entries.length === 0) return;
+  async savePlanRow(
+    farmId: string,
+    weekStart: IsoDate,
+    greenhouseId: string,
+    entries: readonly PlanEntry[],
+  ): Promise<void> {
     await callPostgrest(
-      this.client.from('weekly_plan').upsert(
-        entries.map((e) => planRow(farmId, e)),
-        { onConflict: 'farm_id,week_start,day,greenhouse_id,team_id' },
-      ),
+      this.client.rpc('save_plan_row', {
+        target_farm: farmId,
+        week: weekStart,
+        target_greenhouse: greenhouseId,
+        cells: entries.map((e) => ({
+          day: e.day,
+          team_id: e.teamId,
+          expected_kg: e.expectedKg,
+          hours_per_day: e.hoursPerDay,
+        })),
+      }),
     );
   }
 
