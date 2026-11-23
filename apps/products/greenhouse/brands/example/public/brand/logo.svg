@@ -1,5 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 40" role="img" aria-label="Example Farms">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 40" role="img" aria-label="Example Farms">
   <circle cx="20" cy="20" r="14" fill="none" stroke="#ffffff" stroke-width="3"/>
   <circle cx="20" cy="20" r="5" fill="#ffffff"/>
-  <text x="44" y="27" fill="#ffffff" font-family="sans-serif" font-size="18" font-weight="700">Example Farms</text>
+  <!-- textLength keeps the word inside the box whatever font renders it. -->
+  <text x="44" y="27" textLength="148" lengthAdjust="spacingAndGlyphs" fill="#ffffff" font-family="sans-serif" font-size="18" font-weight="700">Example Farms</text>
 </svg>

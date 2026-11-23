@@ -24,7 +24,7 @@ const LANGUAGES = [
 
 /** A made-up farm's white wordmark, standing in for a brand pack's logo. */
 const EXAMPLE_LOGO = `data:image/svg+xml,${encodeURIComponent(
-  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 40"><circle cx="20" cy="20" r="14" fill="none" stroke="#fff" stroke-width="3"/><circle cx="20" cy="20" r="5" fill="#fff"/><text x="44" y="27" fill="#fff" font-family="sans-serif" font-size="18" font-weight="700">Example Farms</text></svg>`,
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 40"><circle cx="20" cy="20" r="14" fill="none" stroke="#fff" stroke-width="3"/><circle cx="20" cy="20" r="5" fill="#fff"/><text x="44" y="27" textLength="148" lengthAdjust="spacingAndGlyphs" fill="#fff" font-family="sans-serif" font-size="18" font-weight="700">Example Farms</text></svg>`,
 )}`;
 
 const meta: Meta = {
