@@ -95,9 +95,16 @@ The owner's brief suggested Ionic + Capacitor for the phones, Supabase as the ba
   - A target holds from the week it is set until the next one, so changing it never rewrites the weeks before.
   - The periods are whole weeks before this one; the week in progress would always look short.
 
+- **Hygiene checks, offline with photos** (G5).
+  - The checklist travels with the roster; checks and their photos (as blobs) wait in the phone's IndexedDB (Dexie version 2) like work logs, and `HygieneSync` sends them after the logs: photos first, then the check, so the server never points at a missing file.
+  - Photos are shrunk on the phone to 1,600 px JPEG (a few hundred kB), and dropped from it once a signed check is through.
+  - Signing is final on both sides: the phone refuses to change a signed check, and so does RLS. Re-sending a signed check whose reply was lost is treated as done once the server shows it signed.
+  - Items carry their wording in Arabic, French and English; a language left empty takes the first one given. A standard list of eight generic items (no standard quoted) starts a farm's checklist.
+
 ## Consequences
 
 - One shared domain lib keeps the plan, the phone's validation and the database's checks in step. A test checks that the schema's crop list matches the domain's.
 - The field app ships no Ionic look. If a native feel matters later, Capacitor plugins (camera barcode scanning, network status) can be added without Ionic.
 - Real use still needs a hosted Supabase project, the Android project (`cap add android`) and registering the dashboard in the shell. See `docs/greenhouse/AI_HANDOFF.md`.
 - `@supabase/supabase-js` is loaded only when a server is configured, so the demo never downloads it.
+- A photo removed from an answer after upload stays in the bucket, unreferenced; a manager-side clean-up can come later if storage matters.
