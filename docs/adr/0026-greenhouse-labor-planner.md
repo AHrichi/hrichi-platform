@@ -32,7 +32,7 @@ The owner's brief suggested Ionic + Capacitor for the phones, Supabase as the ba
   | `product-greenhouse-feature-field`     | `libs/products/greenhouse/feature-field`     | Supervisor screens, store, copy                                    |
   | `product-greenhouse-feature-dashboard` | `libs/products/greenhouse/feature-dashboard` | Manager and HR screens, store, copy                                |
   | `product-greenhouse-field`             | `apps/products/greenhouse/field`             | Supervisors' PWA and Capacitor shell, port 4314                    |
-  | `product-greenhouse`                   | `apps/products/greenhouse/dashboard`         | Manager's federated remote, port 4313 (not in the shell yet)       |
+  | `product-greenhouse`                   | `apps/products/greenhouse/dashboard`         | Manager's federated remote, port 4313, at `/apps/greenhouse`       |
   | `product-greenhouse-supabase`          | `apps/products/greenhouse/supabase`          | Migrations, RLS, seed and their tests                              |
 
 - **The planning maths is pure and tested.**
@@ -105,6 +105,7 @@ The owner's brief suggested Ionic + Capacitor for the phones, Supabase as the ba
 
 - One shared domain lib keeps the plan, the phone's validation and the database's checks in step. A test checks that the schema's crop list matches the domain's.
 - The field app ships no Ionic look. If a native feel matters later, Capacitor plugins (camera barcode scanning, network status) can be added without Ionic.
-- Real use still needs a hosted Supabase project, the Android project (`cap add android`) and registering the dashboard in the shell. See `docs/greenhouse/AI_HANDOFF.md`.
+- The portfolio shows the dashboard's demo build at `/apps/greenhouse` (G6). The kit carries its own stylesheet (`<gh-kit-styles />` in each app's shell), because the portfolio shell loads no product's global CSS.
+- Real use still needs the hosted project's publishable key in a `hosted` build and the Android project (`cap add android`). See `docs/greenhouse/AI_HANDOFF.md`.
 - `@supabase/supabase-js` is loaded only when a server is configured, so the demo never downloads it.
 - A photo removed from an answer after upload stays in the bucket, unreferenced; a manager-side clean-up can come later if storage matters.
