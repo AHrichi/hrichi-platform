@@ -22,6 +22,7 @@ import { fill, FieldI18n } from '../../i18n/field-i18n';
 import { FieldStore } from '../../store/field.store';
 import {
   canScanBadges,
+  NATIVE_BADGE_SCANNER,
   GhBadgeScanner,
   GhButton,
   GhStatusChip,
@@ -49,7 +50,7 @@ export class LogScreen {
   protected readonly store = inject(FieldStore);
   protected readonly i18n = inject(FieldI18n);
   protected readonly t = this.i18n.t;
-  protected readonly canScan = canScanBadges();
+  protected readonly canScan = canScanBadges(inject(NATIVE_BADGE_SCANNER));
   protected readonly maxHours = MAX_SHIFT_HOURS;
 
   protected readonly greenhouse = computed(

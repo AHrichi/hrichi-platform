@@ -44,9 +44,18 @@ importers:
       '@angular/ssr':
         specifier: ~22.2.0
         version: 22.2.4(f22bdb1507af6a9976e9287c7a06d57b)
+      '@capacitor-mlkit/barcode-scanning':
+        specifier: 8.2.2
+        version: 8.2.2(@capacitor/core@8.6.0)
+      '@capacitor/android':
+        specifier: 8.6.0
+        version: 8.6.0(@capacitor/core@8.6.0)
       '@capacitor/core':
         specifier: 8.6.0
         version: 8.6.0
+      '@capacitor/network':
+        specifier: 8.0.1
+        version: 8.0.1(@capacitor/core@8.6.0)
       '@fontsource-variable/inter':
         specifier: 5.3.0
         version: 5.3.0
@@ -1869,6 +1878,16 @@ packages:
   '@cacheable/utils@2.5.0':
     resolution: {integrity: sha512-buipgOVDkkPXNR5+xBpDw7Zk2n1EvU7qBJCNUcL7rhQ//kfpOXPAvQ511Os0vpLYJ1pZnvudNytkQt2hst3wqA==}
 
+  '@capacitor-mlkit/barcode-scanning@8.2.2':
+    resolution: {integrity: sha512-ifQbo09HDAveFpu89H9jhKbYw1sISdHCpXOi3qJDp/geVuxtJC2GDffBLAL3R6mXNDSjm8jO00AIP2Z1GlV8hQ==}
+    peerDependencies:
+      '@capacitor/core': '>=8.0.0'
+
+  '@capacitor/android@8.6.0':
+    resolution: {integrity: sha512-6IJS0TCfV/F/8+324CCwYd3xL6r+TH0W7zzaxYzPz9IV3YWCNvsZDuCCPHUIBC5iASb9od827ddSJ6rz+9Pu1Q==}
+    peerDependencies:
+      '@capacitor/core': ^8.6.0
+
   '@capacitor/cli@8.6.0':
     resolution: {integrity: sha512-TyLo1v6AqK39inlB5Edm7eFc+dyk4r+Du5bbyD+cRm/u/3b+LkNIeyp5wwYp3ToO3rWiLs4T/PabXGADO0Rlxg==}
     engines: {node: '>=22.0.0'}
@@ -1876,6 +1895,11 @@ packages:
 
   '@capacitor/core@8.6.0':
     resolution: {integrity: sha512-9F2zzuGYTJu+wqmQSEmqnFBfGrhC/njjMCfmxbvg9mq8xJT4wNh5pxbMFZxvW/yDhYJWPEBFQxeqzfo1gKrvxg==}
+
+  '@capacitor/network@8.0.1':
+    resolution: {integrity: sha512-9xK/FHFmzKGanB6BdoSZOzXk8vF0OFVQSQ4PAsIrzAzLuXHryO317qy8dcHVpgxYeuZq2noI0My9z1DvVDi/9w==}
+    peerDependencies:
+      '@capacitor/core': '>=8.0.0'
 
   '@chialab/cjs-to-esm@0.19.2':
     resolution: {integrity: sha512-si+dfCzglT+zh+4okOjA+BKnb2SfdmD81pEYW9qgtzWQbHSSai4niz7kd0Q7JtfHSMlttYkYw1TSybl1M7ETpA==}
@@ -12972,6 +12996,14 @@ snapshots:
       hashery: 1.5.1
       keyv: 5.6.0
 
+  '@capacitor-mlkit/barcode-scanning@8.2.2(@capacitor/core@8.6.0)':
+    dependencies:
+      '@capacitor/core': 8.6.0
+
+  '@capacitor/android@8.6.0(@capacitor/core@8.6.0)':
+    dependencies:
+      '@capacitor/core': 8.6.0
+
   '@capacitor/cli@8.6.0':
     dependencies:
       '@ionic/cli-framework-output': 2.2.8
@@ -12998,6 +13030,10 @@ snapshots:
   '@capacitor/core@8.6.0':
     dependencies:
       tslib: 2.8.1
+
+  '@capacitor/network@8.0.1(@capacitor/core@8.6.0)':
+    dependencies:
+      '@capacitor/core': 8.6.0
 
   '@chialab/cjs-to-esm@0.19.2':
     dependencies:
