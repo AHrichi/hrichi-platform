@@ -1,0 +1,142 @@
+<svg viewBox="0 0 480 260" role="group" [attr.aria-label]="alt()">
+  <defs>
+    <linearGradient id="sc-pad-air" x1="0" x2="1" y1="0" y2="0">
+      <stop class="stop-cool" offset="0" />
+      <stop class="stop-warm" offset="1" />
+    </linearGradient>
+    <marker
+      id="sc-pad-head"
+      viewBox="0 0 10 10"
+      refX="5"
+      refY="5"
+      markerWidth="2.2"
+      markerHeight="2.2"
+      orient="auto-start-reverse"
+    >
+      <path class="head" d="M0 0L10 5L0 10z" />
+    </marker>
+  </defs>
+
+  <rect class="backdrop" width="480" height="260" rx="12" />
+  <rect class="ground" x="0" [attr.y]="floor" width="480" height="60" />
+
+  <!-- The house along its length, the air warming from pad to fans -->
+  <rect
+    class="air"
+    fill="url(#sc-pad-air)"
+    [attr.x]="xPad + 8"
+    [attr.y]="roof"
+    [attr.width]="xFan() - xPad - 8"
+    [attr.height]="floor - roof"
+  />
+  <path
+    class="house"
+    [attr.d]="
+      'M' + xPad + ' ' + floor + 'V' + roof + 'H' + xFan() + 'V' + floor
+    "
+  />
+  <rect
+    class="pad"
+    [attr.x]="xPad - 2"
+    [attr.y]="padTop()"
+    width="12"
+    [attr.height]="floor - padTop()"
+  />
+  @for (y of [120, 150, 180]; track y) {
+    <path
+      class="flow"
+      [attr.d]="'M' + (xPad + 18) + ' ' + y + 'H' + (xFan() - 58)"
+      marker-end="url(#sc-pad-head)"
+    />
+  }
+
+  <!-- Fans in the far wall -->
+  <circle class="fan" [attr.cx]="xFan()" cy="140" r="16" />
+  <path
+    class="blades"
+    [attr.d]="
+      'M' + xFan() + ' 126V154M' + (xFan() - 14) + ' 140H' + (xFan() + 14)
+    "
+  />
+
+  <!-- Temperatures: outside, after the pad, at the fans -->
+  <text class="caption" x="10" y="18">
+    {{ i18n.word(t().diagrams.outside) }} {{ i18n.num(params().outsideC) }} °C ·
+    {{ i18n.num(params().outsideRhPct, 0) }} %
+  </text>
+  <text class="value" [attr.x]="xPad" y="62" text-anchor="middle">
+    {{ i18n.num(result().padOutletC) }} °C
+  </text>
+  <text class="value" [attr.x]="xFan()" y="62" text-anchor="middle">
+    {{ i18n.num(result().exhaustC) }} °C
+  </text>
+  <text class="caption" [attr.x]="xPad" y="42" text-anchor="middle">
+    {{ i18n.word(t().diagrams.pad) }}
+  </text>
+  <text class="caption" [attr.x]="xFan()" y="42" text-anchor="middle">
+    {{ i18n.word(t().diagrams.fans) }}
+  </text>
+
+  <!-- How much the air warms on the way -->
+  <line
+    class="rise"
+    [attr.x1]="xBar()"
+    [attr.y1]="floor - 8"
+    [attr.x2]="xBar()"
+    [attr.y2]="yRise()"
+  />
+  <text
+    class="caption"
+    [attr.x]="xBar()"
+    [attr.y]="yRise() - 18"
+    text-anchor="middle"
+  >
+    +{{ i18n.num(params().riseK) }} K
+  </text>
+
+  <!-- Pad to fans -->
+  <path
+    class="measure"
+    [class.bad-line]="tooFar()"
+    [attr.d]="'M' + xPad + ' ' + (floor + 22) + 'H' + xFan()"
+  />
+  <text
+    class="value"
+    [class.bad]="tooFar()"
+    [attr.x]="(xPad + xFan()) / 2"
+    [attr.y]="floor + 44"
+    text-anchor="middle"
+  >
+    {{ i18n.num(params().padToFanM, 0) }} m
+  </text>
+
+  <g
+    scHandle
+    axis="x"
+    [x]="xFan()"
+    [y]="floor"
+    [value]="params().padToFanM"
+    [min]="limits.distance.min"
+    [max]="limits.distance.max"
+    [step]="limits.distance.step"
+    [label]="t().fields['padToFanM']"
+    unit="m"
+    [fromPoint]="distanceAt"
+    (scDragStart)="hold()"
+    (scDragEnd)="release()"
+    (valueChange)="changed.emit({ key: 'padToFanM', value: $event })"
+  />
+  <g
+    scHandle
+    [x]="xBar()"
+    [y]="yRise()"
+    [value]="params().riseK"
+    [min]="limits.rise.min"
+    [max]="limits.rise.max"
+    [step]="limits.rise.step"
+    [label]="t().fields['riseK']"
+    unit="K"
+    [fromPoint]="riseAt"
+    (valueChange)="changed.emit({ key: 'riseK', value: $event })"
+  />
+</svg>

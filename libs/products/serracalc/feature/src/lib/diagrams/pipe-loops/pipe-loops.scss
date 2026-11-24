@@ -1,0 +1,57 @@
+@use '../../styles/serra' as sc;
+
+@include sc.diagram;
+
+.plan {
+  fill: var(--color-accent-subtle);
+  stroke: var(--color-accent-default);
+  stroke-width: 1.5;
+}
+
+.pipe,
+.header {
+  fill: none;
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+
+.header {
+  stroke-width: 6;
+}
+
+.hot {
+  stroke: var(--color-danger-default);
+}
+
+.cold {
+  stroke: var(--color-info-default);
+}
+
+.tube {
+  fill: var(--color-bg-canvas);
+  stroke: var(--color-border-strong);
+  stroke-width: 1.5;
+}
+
+.hot-fill {
+  fill: var(--color-danger-default);
+}
+
+.cold-fill {
+  fill: var(--color-info-default);
+}
+
+.air {
+  stroke: var(--color-text-muted);
+  stroke-width: 1.5;
+  stroke-dasharray: 4 3;
+}
+
+.tick-label {
+  fill: var(--color-text-muted);
+  font-size: 11px;
+}
+
+.small {
+  font-size: 13px;
+}

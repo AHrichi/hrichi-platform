@@ -19,6 +19,8 @@ import {
   ventilation,
   type VentilationParams,
 } from '@ah/products/serracalc/domain';
+import { PadFanFlow } from '../../diagrams/pad-fan/pad-fan-flow';
+import { VentAirflow } from '../../diagrams/vent-airflow/vent-airflow';
 import { SerraI18n } from '../../i18n/serra-i18n';
 import { SerraStore } from '../../store/serra.store';
 import { CalcSteps, type CalcStep } from '../../ui/calc-steps/calc-steps';
@@ -76,7 +78,9 @@ const PAD_KEYS: readonly (keyof PadExtra)[] = [
     ContextBar,
     FieldGrid,
     NoteList,
+    PadFanFlow,
     SaveBar,
+    VentAirflow,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './cooling-screen.html',

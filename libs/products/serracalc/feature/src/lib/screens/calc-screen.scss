@@ -153,3 +153,7 @@ table {
     @include sc.form-control;
   }
 }
+
+figcaption {
+  @include sc.diagram-caption;
+}

@@ -449,6 +449,43 @@ export const FR: SerraCopy = {
     how: 'Comment c’est calculé',
     inputs: 'Données',
     table: 'Voir les chiffres',
+    dragHint:
+      'Faites glisser les poignées rondes, ou sélectionnez-en une et utilisez les flèches du clavier.',
+  },
+
+  diagrams: {
+    heatAlt: (inside, outside, kw) =>
+      `Chaleur qui quitte la serre : ${kw} kW, de ${inside} °C dedans à ${outside} °C dehors. Les poignées règlent les deux températures.`,
+    pipesAlt: (loops, length, supply, back) =>
+      `Tuyaux de chauffage en plan : ${loops} boucles de ${length} m, eau au départ à ${supply} °C et au retour à ${back} °C. Les poignées règlent les températures et la longueur de boucle.`,
+    ventAlt: (outside, rise, vents) =>
+      `Aération par temps ensoleillé : ${outside} °C dehors, la serre au plus ${rise} K au-dessus, ${vents} m² d’ouvrants. Les poignées règlent les températures et l’ouverture.`,
+    padAlt: (outside, pad, exhaust, distance) =>
+      `Pad et ventilateurs : l’air à ${outside} °C sort du pad à ${pad} °C et atteint les ventilateurs, à ${distance} m, à ${exhaust} °C. Les poignées règlent la distance et l’échauffement.`,
+    cropAlt: (applied, used, drain) =>
+      `Un jour de pointe par m² : ${applied} L apportés, ${used} L transpirés, ${drain} % drainés. Les poignées règlent le feuillage et le drainage.`,
+    rainAlt: (basin, pct) =>
+      `La pluie du toit dans un bassin de ${basin} m³, qui couvre ${pct} % de l’irrigation. Une poignée règle le volume du bassin.`,
+    inside: 'Dedans',
+    outside: 'Dehors',
+    screen: 'Écran',
+    cover: 'Couverture',
+    leaks: 'Fuites',
+    footing: 'Soubassement',
+    supply: 'Départ',
+    return: 'Retour',
+    air: 'Air',
+    loop: 'Boucle',
+    loops: 'boucles',
+    vents: 'Ouvrants',
+    shade: 'Ombrage',
+    pad: 'Pad',
+    fans: 'Ventilateurs',
+    canopy: 'Feuillage',
+    transpired: 'Transpiré',
+    drain: 'Drainage',
+    suggested: 'Conseillé',
+    overflow: 'Trop-plein',
   },
 
   save: {

@@ -17,6 +17,24 @@
 
   <div class="workbench">
     <div class="column">
+      @if (tab() !== 'year') {
+        <figure class="panel">
+          @if (tab() === 'peak') {
+            <sc-heat-loss-diagram
+              [params]="peakParams()"
+              [result]="peak()"
+              (changed)="setPeak($event)"
+            />
+          } @else {
+            <sc-pipe-loops
+              [params]="pipeParams()"
+              [result]="hotWater()"
+              (changed)="setPipes($event)"
+            />
+          }
+          <figcaption>✋ {{ t().calc.dragHint }}</figcaption>
+        </figure>
+      }
       @if (tab() !== 'pipes') {
         <details class="panel house" open>
           <summary>

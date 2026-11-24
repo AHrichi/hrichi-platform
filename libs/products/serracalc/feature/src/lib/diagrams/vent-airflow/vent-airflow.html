@@ -1,0 +1,176 @@
+<svg viewBox="0 0 480 260" role="group" [attr.aria-label]="alt()">
+  <defs>
+    <marker
+      id="sc-vent-cool"
+      viewBox="0 0 10 10"
+      refX="5"
+      refY="5"
+      markerWidth="2.2"
+      markerHeight="2.2"
+      orient="auto-start-reverse"
+    >
+      <path class="head cool" d="M0 0L10 5L0 10z" />
+    </marker>
+    <marker
+      id="sc-vent-warm"
+      viewBox="0 0 10 10"
+      refX="5"
+      refY="5"
+      markerWidth="2.2"
+      markerHeight="2.2"
+      orient="auto-start-reverse"
+    >
+      <path class="head warm" d="M0 0L10 5L0 10z" />
+    </marker>
+  </defs>
+
+  <rect class="backdrop" width="480" height="260" rx="12" />
+  <rect class="ground" x="0" y="214" width="480" height="46" />
+
+  <!-- The sun, its rays thinner behind a shade screen -->
+  <circle class="sun" cx="34" cy="34" r="14" />
+  <g class="rays" [attr.stroke-width]="sunWidth()">
+    <line x1="52" y1="44" x2="100" y2="82" />
+    <line x1="58" y1="32" x2="132" y2="70" />
+    <line x1="48" y1="54" x2="84" y2="100" />
+  </g>
+
+  <!-- The house, with its roof vent open -->
+  <path
+    class="house"
+    [attr.d]="'M120 214V120L' + hinge.x + ' ' + hinge.y + 'L400 120V214Z'"
+  />
+  <path
+    class="flap"
+    [attr.d]="
+      'M' + hinge.x + ' ' + hinge.y + 'L' + flapTip().x + ' ' + flapTip().y
+    "
+  />
+  @if (params().shadingPct > 0) {
+    <line class="shade" x1="120" y1="126" x2="400" y2="126" />
+    <text class="caption" x="392" y="142" text-anchor="end">
+      {{ i18n.word(t().diagrams.shade) }}
+      {{ i18n.num(params().shadingPct, 0) }} %
+    </text>
+  }
+
+  <!-- Cool air in at the side, warm air out at the roof -->
+  <path
+    class="air cool"
+    [attr.stroke-width]="airWidth()"
+    d="M70 196H136"
+    marker-end="url(#sc-vent-cool)"
+  />
+  <path class="air path" d="M140 196C220 196 250 150 270 96" />
+  <path
+    class="air warm"
+    [attr.stroke-width]="airWidth()"
+    [attr.d]="
+      'M' +
+      (hinge.x + 14) +
+      ' ' +
+      (hinge.y - 4) +
+      'L' +
+      (hinge.x + 34) +
+      ' ' +
+      (hinge.y - 44)
+    "
+    marker-end="url(#sc-vent-warm)"
+  />
+
+  <text class="label" x="470" y="24" text-anchor="end">
+    {{ i18n.num(result().flowM3h, 0) }} m³/h ·
+    {{ i18n.num(result().airChangesPerHour, 0) }} /h
+  </text>
+  <text class="caption" [attr.x]="flapTip().x + 18" [attr.y]="flapTip().y + 4">
+    {{ i18n.word(t().diagrams.vents) }}
+    {{ i18n.num(result().ventAreaM2, 0) }} m² ({{
+      i18n.num(result().ventPct, 1)
+    }}
+    %)
+  </text>
+
+  <!-- Outside and inside thermometers -->
+  <rect
+    class="tube"
+    x="36"
+    [attr.y]="yHot - 6"
+    width="8"
+    [attr.height]="yZero - yHot + 12"
+    rx="4"
+  />
+  <rect
+    class="mercury cool-fill"
+    x="38"
+    [attr.y]="yOutside()"
+    width="4"
+    [attr.height]="yZero + 6 - yOutside()"
+  />
+  <rect
+    class="tube"
+    x="236"
+    [attr.y]="yHot"
+    width="8"
+    [attr.height]="yZero - yHot + 6"
+    rx="4"
+  />
+  <rect
+    class="mercury warm-fill"
+    x="238"
+    [attr.y]="yInside()"
+    width="4"
+    [attr.height]="yZero + 6 - yInside()"
+  />
+  <text class="value" x="54" [attr.y]="yOutside() + 5">
+    {{ i18n.num(params().outsideC) }} °C
+  </text>
+  <text class="value" x="254" [attr.y]="yInside() + 5">
+    +{{ i18n.num(params().maxRiseK) }} K
+  </text>
+  <text class="caption" x="40" y="240" text-anchor="middle">
+    {{ i18n.word(t().diagrams.outside) }}
+  </text>
+  <text class="caption" x="254" [attr.y]="yInside() + 22">
+    {{ i18n.word(t().diagrams.inside) }}
+  </text>
+
+  <g
+    scHandle
+    [x]="40"
+    [y]="yOutside()"
+    [value]="params().outsideC"
+    [min]="limits.outside.min"
+    [max]="limits.outside.max"
+    [step]="limits.outside.step"
+    [label]="t().fields['outsideC']"
+    unit="°C"
+    [fromPoint]="tempAt"
+    (valueChange)="changed.emit({ key: 'outsideC', value: $event })"
+  />
+  <g
+    scHandle
+    [x]="240"
+    [y]="yInside()"
+    [value]="params().maxRiseK"
+    [min]="limits.rise.min"
+    [max]="limits.rise.max"
+    [step]="limits.rise.step"
+    [label]="t().fields['maxRiseK']"
+    unit="K"
+    [fromPoint]="riseAt"
+    (valueChange)="changed.emit({ key: 'maxRiseK', value: $event })"
+  />
+  <g
+    scHandle
+    [x]="flapTip().x"
+    [y]="flapTip().y"
+    [value]="params().ventOpeningM"
+    [min]="limits.opening.min"
+    [max]="limits.opening.max"
+    [step]="limits.opening.step"
+    [label]="t().fields['ventOpeningM']"
+    unit="m"
+    [fromPoint]="openingAt"
+    (valueChange)="changed.emit({ key: 'ventOpeningM', value: $event })"
+  />
+</svg>

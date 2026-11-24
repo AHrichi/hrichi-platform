@@ -17,6 +17,22 @@
 
   <div class="workbench">
     <div class="column">
+      <figure class="panel">
+        @if (tab() === 'crop') {
+          <sc-crop-balance
+            [params]="cropParams()"
+            [result]="crop()"
+            (changed)="setDemand($event)"
+          />
+        } @else {
+          <sc-rain-basin
+            [params]="rainParams()"
+            [result]="rain()"
+            (changed)="setRain($event)"
+          />
+        }
+        <figcaption>✋ {{ t().calc.dragHint }}</figcaption>
+      </figure>
       <details class="panel" open>
         <summary>
           <h3>{{ t().context.demand }}</h3>

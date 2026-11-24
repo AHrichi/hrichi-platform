@@ -1,0 +1,75 @@
+@use '../../styles/serra' as sc;
+
+@include sc.diagram;
+
+.house {
+  fill: var(--color-accent-subtle);
+  stroke: var(--color-accent-default);
+  stroke-width: 2;
+  stroke-linejoin: round;
+}
+
+.screen {
+  stroke: var(--color-text-muted);
+  stroke-width: 2;
+  stroke-dasharray: 6 4;
+}
+
+.flow {
+  fill: none;
+  stroke-linecap: round;
+}
+
+.cover {
+  stroke: var(--color-danger-default);
+}
+
+.leak {
+  stroke: var(--color-warning-default);
+}
+
+.ground-flow {
+  stroke: var(--color-text-muted);
+}
+
+.head {
+  stroke: none;
+
+  &.cover {
+    fill: var(--color-danger-default);
+  }
+
+  &.leak {
+    fill: var(--color-warning-default);
+  }
+
+  &.ground-flow {
+    fill: var(--color-text-muted);
+  }
+}
+
+.tube {
+  fill: var(--color-bg-canvas);
+  stroke: var(--color-border-strong);
+  stroke-width: 1.5;
+}
+
+.mercury {
+  &.cold {
+    fill: var(--color-info-default);
+  }
+
+  &.warm {
+    fill: var(--color-danger-default);
+  }
+}
+
+.tick {
+  stroke: var(--color-text-muted);
+  stroke-width: 1;
+}
+
+.tick-label {
+  fill: var(--color-text-muted);
+  font-size: 11px;
+}

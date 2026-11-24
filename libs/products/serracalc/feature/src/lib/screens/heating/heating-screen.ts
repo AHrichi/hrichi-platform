@@ -42,6 +42,8 @@ import {
   SCREEN_SAVINGS,
   type ScreenType,
 } from '@ah/products/serracalc/domain';
+import { HeatLossDiagram } from '../../diagrams/heat-loss/heat-loss-diagram';
+import { PipeLoops } from '../../diagrams/pipe-loops/pipe-loops';
 import { SerraI18n } from '../../i18n/serra-i18n';
 import { SerraStore } from '../../store/serra.store';
 import { CalcSteps, type CalcStep } from '../../ui/calc-steps/calc-steps';
@@ -103,8 +105,10 @@ const YEAR_KEYS: readonly (keyof YearExtra)[] = [
     CalcSteps,
     ContextBar,
     FieldGrid,
+    HeatLossDiagram,
     MonthBars,
     NoteList,
+    PipeLoops,
     SaveBar,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,

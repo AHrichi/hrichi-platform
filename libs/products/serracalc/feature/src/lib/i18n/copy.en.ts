@@ -444,6 +444,42 @@ export const EN = {
     how: 'How it’s calculated',
     inputs: 'Inputs',
     table: 'Show the numbers',
+    dragHint: 'Drag the round handles, or focus one and use the arrow keys.',
+  },
+
+  diagrams: {
+    heatAlt: (inside: string, outside: string, kw: string) =>
+      `Heat leaving the house: ${kw} kW, from ${inside} °C inside to ${outside} °C outside. Handles set both temperatures.`,
+    pipesAlt: (loops: string, length: string, supply: string, back: string) =>
+      `Heating pipes in plan: ${loops} loops of ${length} m, water in at ${supply} °C and back at ${back} °C. Handles set the temperatures and the loop length.`,
+    ventAlt: (outside: string, rise: string, vents: string) =>
+      `Ventilation on a sunny day: ${outside} °C outside, the house at most ${rise} K warmer, ${vents} m² of roof vents. Handles set the temperatures and the vent opening.`,
+    padAlt: (outside: string, pad: string, exhaust: string, distance: string) =>
+      `Fan and pad: air at ${outside} °C leaves the pad at ${pad} °C and reaches the fans ${distance} m away at ${exhaust} °C. Handles set the distance and the warming.`,
+    cropAlt: (applied: string, used: string, drain: string) =>
+      `A peak day per m²: ${applied} L applied, ${used} L transpired, ${drain} % drained. Handles set the canopy and the drain share.`,
+    rainAlt: (basin: string, pct: string) =>
+      `Rain from the roof into a ${basin} m³ basin, covering ${pct} % of the irrigation. A handle sets the basin size.`,
+    inside: 'Inside',
+    outside: 'Outside',
+    screen: 'Screen',
+    cover: 'Cover',
+    leaks: 'Leaks',
+    footing: 'Footing',
+    supply: 'Supply',
+    return: 'Return',
+    air: 'Air',
+    loop: 'Loop',
+    loops: 'loops',
+    vents: 'Vents',
+    shade: 'Shade',
+    pad: 'Pad',
+    fans: 'Fans',
+    canopy: 'Canopy',
+    transpired: 'Transpired',
+    drain: 'Drain',
+    suggested: 'Suggested',
+    overflow: 'Overflow',
   },
 
   save: {

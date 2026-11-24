@@ -19,6 +19,8 @@ import {
   type RainwaterParams,
   type SavedCalculation,
 } from '@ah/products/serracalc/domain';
+import { CropBalance } from '../../diagrams/crop-balance/crop-balance';
+import { RainBasin } from '../../diagrams/rain-basin/rain-basin';
 import { SerraI18n } from '../../i18n/serra-i18n';
 import { SerraStore } from '../../store/serra.store';
 import { CalcSteps, type CalcStep } from '../../ui/calc-steps/calc-steps';
@@ -66,9 +68,11 @@ type Rain = Pick<RainwaterParams, (typeof RAIN_KEYS)[number]>;
     AhMetricCard,
     CalcSteps,
     ContextBar,
+    CropBalance,
     FieldGrid,
     MonthBars,
     NoteList,
+    RainBasin,
     SaveBar,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,

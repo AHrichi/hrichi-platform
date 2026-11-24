@@ -43,5 +43,6 @@ It is a separate product from the Greenhouse Labor Planner (ADR-0026): that app 
 ## Consequences
 
 - 33 domain tests check each formula against hand-worked numbers (FAO-56 vapour pressure, Stull's own example, a semicircular tunnel) and sanity ranges (a Tunisian tomato house needs tens of kWh/m² a year, about 6 L/m² a day in July). 6 store tests cover save, update in place, rename, delete and the samples.
-- Drawings are static in S1 (the house's cross-section, three spans to scale and a break); LuxPath-style drag handles, more drawings, report, backups, climate for any place, lighting and CO₂, and the shell e2e follow in later phases (docs/serracalc/AI_HANDOFF.md §6).
+- **Drawings you can drag (S2):** seven drawings carry `DragHandle`s, an SVG `<g>` component that is a `slider` with arrow keys, over LuxPath's pointer-to-viewBox drag. Each handle sets one input, mirrored in its number field; a drawing whose scale depends on the value being dragged (the cross-section, the loops, the pad, the basin) holds that scale until the drag ends. Interactive drawings are `role="group"` with a description, not `img`, so their sliders stay reachable.
+- Report, backups, climate for any place, lighting and CO₂, and the shell e2e follow in later phases (docs/serracalc/AI_HANDOFF.md §6).
 - These are planning aids with stated sources, not certified designs; every screen says so.

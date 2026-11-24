@@ -1,0 +1,113 @@
+<svg viewBox="0 0 480 260" role="group" [attr.aria-label]="alt()">
+  <defs>
+    <marker
+      id="sc-rain-head"
+      viewBox="0 0 10 10"
+      refX="5"
+      refY="5"
+      markerWidth="2.2"
+      markerHeight="2.2"
+      orient="auto-start-reverse"
+    >
+      <path class="head" d="M0 0L10 5L0 10z" />
+    </marker>
+    <marker
+      id="sc-rain-spill"
+      viewBox="0 0 10 10"
+      refX="5"
+      refY="5"
+      markerWidth="2.2"
+      markerHeight="2.2"
+      orient="auto-start-reverse"
+    >
+      <path class="head spill" d="M0 0L10 5L0 10z" />
+    </marker>
+  </defs>
+
+  <rect class="backdrop" width="480" height="260" rx="12" />
+  <rect class="ground" x="0" [attr.y]="bottom" width="480" height="46" />
+
+  <!-- Rain on the roof, into the gutter and down to the basin -->
+  @for (drop of drops(); track $index) {
+    <path class="drop" [attr.d]="'M' + drop.x + ' ' + drop.y + 'l-3 9'" />
+  }
+  <path class="house" d="M30 214V140L120 104L210 140V214Z" />
+  <path class="pipe" [attr.d]="'M210 140H236V' + (bottom - 10) + 'H' + tankX" />
+  <text class="caption" x="120" y="236" text-anchor="middle">
+    {{ i18n.num(result().annualRainMm, 0) }} mm ·
+    {{ i18n.num(result().annualHarvestM3, 0) }} m³
+  </text>
+
+  <!-- The basin: filled to its fullest month -->
+  <rect
+    class="water"
+    [attr.x]="tankX"
+    [attr.y]="yFill()"
+    [attr.width]="tankW"
+    [attr.height]="bottom - yFill()"
+  />
+  <rect
+    class="tank"
+    [attr.x]="tankX"
+    [attr.y]="yTank()"
+    [attr.width]="tankW"
+    [attr.height]="bottom - yTank()"
+  />
+  <line
+    class="dim"
+    [attr.x1]="tankX - 10"
+    [attr.y1]="ySuggested()"
+    [attr.x2]="tankX + tankW + 10"
+    [attr.y2]="ySuggested()"
+  />
+  <text class="caption" [attr.x]="tankX + 6" [attr.y]="ySuggested() - 5">
+    {{ i18n.word(t().diagrams.suggested) }}
+    {{ i18n.num(result().suggestedBasinM3, 0) }}
+  </text>
+  <text
+    class="value"
+    [attr.x]="tankX + tankW / 2"
+    [attr.y]="yTank() - 18"
+    text-anchor="middle"
+  >
+    {{ i18n.num(params().basinM3, 0) }} m³
+  </text>
+
+  @if (overflow() > 0) {
+    <path
+      class="flow spill-line"
+      [attr.d]="'M' + (tankX + tankW) + ' ' + (yTank() + 4) + 'q20 0 26 24'"
+      marker-end="url(#sc-rain-spill)"
+    />
+    <text class="caption" x="470" [attr.y]="yTank() + 46" text-anchor="end">
+      {{ i18n.word(t().diagrams.overflow) }} {{ i18n.num(overflow(), 0) }} m³
+    </text>
+  }
+
+  <!-- Out to the drippers -->
+  <path
+    class="flow"
+    [attr.d]="'M' + (tankX + tankW) + ' ' + (bottom - 8) + 'H466'"
+    marker-end="url(#sc-rain-head)"
+  />
+  <text class="caption" x="470" [attr.y]="bottom + 22" text-anchor="end">
+    {{ i18n.num(result().annualUsedM3, 0) }} m³ ·
+    {{ i18n.num(result().coveragePct, 0) }} %
+  </text>
+
+  <g
+    scHandle
+    [x]="tankX + tankW / 2"
+    [y]="yTank()"
+    [value]="params().basinM3"
+    [min]="limits.min"
+    [max]="limits.max"
+    [step]="limits.step"
+    [label]="t().fields['basinM3']"
+    unit="m³"
+    [fromPoint]="basinAt"
+    (scDragStart)="hold()"
+    (scDragEnd)="release()"
+    (valueChange)="changed.emit({ key: 'basinM3', value: $event })"
+  />
+</svg>

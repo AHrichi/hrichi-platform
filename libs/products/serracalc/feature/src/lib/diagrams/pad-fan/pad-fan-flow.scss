@@ -1,0 +1,60 @@
+@use '../../styles/serra' as sc;
+
+@include sc.diagram;
+
+.house {
+  fill: none;
+  stroke: var(--color-accent-default);
+  stroke-width: 2;
+  stroke-linejoin: round;
+}
+
+.air {
+  opacity: 0.35;
+}
+
+.stop-cool {
+  stop-color: var(--color-info-default);
+}
+
+.stop-warm {
+  stop-color: var(--color-danger-default);
+}
+
+.pad {
+  fill: var(--color-info-default);
+  opacity: 0.8;
+}
+
+.flow {
+  fill: none;
+  stroke: var(--color-text-muted);
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.head {
+  fill: var(--color-text-muted);
+}
+
+.fan {
+  fill: var(--color-bg-raised);
+  stroke: var(--color-text-default);
+  stroke-width: 2;
+}
+
+.blades {
+  stroke: var(--color-text-default);
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.rise {
+  stroke: var(--color-danger-default);
+  stroke-width: 6;
+  stroke-linecap: round;
+}
+
+.bad-line {
+  stroke: var(--color-danger-default);
+}

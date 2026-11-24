@@ -1,0 +1,67 @@
+@use '../../styles/serra' as sc;
+
+@include sc.diagram;
+
+.sun {
+  fill: var(--color-warning-default);
+}
+
+.slab {
+  fill: var(--color-bg-raised);
+  stroke: var(--color-border-strong);
+}
+
+.stem {
+  stroke: var(--color-success-default);
+  stroke-width: 4;
+  stroke-linecap: round;
+}
+
+.leaf {
+  fill: var(--color-success-default);
+  opacity: 0.85;
+}
+
+.drip {
+  stroke: var(--color-info-default);
+  stroke-width: 2;
+  stroke-dasharray: 3 3;
+}
+
+.dripper {
+  fill: var(--color-info-default);
+}
+
+.vapour path,
+.flow {
+  fill: none;
+  stroke: var(--color-info-default);
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.head {
+  fill: var(--color-info-default);
+}
+
+.column {
+  fill: none;
+  stroke: var(--color-border-strong);
+  stroke-width: 1.5;
+}
+
+.used {
+  fill: var(--color-info-default);
+  opacity: 0.7;
+}
+
+.drained {
+  fill: var(--color-warning-default);
+  opacity: 0.7;
+}
+
+.amount {
+  fill: var(--color-text-default);
+  font-size: 13px;
+  font-weight: 700;
+}

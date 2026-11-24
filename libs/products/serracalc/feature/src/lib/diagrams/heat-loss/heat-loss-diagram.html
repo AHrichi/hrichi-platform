@@ -1,0 +1,164 @@
+<svg viewBox="0 0 480 260" role="group" [attr.aria-label]="alt()">
+  <defs>
+    <marker
+      id="sc-heat-cover"
+      viewBox="0 0 10 10"
+      refX="5"
+      refY="5"
+      markerWidth="2.2"
+      markerHeight="2.2"
+      orient="auto-start-reverse"
+    >
+      <path class="head cover" d="M0 0L10 5L0 10z" />
+    </marker>
+    <marker
+      id="sc-heat-leak"
+      viewBox="0 0 10 10"
+      refX="5"
+      refY="5"
+      markerWidth="2.2"
+      markerHeight="2.2"
+      orient="auto-start-reverse"
+    >
+      <path class="head leak" d="M0 0L10 5L0 10z" />
+    </marker>
+    <marker
+      id="sc-heat-ground"
+      viewBox="0 0 10 10"
+      refX="5"
+      refY="5"
+      markerWidth="2.2"
+      markerHeight="2.2"
+      orient="auto-start-reverse"
+    >
+      <path class="head ground-flow" d="M0 0L10 5L0 10z" />
+    </marker>
+  </defs>
+
+  <rect class="backdrop" width="480" height="260" rx="12" />
+  <rect class="ground" x="0" y="214" width="480" height="46" />
+
+  <!-- The house -->
+  <path class="house" d="M150 214V110L280 62L410 110V214Z" />
+  @if (showScreen()) {
+    <line class="screen" x1="150" y1="110" x2="410" y2="110" />
+    <text class="caption" x="156" y="124">
+      {{ i18n.word(t().diagrams.screen) }}
+    </text>
+  }
+
+  <!-- Heat through the cover, as thick as its share -->
+  <g class="flow cover" [attr.stroke-width]="widths().cover">
+    <path d="M214 92L196 58" marker-end="url(#sc-heat-cover)" />
+    <path d="M346 92L364 58" marker-end="url(#sc-heat-cover)" />
+    <path d="M150 140H116" marker-end="url(#sc-heat-cover)" />
+    <path d="M410 140H444" marker-end="url(#sc-heat-cover)" />
+  </g>
+  <text class="caption" x="470" y="26" text-anchor="end">
+    {{ i18n.word(t().diagrams.cover) }} {{ kw(result().transmissionW) }}
+  </text>
+
+  <!-- Air leaks at the ridge and the door -->
+  <g class="flow leak" [attr.stroke-width]="widths().leak">
+    <path d="M280 64q-8 -10 0 -18t0 -18" marker-end="url(#sc-heat-leak)" />
+    <path d="M410 196q12 -6 22 0t22 0" marker-end="url(#sc-heat-leak)" />
+  </g>
+  <text class="caption" x="470" y="180" text-anchor="end">
+    {{ i18n.word(t().diagrams.leaks) }} {{ kw(result().infiltrationW) }}
+  </text>
+
+  <!-- Down through the footing -->
+  <g class="flow ground-flow" [attr.stroke-width]="widths().ground">
+    <path d="M160 214V240" marker-end="url(#sc-heat-ground)" />
+    <path d="M400 214V240" marker-end="url(#sc-heat-ground)" />
+  </g>
+  <text class="caption" x="280" y="240" text-anchor="middle">
+    {{ i18n.word(t().diagrams.footing) }} {{ kw(result().perimeterW) }}
+  </text>
+
+  <!-- What the house loses in all -->
+  <text class="value" x="215" y="152" text-anchor="middle">
+    {{ kw(result().totalW) }}
+  </text>
+  <text class="caption" x="215" y="172" text-anchor="middle">
+    ΔT {{ i18n.num(result().deltaT) }} K
+  </text>
+
+  <!-- Thermometers: outside (left) and inside -->
+  @for (tick of ticks; track tick.v) {
+    <line class="tick" x1="70" [attr.y1]="tick.y" x2="76" [attr.y2]="tick.y" />
+    <text class="tick-label" x="38" [attr.y]="tick.y + 4" text-anchor="end">
+      {{ tick.v }}
+    </text>
+  }
+  <rect
+    class="tube"
+    x="56"
+    [attr.y]="yHot - 6"
+    width="8"
+    [attr.height]="yCold - yHot + 12"
+    rx="4"
+  />
+  <rect
+    class="mercury cold"
+    x="58"
+    [attr.y]="yOutside()"
+    width="4"
+    [attr.height]="yCold + 6 - yOutside()"
+  />
+  <rect
+    class="tube"
+    x="286"
+    [attr.y]="yHot - 6"
+    width="8"
+    [attr.height]="yCold - yHot + 12"
+    rx="4"
+  />
+  <rect
+    class="mercury warm"
+    x="288"
+    [attr.y]="yInside()"
+    width="4"
+    [attr.height]="yCold + 6 - yInside()"
+  />
+
+  <text class="label" x="60" y="30" text-anchor="middle">
+    {{ i18n.word(t().diagrams.outside) }}
+  </text>
+  <text class="value" x="60" y="52" text-anchor="middle">
+    {{ i18n.num(params().outsideDesignC) }} °C
+  </text>
+  <text class="value" x="304" [attr.y]="yInside() + 5">
+    {{ i18n.num(params().insideC) }} °C
+  </text>
+  <text class="caption" x="304" [attr.y]="yInside() + 22">
+    {{ i18n.word(t().diagrams.inside) }}
+  </text>
+
+  <g
+    scHandle
+    [x]="60"
+    [y]="yOutside()"
+    [value]="params().outsideDesignC"
+    [min]="limits.outside.min"
+    [max]="limits.outside.max"
+    [step]="limits.outside.step"
+    [label]="t().fields['outsideDesignC']"
+    unit="°C"
+    [fromPoint]="tempAt"
+    (valueChange)="changed.emit({ key: 'outsideDesignC', value: $event })"
+  />
+  <g
+    scHandle
+    [x]="290"
+    [y]="yInside()"
+    [value]="params().insideC"
+    [min]="limits.inside.min"
+    [max]="limits.inside.max"
+    [step]="limits.inside.step"
+    [label]="t().fields['insideC']"
+    unit="°C"
+    [fromPoint]="tempAt"
+    (valueChange)="changed.emit({ key: 'insideC', value: $event })"
+  />
+</svg>

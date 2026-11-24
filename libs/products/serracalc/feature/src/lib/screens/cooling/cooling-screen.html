@@ -17,6 +17,22 @@
 
   <div class="workbench">
     <div class="column">
+      <figure class="panel">
+        @if (tab() === 'ventilation') {
+          <sc-vent-airflow
+            [params]="ventParams()"
+            [result]="vent()"
+            (changed)="setVent($event)"
+          />
+        } @else {
+          <sc-pad-fan-flow
+            [params]="padParams()"
+            [result]="pad()"
+            (changed)="setPad($event)"
+          />
+        }
+        <figcaption>✋ {{ t().calc.dragHint }}</figcaption>
+      </figure>
       <details class="panel" open>
         <summary>
           <h3>{{ t().context.sun }}</h3>

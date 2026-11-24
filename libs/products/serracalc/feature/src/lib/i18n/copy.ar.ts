@@ -440,6 +440,43 @@ export const AR: SerraCopy = {
     how: 'كيف يُحسب',
     inputs: 'المعطيات',
     table: 'عرض الأرقام',
+    dragHint:
+      'اسحب المقابض الدائرية، أو اختر واحداً واستعمل أسهم لوحة المفاتيح.',
+  },
+
+  diagrams: {
+    heatAlt: (inside, outside, kw) =>
+      `الحرارة الخارجة من البيت: ${kw} ك.و، من ${inside} °م في الداخل إلى ${outside} °م في الخارج. المقابض تضبط الحرارتين.`,
+    pipesAlt: (loops, length, supply, back) =>
+      `أنابيب التدفئة من الأعلى: ${loops} حلقة بطول ${length} م، الماء يدخل على ${supply} °م ويعود على ${back} °م. المقابض تضبط الحرارتين وطول الحلقة.`,
+    ventAlt: (outside, rise, vents) =>
+      `التهوئة في يوم مشمس: ${outside} °م في الخارج، والبيت أسخن بـ ${rise} K على الأكثر، و${vents} م² من فتحات السقف. المقابض تضبط الحرارتين والفتحة.`,
+    padAlt: (outside, pad, exhaust, distance) =>
+      `الوسادة والمراوح: الهواء على ${outside} °م يخرج من الوسادة على ${pad} °م ويصل إلى المراوح على بعد ${distance} م بحرارة ${exhaust} °م. المقابض تضبط المسافة والتسخين.`,
+    cropAlt: (applied, used, drain) =>
+      `يوم الذروة لكل م²: ${applied} ل مضافة، ${used} ل منتوحة، ${drain} % صرف. المقابض تضبط الأوراق ونسبة الصرف.`,
+    rainAlt: (basin, pct) =>
+      `مطر السقف في حوض بحجم ${basin} م³ يغطي ${pct} % من الري. مقبض يضبط حجم الحوض.`,
+    inside: 'الداخل',
+    outside: 'الخارج',
+    screen: 'الستارة',
+    cover: 'الغطاء',
+    leaks: 'التسرّب',
+    footing: 'القاعدة',
+    supply: 'الذهاب',
+    return: 'الإياب',
+    air: 'الهواء',
+    loop: 'الحلقة',
+    loops: 'حلقات',
+    vents: 'الفتحات',
+    shade: 'التظليل',
+    pad: 'الوسادة',
+    fans: 'المراوح',
+    canopy: 'الأوراق',
+    transpired: 'المنتوح',
+    drain: 'الصرف',
+    suggested: 'المقترح',
+    overflow: 'الفائض',
   },
 
   save: {

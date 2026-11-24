@@ -1,7 +1,7 @@
 @let g = geometry();
 <svg
   [attr.viewBox]="'0 0 ' + width + ' ' + height"
-  role="img"
+  role="group"
   [attr.aria-label]="alt()"
 >
   <rect class="backdrop" [attr.width]="width" [attr.height]="height" rx="12" />
@@ -112,4 +112,50 @@
     {{ spec().spans }} × {{ i18n.num(spec().spanWidthM) }} m =
     {{ i18n.num(spec().spans * spec().spanWidthM) }} m
   </text>
+  <g
+    scHandle
+    [x]="g.x0"
+    [y]="g.yGutter"
+    [value]="spec().gutterHeightM"
+    [min]="limits.gutter.min"
+    [max]="spec().ridgeHeightM"
+    [step]="limits.gutter.step"
+    [label]="t().fields['gutterHeightM']"
+    unit="m"
+    [fromPoint]="heightAt"
+    (scDragStart)="hold()"
+    (scDragEnd)="release()"
+    (valueChange)="changed.emit({ key: 'gutterHeightM', value: $event })"
+  />
+  <g
+    scHandle
+    [x]="g.firstRidgeX"
+    [y]="g.yRidge"
+    [value]="spec().ridgeHeightM"
+    [min]="spec().gutterHeightM"
+    [max]="limits.ridge.max"
+    [step]="limits.ridge.step"
+    [label]="t().fields['ridgeHeightM']"
+    unit="m"
+    [fromPoint]="heightAt"
+    (scDragStart)="hold()"
+    (scDragEnd)="release()"
+    (valueChange)="changed.emit({ key: 'ridgeHeightM', value: $event })"
+  />
+  <g
+    scHandle
+    axis="x"
+    [x]="g.firstSpanEnd"
+    [y]="ground"
+    [value]="spec().spanWidthM"
+    [min]="limits.span.min"
+    [max]="limits.span.max"
+    [step]="limits.span.step"
+    [label]="t().fields['spanWidthM']"
+    unit="m"
+    [fromPoint]="spanAt"
+    (scDragStart)="hold()"
+    (scDragEnd)="release()"
+    (valueChange)="changed.emit({ key: 'spanWidthM', value: $event })"
+  />
 </svg>

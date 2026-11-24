@@ -1,0 +1,149 @@
+<svg viewBox="0 0 480 260" role="group" [attr.aria-label]="alt()">
+  <rect class="backdrop" width="480" height="260" rx="12" />
+
+  <!-- The house in plan -->
+  <rect
+    class="plan"
+    [attr.x]="xHeader - 6"
+    [attr.y]="yTop - 8"
+    [attr.width]="480 - xHeader"
+    [attr.height]="yBottom - yTop + 16"
+    rx="4"
+  />
+  <line
+    class="header hot"
+    [attr.x1]="xHeader"
+    [attr.y1]="yTop"
+    [attr.x2]="xHeader"
+    [attr.y2]="yBottom"
+  />
+
+  @for (loop of loops(); track $index) {
+    <path class="pipe hot" [attr.d]="loop.supply" />
+    <path class="pipe cold" [attr.d]="loop.back" />
+  }
+  @if (more() > 0) {
+    <text class="caption" x="470" y="248" text-anchor="end">
+      +{{ more() }} {{ i18n.word(t().diagrams.loops) }}
+    </text>
+  }
+
+  <text class="label" x="280" y="24" text-anchor="middle">
+    {{ i18n.num(result().flowM3h) }} m³/h ·
+    {{ i18n.num(result().pipeOutputWPerM, 0) }} W/m ·
+    {{ i18n.num(result().pipeLengthM, 0) }} m
+  </text>
+
+  <!-- Supply and return thermometers, with the air temperature -->
+  <rect
+    class="tube"
+    x="24"
+    [attr.y]="yHot - 6"
+    width="8"
+    [attr.height]="yCold - yHot + 12"
+    rx="4"
+  />
+  <rect
+    class="mercury hot-fill"
+    x="26"
+    [attr.y]="ySupply()"
+    width="4"
+    [attr.height]="yCold + 6 - ySupply()"
+  />
+  <rect
+    class="tube"
+    x="58"
+    [attr.y]="yHot - 6"
+    width="8"
+    [attr.height]="yCold - yHot + 12"
+    rx="4"
+  />
+  <rect
+    class="mercury cold-fill"
+    x="60"
+    [attr.y]="yReturn()"
+    width="4"
+    [attr.height]="yCold + 6 - yReturn()"
+  />
+  <line class="air" x1="14" [attr.y1]="yAir()" x2="76" [attr.y2]="yAir()" />
+  <text class="tick-label" x="14" [attr.y]="yAir() + 14">
+    {{ i18n.word(t().diagrams.air) }} {{ i18n.num(params().airC) }}°
+  </text>
+
+  <text
+    class="value small"
+    x="28"
+    [attr.y]="ySupply() - 16"
+    text-anchor="middle"
+  >
+    {{ i18n.num(params().supplyC, 0) }}°
+  </text>
+  <text
+    class="value small"
+    x="62"
+    [attr.y]="yReturn() - 16"
+    text-anchor="middle"
+  >
+    {{ i18n.num(params().returnC, 0) }}°
+  </text>
+  <text class="tick-label" x="28" y="244" text-anchor="middle">
+    {{ i18n.word(t().diagrams.supply) }}
+  </text>
+  <text class="tick-label" x="62" y="258" text-anchor="middle">
+    {{ i18n.word(t().diagrams.return) }}
+  </text>
+
+  <g
+    scHandle
+    [x]="28"
+    [y]="ySupply()"
+    [value]="params().supplyC"
+    [min]="params().returnC + 1"
+    [max]="limits.supply.max"
+    [step]="limits.supply.step"
+    [label]="t().fields['supplyC']"
+    unit="°C"
+    [fromPoint]="tempAt"
+    (valueChange)="changed.emit({ key: 'supplyC', value: $event })"
+  />
+  <g
+    scHandle
+    [x]="62"
+    [y]="yReturn()"
+    [value]="params().returnC"
+    [min]="limits.return.min"
+    [max]="params().supplyC - 1"
+    [step]="limits.return.step"
+    [label]="t().fields['returnC']"
+    unit="°C"
+    [fromPoint]="tempAt"
+    (valueChange)="changed.emit({ key: 'returnC', value: $event })"
+  />
+  @if (loops()[0]; as first) {
+    <g
+      scHandle
+      axis="x"
+      [x]="first.xEnd"
+      [y]="first.mid"
+      [value]="params().loopLengthM"
+      [min]="limits.loop.min"
+      [max]="limits.loop.max"
+      [step]="limits.loop.step"
+      [label]="t().fields['loopLengthM']"
+      unit="m"
+      [fromPoint]="loopAt"
+      (scDragStart)="hold()"
+      (scDragEnd)="release()"
+      (valueChange)="changed.emit({ key: 'loopLengthM', value: $event })"
+    />
+    <text
+      class="caption"
+      [attr.x]="first.xEnd"
+      [attr.y]="yBottom + 26"
+      text-anchor="end"
+    >
+      {{ i18n.word(t().diagrams.loop) }}
+      {{ i18n.num(params().loopLengthM, 0) }} m
+    </text>
+  }
+</svg>
