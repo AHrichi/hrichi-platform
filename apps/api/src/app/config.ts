@@ -18,6 +18,8 @@ export interface ApiConfig {
   learning: LearningModuleOptions | null;
   /** Cross-device StudyLM sync; enabled via STUDYLM_TOKEN_SECRET or LEARNING_TOKEN_SECRET. */
   studylm: StudyLmModuleOptions | null;
+  /** The Git commit this process runs, for /health; null when unknown. */
+  commit: string | null;
 }
 
 /**
@@ -86,6 +88,7 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): ApiConfig {
     },
     learning: learningConfig(env, problems),
     studylm: studylmConfig(env, problems),
+    commit: gitCommit(env['RENDER_GIT_COMMIT']),
   };
 
   if (!Number.isInteger(config.port) || config.port <= 0) {
@@ -112,6 +115,16 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): ApiConfig {
     throw new Error(`Invalid configuration:\n  - ${problems.join('\n  - ')}`);
   }
   return config;
+}
+
+/**
+ * Render sets RENDER_GIT_COMMIT at build time and at runtime. /health shows
+ * it, so a stale deploy is one request away. Anything that isn't a hex SHA
+ * is dropped rather than echoed on a public route.
+ */
+function gitCommit(value: string | undefined): string | null {
+  const sha = value?.trim().toLowerCase() ?? '';
+  return /^[0-9a-f]{7,40}$/.test(sha) ? sha : null;
 }
 
 /**

@@ -87,7 +87,7 @@ It goes in two places: Render (`N8N_WEBHOOK_SECRET`) and an n8n credential (step
    | `N8N_WEBHOOK_SECRET` | From step 4                                                 |
 
 4. Apply. Later deploys start only after GitHub CI passes for the commit (`autoDeployTrigger: checksPass`).
-5. When the deploy is live, open `https://<service>.onrender.com/health`. It should answer `{"status":"ok","db":"up",…}`. The first request after 15 idle minutes takes up to a minute while the free instance wakes; the contact page sends a wake-up ping as soon as it opens.
+5. When the deploy is live, open `https://<service>.onrender.com/health`. It should answer `{"status":"ok","db":"up",…,"commit":"<sha>"}`. `commit` is the Git commit Render deployed (`RENDER_GIT_COMMIT`); if it is behind `main`, the latest deploy didn't happen or failed, so check the service's Events in Render. The first request after 15 idle minutes takes up to a minute while the free instance wakes; the contact page sends a wake-up ping as soon as it opens.
 
 Telegram and n8n are optional: leave both variables of a pair empty and the API marks that delivery `disabled`.
 

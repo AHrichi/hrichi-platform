@@ -7,7 +7,7 @@ import { DispatchModule } from '@ah/api/dispatch';
 import { LearningModule } from '@ah/api/learning';
 import { StudyLmModule } from '@ah/api/studylm';
 import type { ApiConfig } from './config';
-import { HealthController } from './health.controller';
+import { API_COMMIT, HealthController } from './health.controller';
 import { MongoModule } from './mongo.module';
 
 @Module({})
@@ -26,7 +26,10 @@ export class AppModule {
         ...(config.studylm ? [StudyLmModule.register(config.studylm)] : []),
       ],
       controllers: [HealthController],
-      providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],
+      providers: [
+        { provide: APP_GUARD, useClass: ThrottlerGuard },
+        { provide: API_COMMIT, useValue: config.commit },
+      ],
     };
   }
 }
