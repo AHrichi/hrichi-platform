@@ -13,7 +13,7 @@ type AuthProblem = 'invalid' | 'unconfirmed' | 'offline' | 'other' | 'short';
 
 const MIN_PASSWORD = 8;
 
-/** Sign in, or make an account (a new manager, or someone invited). */
+/** Sign in, or make an account (a new manager, or someone with a join code). */
 @Component({
   selector: 'gh-dashboard-sign-in',
   imports: [GhButton],

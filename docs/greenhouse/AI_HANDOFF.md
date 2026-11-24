@@ -2,13 +2,13 @@
 
 A briefing for whichever AI agent or IDE picks up the Greenhouse Labor Planner. It assumes no memory of earlier sessions. Read it top to bottom before touching code; [AGENTS.md](../../AGENTS.md) has the protocol.
 
-Last updated 2026-11-24:
+Last updated 2026-11-25:
 
 - **G1, G2 and the design system are merged into `main`.** G1 (foundation) came in through PR [#22](https://github.com/AHrichi/hrichi-platform/pull/22). G2 (supervisor sign-in and real sync, verified against local Supabase), the design system and brand packs, and the tomato demo farm came in through PR [#23](https://github.com/AHrichi/hrichi-platform/pull/23). See [design-system.md](design-system.md).
 - **G3 (the dashboard on Supabase) and G5 are merged** (PRs [#24](https://github.com/AHrichi/hrichi-platform/pull/24), [#25](https://github.com/AHrichi/hrichi-platform/pull/25) and [#26](https://github.com/AHrichi/hrichi-platform/pull/26)): performance and labour cost (G5a), and the hygiene checklist with photos and sign-off (G5b), both verified against local Supabase.
-- **G6 (the demo in the portfolio)** is in PR [#27](https://github.com/AHrichi/hrichi-platform/pull/27).
-- **G4 (Android)** is on `feat/greenhouse-g4-android`, built on G6: the Android project, the native scanner and network plugins, and a CI job that builds a debug APK. Not tried on a phone yet.
-- **Hosted Supabase (G2b):** the project `greenhouse-labor` (Paris) exists with all four migrations; the `hosted` build waits for its publishable key (§6). Start each phase on a new branch from `main`.
+- **G6 (the demo in the portfolio) and G4 (Android) are merged** (PRs [#27](https://github.com/AHrichi/hrichi-platform/pull/27) and [#28](https://github.com/AHrichi/hrichi-platform/pull/28)). CI builds a debug APK; it hasn't been tried on a phone yet.
+- **Zero cost** is a hard rule: free tiers only, no Google Play, no paid email. So the project sends **no email**, and people join a farm with **join codes** (on `feat/greenhouse-join-codes`, verified against local Supabase).
+- **Hosted Supabase (G2b):** the project `greenhouse-labor` (Paris) has the first four migrations; it still needs `…_join_codes.sql` and email confirmation off, and the `hosted` build waits for its publishable key (§6). Start each phase on a new branch from `main`.
 
 ## 0. Resume in five minutes
 
@@ -70,6 +70,13 @@ There is **no Ionic**: `@ionic/angular` peers on `zone.js` (ADR-0026).
 | G5b hygiene checklist               | Done against **local** Supabase. On the phone: each greenhouse's check for the day (fine or not, a note, photos where the farm asks), saved offline with its photos, sent by `HygieneSync` (photos first), signed off and then locked. On the dashboard: the day's checks per greenhouse (failed first), each answer with its note and photos (signed URLs), and the checklist in three languages (add, edit, reorder, retire, or start from the standard list). |
 | G6 go live in the portfolio         | Done on `feat/greenhouse-g6-go-live`. The demo dashboard is registered at `/apps/greenhouse`: remote origins, the shell's route and manifest, the visibility flag (on), apps cards in five languages, constellation links, a `deploy` target (Cloudflare worker `product-greenhouse`) and a shell e2e. The kit's styles travel with the remote (`GhKitStyles`).                                                                                                  |
 
+**Verified** (2026-11-25, join codes), against local Supabase:
+
+- the manager makes a code on **People** for a supervisor: it shows as `PX24-Q6MZ` with its expiry, Copy and a WhatsApp link, and is listed under unused codes; the role list goes back to Supervisor afterwards;
+- a new account made in the field app lands on "not on a farm yet", refuses `abc` before asking the server, says "could not join" for a wrong code until the error code fix, then joins with `px24-q6mz` typed loosely and downloads the farm;
+- a new account made on the dashboard gets "That code is wrong, used or expired" for a wrong code, then joins with an HR code and sees the farm read-only;
+- the PGlite specs cover making, redeeming once, expiry, wrong codes, managers-only and the last manager.
+
 **Verified** (2026-11-23, G5b):
 
 - Lint, test and build for all 8 projects (215 tests, 35 of them PGlite security tests), stylelint, zoneless, format.
@@ -92,7 +99,7 @@ There is **no Ionic**: `@ionic/angular` peers on `zone.js` (ADR-0026).
   - choosing Équipe A for Serre 1 and 1200 kg on Monday survives a reload (3.3 workers);
   - a new worker gets badge GH-0013 and pay 2.7; the next suggested badge is GH-0014;
   - an absence (Thursday, "Sick") survives a reload;
-  - inviting `lina@farm.test`, then creating that account from the sign-in screen, puts Lina on the farm as a supervisor, with the read-only notice;
+  - inviting `lina@farm.test`, then creating that account from the sign-in screen, puts Lina on the farm as a supervisor, with the read-only notice (email invitations were later replaced by join codes, see below);
   - badges filtered to Équipe B print five cards; the QR path is unit-tested against `uqr`'s matrix;
   - Arabic is RTL; there are no console errors.
 - The default (demo) build shows the sample farm as before: 169,400 kg, 10 worker-days short, Friday the shortest day.
@@ -130,7 +137,6 @@ There is **no Ionic**: `@ionic/angular` peers on `zone.js` (ADR-0026).
 **Not verified yet:**
 
 - A **hosted** Supabase project. Local is verified.
-- Invitation sign-up with email confirmation on (local has it off). The trigger runs at account creation either way.
 - Printing the badges on paper, and scanning a printed badge with a phone.
 - Signing in again after a session expires (the `auth` path) against a real server; the code path is in place, but only the error mapping is unit-tested.
 - Camera scanning with `BarcodeDetector` on a real phone. The browser pane has no camera API, and iOS Safari has no `BarcodeDetector` at all, so typing is the fallback there.
@@ -214,8 +220,8 @@ Gotchas:
    - Create a free project named `greenhouse-labor` in the region closest to Tunisia (`eu-west-3`, Paris). Use the "Generate a password" button for the database password; nothing here needs it.
    - Run the migrations in order, then `seed.sql` if the demo farm is wanted, in the dashboard's SQL editor. The CLI's `db push` works too, but needs an access token and the database password.
    - Put the project URL and **publishable** key (never the secret key) in the field app's `environment.production.ts`, and in a new `environment.production.ts` for the dashboard with a `production` file replacement. The dashboard's default build must stay the demo while it is the portfolio's remote; give the real one its own configuration.
-   - Auth: turn email confirmations on, and set the site URL to wherever the field app is hosted.
-   - The owner creates their account on the dashboard's sign-in screen, creates the farm there, and invites supervisors and HR from **People**.
+   - Auth: keep email confirmations **off**. The project sends no email (zero cost); people join with join codes. Apply `…_join_codes.sql` too.
+   - The owner creates their account on the dashboard's sign-in screen, creates the farm there, and makes join codes for supervisors and HR on **People**.
 2. **Left over from G3:** done on the G5 branch. Supervisors can create their account in the field app, managers rename members on **People**, and targets came with G5a.
 3. **G4 on a phone.** Download the `greenhouse-field-debug-apk` artifact from the PR's CI run, install it, and check: the scanner screen opens and reads a printed badge; airplane mode shows "offline" and sending resumes when the signal comes back. Still to do:
    - a launcher icon and splash in the farm's look (they are Capacitor's defaults; `@capacitor/assets` can make them from `public/icons`);

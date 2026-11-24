@@ -571,88 +571,124 @@ describe('hygiene photos', () => {
     }));
 });
 
-describe('invitations', () => {
-  const invite = `select public.invite_member($1, $2, $3, $4) as result`;
+describe('join codes', () => {
+  const make = `select public.create_join_code($1, $2, $3) as code`;
+  const redeem = `select public.redeem_join_code($1) as farm`;
+  const NEWCOMER = 'd0000000-0000-4000-8000-0000000000d1';
 
-  it('adds someone with an account straight away', () =>
+  async function codeFor(
+    s: Session,
+    role = 'supervisor',
+    name = 'Lina',
+  ): Promise<string> {
+    await s.as(MANAGER_A);
+    const [row] = await s.rows<{ code: string }>(make, [FARM_A, role, name]);
+    return row.code;
+  }
+
+  async function newcomer(s: Session): Promise<void> {
+    await db.exec('reset role');
+    await s.count(`insert into auth.users (id, email) values ($1, $2)`, [
+      NEWCOMER,
+      'newcomer@example.test',
+    ]);
+    await s.as(NEWCOMER);
+  }
+
+  it('are 8 easy-to-read characters, a different one each time', () =>
     scenario(async (s) => {
-      await s.as(MANAGER_A);
-      expect(
-        await s.rows(invite, [
-          FARM_A,
-          ' Stranger@Example.test ',
-          'supervisor',
-          'New supervisor',
-        ]),
-      ).toEqual([{ result: 'added' }]);
-      expect(
-        await s.rows(`select role from public.member where user_id = $1`, [
-          STRANGER,
-        ]),
-      ).toEqual([{ role: 'supervisor' }]);
-      // Asking again changes the role.
-      expect(
-        await s.rows(invite, [FARM_A, 'stranger@example.test', 'hr', 'X']),
-      ).toEqual([{ result: 'updated' }]);
+      const codes = new Set<string>();
+      for (let i = 0; i < 20; i++) codes.add(await codeFor(s));
+      expect(codes.size).toBe(20);
+      for (const code of codes) expect(code).toMatch(/^[A-HJ-NP-Z2-9]{8}$/);
     }));
 
-  it('holds an invitation until that email signs up', () =>
+  it('put the holder on the farm with the role and name chosen, once', () =>
     scenario(async (s) => {
-      await s.as(MANAGER_A);
-      expect(
-        await s.rows(invite, [
-          FARM_A,
-          'Later@Example.test',
-          'supervisor',
-          'Lina',
-        ]),
-      ).toEqual([{ result: 'invited' }]);
-      expect(await s.rows(`select email from public.invitation`)).toEqual([
-        { email: 'later@example.test' },
-      ]);
-      // Supabase Auth creates the account; the trigger claims the invitation.
-      await s.as(null);
-      await db.exec('reset role');
-      const newUser = 'd0000000-0000-4000-8000-0000000000d1';
-      await s.count(`insert into auth.users (id, email) values ($1, $2)`, [
-        newUser,
-        'LATER@example.test',
-      ]);
-      await s.as(newUser);
+      const code = await codeFor(s, 'hr', 'Hana');
+      await newcomer(s);
+      // Typed loosely: lower case, a dash and spaces.
+      const typed = ` ${code.slice(0, 4).toLowerCase()}-${code.slice(4)} `;
+      expect(await s.rows(redeem, [typed])).toEqual([{ farm: FARM_A }]);
       expect(
         await s.rows(
           `select farm_id, role, full_name from public.member where user_id = $1`,
-          [newUser],
+          [NEWCOMER],
         ),
-      ).toEqual([{ farm_id: FARM_A, role: 'supervisor', full_name: 'Lina' }]);
-      await s.as(MANAGER_A);
-      expect(await s.rows(`select * from public.invitation`)).toEqual([]);
+      ).toEqual([{ farm_id: FARM_A, role: 'hr', full_name: 'Hana' }]);
+      // Used up.
+      expect(await s.error(redeem, [code])).toMatch(/not valid/);
     }));
 
-  it('is for managers only, and invitations stay private', () =>
+  it('refuse a wrong or expired code', () =>
     scenario(async (s) => {
-      await s.as(MANAGER_A);
-      await s.rows(invite, [FARM_A, 'later@example.test', 'hr', 'Hana']);
-      for (const who of [SUPERVISOR_A, HR_A, MANAGER_B]) {
+      const code = await codeFor(s);
+      await db.exec('reset role');
+      await s.count(
+        `update public.join_code set expires_at = now() - interval '1 minute' where code = $1`,
+        [code],
+      );
+      await newcomer(s);
+      expect(await s.error(redeem, [code])).toMatch(/not valid/);
+      expect(await s.error(redeem, ['ABCDEFGH'])).toMatch(/not valid/);
+      expect(
+        await s.rows(`select * from public.member where user_id = $1`, [
+          NEWCOMER,
+        ]),
+      ).toEqual([]);
+    }));
+
+  it('need a signed-in person to redeem them', () =>
+    scenario(async (s) => {
+      const code = await codeFor(s);
+      await s.as(null);
+      expect(await s.error(redeem, [code])).toMatch(/permission denied/);
+    }));
+
+  it('are made and seen by managers only', () =>
+    scenario(async (s) => {
+      await codeFor(s);
+      for (const who of [SUPERVISOR_A, HR_A, MANAGER_B, STRANGER]) {
         await s.as(who);
-        expect(
-          await s.error(invite, [FARM_A, 'x@example.test', 'manager', 'X']),
-        ).toMatch(/Only a manager/);
-        expect(await s.rows(`select * from public.invitation`)).toEqual([]);
+        expect(await s.error(make, [FARM_A, 'manager', 'X'])).toMatch(
+          /Only a manager/,
+        );
+        expect(await s.rows(`select * from public.join_code`)).toEqual([]);
       }
+      await s.as(MANAGER_A);
+      expect(await s.rows(`select full_name from public.join_code`)).toEqual([
+        { full_name: 'Lina' },
+      ]);
     }));
 
-  it('still keeps a manager on the farm', () =>
+  it('can be withdrawn by a manager', () =>
     scenario(async (s) => {
+      const code = await codeFor(s);
+      await s.as(SUPERVISOR_A);
+      expect(
+        await s.count(`delete from public.join_code where code = $1`, [code]),
+      ).toBe(0);
       await s.as(MANAGER_A);
       expect(
-        await s.error(invite, [
-          FARM_A,
-          'manager-a@example.test',
-          'supervisor',
-          'Me',
-        ]),
-      ).toMatch(/at least one manager/);
+        await s.count(`delete from public.join_code where code = $1`, [code]),
+      ).toBe(1);
+    }));
+
+  it('still keep a manager on the farm', () =>
+    scenario(async (s) => {
+      const code = await codeFor(s, 'supervisor', 'Me');
+      await s.as(MANAGER_A);
+      expect(await s.error(redeem, [code])).toMatch(/at least one manager/);
+    }));
+
+  it('replace the email invitations', () =>
+    scenario(async (s) => {
+      expect(
+        await s.rows(
+          `select to_regclass('public.invitation') as t,
+                  to_regprocedure('public.invite_member(uuid, text, public.member_role, text)') as f`,
+        ),
+      ).toEqual([{ t: null, f: null }]);
     }));
 });
 

@@ -39,11 +39,17 @@ export interface Member {
   role: Role;
 }
 
-/** Someone a manager asked onto the farm who has no account yet. */
-export interface Invitation {
-  email: string;
+/**
+ * A code a manager made so one person can join the farm, handed over in
+ * person or on WhatsApp. The project sends no email, so a code is the only
+ * way in besides making a farm of one's own.
+ */
+export interface JoinCode {
+  code: string;
   fullName: string;
   role: Role;
+  /** When it stops working (ISO timestamp); a week after it was made. */
+  expiresAt: string;
 }
 
 export interface Greenhouse {

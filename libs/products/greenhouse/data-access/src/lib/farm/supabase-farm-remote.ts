@@ -3,7 +3,7 @@ import {
   addDays,
   type Greenhouse,
   type HygieneItem,
-  type Invitation,
+  type JoinCode,
   type IsoDate,
   type PlanEntry,
   isRole,
@@ -14,6 +14,7 @@ import {
 } from '@ah/products/greenhouse/domain';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { callPostgrest } from '../remote/postgrest';
+import { redeemJoinCode } from '../remote/join-code';
 import { RemoteError } from '../remote/remote-error';
 import {
   type FarmAccess,
@@ -23,7 +24,6 @@ import {
   type FarmSetup,
   type FarmWeek,
   HISTORY_DAYS,
-  type InviteResult,
   PHOTO_URL_SECONDS,
 } from './farm-remote';
 import { HYGIENE_BUCKET } from '../remote/storage';
@@ -54,6 +54,15 @@ import {
   workerRow,
   workerTotalsFrom,
 } from '../remote/rows';
+
+function joinCodeFrom(row: Row): JoinCode {
+  return {
+    code: String(row['code']),
+    fullName: String(row['full_name']),
+    role: isRole(row['role']) ? row['role'] : 'supervisor',
+    expiresAt: String(row['expires_at']),
+  };
+}
 
 /**
  * The dashboard's server: Supabase as the signed-in person, so row-level
@@ -97,7 +106,7 @@ export class SupabaseFarmRemote implements FarmRemote {
 
   async loadSetup(farmId: string): Promise<FarmSetup> {
     const db = this.client;
-    const [greenhouses, teams, workers, pay, members, invitations] =
+    const [greenhouses, teams, workers, pay, members, joinCodes] =
       await Promise.all([
         callPostgrest<Row[] | null>(
           db
@@ -135,10 +144,11 @@ export class SupabaseFarmRemote implements FarmRemote {
         ),
         callPostgrest<Row[] | null>(
           db
-            .from('invitation')
-            .select('email, role, full_name')
+            .from('join_code')
+            .select('code, role, full_name, expires_at')
             .eq('farm_id', farmId)
-            .order('email'),
+            .gt('expires_at', new Date().toISOString())
+            .order('created_at'),
         ),
       ]);
     return {
@@ -150,11 +160,7 @@ export class SupabaseFarmRemote implements FarmRemote {
         hourlyRate: Number(row['hourly_rate']),
       })),
       members: (members ?? []).map(memberFrom),
-      invitations: (invitations ?? []).map((row): Invitation => ({
-        email: String(row['email']),
-        fullName: String(row['full_name']),
-        role: isRole(row['role']) ? row['role'] : 'supervisor',
-      })),
+      joinCodes: (joinCodes ?? []).map(joinCodeFrom),
     };
   }
 
@@ -373,30 +379,41 @@ export class SupabaseFarmRemote implements FarmRemote {
     );
   }
 
-  async invite(
+  joinFarm(code: string): Promise<string> {
+    return redeemJoinCode(this.client, code);
+  }
+
+  async createJoinCode(
     farmId: string,
-    email: string,
     role: Role,
     fullName: string,
-  ): Promise<InviteResult> {
-    const result = await callPostgrest<string | null>(
-      this.client.rpc('invite_member', {
+  ): Promise<JoinCode> {
+    const code = await callPostgrest<string | null>(
+      this.client.rpc('create_join_code', {
         target_farm: farmId,
-        invitee_email: email,
         invitee_role: role,
         invitee_name: fullName,
       }),
     );
-    return result === 'added' || result === 'updated' ? result : 'invited';
+    if (!code) throw new RemoteError('server', 'No join code came back');
+    const row = await callPostgrest<Row | null>(
+      this.client
+        .from('join_code')
+        .select('code, role, full_name, expires_at')
+        .eq('code', code)
+        .maybeSingle(),
+    );
+    if (!row) throw new RemoteError('server', 'The join code went missing');
+    return joinCodeFrom(row);
   }
 
-  async cancelInvitation(farmId: string, email: string): Promise<void> {
+  async withdrawJoinCode(farmId: string, code: string): Promise<void> {
     await callPostgrest(
       this.client
-        .from('invitation')
+        .from('join_code')
         .delete()
         .eq('farm_id', farmId)
-        .eq('email', email),
+        .eq('code', code),
     );
   }
 

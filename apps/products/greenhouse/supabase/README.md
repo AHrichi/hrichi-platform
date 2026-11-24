@@ -6,7 +6,8 @@ The Postgres schema, row-level security and storage bucket behind the planner's 
 | --------------------------------- | ------------------------------------------------------------------------------------- |
 | `migrations/…_labor_schema.sql`   | Tables. Every reference carries the farm id, so rows can't point into another farm    |
 | `migrations/…_labor_security.sql` | Roles per farm, RLS on every table, server-side stamps, `create_farm()`, photo bucket |
-| `migrations/…_dashboard.sql`      | Invitations, `invite_member()`, `save_plan_row()`, `work_totals()`                    |
+| `migrations/…_dashboard.sql`      | `save_plan_row()`, `work_totals()` (its email invitations are replaced by join codes) |
+| `migrations/…_join_codes.sql`     | `join_code`, `create_join_code()`, `redeem_join_code()`                               |
 | `migrations/…_performance.sql`    | `team_week_totals()`, `worker_totals()`: performance and labour cost                  |
 | `seed.sql`                        | A made-up farm for local development, with no members                                 |
 | `spec/security.spec.ts`           | The migrations and seed run against PGlite, acting as each role                       |
@@ -24,7 +25,7 @@ Nobody sees another farm's rows, the anonymous key reaches no table, and pay (`w
 
 ## Joining a farm
 
-A manager adds people from the dashboard's **People** screen, which calls `invite_member()`. Someone who already has an account joins at once. For anyone else it leaves an `invitation`, and a trigger on `auth.users` turns that into a membership when an account with that email is created. Only managers see invitations. Email confirmation must stay **on** in a hosted project; it is what stops someone claiming an invitation for an address they don't own.
+The project sends **no email** (it has to cost nothing, and Supabase's built-in mail only reaches the team's own addresses). An email address is only a sign-in name, and email confirmation stays **off**, so nothing proves who owns an address. People therefore join with a **join code**: a manager makes one on the dashboard's **People** screen (`create_join_code()`, 8 characters, works once, for 7 days) and hands it over in person or on WhatsApp. The person creates an account in either app and enters it (`redeem_join_code()`), which puts them on the farm with the name and role the manager chose. Only managers see and withdraw codes. A forgotten password can't be reset by email: the person makes a new account and gets a new code.
 
 ## Reading weeks of history
 

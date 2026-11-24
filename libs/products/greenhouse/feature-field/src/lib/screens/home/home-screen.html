@@ -3,12 +3,53 @@
     <p class="state" role="status">{{ t().home.loading }}</p>
   }
   @case ('no-roster') {
-    <div class="state">
-      <p>{{ store.noFarm() ? t().auth.noFarm : t().home.noRoster }}</p>
-      <button type="button" ghButton (click)="store.retryRoster()">
-        {{ t().home.retry }}
-      </button>
-    </div>
+    @if (store.noFarm()) {
+      <form
+        class="state join"
+        novalidate
+        (submit)="$event.preventDefault(); join(codeBox.value)"
+      >
+        <p>{{ t().auth.noFarm }}</p>
+        <label class="gh-label" for="gh-join-code">{{
+          t().auth.joinCode
+        }}</label>
+        <input
+          #codeBox
+          id="gh-join-code"
+          class="gh-input code"
+          name="code"
+          dir="ltr"
+          autocomplete="off"
+          autocapitalize="characters"
+          spellcheck="false"
+          maxlength="12"
+          placeholder="K7QX-M2PD"
+          [attr.aria-invalid]="joinProblem() ? true : null"
+          [attr.aria-describedby]="joinProblem() ? 'gh-join-error' : null"
+        />
+        @if (joinProblem(); as problem) {
+          <p id="gh-join-error" class="gh-error" role="alert">
+            {{ t().auth[problem] }}
+          </p>
+        }
+        <button
+          type="submit"
+          ghButton
+          size="field"
+          block
+          [disabled]="joining()"
+        >
+          {{ joining() ? t().auth.busy : t().auth.joinSubmit }}
+        </button>
+      </form>
+    } @else {
+      <div class="state">
+        <p>{{ t().home.noRoster }}</p>
+        <button type="button" ghButton (click)="store.retryRoster()">
+          {{ t().home.retry }}
+        </button>
+      </div>
+    }
   }
   @case ('failed') {
     <div class="state" role="alert">

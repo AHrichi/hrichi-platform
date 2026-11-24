@@ -150,4 +150,22 @@ describe('DemoFarmRemote', () => {
     expect(setup.teams.map((t) => t.id)).not.toContain('team-a1');
     expect(setup.workers.filter((w) => w.teamId === null)).toHaveLength(21);
   });
+
+  it('makes join codes that work once, and can be withdrawn', async () => {
+    const demo = remote();
+    const code = await demo.createJoinCode(DEMO_FARM_ID, 'hr', 'Hana');
+    expect(code).toMatchObject({ fullName: 'Hana', role: 'hr' });
+    expect(code.code).toMatch(/^[A-HJ-NP-Z2-9]{8}$/);
+    expect((await demo.loadSetup()).joinCodes).toEqual([code]);
+
+    const typed = `${code.code.slice(0, 4).toLowerCase()}-${code.code.slice(4)}`;
+    expect(await demo.joinFarm(typed)).toBe(DEMO_FARM_ID);
+    await expect(demo.joinFarm(code.code)).rejects.toMatchObject({
+      kind: 'rejected',
+    });
+
+    const other = await demo.createJoinCode(DEMO_FARM_ID, 'supervisor', 'Sami');
+    await demo.withdrawJoinCode(DEMO_FARM_ID, other.code);
+    expect((await demo.loadSetup()).joinCodes).toEqual([]);
+  });
 });

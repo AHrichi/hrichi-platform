@@ -10,6 +10,9 @@
     {{ signUp ? ta.signUpTitle : ta.title }}
   </h1>
   <p class="intro">{{ ta.intro }}</p>
+  @if (signUp) {
+    <p class="intro">{{ ta.signUpHint }}</p>
+  }
 
   @if (confirm()) {
     <p class="done" role="status">{{ ta.confirmEmail }}</p>

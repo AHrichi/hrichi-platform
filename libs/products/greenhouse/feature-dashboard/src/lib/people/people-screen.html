@@ -14,7 +14,7 @@
     class="gh-card form"
     novalidate
     aria-labelledby="gh-invite-title"
-    (submit)="$event.preventDefault(); invite(form)"
+    (submit)="$event.preventDefault(); makeCode(form)"
   >
     <h2 id="gh-invite-title" class="form-title">{{ tp.invite }}</h2>
     <p class="hint form-title">{{ tp.inviteHint }}</p>
@@ -26,34 +26,23 @@
         name="name"
         maxlength="120"
         autocomplete="off"
-        [attr.aria-invalid]="problem('name') ? true : null"
-        [attr.aria-describedby]="problem('name') ? 'gh-inv-name-error' : null"
+        [attr.aria-invalid]="nameProblem() ? true : null"
+        [attr.aria-describedby]="nameProblem() ? 'gh-inv-name-error' : null"
       />
-      @if (problem('name'); as message) {
-        <p id="gh-inv-name-error" class="gh-error">{{ message }}</p>
-      }
-    </div>
-    <div class="field">
-      <label class="gh-label" for="gh-inv-email">{{ tp.email }}</label>
-      <input
-        id="gh-inv-email"
-        class="gh-input"
-        type="email"
-        name="email"
-        dir="ltr"
-        autocomplete="off"
-        [attr.aria-invalid]="problem('email') ? true : null"
-        [attr.aria-describedby]="problem('email') ? 'gh-inv-email-error' : null"
-      />
-      @if (problem('email'); as message) {
-        <p id="gh-inv-email-error" class="gh-error">{{ message }}</p>
+      @if (nameProblem(); as problem) {
+        <p id="gh-inv-name-error" class="gh-error">
+          {{ tc.errors[problem] }}
+        </p>
       }
     </div>
     <div class="field">
       <label class="gh-label" for="gh-inv-role">{{ tp.role }}</label>
       <select id="gh-inv-role" class="gh-input" name="role">
         @for (role of roles; track role) {
-          <option [value]="role" [selected]="role === 'supervisor'">
+          <option
+            [value]="role"
+            [attr.selected]="role === 'supervisor' ? '' : null"
+          >
             {{ t().roles[role] }}
           </option>
         }
@@ -64,8 +53,29 @@
         {{ busy() ? t().auth.busy : tp.submit }}
       </button>
     </div>
-    @if (message(); as text) {
-      <p class="message form-title" role="status">{{ text }}</p>
+    @if (made(); as code) {
+      <div class="made" role="status">
+        <p class="form-title">
+          {{ i18n.fill(tp.made, { name: code.fullName }) }}
+        </p>
+        <p class="join-code" dir="ltr">{{ format(code.code) }}</p>
+        <p class="hint">
+          {{ i18n.fill(tp.madeHint, { date: i18n.until(code.expiresAt) }) }}
+        </p>
+        <div class="row-actions">
+          <button type="button" ghButton="secondary" (click)="copy(code)">
+            {{ copied() ? tp.copied : tp.copy }}
+          </button>
+          <a
+            ghButton="secondary"
+            target="_blank"
+            rel="noopener"
+            [href]="whatsAppLink(code)"
+          >
+            {{ tp.whatsapp }}
+          </a>
+        </div>
+      </div>
     }
   </form>
 }
@@ -152,9 +162,9 @@
 </section>
 
 @if (store.canEdit()) {
-  <section aria-labelledby="gh-invitations-title">
-    <h2 id="gh-invitations-title" class="form-title">{{ tp.invitations }}</h2>
-    @if (store.setup().invitations.length === 0) {
+  <section aria-labelledby="gh-codes-title">
+    <h2 id="gh-codes-title" class="form-title">{{ tp.codes }}</h2>
+    @if (store.setup().joinCodes.length === 0) {
       <p class="hint">{{ tc.none }}</p>
     } @else {
       <div class="table-wrap">
@@ -162,24 +172,22 @@
           <thead>
             <tr>
               <th scope="col">{{ tc.name }}</th>
-              <th scope="col">{{ tp.email }}</th>
               <th scope="col">{{ tp.role }}</th>
+              <th scope="col">{{ tp.code }}</th>
+              <th scope="col">{{ tp.expires }}</th>
               <th scope="col">{{ tc.actions }}</th>
             </tr>
           </thead>
           <tbody>
-            @for (i of store.setup().invitations; track i.email) {
+            @for (c of store.setup().joinCodes; track c.code) {
               <tr>
-                <th scope="row">{{ i.fullName }}</th>
-                <td dir="ltr">{{ i.email }}</td>
-                <td>{{ t().roles[i.role] }}</td>
+                <th scope="row">{{ c.fullName }}</th>
+                <td>{{ t().roles[c.role] }}</td>
+                <td class="code" dir="ltr">{{ format(c.code) }}</td>
+                <td>{{ i18n.until(c.expiresAt) }}</td>
                 <td>
-                  <button
-                    type="button"
-                    ghButton="ghost"
-                    (click)="store.cancelInvitation(i.email)"
-                  >
-                    {{ tp.cancelInvite }}
+                  <button type="button" ghButton="ghost" (click)="withdraw(c)">
+                    {{ tp.withdraw }}
                   </button>
                 </td>
               </tr>

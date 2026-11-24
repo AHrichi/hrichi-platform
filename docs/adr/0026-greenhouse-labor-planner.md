@@ -84,10 +84,15 @@ The owner's brief suggested Ionic + Capacitor for the phones, Supabase as the ba
   - Ids are UUIDs made on the client, `crypto.randomUUID` or `getRandomValues` on plain HTTP, so every write is safe to repeat.
 
 - **What the dashboard needs from the database** (G3, `…_dashboard.sql`).
-  - People join a farm by invitation: `invite_member()` adds someone who has an account, otherwise leaves an invitation that a trigger on `auth.users` claims when that email signs up. This relies on email confirmation, which must stay on in a hosted project.
+  - People first joined a farm by email invitation. That relied on email confirmation, which the planner can't afford (below), so `…_join_codes.sql` replaced it.
   - `save_plan_row()` writes one greenhouse's week of the plan in a single transaction.
   - `work_totals()` sums the work log per day, team and greenhouse, so history fits under the API's 1,000-row limit.
   - Badge QR codes are drawn by `uqr` (MIT, no dependencies) as one SVG path per badge.
+
+- **Join codes, no email** (`…_join_codes.sql`).
+  - The planner has to cost nothing to run, and Supabase's free built-in mail only reaches the project team's own addresses. So the project sends no email, confirmation stays off, and an email address is only a sign-in name that nothing verifies.
+  - An invitation matched by email would then go to whoever signed up with that address first. Instead a manager makes a **join code** for one person (`create_join_code()`: 8 characters without 0/O or 1/I, 40 random bits, once, for 7 days) and hands it over in person or on WhatsApp. The holder creates an account in either app and enters it (`redeem_join_code()`), which adds them with the name and role the manager chose.
+  - Only managers see and withdraw codes. A forgotten password can't be reset by email: the person makes a new account and gets a new code.
 
 - **Performance and labour cost** (G5, `…_performance.sql`).
   - Rates are ratios of totals (all kg over all hours), never averages of rates. Rankings leave out anyone with fewer than 16 logged hours in the period, where a rate is mostly luck.

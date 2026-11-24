@@ -19,6 +19,11 @@ export interface FieldRemote {
   /** The signed-in supervisor's farm. Throws a `RemoteError`. */
   fetchRoster(): Promise<Roster>;
   /**
+   * Joins the farm a manager's code belongs to; returns its id. A wrong,
+   * used or expired code is a `rejected` `RemoteError`.
+   */
+  joinFarm(code: string): Promise<string>;
+  /**
    * Stores a photo at `path`. One already there counts as stored, so a
    * retry is harmless. Throws a `RemoteError`.
    */
