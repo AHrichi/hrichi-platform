@@ -61,6 +61,7 @@ The owner's brief suggested Ionic + Capacitor for the phones, Supabase as the ba
   - The field app uses `@ah/ui` tokens and its own large controls instead, sized one step above the design system's largest for gloves and glare.
   - Capacitor 8 wraps the same build for Android.
   - Badges are QR codes read with the `BarcodeDetector` API (Chrome on Android). Typing the code or picking from the list are fallbacks.
+  - Inside the Android app (G4), the Google code scanner from Play Services reads them instead, and `@capacitor/network` reports the connection. Both sit behind ports with browser defaults, so the PWA is unchanged and never loads the plugins.
 
 - **A design system of its own, on the platform's** ([docs/greenhouse/design-system.md](../greenhouse/design-system.md)).
   - It is a `greenhouse` token look: a green accent and a blue focus ring, through the contrast gate. The gate now checks the scene pairs only for looks that draw scenes.
@@ -104,8 +105,8 @@ The owner's brief suggested Ionic + Capacitor for the phones, Supabase as the ba
 ## Consequences
 
 - One shared domain lib keeps the plan, the phone's validation and the database's checks in step. A test checks that the schema's crop list matches the domain's.
-- The field app ships no Ionic look. If a native feel matters later, Capacitor plugins (camera barcode scanning, network status) can be added without Ionic.
+- The field app ships no Ionic look. Its two Capacitor plugins (code scanner, network status) came without Ionic.
 - The portfolio shows the dashboard's demo build at `/apps/greenhouse` (G6). The kit carries its own stylesheet (`<gh-kit-styles />` in each app's shell), because the portfolio shell loads no product's global CSS.
-- Real use still needs the hosted project's publishable key in a `hosted` build and the Android project (`cap add android`). See `docs/greenhouse/AI_HANDOFF.md`.
+- Real use still needs the hosted project's publishable key in a `hosted` build, and the Android app tried and signed. See `docs/greenhouse/AI_HANDOFF.md`.
 - `@supabase/supabase-js` is loaded only when a server is configured, so the demo never downloads it.
 - A photo removed from an answer after upload stays in the bucket, unreferenced; a manager-side clean-up can come later if storage matters.
