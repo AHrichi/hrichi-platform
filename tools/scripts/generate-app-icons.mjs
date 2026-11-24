@@ -7,6 +7,11 @@
 //   icons/apple-touch-icon.png, manifest.webmanifest
 // and the matching <link>/<meta> tags in src/index.html.
 //
+// An app with `android` (a Capacitor project) also gets its launcher icons:
+//   mipmap-*/ic_launcher.png, ic_launcher_round.png and the adaptive icon's
+//   ic_launcher_foreground.png, values/ic_launcher_background.xml, and the
+//   splash screens drawable*/splash.png.
+//
 // PNGs are rendered with Playwright's Chromium. Rerun after editing APPS:
 //   node tools/scripts/generate-app-icons.mjs [app-key ...]
 import { chromium } from '@playwright/test';
@@ -115,6 +120,7 @@ const APPS = {
     bg: '#15803d',
     fg: '#ffffff',
     theme: '#15803d',
+    android: 'android/app/src/main/res',
     // A tunnel greenhouse with its hoops.
     glyph: `<path d="M10 50 V32 C10 20 20 13 32 13 S54 20 54 32 V50 Z"/><path d="M22 50 V17.5 M32 50 V13 M42 50 V17.5 M10 50 H54"/>`,
   },
@@ -269,18 +275,111 @@ function patchIndex(file, app) {
   writeFileSync(file, html);
 }
 
+/** Android's density buckets: launcher icon (48dp) and adaptive layer (108dp) sizes. */
+const DENSITIES = [
+  ['mdpi', 48, 108],
+  ['hdpi', 72, 162],
+  ['xhdpi', 96, 216],
+  ['xxhdpi', 144, 324],
+  ['xxxhdpi', 192, 432],
+];
+
+/** Capacitor's splash screens: [folder, width, height]. */
+const SPLASHES = [
+  ['drawable', 480, 320],
+  ['drawable-port-mdpi', 320, 480],
+  ['drawable-port-hdpi', 480, 800],
+  ['drawable-port-xhdpi', 720, 1280],
+  ['drawable-port-xxhdpi', 960, 1600],
+  ['drawable-port-xxxhdpi', 1280, 1920],
+  ['drawable-land-mdpi', 480, 320],
+  ['drawable-land-hdpi', 800, 480],
+  ['drawable-land-xhdpi', 1280, 720],
+  ['drawable-land-xxhdpi', 1600, 960],
+  ['drawable-land-xxxhdpi', 1920, 1280],
+];
+
+/** The glyph alone on transparent ground, inside the adaptive icon's safe zone. */
+function foregroundSvg(app) {
+  // 108dp layer; the launcher shows the middle 72dp, the safe circle is 66dp.
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 108 108">
+  <g transform="translate(54 54) scale(0.8) translate(-32 -32)" color="${app.fg}" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round">
+    ${app.glyph}
+  </g>
+</svg>
+`;
+}
+
+/** The round launcher icon: the glyph on a disc. */
+function roundSvg(app) {
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <circle cx="32" cy="32" r="32" fill="${app.bg}"/>
+  <g transform="translate(32 32) scale(0.8) translate(-32 -32)" color="${app.fg}" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round">
+    ${app.glyph}
+  </g>
+</svg>
+`;
+}
+
+/** A splash screen: the app colour with the glyph in the middle. */
+function splashSvg(app, width, height) {
+  const size = Math.round(Math.min(width, height) * 0.32);
+  const x = (width - size) / 2;
+  const y = (height - size) / 2;
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}">
+  <rect width="${width}" height="${height}" fill="${app.bg}"/>
+  <g transform="translate(${x} ${y}) scale(${size / 64})" color="${app.fg}" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round">
+    ${app.glyph}
+  </g>
+</svg>
+`;
+}
+
 const only = process.argv.slice(2);
 const browser = await chromium.launch();
 const page = await browser.newPage({ deviceScaleFactor: 1 });
 
-async function png(svg, size) {
-  await page.setViewportSize({ width: size, height: size });
+async function png(svg, size, height = size) {
+  await page.setViewportSize({ width: size, height });
   await page.setContent(
     `<html><body style="margin:0;background:transparent">` +
-      svg.replace('<svg ', `<svg width="${size}" height="${size}" `) +
+      svg.replace('<svg ', `<svg width="${size}" height="${height}" `) +
       `</body></html>`,
   );
   return page.locator('svg').screenshot({ omitBackground: true, type: 'png' });
+}
+
+/** Launcher icons and splash screens for a Capacitor Android project. */
+async function androidIcons(app) {
+  const res = join(app.dir, app.android);
+  const square = iconSvg(app);
+  const round = roundSvg(app);
+  const foreground = foregroundSvg(app);
+  for (const [density, icon, layer] of DENSITIES) {
+    const dir = join(res, `mipmap-${density}`);
+    mkdirSync(dir, { recursive: true });
+    writeFileSync(join(dir, 'ic_launcher.png'), await png(square, icon));
+    writeFileSync(join(dir, 'ic_launcher_round.png'), await png(round, icon));
+    writeFileSync(
+      join(dir, 'ic_launcher_foreground.png'),
+      await png(foreground, layer),
+    );
+  }
+  writeFileSync(
+    join(res, 'values/ic_launcher_background.xml'),
+    `<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="ic_launcher_background">${app.bg}</color>
+</resources>
+`,
+  );
+  for (const [folder, width, height] of SPLASHES) {
+    mkdirSync(join(res, folder), { recursive: true });
+    writeFileSync(
+      join(res, folder, 'splash.png'),
+      await png(splashSvg(app, width, height), width, height),
+    );
+  }
 }
 
 for (const [key, app] of Object.entries(APPS)) {
@@ -319,7 +418,10 @@ for (const [key, app] of Object.entries(APPS)) {
   );
 
   patchIndex(join(app.dir, 'src/index.html'), app);
-  console.log(`${key}: icons + manifest written`);
+  if (app.android) await androidIcons(app);
+  console.log(
+    `${key}: icons + manifest${app.android ? ' + Android icons' : ''} written`,
+  );
 }
 
 await browser.close();
