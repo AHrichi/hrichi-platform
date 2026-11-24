@@ -6,9 +6,10 @@ import {
   signal,
 } from '@angular/core';
 import {
-  checkEmail,
   checkPersonName,
+  formatJoinCode,
   isRole,
+  type JoinCode,
   type Member,
   ROLES,
   type SetupProblem,
@@ -18,7 +19,11 @@ import { DashboardI18n } from '../i18n/dashboard-i18n';
 import { formText } from '../shared/problems';
 import { FarmStore } from '../store/farm.store';
 
-/** Who can sign in to the farm: members, invitations, and inviting. */
+/**
+ * Who can sign in to the farm: its members, and join codes for the people
+ * a manager adds. The project sends no email, so a code is handed over in
+ * person or on WhatsApp.
+ */
 @Component({
   selector: 'gh-people-screen',
   imports: [GhButton],
@@ -33,11 +38,12 @@ export class PeopleScreen {
   protected readonly roles = ROLES;
   private readonly window = inject(DOCUMENT).defaultView;
 
-  protected readonly problems = signal<
-    Partial<Record<'email' | 'name', SetupProblem>>
-  >({});
-  protected readonly message = signal<string | null>(null);
+  protected readonly nameProblem = signal<SetupProblem | null>(null);
   protected readonly busy = signal(false);
+  /** The code just made, shown big until the next one. */
+  protected readonly made = signal<JoinCode | null>(null);
+  protected readonly copied = signal(false);
+  protected readonly format = formatJoinCode;
   /** The member whose name is being changed. */
   protected readonly renaming = signal<string | null>(null);
   protected readonly renameProblem = signal<SetupProblem | null>(null);
@@ -46,32 +52,58 @@ export class PeopleScreen {
     return member.userId === this.store.account()?.id;
   }
 
-  protected async invite(form: HTMLFormElement): Promise<void> {
+  protected async makeCode(form: HTMLFormElement): Promise<void> {
     if (this.busy()) return;
     const values = formText(form);
-    const email = checkEmail(values['email'] ?? '');
     const checked = checkPersonName(values['name'] ?? '');
     const role = values['role'];
-    const problems: Partial<Record<'email' | 'name', SetupProblem>> = {};
-    if (!email)
-      problems.email = values['email']?.trim() ? 'invalid' : 'required';
-    if (!checked.ok) problems.name = checked.errors.name;
-    this.problems.set(problems);
-    this.message.set(null);
-    if (!email || !checked.ok || !isRole(role)) return;
-    const name = checked.value;
+    this.nameProblem.set(
+      checked.ok ? null : (checked.errors.name ?? 'invalid'),
+    );
+    if (!checked.ok || !isRole(role)) return;
 
     this.busy.set(true);
+    this.made.set(null);
+    this.copied.set(false);
     try {
-      const result = await this.store.invite(email, role, name);
-      if (!result) return;
+      const code = await this.store.createJoinCode(role, checked.value);
+      if (!code) return;
       form.reset();
-      this.message.set(
-        this.i18n.fill(this.t().people[result], { name, email }),
-      );
+      this.made.set(code);
     } finally {
       this.busy.set(false);
     }
+  }
+
+  protected async copy(code: JoinCode): Promise<void> {
+    try {
+      await this.window?.navigator.clipboard.writeText(
+        formatJoinCode(code.code),
+      );
+      this.copied.set(true);
+    } catch {
+      // No clipboard here; the code is on screen to copy by hand.
+    }
+  }
+
+  /** WhatsApp's share link: the manager picks the person in WhatsApp. */
+  protected whatsAppLink(code: JoinCode): string {
+    // Supervisors use the phone app; managers and HR the dashboard.
+    const tp = this.t().people;
+    const message =
+      code.role === 'supervisor' ? tp.messageField : tp.messageDashboard;
+    const text = this.i18n.fill(message, {
+      farm: this.store.access()?.farmName ?? '',
+      role: this.t().roles[code.role],
+      code: formatJoinCode(code.code),
+      date: this.i18n.until(code.expiresAt),
+    });
+    return `https://wa.me/?text=${encodeURIComponent(text)}`;
+  }
+
+  protected withdraw(code: JoinCode): void {
+    if (this.made()?.code === code.code) this.made.set(null);
+    void this.store.withdrawJoinCode(code.code);
   }
 
   protected startRename(member: Member): void {
@@ -103,10 +135,5 @@ export class PeopleScreen {
     if (this.window?.confirm(question)) {
       void this.store.removeMember(member.userId);
     }
-  }
-
-  protected problem(field: 'email' | 'name'): string | null {
-    const problem = this.problems()[field];
-    return problem ? this.t().common.errors[problem] : null;
   }
 }

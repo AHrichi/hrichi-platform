@@ -51,10 +51,17 @@ export const FR: FieldCopy = {
     signOutPending: 'Envoyez les saisies en attente avant de vous déconnecter.',
     signInAgain: 'Se reconnecter',
     noFarm:
-      'Ce compte n’est rattaché à aucune ferme. Demandez à votre responsable de vous ajouter.',
+      'Ce compte n’est rattaché à aucune ferme. Saisissez le code d’accès donné par votre responsable.',
+    joinCode: 'Code d’accès',
+    joinSubmit: 'Rejoindre la ferme',
+    joinRequired: 'Saisissez le code de 8 caractères, par exemple K7QX-M2PD.',
+    joinInvalid:
+      'Ce code est erroné, déjà utilisé ou expiré. Demandez-en un nouveau à votre responsable.',
+    joinOffline: 'Pas de réseau. Rejoindre une ferme demande Internet.',
+    joinFailed: 'Impossible de rejoindre la ferme. Réessayez dans un instant.',
     signUpTitle: 'Créer un compte',
     signUpIntro:
-      'Utilisez l’e-mail auquel votre responsable vous a invité. Vous rejoignez la ferme dès que le compte existe.',
+      'Votre e-mail sert seulement d’identifiant : rien n’y est envoyé. Ensuite, saisissez le code d’accès donné par votre responsable.',
     newPassword: 'Mot de passe (8 caractères au moins)',
     signUpSubmit: 'Créer le compte',
     noAccount: 'Pas encore de compte ?',

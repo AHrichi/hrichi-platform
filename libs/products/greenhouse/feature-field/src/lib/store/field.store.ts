@@ -196,7 +196,7 @@ export const FieldStore = signalStore(
         patchState(store, { roster, status: 'ready', noFarm: false });
         return roster;
       } catch (error) {
-        // Signed in, but no manager has added this account to a farm yet.
+        // Signed in, but not on a farm yet: the home screen asks for a code.
         if (error instanceof RemoteError && error.kind === 'rejected') {
           patchState(store, { noFarm: true });
         }
@@ -394,15 +394,37 @@ export const FieldStore = signalStore(
       },
 
       /**
-       * Creates an account. With email confirmation on (the hosted
-       * project), it returns `confirm-email`: the supervisor follows the
-       * link, then signs in. A manager's invitation to that email makes
-       * them a member as the account is created.
+       * Creates an account and signs in. The project sends no email, so
+       * the account is on no farm until the supervisor enters a manager's
+       * join code (`joinFarm`).
        */
       async signUp(email: string, password: string): Promise<SignUpResult> {
         const result = await auth.signUp(email, password);
         if (result === null) await openAccount(email);
         return result;
+      },
+
+      /**
+       * Joins a farm with the code a manager gave, then downloads it.
+       * `invalid`: wrong, used or expired; `offline`: no signal.
+       */
+      async joinFarm(
+        code: string,
+      ): Promise<'invalid' | 'offline' | 'failed' | null> {
+        if (!remote) return 'failed';
+        try {
+          await remote.joinFarm(code);
+        } catch (error) {
+          if (error instanceof RemoteError && error.kind === 'rejected') {
+            return 'invalid';
+          }
+          if (error instanceof RemoteError && error.kind === 'offline') {
+            return 'offline';
+          }
+          return 'failed';
+        }
+        await openAccount(store.account() ?? '');
+        return null;
       },
 
       /** The session ran out: sign in again as the same account. */

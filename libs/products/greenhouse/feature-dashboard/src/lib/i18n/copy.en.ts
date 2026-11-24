@@ -47,6 +47,8 @@ export const EN = {
     signUpTitle: 'Create an account',
     signUpSubmit: 'Create account',
     newPassword: 'Password (at least 8 characters)',
+    signUpHint:
+      'Your email is only your sign-in name: nothing is sent to it. To join a farm, you will need a join code from its manager.',
     confirmEmail:
       'Check your email and follow the link to confirm your account, then sign in.',
     errors: {
@@ -61,11 +63,18 @@ export const EN = {
   farm: {
     title: 'Set up your farm',
     intro:
-      'This account is on no farm yet. If your manager invited you, sign in with the email they used. Otherwise, create the farm and you will be its manager.',
+      'This account is on no farm yet. If a manager gave you a join code, enter it. Otherwise, create a farm and you will be its manager.',
     name: 'Farm name',
     you: 'Your name',
     submit: 'Create the farm',
     choose: 'Farm',
+    joinTitle: 'Join with a code',
+    joinCode: 'Join code',
+    joinSubmit: 'Join the farm',
+    joinInvalid:
+      'That code is wrong, used or expired. Ask the manager for a new one.',
+    joinRequired: 'Enter the 8-character code, for example K7QX-M2PD.',
+    createTitle: 'Or create a new farm',
   },
   common: {
     add: 'Add',
@@ -250,7 +259,7 @@ export const EN = {
     editing: 'Editing {name}',
     none: 'No teams yet.',
     deleteConfirm: 'Delete {name}? Its workers stay on the farm, with no team.',
-    noSupervisors: 'Invite supervisors under People to put one in charge.',
+    noSupervisors: 'Add supervisors under People to put one in charge.',
   },
   workers: {
     title: 'Workers',
@@ -281,18 +290,25 @@ export const EN = {
     intro:
       'Who can sign in to this farm. Supervisors log work on their phones; HR reads everything and changes nothing.',
     members: 'Members',
-    invitations: 'Waiting for sign-up',
-    invite: 'Invite someone',
+    codes: 'Join codes not used yet',
+    invite: 'Add someone',
     inviteHint:
-      'If they already have an account, they join at once. Otherwise they join when they create one with this email.',
-    email: 'Email',
+      'Make a code and give it to them in person or on WhatsApp. They create an account, enter the code and join with this name and role. A code works once, for 7 days.',
     role: 'Role',
-    submit: 'Invite',
-    added: '{name} was added to the farm.',
-    updated: '{name}’s role was changed.',
-    invited: '{email} is invited: they join when they create their account.',
+    submit: 'Make a join code',
+    made: 'Join code for {name}',
+    madeHint: 'Works once, until {date}.',
+    code: 'Code',
+    expires: 'Works until',
+    copy: 'Copy',
+    copied: 'Copied',
+    whatsapp: 'Send on WhatsApp',
+    messageField:
+      'You are invited to {farm} as {role}. In the Field log app on your phone, create an account, then enter this join code: {code}. It works until {date}.',
+    messageDashboard:
+      'You are invited to {farm} as {role}. On the Labour planner website, create an account, then enter this join code: {code}. It works until {date}.',
     you: 'you',
-    cancelInvite: 'Cancel',
+    withdraw: 'Withdraw',
     rename: 'Rename',
     renameLabel: 'New name for {name}',
     removeConfirm: 'Remove {name} from the farm? Their past entries stay.',

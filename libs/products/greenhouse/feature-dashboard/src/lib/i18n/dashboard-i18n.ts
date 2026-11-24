@@ -112,6 +112,18 @@ export class DashboardI18n {
     }).format(new Date(`${date}T12:00:00Z`));
   }
 
+  /** `Monday 30 November, 14:05`, on the farm's clock: when a code expires. */
+  until(iso: string): string {
+    return new Intl.DateTimeFormat(this.locale(), {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+      hour: '2-digit',
+      minute: '2-digit',
+      timeZone: FARM_TIME_ZONE,
+    }).format(new Date(iso));
+  }
+
   /** `23 November 2026` */
   date(date: string): string {
     return new Intl.DateTimeFormat(this.locale(), {

@@ -50,10 +50,18 @@ export const EN = {
     signOut: 'Sign out',
     signOutPending: 'Send the waiting entries before signing out.',
     signInAgain: 'Sign in again',
-    noFarm: 'This account is not on any farm yet. Ask your manager to add you.',
+    noFarm:
+      'This account is not on a farm yet. Enter the join code your manager gave you.',
+    joinCode: 'Join code',
+    joinSubmit: 'Join the farm',
+    joinRequired: 'Enter the 8-character code, for example K7QX-M2PD.',
+    joinInvalid:
+      'That code is wrong, used or expired. Ask your manager for a new one.',
+    joinOffline: 'No signal. Joining a farm needs the internet.',
+    joinFailed: 'Could not join. Try again in a moment.',
     signUpTitle: 'Create an account',
     signUpIntro:
-      'Use the email your manager invited. You join the farm as soon as the account exists.',
+      'Your email is only your sign-in name: nothing is sent to it. Then enter the join code your manager gave you.',
     newPassword: 'Password (at least 8 characters)',
     signUpSubmit: 'Create account',
     noAccount: 'No account yet?',

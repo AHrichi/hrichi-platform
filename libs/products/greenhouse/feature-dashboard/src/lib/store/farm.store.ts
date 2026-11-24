@@ -15,7 +15,6 @@ import {
   type FarmRemote,
   type FarmSetup,
   type FarmWeek,
-  type InviteResult,
   RemoteError,
   type RemoteErrorKind,
   type SignInError,
@@ -28,6 +27,7 @@ import {
   type Greenhouse,
   type HygieneItem,
   type IsoDate,
+  type JoinCode,
   lastWeeks,
   newId,
   type PlanEntry,
@@ -48,7 +48,7 @@ import { DashboardAuth } from '../auth/dashboard-auth';
  * Where the dashboard is:
  * - `starting`: reading the stored session;
  * - `signed-out`: the sign-in screen;
- * - `no-farm`: signed in, on no farm yet (make one, or wait for an invite);
+ * - `no-farm`: signed in, on no farm yet (make one, or join with a code);
  * - `loading` / `ready`: the farm is loading or loaded;
  * - `failed`: the farm couldn't load (see `problem`).
  */
@@ -91,7 +91,7 @@ const EMPTY_SETUP: FarmSetup = {
   workers: [],
   pay: [],
   members: [],
-  invitations: [],
+  joinCodes: [],
 };
 
 const byName = (a: { name: string }, b: { name: string }): number =>
@@ -359,6 +359,24 @@ export const FarmStore = signalStore(
         }
       },
 
+      /**
+       * Joins a farm with a manager's code and opens it. `invalid`: the
+       * code is wrong, used or expired; `failed`: the banner says why.
+       */
+      async joinFarm(code: string): Promise<'invalid' | 'failed' | null> {
+        if (!remote) return 'failed';
+        try {
+          await openFarms(await remote.joinFarm(code));
+          return null;
+        } catch (error) {
+          if (error instanceof RemoteError && error.kind === 'rejected') {
+            return 'invalid';
+          }
+          fail(error);
+          return 'failed';
+        }
+      },
+
       openFarm,
 
       async showWeek(date: IsoDate): Promise<void> {
@@ -577,26 +595,26 @@ export const FarmStore = signalStore(
 
       // People --------------------------------------------------------------
 
-      async invite(
-        email: string,
+      /** A code for one person to join the farm, shown to the manager. */
+      async createJoinCode(
         role: Role,
         fullName: string,
-      ): Promise<InviteResult | null> {
+      ): Promise<JoinCode | null> {
         const outcome = await send((r, farm) =>
-          r.invite(farm, email, role, fullName),
+          r.createJoinCode(farm, role, fullName),
         );
         if (!outcome.ok) return null;
-        // The server decides whether it was a member or an invitation.
-        await refreshSetup();
-        return outcome.value;
+        const code = outcome.value;
+        patchSetup((s) => ({ ...s, joinCodes: [...s.joinCodes, code] }));
+        return code;
       },
 
-      cancelInvitation(email: string): Promise<boolean> {
+      withdrawJoinCode(code: string): Promise<boolean> {
         patchSetup((s) => ({
           ...s,
-          invitations: s.invitations.filter((i) => i.email !== email),
+          joinCodes: s.joinCodes.filter((c) => c.code !== code),
         }));
-        return write((r, farm) => r.cancelInvitation(farm, email));
+        return write((r, farm) => r.withdrawJoinCode(farm, code));
       },
 
       renameMember(userId: string, fullName: string): Promise<boolean> {

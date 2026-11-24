@@ -49,6 +49,8 @@ export const FR: DashboardCopy = {
     signUpTitle: 'Créer un compte',
     signUpSubmit: 'Créer le compte',
     newPassword: 'Mot de passe (8 caractères minimum)',
+    signUpHint:
+      'Votre e-mail sert seulement d’identifiant : rien n’y est envoyé. Pour rejoindre une ferme, il vous faudra un code d’accès de son responsable.',
     confirmEmail:
       'Consultez vos e-mails et suivez le lien pour confirmer le compte, puis connectez-vous.',
     errors: {
@@ -63,11 +65,18 @@ export const FR: DashboardCopy = {
   farm: {
     title: 'Créer votre ferme',
     intro:
-      'Ce compte n’appartient encore à aucune ferme. Si votre responsable vous a invité, connectez-vous avec l’e-mail utilisé. Sinon, créez la ferme : vous en serez le responsable.',
+      'Ce compte n’appartient encore à aucune ferme. Si un responsable vous a donné un code d’accès, saisissez-le. Sinon, créez une ferme : vous en serez le responsable.',
     name: 'Nom de la ferme',
     you: 'Votre nom',
     submit: 'Créer la ferme',
     choose: 'Ferme',
+    joinTitle: 'Rejoindre avec un code',
+    joinCode: 'Code d’accès',
+    joinSubmit: 'Rejoindre la ferme',
+    joinInvalid:
+      'Ce code est erroné, déjà utilisé ou expiré. Demandez-en un nouveau au responsable.',
+    joinRequired: 'Saisissez le code de 8 caractères, par exemple K7QX-M2PD.',
+    createTitle: 'Ou créer une nouvelle ferme',
   },
   common: {
     add: 'Ajouter',
@@ -257,7 +266,7 @@ export const FR: DashboardCopy = {
     deleteConfirm:
       'Supprimer {name} ? Ses ouvriers restent dans la ferme, sans équipe.',
     noSupervisors:
-      'Invitez des chefs d’équipe dans Accès pour en nommer un responsable.',
+      'Ajoutez des chefs d’équipe dans Accès pour en nommer un responsable.',
   },
   workers: {
     title: 'Ouvriers',
@@ -288,18 +297,25 @@ export const FR: DashboardCopy = {
     intro:
       'Qui peut se connecter à cette ferme. Les chefs d’équipe saisissent le travail sur leur téléphone ; les RH consultent tout sans rien modifier.',
     members: 'Membres',
-    invitations: 'En attente d’inscription',
-    invite: 'Inviter quelqu’un',
+    codes: 'Codes d’accès pas encore utilisés',
+    invite: 'Ajouter quelqu’un',
     inviteHint:
-      'S’il a déjà un compte, il rejoint la ferme aussitôt. Sinon, il la rejoint en créant un compte avec cet e-mail.',
-    email: 'E-mail',
+      'Créez un code et donnez-le en main propre ou sur WhatsApp. La personne crée un compte, saisit le code et rejoint la ferme avec ce nom et ce rôle. Un code sert une fois, pendant 7 jours.',
     role: 'Rôle',
-    submit: 'Inviter',
-    added: '{name} a été ajouté à la ferme.',
-    updated: 'Le rôle de {name} a été modifié.',
-    invited: '{email} est invité : il rejoindra la ferme en créant son compte.',
+    submit: 'Créer un code d’accès',
+    made: 'Code d’accès pour {name}',
+    madeHint: 'Sert une fois, jusqu’au {date}.',
+    code: 'Code',
+    expires: 'Valable jusqu’au',
+    copy: 'Copier',
+    copied: 'Copié',
+    whatsapp: 'Envoyer sur WhatsApp',
+    messageField:
+      'Vous êtes invité à {farm} comme {role}. Dans l’application Carnet de terrain sur votre téléphone, créez un compte puis saisissez ce code d’accès : {code}. Il est valable jusqu’au {date}.',
+    messageDashboard:
+      'Vous êtes invité à {farm} comme {role}. Sur le site du Planificateur de main-d’œuvre, créez un compte puis saisissez ce code d’accès : {code}. Il est valable jusqu’au {date}.',
     you: 'vous',
-    cancelInvite: 'Annuler',
+    withdraw: 'Retirer',
     rename: 'Renommer',
     renameLabel: 'Nouveau nom pour {name}',
     removeConfirm:

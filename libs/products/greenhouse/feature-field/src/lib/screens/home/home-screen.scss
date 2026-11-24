@@ -102,3 +102,27 @@
   text-align: center;
   color: var(--color-text-muted);
 }
+
+// On no farm yet: the join code, typed on the phone.
+.join {
+  display: grid;
+  gap: var(--space-3);
+  max-inline-size: 24rem;
+  margin-inline: auto;
+  text-align: start;
+
+  p {
+    margin: 0;
+  }
+
+  .gh-label {
+    margin-block-end: 0;
+  }
+}
+
+.code {
+  font-family: var(--font-family-mono, monospace);
+  font-size: var(--font-size-500);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
