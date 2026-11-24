@@ -7,8 +7,8 @@ Last updated 2026-11-25:
 - **G1, G2 and the design system are merged into `main`.** G1 (foundation) came in through PR [#22](https://github.com/AHrichi/hrichi-platform/pull/22). G2 (supervisor sign-in and real sync, verified against local Supabase), the design system and brand packs, and the tomato demo farm came in through PR [#23](https://github.com/AHrichi/hrichi-platform/pull/23). See [design-system.md](design-system.md).
 - **G3 (the dashboard on Supabase) and G5 are merged** (PRs [#24](https://github.com/AHrichi/hrichi-platform/pull/24), [#25](https://github.com/AHrichi/hrichi-platform/pull/25) and [#26](https://github.com/AHrichi/hrichi-platform/pull/26)): performance and labour cost (G5a), and the hygiene checklist with photos and sign-off (G5b), both verified against local Supabase.
 - **G6 (the demo in the portfolio) and G4 (Android) are merged** (PRs [#27](https://github.com/AHrichi/hrichi-platform/pull/27) and [#28](https://github.com/AHrichi/hrichi-platform/pull/28)). CI builds a debug APK; it hasn't been tried on a phone yet.
-- **Zero cost** is a hard rule: free tiers only, no Google Play, no paid email. So the project sends **no email**, and people join a farm with **join codes** (on `feat/greenhouse-join-codes`, verified against local Supabase).
-- **Hosted Supabase (G2b):** the project `greenhouse-labor` (Paris) has the first four migrations; it still needs `…_join_codes.sql` and email confirmation off, and the `hosted` build waits for its publishable key (§6). Start each phase on a new branch from `main`.
+- **Zero cost** is a hard rule: free tiers only, no Google Play, no paid email. So the project sends **no email**, and people join a farm with **join codes** (PR [#30](https://github.com/AHrichi/hrichi-platform/pull/30), merged; verified against local Supabase).
+- **Hosted Supabase (G2b):** the project `greenhouse-labor` (Paris) has all five migrations (`…_join_codes.sql` applied on 2026-11-24 in the SQL editor, when it had no accounts) and **Confirm email is off**. Still empty: nobody has signed up. The `hosted` build waits for its publishable key (§6). Start each phase on a new branch from `main`.
 
 ## 0. Resume in five minutes
 
@@ -220,7 +220,7 @@ Gotchas:
    - Create a free project named `greenhouse-labor` in the region closest to Tunisia (`eu-west-3`, Paris). Use the "Generate a password" button for the database password; nothing here needs it.
    - Run the migrations in order, then `seed.sql` if the demo farm is wanted, in the dashboard's SQL editor. The CLI's `db push` works too, but needs an access token and the database password.
    - Put the project URL and **publishable** key (never the secret key) in the field app's `environment.production.ts`, and in a new `environment.production.ts` for the dashboard with a `production` file replacement. The dashboard's default build must stay the demo while it is the portfolio's remote; give the real one its own configuration.
-   - Auth: keep email confirmations **off**. The project sends no email (zero cost); people join with join codes. Apply `…_join_codes.sql` too.
+   - Auth: email confirmations are **off** (done). The project sends no email (zero cost); people join with join codes. All five migrations are applied.
    - The owner creates their account on the dashboard's sign-in screen, creates the farm there, and makes join codes for supervisors and HR on **People**.
 2. **Left over from G3:** done on the G5 branch. Supervisors can create their account in the field app, managers rename members on **People**, and targets came with G5a.
 3. **G4 on a phone.** Download the `greenhouse-field-debug-apk` artifact from the PR's CI run, install it, and check: the scanner screen opens and reads a printed badge; airplane mode shows "offline" and sending resumes when the signal comes back. Still to do:
