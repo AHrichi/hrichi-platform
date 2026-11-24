@@ -101,7 +101,10 @@ jobs:
 
       - name: Copy it into the Android project
         working-directory: apps/products/greenhouse/field
-        run: pnpm exec cap sync android
+        # The Capacitor CLI is a root dependency; this folder isn't a pnpm
+        # package, so `pnpm exec` can't find it here.
+        run: |
+          "$GITHUB_WORKSPACE/node_modules/.bin/cap" sync android
 
       - name: Build and sign the APK
         working-directory: ${{ env.ANDROID_DIR }}
