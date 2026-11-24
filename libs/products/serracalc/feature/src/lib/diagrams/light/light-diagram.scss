@@ -1,0 +1,64 @@
+@use '../../styles/serra' as sc;
+
+@include sc.diagram;
+
+.column {
+  fill: none;
+  stroke: var(--color-border-strong);
+  stroke-width: 1.5;
+}
+
+.sun-part {
+  fill: var(--color-warning-default);
+  opacity: 0.75;
+}
+
+.lamp-part {
+  fill: var(--color-accent-default);
+  opacity: 0.75;
+}
+
+.target {
+  stroke: var(--color-text-default);
+  stroke-width: 2;
+}
+
+.ceiling {
+  stroke: var(--color-text-muted);
+  stroke-width: 2;
+  stroke-dasharray: 6 4;
+}
+
+.amount {
+  fill: var(--color-text-default);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.lamp {
+  fill: var(--color-text-default);
+}
+
+.beam {
+  fill: var(--color-accent-default);
+  opacity: 0.18;
+}
+
+.plant {
+  fill: var(--color-success-default);
+  opacity: 0.85;
+}
+
+.day {
+  fill: var(--color-bg-canvas);
+  stroke: var(--color-border-strong);
+}
+
+.on {
+  fill: var(--color-accent-default);
+}
+
+.tick-label {
+  fill: var(--color-text-muted);
+  font-size: 11px;
+}

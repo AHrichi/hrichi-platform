@@ -162,6 +162,13 @@ export function defaultFuelPrice(fuel: FuelType, currency: Currency): number {
   return FUEL_PRICES[currency][fuel];
 }
 
+/** Example price of liquid CO₂ per kg; every screen asks for the real one. */
+const CO2_PRICES: Record<Currency, number> = { TND: 0.5, EUR: 0.15, USD: 0.16 };
+
+export function defaultCo2Price(currency: Currency): number {
+  return CO2_PRICES[currency];
+}
+
 export const PIPES: Record<PipeType, PipeProfile> = {
   // Painted steel pipe rail; bare galvanised radiates less (ε ≈ 0.3).
   steel_51: {
@@ -205,6 +212,7 @@ export const CROPS: Record<CropId, CropProfile> = {
     daySetC: 20,
     ventilateAboveC: 24,
     targetDli: 25,
+    maxDli: 30,
     plantsPerM2: 2.5,
     transpirationCoef: 0.65,
   },
@@ -214,6 +222,7 @@ export const CROPS: Record<CropId, CropProfile> = {
     daySetC: 21,
     ventilateAboveC: 26,
     targetDli: 20,
+    maxDli: 30,
     plantsPerM2: 1.6,
     transpirationCoef: 0.7,
   },
@@ -223,6 +232,7 @@ export const CROPS: Record<CropId, CropProfile> = {
     daySetC: 22,
     ventilateAboveC: 26,
     targetDli: 20,
+    maxDli: 28,
     plantsPerM2: 3.3,
     transpirationCoef: 0.6,
   },
@@ -232,6 +242,7 @@ export const CROPS: Record<CropId, CropProfile> = {
     daySetC: 22,
     ventilateAboveC: 28,
     targetDli: 22,
+    maxDli: 30,
     plantsPerM2: 1.2,
     transpirationCoef: 0.6,
   },
@@ -241,6 +252,7 @@ export const CROPS: Record<CropId, CropProfile> = {
     daySetC: 18,
     ventilateAboveC: 24,
     targetDli: 17,
+    maxDli: 25,
     plantsPerM2: 8,
     transpirationCoef: 0.55,
   },
@@ -250,6 +262,7 @@ export const CROPS: Record<CropId, CropProfile> = {
     daySetC: 18,
     ventilateAboveC: 22,
     targetDli: 15,
+    maxDli: 17,
     plantsPerM2: 16,
     transpirationCoef: 0.55,
   },
@@ -259,6 +272,7 @@ export const CROPS: Record<CropId, CropProfile> = {
     daySetC: 20,
     ventilateAboveC: 26,
     targetDli: 20,
+    maxDli: 30,
     plantsPerM2: 7,
     transpirationCoef: 0.6,
   },

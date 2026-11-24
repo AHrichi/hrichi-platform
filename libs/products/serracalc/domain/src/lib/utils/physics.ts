@@ -24,6 +24,16 @@ export function vpdKpa(tC: number, rhPct: number): number {
   return saturationVapourKpa(tC) * (1 - clampPct(rhPct) / 100);
 }
 
+/** Water in the air, kg per kg of dry air, at sea-level pressure. */
+export function humidityRatio(
+  tC: number,
+  rhPct: number,
+  pKpa = 101.325,
+): number {
+  const e = saturationVapourKpa(tC) * (clampPct(rhPct) / 100);
+  return (0.622 * e) / (pKpa - e);
+}
+
 /** Dew point, °C (inverse of Tetens). */
 export function dewPointC(tC: number, rhPct: number): number {
   const e = saturationVapourKpa(tC) * (Math.max(1, clampPct(rhPct)) / 100);

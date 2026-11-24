@@ -68,3 +68,18 @@ svg {
     background: var(--color-data-2);
   }
 }
+
+.level {
+  stroke: var(--color-text-default);
+  stroke-width: 1.5;
+  stroke-dasharray: 6 4;
+}
+
+.level-label {
+  fill: var(--color-text-default);
+  font-size: 11px;
+  font-weight: 600;
+  paint-order: stroke;
+  stroke: var(--color-bg-raised);
+  stroke-width: 3;
+}

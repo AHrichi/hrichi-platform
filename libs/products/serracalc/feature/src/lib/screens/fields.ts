@@ -123,6 +123,46 @@ export const RAIN_FIELDS: readonly FieldSpec[] = [
   spec('basinM3', 'm³', 0, 50000, 10),
 ];
 
+export const LIGHT_FIELDS: readonly FieldSpec[] = [
+  spec('targetDli', 'mol/m²·d', 5, 40, 1),
+  spec('maxDli', 'mol/m²·d', 10, 50, 1),
+  spec('lampHours', 'h', 2, 20, 1),
+  spec('efficacyUmolJ', 'µmol/J', 1, 4, 0.1),
+  spec('fixtureW', 'W', 50, 2000, 10),
+  floor,
+  transmission,
+  spec('co2KgPerKwh', 'kg/kWh', 0, 1.2, 0.01),
+];
+
+export const CO2_FIELDS: readonly FieldSpec[] = [
+  spec('targetPpm', 'ppm', 400, 1500, 10),
+  spec('outsidePpm', 'ppm', 380, 500, 5),
+  spec('airChangesPerHour', '/h', 0.2, 20, 0.1),
+  spec('uptakeGm2h', 'g/m²·h', 0, 8, 0.5),
+  spec('hoursPerDay', 'h', 1, 14, 1),
+  spec('daysPerYear', 'd', 30, 365, 5),
+  spec('burnerEfficiencyPct', '%', 50, 100, 1),
+  floor,
+  volume,
+];
+
+export const HUMIDITY_FIELDS: readonly FieldSpec[] = [
+  spec('insideC', '°C', 5, 30, 0.5),
+  spec('insideRhPct', '%', 50, 98, 1),
+  spec('outsideC', '°C', -20, 30, 0.5),
+  spec('outsideRhPct', '%', 20, 100, 1),
+  spec('transpirationGm2h', 'g/m²·h', 0, 80, 1),
+  spec('nightHours', 'h', 6, 16, 0.5),
+  floor,
+  volume,
+  uValue,
+];
+
+/** A price field in the project's currency, per its unit. */
+export function priceField(key: string, unit: string): FieldSpec {
+  return spec(key, unit, 0, 50, 0.01);
+}
+
 /** Copies the listed keys of `from` into a new object. */
 export function pick<T extends object, K extends keyof T>(
   from: T,

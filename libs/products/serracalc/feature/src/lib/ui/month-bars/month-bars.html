@@ -41,6 +41,23 @@
       <title>{{ b.tip }}</title>
     </path>
   }
+  @for (level of levels(); track level.label) {
+    <line
+      class="level"
+      [attr.x1]="left"
+      [attr.x2]="right"
+      [attr.y1]="level.y"
+      [attr.y2]="level.y"
+    />
+    <text
+      class="level-label"
+      [attr.x]="right - 2"
+      [attr.y]="level.y - 4"
+      text-anchor="end"
+    >
+      {{ i18n.word(level.label) }} {{ i18n.num(level.value, digits()) }}
+    </text>
+  }
   @for (m of months(); track $index) {
     <text
       class="axis"

@@ -2,14 +2,14 @@
 
 A briefing for whichever AI agent or IDE picks up SerraCalc, the greenhouse heat, water and climate engineering app. It assumes no memory of earlier sessions. Read it top to bottom before touching code; [AGENTS.md](../../AGENTS.md) has the protocol, [ADR-0027](../adr/0027-serracalc.md) the decisions.
 
-Last updated 2026-11-24: **S2 done on `feat/serracalc-s2-drawings`**, branched from S1 (`feat/greenhouse-energy-p1`). Neither is merged; merge S1 first, or S2 alone (it contains S1).
+Last updated 2026-11-24: **S3 done on `feat/serracalc-s3-light-air`**, which holds S1 and S2 too (`feat/greenhouse-energy-p1` → `feat/serracalc-s2-drawings` → this). None is merged; merging the S3 branch alone brings all three.
 
 ## 0. Resume in five minutes
 
 1. **Get the branch:**
 
    ```bash
-   git fetch origin && git switch feat/serracalc-s2-drawings
+   git fetch origin && git switch feat/serracalc-s3-light-air
    ```
 
    It was built in the worktree `.claude/worktrees/greenhouse-energy`. Check `git worktree list` first: one agent per checkout.
@@ -22,7 +22,7 @@ Last updated 2026-11-24: **S2 done on `feat/serracalc-s2-drawings`**, branched f
    pnpm exec stylelint "libs/products/serracalc/**/*.scss" "apps/products/serracalc/**/*.scss"
    ```
 
-   That's 3 projects and 44 tests.
+   That's 3 projects and 54 tests.
 
 4. **See it:** `pnpm nx run product-serracalc:build:development`, then `node tools/scripts/serve-static.mjs dist/apps/products/serracalc/web/browser 4314` and open `http://localhost:4314`. Inside the portfolio it is `/apps/serracalc`.
 
@@ -34,14 +34,14 @@ It is **not** the Greenhouse Labor Planner (`product-greenhouse*`, ADR-0026). Ke
 
 ## 2. Status
 
-| Phase                                 | State                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| ------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| S1 domain, screens, portfolio wiring  | **Done.** Domain: geometry, peak load, year of heating, hot-water pipes, ventilation, fan and pad, crop water, rainwater, nine climates, physics helpers (33 tests). Feature: projects, greenhouse, heating, cooling, water, climate, guide; save / open & edit / rename / delete; FR, AR, EN copy; store tests (6). Shell route, remote registry, visibility flag (on), apps cards in five languages, constellation links, icons.                                                                        |
-| S2 drawings you can drag              | **Done.** `DragHandle` (`g[scHandle]`: a slider with arrow keys, over LuxPath's pointer-to-viewBox `SvgDrag`) on seven drawings: the cross-section (gutter, ridge, span), heat loss (inside and outside thermometers, arrows by share), hot-water loops (supply, return, loop length), ventilation (outside, allowed rise, vent opening), fan and pad (pad-to-fan distance, rise), crop water (canopy, drain share) and the rain basin (its size). Scales hold while a handle is dragged. 5 handle tests. |
-| S3 light, CO₂ and humidity            | Planned.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| S4 fertigation, pumps and pipes, PV   | Planned.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| S5 report, backups, any-place climate | Planned.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| S6 shell e2e and go-live polish       | Planned.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| Phase                                 | State                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| ------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| S1 domain, screens, portfolio wiring  | **Done.** Domain: geometry, peak load, year of heating, hot-water pipes, ventilation, fan and pad, crop water, rainwater, nine climates, physics helpers (33 tests). Feature: projects, greenhouse, heating, cooling, water, climate, guide; save / open & edit / rename / delete; FR, AR, EN copy; store tests (6). Shell route, remote registry, visibility flag (on), apps cards in five languages, constellation links, icons.                                                                                                                                                                                                        |
+| S2 drawings you can drag              | **Done.** `DragHandle` (`g[scHandle]`: a slider with arrow keys, over LuxPath's pointer-to-viewBox `SvgDrag`) on seven drawings: the cross-section (gutter, ridge, span), heat loss (inside and outside thermometers, arrows by share), hot-water loops (supply, return, loop length), ventilation (outside, allowed rise, vent opening), fan and pad (pad-to-fan distance, rise), crop water (canopy, drain share) and the rain basin (its size). Scales hold while a handle is dragged. 5 handle tests.                                                                                                                                 |
+| S3 light, CO₂ and humidity            | **Done.** A **Light & air** screen (`/air`, under More on phones) with three tabs, each with a drawing you can drag: grow lights and shade (DLI from radiation, lamps sized for the darkest month, kWh, cost, CO₂ of the electricity, summer shade; drag the target, the shade ceiling and the lamp hours), CO₂ enrichment (leak + uptake, burner gas and heat or liquid CO₂, cost; drag the target ppm and the air changes) and night humidity (VPD, dew point, cover temperature and drips, outside air and heat to dry the house; drag both temperatures and the humidity). Monthly charts take reference lines. 10 more domain tests. |
+| S4 fertigation, pumps and pipes, PV   | Planned.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| S5 report, backups, any-place climate | Planned.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| S6 shell e2e and go-live polish       | Planned.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 
 **Verified** (2026-11-24, standalone build in the browser):
 
@@ -57,6 +57,12 @@ It is **not** the Greenhouse Labor Planner (`product-greenhouse*`, ADR-0026). Ke
 - dragging with the mouse on the ridge (6.3 → 10.1 m), the outside thermometer (0 → −10.5 °C, plant 825 → 1,367 kW) and the fan wall (100 → 64 m, the distance warning updated), each mirrored in the number fields, results and notes;
 - the arrow keys on a focused handle; each handle is a labelled `slider` with its value and unit;
 - the seven drawings in English and Arabic (geometry stays left to right; words isolated with `i18n.word`).
+
+**Verified** (2026-11-24, S3):
+
+- the three tabs on the Kebili sample: December sun 13.3 mol/m², lamps at 203 µmol/m²·s, 20 % shade at most; CO₂ 55.8 kg/h with 52 % taken up and 250 kW from the burner; a 16 °C, 85 % night dripping on a 11.8 °C cover;
+- the humidity gauge from the keyboard (85 → 75 %: the drip warning goes, the air needed rises) and the lamp hours by mouse (16 → 8 h: the PPFD and the lamps double);
+- Save on the Light tab, then "Open & edit" from Projects: back on `/air?tab=light` with 8 h and the Editing badge.
 
 **Not verified yet:**
 
@@ -97,13 +103,12 @@ It is **not** the Greenhouse Labor Planner (`product-greenhouse*`, ADR-0026). Ke
 - `/apps/greenhouse-energy` redirects to `/apps/serracalc`.
 - Icons: `node tools/scripts/generate-app-icons.mjs serracalc`.
 
-## 6. Next step: S3, light, CO₂ and humidity
+## 6. Next step: S4, fertigation, pumps and solar
 
-Add a **Climate control** screen (or tabs on Cooling) with, each in the domain with tests first, a `defaults.ts` starter, a drawing with handles, and FR/AR/EN copy:
+Same pattern as S3 (domain first with tests, `defaults.ts`, a drawing with handles, FR/AR/EN copy, a saved `kind` and its `OPENS_IN` entry):
 
-1. **Supplemental lighting:** natural DLI from the month's radiation (Rg × τ × 2.0 mol per MJ), the gap to the crop's target DLI, the PPFD and hours to close it, fixtures from their µmol/J and wattage, and the kWh and cost.
-2. **Summer shading:** the shade share that keeps the DLI under the crop's ceiling, month by month.
-3. **CO₂ enrichment:** kg/h to hold a target ppm against the ventilation rate (1.83 kg/m³ of CO₂), from bottled CO₂ or from a gas burner (1.8 kg per m³ of gas, and the heat that comes with it).
-4. **Humidity:** VPD and dew point from the physics helpers already in `utils/physics.ts`, the night's transpiration to remove, and the air exchange or heat that removes it.
+1. **Fertigation:** a nutrient recipe (target EC and N-P-K-Ca-Mg in mmol/L) against the source water's EC, the A and B stock tanks at a dilution (1:100 or 1:200), kg of each fertiliser a week, and acid for the bicarbonates. Brackish water in the south makes the drain share and the starting EC matter.
+2. **Pumps and pipes:** head loss in the mains and laterals (Hazen–Williams with C = 150 for PE), velocity checks (0.5–1.5 m/s), the pump's head and power for the irrigation sections from the Water tab.
+3. **Solar PV for pumps and fans:** daily kWh of pumps, fans and lamps, the PV array from the climate's sun hours, and the battery or the hours it covers.
 
-Then S4 (fertigation, pumps and pipe head loss, solar PV for pumps and fans), S5 (report, backups, climate for any place) and S6 (shell e2e).
+Then S5 (report, backups, climate for any place via Open-Meteo, a materials catalogue with prices) and S6 (shell e2e, axe, go live).

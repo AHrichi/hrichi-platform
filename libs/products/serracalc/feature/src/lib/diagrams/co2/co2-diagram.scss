@@ -1,0 +1,72 @@
+@use '../../styles/serra' as sc;
+
+@include sc.diagram;
+
+.house {
+  fill: var(--color-accent-subtle);
+  stroke: var(--color-accent-default);
+  stroke-width: 2;
+  stroke-linejoin: round;
+}
+
+.dot-co2 {
+  fill: var(--color-text-muted);
+  opacity: 0.7;
+}
+
+.source {
+  fill: var(--color-bg-raised);
+  stroke: var(--color-text-default);
+  stroke-width: 1.5;
+}
+
+.flame {
+  fill: var(--color-warning-default);
+}
+
+.plant {
+  fill: var(--color-success-default);
+  opacity: 0.85;
+}
+
+.flow {
+  fill: none;
+  stroke-linecap: round;
+
+  &.leak {
+    stroke: var(--color-text-muted);
+  }
+
+  &.crop {
+    stroke: var(--color-success-default);
+  }
+}
+
+.head {
+  fill: var(--color-text-muted);
+
+  &.crop {
+    fill: var(--color-success-default);
+  }
+}
+
+.tube {
+  fill: var(--color-bg-canvas);
+  stroke: var(--color-border-strong);
+  stroke-width: 1.5;
+}
+
+.fill {
+  fill: var(--color-accent-default);
+}
+
+.outside {
+  stroke: var(--color-text-default);
+  stroke-width: 2;
+  stroke-dasharray: 4 3;
+}
+
+.tick-label {
+  fill: var(--color-text-muted);
+  font-size: 11px;
+}

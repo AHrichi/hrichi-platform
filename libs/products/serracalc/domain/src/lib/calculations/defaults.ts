@@ -2,13 +2,16 @@ import {
   COVERS,
   CROPS,
   DEFAULT_GREENHOUSE,
+  defaultCo2Price,
   defaultFuelPrice,
   FUELS,
   SCREEN_SAVINGS,
 } from '../data/catalogue.data';
 import { climateById, DEFAULT_CLIMATE_ID } from '../data/climates.data';
+import { dayLengthHours, midMonthDay } from '../utils/physics';
 import type {
   AnnualHeatingParams,
+  Co2Params,
   CropId,
   CropWaterParams,
   Currency,
@@ -16,6 +19,8 @@ import type {
   GreenhouseSpec,
   HeatLossParams,
   HotWaterParams,
+  HumidityParams,
+  LightParams,
   PadFanParams,
   RainwaterParams,
   SolarLoadParams,
@@ -172,5 +177,62 @@ export function defaultRainwater(ctx: CalcContext): RainwaterParams {
     catchmentM2: water.floorAreaM2,
     runoffPct: ctx.greenhouse.cover.startsWith('glass') ? 85 : 80,
     basinM3: Math.round(water.floorAreaM2 * 0.05),
+  };
+}
+
+export function defaultLight(ctx: CalcContext): LightParams {
+  const g = greenhouseGeometry(ctx.greenhouse);
+  const crop = CROPS[ctx.crop];
+  return {
+    climateId: ctx.climateId,
+    floorAreaM2: g.floorAreaM2,
+    transmissionPct: COVERS[ctx.greenhouse.cover].transmissionPct,
+    targetDli: crop.targetDli,
+    maxDli: crop.maxDli,
+    lampHours: 16,
+    // A 650 W LED top light at 2.8 µmol/J.
+    efficacyUmolJ: 2.8,
+    fixtureW: 650,
+    electricityPrice: defaultFuelPrice('heat_pump', ctx.currency),
+    co2KgPerKwh: FUELS.heat_pump.co2KgPerUnit,
+  };
+}
+
+export function defaultCo2(ctx: CalcContext): Co2Params {
+  const g = greenhouseGeometry(ctx.greenhouse);
+  return {
+    floorAreaM2: g.floorAreaM2,
+    volumeM3: g.volumeM3,
+    targetPpm: 800,
+    outsidePpm: 420,
+    // Vents mostly shut while enriching: the house's own leakage.
+    airChangesPerHour: COVERS[ctx.greenhouse.cover].airChangesPerHour,
+    uptakeGm2h: 3,
+    hoursPerDay: 8,
+    daysPerYear: 180,
+    source: 'burner',
+    co2Price: defaultCo2Price(ctx.currency),
+    gasPrice: defaultFuelPrice('natural_gas', ctx.currency),
+    burnerEfficiencyPct: 90,
+  };
+}
+
+/** A January night: the night mean outside and the house's own cover. */
+export function defaultHumidity(ctx: CalcContext): HumidityParams {
+  const g = greenhouseGeometry(ctx.greenhouse);
+  const climate = climateById(ctx.climateId);
+  const jan = climate.months[0];
+  return {
+    insideC: CROPS[ctx.crop].nightSetC,
+    insideRhPct: 85,
+    outsideC: Math.round((jan.tMinC + 0.3 * (jan.tMaxC - jan.tMinC)) * 2) / 2,
+    outsideRhPct: 85,
+    transpirationGm2h: 15,
+    floorAreaM2: g.floorAreaM2,
+    volumeM3: g.volumeM3,
+    uValue: COVERS[ctx.greenhouse.cover].uValue,
+    nightHours:
+      Math.round((24 - dayLengthHours(climate.latitude, midMonthDay(0))) * 2) /
+      2,
   };
 }

@@ -23,6 +23,7 @@ export const FR: SerraCopy = {
     water: 'Eau',
     climate: 'Climat',
     guide: 'Guide',
+    air: 'Lumière & air',
     more: 'Plus',
   },
   common: {
@@ -158,6 +159,23 @@ export const FR: SerraCopy = {
     catchmentM2: 'Toiture reliée au bassin',
     runoffPct: 'Ruissellement atteignant le bassin',
     basinM3: 'Volume du bassin',
+    targetDli: 'Lumière visée (DLI)',
+    maxDli: 'Ombrer au-dessus de (DLI)',
+    lampHours: 'Heures d’éclairage par jour',
+    efficacyUmolJ: 'Efficacité du luminaire',
+    fixtureW: 'Puissance du luminaire',
+    electricityPrice: 'Prix de l’électricité',
+    co2KgPerKwh: 'CO₂ du réseau',
+    targetPpm: 'Consigne CO₂',
+    outsidePpm: 'CO₂ extérieur',
+    uptakeGm2h: 'Absorption par la culture',
+    daysPerYear: 'Jours par an',
+    burnerEfficiencyPct: 'Rendement du brûleur',
+    co2Price: 'Prix du CO₂ liquide',
+    gasPrice: 'Prix du gaz',
+    insideRhPct: 'Humidité maximale dedans',
+    transpirationGm2h: 'Transpiration de nuit',
+    nightHours: 'Durée de la nuit',
   },
   hints: {
     spanWidthM: 'Courant : 8, 9,6 ou 12,8 m',
@@ -194,6 +212,15 @@ export const FR: SerraCopy = {
     drainPct: 'Hors-sol 20–35 % ; davantage avec une eau salée',
     shotMl: 'En général 100–200 mL',
     runoffPct: 'Verre 85 %, film 80 %, après les premières eaux',
+    targetDli: 'Tomate 20–30, laitue 12–17, fraise 15–20',
+    maxDli: 'Ombrer au-delà ; la laitue brûle au-dessus de 17 environ',
+    lampHours: 'En général 12 à 18 h',
+    efficacyUmolJ: 'LED 2,5–3,2, sodium environ 1,8',
+    co2KgPerKwh: 'Réseau tunisien : environ 0,47',
+    targetPpm: 'L’essentiel du gain est acquis vers 800–1000 ppm',
+    uptakeGm2h: 'Plein soleil, feuillage complet : 2 à 4',
+    insideRhPct: 'Au-dessus de 85–90 % la nuit, le botrytis s’installe',
+    transpirationGm2h: 'Tomate la nuit : environ 10 à 20',
   },
 
   context: {
@@ -247,6 +274,9 @@ export const FR: SerraCopy = {
     padFan: 'Pad & ventilateurs',
     cropWater: 'Eau de la culture',
     rainwater: 'Eau de pluie',
+    light: 'Éclairage et ombrage',
+    co2: 'Enrichissement en CO₂',
+    humidity: 'Humidité de nuit',
   },
 
   greenhouse: {
@@ -418,6 +448,54 @@ export const FR: SerraCopy = {
     },
   },
 
+  air: {
+    title: 'Lumière & air',
+    lead: 'L’éclairage des mois sombres et l’ombrage des mois lumineux, le CO₂ qui nourrit la culture, et l’air à renouveler la nuit pour limiter humidité et gouttes.',
+    tabs: { light: 'Lumière', co2: 'CO₂', humidity: 'Humidité' },
+    source: 'CO₂ issu de',
+    sources: {
+      burner: 'Brûleur à gaz (fumées)',
+      liquid: 'Cuve de CO₂ liquide',
+    },
+    fixtures: 'Luminaires',
+    ppfd: 'Lumière des lampes',
+    energy: 'Éclairage par an',
+    co2Grid: 'CO₂ de l’électricité',
+    shade: 'Ombrage maximal',
+    shadeMonths: (n) => `${n} mois ombrés`,
+    sunDli: 'Soleil dedans',
+    chart: 'Lumière du soleil dedans chaque mois, mol/m² par jour',
+    chartAlt: (place, target) =>
+      `Histogramme de la lumière journalière dedans par mois à ${place}, face à une cible de ${target}`,
+    table: { sun: 'Soleil', lamps: 'Lampes h', shade: 'Ombrage %' },
+    supply: 'CO₂ à fournir',
+    used: 'Absorbé par la culture',
+    leak: 'Fuit',
+    year: 'CO₂ par an',
+    cost: 'Coût annuel',
+    burner: 'Gaz du brûleur',
+    air: 'Air extérieur à faire entrer',
+    heat: 'Chaleur pour cet air',
+    night: 'nuit',
+    vpd: 'Déficit de pression de vapeur',
+    dew: 'Point de rosée',
+    cover: 'Couverture côté intérieur',
+    water: 'Eau à évacuer',
+    formulas: {
+      dli: 'Soleil dedans = Rg × 0,47 × 4,57 × τ (mois le plus sombre)',
+      ppfd: 'PPFD = (cible − soleil) × 10⁶ / (heures × 3600)',
+      fixtures: 'Luminaires = PPFD / efficacité × sol / watts',
+      shade: 'Ombrage = 1 − plafond / soleil (mois le plus lumineux)',
+      leak: 'Fuite = N × V × (consigne − extérieur) × 1,83 × 10⁻⁶',
+      uptake: 'Absorption = g/m²·h × sol',
+      burner: 'Gaz = CO₂ / 1,96 ; chaleur = gaz × 9,77 × η',
+      water: 'Eau = transpiration × sol',
+      air: 'Air = eau / (ρ × (x_in − x_out))',
+      heat: 'Chaleur = ρ × cp × air × (T_in − T_out)',
+      surface: 'Couverture dedans = T_in − U/8 × (T_in − T_out)',
+    },
+  },
+
   climate: {
     title: 'Climat',
     lead: 'Normales mensuelles des régions de serres. Elles servent à dimensionner ; les relevés de votre station sont meilleurs.',
@@ -486,6 +564,20 @@ export const FR: SerraCopy = {
     drain: 'Drainage',
     suggested: 'Conseillé',
     overflow: 'Trop-plein',
+    lightAlt: (month, sun, target, ppfd) =>
+      `Lumière en ${month} : ${sun} mol/m² du soleil pour une cible de ${target} ; les lampes donnent ${ppfd} µmol/m²·s. Les poignées règlent la cible, le plafond d’ombrage et les heures d’éclairage.`,
+    co2Alt: (target, supply, used) =>
+      `CO₂ à ${target} ppm : ${supply} kg/h fournis, ${used} % absorbés par la culture. Les poignées règlent la consigne et le renouvellement d’air.`,
+    humidityAlt: (inside, rh, dew, cover) =>
+      `Une nuit à ${inside} °C et ${rh} % : rosée à ${dew} °C, couverture à ${cover} °C. Les poignées règlent les deux températures et l’humidité.`,
+    target: 'Cible',
+    ceiling: 'Plafond',
+    noLamps: 'Pas de lampes nécessaires',
+    crop: 'Culture',
+    used: 'absorbé',
+    coverAt: 'Couverture',
+    dew: 'Rosée',
+    wetterOutside: 'L’air extérieur est plus humide',
   },
 
   save: {
@@ -531,6 +623,11 @@ export const FR: SerraCopy = {
         title: 'Climat',
         body: 'Températures, ensoleillement et pluie mensuels pour neuf lieux, avec une nuit et un après-midi de calcul. Prenez le plus proche ; remplacez par les données de votre station quand vous les avez.',
       },
+      {
+        id: 'air',
+        title: 'Lumière & air',
+        body: 'Lumière : l’intégrale de lumière du soleil dedans chaque mois, les lampes qui comblent l’écart avec la cible le mois le plus sombre, et l’ombrage qui garde les mois lumineux sous le plafond de la culture. CO₂ : l’apport qui tient une consigne malgré l’air qui fuit et ce que la culture absorbe, d’un brûleur à gaz ou d’une cuve. Humidité : l’air extérieur à faire entrer la nuit pour évacuer l’eau de la culture, la chaleur pour le réchauffer, et si la couverture goutte.',
+      },
     ],
     sourcesTitle: 'Sources',
     sources: [
@@ -539,6 +636,9 @@ export const FR: SerraCopy = {
       'FAO, Bulletin d’irrigation et de drainage 56 : pression de vapeur, durée du jour, chaleur latente.',
       'Stull (2011) : température humide à partir de la température et de l’humidité.',
       'Stanghellini (1987) et pratique néerlandaise : transpiration à partir du rayonnement.',
+      'Thimijan & Heins (1983) : convertir la lumière du soleil en photons pour les plantes.',
+      'Nederhoff (1994) : enrichissement en CO₂, fuites et absorption en serre.',
+      'Campen et al. (2003) : déshumidifier les serres par aération et chauffage.',
     ],
     limitsTitle: 'Limites',
     limits: [
@@ -638,5 +738,38 @@ export const FR: SerraCopy = {
       `${v['mm']} mm de pluie par an : c’est une aide, mais l’irrigation a besoin d’une autre ressource.`,
     'rain.firstFlush': () =>
       'Écartez les premiers millimètres de chaque pluie : ils lavent la poussière et les fientes du toit.',
+    'light.none': () =>
+      'Le soleil atteint la cible chaque mois : pas besoin de lampes.',
+    'light.months': (v) =>
+      `Les lampes servent ${v['months']} mois par an ; ${v['month']} les dimensionne.`,
+    'light.highPpfd': (v) =>
+      `${v['ppfd']} µmol/m²·s, c’est beaucoup de lampes : baissez la cible ou éclairez plus longtemps.`,
+    'light.shade': (v) =>
+      `Ombrer ${v['months']} mois par an, jusqu’à ${v['pct']} % en ${v['peak']}.`,
+    'light.targetOverCeiling': () =>
+      'La cible dépasse le plafond d’ombrage : relevez le plafond ou baissez la cible.',
+    'co2.noLift': () =>
+      'La consigne n’est pas au-dessus de l’extérieur : rien à ajouter.',
+    'co2.leaky': (v) =>
+      `${v['pct']} % du CO₂ fuit avec l’air : enrichissez ouvrants fermés, ou visez plus bas quand ils s’ouvrent.`,
+    'co2.used': (v) =>
+      `La culture absorbe ${v['pct']} % de ce que vous apportez.`,
+    'co2.highTarget': () =>
+      'Au-delà d’environ 1000 ppm, la culture gagne peu pour le CO₂ en plus.',
+    'co2.burnerHeat': (v) =>
+      `Le brûleur donne ${v['kw']} kW de chaleur avec le CO₂ : stockez-la dans un ballon tampon pour la nuit.`,
+    'co2.flue': () =>
+      'Seulement un brûleur conçu pour le dosage du CO₂, au gaz naturel propre, avec des fumées contrôlées pour le CO et les NOₓ.',
+    'humidity.vpdLow': (v) =>
+      `DPV ${v['vpd']} kPa : l’air est presque saturé, botrytis et mildiou prospèrent. Visez au-dessus de 0,3 kPa.`,
+    'humidity.vpdOk': (v) => `DPV ${v['vpd']} kPa : un climat de nuit sain.`,
+    'humidity.vpdHigh': (v) =>
+      `DPV ${v['vpd']} kPa : sec pour la nuit ; la culture peut souffrir.`,
+    'humidity.condensation': (v) =>
+      `La couverture est à ${v['surface']} °C, sous le point de rosée (${v['dew']} °C) : elle goutte sur la culture. Un écran, un peu d’air ou des tuyaux près du toit aident.`,
+    'humidity.outsideWetter': () =>
+      'L’air extérieur contient plus d’eau que dedans : aérer ne sèche pas la serre. Chauffez, ou déshumidifiez.',
+    'humidity.heat': (v) =>
+      `Réchauffer l’air entré demande ${v['kw']} kW (${v['wm2']} W/m²).`,
   } as Record<string, NoteWriter>,
 };

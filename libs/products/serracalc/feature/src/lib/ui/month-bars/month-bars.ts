@@ -7,6 +7,12 @@ import {
 } from '@angular/core';
 import { SerraI18n } from '../../i18n/serra-i18n';
 
+/** A level drawn across the chart, such as a target, labelled at its end. */
+export interface MonthRef {
+  readonly label: string;
+  readonly value: number;
+}
+
 export interface MonthSeries {
   readonly label: string;
   /** Twelve values, January first. */
@@ -83,6 +89,8 @@ export class MonthBars {
   readonly unit = input('');
   readonly digits = input(0);
   readonly ariaLabel = input.required<string>();
+  /** Dashed levels across the chart, on the same axis. */
+  readonly refs = input<readonly MonthRef[]>([]);
 
   protected readonly i18n = inject(SerraI18n);
   protected readonly width = W;
@@ -100,7 +108,7 @@ export class MonthBars {
       const top = this.stacked()
         ? values.reduce((a, b) => a + b, 0)
         : Math.max(...values);
-      max = Math.max(max, top);
+      max = Math.max(max, top, ...this.refs().map((r) => r.value));
       if (low) min = Math.min(min, low[m] ?? 0);
     }
     const t = ticks(min, max > min ? max : min + 1);
@@ -109,6 +117,10 @@ export class MonthBars {
 
   protected readonly yTicks = computed(() =>
     this.range().ticks.map((v) => ({ v, y: this.y(v) })),
+  );
+
+  protected readonly levels = computed(() =>
+    this.refs().map((r) => ({ ...r, y: this.y(r.value) })),
   );
 
   protected readonly baseline = computed(() =>

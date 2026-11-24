@@ -23,6 +23,7 @@ export const EN = {
     water: 'Water',
     climate: 'Climate',
     guide: 'Guide',
+    air: 'Light & air',
     more: 'More',
   },
   common: {
@@ -159,6 +160,23 @@ export const EN = {
     catchmentM2: 'Roof draining to the basin',
     runoffPct: 'Run-off reaching the basin',
     basinM3: 'Basin size',
+    targetDli: 'Target light (DLI)',
+    maxDli: 'Shade above (DLI)',
+    lampHours: 'Lamp hours a day',
+    efficacyUmolJ: 'Fixture efficacy',
+    fixtureW: 'Fixture power',
+    electricityPrice: 'Electricity price',
+    co2KgPerKwh: 'Grid CO₂',
+    targetPpm: 'CO₂ target',
+    outsidePpm: 'CO₂ outside',
+    uptakeGm2h: 'Crop uptake',
+    daysPerYear: 'Days a year',
+    burnerEfficiencyPct: 'Burner efficiency',
+    co2Price: 'Liquid CO₂ price',
+    gasPrice: 'Gas price',
+    insideRhPct: 'Highest humidity inside',
+    transpirationGm2h: 'Night transpiration',
+    nightHours: 'Night length',
   } as Record<string, string>,
   hints: {
     spanWidthM: 'Common: 8, 9.6 or 12.8 m',
@@ -189,6 +207,15 @@ export const EN = {
     drainPct: 'Soilless 20–35 %; more with salty water',
     shotMl: 'Usually 100–200 mL',
     runoffPct: 'Glass 85 %, film 80 %, after the first flush',
+    targetDli: 'Tomato 20–30, lettuce 12–17, strawberry 15–20',
+    maxDli: 'Shade above this; lettuce tips burn over about 17',
+    lampHours: 'Usually 12–18 h',
+    efficacyUmolJ: 'LED 2.5–3.2, sodium lamps about 1.8',
+    co2KgPerKwh: 'Tunisia’s grid: about 0.47',
+    targetPpm: 'Most of the gain comes by 800–1000 ppm',
+    uptakeGm2h: 'Full sun, full canopy: 2–4',
+    insideRhPct: 'Over 85–90 % at night invites botrytis',
+    transpirationGm2h: 'Tomato at night: about 10–20',
   } as Record<string, string>,
 
   context: {
@@ -242,6 +269,9 @@ export const EN = {
     padFan: 'Fan and pad',
     cropWater: 'Crop water',
     rainwater: 'Rainwater',
+    light: 'Grow lights and shade',
+    co2: 'CO₂ enrichment',
+    humidity: 'Night humidity',
   },
 
   greenhouse: {
@@ -413,6 +443,51 @@ export const EN = {
     },
   },
 
+  air: {
+    title: 'Light & air',
+    lead: 'Grow lights for the dark months and shade for the bright ones, CO₂ to feed the crop, and the air to change at night to keep humidity and drips down.',
+    tabs: { light: 'Light', co2: 'CO₂', humidity: 'Humidity' },
+    source: 'CO₂ from',
+    sources: { burner: 'Gas burner (flue gas)', liquid: 'Liquid CO₂ tank' },
+    fixtures: 'Lamps',
+    ppfd: 'Light from the lamps',
+    energy: 'Lamps a year',
+    co2Grid: 'CO₂ of the electricity',
+    shade: 'Most shade',
+    shadeMonths: (n: string) => `${n} months shaded`,
+    sunDli: 'Sun inside',
+    chart: 'Sunlight inside each month, mol/m² a day',
+    chartAlt: (place: string, target: string) =>
+      `Bar chart of daily light inside by month in ${place}, against a target of ${target}`,
+    table: { sun: 'Sun', lamps: 'Lamp h', shade: 'Shade %' },
+    supply: 'CO₂ to supply',
+    used: 'Taken up by the crop',
+    leak: 'Leaks out',
+    year: 'CO₂ a year',
+    cost: 'Cost a year',
+    burner: 'Gas for the burner',
+    air: 'Outside air to bring in',
+    heat: 'Heat for that air',
+    night: 'night',
+    vpd: 'Vapour pressure deficit',
+    dew: 'Dew point',
+    cover: 'Cover inside',
+    water: 'Water to remove',
+    formulas: {
+      dli: 'Sun inside = Rg × 0.47 × 4.57 × τ (darkest month)',
+      ppfd: 'PPFD = (target − sun) × 10⁶ / (hours × 3600)',
+      fixtures: 'Lamps = PPFD / efficacy × floor / watts',
+      shade: 'Shade = 1 − ceiling / sun (brightest month)',
+      leak: 'Leak = N × V × (target − outside) × 1.83 × 10⁻⁶',
+      uptake: 'Uptake = g/m²·h × floor',
+      burner: 'Gas = CO₂ / 1.96; heat = gas × 9.77 × η',
+      water: 'Water = transpiration × floor',
+      air: 'Air = water / (ρ × (x_in − x_out))',
+      heat: 'Heat = ρ × cp × air × (T_in − T_out)',
+      surface: 'Cover inside = T_in − U/8 × (T_in − T_out)',
+    },
+  },
+
   climate: {
     title: 'Climate',
     lead: 'Monthly normals for greenhouse regions. They size a plant; your own station’s records are better.',
@@ -480,6 +555,20 @@ export const EN = {
     drain: 'Drain',
     suggested: 'Suggested',
     overflow: 'Overflow',
+    lightAlt: (month: string, sun: string, target: string, ppfd: string) =>
+      `Light in ${month}: ${sun} mol/m² from the sun against a target of ${target}; lamps give ${ppfd} µmol/m²·s. Handles set the target, the shade ceiling and the lamp hours.`,
+    co2Alt: (target: string, supply: string, used: string) =>
+      `CO₂ at ${target} ppm: ${supply} kg/h supplied, ${used} % taken up by the crop. Handles set the target and the air changes.`,
+    humidityAlt: (inside: string, rh: string, dew: string, cover: string) =>
+      `A night at ${inside} °C and ${rh} %: dew point ${dew} °C, cover ${cover} °C. Handles set both temperatures and the humidity.`,
+    target: 'Target',
+    ceiling: 'Ceiling',
+    noLamps: 'No lamps needed',
+    crop: 'Crop',
+    used: 'used',
+    coverAt: 'Cover',
+    dew: 'Dew',
+    wetterOutside: 'Outside air is wetter',
   },
 
   save: {
@@ -525,6 +614,11 @@ export const EN = {
         title: 'Climate',
         body: 'Monthly temperatures, sunlight and rain for nine places, with a design night and a design afternoon. Pick the closest; replace with your station’s data when you have it.',
       },
+      {
+        id: 'air',
+        title: 'Light & air',
+        body: 'Light: the sun’s daily light integral inside each month, the lamps that close the gap to the target in the darkest month, and the shade that keeps the brightest months under the crop’s ceiling. CO₂: the supply that holds a target against the air leaking out and what the crop takes up, from a gas burner or a tank. Humidity: the outside air to bring in at night to carry the crop’s water away, the heat to warm it, and whether the cover drips.',
+      },
     ],
     sourcesTitle: 'Sources',
     sources: [
@@ -533,6 +627,9 @@ export const EN = {
       'FAO Irrigation and Drainage Paper 56: vapour pressure, day length, latent heat.',
       'Stull (2011): wet-bulb temperature from temperature and humidity.',
       'Stanghellini (1987) and Dutch practice: transpiration from radiation.',
+      'Thimijan & Heins (1983): converting sunlight to photons for plants.',
+      'Nederhoff (1994): CO₂ enrichment, leakage and uptake in greenhouses.',
+      'Campen et al. (2003): dehumidifying greenhouses by ventilation and heat.',
     ],
     limitsTitle: 'Limits',
     limits: [
@@ -631,6 +728,37 @@ export const EN = {
       `${v['mm']} mm of rain a year: it helps, but irrigation needs another source.`,
     'rain.firstFlush': () =>
       'Divert the first millimetres of each rain: they wash dust and bird droppings off the roof.',
+    'light.none': () =>
+      'The sun reaches the target every month: no lamps needed.',
+    'light.months': (v) =>
+      `Lamps help ${v['months']} months a year; ${v['month']} sizes them.`,
+    'light.highPpfd': (v) =>
+      `${v['ppfd']} µmol/m²·s is a lot of lamps: lower the target or run them longer.`,
+    'light.shade': (v) =>
+      `Shade ${v['months']} months a year, up to ${v['pct']} % in ${v['peak']}.`,
+    'light.targetOverCeiling': () =>
+      'The target is above the shade ceiling: raise the ceiling or lower the target.',
+    'co2.noLift': () => 'The target is no higher than outside: nothing to add.',
+    'co2.leaky': (v) =>
+      `${v['pct']} % of the CO₂ leaks out with the air: enrich with the vents shut, or aim lower when they open.`,
+    'co2.used': (v) => `The crop takes up ${v['pct']} % of what you supply.`,
+    'co2.highTarget': () =>
+      'Above about 1000 ppm the crop gains little more for the extra CO₂.',
+    'co2.burnerHeat': (v) =>
+      `The burner gives ${v['kw']} kW of heat with the CO₂: store it in a buffer tank for the night.`,
+    'co2.flue': () =>
+      'Only a burner made for CO₂ dosing, on clean natural gas, with its flue gas checked for CO and NOₓ.',
+    'humidity.vpdLow': (v) =>
+      `VPD ${v['vpd']} kPa: the air is close to saturated, botrytis and mildew thrive. Aim above 0.3 kPa.`,
+    'humidity.vpdOk': (v) => `VPD ${v['vpd']} kPa: a healthy night climate.`,
+    'humidity.vpdHigh': (v) =>
+      `VPD ${v['vpd']} kPa: dry for the night; the crop may stress.`,
+    'humidity.condensation': (v) =>
+      `The cover is at ${v['surface']} °C, under the dew point (${v['dew']} °C): it drips on the crop. A screen, a little air or pipes near the roof help.`,
+    'humidity.outsideWetter': () =>
+      'The outside air holds more water than inside: ventilating can’t dry the house. Heat, or a dehumidifier.',
+    'humidity.heat': (v) =>
+      `Warming the air brought in takes ${v['kw']} kW (${v['wm2']} W/m²).`,
   } as Record<string, NoteWriter>,
 };
 

@@ -113,6 +113,8 @@ export interface CropProfile {
   ventilateAboveC: number;
   /** Daily light integral the crop wants, mol/m² per day. */
   targetDli: number;
+  /** Above this the crop gets shaded, mol/m² per day. */
+  maxDli: number;
   /** Plants (or stems) per m² of floor. */
   plantsPerM2: number;
   /** Share of the radiation inside used to transpire, full canopy. */
@@ -424,6 +426,131 @@ export interface RainwaterResult {
   notes: CalcNote[];
 }
 
+export interface LightParams {
+  climateId: string;
+  floorAreaM2: number;
+  transmissionPct: number;
+  /** Daily light integral to reach, mol/m² per day. */
+  targetDli: number;
+  /** Shade above this, mol/m² per day. */
+  maxDli: number;
+  /** Most hours a day the lamps may run. */
+  lampHours: number;
+  /** Fixture efficacy, µmol of PAR per joule. */
+  efficacyUmolJ: number;
+  fixtureW: number;
+  /** Electricity, per kWh in the project's currency. */
+  electricityPrice: number;
+  co2KgPerKwh: number;
+}
+
+export interface MonthLight {
+  month: number;
+  /** Sunlight reaching the crop, mol/m² per day. */
+  naturalDli: number;
+  /** What the lamps must add, mol/m² per day. */
+  gapDli: number;
+  /** Hours a day the lamps run. */
+  lampHours: number;
+  kwh: number;
+  /** Shade to keep the crop under its ceiling, percent. */
+  shadePct: number;
+}
+
+export interface LightResult {
+  months: MonthLight[];
+  /** The darkest month, which sizes the lamps. */
+  designMonth: number;
+  /** PPFD the lamps must give, µmol/m²·s. */
+  designPpfd: number;
+  fixtures: number;
+  /** PPFD the installed fixtures give, µmol/m²·s. */
+  installedPpfd: number;
+  wPerM2: number;
+  installedKw: number;
+  annualKwh: number;
+  cost: number;
+  co2Kg: number;
+  litMonths: number;
+  shadeMonths: number;
+  maxShadePct: number;
+  notes: CalcNote[];
+}
+
+export type Co2Source = 'burner' | 'liquid';
+
+export interface Co2Params {
+  floorAreaM2: number;
+  volumeM3: number;
+  targetPpm: number;
+  outsidePpm: number;
+  /** Air exchange while enriching (vents mostly shut), per hour. */
+  airChangesPerHour: number;
+  /** What the crop takes up in good light, g/m² per hour. */
+  uptakeGm2h: number;
+  hoursPerDay: number;
+  daysPerYear: number;
+  source: Co2Source;
+  /** Liquid CO₂, per kg. */
+  co2Price: number;
+  /** Natural gas for a burner, per m³. */
+  gasPrice: number;
+  burnerEfficiencyPct: number;
+}
+
+export interface Co2Result {
+  /** CO₂ lost with the air that leaves, kg/h. */
+  ventLossKgH: number;
+  uptakeKgH: number;
+  supplyKgH: number;
+  /** The same per hectare, kg/h·ha. */
+  supplyKgHaH: number;
+  dailyKg: number;
+  annualT: number;
+  /** Gas a burner needs for that CO₂, m³/h. */
+  gasM3h: number;
+  /** Heat that comes with a burner's CO₂, kW. */
+  burnerHeatKw: number;
+  annualCost: number;
+  /** Share of the supply the crop takes up; the rest leaks out. */
+  usedPct: number;
+  notes: CalcNote[];
+}
+
+export interface HumidityParams {
+  insideC: number;
+  /** Highest relative humidity to allow inside. */
+  insideRhPct: number;
+  outsideC: number;
+  outsideRhPct: number;
+  /** Night transpiration and evaporation, g/m² per hour. */
+  transpirationGm2h: number;
+  floorAreaM2: number;
+  volumeM3: number;
+  /** U-value of the cover, for its inside surface temperature. */
+  uValue: number;
+  nightHours: number;
+}
+
+export interface HumidityResult {
+  vpdKpa: number;
+  dewPointC: number;
+  /** Inside surface of the cover, °C. */
+  coverSurfaceC: number;
+  condensation: boolean;
+  /** Water in the air, g per kg of dry air. */
+  insideGkg: number;
+  outsideGkg: number;
+  moistureKgH: number;
+  /** Outside air to bring in, m³/h; null when it is wetter than inside. */
+  airM3h: number | null;
+  airChangesPerHour: number | null;
+  /** Heat to warm that air to the inside temperature, kW. */
+  heatKw: number;
+  nightKwh: number;
+  notes: CalcNote[];
+}
+
 // ---------------------------------------------------------------------------
 // Projects and saved results
 // ---------------------------------------------------------------------------
@@ -444,7 +571,10 @@ export type SavedCalculation =
   | SavedCalcBase<'ventilation', VentilationParams>
   | SavedCalcBase<'padFan', PadFanParams>
   | SavedCalcBase<'cropWater', CropWaterParams>
-  | SavedCalcBase<'rainwater', RainwaterParams>;
+  | SavedCalcBase<'rainwater', RainwaterParams>
+  | SavedCalcBase<'light', LightParams>
+  | SavedCalcBase<'co2', Co2Params>
+  | SavedCalcBase<'humidity', HumidityParams>;
 
 export type CalcKind = SavedCalculation['kind'];
 
