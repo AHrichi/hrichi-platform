@@ -35,6 +35,12 @@ export class DemoFieldRemote implements FieldRemote {
     }
   }
 
+  /** The demo supervisor is already on the farm; there is nothing to join. */
+  async joinFarm(): Promise<string> {
+    await this.reply();
+    throw new RemoteError('rejected', 'The demo has no join codes');
+  }
+
   async fetchRoster(): Promise<Roster> {
     await this.reply();
     return {

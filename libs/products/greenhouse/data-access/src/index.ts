@@ -4,6 +4,7 @@ export * from './lib/auth/sign-in-error';
 
 // Talking to the server: failures, Postgres rows to the domain model, and
 // the photo bucket.
+export * from './lib/remote/join-code';
 export * from './lib/remote/postgrest';
 export * from './lib/remote/remote-error';
 export * from './lib/remote/storage';

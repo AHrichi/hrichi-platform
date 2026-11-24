@@ -3,7 +3,7 @@ import type {
   Greenhouse,
   HygieneCheck,
   HygieneItem,
-  Invitation,
+  JoinCode,
   IsoDate,
   Member,
   PlanEntry,
@@ -32,8 +32,8 @@ export interface FarmSetup {
   /** Empty for anyone but managers and HR (row-level security). */
   pay: WorkerPay[];
   members: Member[];
-  /** Empty for anyone but managers. */
-  invitations: Invitation[];
+  /** Codes that still work; empty for anyone but managers. */
+  joinCodes: JoinCode[];
 }
 
 /** One week's plan, the absences that touch it, and its history. */
@@ -77,8 +77,6 @@ export interface FarmHygiene {
 /** How long a photo link the dashboard gets stays valid. */
 export const PHOTO_URL_SECONDS = 60 * 60;
 
-export type InviteResult = 'added' | 'updated' | 'invited';
-
 /**
  * The server as the manager's dashboard sees it. Every write is an upsert
  * keyed by an id made on the client, so sending one twice is harmless.
@@ -89,6 +87,11 @@ export interface FarmRemote {
   farms(): Promise<FarmAccess[]>;
   /** Makes a farm with the signed-in person as its manager. */
   createFarm(farmName: string, managerName: string): Promise<string>;
+  /**
+   * Joins the farm a code belongs to; returns its id. A wrong, used or
+   * expired code is a `rejected` `RemoteError`.
+   */
+  joinFarm(code: string): Promise<string>;
 
   loadSetup(farmId: string): Promise<FarmSetup>;
   loadWeek(farmId: string, weekStart: IsoDate): Promise<FarmWeek>;
@@ -133,13 +136,13 @@ export interface FarmRemote {
    */
   photoUrls(paths: readonly string[]): Promise<Map<string, string>>;
 
-  invite(
+  /** A new code for one person, valid for a week. Managers only. */
+  createJoinCode(
     farmId: string,
-    email: string,
     role: Role,
     fullName: string,
-  ): Promise<InviteResult>;
-  cancelInvitation(farmId: string, email: string): Promise<void>;
+  ): Promise<JoinCode>;
+  withdrawJoinCode(farmId: string, code: string): Promise<void>;
   removeMember(farmId: string, userId: string): Promise<void>;
   renameMember(farmId: string, userId: string, fullName: string): Promise<void>;
 }

@@ -1,9 +1,10 @@
 import {
+  cleanJoinCode,
   type Absence,
   addDays,
   type Greenhouse,
   type HygieneItem,
-  type Invitation,
+  type JoinCode,
   type IsoDate,
   type Member,
   type PlanEntry,
@@ -28,10 +29,20 @@ import type {
   FarmRemote,
   FarmSetup,
   FarmWeek,
-  InviteResult,
 } from './farm-remote';
+import { RemoteError } from '../remote/remote-error';
 
 export const DEMO_FARM_ID = 'demo-farm';
+
+/** How long a code works, as on the server. */
+const JOIN_CODE_DAYS = 7;
+const JOIN_CODE_ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+
+/** A code like the server's, from the browser's random numbers. */
+function demoJoinCode(): string {
+  const bytes = crypto.getRandomValues(new Uint8Array(8));
+  return Array.from(bytes, (b) => JOIN_CODE_ALPHABET[b % 32]).join('');
+}
 
 /** A grey square with a camera, standing in for the demo's photos. */
 const DEMO_PHOTO = `data:image/svg+xml,${encodeURIComponent(
@@ -55,7 +66,7 @@ export class DemoFarmRemote implements FarmRemote {
   private readonly workers: Worker[];
   private readonly pay: Map<string, number>;
   private readonly members: Member[];
-  private readonly invitations: Invitation[] = [];
+  private readonly joinCodes: JoinCode[] = [];
   /** Plan rows the visitor changed (week|greenhouse), over the sample's. */
   private readonly rows = new Map<string, PlanEntry[]>();
   /** Absences the visitor added, and sample ones they removed. */
@@ -111,7 +122,7 @@ export class DemoFarmRemote implements FarmRemote {
         hourlyRate,
       })),
       members: this.members.map((m) => ({ ...m })),
-      invitations: this.invitations.map((i) => ({ ...i })),
+      joinCodes: this.joinCodes.map((c) => ({ ...c })),
     };
   }
 
@@ -237,23 +248,37 @@ export class DemoFarmRemote implements FarmRemote {
     this.removedAbsences.add(absenceId);
   }
 
-  async invite(
-    _farmId: string,
-    email: string,
-    role: Role,
-    fullName: string,
-  ): Promise<InviteResult> {
+  /** The visitor is already on the demo farm; a code it made works. */
+  async joinFarm(code: string): Promise<string> {
     await this.reply();
-    const existing = this.invitations.find((i) => i.email === email);
-    if (existing) Object.assign(existing, { role, fullName });
-    else this.invitations.push({ email, role, fullName });
-    return 'invited';
+    const i = this.joinCodes.findIndex((c) => c.code === cleanJoinCode(code));
+    if (i < 0) throw new RemoteError('rejected', 'Not a join code');
+    this.joinCodes.splice(i, 1);
+    return DEMO_FARM_ID;
   }
 
-  async cancelInvitation(_farmId: string, email: string): Promise<void> {
+  async createJoinCode(
+    _farmId: string,
+    role: Role,
+    fullName: string,
+  ): Promise<JoinCode> {
     await this.reply();
-    const i = this.invitations.findIndex((x) => x.email === email);
-    if (i >= 0) this.invitations.splice(i, 1);
+    const code: JoinCode = {
+      code: demoJoinCode(),
+      fullName,
+      role,
+      expiresAt: new Date(
+        Date.now() + JOIN_CODE_DAYS * 86_400_000,
+      ).toISOString(),
+    };
+    this.joinCodes.push(code);
+    return { ...code };
+  }
+
+  async withdrawJoinCode(_farmId: string, code: string): Promise<void> {
+    await this.reply();
+    const i = this.joinCodes.findIndex((c) => c.code === code);
+    if (i >= 0) this.joinCodes.splice(i, 1);
   }
 
   async renameMember(

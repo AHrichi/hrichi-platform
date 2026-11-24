@@ -1,6 +1,7 @@
 import type { HygieneCheck } from '@ah/products/greenhouse/domain';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { callPostgrest } from '../remote/postgrest';
+import { redeemJoinCode } from '../remote/join-code';
 import { RemoteError } from '../remote/remote-error';
 import {
   classifyStorageFailure,
@@ -81,6 +82,10 @@ export class SupabaseFieldRemote implements FieldRemote {
         this.client.from('work_log').upsert(updates, { onConflict: 'id' }),
       );
     }
+  }
+
+  joinFarm(code: string): Promise<string> {
+    return redeemJoinCode(this.client, code);
   }
 
   async fetchRoster(): Promise<Roster> {
