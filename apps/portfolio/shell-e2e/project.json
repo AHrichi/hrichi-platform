@@ -11,7 +11,8 @@
     "product-studylm",
     "product-whatsapp",
     "product-learning",
-    "product-system-design"
+    "product-system-design",
+    "product-greenhouse"
   ],
   "// targets": "to see all targets run: nx show project shell-e2e --web",
   "targets": {}
