@@ -47,5 +47,9 @@
   "product-greenhouse": {
     "development": "http://localhost:4313",
     "production": "https://product-greenhouse.ahmed-hrichi.workers.dev"
+  },
+  "product-serracalc": {
+    "development": "http://localhost:4314",
+    "production": "https://product-serracalc.ahmed-hrichi.workers.dev"
   }
 }

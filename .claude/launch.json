@@ -22,6 +22,16 @@
       "port": 4309
     },
     {
+      "name": "serracalc (static build)",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "tools/scripts/serve-static.mjs",
+        "dist/apps/products/serracalc/web/browser",
+        "4314"
+      ],
+      "port": 4314
+    },
+    {
       "name": "basecamp (static build)",
       "runtimeExecutable": "node",
       "runtimeArgs": [

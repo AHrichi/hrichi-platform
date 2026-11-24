@@ -7,9 +7,9 @@
       "scope": "api",
       "layer": "app",
       "runtime": "node",
-      "x": 0.577,
-      "y": 0.774,
-      "z": -0.027
+      "x": 0.701,
+      "y": 0.612,
+      "z": 0.042
     },
     {
       "id": "api-ai",
@@ -17,9 +17,9 @@
       "scope": "api",
       "layer": "util",
       "runtime": "node",
-      "x": 0.205,
-      "y": 0.879,
-      "z": -0.408
+      "x": 0.9,
+      "y": 0.424,
+      "z": 0.101
     },
     {
       "id": "api-dispatch",
@@ -27,9 +27,9 @@
       "scope": "api",
       "layer": "feature",
       "runtime": "node",
-      "x": 0.827,
-      "y": 0.494,
-      "z": 0.215
+      "x": 0.447,
+      "y": 0.793,
+      "z": -0.339
     },
     {
       "id": "api-leads",
@@ -37,9 +37,9 @@
       "scope": "api",
       "layer": "feature",
       "runtime": "node",
-      "x": -0.011,
-      "y": 0.966,
-      "z": -0.137
+      "x": 0.507,
+      "y": 0.71,
+      "z": 0.453
     },
     {
       "id": "api-learning",
@@ -47,9 +47,9 @@
       "scope": "api",
       "layer": "feature",
       "runtime": "node",
-      "x": 0.553,
-      "y": 0.777,
-      "z": -0.301
+      "x": 0.775,
+      "y": 0.465,
+      "z": 0.368
     },
     {
       "id": "api-studylm",
@@ -57,9 +57,9 @@
       "scope": "api",
       "layer": "feature",
       "runtime": "node",
-      "x": 0.331,
-      "y": 0.924,
-      "z": -0.014
+      "x": 0.692,
+      "y": 0.639,
+      "z": -0.265
     },
     {
       "id": "design-system",
@@ -67,9 +67,9 @@
       "scope": "design-system",
       "layer": "app",
       "runtime": "browser",
-      "x": 0.213,
-      "y": 0.514,
-      "z": 0.526
+      "x": 0.352,
+      "y": 0.267,
+      "z": 0.602
     },
     {
       "id": "design-system-e2e",
@@ -77,9 +77,9 @@
       "scope": "test",
       "layer": "e2e",
       "runtime": "node",
-      "x": 0.542,
-      "y": 0.458,
-      "z": 0.673
+      "x": 0.578,
+      "y": 0.175,
+      "z": 0.784
     },
     {
       "id": "design-system-tokens",
@@ -87,9 +87,9 @@
       "scope": "design-system",
       "layer": "tokens",
       "runtime": "agnostic",
-      "x": -0.174,
-      "y": 0.768,
-      "z": 0.411
+      "x": -0.105,
+      "y": 0.71,
+      "z": 0.498
     },
     {
       "id": "design-system-ui",
@@ -97,9 +97,9 @@
       "scope": "design-system",
       "layer": "ui",
       "runtime": "browser",
-      "x": -0.058,
-      "y": -0.056,
-      "z": 0.05
+      "x": -0.097,
+      "y": -0.026,
+      "z": 0.078
     },
     {
       "id": "lab-ngrx",
@@ -107,9 +107,9 @@
       "scope": "lab-ngrx",
       "layer": "app",
       "runtime": "browser",
-      "x": -0.742,
-      "y": -0.33,
-      "z": -0.413
+      "x": -0.715,
+      "y": 0.347,
+      "z": -0.433
     },
     {
       "id": "lab-ngrx-feature",
@@ -117,9 +117,9 @@
       "scope": "lab-ngrx",
       "layer": "feature",
       "runtime": "browser",
-      "x": -0.66,
-      "y": 0.007,
-      "z": -0.533
+      "x": -0.483,
+      "y": 0.612,
+      "z": -0.348
     },
     {
       "id": "lab-rxjs",
@@ -127,9 +127,9 @@
       "scope": "lab-rxjs",
       "layer": "app",
       "runtime": "browser",
-      "x": -0.62,
-      "y": -0.504,
-      "z": 0.458
+      "x": -0.775,
+      "y": 0.423,
+      "z": -0.181
     },
     {
       "id": "lab-rxjs-feature",
@@ -137,9 +137,9 @@
       "scope": "lab-rxjs",
       "layer": "feature",
       "runtime": "browser",
-      "x": -0.501,
-      "y": -0.079,
-      "z": 0.695
+      "x": -0.488,
+      "y": 0.697,
+      "z": 0.008
     },
     {
       "id": "lab-sky",
@@ -147,9 +147,9 @@
       "scope": "lab-sky",
       "layer": "app",
       "runtime": "browser",
-      "x": -0.831,
-      "y": -0.323,
-      "z": -0.172
+      "x": -0.804,
+      "y": 0.111,
+      "z": -0.38
     },
     {
       "id": "lab-sky-domain",
@@ -157,9 +157,9 @@
       "scope": "lab-sky",
       "layer": "domain",
       "runtime": "agnostic",
-      "x": -0.674,
-      "y": 0.338,
-      "z": -0.577
+      "x": -0.238,
+      "y": 0.554,
+      "z": -0.717
     },
     {
       "id": "lab-sky-feature",
@@ -167,9 +167,9 @@
       "scope": "lab-sky",
       "layer": "feature",
       "runtime": "browser",
-      "x": -0.622,
-      "y": 0.392,
-      "z": -0.147
+      "x": -0.199,
+      "y": 0.617,
+      "z": -0.325
     },
     {
       "id": "learning-client",
@@ -177,9 +177,9 @@
       "scope": "learning-client",
       "layer": "client",
       "runtime": "browser",
-      "x": 0.665,
-      "y": -0.294,
-      "z": -0.238
+      "x": 0.381,
+      "y": -0.674,
+      "z": 0.194
     },
     {
       "id": "learning-contracts",
@@ -187,9 +187,9 @@
       "scope": "learning",
       "layer": "contracts",
       "runtime": "agnostic",
-      "x": 0.785,
-      "y": 0.38,
-      "z": -0.359
+      "x": 0.86,
+      "y": -0.029,
+      "z": 0.282
     },
     {
       "id": "learning-data-access",
@@ -197,9 +197,9 @@
       "scope": "learning",
       "layer": "data-access",
       "runtime": "browser",
-      "x": 0.652,
-      "y": 0.298,
-      "z": -0.674
+      "x": 0.981,
+      "y": 0.004,
+      "z": 0.007
     },
     {
       "id": "learning-domain",
@@ -207,9 +207,9 @@
       "scope": "learning",
       "layer": "domain",
       "runtime": "agnostic",
-      "x": 0.526,
-      "y": 0.595,
-      "z": -0.475
+      "x": 0.856,
+      "y": 0.316,
+      "z": -0.105
     },
     {
       "id": "learning-edge",
@@ -217,9 +217,9 @@
       "scope": "learning",
       "layer": "app",
       "runtime": "agnostic",
-      "x": 0.339,
-      "y": 0.472,
-      "z": -0.793
+      "x": 0.684,
+      "y": 0.494,
+      "z": -0.514
     },
     {
       "id": "learning-feature",
@@ -227,9 +227,9 @@
       "scope": "learning",
       "layer": "feature",
       "runtime": "browser",
-      "x": 0.58,
-      "y": -0.021,
-      "z": -0.471
+      "x": 0.613,
+      "y": -0.339,
+      "z": -0.115
     },
     {
       "id": "learning-ui",
@@ -237,9 +237,9 @@
       "scope": "learning",
       "layer": "ui",
       "runtime": "browser",
-      "x": 0.659,
-      "y": 0.492,
-      "z": -0.017
+      "x": 0.731,
+      "y": 0.157,
+      "z": 0.372
     },
     {
       "id": "orbit-api",
@@ -247,9 +247,9 @@
       "scope": "orbit",
       "layer": "app",
       "runtime": "jvm",
-      "x": -0.248,
-      "y": 0.574,
-      "z": -0.758
+      "x": 0.093,
+      "y": 0.746,
+      "z": -0.641
     },
     {
       "id": "platform-app-mode",
@@ -257,9 +257,9 @@
       "scope": "platform",
       "layer": "platform",
       "runtime": "browser",
-      "x": 0.092,
-      "y": -0.6,
-      "z": -0.012
+      "x": -0.221,
+      "y": -0.589,
+      "z": -0.043
     },
     {
       "id": "platform-federation",
@@ -267,9 +267,9 @@
       "scope": "platform",
       "layer": "platform",
       "runtime": "browser",
-      "x": -0.296,
-      "y": -0.689,
-      "z": -0.104
+      "x": -0.59,
+      "y": -0.273,
+      "z": -0.333
     },
     {
       "id": "platform-inspector",
@@ -277,9 +277,9 @@
       "scope": "platform",
       "layer": "platform",
       "runtime": "browser",
-      "x": 0.165,
-      "y": -0.884,
-      "z": 0.222
+      "x": -0.601,
+      "y": 0.207,
+      "z": -0.656
     },
     {
       "id": "platform-maps",
@@ -287,9 +287,9 @@
       "scope": "platform",
       "layer": "ui",
       "runtime": "browser",
-      "x": 0.171,
-      "y": 0.05,
-      "z": -0.839
+      "x": 0.416,
+      "y": -0.088,
+      "z": -0.744
     },
     {
       "id": "platform-storage",
@@ -297,9 +297,9 @@
       "scope": "platform",
       "layer": "platform",
       "runtime": "browser",
-      "x": 0.53,
-      "y": -0.502,
-      "z": -0.258
+      "x": 0.239,
+      "y": -0.79,
+      "z": -0.052
     },
     {
       "id": "platform-web-push",
@@ -307,9 +307,9 @@
       "scope": "platform",
       "layer": "platform",
       "runtime": "browser",
-      "x": 0.807,
-      "y": 0.184,
-      "z": 0.003
+      "x": 0.677,
+      "y": -0.578,
+      "z": 0.101
     },
     {
       "id": "portfolio-feature-apps",
@@ -317,9 +317,9 @@
       "scope": "portfolio",
       "layer": "feature",
       "runtime": "browser",
-      "x": -0.848,
-      "y": -0.184,
-      "z": 0.205
+      "x": -0.787,
+      "y": 0.001,
+      "z": 0.394
     },
     {
       "id": "portfolio-feature-cv",
@@ -327,9 +327,9 @@
       "scope": "portfolio",
       "layer": "feature",
       "runtime": "browser",
-      "x": -0.854,
-      "y": -0.028,
-      "z": 0.002
+      "x": -0.81,
+      "y": 0.249,
+      "z": 0.24
     },
     {
       "id": "portfolio-feature-experience",
@@ -337,9 +337,9 @@
       "scope": "portfolio",
       "layer": "feature",
       "runtime": "browser",
-      "x": -0.712,
-      "y": -0.22,
-      "z": 0.441
+      "x": -0.668,
+      "y": 0.141,
+      "z": 0.512
     },
     {
       "id": "portfolio-feature-home",
@@ -347,9 +347,9 @@
       "scope": "portfolio",
       "layer": "feature",
       "runtime": "browser",
-      "x": -0.549,
-      "y": 0.227,
-      "z": 0.498
+      "x": -0.398,
+      "y": 0.594,
+      "z": 0.3
     },
     {
       "id": "portfolio-feature-services",
@@ -357,9 +357,9 @@
       "scope": "portfolio",
       "layer": "feature",
       "runtime": "browser",
-      "x": -0.721,
-      "y": 0.071,
-      "z": -0.23
+      "x": -0.41,
+      "y": 0.295,
+      "z": 0.44
     },
     {
       "id": "portfolio-feature-work",
@@ -367,9 +367,9 @@
       "scope": "portfolio",
       "layer": "feature",
       "runtime": "browser",
-      "x": -0.747,
-      "y": -0.009,
-      "z": 0.382
+      "x": -0.728,
+      "y": 0.422,
+      "z": 0.092
     },
     {
       "id": "portfolio-util-seo",
@@ -377,9 +377,9 @@
       "scope": "portfolio",
       "layer": "util",
       "runtime": "browser",
-      "x": -0.884,
-      "y": 0.22,
-      "z": 0.226
+      "x": -0.687,
+      "y": 0.491,
+      "z": 0.464
     },
     {
       "id": "product-alarm-engine",
@@ -387,9 +387,9 @@
       "scope": "product-alarm-engine",
       "layer": "app",
       "runtime": "browser",
-      "x": -0.164,
-      "y": -0.433,
-      "z": -0.843
+      "x": -0.292,
+      "y": 0.046,
+      "z": -0.919
     },
     {
       "id": "product-alarm-engine-domain",
@@ -397,9 +397,9 @@
       "scope": "product-alarm-engine",
       "layer": "domain",
       "runtime": "agnostic",
-      "x": -0.162,
-      "y": 0.08,
-      "z": -0.947
+      "x": 0.157,
+      "y": 0.332,
+      "z": -0.888
     },
     {
       "id": "product-alarm-engine-feature",
@@ -407,9 +407,9 @@
       "scope": "product-alarm-engine",
       "layer": "feature",
       "runtime": "browser",
-      "x": -0.375,
-      "y": -0.396,
-      "z": -0.573
+      "x": -0.387,
+      "y": -0.028,
+      "z": -0.643
     },
     {
       "id": "product-autosphere-domain",
@@ -417,9 +417,9 @@
       "scope": "product-autosphere",
       "layer": "domain",
       "runtime": "agnostic",
-      "x": 0.42,
-      "y": 0.048,
-      "z": 0.858
+      "x": 0.057,
+      "y": 0.213,
+      "z": 0.937
     },
     {
       "id": "product-autosphere-feature",
@@ -427,9 +427,9 @@
       "scope": "product-autosphere",
       "layer": "feature",
       "runtime": "browser",
-      "x": 0.085,
-      "y": -0.52,
-      "z": 0.571
+      "x": -0.429,
+      "y": -0.084,
+      "z": 0.632
     },
     {
       "id": "product-basecamp",
@@ -437,9 +437,9 @@
       "scope": "product-basecamp",
       "layer": "app",
       "runtime": "browser",
-      "x": -0.533,
-      "y": -0.586,
-      "z": -0.389
+      "x": -0.618,
+      "y": -0.299,
+      "z": -0.579
     },
     {
       "id": "product-basecamp-domain",
@@ -447,9 +447,9 @@
       "scope": "product-basecamp",
       "layer": "domain",
       "runtime": "agnostic",
-      "x": -0.436,
-      "y": 0.222,
-      "z": -0.833
+      "x": -0.128,
+      "y": 0.317,
+      "z": -0.9
     },
     {
       "id": "product-basecamp-feature",
@@ -457,9 +457,9 @@
       "scope": "product-basecamp",
       "layer": "feature",
       "runtime": "browser",
-      "x": -0.272,
-      "y": -0.186,
-      "z": -0.651
+      "x": -0.114,
+      "y": -0.197,
+      "z": -0.688
     },
     {
       "id": "product-dispatch",
@@ -467,9 +467,9 @@
       "scope": "product-dispatch",
       "layer": "app",
       "runtime": "browser",
-      "x": 0.277,
-      "y": -0.803,
-      "z": -0.316
+      "x": -0.282,
+      "y": -0.38,
+      "z": -0.741
     },
     {
       "id": "product-dispatch-domain",
@@ -477,9 +477,9 @@
       "scope": "product-dispatch",
       "layer": "domain",
       "runtime": "agnostic",
-      "x": 0.924,
-      "y": 0.114,
-      "z": -0.261
+      "x": 0.432,
+      "y": 0.472,
+      "z": -0.71
     },
     {
       "id": "product-dispatch-feature",
@@ -487,9 +487,9 @@
       "scope": "product-dispatch",
       "layer": "feature",
       "runtime": "browser",
-      "x": 0.516,
-      "y": -0.359,
-      "z": -0.521
+      "x": 0.127,
+      "y": 0.021,
+      "z": -0.777
     },
     {
       "id": "product-greenhouse",
@@ -497,9 +497,9 @@
       "scope": "product-greenhouse",
       "layer": "app",
       "runtime": "browser",
-      "x": -0.311,
-      "y": -0.595,
-      "z": 0.508
+      "x": -0.568,
+      "y": -0.494,
+      "z": 0.365
     },
     {
       "id": "product-greenhouse-data-access",
@@ -507,9 +507,9 @@
       "scope": "product-greenhouse",
       "layer": "data-access",
       "runtime": "browser",
-      "x": -0.122,
-      "y": -0.22,
-      "z": 0.936
+      "x": -0.304,
+      "y": -0.383,
+      "z": 0.849
     },
     {
       "id": "product-greenhouse-domain",
@@ -517,9 +517,9 @@
       "scope": "product-greenhouse",
       "layer": "domain",
       "runtime": "agnostic",
-      "x": -0.059,
-      "y": 0.123,
-      "z": 0.935
+      "x": -0.203,
+      "y": -0.031,
+      "z": 0.929
     },
     {
       "id": "product-greenhouse-feature-dashboard",
@@ -527,9 +527,9 @@
       "scope": "product-greenhouse",
       "layer": "feature",
       "runtime": "browser",
-      "x": -0.25,
-      "y": -0.293,
-      "z": 0.7
+      "x": -0.426,
+      "y": -0.345,
+      "z": 0.618
     },
     {
       "id": "product-greenhouse-feature-field",
@@ -537,9 +537,9 @@
       "scope": "product-greenhouse",
       "layer": "feature",
       "runtime": "browser",
-      "x": 0.266,
-      "y": -0.348,
-      "z": 0.671
+      "x": -0.057,
+      "y": -0.585,
+      "z": 0.62
     },
     {
       "id": "product-greenhouse-field",
@@ -547,9 +547,9 @@
       "scope": "product-greenhouse",
       "layer": "app",
       "runtime": "browser",
-      "x": -0.046,
-      "y": -0.495,
-      "z": 0.75
+      "x": -0.324,
+      "y": -0.643,
+      "z": 0.557
     },
     {
       "id": "product-greenhouse-supabase",
@@ -557,9 +557,9 @@
       "scope": "product-greenhouse",
       "layer": "schema",
       "runtime": "node",
-      "x": -0.404,
-      "y": 0.325,
-      "z": 0.841
+      "x": -0.215,
+      "y": 0.404,
+      "z": 0.871
     },
     {
       "id": "product-greenhouse-ui",
@@ -567,9 +567,9 @@
       "scope": "product-greenhouse",
       "layer": "ui",
       "runtime": "browser",
-      "x": 0.101,
-      "y": -0.074,
-      "z": 0.883
+      "x": -0.062,
+      "y": -0.27,
+      "z": 0.845
     },
     {
       "id": "product-learning",
@@ -577,9 +577,9 @@
       "scope": "learning",
       "layer": "app",
       "runtime": "browser",
-      "x": -0.097,
-      "y": -0.628,
-      "z": -0.494
+      "x": -0.219,
+      "y": -0.597,
+      "z": -0.467
     },
     {
       "id": "product-lighting",
@@ -587,9 +587,9 @@
       "scope": "product-lighting",
       "layer": "app",
       "runtime": "browser",
-      "x": -0.229,
-      "y": -0.785,
-      "z": -0.391
+      "x": -0.463,
+      "y": -0.558,
+      "z": -0.524
     },
     {
       "id": "product-lighting-domain",
@@ -597,8 +597,8 @@
       "scope": "product-lighting",
       "layer": "domain",
       "runtime": "agnostic",
-      "x": 0.439,
-      "y": -0.138,
+      "x": 0.337,
+      "y": -0.351,
       "z": -0.87
     },
     {
@@ -607,9 +607,39 @@
       "scope": "product-lighting",
       "layer": "feature",
       "runtime": "browser",
-      "x": 0.21,
-      "y": -0.469,
-      "z": -0.621
+      "x": 0.072,
+      "y": -0.558,
+      "z": -0.576
+    },
+    {
+      "id": "product-serracalc",
+      "kind": "app",
+      "scope": "product-serracalc",
+      "layer": "app",
+      "runtime": "browser",
+      "x": -0.323,
+      "y": -0.801,
+      "z": 0.116
+    },
+    {
+      "id": "product-serracalc-domain",
+      "kind": "lib",
+      "scope": "product-serracalc",
+      "layer": "domain",
+      "runtime": "agnostic",
+      "x": 0.625,
+      "y": -0.345,
+      "z": 0.636
+    },
+    {
+      "id": "product-serracalc-feature",
+      "kind": "lib",
+      "scope": "product-serracalc",
+      "layer": "feature",
+      "runtime": "browser",
+      "x": 0.135,
+      "y": -0.758,
+      "z": 0.306
     },
     {
       "id": "product-strategy",
@@ -617,9 +647,9 @@
       "scope": "product-strategy",
       "layer": "app",
       "runtime": "browser",
-      "x": -0.009,
-      "y": -0.805,
-      "z": 0.417
+      "x": -0.82,
+      "y": -0.491,
+      "z": -0.025
     },
     {
       "id": "product-studylm",
@@ -627,9 +657,9 @@
       "scope": "product-studylm",
       "layer": "app",
       "runtime": "browser",
-      "x": 0.095,
-      "y": -0.657,
-      "z": -0.426
+      "x": -0.119,
+      "y": -0.767,
+      "z": -0.29
     },
     {
       "id": "product-studylm-domain",
@@ -637,9 +667,9 @@
       "scope": "product-studylm",
       "layer": "domain",
       "runtime": "agnostic",
-      "x": 0.442,
-      "y": 0.731,
-      "z": 0.287
+      "x": 0.751,
+      "y": 0.209,
+      "z": -0.455
     },
     {
       "id": "product-studylm-feature",
@@ -647,9 +677,9 @@
       "scope": "product-studylm",
       "layer": "feature",
       "runtime": "browser",
-      "x": 0.191,
-      "y": 0.077,
-      "z": -0.24
+      "x": 0.36,
+      "y": -0.518,
+      "z": -0.213
     },
     {
       "id": "product-studylm-learn",
@@ -657,9 +687,9 @@
       "scope": "product-studylm",
       "layer": "ui",
       "runtime": "browser",
-      "x": -0.173,
-      "y": 0.829,
-      "z": 0.041
+      "x": 0.86,
+      "y": -0.267,
+      "z": 0.008
     },
     {
       "id": "product-studylm-lessons",
@@ -667,9 +697,9 @@
       "scope": "product-studylm",
       "layer": "domain",
       "runtime": "agnostic",
-      "x": -0.16,
-      "y": 0.77,
-      "z": -0.425
+      "x": 0.817,
+      "y": -0.399,
+      "z": -0.354
     },
     {
       "id": "product-studylm-tracer",
@@ -677,9 +707,9 @@
       "scope": "product-studylm",
       "layer": "engine",
       "runtime": "agnostic",
-      "x": -0.675,
-      "y": 0.678,
-      "z": 0.186
+      "x": 0.803,
+      "y": -0.152,
+      "z": -0.541
     },
     {
       "id": "product-system-design",
@@ -687,9 +717,9 @@
       "scope": "product-system-design",
       "layer": "app",
       "runtime": "browser",
-      "x": -0.023,
-      "y": -0.896,
-      "z": -0.038
+      "x": -0.558,
+      "y": -0.67,
+      "z": 0.113
     },
     {
       "id": "product-system-design-data-access",
@@ -697,9 +727,9 @@
       "scope": "product-system-design",
       "layer": "data-access",
       "runtime": "browser",
-      "x": 0.88,
-      "y": -0.4,
-      "z": 0.099
+      "x": 0.269,
+      "y": -0.437,
+      "z": 0.823
     },
     {
       "id": "product-system-design-domain",
@@ -707,9 +737,9 @@
       "scope": "product-system-design",
       "layer": "domain",
       "runtime": "agnostic",
-      "x": 0.895,
-      "y": -0.112,
-      "z": 0.287
+      "x": 0.446,
+      "y": -0.571,
+      "z": 0.619
     },
     {
       "id": "product-system-design-feature",
@@ -717,9 +747,9 @@
       "scope": "product-system-design",
       "layer": "feature",
       "runtime": "browser",
-      "x": 0.472,
-      "y": -0.499,
-      "z": 0.166
+      "x": -0.023,
+      "y": -0.6,
+      "z": 0.411
     },
     {
       "id": "product-system-design-ui",
@@ -727,9 +757,9 @@
       "scope": "product-system-design",
       "layer": "ui",
       "runtime": "browser",
-      "x": 0.668,
-      "y": 0.119,
-      "z": 0.489
+      "x": 0.335,
+      "y": -0.157,
+      "z": 0.773
     },
     {
       "id": "product-whatsapp",
@@ -737,9 +767,9 @@
       "scope": "product-whatsapp",
       "layer": "app",
       "runtime": "browser",
-      "x": -0.215,
-      "y": -0.859,
-      "z": 0.201
+      "x": -0.459,
+      "y": -0.734,
+      "z": -0.265
     },
     {
       "id": "product-whatsapp-domain",
@@ -747,9 +777,9 @@
       "scope": "product-whatsapp",
       "layer": "domain",
       "runtime": "agnostic",
-      "x": 0.717,
-      "y": -0.494,
-      "z": 0.415
+      "x": 0.484,
+      "y": -0.704,
+      "z": -0.495
     },
     {
       "id": "product-whatsapp-feature",
@@ -757,9 +787,9 @@
       "scope": "product-whatsapp",
       "layer": "feature",
       "runtime": "browser",
-      "x": 0.374,
-      "y": -0.708,
-      "z": -0.012
+      "x": 0.089,
+      "y": -0.754,
+      "z": -0.334
     },
     {
       "id": "shared-ai-schema",
@@ -767,9 +797,9 @@
       "scope": "shared",
       "layer": "util",
       "runtime": "agnostic",
-      "x": 0.105,
-      "y": 0.67,
-      "z": -0.675
+      "x": 0.941,
+      "y": 0.039,
+      "z": -0.268
     },
     {
       "id": "shared-api-client",
@@ -777,9 +807,9 @@
       "scope": "shared",
       "layer": "contracts",
       "runtime": "agnostic",
-      "x": -0.527,
-      "y": 0.617,
-      "z": -0.52
+      "x": 0.079,
+      "y": 0.89,
+      "z": -0.362
     },
     {
       "id": "shared-content",
@@ -787,9 +817,9 @@
       "scope": "shared",
       "layer": "content",
       "runtime": "agnostic",
-      "x": -0.637,
-      "y": -0.307,
-      "z": 0.084
+      "x": -0.672,
+      "y": 0.053,
+      "z": 0.071
     },
     {
       "id": "shared-contracts",
@@ -797,9 +827,9 @@
       "scope": "shared",
       "layer": "contracts",
       "runtime": "agnostic",
-      "x": -0.567,
-      "y": 0.717,
-      "z": -0.233
+      "x": 0.183,
+      "y": 0.543,
+      "z": 0.744
     },
     {
       "id": "shared-site-config",
@@ -807,9 +837,9 @@
       "scope": "shared",
       "layer": "data-access",
       "runtime": "browser",
-      "x": 0.042,
-      "y": -0.183,
-      "z": -0.692
+      "x": 0.275,
+      "y": -0.292,
+      "z": -0.545
     },
     {
       "id": "shared-state",
@@ -817,9 +847,9 @@
       "scope": "shared",
       "layer": "data-access",
       "runtime": "browser",
-      "x": -0.267,
-      "y": -0.372,
-      "z": 0.064
+      "x": -0.38,
+      "y": -0.211,
+      "z": -0.005
     },
     {
       "id": "shared-steps",
@@ -827,9 +857,9 @@
       "scope": "shared",
       "layer": "util",
       "runtime": "agnostic",
-      "x": 0.96,
-      "y": -0.153,
-      "z": -0.109
+      "x": 0.775,
+      "y": -0.445,
+      "z": 0.418
     },
     {
       "id": "shell",
@@ -837,9 +867,9 @@
       "scope": "portfolio",
       "layer": "app",
       "runtime": "browser",
-      "x": -0.447,
-      "y": -0.53,
-      "z": 0.051
+      "x": -0.637,
+      "y": -0.165,
+      "z": -0.097
     },
     {
       "id": "shell-e2e",
@@ -847,9 +877,9 @@
       "scope": "test",
       "layer": "e2e",
       "runtime": "node",
-      "x": -0.478,
-      "y": -0.772,
-      "z": -0.104
+      "x": -0.683,
+      "y": -0.505,
+      "z": -0.243
     },
     {
       "id": "strategy-domain",
@@ -857,9 +887,9 @@
       "scope": "product-strategy",
       "layer": "domain",
       "runtime": "browser",
-      "x": 0.673,
-      "y": -0.157,
-      "z": 0.683
+      "x": -0.998,
+      "y": 0.004,
+      "z": 0.039
     },
     {
       "id": "strategy-feature",
@@ -867,9 +897,9 @@
       "scope": "product-strategy",
       "layer": "feature",
       "runtime": "browser",
-      "x": 0.38,
-      "y": -0.561,
-      "z": 0.486
+      "x": -0.769,
+      "y": -0.331,
+      "z": 0.254
     },
     {
       "id": "three-angular",
@@ -877,9 +907,9 @@
       "scope": "platform",
       "layer": "ui",
       "runtime": "browser",
-      "x": -0.363,
-      "y": 0.654,
-      "z": 0.514
+      "x": 0.182,
+      "y": 0.818,
+      "z": 0.271
     },
     {
       "id": "three-constellation",
@@ -887,9 +917,9 @@
       "scope": "platform",
       "layer": "engine",
       "runtime": "browser",
-      "x": -0.166,
-      "y": 0.487,
-      "z": 0.808
+      "x": 0.097,
+      "y": 0.806,
+      "z": 0.557
     },
     {
       "id": "three-engine",
@@ -897,9 +927,9 @@
       "scope": "platform",
       "layer": "engine",
       "runtime": "browser",
-      "x": 0.029,
-      "y": 0.902,
-      "z": 0.395
+      "x": 0.307,
+      "y": 0.939,
+      "z": 0.034
     },
     {
       "id": "three-scene-constellation",
@@ -907,9 +937,9 @@
       "scope": "platform",
       "layer": "engine",
       "runtime": "browser",
-      "x": -0.026,
-      "y": 0.676,
-      "z": 0.683
+      "x": -0.079,
+      "y": 0.941,
+      "z": 0.261
     },
     {
       "id": "three-scene-sky",
@@ -917,9 +947,9 @@
       "scope": "platform",
       "layer": "engine",
       "runtime": "browser",
-      "x": -0.435,
-      "y": 0.822,
-      "z": 0.123
+      "x": -0.066,
+      "y": 0.94,
+      "z": -0.046
     }
   ],
   "edges": [
@@ -955,12 +985,12 @@
     ],
     [
       0,
-      63,
+      66,
       "static"
     ],
     [
       1,
-      76,
+      79,
       "static"
     ],
     [
@@ -970,7 +1000,7 @@
     ],
     [
       3,
-      79,
+      82,
       "static"
     ],
     [
@@ -995,7 +1025,7 @@
     ],
     [
       5,
-      63,
+      66,
       "static"
     ],
     [
@@ -1025,17 +1055,17 @@
     ],
     [
       6,
-      65,
+      68,
       "implicit"
     ],
     [
       6,
-      72,
+      75,
       "implicit"
     ],
     [
       6,
-      87,
+      90,
       "implicit"
     ],
     [
@@ -1060,7 +1090,7 @@
     ],
     [
       10,
-      78,
+      81,
       "static"
     ],
     [
@@ -1070,7 +1100,7 @@
     ],
     [
       11,
-      81,
+      84,
       "static"
     ],
     [
@@ -1085,7 +1115,7 @@
     ],
     [
       12,
-      78,
+      81,
       "static"
     ],
     [
@@ -1095,7 +1125,7 @@
     ],
     [
       13,
-      81,
+      84,
       "static"
     ],
     [
@@ -1110,7 +1140,7 @@
     ],
     [
       14,
-      78,
+      81,
       "static"
     ],
     [
@@ -1125,32 +1155,32 @@
     ],
     [
       16,
-      77,
-      "static"
-    ],
-    [
-      16,
       80,
       "static"
     ],
     [
       16,
-      81,
+      83,
       "static"
     ],
     [
       16,
-      87,
+      84,
       "static"
     ],
     [
       16,
-      91,
+      90,
       "static"
     ],
     [
       16,
-      91,
+      94,
+      "static"
+    ],
+    [
+      16,
+      94,
       "dynamic"
     ],
     [
@@ -1180,7 +1210,7 @@
     ],
     [
       20,
-      76,
+      79,
       "static"
     ],
     [
@@ -1230,7 +1260,7 @@
     ],
     [
       22,
-      80,
+      83,
       "static"
     ],
     [
@@ -1250,12 +1280,12 @@
     ],
     [
       26,
-      78,
+      81,
       "static"
     ],
     [
       26,
-      81,
+      84,
       "static"
     ],
     [
@@ -1290,12 +1320,12 @@
     ],
     [
       31,
-      78,
+      81,
       "static"
     ],
     [
       31,
-      81,
+      84,
       "static"
     ],
     [
@@ -1310,12 +1340,12 @@
     ],
     [
       32,
-      78,
+      81,
       "static"
     ],
     [
       32,
-      81,
+      84,
       "static"
     ],
     [
@@ -1330,12 +1360,12 @@
     ],
     [
       33,
-      78,
+      81,
       "static"
     ],
     [
       33,
-      81,
+      84,
       "static"
     ],
     [
@@ -1350,27 +1380,27 @@
     ],
     [
       34,
-      78,
-      "static"
-    ],
-    [
-      34,
       81,
       "static"
     ],
     [
       34,
-      87,
-      "static"
-    ],
-    [
-      34,
-      88,
+      84,
       "static"
     ],
     [
       34,
       90,
+      "static"
+    ],
+    [
+      34,
+      91,
+      "static"
+    ],
+    [
+      34,
+      93,
       "dynamic"
     ],
     [
@@ -1385,22 +1415,22 @@
     ],
     [
       35,
-      78,
-      "static"
-    ],
-    [
-      35,
-      79,
-      "static"
-    ],
-    [
-      35,
-      80,
-      "static"
-    ],
-    [
-      35,
       81,
+      "static"
+    ],
+    [
+      35,
+      82,
+      "static"
+    ],
+    [
+      35,
+      83,
+      "static"
+    ],
+    [
+      35,
+      84,
       "static"
     ],
     [
@@ -1415,17 +1445,17 @@
     ],
     [
       36,
-      78,
-      "static"
-    ],
-    [
-      36,
       81,
       "static"
     ],
     [
+      36,
+      84,
+      "static"
+    ],
+    [
       37,
-      78,
+      81,
       "static"
     ],
     [
@@ -1455,7 +1485,7 @@
     ],
     [
       40,
-      81,
+      84,
       "static"
     ],
     [
@@ -1475,7 +1505,7 @@
     ],
     [
       42,
-      81,
+      84,
       "static"
     ],
     [
@@ -1495,7 +1525,7 @@
     ],
     [
       43,
-      81,
+      84,
       "static"
     ],
     [
@@ -1530,7 +1560,7 @@
     ],
     [
       45,
-      81,
+      84,
       "static"
     ],
     [
@@ -1560,12 +1590,12 @@
     ],
     [
       48,
-      80,
+      83,
       "static"
     ],
     [
       48,
-      81,
+      84,
       "static"
     ],
     [
@@ -1595,7 +1625,7 @@
     ],
     [
       49,
-      81,
+      84,
       "static"
     ],
     [
@@ -1630,7 +1660,7 @@
     ],
     [
       52,
-      81,
+      84,
       "static"
     ],
     [
@@ -1660,7 +1690,7 @@
     ],
     [
       53,
-      81,
+      84,
       "static"
     ],
     [
@@ -1685,7 +1715,7 @@
     ],
     [
       54,
-      81,
+      84,
       "static"
     ],
     [
@@ -1710,7 +1740,7 @@
     ],
     [
       57,
-      81,
+      84,
       "static"
     ],
     [
@@ -1730,7 +1760,7 @@
     ],
     [
       58,
-      81,
+      84,
       "static"
     ],
     [
@@ -1760,7 +1790,7 @@
     ],
     [
       60,
-      81,
+      84,
       "static"
     ],
     [
@@ -1775,42 +1805,37 @@
     ],
     [
       61,
-      86,
+      63,
       "dynamic"
     ],
     [
-      62,
-      17,
+      61,
+      84,
       "static"
     ],
     [
-      62,
-      25,
-      "static"
-    ],
-    [
-      62,
-      26,
-      "static"
-    ],
-    [
-      62,
-      64,
-      "dynamic"
-    ],
-    [
-      62,
-      80,
-      "static"
-    ],
-    [
-      64,
+      63,
       9,
       "static"
     ],
     [
-      64,
-      17,
+      63,
+      25,
+      "static"
+    ],
+    [
+      63,
+      29,
+      "static"
+    ],
+    [
+      63,
+      62,
+      "static"
+    ],
+    [
+      63,
+      84,
       "static"
     ],
     [
@@ -1820,442 +1845,497 @@
     ],
     [
       64,
-      29,
+      26,
       "static"
     ],
     [
       64,
-      30,
-      "static"
+      89,
+      "dynamic"
     ],
     [
-      64,
-      63,
-      "static"
-    ],
-    [
-      64,
       65,
-      "static"
-    ],
-    [
-      64,
-      66,
-      "static"
-    ],
-    [
-      64,
-      78,
-      "static"
-    ],
-    [
-      64,
-      80,
-      "static"
-    ],
-    [
-      64,
-      81,
+      17,
       "static"
     ],
     [
       65,
-      66,
+      25,
+      "static"
+    ],
+    [
+      65,
+      26,
       "static"
     ],
     [
       65,
       67,
-      "static"
-    ],
-    [
-      66,
-      76,
-      "static"
-    ],
-    [
-      68,
-      25,
-      "static"
-    ],
-    [
-      68,
-      26,
-      "static"
-    ],
-    [
-      68,
-      71,
       "dynamic"
     ],
     [
-      68,
-      81,
+      65,
+      83,
       "static"
     ],
     [
-      69,
-      70,
-      "static"
-    ],
-    [
-      70,
-      82,
-      "static"
-    ],
-    [
-      71,
+      67,
       9,
       "static"
     ],
     [
-      71,
+      67,
       17,
       "static"
     ],
     [
-      71,
+      67,
       25,
       "static"
     ],
     [
-      71,
+      67,
       29,
       "static"
     ],
     [
-      71,
+      67,
+      30,
+      "static"
+    ],
+    [
+      67,
+      66,
+      "static"
+    ],
+    [
+      67,
+      68,
+      "static"
+    ],
+    [
+      67,
       69,
       "static"
     ],
     [
-      71,
-      70,
-      "static"
-    ],
-    [
-      71,
-      72,
-      "static"
-    ],
-    [
-      71,
-      78,
-      "static"
-    ],
-    [
-      71,
+      67,
       81,
       "static"
     ],
     [
-      72,
-      9,
+      67,
+      83,
       "static"
     ],
     [
-      72,
+      67,
+      84,
+      "static"
+    ],
+    [
+      68,
+      69,
+      "static"
+    ],
+    [
+      68,
       70,
       "static"
     ],
     [
-      73,
+      69,
+      79,
+      "static"
+    ],
+    [
+      71,
       25,
       "static"
     ],
     [
-      73,
+      71,
       26,
       "static"
     ],
     [
-      73,
-      75,
-      "dynamic"
-    ],
-    [
-      73,
-      81,
-      "static"
-    ],
-    [
-      75,
-      9,
-      "static"
-    ],
-    [
-      75,
-      25,
-      "static"
-    ],
-    [
-      75,
-      29,
-      "static"
-    ],
-    [
-      75,
+      71,
       74,
-      "static"
-    ],
-    [
-      75,
-      80,
-      "static"
-    ],
-    [
-      75,
-      81,
-      "static"
-    ],
-    [
-      77,
-      24,
-      "implicit"
-    ],
-    [
-      81,
-      78,
-      "static"
-    ],
-    [
-      83,
-      9,
-      "static"
-    ],
-    [
-      83,
-      10,
-      "federated"
-    ],
-    [
-      83,
-      12,
-      "federated"
-    ],
-    [
-      83,
-      14,
-      "federated"
-    ],
-    [
-      83,
-      25,
-      "static"
-    ],
-    [
-      83,
-      26,
-      "static"
-    ],
-    [
-      83,
-      27,
-      "static"
-    ],
-    [
-      83,
-      31,
       "dynamic"
     ],
     [
-      83,
-      32,
-      "dynamic"
+      71,
+      84,
+      "static"
     ],
     [
-      83,
-      33,
-      "dynamic"
-    ],
-    [
-      83,
-      34,
-      "dynamic"
-    ],
-    [
-      83,
-      35,
-      "dynamic"
-    ],
-    [
-      83,
-      36,
-      "dynamic"
-    ],
-    [
-      83,
-      40,
-      "dynamic"
-    ],
-    [
-      83,
-      42,
-      "dynamic"
-    ],
-    [
-      83,
-      43,
-      "federated"
-    ],
-    [
-      83,
-      46,
-      "federated"
-    ],
-    [
-      83,
-      49,
-      "federated"
-    ],
-    [
-      83,
-      57,
-      "federated"
-    ],
-    [
-      83,
-      58,
-      "federated"
-    ],
-    [
-      83,
-      61,
-      "federated"
-    ],
-    [
-      83,
-      62,
-      "federated"
-    ],
-    [
-      83,
-      68,
-      "federated"
-    ],
-    [
-      83,
+      72,
       73,
-      "federated"
-    ],
-    [
-      83,
-      78,
       "static"
     ],
     [
-      83,
-      81,
-      "static"
-    ],
-    [
-      84,
-      14,
-      "implicit"
-    ],
-    [
-      84,
-      43,
-      "implicit"
-    ],
-    [
-      84,
-      49,
-      "implicit"
-    ],
-    [
-      84,
-      57,
-      "implicit"
-    ],
-    [
-      84,
-      58,
-      "implicit"
-    ],
-    [
-      84,
-      62,
-      "implicit"
-    ],
-    [
-      84,
-      68,
-      "implicit"
-    ],
-    [
-      84,
       73,
-      "implicit"
-    ],
-    [
-      84,
-      78,
-      "static"
-    ],
-    [
-      84,
-      83,
-      "implicit"
-    ],
-    [
-      86,
-      9,
-      "static"
-    ],
-    [
-      86,
-      25,
-      "static"
-    ],
-    [
-      86,
-      81,
-      "static"
-    ],
-    [
-      86,
       85,
       "static"
     ],
     [
-      87,
-      88,
+      74,
+      9,
       "static"
     ],
     [
-      87,
-      89,
+      74,
+      17,
       "static"
     ],
     [
-      87,
-      90,
+      74,
+      25,
+      "static"
+    ],
+    [
+      74,
+      29,
+      "static"
+    ],
+    [
+      74,
+      72,
+      "static"
+    ],
+    [
+      74,
+      73,
+      "static"
+    ],
+    [
+      74,
+      75,
+      "static"
+    ],
+    [
+      74,
+      81,
+      "static"
+    ],
+    [
+      74,
+      84,
+      "static"
+    ],
+    [
+      75,
+      9,
+      "static"
+    ],
+    [
+      75,
+      73,
+      "static"
+    ],
+    [
+      76,
+      25,
+      "static"
+    ],
+    [
+      76,
+      26,
+      "static"
+    ],
+    [
+      76,
+      78,
       "dynamic"
     ],
     [
-      90,
-      8,
+      76,
+      84,
       "static"
     ],
     [
-      90,
+      78,
+      9,
+      "static"
+    ],
+    [
+      78,
+      25,
+      "static"
+    ],
+    [
+      78,
+      29,
+      "static"
+    ],
+    [
+      78,
+      77,
+      "static"
+    ],
+    [
+      78,
+      83,
+      "static"
+    ],
+    [
+      78,
+      84,
+      "static"
+    ],
+    [
+      80,
+      24,
+      "implicit"
+    ],
+    [
+      84,
+      81,
+      "static"
+    ],
+    [
+      86,
+      9,
+      "static"
+    ],
+    [
+      86,
+      10,
+      "federated"
+    ],
+    [
+      86,
+      12,
+      "federated"
+    ],
+    [
+      86,
+      14,
+      "federated"
+    ],
+    [
+      86,
+      25,
+      "static"
+    ],
+    [
+      86,
+      26,
+      "static"
+    ],
+    [
+      86,
+      27,
+      "static"
+    ],
+    [
+      86,
+      31,
+      "dynamic"
+    ],
+    [
+      86,
+      32,
+      "dynamic"
+    ],
+    [
+      86,
+      33,
+      "dynamic"
+    ],
+    [
+      86,
+      34,
+      "dynamic"
+    ],
+    [
+      86,
+      35,
+      "dynamic"
+    ],
+    [
+      86,
+      36,
+      "dynamic"
+    ],
+    [
+      86,
+      40,
+      "dynamic"
+    ],
+    [
+      86,
+      42,
+      "dynamic"
+    ],
+    [
+      86,
+      43,
+      "federated"
+    ],
+    [
+      86,
+      46,
+      "federated"
+    ],
+    [
+      86,
+      49,
+      "federated"
+    ],
+    [
+      86,
+      57,
+      "federated"
+    ],
+    [
+      86,
+      58,
+      "federated"
+    ],
+    [
+      86,
+      61,
+      "federated"
+    ],
+    [
+      86,
+      64,
+      "federated"
+    ],
+    [
+      86,
+      65,
+      "federated"
+    ],
+    [
+      86,
+      71,
+      "federated"
+    ],
+    [
+      86,
+      76,
+      "federated"
+    ],
+    [
+      86,
+      81,
+      "static"
+    ],
+    [
+      86,
+      84,
+      "static"
+    ],
+    [
+      87,
+      14,
+      "implicit"
+    ],
+    [
+      87,
+      43,
+      "implicit"
+    ],
+    [
+      87,
+      49,
+      "implicit"
+    ],
+    [
+      87,
+      57,
+      "implicit"
+    ],
+    [
+      87,
+      58,
+      "implicit"
+    ],
+    [
+      87,
+      65,
+      "implicit"
+    ],
+    [
+      87,
+      71,
+      "implicit"
+    ],
+    [
+      87,
+      76,
+      "implicit"
+    ],
+    [
+      87,
+      81,
+      "static"
+    ],
+    [
+      87,
+      86,
+      "implicit"
+    ],
+    [
+      89,
+      9,
+      "static"
+    ],
+    [
+      89,
+      25,
+      "static"
+    ],
+    [
+      89,
+      84,
+      "static"
+    ],
+    [
+      89,
       88,
       "static"
     ],
     [
       90,
-      89,
+      91,
       "static"
     ],
     [
-      91,
+      90,
+      92,
+      "static"
+    ],
+    [
+      90,
+      93,
+      "dynamic"
+    ],
+    [
+      93,
       8,
       "static"
     ],
     [
+      93,
       91,
-      89,
+      "static"
+    ],
+    [
+      93,
+      92,
+      "static"
+    ],
+    [
+      94,
+      8,
+      "static"
+    ],
+    [
+      94,
+      92,
       "static"
     ]
   ]

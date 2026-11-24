@@ -60,6 +60,12 @@
       "@ah/products/lighting/feature": [
         "./libs/products/lighting/feature/src/index.ts"
       ],
+      "@ah/products/serracalc/domain": [
+        "./libs/products/serracalc/domain/src/index.ts"
+      ],
+      "@ah/products/serracalc/feature": [
+        "./libs/products/serracalc/feature/src/index.ts"
+      ],
       "@ah/products/alarm-engine/domain": [
         "./libs/products/alarm-engine/domain/src/index.ts"
       ],

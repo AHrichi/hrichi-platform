@@ -22,6 +22,8 @@ const STRICT = [
   'apps/products/system-design/**/*.scss',
   'libs/products/greenhouse/**/*.scss',
   'apps/products/greenhouse/**/*.scss',
+  'libs/products/serracalc/**/*.scss',
+  'apps/products/serracalc/**/*.scss',
 ];
 
 const COLOR_PROPS = [

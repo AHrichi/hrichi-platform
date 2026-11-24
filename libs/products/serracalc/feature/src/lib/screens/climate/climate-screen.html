@@ -1,0 +1,112 @@
+<section class="screen" aria-labelledby="sc-climate-title">
+  <header class="head">
+    <div>
+      <h2 id="sc-climate-title">{{ t().climate.title }}</h2>
+      <p>{{ t().climate.lead }}</p>
+    </div>
+  </header>
+
+  <section class="panel" aria-labelledby="sc-climate-place">
+    <h3 id="sc-climate-place" class="ah-visually-hidden">
+      {{ t().climate.choose }}
+    </h3>
+    <div class="actions">
+      <label class="select-inline">
+        <span>{{ t().climate.choose }}</span>
+        <select (change)="choose($event)">
+          @for (c of climates; track c.id) {
+            <option [value]="c.id" [selected]="climateId() === c.id">
+              {{ c.name }} ({{ c.country }})
+            </option>
+          }
+        </select>
+      </label>
+      @if (store.activeProject()) {
+        @if (inUse()) {
+          <span class="hint">✓ {{ t().climate.inUse }}</span>
+        } @else {
+          <button ahButton="secondary" type="button" (click)="useForProject()">
+            {{ t().climate.use }}
+          </button>
+        }
+      }
+    </div>
+    <div class="results">
+      <ah-metric-card
+        [label]="t().climate.designWinter"
+        [value]="i18n.num(climate().designWinterC)"
+        unit="°C"
+        variant="accent"
+      />
+      <ah-metric-card
+        [label]="t().climate.designSummer"
+        [value]="i18n.num(climate().designSummerC)"
+        unit="°C"
+        [hint]="i18n.num(climate().designSummerRhPct, 0) + ' % RH'"
+      />
+      <ah-metric-card
+        [label]="t().climate.peakSun"
+        [value]="i18n.num(climate().peakRadiationWm2, 0)"
+        unit="W/m²"
+      />
+      <ah-metric-card
+        [label]="t().climate.rainYear"
+        [value]="i18n.num(rainYear(), 0)"
+        unit="mm"
+        [hint]="t().climate.lat + ' ' + i18n.num(climate().latitude, 2) + '°'"
+      />
+    </div>
+  </section>
+
+  <div class="workbench">
+    <section class="panel" aria-labelledby="sc-climate-temps">
+      <h3 id="sc-climate-temps">
+        {{ t().climate.table.tMin }} – {{ t().climate.table.tMax }}
+      </h3>
+      <sc-month-bars
+        [series]="temperatures()"
+        [low]="lows()"
+        unit="°C"
+        [digits]="1"
+        [ariaLabel]="t().climate.chartAlt(climate().name)"
+      />
+      <h3>{{ t().climate.table.rain }}</h3>
+      <sc-month-bars
+        [series]="rain()"
+        unit="mm"
+        [ariaLabel]="t().climate.chartAlt(climate().name)"
+      />
+    </section>
+
+    <section class="panel" aria-labelledby="sc-climate-table">
+      <h3 id="sc-climate-table">{{ climate().name }}</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">{{ t().climate.table.month }}</th>
+              <th scope="col">{{ t().climate.table.tMin }}</th>
+              <th scope="col">{{ t().climate.table.tMax }}</th>
+              <th scope="col">{{ t().climate.table.sun }}</th>
+              <th scope="col">{{ t().climate.table.rain }}</th>
+              <th scope="col">{{ t().climate.table.day }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (r of rows(); track r.month) {
+              <tr>
+                <th scope="row">{{ i18n.month(r.month) }}</th>
+                <td>{{ i18n.num(r.tMinC) }}</td>
+                <td>{{ i18n.num(r.tMaxC) }}</td>
+                <td>{{ i18n.num(r.radiationMj) }}</td>
+                <td>{{ i18n.num(r.rainMm, 0) }}</td>
+                <td>{{ i18n.num(r.dayHours) }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      <p class="hint">{{ t().climate.source }}</p>
+    </section>
+  </div>
+</section>

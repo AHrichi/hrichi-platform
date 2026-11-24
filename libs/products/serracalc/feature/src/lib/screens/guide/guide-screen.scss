@@ -1,0 +1,46 @@
+@use '../../styles/serra' as sc;
+
+.screen {
+  @include sc.screen;
+}
+
+.head {
+  @include sc.screen-head;
+}
+
+.tools {
+  display: grid;
+  gap: var(--space-4);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+}
+
+.panel {
+  @include sc.panel;
+  margin: 0;
+
+  h3 {
+    @include sc.panel-title;
+  }
+
+  p,
+  ul {
+    margin: 0;
+    line-height: var(--font-line-height-normal);
+  }
+
+  ul {
+    display: grid;
+    gap: var(--space-2);
+    padding-inline-start: var(--space-5);
+    color: var(--color-text-muted);
+  }
+
+  a {
+    align-self: start;
+    display: inline-flex;
+    align-items: center;
+    min-block-size: 2.75rem;
+    color: var(--color-accent-default);
+    font-weight: var(--font-weight-medium);
+  }
+}

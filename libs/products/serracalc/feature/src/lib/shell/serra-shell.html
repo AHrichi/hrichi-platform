@@ -1,0 +1,124 @@
+<div
+  class="serra"
+  [class.is-sunlight]="store.isHighContrast()"
+  [attr.dir]="i18n.isRtl() ? 'rtl' : 'ltr'"
+  [attr.lang]="i18n.lang()"
+>
+  <header class="bar">
+    <a class="brand" routerLink="projects">
+      <svg class="logo" viewBox="0 0 32 32" aria-hidden="true">
+        <rect width="32" height="32" rx="9" />
+        <path d="M6 25V14l5-5 5 5 5-5 5 5v11z" />
+        <path d="M16 14v11M6 19h20" class="thin" />
+        <path d="M22.5 4.5a2 2 0 1 0 0 .01" class="sun" />
+      </svg>
+      <span class="brand-text">
+        <strong>{{ t().app.name }}</strong>
+        <small>{{ t().app.tagline }}</small>
+      </span>
+    </a>
+
+    @if (store.activeProject(); as project) {
+      <a class="project-chip" routerLink="projects" [title]="project.title">
+        <span class="ah-visually-hidden">{{ t().app.activeProject }}:</span>
+        {{ project.title }}
+      </a>
+    }
+
+    <div class="tools">
+      <span class="offline" [title]="t().app.offlineHint">
+        <span class="dot" aria-hidden="true"></span>{{ t().app.offline }}
+      </span>
+      <button
+        type="button"
+        class="tool"
+        [attr.aria-pressed]="store.isHighContrast()"
+        [title]="t().app.sunlightHint"
+        (click)="store.toggleHighContrast()"
+      >
+        <span aria-hidden="true">☀️</span>
+        <span class="tool-label">{{ t().app.sunlight }}</span>
+      </button>
+      @if (standalone) {
+        <div class="langs" role="group" [attr.aria-label]="t().app.language">
+          @for (lang of languages; track lang.id) {
+            <button
+              type="button"
+              [attr.aria-pressed]="i18n.lang() === lang.id"
+              [attr.lang]="lang.id"
+              (click)="i18n.setLanguage(lang.id)"
+            >
+              {{ lang.label }}
+            </button>
+          }
+        </div>
+      }
+    </div>
+  </header>
+
+  <nav class="tabs" ahScrollHint [attr.aria-label]="t().app.sections">
+    @for (item of nav; track item.id) {
+      <a
+        [routerLink]="item.id"
+        routerLinkActive="is-active"
+        ariaCurrentWhenActive="page"
+      >
+        <span aria-hidden="true">{{ item.icon }}</span>
+        {{ t().nav[item.id] }}
+      </a>
+    }
+  </nav>
+
+  <div class="content">
+    <router-outlet />
+    <p class="aid">{{ t().app.planningAid }}</p>
+  </div>
+
+  <nav class="bottom" [attr.aria-label]="t().app.sections">
+    @for (item of primary; track item.id) {
+      <a
+        [routerLink]="item.id"
+        routerLinkActive="is-active"
+        ariaCurrentWhenActive="page"
+        (click)="closeMore()"
+      >
+        <span class="icon" aria-hidden="true">{{ item.icon }}</span>
+        <span class="label">{{ t().nav[item.id] }}</span>
+      </a>
+    }
+    <button
+      #moreBtn
+      type="button"
+      [class.is-active]="inSecondary()"
+      [attr.aria-expanded]="moreOpen()"
+      aria-controls="sc-more"
+      (click)="toggleMore(moreBtn)"
+    >
+      <span class="icon" aria-hidden="true">⋯</span>
+      <span class="label">{{ t().nav.more }}</span>
+    </button>
+  </nav>
+
+  @if (moreOpen()) {
+    <div class="scrim" aria-hidden="true" (click)="closeMore()"></div>
+    <div
+      #moreSheet
+      class="more"
+      id="sc-more"
+      tabindex="-1"
+      (keydown.escape)="closeMore()"
+    >
+      @for (item of secondary; track item.id) {
+        <a
+          [routerLink]="item.id"
+          routerLinkActive="is-active"
+          ariaCurrentWhenActive="page"
+          (click)="closeMore()"
+        >
+          <span aria-hidden="true">{{ item.icon }}</span>
+          {{ t().nav[item.id] }}
+        </a>
+      }
+    </div>
+  }
+</div>

@@ -34,6 +34,17 @@ const APPS = {
     theme: '#f59e0b',
     glyph: `<path d="M22 54 V24 a10 10 0 0 1 10-10 h6"/><path d="M34 14 h12 l-3 6 h-6 z" fill="currentColor"/><path d="M40 26 v5 M34 25 l-2.5 4 M46 25 l2.5 4"/><path d="M15 54 h14"/>`,
   },
+  serracalc: {
+    dir: 'apps/products/serracalc/web',
+    name: 'SerraCalc · Greenhouse heat, water & climate',
+    shortName: 'SerraCalc',
+    description:
+      'Size greenhouse heating, cooling and irrigation in the field, offline.',
+    bg: '#15803d',
+    fg: '#ffffff',
+    theme: '#15803d',
+    glyph: `<path d="M12 50 V28 l10-10 10 10 10-10 10 10 v22 z"/><path d="M32 28 v22 M12 39 h40" stroke-width="2.5"/><circle cx="48" cy="11" r="3.5"/>`,
+  },
   strategy: {
     dir: 'apps/products/strategy/web',
     name: 'StrategyApp · Wealth & financial planning',

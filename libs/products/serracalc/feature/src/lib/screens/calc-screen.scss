@@ -1,0 +1,155 @@
+// Shared by the calculator screens: inputs on one side, results on the other.
+@use '../styles/serra' as sc;
+
+.screen {
+  @include sc.screen;
+}
+
+.head {
+  @include sc.screen-head;
+}
+
+.workbench {
+  @include sc.workbench;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-inline-size: 0;
+}
+
+.panel {
+  @include sc.panel;
+  margin: 0;
+
+  h3 {
+    @include sc.panel-title;
+  }
+
+  h4 {
+    margin: 0;
+    font-size: var(--font-size-200);
+    font-weight: var(--font-weight-semibold);
+  }
+}
+
+// The house's fields fold away once set.
+details.panel > summary {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-block-size: 2.75rem;
+  cursor: pointer;
+  list-style-position: inside;
+}
+
+details.panel:not([open]) {
+  gap: 0;
+}
+
+.hint {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-200);
+}
+
+.results {
+  @include sc.results;
+}
+
+.actions {
+  @include sc.actions;
+}
+
+.chip {
+  min-block-size: 2.75rem;
+  padding-inline: var(--space-3);
+  border: 1px solid var(--color-accent-default);
+  border-radius: var(--radius-pill);
+  background: var(--color-bg-surface);
+  color: var(--color-accent-default);
+  font: inherit;
+  font-size: var(--font-size-200);
+  cursor: pointer;
+
+  &:hover {
+    background: var(--color-accent-subtle);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-focus-ring);
+    outline-offset: 2px;
+  }
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+table {
+  inline-size: 100%;
+  border-collapse: collapse;
+  font-size: var(--font-size-200);
+  font-variant-numeric: tabular-nums;
+
+  caption {
+    padding-block-end: var(--space-2);
+    font-weight: var(--font-weight-medium);
+    text-align: start;
+  }
+
+  th,
+  td {
+    padding: var(--space-2);
+    border-block-end: 1px solid var(--color-border-default);
+    text-align: end;
+  }
+
+  th:first-child,
+  td:first-child {
+    text-align: start;
+  }
+
+  thead th {
+    color: var(--color-text-muted);
+    font-weight: var(--font-weight-medium);
+  }
+}
+
+.table-toggle summary {
+  min-block-size: 2.75rem;
+  padding-block: var(--space-2);
+  color: var(--color-accent-default);
+  font-size: var(--font-size-200);
+  cursor: pointer;
+}
+
+.split {
+  display: grid;
+  gap: var(--space-3);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 8rem), 1fr));
+  margin: 0;
+
+  dt {
+    color: var(--color-text-muted);
+    font-size: var(--font-size-100);
+  }
+
+  dd {
+    margin: 0;
+    font-weight: var(--font-weight-medium);
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+.select-inline {
+  @include sc.label;
+  flex: 1 1 16rem;
+  max-inline-size: 24rem;
+
+  select {
+    @include sc.form-control;
+  }
+}

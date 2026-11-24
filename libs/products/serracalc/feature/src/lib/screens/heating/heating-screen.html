@@ -1,0 +1,300 @@
+<section class="screen" aria-labelledby="sc-heating-title">
+  <header class="head">
+    <div>
+      <h2 id="sc-heating-title">{{ t().heating.title }}</h2>
+      <p>{{ t().heating.lead }}</p>
+    </div>
+  </header>
+
+  <sc-context-bar (resetInputs)="reset()" />
+
+  <ah-tabs
+    [tabs]="tabs()"
+    [selectedId]="tab()"
+    (selectedIdChange)="editor.select($event)"
+    [ariaLabel]="t().heating.title"
+  />
+
+  <div class="workbench">
+    <div class="column">
+      @if (tab() !== 'pipes') {
+        <details class="panel house" open>
+          <summary>
+            <h3>{{ t().context.house }}</h3>
+          </summary>
+          <sc-field-grid
+            [specs]="envelopeFields"
+            [values]="envelope()"
+            (changed)="setEnvelope($event)"
+          >
+            <label class="select">
+              <span>{{ t().heating.cover }}</span>
+              <select (change)="setCover($any(value($event)))">
+                @for (id of covers; track id) {
+                  <option [value]="id" [selected]="envelope().cover === id">
+                    {{ t().covers[id] }}
+                  </option>
+                }
+              </select>
+            </label>
+            <label class="select">
+              <span>{{ t().heating.screen }}</span>
+              <select (change)="setScreen($any(value($event)))">
+                @for (id of screens; track id) {
+                  <option [value]="id" [selected]="envelope().screen === id">
+                    {{ t().screens[id] }}
+                  </option>
+                }
+              </select>
+            </label>
+            <label class="check">
+              <input
+                type="checkbox"
+                [checked]="envelope().perimeterInsulated"
+                (change)="setInsulated(checked($event))"
+              />
+              {{ t().heating.insulated }}
+            </label>
+          </sc-field-grid>
+        </details>
+      }
+
+      <section class="panel" aria-labelledby="sc-heating-inputs">
+        <h3 id="sc-heating-inputs">{{ t().calc.inputs }}</h3>
+        @switch (tab()) {
+          @case ('peak') {
+            <p class="hint">{{ designNight() }}</p>
+            <sc-field-grid
+              [specs]="peakFields"
+              [values]="peakExtra()"
+              (changed)="setPeak($event)"
+            >
+              <label class="check">
+                <input
+                  type="checkbox"
+                  [checked]="peakExtra().screenClosed"
+                  (change)="setScreenClosed(checked($event))"
+                />
+                {{ t().heating.screenClosed }}
+              </label>
+            </sc-field-grid>
+          }
+          @case ('year') {
+            <sc-field-grid
+              [specs]="yearFields()"
+              [values]="yearExtra()"
+              (changed)="setYear($event)"
+            >
+              <label class="select">
+                <span>{{ t().heating.climate }}</span>
+                <select (change)="setClimate(value($event))">
+                  @for (c of climates; track c.id) {
+                    <option
+                      [value]="c.id"
+                      [selected]="yearExtra().climateId === c.id"
+                    >
+                      {{ c.name }} ({{ c.country }})
+                    </option>
+                  }
+                </select>
+              </label>
+              <label class="select">
+                <span>{{ t().heating.fuel }}</span>
+                <select (change)="setFuel($any(value($event)))">
+                  @for (id of fuels; track id) {
+                    <option [value]="id" [selected]="yearExtra().fuel === id">
+                      {{ t().fuels[id] }}
+                    </option>
+                  }
+                </select>
+              </label>
+            </sc-field-grid>
+          }
+          @case ('pipes') {
+            <div class="actions">
+              <button type="button" class="chip" (click)="usePeak()">
+                {{ t().heating.usePeak(i18n.num(peak().designKw)) }}
+              </button>
+              <button type="button" class="chip" (click)="useYear()">
+                {{ t().heating.useYear(i18n.num(year().annualKwh, 0)) }}
+              </button>
+            </div>
+            <sc-field-grid
+              [specs]="pipeFields"
+              [values]="pipeParams()"
+              (changed)="setPipes($event)"
+            >
+              <label class="select">
+                <span>{{ t().heating.pipe }}</span>
+                <select (change)="setPipe($any(value($event)))">
+                  @for (id of pipes; track id) {
+                    <option [value]="id" [selected]="pipeParams().pipe === id">
+                      {{ t().pipes[id] }}
+                    </option>
+                  }
+                </select>
+              </label>
+            </sc-field-grid>
+          }
+        }
+      </section>
+    </div>
+
+    <div class="column">
+      <section class="panel" aria-labelledby="sc-heating-results">
+        <h3 id="sc-heating-results">{{ t().calc.results }}</h3>
+        @switch (tab()) {
+          @case ('peak') {
+            <div class="results">
+              <ah-metric-card
+                [label]="t().heating.designKw"
+                [value]="i18n.num(peak().designKw)"
+                unit="kW"
+                variant="accent"
+              />
+              <ah-metric-card
+                [label]="t().heating.totalKw"
+                [value]="i18n.num(peak().totalW / 1000)"
+                unit="kW"
+              />
+              <ah-metric-card
+                [label]="t().heating.perM2"
+                [value]="i18n.num(peak().wPerM2, 0)"
+                unit="W/m²"
+              />
+              <ah-metric-card
+                [label]="t().heating.deltaT"
+                [value]="i18n.num(peak().deltaT)"
+                unit="K"
+              />
+            </div>
+            <h4>{{ t().heating.breakdown }}</h4>
+            <ah-split-bar
+              [segments]="breakdown()"
+              [ariaLabel]="t().heating.breakdown"
+            />
+            <sc-note-list [notes]="peak().notes" />
+          }
+          @case ('year') {
+            <div class="results">
+              <ah-metric-card
+                [label]="t().heating.annual"
+                [value]="i18n.num(year().annualKwh / 1000, 0)"
+                unit="MWh"
+                variant="accent"
+              />
+              <ah-metric-card
+                [label]="t().heating.perM2Year"
+                [value]="i18n.num(year().kwhPerM2, 0)"
+                unit="kWh/m²"
+              />
+              <ah-metric-card
+                [label]="t().heating.fuelYear"
+                [value]="i18n.num(year().fuelUnits, 0)"
+                [unit]="fuelUnit()"
+              />
+              <ah-metric-card
+                [label]="t().heating.cost"
+                [value]="i18n.money(year().cost, currency())"
+                [hint]="i18n.money(year().costPerM2, currency()) + ' / m²'"
+              />
+              <ah-metric-card
+                [label]="t().heating.co2"
+                [value]="i18n.num(year().co2Kg / 1000, 1)"
+                unit="t"
+              />
+            </div>
+            <h4>{{ t().heating.monthly }}</h4>
+            <sc-month-bars
+              [series]="monthly()"
+              [stacked]="true"
+              unit="MWh"
+              [digits]="1"
+              [ariaLabel]="monthlyAlt()"
+            />
+            <details class="table-toggle">
+              <summary>{{ t().calc.table }}</summary>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th scope="col">{{ t().water.table.month }}</th>
+                      <th scope="col">{{ t().heating.night }} (MWh)</th>
+                      <th scope="col">{{ t().heating.day }} (MWh)</th>
+                      <th scope="col">°C {{ t().heating.night }}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (m of year().months; track m.month) {
+                      <tr>
+                        <th scope="row">{{ i18n.month(m.month) }}</th>
+                        <td>{{ i18n.num(m.nightKwh / 1000, 1) }}</td>
+                        <td>{{ i18n.num(m.dayKwh / 1000, 1) }}</td>
+                        <td>{{ i18n.num(m.nightMeanC, 1) }}</td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            </details>
+            <sc-note-list [notes]="year().notes" />
+          }
+          @case ('pipes') {
+            <div class="results">
+              <ah-metric-card
+                [label]="t().heating.pipeLength"
+                [value]="i18n.num(hotWater().pipeLengthM, 0)"
+                unit="m"
+                variant="accent"
+                [hint]="i18n.num(hotWater().metresPerM2, 2) + ' m/m²'"
+              />
+              <ah-metric-card
+                [label]="t().heating.flow"
+                [value]="i18n.num(hotWater().flowM3h)"
+                unit="m³/h"
+                [hint]="i18n.num(hotWater().flowLs, 2) + ' L/s'"
+              />
+              <ah-metric-card
+                [label]="t().heating.perMetre"
+                [value]="i18n.num(hotWater().pipeOutputWPerM)"
+                unit="W/m"
+              />
+              <ah-metric-card
+                [label]="t().heating.loops"
+                [value]="hotWater().loops"
+                [hint]="
+                  t().heating.velocity +
+                  ': ' +
+                  i18n.num(hotWater().loopVelocityMs, 2) +
+                  ' m/s'
+                "
+              />
+              <ah-metric-card
+                [label]="t().heating.pump"
+                [value]="i18n.num(hotWater().pumpKw, 2)"
+                unit="kW"
+              />
+              <ah-metric-card
+                [label]="t().heating.waterYear"
+                [value]="i18n.num(hotWater().annualWaterM3, 0)"
+                unit="m³"
+              />
+            </div>
+            <sc-note-list [notes]="hotWater().notes" />
+          }
+        }
+        <sc-calc-steps [steps]="steps()" />
+      </section>
+
+      <section class="panel" aria-labelledby="sc-heating-save">
+        <h3 id="sc-heating-save">{{ t().save.title }}</h3>
+        <sc-save-bar
+          [suggestedLabel]="suggestedLabel()"
+          [editingLabel]="editor.editingLabel()"
+          (save)="save($event)"
+          (stopEditing)="editor.stop()"
+        />
+      </section>
+    </div>
+  </div>
+</section>

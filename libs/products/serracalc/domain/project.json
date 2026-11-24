@@ -1,0 +1,9 @@
+{
+  "name": "product-serracalc-domain",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/products/serracalc/domain/src",
+  "prefix": "sc",
+  "projectType": "library",
+  "tags": ["scope:product-serracalc", "type:domain", "runtime:agnostic"],
+  "targets": {}
+}

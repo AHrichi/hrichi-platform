@@ -1,0 +1,40 @@
+@use '../../styles/serra' as sc;
+
+:host {
+  display: grid;
+  align-content: start;
+  row-gap: var(--space-1);
+  min-inline-size: 0;
+}
+
+// Bottom of its row: in a field grid (sc.fields) a one-line label then sits
+// right above its input when a neighbour's label takes two lines.
+.head {
+  align-self: end;
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-2);
+  font-size: var(--font-size-200);
+  font-weight: var(--font-weight-medium);
+}
+
+.unit {
+  color: var(--color-text-muted);
+  font-weight: var(--font-weight-regular);
+}
+
+.exact {
+  @include sc.form-control;
+  font-variant-numeric: tabular-nums;
+}
+
+.slider {
+  inline-size: 100%;
+  margin: 0;
+  accent-color: var(--color-accent-default);
+}
+
+.hint {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-100);
+}

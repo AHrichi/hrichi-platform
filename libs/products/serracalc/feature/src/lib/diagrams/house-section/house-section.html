@@ -1,0 +1,115 @@
+@let g = geometry();
+<svg
+  [attr.viewBox]="'0 0 ' + width + ' ' + height"
+  role="img"
+  [attr.aria-label]="alt()"
+>
+  <rect class="backdrop" [attr.width]="width" [attr.height]="height" rx="12" />
+  <rect
+    class="ground"
+    x="0"
+    [attr.y]="ground"
+    [attr.width]="width"
+    [attr.height]="height - ground"
+  />
+  <path class="house" [attr.d]="g.roof" />
+  @for (x of g.posts; track $index) {
+    <line
+      class="post"
+      [attr.x1]="x"
+      [attr.x2]="x"
+      [attr.y1]="ground"
+      [attr.y2]="g.yGutter"
+    />
+  }
+
+  @if (hidden() > 0) {
+    <!-- The spans not drawn -->
+    <path
+      class="dim"
+      [attr.d]="'M' + (g.x1 + 6) + ' ' + (g.yGutter - 6) + 'l6 8-6 8 6 8'"
+    />
+    <text
+      class="caption"
+      [attr.x]="g.breakX"
+      [attr.y]="ground + 30"
+      text-anchor="middle"
+    >
+      +{{ hidden() }}
+    </text>
+  }
+
+  <!-- Gutter height, at the left wall -->
+  <path
+    class="measure"
+    [attr.d]="'M' + (g.x0 - 18) + ' ' + ground + 'V' + g.yGutter"
+  />
+  <path
+    class="measure"
+    [attr.d]="
+      'M' +
+      (g.x0 - 24) +
+      ' ' +
+      g.yGutter +
+      'h12M' +
+      (g.x0 - 24) +
+      ' ' +
+      ground +
+      'h12'
+    "
+  />
+  <text
+    class="value"
+    [attr.transform]="
+      'translate(' +
+      (g.x0 - 26) +
+      ' ' +
+      (ground + g.yGutter) / 2 +
+      ') rotate(-90)'
+    "
+    text-anchor="middle"
+  >
+    {{ i18n.num(spec().gutterHeightM) }} m
+  </text>
+
+  <!-- Ridge height, at the right wall -->
+  <path
+    class="dim"
+    [attr.d]="'M' + g.ridgeTipX + ' ' + g.yRidge + 'H' + (g.ridgeX + 18)"
+  />
+  <path
+    class="measure"
+    [attr.d]="'M' + (g.ridgeX + 14) + ' ' + ground + 'V' + g.yRidge"
+  />
+  <text
+    class="value"
+    [attr.transform]="
+      'translate(' +
+      (g.ridgeX + 32) +
+      ' ' +
+      (ground + g.yRidge) / 2 +
+      ') rotate(-90)'
+    "
+    text-anchor="middle"
+  >
+    {{ i18n.num(spec().ridgeHeightM) }} m
+  </text>
+
+  <!-- One span, and the whole width -->
+  <path
+    class="measure"
+    [attr.d]="'M' + g.x0 + ' ' + (ground + 14) + 'H' + g.firstSpanEnd"
+  />
+  <text
+    class="caption"
+    [attr.x]="(g.x0 + g.firstSpanEnd) / 2"
+    [attr.y]="ground + 30"
+    text-anchor="middle"
+  >
+    {{ i18n.num(spec().spanWidthM) }} m
+  </text>
+  <text class="label" [attr.x]="width / 2" y="18" text-anchor="middle">
+    {{ spec().spans }} × {{ i18n.num(spec().spanWidthM) }} m =
+    {{ i18n.num(spec().spans * spec().spanWidthM) }} m
+  </text>
+</svg>
