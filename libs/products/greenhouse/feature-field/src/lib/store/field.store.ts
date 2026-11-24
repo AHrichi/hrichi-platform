@@ -45,6 +45,7 @@ import {
 } from '@ah/products/greenhouse/domain';
 import { FieldAuth } from '../auth/field-auth';
 import { FIELD_DB } from '../field-config';
+import { NETWORK_STATUS } from '../network/network-status';
 import {
   combineResults,
   nextRun,
@@ -146,7 +147,7 @@ export const FieldStore = signalStore(
     const mode = inject(APP_MODE);
     const auth = inject(FieldAuth);
     const doc = inject(DOCUMENT);
-    const win = doc.defaultView;
+    const network = inject(NETWORK_STATUS);
 
     let repo: FieldRepository | null = null;
     let remote: FieldRemote | null = null;
@@ -212,8 +213,9 @@ export const FieldStore = signalStore(
       }
     }
 
+    /** The last word from the network status, kept in the store. */
     function isOnline(): boolean {
-      return win?.navigator.onLine !== false;
+      return store.online();
     }
 
     function requestSync(delayMs: number): void {
@@ -263,23 +265,18 @@ export const FieldStore = signalStore(
     }
 
     function listen(): void {
-      if (!win) return;
-      const on = <K extends keyof WindowEventMap>(
-        target: Window,
-        type: K,
-        handler: () => void,
-      ) => {
-        target.addEventListener(type, handler);
-        cleanups.push(() => target.removeEventListener(type, handler));
-      };
-      on(win, 'online', () => {
-        patchState(store, { online: true });
-        failures = 0;
-        requestSync(0);
-      });
-      on(win, 'offline', () => {
-        patchState(store, { online: false, sync: 'offline' });
-      });
+      cleanups.push(
+        network.watch((online) => {
+          if (online === store.online()) return;
+          if (online) {
+            patchState(store, { online: true });
+            failures = 0;
+            requestSync(0);
+          } else {
+            patchState(store, { online: false, sync: 'offline' });
+          }
+        }),
+      );
       const visible = () => {
         if (doc.visibilityState !== 'visible') return;
         void refresh().then(() => requestSync(0));
@@ -342,7 +339,7 @@ export const FieldStore = signalStore(
           hygiene = remote ? new HygieneSync(db, remote) : null;
           patchState(store, {
             demo: mode === 'embedded-demo',
-            online: isOnline(),
+            online: await network.online(),
             sync: remote ? 'idle' : 'no-server',
           });
           listen();

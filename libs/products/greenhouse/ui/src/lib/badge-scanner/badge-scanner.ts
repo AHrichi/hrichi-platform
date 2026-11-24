@@ -10,6 +10,10 @@ import {
   viewChild,
 } from '@angular/core';
 import { GhButton } from '../button/button';
+import {
+  NATIVE_BADGE_SCANNER,
+  type NativeBadgeScanner,
+} from './native-scanner';
 
 /** The Shape Detection API, where the browser has it (Chrome on Android). */
 interface DetectedBarcode {
@@ -28,8 +32,14 @@ function detectorClass(): BarcodeDetectorCtor | null {
   return typeof ctor === 'function' ? ctor : null;
 }
 
-/** Whether this device can scan QR codes with the camera. */
-export function canScanBadges(): boolean {
+/**
+ * Whether this device can scan QR codes: with a native scanner when the app
+ * provides one, otherwise with the browser's camera.
+ */
+export function canScanBadges(
+  native: NativeBadgeScanner | null = null,
+): boolean {
+  if (native) return true;
   return (
     detectorClass() !== null &&
     typeof navigator !== 'undefined' &&
@@ -43,6 +53,8 @@ const SCAN_EVERY_MS = 250;
  * Reads a badge's QR code with the back camera. It emits the code once and
  * stops; the camera is released when it stops or the view goes away. Where
  * scanning isn't possible it emits `unavailable`, and the badge is typed.
+ * With a native scanner (the Android app) the device's own screen does the
+ * reading instead, and this is only the button.
  */
 @Component({
   selector: 'gh-badge-scanner',
@@ -59,6 +71,7 @@ export class GhBadgeScanner {
   readonly unavailable = output<void>();
 
   protected readonly active = signal(false);
+  private readonly native = inject(NATIVE_BADGE_SCANNER);
   private readonly video = viewChild<ElementRef<HTMLVideoElement>>('video');
   private stream: MediaStream | null = null;
   private timer: ReturnType<typeof setTimeout> | null = null;
@@ -68,6 +81,10 @@ export class GhBadgeScanner {
   }
 
   protected async start(): Promise<void> {
+    if (this.native) {
+      await this.scanNatively(this.native);
+      return;
+    }
     const Detector = detectorClass();
     if (!Detector || !navigator.mediaDevices?.getUserMedia) {
       this.unavailable.emit();
@@ -109,6 +126,16 @@ export class GhBadgeScanner {
       this.timer = setTimeout(tick, SCAN_EVERY_MS);
     };
     void tick();
+  }
+
+  private async scanNatively(native: NativeBadgeScanner): Promise<void> {
+    try {
+      const code = await native.scan();
+      // Cancelled: nothing to do, the button is still there.
+      if (code) this.scanned.emit(code);
+    } catch {
+      this.unavailable.emit();
+    }
   }
 
   protected stop(): void {

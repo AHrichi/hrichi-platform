@@ -5,11 +5,15 @@ import {
 } from '@angular/core';
 import { provideRouter, withComponentInputBinding } from '@angular/router';
 import { provideServiceWorker } from '@angular/service-worker';
+import { Capacitor } from '@capacitor/core';
 import { provideAppMode } from '@ah/platform/app-mode';
 import { provideGreenhouseBrand } from '@ah/products/greenhouse/ui';
 import { brand } from '../brand/brand';
 import { GREENHOUSE_SUPABASE } from '@ah/products/greenhouse/data-access';
-import { FIELD_ROUTES } from '@ah/products/greenhouse/feature-field';
+import {
+  FIELD_ROUTES,
+  provideNativeDevice,
+} from '@ah/products/greenhouse/feature-field';
 import { environment } from '../environments/environment';
 
 export const appConfig: ApplicationConfig = {
@@ -26,9 +30,12 @@ export const appConfig: ApplicationConfig = {
           { provide: GREENHOUSE_SUPABASE, useValue: environment.supabase },
         ]
       : provideAppMode('embedded-demo'),
-    // The app has to open inside a greenhouse with no signal.
+    // In the Android app: the Google code scanner and the phone's radios.
+    provideNativeDevice(),
+    // The app has to open inside a greenhouse with no signal. The Android
+    // app carries its files itself, so it needs no service worker.
     provideServiceWorker('ngsw-worker.js', {
-      enabled: !isDevMode(),
+      enabled: !isDevMode() && !Capacitor.isNativePlatform(),
       registrationStrategy: 'registerWhenStable:30000',
     }),
   ],
