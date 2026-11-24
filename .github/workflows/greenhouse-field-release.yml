@@ -1,0 +1,146 @@
+name: Field app release
+
+# Builds the Greenhouse field app's Android APK against the hosted Supabase
+# project, signs it with the release key, and publishes it as a GitHub
+# Release. Free: no app store; supervisors install the APK from the
+# release page. Start it by pushing a tag such as `greenhouse-field-v1.0.0`,
+# or from Actions → Field app release → Run workflow with a version.
+#
+# Needs four repository secrets (Settings → Secrets and variables → Actions):
+#   ANDROID_KEYSTORE_BASE64    the release keystore, base64
+#   ANDROID_KEYSTORE_PASSWORD  its password
+#   ANDROID_KEY_ALIAS          the key's alias (greenhouse-field)
+#   ANDROID_KEY_PASSWORD       the key's password
+# Every release must be signed with the same key, or phones refuse to update.
+
+on:
+  push:
+    tags: ['greenhouse-field-v*']
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Version, like 1.0.0 (the tag greenhouse-field-v1.0.0 is created)
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: greenhouse-field-release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: Signed APK to GitHub Releases
+    runs-on: ubuntu-latest
+    env:
+      ANDROID_DIR: apps/products/greenhouse/field/android
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Work out the version
+        id: version
+        env:
+          INPUT_VERSION: ${{ inputs.version }}
+        run: |
+          if [ "$GITHUB_EVENT_NAME" = "push" ]; then
+            version="${GITHUB_REF_NAME#greenhouse-field-v}"
+          else
+            version="$INPUT_VERSION"
+          fi
+          if ! [[ "$version" =~ ^([0-9]+)\.([0-9]+)\.([0-9]+)$ ]]; then
+            echo "::error::The version must look like 1.2.3, not '$version'."
+            exit 1
+          fi
+          major=${BASH_REMATCH[1]} minor=${BASH_REMATCH[2]} patch=${BASH_REMATCH[3]}
+          if (( minor > 99 || patch > 99 )); then
+            echo "::error::Minor and patch go up to 99."
+            exit 1
+          fi
+          # Android only installs an update with a higher versionCode.
+          echo "name=$version" >> "$GITHUB_OUTPUT"
+          echo "code=$(( major * 10000 + minor * 100 + patch ))" >> "$GITHUB_OUTPUT"
+          echo "tag=greenhouse-field-v$version" >> "$GITHUB_OUTPUT"
+
+      - name: Check the signing secrets and the hosted key
+        env:
+          KEYSTORE: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          STORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          missing=0
+          for name in KEYSTORE STORE_PASSWORD ALIAS KEY_PASSWORD; do
+            if [ -z "${!name}" ]; then
+              echo "::error::A signing secret is missing ($name). See the comment at the top of this workflow."
+              missing=1
+            fi
+          done
+          if grep -q PASTE_THE_PUBLISHABLE_KEY apps/products/greenhouse/field/src/environments/environment.hosted.ts; then
+            echo "::error::environment.hosted.ts still has no publishable key, so the app couldn't reach the farm."
+            missing=1
+          fi
+          exit $missing
+
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: pnpm
+      # The runner image ships the Android SDK; Capacitor 8 compiles for Java 21.
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: gradle
+      - run: pnpm install --frozen-lockfile
+
+      - name: Build the field app against the hosted project
+        run: pnpm nx run product-greenhouse-field:build:hosted --skip-nx-cache
+
+      - name: Copy it into the Android project
+        working-directory: apps/products/greenhouse/field
+        run: pnpm exec cap sync android
+
+      - name: Build and sign the APK
+        working-directory: ${{ env.ANDROID_DIR }}
+        env:
+          KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          export ANDROID_KEYSTORE_PATH="$RUNNER_TEMP/release.jks"
+          echo "$KEYSTORE_BASE64" | base64 --decode > "$ANDROID_KEYSTORE_PATH"
+          java -classpath gradle/wrapper/gradle-wrapper.jar org.gradle.wrapper.GradleWrapperMain \
+            assembleRelease \
+            -PversionCode=${{ steps.version.outputs.code }} \
+            -PversionName=${{ steps.version.outputs.name }}
+          rm -f "$ANDROID_KEYSTORE_PATH"
+          apk="$RUNNER_TEMP/field-log-${{ steps.version.outputs.name }}.apk"
+          cp app/build/outputs/apk/release/app-release.apk "$apk"
+          echo "APK=$apk" >> "$GITHUB_ENV"
+
+      - name: Check the APK is signed with the release key
+        run: |
+          apksigner=$(ls "$ANDROID_HOME"/build-tools/*/apksigner | sort -V | tail -1)
+          "$apksigner" verify --print-certs "$APK" | grep -i "signer #1 certificate DN"
+
+      - name: Publish the GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.version.outputs.tag }}
+          VERSION: ${{ steps.version.outputs.name }}
+        run: |
+          cat > "$RUNNER_TEMP/notes.md" <<EOF
+          Field log ${VERSION} for Android, for supervisors.
+
+          **Install:** open this page on the phone, download \`field-log-${VERSION}.apk\` below, open it, and allow installing from this source when Android asks. An installed copy updates the same way: install the newer APK over it, and its entries stay.
+
+          It works without signal once signed in. Accounts join a farm with a join code from the farm's manager.
+          EOF
+          gh release create "$TAG" "$APK" \
+            --target "$GITHUB_SHA" \
+            --title "Field log $VERSION" \
+            --notes-file "$RUNNER_TEMP/notes.md"
