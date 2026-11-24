@@ -71,7 +71,6 @@
           "node_modules/@fontsource-variable/inter/index.css",
           "libs/design-system/tokens/src/generated/tokens.css",
           "libs/design-system/ui/src/styles/index.scss",
-          "libs/products/greenhouse/ui/src/styles/greenhouse.scss",
           "apps/products/greenhouse/dashboard/src/styles.scss"
         ],
         "polyfills": ["es-module-shims"],
@@ -149,7 +148,6 @@
             "node_modules/@fontsource-variable/inter/index.css",
             "libs/design-system/tokens/src/generated/tokens.css",
             "libs/design-system/ui/src/styles/index.scss",
-            "libs/products/greenhouse/ui/src/styles/greenhouse.scss",
             "apps/products/greenhouse/dashboard/src/styles.scss",
             "apps/products/greenhouse/brands/active/brand.css"
           ],
@@ -183,6 +181,22 @@
       "options": {
         "port": 4313
       }
+    },
+    "deploy": {
+      "dependsOn": ["build"],
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "node tools/scripts/prepare-hosting.mjs dist/apps/products/greenhouse/dashboard/browser --env production --app product-greenhouse --cors",
+          "wrangler deploy --config apps/products/greenhouse/dashboard/wrangler.jsonc"
+        ],
+        "parallel": false
+      },
+      "inputs": [
+        "production",
+        "^production",
+        "{workspaceRoot}/tools/scripts/prepare-hosting.mjs"
+      ]
     }
   }
 }

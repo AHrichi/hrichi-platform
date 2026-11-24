@@ -43,5 +43,9 @@
   "product-system-design": {
     "development": "http://localhost:4312",
     "production": "https://product-system-design.ahmed-hrichi.workers.dev"
+  },
+  "product-greenhouse": {
+    "development": "http://localhost:4313",
+    "production": "https://product-greenhouse.ahmed-hrichi.workers.dev"
   }
 }

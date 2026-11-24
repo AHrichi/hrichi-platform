@@ -267,6 +267,10 @@ const STANDALONE_APP_ORIGINS: Readonly<
     dev: 'http://localhost:4312',
     prod: 'https://product-system-design.ahmed-hrichi.workers.dev',
   },
+  greenhouse: {
+    dev: 'http://localhost:4313',
+    prod: 'https://product-greenhouse.ahmed-hrichi.workers.dev',
+  },
   sky: {
     dev: 'http://localhost:4302',
     prod: 'https://lab-sky.ahmed-hrichi.workers.dev',
@@ -819,6 +823,37 @@ export class AppsPage {
             'محتوى الدروس شيفرة مضبوطة الأنواع تُحمَّل عند الحاجة، درس لكل جزء؛ ومخطط كل خطوة دالة نقية تُعاد من عمليات المشهد، فإضافة الدروس لا تغيّر المحرك أبدًا.',
         },
         {
+          id: 'greenhouse',
+          title: 'Greenhouse Labor Planner · تخطيط يد عاملة الجني',
+          category: 'production',
+          badge: {
+            label: 'لوحة قيادة + تطبيق ميداني دون اتصال',
+            variant: 'info',
+          },
+          eyebrow: 'خطة أسبوعية، نقص العمّال، الأداء والنظافة',
+          summary:
+            'مخطِّط لليد العاملة في جني البيوت المحمية: حوّل الكيلوغرامات المنتظرة إلى خطة أسبوعية وعدد عمّال، واطّلع على نقص كل يوم وأرسله إلى الموارد البشرية، وتابع الكيلوغرامات في الساعة والصناديق المرفوضة وكلفة اليد العاملة للكيلوغرام مقارنة بالهدف، وراجع مراقبات النظافة التي يمضيها رؤساء الفرق على هواتفهم. يعمل هذا العرض في متصفحك على ضيعة طماطم وهمية مساحتها 32 هكتارًا.',
+          route: '/apps/greenhouse',
+          icon: '🍅',
+          ctaLabel: 'Labour Planner',
+          stack: [
+            'Zoneless Angular 22',
+            'Native Federation',
+            'NgRx SignalStore',
+            'Supabase (Postgres RLS, Auth, Storage)',
+            'Dexie IndexedDB (offline field app)',
+            'Arabic RTL · French · English',
+          ],
+          features: [
+            'خطة أسبوعية لكل بيت محمي، مع عدد العمّال اللازم كل يوم حسب سرعة الفريق',
+            'تقرير النقص للموارد البشرية عبر واتساب أو البريد أو الطباعة',
+            'الأداء: كغ في الساعة والصناديق المرفوضة والكلفة للكيلوغرام، مع ترتيب الفرق والعمّال',
+            'مراقبة نظافة يومية بالصور والإمضاء، تُراجع بيتًا محميًا بعد آخر',
+          ],
+          architectureNotes:
+            'منافذ ومحوّلات: المخازن نفسها تعمل على Supabase مع أمان على مستوى الأسطر أو على ضيعة تجريبية في الذاكرة، وتطبيق رؤساء الفرق يحفظ دون اتصال ثم يزامن عند توفّر الشبكة.',
+        },
+        {
           id: 'learning',
           title: 'Learning Engine · التقط أي فكرة وراجعها في 3 دقائق',
           category: 'production',
@@ -1156,6 +1191,38 @@ export class AppsPage {
           ],
           architectureNotes:
             'Le contenu des leçons est du code typé, chargé à la demande, une leçon par fragment ; le schéma de chaque étape est une fonction pure rejouée à partir d’opérations de scène, si bien qu’ajouter des leçons ne modifie jamais le moteur.',
+        },
+        {
+          id: 'greenhouse',
+          title: 'Greenhouse Labor Planner · Main-d’œuvre de récolte',
+          category: 'production',
+          badge: {
+            label: 'Tableau de bord + application terrain hors ligne',
+            variant: 'info',
+          },
+          eyebrow:
+            'Plan hebdomadaire, manque d’effectif, performance et hygiène',
+          summary:
+            'Un planificateur de main-d’œuvre pour la récolte sous serre : transformer les kilos attendus en plan hebdomadaire et en effectif, voir le manque de chaque jour et l’envoyer aux RH, suivre les kg par heure, les caisses refusées et le coût de main-d’œuvre par kg face à l’objectif, et relire les contrôles d’hygiène que les chefs d’équipe signent sur leur téléphone. Cette démo tourne dans votre navigateur sur une ferme de tomates fictive de 32 hectares.',
+          route: '/apps/greenhouse',
+          icon: '🍅',
+          ctaLabel: 'Labour Planner',
+          stack: [
+            'Zoneless Angular 22',
+            'Native Federation',
+            'NgRx SignalStore',
+            'Supabase (Postgres RLS, Auth, Storage)',
+            'Dexie IndexedDB (offline field app)',
+            'Arabic RTL · French · English',
+          ],
+          features: [
+            'Plan hebdomadaire par serre, avec les ouvriers nécessaires chaque jour selon la cadence de l’équipe',
+            'Rapport de manque pour les RH, par WhatsApp, e-mail ou impression',
+            'Performance : kg par heure, caisses refusées et coût par kg, équipes et ouvriers classés',
+            'Contrôle d’hygiène quotidien avec photos et signature, relu serre par serre',
+          ],
+          architectureNotes:
+            'Ports et adaptateurs : les mêmes stores tournent sur Supabase avec la sécurité au niveau des lignes ou sur une ferme de démonstration en mémoire, et l’application des chefs d’équipe enregistre hors ligne puis synchronise dès qu’il y a du réseau.',
         },
         {
           id: 'learning',
@@ -1505,6 +1572,38 @@ export class AppsPage {
             'Il contenuto delle lezioni è codice tipizzato, caricato su richiesta una lezione per chunk; il diagramma di ogni passo è una funzione pura ricostruita dalle operazioni di scena, quindi aggiungere lezioni non cambia mai il motore.',
         },
         {
+          id: 'greenhouse',
+          title: 'Greenhouse Labor Planner · Personale per la raccolta',
+          category: 'production',
+          badge: {
+            label: 'Dashboard + app da campo offline',
+            variant: 'info',
+          },
+          eyebrow:
+            'Piano settimanale, carenza di personale, rendimento e igiene',
+          summary:
+            'Un pianificatore del lavoro per la raccolta in serra: trasforma i chili attesi in un piano settimanale e in personale, mostra la carenza di ogni giorno da inviare alle risorse umane, segue i kg all’ora, le cassette scartate e il costo del lavoro per kg rispetto all’obiettivo, e raccoglie i controlli igienici che i capisquadra firmano sul telefono. Questa demo gira nel tuo browser su un’azienda di pomodori inventata di 32 ettari.',
+          route: '/apps/greenhouse',
+          icon: '🍅',
+          ctaLabel: 'Labour Planner',
+          stack: [
+            'Zoneless Angular 22',
+            'Native Federation',
+            'NgRx SignalStore',
+            'Supabase (Postgres RLS, Auth, Storage)',
+            'Dexie IndexedDB (offline field app)',
+            'Arabic RTL · French · English',
+          ],
+          features: [
+            'Piano settimanale per serra, con i lavoratori necessari ogni giorno al ritmo della squadra',
+            'Rapporto di carenza per le risorse umane, via WhatsApp, e-mail o stampa',
+            'Rendimento: kg all’ora, cassette scartate e costo per kg, squadre e lavoratori in classifica',
+            'Checklist igienica quotidiana con foto e firma, rivista serra per serra',
+          ],
+          architectureNotes:
+            'Porte e adattatori: gli stessi store girano su Supabase con sicurezza a livello di riga o su un’azienda demo in memoria, e l’app dei capisquadra salva offline e sincronizza quando c’è segnale.',
+        },
+        {
           id: 'learning',
           title: 'Learning Engine · Cattura tutto, ripassa in 3 minuti',
           category: 'production',
@@ -1852,6 +1951,37 @@ export class AppsPage {
             'Lektionsinhalte sind typisierter Code, bei Bedarf geladen, eine Lektion pro Chunk; das Diagramm jedes Schritts ist eine reine Funktion, die aus Szenenoperationen nachgespielt wird, daher ändern neue Lektionen nie die Engine.',
         },
         {
+          id: 'greenhouse',
+          title: 'Greenhouse Labor Planner · Personal für die Ernte',
+          category: 'production',
+          badge: {
+            label: 'Dashboard + Offline-Feld-App',
+            variant: 'info',
+          },
+          eyebrow: 'Wochenplan, Personallücke, Leistung und Hygiene',
+          summary:
+            'Ein Arbeitsplaner für die Gewächshausernte: erwartete Kilos werden zu Wochenplan und Personalbedarf, die Lücke jedes Tages geht an die Personalabteilung, Kilo pro Stunde, abgelehnte Kisten und Lohnkosten pro Kilo werden gegen das Ziel verfolgt, und die Hygieneprüfungen, die Vorarbeiter auf dem Handy unterschreiben, sind nachlesbar. Diese Demo läuft in deinem Browser auf einem erfundenen Tomatenbetrieb mit 32 Hektar.',
+          route: '/apps/greenhouse',
+          icon: '🍅',
+          ctaLabel: 'Labour Planner',
+          stack: [
+            'Zoneless Angular 22',
+            'Native Federation',
+            'NgRx SignalStore',
+            'Supabase (Postgres RLS, Auth, Storage)',
+            'Dexie IndexedDB (offline field app)',
+            'Arabic RTL · French · English',
+          ],
+          features: [
+            'Wochenplan pro Gewächshaus, mit den Arbeitskräften, die jeder Tag beim Tempo des Teams braucht',
+            'Lückenbericht für die Personalabteilung per WhatsApp, E-Mail oder Druck',
+            'Leistung: Kilo pro Stunde, abgelehnte Kisten und Kosten pro Kilo, Teams und Arbeitskräfte im Ranking',
+            'Tägliche Hygiene-Checkliste mit Fotos und Unterschrift, je Gewächshaus geprüft',
+          ],
+          architectureNotes:
+            'Ports und Adapter: dieselben Stores laufen auf Supabase mit Row-Level Security oder auf einem Demo-Betrieb im Speicher, und die App der Vorarbeiter speichert offline und synchronisiert, sobald Netz da ist.',
+        },
+        {
           id: 'learning',
           title: 'Learning Engine · Alles erfassen, in 3 Minuten wiederholen',
           category: 'production',
@@ -2185,6 +2315,37 @@ export class AppsPage {
         ],
         architectureNotes:
           'Lesson content is typed code, lazily loaded one chunk per lesson; the diagram at each step is a pure function replayed from scene operations, so adding lessons never changes the engine.',
+      },
+      {
+        id: 'greenhouse',
+        title: 'Greenhouse Labor Planner · Harvest Staffing',
+        category: 'production',
+        badge: {
+          label: 'Manager Dashboard + Offline Field App',
+          variant: 'info',
+        },
+        eyebrow: 'Weekly plan, staffing gap, performance and hygiene',
+        summary:
+          'A labour planner for a greenhouse harvest: turn expected kilos into a weekly plan and headcount, see each day’s shortage and send it to HR, track kg per hour, rejected crates and labour cost per kg against target, and review the hygiene checks supervisors sign on their phones. This demo runs a made-up 32-hectare tomato farm in your browser.',
+        route: '/apps/greenhouse',
+        icon: '🍅',
+        ctaLabel: 'Labour Planner',
+        stack: [
+          'Zoneless Angular 22',
+          'Native Federation',
+          'NgRx SignalStore',
+          'Supabase (Postgres RLS, Auth, Storage)',
+          'Dexie IndexedDB (offline field app)',
+          'Arabic RTL · French · English',
+        ],
+        features: [
+          'Weekly plan per greenhouse, with the workers each day needs at the team’s picking rate',
+          'Shortage report for HR, by WhatsApp, email or print',
+          'Performance: kg per hour, rejected crates and cost per kg, teams and workers ranked',
+          'Daily hygiene checklist with photos and sign-off, reviewed per greenhouse',
+        ],
+        architectureNotes:
+          'Ports and adapters: the same stores run on Supabase with row-level security or on an in-memory demo farm, and the supervisors’ app saves offline and syncs when there is signal.',
       },
       {
         id: 'learning',
