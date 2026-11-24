@@ -7,7 +7,8 @@ Last updated 2026-11-23:
 - **G1, G2 and the design system are merged into `main`.** G1 (foundation) came in through PR [#22](https://github.com/AHrichi/hrichi-platform/pull/22). G2 (supervisor sign-in and real sync, verified against local Supabase), the design system and brand packs, and the tomato demo farm came in through PR [#23](https://github.com/AHrichi/hrichi-platform/pull/23). See [design-system.md](design-system.md).
 - **G3 (the dashboard on Supabase) is merged** (PR [#24](https://github.com/AHrichi/hrichi-platform/pull/24)). Its architecture clean-up missed that merge and is in PR [#25](https://github.com/AHrichi/hrichi-platform/pull/25).
 - **G5 is done** on `feat/greenhouse-g5-performance` (built on #25): performance and labour cost (G5a), and the hygiene checklist with photos and sign-off (G5b), both verified against local Supabase.
-- **Then:** the hosted Supabase project (G2b, waiting on the owner's sign-in) and G4 (§6). Start each phase on a new branch from `main`.
+- **G6 (the demo in the portfolio) is done** on `feat/greenhouse-g6-go-live`, built on G5.
+- **Hosted Supabase (G2b):** the project `greenhouse-labor` (Paris) exists with all four migrations; the `hosted` build waits for its publishable key (§6). Then G4. Start each phase on a new branch from `main`.
 
 ## 0. Resume in five minutes
 
@@ -67,7 +68,7 @@ There is **no Ionic**: `@ionic/angular` peers on `zone.js` (ADR-0026).
 | G4 Android                          | To do: `cap add android`, a camera barcode plugin for phones without `BarcodeDetector`, a network-status plugin.                                                                                                                                                                                                                                                                                                                                                 |
 | G5a performance and cost            | Done against **local** Supabase. A **Performance** screen: kg, kg/h, rejected crates and labour cost per kg for the last 4, 8 or 12 whole weeks, week by week against the cost target, teams and workers ranked (16 h minimum), for the farm or one team. Targets are set there and hold until the next; the plan screen shows the week's kg target. Cost is for managers and HR only.                                                                           |
 | G5b hygiene checklist               | Done against **local** Supabase. On the phone: each greenhouse's check for the day (fine or not, a note, photos where the farm asks), saved offline with its photos, sent by `HygieneSync` (photos first), signed off and then locked. On the dashboard: the day's checks per greenhouse (failed first), each answer with its note and photos (signed URLs), and the checklist in three languages (add, edit, reorder, retire, or start from the standard list). |
-| G6 go live in the portfolio         | To do: register `product-greenhouse` (section 3 list), a `deploy` target, the e2e, the visibility flag.                                                                                                                                                                                                                                                                                                                                                          |
+| G6 go live in the portfolio         | Done on `feat/greenhouse-g6-go-live`. The demo dashboard is registered at `/apps/greenhouse`: remote origins, the shell's route and manifest, the visibility flag (on), apps cards in five languages, constellation links, a `deploy` target (Cloudflare worker `product-greenhouse`) and a shell e2e. The kit's styles travel with the remote (`GhKitStyles`).                                                                                                  |
 
 **Verified** (2026-11-23, G5b):
 
@@ -147,7 +148,7 @@ There is **no Ionic**: `@ionic/angular` peers on `zone.js` (ADR-0026).
 | Field feature (prefix `gh`)       | `libs/products/greenhouse/feature-field`     | `FIELD_ROUTES`, `FieldStore` (sync scheduling, hygiene checks), `FieldAuth`, the screens (home, log, hygiene, sign-in), `shrinkPhoto`                                                                                                                                                                                                                                                                   |
 | Dashboard feature                 | `libs/products/greenhouse/feature-dashboard` | `GREENHOUSE_DASHBOARD_ROUTES`, `FarmStore` (signal store, `DEMO_FARM_REMOTE`), `DashboardAuth`, `buildWeekView` and row helpers, `shortageReport`, `buildPerformanceView`, `buildHygieneView`, the screens (plan, performance, hygiene, absences, workers, badges, teams, greenhouses, people)                                                                                                          |
 | Field app                         | `apps/products/greenhouse/field`             | Port 4314, `ngsw-config.json`, `capacitor.config.ts`, app mode `embedded-demo` until G2                                                                                                                                                                                                                                                                                                                 |
-| Dashboard app                     | `apps/products/greenhouse/dashboard`         | Remote `product-greenhouse`, port 4313, exposes `./routes` and `./meta`; `-c local` talks to local Supabase, the default build is the demo; no `deploy` target                                                                                                                                                                                                                                          |
+| Dashboard app                     | `apps/products/greenhouse/dashboard`         | Remote `product-greenhouse`, port 4313, exposes `./routes` and `./meta`, mounted at `/apps/greenhouse`; the default build is the demo (and what `deploy` ships), `-c local` talks to local Supabase, `-c hosted` to the hosted project                                                                                                                                                                  |
 | Supabase                          | `apps/products/greenhouse/supabase`          | `migrations/`, `seed.sql`, `config.toml`, `spec/` (PGlite)                                                                                                                                                                                                                                                                                                                                              |
 
 **Registration done in G1:**
@@ -159,15 +160,14 @@ There is **no Ionic**: `@ionic/angular` peers on `zone.js` (ADR-0026).
 - the icon set (`generate-app-icons.mjs`, key `greenhouse-field`);
 - `graph.json`.
 
-**Left for G6 (go live):**
+**Registration done in G6** (the dashboard only; the field app isn't deployed):
 
-- `tools/federation/remotes.json`;
-- the shell's `federation.manifest.json` and route `/apps/greenhouse`;
-- `app-visibility.ts`;
-- the apps hub card in `apps-page.ts`;
-- constellation labels;
-- the shell e2e;
-- the `deploy` target (CI deploys every affected project that has one, so add it together with the registration).
+- `tools/federation/remotes.json` and the shell's `federation.manifest.json`;
+- the shell route `/apps/greenhouse` and `greenhouse` in `app-visibility.ts` (aliases `labor-planner`);
+- a card in `apps-page.ts` in each language, and the standalone origin;
+- constellation links for the dashboard's projects;
+- `apps/portfolio/shell-e2e/src/greenhouse.spec.ts`, and the remote in the e2e's web servers;
+- the `deploy` target. CI deploys every affected project that has one, so the first merge creates the `product-greenhouse` worker. The deploy builds the default (demo) configuration, never a brand pack.
 
 ## 4. Hard rules
 
@@ -206,6 +206,7 @@ Gotchas:
 - **Supabase CLI:** use `npx -y supabase@3.1.0 --workdir apps/products/greenhouse …`. `pnpm dlx` skips the postinstall that downloads its binary.
 - **A rebuilt app in Chrome** keeps running the old build until the service worker updates. Reload twice, or call `registration.update()` first.
 - **Photos in the browser pane:** it has no camera. Make a `File` from a canvas, put it in a `DataTransfer`, set the file input's `files` and dispatch `change`. Stub `window.confirm` in the page before signing.
+- **The shell e2e locally:** the portfolio shell's dev server (`shell:serve`) answers every page with a 500 in its server render (`Cannot find module '@ah/platform/federation'`), so `nx e2e shell-e2e` waits forever. Run the spec as CI does, from production builds: `$env:CI='true'; cd apps/portfolio/shell-e2e; npx playwright test greenhouse.spec.ts`. Stop any server left on ports 4200–4320 first; the e2e reuses whatever answers there.
 
 ## 6. Next step: the hosted Supabase project, then G4
 
@@ -216,4 +217,4 @@ Gotchas:
    - Auth: turn email confirmations on, and set the site URL to wherever the field app is hosted.
    - The owner creates their account on the dashboard's sign-in screen, creates the farm there, and invites supervisors and HR from **People**.
 2. **Left over from G3:** done on the G5 branch. Supervisors can create their account in the field app, managers rename members on **People**, and targets came with G5a.
-3. **G4 Android** (the table in §2), then **G6** (go live in the portfolio).
+3. **G4 Android** (the table in §2). G6 is done.

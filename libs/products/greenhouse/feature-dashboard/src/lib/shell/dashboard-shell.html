@@ -1,3 +1,4 @@
+<gh-kit-styles />
 <gh-app-bar [product]="t().app.name" [tagline]="t().app.tagline">
   @if (standalone) {
     <gh-lang-switch
@@ -9,7 +10,8 @@
   }
 </gh-app-bar>
 
-<div class="dashboard">
+<!-- One main landmark holds every phase, the section nav and the notes. -->
+<main class="dashboard">
   @switch (store.phase()) {
     @case ('signed-out') {
       <gh-dashboard-sign-in />
@@ -98,12 +100,10 @@
         </div>
       }
 
-      <main class="main">
-        <router-outlet />
-      </main>
+      <router-outlet />
     }
     @default {
       <p class="status" role="status">{{ t().app.loading }}</p>
     }
   }
-</div>
+</main>

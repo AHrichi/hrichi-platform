@@ -11,6 +11,7 @@ import { RouterOutlet } from '@angular/router';
 import {
   GhAppBar,
   GhButton,
+  GhKitStyles,
   GhLangSwitch,
   GREENHOUSE_BRAND,
 } from '@ah/products/greenhouse/ui';
@@ -22,7 +23,14 @@ import { FieldStore } from '../store/field.store';
 /** The field app's frame: brand, language, and how sending is going. */
 @Component({
   selector: 'gh-field-shell',
-  imports: [GhAppBar, GhButton, GhLangSwitch, RouterOutlet, SignInScreen],
+  imports: [
+    GhKitStyles,
+    GhAppBar,
+    GhButton,
+    GhLangSwitch,
+    RouterOutlet,
+    SignInScreen,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   // The greenhouse look, and the brand pack's colours when there is one.
   host: { 'data-look': 'greenhouse', '[attr.data-brand]': 'brand.id' },

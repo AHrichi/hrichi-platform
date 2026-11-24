@@ -115,6 +115,12 @@ export const appRoutes: Route[] = [
     title: 'System Design · Interactive Course · Ahmed Hrichi',
   },
   {
+    path: 'apps/greenhouse',
+    canMatch: [appAvailableGuard('greenhouse')],
+    loadChildren: federatedRoutes('product-greenhouse'),
+    title: 'Greenhouse Labor Planner · Harvest Staffing · Ahmed Hrichi',
+  },
+  {
     path: 'apps/alarm-engine',
     canMatch: [appAvailableGuard('alarm-engine')],
     loadChildren: () =>

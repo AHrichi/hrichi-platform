@@ -47,6 +47,9 @@ describe('app-visibility', () => {
     expect(isRouteEnabled('/apps/system-design')).toBe(true);
     expect(isRouteEnabled('/apps/sysdesign')).toBe(true);
     expect(isRouteEnabled('/apps/scale-lab')).toBe(true);
+    // The Greenhouse Labor Planner's demo went public at G6 (ADR-0026).
+    expect(isRouteEnabled('/apps/greenhouse')).toBe(true);
+    expect(isRouteEnabled('/apps/labor-planner')).toBe(true);
 
     // Disabled routes
     expect(isRouteEnabled('/apps/strategy')).toBe(false);

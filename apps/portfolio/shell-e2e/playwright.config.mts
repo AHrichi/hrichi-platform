@@ -86,6 +86,14 @@ export default defineConfig({
       cwd: workspaceRoot,
     },
     {
+      // The Greenhouse Labor Planner's dashboard (ADR-0026): the demo farm
+      // in memory; the default build never calls Supabase.
+      command: 'pnpm exec nx run product-greenhouse:serve-static',
+      url: 'http://localhost:4313/remoteEntry.json',
+      reuseExistingServer: true,
+      cwd: workspaceRoot,
+    },
+    {
       command: isCI
         ? 'pnpm exec nx run shell:serve-static'
         : 'pnpm exec nx run shell:serve',

@@ -25,7 +25,6 @@
           "node_modules/@fontsource-variable/inter/index.css",
           "libs/design-system/tokens/src/generated/tokens.css",
           "libs/design-system/ui/src/styles/index.scss",
-          "libs/products/greenhouse/ui/src/styles/greenhouse.scss",
           "apps/products/greenhouse/field/src/styles.scss"
         ]
       },
@@ -126,7 +125,6 @@
             "node_modules/@fontsource-variable/inter/index.css",
             "libs/design-system/tokens/src/generated/tokens.css",
             "libs/design-system/ui/src/styles/index.scss",
-            "libs/products/greenhouse/ui/src/styles/greenhouse.scss",
             "apps/products/greenhouse/field/src/styles.scss",
             "apps/products/greenhouse/brands/active/brand.css"
           ],
@@ -170,7 +168,6 @@
             "node_modules/@fontsource-variable/inter/index.css",
             "libs/design-system/tokens/src/generated/tokens.css",
             "libs/design-system/ui/src/styles/index.scss",
-            "libs/products/greenhouse/ui/src/styles/greenhouse.scss",
             "apps/products/greenhouse/field/src/styles.scss",
             "apps/products/greenhouse/brands/active/brand.css"
           ],
@@ -214,7 +211,6 @@
             "node_modules/@fontsource-variable/inter/index.css",
             "libs/design-system/tokens/src/generated/tokens.css",
             "libs/design-system/ui/src/styles/index.scss",
-            "libs/products/greenhouse/ui/src/styles/greenhouse.scss",
             "apps/products/greenhouse/field/src/styles.scss",
             "apps/products/greenhouse/brands/active/brand.css"
           ],

@@ -2,6 +2,7 @@ export * from './lib/app-bar/app-bar';
 export * from './lib/badge-scanner/badge-scanner';
 export * from './lib/brand';
 export * from './lib/button/button';
+export * from './lib/kit-styles/kit-styles';
 export * from './lib/lang-switch/lang-switch';
 export * from './lib/mark/mark';
 export * from './lib/status-chip/status-chip';
