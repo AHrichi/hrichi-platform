@@ -23,6 +23,7 @@ const config = loadConfig({
   MONGODB_URI: 'mongodb://unused',
   TURNSTILE_SECRET: 'unused',
   CORS_ORIGINS: 'https://portfolio.example',
+  RENDER_GIT_COMMIT: '65af0dfc93a4919786777271bd9d60be88c8c7c7',
 });
 
 describe('API over HTTP', () => {
@@ -65,12 +66,16 @@ describe('API over HTTP', () => {
 
   afterEach(() => app.close());
 
-  it('reports health', async () => {
+  it('reports health and the commit it runs', async () => {
     const response = await request(app.getHttpServer())
       .get('/health')
       .expect(200);
 
-    expect(response.body).toMatchObject({ status: 'ok', db: 'up' });
+    expect(response.body).toMatchObject({
+      status: 'ok',
+      db: 'up',
+      commit: '65af0dfc93a4919786777271bd9d60be88c8c7c7',
+    });
   });
 
   it('accepts a valid lead with 202 and stores it', async () => {

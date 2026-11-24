@@ -18,6 +18,23 @@ describe('loadConfig', () => {
     expect(config.corsOrigins).toEqual(['http://localhost:4200']);
   });
 
+  it('reads the deployed commit from Render, keeping only a hex SHA', () => {
+    const sha = '43963afda10acd441cb39cbd23e14240dfca072e';
+
+    expect(loadConfig(base).commit).toBeNull();
+    expect(loadConfig({ ...base, RENDER_GIT_COMMIT: sha }).commit).toBe(sha);
+    expect(
+      loadConfig({ ...base, RENDER_GIT_COMMIT: ` ${sha.toUpperCase()} ` })
+        .commit,
+    ).toBe(sha);
+    expect(loadConfig({ ...base, RENDER_GIT_COMMIT: '43963af' }).commit).toBe(
+      '43963af',
+    );
+    expect(
+      loadConfig({ ...base, RENDER_GIT_COMMIT: '<script>' }).commit,
+    ).toBeNull();
+  });
+
   it('lists every problem at once', () => {
     expect(() =>
       loadConfig({
