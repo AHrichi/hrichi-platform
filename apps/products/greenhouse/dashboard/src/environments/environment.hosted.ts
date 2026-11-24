@@ -8,6 +8,6 @@ import type { DashboardEnvironment } from './environment.model';
 export const environment: DashboardEnvironment = {
   supabase: {
     url: 'https://wxziozlataokzoftcpgb.supabase.co',
-    anonKey: 'PASTE_THE_PUBLISHABLE_KEY',
+    anonKey: 'sb_publishable_6-ALBAOUkHiwxIR-F--DpQ_uxzmQTgS',
   },
 };
