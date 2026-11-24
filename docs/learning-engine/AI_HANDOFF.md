@@ -1,8 +1,8 @@
 # AI handoff: Learning Engine (hrichi-platform)
 
-This is a briefing for an AI assistant that picks up the Learning Engine. Read it first, then `docs/learning-engine/technical-design.md` (the design, with "as built" notes per phase), `docs/adr/0024-learning-engine.md` (decisions and setup) and `docs/architecture.md` (the platform). Last updated 2026-11-24 (API redeployed, StudyLM sync still failing; `/health` reports the commit).
+This is a briefing for an AI assistant that picks up the Learning Engine. Read it first, then `docs/learning-engine/technical-design.md` (the design, with "as built" notes per phase), `docs/adr/0024-learning-engine.md` (decisions and setup) and `docs/architecture.md` (the platform). Last updated 2026-11-24 (API redeployed, StudyLM sync works; `/health` reports the commit).
 
-The StudyLM merge (section 10) is built as **shared data, two apps**, the owner's choice on 2026-11-12. The owner redeployed the API on 2026-11-24, but then reported StudyLM sync still failing; the cause isn't known yet (section 11). Telegram (section 9) is parked: on 2026-11-12 the owner reported it works and asked for no changes for now, so leave the bot, the Worker's webhook and the owner's n8n workflows as they are.
+The StudyLM merge (section 10) is built as **shared data, two apps**, the owner's choice on 2026-11-12. It is live: the owner redeployed the API on 2026-11-24 and confirmed StudyLM sync works. Telegram (section 9) is parked: on 2026-11-12 the owner reported it works and asked for no changes for now, so leave the bot, the Worker's webhook and the owner's n8n workflows as they are.
 
 ## 1. What this is
 
@@ -87,7 +87,7 @@ node tools/scripts/prepare-hosting.mjs dist/apps/products/learning/web/browser -
 ## 8. Gotchas found so far
 
 - **Render auto-deploy hasn't fired since 2026-10-27**, although `render.yaml` says `autoDeployTrigger: checksPass`. Deploys happen through Environment → Save, rebuild, and deploy, or Manual Deploy. The Blueprint (`render.yaml`) also hasn't synced its newer env values; they were set by hand. Worth checking the Blueprint's sync setting.
-  - Seen again on 2026-11-24: StudyLM sync failed with `push.progress.0.steps.…: Expected >=0 but received -1`. `main` has accepted `-1` since PR #15 (2026-11-13) and its Docker image builds cleanly, so the live API was older than that. Since branch `feat/api-health-commit`, `GET /health` returns `commit` (Render's `RENDER_GIT_COMMIT`): compare it with `git rev-parse origin/main` to spot a stale deploy. The owner did a Manual Deploy on 2026-11-24 and then reported sync still failing; whether the deploy took is unverified until `/health` shows `commit`.
+  - Seen again on 2026-11-24: StudyLM sync failed with `push.progress.0.steps.…: Expected >=0 but received -1`. `main` has accepted `-1` since PR #15 (2026-11-13) and its Docker image builds cleanly, so the live API was older than that. Since branch `feat/api-health-commit`, `GET /health` returns `commit` (Render's `RENDER_GIT_COMMIT`): compare it with `git rev-parse origin/main` to spot a stale deploy. The owner's Manual Deploy on 2026-11-24 fixed it. A sync tried soon after the deploy still failed and a later one worked; the cause wasn't checked (most likely the deploy wasn't live yet), so wait for Render to show the deploy as live before testing.
 - A GitHub Actions run on `main` once sat queued for 1 h 40 min with no jobs; the next push started normally.
 - Gemini Flash (`gemini-flash-latest`) sometimes hangs through the relay; the ladder and transcription fall back to Flash-Lite.
 - Render values are masked in the dashboard editor and loaded only when revealed; saving keeps unrevealed ones.
@@ -138,6 +138,6 @@ node tools/scripts/prepare-hosting.mjs dist/apps/products/learning/web/browser -
 
 ## 11. Next steps
 
-1. **Find why StudyLM sync still fails after the 2026-11-24 redeploy:** get the exact error from StudyLM's sync dialog (or the browser console line `[studylm] sync contract rejected`) and Render's Events for the deploy's commit and result. Then, **deploy the API after each API change:** Render's auto-deploy is still off (section 8), so after PR #29 (`/health` reports `commit`) or any later API change merges, press Manual Deploy → Deploy latest commit on `ahmed-hrichi-api`, then check that `/health`'s `commit` equals `origin/main`. Turning auto-deploy back on (the service's Auto-Deploy setting, the Blueprint sync) would end this chore. The static apps deploy from CI.
+1. **Deploy the API after each API change:** done on 2026-11-24 (StudyLM sync works). Render's auto-deploy is still off (section 8), so after PR #29 (`/health` reports `commit`) or any later API change merges, press Manual Deploy → Deploy latest commit on `ahmed-hrichi-api`, then check that `/health`'s `commit` equals `origin/main`. Turning auto-deploy back on (the service's Auto-Deploy setting, the Blueprint sync) would end this chore. The static apps deploy from CI.
 2. Owner: pair the phone and the PC (⚙ → Devices and pairing → Send me a code).
 3. Owner, once per browser: StudyLM → Progress → "Connect to my daily reviews" → "Link StudyLM". n8n must be running for the cards to turn into drafts.
