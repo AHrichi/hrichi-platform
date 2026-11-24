@@ -11,6 +11,7 @@ import { APP_MODE } from '@ah/platform/app-mode';
 import {
   GhAppBar,
   GhButton,
+  GhKitStyles,
   GhLangSwitch,
   GREENHOUSE_BRAND,
 } from '@ah/products/greenhouse/ui';
@@ -40,6 +41,7 @@ const SECTIONS = [
 @Component({
   selector: 'gh-dashboard-shell',
   imports: [
+    GhKitStyles,
     CreateFarm,
     DashboardSignIn,
     GhAppBar,
