@@ -20,6 +20,9 @@
         "local": {
           "target": "product-greenhouse:esbuild:local"
         },
+        "hosted": {
+          "target": "product-greenhouse:esbuild:hosted"
+        },
         "development": {
           "target": "product-greenhouse:esbuild:development",
           "dev": true
@@ -113,6 +116,27 @@
             }
           ]
         },
+        "hosted": {
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "1mb",
+              "maximumError": "2mb"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "12kb",
+              "maximumError": "20kb"
+            }
+          ],
+          "outputHashing": "all",
+          "fileReplacements": [
+            {
+              "replace": "apps/products/greenhouse/dashboard/src/environments/environment.ts",
+              "with": "apps/products/greenhouse/dashboard/src/environments/environment.hosted.ts"
+            }
+          ]
+        },
         "development": {
           "optimization": false,
           "extractLicenses": false,
@@ -175,6 +199,9 @@
         },
         "local": {
           "buildTarget": "product-greenhouse:esbuild:local"
+        },
+        "hosted": {
+          "buildTarget": "product-greenhouse:esbuild:hosted"
         }
       },
       "defaultConfiguration": "development",

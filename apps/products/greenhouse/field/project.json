@@ -89,6 +89,28 @@
             }
           ]
         },
+        "hosted": {
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "600kb",
+              "maximumError": "1mb"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "8kb",
+              "maximumError": "16kb"
+            }
+          ],
+          "outputHashing": "all",
+          "serviceWorker": "apps/products/greenhouse/field/ngsw-config.json",
+          "fileReplacements": [
+            {
+              "replace": "apps/products/greenhouse/field/src/environments/environment.ts",
+              "with": "apps/products/greenhouse/field/src/environments/environment.hosted.ts"
+            }
+          ]
+        },
         "development": {
           "optimization": false,
           "extractLicenses": false,
@@ -246,6 +268,9 @@
         },
         "local": {
           "buildTarget": "product-greenhouse-field:build:local"
+        },
+        "hosted": {
+          "buildTarget": "product-greenhouse-field:build:hosted"
         },
         "brand-demo": {
           "buildTarget": "product-greenhouse-field:build:brand-demo"

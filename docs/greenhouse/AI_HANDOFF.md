@@ -223,7 +223,8 @@ Gotchas:
    - Auth: email confirmations are **off** (done). The project sends no email (zero cost); people join with join codes. All five migrations are applied.
    - The owner creates their account on the dashboard's sign-in screen, creates the farm there, and makes join codes for supervisors and HR on **People**.
 2. **Left over from G3:** done on the G5 branch. Supervisors can create their account in the field app, managers rename members on **People**, and targets came with G5a.
-3. **G4 on a phone.** Download the `greenhouse-field-debug-apk` artifact from the PR's CI run, install it, and check: the scanner screen opens and reads a printed badge; airplane mode shows "offline" and sending resumes when the signal comes back. Still to do:
-   - a launcher icon and splash in the farm's look (they are Capacitor's defaults; `@capacitor/assets` can make them from `public/icons`);
-   - a release build: a signing key kept outside the repo, `versionCode` raised for each release;
-   - the build the phones get should be `-c hosted` (`nx run product-greenhouse-field:build:hosted`, then `cap sync`), not the demo.
+3. **G4 on a phone.** Download the `greenhouse-field-debug-apk` artifact from the latest CI run, install it, and check: the scanner screen opens and reads a printed badge; airplane mode shows "offline" and sending resumes when the signal comes back.
+4. **Releasing the field app** (free: no app store). `.github/workflows/greenhouse-field-release.yml` builds `-c hosted`, signs the APK and publishes it as a GitHub Release that supervisors download on the phone.
+   - Once: the owner makes the release key with `keytool` on their own machine (never in the repo, backed up: phones only accept updates signed with the same key) and adds four repository secrets: `ANDROID_KEYSTORE_BASE64`, `ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_ALIAS`, `ANDROID_KEY_PASSWORD`. The hosted publishable key goes into `environment.hosted.ts` (it is public by design); the workflow refuses to run while the placeholder is there.
+   - Each release: push a tag `greenhouse-field-v1.2.3`, or run the workflow with a version. `versionCode` is `major × 10000 + minor × 100 + patch`, so each release must be a higher version.
+   - Launcher icons and splash screens come from `tools/scripts/generate-app-icons.mjs` (the field app's green greenhouse glyph); rerun it with `greenhouse-field` after changing the glyph or colours. A brand pack's look stays out of the repo, so branded icons are a local build only.
