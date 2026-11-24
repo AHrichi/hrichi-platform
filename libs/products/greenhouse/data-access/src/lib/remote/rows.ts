@@ -1,15 +1,21 @@
 import {
   type Absence,
   type Greenhouse,
+  type HygieneAnswer,
+  type HygieneCheck,
+  type HygieneItem,
   isCrop,
+  isRole,
   type Member,
   type PlanEntry,
-  type Role,
-  ROLES,
   type Team,
+  type TeamWeekTotals,
   type Weekday,
+  type WeeklyTarget,
   type Worker,
+  type WorkerTotals,
   type WorkLog,
+  type WorkTotals,
 } from '@ah/products/greenhouse/domain';
 
 /**
@@ -94,9 +100,7 @@ export function memberFrom(row: Row): Member {
   return {
     userId: text(row['user_id']),
     fullName: text(row['full_name']),
-    role: (ROLES as readonly unknown[]).includes(role)
-      ? (role as Role)
-      : 'supervisor',
+    role: isRole(role) ? role : 'supervisor',
   };
 }
 
@@ -142,6 +146,137 @@ export function planRow(farmId: string, p: PlanEntry): Row {
     team_id: p.teamId,
     expected_kg: p.expectedKg,
     hours_per_day: p.hoursPerDay,
+  };
+}
+
+export const HYGIENE_ITEM_COLUMNS =
+  'id, label_ar, label_fr, label_en, photo_required, sort_order, active';
+export const HYGIENE_CHECK_COLUMNS =
+  'id, check_date, greenhouse_id, supervisor_id, answers, signed_at';
+
+export function hygieneItemFrom(row: Row): HygieneItem {
+  return {
+    id: text(row['id']),
+    label: {
+      ar: text(row['label_ar']),
+      fr: text(row['label_fr']),
+      en: text(row['label_en']),
+    },
+    photoRequired: Boolean(row['photo_required']),
+    sortOrder: Number(row['sort_order'] ?? 0),
+    active: Boolean(row['active']),
+  };
+}
+
+export function hygieneItemRow(farmId: string, item: HygieneItem): Row {
+  return {
+    id: item.id,
+    farm_id: farmId,
+    label_ar: item.label.ar,
+    label_fr: item.label.fr,
+    label_en: item.label.en,
+    photo_required: item.photoRequired,
+    sort_order: item.sortOrder,
+    active: item.active,
+  };
+}
+
+/** One answer from the `answers` JSON, which keeps the domain's names. */
+function answerFrom(value: unknown): HygieneAnswer | null {
+  if (typeof value !== 'object' || value === null) return null;
+  const a = value as Record<string, unknown>;
+  if (typeof a['itemId'] !== 'string') return null;
+  const note = typeof a['note'] === 'string' ? a['note'] : '';
+  return {
+    itemId: a['itemId'],
+    ok: a['ok'] === true,
+    ...(note ? { note } : {}),
+    photoPaths: Array.isArray(a['photoPaths'])
+      ? a['photoPaths'].filter((p): p is string => typeof p === 'string')
+      : [],
+  };
+}
+
+export function hygieneCheckFrom(row: Row): HygieneCheck {
+  const answers = Array.isArray(row['answers']) ? row['answers'] : [];
+  return {
+    id: text(row['id']),
+    date: text(row['check_date']),
+    greenhouseId: text(row['greenhouse_id']),
+    supervisorId: text(row['supervisor_id']),
+    answers: answers
+      .map(answerFrom)
+      .filter((a): a is HygieneAnswer => a !== null),
+    signedAt: maybe(row['signed_at']),
+  };
+}
+
+/** The row a supervisor sends; `supervisor_id` must be their own id (RLS). */
+export function hygieneCheckRow(
+  farmId: string,
+  check: HygieneCheck,
+  supervisorId: string,
+): Row {
+  return {
+    id: check.id,
+    farm_id: farmId,
+    check_date: check.date,
+    greenhouse_id: check.greenhouseId,
+    supervisor_id: supervisorId,
+    answers: check.answers.map((a) => ({
+      itemId: a.itemId,
+      ok: a.ok,
+      ...(a.note ? { note: a.note } : {}),
+      photoPaths: a.photoPaths,
+    })),
+    signed_at: check.signedAt,
+  };
+}
+
+export const TARGET_COLUMNS = 'week_start, cost_per_kg_target, kg_target';
+
+export function targetFrom(row: Row): WeeklyTarget {
+  return {
+    weekStart: text(row['week_start']),
+    costPerKgTarget: Number(row['cost_per_kg_target']),
+    kgTarget: Number(row['kg_target']),
+  };
+}
+
+export function targetRow(farmId: string, t: WeeklyTarget): Row {
+  return {
+    farm_id: farmId,
+    week_start: t.weekStart,
+    cost_per_kg_target: t.costPerKgTarget,
+    kg_target: t.kgTarget,
+  };
+}
+
+/** The sums `team_week_totals()` and `worker_totals()` share. */
+function workTotalsFrom(row: Row): WorkTotals {
+  return {
+    kg: Number(row['kg']),
+    hours: Number(row['hours']),
+    crates: Number(row['crates']),
+    rejectedCrates: Number(row['rejected_crates']),
+    labourCost: Number(row['labour_cost']),
+    paidHours: Number(row['paid_hours']),
+  };
+}
+
+export function teamWeekFrom(row: Row): TeamWeekTotals {
+  return {
+    weekStart: text(row['week_start']),
+    teamId: maybe(row['team_id']),
+    ...workTotalsFrom(row),
+  };
+}
+
+export function workerTotalsFrom(row: Row): WorkerTotals {
+  return {
+    workerId: text(row['worker_id']),
+    days: Number(row['days']),
+    ...workTotalsFrom(row),
   };
 }
 

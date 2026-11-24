@@ -40,6 +40,16 @@ export function stateAfter(result: SyncResult): SyncState {
   }
 }
 
+/** Two syncs' results (work logs, then hygiene checks) as one. */
+export function combineResults(a: SyncResult, b: SyncResult): SyncResult {
+  return {
+    sent: a.sent + b.sent,
+    rejected: a.rejected + b.rejected,
+    pending: a.pending + b.pending,
+    stoppedBy: a.stoppedBy ?? b.stoppedBy,
+  };
+}
+
 /** Whether another run is worth scheduling, and when. */
 export function nextRun(
   result: SyncResult,

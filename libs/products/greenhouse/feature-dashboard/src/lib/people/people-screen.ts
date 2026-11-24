@@ -7,8 +7,9 @@ import {
 } from '@angular/core';
 import {
   checkEmail,
+  checkPersonName,
+  isRole,
   type Member,
-  type Role,
   ROLES,
   type SetupProblem,
 } from '@ah/products/greenhouse/domain';
@@ -16,9 +17,6 @@ import { GhButton } from '@ah/products/greenhouse/ui';
 import { DashboardI18n } from '../i18n/dashboard-i18n';
 import { formText } from '../shared/problems';
 import { FarmStore } from '../store/farm.store';
-
-const isRole = (value: unknown): value is Role =>
-  (ROLES as readonly unknown[]).includes(value);
 
 /** Who can sign in to the farm: members, invitations, and inviting. */
 @Component({
@@ -40,6 +38,9 @@ export class PeopleScreen {
   >({});
   protected readonly message = signal<string | null>(null);
   protected readonly busy = signal(false);
+  /** The member whose name is being changed. */
+  protected readonly renaming = signal<string | null>(null);
+  protected readonly renameProblem = signal<SetupProblem | null>(null);
 
   protected isMe(member: Member): boolean {
     return member.userId === this.store.account()?.id;
@@ -49,15 +50,16 @@ export class PeopleScreen {
     if (this.busy()) return;
     const values = formText(form);
     const email = checkEmail(values['email'] ?? '');
-    const name = (values['name'] ?? '').trim().replace(/\s+/g, ' ');
+    const checked = checkPersonName(values['name'] ?? '');
     const role = values['role'];
     const problems: Partial<Record<'email' | 'name', SetupProblem>> = {};
     if (!email)
       problems.email = values['email']?.trim() ? 'invalid' : 'required';
-    if (!name) problems.name = 'required';
+    if (!checked.ok) problems.name = checked.errors.name;
     this.problems.set(problems);
     this.message.set(null);
-    if (!email || !name || !isRole(role)) return;
+    if (!email || !checked.ok || !isRole(role)) return;
+    const name = checked.value;
 
     this.busy.set(true);
     try {
@@ -69,6 +71,28 @@ export class PeopleScreen {
       );
     } finally {
       this.busy.set(false);
+    }
+  }
+
+  protected startRename(member: Member): void {
+    this.renaming.set(member.userId);
+    this.renameProblem.set(null);
+  }
+
+  protected cancelRename(): void {
+    this.renaming.set(null);
+    this.renameProblem.set(null);
+  }
+
+  protected rename(member: Member, text: string): void {
+    const checked = checkPersonName(text);
+    if (!checked.ok) {
+      this.renameProblem.set(checked.errors.name ?? 'invalid');
+      return;
+    }
+    this.cancelRename();
+    if (checked.value !== member.fullName) {
+      void this.store.renameMember(member.userId, checked.value);
     }
   }
 

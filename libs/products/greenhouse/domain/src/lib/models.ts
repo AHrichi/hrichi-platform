@@ -28,6 +28,10 @@ export function isCrop(value: unknown): value is Crop {
 export const ROLES = ['manager', 'supervisor', 'hr'] as const;
 export type Role = (typeof ROLES)[number];
 
+export function isRole(value: unknown): value is Role {
+  return (ROLES as readonly unknown[]).includes(value);
+}
+
 /** Someone who can sign in to a farm, and as what. */
 export interface Member {
   userId: string;
@@ -129,6 +133,8 @@ export interface HygieneItem {
   label: { ar: string; fr: string; en: string };
   /** Whether a photo must back the answer. */
   photoRequired: boolean;
+  /** Where it comes in the checklist, lowest first. */
+  sortOrder: number;
   active: boolean;
 }
 

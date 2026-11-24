@@ -9,52 +9,52 @@ Ahmed Hrichi's portfolio, built as the kind of platform it describes: an Nx mono
 
 ## Projects
 
-| Project                       | Path                                 | What it is                                                                                                   |
-| ----------------------------- | ------------------------------------ | ------------------------------------------------------------------------------------------------------------ |
-| `shell`                       | `apps/portfolio/shell`               | Host. Prerendered content pages, PWA, loads remotes from `public/federation.manifest.json`                   |
-| `shell-e2e`                   | `apps/portfolio/shell-e2e`           | Playwright tests for prerendering, federation and remote fallback                                            |
-| `product-dispatch`            | `apps/products/dispatch/web`         | PulseOps: Commercial Laundry & Fleet Operations Dispatch Control Center (`/apps/dispatch`)                   |
-| `product-strategy`            | `apps/products/strategy/web`         | StrategyApp: Multi-Scenario Wealth & Financial Planning Engine                                               |
-| `product-studylm`             | `apps/products/studylm/web`          | StudyLM: AI study roadmaps, flashcards and quizzes, generated through an n8n workflow                        |
-| `product-whatsapp`            | `apps/products/whatsapp/web`         | ChatPulse: in-browser WhatsApp export analytics (`.zip`/`.txt`) with n8n AI insights                         |
-| `product-system-design`       | `apps/products/system-design/web`    | System Design course: step lessons on an isometric diagram, practice, cheatsheets, Design Lab                |
-| `product-greenhouse`          | `apps/products/greenhouse/dashboard` | Greenhouse Labor Planner, manager side: weekly plan, staffing gap, HR shortage report (not in the shell yet) |
-| `product-greenhouse-field`    | `apps/products/greenhouse/field`     | Greenhouse Labor Planner, supervisor side: offline-first work log PWA and Capacitor app (port 4314)          |
-| `product-greenhouse-supabase` | `apps/products/greenhouse/supabase`  | Its Supabase schema, row-level security and seed, tested on PGlite                                           |
-| `product-greenhouse-ui`       | `libs/products/greenhouse/ui`        | The Greenhouse UI kit: app bar, field-size buttons and steppers, status chips, brand packs                   |
-| `product-*-domain`            | `libs/products/*/domain`             | Framework-free models, parsers and calculations for each product                                             |
-| `product-*-feature`           | `libs/products/*/feature`            | Each product's routes, pages and SignalStore                                                                 |
-| `lab-sky`                     | `apps/labs/sky`                      | Sky lab remote: the night sky over any place and time, from a 3D globe down to a campsite                    |
-| `lab-rxjs`                    | `apps/labs/rxjs`                     | RxJS Practice Pad: Interactive stream visualizer & marble testing lab                                        |
-| `lab-ngrx`                    | `apps/labs/ngrx`                     | NgRx State Architecture Lab: Reactive SignalStore and state transitions                                      |
-| `lab-rxjs-feature`            | `libs/labs/rxjs/feature`             | The RxJS lab's exercises: multicasting, signals, RxJS vs signals                                             |
-| `lab-ngrx-feature`            | `libs/labs/ngrx/feature`             | The NgRx lab's exercises: store flow, SignalStore, effects, time-travel panel                                |
-| `portfolio-feature-apps`      | `libs/portfolio/feature-apps`        | Dedicated Apps & Labs showcase hub and engineering documentation (`/apps`)                                   |
-| `platform-federation`         | `libs/platform/federation`           | Remote contract, `federatedRoutes()`, `FederationStore`, `RemoteUnavailable` fallback                        |
-| `platform-app-mode`           | `libs/platform/app-mode`             | `provideAppMode()`: `embedded-demo` (inside the portfolio, seeded data) or `standalone`                      |
-| `platform-inspector`          | `libs/platform/inspector`            | "Open the hood" (`?inspect=1`): remotes, builds, shared-dependency skew, state, Web Vitals                   |
-| `design-system-tokens`        | `libs/design-system/tokens`          | DTCG tokens → CSS variables and TS, with a WCAG contrast gate (`nx build-tokens`)                            |
-| `design-system-ui`            | `libs/design-system/ui`              | `@ah/ui`: global styles (cascade layers) and components                                                      |
-| `design-system`               | `apps/design-system/storybook`       | Public Storybook: every `@ah/ui` component, the tokens and the scene host                                    |
-| `design-system-e2e`           | `apps/design-system/storybook-e2e`   | axe on every story in both themes; screenshot comparison in the Linux Playwright image                       |
-| `shared-content`              | `libs/shared/content`                | Profile, experience, case studies, services and per-audience copy                                            |
-| `shared-state`                | `libs/shared/state`                  | `PreferencesStore` (NgRx SignalStore): the `?for=` audience mode                                             |
-| `portfolio-util-seo`          | `libs/portfolio/util-seo`            | Title, description, canonical, Open Graph and JSON-LD                                                        |
-| `portfolio-feature-*`         | `libs/portfolio/feature-*`           | Pages: home, work, experience, services/contact, CV                                                          |
-| `shared-contracts`            | `libs/shared/contracts`              | Types shared by the browser and the API (`LeadRequest`, field limits)                                        |
-| `api`                         | `apps/api`                           | NestJS API for Render: config validation, health, CORS, rate limits                                          |
-| `api-leads`                   | `libs/api/leads`                     | Lead intake: Turnstile, idempotency, Mongo outbox, Telegram and n8n delivery                                 |
-| `api-dispatch`                | `libs/api/dispatch`                  | PulseOps backend module: auth, roles, orders, drivers, plants, stock and comms                               |
-| `orbit-api`                   | `apps/orbit-api`                     | Spring Boot 4 + Orekit on Render: the Sky lab's night planner (twilight, the Moon, dark hours)               |
-| `shared-api-client`           | `libs/shared/api-client`             | TypeScript types generated from the Orbit API's OpenAPI contract                                             |
-| `three-engine`                | `libs/three/engine`                  | Framework-free Three.js stage: on-demand frames, pause off-screen, quality tiers, dispose                    |
-| `three-angular`               | `libs/three/angular`                 | `<ah-scene>`: loads a scene after idle over a static fallback                                                |
-| `three-constellation`         | `libs/three/constellation`           | The exported Nx graph, camera and SVG projection for the hero                                                |
-| `three-scene-constellation`   | `libs/three/scenes/constellation`    | The hero's WebGL scene (lazy)                                                                                |
-| `three-scene-sky`             | `libs/three/scenes/sky`              | The Sky lab's scene: dot-matrix Earth, the dive, stars, Moon, planets, Milky Way, meteors                    |
-| `lab-sky-domain`              | `libs/labs/sky/domain`               | Sky positions, night summaries, meteor showers and the star catalogue (Astronomy Engine)                     |
-| `lab-sky-feature`             | `libs/labs/sky/feature`              | The Sky lab page and its SignalStore                                                                         |
-| `shared-site-config`          | `libs/shared/site-config`            | Per-environment backend URLs from `site-config.json`                                                         |
+| Project                       | Path                                 | What it is                                                                                                                 |
+| ----------------------------- | ------------------------------------ | -------------------------------------------------------------------------------------------------------------------------- |
+| `shell`                       | `apps/portfolio/shell`               | Host. Prerendered content pages, PWA, loads remotes from `public/federation.manifest.json`                                 |
+| `shell-e2e`                   | `apps/portfolio/shell-e2e`           | Playwright tests for prerendering, federation and remote fallback                                                          |
+| `product-dispatch`            | `apps/products/dispatch/web`         | PulseOps: Commercial Laundry & Fleet Operations Dispatch Control Center (`/apps/dispatch`)                                 |
+| `product-strategy`            | `apps/products/strategy/web`         | StrategyApp: Multi-Scenario Wealth & Financial Planning Engine                                                             |
+| `product-studylm`             | `apps/products/studylm/web`          | StudyLM: AI study roadmaps, flashcards and quizzes, generated through an n8n workflow                                      |
+| `product-whatsapp`            | `apps/products/whatsapp/web`         | ChatPulse: in-browser WhatsApp export analytics (`.zip`/`.txt`) with n8n AI insights                                       |
+| `product-system-design`       | `apps/products/system-design/web`    | System Design course: step lessons on an isometric diagram, practice, cheatsheets, Design Lab                              |
+| `product-greenhouse`          | `apps/products/greenhouse/dashboard` | Greenhouse Labor Planner, manager side: weekly plan, staffing gap, HR report, farm setup, QR badges (not in the shell yet) |
+| `product-greenhouse-field`    | `apps/products/greenhouse/field`     | Greenhouse Labor Planner, supervisor side: offline-first work log PWA and Capacitor app (port 4314)                        |
+| `product-greenhouse-supabase` | `apps/products/greenhouse/supabase`  | Its Supabase schema, row-level security and seed, tested on PGlite                                                         |
+| `product-greenhouse-ui`       | `libs/products/greenhouse/ui`        | The Greenhouse UI kit: app bar, field-size buttons and steppers, status chips, brand packs                                 |
+| `product-*-domain`            | `libs/products/*/domain`             | Framework-free models, parsers and calculations for each product                                                           |
+| `product-*-feature`           | `libs/products/*/feature`            | Each product's routes, pages and SignalStore                                                                               |
+| `lab-sky`                     | `apps/labs/sky`                      | Sky lab remote: the night sky over any place and time, from a 3D globe down to a campsite                                  |
+| `lab-rxjs`                    | `apps/labs/rxjs`                     | RxJS Practice Pad: Interactive stream visualizer & marble testing lab                                                      |
+| `lab-ngrx`                    | `apps/labs/ngrx`                     | NgRx State Architecture Lab: Reactive SignalStore and state transitions                                                    |
+| `lab-rxjs-feature`            | `libs/labs/rxjs/feature`             | The RxJS lab's exercises: multicasting, signals, RxJS vs signals                                                           |
+| `lab-ngrx-feature`            | `libs/labs/ngrx/feature`             | The NgRx lab's exercises: store flow, SignalStore, effects, time-travel panel                                              |
+| `portfolio-feature-apps`      | `libs/portfolio/feature-apps`        | Dedicated Apps & Labs showcase hub and engineering documentation (`/apps`)                                                 |
+| `platform-federation`         | `libs/platform/federation`           | Remote contract, `federatedRoutes()`, `FederationStore`, `RemoteUnavailable` fallback                                      |
+| `platform-app-mode`           | `libs/platform/app-mode`             | `provideAppMode()`: `embedded-demo` (inside the portfolio, seeded data) or `standalone`                                    |
+| `platform-inspector`          | `libs/platform/inspector`            | "Open the hood" (`?inspect=1`): remotes, builds, shared-dependency skew, state, Web Vitals                                 |
+| `design-system-tokens`        | `libs/design-system/tokens`          | DTCG tokens → CSS variables and TS, with a WCAG contrast gate (`nx build-tokens`)                                          |
+| `design-system-ui`            | `libs/design-system/ui`              | `@ah/ui`: global styles (cascade layers) and components                                                                    |
+| `design-system`               | `apps/design-system/storybook`       | Public Storybook: every `@ah/ui` component, the tokens and the scene host                                                  |
+| `design-system-e2e`           | `apps/design-system/storybook-e2e`   | axe on every story in both themes; screenshot comparison in the Linux Playwright image                                     |
+| `shared-content`              | `libs/shared/content`                | Profile, experience, case studies, services and per-audience copy                                                          |
+| `shared-state`                | `libs/shared/state`                  | `PreferencesStore` (NgRx SignalStore): the `?for=` audience mode                                                           |
+| `portfolio-util-seo`          | `libs/portfolio/util-seo`            | Title, description, canonical, Open Graph and JSON-LD                                                                      |
+| `portfolio-feature-*`         | `libs/portfolio/feature-*`           | Pages: home, work, experience, services/contact, CV                                                                        |
+| `shared-contracts`            | `libs/shared/contracts`              | Types shared by the browser and the API (`LeadRequest`, field limits)                                                      |
+| `api`                         | `apps/api`                           | NestJS API for Render: config validation, health, CORS, rate limits                                                        |
+| `api-leads`                   | `libs/api/leads`                     | Lead intake: Turnstile, idempotency, Mongo outbox, Telegram and n8n delivery                                               |
+| `api-dispatch`                | `libs/api/dispatch`                  | PulseOps backend module: auth, roles, orders, drivers, plants, stock and comms                                             |
+| `orbit-api`                   | `apps/orbit-api`                     | Spring Boot 4 + Orekit on Render: the Sky lab's night planner (twilight, the Moon, dark hours)                             |
+| `shared-api-client`           | `libs/shared/api-client`             | TypeScript types generated from the Orbit API's OpenAPI contract                                                           |
+| `three-engine`                | `libs/three/engine`                  | Framework-free Three.js stage: on-demand frames, pause off-screen, quality tiers, dispose                                  |
+| `three-angular`               | `libs/three/angular`                 | `<ah-scene>`: loads a scene after idle over a static fallback                                                              |
+| `three-constellation`         | `libs/three/constellation`           | The exported Nx graph, camera and SVG projection for the hero                                                              |
+| `three-scene-constellation`   | `libs/three/scenes/constellation`    | The hero's WebGL scene (lazy)                                                                                              |
+| `three-scene-sky`             | `libs/three/scenes/sky`              | The Sky lab's scene: dot-matrix Earth, the dive, stars, Moon, planets, Milky Way, meteors                                  |
+| `lab-sky-domain`              | `libs/labs/sky/domain`               | Sky positions, night summaries, meteor showers and the star catalogue (Astronomy Engine)                                   |
+| `lab-sky-feature`             | `libs/labs/sky/feature`              | The Sky lab page and its SignalStore                                                                                       |
+| `shared-site-config`          | `libs/shared/site-config`            | Per-environment backend URLs from `site-config.json`                                                                       |
 
 ## Commands
 

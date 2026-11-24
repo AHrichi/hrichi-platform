@@ -1,7 +1,16 @@
 import 'fake-indexeddb/auto';
-import { sampleFarm, type WorkLog } from '@ah/products/greenhouse/domain';
+import {
+  type HygieneCheck,
+  sampleFarm,
+  sampleHygieneItems,
+  type WorkLog,
+} from '@ah/products/greenhouse/domain';
 import { FieldDatabase, type Roster } from './field-database';
-import { FieldRepository } from './field-repository';
+import {
+  FieldRepository,
+  photoPath,
+  SignedCheckError,
+} from './field-repository';
 
 const farm = sampleFarm('2026-11-23');
 const roster: Roster = {
@@ -17,7 +26,18 @@ const roster: Roster = {
         ? { ...w, badgeCode: 'gh-0003' }
         : w,
   ),
+  hygieneItems: sampleHygieneItems(),
 };
+
+const check = (over: Partial<HygieneCheck> = {}): HygieneCheck => ({
+  id: 'check-1',
+  date: '2026-11-23',
+  greenhouseId: 'gh-1',
+  supervisorId: 'sup-1',
+  answers: [],
+  signedAt: null,
+  ...over,
+});
 
 function log(id: string, partial: Partial<WorkLog> = {}): WorkLog {
   return {
@@ -125,6 +145,41 @@ describe('FieldRepository', () => {
     await expect(repo.updateLog('missing', { hours: 7 })).rejects.toThrow();
   });
 
+  it('keeps the checklist with the roster', async () => {
+    await repo.saveRoster(roster);
+    expect((await repo.roster())?.hygieneItems).toHaveLength(8);
+  });
+
+  it('saves a check until it is signed, then refuses changes', async () => {
+    const first = await repo.saveCheck('farm-1', check());
+    expect(first).toMatchObject({ status: 'pending', rev: 1 });
+    const answer = { itemId: 'hyg-1', ok: true, photoPaths: [] };
+    await repo.saveCheck('farm-1', check({ answers: [answer] }));
+    expect(await repo.checkFor('2026-11-23', 'gh-1')).toMatchObject({
+      rev: 2,
+      answers: [answer],
+    });
+    await repo.saveCheck('farm-1', check({ signedAt: '2026-11-23T08:00:00Z' }));
+    await expect(repo.saveCheck('farm-1', check())).rejects.toBeInstanceOf(
+      SignedCheckError,
+    );
+    expect(await repo.countChecks()).toEqual({
+      pending: 1,
+      synced: 0,
+      rejected: 0,
+    });
+  });
+
+  it('keeps photos on the phone under their bucket path', async () => {
+    const path = photoPath('farm-1', 'check-1');
+    expect(path).toMatch(/^farm-1\/check-1\/[0-9a-f-]{36}\.jpg$/);
+    const blob = new Blob(['jpeg'], { type: 'image/jpeg' });
+    await repo.addPhoto({ path, checkId: 'check-1', itemId: 'hyg-1', blob });
+    expect(await repo.photo(path)).not.toBeNull();
+    await repo.deletePhoto(path);
+    expect(await repo.photo(path)).toBeNull();
+  });
+
   it('forgets the farm on sign-out, but never with entries waiting', async () => {
     await repo.saveRoster(roster);
     await repo.addLog('farm-1', log('a'));
@@ -136,5 +191,14 @@ describe('FieldRepository', () => {
     expect(await repo.roster()).toBeNull();
     expect(await db.logs.count()).toBe(0);
     expect(await repo.lastSyncAt()).toBeNull();
+  });
+
+  it('never forgets a check that waits to be sent', async () => {
+    await repo.saveRoster(roster);
+    await repo.saveCheck('farm-1', check());
+    expect(await repo.clearAccount()).toBe(false);
+    await db.checks.update('check-1', { status: 'synced' });
+    expect(await repo.clearAccount()).toBe(true);
+    expect(await db.checks.count()).toBe(0);
   });
 });

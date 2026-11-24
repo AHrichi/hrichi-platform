@@ -486,6 +486,71 @@ describe('hygiene checks', () => {
         ),
       ).toMatch(/row-level security/);
     }));
+
+  // The phone re-sends a signed check whose reply it lost; it relies on
+  // this error (not a silent no-op) to look and see the check is in.
+  it('refuse a re-send over a signed check, as the phone upserts it', () =>
+    scenario(async (s) => {
+      await s.as(SUPERVISOR_A);
+      const upsert = `insert into public.hygiene_check
+          (id, farm_id, check_date, greenhouse_id, supervisor_id, answers, signed_at)
+        values ($1, $2, $3, $4, $5, $6::jsonb, $7)
+        on conflict (id) do update set answers = excluded.answers,
+          signed_at = excluded.signed_at`;
+      const id = 'a0000000-0000-4000-8000-00000000a401';
+      const answers = JSON.stringify([
+        { itemId: 'x', ok: true, photoPaths: [] },
+      ]);
+      const args = [id, FARM_A, today(), GH_A, SUPERVISOR_A, answers];
+      expect(await s.count(upsert, [...args, null])).toBe(1);
+      expect(await s.count(upsert, [...args, new Date().toISOString()])).toBe(
+        1,
+      );
+      expect(
+        await s.error(upsert, [...args, new Date().toISOString()]),
+      ).toMatch(/row-level security/);
+      // Another supervisor can't start a second check of the same greenhouse.
+      await s.as(SUPERVISOR_A2);
+      expect(
+        await s.error(upsert, [
+          'a0000000-0000-4000-8000-00000000a402',
+          FARM_A,
+          today(),
+          GH_A,
+          SUPERVISOR_A2,
+          answers,
+          null,
+        ]),
+      ).toMatch(/duplicate key|unique/);
+      // HR and supervisors read the farm's checks; another farm doesn't.
+      await s.as(HR_A);
+      expect(await s.rows(`select id from public.hygiene_check`)).toEqual([
+        { id },
+      ]);
+      await s.as(MANAGER_B);
+      expect(await s.rows(`select id from public.hygiene_check`)).toEqual([]);
+    }));
+});
+
+describe('hygiene items', () => {
+  const insert = `insert into public.hygiene_item (farm_id, label_ar, label_fr, label_en)
+    values ($1, 'ع', 'fr', 'en')`;
+
+  it('are the manager’s to write and everyone’s on the farm to read', () =>
+    scenario(async (s) => {
+      for (const who of [SUPERVISOR_A, HR_A]) {
+        await s.as(who);
+        expect(await s.error(insert, [FARM_A])).toMatch(/row-level security/);
+      }
+      await s.as(MANAGER_A);
+      expect(await s.count(insert, [FARM_A])).toBe(1);
+      await s.as(SUPERVISOR_A);
+      expect(await s.rows(`select label_fr from public.hygiene_item`)).toEqual([
+        { label_fr: 'fr' },
+      ]);
+      await s.as(MANAGER_B);
+      expect(await s.rows(`select * from public.hygiene_item`)).toEqual([]);
+    }));
 });
 
 describe('hygiene photos', () => {
@@ -620,6 +685,128 @@ describe('work totals', () => {
       expect(await s.rows(totals, [FARM_A, today(-1), today()])).toEqual([]);
       await s.as(MANAGER_B);
       expect(await s.rows(totals, [FARM_A, today(-1), today(1)])).toEqual([]);
+    }));
+});
+
+describe('performance totals', () => {
+  /** The Monday of a `YYYY-MM-DD` day. */
+  const monday = (date: string): string => {
+    const d = new Date(`${date}T12:00:00Z`);
+    d.setUTCDate(d.getUTCDate() - ((d.getUTCDay() + 6) % 7));
+    return d.toISOString().slice(0, 10);
+  };
+  const iso = (value: unknown): string =>
+    value instanceof Date ? value.toISOString().slice(0, 10) : String(value);
+
+  async function logTwoWeeks(s: Session): Promise<void> {
+    await s.as(MANAGER_A);
+    await s.count(insertLog, [
+      LOG_ID,
+      FARM_A,
+      today(),
+      WORKER_A,
+      GH_A,
+      MANAGER_A,
+    ]);
+    await s.count(insertLog, [
+      'a0000000-0000-4000-8000-00000000a302',
+      FARM_A,
+      today(-7),
+      WORKER_A,
+      GH_A,
+      MANAGER_A,
+    ]);
+  }
+
+  const teamWeeks = `select week_start, team_id, kg, hours, crates,
+      rejected_crates, labour_cost, paid_hours
+    from public.team_week_totals($1, $2, $3)`;
+  const workers = `select worker_id, days, kg, labour_cost, paid_hours
+    from public.worker_totals($1, $2, $3)`;
+
+  it('sum each team’s weeks from Monday, with the labour cost', () =>
+    scenario(async (s) => {
+      await logTwoWeeks(s);
+      const rows = await s.rows<Record<string, unknown>>(teamWeeks, [
+        FARM_A,
+        today(-8),
+        today(1),
+      ]);
+      expect(
+        rows.map((r) => ({
+          week: iso(r['week_start']),
+          team: r['team_id'],
+          kg: Number(r['kg']),
+          cost: Number(r['labour_cost']),
+          paid: Number(r['paid_hours']),
+          rejected: r['rejected_crates'],
+        })),
+      ).toEqual(
+        [today(-7), today()].map((day) => ({
+          week: monday(day),
+          team: TEAM_A,
+          kg: 120,
+          // 8 hours at 2.55 TND.
+          cost: 20.4,
+          paid: 8,
+          rejected: 1,
+        })),
+      );
+    }));
+
+  it('sum each worker over the period', () =>
+    scenario(async (s) => {
+      await logTwoWeeks(s);
+      const [row] = await s.rows<Record<string, unknown>>(workers, [
+        FARM_A,
+        today(-8),
+        today(1),
+      ]);
+      expect(row?.['worker_id']).toBe(WORKER_A);
+      expect(Number(row?.['days'])).toBe(2);
+      expect(Number(row?.['kg'])).toBe(240);
+      expect(Number(row?.['labour_cost'])).toBe(40.8);
+    }));
+
+  it('show supervisors the work but not its cost, and outsiders nothing', () =>
+    scenario(async (s) => {
+      await logTwoWeeks(s);
+      await s.as(SUPERVISOR_A);
+      const [row] = await s.rows<Record<string, unknown>>(workers, [
+        FARM_A,
+        today(-8),
+        today(1),
+      ]);
+      expect(Number(row?.['kg'])).toBe(240);
+      expect(Number(row?.['labour_cost'])).toBe(0);
+      expect(Number(row?.['paid_hours'])).toBe(0);
+      await s.as(MANAGER_B);
+      expect(await s.rows(teamWeeks, [FARM_A, today(-8), today(1)])).toEqual(
+        [],
+      );
+      expect(await s.rows(workers, [FARM_A, today(-8), today(1)])).toEqual([]);
+    }));
+});
+
+describe('targets', () => {
+  const insertTarget = `insert into public.target
+    (farm_id, week_start, cost_per_kg_target, kg_target)
+    values ($1, '2026-11-23', 0.075, 160000)`;
+
+  it('are set by managers and read by the whole farm', () =>
+    scenario(async (s) => {
+      await s.as(HR_A);
+      expect(await s.error(insertTarget, [FARM_A])).toMatch(
+        /row-level security/,
+      );
+      await s.as(MANAGER_A);
+      expect(await s.count(insertTarget, [FARM_A])).toBe(1);
+      await s.as(SUPERVISOR_A);
+      expect(
+        await s.rows(`select cost_per_kg_target from public.target`),
+      ).toEqual([{ cost_per_kg_target: '0.075' }]);
+      await s.as(MANAGER_B);
+      expect(await s.rows(`select * from public.target`)).toEqual([]);
     }));
 });
 

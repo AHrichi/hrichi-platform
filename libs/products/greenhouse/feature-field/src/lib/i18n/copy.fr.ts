@@ -30,6 +30,7 @@ export const FR: FieldCopy = {
     title: 'Choisissez une serre',
     today: 'Aujourd’hui',
     entries: 'saisies',
+    hygiene: 'Hygiène',
     loading: 'Ouverture de la ferme…',
     noRoster:
       'Ce téléphone n’a pas encore la liste de la ferme. Connectez-vous une fois pour la télécharger.',
@@ -51,7 +52,18 @@ export const FR: FieldCopy = {
     signInAgain: 'Se reconnecter',
     noFarm:
       'Ce compte n’est rattaché à aucune ferme. Demandez à votre responsable de vous ajouter.',
+    signUpTitle: 'Créer un compte',
+    signUpIntro:
+      'Utilisez l’e-mail auquel votre responsable vous a invité. Vous rejoignez la ferme dès que le compte existe.',
+    newPassword: 'Mot de passe (8 caractères au moins)',
+    signUpSubmit: 'Créer le compte',
+    noAccount: 'Pas encore de compte ?',
+    haveAccount: 'Déjà un compte ?',
+    createAccount: 'Créer un compte',
+    confirmEmail:
+      'Ouvrez l’e-mail reçu et suivez le lien pour confirmer le compte, puis connectez-vous ici.',
     errors: {
+      short: 'Le mot de passe doit faire 8 caractères au moins.',
       invalid: 'E-mail ou mot de passe incorrect.',
       unconfirmed: 'L’e-mail de ce compte n’est pas encore confirmé.',
       offline: 'Pas de réseau. La première connexion a besoin d’internet.',
@@ -68,6 +80,34 @@ export const FR: FieldCopy = {
     melon: 'Melon',
     strawberry: 'Fraise',
     other: 'Autre culture',
+  },
+  hygiene: {
+    title: 'Contrôle d’hygiène',
+    progress: '{answered} sur {total} renseignés',
+    ok: 'Conforme',
+    notOk: 'Non conforme',
+    note: 'Qu’est-ce qui ne va pas ? (facultatif)',
+    photoRequired: 'Photo exigée',
+    addPhoto: 'Prendre une photo',
+    removePhoto: 'Retirer',
+    removePhotoConfirm: 'Retirer cette photo ?',
+    photoOf: 'Photo :',
+    photoSent: 'Envoyée',
+    photoMissing: 'Ajoutez une photo avant de signer.',
+    sign: 'Signer le contrôle',
+    signConfirm: 'Signer ? Ensuite le contrôle ne peut plus changer.',
+    signHint: 'La signature verrouille le contrôle et l’envoie au responsable.',
+    notReady: 'Renseignez chaque point, avec ses photos, pour signer.',
+    signedAt: 'Signé à {time}. Il ne peut plus changer.',
+    refused: 'Le serveur a refusé ce contrôle :',
+    noItems:
+      'Cette ferme n’a pas encore de liste de contrôle. Le responsable la prépare.',
+    unknown: 'Cette serre n’est pas dans la liste de ce téléphone.',
+    status: {
+      missing: 'à faire',
+      open: 'commencé',
+      signed: 'signé',
+    },
   },
   log: {
     back: 'Serres',

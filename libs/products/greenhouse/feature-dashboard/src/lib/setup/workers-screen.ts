@@ -8,6 +8,7 @@ import {
 import { RouterLink } from '@angular/router';
 import {
   checkWorker,
+  newId,
   nextBadgeCode,
   normalizeBadge,
   type Worker,
@@ -16,7 +17,7 @@ import {
 import { GhButton } from '@ah/products/greenhouse/ui';
 import { DashboardI18n } from '../i18n/dashboard-i18n';
 import { type FieldProblems, formText } from '../shared/problems';
-import { FarmStore, newId } from '../store/farm.store';
+import { FarmStore } from '../store/farm.store';
 
 /** Filter value for workers in no team. */
 export const NO_TEAM = 'none';

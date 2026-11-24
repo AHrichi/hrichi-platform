@@ -1,7 +1,8 @@
 import 'fake-indexeddb/auto';
 import type { WorkLog } from '@ah/products/greenhouse/domain';
 import { FieldDatabase } from './field-database';
-import { type FieldRemote, type LogChange, RemoteError } from './field-remote';
+import { RemoteError } from '../remote/remote-error';
+import type { FieldRemote, LogChange } from './field-remote';
 import { FieldRepository } from './field-repository';
 import { WorkLogSync } from './work-log-sync';
 
@@ -41,6 +42,14 @@ class FakeRemote implements FieldRemote {
   }
 
   async fetchRoster(): Promise<never> {
+    throw new RemoteError('server', 'not used');
+  }
+
+  async uploadPhoto(): Promise<never> {
+    throw new RemoteError('server', 'not used');
+  }
+
+  async pushCheck(): Promise<never> {
     throw new RemoteError('server', 'not used');
   }
 }

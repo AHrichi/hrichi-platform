@@ -1,5 +1,10 @@
 import type { SyncResult } from '@ah/products/greenhouse/data-access';
-import { nextRun, retryDelay, stateAfter } from './sync-schedule';
+import {
+  combineResults,
+  nextRun,
+  retryDelay,
+  stateAfter,
+} from './sync-schedule';
 
 describe('sync schedule', () => {
   const result = (partial: Partial<SyncResult>): SyncResult => ({
@@ -47,5 +52,16 @@ describe('sync schedule', () => {
     expect(stateAfter(result({ stoppedBy: 'auth' }))).toBe('auth');
     expect(stateAfter(result({ stoppedBy: 'server' }))).toBe('error');
     expect(stateAfter(result({}))).toBe('idle');
+  });
+});
+
+describe('combineResults', () => {
+  it('adds the counts and keeps the first reason to stop', () => {
+    expect(
+      combineResults(
+        { sent: 2, rejected: 0, pending: 1, stoppedBy: null },
+        { sent: 1, rejected: 1, pending: 2, stoppedBy: 'offline' },
+      ),
+    ).toEqual({ sent: 3, rejected: 1, pending: 3, stoppedBy: 'offline' });
   });
 });

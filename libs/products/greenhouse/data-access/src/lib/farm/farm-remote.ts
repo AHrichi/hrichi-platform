@@ -1,14 +1,19 @@
 import type {
   Absence,
   Greenhouse,
+  HygieneCheck,
+  HygieneItem,
   Invitation,
   IsoDate,
   Member,
   PlanEntry,
   Role,
   Team,
+  TeamWeekTotals,
+  WeeklyTarget,
   Worker,
   WorkerPay,
+  WorkerTotals,
   WorkLog,
 } from '@ah/products/greenhouse/domain';
 
@@ -41,10 +46,36 @@ export interface FarmWeek {
    * per day, team and greenhouse (totals, not single workers' logs).
    */
   history: WorkLog[];
+  /** The target in force that week (the latest set on or before it). */
+  target: WeeklyTarget | null;
 }
 
 /** Days of history a week brings with it: four weeks of picking rates. */
 export const HISTORY_DAYS = 28;
+
+/** How the farm picked over a period, and the targets it had. */
+export interface FarmPerformance {
+  /** First day (a Monday), included. */
+  from: IsoDate;
+  /** The Monday after the last week, excluded. */
+  to: IsoDate;
+  teamWeeks: TeamWeekTotals[];
+  workers: WorkerTotals[];
+  /** Every target set up to `to`'s week (this week's, too), oldest first. */
+  targets: WeeklyTarget[];
+}
+
+/** A day's hygiene checks and the checklist they answer. */
+export interface FarmHygiene {
+  date: IsoDate;
+  /** The whole checklist, inactive items included, in order. */
+  items: HygieneItem[];
+  /** The checks started that day, one per greenhouse at most. */
+  checks: HygieneCheck[];
+}
+
+/** How long a photo link the dashboard gets stays valid. */
+export const PHOTO_URL_SECONDS = 60 * 60;
 
 export type InviteResult = 'added' | 'updated' | 'invited';
 
@@ -85,6 +116,23 @@ export interface FarmRemote {
   saveAbsence(farmId: string, absence: Absence): Promise<void>;
   deleteAbsence(farmId: string, absenceId: string): Promise<void>;
 
+  /** Weekly team totals and worker totals for `[from, to)`, and targets. */
+  loadPerformance(
+    farmId: string,
+    from: IsoDate,
+    to: IsoDate,
+  ): Promise<FarmPerformance>;
+  /** Sets the target from `target.weekStart` until the next one. */
+  saveTarget(farmId: string, target: WeeklyTarget): Promise<void>;
+
+  loadHygiene(farmId: string, date: IsoDate): Promise<FarmHygiene>;
+  saveHygieneItem(farmId: string, item: HygieneItem): Promise<void>;
+  /**
+   * Links to view photos in the private bucket, valid for an hour, by
+   * path. A photo that can't be found has no link.
+   */
+  photoUrls(paths: readonly string[]): Promise<Map<string, string>>;
+
   invite(
     farmId: string,
     email: string,
@@ -93,4 +141,5 @@ export interface FarmRemote {
   ): Promise<InviteResult>;
   cancelInvitation(farmId: string, email: string): Promise<void>;
   removeMember(farmId: string, userId: string): Promise<void>;
+  renameMember(farmId: string, userId: string, fullName: string): Promise<void>;
 }

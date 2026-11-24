@@ -6,11 +6,15 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { checkTeamName, type Team } from '@ah/products/greenhouse/domain';
+import {
+  checkTeamName,
+  newId,
+  type Team,
+} from '@ah/products/greenhouse/domain';
 import { GhButton } from '@ah/products/greenhouse/ui';
 import { DashboardI18n } from '../i18n/dashboard-i18n';
 import { type FieldProblems, formText } from '../shared/problems';
-import { FarmStore, newId } from '../store/farm.store';
+import { FarmStore } from '../store/farm.store';
 
 /** Harvest crews, their supervisor and head count. */
 @Component({

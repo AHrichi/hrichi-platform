@@ -1,0 +1,365 @@
+@let tp = t().performance;
+@let tc = t().common;
+@let v = view();
+@let pay = store.canSeePay();
+
+<div class="head">
+  <div>
+    <h1 class="title">{{ tp.title }}</h1>
+    <p class="intro">{{ tp.intro }}</p>
+  </div>
+  <div class="periods" role="group" [attr.aria-label]="tp.period">
+    @for (weeks of periods; track weeks) {
+      <button
+        type="button"
+        ghButton="secondary"
+        [attr.aria-pressed]="store.performanceWeeks() === weeks"
+        (click)="setPeriod(weeks)"
+      >
+        {{ i18n.fill(tp.weeks, { n: weeks }) }}
+      </button>
+    }
+  </div>
+</div>
+
+@if (!v) {
+  <p class="hint" role="status">{{ t().app.loading }}</p>
+} @else {
+  <div class="filters">
+    <label class="field">
+      <span class="gh-label">{{ tc.team }}</span>
+      <select #teamBox class="gh-input" (change)="setTeam(teamBox.value)">
+        <option value="" [selected]="team() === null">
+          {{ tp.allTeams }}
+        </option>
+        @for (option of store.setup().teams; track option.id) {
+          <option [value]="option.id" [selected]="team() === option.id">
+            {{ option.name }}
+          </option>
+        }
+      </select>
+    </label>
+    <p class="hint">
+      {{
+        i18n.fill(tp.range, {
+          from: i18n.date(v.firstDay),
+          to: i18n.date(v.lastDay),
+        })
+      }}
+    </p>
+  </div>
+
+  @let total = v.total;
+  @let status = costStatus(total, v.target);
+  <div class="kpis">
+    <ah-metric-card [label]="tp.kg" [value]="i18n.num(total.kg)" unit="kg" />
+    <ah-metric-card [label]="tp.kgPerHour" [value]="show('kgPerHour', total)" />
+    <ah-metric-card
+      [label]="tp.rejected"
+      [value]="show('rejectionRate', total)"
+    />
+    @if (pay) {
+      <ah-metric-card
+        [label]="tp.costPerKg"
+        [value]="show('costPerKg', total)"
+        [unit]="tp.tndPerKg"
+        [hint]="
+          v.target
+            ? i18n.fill(tp.targetHint, {
+                cost: i18n.money(v.target.costPerKgTarget),
+              })
+            : tp.noTarget
+        "
+        [variant]="
+          status === 'met'
+            ? 'success'
+            : status === 'missed'
+              ? 'danger'
+              : 'default'
+        "
+      />
+    }
+  </div>
+  @if (pay && payCoverage(total) < 1) {
+    <p class="note">
+      {{
+        i18n.fill(tp.missingPay, {
+          share: i18n.percent(1 - payCoverage(total), 0),
+        })
+      }}
+    </p>
+  }
+
+  <section aria-labelledby="gh-perf-weeks">
+    <h2 id="gh-perf-weeks" class="form-title">{{ tp.byWeek }}</h2>
+    <div
+      class="table-wrap"
+      tabindex="0"
+      role="region"
+      [attr.aria-label]="tp.byWeek"
+    >
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">{{ tp.week }}</th>
+            <th scope="col" class="num">{{ tp.kg }}</th>
+            <th scope="col" class="num">{{ tp.hours }}</th>
+            <th scope="col">{{ tp.kgPerHour }}</th>
+            <th scope="col" class="num">{{ tp.rejected }}</th>
+            @if (pay) {
+              <th scope="col" class="num">{{ tp.costPerKg }}</th>
+              <th scope="col" class="num">{{ tp.target }}</th>
+            }
+          </tr>
+        </thead>
+        <tbody>
+          @for (point of v.trend; track point.weekStart) {
+            @let weekStatus = costStatus(point.totals, point.target);
+            <tr>
+              <th scope="row">{{ i18n.date(point.weekStart) }}</th>
+              <td class="num">{{ i18n.num(point.totals.kg) }}</td>
+              <td class="num">{{ i18n.num(point.totals.hours) }}</td>
+              <td>
+                <span class="rate">
+                  <span class="num">{{ show('kgPerHour', point.totals) }}</span>
+                  <span class="bar" aria-hidden="true">
+                    <span
+                      class="fill"
+                      [style.inline-size.%]="barSize(point.totals)"
+                    ></span>
+                  </span>
+                </span>
+              </td>
+              <td class="num">{{ show('rejectionRate', point.totals) }}</td>
+              @if (pay) {
+                <td class="num" [class]="'status-' + weekStatus">
+                  {{ show('costPerKg', point.totals) }}
+                  @if (weekStatus !== 'none') {
+                    <small class="status">{{ tp.status[weekStatus] }}</small>
+                  }
+                </td>
+                <td class="num muted">
+                  {{
+                    point.target
+                      ? i18n.money(point.target.costPerKgTarget)
+                      : tc.none
+                  }}
+                </td>
+              }
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section aria-labelledby="gh-perf-teams">
+    <div class="section-head">
+      <h2 id="gh-perf-teams" class="form-title">{{ tp.teams }}</h2>
+      <label class="field">
+        <span class="gh-label">{{ tp.rankBy }}</span>
+        <select
+          #metricBox
+          class="gh-input"
+          (change)="setMetric(metricBox.value)"
+        >
+          @for (m of metrics(); track m) {
+            <option [value]="m" [selected]="metric() === m">
+              {{ tp.metrics[m] }}
+            </option>
+          }
+        </select>
+      </label>
+    </div>
+    @if (v.teams.length === 0) {
+      <p class="empty">{{ tp.noWork }}</p>
+    } @else {
+      <div
+        class="table-wrap"
+        tabindex="0"
+        role="region"
+        [attr.aria-label]="tp.teams"
+      >
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col" class="num">{{ tp.place }}</th>
+              <th scope="col">{{ tc.team }}</th>
+              <th scope="col" class="num">{{ tp.hours }}</th>
+              <th scope="col" class="num">{{ tp.kg }}</th>
+              <th scope="col" class="num">{{ tp.kgPerHour }}</th>
+              <th scope="col" class="num">{{ tp.rejected }}</th>
+              @if (pay) {
+                <th scope="col" class="num">{{ tp.costPerKg }}</th>
+              }
+            </tr>
+          </thead>
+          <tbody>
+            @for (row of v.teams; track row.item.teamId) {
+              <tr [class.is-picked]="row.item.teamId === team()">
+                <td class="num">{{ row.place }}</td>
+                <th scope="row">
+                  {{ row.item.name ?? teamName(row.item.teamId) }}
+                </th>
+                <td class="num">{{ i18n.num(row.item.hours) }}</td>
+                <td class="num">{{ i18n.num(row.item.kg) }}</td>
+                <td class="num">{{ show('kgPerHour', row.item) }}</td>
+                <td class="num">{{ show('rejectionRate', row.item) }}</td>
+                @if (pay) {
+                  <td class="num">{{ show('costPerKg', row.item) }}</td>
+                }
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </section>
+
+  <section aria-labelledby="gh-perf-workers">
+    <h2 id="gh-perf-workers" class="form-title">
+      {{
+        team()
+          ? i18n.fill(tp.workersOf, { team: teamName(team()) })
+          : tp.workers
+      }}
+    </h2>
+    <p class="hint">
+      {{ i18n.fill(tp.workersHint, { metric: tp.metrics[metric()] }) }}
+      @if (v.unrankedWorkers > 0) {
+        {{ i18n.fill(tp.unranked, { n: v.unrankedWorkers }) }}
+      }
+    </p>
+    @if (v.workers.length === 0) {
+      <p class="empty">{{ tp.noWork }}</p>
+    } @else {
+      <div
+        class="table-wrap"
+        tabindex="0"
+        role="region"
+        [attr.aria-label]="tp.workers"
+      >
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col" class="num">{{ tp.place }}</th>
+              <th scope="col">{{ tc.name }}</th>
+              <th scope="col">{{ tc.team }}</th>
+              <th scope="col" class="num">{{ tp.days }}</th>
+              <th scope="col" class="num">{{ tp.hours }}</th>
+              <th scope="col" class="num">{{ tp.kg }}</th>
+              <th scope="col" class="num">{{ tp.kgPerHour }}</th>
+              <th scope="col" class="num">{{ tp.rejected }}</th>
+              @if (pay) {
+                <th scope="col" class="num">{{ tp.costPerKg }}</th>
+              }
+            </tr>
+          </thead>
+          <tbody>
+            @for (row of shownWorkers(); track row.item.workerId) {
+              <tr>
+                <td class="num">{{ row.place }}</td>
+                <th scope="row">
+                  {{ row.item.name }}
+                  <small class="code muted">{{ row.item.badgeCode }}</small>
+                </th>
+                <td>{{ teamName(row.item.teamId) }}</td>
+                <td class="num">{{ i18n.num(row.item.days) }}</td>
+                <td class="num">{{ i18n.num(row.item.hours) }}</td>
+                <td class="num">{{ i18n.num(row.item.kg) }}</td>
+                <td class="num">{{ show('kgPerHour', row.item) }}</td>
+                <td class="num">{{ show('rejectionRate', row.item) }}</td>
+                @if (pay) {
+                  <td class="num">{{ show('costPerKg', row.item) }}</td>
+                }
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      @if (v.workers.length > shownWorkers().length) {
+        <button
+          type="button"
+          ghButton="secondary"
+          class="no-print"
+          (click)="showAll.set(true)"
+        >
+          {{ i18n.fill(tp.showAll, { n: v.workers.length }) }}
+        </button>
+      }
+    }
+  </section>
+}
+
+<section aria-labelledby="gh-perf-target">
+  <h2 id="gh-perf-target" class="form-title">{{ tp.targetTitle }}</h2>
+  @let current = currentTarget();
+  <p class="hint">
+    @if (current) {
+      {{
+        i18n.fill(tp.targetNow, {
+          cost: i18n.money(current.costPerKgTarget),
+          kg: i18n.num(current.kgTarget),
+          date: i18n.date(current.weekStart),
+        })
+      }}
+    } @else {
+      {{ tp.noTarget }}
+    }
+  </p>
+  @if (store.canEdit()) {
+    <form
+      #form
+      class="gh-card form"
+      novalidate
+      aria-labelledby="gh-perf-target"
+      (submit)="$event.preventDefault(); saveTarget(form)"
+    >
+      <div class="field">
+        <label class="gh-label" for="gh-t-cost">{{ tp.targetCost }}</label>
+        <input
+          id="gh-t-cost"
+          class="gh-input"
+          name="costPerKg"
+          inputmode="decimal"
+          autocomplete="off"
+          [value]="current ? current.costPerKgTarget : ''"
+          [attr.aria-invalid]="problem('costPerKg') ? true : null"
+          [attr.aria-describedby]="
+            problem('costPerKg') ? 'gh-t-cost-error' : null
+          "
+        />
+        @if (problem('costPerKg'); as message) {
+          <p id="gh-t-cost-error" class="gh-error">{{ message }}</p>
+        }
+      </div>
+      <div class="field">
+        <label class="gh-label" for="gh-t-kg">{{ tp.targetKg }}</label>
+        <input
+          id="gh-t-kg"
+          class="gh-input"
+          name="kgPerWeek"
+          inputmode="numeric"
+          autocomplete="off"
+          [value]="current ? current.kgTarget : ''"
+          [attr.aria-invalid]="problem('kgPerWeek') ? true : null"
+          [attr.aria-describedby]="
+            problem('kgPerWeek') ? 'gh-t-kg-error' : null
+          "
+        />
+        @if (problem('kgPerWeek'); as message) {
+          <p id="gh-t-kg-error" class="gh-error">{{ message }}</p>
+        }
+      </div>
+      <p class="hint form-actions">
+        {{ i18n.fill(tp.targetFrom, { date: i18n.date(thisWeek) }) }}
+      </p>
+      <div class="form-actions">
+        <button type="submit" ghButton>{{ tc.save }}</button>
+        @if (saved()) {
+          <span class="message" role="status">{{ tp.targetSaved }}</span>
+        }
+      </div>
+    </form>
+  }
+</section>

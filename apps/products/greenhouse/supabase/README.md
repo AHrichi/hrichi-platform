@@ -7,6 +7,7 @@ The Postgres schema, row-level security and storage bucket behind the planner's 
 | `migrations/…_labor_schema.sql`   | Tables. Every reference carries the farm id, so rows can't point into another farm    |
 | `migrations/…_labor_security.sql` | Roles per farm, RLS on every table, server-side stamps, `create_farm()`, photo bucket |
 | `migrations/…_dashboard.sql`      | Invitations, `invite_member()`, `save_plan_row()`, `work_totals()`                    |
+| `migrations/…_performance.sql`    | `team_week_totals()`, `worker_totals()`: performance and labour cost                  |
 | `seed.sql`                        | A made-up farm for local development, with no members                                 |
 | `spec/security.spec.ts`           | The migrations and seed run against PGlite, acting as each role                       |
 | `spec/supabase-stand-in.sql`      | The bits of Supabase the tests stand in for: API roles, `auth.uid()`, storage tables  |
@@ -28,6 +29,23 @@ A manager adds people from the dashboard's **People** screen, which calls `invit
 ## Reading weeks of history
 
 `work_totals(farm, from, to)` sums the work log per day, team and greenhouse, as the caller (RLS applies). The dashboard reads five weeks this way, a few hundred rows, which stays under the API's `max_rows` (1000). Single workers' logs would not.
+
+The performance screen reads twelve weeks at most, the same way:
+
+- `team_week_totals(farm, from, to)`: one row per week (from Monday) and team;
+- `worker_totals(farm, from, to)`: one row per worker, so up to a thousand workers.
+
+Both add the labour cost: each hour times the worker's **current** hourly rate (pay keeps no history), and the hours that had a rate. They run as the caller, so a supervisor, who can't read pay, gets the work with a cost of 0. Targets (`target`) hold from their week until the next one; managers set them, everyone on the farm reads them.
+
+## Hygiene checks
+
+A supervisor's phone keeps the checklist (`hygiene_item`) with the roster and fills in one `hygiene_check` per greenhouse and day, offline. Photos wait on the phone, then go to the private `hygiene-photos` bucket at `<farm id>/<check id>/<photo id>.jpg` (the first folder is what the storage policies check), always before the check that points at them.
+
+- The check's id is made on the phone; it is upserted with `supervisor_id` set to the signed-in user, which RLS requires.
+- Once `signed_at` is set, RLS refuses any further write, including the same upsert again. A phone that lost the reply to its signed upsert reads `signed_at` back and counts it as sent.
+- One check per greenhouse and day (`unique (farm_id, check_date, greenhouse_id)`): a second supervisor starting the same one is refused, and the phone shows why.
+- The dashboard reads photos through signed URLs that last an hour.
+- A photo taken off an answer after it was uploaded stays in the bucket (only managers can delete there); nothing points at it any more.
 
 ## Tests
 

@@ -3,12 +3,8 @@ import {
   type LogRow,
   META_LAST_SYNC_AT,
 } from './field-database';
-import {
-  type FieldRemote,
-  type LogChange,
-  RemoteError,
-  type RemoteErrorKind,
-} from './field-remote';
+import { RemoteError, type RemoteErrorKind } from '../remote/remote-error';
+import { type FieldRemote, type LogChange } from './field-remote';
 
 export interface SyncResult {
   /** Logs the server accepted. */

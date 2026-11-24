@@ -21,6 +21,37 @@
   list-style: none;
 }
 
+.card {
+  display: grid;
+  gap: var(--space-1);
+}
+
+// Today's hygiene check, under the greenhouse; colour and words both say
+// where it stands.
+.hygiene {
+  display: block;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-surface);
+  color: inherit;
+  font-size: var(--font-size-200);
+  font-weight: var(--font-weight-semibold);
+  text-decoration: none;
+
+  &.is-signed {
+    background: var(--color-success-subtle);
+  }
+
+  &.is-open {
+    background: var(--color-warning-subtle);
+  }
+
+  &:focus-visible {
+    outline: var(--focus-ring-width) solid var(--color-focus-ring);
+    outline-offset: var(--focus-ring-offset);
+  }
+}
+
 .greenhouse {
   display: grid;
   gap: var(--space-1);

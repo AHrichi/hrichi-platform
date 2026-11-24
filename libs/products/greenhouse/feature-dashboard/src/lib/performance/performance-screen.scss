@@ -1,0 +1,88 @@
+// The performance screen, over the shared screen styles (screen.scss).
+
+.periods {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+
+  [aria-pressed='true'] {
+    border-color: var(--color-accent-solid);
+    background: var(--color-accent-subtle);
+  }
+}
+
+.kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr));
+  gap: var(--space-3);
+}
+
+.note {
+  margin: 0;
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--color-warning-subtle);
+}
+
+.section-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+// kg/h with a bar against the period's best week.
+.rate {
+  display: grid;
+  grid-template-columns: 3.5rem minmax(4rem, 10rem);
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.bar {
+  display: block;
+  block-size: var(--space-2);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-surface);
+  overflow: hidden;
+}
+
+.fill {
+  display: block;
+  block-size: 100%;
+  background: var(--color-accent-solid);
+}
+
+.table {
+  .status-met {
+    color: var(--color-success-default);
+    font-weight: var(--font-weight-semibold);
+  }
+
+  .status-missed {
+    color: var(--color-danger-default);
+    font-weight: var(--font-weight-semibold);
+  }
+
+  .is-picked > * {
+    background: var(--color-accent-subtle);
+  }
+
+  small {
+    display: block;
+  }
+
+  // Said in words as well as colour.
+  .status {
+    font-size: var(--font-size-100);
+    font-weight: var(--font-weight-regular);
+  }
+}
+
+@media print {
+  .periods,
+  .section-head .field {
+    display: none;
+  }
+}

@@ -69,6 +69,80 @@ describe('DemoFarmRemote', () => {
     ).not.toContain('new');
   });
 
+  it('totals twelve weeks of sample work, priced and against a target', async () => {
+    const demo = remote();
+    const from = '2026-08-31';
+    const perf = await demo.loadPerformance(DEMO_FARM_ID, from, WEEK);
+    // 12 weeks of 8 crews.
+    expect(perf.teamWeeks).toHaveLength(12 * 8);
+    expect(perf.teamWeeks.every((t) => t.weekStart >= from)).toBe(true);
+    // Every crew worker (114), each paid.
+    expect(perf.workers).toHaveLength(114);
+    expect(perf.workers.every((w) => w.paidHours === w.hours)).toBe(true);
+    expect(perf.targets).toHaveLength(1);
+    // The last four weeks are the plan screen's history.
+    const recent = perf.teamWeeks
+      .filter((t) => t.weekStart >= '2026-10-26')
+      .reduce((kg, t) => kg + t.kg, 0);
+    const history = (await demo.loadWeek(DEMO_FARM_ID, WEEK)).history.reduce(
+      (kg, l) => kg + l.kg,
+      0,
+    );
+    expect(recent).toBeCloseTo(history, 3);
+  });
+
+  it('keeps a new target from its week on', async () => {
+    const demo = remote();
+    const before = (await demo.loadWeek(DEMO_FARM_ID, WEEK)).target;
+    expect(before?.costPerKgTarget).toBe(0.075);
+    await demo.saveTarget(DEMO_FARM_ID, {
+      weekStart: WEEK,
+      costPerKgTarget: 0.07,
+      kgTarget: 150_000,
+    });
+    expect(
+      (await demo.loadWeek(DEMO_FARM_ID, '2026-12-07')).target?.costPerKgTarget,
+    ).toBe(0.07);
+    expect(
+      (await demo.loadWeek(DEMO_FARM_ID, '2026-11-16')).target?.costPerKgTarget,
+    ).toBe(0.075);
+  });
+
+  it('serves today’s hygiene checks, one left undone and one half done', async () => {
+    const demo = remote();
+    const today = await demo.loadHygiene(DEMO_FARM_ID, WEEK);
+    expect(today.items).toHaveLength(8);
+    expect(today.checks).toHaveLength(7);
+    expect(
+      today.checks.find((c) => c.greenhouseId === 'gh-7')?.signedAt,
+    ).toBeNull();
+    const yesterday = await demo.loadHygiene(DEMO_FARM_ID, '2026-11-22');
+    expect(yesterday.checks.every((c) => c.signedAt)).toBe(true);
+    expect((await demo.loadHygiene(DEMO_FARM_ID, '2026-11-24')).checks).toEqual(
+      [],
+    );
+  });
+
+  it('keeps checklist changes, and draws its photos', async () => {
+    const demo = remote();
+    const [first] = (await demo.loadHygiene(DEMO_FARM_ID, WEEK)).items;
+    if (!first) throw new Error('No sample items');
+    await demo.saveHygieneItem(DEMO_FARM_ID, { ...first, active: false });
+    const after = await demo.loadHygiene(DEMO_FARM_ID, WEEK);
+    expect(after.items.find((i) => i.id === first.id)?.active).toBe(false);
+    const urls = await demo.photoUrls(['a.jpg']);
+    expect(urls.get('a.jpg')).toMatch(/^data:image\/svg\+xml,/);
+  });
+
+  it('renames a member', async () => {
+    const demo = remote();
+    await demo.renameMember(DEMO_FARM_ID, 'demo-hr', 'Salma (RH)');
+    const setup = await demo.loadSetup();
+    expect(setup.members.find((m) => m.userId === 'demo-hr')?.fullName).toBe(
+      'Salma (RH)',
+    );
+  });
+
   it('frees a deleted team’s workers', async () => {
     const demo = remote();
     await demo.deleteTeam(DEMO_FARM_ID, 'team-a1');

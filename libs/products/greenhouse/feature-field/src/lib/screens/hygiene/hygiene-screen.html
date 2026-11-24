@@ -1,0 +1,151 @@
+@let th = t().hygiene;
+
+<a class="back" routerLink="/">
+  <span class="arrow" aria-hidden="true">←</span>
+  {{ t().log.back }}
+</a>
+
+@if (greenhouse(); as gh) {
+  @let p = progress();
+  @let locked = signed();
+  <h1 class="title">
+    {{ th.title }}
+    <small>{{ gh.name }}</small>
+  </h1>
+
+  <div class="status">
+    <p class="progress">
+      {{ i18n.fill(th.progress, { answered: p.answered, total: p.total }) }}
+    </p>
+    @if (row(); as saved) {
+      <gh-status-chip
+        [status]="saved.status"
+        [label]="t().log.status[saved.status]"
+      />
+    }
+  </div>
+  @if (row()?.error; as error) {
+    <p class="gh-error" role="alert">{{ th.refused }} {{ error }}</p>
+  }
+  @if (check().signedAt; as signedAt) {
+    <p class="signed" role="status">
+      {{ i18n.fill(th.signedAt, { time: i18n.time(signedAt) }) }}
+    </p>
+  }
+
+  @if (p.total === 0) {
+    <p class="state">{{ th.noItems }}</p>
+  }
+
+  <ol class="items" role="list">
+    @for (item of store.hygieneItems(); track item.id; let i = $index) {
+      @let a = answerOf(item.id);
+      <li class="gh-card item" [class.is-failed]="a && !a.ok">
+        <p class="label" [id]="'gh-h-' + item.id">
+          <span class="number">{{ i + 1 }}.</span>
+          {{ label(item) }}
+          @if (item.photoRequired) {
+            <span class="needs">{{ th.photoRequired }}</span>
+          }
+        </p>
+        <div
+          class="choices"
+          role="group"
+          [attr.aria-labelledby]="'gh-h-' + item.id"
+        >
+          <button
+            type="button"
+            ghButton="secondary"
+            class="choice ok"
+            [attr.aria-pressed]="a?.ok === true"
+            [disabled]="locked"
+            (click)="setOk(item, true)"
+          >
+            <span aria-hidden="true">✓</span> {{ th.ok }}
+          </button>
+          <button
+            type="button"
+            ghButton="secondary"
+            class="choice not-ok"
+            [attr.aria-pressed]="a?.ok === false"
+            [disabled]="locked"
+            (click)="setOk(item, false)"
+          >
+            <span aria-hidden="true">✗</span> {{ th.notOk }}
+          </button>
+        </div>
+
+        @if (a) {
+          @if (!a.ok || a.note) {
+            <label class="note">
+              <span class="gh-label">{{ th.note }}</span>
+              <textarea
+                #noteBox
+                class="gh-input"
+                rows="2"
+                maxlength="200"
+                [readOnly]="locked"
+                [value]="a.note ?? ''"
+                (change)="setNote(a, noteBox.value)"
+              ></textarea>
+            </label>
+          }
+
+          <div class="photos">
+            @for (path of a.photoPaths; track path) {
+              <figure class="photo">
+                @if (thumbs().get(path); as url) {
+                  <img [src]="url" [alt]="th.photoOf + ' ' + label(item)" />
+                } @else {
+                  <span class="sent">{{ th.photoSent }}</span>
+                }
+                @if (!locked) {
+                  <button
+                    type="button"
+                    ghButton="ghost"
+                    class="remove"
+                    (click)="removePhoto(a, path)"
+                  >
+                    {{ th.removePhoto }}
+                  </button>
+                }
+              </figure>
+            }
+            @if (!locked) {
+              <input
+                #fileBox
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                capture="environment"
+                hidden
+                (change)="addPhoto(a, fileBox)"
+              />
+              <button
+                type="button"
+                ghButton="secondary"
+                [disabled]="busy()"
+                (click)="fileBox.click()"
+              >
+                <span aria-hidden="true">📷</span> {{ th.addPhoto }}
+              </button>
+            }
+          </div>
+          @if (needsPhoto(item.id)) {
+            <p class="gh-error">{{ th.photoMissing }}</p>
+          }
+        }
+      </li>
+    }
+  </ol>
+
+  @if (!locked && p.total > 0) {
+    <div class="sign">
+      <button type="button" ghButton [disabled]="!p.complete" (click)="sign()">
+        {{ th.sign }}
+      </button>
+      <p class="hint">{{ p.complete ? th.signHint : th.notReady }}</p>
+    </div>
+  }
+} @else {
+  <p class="state">{{ th.unknown }}</p>
+}

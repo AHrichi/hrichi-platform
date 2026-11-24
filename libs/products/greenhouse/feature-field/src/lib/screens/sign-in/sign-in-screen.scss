@@ -19,3 +19,20 @@
   margin: 0;
   color: var(--color-text-muted);
 }
+
+.confirm {
+  margin: 0;
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--color-success-subtle);
+}
+
+.switch {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  margin: 0;
+  color: var(--color-text-muted);
+}

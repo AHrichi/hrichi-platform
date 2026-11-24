@@ -2,51 +2,66 @@ import {
   type Absence,
   addDays,
   type Greenhouse,
+  type HygieneItem,
   type Invitation,
   type IsoDate,
   type PlanEntry,
+  isRole,
   type Role,
-  ROLES,
   type Team,
+  type WeeklyTarget,
   type Worker,
 } from '@ah/products/greenhouse/domain';
 import type { SupabaseClient } from '@supabase/supabase-js';
-import { RemoteError } from '../field-remote';
-import { callPostgrest } from '../supabase-field-remote';
+import { callPostgrest } from '../remote/postgrest';
+import { RemoteError } from '../remote/remote-error';
 import {
   type FarmAccess,
+  type FarmHygiene,
+  type FarmPerformance,
   type FarmRemote,
   type FarmSetup,
   type FarmWeek,
   HISTORY_DAYS,
   type InviteResult,
+  PHOTO_URL_SECONDS,
 } from './farm-remote';
+import { HYGIENE_BUCKET } from '../remote/storage';
 import {
   absenceFrom,
   absenceRow,
   GREENHOUSE_COLUMNS,
   greenhouseFrom,
   greenhouseRow,
+  HYGIENE_CHECK_COLUMNS,
+  HYGIENE_ITEM_COLUMNS,
+  hygieneCheckFrom,
+  hygieneItemFrom,
+  hygieneItemRow,
   memberFrom,
   planFrom,
   type Row,
+  TARGET_COLUMNS,
+  targetFrom,
+  targetRow,
   TEAM_COLUMNS,
   teamFrom,
   teamRow,
+  teamWeekFrom,
   totalsFrom,
   WORKER_COLUMNS,
   workerFrom,
   workerRow,
-} from './rows';
-
-const isRole = (value: unknown): value is Role =>
-  (ROLES as readonly unknown[]).includes(value);
+  workerTotalsFrom,
+} from '../remote/rows';
 
 /**
  * The dashboard's server: Supabase as the signed-in person, so row-level
  * security decides what they read and write (HR reads, managers write).
  * Reads stay under the API's row limit (`max_rows`, 1000): a farm's
- * roster, a week's plan and absences, and five weeks of daily totals.
+ * roster, a week's plan and absences, five weeks of daily totals, and
+ * performance totals per team and week or per worker (a farm of up to a
+ * thousand workers).
  */
 export class SupabaseFarmRemote implements FarmRemote {
   constructor(private readonly client: SupabaseClient) {}
@@ -146,7 +161,7 @@ export class SupabaseFarmRemote implements FarmRemote {
   async loadWeek(farmId: string, weekStart: IsoDate): Promise<FarmWeek> {
     const db = this.client;
     const weekEnd = addDays(weekStart, 6);
-    const [plan, absences, totals] = await Promise.all([
+    const [plan, absences, totals, target] = await Promise.all([
       callPostgrest<Row[] | null>(
         db
           .from('weekly_plan')
@@ -173,13 +188,116 @@ export class SupabaseFarmRemote implements FarmRemote {
           to_date: addDays(weekStart, 7),
         }),
       ),
+      // The target in force: the latest set on or before the week.
+      callPostgrest<Row[] | null>(
+        db
+          .from('target')
+          .select(TARGET_COLUMNS)
+          .eq('farm_id', farmId)
+          .lte('week_start', weekStart)
+          .order('week_start', { ascending: false })
+          .limit(1),
+      ),
     ]);
+    const [targetRowFound] = target ?? [];
     return {
       weekStart,
       plan: (plan ?? []).map(planFrom),
       absences: (absences ?? []).map(absenceFrom),
       history: (totals ?? []).map(totalsFrom),
+      target: targetRowFound ? targetFrom(targetRowFound) : null,
     };
+  }
+
+  async loadPerformance(
+    farmId: string,
+    from: IsoDate,
+    to: IsoDate,
+  ): Promise<FarmPerformance> {
+    const db = this.client;
+    const range = { target_farm: farmId, from_date: from, to_date: to };
+    const [teamWeeks, workers, targets] = await Promise.all([
+      callPostgrest<Row[] | null>(db.rpc('team_week_totals', range)),
+      callPostgrest<Row[] | null>(db.rpc('worker_totals', range)),
+      callPostgrest<Row[] | null>(
+        db
+          .from('target')
+          .select(TARGET_COLUMNS)
+          .eq('farm_id', farmId)
+          .lte('week_start', to)
+          .order('week_start'),
+      ),
+    ]);
+    return {
+      from,
+      to,
+      teamWeeks: (teamWeeks ?? []).map(teamWeekFrom),
+      workers: (workers ?? []).map(workerTotalsFrom),
+      targets: (targets ?? []).map(targetFrom),
+    };
+  }
+
+  async saveTarget(farmId: string, target: WeeklyTarget): Promise<void> {
+    await callPostgrest(
+      this.client.from('target').upsert(targetRow(farmId, target), {
+        onConflict: 'farm_id,week_start',
+      }),
+    );
+  }
+
+  async loadHygiene(farmId: string, date: IsoDate): Promise<FarmHygiene> {
+    const db = this.client;
+    const [items, checks] = await Promise.all([
+      callPostgrest<Row[] | null>(
+        db
+          .from('hygiene_item')
+          .select(HYGIENE_ITEM_COLUMNS)
+          .eq('farm_id', farmId)
+          .order('sort_order'),
+      ),
+      callPostgrest<Row[] | null>(
+        db
+          .from('hygiene_check')
+          .select(HYGIENE_CHECK_COLUMNS)
+          .eq('farm_id', farmId)
+          .eq('check_date', date),
+      ),
+    ]);
+    return {
+      date,
+      items: (items ?? []).map(hygieneItemFrom),
+      checks: (checks ?? []).map(hygieneCheckFrom),
+    };
+  }
+
+  async saveHygieneItem(farmId: string, item: HygieneItem): Promise<void> {
+    await callPostgrest(
+      this.client.from('hygiene_item').upsert(hygieneItemRow(farmId, item)),
+    );
+  }
+
+  async photoUrls(paths: readonly string[]): Promise<Map<string, string>> {
+    if (paths.length === 0) return new Map();
+    let reply: Awaited<ReturnType<typeof this.signedUrls>>;
+    try {
+      reply = await this.signedUrls(paths);
+    } catch (error) {
+      throw new RemoteError('offline', String(error));
+    }
+    if (reply.error) throw new RemoteError('server', reply.error.message);
+    const links = new Map<string, string>();
+    for (const link of reply.data ?? []) {
+      if (link.path && link.signedUrl && !link.error) {
+        links.set(link.path, link.signedUrl);
+      }
+    }
+    return links;
+  }
+
+  private signedUrls(paths: readonly string[]) {
+    return this.client.storage
+      .from(HYGIENE_BUCKET)
+      .createSignedUrls([...paths], PHOTO_URL_SECONDS);
   }
 
   async saveGreenhouse(farmId: string, greenhouse: Greenhouse): Promise<void> {
@@ -279,6 +397,20 @@ export class SupabaseFarmRemote implements FarmRemote {
         .delete()
         .eq('farm_id', farmId)
         .eq('email', email),
+    );
+  }
+
+  async renameMember(
+    farmId: string,
+    userId: string,
+    fullName: string,
+  ): Promise<void> {
+    await callPostgrest(
+      this.client
+        .from('member')
+        .update({ full_name: fullName })
+        .eq('farm_id', farmId)
+        .eq('user_id', userId),
     );
   }
 

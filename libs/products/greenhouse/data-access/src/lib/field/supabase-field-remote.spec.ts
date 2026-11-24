@@ -1,7 +1,9 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { LogChange } from './field-remote';
-import { RemoteError } from './field-remote';
-import { classifyFailure, SupabaseFieldRemote } from './supabase-field-remote';
+import { classifyFailure } from '../remote/postgrest';
+import { RemoteError } from '../remote/remote-error';
+import { classifyStorageFailure } from '../remote/storage';
+import { SupabaseFieldRemote } from './supabase-field-remote';
 
 describe('classifyFailure', () => {
   const cases: [string, Parameters<typeof classifyFailure>[0], string][] = [
@@ -224,5 +226,119 @@ describe('SupabaseFieldRemote', () => {
     ).rejects.toMatchObject({
       kind: 'auth',
     });
+  });
+});
+
+describe('classifyStorageFailure', () => {
+  it('counts a photo already there as stored', () => {
+    expect(
+      classifyStorageFailure({
+        message: 'The resource already exists',
+        statusCode: '409',
+      }),
+    ).toBe('exists');
+  });
+
+  it('tells no signal, a lost session, a refusal and a busy server apart', () => {
+    expect(classifyStorageFailure({ message: 'Failed to fetch' })).toBe(
+      'offline',
+    );
+    expect(
+      classifyStorageFailure({ message: 'jwt expired', status: 400 }),
+    ).toBe('auth');
+    expect(
+      classifyStorageFailure({
+        message: 'new row violates row-level security policy',
+        statusCode: '403',
+      }),
+    ).toBe('rejected');
+    expect(
+      classifyStorageFailure({ message: 'Payload too large', status: 413 }),
+    ).toBe('rejected');
+    expect(
+      classifyStorageFailure({ message: 'Bad gateway', status: 502 }),
+    ).toBe('server');
+  });
+});
+
+describe('SupabaseFieldRemote.pushCheck', () => {
+  /** Upserts fail with `upsertError`; a select answers `signedAt`. */
+  function checkClient(upsertError: unknown, signedAt: string | null) {
+    const sent: unknown[] = [];
+    const client = {
+      from() {
+        return {
+          upsert(row: unknown) {
+            sent.push(row);
+            return Promise.resolve({
+              data: null,
+              error: upsertError,
+              status: upsertError ? 403 : 201,
+            });
+          },
+          select() {
+            return {
+              eq: () =>
+                Promise.resolve({
+                  data: [{ signed_at: signedAt }],
+                  error: null,
+                  status: 200,
+                }),
+            };
+          },
+        };
+      },
+      auth: {
+        getSession: async () => ({
+          data: { session: { user: { id: 'sup-1' } } },
+        }),
+      },
+    };
+    return { client: client as unknown as SupabaseClient, sent };
+  }
+
+  const signed = {
+    id: 'check-1',
+    date: '2026-11-23',
+    greenhouseId: 'gh-1',
+    supervisorId: 'someone-else',
+    answers: [
+      { itemId: 'hyg-1', ok: false, note: 'no soap', photoPaths: ['p.jpg'] },
+    ],
+    signedAt: '2026-11-23T08:00:00.000Z',
+  };
+  const rls = {
+    message: 'new row violates row-level security policy',
+    code: '42501',
+  };
+
+  it('sends the check as the signed-in supervisor', async () => {
+    const { client, sent } = checkClient(null, null);
+    await new SupabaseFieldRemote(client).pushCheck('farm-1', signed);
+    expect(sent[0]).toEqual({
+      id: 'check-1',
+      farm_id: 'farm-1',
+      check_date: '2026-11-23',
+      greenhouse_id: 'gh-1',
+      supervisor_id: 'sup-1',
+      answers: [
+        { itemId: 'hyg-1', ok: false, note: 'no soap', photoPaths: ['p.jpg'] },
+      ],
+      signed_at: '2026-11-23T08:00:00.000Z',
+    });
+  });
+
+  it('counts a signed check the server already has signed as sent', async () => {
+    const { client } = checkClient(rls, '2026-11-23T08:00:00+00');
+    await expect(
+      new SupabaseFieldRemote(client).pushCheck('farm-1', signed),
+    ).resolves.toBeUndefined();
+  });
+
+  it('passes any other refusal on', async () => {
+    const { client } = checkClient(rls, null);
+    await expect(
+      new SupabaseFieldRemote(client).pushCheck('farm-1', signed),
+    ).rejects.toMatchObject({ kind: 'rejected' });
   });
 });

@@ -8,10 +8,8 @@ import { provideServiceWorker } from '@angular/service-worker';
 import { provideAppMode } from '@ah/platform/app-mode';
 import { provideGreenhouseBrand } from '@ah/products/greenhouse/ui';
 import { brand } from '../brand/brand';
-import {
-  FIELD_ROUTES,
-  GREENHOUSE_SUPABASE,
-} from '@ah/products/greenhouse/feature-field';
+import { GREENHOUSE_SUPABASE } from '@ah/products/greenhouse/data-access';
+import { FIELD_ROUTES } from '@ah/products/greenhouse/feature-field';
 import { environment } from '../environments/environment';
 
 export const appConfig: ApplicationConfig = {

@@ -161,3 +161,49 @@ function sameName(taken: readonly string[], clean: string): boolean {
   const key = clean.toLocaleLowerCase();
   return taken.some((t) => t.trim().toLocaleLowerCase() === key);
 }
+
+export interface TargetInput {
+  costPerKg: string;
+  kgPerWeek: string;
+}
+
+/**
+ * A weekly target: labour cost per kg above 0 (the schema's numeric(8, 3),
+ * so under 100,000 TND) and kg per week at 0 or more.
+ */
+export function checkTarget(
+  input: TargetInput,
+): SetupResult<
+  { costPerKgTarget: number; kgTarget: number },
+  keyof TargetInput
+> {
+  const errors: Partial<Record<keyof TargetInput, SetupProblem>> = {};
+  const costPerKgTarget = parseAmount(input.costPerKg);
+  if (!(costPerKgTarget > 0 && costPerKgTarget < 100_000)) {
+    errors.costPerKg = input.costPerKg.trim() ? 'invalid' : 'required';
+  }
+  const kgTarget = parseAmount(input.kgPerWeek);
+  if (!(kgTarget >= 0 && kgTarget < 1e10)) {
+    errors.kgPerWeek = input.kgPerWeek.trim() ? 'invalid' : 'required';
+  }
+  if (Object.keys(errors).length > 0) return { ok: false, errors };
+  return {
+    ok: true,
+    value: {
+      costPerKgTarget: Math.round(costPerKgTarget * 1000) / 1000,
+      kgTarget: Math.round(kgTarget),
+    },
+  };
+}
+
+/** A person's name as the farm shows it: 1 to 120 characters, spaces tidied. */
+export function checkPersonName(text: string): SetupResult<string, 'name'> {
+  const clean = name(text, 120);
+  if (!clean) {
+    return {
+      ok: false,
+      errors: { name: text.trim() ? 'invalid' : 'required' },
+    };
+  }
+  return { ok: true, value: clean };
+}
