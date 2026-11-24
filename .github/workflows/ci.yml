@@ -99,6 +99,43 @@ jobs:
           include-hidden-files: true
           if-no-files-found: ignore
 
+  android:
+    name: Field app APK (Capacitor, debug)
+    runs-on: ubuntu-latest
+    # The runner image ships the Android SDK (ANDROID_HOME); Capacitor 8
+    # compiles for Java 21. Runs only when the field app is affected.
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: pnpm
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: gradle
+      - run: pnpm install --frozen-lockfile
+      - uses: nrwl/nx-set-shas@v4
+      - name: Build the debug APK
+        id: apk
+        run: |
+          if pnpm nx show projects --affected | grep -qx product-greenhouse-field; then
+            pnpm nx run product-greenhouse-field:android-apk
+            echo "built=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "The field app isn't affected."
+          fi
+      - uses: actions/upload-artifact@v4
+        if: steps.apk.outputs.built == 'true'
+        with:
+          name: greenhouse-field-debug-apk
+          path: apps/products/greenhouse/field/android/app/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
+
   storybook:
     name: Storybook (axe, visual regression)
     runs-on: ubuntu-latest

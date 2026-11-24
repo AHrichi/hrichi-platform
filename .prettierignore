@@ -32,3 +32,6 @@ libs/learning/domain/src/generated
 libs/products/lighting/feature/src/lib/diagrams/material-art/material-photos.generated.ts
 
 
+
+# The Android shell (cap add android); its web assets are copies of the build
+apps/products/greenhouse/field/android

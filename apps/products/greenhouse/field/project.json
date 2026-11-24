@@ -267,6 +267,16 @@
         "command": "cap sync",
         "cwd": "apps/products/greenhouse/field"
       }
+    },
+    "android-apk": {
+      "dependsOn": ["cap-sync"],
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "java -classpath gradle/wrapper/gradle-wrapper.jar org.gradle.wrapper.GradleWrapperMain assembleDebug",
+        "cwd": "apps/products/greenhouse/field/android"
+      },
+      "outputs": ["{projectRoot}/android/app/build/outputs/apk"],
+      "cache": false
     }
   }
 }
