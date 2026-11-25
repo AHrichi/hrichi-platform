@@ -53,7 +53,9 @@ It is **not** the Greenhouse Labor Planner (`product-greenhouse*`, ADR-0026). Ke
 
 **Verified** (2026-11-25, M2–M4, dev build in the browser): RO on the Kebili sample (124 m³/d pumped, 56 of product, 68 of brine at 71.6 g/L); fertigation (12 % water saved, drain EC 4.8, sodium levelling under 8 mmol/L); the Site with the sample set to 5 ha (277 m³/d, 1,250 t, 5,000 labour days, 1.38 m³/m²·a); the energy day chart. Unit gates: RO 0.49 and 15,300 m³ feed; EC 6.3 → 31 %; 2,055 and 5,014 m³/day within 5 %; 29 kWh/m³; a sample week round-tripped through CSV with alerts.
 
-**Not verified yet (greenhouse manager):** the shell e2e with every new screen in `SCREENS` (it last ran on the M3 commit; see §2 of the next session), Operations and Live data in the browser, Arabic RTL of the new drawings and popovers, phones, the Italian, German and Arabic wording by native speakers.
+**Verified** (2026-11-25, final): the SerraCalc e2e, **16 of 16** with `CI=1`, with every new screen in `SCREENS` (axe on 25 screens in light and dark at 375 and 1280 px); Live data with the sample week (charts, 15 alerts) and Operations refusing a WHO Ib spray, in the browser.
+
+**Not verified yet (greenhouse manager):** Arabic RTL of the new drawings and popovers, phones, the Italian, German and Arabic wording by native speakers, every formula against a published worked example beyond the spec's benchmarks.
 
 ### Parity audit (2026-11-25, against LuxPath and the other apps)
 
@@ -150,9 +152,8 @@ Written before any change on `feat/serracalc-parity`; the last column says what 
 
 ## 6. Next step: verify, then open the pull request
 
-1. Run the SerraCalc e2e as CI does (§5); every new screen is in `SCREENS`, so axe covers them in light and dark at 375 and 1280 px. Fix what it finds.
-2. In the browser: Operations (add a spray of class Ib: refused; mark a task done), Live data (load the sample week; import the downloaded CSV), Arabic RTL on Site, Energy and the ⓘ popovers, a phone width.
-3. Open the pull request to `main` (it deploys SerraCalc) and update this hand-off.
+1. In the browser: Arabic RTL on Site, Energy, Live data and the ⓘ popovers, and a phone width.
+2. Open the pull request to `main` (it deploys SerraCalc) and update this hand-off.
 
 Then, from the old plan: pumps and pipes (Hazen–Williams), solar PV, climate for any place (Open-Meteo archive; add it to the CSP `connect-src`), a materials catalogue with prices. A private brand pack for a demo to a named farm, as the Labor Planner has, if the owner wants one.
 
