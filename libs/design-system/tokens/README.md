@@ -43,6 +43,7 @@ A look is an opt-in restyling of a subtree, applied with `data-look="<name>"` on
 | ------------ | ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------ |
 | `paper`      | `tokens/look.paper.{light,dark}.json`      | The System Design course: warm paper, JetBrains Mono, sage accent                                                        |
 | `greenhouse` | `tokens/look.greenhouse.{light,dark}.json` | The Greenhouse Labor Planner: green accent, blue focus ring ([design system](../../../docs/greenhouse/design-system.md)) |
+| `desert`     | `tokens/look.desert.{light,dark}.json`     | SerraCalc: sand by day, a blue-black `night` ramp after dark, teal accent, amber focus ring                              |
 
 A look file may:
 
