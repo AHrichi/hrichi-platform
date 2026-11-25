@@ -21,6 +21,7 @@ export const EN = {
       'A planning aid: check the results with a qualified engineer and the suppliers’ data before you build.',
   },
   nav: {
+    science: 'Science',
     calendar: 'Crop calendar',
     projects: 'Projects',
     greenhouse: 'Greenhouse',
@@ -652,7 +653,250 @@ export const EN = {
     heatingWeeks: 'Weeks of heating',
     fogWeeks: 'Weeks of fog',
   },
+  science: {
+    title: 'Science',
+    lead: 'The phenomena behind every calculator: what happens, the formula, what it assumes, and how to measure each number you type in.',
+    search: 'Find a topic',
+    empty: 'No topic matches.',
+    contents: 'Topics',
+    formula: 'Formula',
+    inputs: 'Inputs and how to get them',
+    input: 'Input',
+    method: 'How',
+    instrument: 'Instrument',
+    assumptions: 'Assumptions',
+    related: 'Related',
+    usedIn: 'Used in',
+    sources: 'Sources',
+    instrumentsTitle: 'Instruments',
+    instrumentsLead: 'What to measure with, and how to read it well.',
+    howToGet: (label: string) => `How to get “${label}”`,
+    readMore: 'Read about',
+    close: 'Close',
+    groups: {
+      house: 'The house',
+      heat: 'Heat',
+      air: 'Air, humidity and cooling',
+      water: 'Water',
+      crop: 'Light, CO₂ and the crop',
+    },
+    methods: {
+      measure: 'Measure it',
+      datasheet: 'From the datasheet',
+      derived: 'Worked out',
+      setpoint: 'Your setting',
+      assume: 'Planning assumption',
+      bill: 'From your bills',
+    },
+    methodHints: {
+      measure: 'Read it on site with the instrument below.',
+      datasheet:
+        'Take it from the supplier’s datasheet; the hint gives a typical value.',
+      derived:
+        'SerraCalc works it out from the house or another tool; overwrite it if you know better.',
+      setpoint: 'A choice: a set point or a target you run the house at.',
+      assume: 'A typical value from practice; refine it from your own records.',
+      bill: 'Your own tariff or factor, in the project’s currency.',
+    },
+    topics: {
+      geometry: {
+        title: 'Greenhouse geometry',
+        what: 'Every load scales with three numbers: the floor (what you grow on and what the sun falls on), the cover (what loses heat) and the air volume (what buffers heat, humidity and CO₂). Taller houses hold more air per m² and swing less.',
+        assumptions: [
+          'Roofs are straight slopes, or half an ellipse for an arch.',
+          'Gable ends count as cover; doors and gutters are ignored.',
+        ],
+      },
+      heatLoss: {
+        title: 'Heat loss through the cover',
+        what: 'Heat flows through the cover from the warm house to the cold night, in proportion to the cover area, the temperature difference and the cover’s U-value. A closed energy screen cuts it; the footing loses a little more along the perimeter.',
+        assumptions: [
+          'U-values are design values for a still, clear night (ASAE EP406).',
+          'The design night is a cold night that returns most winters, not the record.',
+        ],
+      },
+      airLeakage: {
+        title: 'Air leakage',
+        what: 'Cold outside air slips in through gaps, vents and door frames and has to be heated. The air-change rate N says how many times an hour the whole volume is replaced: near 0.5 for tight double film, 1.5–2 for old glass.',
+        assumptions: [
+          'Leakage does not change with the wind in these tools.',
+          '0.335 Wh per m³ and K is the heat capacity of air near 20 °C.',
+        ],
+      },
+      hotWater: {
+        title: 'Hot-water heating pipes',
+        what: 'A heating loop gives off heat by convection and radiation from its surface. The water’s temperature drop sets the flow (1.163 kWh per m³ and K) and the output per metre sets how much pipe to lay. Geothermal water at 60–75 °C needs more pipe than a boiler at 80–90 °C.',
+        assumptions: [
+          'Free convection around a horizontal pipe: h = 1.32 (ΔT/D)^0.25.',
+          'The pipe surface sits at the mean water temperature.',
+        ],
+      },
+      solarGain: {
+        title: 'Solar gain',
+        what: 'Sunlight through the cover turns into heat. Part is spent by the crop evaporating water; the rest warms the air and has to leave by the vents, the pads or the fog. Shade and a whitewashed roof cut it at the source.',
+        assumptions: [
+          'Transmission includes the structure and the dust on the cover.',
+          'A full crop spends about half the sunlight on transpiration.',
+        ],
+      },
+      ventilation: {
+        title: 'Natural ventilation',
+        what: 'Warm air rises out of the roof vents (the stack effect) and the wind pulls air through them. The vent area needed grows fast when the house may run only a few degrees above outside; beyond about 30 % of the floor, vents cannot do it alone.',
+        assumptions: [
+          'Boulard and Baille (1995): Cd 0.65 and Cw 0.1 for roof vents.',
+          'Air at 1.2 kg/m³ and 1005 J/kg·K.',
+        ],
+      },
+      evaporativeCooling: {
+        title: 'Evaporative cooling and the wet bulb',
+        what: 'Water evaporating into dry air takes heat from it. Air can’t be cooled below its wet-bulb temperature, which falls as the air gets drier: desert air at 44 °C and 15 % has a wet bulb near 22 °C. A wet pad gets 75–85 % of the way there.',
+        assumptions: [
+          'Wet bulb by Stull (2011), within about 0.3 K.',
+          'The air warms evenly between the pads and the fans.',
+        ],
+      },
+      fogging: {
+        title: 'High-pressure fogging',
+        what: 'Nozzles at 40–70 bar make droplets of 10–30 µm that evaporate before they land, cooling the air while the vents stay open. Humidity is the limit: the fog is cut back so the air stays under a cap, usually 70–80 %.',
+        assumptions: [
+          'All fog evaporates while the air is under the cap.',
+          'The vents’ air flow follows Boulard and Baille, from the wind and the temperature difference.',
+        ],
+      },
+      vpd: {
+        title: 'Vapour pressure deficit (VPD)',
+        what: 'VPD is how much more water the air could hold at its temperature. It drives transpiration: too low and the crop can’t move water and calcium and fungi spread; too high and the stomata close and the plant wilts. The same VPD fits many pairs of temperature and humidity.',
+        assumptions: [
+          'Leaf and air are taken at the same temperature.',
+          'Saturation vapour pressure by Tetens, as in FAO-56.',
+        ],
+      },
+      dewPoint: {
+        title: 'Dew point and condensation',
+        what: 'Air cooled to its dew point starts to drop water. At night the cover’s inside surface is colder than the air; when it falls below the dew point it drips on the crop and spreads disease.',
+        assumptions: [
+          'The cover’s inside surface exchanges about 8 W/m²·K with the air.',
+          'The cold night sky and the wind are inside the U-value.',
+        ],
+      },
+      nightHumidity: {
+        title: 'Drying the house at night',
+        what: 'At night the crop still transpires. That water must leave with outside air that holds less, and the air must be warmed. Ventilating cannot dry the house when the outside air holds more water in absolute terms.',
+        assumptions: [
+          'Water in grams per kg of dry air, at sea-level pressure.',
+          'Condensation on the cover is not counted as a way out.',
+        ],
+      },
+      transpiration: {
+        title: 'Transpiration and irrigation',
+        what: 'A crop transpires about two-thirds of the sunlight it receives, so its water need follows the radiation inside. Soilless crops get extra on top, the drain, to wash out salts; with brackish water the drain share must rise.',
+        assumptions: [
+          '2.45 MJ evaporate one litre of water.',
+          'Canopy cover scales the use of a young crop.',
+        ],
+      },
+      rainHarvest: {
+        title: 'Rainwater harvesting',
+        what: 'A greenhouse roof is a large catchment. A basin stores rain between storms: month by month it fills with run-off, empties into irrigation and overflows when full.',
+        assumptions: [
+          'Monthly totals; one heavy storm is checked on its own.',
+          'The first millimetres of each rain are lost.',
+        ],
+      },
+      light: {
+        title: 'Light for the crop (DLI)',
+        what: 'Plants count photons, not watts: the daily light integral is the moles of photosynthetic light per m² in a day, and about 47 % of sunlight is PAR. Lamps close the gap in dark months; shade keeps bright months under the crop’s ceiling.',
+        assumptions: [
+          '4.57 µmol of photons per joule of PAR in sunlight.',
+          'Lamps are sized for the darkest month.',
+        ],
+      },
+      co2: {
+        title: 'CO₂ enrichment',
+        what: 'The crop takes CO₂ from the air, and 700–900 ppm raises the yield. What you supply either goes into the crop or leaks out with the air, so enrichment pays when the vents are nearly shut. A gas burner or a CHP gives CO₂ and heat together.',
+        assumptions: [
+          '1.83 g of CO₂ per m³ of air for each 1000 ppm.',
+          '1 m³ of natural gas burnt gives 1.96 kg of CO₂.',
+        ],
+      },
+      cropCalendar: {
+        title: 'The crop year',
+        what: 'A crop moves through stages that want different climates. Read against the climate normals, the calendar shows when the nights need heat, when the house stays shut long enough for CO₂, and when the sun calls for shade and fog.',
+        assumptions: [
+          'Weekly values are read between the monthly normals.',
+          'Stage lengths are typical; check them with the seed company.',
+        ],
+      },
+    },
+    instruments: {
+      tape: {
+        name: 'Tape or laser distance meter',
+        how: 'Measure spans, lengths and heights from the ground to the gutter. Count spans, plants, drippers and nozzles on a few rows and scale up.',
+      },
+      thermometer: {
+        name: 'Aspirated air thermometer',
+        how: 'A sensor in a white, fan-ventilated box at crop height, out of the sun. An unshaded sensor reads several degrees too high.',
+      },
+      hygrometer: {
+        name: 'Humidity sensor or psychrometer',
+        how: 'A capacitive RH sensor in the same aspirated box, checked each year against a wet-and-dry-bulb psychrometer. Read temperature and humidity together.',
+      },
+      weatherStation: {
+        name: 'Outside weather station',
+        how: 'Temperature and humidity in a radiation shield 2 m up, away from the houses. For design values, take the cold nights and hot afternoons of several years.',
+      },
+      pyranometer: {
+        name: 'Pyranometer',
+        how: 'Global radiation in W/m², level and clean, above the roof. The climate computer usually has one; its daily sums in MJ/m² feed the water and light tools.',
+      },
+      parSensor: {
+        name: 'PAR quantum sensor',
+        how: 'Photons in µmol/m²·s. Read outside and at crop height at the same moment: inside over outside is the transmission. Summed over a day it gives the DLI.',
+      },
+      anemometer: {
+        name: 'Anemometer',
+        how: 'A cup or ultrasonic anemometer on a mast above the ridge; take a typical summer afternoon, not the gusts. A hand vane reads the air speed through a pad or a fan.',
+      },
+      co2Sensor: {
+        name: 'CO₂ sensor (NDIR)',
+        how: 'An aspirated infrared sensor at crop height. Check it on fresh outside air, about 420 ppm, before each season.',
+      },
+      tracerGas: {
+        name: 'Tracer-gas decay test',
+        how: 'On a still night shut the house, raise the CO₂ to about 1000 ppm and log its fall: N = ln((C₁ − C_out) / (C₂ − C_out)) / hours.',
+      },
+      flowMeter: {
+        name: 'Water flow meter',
+        how: 'A clamp-on ultrasonic or inline meter on the main. Read the flow while one section runs, or the pump’s curve at its working head.',
+      },
+      catchCups: {
+        name: 'Catch-cup test',
+        how: 'Collect from 10–20 drippers or nozzles for a timed few minutes, measure each volume with a graduated cylinder and average. The spread shows how even the system is.',
+      },
+      drainTray: {
+        name: 'Drain tray on a scale',
+        how: 'A few slabs on a tray with a tipping bucket or a scale: drain share = drain ÷ water given. Measure the EC of the drip and the drain at the same time.',
+      },
+      pressureGauge: {
+        name: 'Pressure gauge',
+        how: 'A glycerine gauge on the pump outlet (1 bar is about 10 m of head), or a manometer across a fan for its static pressure.',
+      },
+      infrared: {
+        name: 'Contact or infrared thermometer',
+        how: 'Clamp a contact probe on the supply and return pipes, or read their surface with an infrared thermometer set to the pipe’s emissivity.',
+      },
+      meters: {
+        name: 'Gas, heat and electricity meters',
+        how: 'Monthly meter readings and bills give the real fuel use, power and tariffs to check the tools against.',
+      },
+      climateComputer: {
+        name: 'Climate computer logs',
+        how: 'Set points, run hours, fog cycles and irrigation shots come from the climate computer’s settings and daily logs.',
+      },
+    },
+  },
   calc: {
+    science: 'The science behind it',
     results: 'Results',
     how: 'How it’s calculated',
     inputs: 'Inputs',
@@ -840,6 +1084,11 @@ export const EN = {
         id: 'fog',
         title: 'Fogging and the cooling strategy',
         body: 'High-pressure fog in a ventilated house: the inside temperature from a heat and water balance, the on/off cycle that holds a humidity cap, and the water a day. The advisor checks the design afternoon: when vents alone would need more than a roof opens, it proposes shade with fog or pads.',
+      },
+      {
+        id: 'science',
+        title: 'Science',
+        body: 'Every phenomenon the tools rely on, explained: what happens, the formula, what it assumes, and how to measure each input, with which instrument. The ⓘ beside each field opens the same advice and links here.',
       },
     ],
     sourcesTitle: 'Sources',

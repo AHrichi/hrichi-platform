@@ -1,11 +1,17 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   inject,
   input,
   output,
 } from '@angular/core';
 import { SerraI18n } from '../../i18n/serra-i18n';
+import {
+  type FieldInfo,
+  fieldInfo,
+  injectScreenTopics,
+} from '../../science/screen-topics';
 import { NumberField } from '../number-field/number-field';
 
 /** One number field: its key in the inputs, unit and range. */
@@ -24,7 +30,8 @@ export interface FieldChange {
 
 /**
  * A grid of number fields drawn from specs, labelled and hinted in the
- * reader's language (copy `fields` and `hints`, by key).
+ * reader's language (copy `fields` and `hints`, by key), each with its ⓘ:
+ * how to get the value, and the phenomenon behind it.
  */
 @Component({
   selector: 'sc-field-grid',
@@ -40,6 +47,7 @@ export interface FieldChange {
         [max]="spec.max"
         [step]="spec.step"
         [value]="valueOf(spec.key)"
+        [info]="infos()[spec.key]"
         (valueChange)="changed.emit({ key: spec.key, value: $event })"
       />
     }
@@ -54,6 +62,22 @@ export class FieldGrid {
   readonly changed = output<FieldChange>();
 
   protected readonly t = inject(SerraI18n).t;
+  private readonly topics = injectScreenTopics();
+
+  protected readonly infos = computed(() => {
+    const t = this.t();
+    const fallback = this.topics()[0];
+    const out: Record<string, FieldInfo | null> = {};
+    for (const spec of this.specs()) {
+      out[spec.key] = fieldInfo(
+        t,
+        spec.key,
+        t.fields[spec.key] ?? spec.key,
+        fallback,
+      );
+    }
+    return out;
+  });
 
   protected valueOf(key: string): number {
     const value = (this.values() as Record<string, unknown>)[key];

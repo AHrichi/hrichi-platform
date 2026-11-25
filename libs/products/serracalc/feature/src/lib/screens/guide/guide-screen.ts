@@ -20,7 +20,9 @@ import { SerraI18n } from '../../i18n/serra-i18n';
           <article class="panel">
             <h3>{{ tool.title }}</h3>
             <p>{{ tool.body }}</p>
-            <a [routerLink]="['..', tool.id]"
+            <a
+              [routerLink]="['..', linkOf(tool.id).screen]"
+              [queryParams]="linkOf(tool.id).query"
               >{{ t().guide.open }} {{ tool.title }} {{ t().common.next }}</a
             >
           </article>
@@ -46,4 +48,19 @@ import { SerraI18n } from '../../i18n/serra-i18n';
 })
 export class GuideScreen {
   protected readonly t = inject(SerraI18n).t;
+
+  /** Guide entries that open a tab of another screen. */
+  protected linkOf(id: string): {
+    screen: string;
+    query: Record<string, string>;
+  } {
+    const tabs: Record<string, [string, string]> = {
+      vpd: ['air', 'vpd'],
+      fog: ['cooling', 'fog'],
+    };
+    const tab = tabs[id];
+    return tab
+      ? { screen: tab[0], query: { tab: tab[1] } }
+      : { screen: id, query: {} };
+  }
 }

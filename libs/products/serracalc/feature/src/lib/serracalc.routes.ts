@@ -75,6 +75,14 @@ export const SERRACALC_ROUTES: Routes = [
           ),
       },
       {
+        path: 'science',
+        title: title('science'),
+        loadComponent: () =>
+          import('./screens/science/science-screen').then(
+            (m) => m.ScienceScreen,
+          ),
+      },
+      {
         path: 'report',
         title: title('report'),
         loadComponent: () =>

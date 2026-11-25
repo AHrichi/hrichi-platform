@@ -22,6 +22,7 @@ export const DE: SerraCopy = {
       'Eine Planungshilfe: Prüfen Sie die Ergebnisse mit einer Fachingenieurin oder einem Fachingenieur und den Daten der Lieferanten, bevor Sie bauen.',
   },
   nav: {
+    science: 'Wissen',
     calendar: 'Anbaukalender',
     projects: 'Projekte',
     greenhouse: 'Gewächshaus',
@@ -662,7 +663,251 @@ export const DE: SerraCopy = {
     heatingWeeks: 'Wochen Heizung',
     fogWeeks: 'Wochen Nebel',
   },
+  science: {
+    title: 'Wissen',
+    lead: 'Die Phänomene hinter jedem Rechner: was passiert, die Formel, was sie annimmt und wie man jede eingegebene Zahl misst.',
+    search: 'Thema suchen',
+    empty: 'Kein Thema passt.',
+    contents: 'Themen',
+    formula: 'Formel',
+    inputs: 'Eingaben und wie man sie bekommt',
+    input: 'Eingabe',
+    method: 'Wie',
+    instrument: 'Messgerät',
+    assumptions: 'Annahmen',
+    related: 'Verwandt',
+    usedIn: 'Verwendet in',
+    sources: 'Quellen',
+    instrumentsTitle: 'Messgeräte',
+    instrumentsLead: 'Womit man misst, und wie man richtig abliest.',
+    howToGet: (label: string) => `So bekommen Sie „${label}“`,
+    readMore: 'Mehr zu',
+    close: 'Schließen',
+    groups: {
+      house: 'Das Haus',
+      heat: 'Wärme',
+      air: 'Luft, Feuchte und Kühlung',
+      water: 'Wasser',
+      crop: 'Licht, CO₂ und Kultur',
+    },
+    methods: {
+      measure: 'Messen',
+      datasheet: 'Aus dem Datenblatt',
+      derived: 'Berechnet',
+      setpoint: 'Ihre Einstellung',
+      assume: 'Planungsannahme',
+      bill: 'Aus Ihren Rechnungen',
+    },
+    methodHints: {
+      measure: 'Vor Ort mit dem Gerät unten ablesen.',
+      datasheet:
+        'Aus dem Datenblatt des Lieferanten; der Hinweis nennt einen üblichen Wert.',
+      derived:
+        'SerraCalc berechnet es aus dem Haus oder einem anderen Werkzeug; überschreiben, wenn Sie es besser wissen.',
+      setpoint:
+        'Eine Wahl: ein Sollwert oder ein Ziel, mit dem Sie das Haus führen.',
+      assume: 'Ein üblicher Praxiswert; mit eigenen Aufzeichnungen verfeinern.',
+      bill: 'Ihr eigener Tarif oder Faktor, in der Währung des Projekts.',
+    },
+    topics: {
+      geometry: {
+        title: 'Geometrie des Gewächshauses',
+        what: 'Jede Last hängt an drei Zahlen: der Grundfläche (auf der man anbaut und auf die die Sonne fällt), der Hülle (die Wärme verliert) und dem Luftvolumen (das Wärme, Feuchte und CO₂ puffert). Höhere Häuser haben mehr Luft je m² und schwanken weniger.',
+        assumptions: [
+          'Dächer sind gerade Flächen, bei Bögen eine halbe Ellipse.',
+          'Giebel zählen zur Hülle; Türen und Rinnen werden vernachlässigt.',
+        ],
+      },
+      heatLoss: {
+        title: 'Wärmeverlust durch die Hülle',
+        what: 'Wärme fließt durch die Hülle vom warmen Haus in die kalte Nacht, proportional zur Fläche, zur Temperaturdifferenz und zum U-Wert. Ein geschlossener Energieschirm senkt sie; der Sockel verliert am Umfang etwas mehr.',
+        assumptions: [
+          'U-Werte sind Auslegungswerte für eine ruhige, klare Nacht (ASAE EP406).',
+          'Die Auslegungsnacht kommt fast jeden Winter wieder, sie ist nicht der Rekord.',
+        ],
+      },
+      airLeakage: {
+        title: 'Luftundichtheit',
+        what: 'Kalte Außenluft dringt durch Spalten, Lüftungen und Türen ein und muss erwärmt werden. Die Luftwechselrate N gibt an, wie oft pro Stunde das ganze Volumen ersetzt wird: etwa 0,5 bei dichter Doppelfolie, 1,5–2 bei altem Glas.',
+        assumptions: [
+          'Die Undichtheit ändert sich in diesen Werkzeugen nicht mit dem Wind.',
+          '0,335 Wh je m³ und K ist die Wärmekapazität der Luft bei etwa 20 °C.',
+        ],
+      },
+      hotWater: {
+        title: 'Warmwasser-Heizrohre',
+        what: 'Ein Heizkreis gibt Wärme durch Konvektion und Strahlung ab. Die Spreizung des Wassers bestimmt den Durchfluss (1,163 kWh je m³ und K), die Leistung je Meter die Rohrlänge. Geothermales Wasser mit 60–75 °C braucht mehr Rohr als ein Kessel mit 80–90 °C.',
+        assumptions: [
+          'Freie Konvektion um ein waagrechtes Rohr: h = 1,32 (ΔT/D)^0,25.',
+          'Die Rohroberfläche hat die mittlere Wassertemperatur.',
+        ],
+      },
+      solarGain: {
+        title: 'Solarer Wärmeeintrag',
+        what: 'Sonnenlicht durch die Hülle wird zu Wärme. Einen Teil verbraucht die Kultur zum Verdunsten; der Rest erwärmt die Luft und muss über Lüftung, Pads oder Nebel hinaus. Schattierung und Kalkung kappen ihn an der Quelle.',
+        assumptions: [
+          'Die Transmission enthält Konstruktion und Staub.',
+          'Eine volle Kultur verbraucht etwa die Hälfte der Sonne für die Transpiration.',
+        ],
+      },
+      ventilation: {
+        title: 'Natürliche Lüftung',
+        what: 'Warme Luft steigt durch die Dachlüftung auf (Kamineffekt) und der Wind zieht Luft hindurch. Die nötige Lüftungsfläche wächst schnell, wenn das Haus nur wenige Grad über außen liegen darf; ab etwa 30 % der Fläche reicht Lüftung allein nicht.',
+        assumptions: [
+          'Boulard und Baille (1995): Cd 0,65 und Cw 0,1 für Dachlüftungen.',
+          'Luft mit 1,2 kg/m³ und 1005 J/kg·K.',
+        ],
+      },
+      evaporativeCooling: {
+        title: 'Verdunstungskühlung und Feuchtkugel',
+        what: 'Wasser, das in trockene Luft verdunstet, entzieht ihr Wärme. Unter ihre Feuchtkugeltemperatur lässt sich Luft nicht kühlen, und die sinkt, je trockener die Luft ist: bei 44 °C und 15 % liegt sie nahe 22 °C. Ein nasses Pad schafft 75–85 % des Weges.',
+        assumptions: [
+          'Feuchtkugel nach Stull (2011), auf etwa 0,3 K genau.',
+          'Die Luft erwärmt sich gleichmäßig zwischen Pads und Ventilatoren.',
+        ],
+      },
+      fogging: {
+        title: 'Hochdrucknebel',
+        what: 'Düsen mit 40–70 bar erzeugen Tröpfchen von 10–30 µm, die verdunsten, bevor sie fallen, und die Luft bei offener Lüftung kühlen. Die Grenze ist die Feuchte: Der Nebel wird gedrosselt, damit die Luft unter einer Grenze bleibt, meist 70–80 %.',
+        assumptions: [
+          'Aller Nebel verdunstet, solange die Luft unter der Grenze bleibt.',
+          'Der Luftstrom der Lüftung folgt Boulard und Baille, aus Wind und Temperaturdifferenz.',
+        ],
+      },
+      vpd: {
+        title: 'Sättigungsdefizit (VPD)',
+        what: 'Das VPD gibt an, wie viel Wasser die Luft bei ihrer Temperatur noch aufnehmen könnte. Es treibt die Transpiration: zu niedrig, und die Pflanze transportiert kein Wasser und Calcium und Pilze breiten sich aus; zu hoch, und die Stomata schließen sich und die Pflanze welkt. Dasselbe VPD passt zu vielen Paaren aus Temperatur und Feuchte.',
+        assumptions: [
+          'Blatt und Luft haben dieselbe Temperatur.',
+          'Sättigungsdampfdruck nach Tetens, wie in FAO-56.',
+        ],
+      },
+      dewPoint: {
+        title: 'Taupunkt und Kondensation',
+        what: 'Luft, die auf ihren Taupunkt abkühlt, gibt Wasser ab. Nachts ist die Innenseite der Hülle kälter als die Luft; fällt sie unter den Taupunkt, tropft sie auf die Kultur und verbreitet Krankheiten.',
+        assumptions: [
+          'Die Innenseite tauscht etwa 8 W/m²·K mit der Luft.',
+          'Kalter Nachthimmel und Wind stecken im U-Wert.',
+        ],
+      },
+      nightHumidity: {
+        title: 'Nachts entfeuchten',
+        what: 'Nachts transpiriert die Kultur weiter. Dieses Wasser muss mit Außenluft hinaus, die weniger enthält, und diese Luft muss erwärmt werden. Lüften trocknet das Haus nicht, wenn die Außenluft absolut mehr Wasser enthält.',
+        assumptions: [
+          'Wasser in Gramm je kg trockener Luft, bei Meereshöhendruck.',
+          'Kondensation an der Hülle zählt nicht als Ausweg.',
+        ],
+      },
+      transpiration: {
+        title: 'Transpiration und Bewässerung',
+        what: 'Eine Kultur transpiriert etwa zwei Drittel der empfangenen Sonne; der Wasserbedarf folgt der Strahlung im Haus. Substratkulturen bekommen zusätzlich den Drain, um Salze auszuwaschen; mit Brackwasser muss der Drainanteil steigen.',
+        assumptions: [
+          '2,45 MJ verdunsten einen Liter Wasser.',
+          'Der Bestandesschluss senkt den Verbrauch einer jungen Kultur.',
+        ],
+      },
+      rainHarvest: {
+        title: 'Regenwassernutzung',
+        what: 'Ein Gewächshausdach ist eine große Auffangfläche. Ein Becken speichert Regen zwischen Gewittern: Monat für Monat füllt es sich, gibt an die Bewässerung ab und läuft über, wenn es voll ist.',
+        assumptions: [
+          'Monatssummen; ein starkes Gewitter wird gesondert geprüft.',
+          'Die ersten Millimeter jedes Regens gehen verloren.',
+        ],
+      },
+      light: {
+        title: 'Licht für die Kultur (DLI)',
+        what: 'Pflanzen zählen Photonen, nicht Watt: Das Tageslichtintegral ist die Menge photosynthetischen Lichts in Mol je m² und Tag, und etwa 47 % der Sonne sind PAR. Lampen schließen die Lücke in dunklen Monaten; Schattierung hält helle Monate unter der Obergrenze der Kultur.',
+        assumptions: [
+          '4,57 µmol Photonen je Joule PAR im Sonnenlicht.',
+          'Die Lampen werden für den dunkelsten Monat ausgelegt.',
+        ],
+      },
+      co2: {
+        title: 'CO₂-Düngung',
+        what: 'Die Kultur nimmt CO₂ aus der Luft, und 700–900 ppm steigern den Ertrag. Was man zuführt, geht in die Kultur oder mit der Luft hinaus: Düngung lohnt, wenn die Lüftung fast zu ist. Ein Gasbrenner oder ein BHKW liefert CO₂ und Wärme zusammen.',
+        assumptions: [
+          '1,83 g CO₂ je m³ Luft für 1000 ppm.',
+          '1 m³ verbranntes Erdgas ergibt 1,96 kg CO₂.',
+        ],
+      },
+      cropCalendar: {
+        title: 'Das Kulturjahr',
+        what: 'Eine Kultur durchläuft Stadien, die unterschiedliches Klima wollen. Mit den Klimanormalen gelesen zeigt der Kalender, wann die Nächte Wärme brauchen, wann das Haus lange genug zu bleibt für CO₂ und wann die Sonne Schattierung und Nebel verlangt.',
+        assumptions: [
+          'Wochenwerte werden zwischen den Monatsnormalen gelesen.',
+          'Die Stadienlängen sind üblich; mit dem Saatgutzüchter prüfen.',
+        ],
+      },
+    },
+    instruments: {
+      tape: {
+        name: 'Maßband oder Laser-Entfernungsmesser',
+        how: 'Schiffe, Längen und Höhen vom Boden bis zur Rinne messen. Schiffe, Pflanzen, Tropfer und Düsen in einigen Reihen zählen und hochrechnen.',
+      },
+      thermometer: {
+        name: 'Belüftetes Luftthermometer',
+        how: 'Ein Sensor in einer weißen, belüfteten Messbox in Bestandeshöhe, im Schatten. Ein unbeschatteter Sensor misst mehrere Grad zu hoch.',
+      },
+      hygrometer: {
+        name: 'Feuchtesensor oder Psychrometer',
+        how: 'Ein kapazitiver Feuchtesensor in derselben belüfteten Box, jährlich mit einem Psychrometer (trockene und feuchte Kugel) geprüft. Temperatur und Feuchte zusammen ablesen.',
+      },
+      weatherStation: {
+        name: 'Wetterstation außen',
+        how: 'Temperatur und Feuchte in einer Strahlungshütte auf 2 m, abseits der Häuser. Für Auslegungswerte die kalten Nächte und heißen Nachmittage mehrerer Jahre nehmen.',
+      },
+      pyranometer: {
+        name: 'Pyranometer',
+        how: 'Globalstrahlung in W/m², waagrecht und sauber über dem Dach. Der Klimacomputer hat meist eines; seine Tagessummen in MJ/m² speisen die Wasser- und Lichtwerkzeuge.',
+      },
+      parSensor: {
+        name: 'PAR-Quantensensor',
+        how: 'Photonen in µmol/m²·s. Außen und in Bestandeshöhe zur selben Zeit messen: innen durch außen ist die Transmission. Über den Tag summiert ergibt es das DLI.',
+      },
+      anemometer: {
+        name: 'Anemometer',
+        how: 'Ein Schalen- oder Ultraschallanemometer an einem Mast über dem First; einen üblichen Sommernachmittag nehmen, nicht die Böen. Ein Flügelrad-Handgerät misst die Luftgeschwindigkeit durch ein Pad oder einen Ventilator.',
+      },
+      co2Sensor: {
+        name: 'CO₂-Sensor (NDIR)',
+        how: 'Ein belüfteter Infrarotsensor in Bestandeshöhe. Vor jeder Saison an Außenluft prüfen, etwa 420 ppm.',
+      },
+      tracerGas: {
+        name: 'Tracergas-Abklingtest',
+        how: 'In einer ruhigen Nacht das Haus schließen, CO₂ auf etwa 1000 ppm bringen und den Abfall aufzeichnen: N = ln((C₁ − C_außen) / (C₂ − C_außen)) / Stunden.',
+      },
+      flowMeter: {
+        name: 'Durchflussmesser',
+        how: 'Ein Clamp-on-Ultraschall- oder Inline-Zähler an der Hauptleitung. Den Durchfluss ablesen, während eine Sektion läuft, oder die Pumpenkennlinie bei ihrer Förderhöhe.',
+      },
+      catchCups: {
+        name: 'Becher-Test',
+        how: '10–20 Tropfer oder Düsen einige gestoppte Minuten auffangen, jedes Volumen mit einem Messzylinder messen und mitteln. Die Streuung zeigt, wie gleichmäßig die Anlage ist.',
+      },
+      drainTray: {
+        name: 'Drainschale auf einer Waage',
+        how: 'Einige Matten auf einer Schale mit Kippwaage oder Waage: Drainanteil = Drain ÷ gegebenes Wasser. Gleichzeitig die EC von Tropfer und Drain messen.',
+      },
+      pressureGauge: {
+        name: 'Manometer',
+        how: 'Ein Glyzerin-Manometer am Pumpenausgang (1 bar entspricht etwa 10 m Förderhöhe), oder ein Differenzdruckmesser an einem Ventilator für seinen statischen Druck.',
+      },
+      infrared: {
+        name: 'Kontakt- oder Infrarotthermometer',
+        how: 'Einen Kontaktfühler an Vor- und Rücklauf klemmen oder deren Oberfläche mit einem Infrarotthermometer messen, eingestellt auf den Emissionsgrad des Rohres.',
+      },
+      meters: {
+        name: 'Gas-, Wärme- und Stromzähler',
+        how: 'Monatliche Zählerstände und Rechnungen geben den echten Verbrauch, die Leistung und die Tarife, um die Werkzeuge zu prüfen.',
+      },
+      climateComputer: {
+        name: 'Protokolle des Klimacomputers',
+        how: 'Sollwerte, Laufstunden, Nebeltakte und Bewässerungsgaben kommen aus den Einstellungen und Tagesprotokollen des Klimacomputers.',
+      },
+    },
+  },
   calc: {
+    science: 'Die Physik dahinter',
     results: 'Ergebnisse',
     how: 'So wird gerechnet',
     inputs: 'Eingaben',
@@ -854,6 +1099,11 @@ export const DE: SerraCopy = {
         id: 'fog',
         title: 'Hochdrucknebel und Kühlstrategie',
         body: 'Hochdrucknebel in einem gelüfteten Haus: die Innentemperatur aus einer Wärme- und Wasserbilanz, der An/Aus-Takt, der eine Feuchtegrenze hält, und das Wasser pro Tag. Der Berater prüft den Auslegungsnachmittag: Bräuchte die Lüftung allein mehr, als ein Dach öffnet, schlägt er Schattierung mit Nebel oder Pads vor.',
+      },
+      {
+        id: 'science',
+        title: 'Wissen',
+        body: 'Jedes Phänomen, auf dem die Werkzeuge beruhen, erklärt: was passiert, die Formel, was sie annimmt und wie man jede Eingabe misst, mit welchem Gerät. Das ⓘ neben jedem Feld öffnet denselben Rat und führt hierher.',
       },
     ],
     sourcesTitle: 'Quellen',

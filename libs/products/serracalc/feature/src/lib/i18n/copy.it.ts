@@ -22,6 +22,7 @@ export const IT: SerraCopy = {
       'Uno strumento di progettazione: verifica i risultati con un tecnico abilitato e con i dati dei fornitori prima di costruire.',
   },
   nav: {
+    science: 'Scienza',
     calendar: 'Calendario colturale',
     projects: 'Progetti',
     greenhouse: 'Serra',
@@ -672,7 +673,250 @@ export const IT: SerraCopy = {
     heatingWeeks: 'Settimane di riscaldamento',
     fogWeeks: 'Settimane di nebbia',
   },
+  science: {
+    title: 'Scienza',
+    lead: 'I fenomeni dietro ogni calcolatore: cosa succede, la formula, cosa assume e come misurare ogni numero che inserisci.',
+    search: 'Cerca un argomento',
+    empty: 'Nessun argomento corrisponde.',
+    contents: 'Argomenti',
+    formula: 'Formula',
+    inputs: 'Dati e come ottenerli',
+    input: 'Dato',
+    method: 'Come',
+    instrument: 'Strumento',
+    assumptions: 'Ipotesi',
+    related: 'Collegati',
+    usedIn: 'Usato in',
+    sources: 'Fonti',
+    instrumentsTitle: 'Strumenti di misura',
+    instrumentsLead: 'Con cosa misurare, e come leggere bene.',
+    howToGet: (label: string) => `Come ottenere «${label}»`,
+    readMore: 'Leggi:',
+    close: 'Chiudi',
+    groups: {
+      house: 'La serra',
+      heat: 'Calore',
+      air: 'Aria, umidità e raffrescamento',
+      water: 'Acqua',
+      crop: 'Luce, CO₂ e coltura',
+    },
+    methods: {
+      measure: 'Da misurare',
+      datasheet: 'Dalla scheda tecnica',
+      derived: 'Calcolato',
+      setpoint: 'Tua impostazione',
+      assume: 'Ipotesi di progetto',
+      bill: 'Dalle bollette',
+    },
+    methodHints: {
+      measure: 'Da rilevare sul posto con lo strumento qui sotto.',
+      datasheet:
+        'Dalla scheda tecnica del fornitore; il suggerimento dà un valore tipico.',
+      derived:
+        'SerraCalc lo ricava dalla serra o da un altro strumento; sostituiscilo se conosci un valore migliore.',
+      setpoint: 'Una scelta: un set point o un obiettivo di conduzione.',
+      assume: 'Un valore tipico della pratica; affinalo con i tuoi dati.',
+      bill: 'La tua tariffa o il tuo fattore, nella valuta del progetto.',
+    },
+    topics: {
+      geometry: {
+        title: 'Geometria della serra',
+        what: 'Ogni carico dipende da tre numeri: il suolo (dove si coltiva e dove cade il sole), la copertura (che perde calore) e il volume d’aria (che smorza calore, umidità e CO₂). Una serra alta ha più aria per m² e oscilla meno.',
+        assumptions: [
+          'I tetti sono falde dritte, o mezza ellisse per un arco.',
+          'Le testate contano come copertura; porte e grondaie sono ignorate.',
+        ],
+      },
+      heatLoss: {
+        title: 'Dispersioni attraverso la copertura',
+        what: 'Il calore attraversa la copertura dalla serra calda alla notte fredda, in proporzione alla superficie, alla differenza di temperatura e alla trasmittanza U. Uno schermo termico chiuso la riduce; lo zoccolo perde un po’ di più lungo il perimetro.',
+        assumptions: [
+          'I valori U sono di progetto per una notte calma e serena (ASAE EP406).',
+          'La notte di progetto torna quasi ogni inverno: non è il record.',
+        ],
+      },
+      airLeakage: {
+        title: 'Infiltrazioni d’aria',
+        what: 'L’aria fredda entra da fessure, aperture e porte e va riscaldata. Il ricambio N dice quante volte all’ora l’intero volume viene sostituito: circa 0,5 per un doppio film stagno, 1,5–2 per un vetro vecchio.',
+        assumptions: [
+          'Le infiltrazioni non cambiano col vento in questi strumenti.',
+          '0,335 Wh per m³ e per K è la capacità termica dell’aria verso 20 °C.',
+        ],
+      },
+      hotWater: {
+        title: 'Tubi di riscaldamento ad acqua calda',
+        what: 'Un circuito cede calore per convezione e irraggiamento. Il salto termico dell’acqua fissa la portata (1,163 kWh per m³ e per K) e la resa per metro fissa la lunghezza dei tubi. L’acqua geotermica a 60–75 °C richiede più tubo di una caldaia a 80–90 °C.',
+        assumptions: [
+          'Convezione naturale attorno a un tubo orizzontale: h = 1,32 (ΔT/D)^0,25.',
+          'La superficie del tubo è alla temperatura media dell’acqua.',
+        ],
+      },
+      solarGain: {
+        title: 'Apporto solare',
+        what: 'Il sole che attraversa la copertura diventa calore. Una parte la coltura la spende per evaporare acqua; il resto scalda l’aria e deve uscire dalle aperture, dai pannelli o con la nebbia. Ombreggio e imbiancatura lo tagliano alla fonte.',
+        assumptions: [
+          'La trasmissione comprende struttura e polvere.',
+          'Una coltura piena spende circa metà del sole nella traspirazione.',
+        ],
+      },
+      ventilation: {
+        title: 'Ventilazione naturale',
+        what: 'L’aria calda sale ed esce dalle aperture al colmo (effetto camino) e il vento la fa passare. La superficie d’apertura necessaria cresce in fretta se la serra può superare l’esterno di pochi gradi; oltre circa il 30 % del suolo le aperture da sole non bastano.',
+        assumptions: [
+          'Boulard e Baille (1995): Cd 0,65 e Cw 0,1 per le aperture al colmo.',
+          'Aria a 1,2 kg/m³ e 1005 J/kg·K.',
+        ],
+      },
+      evaporativeCooling: {
+        title: 'Raffrescamento evaporativo e bulbo umido',
+        what: 'L’acqua che evapora nell’aria secca le sottrae calore. Non si può raffreddare l’aria sotto il suo bulbo umido, che scende quanto più l’aria è secca: a 44 °C e 15 % il bulbo umido è verso 22 °C. Un pannello bagnato fa il 75–85 % del percorso.',
+        assumptions: [
+          'Bulbo umido secondo Stull (2011), entro circa 0,3 K.',
+          'L’aria si scalda in modo uniforme tra pannelli e ventilatori.',
+        ],
+      },
+      fogging: {
+        title: 'Nebulizzazione ad alta pressione',
+        what: 'Ugelli a 40–70 bar producono gocce di 10–30 µm che evaporano prima di cadere, raffrescando l’aria con le aperture aperte. Il limite è l’umidità: la nebbia viene ridotta perché l’aria resti sotto un tetto, di solito il 70–80 %.',
+        assumptions: [
+          'Tutta la nebbia evapora finché l’aria resta sotto il tetto.',
+          'La portata delle aperture segue Boulard e Baille, da vento e differenza di temperatura.',
+        ],
+      },
+      vpd: {
+        title: 'Deficit di pressione di vapore (VPD)',
+        what: 'Il VPD è quanta acqua in più l’aria potrebbe contenere alla sua temperatura. Guida la traspirazione: troppo basso e la pianta non muove acqua e calcio e i funghi si diffondono; troppo alto e gli stomi si chiudono e la pianta appassisce. Lo stesso VPD vale per molte coppie di temperatura e umidità.',
+        assumptions: [
+          'Foglia e aria alla stessa temperatura.',
+          'Pressione di vapore saturo secondo Tetens, come nella FAO-56.',
+        ],
+      },
+      dewPoint: {
+        title: 'Punto di rugiada e condensa',
+        what: 'L’aria raffreddata fino al punto di rugiada comincia a cedere acqua. Di notte la faccia interna della copertura è più fredda dell’aria; sotto il punto di rugiada gocciola sulla coltura e diffonde malattie.',
+        assumptions: [
+          'La faccia interna scambia circa 8 W/m²·K con l’aria.',
+          'Il cielo notturno e il vento sono compresi nel valore U.',
+        ],
+      },
+      nightHumidity: {
+        title: 'Deumidificare di notte',
+        what: 'Di notte la coltura traspira ancora. Quell’acqua deve uscire con aria esterna che ne contiene meno, e quell’aria va riscaldata. Ventilare non asciuga la serra quando l’aria esterna contiene più acqua in valore assoluto.',
+        assumptions: [
+          'Acqua in grammi per kg d’aria secca, alla pressione del livello del mare.',
+          'La condensa sulla copertura non è contata come uscita.',
+        ],
+      },
+      transpiration: {
+        title: 'Traspirazione e irrigazione',
+        what: 'Una coltura traspira circa due terzi del sole che riceve: il fabbisogno segue la radiazione interna. In fuori suolo si aggiunge il drenaggio per lavare i sali; con acqua salmastra la quota di drenaggio deve salire.',
+        assumptions: [
+          '2,45 MJ evaporano un litro d’acqua.',
+          'La copertura vegetale riduce il consumo di una coltura giovane.',
+        ],
+      },
+      rainHarvest: {
+        title: 'Raccolta dell’acqua piovana',
+        what: 'Il tetto di una serra è un grande bacino di raccolta. Una vasca conserva la pioggia tra un temporale e l’altro: mese per mese si riempie, si svuota nell’irrigazione e trabocca quando è piena.',
+        assumptions: [
+          'Totali mensili; un forte temporale è verificato a parte.',
+          'I primi millimetri di ogni pioggia vanno persi.',
+        ],
+      },
+      light: {
+        title: 'Luce per la coltura (DLI)',
+        what: 'Le piante contano fotoni, non watt: l’integrale di luce giornaliero è il numero di moli di luce fotosintetica per m² al giorno, e circa il 47 % del sole è PAR. Le lampade colmano il divario nei mesi bui; l’ombreggio tiene i mesi luminosi sotto il tetto della coltura.',
+        assumptions: [
+          '4,57 µmol di fotoni per joule di PAR solare.',
+          'Le lampade sono dimensionate per il mese più buio.',
+        ],
+      },
+      co2: {
+        title: 'Arricchimento in CO₂',
+        what: 'La coltura prende la CO₂ dall’aria e 700–900 ppm alzano la resa. Quello che fornisci entra nella coltura o se ne va con l’aria: l’arricchimento rende quando le aperture sono quasi chiuse. Un bruciatore a gas o una cogenerazione danno CO₂ e calore insieme.',
+        assumptions: [
+          '1,83 g di CO₂ per m³ d’aria ogni 1000 ppm.',
+          '1 m³ di gas naturale bruciato dà 1,96 kg di CO₂.',
+        ],
+      },
+      cropCalendar: {
+        title: 'L’anno colturale',
+        what: 'Una coltura passa per fasi che vogliono climi diversi. Letto con le normali climatiche, il calendario mostra quando le notti chiedono calore, quando la serra resta chiusa abbastanza per la CO₂, e quando il sole chiede ombreggio e nebbia.',
+        assumptions: [
+          'I valori settimanali sono letti tra le normali mensili.',
+          'Le durate delle fasi sono tipiche; verificale con la ditta sementiera.',
+        ],
+      },
+    },
+    instruments: {
+      tape: {
+        name: 'Metro a nastro o distanziometro laser',
+        how: 'Misura campate, lunghezze e altezze da terra alla grondaia. Conta campate, piante, gocciolatori e ugelli su alcune file e proporziona.',
+      },
+      thermometer: {
+        name: 'Termometro d’aria ventilato',
+        how: 'Un sensore in una cassetta bianca ventilata, ad altezza coltura e all’ombra. Un sensore al sole legge parecchi gradi in più.',
+      },
+      hygrometer: {
+        name: 'Sensore di umidità o psicrometro',
+        how: 'Un sensore capacitivo nella stessa cassetta ventilata, verificato ogni anno con uno psicrometro a bulbo secco e umido. Leggi temperatura e umidità insieme.',
+      },
+      weatherStation: {
+        name: 'Stazione meteo esterna',
+        how: 'Temperatura e umidità in uno schermo antiradiazione a 2 m, lontano dalle serre. Per i valori di progetto prendi le notti fredde e i pomeriggi caldi di più anni.',
+      },
+      pyranometer: {
+        name: 'Piranometro',
+        how: 'La radiazione globale in W/m², in piano e pulito, sopra il tetto. Il computer climatico spesso ne ha uno; le sue somme giornaliere in MJ/m² alimentano gli strumenti acqua e luce.',
+      },
+      parSensor: {
+        name: 'Sensore quantico PAR',
+        how: 'I fotoni in µmol/m²·s. Leggi fuori e ad altezza coltura nello stesso momento: dentro su fuori è la trasmissione. Sommato sul giorno dà il DLI.',
+      },
+      anemometer: {
+        name: 'Anemometro',
+        how: 'Un anemometro a coppe o a ultrasuoni su un palo sopra il colmo; prendi un pomeriggio estivo tipico, non le raffiche. Un anemometro a elica a mano legge la velocità attraverso un pannello o un ventilatore.',
+      },
+      co2Sensor: {
+        name: 'Sensore di CO₂ (NDIR)',
+        how: 'Un sensore infrarosso ventilato ad altezza coltura. Verificalo sull’aria esterna, circa 420 ppm, prima di ogni stagione.',
+      },
+      tracerGas: {
+        name: 'Prova di decadimento di un gas traccia',
+        how: 'In una notte calma chiudi la serra, porta la CO₂ a circa 1000 ppm e registra il calo: N = ln((C₁ − C_est) / (C₂ − C_est)) / ore.',
+      },
+      flowMeter: {
+        name: 'Misuratore di portata',
+        how: 'Un misuratore a ultrasuoni a pinza o in linea sulla condotta principale. Leggi la portata mentre funziona un settore, o la curva della pompa alla sua prevalenza di lavoro.',
+      },
+      catchCups: {
+        name: 'Prova con i bicchieri',
+        how: 'Raccogli da 10–20 gocciolatori o ugelli per qualche minuto cronometrato, misura ogni volume con un cilindro graduato e fai la media. Lo scarto mostra l’uniformità dell’impianto.',
+      },
+      drainTray: {
+        name: 'Vaschetta di drenaggio su bilancia',
+        how: 'Qualche lastra su una vaschetta con pluviometro a bascula o bilancia: quota di drenaggio = drenaggio ÷ acqua data. Misura insieme l’EC del gocciolatore e del drenaggio.',
+      },
+      pressureGauge: {
+        name: 'Manometro',
+        how: 'Un manometro a glicerina sulla mandata della pompa (1 bar vale circa 10 m di prevalenza), o un manometro differenziale su un ventilatore per la pressione statica.',
+      },
+      infrared: {
+        name: 'Termometro a contatto o a infrarossi',
+        how: 'Una sonda a contatto sui tubi di mandata e ritorno, o un termometro a infrarossi impostato sull’emissività del tubo.',
+      },
+      meters: {
+        name: 'Contatori di gas, calore ed elettricità',
+        how: 'Le letture mensili e le bollette danno il consumo reale, la potenza e le tariffe per verificare gli strumenti.',
+      },
+      climateComputer: {
+        name: 'Registri del computer climatico',
+        how: 'Set point, ore di funzionamento, cicli di nebbia e turni d’irrigazione vengono dalle impostazioni e dai registri giornalieri del computer climatico.',
+      },
+    },
+  },
   calc: {
+    science: 'La scienza dietro il calcolo',
     results: 'Risultati',
     how: 'Come si calcola',
     inputs: 'Dati',
@@ -863,6 +1107,11 @@ export const IT: SerraCopy = {
         id: 'fog',
         title: 'Nebulizzazione e strategia di raffrescamento',
         body: 'Nebbia ad alta pressione in una serra ventilata: la temperatura interna da un bilancio di calore e acqua, il ciclo acceso/spento che tiene un tetto di umidità, e l’acqua al giorno. Il consigliere verifica il pomeriggio di progetto: se le sole aperture richiedono più di quanto apra un tetto, propone ombreggio con nebbia o pannelli.',
+      },
+      {
+        id: 'science',
+        title: 'Scienza',
+        body: 'Ogni fenomeno usato dagli strumenti, spiegato: cosa succede, la formula, cosa assume e come misurare ogni dato, con quale strumento. La ⓘ accanto a ogni campo apre gli stessi consigli e rimanda qui.',
       },
     ],
     sourcesTitle: 'Fonti',

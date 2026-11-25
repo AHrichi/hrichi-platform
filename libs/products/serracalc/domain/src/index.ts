@@ -4,6 +4,7 @@ export * from './lib/data/climates.data';
 export * from './lib/data/catalogue.data';
 export * from './lib/data/sample-projects.data';
 export * from './lib/data/targets.data';
+export * from './lib/data/science.data';
 
 export * from './lib/calculations/geometry';
 export * from './lib/calculations/heating';

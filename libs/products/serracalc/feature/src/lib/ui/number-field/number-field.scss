@@ -1,6 +1,7 @@
 @use '../../styles/serra' as sc;
 
 :host {
+  position: relative;
   display: grid;
   align-content: start;
   row-gap: var(--space-1);
@@ -12,15 +13,52 @@
 .head {
   align-self: end;
   display: flex;
+  align-items: end;
   justify-content: space-between;
   gap: var(--space-2);
   font-size: var(--font-size-200);
   font-weight: var(--font-weight-medium);
 }
 
+.tail {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: var(--space-1);
+}
+
 .unit {
   color: var(--color-text-muted);
   font-weight: var(--font-weight-regular);
+}
+
+// The ⓘ: a 24 px target, as WCAG 2.2 asks at least.
+.info {
+  display: inline-grid;
+  place-items: center;
+  inline-size: 1.5rem;
+  block-size: 1.5rem;
+  padding: 0;
+  border: 1px solid var(--sc-edge, var(--color-border-strong));
+  border-radius: 50%;
+  background: var(--color-bg-surface);
+  color: var(--color-accent-default);
+  font: inherit;
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-100);
+  font-weight: var(--font-weight-bold);
+  cursor: pointer;
+
+  &:hover,
+  &.is-open {
+    border-color: var(--color-accent-default);
+    background: var(--color-accent-subtle);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-focus-ring);
+    outline-offset: 2px;
+  }
 }
 
 .exact {
@@ -37,4 +75,103 @@
 .hint {
   color: var(--color-text-muted);
   font-size: var(--font-size-100);
+}
+
+// The advice: a popover in the top layer, placed under its ⓘ from code
+// (top and left), so no panel can cover it.
+.tip {
+  position: fixed;
+  inset: auto;
+  margin: 0;
+  inline-size: min(18rem, calc(100vw - 1rem));
+  padding: var(--space-3);
+  color: var(--color-text-default);
+  border: 1px solid var(--color-accent-default);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-raised);
+  box-shadow: var(--shadow-overlay);
+  font-size: var(--font-size-100);
+  line-height: var(--font-line-height-snug);
+
+  &:popover-open {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  p {
+    margin: 0;
+  }
+
+  a {
+    color: var(--color-accent-default);
+    font-weight: var(--font-weight-semibold);
+
+    &:focus-visible {
+      outline: 2px solid var(--color-focus-ring);
+      outline-offset: 2px;
+    }
+  }
+}
+
+.tip-title {
+  font-size: var(--font-size-200);
+}
+
+.tip-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.kind {
+  @include sc.eyebrow;
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-pill);
+  background: var(--color-accent-subtle);
+  color: var(--color-accent-default);
+
+  &[data-kind='measure'] {
+    background: var(--color-success-subtle);
+    color: var(--color-success-default);
+  }
+
+  &[data-kind='assume'] {
+    background: var(--color-warning-subtle);
+    color: var(--color-warning-default);
+  }
+}
+
+.close {
+  inline-size: 1.75rem;
+  block-size: 1.75rem;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  color: var(--color-text-muted);
+  font: inherit;
+  font-size: var(--font-size-300);
+  cursor: pointer;
+
+  &:hover {
+    color: var(--color-text-default);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-focus-ring);
+  }
+}
+
+.tool {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--space-2);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-surface);
+
+  span {
+    color: var(--color-text-muted);
+  }
 }

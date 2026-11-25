@@ -22,6 +22,7 @@ export const FR: SerraCopy = {
       'Aide au dimensionnement : faites vérifier les résultats par un ingénieur qualifié et avec les données des fournisseurs avant de construire.',
   },
   nav: {
+    science: 'Science',
     calendar: 'Calendrier de culture',
     projects: 'Projets',
     greenhouse: 'Serre',
@@ -667,7 +668,251 @@ export const FR: SerraCopy = {
     heatingWeeks: 'Semaines de chauffage',
     fogWeeks: 'Semaines de brouillard',
   },
+  science: {
+    title: 'Science',
+    lead: 'Les phénomènes derrière chaque calculateur : ce qui se passe, la formule, ce qu’elle suppose, et comment mesurer chaque nombre saisi.',
+    search: 'Chercher un sujet',
+    empty: 'Aucun sujet ne correspond.',
+    contents: 'Sujets',
+    formula: 'Formule',
+    inputs: 'Données et comment les obtenir',
+    input: 'Donnée',
+    method: 'Comment',
+    instrument: 'Instrument',
+    assumptions: 'Hypothèses',
+    related: 'Liés',
+    usedIn: 'Utilisé dans',
+    sources: 'Sources',
+    instrumentsTitle: 'Instruments',
+    instrumentsLead: 'Avec quoi mesurer, et comment bien lire.',
+    howToGet: (label: string) => `Comment obtenir « ${label} »`,
+    readMore: 'Lire :',
+    close: 'Fermer',
+    groups: {
+      house: 'La serre',
+      heat: 'Chaleur',
+      air: 'Air, humidité et refroidissement',
+      water: 'Eau',
+      crop: 'Lumière, CO₂ et culture',
+    },
+    methods: {
+      measure: 'À mesurer',
+      datasheet: 'Fiche technique',
+      derived: 'Calculé',
+      setpoint: 'Votre réglage',
+      assume: 'Hypothèse de calcul',
+      bill: 'Vos factures',
+    },
+    methodHints: {
+      measure: 'À relever sur place avec l’instrument ci-dessous.',
+      datasheet:
+        'À prendre sur la fiche technique du fournisseur ; l’aide donne une valeur courante.',
+      derived:
+        'SerraCalc le calcule à partir de la serre ou d’un autre outil ; remplacez-le si vous savez mieux.',
+      setpoint: 'Un choix : une consigne ou un objectif de conduite.',
+      assume:
+        'Une valeur courante de la pratique ; affinez-la avec vos propres relevés.',
+      bill: 'Votre tarif ou facteur, dans la devise du projet.',
+    },
+    topics: {
+      geometry: {
+        title: 'Géométrie de la serre',
+        what: 'Toutes les charges dépendent de trois nombres : le sol (où l’on cultive et où tombe le soleil), la couverture (qui perd la chaleur) et le volume d’air (qui amortit chaleur, humidité et CO₂). Une serre haute a plus d’air par m² et varie moins.',
+        assumptions: [
+          'Les toits sont des pentes droites, ou une demi-ellipse pour un arceau.',
+          'Les pignons comptent comme couverture ; portes et chéneaux sont ignorés.',
+        ],
+      },
+      heatLoss: {
+        title: 'Pertes de chaleur par la couverture',
+        what: 'La chaleur traverse la couverture de la serre chaude vers la nuit froide, selon la surface, l’écart de température et le coefficient U. Un écran thermique fermé la réduit ; le soubassement perd un peu plus le long du périmètre.',
+        assumptions: [
+          'Les U sont des valeurs de calcul pour une nuit calme et claire (ASAE EP406).',
+          'La nuit de calcul revient la plupart des hivers ; ce n’est pas le record.',
+        ],
+      },
+      airLeakage: {
+        title: 'Fuites d’air',
+        what: 'L’air froid entre par les jointures, les ouvrants et les portes, et doit être chauffé. Le taux de renouvellement N dit combien de fois par heure tout le volume est remplacé : près de 0,5 pour un double film étanche, 1,5–2 pour un vieux verre.',
+        assumptions: [
+          'Les fuites ne varient pas avec le vent dans ces outils.',
+          '0,335 Wh par m³ et par K est la capacité calorifique de l’air vers 20 °C.',
+        ],
+      },
+      hotWater: {
+        title: 'Tubes de chauffage à eau chaude',
+        what: 'Une boucle cède sa chaleur par convection et rayonnement. La chute de température de l’eau fixe le débit (1,163 kWh par m³ et par K) et la puissance par mètre fixe la longueur de tube. L’eau géothermale à 60–75 °C demande plus de tube qu’une chaudière à 80–90 °C.',
+        assumptions: [
+          'Convection libre autour d’un tube horizontal : h = 1,32 (ΔT/D)^0,25.',
+          'La surface du tube est à la température moyenne de l’eau.',
+        ],
+      },
+      solarGain: {
+        title: 'Apport solaire',
+        what: 'Le soleil qui traverse la couverture devient chaleur. Une partie sert à la culture pour évaporer l’eau ; le reste chauffe l’air et doit sortir par les ouvrants, les pads ou le brouillard. L’ombrage et le blanchiment la coupent à la source.',
+        assumptions: [
+          'La transmission inclut la structure et la poussière.',
+          'Une culture pleine consacre environ la moitié du soleil à la transpiration.',
+        ],
+      },
+      ventilation: {
+        title: 'Aération naturelle',
+        what: 'L’air chaud monte et sort par les ouvrants du faîtage (effet cheminée) et le vent fait passer l’air. La surface d’ouvrants nécessaire grimpe vite quand la serre ne doit dépasser l’extérieur que de quelques degrés ; au-delà d’environ 30 % du sol, les ouvrants seuls ne suffisent plus.',
+        assumptions: [
+          'Boulard et Baille (1995) : Cd 0,65 et Cw 0,1 pour les ouvrants de toit.',
+          'Air à 1,2 kg/m³ et 1005 J/kg·K.',
+        ],
+      },
+      evaporativeCooling: {
+        title: 'Refroidissement par évaporation et bulbe humide',
+        what: 'L’eau qui s’évapore dans l’air sec lui prend de la chaleur. On ne peut pas refroidir l’air sous sa température de bulbe humide, qui baisse quand l’air est plus sec : à 44 °C et 15 %, le bulbe humide est vers 22 °C. Un pad mouillé fait 75–85 % du chemin.',
+        assumptions: [
+          'Bulbe humide selon Stull (2011), à environ 0,3 K près.',
+          'L’air se réchauffe régulièrement entre les pads et les ventilateurs.',
+        ],
+      },
+      fogging: {
+        title: 'Brumisation haute pression',
+        what: 'Des buses à 40–70 bar font des gouttelettes de 10–30 µm qui s’évaporent avant de tomber, rafraîchissant l’air pendant que les ouvrants restent ouverts. L’humidité est la limite : le brouillard est réduit pour rester sous un plafond, en général 70–80 %.',
+        assumptions: [
+          'Tout le brouillard s’évapore tant que l’air reste sous le plafond.',
+          'Le débit des ouvrants suit Boulard et Baille, selon le vent et l’écart de température.',
+        ],
+      },
+      vpd: {
+        title: 'Déficit de pression de vapeur (VPD)',
+        what: 'Le VPD est la quantité d’eau que l’air pourrait encore prendre à sa température. Il pilote la transpiration : trop bas, la plante ne fait plus circuler l’eau et le calcium et les champignons s’installent ; trop haut, les stomates se ferment et la plante flétrit. Un même VPD correspond à beaucoup de couples température–humidité.',
+        assumptions: [
+          'La feuille et l’air sont pris à la même température.',
+          'Pression de vapeur saturante selon Tetens, comme la FAO-56.',
+        ],
+      },
+      dewPoint: {
+        title: 'Point de rosée et condensation',
+        what: 'L’air refroidi jusqu’à son point de rosée commence à perdre de l’eau. La nuit, la face intérieure de la couverture est plus froide que l’air ; sous le point de rosée, elle goutte sur la culture et propage les maladies.',
+        assumptions: [
+          'La face intérieure échange environ 8 W/m²·K avec l’air.',
+          'Le ciel nocturne et le vent sont compris dans le coefficient U.',
+        ],
+      },
+      nightHumidity: {
+        title: 'Déshumidifier la nuit',
+        what: 'La nuit, la culture transpire encore. Cette eau doit sortir avec un air extérieur qui en contient moins, et cet air doit être chauffé. Aérer ne sèche pas la serre quand l’air extérieur contient plus d’eau en valeur absolue.',
+        assumptions: [
+          'Eau en grammes par kg d’air sec, à la pression du niveau de la mer.',
+          'La condensation sur la couverture n’est pas comptée comme sortie.',
+        ],
+      },
+      transpiration: {
+        title: 'Transpiration et irrigation',
+        what: 'Une culture transpire environ les deux tiers du soleil reçu : ses besoins suivent le rayonnement intérieur. En hors-sol on ajoute le drainage pour lessiver les sels ; avec une eau saumâtre, la part de drainage doit augmenter.',
+        assumptions: [
+          '2,45 MJ évaporent un litre d’eau.',
+          'Le couvert végétal réduit la consommation d’une jeune culture.',
+        ],
+      },
+      rainHarvest: {
+        title: 'Récupération d’eau de pluie',
+        what: 'Le toit d’une serre est un grand impluvium. Un bassin garde la pluie entre deux orages : mois après mois il se remplit, se vide dans l’irrigation et déborde quand il est plein.',
+        assumptions: [
+          'Totaux mensuels ; un gros orage est vérifié à part.',
+          'Les premiers millimètres de chaque pluie sont perdus.',
+        ],
+      },
+      light: {
+        title: 'Lumière pour la culture (DLI)',
+        what: 'Les plantes comptent des photons, pas des watts : l’intégrale lumineuse journalière est le nombre de moles de lumière photosynthétique par m² et par jour, et environ 47 % du soleil est du PAR. Les lampes comblent l’écart des mois sombres ; l’ombrage garde les mois lumineux sous le plafond de la culture.',
+        assumptions: [
+          '4,57 µmol de photons par joule de PAR solaire.',
+          'Les lampes sont dimensionnées pour le mois le plus sombre.',
+        ],
+      },
+      co2: {
+        title: 'Enrichissement en CO₂',
+        what: 'La culture prend le CO₂ de l’air, et 700–900 ppm augmentent le rendement. Ce qu’on apporte va dans la culture ou part avec l’air : l’enrichissement paie quand les ouvrants sont presque fermés. Un brûleur à gaz ou une cogénération donnent CO₂ et chaleur ensemble.',
+        assumptions: [
+          '1,83 g de CO₂ par m³ d’air pour 1000 ppm.',
+          '1 m³ de gaz naturel brûlé donne 1,96 kg de CO₂.',
+        ],
+      },
+      cropCalendar: {
+        title: 'L’année de culture',
+        what: 'Une culture passe par des stades qui veulent des climats différents. Lu avec les normales climatiques, le calendrier montre quand les nuits demandent de la chaleur, quand la serre reste assez fermée pour le CO₂, et quand le soleil appelle ombrage et brouillard.',
+        assumptions: [
+          'Les valeurs hebdomadaires sont lues entre les normales mensuelles.',
+          'Les durées des stades sont courantes ; vérifiez-les avec le semencier.',
+        ],
+      },
+    },
+    instruments: {
+      tape: {
+        name: 'Mètre ruban ou télémètre laser',
+        how: 'Mesurer chapelles, longueurs et hauteurs du sol au chéneau. Compter chapelles, plants, goutteurs et buses sur quelques rangs, puis extrapoler.',
+      },
+      thermometer: {
+        name: 'Thermomètre d’air ventilé',
+        how: 'Un capteur dans un abri blanc ventilé, à hauteur de culture, à l’ombre. Un capteur au soleil lit plusieurs degrés de trop.',
+      },
+      hygrometer: {
+        name: 'Capteur d’humidité ou psychromètre',
+        how: 'Un capteur capacitif dans le même abri ventilé, vérifié chaque année avec un psychromètre à bulbes sec et humide. Lire température et humidité ensemble.',
+      },
+      weatherStation: {
+        name: 'Station météo extérieure',
+        how: 'Température et humidité sous abri à 2 m, loin des serres. Pour les valeurs de calcul, prendre les nuits froides et les après-midi chauds de plusieurs années.',
+      },
+      pyranometer: {
+        name: 'Pyranomètre',
+        how: 'Le rayonnement global en W/m², horizontal et propre, au-dessus du toit. L’ordinateur climatique en a souvent un ; ses sommes journalières en MJ/m² alimentent les outils eau et lumière.',
+      },
+      parSensor: {
+        name: 'Capteur PAR (quantique)',
+        how: 'Les photons en µmol/m²·s. Lire dehors et à hauteur de culture au même moment : dedans sur dehors donne la transmission. Sommé sur la journée, il donne la DLI.',
+      },
+      anemometer: {
+        name: 'Anémomètre',
+        how: 'Un anémomètre à coupelles ou ultrasonique sur un mât au-dessus du faîtage ; prendre un après-midi d’été courant, pas les rafales. Un anémomètre à hélice à main lit la vitesse dans un pad ou un ventilateur.',
+      },
+      co2Sensor: {
+        name: 'Capteur de CO₂ (NDIR)',
+        how: 'Un capteur infrarouge ventilé à hauteur de culture. Le vérifier sur l’air extérieur, vers 420 ppm, avant chaque saison.',
+      },
+      tracerGas: {
+        name: 'Test de décroissance d’un gaz traceur',
+        how: 'Par une nuit calme, fermer la serre, monter le CO₂ vers 1000 ppm et enregistrer sa baisse : N = ln((C₁ − C_ext) / (C₂ − C_ext)) / heures.',
+      },
+      flowMeter: {
+        name: 'Débitmètre',
+        how: 'Un débitmètre à ultrasons sur tube ou en ligne sur la conduite principale. Lire le débit pendant qu’un secteur tourne, ou la courbe de la pompe à sa hauteur de travail.',
+      },
+      catchCups: {
+        name: 'Test aux gobelets',
+        how: 'Recueillir 10–20 goutteurs ou buses pendant quelques minutes chronométrées, mesurer chaque volume à l’éprouvette et faire la moyenne. L’écart montre l’uniformité du réseau.',
+      },
+      drainTray: {
+        name: 'Bac de drainage sur balance',
+        how: 'Quelques pains sur un bac avec auget basculeur ou balance : part de drainage = drainage ÷ eau apportée. Mesurer en même temps l’EC du goutteur et du drainage.',
+      },
+      pressureGauge: {
+        name: 'Manomètre',
+        how: 'Un manomètre à glycérine à la sortie de la pompe (1 bar vaut environ 10 m de hauteur), ou un manomètre différentiel sur un ventilateur pour sa pression statique.',
+      },
+      infrared: {
+        name: 'Thermomètre de contact ou infrarouge',
+        how: 'Une sonde de contact sur les tubes aller et retour, ou un thermomètre infrarouge réglé sur l’émissivité du tube.',
+      },
+      meters: {
+        name: 'Compteurs de gaz, de chaleur et d’électricité',
+        how: 'Les relevés mensuels et les factures donnent la consommation réelle, la puissance et les tarifs pour vérifier les outils.',
+      },
+      climateComputer: {
+        name: 'Journaux de l’ordinateur climatique',
+        how: 'Consignes, heures de marche, cycles de brouillard et apports d’irrigation viennent des réglages et des journaux de l’ordinateur climatique.',
+      },
+    },
+  },
   calc: {
+    science: 'La science derrière',
     results: 'Résultats',
     how: 'Comment c’est calculé',
     inputs: 'Données',
@@ -859,6 +1104,11 @@ export const FR: SerraCopy = {
         id: 'fog',
         title: 'Brumisation et stratégie de refroidissement',
         body: 'Le brouillard haute pression dans une serre aérée : la température intérieure par un bilan de chaleur et d’eau, le cycle marche/arrêt qui tient un plafond d’humidité, et l’eau par jour. Le conseiller vérifie l’après-midi de calcul : quand les ouvrants seuls demanderaient plus qu’un toit n’ouvre, il propose l’ombrage avec brouillard ou pads.',
+      },
+      {
+        id: 'science',
+        title: 'Science',
+        body: 'Chaque phénomène utilisé par les outils, expliqué : ce qui se passe, la formule, ce qu’elle suppose, et comment mesurer chaque donnée, avec quel instrument. Le ⓘ à côté de chaque champ ouvre les mêmes conseils et renvoie ici.',
       },
     ],
     sourcesTitle: 'Sources',

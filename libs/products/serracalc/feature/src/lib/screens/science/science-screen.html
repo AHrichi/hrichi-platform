@@ -1,0 +1,177 @@
+<section class="screen" aria-labelledby="sc-science-title">
+  <header class="head">
+    <div>
+      <h2 id="sc-science-title">{{ t().science.title }}</h2>
+      <p>{{ t().science.lead }}</p>
+    </div>
+  </header>
+
+  <div class="layout">
+    <nav class="index" [attr.aria-label]="t().science.contents">
+      <label class="search">
+        <span>{{ t().science.search }}</span>
+        <input type="search" [value]="query()" (input)="onSearch($event)" />
+      </label>
+      @for (group of groups(); track group.id) {
+        <span class="eyebrow">{{ t().science.groups[group.id] }}</span>
+        <ul role="list">
+          @for (p of group.topics; track p.id) {
+            <li>
+              <a
+                [routerLink]="[]"
+                [queryParams]="{ topic: p.id }"
+                [class.is-active]="activeTopic() === p.id"
+                >{{ t().science.topics[p.id].title }}</a
+              >
+            </li>
+          }
+        </ul>
+      } @empty {
+        <p class="muted">{{ t().science.empty }}</p>
+      }
+      <span class="eyebrow">{{ t().science.instrumentsTitle }}</span>
+      <ul role="list">
+        @for (id of instruments; track id) {
+          <li>
+            <a
+              [routerLink]="[]"
+              [queryParams]="{ instrument: id }"
+              [class.is-active]="activeInstrument() === id"
+              >{{ t().science.instruments[id].name }}</a
+            >
+          </li>
+        }
+      </ul>
+    </nav>
+
+    <div class="articles">
+      @for (p of topics(); track p.id) {
+        <article
+          class="topic"
+          tabindex="-1"
+          [id]="'sc-topic-' + p.id"
+          [class.is-active]="activeTopic() === p.id"
+          [attr.aria-labelledby]="'sc-topic-title-' + p.id"
+        >
+          <span class="eyebrow">{{ t().science.groups[p.group] }}</span>
+          <h3 [id]="'sc-topic-title-' + p.id">
+            {{ t().science.topics[p.id].title }}
+          </h3>
+          <p class="what">{{ t().science.topics[p.id].what }}</p>
+
+          <h4>{{ t().science.formula }}</h4>
+          <pre class="formula" dir="ltr"><code>{{ p.formula }}</code></pre>
+
+          <h4>{{ t().science.inputs }}</h4>
+          <div
+            class="table-wrap"
+            tabindex="0"
+            role="region"
+            [attr.aria-label]="
+              t().science.inputs + ': ' + t().science.topics[p.id].title
+            "
+          >
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col">{{ t().science.input }}</th>
+                  <th scope="col">{{ t().science.method }}</th>
+                  <th scope="col">{{ t().science.instrument }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (key of p.inputs; track key) {
+                  <tr>
+                    <th scope="row">{{ label(key) }}</th>
+                    <td>
+                      @if (methods[key]; as m) {
+                        <span class="kind" [attr.data-kind]="m.kind">{{
+                          t().science.methods[m.kind]
+                        }}</span>
+                      }
+                    </td>
+                    <td>
+                      @if (methods[key]?.instrument; as tool) {
+                        <a
+                          [routerLink]="[]"
+                          [queryParams]="{ instrument: tool }"
+                          >{{ t().science.instruments[tool].name }}</a
+                        >
+                      } @else {
+                        {{ t().common.none }}
+                      }
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+
+          <h4>{{ t().science.assumptions }}</h4>
+          <ul class="assumptions">
+            @for (a of t().science.topics[p.id].assumptions; track $index) {
+              <li>{{ a }}</li>
+            }
+          </ul>
+
+          <div class="links">
+            <div>
+              <h4>{{ t().science.related }}</h4>
+              <ul role="list" class="chips">
+                @for (id of p.related; track id) {
+                  <li>
+                    <a [routerLink]="[]" [queryParams]="{ topic: id }">{{
+                      t().science.topics[id].title
+                    }}</a>
+                  </li>
+                }
+              </ul>
+            </div>
+            <div>
+              <h4>{{ t().science.usedIn }}</h4>
+              <ul role="list" class="chips tools">
+                @for (tool of p.tools; track $index) {
+                  <li>
+                    <a
+                      [routerLink]="['..', tool.screen]"
+                      [queryParams]="tool.tab ? { tab: tool.tab } : {}"
+                      >{{ toolLabel(tool) }} →</a
+                    >
+                  </li>
+                }
+              </ul>
+            </div>
+          </div>
+
+          <p class="sources">
+            {{ t().science.sources }}:
+            @for (s of p.sources; track s; let last = $last) {
+              {{ sources[s] }}{{ last ? '' : ' · ' }}
+            }
+          </p>
+        </article>
+      }
+
+      <section class="topic instruments" aria-labelledby="sc-instruments-title">
+        <h3 id="sc-instruments-title">{{ t().science.instrumentsTitle }}</h3>
+        <p class="what">{{ t().science.instrumentsLead }}</p>
+        <div class="instrument-grid">
+          @for (id of instruments; track id) {
+            <div
+              class="instrument"
+              tabindex="-1"
+              [id]="'sc-instrument-' + id"
+              [class.is-active]="activeInstrument() === id"
+            >
+              <h4>{{ t().science.instruments[id].name }}</h4>
+              <p>{{ t().science.instruments[id].how }}</p>
+              @if (measures()[id].length) {
+                <p class="measures">{{ measures()[id].join(' · ') }}</p>
+              }
+            </div>
+          }
+        </div>
+      </section>
+    </div>
+  </div>
+</section>
