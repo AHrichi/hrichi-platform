@@ -9,6 +9,13 @@ export const IT: SerraCopy = {
     name: 'SerraCalc',
     tagline: 'Calore, acqua e clima della serra',
     activeProject: 'Progetto attivo',
+    update: {
+      ready: 'È pronta una nuova versione di SerraCalc.',
+      broken:
+        'Questa copia salvata di SerraCalc non riesce ad aggiornarsi. Ricarica per scaricarla da capo; i tuoi progetti restano su questo dispositivo.',
+      reload: 'Ricarica',
+      later: 'Più tardi',
+    },
     offline: 'Funziona offline',
     offlineHint:
       'I progetti sono salvati su questo dispositivo; non serve la connessione.',

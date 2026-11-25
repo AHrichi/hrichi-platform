@@ -9,6 +9,13 @@ export const DE: SerraCopy = {
     name: 'SerraCalc',
     tagline: 'Wärme, Wasser und Klima im Gewächshaus',
     activeProject: 'Aktives Projekt',
+    update: {
+      ready: 'Eine neue Version von SerraCalc ist bereit.',
+      broken:
+        'Diese gespeicherte Kopie von SerraCalc kann sich nicht aktualisieren. Neu laden holt sie frisch; Ihre Projekte bleiben auf diesem Gerät.',
+      reload: 'Neu laden',
+      later: 'Später',
+    },
     offline: 'Funktioniert offline',
     offlineHint:
       'Projekte werden auf diesem Gerät gespeichert; keine Verbindung nötig.',

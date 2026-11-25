@@ -154,6 +154,36 @@
     }
   </div>
 
+  <!-- A new version is ready (standalone; inside the portfolio the site's
+       banner says so). Always present, so screen readers hear it appear. -->
+  @if (standalone) {
+    <div class="update-region" aria-live="polite">
+      @if (updates.visible()) {
+        <div class="update">
+          <p>
+            {{
+              updates.state() === 'broken'
+                ? t().app.update.broken
+                : t().app.update.ready
+            }}
+          </p>
+          <div class="update-actions">
+            <button type="button" class="update-go" (click)="updates.reload()">
+              {{ t().app.update.reload }}
+            </button>
+            <button
+              type="button"
+              class="update-later"
+              (click)="updates.dismiss()"
+            >
+              {{ t().app.update.later }}
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+  }
+
   <nav class="bottom" [attr.aria-label]="t().app.sections">
     @for (item of primary; track item.id) {
       <a

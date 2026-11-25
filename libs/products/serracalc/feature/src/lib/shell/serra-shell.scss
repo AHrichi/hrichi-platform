@@ -623,6 +623,71 @@
   font-size: var(--font-size-100);
 }
 
+// ------------------------------------------------- a new version is ready
+
+.update {
+  position: fixed;
+  inset-inline: var(--space-3);
+  inset-block-end: calc(
+    var(--sc-bottom-bar) + env(safe-area-inset-bottom) + var(--space-2)
+  );
+  z-index: 45;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-accent-default);
+  border-radius: var(--radius-lg);
+  background: var(--sc-glass-strong);
+  backdrop-filter: var(--sc-blur);
+  box-shadow: var(--shadow-overlay);
+
+  @media (min-width: 48rem) {
+    inset-inline: auto var(--space-5);
+    inset-block-end: var(--space-5);
+    max-inline-size: 26rem;
+  }
+
+  p {
+    flex: 1 1 12rem;
+    margin: 0;
+    font-size: var(--font-size-200);
+  }
+}
+
+.update-actions {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.update-go,
+.update-later {
+  min-block-size: 2.75rem;
+  padding-inline: var(--space-4);
+  border: 1px solid var(--color-accent-default);
+  border-radius: var(--radius-pill);
+  font: inherit;
+  font-size: var(--font-size-200);
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: 2px solid var(--color-focus-ring);
+    outline-offset: 2px;
+  }
+}
+
+.update-go {
+  background: var(--color-accent-solid);
+  color: var(--color-accent-on-solid);
+  font-weight: var(--font-weight-semibold);
+}
+
+.update-later {
+  background: none;
+  color: var(--color-accent-default);
+}
+
 // ------------------------------------------- phones: the bottom bar
 
 .bottom {
@@ -760,6 +825,7 @@
 
 // Printing (the project report): only the page's content.
 @media print {
+  .update-region,
   .top,
   .bar,
   .horizon,

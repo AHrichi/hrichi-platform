@@ -25,6 +25,7 @@ import { APP_MODE } from '@ah/platform/app-mode';
 import { PreferencesStore } from '@ah/shared/state';
 import { isoWeek } from '@ah/products/serracalc/domain';
 import { SerraI18n } from '../i18n/serra-i18n';
+import { SerraUpdates } from '../services/serra-updates';
 import { SerraStore } from '../store/serra.store';
 import { Icon, type IconName } from '../ui/icon/icon';
 import { LangMenu } from '../ui/lang-menu/lang-menu';
@@ -118,6 +119,8 @@ export class SerraShell {
   }));
   protected readonly primary = NAV.slice(0, 4);
   protected readonly secondary = NAV.slice(4);
+  /** A new version, downloaded by the service worker (standalone). */
+  protected readonly updates = inject(SerraUpdates);
   protected readonly week = isoWeek(new Date());
   protected readonly moreOpen = signal(false);
   private readonly moreSheet = viewChild<ElementRef<HTMLElement>>('moreSheet');
@@ -154,7 +157,10 @@ export class SerraShell {
         title.setTitle(`${this.t().nav[screen.id]} · SerraCalc`);
       }
     });
-    if (this.standalone) this.floatHeader();
+    if (this.standalone) {
+      this.floatHeader();
+      afterNextRender(() => this.updates.start());
+    }
   }
 
   /**

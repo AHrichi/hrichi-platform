@@ -9,6 +9,13 @@ export const EN = {
     name: 'SerraCalc',
     tagline: 'Greenhouse heat, water & climate',
     activeProject: 'Active project',
+    update: {
+      ready: 'A new version of SerraCalc is ready.',
+      broken:
+        'This saved copy of SerraCalc can’t update itself. Reload to fetch it fresh; your projects stay on this device.',
+      reload: 'Reload',
+      later: 'Later',
+    },
     offline: 'Works offline',
     offlineHint: 'Projects are saved on this device; no connection needed.',
     sunlight: 'Sunlight',
