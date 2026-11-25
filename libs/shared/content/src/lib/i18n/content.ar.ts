@@ -70,7 +70,7 @@ export const CONTENT_AR: ContentBundle = {
   ],
   education: [
     {
-      title: 'الشهادة الوطنية لمهندس',
+      title: 'الشهادة الوطنية لمهندس في الهندسة الطاقية',
       school: 'المدرسة الوطنية للمهندسين بالمنستير (ENIM)',
       period: '2017 – 2020',
     },

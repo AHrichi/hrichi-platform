@@ -1,5 +1,6 @@
 import { audienceCopy, audiences, isAudience, mailto } from './audiences';
 import { caseStudies, caseStudyBySlug } from './case-studies';
+import { getEnergyProfile } from './energy';
 import { experience, formatMonth, rolePeriod } from './experience';
 import { services } from './services';
 import {
@@ -19,6 +20,8 @@ const routes = [
   '/work',
   '/services',
   '/cv',
+  '/cv/energy',
+  '/energy',
   ...caseStudies.map((study) => `/work/${study.slug}`),
 ];
 
@@ -127,6 +130,29 @@ describe('content', () => {
         }
       });
     }
+
+    it('tells the energy track the same way in every language', () => {
+      const en = getEnergyProfile('en');
+      for (const lang of supportedLangs) {
+        const energy = getEnergyProfile(lang);
+        expect(energy.role).toBeTruthy();
+        expect(energy.summary).toBeTruthy();
+        expect(energy.skills.length).toBe(en.skills.length);
+        expect(energy.targetRoles.length).toBe(en.targetRoles.length);
+        expect(energy.projects.map((p) => p.id)).toEqual(
+          en.projects.map((p) => p.id),
+        );
+        energy.projects.forEach((project, i) => {
+          expect(project.highlights.length).toBe(
+            en.projects[i].highlights.length,
+          );
+          expect(project.methods).toEqual(en.projects[i].methods);
+        });
+        // The energy degree is the engineering degree the CV already lists.
+        const [degree] = getContentBundle(lang).education;
+        expect(energy.degree).toEqual(degree);
+      }
+    });
 
     it('formats localized months and periods correctly', () => {
       expect(formatMonth('2023-10', 'en')).toContain('2023');

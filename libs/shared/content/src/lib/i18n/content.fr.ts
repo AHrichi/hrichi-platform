@@ -70,7 +70,7 @@ export const CONTENT_FR: ContentBundle = {
   ],
   education: [
     {
-      title: 'Diplôme National d’Ingénieur',
+      title: 'Diplôme National d’Ingénieur en Génie Énergétique',
       school: 'École Nationale d’Ingénieurs de Monastir (ENIM)',
       period: '2017 – 2020',
     },

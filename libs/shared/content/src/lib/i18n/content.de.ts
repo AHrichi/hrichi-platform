@@ -70,7 +70,7 @@ export const CONTENT_DE: ContentBundle = {
   ],
   education: [
     {
-      title: 'Staatliches Ingenieurdiplom',
+      title: 'Staatliches Ingenieurdiplom in Energietechnik',
       school: 'Nationale Ingenieurschule von Monastir (ENIM)',
       period: '2017 – 2020',
     },
