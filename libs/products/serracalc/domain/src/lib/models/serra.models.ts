@@ -768,6 +768,112 @@ export interface CalendarResult {
 }
 
 // ---------------------------------------------------------------------------
+// The water chain: seawater RO and fertigation with drain recycling
+// ---------------------------------------------------------------------------
+
+export interface RoParams {
+  /** Irrigation the plant must supply on the peak day, m³. */
+  demandM3Day: number;
+  /** Losses on the way (flushing, leaks, filters), percent of demand. */
+  lossesPct: number;
+  /** Salinity of the seawater, g/L (39–40 on the Gabès coast). */
+  feedSalinityGL: number;
+  /** Product over feed, percent (seawater RO: 40–50). */
+  recoveryPct: number;
+  /** Salt the membranes hold back, percent. */
+  rejectionPct: number;
+  /** Specific energy, kWh per m³ of product (typical 3–4). */
+  secKwhM3: number;
+  /** Electricity, per kWh in the project's currency. */
+  electricityPrice: number;
+  /** Days of product to store. */
+  storageDays: number;
+  /** Product the installed plant makes at full output, m³/day. */
+  capacityM3Day: number;
+  /** Share of the time the plant runs (cleaning, maintenance), percent. */
+  availabilityPct: number;
+}
+
+export interface RoResult {
+  needM3Day: number;
+  feedM3Day: number;
+  brineM3Day: number;
+  brineSalinityGL: number;
+  /** Salt left in the product, mg/L. */
+  productMgL: number;
+  /** Its EC, dS/m (about mg/L ÷ 640). */
+  productEcDsM: number;
+  energyKwhDay: number;
+  powerKw: number;
+  costDay: number;
+  costPerM3: number;
+  tankM3: number;
+  /** What the installed plant covers of the need, percent. */
+  coveragePct: number;
+  notes: CalcNote[];
+}
+
+export interface FertigationParams {
+  /** Water given at the drippers, m³ a day. */
+  appliedM3Day: number;
+  /** Drain share of what is given, percent. */
+  drainPct: number;
+  /** Share of the drain disinfected and reused, percent. */
+  recyclePct: number;
+  /** EC of the fresh water (RO product or well), dS/m. */
+  sourceEcDsM: number;
+  /** Sodium in the fresh water, mmol/L. */
+  sourceNaMmolL: number;
+  /** EC of the nutrient solution at the dripper, dS/m. */
+  targetEcDsM: number;
+  /** EC the crop takes up with its water, dS/m (tomato about 1.5–2). */
+  uptakeEcDsM: number;
+  /** Flush the recirculating water when its EC reaches this, dS/m. */
+  flushEcDsM: number;
+  /** ...or when its sodium reaches this, mmol/L. */
+  naLimitMmolL: number;
+  /** Water in the loop: slabs, pipes and tanks, m³. */
+  systemM3: number;
+  /** Stock dilution, 1 : this (100 or 200). */
+  dilution: number;
+  /** Each of the A and B stock tanks, m³. */
+  stockTankM3: number;
+  /** Yield lost per dS/m above the threshold, percent (indicative). */
+  yieldSlopePct: number;
+  /** Root-zone EC where losses start, dS/m. */
+  yieldThresholdEc: number;
+}
+
+export interface FertigationDay {
+  day: number;
+  naMmolL: number;
+  /** EC of the solution at the dripper with that sodium in it, dS/m. */
+  feedEcDsM: number;
+}
+
+export interface FertigationResult {
+  drainM3Day: number;
+  reusedM3Day: number;
+  dischargedM3Day: number;
+  freshM3Day: number;
+  drainEcDsM: number;
+  rootEcDsM: number;
+  yieldLossPct: number;
+  waterSavedPct: number;
+  fertiliserSavedPct: number;
+  /** Stock from each of tank A and tank B a day, L. */
+  stockLDay: number;
+  stockDays: number;
+  /** Days until a flush (null: sodium levels off under the limit). */
+  flushDay: number | null;
+  /** Where sodium levels off when part of the drain is let go, mmol/L. */
+  naEquilibriumMmolL: number | null;
+  /** The first 120 days of the loop. */
+  days: FertigationDay[];
+  notes: CalcNote[];
+}
+
+// ---------------------------------------------------------------------------
 // Projects and saved results
 // ---------------------------------------------------------------------------
 
@@ -793,7 +899,9 @@ export type SavedCalculation =
   | SavedCalcBase<'humidity', HumidityParams>
   | SavedCalcBase<'vpd', VpdParams>
   | SavedCalcBase<'fog', FogParams>
-  | SavedCalcBase<'calendar', CalendarParams>;
+  | SavedCalcBase<'calendar', CalendarParams>
+  | SavedCalcBase<'ro', RoParams>
+  | SavedCalcBase<'fertigation', FertigationParams>;
 
 export type CalcKind = SavedCalculation['kind'];
 

@@ -22,6 +22,7 @@ export const DE: SerraCopy = {
       'Eine Planungshilfe: Prüfen Sie die Ergebnisse mit einer Fachingenieurin oder einem Fachingenieur und den Daten der Lieferanten, bevor Sie bauen.',
   },
   nav: {
+    supply: 'Wasserversorgung',
     science: 'Wissen',
     calendar: 'Anbaukalender',
     projects: 'Projekte',
@@ -122,6 +123,28 @@ export const DE: SerraCopy = {
   },
 
   fields: {
+    demandM3Day: 'Wasserbedarf am Spitzentag',
+    lossesPct: 'Verluste',
+    feedSalinityGL: 'Salzgehalt des Meerwassers',
+    recoveryPct: 'Ausbeute',
+    rejectionPct: 'Salzrückhalt',
+    secKwhM3: 'Spezifische Energie',
+    storageDays: 'Speicher',
+    capacityM3Day: 'Installierte Leistung',
+    availabilityPct: 'Laufzeit',
+    appliedM3Day: 'Gegebenes Wasser pro Tag',
+    recyclePct: 'Wiederverwendeter Drain',
+    sourceEcDsM: 'EC des Frischwassers',
+    sourceNaMmolL: 'Natrium im Frischwasser',
+    targetEcDsM: 'EC am Tropfer',
+    uptakeEcDsM: 'Von der Kultur aufgenommene EC',
+    flushEcDsM: 'Spülen über EC',
+    naLimitMmolL: 'Spülen über Natrium',
+    systemM3: 'Wasser im Kreislauf',
+    dilution: 'Verdünnung der Stammlösung',
+    stockTankM3: 'Jeder Stammlösungstank',
+    yieldSlopePct: 'Ertragsverlust je dS/m',
+    yieldThresholdEc: 'Verluste ab',
     rhPct: 'Relative Luftfeuchte',
     ventPct: 'Geöffnete Lüftung',
     nozzlesPer100M2: 'Düsen',
@@ -211,6 +234,16 @@ export const DE: SerraCopy = {
     nightHours: 'Nachtlänge',
   } as Record<string, string>,
   hints: {
+    feedSalinityGL: 'Das Meer vor Gabès: 39–40 g/L',
+    recoveryPct: 'Meerwasser-UO: 40–50 %; darüber steigt die Sole schnell',
+    secKwhM3: 'Üblich 3–4 mit Energierückgewinnung; mit dem Lieferanten klären',
+    storageDays: 'Ein bis drei Tage überbrücken einen Reinigungsstopp',
+    recyclePct: 'Wüstenbetriebe nutzen 30–50 % ihres Wassers wieder',
+    targetEcDsM: 'Tomate, Nachfülllösung: etwa 2,7',
+    flushEcDsM: 'Eine übliche Obergrenze: 4,5',
+    naLimitMmolL: 'Tomate: bei etwa 8 mmol/L spülen',
+    systemM3: 'Matten, Rohre und Tanks: etwa 4 L je m²',
+    yieldSlopePct: 'Richtwert: 7,3 % aus einem Versuch; eigenen Wert setzen',
     ventPct: 'Beim Nebeln die Lüftung drosseln: 5–15 % der Fläche',
     nozzlesPer100M2: '27 Düsen mit 5,4 L/h geben etwa 24 g/m² pro Minute',
     pressureBar: 'Hochdruck, 40–70 bar, für Tröpfchen von 10–30 µm',
@@ -310,6 +343,8 @@ export const DE: SerraCopy = {
     deleteResult: (label: string) => `„${label}“ löschen?`,
   },
   kinds: {
+    ro: 'Meerwasser-Umkehrosmose',
+    fertigation: 'Fertigation und Drain',
     vpd: 'Feuchte und VPD',
     fog: 'Hochdrucknebel',
     calendar: 'Anbaukalender',
@@ -710,6 +745,22 @@ export const DE: SerraCopy = {
       bill: 'Ihr eigener Tarif oder Faktor, in der Währung des Projekts.',
     },
     topics: {
+      desalination: {
+        title: 'Meerwasserentsalzung durch Umkehrosmose',
+        what: 'Hoher Druck presst Meerwasser durch Membranen, die das Salz zurückhalten. Die Ausbeute ist der Anteil, der als Permeat durchkommt; der Rest geht als Sole, entsprechend salziger. Das Pumpen gegen den osmotischen Druck braucht mit Energierückgewinnung 3–4 kWh je m³.',
+        assumptions: [
+          'Das Permeat behält (1 − Rückhalt) des mittleren Salzgehalts entlang der Membranen.',
+          'Energie und Ausbeute sind übliche Werte; mit dem Lieferanten bestätigen.',
+        ],
+      },
+      fertigation: {
+        title: 'Fertigation und Drainrecycling',
+        what: 'Die Kultur trinkt das Wasser, lässt aber das meiste Natrium und Chlorid zurück, also ist der Drain salziger als die Gabe. Den Drain wiederzuverwenden spart Wasser und Dünger, doch sein Salz reichert sich an, bis der Kreislauf gespült werden muss; einen Teil abzugeben hält das Natrium auf einem Niveau.',
+        assumptions: [
+          'Natrium gelangt kaum in die Kultur.',
+          'Der Ertragsverlust ist über 2 dS/m linear: ein Richtwert aus einem Versuch und einer Sorte.',
+        ],
+      },
       geometry: {
         title: 'Geometrie des Gewächshauses',
         what: 'Jede Last hängt an drei Zahlen: der Grundfläche (auf der man anbaut und auf die die Sonne fällt), der Hülle (die Wärme verliert) und dem Luftvolumen (das Wärme, Feuchte und CO₂ puffert). Höhere Häuser haben mehr Luft je m² und schwanken weniger.',
@@ -840,6 +891,14 @@ export const DE: SerraCopy = {
       },
     },
     instruments: {
+      ecMeter: {
+        name: 'EC- und pH-Messgerät',
+        how: 'Ein Hand- oder Inline-Leitfähigkeitsmesser, auf 25 °C kompensiert. Wöchentlich mit einem 1,41-dS/m-Puffer kalibrieren und Gabe und Drain zur selben Tageszeit messen.',
+      },
+      labAnalysis: {
+        name: 'Wasseranalyse im Labor',
+        how: 'Quelle, Gabe und Drain alle zwei bis vier Wochen beproben; das Labor liefert Natrium, Chlorid, Nährstoffe und Hydrogencarbonat in mmol/L.',
+      },
       tape: {
         name: 'Maßband oder Laser-Entfernungsmesser',
         how: 'Schiffe, Längen und Höhen vom Boden bis zur Rinne messen. Schiffe, Pflanzen, Tropfer und Düsen in einigen Reihen zählen und hochrechnen.',
@@ -906,6 +965,52 @@ export const DE: SerraCopy = {
       },
     },
   },
+  supply: {
+    title: 'Wasserversorgung',
+    lead: 'Vom Meer zur Wurzel: eine Meerwasser-Umkehrosmose für den Spitzentag der Kultur und der Nährstoffkreislauf, der den Drain wiederverwendet und spült, bevor sich Salz anreichert.',
+    tabs: {
+      ro: 'Meerwasser-UO',
+      fertigation: 'Fertigation',
+    },
+    sea: 'Meer',
+    membranes: 'Membranen',
+    brine: 'Sole',
+    fresh: 'Frischwasser',
+    drain: 'Drain',
+    reused: 'Wiederverwendet',
+    letGo: 'Abgegeben',
+    days: 'Tage',
+    flush: 'Spülen',
+    takeDemand: (m3: string) => `Spitzentag der Kultur übernehmen: ${m3} m³`,
+    useRo: (ec: string) => `Osmosewasser verwenden: EC ${ec}`,
+    feed: 'Gepumptes Meerwasser',
+    product: 'Permeat',
+    productEc: 'EC des Permeats',
+    energy: 'Energie pro Tag',
+    costDay: 'Strom pro Tag',
+    coverage: 'Die Anlage deckt',
+    tank: 'Tank',
+    waterSaved: 'Gespartes Wasser',
+    fertSaved: 'Gesparter Dünger',
+    drainEc: 'EC des Drains',
+    rootEc: 'Wurzelraum',
+    yieldLoss: 'Ertragsverlust durch Salz',
+    flushIn: 'Spülen in',
+    never: 'Nicht nötig',
+    levelsAt: 'Pendelt sich ein bei',
+    stock: 'Stammlösung A und B, je',
+    stockDays: (days: string) => `ein Tank reicht ${days} Tage`,
+    formulas: {
+      roFeed: 'Zulauf = Permeat / Ausbeute',
+      roBrine: 'Sole = Zulauf − Permeat; Salzgehalt ≈ S_Meer / (1 − R)',
+      roEnergy: 'Energie = SEC × Permeat',
+      fertDrain: 'Drain-EC = (A × EC_Gabe − U × EC_Aufnahme) / D',
+      fertNa:
+        'Natrium: geschlossen t = V (C_lim − C_0) / (C_in × Frischwasser); sonst pendelt es sich bei C_in × Frischwasser × D / (A × Abgabe) ein',
+      fertYield: 'Ertrag = 1 − Steigung × (EC_Wurzel − Schwelle)',
+      fertStock: 'Stammlösung = benötigte Nährstoffe / Verdünnung',
+    },
+  },
   calc: {
     science: 'Die Physik dahinter',
     results: 'Ergebnisse',
@@ -917,6 +1022,10 @@ export const DE: SerraCopy = {
   },
 
   diagrams: {
+    roAlt: (feed: string, product: string, brine: string, salinity: string) =>
+      `Meerwasser-UO: ${feed} m³ pro Tag gepumpt, ${product} m³ Permeat, ${brine} m³ Sole mit ${salinity} g/L. Griffe stellen Ausbeute und Speicher ein.`,
+    fertAlt: (recycle: string, ec: string, flush: string) =>
+      `Nährstoffkreislauf: ${recycle} % des Drains wiederverwendet, Drain-EC ${ec} dS/m, spülen in ${flush} Tagen. Griffe stellen den wiederverwendeten Anteil und die Natriumgrenze ein.`,
     vpdAlt: (air: string, rh: string, vpd: string, status: string) =>
       `VPD-Karte: Luft mit ${air} °C und ${rh} % ergibt ${vpd} kPa, ${status}. Griffe stellen Temperatur und Feuchte ein.`,
     fogAlt: (
@@ -1105,6 +1214,11 @@ export const DE: SerraCopy = {
         title: 'Wissen',
         body: 'Jedes Phänomen, auf dem die Werkzeuge beruhen, erklärt: was passiert, die Formel, was sie annimmt und wie man jede Eingabe misst, mit welchem Gerät. Das ⓘ neben jedem Feld öffnet denselben Rat und führt hierher.',
       },
+      {
+        id: 'supply',
+        title: 'Wasserversorgung',
+        body: 'Meerwasser-Umkehrosmose für den Spitzentag der Kultur: Zulauf, Sole und ihr Salzgehalt, Energie, Kosten und Speicher. Fertigation mit Drainrecycling: gespartes Wasser und gesparter Dünger, Drain-EC, Natriumanreicherung und wann gespült wird, und der Ertragsverlust durch Salz.',
+      },
     ],
     sourcesTitle: 'Quellen',
     sources: [
@@ -1130,6 +1244,38 @@ export const DE: SerraCopy = {
   },
 
   notes: {
+    'ro.balance': (v) =>
+      `${v['feed']} m³ Meerwasser pro Tag ergeben das Permeat und ${v['brine']} m³ Sole mit ${v['salinity']} g/L.`,
+    'ro.recoveryHigh': (v) =>
+      `Ausbeute ${v['pct']} %: über 50 % verkrustet die Sole die Membranen; Grenze des Lieferanten prüfen.`,
+    'ro.short': (v) =>
+      `Die Anlage deckt nur ${v['pct']} % des Bedarfs: es fehlen ${v['m3']} m³ pro Tag. Leistung oder Speicher ergänzen.`,
+    'ro.headroom': (v) =>
+      `Die Anlage hat ${v['pct']} % Reserve über dem Spitzentag.`,
+    'ro.lowSec': () =>
+      'Unter 2,5 kWh/m³ liegt unter dem, was Meerwasser-UO erreicht; den Wert prüfen.',
+    'ro.highSec': () =>
+      'Über 4,5 kWh/m³: ein Energierückgewinner brächte ihn auf 3–4.',
+    'ro.product': (v) =>
+      `Das Permeat enthält etwa ${v['mg']} mg/L Salz (EC ${v['ec']} dS/m); sein Natrium bestimmt, wie lange der Nährstoffkreislauf läuft.`,
+    'ro.brine': () =>
+      'Die Sole geht über einen Diffusor mit Einleitgenehmigung ins Meer zurück; die Einleitung mit der Behörde planen.',
+    'fert.water': (v) =>
+      `${v['reused']} m³ Drain pro Tag wiederverwendet: ${v['pct']} % des gegebenen Wassers.`,
+    'fert.drainHigh': (v) =>
+      `Drain-EC ${v['ec']} dS/m liegt an oder über der Grenze ${v['max']}: mehr Drain geben oder spülen.`,
+    'fert.yield': (v) =>
+      `Eine Wurzelraum-EC von ${v['ec']} dS/m kostet etwa ${v['pct']} % des Ertrags (Richtwert).`,
+    'fert.flush': (v) =>
+      `Natrium erreicht ${v['na']} mmol/L in etwa ${v['days']} Tagen: dann den Kreislauf spülen.`,
+    'fert.levels': (v) =>
+      `Natrium pendelt sich bei ${v['na']} mmol/L unter der Grenze ein: kein Spülen wegen Natrium nötig.`,
+    'fert.saltySource': () =>
+      'Frischwasser mit über 3 mmol/L Natrium füllt den Kreislauf schnell mit Salz: mit Osmosewasser mischen oder mehr Drain abgeben.',
+    'fert.lowDrain': () =>
+      'Unter 20 % Drain bei salzigem Wasser: Salze reichern sich in den Matten an.',
+    'fert.disinfect': () =>
+      'Den wiederverwendeten Drain desinfizieren (UV, Hitze oder Langsamsandfilter), bevor er zurück zur Kultur geht.',
     'vpd.tooWet': (v) =>
       `VPD ${v['vpd']} kPa: unter ${v['min']} kPa für dieses Stadium, die Luft ist zu feucht.`,
     'vpd.good': (v) =>

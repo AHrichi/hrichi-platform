@@ -8,6 +8,7 @@ import { fogCooling } from './fog';
 import { nightHumidity } from './humidity';
 import { supplementalLight } from './light';
 import { vpdCheck } from './vpd';
+import { fertigation, seawaterRo } from './water-chain';
 import { cropWater, rainwater } from './water';
 
 /** The figures a report shows for each kind of saved result. */
@@ -56,7 +57,15 @@ export type FigureId =
   | 'firstHarvest'
   | 'harvestWeeks'
   | 'heatingWeeks'
-  | 'fogWeeks';
+  | 'fogWeeks'
+  | 'roFeed'
+  | 'roBrine'
+  | 'roEnergy'
+  | 'roCoverage'
+  | 'drainEc'
+  | 'waterSaved'
+  | 'flushDay'
+  | 'yieldLoss';
 
 /**
  * One number of a result, language-neutral: the feature labels it and
@@ -221,6 +230,30 @@ export function summarizeSaved(saved: SavedCalculation): SavedSummary {
           fig('fogRh', r.insideRhPct, '%'),
           fig('fogWater', r.waterM3Day, 'm³/d', 1),
           fig('nozzles', r.nozzles, ''),
+        ],
+        notes: r.notes,
+      };
+    }
+    case 'ro': {
+      const r = seawaterRo(saved.inputs);
+      return {
+        figures: [
+          fig('roFeed', r.feedM3Day, 'm³/d'),
+          fig('roBrine', r.brineM3Day, 'm³/d'),
+          fig('roEnergy', r.energyKwhDay, 'kWh/d'),
+          fig('roCoverage', r.coveragePct, '%'),
+        ],
+        notes: r.notes,
+      };
+    }
+    case 'fertigation': {
+      const r = fertigation(saved.inputs);
+      return {
+        figures: [
+          fig('drainEc', r.drainEcDsM, 'dS/m', 1),
+          fig('waterSaved', r.waterSavedPct, '%'),
+          fig('flushDay', r.flushDay, 'd'),
+          fig('yieldLoss', r.yieldLossPct, '%', 1),
         ],
         notes: r.notes,
       };

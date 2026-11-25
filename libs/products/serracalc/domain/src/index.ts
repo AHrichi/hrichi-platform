@@ -17,6 +17,7 @@ export * from './lib/calculations/humidity';
 export * from './lib/calculations/vpd';
 export * from './lib/calculations/fog';
 export * from './lib/calculations/calendar';
+export * from './lib/calculations/water-chain';
 export * from './lib/calculations/defaults';
 export * from './lib/calculations/saved';
 

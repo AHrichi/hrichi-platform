@@ -11,6 +11,7 @@ const DEFAULT_TABS: Record<string, string> = {
   cooling: 'ventilation',
   water: 'crop',
   air: 'light',
+  supply: 'ro',
 };
 
 /**

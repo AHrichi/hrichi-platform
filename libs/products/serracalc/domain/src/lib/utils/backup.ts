@@ -36,6 +36,8 @@ const KIND_SET: Record<CalcKind, true> = {
   vpd: true,
   fog: true,
   calendar: true,
+  ro: true,
+  fertigation: true,
 };
 const KINDS = Object.keys(KIND_SET) as readonly CalcKind[];
 const SHAPES: readonly GreenhouseShape[] = ['gable', 'venlo', 'tunnel'];

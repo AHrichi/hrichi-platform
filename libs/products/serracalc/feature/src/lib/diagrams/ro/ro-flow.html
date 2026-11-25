@@ -1,0 +1,104 @@
+<svg viewBox="0 0 560 250" role="group" [attr.aria-label]="alt()">
+  <rect class="backdrop" width="560" height="250" rx="12" />
+
+  <!-- The sea -->
+  <path class="sea" d="M0 170h150v80H0Z" />
+  <path
+    class="wave"
+    d="M8 186c10-6 20-6 30 0s20 6 30 0 20-6 30 0 20 6 30 0M8 204c10-6 20-6 30 0s20 6 30 0 20-6 30 0 20 6 30 0"
+  />
+  <text class="caption" x="12" y="236">
+    {{ i18n.word(t().supply.sea) }} {{ i18n.num(params().feedSalinityGL) }} g/L
+  </text>
+
+  <!-- Intake, pump and membranes -->
+  <path class="flow feed" [attr.stroke-width]="feedW" d="M70 178V112H200" />
+  <rect class="unit" x="150" y="96" width="46" height="32" rx="6" />
+  <text class="unit-label" x="173" y="117" text-anchor="middle">HP</text>
+  <rect
+    class="vessel"
+    [attr.x]="vx0"
+    y="92"
+    [attr.width]="vx1 - vx0"
+    height="40"
+    rx="20"
+  />
+  <rect
+    class="recovered"
+    [attr.x]="vx0"
+    y="96"
+    [attr.width]="recoveryX() - vx0"
+    height="32"
+    rx="16"
+  />
+  <text class="label" x="320" y="82" text-anchor="middle">
+    {{ i18n.word(t().supply.membranes) }} · R
+    {{ i18n.num(params().recoveryPct, 0) }} %
+  </text>
+  <text class="value" x="110" y="104">
+    {{ i18n.num(result().feedM3Day, 0) }} m³/d
+  </text>
+
+  <!-- Product to the tank -->
+  <path
+    class="flow product"
+    [attr.stroke-width]="productW()"
+    d="M420 104H470V60"
+  />
+  <rect class="tank" x="440" y="60" width="96" height="96" rx="8" />
+  <rect
+    class="tank-fill"
+    x="444"
+    [attr.y]="tankY()"
+    width="88"
+    [attr.height]="ty0 + 2 - tankY()"
+    rx="4"
+  />
+  <text class="value" x="488" y="176" text-anchor="middle">
+    {{ i18n.num(result().needM3Day, 0) }} m³/d
+  </text>
+  <text class="caption" x="488" y="194" text-anchor="middle">
+    {{ i18n.num(result().tankM3, 0) }} m³ ·
+    {{ i18n.num(params().storageDays) }} d
+  </text>
+
+  <!-- Brine back to the sea -->
+  <path
+    class="flow brine"
+    [attr.stroke-width]="brineW()"
+    d="M420 122H436V214H160"
+  />
+  <text class="value warn" x="300" y="206" text-anchor="middle">
+    {{ i18n.word(t().supply.brine) }}
+    {{ i18n.num(result().brineM3Day, 0) }} m³/d ·
+    {{ i18n.num(result().brineSalinityGL) }} g/L
+  </text>
+
+  <g
+    scHandle
+    axis="x"
+    [x]="recoveryX()"
+    [y]="112"
+    [value]="params().recoveryPct"
+    [min]="limits.recovery.min"
+    [max]="limits.recovery.max"
+    [step]="limits.recovery.step"
+    [label]="t().fields['recoveryPct']"
+    unit="%"
+    [fromPoint]="recoveryAt"
+    (valueChange)="changed.emit({ key: 'recoveryPct', value: $event })"
+  />
+  <g
+    scHandle
+    [x]="488"
+    [y]="tankY()"
+    [value]="params().storageDays"
+    [min]="limits.days.min"
+    [max]="limits.days.max"
+    [step]="limits.days.step"
+    [label]="t().fields['storageDays']"
+    unit="d"
+    [fromPoint]="daysAt"
+    (valueChange)="changed.emit({ key: 'storageDays', value: $event })"
+  />
+</svg>

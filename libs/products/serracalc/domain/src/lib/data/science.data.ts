@@ -22,6 +22,8 @@ export type PhenomenonId =
   | 'nightHumidity'
   | 'transpiration'
   | 'rainHarvest'
+  | 'desalination'
+  | 'fertigation'
   | 'light'
   | 'co2'
   | 'cropCalendar';
@@ -44,6 +46,8 @@ export type InstrumentId =
   | 'pressureGauge'
   | 'infrared'
   | 'meters'
+  | 'ecMeter'
+  | 'labAnalysis'
   | 'climateComputer';
 
 /** How a value is obtained. */
@@ -257,7 +261,7 @@ export const PHENOMENA: readonly Phenomenon[] = [
       'shotMl',
       'pumpM3h',
     ],
-    related: ['solarGain', 'vpd', 'rainHarvest'],
+    related: ['solarGain', 'vpd', 'fertigation', 'desalination'],
     tools: [{ screen: 'water', tab: 'crop' }],
     sources: ['typical'],
   },
@@ -269,6 +273,48 @@ export const PHENOMENA: readonly Phenomenon[] = [
     related: ['transpiration'],
     tools: [{ screen: 'water', tab: 'rain' }],
     sources: ['typical'],
+  },
+  {
+    id: 'desalination',
+    group: 'water',
+    formula:
+      'F = P / R;  B = F − P;  S_brine = (F·S_feed − P·S_product) / B ≈ S_feed / (1 − R);  E = SEC × P',
+    inputs: [
+      'demandM3Day',
+      'lossesPct',
+      'feedSalinityGL',
+      'recoveryPct',
+      'rejectionPct',
+      'secKwhM3',
+      'capacityM3Day',
+      'availabilityPct',
+    ],
+    related: ['transpiration', 'fertigation'],
+    tools: [{ screen: 'supply', tab: 'ro' }],
+    sources: ['typical'],
+  },
+  {
+    id: 'fertigation',
+    group: 'water',
+    formula:
+      'EC_drain = (A·EC_feed − U·EC_uptake) / D;  V·dC/dt = C_in·F − C·(A/D)·L;  closed: t_flush = V (C_lim − C_0) / (C_in·F);  Y = 1 − 0.073 (EC − 2.0)',
+    inputs: [
+      'appliedM3Day',
+      'drainPct',
+      'recyclePct',
+      'sourceEcDsM',
+      'sourceNaMmolL',
+      'targetEcDsM',
+      'uptakeEcDsM',
+      'flushEcDsM',
+      'naLimitMmolL',
+      'systemM3',
+      'dilution',
+      'yieldSlopePct',
+    ],
+    related: ['transpiration', 'desalination', 'vpd'],
+    tools: [{ screen: 'supply', tab: 'fertigation' }],
+    sources: ['rodriguezOrtega2019', 'hydrotool'],
   },
   {
     id: 'light',
@@ -327,6 +373,8 @@ export const INSTRUMENTS: readonly InstrumentId[] = [
   'pressureGauge',
   'infrared',
   'meters',
+  'ecMeter',
+  'labAnalysis',
   'climateComputer',
 ];
 
@@ -408,6 +456,30 @@ export const INPUT_METHODS: Record<string, InputMethod> = {
   catchmentM2: m('derived', undefined, 'rainHarvest'),
   runoffPct: m('assume', undefined, 'rainHarvest'),
   basinM3: m('measure', 'tape', 'rainHarvest'),
+  // Seawater RO
+  demandM3Day: m('derived', 'flowMeter', 'desalination'),
+  lossesPct: m('assume', 'flowMeter', 'desalination'),
+  feedSalinityGL: m('measure', 'ecMeter', 'desalination'),
+  recoveryPct: m('datasheet', 'flowMeter', 'desalination'),
+  rejectionPct: m('datasheet', 'ecMeter', 'desalination'),
+  secKwhM3: m('measure', 'meters', 'desalination'),
+  storageDays: m('setpoint', undefined, 'desalination'),
+  capacityM3Day: m('datasheet', undefined, 'desalination'),
+  availabilityPct: m('assume', 'climateComputer', 'desalination'),
+  // Fertigation
+  appliedM3Day: m('measure', 'flowMeter', 'fertigation'),
+  recyclePct: m('setpoint', 'flowMeter', 'fertigation'),
+  sourceEcDsM: m('measure', 'ecMeter', 'fertigation'),
+  sourceNaMmolL: m('measure', 'labAnalysis', 'fertigation'),
+  targetEcDsM: m('setpoint', 'ecMeter', 'fertigation'),
+  uptakeEcDsM: m('assume', 'labAnalysis', 'fertigation'),
+  flushEcDsM: m('setpoint', 'ecMeter', 'fertigation'),
+  naLimitMmolL: m('setpoint', 'labAnalysis', 'fertigation'),
+  systemM3: m('measure', 'tape', 'fertigation'),
+  dilution: m('setpoint', undefined, 'fertigation'),
+  stockTankM3: m('measure', 'tape', 'fertigation'),
+  yieldSlopePct: m('assume', undefined, 'fertigation'),
+  yieldThresholdEc: m('assume', undefined, 'fertigation'),
   // Light and CO₂
   targetDli: m('setpoint', 'parSensor', 'light'),
   maxDli: m('setpoint', 'parSensor', 'light'),

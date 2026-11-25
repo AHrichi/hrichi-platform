@@ -14,6 +14,8 @@ const SCREENS = [
   'heating',
   'cooling',
   'water',
+  'supply',
+  'supply?tab=fertigation',
   'air',
   'air?tab=vpd',
   'cooling?tab=fog',

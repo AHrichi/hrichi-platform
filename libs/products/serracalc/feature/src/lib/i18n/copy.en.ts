@@ -21,6 +21,7 @@ export const EN = {
       'A planning aid: check the results with a qualified engineer and the suppliers’ data before you build.',
   },
   nav: {
+    supply: 'Water supply',
     science: 'Science',
     calendar: 'Crop calendar',
     projects: 'Projects',
@@ -118,6 +119,28 @@ export const EN = {
 
   /** Number fields, shared by every calculator. */
   fields: {
+    demandM3Day: 'Water needed, peak day',
+    lossesPct: 'Losses',
+    feedSalinityGL: 'Seawater salinity',
+    recoveryPct: 'Recovery',
+    rejectionPct: 'Salt rejection',
+    secKwhM3: 'Specific energy',
+    storageDays: 'Storage',
+    capacityM3Day: 'Installed capacity',
+    availabilityPct: 'Running time',
+    appliedM3Day: 'Water given a day',
+    recyclePct: 'Drain reused',
+    sourceEcDsM: 'EC of the fresh water',
+    sourceNaMmolL: 'Sodium in the fresh water',
+    targetEcDsM: 'EC at the dripper',
+    uptakeEcDsM: 'EC the crop takes up',
+    flushEcDsM: 'Flush above EC',
+    naLimitMmolL: 'Flush above sodium',
+    systemM3: 'Water in the loop',
+    dilution: 'Stock dilution',
+    stockTankM3: 'Each stock tank',
+    yieldSlopePct: 'Yield lost per dS/m',
+    yieldThresholdEc: 'Losses start above',
     rhPct: 'Relative humidity',
     ventPct: 'Vents open',
     nozzlesPer100M2: 'Nozzles',
@@ -207,6 +230,16 @@ export const EN = {
     nightHours: 'Night length',
   } as Record<string, string>,
   hints: {
+    feedSalinityGL: 'The sea off Gabès: 39–40 g/L',
+    recoveryPct: 'Seawater RO: 40–50 %; brine climbs fast above',
+    secKwhM3: 'Typical 3–4 with energy recovery; confirm with the supplier',
+    storageDays: 'One to three days covers a cleaning stop',
+    recyclePct: 'Desert sites reuse 30–50 % of their water',
+    targetEcDsM: 'Tomato refill: about 2.7',
+    flushEcDsM: 'A common ceiling: 4.5',
+    naLimitMmolL: 'Tomato: flush at about 8 mmol/L',
+    systemM3: 'Slabs, pipes and tanks: about 4 L per m²',
+    yieldSlopePct: 'Indicative: 7.3 % from one trial; set your own',
     ventPct: 'Trim the vents while fogging: 5–15 % of the floor',
     nozzlesPer100M2: '27 nozzles of 5.4 L/h give about 24 g/m² a minute',
     pressureBar: 'High pressure, 40–70 bar, for 10–30 µm droplets',
@@ -300,6 +333,8 @@ export const EN = {
     deleteResult: (label: string) => `Delete “${label}”?`,
   },
   kinds: {
+    ro: 'Seawater RO',
+    fertigation: 'Fertigation and drain',
     vpd: 'Humidity and VPD',
     fog: 'Fogging',
     calendar: 'Crop calendar',
@@ -699,6 +734,22 @@ export const EN = {
       bill: 'Your own tariff or factor, in the project’s currency.',
     },
     topics: {
+      desalination: {
+        title: 'Seawater desalination by reverse osmosis',
+        what: 'High pressure pushes seawater through membranes that hold the salt back. The recovery is the share that comes through as product; the rest leaves as brine, saltier in proportion. Pumping against the osmotic pressure takes 3–4 kWh per m³ with energy recovery.',
+        assumptions: [
+          'The product keeps (1 − rejection) of the mean salinity along the membranes.',
+          'Energy and recovery are typical; confirm them with the supplier.',
+        ],
+      },
+      fertigation: {
+        title: 'Fertigation and drain recycling',
+        what: 'The crop drinks the water but leaves most of the sodium and chloride, so the drain is saltier than what was given. Reusing the drain saves water and fertiliser, but its salt builds up until the loop must be flushed; letting part of the drain go holds sodium at a level.',
+        assumptions: [
+          'Sodium hardly enters the crop.',
+          'Yield loss is linear above 2 dS/m: indicative, from one trial and one variety.',
+        ],
+      },
       geometry: {
         title: 'Greenhouse geometry',
         what: 'Every load scales with three numbers: the floor (what you grow on and what the sun falls on), the cover (what loses heat) and the air volume (what buffers heat, humidity and CO₂). Taller houses hold more air per m² and swing less.',
@@ -829,6 +880,14 @@ export const EN = {
       },
     },
     instruments: {
+      ecMeter: {
+        name: 'EC and pH meter',
+        how: 'A handheld or inline conductivity meter, compensated to 25 °C. Calibrate it weekly with a 1.41 dS/m buffer and read the drip and the drain at the same time of day.',
+      },
+      labAnalysis: {
+        name: 'Water analysis by a laboratory',
+        how: 'Sample the source, the drip and the drain every two to four weeks; the lab reports sodium, chloride, nutrients and bicarbonate in mmol/L.',
+      },
       tape: {
         name: 'Tape or laser distance meter',
         how: 'Measure spans, lengths and heights from the ground to the gutter. Count spans, plants, drippers and nozzles on a few rows and scale up.',
@@ -895,6 +954,52 @@ export const EN = {
       },
     },
   },
+  supply: {
+    title: 'Water supply',
+    lead: 'From the sea to the root: a seawater RO plant sized for the crop’s peak day, and the nutrient loop that reuses the drain and flushes before salt builds up.',
+    tabs: {
+      ro: 'Seawater RO',
+      fertigation: 'Fertigation',
+    },
+    sea: 'Sea',
+    membranes: 'Membranes',
+    brine: 'Brine',
+    fresh: 'Fresh',
+    drain: 'Drain',
+    reused: 'Reused',
+    letGo: 'Let go',
+    days: 'days',
+    flush: 'Flush',
+    takeDemand: (m3: string) => `Take the crop’s peak day: ${m3} m³`,
+    useRo: (ec: string) => `Use the RO water: EC ${ec}`,
+    feed: 'Seawater pumped',
+    product: 'Product',
+    productEc: 'EC of the product',
+    energy: 'Energy a day',
+    costDay: 'Electricity a day',
+    coverage: 'Plant covers',
+    tank: 'Tank',
+    waterSaved: 'Water saved',
+    fertSaved: 'Fertiliser saved',
+    drainEc: 'EC of the drain',
+    rootEc: 'Root zone',
+    yieldLoss: 'Yield lost to salt',
+    flushIn: 'Flush in',
+    never: 'Not needed',
+    levelsAt: 'Levels off at',
+    stock: 'Stock A and B, each',
+    stockDays: (days: string) => `a tank lasts ${days} days`,
+    formulas: {
+      roFeed: 'Feed = product / recovery',
+      roBrine: 'Brine = feed − product; salinity ≈ S_feed / (1 − R)',
+      roEnergy: 'Energy = SEC × product',
+      fertDrain: 'Drain EC = (A × EC_feed − U × EC_uptake) / D',
+      fertNa:
+        'Sodium: closed, t = V (C_lim − C_0) / (C_in × fresh); else it levels off at C_in × fresh × D / (A × let go)',
+      fertYield: 'Yield = 1 − slope × (EC_root − threshold)',
+      fertStock: 'Stock = nutrients needed / dilution',
+    },
+  },
   calc: {
     science: 'The science behind it',
     results: 'Results',
@@ -905,6 +1010,10 @@ export const EN = {
   },
 
   diagrams: {
+    roAlt: (feed: string, product: string, brine: string, salinity: string) =>
+      `Seawater RO: ${feed} m³ a day pumped, ${product} m³ of product, ${brine} m³ of brine at ${salinity} g/L. Handles set the recovery and the storage.`,
+    fertAlt: (recycle: string, ec: string, flush: string) =>
+      `Nutrient loop: ${recycle} % of the drain reused, drain EC ${ec} dS/m, flush in ${flush} days. Handles set the share reused and the sodium limit.`,
     vpdAlt: (air: string, rh: string, vpd: string, status: string) =>
       `VPD map: air at ${air} °C and ${rh} % gives ${vpd} kPa, ${status}. Handles set the temperature and the humidity.`,
     fogAlt: (
@@ -1090,6 +1199,11 @@ export const EN = {
         title: 'Science',
         body: 'Every phenomenon the tools rely on, explained: what happens, the formula, what it assumes, and how to measure each input, with which instrument. The ⓘ beside each field opens the same advice and links here.',
       },
+      {
+        id: 'supply',
+        title: 'Water supply',
+        body: 'Seawater RO sized from the crop’s peak day: feed, brine and its salinity, energy, cost and storage. Fertigation with drain recycling: water and fertiliser saved, drain EC, sodium build-up and when to flush, and the yield lost to salt.',
+      },
     ],
     sourcesTitle: 'Sources',
     sources: [
@@ -1115,6 +1229,38 @@ export const EN = {
   },
 
   notes: {
+    'ro.balance': (v) =>
+      `${v['feed']} m³ of seawater a day gives the product and ${v['brine']} m³ of brine at ${v['salinity']} g/L.`,
+    'ro.recoveryHigh': (v) =>
+      `Recovery ${v['pct']} %: above 50 % the brine scales the membranes; check the supplier’s limit.`,
+    'ro.short': (v) =>
+      `The plant covers only ${v['pct']} % of the need: ${v['m3']} m³ a day short. Add capacity or storage.`,
+    'ro.headroom': (v) =>
+      `The plant has ${v['pct']} % in hand over the peak day.`,
+    'ro.lowSec': () =>
+      'Under 2.5 kWh/m³ is below what seawater RO achieves; check the figure.',
+    'ro.highSec': () =>
+      'Over 4.5 kWh/m³: an energy-recovery device would bring it to 3–4.',
+    'ro.product': (v) =>
+      `The product holds about ${v['mg']} mg/L of salt (EC ${v['ec']} dS/m); its sodium sets how long the nutrient loop runs.`,
+    'ro.brine': () =>
+      'The brine goes back to the sea through a diffuser under a discharge permit; plan the outfall with the authority.',
+    'fert.water': (v) =>
+      `${v['reused']} m³ of drain reused a day: ${v['pct']} % of the water given.`,
+    'fert.drainHigh': (v) =>
+      `Drain EC ${v['ec']} dS/m is at or above the ${v['max']} ceiling: give more drain or flush.`,
+    'fert.yield': (v) =>
+      `A root-zone EC of ${v['ec']} dS/m costs about ${v['pct']} % of the yield (indicative).`,
+    'fert.flush': (v) =>
+      `Sodium reaches ${v['na']} mmol/L in about ${v['days']} days: flush the loop then.`,
+    'fert.levels': (v) =>
+      `Sodium levels off at ${v['na']} mmol/L, under the limit: no flush needed for sodium.`,
+    'fert.saltySource': () =>
+      'Fresh water over 3 mmol/L of sodium fills the loop with salt fast: blend with RO water or let more drain go.',
+    'fert.lowDrain': () =>
+      'Under 20 % drain with salty water: salts build up in the slabs.',
+    'fert.disinfect': () =>
+      'Disinfect the reused drain (UV, heat or slow sand) before it goes back to the crop.',
     'vpd.tooWet': (v) =>
       `VPD ${v['vpd']} kPa: under ${v['min']} kPa for this stage, the air is too wet.`,
     'vpd.good': (v) =>

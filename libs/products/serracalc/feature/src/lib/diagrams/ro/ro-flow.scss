@@ -1,0 +1,72 @@
+@use '../../styles/serra' as sc;
+
+@include sc.diagram;
+
+.sea {
+  fill: var(--color-info-default);
+  opacity: 0.22;
+}
+
+.wave {
+  fill: none;
+  stroke: var(--color-info-default);
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.flow {
+  fill: none;
+  stroke-linejoin: round;
+
+  &.feed {
+    stroke: var(--color-info-default);
+    opacity: 0.75;
+  }
+
+  &.product {
+    stroke: var(--color-accent-default);
+  }
+
+  &.brine {
+    stroke: var(--color-warning-default);
+    opacity: 0.8;
+  }
+}
+
+.unit {
+  fill: var(--color-bg-raised);
+  stroke: var(--color-text-default);
+  stroke-width: 2;
+}
+
+.unit-label {
+  fill: var(--color-text-default);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.vessel {
+  fill: var(--color-bg-raised);
+  stroke: var(--color-text-default);
+  stroke-width: 2;
+}
+
+.recovered {
+  fill: var(--color-accent-default);
+  opacity: 0.35;
+}
+
+.tank {
+  fill: var(--color-bg-raised);
+  stroke: var(--color-text-default);
+  stroke-width: 2;
+}
+
+.tank-fill {
+  fill: var(--color-accent-default);
+  opacity: 0.4;
+}
+
+.value.warn {
+  fill: var(--color-warning-default);
+}

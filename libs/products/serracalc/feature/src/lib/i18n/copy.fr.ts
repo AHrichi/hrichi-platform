@@ -22,6 +22,7 @@ export const FR: SerraCopy = {
       'Aide au dimensionnement : faites vérifier les résultats par un ingénieur qualifié et avec les données des fournisseurs avant de construire.',
   },
   nav: {
+    supply: 'Eau d’irrigation',
     science: 'Science',
     calendar: 'Calendrier de culture',
     projects: 'Projets',
@@ -118,6 +119,28 @@ export const FR: SerraCopy = {
   currencies: { TND: 'Dinar tunisien', EUR: 'Euro', USD: 'Dollar américain' },
 
   fields: {
+    demandM3Day: 'Eau nécessaire, jour de pointe',
+    lossesPct: 'Pertes',
+    feedSalinityGL: 'Salinité de l’eau de mer',
+    recoveryPct: 'Taux de conversion',
+    rejectionPct: 'Rejet de sel',
+    secKwhM3: 'Énergie spécifique',
+    storageDays: 'Stockage',
+    capacityM3Day: 'Capacité installée',
+    availabilityPct: 'Temps de marche',
+    appliedM3Day: 'Eau apportée par jour',
+    recyclePct: 'Drainage réutilisé',
+    sourceEcDsM: 'EC de l’eau douce',
+    sourceNaMmolL: 'Sodium dans l’eau douce',
+    targetEcDsM: 'EC au goutteur',
+    uptakeEcDsM: 'EC absorbée par la culture',
+    flushEcDsM: 'Vidange au-dessus de l’EC',
+    naLimitMmolL: 'Vidange au-dessus du sodium',
+    systemM3: 'Eau dans la boucle',
+    dilution: 'Dilution des solutions mères',
+    stockTankM3: 'Chaque bac de solution mère',
+    yieldSlopePct: 'Rendement perdu par dS/m',
+    yieldThresholdEc: 'Pertes au-dessus de',
     rhPct: 'Humidité relative',
     ventPct: 'Ouvrants ouverts',
     nozzlesPer100M2: 'Buses',
@@ -207,6 +230,18 @@ export const FR: SerraCopy = {
     nightHours: 'Durée de la nuit',
   },
   hints: {
+    feedSalinityGL: 'La mer au large de Gabès : 39–40 g/L',
+    recoveryPct:
+      'Osmose d’eau de mer : 40–50 % ; la saumure monte vite au-delà',
+    secKwhM3:
+      'Courant 3–4 avec récupération d’énergie ; à confirmer avec le fournisseur',
+    storageDays: 'Un à trois jours couvrent un arrêt de nettoyage',
+    recyclePct: 'Les sites du désert réutilisent 30–50 % de leur eau',
+    targetEcDsM: 'Tomate, solution de recharge : environ 2,7',
+    flushEcDsM: 'Un plafond courant : 4,5',
+    naLimitMmolL: 'Tomate : vidanger vers 8 mmol/L',
+    systemM3: 'Pains, tuyaux et bacs : environ 4 L par m²',
+    yieldSlopePct: 'Indicatif : 7,3 % d’un essai ; mettez le vôtre',
     ventPct: 'Réduire les ouvrants pendant la brumisation : 5–15 % du sol',
     nozzlesPer100M2: '27 buses de 5,4 L/h donnent environ 24 g/m² par minute',
     pressureBar: 'Haute pression, 40–70 bar, pour des gouttelettes de 10–30 µm',
@@ -306,6 +341,8 @@ export const FR: SerraCopy = {
     deleteResult: (label: string) => `Supprimer « ${label} » ?`,
   },
   kinds: {
+    ro: 'Osmose inverse d’eau de mer',
+    fertigation: 'Fertirrigation et drainage',
     vpd: 'Humidité et VPD',
     fog: 'Brumisation',
     calendar: 'Calendrier de culture',
@@ -715,6 +752,22 @@ export const FR: SerraCopy = {
       bill: 'Votre tarif ou facteur, dans la devise du projet.',
     },
     topics: {
+      desalination: {
+        title: 'Dessalement de l’eau de mer par osmose inverse',
+        what: 'Une forte pression pousse l’eau de mer à travers des membranes qui retiennent le sel. La conversion est la part qui passe comme perméat ; le reste sort en saumure, plus salée d’autant. Pomper contre la pression osmotique demande 3–4 kWh par m³ avec récupération d’énergie.',
+        assumptions: [
+          'Le perméat garde (1 − rejet) de la salinité moyenne le long des membranes.',
+          'Énergie et conversion sont courantes ; confirmez-les avec le fournisseur.',
+        ],
+      },
+      fertigation: {
+        title: 'Fertirrigation et recyclage du drainage',
+        what: 'La culture boit l’eau mais laisse l’essentiel du sodium et du chlorure : le drainage est plus salé que l’apport. Réutiliser le drainage économise eau et engrais, mais son sel s’accumule jusqu’à la vidange ; rejeter une part du drainage stabilise le sodium.',
+        assumptions: [
+          'Le sodium n’entre presque pas dans la culture.',
+          'La perte de rendement est linéaire au-dessus de 2 dS/m : indicatif, d’un essai et d’une variété.',
+        ],
+      },
       geometry: {
         title: 'Géométrie de la serre',
         what: 'Toutes les charges dépendent de trois nombres : le sol (où l’on cultive et où tombe le soleil), la couverture (qui perd la chaleur) et le volume d’air (qui amortit chaleur, humidité et CO₂). Une serre haute a plus d’air par m² et varie moins.',
@@ -845,6 +898,14 @@ export const FR: SerraCopy = {
       },
     },
     instruments: {
+      ecMeter: {
+        name: 'Conductimètre et pH-mètre',
+        how: 'Un conductimètre portable ou en ligne, compensé à 25 °C. Étalonnez-le chaque semaine avec un tampon à 1,41 dS/m et lisez l’apport et le drainage à la même heure.',
+      },
+      labAnalysis: {
+        name: 'Analyse d’eau en laboratoire',
+        how: 'Prélevez la source, l’apport et le drainage toutes les deux à quatre semaines ; le laboratoire donne sodium, chlorure, éléments nutritifs et bicarbonates en mmol/L.',
+      },
       tape: {
         name: 'Mètre ruban ou télémètre laser',
         how: 'Mesurer chapelles, longueurs et hauteurs du sol au chéneau. Compter chapelles, plants, goutteurs et buses sur quelques rangs, puis extrapoler.',
@@ -911,6 +972,52 @@ export const FR: SerraCopy = {
       },
     },
   },
+  supply: {
+    title: 'Eau d’irrigation',
+    lead: 'De la mer à la racine : une osmose inverse dimensionnée pour le jour de pointe de la culture, et la boucle nutritive qui réutilise le drainage et vidange avant que le sel s’accumule.',
+    tabs: {
+      ro: 'Osmose d’eau de mer',
+      fertigation: 'Fertirrigation',
+    },
+    sea: 'Mer',
+    membranes: 'Membranes',
+    brine: 'Saumure',
+    fresh: 'Eau douce',
+    drain: 'Drainage',
+    reused: 'Réutilisé',
+    letGo: 'Rejeté',
+    days: 'jours',
+    flush: 'Vidange',
+    takeDemand: (m3: string) => `Prendre le jour de pointe : ${m3} m³`,
+    useRo: (ec: string) => `Utiliser l’eau osmosée : EC ${ec}`,
+    feed: 'Eau de mer pompée',
+    product: 'Perméat',
+    productEc: 'EC du perméat',
+    energy: 'Énergie par jour',
+    costDay: 'Électricité par jour',
+    coverage: 'L’usine couvre',
+    tank: 'Réservoir',
+    waterSaved: 'Eau économisée',
+    fertSaved: 'Engrais économisé',
+    drainEc: 'EC du drainage',
+    rootEc: 'Zone racinaire',
+    yieldLoss: 'Rendement perdu au sel',
+    flushIn: 'Vidange dans',
+    never: 'Inutile',
+    levelsAt: 'Se stabilise à',
+    stock: 'Solutions A et B, chacune',
+    stockDays: (days: string) => `un bac dure ${days} jours`,
+    formulas: {
+      roFeed: 'Alimentation = perméat / conversion',
+      roBrine: 'Saumure = alimentation − perméat ; salinité ≈ S_mer / (1 − R)',
+      roEnergy: 'Énergie = SEC × perméat',
+      fertDrain: 'EC drainage = (A × EC_apport − U × EC_absorbée) / D',
+      fertNa:
+        'Sodium : fermé, t = V (C_lim − C_0) / (C_in × eau douce) ; sinon il se stabilise à C_in × eau douce × D / (A × rejet)',
+      fertYield: 'Rendement = 1 − pente × (EC_racines − seuil)',
+      fertStock: 'Solution mère = éléments nécessaires / dilution',
+    },
+  },
   calc: {
     science: 'La science derrière',
     results: 'Résultats',
@@ -922,6 +1029,10 @@ export const FR: SerraCopy = {
   },
 
   diagrams: {
+    roAlt: (feed: string, product: string, brine: string, salinity: string) =>
+      `Osmose d’eau de mer : ${feed} m³ pompés par jour, ${product} m³ de perméat, ${brine} m³ de saumure à ${salinity} g/L. Les poignées règlent la conversion et le stockage.`,
+    fertAlt: (recycle: string, ec: string, flush: string) =>
+      `Boucle nutritive : ${recycle} % du drainage réutilisé, EC du drainage ${ec} dS/m, vidange dans ${flush} jours. Les poignées règlent la part réutilisée et la limite de sodium.`,
     vpdAlt: (air: string, rh: string, vpd: string, status: string) =>
       `Carte du VPD : l’air à ${air} °C et ${rh} % donne ${vpd} kPa, ${status}. Les poignées règlent la température et l’humidité.`,
     fogAlt: (
@@ -1110,6 +1221,11 @@ export const FR: SerraCopy = {
         title: 'Science',
         body: 'Chaque phénomène utilisé par les outils, expliqué : ce qui se passe, la formule, ce qu’elle suppose, et comment mesurer chaque donnée, avec quel instrument. Le ⓘ à côté de chaque champ ouvre les mêmes conseils et renvoie ici.',
       },
+      {
+        id: 'supply',
+        title: 'Eau d’irrigation',
+        body: 'L’osmose d’eau de mer dimensionnée pour le jour de pointe : alimentation, saumure et sa salinité, énergie, coût et stockage. La fertirrigation avec recyclage du drainage : eau et engrais économisés, EC du drainage, accumulation du sodium et moment de la vidange, et rendement perdu au sel.',
+      },
     ],
     sourcesTitle: 'Sources',
     sources: [
@@ -1135,6 +1251,38 @@ export const FR: SerraCopy = {
   },
 
   notes: {
+    'ro.balance': (v) =>
+      `${v['feed']} m³ d’eau de mer par jour donnent le perméat et ${v['brine']} m³ de saumure à ${v['salinity']} g/L.`,
+    'ro.recoveryHigh': (v) =>
+      `Conversion de ${v['pct']} % : au-delà de 50 % la saumure entartre les membranes ; vérifiez la limite du fournisseur.`,
+    'ro.short': (v) =>
+      `L’usine ne couvre que ${v['pct']} % du besoin : il manque ${v['m3']} m³ par jour. Ajoutez de la capacité ou du stockage.`,
+    'ro.headroom': (v) =>
+      `L’usine a ${v['pct']} % de marge sur le jour de pointe.`,
+    'ro.lowSec': () =>
+      'Sous 2,5 kWh/m³, c’est moins que ce qu’atteint l’osmose d’eau de mer ; vérifiez le chiffre.',
+    'ro.highSec': () =>
+      'Au-dessus de 4,5 kWh/m³ : un récupérateur d’énergie le ramènerait à 3–4.',
+    'ro.product': (v) =>
+      `Le perméat garde environ ${v['mg']} mg/L de sel (EC ${v['ec']} dS/m) ; son sodium fixe la durée de la boucle nutritive.`,
+    'ro.brine': () =>
+      'La saumure retourne à la mer par un diffuseur, sous autorisation de rejet ; prévoyez l’émissaire avec l’administration.',
+    'fert.water': (v) =>
+      `${v['reused']} m³ de drainage réutilisés par jour : ${v['pct']} % de l’eau apportée.`,
+    'fert.drainHigh': (v) =>
+      `EC du drainage ${v['ec']} dS/m, au plafond de ${v['max']} ou au-dessus : drainez davantage ou vidangez.`,
+    'fert.yield': (v) =>
+      `Une EC racinaire de ${v['ec']} dS/m coûte environ ${v['pct']} % du rendement (indicatif).`,
+    'fert.flush': (v) =>
+      `Le sodium atteint ${v['na']} mmol/L en environ ${v['days']} jours : vidangez la boucle à ce moment.`,
+    'fert.levels': (v) =>
+      `Le sodium se stabilise à ${v['na']} mmol/L, sous la limite : pas de vidange pour le sodium.`,
+    'fert.saltySource': () =>
+      'Une eau douce à plus de 3 mmol/L de sodium remplit vite la boucle de sel : mélangez avec de l’eau osmosée ou rejetez plus de drainage.',
+    'fert.lowDrain': () =>
+      'Moins de 20 % de drainage avec une eau salée : le sel s’accumule dans les pains.',
+    'fert.disinfect': () =>
+      'Désinfectez le drainage réutilisé (UV, chaleur ou filtre à sable lent) avant de le renvoyer à la culture.',
     'vpd.tooWet': (v) =>
       `VPD ${v['vpd']} kPa : sous ${v['min']} kPa pour ce stade, l’air est trop humide.`,
     'vpd.good': (v) =>

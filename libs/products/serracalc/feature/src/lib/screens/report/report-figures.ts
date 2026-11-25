@@ -57,6 +57,14 @@ const LABELS: Record<FigureId, (t: SerraCopy) => string> = {
   harvestWeeks: (t) => t.calendar.harvestWeeks,
   heatingWeeks: (t) => t.calendar.heatingWeeks,
   fogWeeks: (t) => t.calendar.fogWeeks,
+  roFeed: (t) => t.supply.feed,
+  roBrine: (t) => t.supply.brine,
+  roEnergy: (t) => t.supply.energy,
+  roCoverage: (t) => t.supply.coverage,
+  drainEc: (t) => t.supply.drainEc,
+  waterSaved: (t) => t.supply.waterSaved,
+  flushDay: (t) => t.supply.flushIn,
+  yieldLoss: (t) => t.supply.yieldLoss,
 };
 
 export interface ReportFigure {

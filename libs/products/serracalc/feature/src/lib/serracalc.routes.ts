@@ -61,6 +61,12 @@ export const SERRACALC_ROUTES: Routes = [
           import('./screens/water/water-screen').then((m) => m.WaterScreen),
       },
       {
+        path: 'supply',
+        title: title('supply'),
+        loadComponent: () =>
+          import('./screens/supply/supply-screen').then((m) => m.SupplyScreen),
+      },
+      {
         path: 'air',
         title: title('air'),
         loadComponent: () =>

@@ -33,6 +33,7 @@ export type SerraScreen =
   | 'heating'
   | 'cooling'
   | 'water'
+  | 'supply'
   | 'air'
   | 'climate'
   | 'science'
@@ -55,6 +56,7 @@ const NAV: readonly NavItem[] = [
   { id: 'cooling', icon: 'cooling', group: 'climate' },
   { id: 'water', icon: 'water', group: 'water' },
   { id: 'calendar', icon: 'calendar', group: 'plan' },
+  { id: 'supply', icon: 'wave', group: 'water' },
   { id: 'greenhouse', icon: 'greenhouse', group: 'plan' },
   { id: 'air', icon: 'air', group: 'climate' },
   { id: 'climate', icon: 'climate', group: 'reference' },

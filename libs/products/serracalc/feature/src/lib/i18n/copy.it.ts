@@ -22,6 +22,7 @@ export const IT: SerraCopy = {
       'Uno strumento di progettazione: verifica i risultati con un tecnico abilitato e con i dati dei fornitori prima di costruire.',
   },
   nav: {
+    supply: 'Acqua irrigua',
     science: 'Scienza',
     calendar: 'Calendario colturale',
     projects: 'Progetti',
@@ -122,6 +123,28 @@ export const IT: SerraCopy = {
   },
 
   fields: {
+    demandM3Day: 'Acqua necessaria, giorno di punta',
+    lossesPct: 'Perdite',
+    feedSalinityGL: 'Salinità dell’acqua di mare',
+    recoveryPct: 'Recupero',
+    rejectionPct: 'Reiezione salina',
+    secKwhM3: 'Energia specifica',
+    storageDays: 'Accumulo',
+    capacityM3Day: 'Capacità installata',
+    availabilityPct: 'Tempo di funzionamento',
+    appliedM3Day: 'Acqua data al giorno',
+    recyclePct: 'Drenaggio riutilizzato',
+    sourceEcDsM: 'EC dell’acqua dolce',
+    sourceNaMmolL: 'Sodio nell’acqua dolce',
+    targetEcDsM: 'EC al gocciolatore',
+    uptakeEcDsM: 'EC assorbita dalla coltura',
+    flushEcDsM: 'Scarico sopra EC',
+    naLimitMmolL: 'Scarico sopra il sodio',
+    systemM3: 'Acqua nel circuito',
+    dilution: 'Diluizione delle soluzioni madre',
+    stockTankM3: 'Ogni serbatoio di soluzione madre',
+    yieldSlopePct: 'Resa persa per dS/m',
+    yieldThresholdEc: 'Le perdite iniziano sopra',
     rhPct: 'Umidità relativa',
     ventPct: 'Aperture aperte',
     nozzlesPer100M2: 'Ugelli',
@@ -211,6 +234,17 @@ export const IT: SerraCopy = {
     nightHours: 'Durata della notte',
   } as Record<string, string>,
   hints: {
+    feedSalinityGL: 'Il mare al largo di Gabès: 39–40 g/L',
+    recoveryPct:
+      'Osmosi di acqua di mare: 40–50 %; oltre la salamoia sale in fretta',
+    secKwhM3: 'Tipico 3–4 con recupero energetico; da confermare col fornitore',
+    storageDays: 'Da uno a tre giorni coprono un fermo per lavaggio',
+    recyclePct: 'I siti del deserto riutilizzano il 30–50 % dell’acqua',
+    targetEcDsM: 'Pomodoro, soluzione di reintegro: circa 2,7',
+    flushEcDsM: 'Un tetto comune: 4,5',
+    naLimitMmolL: 'Pomodoro: scaricare verso 8 mmol/L',
+    systemM3: 'Lastre, tubi e serbatoi: circa 4 L per m²',
+    yieldSlopePct: 'Indicativo: 7,3 % da una prova; metti il tuo',
     ventPct: 'Riduci le aperture durante la nebulizzazione: 5–15 % del suolo',
     nozzlesPer100M2: '27 ugelli da 5,4 L/h danno circa 24 g/m² al minuto',
     pressureBar: 'Alta pressione, 40–70 bar, per gocce di 10–30 µm',
@@ -309,6 +343,8 @@ export const IT: SerraCopy = {
     deleteResult: (label: string) => `Eliminare «${label}»?`,
   },
   kinds: {
+    ro: 'Osmosi inversa di acqua di mare',
+    fertigation: 'Fertirrigazione e drenaggio',
     vpd: 'Umidità e VPD',
     fog: 'Nebulizzazione',
     calendar: 'Calendario colturale',
@@ -719,6 +755,22 @@ export const IT: SerraCopy = {
       bill: 'La tua tariffa o il tuo fattore, nella valuta del progetto.',
     },
     topics: {
+      desalination: {
+        title: 'Dissalazione dell’acqua di mare per osmosi inversa',
+        what: 'Un’alta pressione spinge l’acqua di mare attraverso membrane che trattengono il sale. Il recupero è la quota che passa come permeato; il resto esce come salamoia, più salata in proporzione. Pompare contro la pressione osmotica richiede 3–4 kWh per m³ con recupero energetico.',
+        assumptions: [
+          'Il permeato mantiene (1 − reiezione) della salinità media lungo le membrane.',
+          'Energia e recupero sono tipici; confermali col fornitore.',
+        ],
+      },
+      fertigation: {
+        title: 'Fertirrigazione e riuso del drenaggio',
+        what: 'La coltura beve l’acqua ma lascia quasi tutto il sodio e il cloruro, quindi il drenaggio è più salato dell’apporto. Riutilizzare il drenaggio risparmia acqua e concime, ma il suo sale si accumula finché il circuito va scaricato; scaricarne una parte stabilizza il sodio.',
+        assumptions: [
+          'Il sodio entra appena nella coltura.',
+          'La perdita di resa è lineare sopra 2 dS/m: indicativa, da una prova e una varietà.',
+        ],
+      },
       geometry: {
         title: 'Geometria della serra',
         what: 'Ogni carico dipende da tre numeri: il suolo (dove si coltiva e dove cade il sole), la copertura (che perde calore) e il volume d’aria (che smorza calore, umidità e CO₂). Una serra alta ha più aria per m² e oscilla meno.',
@@ -849,6 +901,14 @@ export const IT: SerraCopy = {
       },
     },
     instruments: {
+      ecMeter: {
+        name: 'Conduttimetro e pH-metro',
+        how: 'Un conduttimetro portatile o in linea, compensato a 25 °C. Taralo ogni settimana con un tampone da 1,41 dS/m e leggi apporto e drenaggio alla stessa ora.',
+      },
+      labAnalysis: {
+        name: 'Analisi dell’acqua in laboratorio',
+        how: 'Campiona la fonte, l’apporto e il drenaggio ogni due-quattro settimane; il laboratorio dà sodio, cloruro, nutrienti e bicarbonati in mmol/L.',
+      },
       tape: {
         name: 'Metro a nastro o distanziometro laser',
         how: 'Misura campate, lunghezze e altezze da terra alla grondaia. Conta campate, piante, gocciolatori e ugelli su alcune file e proporziona.',
@@ -915,6 +975,53 @@ export const IT: SerraCopy = {
       },
     },
   },
+  supply: {
+    title: 'Acqua irrigua',
+    lead: 'Dal mare alla radice: un impianto di osmosi inversa dimensionato sul giorno di punta della coltura, e il circuito nutritivo che riutilizza il drenaggio e scarica prima che il sale si accumuli.',
+    tabs: {
+      ro: 'Osmosi di acqua di mare',
+      fertigation: 'Fertirrigazione',
+    },
+    sea: 'Mare',
+    membranes: 'Membrane',
+    brine: 'Salamoia',
+    fresh: 'Acqua dolce',
+    drain: 'Drenaggio',
+    reused: 'Riutilizzato',
+    letGo: 'Scaricato',
+    days: 'giorni',
+    flush: 'Scarico',
+    takeDemand: (m3: string) => `Prendi il giorno di punta: ${m3} m³`,
+    useRo: (ec: string) => `Usa l’acqua osmotizzata: EC ${ec}`,
+    feed: 'Acqua di mare pompata',
+    product: 'Permeato',
+    productEc: 'EC del permeato',
+    energy: 'Energia al giorno',
+    costDay: 'Elettricità al giorno',
+    coverage: 'L’impianto copre',
+    tank: 'Serbatoio',
+    waterSaved: 'Acqua risparmiata',
+    fertSaved: 'Concime risparmiato',
+    drainEc: 'EC del drenaggio',
+    rootEc: 'Zona radicale',
+    yieldLoss: 'Resa persa per il sale',
+    flushIn: 'Scarico fra',
+    never: 'Non serve',
+    levelsAt: 'Si stabilizza a',
+    stock: 'Soluzioni A e B, ciascuna',
+    stockDays: (days: string) => `un serbatoio dura ${days} giorni`,
+    formulas: {
+      roFeed: 'Alimentazione = permeato / recupero',
+      roBrine:
+        'Salamoia = alimentazione − permeato; salinità ≈ S_mare / (1 − R)',
+      roEnergy: 'Energia = SEC × permeato',
+      fertDrain: 'EC drenaggio = (A × EC_apporto − U × EC_assorbita) / D',
+      fertNa:
+        'Sodio: chiuso, t = V (C_lim − C_0) / (C_in × acqua dolce); altrimenti si stabilizza a C_in × acqua dolce × D / (A × scarico)',
+      fertYield: 'Resa = 1 − pendenza × (EC_radici − soglia)',
+      fertStock: 'Soluzione madre = nutrienti necessari / diluizione',
+    },
+  },
   calc: {
     science: 'La scienza dietro il calcolo',
     results: 'Risultati',
@@ -926,6 +1033,10 @@ export const IT: SerraCopy = {
   },
 
   diagrams: {
+    roAlt: (feed: string, product: string, brine: string, salinity: string) =>
+      `Osmosi di acqua di mare: ${feed} m³ pompati al giorno, ${product} m³ di permeato, ${brine} m³ di salamoia a ${salinity} g/L. Le maniglie regolano il recupero e l’accumulo.`,
+    fertAlt: (recycle: string, ec: string, flush: string) =>
+      `Circuito nutritivo: ${recycle} % del drenaggio riutilizzato, EC del drenaggio ${ec} dS/m, scarico fra ${flush} giorni. Le maniglie regolano la quota riutilizzata e il limite di sodio.`,
     vpdAlt: (air: string, rh: string, vpd: string, status: string) =>
       `Mappa del VPD: aria a ${air} °C e ${rh} % dà ${vpd} kPa, ${status}. Le maniglie regolano temperatura e umidità.`,
     fogAlt: (
@@ -1113,6 +1224,11 @@ export const IT: SerraCopy = {
         title: 'Scienza',
         body: 'Ogni fenomeno usato dagli strumenti, spiegato: cosa succede, la formula, cosa assume e come misurare ogni dato, con quale strumento. La ⓘ accanto a ogni campo apre gli stessi consigli e rimanda qui.',
       },
+      {
+        id: 'supply',
+        title: 'Acqua irrigua',
+        body: 'L’osmosi di acqua di mare dimensionata sul giorno di punta: alimentazione, salamoia e sua salinità, energia, costo e accumulo. La fertirrigazione con riuso del drenaggio: acqua e concime risparmiati, EC del drenaggio, accumulo del sodio e quando scaricare, e la resa persa per il sale.',
+      },
     ],
     sourcesTitle: 'Fonti',
     sources: [
@@ -1138,6 +1254,38 @@ export const IT: SerraCopy = {
   },
 
   notes: {
+    'ro.balance': (v) =>
+      `${v['feed']} m³ di acqua di mare al giorno danno il permeato e ${v['brine']} m³ di salamoia a ${v['salinity']} g/L.`,
+    'ro.recoveryHigh': (v) =>
+      `Recupero del ${v['pct']} %: oltre il 50 % la salamoia incrosta le membrane; verifica il limite del fornitore.`,
+    'ro.short': (v) =>
+      `L’impianto copre solo il ${v['pct']} % del fabbisogno: mancano ${v['m3']} m³ al giorno. Aggiungi capacità o accumulo.`,
+    'ro.headroom': (v) =>
+      `L’impianto ha un margine del ${v['pct']} % sul giorno di punta.`,
+    'ro.lowSec': () =>
+      'Sotto 2,5 kWh/m³ è meno di quanto raggiunga l’osmosi di acqua di mare; verifica il dato.',
+    'ro.highSec': () =>
+      'Oltre 4,5 kWh/m³: un recuperatore di energia lo porterebbe a 3–4.',
+    'ro.product': (v) =>
+      `Il permeato contiene circa ${v['mg']} mg/L di sale (EC ${v['ec']} dS/m); il suo sodio decide quanto dura il circuito nutritivo.`,
+    'ro.brine': () =>
+      'La salamoia torna in mare tramite un diffusore, con autorizzazione allo scarico; progetta lo scarico con l’autorità.',
+    'fert.water': (v) =>
+      `${v['reused']} m³ di drenaggio riutilizzati al giorno: il ${v['pct']} % dell’acqua data.`,
+    'fert.drainHigh': (v) =>
+      `EC del drenaggio ${v['ec']} dS/m, al tetto di ${v['max']} o sopra: aumenta il drenaggio o scarica.`,
+    'fert.yield': (v) =>
+      `Una EC radicale di ${v['ec']} dS/m costa circa il ${v['pct']} % della resa (indicativo).`,
+    'fert.flush': (v) =>
+      `Il sodio raggiunge ${v['na']} mmol/L in circa ${v['days']} giorni: scarica il circuito allora.`,
+    'fert.levels': (v) =>
+      `Il sodio si stabilizza a ${v['na']} mmol/L, sotto il limite: nessuno scarico per il sodio.`,
+    'fert.saltySource': () =>
+      'Acqua dolce con più di 3 mmol/L di sodio riempie presto il circuito di sale: miscela con acqua osmotizzata o scarica più drenaggio.',
+    'fert.lowDrain': () =>
+      'Meno del 20 % di drenaggio con acqua salata: i sali si accumulano nelle lastre.',
+    'fert.disinfect': () =>
+      'Disinfetta il drenaggio riutilizzato (UV, calore o filtro a sabbia lento) prima di ridarlo alla coltura.',
     'vpd.tooWet': (v) =>
       `VPD ${v['vpd']} kPa: sotto ${v['min']} kPa per questa fase, l’aria è troppo umida.`,
     'vpd.good': (v) =>

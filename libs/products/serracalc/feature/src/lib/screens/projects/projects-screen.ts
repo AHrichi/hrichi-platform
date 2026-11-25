@@ -42,6 +42,8 @@ const OPENS_IN: Record<CalcKind, { screen: string; tab: string }> = {
   vpd: { screen: 'air', tab: 'vpd' },
   fog: { screen: 'cooling', tab: 'fog' },
   calendar: { screen: 'calendar', tab: 'plan' },
+  ro: { screen: 'supply', tab: 'ro' },
+  fertigation: { screen: 'supply', tab: 'fertigation' },
 };
 
 const SHAPES: readonly GreenhouseShape[] = ['gable', 'venlo', 'tunnel'];

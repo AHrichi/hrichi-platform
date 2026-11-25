@@ -12,7 +12,9 @@ import { dayLengthHours, midMonthDay } from '../utils/physics';
 import type {
   AnnualHeatingParams,
   CalendarParams,
+  FertigationParams,
   FogParams,
+  RoParams,
   VpdParams,
   Co2Params,
   CropId,
@@ -31,6 +33,7 @@ import type {
 } from '../models/serra.models';
 import { greenhouseGeometry } from './geometry';
 import type { CoolingAdviceParams } from './fog';
+import { cropWater } from './water';
 
 /**
  * Where a calculator starts: the active project's house, climate and crop,
@@ -311,5 +314,58 @@ export function defaultCalendar(ctx: CalcContext): CalendarParams {
     maxDli: crop.maxDli,
     transmissionPct: COVERS[ctx.greenhouse.cover].transmissionPct,
     coolAboveC: 30,
+  };
+}
+
+/** The house's peak-day irrigation, m³: what the water chain must deliver. */
+function peakWaterM3(ctx: CalcContext): number {
+  return cropWater(defaultCropWater(ctx)).peakM3Day;
+}
+
+/**
+ * A seawater RO plant for the peak day: Gabès-coast seawater at 39.5 g/L,
+ * 45 % recovery, 3.5 kWh/m³ (typical; confirm with the supplier), two days
+ * of storage, sized to run 90 % of the time.
+ */
+export function defaultRo(ctx: CalcContext): RoParams {
+  const demand = Math.round(peakWaterM3(ctx));
+  const need = demand * 1.05;
+  return {
+    demandM3Day: demand,
+    lossesPct: 5,
+    feedSalinityGL: 39.5,
+    recoveryPct: 45,
+    rejectionPct: 99.6,
+    secKwhM3: 3.5,
+    electricityPrice: defaultFuelPrice('heat_pump', ctx.currency),
+    storageDays: 2,
+    capacityM3Day: Math.ceil(need / 0.9 / 10) * 10,
+    availabilityPct: 90,
+  };
+}
+
+/**
+ * A recirculating tomato crop: 30 % drain with 40 % of it reused (desert
+ * sites report reusing 30–50 % of their water), RO water, refill EC 2.7 and
+ * a flush ceiling of 4.5 dS/m (Hydrotool's example), about 4 L of solution
+ * in the loop per m² of floor.
+ */
+export function defaultFertigation(ctx: CalcContext): FertigationParams {
+  const g = greenhouseGeometry(ctx.greenhouse);
+  return {
+    appliedM3Day: Math.round(peakWaterM3(ctx) * 10) / 10,
+    drainPct: 30,
+    recyclePct: 40,
+    sourceEcDsM: 0.3,
+    sourceNaMmolL: 1,
+    targetEcDsM: 2.7,
+    uptakeEcDsM: 1.8,
+    flushEcDsM: 4.5,
+    naLimitMmolL: 8,
+    systemM3: Math.max(1, Math.round((g.floorAreaM2 * 4) / 1000)),
+    dilution: 100,
+    stockTankM3: 5,
+    yieldSlopePct: 7.3,
+    yieldThresholdEc: 2,
   };
 }

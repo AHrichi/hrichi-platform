@@ -192,6 +192,35 @@ export const CALENDAR_FIELDS: readonly FieldSpec[] = [
   transmission,
 ];
 
+export const RO_FIELDS: readonly FieldSpec[] = [
+  spec('demandM3Day', 'm³/d', 0, 200000, 1),
+  spec('lossesPct', '%', 0, 30, 1),
+  spec('feedSalinityGL', 'g/L', 1, 50, 0.5),
+  spec('recoveryPct', '%', 30, 60, 1),
+  spec('rejectionPct', '%', 98, 99.9, 0.1),
+  spec('secKwhM3', 'kWh/m³', 1, 8, 0.1),
+  spec('storageDays', 'd', 0.5, 7, 0.5),
+  spec('capacityM3Day', 'm³/d', 0, 200000, 10),
+  spec('availabilityPct', '%', 50, 100, 1),
+];
+
+export const FERTIGATION_FIELDS: readonly FieldSpec[] = [
+  spec('appliedM3Day', 'm³/d', 0, 100000, 1),
+  spec('drainPct', '%', 0, 60, 1),
+  spec('recyclePct', '%', 0, 100, 5),
+  spec('sourceEcDsM', 'dS/m', 0, 6, 0.1),
+  spec('sourceNaMmolL', 'mmol/L', 0, 30, 0.1),
+  spec('targetEcDsM', 'dS/m', 0.5, 8, 0.1),
+  spec('uptakeEcDsM', 'dS/m', 0, 4, 0.1),
+  spec('flushEcDsM', 'dS/m', 1, 10, 0.1),
+  spec('naLimitMmolL', 'mmol/L', 1, 30, 0.5),
+  spec('systemM3', 'm³', 0.1, 5000, 1),
+  spec('dilution', '1 :', 50, 500, 10),
+  spec('stockTankM3', 'm³', 0.1, 100, 0.5),
+  spec('yieldSlopePct', '%/dS·m', 0, 20, 0.1),
+  spec('yieldThresholdEc', 'dS/m', 0, 6, 0.1),
+];
+
 /** A price field in the project's currency, per its unit. */
 export function priceField(key: string, unit: string): FieldSpec {
   return spec(key, unit, 0, 50, 0.01);
