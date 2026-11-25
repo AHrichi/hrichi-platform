@@ -23,6 +23,7 @@ import {
   siteEconomics,
   siteTotals,
   tariffPrices,
+  energyPrices,
 } from './site';
 
 const kebili = SAMPLE_PROJECTS[0];
@@ -199,5 +200,23 @@ describe('cooling over the year', () => {
     const ha = coolingYear({ ...base, floorAreaM2: 10_000 });
     expect(ha.peakKw).toBe(54);
     expect(ha.mwhYear).toBeCloseTo(ha.kwhM2Year * 10, 0);
+  });
+});
+
+describe('energy prices from the site', () => {
+  it('gives every energy tool its price from the site tariffs', () => {
+    const p = energyPrices({
+      gasPerM3: 1.1,
+      electricityPerKwh: 0.3,
+      exportPerKwh: 0.12,
+      waterPerM3: 2,
+    });
+    expect(p).toEqual({
+      gasPrice: 1.1,
+      powerPrice: 0.3,
+      electricityPrice: 0.3,
+      buyPrice: 0.3,
+      exportPrice: 0.12,
+    });
   });
 });
