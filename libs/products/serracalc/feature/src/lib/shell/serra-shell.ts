@@ -1,7 +1,9 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  DestroyRef,
   ElementRef,
+  afterNextRender,
   computed,
   effect,
   inject,
@@ -22,9 +24,10 @@ import { AhScrollHint } from '@ah/ui';
 import { APP_MODE } from '@ah/platform/app-mode';
 import { PreferencesStore } from '@ah/shared/state';
 import { isoWeek } from '@ah/products/serracalc/domain';
-import { SERRA_LANGUAGES, SerraI18n } from '../i18n/serra-i18n';
+import { SerraI18n } from '../i18n/serra-i18n';
 import { SerraStore } from '../store/serra.store';
 import { Icon, type IconName } from '../ui/icon/icon';
+import { LangMenu } from '../ui/lang-menu/lang-menu';
 
 export type SerraScreen =
   | 'projects'
@@ -83,7 +86,14 @@ const GROUPS: readonly NavGroup[] = [
 
 @Component({
   selector: 'sc-serra-shell',
-  imports: [AhScrollHint, Icon, RouterOutlet, RouterLink, RouterLinkActive],
+  imports: [
+    AhScrollHint,
+    Icon,
+    LangMenu,
+    RouterOutlet,
+    RouterLink,
+    RouterLinkActive,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { 'data-look': 'desert' },
   templateUrl: './serra-shell.html',
@@ -108,11 +118,18 @@ export class SerraShell {
   }));
   protected readonly primary = NAV.slice(0, 4);
   protected readonly secondary = NAV.slice(4);
-  protected readonly languages = SERRA_LANGUAGES;
   protected readonly week = isoWeek(new Date());
   protected readonly moreOpen = signal(false);
   private readonly moreSheet = viewChild<ElementRef<HTMLElement>>('moreSheet');
   private openerButton: HTMLElement | null = null;
+
+  /** The floating header's height, px: what sticky parts sit under. */
+  protected readonly topSize = signal(0);
+  /** True once the page has scrolled under the floating header. */
+  protected readonly stuck = signal(false);
+  private readonly top = viewChild.required<ElementRef<HTMLElement>>('top');
+  private readonly sentinel =
+    viewChild.required<ElementRef<HTMLElement>>('sentinel');
 
   private readonly url = toSignal(
     inject(Router).events.pipe(
@@ -136,6 +153,35 @@ export class SerraShell {
       if (screen) {
         title.setTitle(`${this.t().nav[screen.id]} · SerraCalc`);
       }
+    });
+    if (this.standalone) this.floatHeader();
+  }
+
+  /**
+   * Standalone, the header stays at the top while the page scrolls. Its
+   * height is shared (as --sc-top) with the parts that stick under it, and
+   * the page scrolls anchors clear of it.
+   */
+  private floatHeader(): void {
+    const destroyRef = inject(DestroyRef);
+    afterNextRender(() => {
+      const top = this.top().nativeElement;
+      const root = document.documentElement;
+      const resize = new ResizeObserver(() => {
+        const size = Math.ceil(top.getBoundingClientRect().height);
+        this.topSize.set(size);
+        root.style.setProperty('scroll-padding-block-start', `${size + 12}px`);
+      });
+      resize.observe(top);
+      const scrolled = new IntersectionObserver(([entry]) =>
+        this.stuck.set(!entry.isIntersecting),
+      );
+      scrolled.observe(this.sentinel().nativeElement);
+      destroyRef.onDestroy(() => {
+        resize.disconnect();
+        scrolled.disconnect();
+        root.style.removeProperty('scroll-padding-block-start');
+      });
     });
   }
 

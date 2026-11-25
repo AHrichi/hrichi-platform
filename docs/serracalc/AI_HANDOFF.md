@@ -2,14 +2,14 @@
 
 A briefing for whichever AI agent or IDE picks up SerraCalc, the greenhouse heat, water and climate engineering app. It assumes no memory of earlier sessions. Read it top to bottom before touching code; [AGENTS.md](../../AGENTS.md) has the protocol, [ADR-0027](../adr/0027-serracalc.md) the decisions.
 
-Last updated 2026-11-25: **S1–S3, the parity work, the greenhouse-manager spec and its last three gaps are on `main` (PRs #35, #37, #38, #39). The sodium and chloride flush limits now read in the drain (the root zone) instead of the feed, as the owner decided: `claude/serracalc-root-zone-limits`.** The plan is §7; the decisions are [ADR-0029](../adr/0029-serracalc-greenhouse-manager.md) and its addendum.
+Last updated 2026-11-25: **S1–S3, the parity work, the greenhouse-manager spec and its last three gaps are on `main` (PRs #35, #37, #38, #39). The sodium and chloride flush limits now read in the drain (the root zone) instead of the feed, as the owner decided: [PR #40](https://github.com/AHrichi/hrichi-platform/pull/40), `claude/serracalc-root-zone-limits`. UI work in progress on `claude/serracalc-ui-polish` (built on PR #40): a floating header and a language menu are done; collapsible sections, a formula component and real-life photos are next (§6).** The plan is §7; the decisions are [ADR-0029](../adr/0029-serracalc-greenhouse-manager.md) and its addendum.
 
 ## 0. Resume in five minutes
 
 1. **Get the branch:**
 
    ```bash
-   git fetch origin && git switch claude/serracalc-root-zone-limits
+   git fetch origin && git switch claude/serracalc-ui-polish
    ```
 
    It was built in the worktree `.claude/worktrees/studylm-learning-merge-8ffa5f` (the folder name is historical). Check `git worktree list` first: one agent per checkout.
@@ -161,7 +161,14 @@ Written before any change on `feat/serracalc-parity`; the last column says what 
 - In `fertigation()`, `g` is the feed's factor C / C_in; the drain holds `toDrain` = A/D times it. Sodium and chloride limits divide by `toDrain`, the EC ceiling does not. `days[].naMmolL`, the levels and the notes are drain values.
 - Icons: `node tools/scripts/generate-app-icons.mjs serracalc`.
 
-## 6. Next step: merge the root-zone branch, then check it live
+## 6. Next step: finish the UI polish (owner's request, 2026-11-25)
+
+On `claude/serracalc-ui-polish` (branched from PR #40; open its PR against `main` once #40 merges):
+
+- **Done, not yet seen in a browser:** the standalone header floats (`.top` is sticky, turns to glass once a sentinel scrolls away, shares its height as `--sc-top` and as the page's `scroll-padding`); inside the portfolio it stays in the page because the site header already floats. A language menu (`ui/lang-menu`): a globe button with the language's own name (its code on phones), a menu of the five written in themselves, arrow keys, Escape, click outside. Check it at 375 px and 1280 px, in Arabic and English, and with the e2e.
+- **Next:** (1) collapsible big sections: a `section[scPanel]` component with a heading button (`aria-expanded`), state kept per panel in localStorage, applied to every `section.panel` with an `h3` (66 in 13 templates) and to the Science topics, opening a topic when it is linked to. (2) A formula component: MathML built with `Renderer2` (no `innerHTML`) from the existing formula strings: `/` with spaces is a built-up fraction, `/` without is inline (units, D/A), `_x` subscripts, `^x` superscripts, `√( )`, `;` separates equations, `[...]` is a note; used on the Science page and in "How it's calculated". (3) Real-life photos for the phenomena and instruments: free-licence photos (Wikimedia Commons), credited; **ask the owner before downloading any file**, listing each file's name, source and size.
+
+## 6b. Then: merge the root-zone branch and check it live
 
 1. `claude/serracalc-root-zone-limits`: once CI passes and the owner merges its pull request, open the live app at `/apps/serracalc`: Energy → Cooling over the year, Water supply → Fertigation (strategy table, flush day, "Na in the drain" chart), Site → Plants and tariffs. Then update this hand-off.
 2. Ask the owner about the EC ceiling: the loop compares 4.5 dS/m with the feed (Hydrotool's example), but Live data and the "drain EC high" note compare it with the drain, which is 4.8 at the sample's 30 % drain. Either give the drain its own limit (a new optional input) or read the ceiling in the drain with a higher default.
