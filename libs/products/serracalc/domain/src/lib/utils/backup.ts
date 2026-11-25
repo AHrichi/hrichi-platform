@@ -50,6 +50,7 @@ const KIND_SET: Record<CalcKind, true> = {
   energy: true,
   heatReuse: true,
   coolingYear: true,
+  solarPv: true,
   economics: true,
 };
 const KINDS = Object.keys(KIND_SET) as readonly CalcKind[];

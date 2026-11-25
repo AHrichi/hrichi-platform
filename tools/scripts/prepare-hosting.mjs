@@ -266,7 +266,9 @@ const csp = [
   "style-src 'self' 'unsafe-inline'",
   `connect-src 'self' ${remotes} ${apiOrigins.join(' ')} ${tiles} ${geocoder} ${weather}${devConnectSources}`,
   `frame-src ${[self, turnstile].join(' ').trim() || "'none'"}`,
-  `img-src 'self' data: ${tiles}`,
+  // The remotes: an embedded app's own images (SerraCalc's Science photos)
+  // are served from its origin.
+  `img-src 'self' data: ${tiles} ${remotes}`,
   "font-src 'self'",
   "manifest-src 'self'",
   // 'self' for the service worker; blob: for workers a page builds itself.

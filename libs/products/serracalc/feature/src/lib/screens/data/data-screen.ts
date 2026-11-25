@@ -22,6 +22,7 @@ import { HourlyChart } from '../../diagrams/hourly/hourly-chart';
 import { SerraI18n } from '../../i18n/serra-i18n';
 import { SerraStore } from '../../store/serra.store';
 import { NoteList } from '../../ui/note-list/note-list';
+import { Panel } from '../../ui/panel/panel';
 
 /**
  * Live data: readings imported from a logger's CSV (or a sample week),
@@ -30,7 +31,7 @@ import { NoteList } from '../../ui/note-list/note-list';
  */
 @Component({
   selector: 'sc-data-screen',
-  imports: [AhMetricCard, HourlyChart, NoteList],
+  imports: [Panel, AhMetricCard, HourlyChart, NoteList],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './data-screen.html',
   styleUrls: ['../calc-screen.scss', './data-screen.scss'],

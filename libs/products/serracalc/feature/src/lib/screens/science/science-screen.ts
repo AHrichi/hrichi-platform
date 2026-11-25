@@ -7,6 +7,7 @@ import {
   signal,
   untracked,
 } from '@angular/core';
+import { NgTemplateOutlet } from '@angular/common';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import {
@@ -15,10 +16,17 @@ import {
   type InstrumentId,
   PHENOMENA,
   type Phenomenon,
+  type PhenomenonId,
   SCIENCE_GROUPS,
   SOURCES,
 } from '@ah/products/serracalc/domain';
 import { SerraI18n } from '../../i18n/serra-i18n';
+import { INSTRUMENT_PHOTOS, TOPIC_PHOTOS } from '../../science/photos';
+import { Formula } from '../../ui/formula/formula';
+import { Icon } from '../../ui/icon/icon';
+import { Panel } from '../../ui/panel/panel';
+import { PhotoViewer } from '../../ui/photo-viewer/photo-viewer';
+import { PanelState } from '../../ui/panel/panel-state';
 
 /**
  * Science: every phenomenon the calculators rest on, with its formula, its
@@ -28,7 +36,7 @@ import { SerraI18n } from '../../i18n/serra-i18n';
  */
 @Component({
   selector: 'sc-science-screen',
-  imports: [RouterLink],
+  imports: [Formula, Icon, NgTemplateOutlet, Panel, PhotoViewer, RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './science-screen.html',
   styleUrl: './science-screen.scss',
@@ -40,6 +48,16 @@ export class ScienceScreen {
   protected readonly methods = INPUT_METHODS;
   protected readonly instruments = INSTRUMENTS;
   protected readonly query = signal('');
+  private readonly panels = inject(PanelState);
+  protected readonly topicPhotos = TOPIC_PHOTOS;
+  protected readonly instrumentPhotos = INSTRUMENT_PHOTOS;
+
+  /** What a topic's photo shows, in the reader's language. */
+  protected caption(id: PhenomenonId): string {
+    const captions: Partial<Record<PhenomenonId, string>> =
+      this.t().science.photoCaptions;
+    return captions[id] ?? '';
+  }
 
   private readonly params = toSignal(inject(ActivatedRoute).queryParamMap);
   protected readonly activeTopic = computed(
@@ -82,8 +100,21 @@ export class ScienceScreen {
     return out;
   });
 
+  /** Every topic shown, and the instruments, as section ids. */
+  private readonly panelIds = computed(() => [
+    ...this.topics().map((p) => `science-${p.id}`),
+    'science-instruments',
+  ]);
+  protected readonly allFolded = computed(() =>
+    this.panelIds().every((id) => this.panels.isFolded(id)),
+  );
+
+  protected foldAll(folded: boolean): void {
+    this.panels.setAll(this.panelIds(), folded);
+  }
+
   constructor() {
-    // Bring the entry a link asked for into view, and give it focus.
+    // Bring the entry a link asked for into view (unfolded), and focus it.
     effect(() => {
       const topic = this.activeTopic();
       const instrument = this.activeInstrument();
@@ -94,6 +125,7 @@ export class ScienceScreen {
           : null;
       if (!id) return;
       untracked(() => {
+        this.panels.unfold(topic ? `science-${topic}` : 'science-instruments');
         if (topic) this.query.set('');
         setTimeout(() => {
           const el = document.getElementById(id);

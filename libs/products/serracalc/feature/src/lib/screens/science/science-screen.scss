@@ -8,6 +8,34 @@
   @include sc.screen-head;
 }
 
+.fold-all {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-block-size: 2.75rem;
+  padding-inline: var(--space-3);
+  border: 1px solid var(--sc-edge, var(--color-border-default));
+  border-radius: var(--radius-pill);
+  background: var(--sc-glass, var(--color-bg-surface));
+  color: var(--color-accent-default);
+  font: inherit;
+  font-size: var(--font-size-200);
+  cursor: pointer;
+
+  &:hover {
+    border-color: var(--color-accent-default);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-focus-ring);
+    outline-offset: 2px;
+  }
+
+  .is-up {
+    transform: rotate(180deg);
+  }
+}
+
 .layout {
   display: grid;
   gap: var(--space-4);
@@ -35,8 +63,8 @@
 
   @media (min-width: 72rem) {
     position: sticky;
-    inset-block-start: var(--space-4);
-    max-block-size: calc(100vh - var(--space-8));
+    inset-block-start: calc(var(--sc-top, 0px) + var(--space-4));
+    max-block-size: calc(100vh - var(--sc-top, 0px) - var(--space-8));
     overflow-y: auto;
   }
 
@@ -123,12 +151,6 @@
       var(--sc-shadow, none);
   }
 
-  h3 {
-    margin: 0;
-    font-size: var(--font-size-400);
-    line-height: var(--font-line-height-tight);
-  }
-
   h4 {
     margin: 0;
     font-size: var(--font-size-200);
@@ -142,14 +164,55 @@
   line-height: var(--font-line-height-normal);
 }
 
+// A topic's real-life photo, its caption and its credit.
+.photo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  max-inline-size: 36rem;
+  margin: 0;
+
+  figcaption {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    color: var(--color-text-muted);
+    font-size: var(--font-size-200);
+    line-height: var(--font-line-height-snug);
+  }
+}
+
+.credit {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-100);
+
+  a {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+
+    &:hover {
+      color: var(--color-accent-default);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--color-focus-ring);
+      outline-offset: 2px;
+    }
+  }
+}
+
+// An instrument's photo: whole (contain), on a quiet ground.
+.instrument-photo {
+  --sc-photo-height: 9rem;
+  --sc-photo-fit: contain;
+  --sc-photo-ground: var(--color-bg-canvas);
+  margin-block-end: var(--space-2);
+}
+
 .formula {
   @include sc.readout;
-  margin: 0;
   padding: var(--space-3) var(--space-4);
-  overflow-x: auto;
-  font-family: var(--font-family-mono);
-  font-size: var(--font-size-200);
-  white-space: pre-wrap;
 }
 
 .table-wrap {

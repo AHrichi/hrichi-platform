@@ -54,8 +54,11 @@
         />
       </details>
 
-      <section class="panel" aria-labelledby="sc-cooling-inputs">
-        <h3 id="sc-cooling-inputs">{{ t().calc.inputs }}</h3>
+      <section
+        class="panel"
+        scPanel="cooling-inputs"
+        [heading]="t().calc.inputs"
+      >
         @switch (tab()) {
           @case ('ventilation') {
             <sc-field-grid
@@ -83,8 +86,11 @@
     </div>
 
     <div class="column">
-      <section class="panel" aria-labelledby="sc-cooling-results">
-        <h3 id="sc-cooling-results">{{ t().calc.results }}</h3>
+      <section
+        class="panel"
+        scPanel="cooling-results"
+        [heading]="t().calc.results"
+      >
         @if (tab() === 'ventilation') {
           <div class="results">
             <ah-metric-card
@@ -237,8 +243,7 @@
         />
       }
 
-      <section class="panel" aria-labelledby="sc-cooling-save">
-        <h3 id="sc-cooling-save">{{ t().save.title }}</h3>
+      <section class="panel" scPanel="cooling-save" [heading]="t().save.title">
         <sc-save-bar
           [suggestedLabel]="suggestedLabel()"
           [editingLabel]="editor.editingLabel()"

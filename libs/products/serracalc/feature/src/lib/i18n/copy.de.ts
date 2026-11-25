@@ -9,6 +9,13 @@ export const DE: SerraCopy = {
     name: 'SerraCalc',
     tagline: 'Wärme, Wasser und Klima im Gewächshaus',
     activeProject: 'Aktives Projekt',
+    update: {
+      ready: 'Eine neue Version von SerraCalc ist bereit.',
+      broken:
+        'Diese gespeicherte Kopie von SerraCalc kann sich nicht aktualisieren. Neu laden holt sie frisch; Ihre Projekte bleiben auf diesem Gerät.',
+      reload: 'Neu laden',
+      later: 'Später',
+    },
     offline: 'Funktioniert offline',
     offlineHint:
       'Projekte werden auf diesem Gerät gespeichert; keine Verbindung nötig.',
@@ -138,6 +145,20 @@ export const DE: SerraCopy = {
     pumpWm2: 'Pumpen für Pads oder Nebel',
     emptyFromWeek: 'Haus leer ab Woche',
     emptyWeeks: 'Wochen leer',
+    peakKw: 'Anlagengröße',
+    tiltGainPct: 'Neigungsgewinn gegenüber flach',
+    systemLossPct: 'Systemverluste',
+    soilingPct: 'Staub auf den Modulen',
+    tempLossPctK: 'Leistungsverlust je K über 25 °C',
+    dayLoadKw: 'Last des Standorts tagsüber',
+    nightLoadKw: 'Last des Standorts nachts',
+    groundCoverPct: 'Flächenbelegung der Reihen',
+    moduleWm2: 'Modulleistung je m²',
+    capexPerKwp: 'Installationskosten',
+    omPctYear: 'Unterhalt pro Jahr',
+    buyPrice: 'Netzpreis',
+    exportPrice: 'Einspeisevergütung',
+    lifeYears: 'Lebensdauer, Jahre',
     gridCo2KgKwh: 'CO₂ des Stromnetzes',
     gasPerM3: 'Gas',
     electricityPerKwh: 'Strom bezogen',
@@ -292,6 +313,21 @@ export const DE: SerraCopy = {
       'Lüftertest oder Datenblatt beim Druck der Pads: etwa 0,03–0,04',
     pumpWm2: 'Padpumpen: etwa 0,4 W je m² Boden',
     emptyWeeks: 'Zwischen zwei Kulturen, wie im Kulturkalender',
+    peakKw: 'Zunächst auf den Tagesverbrauch des Standorts ausgelegt',
+    tiltGainPct: 'Fest, nahe der Breite geneigt: +10–15 %',
+    systemLossPct: 'Wechselrichter, Kabel, Fehlanpassung: 10–15 %',
+    soilingPct: 'Wüstenstaub bei regelmäßiger Reinigung: 3–8 %',
+    tempLossPctK: 'Laut Datenblatt: 0,30–0,45',
+    dayLoadKw:
+      'Ventilatoren, Pumpen, Umkehrosmose tagsüber; zunächst aus der Jahreskühlung',
+    nightLoadKw: 'Was nachts läuft, etwa die Umkehrosmose',
+    groundCoverPct: 'Reihenabstand gegen Verschattung: 30–50 %',
+    moduleWm2: 'Moderne Module: 200–230',
+    capexPerKwp: 'Holen Sie ein lokales Angebot ein',
+    omPctYear: 'Reinigung, Unterhalt, Versicherung: 1–2 %',
+    buyPrice: 'Ihr Stromtarif',
+    exportPrice: '0, wenn das Netz nichts zahlt',
+    lifeYears: 'Module halten 25–30 Jahre',
     gridCo2KgKwh: 'Der Wert Ihres Netzes; 0,45 ist ein Beispiel',
     waterPerM3: 'Gekauft, oder die Vollkosten Ihres UO-Wassers',
     exportPerKwh: 'Was das Netz für den BHKW-Strom zahlt',
@@ -415,6 +451,7 @@ export const DE: SerraCopy = {
   },
   kinds: {
     coolingYear: 'Kühlung übers Jahr',
+    solarPv: 'Solarstrom',
     energy: 'Energiezentrale (BHKW)',
     heatReuse: 'Wärme aus gekühltem Wasser',
     economics: 'Wirtschaftlichkeit',
@@ -773,6 +810,13 @@ export const DE: SerraCopy = {
     heatingWeeks: 'Wochen Heizung',
     fogWeeks: 'Wochen Nebel',
   },
+  photoViewer: {
+    open: 'Foto vergrößern',
+    zoom: 'Vergrößern',
+    fit: 'An Bildschirm anpassen',
+    close: 'Schließen',
+    original: 'Volle Größe auf Wikimedia Commons',
+  },
   science: {
     title: 'Wissen',
     lead: 'Die Phänomene hinter jedem Rechner: was passiert, die Formel, was sie annimmt und wie man jede eingegebene Zahl misst.',
@@ -789,7 +833,36 @@ export const DE: SerraCopy = {
     usedIn: 'Verwendet in',
     sources: 'Quellen',
     instrumentsTitle: 'Messgeräte',
+    foldAll: 'Alle einklappen',
+    unfoldAll: 'Alle ausklappen',
     instrumentsLead: 'Womit man misst, und wie man richtig abliest.',
+    photo: 'Foto',
+    photoCaptions: {
+      airLeakage:
+        'In einem Folientunnel: jede Lücke in der Hülle lässt warme Luft hinaus.',
+      cogeneration: 'Der Gasmotor eines Blockheizkraftwerks.',
+      coolingEnergy:
+        'Ein Abluftventilator: im Pad-and-Fan-Haus machen die Ventilatoren den Großteil der Kühlkosten aus.',
+      cropCalendar: 'Jungpflanzen im Anzuchtbeet, vor dem Auspflanzen.',
+      desalination:
+        'In einer Umkehrosmose-Anlage: Reihen von Druckrohren mit den Membranen.',
+      dewPoint:
+        'Wasser kondensiert auf Glas, das kälter ist als der Taupunkt der Luft.',
+      fertigation:
+        'Ein Tropfer versorgt eine Pflanze auf Substrat: hier beginnt der Fertigationskreislauf.',
+      geometry:
+        'Eine Glashausanlage: Schiffe nebeneinander unter einer Rinnenlinie.',
+      heatLoss:
+        'Ein doppelter Energieschirm unter dem Dach senkt den Wärmeverlust in der Nacht.',
+      rainHarvest:
+        'Regenwassertanks: was das Dach auffängt, wird für die trockenen Monate gespeichert.',
+      siteScale:
+        'Die Gewächshäuser von Almería aus der Umlaufbahn, fotografiert von einem NASA-Astronauten.',
+      transpiration:
+        'Ein Tomatenblatt unter dem Mikroskop (100×): die Spaltöffnungen, durch die sein Wasser austritt.',
+      ventilation:
+        'Geöffnete Firstlüftungen lassen die heiße, feuchte Luft hinaus.',
+    },
     howToGet: (label: string) => `So bekommen Sie „${label}“`,
     readMore: 'Mehr zu',
     close: 'Schließen',
@@ -821,6 +894,16 @@ export const DE: SerraCopy = {
       bill: 'Ihr eigener Tarif oder Faktor, in der Währung des Projekts.',
     },
     topics: {
+      solarPv: {
+        title: 'Solarstrom für den Standort',
+        what: 'Wüstenstandorte erhalten rund 2.000 kWh Sonne je m² und Jahr, so viel wie kaum anderswo, und ihre Ventilatoren, Pumpen und Umkehrosmose laufen meist tagsüber. Der Ertrag einer Anlage folgt der Einstrahlung Monat für Monat, abzüglich Verlusten, Staub und Wärme: Module verlieren 0,3–0,45 % ihrer Leistung je Grad über 25 °C, und im Wüstensommer werden sie 50–65 °C heiß. Solarstrom, der beim Erzeugen selbst verbraucht wird, spart den vollen Netzpreis; der Rest bringt die Einspeisevergütung, falls es eine gibt.',
+        assumptions: [
+          'Jeder Monat ist sein mittlerer Einstrahlungstag; Wolken und Sandstürme verändern ihn.',
+          'Die Zellen sind 20 K wärmer als die Tagesluft.',
+          'Die Tageslast ist über die Tagesstunden gleich; Ventilatoren haben ihre Spitze im Sommer, mit der Sonne, daher ist der Eigenverbrauch etwas unterschätzt.',
+          'Amortisation und Kosten je kWh ohne Abzinsung.',
+        ],
+      },
       coolingEnergy: {
         title: 'Kühlstrom übers Jahr',
         what: 'Pad-und-Lüfter-Kühlung läuft mit Strom: Lüfter ziehen 120–150 m³/h Luft je m² Boden durch nasse Pads, Pumpen halten die Pads feucht. Übers Jahr laufen die Lüfter nur in warmen Stunden, umso schneller, je heißer es ist; der Jahresverbrauch folgt also dem Klima. Ein Mittelmeer-Gewächshaus braucht etwa 10 kWh/m² im Jahr: ein Abgleich für die Zahl.',
@@ -1161,12 +1244,33 @@ export const DE: SerraCopy = {
     coolCo2: 'Netz-CO₂ im Jahr',
     coolHours: 'Kühlstunden',
     coolTable: 'Kühlung je Monat',
+    solarMade: 'Solar erzeugt',
+    solarUse: 'Verbrauch des Standorts',
+    solarChartAlt: (place: string, total: string) =>
+      `Solarstrom und Verbrauch des Standorts pro Monat in ${place}: ${total} MWh Solarstrom im Jahr.`,
+    solarCaption:
+      'Nur was der Standort bei Tageslicht verbraucht, nimmt den Solarstrom direkt ab; der Rest geht ins Netz.',
+    solarYield: 'Solar pro Jahr',
+    solarSpecific: 'Je kWp',
+    solarSelfUse: 'Selbst verbraucht',
+    solarFraction: (pct: string) => `${pct} % des Stroms am Standort`,
+    solarExport: 'Ins Netz eingespeist',
+    solarSavings: 'Gespart pro Jahr',
+    solarPayback: 'Amortisiert in',
+    solarYears: 'Jahren',
+    solarCostKwh: 'Kosten einer Solar-kWh',
+    solarLand: 'Fläche für die Reihen',
+    solarCo2: 'Vermiedenes Netz-CO₂',
+    solarTable: 'Solar pro Monat',
+    solarTakeLoads: 'Lasten des Standorts übernehmen',
+    solarNever: 'Nie',
     month: 'Monat',
     coolOfBenchmark: 'Der veröffentlichten 10 kWh/m²',
     title: 'Energie',
-    lead: 'Ein Gas-BHKW, das über einen Wintertag Wärme, Strom und CO₂ liefert, ein Warmwasserpuffer für die Nacht und ein Kessel für den Rest; und die Wärme in gekühltem Brunnenwasser.',
+    lead: 'Ein Gas-BHKW, das über einen Wintertag Wärme, Strom und CO₂ liefert, ein Warmwasserpuffer für die Nacht und ein Kessel für den Rest; die Wärme in gekühltem Brunnenwasser; der Kühlstrom eines Jahres; und Solarstrom für den Standort.',
     tabs: {
       cooling: 'Kühlung übers Jahr',
+      solar: 'Solarstrom',
       chp: 'BHKW und Puffer',
       reuse: 'Wärmerückgewinnung',
     },
@@ -1194,6 +1298,13 @@ export const DE: SerraCopy = {
         'Die Lüfter folgen der Wärme: f = min(1, (T − Start) / Spanne)',
       coolYear: 'Jahr = Σ Tage × Σ Stunden Leistung',
       coolCheck: 'Abgleich mit etwa 10 kWh/m² im Jahr',
+      solarYield:
+        'Solar = kWp × Sonne × Tage × Neigung × (1 − Verluste) × (1 − Staub) × Wärme',
+      solarHeat:
+        'Wärme: Zellen 20 K über der Tagesluft verlieren γ je K über 25 °C',
+      solarSelf: 'Eigenverbrauch = min(Solar, Tageslast × Tagesstunden)',
+      solarPayback:
+        'Amortisation = Kosten / (vermiedene Rechnungen + Einspeisung − Unterhalt)',
       demand:
         'Bedarf = H × (T_soll − T_außen) − Sonne, nachts abzüglich Schirm',
       buffer: 'Puffer = 1,163 × V × ΔT',
@@ -1722,6 +1833,22 @@ export const DE: SerraCopy = {
       `Lüfter mit ${v['w']} W je m³/h sind verschlissen oder kämpfen gegen verschmutzte Pads: ein Lüftertest und saubere Pads senken die Rechnung.`,
     'coolYear.airflow': (v) =>
       `${v['q']} m³/h je m² liegt außerhalb der üblichen 120–150 für Pad und Lüfter.`,
+    'solar.range': (v) =>
+      `${v['kwh']} kWh je kWp im Jahr: im Bereich, den Solaratlanten für den Wüstenrand angeben (${v['low']}–${v['high']}).`,
+    'solar.outside': (v) =>
+      `${v['kwh']} kWh je kWp im Jahr: außerhalb des Wüstenbereichs (${v['low']}–${v['high']}); prüfen Sie Klima, Neigung und Verluste.`,
+    'solar.heat': (v) =>
+      `Im ${v['month']} nimmt die Hitze den Modulen ${v['pct']} %: montieren Sie sie mit Luft dahinter und halten Sie sie sauber.`,
+    'solar.export': (v) =>
+      `Nur ${v['pct']} % des Solarstroms werden selbst verbraucht; ${v['mwh']} MWh im Jahr gehen ins Netz. Lassen Sie Umkehrosmose und Pumpen tagsüber laufen oder bauen Sie kleiner.`,
+    'solar.payback': (v) =>
+      `Amortisiert sich in etwa ${v['years']} von ${v['life']} Jahren.`,
+    'solar.noPayback': (v) =>
+      `Braucht ${v['years']} Jahre zur Amortisation, länger als seine ${v['life']} Jahre Lebensdauer: prüfen Sie die Preise.`,
+    'solar.never': () =>
+      'Bei diesen Preisen amortisiert sich die Anlage nie: was sie spart, deckt den Unterhalt nicht.',
+    'solar.dust': (v) =>
+      `${v['pct']} % gehen durch Staub verloren: reinigen Sie die Module öfter, in sandigen Zeiten wöchentlich.`,
     'coolYear.peakMonth': (v) =>
       `${v['month']} braucht ${v['pct']} % des Kühlstroms im Jahr.`,
     'data.vpdBand': (v) =>

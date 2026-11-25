@@ -21,6 +21,7 @@ import {
 import { SerraI18n } from '../../i18n/serra-i18n';
 import { SerraStore } from '../../store/serra.store';
 import { NoteList } from '../../ui/note-list/note-list';
+import { Panel } from '../../ui/panel/panel';
 
 type OpsTab = 'log' | 'hygiene' | 'maintenance' | 'heat';
 const TABS: readonly OpsTab[] = ['log', 'hygiene', 'maintenance', 'heat'];
@@ -39,7 +40,7 @@ function today(): string {
  */
 @Component({
   selector: 'sc-operations-screen',
-  imports: [AhTabs, NoteList],
+  imports: [Panel, AhTabs, NoteList],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './operations-screen.html',
   styleUrls: ['../calc-screen.scss', './operations-screen.scss'],

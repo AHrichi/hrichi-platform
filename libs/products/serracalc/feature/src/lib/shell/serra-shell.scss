@@ -88,6 +88,51 @@
 
 // ---------------------------------------------------------------- header
 
+// A hairline at the very top: once it scrolls out of view, the floating
+// header turns to glass.
+.sentinel {
+  block-size: 1px;
+  margin-block-end: -1px;
+}
+
+.top {
+  &.is-floating {
+    position: sticky;
+    inset-block-start: 0;
+    z-index: 30;
+    border-block-end: 1px solid transparent;
+    transition:
+      background-color var(--motion-duration-base) var(--motion-easing-standard),
+      border-color var(--motion-duration-base) var(--motion-easing-standard),
+      box-shadow var(--motion-duration-base) var(--motion-easing-standard);
+  }
+
+  &.is-floating.is-stuck {
+    background: var(--sc-glass-strong);
+    backdrop-filter: var(--sc-blur);
+    border-block-end-color: var(--sc-edge);
+    box-shadow: var(--sc-shadow);
+
+    // Scrolled, the header keeps to one slim row.
+    .bar {
+      padding-block: var(--space-2);
+    }
+
+    .brand-text small {
+      display: none;
+    }
+
+    .logo {
+      inline-size: 2.25rem;
+      block-size: 2.25rem;
+    }
+
+    .tabs {
+      padding-block-end: var(--space-2);
+    }
+  }
+}
+
 .bar {
   display: flex;
   flex-wrap: wrap;
@@ -96,6 +141,28 @@
   max-inline-size: var(--layout-content);
   margin-inline: auto;
   padding: var(--space-4) var(--layout-gutter) var(--space-2);
+
+  // Phones: one row, always. The name gives way (ellipsis) before the
+  // tools wrap under it.
+  @media (max-width: 30rem) {
+    flex-wrap: nowrap;
+    gap: var(--space-2);
+
+    .brand {
+      flex: 1 1 auto;
+    }
+
+    .brand-text strong {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .tools {
+      flex: none;
+      flex-wrap: nowrap;
+    }
+  }
 }
 
 .brand {
@@ -182,7 +249,9 @@
   display: none;
   align-items: center;
   gap: var(--space-2);
-  max-inline-size: 22rem;
+  // Long names end in an ellipsis (the full name is its title), so the
+  // header keeps one row on a laptop.
+  max-inline-size: 14rem;
   padding: var(--space-1) var(--space-3);
   border: 1px solid var(--sc-edge);
   border-radius: var(--radius-pill);
@@ -283,13 +352,12 @@
       color-mix(in srgb, var(--color-success-default) 22%, transparent);
   }
 
-  @media (min-width: 72rem) {
+  @media (min-width: 80rem) {
     display: inline-flex;
   }
 }
 
-.tool,
-.langs button {
+.tool {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -327,20 +395,9 @@
 .tool-label {
   display: none;
 
-  @media (min-width: 48rem) {
+  // Icons alone (named by their title) until there is room for words.
+  @media (min-width: 80rem) {
     display: inline;
-  }
-}
-
-.langs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-1);
-
-  button {
-    padding-inline: var(--space-2);
-    font-family: var(--font-family-mono);
-    font-size: var(--font-size-100);
   }
 }
 
@@ -454,7 +511,7 @@
 
   @media (min-width: 64rem) {
     position: sticky;
-    inset-block-start: var(--space-4);
+    inset-block-start: calc(var(--sc-top, 0px) + var(--space-4));
     display: flex;
     flex-direction: column;
     gap: var(--space-4);
@@ -564,6 +621,71 @@
   margin: var(--space-6) 0 0;
   color: var(--color-text-muted);
   font-size: var(--font-size-100);
+}
+
+// ------------------------------------------------- a new version is ready
+
+.update {
+  position: fixed;
+  inset-inline: var(--space-3);
+  inset-block-end: calc(
+    var(--sc-bottom-bar) + env(safe-area-inset-bottom) + var(--space-2)
+  );
+  z-index: 45;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-accent-default);
+  border-radius: var(--radius-lg);
+  background: var(--sc-glass-strong);
+  backdrop-filter: var(--sc-blur);
+  box-shadow: var(--shadow-overlay);
+
+  @media (min-width: 48rem) {
+    inset-inline: auto var(--space-5);
+    inset-block-end: var(--space-5);
+    max-inline-size: 26rem;
+  }
+
+  p {
+    flex: 1 1 12rem;
+    margin: 0;
+    font-size: var(--font-size-200);
+  }
+}
+
+.update-actions {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.update-go,
+.update-later {
+  min-block-size: 2.75rem;
+  padding-inline: var(--space-4);
+  border: 1px solid var(--color-accent-default);
+  border-radius: var(--radius-pill);
+  font: inherit;
+  font-size: var(--font-size-200);
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: 2px solid var(--color-focus-ring);
+    outline-offset: 2px;
+  }
+}
+
+.update-go {
+  background: var(--color-accent-solid);
+  color: var(--color-accent-on-solid);
+  font-weight: var(--font-weight-semibold);
+}
+
+.update-later {
+  background: none;
+  color: var(--color-accent-default);
 }
 
 // ------------------------------------------- phones: the bottom bar
@@ -694,8 +816,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .top.is-floating,
   .tool,
-  .langs button,
   .rail-group a {
     transition: none;
   }
@@ -703,6 +825,8 @@
 
 // Printing (the project report): only the page's content.
 @media print {
+  .update-region,
+  .top,
   .bar,
   .horizon,
   .tabs,

@@ -20,12 +20,15 @@ import {
   defaultCropWater,
   defaultEnergyHub,
   defaultHeatReuse,
+  defaultSolarPv,
   energyHub,
   type EnergyHubParams,
   GAS_KWH_PER_M3,
   heatReuse,
   type HeatReuseParams,
   type SavedCalculation,
+  solarPv,
+  type SolarPvParams,
 } from '@ah/products/serracalc/domain';
 import { EnergyDay } from '../../diagrams/energy/energy-day';
 import { SerraI18n } from '../../i18n/serra-i18n';
@@ -39,22 +42,27 @@ import { MonthBars, type MonthSeries } from '../../ui/month-bars/month-bars';
 import { injectCalcEditing } from '../calc-editing';
 import {
   COOLING_YEAR_FIELDS,
+  costField,
   ENERGY_FIELDS,
   priceField,
   REUSE_FIELDS,
+  PV_FIELDS,
 } from '../fields';
+import { Panel } from '../../ui/panel/panel';
 
-type EnergyTab = 'chp' | 'reuse' | 'cooling';
-const TABS: readonly EnergyTab[] = ['chp', 'reuse', 'cooling'];
+type EnergyTab = 'chp' | 'reuse' | 'cooling' | 'solar';
+const TABS: readonly EnergyTab[] = ['chp', 'reuse', 'cooling', 'solar'];
 
 /**
  * The energy hub: a gas CHP giving heat, power and CO₂ through a winter
- * day with a buffer for the night, the heat in chilled well water, and a
- * year of cooling electricity against the published range.
+ * day with a buffer for the night, the heat in chilled well water, a
+ * year of cooling electricity against the published range, and solar
+ * power for the site against what it uses by day.
  */
 @Component({
   selector: 'sc-energy-screen',
   imports: [
+    Panel,
     AhMetricCard,
     AhTabs,
     CalcSteps,
@@ -95,6 +103,27 @@ export class EnergyScreen {
       values: this.cool().months.map((m) => m.kwhM2),
     },
   ]);
+  protected readonly solarParams = signal<SolarPvParams>(
+    defaultSolarPv(this.store.context()),
+  );
+  protected readonly solar = computed(() => solarPv(this.solarParams()));
+  /** Made and used by month, MWh: two bars side by side. */
+  protected readonly solarSeries = computed<MonthSeries[]>(() => [
+    {
+      label: this.t().energy.solarMade,
+      values: this.solar().months.map((m) => m.pvKwh / 1000),
+    },
+    {
+      label: this.t().energy.solarUse,
+      values: this.solar().months.map((m) => m.demandKwh / 1000),
+    },
+  ]);
+  protected readonly solarAlt = computed(() =>
+    this.t().energy.solarChartAlt(
+      climateById(this.solarParams().climateId).name,
+      this.i18n.num(this.solar().yieldMwh, 0),
+    ),
+  );
   protected readonly coolAlt = computed(() =>
     this.t().energy.coolChartAlt(
       climateById(this.coolParams().climateId).name,
@@ -104,7 +133,12 @@ export class EnergyScreen {
 
   protected readonly editor = injectCalcEditing<EnergyTab>({
     tabs: TABS,
-    kinds: { chp: 'energy', reuse: 'heatReuse', cooling: 'coolingYear' },
+    kinds: {
+      chp: 'energy',
+      reuse: 'heatReuse',
+      cooling: 'coolingYear',
+      solar: 'solarPv',
+    },
     load: (saved) => this.load(saved),
   });
   protected readonly tab = this.editor.tab;
@@ -123,6 +157,13 @@ export class EnergyScreen {
     priceField('electricityPrice', `${this.currency()}/kWh`),
   ]);
 
+  protected readonly solarFields = computed(() => [
+    ...PV_FIELDS,
+    costField('capexPerKwp', `${this.currency()}/kWp`),
+    priceField('buyPrice', `${this.currency()}/kWh`),
+    priceField('exportPrice', `${this.currency()}/kWh`),
+  ]);
+
   /** Bars for the heat-reuse picture: chilled water against the need. */
   protected readonly reuseBars = computed(() => {
     const r = this.reuse();
@@ -138,6 +179,9 @@ export class EnergyScreen {
   protected readonly suggestedLabel = computed(() => {
     const n = (v: number, d = 0) => this.i18n.num(v, d);
     const k = this.t().kinds;
+    if (this.tab() === 'solar') {
+      return `${k.solarPv} · ${n(this.solarParams().peakKw)} kWp · ${n(this.solar().yieldMwh)} MWh`;
+    }
     if (this.tab() === 'cooling') {
       const c = this.coolParams();
       return `${k.coolingYear} · ${climateById(c.climateId).name} · ${n(this.cool().kwhM2Year, 1)} kWh/m²`;
@@ -170,6 +214,32 @@ export class EnergyScreen {
         {
           label: f.co2,
           math: `CO₂ = 1.96 kg/m³ × CHP gas → ${n(r.co2Kg, 0)} kg (${n(r.co2NeedKg, 0)} kg needed)`,
+        },
+      ];
+    }
+    if (this.tab() === 'solar') {
+      const p = this.solarParams();
+      const r = this.solar();
+      const july = r.months[6];
+      return [
+        {
+          label: f.solarYield,
+          math: `${n(p.peakKw, 0)} kWp × … × (1 + ${n(p.tiltGainPct, 0)} %) × (1 − ${n(p.systemLossPct, 0)} %) × (1 − ${n(p.soilingPct)} %) = ${n(r.yieldMwh)} MWh → ${n(r.specificKwhKwp, 0)} kWh/kWp`,
+        },
+        {
+          label: f.solarHeat,
+          math: `${n(p.tempLossPctK, 2)} %/K × (T_cell − 25) → ${n(july.heatLossPct)} % (${this.i18n.month(6)})`,
+        },
+        {
+          label: f.solarSelf,
+          math: `Σ min(E_m, ${n(p.dayLoadKw, 0)} kW × h_day × n_m) = ${n(r.selfMwh)} MWh = ${n(r.selfUsePct, 0)} %`,
+        },
+        {
+          label: f.solarPayback,
+          math:
+            r.paybackYears === null
+              ? '—'
+              : `${n(r.capex, 0)} / ${n(r.netSavingsYear, 0)} = ${n(r.paybackYears)} a`,
         },
       ];
     }
@@ -219,12 +289,14 @@ export class EnergyScreen {
     this.hubParams.set(defaultEnergyHub(ctx));
     this.reuseParams.set(defaultHeatReuse(ctx));
     this.coolParams.set(defaultCoolingYear(ctx));
+    this.solarParams.set(defaultSolarPv(ctx));
   }
 
   private load(saved: SavedCalculation): void {
     if (saved.kind === 'energy') this.hubParams.set({ ...saved.inputs });
     if (saved.kind === 'heatReuse') this.reuseParams.set({ ...saved.inputs });
     if (saved.kind === 'coolingYear') this.coolParams.set({ ...saved.inputs });
+    if (saved.kind === 'solarPv') this.solarParams.set({ ...saved.inputs });
   }
 
   protected setHub(change: FieldChange): void {
@@ -241,6 +313,24 @@ export class EnergyScreen {
 
   protected setCoolClimate(id: string): void {
     this.coolParams.update((p) => ({ ...p, climateId: id }));
+  }
+
+  protected setSolar(change: FieldChange): void {
+    this.solarParams.update((p) => ({ ...p, [change.key]: change.value }));
+  }
+
+  protected setSolarClimate(id: string): void {
+    this.solarParams.update((p) => ({ ...p, climateId: id }));
+  }
+
+  /** The site's loads again: the cooling year and the RO, as at first. */
+  protected takeSiteLoads(): void {
+    const fresh = defaultSolarPv(this.store.context());
+    this.solarParams.update((p) => ({
+      ...p,
+      dayLoadKw: fresh.dayLoadKw,
+      nightLoadKw: fresh.nightLoadKw,
+    }));
   }
 
   protected value(event: Event): string {
@@ -264,7 +354,9 @@ export class EnergyScreen {
         ? this.hubParams()
         : tab === 'reuse'
           ? this.reuseParams()
-          : this.coolParams(),
+          : tab === 'solar'
+            ? this.solarParams()
+            : this.coolParams(),
       request,
     );
   }

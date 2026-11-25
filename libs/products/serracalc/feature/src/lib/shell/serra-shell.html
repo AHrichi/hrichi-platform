@@ -3,80 +3,94 @@
   [class.is-sunlight]="store.isHighContrast()"
   [attr.dir]="i18n.isRtl() ? 'rtl' : 'ltr'"
   [attr.lang]="i18n.lang()"
+  [style.--sc-top]="topSize() + 'px'"
 >
-  <header class="bar">
-    <a class="brand" routerLink="projects">
-      <svg class="logo" viewBox="0 0 40 40" aria-hidden="true">
-        <defs>
-          <linearGradient id="sc-logo-sky" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" class="sky-top" />
-            <stop offset="1" class="sky-bottom" />
-          </linearGradient>
-        </defs>
-        <rect width="40" height="40" rx="11" fill="url(#sc-logo-sky)" />
-        <circle cx="28" cy="13" r="5" class="sun" />
-        <path d="M0 31c7-4 13-5 20-2s13 3 20-1v12H0Z" class="dune" />
-        <path d="M8 31v-8l6-6 6 6 6-6 6 6v8" class="house" />
-        <path d="M20 23v8" class="house thin" />
-      </svg>
-      <span class="brand-text">
-        <strong>{{ t().app.name }}</strong>
-        <small>{{ t().app.tagline }}</small>
-      </span>
-    </a>
-
-    @if (store.activeProject(); as project) {
-      <a class="project-chip" routerLink="projects" [title]="project.title">
-        <span class="pulse" aria-hidden="true"></span>
-        <span class="ah-visually-hidden">{{ t().app.activeProject }}:</span>
-        {{ project.title }}
+  <!-- Standalone, the header floats: the sentinel above it tells when the
+       page has scrolled, so it can turn to glass. Inside the portfolio the
+       site header already floats, so this one stays in the page. -->
+  <div #sentinel class="sentinel" aria-hidden="true"></div>
+  <div
+    #top
+    class="top"
+    [class.is-floating]="standalone"
+    [class.is-stuck]="stuck()"
+  >
+    <header class="bar">
+      <a class="brand" routerLink="projects">
+        <svg class="logo" viewBox="0 0 40 40" aria-hidden="true">
+          <defs>
+            <linearGradient id="sc-logo-sky" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" class="sky-top" />
+              <stop offset="1" class="sky-bottom" />
+            </linearGradient>
+          </defs>
+          <rect width="40" height="40" rx="11" fill="url(#sc-logo-sky)" />
+          <circle cx="28" cy="13" r="5" class="sun" />
+          <path d="M0 31c7-4 13-5 20-2s13 3 20-1v12H0Z" class="dune" />
+          <path d="M8 31v-8l6-6 6 6 6-6 6 6v8" class="house" />
+          <path d="M20 23v8" class="house thin" />
+        </svg>
+        <span class="brand-text">
+          <strong>{{ t().app.name }}</strong>
+          <small>{{ t().app.tagline }}</small>
+        </span>
       </a>
-    }
 
-    <div class="tools">
-      <a class="week" routerLink="calendar" [title]="t().app.weekHint">
-        <span class="week-label">{{ t().app.week }}</span>
-        <strong>{{ week }}</strong>
-      </a>
-      <span class="offline" [title]="t().app.offlineHint">
-        <span class="dot" aria-hidden="true"></span>{{ t().app.offline }}
-      </span>
-      <button
-        type="button"
-        class="tool"
-        [attr.aria-pressed]="store.isHighContrast()"
-        [title]="t().app.sunlightHint"
-        (click)="store.toggleHighContrast()"
-      >
-        <sc-icon name="sunlight" />
-        <span class="tool-label">{{ t().app.sunlight }}</span>
-      </button>
-      @if (standalone) {
+      @if (store.activeProject(); as project) {
+        <a class="project-chip" routerLink="projects" [title]="project.title">
+          <span class="pulse" aria-hidden="true"></span>
+          <span class="ah-visually-hidden">{{ t().app.activeProject }}:</span>
+          {{ project.title }}
+        </a>
+      }
+
+      <div class="tools">
+        <a class="week" routerLink="calendar" [title]="t().app.weekHint">
+          <span class="week-label">{{ t().app.week }}</span>
+          <strong>{{ week }}</strong>
+        </a>
+        <span class="offline" [title]="t().app.offlineHint">
+          <span class="dot" aria-hidden="true"></span>{{ t().app.offline }}
+        </span>
         <button
           type="button"
           class="tool"
-          [attr.aria-pressed]="preferences.isDark()"
-          [title]="t().app.darkHint"
-          (click)="preferences.toggleTheme()"
+          [attr.aria-pressed]="store.isHighContrast()"
+          [title]="t().app.sunlightHint"
+          (click)="store.toggleHighContrast()"
         >
-          <sc-icon name="moon" />
-          <span class="tool-label">{{ t().app.dark }}</span>
+          <sc-icon name="sunlight" />
+          <span class="tool-label">{{ t().app.sunlight }}</span>
         </button>
-        <div class="langs" role="group" [attr.aria-label]="t().app.language">
-          @for (lang of languages; track lang.id) {
-            <button
-              type="button"
-              [attr.aria-pressed]="i18n.lang() === lang.id"
-              [attr.lang]="lang.id"
-              (click)="i18n.setLanguage(lang.id)"
-            >
-              {{ lang.label }}
-            </button>
-          }
-        </div>
+        @if (standalone) {
+          <button
+            type="button"
+            class="tool"
+            [attr.aria-pressed]="preferences.isDark()"
+            [title]="t().app.darkHint"
+            (click)="preferences.toggleTheme()"
+          >
+            <sc-icon name="moon" />
+            <span class="tool-label">{{ t().app.dark }}</span>
+          </button>
+          <sc-lang-menu />
+        }
+      </div>
+    </header>
+
+    <nav class="tabs" ahScrollHint [attr.aria-label]="t().app.sections">
+      @for (item of nav; track item.id) {
+        <a
+          [routerLink]="item.id"
+          routerLinkActive="is-active"
+          ariaCurrentWhenActive="page"
+        >
+          <sc-icon [name]="item.icon" />
+          {{ t().nav[item.id] }}
+        </a>
       }
-    </div>
-  </header>
+    </nav>
+  </div>
 
   <!-- The horizon: dunes, a row of glasshouses and the sun. Decoration only. -->
   <svg
@@ -100,19 +114,6 @@
     />
     <path d="M0 63.5h1440" class="h-line" />
   </svg>
-
-  <nav class="tabs" ahScrollHint [attr.aria-label]="t().app.sections">
-    @for (item of nav; track item.id) {
-      <a
-        [routerLink]="item.id"
-        routerLinkActive="is-active"
-        ariaCurrentWhenActive="page"
-      >
-        <sc-icon [name]="item.icon" />
-        {{ t().nav[item.id] }}
-      </a>
-    }
-  </nav>
 
   <div class="frame">
     <nav class="rail" [attr.aria-label]="t().app.sections">
@@ -152,6 +153,36 @@
       </div>
     }
   </div>
+
+  <!-- A new version is ready (standalone; inside the portfolio the site's
+       banner says so). Always present, so screen readers hear it appear. -->
+  @if (standalone) {
+    <div class="update-region" aria-live="polite">
+      @if (updates.visible()) {
+        <div class="update">
+          <p>
+            {{
+              updates.state() === 'broken'
+                ? t().app.update.broken
+                : t().app.update.ready
+            }}
+          </p>
+          <div class="update-actions">
+            <button type="button" class="update-go" (click)="updates.reload()">
+              {{ t().app.update.reload }}
+            </button>
+            <button
+              type="button"
+              class="update-later"
+              (click)="updates.dismiss()"
+            >
+              {{ t().app.update.later }}
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+  }
 
   <nav class="bottom" [attr.aria-label]="t().app.sections">
     @for (item of primary; track item.id) {

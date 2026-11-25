@@ -4,6 +4,10 @@
       <h2 id="sc-science-title">{{ t().science.title }}</h2>
       <p>{{ t().science.lead }}</p>
     </div>
+    <button type="button" class="fold-all" (click)="foldAll(!allFolded())">
+      <sc-icon name="chevron" [class.is-up]="!allFolded()" />
+      {{ allFolded() ? t().science.unfoldAll : t().science.foldAll }}
+    </button>
   </header>
 
   <div class="layout">
@@ -51,16 +55,34 @@
           tabindex="-1"
           [id]="'sc-topic-' + p.id"
           [class.is-active]="activeTopic() === p.id"
-          [attr.aria-labelledby]="'sc-topic-title-' + p.id"
+          [scPanel]="'science-' + p.id"
+          [heading]="t().science.topics[p.id].title"
+          [eyebrow]="t().science.groups[p.group]"
         >
-          <span class="eyebrow">{{ t().science.groups[p.group] }}</span>
-          <h3 [id]="'sc-topic-title-' + p.id">
-            {{ t().science.topics[p.id].title }}
-          </h3>
           <p class="what">{{ t().science.topics[p.id].what }}</p>
 
+          @if (topicPhotos[p.id]; as photo) {
+            <!-- Tap the photo to open it large and zoom. -->
+            <figure class="photo">
+              <sc-photo-viewer [photo]="photo" [caption]="caption(p.id)" />
+              <figcaption>
+                {{ caption(p.id) }}
+                <ng-container
+                  [ngTemplateOutlet]="credit"
+                  [ngTemplateOutletContext]="{ $implicit: photo }"
+                />
+              </figcaption>
+            </figure>
+          }
+
           <h4>{{ t().science.formula }}</h4>
-          <pre class="formula" dir="ltr"><code>{{ p.formula }}</code></pre>
+          <sc-formula
+            class="formula"
+            [source]="p.formula"
+            [label]="
+              t().science.formula + ': ' + t().science.topics[p.id].title
+            "
+          />
 
           <h4>{{ t().science.inputs }}</h4>
           <div
@@ -152,8 +174,11 @@
         </article>
       }
 
-      <section class="topic instruments" aria-labelledby="sc-instruments-title">
-        <h3 id="sc-instruments-title">{{ t().science.instrumentsTitle }}</h3>
+      <section
+        class="topic instruments"
+        scPanel="science-instruments"
+        [heading]="t().science.instrumentsTitle"
+      >
         <p class="what">{{ t().science.instrumentsLead }}</p>
         <div class="instrument-grid">
           @for (id of instruments; track id) {
@@ -163,10 +188,23 @@
               [id]="'sc-instrument-' + id"
               [class.is-active]="activeInstrument() === id"
             >
+              @if (instrumentPhotos[id]; as photo) {
+                <sc-photo-viewer
+                  class="instrument-photo"
+                  [photo]="photo"
+                  [caption]="t().science.instruments[id].name"
+                />
+              }
               <h4>{{ t().science.instruments[id].name }}</h4>
               <p>{{ t().science.instruments[id].how }}</p>
               @if (measures()[id].length) {
                 <p class="measures">{{ measures()[id].join(' · ') }}</p>
+              }
+              @if (instrumentPhotos[id]; as photo) {
+                <ng-container
+                  [ngTemplateOutlet]="credit"
+                  [ngTemplateOutletContext]="{ $implicit: photo }"
+                />
               }
             </div>
           }
@@ -175,3 +213,22 @@
     </div>
   </div>
 </section>
+
+<!-- A photo's credit: author (to its Commons page) and licence. -->
+<ng-template #credit let-photo>
+  <small class="credit" dir="auto">
+    {{ t().science.photo }}:
+    <a [href]="photo.page" target="_blank" rel="noopener noreferrer">{{
+      photo.author
+    }}</a>
+    ·
+    @if (photo.licenseUrl) {
+      <a [href]="photo.licenseUrl" target="_blank" rel="noopener noreferrer">{{
+        photo.license
+      }}</a>
+    } @else {
+      {{ photo.license }}
+    }
+    · Wikimedia Commons
+  </small>
+</ng-template>

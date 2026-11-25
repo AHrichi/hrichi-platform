@@ -28,8 +28,11 @@
 
   <div class="workbench">
     <div class="column">
-      <section class="panel" aria-labelledby="sc-calendar-inputs">
-        <h3 id="sc-calendar-inputs">{{ t().calc.inputs }}</h3>
+      <section
+        class="panel"
+        scPanel="calendar-inputs"
+        [heading]="t().calc.inputs"
+      >
         <sc-field-grid
           [specs]="fields"
           [values]="params()"
@@ -58,8 +61,11 @@
         </sc-field-grid>
       </section>
 
-      <section class="panel" aria-labelledby="sc-calendar-stages">
-        <h3 id="sc-calendar-stages">{{ t().calendar.targets }}</h3>
+      <section
+        class="panel"
+        scPanel="calendar-stages"
+        [heading]="t().calendar.targets"
+      >
         <div
           class="table-wrap"
           tabindex="0"
@@ -134,8 +140,11 @@
     </div>
 
     <div class="column">
-      <section class="panel" aria-labelledby="sc-calendar-results">
-        <h3 id="sc-calendar-results">{{ t().calc.results }}</h3>
+      <section
+        class="panel"
+        scPanel="calendar-results"
+        [heading]="t().calc.results"
+      >
         <div class="results">
           <ah-metric-card
             [label]="t().calendar.firstHarvest"
@@ -222,8 +231,7 @@
         </details>
       </section>
 
-      <section class="panel" aria-labelledby="sc-calendar-save">
-        <h3 id="sc-calendar-save">{{ t().save.title }}</h3>
+      <section class="panel" scPanel="calendar-save" [heading]="t().save.title">
         <sc-save-bar
           [suggestedLabel]="suggestedLabel()"
           [editingLabel]="editor.editingLabel()"

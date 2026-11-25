@@ -8,6 +8,10 @@ import { appIsPublic, chooseLanguage } from './support/site';
 // projects live in IndexedDB, nothing calls a server.
 const STANDALONE = 'http://localhost:4314/';
 
+// The standalone build registers a service worker (offline use); a cached
+// app must not carry from one test to the next.
+test.use({ serviceWorkers: 'block' });
+
 /** Every screen of the app, in the order of its navigation. */
 const SCREENS = [
   'projects',
@@ -26,6 +30,7 @@ const SCREENS = [
   'energy',
   'energy?tab=reuse',
   'energy?tab=cooling',
+  'energy?tab=solar',
   'greenhouse',
   'operations',
   'data',
@@ -53,6 +58,13 @@ async function savePeak(page: Page): Promise<void> {
   await expect(page.getByText('Editing', { exact: true })).toBeVisible();
 }
 
+/** Standalone: open the globe menu and pick a language by its own name. */
+async function pickLanguage(page: Page, nativeName: string): Promise<void> {
+  await page.locator('sc-lang-menu .trigger').click();
+  await page.getByRole('menuitemradio', { name: nativeName }).click();
+  await expect(page.getByRole('menu')).toHaveCount(0);
+}
+
 test.describe('SerraCalc, standalone', () => {
   test.beforeEach(async ({ page }) => {
     // English, so the assertions read the same whatever the default.
@@ -65,7 +77,7 @@ test.describe('SerraCalc, standalone', () => {
     page,
   }) => {
     await page.goto(STANDALONE);
-    await page.getByRole('button', { name: 'EN', exact: true }).click();
+    await pickLanguage(page, 'English');
     await expect(page.locator('sc-serra-shell')).toHaveAttribute(
       'data-look',
       'desert',
@@ -87,7 +99,7 @@ test.describe('SerraCalc, standalone', () => {
     page,
   }) => {
     await page.goto(`${STANDALONE}greenhouse`);
-    await page.getByRole('button', { name: 'EN', exact: true }).click();
+    await pickLanguage(page, 'English');
     const ridge = page.getByRole('slider', { name: 'Ridge height' });
     await expect(ridge).toHaveAttribute('aria-valuenow', '6.3');
     await ridge.focus();
@@ -155,7 +167,7 @@ test.describe('SerraCalc, standalone', () => {
   }) => {
     await loadSamples(page);
     await page.goto(`${STANDALONE}heating?tab=peak`);
-    await page.getByRole('button', { name: 'IT', exact: true }).click();
+    await pickLanguage(page, 'Italiano');
     await expect(
       page.getByRole('heading', { level: 2, name: 'Riscaldamento' }),
     ).toBeVisible();
@@ -163,7 +175,7 @@ test.describe('SerraCalc, standalone', () => {
     await expect(page.locator('ah-metric-card').first()).toContainText('825,2');
     await expect(page).toHaveTitle('Riscaldamento · SerraCalc');
 
-    await page.getByRole('button', { name: 'DE', exact: true }).click();
+    await pickLanguage(page, 'Deutsch');
     await expect(
       page.getByRole('heading', { level: 2, name: 'Heizung' }),
     ).toBeVisible();
@@ -289,7 +301,7 @@ test.describe('SerraCalc, standalone', () => {
     page,
   }) => {
     await page.goto(`${STANDALONE}water`);
-    await page.getByRole('button', { name: 'ع', exact: true }).click();
+    await pickLanguage(page, 'العربية');
     await expect(page.locator('.serra')).toHaveAttribute('dir', 'rtl');
     await expect(
       page.getByRole('heading', { level: 2, name: 'المياه' }),
@@ -328,7 +340,7 @@ test.describe('SerraCalc, inside the portfolio', () => {
       page.getByRole('heading', { level: 2, name: 'Heating' }),
     ).toBeVisible();
     // The site's header has the switches; SerraCalc shows none of its own.
-    await expect(page.locator('sc-serra-shell .langs')).toHaveCount(0);
+    await expect(page.locator('sc-serra-shell sc-lang-menu')).toHaveCount(0);
 
     await chooseLanguage(page, 'it');
     await expect(

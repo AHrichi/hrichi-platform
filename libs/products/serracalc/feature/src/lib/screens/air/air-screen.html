@@ -51,8 +51,7 @@
         <figcaption>{{ t().calc.dragHint }}</figcaption>
       </figure>
 
-      <section class="panel" aria-labelledby="sc-air-inputs">
-        <h3 id="sc-air-inputs">{{ t().calc.inputs }}</h3>
+      <section class="panel" scPanel="air-inputs" [heading]="t().calc.inputs">
         @switch (tab()) {
           @case ('light') {
             <sc-field-grid
@@ -143,8 +142,7 @@
     </div>
 
     <div class="column">
-      <section class="panel" aria-labelledby="sc-air-results">
-        <h3 id="sc-air-results">{{ t().calc.results }}</h3>
+      <section class="panel" scPanel="air-results" [heading]="t().calc.results">
         @switch (tab()) {
           @case ('light') {
             <div class="results">
@@ -452,8 +450,7 @@
         <sc-calc-steps [steps]="steps()" />
       </section>
 
-      <section class="panel" aria-labelledby="sc-air-save">
-        <h3 id="sc-air-save">{{ t().save.title }}</h3>
+      <section class="panel" scPanel="air-save" [heading]="t().save.title">
         <sc-save-bar
           [suggestedLabel]="suggestedLabel()"
           [editingLabel]="editor.editingLabel()"

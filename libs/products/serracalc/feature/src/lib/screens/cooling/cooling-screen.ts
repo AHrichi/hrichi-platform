@@ -44,6 +44,7 @@ import {
   SOLAR_FIELDS,
   VENTILATION_FIELDS,
 } from '../fields';
+import { Panel } from '../../ui/panel/panel';
 
 type CoolingTab = 'ventilation' | 'padFan' | 'fog';
 const TABS: readonly CoolingTab[] = ['ventilation', 'padFan', 'fog'];
@@ -97,6 +98,7 @@ const FOG_KEYS: readonly (keyof FogExtra)[] = [
 @Component({
   selector: 'sc-cooling-screen',
   imports: [
+    Panel,
     AdviceCard,
     AhTabs,
     AhMetricCard,

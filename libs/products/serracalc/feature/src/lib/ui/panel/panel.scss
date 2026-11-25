@@ -1,0 +1,118 @@
+// A panel's title bar and body. The host keeps the screen's .panel look;
+// this styles what the panel adds: the title as a full-width button with a
+// lit square before it and a chevron after it.
+@use '../../styles/serra' as sc;
+
+:host.is-folded {
+  gap: 0;
+}
+
+// The Science page's topics: a larger title, tighter content.
+:host(.topic) {
+  .panel-head {
+    font-size: var(--font-size-400);
+    line-height: var(--font-line-height-tight);
+  }
+
+  .panel-body {
+    gap: var(--space-3);
+  }
+}
+
+.panel-eyebrow {
+  @include sc.eyebrow;
+  margin-block-end: calc(var(--space-2) * -1);
+}
+
+.panel-head {
+  @include sc.panel-title;
+}
+
+.panel-toggle {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: var(--space-2);
+  min-block-size: 2.75rem;
+  margin-block: calc(var(--space-2) * -1);
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+
+  // A small lit square, accent into sun, as on every panel title.
+  &::before {
+    content: '';
+    flex: none;
+    inline-size: 0.5rem;
+    block-size: 0.5rem;
+    border-radius: 2px;
+    background: linear-gradient(
+      135deg,
+      var(--color-accent-default),
+      var(--sc-sun, var(--color-accent-default))
+    );
+    box-shadow: 0 0 0.5rem var(--sc-glow, transparent);
+  }
+
+  &:hover .panel-chevron {
+    color: var(--color-accent-default);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-focus-ring);
+    outline-offset: 2px;
+  }
+}
+
+.panel-title {
+  flex: 1;
+  min-inline-size: 0;
+}
+
+.panel-chevron {
+  color: var(--color-text-muted);
+  transition: transform var(--motion-duration-fast)
+    var(--motion-easing-standard);
+
+  [aria-expanded='false'] > & {
+    transform: rotate(-90deg);
+  }
+
+  // Folded, the chevron points the way the page reads.
+  :host-context([dir='rtl']) [aria-expanded='false'] > & {
+    transform: rotate(90deg);
+  }
+}
+
+.panel-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-inline-size: 0;
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .panel-chevron {
+    transition: none;
+  }
+}
+
+@media print {
+  // A printed report shows everything.
+  .panel-body[hidden] {
+    display: flex;
+  }
+
+  .panel-chevron {
+    display: none;
+  }
+}

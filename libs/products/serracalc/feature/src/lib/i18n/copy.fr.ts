@@ -9,6 +9,13 @@ export const FR: SerraCopy = {
     name: 'SerraCalc',
     tagline: 'Chauffage, eau et climat des serres',
     activeProject: 'Projet actif',
+    update: {
+      ready: 'Une nouvelle version de SerraCalc est prête.',
+      broken:
+        'Cette copie de SerraCalc ne peut pas se mettre à jour. Rechargez pour la récupérer à neuf ; vos projets restent sur cet appareil.',
+      reload: 'Recharger',
+      later: 'Plus tard',
+    },
     offline: 'Fonctionne hors ligne',
     offlineHint:
       'Les projets sont enregistrés sur cet appareil ; aucune connexion nécessaire.',
@@ -134,6 +141,20 @@ export const FR: SerraCopy = {
     pumpWm2: 'Pompes des pads ou du brouillard',
     emptyFromWeek: 'Serre vide à partir de la semaine',
     emptyWeeks: 'Semaines à vide',
+    peakKw: 'Taille du champ',
+    tiltGainPct: 'Gain d’inclinaison sur le plat',
+    systemLossPct: 'Pertes du système',
+    soilingPct: 'Poussière sur les modules',
+    tempLossPctK: 'Puissance perdue par K au-dessus de 25 °C',
+    dayLoadKw: 'Charge du site le jour',
+    nightLoadKw: 'Charge du site la nuit',
+    groundCoverPct: 'Part du terrain couverte',
+    moduleWm2: 'Puissance des modules par m²',
+    capexPerKwp: 'Coût installé',
+    omPctYear: 'Entretien par an',
+    buyPrice: 'Prix du réseau',
+    exportPrice: 'Prix de revente',
+    lifeYears: 'Durée de vie, ans',
     gridCo2KgKwh: 'CO₂ du réseau',
     gasPerM3: 'Gaz',
     electricityPerKwh: 'Électricité achetée',
@@ -291,6 +312,21 @@ export const FR: SerraCopy = {
       'Essai ou fiche du ventilateur à la pression des pads : environ 0,03 à 0,04',
     pumpWm2: 'Pompes des pads : environ 0,4 W par m² de sol',
     emptyWeeks: 'Entre deux cultures, comme dans le calendrier',
+    peakKw: 'Dimensionné d’abord sur la consommation de jour du site',
+    tiltGainPct: 'Fixe, incliné près de la latitude : +10–15 %',
+    systemLossPct: 'Onduleur, câbles, désadaptation : 10–15 %',
+    soilingPct: 'Poussière du désert, nettoyage régulier : 3–8 %',
+    tempLossPctK: 'Sur la fiche technique : 0,30–0,45',
+    dayLoadKw:
+      'Ventilateurs, pompes, osmose le jour ; d’abord depuis le refroidissement annuel',
+    nightLoadKw: 'Ce qui tourne la nuit, comme l’osmose',
+    groundCoverPct: 'Rangées espacées contre l’ombrage : 30–50 %',
+    moduleWm2: 'Modules récents : 200–230',
+    capexPerKwp: 'Demandez un devis local',
+    omPctYear: 'Nettoyage, entretien, assurance : 1–2 %',
+    buyPrice: 'Votre tarif d’électricité',
+    exportPrice: '0 si le réseau ne paie rien',
+    lifeYears: 'Les modules durent 25–30 ans',
     gridCo2KgKwh: 'Le chiffre de votre réseau ; 0,45 est un exemple',
     waterPerM3: 'Achetée, ou le coût complet de votre eau d’osmose',
     exportPerKwh: 'Ce que le réseau paie pour l’électricité de la cogénération',
@@ -416,6 +452,7 @@ export const FR: SerraCopy = {
   },
   kinds: {
     coolingYear: 'Refroidissement sur l’année',
+    solarPv: 'Énergie solaire',
     energy: 'Pôle énergie (cogénération)',
     heatReuse: 'Chaleur de l’eau refroidie',
     economics: 'Économie',
@@ -783,6 +820,13 @@ export const FR: SerraCopy = {
     heatingWeeks: 'Semaines de chauffage',
     fogWeeks: 'Semaines de brouillard',
   },
+  photoViewer: {
+    open: 'Agrandir la photo',
+    zoom: 'Zoomer',
+    fit: 'Ajuster à l’écran',
+    close: 'Fermer',
+    original: 'Taille réelle sur Wikimedia Commons',
+  },
   science: {
     title: 'Science',
     lead: 'Les phénomènes derrière chaque calculateur : ce qui se passe, la formule, ce qu’elle suppose, et comment mesurer chaque nombre saisi.',
@@ -799,7 +843,36 @@ export const FR: SerraCopy = {
     usedIn: 'Utilisé dans',
     sources: 'Sources',
     instrumentsTitle: 'Instruments',
+    foldAll: 'Tout replier',
+    unfoldAll: 'Tout déplier',
     instrumentsLead: 'Avec quoi mesurer, et comment bien lire.',
+    photo: 'Photo',
+    photoCaptions: {
+      airLeakage:
+        'Dans un tunnel en film : chaque jour dans la couverture laisse fuir l’air chaud.',
+      cogeneration: 'Le moteur à gaz d’une unité de cogénération.',
+      coolingEnergy:
+        'Un ventilateur d’extraction : en pad-and-fan, les ventilateurs font l’essentiel de la facture de froid.',
+      cropCalendar: 'Des plants en pépinière, avant la plantation.',
+      desalination:
+        'Dans une usine d’osmose inverse : des rangées de tubes de pression qui portent les membranes.',
+      dewPoint:
+        'L’eau se condense sur un verre plus froid que le point de rosée de l’air.',
+      fertigation:
+        'Un goutteur qui nourrit une plante sur substrat : là où commence la boucle de fertirrigation.',
+      geometry:
+        'Un ensemble de serres verre : des chapelles côte à côte sous une même ligne de chéneau.',
+      heatLoss:
+        'Un double écran énergétique tiré sous le toit réduit la chaleur perdue la nuit.',
+      rainHarvest:
+        'Des cuves d’eau de pluie : ce que le toit recueille est gardé pour les mois secs.',
+      siteScale:
+        'Les serres d’Almería vues de l’orbite par un astronaute de la NASA.',
+      transpiration:
+        'Une feuille de tomate au microscope (100×) : les stomates, par où sort son eau.',
+      ventilation:
+        'Des ouvrants de toit le long du faîtage laissent sortir l’air chaud et humide.',
+    },
     howToGet: (label: string) => `Comment obtenir « ${label} »`,
     readMore: 'Lire :',
     close: 'Fermer',
@@ -831,6 +904,16 @@ export const FR: SerraCopy = {
       bill: 'Votre tarif ou facteur, dans la devise du projet.',
     },
     topics: {
+      solarPv: {
+        title: 'L’énergie solaire du site',
+        what: 'Les sites du désert reçoivent environ 2 000 kWh de soleil par m² et par an, parmi les plus élevés au monde, et leurs ventilateurs, pompes et usine d’osmose tournent surtout le jour. La production d’un champ suit le rayonnement mois par mois, moins ses pertes, la poussière et la chaleur : les modules perdent 0,3–0,45 % de leur puissance par degré au-dessus de 25 °C, et l’été au désert ils montent à 50–65 °C. Le solaire consommé sur place au moment où il est produit économise le plein tarif du réseau ; le reste rapporte le prix de revente, s’il existe.',
+        assumptions: [
+          'Chaque mois est son jour moyen de rayonnement ; nuages et tempêtes de sable le font varier.',
+          'Les cellules sont 20 K au-dessus de l’air de jour.',
+          'La charge de jour est constante sur les heures de jour ; les ventilateurs culminent l’été, avec le soleil, donc la consommation sur place est un peu sous-estimée.',
+          'Retour et coût par kWh sans actualisation.',
+        ],
+      },
       coolingEnergy: {
         title: 'L’électricité du refroidissement sur l’année',
         what: 'Le refroidissement par pad et ventilateur fonctionne à l’électricité : les ventilateurs tirent 120 à 150 m³/h d’air par m² de sol à travers des pads mouillés, et des pompes gardent les pads humides. Sur l’année, les ventilateurs ne tournent qu’aux heures chaudes, d’autant plus vite qu’il fait chaud : la consommation suit le climat. Une serre méditerranéenne consomme environ 10 kWh/m² par an : un repère pour le chiffre.',
@@ -1171,12 +1254,33 @@ export const FR: SerraCopy = {
     coolCo2: 'CO₂ du réseau par an',
     coolHours: 'Heures de refroidissement',
     coolTable: 'Refroidissement par mois',
+    solarMade: 'Solaire produit',
+    solarUse: 'Consommation du site',
+    solarChartAlt: (place: string, total: string) =>
+      `Production solaire et consommation du site par mois à ${place} : ${total} MWh solaires par an.`,
+    solarCaption:
+      'Seule la consommation du site pendant le jour prend le solaire au fil de la production ; le reste part sur le réseau.',
+    solarYield: 'Solaire par an',
+    solarSpecific: 'Par kWc',
+    solarSelfUse: 'Consommé sur place',
+    solarFraction: (pct: string) => `${pct} % de l’électricité du site`,
+    solarExport: 'Envoyé au réseau',
+    solarSavings: 'Économisé par an',
+    solarPayback: 'Rentabilisé en',
+    solarYears: 'ans',
+    solarCostKwh: 'Coût d’un kWh solaire',
+    solarLand: 'Terrain des rangées',
+    solarCo2: 'CO₂ du réseau évité',
+    solarTable: 'Solaire par mois',
+    solarTakeLoads: 'Reprendre les charges du site',
+    solarNever: 'Jamais',
     month: 'Mois',
     coolOfBenchmark: 'Des 10 kWh/m² publiés',
     title: 'Énergie',
-    lead: 'Une cogénération au gaz qui donne chaleur, électricité et CO₂ au fil d’une journée d’hiver, un ballon tampon pour la nuit et une chaudière pour le reste ; et la chaleur contenue dans l’eau de forage refroidie.',
+    lead: 'Une cogénération au gaz qui donne chaleur, électricité et CO₂ au fil d’une journée d’hiver, un ballon tampon pour la nuit et une chaudière pour le reste ; la chaleur contenue dans l’eau de forage refroidie ; l’électricité du refroidissement sur l’année ; et l’énergie solaire du site.',
     tabs: {
       cooling: 'Refroidissement sur l’année',
+      solar: 'Énergie solaire',
       chp: 'Cogénération et tampon',
       reuse: 'Récupération de chaleur',
     },
@@ -1203,6 +1307,13 @@ export const FR: SerraCopy = {
         'Les ventilateurs suivent la chaleur : f = min(1, (T − départ) / écart)',
       coolYear: 'Année = Σ jours × Σ heures de puissance',
       coolCheck: 'Comparaison avec environ 10 kWh/m² par an',
+      solarYield:
+        'Solaire = kWc × soleil × jours × inclinaison × (1 − pertes) × (1 − poussière) × chaleur',
+      solarHeat:
+        'Chaleur : cellules 20 K au-dessus de l’air de jour, γ perdu par K au-dessus de 25 °C',
+      solarSelf:
+        'Consommé sur place = min(solaire, charge de jour × heures de jour)',
+      solarPayback: 'Retour = coût / (factures évitées + revente − entretien)',
       demand:
         'Besoin = H × (T_consigne − T_ext) − soleil, moins l’écran la nuit',
       buffer: 'Tampon = 1,163 × V × ΔT',
@@ -1732,6 +1843,22 @@ export const FR: SerraCopy = {
       `Des ventilateurs à ${v['w']} W par m³/h sont usés ou freinés par des pads encrassés : un essai et des pads propres réduisent la facture.`,
     'coolYear.airflow': (v) =>
       `${v['q']} m³/h par m² sort des 120 à 150 habituels pour pad et ventilateur.`,
+    'solar.range': (v) =>
+      `${v['kwh']} kWh par kWc et par an : dans la fourchette des atlas solaires pour les marges du désert (${v['low']}–${v['high']}).`,
+    'solar.outside': (v) =>
+      `${v['kwh']} kWh par kWc et par an : hors de la fourchette du désert (${v['low']}–${v['high']}) ; vérifiez le climat, l’inclinaison et les pertes.`,
+    'solar.heat': (v) =>
+      `En ${v['month']}, la chaleur retire ${v['pct']} % aux modules : montez-les avec de l’air derrière et gardez-les propres.`,
+    'solar.export': (v) =>
+      `Seuls ${v['pct']} % du solaire sont consommés sur place ; ${v['mwh']} MWh par an partent sur le réseau. Faites tourner l’osmose et les pompes le jour, ou réduisez le champ.`,
+    'solar.payback': (v) =>
+      `Rentabilisé en environ ${v['years']} ans sur ${v['life']}.`,
+    'solar.noPayback': (v) =>
+      `Il faut ${v['years']} ans pour le rentabiliser, plus que sa durée de vie de ${v['life']} ans : vérifiez les prix.`,
+    'solar.never': () =>
+      'À ces prix, le champ ne se rentabilise jamais : ce qu’il économise ne couvre pas son entretien.',
+    'solar.dust': (v) =>
+      `${v['pct']} % perdus à la poussière : nettoyez les modules plus souvent, chaque semaine en saison de sable.`,
     'coolYear.peakMonth': (v) =>
       `${v['month']} prend ${v['pct']} % de l’électricité de refroidissement de l’année.`,
     'data.vpdBand': (v) =>

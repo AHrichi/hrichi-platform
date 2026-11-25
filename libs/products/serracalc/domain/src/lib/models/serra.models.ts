@@ -6,6 +6,7 @@ import type {
 import type { LogEntry } from '../calculations/operations';
 import type { Reading } from '../calculations/readings';
 import type { EconomicsParams } from '../calculations/site';
+import type { SolarPvParams } from '../calculations/solar';
 
 /**
  * SerraCalc's language-neutral model. Calculations return numbers and note
@@ -966,6 +967,7 @@ export type SavedCalculation =
   | SavedCalcBase<'energy', EnergyHubParams>
   | SavedCalcBase<'heatReuse', HeatReuseParams>
   | SavedCalcBase<'coolingYear', CoolingYearParams>
+  | SavedCalcBase<'solarPv', SolarPvParams>
   | SavedCalcBase<'economics', EconomicsParams>;
 
 export type CalcKind = SavedCalculation['kind'];

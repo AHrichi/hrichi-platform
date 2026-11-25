@@ -31,6 +31,7 @@ import { NoteList } from '../../ui/note-list/note-list';
 import { SaveBar, type SaveRequest } from '../../ui/save-bar/save-bar';
 import { injectCalcEditing } from '../calc-editing';
 import { CALENDAR_FIELDS } from '../fields';
+import { Panel } from '../../ui/panel/panel';
 
 type CalendarTab = 'plan';
 
@@ -41,6 +42,7 @@ type CalendarTab = 'plan';
 @Component({
   selector: 'sc-calendar-screen',
   imports: [
+    Panel,
     AhMetricCard,
     CalendarTimeline,
     ContextBar,

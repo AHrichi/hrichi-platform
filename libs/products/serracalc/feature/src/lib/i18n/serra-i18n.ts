@@ -7,13 +7,21 @@ import { EN, type SerraCopy } from './copy.en';
 import { FR } from './copy.fr';
 import { IT } from './copy.it';
 
+export interface SerraLanguage {
+  readonly id: SiteLanguage;
+  /** A short code for tight spots. */
+  readonly label: string;
+  /** The language's name in itself, as its speakers look for it. */
+  readonly nativeName: string;
+}
+
 /** The languages SerraCalc speaks: the portfolio's five. */
-export const SERRA_LANGUAGES: readonly { id: SiteLanguage; label: string }[] = [
-  { id: 'fr', label: 'FR' },
-  { id: 'ar', label: 'ع' },
-  { id: 'en', label: 'EN' },
-  { id: 'it', label: 'IT' },
-  { id: 'de', label: 'DE' },
+export const SERRA_LANGUAGES: readonly SerraLanguage[] = [
+  { id: 'fr', label: 'FR', nativeName: 'Français' },
+  { id: 'ar', label: 'ع', nativeName: 'العربية' },
+  { id: 'en', label: 'EN', nativeName: 'English' },
+  { id: 'it', label: 'IT', nativeName: 'Italiano' },
+  { id: 'de', label: 'DE', nativeName: 'Deutsch' },
 ];
 
 const COPY: Record<SiteLanguage, SerraCopy> = {

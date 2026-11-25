@@ -35,8 +35,11 @@
   } @else if (tab() === 'plants') {
     <div class="workbench">
       <div class="column">
-        <section class="panel" aria-labelledby="sc-site-plant-list">
-          <h3 id="sc-site-plant-list">{{ t().site.plantList }}</h3>
+        <section
+          class="panel"
+          scPanel="site-plant-list"
+          [heading]="t().site.plantList"
+        >
           <p class="hint">{{ t().site.plantHint }}</p>
           @if (record().plants.length === 0) {
             <p class="hint">{{ t().site.noPlants }}</p>
@@ -120,8 +123,11 @@
         </section>
       </div>
       <div class="column">
-        <section class="panel" aria-labelledby="sc-site-tariffs">
-          <h3 id="sc-site-tariffs">{{ t().site.tariffs }}</h3>
+        <section
+          class="panel"
+          scPanel="site-tariffs"
+          [heading]="t().site.tariffs"
+        >
           <p class="hint">{{ t().site.tariffHint }}</p>
           <sc-field-grid
             [specs]="tariffFields()"
@@ -129,8 +135,11 @@
             (changed)="setTariff($event)"
           />
         </section>
-        <section class="panel" aria-labelledby="sc-site-checks">
-          <h3 id="sc-site-checks">{{ t().site.checksTitle }}</h3>
+        <section
+          class="panel"
+          scPanel="site-checks"
+          [heading]="t().site.checksTitle"
+        >
           @if (checks().length) {
             <ng-container [ngTemplateOutlet]="plantGauges" />
           } @else {
@@ -140,11 +149,15 @@
       </div>
     </div>
   } @else if (tab() === 'overview') {
-    <section class="panel" aria-labelledby="sc-site-kpis">
-      <h3 id="sc-site-kpis">
-        {{ site() || t().site.unnamed }} ·
-        {{ t().site.compartments(members().length + '') }}
-      </h3>
+    <section
+      class="panel"
+      scPanel="site-kpis"
+      [heading]="
+        (site() || t().site.unnamed) +
+        ' · ' +
+        t().site.compartments(members().length + '')
+      "
+    >
       <div class="kpis">
         <ah-metric-card
           [label]="t().site.area"
@@ -195,20 +208,42 @@
         />
       </div>
 
-      <div class="shares" role="img" [attr.aria-label]="t().site.sharesAlt">
-        @for (s of shares(); track s.id; let i = $index) {
-          <span
-            class="share"
-            [attr.data-i]="i % 6"
-            [style.flex-grow]="s.pct"
-            [title]="s.title + ' · ' + i18n.num(s.pct, 0) + ' %'"
-          ></span>
-        }
-      </div>
+      <!-- Each compartment's share of the area: only worth a bar when there
+           are several, and named in a legend (a tooltip never shows on a
+           phone). The bar is a picture of the legend, so hidden from
+           screen readers, which read the list. -->
+      @if (shares().length > 1) {
+        <figure class="share-figure">
+          <div class="shares" aria-hidden="true">
+            @for (s of shares(); track s.id; let i = $index) {
+              <span
+                class="share"
+                [attr.data-i]="i % 6"
+                [style.flex-grow]="s.pct"
+              ></span>
+            }
+          </div>
+          <figcaption>
+            <span class="eyebrow">{{ t().site.sharesAlt }}</span>
+            <ul class="share-legend" role="list">
+              @for (s of shares(); track s.id; let i = $index) {
+                <li>
+                  <span
+                    class="share swatch"
+                    [attr.data-i]="i % 6"
+                    aria-hidden="true"
+                  ></span>
+                  <span dir="auto">{{ s.title }}</span>
+                  <span class="pct">{{ i18n.num(s.pct, 0) }} %</span>
+                </li>
+              }
+            </ul>
+          </figcaption>
+        </figure>
+      }
     </section>
 
-    <section class="panel" aria-labelledby="sc-site-plants">
-      <h3 id="sc-site-plants">{{ t().site.plants }}</h3>
+    <section class="panel" scPanel="site-plants" [heading]="t().site.plants">
       @if (checks().length) {
         <ng-container [ngTemplateOutlet]="plantGauges" />
         <p class="hint">{{ t().site.fromSaved }}</p>
@@ -261,8 +296,7 @@
       </div>
     </section>
 
-    <section class="panel" aria-labelledby="sc-site-table">
-      <h3 id="sc-site-table">{{ t().site.table }}</h3>
+    <section class="panel" scPanel="site-table" [heading]="t().site.table">
       <p class="hint">{{ t().site.tableHint }}</p>
       <div
         class="table-wrap"
@@ -319,8 +353,11 @@
   } @else {
     <div class="workbench">
       <div class="column">
-        <section class="panel" aria-labelledby="sc-econ-inputs">
-          <h3 id="sc-econ-inputs">{{ t().calc.inputs }}</h3>
+        <section
+          class="panel"
+          scPanel="econ-inputs"
+          [heading]="t().calc.inputs"
+        >
           <div class="actions">
             <button type="button" class="chip" (click)="takeTotals()">
               {{ t().site.takeTotals(i18n.num(totals().areaHa, 1)) }}
@@ -337,8 +374,11 @@
         </section>
       </div>
       <div class="column">
-        <section class="panel" aria-labelledby="sc-econ-results">
-          <h3 id="sc-econ-results">{{ t().calc.results }}</h3>
+        <section
+          class="panel"
+          scPanel="econ-results"
+          [heading]="t().calc.results"
+        >
           <div class="results">
             <ah-metric-card
               [label]="t().site.costPerKg"
@@ -414,8 +454,7 @@
           <sc-note-list [notes]="econ().notes" />
           <sc-calc-steps [steps]="steps()" />
         </section>
-        <section class="panel" aria-labelledby="sc-econ-save">
-          <h3 id="sc-econ-save">{{ t().save.title }}</h3>
+        <section class="panel" scPanel="econ-save" [heading]="t().save.title">
           <sc-save-bar
             [suggestedLabel]="suggestedLabel()"
             [editingLabel]="editor.editingLabel()"

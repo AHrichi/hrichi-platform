@@ -17,11 +17,12 @@ import {
 import { SerraI18n } from '../../i18n/serra-i18n';
 import { SerraStore } from '../../store/serra.store';
 import { MonthBars, type MonthSeries } from '../../ui/month-bars/month-bars';
+import { Panel } from '../../ui/panel/panel';
 
 /** The climate presets: monthly normals and the design days. */
 @Component({
   selector: 'sc-climate-screen',
-  imports: [AhButton, AhMetricCard, MonthBars],
+  imports: [Panel, AhButton, AhMetricCard, MonthBars],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './climate-screen.html',
   styleUrl: '../calc-screen.scss',

@@ -63,6 +63,7 @@ import {
   priceField,
   VPD_FIELDS,
 } from '../fields';
+import { Panel } from '../../ui/panel/panel';
 
 type AirTab = 'light' | 'co2' | 'humidity' | 'vpd';
 const TABS: readonly AirTab[] = ['light', 'co2', 'humidity', 'vpd'];
@@ -72,6 +73,7 @@ const LIGHTS: readonly LightCondition[] = ['sun', 'cloud', 'night'];
 @Component({
   selector: 'sc-air-screen',
   imports: [
+    Panel,
     AhTabs,
     AhMetricCard,
     CalcSteps,

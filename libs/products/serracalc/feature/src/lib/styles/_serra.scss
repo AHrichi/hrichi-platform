@@ -157,6 +157,26 @@
   align-items: center;
 }
 
+// Wide drawings (a year, a day by the hour) keep a readable size on phones
+// and scroll sideways, rather than shrinking their labels below reading
+// size. Left to right in every language, so a year starts at January.
+@mixin diagram-scroll($min) {
+  :host {
+    @media (max-width: 40rem) {
+      overflow-x: auto;
+      overscroll-behavior-x: contain;
+      scrollbar-width: thin;
+      direction: ltr;
+    }
+  }
+
+  svg {
+    @media (max-width: 40rem) {
+      min-inline-size: $min;
+    }
+  }
+}
+
 // Illustrated diagrams. Geometry never mirrors in Arabic (the svg stays ltr);
 // only the words inside it change.
 @mixin diagram {

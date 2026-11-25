@@ -1,6 +1,8 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  ElementRef,
+  afterNextRender,
   computed,
   inject,
   input,
@@ -19,6 +21,8 @@ import type { FieldChange } from '../../ui/field-grid/field-grid';
 import { DragHandle } from '../drag-handle';
 import { clamp, type SvgPoint } from '../svg-drag';
 
+/** The drawing's viewBox width. */
+const VIEW_W = 640;
 /** Weeks 1–52 across, from x 108 to x 628. */
 const X0 = 108;
 const X1 = 628;
@@ -69,6 +73,18 @@ export class CalendarTimeline {
   protected readonly i18n = inject(SerraI18n);
   protected readonly t = this.i18n.t;
   protected readonly x0 = X0;
+
+  constructor() {
+    // On a phone the year scrolls sideways: open it with today in view.
+    const host = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
+    afterNextRender(() => {
+      if (host.scrollWidth <= host.clientWidth) return;
+      const svg = host.querySelector('svg');
+      const scale = svg ? svg.getBoundingClientRect().width / VIEW_W : 1;
+      host.scrollLeft = this.todayX() * scale - host.clientWidth / 2;
+    });
+  }
+
   protected readonly x1 = X1;
   protected readonly kw = KW;
   protected readonly systems = SYSTEMS;

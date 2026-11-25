@@ -31,6 +31,7 @@ import { NoteList } from '../../ui/note-list/note-list';
 import { SaveBar, type SaveRequest } from '../../ui/save-bar/save-bar';
 import { injectCalcEditing } from '../calc-editing';
 import { DEMAND_FIELDS, IRRIGATION_FIELDS, pick, RAIN_FIELDS } from '../fields';
+import { Panel } from '../../ui/panel/panel';
 
 type WaterTab = 'crop' | 'rain';
 
@@ -64,6 +65,7 @@ type Rain = Pick<RainwaterParams, (typeof RAIN_KEYS)[number]>;
 @Component({
   selector: 'sc-water-screen',
   imports: [
+    Panel,
     AhTabs,
     AhMetricCard,
     CalcSteps,

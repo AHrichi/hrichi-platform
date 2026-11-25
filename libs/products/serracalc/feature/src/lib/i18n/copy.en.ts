@@ -9,6 +9,13 @@ export const EN = {
     name: 'SerraCalc',
     tagline: 'Greenhouse heat, water & climate',
     activeProject: 'Active project',
+    update: {
+      ready: 'A new version of SerraCalc is ready.',
+      broken:
+        'This saved copy of SerraCalc can’t update itself. Reload to fetch it fresh; your projects stay on this device.',
+      reload: 'Reload',
+      later: 'Later',
+    },
     offline: 'Works offline',
     offlineHint: 'Projects are saved on this device; no connection needed.',
     sunlight: 'Sunlight',
@@ -134,6 +141,20 @@ export const EN = {
     pumpWm2: 'Pad or fog pumps',
     emptyFromWeek: 'House empty from week',
     emptyWeeks: 'Weeks empty',
+    peakKw: 'Array size',
+    tiltGainPct: 'Tilt gain over flat',
+    systemLossPct: 'System losses',
+    soilingPct: 'Dust on the modules',
+    tempLossPctK: 'Power lost per K above 25 °C',
+    dayLoadKw: 'Site load by day',
+    nightLoadKw: 'Site load at night',
+    groundCoverPct: 'Rows cover the land',
+    moduleWm2: 'Module power per m²',
+    capexPerKwp: 'Installed cost',
+    omPctYear: 'Upkeep a year',
+    buyPrice: 'Grid price',
+    exportPrice: 'Export price',
+    lifeYears: 'Life, years',
     gridCo2KgKwh: 'Grid CO₂',
     gasPerM3: 'Gas',
     electricityPerKwh: 'Electricity bought',
@@ -287,6 +308,20 @@ export const EN = {
     fanWPerM3h: 'Fan test or datasheet at pad pressure: about 0.03–0.04',
     pumpWm2: 'Pad pumps: about 0.4 W per m² of floor',
     emptyWeeks: 'Between crops, as in the crop calendar',
+    peakKw: 'Sized at first to what the site uses by day',
+    tiltGainPct: 'Fixed, tilted near the latitude: +10–15 %',
+    systemLossPct: 'Inverter, cables, mismatch: 10–15 %',
+    soilingPct: 'Desert dust, cleaned regularly: 3–8 %',
+    tempLossPctK: 'On the datasheet: 0.30–0.45',
+    dayLoadKw: 'Fans, pumps, RO by day; from the cooling year at first',
+    nightLoadKw: 'What runs at night, such as the RO',
+    groundCoverPct: 'Rows spaced against shading: 30–50 %',
+    moduleWm2: 'Modern modules: 200–230',
+    capexPerKwp: 'Ask for a local quote',
+    omPctYear: 'Cleaning, upkeep, insurance: 1–2 %',
+    buyPrice: 'Your power tariff',
+    exportPrice: '0 if the grid pays nothing',
+    lifeYears: 'Modules last 25–30 years',
     gridCo2KgKwh: 'Your grid’s figure; 0.45 is an example',
     waterPerM3: 'Bought, or your RO water’s full cost',
     exportPerKwh: 'What the grid pays for the CHP’s power',
@@ -403,6 +438,7 @@ export const EN = {
   },
   kinds: {
     coolingYear: 'Cooling over the year',
+    solarPv: 'Solar power',
     energy: 'Energy hub (CHP)',
     heatReuse: 'Heat in chilled water',
     economics: 'Economics',
@@ -761,6 +797,13 @@ export const EN = {
     heatingWeeks: 'Weeks of heating',
     fogWeeks: 'Weeks of fog',
   },
+  photoViewer: {
+    open: 'Enlarge photo',
+    zoom: 'Zoom in',
+    fit: 'Fit to screen',
+    close: 'Close',
+    original: 'Full size on Wikimedia Commons',
+  },
   science: {
     title: 'Science',
     lead: 'The phenomena behind every calculator: what happens, the formula, what it assumes, and how to measure each number you type in.',
@@ -777,7 +820,35 @@ export const EN = {
     usedIn: 'Used in',
     sources: 'Sources',
     instrumentsTitle: 'Instruments',
+    foldAll: 'Fold all',
+    unfoldAll: 'Unfold all',
     instrumentsLead: 'What to measure with, and how to read it well.',
+    photo: 'Photo',
+    photoCaptions: {
+      airLeakage:
+        'Inside a film tunnel: every gap in the cover lets warm air out.',
+      cogeneration: 'The gas engine of a combined heat and power unit.',
+      coolingEnergy:
+        'An exhaust fan: in a fan-and-pad house, fans are most of the cooling bill.',
+      cropCalendar: 'Seedlings in a nursery bed, before they are planted out.',
+      desalination:
+        'Inside a reverse-osmosis plant: rows of pressure vessels holding the membranes.',
+      dewPoint:
+        'Water condenses on glass that is colder than the dew point of the air.',
+      fertigation:
+        'A dripper feeding a plant on substrate: where the fertigation loop starts.',
+      geometry: 'A glasshouse range: spans side by side under one gutter line.',
+      heatLoss:
+        'A double energy screen drawn under the roof cuts the heat lost at night.',
+      rainHarvest:
+        'Rainwater tanks: what a roof catches is kept for the dry months.',
+      siteScale:
+        'The greenhouses of Almería seen from orbit by a NASA astronaut.',
+      transpiration:
+        'A tomato leaf under the microscope (100×): the stomata, where its water leaves.',
+      ventilation:
+        'Roof vents open along the ridge let the hot, moist air out.',
+    },
     howToGet: (label: string) => `How to get “${label}”`,
     readMore: 'Read about',
     close: 'Close',
@@ -808,6 +879,16 @@ export const EN = {
       bill: 'Your own tariff or factor, in the project’s currency.',
     },
     topics: {
+      solarPv: {
+        title: 'Solar power for the site',
+        what: 'Desert sites get about 2,000 kWh of sun per m² a year, among the most anywhere, and their fans, pumps and RO plant run mostly by day. An array’s output follows the radiation month by month, less its losses, dust and heat: modules lose 0.3–0.45 % of their power for each degree above 25 °C, and in desert summers they run at 50–65 °C. Solar used on site as it is made saves the full grid price; the rest earns the export price, if any.',
+        assumptions: [
+          'Each month is its mean day of radiation; clouds and dust storms vary it.',
+          'The cells run 20 K above the daytime air.',
+          'The daytime load is even through the daylight hours; fans peak in summer, with the sun, so the use on site is a little underestimated.',
+          'Payback and the cost per kWh are undiscounted.',
+        ],
+      },
       coolingEnergy: {
         title: 'Cooling electricity over the year',
         what: 'Fan-and-pad cooling runs on electricity: fans pull 120–150 m³/h of air per m² of floor through wet pads, and pumps keep the pads wet. Through the year the fans run only in warm hours, faster the hotter it is, so the year’s use follows the climate. A Mediterranean house uses about 10 kWh/m² a year: a check for the figure.',
@@ -1148,12 +1229,33 @@ export const EN = {
     coolCo2: 'Grid CO₂ a year',
     coolHours: 'Hours of cooling',
     coolTable: 'Cooling by month',
+    solarMade: 'Solar made',
+    solarUse: 'Site use',
+    solarChartAlt: (place: string, total: string) =>
+      `Solar power made and the site’s use by month in ${place}: ${total} MWh of solar a year.`,
+    solarCaption:
+      'Only what the site uses while the sun is up takes solar power as it comes; the rest goes to the grid.',
+    solarYield: 'Solar a year',
+    solarSpecific: 'Per kWp',
+    solarSelfUse: 'Used on site',
+    solarFraction: (pct: string) => `${pct} % of the site’s electricity`,
+    solarExport: 'Sent to the grid',
+    solarSavings: 'Saved a year',
+    solarPayback: 'Pays back in',
+    solarYears: 'years',
+    solarCostKwh: 'Cost of a solar kWh',
+    solarLand: 'Land for the rows',
+    solarCo2: 'Grid CO₂ avoided',
+    solarTable: 'Solar by month',
+    solarTakeLoads: 'Take the site’s loads',
+    solarNever: 'Never',
     month: 'Month',
     coolOfBenchmark: 'Of the published 10 kWh/m²',
     title: 'Energy',
-    lead: 'A gas CHP giving heat, power and CO₂ through a winter day, a hot-water buffer for the night and a boiler for the rest; and the heat held in chilled well water.',
+    lead: 'A gas CHP giving heat, power and CO₂ through a winter day, a hot-water buffer for the night and a boiler for the rest; the heat held in chilled well water; the cooling electricity of a year; and solar power for the site.',
     tabs: {
       cooling: 'Cooling over the year',
+      solar: 'Solar power',
       chp: 'CHP and buffer',
       reuse: 'Heat reuse',
     },
@@ -1179,6 +1281,12 @@ export const EN = {
       coolShare: 'Fans follow the heat: f = min(1, (T − start) / span)',
       coolYear: 'Year = Σ days × Σ hours of power',
       coolCheck: 'Check against about 10 kWh/m² a year',
+      solarYield:
+        'Solar = kWp × sun × days × tilt × (1 − losses) × (1 − dust) × heat',
+      solarHeat:
+        'Heat: cells 20 K above the daytime air lose γ per K above 25 °C',
+      solarSelf: 'Used on site = min(solar, day load × daylight hours)',
+      solarPayback: 'Payback = cost / (bills avoided + exports − upkeep)',
       demand: 'Need = H × (T_set − T_out) − sun, less the screen at night',
       buffer: 'Buffer = 1.163 × V × ΔT',
       gas: 'Gas = P_el / η_el / 9.77 × hours + boiler',
@@ -1699,6 +1807,22 @@ export const EN = {
       `Fans at ${v['w']} W per m³/h are worn or fighting dirty pads: a fan test and clean pads cut the bill.`,
     'coolYear.airflow': (v) =>
       `${v['q']} m³/h per m² is outside the usual 120–150 for fan and pad.`,
+    'solar.range': (v) =>
+      `${v['kwh']} kWh per kWp a year: in the range solar atlases give for the desert edge (${v['low']}–${v['high']}).`,
+    'solar.outside': (v) =>
+      `${v['kwh']} kWh per kWp a year: outside the desert range (${v['low']}–${v['high']}); check the climate, tilt and losses.`,
+    'solar.heat': (v) =>
+      `In ${v['month']} heat takes ${v['pct']} % off the modules: mount them with air behind and keep them clean.`,
+    'solar.export': (v) =>
+      `Only ${v['pct']} % of the solar power is used on site; ${v['mwh']} MWh a year go to the grid. Run the RO and pumps by day, or build a smaller array.`,
+    'solar.payback': (v) =>
+      `Pays back in about ${v['years']} years of its ${v['life']}.`,
+    'solar.noPayback': (v) =>
+      `Takes ${v['years']} years to pay back, longer than its ${v['life']}-year life: check the prices.`,
+    'solar.never': () =>
+      'At these prices the array never pays back: what it saves doesn’t cover its upkeep.',
+    'solar.dust': (v) =>
+      `${v['pct']} % lost to dust: clean the modules more often, weekly in sandy seasons.`,
     'coolYear.peakMonth': (v) =>
       `${v['month']} takes ${v['pct']} % of the year’s cooling electricity.`,
     'data.vpdBand': (v) => `VPD sat in its band ${v['pct']} % of the time.`,

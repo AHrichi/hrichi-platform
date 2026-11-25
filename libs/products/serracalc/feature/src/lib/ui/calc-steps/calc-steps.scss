@@ -38,17 +38,12 @@
   font-weight: var(--font-weight-medium);
 }
 
-code {
-  display: block;
+// The formula with today's numbers, laid out as maths.
+.math {
   padding: var(--space-2) var(--space-3);
-  overflow-x: auto;
   border-radius: var(--radius-sm);
   background: var(--color-bg-canvas);
-  font-family: var(--font-family-mono);
-  font-size: var(--font-size-100);
-  text-align: start;
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
+  font-size: var(--font-size-200);
 }
 
 // The phenomena behind the formulas, as links to the Science page.

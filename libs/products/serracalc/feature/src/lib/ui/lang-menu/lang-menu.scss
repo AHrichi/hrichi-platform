@@ -1,0 +1,150 @@
+// The language switch: a pill like the header's other tools, and a small
+// glass menu under it on the side the page reads from.
+:host {
+  position: relative;
+  display: inline-flex;
+}
+
+.trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-block-size: 2.75rem;
+  min-inline-size: 2.75rem;
+  padding-inline: var(--space-3);
+  border: 1px solid var(--sc-edge, var(--color-border-default));
+  border-radius: var(--radius-pill);
+  background: var(--sc-glass, var(--color-bg-surface));
+  color: var(--color-text-default);
+  font: inherit;
+  font-size: var(--font-size-200);
+  cursor: pointer;
+  transition: border-color var(--motion-duration-fast)
+    var(--motion-easing-standard);
+
+  &:hover,
+  &[aria-expanded='true'] {
+    border-color: var(--color-accent-default);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-focus-ring);
+    outline-offset: 2px;
+  }
+
+  .code {
+    font-family: var(--font-family-mono);
+    font-size: var(--font-size-100);
+    font-weight: var(--font-weight-semibold);
+  }
+
+  // The full name where there is room; the code on phones.
+  .name {
+    display: none;
+  }
+
+  @media (min-width: 48rem) {
+    .code {
+      display: none;
+    }
+
+    .name {
+      display: inline;
+    }
+  }
+
+  .chevron {
+    color: var(--color-text-muted);
+    font-size: 0.875em;
+    transition: transform var(--motion-duration-fast)
+      var(--motion-easing-standard);
+
+    // Phones: the globe and the code are enough; the chevron makes room.
+    @media (max-width: 30rem) {
+      display: none;
+    }
+  }
+
+  &[aria-expanded='true'] .chevron {
+    transform: rotate(180deg);
+  }
+}
+
+.menu {
+  position: absolute;
+  inset-block-start: calc(100% + var(--space-2));
+  inset-inline-end: 0;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-inline-size: 12rem;
+  margin: 0;
+  padding: var(--space-2);
+  list-style: none;
+  background: var(--sc-glass-strong, var(--color-bg-raised));
+  backdrop-filter: var(--sc-blur, none);
+  border: 1px solid var(--sc-edge, var(--color-border-default));
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-overlay);
+
+  button {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    inline-size: 100%;
+    min-block-size: 2.75rem;
+    padding: var(--space-2) var(--space-3);
+    border: 0;
+    border-radius: var(--radius-md);
+    background: none;
+    color: var(--color-text-default);
+    font: inherit;
+    font-size: var(--font-size-200);
+    text-align: start;
+    cursor: pointer;
+
+    &:hover {
+      background: color-mix(
+        in srgb,
+        var(--color-accent-default) 10%,
+        transparent
+      );
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--color-focus-ring);
+      outline-offset: -2px;
+    }
+
+    &[aria-checked='true'] {
+      color: var(--color-accent-default);
+      font-weight: var(--font-weight-semibold);
+    }
+  }
+
+  .native {
+    flex: 1;
+  }
+
+  .code {
+    color: var(--color-text-muted);
+    font-family: var(--font-family-mono);
+    font-size: var(--font-size-100);
+  }
+
+  .tick {
+    visibility: hidden;
+  }
+
+  [aria-checked='true'] .tick {
+    visibility: visible;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .trigger,
+  .trigger .chevron {
+    transition: none;
+  }
+}
