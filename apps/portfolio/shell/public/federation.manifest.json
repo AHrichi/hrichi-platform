@@ -10,5 +10,6 @@
   "product-basecamp": "http://localhost:4310/remoteEntry.json",
   "product-learning": "http://localhost:4311/remoteEntry.json",
   "product-system-design": "http://localhost:4312/remoteEntry.json",
-  "product-greenhouse": "http://localhost:4313/remoteEntry.json"
+  "product-greenhouse": "http://localhost:4313/remoteEntry.json",
+  "product-serracalc": "http://localhost:4314/remoteEntry.json"
 }

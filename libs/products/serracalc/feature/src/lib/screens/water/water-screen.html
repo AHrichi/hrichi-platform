@@ -1,0 +1,256 @@
+<section class="screen" aria-labelledby="sc-water-title">
+  <header class="head">
+    <div>
+      <h2 id="sc-water-title">{{ t().water.title }}</h2>
+      <p>{{ t().water.lead }}</p>
+    </div>
+  </header>
+
+  <sc-context-bar (resetInputs)="reset()" />
+
+  <ah-tabs
+    [tabs]="tabs()"
+    [selectedId]="tab()"
+    (selectedIdChange)="editor.select($event)"
+    [ariaLabel]="t().water.title"
+  />
+
+  <div class="workbench">
+    <div class="column">
+      <figure class="panel">
+        @if (tab() === 'crop') {
+          <sc-crop-balance
+            [params]="cropParams()"
+            [result]="crop()"
+            (changed)="setDemand($event)"
+          />
+        } @else {
+          <sc-rain-basin
+            [params]="rainParams()"
+            [result]="rain()"
+            (changed)="setRain($event)"
+          />
+        }
+        <figcaption>✋ {{ t().calc.dragHint }}</figcaption>
+      </figure>
+      <details class="panel" open>
+        <summary>
+          <h3>{{ t().context.demand }}</h3>
+        </summary>
+        <sc-field-grid
+          [specs]="demandFields"
+          [values]="demand()"
+          (changed)="setDemand($event)"
+        >
+          <label class="select">
+            <span>{{ t().water.climate }}</span>
+            <select (change)="setClimate(value($event))">
+              @for (c of climates; track c.id) {
+                <option [value]="c.id" [selected]="demand().climateId === c.id">
+                  {{ c.name }} ({{ c.country }})
+                </option>
+              }
+            </select>
+          </label>
+        </sc-field-grid>
+      </details>
+
+      <section class="panel" aria-labelledby="sc-water-inputs">
+        <h3 id="sc-water-inputs">{{ t().calc.inputs }}</h3>
+        @if (tab() === 'crop') {
+          <sc-field-grid
+            [specs]="irrigationFields"
+            [values]="irrigation()"
+            (changed)="setIrrigation($event)"
+          />
+        } @else {
+          <sc-field-grid
+            [specs]="rainFields"
+            [values]="rainInputs()"
+            (changed)="setRain($event)"
+          />
+          <div class="actions">
+            <button type="button" class="chip" (click)="useSuggested()">
+              {{ t().water.suggested }}:
+              {{ i18n.num(rain().suggestedBasinM3, 0) }} m³
+            </button>
+          </div>
+        }
+      </section>
+    </div>
+
+    <div class="column">
+      <section class="panel" aria-labelledby="sc-water-results">
+        <h3 id="sc-water-results">{{ t().calc.results }}</h3>
+        @if (tab() === 'crop') {
+          <div class="results">
+            <ah-metric-card
+              [label]="t().water.peak"
+              [value]="i18n.num(crop().peakGrossLm2)"
+              unit="L/m²·d"
+              variant="accent"
+              [hint]="i18n.month(crop().peakMonth)"
+            />
+            <ah-metric-card
+              [label]="t().water.peakDay"
+              [value]="i18n.num(crop().peakM3Day)"
+              unit="m³"
+            />
+            <ah-metric-card
+              [label]="t().water.year"
+              [value]="i18n.num(crop().annualM3, 0)"
+              unit="m³"
+              [hint]="
+                i18n.num(crop().annualM3PerM2, 2) + ' m³ ' + t().water.perM2Year
+              "
+            />
+            <ah-metric-card
+              [label]="t().water.emitters"
+              [value]="i18n.num(crop().emitters, 0)"
+              [hint]="
+                t().water.perEmitter +
+                ': ' +
+                i18n.num(crop().litresPerEmitterPeak, 2) +
+                ' L'
+              "
+            />
+            <ah-metric-card
+              [label]="t().water.shots"
+              [value]="crop().shotsPerDayPeak"
+              [hint]="
+                t().water.shotLength +
+                ' ' +
+                i18n.num(crop().shotMinutes) +
+                ' min'
+              "
+            />
+            <ah-metric-card
+              [label]="t().water.sections"
+              [value]="crop().sections"
+              [hint]="
+                t().water.systemFlow +
+                ': ' +
+                i18n.num(crop().systemFlowM3h) +
+                ' m³/h'
+              "
+            />
+          </div>
+          <h4>{{ t().water.monthly }}</h4>
+          <sc-month-bars
+            [series]="cropSeries()"
+            unit="L/m²"
+            [digits]="1"
+            [ariaLabel]="cropAlt()"
+          />
+          <details class="table-toggle">
+            <summary>{{ t().calc.table }}</summary>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th scope="col">{{ t().water.table.month }}</th>
+                    <th scope="col">MJ/m²</th>
+                    <th scope="col">L/m²</th>
+                    <th scope="col">m³ / d</th>
+                    <th scope="col">m³</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (m of crop().months; track m.month) {
+                    <tr>
+                      <th scope="row">{{ i18n.month(m.month) }}</th>
+                      <td>{{ i18n.num(m.radiationInMj) }}</td>
+                      <td>{{ i18n.num(m.grossLm2, 2) }}</td>
+                      <td>{{ i18n.num(m.houseM3Day) }}</td>
+                      <td>{{ i18n.num(m.houseM3Month, 0) }}</td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </details>
+          <sc-note-list [notes]="crop().notes" />
+        } @else {
+          <div class="results">
+            <ah-metric-card
+              [label]="t().water.coverage"
+              [value]="i18n.num(rain().coveragePct, 0)"
+              unit="%"
+              variant="accent"
+              [hint]="t().water.maxCoverage(i18n.num(rain().maxCoveragePct, 0))"
+            />
+            <ah-metric-card
+              [label]="t().water.harvest"
+              [value]="i18n.num(rain().annualHarvestM3, 0)"
+              unit="m³"
+              [hint]="
+                t().water.rainYear +
+                ': ' +
+                i18n.num(rain().annualRainMm, 0) +
+                ' mm'
+              "
+            />
+            <ah-metric-card
+              [label]="t().water.demand"
+              [value]="i18n.num(rain().annualDemandM3, 0)"
+              unit="m³"
+            />
+            <ah-metric-card
+              [label]="t().water.suggested"
+              [value]="i18n.num(rain().suggestedBasinM3, 0)"
+              unit="m³"
+              [hint]="t().water.storm('25', i18n.num(rain().stormBufferM3, 0))"
+            />
+          </div>
+          <h4>{{ t().water.rainChart }}</h4>
+          <sc-month-bars
+            [series]="rainSeries()"
+            unit="m³"
+            [ariaLabel]="rainAlt()"
+          />
+          <details class="table-toggle">
+            <summary>{{ t().calc.table }}</summary>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th scope="col">{{ t().water.table.month }}</th>
+                    <th scope="col">{{ t().water.table.harvest }}</th>
+                    <th scope="col">{{ t().water.table.demand }}</th>
+                    <th scope="col">{{ t().water.table.used }}</th>
+                    <th scope="col">{{ t().water.table.stored }}</th>
+                    <th scope="col">{{ t().water.table.overflow }}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (m of rain().months; track m.month) {
+                    <tr>
+                      <th scope="row">{{ i18n.month(m.month) }}</th>
+                      <td>{{ i18n.num(m.harvestM3, 0) }}</td>
+                      <td>{{ i18n.num(m.demandM3, 0) }}</td>
+                      <td>{{ i18n.num(m.usedM3, 0) }}</td>
+                      <td>{{ i18n.num(m.storedEndM3, 0) }}</td>
+                      <td>{{ i18n.num(m.overflowM3, 0) }}</td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </details>
+          <sc-note-list [notes]="rain().notes" />
+        }
+        <sc-calc-steps [steps]="steps()" />
+      </section>
+
+      <section class="panel" aria-labelledby="sc-water-save">
+        <h3 id="sc-water-save">{{ t().save.title }}</h3>
+        <sc-save-bar
+          [suggestedLabel]="suggestedLabel()"
+          [editingLabel]="editor.editingLabel()"
+          (save)="save($event)"
+          (stopEditing)="editor.stop()"
+        />
+      </section>
+    </div>
+  </div>
+</section>

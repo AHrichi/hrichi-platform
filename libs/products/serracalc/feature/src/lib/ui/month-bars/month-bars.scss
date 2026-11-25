@@ -1,0 +1,85 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-inline-size: 0;
+}
+
+// Months run left to right in every language, like the numbers on the axis.
+svg {
+  display: block;
+  inline-size: 100%;
+  block-size: auto;
+  direction: ltr;
+  font-family: var(--font-family-sans);
+}
+
+.grid {
+  stroke: var(--color-border-default);
+  stroke-width: 1;
+}
+
+.base {
+  stroke: var(--color-border-strong);
+  stroke-width: 1;
+}
+
+.axis {
+  fill: var(--color-text-muted);
+  font-size: 11px;
+}
+
+.bar {
+  fill: var(--color-data-1);
+
+  &[data-series='1'] {
+    fill: var(--color-data-2);
+  }
+
+  &:hover {
+    opacity: 0.8;
+  }
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-100);
+
+  li {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+}
+
+.swatch {
+  inline-size: 0.75rem;
+  block-size: 0.75rem;
+  border-radius: 3px;
+  background: var(--color-data-1);
+
+  &[data-series='1'] {
+    background: var(--color-data-2);
+  }
+}
+
+.level {
+  stroke: var(--color-text-default);
+  stroke-width: 1.5;
+  stroke-dasharray: 6 4;
+}
+
+.level-label {
+  fill: var(--color-text-default);
+  font-size: 11px;
+  font-weight: 600;
+  paint-order: stroke;
+  stroke: var(--color-bg-raised);
+  stroke-width: 3;
+}

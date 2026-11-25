@@ -1,0 +1,325 @@
+<section class="screen" aria-labelledby="sc-projects-title">
+  <header class="head">
+    <div>
+      <h2 id="sc-projects-title">{{ t().projects.title }}</h2>
+      <p>{{ t().projects.lead }}</p>
+    </div>
+    <div class="actions">
+      <button ahButton type="button" (click)="newProject()">
+        + {{ t().projects.new }}
+      </button>
+      @if (!store.hasSamples()) {
+        <button
+          ahButton="secondary"
+          type="button"
+          (click)="store.loadSamples()"
+        >
+          {{ t().projects.samples }}
+        </button>
+      }
+    </div>
+  </header>
+
+  @if (store.isLoading()) {
+    <p class="muted" role="status">{{ t().projects.loading }}</p>
+  } @else if (store.projects().length === 0) {
+    <ah-empty-state
+      icon="🏠"
+      [title]="t().projects.emptyTitle"
+      [description]="t().projects.emptyLead"
+    />
+  } @else {
+    @if (store.projects().length > 1) {
+      <label class="switch">
+        <span>{{ t().projects.switch }}</span>
+        <select (change)="store.setActiveProject(value($event))">
+          @for (p of store.projects(); track p.id) {
+            <option
+              [value]="p.id"
+              [selected]="store.activeProject()?.id === p.id"
+            >
+              {{ p.title }}
+            </option>
+          }
+        </select>
+      </label>
+    }
+
+    @if (store.activeProject(); as project) {
+      <article class="panel project" aria-labelledby="sc-project-name">
+        <header class="project-head">
+          <div>
+            <h3 id="sc-project-name">{{ project.title }}</h3>
+            @if (project.site) {
+              <p class="muted">{{ project.site }}</p>
+            }
+          </div>
+          <div class="actions">
+            <button
+              ahButton="secondary"
+              type="button"
+              (click)="editProject(project)"
+            >
+              {{ t().common.edit }}
+            </button>
+            <button
+              ahButton="ghost"
+              type="button"
+              (click)="deleteProject(project)"
+            >
+              {{ t().common.delete }}
+            </button>
+          </div>
+        </header>
+        @if (summary(); as s) {
+          <dl class="facts">
+            <div>
+              <dt>{{ t().projects.climate }}</dt>
+              <dd>{{ s.climate.name }} ({{ s.climate.country }})</dd>
+            </div>
+            <div>
+              <dt>{{ t().projects.crop }}</dt>
+              <dd>{{ t().crops[project.crop] }}</dd>
+            </div>
+            <div>
+              <dt>{{ t().projects.shape }}</dt>
+              <dd>{{ t().shapes[project.greenhouse.shape] }}</dd>
+            </div>
+            <div>
+              <dt>{{ t().projects.floor }}</dt>
+              <dd>{{ i18n.num(s.floor, 0) }} m²</dd>
+            </div>
+            <div>
+              <dt>{{ t().projects.cover }}</dt>
+              <dd>{{ t().covers[project.greenhouse.cover] }}</dd>
+            </div>
+            <div>
+              <dt>{{ t().projects.screen }}</dt>
+              <dd>{{ t().screens[project.greenhouse.screen] }}</dd>
+            </div>
+          </dl>
+        }
+        <p class="links">
+          <a routerLink="../greenhouse"
+            >🏠 {{ t().nav.greenhouse }} {{ t().common.next }}</a
+          >
+          <a routerLink="../heating"
+            >🔥 {{ t().nav.heating }} {{ t().common.next }}</a
+          >
+          <a routerLink="../cooling"
+            >🌬️ {{ t().nav.cooling }} {{ t().common.next }}</a
+          >
+          <a routerLink="../water"
+            >💧 {{ t().nav.water }} {{ t().common.next }}</a
+          >
+        </p>
+      </article>
+
+      <section class="panel" id="saved" aria-labelledby="sc-saved-title">
+        <h3 id="sc-saved-title">{{ t().projects.saved }}</h3>
+        @if (project.calculations.length === 0) {
+          <p class="muted">{{ t().projects.savedEmpty }}</p>
+        } @else {
+          <ul class="saved" role="list">
+            @for (c of project.calculations; track c.id) {
+              <li>
+                <div class="saved-text">
+                  <strong>{{ c.label }}</strong>
+                  <small
+                    >{{ t().kinds[c.kind] }} · {{ i18n.date(c.savedAt) }}</small
+                  >
+                </div>
+                <div class="actions">
+                  <a
+                    ahButton="secondary"
+                    size="sm"
+                    [routerLink]="['..', opens(c).screen]"
+                    [queryParams]="{ tab: opens(c).tab, edit: c.id }"
+                  >
+                    {{ t().common.open }}
+                  </a>
+                  <button
+                    ahButton="ghost"
+                    size="sm"
+                    type="button"
+                    (click)="startRename(c)"
+                  >
+                    {{ t().common.rename }}
+                  </button>
+                  <button
+                    ahButton="ghost"
+                    size="sm"
+                    type="button"
+                    (click)="deleteResult(c)"
+                  >
+                    {{ t().common.delete }}
+                  </button>
+                </div>
+              </li>
+            }
+          </ul>
+        }
+      </section>
+    }
+  }
+</section>
+
+<ah-modal
+  [closeLabel]="t().common.close"
+  [(open)]="formOpen"
+  [title]="editingProject() ? t().projects.editTitle : t().projects.newTitle"
+  size="lg"
+>
+  <form
+    class="form"
+    id="sc-project-form"
+    (submit)="$event.preventDefault(); submit()"
+  >
+    @if (formError()) {
+      <p class="error" role="alert">{{ t().projects.required }}</p>
+    }
+    <div class="form-row">
+      <label class="text">
+        <span>{{ t().projects.name }}</span>
+        <input
+          type="text"
+          maxlength="80"
+          required
+          [value]="draft().title"
+          (input)="setDraft('title', value($event))"
+        />
+      </label>
+      <label class="text">
+        <span>{{ t().projects.site }}</span>
+        <input
+          type="text"
+          maxlength="80"
+          [value]="draft().site"
+          (input)="setDraft('site', value($event))"
+        />
+      </label>
+    </div>
+    <div class="form-row">
+      <label class="text">
+        <span>{{ t().projects.climate }}</span>
+        <select (change)="setDraft('climateId', value($event))">
+          @for (c of climates; track c.id) {
+            <option [value]="c.id" [selected]="draft().climateId === c.id">
+              {{ c.name }} ({{ c.country }})
+            </option>
+          }
+        </select>
+      </label>
+      <label class="text">
+        <span>{{ t().projects.crop }}</span>
+        <select (change)="setDraft('crop', $any(value($event)))">
+          @for (id of crops; track id) {
+            <option [value]="id" [selected]="draft().crop === id">
+              {{ t().crops[id] }}
+            </option>
+          }
+        </select>
+      </label>
+      <label class="text">
+        <span>{{ t().projects.currency }}</span>
+        <select (change)="setDraft('currency', $any(value($event)))">
+          @for (id of currencies; track id) {
+            <option [value]="id" [selected]="draft().currency === id">
+              {{ id }} · {{ t().currencies[id] }}
+            </option>
+          }
+        </select>
+      </label>
+    </div>
+
+    <fieldset>
+      <legend>{{ t().context.house }}</legend>
+      <sc-field-grid
+        [specs]="houseFields"
+        [values]="draft().greenhouse"
+        (changed)="setHouse($event)"
+      >
+        <label class="select">
+          <span>{{ t().projects.shape }}</span>
+          <select (change)="setHouseOption('shape', value($event))">
+            @for (id of shapes; track id) {
+              <option [value]="id" [selected]="draft().greenhouse.shape === id">
+                {{ t().shapes[id] }}
+              </option>
+            }
+          </select>
+        </label>
+        <label class="select">
+          <span>{{ t().projects.cover }}</span>
+          <select (change)="setHouseOption('cover', value($event))">
+            @for (id of covers; track id) {
+              <option [value]="id" [selected]="draft().greenhouse.cover === id">
+                {{ t().covers[id] }}
+              </option>
+            }
+          </select>
+        </label>
+        <label class="select">
+          <span>{{ t().projects.screen }}</span>
+          <select (change)="setHouseOption('screen', value($event))">
+            @for (id of screens; track id) {
+              <option
+                [value]="id"
+                [selected]="draft().greenhouse.screen === id"
+              >
+                {{ t().screens[id] }}
+              </option>
+            }
+          </select>
+        </label>
+        <label class="check">
+          <input
+            type="checkbox"
+            [checked]="draft().greenhouse.perimeterInsulated"
+            (change)="setInsulated(checked($event))"
+          />
+          {{ t().projects.insulated }}
+        </label>
+      </sc-field-grid>
+    </fieldset>
+  </form>
+  <div modal-actions class="modal-actions">
+    <button ahButton="ghost" type="button" (click)="formOpen.set(false)">
+      {{ t().common.cancel }}
+    </button>
+    <button ahButton type="submit" form="sc-project-form">
+      {{ editingProject() ? t().projects.saveChanges : t().projects.create }}
+    </button>
+  </div>
+</ah-modal>
+
+<ah-modal
+  [closeLabel]="t().common.close"
+  [(open)]="renameOpen"
+  [title]="t().projects.renameTitle"
+  size="sm"
+>
+  <form
+    class="form"
+    id="sc-rename-form"
+    (submit)="$event.preventDefault(); rename()"
+  >
+    <label class="text">
+      <span>{{ t().projects.renameLabel }}</span>
+      <input
+        type="text"
+        maxlength="80"
+        [value]="renameText()"
+        (input)="renameText.set(value($event))"
+      />
+    </label>
+  </form>
+  <div modal-actions class="modal-actions">
+    <button ahButton="ghost" type="button" (click)="renameOpen.set(false)">
+      {{ t().common.cancel }}
+    </button>
+    <button ahButton type="submit" form="sc-rename-form">
+      {{ t().common.save }}
+    </button>
+  </div>
+</ah-modal>

@@ -119,6 +119,15 @@ export default [
               ],
             },
             {
+              sourceTag: 'scope:product-serracalc',
+              onlyDependOnLibsWithTags: [
+                'scope:product-serracalc',
+                'scope:shared',
+                'scope:platform',
+                'scope:design-system',
+              ],
+            },
+            {
               sourceTag: 'scope:product-alarm-engine',
               onlyDependOnLibsWithTags: [
                 'scope:product-alarm-engine',

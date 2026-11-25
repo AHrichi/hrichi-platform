@@ -94,6 +94,13 @@ export default defineConfig({
       cwd: workspaceRoot,
     },
     {
+      // SerraCalc (ADR-0027): static, local-first, no API.
+      command: 'pnpm exec nx run product-serracalc:serve-static',
+      url: 'http://localhost:4314/remoteEntry.json',
+      reuseExistingServer: true,
+      cwd: workspaceRoot,
+    },
+    {
       command: isCI
         ? 'pnpm exec nx run shell:serve-static'
         : 'pnpm exec nx run shell:serve',

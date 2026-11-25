@@ -32,6 +32,7 @@ Each ADR records one decision, why it was made, and what a spike proved. New ADR
 | [0024](0024-learning-engine.md)                | Learning Engine: own scope, client-only access for products, local-first sync, Nest AI    |
 | [0025](0025-system-design-course.md)           | System Design course: step lessons on an isometric scene, paper look, shared step helpers |
 | [0026](0026-greenhouse-labor-planner.md)       | Greenhouse Labor Planner: pure planning maths, Supabase RLS, offline-first Capacitor app  |
+| [0027](0027-serracalc.md)                      | SerraCalc: greenhouse heat, water and climate calculators on LuxPath's pattern            |
 
 ## Proposed (written when the area is built)
 

@@ -1,0 +1,53 @@
+@use '../../styles/serra' as sc;
+
+@include sc.diagram;
+
+.house {
+  fill: var(--color-accent-subtle);
+  stroke: var(--color-accent-default);
+  stroke-width: 2;
+  stroke-linejoin: round;
+}
+
+.drop {
+  stroke: var(--color-info-default);
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.pipe {
+  fill: none;
+  stroke: var(--color-text-muted);
+  stroke-width: 4;
+  stroke-linejoin: round;
+}
+
+.tank {
+  fill: none;
+  stroke: var(--color-text-default);
+  stroke-width: 2;
+}
+
+.water {
+  fill: var(--color-info-default);
+  opacity: 0.45;
+}
+
+.flow {
+  fill: none;
+  stroke: var(--color-info-default);
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+
+.spill-line {
+  stroke: var(--color-warning-default);
+}
+
+.head {
+  fill: var(--color-info-default);
+
+  &.spill {
+    fill: var(--color-warning-default);
+  }
+}

@@ -30,6 +30,7 @@ const linkLabels: Record<string, string> = {
   'product-basecamp': 'Basecamp · Camping trip planner',
   'product-learning': 'Learning Engine · Capture and daily review',
   'product-system-design': 'System Design · Interactive course',
+  'product-serracalc': 'SerraCalc · Greenhouse heat, water & climate',
   'lab-rxjs': 'RxJS practice pad',
   'lab-sky': 'Sky lab',
   'design-system': 'Design system & Storybook',

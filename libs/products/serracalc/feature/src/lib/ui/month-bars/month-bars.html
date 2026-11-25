@@ -1,0 +1,74 @@
+@if (series().length > 1) {
+  <ul class="legend" role="list">
+    @for (s of series(); track $index) {
+      <li>
+        <span class="swatch" [attr.data-series]="$index"></span>{{ s.label }}
+      </li>
+    }
+  </ul>
+}
+<svg
+  [attr.viewBox]="'0 0 ' + width + ' ' + height"
+  role="img"
+  [attr.aria-label]="ariaLabel()"
+>
+  @for (tick of yTicks(); track tick.v) {
+    <line
+      class="grid"
+      [attr.x1]="left"
+      [attr.x2]="right"
+      [attr.y1]="tick.y"
+      [attr.y2]="tick.y"
+    />
+    <text
+      class="axis"
+      [attr.x]="left - 6"
+      [attr.y]="tick.y + 4"
+      text-anchor="end"
+    >
+      {{ i18n.num(tick.v, 1) }}
+    </text>
+  }
+  <line
+    class="base"
+    [attr.x1]="left"
+    [attr.x2]="right"
+    [attr.y1]="baseline()"
+    [attr.y2]="baseline()"
+  />
+  @for (b of bars(); track b.key) {
+    <path class="bar" [attr.data-series]="b.series" [attr.d]="b.path">
+      <title>{{ b.tip }}</title>
+    </path>
+  }
+  @for (level of levels(); track level.label) {
+    <line
+      class="level"
+      [attr.x1]="left"
+      [attr.x2]="right"
+      [attr.y1]="level.y"
+      [attr.y2]="level.y"
+    />
+    <text
+      class="level-label"
+      [attr.x]="right - 2"
+      [attr.y]="level.y - 4"
+      text-anchor="end"
+    >
+      {{ i18n.word(level.label) }} {{ i18n.num(level.value, digits()) }}
+    </text>
+  }
+  @for (m of months(); track $index) {
+    <text
+      class="axis"
+      [attr.x]="m.x"
+      [attr.y]="height - 8"
+      text-anchor="middle"
+    >
+      {{ m.label }}
+    </text>
+  }
+  @if (unit()) {
+    <text class="axis unit" x="4" y="12">{{ unit() }}</text>
+  }
+</svg>

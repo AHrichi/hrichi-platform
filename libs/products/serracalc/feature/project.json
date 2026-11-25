@@ -1,0 +1,9 @@
+{
+  "name": "product-serracalc-feature",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/products/serracalc/feature/src",
+  "prefix": "sc",
+  "projectType": "library",
+  "tags": ["scope:product-serracalc", "type:feature", "runtime:browser"],
+  "targets": {}
+}

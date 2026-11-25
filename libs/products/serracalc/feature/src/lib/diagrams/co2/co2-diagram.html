@@ -1,0 +1,141 @@
+<svg viewBox="0 0 480 260" role="group" [attr.aria-label]="alt()">
+  <defs>
+    <marker
+      id="sc-co2-head"
+      viewBox="0 0 10 10"
+      refX="5"
+      refY="5"
+      markerWidth="2.2"
+      markerHeight="2.2"
+      orient="auto-start-reverse"
+    >
+      <path class="head" d="M0 0L10 5L0 10z" />
+    </marker>
+    <marker
+      id="sc-co2-crop"
+      viewBox="0 0 10 10"
+      refX="5"
+      refY="5"
+      markerWidth="2.2"
+      markerHeight="2.2"
+      orient="auto-start-reverse"
+    >
+      <path class="head crop" d="M0 0L10 5L0 10z" />
+    </marker>
+  </defs>
+
+  <rect class="backdrop" width="480" height="260" rx="12" />
+  <rect class="ground" x="0" y="214" width="480" height="46" />
+
+  <!-- The house, its air thick with CO₂ -->
+  <path class="house" d="M120 214V120L260 76L400 120V214Z" />
+  @for (dot of dots(); track $index) {
+    <circle class="dot-co2" [attr.cx]="dot.x" [attr.cy]="dot.y" r="2.5" />
+  }
+
+  <!-- Where it comes from -->
+  @if (params().source === 'burner') {
+    <rect class="source" x="134" y="184" width="34" height="24" rx="3" />
+    <path class="flame" d="M151 184c-6 -8 2 -12 0 -20c6 6 8 12 0 20z" />
+  } @else {
+    <rect class="source" x="140" y="160" width="20" height="48" rx="8" />
+  }
+  <text class="caption" x="176" y="204">
+    {{ i18n.num(result().supplyKgH) }} kg/h
+  </text>
+
+  <!-- Taken up by the crop -->
+  @for (x of [250, 286, 322, 358]; track x) {
+    <ellipse class="plant" [attr.cx]="x" cy="204" rx="14" ry="9" />
+  }
+  <path
+    class="flow crop"
+    [attr.stroke-width]="uptakeWidth()"
+    d="M304 150V186"
+    marker-end="url(#sc-co2-crop)"
+  />
+  <text class="caption" x="312" y="164">
+    {{ i18n.word(t().diagrams.crop) }} {{ i18n.num(result().uptakeKgH) }} kg/h
+  </text>
+
+  <!-- Leaking out with the air -->
+  <path
+    class="flow leak"
+    [attr.stroke-width]="leakWidth()"
+    [attr.d]="'M' + wallX + ' 150H' + leakEnd()"
+    marker-end="url(#sc-co2-head)"
+  />
+  <text class="caption" x="470" y="134" text-anchor="end">
+    {{ i18n.word(t().diagrams.leaks) }}
+    {{ i18n.num(result().ventLossKgH) }} kg/h
+  </text>
+
+  <text class="label" x="470" y="24" text-anchor="end">
+    {{ i18n.num(result().supplyKgH) }} kg/h ·
+    {{ i18n.num(result().usedPct, 0) }} %
+    {{ i18n.word(t().diagrams.used) }}
+  </text>
+
+  <!-- The ppm gauge -->
+  @for (tick of ticks; track tick.v) {
+    <text class="tick-label" x="34" [attr.y]="tick.y + 4" text-anchor="end">
+      {{ tick.v }}
+    </text>
+  }
+  <rect
+    class="tube"
+    x="44"
+    [attr.y]="yHigh - 6"
+    width="10"
+    [attr.height]="yLow - yHigh + 12"
+    rx="5"
+  />
+  <rect
+    class="fill"
+    x="46"
+    [attr.y]="yTarget()"
+    width="6"
+    [attr.height]="yLow + 6 - yTarget()"
+  />
+  <line
+    class="outside"
+    x1="38"
+    [attr.y1]="yOutside()"
+    x2="62"
+    [attr.y2]="yOutside()"
+  />
+  <text class="tick-label" x="66" [attr.y]="yOutside() + 14">
+    {{ i18n.word(t().diagrams.outside) }} {{ params().outsidePpm }}
+  </text>
+  <text class="value" x="66" [attr.y]="yTarget() + 5">
+    {{ i18n.num(params().targetPpm, 0) }} ppm
+  </text>
+
+  <g
+    scHandle
+    [x]="49"
+    [y]="yTarget()"
+    [value]="params().targetPpm"
+    [min]="limits.target.min"
+    [max]="limits.target.max"
+    [step]="limits.target.step"
+    [label]="t().fields['targetPpm']"
+    unit="ppm"
+    [fromPoint]="ppmAt"
+    (valueChange)="changed.emit({ key: 'targetPpm', value: $event })"
+  />
+  <g
+    scHandle
+    axis="x"
+    [x]="leakEnd()"
+    [y]="150"
+    [value]="params().airChangesPerHour"
+    [min]="limits.ach.min"
+    [max]="limits.ach.max"
+    [step]="limits.ach.step"
+    [label]="t().fields['airChangesPerHour']"
+    unit="/h"
+    [fromPoint]="achAt"
+    (valueChange)="changed.emit({ key: 'airChangesPerHour', value: $event })"
+  />
+</svg>

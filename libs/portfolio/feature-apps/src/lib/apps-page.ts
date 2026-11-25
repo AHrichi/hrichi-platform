@@ -271,6 +271,10 @@ const STANDALONE_APP_ORIGINS: Readonly<
     dev: 'http://localhost:4313',
     prod: 'https://product-greenhouse.ahmed-hrichi.workers.dev',
   },
+  serracalc: {
+    dev: 'http://localhost:4314',
+    prod: 'https://product-serracalc.ahmed-hrichi.workers.dev',
+  },
   sky: {
     dev: 'http://localhost:4302',
     prod: 'https://lab-sky.ahmed-hrichi.workers.dev',
@@ -854,6 +858,38 @@ export class AppsPage {
             'منافذ ومحوّلات: المخازن نفسها تعمل على Supabase مع أمان على مستوى الأسطر أو على ضيعة تجريبية في الذاكرة، وتطبيق رؤساء الفرق يحفظ دون اتصال ثم يزامن عند توفّر الشبكة.',
         },
         {
+          id: 'serracalc',
+          title: 'SerraCalc · تدفئة البيوت المحمية ومياهها ومناخها',
+          category: 'production',
+          badge: {
+            label: 'حاسبات هندسية · دون اتصال',
+            variant: 'success',
+          },
+          eyebrow:
+            'التدفئة، الأنابيب الجيوحرارية، التهوئة، الوسادة والمراوح، الري، مياه الأمطار',
+          summary:
+            'عدّة ميدانية لمهندسي البيوت المحمية: صف البيت مرة واحدة، ثم احسب قدرة التدفئة لأبرد ليلة، واستهلاك سنة من الوقود وكلفتها وثاني أكسيد الكربون شهراً بشهر، ومدّ أنابيب الماء الساخن للمياه الجيوحرارية أو للمرجل، وحدّد فتحات التهوئة والمراوح والوسائد المبللة ليوم حار، واحسب ما تشربه الزراعة ونظام الري قطرة قطرة وما يمكن أن تغطيه أمطار السقف. كل معادلة تعرض أرقامها، وتُحفظ النتائج في مشاريع على هاتفك.',
+          route: '/apps/serracalc',
+          icon: '🌿',
+          ctaLabel: 'SerraCalc',
+          stack: [
+            'Zoneless Angular 22',
+            'Native Federation',
+            'NgRx SignalStore',
+            'IndexedDB (offline)',
+            'Pure TypeScript engineering domain',
+            'Arabic RTL · French · English',
+          ],
+          features: [
+            'قدرة التدفئة القصوى (ASAE EP406) والتدفئة خلال السنة شهراً بشهر، مع الوقود والكلفة وثاني أكسيد الكربون',
+            'أنابيب الماء الساخن للمياه الجيوحرارية أو للمرجل: التدفق وأمتار الأنابيب والحلقات والمضخة',
+            'التهوئة والتبريد بالوسادة والمراوح: تدفق الهواء والفتحات والمراوح وجدار الوسادة والماء',
+            'مياه الزراعة حسب الشمس، وتصميم الري قطرة قطرة، ومياه الأمطار مع حوض يُحاكى شهراً بشهر',
+          ],
+          architectureNotes:
+            'الهندسة في مكتبة TypeScript خالصة مختبرة مقابل حسابات يدوية. النتائج رموز لا جمل، فتتكلم الحسابات نفسها ثلاث لغات، والمشاريع تحفظ المعطيات لا النتائج، فيُعاد حساب النتيجة عند فتحها بالقواعد الحالية.',
+        },
+        {
           id: 'learning',
           title: 'Learning Engine · التقط أي فكرة وراجعها في 3 دقائق',
           category: 'production',
@@ -1223,6 +1259,38 @@ export class AppsPage {
           ],
           architectureNotes:
             'Ports et adaptateurs : les mêmes stores tournent sur Supabase avec la sécurité au niveau des lignes ou sur une ferme de démonstration en mémoire, et l’application des chefs d’équipe enregistre hors ligne puis synchronise dès qu’il y a du réseau.',
+        },
+        {
+          id: 'serracalc',
+          title: 'SerraCalc · Chauffage, eau et climat des serres',
+          category: 'production',
+          badge: {
+            label: 'Calculateurs d’ingénierie · hors ligne',
+            variant: 'success',
+          },
+          eyebrow:
+            'Chauffage, tuyaux géothermiques, aération, pad et ventilateurs, irrigation, eau de pluie',
+          summary:
+            'Une boîte à outils de terrain pour les ingénieurs de serres : décrivez la serre une fois, puis dimensionnez la chaufferie pour la nuit la plus froide, comptez une année de combustible, de coût et de CO₂ mois par mois, posez les tuyaux d’eau chaude pour l’eau géothermale ou une chaudière, dimensionnez ouvrants, ventilateurs et pads pour une journée chaude, et calculez ce que boit la culture, le goutte-à-goutte et la part que la pluie du toit peut couvrir. Chaque formule montre ses chiffres et les résultats s’enregistrent dans des projets sur votre téléphone.',
+          route: '/apps/serracalc',
+          icon: '🌿',
+          ctaLabel: 'SerraCalc',
+          stack: [
+            'Zoneless Angular 22',
+            'Native Federation',
+            'NgRx SignalStore',
+            'IndexedDB (offline)',
+            'Pure TypeScript engineering domain',
+            'Arabic RTL · French · English',
+          ],
+          features: [
+            'Puissance de chauffage de pointe (ASAE EP406) et chauffage sur l’année mois par mois, avec combustible, coût et CO₂',
+            'Tuyaux d’eau chaude pour l’eau géothermale ou une chaudière : débit, mètres de tuyau, boucles et pompe',
+            'Aération et refroidissement par pad : débit d’air, ouvrants, ventilateurs, mur de pad et eau',
+            'Eau de la culture selon le soleil, goutte-à-goutte, et eau de pluie avec un bassin simulé mois par mois',
+          ],
+          architectureNotes:
+            'L’ingénierie vit dans une bibliothèque TypeScript pure, testée contre des calculs faits à la main. Les résultats portent des codes, pas des phrases : les mêmes calculs parlent trois langues, et les projets gardent les données, jamais les résultats, pour qu’un calcul rouvert soit refait avec les règles actuelles.',
         },
         {
           id: 'learning',
@@ -1604,6 +1672,38 @@ export class AppsPage {
             'Porte e adattatori: gli stessi store girano su Supabase con sicurezza a livello di riga o su un’azienda demo in memoria, e l’app dei capisquadra salva offline e sincronizza quando c’è segnale.',
         },
         {
+          id: 'serracalc',
+          title: 'SerraCalc · Riscaldamento, acqua e clima delle serre',
+          category: 'production',
+          badge: {
+            label: 'Calcolatori di ingegneria · offline',
+            variant: 'success',
+          },
+          eyebrow:
+            'Riscaldamento, tubi geotermici, ventilazione, pad e ventilatori, irrigazione, acqua piovana',
+          summary:
+            'Un kit da campo per chi progetta serre: descrivi la serra una volta, poi dimensiona la centrale termica per la notte più fredda, conta un anno di combustibile, costi e CO₂ mese per mese, posa i tubi ad acqua calda per acqua geotermica o caldaia, dimensiona aperture, ventilatori e pannelli evaporativi per una giornata calda, e calcola quanto beve la coltura, l’impianto a goccia e quanto può coprire la pioggia del tetto. Ogni formula mostra i suoi numeri e i risultati si salvano in progetti sul telefono.',
+          route: '/apps/serracalc',
+          icon: '🌿',
+          ctaLabel: 'SerraCalc',
+          stack: [
+            'Zoneless Angular 22',
+            'Native Federation',
+            'NgRx SignalStore',
+            'IndexedDB (offline)',
+            'Pure TypeScript engineering domain',
+            'Arabic RTL · French · English',
+          ],
+          features: [
+            'Potenza termica di punta (ASAE EP406) e riscaldamento annuale mese per mese, con combustibile, costi e CO₂',
+            'Tubi ad acqua calda per acqua geotermica o caldaia: portata, metri di tubo, circuiti e pompa',
+            'Ventilazione e raffrescamento con pad: portata d’aria, aperture, ventilatori, parete di pad e acqua',
+            'Acqua della coltura dalla radiazione, impianto a goccia e acqua piovana con una vasca simulata mese per mese',
+          ],
+          architectureNotes:
+            'L’ingegneria vive in una libreria TypeScript pura, testata contro calcoli fatti a mano. I risultati portano codici, non frasi, così gli stessi calcoli parlano tre lingue; i progetti salvano i dati, mai i risultati, quindi un calcolo riaperto si ricalcola con le regole attuali.',
+        },
+        {
           id: 'learning',
           title: 'Learning Engine · Cattura tutto, ripassa in 3 minuti',
           category: 'production',
@@ -1982,6 +2082,38 @@ export class AppsPage {
             'Ports und Adapter: dieselben Stores laufen auf Supabase mit Row-Level Security oder auf einem Demo-Betrieb im Speicher, und die App der Vorarbeiter speichert offline und synchronisiert, sobald Netz da ist.',
         },
         {
+          id: 'serracalc',
+          title: 'SerraCalc · Heizung, Wasser und Klima im Gewächshaus',
+          category: 'production',
+          badge: {
+            label: 'Ingenieur-Rechner · offline',
+            variant: 'success',
+          },
+          eyebrow:
+            'Heizung, Geothermie-Rohre, Lüftung, Pad und Ventilatoren, Bewässerung, Regenwasser',
+          summary:
+            'Ein Feldwerkzeug für Gewächshaus-Ingenieure: das Haus einmal beschreiben, dann die Heizleistung für die kälteste Nacht auslegen, ein Jahr Brennstoff, Kosten und CO₂ Monat für Monat rechnen, Warmwasserrohre für Thermalwasser oder einen Kessel verlegen, Lüftungsklappen, Ventilatoren und Verdunstungspads für einen heißen Tag bemessen und berechnen, was die Kultur trinkt, die Tropfbewässerung und wie viel davon das Regenwasser vom Dach deckt. Jede Formel zeigt ihre Zahlen, und Ergebnisse werden in Projekten auf dem Handy gespeichert.',
+          route: '/apps/serracalc',
+          icon: '🌿',
+          ctaLabel: 'SerraCalc',
+          stack: [
+            'Zoneless Angular 22',
+            'Native Federation',
+            'NgRx SignalStore',
+            'IndexedDB (offline)',
+            'Pure TypeScript engineering domain',
+            'Arabic RTL · French · English',
+          ],
+          features: [
+            'Spitzen-Heizlast (ASAE EP406) und Heizung übers Jahr Monat für Monat, mit Brennstoff, Kosten und CO₂',
+            'Warmwasserrohre für Thermalwasser oder Kessel: Durchfluss, Rohrmeter, Kreise und Pumpe',
+            'Lüftung und Pad-Kühlung: Luftmenge, Lüftungsklappen, Ventilatoren, Pad-Wand und Wasser',
+            'Wasserbedarf der Kultur aus der Strahlung, Tropfbewässerung und Regenwasser mit monatlich simuliertem Becken',
+          ],
+          architectureNotes:
+            'Die Ingenieurrechnung steckt in einer reinen TypeScript-Bibliothek, getestet gegen Handrechnungen. Ergebnisse tragen Codes statt Sätze, damit dieselbe Mathematik drei Sprachen spricht; Projekte speichern Eingaben, nie Ergebnisse, sodass eine wieder geöffnete Rechnung mit den aktuellen Regeln neu rechnet.',
+        },
+        {
           id: 'learning',
           title: 'Learning Engine · Alles erfassen, in 3 Minuten wiederholen',
           category: 'production',
@@ -2346,6 +2478,38 @@ export class AppsPage {
         ],
         architectureNotes:
           'Ports and adapters: the same stores run on Supabase with row-level security or on an in-memory demo farm, and the supervisors’ app saves offline and syncs when there is signal.',
+      },
+      {
+        id: 'serracalc',
+        title: 'SerraCalc · Greenhouse Heat, Water & Climate',
+        category: 'production',
+        badge: {
+          label: 'Engineering calculators · offline',
+          variant: 'success',
+        },
+        eyebrow:
+          'Heating, geothermal pipes, ventilation, fan and pad, irrigation, rainwater',
+        summary:
+          'A field kit for greenhouse engineers: describe the house once, then size the heating plant for the coldest night, count a year of fuel, cost and CO₂ month by month, lay out hot-water pipes for geothermal water or a boiler, size roof vents, fans and evaporative pads for a hot day, and work out what the crop drinks, the drip system and how much of it the roof’s rain can cover. Every formula shows its numbers, and results save to projects on your phone.',
+        route: '/apps/serracalc',
+        icon: '🌿',
+        ctaLabel: 'SerraCalc',
+        stack: [
+          'Zoneless Angular 22',
+          'Native Federation',
+          'NgRx SignalStore',
+          'IndexedDB (offline)',
+          'Pure TypeScript engineering domain',
+          'Arabic RTL · French · English',
+        ],
+        features: [
+          'Peak heating load (ASAE EP406) and a year of heating month by month, with fuel, cost and CO₂',
+          'Hot-water pipes for geothermal water or a boiler: flow, metres of pipe, loops and pump',
+          'Ventilation and fan-and-pad cooling: air flow, roof vents, fans, pad wall and water',
+          'Crop water from sunlight, drip design, and rainwater with a month-by-month basin',
+        ],
+        architectureNotes:
+          'The engineering lives in a pure TypeScript library tested against hand-worked numbers. Results carry codes, not sentences, so the same maths speaks three languages, and projects store inputs, never results, so a reopened calculation recomputes with the current rules.',
       },
       {
         id: 'learning',

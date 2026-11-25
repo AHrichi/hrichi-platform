@@ -15,6 +15,7 @@ export type PortfolioAppKey =
   | 'learning'
   | 'system-design'
   | 'greenhouse'
+  | 'serracalc'
   | 'alarm-engine'
   | 'sky'
   | 'rxjs'
@@ -33,6 +34,7 @@ export const PORTFOLIO_APPS_CONFIG: Record<PortfolioAppKey, boolean> = {
   learning: true, // Learning Engine · Capture, daily review, streaks (ADR-0024)
   'system-design': true, // System Design course · step lessons, practice, lab (ADR-0025)
   greenhouse: true, // Greenhouse Labor Planner · demo farm, plan, performance, hygiene (ADR-0026)
+  serracalc: true, // SerraCalc · greenhouse heating, cooling and water engineering (ADR-0027)
   'alarm-engine': false, // Nightly Alarm Decision Engine
 
   // --- Interactive Engineering Labs ---
@@ -84,6 +86,8 @@ export function isRouteEnabled(route: string): boolean {
     'scale-lab': 'system-design',
     greenhouse: 'greenhouse',
     'labor-planner': 'greenhouse',
+    serracalc: 'serracalc',
+    'greenhouse-energy': 'serracalc',
     'alarm-engine': 'alarm-engine',
     alarm: 'alarm-engine',
     'nightly-alarm': 'alarm-engine',

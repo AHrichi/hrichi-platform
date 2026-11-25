@@ -1,0 +1,143 @@
+<svg viewBox="0 0 480 260" role="group" [attr.aria-label]="alt()">
+  <rect class="backdrop" width="480" height="260" rx="12" />
+
+  <!-- The darkest month: sun, then lamps up to the target -->
+  <text class="caption" x="88" y="22" text-anchor="middle">
+    {{ i18n.word(i18n.month(result().designMonth)) }}
+  </text>
+  <rect
+    class="sun-part"
+    x="60"
+    [attr.y]="ySun()"
+    width="56"
+    [attr.height]="yZero - ySun()"
+  />
+  @if (yTarget() < ySun()) {
+    <rect
+      class="lamp-part"
+      x="60"
+      [attr.y]="yTarget()"
+      width="56"
+      [attr.height]="ySun() - yTarget()"
+    />
+  }
+  <rect
+    class="column"
+    x="60"
+    y="40"
+    width="56"
+    [attr.height]="yZero - 40"
+    rx="3"
+  />
+  <text class="amount" x="88" [attr.y]="yZero - 8" text-anchor="middle">
+    {{ i18n.num(design().naturalDli) }}
+  </text>
+  <line
+    class="target"
+    x1="52"
+    [attr.y1]="yTarget()"
+    x2="124"
+    [attr.y2]="yTarget()"
+  />
+  <line
+    class="ceiling"
+    x1="52"
+    [attr.y1]="yCeiling()"
+    x2="146"
+    [attr.y2]="yCeiling()"
+  />
+  <text class="caption" x="160" [attr.y]="yTarget() + 4">
+    {{ i18n.word(t().diagrams.target) }} {{ i18n.num(params().targetDli, 0) }}
+  </text>
+  <text class="caption" x="160" [attr.y]="yCeiling() + 4">
+    {{ i18n.word(t().diagrams.ceiling) }} {{ i18n.num(params().maxDli, 0) }}
+  </text>
+  <text class="caption" x="88" y="244" text-anchor="middle">mol/m²·d</text>
+
+  <!-- Lamps over the crop -->
+  @for (x of lamps(); track $index) {
+    <polygon
+      class="beam"
+      [attr.points]="x + ',70 ' + (x - 18) + ',184 ' + (x + 18) + ',184'"
+    />
+    <rect class="lamp" [attr.x]="x - 10" y="62" width="20" height="8" rx="2" />
+  }
+  @if (lamps().length === 0) {
+    <text class="caption" x="340" y="110" text-anchor="middle">
+      {{ t().diagrams.noLamps }}
+    </text>
+  }
+  <text class="label" x="340" y="40" text-anchor="middle">
+    {{ i18n.num(result().installedPpfd, 0) }} µmol/m²·s ·
+    {{ i18n.num(result().wPerM2, 0) }} W/m²
+  </text>
+  @for (x of [236, 268, 300, 332, 364, 396, 428, 456]; track x) {
+    <ellipse class="plant" [attr.cx]="x" cy="192" rx="13" ry="9" />
+  }
+
+  <!-- Hours a day the lamps may run, on a 24-hour bar -->
+  <rect
+    class="day"
+    [attr.x]="dayX"
+    y="224"
+    [attr.width]="dayW"
+    height="10"
+    rx="5"
+  />
+  <rect
+    class="on"
+    [attr.x]="dayX"
+    y="224"
+    [attr.width]="xHours() - dayX"
+    height="10"
+    rx="5"
+  />
+  <text class="tick-label" [attr.x]="dayX" y="252">0</text>
+  <text class="tick-label" [attr.x]="dayX + dayW" y="252" text-anchor="end">
+    24 h
+  </text>
+  <text class="value" [attr.x]="xHours()" y="214" text-anchor="middle">
+    {{ i18n.num(params().lampHours, 0) }} h
+  </text>
+
+  <g
+    scHandle
+    [x]="88"
+    [y]="yTarget()"
+    [value]="params().targetDli"
+    [min]="limits.target.min"
+    [max]="limits.target.max"
+    [step]="limits.target.step"
+    [label]="t().fields['targetDli']"
+    unit="mol/m²·d"
+    [fromPoint]="dliAt"
+    (valueChange)="changed.emit({ key: 'targetDli', value: $event })"
+  />
+  <g
+    scHandle
+    [x]="134"
+    [y]="yCeiling()"
+    [value]="params().maxDli"
+    [min]="limits.ceiling.min"
+    [max]="limits.ceiling.max"
+    [step]="limits.ceiling.step"
+    [label]="t().fields['maxDli']"
+    unit="mol/m²·d"
+    [fromPoint]="dliAt"
+    (valueChange)="changed.emit({ key: 'maxDli', value: $event })"
+  />
+  <g
+    scHandle
+    axis="x"
+    [x]="xHours()"
+    [y]="229"
+    [value]="params().lampHours"
+    [min]="limits.hours.min"
+    [max]="limits.hours.max"
+    [step]="limits.hours.step"
+    [label]="t().fields['lampHours']"
+    unit="h"
+    [fromPoint]="hoursAt"
+    (valueChange)="changed.emit({ key: 'lampHours', value: $event })"
+  />
+</svg>

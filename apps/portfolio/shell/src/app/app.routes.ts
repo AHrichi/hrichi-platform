@@ -121,6 +121,19 @@ export const appRoutes: Route[] = [
     title: 'Greenhouse Labor Planner · Harvest Staffing · Ahmed Hrichi',
   },
   {
+    path: 'apps/serracalc',
+    canMatch: [appAvailableGuard('serracalc')],
+    loadChildren: federatedRoutes('product-serracalc'),
+    title:
+      'SerraCalc · Greenhouse Heat, Water & Climate Engineering · Ahmed Hrichi',
+  },
+  {
+    path: 'apps/greenhouse-energy',
+    canMatch: [appAvailableGuard('serracalc')],
+    redirectTo: 'apps/serracalc',
+    pathMatch: 'full',
+  },
+  {
     path: 'apps/alarm-engine',
     canMatch: [appAvailableGuard('alarm-engine')],
     loadChildren: () =>

@@ -1,0 +1,47 @@
+// A big transparent hit area for fingers, a visible dot with arrows.
+:host {
+  cursor: grab;
+  touch-action: none;
+  outline: none;
+
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+.hit {
+  fill: transparent;
+}
+
+.dot {
+  fill: var(--color-accent-default);
+  stroke: var(--color-bg-raised);
+  stroke-width: 3;
+  transition: r var(--motion-duration-fast) var(--motion-easing-standard);
+}
+
+.arrows {
+  fill: none;
+  stroke: var(--color-accent-on);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  pointer-events: none;
+}
+
+:host(:hover) .dot,
+:host(:active) .dot {
+  r: 13;
+}
+
+:host(:focus-visible) .hit {
+  fill: none;
+  stroke: var(--color-focus-ring);
+  stroke-width: 3;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dot {
+    transition: none;
+  }
+}

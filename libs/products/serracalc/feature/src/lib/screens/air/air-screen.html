@@ -1,0 +1,286 @@
+<section class="screen" aria-labelledby="sc-air-title">
+  <header class="head">
+    <div>
+      <h2 id="sc-air-title">{{ t().air.title }}</h2>
+      <p>{{ t().air.lead }}</p>
+    </div>
+  </header>
+
+  <sc-context-bar (resetInputs)="reset()" />
+
+  <ah-tabs
+    [tabs]="tabs()"
+    [selectedId]="tab()"
+    (selectedIdChange)="editor.select($event)"
+    [ariaLabel]="t().air.title"
+  />
+
+  <div class="workbench">
+    <div class="column">
+      <figure class="panel">
+        @switch (tab()) {
+          @case ('light') {
+            <sc-light-diagram
+              [params]="lightParams()"
+              [result]="light()"
+              (changed)="setLight($event)"
+            />
+          }
+          @case ('co2') {
+            <sc-co2-diagram
+              [params]="co2Params()"
+              [result]="co2()"
+              (changed)="setCo2($event)"
+            />
+          }
+          @case ('humidity') {
+            <sc-humidity-diagram
+              [params]="humidityParams()"
+              [result]="humidity()"
+              (changed)="setHumidity($event)"
+            />
+          }
+        }
+        <figcaption>✋ {{ t().calc.dragHint }}</figcaption>
+      </figure>
+
+      <section class="panel" aria-labelledby="sc-air-inputs">
+        <h3 id="sc-air-inputs">{{ t().calc.inputs }}</h3>
+        @switch (tab()) {
+          @case ('light') {
+            <sc-field-grid
+              [specs]="lightFields()"
+              [values]="lightParams()"
+              (changed)="setLight($event)"
+            >
+              <label class="select">
+                <span>{{ t().water.climate }}</span>
+                <select (change)="setClimate(value($event))">
+                  @for (c of climates; track c.id) {
+                    <option
+                      [value]="c.id"
+                      [selected]="lightParams().climateId === c.id"
+                    >
+                      {{ c.name }} ({{ c.country }})
+                    </option>
+                  }
+                </select>
+              </label>
+            </sc-field-grid>
+          }
+          @case ('co2') {
+            <sc-field-grid
+              [specs]="co2Fields()"
+              [values]="co2Params()"
+              (changed)="setCo2($event)"
+            >
+              <label class="select">
+                <span>{{ t().air.source }}</span>
+                <select (change)="setSource($any(value($event)))">
+                  @for (id of sources; track id) {
+                    <option [value]="id" [selected]="co2Params().source === id">
+                      {{ t().air.sources[id] }}
+                    </option>
+                  }
+                </select>
+              </label>
+            </sc-field-grid>
+          }
+          @case ('humidity') {
+            <sc-field-grid
+              [specs]="humidityFields"
+              [values]="humidityParams()"
+              (changed)="setHumidity($event)"
+            />
+          }
+        }
+      </section>
+    </div>
+
+    <div class="column">
+      <section class="panel" aria-labelledby="sc-air-results">
+        <h3 id="sc-air-results">{{ t().calc.results }}</h3>
+        @switch (tab()) {
+          @case ('light') {
+            <div class="results">
+              <ah-metric-card
+                [label]="t().air.fixtures"
+                [value]="light().fixtures"
+                variant="accent"
+                [hint]="
+                  i18n.num(light().installedKw) +
+                  ' kW · ' +
+                  i18n.num(light().wPerM2, 0) +
+                  ' W/m²'
+                "
+              />
+              <ah-metric-card
+                [label]="t().air.ppfd"
+                [value]="i18n.num(light().installedPpfd, 0)"
+                unit="µmol/m²·s"
+                [hint]="i18n.month(light().designMonth)"
+              />
+              <ah-metric-card
+                [label]="t().air.energy"
+                [value]="i18n.num(light().annualKwh / 1000, 0)"
+                unit="MWh"
+                [hint]="i18n.money(light().cost, currency())"
+              />
+              <ah-metric-card
+                [label]="t().air.co2Grid"
+                [value]="i18n.num(light().co2Kg / 1000, 1)"
+                unit="t"
+              />
+              <ah-metric-card
+                [label]="t().air.shade"
+                [value]="i18n.num(light().maxShadePct, 0)"
+                unit="%"
+                [hint]="t().air.shadeMonths(light().shadeMonths + '')"
+              />
+            </div>
+            <h4>{{ t().air.chart }}</h4>
+            <sc-month-bars
+              [series]="lightSeries()"
+              [refs]="lightRefs()"
+              unit="mol/m²·d"
+              [digits]="1"
+              [ariaLabel]="lightAlt()"
+            />
+            <details class="table-toggle">
+              <summary>{{ t().calc.table }}</summary>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th scope="col">{{ t().water.table.month }}</th>
+                      <th scope="col">{{ t().air.table.sun }}</th>
+                      <th scope="col">{{ t().air.table.lamps }}</th>
+                      <th scope="col">kWh</th>
+                      <th scope="col">{{ t().air.table.shade }}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (m of light().months; track m.month) {
+                      <tr>
+                        <th scope="row">{{ i18n.month(m.month) }}</th>
+                        <td>{{ i18n.num(m.naturalDli) }}</td>
+                        <td>{{ i18n.num(m.lampHours) }}</td>
+                        <td>{{ i18n.num(m.kwh, 0) }}</td>
+                        <td>{{ i18n.num(m.shadePct, 0) }}</td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            </details>
+            <sc-note-list [notes]="light().notes" />
+          }
+          @case ('co2') {
+            <div class="results">
+              <ah-metric-card
+                [label]="t().air.supply"
+                [value]="i18n.num(co2().supplyKgH)"
+                unit="kg/h"
+                variant="accent"
+                [hint]="i18n.num(co2().supplyKgHaH, 0) + ' kg/h·ha'"
+              />
+              <ah-metric-card
+                [label]="t().air.used"
+                [value]="i18n.num(co2().usedPct, 0)"
+                unit="%"
+                [hint]="
+                  t().air.leak + ': ' + i18n.num(co2().ventLossKgH) + ' kg/h'
+                "
+              />
+              <ah-metric-card
+                [label]="t().air.year"
+                [value]="i18n.num(co2().annualT)"
+                unit="t"
+                [hint]="i18n.num(co2().dailyKg, 0) + ' kg/d'"
+              />
+              <ah-metric-card
+                [label]="t().air.cost"
+                [value]="i18n.money(co2().annualCost, currency())"
+              />
+              @if (co2Params().source === 'burner') {
+                <ah-metric-card
+                  [label]="t().air.burner"
+                  [value]="i18n.num(co2().gasM3h)"
+                  unit="m³/h"
+                  [hint]="i18n.num(co2().burnerHeatKw, 0) + ' kW'"
+                />
+              }
+            </div>
+            <sc-note-list [notes]="co2().notes" />
+          }
+          @case ('humidity') {
+            <div class="results">
+              <ah-metric-card
+                [label]="t().air.air"
+                [value]="
+                  humidity().airM3h === null
+                    ? '—'
+                    : i18n.num(humidity().airM3h ?? 0, 0)
+                "
+                unit="m³/h"
+                variant="accent"
+                [hint]="
+                  humidity().airChangesPerHour === null
+                    ? ''
+                    : i18n.num(humidity().airChangesPerHour ?? 0, 2) + ' /h'
+                "
+              />
+              <ah-metric-card
+                [label]="t().air.heat"
+                [value]="i18n.num(humidity().heatKw)"
+                unit="kW"
+                [hint]="
+                  i18n.num(humidity().nightKwh, 0) + ' kWh / ' + t().air.night
+                "
+              />
+              <ah-metric-card
+                [label]="t().air.vpd"
+                [value]="i18n.num(humidity().vpdKpa, 2)"
+                unit="kPa"
+              />
+              <ah-metric-card
+                [label]="t().air.dew"
+                [value]="i18n.num(humidity().dewPointC)"
+                unit="°C"
+                [hint]="
+                  t().air.cover +
+                  ': ' +
+                  i18n.num(humidity().coverSurfaceC) +
+                  ' °C'
+                "
+              />
+              <ah-metric-card
+                [label]="t().air.water"
+                [value]="i18n.num(humidity().moistureKgH)"
+                unit="kg/h"
+                [hint]="
+                  i18n.num(humidity().insideGkg) +
+                  ' → ' +
+                  i18n.num(humidity().outsideGkg) +
+                  ' g/kg'
+                "
+              />
+            </div>
+            <sc-note-list [notes]="humidity().notes" />
+          }
+        }
+        <sc-calc-steps [steps]="steps()" />
+      </section>
+
+      <section class="panel" aria-labelledby="sc-air-save">
+        <h3 id="sc-air-save">{{ t().save.title }}</h3>
+        <sc-save-bar
+          [suggestedLabel]="suggestedLabel()"
+          [editingLabel]="editor.editingLabel()"
+          (save)="save($event)"
+          (stopEditing)="editor.stop()"
+        />
+      </section>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,148 @@
+<section class="screen" aria-labelledby="sc-greenhouse-title">
+  <header class="head">
+    <div>
+      <h2 id="sc-greenhouse-title">{{ t().greenhouse.title }}</h2>
+      <p>{{ t().greenhouse.lead }}</p>
+    </div>
+  </header>
+
+  <div class="workbench">
+    <div class="column">
+      <figure class="panel">
+        <sc-house-section [spec]="spec()" (changed)="set($event)" />
+        <figcaption>✋ {{ t().calc.dragHint }}</figcaption>
+      </figure>
+
+      <section class="panel" aria-labelledby="sc-greenhouse-inputs">
+        <h3 id="sc-greenhouse-inputs">{{ t().context.house }}</h3>
+        <sc-field-grid
+          [specs]="fields"
+          [values]="spec()"
+          (changed)="set($event)"
+        >
+          <label class="select">
+            <span>{{ t().projects.shape }}</span>
+            <select (change)="setOption('shape', value($event))">
+              @for (id of shapes; track id) {
+                <option [value]="id" [selected]="spec().shape === id">
+                  {{ t().shapes[id] }}
+                </option>
+              }
+            </select>
+          </label>
+          <label class="select">
+            <span>{{ t().projects.cover }}</span>
+            <select (change)="setOption('cover', value($event))">
+              @for (id of covers; track id) {
+                <option [value]="id" [selected]="spec().cover === id">
+                  {{ t().covers[id] }}
+                </option>
+              }
+            </select>
+          </label>
+          <label class="select">
+            <span>{{ t().projects.screen }}</span>
+            <select (change)="setOption('screen', value($event))">
+              @for (id of screens; track id) {
+                <option [value]="id" [selected]="spec().screen === id">
+                  {{ t().screens[id] }}
+                </option>
+              }
+            </select>
+          </label>
+          <label class="check">
+            <input
+              type="checkbox"
+              [checked]="spec().perimeterInsulated"
+              (change)="setInsulated(checked($event))"
+            />
+            {{ t().projects.insulated }}
+          </label>
+        </sc-field-grid>
+        @if (store.activeProject()) {
+          <div class="actions">
+            <button
+              ahButton
+              type="button"
+              [disabled]="!dirty()"
+              (click)="saveToProject()"
+            >
+              {{ t().greenhouse.saveToProject }}
+            </button>
+            <p class="hint" role="status">
+              @if (savedNow()) {
+                ✓ {{ t().greenhouse.savedToProject }}
+              }
+            </p>
+          </div>
+        } @else {
+          <p class="hint">
+            {{ t().greenhouse.noProject }}
+            <a routerLink="../projects"
+              >{{ t().nav.projects }} {{ t().common.next }}</a
+            >
+          </p>
+        }
+      </section>
+    </div>
+
+    <div class="column">
+      <section class="panel" aria-labelledby="sc-greenhouse-results">
+        <h3 id="sc-greenhouse-results">{{ t().calc.results }}</h3>
+        <div class="results">
+          <ah-metric-card
+            [label]="t().greenhouse.floor"
+            [value]="i18n.num(geometry().floorAreaM2, 0)"
+            unit="m²"
+            variant="accent"
+            [hint]="
+              t().greenhouse.width + ': ' + i18n.num(geometry().widthM) + ' m'
+            "
+          />
+          <ah-metric-card
+            [label]="t().greenhouse.cover"
+            [value]="i18n.num(geometry().coverAreaM2, 0)"
+            unit="m²"
+            [hint]="
+              t().greenhouse.coverRatio +
+              ' ' +
+              i18n.num(geometry().coverRatio, 2)
+            "
+          />
+          <ah-metric-card
+            [label]="t().greenhouse.volume"
+            [value]="i18n.num(geometry().volumeM3, 0)"
+            unit="m³"
+            [hint]="
+              t().greenhouse.meanHeight +
+              ' ' +
+              i18n.num(geometry().meanHeightM, 2) +
+              ' m'
+            "
+          />
+          <ah-metric-card
+            [label]="t().greenhouse.perimeter"
+            [value]="i18n.num(geometry().perimeterM, 0)"
+            unit="m"
+          />
+        </div>
+        <dl class="split">
+          <div>
+            <dt>{{ t().greenhouse.roof }}</dt>
+            <dd>{{ i18n.num(geometry().roofAreaM2, 0) }} m²</dd>
+          </div>
+          <div>
+            <dt>{{ t().greenhouse.sideWalls }}</dt>
+            <dd>{{ i18n.num(geometry().sideWallAreaM2, 0) }} m²</dd>
+          </div>
+          <div>
+            <dt>{{ t().greenhouse.gables }}</dt>
+            <dd>{{ i18n.num(geometry().gableAreaM2, 0) }} m²</dd>
+          </div>
+        </dl>
+        <sc-note-list [notes]="geometry().notes" />
+        <sc-calc-steps [steps]="steps()" />
+      </section>
+    </div>
+  </div>
+</section>

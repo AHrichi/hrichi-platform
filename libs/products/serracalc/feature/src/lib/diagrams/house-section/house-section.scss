@@ -1,0 +1,16 @@
+@use '../../styles/serra' as sc;
+
+@include sc.diagram;
+
+.house {
+  fill: var(--color-accent-subtle);
+  stroke: var(--color-accent-default);
+  stroke-width: 2;
+  stroke-linejoin: round;
+}
+
+.post {
+  stroke: var(--color-text-muted);
+  stroke-width: 1.5;
+  stroke-dasharray: 4 4;
+}

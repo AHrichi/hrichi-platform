@@ -1,0 +1,154 @@
+<section class="screen" aria-labelledby="sc-cooling-title">
+  <header class="head">
+    <div>
+      <h2 id="sc-cooling-title">{{ t().cooling.title }}</h2>
+      <p>{{ t().cooling.lead }}</p>
+    </div>
+  </header>
+
+  <sc-context-bar (resetInputs)="reset()" />
+
+  <ah-tabs
+    [tabs]="tabs()"
+    [selectedId]="tab()"
+    (selectedIdChange)="editor.select($event)"
+    [ariaLabel]="t().cooling.title"
+  />
+
+  <div class="workbench">
+    <div class="column">
+      <figure class="panel">
+        @if (tab() === 'ventilation') {
+          <sc-vent-airflow
+            [params]="ventParams()"
+            [result]="vent()"
+            (changed)="setVent($event)"
+          />
+        } @else {
+          <sc-pad-fan-flow
+            [params]="padParams()"
+            [result]="pad()"
+            (changed)="setPad($event)"
+          />
+        }
+        <figcaption>✋ {{ t().calc.dragHint }}</figcaption>
+      </figure>
+      <details class="panel" open>
+        <summary>
+          <h3>{{ t().context.sun }}</h3>
+        </summary>
+        <sc-field-grid
+          [specs]="solarFields"
+          [values]="solar()"
+          (changed)="setSolar($event)"
+        />
+      </details>
+
+      <section class="panel" aria-labelledby="sc-cooling-inputs">
+        <h3 id="sc-cooling-inputs">{{ t().calc.inputs }}</h3>
+        @if (tab() === 'ventilation') {
+          <sc-field-grid
+            [specs]="ventFields"
+            [values]="ventExtra()"
+            (changed)="setVent($event)"
+          />
+        } @else {
+          <sc-field-grid
+            [specs]="padFields"
+            [values]="padExtra()"
+            (changed)="setPad($event)"
+          />
+        }
+      </section>
+    </div>
+
+    <div class="column">
+      <section class="panel" aria-labelledby="sc-cooling-results">
+        <h3 id="sc-cooling-results">{{ t().calc.results }}</h3>
+        @if (tab() === 'ventilation') {
+          <div class="results">
+            <ah-metric-card
+              [label]="t().cooling.flow"
+              [value]="i18n.num(vent().flowM3h, 0)"
+              unit="m³/h"
+              variant="accent"
+            />
+            <ah-metric-card
+              [label]="t().cooling.ach"
+              [value]="i18n.num(vent().airChangesPerHour, 0)"
+              unit="/h"
+              [hint]="i18n.num(vent().flowPerM2, 0) + ' m³/h·m²'"
+            />
+            <ah-metric-card
+              [label]="t().cooling.vents"
+              [value]="i18n.num(vent().ventAreaM2, 0)"
+              unit="m²"
+              [hint]="
+                i18n.num(vent().ventPct, 1) + ' % ' + t().cooling.ventShare
+              "
+            />
+            <ah-metric-card [label]="t().cooling.fans" [value]="vent().fans" />
+            <ah-metric-card
+              [label]="t().cooling.solar"
+              [value]="i18n.num(vent().netLoadW / 1000, 0)"
+              unit="kW"
+            />
+          </div>
+          <sc-note-list [notes]="vent().notes" />
+        } @else {
+          <div class="results">
+            <ah-metric-card
+              [label]="t().cooling.padOutlet"
+              [value]="i18n.num(pad().padOutletC)"
+              unit="°C"
+              variant="accent"
+              [hint]="
+                t().cooling.wetBulb + ': ' + i18n.num(pad().wetBulbC) + ' °C'
+              "
+            />
+            <ah-metric-card
+              [label]="t().cooling.exhaust"
+              [value]="i18n.num(pad().exhaustC)"
+              unit="°C"
+            />
+            <ah-metric-card
+              [label]="t().cooling.fans"
+              [value]="pad().fans"
+              [hint]="i18n.num(pad().flowM3h, 0) + ' m³/h'"
+            />
+            <ah-metric-card
+              [label]="t().cooling.padLength"
+              [value]="i18n.num(pad().padLengthM)"
+              unit="m"
+              [hint]="
+                t().cooling.padArea + ': ' + i18n.num(pad().padAreaM2) + ' m²'
+              "
+            />
+            <ah-metric-card
+              [label]="t().cooling.evaporation"
+              [value]="i18n.num(pad().evaporationLh, 0)"
+              unit="L/h"
+            />
+            <ah-metric-card
+              [label]="t().cooling.waterDay"
+              [value]="i18n.num(pad().waterM3PerDay)"
+              unit="m³"
+            />
+          </div>
+          <sc-note-list [notes]="pad().notes" />
+        }
+        <sc-calc-steps [steps]="steps()" />
+      </section>
+
+      <section class="panel" aria-labelledby="sc-cooling-save">
+        <h3 id="sc-cooling-save">{{ t().save.title }}</h3>
+        <sc-save-bar
+          [suggestedLabel]="suggestedLabel()"
+          [editingLabel]="editor.editingLabel()"
+          (save)="save($event)"
+          (stopEditing)="editor.stop()"
+        />
+      </section>
+    </div>
+  </div>
+</section>
