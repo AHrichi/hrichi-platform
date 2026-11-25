@@ -78,13 +78,15 @@
       />
     </section>
 
-    <section class="panel" aria-labelledby="sc-climate-table">
+    <!-- The table is the region, named by the heading: one landmark, not two
+         with the same name. -->
+    <section class="panel">
       <h3 id="sc-climate-table">{{ climate().name }}</h3>
       <div
         class="table-wrap"
         tabindex="0"
         role="region"
-        [attr.aria-label]="climate().name"
+        aria-labelledby="sc-climate-table"
       >
         <table>
           <thead>
