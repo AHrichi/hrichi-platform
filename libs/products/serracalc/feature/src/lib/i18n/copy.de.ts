@@ -1,0 +1,840 @@
+import type { NoteWriter, SerraCopy } from './copy.en';
+
+export const DE: SerraCopy = {
+  app: {
+    name: 'SerraCalc',
+    tagline: 'Wärme, Wasser und Klima im Gewächshaus',
+    activeProject: 'Aktives Projekt',
+    offline: 'Funktioniert offline',
+    offlineHint:
+      'Projekte werden auf diesem Gerät gespeichert; keine Verbindung nötig.',
+    sunlight: 'Sonnenlicht',
+    sunlightHint: 'Hoher Kontrast, um den Bildschirm im Freien zu lesen',
+    dark: 'Dunkel',
+    darkHint: 'Dunkles Design',
+    language: 'Sprache',
+    sections: 'Bereiche von SerraCalc',
+    planningAid:
+      'Eine Planungshilfe: Prüfen Sie die Ergebnisse mit einer Fachingenieurin oder einem Fachingenieur und den Daten der Lieferanten, bevor Sie bauen.',
+  },
+  nav: {
+    projects: 'Projekte',
+    greenhouse: 'Gewächshaus',
+    heating: 'Heizung',
+    cooling: 'Kühlung',
+    water: 'Wasser',
+    climate: 'Klima',
+    guide: 'Anleitung',
+    air: 'Licht & Luft',
+    report: 'Bericht',
+    more: 'Mehr',
+  },
+  common: {
+    close: 'Schließen',
+    cancel: 'Abbrechen',
+    edit: 'Bearbeiten',
+    delete: 'Löschen',
+    rename: 'Umbenennen',
+    save: 'Speichern',
+    open: 'Öffnen & bearbeiten',
+    yes: 'Ja',
+    no: 'Nein',
+    next: '→',
+    none: '—',
+  },
+  months: [
+    'Januar',
+    'Februar',
+    'März',
+    'April',
+    'Mai',
+    'Juni',
+    'Juli',
+    'August',
+    'September',
+    'Oktober',
+    'November',
+    'Dezember',
+  ],
+  monthsShort: ['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'],
+
+  shapes: {
+    gable: 'Mehrschiffig, Satteldächer',
+    venlo: 'Venlo-Glashaus',
+    tunnel: 'Folientunnel (Bogendach)',
+  },
+  covers: {
+    glass_single: 'Einfachglas',
+    glass_double: 'Doppelglas',
+    pe_single: 'Einfachfolie (PE)',
+    pe_double: 'Aufgeblasene Doppelfolie (PE)',
+    pc_twin: 'Polycarbonat, Stegdoppelplatte',
+    pc_triple: 'Polycarbonat, Stegdreifachplatte',
+    acrylic_double: 'Acrylglas, doppelt',
+  },
+  screens: {
+    none: 'Kein Schirm',
+    clear: 'Transparenter Energieschirm',
+    shade_energy: 'Schattier- und Energieschirm',
+    aluminised: 'Aluminiumschirm',
+  },
+  crops: {
+    tomato: 'Tomate',
+    cucumber: 'Gurke',
+    pepper: 'Paprika',
+    melon: 'Melone',
+    strawberry: 'Erdbeere',
+    lettuce: 'Salat',
+    rose: 'Rose',
+  },
+  fuels: {
+    natural_gas: 'Erdgas',
+    lpg: 'Flüssiggas (Propan)',
+    fuel_oil: 'Heizöl / Diesel',
+    heat_pump: 'Wärmepumpe (Strom)',
+    geothermal: 'Thermalwasser',
+    biomass: 'Biomasse (Pellets, Oliventrester)',
+  },
+  fuelUnits: { m3: 'm³', kg: 'kg', L: 'L', kWh: 'kWh' },
+  pipes: {
+    steel_51: 'Stahlrohr (Rohrschiene), 51 mm',
+    steel_33: 'Stahlrohr, 33,7 mm',
+    pe_40: 'Kunststoffrohr (PE/PP), 40 mm',
+    pe_32: 'Kunststoffrohr (PE/PP), 32 mm',
+    pe_25: 'Kunststoffrohr (PE/PP), 25 mm',
+  },
+  currencies: {
+    TND: 'Tunesischer Dinar',
+    EUR: 'Euro',
+    USD: 'US-Dollar',
+  },
+
+  fields: {
+    spans: 'Schiffe',
+    spanWidthM: 'Schiffbreite',
+    lengthM: 'Länge',
+    gutterHeightM: 'Traufhöhe',
+    ridgeHeightM: 'Firsthöhe',
+    floorAreaM2: 'Grundfläche',
+    coverAreaM2: 'Hüllfläche',
+    volumeM3: 'Luftvolumen',
+    perimeterM: 'Umfang',
+    uValue: 'U-Wert der Eindeckung',
+    airChangesPerHour: 'Luftundichtheit',
+    screenSavingPct: 'Einsparung durch den Schirm',
+    insideC: 'Innen, nachts',
+    outsideDesignC: 'Kälteste Nacht draußen',
+    marginPct: 'Sicherheitszuschlag',
+    nightSetC: 'Nachtsollwert',
+    daySetC: 'Tagsollwert',
+    transmissionPct: 'Lichtdurchlässigkeit',
+    solarGainPct: 'Sonne, die die Luft erwärmt',
+    efficiencyPct: 'Wirkungsgrad (COP × 100)',
+    fuelPrice: 'Preis pro Einheit',
+    heatDemandKw: 'Zu liefernde Wärme',
+    supplyC: 'Vorlauf',
+    returnC: 'Rücklauf',
+    airC: 'Lufttemperatur',
+    loopLengthM: 'Länge eines Kreises',
+    pumpHeadM: 'Förderhöhe der Pumpe',
+    pumpEfficiencyPct: 'Wirkungsgrad der Pumpe',
+    annualHeatKwh: 'Wärme im Jahr',
+    radiationWm2: 'Sonnenstrahlung draußen',
+    shadingPct: 'Schattierung',
+    evapotranspirationPct: 'Sonne, die die Kultur zur Transpiration nutzt',
+    outsideC: 'Außentemperatur',
+    maxRiseK: 'Erlaubte Erwärmung über außen',
+    windMs: 'Windgeschwindigkeit',
+    ventOpeningM: 'Öffnung der Lüftungsklappen',
+    fanCapacityM3h: 'Luft je Ventilator',
+    outsideRhPct: 'Außenluftfeuchte',
+    padEfficiencyPct: 'Wirkungsgrad des Pads',
+    riseK: 'Erwärmung vom Pad zu den Ventilatoren',
+    padFaceVelocityMs: 'Luftgeschwindigkeit durch das Pad',
+    padHeightM: 'Pad-Höhe',
+    padToFanM: 'Pad bis Ventilatoren',
+    hoursPerDay: 'Stunden am Tag',
+    cropAreaPct: 'Bepflanzte Fläche',
+    transpirationPct: 'Sonne, die zu Transpiration wird',
+    canopyPct: 'Bestandesdeckung',
+    drainPct: 'Drain / Verluste',
+    plantsPerM2: 'Pflanzen pro m²',
+    emittersPerPlant: 'Tropfer pro Pflanze',
+    emitterLh: 'Tropferleistung',
+    shotMl: 'Gabe pro Tropfer',
+    pumpM3h: 'Pumpenförderstrom',
+    catchmentM2: 'Dachfläche zum Becken',
+    runoffPct: 'Abfluss, der das Becken erreicht',
+    basinM3: 'Beckengröße',
+    targetDli: 'Ziellicht (DLI)',
+    maxDli: 'Schattieren über (DLI)',
+    lampHours: 'Lampenstunden am Tag',
+    efficacyUmolJ: 'Effizienz der Leuchte',
+    fixtureW: 'Leistung der Leuchte',
+    electricityPrice: 'Strompreis',
+    co2KgPerKwh: 'CO₂ des Stromnetzes',
+    targetPpm: 'CO₂-Ziel',
+    outsidePpm: 'CO₂ draußen',
+    uptakeGm2h: 'Aufnahme durch die Kultur',
+    daysPerYear: 'Tage im Jahr',
+    burnerEfficiencyPct: 'Wirkungsgrad des Brenners',
+    co2Price: 'Preis für Flüssig-CO₂',
+    gasPrice: 'Gaspreis',
+    insideRhPct: 'Höchste Luftfeuchte innen',
+    transpirationGm2h: 'Nächtliche Transpiration',
+    nightHours: 'Nachtlänge',
+  } as Record<string, string>,
+  hints: {
+    spanWidthM: 'Üblich: 8, 9,6 oder 12,8 m',
+    gutterHeightM: 'Höhere Häuser puffern Wärme und Feuchte besser',
+    uValue:
+      'Aus der Eindeckung übernommen; Ihr Lieferant nennt evtl. einen anderen',
+    airChangesPerHour:
+      'Luftwechsel pro Stunde: 0,5 dichte Folie bis 2 altes Glas',
+    screenSavingPct:
+      'Transparent 25 %, Schattier-/Energie 35 %, Aluminium 45 %',
+    outsideDesignC: 'Eine kalte Nacht, die fast jeden Winter wiederkommt',
+    marginPct: 'Für Wind, klaren Himmel und Rohrverluste',
+    transmissionPct:
+      'Durch Eindeckung und Konstruktion; staubige Folie verliert 10–20 %',
+    solarGainPct: 'Etwa die Hälfte des Lichts innen erwärmt die Luft',
+    efficiencyPct: 'Kessel 85–95 %; Wärmepumpe COP 3 = 300',
+    fuelPrice: 'Ihr eigener Tarif, in der Währung des Projekts',
+    heatDemandKw:
+      'Startet mit der Spitzenlast; die Schaltfläche oben übernimmt sie erneut',
+    supplyC: 'Thermalbrunnen liefern hier 60–75 °C',
+    loopLengthM: 'Hin und zurück entlang des Hauses',
+    annualHeatKwh:
+      'Für die Wassermenge; die Schaltfläche oben übernimmt den Jahreswert',
+    radiationWm2: 'Mittags im Sommer, auf die Horizontale',
+    evapotranspirationPct: 'Etwa 50 % bei vollem Bestand, 0 im leeren Haus',
+    maxRiseK: '3–5 K sind üblich',
+    ventOpeningM: 'Höhe der offenen Klappe',
+    fanCapacityM3h: 'Bei etwa 30 Pa, aus der Ventilatorkennlinie',
+    padEfficiencyPct: '75–85 % bei sauberem Pad',
+    padFaceVelocityMs: '1,25 m/s bei 100-mm-Pads, 1,75 bei 150 mm',
+    padToFanM: 'Unter 40–50 m bleiben',
+    transpirationPct: 'Voller Bestand: etwa 65 %',
+    canopyPct: 'Junge Pflanzen 30 %, voller Bestand 100 %',
+    drainPct: 'Substratkultur 20–35 %; mehr bei salzigem Wasser',
+    shotMl: 'Meist 100–200 mL',
+    runoffPct: 'Glas 85 %, Folie 80 %, nach dem ersten Spülstoß',
+    targetDli: 'Tomate 20–30, Salat 12–17, Erdbeere 15–20',
+    maxDli: 'Darüber schattieren; Salat verbrennt über etwa 17',
+    lampHours: 'Meist 12–18 h',
+    efficacyUmolJ: 'LED 2,5–3,2, Natriumdampflampen etwa 1,8',
+    co2KgPerKwh: 'Tunesisches Netz: etwa 0,47',
+    targetPpm: 'Der meiste Gewinn kommt bis 800–1000 ppm',
+    uptakeGm2h: 'Volle Sonne, voller Bestand: 2–4',
+    insideRhPct: 'Über 85–90 % nachts lädt Botrytis ein',
+    transpirationGm2h: 'Tomate nachts: etwa 10–20',
+  } as Record<string, string>,
+
+  context: {
+    from: 'Aus',
+    defaultHouse: 'Beispielhaus, Monastir, Tomate',
+    reset: 'Aus dem Projekt neu laden',
+    house: 'Das Haus',
+    sun: 'Sonne und Haus',
+    demand: 'Was die Kultur braucht',
+  },
+
+  projects: {
+    title: 'Projekte',
+    lead: 'Jedes Gewächshaus: Haus, Klima und Kultur, und jedes in den Werkzeugen gespeicherte Ergebnis.',
+    new: 'Neues Projekt',
+    newTitle: 'Neues Projekt',
+    editTitle: 'Projekt bearbeiten',
+    create: 'Projekt anlegen',
+    saveChanges: 'Änderungen speichern',
+    loading: 'Projekte werden geladen…',
+    switch: 'Projekt',
+    name: 'Projektname',
+    site: 'Standort',
+    climate: 'Klima',
+    crop: 'Kultur',
+    currency: 'Währung',
+    shape: 'Haustyp',
+    cover: 'Eindeckung',
+    screen: 'Schirm',
+    insulated: 'Gedämmter Sockel',
+    required: 'Geben Sie dem Projekt einen Namen.',
+    emptyTitle: 'Noch kein Projekt',
+    emptyLead:
+      'Legen Sie ein Projekt für Ihr Gewächshaus an, oder laden Sie die Beispiele, um die Werkzeuge erst auszuprobieren. Die Rechner funktionieren auch ohne; zum Speichern von Ergebnissen brauchen Sie ein Projekt.',
+    samples: 'Beispielprojekte laden',
+    deleteConfirm: (title: string) =>
+      `„${title}“ und seine gespeicherten Ergebnisse löschen? Das lässt sich nicht rückgängig machen.`,
+    floor: 'Fläche',
+    saved: 'Gespeicherte Ergebnisse',
+    savedEmpty:
+      'Noch nichts gespeichert. Jeder Rechner hat unten eine Schaltfläche Speichern.',
+    renameTitle: 'Ergebnis umbenennen',
+    renameLabel: 'Name',
+    deleteResult: (label: string) => `„${label}“ löschen?`,
+  },
+  kinds: {
+    heatPeak: 'Heizlast (Spitze)',
+    heatYear: 'Heizung übers Jahr',
+    hotWater: 'Warmwasserrohre',
+    ventilation: 'Lüftung',
+    padFan: 'Pad-and-Fan-Kühlung',
+    cropWater: 'Wasser für die Kultur',
+    rainwater: 'Regenwasser',
+    light: 'Belichtung und Schattierung',
+    co2: 'CO₂-Düngung',
+    humidity: 'Nächtliche Luftfeuchte',
+  },
+
+  greenhouse: {
+    title: 'Gewächshaus',
+    lead: 'Das Haus, von dem jeder Rechner ausgeht: Grundfläche, Hülle und Luftvolumen.',
+    sectionAlt: (spans: string, width: string, gutter: string, ridge: string) =>
+      `Querschnitt: ${spans} Schiffe zu ${width} m, Traufe ${gutter} m, First ${ridge} m`,
+    saveToProject: 'Im Projekt speichern',
+    savedToProject: 'Im Projekt gespeichert.',
+    noProject:
+      'Nicht gespeichert: Legen Sie ein Projekt an, um dieses Haus zu behalten.',
+    floor: 'Grundfläche',
+    cover: 'Hüllfläche',
+    volume: 'Luftvolumen',
+    meanHeight: 'Mittlere Höhe',
+    coverRatio: 'Hülle / Grundfläche',
+    perimeter: 'Umfang',
+    roof: 'Dach',
+    sideWalls: 'Seitenwände',
+    gables: 'Giebelwände',
+    width: 'Breite',
+    formulas: {
+      floor: 'Grundfläche = Schiffe × Schiffbreite × Länge',
+      roof: 'Dach: jede Dachfläche √((b/2)² + h²), oder eine halbe Ellipse beim Bogen',
+      ends: 'Giebel: Wände bis zur Traufe, plus ein Dreieck (oder eine halbe Ellipse) je Dach',
+      volume: 'Volumen = Grundfläche × Traufe + Dachquerschnitt × Länge',
+    },
+  },
+
+  heating: {
+    title: 'Heizung',
+    lead: 'Die Heizanlage auslegen, ein Jahr Brennstoff zählen und Warmwasserrohre für Thermalwasser oder einen Kessel verlegen.',
+    tabs: {
+      peak: 'Spitzenlast',
+      year: 'Übers Jahr',
+      pipes: 'Warmwasserrohre',
+    },
+    cover: 'Eindeckung',
+    screen: 'Schirm',
+    insulated: 'Gedämmter Sockel',
+    screenClosed: 'Schirm in der kältesten Nacht geschlossen',
+    designNight: (place: string, t: string) =>
+      `Auslegungsnacht in ${place}: ${t} °C`,
+    climate: 'Klima',
+    fuel: 'Brennstoff',
+    pipe: 'Rohr',
+    designKw: 'Heizanlage',
+    totalKw: 'Wärmeverlust',
+    perM2: 'Pro m² Grundfläche',
+    deltaT: 'Innen − außen',
+    breakdown: 'Wohin die Wärme geht',
+    parts: {
+      transmission: 'Durch die Eindeckung',
+      infiltration: 'Undichtheiten',
+      perimeter: 'Sockel',
+    },
+    annual: 'Wärme im Jahr',
+    perM2Year: 'Pro m² und Jahr',
+    fuelYear: 'Brennstoff im Jahr',
+    cost: 'Brennstoffkosten im Jahr',
+    co2: 'CO₂ im Jahr',
+    monthly: 'Wärme je Monat, Nacht und Tag',
+    night: 'Nacht',
+    day: 'Tag',
+    monthlyAlt: (peak: string, total: string) =>
+      `Balkendiagramm der Wärme je Monat; Spitze im ${peak}; ${total} MWh im Jahr`,
+    flow: 'Wasserstrom',
+    perMetre: 'Wärme pro Meter Rohr',
+    pipeLength: 'Zu verlegendes Rohr',
+    perM2Pipe: 'Rohr pro m² Grundfläche',
+    loops: 'Heizkreise',
+    velocity: 'Geschwindigkeit in einem Kreis',
+    pump: 'Pumpenleistung',
+    waterYear: 'Wasser im Jahr',
+    usePeak: (kw: string) => `Spitzenlast übernehmen (${kw} kW)`,
+    useYear: (kwh: string) => `Jahreswert übernehmen (${kwh} kWh)`,
+    formulas: {
+      transmission: 'Eindeckung: U × A × ΔT',
+      infiltration: 'Undichtheiten: 0,335 × N × V × ΔT',
+      perimeter: 'Sockel: F × Umfang × ΔT',
+      design: 'Anlage = Summe × (1 + Zuschlag)',
+      night:
+        'Nacht (Januar): Verluste × (Sollwert − Nachtmittel) × Stunden × Tage',
+      day: 'Tag (Januar): Verluste × (Sollwert − Tagesmittel) × Stunden − Sonne',
+      fuel: 'Brennstoff = Wärme / (Energie pro Einheit × Wirkungsgrad)',
+      flow: 'Strom = Q / (1,163 × ΔT Wasser)',
+      output: 'Pro Meter = π × D × (h_konv + h_rad) × ΔT',
+      length: 'Länge = Q / Leistung pro Meter',
+      pump: 'Pumpe = ρ × g × Strom × Förderhöhe / Wirkungsgrad',
+    },
+  },
+
+  cooling: {
+    title: 'Kühlung',
+    lead: 'Wie viel Luft das Haus an einem sonnigen Tag bewegen muss, die Lüftungsklappen oder Ventilatoren dafür, und Pad-and-Fan-Kühlung für heißes, trockenes Wetter.',
+    tabs: { ventilation: 'Lüftung', padFan: 'Pad and Fan' },
+    solar: 'Sonne, die die Luft erwärmt',
+    flow: 'Zu bewegende Luft',
+    ach: 'Luftwechsel',
+    perM2: 'Pro m² Grundfläche',
+    vents: 'Lüftungsöffnung (natürlich)',
+    ventShare: 'der Grundfläche',
+    fans: 'Ventilatoren (mechanisch)',
+    wetBulb: 'Feuchtkugel draußen',
+    padOutlet: 'Luft hinter dem Pad',
+    exhaust: 'Luft an den Ventilatoren',
+    padArea: 'Pad-Fläche',
+    padLength: 'Länge der Pad-Wand',
+    evaporation: 'Verdunstetes Wasser',
+    waterDay: 'Wasser am Tag',
+    perHour: 'pro Stunde',
+    formulas: {
+      solar: 'Sonne = τ × (1 − Schatten) × G × Fläche × (1 − ET)',
+      conduction: 'Durch die Eindeckung: U × A × ΔT',
+      flow: 'Luft = (Sonne − Hülle) / (ρ × cp × ΔT)',
+      vents:
+        'Klappen (Boulard & Baille): G = Cd × A/2 × √(2g × ΔT/T × h/4 + Cw × u²)',
+      padOutlet: 'Pad: T − η × (T − T_feucht)',
+      padFlow: 'Luft = (Sonne + Hülle) / (ρ × cp × Erwärmung)',
+      pad: 'Pad-Fläche = Luft / Anströmgeschwindigkeit',
+      water: 'Wasser = ρ × Luft × cp × (T − T_Pad) / λ',
+    },
+  },
+
+  water: {
+    title: 'Wasser',
+    lead: 'Was die Kultur Monat für Monat trinkt, die Tropfbewässerung dafür, und wie viel davon der Regen vom Dach decken kann.',
+    tabs: { crop: 'Wasser für die Kultur', rain: 'Regenwasser' },
+    climate: 'Klima',
+    peak: 'Spitze, gegeben',
+    peakDay: 'Spitzentag, ganzes Haus',
+    year: 'Wasser im Jahr',
+    perM2Year: 'pro m² Grundfläche',
+    emitters: 'Tropfer',
+    perEmitter: 'Pro Tropfer, Spitzentag',
+    shots: 'Gaben am Tag',
+    shotLength: 'Jede Gabe dauert',
+    systemFlow: 'Alle Tropfer zugleich',
+    sections: 'Bewässerungssektoren',
+    monthly: 'Gegebenes Wasser je Monat, L pro m² und Tag',
+    monthlyAlt: (peak: string, value: string) =>
+      `Balkendiagramm des täglichen Wassers je Monat; Spitze im ${peak} mit ${value} L/m²`,
+    rainYear: 'Regen im Jahr',
+    harvest: 'Gesammelter Regen',
+    demand: 'Bewässerung',
+    coverage: 'Regen deckt',
+    maxCoverage: (pct: string) =>
+      `höchstens ${pct} % mit einem ausreichend großen Becken`,
+    suggested: 'Empfohlenes Becken',
+    storm: (mm: string, m3: string) => `Ein Starkregen von ${mm} mm: ${m3} m³`,
+    rainChart: 'Gesammelter Regen und Bewässerung je Monat, m³',
+    rainAlt: (pct: string) =>
+      `Balkendiagramm von gesammeltem Regen und Bewässerung je Monat; Regen deckt ${pct} %`,
+    table: {
+      month: 'Monat',
+      harvest: 'Gesammelt',
+      demand: 'Bedarf',
+      used: 'Genutzt',
+      stored: 'Im Becken',
+      overflow: 'Überlauf',
+    },
+    formulas: {
+      inside: 'Licht innen = Rg × τ × (1 − Schatten)',
+      net: 'Verbrauch der Kultur = k × Bestand × Licht innen / 2,45',
+      gross: 'Gegeben = Verbrauch / (1 − Drain)',
+      house: 'Haus = gegeben × bepflanzte Fläche',
+      drippers: 'Tropfer = bepflanzte Fläche × Pflanzen × Tropfer pro Pflanze',
+      shots: 'Gaben = pro Tropfer / Gabe',
+      harvest: 'Gesammelt = Regen × Dach × Abfluss',
+      basin:
+        'Becken: Monat für Monat Regen hinein, Bewässerung hinaus, Überlauf wenn voll',
+    },
+  },
+
+  air: {
+    title: 'Licht & Luft',
+    lead: 'Belichtung für die dunklen Monate und Schatten für die hellen, CO₂ für die Kultur, und die Luft, die nachts getauscht werden muss, damit Feuchte und Tropfen gering bleiben.',
+    tabs: { light: 'Licht', co2: 'CO₂', humidity: 'Feuchte' },
+    source: 'CO₂ aus',
+    sources: { burner: 'Gasbrenner (Rauchgas)', liquid: 'Flüssig-CO₂-Tank' },
+    fixtures: 'Leuchten',
+    ppfd: 'Licht der Leuchten',
+    energy: 'Leuchten im Jahr',
+    co2Grid: 'CO₂ des Stroms',
+    shade: 'Stärkste Schattierung',
+    shadeMonths: (n: string) => `${n} Monate schattiert`,
+    sunDli: 'Sonne innen',
+    chart: 'Sonnenlicht innen je Monat, mol/m² am Tag',
+    chartAlt: (place: string, target: string) =>
+      `Balkendiagramm des täglichen Lichts innen je Monat in ${place}, gegenüber einem Ziel von ${target}`,
+    table: { sun: 'Sonne', lamps: 'Lampen h', shade: 'Schatten %' },
+    supply: 'Zu lieferndes CO₂',
+    used: 'Von der Kultur aufgenommen',
+    leak: 'Entweicht',
+    year: 'CO₂ im Jahr',
+    cost: 'Kosten im Jahr',
+    burner: 'Gas für den Brenner',
+    air: 'Hereinzuholende Außenluft',
+    heat: 'Wärme für diese Luft',
+    night: 'Nacht',
+    vpd: 'Dampfdruckdefizit',
+    dew: 'Taupunkt',
+    cover: 'Eindeckung innen',
+    water: 'Abzuführendes Wasser',
+    formulas: {
+      dli: 'Sonne innen = Rg × 0,47 × 4,57 × τ (dunkelster Monat)',
+      ppfd: 'PPFD = (Ziel − Sonne) × 10⁶ / (Stunden × 3600)',
+      fixtures: 'Leuchten = PPFD / Effizienz × Fläche / Watt',
+      shade: 'Schatten = 1 − Grenze / Sonne (hellster Monat)',
+      leak: 'Verlust = N × V × (Ziel − außen) × 1,83 × 10⁻⁶',
+      uptake: 'Aufnahme = g/m²·h × Fläche',
+      burner: 'Gas = CO₂ / 1,96; Wärme = Gas × 9,77 × η',
+      water: 'Wasser = Transpiration × Fläche',
+      air: 'Luft = Wasser / (ρ × (x_innen − x_außen))',
+      heat: 'Wärme = ρ × cp × Luft × (T_innen − T_außen)',
+      surface: 'Eindeckung innen = T_innen − U/8 × (T_innen − T_außen)',
+    },
+  },
+
+  climate: {
+    title: 'Klima',
+    lead: 'Monatsmittel für Gewächshausregionen. Sie reichen zur Auslegung einer Anlage; die Aufzeichnungen Ihrer eigenen Station sind besser.',
+    choose: 'Ort',
+    use: 'Für dieses Projekt verwenden',
+    inUse: 'Von diesem Projekt verwendet',
+    lat: 'Breitengrad',
+    designWinter: 'Auslegungsnacht',
+    designSummer: 'Auslegungsnachmittag',
+    peakSun: 'Mittagssonne im Sommer',
+    rainYear: 'Regen im Jahr',
+    chart: 'Temperaturen (Linien) und Regen (Balken) je Monat',
+    chartAlt: (place: string) =>
+      `Diagramm der monatlichen Temperaturen und Niederschläge in ${place}`,
+    table: {
+      month: 'Monat',
+      tMin: 'Min °C',
+      tMax: 'Max °C',
+      sun: 'Sonne MJ/m²·d',
+      rain: 'Regen mm',
+      day: 'Tag h',
+    },
+    source:
+      'Gerundete Stationsmittel (etwa 1991–2020). Eine spätere Version holt Mittelwerte für jeden Ort auf der Karte.',
+  },
+
+  calc: {
+    results: 'Ergebnisse',
+    how: 'So wird gerechnet',
+    inputs: 'Eingaben',
+    table: 'Zahlen zeigen',
+    dragHint:
+      'Ziehen Sie die runden Griffe, oder wählen Sie einen und nutzen Sie die Pfeiltasten.',
+  },
+
+  diagrams: {
+    heatAlt: (inside: string, outside: string, kw: string) =>
+      `Wärme, die das Haus verlässt: ${kw} kW, von ${inside} °C innen zu ${outside} °C außen. Griffe stellen beide Temperaturen ein.`,
+    pipesAlt: (loops: string, length: string, supply: string, back: string) =>
+      `Heizrohre im Grundriss: ${loops} Kreise zu ${length} m, Vorlauf ${supply} °C, Rücklauf ${back} °C. Griffe stellen die Temperaturen und die Kreislänge ein.`,
+    ventAlt: (outside: string, rise: string, vents: string) =>
+      `Lüftung an einem sonnigen Tag: ${outside} °C draußen, das Haus höchstens ${rise} K wärmer, ${vents} m² Firstlüftung. Griffe stellen die Temperaturen und die Klappenöffnung ein.`,
+    padAlt: (outside: string, pad: string, exhaust: string, distance: string) =>
+      `Pad and Fan: Luft mit ${outside} °C verlässt das Pad mit ${pad} °C und erreicht die Ventilatoren in ${distance} m mit ${exhaust} °C. Griffe stellen den Abstand und die Erwärmung ein.`,
+    cropAlt: (applied: string, used: string, drain: string) =>
+      `Ein Spitzentag pro m²: ${applied} L gegeben, ${used} L transpiriert, ${drain} % Drain. Griffe stellen den Bestand und den Drainanteil ein.`,
+    rainAlt: (basin: string, pct: string) =>
+      `Regen vom Dach in ein Becken von ${basin} m³, das ${pct} % der Bewässerung deckt. Ein Griff stellt die Beckengröße ein.`,
+    inside: 'Innen',
+    outside: 'Außen',
+    screen: 'Schirm',
+    cover: 'Hülle',
+    leaks: 'Undicht',
+    footing: 'Sockel',
+    supply: 'Vorlauf',
+    return: 'Rücklauf',
+    air: 'Luft',
+    loop: 'Kreis',
+    loops: 'Kreise',
+    vents: 'Klappen',
+    shade: 'Schatten',
+    pad: 'Pad',
+    fans: 'Ventilatoren',
+    canopy: 'Bestand',
+    transpired: 'Transpiriert',
+    drain: 'Drain',
+    suggested: 'Empfohlen',
+    overflow: 'Überlauf',
+    lightAlt: (month: string, sun: string, target: string, ppfd: string) =>
+      `Licht im ${month}: ${sun} mol/m² von der Sonne gegenüber einem Ziel von ${target}; die Leuchten geben ${ppfd} µmol/m²·s. Griffe stellen das Ziel, die Schattiergrenze und die Lampenstunden ein.`,
+    co2Alt: (target: string, supply: string, used: string) =>
+      `CO₂ bei ${target} ppm: ${supply} kg/h geliefert, ${used} % von der Kultur aufgenommen. Griffe stellen das Ziel und den Luftwechsel ein.`,
+    humidityAlt: (inside: string, rh: string, dew: string, cover: string) =>
+      `Eine Nacht bei ${inside} °C und ${rh} %: Taupunkt ${dew} °C, Eindeckung ${cover} °C. Griffe stellen beide Temperaturen und die Feuchte ein.`,
+    target: 'Ziel',
+    ceiling: 'Grenze',
+    noLamps: 'Keine Leuchten nötig',
+    crop: 'Kultur',
+    used: 'genutzt',
+    coverAt: 'Hülle',
+    dew: 'Tau',
+    wetterOutside: 'Außenluft ist feuchter',
+  },
+
+  save: {
+    title: 'Im Projekt speichern',
+    label: 'Name',
+    save: 'Speichern',
+    update: 'Gespeichertes Ergebnis aktualisieren',
+    saveCopy: 'Als Kopie speichern',
+    stopEditing: 'Bearbeitung beenden',
+    editing: 'In Bearbeitung',
+    editingHint: 'Sie ändern ein gespeichertes Ergebnis.',
+    savedTo: 'Gespeichert in',
+    viewSaved: 'gespeicherte Ergebnisse ansehen',
+    noProject: 'Legen Sie ein Projekt an, um Ergebnisse zu speichern.',
+  },
+
+  backup: {
+    title: 'Sichern und wiederherstellen',
+    lead: 'Ihre Projekte liegen nur in diesem Browser. Behalten Sie eine Kopie: Speichern Sie eine Sicherungsdatei auf dem Telefon oder teilen Sie sie in Google Drive, und öffnen Sie sie auf jedem Gerät wieder.',
+    download: 'Sicherungsdatei speichern',
+    share: 'Teilen oder in Drive speichern',
+    shareTitle: 'SerraCalc-Sicherung',
+    open: 'Sicherung öffnen',
+    driveHint:
+      'Unter Android zeigt „Teilen oder in Drive speichern“ Drive im Teilen-Menü, und „Sicherung öffnen“ kann die Datei aus Drive wählen. Auf dem iPhone wählen Sie Dateien oder die Drive-App.',
+    saved: (n: number) =>
+      `Sicherung von ${n} Projekt${n === 1 ? '' : 'en'} bereit.`,
+    restored: (n: number, skipped: number) =>
+      `${n} Projekt${n === 1 ? '' : 'e'} wiederhergestellt${skipped ? ` (${skipped} beschädigte${skipped === 1 ? 'r Eintrag' : ' Einträge'} ausgelassen)` : ''}. Bereits vorhandene kamen als Kopie hinzu.`,
+    shareFailed:
+      'Teilen hat hier nicht funktioniert: Speichern Sie stattdessen die Sicherungsdatei.',
+    errors: {
+      notJson: 'Diese Datei ist keine SerraCalc-Sicherung (kein JSON).',
+      notSerraCalc: 'Diese JSON-Datei ist keine SerraCalc-Sicherung.',
+      newerVersion:
+        'Diese Sicherung stammt aus einer neueren SerraCalc-Version: Laden Sie die App neu und versuchen Sie es noch einmal.',
+      empty: 'Diese Sicherung enthält kein Projekt, das SerraCalc lesen kann.',
+    },
+  },
+
+  report: {
+    title: 'Bericht',
+    lead: 'Das Projekt auf Papier: das Haus, sein Klima und jedes gespeicherte Ergebnis mit seinen Befunden, zum Drucken oder als PDF.',
+    print: 'Drucken oder als PDF speichern',
+    tip: 'Wählen Sie im Druckdialog „Als PDF speichern“, um eine Datei zu behalten. Menüs und Schaltflächen werden nicht gedruckt.',
+    kicker: 'Projektbericht',
+    date: 'Datum',
+    house: 'Das Haus',
+    layout: (
+      spans: string,
+      width: string,
+      length: string,
+      gutter: string,
+      ridge: string,
+    ) =>
+      `${spans} Schiffe zu ${width} m, ${length} m lang, Traufe ${gutter} m, First ${ridge} m`,
+    noProject:
+      'Legen Sie ein Projekt an oder öffnen Sie eines, um seinen Bericht zu drucken.',
+    footer:
+      'Die Ergebnisse werden aus den gespeicherten Eingaben mit den aktuellen Regeln von SerraCalc neu berechnet; die Anleitung nennt ihre Quellen.',
+  },
+
+  guide: {
+    title: 'Anleitung',
+    lead: 'Was jedes Werkzeug tut, was es annimmt und woher seine Zahlen kommen.',
+    tools: [
+      {
+        id: 'projects',
+        title: 'Projekte und Sicherungen',
+        body: 'Ein Projekt enthält ein Haus, sein Klima, seine Kultur und Währung, und jedes Ergebnis, das Sie in den Werkzeugen speichern. Gespeicherte Ergebnisse behalten nur ihre Eingaben und öffnen sich daher mit den aktuellen Regeln. Projekte bleiben in diesem Browser: Speichern Sie eine Sicherungsdatei oder teilen Sie sie in Drive, und öffnen Sie sie auf einem anderen Gerät.',
+      },
+      {
+        id: 'greenhouse',
+        title: 'Gewächshaus',
+        body: 'Beschreiben Sie das Haus einmal: Typ, Schiffe, Länge, Höhen, Eindeckung und Schirm. SerraCalc berechnet Grundfläche, Hülle (Dach, Seitenwände und Giebel) und Luftvolumen. Jeder Rechner geht davon aus und behält beim Speichern eine eigene Kopie.',
+      },
+      {
+        id: 'heating',
+        title: 'Heizung',
+        body: 'Spitzenlast: die Wärme, die in einer kalten Nacht durch die Eindeckung (U × A × ΔT), durch Undichtheiten (0,335 × N × V × ΔT) und über den Sockel verloren geht, plus ein Zuschlag. Übers Jahr: jeder Monat nach der Tageslänge in Nacht und Tag geteilt, die Nächte mit der Einsparung des Schirms, die Tage um die Sonne verringert. Dann Brennstoff, Kosten und CO₂. Warmwasserrohre: der Strom an Thermal- oder Kesselwasser und das Rohr, das zu verlegen ist, damit das Haus seine Wärme bekommt.',
+      },
+      {
+        id: 'cooling',
+        title: 'Kühlung',
+        body: 'Lüftung: die Luft, die die Sonnenwärme hinausträgt, während das Haus einige Grad über außen bleibt, die Firstlüftung für natürliche Lüftung (Boulard und Baille) oder die Zahl der Ventilatoren. Pad and Fan: Luft, die ein nasses Pad verlässt, nähert sich der Feuchtkugeltemperatur; das Werkzeug legt Ventilatoren, Pad-Wand und Wasser aus.',
+      },
+      {
+        id: 'water',
+        title: 'Wasser',
+        body: 'Die Kultur transpiriert etwa zwei Drittel des Lichts, das sie erhält: Liter pro m² je Monat aus dem Klima, plus der Drain. Dann Tropfer, Gaben und Bewässerungssektoren. Regenwasser: was das Dach Monat für Monat in ein Becken sammelt, und das Becken, das das meiste davon auffängt.',
+      },
+      {
+        id: 'climate',
+        title: 'Klima',
+        body: 'Monatliche Temperaturen, Sonnenlicht und Regen für neun Orte, mit einer Auslegungsnacht und einem Auslegungsnachmittag. Wählen Sie den nächsten; ersetzen Sie ihn durch die Daten Ihrer Station, sobald Sie sie haben.',
+      },
+      {
+        id: 'air',
+        title: 'Licht & Luft',
+        body: 'Licht: das tägliche Lichtintegral der Sonne innen je Monat, die Leuchten, die im dunkelsten Monat die Lücke zum Ziel schließen, und die Schattierung, die die hellsten Monate unter der Grenze der Kultur hält. CO₂: die Zufuhr, die ein Ziel gegen die entweichende Luft und die Aufnahme der Kultur hält, aus einem Gasbrenner oder einem Tank. Feuchte: die Außenluft, die nachts hereingeholt werden muss, um das Wasser der Kultur abzuführen, die Wärme dafür, und ob die Eindeckung tropft.',
+      },
+      {
+        id: 'report',
+        title: 'Bericht',
+        body: 'Das Projekt auf einer druckbaren Seite: das Haus, sein Klima und jedes gespeicherte Ergebnis mit seinen wichtigsten Zahlen und Befunden. Drucken Sie es, oder wählen Sie im Druckdialog „Als PDF speichern“, um es zu versenden.',
+      },
+    ],
+    sourcesTitle: 'Quellen',
+    sources: [
+      'ASAE EP406: Heizen, Lüften und Kühlen von Gewächshäusern (U-Werte, Undichtheiten, Sockelverluste, Pad and Fan).',
+      'Boulard & Baille (1995): natürliche Lüftung von Gewächshäusern über Firstklappen.',
+      'FAO Irrigation and Drainage Paper 56: Dampfdruck, Tageslänge, latente Wärme.',
+      'Stull (2011): Feuchtkugeltemperatur aus Temperatur und Luftfeuchte.',
+      'Stanghellini (1987) und niederländische Praxis: Transpiration aus der Strahlung.',
+      'Thimijan & Heins (1983): Umrechnung von Sonnenlicht in Photonen für Pflanzen.',
+      'Nederhoff (1994): CO₂-Düngung, Verluste und Aufnahme im Gewächshaus.',
+      'Campen et al. (2003): Entfeuchtung von Gewächshäusern durch Lüftung und Wärme.',
+    ],
+    limitsTitle: 'Grenzen',
+    limits: [
+      'Monatsmittel verdecken Kälte- und Hitzewellen: Die Spitzenwerkzeuge nutzen dafür Auslegungswerte.',
+      'Wärme- und Wasserzahlen dienen der Planung; messen Sie das echte Haus und passen Sie an.',
+      'Preise sind Beispiele; geben Sie Ihren eigenen Tarif ein.',
+    ],
+    open: 'Öffnen',
+  },
+
+  notes: {
+    'geometry.lowGutter': (v) =>
+      `Traufe bei ${v['gutter']} m: Ein niedriges Haus heizt sich auf und bleibt feucht. 4 m oder mehr puffern besser.`,
+    'geometry.goodVolume': (v) =>
+      `Mittlere Höhe ${v['height']} m: genug Luft, um Wärme und Feuchte zu puffern.`,
+    'geometry.flatRoof': (v) =>
+      `Dachneigung ${v['slope']}°: Unter etwa 20° tropft Kondenswasser auf die Kultur, und im Winter kommt weniger Sonne herein.`,
+    'geometry.longHouse': (v) =>
+      `${v['length']} m lang: Pad-and-Fan-Kühlung arbeitet am besten unter 40–50 m vom Pad zum Ventilator.`,
+    'heat.noLoad': () =>
+      'Draußen ist es nicht kälter als drinnen: keine Wärme nötig.',
+    'heat.perM2': (v) =>
+      `${v['w']} W pro m² Grundfläche in der Auslegungsnacht.`,
+    'heat.leaky': (v) =>
+      `${v['pct']} % der Wärme gehen durch Undichtheiten verloren: Dichten Sie zuerst Türen, Klappen und Folienränder ab.`,
+    'heat.screenOpen': () =>
+      'Der Schirm ist offen gerechnet. Ihn in kalten Nächten zu schließen, senkt die Last.',
+    'heat.addScreen': () =>
+      'Kein Schirm: Ein Energieschirm spart 25–45 % der Nachtwärme.',
+    'year.none': () =>
+      'In einem durchschnittlichen Jahr ist keine Heizung nötig.',
+    'year.season': (v) =>
+      `Heizen ${v['months']} Monate im Jahr, am meisten im ${v['peak']}.`,
+    'year.mostlyNights': (v) =>
+      `${v['pct']} % der Wärme fallen nachts an: Ein Schirm und ein dichtes Haus zahlen sich am schnellsten aus.`,
+    'year.screenSaves': () =>
+      'Ein Energieschirm würde dies um ein Viertel oder mehr senken.',
+    'year.geothermal': () =>
+      'Thermalwasser: kein Brennstoff verbrannt, nur der Strom der Pumpe.',
+    'year.high': (v) =>
+      `${v['kwh']} kWh pro m²: hoch für ein Mittelmeerhaus. Prüfen Sie die Sollwerte und die Eindeckung.`,
+    'pipes.tooCold': () =>
+      'Das Wasser ist nicht wärmer als die Luft: Es kann das Haus nicht heizen.',
+    'pipes.tooMany': (v) =>
+      `${v['m']} m Rohr pro m² Grundfläche: zu viel zum Verlegen. Nehmen Sie wärmeres Wasser, ein dickeres Rohr oder weniger Grad.`,
+    'pipes.fits': (v) => `${v['m']} m Rohr pro m² Grundfläche: Das passt.`,
+    'pipes.smallDrop': () =>
+      'Unter 5 K zwischen Vor- und Rücklauf: Der Strom wird groß; streben Sie 15–25 K an.',
+    'pipes.fast': (v) =>
+      `${v['v']} m/s in jedem Kreis: laut und teuer zu pumpen. Fügen Sie Kreise hinzu oder nehmen Sie ein dickeres Rohr.`,
+    'pipes.slow': (v) =>
+      `${v['v']} m/s in jedem Kreis: Das Wasser kühlt entlang des Kreises ab, das ferne Ende bleibt kälter. Weniger, längere Kreise helfen.`,
+    'pipes.peOk': () =>
+      'Kunststoffrohr eignet sich für Thermalwasser bis etwa 70 °C; prüfen Sie seine Einstufung.',
+    'pipes.peHot': () =>
+      'Über 75 °C ist für die meisten Kunststoffrohre zu heiß: Nehmen Sie Stahl, oder mischen Sie das Wasser herunter.',
+    'vent.coverEnough': () =>
+      'Die Hülle allein gibt diese Wärme ab: keine zusätzliche Lüftung nötig.',
+    'vent.naturalOk': (v) =>
+      `Firstklappen von ${v['pct']} % der Grundfläche: für ein normales Haus erreichbar.`,
+    'vent.naturalTight': (v) =>
+      `Klappen von ${v['pct']} % der Grundfläche: mehr, als die meisten Dächer öffnen. Ergänzen Sie Seitenlüftung oder Schattierung.`,
+    'vent.naturalShort': (v) =>
+      `Klappen von ${v['pct']} % der Grundfläche: Natürliche Lüftung schafft das nicht. Schattieren Sie, oder nutzen Sie Pad and Fan.`,
+    'vent.extreme': (v) =>
+      `${v['ach']} Luftwechsel pro Stunde: mehr als einer pro Minute ist hart für die Kultur. Schattieren oder verdunstend kühlen.`,
+    'vent.hotOutside': () =>
+      'Bei 30 °C draußen kann Luft allein das Haus nicht unter die Außentemperatur kühlen: siehe Pad and Fan.',
+    'vent.tryShade': () =>
+      'Keine Schattierung gerechnet: Ein Schirm mit 30–50 % oder Kalken senkt die nötige Luft um ebenso viel.',
+    'pad.cooling': (v) =>
+      `Das Pad kühlt die Luft um ${v['drop']} K; sie verlässt das Haus mit ${v['exhaust']} °C.`,
+    'pad.humid': () =>
+      'Feuchte Außenluft: Verdunstung kühlt wenig. Pads arbeiten am besten unter etwa 50 % Luftfeuchte.',
+    'pad.tooLong': (v) =>
+      `${v['m']} m von den Pads zu den Ventilatoren: Das ferne Ende wird heiß. Bleiben Sie unter 40–50 m, oder kühlen Sie von beiden Enden.`,
+    'pad.fastFace': () =>
+      'Luft zu schnell durch das Pad: Tropfen werden mitgerissen, der Wirkungsgrad sinkt.',
+    'pad.waterQuality': () =>
+      'Salziges oder hartes Wasser verkalkt die Pads: Leiten Sie einen Teil des Wassers ab und prüfen Sie seine Qualität.',
+    'water.peak': (v) =>
+      `Spitze im ${v['month']}: ${v['l']} L pro m² am Tag, Drain eingerechnet.`,
+    'water.highPeak': () =>
+      'Über 9 L pro m² am Tag: Prüfen Sie den Drain und die Schattierung.',
+    'water.lowDrain': () =>
+      'Unter 15 % Drain: Salze reichern sich in der Matte an, erst recht bei Brackwasser.',
+    'water.manyShots': (v) =>
+      `${v['shots']} Gaben am Tag: Nehmen Sie größere Gaben oder mehr Tropfer.`,
+    'water.sections': (v) =>
+      `Die Pumpe kann nicht alle Tropfer zugleich versorgen: in ${v['sections']} Sektoren bewässern.`,
+    'rain.coverage': (v) => `Regen deckt ${v['pct']} % der Bewässerung.`,
+    'rain.basinSmall': (v) =>
+      `Das Becken läuft mit nutzbarem Regen über: etwa ${v['m3']} m³ fangen das meiste auf.`,
+    'rain.basinBig': (v) =>
+      `Etwa ${v['m3']} m³ reichen: Ein größeres Becken bringt wenig.`,
+    'rain.storm': (v) =>
+      `Ein Starkregen von ${v['mm']} mm bringt ${v['m3']} m³ vom Dach: Das Becken sollte mindestens so viel fassen.`,
+    'rain.dry': (v) =>
+      `${v['mm']} mm Regen im Jahr: Das hilft, aber die Bewässerung braucht eine weitere Quelle.`,
+    'rain.firstFlush': () =>
+      'Leiten Sie die ersten Millimeter jedes Regens ab: Sie spülen Staub und Vogelkot vom Dach.',
+    'light.none': () =>
+      'Die Sonne erreicht das Ziel in jedem Monat: keine Leuchten nötig.',
+    'light.months': (v) =>
+      `Leuchten helfen ${v['months']} Monate im Jahr; der ${v['month']} bestimmt ihre Größe.`,
+    'light.highPpfd': (v) =>
+      `${v['ppfd']} µmol/m²·s sind viele Leuchten: Senken Sie das Ziel oder lassen Sie sie länger brennen.`,
+    'light.shade': (v) =>
+      `Schattieren ${v['months']} Monate im Jahr, bis zu ${v['pct']} % im ${v['peak']}.`,
+    'light.targetOverCeiling': () =>
+      'Das Ziel liegt über der Schattiergrenze: Heben Sie die Grenze an oder senken Sie das Ziel.',
+    'co2.noLift': () =>
+      'Das Ziel liegt nicht über dem Außenwert: nichts hinzuzufügen.',
+    'co2.leaky': (v) =>
+      `${v['pct']} % des CO₂ entweichen mit der Luft: Düngen Sie bei geschlossenen Klappen, oder zielen Sie niedriger, wenn sie öffnen.`,
+    'co2.used': (v) =>
+      `Die Kultur nimmt ${v['pct']} % dessen auf, was Sie zuführen.`,
+    'co2.highTarget': () =>
+      'Über etwa 1000 ppm gewinnt die Kultur für das zusätzliche CO₂ kaum noch etwas.',
+    'co2.burnerHeat': (v) =>
+      `Der Brenner liefert mit dem CO₂ ${v['kw']} kW Wärme: Speichern Sie sie für die Nacht in einem Pufferspeicher.`,
+    'co2.flue': () =>
+      'Nur ein für CO₂-Dosierung gebauter Brenner mit sauberem Erdgas, dessen Rauchgas auf CO und NOₓ geprüft wird.',
+    'humidity.vpdLow': (v) =>
+      `VPD ${v['vpd']} kPa: Die Luft ist nahezu gesättigt, Botrytis und Mehltau gedeihen. Streben Sie über 0,3 kPa an.`,
+    'humidity.vpdOk': (v) => `VPD ${v['vpd']} kPa: ein gesundes Nachtklima.`,
+    'humidity.vpdHigh': (v) =>
+      `VPD ${v['vpd']} kPa: trocken für die Nacht; die Kultur kann gestresst werden.`,
+    'humidity.condensation': (v) =>
+      `Die Eindeckung hat ${v['surface']} °C, unter dem Taupunkt (${v['dew']} °C): Sie tropft auf die Kultur. Ein Schirm, etwas Luft oder Rohre nahe dem Dach helfen.`,
+    'humidity.outsideWetter': () =>
+      'Die Außenluft enthält mehr Wasser als die Innenluft: Lüften kann das Haus nicht trocknen. Heizen Sie, oder nutzen Sie einen Entfeuchter.',
+    'humidity.heat': (v) =>
+      `Die hereingeholte Luft zu erwärmen, braucht ${v['kw']} kW (${v['wm2']} W/m²).`,
+  } as Record<string, NoteWriter>,
+};

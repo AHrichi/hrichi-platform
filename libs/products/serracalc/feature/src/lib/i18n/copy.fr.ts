@@ -10,6 +10,8 @@ export const FR: SerraCopy = {
       'Les projets sont enregistrés sur cet appareil ; aucune connexion nécessaire.',
     sunlight: 'Plein soleil',
     sunlightHint: 'Mode contraste élevé pour lire l’écran en extérieur',
+    dark: 'Sombre',
+    darkHint: 'Thème sombre',
     language: 'Langue',
     sections: 'Sections de SerraCalc',
     planningAid:
@@ -24,6 +26,7 @@ export const FR: SerraCopy = {
     climate: 'Climat',
     guide: 'Guide',
     air: 'Lumière & air',
+    report: 'Rapport',
     more: 'Plus',
   },
   common: {
@@ -594,10 +597,61 @@ export const FR: SerraCopy = {
     noProject: 'Créez un projet pour enregistrer les résultats.',
   },
 
+  backup: {
+    title: 'Sauvegarder et restaurer',
+    lead: 'Vos projets ne sont gardés que dans ce navigateur. Gardez-en une copie : enregistrez un fichier de sauvegarde sur le téléphone, ou partagez-le vers Google Drive, et rouvrez-le sur n’importe quel appareil.',
+    download: 'Enregistrer une sauvegarde',
+    share: 'Partager ou enregistrer sur Drive',
+    shareTitle: 'Sauvegarde SerraCalc',
+    open: 'Ouvrir une sauvegarde',
+    driveHint:
+      'Sur Android, « Partager ou enregistrer sur Drive » propose Drive dans le menu de partage, et « Ouvrir une sauvegarde » peut choisir le fichier dans Drive. Sur iPhone, choisissez Fichiers ou l’app Drive.',
+    saved: (n: number) =>
+      `Sauvegarde de ${n} projet${n === 1 ? '' : 's'} prête.`,
+    restored: (n: number, skipped: number) =>
+      `${n} projet${n === 1 ? '' : 's'} restauré${n === 1 ? '' : 's'}${skipped ? ` (${skipped} entrée${skipped === 1 ? '' : 's'} abîmée${skipped === 1 ? '' : 's'} ignorée${skipped === 1 ? '' : 's'})` : ''}. Un projet déjà présent arrive en copie.`,
+    shareFailed:
+      'Le partage n’a pas fonctionné ici : enregistrez plutôt le fichier de sauvegarde.',
+    errors: {
+      notJson:
+        'Ce fichier n’est pas une sauvegarde SerraCalc (ce n’est pas du JSON).',
+      notSerraCalc: 'Ce fichier JSON n’est pas une sauvegarde SerraCalc.',
+      newerVersion:
+        'Cette sauvegarde vient d’une version plus récente de SerraCalc : rechargez l’app et réessayez.',
+      empty: 'Cette sauvegarde ne contient aucun projet lisible.',
+    },
+  },
+
+  report: {
+    title: 'Rapport',
+    lead: 'Le projet sur papier : la serre, son climat et chaque résultat enregistré avec ses constats, à imprimer ou garder en PDF.',
+    print: 'Imprimer ou enregistrer en PDF',
+    tip: 'Dans la fenêtre d’impression, choisissez « Enregistrer au format PDF » pour garder un fichier. Menus et boutons ne sont pas imprimés.',
+    kicker: 'Rapport de projet',
+    date: 'Date',
+    house: 'La serre',
+    layout: (
+      spans: string,
+      width: string,
+      length: string,
+      gutter: string,
+      ridge: string,
+    ) =>
+      `${spans} chapelles de ${width} m, ${length} m de long, chéneau ${gutter} m, faîtage ${ridge} m`,
+    noProject: 'Créez ou ouvrez un projet pour imprimer son rapport.',
+    footer:
+      'Les résultats sont recalculés à partir des données enregistrées, avec les règles actuelles de SerraCalc ; le Guide en donne les sources.',
+  },
+
   guide: {
     title: 'Guide',
     lead: 'Ce que fait chaque outil, ce qu’il suppose et d’où viennent ses chiffres.',
     tools: [
+      {
+        id: 'projects',
+        title: 'Projets et sauvegardes',
+        body: 'Un projet réunit une serre, son climat, sa culture et sa monnaie, et chaque résultat enregistré depuis les outils. Les résultats ne gardent que leurs données, et se rouvrent donc avec les règles actuelles. Les projets restent dans ce navigateur : enregistrez une sauvegarde, ou partagez-la vers Drive, et ouvrez-la sur un autre appareil.',
+      },
       {
         id: 'greenhouse',
         title: 'Serre',
@@ -627,6 +681,11 @@ export const FR: SerraCopy = {
         id: 'air',
         title: 'Lumière & air',
         body: 'Lumière : l’intégrale de lumière du soleil dedans chaque mois, les lampes qui comblent l’écart avec la cible le mois le plus sombre, et l’ombrage qui garde les mois lumineux sous le plafond de la culture. CO₂ : l’apport qui tient une consigne malgré l’air qui fuit et ce que la culture absorbe, d’un brûleur à gaz ou d’une cuve. Humidité : l’air extérieur à faire entrer la nuit pour évacuer l’eau de la culture, la chaleur pour le réchauffer, et si la couverture goutte.',
+      },
+      {
+        id: 'report',
+        title: 'Rapport',
+        body: 'Le projet sur une page imprimable : la serre, son climat et chaque résultat enregistré avec ses chiffres principaux et ses constats. Imprimez-le, ou choisissez « Enregistrer au format PDF » pour l’envoyer.',
       },
     ],
     sourcesTitle: 'Sources',

@@ -232,7 +232,12 @@
             />
             <details class="table-toggle">
               <summary>{{ t().calc.table }}</summary>
-              <div class="table-wrap">
+              <div
+                class="table-wrap"
+                tabindex="0"
+                role="region"
+                [attr.aria-label]="t().heating.monthly"
+              >
                 <table>
                   <thead>
                     <tr>

@@ -112,6 +112,9 @@
           <a routerLink="../water"
             >💧 {{ t().nav.water }} {{ t().common.next }}</a
           >
+          <a routerLink="../report"
+            >🖨️ {{ t().nav.report }} {{ t().common.next }}</a
+          >
         </p>
       </article>
 
@@ -161,6 +164,13 @@
         }
       </section>
     }
+  }
+
+  @if (!store.isLoading()) {
+    <section class="panel" aria-labelledby="sc-backup-title">
+      <h3 id="sc-backup-title">{{ t().backup.title }}</h3>
+      <sc-backup-panel />
+    </section>
   }
 </section>
 

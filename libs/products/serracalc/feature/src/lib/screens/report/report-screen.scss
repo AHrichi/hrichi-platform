@@ -1,0 +1,163 @@
+@use '../../styles/serra' as sc;
+
+.screen {
+  @include sc.screen;
+}
+
+.head {
+  @include sc.screen-head;
+}
+
+.tip,
+.muted,
+.center {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-200);
+}
+
+.center {
+  text-align: center;
+}
+
+.report {
+  @include sc.panel;
+  gap: var(--space-6);
+
+  h3,
+  h4,
+  h5 {
+    margin: 0;
+    line-height: var(--font-line-height-snug);
+  }
+
+  h3 {
+    font-size: var(--font-size-500);
+  }
+
+  h4 {
+    padding-block-end: var(--space-2);
+    border-block-end: 1px solid var(--color-border-default);
+    font-size: var(--font-size-300);
+  }
+
+  h5 {
+    font-size: var(--font-size-300);
+    font-weight: var(--font-weight-semibold);
+  }
+
+  section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+}
+
+.kicker {
+  margin: 0 0 var(--space-1);
+  color: var(--color-accent-default);
+  font-size: var(--font-size-200);
+  font-weight: var(--font-weight-semibold);
+}
+
+.facts,
+.figures {
+  display: grid;
+  gap: var(--space-2) var(--space-5);
+  margin: 0;
+
+  div {
+    min-inline-size: 0;
+  }
+
+  dt {
+    color: var(--color-text-muted);
+    font-size: var(--font-size-100);
+  }
+
+  dd {
+    margin: 0;
+    font-weight: var(--font-weight-medium);
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+.facts {
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 12rem), 1fr));
+  margin-block-start: var(--space-3);
+}
+
+.figures {
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 10rem), 1fr));
+
+  dd {
+    font-size: var(--font-size-300);
+  }
+}
+
+.layout {
+  margin: 0;
+}
+
+.result {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding-block: var(--space-3);
+  break-inside: avoid;
+
+  & + & {
+    border-block-start: 1px dashed var(--color-border-default);
+  }
+}
+
+.result-head .kind {
+  margin: var(--space-1) 0 0;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-100);
+}
+
+.findings {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  margin: 0;
+  padding-inline-start: var(--space-5);
+  font-size: var(--font-size-200);
+  list-style: disc;
+}
+
+.report-foot {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-100);
+
+  p {
+    margin: 0;
+  }
+}
+
+// On paper: dark on white whatever the theme, and no controls.
+@media print {
+  :host {
+    --color-text-default: var(--color-neutral-950);
+    --color-text-muted: var(--color-neutral-700);
+    --color-bg-raised: var(--color-neutral-0);
+    --color-border-default: var(--color-neutral-300);
+    --color-accent-default: var(--color-neutral-950);
+
+    color: var(--color-text-default);
+  }
+
+  .head,
+  .tip {
+    display: none;
+  }
+
+  .report {
+    padding: 0;
+    border: 0;
+  }
+}

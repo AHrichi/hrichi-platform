@@ -13,5 +13,7 @@ export * from './lib/calculations/light';
 export * from './lib/calculations/co2';
 export * from './lib/calculations/humidity';
 export * from './lib/calculations/defaults';
+export * from './lib/calculations/saved';
 
 export * from './lib/utils/physics';
+export * from './lib/utils/backup';

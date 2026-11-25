@@ -26,10 +26,14 @@ function project(id: string): GreenhouseProject {
   };
 }
 
-function setup(initial: GreenhouseProject[] = [project('p1')]) {
+function setup(
+  initial: GreenhouseProject[] = [project('p1')],
+  sunlight = false,
+) {
   const saved = new Map(initial.map((p) => [p.id, structuredClone(p)]));
   const db = {
     lastProjectId: initial[0]?.id ?? null,
+    sunlight,
     getAllProjects: async () => [...saved.values()],
     saveProject: async (p: GreenhouseProject) => {
       saved.set(p.id, structuredClone(p));
@@ -44,7 +48,7 @@ function setup(initial: GreenhouseProject[] = [project('p1')]) {
   const store = Injector.create({
     providers: [{ provide: SerraDbService, useValue: db }, SerraStore],
   }).get(SerraStore);
-  return { store, saved };
+  return { store, saved, db };
 }
 
 describe('SerraStore', () => {
@@ -125,5 +129,30 @@ describe('SerraStore', () => {
     expect(store.projects()).toHaveLength(1 + SAMPLE_PROJECTS.length);
     expect(store.hasSamples()).toBe(true);
     expect(store.activeProject()?.id).toBe(SAMPLE_PROJECTS[0].id);
+  });
+
+  it('restores a backup beside the projects here, never over them', async () => {
+    const { store, saved } = setup();
+    await store.loadProjects();
+    const fromBackup = { ...project('p1'), title: 'Restored house' };
+    const count = await store.importProjects([fromBackup, project('p2')]);
+
+    expect(count).toBe(2);
+    expect(store.projects()).toHaveLength(3);
+    // The clash came in under a new id; the original is untouched.
+    expect(saved.get('p1')?.title).toBe('House p1');
+    const copy = store.projects()[1];
+    expect(copy.id).not.toBe('p1');
+    expect(copy.title).toBe('Restored house');
+    expect(saved.has(copy.id)).toBe(true);
+    expect(store.activeProject()?.id).toBe(copy.id);
+  });
+
+  it('remembers sunlight mode on the device', async () => {
+    const { store, db } = setup([project('p1')], true);
+    expect(store.isHighContrast()).toBe(true);
+    store.toggleHighContrast();
+    expect(store.isHighContrast()).toBe(false);
+    expect(db.sunlight).toBe(false);
   });
 });

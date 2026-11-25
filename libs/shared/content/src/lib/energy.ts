@@ -98,7 +98,7 @@ const EN: EnergyProfile = {
       name: 'SerraCalc',
       title: 'Greenhouse heating, cooling and water engineering',
       summary:
-        'An offline field app for greenhouse engineers in Tunisia, in French, Arabic and English: describe the house once, then size its heating, cooling, lighting and water.',
+        'An offline field app for greenhouse engineers in Tunisia, in French, Arabic, English, Italian and German: describe the house once, then size its heating, cooling, lighting and water.',
       highlights: [
         {
           title: 'Heating',
@@ -223,7 +223,7 @@ const FR: EnergyProfile = {
       title:
         'Ingénierie du chauffage, du refroidissement et de l’eau des serres',
       summary:
-        'Application de terrain hors ligne pour les ingénieurs serristes en Tunisie, en français, arabe et anglais : on décrit la serre une fois, puis on dimensionne son chauffage, son refroidissement, son éclairage et son eau.',
+        'Application de terrain hors ligne pour les ingénieurs serristes en Tunisie, en français, arabe, anglais, italien et allemand : on décrit la serre une fois, puis on dimensionne son chauffage, son refroidissement, son éclairage et son eau.',
       highlights: [
         {
           title: 'Chauffage',
@@ -347,7 +347,7 @@ const AR: EnergyProfile = {
       name: 'SerraCalc',
       title: 'هندسة تدفئة البيوت المحمية وتبريدها ومياهها',
       summary:
-        'تطبيق ميداني يعمل دون اتصال لمهندسي البيوت المحمية في تونس، بالفرنسية والعربية والإنجليزية: تصف البيت مرة واحدة، ثم تحدّد أبعاد تدفئته وتبريده وإضاءته ومياهه.',
+        'تطبيق ميداني يعمل دون اتصال لمهندسي البيوت المحمية في تونس، بالفرنسية والعربية والإنجليزية والإيطالية والألمانية: تصف البيت مرة واحدة، ثم تحدّد أبعاد تدفئته وتبريده وإضاءته ومياهه.',
       highlights: [
         {
           title: 'التدفئة',
@@ -471,7 +471,7 @@ const IT: EnergyProfile = {
       name: 'SerraCalc',
       title: 'Ingegneria del riscaldamento, raffrescamento e acqua delle serre',
       summary:
-        'App da campo offline per gli ingegneri delle serre in Tunisia, in francese, arabo e inglese: si descrive la serra una volta, poi se ne dimensionano riscaldamento, raffrescamento, illuminazione e acqua.',
+        'App da campo offline per gli ingegneri delle serre in Tunisia, in francese, arabo, inglese, italiano e tedesco: si descrive la serra una volta, poi se ne dimensionano riscaldamento, raffrescamento, illuminazione e acqua.',
       highlights: [
         {
           title: 'Riscaldamento',
@@ -595,7 +595,7 @@ const DE: EnergyProfile = {
       name: 'SerraCalc',
       title: 'Heizung, Kühlung und Wasser für Gewächshäuser',
       summary:
-        'Offline-Feld-App für Gewächshausingenieure in Tunesien, auf Französisch, Arabisch und Englisch: Das Gewächshaus wird einmal beschrieben, dann werden Heizung, Kühlung, Belichtung und Wasser ausgelegt.',
+        'Offline-Feld-App für Gewächshausingenieure in Tunesien, auf Französisch, Arabisch, Englisch, Italienisch und Deutsch: Das Gewächshaus wird einmal beschrieben, dann werden Heizung, Kühlung, Belichtung und Wasser ausgelegt.',
       highlights: [
         {
           title: 'Heizung',
