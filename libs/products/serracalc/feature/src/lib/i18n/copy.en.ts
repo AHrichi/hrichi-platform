@@ -26,6 +26,7 @@ export const EN = {
     climate: 'Climate',
     guide: 'Guide',
     air: 'Light & air',
+    report: 'Report',
     more: 'More',
   },
   common: {
@@ -609,10 +610,36 @@ export const EN = {
     },
   },
 
+  report: {
+    title: 'Report',
+    lead: 'The project on paper: the house, its climate and every saved result with its findings, to print or keep as a PDF.',
+    print: 'Print or save as PDF',
+    tip: 'In the print dialog, choose “Save as PDF” to keep a file. Screens, menus and buttons are left off the paper.',
+    kicker: 'Project report',
+    date: 'Date',
+    house: 'The house',
+    layout: (
+      spans: string,
+      width: string,
+      length: string,
+      gutter: string,
+      ridge: string,
+    ) =>
+      `${spans} × ${width} m spans, ${length} m long, gutter ${gutter} m, ridge ${ridge} m`,
+    noProject: 'Create or open a project to print its report.',
+    footer:
+      'Results are worked out again from the saved inputs with SerraCalc’s current rules; the Guide lists their sources.',
+  },
+
   guide: {
     title: 'Guide',
     lead: 'What each tool does, what it assumes and where its numbers come from.',
     tools: [
+      {
+        id: 'projects',
+        title: 'Projects and backups',
+        body: 'A project holds one house, its climate, crop and currency, and every result you save from the tools. Saved results keep their inputs only, so they open again with the current rules. Projects stay in this browser: save a backup file, or share it to Drive, and open it on another device.',
+      },
       {
         id: 'greenhouse',
         title: 'Greenhouse',
@@ -642,6 +669,11 @@ export const EN = {
         id: 'air',
         title: 'Light & air',
         body: 'Light: the sun’s daily light integral inside each month, the lamps that close the gap to the target in the darkest month, and the shade that keeps the brightest months under the crop’s ceiling. CO₂: the supply that holds a target against the air leaking out and what the crop takes up, from a gas burner or a tank. Humidity: the outside air to bring in at night to carry the crop’s water away, the heat to warm it, and whether the cover drips.',
+      },
+      {
+        id: 'report',
+        title: 'Report',
+        body: 'The project on one printable page: the house, its climate and each saved result with its main figures and findings. Print it, or choose “Save as PDF” in the print dialog to send it.',
       },
     ],
     sourcesTitle: 'Sources',

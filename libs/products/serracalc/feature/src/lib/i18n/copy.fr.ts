@@ -26,6 +26,7 @@ export const FR: SerraCopy = {
     climate: 'Climat',
     guide: 'Guide',
     air: 'Lumière & air',
+    report: 'Rapport',
     more: 'Plus',
   },
   common: {
@@ -621,10 +622,36 @@ export const FR: SerraCopy = {
     },
   },
 
+  report: {
+    title: 'Rapport',
+    lead: 'Le projet sur papier : la serre, son climat et chaque résultat enregistré avec ses constats, à imprimer ou garder en PDF.',
+    print: 'Imprimer ou enregistrer en PDF',
+    tip: 'Dans la fenêtre d’impression, choisissez « Enregistrer au format PDF » pour garder un fichier. Menus et boutons ne sont pas imprimés.',
+    kicker: 'Rapport de projet',
+    date: 'Date',
+    house: 'La serre',
+    layout: (
+      spans: string,
+      width: string,
+      length: string,
+      gutter: string,
+      ridge: string,
+    ) =>
+      `${spans} chapelles de ${width} m, ${length} m de long, chéneau ${gutter} m, faîtage ${ridge} m`,
+    noProject: 'Créez ou ouvrez un projet pour imprimer son rapport.',
+    footer:
+      'Les résultats sont recalculés à partir des données enregistrées, avec les règles actuelles de SerraCalc ; le Guide en donne les sources.',
+  },
+
   guide: {
     title: 'Guide',
     lead: 'Ce que fait chaque outil, ce qu’il suppose et d’où viennent ses chiffres.',
     tools: [
+      {
+        id: 'projects',
+        title: 'Projets et sauvegardes',
+        body: 'Un projet réunit une serre, son climat, sa culture et sa monnaie, et chaque résultat enregistré depuis les outils. Les résultats ne gardent que leurs données, et se rouvrent donc avec les règles actuelles. Les projets restent dans ce navigateur : enregistrez une sauvegarde, ou partagez-la vers Drive, et ouvrez-la sur un autre appareil.',
+      },
       {
         id: 'greenhouse',
         title: 'Serre',
@@ -654,6 +681,11 @@ export const FR: SerraCopy = {
         id: 'air',
         title: 'Lumière & air',
         body: 'Lumière : l’intégrale de lumière du soleil dedans chaque mois, les lampes qui comblent l’écart avec la cible le mois le plus sombre, et l’ombrage qui garde les mois lumineux sous le plafond de la culture. CO₂ : l’apport qui tient une consigne malgré l’air qui fuit et ce que la culture absorbe, d’un brûleur à gaz ou d’une cuve. Humidité : l’air extérieur à faire entrer la nuit pour évacuer l’eau de la culture, la chaleur pour le réchauffer, et si la couverture goutte.',
+      },
+      {
+        id: 'report',
+        title: 'Rapport',
+        body: 'Le projet sur une page imprimable : la serre, son climat et chaque résultat enregistré avec ses chiffres principaux et ses constats. Imprimez-le, ou choisissez « Enregistrer au format PDF » pour l’envoyer.',
       },
     ],
     sourcesTitle: 'Sources',

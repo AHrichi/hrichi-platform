@@ -1,0 +1,161 @@
+<section class="screen" aria-labelledby="sc-report-title">
+  <header class="head">
+    <div>
+      <h2 id="sc-report-title">{{ t().report.title }}</h2>
+      <p>{{ t().report.lead }}</p>
+    </div>
+    @if (store.activeProject()) {
+      <button ahButton type="button" (click)="print()">
+        <span aria-hidden="true">🖨️</span> {{ t().report.print }}
+      </button>
+    }
+  </header>
+
+  @if (store.activeProject(); as project) {
+    <p class="tip">{{ t().report.tip }}</p>
+
+    <article class="report" aria-labelledby="sc-report-project">
+      <header class="report-head">
+        <p class="kicker">SerraCalc · {{ t().report.kicker }}</p>
+        <h3 id="sc-report-project">{{ project.title }}</h3>
+        <dl class="facts">
+          @if (project.site) {
+            <div>
+              <dt>{{ t().projects.site }}</dt>
+              <dd>{{ project.site }}</dd>
+            </div>
+          }
+          @if (house(); as h) {
+            <div>
+              <dt>{{ t().projects.climate }}</dt>
+              <dd>{{ h.climate.name }} ({{ h.climate.country }})</dd>
+            </div>
+          }
+          <div>
+            <dt>{{ t().projects.crop }}</dt>
+            <dd>{{ t().crops[project.crop] }}</dd>
+          </div>
+          <div>
+            <dt>{{ t().projects.currency }}</dt>
+            <dd>{{ t().currencies[project.currency] }}</dd>
+          </div>
+          <div>
+            <dt>{{ t().report.date }}</dt>
+            <dd>{{ i18n.date(today) }}</dd>
+          </div>
+        </dl>
+      </header>
+
+      @if (house(); as h) {
+        <section aria-labelledby="sc-report-house">
+          <h4 id="sc-report-house">{{ t().report.house }}</h4>
+          <p class="layout">
+            {{ t().shapes[project.greenhouse.shape] }} ·
+            <bdi>{{
+              t().report.layout(
+                i18n.num(project.greenhouse.spans, 0),
+                i18n.num(project.greenhouse.spanWidthM),
+                i18n.num(project.greenhouse.lengthM),
+                i18n.num(project.greenhouse.gutterHeightM),
+                i18n.num(project.greenhouse.ridgeHeightM)
+              )
+            }}</bdi>
+          </p>
+          <p class="layout">
+            {{ t().covers[project.greenhouse.cover] }} ·
+            {{ t().screens[project.greenhouse.screen] }}
+            @if (project.greenhouse.perimeterInsulated) {
+              · {{ t().projects.insulated }}
+            }
+          </p>
+          <dl class="figures">
+            <div>
+              <dt>{{ t().greenhouse.floor }}</dt>
+              <dd>
+                <bdi>{{ i18n.num(h.geometry.floorAreaM2, 0) }} m²</bdi>
+              </dd>
+            </div>
+            <div>
+              <dt>{{ t().greenhouse.cover }}</dt>
+              <dd>
+                <bdi>{{ i18n.num(h.geometry.coverAreaM2, 0) }} m²</bdi>
+              </dd>
+            </div>
+            <div>
+              <dt>{{ t().greenhouse.volume }}</dt>
+              <dd>
+                <bdi>{{ i18n.num(h.geometry.volumeM3, 0) }} m³</bdi>
+              </dd>
+            </div>
+            <div>
+              <dt>{{ t().greenhouse.meanHeight }}</dt>
+              <dd>
+                <bdi>{{ i18n.num(h.geometry.meanHeightM, 2) }} m</bdi>
+              </dd>
+            </div>
+            <div>
+              <dt>{{ t().greenhouse.coverRatio }}</dt>
+              <dd>{{ i18n.num(h.geometry.coverRatio, 2) }}</dd>
+            </div>
+          </dl>
+          @if (h.notes.length) {
+            <ul class="findings" role="list">
+              @for (note of h.notes; track $index) {
+                <li>{{ note }}</li>
+              }
+            </ul>
+          }
+        </section>
+      }
+
+      <section aria-labelledby="sc-report-results">
+        <h4 id="sc-report-results">{{ t().projects.saved }}</h4>
+        @if (results().length) {
+          @for (r of results(); track r.id) {
+            <article class="result" [attr.aria-labelledby]="'sc-r-' + r.id">
+              <header class="result-head">
+                <h5 [id]="'sc-r-' + r.id">{{ r.label }}</h5>
+                <p class="kind">{{ r.kind }} · {{ r.savedAt }}</p>
+              </header>
+              <dl class="figures">
+                @for (f of r.figures; track $index) {
+                  <div>
+                    <dt>{{ f.label }}</dt>
+                    <dd>
+                      <bdi>{{ f.value }}</bdi>
+                    </dd>
+                  </div>
+                }
+              </dl>
+              @if (r.notes.length) {
+                <ul class="findings" role="list">
+                  @for (note of r.notes; track $index) {
+                    <li>{{ note }}</li>
+                  }
+                </ul>
+              }
+            </article>
+          }
+        } @else {
+          <p class="muted">{{ t().projects.savedEmpty }}</p>
+        }
+      </section>
+
+      <footer class="report-foot">
+        <p>{{ t().report.footer }}</p>
+        <p>{{ t().app.planningAid }}</p>
+      </footer>
+    </article>
+  } @else if (!store.isLoading()) {
+    <ah-empty-state
+      icon="🖨️"
+      [title]="t().report.title"
+      [description]="t().report.noProject"
+    />
+    <p class="center">
+      <a ahButton="secondary" routerLink="../projects">{{
+        t().nav.projects
+      }}</a>
+    </p>
+  }
+</section>
