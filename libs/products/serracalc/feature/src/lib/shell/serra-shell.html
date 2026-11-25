@@ -69,10 +69,20 @@
     }
   </nav>
 
-  <div class="content">
-    <router-outlet />
-    <p class="aid">{{ t().app.planningAid }}</p>
-  </div>
+  <!-- Standalone, the app owns the page: one main landmark and an h1. Inside
+       the portfolio the shell already has both, so it gets a plain div. -->
+  @if (standalone) {
+    <main class="content">
+      <h1 class="ah-visually-hidden">{{ t().app.name }}</h1>
+      <router-outlet />
+      <p class="aid">{{ t().app.planningAid }}</p>
+    </main>
+  } @else {
+    <div class="content">
+      <router-outlet />
+      <p class="aid">{{ t().app.planningAid }}</p>
+    </div>
+  }
 
   <nav class="bottom" [attr.aria-label]="t().app.sections">
     @for (item of primary; track item.id) {

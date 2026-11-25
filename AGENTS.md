@@ -32,7 +32,7 @@ The repo and these docs are the only memory. Don't rely on anything an earlier a
 - **Don't weaken accessibility to quiet axe.** Fix the markup.
 - **Only one agent per branch or checkout at a time.** Parallel work goes on separate branches, merged later.
 - **Shared resources:**
-  - The e2e needs ports 4200 and 4302–4312. Don't stop servers you didn't start. If a port is taken, say which process holds it and ask the owner.
+  - The e2e needs ports 4200 and 4302–4314. Don't stop servers you didn't start. If a port is taken, say which process holds it and ask the owner.
   - Don't install global tools or change system settings.
 - **Never commit secrets** (`.env.render`, tokens, chat ids). Never print them.
 

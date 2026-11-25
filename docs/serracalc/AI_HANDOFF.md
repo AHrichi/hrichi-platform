@@ -2,7 +2,7 @@
 
 A briefing for whichever AI agent or IDE picks up SerraCalc, the greenhouse heat, water and climate engineering app. It assumes no memory of earlier sessions. Read it top to bottom before touching code; [AGENTS.md](../../AGENTS.md) has the protocol, [ADR-0027](../adr/0027-serracalc.md) the decisions.
 
-Last updated 2026-11-24: **S3 done on `feat/serracalc-s3-light-air`**, which holds S1 and S2 too (`feat/greenhouse-energy-p1` → `feat/serracalc-s2-drawings` → this). None is merged; merging the S3 branch alone brings all three.
+Last updated 2026-11-25: **S1–S3 and the shell e2e are on `feat/serracalc-s3-light-air`, in a pull request to `main`.** Merging it deploys SerraCalc (worker `product-serracalc`) and puts it on the apps page.
 
 ## 0. Resume in five minutes
 
@@ -41,7 +41,7 @@ It is **not** the Greenhouse Labor Planner (`product-greenhouse*`, ADR-0026). Ke
 | S3 light, CO₂ and humidity            | **Done.** A **Light & air** screen (`/air`, under More on phones) with three tabs, each with a drawing you can drag: grow lights and shade (DLI from radiation, lamps sized for the darkest month, kWh, cost, CO₂ of the electricity, summer shade; drag the target, the shade ceiling and the lamp hours), CO₂ enrichment (leak + uptake, burner gas and heat or liquid CO₂, cost; drag the target ppm and the air changes) and night humidity (VPD, dew point, cover temperature and drips, outside air and heat to dry the house; drag both temperatures and the humidity). Monthly charts take reference lines. 10 more domain tests. |
 | S4 fertigation, pumps and pipes, PV   | Planned.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | S5 report, backups, any-place climate | Planned.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| S6 shell e2e and go-live polish       | Planned.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| S6 shell e2e and go-live polish       | **Partly done.** `shell-e2e/src/serracalc.spec.ts` (7 tests): samples and the heating result, a drawing handle by keyboard, save and "Open & edit", axe on the five calculators, Arabic RTL with drawings kept LTR, the catalog link and the redirect inside the portfolio under the production CSP. Standalone, the shell renders `<main>` and a hidden `<h1>` (the portfolio provides both when embedded). Left: phone testing.                                                                                                                                                                                                         |
 
 **Verified** (2026-11-24, standalone build in the browser):
 
@@ -64,12 +64,13 @@ It is **not** the Greenhouse Labor Planner (`product-greenhouse*`, ADR-0026). Ke
 - the humidity gauge from the keyboard (85 → 75 %: the drip warning goes, the air needed rises) and the lamp hours by mouse (16 → 8 h: the PPFD and the lamps double);
 - Save on the Light tab, then "Open & edit" from Projects: back on `/air?tab=light` with 8 h and the Editing badge.
 
+**Verified** (2026-11-25, go-live): the SerraCalc e2e, 7 of 7, run as CI does (`CI=1`).
+
 **Not verified yet:**
 
 - dragging with a finger on a real phone (the pointer handling and the touch-scroll guard are LuxPath's, but not tried here);
-- SerraCalc inside the portfolio shell (route, CSP, demo database name) — no shell e2e yet;
 - the deploy target (Cloudflare worker `product-serracalc` is created on the first deploy from `main`);
-- axe on every screen (no automated accessibility run yet);
+- axe on Projects, Climate and Guide (the e2e scans the five calculators);
 - every formula against a published worked example (only hand checks and sanity ranges).
 
 ## 3. Code map
