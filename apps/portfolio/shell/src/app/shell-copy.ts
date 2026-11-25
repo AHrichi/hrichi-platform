@@ -8,6 +8,7 @@ export interface ShellCopy {
     work: string;
     apps: string;
     experience: string;
+    energy: string;
     services: string;
     contact: string;
   };
@@ -43,6 +44,7 @@ export const SHELL_COPY: Record<SiteLanguage, ShellCopy> = {
       work: 'Work',
       apps: 'Apps & Labs',
       experience: 'Experience',
+      energy: 'Energy',
       services: 'Services',
       contact: 'Contact',
     },
@@ -78,6 +80,7 @@ export const SHELL_COPY: Record<SiteLanguage, ShellCopy> = {
       work: 'Réalisations',
       apps: 'Applications',
       experience: 'Expérience',
+      energy: 'Énergie',
       services: 'Services',
       contact: 'Contact',
     },
@@ -113,6 +116,7 @@ export const SHELL_COPY: Record<SiteLanguage, ShellCopy> = {
       work: 'الأعمال',
       apps: 'التطبيقات والمختبرات',
       experience: 'الخبرة',
+      energy: 'الطاقة',
       services: 'الخدمات',
       contact: 'تواصل',
     },
@@ -146,6 +150,7 @@ export const SHELL_COPY: Record<SiteLanguage, ShellCopy> = {
       work: 'Progetti',
       apps: 'App e Laboratori',
       experience: 'Esperienza',
+      energy: 'Energia',
       services: 'Servizi',
       contact: 'Contatti',
     },
@@ -181,6 +186,7 @@ export const SHELL_COPY: Record<SiteLanguage, ShellCopy> = {
       work: 'Projekte',
       apps: 'Apps & Labs',
       experience: 'Erfahrung',
+      energy: 'Energie',
       services: 'Leistungen',
       contact: 'Kontakt',
     },

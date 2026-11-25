@@ -3,7 +3,7 @@ import { caseStudies, isAppEnabled } from '@ah/shared/content';
 
 /**
  * Static-first SSR (ADR-0003): Static pages like the home page, case studies,
- * experience, services, contact, CV, and the apps catalog are rendered into
+ * experience, energy, services, contact, both CVs, and the apps catalog are rendered into
  * full static HTML ahead of time using Angular's SSR engine (@angular/ssr).
  * They are served with 0ms compute latency from Cloudflare edge storage and
  * hydrated with event replay on the client.
@@ -46,7 +46,9 @@ export const serverRoutes: ServerRoute[] = [
   { path: 'experience', renderMode: RenderMode.Prerender },
   { path: 'services', renderMode: RenderMode.Prerender },
   { path: 'contact', renderMode: RenderMode.Prerender },
+  { path: 'energy', renderMode: RenderMode.Prerender },
   { path: 'cv', renderMode: RenderMode.Prerender },
+  { path: 'cv/energy', renderMode: RenderMode.Prerender },
   { path: 'apps', renderMode: RenderMode.Prerender },
   ...enabledOptionalRoutes,
   { path: '**', renderMode: RenderMode.Prerender },

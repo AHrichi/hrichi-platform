@@ -24,6 +24,7 @@ describe('App', () => {
       'Work',
       'Apps & Labs',
       'Experience',
+      'Energy',
       'Services',
       'Contact',
     ]);
@@ -51,6 +52,7 @@ describe('App', () => {
       'Progetti',
       'App e Laboratori',
       'Esperienza',
+      'Energia',
       'Servizi',
       'Contatti',
     ]);
@@ -64,6 +66,7 @@ describe('App', () => {
       'Projekte',
       'Apps & Labs',
       'Erfahrung',
+      'Energie',
       'Leistungen',
       'Kontakt',
     ]);
