@@ -149,14 +149,7 @@
                   : i18n.num(fert().flushDay ?? 0, 0)
               "
               [unit]="fert().flushDay === null ? '' : 'd'"
-              [hint]="
-                fert().naEquilibriumMmolL === null
-                  ? ''
-                  : t().supply.levelsAt +
-                    ' ' +
-                    i18n.num(fert().naEquilibriumMmolL ?? 0) +
-                    ' mmol/L'
-              "
+              [hint]="flushHint()"
             />
             <ah-metric-card
               [label]="t().supply.stock"
@@ -169,6 +162,60 @@
         }
         <sc-calc-steps [steps]="steps()" />
       </section>
+
+      @if (tab() === 'fertigation') {
+        <section class="panel" aria-labelledby="sc-supply-strategies">
+          <h3 id="sc-supply-strategies">{{ t().supply.strategies.title }}</h3>
+          <p class="hint">{{ t().supply.strategies.lead }}</p>
+          <div
+            class="table-wrap"
+            tabindex="0"
+            role="region"
+            [attr.aria-label]="t().supply.strategies.table"
+          >
+            <table class="strategies">
+              <thead>
+                <tr>
+                  <th scope="col">{{ t().supply.strategies.strategy }}</th>
+                  <th scope="col">{{ t().supply.strategies.flushes }}</th>
+                  <th scope="col">{{ t().supply.strategies.letGo }} m³</th>
+                  <th scope="col">{{ t().supply.strategies.fresh }} m³</th>
+                  <th scope="col">{{ t().supply.strategies.stockLost }} L</th>
+                  <th scope="col">{{ t().supply.rootEc }} dS/m</th>
+                  <th scope="col">{{ t().supply.yieldLoss }} %</th>
+                  <th scope="col">
+                    {{ t().supply.strategies.minNutrient }} dS/m
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (row of fert().strategies; track row.id) {
+                  <tr [attr.data-current]="row.id === 'current' || null">
+                    <th scope="row">
+                      {{ t().supply.strategies.names[row.id] }}
+                      @if (row.letGoM3Day > 0) {
+                        <small>{{ i18n.num(row.letGoM3Day, 1) }} m³/d</small>
+                      }
+                    </th>
+                    <td>{{ i18n.num(row.flushesYear, 0) }}</td>
+                    @for (col of strategyCols; track col) {
+                      <td>
+                        @if (lowest()[col] === row.id) {
+                          <strong>{{ cell(row, col) }}</strong>
+                        } @else {
+                          {{ cell(row, col) }}
+                        }
+                      </td>
+                    }
+                    <td>{{ i18n.num(row.minNutrientEcDsM, 1) }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+          <p class="hint">{{ t().supply.strategies.assume }}</p>
+        </section>
+      }
 
       <section class="panel" aria-labelledby="sc-supply-save">
         <h3 id="sc-supply-save">{{ t().save.title }}</h3>

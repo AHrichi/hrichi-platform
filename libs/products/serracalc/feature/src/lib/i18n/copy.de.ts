@@ -128,6 +128,21 @@ export const DE: SerraCopy = {
   },
 
   fields: {
+    sourceClMmolL: 'Chlorid im Frischwasser',
+    sourceHco3MmolL: 'Hydrogencarbonat im Frischwasser',
+    clLimitMmolL: 'Spülen über Chlorid',
+    coolFromC: 'Kühlen über (außen)',
+    fullAtK: 'Volle Luftmenge, über dem Start um',
+    airflowM3hM2: 'Volle Luftmenge',
+    fanWPerM3h: 'Lüfterleistung je m³/h',
+    pumpWm2: 'Pumpen für Pads oder Nebel',
+    emptyFromWeek: 'Haus leer ab Woche',
+    emptyWeeks: 'Wochen leer',
+    gridCo2KgKwh: 'CO₂ des Stromnetzes',
+    gasPerM3: 'Gas',
+    electricityPerKwh: 'Strom bezogen',
+    exportPerKwh: 'Strom verkauft',
+    waterPerM3: 'Wasser',
     lossCoefficientWK: 'Wärmeverlust je Kelvin',
     outsideMinC: 'Außen, Nachttief',
     outsideMaxC: 'Außen, Nachmittagshoch',
@@ -268,6 +283,18 @@ export const DE: SerraCopy = {
     nightHours: 'Nachtlänge',
   } as Record<string, string>,
   hints: {
+    sourceClMmolL: 'UO-Wasser: etwa so viel wie Natrium',
+    sourceHco3MmolL: 'UO-Wasser: unter 0,5; Brunnen: 2–6, laut Analyse',
+    clLimitMmolL: 'Richtwert: etwa 10; fragen Sie Ihre Beratung',
+    coolFromC: 'Lüfter und Pads starten; darunter reichen die Lüftungsklappen',
+    airflowM3hM2: 'Pad und Lüfter: 120–150 m³/h je m² Boden',
+    fanWPerM3h:
+      'Lüftertest oder Datenblatt beim Druck der Pads: etwa 0,03–0,04',
+    pumpWm2: 'Padpumpen: etwa 0,4 W je m² Boden',
+    emptyWeeks: 'Zwischen zwei Kulturen, wie im Kulturkalender',
+    gridCo2KgKwh: 'Der Wert Ihres Netzes; 0,45 ist ein Beispiel',
+    waterPerM3: 'Gekauft, oder die Vollkosten Ihres UO-Wassers',
+    exportPerKwh: 'Was das Netz für den BHKW-Strom zahlt',
     chpElectricKw: 'Wüstenbetriebe: etwa 10 MW für 50 ha (20 W/m²)',
     chpStartHour:
       'Tagsüber laufen, wenn das CO₂ bei geschlossener Lüftung genutzt wird',
@@ -387,6 +414,7 @@ export const DE: SerraCopy = {
     deleteResult: (label: string) => `„${label}“ löschen?`,
   },
   kinds: {
+    coolingYear: 'Kühlung übers Jahr',
     energy: 'Energiezentrale (BHKW)',
     heatReuse: 'Wärme aus gekühltem Wasser',
     economics: 'Wirtschaftlichkeit',
@@ -793,6 +821,15 @@ export const DE: SerraCopy = {
       bill: 'Ihr eigener Tarif oder Faktor, in der Währung des Projekts.',
     },
     topics: {
+      coolingEnergy: {
+        title: 'Kühlstrom übers Jahr',
+        what: 'Pad-und-Lüfter-Kühlung läuft mit Strom: Lüfter ziehen 120–150 m³/h Luft je m² Boden durch nasse Pads, Pumpen halten die Pads feucht. Übers Jahr laufen die Lüfter nur in warmen Stunden, umso schneller, je heißer es ist; der Jahresverbrauch folgt also dem Klima. Ein Mittelmeer-Gewächshaus braucht etwa 10 kWh/m² im Jahr: ein Abgleich für die Zahl.',
+        assumptions: [
+          'Jeder Monat ist sein mittlerer Tag: Außentemperatur als Kosinus, am wärmsten um 15 Uhr.',
+          'Die Lüfterleistung folgt dem Anteil laufender Lüfter (gestufte Lüfter).',
+          'Die Padpumpen laufen, wann immer die Lüfter laufen.',
+        ],
+      },
       cogeneration: {
         title: 'Kraft-Wärme-Kopplung (BHKW) und Wärmespeicher',
         what: 'Ein Gasmotor erzeugt Strom und aus Kühlwasser und Abgas Wärme; sein gereinigtes Abgas liefert CO₂ für die Kultur. Läuft er tagsüber, wenn die Kultur das CO₂ nutzen kann, erzeugt er mehr Wärme, als das Haus braucht: ein Warmwasserpuffer trägt sie in die Nacht, ein Kessel deckt den Rest.',
@@ -1038,6 +1075,31 @@ export const DE: SerraCopy = {
     },
   },
   supply: {
+    limitBy: {
+      na: 'Natrium erreicht zuerst seine Grenze',
+      cl: 'Chlorid erreicht zuerst seine Grenze',
+      ec: 'Die EC-Obergrenze kommt zuerst',
+    },
+    strategies: {
+      title: 'Salz niedrig halten: ein Jahr im Vergleich',
+      lead: 'Derselbe Kreislauf über ein Jahr, mit fünf Wegen, das Salz zu handhaben, das die Kultur zurücklässt. Fett: der niedrigste Wert der Spalte.',
+      table: 'Spülstrategien über ein Jahr',
+      strategy: 'Strategie',
+      flushes: 'Spülungen',
+      letGo: 'Abgelassen',
+      fresh: 'Frischwasser',
+      stockLost: 'Stammlösung verloren',
+      minNutrient: 'Niedrigste Nährstoff-EC',
+      names: {
+        current: 'Wie eingestellt',
+        flush: 'Spülen an der EC-Obergrenze',
+        acid: 'Angesäuertes Nachfüllen',
+        variable: 'Niedrigere Nachfüll-EC',
+        bleed: 'Stetiges Ablassen',
+      },
+      assume:
+        'Ein Jahr Tag für Tag, Kreislauf geschlossen (alles Drainwasser wiederverwendet) außer „wie eingestellt“ und dem stetigen Ablassen. Säure im Nachfüllwasser macht Hydrogencarbonat zu CO₂ und Nitrat: Es erhöht die EC nicht mehr. Eine niedrigere Nachfüll-EC hält die EC am Tropfer, düngt aber weniger. Stammlösung verloren: L von A und B je, das abgelassene Wasser in Zulaufkonzentration gerechnet. Ertragsverlust als Richtwert.',
+    },
     title: 'Wasserversorgung',
     lead: 'Vom Meer zur Wurzel: eine Meerwasser-Umkehrosmose für den Spitzentag der Kultur und der Nährstoffkreislauf, der den Drain wiederverwendet und spült, bevor sich Salz anreichert.',
     tabs: {
@@ -1084,9 +1146,26 @@ export const DE: SerraCopy = {
     },
   },
   energy: {
+    coolKwhM2: 'Kühlstrom',
+    coolChartAlt: (place: string, total: string) =>
+      `Kühlstrom je Monat in ${place}: ${total} kWh je m² im Jahr.`,
+    coolCaption:
+      'Lüfter und Pumpen über den mittleren Tag jedes Monats; nichts, solange das Haus leer steht.',
+    coolYear: 'Kühlung im Jahr',
+    coolBenchmark: (bench: string, pct: string) =>
+      `${pct} % der veröffentlichten ${bench} kWh/m²`,
+    coolSite: 'Für das ganze Haus',
+    coolPeak: 'Alles in Betrieb:',
+    coolCost: 'Strom im Jahr',
+    coolCo2: 'Netz-CO₂ im Jahr',
+    coolHours: 'Kühlstunden',
+    coolTable: 'Kühlung je Monat',
+    month: 'Monat',
+    coolOfBenchmark: 'Der veröffentlichten 10 kWh/m²',
     title: 'Energie',
     lead: 'Ein Gas-BHKW, das über einen Wintertag Wärme, Strom und CO₂ liefert, ein Warmwasserpuffer für die Nacht und ein Kessel für den Rest; und die Wärme in gekühltem Brunnenwasser.',
     tabs: {
+      cooling: 'Kühlung übers Jahr',
       chp: 'BHKW und Puffer',
       reuse: 'Wärmerückgewinnung',
     },
@@ -1109,6 +1188,11 @@ export const DE: SerraCopy = {
     takeLinks:
       'Spitzentag-Wasser der Kultur und Wärme des Wintertags übernehmen',
     formulas: {
+      coolPower: 'Leistung = Luftmenge × Lüfter-W je m³/h + Pumpen',
+      coolShare:
+        'Die Lüfter folgen der Wärme: f = min(1, (T − Start) / Spanne)',
+      coolYear: 'Jahr = Σ Tage × Σ Stunden Leistung',
+      coolCheck: 'Abgleich mit etwa 10 kWh/m² im Jahr',
       demand:
         'Bedarf = H × (T_soll − T_außen) − Sonne, nachts abzüglich Schirm',
       buffer: 'Puffer = 1,163 × V × ΔT',
@@ -1118,9 +1202,48 @@ export const DE: SerraCopy = {
     },
   },
   site: {
+    plantList: 'Die Anlagen des Standorts',
+    plantHint:
+      'Erfassen Sie die Anlagen, die sich die Abteilungen teilen; die Prüfungen setzen sie gegen den Spitzentag des Standorts.',
+    noPlants:
+      'Noch keine Anlage erfasst: UO, BHKW, Kessel, Kältemaschinen, Tanks und Pumpen hinzufügen.',
+    plantTypes: {
+      ro: 'Meerwasser-UO',
+      chp: 'BHKW',
+      boiler: 'Kessel',
+      chiller: 'Kältemaschine',
+      tank: 'Tank',
+      pump: 'Pumpe',
+    },
+    plantName: 'Name',
+    plantField: {
+      capacity: 'Leistung',
+      efficiency: 'Wirkungsgrad',
+      hoursDay: 'Stunden am Tag',
+    },
+    removePlant: (name: string) => `${name} entfernen`,
+    plantType: 'Anlage',
+    addPlant: 'Anlage hinzufügen',
+    tariffs: 'Tarife',
+    tariffHint:
+      'Was der Standort für Gas, Strom und Wasser zahlt und für verkauften Strom erhält. Die Wirtschaftlichkeit kann sie übernehmen.',
+    checksTitle: 'Anlagen gegen den Spitzentag',
+    noChecks:
+      'Fügen Sie eine UO, ein BHKW oder einen Kessel, einen Tank oder eine Pumpe hinzu, um sie zu prüfen.',
+    checks: {
+      water: 'UO-Wasser',
+      heat: 'Wärme (BHKW und Kessel)',
+      storage: 'Wasserspeicher',
+      pumping: 'Pumpen',
+    },
+    checkLine: (pct: string) => `${pct} % des Bedarfs`,
+    fromSaved:
+      'Aus den unter Anlagen und Tarife erfassten Anlagen; darunter aus gespeicherten Ergebnissen.',
+    takeTariffs: 'Tarife des Standorts übernehmen',
     title: 'Standort',
     lead: 'Der ganze Betrieb: Jedes Projekt ist eine Abteilung, sein Haus über ihre Fläche wiederholt; die Summen, die gemeinsame UO und das BHKW im Vergleich, und die Wirtschaftlichkeit des Jahres.',
     tabs: {
+      plants: 'Anlagen und Tarife',
       overview: 'Überblick',
       economics: 'Wirtschaftlichkeit',
     },
@@ -1582,6 +1705,24 @@ export const DE: SerraCopy = {
   },
 
   notes: {
+    'fert.flushCl': (v) =>
+      `Chlorid erreicht ${v['cl']} mmol/L in etwa ${v['days']} Tagen: dann den Kreislauf spülen.`,
+    'fert.flushEc': (v) =>
+      `Das Salz hebt die EC in etwa ${v['days']} Tagen auf die Obergrenze von ${v['ec']} dS/m: dann den Kreislauf spülen.`,
+    'fert.bleed': (v) =>
+      `Täglich ${v['m3']} m³ Drainwasser abzulassen hält den Kreislauf ohne Spülen unter seinen Grenzen: ${v['saved']} m³ weniger im Jahr als beim Spülen an der Obergrenze.`,
+    'coolYear.range': (v) =>
+      `${v['kwh']} kWh/m² im Jahr: im veröffentlichten Bereich für Mittelmeer-Gewächshäuser (etwa 10; hier ${v['pct']} %).`,
+    'coolYear.high': (v) =>
+      `${v['kwh']} kWh/m² im Jahr, ${v['pct']} % der veröffentlichten 10: Lüfterleistung prüfen, früher schattieren oder nebeln statt Pads.`,
+    'coolYear.low': (v) =>
+      `${v['kwh']} kWh/m² im Jahr, deutlich unter den veröffentlichten 10 (${v['pct']} %): milder Standort oder leerer Sommer; Starttemperatur prüfen.`,
+    'coolYear.fans': (v) =>
+      `Lüfter mit ${v['w']} W je m³/h sind verschlissen oder kämpfen gegen verschmutzte Pads: ein Lüftertest und saubere Pads senken die Rechnung.`,
+    'coolYear.airflow': (v) =>
+      `${v['q']} m³/h je m² liegt außerhalb der üblichen 120–150 für Pad und Lüfter.`,
+    'coolYear.peakMonth': (v) =>
+      `${v['month']} braucht ${v['pct']} % des Kühlstroms im Jahr.`,
     'data.vpdBand': (v) =>
       `Das VPD lag ${v['pct']} % der Zeit in seinem Bereich.`,
     'data.dayOk': (v) =>
@@ -1668,7 +1809,7 @@ export const DE: SerraCopy = {
     'fert.flush': (v) =>
       `Natrium erreicht ${v['na']} mmol/L in etwa ${v['days']} Tagen: dann den Kreislauf spülen.`,
     'fert.levels': (v) =>
-      `Natrium pendelt sich bei ${v['na']} mmol/L unter der Grenze ein: kein Spülen wegen Natrium nötig.`,
+      `Natrium pendelt sich bei ${v['na']}, Chlorid bei ${v['cl']} mmol/L unter den Grenzen ein: kein Spülen nötig.`,
     'fert.saltySource': () =>
       'Frischwasser mit über 3 mmol/L Natrium füllt den Kreislauf schnell mit Salz: mit Osmosewasser mischen oder mehr Drain abgeben.',
     'fert.lowDrain': () =>

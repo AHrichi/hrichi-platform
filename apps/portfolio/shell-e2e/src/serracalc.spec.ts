@@ -12,6 +12,7 @@ const STANDALONE = 'http://localhost:4314/';
 const SCREENS = [
   'projects',
   'site',
+  'site?tab=plants',
   'site?tab=economics',
   'heating',
   'cooling',
@@ -24,6 +25,7 @@ const SCREENS = [
   'calendar',
   'energy',
   'energy?tab=reuse',
+  'energy?tab=cooling',
   'greenhouse',
   'operations',
   'data',
@@ -244,6 +246,20 @@ test.describe('SerraCalc, standalone', () => {
     await expect(page.locator('sc-backup-panel .status')).toContainText(
       'isn’t a SerraCalc backup',
     );
+  });
+
+  test('records a shared plant and checks it against the peak day', async ({
+    page,
+  }) => {
+    await loadSamples(page);
+    await page.goto(`${STANDALONE}site?tab=plants`);
+    await page.getByRole('button', { name: 'Add the plant' }).click();
+    const plant = page.getByRole('group', { name: 'Seawater RO' });
+    await expect(plant).toBeVisible();
+    await expect(page.getByText('RO water', { exact: true })).toBeVisible();
+    // Kept on the device: the sites store survives a reload.
+    await page.reload();
+    await expect(plant).toBeVisible();
   });
 
   test('prints a report of the project without the app around it', async ({

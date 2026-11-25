@@ -7,21 +7,33 @@ import {
   signal,
   untracked,
 } from '@angular/core';
+import { NgTemplateOutlet } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { AhMetricCard, AhTabs, type AhTabItem } from '@ah/ui';
 import {
   compartmentFigures,
   defaultEconomics,
   type EconomicsParams,
+  emptySite,
   energyHub,
   type GreenhouseProject,
+  newPlant,
+  PLANT_EFFICIENCY_UNITS,
+  PLANT_TYPES,
+  PLANT_UNITS,
+  plantChecks,
+  type PlantType,
   type SavedCalculation,
   seawaterRo,
+  type SitePlant,
+  type SiteRecord,
+  type SiteTariffs,
   siteEconomics,
   siteTotals,
+  tariffPrices,
 } from '@ah/products/serracalc/domain';
 import { SerraI18n } from '../../i18n/serra-i18n';
-import { SerraStore } from '../../store/serra.store';
+import { newId, SerraStore } from '../../store/serra.store';
 import { CalcSteps, type CalcStep } from '../../ui/calc-steps/calc-steps';
 import { FieldGrid, type FieldChange } from '../../ui/field-grid/field-grid';
 import { NoteList } from '../../ui/note-list/note-list';
@@ -29,8 +41,16 @@ import { SaveBar, type SaveRequest } from '../../ui/save-bar/save-bar';
 import { injectCalcEditing } from '../calc-editing';
 import { ECONOMICS_FIELDS, moneyField } from '../fields';
 
-type SiteTab = 'overview' | 'economics';
-const TABS: readonly SiteTab[] = ['overview', 'economics'];
+type SiteTab = 'overview' | 'plants' | 'economics';
+const TABS: readonly SiteTab[] = ['overview', 'plants', 'economics'];
+
+/** The plant fields a card edits, with their input limits. */
+type PlantField = 'capacity' | 'efficiency' | 'hoursDay';
+const PLANT_LIMITS: Record<PlantField, { max: number; step: number }> = {
+  capacity: { max: 1_000_000, step: 1 },
+  efficiency: { max: 100, step: 0.1 },
+  hoursDay: { max: 24, step: 0.5 },
+};
 
 /** The newest saved result of a kind among some projects. */
 function latest(
@@ -45,8 +65,8 @@ function latest(
 
 /**
  * The site: its compartments (projects that share the site's name, each a
- * house repeated over its area), their totals, the shared RO and CHP
- * against them, and the year's economics.
+ * house repeated over its area), their totals, the shared plants and the
+ * site's tariffs against them, and the year's economics.
  */
 @Component({
   selector: 'sc-site-screen',
@@ -55,6 +75,7 @@ function latest(
     AhTabs,
     CalcSteps,
     FieldGrid,
+    NgTemplateOutlet,
     NoteList,
     RouterLink,
     SaveBar,
@@ -98,6 +119,35 @@ export class SiteScreen {
     }));
   });
 
+  /** The site's plants and tariffs, or none yet with example tariffs. */
+  protected readonly record = computed<SiteRecord>(
+    () =>
+      this.store.sites().find((s) => s.name === this.site()) ??
+      emptySite(this.site(), this.store.context()),
+  );
+  protected readonly plantTypes = PLANT_TYPES;
+  protected readonly plantUnits = PLANT_UNITS;
+  protected readonly effUnits = PLANT_EFFICIENCY_UNITS;
+  protected readonly plantLimits = PLANT_LIMITS;
+  protected readonly plantFields: readonly PlantField[] = [
+    'capacity',
+    'efficiency',
+    'hoursDay',
+  ];
+  /** The recorded plants against the site's peak day. */
+  protected readonly checks = computed(() =>
+    plantChecks(this.record().plants, this.totals()),
+  );
+  protected readonly tariffFields = computed(() => {
+    const c = this.currency();
+    return [
+      moneyField('gasPerM3', `${c}/m³`, 50),
+      moneyField('electricityPerKwh', `${c}/kWh`, 50),
+      moneyField('exportPerKwh', `${c}/kWh`, 50),
+      moneyField('waterPerM3', `${c}/m³`, 100),
+    ];
+  });
+
   /** The shared plants, from the newest RO and energy results saved here. */
   protected readonly roCheck = computed(() => {
     const saved = latest(this.members(), 'ro');
@@ -126,7 +176,11 @@ export class SiteScreen {
 
   protected readonly editor = injectCalcEditing<SiteTab>({
     tabs: TABS,
-    kinds: { overview: 'economics', economics: 'economics' },
+    kinds: {
+      overview: 'economics',
+      plants: 'economics',
+      economics: 'economics',
+    },
     load: (saved) => {
       if (saved.kind === 'economics') this.econParams.set({ ...saved.inputs });
     },
@@ -236,6 +290,61 @@ export class SiteScreen {
       heatMwhYear: s.heatMwhYear,
       waterM3Year: s.waterM3Year,
       yieldTHa: s.areaHa > 0 ? Math.round(s.yieldT / s.areaHa) : p.yieldTHa,
+    }));
+  }
+
+  private saveRecord(change: (site: SiteRecord) => SiteRecord): void {
+    void this.store.saveSite(change(this.record()));
+  }
+
+  protected addPlant(type: string): void {
+    const plant = newPlant(type as PlantType, newId('pl'));
+    this.saveRecord((s) => ({ ...s, plants: [...s.plants, plant] }));
+  }
+
+  protected removePlant(id: string): void {
+    this.saveRecord((s) => ({
+      ...s,
+      plants: s.plants.filter((p) => p.id !== id),
+    }));
+  }
+
+  protected renamePlant(id: string, event: Event): void {
+    const name = (event.target as HTMLInputElement).value.trim();
+    this.updatePlant(id, { name });
+  }
+
+  protected setPlant(id: string, field: PlantField, event: Event): void {
+    const value = Number((event.target as HTMLInputElement).value);
+    if (!Number.isFinite(value) || value < 0) return;
+    this.updatePlant(id, {
+      [field]: Math.min(PLANT_LIMITS[field].max, value),
+    });
+  }
+
+  private updatePlant(id: string, change: Partial<SitePlant>): void {
+    this.saveRecord((s) => ({
+      ...s,
+      plants: s.plants.map((p) => (p.id === id ? { ...p, ...change } : p)),
+    }));
+  }
+
+  protected setTariff(change: FieldChange): void {
+    this.saveRecord((s) => ({
+      ...s,
+      tariffs: {
+        ...s.tariffs,
+        [change.key as keyof SiteTariffs]: change.value,
+      },
+    }));
+  }
+
+  /** The site's tariffs into the economics: heat through its boilers, water. */
+  protected takeTariffs(): void {
+    const r = this.record();
+    this.econParams.update((p) => ({
+      ...p,
+      ...tariffPrices(r.tariffs, r.plants),
     }));
   }
 

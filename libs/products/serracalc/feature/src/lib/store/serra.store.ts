@@ -16,12 +16,15 @@ import {
   type GreenhouseProject,
   SAMPLE_PROJECTS,
   type SavedCalculation,
+  type SiteRecord,
   withNewId,
 } from '@ah/products/serracalc/domain';
 import { SerraDbService } from '../services/serra-db.service';
 
 export interface SerraState {
   projects: GreenhouseProject[];
+  /** Sites' shared plants and tariffs, by the projects' "Site" name. */
+  sites: SiteRecord[];
   activeProjectId: string | null;
   /** Sunlight mode: maximum contrast for reading the screen outdoors. */
   isHighContrast: boolean;
@@ -31,6 +34,7 @@ export interface SerraState {
 
 const initialState: SerraState = {
   projects: [],
+  sites: [],
   activeProjectId: null,
   isHighContrast: false,
   isLoading: true,
@@ -135,6 +139,26 @@ export const SerraStore = signalStore(
         } catch {
           // Private browsing can refuse IndexedDB: start empty, in memory.
           patchState(store, { projects: [], isLoading: false });
+        }
+        try {
+          patchState(store, { sites: await db.getAllSites() });
+        } catch {
+          // Without the sites store, plants and tariffs live in memory.
+        }
+      },
+
+      /** Records a site's plants and tariffs (kept in memory if refused). */
+      async saveSite(site: SiteRecord): Promise<void> {
+        const saved = { ...site, updatedAt: new Date().toISOString() };
+        patchState(store, {
+          sites: [...store.sites().filter((s) => s.name !== saved.name), saved],
+        });
+        try {
+          await db.saveSite(saved);
+        } catch (err) {
+          patchState(store, {
+            error: err instanceof Error ? err.message : String(err),
+          });
         }
       },
 
@@ -243,7 +267,17 @@ export const SerraStore = signalStore(
        */
       async importProjects(
         projects: readonly GreenhouseProject[],
+        sites: readonly SiteRecord[] = [],
       ): Promise<number> {
+        // A site recorded here stays as it is; only new names come in.
+        const known = new Set(store.sites().map((s) => s.name));
+        const newSites = sites.filter((s) => !known.has(s.name));
+        for (const site of newSites) {
+          await db.saveSite(site);
+        }
+        if (newSites.length) {
+          patchState(store, { sites: [...store.sites(), ...newSites] });
+        }
         const taken = new Set(store.projects().map((p) => p.id));
         const incoming = projects.map((project) => {
           const copy = taken.has(project.id)

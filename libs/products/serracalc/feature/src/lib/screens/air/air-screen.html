@@ -311,7 +311,9 @@
                 unit="kg/h"
                 [hint]="
                   i18n.num(humidity().insideGkg) +
-                  ' → ' +
+                  ' ' +
+                  t().common.next +
+                  ' ' +
                   i18n.num(humidity().outsideGkg) +
                   ' g/kg'
                 "

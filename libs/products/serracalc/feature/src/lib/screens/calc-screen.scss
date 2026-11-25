@@ -150,6 +150,28 @@ table {
   }
 }
 
+// Flush strategies: the row as set now, the lowest figure per column.
+table.strategies {
+  tbody th {
+    min-inline-size: 8.5rem;
+  }
+
+  tr[data-current] th {
+    color: var(--color-accent-default);
+  }
+
+  th small {
+    display: block;
+    color: var(--color-text-muted);
+    font-size: var(--font-size-100);
+    font-weight: var(--font-weight-regular);
+  }
+
+  td strong {
+    color: var(--color-accent-default);
+  }
+}
+
 .table-toggle summary {
   min-block-size: 2.75rem;
   padding-block: var(--space-2);

@@ -5,21 +5,30 @@ import type {
   GreenhouseProject,
   GreenhouseShape,
   GreenhouseSpec,
+  PlantType,
   SavedCalculation,
+  SitePlant,
+  SiteRecord,
+  SiteTariffs,
 } from '../models/serra.models';
 
-/** A SerraCalc backup file: every project with its house and saved inputs. */
+/**
+ * A SerraCalc backup file: every project with its house and saved inputs,
+ * and the sites' shared plants and tariffs (absent in older files).
+ */
 export interface SerraBackup {
   app: 'serracalc';
   version: 1;
   exportedAt: string;
   projects: GreenhouseProject[];
+  sites?: SiteRecord[];
 }
 
 export type BackupError = 'notJson' | 'notSerraCalc' | 'newerVersion' | 'empty';
 
 export type BackupRead =
-  { projects: GreenhouseProject[]; skipped: number } | { error: BackupError };
+  | { projects: GreenhouseProject[]; sites: SiteRecord[]; skipped: number }
+  | { error: BackupError };
 
 /** Every kind of saved result; a Record so a new kind can't be forgotten. */
 const KIND_SET: Record<CalcKind, true> = {
@@ -40,6 +49,7 @@ const KIND_SET: Record<CalcKind, true> = {
   fertigation: true,
   energy: true,
   heatReuse: true,
+  coolingYear: true,
   economics: true,
 };
 const KINDS = Object.keys(KIND_SET) as readonly CalcKind[];
@@ -56,12 +66,14 @@ const SIZES = [
 export function createBackup(
   projects: readonly GreenhouseProject[],
   now = new Date(),
+  sites: readonly SiteRecord[] = [],
 ): string {
   const backup: SerraBackup = {
     app: 'serracalc',
     version: 1,
     exportedAt: now.toISOString(),
     projects: [...projects],
+    sites: [...sites],
   };
   return JSON.stringify(backup, null, 2);
 }
@@ -142,6 +154,60 @@ function toProject(value: unknown): GreenhouseProject | null {
   };
 }
 
+const PLANT_TYPES: readonly PlantType[] = [
+  'ro',
+  'chp',
+  'boiler',
+  'chiller',
+  'tank',
+  'pump',
+];
+const TARIFFS: readonly (keyof SiteTariffs)[] = [
+  'gasPerM3',
+  'electricityPerKwh',
+  'exportPerKwh',
+  'waterPerM3',
+];
+
+function isAmount(value: unknown): value is number {
+  return typeof value === 'number' && Number.isFinite(value) && value >= 0;
+}
+
+function isPlant(value: unknown): value is SitePlant {
+  return (
+    isRecord(value) &&
+    typeof value['id'] === 'string' &&
+    typeof value['name'] === 'string' &&
+    oneOf(PLANT_TYPES, value['type']) &&
+    isAmount(value['capacity']) &&
+    isAmount(value['efficiency']) &&
+    isAmount(value['hoursDay'])
+  );
+}
+
+/** A site's plants and tariffs, or null when it can't be read. */
+function toSite(value: unknown): SiteRecord | null {
+  if (
+    !isRecord(value) ||
+    typeof value['name'] !== 'string' ||
+    !Array.isArray(value['plants']) ||
+    !isRecord(value['tariffs'])
+  ) {
+    return null;
+  }
+  const tariffs = value['tariffs'];
+  if (!TARIFFS.every((key) => isAmount(tariffs[key]))) return null;
+  return {
+    name: value['name'],
+    plants: (value['plants'] as unknown[]).filter(isPlant),
+    tariffs: tariffs as unknown as SiteTariffs,
+    updatedAt:
+      typeof value['updatedAt'] === 'string'
+        ? value['updatedAt']
+        : new Date(0).toISOString(),
+  };
+}
+
 /**
  * Reads a backup file's text. Projects that don't have the expected shape
  * are left out and counted, so one damaged entry never blocks the rest.
@@ -170,7 +236,12 @@ export function readBackup(text: string): BackupRead {
   if (projects.length === 0) {
     return { error: 'empty' };
   }
-  return { projects, skipped: all.length - projects.length };
+  const sites = Array.isArray(data['sites'])
+    ? (data['sites'] as unknown[])
+        .map(toSite)
+        .filter((s): s is SiteRecord => s !== null)
+    : [];
+  return { projects, sites, skipped: all.length - projects.length };
 }
 
 /** A restored project whose id is taken gets a new one: nothing is overwritten. */

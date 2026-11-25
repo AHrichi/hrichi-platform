@@ -5,9 +5,13 @@ import { databaseName } from '@ah/platform/storage';
 import {
   type GreenhouseProject,
   SAMPLE_PROJECTS,
+  type SiteRecord,
 } from '@ah/products/serracalc/domain';
 
 const STORE = 'projects';
+/** Sites' shared plants and tariffs, by site name (since version 2). */
+const SITES = 'sites';
+const VERSION = 2;
 const SUNLIGHT_KEY = 'serracalc.sunlight';
 
 /**
@@ -31,11 +35,14 @@ export class SerraDbService {
       (name) =>
         new Promise((resolve, reject) => {
           this.name = name;
-          const request = indexedDB.open(name, 1);
+          const request = indexedDB.open(name, VERSION);
           request.onupgradeneeded = () => {
             const db = request.result;
             if (!db.objectStoreNames.contains(STORE)) {
               db.createObjectStore(STORE, { keyPath: 'id' });
+            }
+            if (!db.objectStoreNames.contains(SITES)) {
+              db.createObjectStore(SITES, { keyPath: 'name' });
             }
           };
           request.onsuccess = () => resolve(request.result);
@@ -48,10 +55,13 @@ export class SerraDbService {
   private async request<T>(
     mode: IDBTransactionMode,
     run: (store: IDBObjectStore) => IDBRequest<T>,
+    storeName = STORE,
   ): Promise<T> {
     const db = await this.open();
     return new Promise((resolve, reject) => {
-      const request = run(db.transaction(STORE, mode).objectStore(STORE));
+      const request = run(
+        db.transaction(storeName, mode).objectStore(storeName),
+      );
       request.onsuccess = () => resolve(request.result);
       request.onerror = () => reject(request.error);
     });
@@ -65,6 +75,23 @@ export class SerraDbService {
       s.getAll(),
     )) as GreenhouseProject[];
     return [...projects].sort((a, b) => a.createdAt.localeCompare(b.createdAt));
+  }
+
+  async getAllSites(): Promise<SiteRecord[]> {
+    if (!this.isBrowser) {
+      return [];
+    }
+    return (await this.request(
+      'readonly',
+      (s) => s.getAll(),
+      SITES,
+    )) as SiteRecord[];
+  }
+
+  async saveSite(site: SiteRecord): Promise<void> {
+    if (this.isBrowser) {
+      await this.request('readwrite', (s) => s.put(site), SITES);
+    }
   }
 
   /** The project last opened on this device, so a reload reopens it. */

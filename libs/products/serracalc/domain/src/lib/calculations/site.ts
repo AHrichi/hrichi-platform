@@ -1,8 +1,16 @@
-import { CROP_YIELD_T_HA, LABOUR_DAYS_HA } from '../data/catalogue.data';
+import {
+  CROP_YIELD_T_HA,
+  defaultFuelPrice,
+  LABOUR_DAYS_HA,
+} from '../data/catalogue.data';
 import type {
   CalcNote,
   CropId,
   GreenhouseProject,
+  PlantType,
+  SitePlant,
+  SiteRecord,
+  SiteTariffs,
 } from '../models/serra.models';
 import { round } from '../utils/physics';
 import {
@@ -10,7 +18,10 @@ import {
   defaultAnnualHeating,
   defaultCropWater,
   defaultHeatLoss,
+  defaultRo,
 } from './defaults';
+import { GAS_KWH_PER_M3 } from './energy';
+import { seawaterRo } from './water-chain';
 import { greenhouseGeometry } from './geometry';
 import { annualHeating, heatLoss } from './heating';
 import { cropWater } from './water';
@@ -125,6 +136,190 @@ export function siteTotals(
     yieldT: round(yieldT),
     labourDays: round(sum('labourDays')),
     co2eT: round(yieldT * CO2E_KG_PER_KG),
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Shared plants and tariffs
+// ---------------------------------------------------------------------------
+
+export const PLANT_TYPES: readonly PlantType[] = [
+  'ro',
+  'chp',
+  'boiler',
+  'chiller',
+  'tank',
+  'pump',
+];
+
+/** The unit of each plant's capacity. */
+export const PLANT_UNITS: Record<PlantType, string> = {
+  ro: 'm³/d',
+  chp: 'kW',
+  boiler: 'kW',
+  chiller: 'kW',
+  tank: 'm³',
+  pump: 'm³/h',
+};
+
+/** The unit of each plant's efficiency: a chiller's is its COP. */
+export const PLANT_EFFICIENCY_UNITS: Record<PlantType, string> = {
+  ro: '%',
+  chp: '%',
+  boiler: '%',
+  chiller: 'COP',
+  tank: '%',
+  pump: '%',
+};
+
+/**
+ * A new plant with typical figures to overwrite: RO 1,000 m³/d at 45 %
+ * recovery; CHP 4 MW of heat at 42 % electrical; boiler 5 MW at 92 %;
+ * chiller 1 MW at COP 4.5; tank 2,000 m³, 90 % usable; pump 200 m³/h.
+ */
+export function newPlant(type: PlantType, id: string): SitePlant {
+  const typical: Record<PlantType, [number, number, number]> = {
+    ro: [1000, 45, 22],
+    chp: [4000, 42, 16],
+    boiler: [5000, 92, 24],
+    chiller: [1000, 4.5, 12],
+    tank: [2000, 90, 24],
+    pump: [200, 70, 20],
+  };
+  const [capacity, efficiency, hoursDay] = typical[type];
+  return { id, type, name: '', capacity, efficiency, hoursDay };
+}
+
+/**
+ * Example tariffs in the project's currency: the gas and electricity prices
+ * the calculators start from, power sold at 60 % of the price bought, water
+ * at the RO plant's cost plus 30 % for chemicals and membranes.
+ */
+export function defaultTariffs(ctx: CalcContext): SiteTariffs {
+  const power = defaultFuelPrice('heat_pump', ctx.currency);
+  return {
+    gasPerM3: defaultFuelPrice('natural_gas', ctx.currency),
+    electricityPerKwh: power,
+    exportPerKwh: round(power * 0.6, 3),
+    waterPerM3:
+      Math.round(seawaterRo(defaultRo(ctx)).costPerM3 * 1.3 * 100) / 100,
+  };
+}
+
+/** A site with nothing recorded yet. */
+export function emptySite(name: string, ctx: CalcContext): SiteRecord {
+  return {
+    name,
+    plants: [],
+    tariffs: defaultTariffs(ctx),
+    updatedAt: new Date(0).toISOString(),
+  };
+}
+
+export type PlantCheckId = 'water' | 'heat' | 'storage' | 'pumping';
+
+/** A shared plant set against what the compartments need. */
+export interface PlantCheck {
+  id: PlantCheckId;
+  /** What the plants give, in `unit`. */
+  have: number;
+  /** What the site needs on its peak day, in `unit`. */
+  need: number;
+  unit: string;
+  pct: number;
+}
+
+/**
+ * The site's plants against its totals, for each kind it has: RO product
+ * (capacity × hours / 24) and pumping (m³/h × hours) against the peak day's
+ * water; CHP and boiler heat against the design night's peak; tanks
+ * (capacity × usable share) as a share of a peak day's water.
+ */
+export function plantChecks(
+  plants: readonly SitePlant[],
+  totals: Pick<SiteTotals, 'peakWaterM3Day' | 'heatPeakMw'>,
+): PlantCheck[] {
+  const sum = (types: readonly PlantType[], each: (p: SitePlant) => number) =>
+    plants
+      .filter((p) => types.includes(p.type))
+      .reduce((s, p) => s + each(p), 0);
+  const has = (...types: PlantType[]) =>
+    plants.some((p) => types.includes(p.type));
+  const hours = (p: SitePlant) => Math.min(24, Math.max(0, p.hoursDay));
+  const water = Math.max(1, totals.peakWaterM3Day);
+  const check = (
+    id: PlantCheckId,
+    have: number,
+    need: number,
+    unit: string,
+  ): PlantCheck => ({
+    id,
+    have: round(have),
+    need: round(need),
+    unit,
+    pct: round((have / Math.max(1e-9, need)) * 100),
+  });
+  const out: PlantCheck[] = [];
+  if (has('ro')) {
+    out.push(
+      check(
+        'water',
+        sum(['ro'], (p) => (p.capacity * hours(p)) / 24),
+        water,
+        'm³/d',
+      ),
+    );
+  }
+  if (has('chp', 'boiler')) {
+    out.push(
+      check(
+        'heat',
+        sum(['chp', 'boiler'], (p) => p.capacity),
+        Math.max(1, totals.heatPeakMw * 1000),
+        'kW',
+      ),
+    );
+  }
+  if (has('tank')) {
+    out.push(
+      check(
+        'storage',
+        sum(['tank'], (p) => (p.capacity * Math.min(100, p.efficiency)) / 100),
+        water,
+        'm³',
+      ),
+    );
+  }
+  if (has('pump')) {
+    out.push(
+      check(
+        'pumping',
+        sum(['pump'], (p) => p.capacity * hours(p)),
+        water,
+        'm³/d',
+      ),
+    );
+  }
+  return out;
+}
+
+/**
+ * The tariffs as the economics needs them: heat from gas through the
+ * site's boilers (their mean efficiency, or 90 %) per MWh, and water.
+ */
+export function tariffPrices(
+  tariffs: SiteTariffs,
+  plants: readonly SitePlant[] = [],
+): { heatPricePerMwh: number; waterPricePerM3: number } {
+  const boilers = plants.filter((p) => p.type === 'boiler');
+  const efficiency = boilers.length
+    ? boilers.reduce((s, p) => s + p.efficiency, 0) / boilers.length / 100
+    : 0.9;
+  return {
+    heatPricePerMwh: Math.round(
+      (tariffs.gasPerM3 / (GAS_KWH_PER_M3 * Math.max(0.5, efficiency))) * 1000,
+    ),
+    waterPricePerM3: tariffs.waterPerM3,
   };
 }
 

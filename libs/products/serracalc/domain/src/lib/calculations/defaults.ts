@@ -12,6 +12,7 @@ import {
 } from '../data/catalogue.data';
 import { climateById, DEFAULT_CLIMATE_ID } from '../data/climates.data';
 import { dayLengthHours, midMonthDay } from '../utils/physics';
+import { WEEKS_PER_YEAR, wrapWeek } from '../utils/weeks';
 import type {
   AnnualHeatingParams,
   CalendarParams,
@@ -35,7 +36,11 @@ import type {
   VentilationParams,
 } from '../models/serra.models';
 import { greenhouseGeometry } from './geometry';
-import type { EnergyHubParams, HeatReuseParams } from './energy';
+import type {
+  CoolingYearParams,
+  EnergyHubParams,
+  HeatReuseParams,
+} from './energy';
 import { energyHub, GAS_KWH_PER_M3 } from './energy';
 import type { CoolingAdviceParams } from './fog';
 import { annualHeating, heatLoss } from './heating';
@@ -366,10 +371,13 @@ export function defaultFertigation(ctx: CalcContext): FertigationParams {
     recyclePct: 40,
     sourceEcDsM: 0.3,
     sourceNaMmolL: 1,
+    sourceClMmolL: 1,
+    sourceHco3MmolL: 0.3,
     targetEcDsM: 2.7,
     uptakeEcDsM: 1.8,
     flushEcDsM: 4.5,
     naLimitMmolL: 8,
+    clLimitMmolL: 10,
     systemM3: Math.max(1, Math.round((g.floorAreaM2 * 4) / 1000)),
     dilution: 100,
     stockTankM3: 5,
@@ -417,6 +425,31 @@ export function defaultEnergyHub(ctx: CalcContext): EnergyHubParams {
     co2NeedKgH: Math.round((g.floorAreaM2 * 3) / 1000),
     gasPrice: defaultFuelPrice('natural_gas', ctx.currency),
     powerPrice: defaultFuelPrice('heat_pump', ctx.currency),
+  };
+}
+
+/**
+ * A year of fan-and-pad cooling: fans start above 24 °C outside and reach
+ * the full 135 m³/h per m² (120–150 published) 6 K later, at 0.037 W per
+ * m³/h through the pads, 0.4 W/m² of pad pumps; the house stands empty
+ * between crops, as in the crop calendar. Grid CO₂: 0.45 kg/kWh (set your
+ * country's figure).
+ */
+export function defaultCoolingYear(ctx: CalcContext): CoolingYearParams {
+  const g = greenhouseGeometry(ctx.greenhouse);
+  const calendar = defaultCalendar(ctx);
+  return {
+    floorAreaM2: Math.round(g.floorAreaM2),
+    climateId: ctx.climateId,
+    coolFromC: 24,
+    fullAtK: 6,
+    airflowM3hM2: 135,
+    fanWPerM3h: 0.037,
+    pumpWm2: 0.4,
+    emptyFromWeek: wrapWeek(calendar.plantingWeek + calendar.cropWeeks),
+    emptyWeeks: WEEKS_PER_YEAR - calendar.cropWeeks,
+    electricityPrice: defaultFuelPrice('heat_pump', ctx.currency),
+    gridCo2KgKwh: 0.45,
   };
 }
 

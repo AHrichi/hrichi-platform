@@ -25,190 +25,297 @@
     [ariaLabel]="t().site.title"
   />
 
-  @if (tab() === 'overview') {
-    @if (members().length === 0) {
-      <section class="panel">
-        <p class="hint">{{ t().site.empty }}</p>
-        <a class="chip link" routerLink="../projects"
-          >{{ t().nav.projects }} →</a
-        >
-      </section>
-    } @else {
-      <section class="panel" aria-labelledby="sc-site-kpis">
-        <h3 id="sc-site-kpis">
-          {{ site() || t().site.unnamed }} ·
-          {{ t().site.compartments(members().length + '') }}
-        </h3>
-        <div class="kpis">
-          <ah-metric-card
-            [label]="t().site.area"
-            [value]="i18n.num(totals().areaHa, 1)"
-            unit="ha"
-            variant="accent"
-          />
-          <ah-metric-card
-            [label]="t().site.peakWater"
-            [value]="i18n.num(totals().peakWaterM3Day, 0)"
-            unit="m³/d"
-            [hint]="
-              t().site.meanWater +
-              ' ' +
-              i18n.num(totals().meanWaterM3Day, 0) +
-              ' · ' +
-              i18n.num(totals().waterM3PerM2Year, 2) +
-              ' m³/m²·a'
-            "
-          />
-          <ah-metric-card
-            [label]="t().site.heatPeak"
-            [value]="i18n.num(totals().heatPeakMw, 1)"
-            unit="MW"
-            [hint]="
-              i18n.num(totals().heatMwhYear, 0) +
-              ' MWh/a · ' +
-              i18n.num(totals().heatKwhPerM2Year, 0) +
-              ' kWh/m²'
-            "
-          />
-          <ah-metric-card
-            [label]="t().site.yield"
-            [value]="i18n.num(totals().yieldT, 0)"
-            unit="t"
-          />
-          <ah-metric-card
-            [label]="t().site.labour"
-            [value]="i18n.num(totals().labourDays, 0)"
-            [unit]="t().site.days"
-            [hint]="t().site.people(i18n.num(totals().labourDays / 250, 0))"
-          />
-          <ah-metric-card
-            [label]="t().site.co2e"
-            [value]="i18n.num(totals().co2eT, 0)"
-            unit="t CO₂e"
-            [hint]="t().site.co2eHint"
-          />
-        </div>
-
-        <div class="shares" role="img" [attr.aria-label]="t().site.sharesAlt">
-          @for (s of shares(); track s.id; let i = $index) {
-            <span
-              class="share"
-              [attr.data-i]="i % 6"
-              [style.flex-grow]="s.pct"
-              [title]="s.title + ' · ' + i18n.num(s.pct, 0) + ' %'"
-            ></span>
+  @if (tab() !== 'economics' && members().length === 0) {
+    <section class="panel">
+      <p class="hint">{{ t().site.empty }}</p>
+      <a class="chip link" routerLink="../projects"
+        >{{ t().nav.projects }} {{ t().common.next }}</a
+      >
+    </section>
+  } @else if (tab() === 'plants') {
+    <div class="workbench">
+      <div class="column">
+        <section class="panel" aria-labelledby="sc-site-plant-list">
+          <h3 id="sc-site-plant-list">{{ t().site.plantList }}</h3>
+          <p class="hint">{{ t().site.plantHint }}</p>
+          @if (record().plants.length === 0) {
+            <p class="hint">{{ t().site.noPlants }}</p>
           }
-        </div>
-      </section>
-
-      <section class="panel" aria-labelledby="sc-site-plants">
-        <h3 id="sc-site-plants">{{ t().site.plants }}</h3>
-        <div class="plants">
-          <div class="plant">
-            <span class="eyebrow">{{ t().site.roPlant }}</span>
-            @if (roCheck(); as ro) {
-              <div class="gauge" [class.short]="ro.pct < 100">
-                <span
-                  [style.inline-size.%]="ro.pct > 100 ? 100 : ro.pct"
-                ></span>
-              </div>
-              <p>
-                {{ t().site.covers(i18n.num(ro.pct, 0)) }} ·
-                {{ i18n.num(ro.available, 0) }} m³/d · {{ ro.label }}
-              </p>
-            } @else {
-              <p class="hint">{{ t().site.noRo }}</p>
-            }
-            <a
-              class="chip link"
-              routerLink="../supply"
-              [queryParams]="{ tab: 'ro' }"
-            >
-              {{ t().nav.supply }} →
-            </a>
-          </div>
-          <div class="plant">
-            <span class="eyebrow">{{ t().site.chpPlant }}</span>
-            @if (chpCheck(); as chp) {
-              <div class="gauge">
-                <span
-                  [style.inline-size.%]="chp.pct > 100 ? 100 : chp.pct"
-                ></span>
-              </div>
-              <p>
-                {{ t().site.chpOfPeak(i18n.num(chp.pct, 0)) }} ·
-                {{ i18n.num(chp.thermalKw, 0) }} kW · {{ chp.label }}
-              </p>
-            } @else {
-              <p class="hint">{{ t().site.noChp }}</p>
-            }
-            <a
-              class="chip link"
-              routerLink="../energy"
-              [queryParams]="{ tab: 'chp' }"
-            >
-              {{ t().nav.energy }} →
-            </a>
-          </div>
-        </div>
-      </section>
-
-      <section class="panel" aria-labelledby="sc-site-table">
-        <h3 id="sc-site-table">{{ t().site.table }}</h3>
-        <p class="hint">{{ t().site.tableHint }}</p>
-        <div
-          class="table-wrap"
-          tabindex="0"
-          role="region"
-          [attr.aria-label]="t().calc.table"
-        >
-          <table>
-            <thead>
-              <tr>
-                <th scope="col">{{ t().site.compartment }}</th>
-                <th scope="col">ha</th>
-                <th scope="col">{{ t().site.houses }}</th>
-                <th scope="col">m³/d</th>
-                <th scope="col">m³/a</th>
-                <th scope="col">kW</th>
-                <th scope="col">MWh/a</th>
-                <th scope="col">t</th>
-              </tr>
-            </thead>
-            <tbody>
-              @for (c of compartments(); track c.projectId) {
-                <tr>
-                  <th scope="row">
-                    <a routerLink="../projects" (click)="open(c.projectId)">{{
-                      c.title
-                    }}</a>
-                    <small>{{ t().crops[c.crop] }}</small>
-                  </th>
-                  <td>
+          <ul class="plant-list" role="list">
+            @for (p of record().plants; track p.id) {
+              <li>
+                <fieldset class="plant-card">
+                  <legend>
+                    {{ t().site.plantTypes[p.type] }}
+                    @if (p.name) {
+                      · {{ p.name }}
+                    }
+                  </legend>
+                  <label class="plant-field name">
+                    <span>{{ t().site.plantName }}</span>
                     <input
-                      class="area"
-                      type="number"
-                      inputmode="decimal"
-                      min="0.01"
-                      step="0.01"
-                      [value]="c.areaHa"
-                      [attr.aria-label]="t().site.areaOf(c.title)"
-                      (change)="setArea(c.projectId, $event)"
+                      type="text"
+                      [value]="p.name"
+                      [placeholder]="t().site.plantTypes[p.type]"
+                      (change)="renamePlant(p.id, $event)"
                     />
-                  </td>
-                  <td>{{ i18n.num(c.houses, 1) }}</td>
-                  <td>{{ i18n.num(c.peakWaterM3Day, 0) }}</td>
-                  <td>{{ i18n.num(c.waterM3Year, 0) }}</td>
-                  <td>{{ i18n.num(c.heatPeakKw, 0) }}</td>
-                  <td>{{ i18n.num(c.heatMwhYear, 0) }}</td>
-                  <td>{{ i18n.num(c.yieldT, 0) }}</td>
-                </tr>
-              }
-            </tbody>
-          </table>
+                  </label>
+                  @for (f of plantFields; track f) {
+                    <label class="plant-field">
+                      <span>
+                        {{ t().site.plantField[f] }}
+                        <small dir="auto">{{
+                          f === 'capacity'
+                            ? plantUnits[p.type]
+                            : f === 'efficiency'
+                              ? effUnits[p.type]
+                              : 'h'
+                        }}</small>
+                      </span>
+                      <input
+                        type="number"
+                        inputmode="decimal"
+                        min="0"
+                        [max]="plantLimits[f].max"
+                        [step]="plantLimits[f].step"
+                        [value]="p[f]"
+                        (change)="setPlant(p.id, f, $event)"
+                      />
+                    </label>
+                  }
+                  <button
+                    type="button"
+                    class="chip remove"
+                    (click)="removePlant(p.id)"
+                  >
+                    {{
+                      t().site.removePlant(
+                        p.name || t().site.plantTypes[p.type]
+                      )
+                    }}
+                  </button>
+                </fieldset>
+              </li>
+            }
+          </ul>
+          <div class="actions add-plant">
+            <label class="select-inline">
+              <span>{{ t().site.plantType }}</span>
+              <select #plantType>
+                @for (type of plantTypes; track type) {
+                  <option [value]="type">
+                    {{ t().site.plantTypes[type] }}
+                  </option>
+                }
+              </select>
+            </label>
+            <button
+              type="button"
+              class="chip"
+              (click)="addPlant(plantType.value)"
+            >
+              {{ t().site.addPlant }}
+            </button>
+          </div>
+        </section>
+      </div>
+      <div class="column">
+        <section class="panel" aria-labelledby="sc-site-tariffs">
+          <h3 id="sc-site-tariffs">{{ t().site.tariffs }}</h3>
+          <p class="hint">{{ t().site.tariffHint }}</p>
+          <sc-field-grid
+            [specs]="tariffFields()"
+            [values]="record().tariffs"
+            (changed)="setTariff($event)"
+          />
+        </section>
+        <section class="panel" aria-labelledby="sc-site-checks">
+          <h3 id="sc-site-checks">{{ t().site.checksTitle }}</h3>
+          @if (checks().length) {
+            <ng-container [ngTemplateOutlet]="plantGauges" />
+          } @else {
+            <p class="hint">{{ t().site.noChecks }}</p>
+          }
+        </section>
+      </div>
+    </div>
+  } @else if (tab() === 'overview') {
+    <section class="panel" aria-labelledby="sc-site-kpis">
+      <h3 id="sc-site-kpis">
+        {{ site() || t().site.unnamed }} ·
+        {{ t().site.compartments(members().length + '') }}
+      </h3>
+      <div class="kpis">
+        <ah-metric-card
+          [label]="t().site.area"
+          [value]="i18n.num(totals().areaHa, 1)"
+          unit="ha"
+          variant="accent"
+        />
+        <ah-metric-card
+          [label]="t().site.peakWater"
+          [value]="i18n.num(totals().peakWaterM3Day, 0)"
+          unit="m³/d"
+          [hint]="
+            t().site.meanWater +
+            ' ' +
+            i18n.num(totals().meanWaterM3Day, 0) +
+            ' · ' +
+            i18n.num(totals().waterM3PerM2Year, 2) +
+            ' m³/m²·a'
+          "
+        />
+        <ah-metric-card
+          [label]="t().site.heatPeak"
+          [value]="i18n.num(totals().heatPeakMw, 1)"
+          unit="MW"
+          [hint]="
+            i18n.num(totals().heatMwhYear, 0) +
+            ' MWh/a · ' +
+            i18n.num(totals().heatKwhPerM2Year, 0) +
+            ' kWh/m²'
+          "
+        />
+        <ah-metric-card
+          [label]="t().site.yield"
+          [value]="i18n.num(totals().yieldT, 0)"
+          unit="t"
+        />
+        <ah-metric-card
+          [label]="t().site.labour"
+          [value]="i18n.num(totals().labourDays, 0)"
+          [unit]="t().site.days"
+          [hint]="t().site.people(i18n.num(totals().labourDays / 250, 0))"
+        />
+        <ah-metric-card
+          [label]="t().site.co2e"
+          [value]="i18n.num(totals().co2eT, 0)"
+          unit="t CO₂e"
+          [hint]="t().site.co2eHint"
+        />
+      </div>
+
+      <div class="shares" role="img" [attr.aria-label]="t().site.sharesAlt">
+        @for (s of shares(); track s.id; let i = $index) {
+          <span
+            class="share"
+            [attr.data-i]="i % 6"
+            [style.flex-grow]="s.pct"
+            [title]="s.title + ' · ' + i18n.num(s.pct, 0) + ' %'"
+          ></span>
+        }
+      </div>
+    </section>
+
+    <section class="panel" aria-labelledby="sc-site-plants">
+      <h3 id="sc-site-plants">{{ t().site.plants }}</h3>
+      @if (checks().length) {
+        <ng-container [ngTemplateOutlet]="plantGauges" />
+        <p class="hint">{{ t().site.fromSaved }}</p>
+      }
+      <div class="plants">
+        <div class="plant">
+          <span class="eyebrow">{{ t().site.roPlant }}</span>
+          @if (roCheck(); as ro) {
+            <div class="gauge" [class.short]="ro.pct < 100">
+              <span [style.inline-size.%]="ro.pct > 100 ? 100 : ro.pct"></span>
+            </div>
+            <p>
+              {{ t().site.covers(i18n.num(ro.pct, 0)) }} ·
+              {{ i18n.num(ro.available, 0) }} m³/d · {{ ro.label }}
+            </p>
+          } @else {
+            <p class="hint">{{ t().site.noRo }}</p>
+          }
+          <a
+            class="chip link"
+            routerLink="../supply"
+            [queryParams]="{ tab: 'ro' }"
+          >
+            {{ t().nav.supply }} {{ t().common.next }}
+          </a>
         </div>
-      </section>
-    }
+        <div class="plant">
+          <span class="eyebrow">{{ t().site.chpPlant }}</span>
+          @if (chpCheck(); as chp) {
+            <div class="gauge">
+              <span
+                [style.inline-size.%]="chp.pct > 100 ? 100 : chp.pct"
+              ></span>
+            </div>
+            <p>
+              {{ t().site.chpOfPeak(i18n.num(chp.pct, 0)) }} ·
+              {{ i18n.num(chp.thermalKw, 0) }} kW · {{ chp.label }}
+            </p>
+          } @else {
+            <p class="hint">{{ t().site.noChp }}</p>
+          }
+          <a
+            class="chip link"
+            routerLink="../energy"
+            [queryParams]="{ tab: 'chp' }"
+          >
+            {{ t().nav.energy }} {{ t().common.next }}
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" aria-labelledby="sc-site-table">
+      <h3 id="sc-site-table">{{ t().site.table }}</h3>
+      <p class="hint">{{ t().site.tableHint }}</p>
+      <div
+        class="table-wrap"
+        tabindex="0"
+        role="region"
+        [attr.aria-label]="t().calc.table"
+      >
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">{{ t().site.compartment }}</th>
+              <th scope="col">ha</th>
+              <th scope="col">{{ t().site.houses }}</th>
+              <th scope="col">m³/d</th>
+              <th scope="col">m³/a</th>
+              <th scope="col">kW</th>
+              <th scope="col">MWh/a</th>
+              <th scope="col">t</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (c of compartments(); track c.projectId) {
+              <tr>
+                <th scope="row">
+                  <a routerLink="../projects" (click)="open(c.projectId)">{{
+                    c.title
+                  }}</a>
+                  <small>{{ t().crops[c.crop] }}</small>
+                </th>
+                <td>
+                  <input
+                    class="area"
+                    type="number"
+                    inputmode="decimal"
+                    min="0.01"
+                    step="0.01"
+                    [value]="c.areaHa"
+                    [attr.aria-label]="t().site.areaOf(c.title)"
+                    (change)="setArea(c.projectId, $event)"
+                  />
+                </td>
+                <td>{{ i18n.num(c.houses, 1) }}</td>
+                <td>{{ i18n.num(c.peakWaterM3Day, 0) }}</td>
+                <td>{{ i18n.num(c.waterM3Year, 0) }}</td>
+                <td>{{ i18n.num(c.heatPeakKw, 0) }}</td>
+                <td>{{ i18n.num(c.heatMwhYear, 0) }}</td>
+                <td>{{ i18n.num(c.yieldT, 0) }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
   } @else {
     <div class="workbench">
       <div class="column">
@@ -217,6 +324,9 @@
           <div class="actions">
             <button type="button" class="chip" (click)="takeTotals()">
               {{ t().site.takeTotals(i18n.num(totals().areaHa, 1)) }}
+            </button>
+            <button type="button" class="chip" (click)="takeTariffs()">
+              {{ t().site.takeTariffs }}
             </button>
           </div>
           <sc-field-grid
@@ -316,4 +426,21 @@
       </div>
     </div>
   }
+
+  <ng-template #plantGauges>
+    <div class="plants">
+      @for (c of checks(); track c.id) {
+        <div class="plant">
+          <span class="eyebrow">{{ t().site.checks[c.id] }}</span>
+          <div class="gauge" [class.short]="c.pct < 100">
+            <span [style.inline-size.%]="c.pct > 100 ? 100 : c.pct"></span>
+          </div>
+          <p>
+            {{ t().site.checkLine(i18n.num(c.pct, 0)) }} ·
+            {{ i18n.num(c.have, 0) }} / {{ i18n.num(c.need, 0) }} {{ c.unit }}
+          </p>
+        </div>
+      }
+    </div>
+  </ng-template>
 </section>

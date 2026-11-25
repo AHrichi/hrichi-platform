@@ -1,6 +1,6 @@
 import type { CalcNote, SavedCalculation } from '../models/serra.models';
 import { cropCalendar } from './calendar';
-import { energyHub, heatReuse } from './energy';
+import { coolingYear, energyHub, heatReuse } from './energy';
 import { siteEconomics } from './site';
 import { co2Enrichment } from './co2';
 import { padAndFan, ventilation } from './cooling';
@@ -74,6 +74,10 @@ export type FigureId =
   | 'powerDay'
   | 'reuseHeat'
   | 'reuseCover'
+  | 'coolKwhM2'
+  | 'coolMwh'
+  | 'coolCost'
+  | 'coolBenchmark'
   | 'revenue'
   | 'costPerKg'
   | 'margin'
@@ -288,6 +292,18 @@ export function summarizeSaved(saved: SavedCalculation): SavedSummary {
         figures: [
           fig('reuseHeat', r.kwhDay / 1000, 'MWh', 2),
           fig('reuseCover', r.coverPct, '%'),
+        ],
+        notes: r.notes,
+      };
+    }
+    case 'coolingYear': {
+      const r = coolingYear(saved.inputs);
+      return {
+        figures: [
+          fig('coolKwhM2', r.kwhM2Year, 'kWh/m²', 1),
+          fig('coolMwh', r.mwhYear, 'MWh', 1),
+          fig('coolCost', r.cost, 'money'),
+          fig('coolBenchmark', r.benchmarkPct, '%'),
         ],
         notes: r.notes,
       };

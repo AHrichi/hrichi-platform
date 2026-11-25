@@ -1,6 +1,7 @@
 import { defaultHeatLoss, DEFAULT_CONTEXT } from '../calculations/defaults';
+import { defaultTariffs, newPlant } from '../calculations/site';
 import { SAMPLE_PROJECTS } from '../data/sample-projects.data';
-import type { GreenhouseProject } from '../models/serra.models';
+import type { GreenhouseProject, SiteRecord } from '../models/serra.models';
 import { backupFileName, createBackup, readBackup, withNewId } from './backup';
 
 describe('Project backups', () => {
@@ -22,6 +23,7 @@ describe('Project backups', () => {
     const projects = [withResult, ...SAMPLE_PROJECTS.slice(1)];
     expect(readBackup(createBackup(projects, now))).toEqual({
       projects,
+      sites: [],
       skipped: 0,
     });
     expect(backupFileName(now)).toBe('serracalc-backup-2026-11-25.json');
@@ -52,8 +54,32 @@ describe('Project backups', () => {
     });
     expect(readBackup(text)).toEqual({
       projects: [SAMPLE_PROJECTS[0]],
+      sites: [],
       skipped: 2,
     });
+  });
+
+  it('carries the sites, their plants and tariffs', () => {
+    const site: SiteRecord = {
+      name: 'South block',
+      plants: [
+        newPlant('ro', 'p1'),
+        { ...newPlant('chp', 'p2'), name: 'CHP 1' },
+      ],
+      tariffs: defaultTariffs(DEFAULT_CONTEXT),
+      updatedAt: now.toISOString(),
+    };
+    const broken = { ...site, name: 'Broken', tariffs: { gasPerM3: -1 } };
+    const odd = { ...site, name: 'Odd', plants: [{ id: 'x', type: 'sauna' }] };
+    const text = createBackup(SAMPLE_PROJECTS, now, [site]).replace(
+      '"sites": [',
+      `"sites": [${JSON.stringify(broken)}, ${JSON.stringify(odd)}, `,
+    );
+    const read = readBackup(text);
+    expect('sites' in read && read.sites).toEqual([
+      { ...odd, plants: [] },
+      site,
+    ]);
   });
 
   it('drops damaged results but keeps their project', () => {
