@@ -773,6 +773,13 @@ export const DE: SerraCopy = {
     heatingWeeks: 'Wochen Heizung',
     fogWeeks: 'Wochen Nebel',
   },
+  photoViewer: {
+    open: 'Foto vergrößern',
+    zoom: 'Vergrößern',
+    fit: 'An Bildschirm anpassen',
+    close: 'Schließen',
+    original: 'Volle Größe auf Wikimedia Commons',
+  },
   science: {
     title: 'Wissen',
     lead: 'Die Phänomene hinter jedem Rechner: was passiert, die Formel, was sie annimmt und wie man jede eingegebene Zahl misst.',

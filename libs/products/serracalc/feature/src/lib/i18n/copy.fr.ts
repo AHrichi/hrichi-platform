@@ -783,6 +783,13 @@ export const FR: SerraCopy = {
     heatingWeeks: 'Semaines de chauffage',
     fogWeeks: 'Semaines de brouillard',
   },
+  photoViewer: {
+    open: 'Agrandir la photo',
+    zoom: 'Zoomer',
+    fit: 'Ajuster à l’écran',
+    close: 'Fermer',
+    original: 'Taille réelle sur Wikimedia Commons',
+  },
   science: {
     title: 'Science',
     lead: 'Les phénomènes derrière chaque calculateur : ce qui se passe, la formule, ce qu’elle suppose, et comment mesurer chaque nombre saisi.',

@@ -761,6 +761,13 @@ export const EN = {
     heatingWeeks: 'Weeks of heating',
     fogWeeks: 'Weeks of fog',
   },
+  photoViewer: {
+    open: 'Enlarge photo',
+    zoom: 'Zoom in',
+    fit: 'Fit to screen',
+    close: 'Close',
+    original: 'Full size on Wikimedia Commons',
+  },
   science: {
     title: 'Science',
     lead: 'The phenomena behind every calculator: what happens, the formula, what it assumes, and how to measure each number you type in.',

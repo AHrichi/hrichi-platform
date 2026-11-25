@@ -34,12 +34,14 @@ let nextId = 0;
       aria-haspopup="menu"
       [attr.aria-expanded]="open()"
       [attr.aria-controls]="open() ? menuId : null"
-      [attr.aria-label]="triggerLabel()"
       (click)="toggle()"
       (keydown.arrowdown)="openAndFocus($event, 'checked')"
       (keydown.arrowup)="openAndFocus($event, 'last')"
     >
       <sc-icon name="globe" />
+      <!-- Named "Language: EN" on phones, "Language: English" wider: the
+           visible text is always part of the name. -->
+      <span class="ah-visually-hidden">{{ t().app.language }}: </span>
       <span class="code" [attr.lang]="current().id">{{ current().label }}</span>
       <span class="name" [attr.lang]="current().id">{{
         current().nativeName
@@ -92,11 +94,6 @@ export class LangMenu {
     () =>
       SERRA_LANGUAGES.find((l) => l.id === this.i18n.lang()) ??
       SERRA_LANGUAGES[0],
-  );
-  /** "Language: English (EN)": says what it is and holds the visible text. */
-  protected readonly triggerLabel = computed(
-    () =>
-      `${this.t().app.language}: ${this.current().nativeName} (${this.current().label})`,
   );
 
   protected toggle(): void {

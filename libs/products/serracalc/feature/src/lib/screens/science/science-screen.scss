@@ -172,17 +172,6 @@
   max-inline-size: 36rem;
   margin: 0;
 
-  img {
-    display: block;
-    inline-size: 100%;
-    block-size: auto;
-    max-block-size: 22rem;
-    object-fit: cover;
-    border: 1px solid var(--sc-edge, var(--color-border-default));
-    border-radius: var(--radius-md);
-    background: var(--color-bg-surface);
-  }
-
   figcaption {
     display: flex;
     flex-direction: column;
@@ -213,15 +202,12 @@
   }
 }
 
-// An instrument's photo, whole (contain), on a quiet ground.
+// An instrument's photo: whole (contain), on a quiet ground.
 .instrument-photo {
-  display: block;
-  inline-size: 100%;
-  block-size: 9rem;
+  --sc-photo-height: 9rem;
+  --sc-photo-fit: contain;
+  --sc-photo-ground: var(--color-bg-canvas);
   margin-block-end: var(--space-2);
-  object-fit: contain;
-  border-radius: var(--radius-sm);
-  background: var(--color-bg-canvas);
 }
 
 .formula {

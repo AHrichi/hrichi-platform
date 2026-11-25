@@ -785,6 +785,13 @@ export const IT: SerraCopy = {
     heatingWeeks: 'Settimane di riscaldamento',
     fogWeeks: 'Settimane di nebbia',
   },
+  photoViewer: {
+    open: 'Ingrandisci la foto',
+    zoom: 'Ingrandisci',
+    fit: 'Adatta allo schermo',
+    close: 'Chiudi',
+    original: 'Dimensione intera su Wikimedia Commons',
+  },
   science: {
     title: 'Scienza',
     lead: 'I fenomeni dietro ogni calcolatore: cosa succede, la formula, cosa assume e come misurare ogni numero che inserisci.',

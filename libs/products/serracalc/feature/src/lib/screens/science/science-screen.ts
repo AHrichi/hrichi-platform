@@ -21,14 +21,11 @@ import {
   SOURCES,
 } from '@ah/products/serracalc/domain';
 import { SerraI18n } from '../../i18n/serra-i18n';
-import {
-  INSTRUMENT_PHOTOS,
-  TOPIC_PHOTOS,
-  photoUrl,
-} from '../../science/photos';
+import { INSTRUMENT_PHOTOS, TOPIC_PHOTOS } from '../../science/photos';
 import { Formula } from '../../ui/formula/formula';
 import { Icon } from '../../ui/icon/icon';
 import { Panel } from '../../ui/panel/panel';
+import { PhotoViewer } from '../../ui/photo-viewer/photo-viewer';
 import { PanelState } from '../../ui/panel/panel-state';
 
 /**
@@ -39,7 +36,7 @@ import { PanelState } from '../../ui/panel/panel-state';
  */
 @Component({
   selector: 'sc-science-screen',
-  imports: [Formula, Icon, NgTemplateOutlet, Panel, RouterLink],
+  imports: [Formula, Icon, NgTemplateOutlet, Panel, PhotoViewer, RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './science-screen.html',
   styleUrl: './science-screen.scss',
@@ -54,7 +51,6 @@ export class ScienceScreen {
   private readonly panels = inject(PanelState);
   protected readonly topicPhotos = TOPIC_PHOTOS;
   protected readonly instrumentPhotos = INSTRUMENT_PHOTOS;
-  protected readonly photoUrl = photoUrl;
 
   /** What a topic's photo shows, in the reader's language. */
   protected caption(id: PhenomenonId): string {
