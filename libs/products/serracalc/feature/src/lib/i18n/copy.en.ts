@@ -777,6 +777,8 @@ export const EN = {
     usedIn: 'Used in',
     sources: 'Sources',
     instrumentsTitle: 'Instruments',
+    foldAll: 'Fold all',
+    unfoldAll: 'Unfold all',
     instrumentsLead: 'What to measure with, and how to read it well.',
     howToGet: (label: string) => `How to get “${label}”`,
     readMore: 'Read about',

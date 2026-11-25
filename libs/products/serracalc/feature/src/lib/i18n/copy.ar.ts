@@ -773,6 +773,8 @@ export const AR: SerraCopy = {
     usedIn: 'يُستعمل في',
     sources: 'المصادر',
     instrumentsTitle: 'أجهزة القياس',
+    foldAll: 'طيّ الكل',
+    unfoldAll: 'فتح الكل',
     instrumentsLead: 'بماذا تقيس، وكيف تقرأ القياس جيدًا.',
     howToGet: (label: string) => `كيف تحصل على «${label}»`,
     readMore: 'اقرأ عن',

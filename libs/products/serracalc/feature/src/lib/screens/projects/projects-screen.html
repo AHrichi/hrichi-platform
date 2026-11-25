@@ -118,8 +118,12 @@
         </p>
       </article>
 
-      <section class="panel" id="saved" aria-labelledby="sc-saved-title">
-        <h3 id="sc-saved-title">{{ t().projects.saved }}</h3>
+      <section
+        class="panel"
+        id="saved"
+        scPanel="saved-title"
+        [heading]="t().projects.saved"
+      >
         @if (project.calculations.length === 0) {
           <p class="muted">{{ t().projects.savedEmpty }}</p>
         } @else {
@@ -167,8 +171,7 @@
   }
 
   @if (!store.isLoading()) {
-    <section class="panel" aria-labelledby="sc-backup-title">
-      <h3 id="sc-backup-title">{{ t().backup.title }}</h3>
+    <section class="panel" scPanel="backup-title" [heading]="t().backup.title">
       <sc-backup-panel />
     </section>
   }

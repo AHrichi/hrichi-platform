@@ -40,6 +40,7 @@ import { NoteList } from '../../ui/note-list/note-list';
 import { SaveBar, type SaveRequest } from '../../ui/save-bar/save-bar';
 import { injectCalcEditing } from '../calc-editing';
 import { ECONOMICS_FIELDS, moneyField } from '../fields';
+import { Panel } from '../../ui/panel/panel';
 
 type SiteTab = 'overview' | 'plants' | 'economics';
 const TABS: readonly SiteTab[] = ['overview', 'plants', 'economics'];
@@ -71,6 +72,7 @@ function latest(
 @Component({
   selector: 'sc-site-screen',
   imports: [
+    Panel,
     AhMetricCard,
     AhTabs,
     CalcSteps,

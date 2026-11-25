@@ -789,6 +789,8 @@ export const DE: SerraCopy = {
     usedIn: 'Verwendet in',
     sources: 'Quellen',
     instrumentsTitle: 'Messgeräte',
+    foldAll: 'Alle einklappen',
+    unfoldAll: 'Alle ausklappen',
     instrumentsLead: 'Womit man misst, und wie man richtig abliest.',
     howToGet: (label: string) => `So bekommen Sie „${label}“`,
     readMore: 'Mehr zu',

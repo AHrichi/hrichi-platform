@@ -34,8 +34,11 @@
         <figcaption>{{ t().calc.dragHint }}</figcaption>
       </figure>
 
-      <section class="panel" aria-labelledby="sc-supply-inputs">
-        <h3 id="sc-supply-inputs">{{ t().calc.inputs }}</h3>
+      <section
+        class="panel"
+        scPanel="supply-inputs"
+        [heading]="t().calc.inputs"
+      >
         <div class="actions">
           <button type="button" class="chip" (click)="takeDemand()">
             {{ t().supply.takeDemand(i18n.num(cropPeak(), 0)) }}
@@ -63,8 +66,11 @@
     </div>
 
     <div class="column">
-      <section class="panel" aria-labelledby="sc-supply-results">
-        <h3 id="sc-supply-results">{{ t().calc.results }}</h3>
+      <section
+        class="panel"
+        scPanel="supply-results"
+        [heading]="t().calc.results"
+      >
         @if (tab() === 'ro') {
           <div class="results">
             <ah-metric-card
@@ -164,8 +170,11 @@
       </section>
 
       @if (tab() === 'fertigation') {
-        <section class="panel" aria-labelledby="sc-supply-strategies">
-          <h3 id="sc-supply-strategies">{{ t().supply.strategies.title }}</h3>
+        <section
+          class="panel"
+          scPanel="supply-strategies"
+          [heading]="t().supply.strategies.title"
+        >
           <p class="hint">{{ t().supply.strategies.lead }}</p>
           <div
             class="table-wrap"
@@ -217,8 +226,7 @@
         </section>
       }
 
-      <section class="panel" aria-labelledby="sc-supply-save">
-        <h3 id="sc-supply-save">{{ t().save.title }}</h3>
+      <section class="panel" scPanel="supply-save" [heading]="t().save.title">
         <sc-save-bar
           [suggestedLabel]="suggestedLabel()"
           [editingLabel]="editor.editingLabel()"

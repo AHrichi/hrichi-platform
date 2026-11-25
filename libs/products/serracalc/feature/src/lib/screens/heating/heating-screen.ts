@@ -61,6 +61,7 @@ import {
   pick,
   YEAR_FIELDS,
 } from '../fields';
+import { Panel } from '../../ui/panel/panel';
 
 type HeatingTab = 'peak' | 'year' | 'pipes';
 
@@ -99,6 +100,7 @@ const YEAR_KEYS: readonly (keyof YearExtra)[] = [
 @Component({
   selector: 'sc-heating-screen',
   imports: [
+    Panel,
     AhTabs,
     AhMetricCard,
     AhSplitBar,

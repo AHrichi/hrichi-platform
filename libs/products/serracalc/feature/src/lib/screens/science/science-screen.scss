@@ -8,6 +8,34 @@
   @include sc.screen-head;
 }
 
+.fold-all {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-block-size: 2.75rem;
+  padding-inline: var(--space-3);
+  border: 1px solid var(--sc-edge, var(--color-border-default));
+  border-radius: var(--radius-pill);
+  background: var(--sc-glass, var(--color-bg-surface));
+  color: var(--color-accent-default);
+  font: inherit;
+  font-size: var(--font-size-200);
+  cursor: pointer;
+
+  &:hover {
+    border-color: var(--color-accent-default);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-focus-ring);
+    outline-offset: 2px;
+  }
+
+  .is-up {
+    transform: rotate(180deg);
+  }
+}
+
 .layout {
   display: grid;
   gap: var(--space-4);
@@ -35,8 +63,8 @@
 
   @media (min-width: 72rem) {
     position: sticky;
-    inset-block-start: var(--space-4);
-    max-block-size: calc(100vh - var(--space-8));
+    inset-block-start: calc(var(--sc-top, 0px) + var(--space-4));
+    max-block-size: calc(100vh - var(--sc-top, 0px) - var(--space-8));
     overflow-y: auto;
   }
 
@@ -121,12 +149,6 @@
     box-shadow:
       0 0 2rem -1rem var(--sc-glow, transparent),
       var(--sc-shadow, none);
-  }
-
-  h3 {
-    margin: 0;
-    font-size: var(--font-size-400);
-    line-height: var(--font-line-height-tight);
   }
 
   h4 {

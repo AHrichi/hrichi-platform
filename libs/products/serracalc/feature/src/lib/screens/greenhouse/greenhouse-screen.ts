@@ -24,11 +24,13 @@ import { CalcSteps, type CalcStep } from '../../ui/calc-steps/calc-steps';
 import { FieldGrid, type FieldChange } from '../../ui/field-grid/field-grid';
 import { NoteList } from '../../ui/note-list/note-list';
 import { GREENHOUSE_FIELDS } from '../fields';
+import { Panel } from '../../ui/panel/panel';
 
 /** The house every calculator starts from, edited and saved to the project. */
 @Component({
   selector: 'sc-greenhouse-screen',
   imports: [
+    Panel,
     AhButton,
     AhMetricCard,
     CalcSteps,

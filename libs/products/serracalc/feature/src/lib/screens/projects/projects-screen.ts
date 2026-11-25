@@ -26,6 +26,7 @@ import { type NewProject, SerraStore } from '../../store/serra.store';
 import { BackupPanel } from '../../ui/backup-panel/backup-panel';
 import { FieldGrid, type FieldChange } from '../../ui/field-grid/field-grid';
 import { GREENHOUSE_FIELDS } from '../fields';
+import { Panel } from '../../ui/panel/panel';
 
 /** Where each kind of saved result opens. */
 const OPENS_IN: Record<CalcKind, { screen: string; tab: string }> = {
@@ -67,6 +68,7 @@ function blankDraft(): NewProject {
 @Component({
   selector: 'sc-projects-screen',
   imports: [
+    Panel,
     AhButton,
     AhEmptyState,
     AhModal,

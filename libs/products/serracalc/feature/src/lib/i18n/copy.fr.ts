@@ -799,6 +799,8 @@ export const FR: SerraCopy = {
     usedIn: 'Utilisé dans',
     sources: 'Sources',
     instrumentsTitle: 'Instruments',
+    foldAll: 'Tout replier',
+    unfoldAll: 'Tout déplier',
     instrumentsLead: 'Avec quoi mesurer, et comment bien lire.',
     howToGet: (label: string) => `Comment obtenir « ${label} »`,
     readMore: 'Lire :',

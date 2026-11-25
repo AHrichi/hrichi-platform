@@ -55,8 +55,7 @@
         </sc-field-grid>
       </details>
 
-      <section class="panel" aria-labelledby="sc-water-inputs">
-        <h3 id="sc-water-inputs">{{ t().calc.inputs }}</h3>
+      <section class="panel" scPanel="water-inputs" [heading]="t().calc.inputs">
         @if (tab() === 'crop') {
           <sc-field-grid
             [specs]="irrigationFields"
@@ -80,8 +79,11 @@
     </div>
 
     <div class="column">
-      <section class="panel" aria-labelledby="sc-water-results">
-        <h3 id="sc-water-results">{{ t().calc.results }}</h3>
+      <section
+        class="panel"
+        scPanel="water-results"
+        [heading]="t().calc.results"
+      >
         @if (tab() === 'crop') {
           <div class="results">
             <ah-metric-card
@@ -252,8 +254,7 @@
         <sc-calc-steps [steps]="steps()" />
       </section>
 
-      <section class="panel" aria-labelledby="sc-water-save">
-        <h3 id="sc-water-save">{{ t().save.title }}</h3>
+      <section class="panel" scPanel="water-save" [heading]="t().save.title">
         <sc-save-bar
           [suggestedLabel]="suggestedLabel()"
           [editingLabel]="editor.editingLabel()"

@@ -28,8 +28,7 @@
   @switch (tab()) {
     @case ('log') {
       <div class="workbench">
-        <section class="panel" aria-labelledby="sc-ops-new">
-          <h3 id="sc-ops-new">{{ t().ops.newEntry }}</h3>
+        <section class="panel" scPanel="ops-new" [heading]="t().ops.newEntry">
           <div class="form">
             <label class="select">
               <span>{{ t().ops.date }}</span>
@@ -120,8 +119,11 @@
           </div>
         </section>
 
-        <section class="panel" aria-labelledby="sc-ops-list">
-          <h3 id="sc-ops-list">{{ t().ops.entries(logs().length + '') }}</h3>
+        <section
+          class="panel"
+          scPanel="ops-list"
+          [heading]="t().ops.entries(logs().length + '')"
+        >
           <div class="filters" role="group" [attr.aria-label]="t().ops.kind">
             <button
               type="button"
@@ -183,10 +185,11 @@
     }
     @case ('hygiene') {
       <div class="workbench">
-        <section class="panel" aria-labelledby="sc-ops-hyg">
-          <h3 id="sc-ops-hyg">
-            {{ t().ops.checklist }} · {{ i18n.date(today) }}
-          </h3>
+        <section
+          class="panel"
+          scPanel="ops-hyg"
+          [heading]="t().ops.checklist + ' · ' + i18n.date(today)"
+        >
           <ul class="checks" role="list">
             @for (item of hygieneItems; track item) {
               <li>
@@ -217,8 +220,11 @@
             </button>
           </div>
         </section>
-        <section class="panel" aria-labelledby="sc-ops-hyg-recent">
-          <h3 id="sc-ops-hyg-recent">{{ t().ops.recent }}</h3>
+        <section
+          class="panel"
+          scPanel="ops-hyg-recent"
+          [heading]="t().ops.recent"
+        >
           @if (recentChecks().length === 0) {
             <p class="hint">{{ t().ops.empty }}</p>
           }
@@ -239,8 +245,11 @@
       </div>
     }
     @case ('maintenance') {
-      <section class="panel" aria-labelledby="sc-ops-maint">
-        <h3 id="sc-ops-maint">{{ t().ops.tabs.maintenance }}</h3>
+      <section
+        class="panel"
+        scPanel="ops-maint"
+        [heading]="t().ops.tabs.maintenance"
+      >
         <div
           class="table-wrap"
           tabindex="0"
@@ -291,8 +300,7 @@
     }
     @case ('heat') {
       <div class="workbench">
-        <section class="panel" aria-labelledby="sc-ops-heat">
-          <h3 id="sc-ops-heat">{{ t().ops.heatTitle }}</h3>
+        <section class="panel" scPanel="ops-heat" [heading]="t().ops.heatTitle">
           <div class="form">
             <label class="select">
               <span>{{ t().fields['airC'] }} {{ i18n.unit('°C') }}</span>
@@ -337,8 +345,7 @@
           </dl>
           <sc-note-list [notes]="heat().notes" />
         </section>
-        <section class="panel" aria-labelledby="sc-ops-plan">
-          <h3 id="sc-ops-plan">{{ t().ops.plan }}</h3>
+        <section class="panel" scPanel="ops-plan" [heading]="t().ops.plan">
           <ul class="plan" role="list">
             @for (b of bands; track b.id) {
               <li [attr.data-risk]="b.id" [class.is-now]="heat().risk === b.id">

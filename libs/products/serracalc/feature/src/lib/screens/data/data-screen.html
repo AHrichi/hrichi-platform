@@ -8,8 +8,7 @@
 
   <div class="workbench">
     <div class="column">
-      <section class="panel" aria-labelledby="sc-data-import">
-        <h3 id="sc-data-import">{{ t().data.import }}</h3>
+      <section class="panel" scPanel="data-import" [heading]="t().data.import">
         <p class="hint">{{ t().data.importHint }}</p>
         <label class="file">
           <span>{{ t().data.file }}</span>
@@ -63,8 +62,11 @@
         }
       </section>
 
-      <section class="panel" aria-labelledby="sc-data-targets">
-        <h3 id="sc-data-targets">{{ t().data.targets }}</h3>
+      <section
+        class="panel"
+        scPanel="data-targets"
+        [heading]="t().data.targets"
+      >
         <div class="targets">
           <label class="select">
             <span>{{ t().vpd.stage }}</span>
@@ -99,8 +101,11 @@
     </div>
 
     <div class="column">
-      <section class="panel" aria-labelledby="sc-data-summary">
-        <h3 id="sc-data-summary">{{ t().data.summary }}</h3>
+      <section
+        class="panel"
+        scPanel="data-summary"
+        [heading]="t().data.summary"
+      >
         @if (analysis().count === 0) {
           <p class="hint">{{ t().data.empty }}</p>
         } @else {
@@ -173,8 +178,7 @@
   </div>
 
   @if (analysis().count > 0) {
-    <section class="panel" aria-labelledby="sc-data-hours">
-      <h3 id="sc-data-hours">{{ t().data.byHour }}</h3>
+    <section class="panel" scPanel="data-hours" [heading]="t().data.byHour">
       <div class="charts">
         <figure>
           <figcaption>{{ t().data.vpdByHour }}</figcaption>
@@ -199,8 +203,11 @@
       </div>
     </section>
 
-    <section class="panel" aria-labelledby="sc-data-alerts">
-      <h3 id="sc-data-alerts">{{ t().data.alertsTitle }}</h3>
+    <section
+      class="panel"
+      scPanel="data-alerts"
+      [heading]="t().data.alertsTitle"
+    >
       @if (analysis().alerts.length === 0) {
         <p class="hint">{{ t().data.noAlerts }}</p>
       }
@@ -219,8 +226,7 @@
       </ul>
     </section>
 
-    <section class="panel" aria-labelledby="sc-data-days">
-      <h3 id="sc-data-days">{{ t().data.days }}</h3>
+    <section class="panel" scPanel="data-days" [heading]="t().data.days">
       <div
         class="table-wrap"
         tabindex="0"

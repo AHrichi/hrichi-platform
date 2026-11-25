@@ -77,8 +77,11 @@
         </details>
       }
 
-      <section class="panel" aria-labelledby="sc-heating-inputs">
-        <h3 id="sc-heating-inputs">{{ t().calc.inputs }}</h3>
+      <section
+        class="panel"
+        scPanel="heating-inputs"
+        [heading]="t().calc.inputs"
+      >
         @switch (tab()) {
           @case ('peak') {
             <p class="hint">{{ designNight() }}</p>
@@ -159,8 +162,11 @@
     </div>
 
     <div class="column">
-      <section class="panel" aria-labelledby="sc-heating-results">
-        <h3 id="sc-heating-results">{{ t().calc.results }}</h3>
+      <section
+        class="panel"
+        scPanel="heating-results"
+        [heading]="t().calc.results"
+      >
         @switch (tab()) {
           @case ('peak') {
             <div class="results">
@@ -311,8 +317,7 @@
         <sc-calc-steps [steps]="steps()" />
       </section>
 
-      <section class="panel" aria-labelledby="sc-heating-save">
-        <h3 id="sc-heating-save">{{ t().save.title }}</h3>
+      <section class="panel" scPanel="heating-save" [heading]="t().save.title">
         <sc-save-bar
           [suggestedLabel]="suggestedLabel()"
           [editingLabel]="editor.editingLabel()"

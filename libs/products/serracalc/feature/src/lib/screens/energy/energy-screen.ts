@@ -43,6 +43,7 @@ import {
   priceField,
   REUSE_FIELDS,
 } from '../fields';
+import { Panel } from '../../ui/panel/panel';
 
 type EnergyTab = 'chp' | 'reuse' | 'cooling';
 const TABS: readonly EnergyTab[] = ['chp', 'reuse', 'cooling'];
@@ -55,6 +56,7 @@ const TABS: readonly EnergyTab[] = ['chp', 'reuse', 'cooling'];
 @Component({
   selector: 'sc-energy-screen',
   imports: [
+    Panel,
     AhMetricCard,
     AhTabs,
     CalcSteps,

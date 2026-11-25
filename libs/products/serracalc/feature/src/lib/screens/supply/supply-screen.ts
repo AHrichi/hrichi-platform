@@ -33,6 +33,7 @@ import { NoteList } from '../../ui/note-list/note-list';
 import { SaveBar, type SaveRequest } from '../../ui/save-bar/save-bar';
 import { injectCalcEditing } from '../calc-editing';
 import { FERTIGATION_FIELDS, priceField, RO_FIELDS } from '../fields';
+import { Panel } from '../../ui/panel/panel';
 
 type SupplyTab = 'ro' | 'fertigation';
 const TABS: readonly SupplyTab[] = ['ro', 'fertigation'];
@@ -62,6 +63,7 @@ const NA_SHARE = 23 / 58.44;
 @Component({
   selector: 'sc-supply-screen',
   imports: [
+    Panel,
     AhMetricCard,
     AhTabs,
     CalcSteps,

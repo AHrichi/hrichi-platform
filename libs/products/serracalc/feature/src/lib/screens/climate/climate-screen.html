@@ -59,10 +59,11 @@
   </section>
 
   <div class="workbench">
-    <section class="panel" aria-labelledby="sc-climate-temps">
-      <h3 id="sc-climate-temps">
-        {{ t().climate.table.tMin }} – {{ t().climate.table.tMax }}
-      </h3>
+    <section
+      class="panel"
+      scPanel="climate-temps"
+      [heading]="t().climate.table.tMin + ' – ' + t().climate.table.tMax"
+    >
       <sc-month-bars
         [series]="temperatures()"
         [low]="lows()"

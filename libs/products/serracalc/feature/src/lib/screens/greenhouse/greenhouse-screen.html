@@ -13,8 +13,11 @@
         <figcaption>{{ t().calc.dragHint }}</figcaption>
       </figure>
 
-      <section class="panel" aria-labelledby="sc-greenhouse-inputs">
-        <h3 id="sc-greenhouse-inputs">{{ t().context.house }}</h3>
+      <section
+        class="panel"
+        scPanel="greenhouse-inputs"
+        [heading]="t().context.house"
+      >
         <sc-field-grid
           [specs]="fields"
           [values]="spec()"
@@ -87,8 +90,11 @@
     </div>
 
     <div class="column">
-      <section class="panel" aria-labelledby="sc-greenhouse-results">
-        <h3 id="sc-greenhouse-results">{{ t().calc.results }}</h3>
+      <section
+        class="panel"
+        scPanel="greenhouse-results"
+        [heading]="t().calc.results"
+      >
         <div class="results">
           <ah-metric-card
             [label]="t().greenhouse.floor"

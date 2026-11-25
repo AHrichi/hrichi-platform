@@ -4,6 +4,10 @@
       <h2 id="sc-science-title">{{ t().science.title }}</h2>
       <p>{{ t().science.lead }}</p>
     </div>
+    <button type="button" class="fold-all" (click)="foldAll(!allFolded())">
+      <sc-icon name="chevron" [class.is-up]="!allFolded()" />
+      {{ allFolded() ? t().science.unfoldAll : t().science.foldAll }}
+    </button>
   </header>
 
   <div class="layout">
@@ -51,12 +55,10 @@
           tabindex="-1"
           [id]="'sc-topic-' + p.id"
           [class.is-active]="activeTopic() === p.id"
-          [attr.aria-labelledby]="'sc-topic-title-' + p.id"
+          [scPanel]="'science-' + p.id"
+          [heading]="t().science.topics[p.id].title"
+          [eyebrow]="t().science.groups[p.group]"
         >
-          <span class="eyebrow">{{ t().science.groups[p.group] }}</span>
-          <h3 [id]="'sc-topic-title-' + p.id">
-            {{ t().science.topics[p.id].title }}
-          </h3>
           <p class="what">{{ t().science.topics[p.id].what }}</p>
 
           <h4>{{ t().science.formula }}</h4>
@@ -152,8 +154,11 @@
         </article>
       }
 
-      <section class="topic instruments" aria-labelledby="sc-instruments-title">
-        <h3 id="sc-instruments-title">{{ t().science.instrumentsTitle }}</h3>
+      <section
+        class="topic instruments"
+        scPanel="science-instruments"
+        [heading]="t().science.instrumentsTitle"
+      >
         <p class="what">{{ t().science.instrumentsLead }}</p>
         <div class="instrument-grid">
           @for (id of instruments; track id) {
