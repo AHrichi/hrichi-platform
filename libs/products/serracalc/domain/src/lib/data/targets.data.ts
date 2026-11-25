@@ -21,10 +21,13 @@ export type SourceId =
   | 'rodriguezOrtega2019'
   | 'hydrotool'
   | 'vtCo2'
+  | 'solarAtlas'
   | 'typical';
 
 /** Citations are names and stay as written in every language. */
 export const SOURCES: Record<SourceId, string> = {
+  solarAtlas:
+    'Global Solar Atlas (World Bank, Solargis), photovoltaic power potential',
   soussi2022:
     'Soussi et al. (2022), climate control and cooling of greenhouses in hot arid regions',
   shamshiri2018:

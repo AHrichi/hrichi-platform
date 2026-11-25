@@ -27,6 +27,7 @@ export type PhenomenonId =
   | 'cogeneration'
   | 'heatReuse'
   | 'coolingEnergy'
+  | 'solarPv'
   | 'siteScale'
   | 'light'
   | 'co2'
@@ -375,6 +376,31 @@ export const PHENOMENA: readonly Phenomenon[] = [
     sources: ['soussi2022', 'typical'],
   },
   {
+    id: 'solarPv',
+    group: 'site',
+    formula:
+      'E_m = P × H_m × n_m × (1 + g_tilt) × (1 − L_sys) × (1 − L_dust) × (1 − γ (T_cell − 25));  T_cell = (3 T_max + T_min) / 4 + 20;  self = min(E_m, P_day × h_day × n_m);  payback = capex / (self × c_buy + export × c_export − upkeep)',
+    inputs: [
+      'peakKw',
+      'tiltGainPct',
+      'systemLossPct',
+      'soilingPct',
+      'tempLossPctK',
+      'dayLoadKw',
+      'nightLoadKw',
+      'groundCoverPct',
+      'moduleWm2',
+      'capexPerKwp',
+      'omPctYear',
+      'buyPrice',
+      'exportPrice',
+      'lifeYears',
+    ],
+    related: ['coolingEnergy', 'desalination', 'siteScale', 'solarGain'],
+    tools: [{ screen: 'energy', tab: 'solar' }],
+    sources: ['solarAtlas', 'typical'],
+  },
+  {
     id: 'siteScale',
     group: 'site',
     formula:
@@ -620,6 +646,21 @@ export const INPUT_METHODS: Record<string, InputMethod> = {
   emptyFromWeek: m('setpoint', undefined, 'cropCalendar'),
   emptyWeeks: m('setpoint', undefined, 'cropCalendar'),
   gridCo2KgKwh: m('bill', undefined, 'coolingEnergy'),
+  // Solar power for the site
+  peakKw: m('datasheet', undefined, 'solarPv'),
+  tiltGainPct: m('assume', 'pyranometer', 'solarPv'),
+  systemLossPct: m('datasheet', undefined, 'solarPv'),
+  soilingPct: m('measure', 'meters', 'solarPv'),
+  tempLossPctK: m('datasheet', undefined, 'solarPv'),
+  dayLoadKw: m('measure', 'meters', 'solarPv'),
+  nightLoadKw: m('measure', 'meters', 'solarPv'),
+  groundCoverPct: m('assume', 'tape', 'solarPv'),
+  moduleWm2: m('datasheet', undefined, 'solarPv'),
+  capexPerKwp: m('bill', undefined, 'solarPv'),
+  omPctYear: m('assume', undefined, 'solarPv'),
+  buyPrice: m('bill', 'meters', 'solarPv'),
+  exportPrice: m('bill', undefined, 'solarPv'),
+  lifeYears: m('datasheet', undefined, 'solarPv'),
   // The crop calendar
   plantingWeek: m('setpoint', undefined, 'cropCalendar'),
   nurseryWeeks: m('assume', undefined, 'cropCalendar'),

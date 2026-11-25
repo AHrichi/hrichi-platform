@@ -1,6 +1,7 @@
 import type { CalcNote, SavedCalculation } from '../models/serra.models';
 import { cropCalendar } from './calendar';
 import { coolingYear, energyHub, heatReuse } from './energy';
+import { solarPv } from './solar';
 import { siteEconomics } from './site';
 import { co2Enrichment } from './co2';
 import { padAndFan, ventilation } from './cooling';
@@ -78,6 +79,10 @@ export type FigureId =
   | 'coolMwh'
   | 'coolCost'
   | 'coolBenchmark'
+  | 'solarYield'
+  | 'solarSpecific'
+  | 'solarSelfUse'
+  | 'solarPayback'
   | 'revenue'
   | 'costPerKg'
   | 'margin'
@@ -304,6 +309,18 @@ export function summarizeSaved(saved: SavedCalculation): SavedSummary {
           fig('coolMwh', r.mwhYear, 'MWh', 1),
           fig('coolCost', r.cost, 'money'),
           fig('coolBenchmark', r.benchmarkPct, '%'),
+        ],
+        notes: r.notes,
+      };
+    }
+    case 'solarPv': {
+      const r = solarPv(saved.inputs);
+      return {
+        figures: [
+          fig('solarYield', r.yieldMwh, 'MWh', 1),
+          fig('solarSpecific', r.specificKwhKwp, 'kWh/kWp'),
+          fig('solarSelfUse', r.selfUsePct, '%'),
+          fig('solarPayback', r.paybackYears, 'y', 1),
         ],
         notes: r.notes,
       };

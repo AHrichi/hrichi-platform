@@ -7,6 +7,7 @@ import {
   DEFAULT_GREENHOUSE,
   defaultCo2Price,
   defaultFuelPrice,
+  defaultSolarCapex,
   FUELS,
   SCREEN_SAVINGS,
 } from '../data/catalogue.data';
@@ -41,10 +42,11 @@ import type {
   EnergyHubParams,
   HeatReuseParams,
 } from './energy';
-import { energyHub, GAS_KWH_PER_M3 } from './energy';
+import { coolingYear, energyHub, GAS_KWH_PER_M3 } from './energy';
 import type { CoolingAdviceParams } from './fog';
 import { annualHeating, heatLoss } from './heating';
 import type { EconomicsParams } from './site';
+import type { SolarPvParams } from './solar';
 import { seawaterRo } from './water-chain';
 import { cropWater } from './water';
 
@@ -450,6 +452,48 @@ export function defaultCoolingYear(ctx: CalcContext): CoolingYearParams {
     emptyWeeks: WEEKS_PER_YEAR - calendar.cropWeeks,
     electricityPrice: defaultFuelPrice('heat_pump', ctx.currency),
     gridCo2KgKwh: 0.45,
+  };
+}
+
+/**
+ * Solar for the site: the daytime load is the year's cooling spread over the
+ * daylight hours plus the RO plant (running round the clock, so also the
+ * night load); the array is sized to make about what the site uses by day
+ * (≈ 1,650 kWh per kWp a year in the desert). Tilted at about the latitude
+ * (+12 % over flat), 14 % system losses, 5 % dust, 0.4 %/K, rows on 40 % of
+ * the land, 210 W/m² modules, 1.5 % upkeep, 25 years; exports paid at 60 %
+ * of the power price, as the site tariffs start.
+ */
+export function defaultSolarPv(ctx: CalcContext): SolarPvParams {
+  const climate = climateById(ctx.climateId);
+  const monthDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+  const daylightYear = climate.months.reduce(
+    (s, _m, month) =>
+      s +
+      dayLengthHours(climate.latitude, midMonthDay(month)) * monthDays[month],
+    0,
+  );
+  const coolingKwh = coolingYear(defaultCoolingYear(ctx)).mwhYear * 1000;
+  const roKw = seawaterRo(defaultRo(ctx)).energyKwhDay / 24;
+  const dayLoad = coolingKwh / daylightYear + roKw;
+  const power = defaultFuelPrice('heat_pump', ctx.currency);
+  return {
+    climateId: ctx.climateId,
+    peakKw: Math.max(5, Math.round((dayLoad * daylightYear) / 1650 / 5) * 5),
+    tiltGainPct: 12,
+    systemLossPct: 14,
+    soilingPct: 5,
+    tempLossPctK: 0.4,
+    dayLoadKw: Math.round(dayLoad),
+    nightLoadKw: Math.round(roKw),
+    groundCoverPct: 40,
+    moduleWm2: 210,
+    capexPerKwp: defaultSolarCapex(ctx.currency),
+    omPctYear: 1.5,
+    buyPrice: power,
+    exportPrice: Math.round(power * 0.6 * 1000) / 1000,
+    gridCo2KgKwh: 0.45,
+    lifeYears: 25,
   };
 }
 

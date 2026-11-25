@@ -258,6 +258,22 @@ export const COOLING_YEAR_FIELDS: readonly FieldSpec[] = [
   floor,
 ];
 
+/** Solar power for the site (the Energy screen). */
+export const PV_FIELDS: readonly FieldSpec[] = [
+  spec('peakKw', 'kWp', 0, 100000, 5),
+  spec('dayLoadKw', 'kW', 0, 100000, 1),
+  spec('nightLoadKw', 'kW', 0, 100000, 1),
+  spec('tiltGainPct', '%', 0, 30, 1),
+  spec('systemLossPct', '%', 0, 40, 1),
+  spec('soilingPct', '%', 0, 30, 0.5),
+  spec('tempLossPctK', '%/K', 0, 0.6, 0.01),
+  spec('groundCoverPct', '%', 10, 80, 1),
+  spec('moduleWm2', 'W/m²', 100, 260, 5),
+  spec('omPctYear', '%', 0, 5, 0.1),
+  spec('lifeYears', '', 5, 40, 1),
+  spec('gridCo2KgKwh', 'kg/kWh', 0, 1.2, 0.01),
+];
+
 export const REUSE_FIELDS: readonly FieldSpec[] = [
   spec('waterM3Day', 'm³/d', 0, 200000, 1),
   spec('inC', '°C', 5, 95, 0.5),
@@ -281,6 +297,11 @@ export function moneyField(key: string, unit: string, max = 5000): FieldSpec {
 /** A price field in the project's currency, per its unit. */
 export function priceField(key: string, unit: string): FieldSpec {
   return spec(key, unit, 0, 50, 0.01);
+}
+
+/** A cost per unit of equipment (a kWp, a m³/d): larger than a tariff. */
+export function costField(key: string, unit: string): FieldSpec {
+  return spec(key, unit, 0, 20000, 10);
 }
 
 /** Copies the listed keys of `from` into a new object. */

@@ -30,6 +30,7 @@ const SCREENS = [
   'energy',
   'energy?tab=reuse',
   'energy?tab=cooling',
+  'energy?tab=solar',
   'greenhouse',
   'operations',
   'data',

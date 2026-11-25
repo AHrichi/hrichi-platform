@@ -25,6 +25,14 @@
             (changed)="setHub($event)"
           />
           <figcaption>{{ t().calc.dragHint }}</figcaption>
+        } @else if (tab() === 'solar') {
+          <sc-month-bars
+            [series]="solarSeries()"
+            unit="MWh"
+            [digits]="1"
+            [ariaLabel]="solarAlt()"
+          />
+          <figcaption>{{ t().energy.solarCaption }}</figcaption>
         } @else if (tab() === 'cooling') {
           <sc-month-bars
             [series]="coolSeries()"
@@ -89,6 +97,31 @@
             [values]="hubParams()"
             (changed)="setHub($event)"
           />
+        } @else if (tab() === 'solar') {
+          <div class="actions">
+            <button type="button" class="chip" (click)="takeSiteLoads()">
+              {{ t().energy.solarTakeLoads }}
+            </button>
+          </div>
+          <sc-field-grid
+            [specs]="solarFields()"
+            [values]="solarParams()"
+            (changed)="setSolar($event)"
+          >
+            <label class="select">
+              <span>{{ t().water.climate }}</span>
+              <select (change)="setSolarClimate(value($event))">
+                @for (c of climates; track c.id) {
+                  <option
+                    [value]="c.id"
+                    [selected]="solarParams().climateId === c.id"
+                  >
+                    {{ c.name }} ({{ c.country }})
+                  </option>
+                }
+              </select>
+            </label>
+          </sc-field-grid>
         } @else if (tab() === 'cooling') {
           <sc-field-grid
             [specs]="coolFields()"
@@ -211,6 +244,99 @@
                       <td>{{ i18n.num(h.fromBufferKw, 0) }}</td>
                       <td>{{ i18n.num(h.boilerKw, 0) }}</td>
                       <td>{{ i18n.num(h.bufferKwh, 0) }}</td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </details>
+        } @else if (tab() === 'solar') {
+          <div class="results">
+            <ah-metric-card
+              [label]="t().energy.solarYield"
+              [value]="i18n.num(solar().yieldMwh, 0)"
+              unit="MWh"
+              variant="accent"
+              [hint]="
+                i18n.num(solar().specificKwhKwp, 0) +
+                ' kWh/kWp · ' +
+                i18n.num(solarParams().peakKw, 0) +
+                ' kWp'
+              "
+            />
+            <ah-metric-card
+              [label]="t().energy.solarSelfUse"
+              [value]="i18n.num(solar().selfUsePct, 0)"
+              unit="%"
+              [hint]="
+                t().energy.solarFraction(i18n.num(solar().solarFractionPct, 0))
+              "
+            />
+            <ah-metric-card
+              [label]="t().energy.solarExport"
+              [value]="i18n.num(solar().exportMwh, 0)"
+              unit="MWh"
+            />
+            <ah-metric-card
+              [label]="t().energy.solarSavings"
+              [value]="i18n.money(solar().netSavingsYear, currency())"
+            />
+            <ah-metric-card
+              [label]="t().energy.solarPayback"
+              [value]="
+                solar().paybackYears === null
+                  ? t().energy.solarNever
+                  : i18n.num(solar().paybackYears ?? 0, 1)
+              "
+              [unit]="
+                solar().paybackYears === null ? '' : t().energy.solarYears
+              "
+              [hint]="i18n.money(solar().capex, currency())"
+            />
+            <ah-metric-card
+              [label]="t().energy.solarCostKwh"
+              [value]="i18n.money(solar().costPerKwh, currency())"
+              unit="/kWh"
+            />
+            <ah-metric-card
+              [label]="t().energy.solarLand"
+              [value]="i18n.num(solar().landHa, 2)"
+              unit="ha"
+              [hint]="i18n.num(solar().moduleM2, 0) + ' m²'"
+            />
+            <ah-metric-card
+              [label]="t().energy.solarCo2"
+              [value]="i18n.num(solar().co2T, 0)"
+              unit="t"
+            />
+          </div>
+          <sc-note-list [notes]="solar().notes" />
+          <details class="table-toggle">
+            <summary>{{ t().calc.table }}</summary>
+            <div
+              class="table-wrap"
+              tabindex="0"
+              role="region"
+              [attr.aria-label]="t().energy.solarTable"
+            >
+              <table>
+                <thead>
+                  <tr>
+                    <th scope="col">{{ t().energy.month }}</th>
+                    <th scope="col">{{ t().energy.solarMade }}, kWh</th>
+                    <th scope="col">{{ t().energy.solarUse }}, kWh</th>
+                    <th scope="col">{{ t().energy.solarSelfUse }}, kWh</th>
+                    <th scope="col">h</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (m of solar().months; track m.month) {
+                    <tr>
+                      <th scope="row">{{ i18n.month(m.month) }}</th>
+                      <td>{{ i18n.num(m.pvKwh, 0) }}</td>
+                      <td>{{ i18n.num(m.demandKwh, 0) }}</td>
+                      <td>{{ i18n.num(m.selfKwh, 0) }}</td>
+                      <td>{{ i18n.num(m.dayHours, 1) }}</td>
                     </tr>
                   }
                 </tbody>

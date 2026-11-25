@@ -145,6 +145,20 @@ export const IT: SerraCopy = {
     pumpWm2: 'Pompe dei pannelli o della nebbia',
     emptyFromWeek: 'Serra vuota dalla settimana',
     emptyWeeks: 'Settimane vuota',
+    peakKw: 'Taglia dell’impianto',
+    tiltGainPct: 'Guadagno d’inclinazione sul piano',
+    systemLossPct: 'Perdite di sistema',
+    soilingPct: 'Polvere sui moduli',
+    tempLossPctK: 'Potenza persa per K sopra 25 °C',
+    dayLoadKw: 'Carico del sito di giorno',
+    nightLoadKw: 'Carico del sito di notte',
+    groundCoverPct: 'Terreno coperto dalle file',
+    moduleWm2: 'Potenza del modulo per m²',
+    capexPerKwp: 'Costo installato',
+    omPctYear: 'Manutenzione all’anno',
+    buyPrice: 'Prezzo di rete',
+    exportPrice: 'Prezzo di cessione',
+    lifeYears: 'Vita, anni',
     gridCo2KgKwh: 'CO₂ della rete',
     gasPerM3: 'Gas',
     electricityPerKwh: 'Elettricità acquistata',
@@ -300,6 +314,21 @@ export const IT: SerraCopy = {
       'Prova o scheda del ventilatore alla pressione dei pannelli: circa 0,03–0,04',
     pumpWm2: 'Pompe dei pannelli: circa 0,4 W per m² di suolo',
     emptyWeeks: 'Tra due colture, come nel calendario',
+    peakKw: 'Dimensionato all’inizio sul consumo diurno del sito',
+    tiltGainPct: 'Fisso, inclinato vicino alla latitudine: +10–15 %',
+    systemLossPct: 'Inverter, cavi, disaccoppiamento: 10–15 %',
+    soilingPct: 'Polvere del deserto, pulizia regolare: 3–8 %',
+    tempLossPctK: 'Sulla scheda tecnica: 0,30–0,45',
+    dayLoadKw:
+      'Ventilatori, pompe, osmosi di giorno; all’inizio dal raffrescamento annuo',
+    nightLoadKw: 'Ciò che gira di notte, come l’osmosi',
+    groundCoverPct: 'File distanziate contro l’ombra: 30–50 %',
+    moduleWm2: 'Moduli moderni: 200–230',
+    capexPerKwp: 'Chiedi un preventivo locale',
+    omPctYear: 'Pulizia, manutenzione, assicurazione: 1–2 %',
+    buyPrice: 'La tua tariffa elettrica',
+    exportPrice: '0 se la rete non paga',
+    lifeYears: 'I moduli durano 25–30 anni',
     gridCo2KgKwh: 'Il dato della tua rete; 0,45 è un esempio',
     waterPerM3: 'Acquistata, o il costo pieno della tua acqua di osmosi',
     exportPerKwh: 'Quanto la rete paga l’elettricità della cogenerazione',
@@ -423,6 +452,7 @@ export const IT: SerraCopy = {
   },
   kinds: {
     coolingYear: 'Raffrescamento nell’anno',
+    solarPv: 'Fotovoltaico',
     energy: 'Centrale energetica (cogenerazione)',
     heatReuse: 'Calore dell’acqua raffreddata',
     economics: 'Economia',
@@ -875,6 +905,16 @@ export const IT: SerraCopy = {
       bill: 'La tua tariffa o il tuo fattore, nella valuta del progetto.',
     },
     topics: {
+      solarPv: {
+        title: 'Il fotovoltaico del sito',
+        what: 'I siti del deserto ricevono circa 2.000 kWh di sole per m² all’anno, tra i valori più alti al mondo, e i loro ventilatori, pompe e impianto a osmosi lavorano soprattutto di giorno. La produzione di un impianto segue la radiazione mese per mese, meno perdite, polvere e calore: i moduli perdono lo 0,3–0,45 % della potenza per ogni grado sopra 25 °C, e nelle estati del deserto arrivano a 50–65 °C. Il solare autoconsumato mentre viene prodotto fa risparmiare l’intero prezzo di rete; il resto rende il prezzo di cessione, se c’è.',
+        assumptions: [
+          'Ogni mese è il suo giorno medio di radiazione; nuvole e tempeste di sabbia lo fanno variare.',
+          'Le celle sono 20 K sopra l’aria diurna.',
+          'Il carico diurno è costante nelle ore di luce; i ventilatori hanno il picco d’estate, con il sole, quindi l’autoconsumo è un po’ sottostimato.',
+          'Rientro e costo per kWh senza attualizzazione.',
+        ],
+      },
       coolingEnergy: {
         title: 'L’elettricità del raffrescamento nell’anno',
         what: 'Il raffrescamento a pannello e ventilatore va a elettricità: i ventilatori aspirano 120–150 m³/h d’aria per m² di suolo attraverso pannelli bagnati, e le pompe li tengono umidi. Nell’anno i ventilatori girano solo nelle ore calde, tanto più forte quanto fa più caldo, così il consumo segue il clima. Una serra mediterranea consuma circa 10 kWh/m² all’anno: un riscontro per il dato.',
@@ -1216,12 +1256,33 @@ export const IT: SerraCopy = {
     coolCo2: 'CO₂ della rete all’anno',
     coolHours: 'Ore di raffrescamento',
     coolTable: 'Raffrescamento per mese',
+    solarMade: 'Solare prodotto',
+    solarUse: 'Consumo del sito',
+    solarChartAlt: (place: string, total: string) =>
+      `Produzione solare e consumo del sito mese per mese a ${place}: ${total} MWh solari all’anno.`,
+    solarCaption:
+      'Solo ciò che il sito consuma mentre c’è il sole prende il solare man mano che si produce; il resto va in rete.',
+    solarYield: 'Solare all’anno',
+    solarSpecific: 'Per kWp',
+    solarSelfUse: 'Autoconsumato',
+    solarFraction: (pct: string) => `${pct} % dell’elettricità del sito`,
+    solarExport: 'Ceduto alla rete',
+    solarSavings: 'Risparmiato all’anno',
+    solarPayback: 'Si ripaga in',
+    solarYears: 'anni',
+    solarCostKwh: 'Costo di un kWh solare',
+    solarLand: 'Terreno per le file',
+    solarCo2: 'CO₂ di rete evitata',
+    solarTable: 'Solare per mese',
+    solarTakeLoads: 'Prendi i carichi del sito',
+    solarNever: 'Mai',
     month: 'Mese',
     coolOfBenchmark: 'Dei 10 kWh/m² pubblicati',
     title: 'Energia',
-    lead: 'Una cogenerazione a gas che dà calore, elettricità e CO₂ lungo una giornata d’inverno, un accumulo d’acqua calda per la notte e una caldaia per il resto; e il calore contenuto nell’acqua di pozzo raffreddata.',
+    lead: 'Una cogenerazione a gas che dà calore, elettricità e CO₂ lungo una giornata d’inverno, un accumulo d’acqua calda per la notte e una caldaia per il resto; il calore contenuto nell’acqua di pozzo raffreddata; l’elettricità del raffrescamento nell’anno; e il fotovoltaico del sito.',
     tabs: {
       cooling: 'Raffrescamento nell’anno',
+      solar: 'Fotovoltaico',
       chp: 'Cogenerazione e accumulo',
       reuse: 'Recupero di calore',
     },
@@ -1249,6 +1310,13 @@ export const IT: SerraCopy = {
         'I ventilatori seguono il caldo: f = min(1, (T − avvio) / intervallo)',
       coolYear: 'Anno = Σ giorni × Σ ore di potenza',
       coolCheck: 'Confronto con circa 10 kWh/m² all’anno',
+      solarYield:
+        'Solare = kWp × sole × giorni × inclinazione × (1 − perdite) × (1 − polvere) × calore',
+      solarHeat:
+        'Calore: celle 20 K sopra l’aria diurna, γ perso per K sopra 25 °C',
+      solarSelf: 'Autoconsumo = min(solare, carico diurno × ore di luce)',
+      solarPayback:
+        'Rientro = costo / (bollette evitate + cessione − manutenzione)',
       demand:
         'Fabbisogno = H × (T_set − T_est) − sole, meno lo schermo di notte',
       buffer: 'Accumulo = 1,163 × V × ΔT',
@@ -1777,6 +1845,22 @@ export const IT: SerraCopy = {
       `Ventilatori a ${v['w']} W per m³/h sono usurati o frenati da pannelli sporchi: una prova e pannelli puliti abbassano la bolletta.`,
     'coolYear.airflow': (v) =>
       `${v['q']} m³/h per m² è fuori dai consueti 120–150 per pannello e ventilatore.`,
+    'solar.range': (v) =>
+      `${v['kwh']} kWh per kWp all’anno: nell’intervallo che gli atlanti solari danno per i margini del deserto (${v['low']}–${v['high']}).`,
+    'solar.outside': (v) =>
+      `${v['kwh']} kWh per kWp all’anno: fuori dall’intervallo del deserto (${v['low']}–${v['high']}); controlla clima, inclinazione e perdite.`,
+    'solar.heat': (v) =>
+      `A ${v['month']} il calore toglie il ${v['pct']} % ai moduli: montali con aria dietro e tienili puliti.`,
+    'solar.export': (v) =>
+      `Solo il ${v['pct']} % del solare è autoconsumato; ${v['mwh']} MWh all’anno vanno in rete. Fai girare osmosi e pompe di giorno, o riduci l’impianto.`,
+    'solar.payback': (v) =>
+      `Si ripaga in circa ${v['years']} anni dei suoi ${v['life']}.`,
+    'solar.noPayback': (v) =>
+      `Servono ${v['years']} anni per ripagarlo, più della sua vita di ${v['life']} anni: controlla i prezzi.`,
+    'solar.never': () =>
+      'A questi prezzi l’impianto non si ripaga mai: ciò che fa risparmiare non copre la manutenzione.',
+    'solar.dust': (v) =>
+      `${v['pct']} % perso per la polvere: pulisci i moduli più spesso, ogni settimana nelle stagioni di sabbia.`,
     'coolYear.peakMonth': (v) =>
       `${v['month']} prende il ${v['pct']} % dell’elettricità di raffrescamento dell’anno.`,
     'data.vpdBand': (v) =>

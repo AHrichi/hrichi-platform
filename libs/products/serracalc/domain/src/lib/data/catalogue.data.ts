@@ -162,6 +162,21 @@ export function defaultFuelPrice(fuel: FuelType, currency: Currency): number {
   return FUEL_PRICES[currency][fuel];
 }
 
+/**
+ * Example installed cost of a ground-mounted array per kWp (modules,
+ * inverters, mounting, cabling, build), by currency: about 0.65 €/Wp in
+ * 2026. Every screen asks for a real quote.
+ */
+const SOLAR_CAPEX_PER_KWP: Record<Currency, number> = {
+  TND: 2200,
+  EUR: 650,
+  USD: 700,
+};
+
+export function defaultSolarCapex(currency: Currency): number {
+  return SOLAR_CAPEX_PER_KWP[currency];
+}
+
 /** Example price of liquid CO₂ per kg; every screen asks for the real one. */
 const CO2_PRICES: Record<Currency, number> = { TND: 0.5, EUR: 0.15, USD: 0.16 };
 
