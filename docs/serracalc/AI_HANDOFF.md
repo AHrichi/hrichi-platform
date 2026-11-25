@@ -2,7 +2,7 @@
 
 A briefing for whichever AI agent or IDE picks up SerraCalc, the greenhouse heat, water and climate engineering app. It assumes no memory of earlier sessions. Read it top to bottom before touching code; [AGENTS.md](../../AGENTS.md) has the protocol, [ADR-0027](../adr/0027-serracalc.md) the decisions.
 
-Last updated 2026-11-25: **S1–S3, the parity work, the greenhouse-manager spec and its last three gaps are on `main` (PRs #35, #37, #38, #39). The sodium and chloride flush limits now read in the drain (the root zone) instead of the feed, as the owner decided: [PR #40](https://github.com/AHrichi/hrichi-platform/pull/40), `claude/serracalc-root-zone-limits`. The owner's UI requests are done on `claude/serracalc-ui-polish` (built on PR #40): a floating header, a language menu, sections that fold, formulas laid out as maths (MathML) and 25 real-life photos from Wikimedia Commons on the Science page (§5, §6).** The plan is §7; the decisions are [ADR-0029](../adr/0029-serracalc-greenhouse-manager.md) and its addendum.
+Last updated 2026-11-25: **S1–S3, the parity work, the greenhouse-manager spec and its last three gaps are on `main` (PRs #35, #37, #38, #39). The sodium and chloride flush limits now read in the drain (the root zone) instead of the feed, as the owner decided: [PR #40](https://github.com/AHrichi/hrichi-platform/pull/40), `claude/serracalc-root-zone-limits`. The owner's UI requests are in [PR #41](https://github.com/AHrichi/hrichi-platform/pull/41) (`claude/serracalc-ui-polish`): a floating header, a language menu, sections that fold, formulas laid out as maths (MathML), 25 real-life photos from Wikimedia Commons that open large with zoom, the standalone app opening offline (service worker), and fixes from a walk through every screen (§5, §6).** The plan is §7; the decisions are [ADR-0029](../adr/0029-serracalc-greenhouse-manager.md) and its addendum.
 
 ## 0. Resume in five minutes
 
@@ -68,6 +68,8 @@ It is **not** the Greenhouse Labor Planner (`product-greenhouse*`, ADR-0026). Ke
 - Folding: a panel, then a reload (remembered); Science's fold all; a contents link that unfolds its topic and scrolls it clear of the header.
 - Formulas: the Science fertigation entry (fractions, subscripts), and the steps on a phone (a long one scrolls and takes focus).
 - All 25 photos load, standalone. A photo opens large (zoom, pan, Escape) and focus returns to it.
+- Offline (Playwright Chromium, production build): the service worker registers; after one visit, /projects, /heating and /science reload with the network off, and a photo comes from the cache.
+- The walk-through, all 16 screens at 375 px in English, Arabic spot checks, and 1280, 1024 and 768 px: the header is one row at every width; the calendar reads at phone size and opens at today.
 
 **Not verified yet (greenhouse manager):** the photos inside the portfolio (they need the remote's origin in `img-src`, which the e2e's headers have); MathML on a real Android phone (Chrome draws it, but fonts vary); a real phone; the Italian, German and Arabic wording by native speakers; every formula against a published worked example beyond the spec's benchmarks; "acidified refill" is our reading of the Hydrotool strategy (the paper wasn't read). The EC ceiling (4.5) is still compared with the feed in the loop, but with the drain EC in Live data and in the "drain EC high" note; at the sample's 30 % drain the drain is already 4.8 (§6).
 
@@ -175,21 +177,35 @@ Written before any change on `feat/serracalc-parity`; the last column says what 
   - **Formulas:** `sc-formula` (`ui/formula`) parses the plain text (rules at the top of `formula-parse.ts`): a spaced `/` is a fraction, an unspaced `/` stays inline. A test checks that every Science formula parses, so check yours there.
   - **Photos:** in `apps/products/serracalc/web/public/science/`, with credits in `CREDITS.md` there and in `feature/src/lib/science/photos.ts`. They load through `photoUrl()` (`import.meta.url`), because inside the portfolio the app runs from its own origin; the portfolio's CSP `img-src` lists the remotes for this. A new photo needs the owner's OK before downloading, its credit, and a caption in all five languages (`science.photoCaptions`).
 
-## 6. Next step: open the UI polish PR, then merge both
+  - **Offline (standalone):** `build` now runs `ngsw-config` after `build-federation` (as the System Design app does). `build:development` only echoes, and the service worker runs in production builds only. It prefetches all screen code and caches photos as they are seen, so every screen opens offline after one visit. The e2e blocks service workers. The desktop app's browser pane can't register service workers, so check offline with Playwright's Chromium: load, wait for `navigator.serviceWorker.ready`, `context.setOffline(true)`, reload.
+  - **Wide drawings on phones:** `sc.diagram-scroll($min)` keeps a drawing readable and scrolls it sideways under 40rem (used by the calendar and the energy day). The calendar opens scrolled to today.
 
-1. `claude/serracalc-ui-polish` (built on PR #40): open its PR against `main`. It shows PR #40's commits until #40 merges, then only its own.
-2. Once CI passes and the owner merges [PR #40](https://github.com/AHrichi/hrichi-platform/pull/40) and then this one, open the live app at `/apps/serracalc` and check:
-   - the Science page: photos load from the remote inside the portfolio, the formulas, fold all;
+## 6. Next step: merge PR #41 and check it live
+
+1. [PR #41](https://github.com/AHrichi/hrichi-platform/pull/41) (`claude/serracalc-ui-polish`): once CI passes and the owner merges it, open the live app at `/apps/serracalc` and check:
+   - the Science page: photos load from the remote inside the portfolio, zoom, the formulas, fold all;
    - Water supply → Fertigation (flush day, "Na in the drain" chart);
-   - the language menu and the floating header standalone.
+   - standalone: the language menu, the floating header, and opening offline after one visit.
 
    Then update this hand-off.
 
-3. Ask the owner about the EC ceiling: the loop compares 4.5 dS/m with the feed (Hydrotool's example), but Live data and the "drain EC high" note compare it with the drain, which is 4.8 at the sample's 30 % drain. Either give the drain its own limit (a new optional input) or read the ceiling in the drain with a higher default.
-4. A real phone (Android Chrome): drag handles with a finger, the plant cards, a backup shared to Drive, the language menu, folding.
-5. Photos still missing (Commons had none free): hot-water pipes, pad cooling, fogging, a heat buffer, grow lights, CO₂ dosing, a PAR sensor, a lab analysis, a climate computer. The owner's own photos could fill them, with no farm or company names in view.
+2. Ask the owner about the EC ceiling: the loop compares 4.5 dS/m with the feed (Hydrotool's example), but Live data and the "drain EC high" note compare it with the drain, which is 4.8 at the sample's 30 % drain. Either give the drain its own limit (a new optional input) or read the ceiling in the drain with a higher default.
+3. A real phone (Android Chrome): drag handles with a finger, the plant cards, a backup shared to Drive, the language menu, folding, photo zoom, MathML fonts, installing and opening offline.
+4. Photos still missing (Commons had none free): hot-water pipes, pad cooling, fogging, a heat buffer, grow lights, CO₂ dosing, a PAR sensor, a lab analysis, a climate computer. The owner's own photos could fill them, with no farm or company names in view.
 
-Then, from the old plan: pumps and pipes (Hazen–Williams), solar PV, climate for any place (Open-Meteo archive; add it to the CSP `connect-src`), a materials catalogue with prices. A private brand pack for a demo to a named farm, as the Labor Planner has, if the owner wants one.
+**Suggested next features** (from the 2026-11-25 walk-through; the owner picks):
+
+- **"New version" notice:** now that a service worker caches the app, a new version shows only on the next visit after it downloads. Use `SwUpdate.versionUpdates` and offer a reload.
+- **Results in reach on phones:** a slim summary of the screen's key result that stays visible while the inputs are edited. On a phone, the results sit below a long list of inputs.
+- **Undo instead of `confirm()`** when a project or saved result is deleted.
+- **Solar PV for the site:** desert sun against the fans', RO's and pumps' electricity (pairs with cooling over the year and the tariffs).
+- **Pumps and pipes** (Hazen–Williams) for the irrigation mains.
+- **Climate for any place** (Open-Meteo archive; add it to the CSP `connect-src`).
+- **A materials catalogue with prices** (covers, screens).
+- **Compare two projects or scenarios** side by side.
+- **Open any drawing large**, as the photos do, for the 480–560-wide drawings on small phones.
+
+A private brand pack for a demo to a named farm, as the Labor Planner has, if the owner wants one.
 
 ## 7. The greenhouse-manager plan (owner's spec, 2026-11-25)
 
