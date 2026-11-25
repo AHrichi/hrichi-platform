@@ -9,9 +9,9 @@
   class="ah-metric-value-row"
   [attr.title]="value() + (unit() ? ' ' + unit() : '')"
 >
-  <span class="ah-metric-value">{{ value() }}</span>
+  <span class="ah-metric-value" dir="auto">{{ value() }}</span>
   @if (unit()) {
-    <span class="ah-metric-unit">{{ unit() }}</span>
+    <span class="ah-metric-unit" dir="auto">{{ unit() }}</span>
   }
 </div>
 

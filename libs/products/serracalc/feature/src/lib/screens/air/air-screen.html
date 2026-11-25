@@ -301,7 +301,8 @@
                   t().air.cover +
                   ': ' +
                   i18n.num(humidity().coverSurfaceC) +
-                  ' °C'
+                  ' ' +
+                  i18n.unit('°C')
                 "
               />
               <ah-metric-card
@@ -370,7 +371,7 @@
               <table>
                 <thead>
                   <tr>
-                    <th scope="col">°C</th>
+                    <th scope="col">{{ i18n.unit('°C') }}</th>
                     @for (pair of vpd().pairs; track pair.airC) {
                       <th scope="col">{{ pair.airC }}</th>
                     }
@@ -394,7 +395,7 @@
                   {{ i18n.num(stageTargets().dayC.min) }}–{{
                     i18n.num(stageTargets().dayC.max)
                   }}
-                  °C
+                  {{ i18n.unit('°C') }}
                 </dd>
               </div>
               <div>
@@ -403,7 +404,7 @@
                   {{ i18n.num(stageTargets().nightC.min) }}–{{
                     i18n.num(stageTargets().nightC.max)
                   }}
-                  °C
+                  {{ i18n.unit('°C') }}
                 </dd>
               </div>
               <div>

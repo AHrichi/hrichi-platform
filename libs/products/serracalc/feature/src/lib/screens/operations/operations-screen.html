@@ -295,7 +295,7 @@
           <h3 id="sc-ops-heat">{{ t().ops.heatTitle }}</h3>
           <div class="form">
             <label class="select">
-              <span>{{ t().fields['airC'] }} °C</span>
+              <span>{{ t().fields['airC'] }} {{ i18n.unit('°C') }}</span>
               <input
                 type="number"
                 inputmode="decimal"
@@ -321,8 +321,8 @@
           >
             <span class="verdict-status">{{ t().ops.risks[heat().risk] }}</span>
             <strong
-              >{{ t().ops.heatIndex }}
-              {{ i18n.num(heat().heatIndexC) }} °C</strong
+              >{{ t().ops.heatIndex }} {{ i18n.num(heat().heatIndexC) }}
+              {{ i18n.unit('°C') }}</strong
             >
           </div>
           <dl class="split">
@@ -342,7 +342,10 @@
           <ul class="plan" role="list">
             @for (b of bands; track b.id) {
               <li [attr.data-risk]="b.id" [class.is-now]="heat().risk === b.id">
-                <strong>{{ t().ops.risks[b.id] }} · {{ b.from }} °C+</strong>
+                <strong
+                  >{{ t().ops.risks[b.id] }} · {{ b.from }}
+                  {{ i18n.unit('°C+') }}</strong
+                >
                 <span>{{ t().ops.advice[b.id] }}</span>
               </li>
             }

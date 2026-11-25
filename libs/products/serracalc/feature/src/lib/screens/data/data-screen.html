@@ -134,7 +134,11 @@
               "
               unit="°C"
               [hint]="
-                i18n.num(dayBand().min) + '–' + i18n.num(dayBand().max) + ' °C'
+                i18n.num(dayBand().min) +
+                '–' +
+                i18n.num(dayBand().max) +
+                ' ' +
+                i18n.unit('°C')
               "
             />
             <ah-metric-card

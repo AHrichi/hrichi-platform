@@ -682,6 +682,17 @@
   }
 }
 
+// Arabic is cursive: the shell's mono, letter-spaced labels go sans.
+.serra:lang(ar) {
+  .brand-text small,
+  .week-label,
+  .rail-title {
+    font-family: var(--font-family-sans);
+    font-size: var(--font-size-100);
+    letter-spacing: normal;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .tool,
   .langs button,

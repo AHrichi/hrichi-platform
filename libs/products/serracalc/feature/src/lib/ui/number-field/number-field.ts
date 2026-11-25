@@ -72,9 +72,10 @@ export class NumberField {
     const button = this.button()?.nativeElement;
     if ((event as ToggleEvent).newState !== 'open' || !button) return;
     const rect = button.getBoundingClientRect();
-    const width = Math.min(TIP_WIDTH, window.innerWidth - 16);
+    const page = document.documentElement.clientWidth;
+    const width = Math.min(TIP_WIDTH, page - 16);
     const start = this.i18n.isRtl() ? rect.left : rect.right - width;
-    const left = Math.max(8, Math.min(start, window.innerWidth - width - 8));
+    const left = Math.max(8, Math.min(start, page - width - 8));
     tip.style.top = `${rect.bottom + 6}px`;
     tip.style.left = `${left}px`;
   }

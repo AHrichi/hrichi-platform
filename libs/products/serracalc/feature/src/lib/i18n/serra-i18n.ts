@@ -36,6 +36,10 @@ const LOCALES: Record<SiteLanguage, string> = {
   de: 'de-DE',
 };
 
+/** Left-to-right isolate and its pop, to keep a unit whole in Arabic. */
+const LRI = String.fromCharCode(0x2066);
+const PDI = String.fromCharCode(0x2069);
+
 /** Note values that hold a month (0–11), written as the month's name. */
 const MONTH_VALUES = new Set(['month', 'peak']);
 
@@ -81,6 +85,14 @@ export class SerraI18n {
    */
   word(text: string): string {
     return `⁨${text}⁩`;
+  }
+
+  /**
+   * A unit (°C, m³/d…) kept whole inside right-to-left text: without the
+   * isolate, Arabic turns "°C" into "C°".
+   */
+  unit(text: string): string {
+    return `${LRI}${text}${PDI}`;
   }
 
   date(iso: string): string {

@@ -2,7 +2,7 @@
   <label [for]="id">{{ label() }}</label>
   <span class="tail">
     @if (unit()) {
-      <span class="unit">{{ unit() }}</span>
+      <span class="unit" dir="auto">{{ unit() }}</span>
     }
     @if (info(); as i) {
       <button

@@ -33,6 +33,14 @@
   font-weight: var(--font-weight-medium);
   letter-spacing: 0.08em;
   text-transform: uppercase;
+
+  // Arabic is cursive: spacing the letters breaks the joins, and the mono
+  // face has no Arabic glyphs.
+  &:lang(ar) {
+    font-family: var(--font-family-sans);
+    font-size: var(--font-size-100);
+    letter-spacing: normal;
+  }
 }
 
 @mixin panel-title {

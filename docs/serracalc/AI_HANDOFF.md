@@ -55,7 +55,9 @@ It is **not** the Greenhouse Labor Planner (`product-greenhouse*`, ADR-0026). Ke
 
 **Verified** (2026-11-25, final): the SerraCalc e2e, **16 of 16** with `CI=1`, with every new screen in `SCREENS` (axe on 25 screens in light and dark at 375 and 1280 px); Live data with the sample week (charts, 15 alerts) and Operations refusing a WHO Ib spray, in the browser.
 
-**Not verified yet (greenhouse manager):** Arabic RTL of the new drawings and popovers, phones, the Italian, German and Arabic wording by native speakers, every formula against a published worked example beyond the spec's benchmarks.
+**Verified** (2026-11-25, Arabic RTL, dev build at the pane width and 1280 px): the rail on the right and mirrored panels on Site, Water supply, Calendar, Cooling, Science; drawings kept left to right with Arabic labels in natural reading order (Chrome's SVG text ignores the isolates `i18n.word()` adds, and that order is the right one for readers, so it stays); fixed here: "°C" shown as "C°" (result cards and field units now `dir="auto"`, the screens' HTML uses `i18n.unit()`, the Arabic copy wraps °C in isolates), the fog cycle "60 / 28" reversing, Arabic eyebrows in a monospace face with letter spacing (now sans, no spacing, by `:lang(ar)`), the ⓘ popover clipped by the scrollbar, the RO feed label over the pump.
+
+**Not verified yet (greenhouse manager):** phones, the Italian, German and Arabic wording by native speakers, every formula against a published worked example beyond the spec's benchmarks.
 
 ### Parity audit (2026-11-25, against LuxPath and the other apps)
 
@@ -150,10 +152,10 @@ Written before any change on `feat/serracalc-parity`; the last column says what 
 - `/apps/greenhouse-energy` redirects to `/apps/serracalc`.
 - Icons: `node tools/scripts/generate-app-icons.mjs serracalc`.
 
-## 6. Next step: verify, then open the pull request
+## 6. Next step: the deploy, then a phone check
 
-1. In the browser: Arabic RTL on Site, Energy, Live data and the ⓘ popovers, and a phone width.
-2. Open the pull request to `main` (it deploys SerraCalc) and update this hand-off.
+1. A phone width in the browser (375 px), and Arabic on Energy, Live data and Operations (the patterns are fixed, those screens were not looked at one by one).
+2. PR #38 is open with auto-merge on: once CI passes it merges and deploys. Then open the live app at `/apps/serracalc` and update this hand-off.
 
 Then, from the old plan: pumps and pipes (Hazen–Williams), solar PV, climate for any place (Open-Meteo archive; add it to the CSP `connect-src`), a materials catalogue with prices. A private brand pack for a demo to a named farm, as the Labor Planner has, if the owner wants one.
 

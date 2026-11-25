@@ -244,7 +244,9 @@
                       <th scope="col">{{ t().water.table.month }}</th>
                       <th scope="col">{{ t().heating.night }} (MWh)</th>
                       <th scope="col">{{ t().heating.day }} (MWh)</th>
-                      <th scope="col">°C {{ t().heating.night }}</th>
+                      <th scope="col">
+                        {{ i18n.unit('°C') }} {{ t().heating.night }}
+                      </th>
                     </tr>
                   </thead>
                   <tbody>

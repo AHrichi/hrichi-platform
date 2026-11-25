@@ -123,7 +123,11 @@
               unit="°C"
               variant="accent"
               [hint]="
-                t().cooling.ventOnly + ': ' + i18n.num(fog().ventOnlyC) + ' °C'
+                t().cooling.ventOnly +
+                ': ' +
+                i18n.num(fog().ventOnlyC) +
+                ' ' +
+                i18n.unit('°C')
               "
             />
             <ah-metric-card
@@ -181,7 +185,11 @@
               unit="°C"
               variant="accent"
               [hint]="
-                t().cooling.wetBulb + ': ' + i18n.num(pad().wetBulbC) + ' °C'
+                t().cooling.wetBulb +
+                ': ' +
+                i18n.num(pad().wetBulbC) +
+                ' ' +
+                i18n.unit('°C')
               "
             />
             <ah-metric-card
