@@ -43,6 +43,27 @@ It is **not** the Greenhouse Labor Planner (`product-greenhouse*`, ADR-0026). Ke
 | S5 report, backups, any-place climate | Planned.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | S6 shell e2e and go-live polish       | **Partly done.** `shell-e2e/src/serracalc.spec.ts` (7 tests): samples and the heating result, a drawing handle by keyboard, save and "Open & edit", axe on the five calculators, Arabic RTL with drawings kept LTR, the catalog link and the redirect inside the portfolio under the production CSP. Standalone, the shell renders `<main>` and a hidden `<h1>` (the portfolio provides both when embedded). Left: phone testing.                                                                                                                                                                                                         |
 
+### Parity audit (2026-11-25, against LuxPath and the other apps)
+
+Written before any change on `feat/serracalc-parity`. The "Plan" column says what that branch does with each gap.
+
+| Area                  | Gap found                                                                                                                                | Plan                                                         |
+| --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
+| Languages             | Only FR, AR, EN. Italian and German readers get English words and `en-GB` numbers; the standalone switch offers three languages.         | Full typed IT and DE copies, `it-IT` / `de-DE` locales.      |
+| Typed copies          | `fields`, `hints` and `notes` are `Record<string, …>`, so a copy missing a key still compiles.                                           | A spec that checks every language has every key of EN.       |
+| Shell theme           | Tokens follow `:root[data-theme]` live, but standalone there is no theme switch (System Design has one), so only the OS setting applies. | A light/dark button next to the language switch, standalone. |
+| Sunlight mode         | Works, but forgets the choice on reload.                                                                                                 | Keep it in `localStorage`.                                   |
+| Scrolling tables      | `.table-wrap` scrolls sideways on phones but can't take focus, so keyboard users can't scroll it (axe `scrollable-region-focusable`).    | `tabindex="0"`, `role="region"` and a label.                 |
+| Dead style            | `chip-row` mixin in `_serra.scss` is unused.                                                                                             | Remove.                                                      |
+| axe coverage          | The e2e scans the five calculators in light, at desktop width only.                                                                      | Every screen, light and dark, phone and desktop.             |
+| Backups               | None: projects live in this browser's IndexedDB only. LuxPath has JSON backup, restore and Web Share.                                    | `createBackup` / `readBackup` in the domain, a backup panel. |
+| Report                | None. LuxPath prints a project report.                                                                                                   | A Report screen that prints the project and its results.     |
+| Guide                 | Present (tools, sources, limits).                                                                                                        | Add the new Report and backups to it.                        |
+| Empty start, samples  | Present: starts empty, samples on request.                                                                                               | Nothing to do.                                               |
+| Save copy / update    | Present (`SaveBar`: update, save as a copy, stop editing).                                                                               | Nothing to do.                                               |
+| Map or place picking  | None: nine fixed climates. LuxPath has a map picker.                                                                                     | Deferred with S5 "climate for any place" (see §6).           |
+| S4 and S5 calculators | Fertigation, pumps and pipes, solar PV, materials with prices, climate for any place: not built.                                         | Deferred: each is its own phase (see §6).                    |
+
 **Verified** (2026-11-24, standalone build in the browser):
 
 - the empty start, "Load sample projects", the project card and the links to each tool;
