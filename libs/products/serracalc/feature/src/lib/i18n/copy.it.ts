@@ -22,6 +22,8 @@ export const IT: SerraCopy = {
       'Uno strumento di progettazione: verifica i risultati con un tecnico abilitato e con i dati dei fornitori prima di costruire.',
   },
   nav: {
+    operations: 'Gestione',
+    data: 'Dati in diretta',
     site: 'Sito',
     energy: 'Energia',
     supply: 'Acqua irrigua',
@@ -39,6 +41,7 @@ export const IT: SerraCopy = {
     more: 'Altro',
   },
   navGroups: {
+    operate: 'Gestire',
     plan: 'Pianificare',
     climate: 'Controllo del clima',
     water: 'Acqua',
@@ -1184,6 +1187,156 @@ export const IT: SerraCopy = {
       payback: 'Rientro = costruzione / margine',
     },
   },
+  ops: {
+    title: 'Gestione',
+    lead: 'Il registro colturale, il giro d’igiene del giorno, la manutenzione degli impianti e un piano caldo per chi lavora dentro.',
+    noProject: 'Apri un progetto per tenere il suo registro.',
+    tabs: {
+      log: 'Registro',
+      hygiene: 'Igiene',
+      maintenance: 'Manutenzione',
+      heat: 'Stress da caldo',
+    },
+    newEntry: 'Nuova voce',
+    date: 'Data',
+    kind: 'Tipo',
+    kinds: {
+      scouting: 'Monitoraggio',
+      release: 'Lancio di ausiliari',
+      spray: 'Trattamento',
+      maintenance: 'Manutenzione',
+      hygiene: 'Controllo igiene',
+      harvest: 'Raccolta',
+    },
+    subjects: {
+      scouting: 'Parassita o malattia visti, e dove',
+      release: 'Ausiliare lanciato',
+      spray: 'Prodotto distribuito',
+      maintenance: 'Cosa è stato fatto',
+      hygiene: 'Lista di controllo',
+      harvest: 'Compartimento o file',
+    },
+    task: 'Compito',
+    amount: 'Quantità',
+    unit: 'Unità',
+    who: 'Classe OMS',
+    note: 'Nota',
+    add: 'Aggiungi al registro',
+    entries: (n: string) => `Voci del registro: ${n}`,
+    all: 'Tutto',
+    empty: 'Ancora niente nel registro.',
+    remove: (what: string) => `Elimina «${what}»`,
+    checklist: 'Lista d’igiene',
+    saveChecklist: (done: string, total: string) =>
+      `Salva la lista di oggi (${done} su ${total})`,
+    recent: 'Ultime liste',
+    every: 'Ogni',
+    last: 'Ultima volta',
+    due: 'Scadenza',
+    state: 'Stato',
+    done: 'Fatto oggi',
+    days: 'giorni',
+    states: {
+      ok: 'In regola',
+      soon: 'A breve',
+      overdue: 'In ritardo',
+    },
+    overdue: (n: string) => `Compiti in ritardo: ${n}`,
+    tasks: {
+      filters: 'Pulire i filtri dell’irrigazione',
+      nozzles: 'Controllare gli ugelli della nebbia',
+      pads: 'Pulire e lavare i pannelli',
+      sensors: 'Tarare i sensori di clima ed EC',
+      pumps: 'Manutenzione delle pompe',
+      fans: 'Controllare ventilatori e cinghie',
+      drainDisinfection: 'Controllare la disinfezione del drenaggio',
+      roMembranes: 'Pulire le membrane dell’osmosi (CIP)',
+      chp: 'Manutenzione della cogenerazione',
+    },
+    hygiene: {
+      footbath: 'Pediluvi riempiti',
+      handwash: 'Lavaggio mani e guanti all’ingresso',
+      clothing: 'Indumenti puliti per questo compartimento',
+      tools: 'Coltelli e attrezzi disinfettati',
+      visitors: 'Visitatori registrati e informati',
+      waste: 'Residui vegetali portati via e coperti',
+      doors: 'Porte e reti antinsetto chiuse',
+    },
+    heatTitle: 'Stress da caldo al lavoro',
+    heatIndex: 'Indice di calore',
+    rest: 'Pausa ogni ora',
+    water: 'Acqua ogni ora',
+    risks: {
+      none: 'Nessun rischio',
+      caution: 'Attenzione',
+      extremeCaution: 'Massima attenzione',
+      danger: 'Pericolo',
+      extremeDanger: 'Pericolo estremo',
+    },
+    plan: 'Il piano caldo',
+    advice: {
+      caution: 'Acqua a portata di mano; lavori pesanti al mattino presto.',
+      extremeCaution:
+        'Pausa di 20 min ogni ora all’ombra; 0,75 L d’acqua all’ora.',
+      danger:
+        'Pausa di 40 min ogni ora; niente lavori pesanti dentro; i lavoratori si controllano a vicenda.',
+      extremeDanger: 'Sospendere il lavoro in serra.',
+    },
+    heatSource:
+      'Indice di calore del servizio meteorologico statunitense (Rothfusz); lavoro e pause secondo le indicazioni comuni di salute sul lavoro. Un aiuto alla pianificazione, non un parere medico.',
+  },
+  data: {
+    title: 'Dati in diretta',
+    lead: 'Le letture dei tuoi sensori o datalogger, importate in CSV e confrontate con ciò che si aspettano i calcolatori: VPD per la fase, temperature di giorno e di notte, drenaggio; VPD per ora; e allarmi.',
+    import: 'Importa letture',
+    importHint:
+      'Un CSV con una colonna del tempo e a scelta: temperatura, UR, PAR, EC, pH, drenaggio %, EC del drenaggio, temperatura e UR esterne. Virgole o punti e virgola, decimali con punto o virgola.',
+    file: 'File CSV',
+    paste: 'Oppure incollalo qui',
+    importPasted: 'Importa il testo incollato',
+    sample: 'Carica una settimana di esempio',
+    download: 'Scarica il CSV di esempio',
+    clear: 'Cancella le letture',
+    noProject: 'Apri un progetto per tenere le sue letture.',
+    imported: (n: string, skipped: string) =>
+      `Importate ${n} letture; ${skipped} righe saltate.`,
+    errors: {
+      empty: 'Il file è vuoto.',
+      noTime: 'Nessuna colonna del tempo trovata.',
+      noData: 'Nessuna lettura trovata.',
+    },
+    targets: 'Confronta con',
+    summary: 'Misurato contro atteso',
+    empty:
+      'Ancora nessuna lettura: importa un CSV o carica la settimana di esempio.',
+    period: (from: string, to: string, n: string, step: string) =>
+      `Da ${from} a ${to}: ${n} letture, ogni ${step} min.`,
+    vpdInBand: 'VPD nella sua fascia',
+    dayMean: 'Giorni, media',
+    nightMean: 'Notti, media',
+    drainMean: 'Drenaggio, media',
+    plan: 'previsto',
+    alertCount: 'Allarmi',
+    byHour: 'Per ora del giorno',
+    vpdByHour: 'VPD per ora, kPa (verde: fascia diurna)',
+    tempByHour: 'Temperatura per ora, °C (verde: fascia diurna)',
+    alertsTitle: 'Allarmi',
+    noAlerts: 'Nessun allarme in queste letture.',
+    alerts: {
+      vpdLow: 'VPD sotto 0,3 kPa: rischio di malattie',
+      vpdHigh: 'VPD sopra 1,5 kPa di giorno',
+      heatStress: 'Stress da caldo per i lavoratori',
+      heatDanger: 'Pericolo caldo per i lavoratori',
+      drainEcHigh: 'EC del drenaggio al tetto di scarico',
+      tempLow: 'Troppo freddo per la fase',
+      tempHigh: 'Troppo caldo per la fase',
+      phOut: 'pH fuori da 5,2–6,8',
+    },
+    alertDetail: (n: string, worst: string) =>
+      `${n} letture, peggiore ${worst}`,
+    days: 'Giorno per giorno',
+    outOfBand: 'VPD fuori fascia',
+  },
   calc: {
     science: 'La scienza dietro il calcolo',
     results: 'Risultati',
@@ -1405,6 +1558,16 @@ export const IT: SerraCopy = {
         title: 'Centrale energetica',
         body: 'Una giornata d’inverno ora per ora: il fabbisogno di calore della serra, una cogenerazione a gas che gira di giorno per la sua CO₂, l’accumulo che porta il calore nella notte e la caldaia per il resto; gas, elettricità e costi. E il calore contenuto nell’acqua di pozzo raffreddata.',
       },
+      {
+        id: 'operations',
+        title: 'Gestione',
+        body: 'Un registro di monitoraggi, lanci di ausiliari, trattamenti (classi OMS Ia e Ib rifiutate), manutenzioni e raccolte; la lista d’igiene del giorno; il calendario di manutenzione con ciò che scade o è in ritardo; e un piano contro lo stress da caldo per i lavoratori dall’indice di calore.',
+      },
+      {
+        id: 'data',
+        title: 'Dati in diretta',
+        body: 'Importa il CSV di un datalogger, o carica una settimana di esempio, e confrontalo con ciò che si aspettano gli strumenti: VPD nella sua fascia, temperature di giorno e di notte, drenaggio; VPD e temperatura per ora; e allarmi per rischio di malattie, stress da caldo, EC del drenaggio, temperatura e pH.',
+      },
     ],
     sourcesTitle: 'Fonti',
     sources: [
@@ -1430,6 +1593,32 @@ export const IT: SerraCopy = {
   },
 
   notes: {
+    'data.vpdBand': (v) =>
+      `Il VPD è rimasto nella sua fascia il ${v['pct']} % del tempo.`,
+    'data.dayOk': (v) =>
+      `I giorni hanno fatto in media ${v['t']} °C, dentro ${v['min']}–${v['max']} °C.`,
+    'data.dayOff': (v) =>
+      `I giorni hanno fatto in media ${v['t']} °C, fuori da ${v['min']}–${v['max']} °C.`,
+    'data.nightOk': (v) =>
+      `Le notti hanno fatto in media ${v['t']} °C, dentro ${v['min']}–${v['max']} °C.`,
+    'data.nightOff': (v) =>
+      `Le notti hanno fatto in media ${v['t']} °C, fuori da ${v['min']}–${v['max']} °C.`,
+    'data.drain': (v) =>
+      `Il drenaggio è stato in media del ${v['pct']} % contro un ${v['plan']} % previsto.`,
+    'data.alerts': (v) => `${v['n']} allarmi: vedi l’elenco qui sotto.`,
+    'data.noAlerts': (v) => `Nessun allarme (${v['n']}).`,
+    'ops.bannedSpray': (v) =>
+      `I prodotti di classe OMS ${v['cls']} non sono ammessi: scegli un altro prodotto.`,
+    'heat.none': (v) =>
+      `Indice di calore ${v['hi']} °C: nessun rischio (${v['rest']} min di pausa, ${v['water']} L all’ora).`,
+    'heat.caution': (v) =>
+      `Indice di calore ${v['hi']} °C: attenzione. Pausa di ${v['rest']} min ogni ora e bere ${v['water']} L all’ora.`,
+    'heat.extremeCaution': (v) =>
+      `Indice di calore ${v['hi']} °C: massima attenzione. Pausa di ${v['rest']} min ogni ora e bere ${v['water']} L all’ora.`,
+    'heat.danger': (v) =>
+      `Indice di calore ${v['hi']} °C: pericolo. Pausa di ${v['rest']} min ogni ora, bere ${v['water']} L all’ora, niente lavori pesanti.`,
+    'heat.extremeDanger': (v) =>
+      `Indice di calore ${v['hi']} °C: pericolo estremo. Sospendere il lavoro dentro (${v['rest']} min di pausa, ${v['water']} L all’ora).`,
     'energy.share': (v) =>
       `La cogenerazione copre il ${v['pct']} % del calore del giorno; la caldaia aggiunge ${v['boiler']} MWh.`,
     'energy.dump': (v) =>

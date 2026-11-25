@@ -22,6 +22,8 @@ export const DE: SerraCopy = {
       'Eine Planungshilfe: Prüfen Sie die Ergebnisse mit einer Fachingenieurin oder einem Fachingenieur und den Daten der Lieferanten, bevor Sie bauen.',
   },
   nav: {
+    operations: 'Betrieb',
+    data: 'Live-Daten',
     site: 'Standort',
     energy: 'Energie',
     supply: 'Wasserversorgung',
@@ -39,6 +41,7 @@ export const DE: SerraCopy = {
     more: 'Mehr',
   },
   navGroups: {
+    operate: 'Betreiben',
     plan: 'Planen',
     climate: 'Klimaregelung',
     water: 'Wasser',
@@ -1173,6 +1176,155 @@ export const DE: SerraCopy = {
       payback: 'Amortisation = Bau / Marge',
     },
   },
+  ops: {
+    title: 'Betrieb',
+    lead: 'Das Kulturtagebuch, der tägliche Hygienerundgang, die Wartung der Anlagen und ein Hitzeplan für die Menschen, die drinnen arbeiten.',
+    noProject: 'Öffnen Sie ein Projekt, um sein Tagebuch zu führen.',
+    tabs: {
+      log: 'Tagebuch',
+      hygiene: 'Hygiene',
+      maintenance: 'Wartung',
+      heat: 'Hitzebelastung',
+    },
+    newEntry: 'Neuer Eintrag',
+    date: 'Datum',
+    kind: 'Art',
+    kinds: {
+      scouting: 'Kontrolle',
+      release: 'Nützlingsfreilassung',
+      spray: 'Spritzung',
+      maintenance: 'Wartung',
+      hygiene: 'Hygienekontrolle',
+      harvest: 'Ernte',
+    },
+    subjects: {
+      scouting: 'Gesehener Schädling oder Krankheit, und wo',
+      release: 'Freigelassener Nützling',
+      spray: 'Gespritztes Mittel',
+      maintenance: 'Was gemacht wurde',
+      hygiene: 'Checkliste',
+      harvest: 'Abteilung oder Reihen',
+    },
+    task: 'Aufgabe',
+    amount: 'Menge',
+    unit: 'Einheit',
+    who: 'WHO-Klasse',
+    note: 'Notiz',
+    add: 'Ins Tagebuch eintragen',
+    entries: (n: string) => `Tagebucheinträge: ${n}`,
+    all: 'Alle',
+    empty: 'Noch nichts eingetragen.',
+    remove: (what: string) => `„${what}“ löschen`,
+    checklist: 'Hygiene-Checkliste',
+    saveChecklist: (done: string, total: string) =>
+      `Checkliste von heute speichern (${done} von ${total})`,
+    recent: 'Letzte Checklisten',
+    every: 'Alle',
+    last: 'Zuletzt',
+    due: 'Fällig',
+    state: 'Status',
+    done: 'Heute erledigt',
+    days: 'Tage',
+    states: {
+      ok: 'Im Plan',
+      soon: 'Bald fällig',
+      overdue: 'Überfällig',
+    },
+    overdue: (n: string) => `Überfällige Aufgaben: ${n}`,
+    tasks: {
+      filters: 'Bewässerungsfilter reinigen',
+      nozzles: 'Nebeldüsen prüfen',
+      pads: 'Pads reinigen und spülen',
+      sensors: 'Klima- und EC-Sensoren kalibrieren',
+      pumps: 'Pumpen warten',
+      fans: 'Ventilatoren und Riemen prüfen',
+      drainDisinfection: 'Draindesinfektion prüfen',
+      roMembranes: 'UO-Membranen reinigen (CIP)',
+      chp: 'BHKW warten',
+    },
+    hygiene: {
+      footbath: 'Fußbäder aufgefüllt',
+      handwash: 'Händewaschen und Handschuhe an der Tür',
+      clothing: 'Saubere Kleidung für diese Abteilung',
+      tools: 'Messer und Werkzeuge desinfiziert',
+      visitors: 'Besucher erfasst und eingewiesen',
+      waste: 'Pflanzenabfälle entfernt und abgedeckt',
+      doors: 'Türen und Insektennetze geschlossen',
+    },
+    heatTitle: 'Hitzebelastung bei der Arbeit',
+    heatIndex: 'Hitzeindex',
+    rest: 'Pause je Stunde',
+    water: 'Wasser je Stunde',
+    risks: {
+      none: 'Keine Hitzegefahr',
+      caution: 'Vorsicht',
+      extremeCaution: 'Große Vorsicht',
+      danger: 'Gefahr',
+      extremeDanger: 'Extreme Gefahr',
+    },
+    plan: 'Der Hitzeplan',
+    advice: {
+      caution: 'Wasser griffbereit; schwere Arbeit früh am Tag.',
+      extremeCaution:
+        '20 min Pause je Stunde im Schatten; 0,75 L Wasser je Stunde.',
+      danger:
+        '40 min Pause je Stunde; keine schwere Arbeit drinnen; gegenseitig aufeinander achten.',
+      extremeDanger: 'Arbeit im Haus einstellen.',
+    },
+    heatSource:
+      'Hitzeindex nach dem US-Wetterdienst (Rothfusz); Arbeit und Pausen nach gängigen Arbeitsschutzempfehlungen. Eine Planungshilfe, kein medizinischer Rat.',
+  },
+  data: {
+    title: 'Live-Daten',
+    lead: 'Messwerte Ihrer Sensoren oder Datenlogger, als CSV importiert und mit dem verglichen, was die Rechner erwarten: VPD für das Stadium, Tag- und Nachttemperaturen, Drain; VPD je Stunde; und Alarme.',
+    import: 'Messwerte importieren',
+    importHint:
+      'Eine CSV mit einer Zeitspalte und beliebigen von: Temperatur, rF, PAR, EC, pH, Drain %, Drain-EC, Außentemperatur und -feuchte. Kommas oder Semikolons, Dezimalpunkt oder -komma.',
+    file: 'CSV-Datei',
+    paste: 'Oder hier einfügen',
+    importPasted: 'Eingefügten Text importieren',
+    sample: 'Beispielwoche laden',
+    download: 'Beispiel-CSV herunterladen',
+    clear: 'Messwerte löschen',
+    noProject: 'Öffnen Sie ein Projekt, um seine Messwerte zu behalten.',
+    imported: (n: string, skipped: string) =>
+      `${n} Messwerte importiert; ${skipped} Zeilen übersprungen.`,
+    errors: {
+      empty: 'Die Datei ist leer.',
+      noTime: 'Keine Zeitspalte gefunden.',
+      noData: 'Keine Messwerte gefunden.',
+    },
+    targets: 'Vergleichen mit',
+    summary: 'Gemessen gegen erwartet',
+    empty: 'Noch keine Messwerte: CSV importieren oder Beispielwoche laden.',
+    period: (from: string, to: string, n: string, step: string) =>
+      `${from} bis ${to}: ${n} Messwerte, alle ${step} min.`,
+    vpdInBand: 'VPD im Bereich',
+    dayMean: 'Tage, Mittel',
+    nightMean: 'Nächte, Mittel',
+    drainMean: 'Drain, Mittel',
+    plan: 'Plan',
+    alertCount: 'Alarme',
+    byHour: 'Nach Tagesstunde',
+    vpdByHour: 'VPD je Stunde, kPa (grün: Tagbereich)',
+    tempByHour: 'Temperatur je Stunde, °C (grün: Tagbereich)',
+    alertsTitle: 'Alarme',
+    noAlerts: 'Keine Alarme in diesen Messwerten.',
+    alerts: {
+      vpdLow: 'VPD unter 0,3 kPa: Krankheitsrisiko',
+      vpdHigh: 'VPD über 1,5 kPa am Tag',
+      heatStress: 'Hitzebelastung für die Arbeitenden',
+      heatDanger: 'Hitzegefahr für die Arbeitenden',
+      drainEcHigh: 'Drain-EC an der Spülgrenze',
+      tempLow: 'Zu kalt für das Stadium',
+      tempHigh: 'Zu warm für das Stadium',
+      phOut: 'pH außerhalb 5,2–6,8',
+    },
+    alertDetail: (n: string, worst: string) =>
+      `${n} Messwerte, schlechtester ${worst}`,
+    days: 'Tag für Tag',
+    outOfBand: 'VPD außerhalb',
+  },
   calc: {
     science: 'Die Physik dahinter',
     results: 'Ergebnisse',
@@ -1395,6 +1547,16 @@ export const DE: SerraCopy = {
         title: 'Energiezentrale',
         body: 'Ein Wintertag Stunde für Stunde: der Wärmebedarf des Hauses, ein tagsüber für sein CO₂ laufendes Gas-BHKW, der Puffer, der seine Wärme in die Nacht trägt, und der Kessel für den Rest; Gas, Strom und Kosten. Und die Wärme in gekühltem Brunnenwasser.',
       },
+      {
+        id: 'operations',
+        title: 'Betrieb',
+        body: 'Ein Tagebuch für Kontrollen, Nützlinge, Spritzungen (WHO-Klasse Ia und Ib abgelehnt), Wartung und Ernte; die tägliche Hygiene-Checkliste; der Wartungsplan mit Fälligem und Überfälligem; und ein Hitzeplan für die Arbeitenden nach dem Hitzeindex.',
+      },
+      {
+        id: 'data',
+        title: 'Live-Daten',
+        body: 'Die CSV eines Datenloggers importieren oder eine Beispielwoche laden und mit dem vergleichen, was die Werkzeuge erwarten: VPD im Bereich, Tag- und Nachttemperaturen, Drain; VPD und Temperatur je Tagesstunde; und Alarme für Krankheitsrisiko, Hitzebelastung, Drain-EC, Temperatur und pH.',
+      },
     ],
     sourcesTitle: 'Quellen',
     sources: [
@@ -1420,6 +1582,32 @@ export const DE: SerraCopy = {
   },
 
   notes: {
+    'data.vpdBand': (v) =>
+      `Das VPD lag ${v['pct']} % der Zeit in seinem Bereich.`,
+    'data.dayOk': (v) =>
+      `Die Tage lagen im Mittel bei ${v['t']} °C, innerhalb ${v['min']}–${v['max']} °C.`,
+    'data.dayOff': (v) =>
+      `Die Tage lagen im Mittel bei ${v['t']} °C, außerhalb ${v['min']}–${v['max']} °C.`,
+    'data.nightOk': (v) =>
+      `Die Nächte lagen im Mittel bei ${v['t']} °C, innerhalb ${v['min']}–${v['max']} °C.`,
+    'data.nightOff': (v) =>
+      `Die Nächte lagen im Mittel bei ${v['t']} °C, außerhalb ${v['min']}–${v['max']} °C.`,
+    'data.drain': (v) =>
+      `Der Drain lag im Mittel bei ${v['pct']} % bei ${v['plan']} % Plan.`,
+    'data.alerts': (v) => `${v['n']} Alarme: siehe Liste unten.`,
+    'data.noAlerts': (v) => `Keine Alarme (${v['n']}).`,
+    'ops.bannedSpray': (v) =>
+      `Mittel der WHO-Klasse ${v['cls']} sind nicht erlaubt: ein anderes Mittel wählen.`,
+    'heat.none': (v) =>
+      `Hitzeindex ${v['hi']} °C: keine Hitzegefahr (${v['rest']} min Pause, ${v['water']} L je Stunde).`,
+    'heat.caution': (v) =>
+      `Hitzeindex ${v['hi']} °C: Vorsicht. ${v['rest']} min Pause je Stunde und ${v['water']} L je Stunde trinken.`,
+    'heat.extremeCaution': (v) =>
+      `Hitzeindex ${v['hi']} °C: große Vorsicht. ${v['rest']} min Pause je Stunde und ${v['water']} L je Stunde trinken.`,
+    'heat.danger': (v) =>
+      `Hitzeindex ${v['hi']} °C: Gefahr. ${v['rest']} min Pause je Stunde, ${v['water']} L je Stunde trinken, keine schwere Arbeit.`,
+    'heat.extremeDanger': (v) =>
+      `Hitzeindex ${v['hi']} °C: extreme Gefahr. Arbeit drinnen einstellen (${v['rest']} min Pause, ${v['water']} L je Stunde).`,
     'energy.share': (v) =>
       `Das BHKW deckt ${v['pct']} % der Tageswärme; der Kessel ergänzt ${v['boiler']} MWh.`,
     'energy.dump': (v) =>

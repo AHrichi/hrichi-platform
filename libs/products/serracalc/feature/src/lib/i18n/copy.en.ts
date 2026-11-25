@@ -21,6 +21,8 @@ export const EN = {
       'A planning aid: check the results with a qualified engineer and the suppliers’ data before you build.',
   },
   nav: {
+    operations: 'Operations',
+    data: 'Live data',
     site: 'Site',
     energy: 'Energy',
     supply: 'Water supply',
@@ -38,6 +40,7 @@ export const EN = {
     more: 'More',
   },
   navGroups: {
+    operate: 'Operate',
     plan: 'Plan',
     climate: 'Climate control',
     water: 'Water',
@@ -1158,6 +1161,154 @@ export const EN = {
       payback: 'Payback = build / margin',
     },
   },
+  ops: {
+    title: 'Operations',
+    lead: 'The crop log, the daily hygiene round, the plant’s maintenance and a heat plan for the people working inside.',
+    noProject: 'Open a project to keep its log.',
+    tabs: {
+      log: 'Log',
+      hygiene: 'Hygiene',
+      maintenance: 'Maintenance',
+      heat: 'Heat stress',
+    },
+    newEntry: 'New entry',
+    date: 'Date',
+    kind: 'Kind',
+    kinds: {
+      scouting: 'Scouting',
+      release: 'Biological release',
+      spray: 'Spray',
+      maintenance: 'Maintenance',
+      hygiene: 'Hygiene check',
+      harvest: 'Harvest',
+    },
+    subjects: {
+      scouting: 'Pest or disease seen, and where',
+      release: 'Beneficial released',
+      spray: 'Product sprayed',
+      maintenance: 'What was done',
+      hygiene: 'Checklist',
+      harvest: 'Compartment or rows',
+    },
+    task: 'Task',
+    amount: 'Amount',
+    unit: 'Unit',
+    who: 'WHO class',
+    note: 'Note',
+    add: 'Add to the log',
+    entries: (n: string) => `Log entries: ${n}`,
+    all: 'All',
+    empty: 'Nothing logged yet.',
+    remove: (what: string) => `Delete “${what}”`,
+    checklist: 'Hygiene checklist',
+    saveChecklist: (done: string, total: string) =>
+      `Save today’s checklist (${done} of ${total})`,
+    recent: 'Last checklists',
+    every: 'Every',
+    last: 'Last done',
+    due: 'Due',
+    state: 'State',
+    done: 'Done today',
+    days: 'days',
+    states: {
+      ok: 'On time',
+      soon: 'Due soon',
+      overdue: 'Overdue',
+    },
+    overdue: (n: string) => `Overdue tasks: ${n}`,
+    tasks: {
+      filters: 'Clean the irrigation filters',
+      nozzles: 'Check the fog nozzles',
+      pads: 'Clean and flush the pads',
+      sensors: 'Calibrate the climate and EC sensors',
+      pumps: 'Service the pumps',
+      fans: 'Check the fans and belts',
+      drainDisinfection: 'Check the drain disinfection',
+      roMembranes: 'Clean the RO membranes (CIP)',
+      chp: 'Service the CHP',
+    },
+    hygiene: {
+      footbath: 'Footbaths refilled',
+      handwash: 'Hand wash and gloves at the door',
+      clothing: 'Clean clothing for this compartment',
+      tools: 'Knives and tools disinfected',
+      visitors: 'Visitors logged and briefed',
+      waste: 'Plant waste removed and covered',
+      doors: 'Doors and insect nets closed',
+    },
+    heatTitle: 'Heat stress at work',
+    heatIndex: 'Heat index',
+    rest: 'Rest each hour',
+    water: 'Water each hour',
+    risks: {
+      none: 'No heat risk',
+      caution: 'Caution',
+      extremeCaution: 'Extreme caution',
+      danger: 'Danger',
+      extremeDanger: 'Extreme danger',
+    },
+    plan: 'The heat plan',
+    advice: {
+      caution: 'Water at hand; heavy work early in the day.',
+      extremeCaution:
+        'Rest 20 min an hour in the shade; 0.75 L of water an hour.',
+      danger:
+        'Rest 40 min an hour; no heavy work inside; workers check on each other.',
+      extremeDanger: 'Stop work in the house.',
+    },
+    heatSource:
+      'Heat index by the US National Weather Service (Rothfusz); work and rest after common occupational guidance. A planning aid, not medical advice.',
+  },
+  data: {
+    title: 'Live data',
+    lead: 'Readings from your sensors or logger, imported as CSV and set against what the calculators expect: VPD for the stage, day and night temperatures, the drain; VPD by hour; and alerts.',
+    import: 'Import readings',
+    importHint:
+      'A CSV with a time column and any of: temperature, RH, PAR, EC, pH, drain %, drain EC, outside temperature and RH. Commas or semicolons, decimal points or commas.',
+    file: 'CSV file',
+    paste: 'Or paste it here',
+    importPasted: 'Import the pasted text',
+    sample: 'Load a sample week',
+    download: 'Download the sample CSV',
+    clear: 'Clear the readings',
+    noProject: 'Open a project to keep its readings.',
+    imported: (n: string, skipped: string) =>
+      `Imported ${n} readings; ${skipped} rows skipped.`,
+    errors: {
+      empty: 'The file is empty.',
+      noTime: 'No time column found.',
+      noData: 'No readings found.',
+    },
+    targets: 'Compare against',
+    summary: 'Measured against expected',
+    empty: 'No readings yet: import a CSV or load the sample week.',
+    period: (from: string, to: string, n: string, step: string) =>
+      `${from} to ${to}: ${n} readings, every ${step} min.`,
+    vpdInBand: 'VPD in its band',
+    dayMean: 'Days, mean',
+    nightMean: 'Nights, mean',
+    drainMean: 'Drain, mean',
+    plan: 'plan',
+    alertCount: 'Alerts',
+    byHour: 'By hour of the day',
+    vpdByHour: 'VPD by hour, kPa (green: the day band)',
+    tempByHour: 'Temperature by hour, °C (green: the day band)',
+    alertsTitle: 'Alerts',
+    noAlerts: 'No alerts in these readings.',
+    alerts: {
+      vpdLow: 'VPD under 0.3 kPa: disease risk',
+      vpdHigh: 'VPD over 1.5 kPa by day',
+      heatStress: 'Heat stress for the workers',
+      heatDanger: 'Heat danger for the workers',
+      drainEcHigh: 'Drain EC at the flush ceiling',
+      tempLow: 'Too cold for the stage',
+      tempHigh: 'Too hot for the stage',
+      phOut: 'pH outside 5.2–6.8',
+    },
+    alertDetail: (n: string, worst: string) => `${n} readings, worst ${worst}`,
+    days: 'Day by day',
+    outOfBand: 'VPD out of band',
+  },
   calc: {
     science: 'The science behind it',
     results: 'Results',
@@ -1376,6 +1527,16 @@ export const EN = {
         title: 'Energy hub',
         body: 'A winter day hour by hour: the house’s heat need, a gas CHP run by day for its CO₂, the buffer that carries its heat into the night and the boiler for the rest; gas, power and cost. And the heat held in chilled well water.',
       },
+      {
+        id: 'operations',
+        title: 'Operations',
+        body: 'A log of scouting, biological releases, sprays (WHO class Ia and Ib refused), maintenance and harvest; the daily hygiene checklist; the maintenance schedule with what is due or overdue; and a heat-stress plan for workers from the heat index.',
+      },
+      {
+        id: 'data',
+        title: 'Live data',
+        body: 'Import a logger’s CSV, or load a sample week, and compare it with what the tools expect: VPD in its band, day and night temperatures, the drain; VPD and temperature by hour of the day; and alerts for disease risk, heat stress, drain EC, temperature and pH.',
+      },
     ],
     sourcesTitle: 'Sources',
     sources: [
@@ -1401,6 +1562,31 @@ export const EN = {
   },
 
   notes: {
+    'data.vpdBand': (v) => `VPD sat in its band ${v['pct']} % of the time.`,
+    'data.dayOk': (v) =>
+      `Days averaged ${v['t']} °C, within ${v['min']}–${v['max']} °C.`,
+    'data.dayOff': (v) =>
+      `Days averaged ${v['t']} °C, outside ${v['min']}–${v['max']} °C.`,
+    'data.nightOk': (v) =>
+      `Nights averaged ${v['t']} °C, within ${v['min']}–${v['max']} °C.`,
+    'data.nightOff': (v) =>
+      `Nights averaged ${v['t']} °C, outside ${v['min']}–${v['max']} °C.`,
+    'data.drain': (v) =>
+      `The drain averaged ${v['pct']} % against a plan of ${v['plan']} %.`,
+    'data.alerts': (v) => `${v['n']} alerts: see the list below.`,
+    'data.noAlerts': (v) => `No alerts (${v['n']}).`,
+    'ops.bannedSpray': (v) =>
+      `WHO class ${v['cls']} products are not allowed: choose another product.`,
+    'heat.none': (v) =>
+      `Heat index ${v['hi']} °C: no heat risk (${v['rest']} min rest, ${v['water']} L an hour).`,
+    'heat.caution': (v) =>
+      `Heat index ${v['hi']} °C: caution. Rest ${v['rest']} min an hour and drink ${v['water']} L an hour.`,
+    'heat.extremeCaution': (v) =>
+      `Heat index ${v['hi']} °C: extreme caution. Rest ${v['rest']} min an hour and drink ${v['water']} L an hour.`,
+    'heat.danger': (v) =>
+      `Heat index ${v['hi']} °C: danger. Rest ${v['rest']} min an hour, drink ${v['water']} L an hour, no heavy work.`,
+    'heat.extremeDanger': (v) =>
+      `Heat index ${v['hi']} °C: extreme danger. Stop work inside (${v['rest']} min rest, ${v['water']} L an hour).`,
     'energy.share': (v) =>
       `The CHP covers ${v['pct']} % of the day’s heat; the boiler adds ${v['boiler']} MWh.`,
     'energy.dump': (v) =>

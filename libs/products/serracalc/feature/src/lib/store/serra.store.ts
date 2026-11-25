@@ -8,6 +8,8 @@ import {
   withState,
 } from '@ngrx/signals';
 import {
+  type LogEntry,
+  type Reading,
   type CalcContext,
   DEFAULT_CONTEXT,
   DEFAULT_GREENHOUSE,
@@ -201,6 +203,29 @@ export const SerraStore = signalStore(
           calculations: project.calculations.map((c) =>
             c.id === id ? { ...c, label } : c,
           ),
+        }));
+      },
+
+      /** Adds an entry to the active project's log. */
+      addLog(entry: Omit<LogEntry, 'id'>): Promise<void> {
+        return edit((project) => ({
+          ...project,
+          logs: [...(project.logs ?? []), { ...entry, id: newId('log') }],
+        }));
+      },
+
+      deleteLog(id: string): Promise<void> {
+        return edit((project) => ({
+          ...project,
+          logs: (project.logs ?? []).filter((l) => l.id !== id),
+        }));
+      },
+
+      /** Replaces the active project's imported readings. */
+      setReadings(readings: readonly Reading[]): Promise<void> {
+        return edit((project) => ({
+          ...project,
+          readings: readings.length ? [...readings] : undefined,
         }));
       },
 

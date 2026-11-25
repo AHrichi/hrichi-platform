@@ -85,6 +85,20 @@ export const SERRACALC_ROUTES: Routes = [
           import('./screens/air/air-screen').then((m) => m.AirScreen),
       },
       {
+        path: 'operations',
+        title: title('operations'),
+        loadComponent: () =>
+          import('./screens/operations/operations-screen').then(
+            (m) => m.OperationsScreen,
+          ),
+      },
+      {
+        path: 'data',
+        title: title('data'),
+        loadComponent: () =>
+          import('./screens/data/data-screen').then((m) => m.DataScreen),
+      },
+      {
         path: 'climate',
         title: title('climate'),
         loadComponent: () =>

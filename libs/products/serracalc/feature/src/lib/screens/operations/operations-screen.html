@@ -1,0 +1,355 @@
+<section class="screen" aria-labelledby="sc-ops-title">
+  <header class="head">
+    <div>
+      <h2 id="sc-ops-title">{{ t().ops.title }}</h2>
+      <p>{{ t().ops.lead }}</p>
+    </div>
+    @if (overdue() > 0) {
+      <div class="verdict" data-status="tooDry">
+        <span class="verdict-status">{{ t().ops.tabs.maintenance }}</span>
+        <strong>{{ t().ops.overdue(overdue() + '') }}</strong>
+      </div>
+    }
+  </header>
+
+  @if (!store.activeProject()) {
+    <section class="panel">
+      <p class="hint">{{ t().ops.noProject }}</p>
+    </section>
+  }
+
+  <ah-tabs
+    [tabs]="tabs()"
+    [selectedId]="tab()"
+    (selectedIdChange)="tab.set($event)"
+    [ariaLabel]="t().ops.title"
+  />
+
+  @switch (tab()) {
+    @case ('log') {
+      <div class="workbench">
+        <section class="panel" aria-labelledby="sc-ops-new">
+          <h3 id="sc-ops-new">{{ t().ops.newEntry }}</h3>
+          <div class="form">
+            <label class="select">
+              <span>{{ t().ops.date }}</span>
+              <input
+                type="date"
+                [value]="date()"
+                (change)="date.set(text($event))"
+              />
+            </label>
+            <label class="select">
+              <span>{{ t().ops.kind }}</span>
+              <select (change)="kind.set($any(text($event)))">
+                @for (k of kinds; track k) {
+                  <option [value]="k" [selected]="kind() === k">
+                    {{ t().ops.kinds[k] }}
+                  </option>
+                }
+              </select>
+            </label>
+            @if (kind() === 'maintenance') {
+              <label class="select">
+                <span>{{ t().ops.task }}</span>
+                <select (change)="task.set(text($event))">
+                  @for (m of tasks; track m.id) {
+                    <option [value]="m.id" [selected]="task() === m.id">
+                      {{ taskName(m.id) }}
+                    </option>
+                  }
+                </select>
+              </label>
+            }
+            <label class="select wide">
+              <span>{{ t().ops.subjects[kind()] }}</span>
+              <input
+                type="text"
+                [value]="subject()"
+                (input)="subject.set(text($event))"
+              />
+            </label>
+            <label class="select">
+              <span>{{ t().ops.amount }}</span>
+              <input
+                type="number"
+                inputmode="decimal"
+                [value]="amount() ?? ''"
+                (input)="amount.set(number($event))"
+              />
+            </label>
+            <label class="select">
+              <span>{{ t().ops.unit }}</span>
+              <input
+                type="text"
+                [value]="unit()"
+                (input)="unit.set(text($event))"
+              />
+            </label>
+            @if (kind() === 'spray') {
+              <label class="select">
+                <span>{{ t().ops.who }}</span>
+                <select (change)="whoClass.set($any(text($event)))">
+                  @for (c of whoClasses; track c) {
+                    <option [value]="c" [selected]="whoClass() === c">
+                      {{ c }}
+                    </option>
+                  }
+                </select>
+              </label>
+            }
+            <label class="select wide">
+              <span>{{ t().ops.note }}</span>
+              <textarea
+                rows="2"
+                [value]="note()"
+                (input)="note.set(text($event))"
+              ></textarea>
+            </label>
+          </div>
+          <sc-note-list [notes]="problems()" />
+          <div class="actions">
+            <button
+              type="button"
+              class="primary"
+              [disabled]="!canAdd()"
+              (click)="add()"
+            >
+              {{ t().ops.add }}
+            </button>
+          </div>
+        </section>
+
+        <section class="panel" aria-labelledby="sc-ops-list">
+          <h3 id="sc-ops-list">{{ t().ops.entries(logs().length + '') }}</h3>
+          <div class="filters" role="group" [attr.aria-label]="t().ops.kind">
+            <button
+              type="button"
+              class="chip"
+              [attr.aria-pressed]="filter() === 'all'"
+              (click)="filter.set('all')"
+            >
+              {{ t().ops.all }}
+            </button>
+            @for (k of kinds; track k) {
+              <button
+                type="button"
+                class="chip"
+                [attr.aria-pressed]="filter() === k"
+                (click)="filter.set(k)"
+              >
+                {{ t().ops.kinds[k] }}
+              </button>
+            }
+          </div>
+          @if (shown().length === 0) {
+            <p class="hint">{{ t().ops.empty }}</p>
+          }
+          <ul class="entries" role="list">
+            @for (e of shown(); track e.id) {
+              <li [attr.data-kind]="e.kind">
+                <div class="entry-head">
+                  <span class="badge">{{ t().ops.kinds[e.kind] }}</span>
+                  <time [attr.datetime]="e.date">{{ i18n.date(e.date) }}</time>
+                  <button
+                    type="button"
+                    class="remove"
+                    [attr.aria-label]="t().ops.remove(e.subject)"
+                    (click)="remove(e.id)"
+                  >
+                    ×
+                  </button>
+                </div>
+                <strong>{{ e.subject }}</strong>
+                @if (e.amount !== undefined) {
+                  <span>{{ i18n.num(e.amount, 2) }} {{ e.unit }}</span>
+                }
+                @if (e.whoClass) {
+                  <span class="muted">WHO {{ e.whoClass }}</span>
+                }
+                @if (e.checked) {
+                  <span class="muted"
+                    >{{ e.checked.length }} / {{ hygieneItems.length }}</span
+                  >
+                }
+                @if (e.note) {
+                  <p>{{ e.note }}</p>
+                }
+              </li>
+            }
+          </ul>
+        </section>
+      </div>
+    }
+    @case ('hygiene') {
+      <div class="workbench">
+        <section class="panel" aria-labelledby="sc-ops-hyg">
+          <h3 id="sc-ops-hyg">
+            {{ t().ops.checklist }} · {{ i18n.date(today) }}
+          </h3>
+          <ul class="checks" role="list">
+            @for (item of hygieneItems; track item) {
+              <li>
+                <label>
+                  <input
+                    type="checkbox"
+                    [checked]="ticked().has(item)"
+                    (change)="toggleItem(item)"
+                  />
+                  {{ itemName(item) }}
+                </label>
+              </li>
+            }
+          </ul>
+          <div class="actions">
+            <button
+              type="button"
+              class="primary"
+              [disabled]="!store.activeProject()"
+              (click)="saveChecklist()"
+            >
+              {{
+                t().ops.saveChecklist(
+                  ticked().size + '',
+                  hygieneItems.length + ''
+                )
+              }}
+            </button>
+          </div>
+        </section>
+        <section class="panel" aria-labelledby="sc-ops-hyg-recent">
+          <h3 id="sc-ops-hyg-recent">{{ t().ops.recent }}</h3>
+          @if (recentChecks().length === 0) {
+            <p class="hint">{{ t().ops.empty }}</p>
+          }
+          <ul class="entries" role="list">
+            @for (e of recentChecks(); track e.id) {
+              <li data-kind="hygiene">
+                <div class="entry-head">
+                  <time [attr.datetime]="e.date">{{ i18n.date(e.date) }}</time>
+                  <span class="badge"
+                    >{{ e.checked?.length ?? 0 }} /
+                    {{ hygieneItems.length }}</span
+                  >
+                </div>
+              </li>
+            }
+          </ul>
+        </section>
+      </div>
+    }
+    @case ('maintenance') {
+      <section class="panel" aria-labelledby="sc-ops-maint">
+        <h3 id="sc-ops-maint">{{ t().ops.tabs.maintenance }}</h3>
+        <div
+          class="table-wrap"
+          tabindex="0"
+          role="region"
+          [attr.aria-label]="t().calc.table"
+        >
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">{{ t().ops.task }}</th>
+                <th scope="col">{{ t().ops.every }}</th>
+                <th scope="col">{{ t().ops.last }}</th>
+                <th scope="col">{{ t().ops.due }}</th>
+                <th scope="col">{{ t().ops.state }}</th>
+                <th scope="col">
+                  <span class="ah-visually-hidden">{{ t().ops.done }}</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (s of schedule(); track s.id) {
+                <tr [attr.data-state]="s.state">
+                  <th scope="row">{{ taskName(s.id) }}</th>
+                  <td>{{ s.everyDays }} {{ t().ops.days }}</td>
+                  <td>{{ s.last ? i18n.date(s.last) : t().common.none }}</td>
+                  <td>{{ i18n.date(s.due) }}</td>
+                  <td>
+                    <span class="state" [attr.data-state]="s.state">{{
+                      t().ops.states[s.state]
+                    }}</span>
+                  </td>
+                  <td>
+                    <button
+                      type="button"
+                      class="chip"
+                      [disabled]="!store.activeProject()"
+                      (click)="markDone(s.id)"
+                    >
+                      {{ t().ops.done }}
+                    </button>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </section>
+    }
+    @case ('heat') {
+      <div class="workbench">
+        <section class="panel" aria-labelledby="sc-ops-heat">
+          <h3 id="sc-ops-heat">{{ t().ops.heatTitle }}</h3>
+          <div class="form">
+            <label class="select">
+              <span>{{ t().fields['airC'] }} °C</span>
+              <input
+                type="number"
+                inputmode="decimal"
+                step="0.5"
+                [value]="air()"
+                (input)="heatAir.set(number($event))"
+              />
+            </label>
+            <label class="select">
+              <span>{{ t().fields['rhPct'] }} %</span>
+              <input
+                type="number"
+                inputmode="decimal"
+                step="1"
+                [value]="rh()"
+                (input)="heatRh.set(number($event))"
+              />
+            </label>
+          </div>
+          <div
+            class="verdict"
+            [attr.data-status]="heat().risk === 'none' ? 'good' : 'tooDry'"
+          >
+            <span class="verdict-status">{{ t().ops.risks[heat().risk] }}</span>
+            <strong
+              >{{ t().ops.heatIndex }}
+              {{ i18n.num(heat().heatIndexC) }} °C</strong
+            >
+          </div>
+          <dl class="split">
+            <div>
+              <dt>{{ t().ops.rest }}</dt>
+              <dd>{{ heat().restMinPerHour }} min/h</dd>
+            </div>
+            <div>
+              <dt>{{ t().ops.water }}</dt>
+              <dd>{{ i18n.num(heat().waterLPerHour, 2) }} L/h</dd>
+            </div>
+          </dl>
+          <sc-note-list [notes]="heat().notes" />
+        </section>
+        <section class="panel" aria-labelledby="sc-ops-plan">
+          <h3 id="sc-ops-plan">{{ t().ops.plan }}</h3>
+          <ul class="plan" role="list">
+            @for (b of bands; track b.id) {
+              <li [attr.data-risk]="b.id" [class.is-now]="heat().risk === b.id">
+                <strong>{{ t().ops.risks[b.id] }} · {{ b.from }} °C+</strong>
+                <span>{{ t().ops.advice[b.id] }}</span>
+              </li>
+            }
+          </ul>
+          <p class="hint">{{ t().ops.heatSource }}</p>
+        </section>
+      </div>
+    }
+  }
+</section>

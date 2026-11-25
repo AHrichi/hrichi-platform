@@ -37,13 +37,15 @@ export type SerraScreen =
   | 'water'
   | 'supply'
   | 'air'
+  | 'operations'
+  | 'data'
   | 'climate'
   | 'science'
   | 'report'
   | 'guide';
 
 /** Sections of the side rail, in order. */
-export type NavGroup = 'plan' | 'climate' | 'water' | 'reference';
+export type NavGroup = 'plan' | 'climate' | 'water' | 'operate' | 'reference';
 
 interface NavItem {
   readonly id: SerraScreen;
@@ -63,13 +65,21 @@ const NAV: readonly NavItem[] = [
   { id: 'greenhouse', icon: 'greenhouse', group: 'plan' },
   { id: 'air', icon: 'air', group: 'climate' },
   { id: 'energy', icon: 'energy', group: 'climate' },
+  { id: 'operations', icon: 'operations', group: 'operate' },
+  { id: 'data', icon: 'data', group: 'operate' },
   { id: 'climate', icon: 'climate', group: 'reference' },
   { id: 'science', icon: 'science', group: 'reference' },
   { id: 'report', icon: 'report', group: 'reference' },
   { id: 'guide', icon: 'guide', group: 'reference' },
 ];
 
-const GROUPS: readonly NavGroup[] = ['plan', 'climate', 'water', 'reference'];
+const GROUPS: readonly NavGroup[] = [
+  'plan',
+  'climate',
+  'water',
+  'operate',
+  'reference',
+];
 
 @Component({
   selector: 'sc-serra-shell',

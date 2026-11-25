@@ -25,6 +25,8 @@ const SCREENS = [
   'energy',
   'energy?tab=reuse',
   'greenhouse',
+  'operations',
+  'data',
   'climate',
   'science',
   'report',
@@ -117,6 +119,8 @@ test.describe('SerraCalc, standalone', () => {
       test(`every screen passes axe, ${theme}, ${width} px wide`, async ({
         page,
       }) => {
+        // Twenty-odd screens, each scanned whole: more than the default 30 s.
+        test.setTimeout(180_000);
         await page.addInitScript(
           (chosen) => localStorage.setItem('ah.theme', chosen),
           theme,

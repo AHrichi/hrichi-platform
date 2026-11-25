@@ -134,6 +134,10 @@ function toProject(value: unknown): GreenhouseProject | null {
       value['areaHa'] > 0
         ? value['areaHa']
         : undefined,
+    logs: Array.isArray(value['logs']) ? (project.logs ?? []) : undefined,
+    readings: Array.isArray(value['readings'])
+      ? (project.readings ?? [])
+      : undefined,
     calculations: (value['calculations'] as unknown[]).filter(isCalculation),
   };
 }

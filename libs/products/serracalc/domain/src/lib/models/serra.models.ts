@@ -1,4 +1,6 @@
 import type { EnergyHubParams, HeatReuseParams } from '../calculations/energy';
+import type { LogEntry } from '../calculations/operations';
+import type { Reading } from '../calculations/readings';
 import type { EconomicsParams } from '../calculations/site';
 
 /**
@@ -927,6 +929,10 @@ export interface GreenhouseProject {
    * the area. Unset, the house's own floor.
    */
   areaHa?: number;
+  /** The crop log: scouting, releases, sprays, maintenance, hygiene. */
+  logs?: LogEntry[];
+  /** Imported sensor readings, oldest first. */
+  readings?: Reading[];
   notes?: string;
   calculations: SavedCalculation[];
   createdAt: string;
