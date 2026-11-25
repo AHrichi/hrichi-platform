@@ -2,14 +2,14 @@
 
 A briefing for whichever AI agent or IDE picks up SerraCalc, the greenhouse heat, water and climate engineering app. It assumes no memory of earlier sessions. Read it top to bottom before touching code; [AGENTS.md](../../AGENTS.md) has the protocol, [ADR-0027](../adr/0027-serracalc.md) the decisions.
 
-Last updated 2026-11-25: **S1–S3, the parity work, the greenhouse-manager spec and its last three gaps are on `main` (PRs #35, #37, #38, #39). The sodium and chloride flush limits now read in the drain (the root zone) instead of the feed, as the owner decided: [PR #40](https://github.com/AHrichi/hrichi-platform/pull/40), `claude/serracalc-root-zone-limits`. The owner's UI requests are in [PR #41](https://github.com/AHrichi/hrichi-platform/pull/41) (`claude/serracalc-ui-polish`): a floating header, a language menu, sections that fold, formulas laid out as maths (MathML), 25 real-life photos from Wikimedia Commons that open large with zoom, the standalone app opening offline (service worker), fixes from a walk through every screen, a "new version" notice and **Energy → Solar power** for the site (§5, §6).** The plan is §7; the decisions are [ADR-0029](../adr/0029-serracalc-greenhouse-manager.md) and its addendum.
+Last updated 2026-11-25: **Everything through PR #41 is on `main` and deployed: the greenhouse-manager spec, its gaps, the root-zone limits (#40), and the owner's UI requests (#41: floating header, language menu, folding, MathML formulas, Commons photos with zoom, offline use, a new-version notice, walk-through fixes, Energy → Solar power). Nothing is in progress; §6 has the next steps.**Energy → Solar power** for the site (§5, §6).** The plan is §7; the decisions are [ADR-0029](../adr/0029-serracalc-greenhouse-manager.md) and its addendum.
 
 ## 0. Resume in five minutes
 
 1. **Get the branch:**
 
    ```bash
-   git fetch origin && git switch claude/serracalc-ui-polish
+   git fetch origin && git switch main
    ```
 
    It was built in the worktree `.claude/worktrees/studylm-learning-merge-8ffa5f` (the folder name is historical). Check `git worktree list` first: one agent per checkout.
@@ -185,18 +185,20 @@ Written before any change on `feat/serracalc-parity`; the last column says what 
   - **New version (standalone):** `services/serra-updates.ts` watches the service worker (when the tab comes back into view, every 30 min) and the shell shows Reload / Later. The next move to another screen reloads anyway. Inside the portfolio the site's own banner does this.
   - **Month charts:** `ui/month-bars/month-ticks.ts` sets the axis; it always reaches the tallest bar.
 
-## 6. Next step: merge PR #41 and check it live
+## 6. Next step: a real phone, then the owner's pick
 
-1. [PR #41](https://github.com/AHrichi/hrichi-platform/pull/41) (`claude/serracalc-ui-polish`): once CI passes and the owner merges it, open the live app at `/apps/serracalc` and check:
-   - the Science page: photos load from the remote inside the portfolio, zoom, the formulas, fold all;
-   - Water supply → Fertigation (flush day, "Na in the drain" chart);
-   - standalone: the language menu, the floating header, and opening offline after one visit.
+PR #41 is merged (`b2662e7`) and deployed (CI run 45676992891; every job green, including Deploy to Cloudflare).
 
-   Then update this hand-off.
+**Checked live on 2026-11-25:**
 
-2. Ask the owner about the EC ceiling: the loop compares 4.5 dS/m with the feed (Hydrotool's example), but Live data and the "drain EC high" note compare it with the drain, which is 4.8 at the sample's 30 % drain. Either give the drain its own limit (a new optional input) or read the ceiling in the drain with a higher default.
-3. A real phone (Android Chrome): drag handles with a finger, the plant cards, a backup shared to Drive, the language menu, folding, photo zoom, MathML fonts, installing and opening offline.
-4. Photos still missing (Commons had none free): hot-water pipes, pad cooling, fogging, a heat buffer, grow lights, CO₂ dosing, a PAR sensor, a lab analysis, a climate computer. The owner's own photos could fill them, with no farm or company names in view.
+- Inside the portfolio (`https://portfolio.ahmed-hrichi.workers.dev/apps/serracalc`): the Science photos load from `https://product-serracalc.ahmed-hrichi.workers.dev` under the new `img-src`; MathML formulas; folding; Energy → Solar power.
+- Standalone (`https://product-serracalc.ahmed-hrichi.workers.dev`): the language menu, the floating header (glass after a deep link to a topic, which scrolls clear of it), photos, `ngsw-worker.js` and `ngsw.json` served.
+
+**Not checked live:** the service worker and opening offline (the desktop app's browser pane can't register one; use Playwright or a phone); the "new version" banner (it needs the next deploy).
+
+1. Ask the owner about the EC ceiling: the loop compares 4.5 dS/m with the feed (Hydrotool's example), but Live data and the "drain EC high" note compare it with the drain, which is 4.8 at the sample's 30 % drain. Either give the drain its own limit (a new optional input) or read the ceiling in the drain with a higher default.
+2. A real phone (Android Chrome): drag handles with a finger, the plant cards, a backup shared to Drive, the language menu, folding, photo zoom, MathML fonts, installing and opening offline.
+3. Photos still missing (Commons had none free): hot-water pipes, pad cooling, fogging, a heat buffer, grow lights, CO₂ dosing, a PAR sensor, a lab analysis, a climate computer. The owner's own photos could fill them, with no farm or company names in view.
 
 **Suggested next features** (from the 2026-11-25 walk-through; the owner picks):
 
