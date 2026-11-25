@@ -2,17 +2,17 @@
 
 A briefing for whichever AI agent or IDE picks up SerraCalc, the greenhouse heat, water and climate engineering app. It assumes no memory of earlier sessions. Read it top to bottom before touching code; [AGENTS.md](../../AGENTS.md) has the protocol, [ADR-0027](../adr/0027-serracalc.md) the decisions.
 
-Last updated 2026-11-25: **S1–S3 are live on `main` (PR #35). The parity work (Italian and German, a theme switch, backups, a printable report, axe on every screen) is on `feat/serracalc-parity`, in a pull request to `main`.**
+Last updated 2026-11-25: **S1–S3 and the parity work are on `main` (PRs #35, #37). The greenhouse-manager build (a desert look, Phase 1 climate core, a Science page) is on `claude/serracalc-greenhouse-manager-af74c7`, pushed, no pull request yet.** The plan it follows is §7.
 
 ## 0. Resume in five minutes
 
 1. **Get the branch:**
 
    ```bash
-   git fetch origin && git switch feat/serracalc-parity
+   git fetch origin && git switch claude/serracalc-greenhouse-manager-af74c7
    ```
 
-   It was built in the worktree `.claude/worktrees/funny-cartwright-dcfc46`. Check `git worktree list` first: one agent per checkout. Once its PR is merged, branch from `main`.
+   It was built in the worktree `.claude/worktrees/studylm-learning-merge-8ffa5f` (the folder name is historical). Check `git worktree list` first: one agent per checkout.
 
 2. **Install:** `pnpm install --frozen-lockfile` (Node 24, pnpm 10.34.9).
 3. **Check that it's green:**
@@ -22,7 +22,7 @@ Last updated 2026-11-25: **S1–S3 are live on `main` (PR #35). The parity work 
    pnpm exec stylelint "libs/products/serracalc/**/*.scss" "apps/products/serracalc/**/*.scss"
    ```
 
-   That's 3 projects and 82 tests (52 domain, 30 feature).
+   That's 3 projects and 102 tests (68 domain, 34 feature).
 
 4. **See it:** `pnpm nx run product-serracalc:build:development`, then `node tools/scripts/serve-static.mjs dist/apps/products/serracalc/web/browser 4314` and open `http://localhost:4314`. Inside the portfolio it is `/apps/serracalc`.
 
@@ -42,6 +42,16 @@ It is **not** the Greenhouse Labor Planner (`product-greenhouse*`, ADR-0026). Ke
 | S4 fertigation, pumps and pipes, PV   | Planned.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | S5 report, backups, any-place climate | **Partly done** (parity branch): JSON backups with Web Share and a printable report. Left: climate for any place, a materials catalogue with prices.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
 | S6 shell e2e and go-live polish       | **Partly done.** `shell-e2e/src/serracalc.spec.ts` (16 tests): samples and the heating result, a drawing handle by keyboard, save and "Open & edit", axe on every screen (light/dark, phone/desktop), IT and DE, the theme switch, backups, the report and print, Arabic RTL with drawings kept LTR, the catalog link and the redirect inside the portfolio under the production CSP. Standalone, the shell renders `<main>` and a hidden `<h1>` (the portfolio provides both when embedded). Left: phone testing.                                                                                                                        |
+| M0 desert look and shell              | **Done.** Design-system look `desert` (sand by day, a new blue-black `night` primitive ramp after dark, teal accent, amber focus ring; WCAG gate passes) on `sc-serra-shell`. Grouped side rail (≥ 64 rem) with line icons (`ui/icon`), tabs on tablets, the phone bar; a dune horizon, glass panels (`--sc-glass`, `--sc-edge`, `--sc-glow` set on `.serra`, switched off by sunlight mode), this ISO week in the header.                                                                                                                                                                                                                |
+| M1 climate core                       | **Done.** Humidity and VPD (`/air?tab=vpd`, a draggable VPD map), fogging (`/cooling?tab=fog`: heat and water balance, the on/off cycle that holds a humidity cap), the cooling advisor (`advice-card` on Ventilation and Fog: the Kebili sample's 26.6 % vents → shade + fog), the crop calendar (`/calendar`: 52-week strip, stages, heating/CO₂/shade/fog weeks, stage targets with sources). Setpoints and advice rules are data in `targets.data.ts`. 16 domain tests.                                                                                                                                                               |
+| Science and field advice              | **Done.** `/science`: 16 phenomena (formula, assumptions, each input's method and instrument, related topics, calculators), 16 instruments. Every number field has an ⓘ popover (native `popover`, top layer) linking there; "How it's calculated" links the topics of the open tab. Data in `science.data.ts`; `science.spec.ts` checks that every field has a method.                                                                                                                                                                                                                                                                   |
+| M2 water chain                        | Next (§6): seawater RO, fertigation and drain recycling.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| M3 site, energy, economics            | Planned (§7).                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| M4 operations and live data           | Planned (§7).                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+
+**Verified** (2026-11-25, greenhouse manager, standalone dev build in the browser): the desert look in light and dark at 1280 px; the Kebili sample's advisor (26.6 % vents flagged, 12.3 % with 50 % shade, 26.7 °C with shade and fog); the calendar (heating from week 42, CO₂ in winter, shade and fog in summer, today's week); the VPD map; an ⓘ popover under its button and its link to `/science?topic=fogging`, which scrolls to and highlights the entry; lint, 102 unit tests, builds, stylelint, `nx format:check`, the zoneless check.
+
+**Not verified yet (greenhouse manager):** the shell e2e with the new screens added to `SCREENS` (axe on `calendar`, `air?tab=vpd`, `cooling?tab=fog`; `science` still to add), Arabic RTL of the new drawings and the popover, phones.
 
 ### Parity audit (2026-11-25, against LuxPath and the other apps)
 
@@ -136,15 +146,25 @@ Written before any change on `feat/serracalc-parity`; the last column says what 
 - `/apps/greenhouse-energy` redirects to `/apps/serracalc`.
 - Icons: `node tools/scripts/generate-app-icons.mjs serracalc`.
 
-## 6. Next step: S4, fertigation, pumps and solar
+## 6. Next step: M2, the water chain
 
-Same pattern as S3 (domain first with tests, `defaults.ts`, a drawing with handles, copy in all five languages, a saved `kind`, its `OPENS_IN` entry and its figures in `summarizeSaved`):
+Same pattern as M1 (domain first with tests, `defaults.ts`, a drawing with handles, copy in all five languages, a saved `kind` in `backup.ts`'s `KIND_SET`, its `OPENS_IN` entry, its figures in `summarizeSaved` and report labels, an `INPUT_METHODS` entry for every new field and a phenomenon in `science.data.ts`):
 
-1. **Fertigation:** a nutrient recipe (target EC and N-P-K-Ca-Mg in mmol/L) against the source water's EC, the A and B stock tanks at a dilution (1:100 or 1:200), kg of each fertiliser a week, and acid for the bicarbonates. Brackish water in the south makes the drain share and the starting EC matter.
-2. **Pumps and pipes:** head loss in the mains and laterals (Hazen–Williams with C = 150 for PE), velocity checks (0.5–1.5 m/s), the pump's head and power for the irrigation sections from the Water tab.
-3. **Solar PV for pumps and fans:** daily kWh of pumps, fans and lamps, the PV array from the climate's sun hours, and the battery or the hours it covers.
+1. **Seawater RO** (a Water tab): F = P / R, B = F − P, S_brine ≈ S_feed / (1 − R), E = SEC × P; demand from the crop-water peak day plus losses; tank days; share of the site covered. Tests: 39.5 g/L feed and 77 g/L brine give R ≈ 0.49; 7,500 m³/day product needs about 15,300 m³/day feed. SEC 3–4 kWh/m³ is typical (confirm with a supplier).
+2. **Fertigation and drain recycling** (a Water tab): stock dosing, refill and drain EC, Na and Cl build-up, the flush day t = V_t (C_lim − C_0) / (C_in × V_m), water and fertiliser saved; yield loss 7.3 % per dS/m above 2.0 (indicative, overridable). Test: EC 6.3 gives about 31 %.
+3. Link the crop water to the RO sizing.
 
-Then the rest of S5:
+Pumps and pipes, solar PV, climate for any place (Open-Meteo archive, CSP `connect-src`) and a materials catalogue stay planned after M4.
 
-- **Climate for any place:** a map picker (LuxPath's) and monthly normals from Open-Meteo's free historical API. It lives on `archive-api.open-meteo.com`, which the shell's CSP doesn't allow yet: add it to `connect-src` in `tools/scripts/prepare-hosting.mjs` (only `api.open-meteo.com` is there, for Basecamp). Keep the fetched normals in the project, so it still works offline.
-- **A materials catalogue with prices** (covers, screens, pipes, pads, fans), editable, carried in backups.
+## 7. The greenhouse-manager plan (owner's spec, 2026-11-25)
+
+The owner's spec turns SerraCalc from calculators into a manager for large desert tomato sites (seawater RO, fertigation with drain recycling, fogging, gas CHP, 5 ha compartments). Keep real farm and company names out of the repo (brand-pack rule above); the benchmarks below are published figures for a Gabès-coast site.
+
+| Phase                  | Build                                                                                                                                                                                                                                                                          | Gate                                                                                                                                    |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------- |
+| M1 climate core        | VPD, fogging and the advisor, crop calendar                                                                                                                                                                                                                                    | **Done**: VPD 0.85 kPa at 15 °C/50 % and 34 °C/84 %; the Kebili sample recommends shade + fog, not 26.6 % vents                         |
+| M2 water chain         | Seawater RO, fertigation with drain recycling and flush rule, crop demand → RO                                                                                                                                                                                                 | RO recovery ≈ 0.49 from 39.5 → 77 g/L; EC 6.3 → ≈ 31 % yield loss                                                                       |
+| M3 site and energy     | Site of compartments (about 5 ha each) sharing RO, CHP and packing; energy hub (CHP heat, power and CO₂, buffer, chilled-water heat reuse 1.163 × 25 K ≈ 29 kWh/m³); economics (yield 250 t/ha, labour about 1,000 days/ha, price, cost per kg, payback, about 1.9 kg CO₂e/kg) | 50 ha at 1.5 m³/m²·yr ≈ 2,055 m³/day (published 2,021); 122 ha ≈ 5,014 (published 4,932), within 5 %; cooling within about 10 kWh/m²·yr |
+| M4 operations and data | Scouting, releases, sprays (no WHO Ia/Ib), hygiene and maintenance logs; CSV import of T, RH, PAR, EC, pH, drain, weather; measured against calculated; alerts (VPD, heat stress, drain EC)                                                                                    | A real week of readings imported and compared without manual edits                                                                      |
+
+Principles: every module reads the same project (house, climate, crop); calculations stay pure with tests; offline first; SI units, TND, FR/AR/EN/IT/DE; advice rules are data; every reference value shows its source; planning aid only.

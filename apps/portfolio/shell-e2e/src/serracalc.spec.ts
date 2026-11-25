@@ -20,6 +20,7 @@ const SCREENS = [
   'calendar',
   'greenhouse',
   'climate',
+  'science',
   'report',
   'guide',
 ] as const;
