@@ -135,7 +135,7 @@
                     <a
                       [routerLink]="['..', tool.screen]"
                       [queryParams]="tool.tab ? { tab: tool.tab } : {}"
-                      >{{ toolLabel(tool) }} →</a
+                      >{{ toolLabel(tool) }} {{ t().common.next }}</a
                     >
                   </li>
                 }

@@ -28,7 +28,9 @@
   @if (tab() !== 'economics' && members().length === 0) {
     <section class="panel">
       <p class="hint">{{ t().site.empty }}</p>
-      <a class="chip link" routerLink="../projects">{{ t().nav.projects }} →</a>
+      <a class="chip link" routerLink="../projects"
+        >{{ t().nav.projects }} {{ t().common.next }}</a
+      >
     </section>
   } @else if (tab() === 'plants') {
     <div class="workbench">
@@ -230,7 +232,7 @@
             routerLink="../supply"
             [queryParams]="{ tab: 'ro' }"
           >
-            {{ t().nav.supply }} →
+            {{ t().nav.supply }} {{ t().common.next }}
           </a>
         </div>
         <div class="plant">
@@ -253,7 +255,7 @@
             routerLink="../energy"
             [queryParams]="{ tab: 'chp' }"
           >
-            {{ t().nav.energy }} →
+            {{ t().nav.energy }} {{ t().common.next }}
           </a>
         </div>
       </div>

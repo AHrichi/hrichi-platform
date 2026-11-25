@@ -128,9 +128,10 @@ export class EnergyScreen {
     const r = this.reuse();
     const need = this.reuseParams().heatDemandKwhDay;
     const top = Math.max(r.kwhDay, need, 1);
+    // Bars start at x 140 of 560: up to 320 long leaves room for the label.
     return {
-      water: (r.kwhDay / top) * 400,
-      need: (need / top) * 400,
+      water: (r.kwhDay / top) * 320,
+      need: (need / top) * 320,
     };
   });
 

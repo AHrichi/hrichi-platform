@@ -40,6 +40,8 @@
     font-family: var(--font-family-sans);
     font-size: var(--font-size-100);
     letter-spacing: normal;
+    // No case in Arabic; Latin units inside (kPa) keep theirs.
+    text-transform: none;
   }
 }
 

@@ -152,6 +152,10 @@ table {
 
 // Flush strategies: the row as set now, the lowest figure per column.
 table.strategies {
+  tbody th {
+    min-inline-size: 8.5rem;
+  }
+
   tr[data-current] th {
     color: var(--color-accent-default);
   }

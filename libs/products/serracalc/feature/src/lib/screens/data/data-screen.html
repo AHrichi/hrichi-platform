@@ -208,7 +208,9 @@
         @for (a of analysis().alerts; track a.from + a.code) {
           <li [attr.data-severity]="a.severity">
             <strong>{{ alertTitle(a.code) }}</strong>
-            <span>{{ when(a.from) }} → {{ when(a.to) }}</span>
+            <span
+              >{{ when(a.from) }} {{ t().common.next }} {{ when(a.to) }}</span
+            >
             <span class="muted">
               {{ t().data.alertDetail(a.readings + '', i18n.num(a.worst, 2)) }}
             </span>
