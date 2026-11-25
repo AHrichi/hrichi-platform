@@ -28,6 +28,8 @@ import { Icon, type IconName } from '../ui/icon/icon';
 
 export type SerraScreen =
   | 'projects'
+  | 'site'
+  | 'energy'
   | 'calendar'
   | 'greenhouse'
   | 'heating'
@@ -55,10 +57,12 @@ const NAV: readonly NavItem[] = [
   { id: 'heating', icon: 'heating', group: 'climate' },
   { id: 'cooling', icon: 'cooling', group: 'climate' },
   { id: 'water', icon: 'water', group: 'water' },
+  { id: 'site', icon: 'site', group: 'plan' },
   { id: 'calendar', icon: 'calendar', group: 'plan' },
   { id: 'supply', icon: 'wave', group: 'water' },
   { id: 'greenhouse', icon: 'greenhouse', group: 'plan' },
   { id: 'air', icon: 'air', group: 'climate' },
+  { id: 'energy', icon: 'energy', group: 'climate' },
   { id: 'climate', icon: 'climate', group: 'reference' },
   { id: 'science', icon: 'science', group: 'reference' },
   { id: 'report', icon: 'report', group: 'reference' },

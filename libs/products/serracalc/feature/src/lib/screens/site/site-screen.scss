@@ -1,0 +1,170 @@
+@use '../../styles/serra' as sc;
+
+.kpis {
+  @include sc.results;
+
+  > ah-metric-card {
+    @include sc.readout;
+  }
+}
+
+.eyebrow {
+  @include sc.eyebrow;
+}
+
+// The compartments as one bar, each its share of the site's area.
+.shares {
+  display: flex;
+  gap: 2px;
+  block-size: 0.875rem;
+  overflow: hidden;
+  border-radius: var(--radius-pill);
+}
+
+.share {
+  min-inline-size: 4px;
+  background: var(--color-data-1);
+
+  &[data-i='1'] {
+    background: var(--color-data-2);
+  }
+
+  &[data-i='2'] {
+    background: var(--color-data-3);
+  }
+
+  &[data-i='3'] {
+    background: var(--color-data-4);
+  }
+
+  &[data-i='4'] {
+    background: var(--color-data-5);
+  }
+
+  &[data-i='5'] {
+    background: var(--color-data-7);
+  }
+}
+
+.plants {
+  display: grid;
+  gap: var(--space-3);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+}
+
+.plant {
+  @include sc.readout;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
+
+  p {
+    margin: 0;
+    font-size: var(--font-size-200);
+  }
+}
+
+.gauge {
+  block-size: 0.625rem;
+  overflow: hidden;
+  border-radius: var(--radius-pill);
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border-default);
+
+  span {
+    display: block;
+    block-size: 100%;
+    background: var(--color-success-default);
+  }
+
+  &.short span {
+    background: var(--color-danger-default);
+  }
+}
+
+.link {
+  align-self: start;
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+tbody th {
+  a {
+    color: var(--color-accent-default);
+    font-weight: var(--font-weight-semibold);
+  }
+
+  small {
+    display: block;
+    color: var(--color-text-muted);
+    font-weight: var(--font-weight-regular);
+  }
+}
+
+.area {
+  @include sc.form-control;
+  inline-size: 6rem;
+  min-block-size: 2.25rem;
+  padding: var(--space-1) var(--space-2);
+  text-align: end;
+  font-variant-numeric: tabular-nums;
+}
+
+// The year's costs, one bar, with a legend that carries the numbers.
+.costbar {
+  display: flex;
+  gap: 2px;
+  block-size: 1.25rem;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+}
+
+.cost,
+.swatch {
+  background: var(--color-data-1);
+
+  &[data-cost='energy'] {
+    background: var(--color-data-2);
+  }
+
+  &[data-cost='water'] {
+    background: var(--color-data-4);
+  }
+
+  &[data-cost='inputs'] {
+    background: var(--color-data-7);
+  }
+
+  &[data-cost='other'] {
+    background: var(--color-data-6);
+  }
+}
+
+.cost {
+  min-inline-size: 3px;
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--font-size-200);
+  font-variant-numeric: tabular-nums;
+
+  li {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+}
+
+.swatch {
+  inline-size: 0.75rem;
+  block-size: 0.75rem;
+  border-radius: 2px;
+}

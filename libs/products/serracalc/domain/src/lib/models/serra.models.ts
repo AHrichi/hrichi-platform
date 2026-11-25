@@ -1,3 +1,6 @@
+import type { EnergyHubParams, HeatReuseParams } from '../calculations/energy';
+import type { EconomicsParams } from '../calculations/site';
+
 /**
  * SerraCalc's language-neutral model. Calculations return numbers and note
  * codes; the feature writes the sentences in the reader's language.
@@ -901,7 +904,10 @@ export type SavedCalculation =
   | SavedCalcBase<'fog', FogParams>
   | SavedCalcBase<'calendar', CalendarParams>
   | SavedCalcBase<'ro', RoParams>
-  | SavedCalcBase<'fertigation', FertigationParams>;
+  | SavedCalcBase<'fertigation', FertigationParams>
+  | SavedCalcBase<'energy', EnergyHubParams>
+  | SavedCalcBase<'heatReuse', HeatReuseParams>
+  | SavedCalcBase<'economics', EconomicsParams>;
 
 export type CalcKind = SavedCalculation['kind'];
 
@@ -916,6 +922,11 @@ export interface GreenhouseProject {
   crop: CropId;
   currency: Currency;
   greenhouse: GreenhouseSpec;
+  /**
+   * The compartment this project stands for, ha: its house repeated over
+   * the area. Unset, the house's own floor.
+   */
+  areaHa?: number;
   notes?: string;
   calculations: SavedCalculation[];
   createdAt: string;

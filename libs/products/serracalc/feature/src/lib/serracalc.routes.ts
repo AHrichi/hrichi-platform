@@ -23,6 +23,18 @@ export const SERRACALC_ROUTES: Routes = [
           ),
       },
       {
+        path: 'site',
+        title: title('site'),
+        loadComponent: () =>
+          import('./screens/site/site-screen').then((m) => m.SiteScreen),
+      },
+      {
+        path: 'energy',
+        title: title('energy'),
+        loadComponent: () =>
+          import('./screens/energy/energy-screen').then((m) => m.EnergyScreen),
+      },
+      {
         path: 'calendar',
         title: title('calendar'),
         loadComponent: () =>

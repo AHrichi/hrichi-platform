@@ -1,5 +1,7 @@
 import type { CalcNote, SavedCalculation } from '../models/serra.models';
 import { cropCalendar } from './calendar';
+import { energyHub, heatReuse } from './energy';
+import { siteEconomics } from './site';
 import { co2Enrichment } from './co2';
 import { padAndFan, ventilation } from './cooling';
 import { annualHeating, heatLoss } from './heating';
@@ -65,7 +67,17 @@ export type FigureId =
   | 'drainEc'
   | 'waterSaved'
   | 'flushDay'
-  | 'yieldLoss';
+  | 'yieldLoss'
+  | 'chpShare'
+  | 'boilerHeat'
+  | 'gasDay'
+  | 'powerDay'
+  | 'reuseHeat'
+  | 'reuseCover'
+  | 'revenue'
+  | 'costPerKg'
+  | 'margin'
+  | 'payback';
 
 /**
  * One number of a result, language-neutral: the feature labels it and
@@ -254,6 +266,40 @@ export function summarizeSaved(saved: SavedCalculation): SavedSummary {
           fig('waterSaved', r.waterSavedPct, '%'),
           fig('flushDay', r.flushDay, 'd'),
           fig('yieldLoss', r.yieldLossPct, '%', 1),
+        ],
+        notes: r.notes,
+      };
+    }
+    case 'energy': {
+      const r = energyHub(saved.inputs);
+      return {
+        figures: [
+          fig('chpShare', r.chpSharePct, '%'),
+          fig('boilerHeat', r.boilerKwh / 1000, 'MWh', 1),
+          fig('gasDay', r.gasM3, 'm³'),
+          fig('powerDay', r.powerKwh / 1000, 'MWh', 1),
+        ],
+        notes: r.notes,
+      };
+    }
+    case 'heatReuse': {
+      const r = heatReuse(saved.inputs);
+      return {
+        figures: [
+          fig('reuseHeat', r.kwhDay / 1000, 'MWh', 2),
+          fig('reuseCover', r.coverPct, '%'),
+        ],
+        notes: r.notes,
+      };
+    }
+    case 'economics': {
+      const r = siteEconomics(saved.inputs);
+      return {
+        figures: [
+          fig('revenue', r.revenue, 'money'),
+          fig('costPerKg', r.costPerKg, 'money', 2),
+          fig('margin', r.margin, 'money'),
+          fig('payback', r.paybackYears, 'y', 1),
         ],
         notes: r.notes,
       };

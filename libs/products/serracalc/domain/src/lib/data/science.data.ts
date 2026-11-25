@@ -24,11 +24,14 @@ export type PhenomenonId =
   | 'rainHarvest'
   | 'desalination'
   | 'fertigation'
+  | 'cogeneration'
+  | 'heatReuse'
+  | 'siteScale'
   | 'light'
   | 'co2'
   | 'cropCalendar';
 
-export type ScienceGroup = 'house' | 'heat' | 'air' | 'water' | 'crop';
+export type ScienceGroup = 'house' | 'heat' | 'air' | 'water' | 'crop' | 'site';
 
 export type InstrumentId =
   | 'tape'
@@ -85,6 +88,7 @@ export const SCIENCE_GROUPS: readonly ScienceGroup[] = [
   'air',
   'water',
   'crop',
+  'site',
 ];
 
 export const PHENOMENA: readonly Phenomenon[] = [
@@ -317,6 +321,58 @@ export const PHENOMENA: readonly Phenomenon[] = [
     sources: ['rodriguezOrtega2019', 'hydrotool'],
   },
   {
+    id: 'cogeneration',
+    group: 'heat',
+    formula:
+      'gas = P_el / η_el / 9.77;  heat → house, then buffer (1.163 × V × ΔT), then dumped;  boiler = demand − CHP − buffer;  CO₂ = 1.96 kg per m³ of gas',
+    inputs: [
+      'chpElectricKw',
+      'chpThermalKw',
+      'chpElectricPct',
+      'chpStartHour',
+      'chpEndHour',
+      'bufferM3',
+      'bufferDeltaK',
+      'lossCoefficientWK',
+    ],
+    related: ['heatLoss', 'co2', 'heatReuse', 'siteScale'],
+    tools: [{ screen: 'energy', tab: 'chp' }],
+    sources: ['typical'],
+  },
+  {
+    id: 'heatReuse',
+    group: 'heat',
+    formula: 'Q = 1.163 × V × (T_in − T_out)   [kWh; V in m³]',
+    inputs: ['waterM3Day', 'inC', 'outC'],
+    related: ['cogeneration', 'hotWater'],
+    tools: [{ screen: 'energy', tab: 'reuse' }],
+    sources: ['typical'],
+  },
+  {
+    id: 'siteScale',
+    group: 'site',
+    formula:
+      'site = Σ compartments (house per m² × area);  water/day = ha × 10,000 × m³/m² / 365;  cost/kg = costs / (ha × t/ha × 1000)',
+    inputs: [
+      'areaHa',
+      'yieldTHa',
+      'pricePerKg',
+      'labourDaysHa',
+      'wagePerDay',
+      'heatPricePerMwh',
+      'waterPricePerM3',
+      'inputsPerM2',
+      'otherPerM2',
+      'capexPerM2',
+    ],
+    related: ['transpiration', 'heatLoss', 'desalination', 'cogeneration'],
+    tools: [
+      { screen: 'site', tab: 'overview' },
+      { screen: 'site', tab: 'economics' },
+    ],
+    sources: ['typical'],
+  },
+  {
     id: 'light',
     group: 'crop',
     formula:
@@ -480,6 +536,37 @@ export const INPUT_METHODS: Record<string, InputMethod> = {
   stockTankM3: m('measure', 'tape', 'fertigation'),
   yieldSlopePct: m('assume', undefined, 'fertigation'),
   yieldThresholdEc: m('assume', undefined, 'fertigation'),
+  // Energy hub
+  lossCoefficientWK: m('derived', 'meters', 'cogeneration'),
+  outsideMinC: m('measure', 'weatherStation', 'cogeneration'),
+  outsideMaxC: m('measure', 'weatherStation', 'cogeneration'),
+  chpElectricKw: m('datasheet', 'meters', 'cogeneration'),
+  chpThermalKw: m('datasheet', 'meters', 'cogeneration'),
+  chpElectricPct: m('datasheet', 'meters', 'cogeneration'),
+  chpStartHour: m('setpoint', 'climateComputer', 'cogeneration'),
+  chpEndHour: m('setpoint', 'climateComputer', 'cogeneration'),
+  bufferM3: m('measure', 'tape', 'cogeneration'),
+  bufferDeltaK: m('measure', 'infrared', 'cogeneration'),
+  boilerEfficiencyPct: m('datasheet', 'meters', 'cogeneration'),
+  co2NeedKgH: m('assume', 'co2Sensor', 'co2'),
+  powerPrice: m('bill', 'meters', 'cogeneration'),
+  waterM3Day: m('measure', 'flowMeter', 'heatReuse'),
+  inC: m('measure', 'infrared', 'heatReuse'),
+  outC: m('measure', 'infrared', 'heatReuse'),
+  heatDemandKwhDay: m('derived', 'meters', 'heatReuse'),
+  // Site and economics
+  areaHa: m('measure', 'tape', 'siteScale'),
+  yieldTHa: m('assume', undefined, 'siteScale'),
+  pricePerKg: m('bill', undefined, 'siteScale'),
+  labourDaysHa: m('assume', undefined, 'siteScale'),
+  wagePerDay: m('bill', undefined, 'siteScale'),
+  heatMwhYear: m('derived', 'meters', 'siteScale'),
+  heatPricePerMwh: m('bill', 'meters', 'siteScale'),
+  waterM3Year: m('derived', 'flowMeter', 'siteScale'),
+  waterPricePerM3: m('bill', 'meters', 'siteScale'),
+  inputsPerM2: m('bill', undefined, 'siteScale'),
+  otherPerM2: m('bill', undefined, 'siteScale'),
+  capexPerM2: m('bill', undefined, 'siteScale'),
   // Light and CO₂
   targetDli: m('setpoint', 'parSensor', 'light'),
   maxDli: m('setpoint', 'parSensor', 'light'),

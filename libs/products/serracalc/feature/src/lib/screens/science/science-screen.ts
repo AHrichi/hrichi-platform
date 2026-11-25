@@ -122,6 +122,8 @@ export class ScienceScreen {
       cooling: t.cooling.tabs,
       water: t.water.tabs,
       supply: t.supply.tabs,
+      energy: t.energy.tabs,
+      site: t.site.tabs,
       air: t.air.tabs,
     };
     const tab = p.tab ? tabs[p.screen]?.[p.tab] : undefined;

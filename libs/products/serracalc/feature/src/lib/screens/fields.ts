@@ -221,6 +221,48 @@ export const FERTIGATION_FIELDS: readonly FieldSpec[] = [
   spec('yieldThresholdEc', 'dS/m', 0, 6, 0.1),
 ];
 
+export const ENERGY_FIELDS: readonly FieldSpec[] = [
+  spec('lossCoefficientWK', 'W/K', 10, 5000000, 10),
+  spec('screenSavingPct', '%', 0, 70, 1),
+  spec('nightSetC', '°C', 0, 30, 0.5),
+  spec('daySetC', '°C', 0, 35, 0.5),
+  spec('outsideMinC', '°C', -25, 25, 0.5),
+  spec('outsideMaxC', '°C', -15, 35, 0.5),
+  spec('radiationWm2', 'W/m²', 0, 1100, 10),
+  transmission,
+  spec('solarGainPct', '%', 0, 80, 1),
+  spec('chpElectricKw', 'kW', 0, 50000, 10),
+  spec('chpThermalKw', 'kW', 0, 60000, 10),
+  spec('chpElectricPct', '%', 25, 50, 1),
+  spec('chpStartHour', 'h', 0, 23, 1),
+  spec('chpEndHour', 'h', 1, 24, 1),
+  spec('bufferM3', 'm³', 0, 50000, 1),
+  spec('bufferDeltaK', 'K', 10, 60, 1),
+  spec('boilerEfficiencyPct', '%', 70, 105, 1),
+  spec('co2NeedKgH', 'kg/h', 0, 10000, 1),
+  floor,
+];
+
+export const REUSE_FIELDS: readonly FieldSpec[] = [
+  spec('waterM3Day', 'm³/d', 0, 200000, 1),
+  spec('inC', '°C', 5, 95, 0.5),
+  spec('outC', '°C', 0, 60, 0.5),
+  spec('heatDemandKwhDay', 'kWh', 0, 50000000, 10),
+];
+
+export const ECONOMICS_FIELDS: readonly FieldSpec[] = [
+  spec('areaHa', 'ha', 0.01, 1000, 0.01),
+  spec('yieldTHa', 't/ha', 0, 800, 1),
+  spec('labourDaysHa', 'd/ha', 0, 5000, 10),
+  spec('heatMwhYear', 'MWh', 0, 5000000, 1),
+  spec('waterM3Year', 'm³', 0, 500000000, 10),
+];
+
+/** A money field in the project's currency that can run high (wages, build). */
+export function moneyField(key: string, unit: string, max = 5000): FieldSpec {
+  return spec(key, unit, 0, max, 0.01);
+}
+
 /** A price field in the project's currency, per its unit. */
 export function priceField(key: string, unit: string): FieldSpec {
   return spec(key, unit, 0, 50, 0.01);

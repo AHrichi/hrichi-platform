@@ -1,0 +1,319 @@
+<section class="screen" aria-labelledby="sc-site-title">
+  <header class="head">
+    <div>
+      <h2 id="sc-site-title">{{ t().site.title }}</h2>
+      <p>{{ t().site.lead }}</p>
+    </div>
+    @if (sites().length > 1) {
+      <label class="select-inline">
+        <span>{{ t().site.choose }}</span>
+        <select (change)="chooseSite($event)">
+          @for (name of sites(); track name) {
+            <option [value]="name" [selected]="name === site()">
+              {{ name || t().site.unnamed }}
+            </option>
+          }
+        </select>
+      </label>
+    }
+  </header>
+
+  <ah-tabs
+    [tabs]="tabs()"
+    [selectedId]="tab()"
+    (selectedIdChange)="editor.select($event)"
+    [ariaLabel]="t().site.title"
+  />
+
+  @if (tab() === 'overview') {
+    @if (members().length === 0) {
+      <section class="panel">
+        <p class="hint">{{ t().site.empty }}</p>
+        <a class="chip link" routerLink="../projects"
+          >{{ t().nav.projects }} →</a
+        >
+      </section>
+    } @else {
+      <section class="panel" aria-labelledby="sc-site-kpis">
+        <h3 id="sc-site-kpis">
+          {{ site() || t().site.unnamed }} ·
+          {{ t().site.compartments(members().length + '') }}
+        </h3>
+        <div class="kpis">
+          <ah-metric-card
+            [label]="t().site.area"
+            [value]="i18n.num(totals().areaHa, 1)"
+            unit="ha"
+            variant="accent"
+          />
+          <ah-metric-card
+            [label]="t().site.peakWater"
+            [value]="i18n.num(totals().peakWaterM3Day, 0)"
+            unit="m³/d"
+            [hint]="
+              t().site.meanWater +
+              ' ' +
+              i18n.num(totals().meanWaterM3Day, 0) +
+              ' · ' +
+              i18n.num(totals().waterM3PerM2Year, 2) +
+              ' m³/m²·a'
+            "
+          />
+          <ah-metric-card
+            [label]="t().site.heatPeak"
+            [value]="i18n.num(totals().heatPeakMw, 1)"
+            unit="MW"
+            [hint]="
+              i18n.num(totals().heatMwhYear, 0) +
+              ' MWh/a · ' +
+              i18n.num(totals().heatKwhPerM2Year, 0) +
+              ' kWh/m²'
+            "
+          />
+          <ah-metric-card
+            [label]="t().site.yield"
+            [value]="i18n.num(totals().yieldT, 0)"
+            unit="t"
+          />
+          <ah-metric-card
+            [label]="t().site.labour"
+            [value]="i18n.num(totals().labourDays, 0)"
+            [unit]="t().site.days"
+            [hint]="t().site.people(i18n.num(totals().labourDays / 250, 0))"
+          />
+          <ah-metric-card
+            [label]="t().site.co2e"
+            [value]="i18n.num(totals().co2eT, 0)"
+            unit="t CO₂e"
+            [hint]="t().site.co2eHint"
+          />
+        </div>
+
+        <div class="shares" role="img" [attr.aria-label]="t().site.sharesAlt">
+          @for (s of shares(); track s.id; let i = $index) {
+            <span
+              class="share"
+              [attr.data-i]="i % 6"
+              [style.flex-grow]="s.pct"
+              [title]="s.title + ' · ' + i18n.num(s.pct, 0) + ' %'"
+            ></span>
+          }
+        </div>
+      </section>
+
+      <section class="panel" aria-labelledby="sc-site-plants">
+        <h3 id="sc-site-plants">{{ t().site.plants }}</h3>
+        <div class="plants">
+          <div class="plant">
+            <span class="eyebrow">{{ t().site.roPlant }}</span>
+            @if (roCheck(); as ro) {
+              <div class="gauge" [class.short]="ro.pct < 100">
+                <span
+                  [style.inline-size.%]="ro.pct > 100 ? 100 : ro.pct"
+                ></span>
+              </div>
+              <p>
+                {{ t().site.covers(i18n.num(ro.pct, 0)) }} ·
+                {{ i18n.num(ro.available, 0) }} m³/d · {{ ro.label }}
+              </p>
+            } @else {
+              <p class="hint">{{ t().site.noRo }}</p>
+            }
+            <a
+              class="chip link"
+              routerLink="../supply"
+              [queryParams]="{ tab: 'ro' }"
+            >
+              {{ t().nav.supply }} →
+            </a>
+          </div>
+          <div class="plant">
+            <span class="eyebrow">{{ t().site.chpPlant }}</span>
+            @if (chpCheck(); as chp) {
+              <div class="gauge">
+                <span
+                  [style.inline-size.%]="chp.pct > 100 ? 100 : chp.pct"
+                ></span>
+              </div>
+              <p>
+                {{ t().site.chpOfPeak(i18n.num(chp.pct, 0)) }} ·
+                {{ i18n.num(chp.thermalKw, 0) }} kW · {{ chp.label }}
+              </p>
+            } @else {
+              <p class="hint">{{ t().site.noChp }}</p>
+            }
+            <a
+              class="chip link"
+              routerLink="../energy"
+              [queryParams]="{ tab: 'chp' }"
+            >
+              {{ t().nav.energy }} →
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel" aria-labelledby="sc-site-table">
+        <h3 id="sc-site-table">{{ t().site.table }}</h3>
+        <p class="hint">{{ t().site.tableHint }}</p>
+        <div
+          class="table-wrap"
+          tabindex="0"
+          role="region"
+          [attr.aria-label]="t().site.table"
+        >
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">{{ t().site.compartment }}</th>
+                <th scope="col">ha</th>
+                <th scope="col">{{ t().site.houses }}</th>
+                <th scope="col">m³/d</th>
+                <th scope="col">m³/a</th>
+                <th scope="col">kW</th>
+                <th scope="col">MWh/a</th>
+                <th scope="col">t</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (c of compartments(); track c.projectId) {
+                <tr>
+                  <th scope="row">
+                    <a routerLink="../projects" (click)="open(c.projectId)">{{
+                      c.title
+                    }}</a>
+                    <small>{{ t().crops[c.crop] }}</small>
+                  </th>
+                  <td>
+                    <input
+                      class="area"
+                      type="number"
+                      inputmode="decimal"
+                      min="0.01"
+                      step="0.01"
+                      [value]="c.areaHa"
+                      [attr.aria-label]="t().site.areaOf(c.title)"
+                      (change)="setArea(c.projectId, $event)"
+                    />
+                  </td>
+                  <td>{{ i18n.num(c.houses, 1) }}</td>
+                  <td>{{ i18n.num(c.peakWaterM3Day, 0) }}</td>
+                  <td>{{ i18n.num(c.waterM3Year, 0) }}</td>
+                  <td>{{ i18n.num(c.heatPeakKw, 0) }}</td>
+                  <td>{{ i18n.num(c.heatMwhYear, 0) }}</td>
+                  <td>{{ i18n.num(c.yieldT, 0) }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </section>
+    }
+  } @else {
+    <div class="workbench">
+      <div class="column">
+        <section class="panel" aria-labelledby="sc-econ-inputs">
+          <h3 id="sc-econ-inputs">{{ t().calc.inputs }}</h3>
+          <div class="actions">
+            <button type="button" class="chip" (click)="takeTotals()">
+              {{ t().site.takeTotals(i18n.num(totals().areaHa, 1)) }}
+            </button>
+          </div>
+          <sc-field-grid
+            [specs]="econFields()"
+            [values]="econParams()"
+            (changed)="setEcon($event)"
+          />
+        </section>
+      </div>
+      <div class="column">
+        <section class="panel" aria-labelledby="sc-econ-results">
+          <h3 id="sc-econ-results">{{ t().calc.results }}</h3>
+          <div class="results">
+            <ah-metric-card
+              [label]="t().site.costPerKg"
+              [value]="i18n.money(econ().costPerKg, currency())"
+              variant="accent"
+              [hint]="
+                t().site.price +
+                ' ' +
+                i18n.money(econParams().pricePerKg, currency())
+              "
+            />
+            <ah-metric-card
+              [label]="t().site.margin"
+              [value]="i18n.money(econ().margin, currency())"
+              [variant]="econ().margin < 0 ? 'danger' : 'default'"
+              [hint]="i18n.num(econ().marginPct, 1) + ' %'"
+            />
+            <ah-metric-card
+              [label]="t().site.revenue"
+              [value]="i18n.money(econ().revenue, currency())"
+              [hint]="i18n.num(econ().yieldT, 0) + ' t'"
+            />
+            <ah-metric-card
+              [label]="t().site.payback"
+              [value]="
+                econ().paybackYears === null
+                  ? t().common.none
+                  : i18n.num(econ().paybackYears ?? 0, 1)
+              "
+              [unit]="econ().paybackYears === null ? '' : t().site.years"
+            />
+            <ah-metric-card
+              [label]="t().site.waterPerKg"
+              [value]="i18n.num(econ().waterLPerKg, 0)"
+              unit="L/kg"
+            />
+            <ah-metric-card
+              [label]="t().site.co2e"
+              [value]="i18n.num(econ().co2eT, 0)"
+              unit="t CO₂e"
+            />
+          </div>
+          <h4>{{ t().site.costTitle }}</h4>
+          <div
+            class="costbar"
+            role="img"
+            [attr.aria-label]="t().site.costTitle"
+          >
+            @for (part of costParts(); track part.id) {
+              <span
+                class="cost"
+                [attr.data-cost]="part.id"
+                [style.flex-grow]="part.pct"
+                [title]="part.label + ' · ' + i18n.num(part.pct, 0) + ' %'"
+              ></span>
+            }
+          </div>
+          <ul class="legend" role="list">
+            @for (part of costParts(); track part.id) {
+              <li>
+                <span
+                  class="swatch"
+                  [attr.data-cost]="part.id"
+                  aria-hidden="true"
+                ></span>
+                {{ part.label }}: {{ i18n.money(part.value, currency()) }} ({{
+                  i18n.num(part.pct, 0)
+                }}
+                %)
+              </li>
+            }
+          </ul>
+          <sc-note-list [notes]="econ().notes" />
+          <sc-calc-steps [steps]="steps()" />
+        </section>
+        <section class="panel" aria-labelledby="sc-econ-save">
+          <h3 id="sc-econ-save">{{ t().save.title }}</h3>
+          <sc-save-bar
+            [suggestedLabel]="suggestedLabel()"
+            [editingLabel]="editor.editingLabel()"
+            (save)="save($event)"
+            (stopEditing)="editor.stop()"
+          />
+        </section>
+      </div>
+    </div>
+  }
+</section>

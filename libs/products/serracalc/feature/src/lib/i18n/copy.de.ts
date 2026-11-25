@@ -22,6 +22,8 @@ export const DE: SerraCopy = {
       'Eine Planungshilfe: Prüfen Sie die Ergebnisse mit einer Fachingenieurin oder einem Fachingenieur und den Daten der Lieferanten, bevor Sie bauen.',
   },
   nav: {
+    site: 'Standort',
+    energy: 'Energie',
     supply: 'Wasserversorgung',
     science: 'Wissen',
     calendar: 'Anbaukalender',
@@ -123,6 +125,35 @@ export const DE: SerraCopy = {
   },
 
   fields: {
+    lossCoefficientWK: 'Wärmeverlust je Kelvin',
+    outsideMinC: 'Außen, Nachttief',
+    outsideMaxC: 'Außen, Nachmittagshoch',
+    chpElectricKw: 'BHKW-Strom',
+    chpThermalKw: 'BHKW-Wärme',
+    chpElectricPct: 'Elektrischer Wirkungsgrad',
+    chpStartHour: 'BHKW startet um',
+    chpEndHour: 'BHKW stoppt um',
+    bufferM3: 'Pufferspeicher',
+    bufferDeltaK: 'Temperaturspanne des Puffers',
+    boilerEfficiencyPct: 'Kesselwirkungsgrad',
+    co2NeedKgH: 'Von der Kultur aufgenommenes CO₂',
+    powerPrice: 'Preis des verkauften Stroms',
+    waterM3Day: 'Gekühltes Wasser pro Tag',
+    inC: 'Wasser zu',
+    outC: 'Wasser ab',
+    heatDemandKwhDay: 'Wärmebedarf an dem Tag',
+    areaHa: 'Fläche',
+    yieldTHa: 'Ertrag',
+    pricePerKg: 'Erzielter Preis',
+    labourDaysHa: 'Arbeit',
+    wagePerDay: 'Tageslohn',
+    heatMwhYear: 'Wärme pro Jahr',
+    heatPricePerMwh: 'Wärmepreis',
+    waterM3Year: 'Wasser pro Jahr',
+    waterPricePerM3: 'Wasserpreis',
+    inputsPerM2: 'Dünger und Pflanzenschutz',
+    otherPerM2: 'Verpackung und Gemeinkosten',
+    capexPerM2: 'Baukosten',
     demandM3Day: 'Wasserbedarf am Spitzentag',
     lossesPct: 'Verluste',
     feedSalinityGL: 'Salzgehalt des Meerwassers',
@@ -234,6 +265,16 @@ export const DE: SerraCopy = {
     nightHours: 'Nachtlänge',
   } as Record<string, string>,
   hints: {
+    chpElectricKw: 'Wüstenbetriebe: etwa 10 MW für 50 ha (20 W/m²)',
+    chpStartHour:
+      'Tagsüber laufen, wenn das CO₂ bei geschlossener Lüftung genutzt wird',
+    bufferM3: 'Üblich 50–100 m³ je Hektar',
+    bufferDeltaK: '90 → 50 °C: 40 K',
+    inC: 'Tiefe Brunnen im Süden liefern Wasser mit etwa 40 °C',
+    yieldTHa: 'Glashaustomate in der Wüste: etwa 250 t/ha',
+    labourDaysHa: 'Geschützte Tomate: etwa 1.000 Tage/ha (Studie 2018)',
+    pricePerKg: 'Exporttomaten erzielten 1,24–1,94 EUR/kg, Januar–April 2016',
+    capexPerM2: 'Ihr eigenes Angebot; dies ist ein Beispiel',
     feedSalinityGL: 'Das Meer vor Gabès: 39–40 g/L',
     recoveryPct: 'Meerwasser-UO: 40–50 %; darüber steigt die Sole schnell',
     secKwhM3: 'Üblich 3–4 mit Energierückgewinnung; mit dem Lieferanten klären',
@@ -343,6 +384,9 @@ export const DE: SerraCopy = {
     deleteResult: (label: string) => `„${label}“ löschen?`,
   },
   kinds: {
+    energy: 'Energiezentrale (BHKW)',
+    heatReuse: 'Wärme aus gekühltem Wasser',
+    economics: 'Wirtschaftlichkeit',
     ro: 'Meerwasser-Umkehrosmose',
     fertigation: 'Fertigation und Drain',
     vpd: 'Feuchte und VPD',
@@ -719,6 +763,7 @@ export const DE: SerraCopy = {
     readMore: 'Mehr zu',
     close: 'Schließen',
     groups: {
+      site: 'Standort und Geld',
       house: 'Das Haus',
       heat: 'Wärme',
       air: 'Luft, Feuchte und Kühlung',
@@ -745,6 +790,30 @@ export const DE: SerraCopy = {
       bill: 'Ihr eigener Tarif oder Faktor, in der Währung des Projekts.',
     },
     topics: {
+      cogeneration: {
+        title: 'Kraft-Wärme-Kopplung (BHKW) und Wärmespeicher',
+        what: 'Ein Gasmotor erzeugt Strom und aus Kühlwasser und Abgas Wärme; sein gereinigtes Abgas liefert CO₂ für die Kultur. Läuft er tagsüber, wenn die Kultur das CO₂ nutzen kann, erzeugt er mehr Wärme, als das Haus braucht: ein Warmwasserpuffer trägt sie in die Nacht, ein Kessel deckt den Rest.',
+        assumptions: [
+          'Ein winterlicher Auslegungstag, außen ein Kosinus von 3 bis 15 Uhr.',
+          'Das BHKW läuft in seinen Stunden mit voller Leistung.',
+        ],
+      },
+      heatReuse: {
+        title: 'Wärme in gekühltem Brunnenwasser',
+        what: 'Warm aus einem tiefen Brunnen gepumptes und für Bewässerung oder Kühlung gekühltes Wasser gibt je m³ und Kelvin 1,163 kWh ab. Von 40 auf 15 °C gekühlt, werden etwa 29 kWh je m³ frei: Wärme, die eine Wärmepumpe oder ein Niedertemperaturkreis ins Haus zurückbringen kann.',
+        assumptions: [
+          'Die ganze freigesetzte Wärme wird genutzt.',
+          'Wasser mit 1.000 kg/m³ und 4,19 kJ/kg·K.',
+        ],
+      },
+      siteScale: {
+        title: 'Standortgröße und Wirtschaftlichkeit',
+        what: 'Ein großer Standort besteht aus Abteilungen von einigen Hektar, jede ein über ihre Fläche wiederholtes Haus, die UO, BHKW und Packhalle teilen. Zusammengezählt ergeben sie Wasser, Wärme, Arbeit und Ertrag, die die gemeinsamen Anlagen bedienen müssen, und die Kosten jedes Kilos.',
+        assumptions: [
+          'Jede Abteilung verhält sich je m² wie das Haus ihres Projekts.',
+          'Preise, Löhne und Erträge sind Beispiele, die Sie ersetzen.',
+        ],
+      },
       desalination: {
         title: 'Meerwasserentsalzung durch Umkehrosmose',
         what: 'Hoher Druck presst Meerwasser durch Membranen, die das Salz zurückhalten. Die Ausbeute ist der Anteil, der als Permeat durchkommt; der Rest geht als Sole, entsprechend salziger. Das Pumpen gegen den osmotischen Druck braucht mit Energierückgewinnung 3–4 kWh je m³.',
@@ -1011,6 +1080,99 @@ export const DE: SerraCopy = {
       fertStock: 'Stammlösung = benötigte Nährstoffe / Verdünnung',
     },
   },
+  energy: {
+    title: 'Energie',
+    lead: 'Ein Gas-BHKW, das über einen Wintertag Wärme, Strom und CO₂ liefert, ein Warmwasserpuffer für die Nacht und ein Kessel für den Rest; und die Wärme in gekühltem Brunnenwasser.',
+    tabs: {
+      chp: 'BHKW und Puffer',
+      reuse: 'Wärmerückgewinnung',
+    },
+    buffer: 'Puffer',
+    fromChp: 'BHKW',
+    fromBuffer: 'Puffer',
+    fromBoiler: 'Kessel',
+    demand: 'Bedarf',
+    chpShare: 'Das BHKW deckt',
+    dayNeed: 'Wärme des Tages',
+    dumped: 'Abgeführt',
+    gas: 'Gas pro Tag',
+    power: 'Erzeugter Strom',
+    netCost: 'Gas abzüglich verkauften Stroms',
+    co2: 'CO₂ für die Kultur',
+    co2Need: 'Benötigt',
+    inWater: 'Wärme im Wasser',
+    need: 'Wärmebedarf',
+    covers: 'Deckt',
+    takeLinks:
+      'Spitzentag-Wasser der Kultur und Wärme des Wintertags übernehmen',
+    formulas: {
+      demand:
+        'Bedarf = H × (T_soll − T_außen) − Sonne, nachts abzüglich Schirm',
+      buffer: 'Puffer = 1,163 × V × ΔT',
+      gas: 'Gas = P_el / η_el / 9,77 × Stunden + Kessel',
+      co2: 'CO₂ = 1,96 kg je m³ Gas',
+      reuse: 'Wärme = 1,163 × V × ΔT',
+    },
+  },
+  site: {
+    title: 'Standort',
+    lead: 'Der ganze Betrieb: Jedes Projekt ist eine Abteilung, sein Haus über ihre Fläche wiederholt; die Summen, die gemeinsame UO und das BHKW im Vergleich, und die Wirtschaftlichkeit des Jahres.',
+    tabs: {
+      overview: 'Überblick',
+      economics: 'Wirtschaftlichkeit',
+    },
+    choose: 'Standort',
+    unnamed: 'Standort ohne Namen',
+    empty:
+      'Noch kein Projekt. Projekte mit demselben „Standort“ bilden einen Standort; geben Sie hier jedem seine Fläche.',
+    compartments: (n: string) => `Abteilungen: ${n}`,
+    area: 'Fläche',
+    peakWater: 'Wasser am Spitzentag',
+    meanWater: 'Mittel',
+    heatPeak: 'Wärme in der Auslegungsnacht',
+    yield: 'Ertrag pro Jahr',
+    labour: 'Arbeit pro Jahr',
+    days: 'Tage',
+    people: (n: string) => `etwa ${n} Vollzeitkräfte`,
+    co2e: 'CO₂-Fußabdruck',
+    co2eHint: '1,9 kg CO₂e je kg (veröffentlichte Schätzung)',
+    sharesAlt: 'Abteilungen nach Flächenanteil',
+    plants: 'Gemeinsame Anlagen',
+    roPlant: 'Meerwasser-UO',
+    chpPlant: 'BHKW',
+    covers: (pct: string) => `deckt ${pct} % des Spitzentags`,
+    chpOfPeak: (pct: string) => `${pct} % der Spitzenwärme`,
+    noRo: 'Speichern Sie ein Meerwasser-UO-Ergebnis in einem dieser Projekte, um es hier zu prüfen.',
+    noChp:
+      'Speichern Sie ein Energiezentralen-Ergebnis in einem dieser Projekte, um es hier zu prüfen.',
+    table: 'Abteilungen',
+    tableHint:
+      'Fläche jeder Abteilung festlegen: ihr Haus wird darüber wiederholt.',
+    compartment: 'Abteilung',
+    houses: 'Häuser',
+    areaOf: (name: string) => `Fläche von ${name}, ha`,
+    takeTotals: (ha: string) => `Standortsummen übernehmen: ${ha} ha`,
+    costPerKg: 'Kosten je kg',
+    price: 'Preis',
+    margin: 'Marge',
+    revenue: 'Umsatz',
+    payback: 'Amortisation',
+    years: 'Jahre',
+    waterPerKg: 'Wasser je kg',
+    costTitle: 'Wohin das Geld geht',
+    costs: {
+      labour: 'Arbeit',
+      energy: 'Energie',
+      water: 'Wasser',
+      inputs: 'Dünger und Schutz',
+      other: 'Verpackung und Gemeinkosten',
+    },
+    formulas: {
+      yield: 'Ertrag = Fläche × t/ha',
+      cost: 'Kosten je kg = Kosten / kg',
+      payback: 'Amortisation = Bau / Marge',
+    },
+  },
   calc: {
     science: 'Die Physik dahinter',
     results: 'Ergebnisse',
@@ -1022,6 +1184,10 @@ export const DE: SerraCopy = {
   },
 
   diagrams: {
+    energyAlt: (peak: string, start: string, end: string, share: string) =>
+      `Winterlicher Auslegungstag: Der Wärmebedarf erreicht ${peak} kW; das BHKW läuft von ${start}:00 bis ${end}:00 und deckt ${share} %. Griffe stellen Start und Stopp ein.`,
+    reuseAlt: (water: string, need: string) =>
+      `Wärme im gekühlten Wasser, ${water} kWh, gegen den Wärmebedarf des Tages, ${need} kWh.`,
     roAlt: (feed: string, product: string, brine: string, salinity: string) =>
       `Meerwasser-UO: ${feed} m³ pro Tag gepumpt, ${product} m³ Permeat, ${brine} m³ Sole mit ${salinity} g/L. Griffe stellen Ausbeute und Speicher ein.`,
     fertAlt: (recycle: string, ec: string, flush: string) =>
@@ -1219,6 +1385,16 @@ export const DE: SerraCopy = {
         title: 'Wasserversorgung',
         body: 'Meerwasser-Umkehrosmose für den Spitzentag der Kultur: Zulauf, Sole und ihr Salzgehalt, Energie, Kosten und Speicher. Fertigation mit Drainrecycling: gespartes Wasser und gesparter Dünger, Drain-EC, Natriumanreicherung und wann gespült wird, und der Ertragsverlust durch Salz.',
       },
+      {
+        id: 'site',
+        title: 'Standort und Wirtschaftlichkeit',
+        body: 'Projekte mit demselben Standortnamen sind seine Abteilungen; geben Sie jeder ihre Fläche, und der Standort summiert Wasser, Wärme, Ertrag, Arbeit und CO₂, prüft gemeinsame UO und BHKW und berechnet Kosten je kg, Marge und Amortisation.',
+      },
+      {
+        id: 'energy',
+        title: 'Energiezentrale',
+        body: 'Ein Wintertag Stunde für Stunde: der Wärmebedarf des Hauses, ein tagsüber für sein CO₂ laufendes Gas-BHKW, der Puffer, der seine Wärme in die Nacht trägt, und der Kessel für den Rest; Gas, Strom und Kosten. Und die Wärme in gekühltem Brunnenwasser.',
+      },
     ],
     sourcesTitle: 'Quellen',
     sources: [
@@ -1244,6 +1420,41 @@ export const DE: SerraCopy = {
   },
 
   notes: {
+    'energy.share': (v) =>
+      `Das BHKW deckt ${v['pct']} % der Tageswärme; der Kessel ergänzt ${v['boiler']} MWh.`,
+    'energy.dump': (v) =>
+      `${v['mwh']} MWh BHKW-Wärme werden abgeführt: ein größerer Puffer oder eine kürzere Laufzeit würde sie halten.`,
+    'energy.buffer': (v) =>
+      `Der Puffer hält ${v['mwh']} MWh, um die Tageswärme in die Nacht zu tragen.`,
+    'energy.co2Enough': (v) =>
+      `Das Abgas des BHKW liefert ${v['kg']} kg CO₂, genug für die ${v['need']} kg, die die Kultur aufnimmt.`,
+    'energy.co2Short': (v) =>
+      `Das Abgas des BHKW liefert ${v['kg']} kg CO₂, weniger als die ${v['need']} kg, die die Kultur aufnimmt: flüssiges CO₂ ergänzen oder länger laufen.`,
+    'energy.ventsShut': () =>
+      'BHKW-CO₂ lohnt nur bei fast geschlossener Lüftung (über etwa 5 % offen hält es sich nicht): für Wintertage planen.',
+    'reuse.heat': (v) =>
+      `Jeder gekühlte m³ hält ${v['kwh']} kWh: ${v['mwh']} MWh pro Tag zur Rückgewinnung.`,
+    'reuse.cover': (v) =>
+      `Das deckt ${v['pct']} % des Wärmebedarfs am Wintertag.`,
+    'reuse.heatPump': () =>
+      'Bei 15–40 °C braucht diese Wärme eine Wärmepumpe oder einen Niedertemperaturkreis.',
+    'econ.margin': (v) => `Eine Marge von ${v['pct']} % des Umsatzes.`,
+    'econ.loss': (v) =>
+      `Die Kosten übersteigen den Umsatz (Marge ${v['pct']} %).`,
+    'econ.biggest.labour': (v) =>
+      `Arbeit ist der größte Kostenblock: ${v['pct']} %.`,
+    'econ.biggest.energy': (v) =>
+      `Energie ist der größte Kostenblock: ${v['pct']} %.`,
+    'econ.biggest.water': (v) =>
+      `Wasser ist der größte Kostenblock: ${v['pct']} %.`,
+    'econ.biggest.inputs': (v) =>
+      `Dünger und Pflanzenschutz sind der größte Kostenblock: ${v['pct']} %.`,
+    'econ.biggest.other': (v) =>
+      `Verpackung und Gemeinkosten sind der größte Kostenblock: ${v['pct']} %.`,
+    'econ.payback': (v) =>
+      `Der Bau amortisiert sich in etwa ${v['years']} Jahren.`,
+    'econ.prices': () =>
+      'Die Preise sind Beispiele (Exporttomaten erzielten von Januar bis April 2016 1,24–1,94 EUR/kg): eigene eingeben.',
     'ro.balance': (v) =>
       `${v['feed']} m³ Meerwasser pro Tag ergeben das Permeat und ${v['brine']} m³ Sole mit ${v['salinity']} g/L.`,
     'ro.recoveryHigh': (v) =>

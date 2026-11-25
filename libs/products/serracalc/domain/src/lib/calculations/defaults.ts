@@ -1,6 +1,9 @@
 import {
   COVERS,
+  CROP_YIELD_T_HA,
   CROPS,
+  ECONOMICS_PRICES,
+  LABOUR_DAYS_HA,
   DEFAULT_GREENHOUSE,
   defaultCo2Price,
   defaultFuelPrice,
@@ -32,7 +35,12 @@ import type {
   VentilationParams,
 } from '../models/serra.models';
 import { greenhouseGeometry } from './geometry';
+import type { EnergyHubParams, HeatReuseParams } from './energy';
+import { energyHub, GAS_KWH_PER_M3 } from './energy';
 import type { CoolingAdviceParams } from './fog';
+import { annualHeating, heatLoss } from './heating';
+import type { EconomicsParams } from './site';
+import { seawaterRo } from './water-chain';
 import { cropWater } from './water';
 
 /**
@@ -367,5 +375,89 @@ export function defaultFertigation(ctx: CalcContext): FertigationParams {
     stockTankM3: 5,
     yieldSlopePct: 7.3,
     yieldThresholdEc: 2,
+  };
+}
+
+/**
+ * A design winter day for the energy hub. The CHP is scaled from a desert
+ * site's 10 MW of power for about 50 ha (20 W/m² of floor), runs through
+ * the day so its CO₂ feeds the crop with the vents shut, and charges a
+ * buffer of about 60 m³ a hectare for the night.
+ */
+export function defaultEnergyHub(ctx: CalcContext): EnergyHubParams {
+  const g = greenhouseGeometry(ctx.greenhouse);
+  const climate = climateById(ctx.climateId);
+  const crop = CROPS[ctx.crop];
+  const coldest = climate.months.reduce((a, b) => (b.tMinC < a.tMinC ? b : a));
+  const month = climate.months.indexOf(coldest);
+  const dayHours = dayLengthHours(climate.latitude, midMonthDay(month));
+  const peakSun =
+    ((coldest.radiationMj * 1e6) / (dayHours * 3600)) * (Math.PI / 2);
+  const loss = heatLoss({ ...defaultHeatLoss(ctx), screenClosed: false });
+  const electric = Math.round((g.floorAreaM2 * 20) / 1000);
+  return {
+    floorAreaM2: g.floorAreaM2,
+    lossCoefficientWK: Math.round(loss.lossCoefficientWPerK),
+    screenSavingPct: SCREEN_SAVINGS[ctx.greenhouse.screen],
+    nightSetC: crop.nightSetC,
+    daySetC: crop.daySetC,
+    outsideMinC: climate.designWinterC,
+    outsideMaxC: climate.designWinterC + (coldest.tMaxC - coldest.tMinC),
+    radiationWm2: Math.round(peakSun / 10) * 10,
+    transmissionPct: COVERS[ctx.greenhouse.cover].transmissionPct,
+    solarGainPct: 50,
+    chpElectricKw: electric,
+    chpThermalKw: Math.round(electric * 1.1),
+    chpElectricPct: 42,
+    chpStartHour: 6,
+    chpEndHour: 17,
+    bufferM3: Math.max(1, Math.round((g.floorAreaM2 / 10_000) * 60)),
+    bufferDeltaK: 40,
+    boilerEfficiencyPct: 92,
+    co2NeedKgH: Math.round((g.floorAreaM2 * 3) / 1000),
+    gasPrice: defaultFuelPrice('natural_gas', ctx.currency),
+    powerPrice: defaultFuelPrice('heat_pump', ctx.currency),
+  };
+}
+
+/**
+ * Heat in the well water chilled on the peak day, from 40 °C to 15 °C,
+ * against the design winter day's heat need.
+ */
+export function defaultHeatReuse(ctx: CalcContext): HeatReuseParams {
+  return {
+    waterM3Day: Math.round(cropWater(defaultCropWater(ctx)).peakM3Day),
+    inC: 40,
+    outC: 15,
+    heatDemandKwhDay: energyHub(defaultEnergyHub(ctx)).demandKwh,
+  };
+}
+
+/**
+ * A year of the house as a business: the crop's yield, example prices in
+ * the project's currency, heat from the year's heating at the gas price,
+ * water at the RO plant's cost plus 30 % for chemicals and membranes, and
+ * about 1,000 working days a hectare.
+ */
+export function defaultEconomics(ctx: CalcContext): EconomicsParams {
+  const g = greenhouseGeometry(ctx.greenhouse);
+  const prices = ECONOMICS_PRICES[ctx.currency];
+  const gas = defaultFuelPrice('natural_gas', ctx.currency);
+  return {
+    areaHa: Math.round((g.floorAreaM2 / 10_000) * 100) / 100,
+    yieldTHa: CROP_YIELD_T_HA[ctx.crop],
+    pricePerKg: prices.pricePerKg,
+    labourDaysHa: LABOUR_DAYS_HA,
+    wagePerDay: prices.wagePerDay,
+    heatMwhYear: Math.round(
+      annualHeating(defaultAnnualHeating(ctx)).annualKwh / 1000,
+    ),
+    heatPricePerMwh: Math.round((gas / (GAS_KWH_PER_M3 * 0.9)) * 1000),
+    waterM3Year: Math.round(cropWater(defaultCropWater(ctx)).annualM3),
+    waterPricePerM3:
+      Math.round(seawaterRo(defaultRo(ctx)).costPerM3 * 1.3 * 100) / 100,
+    inputsPerM2: prices.inputsPerM2,
+    otherPerM2: prices.otherPerM2,
+    capexPerM2: prices.capexPerM2,
   };
 }

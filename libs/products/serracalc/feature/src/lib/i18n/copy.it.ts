@@ -22,6 +22,8 @@ export const IT: SerraCopy = {
       'Uno strumento di progettazione: verifica i risultati con un tecnico abilitato e con i dati dei fornitori prima di costruire.',
   },
   nav: {
+    site: 'Sito',
+    energy: 'Energia',
     supply: 'Acqua irrigua',
     science: 'Scienza',
     calendar: 'Calendario colturale',
@@ -123,6 +125,35 @@ export const IT: SerraCopy = {
   },
 
   fields: {
+    lossCoefficientWK: 'Dispersione per kelvin',
+    outsideMinC: 'Fuori, minima notturna',
+    outsideMaxC: 'Fuori, massima pomeridiana',
+    chpElectricKw: 'Potenza elettrica',
+    chpThermalKw: 'Potenza termica',
+    chpElectricPct: 'Rendimento elettrico',
+    chpStartHour: 'Avvio della cogenerazione',
+    chpEndHour: 'Arresto della cogenerazione',
+    bufferM3: 'Serbatoio di accumulo',
+    bufferDeltaK: 'Salto termico dell’accumulo',
+    boilerEfficiencyPct: 'Rendimento della caldaia',
+    co2NeedKgH: 'CO₂ assorbita dalla coltura',
+    powerPrice: 'Prezzo dell’elettricità venduta',
+    waterM3Day: 'Acqua raffreddata al giorno',
+    inC: 'Acqua in ingresso',
+    outC: 'Acqua in uscita',
+    heatDemandKwhDay: 'Calore necessario quel giorno',
+    areaHa: 'Superficie',
+    yieldTHa: 'Resa',
+    pricePerKg: 'Prezzo ricevuto',
+    labourDaysHa: 'Manodopera',
+    wagePerDay: 'Paga giornaliera',
+    heatMwhYear: 'Calore all’anno',
+    heatPricePerMwh: 'Prezzo del calore',
+    waterM3Year: 'Acqua all’anno',
+    waterPricePerM3: 'Prezzo dell’acqua',
+    inputsPerM2: 'Concimi e difesa',
+    otherPerM2: 'Confezionamento e spese generali',
+    capexPerM2: 'Costo di costruzione',
     demandM3Day: 'Acqua necessaria, giorno di punta',
     lossesPct: 'Perdite',
     feedSalinityGL: 'Salinità dell’acqua di mare',
@@ -234,6 +265,16 @@ export const IT: SerraCopy = {
     nightHours: 'Durata della notte',
   } as Record<string, string>,
   hints: {
+    chpElectricKw: 'Siti nel deserto: circa 10 MW per 50 ha (20 W/m²)',
+    chpStartHour: 'Di giorno, quando la CO₂ si usa con le aperture chiuse',
+    bufferM3: 'Tipico 50–100 m³ per ettaro',
+    bufferDeltaK: '90 → 50 °C: 40 K',
+    inC: 'I pozzi profondi del sud danno acqua verso 40 °C',
+    yieldTHa: 'Pomodoro in serra di vetro nel deserto: circa 250 t/ha',
+    labourDaysHa: 'Pomodoro protetto: circa 1.000 giornate/ha (studio 2018)',
+    pricePerKg:
+      'Il pomodoro esportato valeva 1,24–1,94 EUR/kg, gennaio–aprile 2016',
+    capexPerM2: 'Il tuo preventivo; questo è un esempio',
     feedSalinityGL: 'Il mare al largo di Gabès: 39–40 g/L',
     recoveryPct:
       'Osmosi di acqua di mare: 40–50 %; oltre la salamoia sale in fretta',
@@ -343,6 +384,9 @@ export const IT: SerraCopy = {
     deleteResult: (label: string) => `Eliminare «${label}»?`,
   },
   kinds: {
+    energy: 'Centrale energetica (cogenerazione)',
+    heatReuse: 'Calore dell’acqua raffreddata',
+    economics: 'Economia',
     ro: 'Osmosi inversa di acqua di mare',
     fertigation: 'Fertirrigazione e drenaggio',
     vpd: 'Umidità e VPD',
@@ -730,6 +774,7 @@ export const IT: SerraCopy = {
     readMore: 'Leggi:',
     close: 'Chiudi',
     groups: {
+      site: 'Sito e conti',
       house: 'La serra',
       heat: 'Calore',
       air: 'Aria, umidità e raffrescamento',
@@ -755,6 +800,30 @@ export const IT: SerraCopy = {
       bill: 'La tua tariffa o il tuo fattore, nella valuta del progetto.',
     },
     topics: {
+      cogeneration: {
+        title: 'Cogenerazione e accumulo di calore',
+        what: 'Un motore a gas produce elettricità e, dall’acqua di raffreddamento e dai fumi, calore; i fumi depurati portano CO₂ alla coltura. Girando di giorno, quando la coltura può usare la CO₂, produce più calore di quanto serva alla serra: un accumulo d’acqua calda lo porta nella notte e una caldaia copre il resto.',
+        assumptions: [
+          'Una giornata d’inverno di progetto, con l’esterno che segue un coseno dalle 3 alle 15.',
+          'La cogenerazione gira a piena potenza nelle sue ore.',
+        ],
+      },
+      heatReuse: {
+        title: 'Calore dell’acqua di pozzo raffreddata',
+        what: 'L’acqua pompata calda da un pozzo profondo e raffreddata per l’irrigazione o il raffrescamento cede 1,163 kWh per m³ e per kelvin. Raffreddarla da 40 a 15 °C libera circa 29 kWh per m³, che una pompa di calore o un circuito a bassa temperatura può restituire alla serra.',
+        assumptions: [
+          'Tutto il calore liberato viene recuperato.',
+          'Acqua a 1.000 kg/m³ e 4,19 kJ/kg·K.',
+        ],
+      },
+      siteScale: {
+        title: 'Scala del sito ed economia',
+        what: 'Un grande sito è fatto di compartimenti di pochi ettari, ciascuno una serra ripetuta sulla superficie, che condividono osmosi, cogenerazione e magazzino di confezionamento. Sommandoli si ottengono l’acqua, il calore, la manodopera e la produzione che gli impianti condivisi devono servire, e il costo di ogni chilo.',
+        assumptions: [
+          'Ogni compartimento si comporta come la serra del suo progetto, al m².',
+          'Prezzi, paghe e rese sono esempi da sostituire con i tuoi.',
+        ],
+      },
       desalination: {
         title: 'Dissalazione dell’acqua di mare per osmosi inversa',
         what: 'Un’alta pressione spinge l’acqua di mare attraverso membrane che trattengono il sale. Il recupero è la quota che passa come permeato; il resto esce come salamoia, più salata in proporzione. Pompare contro la pressione osmotica richiede 3–4 kWh per m³ con recupero energetico.',
@@ -1022,6 +1091,99 @@ export const IT: SerraCopy = {
       fertStock: 'Soluzione madre = nutrienti necessari / diluizione',
     },
   },
+  energy: {
+    title: 'Energia',
+    lead: 'Una cogenerazione a gas che dà calore, elettricità e CO₂ lungo una giornata d’inverno, un accumulo d’acqua calda per la notte e una caldaia per il resto; e il calore contenuto nell’acqua di pozzo raffreddata.',
+    tabs: {
+      chp: 'Cogenerazione e accumulo',
+      reuse: 'Recupero di calore',
+    },
+    buffer: 'Accumulo',
+    fromChp: 'Cogenerazione',
+    fromBuffer: 'Accumulo',
+    fromBoiler: 'Caldaia',
+    demand: 'Fabbisogno',
+    chpShare: 'La cogenerazione copre',
+    dayNeed: 'Calore del giorno',
+    dumped: 'Disperso',
+    gas: 'Gas al giorno',
+    power: 'Elettricità prodotta',
+    netCost: 'Gas meno elettricità venduta',
+    co2: 'CO₂ alla coltura',
+    co2Need: 'Necessaria',
+    inWater: 'Calore nell’acqua',
+    need: 'Fabbisogno di calore',
+    covers: 'Copre',
+    takeLinks:
+      'Prendi l’acqua del giorno di punta e il calore del giorno d’inverno',
+    formulas: {
+      demand:
+        'Fabbisogno = H × (T_set − T_est) − sole, meno lo schermo di notte',
+      buffer: 'Accumulo = 1,163 × V × ΔT',
+      gas: 'Gas = P_el / η_el / 9,77 × ore + caldaia',
+      co2: 'CO₂ = 1,96 kg per m³ di gas',
+      reuse: 'Calore = 1,163 × V × ΔT',
+    },
+  },
+  site: {
+    title: 'Sito',
+    lead: 'L’intera azienda: ogni progetto è un compartimento, la sua serra ripetuta sulla superficie; i totali, l’osmosi e la cogenerazione condivise a confronto, e l’economia dell’anno.',
+    tabs: {
+      overview: 'Panoramica',
+      economics: 'Economia',
+    },
+    choose: 'Sito',
+    unnamed: 'Sito senza nome',
+    empty:
+      'Nessun progetto. I progetti con lo stesso «Sito» formano un sito; dai qui a ciascuno la sua superficie.',
+    compartments: (n: string) => `Compartimenti: ${n}`,
+    area: 'Superficie',
+    peakWater: 'Acqua, giorno di punta',
+    meanWater: 'media',
+    heatPeak: 'Calore, notte di progetto',
+    yield: 'Produzione all’anno',
+    labour: 'Manodopera all’anno',
+    days: 'giornate',
+    people: (n: string) => `circa ${n} persone a tempo pieno`,
+    co2e: 'Impronta di carbonio',
+    co2eHint: '1,9 kg CO₂e per kg (stima pubblicata)',
+    sharesAlt: 'Compartimenti per quota della superficie',
+    plants: 'Impianti condivisi',
+    roPlant: 'Osmosi di acqua di mare',
+    chpPlant: 'Cogenerazione',
+    covers: (pct: string) => `copre il ${pct} % del giorno di punta`,
+    chpOfPeak: (pct: string) => `${pct} % del picco di calore`,
+    noRo: 'Salva un risultato di osmosi di acqua di mare in uno di questi progetti per verificarlo qui.',
+    noChp:
+      'Salva un risultato della centrale energetica in uno di questi progetti per verificarlo qui.',
+    table: 'Compartimenti',
+    tableHint:
+      'Imposta la superficie di ogni compartimento: la sua serra vi è ripetuta.',
+    compartment: 'Compartimento',
+    houses: 'Serre',
+    areaOf: (name: string) => `Superficie di ${name}, ha`,
+    takeTotals: (ha: string) => `Prendi i totali del sito: ${ha} ha`,
+    costPerKg: 'Costo per kg',
+    price: 'Prezzo',
+    margin: 'Margine',
+    revenue: 'Ricavi',
+    payback: 'Rientro dell’investimento',
+    years: 'anni',
+    waterPerKg: 'Acqua per kg',
+    costTitle: 'Dove vanno i soldi',
+    costs: {
+      labour: 'Manodopera',
+      energy: 'Energia',
+      water: 'Acqua',
+      inputs: 'Concimi e difesa',
+      other: 'Confezionamento e spese',
+    },
+    formulas: {
+      yield: 'Produzione = superficie × t/ha',
+      cost: 'Costo per kg = costi / kg',
+      payback: 'Rientro = costruzione / margine',
+    },
+  },
   calc: {
     science: 'La scienza dietro il calcolo',
     results: 'Risultati',
@@ -1033,6 +1195,10 @@ export const IT: SerraCopy = {
   },
 
   diagrams: {
+    energyAlt: (peak: string, start: string, end: string, share: string) =>
+      `Giornata d’inverno di progetto: il fabbisogno di calore arriva a ${peak} kW; la cogenerazione gira dalle ${start}:00 alle ${end}:00 e copre il ${share} %. Le maniglie regolano avvio e arresto.`,
+    reuseAlt: (water: string, need: string) =>
+      `Calore nell’acqua raffreddata, ${water} kWh, a confronto con il fabbisogno del giorno, ${need} kWh.`,
     roAlt: (feed: string, product: string, brine: string, salinity: string) =>
       `Osmosi di acqua di mare: ${feed} m³ pompati al giorno, ${product} m³ di permeato, ${brine} m³ di salamoia a ${salinity} g/L. Le maniglie regolano il recupero e l’accumulo.`,
     fertAlt: (recycle: string, ec: string, flush: string) =>
@@ -1229,6 +1395,16 @@ export const IT: SerraCopy = {
         title: 'Acqua irrigua',
         body: 'L’osmosi di acqua di mare dimensionata sul giorno di punta: alimentazione, salamoia e sua salinità, energia, costo e accumulo. La fertirrigazione con riuso del drenaggio: acqua e concime risparmiati, EC del drenaggio, accumulo del sodio e quando scaricare, e la resa persa per il sale.',
       },
+      {
+        id: 'site',
+        title: 'Sito ed economia',
+        body: 'I progetti con lo stesso nome di sito ne sono i compartimenti; dai a ciascuno la sua superficie e il sito somma acqua, calore, produzione, manodopera e carbonio, verifica osmosi e cogenerazione condivise e calcola costo per kg, margine e rientro.',
+      },
+      {
+        id: 'energy',
+        title: 'Centrale energetica',
+        body: 'Una giornata d’inverno ora per ora: il fabbisogno di calore della serra, una cogenerazione a gas che gira di giorno per la sua CO₂, l’accumulo che porta il calore nella notte e la caldaia per il resto; gas, elettricità e costi. E il calore contenuto nell’acqua di pozzo raffreddata.',
+      },
     ],
     sourcesTitle: 'Fonti',
     sources: [
@@ -1254,6 +1430,39 @@ export const IT: SerraCopy = {
   },
 
   notes: {
+    'energy.share': (v) =>
+      `La cogenerazione copre il ${v['pct']} % del calore del giorno; la caldaia aggiunge ${v['boiler']} MWh.`,
+    'energy.dump': (v) =>
+      `${v['mwh']} MWh di calore di cogenerazione vanno dispersi: un accumulo più grande o una marcia più corta li terrebbe.`,
+    'energy.buffer': (v) =>
+      `L’accumulo conserva ${v['mwh']} MWh per portare il calore del giorno nella notte.`,
+    'energy.co2Enough': (v) =>
+      `I fumi della cogenerazione danno ${v['kg']} kg di CO₂, abbastanza per i ${v['need']} kg assorbiti dalla coltura.`,
+    'energy.co2Short': (v) =>
+      `I fumi della cogenerazione danno ${v['kg']} kg di CO₂, meno dei ${v['need']} kg assorbiti: aggiungi CO₂ liquida o fai girare più a lungo.`,
+    'energy.ventsShut': () =>
+      'La CO₂ da cogenerazione rende solo con le aperture quasi chiuse (oltre circa il 5 % non si tiene): pianificala per i giorni d’inverno.',
+    'reuse.heat': (v) =>
+      `Ogni m³ raffreddato contiene ${v['kwh']} kWh: ${v['mwh']} MWh al giorno da recuperare.`,
+    'reuse.cover': (v) =>
+      `Copre il ${v['pct']} % del fabbisogno di calore del giorno d’inverno.`,
+    'reuse.heatPump': () =>
+      'Tra 15 e 40 °C questo calore richiede una pompa di calore o un circuito a bassa temperatura.',
+    'econ.margin': (v) => `Un margine del ${v['pct']} % dei ricavi.`,
+    'econ.loss': (v) => `I costi superano i ricavi (margine ${v['pct']} %).`,
+    'econ.biggest.labour': (v) =>
+      `La manodopera è il costo maggiore: ${v['pct']} %.`,
+    'econ.biggest.energy': (v) =>
+      `L’energia è il costo maggiore: ${v['pct']} %.`,
+    'econ.biggest.water': (v) => `L’acqua è il costo maggiore: ${v['pct']} %.`,
+    'econ.biggest.inputs': (v) =>
+      `Concimi e difesa sono il costo maggiore: ${v['pct']} %.`,
+    'econ.biggest.other': (v) =>
+      `Confezionamento e spese generali sono il costo maggiore: ${v['pct']} %.`,
+    'econ.payback': (v) =>
+      `La costruzione rientra in circa ${v['years']} anni.`,
+    'econ.prices': () =>
+      'I prezzi sono esempi (il pomodoro esportato valeva 1,24–1,94 EUR/kg da gennaio ad aprile 2016): inserisci i tuoi.',
     'ro.balance': (v) =>
       `${v['feed']} m³ di acqua di mare al giorno danno il permeato e ${v['brine']} m³ di salamoia a ${v['salinity']} g/L.`,
     'ro.recoveryHigh': (v) =>

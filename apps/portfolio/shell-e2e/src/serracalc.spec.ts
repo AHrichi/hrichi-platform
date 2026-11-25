@@ -11,6 +11,8 @@ const STANDALONE = 'http://localhost:4314/';
 /** Every screen of the app, in the order of its navigation. */
 const SCREENS = [
   'projects',
+  'site',
+  'site?tab=economics',
   'heating',
   'cooling',
   'water',
@@ -20,6 +22,8 @@ const SCREENS = [
   'air?tab=vpd',
   'cooling?tab=fog',
   'calendar',
+  'energy',
+  'energy?tab=reuse',
   'greenhouse',
   'climate',
   'science',

@@ -57,6 +57,7 @@ export class GuideScreen {
     const tabs: Record<string, [string, string]> = {
       vpd: ['air', 'vpd'],
       fog: ['cooling', 'fog'],
+      supply: ['supply', 'ro'],
     };
     const tab = tabs[id];
     return tab

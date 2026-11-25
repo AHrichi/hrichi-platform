@@ -240,6 +240,30 @@ export const SerraStore = signalStore(
         return incoming.length;
       },
 
+      /**
+       * Sets the area a project stands for on its site (a compartment of
+       * its house repeated), or clears it back to the house's own floor.
+       */
+      async setProjectArea(
+        id: string,
+        areaHa: number | undefined,
+      ): Promise<void> {
+        const project = store.projects().find((p) => p.id === id);
+        if (!project) return;
+        const saved: GreenhouseProject = {
+          ...project,
+          areaHa:
+            areaHa !== undefined && Number.isFinite(areaHa) && areaHa > 0
+              ? areaHa
+              : undefined,
+          updatedAt: new Date().toISOString(),
+        };
+        await db.saveProject(saved);
+        patchState(store, {
+          projects: store.projects().map((p) => (p.id === id ? saved : p)),
+        });
+      },
+
       /** Adds the sample projects (back as they were); the user's stay. */
       async loadSamples(): Promise<void> {
         await db.seedSamples();

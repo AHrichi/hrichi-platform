@@ -65,6 +65,16 @@ const LABELS: Record<FigureId, (t: SerraCopy) => string> = {
   waterSaved: (t) => t.supply.waterSaved,
   flushDay: (t) => t.supply.flushIn,
   yieldLoss: (t) => t.supply.yieldLoss,
+  chpShare: (t) => t.energy.chpShare,
+  boilerHeat: (t) => t.energy.fromBoiler,
+  gasDay: (t) => t.energy.gas,
+  powerDay: (t) => t.energy.power,
+  reuseHeat: (t) => t.energy.inWater,
+  reuseCover: (t) => t.energy.covers,
+  revenue: (t) => t.site.revenue,
+  costPerKg: (t) => t.site.costPerKg,
+  margin: (t) => t.site.margin,
+  payback: (t) => t.site.payback,
 };
 
 export interface ReportFigure {

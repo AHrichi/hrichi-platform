@@ -237,3 +237,35 @@ figcaption {
   color: var(--color-text-muted);
   font-size: var(--font-size-100);
 }
+
+// The heat-reuse bars (energy screen).
+svg.reuse {
+  display: block;
+  inline-size: 100%;
+  block-size: auto;
+  direction: ltr;
+  font-family: var(--font-family-sans);
+
+  .backdrop {
+    fill: var(--color-bg-surface);
+  }
+
+  .caption {
+    fill: var(--color-text-muted);
+    font-size: 13px;
+  }
+
+  .value {
+    fill: var(--color-text-default);
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  .bar.water {
+    fill: var(--color-info-default);
+  }
+
+  .bar.need {
+    fill: var(--color-warning-default);
+  }
+}

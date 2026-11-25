@@ -280,6 +280,58 @@ export const CROPS: Record<CropId, CropProfile> = {
 
 export const CROP_IDS = Object.keys(CROPS) as CropId[];
 
+/**
+ * Marketable yield a year of a high-tech house, t/ha. Tomato is the 250 t/ha
+ * (25 kg/m²) published for a desert glasshouse site; the rest are typical
+ * values to replace with your own.
+ */
+export const CROP_YIELD_T_HA: Record<CropId, number> = {
+  tomato: 250,
+  cucumber: 300,
+  pepper: 150,
+  melon: 60,
+  strawberry: 60,
+  lettuce: 50,
+  rose: 100,
+};
+
+/** Working days a hectare of protected tomatoes takes in a year (2018 study). */
+export const LABOUR_DAYS_HA = 1000;
+
+/** Example prices to start the economics from, by currency. */
+export const ECONOMICS_PRICES: Record<
+  Currency,
+  {
+    pricePerKg: number;
+    wagePerDay: number;
+    inputsPerM2: number;
+    otherPerM2: number;
+    capexPerM2: number;
+  }
+> = {
+  TND: {
+    pricePerKg: 4.5,
+    wagePerDay: 30,
+    inputsPerM2: 4,
+    otherPerM2: 10,
+    capexPerM2: 350,
+  },
+  EUR: {
+    pricePerKg: 1.5,
+    wagePerDay: 60,
+    inputsPerM2: 1.5,
+    otherPerM2: 4,
+    capexPerM2: 110,
+  },
+  USD: {
+    pricePerKg: 1.6,
+    wagePerDay: 65,
+    inputsPerM2: 1.6,
+    otherPerM2: 4.5,
+    capexPerM2: 120,
+  },
+};
+
 /** A new project's house: eight 9.6 m spans of double film, 60 m long. */
 export const DEFAULT_GREENHOUSE: GreenhouseSpec = {
   shape: 'gable',

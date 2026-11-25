@@ -21,6 +21,8 @@ export const EN = {
       'A planning aid: check the results with a qualified engineer and the suppliers’ data before you build.',
   },
   nav: {
+    site: 'Site',
+    energy: 'Energy',
     supply: 'Water supply',
     science: 'Science',
     calendar: 'Crop calendar',
@@ -119,6 +121,35 @@ export const EN = {
 
   /** Number fields, shared by every calculator. */
   fields: {
+    lossCoefficientWK: 'Heat loss per kelvin',
+    outsideMinC: 'Outside, night low',
+    outsideMaxC: 'Outside, afternoon high',
+    chpElectricKw: 'CHP power',
+    chpThermalKw: 'CHP heat',
+    chpElectricPct: 'CHP electrical efficiency',
+    chpStartHour: 'CHP starts at',
+    chpEndHour: 'CHP stops at',
+    bufferM3: 'Buffer tank',
+    bufferDeltaK: 'Buffer temperature span',
+    boilerEfficiencyPct: 'Boiler efficiency',
+    co2NeedKgH: 'CO₂ the crop takes up',
+    powerPrice: 'Price of power sold',
+    waterM3Day: 'Water chilled a day',
+    inC: 'Water in',
+    outC: 'Water out',
+    heatDemandKwhDay: 'Heat needed that day',
+    areaHa: 'Area',
+    yieldTHa: 'Yield',
+    pricePerKg: 'Price received',
+    labourDaysHa: 'Labour',
+    wagePerDay: 'Wage a day',
+    heatMwhYear: 'Heat a year',
+    heatPricePerMwh: 'Heat price',
+    waterM3Year: 'Water a year',
+    waterPricePerM3: 'Water price',
+    inputsPerM2: 'Fertiliser and crop care',
+    otherPerM2: 'Packing and overheads',
+    capexPerM2: 'Build cost',
     demandM3Day: 'Water needed, peak day',
     lossesPct: 'Losses',
     feedSalinityGL: 'Seawater salinity',
@@ -230,6 +261,15 @@ export const EN = {
     nightHours: 'Night length',
   } as Record<string, string>,
   hints: {
+    chpElectricKw: 'Desert sites: about 10 MW for 50 ha (20 W/m²)',
+    chpStartHour: 'Run by day, when the CO₂ is used with the vents shut',
+    bufferM3: 'Typical 50–100 m³ a hectare',
+    bufferDeltaK: '90 → 50 °C: 40 K',
+    inC: 'Deep wells in the south give water near 40 °C',
+    yieldTHa: 'Desert glasshouse tomato: about 250 t/ha',
+    labourDaysHa: 'Protected tomato: about 1,000 days/ha (2018 study)',
+    pricePerKg: 'Export tomato fetched EUR 1.24–1.94/kg, Jan–Apr 2016',
+    capexPerM2: 'Your own quote; this is an example',
     feedSalinityGL: 'The sea off Gabès: 39–40 g/L',
     recoveryPct: 'Seawater RO: 40–50 %; brine climbs fast above',
     secKwhM3: 'Typical 3–4 with energy recovery; confirm with the supplier',
@@ -333,6 +373,9 @@ export const EN = {
     deleteResult: (label: string) => `Delete “${label}”?`,
   },
   kinds: {
+    energy: 'Energy hub (CHP)',
+    heatReuse: 'Heat in chilled water',
+    economics: 'Economics',
     ro: 'Seawater RO',
     fertigation: 'Fertigation and drain',
     vpd: 'Humidity and VPD',
@@ -709,6 +752,7 @@ export const EN = {
     readMore: 'Read about',
     close: 'Close',
     groups: {
+      site: 'Site and money',
       house: 'The house',
       heat: 'Heat',
       air: 'Air, humidity and cooling',
@@ -734,6 +778,30 @@ export const EN = {
       bill: 'Your own tariff or factor, in the project’s currency.',
     },
     topics: {
+      cogeneration: {
+        title: 'Cogeneration (CHP) and heat storage',
+        what: 'A gas engine makes power and, from its cooling water and exhaust, heat; its cleaned flue gas feeds CO₂ to the crop. Run by day, when the crop can use the CO₂, it makes more heat than the house needs: a hot-water buffer carries it into the night, and a boiler covers the rest.',
+        assumptions: [
+          'A winter design day, the outside following a cosine from 3 am to 3 pm.',
+          'The CHP runs at full output through its hours.',
+        ],
+      },
+      heatReuse: {
+        title: 'Heat in chilled well water',
+        what: 'Water pumped warm from a deep well and cooled for irrigation or cooling gives up 1.163 kWh per m³ for each kelvin. Chilling it from 40 to 15 °C frees about 29 kWh per m³: heat a heat pump or a low-temperature loop can put back into the house.',
+        assumptions: [
+          'All the heat released is captured.',
+          'Water at 1,000 kg/m³ and 4.19 kJ/kg·K.',
+        ],
+      },
+      siteScale: {
+        title: 'Site scale and economics',
+        what: 'A large site is compartments of a few hectares, each a house repeated over its area, sharing the RO plant, the CHP and the packing hall. Adding them up gives the water, heat, labour and yield the shared plants must serve, and the cost of each kilogram.',
+        assumptions: [
+          'Each compartment behaves like its project’s house, per m².',
+          'Prices, wages and yields are examples to replace with your own.',
+        ],
+      },
       desalination: {
         title: 'Seawater desalination by reverse osmosis',
         what: 'High pressure pushes seawater through membranes that hold the salt back. The recovery is the share that comes through as product; the rest leaves as brine, saltier in proportion. Pumping against the osmotic pressure takes 3–4 kWh per m³ with energy recovery.',
@@ -1000,6 +1068,96 @@ export const EN = {
       fertStock: 'Stock = nutrients needed / dilution',
     },
   },
+  energy: {
+    title: 'Energy',
+    lead: 'A gas CHP giving heat, power and CO₂ through a winter day, a hot-water buffer for the night and a boiler for the rest; and the heat held in chilled well water.',
+    tabs: {
+      chp: 'CHP and buffer',
+      reuse: 'Heat reuse',
+    },
+    buffer: 'Buffer',
+    fromChp: 'CHP',
+    fromBuffer: 'Buffer',
+    fromBoiler: 'Boiler',
+    demand: 'Need',
+    chpShare: 'CHP covers',
+    dayNeed: 'The day’s heat',
+    dumped: 'Dumped',
+    gas: 'Gas a day',
+    power: 'Power made',
+    netCost: 'Gas less power sold',
+    co2: 'CO₂ to the crop',
+    co2Need: 'Needed',
+    inWater: 'Heat in the water',
+    need: 'Heat need',
+    covers: 'Covers',
+    takeLinks: 'Take the crop’s peak water and the winter day’s heat',
+    formulas: {
+      demand: 'Need = H × (T_set − T_out) − sun, less the screen at night',
+      buffer: 'Buffer = 1.163 × V × ΔT',
+      gas: 'Gas = P_el / η_el / 9.77 × hours + boiler',
+      co2: 'CO₂ = 1.96 kg per m³ of gas',
+      reuse: 'Heat = 1.163 × V × ΔT',
+    },
+  },
+  site: {
+    title: 'Site',
+    lead: 'The whole farm: each project is a compartment, its house repeated over its area; the totals, the shared RO and CHP against them, and the year’s economics.',
+    tabs: {
+      overview: 'Overview',
+      economics: 'Economics',
+    },
+    choose: 'Site',
+    unnamed: 'Site without a name',
+    empty:
+      'No project yet. Projects with the same “Site” form one site; give each its area here.',
+    compartments: (n: string) => `Compartments: ${n}`,
+    area: 'Area',
+    peakWater: 'Water, peak day',
+    meanWater: 'mean',
+    heatPeak: 'Heat, design night',
+    yield: 'Yield a year',
+    labour: 'Labour a year',
+    days: 'days',
+    people: (n: string) => `about ${n} people full time`,
+    co2e: 'Carbon footprint',
+    co2eHint: '1.9 kg CO₂e per kg (published estimate)',
+    sharesAlt: 'Compartments by share of the area',
+    plants: 'Shared plants',
+    roPlant: 'Seawater RO',
+    chpPlant: 'CHP',
+    covers: (pct: string) => `covers ${pct} % of the peak day`,
+    chpOfPeak: (pct: string) => `${pct} % of the peak heat`,
+    noRo: 'Save a Seawater RO result in one of these projects to check it here.',
+    noChp:
+      'Save an energy hub result in one of these projects to check it here.',
+    table: 'Compartments',
+    tableHint: 'Set each compartment’s area: its house is repeated over it.',
+    compartment: 'Compartment',
+    houses: 'Houses',
+    areaOf: (name: string) => `Area of ${name}, ha`,
+    takeTotals: (ha: string) => `Take the site’s totals: ${ha} ha`,
+    costPerKg: 'Cost per kg',
+    price: 'Price',
+    margin: 'Margin',
+    revenue: 'Revenue',
+    payback: 'Payback',
+    years: 'years',
+    waterPerKg: 'Water per kg',
+    costTitle: 'Where the money goes',
+    costs: {
+      labour: 'Labour',
+      energy: 'Energy',
+      water: 'Water',
+      inputs: 'Fertiliser and care',
+      other: 'Packing and overheads',
+    },
+    formulas: {
+      yield: 'Yield = area × t/ha',
+      cost: 'Cost per kg = costs / kg',
+      payback: 'Payback = build / margin',
+    },
+  },
   calc: {
     science: 'The science behind it',
     results: 'Results',
@@ -1010,6 +1168,10 @@ export const EN = {
   },
 
   diagrams: {
+    energyAlt: (peak: string, start: string, end: string, share: string) =>
+      `Winter design day: the heat need peaks at ${peak} kW; the CHP runs from ${start}:00 to ${end}:00 and covers ${share} %. Handles set the CHP’s start and stop.`,
+    reuseAlt: (water: string, need: string) =>
+      `Heat in the chilled water, ${water} kWh, against the day’s heat need, ${need} kWh.`,
     roAlt: (feed: string, product: string, brine: string, salinity: string) =>
       `Seawater RO: ${feed} m³ a day pumped, ${product} m³ of product, ${brine} m³ of brine at ${salinity} g/L. Handles set the recovery and the storage.`,
     fertAlt: (recycle: string, ec: string, flush: string) =>
@@ -1204,6 +1366,16 @@ export const EN = {
         title: 'Water supply',
         body: 'Seawater RO sized from the crop’s peak day: feed, brine and its salinity, energy, cost and storage. Fertigation with drain recycling: water and fertiliser saved, drain EC, sodium build-up and when to flush, and the yield lost to salt.',
       },
+      {
+        id: 'site',
+        title: 'Site and economics',
+        body: 'Projects that share a site name are its compartments; give each its area and the site adds up water, heat, yield, labour and carbon, checks the shared RO and CHP, and works out cost per kg, margin and payback.',
+      },
+      {
+        id: 'energy',
+        title: 'Energy hub',
+        body: 'A winter day hour by hour: the house’s heat need, a gas CHP run by day for its CO₂, the buffer that carries its heat into the night and the boiler for the rest; gas, power and cost. And the heat held in chilled well water.',
+      },
     ],
     sourcesTitle: 'Sources',
     sources: [
@@ -1229,6 +1401,36 @@ export const EN = {
   },
 
   notes: {
+    'energy.share': (v) =>
+      `The CHP covers ${v['pct']} % of the day’s heat; the boiler adds ${v['boiler']} MWh.`,
+    'energy.dump': (v) =>
+      `${v['mwh']} MWh of CHP heat is dumped: a bigger buffer or a shorter run would keep it.`,
+    'energy.buffer': (v) =>
+      `The buffer holds ${v['mwh']} MWh to carry the day’s CHP heat into the night.`,
+    'energy.co2Enough': (v) =>
+      `The CHP’s flue gives ${v['kg']} kg of CO₂, enough for the ${v['need']} kg the crop takes up.`,
+    'energy.co2Short': (v) =>
+      `The CHP’s flue gives ${v['kg']} kg of CO₂, short of the ${v['need']} kg the crop takes up: add liquid CO₂ or run longer.`,
+    'energy.ventsShut': () =>
+      'CHP CO₂ only pays with the vents nearly shut (above about 5 % open it can’t be held): plan it for winter days.',
+    'reuse.heat': (v) =>
+      `Each m³ chilled holds ${v['kwh']} kWh: ${v['mwh']} MWh a day to reuse.`,
+    'reuse.cover': (v) =>
+      `That covers ${v['pct']} % of the winter day’s heat need.`,
+    'reuse.heatPump': () =>
+      'At 15–40 °C the heat needs a heat pump or a low-temperature loop to warm the house.',
+    'econ.margin': (v) => `A margin of ${v['pct']} % of the revenue.`,
+    'econ.loss': (v) => `Costs exceed the revenue (margin ${v['pct']} %).`,
+    'econ.biggest.labour': (v) => `Labour is the biggest cost: ${v['pct']} %.`,
+    'econ.biggest.energy': (v) => `Energy is the biggest cost: ${v['pct']} %.`,
+    'econ.biggest.water': (v) => `Water is the biggest cost: ${v['pct']} %.`,
+    'econ.biggest.inputs': (v) =>
+      `Fertiliser and crop care are the biggest cost: ${v['pct']} %.`,
+    'econ.biggest.other': (v) =>
+      `Packing and overheads are the biggest cost: ${v['pct']} %.`,
+    'econ.payback': (v) => `The build pays back in about ${v['years']} years.`,
+    'econ.prices': () =>
+      'Prices are examples (export tomato fetched EUR 1.24–1.94/kg from January to April 2016): enter your own.',
     'ro.balance': (v) =>
       `${v['feed']} m³ of seawater a day gives the product and ${v['brine']} m³ of brine at ${v['salinity']} g/L.`,
     'ro.recoveryHigh': (v) =>

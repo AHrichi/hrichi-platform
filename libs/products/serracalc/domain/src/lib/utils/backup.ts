@@ -38,6 +38,9 @@ const KIND_SET: Record<CalcKind, true> = {
   calendar: true,
   ro: true,
   fertigation: true,
+  energy: true,
+  heatReuse: true,
+  economics: true,
 };
 const KINDS = Object.keys(KIND_SET) as readonly CalcKind[];
 const SHAPES: readonly GreenhouseShape[] = ['gable', 'venlo', 'tunnel'];
@@ -125,6 +128,12 @@ function toProject(value: unknown): GreenhouseProject | null {
   return {
     ...project,
     site: typeof value['site'] === 'string' ? value['site'] : '',
+    areaHa:
+      typeof value['areaHa'] === 'number' &&
+      Number.isFinite(value['areaHa']) &&
+      value['areaHa'] > 0
+        ? value['areaHa']
+        : undefined,
     calculations: (value['calculations'] as unknown[]).filter(isCalculation),
   };
 }

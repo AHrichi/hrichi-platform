@@ -44,6 +44,9 @@ const OPENS_IN: Record<CalcKind, { screen: string; tab: string }> = {
   calendar: { screen: 'calendar', tab: 'plan' },
   ro: { screen: 'supply', tab: 'ro' },
   fertigation: { screen: 'supply', tab: 'fertigation' },
+  energy: { screen: 'energy', tab: 'chp' },
+  heatReuse: { screen: 'energy', tab: 'reuse' },
+  economics: { screen: 'site', tab: 'economics' },
 };
 
 const SHAPES: readonly GreenhouseShape[] = ['gable', 'venlo', 'tunnel'];
