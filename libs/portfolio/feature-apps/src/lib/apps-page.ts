@@ -878,7 +878,7 @@ export class AppsPage {
             'NgRx SignalStore',
             'IndexedDB (offline)',
             'Pure TypeScript engineering domain',
-            'Arabic RTL · French · English',
+            'Arabic RTL · French · English · Italian · German',
           ],
           features: [
             'قدرة التدفئة القصوى (ASAE EP406) والتدفئة خلال السنة شهراً بشهر، مع الوقود والكلفة وثاني أكسيد الكربون',
@@ -1281,7 +1281,7 @@ export class AppsPage {
             'NgRx SignalStore',
             'IndexedDB (offline)',
             'Pure TypeScript engineering domain',
-            'Arabic RTL · French · English',
+            'Arabic RTL · French · English · Italian · German',
           ],
           features: [
             'Puissance de chauffage de pointe (ASAE EP406) et chauffage sur l’année mois par mois, avec combustible, coût et CO₂',
@@ -1692,7 +1692,7 @@ export class AppsPage {
             'NgRx SignalStore',
             'IndexedDB (offline)',
             'Pure TypeScript engineering domain',
-            'Arabic RTL · French · English',
+            'Arabic RTL · French · English · Italian · German',
           ],
           features: [
             'Potenza termica di punta (ASAE EP406) e riscaldamento annuale mese per mese, con combustibile, costi e CO₂',
@@ -2102,7 +2102,7 @@ export class AppsPage {
             'NgRx SignalStore',
             'IndexedDB (offline)',
             'Pure TypeScript engineering domain',
-            'Arabic RTL · French · English',
+            'Arabic RTL · French · English · Italian · German',
           ],
           features: [
             'Spitzen-Heizlast (ASAE EP406) und Heizung übers Jahr Monat für Monat, mit Brennstoff, Kosten und CO₂',
@@ -2500,7 +2500,7 @@ export class AppsPage {
           'NgRx SignalStore',
           'IndexedDB (offline)',
           'Pure TypeScript engineering domain',
-          'Arabic RTL · French · English',
+          'Arabic RTL · French · English · Italian · German',
         ],
         features: [
           'Peak heating load (ASAE EP406) and a year of heating month by month, with fuel, cost and CO₂',

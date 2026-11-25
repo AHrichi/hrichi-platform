@@ -6,6 +6,6 @@ import type { RemoteMeta } from '@ah/platform/federation';
 export const remoteMeta: RemoteMeta = {
   id: 'product-serracalc',
   title: 'SerraCalc',
-  version: '0.1.0',
+  version: '0.2.0',
   capabilities: [],
 };
