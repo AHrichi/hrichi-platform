@@ -322,6 +322,45 @@
       },
       "$description": "Warm off-white to ink ramp for the paper look"
     },
+    "night": {
+      "50": {
+        "$value": "#f2f4f9"
+      },
+      "100": {
+        "$value": "#e3e8f1"
+      },
+      "200": {
+        "$value": "#cbd3e2"
+      },
+      "300": {
+        "$value": "#a9b4ca"
+      },
+      "400": {
+        "$value": "#7d8aa6"
+      },
+      "500": {
+        "$value": "#56627e"
+      },
+      "600": {
+        "$value": "#34425f"
+      },
+      "700": {
+        "$value": "#22304a"
+      },
+      "800": {
+        "$value": "#182339"
+      },
+      "850": {
+        "$value": "#121b2e"
+      },
+      "900": {
+        "$value": "#0c1322"
+      },
+      "950": {
+        "$value": "#070b14"
+      },
+      "$description": "Blue-black desert night to pale sky ramp for the desert look"
+    },
     "sage": {
       "50": {
         "$value": "#f1f7ea"

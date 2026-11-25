@@ -21,18 +21,28 @@ export type BackupError = 'notJson' | 'notSerraCalc' | 'newerVersion' | 'empty';
 export type BackupRead =
   { projects: GreenhouseProject[]; skipped: number } | { error: BackupError };
 
-const KINDS: readonly CalcKind[] = [
-  'heatPeak',
-  'heatYear',
-  'hotWater',
-  'ventilation',
-  'padFan',
-  'cropWater',
-  'rainwater',
-  'light',
-  'co2',
-  'humidity',
-];
+/** Every kind of saved result; a Record so a new kind can't be forgotten. */
+const KIND_SET: Record<CalcKind, true> = {
+  heatPeak: true,
+  heatYear: true,
+  hotWater: true,
+  ventilation: true,
+  padFan: true,
+  cropWater: true,
+  rainwater: true,
+  light: true,
+  co2: true,
+  humidity: true,
+  vpd: true,
+  fog: true,
+  calendar: true,
+  ro: true,
+  fertigation: true,
+  energy: true,
+  heatReuse: true,
+  economics: true,
+};
+const KINDS = Object.keys(KIND_SET) as readonly CalcKind[];
 const SHAPES: readonly GreenhouseShape[] = ['gable', 'venlo', 'tunnel'];
 const CURRENCIES: readonly Currency[] = ['TND', 'EUR', 'USD'];
 const SIZES = [
@@ -118,6 +128,16 @@ function toProject(value: unknown): GreenhouseProject | null {
   return {
     ...project,
     site: typeof value['site'] === 'string' ? value['site'] : '',
+    areaHa:
+      typeof value['areaHa'] === 'number' &&
+      Number.isFinite(value['areaHa']) &&
+      value['areaHa'] > 0
+        ? value['areaHa']
+        : undefined,
+    logs: Array.isArray(value['logs']) ? (project.logs ?? []) : undefined,
+    readings: Array.isArray(value['readings'])
+      ? (project.readings ?? [])
+      : undefined,
     calculations: (value['calculations'] as unknown[]).filter(isCalculation),
   };
 }

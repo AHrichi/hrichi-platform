@@ -38,7 +38,11 @@ export function injectCalcEditing<T extends string>(options: {
         loadedId = saved.id;
         options.load(saved);
         editing.set(saved);
-        const owner = options.tabs.find((t) => options.kinds[t] === saved.kind);
+        // The tab the link asked for, if it holds this kind; else the first.
+        const owner =
+          isTab(wanted) && options.kinds[wanted] === saved.kind
+            ? wanted
+            : options.tabs.find((t) => options.kinds[t] === saved.kind);
         if (owner) tab.set(owner);
       }
     });

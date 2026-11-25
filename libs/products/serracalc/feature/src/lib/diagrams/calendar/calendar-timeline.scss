@@ -1,0 +1,112 @@
+@use '../../styles/serra' as sc;
+
+@include sc.diagram;
+
+.month-line {
+  fill: none;
+  stroke: var(--color-border-default);
+  stroke-width: 1;
+  opacity: 0.55;
+}
+
+.row-label {
+  fill: var(--color-text-muted);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.tick {
+  fill: var(--color-text-muted);
+  font-size: 10px;
+}
+
+.temp {
+  fill: var(--color-warning-default);
+  opacity: 0.3;
+  stroke: var(--color-warning-default);
+  stroke-width: 1;
+}
+
+.set-line,
+.cool-line {
+  fill: none;
+  stroke-width: 1.25;
+  stroke-dasharray: 5 4;
+}
+
+.set-line {
+  stroke: var(--color-info-default);
+}
+
+.cool-line {
+  stroke: var(--color-danger-default);
+}
+
+.stage {
+  &.vegetative {
+    fill: var(--color-success-default);
+    opacity: 0.55;
+  }
+
+  &.flowering {
+    fill: var(--color-warning-default);
+    opacity: 0.7;
+  }
+
+  &.harvest {
+    fill: var(--color-danger-default);
+    opacity: 0.75;
+  }
+
+  &.cleanOut {
+    fill: var(--color-border-strong);
+    opacity: 0.6;
+  }
+}
+
+.stage-label {
+  fill: var(--color-text-default);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.nursery {
+  fill: var(--color-success-default);
+  opacity: 0.4;
+}
+
+.lane {
+  fill: var(--color-bg-raised);
+  stroke: var(--color-border-default);
+  stroke-width: 0.75;
+}
+
+.cell {
+  &.heating {
+    fill: var(--color-danger-default);
+  }
+
+  &.co2 {
+    fill: var(--color-text-muted);
+  }
+
+  &.shade {
+    fill: var(--color-warning-default);
+  }
+
+  &.fog {
+    fill: var(--color-info-default);
+  }
+}
+
+.today {
+  fill: none;
+  stroke: var(--color-accent-default);
+  stroke-width: 2;
+}
+
+.today-label {
+  fill: var(--color-accent-default);
+  font-size: 11px;
+  font-weight: 700;
+}

@@ -1,0 +1,217 @@
+<section class="screen" aria-labelledby="sc-energy-title">
+  <header class="head">
+    <div>
+      <h2 id="sc-energy-title">{{ t().energy.title }}</h2>
+      <p>{{ t().energy.lead }}</p>
+    </div>
+  </header>
+
+  <sc-context-bar (resetInputs)="reset()" />
+
+  <ah-tabs
+    [tabs]="tabs()"
+    [selectedId]="tab()"
+    (selectedIdChange)="editor.select($event)"
+    [ariaLabel]="t().energy.title"
+  />
+
+  <div class="workbench">
+    <div class="column">
+      <figure class="panel">
+        @if (tab() === 'chp') {
+          <sc-energy-day
+            [params]="hubParams()"
+            [result]="hub()"
+            (changed)="setHub($event)"
+          />
+          <figcaption>{{ t().calc.dragHint }}</figcaption>
+        } @else {
+          <svg
+            class="reuse"
+            viewBox="0 0 560 150"
+            role="img"
+            [attr.aria-label]="
+              t().diagrams.reuseAlt(
+                i18n.num(reuse().kwhDay, 0),
+                i18n.num(reuseParams().heatDemandKwhDay, 0)
+              )
+            "
+          >
+            <rect class="backdrop" width="560" height="150" rx="12" />
+            <text class="caption" x="20" y="40">
+              {{ i18n.word(t().energy.inWater) }}
+            </text>
+            <rect
+              class="bar water"
+              x="140"
+              y="26"
+              [attr.width]="reuseBars().water"
+              height="22"
+              rx="4"
+            />
+            <text class="value" [attr.x]="146 + reuseBars().water" y="43">
+              {{ i18n.num(reuse().kwhDay, 0) }} kWh
+            </text>
+            <text class="caption" x="20" y="100">
+              {{ i18n.word(t().energy.need) }}
+            </text>
+            <rect
+              class="bar need"
+              x="140"
+              y="86"
+              [attr.width]="reuseBars().need"
+              height="22"
+              rx="4"
+            />
+            <text class="value" [attr.x]="146 + reuseBars().need" y="103">
+              {{ i18n.num(reuseParams().heatDemandKwhDay, 0) }} kWh
+            </text>
+          </svg>
+        }
+      </figure>
+
+      <section class="panel" aria-labelledby="sc-energy-inputs">
+        <h3 id="sc-energy-inputs">{{ t().calc.inputs }}</h3>
+        @if (tab() === 'chp') {
+          <sc-field-grid
+            [specs]="hubFields()"
+            [values]="hubParams()"
+            (changed)="setHub($event)"
+          />
+        } @else {
+          <div class="actions">
+            <button type="button" class="chip" (click)="takeLinks()">
+              {{ t().energy.takeLinks }}
+            </button>
+          </div>
+          <sc-field-grid
+            [specs]="reuseFields"
+            [values]="reuseParams()"
+            (changed)="setReuse($event)"
+          />
+        }
+      </section>
+    </div>
+
+    <div class="column">
+      <section class="panel" aria-labelledby="sc-energy-results">
+        <h3 id="sc-energy-results">{{ t().calc.results }}</h3>
+        @if (tab() === 'chp') {
+          <div class="results">
+            <ah-metric-card
+              [label]="t().energy.chpShare"
+              [value]="i18n.num(hub().chpSharePct, 0)"
+              unit="%"
+              variant="accent"
+              [hint]="
+                t().energy.dayNeed +
+                ': ' +
+                i18n.num(hub().demandKwh / 1000, 1) +
+                ' MWh'
+              "
+            />
+            <ah-metric-card
+              [label]="t().energy.fromBoiler"
+              [value]="i18n.num(hub().boilerKwh / 1000, 1)"
+              unit="MWh"
+              [hint]="
+                t().energy.dumped +
+                ': ' +
+                i18n.num(hub().dumpedKwh / 1000, 1) +
+                ' MWh'
+              "
+            />
+            <ah-metric-card
+              [label]="t().energy.gas"
+              [value]="i18n.num(hub().gasM3, 0)"
+              unit="m³"
+              [hint]="i18n.money(hub().gasCost, currency())"
+            />
+            <ah-metric-card
+              [label]="t().energy.power"
+              [value]="i18n.num(hub().powerKwh / 1000, 1)"
+              unit="MWh"
+              [hint]="i18n.money(hub().powerIncome, currency())"
+            />
+            <ah-metric-card
+              [label]="t().energy.netCost"
+              [value]="i18n.money(hub().netCost, currency())"
+            />
+            <ah-metric-card
+              [label]="t().energy.co2"
+              [value]="i18n.num(hub().co2Kg, 0)"
+              unit="kg"
+              [hint]="
+                t().energy.co2Need + ': ' + i18n.num(hub().co2NeedKg, 0) + ' kg'
+              "
+            />
+          </div>
+          <sc-note-list [notes]="hub().notes" />
+          <details class="table-toggle">
+            <summary>{{ t().calc.table }}</summary>
+            <div
+              class="table-wrap"
+              tabindex="0"
+              role="region"
+              [attr.aria-label]="t().calc.table"
+            >
+              <table>
+                <thead>
+                  <tr>
+                    <th scope="col">h</th>
+                    <th scope="col">{{ i18n.unit('°C') }}</th>
+                    <th scope="col">{{ t().energy.demand }}</th>
+                    <th scope="col">CHP</th>
+                    <th scope="col">{{ t().energy.fromBuffer }}</th>
+                    <th scope="col">{{ t().energy.fromBoiler }}</th>
+                    <th scope="col">{{ t().energy.buffer }} kWh</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (h of hub().hours; track h.hour) {
+                    <tr>
+                      <th scope="row">{{ h.hour }}:00</th>
+                      <td>{{ i18n.num(h.outsideC) }}</td>
+                      <td>{{ i18n.num(h.demandKw, 0) }}</td>
+                      <td>{{ i18n.num(h.chpKw, 0) }}</td>
+                      <td>{{ i18n.num(h.fromBufferKw, 0) }}</td>
+                      <td>{{ i18n.num(h.boilerKw, 0) }}</td>
+                      <td>{{ i18n.num(h.bufferKwh, 0) }}</td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </details>
+        } @else {
+          <div class="results">
+            <ah-metric-card
+              [label]="t().energy.inWater"
+              [value]="i18n.num(reuse().kwhDay / 1000, 2)"
+              unit="MWh"
+              variant="accent"
+              [hint]="i18n.num(reuse().kwhPerM3) + ' kWh/m³'"
+            />
+            <ah-metric-card
+              [label]="t().energy.covers"
+              [value]="i18n.num(reuse().coverPct, 0)"
+              unit="%"
+            />
+          </div>
+          <sc-note-list [notes]="reuse().notes" />
+        }
+        <sc-calc-steps [steps]="steps()" />
+      </section>
+
+      <section class="panel" aria-labelledby="sc-energy-save">
+        <h3 id="sc-energy-save">{{ t().save.title }}</h3>
+        <sc-save-bar
+          [suggestedLabel]="suggestedLabel()"
+          [editingLabel]="editor.editingLabel()"
+          (save)="save($event)"
+          (stopEditing)="editor.stop()"
+        />
+      </section>
+    </div>
+  </div>
+</section>

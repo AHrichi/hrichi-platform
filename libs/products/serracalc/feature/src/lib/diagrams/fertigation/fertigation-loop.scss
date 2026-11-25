@@ -1,0 +1,108 @@
+@use '../../styles/serra' as sc;
+
+@include sc.diagram;
+
+.tank,
+.mix {
+  fill: var(--color-bg-raised);
+  stroke: var(--color-text-default);
+  stroke-width: 2;
+}
+
+.mix {
+  stroke: var(--color-accent-default);
+}
+
+.stock {
+  fill: var(--color-success-default);
+  opacity: 0.55;
+
+  &.b {
+    fill: var(--color-info-default);
+  }
+}
+
+.stock-label {
+  fill: var(--color-text-default);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.pipe {
+  fill: none;
+  stroke: var(--color-text-muted);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+
+  &.feed {
+    stroke: var(--color-accent-default);
+  }
+
+  &.drain,
+  &.out {
+    stroke: var(--color-warning-default);
+  }
+
+  &.reused {
+    stroke: var(--color-accent-default);
+    opacity: 0.8;
+  }
+}
+
+.slab {
+  fill: var(--color-warning-default);
+  opacity: 0.3;
+}
+
+.plant {
+  fill: none;
+  stroke: var(--color-success-default);
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+
+.fruit {
+  fill: var(--color-danger-default);
+}
+
+.valve-track {
+  fill: var(--color-bg-raised);
+  stroke: var(--color-border-strong);
+}
+
+.valve-fill {
+  fill: var(--color-accent-default);
+  opacity: 0.35;
+}
+
+.grid {
+  fill: none;
+  stroke: var(--color-border-default);
+  stroke-width: 1;
+  opacity: 0.6;
+}
+
+.limit {
+  fill: none;
+  stroke: var(--color-danger-default);
+  stroke-width: 2;
+  stroke-dasharray: 6 4;
+}
+
+.na {
+  fill: none;
+  stroke: var(--color-accent-default);
+  stroke-width: 3;
+  stroke-linejoin: round;
+}
+
+.flush {
+  fill: none;
+  stroke: var(--color-warning-default);
+  stroke-width: 2;
+}
+
+.value.warn {
+  fill: var(--color-warning-default);
+}

@@ -11,12 +11,24 @@ const STANDALONE = 'http://localhost:4314/';
 /** Every screen of the app, in the order of its navigation. */
 const SCREENS = [
   'projects',
+  'site',
+  'site?tab=economics',
   'heating',
   'cooling',
   'water',
+  'supply',
+  'supply?tab=fertigation',
   'air',
+  'air?tab=vpd',
+  'cooling?tab=fog',
+  'calendar',
+  'energy',
+  'energy?tab=reuse',
   'greenhouse',
+  'operations',
+  'data',
   'climate',
+  'science',
   'report',
   'guide',
 ] as const;
@@ -54,7 +66,7 @@ test.describe('SerraCalc, standalone', () => {
     await page.getByRole('button', { name: 'EN', exact: true }).click();
     await expect(page.locator('sc-serra-shell')).toHaveAttribute(
       'data-look',
-      'greenhouse',
+      'desert',
     );
     await page.getByRole('button', { name: 'Load sample projects' }).click();
     await expect(
@@ -107,6 +119,8 @@ test.describe('SerraCalc, standalone', () => {
       test(`every screen passes axe, ${theme}, ${width} px wide`, async ({
         page,
       }) => {
+        // Twenty-odd screens, each scanned whole: more than the default 30 s.
+        test.setTimeout(180_000);
         await page.addInitScript(
           (chosen) => localStorage.setItem('ah.theme', chosen),
           theme,

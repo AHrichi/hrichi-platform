@@ -40,8 +40,15 @@
               (changed)="setHumidity($event)"
             />
           }
+          @case ('vpd') {
+            <sc-vpd-chart
+              [params]="vpdParams()"
+              [result]="vpd()"
+              (changed)="setVpd($event)"
+            />
+          }
         }
-        <figcaption>✋ {{ t().calc.dragHint }}</figcaption>
+        <figcaption>{{ t().calc.dragHint }}</figcaption>
       </figure>
 
       <section class="panel" aria-labelledby="sc-air-inputs">
@@ -92,6 +99,44 @@
               [values]="humidityParams()"
               (changed)="setHumidity($event)"
             />
+          }
+          @case ('vpd') {
+            <sc-field-grid
+              [specs]="vpdFields"
+              [values]="vpdParams()"
+              (changed)="setVpd($event)"
+            >
+              <label class="select">
+                <span>{{ t().projects.crop }}</span>
+                <select (change)="setVpdCrop($any(value($event)))">
+                  @for (id of crops; track id) {
+                    <option [value]="id" [selected]="vpdParams().crop === id">
+                      {{ t().crops[id] }}
+                    </option>
+                  }
+                </select>
+              </label>
+              <label class="select">
+                <span>{{ t().vpd.stage }}</span>
+                <select (change)="setVpdStage($any(value($event)))">
+                  @for (id of stages; track id) {
+                    <option [value]="id" [selected]="vpdParams().stage === id">
+                      {{ t().stages[id] }}
+                    </option>
+                  }
+                </select>
+              </label>
+              <label class="select">
+                <span>{{ t().vpd.light }}</span>
+                <select (change)="setVpdLight($any(value($event)))">
+                  @for (id of lights; track id) {
+                    <option [value]="id" [selected]="vpdParams().light === id">
+                      {{ t().vpd.lights[id] }}
+                    </option>
+                  }
+                </select>
+              </label>
+            </sc-field-grid>
           }
         }
       </section>
@@ -256,7 +301,8 @@
                   t().air.cover +
                   ': ' +
                   i18n.num(humidity().coverSurfaceC) +
-                  ' °C'
+                  ' ' +
+                  i18n.unit('°C')
                 "
               />
               <ah-metric-card
@@ -272,6 +318,133 @@
               />
             </div>
             <sc-note-list [notes]="humidity().notes" />
+          }
+          @case ('vpd') {
+            <div class="verdict" [attr.data-status]="vpd().status">
+              <span class="verdict-status">
+                {{ t().vpd.status[vpd().status] }}
+                @if (vpd().ideal) {
+                  · {{ t().vpd.ideal }}
+                }
+              </span>
+              <strong>{{ t().vpd.actions[vpd().action] }}</strong>
+            </div>
+            <div class="results">
+              <ah-metric-card
+                [label]="t().air.vpd"
+                [value]="i18n.num(vpd().vpdKpa, 2)"
+                unit="kPa"
+                [variant]="vpd().status === 'good' ? 'accent' : 'warning'"
+                [hint]="
+                  t().vpd.band +
+                  ' ' +
+                  i18n.num(vpd().band.min, 2) +
+                  '–' +
+                  i18n.num(vpd().band.max, 2)
+                "
+              />
+              <ah-metric-card
+                [label]="t().air.dew"
+                [value]="i18n.num(vpd().dewPointC)"
+                unit="°C"
+              />
+              <ah-metric-card
+                [label]="t().vpd.absolute"
+                [value]="i18n.num(vpd().absoluteGm3)"
+                unit="g/m³"
+                [hint]="i18n.num(vpd().insideGkg) + ' g/kg'"
+              />
+              <ah-metric-card
+                [label]="t().vpd.headroom"
+                [value]="i18n.num(vpd().headroomGm3)"
+                unit="g/m³"
+              />
+            </div>
+            <sc-note-list [notes]="vpd().notes" />
+            <h4>{{ t().vpd.pairsTitle }}</h4>
+            <div
+              class="table-wrap"
+              tabindex="0"
+              role="region"
+              [attr.aria-label]="t().vpd.pairsTitle"
+            >
+              <table>
+                <thead>
+                  <tr>
+                    <th scope="col">{{ i18n.unit('°C') }}</th>
+                    @for (pair of vpd().pairs; track pair.airC) {
+                      <th scope="col">{{ pair.airC }}</th>
+                    }
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th scope="row">RH %</th>
+                    @for (pair of vpd().pairs; track pair.airC) {
+                      <td>{{ i18n.num(pair.rhPct, 0) }}</td>
+                    }
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <h4>{{ t().vpd.targetsTitle(t().stages[vpdParams().stage]) }}</h4>
+            <dl class="split">
+              <div>
+                <dt>{{ t().vpd.day }}</dt>
+                <dd>
+                  {{ i18n.num(stageTargets().dayC.min) }}–{{
+                    i18n.num(stageTargets().dayC.max)
+                  }}
+                  {{ i18n.unit('°C') }}
+                </dd>
+              </div>
+              <div>
+                <dt>{{ t().vpd.night }}</dt>
+                <dd>
+                  {{ i18n.num(stageTargets().nightC.min) }}–{{
+                    i18n.num(stageTargets().nightC.max)
+                  }}
+                  {{ i18n.unit('°C') }}
+                </dd>
+              </div>
+              <div>
+                <dt>RH</dt>
+                <dd>
+                  {{ i18n.num(stageTargets().rhPct.min, 0) }}–{{
+                    i18n.num(stageTargets().rhPct.max, 0)
+                  }}
+                  %
+                </dd>
+              </div>
+              <div>
+                <dt>VPD</dt>
+                <dd>
+                  {{ i18n.num(stageTargets().vpdIdealKpa.min, 2) }}–{{
+                    i18n.num(stageTargets().vpdIdealKpa.max, 2)
+                  }}
+                  kPa
+                </dd>
+              </div>
+              <div>
+                <dt>EC</dt>
+                <dd>
+                  {{ i18n.num(stageTargets().ecDsM.min) }}–{{
+                    i18n.num(stageTargets().ecDsM.max)
+                  }}
+                  dS/m
+                </dd>
+              </div>
+              <div>
+                <dt>CO₂</dt>
+                <dd>
+                  {{ i18n.num(stageTargets().co2Ppm.min, 0) }}–{{
+                    i18n.num(stageTargets().co2Ppm.max, 0)
+                  }}
+                  ppm
+                </dd>
+              </div>
+            </dl>
+            <p class="hint">{{ t().vpd.source }}: {{ targetSource() }}</p>
           }
         }
         <sc-calc-steps [steps]="steps()" />

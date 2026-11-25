@@ -2,6 +2,10 @@ import type { NoteWriter, SerraCopy } from './copy.en';
 
 export const IT: SerraCopy = {
   app: {
+    week: 'Settimana',
+    weekHint: 'La settimana in corso: apre il calendario colturale',
+    railNote:
+      'Pensato per i siti desertici: sole forte, notti fredde, acqua scarsa.',
     name: 'SerraCalc',
     tagline: 'Calore, acqua e clima della serra',
     activeProject: 'Progetto attivo',
@@ -18,6 +22,13 @@ export const IT: SerraCopy = {
       'Uno strumento di progettazione: verifica i risultati con un tecnico abilitato e con i dati dei fornitori prima di costruire.',
   },
   nav: {
+    operations: 'Gestione',
+    data: 'Dati in diretta',
+    site: 'Sito',
+    energy: 'Energia',
+    supply: 'Acqua irrigua',
+    science: 'Scienza',
+    calendar: 'Calendario colturale',
     projects: 'Progetti',
     greenhouse: 'Serra',
     heating: 'Riscaldamento',
@@ -28,6 +39,13 @@ export const IT: SerraCopy = {
     air: 'Luce e aria',
     report: 'Relazione',
     more: 'Altro',
+  },
+  navGroups: {
+    operate: 'Gestire',
+    plan: 'Pianificare',
+    climate: 'Controllo del clima',
+    water: 'Acqua',
+    reference: 'Riferimenti',
   },
   common: {
     close: 'Chiudi',
@@ -110,6 +128,71 @@ export const IT: SerraCopy = {
   },
 
   fields: {
+    lossCoefficientWK: 'Dispersione per kelvin',
+    outsideMinC: 'Fuori, minima notturna',
+    outsideMaxC: 'Fuori, massima pomeridiana',
+    chpElectricKw: 'Potenza elettrica',
+    chpThermalKw: 'Potenza termica',
+    chpElectricPct: 'Rendimento elettrico',
+    chpStartHour: 'Avvio della cogenerazione',
+    chpEndHour: 'Arresto della cogenerazione',
+    bufferM3: 'Serbatoio di accumulo',
+    bufferDeltaK: 'Salto termico dell’accumulo',
+    boilerEfficiencyPct: 'Rendimento della caldaia',
+    co2NeedKgH: 'CO₂ assorbita dalla coltura',
+    powerPrice: 'Prezzo dell’elettricità venduta',
+    waterM3Day: 'Acqua raffreddata al giorno',
+    inC: 'Acqua in ingresso',
+    outC: 'Acqua in uscita',
+    heatDemandKwhDay: 'Calore necessario quel giorno',
+    areaHa: 'Superficie',
+    yieldTHa: 'Resa',
+    pricePerKg: 'Prezzo ricevuto',
+    labourDaysHa: 'Manodopera',
+    wagePerDay: 'Paga giornaliera',
+    heatMwhYear: 'Calore all’anno',
+    heatPricePerMwh: 'Prezzo del calore',
+    waterM3Year: 'Acqua all’anno',
+    waterPricePerM3: 'Prezzo dell’acqua',
+    inputsPerM2: 'Concimi e difesa',
+    otherPerM2: 'Confezionamento e spese generali',
+    capexPerM2: 'Costo di costruzione',
+    demandM3Day: 'Acqua necessaria, giorno di punta',
+    lossesPct: 'Perdite',
+    feedSalinityGL: 'Salinità dell’acqua di mare',
+    recoveryPct: 'Recupero',
+    rejectionPct: 'Reiezione salina',
+    secKwhM3: 'Energia specifica',
+    storageDays: 'Accumulo',
+    capacityM3Day: 'Capacità installata',
+    availabilityPct: 'Tempo di funzionamento',
+    appliedM3Day: 'Acqua data al giorno',
+    recyclePct: 'Drenaggio riutilizzato',
+    sourceEcDsM: 'EC dell’acqua dolce',
+    sourceNaMmolL: 'Sodio nell’acqua dolce',
+    targetEcDsM: 'EC al gocciolatore',
+    uptakeEcDsM: 'EC assorbita dalla coltura',
+    flushEcDsM: 'Scarico sopra EC',
+    naLimitMmolL: 'Scarico sopra il sodio',
+    systemM3: 'Acqua nel circuito',
+    dilution: 'Diluizione delle soluzioni madre',
+    stockTankM3: 'Ogni serbatoio di soluzione madre',
+    yieldSlopePct: 'Resa persa per dS/m',
+    yieldThresholdEc: 'Le perdite iniziano sopra',
+    rhPct: 'Umidità relativa',
+    ventPct: 'Aperture aperte',
+    nozzlesPer100M2: 'Ugelli',
+    nozzleLh: 'Portata per ugello',
+    pressureBar: 'Pressione della pompa',
+    onS: 'Getto di nebbia',
+    maxRhPct: 'Tetto di umidità',
+    plantingWeek: 'Settimana di trapianto',
+    nurseryWeeks: 'Settimane in vivaio',
+    vegetativeWeeks: 'Dal trapianto ai primi fiori',
+    floweringWeeks: 'Dai fiori alla prima raccolta',
+    cropWeeks: 'Dal trapianto a fine coltura',
+    ventilateAboveC: 'Aperture aperte sopra',
+    coolAboveC: 'Nebbia sopra (fuori)',
     spans: 'Campate',
     spanWidthM: 'Larghezza della campata',
     lengthM: 'Lunghezza',
@@ -185,6 +268,38 @@ export const IT: SerraCopy = {
     nightHours: 'Durata della notte',
   } as Record<string, string>,
   hints: {
+    chpElectricKw: 'Siti nel deserto: circa 10 MW per 50 ha (20 W/m²)',
+    chpStartHour: 'Di giorno, quando la CO₂ si usa con le aperture chiuse',
+    bufferM3: 'Tipico 50–100 m³ per ettaro',
+    bufferDeltaK: '90 → 50 °C: 40 K',
+    inC: 'I pozzi profondi del sud danno acqua verso 40 °C',
+    yieldTHa: 'Pomodoro in serra di vetro nel deserto: circa 250 t/ha',
+    labourDaysHa: 'Pomodoro protetto: circa 1.000 giornate/ha (studio 2018)',
+    pricePerKg:
+      'Il pomodoro esportato valeva 1,24–1,94 EUR/kg, gennaio–aprile 2016',
+    capexPerM2: 'Il tuo preventivo; questo è un esempio',
+    feedSalinityGL: 'Il mare al largo di Gabès: 39–40 g/L',
+    recoveryPct:
+      'Osmosi di acqua di mare: 40–50 %; oltre la salamoia sale in fretta',
+    secKwhM3: 'Tipico 3–4 con recupero energetico; da confermare col fornitore',
+    storageDays: 'Da uno a tre giorni coprono un fermo per lavaggio',
+    recyclePct: 'I siti del deserto riutilizzano il 30–50 % dell’acqua',
+    targetEcDsM: 'Pomodoro, soluzione di reintegro: circa 2,7',
+    flushEcDsM: 'Un tetto comune: 4,5',
+    naLimitMmolL: 'Pomodoro: scaricare verso 8 mmol/L',
+    systemM3: 'Lastre, tubi e serbatoi: circa 4 L per m²',
+    yieldSlopePct: 'Indicativo: 7,3 % da una prova; metti il tuo',
+    ventPct: 'Riduci le aperture durante la nebulizzazione: 5–15 % del suolo',
+    nozzlesPer100M2: '27 ugelli da 5,4 L/h danno circa 24 g/m² al minuto',
+    pressureBar: 'Alta pressione, 40–70 bar, per gocce di 10–30 µm',
+    onS: 'La pausa dopo è calcolata per tenere il tetto',
+    maxRhPct: 'Tenere il 65–75 % ha risparmiato circa il 21 % dell’acqua',
+    plantingWeek:
+      'I siti di pomodoro nel deserto trapiantano verso la settimana 36',
+    nurseryWeeks: 'Piantine di pomodoro: circa 7 settimane',
+    floweringWeeks: 'Pomodoro: circa 8 settimane',
+    cropWeeks: 'Dalla settimana 36 alla 29: 46 settimane',
+    coolAboveC: 'I pomeriggi più caldi richiedono nebbia o pannelli',
     spanWidthM: 'Tipiche: 8, 9,6 o 12,8 m',
     gutterHeightM: 'Le serre più alte tamponano meglio calore e umidità',
     uValue: 'Preso dalla copertura; il fornitore può indicarne un altro',
@@ -272,6 +387,14 @@ export const IT: SerraCopy = {
     deleteResult: (label: string) => `Eliminare «${label}»?`,
   },
   kinds: {
+    energy: 'Centrale energetica (cogenerazione)',
+    heatReuse: 'Calore dell’acqua raffreddata',
+    economics: 'Economia',
+    ro: 'Osmosi inversa di acqua di mare',
+    fertigation: 'Fertirrigazione e drenaggio',
+    vpd: 'Umidità e VPD',
+    fog: 'Nebulizzazione',
+    calendar: 'Calendario colturale',
     heatPeak: 'Carico termico di punta',
     heatYear: 'Riscaldamento nell’anno',
     hotWater: 'Tubi ad acqua calda',
@@ -376,7 +499,20 @@ export const IT: SerraCopy = {
   cooling: {
     title: 'Raffrescamento',
     lead: 'Quanta aria deve muovere la serra in una giornata di sole, le finestre o i ventilatori che la muovono, e il raffrescamento con pannelli evaporativi per il caldo secco.',
-    tabs: { ventilation: 'Ventilazione', padFan: 'Pannelli e ventilatori' },
+    tabs: {
+      ventilation: 'Ventilazione',
+      padFan: 'Pannelli e ventilatori',
+      fog: 'Nebulizzazione',
+    },
+    fogInside: 'Dentro con la nebbia',
+    ventOnly: 'Solo aperture',
+    fogRh: 'Umidità dentro',
+    fogRate: 'Nebbia in funzione',
+    fogMean: 'In media',
+    fogCycle: 'Ciclo acceso / spento',
+    fogOn: 'del tempo acceso',
+    nozzles: 'Ugelli',
+    padCompare: 'I pannelli userebbero',
     solar: 'Sole che scalda l’aria',
     flow: 'Aria da muovere',
     ach: 'Ricambi d’aria',
@@ -393,6 +529,11 @@ export const IT: SerraCopy = {
     waterDay: 'Acqua al giorno',
     perHour: 'all’ora',
     formulas: {
+      fogRate: 'Nebbia = ugelli × L/h / suolo',
+      fogBalance:
+        'Dentro = T_est + (sole − λ × nebbia) / (ρ × cp × aria + U × A)',
+      fogCycle: 'Ciclo: la quota di nebbia che l’aria assorbe sotto il tetto',
+      fogWater: 'Acqua = q × A × t / 10⁶',
       solar: 'Sole = τ × (1 − ombra) × G × superficie × (1 − ET)',
       conduction: 'Attraverso la copertura: U × A × ΔT',
       flow: 'Aria = (sole − copertura) / (ρ × cp × ΔT)',
@@ -459,7 +600,12 @@ export const IT: SerraCopy = {
   air: {
     title: 'Luce e aria',
     lead: 'Lampade per i mesi bui e ombra per quelli luminosi, CO₂ per nutrire la coltura, e l’aria da cambiare di notte per tenere basse umidità e gocciolamento.',
-    tabs: { light: 'Luce', co2: 'CO₂', humidity: 'Umidità' },
+    tabs: {
+      light: 'Luce',
+      co2: 'CO₂',
+      humidity: 'Umidità notturna',
+      vpd: 'VPD',
+    },
     source: 'CO₂ da',
     sources: {
       burner: 'Bruciatore a gas (fumi)',
@@ -490,6 +636,9 @@ export const IT: SerraCopy = {
     cover: 'Copertura, lato interno',
     water: 'Acqua da togliere',
     formulas: {
+      saturation: 'Saturazione: e_s = 0,6108 × exp(17,27 T / (T + 237,3))',
+      vpd: 'VPD = e_s × (1 − UR / 100)',
+      headroom: 'Margine = saturo − acqua nell’aria',
       dli: 'Sole interno = Rg × 0,47 × 4,57 × τ (mese più buio)',
       ppfd: 'PPFD = (obiettivo − sole) × 10⁶ / (ore × 3600)',
       fixtures: 'Lampade = PPFD / efficienza × superficie / watt',
@@ -530,7 +679,666 @@ export const IT: SerraCopy = {
       'Medie di stazione arrotondate (circa 1991–2020). Una versione futura prenderà le medie di qualsiasi luogo sulla mappa.',
   },
 
+  stages: {
+    nursery: 'Vivaio',
+    vegetative: 'Crescita',
+    flowering: 'Fioritura',
+    harvest: 'Raccolta',
+    cleanOut: 'Pulizia',
+  },
+  vpd: {
+    stage: 'Fase colturale',
+    light: 'Luce',
+    lights: {
+      sun: 'Sole',
+      cloud: 'Nuvoloso',
+      night: 'Notte',
+    },
+    status: {
+      tooWet: 'Troppo umido',
+      good: 'Buono',
+      tooDry: 'Troppo secco',
+    },
+    ideal: 'ideale',
+    actions: {
+      hold: 'Mantieni il clima così',
+      ventilate: 'Ventila per asciugare l’aria',
+      heatAndVent: 'Riscalda un poco e apri le aperture',
+      heat: 'Riscalda: l’aria fuori è più umida',
+      humidify: 'Alza l’umidità: nebbia o nebulizzazione',
+      coolAndHumidify: 'Ombreggia e nebulizza: raffredda e inumidisci',
+    },
+    band: 'Fascia',
+    absolute: 'Acqua nell’aria',
+    headroom: 'Margine prima della saturazione',
+    pairsTitle: 'Lo stesso VPD ad altre temperature',
+    targetsTitle: (stage: string) => `Obiettivi · ${stage}`,
+    day: 'Giorno',
+    night: 'Notte',
+    source: 'Fonte',
+  },
+  advice: {
+    title: 'Strategia di raffrescamento',
+    strategies: {
+      vents: 'Bastano le aperture al colmo',
+      ventsAndShade: 'Aperture con ombreggio',
+      shadeAndFog: 'Ombreggio e nebbia ad alta pressione',
+      shadeAndPad: 'Ombreggio e pannelli evaporativi',
+    },
+    ventsNeeded: 'Aperture necessarie, senza ombreggio in più',
+    withShade: (pct: string) => `Aperture con il ${pct} % di ombreggio`,
+    fogInside: 'Dentro con ombreggio e nebbia',
+    padOutlet: 'Aria all’uscita del pannello bagnato',
+    openFog: 'Dimensiona la nebulizzazione',
+    rule: 'Regola: sopra 38 °C fuori, o con aperture oltre un quarto del suolo, ombreggia e raffresca per evaporazione invece di ingrandire le aperture.',
+  },
+  calendar: {
+    title: 'Calendario colturale',
+    lead: 'L’anno colturale settimana per settimana: le fasi, il clima che ognuna vuole, e quando funzionano riscaldamento, CO₂, ombreggio e nebbia.',
+    rows: {
+      temp: 'Fuori',
+      stage: 'Coltura',
+      heating: 'Riscaldamento',
+      co2: 'CO₂',
+      shade: 'Ombreggio',
+      fog: 'Nebbia',
+    },
+    targets: 'Obiettivi per fase',
+    stage: 'Fase',
+    weeks: 'settimane',
+    week: 'Settimana',
+    firstHarvest: 'Prima raccolta',
+    weeksOfPicking: 'settimane di raccolta',
+    end: 'Fine coltura',
+    heatingFrom: 'Riscaldamento dalla',
+    systems: 'Impianti',
+    harvestWeeks: 'Settimane di raccolta',
+    heatingWeeks: 'Settimane di riscaldamento',
+    fogWeeks: 'Settimane di nebbia',
+  },
+  science: {
+    title: 'Scienza',
+    lead: 'I fenomeni dietro ogni calcolatore: cosa succede, la formula, cosa assume e come misurare ogni numero che inserisci.',
+    search: 'Cerca un argomento',
+    empty: 'Nessun argomento corrisponde.',
+    contents: 'Argomenti',
+    formula: 'Formula',
+    inputs: 'Dati e come ottenerli',
+    input: 'Dato',
+    method: 'Come',
+    instrument: 'Strumento',
+    assumptions: 'Ipotesi',
+    related: 'Collegati',
+    usedIn: 'Usato in',
+    sources: 'Fonti',
+    instrumentsTitle: 'Strumenti di misura',
+    instrumentsLead: 'Con cosa misurare, e come leggere bene.',
+    howToGet: (label: string) => `Come ottenere «${label}»`,
+    readMore: 'Leggi:',
+    close: 'Chiudi',
+    groups: {
+      site: 'Sito e conti',
+      house: 'La serra',
+      heat: 'Calore',
+      air: 'Aria, umidità e raffrescamento',
+      water: 'Acqua',
+      crop: 'Luce, CO₂ e coltura',
+    },
+    methods: {
+      measure: 'Da misurare',
+      datasheet: 'Dalla scheda tecnica',
+      derived: 'Calcolato',
+      setpoint: 'Tua impostazione',
+      assume: 'Ipotesi di progetto',
+      bill: 'Dalle bollette',
+    },
+    methodHints: {
+      measure: 'Da rilevare sul posto con lo strumento qui sotto.',
+      datasheet:
+        'Dalla scheda tecnica del fornitore; il suggerimento dà un valore tipico.',
+      derived:
+        'SerraCalc lo ricava dalla serra o da un altro strumento; sostituiscilo se conosci un valore migliore.',
+      setpoint: 'Una scelta: un set point o un obiettivo di conduzione.',
+      assume: 'Un valore tipico della pratica; affinalo con i tuoi dati.',
+      bill: 'La tua tariffa o il tuo fattore, nella valuta del progetto.',
+    },
+    topics: {
+      cogeneration: {
+        title: 'Cogenerazione e accumulo di calore',
+        what: 'Un motore a gas produce elettricità e, dall’acqua di raffreddamento e dai fumi, calore; i fumi depurati portano CO₂ alla coltura. Girando di giorno, quando la coltura può usare la CO₂, produce più calore di quanto serva alla serra: un accumulo d’acqua calda lo porta nella notte e una caldaia copre il resto.',
+        assumptions: [
+          'Una giornata d’inverno di progetto, con l’esterno che segue un coseno dalle 3 alle 15.',
+          'La cogenerazione gira a piena potenza nelle sue ore.',
+        ],
+      },
+      heatReuse: {
+        title: 'Calore dell’acqua di pozzo raffreddata',
+        what: 'L’acqua pompata calda da un pozzo profondo e raffreddata per l’irrigazione o il raffrescamento cede 1,163 kWh per m³ e per kelvin. Raffreddarla da 40 a 15 °C libera circa 29 kWh per m³, che una pompa di calore o un circuito a bassa temperatura può restituire alla serra.',
+        assumptions: [
+          'Tutto il calore liberato viene recuperato.',
+          'Acqua a 1.000 kg/m³ e 4,19 kJ/kg·K.',
+        ],
+      },
+      siteScale: {
+        title: 'Scala del sito ed economia',
+        what: 'Un grande sito è fatto di compartimenti di pochi ettari, ciascuno una serra ripetuta sulla superficie, che condividono osmosi, cogenerazione e magazzino di confezionamento. Sommandoli si ottengono l’acqua, il calore, la manodopera e la produzione che gli impianti condivisi devono servire, e il costo di ogni chilo.',
+        assumptions: [
+          'Ogni compartimento si comporta come la serra del suo progetto, al m².',
+          'Prezzi, paghe e rese sono esempi da sostituire con i tuoi.',
+        ],
+      },
+      desalination: {
+        title: 'Dissalazione dell’acqua di mare per osmosi inversa',
+        what: 'Un’alta pressione spinge l’acqua di mare attraverso membrane che trattengono il sale. Il recupero è la quota che passa come permeato; il resto esce come salamoia, più salata in proporzione. Pompare contro la pressione osmotica richiede 3–4 kWh per m³ con recupero energetico.',
+        assumptions: [
+          'Il permeato mantiene (1 − reiezione) della salinità media lungo le membrane.',
+          'Energia e recupero sono tipici; confermali col fornitore.',
+        ],
+      },
+      fertigation: {
+        title: 'Fertirrigazione e riuso del drenaggio',
+        what: 'La coltura beve l’acqua ma lascia quasi tutto il sodio e il cloruro, quindi il drenaggio è più salato dell’apporto. Riutilizzare il drenaggio risparmia acqua e concime, ma il suo sale si accumula finché il circuito va scaricato; scaricarne una parte stabilizza il sodio.',
+        assumptions: [
+          'Il sodio entra appena nella coltura.',
+          'La perdita di resa è lineare sopra 2 dS/m: indicativa, da una prova e una varietà.',
+        ],
+      },
+      geometry: {
+        title: 'Geometria della serra',
+        what: 'Ogni carico dipende da tre numeri: il suolo (dove si coltiva e dove cade il sole), la copertura (che perde calore) e il volume d’aria (che smorza calore, umidità e CO₂). Una serra alta ha più aria per m² e oscilla meno.',
+        assumptions: [
+          'I tetti sono falde dritte, o mezza ellisse per un arco.',
+          'Le testate contano come copertura; porte e grondaie sono ignorate.',
+        ],
+      },
+      heatLoss: {
+        title: 'Dispersioni attraverso la copertura',
+        what: 'Il calore attraversa la copertura dalla serra calda alla notte fredda, in proporzione alla superficie, alla differenza di temperatura e alla trasmittanza U. Uno schermo termico chiuso la riduce; lo zoccolo perde un po’ di più lungo il perimetro.',
+        assumptions: [
+          'I valori U sono di progetto per una notte calma e serena (ASAE EP406).',
+          'La notte di progetto torna quasi ogni inverno: non è il record.',
+        ],
+      },
+      airLeakage: {
+        title: 'Infiltrazioni d’aria',
+        what: 'L’aria fredda entra da fessure, aperture e porte e va riscaldata. Il ricambio N dice quante volte all’ora l’intero volume viene sostituito: circa 0,5 per un doppio film stagno, 1,5–2 per un vetro vecchio.',
+        assumptions: [
+          'Le infiltrazioni non cambiano col vento in questi strumenti.',
+          '0,335 Wh per m³ e per K è la capacità termica dell’aria verso 20 °C.',
+        ],
+      },
+      hotWater: {
+        title: 'Tubi di riscaldamento ad acqua calda',
+        what: 'Un circuito cede calore per convezione e irraggiamento. Il salto termico dell’acqua fissa la portata (1,163 kWh per m³ e per K) e la resa per metro fissa la lunghezza dei tubi. L’acqua geotermica a 60–75 °C richiede più tubo di una caldaia a 80–90 °C.',
+        assumptions: [
+          'Convezione naturale attorno a un tubo orizzontale: h = 1,32 (ΔT/D)^0,25.',
+          'La superficie del tubo è alla temperatura media dell’acqua.',
+        ],
+      },
+      solarGain: {
+        title: 'Apporto solare',
+        what: 'Il sole che attraversa la copertura diventa calore. Una parte la coltura la spende per evaporare acqua; il resto scalda l’aria e deve uscire dalle aperture, dai pannelli o con la nebbia. Ombreggio e imbiancatura lo tagliano alla fonte.',
+        assumptions: [
+          'La trasmissione comprende struttura e polvere.',
+          'Una coltura piena spende circa metà del sole nella traspirazione.',
+        ],
+      },
+      ventilation: {
+        title: 'Ventilazione naturale',
+        what: 'L’aria calda sale ed esce dalle aperture al colmo (effetto camino) e il vento la fa passare. La superficie d’apertura necessaria cresce in fretta se la serra può superare l’esterno di pochi gradi; oltre circa il 30 % del suolo le aperture da sole non bastano.',
+        assumptions: [
+          'Boulard e Baille (1995): Cd 0,65 e Cw 0,1 per le aperture al colmo.',
+          'Aria a 1,2 kg/m³ e 1005 J/kg·K.',
+        ],
+      },
+      evaporativeCooling: {
+        title: 'Raffrescamento evaporativo e bulbo umido',
+        what: 'L’acqua che evapora nell’aria secca le sottrae calore. Non si può raffreddare l’aria sotto il suo bulbo umido, che scende quanto più l’aria è secca: a 44 °C e 15 % il bulbo umido è verso 22 °C. Un pannello bagnato fa il 75–85 % del percorso.',
+        assumptions: [
+          'Bulbo umido secondo Stull (2011), entro circa 0,3 K.',
+          'L’aria si scalda in modo uniforme tra pannelli e ventilatori.',
+        ],
+      },
+      fogging: {
+        title: 'Nebulizzazione ad alta pressione',
+        what: 'Ugelli a 40–70 bar producono gocce di 10–30 µm che evaporano prima di cadere, raffrescando l’aria con le aperture aperte. Il limite è l’umidità: la nebbia viene ridotta perché l’aria resti sotto un tetto, di solito il 70–80 %.',
+        assumptions: [
+          'Tutta la nebbia evapora finché l’aria resta sotto il tetto.',
+          'La portata delle aperture segue Boulard e Baille, da vento e differenza di temperatura.',
+        ],
+      },
+      vpd: {
+        title: 'Deficit di pressione di vapore (VPD)',
+        what: 'Il VPD è quanta acqua in più l’aria potrebbe contenere alla sua temperatura. Guida la traspirazione: troppo basso e la pianta non muove acqua e calcio e i funghi si diffondono; troppo alto e gli stomi si chiudono e la pianta appassisce. Lo stesso VPD vale per molte coppie di temperatura e umidità.',
+        assumptions: [
+          'Foglia e aria alla stessa temperatura.',
+          'Pressione di vapore saturo secondo Tetens, come nella FAO-56.',
+        ],
+      },
+      dewPoint: {
+        title: 'Punto di rugiada e condensa',
+        what: 'L’aria raffreddata fino al punto di rugiada comincia a cedere acqua. Di notte la faccia interna della copertura è più fredda dell’aria; sotto il punto di rugiada gocciola sulla coltura e diffonde malattie.',
+        assumptions: [
+          'La faccia interna scambia circa 8 W/m²·K con l’aria.',
+          'Il cielo notturno e il vento sono compresi nel valore U.',
+        ],
+      },
+      nightHumidity: {
+        title: 'Deumidificare di notte',
+        what: 'Di notte la coltura traspira ancora. Quell’acqua deve uscire con aria esterna che ne contiene meno, e quell’aria va riscaldata. Ventilare non asciuga la serra quando l’aria esterna contiene più acqua in valore assoluto.',
+        assumptions: [
+          'Acqua in grammi per kg d’aria secca, alla pressione del livello del mare.',
+          'La condensa sulla copertura non è contata come uscita.',
+        ],
+      },
+      transpiration: {
+        title: 'Traspirazione e irrigazione',
+        what: 'Una coltura traspira circa due terzi del sole che riceve: il fabbisogno segue la radiazione interna. In fuori suolo si aggiunge il drenaggio per lavare i sali; con acqua salmastra la quota di drenaggio deve salire.',
+        assumptions: [
+          '2,45 MJ evaporano un litro d’acqua.',
+          'La copertura vegetale riduce il consumo di una coltura giovane.',
+        ],
+      },
+      rainHarvest: {
+        title: 'Raccolta dell’acqua piovana',
+        what: 'Il tetto di una serra è un grande bacino di raccolta. Una vasca conserva la pioggia tra un temporale e l’altro: mese per mese si riempie, si svuota nell’irrigazione e trabocca quando è piena.',
+        assumptions: [
+          'Totali mensili; un forte temporale è verificato a parte.',
+          'I primi millimetri di ogni pioggia vanno persi.',
+        ],
+      },
+      light: {
+        title: 'Luce per la coltura (DLI)',
+        what: 'Le piante contano fotoni, non watt: l’integrale di luce giornaliero è il numero di moli di luce fotosintetica per m² al giorno, e circa il 47 % del sole è PAR. Le lampade colmano il divario nei mesi bui; l’ombreggio tiene i mesi luminosi sotto il tetto della coltura.',
+        assumptions: [
+          '4,57 µmol di fotoni per joule di PAR solare.',
+          'Le lampade sono dimensionate per il mese più buio.',
+        ],
+      },
+      co2: {
+        title: 'Arricchimento in CO₂',
+        what: 'La coltura prende la CO₂ dall’aria e 700–900 ppm alzano la resa. Quello che fornisci entra nella coltura o se ne va con l’aria: l’arricchimento rende quando le aperture sono quasi chiuse. Un bruciatore a gas o una cogenerazione danno CO₂ e calore insieme.',
+        assumptions: [
+          '1,83 g di CO₂ per m³ d’aria ogni 1000 ppm.',
+          '1 m³ di gas naturale bruciato dà 1,96 kg di CO₂.',
+        ],
+      },
+      cropCalendar: {
+        title: 'L’anno colturale',
+        what: 'Una coltura passa per fasi che vogliono climi diversi. Letto con le normali climatiche, il calendario mostra quando le notti chiedono calore, quando la serra resta chiusa abbastanza per la CO₂, e quando il sole chiede ombreggio e nebbia.',
+        assumptions: [
+          'I valori settimanali sono letti tra le normali mensili.',
+          'Le durate delle fasi sono tipiche; verificale con la ditta sementiera.',
+        ],
+      },
+    },
+    instruments: {
+      ecMeter: {
+        name: 'Conduttimetro e pH-metro',
+        how: 'Un conduttimetro portatile o in linea, compensato a 25 °C. Taralo ogni settimana con un tampone da 1,41 dS/m e leggi apporto e drenaggio alla stessa ora.',
+      },
+      labAnalysis: {
+        name: 'Analisi dell’acqua in laboratorio',
+        how: 'Campiona la fonte, l’apporto e il drenaggio ogni due-quattro settimane; il laboratorio dà sodio, cloruro, nutrienti e bicarbonati in mmol/L.',
+      },
+      tape: {
+        name: 'Metro a nastro o distanziometro laser',
+        how: 'Misura campate, lunghezze e altezze da terra alla grondaia. Conta campate, piante, gocciolatori e ugelli su alcune file e proporziona.',
+      },
+      thermometer: {
+        name: 'Termometro d’aria ventilato',
+        how: 'Un sensore in una cassetta bianca ventilata, ad altezza coltura e all’ombra. Un sensore al sole legge parecchi gradi in più.',
+      },
+      hygrometer: {
+        name: 'Sensore di umidità o psicrometro',
+        how: 'Un sensore capacitivo nella stessa cassetta ventilata, verificato ogni anno con uno psicrometro a bulbo secco e umido. Leggi temperatura e umidità insieme.',
+      },
+      weatherStation: {
+        name: 'Stazione meteo esterna',
+        how: 'Temperatura e umidità in uno schermo antiradiazione a 2 m, lontano dalle serre. Per i valori di progetto prendi le notti fredde e i pomeriggi caldi di più anni.',
+      },
+      pyranometer: {
+        name: 'Piranometro',
+        how: 'La radiazione globale in W/m², in piano e pulito, sopra il tetto. Il computer climatico spesso ne ha uno; le sue somme giornaliere in MJ/m² alimentano gli strumenti acqua e luce.',
+      },
+      parSensor: {
+        name: 'Sensore quantico PAR',
+        how: 'I fotoni in µmol/m²·s. Leggi fuori e ad altezza coltura nello stesso momento: dentro su fuori è la trasmissione. Sommato sul giorno dà il DLI.',
+      },
+      anemometer: {
+        name: 'Anemometro',
+        how: 'Un anemometro a coppe o a ultrasuoni su un palo sopra il colmo; prendi un pomeriggio estivo tipico, non le raffiche. Un anemometro a elica a mano legge la velocità attraverso un pannello o un ventilatore.',
+      },
+      co2Sensor: {
+        name: 'Sensore di CO₂ (NDIR)',
+        how: 'Un sensore infrarosso ventilato ad altezza coltura. Verificalo sull’aria esterna, circa 420 ppm, prima di ogni stagione.',
+      },
+      tracerGas: {
+        name: 'Prova di decadimento di un gas traccia',
+        how: 'In una notte calma chiudi la serra, porta la CO₂ a circa 1000 ppm e registra il calo: N = ln((C₁ − C_est) / (C₂ − C_est)) / ore.',
+      },
+      flowMeter: {
+        name: 'Misuratore di portata',
+        how: 'Un misuratore a ultrasuoni a pinza o in linea sulla condotta principale. Leggi la portata mentre funziona un settore, o la curva della pompa alla sua prevalenza di lavoro.',
+      },
+      catchCups: {
+        name: 'Prova con i bicchieri',
+        how: 'Raccogli da 10–20 gocciolatori o ugelli per qualche minuto cronometrato, misura ogni volume con un cilindro graduato e fai la media. Lo scarto mostra l’uniformità dell’impianto.',
+      },
+      drainTray: {
+        name: 'Vaschetta di drenaggio su bilancia',
+        how: 'Qualche lastra su una vaschetta con pluviometro a bascula o bilancia: quota di drenaggio = drenaggio ÷ acqua data. Misura insieme l’EC del gocciolatore e del drenaggio.',
+      },
+      pressureGauge: {
+        name: 'Manometro',
+        how: 'Un manometro a glicerina sulla mandata della pompa (1 bar vale circa 10 m di prevalenza), o un manometro differenziale su un ventilatore per la pressione statica.',
+      },
+      infrared: {
+        name: 'Termometro a contatto o a infrarossi',
+        how: 'Una sonda a contatto sui tubi di mandata e ritorno, o un termometro a infrarossi impostato sull’emissività del tubo.',
+      },
+      meters: {
+        name: 'Contatori di gas, calore ed elettricità',
+        how: 'Le letture mensili e le bollette danno il consumo reale, la potenza e le tariffe per verificare gli strumenti.',
+      },
+      climateComputer: {
+        name: 'Registri del computer climatico',
+        how: 'Set point, ore di funzionamento, cicli di nebbia e turni d’irrigazione vengono dalle impostazioni e dai registri giornalieri del computer climatico.',
+      },
+    },
+  },
+  supply: {
+    title: 'Acqua irrigua',
+    lead: 'Dal mare alla radice: un impianto di osmosi inversa dimensionato sul giorno di punta della coltura, e il circuito nutritivo che riutilizza il drenaggio e scarica prima che il sale si accumuli.',
+    tabs: {
+      ro: 'Osmosi di acqua di mare',
+      fertigation: 'Fertirrigazione',
+    },
+    sea: 'Mare',
+    membranes: 'Membrane',
+    brine: 'Salamoia',
+    fresh: 'Acqua dolce',
+    drain: 'Drenaggio',
+    reused: 'Riutilizzato',
+    letGo: 'Scaricato',
+    days: 'giorni',
+    flush: 'Scarico',
+    takeDemand: (m3: string) => `Prendi il giorno di punta: ${m3} m³`,
+    useRo: (ec: string) => `Usa l’acqua osmotizzata: EC ${ec}`,
+    feed: 'Acqua di mare pompata',
+    product: 'Permeato',
+    productEc: 'EC del permeato',
+    energy: 'Energia al giorno',
+    costDay: 'Elettricità al giorno',
+    coverage: 'L’impianto copre',
+    tank: 'Serbatoio',
+    waterSaved: 'Acqua risparmiata',
+    fertSaved: 'Concime risparmiato',
+    drainEc: 'EC del drenaggio',
+    rootEc: 'Zona radicale',
+    yieldLoss: 'Resa persa per il sale',
+    flushIn: 'Scarico fra',
+    never: 'Non serve',
+    levelsAt: 'Si stabilizza a',
+    stock: 'Soluzioni A e B, ciascuna',
+    stockDays: (days: string) => `un serbatoio dura ${days} giorni`,
+    formulas: {
+      roFeed: 'Alimentazione = permeato / recupero',
+      roBrine:
+        'Salamoia = alimentazione − permeato; salinità ≈ S_mare / (1 − R)',
+      roEnergy: 'Energia = SEC × permeato',
+      fertDrain: 'EC drenaggio = (A × EC_apporto − U × EC_assorbita) / D',
+      fertNa:
+        'Sodio: chiuso, t = V (C_lim − C_0) / (C_in × acqua dolce); altrimenti si stabilizza a C_in × acqua dolce × D / (A × scarico)',
+      fertYield: 'Resa = 1 − pendenza × (EC_radici − soglia)',
+      fertStock: 'Soluzione madre = nutrienti necessari / diluizione',
+    },
+  },
+  energy: {
+    title: 'Energia',
+    lead: 'Una cogenerazione a gas che dà calore, elettricità e CO₂ lungo una giornata d’inverno, un accumulo d’acqua calda per la notte e una caldaia per il resto; e il calore contenuto nell’acqua di pozzo raffreddata.',
+    tabs: {
+      chp: 'Cogenerazione e accumulo',
+      reuse: 'Recupero di calore',
+    },
+    buffer: 'Accumulo',
+    fromChp: 'Cogenerazione',
+    fromBuffer: 'Accumulo',
+    fromBoiler: 'Caldaia',
+    demand: 'Fabbisogno',
+    chpShare: 'La cogenerazione copre',
+    dayNeed: 'Calore del giorno',
+    dumped: 'Disperso',
+    gas: 'Gas al giorno',
+    power: 'Elettricità prodotta',
+    netCost: 'Gas meno elettricità venduta',
+    co2: 'CO₂ alla coltura',
+    co2Need: 'Necessaria',
+    inWater: 'Calore nell’acqua',
+    need: 'Fabbisogno di calore',
+    covers: 'Copre',
+    takeLinks:
+      'Prendi l’acqua del giorno di punta e il calore del giorno d’inverno',
+    formulas: {
+      demand:
+        'Fabbisogno = H × (T_set − T_est) − sole, meno lo schermo di notte',
+      buffer: 'Accumulo = 1,163 × V × ΔT',
+      gas: 'Gas = P_el / η_el / 9,77 × ore + caldaia',
+      co2: 'CO₂ = 1,96 kg per m³ di gas',
+      reuse: 'Calore = 1,163 × V × ΔT',
+    },
+  },
+  site: {
+    title: 'Sito',
+    lead: 'L’intera azienda: ogni progetto è un compartimento, la sua serra ripetuta sulla superficie; i totali, l’osmosi e la cogenerazione condivise a confronto, e l’economia dell’anno.',
+    tabs: {
+      overview: 'Panoramica',
+      economics: 'Economia',
+    },
+    choose: 'Sito',
+    unnamed: 'Sito senza nome',
+    empty:
+      'Nessun progetto. I progetti con lo stesso «Sito» formano un sito; dai qui a ciascuno la sua superficie.',
+    compartments: (n: string) => `Compartimenti: ${n}`,
+    area: 'Superficie',
+    peakWater: 'Acqua, giorno di punta',
+    meanWater: 'media',
+    heatPeak: 'Calore, notte di progetto',
+    yield: 'Produzione all’anno',
+    labour: 'Manodopera all’anno',
+    days: 'giornate',
+    people: (n: string) => `circa ${n} persone a tempo pieno`,
+    co2e: 'Impronta di carbonio',
+    co2eHint: '1,9 kg CO₂e per kg (stima pubblicata)',
+    sharesAlt: 'Compartimenti per quota della superficie',
+    plants: 'Impianti condivisi',
+    roPlant: 'Osmosi di acqua di mare',
+    chpPlant: 'Cogenerazione',
+    covers: (pct: string) => `copre il ${pct} % del giorno di punta`,
+    chpOfPeak: (pct: string) => `${pct} % del picco di calore`,
+    noRo: 'Salva un risultato di osmosi di acqua di mare in uno di questi progetti per verificarlo qui.',
+    noChp:
+      'Salva un risultato della centrale energetica in uno di questi progetti per verificarlo qui.',
+    table: 'Compartimenti',
+    tableHint:
+      'Imposta la superficie di ogni compartimento: la sua serra vi è ripetuta.',
+    compartment: 'Compartimento',
+    houses: 'Serre',
+    areaOf: (name: string) => `Superficie di ${name}, ha`,
+    takeTotals: (ha: string) => `Prendi i totali del sito: ${ha} ha`,
+    costPerKg: 'Costo per kg',
+    price: 'Prezzo',
+    margin: 'Margine',
+    revenue: 'Ricavi',
+    payback: 'Rientro dell’investimento',
+    years: 'anni',
+    waterPerKg: 'Acqua per kg',
+    costTitle: 'Dove vanno i soldi',
+    costs: {
+      labour: 'Manodopera',
+      energy: 'Energia',
+      water: 'Acqua',
+      inputs: 'Concimi e difesa',
+      other: 'Confezionamento e spese',
+    },
+    formulas: {
+      yield: 'Produzione = superficie × t/ha',
+      cost: 'Costo per kg = costi / kg',
+      payback: 'Rientro = costruzione / margine',
+    },
+  },
+  ops: {
+    title: 'Gestione',
+    lead: 'Il registro colturale, il giro d’igiene del giorno, la manutenzione degli impianti e un piano caldo per chi lavora dentro.',
+    noProject: 'Apri un progetto per tenere il suo registro.',
+    tabs: {
+      log: 'Registro',
+      hygiene: 'Igiene',
+      maintenance: 'Manutenzione',
+      heat: 'Stress da caldo',
+    },
+    newEntry: 'Nuova voce',
+    date: 'Data',
+    kind: 'Tipo',
+    kinds: {
+      scouting: 'Monitoraggio',
+      release: 'Lancio di ausiliari',
+      spray: 'Trattamento',
+      maintenance: 'Manutenzione',
+      hygiene: 'Controllo igiene',
+      harvest: 'Raccolta',
+    },
+    subjects: {
+      scouting: 'Parassita o malattia visti, e dove',
+      release: 'Ausiliare lanciato',
+      spray: 'Prodotto distribuito',
+      maintenance: 'Cosa è stato fatto',
+      hygiene: 'Lista di controllo',
+      harvest: 'Compartimento o file',
+    },
+    task: 'Compito',
+    amount: 'Quantità',
+    unit: 'Unità',
+    who: 'Classe OMS',
+    note: 'Nota',
+    add: 'Aggiungi al registro',
+    entries: (n: string) => `Voci del registro: ${n}`,
+    all: 'Tutto',
+    empty: 'Ancora niente nel registro.',
+    remove: (what: string) => `Elimina «${what}»`,
+    checklist: 'Lista d’igiene',
+    saveChecklist: (done: string, total: string) =>
+      `Salva la lista di oggi (${done} su ${total})`,
+    recent: 'Ultime liste',
+    every: 'Ogni',
+    last: 'Ultima volta',
+    due: 'Scadenza',
+    state: 'Stato',
+    done: 'Fatto oggi',
+    days: 'giorni',
+    states: {
+      ok: 'In regola',
+      soon: 'A breve',
+      overdue: 'In ritardo',
+    },
+    overdue: (n: string) => `Compiti in ritardo: ${n}`,
+    tasks: {
+      filters: 'Pulire i filtri dell’irrigazione',
+      nozzles: 'Controllare gli ugelli della nebbia',
+      pads: 'Pulire e lavare i pannelli',
+      sensors: 'Tarare i sensori di clima ed EC',
+      pumps: 'Manutenzione delle pompe',
+      fans: 'Controllare ventilatori e cinghie',
+      drainDisinfection: 'Controllare la disinfezione del drenaggio',
+      roMembranes: 'Pulire le membrane dell’osmosi (CIP)',
+      chp: 'Manutenzione della cogenerazione',
+    },
+    hygiene: {
+      footbath: 'Pediluvi riempiti',
+      handwash: 'Lavaggio mani e guanti all’ingresso',
+      clothing: 'Indumenti puliti per questo compartimento',
+      tools: 'Coltelli e attrezzi disinfettati',
+      visitors: 'Visitatori registrati e informati',
+      waste: 'Residui vegetali portati via e coperti',
+      doors: 'Porte e reti antinsetto chiuse',
+    },
+    heatTitle: 'Stress da caldo al lavoro',
+    heatIndex: 'Indice di calore',
+    rest: 'Pausa ogni ora',
+    water: 'Acqua ogni ora',
+    risks: {
+      none: 'Nessun rischio',
+      caution: 'Attenzione',
+      extremeCaution: 'Massima attenzione',
+      danger: 'Pericolo',
+      extremeDanger: 'Pericolo estremo',
+    },
+    plan: 'Il piano caldo',
+    advice: {
+      caution: 'Acqua a portata di mano; lavori pesanti al mattino presto.',
+      extremeCaution:
+        'Pausa di 20 min ogni ora all’ombra; 0,75 L d’acqua all’ora.',
+      danger:
+        'Pausa di 40 min ogni ora; niente lavori pesanti dentro; i lavoratori si controllano a vicenda.',
+      extremeDanger: 'Sospendere il lavoro in serra.',
+    },
+    heatSource:
+      'Indice di calore del servizio meteorologico statunitense (Rothfusz); lavoro e pause secondo le indicazioni comuni di salute sul lavoro. Un aiuto alla pianificazione, non un parere medico.',
+  },
+  data: {
+    title: 'Dati in diretta',
+    lead: 'Le letture dei tuoi sensori o datalogger, importate in CSV e confrontate con ciò che si aspettano i calcolatori: VPD per la fase, temperature di giorno e di notte, drenaggio; VPD per ora; e allarmi.',
+    import: 'Importa letture',
+    importHint:
+      'Un CSV con una colonna del tempo e a scelta: temperatura, UR, PAR, EC, pH, drenaggio %, EC del drenaggio, temperatura e UR esterne. Virgole o punti e virgola, decimali con punto o virgola.',
+    file: 'File CSV',
+    paste: 'Oppure incollalo qui',
+    importPasted: 'Importa il testo incollato',
+    sample: 'Carica una settimana di esempio',
+    download: 'Scarica il CSV di esempio',
+    clear: 'Cancella le letture',
+    noProject: 'Apri un progetto per tenere le sue letture.',
+    imported: (n: string, skipped: string) =>
+      `Importate ${n} letture; ${skipped} righe saltate.`,
+    errors: {
+      empty: 'Il file è vuoto.',
+      noTime: 'Nessuna colonna del tempo trovata.',
+      noData: 'Nessuna lettura trovata.',
+    },
+    targets: 'Confronta con',
+    summary: 'Misurato contro atteso',
+    empty:
+      'Ancora nessuna lettura: importa un CSV o carica la settimana di esempio.',
+    period: (from: string, to: string, n: string, step: string) =>
+      `Da ${from} a ${to}: ${n} letture, ogni ${step} min.`,
+    vpdInBand: 'VPD nella sua fascia',
+    dayMean: 'Giorni, media',
+    nightMean: 'Notti, media',
+    drainMean: 'Drenaggio, media',
+    plan: 'previsto',
+    alertCount: 'Allarmi',
+    byHour: 'Per ora del giorno',
+    vpdByHour: 'VPD per ora, kPa (verde: fascia diurna)',
+    tempByHour: 'Temperatura per ora, °C (verde: fascia diurna)',
+    alertsTitle: 'Allarmi',
+    noAlerts: 'Nessun allarme in queste letture.',
+    alerts: {
+      vpdLow: 'VPD sotto 0,3 kPa: rischio di malattie',
+      vpdHigh: 'VPD sopra 1,5 kPa di giorno',
+      heatStress: 'Stress da caldo per i lavoratori',
+      heatDanger: 'Pericolo caldo per i lavoratori',
+      drainEcHigh: 'EC del drenaggio al tetto di scarico',
+      tempLow: 'Troppo freddo per la fase',
+      tempHigh: 'Troppo caldo per la fase',
+      phOut: 'pH fuori da 5,2–6,8',
+    },
+    alertDetail: (n: string, worst: string) =>
+      `${n} letture, peggiore ${worst}`,
+    days: 'Giorno per giorno',
+    outOfBand: 'VPD fuori fascia',
+  },
   calc: {
+    science: 'La scienza dietro il calcolo',
     results: 'Risultati',
     how: 'Come si calcola',
     inputs: 'Dati',
@@ -540,6 +1348,30 @@ export const IT: SerraCopy = {
   },
 
   diagrams: {
+    energyAlt: (peak: string, start: string, end: string, share: string) =>
+      `Giornata d’inverno di progetto: il fabbisogno di calore arriva a ${peak} kW; la cogenerazione gira dalle ${start}:00 alle ${end}:00 e copre il ${share} %. Le maniglie regolano avvio e arresto.`,
+    reuseAlt: (water: string, need: string) =>
+      `Calore nell’acqua raffreddata, ${water} kWh, a confronto con il fabbisogno del giorno, ${need} kWh.`,
+    roAlt: (feed: string, product: string, brine: string, salinity: string) =>
+      `Osmosi di acqua di mare: ${feed} m³ pompati al giorno, ${product} m³ di permeato, ${brine} m³ di salamoia a ${salinity} g/L. Le maniglie regolano il recupero e l’accumulo.`,
+    fertAlt: (recycle: string, ec: string, flush: string) =>
+      `Circuito nutritivo: ${recycle} % del drenaggio riutilizzato, EC del drenaggio ${ec} dS/m, scarico fra ${flush} giorni. Le maniglie regolano la quota riutilizzata e il limite di sodio.`,
+    vpdAlt: (air: string, rh: string, vpd: string, status: string) =>
+      `Mappa del VPD: aria a ${air} °C e ${rh} % dà ${vpd} kPa, ${status}. Le maniglie regolano temperatura e umidità.`,
+    fogAlt: (
+      outside: string,
+      inside: string,
+      rh: string,
+      on: string,
+      off: string,
+    ) =>
+      `La nebbia, in un pomeriggio a ${outside} °C, porta la serra a ${inside} °C e ${rh} %, con ${on} s acceso e ${off} s spento. Le maniglie regolano il tetto di umidità e il getto.`,
+    calendarAlt: (plant: string, harvest: string, end: string, heat: string) =>
+      `Calendario: trapianto nella settimana ${plant}, prima raccolta nella settimana ${harvest}, fine coltura nella settimana ${end}, riscaldamento dalla settimana ${heat}. Le maniglie regolano la settimana di trapianto e la fine della coltura.`,
+    ventsOnly: 'Solo aperture',
+    withFog: 'Con nebbia',
+    wetBulb: 'Bulbo umido',
+    cap: 'Tetto',
     heatAlt: (inside: string, outside: string, kw: string) =>
       `Calore che esce dalla serra: ${kw} kW, da ${inside} °C dentro a ${outside} °C fuori. Le maniglie regolano le due temperature.`,
     pipesAlt: (loops: string, length: string, supply: string, back: string) =>
@@ -691,6 +1523,51 @@ export const IT: SerraCopy = {
         title: 'Relazione',
         body: 'Il progetto in una pagina stampabile: la serra, il suo clima e ogni risultato salvato con i numeri principali e le osservazioni. Stampala, o scegli «Salva come PDF» nella finestra di stampa per inviarla.',
       },
+      {
+        id: 'calendar',
+        title: 'Calendario colturale',
+        body: 'Le settimane di trapianto, fioritura, raccolta e pulizia con gli obiettivi climatici di ogni fase, e le settimane in cui funzionano riscaldamento, CO₂, ombreggio e nebbia, ricavate dalle normali climatiche. I siti di pomodoro nel deserto trapiantano verso la settimana 36, riscaldano dalla 42 circa e finiscono dopo la 29.',
+      },
+      {
+        id: 'vpd',
+        title: 'Umidità e VPD',
+        body: 'Il deficit di pressione di vapore da temperatura e umidità (Tetens, come nella FAO-56), il punto di rugiada e l’acqua che l’aria può ancora prendere, rispetto alla fascia della fase colturale e della luce. La mappa mostra ogni coppia di temperatura e umidità, perché uno stesso VPD vale per molte di esse.',
+      },
+      {
+        id: 'fog',
+        title: 'Nebulizzazione e strategia di raffrescamento',
+        body: 'Nebbia ad alta pressione in una serra ventilata: la temperatura interna da un bilancio di calore e acqua, il ciclo acceso/spento che tiene un tetto di umidità, e l’acqua al giorno. Il consigliere verifica il pomeriggio di progetto: se le sole aperture richiedono più di quanto apra un tetto, propone ombreggio con nebbia o pannelli.',
+      },
+      {
+        id: 'science',
+        title: 'Scienza',
+        body: 'Ogni fenomeno usato dagli strumenti, spiegato: cosa succede, la formula, cosa assume e come misurare ogni dato, con quale strumento. La ⓘ accanto a ogni campo apre gli stessi consigli e rimanda qui.',
+      },
+      {
+        id: 'supply',
+        title: 'Acqua irrigua',
+        body: 'L’osmosi di acqua di mare dimensionata sul giorno di punta: alimentazione, salamoia e sua salinità, energia, costo e accumulo. La fertirrigazione con riuso del drenaggio: acqua e concime risparmiati, EC del drenaggio, accumulo del sodio e quando scaricare, e la resa persa per il sale.',
+      },
+      {
+        id: 'site',
+        title: 'Sito ed economia',
+        body: 'I progetti con lo stesso nome di sito ne sono i compartimenti; dai a ciascuno la sua superficie e il sito somma acqua, calore, produzione, manodopera e carbonio, verifica osmosi e cogenerazione condivise e calcola costo per kg, margine e rientro.',
+      },
+      {
+        id: 'energy',
+        title: 'Centrale energetica',
+        body: 'Una giornata d’inverno ora per ora: il fabbisogno di calore della serra, una cogenerazione a gas che gira di giorno per la sua CO₂, l’accumulo che porta il calore nella notte e la caldaia per il resto; gas, elettricità e costi. E il calore contenuto nell’acqua di pozzo raffreddata.',
+      },
+      {
+        id: 'operations',
+        title: 'Gestione',
+        body: 'Un registro di monitoraggi, lanci di ausiliari, trattamenti (classi OMS Ia e Ib rifiutate), manutenzioni e raccolte; la lista d’igiene del giorno; il calendario di manutenzione con ciò che scade o è in ritardo; e un piano contro lo stress da caldo per i lavoratori dall’indice di calore.',
+      },
+      {
+        id: 'data',
+        title: 'Dati in diretta',
+        body: 'Importa il CSV di un datalogger, o carica una settimana di esempio, e confrontalo con ciò che si aspettano gli strumenti: VPD nella sua fascia, temperature di giorno e di notte, drenaggio; VPD e temperatura per ora; e allarmi per rischio di malattie, stress da caldo, EC del drenaggio, temperatura e pH.',
+      },
     ],
     sourcesTitle: 'Fonti',
     sources: [
@@ -702,6 +1579,9 @@ export const IT: SerraCopy = {
       'Thimijan & Heins (1983): conversione della luce solare in fotoni per le piante.',
       'Nederhoff (1994): concimazione carbonica, perdite e assorbimento in serra.',
       'Campen et al. (2003): deumidificazione delle serre con ventilazione e calore.',
+      'Soussi et al. (2022): controllo del clima e raffrescamento delle serre nelle regioni calde e aride.',
+      'Shamshiri et al. (2018): temperatura, umidità e VPD ottimali per il pomodoro in serra.',
+      'Ishii et al.: raffrescamento a nebbia contro pannelli e ventilatori in una serra in Arizona.',
     ],
     limitsTitle: 'Limiti',
     limits: [
@@ -713,6 +1593,157 @@ export const IT: SerraCopy = {
   },
 
   notes: {
+    'data.vpdBand': (v) =>
+      `Il VPD è rimasto nella sua fascia il ${v['pct']} % del tempo.`,
+    'data.dayOk': (v) =>
+      `I giorni hanno fatto in media ${v['t']} °C, dentro ${v['min']}–${v['max']} °C.`,
+    'data.dayOff': (v) =>
+      `I giorni hanno fatto in media ${v['t']} °C, fuori da ${v['min']}–${v['max']} °C.`,
+    'data.nightOk': (v) =>
+      `Le notti hanno fatto in media ${v['t']} °C, dentro ${v['min']}–${v['max']} °C.`,
+    'data.nightOff': (v) =>
+      `Le notti hanno fatto in media ${v['t']} °C, fuori da ${v['min']}–${v['max']} °C.`,
+    'data.drain': (v) =>
+      `Il drenaggio è stato in media del ${v['pct']} % contro un ${v['plan']} % previsto.`,
+    'data.alerts': (v) => `${v['n']} allarmi: vedi l’elenco qui sotto.`,
+    'data.noAlerts': (v) => `Nessun allarme (${v['n']}).`,
+    'ops.bannedSpray': (v) =>
+      `I prodotti di classe OMS ${v['cls']} non sono ammessi: scegli un altro prodotto.`,
+    'heat.none': (v) =>
+      `Indice di calore ${v['hi']} °C: nessun rischio (${v['rest']} min di pausa, ${v['water']} L all’ora).`,
+    'heat.caution': (v) =>
+      `Indice di calore ${v['hi']} °C: attenzione. Pausa di ${v['rest']} min ogni ora e bere ${v['water']} L all’ora.`,
+    'heat.extremeCaution': (v) =>
+      `Indice di calore ${v['hi']} °C: massima attenzione. Pausa di ${v['rest']} min ogni ora e bere ${v['water']} L all’ora.`,
+    'heat.danger': (v) =>
+      `Indice di calore ${v['hi']} °C: pericolo. Pausa di ${v['rest']} min ogni ora, bere ${v['water']} L all’ora, niente lavori pesanti.`,
+    'heat.extremeDanger': (v) =>
+      `Indice di calore ${v['hi']} °C: pericolo estremo. Sospendere il lavoro dentro (${v['rest']} min di pausa, ${v['water']} L all’ora).`,
+    'energy.share': (v) =>
+      `La cogenerazione copre il ${v['pct']} % del calore del giorno; la caldaia aggiunge ${v['boiler']} MWh.`,
+    'energy.dump': (v) =>
+      `${v['mwh']} MWh di calore di cogenerazione vanno dispersi: un accumulo più grande o una marcia più corta li terrebbe.`,
+    'energy.buffer': (v) =>
+      `L’accumulo conserva ${v['mwh']} MWh per portare il calore del giorno nella notte.`,
+    'energy.co2Enough': (v) =>
+      `I fumi della cogenerazione danno ${v['kg']} kg di CO₂, abbastanza per i ${v['need']} kg assorbiti dalla coltura.`,
+    'energy.co2Short': (v) =>
+      `I fumi della cogenerazione danno ${v['kg']} kg di CO₂, meno dei ${v['need']} kg assorbiti: aggiungi CO₂ liquida o fai girare più a lungo.`,
+    'energy.ventsShut': () =>
+      'La CO₂ da cogenerazione rende solo con le aperture quasi chiuse (oltre circa il 5 % non si tiene): pianificala per i giorni d’inverno.',
+    'reuse.heat': (v) =>
+      `Ogni m³ raffreddato contiene ${v['kwh']} kWh: ${v['mwh']} MWh al giorno da recuperare.`,
+    'reuse.cover': (v) =>
+      `Copre il ${v['pct']} % del fabbisogno di calore del giorno d’inverno.`,
+    'reuse.heatPump': () =>
+      'Tra 15 e 40 °C questo calore richiede una pompa di calore o un circuito a bassa temperatura.',
+    'econ.margin': (v) => `Un margine del ${v['pct']} % dei ricavi.`,
+    'econ.loss': (v) => `I costi superano i ricavi (margine ${v['pct']} %).`,
+    'econ.biggest.labour': (v) =>
+      `La manodopera è il costo maggiore: ${v['pct']} %.`,
+    'econ.biggest.energy': (v) =>
+      `L’energia è il costo maggiore: ${v['pct']} %.`,
+    'econ.biggest.water': (v) => `L’acqua è il costo maggiore: ${v['pct']} %.`,
+    'econ.biggest.inputs': (v) =>
+      `Concimi e difesa sono il costo maggiore: ${v['pct']} %.`,
+    'econ.biggest.other': (v) =>
+      `Confezionamento e spese generali sono il costo maggiore: ${v['pct']} %.`,
+    'econ.payback': (v) =>
+      `La costruzione rientra in circa ${v['years']} anni.`,
+    'econ.prices': () =>
+      'I prezzi sono esempi (il pomodoro esportato valeva 1,24–1,94 EUR/kg da gennaio ad aprile 2016): inserisci i tuoi.',
+    'ro.balance': (v) =>
+      `${v['feed']} m³ di acqua di mare al giorno danno il permeato e ${v['brine']} m³ di salamoia a ${v['salinity']} g/L.`,
+    'ro.recoveryHigh': (v) =>
+      `Recupero del ${v['pct']} %: oltre il 50 % la salamoia incrosta le membrane; verifica il limite del fornitore.`,
+    'ro.short': (v) =>
+      `L’impianto copre solo il ${v['pct']} % del fabbisogno: mancano ${v['m3']} m³ al giorno. Aggiungi capacità o accumulo.`,
+    'ro.headroom': (v) =>
+      `L’impianto ha un margine del ${v['pct']} % sul giorno di punta.`,
+    'ro.lowSec': () =>
+      'Sotto 2,5 kWh/m³ è meno di quanto raggiunga l’osmosi di acqua di mare; verifica il dato.',
+    'ro.highSec': () =>
+      'Oltre 4,5 kWh/m³: un recuperatore di energia lo porterebbe a 3–4.',
+    'ro.product': (v) =>
+      `Il permeato contiene circa ${v['mg']} mg/L di sale (EC ${v['ec']} dS/m); il suo sodio decide quanto dura il circuito nutritivo.`,
+    'ro.brine': () =>
+      'La salamoia torna in mare tramite un diffusore, con autorizzazione allo scarico; progetta lo scarico con l’autorità.',
+    'fert.water': (v) =>
+      `${v['reused']} m³ di drenaggio riutilizzati al giorno: il ${v['pct']} % dell’acqua data.`,
+    'fert.drainHigh': (v) =>
+      `EC del drenaggio ${v['ec']} dS/m, al tetto di ${v['max']} o sopra: aumenta il drenaggio o scarica.`,
+    'fert.yield': (v) =>
+      `Una EC radicale di ${v['ec']} dS/m costa circa il ${v['pct']} % della resa (indicativo).`,
+    'fert.flush': (v) =>
+      `Il sodio raggiunge ${v['na']} mmol/L in circa ${v['days']} giorni: scarica il circuito allora.`,
+    'fert.levels': (v) =>
+      `Il sodio si stabilizza a ${v['na']} mmol/L, sotto il limite: nessuno scarico per il sodio.`,
+    'fert.saltySource': () =>
+      'Acqua dolce con più di 3 mmol/L di sodio riempie presto il circuito di sale: miscela con acqua osmotizzata o scarica più drenaggio.',
+    'fert.lowDrain': () =>
+      'Meno del 20 % di drenaggio con acqua salata: i sali si accumulano nelle lastre.',
+    'fert.disinfect': () =>
+      'Disinfetta il drenaggio riutilizzato (UV, calore o filtro a sabbia lento) prima di ridarlo alla coltura.',
+    'vpd.tooWet': (v) =>
+      `VPD ${v['vpd']} kPa: sotto ${v['min']} kPa per questa fase, l’aria è troppo umida.`,
+    'vpd.good': (v) =>
+      `VPD ${v['vpd']} kPa: dentro la fascia ${v['min']}–${v['max']} kPa di questa fase.`,
+    'vpd.tooDry': (v) =>
+      `VPD ${v['vpd']} kPa: sopra ${v['max']} kPa per questa fase, l’aria è troppo secca.`,
+    'vpd.disease': () => 'Sotto 0,3 kPa: botrite, oidio e crescita molle.',
+    'vpd.wilting': () =>
+      'Sopra 1,5 kPa la coltura appassisce: ombreggia e aggiungi umidità.',
+    'vpd.arid': () =>
+      '3 kPa o più: aria del deserto, la crescita si ferma. Nebbia o pannelli, e ombreggio.',
+    'vpd.cold': (v) =>
+      `Sotto ${v['min']} °C per questa fase: riscalda prima di ventilare.`,
+    'vpd.hot': (v) =>
+      `Sopra ${v['max']} °C per questa fase: ombreggia e raffresca.`,
+    'vpd.outsideWetter': () =>
+      'L’aria esterna contiene più acqua di quella interna: ventilare non asciuga la serra, riscaldare sì.',
+    'vpd.samePairs': (v) =>
+      `Uno stesso VPD vale per molte coppie: ${v['vpd']} kPa richiede aria più secca a 15 °C che a 35 °C, quindi leggi temperatura e umidità insieme.`,
+    'fog.cooling': (v) =>
+      `La nebbia porta la serra a ${v['inside']} °C, ${v['drop']} K sotto l’esterno, al ${v['rh']} % di umidità.`,
+    'fog.tooHumid': () =>
+      'La serra supera il tetto di umidità senza nebbia: nebulizzare bagnerebbe solo la coltura.',
+    'fog.moreNozzles': () =>
+      'Gli ugelli funzionano di continuo sotto il tetto: più ugelli raffrescherebbero di più.',
+    'fog.cycle': (v) =>
+      `${v['on']} s acceso e ${v['off']} s spento tengono l’aria vicino al ${v['rh']} % (60 s acceso e 180 s spento è un inizio comune).`,
+    'fog.lowPressure': () =>
+      'Sotto 40 bar le gocce sono troppo grandi per evaporare in aria: bagnano le foglie.',
+    'fog.droplets': () =>
+      'L’alta pressione dà gocce di 10–30 µm che evaporano prima di cadere.',
+    'fog.trimVents': () =>
+      'Le aperture spalancate portano via la nebbia: riducile al 5–15 % del suolo mentre nebulizzi.',
+    'fog.waterQuality': () =>
+      'Usa acqua dissalata o addolcita: i sali intasano gli ugelli e macchiano i frutti.',
+    'advice.notBuildable': (v) =>
+      `${v['pct']} % del suolo in aperture e ${v['flow']} milioni di m³/h d’aria: più di quanto apra un tetto (al massimo circa il ${v['limit']} %).`,
+    'advice.vents': () => 'Le aperture al colmo bastano per questo pomeriggio.',
+    'advice.ventsAndShade': (v) =>
+      `Con il ${v['shade']} % di ombreggio le aperture richiedono il ${v['pct']} % del suolo: prima ombreggia.`,
+    'advice.shadeAndFog': (v) =>
+      `Il ${v['shade']} % di ombreggio e la nebbia tengono la serra vicino a ${v['inside']} °C con le aperture ridotte. La nebbia si adatta alle serre lunghe e grandi.`,
+    'advice.shadeAndPad': (v) =>
+      `Il ${v['shade']} % di ombreggio e i pannelli: l’aria esce dal pannello bagnato vicino a ${v['pad']} °C. Con ${v['length']} m la serra è abbastanza corta per i pannelli.`,
+    'advice.humid': () =>
+      'Aria umida fuori: l’evaporazione raffresca poco. Ombreggia, e raffresca di notte.',
+    'calendar.season': (v) =>
+      `Trapiantata nella settimana ${v['plant']}, la coltura finisce nella settimana ${v['end']}: ${v['weeks']} settimane in serra.`,
+    'calendar.harvest': (v) =>
+      `Raccolta dalla settimana ${v['first']}, per ${v['weeks']} settimane.`,
+    'calendar.heating': (v) =>
+      `Riscaldamento dalla settimana ${v['from']}, ${v['weeks']} settimane all’anno.`,
+    'calendar.co2': (v) =>
+      `La CO₂ rende in ${v['weeks']} settimane, quando la serra resta chiusa.`,
+    'calendar.fog': (v) =>
+      `Nebbia o pannelli per ${v['weeks']} settimane di pomeriggi caldi.`,
+    'calendar.shade': (v) =>
+      `Ombreggio per ${v['weeks']} settimane di sole forte.`,
+    'calendar.shortCleanOut': (v) =>
+      `Solo ${v['weeks']} settimane tra due colture: poco tempo per pulire e disinfettare.`,
     'geometry.lowGutter': (v) =>
       `Gronda a ${v['gutter']} m: una serra bassa si scalda e resta umida. 4 m o più tamponano meglio.`,
     'geometry.goodVolume': (v) =>

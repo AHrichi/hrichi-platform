@@ -11,6 +11,18 @@ import { AhMetricCard, AhTabs, type AhTabItem } from '@ah/ui';
 import {
   type CalcContext,
   CLIMATES,
+  CROP_IDS,
+  type CropId,
+  type CropStage,
+  defaultVpd,
+  type LightCondition,
+  saturationVapourKpa,
+  SOURCES,
+  STAGES,
+  stageTargets,
+  targetSource,
+  vpdCheck,
+  type VpdParams,
   climateById,
   co2Enrichment,
   type Co2Params,
@@ -30,6 +42,7 @@ import {
 import { Co2Diagram } from '../../diagrams/co2/co2-diagram';
 import { HumidityDiagram } from '../../diagrams/humidity/humidity-diagram';
 import { LightDiagram } from '../../diagrams/light/light-diagram';
+import { VpdChart } from '../../diagrams/vpd/vpd-chart';
 import { SerraI18n } from '../../i18n/serra-i18n';
 import { SerraStore } from '../../store/serra.store';
 import { CalcSteps, type CalcStep } from '../../ui/calc-steps/calc-steps';
@@ -48,10 +61,12 @@ import {
   HUMIDITY_FIELDS,
   LIGHT_FIELDS,
   priceField,
+  VPD_FIELDS,
 } from '../fields';
 
-type AirTab = 'light' | 'co2' | 'humidity';
-const TABS: readonly AirTab[] = ['light', 'co2', 'humidity'];
+type AirTab = 'light' | 'co2' | 'humidity' | 'vpd';
+const TABS: readonly AirTab[] = ['light', 'co2', 'humidity', 'vpd'];
+const LIGHTS: readonly LightCondition[] = ['sun', 'cloud', 'night'];
 
 /** Light, CO₂ and night humidity: the climate the crop grows in. */
 @Component({
@@ -68,6 +83,7 @@ const TABS: readonly AirTab[] = ['light', 'co2', 'humidity'];
     MonthBars,
     NoteList,
     SaveBar,
+    VpdChart,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './air-screen.html',
@@ -80,6 +96,10 @@ export class AirScreen {
   protected readonly climates = CLIMATES;
   protected readonly humidityFields = HUMIDITY_FIELDS;
   protected readonly sources: readonly Co2Source[] = ['burner', 'liquid'];
+  protected readonly vpdFields = VPD_FIELDS;
+  protected readonly crops = CROP_IDS;
+  protected readonly stages = STAGES;
+  protected readonly lights = LIGHTS;
 
   protected readonly lightParams = signal<LightParams>(
     defaultLight(this.store.context()),
@@ -97,10 +117,21 @@ export class AirScreen {
   protected readonly humidity = computed(() =>
     nightHumidity(this.humidityParams()),
   );
+  protected readonly vpdParams = signal<VpdParams>(
+    defaultVpd(this.store.context()),
+  );
+  protected readonly vpd = computed(() => vpdCheck(this.vpdParams()));
+  /** The stage's targets beside the reading, with where they come from. */
+  protected readonly stageTargets = computed(() =>
+    stageTargets(this.vpdParams().crop, this.vpdParams().stage),
+  );
+  protected readonly targetSource = computed(
+    () => SOURCES[targetSource(this.vpdParams().crop, this.vpdParams().stage)],
+  );
 
   protected readonly editor = injectCalcEditing<AirTab>({
     tabs: TABS,
-    kinds: { light: 'light', co2: 'co2', humidity: 'humidity' },
+    kinds: { light: 'light', co2: 'co2', humidity: 'humidity', vpd: 'vpd' },
     load: (saved) => this.load(saved),
   });
   protected readonly tab = this.editor.tab;
@@ -149,6 +180,10 @@ export class AirScreen {
       }
       case 'co2':
         return `${k.co2} · ${n(this.co2Params().targetPpm)} ppm · ${n(this.co2().supplyKgH, 1)} kg/h`;
+      case 'vpd': {
+        const p = this.vpdParams();
+        return `${k.vpd} · ${n(p.airC, 1)} °C ${n(p.rhPct)} % · ${n(this.vpd().vpdKpa, 2)} kPa`;
+      }
       case 'humidity':
         return `${k.humidity} · ${n(this.humidityParams().insideC, 1)} °C ${n(this.humidityParams().insideRhPct)} % · ${n(this.humidity().airM3h ?? 0)} m³/h`;
     }
@@ -203,6 +238,25 @@ export class AirScreen {
           },
         ];
       }
+      case 'vpd': {
+        const p = this.vpdParams();
+        const r = this.vpd();
+        const es = saturationVapourKpa(p.airC);
+        return [
+          {
+            label: f.saturation,
+            math: `0.6108 × exp(17.27 × ${n(p.airC)} / (${n(p.airC)} + 237.3)) = ${n(es, 2)} kPa`,
+          },
+          {
+            label: f.vpd,
+            math: `${n(es, 2)} × (1 − ${n(p.rhPct, 0)} / 100) = ${n(r.vpdKpa, 2)} kPa`,
+          },
+          {
+            label: f.headroom,
+            math: `${n(r.absoluteGm3 + r.headroomGm3)} − ${n(r.absoluteGm3)} = ${n(r.headroomGm3)} g/m³`,
+          },
+        ];
+      }
       case 'humidity': {
         const p = this.humidityParams();
         const r = this.humidity();
@@ -245,6 +299,7 @@ export class AirScreen {
     this.lightParams.set(defaultLight(ctx));
     this.co2Params.set(defaultCo2(ctx));
     this.humidityParams.set(defaultHumidity(ctx));
+    this.vpdParams.set(defaultVpd(ctx));
   }
 
   private load(saved: SavedCalculation): void {
@@ -257,6 +312,9 @@ export class AirScreen {
         break;
       case 'humidity':
         this.humidityParams.set({ ...saved.inputs });
+        break;
+      case 'vpd':
+        this.vpdParams.set({ ...saved.inputs });
         break;
     }
   }
@@ -281,13 +339,32 @@ export class AirScreen {
     this.humidityParams.update((p) => ({ ...p, [change.key]: change.value }));
   }
 
+  protected setVpd(change: FieldChange): void {
+    this.vpdParams.update((p) => ({ ...p, [change.key]: change.value }));
+  }
+
+  protected setVpdCrop(crop: CropId): void {
+    this.vpdParams.update((p) => ({ ...p, crop }));
+  }
+
+  protected setVpdStage(stage: CropStage): void {
+    this.vpdParams.update((p) => ({ ...p, stage }));
+  }
+
+  protected setVpdLight(light: LightCondition): void {
+    this.vpdParams.update((p) => ({ ...p, light }));
+  }
+
   protected save(request: SaveRequest): Promise<void> {
+    const tab = this.tab();
     const inputs =
-      this.tab() === 'light'
+      tab === 'light'
         ? this.lightParams()
-        : this.tab() === 'co2'
+        : tab === 'co2'
           ? this.co2Params()
-          : this.humidityParams();
+          : tab === 'vpd'
+            ? this.vpdParams()
+            : this.humidityParams();
     return this.editor.save(inputs, request);
   }
 

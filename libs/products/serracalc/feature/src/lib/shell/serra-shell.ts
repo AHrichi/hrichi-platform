@@ -21,43 +21,71 @@ import { filter, map } from 'rxjs';
 import { AhScrollHint } from '@ah/ui';
 import { APP_MODE } from '@ah/platform/app-mode';
 import { PreferencesStore } from '@ah/shared/state';
+import { isoWeek } from '@ah/products/serracalc/domain';
 import { SERRA_LANGUAGES, SerraI18n } from '../i18n/serra-i18n';
 import { SerraStore } from '../store/serra.store';
+import { Icon, type IconName } from '../ui/icon/icon';
 
 export type SerraScreen =
   | 'projects'
+  | 'site'
+  | 'energy'
+  | 'calendar'
   | 'greenhouse'
   | 'heating'
   | 'cooling'
   | 'water'
+  | 'supply'
   | 'air'
+  | 'operations'
+  | 'data'
   | 'climate'
+  | 'science'
   | 'report'
   | 'guide';
 
+/** Sections of the side rail, in order. */
+export type NavGroup = 'plan' | 'climate' | 'water' | 'operate' | 'reference';
+
 interface NavItem {
   readonly id: SerraScreen;
-  readonly icon: string;
+  readonly icon: IconName;
+  readonly group: NavGroup;
 }
 
 /** Phones show the first four in the bottom bar and the rest under "More". */
 const NAV: readonly NavItem[] = [
-  { id: 'projects', icon: '📋' },
-  { id: 'heating', icon: '🔥' },
-  { id: 'cooling', icon: '🌬️' },
-  { id: 'water', icon: '💧' },
-  { id: 'air', icon: '💡' },
-  { id: 'greenhouse', icon: '🏠' },
-  { id: 'climate', icon: '🌤️' },
-  { id: 'report', icon: '🖨️' },
-  { id: 'guide', icon: '📖' },
+  { id: 'projects', icon: 'projects', group: 'plan' },
+  { id: 'heating', icon: 'heating', group: 'climate' },
+  { id: 'cooling', icon: 'cooling', group: 'climate' },
+  { id: 'water', icon: 'water', group: 'water' },
+  { id: 'site', icon: 'site', group: 'plan' },
+  { id: 'calendar', icon: 'calendar', group: 'plan' },
+  { id: 'supply', icon: 'wave', group: 'water' },
+  { id: 'greenhouse', icon: 'greenhouse', group: 'plan' },
+  { id: 'air', icon: 'air', group: 'climate' },
+  { id: 'energy', icon: 'energy', group: 'climate' },
+  { id: 'operations', icon: 'operations', group: 'operate' },
+  { id: 'data', icon: 'data', group: 'operate' },
+  { id: 'climate', icon: 'climate', group: 'reference' },
+  { id: 'science', icon: 'science', group: 'reference' },
+  { id: 'report', icon: 'report', group: 'reference' },
+  { id: 'guide', icon: 'guide', group: 'reference' },
+];
+
+const GROUPS: readonly NavGroup[] = [
+  'plan',
+  'climate',
+  'water',
+  'operate',
+  'reference',
 ];
 
 @Component({
   selector: 'sc-serra-shell',
-  imports: [AhScrollHint, RouterOutlet, RouterLink, RouterLinkActive],
+  imports: [AhScrollHint, Icon, RouterOutlet, RouterLink, RouterLinkActive],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { 'data-look': 'greenhouse' },
+  host: { 'data-look': 'desert' },
   templateUrl: './serra-shell.html',
   styleUrl: './serra-shell.scss',
 })
@@ -70,10 +98,18 @@ export class SerraShell {
   /** Inside the portfolio the site header already has a language switch. */
   protected readonly standalone =
     (inject(APP_MODE, { optional: true }) ?? 'standalone') === 'standalone';
-  protected readonly nav = NAV;
+  /** The order the side rail and the wide tabs read in. */
+  protected readonly nav = GROUPS.flatMap((group) =>
+    NAV.filter((item) => item.group === group),
+  );
+  protected readonly groups = GROUPS.map((id) => ({
+    id,
+    items: NAV.filter((item) => item.group === id),
+  }));
   protected readonly primary = NAV.slice(0, 4);
   protected readonly secondary = NAV.slice(4);
   protected readonly languages = SERRA_LANGUAGES;
+  protected readonly week = isoWeek(new Date());
   protected readonly moreOpen = signal(false);
   private readonly moreSheet = viewChild<ElementRef<HTMLElement>>('moreSheet');
   private openerButton: HTMLElement | null = null;

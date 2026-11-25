@@ -1,0 +1,125 @@
+<svg viewBox="0 0 600 310" role="group" [attr.aria-label]="alt()">
+  <rect class="backdrop" width="600" height="310" rx="12" />
+
+  <!-- The CHP's run -->
+  @for (r of run(); track $index) {
+    <rect
+      class="run"
+      [attr.x]="r.x"
+      y="16"
+      [attr.width]="r.w"
+      height="12"
+      rx="4"
+    />
+  }
+  <text class="caption" x="10" y="26">CHP</text>
+
+  <!-- Heat, kW -->
+  @for (tick of kwTicks(); track tick.kw) {
+    <path class="grid" [attr.d]="'M' + x0 + ' ' + tick.y + 'H' + x1" />
+    <text
+      class="caption"
+      [attr.x]="x0 - 6"
+      [attr.y]="tick.y + 4"
+      text-anchor="end"
+    >
+      {{ i18n.num(tick.kw, 0) }}
+    </text>
+  }
+  <text class="caption" x="10" y="40">kW</text>
+  @for (b of bars(); track b.hour) {
+    <rect
+      class="chp"
+      [attr.x]="b.x"
+      [attr.y]="b.chp.y"
+      [attr.width]="b.w"
+      [attr.height]="b.chp.h"
+    />
+    <rect
+      class="buffer"
+      [attr.x]="b.x"
+      [attr.y]="b.buffer.y"
+      [attr.width]="b.w"
+      [attr.height]="b.buffer.h"
+    />
+    <rect
+      class="boiler"
+      [attr.x]="b.x"
+      [attr.y]="b.boiler.y"
+      [attr.width]="b.w"
+      [attr.height]="b.boiler.h"
+    />
+  }
+  <path class="demand" [attr.d]="demandLine()" />
+
+  <!-- Heat in the buffer, kWh -->
+  <path class="buffer-area" [attr.d]="bufferArea()" />
+  <path class="grid" [attr.d]="'M' + x0 + ' ' + by0 + 'H' + x1" />
+  <path class="grid" [attr.d]="'M' + x0 + ' ' + by1 + 'H' + x1" />
+  <text class="caption" x="10" [attr.y]="by1 + 4">
+    {{ i18n.word(t().energy.buffer) }}
+  </text>
+  <text class="caption" [attr.x]="x1" [attr.y]="by1 - 4" text-anchor="end">
+    {{ i18n.num(result().bufferCapacityKwh, 0) }} kWh
+  </text>
+
+  @for (tick of hourTicks; track tick.h) {
+    <text
+      class="caption"
+      [attr.x]="tick.x"
+      [attr.y]="by0 + 16"
+      text-anchor="middle"
+    >
+      {{ tick.h }}:00
+    </text>
+  }
+
+  <!-- Legend -->
+  <g class="legend">
+    <rect class="chp" x="250" y="203" width="10" height="10" rx="2" />
+    <text class="caption" x="264" y="212">
+      {{ i18n.word(t().energy.fromChp) }}
+    </text>
+    <rect class="buffer" x="330" y="203" width="10" height="10" rx="2" />
+    <text class="caption" x="344" y="212">
+      {{ i18n.word(t().energy.fromBuffer) }}
+    </text>
+    <rect class="boiler" x="420" y="203" width="10" height="10" rx="2" />
+    <text class="caption" x="434" y="212">
+      {{ i18n.word(t().energy.fromBoiler) }}
+    </text>
+    <path class="demand" d="M500 208h14" />
+    <text class="caption" x="518" y="212">
+      {{ i18n.word(t().energy.demand) }}
+    </text>
+  </g>
+
+  <g
+    scHandle
+    axis="x"
+    [x]="startX()"
+    [y]="22"
+    [value]="params().chpStartHour"
+    [min]="0"
+    [max]="23"
+    [step]="1"
+    [label]="t().fields['chpStartHour']"
+    unit="h"
+    [fromPoint]="hourAt"
+    (valueChange)="changed.emit({ key: 'chpStartHour', value: $event })"
+  />
+  <g
+    scHandle
+    axis="x"
+    [x]="endX()"
+    [y]="22"
+    [value]="params().chpEndHour"
+    [min]="1"
+    [max]="24"
+    [step]="1"
+    [label]="t().fields['chpEndHour']"
+    unit="h"
+    [fromPoint]="hourAt"
+    (valueChange)="changed.emit({ key: 'chpEndHour', value: $event })"
+  />
+</svg>

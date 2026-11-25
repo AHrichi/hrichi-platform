@@ -1,9 +1,24 @@
-<label class="head" [for]="id">
-  <span>{{ label() }}</span>
-  @if (unit()) {
-    <span class="unit">{{ unit() }}</span>
-  }
-</label>
+<div class="head">
+  <label [for]="id">{{ label() }}</label>
+  <span class="tail">
+    @if (unit()) {
+      <span class="unit" dir="auto">{{ unit() }}</span>
+    }
+    @if (info(); as i) {
+      <button
+        #infoButton
+        type="button"
+        class="info"
+        [class.is-open]="tipOpen()"
+        [attr.popovertarget]="id + '-tip'"
+        [attr.aria-label]="i.title"
+        [title]="i.title"
+      >
+        i
+      </button>
+    }
+  </span>
+</div>
 <input
   class="exact"
   type="number"
@@ -30,4 +45,51 @@
 />
 @if (hint()) {
   <small class="hint" [id]="id + '-hint'">{{ hint() }}</small>
+}
+@if (info(); as i) {
+  <div
+    #tip
+    class="tip"
+    popover="auto"
+    role="dialog"
+    [id]="id + '-tip'"
+    [attr.aria-label]="i.title"
+    [attr.dir]="i18n.isRtl() ? 'rtl' : 'ltr'"
+    [attr.lang]="i18n.lang()"
+    (beforetoggle)="place($event)"
+    (toggle)="tipOpen.set($any($event).newState === 'open')"
+  >
+    <div class="tip-head">
+      <span class="kind" [attr.data-kind]="i.kind">{{ i.method }}</span>
+      <button
+        type="button"
+        class="close"
+        [attr.popovertarget]="id + '-tip'"
+        popovertargetaction="hide"
+        [attr.aria-label]="t().science.close"
+      >
+        ×
+      </button>
+    </div>
+    <strong class="tip-title">{{ i.title }}</strong>
+    <p>{{ i.methodHint }}</p>
+    @if (i.instrument; as tool) {
+      <p class="tool">
+        <a
+          [routerLink]="['..', 'science']"
+          [queryParams]="{ instrument: tool.id }"
+          >{{ tool.name }}</a
+        >
+        <span>{{ tool.how }}</span>
+      </p>
+    }
+    @if (i.topic; as topic) {
+      <a
+        class="more"
+        [routerLink]="['..', 'science']"
+        [queryParams]="{ topic: topic.id }"
+        >{{ t().science.readMore }} {{ topic.title }} →</a
+      >
+    }
+  </div>
 }

@@ -1,0 +1,142 @@
+<svg viewBox="0 0 560 348" role="group" [attr.aria-label]="alt()">
+  <defs>
+    <clipPath id="sc-vpd-plot">
+      <rect
+        [attr.x]="x0"
+        [attr.y]="y0"
+        [attr.width]="x1 - x0"
+        [attr.height]="y1 - y0"
+      />
+    </clipPath>
+  </defs>
+  <rect class="backdrop" width="560" height="348" rx="12" />
+
+  <g clip-path="url(#sc-vpd-plot)">
+    <path class="zone wet" [attr.d]="wet()" />
+    <path class="zone good" [attr.d]="good()" />
+    <path class="zone dry" [attr.d]="dry()" />
+    <path class="zone ideal" [attr.d]="ideal()" />
+    <rect
+      class="band"
+      [attr.x]="tBand().x"
+      [attr.y]="y0"
+      [attr.width]="tBand().w"
+      [attr.height]="y1 - y0"
+    />
+    <rect
+      class="band"
+      [attr.x]="x0"
+      [attr.y]="rhBand().y"
+      [attr.width]="x1 - x0"
+      [attr.height]="rhBand().h"
+    />
+    @for (line of lines(); track $index) {
+      <path class="iso" [attr.d]="line.d" />
+    }
+  </g>
+
+  <!-- Grid and axes -->
+  @for (tick of tTicks; track tick.t) {
+    <path class="grid" [attr.d]="'M' + tick.x + ' ' + y0 + 'V' + y1" />
+    <text
+      class="caption"
+      [attr.x]="tick.x"
+      [attr.y]="y1 + 18"
+      text-anchor="middle"
+    >
+      {{ tick.t }}
+    </text>
+  }
+  @for (tick of rhTicks; track tick.rh) {
+    <path class="grid" [attr.d]="'M' + x0 + ' ' + tick.y + 'H' + x1" />
+    <text
+      class="caption"
+      [attr.x]="x0 - 10"
+      [attr.y]="tick.y + 4"
+      text-anchor="end"
+    >
+      {{ tick.rh }}
+    </text>
+  }
+  <text class="caption" [attr.x]="x1" [attr.y]="y1 + 38" text-anchor="end">
+    °C
+  </text>
+  <text class="caption" x="14" [attr.y]="y0 - 6">RH %</text>
+
+  <!-- The VPD of each line, at its right end -->
+  @for (line of lines(); track $index) {
+    @if (($first || $last) && line.y > y0 + 6 && line.y < y1 - 4) {
+      <text
+        class="iso-label"
+        [attr.x]="x1 - 6"
+        [attr.y]="line.y - 5"
+        text-anchor="end"
+      >
+        {{ i18n.num(line.vpd, 2) }} kPa
+      </text>
+    }
+  }
+
+  <text class="zone-label wet-label" [attr.x]="x0 + 10" [attr.y]="y0 + 20">
+    {{ i18n.word(t().vpd.status.tooWet) }}
+  </text>
+  <text
+    class="zone-label dry-label"
+    [attr.x]="x1 - 10"
+    [attr.y]="y1 - 12"
+    text-anchor="end"
+  >
+    {{ i18n.word(t().vpd.status.tooDry) }}
+  </text>
+
+  <!-- The air now -->
+  <path
+    class="cross"
+    [attr.d]="'M' + px() + ' ' + y1 + 'V' + py() + 'H' + x0"
+  />
+  <circle class="halo" [attr.cx]="px()" [attr.cy]="py()" r="16" />
+  <circle
+    class="point"
+    [class.ok]="result().status === 'good'"
+    [class.warn]="result().status !== 'good'"
+    [attr.cx]="px()"
+    [attr.cy]="py()"
+    r="7"
+  />
+  <text
+    class="value"
+    [attr.x]="px() + (px() > 400 ? -16 : 16)"
+    [attr.y]="py() - 14"
+    [attr.text-anchor]="px() > 400 ? 'end' : 'start'"
+  >
+    {{ i18n.num(result().vpdKpa, 2) }} kPa
+  </text>
+
+  <g
+    scHandle
+    axis="x"
+    [x]="px()"
+    [y]="y1"
+    [value]="params().airC"
+    [min]="limits.air.min"
+    [max]="limits.air.max"
+    [step]="limits.air.step"
+    [label]="t().fields['airC']"
+    unit="°C"
+    [fromPoint]="airAt"
+    (valueChange)="changed.emit({ key: 'airC', value: $event })"
+  />
+  <g
+    scHandle
+    [x]="x0"
+    [y]="py()"
+    [value]="params().rhPct"
+    [min]="limits.rh.min"
+    [max]="limits.rh.max"
+    [step]="limits.rh.step"
+    [label]="t().fields['rhPct']"
+    unit="%"
+    [fromPoint]="rhAt"
+    (valueChange)="changed.emit({ key: 'rhPct', value: $event })"
+  />
+</svg>

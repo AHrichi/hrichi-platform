@@ -1,0 +1,257 @@
+<section class="screen" aria-labelledby="sc-data-title">
+  <header class="head">
+    <div>
+      <h2 id="sc-data-title">{{ t().data.title }}</h2>
+      <p>{{ t().data.lead }}</p>
+    </div>
+  </header>
+
+  <div class="workbench">
+    <div class="column">
+      <section class="panel" aria-labelledby="sc-data-import">
+        <h3 id="sc-data-import">{{ t().data.import }}</h3>
+        <p class="hint">{{ t().data.importHint }}</p>
+        <label class="file">
+          <span>{{ t().data.file }}</span>
+          <input
+            type="file"
+            accept=".csv,.txt,text/csv"
+            (change)="onFile($event)"
+          />
+        </label>
+        <label class="paste">
+          <span>{{ t().data.paste }}</span>
+          <textarea
+            rows="4"
+            dir="ltr"
+            [value]="pasted()"
+            (input)="pasted.set(text($event))"
+            placeholder="time,air,rh,par,ec,drain_ec"
+          ></textarea>
+        </label>
+        <div class="actions">
+          <button
+            type="button"
+            class="chip"
+            [disabled]="!pasted().trim() || !store.activeProject()"
+            (click)="importText(pasted())"
+          >
+            {{ t().data.importPasted }}
+          </button>
+          <button
+            type="button"
+            class="chip"
+            [disabled]="!store.activeProject()"
+            (click)="loadSample()"
+          >
+            {{ t().data.sample }}
+          </button>
+          <button type="button" class="chip" (click)="downloadSample()">
+            {{ t().data.download }}
+          </button>
+          @if (readings().length) {
+            <button type="button" class="chip" (click)="clear()">
+              {{ t().data.clear }}
+            </button>
+          }
+        </div>
+        @if (message(); as m) {
+          <p class="status" role="status">{{ m }}</p>
+        }
+        @if (!store.activeProject()) {
+          <p class="hint">{{ t().data.noProject }}</p>
+        }
+      </section>
+
+      <section class="panel" aria-labelledby="sc-data-targets">
+        <h3 id="sc-data-targets">{{ t().data.targets }}</h3>
+        <div class="targets">
+          <label class="select">
+            <span>{{ t().vpd.stage }}</span>
+            <select (change)="stage.set($any(text($event)))">
+              @for (s of stages; track s) {
+                <option [value]="s" [selected]="stage() === s">
+                  {{ t().stages[s] }}
+                </option>
+              }
+            </select>
+          </label>
+          <label class="select">
+            <span>{{ t().fields['flushEcDsM'] }} (dS/m)</span>
+            <input
+              type="number"
+              step="0.1"
+              [value]="flushEc()"
+              (input)="flushEc.set(number($event))"
+            />
+          </label>
+          <label class="select">
+            <span>{{ t().fields['drainPct'] }} (%)</span>
+            <input
+              type="number"
+              step="1"
+              [value]="drainPlan()"
+              (input)="drainPlan.set(number($event))"
+            />
+          </label>
+        </div>
+      </section>
+    </div>
+
+    <div class="column">
+      <section class="panel" aria-labelledby="sc-data-summary">
+        <h3 id="sc-data-summary">{{ t().data.summary }}</h3>
+        @if (analysis().count === 0) {
+          <p class="hint">{{ t().data.empty }}</p>
+        } @else {
+          <p class="hint">
+            {{
+              t().data.period(
+                when(analysis().from ?? ''),
+                when(analysis().to ?? ''),
+                analysis().count + '',
+                analysis().stepMin + ''
+              )
+            }}
+          </p>
+          <div class="results">
+            <ah-metric-card
+              [label]="t().data.vpdInBand"
+              [value]="
+                analysis().vpdInBandPct === null
+                  ? '—'
+                  : i18n.num(analysis().vpdInBandPct ?? 0, 0)
+              "
+              unit="%"
+              variant="accent"
+            />
+            <ah-metric-card
+              [label]="t().data.dayMean"
+              [value]="
+                analysis().dayMeanC === null
+                  ? '—'
+                  : i18n.num(analysis().dayMeanC ?? 0)
+              "
+              unit="°C"
+              [hint]="
+                i18n.num(dayBand().min) +
+                '–' +
+                i18n.num(dayBand().max) +
+                ' ' +
+                i18n.unit('°C')
+              "
+            />
+            <ah-metric-card
+              [label]="t().data.nightMean"
+              [value]="
+                analysis().nightMeanC === null
+                  ? '—'
+                  : i18n.num(analysis().nightMeanC ?? 0)
+              "
+              unit="°C"
+            />
+            <ah-metric-card
+              [label]="t().data.drainMean"
+              [value]="
+                analysis().drainMeanPct === null
+                  ? '—'
+                  : i18n.num(analysis().drainMeanPct ?? 0, 0)
+              "
+              unit="%"
+              [hint]="t().data.plan + ' ' + drainPlan() + ' %'"
+            />
+            <ah-metric-card
+              [label]="t().data.alertCount"
+              [value]="analysis().alerts.length"
+              [variant]="analysis().alerts.length ? 'warning' : 'default'"
+            />
+          </div>
+          <sc-note-list [notes]="analysis().notes" />
+        }
+      </section>
+    </div>
+  </div>
+
+  @if (analysis().count > 0) {
+    <section class="panel" aria-labelledby="sc-data-hours">
+      <h3 id="sc-data-hours">{{ t().data.byHour }}</h3>
+      <div class="charts">
+        <figure>
+          <figcaption>{{ t().data.vpdByHour }}</figcaption>
+          <sc-hourly-chart
+            [values]="vpdByHour()"
+            [band]="vpdBand()"
+            unit="kPa"
+            [digits]="2"
+            [label]="t().data.vpdByHour"
+          />
+        </figure>
+        <figure>
+          <figcaption>{{ t().data.tempByHour }}</figcaption>
+          <sc-hourly-chart
+            [values]="tempByHour()"
+            [band]="dayBand()"
+            unit="°C"
+            [digits]="0"
+            [label]="t().data.tempByHour"
+          />
+        </figure>
+      </div>
+    </section>
+
+    <section class="panel" aria-labelledby="sc-data-alerts">
+      <h3 id="sc-data-alerts">{{ t().data.alertsTitle }}</h3>
+      @if (analysis().alerts.length === 0) {
+        <p class="hint">{{ t().data.noAlerts }}</p>
+      }
+      <ul class="alerts" role="list">
+        @for (a of analysis().alerts; track a.from + a.code) {
+          <li [attr.data-severity]="a.severity">
+            <strong>{{ alertTitle(a.code) }}</strong>
+            <span>{{ when(a.from) }} → {{ when(a.to) }}</span>
+            <span class="muted">
+              {{ t().data.alertDetail(a.readings + '', i18n.num(a.worst, 2)) }}
+            </span>
+          </li>
+        }
+      </ul>
+    </section>
+
+    <section class="panel" aria-labelledby="sc-data-days">
+      <h3 id="sc-data-days">{{ t().data.days }}</h3>
+      <div
+        class="table-wrap"
+        tabindex="0"
+        role="region"
+        [attr.aria-label]="t().data.days"
+      >
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">{{ t().ops.date }}</th>
+              <th scope="col">Min °C</th>
+              <th scope="col">Max °C</th>
+              <th scope="col">RH %</th>
+              <th scope="col">VPD kPa</th>
+              <th scope="col">{{ t().data.outOfBand }}</th>
+              <th scope="col">{{ t().supply.drainEc }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (d of analysis().daysSummary; track d.date) {
+              <tr>
+                <th scope="row">{{ i18n.date(d.date) }}</th>
+                <td>{{ d.tMinC ?? '—' }}</td>
+                <td>{{ d.tMaxC ?? '—' }}</td>
+                <td>{{ d.rhMeanPct ?? '—' }}</td>
+                <td>{{ d.vpdMeanKpa ?? '—' }}</td>
+                <td>{{ i18n.num(d.hoursOutOfBand) }} h</td>
+                <td>{{ d.drainEcMax ?? '—' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+  }
+</section>

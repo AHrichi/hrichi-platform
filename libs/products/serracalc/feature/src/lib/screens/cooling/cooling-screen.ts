@@ -9,9 +9,15 @@ import {
 } from '@angular/core';
 import { AhMetricCard, AhTabs, type AhTabItem } from '@ah/ui';
 import {
+  adviceParams,
   type CalcContext,
+  COOLING_RULES,
+  coolingAdvice,
+  defaultFog,
   defaultPadFan,
   defaultVentilation,
+  fogCooling,
+  type FogParams,
   padAndFan,
   type PadFanParams,
   type SavedCalculation,
@@ -19,10 +25,12 @@ import {
   ventilation,
   type VentilationParams,
 } from '@ah/products/serracalc/domain';
+import { FogDiagram } from '../../diagrams/fog/fog-diagram';
 import { PadFanFlow } from '../../diagrams/pad-fan/pad-fan-flow';
 import { VentAirflow } from '../../diagrams/vent-airflow/vent-airflow';
 import { SerraI18n } from '../../i18n/serra-i18n';
 import { SerraStore } from '../../store/serra.store';
+import { AdviceCard } from '../../ui/advice-card/advice-card';
 import { CalcSteps, type CalcStep } from '../../ui/calc-steps/calc-steps';
 import { ContextBar } from '../../ui/context-bar/context-bar';
 import { FieldGrid, type FieldChange } from '../../ui/field-grid/field-grid';
@@ -30,13 +38,15 @@ import { NoteList } from '../../ui/note-list/note-list';
 import { SaveBar, type SaveRequest } from '../../ui/save-bar/save-bar';
 import { injectCalcEditing } from '../calc-editing';
 import {
+  FOG_FIELDS,
   PAD_FAN_FIELDS,
   pick,
   SOLAR_FIELDS,
   VENTILATION_FIELDS,
 } from '../fields';
 
-type CoolingTab = 'ventilation' | 'padFan';
+type CoolingTab = 'ventilation' | 'padFan' | 'fog';
+const TABS: readonly CoolingTab[] = ['ventilation', 'padFan', 'fog'];
 
 const SOLAR_KEYS: readonly (keyof SolarLoadParams)[] = [
   'floorAreaM2',
@@ -50,6 +60,7 @@ const SOLAR_KEYS: readonly (keyof SolarLoadParams)[] = [
 ];
 type VentExtra = Omit<VentilationParams, keyof SolarLoadParams>;
 type PadExtra = Omit<PadFanParams, keyof SolarLoadParams>;
+type FogExtra = Omit<FogParams, keyof SolarLoadParams>;
 const VENT_KEYS: readonly (keyof VentExtra)[] = [
   'outsideC',
   'maxRiseK',
@@ -69,14 +80,30 @@ const PAD_KEYS: readonly (keyof PadExtra)[] = [
   'hoursPerDay',
 ];
 
+const FOG_KEYS: readonly (keyof FogExtra)[] = [
+  'outsideC',
+  'outsideRhPct',
+  'ventPct',
+  'ventOpeningM',
+  'windMs',
+  'nozzlesPer100M2',
+  'nozzleLh',
+  'pressureBar',
+  'onS',
+  'maxRhPct',
+  'hoursPerDay',
+];
+
 @Component({
   selector: 'sc-cooling-screen',
   imports: [
+    AdviceCard,
     AhTabs,
     AhMetricCard,
     CalcSteps,
     ContextBar,
     FieldGrid,
+    FogDiagram,
     NoteList,
     PadFanFlow,
     SaveBar,
@@ -94,9 +121,12 @@ export class CoolingScreen {
   protected readonly solarFields = SOLAR_FIELDS;
   protected readonly ventFields = VENTILATION_FIELDS;
   protected readonly padFields = PAD_FAN_FIELDS;
+  protected readonly fogFields = FOG_FIELDS;
+  protected readonly ventLimit = COOLING_RULES.ventLimitPct;
 
   private readonly startVent = defaultVentilation(this.store.context());
   private readonly startPad = defaultPadFan(this.store.context());
+  private readonly startFog = defaultFog(this.store.context());
   /** Sun and house for ventilation, and for the pads (which assume shade). */
   protected readonly ventSolar = signal<SolarLoadParams>(
     pick(this.startVent, SOLAR_KEYS),
@@ -108,6 +138,10 @@ export class CoolingScreen {
     pick(this.startVent, VENT_KEYS),
   );
   protected readonly padExtra = signal<PadExtra>(pick(this.startPad, PAD_KEYS));
+  protected readonly fogSolar = signal<SolarLoadParams>(
+    pick(this.startFog, SOLAR_KEYS),
+  );
+  protected readonly fogExtra = signal<FogExtra>(pick(this.startFog, FOG_KEYS));
 
   protected readonly ventParams = computed<VentilationParams>(() => ({
     ...this.ventSolar(),
@@ -119,28 +153,38 @@ export class CoolingScreen {
   }));
   protected readonly vent = computed(() => ventilation(this.ventParams()));
   protected readonly pad = computed(() => padAndFan(this.padParams()));
+  protected readonly fogParams = computed<FogParams>(() => ({
+    ...this.fogSolar(),
+    ...this.fogExtra(),
+  }));
+  protected readonly fog = computed(() => fogCooling(this.fogParams()));
+  /** The strategy for the ventilation tab's afternoon. */
+  protected readonly advice = computed(() =>
+    coolingAdvice(adviceParams(this.ventParams(), this.store.context())),
+  );
 
   protected readonly editor = injectCalcEditing<CoolingTab>({
-    tabs: ['ventilation', 'padFan'],
-    kinds: { ventilation: 'ventilation', padFan: 'padFan' },
+    tabs: TABS,
+    kinds: { ventilation: 'ventilation', padFan: 'padFan', fog: 'fog' },
     load: (saved) => this.load(saved),
   });
   protected readonly tab = this.editor.tab;
 
   protected readonly tabs = computed<AhTabItem<CoolingTab>[]>(() =>
-    (['ventilation', 'padFan'] as const).map((id) => ({
+    TABS.map((id) => ({
       id,
       label: this.t().cooling.tabs[id],
     })),
   );
 
-  protected readonly solar = computed(() =>
-    this.tab() === 'ventilation' ? this.ventSolar() : this.padSolar(),
-  );
+  protected readonly solar = computed(() => this.solarSignal()());
 
   protected readonly suggestedLabel = computed(() => {
     const n = (v: number, d = 0) => this.i18n.num(v, d);
     const k = this.t().kinds;
+    if (this.tab() === 'fog') {
+      return `${k.fog} · ${n(this.fogExtra().outsideC, 1)} → ${n(this.fog().insideC, 1)} °C · ${n(this.fog().waterM3Day, 1)} m³/d`;
+    }
     return this.tab() === 'ventilation'
       ? `${k.ventilation} · ${n(this.ventExtra().outsideC, 1)} °C · ${n(this.vent().airChangesPerHour)} /h`
       : `${k.padFan} · ${n(this.padExtra().outsideC, 1)} °C · ${this.pad().fans} × ${n(this.padExtra().fanCapacityM3h)} m³/h`;
@@ -168,6 +212,28 @@ export class CoolingScreen {
         {
           label: f.vents,
           math: `A = 2 × ${n(r.flowM3s)} / (0.65 × √(2 × 9.81 × ${n(p.maxRiseK)}/${n(p.outsideC + 273.15, 0)} × ${n(p.ventOpeningM)}/4 + 0.1 × ${n(p.windMs)}²)) = ${n(r.ventAreaM2, 0)} m²`,
+        },
+      ];
+    }
+    if (this.tab() === 'fog') {
+      const p = this.fogParams();
+      const r = this.fog();
+      return [
+        {
+          label: f.fogRate,
+          math: `${r.nozzles} × ${n(p.nozzleLh)} L/h / ${n(p.floorAreaM2, 0)} m² = ${n(r.fogGm2Min)} g/m²·min`,
+        },
+        {
+          label: f.fogBalance,
+          math: `${n(p.outsideC)} + (S − 2.45 MJ × E) / (1.2 × 1005 × ${n(r.airFlowM3h / 3600, 0)} m³/s + U·A) = ${n(r.insideC)} °C`,
+        },
+        {
+          label: f.fogCycle,
+          math: `${n(r.dutyPct, 0)} % → ${n(r.onS, 0)} s / ${n(r.offS, 0)} s (RH ≤ ${n(p.maxRhPct, 0)} %)`,
+        },
+        {
+          label: f.fogWater,
+          math: `${n(r.fogGm2Min)} × ${n(p.floorAreaM2, 0)} × ${n((p.hoursPerDay * 60 * r.dutyPct) / 100, 0)} min / 10⁶ = ${n(r.waterM3Day)} m³`,
         },
       ];
     }
@@ -205,6 +271,9 @@ export class CoolingScreen {
   protected reset(ctx: CalcContext = this.store.context()): void {
     const vent = defaultVentilation(ctx);
     const pad = defaultPadFan(ctx);
+    const fog = defaultFog(ctx);
+    this.fogSolar.set(pick(fog, SOLAR_KEYS));
+    this.fogExtra.set(pick(fog, FOG_KEYS));
     this.ventSolar.set(pick(vent, SOLAR_KEYS));
     this.ventExtra.set(pick(vent, VENT_KEYS));
     this.padSolar.set(pick(pad, SOLAR_KEYS));
@@ -218,13 +287,14 @@ export class CoolingScreen {
     } else if (saved.kind === 'padFan') {
       this.padSolar.set(pick(saved.inputs, SOLAR_KEYS));
       this.padExtra.set(pick(saved.inputs, PAD_KEYS));
+    } else if (saved.kind === 'fog') {
+      this.fogSolar.set(pick(saved.inputs, SOLAR_KEYS));
+      this.fogExtra.set(pick(saved.inputs, FOG_KEYS));
     }
   }
 
   protected setSolar(change: FieldChange): void {
-    const target =
-      this.tab() === 'ventilation' ? this.ventSolar : this.padSolar;
-    target.update((s) => ({ ...s, [change.key]: change.value }));
+    this.solarSignal().update((s) => ({ ...s, [change.key]: change.value }));
   }
 
   protected setVent(change: FieldChange): void {
@@ -235,9 +305,33 @@ export class CoolingScreen {
     this.padExtra.update((p) => ({ ...p, [change.key]: change.value }));
   }
 
+  protected setFog(change: FieldChange): void {
+    this.fogExtra.update((p) => ({ ...p, [change.key]: change.value }));
+  }
+
+  /** The advisor's button: fog this house on its design afternoon. */
+  protected openFog(): void {
+    this.editor.select('fog');
+  }
+
+  /** The sun-and-house inputs of the open tab. */
+  private solarSignal() {
+    const tab = this.tab();
+    return tab === 'ventilation'
+      ? this.ventSolar
+      : tab === 'padFan'
+        ? this.padSolar
+        : this.fogSolar;
+  }
+
   protected save(request: SaveRequest): Promise<void> {
+    const tab = this.tab();
     return this.editor.save(
-      this.tab() === 'ventilation' ? this.ventParams() : this.padParams(),
+      tab === 'ventilation'
+        ? this.ventParams()
+        : tab === 'padFan'
+          ? this.padParams()
+          : this.fogParams(),
       request,
     );
   }

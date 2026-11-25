@@ -1,0 +1,184 @@
+<section class="screen" aria-labelledby="sc-supply-title">
+  <header class="head">
+    <div>
+      <h2 id="sc-supply-title">{{ t().supply.title }}</h2>
+      <p>{{ t().supply.lead }}</p>
+    </div>
+  </header>
+
+  <sc-context-bar (resetInputs)="reset()" />
+
+  <ah-tabs
+    [tabs]="tabs()"
+    [selectedId]="tab()"
+    (selectedIdChange)="editor.select($event)"
+    [ariaLabel]="t().supply.title"
+  />
+
+  <div class="workbench">
+    <div class="column">
+      <figure class="panel">
+        @if (tab() === 'ro') {
+          <sc-ro-flow
+            [params]="roParams()"
+            [result]="ro()"
+            (changed)="setRo($event)"
+          />
+        } @else {
+          <sc-fertigation-loop
+            [params]="fertParams()"
+            [result]="fert()"
+            (changed)="setFert($event)"
+          />
+        }
+        <figcaption>{{ t().calc.dragHint }}</figcaption>
+      </figure>
+
+      <section class="panel" aria-labelledby="sc-supply-inputs">
+        <h3 id="sc-supply-inputs">{{ t().calc.inputs }}</h3>
+        <div class="actions">
+          <button type="button" class="chip" (click)="takeDemand()">
+            {{ t().supply.takeDemand(i18n.num(cropPeak(), 0)) }}
+          </button>
+          @if (tab() === 'fertigation') {
+            <button type="button" class="chip" (click)="useRoWater()">
+              {{ t().supply.useRo(i18n.num(ro().productEcDsM, 2)) }}
+            </button>
+          }
+        </div>
+        @if (tab() === 'ro') {
+          <sc-field-grid
+            [specs]="roFields()"
+            [values]="roParams()"
+            (changed)="setRo($event)"
+          />
+        } @else {
+          <sc-field-grid
+            [specs]="fertFields"
+            [values]="fertParams()"
+            (changed)="setFert($event)"
+          />
+        }
+      </section>
+    </div>
+
+    <div class="column">
+      <section class="panel" aria-labelledby="sc-supply-results">
+        <h3 id="sc-supply-results">{{ t().calc.results }}</h3>
+        @if (tab() === 'ro') {
+          <div class="results">
+            <ah-metric-card
+              [label]="t().supply.feed"
+              [value]="i18n.num(ro().feedM3Day, 0)"
+              unit="m³/d"
+              variant="accent"
+              [hint]="
+                t().supply.product +
+                ': ' +
+                i18n.num(ro().needM3Day, 0) +
+                ' m³/d'
+              "
+            />
+            <ah-metric-card
+              [label]="t().supply.brine"
+              [value]="i18n.num(ro().brineM3Day, 0)"
+              unit="m³/d"
+              [hint]="i18n.num(ro().brineSalinityGL) + ' g/L'"
+            />
+            <ah-metric-card
+              [label]="t().supply.productEc"
+              [value]="i18n.num(ro().productEcDsM, 2)"
+              unit="dS/m"
+              [hint]="i18n.num(ro().productMgL, 0) + ' mg/L'"
+            />
+            <ah-metric-card
+              [label]="t().supply.energy"
+              [value]="i18n.num(ro().energyKwhDay, 0)"
+              unit="kWh/d"
+              [hint]="i18n.num(ro().powerKw) + ' kW'"
+            />
+            <ah-metric-card
+              [label]="t().supply.costDay"
+              [value]="i18n.money(ro().costDay, currency())"
+              [hint]="i18n.money(ro().costPerM3, currency()) + ' / m³'"
+            />
+            <ah-metric-card
+              [label]="t().supply.coverage"
+              [value]="i18n.num(ro().coveragePct, 0)"
+              unit="%"
+              [variant]="ro().coveragePct < 100 ? 'danger' : 'default'"
+              [hint]="t().supply.tank + ': ' + i18n.num(ro().tankM3, 0) + ' m³'"
+            />
+          </div>
+          <sc-note-list [notes]="ro().notes" />
+        } @else {
+          <div class="results">
+            <ah-metric-card
+              [label]="t().supply.waterSaved"
+              [value]="i18n.num(fert().waterSavedPct, 0)"
+              unit="%"
+              variant="accent"
+              [hint]="i18n.num(fert().reusedM3Day) + ' m³/d'"
+            />
+            <ah-metric-card
+              [label]="t().supply.fertSaved"
+              [value]="i18n.num(fert().fertiliserSavedPct, 0)"
+              unit="%"
+            />
+            <ah-metric-card
+              [label]="t().supply.drainEc"
+              [value]="i18n.num(fert().drainEcDsM, 1)"
+              unit="dS/m"
+              [variant]="
+                fert().drainEcDsM >= fertParams().flushEcDsM
+                  ? 'warning'
+                  : 'default'
+              "
+              [hint]="t().supply.rootEc + ' ' + i18n.num(fert().rootEcDsM, 1)"
+            />
+            <ah-metric-card
+              [label]="t().supply.yieldLoss"
+              [value]="i18n.num(fert().yieldLossPct, 1)"
+              unit="%"
+            />
+            <ah-metric-card
+              [label]="t().supply.flushIn"
+              [value]="
+                fert().flushDay === null
+                  ? t().supply.never
+                  : i18n.num(fert().flushDay ?? 0, 0)
+              "
+              [unit]="fert().flushDay === null ? '' : 'd'"
+              [hint]="
+                fert().naEquilibriumMmolL === null
+                  ? ''
+                  : t().supply.levelsAt +
+                    ' ' +
+                    i18n.num(fert().naEquilibriumMmolL ?? 0) +
+                    ' mmol/L'
+              "
+            />
+            <ah-metric-card
+              [label]="t().supply.stock"
+              [value]="i18n.num(fert().stockLDay, 0)"
+              unit="L/d"
+              [hint]="t().supply.stockDays(i18n.num(fert().stockDays))"
+            />
+          </div>
+          <sc-note-list [notes]="fert().notes" />
+        }
+        <sc-calc-steps [steps]="steps()" />
+      </section>
+
+      <section class="panel" aria-labelledby="sc-supply-save">
+        <h3 id="sc-supply-save">{{ t().save.title }}</h3>
+        <sc-save-bar
+          [suggestedLabel]="suggestedLabel()"
+          [editingLabel]="editor.editingLabel()"
+          (save)="save($event)"
+          (stopEditing)="editor.stop()"
+        />
+      </section>
+    </div>
+  </div>
+</section>

@@ -4,36 +4,37 @@ Each ADR records one decision, why it was made, and what a spike proved. New ADR
 
 ## Accepted
 
-| ADR                                            | Decision                                                                                  |
-| ---------------------------------------------- | ----------------------------------------------------------------------------------------- |
-| [0001](0001-nx-integrated-monorepo.md)         | Nx 24 integrated monorepo, pnpm, single version policy                                    |
-| [0002](0002-native-federation.md)              | Native Federation v4, dynamic host, remote contract `./routes` + `./meta`                 |
-| [0003](0003-static-first-rendering.md)         | Prerendered shell, client-rendered remotes, no server                                     |
-| [0004](0004-zoneless.md)                       | Zoneless everywhere, enforced by `pnpm check:zoneless`                                    |
-| [0005](0005-pwa-with-federation.md)            | Service worker regenerated after the federation build                                     |
-| [0006](0006-content-security-policy.md)        | CSP header with build-time hashes; `autoCsp` is incompatible with prerendering            |
-| [0007](0007-cloudflare-hosting.md)             | Cloudflare Workers static assets, one Worker per app, affected deploys from CI            |
-| [0008](0008-design-tokens-and-ui.md)           | Design tokens (DTCG + Style Dictionary) with a contrast gate, cascade layers, `@ah/ui`    |
-| [0009](0009-content-audiences-and-seo.md)      | Typed content, audience modes, SEO, generated CV, Lighthouse gate                         |
-| [0010](0010-lead-pipeline.md)                  | Lead pipeline: document outbox, direct Telegram alert, n8n push and pull                  |
-| [0011](0011-three-engine-and-constellation.md) | Three.js engine, `<ah-scene>` adapter and the constellation hero with an SVG fallback     |
-| [0012](0012-federation-inspector.md)           | Federation Inspector: remote telemetry, capability checks, build info, skew check         |
-| [0013](0013-orbit-api.md)                      | Orbit API: Spring Boot 4 + Orekit, polite CelesTrak cache, contract-first, JVM on Render  |
-| [0014](0014-orbit-lab.md)                      | Orbit lab (superseded by 0016): satellites on a globe, SGP4 worker                        |
-| [0015](0015-public-storybook.md)               | Public Storybook (angular-vite, zoneless), axe on every story, visual regression          |
-| [0016](0016-sky-lab.md)                        | Sky lab: the sky over any place and time, globe dive, Astronomy Engine, star catalogue    |
-| [0017](0017-night-planner.md)                  | Orbit API as a night planner: Orekit events for twilight and the Moon, analytical Moon    |
-| [0018](0018-site-languages.md)                 | English, French and Arabic at runtime from one store; English-only pages marked as such   |
-| [0019](0019-luxpath.md)                        | LuxPath on the design system: language-neutral domain, editable drawings, saved inputs    |
-| [0020](0020-basecamp.md)                       | Basecamp: local-first camping planner, Open-Meteo, stars on the phone, share links        |
-| [0021](0021-studylm-learning-lab.md)           | StudyLM Learning Lab: typed lessons the AI fills and the app checks, simulators, kit      |
-| [0022](0022-studylm-lesson-player.md)          | StudyLM lesson player: honest AI failures, routed screens, step player, checks, progress  |
-| [0023](0023-studylm-generated-lessons.md)      | StudyLM writes lessons, plays every visual, runs JS with a tracer, no eval or worker      |
-| [0024](0024-learning-engine.md)                | Learning Engine: own scope, client-only access for products, local-first sync, Nest AI    |
-| [0025](0025-system-design-course.md)           | System Design course: step lessons on an isometric scene, paper look, shared step helpers |
-| [0026](0026-greenhouse-labor-planner.md)       | Greenhouse Labor Planner: pure planning maths, Supabase RLS, offline-first Capacitor app  |
-| [0027](0027-serracalc.md)                      | SerraCalc: greenhouse heat, water and climate calculators on LuxPath's pattern            |
-| [0028](0028-energy-engineering-track.md)       | Energy engineering page and a second CV from one typed source, printed to its own PDF     |
+| ADR                                            | Decision                                                                                                           |
+| ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| [0001](0001-nx-integrated-monorepo.md)         | Nx 24 integrated monorepo, pnpm, single version policy                                                             |
+| [0002](0002-native-federation.md)              | Native Federation v4, dynamic host, remote contract `./routes` + `./meta`                                          |
+| [0003](0003-static-first-rendering.md)         | Prerendered shell, client-rendered remotes, no server                                                              |
+| [0004](0004-zoneless.md)                       | Zoneless everywhere, enforced by `pnpm check:zoneless`                                                             |
+| [0005](0005-pwa-with-federation.md)            | Service worker regenerated after the federation build                                                              |
+| [0006](0006-content-security-policy.md)        | CSP header with build-time hashes; `autoCsp` is incompatible with prerendering                                     |
+| [0007](0007-cloudflare-hosting.md)             | Cloudflare Workers static assets, one Worker per app, affected deploys from CI                                     |
+| [0008](0008-design-tokens-and-ui.md)           | Design tokens (DTCG + Style Dictionary) with a contrast gate, cascade layers, `@ah/ui`                             |
+| [0009](0009-content-audiences-and-seo.md)      | Typed content, audience modes, SEO, generated CV, Lighthouse gate                                                  |
+| [0010](0010-lead-pipeline.md)                  | Lead pipeline: document outbox, direct Telegram alert, n8n push and pull                                           |
+| [0011](0011-three-engine-and-constellation.md) | Three.js engine, `<ah-scene>` adapter and the constellation hero with an SVG fallback                              |
+| [0012](0012-federation-inspector.md)           | Federation Inspector: remote telemetry, capability checks, build info, skew check                                  |
+| [0013](0013-orbit-api.md)                      | Orbit API: Spring Boot 4 + Orekit, polite CelesTrak cache, contract-first, JVM on Render                           |
+| [0014](0014-orbit-lab.md)                      | Orbit lab (superseded by 0016): satellites on a globe, SGP4 worker                                                 |
+| [0015](0015-public-storybook.md)               | Public Storybook (angular-vite, zoneless), axe on every story, visual regression                                   |
+| [0016](0016-sky-lab.md)                        | Sky lab: the sky over any place and time, globe dive, Astronomy Engine, star catalogue                             |
+| [0017](0017-night-planner.md)                  | Orbit API as a night planner: Orekit events for twilight and the Moon, analytical Moon                             |
+| [0018](0018-site-languages.md)                 | English, French and Arabic at runtime from one store; English-only pages marked as such                            |
+| [0019](0019-luxpath.md)                        | LuxPath on the design system: language-neutral domain, editable drawings, saved inputs                             |
+| [0020](0020-basecamp.md)                       | Basecamp: local-first camping planner, Open-Meteo, stars on the phone, share links                                 |
+| [0021](0021-studylm-learning-lab.md)           | StudyLM Learning Lab: typed lessons the AI fills and the app checks, simulators, kit                               |
+| [0022](0022-studylm-lesson-player.md)          | StudyLM lesson player: honest AI failures, routed screens, step player, checks, progress                           |
+| [0023](0023-studylm-generated-lessons.md)      | StudyLM writes lessons, plays every visual, runs JS with a tracer, no eval or worker                               |
+| [0024](0024-learning-engine.md)                | Learning Engine: own scope, client-only access for products, local-first sync, Nest AI                             |
+| [0025](0025-system-design-course.md)           | System Design course: step lessons on an isometric scene, paper look, shared step helpers                          |
+| [0026](0026-greenhouse-labor-planner.md)       | Greenhouse Labor Planner: pure planning maths, Supabase RLS, offline-first Capacitor app                           |
+| [0027](0027-serracalc.md)                      | SerraCalc: greenhouse heat, water and climate calculators on LuxPath's pattern                                     |
+| [0028](0028-energy-engineering-track.md)       | Energy engineering page and a second CV from one typed source, printed to its own PDF                              |
+| [0029](0029-serracalc-greenhouse-manager.md)   | SerraCalc as a greenhouse manager: desert look, Science page, RO, fertigation, site, energy, operations, live data |
 
 ## Proposed (written when the area is built)
 

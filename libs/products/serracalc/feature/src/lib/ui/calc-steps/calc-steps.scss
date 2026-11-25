@@ -1,3 +1,5 @@
+@use '../../styles/serra' as sc;
+
 :host {
   display: block;
 }
@@ -47,4 +49,41 @@ code {
   text-align: start;
   white-space: pre-wrap;
   overflow-wrap: anywhere;
+}
+
+// The phenomena behind the formulas, as links to the Science page.
+.science {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  margin-block-start: var(--space-3);
+
+  a {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: 2rem;
+    padding-inline: var(--space-3);
+    border: 1px solid var(--sc-edge, var(--color-border-default));
+    border-radius: var(--radius-pill);
+    background: var(--color-bg-surface);
+    color: var(--color-accent-default);
+    font-size: var(--font-size-100);
+    font-weight: var(--font-weight-medium);
+    text-decoration: none;
+
+    &:hover {
+      border-color: var(--color-accent-default);
+      background: var(--color-accent-subtle);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--color-focus-ring);
+      outline-offset: 2px;
+    }
+  }
+}
+
+.eyebrow {
+  @include sc.eyebrow;
 }

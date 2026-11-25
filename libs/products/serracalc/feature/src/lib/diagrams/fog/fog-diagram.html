@@ -1,0 +1,115 @@
+<svg viewBox="0 0 560 330" role="group" [attr.aria-label]="alt()">
+  <rect class="backdrop" width="560" height="330" rx="12" />
+
+  @for (tick of ticks; track tick.t) {
+    <path class="grid" [attr.d]="'M36 ' + tick.y + 'H384'" />
+    <text class="caption" x="30" [attr.y]="tick.y + 4" text-anchor="end">
+      {{ tick.t }}
+    </text>
+  }
+  <text class="caption" x="30" [attr.y]="yTop - 14" text-anchor="end">°C</text>
+
+  <!-- Four thermometers -->
+  @for (c of columns(); track c.x) {
+    <rect
+      class="tube"
+      [attr.x]="c.x - 17"
+      [attr.y]="yTop"
+      width="34"
+      [attr.height]="yBase - yTop"
+      rx="17"
+    />
+    <rect
+      [class]="'fill ' + c.tone"
+      [attr.x]="c.x - 13"
+      [attr.y]="c.y"
+      width="26"
+      [attr.height]="yBase - c.y"
+      rx="13"
+    />
+    <text class="value" [attr.x]="c.x" [attr.y]="c.y - 10" text-anchor="middle">
+      {{ i18n.num(c.value) }}
+    </text>
+    <text
+      class="label"
+      [attr.x]="c.x"
+      [attr.y]="yBase + 22"
+      text-anchor="middle"
+    >
+      {{ i18n.word(c.label) }}
+    </text>
+  }
+
+  <!-- Humidity: outside, inside and the cap the fog stops at -->
+  <rect
+    class="tube"
+    x="438"
+    [attr.y]="yTop"
+    width="34"
+    [attr.height]="yBase - yTop"
+    rx="8"
+  />
+  <rect
+    class="fill rh"
+    x="442"
+    [attr.y]="rhIn()"
+    width="26"
+    [attr.height]="yBase - rhIn()"
+    rx="6"
+  />
+  <path class="out-mark" [attr.d]="'M430 ' + rhOut() + 'H480'" />
+  <text class="caption" x="488" [attr.y]="rhOut() + 4">
+    {{ i18n.word(t().diagrams.outside) }}
+    {{ i18n.num(params().outsideRhPct, 0) }} %
+  </text>
+  <path class="cap" [attr.d]="'M420 ' + rhCap() + 'H490'" />
+  <text class="value" x="488" [attr.y]="rhCap() - 8">
+    {{ i18n.word(t().diagrams.cap) }} {{ i18n.num(params().maxRhPct, 0) }} %
+  </text>
+  <text class="label" x="455" [attr.y]="yBase + 22" text-anchor="middle">
+    RH {{ i18n.num(result().insideRhPct, 0) }} %
+  </text>
+
+  <!-- Ten minutes of the cycle -->
+  <rect class="strip" x="40" y="288" width="480" height="14" rx="4" />
+  @for (b of bursts(); track $index) {
+    <rect
+      class="burst"
+      [attr.x]="b.x"
+      y="288"
+      [attr.width]="b.w"
+      height="14"
+      rx="3"
+    />
+  }
+  <text class="caption" x="40" y="320">0</text>
+  <text class="caption" x="520" y="320" text-anchor="end">10 min</text>
+
+  <g
+    scHandle
+    [x]="455"
+    [y]="rhCap()"
+    [value]="params().maxRhPct"
+    [min]="limits.maxRh.min"
+    [max]="limits.maxRh.max"
+    [step]="limits.maxRh.step"
+    [label]="t().fields['maxRhPct']"
+    unit="%"
+    [fromPoint]="rhAt"
+    (valueChange)="changed.emit({ key: 'maxRhPct', value: $event })"
+  />
+  <g
+    scHandle
+    axis="x"
+    [x]="burstEnd()"
+    [y]="295"
+    [value]="params().onS"
+    [min]="limits.onS.min"
+    [max]="limits.onS.max"
+    [step]="limits.onS.step"
+    [label]="t().fields['onS']"
+    unit="s"
+    [fromPoint]="secondsAt"
+    (valueChange)="changed.emit({ key: 'onS', value: $event })"
+  />
+</svg>

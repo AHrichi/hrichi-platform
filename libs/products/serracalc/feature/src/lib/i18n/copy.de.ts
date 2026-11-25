@@ -2,6 +2,10 @@ import type { NoteWriter, SerraCopy } from './copy.en';
 
 export const DE: SerraCopy = {
   app: {
+    week: 'Woche',
+    weekHint: 'Die aktuelle Kalenderwoche: öffnet den Anbaukalender',
+    railNote:
+      'Für Wüstenstandorte gemacht: starke Sonne, kalte Nächte, knappes Wasser.',
     name: 'SerraCalc',
     tagline: 'Wärme, Wasser und Klima im Gewächshaus',
     activeProject: 'Aktives Projekt',
@@ -18,6 +22,13 @@ export const DE: SerraCopy = {
       'Eine Planungshilfe: Prüfen Sie die Ergebnisse mit einer Fachingenieurin oder einem Fachingenieur und den Daten der Lieferanten, bevor Sie bauen.',
   },
   nav: {
+    operations: 'Betrieb',
+    data: 'Live-Daten',
+    site: 'Standort',
+    energy: 'Energie',
+    supply: 'Wasserversorgung',
+    science: 'Wissen',
+    calendar: 'Anbaukalender',
     projects: 'Projekte',
     greenhouse: 'Gewächshaus',
     heating: 'Heizung',
@@ -28,6 +39,13 @@ export const DE: SerraCopy = {
     air: 'Licht & Luft',
     report: 'Bericht',
     more: 'Mehr',
+  },
+  navGroups: {
+    operate: 'Betreiben',
+    plan: 'Planen',
+    climate: 'Klimaregelung',
+    water: 'Wasser',
+    reference: 'Nachschlagen',
   },
   common: {
     close: 'Schließen',
@@ -110,6 +128,71 @@ export const DE: SerraCopy = {
   },
 
   fields: {
+    lossCoefficientWK: 'Wärmeverlust je Kelvin',
+    outsideMinC: 'Außen, Nachttief',
+    outsideMaxC: 'Außen, Nachmittagshoch',
+    chpElectricKw: 'BHKW-Strom',
+    chpThermalKw: 'BHKW-Wärme',
+    chpElectricPct: 'Elektrischer Wirkungsgrad',
+    chpStartHour: 'BHKW startet um',
+    chpEndHour: 'BHKW stoppt um',
+    bufferM3: 'Pufferspeicher',
+    bufferDeltaK: 'Temperaturspanne des Puffers',
+    boilerEfficiencyPct: 'Kesselwirkungsgrad',
+    co2NeedKgH: 'Von der Kultur aufgenommenes CO₂',
+    powerPrice: 'Preis des verkauften Stroms',
+    waterM3Day: 'Gekühltes Wasser pro Tag',
+    inC: 'Wasser zu',
+    outC: 'Wasser ab',
+    heatDemandKwhDay: 'Wärmebedarf an dem Tag',
+    areaHa: 'Fläche',
+    yieldTHa: 'Ertrag',
+    pricePerKg: 'Erzielter Preis',
+    labourDaysHa: 'Arbeit',
+    wagePerDay: 'Tageslohn',
+    heatMwhYear: 'Wärme pro Jahr',
+    heatPricePerMwh: 'Wärmepreis',
+    waterM3Year: 'Wasser pro Jahr',
+    waterPricePerM3: 'Wasserpreis',
+    inputsPerM2: 'Dünger und Pflanzenschutz',
+    otherPerM2: 'Verpackung und Gemeinkosten',
+    capexPerM2: 'Baukosten',
+    demandM3Day: 'Wasserbedarf am Spitzentag',
+    lossesPct: 'Verluste',
+    feedSalinityGL: 'Salzgehalt des Meerwassers',
+    recoveryPct: 'Ausbeute',
+    rejectionPct: 'Salzrückhalt',
+    secKwhM3: 'Spezifische Energie',
+    storageDays: 'Speicher',
+    capacityM3Day: 'Installierte Leistung',
+    availabilityPct: 'Laufzeit',
+    appliedM3Day: 'Gegebenes Wasser pro Tag',
+    recyclePct: 'Wiederverwendeter Drain',
+    sourceEcDsM: 'EC des Frischwassers',
+    sourceNaMmolL: 'Natrium im Frischwasser',
+    targetEcDsM: 'EC am Tropfer',
+    uptakeEcDsM: 'Von der Kultur aufgenommene EC',
+    flushEcDsM: 'Spülen über EC',
+    naLimitMmolL: 'Spülen über Natrium',
+    systemM3: 'Wasser im Kreislauf',
+    dilution: 'Verdünnung der Stammlösung',
+    stockTankM3: 'Jeder Stammlösungstank',
+    yieldSlopePct: 'Ertragsverlust je dS/m',
+    yieldThresholdEc: 'Verluste ab',
+    rhPct: 'Relative Luftfeuchte',
+    ventPct: 'Geöffnete Lüftung',
+    nozzlesPer100M2: 'Düsen',
+    nozzleLh: 'Durchfluss je Düse',
+    pressureBar: 'Pumpendruck',
+    onS: 'Nebelstoß',
+    maxRhPct: 'Feuchtegrenze',
+    plantingWeek: 'Pflanzwoche',
+    nurseryWeeks: 'Wochen in der Anzucht',
+    vegetativeWeeks: 'Pflanzung bis erste Blüten',
+    floweringWeeks: 'Blüten bis erste Ernte',
+    cropWeeks: 'Pflanzung bis Kulturende',
+    ventilateAboveC: 'Lüftung öffnet über',
+    coolAboveC: 'Nebel über (außen)',
     spans: 'Schiffe',
     spanWidthM: 'Schiffbreite',
     lengthM: 'Länge',
@@ -185,6 +268,36 @@ export const DE: SerraCopy = {
     nightHours: 'Nachtlänge',
   } as Record<string, string>,
   hints: {
+    chpElectricKw: 'Wüstenbetriebe: etwa 10 MW für 50 ha (20 W/m²)',
+    chpStartHour:
+      'Tagsüber laufen, wenn das CO₂ bei geschlossener Lüftung genutzt wird',
+    bufferM3: 'Üblich 50–100 m³ je Hektar',
+    bufferDeltaK: '90 → 50 °C: 40 K',
+    inC: 'Tiefe Brunnen im Süden liefern Wasser mit etwa 40 °C',
+    yieldTHa: 'Glashaustomate in der Wüste: etwa 250 t/ha',
+    labourDaysHa: 'Geschützte Tomate: etwa 1.000 Tage/ha (Studie 2018)',
+    pricePerKg: 'Exporttomaten erzielten 1,24–1,94 EUR/kg, Januar–April 2016',
+    capexPerM2: 'Ihr eigenes Angebot; dies ist ein Beispiel',
+    feedSalinityGL: 'Das Meer vor Gabès: 39–40 g/L',
+    recoveryPct: 'Meerwasser-UO: 40–50 %; darüber steigt die Sole schnell',
+    secKwhM3: 'Üblich 3–4 mit Energierückgewinnung; mit dem Lieferanten klären',
+    storageDays: 'Ein bis drei Tage überbrücken einen Reinigungsstopp',
+    recyclePct: 'Wüstenbetriebe nutzen 30–50 % ihres Wassers wieder',
+    targetEcDsM: 'Tomate, Nachfülllösung: etwa 2,7',
+    flushEcDsM: 'Eine übliche Obergrenze: 4,5',
+    naLimitMmolL: 'Tomate: bei etwa 8 mmol/L spülen',
+    systemM3: 'Matten, Rohre und Tanks: etwa 4 L je m²',
+    yieldSlopePct: 'Richtwert: 7,3 % aus einem Versuch; eigenen Wert setzen',
+    ventPct: 'Beim Nebeln die Lüftung drosseln: 5–15 % der Fläche',
+    nozzlesPer100M2: '27 Düsen mit 5,4 L/h geben etwa 24 g/m² pro Minute',
+    pressureBar: 'Hochdruck, 40–70 bar, für Tröpfchen von 10–30 µm',
+    onS: 'Die Pause danach wird so berechnet, dass die Grenze hält',
+    maxRhPct: '65–75 % zu halten sparte etwa 21 % Wasser',
+    plantingWeek: 'Tomatenbetriebe in der Wüste pflanzen um Woche 36',
+    nurseryWeeks: 'Tomatenjungpflanzen: etwa 7 Wochen',
+    floweringWeeks: 'Tomate: etwa 8 Wochen',
+    cropWeeks: 'Woche 36 bis Woche 29: 46 Wochen',
+    coolAboveC: 'Heißere Nachmittage brauchen Nebel oder Pads',
     spanWidthM: 'Üblich: 8, 9,6 oder 12,8 m',
     gutterHeightM: 'Höhere Häuser puffern Wärme und Feuchte besser',
     uValue:
@@ -274,6 +387,14 @@ export const DE: SerraCopy = {
     deleteResult: (label: string) => `„${label}“ löschen?`,
   },
   kinds: {
+    energy: 'Energiezentrale (BHKW)',
+    heatReuse: 'Wärme aus gekühltem Wasser',
+    economics: 'Wirtschaftlichkeit',
+    ro: 'Meerwasser-Umkehrosmose',
+    fertigation: 'Fertigation und Drain',
+    vpd: 'Feuchte und VPD',
+    fog: 'Hochdrucknebel',
+    calendar: 'Anbaukalender',
     heatPeak: 'Heizlast (Spitze)',
     heatYear: 'Heizung übers Jahr',
     hotWater: 'Warmwasserrohre',
@@ -379,7 +500,16 @@ export const DE: SerraCopy = {
   cooling: {
     title: 'Kühlung',
     lead: 'Wie viel Luft das Haus an einem sonnigen Tag bewegen muss, die Lüftungsklappen oder Ventilatoren dafür, und Pad-and-Fan-Kühlung für heißes, trockenes Wetter.',
-    tabs: { ventilation: 'Lüftung', padFan: 'Pad and Fan' },
+    tabs: { ventilation: 'Lüftung', padFan: 'Pad and Fan', fog: 'Nebel' },
+    fogInside: 'Innen mit Nebel',
+    ventOnly: 'Nur Lüftung',
+    fogRh: 'Feuchte innen',
+    fogRate: 'Nebel im Betrieb',
+    fogMean: 'Im Mittel',
+    fogCycle: 'Takt an / aus',
+    fogOn: 'der Zeit an',
+    nozzles: 'Düsen',
+    padCompare: 'Pads bräuchten',
     solar: 'Sonne, die die Luft erwärmt',
     flow: 'Zu bewegende Luft',
     ach: 'Luftwechsel',
@@ -396,6 +526,12 @@ export const DE: SerraCopy = {
     waterDay: 'Wasser am Tag',
     perHour: 'pro Stunde',
     formulas: {
+      fogRate: 'Nebel = Düsen × L/h / Fläche',
+      fogBalance:
+        'Innen = T_außen + (Sonne − λ × Nebel) / (ρ × cp × Luft + U × A)',
+      fogCycle:
+        'Takt: der Anteil Nebel, den die Luft unter der Grenze aufnimmt',
+      fogWater: 'Wasser = q × A × t / 10⁶',
       solar: 'Sonne = τ × (1 − Schatten) × G × Fläche × (1 − ET)',
       conduction: 'Durch die Eindeckung: U × A × ΔT',
       flow: 'Luft = (Sonne − Hülle) / (ρ × cp × ΔT)',
@@ -461,7 +597,7 @@ export const DE: SerraCopy = {
   air: {
     title: 'Licht & Luft',
     lead: 'Belichtung für die dunklen Monate und Schatten für die hellen, CO₂ für die Kultur, und die Luft, die nachts getauscht werden muss, damit Feuchte und Tropfen gering bleiben.',
-    tabs: { light: 'Licht', co2: 'CO₂', humidity: 'Feuchte' },
+    tabs: { light: 'Licht', co2: 'CO₂', humidity: 'Nachtfeuchte', vpd: 'VPD' },
     source: 'CO₂ aus',
     sources: { burner: 'Gasbrenner (Rauchgas)', liquid: 'Flüssig-CO₂-Tank' },
     fixtures: 'Leuchten',
@@ -489,6 +625,9 @@ export const DE: SerraCopy = {
     cover: 'Eindeckung innen',
     water: 'Abzuführendes Wasser',
     formulas: {
+      saturation: 'Sättigung: e_s = 0,6108 × exp(17,27 T / (T + 237,3))',
+      vpd: 'VPD = e_s × (1 − rF / 100)',
+      headroom: 'Reserve = gesättigt − Wasser in der Luft',
       dli: 'Sonne innen = Rg × 0,47 × 4,57 × τ (dunkelster Monat)',
       ppfd: 'PPFD = (Ziel − Sonne) × 10⁶ / (Stunden × 3600)',
       fixtures: 'Leuchten = PPFD / Effizienz × Fläche / Watt',
@@ -529,7 +668,665 @@ export const DE: SerraCopy = {
       'Gerundete Stationsmittel (etwa 1991–2020). Eine spätere Version holt Mittelwerte für jeden Ort auf der Karte.',
   },
 
+  stages: {
+    nursery: 'Anzucht',
+    vegetative: 'Wachstum',
+    flowering: 'Blüte',
+    harvest: 'Ernte',
+    cleanOut: 'Räumung',
+  },
+  vpd: {
+    stage: 'Kulturstadium',
+    light: 'Licht',
+    lights: {
+      sun: 'Sonnig',
+      cloud: 'Bewölkt',
+      night: 'Nacht',
+    },
+    status: {
+      tooWet: 'Zu feucht',
+      good: 'Gut',
+      tooDry: 'Zu trocken',
+    },
+    ideal: 'ideal',
+    actions: {
+      hold: 'Klima so halten',
+      ventilate: 'Lüften, um die Luft zu trocknen',
+      heatAndVent: 'Etwas heizen und die Lüftung öffnen',
+      heat: 'Heizen: die Außenluft ist feuchter',
+      humidify: 'Befeuchten: Nebel oder Sprühnebel',
+      coolAndHumidify: 'Schattieren und nebeln: kühlen und befeuchten',
+    },
+    band: 'Bereich',
+    absolute: 'Wasser in der Luft',
+    headroom: 'Reserve bis zur Sättigung',
+    pairsTitle: 'Dasselbe VPD bei anderen Temperaturen',
+    targetsTitle: (stage: string) => `Sollwerte · ${stage}`,
+    day: 'Tag',
+    night: 'Nacht',
+    source: 'Quelle',
+  },
+  advice: {
+    title: 'Kühlstrategie',
+    strategies: {
+      vents: 'Die Dachlüftung reicht',
+      ventsAndShade: 'Lüftung mit Schattierung',
+      shadeAndFog: 'Schattierung und Hochdrucknebel',
+      shadeAndPad: 'Schattierung und Pad and Fan',
+    },
+    ventsNeeded: 'Nötige Lüftung, ohne zusätzliche Schattierung',
+    withShade: (pct: string) => `Lüftung mit ${pct} % Schattierung`,
+    fogInside: 'Innen mit Schattierung und Nebel',
+    padOutlet: 'Luft hinter einem nassen Pad',
+    openFog: 'Nebelanlage auslegen',
+    rule: 'Regel: über 38 °C außen oder bei Lüftung über einem Viertel der Fläche schattieren und durch Verdunstung kühlen, statt die Lüftung zu vergrößern.',
+  },
+  calendar: {
+    title: 'Anbaukalender',
+    lead: 'Das Kulturjahr Woche für Woche: die Stadien, das Klima, das jedes will, und wann Heizung, CO₂, Schattierung und Nebel laufen.',
+    rows: {
+      temp: 'Außen',
+      stage: 'Kultur',
+      heating: 'Heizung',
+      co2: 'CO₂',
+      shade: 'Schatten',
+      fog: 'Nebel',
+    },
+    targets: 'Sollwerte je Stadium',
+    stage: 'Stadium',
+    weeks: 'Wochen',
+    week: 'Woche',
+    firstHarvest: 'Erste Ernte',
+    weeksOfPicking: 'Wochen Ernte',
+    end: 'Kulturende',
+    heatingFrom: 'Heizung ab',
+    systems: 'Anlagen',
+    harvestWeeks: 'Wochen Ernte',
+    heatingWeeks: 'Wochen Heizung',
+    fogWeeks: 'Wochen Nebel',
+  },
+  science: {
+    title: 'Wissen',
+    lead: 'Die Phänomene hinter jedem Rechner: was passiert, die Formel, was sie annimmt und wie man jede eingegebene Zahl misst.',
+    search: 'Thema suchen',
+    empty: 'Kein Thema passt.',
+    contents: 'Themen',
+    formula: 'Formel',
+    inputs: 'Eingaben und wie man sie bekommt',
+    input: 'Eingabe',
+    method: 'Wie',
+    instrument: 'Messgerät',
+    assumptions: 'Annahmen',
+    related: 'Verwandt',
+    usedIn: 'Verwendet in',
+    sources: 'Quellen',
+    instrumentsTitle: 'Messgeräte',
+    instrumentsLead: 'Womit man misst, und wie man richtig abliest.',
+    howToGet: (label: string) => `So bekommen Sie „${label}“`,
+    readMore: 'Mehr zu',
+    close: 'Schließen',
+    groups: {
+      site: 'Standort und Geld',
+      house: 'Das Haus',
+      heat: 'Wärme',
+      air: 'Luft, Feuchte und Kühlung',
+      water: 'Wasser',
+      crop: 'Licht, CO₂ und Kultur',
+    },
+    methods: {
+      measure: 'Messen',
+      datasheet: 'Aus dem Datenblatt',
+      derived: 'Berechnet',
+      setpoint: 'Ihre Einstellung',
+      assume: 'Planungsannahme',
+      bill: 'Aus Ihren Rechnungen',
+    },
+    methodHints: {
+      measure: 'Vor Ort mit dem Gerät unten ablesen.',
+      datasheet:
+        'Aus dem Datenblatt des Lieferanten; der Hinweis nennt einen üblichen Wert.',
+      derived:
+        'SerraCalc berechnet es aus dem Haus oder einem anderen Werkzeug; überschreiben, wenn Sie es besser wissen.',
+      setpoint:
+        'Eine Wahl: ein Sollwert oder ein Ziel, mit dem Sie das Haus führen.',
+      assume: 'Ein üblicher Praxiswert; mit eigenen Aufzeichnungen verfeinern.',
+      bill: 'Ihr eigener Tarif oder Faktor, in der Währung des Projekts.',
+    },
+    topics: {
+      cogeneration: {
+        title: 'Kraft-Wärme-Kopplung (BHKW) und Wärmespeicher',
+        what: 'Ein Gasmotor erzeugt Strom und aus Kühlwasser und Abgas Wärme; sein gereinigtes Abgas liefert CO₂ für die Kultur. Läuft er tagsüber, wenn die Kultur das CO₂ nutzen kann, erzeugt er mehr Wärme, als das Haus braucht: ein Warmwasserpuffer trägt sie in die Nacht, ein Kessel deckt den Rest.',
+        assumptions: [
+          'Ein winterlicher Auslegungstag, außen ein Kosinus von 3 bis 15 Uhr.',
+          'Das BHKW läuft in seinen Stunden mit voller Leistung.',
+        ],
+      },
+      heatReuse: {
+        title: 'Wärme in gekühltem Brunnenwasser',
+        what: 'Warm aus einem tiefen Brunnen gepumptes und für Bewässerung oder Kühlung gekühltes Wasser gibt je m³ und Kelvin 1,163 kWh ab. Von 40 auf 15 °C gekühlt, werden etwa 29 kWh je m³ frei: Wärme, die eine Wärmepumpe oder ein Niedertemperaturkreis ins Haus zurückbringen kann.',
+        assumptions: [
+          'Die ganze freigesetzte Wärme wird genutzt.',
+          'Wasser mit 1.000 kg/m³ und 4,19 kJ/kg·K.',
+        ],
+      },
+      siteScale: {
+        title: 'Standortgröße und Wirtschaftlichkeit',
+        what: 'Ein großer Standort besteht aus Abteilungen von einigen Hektar, jede ein über ihre Fläche wiederholtes Haus, die UO, BHKW und Packhalle teilen. Zusammengezählt ergeben sie Wasser, Wärme, Arbeit und Ertrag, die die gemeinsamen Anlagen bedienen müssen, und die Kosten jedes Kilos.',
+        assumptions: [
+          'Jede Abteilung verhält sich je m² wie das Haus ihres Projekts.',
+          'Preise, Löhne und Erträge sind Beispiele, die Sie ersetzen.',
+        ],
+      },
+      desalination: {
+        title: 'Meerwasserentsalzung durch Umkehrosmose',
+        what: 'Hoher Druck presst Meerwasser durch Membranen, die das Salz zurückhalten. Die Ausbeute ist der Anteil, der als Permeat durchkommt; der Rest geht als Sole, entsprechend salziger. Das Pumpen gegen den osmotischen Druck braucht mit Energierückgewinnung 3–4 kWh je m³.',
+        assumptions: [
+          'Das Permeat behält (1 − Rückhalt) des mittleren Salzgehalts entlang der Membranen.',
+          'Energie und Ausbeute sind übliche Werte; mit dem Lieferanten bestätigen.',
+        ],
+      },
+      fertigation: {
+        title: 'Fertigation und Drainrecycling',
+        what: 'Die Kultur trinkt das Wasser, lässt aber das meiste Natrium und Chlorid zurück, also ist der Drain salziger als die Gabe. Den Drain wiederzuverwenden spart Wasser und Dünger, doch sein Salz reichert sich an, bis der Kreislauf gespült werden muss; einen Teil abzugeben hält das Natrium auf einem Niveau.',
+        assumptions: [
+          'Natrium gelangt kaum in die Kultur.',
+          'Der Ertragsverlust ist über 2 dS/m linear: ein Richtwert aus einem Versuch und einer Sorte.',
+        ],
+      },
+      geometry: {
+        title: 'Geometrie des Gewächshauses',
+        what: 'Jede Last hängt an drei Zahlen: der Grundfläche (auf der man anbaut und auf die die Sonne fällt), der Hülle (die Wärme verliert) und dem Luftvolumen (das Wärme, Feuchte und CO₂ puffert). Höhere Häuser haben mehr Luft je m² und schwanken weniger.',
+        assumptions: [
+          'Dächer sind gerade Flächen, bei Bögen eine halbe Ellipse.',
+          'Giebel zählen zur Hülle; Türen und Rinnen werden vernachlässigt.',
+        ],
+      },
+      heatLoss: {
+        title: 'Wärmeverlust durch die Hülle',
+        what: 'Wärme fließt durch die Hülle vom warmen Haus in die kalte Nacht, proportional zur Fläche, zur Temperaturdifferenz und zum U-Wert. Ein geschlossener Energieschirm senkt sie; der Sockel verliert am Umfang etwas mehr.',
+        assumptions: [
+          'U-Werte sind Auslegungswerte für eine ruhige, klare Nacht (ASAE EP406).',
+          'Die Auslegungsnacht kommt fast jeden Winter wieder, sie ist nicht der Rekord.',
+        ],
+      },
+      airLeakage: {
+        title: 'Luftundichtheit',
+        what: 'Kalte Außenluft dringt durch Spalten, Lüftungen und Türen ein und muss erwärmt werden. Die Luftwechselrate N gibt an, wie oft pro Stunde das ganze Volumen ersetzt wird: etwa 0,5 bei dichter Doppelfolie, 1,5–2 bei altem Glas.',
+        assumptions: [
+          'Die Undichtheit ändert sich in diesen Werkzeugen nicht mit dem Wind.',
+          '0,335 Wh je m³ und K ist die Wärmekapazität der Luft bei etwa 20 °C.',
+        ],
+      },
+      hotWater: {
+        title: 'Warmwasser-Heizrohre',
+        what: 'Ein Heizkreis gibt Wärme durch Konvektion und Strahlung ab. Die Spreizung des Wassers bestimmt den Durchfluss (1,163 kWh je m³ und K), die Leistung je Meter die Rohrlänge. Geothermales Wasser mit 60–75 °C braucht mehr Rohr als ein Kessel mit 80–90 °C.',
+        assumptions: [
+          'Freie Konvektion um ein waagrechtes Rohr: h = 1,32 (ΔT/D)^0,25.',
+          'Die Rohroberfläche hat die mittlere Wassertemperatur.',
+        ],
+      },
+      solarGain: {
+        title: 'Solarer Wärmeeintrag',
+        what: 'Sonnenlicht durch die Hülle wird zu Wärme. Einen Teil verbraucht die Kultur zum Verdunsten; der Rest erwärmt die Luft und muss über Lüftung, Pads oder Nebel hinaus. Schattierung und Kalkung kappen ihn an der Quelle.',
+        assumptions: [
+          'Die Transmission enthält Konstruktion und Staub.',
+          'Eine volle Kultur verbraucht etwa die Hälfte der Sonne für die Transpiration.',
+        ],
+      },
+      ventilation: {
+        title: 'Natürliche Lüftung',
+        what: 'Warme Luft steigt durch die Dachlüftung auf (Kamineffekt) und der Wind zieht Luft hindurch. Die nötige Lüftungsfläche wächst schnell, wenn das Haus nur wenige Grad über außen liegen darf; ab etwa 30 % der Fläche reicht Lüftung allein nicht.',
+        assumptions: [
+          'Boulard und Baille (1995): Cd 0,65 und Cw 0,1 für Dachlüftungen.',
+          'Luft mit 1,2 kg/m³ und 1005 J/kg·K.',
+        ],
+      },
+      evaporativeCooling: {
+        title: 'Verdunstungskühlung und Feuchtkugel',
+        what: 'Wasser, das in trockene Luft verdunstet, entzieht ihr Wärme. Unter ihre Feuchtkugeltemperatur lässt sich Luft nicht kühlen, und die sinkt, je trockener die Luft ist: bei 44 °C und 15 % liegt sie nahe 22 °C. Ein nasses Pad schafft 75–85 % des Weges.',
+        assumptions: [
+          'Feuchtkugel nach Stull (2011), auf etwa 0,3 K genau.',
+          'Die Luft erwärmt sich gleichmäßig zwischen Pads und Ventilatoren.',
+        ],
+      },
+      fogging: {
+        title: 'Hochdrucknebel',
+        what: 'Düsen mit 40–70 bar erzeugen Tröpfchen von 10–30 µm, die verdunsten, bevor sie fallen, und die Luft bei offener Lüftung kühlen. Die Grenze ist die Feuchte: Der Nebel wird gedrosselt, damit die Luft unter einer Grenze bleibt, meist 70–80 %.',
+        assumptions: [
+          'Aller Nebel verdunstet, solange die Luft unter der Grenze bleibt.',
+          'Der Luftstrom der Lüftung folgt Boulard und Baille, aus Wind und Temperaturdifferenz.',
+        ],
+      },
+      vpd: {
+        title: 'Sättigungsdefizit (VPD)',
+        what: 'Das VPD gibt an, wie viel Wasser die Luft bei ihrer Temperatur noch aufnehmen könnte. Es treibt die Transpiration: zu niedrig, und die Pflanze transportiert kein Wasser und Calcium und Pilze breiten sich aus; zu hoch, und die Stomata schließen sich und die Pflanze welkt. Dasselbe VPD passt zu vielen Paaren aus Temperatur und Feuchte.',
+        assumptions: [
+          'Blatt und Luft haben dieselbe Temperatur.',
+          'Sättigungsdampfdruck nach Tetens, wie in FAO-56.',
+        ],
+      },
+      dewPoint: {
+        title: 'Taupunkt und Kondensation',
+        what: 'Luft, die auf ihren Taupunkt abkühlt, gibt Wasser ab. Nachts ist die Innenseite der Hülle kälter als die Luft; fällt sie unter den Taupunkt, tropft sie auf die Kultur und verbreitet Krankheiten.',
+        assumptions: [
+          'Die Innenseite tauscht etwa 8 W/m²·K mit der Luft.',
+          'Kalter Nachthimmel und Wind stecken im U-Wert.',
+        ],
+      },
+      nightHumidity: {
+        title: 'Nachts entfeuchten',
+        what: 'Nachts transpiriert die Kultur weiter. Dieses Wasser muss mit Außenluft hinaus, die weniger enthält, und diese Luft muss erwärmt werden. Lüften trocknet das Haus nicht, wenn die Außenluft absolut mehr Wasser enthält.',
+        assumptions: [
+          'Wasser in Gramm je kg trockener Luft, bei Meereshöhendruck.',
+          'Kondensation an der Hülle zählt nicht als Ausweg.',
+        ],
+      },
+      transpiration: {
+        title: 'Transpiration und Bewässerung',
+        what: 'Eine Kultur transpiriert etwa zwei Drittel der empfangenen Sonne; der Wasserbedarf folgt der Strahlung im Haus. Substratkulturen bekommen zusätzlich den Drain, um Salze auszuwaschen; mit Brackwasser muss der Drainanteil steigen.',
+        assumptions: [
+          '2,45 MJ verdunsten einen Liter Wasser.',
+          'Der Bestandesschluss senkt den Verbrauch einer jungen Kultur.',
+        ],
+      },
+      rainHarvest: {
+        title: 'Regenwassernutzung',
+        what: 'Ein Gewächshausdach ist eine große Auffangfläche. Ein Becken speichert Regen zwischen Gewittern: Monat für Monat füllt es sich, gibt an die Bewässerung ab und läuft über, wenn es voll ist.',
+        assumptions: [
+          'Monatssummen; ein starkes Gewitter wird gesondert geprüft.',
+          'Die ersten Millimeter jedes Regens gehen verloren.',
+        ],
+      },
+      light: {
+        title: 'Licht für die Kultur (DLI)',
+        what: 'Pflanzen zählen Photonen, nicht Watt: Das Tageslichtintegral ist die Menge photosynthetischen Lichts in Mol je m² und Tag, und etwa 47 % der Sonne sind PAR. Lampen schließen die Lücke in dunklen Monaten; Schattierung hält helle Monate unter der Obergrenze der Kultur.',
+        assumptions: [
+          '4,57 µmol Photonen je Joule PAR im Sonnenlicht.',
+          'Die Lampen werden für den dunkelsten Monat ausgelegt.',
+        ],
+      },
+      co2: {
+        title: 'CO₂-Düngung',
+        what: 'Die Kultur nimmt CO₂ aus der Luft, und 700–900 ppm steigern den Ertrag. Was man zuführt, geht in die Kultur oder mit der Luft hinaus: Düngung lohnt, wenn die Lüftung fast zu ist. Ein Gasbrenner oder ein BHKW liefert CO₂ und Wärme zusammen.',
+        assumptions: [
+          '1,83 g CO₂ je m³ Luft für 1000 ppm.',
+          '1 m³ verbranntes Erdgas ergibt 1,96 kg CO₂.',
+        ],
+      },
+      cropCalendar: {
+        title: 'Das Kulturjahr',
+        what: 'Eine Kultur durchläuft Stadien, die unterschiedliches Klima wollen. Mit den Klimanormalen gelesen zeigt der Kalender, wann die Nächte Wärme brauchen, wann das Haus lange genug zu bleibt für CO₂ und wann die Sonne Schattierung und Nebel verlangt.',
+        assumptions: [
+          'Wochenwerte werden zwischen den Monatsnormalen gelesen.',
+          'Die Stadienlängen sind üblich; mit dem Saatgutzüchter prüfen.',
+        ],
+      },
+    },
+    instruments: {
+      ecMeter: {
+        name: 'EC- und pH-Messgerät',
+        how: 'Ein Hand- oder Inline-Leitfähigkeitsmesser, auf 25 °C kompensiert. Wöchentlich mit einem 1,41-dS/m-Puffer kalibrieren und Gabe und Drain zur selben Tageszeit messen.',
+      },
+      labAnalysis: {
+        name: 'Wasseranalyse im Labor',
+        how: 'Quelle, Gabe und Drain alle zwei bis vier Wochen beproben; das Labor liefert Natrium, Chlorid, Nährstoffe und Hydrogencarbonat in mmol/L.',
+      },
+      tape: {
+        name: 'Maßband oder Laser-Entfernungsmesser',
+        how: 'Schiffe, Längen und Höhen vom Boden bis zur Rinne messen. Schiffe, Pflanzen, Tropfer und Düsen in einigen Reihen zählen und hochrechnen.',
+      },
+      thermometer: {
+        name: 'Belüftetes Luftthermometer',
+        how: 'Ein Sensor in einer weißen, belüfteten Messbox in Bestandeshöhe, im Schatten. Ein unbeschatteter Sensor misst mehrere Grad zu hoch.',
+      },
+      hygrometer: {
+        name: 'Feuchtesensor oder Psychrometer',
+        how: 'Ein kapazitiver Feuchtesensor in derselben belüfteten Box, jährlich mit einem Psychrometer (trockene und feuchte Kugel) geprüft. Temperatur und Feuchte zusammen ablesen.',
+      },
+      weatherStation: {
+        name: 'Wetterstation außen',
+        how: 'Temperatur und Feuchte in einer Strahlungshütte auf 2 m, abseits der Häuser. Für Auslegungswerte die kalten Nächte und heißen Nachmittage mehrerer Jahre nehmen.',
+      },
+      pyranometer: {
+        name: 'Pyranometer',
+        how: 'Globalstrahlung in W/m², waagrecht und sauber über dem Dach. Der Klimacomputer hat meist eines; seine Tagessummen in MJ/m² speisen die Wasser- und Lichtwerkzeuge.',
+      },
+      parSensor: {
+        name: 'PAR-Quantensensor',
+        how: 'Photonen in µmol/m²·s. Außen und in Bestandeshöhe zur selben Zeit messen: innen durch außen ist die Transmission. Über den Tag summiert ergibt es das DLI.',
+      },
+      anemometer: {
+        name: 'Anemometer',
+        how: 'Ein Schalen- oder Ultraschallanemometer an einem Mast über dem First; einen üblichen Sommernachmittag nehmen, nicht die Böen. Ein Flügelrad-Handgerät misst die Luftgeschwindigkeit durch ein Pad oder einen Ventilator.',
+      },
+      co2Sensor: {
+        name: 'CO₂-Sensor (NDIR)',
+        how: 'Ein belüfteter Infrarotsensor in Bestandeshöhe. Vor jeder Saison an Außenluft prüfen, etwa 420 ppm.',
+      },
+      tracerGas: {
+        name: 'Tracergas-Abklingtest',
+        how: 'In einer ruhigen Nacht das Haus schließen, CO₂ auf etwa 1000 ppm bringen und den Abfall aufzeichnen: N = ln((C₁ − C_außen) / (C₂ − C_außen)) / Stunden.',
+      },
+      flowMeter: {
+        name: 'Durchflussmesser',
+        how: 'Ein Clamp-on-Ultraschall- oder Inline-Zähler an der Hauptleitung. Den Durchfluss ablesen, während eine Sektion läuft, oder die Pumpenkennlinie bei ihrer Förderhöhe.',
+      },
+      catchCups: {
+        name: 'Becher-Test',
+        how: '10–20 Tropfer oder Düsen einige gestoppte Minuten auffangen, jedes Volumen mit einem Messzylinder messen und mitteln. Die Streuung zeigt, wie gleichmäßig die Anlage ist.',
+      },
+      drainTray: {
+        name: 'Drainschale auf einer Waage',
+        how: 'Einige Matten auf einer Schale mit Kippwaage oder Waage: Drainanteil = Drain ÷ gegebenes Wasser. Gleichzeitig die EC von Tropfer und Drain messen.',
+      },
+      pressureGauge: {
+        name: 'Manometer',
+        how: 'Ein Glyzerin-Manometer am Pumpenausgang (1 bar entspricht etwa 10 m Förderhöhe), oder ein Differenzdruckmesser an einem Ventilator für seinen statischen Druck.',
+      },
+      infrared: {
+        name: 'Kontakt- oder Infrarotthermometer',
+        how: 'Einen Kontaktfühler an Vor- und Rücklauf klemmen oder deren Oberfläche mit einem Infrarotthermometer messen, eingestellt auf den Emissionsgrad des Rohres.',
+      },
+      meters: {
+        name: 'Gas-, Wärme- und Stromzähler',
+        how: 'Monatliche Zählerstände und Rechnungen geben den echten Verbrauch, die Leistung und die Tarife, um die Werkzeuge zu prüfen.',
+      },
+      climateComputer: {
+        name: 'Protokolle des Klimacomputers',
+        how: 'Sollwerte, Laufstunden, Nebeltakte und Bewässerungsgaben kommen aus den Einstellungen und Tagesprotokollen des Klimacomputers.',
+      },
+    },
+  },
+  supply: {
+    title: 'Wasserversorgung',
+    lead: 'Vom Meer zur Wurzel: eine Meerwasser-Umkehrosmose für den Spitzentag der Kultur und der Nährstoffkreislauf, der den Drain wiederverwendet und spült, bevor sich Salz anreichert.',
+    tabs: {
+      ro: 'Meerwasser-UO',
+      fertigation: 'Fertigation',
+    },
+    sea: 'Meer',
+    membranes: 'Membranen',
+    brine: 'Sole',
+    fresh: 'Frischwasser',
+    drain: 'Drain',
+    reused: 'Wiederverwendet',
+    letGo: 'Abgegeben',
+    days: 'Tage',
+    flush: 'Spülen',
+    takeDemand: (m3: string) => `Spitzentag der Kultur übernehmen: ${m3} m³`,
+    useRo: (ec: string) => `Osmosewasser verwenden: EC ${ec}`,
+    feed: 'Gepumptes Meerwasser',
+    product: 'Permeat',
+    productEc: 'EC des Permeats',
+    energy: 'Energie pro Tag',
+    costDay: 'Strom pro Tag',
+    coverage: 'Die Anlage deckt',
+    tank: 'Tank',
+    waterSaved: 'Gespartes Wasser',
+    fertSaved: 'Gesparter Dünger',
+    drainEc: 'EC des Drains',
+    rootEc: 'Wurzelraum',
+    yieldLoss: 'Ertragsverlust durch Salz',
+    flushIn: 'Spülen in',
+    never: 'Nicht nötig',
+    levelsAt: 'Pendelt sich ein bei',
+    stock: 'Stammlösung A und B, je',
+    stockDays: (days: string) => `ein Tank reicht ${days} Tage`,
+    formulas: {
+      roFeed: 'Zulauf = Permeat / Ausbeute',
+      roBrine: 'Sole = Zulauf − Permeat; Salzgehalt ≈ S_Meer / (1 − R)',
+      roEnergy: 'Energie = SEC × Permeat',
+      fertDrain: 'Drain-EC = (A × EC_Gabe − U × EC_Aufnahme) / D',
+      fertNa:
+        'Natrium: geschlossen t = V (C_lim − C_0) / (C_in × Frischwasser); sonst pendelt es sich bei C_in × Frischwasser × D / (A × Abgabe) ein',
+      fertYield: 'Ertrag = 1 − Steigung × (EC_Wurzel − Schwelle)',
+      fertStock: 'Stammlösung = benötigte Nährstoffe / Verdünnung',
+    },
+  },
+  energy: {
+    title: 'Energie',
+    lead: 'Ein Gas-BHKW, das über einen Wintertag Wärme, Strom und CO₂ liefert, ein Warmwasserpuffer für die Nacht und ein Kessel für den Rest; und die Wärme in gekühltem Brunnenwasser.',
+    tabs: {
+      chp: 'BHKW und Puffer',
+      reuse: 'Wärmerückgewinnung',
+    },
+    buffer: 'Puffer',
+    fromChp: 'BHKW',
+    fromBuffer: 'Puffer',
+    fromBoiler: 'Kessel',
+    demand: 'Bedarf',
+    chpShare: 'Das BHKW deckt',
+    dayNeed: 'Wärme des Tages',
+    dumped: 'Abgeführt',
+    gas: 'Gas pro Tag',
+    power: 'Erzeugter Strom',
+    netCost: 'Gas abzüglich verkauften Stroms',
+    co2: 'CO₂ für die Kultur',
+    co2Need: 'Benötigt',
+    inWater: 'Wärme im Wasser',
+    need: 'Wärmebedarf',
+    covers: 'Deckt',
+    takeLinks:
+      'Spitzentag-Wasser der Kultur und Wärme des Wintertags übernehmen',
+    formulas: {
+      demand:
+        'Bedarf = H × (T_soll − T_außen) − Sonne, nachts abzüglich Schirm',
+      buffer: 'Puffer = 1,163 × V × ΔT',
+      gas: 'Gas = P_el / η_el / 9,77 × Stunden + Kessel',
+      co2: 'CO₂ = 1,96 kg je m³ Gas',
+      reuse: 'Wärme = 1,163 × V × ΔT',
+    },
+  },
+  site: {
+    title: 'Standort',
+    lead: 'Der ganze Betrieb: Jedes Projekt ist eine Abteilung, sein Haus über ihre Fläche wiederholt; die Summen, die gemeinsame UO und das BHKW im Vergleich, und die Wirtschaftlichkeit des Jahres.',
+    tabs: {
+      overview: 'Überblick',
+      economics: 'Wirtschaftlichkeit',
+    },
+    choose: 'Standort',
+    unnamed: 'Standort ohne Namen',
+    empty:
+      'Noch kein Projekt. Projekte mit demselben „Standort“ bilden einen Standort; geben Sie hier jedem seine Fläche.',
+    compartments: (n: string) => `Abteilungen: ${n}`,
+    area: 'Fläche',
+    peakWater: 'Wasser am Spitzentag',
+    meanWater: 'Mittel',
+    heatPeak: 'Wärme in der Auslegungsnacht',
+    yield: 'Ertrag pro Jahr',
+    labour: 'Arbeit pro Jahr',
+    days: 'Tage',
+    people: (n: string) => `etwa ${n} Vollzeitkräfte`,
+    co2e: 'CO₂-Fußabdruck',
+    co2eHint: '1,9 kg CO₂e je kg (veröffentlichte Schätzung)',
+    sharesAlt: 'Abteilungen nach Flächenanteil',
+    plants: 'Gemeinsame Anlagen',
+    roPlant: 'Meerwasser-UO',
+    chpPlant: 'BHKW',
+    covers: (pct: string) => `deckt ${pct} % des Spitzentags`,
+    chpOfPeak: (pct: string) => `${pct} % der Spitzenwärme`,
+    noRo: 'Speichern Sie ein Meerwasser-UO-Ergebnis in einem dieser Projekte, um es hier zu prüfen.',
+    noChp:
+      'Speichern Sie ein Energiezentralen-Ergebnis in einem dieser Projekte, um es hier zu prüfen.',
+    table: 'Abteilungen',
+    tableHint:
+      'Fläche jeder Abteilung festlegen: ihr Haus wird darüber wiederholt.',
+    compartment: 'Abteilung',
+    houses: 'Häuser',
+    areaOf: (name: string) => `Fläche von ${name}, ha`,
+    takeTotals: (ha: string) => `Standortsummen übernehmen: ${ha} ha`,
+    costPerKg: 'Kosten je kg',
+    price: 'Preis',
+    margin: 'Marge',
+    revenue: 'Umsatz',
+    payback: 'Amortisation',
+    years: 'Jahre',
+    waterPerKg: 'Wasser je kg',
+    costTitle: 'Wohin das Geld geht',
+    costs: {
+      labour: 'Arbeit',
+      energy: 'Energie',
+      water: 'Wasser',
+      inputs: 'Dünger und Schutz',
+      other: 'Verpackung und Gemeinkosten',
+    },
+    formulas: {
+      yield: 'Ertrag = Fläche × t/ha',
+      cost: 'Kosten je kg = Kosten / kg',
+      payback: 'Amortisation = Bau / Marge',
+    },
+  },
+  ops: {
+    title: 'Betrieb',
+    lead: 'Das Kulturtagebuch, der tägliche Hygienerundgang, die Wartung der Anlagen und ein Hitzeplan für die Menschen, die drinnen arbeiten.',
+    noProject: 'Öffnen Sie ein Projekt, um sein Tagebuch zu führen.',
+    tabs: {
+      log: 'Tagebuch',
+      hygiene: 'Hygiene',
+      maintenance: 'Wartung',
+      heat: 'Hitzebelastung',
+    },
+    newEntry: 'Neuer Eintrag',
+    date: 'Datum',
+    kind: 'Art',
+    kinds: {
+      scouting: 'Kontrolle',
+      release: 'Nützlingsfreilassung',
+      spray: 'Spritzung',
+      maintenance: 'Wartung',
+      hygiene: 'Hygienekontrolle',
+      harvest: 'Ernte',
+    },
+    subjects: {
+      scouting: 'Gesehener Schädling oder Krankheit, und wo',
+      release: 'Freigelassener Nützling',
+      spray: 'Gespritztes Mittel',
+      maintenance: 'Was gemacht wurde',
+      hygiene: 'Checkliste',
+      harvest: 'Abteilung oder Reihen',
+    },
+    task: 'Aufgabe',
+    amount: 'Menge',
+    unit: 'Einheit',
+    who: 'WHO-Klasse',
+    note: 'Notiz',
+    add: 'Ins Tagebuch eintragen',
+    entries: (n: string) => `Tagebucheinträge: ${n}`,
+    all: 'Alle',
+    empty: 'Noch nichts eingetragen.',
+    remove: (what: string) => `„${what}“ löschen`,
+    checklist: 'Hygiene-Checkliste',
+    saveChecklist: (done: string, total: string) =>
+      `Checkliste von heute speichern (${done} von ${total})`,
+    recent: 'Letzte Checklisten',
+    every: 'Alle',
+    last: 'Zuletzt',
+    due: 'Fällig',
+    state: 'Status',
+    done: 'Heute erledigt',
+    days: 'Tage',
+    states: {
+      ok: 'Im Plan',
+      soon: 'Bald fällig',
+      overdue: 'Überfällig',
+    },
+    overdue: (n: string) => `Überfällige Aufgaben: ${n}`,
+    tasks: {
+      filters: 'Bewässerungsfilter reinigen',
+      nozzles: 'Nebeldüsen prüfen',
+      pads: 'Pads reinigen und spülen',
+      sensors: 'Klima- und EC-Sensoren kalibrieren',
+      pumps: 'Pumpen warten',
+      fans: 'Ventilatoren und Riemen prüfen',
+      drainDisinfection: 'Draindesinfektion prüfen',
+      roMembranes: 'UO-Membranen reinigen (CIP)',
+      chp: 'BHKW warten',
+    },
+    hygiene: {
+      footbath: 'Fußbäder aufgefüllt',
+      handwash: 'Händewaschen und Handschuhe an der Tür',
+      clothing: 'Saubere Kleidung für diese Abteilung',
+      tools: 'Messer und Werkzeuge desinfiziert',
+      visitors: 'Besucher erfasst und eingewiesen',
+      waste: 'Pflanzenabfälle entfernt und abgedeckt',
+      doors: 'Türen und Insektennetze geschlossen',
+    },
+    heatTitle: 'Hitzebelastung bei der Arbeit',
+    heatIndex: 'Hitzeindex',
+    rest: 'Pause je Stunde',
+    water: 'Wasser je Stunde',
+    risks: {
+      none: 'Keine Hitzegefahr',
+      caution: 'Vorsicht',
+      extremeCaution: 'Große Vorsicht',
+      danger: 'Gefahr',
+      extremeDanger: 'Extreme Gefahr',
+    },
+    plan: 'Der Hitzeplan',
+    advice: {
+      caution: 'Wasser griffbereit; schwere Arbeit früh am Tag.',
+      extremeCaution:
+        '20 min Pause je Stunde im Schatten; 0,75 L Wasser je Stunde.',
+      danger:
+        '40 min Pause je Stunde; keine schwere Arbeit drinnen; gegenseitig aufeinander achten.',
+      extremeDanger: 'Arbeit im Haus einstellen.',
+    },
+    heatSource:
+      'Hitzeindex nach dem US-Wetterdienst (Rothfusz); Arbeit und Pausen nach gängigen Arbeitsschutzempfehlungen. Eine Planungshilfe, kein medizinischer Rat.',
+  },
+  data: {
+    title: 'Live-Daten',
+    lead: 'Messwerte Ihrer Sensoren oder Datenlogger, als CSV importiert und mit dem verglichen, was die Rechner erwarten: VPD für das Stadium, Tag- und Nachttemperaturen, Drain; VPD je Stunde; und Alarme.',
+    import: 'Messwerte importieren',
+    importHint:
+      'Eine CSV mit einer Zeitspalte und beliebigen von: Temperatur, rF, PAR, EC, pH, Drain %, Drain-EC, Außentemperatur und -feuchte. Kommas oder Semikolons, Dezimalpunkt oder -komma.',
+    file: 'CSV-Datei',
+    paste: 'Oder hier einfügen',
+    importPasted: 'Eingefügten Text importieren',
+    sample: 'Beispielwoche laden',
+    download: 'Beispiel-CSV herunterladen',
+    clear: 'Messwerte löschen',
+    noProject: 'Öffnen Sie ein Projekt, um seine Messwerte zu behalten.',
+    imported: (n: string, skipped: string) =>
+      `${n} Messwerte importiert; ${skipped} Zeilen übersprungen.`,
+    errors: {
+      empty: 'Die Datei ist leer.',
+      noTime: 'Keine Zeitspalte gefunden.',
+      noData: 'Keine Messwerte gefunden.',
+    },
+    targets: 'Vergleichen mit',
+    summary: 'Gemessen gegen erwartet',
+    empty: 'Noch keine Messwerte: CSV importieren oder Beispielwoche laden.',
+    period: (from: string, to: string, n: string, step: string) =>
+      `${from} bis ${to}: ${n} Messwerte, alle ${step} min.`,
+    vpdInBand: 'VPD im Bereich',
+    dayMean: 'Tage, Mittel',
+    nightMean: 'Nächte, Mittel',
+    drainMean: 'Drain, Mittel',
+    plan: 'Plan',
+    alertCount: 'Alarme',
+    byHour: 'Nach Tagesstunde',
+    vpdByHour: 'VPD je Stunde, kPa (grün: Tagbereich)',
+    tempByHour: 'Temperatur je Stunde, °C (grün: Tagbereich)',
+    alertsTitle: 'Alarme',
+    noAlerts: 'Keine Alarme in diesen Messwerten.',
+    alerts: {
+      vpdLow: 'VPD unter 0,3 kPa: Krankheitsrisiko',
+      vpdHigh: 'VPD über 1,5 kPa am Tag',
+      heatStress: 'Hitzebelastung für die Arbeitenden',
+      heatDanger: 'Hitzegefahr für die Arbeitenden',
+      drainEcHigh: 'Drain-EC an der Spülgrenze',
+      tempLow: 'Zu kalt für das Stadium',
+      tempHigh: 'Zu warm für das Stadium',
+      phOut: 'pH außerhalb 5,2–6,8',
+    },
+    alertDetail: (n: string, worst: string) =>
+      `${n} Messwerte, schlechtester ${worst}`,
+    days: 'Tag für Tag',
+    outOfBand: 'VPD außerhalb',
+  },
   calc: {
+    science: 'Die Physik dahinter',
     results: 'Ergebnisse',
     how: 'So wird gerechnet',
     inputs: 'Eingaben',
@@ -539,6 +1336,30 @@ export const DE: SerraCopy = {
   },
 
   diagrams: {
+    energyAlt: (peak: string, start: string, end: string, share: string) =>
+      `Winterlicher Auslegungstag: Der Wärmebedarf erreicht ${peak} kW; das BHKW läuft von ${start}:00 bis ${end}:00 und deckt ${share} %. Griffe stellen Start und Stopp ein.`,
+    reuseAlt: (water: string, need: string) =>
+      `Wärme im gekühlten Wasser, ${water} kWh, gegen den Wärmebedarf des Tages, ${need} kWh.`,
+    roAlt: (feed: string, product: string, brine: string, salinity: string) =>
+      `Meerwasser-UO: ${feed} m³ pro Tag gepumpt, ${product} m³ Permeat, ${brine} m³ Sole mit ${salinity} g/L. Griffe stellen Ausbeute und Speicher ein.`,
+    fertAlt: (recycle: string, ec: string, flush: string) =>
+      `Nährstoffkreislauf: ${recycle} % des Drains wiederverwendet, Drain-EC ${ec} dS/m, spülen in ${flush} Tagen. Griffe stellen den wiederverwendeten Anteil und die Natriumgrenze ein.`,
+    vpdAlt: (air: string, rh: string, vpd: string, status: string) =>
+      `VPD-Karte: Luft mit ${air} °C und ${rh} % ergibt ${vpd} kPa, ${status}. Griffe stellen Temperatur und Feuchte ein.`,
+    fogAlt: (
+      outside: string,
+      inside: string,
+      rh: string,
+      on: string,
+      off: string,
+    ) =>
+      `Nebel bringt das Haus an einem Nachmittag mit ${outside} °C auf ${inside} °C bei ${rh} %, ${on} s an und ${off} s aus. Griffe stellen die Feuchtegrenze und den Stoß ein.`,
+    calendarAlt: (plant: string, harvest: string, end: string, heat: string) =>
+      `Anbaukalender: Pflanzung in Woche ${plant}, erste Ernte in Woche ${harvest}, Kulturende in Woche ${end}, Heizung ab Woche ${heat}. Griffe stellen die Pflanzwoche und das Kulturende ein.`,
+    ventsOnly: 'Nur Lüftung',
+    withFog: 'Mit Nebel',
+    wetBulb: 'Feuchtkugel',
+    cap: 'Grenze',
     heatAlt: (inside: string, outside: string, kw: string) =>
       `Wärme, die das Haus verlässt: ${kw} kW, von ${inside} °C innen zu ${outside} °C außen. Griffe stellen beide Temperaturen ein.`,
     pipesAlt: (loops: string, length: string, supply: string, back: string) =>
@@ -691,6 +1512,51 @@ export const DE: SerraCopy = {
         title: 'Bericht',
         body: 'Das Projekt auf einer druckbaren Seite: das Haus, sein Klima und jedes gespeicherte Ergebnis mit seinen wichtigsten Zahlen und Befunden. Drucken Sie es, oder wählen Sie im Druckdialog „Als PDF speichern“, um es zu versenden.',
       },
+      {
+        id: 'calendar',
+        title: 'Anbaukalender',
+        body: 'Die Wochen für Pflanzung, Blüte, Ernte und Räumung mit den Klimasollwerten jedes Stadiums und die Wochen, in denen Heizung, CO₂, Schattierung und Nebel laufen, aus den Klimanormalen. Tomatenbetriebe in der Wüste pflanzen um Woche 36, heizen ab etwa Woche 42 und enden nach Woche 29.',
+      },
+      {
+        id: 'vpd',
+        title: 'Feuchte und VPD',
+        body: 'Das Sättigungsdefizit aus Temperatur und Feuchte (Tetens, wie in FAO-56), der Taupunkt und das Wasser, das die Luft noch aufnehmen kann, gegen den Bereich für Kulturstadium und Licht. Die Karte zeigt jedes Paar aus Temperatur und Feuchte, denn ein VPD passt zu vielen.',
+      },
+      {
+        id: 'fog',
+        title: 'Hochdrucknebel und Kühlstrategie',
+        body: 'Hochdrucknebel in einem gelüfteten Haus: die Innentemperatur aus einer Wärme- und Wasserbilanz, der An/Aus-Takt, der eine Feuchtegrenze hält, und das Wasser pro Tag. Der Berater prüft den Auslegungsnachmittag: Bräuchte die Lüftung allein mehr, als ein Dach öffnet, schlägt er Schattierung mit Nebel oder Pads vor.',
+      },
+      {
+        id: 'science',
+        title: 'Wissen',
+        body: 'Jedes Phänomen, auf dem die Werkzeuge beruhen, erklärt: was passiert, die Formel, was sie annimmt und wie man jede Eingabe misst, mit welchem Gerät. Das ⓘ neben jedem Feld öffnet denselben Rat und führt hierher.',
+      },
+      {
+        id: 'supply',
+        title: 'Wasserversorgung',
+        body: 'Meerwasser-Umkehrosmose für den Spitzentag der Kultur: Zulauf, Sole und ihr Salzgehalt, Energie, Kosten und Speicher. Fertigation mit Drainrecycling: gespartes Wasser und gesparter Dünger, Drain-EC, Natriumanreicherung und wann gespült wird, und der Ertragsverlust durch Salz.',
+      },
+      {
+        id: 'site',
+        title: 'Standort und Wirtschaftlichkeit',
+        body: 'Projekte mit demselben Standortnamen sind seine Abteilungen; geben Sie jeder ihre Fläche, und der Standort summiert Wasser, Wärme, Ertrag, Arbeit und CO₂, prüft gemeinsame UO und BHKW und berechnet Kosten je kg, Marge und Amortisation.',
+      },
+      {
+        id: 'energy',
+        title: 'Energiezentrale',
+        body: 'Ein Wintertag Stunde für Stunde: der Wärmebedarf des Hauses, ein tagsüber für sein CO₂ laufendes Gas-BHKW, der Puffer, der seine Wärme in die Nacht trägt, und der Kessel für den Rest; Gas, Strom und Kosten. Und die Wärme in gekühltem Brunnenwasser.',
+      },
+      {
+        id: 'operations',
+        title: 'Betrieb',
+        body: 'Ein Tagebuch für Kontrollen, Nützlinge, Spritzungen (WHO-Klasse Ia und Ib abgelehnt), Wartung und Ernte; die tägliche Hygiene-Checkliste; der Wartungsplan mit Fälligem und Überfälligem; und ein Hitzeplan für die Arbeitenden nach dem Hitzeindex.',
+      },
+      {
+        id: 'data',
+        title: 'Live-Daten',
+        body: 'Die CSV eines Datenloggers importieren oder eine Beispielwoche laden und mit dem vergleichen, was die Werkzeuge erwarten: VPD im Bereich, Tag- und Nachttemperaturen, Drain; VPD und Temperatur je Tagesstunde; und Alarme für Krankheitsrisiko, Hitzebelastung, Drain-EC, Temperatur und pH.',
+      },
     ],
     sourcesTitle: 'Quellen',
     sources: [
@@ -702,6 +1568,9 @@ export const DE: SerraCopy = {
       'Thimijan & Heins (1983): Umrechnung von Sonnenlicht in Photonen für Pflanzen.',
       'Nederhoff (1994): CO₂-Düngung, Verluste und Aufnahme im Gewächshaus.',
       'Campen et al. (2003): Entfeuchtung von Gewächshäusern durch Lüftung und Wärme.',
+      'Soussi et al. (2022): Klimaregelung und Kühlung von Gewächshäusern in heißen, trockenen Regionen.',
+      'Shamshiri et al. (2018): optimale Temperatur, Feuchte und VPD für Gewächshaustomaten.',
+      'Ishii et al.: Nebelkühlung gegen Pad and Fan in einem Gewächshaus in Arizona.',
     ],
     limitsTitle: 'Grenzen',
     limits: [
@@ -713,6 +1582,160 @@ export const DE: SerraCopy = {
   },
 
   notes: {
+    'data.vpdBand': (v) =>
+      `Das VPD lag ${v['pct']} % der Zeit in seinem Bereich.`,
+    'data.dayOk': (v) =>
+      `Die Tage lagen im Mittel bei ${v['t']} °C, innerhalb ${v['min']}–${v['max']} °C.`,
+    'data.dayOff': (v) =>
+      `Die Tage lagen im Mittel bei ${v['t']} °C, außerhalb ${v['min']}–${v['max']} °C.`,
+    'data.nightOk': (v) =>
+      `Die Nächte lagen im Mittel bei ${v['t']} °C, innerhalb ${v['min']}–${v['max']} °C.`,
+    'data.nightOff': (v) =>
+      `Die Nächte lagen im Mittel bei ${v['t']} °C, außerhalb ${v['min']}–${v['max']} °C.`,
+    'data.drain': (v) =>
+      `Der Drain lag im Mittel bei ${v['pct']} % bei ${v['plan']} % Plan.`,
+    'data.alerts': (v) => `${v['n']} Alarme: siehe Liste unten.`,
+    'data.noAlerts': (v) => `Keine Alarme (${v['n']}).`,
+    'ops.bannedSpray': (v) =>
+      `Mittel der WHO-Klasse ${v['cls']} sind nicht erlaubt: ein anderes Mittel wählen.`,
+    'heat.none': (v) =>
+      `Hitzeindex ${v['hi']} °C: keine Hitzegefahr (${v['rest']} min Pause, ${v['water']} L je Stunde).`,
+    'heat.caution': (v) =>
+      `Hitzeindex ${v['hi']} °C: Vorsicht. ${v['rest']} min Pause je Stunde und ${v['water']} L je Stunde trinken.`,
+    'heat.extremeCaution': (v) =>
+      `Hitzeindex ${v['hi']} °C: große Vorsicht. ${v['rest']} min Pause je Stunde und ${v['water']} L je Stunde trinken.`,
+    'heat.danger': (v) =>
+      `Hitzeindex ${v['hi']} °C: Gefahr. ${v['rest']} min Pause je Stunde, ${v['water']} L je Stunde trinken, keine schwere Arbeit.`,
+    'heat.extremeDanger': (v) =>
+      `Hitzeindex ${v['hi']} °C: extreme Gefahr. Arbeit drinnen einstellen (${v['rest']} min Pause, ${v['water']} L je Stunde).`,
+    'energy.share': (v) =>
+      `Das BHKW deckt ${v['pct']} % der Tageswärme; der Kessel ergänzt ${v['boiler']} MWh.`,
+    'energy.dump': (v) =>
+      `${v['mwh']} MWh BHKW-Wärme werden abgeführt: ein größerer Puffer oder eine kürzere Laufzeit würde sie halten.`,
+    'energy.buffer': (v) =>
+      `Der Puffer hält ${v['mwh']} MWh, um die Tageswärme in die Nacht zu tragen.`,
+    'energy.co2Enough': (v) =>
+      `Das Abgas des BHKW liefert ${v['kg']} kg CO₂, genug für die ${v['need']} kg, die die Kultur aufnimmt.`,
+    'energy.co2Short': (v) =>
+      `Das Abgas des BHKW liefert ${v['kg']} kg CO₂, weniger als die ${v['need']} kg, die die Kultur aufnimmt: flüssiges CO₂ ergänzen oder länger laufen.`,
+    'energy.ventsShut': () =>
+      'BHKW-CO₂ lohnt nur bei fast geschlossener Lüftung (über etwa 5 % offen hält es sich nicht): für Wintertage planen.',
+    'reuse.heat': (v) =>
+      `Jeder gekühlte m³ hält ${v['kwh']} kWh: ${v['mwh']} MWh pro Tag zur Rückgewinnung.`,
+    'reuse.cover': (v) =>
+      `Das deckt ${v['pct']} % des Wärmebedarfs am Wintertag.`,
+    'reuse.heatPump': () =>
+      'Bei 15–40 °C braucht diese Wärme eine Wärmepumpe oder einen Niedertemperaturkreis.',
+    'econ.margin': (v) => `Eine Marge von ${v['pct']} % des Umsatzes.`,
+    'econ.loss': (v) =>
+      `Die Kosten übersteigen den Umsatz (Marge ${v['pct']} %).`,
+    'econ.biggest.labour': (v) =>
+      `Arbeit ist der größte Kostenblock: ${v['pct']} %.`,
+    'econ.biggest.energy': (v) =>
+      `Energie ist der größte Kostenblock: ${v['pct']} %.`,
+    'econ.biggest.water': (v) =>
+      `Wasser ist der größte Kostenblock: ${v['pct']} %.`,
+    'econ.biggest.inputs': (v) =>
+      `Dünger und Pflanzenschutz sind der größte Kostenblock: ${v['pct']} %.`,
+    'econ.biggest.other': (v) =>
+      `Verpackung und Gemeinkosten sind der größte Kostenblock: ${v['pct']} %.`,
+    'econ.payback': (v) =>
+      `Der Bau amortisiert sich in etwa ${v['years']} Jahren.`,
+    'econ.prices': () =>
+      'Die Preise sind Beispiele (Exporttomaten erzielten von Januar bis April 2016 1,24–1,94 EUR/kg): eigene eingeben.',
+    'ro.balance': (v) =>
+      `${v['feed']} m³ Meerwasser pro Tag ergeben das Permeat und ${v['brine']} m³ Sole mit ${v['salinity']} g/L.`,
+    'ro.recoveryHigh': (v) =>
+      `Ausbeute ${v['pct']} %: über 50 % verkrustet die Sole die Membranen; Grenze des Lieferanten prüfen.`,
+    'ro.short': (v) =>
+      `Die Anlage deckt nur ${v['pct']} % des Bedarfs: es fehlen ${v['m3']} m³ pro Tag. Leistung oder Speicher ergänzen.`,
+    'ro.headroom': (v) =>
+      `Die Anlage hat ${v['pct']} % Reserve über dem Spitzentag.`,
+    'ro.lowSec': () =>
+      'Unter 2,5 kWh/m³ liegt unter dem, was Meerwasser-UO erreicht; den Wert prüfen.',
+    'ro.highSec': () =>
+      'Über 4,5 kWh/m³: ein Energierückgewinner brächte ihn auf 3–4.',
+    'ro.product': (v) =>
+      `Das Permeat enthält etwa ${v['mg']} mg/L Salz (EC ${v['ec']} dS/m); sein Natrium bestimmt, wie lange der Nährstoffkreislauf läuft.`,
+    'ro.brine': () =>
+      'Die Sole geht über einen Diffusor mit Einleitgenehmigung ins Meer zurück; die Einleitung mit der Behörde planen.',
+    'fert.water': (v) =>
+      `${v['reused']} m³ Drain pro Tag wiederverwendet: ${v['pct']} % des gegebenen Wassers.`,
+    'fert.drainHigh': (v) =>
+      `Drain-EC ${v['ec']} dS/m liegt an oder über der Grenze ${v['max']}: mehr Drain geben oder spülen.`,
+    'fert.yield': (v) =>
+      `Eine Wurzelraum-EC von ${v['ec']} dS/m kostet etwa ${v['pct']} % des Ertrags (Richtwert).`,
+    'fert.flush': (v) =>
+      `Natrium erreicht ${v['na']} mmol/L in etwa ${v['days']} Tagen: dann den Kreislauf spülen.`,
+    'fert.levels': (v) =>
+      `Natrium pendelt sich bei ${v['na']} mmol/L unter der Grenze ein: kein Spülen wegen Natrium nötig.`,
+    'fert.saltySource': () =>
+      'Frischwasser mit über 3 mmol/L Natrium füllt den Kreislauf schnell mit Salz: mit Osmosewasser mischen oder mehr Drain abgeben.',
+    'fert.lowDrain': () =>
+      'Unter 20 % Drain bei salzigem Wasser: Salze reichern sich in den Matten an.',
+    'fert.disinfect': () =>
+      'Den wiederverwendeten Drain desinfizieren (UV, Hitze oder Langsamsandfilter), bevor er zurück zur Kultur geht.',
+    'vpd.tooWet': (v) =>
+      `VPD ${v['vpd']} kPa: unter ${v['min']} kPa für dieses Stadium, die Luft ist zu feucht.`,
+    'vpd.good': (v) =>
+      `VPD ${v['vpd']} kPa: im Bereich ${v['min']}–${v['max']} kPa für dieses Stadium.`,
+    'vpd.tooDry': (v) =>
+      `VPD ${v['vpd']} kPa: über ${v['max']} kPa für dieses Stadium, die Luft ist zu trocken.`,
+    'vpd.disease': () =>
+      'Unter 0,3 kPa: Botrytis, Mehltau und weiches Wachstum.',
+    'vpd.wilting': () =>
+      'Über 1,5 kPa welkt die Kultur: schattieren und befeuchten.',
+    'vpd.arid': () =>
+      '3 kPa oder mehr: Wüstenluft, das Wachstum stockt. Nebel oder Pads, und Schattierung.',
+    'vpd.cold': (v) =>
+      `Unter ${v['min']} °C für dieses Stadium: erst heizen, dann lüften.`,
+    'vpd.hot': (v) =>
+      `Über ${v['max']} °C für dieses Stadium: schattieren und kühlen.`,
+    'vpd.outsideWetter': () =>
+      'Die Außenluft hält mehr Wasser als die Innenluft: Lüften trocknet das Haus nicht, Heizen schon.',
+    'vpd.samePairs': (v) =>
+      `Ein VPD passt zu vielen Paaren: ${v['vpd']} kPa braucht bei 15 °C trockenere Luft als bei 35 °C, also Temperatur und Feuchte zusammen lesen.`,
+    'fog.cooling': (v) =>
+      `Nebel bringt das Haus auf ${v['inside']} °C, ${v['drop']} K unter außen, bei ${v['rh']} % Feuchte.`,
+    'fog.tooHumid': () =>
+      'Das Haus liegt ohne Nebel über der Feuchtegrenze: Nebeln würde nur die Kultur nässen.',
+    'fog.moreNozzles': () =>
+      'Die Düsen laufen unter der Grenze ständig: mehr Düsen würden weiter kühlen.',
+    'fog.cycle': (v) =>
+      `${v['on']} s an und ${v['off']} s aus halten die Luft nahe ${v['rh']} % (60 s an, 180 s aus ist ein üblicher Start).`,
+    'fog.lowPressure': () =>
+      'Unter 40 bar sind die Tröpfchen zu groß, um in der Luft zu verdunsten: sie nässen die Blätter.',
+    'fog.droplets': () =>
+      'Hochdruck gibt Tröpfchen von 10–30 µm, die verdunsten, bevor sie fallen.',
+    'fog.trimVents': () =>
+      'Weit offene Lüftung trägt den Nebel fort: beim Nebeln auf 5–15 % der Fläche drosseln.',
+    'fog.waterQuality': () =>
+      'Entsalztes oder enthärtetes Wasser nehmen: Salze verstopfen die Düsen und machen die Früchte fleckig.',
+    'advice.notBuildable': (v) =>
+      `${v['pct']} % der Fläche als Lüftung und ${v['flow']} Millionen m³/h Luft: mehr, als ein Dach öffnet (höchstens etwa ${v['limit']} %).`,
+    'advice.vents': () => 'Die Dachlüftung schafft diesen Nachmittag.',
+    'advice.ventsAndShade': (v) =>
+      `Mit ${v['shade']} % Schattierung braucht die Lüftung ${v['pct']} % der Fläche: zuerst schattieren.`,
+    'advice.shadeAndFog': (v) =>
+      `${v['shade']} % Schattierung und Nebel halten das Haus nahe ${v['inside']} °C bei gedrosselter Lüftung. Nebel passt zu langen, großen Häusern.`,
+    'advice.shadeAndPad': (v) =>
+      `${v['shade']} % Schattierung und Pads: Die Luft verlässt das nasse Pad mit etwa ${v['pad']} °C. Mit ${v['length']} m ist das Haus kurz genug für Pads.`,
+    'advice.humid': () =>
+      'Feuchte Außenluft: Verdunstung kühlt wenig. Schattieren, und nachts kühlen.',
+    'calendar.season': (v) =>
+      `Gepflanzt in Woche ${v['plant']}, endet die Kultur in Woche ${v['end']}: ${v['weeks']} Wochen im Haus.`,
+    'calendar.harvest': (v) =>
+      `Ernte ab Woche ${v['first']}, ${v['weeks']} Wochen lang.`,
+    'calendar.heating': (v) =>
+      `Heizung ab Woche ${v['from']}, ${v['weeks']} Wochen im Jahr.`,
+    'calendar.co2': (v) =>
+      `CO₂ lohnt sich ${v['weeks']} Wochen, wenn das Haus geschlossen bleibt.`,
+    'calendar.fog': (v) =>
+      `Nebel oder Pads für ${v['weeks']} Wochen heißer Nachmittage.`,
+    'calendar.shade': (v) =>
+      `Schattierung für ${v['weeks']} Wochen starker Sonne.`,
+    'calendar.shortCleanOut': (v) =>
+      `Nur ${v['weeks']} Wochen zwischen zwei Kulturen: wenig Zeit zum Reinigen und Desinfizieren.`,
     'geometry.lowGutter': (v) =>
       `Traufe bei ${v['gutter']} m: Ein niedriges Haus heizt sich auf und bleibt feucht. 4 m oder mehr puffern besser.`,
     'geometry.goodVolume': (v) =>

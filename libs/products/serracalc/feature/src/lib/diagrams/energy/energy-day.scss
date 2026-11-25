@@ -1,0 +1,41 @@
+@use '../../styles/serra' as sc;
+
+@include sc.diagram;
+
+.grid {
+  fill: none;
+  stroke: var(--color-border-default);
+  stroke-width: 1;
+  opacity: 0.6;
+}
+
+.run {
+  fill: var(--color-accent-default);
+  opacity: 0.3;
+}
+
+.chp {
+  fill: var(--color-accent-default);
+}
+
+.buffer {
+  fill: var(--color-info-default);
+}
+
+.boiler {
+  fill: var(--color-warning-default);
+}
+
+.demand {
+  fill: none;
+  stroke: var(--color-text-default);
+  stroke-width: 2;
+  stroke-linejoin: round;
+}
+
+.buffer-area {
+  fill: var(--color-info-default);
+  opacity: 0.3;
+  stroke: var(--color-info-default);
+  stroke-width: 1.5;
+}

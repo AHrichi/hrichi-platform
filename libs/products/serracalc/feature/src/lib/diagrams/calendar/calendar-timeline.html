@@ -1,0 +1,124 @@
+<svg viewBox="0 0 640 290" role="group" [attr.aria-label]="alt()">
+  <rect class="backdrop" width="640" height="290" rx="12" />
+
+  <!-- Months -->
+  @for (m of months(); track m.x) {
+    <path class="month-line" [attr.d]="'M' + m.x + ' 22V270'" />
+    <text class="caption" [attr.x]="m.x + 3" y="18">{{ m.label }}</text>
+  }
+
+  <!-- Outside temperatures: the band between night and afternoon -->
+  <text class="row-label" x="10" y="76">
+    {{ i18n.word(t().calendar.rows.temp) }}
+  </text>
+  @for (tick of tTicks; track tick.t) {
+    <text
+      class="tick"
+      [attr.x]="x0 - 6"
+      [attr.y]="tick.y + 4"
+      text-anchor="end"
+    >
+      {{ tick.t }}
+    </text>
+  }
+  <path class="temp" [attr.d]="tempArea()" />
+  <path class="set-line" [attr.d]="'M' + x0 + ' ' + setLine() + 'H' + x1" />
+  <path class="cool-line" [attr.d]="'M' + x0 + ' ' + coolLine() + 'H' + x1" />
+
+  <!-- The crop's stages -->
+  <text class="row-label" x="10" y="134">
+    {{ i18n.word(t().calendar.rows.stage) }}
+  </text>
+  @for (run of runs(); track run.x) {
+    <rect
+      [class]="'stage ' + run.stage"
+      [attr.x]="run.x + 0.5"
+      y="116"
+      [attr.width]="run.w - 1"
+      height="26"
+      rx="5"
+    />
+    @if (run.w > 60) {
+      <text
+        class="stage-label"
+        [attr.x]="run.x + run.w / 2"
+        y="133"
+        text-anchor="middle"
+      >
+        {{ i18n.word(t().stages[run.stage]) }}
+      </text>
+    }
+  }
+
+  <text class="row-label" x="10" y="164">
+    {{ i18n.word(t().stages.nursery) }}
+  </text>
+  @for (x of nursery(); track x) {
+    <rect
+      class="nursery"
+      [attr.x]="x + 0.5"
+      y="153"
+      [attr.width]="kw - 1"
+      height="14"
+      rx="3"
+    />
+  }
+
+  <!-- Systems by week -->
+  @for (row of cells(); track row.key) {
+    <text class="row-label" x="10" [attr.y]="row.y + 11">
+      {{ i18n.word(t().calendar.rows[row.key]) }}
+    </text>
+    <rect
+      class="lane"
+      [attr.x]="x0"
+      [attr.y]="row.y"
+      [attr.width]="x1 - x0"
+      height="15"
+      rx="3"
+    />
+    @for (x of row.xs; track x) {
+      <rect
+        [class]="'cell ' + row.key"
+        [attr.x]="x + 0.5"
+        [attr.y]="row.y"
+        [attr.width]="kw - 1"
+        height="15"
+        rx="2"
+      />
+    }
+  }
+
+  <!-- This week -->
+  <path class="today" [attr.d]="'M' + todayX() + ' 30V276'" />
+  <text class="today-label" [attr.x]="todayX()" y="286" text-anchor="middle">
+    {{ i18n.word(t().app.week) }} {{ today() }}
+  </text>
+
+  <g
+    scHandle
+    axis="x"
+    [x]="plantX()"
+    [y]="129"
+    [value]="params().plantingWeek"
+    [min]="1"
+    [max]="52"
+    [step]="1"
+    [label]="t().fields['plantingWeek']"
+    [fromPoint]="weekAt"
+    (valueChange)="changed.emit({ key: 'plantingWeek', value: $event })"
+  />
+  <g
+    scHandle
+    axis="x"
+    [x]="endX()"
+    [y]="129"
+    [value]="params().cropWeeks"
+    [min]="params().vegetativeWeeks + params().floweringWeeks + 1"
+    [max]="52"
+    [step]="1"
+    [label]="t().fields['cropWeeks']"
+    [fromPoint]="lengthAt"
+    (valueChange)="changed.emit({ key: 'cropWeeks', value: $event })"
+  />
+</svg>

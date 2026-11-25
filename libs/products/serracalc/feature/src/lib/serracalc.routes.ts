@@ -23,6 +23,26 @@ export const SERRACALC_ROUTES: Routes = [
           ),
       },
       {
+        path: 'site',
+        title: title('site'),
+        loadComponent: () =>
+          import('./screens/site/site-screen').then((m) => m.SiteScreen),
+      },
+      {
+        path: 'energy',
+        title: title('energy'),
+        loadComponent: () =>
+          import('./screens/energy/energy-screen').then((m) => m.EnergyScreen),
+      },
+      {
+        path: 'calendar',
+        title: title('calendar'),
+        loadComponent: () =>
+          import('./screens/calendar/calendar-screen').then(
+            (m) => m.CalendarScreen,
+          ),
+      },
+      {
         path: 'greenhouse',
         title: title('greenhouse'),
         loadComponent: () =>
@@ -53,10 +73,30 @@ export const SERRACALC_ROUTES: Routes = [
           import('./screens/water/water-screen').then((m) => m.WaterScreen),
       },
       {
+        path: 'supply',
+        title: title('supply'),
+        loadComponent: () =>
+          import('./screens/supply/supply-screen').then((m) => m.SupplyScreen),
+      },
+      {
         path: 'air',
         title: title('air'),
         loadComponent: () =>
           import('./screens/air/air-screen').then((m) => m.AirScreen),
+      },
+      {
+        path: 'operations',
+        title: title('operations'),
+        loadComponent: () =>
+          import('./screens/operations/operations-screen').then(
+            (m) => m.OperationsScreen,
+          ),
+      },
+      {
+        path: 'data',
+        title: title('data'),
+        loadComponent: () =>
+          import('./screens/data/data-screen').then((m) => m.DataScreen),
       },
       {
         path: 'climate',
@@ -64,6 +104,14 @@ export const SERRACALC_ROUTES: Routes = [
         loadComponent: () =>
           import('./screens/climate/climate-screen').then(
             (m) => m.ClimateScreen,
+          ),
+      },
+      {
+        path: 'science',
+        title: title('science'),
+        loadComponent: () =>
+          import('./screens/science/science-screen').then(
+            (m) => m.ScienceScreen,
           ),
       },
       {

@@ -158,6 +158,111 @@ export const HUMIDITY_FIELDS: readonly FieldSpec[] = [
   uValue,
 ];
 
+export const FOG_FIELDS: readonly FieldSpec[] = [
+  spec('outsideC', '°C', 20, 50, 0.5),
+  spec('outsideRhPct', '%', 5, 95, 1),
+  spec('ventPct', '%', 1, 40, 1),
+  spec('ventOpeningM', 'm', 0.2, 3, 0.1),
+  spec('windMs', 'm/s', 0, 10, 0.5),
+  spec('nozzlesPer100M2', '/100 m²', 0, 80, 1),
+  spec('nozzleLh', 'L/h', 1, 15, 0.1),
+  spec('pressureBar', 'bar', 5, 120, 5),
+  spec('onS', 's', 10, 300, 5),
+  spec('maxRhPct', '%', 50, 95, 1),
+  spec('hoursPerDay', 'h', 1, 16, 0.5),
+];
+
+export const VPD_FIELDS: readonly FieldSpec[] = [
+  spec('airC', '°C', 5, 45, 0.5),
+  spec('rhPct', '%', 5, 99, 1),
+  spec('outsideC', '°C', -10, 50, 0.5),
+  spec('outsideRhPct', '%', 5, 100, 1),
+];
+
+export const CALENDAR_FIELDS: readonly FieldSpec[] = [
+  spec('plantingWeek', '', 1, 52, 1),
+  spec('nurseryWeeks', '', 0, 12, 1),
+  spec('vegetativeWeeks', '', 1, 12, 1),
+  spec('floweringWeeks', '', 1, 16, 1),
+  spec('cropWeeks', '', 8, 52, 1),
+  spec('nightSetC', '°C', 0, 25, 0.5),
+  spec('ventilateAboveC', '°C', 15, 35, 0.5),
+  spec('coolAboveC', '°C', 20, 45, 0.5),
+  spec('maxDli', 'mol/m²·d', 5, 60, 1),
+  transmission,
+];
+
+export const RO_FIELDS: readonly FieldSpec[] = [
+  spec('demandM3Day', 'm³/d', 0, 200000, 1),
+  spec('lossesPct', '%', 0, 30, 1),
+  spec('feedSalinityGL', 'g/L', 1, 50, 0.5),
+  spec('recoveryPct', '%', 30, 60, 1),
+  spec('rejectionPct', '%', 98, 99.9, 0.1),
+  spec('secKwhM3', 'kWh/m³', 1, 8, 0.1),
+  spec('storageDays', 'd', 0.5, 7, 0.5),
+  spec('capacityM3Day', 'm³/d', 0, 200000, 10),
+  spec('availabilityPct', '%', 50, 100, 1),
+];
+
+export const FERTIGATION_FIELDS: readonly FieldSpec[] = [
+  spec('appliedM3Day', 'm³/d', 0, 100000, 1),
+  spec('drainPct', '%', 0, 60, 1),
+  spec('recyclePct', '%', 0, 100, 5),
+  spec('sourceEcDsM', 'dS/m', 0, 6, 0.1),
+  spec('sourceNaMmolL', 'mmol/L', 0, 30, 0.1),
+  spec('targetEcDsM', 'dS/m', 0.5, 8, 0.1),
+  spec('uptakeEcDsM', 'dS/m', 0, 4, 0.1),
+  spec('flushEcDsM', 'dS/m', 1, 10, 0.1),
+  spec('naLimitMmolL', 'mmol/L', 1, 30, 0.5),
+  spec('systemM3', 'm³', 0.1, 5000, 1),
+  spec('dilution', '1 :', 50, 500, 10),
+  spec('stockTankM3', 'm³', 0.1, 100, 0.5),
+  spec('yieldSlopePct', '%/dS·m', 0, 20, 0.1),
+  spec('yieldThresholdEc', 'dS/m', 0, 6, 0.1),
+];
+
+export const ENERGY_FIELDS: readonly FieldSpec[] = [
+  spec('lossCoefficientWK', 'W/K', 10, 5000000, 10),
+  spec('screenSavingPct', '%', 0, 70, 1),
+  spec('nightSetC', '°C', 0, 30, 0.5),
+  spec('daySetC', '°C', 0, 35, 0.5),
+  spec('outsideMinC', '°C', -25, 25, 0.5),
+  spec('outsideMaxC', '°C', -15, 35, 0.5),
+  spec('radiationWm2', 'W/m²', 0, 1100, 10),
+  transmission,
+  spec('solarGainPct', '%', 0, 80, 1),
+  spec('chpElectricKw', 'kW', 0, 50000, 10),
+  spec('chpThermalKw', 'kW', 0, 60000, 10),
+  spec('chpElectricPct', '%', 25, 50, 1),
+  spec('chpStartHour', 'h', 0, 23, 1),
+  spec('chpEndHour', 'h', 1, 24, 1),
+  spec('bufferM3', 'm³', 0, 50000, 1),
+  spec('bufferDeltaK', 'K', 10, 60, 1),
+  spec('boilerEfficiencyPct', '%', 70, 105, 1),
+  spec('co2NeedKgH', 'kg/h', 0, 10000, 1),
+  floor,
+];
+
+export const REUSE_FIELDS: readonly FieldSpec[] = [
+  spec('waterM3Day', 'm³/d', 0, 200000, 1),
+  spec('inC', '°C', 5, 95, 0.5),
+  spec('outC', '°C', 0, 60, 0.5),
+  spec('heatDemandKwhDay', 'kWh', 0, 50000000, 10),
+];
+
+export const ECONOMICS_FIELDS: readonly FieldSpec[] = [
+  spec('areaHa', 'ha', 0.01, 1000, 0.01),
+  spec('yieldTHa', 't/ha', 0, 800, 1),
+  spec('labourDaysHa', 'd/ha', 0, 5000, 10),
+  spec('heatMwhYear', 'MWh', 0, 5000000, 1),
+  spec('waterM3Year', 'm³', 0, 500000000, 10),
+];
+
+/** A money field in the project's currency that can run high (wages, build). */
+export function moneyField(key: string, unit: string, max = 5000): FieldSpec {
+  return spec(key, unit, 0, max, 0.01);
+}
+
 /** A price field in the project's currency, per its unit. */
 export function priceField(key: string, unit: string): FieldSpec {
   return spec(key, unit, 0, 50, 0.01);

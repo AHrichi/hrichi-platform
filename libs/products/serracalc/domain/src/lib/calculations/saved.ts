@@ -1,10 +1,16 @@
 import type { CalcNote, SavedCalculation } from '../models/serra.models';
+import { cropCalendar } from './calendar';
+import { energyHub, heatReuse } from './energy';
+import { siteEconomics } from './site';
 import { co2Enrichment } from './co2';
 import { padAndFan, ventilation } from './cooling';
 import { annualHeating, heatLoss } from './heating';
 import { hotWaterHeating } from './hot-water';
+import { fogCooling } from './fog';
 import { nightHumidity } from './humidity';
 import { supplementalLight } from './light';
+import { vpdCheck } from './vpd';
+import { fertigation, seawaterRo } from './water-chain';
 import { cropWater, rainwater } from './water';
 
 /** The figures a report shows for each kind of saved result. */
@@ -44,7 +50,34 @@ export type FigureId =
   | 'vpd'
   | 'dewPoint'
   | 'outsideAir'
-  | 'dryingHeat';
+  | 'dryingHeat'
+  | 'headroom'
+  | 'fogInside'
+  | 'fogRh'
+  | 'fogWater'
+  | 'nozzles'
+  | 'firstHarvest'
+  | 'harvestWeeks'
+  | 'heatingWeeks'
+  | 'fogWeeks'
+  | 'roFeed'
+  | 'roBrine'
+  | 'roEnergy'
+  | 'roCoverage'
+  | 'drainEc'
+  | 'waterSaved'
+  | 'flushDay'
+  | 'yieldLoss'
+  | 'chpShare'
+  | 'boilerHeat'
+  | 'gasDay'
+  | 'powerDay'
+  | 'reuseHeat'
+  | 'reuseCover'
+  | 'revenue'
+  | 'costPerKg'
+  | 'margin'
+  | 'payback';
 
 /**
  * One number of a result, language-neutral: the feature labels it and
@@ -186,6 +219,99 @@ export function summarizeSaved(saved: SavedCalculation): SavedSummary {
           fig('dewPoint', r.dewPointC, '°C', 1),
           fig('outsideAir', r.airM3h, 'm³/h'),
           fig('dryingHeat', r.heatKw, 'kW', 1),
+        ],
+        notes: r.notes,
+      };
+    }
+    case 'vpd': {
+      const r = vpdCheck(saved.inputs);
+      return {
+        figures: [
+          fig('vpd', r.vpdKpa, 'kPa', 2),
+          fig('dewPoint', r.dewPointC, '°C', 1),
+          fig('headroom', r.headroomGm3, 'g/m³', 1),
+        ],
+        notes: r.notes,
+      };
+    }
+    case 'fog': {
+      const r = fogCooling(saved.inputs);
+      return {
+        figures: [
+          fig('fogInside', r.insideC, '°C', 1),
+          fig('fogRh', r.insideRhPct, '%'),
+          fig('fogWater', r.waterM3Day, 'm³/d', 1),
+          fig('nozzles', r.nozzles, ''),
+        ],
+        notes: r.notes,
+      };
+    }
+    case 'ro': {
+      const r = seawaterRo(saved.inputs);
+      return {
+        figures: [
+          fig('roFeed', r.feedM3Day, 'm³/d'),
+          fig('roBrine', r.brineM3Day, 'm³/d'),
+          fig('roEnergy', r.energyKwhDay, 'kWh/d'),
+          fig('roCoverage', r.coveragePct, '%'),
+        ],
+        notes: r.notes,
+      };
+    }
+    case 'fertigation': {
+      const r = fertigation(saved.inputs);
+      return {
+        figures: [
+          fig('drainEc', r.drainEcDsM, 'dS/m', 1),
+          fig('waterSaved', r.waterSavedPct, '%'),
+          fig('flushDay', r.flushDay, 'd'),
+          fig('yieldLoss', r.yieldLossPct, '%', 1),
+        ],
+        notes: r.notes,
+      };
+    }
+    case 'energy': {
+      const r = energyHub(saved.inputs);
+      return {
+        figures: [
+          fig('chpShare', r.chpSharePct, '%'),
+          fig('boilerHeat', r.boilerKwh / 1000, 'MWh', 1),
+          fig('gasDay', r.gasM3, 'm³'),
+          fig('powerDay', r.powerKwh / 1000, 'MWh', 1),
+        ],
+        notes: r.notes,
+      };
+    }
+    case 'heatReuse': {
+      const r = heatReuse(saved.inputs);
+      return {
+        figures: [
+          fig('reuseHeat', r.kwhDay / 1000, 'MWh', 2),
+          fig('reuseCover', r.coverPct, '%'),
+        ],
+        notes: r.notes,
+      };
+    }
+    case 'economics': {
+      const r = siteEconomics(saved.inputs);
+      return {
+        figures: [
+          fig('revenue', r.revenue, 'money'),
+          fig('costPerKg', r.costPerKg, 'money', 2),
+          fig('margin', r.margin, 'money'),
+          fig('payback', r.paybackYears, 'y', 1),
+        ],
+        notes: r.notes,
+      };
+    }
+    case 'calendar': {
+      const r = cropCalendar(saved.inputs);
+      return {
+        figures: [
+          fig('firstHarvest', r.firstHarvestWeek, ''),
+          fig('harvestWeeks', r.harvestWeeks, ''),
+          fig('heatingWeeks', r.heatingWeeks, ''),
+          fig('fogWeeks', r.fogWeeks, ''),
         ],
         notes: r.notes,
       };

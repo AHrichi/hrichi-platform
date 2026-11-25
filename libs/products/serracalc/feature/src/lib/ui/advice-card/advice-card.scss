@@ -1,0 +1,110 @@
+@use '../../styles/serra' as sc;
+
+:host {
+  display: block;
+  min-inline-size: 0;
+}
+
+.advice {
+  @include sc.panel;
+
+  border-color: var(--color-accent-default);
+  box-shadow:
+    0 0 2.5rem -1.5rem var(--sc-glow, transparent),
+    var(--sc-shadow, none);
+
+  &[data-strategy='shadeAndFog'],
+  &[data-strategy='shadeAndPad'] {
+    border-color: var(--color-warning-default);
+  }
+}
+
+header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+
+  h3 {
+    margin: 0;
+    font-size: var(--font-size-400);
+    line-height: var(--font-line-height-tight);
+  }
+}
+
+.badge {
+  display: grid;
+  place-items: center;
+  flex: none;
+  inline-size: 2.75rem;
+  block-size: 2.75rem;
+  border-radius: var(--radius-md);
+  background: var(--color-accent-subtle);
+  color: var(--color-accent-default);
+  font-size: 1.25rem;
+}
+
+.eyebrow {
+  @include sc.eyebrow;
+}
+
+.compare {
+  display: grid;
+  gap: var(--space-2);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 8rem), 1fr));
+  margin: 0;
+
+  > div {
+    @include sc.readout;
+    padding: var(--space-2) var(--space-3);
+  }
+
+  .bad {
+    border-color: var(--color-danger-default);
+
+    dd {
+      color: var(--color-danger-default);
+    }
+  }
+
+  dt {
+    color: var(--color-text-muted);
+    font-size: var(--font-size-100);
+  }
+
+  dd {
+    margin: 0;
+    font-size: var(--font-size-400);
+    font-weight: var(--font-weight-semibold);
+  }
+}
+
+.go {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  align-self: start;
+  min-block-size: 2.75rem;
+  padding-inline: var(--space-4);
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--color-accent-solid);
+  color: var(--color-accent-on-solid);
+  font: inherit;
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+
+  &:hover {
+    background: var(--color-accent-solid-hover);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-focus-ring);
+    outline-offset: 2px;
+  }
+}
+
+.rule {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-100);
+}

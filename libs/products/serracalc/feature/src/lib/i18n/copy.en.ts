@@ -3,6 +3,9 @@ export type NoteWriter = (v: Record<string, string>) => string;
 
 export const EN = {
   app: {
+    week: 'Week',
+    weekHint: 'This calendar week: opens the crop calendar',
+    railNote: 'Made for desert sites: strong sun, cold nights, scarce water.',
     name: 'SerraCalc',
     tagline: 'Greenhouse heat, water & climate',
     activeProject: 'Active project',
@@ -18,6 +21,13 @@ export const EN = {
       'A planning aid: check the results with a qualified engineer and the suppliers’ data before you build.',
   },
   nav: {
+    operations: 'Operations',
+    data: 'Live data',
+    site: 'Site',
+    energy: 'Energy',
+    supply: 'Water supply',
+    science: 'Science',
+    calendar: 'Crop calendar',
     projects: 'Projects',
     greenhouse: 'Greenhouse',
     heating: 'Heating',
@@ -28,6 +38,13 @@ export const EN = {
     air: 'Light & air',
     report: 'Report',
     more: 'More',
+  },
+  navGroups: {
+    operate: 'Operate',
+    plan: 'Plan',
+    climate: 'Climate control',
+    water: 'Water',
+    reference: 'Reference',
   },
   common: {
     close: 'Close',
@@ -107,6 +124,71 @@ export const EN = {
 
   /** Number fields, shared by every calculator. */
   fields: {
+    lossCoefficientWK: 'Heat loss per kelvin',
+    outsideMinC: 'Outside, night low',
+    outsideMaxC: 'Outside, afternoon high',
+    chpElectricKw: 'CHP power',
+    chpThermalKw: 'CHP heat',
+    chpElectricPct: 'CHP electrical efficiency',
+    chpStartHour: 'CHP starts at',
+    chpEndHour: 'CHP stops at',
+    bufferM3: 'Buffer tank',
+    bufferDeltaK: 'Buffer temperature span',
+    boilerEfficiencyPct: 'Boiler efficiency',
+    co2NeedKgH: 'CO₂ the crop takes up',
+    powerPrice: 'Price of power sold',
+    waterM3Day: 'Water chilled a day',
+    inC: 'Water in',
+    outC: 'Water out',
+    heatDemandKwhDay: 'Heat needed that day',
+    areaHa: 'Area',
+    yieldTHa: 'Yield',
+    pricePerKg: 'Price received',
+    labourDaysHa: 'Labour',
+    wagePerDay: 'Wage a day',
+    heatMwhYear: 'Heat a year',
+    heatPricePerMwh: 'Heat price',
+    waterM3Year: 'Water a year',
+    waterPricePerM3: 'Water price',
+    inputsPerM2: 'Fertiliser and crop care',
+    otherPerM2: 'Packing and overheads',
+    capexPerM2: 'Build cost',
+    demandM3Day: 'Water needed, peak day',
+    lossesPct: 'Losses',
+    feedSalinityGL: 'Seawater salinity',
+    recoveryPct: 'Recovery',
+    rejectionPct: 'Salt rejection',
+    secKwhM3: 'Specific energy',
+    storageDays: 'Storage',
+    capacityM3Day: 'Installed capacity',
+    availabilityPct: 'Running time',
+    appliedM3Day: 'Water given a day',
+    recyclePct: 'Drain reused',
+    sourceEcDsM: 'EC of the fresh water',
+    sourceNaMmolL: 'Sodium in the fresh water',
+    targetEcDsM: 'EC at the dripper',
+    uptakeEcDsM: 'EC the crop takes up',
+    flushEcDsM: 'Flush above EC',
+    naLimitMmolL: 'Flush above sodium',
+    systemM3: 'Water in the loop',
+    dilution: 'Stock dilution',
+    stockTankM3: 'Each stock tank',
+    yieldSlopePct: 'Yield lost per dS/m',
+    yieldThresholdEc: 'Losses start above',
+    rhPct: 'Relative humidity',
+    ventPct: 'Vents open',
+    nozzlesPer100M2: 'Nozzles',
+    nozzleLh: 'Flow per nozzle',
+    pressureBar: 'Pump pressure',
+    onS: 'Fog burst',
+    maxRhPct: 'Humidity cap',
+    plantingWeek: 'Planting week',
+    nurseryWeeks: 'Weeks in the nursery',
+    vegetativeWeeks: 'Planting to first flowers',
+    floweringWeeks: 'Flowers to first harvest',
+    cropWeeks: 'Planting to end of crop',
+    ventilateAboveC: 'Vents open above',
+    coolAboveC: 'Fog above (outside)',
     spans: 'Spans',
     spanWidthM: 'Span width',
     lengthM: 'Length',
@@ -182,6 +264,35 @@ export const EN = {
     nightHours: 'Night length',
   } as Record<string, string>,
   hints: {
+    chpElectricKw: 'Desert sites: about 10 MW for 50 ha (20 W/m²)',
+    chpStartHour: 'Run by day, when the CO₂ is used with the vents shut',
+    bufferM3: 'Typical 50–100 m³ a hectare',
+    bufferDeltaK: '90 → 50 °C: 40 K',
+    inC: 'Deep wells in the south give water near 40 °C',
+    yieldTHa: 'Desert glasshouse tomato: about 250 t/ha',
+    labourDaysHa: 'Protected tomato: about 1,000 days/ha (2018 study)',
+    pricePerKg: 'Export tomato fetched EUR 1.24–1.94/kg, Jan–Apr 2016',
+    capexPerM2: 'Your own quote; this is an example',
+    feedSalinityGL: 'The sea off Gabès: 39–40 g/L',
+    recoveryPct: 'Seawater RO: 40–50 %; brine climbs fast above',
+    secKwhM3: 'Typical 3–4 with energy recovery; confirm with the supplier',
+    storageDays: 'One to three days covers a cleaning stop',
+    recyclePct: 'Desert sites reuse 30–50 % of their water',
+    targetEcDsM: 'Tomato refill: about 2.7',
+    flushEcDsM: 'A common ceiling: 4.5',
+    naLimitMmolL: 'Tomato: flush at about 8 mmol/L',
+    systemM3: 'Slabs, pipes and tanks: about 4 L per m²',
+    yieldSlopePct: 'Indicative: 7.3 % from one trial; set your own',
+    ventPct: 'Trim the vents while fogging: 5–15 % of the floor',
+    nozzlesPer100M2: '27 nozzles of 5.4 L/h give about 24 g/m² a minute',
+    pressureBar: 'High pressure, 40–70 bar, for 10–30 µm droplets',
+    onS: 'The pause after it is worked out to hold the cap',
+    maxRhPct: 'Holding 65–75 % saved about 21 % of the water',
+    plantingWeek: 'Desert tomato sites plant around week 36',
+    nurseryWeeks: 'Tomato seedlings: about 7 weeks',
+    floweringWeeks: 'Tomato: about 8 weeks',
+    cropWeeks: 'Week 36 to week 29: 46 weeks',
+    coolAboveC: 'Afternoons hotter than this need fog or pads',
     spanWidthM: 'Common: 8, 9.6 or 12.8 m',
     gutterHeightM: 'Taller houses buffer heat and humidity better',
     uValue: 'Filled in from the cover; your supplier may give another',
@@ -265,6 +376,14 @@ export const EN = {
     deleteResult: (label: string) => `Delete “${label}”?`,
   },
   kinds: {
+    energy: 'Energy hub (CHP)',
+    heatReuse: 'Heat in chilled water',
+    economics: 'Economics',
+    ro: 'Seawater RO',
+    fertigation: 'Fertigation and drain',
+    vpd: 'Humidity and VPD',
+    fog: 'Fogging',
+    calendar: 'Crop calendar',
     heatPeak: 'Peak heating load',
     heatYear: 'Heating over the year',
     hotWater: 'Hot-water pipes',
@@ -368,7 +487,16 @@ export const EN = {
   cooling: {
     title: 'Cooling',
     lead: 'How much air the house must move on a sunny day, the vents or fans that move it, and fan-and-pad cooling for hot, dry weather.',
-    tabs: { ventilation: 'Ventilation', padFan: 'Fan and pad' },
+    tabs: { ventilation: 'Ventilation', padFan: 'Fan and pad', fog: 'Fogging' },
+    fogInside: 'Inside with fog',
+    ventOnly: 'Vents only',
+    fogRh: 'Humidity inside',
+    fogRate: 'Fog while on',
+    fogMean: 'Averaged',
+    fogCycle: 'Cycle on / off',
+    fogOn: 'of the time on',
+    nozzles: 'Nozzles',
+    padCompare: 'Pads would use',
     solar: 'Sun heating the air',
     flow: 'Air to move',
     ach: 'Air changes',
@@ -385,6 +513,10 @@ export const EN = {
     waterDay: 'Water a day',
     perHour: 'an hour',
     formulas: {
+      fogRate: 'Fog = nozzles × L/h / floor',
+      fogBalance: 'Inside = T_out + (sun − λ × fog) / (ρ × cp × air + U × A)',
+      fogCycle: 'Cycle: the share of fog the air takes under the cap',
+      fogWater: 'Water = q × A × t / 10⁶',
       solar: 'Sun = τ × (1 − shade) × G × floor × (1 − ET)',
       conduction: 'Through the cover: U × A × ΔT',
       flow: 'Air = (sun − cover) / (ρ × cp × ΔT)',
@@ -449,7 +581,12 @@ export const EN = {
   air: {
     title: 'Light & air',
     lead: 'Grow lights for the dark months and shade for the bright ones, CO₂ to feed the crop, and the air to change at night to keep humidity and drips down.',
-    tabs: { light: 'Light', co2: 'CO₂', humidity: 'Humidity' },
+    tabs: {
+      light: 'Light',
+      co2: 'CO₂',
+      humidity: 'Night humidity',
+      vpd: 'VPD',
+    },
     source: 'CO₂ from',
     sources: { burner: 'Gas burner (flue gas)', liquid: 'Liquid CO₂ tank' },
     fixtures: 'Lamps',
@@ -477,6 +614,9 @@ export const EN = {
     cover: 'Cover inside',
     water: 'Water to remove',
     formulas: {
+      saturation: 'Saturation: e_s = 0.6108 × exp(17.27 T / (T + 237.3))',
+      vpd: 'VPD = e_s × (1 − RH / 100)',
+      headroom: 'Room = saturated − water in the air',
       dli: 'Sun inside = Rg × 0.47 × 4.57 × τ (darkest month)',
       ppfd: 'PPFD = (target − sun) × 10⁶ / (hours × 3600)',
       fixtures: 'Lamps = PPFD / efficacy × floor / watts',
@@ -517,7 +657,660 @@ export const EN = {
       'Rounded station normals (about 1991–2020). A later version fetches normals for any place on the map.',
   },
 
+  stages: {
+    nursery: 'Nursery',
+    vegetative: 'Growing',
+    flowering: 'Flowering',
+    harvest: 'Harvest',
+    cleanOut: 'Clean-out',
+  },
+  vpd: {
+    stage: 'Crop stage',
+    light: 'Light',
+    lights: {
+      sun: 'Sunny',
+      cloud: 'Cloudy',
+      night: 'Night',
+    },
+    status: {
+      tooWet: 'Too wet',
+      good: 'Good',
+      tooDry: 'Too dry',
+    },
+    ideal: 'ideal',
+    actions: {
+      hold: 'Hold the climate as it is',
+      ventilate: 'Ventilate to dry the air',
+      heatAndVent: 'Heat a little and open the vents',
+      heat: 'Heat: the outside air is wetter',
+      humidify: 'Raise the humidity: fog or mist',
+      coolAndHumidify: 'Shade and fog: cool and moisten the air',
+    },
+    band: 'Band',
+    absolute: 'Water in the air',
+    headroom: 'Room before saturation',
+    pairsTitle: 'The same VPD at other temperatures',
+    targetsTitle: (stage: string) => `Targets · ${stage}`,
+    day: 'Day',
+    night: 'Night',
+    source: 'Source',
+  },
+  advice: {
+    title: 'Cooling strategy',
+    strategies: {
+      vents: 'Roof vents are enough',
+      ventsAndShade: 'Vents with shade',
+      shadeAndFog: 'Shade and high-pressure fog',
+      shadeAndPad: 'Shade and fan-and-pad',
+    },
+    ventsNeeded: 'Vents needed, no extra shade',
+    withShade: (pct: string) => `Vents with ${pct} % shade`,
+    fogInside: 'Inside with shade and fog',
+    padOutlet: 'Air off a wet pad',
+    openFog: 'Size the fog system',
+    rule: 'Rule: above 38 °C outside, or vents over a quarter of the floor, shade and cool by evaporation instead of building bigger vents.',
+  },
+  calendar: {
+    title: 'Crop calendar',
+    lead: 'The crop year week by week: its stages, the climate each one wants, and when heating, CO₂, shade and fog run.',
+    rows: {
+      temp: 'Outside',
+      stage: 'Crop',
+      heating: 'Heating',
+      co2: 'CO₂',
+      shade: 'Shade',
+      fog: 'Fog',
+    },
+    targets: 'Targets by stage',
+    stage: 'Stage',
+    weeks: 'weeks',
+    week: 'Week',
+    firstHarvest: 'First harvest',
+    weeksOfPicking: 'weeks of picking',
+    end: 'End of crop',
+    heatingFrom: 'Heating from',
+    systems: 'Systems',
+    harvestWeeks: 'Weeks of picking',
+    heatingWeeks: 'Weeks of heating',
+    fogWeeks: 'Weeks of fog',
+  },
+  science: {
+    title: 'Science',
+    lead: 'The phenomena behind every calculator: what happens, the formula, what it assumes, and how to measure each number you type in.',
+    search: 'Find a topic',
+    empty: 'No topic matches.',
+    contents: 'Topics',
+    formula: 'Formula',
+    inputs: 'Inputs and how to get them',
+    input: 'Input',
+    method: 'How',
+    instrument: 'Instrument',
+    assumptions: 'Assumptions',
+    related: 'Related',
+    usedIn: 'Used in',
+    sources: 'Sources',
+    instrumentsTitle: 'Instruments',
+    instrumentsLead: 'What to measure with, and how to read it well.',
+    howToGet: (label: string) => `How to get “${label}”`,
+    readMore: 'Read about',
+    close: 'Close',
+    groups: {
+      site: 'Site and money',
+      house: 'The house',
+      heat: 'Heat',
+      air: 'Air, humidity and cooling',
+      water: 'Water',
+      crop: 'Light, CO₂ and the crop',
+    },
+    methods: {
+      measure: 'Measure it',
+      datasheet: 'From the datasheet',
+      derived: 'Worked out',
+      setpoint: 'Your setting',
+      assume: 'Planning assumption',
+      bill: 'From your bills',
+    },
+    methodHints: {
+      measure: 'Read it on site with the instrument below.',
+      datasheet:
+        'Take it from the supplier’s datasheet; the hint gives a typical value.',
+      derived:
+        'SerraCalc works it out from the house or another tool; overwrite it if you know better.',
+      setpoint: 'A choice: a set point or a target you run the house at.',
+      assume: 'A typical value from practice; refine it from your own records.',
+      bill: 'Your own tariff or factor, in the project’s currency.',
+    },
+    topics: {
+      cogeneration: {
+        title: 'Cogeneration (CHP) and heat storage',
+        what: 'A gas engine makes power and, from its cooling water and exhaust, heat; its cleaned flue gas feeds CO₂ to the crop. Run by day, when the crop can use the CO₂, it makes more heat than the house needs: a hot-water buffer carries it into the night, and a boiler covers the rest.',
+        assumptions: [
+          'A winter design day, the outside following a cosine from 3 am to 3 pm.',
+          'The CHP runs at full output through its hours.',
+        ],
+      },
+      heatReuse: {
+        title: 'Heat in chilled well water',
+        what: 'Water pumped warm from a deep well and cooled for irrigation or cooling gives up 1.163 kWh per m³ for each kelvin. Chilling it from 40 to 15 °C frees about 29 kWh per m³: heat a heat pump or a low-temperature loop can put back into the house.',
+        assumptions: [
+          'All the heat released is captured.',
+          'Water at 1,000 kg/m³ and 4.19 kJ/kg·K.',
+        ],
+      },
+      siteScale: {
+        title: 'Site scale and economics',
+        what: 'A large site is compartments of a few hectares, each a house repeated over its area, sharing the RO plant, the CHP and the packing hall. Adding them up gives the water, heat, labour and yield the shared plants must serve, and the cost of each kilogram.',
+        assumptions: [
+          'Each compartment behaves like its project’s house, per m².',
+          'Prices, wages and yields are examples to replace with your own.',
+        ],
+      },
+      desalination: {
+        title: 'Seawater desalination by reverse osmosis',
+        what: 'High pressure pushes seawater through membranes that hold the salt back. The recovery is the share that comes through as product; the rest leaves as brine, saltier in proportion. Pumping against the osmotic pressure takes 3–4 kWh per m³ with energy recovery.',
+        assumptions: [
+          'The product keeps (1 − rejection) of the mean salinity along the membranes.',
+          'Energy and recovery are typical; confirm them with the supplier.',
+        ],
+      },
+      fertigation: {
+        title: 'Fertigation and drain recycling',
+        what: 'The crop drinks the water but leaves most of the sodium and chloride, so the drain is saltier than what was given. Reusing the drain saves water and fertiliser, but its salt builds up until the loop must be flushed; letting part of the drain go holds sodium at a level.',
+        assumptions: [
+          'Sodium hardly enters the crop.',
+          'Yield loss is linear above 2 dS/m: indicative, from one trial and one variety.',
+        ],
+      },
+      geometry: {
+        title: 'Greenhouse geometry',
+        what: 'Every load scales with three numbers: the floor (what you grow on and what the sun falls on), the cover (what loses heat) and the air volume (what buffers heat, humidity and CO₂). Taller houses hold more air per m² and swing less.',
+        assumptions: [
+          'Roofs are straight slopes, or half an ellipse for an arch.',
+          'Gable ends count as cover; doors and gutters are ignored.',
+        ],
+      },
+      heatLoss: {
+        title: 'Heat loss through the cover',
+        what: 'Heat flows through the cover from the warm house to the cold night, in proportion to the cover area, the temperature difference and the cover’s U-value. A closed energy screen cuts it; the footing loses a little more along the perimeter.',
+        assumptions: [
+          'U-values are design values for a still, clear night (ASAE EP406).',
+          'The design night is a cold night that returns most winters, not the record.',
+        ],
+      },
+      airLeakage: {
+        title: 'Air leakage',
+        what: 'Cold outside air slips in through gaps, vents and door frames and has to be heated. The air-change rate N says how many times an hour the whole volume is replaced: near 0.5 for tight double film, 1.5–2 for old glass.',
+        assumptions: [
+          'Leakage does not change with the wind in these tools.',
+          '0.335 Wh per m³ and K is the heat capacity of air near 20 °C.',
+        ],
+      },
+      hotWater: {
+        title: 'Hot-water heating pipes',
+        what: 'A heating loop gives off heat by convection and radiation from its surface. The water’s temperature drop sets the flow (1.163 kWh per m³ and K) and the output per metre sets how much pipe to lay. Geothermal water at 60–75 °C needs more pipe than a boiler at 80–90 °C.',
+        assumptions: [
+          'Free convection around a horizontal pipe: h = 1.32 (ΔT/D)^0.25.',
+          'The pipe surface sits at the mean water temperature.',
+        ],
+      },
+      solarGain: {
+        title: 'Solar gain',
+        what: 'Sunlight through the cover turns into heat. Part is spent by the crop evaporating water; the rest warms the air and has to leave by the vents, the pads or the fog. Shade and a whitewashed roof cut it at the source.',
+        assumptions: [
+          'Transmission includes the structure and the dust on the cover.',
+          'A full crop spends about half the sunlight on transpiration.',
+        ],
+      },
+      ventilation: {
+        title: 'Natural ventilation',
+        what: 'Warm air rises out of the roof vents (the stack effect) and the wind pulls air through them. The vent area needed grows fast when the house may run only a few degrees above outside; beyond about 30 % of the floor, vents cannot do it alone.',
+        assumptions: [
+          'Boulard and Baille (1995): Cd 0.65 and Cw 0.1 for roof vents.',
+          'Air at 1.2 kg/m³ and 1005 J/kg·K.',
+        ],
+      },
+      evaporativeCooling: {
+        title: 'Evaporative cooling and the wet bulb',
+        what: 'Water evaporating into dry air takes heat from it. Air can’t be cooled below its wet-bulb temperature, which falls as the air gets drier: desert air at 44 °C and 15 % has a wet bulb near 22 °C. A wet pad gets 75–85 % of the way there.',
+        assumptions: [
+          'Wet bulb by Stull (2011), within about 0.3 K.',
+          'The air warms evenly between the pads and the fans.',
+        ],
+      },
+      fogging: {
+        title: 'High-pressure fogging',
+        what: 'Nozzles at 40–70 bar make droplets of 10–30 µm that evaporate before they land, cooling the air while the vents stay open. Humidity is the limit: the fog is cut back so the air stays under a cap, usually 70–80 %.',
+        assumptions: [
+          'All fog evaporates while the air is under the cap.',
+          'The vents’ air flow follows Boulard and Baille, from the wind and the temperature difference.',
+        ],
+      },
+      vpd: {
+        title: 'Vapour pressure deficit (VPD)',
+        what: 'VPD is how much more water the air could hold at its temperature. It drives transpiration: too low and the crop can’t move water and calcium and fungi spread; too high and the stomata close and the plant wilts. The same VPD fits many pairs of temperature and humidity.',
+        assumptions: [
+          'Leaf and air are taken at the same temperature.',
+          'Saturation vapour pressure by Tetens, as in FAO-56.',
+        ],
+      },
+      dewPoint: {
+        title: 'Dew point and condensation',
+        what: 'Air cooled to its dew point starts to drop water. At night the cover’s inside surface is colder than the air; when it falls below the dew point it drips on the crop and spreads disease.',
+        assumptions: [
+          'The cover’s inside surface exchanges about 8 W/m²·K with the air.',
+          'The cold night sky and the wind are inside the U-value.',
+        ],
+      },
+      nightHumidity: {
+        title: 'Drying the house at night',
+        what: 'At night the crop still transpires. That water must leave with outside air that holds less, and the air must be warmed. Ventilating cannot dry the house when the outside air holds more water in absolute terms.',
+        assumptions: [
+          'Water in grams per kg of dry air, at sea-level pressure.',
+          'Condensation on the cover is not counted as a way out.',
+        ],
+      },
+      transpiration: {
+        title: 'Transpiration and irrigation',
+        what: 'A crop transpires about two-thirds of the sunlight it receives, so its water need follows the radiation inside. Soilless crops get extra on top, the drain, to wash out salts; with brackish water the drain share must rise.',
+        assumptions: [
+          '2.45 MJ evaporate one litre of water.',
+          'Canopy cover scales the use of a young crop.',
+        ],
+      },
+      rainHarvest: {
+        title: 'Rainwater harvesting',
+        what: 'A greenhouse roof is a large catchment. A basin stores rain between storms: month by month it fills with run-off, empties into irrigation and overflows when full.',
+        assumptions: [
+          'Monthly totals; one heavy storm is checked on its own.',
+          'The first millimetres of each rain are lost.',
+        ],
+      },
+      light: {
+        title: 'Light for the crop (DLI)',
+        what: 'Plants count photons, not watts: the daily light integral is the moles of photosynthetic light per m² in a day, and about 47 % of sunlight is PAR. Lamps close the gap in dark months; shade keeps bright months under the crop’s ceiling.',
+        assumptions: [
+          '4.57 µmol of photons per joule of PAR in sunlight.',
+          'Lamps are sized for the darkest month.',
+        ],
+      },
+      co2: {
+        title: 'CO₂ enrichment',
+        what: 'The crop takes CO₂ from the air, and 700–900 ppm raises the yield. What you supply either goes into the crop or leaks out with the air, so enrichment pays when the vents are nearly shut. A gas burner or a CHP gives CO₂ and heat together.',
+        assumptions: [
+          '1.83 g of CO₂ per m³ of air for each 1000 ppm.',
+          '1 m³ of natural gas burnt gives 1.96 kg of CO₂.',
+        ],
+      },
+      cropCalendar: {
+        title: 'The crop year',
+        what: 'A crop moves through stages that want different climates. Read against the climate normals, the calendar shows when the nights need heat, when the house stays shut long enough for CO₂, and when the sun calls for shade and fog.',
+        assumptions: [
+          'Weekly values are read between the monthly normals.',
+          'Stage lengths are typical; check them with the seed company.',
+        ],
+      },
+    },
+    instruments: {
+      ecMeter: {
+        name: 'EC and pH meter',
+        how: 'A handheld or inline conductivity meter, compensated to 25 °C. Calibrate it weekly with a 1.41 dS/m buffer and read the drip and the drain at the same time of day.',
+      },
+      labAnalysis: {
+        name: 'Water analysis by a laboratory',
+        how: 'Sample the source, the drip and the drain every two to four weeks; the lab reports sodium, chloride, nutrients and bicarbonate in mmol/L.',
+      },
+      tape: {
+        name: 'Tape or laser distance meter',
+        how: 'Measure spans, lengths and heights from the ground to the gutter. Count spans, plants, drippers and nozzles on a few rows and scale up.',
+      },
+      thermometer: {
+        name: 'Aspirated air thermometer',
+        how: 'A sensor in a white, fan-ventilated box at crop height, out of the sun. An unshaded sensor reads several degrees too high.',
+      },
+      hygrometer: {
+        name: 'Humidity sensor or psychrometer',
+        how: 'A capacitive RH sensor in the same aspirated box, checked each year against a wet-and-dry-bulb psychrometer. Read temperature and humidity together.',
+      },
+      weatherStation: {
+        name: 'Outside weather station',
+        how: 'Temperature and humidity in a radiation shield 2 m up, away from the houses. For design values, take the cold nights and hot afternoons of several years.',
+      },
+      pyranometer: {
+        name: 'Pyranometer',
+        how: 'Global radiation in W/m², level and clean, above the roof. The climate computer usually has one; its daily sums in MJ/m² feed the water and light tools.',
+      },
+      parSensor: {
+        name: 'PAR quantum sensor',
+        how: 'Photons in µmol/m²·s. Read outside and at crop height at the same moment: inside over outside is the transmission. Summed over a day it gives the DLI.',
+      },
+      anemometer: {
+        name: 'Anemometer',
+        how: 'A cup or ultrasonic anemometer on a mast above the ridge; take a typical summer afternoon, not the gusts. A hand vane reads the air speed through a pad or a fan.',
+      },
+      co2Sensor: {
+        name: 'CO₂ sensor (NDIR)',
+        how: 'An aspirated infrared sensor at crop height. Check it on fresh outside air, about 420 ppm, before each season.',
+      },
+      tracerGas: {
+        name: 'Tracer-gas decay test',
+        how: 'On a still night shut the house, raise the CO₂ to about 1000 ppm and log its fall: N = ln((C₁ − C_out) / (C₂ − C_out)) / hours.',
+      },
+      flowMeter: {
+        name: 'Water flow meter',
+        how: 'A clamp-on ultrasonic or inline meter on the main. Read the flow while one section runs, or the pump’s curve at its working head.',
+      },
+      catchCups: {
+        name: 'Catch-cup test',
+        how: 'Collect from 10–20 drippers or nozzles for a timed few minutes, measure each volume with a graduated cylinder and average. The spread shows how even the system is.',
+      },
+      drainTray: {
+        name: 'Drain tray on a scale',
+        how: 'A few slabs on a tray with a tipping bucket or a scale: drain share = drain ÷ water given. Measure the EC of the drip and the drain at the same time.',
+      },
+      pressureGauge: {
+        name: 'Pressure gauge',
+        how: 'A glycerine gauge on the pump outlet (1 bar is about 10 m of head), or a manometer across a fan for its static pressure.',
+      },
+      infrared: {
+        name: 'Contact or infrared thermometer',
+        how: 'Clamp a contact probe on the supply and return pipes, or read their surface with an infrared thermometer set to the pipe’s emissivity.',
+      },
+      meters: {
+        name: 'Gas, heat and electricity meters',
+        how: 'Monthly meter readings and bills give the real fuel use, power and tariffs to check the tools against.',
+      },
+      climateComputer: {
+        name: 'Climate computer logs',
+        how: 'Set points, run hours, fog cycles and irrigation shots come from the climate computer’s settings and daily logs.',
+      },
+    },
+  },
+  supply: {
+    title: 'Water supply',
+    lead: 'From the sea to the root: a seawater RO plant sized for the crop’s peak day, and the nutrient loop that reuses the drain and flushes before salt builds up.',
+    tabs: {
+      ro: 'Seawater RO',
+      fertigation: 'Fertigation',
+    },
+    sea: 'Sea',
+    membranes: 'Membranes',
+    brine: 'Brine',
+    fresh: 'Fresh',
+    drain: 'Drain',
+    reused: 'Reused',
+    letGo: 'Let go',
+    days: 'days',
+    flush: 'Flush',
+    takeDemand: (m3: string) => `Take the crop’s peak day: ${m3} m³`,
+    useRo: (ec: string) => `Use the RO water: EC ${ec}`,
+    feed: 'Seawater pumped',
+    product: 'Product',
+    productEc: 'EC of the product',
+    energy: 'Energy a day',
+    costDay: 'Electricity a day',
+    coverage: 'Plant covers',
+    tank: 'Tank',
+    waterSaved: 'Water saved',
+    fertSaved: 'Fertiliser saved',
+    drainEc: 'EC of the drain',
+    rootEc: 'Root zone',
+    yieldLoss: 'Yield lost to salt',
+    flushIn: 'Flush in',
+    never: 'Not needed',
+    levelsAt: 'Levels off at',
+    stock: 'Stock A and B, each',
+    stockDays: (days: string) => `a tank lasts ${days} days`,
+    formulas: {
+      roFeed: 'Feed = product / recovery',
+      roBrine: 'Brine = feed − product; salinity ≈ S_feed / (1 − R)',
+      roEnergy: 'Energy = SEC × product',
+      fertDrain: 'Drain EC = (A × EC_feed − U × EC_uptake) / D',
+      fertNa:
+        'Sodium: closed, t = V (C_lim − C_0) / (C_in × fresh); else it levels off at C_in × fresh × D / (A × let go)',
+      fertYield: 'Yield = 1 − slope × (EC_root − threshold)',
+      fertStock: 'Stock = nutrients needed / dilution',
+    },
+  },
+  energy: {
+    title: 'Energy',
+    lead: 'A gas CHP giving heat, power and CO₂ through a winter day, a hot-water buffer for the night and a boiler for the rest; and the heat held in chilled well water.',
+    tabs: {
+      chp: 'CHP and buffer',
+      reuse: 'Heat reuse',
+    },
+    buffer: 'Buffer',
+    fromChp: 'CHP',
+    fromBuffer: 'Buffer',
+    fromBoiler: 'Boiler',
+    demand: 'Need',
+    chpShare: 'CHP covers',
+    dayNeed: 'The day’s heat',
+    dumped: 'Dumped',
+    gas: 'Gas a day',
+    power: 'Power made',
+    netCost: 'Gas less power sold',
+    co2: 'CO₂ to the crop',
+    co2Need: 'Needed',
+    inWater: 'Heat in the water',
+    need: 'Heat need',
+    covers: 'Covers',
+    takeLinks: 'Take the crop’s peak water and the winter day’s heat',
+    formulas: {
+      demand: 'Need = H × (T_set − T_out) − sun, less the screen at night',
+      buffer: 'Buffer = 1.163 × V × ΔT',
+      gas: 'Gas = P_el / η_el / 9.77 × hours + boiler',
+      co2: 'CO₂ = 1.96 kg per m³ of gas',
+      reuse: 'Heat = 1.163 × V × ΔT',
+    },
+  },
+  site: {
+    title: 'Site',
+    lead: 'The whole farm: each project is a compartment, its house repeated over its area; the totals, the shared RO and CHP against them, and the year’s economics.',
+    tabs: {
+      overview: 'Overview',
+      economics: 'Economics',
+    },
+    choose: 'Site',
+    unnamed: 'Site without a name',
+    empty:
+      'No project yet. Projects with the same “Site” form one site; give each its area here.',
+    compartments: (n: string) => `Compartments: ${n}`,
+    area: 'Area',
+    peakWater: 'Water, peak day',
+    meanWater: 'mean',
+    heatPeak: 'Heat, design night',
+    yield: 'Yield a year',
+    labour: 'Labour a year',
+    days: 'days',
+    people: (n: string) => `about ${n} people full time`,
+    co2e: 'Carbon footprint',
+    co2eHint: '1.9 kg CO₂e per kg (published estimate)',
+    sharesAlt: 'Compartments by share of the area',
+    plants: 'Shared plants',
+    roPlant: 'Seawater RO',
+    chpPlant: 'CHP',
+    covers: (pct: string) => `covers ${pct} % of the peak day`,
+    chpOfPeak: (pct: string) => `${pct} % of the peak heat`,
+    noRo: 'Save a Seawater RO result in one of these projects to check it here.',
+    noChp:
+      'Save an energy hub result in one of these projects to check it here.',
+    table: 'Compartments',
+    tableHint: 'Set each compartment’s area: its house is repeated over it.',
+    compartment: 'Compartment',
+    houses: 'Houses',
+    areaOf: (name: string) => `Area of ${name}, ha`,
+    takeTotals: (ha: string) => `Take the site’s totals: ${ha} ha`,
+    costPerKg: 'Cost per kg',
+    price: 'Price',
+    margin: 'Margin',
+    revenue: 'Revenue',
+    payback: 'Payback',
+    years: 'years',
+    waterPerKg: 'Water per kg',
+    costTitle: 'Where the money goes',
+    costs: {
+      labour: 'Labour',
+      energy: 'Energy',
+      water: 'Water',
+      inputs: 'Fertiliser and care',
+      other: 'Packing and overheads',
+    },
+    formulas: {
+      yield: 'Yield = area × t/ha',
+      cost: 'Cost per kg = costs / kg',
+      payback: 'Payback = build / margin',
+    },
+  },
+  ops: {
+    title: 'Operations',
+    lead: 'The crop log, the daily hygiene round, the plant’s maintenance and a heat plan for the people working inside.',
+    noProject: 'Open a project to keep its log.',
+    tabs: {
+      log: 'Log',
+      hygiene: 'Hygiene',
+      maintenance: 'Maintenance',
+      heat: 'Heat stress',
+    },
+    newEntry: 'New entry',
+    date: 'Date',
+    kind: 'Kind',
+    kinds: {
+      scouting: 'Scouting',
+      release: 'Biological release',
+      spray: 'Spray',
+      maintenance: 'Maintenance',
+      hygiene: 'Hygiene check',
+      harvest: 'Harvest',
+    },
+    subjects: {
+      scouting: 'Pest or disease seen, and where',
+      release: 'Beneficial released',
+      spray: 'Product sprayed',
+      maintenance: 'What was done',
+      hygiene: 'Checklist',
+      harvest: 'Compartment or rows',
+    },
+    task: 'Task',
+    amount: 'Amount',
+    unit: 'Unit',
+    who: 'WHO class',
+    note: 'Note',
+    add: 'Add to the log',
+    entries: (n: string) => `Log entries: ${n}`,
+    all: 'All',
+    empty: 'Nothing logged yet.',
+    remove: (what: string) => `Delete “${what}”`,
+    checklist: 'Hygiene checklist',
+    saveChecklist: (done: string, total: string) =>
+      `Save today’s checklist (${done} of ${total})`,
+    recent: 'Last checklists',
+    every: 'Every',
+    last: 'Last done',
+    due: 'Due',
+    state: 'State',
+    done: 'Done today',
+    days: 'days',
+    states: {
+      ok: 'On time',
+      soon: 'Due soon',
+      overdue: 'Overdue',
+    },
+    overdue: (n: string) => `Overdue tasks: ${n}`,
+    tasks: {
+      filters: 'Clean the irrigation filters',
+      nozzles: 'Check the fog nozzles',
+      pads: 'Clean and flush the pads',
+      sensors: 'Calibrate the climate and EC sensors',
+      pumps: 'Service the pumps',
+      fans: 'Check the fans and belts',
+      drainDisinfection: 'Check the drain disinfection',
+      roMembranes: 'Clean the RO membranes (CIP)',
+      chp: 'Service the CHP',
+    },
+    hygiene: {
+      footbath: 'Footbaths refilled',
+      handwash: 'Hand wash and gloves at the door',
+      clothing: 'Clean clothing for this compartment',
+      tools: 'Knives and tools disinfected',
+      visitors: 'Visitors logged and briefed',
+      waste: 'Plant waste removed and covered',
+      doors: 'Doors and insect nets closed',
+    },
+    heatTitle: 'Heat stress at work',
+    heatIndex: 'Heat index',
+    rest: 'Rest each hour',
+    water: 'Water each hour',
+    risks: {
+      none: 'No heat risk',
+      caution: 'Caution',
+      extremeCaution: 'Extreme caution',
+      danger: 'Danger',
+      extremeDanger: 'Extreme danger',
+    },
+    plan: 'The heat plan',
+    advice: {
+      caution: 'Water at hand; heavy work early in the day.',
+      extremeCaution:
+        'Rest 20 min an hour in the shade; 0.75 L of water an hour.',
+      danger:
+        'Rest 40 min an hour; no heavy work inside; workers check on each other.',
+      extremeDanger: 'Stop work in the house.',
+    },
+    heatSource:
+      'Heat index by the US National Weather Service (Rothfusz); work and rest after common occupational guidance. A planning aid, not medical advice.',
+  },
+  data: {
+    title: 'Live data',
+    lead: 'Readings from your sensors or logger, imported as CSV and set against what the calculators expect: VPD for the stage, day and night temperatures, the drain; VPD by hour; and alerts.',
+    import: 'Import readings',
+    importHint:
+      'A CSV with a time column and any of: temperature, RH, PAR, EC, pH, drain %, drain EC, outside temperature and RH. Commas or semicolons, decimal points or commas.',
+    file: 'CSV file',
+    paste: 'Or paste it here',
+    importPasted: 'Import the pasted text',
+    sample: 'Load a sample week',
+    download: 'Download the sample CSV',
+    clear: 'Clear the readings',
+    noProject: 'Open a project to keep its readings.',
+    imported: (n: string, skipped: string) =>
+      `Imported ${n} readings; ${skipped} rows skipped.`,
+    errors: {
+      empty: 'The file is empty.',
+      noTime: 'No time column found.',
+      noData: 'No readings found.',
+    },
+    targets: 'Compare against',
+    summary: 'Measured against expected',
+    empty: 'No readings yet: import a CSV or load the sample week.',
+    period: (from: string, to: string, n: string, step: string) =>
+      `${from} to ${to}: ${n} readings, every ${step} min.`,
+    vpdInBand: 'VPD in its band',
+    dayMean: 'Days, mean',
+    nightMean: 'Nights, mean',
+    drainMean: 'Drain, mean',
+    plan: 'plan',
+    alertCount: 'Alerts',
+    byHour: 'By hour of the day',
+    vpdByHour: 'VPD by hour, kPa (green: the day band)',
+    tempByHour: 'Temperature by hour, °C (green: the day band)',
+    alertsTitle: 'Alerts',
+    noAlerts: 'No alerts in these readings.',
+    alerts: {
+      vpdLow: 'VPD under 0.3 kPa: disease risk',
+      vpdHigh: 'VPD over 1.5 kPa by day',
+      heatStress: 'Heat stress for the workers',
+      heatDanger: 'Heat danger for the workers',
+      drainEcHigh: 'Drain EC at the flush ceiling',
+      tempLow: 'Too cold for the stage',
+      tempHigh: 'Too hot for the stage',
+      phOut: 'pH outside 5.2–6.8',
+    },
+    alertDetail: (n: string, worst: string) => `${n} readings, worst ${worst}`,
+    days: 'Day by day',
+    outOfBand: 'VPD out of band',
+  },
   calc: {
+    science: 'The science behind it',
     results: 'Results',
     how: 'How it’s calculated',
     inputs: 'Inputs',
@@ -526,6 +1319,30 @@ export const EN = {
   },
 
   diagrams: {
+    energyAlt: (peak: string, start: string, end: string, share: string) =>
+      `Winter design day: the heat need peaks at ${peak} kW; the CHP runs from ${start}:00 to ${end}:00 and covers ${share} %. Handles set the CHP’s start and stop.`,
+    reuseAlt: (water: string, need: string) =>
+      `Heat in the chilled water, ${water} kWh, against the day’s heat need, ${need} kWh.`,
+    roAlt: (feed: string, product: string, brine: string, salinity: string) =>
+      `Seawater RO: ${feed} m³ a day pumped, ${product} m³ of product, ${brine} m³ of brine at ${salinity} g/L. Handles set the recovery and the storage.`,
+    fertAlt: (recycle: string, ec: string, flush: string) =>
+      `Nutrient loop: ${recycle} % of the drain reused, drain EC ${ec} dS/m, flush in ${flush} days. Handles set the share reused and the sodium limit.`,
+    vpdAlt: (air: string, rh: string, vpd: string, status: string) =>
+      `VPD map: air at ${air} °C and ${rh} % gives ${vpd} kPa, ${status}. Handles set the temperature and the humidity.`,
+    fogAlt: (
+      outside: string,
+      inside: string,
+      rh: string,
+      on: string,
+      off: string,
+    ) =>
+      `Fog on a ${outside} °C afternoon brings the house to ${inside} °C at ${rh} %, fogging ${on} s on and ${off} s off. Handles set the humidity cap and the burst.`,
+    calendarAlt: (plant: string, harvest: string, end: string, heat: string) =>
+      `Crop calendar: planted in week ${plant}, first harvest in week ${harvest}, crop ends in week ${end}, heating from week ${heat}. Handles set the planting week and the end of the crop.`,
+    ventsOnly: 'Vents only',
+    withFog: 'With fog',
+    wetBulb: 'Wet bulb',
+    cap: 'Cap',
     heatAlt: (inside: string, outside: string, kw: string) =>
       `Heat leaving the house: ${kw} kW, from ${inside} °C inside to ${outside} °C outside. Handles set both temperatures.`,
     pipesAlt: (loops: string, length: string, supply: string, back: string) =>
@@ -675,6 +1492,51 @@ export const EN = {
         title: 'Report',
         body: 'The project on one printable page: the house, its climate and each saved result with its main figures and findings. Print it, or choose “Save as PDF” in the print dialog to send it.',
       },
+      {
+        id: 'calendar',
+        title: 'Crop calendar',
+        body: 'Planting, flowering, harvest and clean-out weeks with the climate targets of each stage, and the weeks heating, CO₂, shade and fog run, read from the climate normals. Desert tomato sites plant around week 36, heat from about week 42 and finish after week 29.',
+      },
+      {
+        id: 'vpd',
+        title: 'Humidity and VPD',
+        body: 'The vapour pressure deficit from temperature and humidity (Tetens, as in FAO-56), the dew point and the water the air can still take, against the band for the crop’s stage and the light. The map shows every pair of temperature and humidity, because one VPD fits many of them.',
+      },
+      {
+        id: 'fog',
+        title: 'Fogging and the cooling strategy',
+        body: 'High-pressure fog in a ventilated house: the inside temperature from a heat and water balance, the on/off cycle that holds a humidity cap, and the water a day. The advisor checks the design afternoon: when vents alone would need more than a roof opens, it proposes shade with fog or pads.',
+      },
+      {
+        id: 'science',
+        title: 'Science',
+        body: 'Every phenomenon the tools rely on, explained: what happens, the formula, what it assumes, and how to measure each input, with which instrument. The ⓘ beside each field opens the same advice and links here.',
+      },
+      {
+        id: 'supply',
+        title: 'Water supply',
+        body: 'Seawater RO sized from the crop’s peak day: feed, brine and its salinity, energy, cost and storage. Fertigation with drain recycling: water and fertiliser saved, drain EC, sodium build-up and when to flush, and the yield lost to salt.',
+      },
+      {
+        id: 'site',
+        title: 'Site and economics',
+        body: 'Projects that share a site name are its compartments; give each its area and the site adds up water, heat, yield, labour and carbon, checks the shared RO and CHP, and works out cost per kg, margin and payback.',
+      },
+      {
+        id: 'energy',
+        title: 'Energy hub',
+        body: 'A winter day hour by hour: the house’s heat need, a gas CHP run by day for its CO₂, the buffer that carries its heat into the night and the boiler for the rest; gas, power and cost. And the heat held in chilled well water.',
+      },
+      {
+        id: 'operations',
+        title: 'Operations',
+        body: 'A log of scouting, biological releases, sprays (WHO class Ia and Ib refused), maintenance and harvest; the daily hygiene checklist; the maintenance schedule with what is due or overdue; and a heat-stress plan for workers from the heat index.',
+      },
+      {
+        id: 'data',
+        title: 'Live data',
+        body: 'Import a logger’s CSV, or load a sample week, and compare it with what the tools expect: VPD in its band, day and night temperatures, the drain; VPD and temperature by hour of the day; and alerts for disease risk, heat stress, drain EC, temperature and pH.',
+      },
     ],
     sourcesTitle: 'Sources',
     sources: [
@@ -686,6 +1548,9 @@ export const EN = {
       'Thimijan & Heins (1983): converting sunlight to photons for plants.',
       'Nederhoff (1994): CO₂ enrichment, leakage and uptake in greenhouses.',
       'Campen et al. (2003): dehumidifying greenhouses by ventilation and heat.',
+      'Soussi et al. (2022): climate control and cooling of greenhouses in hot, arid regions.',
+      'Shamshiri et al. (2018): the best temperature, humidity and VPD for greenhouse tomato.',
+      'Ishii et al.: fog cooling against fan-and-pad in an Arizona greenhouse.',
     ],
     limitsTitle: 'Limits',
     limits: [
@@ -697,6 +1562,151 @@ export const EN = {
   },
 
   notes: {
+    'data.vpdBand': (v) => `VPD sat in its band ${v['pct']} % of the time.`,
+    'data.dayOk': (v) =>
+      `Days averaged ${v['t']} °C, within ${v['min']}–${v['max']} °C.`,
+    'data.dayOff': (v) =>
+      `Days averaged ${v['t']} °C, outside ${v['min']}–${v['max']} °C.`,
+    'data.nightOk': (v) =>
+      `Nights averaged ${v['t']} °C, within ${v['min']}–${v['max']} °C.`,
+    'data.nightOff': (v) =>
+      `Nights averaged ${v['t']} °C, outside ${v['min']}–${v['max']} °C.`,
+    'data.drain': (v) =>
+      `The drain averaged ${v['pct']} % against a plan of ${v['plan']} %.`,
+    'data.alerts': (v) => `${v['n']} alerts: see the list below.`,
+    'data.noAlerts': (v) => `No alerts (${v['n']}).`,
+    'ops.bannedSpray': (v) =>
+      `WHO class ${v['cls']} products are not allowed: choose another product.`,
+    'heat.none': (v) =>
+      `Heat index ${v['hi']} °C: no heat risk (${v['rest']} min rest, ${v['water']} L an hour).`,
+    'heat.caution': (v) =>
+      `Heat index ${v['hi']} °C: caution. Rest ${v['rest']} min an hour and drink ${v['water']} L an hour.`,
+    'heat.extremeCaution': (v) =>
+      `Heat index ${v['hi']} °C: extreme caution. Rest ${v['rest']} min an hour and drink ${v['water']} L an hour.`,
+    'heat.danger': (v) =>
+      `Heat index ${v['hi']} °C: danger. Rest ${v['rest']} min an hour, drink ${v['water']} L an hour, no heavy work.`,
+    'heat.extremeDanger': (v) =>
+      `Heat index ${v['hi']} °C: extreme danger. Stop work inside (${v['rest']} min rest, ${v['water']} L an hour).`,
+    'energy.share': (v) =>
+      `The CHP covers ${v['pct']} % of the day’s heat; the boiler adds ${v['boiler']} MWh.`,
+    'energy.dump': (v) =>
+      `${v['mwh']} MWh of CHP heat is dumped: a bigger buffer or a shorter run would keep it.`,
+    'energy.buffer': (v) =>
+      `The buffer holds ${v['mwh']} MWh to carry the day’s CHP heat into the night.`,
+    'energy.co2Enough': (v) =>
+      `The CHP’s flue gives ${v['kg']} kg of CO₂, enough for the ${v['need']} kg the crop takes up.`,
+    'energy.co2Short': (v) =>
+      `The CHP’s flue gives ${v['kg']} kg of CO₂, short of the ${v['need']} kg the crop takes up: add liquid CO₂ or run longer.`,
+    'energy.ventsShut': () =>
+      'CHP CO₂ only pays with the vents nearly shut (above about 5 % open it can’t be held): plan it for winter days.',
+    'reuse.heat': (v) =>
+      `Each m³ chilled holds ${v['kwh']} kWh: ${v['mwh']} MWh a day to reuse.`,
+    'reuse.cover': (v) =>
+      `That covers ${v['pct']} % of the winter day’s heat need.`,
+    'reuse.heatPump': () =>
+      'At 15–40 °C the heat needs a heat pump or a low-temperature loop to warm the house.',
+    'econ.margin': (v) => `A margin of ${v['pct']} % of the revenue.`,
+    'econ.loss': (v) => `Costs exceed the revenue (margin ${v['pct']} %).`,
+    'econ.biggest.labour': (v) => `Labour is the biggest cost: ${v['pct']} %.`,
+    'econ.biggest.energy': (v) => `Energy is the biggest cost: ${v['pct']} %.`,
+    'econ.biggest.water': (v) => `Water is the biggest cost: ${v['pct']} %.`,
+    'econ.biggest.inputs': (v) =>
+      `Fertiliser and crop care are the biggest cost: ${v['pct']} %.`,
+    'econ.biggest.other': (v) =>
+      `Packing and overheads are the biggest cost: ${v['pct']} %.`,
+    'econ.payback': (v) => `The build pays back in about ${v['years']} years.`,
+    'econ.prices': () =>
+      'Prices are examples (export tomato fetched EUR 1.24–1.94/kg from January to April 2016): enter your own.',
+    'ro.balance': (v) =>
+      `${v['feed']} m³ of seawater a day gives the product and ${v['brine']} m³ of brine at ${v['salinity']} g/L.`,
+    'ro.recoveryHigh': (v) =>
+      `Recovery ${v['pct']} %: above 50 % the brine scales the membranes; check the supplier’s limit.`,
+    'ro.short': (v) =>
+      `The plant covers only ${v['pct']} % of the need: ${v['m3']} m³ a day short. Add capacity or storage.`,
+    'ro.headroom': (v) =>
+      `The plant has ${v['pct']} % in hand over the peak day.`,
+    'ro.lowSec': () =>
+      'Under 2.5 kWh/m³ is below what seawater RO achieves; check the figure.',
+    'ro.highSec': () =>
+      'Over 4.5 kWh/m³: an energy-recovery device would bring it to 3–4.',
+    'ro.product': (v) =>
+      `The product holds about ${v['mg']} mg/L of salt (EC ${v['ec']} dS/m); its sodium sets how long the nutrient loop runs.`,
+    'ro.brine': () =>
+      'The brine goes back to the sea through a diffuser under a discharge permit; plan the outfall with the authority.',
+    'fert.water': (v) =>
+      `${v['reused']} m³ of drain reused a day: ${v['pct']} % of the water given.`,
+    'fert.drainHigh': (v) =>
+      `Drain EC ${v['ec']} dS/m is at or above the ${v['max']} ceiling: give more drain or flush.`,
+    'fert.yield': (v) =>
+      `A root-zone EC of ${v['ec']} dS/m costs about ${v['pct']} % of the yield (indicative).`,
+    'fert.flush': (v) =>
+      `Sodium reaches ${v['na']} mmol/L in about ${v['days']} days: flush the loop then.`,
+    'fert.levels': (v) =>
+      `Sodium levels off at ${v['na']} mmol/L, under the limit: no flush needed for sodium.`,
+    'fert.saltySource': () =>
+      'Fresh water over 3 mmol/L of sodium fills the loop with salt fast: blend with RO water or let more drain go.',
+    'fert.lowDrain': () =>
+      'Under 20 % drain with salty water: salts build up in the slabs.',
+    'fert.disinfect': () =>
+      'Disinfect the reused drain (UV, heat or slow sand) before it goes back to the crop.',
+    'vpd.tooWet': (v) =>
+      `VPD ${v['vpd']} kPa: under ${v['min']} kPa for this stage, the air is too wet.`,
+    'vpd.good': (v) =>
+      `VPD ${v['vpd']} kPa: inside the ${v['min']}–${v['max']} kPa band for this stage.`,
+    'vpd.tooDry': (v) =>
+      `VPD ${v['vpd']} kPa: over ${v['max']} kPa for this stage, the air is too dry.`,
+    'vpd.disease': () => 'Under 0.3 kPa: botrytis, mildew and soft growth.',
+    'vpd.wilting': () =>
+      'Over 1.5 kPa the crop wilts: shade it and add moisture.',
+    'vpd.arid': () =>
+      '3 kPa or more: desert air, and growth stalls. Fog or pads, and shade.',
+    'vpd.cold': (v) =>
+      `Under ${v['min']} °C for this stage: heat before you ventilate.`,
+    'vpd.hot': (v) => `Over ${v['max']} °C for this stage: shade and cool.`,
+    'vpd.outsideWetter': () =>
+      'The outside air holds more water than inside: ventilating won’t dry the house, heating will.',
+    'vpd.samePairs': (v) =>
+      `One VPD fits many pairs: ${v['vpd']} kPa at 15 °C needs drier air than at 35 °C, so read the temperature and humidity together.`,
+    'fog.cooling': (v) =>
+      `Fog brings the house to ${v['inside']} °C, ${v['drop']} K under outside, at ${v['rh']} % humidity.`,
+    'fog.tooHumid': () =>
+      'The house is over the humidity cap without fog: fogging would only wet the crop.',
+    'fog.moreNozzles': () =>
+      'The nozzles run all the time under the cap: more nozzles would cool further.',
+    'fog.cycle': (v) =>
+      `Fog ${v['on']} s on and ${v['off']} s off holds the air near ${v['rh']} % (60 s on, 180 s off is a common start).`,
+    'fog.lowPressure': () =>
+      'Under 40 bar the droplets are too big to evaporate in the air: they wet the leaves.',
+    'fog.droplets': () =>
+      'High pressure makes 10–30 µm droplets that evaporate before they land.',
+    'fog.trimVents': () =>
+      'Wide-open vents carry the fog away: trim them to 5–15 % of the floor while fogging.',
+    'fog.waterQuality': () =>
+      'Use desalinated or soft water: salts clog the nozzles and spot the fruit.',
+    'advice.notBuildable': (v) =>
+      `${v['pct']} % of the floor in vents and ${v['flow']} million m³/h of air: more than a roof opens (about ${v['limit']} % at most).`,
+    'advice.vents': () => 'Roof vents handle this afternoon.',
+    'advice.ventsAndShade': (v) =>
+      `With ${v['shade']} % shade the vents need ${v['pct']} % of the floor: shade first.`,
+    'advice.shadeAndFog': (v) =>
+      `${v['shade']} % shade and fog keep the house near ${v['inside']} °C with the vents trimmed. Fog suits long, large houses.`,
+    'advice.shadeAndPad': (v) =>
+      `${v['shade']} % shade and pads: air leaves a wet pad near ${v['pad']} °C. At ${v['length']} m the house is short enough for pads.`,
+    'advice.humid': () =>
+      'Humid air outside: evaporative cooling gives little. Shade, and cool at night.',
+    'calendar.season': (v) =>
+      `Planted in week ${v['plant']}, the crop ends in week ${v['end']}: ${v['weeks']} weeks in the house.`,
+    'calendar.harvest': (v) =>
+      `Picking from week ${v['first']}, for ${v['weeks']} weeks.`,
+    'calendar.heating': (v) =>
+      `Heating from week ${v['from']}, ${v['weeks']} weeks in the year.`,
+    'calendar.co2': (v) =>
+      `CO₂ pays in ${v['weeks']} weeks, when the house stays shut.`,
+    'calendar.fog': (v) =>
+      `Fog or pads for ${v['weeks']} weeks of hot afternoons.`,
+    'calendar.shade': (v) => `Shade for ${v['weeks']} weeks of strong sun.`,
+    'calendar.shortCleanOut': (v) =>
+      `Only ${v['weeks']} weeks between crops: little time to clean and disinfect.`,
     'geometry.lowGutter': (v) =>
       `Gutter at ${v['gutter']} m: a low house heats up and stays humid. 4 m or more buffers better.`,
     'geometry.goodVolume': (v) =>

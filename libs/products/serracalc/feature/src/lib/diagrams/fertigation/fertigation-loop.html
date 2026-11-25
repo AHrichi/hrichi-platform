@@ -1,0 +1,127 @@
+<svg viewBox="0 0 560 340" role="group" [attr.aria-label]="alt()">
+  <rect class="backdrop" width="560" height="340" rx="12" />
+
+  <!-- Fresh water and stocks into the mix tank -->
+  <rect class="tank" x="20" y="40" width="70" height="60" rx="8" />
+  <text class="caption" x="55" y="30" text-anchor="middle">
+    {{ i18n.word(t().supply.fresh) }}
+  </text>
+  <text class="value" x="55" y="76" text-anchor="middle">
+    {{ i18n.num(result().freshM3Day, 0) }}
+  </text>
+  <rect class="stock" x="108" y="20" width="30" height="34" rx="5" />
+  <rect class="stock b" x="144" y="20" width="30" height="34" rx="5" />
+  <text class="stock-label" x="123" y="42" text-anchor="middle">A</text>
+  <text class="stock-label" x="159" y="42" text-anchor="middle">B</text>
+  <rect class="mix" x="110" y="66" width="70" height="44" rx="8" />
+  <text class="caption" x="145" y="125" text-anchor="middle">
+    EC {{ i18n.num(params().targetEcDsM, 1) }}
+  </text>
+  <path class="pipe" d="M90 80H110M123 54V66M159 54V66" />
+
+  <!-- To the crop and its drain -->
+  <path class="pipe feed" d="M180 88H232" />
+  <path class="slab" d="M232 70h52v36h-52Z" />
+  <path class="plant" d="M258 70V30M258 46l-14-10M258 40l14-10M258 56l-12-6" />
+  <circle class="fruit" cx="270" cy="58" r="5" />
+  <text class="caption" x="258" y="124" text-anchor="middle">
+    {{ i18n.word(t().supply.drain) }} {{ i18n.num(result().drainM3Day, 0) }} ·
+    EC {{ i18n.num(result().drainEcDsM, 1) }}
+  </text>
+  <path class="pipe drain" d="M284 100H300" />
+
+  <!-- The valve: reused back, the rest let go -->
+  <rect
+    class="valve-track"
+    [attr.x]="300"
+    y="92"
+    width="160"
+    height="16"
+    rx="8"
+  />
+  <rect
+    class="valve-fill"
+    x="300"
+    y="92"
+    [attr.width]="valveX() - 300"
+    height="16"
+    rx="8"
+  />
+  <path
+    class="pipe reused"
+    [attr.stroke-width]="reusedW()"
+    d="M380 92V150H145V110"
+  />
+  <path class="pipe out" [attr.stroke-width]="dischargedW()" d="M460 100H530" />
+  <text class="caption" x="262" y="166" text-anchor="middle">
+    {{ i18n.word(t().supply.reused) }}
+    {{ i18n.num(result().reusedM3Day, 0) }} m³/d
+  </text>
+  <text class="caption" x="530" y="88" text-anchor="end">
+    {{ i18n.word(t().supply.letGo) }}
+    {{ i18n.num(result().dischargedM3Day, 0) }}
+  </text>
+
+  <!-- Sodium in the loop -->
+  @for (tick of naTicks; track tick.na) {
+    <path class="grid" [attr.d]="'M' + cx0 + ' ' + tick.y + 'H' + cx1" />
+    <text
+      class="caption"
+      [attr.x]="cx0 - 8"
+      [attr.y]="tick.y + 4"
+      text-anchor="end"
+    >
+      {{ tick.na }}
+    </text>
+  }
+  @for (tick of ticks; track tick.d) {
+    <text
+      class="caption"
+      [attr.x]="tick.x"
+      [attr.y]="cy0 + 18"
+      text-anchor="middle"
+    >
+      {{ tick.d }}
+    </text>
+  }
+  <text class="caption" x="16" [attr.y]="cy1 - 10">Na mmol/L</text>
+  <text class="caption" [attr.x]="cx1" [attr.y]="cy0 + 34" text-anchor="end">
+    {{ i18n.word(t().supply.days) }}
+  </text>
+  <path class="limit" [attr.d]="'M' + cx0 + ' ' + limitY() + 'H' + cx1" />
+  <path class="na" [attr.d]="line()" />
+  @if (flushX(); as fx) {
+    <path class="flush" [attr.d]="'M' + fx + ' ' + cy1 + 'V' + cy0" />
+    <text class="value warn" [attr.x]="fx + 6" [attr.y]="cy1 + 14">
+      {{ i18n.word(t().supply.flush) }} {{ result().flushDay }}
+    </text>
+  }
+
+  <g
+    scHandle
+    axis="x"
+    [x]="valveX()"
+    [y]="100"
+    [value]="params().recyclePct"
+    [min]="limits.recycle.min"
+    [max]="limits.recycle.max"
+    [step]="limits.recycle.step"
+    [label]="t().fields['recyclePct']"
+    unit="%"
+    [fromPoint]="recycleAt"
+    (valueChange)="changed.emit({ key: 'recyclePct', value: $event })"
+  />
+  <g
+    scHandle
+    [x]="cx1 - 20"
+    [y]="limitY()"
+    [value]="params().naLimitMmolL"
+    [min]="limits.naLimit.min"
+    [max]="limits.naLimit.max"
+    [step]="limits.naLimit.step"
+    [label]="t().fields['naLimitMmolL']"
+    unit="mmol/L"
+    [fromPoint]="naAt"
+    (valueChange)="changed.emit({ key: 'naLimitMmolL', value: $event })"
+  />
+</svg>

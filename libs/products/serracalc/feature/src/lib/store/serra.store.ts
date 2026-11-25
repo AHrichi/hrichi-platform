@@ -8,6 +8,8 @@ import {
   withState,
 } from '@ngrx/signals';
 import {
+  type LogEntry,
+  type Reading,
   type CalcContext,
   DEFAULT_CONTEXT,
   DEFAULT_GREENHOUSE,
@@ -204,6 +206,29 @@ export const SerraStore = signalStore(
         }));
       },
 
+      /** Adds an entry to the active project's log. */
+      addLog(entry: Omit<LogEntry, 'id'>): Promise<void> {
+        return edit((project) => ({
+          ...project,
+          logs: [...(project.logs ?? []), { ...entry, id: newId('log') }],
+        }));
+      },
+
+      deleteLog(id: string): Promise<void> {
+        return edit((project) => ({
+          ...project,
+          logs: (project.logs ?? []).filter((l) => l.id !== id),
+        }));
+      },
+
+      /** Replaces the active project's imported readings. */
+      setReadings(readings: readonly Reading[]): Promise<void> {
+        return edit((project) => ({
+          ...project,
+          readings: readings.length ? [...readings] : undefined,
+        }));
+      },
+
       deleteCalculation(id: string): Promise<void> {
         return edit((project) => ({
           ...project,
@@ -238,6 +263,30 @@ export const SerraStore = signalStore(
           error: null,
         });
         return incoming.length;
+      },
+
+      /**
+       * Sets the area a project stands for on its site (a compartment of
+       * its house repeated), or clears it back to the house's own floor.
+       */
+      async setProjectArea(
+        id: string,
+        areaHa: number | undefined,
+      ): Promise<void> {
+        const project = store.projects().find((p) => p.id === id);
+        if (!project) return;
+        const saved: GreenhouseProject = {
+          ...project,
+          areaHa:
+            areaHa !== undefined && Number.isFinite(areaHa) && areaHa > 0
+              ? areaHa
+              : undefined,
+          updatedAt: new Date().toISOString(),
+        };
+        await db.saveProject(saved);
+        patchState(store, {
+          projects: store.projects().map((p) => (p.id === id ? saved : p)),
+        });
       },
 
       /** Adds the sample projects (back as they were); the user's stay. */
