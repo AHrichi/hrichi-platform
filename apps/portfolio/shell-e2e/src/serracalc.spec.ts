@@ -51,7 +51,7 @@ test.describe('SerraCalc, standalone', () => {
     page,
   }) => {
     await page.goto(STANDALONE);
-    await page.getByRole('button', { name: 'EN' }).click();
+    await page.getByRole('button', { name: 'EN', exact: true }).click();
     await expect(page.locator('sc-serra-shell')).toHaveAttribute(
       'data-look',
       'greenhouse',
@@ -73,7 +73,7 @@ test.describe('SerraCalc, standalone', () => {
     page,
   }) => {
     await page.goto(`${STANDALONE}greenhouse`);
-    await page.getByRole('button', { name: 'EN' }).click();
+    await page.getByRole('button', { name: 'EN', exact: true }).click();
     const ridge = page.getByRole('slider', { name: 'Ridge height' });
     await expect(ridge).toHaveAttribute('aria-valuenow', '6.3');
     await ridge.focus();
@@ -139,7 +139,7 @@ test.describe('SerraCalc, standalone', () => {
   }) => {
     await loadSamples(page);
     await page.goto(`${STANDALONE}heating?tab=peak`);
-    await page.getByRole('button', { name: 'IT' }).click();
+    await page.getByRole('button', { name: 'IT', exact: true }).click();
     await expect(
       page.getByRole('heading', { level: 2, name: 'Riscaldamento' }),
     ).toBeVisible();
@@ -147,7 +147,7 @@ test.describe('SerraCalc, standalone', () => {
     await expect(page.locator('ah-metric-card').first()).toContainText('825,2');
     await expect(page).toHaveTitle('Riscaldamento · SerraCalc');
 
-    await page.getByRole('button', { name: 'DE' }).click();
+    await page.getByRole('button', { name: 'DE', exact: true }).click();
     await expect(
       page.getByRole('heading', { level: 2, name: 'Heizung' }),
     ).toBeVisible();
@@ -259,7 +259,7 @@ test.describe('SerraCalc, standalone', () => {
     page,
   }) => {
     await page.goto(`${STANDALONE}water`);
-    await page.getByRole('button', { name: 'ع' }).click();
+    await page.getByRole('button', { name: 'ع', exact: true }).click();
     await expect(page.locator('.serra')).toHaveAttribute('dir', 'rtl');
     await expect(
       page.getByRole('heading', { level: 2, name: 'المياه' }),
