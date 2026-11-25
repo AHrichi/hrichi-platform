@@ -1,6 +1,7 @@
 @use '../../styles/serra' as sc;
 
 @include sc.diagram;
+@include sc.diagram-scroll(36rem);
 
 .month-line {
   fill: none;

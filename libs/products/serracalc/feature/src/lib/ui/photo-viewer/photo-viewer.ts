@@ -32,7 +32,7 @@ import { Icon } from '../icon/icon';
       type="button"
       class="thumb"
       [attr.aria-label]="t().photoViewer.open + ': ' + caption()"
-      (click)="show()"
+      (click)="show($event)"
     >
       <img
         [src]="url()"
@@ -142,8 +142,9 @@ export class PhotoViewer {
     inject(DestroyRef).onDestroy(() => this.unlockScroll());
   }
 
-  protected show(): void {
-    this.opener = document.activeElement as HTMLElement | null;
+  protected show(event: Event): void {
+    // Back to the photo itself on close, however it was opened.
+    this.opener = event.currentTarget as HTMLElement;
     this.zoomed.set(false);
     this.isOpen.set(true);
     this.dialog().nativeElement.showModal();

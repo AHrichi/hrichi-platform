@@ -58,6 +58,11 @@
     font-size: 0.875em;
     transition: transform var(--motion-duration-fast)
       var(--motion-easing-standard);
+
+    // Phones: the globe and the code are enough; the chevron makes room.
+    @media (max-width: 30rem) {
+      display: none;
+    }
   }
 
   &[aria-expanded='true'] .chevron {

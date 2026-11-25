@@ -208,16 +208,39 @@
         />
       </div>
 
-      <div class="shares" role="img" [attr.aria-label]="t().site.sharesAlt">
-        @for (s of shares(); track s.id; let i = $index) {
-          <span
-            class="share"
-            [attr.data-i]="i % 6"
-            [style.flex-grow]="s.pct"
-            [title]="s.title + ' · ' + i18n.num(s.pct, 0) + ' %'"
-          ></span>
-        }
-      </div>
+      <!-- Each compartment's share of the area: only worth a bar when there
+           are several, and named in a legend (a tooltip never shows on a
+           phone). The bar is a picture of the legend, so hidden from
+           screen readers, which read the list. -->
+      @if (shares().length > 1) {
+        <figure class="share-figure">
+          <div class="shares" aria-hidden="true">
+            @for (s of shares(); track s.id; let i = $index) {
+              <span
+                class="share"
+                [attr.data-i]="i % 6"
+                [style.flex-grow]="s.pct"
+              ></span>
+            }
+          </div>
+          <figcaption>
+            <span class="eyebrow">{{ t().site.sharesAlt }}</span>
+            <ul class="share-legend" role="list">
+              @for (s of shares(); track s.id; let i = $index) {
+                <li>
+                  <span
+                    class="share swatch"
+                    [attr.data-i]="i % 6"
+                    aria-hidden="true"
+                  ></span>
+                  <span dir="auto">{{ s.title }}</span>
+                  <span class="pct">{{ i18n.num(s.pct, 0) }} %</span>
+                </li>
+              }
+            </ul>
+          </figcaption>
+        </figure>
+      }
     </section>
 
     <section class="panel" scPanel="site-plants" [heading]="t().site.plants">
