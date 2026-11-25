@@ -2,7 +2,7 @@
 
 A briefing for whichever AI agent or IDE picks up SerraCalc, the greenhouse heat, water and climate engineering app. It assumes no memory of earlier sessions. Read it top to bottom before touching code; [AGENTS.md](../../AGENTS.md) has the protocol, [ADR-0027](../adr/0027-serracalc.md) the decisions.
 
-Last updated 2026-11-25: **S1–S3, the parity work, the greenhouse-manager spec and its last three gaps are on `main` (PRs #35, #37, #38, #39). The sodium and chloride flush limits now read in the drain (the root zone) instead of the feed, as the owner decided: [PR #40](https://github.com/AHrichi/hrichi-platform/pull/40), `claude/serracalc-root-zone-limits`. UI work in progress on `claude/serracalc-ui-polish` (built on PR #40): a floating header and a language menu are done; collapsible sections, a formula component and real-life photos are next (§6).** The plan is §7; the decisions are [ADR-0029](../adr/0029-serracalc-greenhouse-manager.md) and its addendum.
+Last updated 2026-11-25: **S1–S3, the parity work, the greenhouse-manager spec and its last three gaps are on `main` (PRs #35, #37, #38, #39). The sodium and chloride flush limits now read in the drain (the root zone) instead of the feed, as the owner decided: [PR #40](https://github.com/AHrichi/hrichi-platform/pull/40), `claude/serracalc-root-zone-limits`. The owner's UI requests are done on `claude/serracalc-ui-polish` (built on PR #40): a floating header, a language menu, sections that fold, formulas laid out as maths (MathML) and 25 real-life photos from Wikimedia Commons on the Science page (§5, §6).** The plan is §7; the decisions are [ADR-0029](../adr/0029-serracalc-greenhouse-manager.md) and its addendum.
 
 ## 0. Resume in five minutes
 
@@ -61,7 +61,15 @@ It is **not** the Greenhouse Labor Planner (`product-greenhouse*`, ADR-0026). Ke
 
 **Verified** (2026-11-25, root zone, `claude/serracalc-root-zone-limits`): lint, 105 domain and 34 feature tests (gates: a closed loop at half drain flushes on 8 mmol/L of sodium in the drain on day 6, not 14; the Kebili sample levels off at 1 × 0.88 / 0.18 ≈ 4.9 mmol/L in the drain; a smaller drain flushes sooner), builds, `nx format:check`, the zoneless check, the SerraCalc e2e with `CI=1`. In the browser: Water supply → Fertigation in English and Arabic (the notes, the worked step, the chart's "Na in the drain" axis).
 
-**Not verified yet (greenhouse manager):** a real phone; the Italian, German and Arabic wording by native speakers; every formula against a published worked example beyond the spec's benchmarks; "acidified refill" is our reading of the Hydrotool strategy (the paper wasn't read). The EC ceiling (4.5) is still compared with the feed in the loop, but with the drain EC in Live data and in the "drain EC high" note; at the sample's 30 % drain the drain is already 4.8 (§6).
+**Verified** (2026-11-25, UI polish, `claude/serracalc-ui-polish`): lint, 105 domain and 42 feature tests (new: the formula parser, and every Science formula parses without falling back to text), builds, stylelint, `nx format:check`, the zoneless check, the SerraCalc e2e **17 of 17** with `CI=1` (axe on every screen, light and dark, 375 and 1280 px, now with the language menu, folding panels, MathML and photos). The production `_headers` stays at 1,149 characters with the remotes in `img-src`. In the browser:
+
+- Floating header at 1280 and 375 px, in English, French and Arabic: one slim glass row once scrolled, including straight after a deep link.
+- The language menu: mouse and keyboard (arrows, Enter, focus back on the button).
+- Folding: a panel, then a reload (remembered); Science's fold all; a contents link that unfolds its topic and scrolls it clear of the header.
+- Formulas: the Science fertigation entry (fractions, subscripts), and the steps on a phone (a long one scrolls and takes focus).
+- All 25 photos load, standalone. A photo opens large (zoom, pan, Escape) and focus returns to it.
+
+**Not verified yet (greenhouse manager):** the photos inside the portfolio (they need the remote's origin in `img-src`, which the e2e's headers have); MathML on a real Android phone (Chrome draws it, but fonts vary); a real phone; the Italian, German and Arabic wording by native speakers; every formula against a published worked example beyond the spec's benchmarks; "acidified refill" is our reading of the Hydrotool strategy (the paper wasn't read). The EC ceiling (4.5) is still compared with the feed in the loop, but with the drain EC in Live data and in the "drain EC high" note; at the sample's 30 % drain the drain is already 4.8 (§6).
 
 ### Parity audit (2026-11-25, against LuxPath and the other apps)
 
@@ -139,7 +147,7 @@ Written before any change on `feat/serracalc-parity`; the last column says what 
 | `feature/src/lib/screens/<area>/`               | One screen per area; Heating, Cooling and Water have tabs that share the house's numbers                                                                                          |
 | `feature/src/lib/diagrams/`                     | `svg-drag.ts` (pointer to viewBox), `drag-handle.ts` (`g[scHandle]`), one folder per drawing                                                                                      |
 | `feature/src/lib/screens/report/`               | The printable report; `report-figures.ts` labels each figure with its calculator's words                                                                                          |
-| `feature/src/lib/ui/`                           | Number field, field grid, notes, "How it's calculated", save bar, context bar, month bars, backup panel                                                                           |
+| `feature/src/lib/ui/`                           | Number field, field grid, notes, "How it's calculated", save bar, context bar, month bars, backup panel; `lang-menu`, `panel` (folding sections), `formula` (MathML)              |
 | `feature/src/lib/i18n/copy.{en,fr,ar,it,de}.ts` | All words; `SerraCopy = typeof EN`. `copy.spec.ts` checks every key and placeholder                                                                                               |
 
 ## 4. Hard rules
@@ -160,19 +168,26 @@ Written before any change on `feat/serracalc-parity`; the last column says what 
 - Fertigation inputs added later (`sourceClMmolL`, `sourceHco3MmolL`, `clLimitMmolL`) are optional, so results saved before them still open; the Supply screen fills them from defaults when editing. Since the root-zone change, saved fertigation results recompute with the limits read in the drain, so their flush days come sooner.
 - In `fertigation()`, `g` is the feed's factor C / C_in; the drain holds `toDrain` = A/D times it. Sodium and chloride limits divide by `toDrain`, the EC ceiling does not. `days[].naMmolL`, the levels and the notes are drain values.
 - Icons: `node tools/scripts/generate-app-icons.mjs serracalc`.
+- **UI polish (`claude/serracalc-ui-polish`):**
+  - **Floating header:** standalone only (`.top` in `serra-shell`). Its height is `--sc-top` (the rail and Science's contents stick under it) and the page's `scroll-padding`. Inside the portfolio the site header already floats, so SerraCalc's stays in the page.
+  - **Language switch:** the globe menu `ui/lang-menu`. The e2e picks a language with `pickLanguage(page, 'Italiano')`.
+  - **Folding:** `section[scPanel]` / `article[scPanel]` (`ui/panel`) owns the section's `h3`. Write `scPanel="supply-inputs" [heading]="…"`, not an `h3`; the heading id is `sc-<scPanel>`. Folding is kept in localStorage under `serracalc.folded` (`PanelState`).
+  - **Formulas:** `sc-formula` (`ui/formula`) parses the plain text (rules at the top of `formula-parse.ts`): a spaced `/` is a fraction, an unspaced `/` stays inline. A test checks that every Science formula parses, so check yours there.
+  - **Photos:** in `apps/products/serracalc/web/public/science/`, with credits in `CREDITS.md` there and in `feature/src/lib/science/photos.ts`. They load through `photoUrl()` (`import.meta.url`), because inside the portfolio the app runs from its own origin; the portfolio's CSP `img-src` lists the remotes for this. A new photo needs the owner's OK before downloading, its credit, and a caption in all five languages (`science.photoCaptions`).
 
-## 6. Next step: finish the UI polish (owner's request, 2026-11-25)
+## 6. Next step: open the UI polish PR, then merge both
 
-On `claude/serracalc-ui-polish` (branched from PR #40; open its PR against `main` once #40 merges):
+1. `claude/serracalc-ui-polish` (built on PR #40): open its PR against `main`. It shows PR #40's commits until #40 merges, then only its own.
+2. Once CI passes and the owner merges [PR #40](https://github.com/AHrichi/hrichi-platform/pull/40) and then this one, open the live app at `/apps/serracalc` and check:
+   - the Science page: photos load from the remote inside the portfolio, the formulas, fold all;
+   - Water supply → Fertigation (flush day, "Na in the drain" chart);
+   - the language menu and the floating header standalone.
 
-- **Done, not yet seen in a browser:** the standalone header floats (`.top` is sticky, turns to glass once a sentinel scrolls away, shares its height as `--sc-top` and as the page's `scroll-padding`); inside the portfolio it stays in the page because the site header already floats. A language menu (`ui/lang-menu`): a globe button with the language's own name (its code on phones), a menu of the five written in themselves, arrow keys, Escape, click outside. Check it at 375 px and 1280 px, in Arabic and English, and with the e2e.
-- **Next:** (1) collapsible big sections: a `section[scPanel]` component with a heading button (`aria-expanded`), state kept per panel in localStorage, applied to every `section.panel` with an `h3` (66 in 13 templates) and to the Science topics, opening a topic when it is linked to. (2) A formula component: MathML built with `Renderer2` (no `innerHTML`) from the existing formula strings: `/` with spaces is a built-up fraction, `/` without is inline (units, D/A), `_x` subscripts, `^x` superscripts, `√( )`, `;` separates equations, `[...]` is a note; used on the Science page and in "How it's calculated". (3) Real-life photos for the phenomena and instruments: free-licence photos (Wikimedia Commons), credited; **ask the owner before downloading any file**, listing each file's name, source and size.
+   Then update this hand-off.
 
-## 6b. Then: merge the root-zone branch and check it live
-
-1. `claude/serracalc-root-zone-limits`: once CI passes and the owner merges its pull request, open the live app at `/apps/serracalc`: Energy → Cooling over the year, Water supply → Fertigation (strategy table, flush day, "Na in the drain" chart), Site → Plants and tariffs. Then update this hand-off.
-2. Ask the owner about the EC ceiling: the loop compares 4.5 dS/m with the feed (Hydrotool's example), but Live data and the "drain EC high" note compare it with the drain, which is 4.8 at the sample's 30 % drain. Either give the drain its own limit (a new optional input) or read the ceiling in the drain with a higher default.
-3. A real phone (Android Chrome): drag handles with a finger, the plant cards, a backup shared to Drive.
+3. Ask the owner about the EC ceiling: the loop compares 4.5 dS/m with the feed (Hydrotool's example), but Live data and the "drain EC high" note compare it with the drain, which is 4.8 at the sample's 30 % drain. Either give the drain its own limit (a new optional input) or read the ceiling in the drain with a higher default.
+4. A real phone (Android Chrome): drag handles with a finger, the plant cards, a backup shared to Drive, the language menu, folding.
+5. Photos still missing (Commons had none free): hot-water pipes, pad cooling, fogging, a heat buffer, grow lights, CO₂ dosing, a PAR sensor, a lab analysis, a climate computer. The owner's own photos could fill them, with no farm or company names in view.
 
 Then, from the old plan: pumps and pipes (Hazen–Williams), solar PV, climate for any place (Open-Meteo archive; add it to the CSP `connect-src`), a materials catalogue with prices. A private brand pack for a demo to a named farm, as the Labor Planner has, if the owner wants one.
 
