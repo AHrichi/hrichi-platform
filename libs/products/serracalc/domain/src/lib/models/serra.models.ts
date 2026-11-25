@@ -1,4 +1,8 @@
-import type { EnergyHubParams, HeatReuseParams } from '../calculations/energy';
+import type {
+  CoolingYearParams,
+  EnergyHubParams,
+  HeatReuseParams,
+} from '../calculations/energy';
 import type { LogEntry } from '../calculations/operations';
 import type { Reading } from '../calculations/readings';
 import type { EconomicsParams } from '../calculations/site';
@@ -829,6 +833,16 @@ export interface FertigationParams {
   sourceEcDsM: number;
   /** Sodium in the fresh water, mmol/L. */
   sourceNaMmolL: number;
+  /**
+   * Chloride in the fresh water, mmol/L. Results saved before chloride was
+   * tracked lack it: it then follows the sodium, as in sodium chloride.
+   */
+  sourceClMmolL?: number;
+  /**
+   * Bicarbonate in the fresh water, mmol/L: RO water under 0.5, wells 2–6.
+   * Missing in older saved results: none.
+   */
+  sourceHco3MmolL?: number;
   /** EC of the nutrient solution at the dripper, dS/m. */
   targetEcDsM: number;
   /** EC the crop takes up with its water, dS/m (tomato about 1.5–2). */
@@ -837,6 +851,8 @@ export interface FertigationParams {
   flushEcDsM: number;
   /** ...or when its sodium reaches this, mmol/L. */
   naLimitMmolL: number;
+  /** ...or when its chloride reaches this, mmol/L (missing: no limit). */
+  clLimitMmolL?: number;
   /** Water in the loop: slabs, pipes and tanks, m³. */
   systemM3: number;
   /** Stock dilution, 1 : this (100 or 200). */
@@ -852,8 +868,40 @@ export interface FertigationParams {
 export interface FertigationDay {
   day: number;
   naMmolL: number;
-  /** EC of the solution at the dripper with that sodium in it, dS/m. */
+  clMmolL: number;
+  /** EC of the solution at the dripper with that salt in it, dS/m. */
   feedEcDsM: number;
+}
+
+/** What makes the loop's water go first: sodium, chloride or its EC. */
+export type FlushLimit = 'na' | 'cl' | 'ec';
+
+/**
+ * Ways to keep salt down in a recirculating loop: as set now; a closed loop
+ * flushed at the EC ceiling; the same with acid in the refill, so bicarbonate
+ * stops building up; a closed loop whose refill EC drops as salt builds up;
+ * and a steady bleed of drain that holds the loop under its limits.
+ */
+export type FlushStrategy = 'current' | 'flush' | 'acid' | 'variable' | 'bleed';
+
+export interface FlushStrategyResult {
+  id: FlushStrategy;
+  /** Times the loop is emptied and refilled in a year. */
+  flushesYear: number;
+  /** Drain let go every day, m³. */
+  letGoM3Day: number;
+  /** Solution let go in a year, bleed and flushes, m³. */
+  letGoM3Year: number;
+  /** Fresh water used in a year, m³. */
+  freshM3Year: number;
+  /** Stock lost with the water let go, L of each of tank A and B a year. */
+  stockLostLYear: number;
+  /** Mean root-zone EC over the year, dS/m. */
+  meanRootEcDsM: number;
+  /** Yield lost to salinity over the year, percent (indicative). */
+  yieldLossPct: number;
+  /** Lowest nutrient EC in the feed over the year, dS/m. */
+  minNutrientEcDsM: number;
 }
 
 export interface FertigationResult {
@@ -869,12 +917,18 @@ export interface FertigationResult {
   /** Stock from each of tank A and tank B a day, L. */
   stockLDay: number;
   stockDays: number;
-  /** Days until a flush (null: sodium levels off under the limit). */
+  /** Days until a flush (null: salt levels off under every limit). */
   flushDay: number | null;
+  /** The limit the loop reaches first, or would reach if it climbed. */
+  limitBy: FlushLimit;
   /** Where sodium levels off when part of the drain is let go, mmol/L. */
   naEquilibriumMmolL: number | null;
+  /** Where chloride levels off, mmol/L. */
+  clEquilibriumMmolL: number | null;
   /** The first 120 days of the loop. */
   days: FertigationDay[];
+  /** A year of the loop under each way of keeping salt down. */
+  strategies: FlushStrategyResult[];
   notes: CalcNote[];
 }
 
@@ -909,11 +963,52 @@ export type SavedCalculation =
   | SavedCalcBase<'fertigation', FertigationParams>
   | SavedCalcBase<'energy', EnergyHubParams>
   | SavedCalcBase<'heatReuse', HeatReuseParams>
+  | SavedCalcBase<'coolingYear', CoolingYearParams>
   | SavedCalcBase<'economics', EconomicsParams>;
 
 export type CalcKind = SavedCalculation['kind'];
 
 export type Currency = 'TND' | 'EUR' | 'USD';
+
+/** A plant the compartments of a site share. */
+export type PlantType = 'ro' | 'chp' | 'boiler' | 'chiller' | 'tank' | 'pump';
+
+export interface SitePlant {
+  id: string;
+  type: PlantType;
+  /** What the site calls it ("RO line 2"). */
+  name: string;
+  /**
+   * Its size: RO m³ of product a day; CHP and boiler kW of heat; chiller kW
+   * of cooling; tank m³; pump m³/h.
+   */
+  capacity: number;
+  /**
+   * RO recovery, CHP electrical efficiency, boiler efficiency, tank's
+   * usable share, pump efficiency, percent; a chiller's COP.
+   */
+  efficiency: number;
+  /** Hours a day it can run. */
+  hoursDay: number;
+}
+
+/** What the site pays, and is paid, for energy and water. */
+export interface SiteTariffs {
+  gasPerM3: number;
+  electricityPerKwh: number;
+  /** Electricity sold to the grid, per kWh. */
+  exportPerKwh: number;
+  waterPerM3: number;
+}
+
+/** What a site holds above its compartments: shared plants and tariffs. */
+export interface SiteRecord {
+  /** The site's name: the "Site" field its projects share. */
+  name: string;
+  plants: SitePlant[];
+  tariffs: SiteTariffs;
+  updatedAt: string;
+}
 
 export interface GreenhouseProject {
   id: string;

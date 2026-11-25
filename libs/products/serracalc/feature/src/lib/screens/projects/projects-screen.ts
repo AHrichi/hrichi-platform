@@ -46,6 +46,7 @@ const OPENS_IN: Record<CalcKind, { screen: string; tab: string }> = {
   fertigation: { screen: 'supply', tab: 'fertigation' },
   energy: { screen: 'energy', tab: 'chp' },
   heatReuse: { screen: 'energy', tab: 'reuse' },
+  coolingYear: { screen: 'energy', tab: 'cooling' },
   economics: { screen: 'site', tab: 'economics' },
 };
 

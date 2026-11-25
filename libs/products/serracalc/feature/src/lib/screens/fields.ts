@@ -210,10 +210,13 @@ export const FERTIGATION_FIELDS: readonly FieldSpec[] = [
   spec('recyclePct', '%', 0, 100, 5),
   spec('sourceEcDsM', 'dS/m', 0, 6, 0.1),
   spec('sourceNaMmolL', 'mmol/L', 0, 30, 0.1),
+  spec('sourceClMmolL', 'mmol/L', 0, 30, 0.1),
+  spec('sourceHco3MmolL', 'mmol/L', 0, 15, 0.1),
   spec('targetEcDsM', 'dS/m', 0.5, 8, 0.1),
   spec('uptakeEcDsM', 'dS/m', 0, 4, 0.1),
   spec('flushEcDsM', 'dS/m', 1, 10, 0.1),
   spec('naLimitMmolL', 'mmol/L', 1, 30, 0.5),
+  spec('clLimitMmolL', 'mmol/L', 1, 40, 0.5),
   spec('systemM3', 'm³', 0.1, 5000, 1),
   spec('dilution', '1 :', 50, 500, 10),
   spec('stockTankM3', 'm³', 0.1, 100, 0.5),
@@ -240,6 +243,18 @@ export const ENERGY_FIELDS: readonly FieldSpec[] = [
   spec('bufferDeltaK', 'K', 10, 60, 1),
   spec('boilerEfficiencyPct', '%', 70, 105, 1),
   spec('co2NeedKgH', 'kg/h', 0, 10000, 1),
+  floor,
+];
+
+export const COOLING_YEAR_FIELDS: readonly FieldSpec[] = [
+  spec('coolFromC', '°C', 15, 35, 0.5),
+  spec('fullAtK', 'K', 1, 15, 0.5),
+  spec('airflowM3hM2', 'm³/h·m²', 0, 250, 5),
+  spec('fanWPerM3h', 'W·h/m³', 0.01, 0.1, 0.001),
+  spec('pumpWm2', 'W/m²', 0, 5, 0.1),
+  spec('emptyFromWeek', '', 1, 52, 1),
+  spec('emptyWeeks', '', 0, 52, 1),
+  spec('gridCo2KgKwh', 'kg/kWh', 0, 1.2, 0.01),
   floor,
 ];
 

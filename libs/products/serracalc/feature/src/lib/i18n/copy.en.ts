@@ -124,6 +124,21 @@ export const EN = {
 
   /** Number fields, shared by every calculator. */
   fields: {
+    sourceClMmolL: 'Chloride in the fresh water',
+    sourceHco3MmolL: 'Bicarbonate in the fresh water',
+    clLimitMmolL: 'Flush above chloride',
+    coolFromC: 'Cooling starts above (outside)',
+    fullAtK: 'Full airflow, above the start by',
+    airflowM3hM2: 'Full airflow',
+    fanWPerM3h: 'Fan power per m³/h',
+    pumpWm2: 'Pad or fog pumps',
+    emptyFromWeek: 'House empty from week',
+    emptyWeeks: 'Weeks empty',
+    gridCo2KgKwh: 'Grid CO₂',
+    gasPerM3: 'Gas',
+    electricityPerKwh: 'Electricity bought',
+    exportPerKwh: 'Electricity sold',
+    waterPerM3: 'Water',
     lossCoefficientWK: 'Heat loss per kelvin',
     outsideMinC: 'Outside, night low',
     outsideMaxC: 'Outside, afternoon high',
@@ -264,6 +279,17 @@ export const EN = {
     nightHours: 'Night length',
   } as Record<string, string>,
   hints: {
+    sourceClMmolL: 'RO water: about as much as sodium',
+    sourceHco3MmolL: 'RO water: under 0.5; wells: 2–6, from the lab',
+    clLimitMmolL: 'Indicative: about 10; ask your adviser',
+    coolFromC: 'Fans and pads start; under it the vents cope',
+    airflowM3hM2: 'Fan and pad: 120–150 m³/h per m² of floor',
+    fanWPerM3h: 'Fan test or datasheet at pad pressure: about 0.03–0.04',
+    pumpWm2: 'Pad pumps: about 0.4 W per m² of floor',
+    emptyWeeks: 'Between crops, as in the crop calendar',
+    gridCo2KgKwh: 'Your grid’s figure; 0.45 is an example',
+    waterPerM3: 'Bought, or your RO water’s full cost',
+    exportPerKwh: 'What the grid pays for the CHP’s power',
     chpElectricKw: 'Desert sites: about 10 MW for 50 ha (20 W/m²)',
     chpStartHour: 'Run by day, when the CO₂ is used with the vents shut',
     bufferM3: 'Typical 50–100 m³ a hectare',
@@ -376,6 +402,7 @@ export const EN = {
     deleteResult: (label: string) => `Delete “${label}”?`,
   },
   kinds: {
+    coolingYear: 'Cooling over the year',
     energy: 'Energy hub (CHP)',
     heatReuse: 'Heat in chilled water',
     economics: 'Economics',
@@ -781,6 +808,15 @@ export const EN = {
       bill: 'Your own tariff or factor, in the project’s currency.',
     },
     topics: {
+      coolingEnergy: {
+        title: 'Cooling electricity over the year',
+        what: 'Fan-and-pad cooling runs on electricity: fans pull 120–150 m³/h of air per m² of floor through wet pads, and pumps keep the pads wet. Through the year the fans run only in warm hours, faster the hotter it is, so the year’s use follows the climate. A Mediterranean house uses about 10 kWh/m² a year: a check for the figure.',
+        assumptions: [
+          'Each month is its mean day: the outside temperature on a cosine, warmest at 15:00.',
+          'Fan power follows the share of fans running (staged fans).',
+          'The pad pumps run whenever the fans do.',
+        ],
+      },
       cogeneration: {
         title: 'Cogeneration (CHP) and heat storage',
         what: 'A gas engine makes power and, from its cooling water and exhaust, heat; its cleaned flue gas feeds CO₂ to the crop. Run by day, when the crop can use the CO₂, it makes more heat than the house needs: a hot-water buffer carries it into the night, and a boiler covers the rest.',
@@ -1026,6 +1062,31 @@ export const EN = {
     },
   },
   supply: {
+    limitBy: {
+      na: 'Sodium reaches its limit first',
+      cl: 'Chloride reaches its limit first',
+      ec: 'The EC ceiling comes first',
+    },
+    strategies: {
+      title: 'Keeping salt down: a year compared',
+      lead: 'The same loop through a year under five ways of handling the salt the crop leaves behind. Bold: the lowest in its column.',
+      table: 'Flush strategies over a year',
+      strategy: 'Strategy',
+      flushes: 'Flushes',
+      letGo: 'Let go',
+      fresh: 'Fresh water',
+      stockLost: 'Stock lost',
+      minNutrient: 'Lowest nutrient EC',
+      names: {
+        current: 'As set now',
+        flush: 'Flush at the EC ceiling',
+        acid: 'Acidified refill',
+        variable: 'Lower refill EC',
+        bleed: 'Steady bleed',
+      },
+      assume:
+        'A year, day by day, with the loop closed (all the drain reused) except “as set now” and the bleed. Acid in the refill turns bicarbonate into CO₂ and nitrate, so it stops adding to the EC. Lowering the refill EC holds the EC at the dripper but feeds less. Stock lost: L of each of A and B, the water let go counted at feed strength. Yield loss is indicative.',
+    },
     title: 'Water supply',
     lead: 'From the sea to the root: a seawater RO plant sized for the crop’s peak day, and the nutrient loop that reuses the drain and flushes before salt builds up.',
     tabs: {
@@ -1072,9 +1133,26 @@ export const EN = {
     },
   },
   energy: {
+    coolKwhM2: 'Cooling electricity',
+    coolChartAlt: (place: string, total: string) =>
+      `Cooling electricity by month in ${place}: ${total} kWh per m² over the year.`,
+    coolCaption:
+      'Fans and pumps through each month’s mean day; nothing while the house stands empty.',
+    coolYear: 'Cooling a year',
+    coolBenchmark: (bench: string, pct: string) =>
+      `${pct} % of the published ${bench} kWh/m²`,
+    coolSite: 'For the whole house',
+    coolPeak: 'All running:',
+    coolCost: 'Electricity a year',
+    coolCo2: 'Grid CO₂ a year',
+    coolHours: 'Hours of cooling',
+    coolTable: 'Cooling by month',
+    month: 'Month',
+    coolOfBenchmark: 'Of the published 10 kWh/m²',
     title: 'Energy',
     lead: 'A gas CHP giving heat, power and CO₂ through a winter day, a hot-water buffer for the night and a boiler for the rest; and the heat held in chilled well water.',
     tabs: {
+      cooling: 'Cooling over the year',
       chp: 'CHP and buffer',
       reuse: 'Heat reuse',
     },
@@ -1096,6 +1174,10 @@ export const EN = {
     covers: 'Covers',
     takeLinks: 'Take the crop’s peak water and the winter day’s heat',
     formulas: {
+      coolPower: 'Power = airflow × fan W per m³/h + pumps',
+      coolShare: 'Fans follow the heat: f = min(1, (T − start) / span)',
+      coolYear: 'Year = Σ days × Σ hours of power',
+      coolCheck: 'Check against about 10 kWh/m² a year',
       demand: 'Need = H × (T_set − T_out) − sun, less the screen at night',
       buffer: 'Buffer = 1.163 × V × ΔT',
       gas: 'Gas = P_el / η_el / 9.77 × hours + boiler',
@@ -1104,9 +1186,47 @@ export const EN = {
     },
   },
   site: {
+    plantList: 'The site’s plants',
+    plantHint:
+      'Record the plants the compartments share; the checks set them against the site’s peak day.',
+    noPlants:
+      'No plant recorded yet: add the RO, CHP, boilers, chillers, tanks and pumps.',
+    plantTypes: {
+      ro: 'Seawater RO',
+      chp: 'CHP',
+      boiler: 'Boiler',
+      chiller: 'Chiller',
+      tank: 'Tank',
+      pump: 'Pump',
+    },
+    plantName: 'Name',
+    plantField: {
+      capacity: 'Capacity',
+      efficiency: 'Efficiency',
+      hoursDay: 'Hours a day',
+    },
+    removePlant: (name: string) => `Remove ${name}`,
+    plantType: 'Plant',
+    addPlant: 'Add the plant',
+    tariffs: 'Tariffs',
+    tariffHint:
+      'What the site pays for gas, power and water, and gets for power sold. The economics can take them.',
+    checksTitle: 'Plants against the peak day',
+    noChecks: 'Add an RO plant, a CHP or boiler, a tank or a pump to check it.',
+    checks: {
+      water: 'RO water',
+      heat: 'Heat (CHP and boilers)',
+      storage: 'Water storage',
+      pumping: 'Pumping',
+    },
+    checkLine: (pct: string) => `${pct} % of the need`,
+    fromSaved:
+      'From the plants recorded under Plants and tariffs; below, from saved results.',
+    takeTariffs: 'Take the site’s tariffs',
     title: 'Site',
     lead: 'The whole farm: each project is a compartment, its house repeated over its area; the totals, the shared RO and CHP against them, and the year’s economics.',
     tabs: {
+      plants: 'Plants and tariffs',
       overview: 'Overview',
       economics: 'Economics',
     },
@@ -1562,6 +1682,24 @@ export const EN = {
   },
 
   notes: {
+    'fert.flushCl': (v) =>
+      `Chloride reaches ${v['cl']} mmol/L in about ${v['days']} days: flush the loop then.`,
+    'fert.flushEc': (v) =>
+      `Salt lifts the EC to the ${v['ec']} dS/m ceiling in about ${v['days']} days: flush the loop then.`,
+    'fert.bleed': (v) =>
+      `Letting ${v['m3']} m³ of drain go each day holds the loop under its limits with no flush: ${v['saved']} m³ less let go a year than flushing at the ceiling.`,
+    'coolYear.range': (v) =>
+      `${v['kwh']} kWh/m² a year: in the range published for Mediterranean houses (about 10; here ${v['pct']} %).`,
+    'coolYear.high': (v) =>
+      `${v['kwh']} kWh/m² a year, ${v['pct']} % of the published 10: check the fans’ power, shade earlier, or fog instead of pads.`,
+    'coolYear.low': (v) =>
+      `${v['kwh']} kWh/m² a year, well under the published 10 (${v['pct']} %): a mild site or an empty summer; check the start temperature.`,
+    'coolYear.fans': (v) =>
+      `Fans at ${v['w']} W per m³/h are worn or fighting dirty pads: a fan test and clean pads cut the bill.`,
+    'coolYear.airflow': (v) =>
+      `${v['q']} m³/h per m² is outside the usual 120–150 for fan and pad.`,
+    'coolYear.peakMonth': (v) =>
+      `${v['month']} takes ${v['pct']} % of the year’s cooling electricity.`,
     'data.vpdBand': (v) => `VPD sat in its band ${v['pct']} % of the time.`,
     'data.dayOk': (v) =>
       `Days averaged ${v['t']} °C, within ${v['min']}–${v['max']} °C.`,
@@ -1642,7 +1780,7 @@ export const EN = {
     'fert.flush': (v) =>
       `Sodium reaches ${v['na']} mmol/L in about ${v['days']} days: flush the loop then.`,
     'fert.levels': (v) =>
-      `Sodium levels off at ${v['na']} mmol/L, under the limit: no flush needed for sodium.`,
+      `Sodium levels off at ${v['na']} and chloride at ${v['cl']} mmol/L, under the limits: no flush needed.`,
     'fert.saltySource': () =>
       'Fresh water over 3 mmol/L of sodium fills the loop with salt fast: blend with RO water or let more drain go.',
     'fert.lowDrain': () =>

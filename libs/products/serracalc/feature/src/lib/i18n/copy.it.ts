@@ -128,6 +128,21 @@ export const IT: SerraCopy = {
   },
 
   fields: {
+    sourceClMmolL: 'Cloruro nell’acqua dolce',
+    sourceHco3MmolL: 'Bicarbonato nell’acqua dolce',
+    clLimitMmolL: 'Scarico sopra il cloruro',
+    coolFromC: 'Raffrescamento sopra (fuori)',
+    fullAtK: 'Portata piena, oltre l’avvio di',
+    airflowM3hM2: 'Portata d’aria piena',
+    fanWPerM3h: 'Potenza dei ventilatori per m³/h',
+    pumpWm2: 'Pompe dei pannelli o della nebbia',
+    emptyFromWeek: 'Serra vuota dalla settimana',
+    emptyWeeks: 'Settimane vuota',
+    gridCo2KgKwh: 'CO₂ della rete',
+    gasPerM3: 'Gas',
+    electricityPerKwh: 'Elettricità acquistata',
+    exportPerKwh: 'Elettricità venduta',
+    waterPerM3: 'Acqua',
     lossCoefficientWK: 'Dispersione per kelvin',
     outsideMinC: 'Fuori, minima notturna',
     outsideMaxC: 'Fuori, massima pomeridiana',
@@ -268,6 +283,18 @@ export const IT: SerraCopy = {
     nightHours: 'Durata della notte',
   } as Record<string, string>,
   hints: {
+    sourceClMmolL: 'Acqua di osmosi: circa quanto il sodio',
+    sourceHco3MmolL: 'Acqua di osmosi: sotto 0,5; pozzi: 2–6, dall’analisi',
+    clLimitMmolL: 'Indicativo: circa 10; chiedi al tuo consulente',
+    coolFromC: 'Partono ventilatori e pannelli; sotto bastano le finestre',
+    airflowM3hM2: 'Pannello e ventilatore: 120–150 m³/h per m² di suolo',
+    fanWPerM3h:
+      'Prova o scheda del ventilatore alla pressione dei pannelli: circa 0,03–0,04',
+    pumpWm2: 'Pompe dei pannelli: circa 0,4 W per m² di suolo',
+    emptyWeeks: 'Tra due colture, come nel calendario',
+    gridCo2KgKwh: 'Il dato della tua rete; 0,45 è un esempio',
+    waterPerM3: 'Acquistata, o il costo pieno della tua acqua di osmosi',
+    exportPerKwh: 'Quanto la rete paga l’elettricità della cogenerazione',
     chpElectricKw: 'Siti nel deserto: circa 10 MW per 50 ha (20 W/m²)',
     chpStartHour: 'Di giorno, quando la CO₂ si usa con le aperture chiuse',
     bufferM3: 'Tipico 50–100 m³ per ettaro',
@@ -387,6 +414,7 @@ export const IT: SerraCopy = {
     deleteResult: (label: string) => `Eliminare «${label}»?`,
   },
   kinds: {
+    coolingYear: 'Raffrescamento nell’anno',
     energy: 'Centrale energetica (cogenerazione)',
     heatReuse: 'Calore dell’acqua raffreddata',
     economics: 'Economia',
@@ -803,6 +831,15 @@ export const IT: SerraCopy = {
       bill: 'La tua tariffa o il tuo fattore, nella valuta del progetto.',
     },
     topics: {
+      coolingEnergy: {
+        title: 'L’elettricità del raffrescamento nell’anno',
+        what: 'Il raffrescamento a pannello e ventilatore va a elettricità: i ventilatori aspirano 120–150 m³/h d’aria per m² di suolo attraverso pannelli bagnati, e le pompe li tengono umidi. Nell’anno i ventilatori girano solo nelle ore calde, tanto più forte quanto fa più caldo, così il consumo segue il clima. Una serra mediterranea consuma circa 10 kWh/m² all’anno: un riscontro per il dato.',
+        assumptions: [
+          'Ogni mese è il suo giorno medio: temperatura esterna a coseno, massima alle 15.',
+          'La potenza dei ventilatori segue la quota di ventilatori accesi (ventilatori a gradini).',
+          'Le pompe dei pannelli girano quando girano i ventilatori.',
+        ],
+      },
       cogeneration: {
         title: 'Cogenerazione e accumulo di calore',
         what: 'Un motore a gas produce elettricità e, dall’acqua di raffreddamento e dai fumi, calore; i fumi depurati portano CO₂ alla coltura. Girando di giorno, quando la coltura può usare la CO₂, produce più calore di quanto serva alla serra: un accumulo d’acqua calda lo porta nella notte e una caldaia copre il resto.',
@@ -1048,6 +1085,31 @@ export const IT: SerraCopy = {
     },
   },
   supply: {
+    limitBy: {
+      na: 'Il sodio raggiunge per primo il limite',
+      cl: 'Il cloruro raggiunge per primo il limite',
+      ec: 'Arriva prima il tetto di EC',
+    },
+    strategies: {
+      title: 'Tenere basso il sale: un anno a confronto',
+      lead: 'Lo stesso circuito per un anno, con cinque modi di gestire il sale che la coltura lascia. In grassetto: il più basso della colonna.',
+      table: 'Strategie di scarico in un anno',
+      strategy: 'Strategia',
+      flushes: 'Scarichi',
+      letGo: 'Scaricato',
+      fresh: 'Acqua dolce',
+      stockLost: 'Soluzione madre persa',
+      minNutrient: 'EC nutritiva più bassa',
+      names: {
+        current: 'Come impostato',
+        flush: 'Scarico al tetto di EC',
+        acid: 'Rabbocco acidificato',
+        variable: 'EC di rabbocco ridotta',
+        bleed: 'Spurgo continuo',
+      },
+      assume:
+        'Un anno giorno per giorno, circuito chiuso (tutto il drenaggio riusato) tranne «come impostato» e lo spurgo. L’acido nel rabbocco trasforma il bicarbonato in CO₂ e nitrato: non aggiunge più EC. Ridurre la EC di rabbocco tiene la EC al gocciolatore ma nutre meno. Soluzione madre persa: L di ciascuna delle soluzioni A e B, l’acqua scaricata contata alla concentrazione di apporto. Perdita di resa indicativa.',
+    },
     title: 'Acqua irrigua',
     lead: 'Dal mare alla radice: un impianto di osmosi inversa dimensionato sul giorno di punta della coltura, e il circuito nutritivo che riutilizza il drenaggio e scarica prima che il sale si accumuli.',
     tabs: {
@@ -1095,9 +1157,26 @@ export const IT: SerraCopy = {
     },
   },
   energy: {
+    coolKwhM2: 'Elettricità per il raffrescamento',
+    coolChartAlt: (place: string, total: string) =>
+      `Elettricità per il raffrescamento per mese a ${place}: ${total} kWh per m² nell’anno.`,
+    coolCaption:
+      'Ventilatori e pompe nel giorno medio di ogni mese; nulla mentre la serra è vuota.',
+    coolYear: 'Raffrescamento all’anno',
+    coolBenchmark: (bench: string, pct: string) =>
+      `${pct} % dei ${bench} kWh/m² pubblicati`,
+    coolSite: 'Per tutta la serra',
+    coolPeak: 'Tutto in funzione:',
+    coolCost: 'Elettricità all’anno',
+    coolCo2: 'CO₂ della rete all’anno',
+    coolHours: 'Ore di raffrescamento',
+    coolTable: 'Raffrescamento per mese',
+    month: 'Mese',
+    coolOfBenchmark: 'Dei 10 kWh/m² pubblicati',
     title: 'Energia',
     lead: 'Una cogenerazione a gas che dà calore, elettricità e CO₂ lungo una giornata d’inverno, un accumulo d’acqua calda per la notte e una caldaia per il resto; e il calore contenuto nell’acqua di pozzo raffreddata.',
     tabs: {
+      cooling: 'Raffrescamento nell’anno',
       chp: 'Cogenerazione e accumulo',
       reuse: 'Recupero di calore',
     },
@@ -1120,6 +1199,11 @@ export const IT: SerraCopy = {
     takeLinks:
       'Prendi l’acqua del giorno di punta e il calore del giorno d’inverno',
     formulas: {
+      coolPower: 'Potenza = portata × W dei ventilatori per m³/h + pompe',
+      coolShare:
+        'I ventilatori seguono il caldo: f = min(1, (T − avvio) / intervallo)',
+      coolYear: 'Anno = Σ giorni × Σ ore di potenza',
+      coolCheck: 'Confronto con circa 10 kWh/m² all’anno',
       demand:
         'Fabbisogno = H × (T_set − T_est) − sole, meno lo schermo di notte',
       buffer: 'Accumulo = 1,163 × V × ΔT',
@@ -1129,9 +1213,48 @@ export const IT: SerraCopy = {
     },
   },
   site: {
+    plantList: 'Gli impianti del sito',
+    plantHint:
+      'Registra gli impianti che i compartimenti condividono; i controlli li confrontano con il giorno di punta del sito.',
+    noPlants:
+      'Nessun impianto registrato: aggiungi osmosi, cogenerazione, caldaie, refrigeratori, serbatoi e pompe.',
+    plantTypes: {
+      ro: 'Osmosi di acqua di mare',
+      chp: 'Cogenerazione',
+      boiler: 'Caldaia',
+      chiller: 'Refrigeratore',
+      tank: 'Serbatoio',
+      pump: 'Pompa',
+    },
+    plantName: 'Nome',
+    plantField: {
+      capacity: 'Capacità',
+      efficiency: 'Rendimento',
+      hoursDay: 'Ore al giorno',
+    },
+    removePlant: (name: string) => `Togli ${name}`,
+    plantType: 'Impianto',
+    addPlant: 'Aggiungi l’impianto',
+    tariffs: 'Tariffe',
+    tariffHint:
+      'Quanto il sito paga per gas, elettricità e acqua, e riceve per l’elettricità venduta. L’economia può riprenderle.',
+    checksTitle: 'Impianti e giorno di punta',
+    noChecks:
+      'Aggiungi un’osmosi, una cogenerazione o una caldaia, un serbatoio o una pompa per controllarli.',
+    checks: {
+      water: 'Acqua di osmosi',
+      heat: 'Calore (cogenerazione e caldaie)',
+      storage: 'Accumulo d’acqua',
+      pumping: 'Pompaggio',
+    },
+    checkLine: (pct: string) => `${pct} % del fabbisogno`,
+    fromSaved:
+      'Dagli impianti registrati in Impianti e tariffe; più sotto, dai risultati salvati.',
+    takeTariffs: 'Riprendi le tariffe del sito',
     title: 'Sito',
     lead: 'L’intera azienda: ogni progetto è un compartimento, la sua serra ripetuta sulla superficie; i totali, l’osmosi e la cogenerazione condivise a confronto, e l’economia dell’anno.',
     tabs: {
+      plants: 'Impianti e tariffe',
       overview: 'Panoramica',
       economics: 'Economia',
     },
@@ -1593,6 +1716,24 @@ export const IT: SerraCopy = {
   },
 
   notes: {
+    'fert.flushCl': (v) =>
+      `Il cloruro raggiunge ${v['cl']} mmol/L in circa ${v['days']} giorni: scarica il circuito allora.`,
+    'fert.flushEc': (v) =>
+      `Il sale porta la EC al tetto di ${v['ec']} dS/m in circa ${v['days']} giorni: scarica il circuito allora.`,
+    'fert.bleed': (v) =>
+      `Scaricare ${v['m3']} m³ di drenaggio al giorno tiene il circuito sotto i limiti senza scarichi completi: ${v['saved']} m³ in meno all’anno che scaricando al tetto.`,
+    'coolYear.range': (v) =>
+      `${v['kwh']} kWh/m² all’anno: nell’intervallo pubblicato per le serre mediterranee (circa 10; qui ${v['pct']} %).`,
+    'coolYear.high': (v) =>
+      `${v['kwh']} kWh/m² all’anno, ${v['pct']} % dei 10 pubblicati: controlla la potenza dei ventilatori, ombreggia prima o nebulizza invece dei pannelli.`,
+    'coolYear.low': (v) =>
+      `${v['kwh']} kWh/m² all’anno, ben sotto i 10 pubblicati (${v['pct']} %): sito mite o estate senza coltura; controlla la temperatura di avvio.`,
+    'coolYear.fans': (v) =>
+      `Ventilatori a ${v['w']} W per m³/h sono usurati o frenati da pannelli sporchi: una prova e pannelli puliti abbassano la bolletta.`,
+    'coolYear.airflow': (v) =>
+      `${v['q']} m³/h per m² è fuori dai consueti 120–150 per pannello e ventilatore.`,
+    'coolYear.peakMonth': (v) =>
+      `${v['month']} prende il ${v['pct']} % dell’elettricità di raffrescamento dell’anno.`,
     'data.vpdBand': (v) =>
       `Il VPD è rimasto nella sua fascia il ${v['pct']} % del tempo.`,
     'data.dayOk': (v) =>
@@ -1677,7 +1818,7 @@ export const IT: SerraCopy = {
     'fert.flush': (v) =>
       `Il sodio raggiunge ${v['na']} mmol/L in circa ${v['days']} giorni: scarica il circuito allora.`,
     'fert.levels': (v) =>
-      `Il sodio si stabilizza a ${v['na']} mmol/L, sotto il limite: nessuno scarico per il sodio.`,
+      `Il sodio si stabilizza a ${v['na']} e il cloruro a ${v['cl']} mmol/L, sotto i limiti: nessuno scarico necessario.`,
     'fert.saltySource': () =>
       'Acqua dolce con più di 3 mmol/L di sodio riempie presto il circuito di sale: miscela con acqua osmotizzata o scarica più drenaggio.',
     'fert.lowDrain': () =>

@@ -124,6 +124,21 @@ export const FR: SerraCopy = {
   currencies: { TND: 'Dinar tunisien', EUR: 'Euro', USD: 'Dollar américain' },
 
   fields: {
+    sourceClMmolL: 'Chlorure dans l’eau douce',
+    sourceHco3MmolL: 'Bicarbonate dans l’eau douce',
+    clLimitMmolL: 'Vidange au-dessus du chlorure',
+    coolFromC: 'Refroidissement au-dessus de (dehors)',
+    fullAtK: 'Débit plein, au-delà du départ de',
+    airflowM3hM2: 'Débit d’air plein',
+    fanWPerM3h: 'Puissance des ventilateurs par m³/h',
+    pumpWm2: 'Pompes des pads ou du brouillard',
+    emptyFromWeek: 'Serre vide à partir de la semaine',
+    emptyWeeks: 'Semaines à vide',
+    gridCo2KgKwh: 'CO₂ du réseau',
+    gasPerM3: 'Gaz',
+    electricityPerKwh: 'Électricité achetée',
+    exportPerKwh: 'Électricité vendue',
+    waterPerM3: 'Eau',
     lossCoefficientWK: 'Pertes par kelvin',
     outsideMinC: 'Dehors, minimum de la nuit',
     outsideMaxC: 'Dehors, maximum de l’après-midi',
@@ -264,6 +279,20 @@ export const FR: SerraCopy = {
     nightHours: 'Durée de la nuit',
   },
   hints: {
+    sourceClMmolL: 'Eau d’osmose : à peu près autant que de sodium',
+    sourceHco3MmolL:
+      'Eau d’osmose : moins de 0,5 ; puits : 2 à 6, selon l’analyse',
+    clLimitMmolL: 'Indicatif : environ 10 ; demandez à votre conseiller',
+    coolFromC:
+      'Ventilateurs et pads démarrent ; en dessous, les ouvrants suffisent',
+    airflowM3hM2: 'Pad et ventilateur : 120 à 150 m³/h par m² de sol',
+    fanWPerM3h:
+      'Essai ou fiche du ventilateur à la pression des pads : environ 0,03 à 0,04',
+    pumpWm2: 'Pompes des pads : environ 0,4 W par m² de sol',
+    emptyWeeks: 'Entre deux cultures, comme dans le calendrier',
+    gridCo2KgKwh: 'Le chiffre de votre réseau ; 0,45 est un exemple',
+    waterPerM3: 'Achetée, ou le coût complet de votre eau d’osmose',
+    exportPerKwh: 'Ce que le réseau paie pour l’électricité de la cogénération',
     chpElectricKw: 'Sites du désert : environ 10 MW pour 50 ha (20 W/m²)',
     chpStartHour: 'Tourner de jour, quand le CO₂ sert ouvrants fermés',
     bufferM3: 'Courant 50–100 m³ par hectare',
@@ -385,6 +414,7 @@ export const FR: SerraCopy = {
     deleteResult: (label: string) => `Supprimer « ${label} » ?`,
   },
   kinds: {
+    coolingYear: 'Refroidissement sur l’année',
     energy: 'Pôle énergie (cogénération)',
     heatReuse: 'Chaleur de l’eau refroidie',
     economics: 'Économie',
@@ -800,6 +830,15 @@ export const FR: SerraCopy = {
       bill: 'Votre tarif ou facteur, dans la devise du projet.',
     },
     topics: {
+      coolingEnergy: {
+        title: 'L’électricité du refroidissement sur l’année',
+        what: 'Le refroidissement par pad et ventilateur fonctionne à l’électricité : les ventilateurs tirent 120 à 150 m³/h d’air par m² de sol à travers des pads mouillés, et des pompes gardent les pads humides. Sur l’année, les ventilateurs ne tournent qu’aux heures chaudes, d’autant plus vite qu’il fait chaud : la consommation suit le climat. Une serre méditerranéenne consomme environ 10 kWh/m² par an : un repère pour le chiffre.',
+        assumptions: [
+          'Chaque mois est sa journée moyenne : température extérieure en cosinus, maximale à 15 h.',
+          'La puissance des ventilateurs suit la part des ventilateurs en marche (ventilateurs par paliers).',
+          'Les pompes des pads tournent dès que les ventilateurs tournent.',
+        ],
+      },
       cogeneration: {
         title: 'Cogénération et stockage de chaleur',
         what: 'Un moteur à gaz produit de l’électricité et, de son eau de refroidissement et de ses fumées, de la chaleur ; ses fumées épurées apportent du CO₂ à la culture. Tournant de jour, quand la culture peut utiliser le CO₂, il produit plus de chaleur que la serre n’en demande : un ballon tampon la porte dans la nuit et une chaudière couvre le reste.',
@@ -1045,6 +1084,31 @@ export const FR: SerraCopy = {
     },
   },
   supply: {
+    limitBy: {
+      na: 'Le sodium atteint sa limite en premier',
+      cl: 'Le chlorure atteint sa limite en premier',
+      ec: 'Le plafond d’EC arrive en premier',
+    },
+    strategies: {
+      title: 'Contenir le sel : une année comparée',
+      lead: 'La même boucle sur une année, selon cinq façons de gérer le sel que la culture laisse. En gras : le plus bas de sa colonne.',
+      table: 'Stratégies de vidange sur une année',
+      strategy: 'Stratégie',
+      flushes: 'Vidanges',
+      letGo: 'Rejeté',
+      fresh: 'Eau douce',
+      stockLost: 'Solution mère perdue',
+      minNutrient: 'EC nutritive la plus basse',
+      names: {
+        current: 'Réglage actuel',
+        flush: 'Vidange au plafond d’EC',
+        acid: 'Appoint acidifié',
+        variable: 'EC d’appoint abaissée',
+        bleed: 'Purge continue',
+      },
+      assume:
+        'Une année jour par jour, boucle fermée (tout le drainage réutilisé) sauf « réglage actuel » et la purge. L’acide dans l’appoint transforme le bicarbonate en CO₂ et en nitrate : il n’ajoute plus à l’EC. Abaisser l’EC d’appoint tient l’EC au goutteur mais nourrit moins. Solution mère perdue : L de chacune des solutions A et B, l’eau rejetée comptée à la concentration d’apport. Perte de rendement indicative.',
+    },
     title: 'Eau d’irrigation',
     lead: 'De la mer à la racine : une osmose inverse dimensionnée pour le jour de pointe de la culture, et la boucle nutritive qui réutilise le drainage et vidange avant que le sel s’accumule.',
     tabs: {
@@ -1091,9 +1155,26 @@ export const FR: SerraCopy = {
     },
   },
   energy: {
+    coolKwhM2: 'Électricité de refroidissement',
+    coolChartAlt: (place: string, total: string) =>
+      `Électricité de refroidissement par mois à ${place} : ${total} kWh par m² sur l’année.`,
+    coolCaption:
+      'Ventilateurs et pompes sur la journée moyenne de chaque mois ; rien tant que la serre est vide.',
+    coolYear: 'Refroidissement par an',
+    coolBenchmark: (bench: string, pct: string) =>
+      `${pct} % des ${bench} kWh/m² publiés`,
+    coolSite: 'Pour toute la serre',
+    coolPeak: 'Tout en marche :',
+    coolCost: 'Électricité par an',
+    coolCo2: 'CO₂ du réseau par an',
+    coolHours: 'Heures de refroidissement',
+    coolTable: 'Refroidissement par mois',
+    month: 'Mois',
+    coolOfBenchmark: 'Des 10 kWh/m² publiés',
     title: 'Énergie',
     lead: 'Une cogénération au gaz qui donne chaleur, électricité et CO₂ au fil d’une journée d’hiver, un ballon tampon pour la nuit et une chaudière pour le reste ; et la chaleur contenue dans l’eau de forage refroidie.',
     tabs: {
+      cooling: 'Refroidissement sur l’année',
       chp: 'Cogénération et tampon',
       reuse: 'Récupération de chaleur',
     },
@@ -1115,6 +1196,11 @@ export const FR: SerraCopy = {
     covers: 'Couvre',
     takeLinks: 'Prendre l’eau du jour de pointe et la chaleur du jour d’hiver',
     formulas: {
+      coolPower: 'Puissance = débit × W des ventilateurs par m³/h + pompes',
+      coolShare:
+        'Les ventilateurs suivent la chaleur : f = min(1, (T − départ) / écart)',
+      coolYear: 'Année = Σ jours × Σ heures de puissance',
+      coolCheck: 'Comparaison avec environ 10 kWh/m² par an',
       demand:
         'Besoin = H × (T_consigne − T_ext) − soleil, moins l’écran la nuit',
       buffer: 'Tampon = 1,163 × V × ΔT',
@@ -1124,9 +1210,48 @@ export const FR: SerraCopy = {
     },
   },
   site: {
+    plantList: 'Les équipements du site',
+    plantHint:
+      'Notez les équipements que les compartiments partagent ; les contrôles les comparent au jour de pointe du site.',
+    noPlants:
+      'Aucun équipement noté : ajoutez l’osmose, la cogénération, les chaudières, les groupes froids, les bassins et les pompes.',
+    plantTypes: {
+      ro: 'Osmose d’eau de mer',
+      chp: 'Cogénération',
+      boiler: 'Chaudière',
+      chiller: 'Groupe froid',
+      tank: 'Bassin',
+      pump: 'Pompe',
+    },
+    plantName: 'Nom',
+    plantField: {
+      capacity: 'Capacité',
+      efficiency: 'Rendement',
+      hoursDay: 'Heures par jour',
+    },
+    removePlant: (name: string) => `Retirer ${name}`,
+    plantType: 'Équipement',
+    addPlant: 'Ajouter l’équipement',
+    tariffs: 'Tarifs',
+    tariffHint:
+      'Ce que le site paie pour le gaz, l’électricité et l’eau, et reçoit pour l’électricité vendue. L’économie peut les reprendre.',
+    checksTitle: 'Équipements face au jour de pointe',
+    noChecks:
+      'Ajoutez une osmose, une cogénération ou une chaudière, un bassin ou une pompe pour les contrôler.',
+    checks: {
+      water: 'Eau d’osmose',
+      heat: 'Chaleur (cogénération et chaudières)',
+      storage: 'Stockage d’eau',
+      pumping: 'Pompage',
+    },
+    checkLine: (pct: string) => `${pct} % du besoin`,
+    fromSaved:
+      'D’après les équipements notés dans Équipements et tarifs ; plus bas, d’après les résultats enregistrés.',
+    takeTariffs: 'Reprendre les tarifs du site',
     title: 'Site',
     lead: 'Toute l’exploitation : chaque projet est un compartiment, sa serre répétée sur sa surface ; les totaux, l’osmose et la cogénération partagées face à eux, et l’économie de l’année.',
     tabs: {
+      plants: 'Équipements et tarifs',
       overview: 'Vue d’ensemble',
       economics: 'Économie',
     },
@@ -1589,6 +1714,24 @@ export const FR: SerraCopy = {
   },
 
   notes: {
+    'fert.flushCl': (v) =>
+      `Le chlorure atteint ${v['cl']} mmol/L en environ ${v['days']} jours : vidangez la boucle à ce moment.`,
+    'fert.flushEc': (v) =>
+      `Le sel porte l’EC au plafond de ${v['ec']} dS/m en environ ${v['days']} jours : vidangez la boucle à ce moment.`,
+    'fert.bleed': (v) =>
+      `Rejeter ${v['m3']} m³ de drainage par jour tient la boucle sous ses limites sans vidange : ${v['saved']} m³ de moins rejetés par an qu’en vidangeant au plafond.`,
+    'coolYear.range': (v) =>
+      `${v['kwh']} kWh/m² par an : dans la fourchette publiée pour les serres méditerranéennes (environ 10 ; ici ${v['pct']} %).`,
+    'coolYear.high': (v) =>
+      `${v['kwh']} kWh/m² par an, ${v['pct']} % des 10 publiés : vérifiez la puissance des ventilateurs, ombrez plus tôt ou brumisez au lieu des pads.`,
+    'coolYear.low': (v) =>
+      `${v['kwh']} kWh/m² par an, bien sous les 10 publiés (${v['pct']} %) : site doux ou été sans culture ; vérifiez la température de départ.`,
+    'coolYear.fans': (v) =>
+      `Des ventilateurs à ${v['w']} W par m³/h sont usés ou freinés par des pads encrassés : un essai et des pads propres réduisent la facture.`,
+    'coolYear.airflow': (v) =>
+      `${v['q']} m³/h par m² sort des 120 à 150 habituels pour pad et ventilateur.`,
+    'coolYear.peakMonth': (v) =>
+      `${v['month']} prend ${v['pct']} % de l’électricité de refroidissement de l’année.`,
     'data.vpdBand': (v) =>
       `Le VPD est resté dans sa plage ${v['pct']} % du temps.`,
     'data.dayOk': (v) =>
@@ -1674,7 +1817,7 @@ export const FR: SerraCopy = {
     'fert.flush': (v) =>
       `Le sodium atteint ${v['na']} mmol/L en environ ${v['days']} jours : vidangez la boucle à ce moment.`,
     'fert.levels': (v) =>
-      `Le sodium se stabilise à ${v['na']} mmol/L, sous la limite : pas de vidange pour le sodium.`,
+      `Le sodium se stabilise à ${v['na']} et le chlorure à ${v['cl']} mmol/L, sous les limites : pas de vidange nécessaire.`,
     'fert.saltySource': () =>
       'Une eau douce à plus de 3 mmol/L de sodium remplit vite la boucle de sel : mélangez avec de l’eau osmosée ou rejetez plus de drainage.',
     'fert.lowDrain': () =>

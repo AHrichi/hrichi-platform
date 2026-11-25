@@ -16,6 +16,8 @@ import {
   defaultRo,
   fertigation,
   type FertigationParams,
+  type FlushStrategy,
+  type FlushStrategyResult,
   type RoParams,
   type SavedCalculation,
   seawaterRo,
@@ -34,6 +36,21 @@ import { FERTIGATION_FIELDS, priceField, RO_FIELDS } from '../fields';
 
 type SupplyTab = 'ro' | 'fertigation';
 const TABS: readonly SupplyTab[] = ['ro', 'fertigation'];
+
+/** Strategy columns where the lowest figure is the best, in table order. */
+type StrategyCol =
+  | 'letGoM3Year'
+  | 'freshM3Year'
+  | 'stockLostLYear'
+  | 'meanRootEcDsM'
+  | 'yieldLossPct';
+const STRATEGY_COLS: readonly StrategyCol[] = [
+  'letGoM3Year',
+  'freshM3Year',
+  'stockLostLYear',
+  'meanRootEcDsM',
+  'yieldLossPct',
+];
 
 /** Sodium's share of the salt left in RO water (NaCl: 23 of 58.4). */
 const NA_SHARE = 23 / 58.44;
@@ -73,6 +90,27 @@ export class SupplyScreen {
   );
   protected readonly ro = computed(() => seawaterRo(this.roParams()));
   protected readonly fert = computed(() => fertigation(this.fertParams()));
+  protected readonly strategyCols = STRATEGY_COLS;
+
+  /** Which strategy is lowest in each column (bold in the table). */
+  protected readonly lowest = computed(() => {
+    const rows = this.fert().strategies;
+    const best = {} as Record<StrategyCol, FlushStrategy>;
+    for (const col of STRATEGY_COLS) {
+      best[col] = rows.reduce((a, b) => (b[col] < a[col] ? b : a)).id;
+    }
+    return best;
+  });
+
+  /** The flush card's hint: the limit that ends the loop, or where it levels. */
+  protected readonly flushHint = computed(() => {
+    const r = this.fert();
+    const n = (v: number) => this.i18n.num(v);
+    const s = this.t().supply;
+    if (r.flushDay !== null) return s.limitBy[r.limitBy];
+    if (r.naEquilibriumMmolL === null) return '';
+    return `${s.levelsAt} Na ${n(r.naEquilibriumMmolL)} · Cl ${n(r.clEquilibriumMmolL ?? 0)} mmol/L`;
+  });
 
   protected readonly editor = injectCalcEditing<SupplyTab>({
     tabs: TABS,
@@ -149,6 +187,11 @@ export class SupplyScreen {
     ];
   });
 
+  protected cell(row: FlushStrategyResult, col: StrategyCol): string {
+    const digits = col === 'meanRootEcDsM' ? 2 : col === 'yieldLossPct' ? 1 : 0;
+    return this.i18n.num(row[col], digits);
+  }
+
   constructor() {
     effect(() => {
       const ctx = this.store.context();
@@ -165,7 +208,13 @@ export class SupplyScreen {
 
   private load(saved: SavedCalculation): void {
     if (saved.kind === 'ro') this.roParams.set({ ...saved.inputs });
-    if (saved.kind === 'fertigation') this.fertParams.set({ ...saved.inputs });
+    if (saved.kind === 'fertigation') {
+      // Results saved before chloride was tracked lack its two fields.
+      this.fertParams.set({
+        ...defaultFertigation(this.store.context()),
+        ...saved.inputs,
+      });
+    }
   }
 
   protected setRo(change: FieldChange): void {
@@ -194,6 +243,8 @@ export class SupplyScreen {
       ...p,
       sourceEcDsM: Math.round(r.productEcDsM * 100) / 100,
       sourceNaMmolL: Math.round(na * 10) / 10,
+      // Sodium chloride: as many chloride ions as sodium ones.
+      sourceClMmolL: Math.round(na * 10) / 10,
     }));
   }
 

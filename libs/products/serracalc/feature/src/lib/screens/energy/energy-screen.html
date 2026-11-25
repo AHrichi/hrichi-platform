@@ -25,6 +25,14 @@
             (changed)="setHub($event)"
           />
           <figcaption>{{ t().calc.dragHint }}</figcaption>
+        } @else if (tab() === 'cooling') {
+          <sc-month-bars
+            [series]="coolSeries()"
+            unit="kWh/m²"
+            [digits]="2"
+            [ariaLabel]="coolAlt()"
+          />
+          <figcaption>{{ t().energy.coolCaption }}</figcaption>
         } @else {
           <svg
             class="reuse"
@@ -78,6 +86,26 @@
             [values]="hubParams()"
             (changed)="setHub($event)"
           />
+        } @else if (tab() === 'cooling') {
+          <sc-field-grid
+            [specs]="coolFields()"
+            [values]="coolParams()"
+            (changed)="setCool($event)"
+          >
+            <label class="select">
+              <span>{{ t().water.climate }}</span>
+              <select (change)="setCoolClimate(value($event))">
+                @for (c of climates; track c.id) {
+                  <option
+                    [value]="c.id"
+                    [selected]="coolParams().climateId === c.id"
+                  >
+                    {{ c.name }} ({{ c.country }})
+                  </option>
+                }
+              </select>
+            </label>
+          </sc-field-grid>
         } @else {
           <div class="actions">
             <button type="button" class="chip" (click)="takeLinks()">
@@ -177,6 +205,72 @@
                       <td>{{ i18n.num(h.fromBufferKw, 0) }}</td>
                       <td>{{ i18n.num(h.boilerKw, 0) }}</td>
                       <td>{{ i18n.num(h.bufferKwh, 0) }}</td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </details>
+        } @else if (tab() === 'cooling') {
+          <div class="results">
+            <ah-metric-card
+              [label]="t().energy.coolYear"
+              [value]="i18n.num(cool().kwhM2Year, 1)"
+              unit="kWh/m²"
+              variant="accent"
+              [hint]="
+                t().energy.coolBenchmark(
+                  i18n.num(benchmark, 0),
+                  i18n.num(cool().benchmarkPct, 0)
+                )
+              "
+            />
+            <ah-metric-card
+              [label]="t().energy.coolSite"
+              [value]="i18n.num(cool().mwhYear, 1)"
+              unit="MWh"
+              [hint]="
+                t().energy.coolPeak + ' ' + i18n.num(cool().peakKw, 0) + ' kW'
+              "
+            />
+            <ah-metric-card
+              [label]="t().energy.coolCost"
+              [value]="i18n.money(cool().cost, currency())"
+            />
+            <ah-metric-card
+              [label]="t().energy.coolCo2"
+              [value]="i18n.num(cool().co2T, 1)"
+              unit="t"
+            />
+            <ah-metric-card
+              [label]="t().energy.coolHours"
+              [value]="i18n.num(cool().hoursYear, 0)"
+              unit="h"
+            />
+          </div>
+          <sc-note-list [notes]="cool().notes" />
+          <details class="table-toggle">
+            <summary>{{ t().calc.table }}</summary>
+            <div
+              class="table-wrap"
+              tabindex="0"
+              role="region"
+              [attr.aria-label]="t().energy.coolTable"
+            >
+              <table>
+                <thead>
+                  <tr>
+                    <th scope="col">{{ t().energy.month }}</th>
+                    <th scope="col">h</th>
+                    <th scope="col">kWh/m²</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (m of cool().months; track m.month) {
+                    <tr>
+                      <th scope="row">{{ i18n.month(m.month) }}</th>
+                      <td>{{ i18n.num(m.hours, 0) }}</td>
+                      <td>{{ i18n.num(m.kwhM2, 2) }}</td>
                     </tr>
                   }
                 </tbody>

@@ -26,6 +26,7 @@ export type PhenomenonId =
   | 'fertigation'
   | 'cogeneration'
   | 'heatReuse'
+  | 'coolingEnergy'
   | 'siteScale'
   | 'light'
   | 'co2'
@@ -301,17 +302,20 @@ export const PHENOMENA: readonly Phenomenon[] = [
     id: 'fertigation',
     group: 'water',
     formula:
-      'EC_drain = (A·EC_feed − U·EC_uptake) / D;  V·dC/dt = C_in·F − C·(A/D)·L;  closed: t_flush = V (C_lim − C_0) / (C_in·F);  Y = 1 − 0.073 (EC − 2.0)',
+      'EC_drain = (A·EC_feed − U·EC_uptake) / D;  V·dC/dt = C_in·F − C·(A/D)·L (Na and Cl);  closed: t_flush = V (C_lim − C_0) / (C_in·F);  bleed L = C_in·U·D / (C_lim·A − C_in·D);  ΔEC = 0.06 (ΔNa + ΔCl) + 0.045 ΔHCO₃;  Y = 1 − 0.073 (EC − 2.0)',
     inputs: [
       'appliedM3Day',
       'drainPct',
       'recyclePct',
       'sourceEcDsM',
       'sourceNaMmolL',
+      'sourceClMmolL',
+      'sourceHco3MmolL',
       'targetEcDsM',
       'uptakeEcDsM',
       'flushEcDsM',
       'naLimitMmolL',
+      'clLimitMmolL',
       'systemM3',
       'dilution',
       'yieldSlopePct',
@@ -347,6 +351,28 @@ export const PHENOMENA: readonly Phenomenon[] = [
     related: ['cogeneration', 'hotWater'],
     tools: [{ screen: 'energy', tab: 'reuse' }],
     sources: ['typical'],
+  },
+  {
+    id: 'coolingEnergy',
+    group: 'air',
+    formula:
+      'T(h) = T_mean + A·cos(2π (h − 15) / 24);  f = min(1, (T − T_start) / ΔT_full);  P = Q·f·w_fan + P_pump;  E = Σ days × Σ hours P  [≈ 10 kWh/m²·yr]',
+    inputs: [
+      'coolFromC',
+      'fullAtK',
+      'airflowM3hM2',
+      'fanWPerM3h',
+      'pumpWm2',
+      'emptyFromWeek',
+      'emptyWeeks',
+      'gridCo2KgKwh',
+    ],
+    related: ['evaporativeCooling', 'ventilation', 'fogging', 'siteScale'],
+    tools: [
+      { screen: 'energy', tab: 'cooling' },
+      { screen: 'cooling', tab: 'padFan' },
+    ],
+    sources: ['soussi2022', 'typical'],
   },
   {
     id: 'siteScale',
@@ -527,10 +553,13 @@ export const INPUT_METHODS: Record<string, InputMethod> = {
   recyclePct: m('setpoint', 'flowMeter', 'fertigation'),
   sourceEcDsM: m('measure', 'ecMeter', 'fertigation'),
   sourceNaMmolL: m('measure', 'labAnalysis', 'fertigation'),
+  sourceClMmolL: m('measure', 'labAnalysis', 'fertigation'),
+  sourceHco3MmolL: m('measure', 'labAnalysis', 'fertigation'),
   targetEcDsM: m('setpoint', 'ecMeter', 'fertigation'),
   uptakeEcDsM: m('assume', 'labAnalysis', 'fertigation'),
   flushEcDsM: m('setpoint', 'ecMeter', 'fertigation'),
   naLimitMmolL: m('setpoint', 'labAnalysis', 'fertigation'),
+  clLimitMmolL: m('setpoint', 'labAnalysis', 'fertigation'),
   systemM3: m('measure', 'tape', 'fertigation'),
   dilution: m('setpoint', undefined, 'fertigation'),
   stockTankM3: m('measure', 'tape', 'fertigation'),
@@ -582,6 +611,15 @@ export const INPUT_METHODS: Record<string, InputMethod> = {
   burnerEfficiencyPct: m('datasheet', undefined, 'co2'),
   gasPrice: m('bill', 'meters'),
   co2Price: m('bill', undefined, 'co2'),
+  // Cooling over the year
+  coolFromC: m('setpoint', 'climateComputer', 'coolingEnergy'),
+  fullAtK: m('setpoint', 'climateComputer', 'coolingEnergy'),
+  airflowM3hM2: m('datasheet', 'anemometer', 'coolingEnergy'),
+  fanWPerM3h: m('datasheet', 'meters', 'coolingEnergy'),
+  pumpWm2: m('datasheet', 'meters', 'coolingEnergy'),
+  emptyFromWeek: m('setpoint', undefined, 'cropCalendar'),
+  emptyWeeks: m('setpoint', undefined, 'cropCalendar'),
+  gridCo2KgKwh: m('bill', undefined, 'coolingEnergy'),
   // The crop calendar
   plantingWeek: m('setpoint', undefined, 'cropCalendar'),
   nurseryWeeks: m('assume', undefined, 'cropCalendar'),

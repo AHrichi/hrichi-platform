@@ -3,6 +3,9 @@ import type {
   FertigationDay,
   FertigationParams,
   FertigationResult,
+  FlushLimit,
+  FlushStrategy,
+  FlushStrategyResult,
   RoParams,
   RoResult,
 } from '../models/serra.models';
@@ -12,8 +15,12 @@ import { round } from '../utils/physics';
 export const MG_L_PER_DS_M = 640;
 /** EC added by 1 mmol/L of sodium chloride, dS/m. */
 export const EC_PER_MMOL_NACL = 0.12;
+/** EC added by 1 mmol/L of bicarbonate, its cation a nutrient, dS/m. */
+export const EC_PER_MMOL_HCO3 = 0.045;
 /** Days of the loop the chart shows. */
 const LOOP_DAYS = 120;
+/** Days the flush strategies are compared over. */
+const YEAR_DAYS = 365;
 
 /** The recovery that turns a feed salinity into a brine salinity. */
 export function recoveryFromBrine(feedGL: number, brineGL: number): number {
@@ -123,10 +130,14 @@ export function salinityYield(
  * Fertigation with drain recycling. Water: applied A, drain D, reused R,
  * let go D − R, fresh make-up A − R. EC: the crop takes water with less
  * salt than it is given, so EC_drain = (A·EC_feed − U·EC_uptake) / D. Sodium
- * hardly goes into the crop, so it builds up in the loop of volume V:
- * V·dC/dt = C_in·fresh − C·let go. Fully closed, it climbs straight to the
- * limit in t = V (C_lim − C_0) / (C_in · fresh); with some drain let go it
- * levels off at C_in · fresh / let go. Yield: 1 − slope × (EC_root − 2.0).
+ * and chloride hardly go into the crop, so they build up in the loop of
+ * volume V: V·dC/dt = C_in·fresh − C·(A/D)·let go. Fully closed, they climb
+ * straight to the limit in t = V (C_lim − C_0) / (C_in · fresh); with some
+ * drain let go they level off at C_in · fresh · D / (A · let go). Each
+ * mmol/L of either adds 0.06 dS/m to the EC, of bicarbonate 0.045; the loop
+ * goes at the first of the sodium, chloride and EC limits. A year under five
+ * strategies (as set, flush at the EC ceiling, acidified refill, refill EC
+ * lowered as salt builds, steady bleed) is worked out day by day. Yield: 1 − slope × (EC_root − threshold).
  */
 export function fertigation(p: FertigationParams): FertigationResult {
   const applied = Math.max(0, p.appliedM3Day);
@@ -146,38 +157,99 @@ export function fertigation(p: FertigationParams): FertigationResult {
     p.yieldThresholdEc,
   );
 
-  // Sodium in the solution fed to the crop. The crop drinks water but leaves
-  // the sodium, so the drain holds C·A/D; what is let go carries it out:
-  // V·dC/dt = C_in·fresh − C·(A/D)·let go, solved exactly day by day.
-  const volume = Math.max(0.1, p.systemM3);
-  const cIn = Math.max(0, p.sourceNaMmolL);
+  // Sodium, chloride and bicarbonate in the solution fed to the crop. The
+  // crop drinks water but leaves them, so the drain holds C·A/D; what is let
+  // go carries them out: V·dC/dt = C_in·fresh − C·(A/D)·let go, solved
+  // exactly. All climb by the same factor g = C / C_in, so one loop tells
+  // every limit.
+  const loop: Loop = {
+    applied,
+    drain,
+    volume: Math.max(0.1, p.systemM3),
+  };
+  const naIn = Math.max(0, p.sourceNaMmolL);
+  const clIn = Math.max(0, p.sourceClMmolL ?? p.sourceNaMmolL);
+  const hco3In = Math.max(0, p.sourceHco3MmolL ?? 0);
   const nutrientEc = Math.max(0, p.targetEcDsM - p.sourceEcDsM);
-  const ecAt = (na: number) => p.targetEcDsM + (na - cIn) * EC_PER_MMOL_NACL;
-  // The EC ceiling as sodium; whichever limit comes first.
-  const naAtFlushEc = cIn + (p.flushEcDsM - p.targetEcDsM) / EC_PER_MMOL_NACL;
-  const limit = Math.min(p.naLimitMmolL, naAtFlushEc);
-  const k = drain > 0 ? ((applied / drain) * discharged) / volume : 0;
-  const equilibrium =
-    k > 0 ? (cIn * fresh * drain) / (applied * discharged) : null;
-  const naAt = (t: number) =>
-    equilibrium !== null
-      ? equilibrium + (cIn - equilibrium) * Math.exp(-k * t)
-      : cIn + (cIn * fresh * t) / volume;
+  // EC each step of g adds: 0.06 dS/m per mmol/L of sodium or chloride,
+  // 0.045 per mmol/L of bicarbonate. Acid in the refill turns bicarbonate
+  // into CO₂ (and nitrate, a nutrient), so it no longer builds up.
+  const ionBallast = (EC_PER_MMOL_NACL / 2) * (naIn + clIn);
+  const ballastPerG = ionBallast + EC_PER_MMOL_HCO3 * hco3In;
+  const limitsFor = (ballast: number): Record<FlushLimit, number> => ({
+    na: naIn > 0 ? p.naLimitMmolL / naIn : Infinity,
+    cl:
+      clIn > 0 && p.clLimitMmolL !== undefined
+        ? p.clLimitMmolL / clIn
+        : Infinity,
+    ec: ballast > 0 ? 1 + (p.flushEcDsM - p.targetEcDsM) / ballast : Infinity,
+  });
+  const limits = limitsFor(ballastPerG);
+  const firstOf = (l: Record<FlushLimit, number>): FlushLimit =>
+    (['na', 'cl', 'ec'] as const).reduce((a, b) => (l[b] < l[a] ? b : a));
+  const limitBy = firstOf(limits);
+  const gLimit = limits[limitBy];
+  const equilibrium = discharged > 0 ? levelFactor(loop, discharged) : null;
   let flushDay: number | null = null;
-  if (reused > 0 && cIn * fresh > 0) {
-    if (limit <= cIn) flushDay = 0;
+  if (reused > 0 && Number.isFinite(gLimit)) {
+    if (gLimit <= 1) flushDay = 0;
     else if (equilibrium === null)
-      flushDay = Math.ceil((volume * (limit - cIn)) / (cIn * fresh));
-    else if (equilibrium > limit)
+      flushDay = Math.ceil((loop.volume * (gLimit - 1)) / fresh);
+    else if (equilibrium > gLimit) {
+      const k = ((applied / drain) * discharged) / loop.volume;
       flushDay = Math.ceil(
-        Math.log((equilibrium - cIn) / (equilibrium - limit)) / k,
+        Math.log((equilibrium - 1) / (equilibrium - gLimit)) / k,
       );
+    }
   }
   const days: FertigationDay[] = [];
   for (let day = 0; day <= LOOP_DAYS; day += 2) {
-    const na = naAt(day);
-    days.push({ day, naMmolL: round(na, 2), feedEcDsM: round(ecAt(na), 2) });
+    const g = loopFactor(loop, discharged, 1, day);
+    days.push({
+      day,
+      naMmolL: round(naIn * g, 2),
+      clMmolL: round(clIn * g, 2),
+      feedEcDsM: round(p.targetEcDsM + ballastPerG * (g - 1), 2),
+    });
   }
+
+  // A year under each strategy, against the same limits.
+  const crop = (ballast: number): YearCrop => ({
+    ballastPerG: ballast,
+    nutrientEc,
+    rootEc,
+    dilution: p.dilution,
+    slope: p.yieldSlopePct,
+    threshold: p.yieldThresholdEc,
+  });
+  const uptake = applied - drain;
+  const bleed = !Number.isFinite(gLimit)
+    ? 0
+    : gLimit * applied > drain
+      ? Math.min(drain, (uptake * drain) / (gLimit * applied - drain))
+      : drain;
+  const acidLimits = limitsFor(ionBallast);
+  // Holding the EC, only the ions themselves (or nutrients run out) end it.
+  const variableAt = Math.min(
+    limits.na,
+    limits.cl,
+    ballastPerG > 0 ? 1 + nutrientEc / ballastPerG : Infinity,
+  );
+  const withSalt = crop(ballastPerG);
+  const strategies = [
+    simulateYear('current', loop, discharged, gLimit, false, withSalt),
+    simulateYear('flush', loop, 0, gLimit, false, withSalt),
+    simulateYear(
+      'acid',
+      loop,
+      0,
+      acidLimits[firstOf(acidLimits)],
+      false,
+      crop(ionBallast),
+    ),
+    simulateYear('variable', loop, 0, variableAt, true, withSalt),
+    simulateYear('bleed', loop, bleed, Infinity, false, withSalt),
+  ];
 
   // Fertiliser: what a fresh-water-only system would need, against what is
   // left once the reused drain brings its own nutrients back.
@@ -219,16 +291,47 @@ export function fertigation(p: FertigationParams): FertigationResult {
     });
   }
   if (flushDay !== null) {
-    notes.push({
-      code: 'fert.flush',
-      severity: flushDay < 14 ? 'warn' : 'info',
-      values: { days: flushDay, na: round(limit, 1) },
-    });
-  } else if (equilibrium !== null && reused > 0 && discharged > 0) {
+    const severity = flushDay < 14 ? 'warn' : 'info';
+    if (limitBy === 'na') {
+      notes.push({
+        code: 'fert.flush',
+        severity,
+        values: { days: flushDay, na: round(naIn * gLimit, 1) },
+      });
+    } else if (limitBy === 'cl') {
+      notes.push({
+        code: 'fert.flushCl',
+        severity,
+        values: { days: flushDay, cl: round(clIn * gLimit, 1) },
+      });
+    } else {
+      notes.push({
+        code: 'fert.flushEc',
+        severity,
+        values: { days: flushDay, ec: round(p.flushEcDsM, 1) },
+      });
+    }
+  } else if (equilibrium !== null && reused > 0) {
     notes.push({
       code: 'fert.levels',
       severity: 'ok',
-      values: { na: round(equilibrium, 1) },
+      values: {
+        na: round(naIn * equilibrium, 1),
+        cl: round(clIn * equilibrium, 1),
+      },
+    });
+  }
+  // A steady bleed lets less go than emptying the loop at the ceiling.
+  const flushed = strategies[1];
+  const bled = strategies[4];
+  if (flushed.flushesYear > 0 && bled.letGoM3Year < flushed.letGoM3Year) {
+    notes.push({
+      code: 'fert.bleed',
+      severity: 'info',
+      values: {
+        m3: round(bled.letGoM3Day, 1),
+        saved: round(flushed.letGoM3Year - bled.letGoM3Year),
+      },
     });
   }
   if (p.sourceNaMmolL > 3) {
@@ -252,8 +355,118 @@ export function fertigation(p: FertigationParams): FertigationResult {
     stockLDay: round(stockLDay),
     stockDays: round(stockDays, 1),
     flushDay,
-    naEquilibriumMmolL: equilibrium === null ? null : round(equilibrium, 1),
+    limitBy,
+    naEquilibriumMmolL:
+      equilibrium === null ? null : round(naIn * equilibrium, 1),
+    clEquilibriumMmolL:
+      equilibrium === null ? null : round(clIn * equilibrium, 1),
     days,
+    strategies,
     notes,
+  };
+}
+
+/** The loop's size: water given and drained a day, water held, m³. */
+interface Loop {
+  applied: number;
+  drain: number;
+  volume: number;
+}
+
+/**
+ * Where the concentration factor g = C / C_in levels off when `letGo` m³ of
+ * drain go each day: g = fresh · D / (A · let go).
+ */
+function levelFactor(loop: Loop, letGo: number): number {
+  const fresh = loop.applied - (loop.drain - letGo);
+  return (fresh * loop.drain) / (loop.applied * letGo);
+}
+
+/** The concentration factor `days` later, from `g0`, solved exactly. */
+function loopFactor(
+  loop: Loop,
+  letGo: number,
+  g0: number,
+  days: number,
+): number {
+  const reused = loop.drain - letGo;
+  if (reused <= 0) return 1;
+  const fresh = loop.applied - reused;
+  if (letGo <= 0) return g0 + (fresh * days) / loop.volume;
+  const k = ((loop.applied / loop.drain) * letGo) / loop.volume;
+  const level = levelFactor(loop, letGo);
+  return level + (g0 - level) * Math.exp(-k * days);
+}
+
+interface YearCrop {
+  /** EC added per step of the concentration factor, dS/m. */
+  ballastPerG: number;
+  nutrientEc: number;
+  /** Root-zone EC with no salt build-up, dS/m. */
+  rootEc: number;
+  dilution: number;
+  slope: number;
+  threshold: number;
+}
+
+/**
+ * A year of the loop, day by day: `letGo` m³ of drain go each day, and the
+ * loop is emptied and refilled with fresh water when g reaches `flushAt`.
+ * With `holdEc` the refill's nutrients drop as salt builds up, so the EC
+ * at the dripper holds; otherwise the salt adds to it. What is let go
+ * carries nutrients at the day's feed strength.
+ */
+function simulateYear(
+  id: FlushStrategy,
+  loop: Loop,
+  letGo: number,
+  flushAt: number,
+  holdEc: boolean,
+  crop: YearCrop,
+): FlushStrategyResult {
+  const fresh = loop.applied - (loop.drain - letGo);
+  // The drain holds the salt of A m³ in D m³: the root zone averages both.
+  const rootPerBallast =
+    loop.drain > 0 ? (1 + loop.applied / loop.drain) / 2 : 1;
+  let g = 1;
+  let flushes = 0;
+  let letGoM3 = 0;
+  let freshM3 = 0;
+  let stockM3 = 0;
+  let rootSum = 0;
+  let yieldSum = 0;
+  let minNutrient = crop.nutrientEc;
+  for (let day = 0; day < YEAR_DAYS; day++) {
+    const ballast = crop.ballastPerG * (g - 1);
+    const nutrient = holdEc
+      ? Math.max(0, crop.nutrientEc - ballast)
+      : crop.nutrientEc;
+    const strength = crop.nutrientEc > 0 ? nutrient / crop.nutrientEc : 0;
+    const root = holdEc ? crop.rootEc : crop.rootEc + ballast * rootPerBallast;
+    rootSum += root;
+    yieldSum += salinityYield(root, crop.slope, crop.threshold);
+    minNutrient = Math.min(minNutrient, nutrient);
+    letGoM3 += letGo;
+    freshM3 += fresh;
+    stockM3 += letGo * strength;
+    g = loopFactor(loop, letGo, g, 1);
+    if (g >= flushAt) {
+      flushes++;
+      letGoM3 += loop.volume;
+      freshM3 += loop.volume;
+      stockM3 += loop.volume * strength;
+      g = 1;
+    }
+  }
+  return {
+    id,
+    flushesYear: flushes,
+    letGoM3Day: round(letGo, 2),
+    letGoM3Year: round(letGoM3),
+    freshM3Year: round(freshM3),
+    stockLostLYear: round((stockM3 * 1000) / Math.max(1, crop.dilution)),
+    meanRootEcDsM: round(rootSum / YEAR_DAYS, 2),
+    yieldLossPct: round((1 - yieldSum / YEAR_DAYS) * 100, 1),
+    minNutrientEcDsM: round(minNutrient, 2),
   };
 }
