@@ -2,22 +2,26 @@ import { computed, inject, Injectable } from '@angular/core';
 import { PreferencesStore, type SiteLanguage } from '@ah/shared/state';
 import type { CalcNote, Currency } from '@ah/products/serracalc/domain';
 import { AR } from './copy.ar';
+import { DE } from './copy.de';
 import { EN, type SerraCopy } from './copy.en';
 import { FR } from './copy.fr';
+import { IT } from './copy.it';
 
-/** The languages SerraCalc speaks; Italian and German readers get English. */
+/** The languages SerraCalc speaks: the portfolio's five. */
 export const SERRA_LANGUAGES: readonly { id: SiteLanguage; label: string }[] = [
   { id: 'fr', label: 'FR' },
   { id: 'ar', label: 'ع' },
   { id: 'en', label: 'EN' },
+  { id: 'it', label: 'IT' },
+  { id: 'de', label: 'DE' },
 ];
 
 const COPY: Record<SiteLanguage, SerraCopy> = {
   en: EN,
   fr: FR,
   ar: AR,
-  it: EN,
-  de: EN,
+  it: IT,
+  de: DE,
 };
 
 /**
@@ -28,8 +32,8 @@ const LOCALES: Record<SiteLanguage, string> = {
   en: 'en-GB',
   fr: 'fr-FR',
   ar: 'ar-u-nu-latn',
-  it: 'en-GB',
-  de: 'en-GB',
+  it: 'it-IT',
+  de: 'de-DE',
 };
 
 /** Note values that hold a month (0–11), written as the month's name. */
