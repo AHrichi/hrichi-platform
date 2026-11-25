@@ -23,6 +23,7 @@ import {
 } from '@ah/products/serracalc/domain';
 import { SerraI18n } from '../../i18n/serra-i18n';
 import { type NewProject, SerraStore } from '../../store/serra.store';
+import { BackupPanel } from '../../ui/backup-panel/backup-panel';
 import { FieldGrid, type FieldChange } from '../../ui/field-grid/field-grid';
 import { GREENHOUSE_FIELDS } from '../fields';
 
@@ -56,7 +57,14 @@ function blankDraft(): NewProject {
 
 @Component({
   selector: 'sc-projects-screen',
-  imports: [AhButton, AhEmptyState, AhModal, FieldGrid, RouterLink],
+  imports: [
+    AhButton,
+    AhEmptyState,
+    AhModal,
+    BackupPanel,
+    FieldGrid,
+    RouterLink,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './projects-screen.html',
   styleUrl: './projects-screen.scss',

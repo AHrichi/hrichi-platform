@@ -587,6 +587,28 @@ export const EN = {
     noProject: 'Create a project to save results.',
   },
 
+  backup: {
+    title: 'Back up and restore',
+    lead: 'Your projects are kept in this browser only. Keep a copy: save a backup file on the phone, or share it to Google Drive, and open it again on any device.',
+    download: 'Save a backup file',
+    share: 'Share or save to Drive',
+    shareTitle: 'SerraCalc backup',
+    open: 'Open a backup',
+    driveHint:
+      'On Android, “Share or save to Drive” lists Drive in the share menu, and “Open a backup” can pick the file from Drive. On iPhone, choose Files or the Drive app.',
+    saved: (n: number) => `Backup of ${n} project${n === 1 ? '' : 's'} ready.`,
+    restored: (n: number, skipped: number) =>
+      `${n} project${n === 1 ? '' : 's'} restored${skipped ? ` (${skipped} damaged entr${skipped === 1 ? 'y' : 'ies'} left out)` : ''}. Any already here came in as a copy.`,
+    shareFailed: 'Sharing didn’t work here: save the backup file instead.',
+    errors: {
+      notJson: 'This file isn’t a SerraCalc backup (it isn’t JSON).',
+      notSerraCalc: 'This JSON file isn’t a SerraCalc backup.',
+      newerVersion:
+        'This backup comes from a newer SerraCalc: reload the app and try again.',
+      empty: 'This backup has no project SerraCalc can read.',
+    },
+  },
+
   guide: {
     title: 'Guide',
     lead: 'What each tool does, what it assumes and where its numbers come from.',

@@ -162,6 +162,13 @@
       </section>
     }
   }
+
+  @if (!store.isLoading()) {
+    <section class="panel" aria-labelledby="sc-backup-title">
+      <h3 id="sc-backup-title">{{ t().backup.title }}</h3>
+      <sc-backup-panel />
+    </section>
+  }
 </section>
 
 <ah-modal

@@ -15,3 +15,4 @@ export * from './lib/calculations/humidity';
 export * from './lib/calculations/defaults';
 
 export * from './lib/utils/physics';
+export * from './lib/utils/backup';

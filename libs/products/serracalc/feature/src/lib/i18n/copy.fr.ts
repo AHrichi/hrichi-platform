@@ -596,6 +596,31 @@ export const FR: SerraCopy = {
     noProject: 'Créez un projet pour enregistrer les résultats.',
   },
 
+  backup: {
+    title: 'Sauvegarder et restaurer',
+    lead: 'Vos projets ne sont gardés que dans ce navigateur. Gardez-en une copie : enregistrez un fichier de sauvegarde sur le téléphone, ou partagez-le vers Google Drive, et rouvrez-le sur n’importe quel appareil.',
+    download: 'Enregistrer une sauvegarde',
+    share: 'Partager ou enregistrer sur Drive',
+    shareTitle: 'Sauvegarde SerraCalc',
+    open: 'Ouvrir une sauvegarde',
+    driveHint:
+      'Sur Android, « Partager ou enregistrer sur Drive » propose Drive dans le menu de partage, et « Ouvrir une sauvegarde » peut choisir le fichier dans Drive. Sur iPhone, choisissez Fichiers ou l’app Drive.',
+    saved: (n: number) =>
+      `Sauvegarde de ${n} projet${n === 1 ? '' : 's'} prête.`,
+    restored: (n: number, skipped: number) =>
+      `${n} projet${n === 1 ? '' : 's'} restauré${n === 1 ? '' : 's'}${skipped ? ` (${skipped} entrée${skipped === 1 ? '' : 's'} abîmée${skipped === 1 ? '' : 's'} ignorée${skipped === 1 ? '' : 's'})` : ''}. Un projet déjà présent arrive en copie.`,
+    shareFailed:
+      'Le partage n’a pas fonctionné ici : enregistrez plutôt le fichier de sauvegarde.',
+    errors: {
+      notJson:
+        'Ce fichier n’est pas une sauvegarde SerraCalc (ce n’est pas du JSON).',
+      notSerraCalc: 'Ce fichier JSON n’est pas une sauvegarde SerraCalc.',
+      newerVersion:
+        'Cette sauvegarde vient d’une version plus récente de SerraCalc : rechargez l’app et réessayez.',
+      empty: 'Cette sauvegarde ne contient aucun projet lisible.',
+    },
+  },
+
   guide: {
     title: 'Guide',
     lead: 'Ce que fait chaque outil, ce qu’il suppose et d’où viennent ses chiffres.',

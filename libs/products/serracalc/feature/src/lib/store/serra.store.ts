@@ -14,6 +14,7 @@ import {
   type GreenhouseProject,
   SAMPLE_PROJECTS,
   type SavedCalculation,
+  withNewId,
 } from '@ah/products/serracalc/domain';
 import { SerraDbService } from '../services/serra-db.service';
 
@@ -208,6 +209,35 @@ export const SerraStore = signalStore(
           ...project,
           calculations: project.calculations.filter((c) => c.id !== id),
         }));
+      },
+
+      /**
+       * Adds the projects of a backup file next to the ones here. A project
+       * whose id is taken comes in as a copy, so a restore never overwrites.
+       * Returns how many came in; the first of them opens.
+       */
+      async importProjects(
+        projects: readonly GreenhouseProject[],
+      ): Promise<number> {
+        const taken = new Set(store.projects().map((p) => p.id));
+        const incoming = projects.map((project) => {
+          const copy = taken.has(project.id)
+            ? withNewId(project, newId('gh'))
+            : project;
+          taken.add(copy.id);
+          return copy;
+        });
+        for (const project of incoming) {
+          await db.saveProject(project);
+        }
+        const first = incoming[0]?.id ?? store.activeProjectId();
+        if (first) db.lastProjectId = first;
+        patchState(store, {
+          projects: [...store.projects(), ...incoming],
+          activeProjectId: first,
+          error: null,
+        });
+        return incoming.length;
       },
 
       /** Adds the sample projects (back as they were); the user's stay. */
