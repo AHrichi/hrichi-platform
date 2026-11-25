@@ -48,6 +48,15 @@ const LABELS: Record<FigureId, (t: SerraCopy) => string> = {
   dewPoint: (t) => t.air.dew,
   outsideAir: (t) => t.air.air,
   dryingHeat: (t) => t.air.heat,
+  headroom: (t) => t.vpd.headroom,
+  fogInside: (t) => t.cooling.fogInside,
+  fogRh: (t) => t.cooling.fogRh,
+  fogWater: (t) => t.cooling.waterDay,
+  nozzles: (t) => t.cooling.nozzles,
+  firstHarvest: (t) => t.calendar.firstHarvest,
+  harvestWeeks: (t) => t.calendar.harvestWeeks,
+  heatingWeeks: (t) => t.calendar.heatingWeeks,
+  fogWeeks: (t) => t.calendar.fogWeeks,
 };
 
 export interface ReportFigure {

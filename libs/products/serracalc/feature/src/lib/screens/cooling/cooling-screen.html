@@ -18,20 +18,30 @@
   <div class="workbench">
     <div class="column">
       <figure class="panel">
-        @if (tab() === 'ventilation') {
-          <sc-vent-airflow
-            [params]="ventParams()"
-            [result]="vent()"
-            (changed)="setVent($event)"
-          />
-        } @else {
-          <sc-pad-fan-flow
-            [params]="padParams()"
-            [result]="pad()"
-            (changed)="setPad($event)"
-          />
+        @switch (tab()) {
+          @case ('ventilation') {
+            <sc-vent-airflow
+              [params]="ventParams()"
+              [result]="vent()"
+              (changed)="setVent($event)"
+            />
+          }
+          @case ('padFan') {
+            <sc-pad-fan-flow
+              [params]="padParams()"
+              [result]="pad()"
+              (changed)="setPad($event)"
+            />
+          }
+          @case ('fog') {
+            <sc-fog-diagram
+              [params]="fogParams()"
+              [result]="fog()"
+              (changed)="setFog($event)"
+            />
+          }
         }
-        <figcaption>✋ {{ t().calc.dragHint }}</figcaption>
+        <figcaption>{{ t().calc.dragHint }}</figcaption>
       </figure>
       <details class="panel" open>
         <summary>
@@ -46,18 +56,28 @@
 
       <section class="panel" aria-labelledby="sc-cooling-inputs">
         <h3 id="sc-cooling-inputs">{{ t().calc.inputs }}</h3>
-        @if (tab() === 'ventilation') {
-          <sc-field-grid
-            [specs]="ventFields"
-            [values]="ventExtra()"
-            (changed)="setVent($event)"
-          />
-        } @else {
-          <sc-field-grid
-            [specs]="padFields"
-            [values]="padExtra()"
-            (changed)="setPad($event)"
-          />
+        @switch (tab()) {
+          @case ('ventilation') {
+            <sc-field-grid
+              [specs]="ventFields"
+              [values]="ventExtra()"
+              (changed)="setVent($event)"
+            />
+          }
+          @case ('padFan') {
+            <sc-field-grid
+              [specs]="padFields"
+              [values]="padExtra()"
+              (changed)="setPad($event)"
+            />
+          }
+          @case ('fog') {
+            <sc-field-grid
+              [specs]="fogFields"
+              [values]="fogExtra()"
+              (changed)="setFog($event)"
+            />
+          }
         }
       </section>
     </div>
@@ -95,6 +115,64 @@
             />
           </div>
           <sc-note-list [notes]="vent().notes" />
+        } @else if (tab() === 'fog') {
+          <div class="results">
+            <ah-metric-card
+              [label]="t().cooling.fogInside"
+              [value]="i18n.num(fog().insideC)"
+              unit="°C"
+              variant="accent"
+              [hint]="
+                t().cooling.ventOnly + ': ' + i18n.num(fog().ventOnlyC) + ' °C'
+              "
+            />
+            <ah-metric-card
+              [label]="t().cooling.fogRh"
+              [value]="i18n.num(fog().insideRhPct, 0)"
+              unit="%"
+              [hint]="
+                '+' +
+                i18n.num(fog().rhRisePct, 0) +
+                ' % · VPD ' +
+                i18n.num(fog().vpdKpa, 2) +
+                ' kPa'
+              "
+            />
+            <ah-metric-card
+              [label]="t().cooling.fogRate"
+              [value]="i18n.num(fog().fogGm2Min)"
+              unit="g/m²·min"
+              [hint]="
+                t().cooling.fogMean +
+                ': ' +
+                i18n.num(fog().meanGm2Min) +
+                ' g/m²·min'
+              "
+            />
+            <ah-metric-card
+              [label]="t().cooling.fogCycle"
+              [value]="i18n.num(fog().onS, 0) + ' / ' + i18n.num(fog().offS, 0)"
+              unit="s"
+              [hint]="i18n.num(fog().dutyPct, 0) + ' % ' + t().cooling.fogOn"
+            />
+            <ah-metric-card
+              [label]="t().cooling.waterDay"
+              [value]="i18n.num(fog().waterM3Day)"
+              unit="m³"
+              [hint]="i18n.num(fog().waterLm2Day) + ' L/m²'"
+            />
+            <ah-metric-card
+              [label]="t().cooling.nozzles"
+              [value]="i18n.num(fog().nozzles, 0)"
+              [hint]="
+                t().cooling.padCompare +
+                ': ' +
+                i18n.num(fog().padWaterM3Day) +
+                ' m³'
+              "
+            />
+          </div>
+          <sc-note-list [notes]="fog().notes" />
         } @else {
           <div class="results">
             <ah-metric-card
@@ -139,6 +217,17 @@
         }
         <sc-calc-steps [steps]="steps()" />
       </section>
+
+      @if (tab() !== 'padFan') {
+        <sc-advice-card
+          [advice]="advice()"
+          [limit]="ventLimit"
+          [showFog]="
+            tab() === 'ventilation' && advice().strategy === 'shadeAndFog'
+          "
+          (openFog)="openFog()"
+        />
+      }
 
       <section class="panel" aria-labelledby="sc-cooling-save">
         <h3 id="sc-cooling-save">{{ t().save.title }}</h3>

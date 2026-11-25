@@ -158,6 +158,40 @@ export const HUMIDITY_FIELDS: readonly FieldSpec[] = [
   uValue,
 ];
 
+export const FOG_FIELDS: readonly FieldSpec[] = [
+  spec('outsideC', '°C', 20, 50, 0.5),
+  spec('outsideRhPct', '%', 5, 95, 1),
+  spec('ventPct', '%', 1, 40, 1),
+  spec('ventOpeningM', 'm', 0.2, 3, 0.1),
+  spec('windMs', 'm/s', 0, 10, 0.5),
+  spec('nozzlesPer100M2', '/100 m²', 0, 80, 1),
+  spec('nozzleLh', 'L/h', 1, 15, 0.1),
+  spec('pressureBar', 'bar', 5, 120, 5),
+  spec('onS', 's', 10, 300, 5),
+  spec('maxRhPct', '%', 50, 95, 1),
+  spec('hoursPerDay', 'h', 1, 16, 0.5),
+];
+
+export const VPD_FIELDS: readonly FieldSpec[] = [
+  spec('airC', '°C', 5, 45, 0.5),
+  spec('rhPct', '%', 5, 99, 1),
+  spec('outsideC', '°C', -10, 50, 0.5),
+  spec('outsideRhPct', '%', 5, 100, 1),
+];
+
+export const CALENDAR_FIELDS: readonly FieldSpec[] = [
+  spec('plantingWeek', '', 1, 52, 1),
+  spec('nurseryWeeks', '', 0, 12, 1),
+  spec('vegetativeWeeks', '', 1, 12, 1),
+  spec('floweringWeeks', '', 1, 16, 1),
+  spec('cropWeeks', '', 8, 52, 1),
+  spec('nightSetC', '°C', 0, 25, 0.5),
+  spec('ventilateAboveC', '°C', 15, 35, 0.5),
+  spec('coolAboveC', '°C', 20, 45, 0.5),
+  spec('maxDli', 'mol/m²·d', 5, 60, 1),
+  transmission,
+];
+
 /** A price field in the project's currency, per its unit. */
 export function priceField(key: string, unit: string): FieldSpec {
   return spec(key, unit, 0, 50, 0.01);

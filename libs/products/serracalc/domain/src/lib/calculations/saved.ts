@@ -1,10 +1,13 @@
 import type { CalcNote, SavedCalculation } from '../models/serra.models';
+import { cropCalendar } from './calendar';
 import { co2Enrichment } from './co2';
 import { padAndFan, ventilation } from './cooling';
 import { annualHeating, heatLoss } from './heating';
 import { hotWaterHeating } from './hot-water';
+import { fogCooling } from './fog';
 import { nightHumidity } from './humidity';
 import { supplementalLight } from './light';
+import { vpdCheck } from './vpd';
 import { cropWater, rainwater } from './water';
 
 /** The figures a report shows for each kind of saved result. */
@@ -44,7 +47,16 @@ export type FigureId =
   | 'vpd'
   | 'dewPoint'
   | 'outsideAir'
-  | 'dryingHeat';
+  | 'dryingHeat'
+  | 'headroom'
+  | 'fogInside'
+  | 'fogRh'
+  | 'fogWater'
+  | 'nozzles'
+  | 'firstHarvest'
+  | 'harvestWeeks'
+  | 'heatingWeeks'
+  | 'fogWeeks';
 
 /**
  * One number of a result, language-neutral: the feature labels it and
@@ -186,6 +198,41 @@ export function summarizeSaved(saved: SavedCalculation): SavedSummary {
           fig('dewPoint', r.dewPointC, '°C', 1),
           fig('outsideAir', r.airM3h, 'm³/h'),
           fig('dryingHeat', r.heatKw, 'kW', 1),
+        ],
+        notes: r.notes,
+      };
+    }
+    case 'vpd': {
+      const r = vpdCheck(saved.inputs);
+      return {
+        figures: [
+          fig('vpd', r.vpdKpa, 'kPa', 2),
+          fig('dewPoint', r.dewPointC, '°C', 1),
+          fig('headroom', r.headroomGm3, 'g/m³', 1),
+        ],
+        notes: r.notes,
+      };
+    }
+    case 'fog': {
+      const r = fogCooling(saved.inputs);
+      return {
+        figures: [
+          fig('fogInside', r.insideC, '°C', 1),
+          fig('fogRh', r.insideRhPct, '%'),
+          fig('fogWater', r.waterM3Day, 'm³/d', 1),
+          fig('nozzles', r.nozzles, ''),
+        ],
+        notes: r.notes,
+      };
+    }
+    case 'calendar': {
+      const r = cropCalendar(saved.inputs);
+      return {
+        figures: [
+          fig('firstHarvest', r.firstHarvestWeek, ''),
+          fig('harvestWeeks', r.harvestWeeks, ''),
+          fig('heatingWeeks', r.heatingWeeks, ''),
+          fig('fogWeeks', r.fogWeeks, ''),
         ],
         notes: r.notes,
       };

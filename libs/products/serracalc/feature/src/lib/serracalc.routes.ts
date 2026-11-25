@@ -23,6 +23,14 @@ export const SERRACALC_ROUTES: Routes = [
           ),
       },
       {
+        path: 'calendar',
+        title: title('calendar'),
+        loadComponent: () =>
+          import('./screens/calendar/calendar-screen').then(
+            (m) => m.CalendarScreen,
+          ),
+      },
+      {
         path: 'greenhouse',
         title: title('greenhouse'),
         loadComponent: () =>

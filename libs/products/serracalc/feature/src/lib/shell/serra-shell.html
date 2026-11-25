@@ -6,11 +6,18 @@
 >
   <header class="bar">
     <a class="brand" routerLink="projects">
-      <svg class="logo" viewBox="0 0 32 32" aria-hidden="true">
-        <rect width="32" height="32" rx="9" />
-        <path d="M6 25V14l5-5 5 5 5-5 5 5v11z" />
-        <path d="M16 14v11M6 19h20" class="thin" />
-        <path d="M22.5 4.5a2 2 0 1 0 0 .01" class="sun" />
+      <svg class="logo" viewBox="0 0 40 40" aria-hidden="true">
+        <defs>
+          <linearGradient id="sc-logo-sky" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" class="sky-top" />
+            <stop offset="1" class="sky-bottom" />
+          </linearGradient>
+        </defs>
+        <rect width="40" height="40" rx="11" fill="url(#sc-logo-sky)" />
+        <circle cx="28" cy="13" r="5" class="sun" />
+        <path d="M0 31c7-4 13-5 20-2s13 3 20-1v12H0Z" class="dune" />
+        <path d="M8 31v-8l6-6 6 6 6-6 6 6v8" class="house" />
+        <path d="M20 23v8" class="house thin" />
       </svg>
       <span class="brand-text">
         <strong>{{ t().app.name }}</strong>
@@ -20,12 +27,17 @@
 
     @if (store.activeProject(); as project) {
       <a class="project-chip" routerLink="projects" [title]="project.title">
+        <span class="pulse" aria-hidden="true"></span>
         <span class="ah-visually-hidden">{{ t().app.activeProject }}:</span>
         {{ project.title }}
       </a>
     }
 
     <div class="tools">
+      <a class="week" routerLink="calendar" [title]="t().app.weekHint">
+        <span class="week-label">{{ t().app.week }}</span>
+        <strong>{{ week }}</strong>
+      </a>
       <span class="offline" [title]="t().app.offlineHint">
         <span class="dot" aria-hidden="true"></span>{{ t().app.offline }}
       </span>
@@ -36,7 +48,7 @@
         [title]="t().app.sunlightHint"
         (click)="store.toggleHighContrast()"
       >
-        <span aria-hidden="true">☀️</span>
+        <sc-icon name="sunlight" />
         <span class="tool-label">{{ t().app.sunlight }}</span>
       </button>
       @if (standalone) {
@@ -47,7 +59,7 @@
           [title]="t().app.darkHint"
           (click)="preferences.toggleTheme()"
         >
-          <span aria-hidden="true">🌙</span>
+          <sc-icon name="moon" />
           <span class="tool-label">{{ t().app.dark }}</span>
         </button>
         <div class="langs" role="group" [attr.aria-label]="t().app.language">
@@ -66,6 +78,29 @@
     </div>
   </header>
 
+  <!-- The horizon: dunes, a row of glasshouses and the sun. Decoration only. -->
+  <svg
+    class="horizon"
+    viewBox="0 0 1440 64"
+    preserveAspectRatio="none"
+    aria-hidden="true"
+  >
+    <circle cx="1180" cy="40" r="26" class="h-sun" />
+    <path
+      d="M0 44C160 30 300 26 470 36s330 14 520 0 300-18 450-8V64H0Z"
+      class="h-far"
+    />
+    <path
+      d="M120 40v-9l9-8 9 8 9-8 9 8 9-8 9 8v9M260 38v-7l7-6 7 6 7-6 7 6v7"
+      class="h-houses"
+    />
+    <path
+      d="M0 54c200-14 380-18 600-8s420 12 600-2 180-10 240-6V64H0Z"
+      class="h-near"
+    />
+    <path d="M0 63.5h1440" class="h-line" />
+  </svg>
+
   <nav class="tabs" ahScrollHint [attr.aria-label]="t().app.sections">
     @for (item of nav; track item.id) {
       <a
@@ -73,26 +108,50 @@
         routerLinkActive="is-active"
         ariaCurrentWhenActive="page"
       >
-        <span aria-hidden="true">{{ item.icon }}</span>
+        <sc-icon [name]="item.icon" />
         {{ t().nav[item.id] }}
       </a>
     }
   </nav>
 
-  <!-- Standalone, the app owns the page: one main landmark and an h1. Inside
-       the portfolio the shell already has both, so it gets a plain div. -->
-  @if (standalone) {
-    <main class="content">
-      <h1 class="ah-visually-hidden">{{ t().app.name }}</h1>
-      <router-outlet />
-      <p class="aid">{{ t().app.planningAid }}</p>
-    </main>
-  } @else {
-    <div class="content">
-      <router-outlet />
-      <p class="aid">{{ t().app.planningAid }}</p>
-    </div>
-  }
+  <div class="frame">
+    <nav class="rail" [attr.aria-label]="t().app.sections">
+      @for (group of groups; track group.id) {
+        <div class="rail-group">
+          <span class="rail-title">{{ t().navGroups[group.id] }}</span>
+          @for (item of group.items; track item.id) {
+            <a
+              [routerLink]="item.id"
+              routerLinkActive="is-active"
+              ariaCurrentWhenActive="page"
+            >
+              <sc-icon [name]="item.icon" />
+              <span>{{ t().nav[item.id] }}</span>
+            </a>
+          }
+        </div>
+      }
+      <p class="rail-note">
+        <sc-icon name="leaf" />
+        {{ t().app.railNote }}
+      </p>
+    </nav>
+
+    <!-- Standalone, the app owns the page: one main landmark and an h1. Inside
+         the portfolio the shell already has both, so it gets a plain div. -->
+    @if (standalone) {
+      <main class="content">
+        <h1 class="ah-visually-hidden">{{ t().app.name }}</h1>
+        <router-outlet />
+        <p class="aid">{{ t().app.planningAid }}</p>
+      </main>
+    } @else {
+      <div class="content">
+        <router-outlet />
+        <p class="aid">{{ t().app.planningAid }}</p>
+      </div>
+    }
+  </div>
 
   <nav class="bottom" [attr.aria-label]="t().app.sections">
     @for (item of primary; track item.id) {
@@ -102,7 +161,7 @@
         ariaCurrentWhenActive="page"
         (click)="closeMore()"
       >
-        <span class="icon" aria-hidden="true">{{ item.icon }}</span>
+        <sc-icon class="icon" [name]="item.icon" />
         <span class="label">{{ t().nav[item.id] }}</span>
       </a>
     }
@@ -114,7 +173,7 @@
       aria-controls="sc-more"
       (click)="toggleMore(moreBtn)"
     >
-      <span class="icon" aria-hidden="true">⋯</span>
+      <sc-icon class="icon" name="more" />
       <span class="label">{{ t().nav.more }}</span>
     </button>
   </nav>
@@ -135,7 +194,7 @@
           ariaCurrentWhenActive="page"
           (click)="closeMore()"
         >
-          <span aria-hidden="true">{{ item.icon }}</span>
+          <sc-icon [name]="item.icon" />
           {{ t().nav[item.id] }}
         </a>
       }

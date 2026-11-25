@@ -2,6 +2,10 @@ import type { NoteWriter, SerraCopy } from './copy.en';
 
 export const DE: SerraCopy = {
   app: {
+    week: 'Woche',
+    weekHint: 'Die aktuelle Kalenderwoche: öffnet den Anbaukalender',
+    railNote:
+      'Für Wüstenstandorte gemacht: starke Sonne, kalte Nächte, knappes Wasser.',
     name: 'SerraCalc',
     tagline: 'Wärme, Wasser und Klima im Gewächshaus',
     activeProject: 'Aktives Projekt',
@@ -18,6 +22,7 @@ export const DE: SerraCopy = {
       'Eine Planungshilfe: Prüfen Sie die Ergebnisse mit einer Fachingenieurin oder einem Fachingenieur und den Daten der Lieferanten, bevor Sie bauen.',
   },
   nav: {
+    calendar: 'Anbaukalender',
     projects: 'Projekte',
     greenhouse: 'Gewächshaus',
     heating: 'Heizung',
@@ -28,6 +33,12 @@ export const DE: SerraCopy = {
     air: 'Licht & Luft',
     report: 'Bericht',
     more: 'Mehr',
+  },
+  navGroups: {
+    plan: 'Planen',
+    climate: 'Klimaregelung',
+    water: 'Wasser',
+    reference: 'Nachschlagen',
   },
   common: {
     close: 'Schließen',
@@ -110,6 +121,20 @@ export const DE: SerraCopy = {
   },
 
   fields: {
+    rhPct: 'Relative Luftfeuchte',
+    ventPct: 'Geöffnete Lüftung',
+    nozzlesPer100M2: 'Düsen',
+    nozzleLh: 'Durchfluss je Düse',
+    pressureBar: 'Pumpendruck',
+    onS: 'Nebelstoß',
+    maxRhPct: 'Feuchtegrenze',
+    plantingWeek: 'Pflanzwoche',
+    nurseryWeeks: 'Wochen in der Anzucht',
+    vegetativeWeeks: 'Pflanzung bis erste Blüten',
+    floweringWeeks: 'Blüten bis erste Ernte',
+    cropWeeks: 'Pflanzung bis Kulturende',
+    ventilateAboveC: 'Lüftung öffnet über',
+    coolAboveC: 'Nebel über (außen)',
     spans: 'Schiffe',
     spanWidthM: 'Schiffbreite',
     lengthM: 'Länge',
@@ -185,6 +210,16 @@ export const DE: SerraCopy = {
     nightHours: 'Nachtlänge',
   } as Record<string, string>,
   hints: {
+    ventPct: 'Beim Nebeln die Lüftung drosseln: 5–15 % der Fläche',
+    nozzlesPer100M2: '27 Düsen mit 5,4 L/h geben etwa 24 g/m² pro Minute',
+    pressureBar: 'Hochdruck, 40–70 bar, für Tröpfchen von 10–30 µm',
+    onS: 'Die Pause danach wird so berechnet, dass die Grenze hält',
+    maxRhPct: '65–75 % zu halten sparte etwa 21 % Wasser',
+    plantingWeek: 'Tomatenbetriebe in der Wüste pflanzen um Woche 36',
+    nurseryWeeks: 'Tomatenjungpflanzen: etwa 7 Wochen',
+    floweringWeeks: 'Tomate: etwa 8 Wochen',
+    cropWeeks: 'Woche 36 bis Woche 29: 46 Wochen',
+    coolAboveC: 'Heißere Nachmittage brauchen Nebel oder Pads',
     spanWidthM: 'Üblich: 8, 9,6 oder 12,8 m',
     gutterHeightM: 'Höhere Häuser puffern Wärme und Feuchte besser',
     uValue:
@@ -274,6 +309,9 @@ export const DE: SerraCopy = {
     deleteResult: (label: string) => `„${label}“ löschen?`,
   },
   kinds: {
+    vpd: 'Feuchte und VPD',
+    fog: 'Hochdrucknebel',
+    calendar: 'Anbaukalender',
     heatPeak: 'Heizlast (Spitze)',
     heatYear: 'Heizung übers Jahr',
     hotWater: 'Warmwasserrohre',
@@ -379,7 +417,16 @@ export const DE: SerraCopy = {
   cooling: {
     title: 'Kühlung',
     lead: 'Wie viel Luft das Haus an einem sonnigen Tag bewegen muss, die Lüftungsklappen oder Ventilatoren dafür, und Pad-and-Fan-Kühlung für heißes, trockenes Wetter.',
-    tabs: { ventilation: 'Lüftung', padFan: 'Pad and Fan' },
+    tabs: { ventilation: 'Lüftung', padFan: 'Pad and Fan', fog: 'Nebel' },
+    fogInside: 'Innen mit Nebel',
+    ventOnly: 'Nur Lüftung',
+    fogRh: 'Feuchte innen',
+    fogRate: 'Nebel im Betrieb',
+    fogMean: 'Im Mittel',
+    fogCycle: 'Takt an / aus',
+    fogOn: 'der Zeit an',
+    nozzles: 'Düsen',
+    padCompare: 'Pads bräuchten',
     solar: 'Sonne, die die Luft erwärmt',
     flow: 'Zu bewegende Luft',
     ach: 'Luftwechsel',
@@ -396,6 +443,12 @@ export const DE: SerraCopy = {
     waterDay: 'Wasser am Tag',
     perHour: 'pro Stunde',
     formulas: {
+      fogRate: 'Nebel = Düsen × L/h / Fläche',
+      fogBalance:
+        'Innen = T_außen + (Sonne − λ × Nebel) / (ρ × cp × Luft + U × A)',
+      fogCycle:
+        'Takt: der Anteil Nebel, den die Luft unter der Grenze aufnimmt',
+      fogWater: 'Wasser = q × A × t / 10⁶',
       solar: 'Sonne = τ × (1 − Schatten) × G × Fläche × (1 − ET)',
       conduction: 'Durch die Eindeckung: U × A × ΔT',
       flow: 'Luft = (Sonne − Hülle) / (ρ × cp × ΔT)',
@@ -461,7 +514,7 @@ export const DE: SerraCopy = {
   air: {
     title: 'Licht & Luft',
     lead: 'Belichtung für die dunklen Monate und Schatten für die hellen, CO₂ für die Kultur, und die Luft, die nachts getauscht werden muss, damit Feuchte und Tropfen gering bleiben.',
-    tabs: { light: 'Licht', co2: 'CO₂', humidity: 'Feuchte' },
+    tabs: { light: 'Licht', co2: 'CO₂', humidity: 'Nachtfeuchte', vpd: 'VPD' },
     source: 'CO₂ aus',
     sources: { burner: 'Gasbrenner (Rauchgas)', liquid: 'Flüssig-CO₂-Tank' },
     fixtures: 'Leuchten',
@@ -489,6 +542,9 @@ export const DE: SerraCopy = {
     cover: 'Eindeckung innen',
     water: 'Abzuführendes Wasser',
     formulas: {
+      saturation: 'Sättigung: e_s = 0,6108 × exp(17,27 T / (T + 237,3))',
+      vpd: 'VPD = e_s × (1 − rF / 100)',
+      headroom: 'Reserve = gesättigt − Wasser in der Luft',
       dli: 'Sonne innen = Rg × 0,47 × 4,57 × τ (dunkelster Monat)',
       ppfd: 'PPFD = (Ziel − Sonne) × 10⁶ / (Stunden × 3600)',
       fixtures: 'Leuchten = PPFD / Effizienz × Fläche / Watt',
@@ -529,6 +585,83 @@ export const DE: SerraCopy = {
       'Gerundete Stationsmittel (etwa 1991–2020). Eine spätere Version holt Mittelwerte für jeden Ort auf der Karte.',
   },
 
+  stages: {
+    nursery: 'Anzucht',
+    vegetative: 'Wachstum',
+    flowering: 'Blüte',
+    harvest: 'Ernte',
+    cleanOut: 'Räumung',
+  },
+  vpd: {
+    stage: 'Kulturstadium',
+    light: 'Licht',
+    lights: {
+      sun: 'Sonnig',
+      cloud: 'Bewölkt',
+      night: 'Nacht',
+    },
+    status: {
+      tooWet: 'Zu feucht',
+      good: 'Gut',
+      tooDry: 'Zu trocken',
+    },
+    ideal: 'ideal',
+    actions: {
+      hold: 'Klima so halten',
+      ventilate: 'Lüften, um die Luft zu trocknen',
+      heatAndVent: 'Etwas heizen und die Lüftung öffnen',
+      heat: 'Heizen: die Außenluft ist feuchter',
+      humidify: 'Befeuchten: Nebel oder Sprühnebel',
+      coolAndHumidify: 'Schattieren und nebeln: kühlen und befeuchten',
+    },
+    band: 'Bereich',
+    absolute: 'Wasser in der Luft',
+    headroom: 'Reserve bis zur Sättigung',
+    pairsTitle: 'Dasselbe VPD bei anderen Temperaturen',
+    targetsTitle: (stage: string) => `Sollwerte · ${stage}`,
+    day: 'Tag',
+    night: 'Nacht',
+    source: 'Quelle',
+  },
+  advice: {
+    title: 'Kühlstrategie',
+    strategies: {
+      vents: 'Die Dachlüftung reicht',
+      ventsAndShade: 'Lüftung mit Schattierung',
+      shadeAndFog: 'Schattierung und Hochdrucknebel',
+      shadeAndPad: 'Schattierung und Pad and Fan',
+    },
+    ventsNeeded: 'Nötige Lüftung, ohne zusätzliche Schattierung',
+    withShade: (pct: string) => `Lüftung mit ${pct} % Schattierung`,
+    fogInside: 'Innen mit Schattierung und Nebel',
+    padOutlet: 'Luft hinter einem nassen Pad',
+    openFog: 'Nebelanlage auslegen',
+    rule: 'Regel: über 38 °C außen oder bei Lüftung über einem Viertel der Fläche schattieren und durch Verdunstung kühlen, statt die Lüftung zu vergrößern.',
+  },
+  calendar: {
+    title: 'Anbaukalender',
+    lead: 'Das Kulturjahr Woche für Woche: die Stadien, das Klima, das jedes will, und wann Heizung, CO₂, Schattierung und Nebel laufen.',
+    rows: {
+      temp: 'Außen',
+      stage: 'Kultur',
+      heating: 'Heizung',
+      co2: 'CO₂',
+      shade: 'Schatten',
+      fog: 'Nebel',
+    },
+    targets: 'Sollwerte je Stadium',
+    stage: 'Stadium',
+    weeks: 'Wochen',
+    week: 'Woche',
+    firstHarvest: 'Erste Ernte',
+    weeksOfPicking: 'Wochen Ernte',
+    end: 'Kulturende',
+    heatingFrom: 'Heizung ab',
+    systems: 'Anlagen',
+    harvestWeeks: 'Wochen Ernte',
+    heatingWeeks: 'Wochen Heizung',
+    fogWeeks: 'Wochen Nebel',
+  },
   calc: {
     results: 'Ergebnisse',
     how: 'So wird gerechnet',
@@ -539,6 +672,22 @@ export const DE: SerraCopy = {
   },
 
   diagrams: {
+    vpdAlt: (air: string, rh: string, vpd: string, status: string) =>
+      `VPD-Karte: Luft mit ${air} °C und ${rh} % ergibt ${vpd} kPa, ${status}. Griffe stellen Temperatur und Feuchte ein.`,
+    fogAlt: (
+      outside: string,
+      inside: string,
+      rh: string,
+      on: string,
+      off: string,
+    ) =>
+      `Nebel bringt das Haus an einem Nachmittag mit ${outside} °C auf ${inside} °C bei ${rh} %, ${on} s an und ${off} s aus. Griffe stellen die Feuchtegrenze und den Stoß ein.`,
+    calendarAlt: (plant: string, harvest: string, end: string, heat: string) =>
+      `Anbaukalender: Pflanzung in Woche ${plant}, erste Ernte in Woche ${harvest}, Kulturende in Woche ${end}, Heizung ab Woche ${heat}. Griffe stellen die Pflanzwoche und das Kulturende ein.`,
+    ventsOnly: 'Nur Lüftung',
+    withFog: 'Mit Nebel',
+    wetBulb: 'Feuchtkugel',
+    cap: 'Grenze',
     heatAlt: (inside: string, outside: string, kw: string) =>
       `Wärme, die das Haus verlässt: ${kw} kW, von ${inside} °C innen zu ${outside} °C außen. Griffe stellen beide Temperaturen ein.`,
     pipesAlt: (loops: string, length: string, supply: string, back: string) =>
@@ -691,6 +840,21 @@ export const DE: SerraCopy = {
         title: 'Bericht',
         body: 'Das Projekt auf einer druckbaren Seite: das Haus, sein Klima und jedes gespeicherte Ergebnis mit seinen wichtigsten Zahlen und Befunden. Drucken Sie es, oder wählen Sie im Druckdialog „Als PDF speichern“, um es zu versenden.',
       },
+      {
+        id: 'calendar',
+        title: 'Anbaukalender',
+        body: 'Die Wochen für Pflanzung, Blüte, Ernte und Räumung mit den Klimasollwerten jedes Stadiums und die Wochen, in denen Heizung, CO₂, Schattierung und Nebel laufen, aus den Klimanormalen. Tomatenbetriebe in der Wüste pflanzen um Woche 36, heizen ab etwa Woche 42 und enden nach Woche 29.',
+      },
+      {
+        id: 'vpd',
+        title: 'Feuchte und VPD',
+        body: 'Das Sättigungsdefizit aus Temperatur und Feuchte (Tetens, wie in FAO-56), der Taupunkt und das Wasser, das die Luft noch aufnehmen kann, gegen den Bereich für Kulturstadium und Licht. Die Karte zeigt jedes Paar aus Temperatur und Feuchte, denn ein VPD passt zu vielen.',
+      },
+      {
+        id: 'fog',
+        title: 'Hochdrucknebel und Kühlstrategie',
+        body: 'Hochdrucknebel in einem gelüfteten Haus: die Innentemperatur aus einer Wärme- und Wasserbilanz, der An/Aus-Takt, der eine Feuchtegrenze hält, und das Wasser pro Tag. Der Berater prüft den Auslegungsnachmittag: Bräuchte die Lüftung allein mehr, als ein Dach öffnet, schlägt er Schattierung mit Nebel oder Pads vor.',
+      },
     ],
     sourcesTitle: 'Quellen',
     sources: [
@@ -702,6 +866,9 @@ export const DE: SerraCopy = {
       'Thimijan & Heins (1983): Umrechnung von Sonnenlicht in Photonen für Pflanzen.',
       'Nederhoff (1994): CO₂-Düngung, Verluste und Aufnahme im Gewächshaus.',
       'Campen et al. (2003): Entfeuchtung von Gewächshäusern durch Lüftung und Wärme.',
+      'Soussi et al. (2022): Klimaregelung und Kühlung von Gewächshäusern in heißen, trockenen Regionen.',
+      'Shamshiri et al. (2018): optimale Temperatur, Feuchte und VPD für Gewächshaustomaten.',
+      'Ishii et al.: Nebelkühlung gegen Pad and Fan in einem Gewächshaus in Arizona.',
     ],
     limitsTitle: 'Grenzen',
     limits: [
@@ -713,6 +880,67 @@ export const DE: SerraCopy = {
   },
 
   notes: {
+    'vpd.tooWet': (v) =>
+      `VPD ${v['vpd']} kPa: unter ${v['min']} kPa für dieses Stadium, die Luft ist zu feucht.`,
+    'vpd.good': (v) =>
+      `VPD ${v['vpd']} kPa: im Bereich ${v['min']}–${v['max']} kPa für dieses Stadium.`,
+    'vpd.tooDry': (v) =>
+      `VPD ${v['vpd']} kPa: über ${v['max']} kPa für dieses Stadium, die Luft ist zu trocken.`,
+    'vpd.disease': () =>
+      'Unter 0,3 kPa: Botrytis, Mehltau und weiches Wachstum.',
+    'vpd.wilting': () =>
+      'Über 1,5 kPa welkt die Kultur: schattieren und befeuchten.',
+    'vpd.arid': () =>
+      '3 kPa oder mehr: Wüstenluft, das Wachstum stockt. Nebel oder Pads, und Schattierung.',
+    'vpd.cold': (v) =>
+      `Unter ${v['min']} °C für dieses Stadium: erst heizen, dann lüften.`,
+    'vpd.hot': (v) =>
+      `Über ${v['max']} °C für dieses Stadium: schattieren und kühlen.`,
+    'vpd.outsideWetter': () =>
+      'Die Außenluft hält mehr Wasser als die Innenluft: Lüften trocknet das Haus nicht, Heizen schon.',
+    'vpd.samePairs': (v) =>
+      `Ein VPD passt zu vielen Paaren: ${v['vpd']} kPa braucht bei 15 °C trockenere Luft als bei 35 °C, also Temperatur und Feuchte zusammen lesen.`,
+    'fog.cooling': (v) =>
+      `Nebel bringt das Haus auf ${v['inside']} °C, ${v['drop']} K unter außen, bei ${v['rh']} % Feuchte.`,
+    'fog.tooHumid': () =>
+      'Das Haus liegt ohne Nebel über der Feuchtegrenze: Nebeln würde nur die Kultur nässen.',
+    'fog.moreNozzles': () =>
+      'Die Düsen laufen unter der Grenze ständig: mehr Düsen würden weiter kühlen.',
+    'fog.cycle': (v) =>
+      `${v['on']} s an und ${v['off']} s aus halten die Luft nahe ${v['rh']} % (60 s an, 180 s aus ist ein üblicher Start).`,
+    'fog.lowPressure': () =>
+      'Unter 40 bar sind die Tröpfchen zu groß, um in der Luft zu verdunsten: sie nässen die Blätter.',
+    'fog.droplets': () =>
+      'Hochdruck gibt Tröpfchen von 10–30 µm, die verdunsten, bevor sie fallen.',
+    'fog.trimVents': () =>
+      'Weit offene Lüftung trägt den Nebel fort: beim Nebeln auf 5–15 % der Fläche drosseln.',
+    'fog.waterQuality': () =>
+      'Entsalztes oder enthärtetes Wasser nehmen: Salze verstopfen die Düsen und machen die Früchte fleckig.',
+    'advice.notBuildable': (v) =>
+      `${v['pct']} % der Fläche als Lüftung und ${v['flow']} Millionen m³/h Luft: mehr, als ein Dach öffnet (höchstens etwa ${v['limit']} %).`,
+    'advice.vents': () => 'Die Dachlüftung schafft diesen Nachmittag.',
+    'advice.ventsAndShade': (v) =>
+      `Mit ${v['shade']} % Schattierung braucht die Lüftung ${v['pct']} % der Fläche: zuerst schattieren.`,
+    'advice.shadeAndFog': (v) =>
+      `${v['shade']} % Schattierung und Nebel halten das Haus nahe ${v['inside']} °C bei gedrosselter Lüftung. Nebel passt zu langen, großen Häusern.`,
+    'advice.shadeAndPad': (v) =>
+      `${v['shade']} % Schattierung und Pads: Die Luft verlässt das nasse Pad mit etwa ${v['pad']} °C. Mit ${v['length']} m ist das Haus kurz genug für Pads.`,
+    'advice.humid': () =>
+      'Feuchte Außenluft: Verdunstung kühlt wenig. Schattieren, und nachts kühlen.',
+    'calendar.season': (v) =>
+      `Gepflanzt in Woche ${v['plant']}, endet die Kultur in Woche ${v['end']}: ${v['weeks']} Wochen im Haus.`,
+    'calendar.harvest': (v) =>
+      `Ernte ab Woche ${v['first']}, ${v['weeks']} Wochen lang.`,
+    'calendar.heating': (v) =>
+      `Heizung ab Woche ${v['from']}, ${v['weeks']} Wochen im Jahr.`,
+    'calendar.co2': (v) =>
+      `CO₂ lohnt sich ${v['weeks']} Wochen, wenn das Haus geschlossen bleibt.`,
+    'calendar.fog': (v) =>
+      `Nebel oder Pads für ${v['weeks']} Wochen heißer Nachmittage.`,
+    'calendar.shade': (v) =>
+      `Schattierung für ${v['weeks']} Wochen starker Sonne.`,
+    'calendar.shortCleanOut': (v) =>
+      `Nur ${v['weeks']} Wochen zwischen zwei Kulturen: wenig Zeit zum Reinigen und Desinfizieren.`,
     'geometry.lowGutter': (v) =>
       `Traufe bei ${v['gutter']} m: Ein niedriges Haus heizt sich auf und bleibt feucht. 4 m oder mehr puffern besser.`,
     'geometry.goodVolume': (v) =>

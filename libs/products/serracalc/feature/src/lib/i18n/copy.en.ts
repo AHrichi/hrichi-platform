@@ -3,6 +3,9 @@ export type NoteWriter = (v: Record<string, string>) => string;
 
 export const EN = {
   app: {
+    week: 'Week',
+    weekHint: 'This calendar week: opens the crop calendar',
+    railNote: 'Made for desert sites: strong sun, cold nights, scarce water.',
     name: 'SerraCalc',
     tagline: 'Greenhouse heat, water & climate',
     activeProject: 'Active project',
@@ -18,6 +21,7 @@ export const EN = {
       'A planning aid: check the results with a qualified engineer and the suppliers’ data before you build.',
   },
   nav: {
+    calendar: 'Crop calendar',
     projects: 'Projects',
     greenhouse: 'Greenhouse',
     heating: 'Heating',
@@ -28,6 +32,12 @@ export const EN = {
     air: 'Light & air',
     report: 'Report',
     more: 'More',
+  },
+  navGroups: {
+    plan: 'Plan',
+    climate: 'Climate control',
+    water: 'Water',
+    reference: 'Reference',
   },
   common: {
     close: 'Close',
@@ -107,6 +117,20 @@ export const EN = {
 
   /** Number fields, shared by every calculator. */
   fields: {
+    rhPct: 'Relative humidity',
+    ventPct: 'Vents open',
+    nozzlesPer100M2: 'Nozzles',
+    nozzleLh: 'Flow per nozzle',
+    pressureBar: 'Pump pressure',
+    onS: 'Fog burst',
+    maxRhPct: 'Humidity cap',
+    plantingWeek: 'Planting week',
+    nurseryWeeks: 'Weeks in the nursery',
+    vegetativeWeeks: 'Planting to first flowers',
+    floweringWeeks: 'Flowers to first harvest',
+    cropWeeks: 'Planting to end of crop',
+    ventilateAboveC: 'Vents open above',
+    coolAboveC: 'Fog above (outside)',
     spans: 'Spans',
     spanWidthM: 'Span width',
     lengthM: 'Length',
@@ -182,6 +206,16 @@ export const EN = {
     nightHours: 'Night length',
   } as Record<string, string>,
   hints: {
+    ventPct: 'Trim the vents while fogging: 5–15 % of the floor',
+    nozzlesPer100M2: '27 nozzles of 5.4 L/h give about 24 g/m² a minute',
+    pressureBar: 'High pressure, 40–70 bar, for 10–30 µm droplets',
+    onS: 'The pause after it is worked out to hold the cap',
+    maxRhPct: 'Holding 65–75 % saved about 21 % of the water',
+    plantingWeek: 'Desert tomato sites plant around week 36',
+    nurseryWeeks: 'Tomato seedlings: about 7 weeks',
+    floweringWeeks: 'Tomato: about 8 weeks',
+    cropWeeks: 'Week 36 to week 29: 46 weeks',
+    coolAboveC: 'Afternoons hotter than this need fog or pads',
     spanWidthM: 'Common: 8, 9.6 or 12.8 m',
     gutterHeightM: 'Taller houses buffer heat and humidity better',
     uValue: 'Filled in from the cover; your supplier may give another',
@@ -265,6 +299,9 @@ export const EN = {
     deleteResult: (label: string) => `Delete “${label}”?`,
   },
   kinds: {
+    vpd: 'Humidity and VPD',
+    fog: 'Fogging',
+    calendar: 'Crop calendar',
     heatPeak: 'Peak heating load',
     heatYear: 'Heating over the year',
     hotWater: 'Hot-water pipes',
@@ -368,7 +405,16 @@ export const EN = {
   cooling: {
     title: 'Cooling',
     lead: 'How much air the house must move on a sunny day, the vents or fans that move it, and fan-and-pad cooling for hot, dry weather.',
-    tabs: { ventilation: 'Ventilation', padFan: 'Fan and pad' },
+    tabs: { ventilation: 'Ventilation', padFan: 'Fan and pad', fog: 'Fogging' },
+    fogInside: 'Inside with fog',
+    ventOnly: 'Vents only',
+    fogRh: 'Humidity inside',
+    fogRate: 'Fog while on',
+    fogMean: 'Averaged',
+    fogCycle: 'Cycle on / off',
+    fogOn: 'of the time on',
+    nozzles: 'Nozzles',
+    padCompare: 'Pads would use',
     solar: 'Sun heating the air',
     flow: 'Air to move',
     ach: 'Air changes',
@@ -385,6 +431,10 @@ export const EN = {
     waterDay: 'Water a day',
     perHour: 'an hour',
     formulas: {
+      fogRate: 'Fog = nozzles × L/h / floor',
+      fogBalance: 'Inside = T_out + (sun − λ × fog) / (ρ × cp × air + U × A)',
+      fogCycle: 'Cycle: the share of fog the air takes under the cap',
+      fogWater: 'Water = q × A × t / 10⁶',
       solar: 'Sun = τ × (1 − shade) × G × floor × (1 − ET)',
       conduction: 'Through the cover: U × A × ΔT',
       flow: 'Air = (sun − cover) / (ρ × cp × ΔT)',
@@ -449,7 +499,12 @@ export const EN = {
   air: {
     title: 'Light & air',
     lead: 'Grow lights for the dark months and shade for the bright ones, CO₂ to feed the crop, and the air to change at night to keep humidity and drips down.',
-    tabs: { light: 'Light', co2: 'CO₂', humidity: 'Humidity' },
+    tabs: {
+      light: 'Light',
+      co2: 'CO₂',
+      humidity: 'Night humidity',
+      vpd: 'VPD',
+    },
     source: 'CO₂ from',
     sources: { burner: 'Gas burner (flue gas)', liquid: 'Liquid CO₂ tank' },
     fixtures: 'Lamps',
@@ -477,6 +532,9 @@ export const EN = {
     cover: 'Cover inside',
     water: 'Water to remove',
     formulas: {
+      saturation: 'Saturation: e_s = 0.6108 × exp(17.27 T / (T + 237.3))',
+      vpd: 'VPD = e_s × (1 − RH / 100)',
+      headroom: 'Room = saturated − water in the air',
       dli: 'Sun inside = Rg × 0.47 × 4.57 × τ (darkest month)',
       ppfd: 'PPFD = (target − sun) × 10⁶ / (hours × 3600)',
       fixtures: 'Lamps = PPFD / efficacy × floor / watts',
@@ -517,6 +575,83 @@ export const EN = {
       'Rounded station normals (about 1991–2020). A later version fetches normals for any place on the map.',
   },
 
+  stages: {
+    nursery: 'Nursery',
+    vegetative: 'Growing',
+    flowering: 'Flowering',
+    harvest: 'Harvest',
+    cleanOut: 'Clean-out',
+  },
+  vpd: {
+    stage: 'Crop stage',
+    light: 'Light',
+    lights: {
+      sun: 'Sunny',
+      cloud: 'Cloudy',
+      night: 'Night',
+    },
+    status: {
+      tooWet: 'Too wet',
+      good: 'Good',
+      tooDry: 'Too dry',
+    },
+    ideal: 'ideal',
+    actions: {
+      hold: 'Hold the climate as it is',
+      ventilate: 'Ventilate to dry the air',
+      heatAndVent: 'Heat a little and open the vents',
+      heat: 'Heat: the outside air is wetter',
+      humidify: 'Raise the humidity: fog or mist',
+      coolAndHumidify: 'Shade and fog: cool and moisten the air',
+    },
+    band: 'Band',
+    absolute: 'Water in the air',
+    headroom: 'Room before saturation',
+    pairsTitle: 'The same VPD at other temperatures',
+    targetsTitle: (stage: string) => `Targets · ${stage}`,
+    day: 'Day',
+    night: 'Night',
+    source: 'Source',
+  },
+  advice: {
+    title: 'Cooling strategy',
+    strategies: {
+      vents: 'Roof vents are enough',
+      ventsAndShade: 'Vents with shade',
+      shadeAndFog: 'Shade and high-pressure fog',
+      shadeAndPad: 'Shade and fan-and-pad',
+    },
+    ventsNeeded: 'Vents needed, no extra shade',
+    withShade: (pct: string) => `Vents with ${pct} % shade`,
+    fogInside: 'Inside with shade and fog',
+    padOutlet: 'Air off a wet pad',
+    openFog: 'Size the fog system',
+    rule: 'Rule: above 38 °C outside, or vents over a quarter of the floor, shade and cool by evaporation instead of building bigger vents.',
+  },
+  calendar: {
+    title: 'Crop calendar',
+    lead: 'The crop year week by week: its stages, the climate each one wants, and when heating, CO₂, shade and fog run.',
+    rows: {
+      temp: 'Outside',
+      stage: 'Crop',
+      heating: 'Heating',
+      co2: 'CO₂',
+      shade: 'Shade',
+      fog: 'Fog',
+    },
+    targets: 'Targets by stage',
+    stage: 'Stage',
+    weeks: 'weeks',
+    week: 'Week',
+    firstHarvest: 'First harvest',
+    weeksOfPicking: 'weeks of picking',
+    end: 'End of crop',
+    heatingFrom: 'Heating from',
+    systems: 'Systems',
+    harvestWeeks: 'Weeks of picking',
+    heatingWeeks: 'Weeks of heating',
+    fogWeeks: 'Weeks of fog',
+  },
   calc: {
     results: 'Results',
     how: 'How it’s calculated',
@@ -526,6 +661,22 @@ export const EN = {
   },
 
   diagrams: {
+    vpdAlt: (air: string, rh: string, vpd: string, status: string) =>
+      `VPD map: air at ${air} °C and ${rh} % gives ${vpd} kPa, ${status}. Handles set the temperature and the humidity.`,
+    fogAlt: (
+      outside: string,
+      inside: string,
+      rh: string,
+      on: string,
+      off: string,
+    ) =>
+      `Fog on a ${outside} °C afternoon brings the house to ${inside} °C at ${rh} %, fogging ${on} s on and ${off} s off. Handles set the humidity cap and the burst.`,
+    calendarAlt: (plant: string, harvest: string, end: string, heat: string) =>
+      `Crop calendar: planted in week ${plant}, first harvest in week ${harvest}, crop ends in week ${end}, heating from week ${heat}. Handles set the planting week and the end of the crop.`,
+    ventsOnly: 'Vents only',
+    withFog: 'With fog',
+    wetBulb: 'Wet bulb',
+    cap: 'Cap',
     heatAlt: (inside: string, outside: string, kw: string) =>
       `Heat leaving the house: ${kw} kW, from ${inside} °C inside to ${outside} °C outside. Handles set both temperatures.`,
     pipesAlt: (loops: string, length: string, supply: string, back: string) =>
@@ -675,6 +826,21 @@ export const EN = {
         title: 'Report',
         body: 'The project on one printable page: the house, its climate and each saved result with its main figures and findings. Print it, or choose “Save as PDF” in the print dialog to send it.',
       },
+      {
+        id: 'calendar',
+        title: 'Crop calendar',
+        body: 'Planting, flowering, harvest and clean-out weeks with the climate targets of each stage, and the weeks heating, CO₂, shade and fog run, read from the climate normals. Desert tomato sites plant around week 36, heat from about week 42 and finish after week 29.',
+      },
+      {
+        id: 'vpd',
+        title: 'Humidity and VPD',
+        body: 'The vapour pressure deficit from temperature and humidity (Tetens, as in FAO-56), the dew point and the water the air can still take, against the band for the crop’s stage and the light. The map shows every pair of temperature and humidity, because one VPD fits many of them.',
+      },
+      {
+        id: 'fog',
+        title: 'Fogging and the cooling strategy',
+        body: 'High-pressure fog in a ventilated house: the inside temperature from a heat and water balance, the on/off cycle that holds a humidity cap, and the water a day. The advisor checks the design afternoon: when vents alone would need more than a roof opens, it proposes shade with fog or pads.',
+      },
     ],
     sourcesTitle: 'Sources',
     sources: [
@@ -686,6 +852,9 @@ export const EN = {
       'Thimijan & Heins (1983): converting sunlight to photons for plants.',
       'Nederhoff (1994): CO₂ enrichment, leakage and uptake in greenhouses.',
       'Campen et al. (2003): dehumidifying greenhouses by ventilation and heat.',
+      'Soussi et al. (2022): climate control and cooling of greenhouses in hot, arid regions.',
+      'Shamshiri et al. (2018): the best temperature, humidity and VPD for greenhouse tomato.',
+      'Ishii et al.: fog cooling against fan-and-pad in an Arizona greenhouse.',
     ],
     limitsTitle: 'Limits',
     limits: [
@@ -697,6 +866,64 @@ export const EN = {
   },
 
   notes: {
+    'vpd.tooWet': (v) =>
+      `VPD ${v['vpd']} kPa: under ${v['min']} kPa for this stage, the air is too wet.`,
+    'vpd.good': (v) =>
+      `VPD ${v['vpd']} kPa: inside the ${v['min']}–${v['max']} kPa band for this stage.`,
+    'vpd.tooDry': (v) =>
+      `VPD ${v['vpd']} kPa: over ${v['max']} kPa for this stage, the air is too dry.`,
+    'vpd.disease': () => 'Under 0.3 kPa: botrytis, mildew and soft growth.',
+    'vpd.wilting': () =>
+      'Over 1.5 kPa the crop wilts: shade it and add moisture.',
+    'vpd.arid': () =>
+      '3 kPa or more: desert air, and growth stalls. Fog or pads, and shade.',
+    'vpd.cold': (v) =>
+      `Under ${v['min']} °C for this stage: heat before you ventilate.`,
+    'vpd.hot': (v) => `Over ${v['max']} °C for this stage: shade and cool.`,
+    'vpd.outsideWetter': () =>
+      'The outside air holds more water than inside: ventilating won’t dry the house, heating will.',
+    'vpd.samePairs': (v) =>
+      `One VPD fits many pairs: ${v['vpd']} kPa at 15 °C needs drier air than at 35 °C, so read the temperature and humidity together.`,
+    'fog.cooling': (v) =>
+      `Fog brings the house to ${v['inside']} °C, ${v['drop']} K under outside, at ${v['rh']} % humidity.`,
+    'fog.tooHumid': () =>
+      'The house is over the humidity cap without fog: fogging would only wet the crop.',
+    'fog.moreNozzles': () =>
+      'The nozzles run all the time under the cap: more nozzles would cool further.',
+    'fog.cycle': (v) =>
+      `Fog ${v['on']} s on and ${v['off']} s off holds the air near ${v['rh']} % (60 s on, 180 s off is a common start).`,
+    'fog.lowPressure': () =>
+      'Under 40 bar the droplets are too big to evaporate in the air: they wet the leaves.',
+    'fog.droplets': () =>
+      'High pressure makes 10–30 µm droplets that evaporate before they land.',
+    'fog.trimVents': () =>
+      'Wide-open vents carry the fog away: trim them to 5–15 % of the floor while fogging.',
+    'fog.waterQuality': () =>
+      'Use desalinated or soft water: salts clog the nozzles and spot the fruit.',
+    'advice.notBuildable': (v) =>
+      `${v['pct']} % of the floor in vents and ${v['flow']} million m³/h of air: more than a roof opens (about ${v['limit']} % at most).`,
+    'advice.vents': () => 'Roof vents handle this afternoon.',
+    'advice.ventsAndShade': (v) =>
+      `With ${v['shade']} % shade the vents need ${v['pct']} % of the floor: shade first.`,
+    'advice.shadeAndFog': (v) =>
+      `${v['shade']} % shade and fog keep the house near ${v['inside']} °C with the vents trimmed. Fog suits long, large houses.`,
+    'advice.shadeAndPad': (v) =>
+      `${v['shade']} % shade and pads: air leaves a wet pad near ${v['pad']} °C. At ${v['length']} m the house is short enough for pads.`,
+    'advice.humid': () =>
+      'Humid air outside: evaporative cooling gives little. Shade, and cool at night.',
+    'calendar.season': (v) =>
+      `Planted in week ${v['plant']}, the crop ends in week ${v['end']}: ${v['weeks']} weeks in the house.`,
+    'calendar.harvest': (v) =>
+      `Picking from week ${v['first']}, for ${v['weeks']} weeks.`,
+    'calendar.heating': (v) =>
+      `Heating from week ${v['from']}, ${v['weeks']} weeks in the year.`,
+    'calendar.co2': (v) =>
+      `CO₂ pays in ${v['weeks']} weeks, when the house stays shut.`,
+    'calendar.fog': (v) =>
+      `Fog or pads for ${v['weeks']} weeks of hot afternoons.`,
+    'calendar.shade': (v) => `Shade for ${v['weeks']} weeks of strong sun.`,
+    'calendar.shortCleanOut': (v) =>
+      `Only ${v['weeks']} weeks between crops: little time to clean and disinfect.`,
     'geometry.lowGutter': (v) =>
       `Gutter at ${v['gutter']} m: a low house heats up and stays humid. 4 m or more buffers better.`,
     'geometry.goodVolume': (v) =>

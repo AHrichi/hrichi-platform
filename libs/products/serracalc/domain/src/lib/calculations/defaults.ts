@@ -11,6 +11,9 @@ import { climateById, DEFAULT_CLIMATE_ID } from '../data/climates.data';
 import { dayLengthHours, midMonthDay } from '../utils/physics';
 import type {
   AnnualHeatingParams,
+  CalendarParams,
+  FogParams,
+  VpdParams,
   Co2Params,
   CropId,
   CropWaterParams,
@@ -27,6 +30,7 @@ import type {
   VentilationParams,
 } from '../models/serra.models';
 import { greenhouseGeometry } from './geometry';
+import type { CoolingAdviceParams } from './fog';
 
 /**
  * Where a calculator starts: the active project's house, climate and crop,
@@ -234,5 +238,78 @@ export function defaultHumidity(ctx: CalcContext): HumidityParams {
     nightHours:
       Math.round((24 - dayLengthHours(climate.latitude, midMonthDay(0))) * 2) /
       2,
+  };
+}
+
+/** A sunny day in the harvest stage, the outside air of a hot afternoon. */
+export function defaultVpd(ctx: CalcContext): VpdParams {
+  const climate = climateById(ctx.climateId);
+  return {
+    crop: ctx.crop,
+    stage: 'harvest',
+    light: 'sun',
+    airC: 26,
+    rhPct: 70,
+    outsideC: climate.designSummerC - 5,
+    outsideRhPct: climate.designSummerRhPct,
+  };
+}
+
+/**
+ * High-pressure fog on the design afternoon: half shade, vents trimmed to a
+ * tenth of the floor, about 27 nozzles of 5.4 L/h per 100 m² (about
+ * 24 g/m² a minute while on, as in Ishii's Arizona test).
+ */
+export function defaultFog(ctx: CalcContext): FogParams {
+  const climate = climateById(ctx.climateId);
+  return {
+    ...solarFrom(ctx),
+    shadingPct: 50,
+    outsideC: climate.designSummerC,
+    outsideRhPct: climate.designSummerRhPct,
+    ventPct: 10,
+    ventOpeningM: 1,
+    windMs: 2,
+    nozzlesPer100M2: 27,
+    nozzleLh: 5.4,
+    pressureBar: 40,
+    onS: 60,
+    maxRhPct: 75,
+    hoursPerDay: 8,
+  };
+}
+
+/** The ventilation inputs plus what the cooling advisor reads from the house. */
+export function adviceParams(
+  vent: VentilationParams,
+  ctx: CalcContext,
+): CoolingAdviceParams {
+  return {
+    ...vent,
+    outsideRhPct: climateById(ctx.climateId).designSummerRhPct,
+    houseLengthM: ctx.greenhouse.lengthM,
+  };
+}
+
+/**
+ * A crop year as the desert tomato sites run it: planted in week 36 after
+ * seven weeks in the nursery, first flowers three weeks later, picking eight
+ * weeks after that, finished after week 29.
+ */
+export function defaultCalendar(ctx: CalcContext): CalendarParams {
+  const crop = CROPS[ctx.crop];
+  return {
+    climateId: ctx.climateId,
+    crop: ctx.crop,
+    plantingWeek: 36,
+    nurseryWeeks: 7,
+    vegetativeWeeks: 3,
+    floweringWeeks: 8,
+    cropWeeks: 46,
+    nightSetC: crop.nightSetC,
+    ventilateAboveC: crop.ventilateAboveC,
+    maxDli: crop.maxDli,
+    transmissionPct: COVERS[ctx.greenhouse.cover].transmissionPct,
+    coolAboveC: 30,
   };
 }

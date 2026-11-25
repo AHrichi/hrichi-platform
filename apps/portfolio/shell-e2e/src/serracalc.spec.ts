@@ -15,6 +15,9 @@ const SCREENS = [
   'cooling',
   'water',
   'air',
+  'air?tab=vpd',
+  'cooling?tab=fog',
+  'calendar',
   'greenhouse',
   'climate',
   'report',
@@ -54,7 +57,7 @@ test.describe('SerraCalc, standalone', () => {
     await page.getByRole('button', { name: 'EN', exact: true }).click();
     await expect(page.locator('sc-serra-shell')).toHaveAttribute(
       'data-look',
-      'greenhouse',
+      'desert',
     );
     await page.getByRole('button', { name: 'Load sample projects' }).click();
     await expect(

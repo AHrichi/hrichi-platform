@@ -1,0 +1,87 @@
+@use '../../styles/serra' as sc;
+
+@include sc.diagram;
+
+.zone {
+  stroke: none;
+
+  &.wet {
+    fill: var(--color-info-default);
+    opacity: 0.16;
+  }
+
+  &.good {
+    fill: var(--color-success-default);
+    opacity: 0.2;
+  }
+
+  &.ideal {
+    fill: var(--color-accent-default);
+    opacity: 0.32;
+  }
+
+  &.dry {
+    fill: var(--color-warning-default);
+    opacity: 0.18;
+  }
+}
+
+.band {
+  fill: none;
+  stroke: var(--color-text-muted);
+  stroke-width: 1.25;
+  stroke-dasharray: 6 5;
+}
+
+.iso {
+  fill: none;
+  stroke: var(--color-text-muted);
+  stroke-width: 1;
+  opacity: 0.7;
+}
+
+.iso-label {
+  fill: var(--color-text-muted);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
+.grid {
+  fill: none;
+  stroke: var(--color-border-default);
+  stroke-width: 1;
+  opacity: 0.6;
+}
+
+.zone-label {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+
+  &.wet-label {
+    fill: var(--color-info-default);
+  }
+
+  &.dry-label {
+    fill: var(--color-warning-default);
+  }
+}
+
+.cross {
+  fill: none;
+  stroke: var(--color-text-default);
+  stroke-width: 1;
+  stroke-dasharray: 3 4;
+  opacity: 0.6;
+}
+
+.halo {
+  fill: var(--color-accent-default);
+  opacity: 0.18;
+}
+
+.point {
+  stroke: var(--color-bg-raised);
+  stroke-width: 3;
+}

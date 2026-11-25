@@ -552,6 +552,222 @@ export interface HumidityResult {
 }
 
 // ---------------------------------------------------------------------------
+// Climate control: VPD, fogging, the cooling strategy, the crop calendar
+// ---------------------------------------------------------------------------
+
+/** Where the crop is in its cycle; targets change with it. */
+export type CropStage = 'nursery' | 'vegetative' | 'flowering' | 'harvest';
+
+export type LightCondition = 'sun' | 'cloud' | 'night';
+
+/** A low–high band; `ideal` sits inside `range` where a source gives one. */
+export interface Band {
+  min: number;
+  max: number;
+}
+
+export interface StageTargets {
+  dayC: Band;
+  nightC: Band;
+  rhPct: Band;
+  /** Acceptable VPD, kPa. */
+  vpdKpa: Band;
+  /** Ideal VPD inside the acceptable band, kPa. */
+  vpdIdealKpa: Band;
+  /** Nutrient solution EC at the dripper, dS/m. */
+  ecDsM: Band;
+  co2Ppm: Band;
+}
+
+export interface VpdParams {
+  crop: CropId;
+  stage: CropStage;
+  light: LightCondition;
+  airC: number;
+  rhPct: number;
+  /** Outside air, to tell whether ventilating dries the house. */
+  outsideC: number;
+  outsideRhPct: number;
+}
+
+export type VpdStatus = 'tooWet' | 'good' | 'tooDry';
+
+export type VpdAction =
+  | 'hold'
+  | 'ventilate'
+  | 'heatAndVent'
+  | 'heat'
+  | 'humidify'
+  | 'coolAndHumidify';
+
+/** One temperature and the humidity that gives the same VPD there. */
+export interface VpdPair {
+  airC: number;
+  rhPct: number;
+}
+
+export interface VpdResult {
+  vpdKpa: number;
+  dewPointC: number;
+  /** Water in the air, g/m³. */
+  absoluteGm3: number;
+  /** What the air can still take before it saturates, g/m³. */
+  headroomGm3: number;
+  insideGkg: number;
+  outsideGkg: number;
+  status: VpdStatus;
+  /** Inside the ideal band, not only the acceptable one. */
+  ideal: boolean;
+  action: VpdAction;
+  /** The bands for this stage and light. */
+  band: Band;
+  idealBand: Band;
+  temperatureBand: Band;
+  rhBand: Band;
+  /** Other temperatures with the same VPD as the middle of the ideal band. */
+  pairs: VpdPair[];
+  notes: CalcNote[];
+}
+
+export interface FogParams {
+  outsideC: number;
+  outsideRhPct: number;
+  floorAreaM2: number;
+  coverAreaM2: number;
+  volumeM3: number;
+  uValue: number;
+  radiationWm2: number;
+  transmissionPct: number;
+  shadingPct: number;
+  evapotranspirationPct: number;
+  /** Roof and side vents open, percent of the floor. */
+  ventPct: number;
+  ventOpeningM: number;
+  windMs: number;
+  /** Nozzles per 100 m² of floor. */
+  nozzlesPer100M2: number;
+  /** One nozzle at its working pressure, L/h. */
+  nozzleLh: number;
+  /** Working pressure, bar (high pressure: about 40–70). */
+  pressureBar: number;
+  /** One burst of fog, s; the pause after it is worked out. */
+  onS: number;
+  /** Stop fogging above this inside humidity. */
+  maxRhPct: number;
+  /** Hours a day the fog runs in the hot season. */
+  hoursPerDay: number;
+}
+
+export interface FogResult {
+  wetBulbC: number;
+  /** Inside with the vents only (no fog). */
+  ventOnlyC: number;
+  insideC: number;
+  insideRhPct: number;
+  rhRisePct: number;
+  vpdKpa: number;
+  /** Fog sprayed while the nozzles run, g/m² per minute. */
+  fogGm2Min: number;
+  /** Averaged over the on/off cycle, g/m² per minute. */
+  meanGm2Min: number;
+  /** The cycle that holds the humidity cap: a burst, then a pause, s. */
+  onS: number;
+  offS: number;
+  dutyPct: number;
+  /** Fog water sprayed in a day, m³. */
+  waterM3Day: number;
+  waterLm2Day: number;
+  airFlowM3h: number;
+  nozzles: number;
+  /** Pad-and-fan water for the same house, for comparison, m³/day. */
+  padWaterM3Day: number;
+  /** Ran into the humidity cap, so the fog is cut back. */
+  rhLimited: boolean;
+  notes: CalcNote[];
+}
+
+export type CoolingStrategy =
+  'vents' | 'ventsAndShade' | 'shadeAndFog' | 'shadeAndPad';
+
+export interface CoolingAdvice {
+  strategy: CoolingStrategy;
+  /** Vent opening needed with the inputs as they are, percent of floor. */
+  ventPct: number;
+  /** The same with the advisor's shade. */
+  shadedVentPct: number;
+  shadePct: number;
+  /** Inside temperature with shade and fog, °C. */
+  fogInsideC: number;
+  /** Air leaving the pad, °C. */
+  padOutletC: number;
+  notes: CalcNote[];
+}
+
+export interface CalendarParams {
+  climateId: string;
+  crop: CropId;
+  /** ISO week the young plants go into the house. */
+  plantingWeek: number;
+  /** Weeks of raising seedlings before planting. */
+  nurseryWeeks: number;
+  /** Planting to the first flowers. */
+  vegetativeWeeks: number;
+  /** First flowers to the first harvest. */
+  floweringWeeks: number;
+  /** Planting to the end of the crop. */
+  cropWeeks: number;
+  nightSetC: number;
+  /** Vents open above this; days below it leave the house closed. */
+  ventilateAboveC: number;
+  /** Shade above this daily light, mol/m² per day. */
+  maxDli: number;
+  transmissionPct: number;
+  /** Outside afternoons above this need evaporative cooling, °C. */
+  coolAboveC: number;
+}
+
+export interface CalendarStage {
+  stage: CropStage | 'cleanOut';
+  /** ISO weeks, 1–52; `endWeek` is the last week of the stage. */
+  startWeek: number;
+  endWeek: number;
+  weeks: number;
+}
+
+export interface CalendarWeek {
+  week: number;
+  month: number;
+  /** `cleanOut` while the house is empty between crops. */
+  stage: Exclude<CropStage, 'nursery'> | 'cleanOut';
+  /** Seedlings for the next crop are in the nursery this week. */
+  nursery: boolean;
+  tMinC: number;
+  tMaxC: number;
+  /** Sunlight reaching the crop, mol/m² per day. */
+  dli: number;
+  heating: boolean;
+  co2: boolean;
+  shade: boolean;
+  fog: boolean;
+}
+
+export interface CalendarResult {
+  stages: CalendarStage[];
+  /** 52 weeks from the planting week. */
+  weeks: CalendarWeek[];
+  firstHarvestWeek: number;
+  endWeek: number;
+  harvestWeeks: number;
+  heatingWeeks: number;
+  co2Weeks: number;
+  shadeWeeks: number;
+  fogWeeks: number;
+  /** First week the heating comes on after planting (0: never). */
+  heatingFromWeek: number;
+  notes: CalcNote[];
+}
+
+// ---------------------------------------------------------------------------
 // Projects and saved results
 // ---------------------------------------------------------------------------
 
@@ -574,7 +790,10 @@ export type SavedCalculation =
   | SavedCalcBase<'rainwater', RainwaterParams>
   | SavedCalcBase<'light', LightParams>
   | SavedCalcBase<'co2', Co2Params>
-  | SavedCalcBase<'humidity', HumidityParams>;
+  | SavedCalcBase<'humidity', HumidityParams>
+  | SavedCalcBase<'vpd', VpdParams>
+  | SavedCalcBase<'fog', FogParams>
+  | SavedCalcBase<'calendar', CalendarParams>;
 
 export type CalcKind = SavedCalculation['kind'];
 

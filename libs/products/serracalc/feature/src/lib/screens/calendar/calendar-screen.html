@@ -1,0 +1,236 @@
+<section class="screen" aria-labelledby="sc-calendar-title">
+  <header class="head">
+    <div>
+      <h2 id="sc-calendar-title">{{ t().calendar.title }}</h2>
+      <p>{{ t().calendar.lead }}</p>
+    </div>
+    @if (now(); as week) {
+      <div class="verdict now" data-status="good">
+        <span class="verdict-status">
+          {{ t().app.week }} {{ today }} · {{ i18n.month(week.month) }}
+        </span>
+        <strong>{{ t().stages[week.stage] }}</strong>
+      </div>
+    }
+  </header>
+
+  <sc-context-bar (resetInputs)="reset()" />
+
+  <figure class="panel">
+    <sc-calendar-timeline
+      [params]="params()"
+      [result]="result()"
+      [today]="today"
+      (changed)="set($event)"
+    />
+    <figcaption>{{ t().calc.dragHint }}</figcaption>
+  </figure>
+
+  <div class="workbench">
+    <div class="column">
+      <section class="panel" aria-labelledby="sc-calendar-inputs">
+        <h3 id="sc-calendar-inputs">{{ t().calc.inputs }}</h3>
+        <sc-field-grid
+          [specs]="fields"
+          [values]="params()"
+          (changed)="set($event)"
+        >
+          <label class="select">
+            <span>{{ t().water.climate }}</span>
+            <select (change)="setClimate(value($event))">
+              @for (c of climates; track c.id) {
+                <option [value]="c.id" [selected]="params().climateId === c.id">
+                  {{ c.name }} ({{ c.country }})
+                </option>
+              }
+            </select>
+          </label>
+          <label class="select">
+            <span>{{ t().projects.crop }}</span>
+            <select (change)="setCrop($any(value($event)))">
+              @for (id of crops; track id) {
+                <option [value]="id" [selected]="params().crop === id">
+                  {{ t().crops[id] }}
+                </option>
+              }
+            </select>
+          </label>
+        </sc-field-grid>
+      </section>
+
+      <section class="panel" aria-labelledby="sc-calendar-stages">
+        <h3 id="sc-calendar-stages">{{ t().calendar.targets }}</h3>
+        <div
+          class="table-wrap"
+          tabindex="0"
+          role="region"
+          [attr.aria-label]="t().calendar.targets"
+        >
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">{{ t().calendar.stage }}</th>
+                <th scope="col">{{ t().calendar.weeks }}</th>
+                <th scope="col">{{ t().vpd.day }} °C</th>
+                <th scope="col">{{ t().vpd.night }} °C</th>
+                <th scope="col">RH %</th>
+                <th scope="col">VPD kPa</th>
+                <th scope="col">EC dS/m</th>
+                <th scope="col">CO₂ ppm</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (row of stageRows(); track row.stage) {
+                <tr>
+                  <th scope="row">{{ t().stages[row.stage] }}</th>
+                  <td>
+                    @if (row.span; as span) {
+                      {{ span.startWeek }}–{{ span.endWeek }}
+                    } @else {
+                      {{ t().common.none }}
+                    }
+                  </td>
+                  <td>
+                    {{ i18n.num(row.targets.dayC.min) }}–{{
+                      i18n.num(row.targets.dayC.max)
+                    }}
+                  </td>
+                  <td>
+                    {{ i18n.num(row.targets.nightC.min) }}–{{
+                      i18n.num(row.targets.nightC.max)
+                    }}
+                  </td>
+                  <td>
+                    {{ i18n.num(row.targets.rhPct.min, 0) }}–{{
+                      i18n.num(row.targets.rhPct.max, 0)
+                    }}
+                  </td>
+                  <td>
+                    {{ i18n.num(row.targets.vpdIdealKpa.min, 2) }}–{{
+                      i18n.num(row.targets.vpdIdealKpa.max, 2)
+                    }}
+                  </td>
+                  <td>
+                    {{ i18n.num(row.targets.ecDsM.min) }}–{{
+                      i18n.num(row.targets.ecDsM.max)
+                    }}
+                  </td>
+                  <td>
+                    {{ i18n.num(row.targets.co2Ppm.min, 0) }}–{{
+                      i18n.num(row.targets.co2Ppm.max, 0)
+                    }}
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+        <ul class="sources">
+          @for (row of stageRows(); track row.stage) {
+            <li>{{ t().stages[row.stage] }}: {{ row.source }}</li>
+          }
+        </ul>
+      </section>
+    </div>
+
+    <div class="column">
+      <section class="panel" aria-labelledby="sc-calendar-results">
+        <h3 id="sc-calendar-results">{{ t().calc.results }}</h3>
+        <div class="results">
+          <ah-metric-card
+            [label]="t().calendar.firstHarvest"
+            [value]="t().app.week + ' ' + result().firstHarvestWeek"
+            variant="accent"
+            [hint]="result().harvestWeeks + ' ' + t().calendar.weeksOfPicking"
+          />
+          <ah-metric-card
+            [label]="t().calendar.end"
+            [value]="t().app.week + ' ' + result().endWeek"
+          />
+          <ah-metric-card
+            [label]="t().calendar.heatingFrom"
+            [value]="
+              result().heatingFromWeek
+                ? t().app.week + ' ' + result().heatingFromWeek
+                : t().common.none
+            "
+            [hint]="result().heatingWeeks + ' ' + t().calendar.weeks"
+          />
+          <ah-metric-card
+            [label]="t().calendar.rows.co2"
+            [value]="result().co2Weeks"
+            [unit]="t().calendar.weeks"
+          />
+          <ah-metric-card
+            [label]="t().calendar.rows.shade"
+            [value]="result().shadeWeeks"
+            [unit]="t().calendar.weeks"
+          />
+          <ah-metric-card
+            [label]="t().calendar.rows.fog"
+            [value]="result().fogWeeks"
+            [unit]="t().calendar.weeks"
+          />
+        </div>
+        <sc-note-list [notes]="result().notes" />
+        <details class="table-toggle">
+          <summary>{{ t().calc.table }}</summary>
+          <div
+            class="table-wrap"
+            tabindex="0"
+            role="region"
+            [attr.aria-label]="t().calendar.title"
+          >
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col">{{ t().calendar.week }}</th>
+                  <th scope="col">{{ t().calendar.stage }}</th>
+                  <th scope="col">Min °C</th>
+                  <th scope="col">Max °C</th>
+                  <th scope="col">DLI</th>
+                  <th scope="col">{{ t().calendar.systems }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (w of result().weeks; track w.week) {
+                  <tr>
+                    <th scope="row">{{ w.week }}</th>
+                    <td>{{ t().stages[w.stage] }}</td>
+                    <td>{{ i18n.num(w.tMinC) }}</td>
+                    <td>{{ i18n.num(w.tMaxC) }}</td>
+                    <td>{{ i18n.num(w.dli) }}</td>
+                    <td>
+                      @if (w.heating) {
+                        {{ t().calendar.rows.heating }}
+                      }
+                      @if (w.co2) {
+                        · {{ t().calendar.rows.co2 }}
+                      }
+                      @if (w.shade) {
+                        · {{ t().calendar.rows.shade }}
+                      }
+                      @if (w.fog) {
+                        · {{ t().calendar.rows.fog }}
+                      }
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </details>
+      </section>
+
+      <section class="panel" aria-labelledby="sc-calendar-save">
+        <h3 id="sc-calendar-save">{{ t().save.title }}</h3>
+        <sc-save-bar
+          [suggestedLabel]="suggestedLabel()"
+          [editingLabel]="editor.editingLabel()"
+          (save)="save($event)"
+          (stopEditing)="editor.stop()"
+        />
+      </section>
+    </div>
+  </div>
+</section>

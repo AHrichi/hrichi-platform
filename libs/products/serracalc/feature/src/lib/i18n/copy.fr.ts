@@ -2,6 +2,10 @@ import type { NoteWriter, SerraCopy } from './copy.en';
 
 export const FR: SerraCopy = {
   app: {
+    week: 'Semaine',
+    weekHint: 'La semaine en cours : ouvre le calendrier de culture',
+    railNote:
+      'Pensé pour les sites désertiques : soleil fort, nuits froides, eau rare.',
     name: 'SerraCalc',
     tagline: 'Chauffage, eau et climat des serres',
     activeProject: 'Projet actif',
@@ -18,6 +22,7 @@ export const FR: SerraCopy = {
       'Aide au dimensionnement : faites vérifier les résultats par un ingénieur qualifié et avec les données des fournisseurs avant de construire.',
   },
   nav: {
+    calendar: 'Calendrier de culture',
     projects: 'Projets',
     greenhouse: 'Serre',
     heating: 'Chauffage',
@@ -28,6 +33,12 @@ export const FR: SerraCopy = {
     air: 'Lumière & air',
     report: 'Rapport',
     more: 'Plus',
+  },
+  navGroups: {
+    plan: 'Planifier',
+    climate: 'Pilotage du climat',
+    water: 'Eau',
+    reference: 'Références',
   },
   common: {
     close: 'Fermer',
@@ -106,6 +117,20 @@ export const FR: SerraCopy = {
   currencies: { TND: 'Dinar tunisien', EUR: 'Euro', USD: 'Dollar américain' },
 
   fields: {
+    rhPct: 'Humidité relative',
+    ventPct: 'Ouvrants ouverts',
+    nozzlesPer100M2: 'Buses',
+    nozzleLh: 'Débit par buse',
+    pressureBar: 'Pression de la pompe',
+    onS: 'Salve de brouillard',
+    maxRhPct: 'Plafond d’humidité',
+    plantingWeek: 'Semaine de plantation',
+    nurseryWeeks: 'Semaines en pépinière',
+    vegetativeWeeks: 'Plantation aux premières fleurs',
+    floweringWeeks: 'Fleurs à la première récolte',
+    cropWeeks: 'Plantation à la fin de culture',
+    ventilateAboveC: 'Ouvrants ouverts au-dessus de',
+    coolAboveC: 'Brumisation au-dessus de (dehors)',
     spans: 'Chapelles',
     spanWidthM: 'Largeur de chapelle',
     lengthM: 'Longueur',
@@ -181,6 +206,16 @@ export const FR: SerraCopy = {
     nightHours: 'Durée de la nuit',
   },
   hints: {
+    ventPct: 'Réduire les ouvrants pendant la brumisation : 5–15 % du sol',
+    nozzlesPer100M2: '27 buses de 5,4 L/h donnent environ 24 g/m² par minute',
+    pressureBar: 'Haute pression, 40–70 bar, pour des gouttelettes de 10–30 µm',
+    onS: 'La pause qui suit est calculée pour tenir le plafond',
+    maxRhPct: 'Tenir 65–75 % a économisé environ 21 % de l’eau',
+    plantingWeek: 'Les sites de tomate du désert plantent vers la semaine 36',
+    nurseryWeeks: 'Plants de tomate : environ 7 semaines',
+    floweringWeeks: 'Tomate : environ 8 semaines',
+    cropWeeks: 'Semaine 36 à semaine 29 : 46 semaines',
+    coolAboveC: 'Les après-midi plus chauds demandent brouillard ou pads',
     spanWidthM: 'Courant : 8, 9,6 ou 12,8 m',
     gutterHeightM: 'Une serre haute amortit mieux chaleur et humidité',
     uValue:
@@ -270,6 +305,9 @@ export const FR: SerraCopy = {
     deleteResult: (label: string) => `Supprimer « ${label} » ?`,
   },
   kinds: {
+    vpd: 'Humidité et VPD',
+    fog: 'Brumisation',
+    calendar: 'Calendrier de culture',
     heatPeak: 'Puissance de chauffage',
     heatYear: 'Chauffage sur l’année',
     hotWater: 'Tuyaux d’eau chaude',
@@ -373,7 +411,20 @@ export const FR: SerraCopy = {
   cooling: {
     title: 'Refroidissement',
     lead: 'L’air que la serre doit renouveler par temps ensoleillé, les ouvrants ou ventilateurs pour le faire, et le refroidissement par pad pour le temps chaud et sec.',
-    tabs: { ventilation: 'Aération', padFan: 'Pad & ventilateurs' },
+    tabs: {
+      ventilation: 'Aération',
+      padFan: 'Pad & ventilateurs',
+      fog: 'Brumisation',
+    },
+    fogInside: 'Dedans avec brouillard',
+    ventOnly: 'Ouvrants seuls',
+    fogRh: 'Humidité dedans',
+    fogRate: 'Brouillard en marche',
+    fogMean: 'En moyenne',
+    fogCycle: 'Cycle marche / arrêt',
+    fogOn: 'du temps en marche',
+    nozzles: 'Buses',
+    padCompare: 'Des pads utiliseraient',
     solar: 'Soleil qui chauffe l’air',
     flow: 'Air à renouveler',
     ach: 'Renouvellements',
@@ -390,6 +441,12 @@ export const FR: SerraCopy = {
     waterDay: 'Eau par jour',
     perHour: 'par heure',
     formulas: {
+      fogRate: 'Brouillard = buses × L/h / sol',
+      fogBalance:
+        'Dedans = T_ext + (soleil − λ × brouillard) / (ρ × cp × air + U × A)',
+      fogCycle:
+        'Cycle : la part de brouillard que l’air absorbe sous le plafond',
+      fogWater: 'Eau = q × A × t / 10⁶',
       solar: 'Soleil = τ × (1 − ombrage) × G × sol × (1 − ET)',
       conduction: 'Par la couverture : U × A × ΔT',
       flow: 'Air = (soleil − couverture) / (ρ × cp × ΔT)',
@@ -454,7 +511,12 @@ export const FR: SerraCopy = {
   air: {
     title: 'Lumière & air',
     lead: 'L’éclairage des mois sombres et l’ombrage des mois lumineux, le CO₂ qui nourrit la culture, et l’air à renouveler la nuit pour limiter humidité et gouttes.',
-    tabs: { light: 'Lumière', co2: 'CO₂', humidity: 'Humidité' },
+    tabs: {
+      light: 'Lumière',
+      co2: 'CO₂',
+      humidity: 'Humidité de nuit',
+      vpd: 'VPD',
+    },
     source: 'CO₂ issu de',
     sources: {
       burner: 'Brûleur à gaz (fumées)',
@@ -485,6 +547,9 @@ export const FR: SerraCopy = {
     cover: 'Couverture côté intérieur',
     water: 'Eau à évacuer',
     formulas: {
+      saturation: 'Saturation : e_s = 0,6108 × exp(17,27 T / (T + 237,3))',
+      vpd: 'VPD = e_s × (1 − HR / 100)',
+      headroom: 'Marge = saturé − eau dans l’air',
       dli: 'Soleil dedans = Rg × 0,47 × 4,57 × τ (mois le plus sombre)',
       ppfd: 'PPFD = (cible − soleil) × 10⁶ / (heures × 3600)',
       fixtures: 'Luminaires = PPFD / efficacité × sol / watts',
@@ -525,6 +590,83 @@ export const FR: SerraCopy = {
       'Normales de station arrondies (environ 1991–2020). Une prochaine version récupère les normales de n’importe quel lieu sur la carte.',
   },
 
+  stages: {
+    nursery: 'Pépinière',
+    vegetative: 'Croissance',
+    flowering: 'Floraison',
+    harvest: 'Récolte',
+    cleanOut: 'Vide sanitaire',
+  },
+  vpd: {
+    stage: 'Stade de la culture',
+    light: 'Lumière',
+    lights: {
+      sun: 'Ensoleillé',
+      cloud: 'Nuageux',
+      night: 'Nuit',
+    },
+    status: {
+      tooWet: 'Trop humide',
+      good: 'Bon',
+      tooDry: 'Trop sec',
+    },
+    ideal: 'idéal',
+    actions: {
+      hold: 'Garder le climat tel quel',
+      ventilate: 'Aérer pour sécher l’air',
+      heatAndVent: 'Chauffer un peu et ouvrir les ouvrants',
+      heat: 'Chauffer : l’air extérieur est plus humide',
+      humidify: 'Humidifier : brouillard ou brumisation',
+      coolAndHumidify: 'Ombrer et brumiser : rafraîchir et humidifier',
+    },
+    band: 'Plage',
+    absolute: 'Eau dans l’air',
+    headroom: 'Marge avant saturation',
+    pairsTitle: 'Le même VPD à d’autres températures',
+    targetsTitle: (stage: string) => `Consignes · ${stage}`,
+    day: 'Jour',
+    night: 'Nuit',
+    source: 'Source',
+  },
+  advice: {
+    title: 'Stratégie de refroidissement',
+    strategies: {
+      vents: 'Les ouvrants suffisent',
+      ventsAndShade: 'Ouvrants et ombrage',
+      shadeAndFog: 'Ombrage et brouillard haute pression',
+      shadeAndPad: 'Ombrage et pad & ventilateurs',
+    },
+    ventsNeeded: 'Ouvrants nécessaires, sans ombrage ajouté',
+    withShade: (pct: string) => `Ouvrants avec ${pct} % d’ombrage`,
+    fogInside: 'Dedans avec ombrage et brouillard',
+    padOutlet: 'Air sortant d’un pad mouillé',
+    openFog: 'Dimensionner la brumisation',
+    rule: 'Règle : au-dessus de 38 °C dehors, ou d’ouvrants sur plus d’un quart du sol, ombrer et refroidir par évaporation plutôt que d’agrandir les ouvrants.',
+  },
+  calendar: {
+    title: 'Calendrier de culture',
+    lead: 'L’année de culture semaine par semaine : ses stades, le climat de chacun, et quand tournent le chauffage, le CO₂, l’ombrage et le brouillard.',
+    rows: {
+      temp: 'Dehors',
+      stage: 'Culture',
+      heating: 'Chauffage',
+      co2: 'CO₂',
+      shade: 'Ombrage',
+      fog: 'Brouillard',
+    },
+    targets: 'Consignes par stade',
+    stage: 'Stade',
+    weeks: 'semaines',
+    week: 'Semaine',
+    firstHarvest: 'Première récolte',
+    weeksOfPicking: 'semaines de cueillette',
+    end: 'Fin de culture',
+    heatingFrom: 'Chauffage dès',
+    systems: 'Systèmes',
+    harvestWeeks: 'Semaines de cueillette',
+    heatingWeeks: 'Semaines de chauffage',
+    fogWeeks: 'Semaines de brouillard',
+  },
   calc: {
     results: 'Résultats',
     how: 'Comment c’est calculé',
@@ -535,6 +677,22 @@ export const FR: SerraCopy = {
   },
 
   diagrams: {
+    vpdAlt: (air: string, rh: string, vpd: string, status: string) =>
+      `Carte du VPD : l’air à ${air} °C et ${rh} % donne ${vpd} kPa, ${status}. Les poignées règlent la température et l’humidité.`,
+    fogAlt: (
+      outside: string,
+      inside: string,
+      rh: string,
+      on: string,
+      off: string,
+    ) =>
+      `Le brouillard, un après-midi à ${outside} °C, amène la serre à ${inside} °C et ${rh} %, ${on} s en marche et ${off} s à l’arrêt. Les poignées règlent le plafond d’humidité et la salve.`,
+    calendarAlt: (plant: string, harvest: string, end: string, heat: string) =>
+      `Calendrier : plantation en semaine ${plant}, première récolte en semaine ${harvest}, fin de culture en semaine ${end}, chauffage dès la semaine ${heat}. Les poignées règlent la semaine de plantation et la fin de culture.`,
+    ventsOnly: 'Ouvrants seuls',
+    withFog: 'Avec brouillard',
+    wetBulb: 'Bulbe humide',
+    cap: 'Plafond',
     heatAlt: (inside, outside, kw) =>
       `Chaleur qui quitte la serre : ${kw} kW, de ${inside} °C dedans à ${outside} °C dehors. Les poignées règlent les deux températures.`,
     pipesAlt: (loops, length, supply, back) =>
@@ -687,6 +845,21 @@ export const FR: SerraCopy = {
         title: 'Rapport',
         body: 'Le projet sur une page imprimable : la serre, son climat et chaque résultat enregistré avec ses chiffres principaux et ses constats. Imprimez-le, ou choisissez « Enregistrer au format PDF » pour l’envoyer.',
       },
+      {
+        id: 'calendar',
+        title: 'Calendrier de culture',
+        body: 'Les semaines de plantation, de floraison, de récolte et de vide sanitaire, avec les consignes de climat de chaque stade, et les semaines où tournent le chauffage, le CO₂, l’ombrage et le brouillard, tirées des normales climatiques. Les sites de tomate du désert plantent vers la semaine 36, chauffent dès la semaine 42 environ et finissent après la semaine 29.',
+      },
+      {
+        id: 'vpd',
+        title: 'Humidité et VPD',
+        body: 'Le déficit de pression de vapeur à partir de la température et de l’humidité (Tetens, comme la FAO-56), le point de rosée et l’eau que l’air peut encore prendre, face à la plage du stade de la culture et de la lumière. La carte montre chaque couple température–humidité, car un même VPD correspond à beaucoup d’entre eux.',
+      },
+      {
+        id: 'fog',
+        title: 'Brumisation et stratégie de refroidissement',
+        body: 'Le brouillard haute pression dans une serre aérée : la température intérieure par un bilan de chaleur et d’eau, le cycle marche/arrêt qui tient un plafond d’humidité, et l’eau par jour. Le conseiller vérifie l’après-midi de calcul : quand les ouvrants seuls demanderaient plus qu’un toit n’ouvre, il propose l’ombrage avec brouillard ou pads.',
+      },
     ],
     sourcesTitle: 'Sources',
     sources: [
@@ -698,6 +871,9 @@ export const FR: SerraCopy = {
       'Thimijan & Heins (1983) : convertir la lumière du soleil en photons pour les plantes.',
       'Nederhoff (1994) : enrichissement en CO₂, fuites et absorption en serre.',
       'Campen et al. (2003) : déshumidifier les serres par aération et chauffage.',
+      'Soussi et al. (2022) : pilotage du climat et refroidissement des serres en régions chaudes et arides.',
+      'Shamshiri et al. (2018) : température, humidité et VPD optimaux pour la tomate sous serre.',
+      'Ishii et al. : brumisation contre pad & ventilateurs dans une serre en Arizona.',
     ],
     limitsTitle: 'Limites',
     limits: [
@@ -709,6 +885,67 @@ export const FR: SerraCopy = {
   },
 
   notes: {
+    'vpd.tooWet': (v) =>
+      `VPD ${v['vpd']} kPa : sous ${v['min']} kPa pour ce stade, l’air est trop humide.`,
+    'vpd.good': (v) =>
+      `VPD ${v['vpd']} kPa : dans la plage ${v['min']}–${v['max']} kPa de ce stade.`,
+    'vpd.tooDry': (v) =>
+      `VPD ${v['vpd']} kPa : au-dessus de ${v['max']} kPa pour ce stade, l’air est trop sec.`,
+    'vpd.disease': () =>
+      'Sous 0,3 kPa : botrytis, mildiou et croissance molle.',
+    'vpd.wilting': () =>
+      'Au-dessus de 1,5 kPa la culture flétrit : ombrer et humidifier.',
+    'vpd.arid': () =>
+      '3 kPa ou plus : air du désert, la croissance s’arrête. Brouillard ou pads, et ombrage.',
+    'vpd.cold': (v) =>
+      `Sous ${v['min']} °C pour ce stade : chauffer avant d’aérer.`,
+    'vpd.hot': (v) =>
+      `Au-dessus de ${v['max']} °C pour ce stade : ombrer et refroidir.`,
+    'vpd.outsideWetter': () =>
+      'L’air extérieur contient plus d’eau que l’air intérieur : aérer ne séchera pas la serre, chauffer oui.',
+    'vpd.samePairs': (v) =>
+      `Un même VPD correspond à beaucoup de couples : ${v['vpd']} kPa demande un air plus sec à 15 °C qu’à 35 °C, lisez donc la température et l’humidité ensemble.`,
+    'fog.cooling': (v) =>
+      `Le brouillard amène la serre à ${v['inside']} °C, ${v['drop']} K sous l’extérieur, à ${v['rh']} % d’humidité.`,
+    'fog.tooHumid': () =>
+      'La serre dépasse le plafond d’humidité sans brouillard : brumiser ne ferait que mouiller la culture.',
+    'fog.moreNozzles': () =>
+      'Les buses tournent en continu sous le plafond : plus de buses refroidiraient davantage.',
+    'fog.cycle': (v) =>
+      `${v['on']} s en marche et ${v['off']} s à l’arrêt tiennent l’air près de ${v['rh']} % (60 s en marche, 180 s à l’arrêt est un départ courant).`,
+    'fog.lowPressure': () =>
+      'Sous 40 bar les gouttelettes sont trop grosses pour s’évaporer dans l’air : elles mouillent les feuilles.',
+    'fog.droplets': () =>
+      'La haute pression donne des gouttelettes de 10–30 µm qui s’évaporent avant de tomber.',
+    'fog.trimVents': () =>
+      'Des ouvrants grands ouverts emportent le brouillard : les réduire à 5–15 % du sol pendant la brumisation.',
+    'fog.waterQuality': () =>
+      'Utilisez de l’eau dessalée ou adoucie : le sel bouche les buses et tache les fruits.',
+    'advice.notBuildable': (v) =>
+      `${v['pct']} % du sol en ouvrants et ${v['flow']} millions de m³/h d’air : plus qu’un toit n’ouvre (environ ${v['limit']} % au plus).`,
+    'advice.vents': () => 'Les ouvrants suffisent pour cet après-midi.',
+    'advice.ventsAndShade': (v) =>
+      `Avec ${v['shade']} % d’ombrage les ouvrants demandent ${v['pct']} % du sol : ombrer d’abord.`,
+    'advice.shadeAndFog': (v) =>
+      `${v['shade']} % d’ombrage et du brouillard tiennent la serre vers ${v['inside']} °C, ouvrants réduits. Le brouillard convient aux serres longues et grandes.`,
+    'advice.shadeAndPad': (v) =>
+      `${v['shade']} % d’ombrage et des pads : l’air sort d’un pad mouillé vers ${v['pad']} °C. Avec ${v['length']} m, la serre est assez courte pour des pads.`,
+    'advice.humid': () =>
+      'Air humide dehors : l’évaporation refroidit peu. Ombrer, et refroidir la nuit.',
+    'calendar.season': (v) =>
+      `Plantée en semaine ${v['plant']}, la culture finit en semaine ${v['end']} : ${v['weeks']} semaines en serre.`,
+    'calendar.harvest': (v) =>
+      `Cueillette dès la semaine ${v['first']}, pendant ${v['weeks']} semaines.`,
+    'calendar.heating': (v) =>
+      `Chauffage dès la semaine ${v['from']}, ${v['weeks']} semaines dans l’année.`,
+    'calendar.co2': (v) =>
+      `Le CO₂ rapporte ${v['weeks']} semaines, quand la serre reste fermée.`,
+    'calendar.fog': (v) =>
+      `Brouillard ou pads pendant ${v['weeks']} semaines d’après-midi chauds.`,
+    'calendar.shade': (v) =>
+      `Ombrage pendant ${v['weeks']} semaines de fort soleil.`,
+    'calendar.shortCleanOut': (v) =>
+      `Seulement ${v['weeks']} semaines entre deux cultures : peu de temps pour nettoyer et désinfecter.`,
     'geometry.lowGutter': (v) =>
       `Chéneau à ${v['gutter']} m : une serre basse chauffe vite et reste humide. 4 m ou plus amortit mieux.`,
     'geometry.goodVolume': (v) =>

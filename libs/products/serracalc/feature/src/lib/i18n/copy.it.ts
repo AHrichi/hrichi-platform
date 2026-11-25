@@ -2,6 +2,10 @@ import type { NoteWriter, SerraCopy } from './copy.en';
 
 export const IT: SerraCopy = {
   app: {
+    week: 'Settimana',
+    weekHint: 'La settimana in corso: apre il calendario colturale',
+    railNote:
+      'Pensato per i siti desertici: sole forte, notti fredde, acqua scarsa.',
     name: 'SerraCalc',
     tagline: 'Calore, acqua e clima della serra',
     activeProject: 'Progetto attivo',
@@ -18,6 +22,7 @@ export const IT: SerraCopy = {
       'Uno strumento di progettazione: verifica i risultati con un tecnico abilitato e con i dati dei fornitori prima di costruire.',
   },
   nav: {
+    calendar: 'Calendario colturale',
     projects: 'Progetti',
     greenhouse: 'Serra',
     heating: 'Riscaldamento',
@@ -28,6 +33,12 @@ export const IT: SerraCopy = {
     air: 'Luce e aria',
     report: 'Relazione',
     more: 'Altro',
+  },
+  navGroups: {
+    plan: 'Pianificare',
+    climate: 'Controllo del clima',
+    water: 'Acqua',
+    reference: 'Riferimenti',
   },
   common: {
     close: 'Chiudi',
@@ -110,6 +121,20 @@ export const IT: SerraCopy = {
   },
 
   fields: {
+    rhPct: 'Umidità relativa',
+    ventPct: 'Aperture aperte',
+    nozzlesPer100M2: 'Ugelli',
+    nozzleLh: 'Portata per ugello',
+    pressureBar: 'Pressione della pompa',
+    onS: 'Getto di nebbia',
+    maxRhPct: 'Tetto di umidità',
+    plantingWeek: 'Settimana di trapianto',
+    nurseryWeeks: 'Settimane in vivaio',
+    vegetativeWeeks: 'Dal trapianto ai primi fiori',
+    floweringWeeks: 'Dai fiori alla prima raccolta',
+    cropWeeks: 'Dal trapianto a fine coltura',
+    ventilateAboveC: 'Aperture aperte sopra',
+    coolAboveC: 'Nebbia sopra (fuori)',
     spans: 'Campate',
     spanWidthM: 'Larghezza della campata',
     lengthM: 'Lunghezza',
@@ -185,6 +210,17 @@ export const IT: SerraCopy = {
     nightHours: 'Durata della notte',
   } as Record<string, string>,
   hints: {
+    ventPct: 'Riduci le aperture durante la nebulizzazione: 5–15 % del suolo',
+    nozzlesPer100M2: '27 ugelli da 5,4 L/h danno circa 24 g/m² al minuto',
+    pressureBar: 'Alta pressione, 40–70 bar, per gocce di 10–30 µm',
+    onS: 'La pausa dopo è calcolata per tenere il tetto',
+    maxRhPct: 'Tenere il 65–75 % ha risparmiato circa il 21 % dell’acqua',
+    plantingWeek:
+      'I siti di pomodoro nel deserto trapiantano verso la settimana 36',
+    nurseryWeeks: 'Piantine di pomodoro: circa 7 settimane',
+    floweringWeeks: 'Pomodoro: circa 8 settimane',
+    cropWeeks: 'Dalla settimana 36 alla 29: 46 settimane',
+    coolAboveC: 'I pomeriggi più caldi richiedono nebbia o pannelli',
     spanWidthM: 'Tipiche: 8, 9,6 o 12,8 m',
     gutterHeightM: 'Le serre più alte tamponano meglio calore e umidità',
     uValue: 'Preso dalla copertura; il fornitore può indicarne un altro',
@@ -272,6 +308,9 @@ export const IT: SerraCopy = {
     deleteResult: (label: string) => `Eliminare «${label}»?`,
   },
   kinds: {
+    vpd: 'Umidità e VPD',
+    fog: 'Nebulizzazione',
+    calendar: 'Calendario colturale',
     heatPeak: 'Carico termico di punta',
     heatYear: 'Riscaldamento nell’anno',
     hotWater: 'Tubi ad acqua calda',
@@ -376,7 +415,20 @@ export const IT: SerraCopy = {
   cooling: {
     title: 'Raffrescamento',
     lead: 'Quanta aria deve muovere la serra in una giornata di sole, le finestre o i ventilatori che la muovono, e il raffrescamento con pannelli evaporativi per il caldo secco.',
-    tabs: { ventilation: 'Ventilazione', padFan: 'Pannelli e ventilatori' },
+    tabs: {
+      ventilation: 'Ventilazione',
+      padFan: 'Pannelli e ventilatori',
+      fog: 'Nebulizzazione',
+    },
+    fogInside: 'Dentro con la nebbia',
+    ventOnly: 'Solo aperture',
+    fogRh: 'Umidità dentro',
+    fogRate: 'Nebbia in funzione',
+    fogMean: 'In media',
+    fogCycle: 'Ciclo acceso / spento',
+    fogOn: 'del tempo acceso',
+    nozzles: 'Ugelli',
+    padCompare: 'I pannelli userebbero',
     solar: 'Sole che scalda l’aria',
     flow: 'Aria da muovere',
     ach: 'Ricambi d’aria',
@@ -393,6 +445,11 @@ export const IT: SerraCopy = {
     waterDay: 'Acqua al giorno',
     perHour: 'all’ora',
     formulas: {
+      fogRate: 'Nebbia = ugelli × L/h / suolo',
+      fogBalance:
+        'Dentro = T_est + (sole − λ × nebbia) / (ρ × cp × aria + U × A)',
+      fogCycle: 'Ciclo: la quota di nebbia che l’aria assorbe sotto il tetto',
+      fogWater: 'Acqua = q × A × t / 10⁶',
       solar: 'Sole = τ × (1 − ombra) × G × superficie × (1 − ET)',
       conduction: 'Attraverso la copertura: U × A × ΔT',
       flow: 'Aria = (sole − copertura) / (ρ × cp × ΔT)',
@@ -459,7 +516,12 @@ export const IT: SerraCopy = {
   air: {
     title: 'Luce e aria',
     lead: 'Lampade per i mesi bui e ombra per quelli luminosi, CO₂ per nutrire la coltura, e l’aria da cambiare di notte per tenere basse umidità e gocciolamento.',
-    tabs: { light: 'Luce', co2: 'CO₂', humidity: 'Umidità' },
+    tabs: {
+      light: 'Luce',
+      co2: 'CO₂',
+      humidity: 'Umidità notturna',
+      vpd: 'VPD',
+    },
     source: 'CO₂ da',
     sources: {
       burner: 'Bruciatore a gas (fumi)',
@@ -490,6 +552,9 @@ export const IT: SerraCopy = {
     cover: 'Copertura, lato interno',
     water: 'Acqua da togliere',
     formulas: {
+      saturation: 'Saturazione: e_s = 0,6108 × exp(17,27 T / (T + 237,3))',
+      vpd: 'VPD = e_s × (1 − UR / 100)',
+      headroom: 'Margine = saturo − acqua nell’aria',
       dli: 'Sole interno = Rg × 0,47 × 4,57 × τ (mese più buio)',
       ppfd: 'PPFD = (obiettivo − sole) × 10⁶ / (ore × 3600)',
       fixtures: 'Lampade = PPFD / efficienza × superficie / watt',
@@ -530,6 +595,83 @@ export const IT: SerraCopy = {
       'Medie di stazione arrotondate (circa 1991–2020). Una versione futura prenderà le medie di qualsiasi luogo sulla mappa.',
   },
 
+  stages: {
+    nursery: 'Vivaio',
+    vegetative: 'Crescita',
+    flowering: 'Fioritura',
+    harvest: 'Raccolta',
+    cleanOut: 'Pulizia',
+  },
+  vpd: {
+    stage: 'Fase colturale',
+    light: 'Luce',
+    lights: {
+      sun: 'Sole',
+      cloud: 'Nuvoloso',
+      night: 'Notte',
+    },
+    status: {
+      tooWet: 'Troppo umido',
+      good: 'Buono',
+      tooDry: 'Troppo secco',
+    },
+    ideal: 'ideale',
+    actions: {
+      hold: 'Mantieni il clima così',
+      ventilate: 'Ventila per asciugare l’aria',
+      heatAndVent: 'Riscalda un poco e apri le aperture',
+      heat: 'Riscalda: l’aria fuori è più umida',
+      humidify: 'Alza l’umidità: nebbia o nebulizzazione',
+      coolAndHumidify: 'Ombreggia e nebulizza: raffredda e inumidisci',
+    },
+    band: 'Fascia',
+    absolute: 'Acqua nell’aria',
+    headroom: 'Margine prima della saturazione',
+    pairsTitle: 'Lo stesso VPD ad altre temperature',
+    targetsTitle: (stage: string) => `Obiettivi · ${stage}`,
+    day: 'Giorno',
+    night: 'Notte',
+    source: 'Fonte',
+  },
+  advice: {
+    title: 'Strategia di raffrescamento',
+    strategies: {
+      vents: 'Bastano le aperture al colmo',
+      ventsAndShade: 'Aperture con ombreggio',
+      shadeAndFog: 'Ombreggio e nebbia ad alta pressione',
+      shadeAndPad: 'Ombreggio e pannelli evaporativi',
+    },
+    ventsNeeded: 'Aperture necessarie, senza ombreggio in più',
+    withShade: (pct: string) => `Aperture con il ${pct} % di ombreggio`,
+    fogInside: 'Dentro con ombreggio e nebbia',
+    padOutlet: 'Aria all’uscita del pannello bagnato',
+    openFog: 'Dimensiona la nebulizzazione',
+    rule: 'Regola: sopra 38 °C fuori, o con aperture oltre un quarto del suolo, ombreggia e raffresca per evaporazione invece di ingrandire le aperture.',
+  },
+  calendar: {
+    title: 'Calendario colturale',
+    lead: 'L’anno colturale settimana per settimana: le fasi, il clima che ognuna vuole, e quando funzionano riscaldamento, CO₂, ombreggio e nebbia.',
+    rows: {
+      temp: 'Fuori',
+      stage: 'Coltura',
+      heating: 'Riscaldamento',
+      co2: 'CO₂',
+      shade: 'Ombreggio',
+      fog: 'Nebbia',
+    },
+    targets: 'Obiettivi per fase',
+    stage: 'Fase',
+    weeks: 'settimane',
+    week: 'Settimana',
+    firstHarvest: 'Prima raccolta',
+    weeksOfPicking: 'settimane di raccolta',
+    end: 'Fine coltura',
+    heatingFrom: 'Riscaldamento dalla',
+    systems: 'Impianti',
+    harvestWeeks: 'Settimane di raccolta',
+    heatingWeeks: 'Settimane di riscaldamento',
+    fogWeeks: 'Settimane di nebbia',
+  },
   calc: {
     results: 'Risultati',
     how: 'Come si calcola',
@@ -540,6 +682,22 @@ export const IT: SerraCopy = {
   },
 
   diagrams: {
+    vpdAlt: (air: string, rh: string, vpd: string, status: string) =>
+      `Mappa del VPD: aria a ${air} °C e ${rh} % dà ${vpd} kPa, ${status}. Le maniglie regolano temperatura e umidità.`,
+    fogAlt: (
+      outside: string,
+      inside: string,
+      rh: string,
+      on: string,
+      off: string,
+    ) =>
+      `La nebbia, in un pomeriggio a ${outside} °C, porta la serra a ${inside} °C e ${rh} %, con ${on} s acceso e ${off} s spento. Le maniglie regolano il tetto di umidità e il getto.`,
+    calendarAlt: (plant: string, harvest: string, end: string, heat: string) =>
+      `Calendario: trapianto nella settimana ${plant}, prima raccolta nella settimana ${harvest}, fine coltura nella settimana ${end}, riscaldamento dalla settimana ${heat}. Le maniglie regolano la settimana di trapianto e la fine della coltura.`,
+    ventsOnly: 'Solo aperture',
+    withFog: 'Con nebbia',
+    wetBulb: 'Bulbo umido',
+    cap: 'Tetto',
     heatAlt: (inside: string, outside: string, kw: string) =>
       `Calore che esce dalla serra: ${kw} kW, da ${inside} °C dentro a ${outside} °C fuori. Le maniglie regolano le due temperature.`,
     pipesAlt: (loops: string, length: string, supply: string, back: string) =>
@@ -691,6 +849,21 @@ export const IT: SerraCopy = {
         title: 'Relazione',
         body: 'Il progetto in una pagina stampabile: la serra, il suo clima e ogni risultato salvato con i numeri principali e le osservazioni. Stampala, o scegli «Salva come PDF» nella finestra di stampa per inviarla.',
       },
+      {
+        id: 'calendar',
+        title: 'Calendario colturale',
+        body: 'Le settimane di trapianto, fioritura, raccolta e pulizia con gli obiettivi climatici di ogni fase, e le settimane in cui funzionano riscaldamento, CO₂, ombreggio e nebbia, ricavate dalle normali climatiche. I siti di pomodoro nel deserto trapiantano verso la settimana 36, riscaldano dalla 42 circa e finiscono dopo la 29.',
+      },
+      {
+        id: 'vpd',
+        title: 'Umidità e VPD',
+        body: 'Il deficit di pressione di vapore da temperatura e umidità (Tetens, come nella FAO-56), il punto di rugiada e l’acqua che l’aria può ancora prendere, rispetto alla fascia della fase colturale e della luce. La mappa mostra ogni coppia di temperatura e umidità, perché uno stesso VPD vale per molte di esse.',
+      },
+      {
+        id: 'fog',
+        title: 'Nebulizzazione e strategia di raffrescamento',
+        body: 'Nebbia ad alta pressione in una serra ventilata: la temperatura interna da un bilancio di calore e acqua, il ciclo acceso/spento che tiene un tetto di umidità, e l’acqua al giorno. Il consigliere verifica il pomeriggio di progetto: se le sole aperture richiedono più di quanto apra un tetto, propone ombreggio con nebbia o pannelli.',
+      },
     ],
     sourcesTitle: 'Fonti',
     sources: [
@@ -702,6 +875,9 @@ export const IT: SerraCopy = {
       'Thimijan & Heins (1983): conversione della luce solare in fotoni per le piante.',
       'Nederhoff (1994): concimazione carbonica, perdite e assorbimento in serra.',
       'Campen et al. (2003): deumidificazione delle serre con ventilazione e calore.',
+      'Soussi et al. (2022): controllo del clima e raffrescamento delle serre nelle regioni calde e aride.',
+      'Shamshiri et al. (2018): temperatura, umidità e VPD ottimali per il pomodoro in serra.',
+      'Ishii et al.: raffrescamento a nebbia contro pannelli e ventilatori in una serra in Arizona.',
     ],
     limitsTitle: 'Limiti',
     limits: [
@@ -713,6 +889,66 @@ export const IT: SerraCopy = {
   },
 
   notes: {
+    'vpd.tooWet': (v) =>
+      `VPD ${v['vpd']} kPa: sotto ${v['min']} kPa per questa fase, l’aria è troppo umida.`,
+    'vpd.good': (v) =>
+      `VPD ${v['vpd']} kPa: dentro la fascia ${v['min']}–${v['max']} kPa di questa fase.`,
+    'vpd.tooDry': (v) =>
+      `VPD ${v['vpd']} kPa: sopra ${v['max']} kPa per questa fase, l’aria è troppo secca.`,
+    'vpd.disease': () => 'Sotto 0,3 kPa: botrite, oidio e crescita molle.',
+    'vpd.wilting': () =>
+      'Sopra 1,5 kPa la coltura appassisce: ombreggia e aggiungi umidità.',
+    'vpd.arid': () =>
+      '3 kPa o più: aria del deserto, la crescita si ferma. Nebbia o pannelli, e ombreggio.',
+    'vpd.cold': (v) =>
+      `Sotto ${v['min']} °C per questa fase: riscalda prima di ventilare.`,
+    'vpd.hot': (v) =>
+      `Sopra ${v['max']} °C per questa fase: ombreggia e raffresca.`,
+    'vpd.outsideWetter': () =>
+      'L’aria esterna contiene più acqua di quella interna: ventilare non asciuga la serra, riscaldare sì.',
+    'vpd.samePairs': (v) =>
+      `Uno stesso VPD vale per molte coppie: ${v['vpd']} kPa richiede aria più secca a 15 °C che a 35 °C, quindi leggi temperatura e umidità insieme.`,
+    'fog.cooling': (v) =>
+      `La nebbia porta la serra a ${v['inside']} °C, ${v['drop']} K sotto l’esterno, al ${v['rh']} % di umidità.`,
+    'fog.tooHumid': () =>
+      'La serra supera il tetto di umidità senza nebbia: nebulizzare bagnerebbe solo la coltura.',
+    'fog.moreNozzles': () =>
+      'Gli ugelli funzionano di continuo sotto il tetto: più ugelli raffrescherebbero di più.',
+    'fog.cycle': (v) =>
+      `${v['on']} s acceso e ${v['off']} s spento tengono l’aria vicino al ${v['rh']} % (60 s acceso e 180 s spento è un inizio comune).`,
+    'fog.lowPressure': () =>
+      'Sotto 40 bar le gocce sono troppo grandi per evaporare in aria: bagnano le foglie.',
+    'fog.droplets': () =>
+      'L’alta pressione dà gocce di 10–30 µm che evaporano prima di cadere.',
+    'fog.trimVents': () =>
+      'Le aperture spalancate portano via la nebbia: riducile al 5–15 % del suolo mentre nebulizzi.',
+    'fog.waterQuality': () =>
+      'Usa acqua dissalata o addolcita: i sali intasano gli ugelli e macchiano i frutti.',
+    'advice.notBuildable': (v) =>
+      `${v['pct']} % del suolo in aperture e ${v['flow']} milioni di m³/h d’aria: più di quanto apra un tetto (al massimo circa il ${v['limit']} %).`,
+    'advice.vents': () => 'Le aperture al colmo bastano per questo pomeriggio.',
+    'advice.ventsAndShade': (v) =>
+      `Con il ${v['shade']} % di ombreggio le aperture richiedono il ${v['pct']} % del suolo: prima ombreggia.`,
+    'advice.shadeAndFog': (v) =>
+      `Il ${v['shade']} % di ombreggio e la nebbia tengono la serra vicino a ${v['inside']} °C con le aperture ridotte. La nebbia si adatta alle serre lunghe e grandi.`,
+    'advice.shadeAndPad': (v) =>
+      `Il ${v['shade']} % di ombreggio e i pannelli: l’aria esce dal pannello bagnato vicino a ${v['pad']} °C. Con ${v['length']} m la serra è abbastanza corta per i pannelli.`,
+    'advice.humid': () =>
+      'Aria umida fuori: l’evaporazione raffresca poco. Ombreggia, e raffresca di notte.',
+    'calendar.season': (v) =>
+      `Trapiantata nella settimana ${v['plant']}, la coltura finisce nella settimana ${v['end']}: ${v['weeks']} settimane in serra.`,
+    'calendar.harvest': (v) =>
+      `Raccolta dalla settimana ${v['first']}, per ${v['weeks']} settimane.`,
+    'calendar.heating': (v) =>
+      `Riscaldamento dalla settimana ${v['from']}, ${v['weeks']} settimane all’anno.`,
+    'calendar.co2': (v) =>
+      `La CO₂ rende in ${v['weeks']} settimane, quando la serra resta chiusa.`,
+    'calendar.fog': (v) =>
+      `Nebbia o pannelli per ${v['weeks']} settimane di pomeriggi caldi.`,
+    'calendar.shade': (v) =>
+      `Ombreggio per ${v['weeks']} settimane di sole forte.`,
+    'calendar.shortCleanOut': (v) =>
+      `Solo ${v['weeks']} settimane tra due colture: poco tempo per pulire e disinfettare.`,
     'geometry.lowGutter': (v) =>
       `Gronda a ${v['gutter']} m: una serra bassa si scalda e resta umida. 4 m o più tamponano meglio.`,
     'geometry.goodVolume': (v) =>
