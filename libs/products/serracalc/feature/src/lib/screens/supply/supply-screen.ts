@@ -173,8 +173,8 @@ export class SupplyScreen {
         label: f.fertNa,
         math:
           r.naEquilibriumMmolL === null
-            ? `${n(p.systemM3, 0)} × (${n(p.naLimitMmolL)} − ${n(p.sourceNaMmolL)}) / (${n(p.sourceNaMmolL)} × ${n(r.freshM3Day, 0)}) = ${r.flushDay ?? '—'} d`
-            : `${n(p.sourceNaMmolL)} × ${n(r.freshM3Day, 0)} × ${n(r.drainM3Day, 0)} / (${n(p.appliedM3Day, 0)} × ${n(r.dischargedM3Day, 0)}) = ${n(r.naEquilibriumMmolL)} mmol/L`,
+            ? `${n(p.systemM3, 0)} × (${n(p.naLimitMmolL)} × ${n(r.drainM3Day, 0)} / ${n(p.appliedM3Day, 0)} − ${n(p.sourceNaMmolL)}) / (${n(p.sourceNaMmolL)} × ${n(r.freshM3Day, 0)}) = ${r.flushDay ?? '—'} d`
+            : `${n(p.sourceNaMmolL)} × ${n(r.freshM3Day, 0)} / ${n(r.dischargedM3Day, 0)} = ${n(r.naEquilibriumMmolL)} mmol/L`,
       },
       {
         label: f.fertYield,

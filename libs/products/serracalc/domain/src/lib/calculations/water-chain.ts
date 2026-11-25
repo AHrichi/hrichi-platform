@@ -131,11 +131,13 @@ export function salinityYield(
  * let go D − R, fresh make-up A − R. EC: the crop takes water with less
  * salt than it is given, so EC_drain = (A·EC_feed − U·EC_uptake) / D. Sodium
  * and chloride hardly go into the crop, so they build up in the loop of
- * volume V: V·dC/dt = C_in·fresh − C·(A/D)·let go. Fully closed, they climb
- * straight to the limit in t = V (C_lim − C_0) / (C_in · fresh); with some
- * drain let go they level off at C_in · fresh · D / (A · let go). Each
- * mmol/L of either adds 0.06 dS/m to the EC, of bicarbonate 0.045; the loop
- * goes at the first of the sodium, chloride and EC limits. A year under five
+ * volume V: V·dC/dt = C_in·fresh − C·(A/D)·let go, and the drain holds
+ * C·A/D. Their limits are read in the drain, the root zone a grower samples:
+ * fully closed, the drain reaches C_lim in t = V (C_lim·D/A − C_0) /
+ * (C_in · fresh); with some drain let go it levels off at
+ * C_in · fresh / let go (salt in = salt out). Each mmol/L of either adds
+ * 0.06 dS/m to the EC, of bicarbonate 0.045; the loop goes at the first of
+ * the sodium, chloride and EC limits (EC at the dripper). A year under five
  * strategies (as set, flush at the EC ceiling, acidified refill, refill EC
  * lowered as salt builds, steady bleed) is worked out day by day. Yield: 1 − slope × (EC_root − threshold).
  */
@@ -161,12 +163,14 @@ export function fertigation(p: FertigationParams): FertigationResult {
   // crop drinks water but leaves them, so the drain holds C·A/D; what is let
   // go carries them out: V·dC/dt = C_in·fresh − C·(A/D)·let go, solved
   // exactly. All climb by the same factor g = C / C_in, so one loop tells
-  // every limit.
+  // every limit. Sodium and chloride limits (tomato ~8 mmol/L) are for the
+  // root zone, sampled in the drain: there they are A/D times the feed's.
   const loop: Loop = {
     applied,
     drain,
     volume: Math.max(0.1, p.systemM3),
   };
+  const toDrain = drain > 0 ? applied / drain : 1;
   const naIn = Math.max(0, p.sourceNaMmolL);
   const clIn = Math.max(0, p.sourceClMmolL ?? p.sourceNaMmolL);
   const hco3In = Math.max(0, p.sourceHco3MmolL ?? 0);
@@ -177,10 +181,10 @@ export function fertigation(p: FertigationParams): FertigationResult {
   const ionBallast = (EC_PER_MMOL_NACL / 2) * (naIn + clIn);
   const ballastPerG = ionBallast + EC_PER_MMOL_HCO3 * hco3In;
   const limitsFor = (ballast: number): Record<FlushLimit, number> => ({
-    na: naIn > 0 ? p.naLimitMmolL / naIn : Infinity,
+    na: naIn > 0 ? p.naLimitMmolL / (naIn * toDrain) : Infinity,
     cl:
       clIn > 0 && p.clLimitMmolL !== undefined
-        ? p.clLimitMmolL / clIn
+        ? p.clLimitMmolL / (clIn * toDrain)
         : Infinity,
     ec: ballast > 0 ? 1 + (p.flushEcDsM - p.targetEcDsM) / ballast : Infinity,
   });
@@ -207,8 +211,8 @@ export function fertigation(p: FertigationParams): FertigationResult {
     const g = loopFactor(loop, discharged, 1, day);
     days.push({
       day,
-      naMmolL: round(naIn * g, 2),
-      clMmolL: round(clIn * g, 2),
+      naMmolL: round(naIn * g * toDrain, 2),
+      clMmolL: round(clIn * g * toDrain, 2),
       feedEcDsM: round(p.targetEcDsM + ballastPerG * (g - 1), 2),
     });
   }
@@ -296,13 +300,13 @@ export function fertigation(p: FertigationParams): FertigationResult {
       notes.push({
         code: 'fert.flush',
         severity,
-        values: { days: flushDay, na: round(naIn * gLimit, 1) },
+        values: { days: flushDay, na: round(naIn * gLimit * toDrain, 1) },
       });
     } else if (limitBy === 'cl') {
       notes.push({
         code: 'fert.flushCl',
         severity,
-        values: { days: flushDay, cl: round(clIn * gLimit, 1) },
+        values: { days: flushDay, cl: round(clIn * gLimit * toDrain, 1) },
       });
     } else {
       notes.push({
@@ -316,8 +320,8 @@ export function fertigation(p: FertigationParams): FertigationResult {
       code: 'fert.levels',
       severity: 'ok',
       values: {
-        na: round(naIn * equilibrium, 1),
-        cl: round(clIn * equilibrium, 1),
+        na: round(naIn * equilibrium * toDrain, 1),
+        cl: round(clIn * equilibrium * toDrain, 1),
       },
     });
   }
@@ -357,9 +361,9 @@ export function fertigation(p: FertigationParams): FertigationResult {
     flushDay,
     limitBy,
     naEquilibriumMmolL:
-      equilibrium === null ? null : round(naIn * equilibrium, 1),
+      equilibrium === null ? null : round(naIn * equilibrium * toDrain, 1),
     clEquilibriumMmolL:
-      equilibrium === null ? null : round(clIn * equilibrium, 1),
+      equilibrium === null ? null : round(clIn * equilibrium * toDrain, 1),
     days,
     strategies,
     notes,

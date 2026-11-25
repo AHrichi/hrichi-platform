@@ -285,7 +285,8 @@ export const IT: SerraCopy = {
   hints: {
     sourceClMmolL: 'Acqua di osmosi: circa quanto il sodio',
     sourceHco3MmolL: 'Acqua di osmosi: sotto 0,5; pozzi: 2–6, dall’analisi',
-    clLimitMmolL: 'Indicativo: circa 10; chiedi al tuo consulente',
+    clLimitMmolL:
+      'Indicativo: circa 10 nel drenaggio; chiedi al tuo consulente',
     coolFromC: 'Partono ventilatori e pannelli; sotto bastano le finestre',
     airflowM3hM2: 'Pannello e ventilatore: 120–150 m³/h per m² di suolo',
     fanWPerM3h:
@@ -313,7 +314,7 @@ export const IT: SerraCopy = {
     recyclePct: 'I siti del deserto riutilizzano il 30–50 % dell’acqua',
     targetEcDsM: 'Pomodoro, soluzione di reintegro: circa 2,7',
     flushEcDsM: 'Un tetto comune: 4,5',
-    naLimitMmolL: 'Pomodoro: scaricare verso 8 mmol/L',
+    naLimitMmolL: 'Pomodoro: circa 8 mmol/L nel drenaggio',
     systemM3: 'Lastre, tubi e serbatoi: circa 4 L per m²',
     yieldSlopePct: 'Indicativo: 7,3 % da una prova; metti il tuo',
     ventPct: 'Riduci le aperture durante la nebulizzazione: 5–15 % del suolo',
@@ -874,7 +875,7 @@ export const IT: SerraCopy = {
       },
       fertigation: {
         title: 'Fertirrigazione e riuso del drenaggio',
-        what: 'La coltura beve l’acqua ma lascia quasi tutto il sodio e il cloruro, quindi il drenaggio è più salato dell’apporto. Riutilizzare il drenaggio risparmia acqua e concime, ma il suo sale si accumula finché il circuito va scaricato; scaricarne una parte stabilizza il sodio.',
+        what: 'La coltura beve l’acqua ma lascia quasi tutto il sodio e il cloruro, quindi il drenaggio è più salato dell’apporto. Riutilizzare il drenaggio risparmia acqua e concime, ma il suo sale si accumula finché il circuito va scaricato; scaricarne una parte stabilizza il sodio. I limiti di sodio e cloruro si leggono nel drenaggio, dove si campiona la zona radicale.',
         assumptions: [
           'Il sodio entra appena nella coltura.',
           'La perdita di resa è lineare sopra 2 dS/m: indicativa, da una prova e una varietà.',
@@ -1141,7 +1142,8 @@ export const IT: SerraCopy = {
     yieldLoss: 'Resa persa per il sale',
     flushIn: 'Scarico fra',
     never: 'Non serve',
-    levelsAt: 'Si stabilizza a',
+    levelsAt: 'Drenaggio stabile a',
+    naInDrain: 'Na nel drenaggio, mmol/L',
     stock: 'Soluzioni A e B, ciascuna',
     stockDays: (days: string) => `un serbatoio dura ${days} giorni`,
     formulas: {
@@ -1151,7 +1153,7 @@ export const IT: SerraCopy = {
       roEnergy: 'Energia = SEC × permeato',
       fertDrain: 'EC drenaggio = (A × EC_apporto − U × EC_assorbita) / D',
       fertNa:
-        'Sodio: chiuso, t = V (C_lim − C_0) / (C_in × acqua dolce); altrimenti si stabilizza a C_in × acqua dolce × D / (A × scarico)',
+        'Sodio nel drenaggio (A/D × l’apporto): chiuso, t = V (C_lim × D/A − C_0) / (C_in × acqua dolce); altrimenti si stabilizza a C_in × acqua dolce / scarico',
       fertYield: 'Resa = 1 − pendenza × (EC_radici − soglia)',
       fertStock: 'Soluzione madre = nutrienti necessari / diluizione',
     },
@@ -1717,7 +1719,7 @@ export const IT: SerraCopy = {
 
   notes: {
     'fert.flushCl': (v) =>
-      `Il cloruro raggiunge ${v['cl']} mmol/L in circa ${v['days']} giorni: scarica il circuito allora.`,
+      `Il cloruro nel drenaggio raggiunge ${v['cl']} mmol/L in circa ${v['days']} giorni: scarica il circuito allora.`,
     'fert.flushEc': (v) =>
       `Il sale porta la EC al tetto di ${v['ec']} dS/m in circa ${v['days']} giorni: scarica il circuito allora.`,
     'fert.bleed': (v) =>
@@ -1816,9 +1818,9 @@ export const IT: SerraCopy = {
     'fert.yield': (v) =>
       `Una EC radicale di ${v['ec']} dS/m costa circa il ${v['pct']} % della resa (indicativo).`,
     'fert.flush': (v) =>
-      `Il sodio raggiunge ${v['na']} mmol/L in circa ${v['days']} giorni: scarica il circuito allora.`,
+      `Il sodio nel drenaggio raggiunge ${v['na']} mmol/L in circa ${v['days']} giorni: scarica il circuito allora.`,
     'fert.levels': (v) =>
-      `Il sodio si stabilizza a ${v['na']} e il cloruro a ${v['cl']} mmol/L, sotto i limiti: nessuno scarico necessario.`,
+      `Nel drenaggio il sodio si stabilizza a ${v['na']} e il cloruro a ${v['cl']} mmol/L, sotto i limiti: nessuno scarico necessario.`,
     'fert.saltySource': () =>
       'Acqua dolce con più di 3 mmol/L di sodio riempie presto il circuito di sale: miscela con acqua osmotizzata o scarica più drenaggio.',
     'fert.lowDrain': () =>

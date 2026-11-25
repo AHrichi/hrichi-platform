@@ -84,7 +84,9 @@
       {{ tick.d }}
     </text>
   }
-  <text class="caption" x="16" [attr.y]="cy1 - 10">Na mmol/L</text>
+  <text class="caption" x="16" [attr.y]="cy1 - 10">
+    {{ t().supply.naInDrain }}
+  </text>
   <text class="caption" [attr.x]="cx1" [attr.y]="cy0 + 34" text-anchor="end">
     {{ i18n.word(t().supply.days) }}
   </text>

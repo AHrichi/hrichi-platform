@@ -59,8 +59,11 @@ describe('fertigation and drain recycling', () => {
     expect(salinityYield(1.8, 7.3, 2)).toBe(1);
   });
 
-  it('flushes a closed loop after V (C_lim − C_0) / (C_in × make-up) days', () => {
-    // 50 m³ of solution, 1 mmol/L Na in 25 m³ of make-up a day, limit 8.
+  it('flushes a closed loop when the drain reaches the sodium limit', () => {
+    // 50 m³ of solution, 1 mmol/L Na in 25 m³ of make-up a day, limit 8 in
+    // the drain. Half the water given drains, so the drain holds twice the
+    // feed's sodium: the feed may reach 8 × 25 / 50 = 4, in
+    // V (C_lim·D/A − C_0) / (C_in × make-up) = 50 × 3 / 25 = 6 days.
     const r = fertigation({
       ...defaultFertigation(KEBILI),
       appliedM3Day: 50,
@@ -73,22 +76,39 @@ describe('fertigation and drain recycling', () => {
     });
     expect(r.dischargedM3Day).toBe(0);
     expect(r.freshM3Day).toBe(25);
-    expect(r.flushDay).toBe(14);
+    expect(r.flushDay).toBe(6);
     expect(r.naEquilibriumMmolL).toBeNull();
+    expect(r.days[0].naMmolL).toBe(2);
+    expect(r.notes.find((n) => n.code === 'fert.flush')?.values).toEqual({
+      days: 6,
+      na: 8,
+    });
   });
 
-  it('levels sodium off when part of the drain is let go', () => {
+  it('levels sodium in the drain off where salt in = salt out', () => {
     const r = fertigation(defaultFertigation(KEBILI));
-    expect(r.naEquilibriumMmolL).not.toBeNull();
-    expect(r.naEquilibriumMmolL ?? 0).toBeLessThan(8);
+    // 30 % drain, 40 % of it reused: fresh 0.88 A, let go 0.18 A, so the
+    // drain holds 1 × 0.88 / 0.18 ≈ 4.9 mmol/L, under the 8 limit.
+    expect(r.naEquilibriumMmolL).toBe(4.9);
+    expect(r.clEquilibriumMmolL).toBe(4.9);
     expect(r.flushDay).toBeNull();
+    expect(r.notes.map((n) => n.code)).toContain('fert.levels');
     expect(r.waterSavedPct).toBe(12);
     expect(r.drainEcDsM).toBeGreaterThan(r.rootEcDsM);
     expect(r.days.at(-1)?.naMmolL).toBeCloseTo(r.naEquilibriumMmolL ?? 0, 0);
   });
 
+  it('flushes sooner the smaller the drain, which concentrates the salt', () => {
+    const base = { ...defaultFertigation(KEBILI), recyclePct: 100 };
+    const wet = fertigation({ ...base, drainPct: 40 });
+    const dry = fertigation({ ...base, drainPct: 20 });
+    expect(dry.flushDay ?? 0).toBeLessThan(wet.flushDay ?? 0);
+  });
+
   // A closed loop of 50 m³ given 50 m³ a day, half drained: 25 m³ of
-  // make-up a day, so the factor g climbs by 0.5 a day.
+  // make-up a day, so the factor g climbs by 0.5 a day. The drain holds
+  // twice the feed's salt, so limits of 16 Na and 20 Cl in the drain are
+  // reached at g = 8 and 10.
   const closed = {
     ...defaultFertigation(KEBILI),
     appliedM3Day: 50,
@@ -97,15 +117,16 @@ describe('fertigation and drain recycling', () => {
     sourceNaMmolL: 1,
     sourceClMmolL: 1,
     sourceHco3MmolL: 0,
-    naLimitMmolL: 8,
-    clLimitMmolL: 10,
+    naLimitMmolL: 16,
+    clLimitMmolL: 20,
     flushEcDsM: 10,
     systemM3: 50,
   };
 
   it('flushes on chloride when it reaches its limit first', () => {
     const r = fertigation({ ...closed, sourceClMmolL: 2 });
-    // Chloride: 2 → 10 is g = 5, reached in 50 × 4 / 25 = 8 days.
+    // Chloride: 4 in the drain at the start, 20 at g = 20 / (2 × 2) = 5,
+    // reached in 50 × 4 / 25 = 8 days.
     expect(r.limitBy).toBe('cl');
     expect(r.flushDay).toBe(8);
     expect(r.notes.map((n) => n.code)).toContain('fert.flushCl');
@@ -142,7 +163,8 @@ describe('fertigation and drain recycling', () => {
     expect(by['bleed'].letGoM3Day).toBeCloseTo(2.27, 2);
     expect(by['bleed'].flushesYear).toBe(0);
     expect(by['bleed'].letGoM3Year).toBeLessThan(by['flush'].letGoM3Year);
-    // Holding the EC, the loop runs to the sodium limit: g = 8, 14 days.
+    // Holding the EC, the loop runs to the sodium limit: 16 in the drain is
+    // g = 8, 14 days.
     expect(by['variable'].flushesYear).toBe(26);
     expect(by['variable'].meanRootEcDsM).toBeLessThan(
       by['flush'].meanRootEcDsM,
