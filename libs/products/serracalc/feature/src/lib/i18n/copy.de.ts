@@ -285,7 +285,7 @@ export const DE: SerraCopy = {
   hints: {
     sourceClMmolL: 'UO-Wasser: etwa so viel wie Natrium',
     sourceHco3MmolL: 'UO-Wasser: unter 0,5; Brunnen: 2–6, laut Analyse',
-    clLimitMmolL: 'Richtwert: etwa 10; fragen Sie Ihre Beratung',
+    clLimitMmolL: 'Richtwert: etwa 10 im Drain; fragen Sie Ihre Beratung',
     coolFromC: 'Lüfter und Pads starten; darunter reichen die Lüftungsklappen',
     airflowM3hM2: 'Pad und Lüfter: 120–150 m³/h je m² Boden',
     fanWPerM3h:
@@ -312,7 +312,7 @@ export const DE: SerraCopy = {
     recyclePct: 'Wüstenbetriebe nutzen 30–50 % ihres Wassers wieder',
     targetEcDsM: 'Tomate, Nachfülllösung: etwa 2,7',
     flushEcDsM: 'Eine übliche Obergrenze: 4,5',
-    naLimitMmolL: 'Tomate: bei etwa 8 mmol/L spülen',
+    naLimitMmolL: 'Tomate: etwa 8 mmol/L im Drain',
     systemM3: 'Matten, Rohre und Tanks: etwa 4 L je m²',
     yieldSlopePct: 'Richtwert: 7,3 % aus einem Versuch; eigenen Wert setzen',
     ventPct: 'Beim Nebeln die Lüftung drosseln: 5–15 % der Fläche',
@@ -864,7 +864,7 @@ export const DE: SerraCopy = {
       },
       fertigation: {
         title: 'Fertigation und Drainrecycling',
-        what: 'Die Kultur trinkt das Wasser, lässt aber das meiste Natrium und Chlorid zurück, also ist der Drain salziger als die Gabe. Den Drain wiederzuverwenden spart Wasser und Dünger, doch sein Salz reichert sich an, bis der Kreislauf gespült werden muss; einen Teil abzugeben hält das Natrium auf einem Niveau.',
+        what: 'Die Kultur trinkt das Wasser, lässt aber das meiste Natrium und Chlorid zurück, also ist der Drain salziger als die Gabe. Den Drain wiederzuverwenden spart Wasser und Dünger, doch sein Salz reichert sich an, bis der Kreislauf gespült werden muss; einen Teil abzugeben hält das Natrium auf einem Niveau. Die Grenzen für Natrium und Chlorid gelten im Drain, wo man die Wurzelzone beprobt.',
         assumptions: [
           'Natrium gelangt kaum in die Kultur.',
           'Der Ertragsverlust ist über 2 dS/m linear: ein Richtwert aus einem Versuch und einer Sorte.',
@@ -1131,7 +1131,8 @@ export const DE: SerraCopy = {
     yieldLoss: 'Ertragsverlust durch Salz',
     flushIn: 'Spülen in',
     never: 'Nicht nötig',
-    levelsAt: 'Pendelt sich ein bei',
+    levelsAt: 'Drain pendelt sich ein bei',
+    naInDrain: 'Na im Drain, mmol/L',
     stock: 'Stammlösung A und B, je',
     stockDays: (days: string) => `ein Tank reicht ${days} Tage`,
     formulas: {
@@ -1140,7 +1141,7 @@ export const DE: SerraCopy = {
       roEnergy: 'Energie = SEC × Permeat',
       fertDrain: 'Drain-EC = (A × EC_Gabe − U × EC_Aufnahme) / D',
       fertNa:
-        'Natrium: geschlossen t = V (C_lim − C_0) / (C_in × Frischwasser); sonst pendelt es sich bei C_in × Frischwasser × D / (A × Abgabe) ein',
+        'Natrium im Drain (A/D × Gabe): geschlossen t = V (C_lim × D/A − C_0) / (C_in × Frischwasser); sonst pendelt es sich bei C_in × Frischwasser / Abgabe ein',
       fertYield: 'Ertrag = 1 − Steigung × (EC_Wurzel − Schwelle)',
       fertStock: 'Stammlösung = benötigte Nährstoffe / Verdünnung',
     },
@@ -1706,7 +1707,7 @@ export const DE: SerraCopy = {
 
   notes: {
     'fert.flushCl': (v) =>
-      `Chlorid erreicht ${v['cl']} mmol/L in etwa ${v['days']} Tagen: dann den Kreislauf spülen.`,
+      `Chlorid im Drain erreicht ${v['cl']} mmol/L in etwa ${v['days']} Tagen: dann den Kreislauf spülen.`,
     'fert.flushEc': (v) =>
       `Das Salz hebt die EC in etwa ${v['days']} Tagen auf die Obergrenze von ${v['ec']} dS/m: dann den Kreislauf spülen.`,
     'fert.bleed': (v) =>
@@ -1807,9 +1808,9 @@ export const DE: SerraCopy = {
     'fert.yield': (v) =>
       `Eine Wurzelraum-EC von ${v['ec']} dS/m kostet etwa ${v['pct']} % des Ertrags (Richtwert).`,
     'fert.flush': (v) =>
-      `Natrium erreicht ${v['na']} mmol/L in etwa ${v['days']} Tagen: dann den Kreislauf spülen.`,
+      `Natrium im Drain erreicht ${v['na']} mmol/L in etwa ${v['days']} Tagen: dann den Kreislauf spülen.`,
     'fert.levels': (v) =>
-      `Natrium pendelt sich bei ${v['na']}, Chlorid bei ${v['cl']} mmol/L unter den Grenzen ein: kein Spülen nötig.`,
+      `Im Drain pendelt sich Natrium bei ${v['na']}, Chlorid bei ${v['cl']} mmol/L unter den Grenzen ein: kein Spülen nötig.`,
     'fert.saltySource': () =>
       'Frischwasser mit über 3 mmol/L Natrium füllt den Kreislauf schnell mit Salz: mit Osmosewasser mischen oder mehr Drain abgeben.',
     'fert.lowDrain': () =>

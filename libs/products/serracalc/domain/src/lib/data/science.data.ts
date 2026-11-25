@@ -302,7 +302,7 @@ export const PHENOMENA: readonly Phenomenon[] = [
     id: 'fertigation',
     group: 'water',
     formula:
-      'EC_drain = (A·EC_feed − U·EC_uptake) / D;  V·dC/dt = C_in·F − C·(A/D)·L (Na and Cl);  closed: t_flush = V (C_lim − C_0) / (C_in·F);  bleed L = C_in·U·D / (C_lim·A − C_in·D);  ΔEC = 0.06 (ΔNa + ΔCl) + 0.045 ΔHCO₃;  Y = 1 − 0.073 (EC − 2.0)',
+      'EC_drain = (A·EC_feed − U·EC_uptake) / D;  V·dC/dt = C_in·F − C·(A/D)·L (Na and Cl);  in the drain C_D = C·A/D, held under C_lim;  closed: t_flush = V (C_lim·D/A − C_0) / (C_in·F);  open: C_D → C_in·F / L;  bleed L = C_in·U / (C_lim − C_in);  ΔEC = 0.06 (ΔNa + ΔCl) + 0.045 ΔHCO₃;  Y = 1 − 0.073 (EC − 2.0)',
     inputs: [
       'appliedM3Day',
       'drainPct',

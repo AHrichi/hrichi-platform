@@ -41,8 +41,8 @@ const yNa = (na: number) =>
 /**
  * The closed loop: fresh water and the A and B stocks into the dripper, the
  * crop, its drain split between reuse and discharge; under it, sodium in the
- * loop over 120 days against the flush limit. Drag the share reused and the
- * sodium limit.
+ * drain (where its limit is read) over 120 days against the flush limit.
+ * Drag the share reused and the sodium limit.
  */
 @Component({
   selector: 'sc-fertigation-loop',

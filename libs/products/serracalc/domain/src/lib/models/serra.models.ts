@@ -867,7 +867,9 @@ export interface FertigationParams {
 
 export interface FertigationDay {
   day: number;
+  /** Sodium in the drain (the root zone, where its limit is read), mmol/L. */
   naMmolL: number;
+  /** Chloride in the drain, mmol/L. */
   clMmolL: number;
   /** EC of the solution at the dripper with that salt in it, dS/m. */
   feedEcDsM: number;
@@ -921,9 +923,9 @@ export interface FertigationResult {
   flushDay: number | null;
   /** The limit the loop reaches first, or would reach if it climbed. */
   limitBy: FlushLimit;
-  /** Where sodium levels off when part of the drain is let go, mmol/L. */
+  /** Where sodium in the drain levels off when part of it is let go, mmol/L. */
   naEquilibriumMmolL: number | null;
-  /** Where chloride levels off, mmol/L. */
+  /** Where chloride in the drain levels off, mmol/L. */
   clEquilibriumMmolL: number | null;
   /** The first 120 days of the loop. */
   days: FertigationDay[];

@@ -281,7 +281,7 @@ export const EN = {
   hints: {
     sourceClMmolL: 'RO water: about as much as sodium',
     sourceHco3MmolL: 'RO water: under 0.5; wells: 2–6, from the lab',
-    clLimitMmolL: 'Indicative: about 10; ask your adviser',
+    clLimitMmolL: 'Indicative: about 10 in the drain; ask your adviser',
     coolFromC: 'Fans and pads start; under it the vents cope',
     airflowM3hM2: 'Fan and pad: 120–150 m³/h per m² of floor',
     fanWPerM3h: 'Fan test or datasheet at pad pressure: about 0.03–0.04',
@@ -306,7 +306,7 @@ export const EN = {
     recyclePct: 'Desert sites reuse 30–50 % of their water',
     targetEcDsM: 'Tomato refill: about 2.7',
     flushEcDsM: 'A common ceiling: 4.5',
-    naLimitMmolL: 'Tomato: flush at about 8 mmol/L',
+    naLimitMmolL: 'Tomato: about 8 mmol/L in the drain',
     systemM3: 'Slabs, pipes and tanks: about 4 L per m²',
     yieldSlopePct: 'Indicative: 7.3 % from one trial; set your own',
     ventPct: 'Trim the vents while fogging: 5–15 % of the floor',
@@ -851,7 +851,7 @@ export const EN = {
       },
       fertigation: {
         title: 'Fertigation and drain recycling',
-        what: 'The crop drinks the water but leaves most of the sodium and chloride, so the drain is saltier than what was given. Reusing the drain saves water and fertiliser, but its salt builds up until the loop must be flushed; letting part of the drain go holds sodium at a level.',
+        what: 'The crop drinks the water but leaves most of the sodium and chloride, so the drain is saltier than what was given. Reusing the drain saves water and fertiliser, but its salt builds up until the loop must be flushed; letting part of the drain go holds sodium at a level. The sodium and chloride limits are read in the drain, where the root zone is sampled.',
         assumptions: [
           'Sodium hardly enters the crop.',
           'Yield loss is linear above 2 dS/m: indicative, from one trial and one variety.',
@@ -1118,7 +1118,8 @@ export const EN = {
     yieldLoss: 'Yield lost to salt',
     flushIn: 'Flush in',
     never: 'Not needed',
-    levelsAt: 'Levels off at',
+    levelsAt: 'Drain levels off at',
+    naInDrain: 'Na in the drain, mmol/L',
     stock: 'Stock A and B, each',
     stockDays: (days: string) => `a tank lasts ${days} days`,
     formulas: {
@@ -1127,7 +1128,7 @@ export const EN = {
       roEnergy: 'Energy = SEC × product',
       fertDrain: 'Drain EC = (A × EC_feed − U × EC_uptake) / D',
       fertNa:
-        'Sodium: closed, t = V (C_lim − C_0) / (C_in × fresh); else it levels off at C_in × fresh × D / (A × let go)',
+        'Sodium in the drain (A/D × the feed): closed, t = V (C_lim × D/A − C_0) / (C_in × fresh); else it levels off at C_in × fresh / let go',
       fertYield: 'Yield = 1 − slope × (EC_root − threshold)',
       fertStock: 'Stock = nutrients needed / dilution',
     },
@@ -1683,7 +1684,7 @@ export const EN = {
 
   notes: {
     'fert.flushCl': (v) =>
-      `Chloride reaches ${v['cl']} mmol/L in about ${v['days']} days: flush the loop then.`,
+      `Chloride in the drain reaches ${v['cl']} mmol/L in about ${v['days']} days: flush the loop then.`,
     'fert.flushEc': (v) =>
       `Salt lifts the EC to the ${v['ec']} dS/m ceiling in about ${v['days']} days: flush the loop then.`,
     'fert.bleed': (v) =>
@@ -1778,9 +1779,9 @@ export const EN = {
     'fert.yield': (v) =>
       `A root-zone EC of ${v['ec']} dS/m costs about ${v['pct']} % of the yield (indicative).`,
     'fert.flush': (v) =>
-      `Sodium reaches ${v['na']} mmol/L in about ${v['days']} days: flush the loop then.`,
+      `Sodium in the drain reaches ${v['na']} mmol/L in about ${v['days']} days: flush the loop then.`,
     'fert.levels': (v) =>
-      `Sodium levels off at ${v['na']} and chloride at ${v['cl']} mmol/L, under the limits: no flush needed.`,
+      `In the drain, sodium levels off at ${v['na']} and chloride at ${v['cl']} mmol/L, under the limits: no flush needed.`,
     'fert.saltySource': () =>
       'Fresh water over 3 mmol/L of sodium fills the loop with salt fast: blend with RO water or let more drain go.',
     'fert.lowDrain': () =>

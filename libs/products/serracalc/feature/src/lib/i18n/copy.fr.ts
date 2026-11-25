@@ -282,7 +282,8 @@ export const FR: SerraCopy = {
     sourceClMmolL: 'Eau d’osmose : à peu près autant que de sodium',
     sourceHco3MmolL:
       'Eau d’osmose : moins de 0,5 ; puits : 2 à 6, selon l’analyse',
-    clLimitMmolL: 'Indicatif : environ 10 ; demandez à votre conseiller',
+    clLimitMmolL:
+      'Indicatif : environ 10 dans le drainage ; demandez à votre conseiller',
     coolFromC:
       'Ventilateurs et pads démarrent ; en dessous, les ouvrants suffisent',
     airflowM3hM2: 'Pad et ventilateur : 120 à 150 m³/h par m² de sol',
@@ -312,7 +313,7 @@ export const FR: SerraCopy = {
     recyclePct: 'Les sites du désert réutilisent 30–50 % de leur eau',
     targetEcDsM: 'Tomate, solution de recharge : environ 2,7',
     flushEcDsM: 'Un plafond courant : 4,5',
-    naLimitMmolL: 'Tomate : vidanger vers 8 mmol/L',
+    naLimitMmolL: 'Tomate : environ 8 mmol/L dans le drainage',
     systemM3: 'Pains, tuyaux et bacs : environ 4 L par m²',
     yieldSlopePct: 'Indicatif : 7,3 % d’un essai ; mettez le vôtre',
     ventPct: 'Réduire les ouvrants pendant la brumisation : 5–15 % du sol',
@@ -873,7 +874,7 @@ export const FR: SerraCopy = {
       },
       fertigation: {
         title: 'Fertirrigation et recyclage du drainage',
-        what: 'La culture boit l’eau mais laisse l’essentiel du sodium et du chlorure : le drainage est plus salé que l’apport. Réutiliser le drainage économise eau et engrais, mais son sel s’accumule jusqu’à la vidange ; rejeter une part du drainage stabilise le sodium.',
+        what: 'La culture boit l’eau mais laisse l’essentiel du sodium et du chlorure : le drainage est plus salé que l’apport. Réutiliser le drainage économise eau et engrais, mais son sel s’accumule jusqu’à la vidange ; rejeter une part du drainage stabilise le sodium. Les limites de sodium et de chlorure se lisent dans le drainage, là où l’on prélève la zone racinaire.',
         assumptions: [
           'Le sodium n’entre presque pas dans la culture.',
           'La perte de rendement est linéaire au-dessus de 2 dS/m : indicatif, d’un essai et d’une variété.',
@@ -1140,7 +1141,8 @@ export const FR: SerraCopy = {
     yieldLoss: 'Rendement perdu au sel',
     flushIn: 'Vidange dans',
     never: 'Inutile',
-    levelsAt: 'Se stabilise à',
+    levelsAt: 'Drainage stable à',
+    naInDrain: 'Na du drainage, mmol/L',
     stock: 'Solutions A et B, chacune',
     stockDays: (days: string) => `un bac dure ${days} jours`,
     formulas: {
@@ -1149,7 +1151,7 @@ export const FR: SerraCopy = {
       roEnergy: 'Énergie = SEC × perméat',
       fertDrain: 'EC drainage = (A × EC_apport − U × EC_absorbée) / D',
       fertNa:
-        'Sodium : fermé, t = V (C_lim − C_0) / (C_in × eau douce) ; sinon il se stabilise à C_in × eau douce × D / (A × rejet)',
+        'Sodium du drainage (A/D × l’apport) : fermé, t = V (C_lim × D/A − C_0) / (C_in × eau douce) ; sinon il se stabilise à C_in × eau douce / rejet',
       fertYield: 'Rendement = 1 − pente × (EC_racines − seuil)',
       fertStock: 'Solution mère = éléments nécessaires / dilution',
     },
@@ -1715,7 +1717,7 @@ export const FR: SerraCopy = {
 
   notes: {
     'fert.flushCl': (v) =>
-      `Le chlorure atteint ${v['cl']} mmol/L en environ ${v['days']} jours : vidangez la boucle à ce moment.`,
+      `Le chlorure du drainage atteint ${v['cl']} mmol/L en environ ${v['days']} jours : vidangez la boucle à ce moment.`,
     'fert.flushEc': (v) =>
       `Le sel porte l’EC au plafond de ${v['ec']} dS/m en environ ${v['days']} jours : vidangez la boucle à ce moment.`,
     'fert.bleed': (v) =>
@@ -1815,9 +1817,9 @@ export const FR: SerraCopy = {
     'fert.yield': (v) =>
       `Une EC racinaire de ${v['ec']} dS/m coûte environ ${v['pct']} % du rendement (indicatif).`,
     'fert.flush': (v) =>
-      `Le sodium atteint ${v['na']} mmol/L en environ ${v['days']} jours : vidangez la boucle à ce moment.`,
+      `Le sodium du drainage atteint ${v['na']} mmol/L en environ ${v['days']} jours : vidangez la boucle à ce moment.`,
     'fert.levels': (v) =>
-      `Le sodium se stabilise à ${v['na']} et le chlorure à ${v['cl']} mmol/L, sous les limites : pas de vidange nécessaire.`,
+      `Dans le drainage, le sodium se stabilise à ${v['na']} et le chlorure à ${v['cl']} mmol/L, sous les limites : pas de vidange nécessaire.`,
     'fert.saltySource': () =>
       'Une eau douce à plus de 3 mmol/L de sodium remplit vite la boucle de sel : mélangez avec de l’eau osmosée ou rejetez plus de drainage.',
     'fert.lowDrain': () =>
