@@ -804,6 +804,33 @@ export const IT: SerraCopy = {
     foldAll: 'Comprimi tutto',
     unfoldAll: 'Espandi tutto',
     instrumentsLead: 'Con cosa misurare, e come leggere bene.',
+    photo: 'Foto',
+    photoCaptions: {
+      airLeakage:
+        'Dentro un tunnel in film: ogni fessura nella copertura fa uscire aria calda.',
+      cogeneration: 'Il motore a gas di un cogeneratore.',
+      coolingEnergy:
+        'Un ventilatore di estrazione: in una serra pad-and-fan, i ventilatori sono quasi tutta la bolletta del raffrescamento.',
+      cropCalendar: 'Piantine in vivaio, prima del trapianto.',
+      desalination:
+        'Dentro un impianto a osmosi inversa: file di vessel che contengono le membrane.',
+      dewPoint:
+        'L’acqua condensa sul vetro più freddo del punto di rugiada dell’aria.',
+      fertigation:
+        'Un gocciolatore che nutre una pianta su substrato: dove inizia il ciclo di fertirrigazione.',
+      geometry:
+        'Un complesso di serre in vetro: campate affiancate sotto una stessa linea di gronda.',
+      heatLoss:
+        'Un doppio schermo energetico steso sotto il tetto riduce il calore perso di notte.',
+      rainHarvest:
+        'Serbatoi di acqua piovana: ciò che il tetto raccoglie si conserva per i mesi secchi.',
+      siteScale:
+        'Le serre di Almería viste dall’orbita da un astronauta della NASA.',
+      transpiration:
+        'Una foglia di pomodoro al microscopio (100×): gli stomi, da cui esce la sua acqua.',
+      ventilation:
+        'Finestre di colmo aperte lungo il tetto fanno uscire l’aria calda e umida.',
+    },
     howToGet: (label: string) => `Come ottenere «${label}»`,
     readMore: 'Leggi:',
     close: 'Chiudi',

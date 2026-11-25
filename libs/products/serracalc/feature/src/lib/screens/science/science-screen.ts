@@ -7,6 +7,7 @@ import {
   signal,
   untracked,
 } from '@angular/core';
+import { NgTemplateOutlet } from '@angular/common';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import {
@@ -15,10 +16,16 @@ import {
   type InstrumentId,
   PHENOMENA,
   type Phenomenon,
+  type PhenomenonId,
   SCIENCE_GROUPS,
   SOURCES,
 } from '@ah/products/serracalc/domain';
 import { SerraI18n } from '../../i18n/serra-i18n';
+import {
+  INSTRUMENT_PHOTOS,
+  TOPIC_PHOTOS,
+  photoUrl,
+} from '../../science/photos';
 import { Formula } from '../../ui/formula/formula';
 import { Icon } from '../../ui/icon/icon';
 import { Panel } from '../../ui/panel/panel';
@@ -32,7 +39,7 @@ import { PanelState } from '../../ui/panel/panel-state';
  */
 @Component({
   selector: 'sc-science-screen',
-  imports: [Formula, Icon, Panel, RouterLink],
+  imports: [Formula, Icon, NgTemplateOutlet, Panel, RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './science-screen.html',
   styleUrl: './science-screen.scss',
@@ -45,6 +52,16 @@ export class ScienceScreen {
   protected readonly instruments = INSTRUMENTS;
   protected readonly query = signal('');
   private readonly panels = inject(PanelState);
+  protected readonly topicPhotos = TOPIC_PHOTOS;
+  protected readonly instrumentPhotos = INSTRUMENT_PHOTOS;
+  protected readonly photoUrl = photoUrl;
+
+  /** What a topic's photo shows, in the reader's language. */
+  protected caption(id: PhenomenonId): string {
+    const captions: Partial<Record<PhenomenonId, string>> =
+      this.t().science.photoCaptions;
+    return captions[id] ?? '';
+  }
 
   private readonly params = toSignal(inject(ActivatedRoute).queryParamMap);
   protected readonly activeTopic = computed(

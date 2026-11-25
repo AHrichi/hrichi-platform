@@ -173,8 +173,10 @@ export class SerraShell {
         root.style.setProperty('scroll-padding-block-start', `${size + 12}px`);
       });
       resize.observe(top);
-      const scrolled = new IntersectionObserver(([entry]) =>
-        this.stuck.set(!entry.isIntersecting),
+      // One callback can carry several changes (a page that jumps to an
+      // anchor right after loading): the last one is the current state.
+      const scrolled = new IntersectionObserver((entries) =>
+        this.stuck.set(!entries[entries.length - 1].isIntersecting),
       );
       scrolled.observe(this.sentinel().nativeElement);
       destroyRef.onDestroy(() => {

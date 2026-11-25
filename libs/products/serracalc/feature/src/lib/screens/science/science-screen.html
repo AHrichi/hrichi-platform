@@ -61,6 +61,28 @@
         >
           <p class="what">{{ t().science.topics[p.id].what }}</p>
 
+          @if (topicPhotos[p.id]; as photo) {
+            <!-- The caption names the photo for everyone, so the image itself
+                 needs no second description. -->
+            <figure class="photo">
+              <img
+                [src]="photoUrl(photo)"
+                [width]="photo.width"
+                [height]="photo.height"
+                loading="lazy"
+                decoding="async"
+                alt=""
+              />
+              <figcaption>
+                {{ caption(p.id) }}
+                <ng-container
+                  [ngTemplateOutlet]="credit"
+                  [ngTemplateOutletContext]="{ $implicit: photo }"
+                />
+              </figcaption>
+            </figure>
+          }
+
           <h4>{{ t().science.formula }}</h4>
           <sc-formula
             class="formula"
@@ -174,10 +196,28 @@
               [id]="'sc-instrument-' + id"
               [class.is-active]="activeInstrument() === id"
             >
+              @if (instrumentPhotos[id]; as photo) {
+                <!-- Named by the heading under it. -->
+                <img
+                  class="instrument-photo"
+                  [src]="photoUrl(photo)"
+                  [width]="photo.width"
+                  [height]="photo.height"
+                  loading="lazy"
+                  decoding="async"
+                  alt=""
+                />
+              }
               <h4>{{ t().science.instruments[id].name }}</h4>
               <p>{{ t().science.instruments[id].how }}</p>
               @if (measures()[id].length) {
                 <p class="measures">{{ measures()[id].join(' · ') }}</p>
+              }
+              @if (instrumentPhotos[id]; as photo) {
+                <ng-container
+                  [ngTemplateOutlet]="credit"
+                  [ngTemplateOutletContext]="{ $implicit: photo }"
+                />
               }
             </div>
           }
@@ -186,3 +226,22 @@
     </div>
   </div>
 </section>
+
+<!-- A photo's credit: author (to its Commons page) and licence. -->
+<ng-template #credit let-photo>
+  <small class="credit" dir="auto">
+    {{ t().science.photo }}:
+    <a [href]="photo.page" target="_blank" rel="noopener noreferrer">{{
+      photo.author
+    }}</a>
+    ·
+    @if (photo.licenseUrl) {
+      <a [href]="photo.licenseUrl" target="_blank" rel="noopener noreferrer">{{
+        photo.license
+      }}</a>
+    } @else {
+      {{ photo.license }}
+    }
+    · Wikimedia Commons
+  </small>
+</ng-template>

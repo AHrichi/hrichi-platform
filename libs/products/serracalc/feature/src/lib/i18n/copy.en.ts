@@ -780,6 +780,32 @@ export const EN = {
     foldAll: 'Fold all',
     unfoldAll: 'Unfold all',
     instrumentsLead: 'What to measure with, and how to read it well.',
+    photo: 'Photo',
+    photoCaptions: {
+      airLeakage:
+        'Inside a film tunnel: every gap in the cover lets warm air out.',
+      cogeneration: 'The gas engine of a combined heat and power unit.',
+      coolingEnergy:
+        'An exhaust fan: in a fan-and-pad house, fans are most of the cooling bill.',
+      cropCalendar: 'Seedlings in a nursery bed, before they are planted out.',
+      desalination:
+        'Inside a reverse-osmosis plant: rows of pressure vessels holding the membranes.',
+      dewPoint:
+        'Water condenses on glass that is colder than the dew point of the air.',
+      fertigation:
+        'A dripper feeding a plant on substrate: where the fertigation loop starts.',
+      geometry: 'A glasshouse range: spans side by side under one gutter line.',
+      heatLoss:
+        'A double energy screen drawn under the roof cuts the heat lost at night.',
+      rainHarvest:
+        'Rainwater tanks: what a roof catches is kept for the dry months.',
+      siteScale:
+        'The greenhouses of Almería seen from orbit by a NASA astronaut.',
+      transpiration:
+        'A tomato leaf under the microscope (100×): the stomata, where its water leaves.',
+      ventilation:
+        'Roof vents open along the ridge let the hot, moist air out.',
+    },
     howToGet: (label: string) => `How to get “${label}”`,
     readMore: 'Read about',
     close: 'Close',

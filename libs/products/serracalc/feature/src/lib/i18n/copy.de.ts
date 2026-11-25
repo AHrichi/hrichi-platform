@@ -792,6 +792,33 @@ export const DE: SerraCopy = {
     foldAll: 'Alle einklappen',
     unfoldAll: 'Alle ausklappen',
     instrumentsLead: 'Womit man misst, und wie man richtig abliest.',
+    photo: 'Foto',
+    photoCaptions: {
+      airLeakage:
+        'In einem Folientunnel: jede Lücke in der Hülle lässt warme Luft hinaus.',
+      cogeneration: 'Der Gasmotor eines Blockheizkraftwerks.',
+      coolingEnergy:
+        'Ein Abluftventilator: im Pad-and-Fan-Haus machen die Ventilatoren den Großteil der Kühlkosten aus.',
+      cropCalendar: 'Jungpflanzen im Anzuchtbeet, vor dem Auspflanzen.',
+      desalination:
+        'In einer Umkehrosmose-Anlage: Reihen von Druckrohren mit den Membranen.',
+      dewPoint:
+        'Wasser kondensiert auf Glas, das kälter ist als der Taupunkt der Luft.',
+      fertigation:
+        'Ein Tropfer versorgt eine Pflanze auf Substrat: hier beginnt der Fertigationskreislauf.',
+      geometry:
+        'Eine Glashausanlage: Schiffe nebeneinander unter einer Rinnenlinie.',
+      heatLoss:
+        'Ein doppelter Energieschirm unter dem Dach senkt den Wärmeverlust in der Nacht.',
+      rainHarvest:
+        'Regenwassertanks: was das Dach auffängt, wird für die trockenen Monate gespeichert.',
+      siteScale:
+        'Die Gewächshäuser von Almería aus der Umlaufbahn, fotografiert von einem NASA-Astronauten.',
+      transpiration:
+        'Ein Tomatenblatt unter dem Mikroskop (100×): die Spaltöffnungen, durch die sein Wasser austritt.',
+      ventilation:
+        'Geöffnete Firstlüftungen lassen die heiße, feuchte Luft hinaus.',
+    },
     howToGet: (label: string) => `So bekommen Sie „${label}“`,
     readMore: 'Mehr zu',
     close: 'Schließen',

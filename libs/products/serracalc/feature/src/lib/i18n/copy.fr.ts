@@ -802,6 +802,33 @@ export const FR: SerraCopy = {
     foldAll: 'Tout replier',
     unfoldAll: 'Tout déplier',
     instrumentsLead: 'Avec quoi mesurer, et comment bien lire.',
+    photo: 'Photo',
+    photoCaptions: {
+      airLeakage:
+        'Dans un tunnel en film : chaque jour dans la couverture laisse fuir l’air chaud.',
+      cogeneration: 'Le moteur à gaz d’une unité de cogénération.',
+      coolingEnergy:
+        'Un ventilateur d’extraction : en pad-and-fan, les ventilateurs font l’essentiel de la facture de froid.',
+      cropCalendar: 'Des plants en pépinière, avant la plantation.',
+      desalination:
+        'Dans une usine d’osmose inverse : des rangées de tubes de pression qui portent les membranes.',
+      dewPoint:
+        'L’eau se condense sur un verre plus froid que le point de rosée de l’air.',
+      fertigation:
+        'Un goutteur qui nourrit une plante sur substrat : là où commence la boucle de fertirrigation.',
+      geometry:
+        'Un ensemble de serres verre : des chapelles côte à côte sous une même ligne de chéneau.',
+      heatLoss:
+        'Un double écran énergétique tiré sous le toit réduit la chaleur perdue la nuit.',
+      rainHarvest:
+        'Des cuves d’eau de pluie : ce que le toit recueille est gardé pour les mois secs.',
+      siteScale:
+        'Les serres d’Almería vues de l’orbite par un astronaute de la NASA.',
+      transpiration:
+        'Une feuille de tomate au microscope (100×) : les stomates, par où sort son eau.',
+      ventilation:
+        'Des ouvrants de toit le long du faîtage laissent sortir l’air chaud et humide.',
+    },
     howToGet: (label: string) => `Comment obtenir « ${label} »`,
     readMore: 'Lire :',
     close: 'Fermer',
