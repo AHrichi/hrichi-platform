@@ -8,6 +8,10 @@ import { appIsPublic, chooseLanguage } from './support/site';
 // projects live in IndexedDB, nothing calls a server.
 const STANDALONE = 'http://localhost:4314/';
 
+// The standalone build registers a service worker (offline use); a cached
+// app must not carry from one test to the next.
+test.use({ serviceWorkers: 'block' });
+
 /** Every screen of the app, in the order of its navigation. */
 const SCREENS = [
   'projects',
