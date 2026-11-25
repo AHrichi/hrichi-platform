@@ -62,7 +62,13 @@
           <p class="what">{{ t().science.topics[p.id].what }}</p>
 
           <h4>{{ t().science.formula }}</h4>
-          <pre class="formula" dir="ltr"><code>{{ p.formula }}</code></pre>
+          <sc-formula
+            class="formula"
+            [source]="p.formula"
+            [label]="
+              t().science.formula + ': ' + t().science.topics[p.id].title
+            "
+          />
 
           <h4>{{ t().science.inputs }}</h4>
           <div

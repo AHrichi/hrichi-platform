@@ -19,6 +19,7 @@ import {
   SOURCES,
 } from '@ah/products/serracalc/domain';
 import { SerraI18n } from '../../i18n/serra-i18n';
+import { Formula } from '../../ui/formula/formula';
 import { Icon } from '../../ui/icon/icon';
 import { Panel } from '../../ui/panel/panel';
 import { PanelState } from '../../ui/panel/panel-state';
@@ -31,7 +32,7 @@ import { PanelState } from '../../ui/panel/panel-state';
  */
 @Component({
   selector: 'sc-science-screen',
-  imports: [Icon, Panel, RouterLink],
+  imports: [Formula, Icon, Panel, RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './science-screen.html',
   styleUrl: './science-screen.scss',

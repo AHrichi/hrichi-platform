@@ -166,12 +166,7 @@
 
 .formula {
   @include sc.readout;
-  margin: 0;
   padding: var(--space-3) var(--space-4);
-  overflow-x: auto;
-  font-family: var(--font-family-mono);
-  font-size: var(--font-size-200);
-  white-space: pre-wrap;
 }
 
 .table-wrap {

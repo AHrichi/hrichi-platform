@@ -7,6 +7,7 @@ import {
 import { RouterLink } from '@angular/router';
 import { SerraI18n } from '../../i18n/serra-i18n';
 import { injectScreenTopics } from '../../science/screen-topics';
+import { Formula } from '../formula/formula';
 
 export interface CalcStep {
   readonly label: string;
@@ -20,7 +21,7 @@ export interface CalcStep {
  */
 @Component({
   selector: 'sc-calc-steps',
-  imports: [RouterLink],
+  imports: [Formula, RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <details class="how" [open]="open()">
@@ -29,7 +30,11 @@ export interface CalcStep {
         @for (step of steps(); track $index) {
           <li>
             <span class="label">{{ step.label }}</span>
-            <code dir="ltr">{{ step.math }}</code>
+            <sc-formula
+              class="math"
+              [source]="step.math"
+              [label]="step.label"
+            />
           </li>
         }
       </ol>

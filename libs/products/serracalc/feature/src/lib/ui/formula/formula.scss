@@ -1,0 +1,42 @@
+// A formula as maths: one equation a line, its label before it and its
+// note (units) after it, scrolling sideways when a phone is too narrow.
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-inline-size: 0;
+  overflow-x: auto;
+  color: var(--color-text-default);
+
+  &:focus-visible {
+    outline: 2px solid var(--color-focus-ring);
+    outline-offset: 2px;
+  }
+}
+
+.eq {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-1) var(--space-3);
+}
+
+.eq-label {
+  color: var(--color-accent-default);
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-100);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+// The maths itself: a little larger than the text, in the browser's math
+// face (MathML's own), so fractions and subscripts sit right.
+.eq-math {
+  font-size: 1.15em;
+  white-space: nowrap;
+}
+
+.eq-note {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-100);
+}
