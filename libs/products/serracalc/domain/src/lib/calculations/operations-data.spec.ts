@@ -18,7 +18,7 @@ import {
 const TARGETS = {
   crop: 'tomato',
   stage: 'harvest',
-  flushEcDsM: 4.5,
+  drainEcMaxDsM: 4.5,
   drainPct: 30,
 } as const;
 

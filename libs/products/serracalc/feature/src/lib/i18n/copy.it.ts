@@ -209,6 +209,7 @@ export const IT: SerraCopy = {
     targetEcDsM: 'EC al gocciolatore',
     uptakeEcDsM: 'EC assorbita dalla coltura',
     flushEcDsM: 'Scarico sopra EC',
+    drainEcMaxDsM: 'Limite di EC del drenaggio',
     naLimitMmolL: 'Scarico sopra il sodio',
     systemM3: 'Acqua nel circuito',
     dilution: 'Diluizione delle soluzioni madre',
@@ -349,7 +350,9 @@ export const IT: SerraCopy = {
     storageDays: 'Da uno a tre giorni coprono un fermo per lavaggio',
     recyclePct: 'I siti del deserto riutilizzano il 30–50 % dell’acqua',
     targetEcDsM: 'Pomodoro, soluzione di reintegro: circa 2,7',
-    flushEcDsM: 'Un tetto comune: 4,5',
+    flushEcDsM: 'Al gocciolatore, in ricircolo; un tetto comune: 4,5',
+    drainEcMaxDsM:
+      'Dalla coltura (pomodoro 6, cetriolo 4,5); sopra, più drenaggio o scarico',
     naLimitMmolL: 'Pomodoro: circa 8 mmol/L nel drenaggio',
     systemM3: 'Lastre, tubi e serbatoi: circa 4 L per m²',
     yieldSlopePct: 'Indicativo: 7,3 % da una prova; metti il tuo',
@@ -1563,7 +1566,7 @@ export const IT: SerraCopy = {
       vpdHigh: 'VPD sopra 1,5 kPa di giorno',
       heatStress: 'Stress da caldo per i lavoratori',
       heatDanger: 'Pericolo caldo per i lavoratori',
-      drainEcHigh: 'EC del drenaggio al tetto di scarico',
+      drainEcHigh: 'EC del drenaggio al suo limite',
       tempLow: 'Troppo freddo per la fase',
       tempHigh: 'Troppo caldo per la fase',
       phOut: 'pH fuori da 5,2–6,8',
@@ -1941,7 +1944,7 @@ export const IT: SerraCopy = {
     'fert.water': (v) =>
       `${v['reused']} m³ di drenaggio riutilizzati al giorno: il ${v['pct']} % dell’acqua data.`,
     'fert.drainHigh': (v) =>
-      `EC del drenaggio ${v['ec']} dS/m, al tetto di ${v['max']} o sopra: aumenta il drenaggio o scarica.`,
+      `EC del drenaggio ${v['ec']} dS/m, al limite di ${v['max']} o sopra: aumenta il drenaggio o scarica.`,
     'fert.yield': (v) =>
       `Una EC radicale di ${v['ec']} dS/m costa circa il ${v['pct']} % della resa (indicativo).`,
     'fert.flush': (v) =>

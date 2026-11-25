@@ -53,6 +53,29 @@ describe('seawater RO', () => {
   });
 });
 
+describe('the drain EC limit', () => {
+  it('comes from the crop: tomato tolerates a 4.8 drain, lettuce does not', () => {
+    const tomato = fertigation(defaultFertigation(KEBILI));
+    expect(tomato.drainEcDsM).toBeCloseTo(4.8, 1);
+    expect(tomato.notes.map((n) => n.code)).not.toContain('fert.drainHigh');
+    const lettuce = fertigation(
+      defaultFertigation({ ...KEBILI, crop: 'lettuce' }),
+    );
+    expect(lettuce.notes.map((n) => n.code)).toContain('fert.drainHigh');
+  });
+
+  it('falls back to the flush ceiling for results saved before it', () => {
+    const old: FertigationParams = { ...defaultFertigation(KEBILI) };
+    delete old.drainEcMaxDsM;
+    const r = fertigation(old);
+    // 4.8 against the 4.5 ceiling, as before.
+    expect(r.notes.find((n) => n.code === 'fert.drainHigh')?.values).toEqual({
+      ec: 4.8,
+      max: 4.5,
+    });
+  });
+});
+
 describe('fertigation and drain recycling', () => {
   it('loses about 31 % of the yield at EC 6.3 (indicative linear rule)', () => {
     expect(1 - salinityYield(6.3, 7.3, 2)).toBeCloseTo(0.314, 3);
@@ -195,8 +218,9 @@ describe('fertigation and drain recycling', () => {
       drainPct: 30,
       targetEcDsM: 2.7,
       uptakeEcDsM: 1.8,
+      drainEcMaxDsM: 4.5,
     });
-    // (100 × 2.7 − 70 × 1.8) / 30 = 4.8 dS/m.
+    // (100 × 2.7 − 70 × 1.8) / 30 = 4.8 dS/m, above a 4.5 drain limit.
     expect(r.drainEcDsM).toBeCloseTo(4.8, 2);
     expect(r.notes.map((n) => n.code)).toContain('fert.drainHigh');
   });

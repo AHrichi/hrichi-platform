@@ -220,6 +220,11 @@ export const PIPES: Record<PipeType, PipeProfile> = {
 
 export const PIPE_IDS = Object.keys(PIPES) as PipeType[];
 
+/**
+ * Crops and what they want. drainEcMaxDsM is the drain (root-zone) EC to act
+ * at, about one and a half times the slab EC each crop is grown at
+ * (indicative: tomato tolerates salt best, strawberry and lettuce least).
+ */
 export const CROPS: Record<CropId, CropProfile> = {
   tomato: {
     id: 'tomato',
@@ -230,6 +235,7 @@ export const CROPS: Record<CropId, CropProfile> = {
     maxDli: 30,
     plantsPerM2: 2.5,
     transpirationCoef: 0.65,
+    drainEcMaxDsM: 6,
   },
   cucumber: {
     id: 'cucumber',
@@ -240,6 +246,7 @@ export const CROPS: Record<CropId, CropProfile> = {
     maxDli: 30,
     plantsPerM2: 1.6,
     transpirationCoef: 0.7,
+    drainEcMaxDsM: 4.5,
   },
   pepper: {
     id: 'pepper',
@@ -250,6 +257,7 @@ export const CROPS: Record<CropId, CropProfile> = {
     maxDli: 28,
     plantsPerM2: 3.3,
     transpirationCoef: 0.6,
+    drainEcMaxDsM: 4.5,
   },
   melon: {
     id: 'melon',
@@ -260,6 +268,7 @@ export const CROPS: Record<CropId, CropProfile> = {
     maxDli: 30,
     plantsPerM2: 1.2,
     transpirationCoef: 0.6,
+    drainEcMaxDsM: 5,
   },
   strawberry: {
     id: 'strawberry',
@@ -270,6 +279,7 @@ export const CROPS: Record<CropId, CropProfile> = {
     maxDli: 25,
     plantsPerM2: 8,
     transpirationCoef: 0.55,
+    drainEcMaxDsM: 3,
   },
   lettuce: {
     id: 'lettuce',
@@ -280,6 +290,7 @@ export const CROPS: Record<CropId, CropProfile> = {
     maxDli: 17,
     plantsPerM2: 16,
     transpirationCoef: 0.55,
+    drainEcMaxDsM: 3,
   },
   rose: {
     id: 'rose',
@@ -290,6 +301,7 @@ export const CROPS: Record<CropId, CropProfile> = {
     maxDli: 30,
     plantsPerM2: 7,
     transpirationCoef: 0.6,
+    drainEcMaxDsM: 3.5,
   },
 };
 

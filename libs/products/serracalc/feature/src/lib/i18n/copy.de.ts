@@ -209,6 +209,7 @@ export const DE: SerraCopy = {
     targetEcDsM: 'EC am Tropfer',
     uptakeEcDsM: 'Von der Kultur aufgenommene EC',
     flushEcDsM: 'Spülen über EC',
+    drainEcMaxDsM: 'Drain-EC-Grenze',
     naLimitMmolL: 'Spülen über Natrium',
     systemM3: 'Wasser im Kreislauf',
     dilution: 'Verdünnung der Stammlösung',
@@ -347,7 +348,9 @@ export const DE: SerraCopy = {
     storageDays: 'Ein bis drei Tage überbrücken einen Reinigungsstopp',
     recyclePct: 'Wüstenbetriebe nutzen 30–50 % ihres Wassers wieder',
     targetEcDsM: 'Tomate, Nachfülllösung: etwa 2,7',
-    flushEcDsM: 'Eine übliche Obergrenze: 4,5',
+    flushEcDsM: 'Am Tropfer, im Kreislauf; eine übliche Obergrenze: 4,5',
+    drainEcMaxDsM:
+      'Nach Kultur (Tomate 6, Gurke 4,5); darüber mehr Drain oder spülen',
     naLimitMmolL: 'Tomate: etwa 8 mmol/L im Drain',
     systemM3: 'Matten, Rohre und Tanks: etwa 4 L je m²',
     yieldSlopePct: 'Richtwert: 7,3 % aus einem Versuch; eigenen Wert setzen',
@@ -1550,7 +1553,7 @@ export const DE: SerraCopy = {
       vpdHigh: 'VPD über 1,5 kPa am Tag',
       heatStress: 'Hitzebelastung für die Arbeitenden',
       heatDanger: 'Hitzegefahr für die Arbeitenden',
-      drainEcHigh: 'Drain-EC an der Spülgrenze',
+      drainEcHigh: 'Drain-EC an ihrer Grenze',
       tempLow: 'Zu kalt für das Stadium',
       tempHigh: 'Zu warm für das Stadium',
       phOut: 'pH außerhalb 5,2–6,8',
@@ -1931,7 +1934,7 @@ export const DE: SerraCopy = {
     'fert.water': (v) =>
       `${v['reused']} m³ Drain pro Tag wiederverwendet: ${v['pct']} % des gegebenen Wassers.`,
     'fert.drainHigh': (v) =>
-      `Drain-EC ${v['ec']} dS/m liegt an oder über der Grenze ${v['max']}: mehr Drain geben oder spülen.`,
+      `Drain-EC ${v['ec']} dS/m liegt an oder über der Drain-Grenze ${v['max']}: mehr Drain geben oder spülen.`,
     'fert.yield': (v) =>
       `Eine Wurzelraum-EC von ${v['ec']} dS/m kostet etwa ${v['pct']} % des Ertrags (Richtwert).`,
     'fert.flush': (v) =>

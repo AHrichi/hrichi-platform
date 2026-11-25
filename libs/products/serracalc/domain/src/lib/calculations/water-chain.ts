@@ -280,11 +280,14 @@ export function fertigation(p: FertigationParams): FertigationResult {
       pct: round(applied > 0 ? (reused / applied) * 100 : 0),
     },
   });
-  if (drainEc >= p.flushEcDsM) {
+  // The drain is the root zone: it has its own limit (results saved before
+  // it had one use the flush ceiling).
+  const drainMax = p.drainEcMaxDsM ?? p.flushEcDsM;
+  if (drainEc >= drainMax) {
     notes.push({
       code: 'fert.drainHigh',
       severity: 'warn',
-      values: { ec: round(drainEc, 1), max: p.flushEcDsM },
+      values: { ec: round(drainEc, 1), max: round(drainMax, 1) },
     });
   }
   if (rootEc > p.yieldThresholdEc) {

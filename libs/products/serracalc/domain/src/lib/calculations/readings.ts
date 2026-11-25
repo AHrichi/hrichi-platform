@@ -193,8 +193,8 @@ export function readingsToCsv(readings: readonly Reading[]): string {
 export interface ReadingTargets {
   crop: CropId;
   stage: CropStage;
-  /** Flush the drain above this EC, dS/m. */
-  flushEcDsM: number;
+  /** Act (more drain, or a flush) when the drain's EC reaches this, dS/m. */
+  drainEcMaxDsM: number;
   /** Planned drain share, percent. */
   drainPct: number;
 }
@@ -297,7 +297,7 @@ export const ALERT_RULES: readonly {
     code: 'drainEcHigh',
     severity: 'warn',
     test: (r, c) =>
-      r.drainEcDsM !== undefined && r.drainEcDsM >= c.t.flushEcDsM
+      r.drainEcDsM !== undefined && r.drainEcDsM >= c.t.drainEcMaxDsM
         ? r.drainEcDsM
         : null,
   },

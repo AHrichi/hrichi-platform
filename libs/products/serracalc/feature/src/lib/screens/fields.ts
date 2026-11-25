@@ -215,6 +215,7 @@ export const FERTIGATION_FIELDS: readonly FieldSpec[] = [
   spec('targetEcDsM', 'dS/m', 0.5, 8, 0.1),
   spec('uptakeEcDsM', 'dS/m', 0, 4, 0.1),
   spec('flushEcDsM', 'dS/m', 1, 10, 0.1),
+  spec('drainEcMaxDsM', 'dS/m', 1, 12, 0.1),
   spec('naLimitMmolL', 'mmol/L', 1, 30, 0.5),
   spec('clLimitMmolL', 'mmol/L', 1, 40, 0.5),
   spec('systemM3', 'm³', 0.1, 5000, 1),
