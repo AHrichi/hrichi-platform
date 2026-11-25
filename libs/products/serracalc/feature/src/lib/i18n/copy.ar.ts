@@ -9,6 +9,8 @@ export const AR: SerraCopy = {
     offlineHint: 'تُحفظ المشاريع على هذا الجهاز؛ لا حاجة إلى الإنترنت.',
     sunlight: 'ضوء الشمس',
     sunlightHint: 'تباين عالٍ لقراءة الشاشة في الخارج',
+    dark: 'داكن',
+    darkHint: 'المظهر الداكن',
     language: 'اللغة',
     sections: 'أقسام SerraCalc',
     planningAid:

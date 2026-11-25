@@ -40,6 +40,16 @@
         <span class="tool-label">{{ t().app.sunlight }}</span>
       </button>
       @if (standalone) {
+        <button
+          type="button"
+          class="tool"
+          [attr.aria-pressed]="preferences.isDark()"
+          [title]="t().app.darkHint"
+          (click)="preferences.toggleTheme()"
+        >
+          <span aria-hidden="true">🌙</span>
+          <span class="tool-label">{{ t().app.dark }}</span>
+        </button>
         <div class="langs" role="group" [attr.aria-label]="t().app.language">
           @for (lang of languages; track lang.id) {
             <button

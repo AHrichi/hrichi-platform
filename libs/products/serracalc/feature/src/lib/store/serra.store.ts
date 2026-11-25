@@ -141,7 +141,9 @@ export const SerraStore = signalStore(
       },
 
       toggleHighContrast(): void {
-        patchState(store, { isHighContrast: !store.isHighContrast() });
+        const on = !store.isHighContrast();
+        db.sunlight = on;
+        patchState(store, { isHighContrast: on });
       },
 
       async createProject(details: NewProject): Promise<GreenhouseProject> {
@@ -223,6 +225,7 @@ export const SerraStore = signalStore(
   }),
   withHooks({
     onInit(store) {
+      patchState(store, { isHighContrast: inject(SerraDbService).sunlight });
       void store.loadProjects();
     },
   }),

@@ -119,14 +119,6 @@
   align-items: center;
 }
 
-@mixin chip-row {
-  display: flex;
-  gap: var(--space-2);
-  overflow-x: auto;
-  padding-block-end: var(--space-1);
-  scrollbar-width: thin;
-}
-
 // Illustrated diagrams. Geometry never mirrors in Arabic (the svg stays ltr);
 // only the words inside it change.
 @mixin diagram {

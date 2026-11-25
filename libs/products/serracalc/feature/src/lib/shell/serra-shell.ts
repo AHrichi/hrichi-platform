@@ -20,6 +20,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { filter, map } from 'rxjs';
 import { AhScrollHint } from '@ah/ui';
 import { APP_MODE } from '@ah/platform/app-mode';
+import { PreferencesStore } from '@ah/shared/state';
 import { SERRA_LANGUAGES, SerraI18n } from '../i18n/serra-i18n';
 import { SerraStore } from '../store/serra.store';
 
@@ -62,6 +63,8 @@ export class SerraShell {
   protected readonly store = inject(SerraStore);
   protected readonly i18n = inject(SerraI18n);
   protected readonly t = this.i18n.t;
+  /** Light or dark: the portfolio's choice, or the standalone app's own. */
+  protected readonly preferences = inject(PreferencesStore);
   /** Inside the portfolio the site header already has a language switch. */
   protected readonly standalone =
     (inject(APP_MODE, { optional: true }) ?? 'standalone') === 'standalone';

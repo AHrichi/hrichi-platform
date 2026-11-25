@@ -8,6 +8,7 @@ import {
 } from '@ah/products/serracalc/domain';
 
 const STORE = 'projects';
+const SUNLIGHT_KEY = 'serracalc.sunlight';
 
 /**
  * Projects live in IndexedDB, so SerraCalc works offline in the field. The
@@ -80,6 +81,24 @@ export class SerraDbService {
       if (this.activeKey && id) localStorage.setItem(this.activeKey, id);
     } catch {
       // Blocked storage: the first project opens next time instead.
+    }
+  }
+
+  /** Sunlight mode is a choice about this screen, so it stays on the device. */
+  get sunlight(): boolean {
+    try {
+      return this.isBrowser && localStorage.getItem(SUNLIGHT_KEY) === '1';
+    } catch {
+      return false;
+    }
+  }
+
+  set sunlight(on: boolean) {
+    try {
+      if (on) localStorage.setItem(SUNLIGHT_KEY, '1');
+      else localStorage.removeItem(SUNLIGHT_KEY);
+    } catch {
+      // Blocked storage: the mode lasts until the page closes.
     }
   }
 

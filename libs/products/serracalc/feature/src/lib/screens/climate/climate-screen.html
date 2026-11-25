@@ -80,7 +80,12 @@
 
     <section class="panel" aria-labelledby="sc-climate-table">
       <h3 id="sc-climate-table">{{ climate().name }}</h3>
-      <div class="table-wrap">
+      <div
+        class="table-wrap"
+        tabindex="0"
+        role="region"
+        [attr.aria-label]="climate().name"
+      >
         <table>
           <thead>
             <tr>

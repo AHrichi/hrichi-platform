@@ -10,6 +10,8 @@ export const FR: SerraCopy = {
       'Les projets sont enregistrés sur cet appareil ; aucune connexion nécessaire.',
     sunlight: 'Plein soleil',
     sunlightHint: 'Mode contraste élevé pour lire l’écran en extérieur',
+    dark: 'Sombre',
+    darkHint: 'Thème sombre',
     language: 'Langue',
     sections: 'Sections de SerraCalc',
     planningAid:

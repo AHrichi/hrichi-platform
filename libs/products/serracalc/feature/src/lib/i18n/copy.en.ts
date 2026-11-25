@@ -10,6 +10,8 @@ export const EN = {
     offlineHint: 'Projects are saved on this device; no connection needed.',
     sunlight: 'Sunlight',
     sunlightHint: 'High-contrast mode for reading the screen outdoors',
+    dark: 'Dark',
+    darkHint: 'Dark theme',
     language: 'Language',
     sections: 'SerraCalc sections',
     planningAid:
