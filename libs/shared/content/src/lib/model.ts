@@ -45,6 +45,28 @@ export interface SkillGroup {
   items: readonly string[];
 }
 
+/** An app in this portfolio that does engineering work, told for the energy CV. */
+export interface EngineeringProject {
+  /** The app's key in PORTFOLIO_APPS_CONFIG; it opens at /apps/<id>. */
+  id: 'serracalc' | 'lighting';
+  name: string;
+  title: string;
+  summary: string;
+  highlights: readonly { title: string; text: string }[];
+  /** Standards and published methods the calculations follow. */
+  methods: readonly string[];
+}
+
+/** The energy engineering track: the degree and the work that uses it. */
+export interface EnergyProfile {
+  role: string;
+  summary: string;
+  degree: Education;
+  skills: readonly SkillGroup[];
+  projects: readonly EngineeringProject[];
+  targetRoles: readonly string[];
+}
+
 export interface Decision {
   decision: string;
   why: string;

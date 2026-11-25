@@ -1,15 +1,18 @@
 <div class="ah-container cv-wrap">
   <div class="ah-cluster actions ah-no-print">
-    <a ahButton [href]="pdfHref" download>{{ copy().downloadPdf }}</a>
+    <a ahButton [href]="pdfHref()" download>{{ copy().downloadPdf }}</a>
     <button ahButton="secondary" type="button" (click)="print()">
       {{ copy().print }}
     </button>
+    <a ahButton="ghost" class="other-cv" [routerLink]="otherCv().path">{{
+      otherCv().label
+    }}</a>
   </div>
 
   <article class="cv">
     <header class="cv__header">
       <h1>{{ profile().name }}</h1>
-      <p class="cv__role">{{ profile().role }}</p>
+      <p class="cv__role">{{ role() }}</p>
       <ul class="cv__contact" role="list">
         <li>{{ profile().location }} · {{ profile().workSetup }}</li>
         <li>
@@ -21,13 +24,23 @@
         <li>
           <a [href]="profile().github">github.com/AHrichi</a>
         </li>
+        @if (isEnergy()) {
+          <li>
+            <a [href]="portfolio.href">{{ portfolio.label }}</a>
+          </li>
+        }
       </ul>
     </header>
 
     <section aria-labelledby="cv-summary">
       <h2 id="cv-summary">{{ copy().summary }}</h2>
-      <p>{{ profile().summary }}</p>
+      <p>{{ summary() }}</p>
     </section>
+
+    <!-- The energy CV leads with the degree: it is the credential. -->
+    @if (isEnergy()) {
+      <ng-container *ngTemplateOutlet="educationAndLanguages" />
+    }
 
     <section aria-labelledby="cv-skills">
       <h2 id="cv-skills">{{ copy().skills }}</h2>
@@ -41,8 +54,37 @@
       </dl>
     </section>
 
+    @if (projects().length) {
+      <section aria-labelledby="cv-projects">
+        <h2 id="cv-projects">{{ copy().projects }}</h2>
+        @for (project of projects(); track project.id) {
+          <section class="cv__role-block">
+            <div class="cv__role-head">
+              <h3>{{ project.name }} · {{ project.title }}</h3>
+              <p class="cv__period">
+                <a [href]="project.href">{{ project.label }}</a>
+              </p>
+            </div>
+            <p>{{ project.summary }}</p>
+            <ul class="cv__bullets">
+              @for (item of project.highlights; track $index) {
+                <li>
+                  <strong>{{ item.title }}:</strong> {{ item.text }}
+                </li>
+              }
+            </ul>
+            <p class="cv__muted">
+              {{ copy().methods }}: {{ project.methods.join(' · ') }}
+            </p>
+          </section>
+        }
+      </section>
+    }
+
     <section aria-labelledby="cv-experience">
-      <h2 id="cv-experience">{{ copy().experience }}</h2>
+      <h2 id="cv-experience">
+        {{ isEnergy() ? copy().softwareExperience : copy().experience }}
+      </h2>
       @for (role of roles(); track role.company) {
         <section class="cv__role-block">
           <div class="cv__role-head">
@@ -51,39 +93,47 @@
           </div>
           <p class="cv__muted">{{ role.location }}</p>
           <p>{{ role.context }}</p>
-          <ul class="cv__bullets">
-            @for (item of role.highlights; track $index) {
-              <li>
-                <strong>{{ item.title }}:</strong> {{ item.text }}
-              </li>
-            }
-          </ul>
+          @if (!isEnergy()) {
+            <ul class="cv__bullets">
+              @for (item of role.highlights; track $index) {
+                <li>
+                  <strong>{{ item.title }}:</strong> {{ item.text }}
+                </li>
+              }
+            </ul>
+          }
         </section>
       }
     </section>
 
-    <div class="cv__columns">
-      <section aria-labelledby="cv-education">
-        <h2 id="cv-education">{{ copy().education }}</h2>
-        <ul class="cv__plain" role="list">
-          @for (item of education(); track item.title) {
-            <li>
-              <strong>{{ item.title }}</strong> · {{ item.school }} ·
-              {{ item.period }}
-            </li>
-          }
-        </ul>
-      </section>
-      <section aria-labelledby="cv-languages">
-        <h2 id="cv-languages">{{ copy().languages }}</h2>
-        <ul class="cv__plain" role="list">
-          @for (item of languages(); track item.language) {
-            <li>
-              <strong>{{ item.language }}</strong> · {{ item.level }}
-            </li>
-          }
-        </ul>
-      </section>
-    </div>
+    @if (!isEnergy()) {
+      <ng-container *ngTemplateOutlet="educationAndLanguages" />
+    }
   </article>
 </div>
+
+<ng-template #educationAndLanguages>
+  <div class="cv__columns">
+    <section aria-labelledby="cv-education">
+      <h2 id="cv-education">{{ copy().education }}</h2>
+      <ul class="cv__plain" role="list">
+        @for (item of education(); track item.title) {
+          <li>
+            <strong>{{ item.title }}</strong> · {{ item.school }} ·
+            {{ item.period }}
+          </li>
+        }
+      </ul>
+    </section>
+    <section aria-labelledby="cv-languages">
+      <h2 id="cv-languages">{{ copy().languages }}</h2>
+      <ul class="cv__plain" role="list">
+        @for (item of languages(); track item.language) {
+          <li>
+            <strong>{{ item.language }}</strong> · {{ item.level }}
+          </li>
+        }
+      </ul>
+    </section>
+  </div>
+</ng-template>

@@ -8,6 +8,14 @@ export interface CvCopy {
   experience: string;
   education: string;
   languages: string;
+  /** Energy CV: the engineering projects and the methods they follow. */
+  projects: string;
+  methods: string;
+  /** Energy CV: the software roles, told briefly. */
+  softwareExperience: string;
+  /** The link from each CV to the other. */
+  toEnergyCv: string;
+  toSoftwareCv: string;
 }
 
 export const CV_COPY: Record<SiteLanguage, CvCopy> = {
@@ -19,6 +27,11 @@ export const CV_COPY: Record<SiteLanguage, CvCopy> = {
     experience: 'Experience',
     education: 'Education',
     languages: 'Languages',
+    projects: 'Engineering projects',
+    methods: 'Methods & standards',
+    softwareExperience: 'Software engineering experience',
+    toEnergyCv: 'Energy engineering CV',
+    toSoftwareCv: 'Software developer CV',
   },
   fr: {
     downloadPdf: 'Télécharger le PDF',
@@ -28,6 +41,11 @@ export const CV_COPY: Record<SiteLanguage, CvCopy> = {
     experience: 'Expérience professionnelle',
     education: 'Formation',
     languages: 'Langues',
+    projects: 'Projets d’ingénierie',
+    methods: 'Méthodes & normes',
+    softwareExperience: 'Expérience en développement logiciel',
+    toEnergyCv: 'CV ingénieur énergéticien',
+    toSoftwareCv: 'CV développeur logiciel',
   },
   ar: {
     downloadPdf: 'تحميل ملف PDF',
@@ -37,6 +55,11 @@ export const CV_COPY: Record<SiteLanguage, CvCopy> = {
     experience: 'الخبرة المهنية',
     education: 'التعليم والشهادات',
     languages: 'اللغات',
+    projects: 'مشاريع هندسية',
+    methods: 'الطرق والمعايير',
+    softwareExperience: 'الخبرة في تطوير البرمجيات',
+    toEnergyCv: 'السيرة الذاتية لمهندس الطاقة',
+    toSoftwareCv: 'السيرة الذاتية لمطوّر البرمجيات',
   },
   it: {
     downloadPdf: 'Scarica PDF',
@@ -46,6 +69,11 @@ export const CV_COPY: Record<SiteLanguage, CvCopy> = {
     experience: 'Esperienza',
     education: 'Istruzione',
     languages: 'Lingue',
+    projects: 'Progetti di ingegneria',
+    methods: 'Metodi & norme',
+    softwareExperience: 'Esperienza nello sviluppo software',
+    toEnergyCv: 'CV ingegnere energetico',
+    toSoftwareCv: 'CV sviluppatore software',
   },
   de: {
     downloadPdf: 'PDF herunterladen',
@@ -55,5 +83,10 @@ export const CV_COPY: Record<SiteLanguage, CvCopy> = {
     experience: 'Berufserfahrung',
     education: 'Ausbildung & Studium',
     languages: 'Sprachen',
+    projects: 'Ingenieurprojekte',
+    methods: 'Methoden & Normen',
+    softwareExperience: 'Erfahrung in der Softwareentwicklung',
+    toEnergyCv: 'Lebenslauf Energietechnik',
+    toSoftwareCv: 'Lebenslauf Softwareentwicklung',
   },
 };

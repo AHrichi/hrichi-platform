@@ -33,6 +33,7 @@ Each ADR records one decision, why it was made, and what a spike proved. New ADR
 | [0025](0025-system-design-course.md)           | System Design course: step lessons on an isometric scene, paper look, shared step helpers |
 | [0026](0026-greenhouse-labor-planner.md)       | Greenhouse Labor Planner: pure planning maths, Supabase RLS, offline-first Capacitor app  |
 | [0027](0027-serracalc.md)                      | SerraCalc: greenhouse heat, water and climate calculators on LuxPath's pattern            |
+| [0028](0028-energy-engineering-track.md)       | Energy engineering page and a second CV from one typed source, printed to its own PDF     |
 
 ## Proposed (written when the area is built)
 

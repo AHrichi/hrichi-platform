@@ -71,7 +71,7 @@ export const CONTENT_IT: ContentBundle = {
   ],
   education: [
     {
-      title: 'Laurea Magistrale in Ingegneria',
+      title: 'Laurea Magistrale in Ingegneria Energetica',
       school: 'Scuola Nazionale di Ingegneri di Monastir (ENIM)',
       period: '2017 – 2020',
     },

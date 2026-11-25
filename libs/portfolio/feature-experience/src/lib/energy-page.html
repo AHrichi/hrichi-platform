@@ -1,0 +1,104 @@
+<div class="ah-section ah-container ah-stack" style="--gap: var(--space-8)">
+  <div class="ah-stack" style="--gap: var(--space-5)">
+    <ah-section-heading
+      [level]="1"
+      [eyebrow]="copy().eyebrow"
+      [heading]="copy().heading"
+      [lead]="energy().summary"
+    />
+    <div class="ah-cluster">
+      <a ahButton routerLink="/cv/energy">{{ copy().cvButton }}</a>
+      <a ahButton="secondary" [href]="pdfHref" download>{{
+        copy().pdfButton
+      }}</a>
+    </div>
+  </div>
+
+  <div class="ah-grid" style="--min: 20rem">
+    <section aria-labelledby="energy-degree" class="ah-card energy-card">
+      <h2 id="energy-degree">{{ copy().degreeHeading }}</h2>
+      <p>
+        <strong>{{ energy().degree.title }}</strong>
+      </p>
+      <p class="ah-muted">
+        {{ energy().degree.school }} · {{ energy().degree.period }}
+      </p>
+    </section>
+    <section aria-labelledby="energy-roles" class="ah-card energy-card">
+      <h2 id="energy-roles">{{ copy().rolesHeading }}</h2>
+      <ul class="energy-list" role="list">
+        @for (role of energy().targetRoles; track $index) {
+          <li>{{ role }}</li>
+        }
+      </ul>
+    </section>
+  </div>
+
+  <section aria-labelledby="energy-projects" class="ah-stack">
+    <div class="ah-stack" style="--gap: var(--space-2)">
+      <h2 id="energy-projects">{{ copy().projectsHeading }}</h2>
+      <p class="ah-muted lead">{{ copy().projectsLead }}</p>
+    </div>
+    @for (project of projects(); track project.id) {
+      <article
+        class="ah-card project"
+        [attr.aria-labelledby]="'project-' + project.id"
+      >
+        <header class="project__header">
+          <h3 [id]="'project-' + project.id">
+            {{ project.name }} · {{ project.title }}
+          </h3>
+          <p class="ah-muted">{{ project.summary }}</p>
+        </header>
+        <ul class="project__highlights" role="list">
+          @for (item of project.highlights; track $index) {
+            <li>
+              <h4>{{ item.title }}</h4>
+              <p class="ah-muted">{{ item.text }}</p>
+            </li>
+          }
+        </ul>
+        <div class="project__footer">
+          <div class="ah-stack" style="--gap: var(--space-2)">
+            <p class="ah-eyebrow" [id]="'methods-' + project.id">
+              {{ copy().methods }}
+            </p>
+            <ul
+              class="ah-cluster"
+              role="list"
+              style="--gap: var(--space-2)"
+              [attr.aria-labelledby]="'methods-' + project.id"
+            >
+              @for (method of project.methods; track method) {
+                <li>
+                  <ah-tag>{{ method }}</ah-tag>
+                </li>
+              }
+            </ul>
+          </div>
+          <a ahButton="secondary" size="sm" [routerLink]="'/apps/' + project.id"
+            >{{ copy().open }} {{ project.name }}</a
+          >
+        </div>
+      </article>
+    }
+  </section>
+
+  <section aria-labelledby="energy-skills" class="ah-stack">
+    <h2 id="energy-skills">{{ copy().skillsHeading }}</h2>
+    <div class="ah-grid" style="--min: 16rem">
+      @for (group of energy().skills; track $index) {
+        <section class="ah-card skill-card">
+          <h3>{{ group.name }}</h3>
+          <ul class="ah-cluster" role="list" style="--gap: var(--space-2)">
+            @for (item of group.items; track $index) {
+              <li>
+                <ah-tag>{{ item }}</ah-tag>
+              </li>
+            }
+          </ul>
+        </section>
+      }
+    </div>
+  </section>
+</div>

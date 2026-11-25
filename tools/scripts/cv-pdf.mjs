@@ -1,6 +1,7 @@
-// Prints the prerendered /cv page to <dir>/<site.cvFile> (A4, tagged PDF), so
-// the downloadable CV is always the same content as the site. JavaScript is
-// off: the prerendered HTML is complete, and federation isn't needed.
+// Prints the prerendered CV pages to PDFs in <dir> (A4, tagged): /cv to
+// <site.cvFile> and /cv/energy to <site.energyCvFile>, so each downloadable
+// CV is always the same content as the site. JavaScript is off: the
+// prerendered HTML is complete, and federation isn't needed.
 //
 // Usage: node tools/scripts/cv-pdf.mjs <dist/browser dir>
 import { readFile } from 'node:fs/promises';
@@ -57,18 +58,23 @@ try {
     }
   });
 
-  await page.goto('http://cv.local/cv', { waitUntil: 'networkidle' });
   await page.emulateMedia({ media: 'print' });
-  const output = join(root, site.cvFile);
-  await page.pdf({
-    path: output,
-    format: 'A4',
-    printBackground: true,
-    preferCSSPageSize: true,
-    tagged: true,
-    outline: true,
-  });
-  console.log(`CV PDF written to ${output}`);
+  for (const [path, file] of [
+    ['/cv', site.cvFile],
+    ['/cv/energy', site.energyCvFile],
+  ]) {
+    await page.goto(`http://cv.local${path}`, { waitUntil: 'networkidle' });
+    const output = join(root, file);
+    await page.pdf({
+      path: output,
+      format: 'A4',
+      printBackground: true,
+      preferCSSPageSize: true,
+      tagged: true,
+      outline: true,
+    });
+    console.log(`CV PDF written to ${output}`);
+  }
 } finally {
   await browser.close();
 }

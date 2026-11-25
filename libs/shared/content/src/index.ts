@@ -1,6 +1,7 @@
 export * from './lib/app-visibility';
 export * from './lib/audiences';
 export * from './lib/case-studies';
+export * from './lib/energy';
 export * from './lib/experience';
 export * from './lib/labs';
 export * from './lib/model';

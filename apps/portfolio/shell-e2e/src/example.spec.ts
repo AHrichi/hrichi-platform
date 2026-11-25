@@ -15,6 +15,8 @@ test('content pages are prerendered with their own metadata', async ({
     ],
     ['/experience', 'Experience · Ahmed Hrichi'],
     ['/cv', 'CV · Ahmed Hrichi'],
+    ['/energy', 'Energy engineering · Ahmed Hrichi'],
+    ['/cv/energy', 'Energy engineering CV · Ahmed Hrichi'],
   ]) {
     const html = await (await request.get(path)).text();
 

@@ -66,7 +66,7 @@ export const skills: readonly SkillGroup[] = [
 
 export const education: readonly Education[] = [
   {
-    title: 'National Engineering Degree',
+    title: 'National Engineering Degree in Energy Engineering',
     school: 'National Engineering School of Monastir (ENIM)',
     period: '2017 – 2020',
   },

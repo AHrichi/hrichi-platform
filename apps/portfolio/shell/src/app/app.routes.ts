@@ -23,6 +23,11 @@ export const appRoutes: Route[] = [
       ),
   },
   {
+    path: 'energy',
+    loadChildren: () =>
+      import('@ah/portfolio/feature-experience').then((m) => m.energyRoutes),
+  },
+  {
     path: 'services',
     loadChildren: () =>
       import('@ah/portfolio/feature-services').then((m) => m.servicesRoutes),

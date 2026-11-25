@@ -79,6 +79,7 @@ export class App {
       { label: nav.work, path: '/work' },
       { label: nav.apps, path: '/apps' },
       { label: nav.experience, path: '/experience' },
+      { label: nav.energy, path: '/energy' },
       { label: nav.services, path: '/services' },
       { label: nav.contact, path: '/contact' },
     ];
