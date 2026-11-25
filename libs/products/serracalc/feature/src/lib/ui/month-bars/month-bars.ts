@@ -6,6 +6,7 @@ import {
   input,
 } from '@angular/core';
 import { SerraI18n } from '../../i18n/serra-i18n';
+import { ticks } from './month-ticks';
 
 /** A level drawn across the chart, such as a target, labelled at its end. */
 export interface MonthRef {
@@ -52,21 +53,6 @@ function bar(x: number, w: number, y0: number, y1: number): string {
     `V${bottom}`,
     'Z',
   ].join(' ');
-}
-
-/** About four round steps between 0 (or the low end) and the high end. */
-function ticks(low: number, high: number): number[] {
-  const span = Math.max(1e-9, high - low);
-  const raw = span / 4;
-  const power = 10 ** Math.floor(Math.log10(raw));
-  const step =
-    [1, 2, 2.5, 5, 10].map((m) => m * power).find((s) => s >= raw) ?? raw;
-  const start = Math.floor(low / step) * step;
-  const out: number[] = [];
-  for (let v = start; v <= high + step * 0.001; v += step) {
-    out.push(Number(v.toFixed(6)));
-  }
-  return out;
 }
 
 /**
