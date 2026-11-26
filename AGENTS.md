@@ -15,6 +15,7 @@ The owner switches between agents mid-project. Any agent must be able to stop at
 | Learning Engine                                             | `docs/learning-engine/AI_HANDOFF.md`, `technical-design.md`            |
 | **Greenhouse Labor Planner: status, branch, next task**     | `docs/greenhouse/AI_HANDOFF.md`, ADR-0026                              |
 | **SerraCalc (greenhouse engineering): status, next task**   | `docs/serracalc/AI_HANDOFF.md`, ADR-0027                               |
+| **Project Workbench: status, plan, next task**              | `docs/workbench/AI_HANDOFF.md`, `docs/workbench/technical-design.md`   |
 
 The repo and these docs are the only memory. Don't rely on anything an earlier agent "knew".
 
