@@ -2,7 +2,7 @@
 
 A briefing for whichever AI agent or IDE picks up SerraCalc, the greenhouse heat, water and climate engineering app. It assumes no memory of earlier sessions. Read it top to bottom before touching code; [AGENTS.md](../../AGENTS.md) has the protocol, [ADR-0027](../adr/0027-serracalc.md) the decisions.
 
-Last updated 2026-11-26: **Everything through PR #48 is on `main` and deployed (and #47, merged after it): the greenhouse-manager spec, its gaps, the root-zone limits (#40), the owner's UI requests (#41: floating header, language menu, folding, MathML formulas, Commons photos with zoom, offline use, a new-version notice, walk-through fixes, Energy → Solar power), and a drain EC limit per crop with the Energy tools taking their prices from the site (#43, §5), a notice when SerraCalc in another tab holds the database (#45, §5), and number fields that are a dial, a thermometer, a tape, a stepper, chips or a clock to suit the value, from four new `@ah/ui` controls (#48, §2, §5), and a notice when the browser never answers for the database (#47, §5). Open for review: a guided tour for new users (the wand 🪄, PR #50, `claude/serracalc-tour`, ADR-0030), and on top of it an AI assistant that answers and, after the reader's Apply, creates and changes projects, results and settings (`claude/serracalc-assistant`, ADR-0031). They are the first two of three parts the owner approved on 2026-11-26; the third is cloud sync (a Worker with D1). The plan is in §6.** The plan is §7; the decisions are [ADR-0029](../adr/0029-serracalc-greenhouse-manager.md) and its addendum.
+Last updated 2026-11-26: **Everything through PR #48 is on `main` and deployed (and #47, merged after it): the greenhouse-manager spec, its gaps, the root-zone limits (#40), the owner's UI requests (#41: floating header, language menu, folding, MathML formulas, Commons photos with zoom, offline use, a new-version notice, walk-through fixes, Energy → Solar power), and a drain EC limit per crop with the Energy tools taking their prices from the site (#43, §5), a notice when SerraCalc in another tab holds the database (#45, §5), and number fields that are a dial, a thermometer, a tape, a stepper, chips or a clock to suit the value, from four new `@ah/ui` controls (#48, §2, §5), and a notice when the browser never answers for the database (#47, §5). Open for review: a guided tour for new users (the wand 🪄, PR #50, `claude/serracalc-tour`, ADR-0030), and on top of it an AI assistant that answers and, after the reader's Apply, creates and changes projects, results and settings (PR #51, `claude/serracalc-assistant`, ADR-0031). They are the first two of three parts the owner approved on 2026-11-26; the third is cloud sync (a Worker with D1). The plan is in §6.** The plan is §7; the decisions are [ADR-0029](../adr/0029-serracalc-greenhouse-manager.md) and its addendum.
 
 ## 0. Resume in five minutes
 
@@ -12,7 +12,7 @@ Last updated 2026-11-26: **Everything through PR #48 is on `main` and deployed (
    git fetch origin && git switch claude/serracalc-assistant
    ```
 
-   It is stacked on `claude/serracalc-tour` (PR #50): merge #50 first, then this branch's PR. Once both are merged, resume from `main`. This branch was built in the worktree `.claude/worktrees/studylm-learning-merge-8ffa5f`, the tour in `.claude/worktrees/funny-cartwright-dcfc46` (the folder names are historical). Check `git worktree list` first: one agent per checkout.
+   It is stacked on `claude/serracalc-tour` (PR #50): merge #50 first, then #51. Once both are merged, resume from `main`. This branch was built in the worktree `.claude/worktrees/studylm-learning-merge-8ffa5f`, the tour in `.claude/worktrees/funny-cartwright-dcfc46` (the folder names are historical). Check `git worktree list` first: one agent per checkout.
 
 2. **Install:** `pnpm install --frozen-lockfile` (Node 24, pnpm 10.34.9).
 3. **Check that it's green:**
@@ -254,7 +254,7 @@ Written before any change on `feat/serracalc-parity`; the last column says what 
 
 ## 6. Next step: review the tour and the assistant, then sync
 
-**Open:** PR #50 (the tour, `claude/serracalc-tour`) and the assistant's PR (`claude/serracalc-assistant`, stacked on #50). Merge #50 first.
+**Open:** PR #50 (the tour, `claude/serracalc-tour`) and PR #51 (the assistant, `claude/serracalc-assistant`, stacked on #50). Merge #50 first.
 
 **The owner's one-time step for the assistant,** after its first deploy (until then, and without keys, the Worker answers read-only through Workers AI):
 
