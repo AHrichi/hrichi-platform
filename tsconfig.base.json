@@ -83,6 +83,7 @@
       "@ah/platform/inspector": ["./libs/platform/inspector/src/index.ts"],
       "@ah/platform/maps": ["./libs/platform/maps/src/index.ts"],
       "@ah/platform/storage": ["./libs/platform/storage/src/index.ts"],
+      "@ah/platform/assistant": ["./libs/platform/assistant/src/index.ts"],
       "@ah/platform/tour": ["./libs/platform/tour/src/index.ts"],
       "@ah/platform/web-push": ["./libs/platform/web-push/src/index.ts"],
       "@ah/design-system/tokens": ["./libs/design-system/tokens/src/index.ts"],

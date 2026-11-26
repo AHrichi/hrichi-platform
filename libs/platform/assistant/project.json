@@ -1,0 +1,9 @@
+{
+  "name": "platform-assistant",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/platform/assistant/src",
+  "prefix": "ah",
+  "projectType": "library",
+  "tags": ["scope:platform", "type:platform", "runtime:browser"],
+  "targets": {}
+}
