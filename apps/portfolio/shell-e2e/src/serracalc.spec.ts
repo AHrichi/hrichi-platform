@@ -274,6 +274,66 @@ test.describe('SerraCalc, standalone', () => {
     await expect(plant).toBeVisible();
   });
 
+  test('says when SerraCalc in another tab holds the projects', async ({
+    page,
+    context,
+  }) => {
+    // The other tab: a page of the same origin holding the database at
+    // version 1, never closed for an upgrade, as builds before this did.
+    const other = await context.newPage();
+    await other.goto(`${STANDALONE}manifest.webmanifest`);
+    await other.evaluate(
+      () =>
+        new Promise<void>((resolve) => {
+          const request = indexedDB.open('serracalc_db_v1', 1);
+          request.onupgradeneeded = () =>
+            request.result.createObjectStore('projects', { keyPath: 'id' });
+          request.onsuccess = () => {
+            (window as unknown as { held: IDBDatabase }).held = request.result;
+            resolve();
+          };
+        }),
+    );
+
+    await page.goto(`${STANDALONE}projects`);
+    const blocked = page.getByText(
+      'SerraCalc is open in another tab on an older version',
+    );
+    await expect(blocked).toBeVisible();
+    const results = await new AxeBuilder({ page })
+      .include('.update-region')
+      .analyze();
+    expect(results.violations).toEqual([]);
+
+    // Once it lets go, the upgrade finishes and the projects open here.
+    await other.evaluate(() =>
+      (window as unknown as { held: IDBDatabase }).held.close(),
+    );
+    await expect(blocked).toBeHidden();
+    await page.getByRole('button', { name: 'Load sample projects' }).click();
+    await expect(
+      page.getByRole('heading', { name: 'Geothermal tomato house (sample)' }),
+    ).toBeVisible();
+
+    // A newer version opens in the other tab: this one lets it upgrade
+    // and asks for a reload.
+    const version = await other.evaluate(
+      () =>
+        new Promise<number>((resolve) => {
+          const request = indexedDB.open('serracalc_db_v1', 3);
+          request.onsuccess = () => {
+            request.result.close();
+            resolve(request.result.version);
+          };
+        }),
+    );
+    expect(version).toBe(3);
+    await expect(
+      page.getByText('A newer SerraCalc opened in another tab'),
+    ).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Reload' })).toBeVisible();
+  });
+
   test('prints a report of the project without the app around it', async ({
     page,
   }) => {

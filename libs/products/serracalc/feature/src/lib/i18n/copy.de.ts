@@ -15,6 +15,10 @@ export const DE: SerraCopy = {
         'Diese gespeicherte Kopie von SerraCalc kann sich nicht aktualisieren. Neu laden holt sie frisch; Ihre Projekte bleiben auf diesem Gerät.',
       reload: 'Neu laden',
       later: 'Später',
+      dbBlocked:
+        'SerraCalc ist in einem anderen Tab in einer älteren Version geöffnet, daher lassen sich Ihre Projekte hier noch nicht öffnen. Schließen Sie diesen Tab oder laden Sie ihn neu.',
+      dbReplaced:
+        'Eine neuere Version von SerraCalc wurde in einem anderen Tab geöffnet und hat Ihre Projekte übernommen. Laden Sie diesen Tab neu: Bis dahin werden Änderungen hier nicht gespeichert.',
     },
     offline: 'Funktioniert offline',
     offlineHint:

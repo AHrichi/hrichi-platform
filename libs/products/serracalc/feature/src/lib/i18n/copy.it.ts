@@ -15,6 +15,10 @@ export const IT: SerraCopy = {
         'Questa copia salvata di SerraCalc non riesce ad aggiornarsi. Ricarica per scaricarla da capo; i tuoi progetti restano su questo dispositivo.',
       reload: 'Ricarica',
       later: 'Più tardi',
+      dbBlocked:
+        'SerraCalc è aperto in un’altra scheda in una versione più vecchia, quindi i tuoi progetti non possono ancora aprirsi qui. Chiudi o ricarica quella scheda.',
+      dbReplaced:
+        'Una versione più recente di SerraCalc si è aperta in un’altra scheda e ha preso i tuoi progetti. Ricarica questa: fino ad allora le modifiche fatte qui non vengono salvate.',
     },
     offline: 'Funziona offline',
     offlineHint:

@@ -57,6 +57,12 @@
     padding-block-end: var(--space-8);
   }
 
+  // Standalone it is the whole page: the sand reaches the bottom even on a
+  // short screen (a load waiting on the database, an empty list).
+  &.is-standalone {
+    min-block-size: 100dvh;
+  }
+
   // Sunlight mode: black on white with heavy borders, readable in full sun.
   // Overriding the tokens here restyles every screen and component inside.
   &.is-sunlight {

@@ -1,4 +1,4 @@
-import { inject, Injectable, PLATFORM_ID } from '@angular/core';
+import { inject, Injectable, PLATFORM_ID, signal } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { APP_MODE } from '@ah/platform/app-mode';
 import { databaseName } from '@ah/platform/storage';
@@ -15,6 +15,13 @@ const VERSION = 2;
 const SUNLIGHT_KEY = 'serracalc.sunlight';
 
 /**
+ * `blocked`: an older SerraCalc open in another tab holds the database, so
+ * this one can't upgrade it yet. `replaced`: a newer one in another tab
+ * needed it, so this tab let go and can no longer save.
+ */
+export type SerraDbState = 'ok' | 'blocked' | 'replaced';
+
+/**
  * Projects live in IndexedDB, so SerraCalc works offline in the field. The
  * portfolio's demo uses its own database (ADR-0002), so trying it never
  * touches the data of someone who uses SerraCalc for real.
@@ -25,6 +32,9 @@ export class SerraDbService {
   private readonly mode = inject(APP_MODE, { optional: true }) ?? 'standalone';
   private name: string | null = null;
   private database: Promise<IDBDatabase> | null = null;
+
+  /** Whether the database is in reach; the shell explains when it isn't. */
+  readonly state = signal<SerraDbState>('ok');
 
   private open(): Promise<IDBDatabase> {
     this.database ??= databaseName(
@@ -45,7 +55,20 @@ export class SerraDbService {
               db.createObjectStore(SITES, { keyPath: 'name' });
             }
           };
-          request.onsuccess = () => resolve(request.result);
+          // Another tab still has the old version open. The upgrade waits
+          // for it to close (or reload), and succeeds then.
+          request.onblocked = () => this.state.set('blocked');
+          request.onsuccess = () => {
+            const db = request.result;
+            // A newer SerraCalc wants to upgrade: let go, so it isn't
+            // blocked in turn, and ask for a reload here.
+            db.onversionchange = () => {
+              db.close();
+              this.state.set('replaced');
+            };
+            this.state.set('ok');
+            resolve(db);
+          };
           request.onerror = () => reject(request.error);
         }),
     );
