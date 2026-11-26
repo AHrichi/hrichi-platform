@@ -2,14 +2,14 @@
 
 A briefing for whichever AI agent or IDE picks up SerraCalc, the greenhouse heat, water and climate engineering app. It assumes no memory of earlier sessions. Read it top to bottom before touching code; [AGENTS.md](../../AGENTS.md) has the protocol, [ADR-0027](../adr/0027-serracalc.md) the decisions.
 
-Last updated 2026-11-26: **Everything through PR #43 is on `main` and deployed: the greenhouse-manager spec, its gaps, the root-zone limits (#40), the owner's UI requests (#41: floating header, language menu, folding, MathML formulas, Commons photos with zoom, offline use, a new-version notice, walk-through fixes, Energy → Solar power), and a drain EC limit per crop with the Energy tools taking their prices from the site (#43, §5). Then, on `claude/serracalc-db-blocked`: SerraCalc says when another tab holds its database, instead of opening empty (§5, §6).** The plan is §7; the decisions are [ADR-0029](../adr/0029-serracalc-greenhouse-manager.md) and its addendum.
+Last updated 2026-11-26: **Everything through PR #45 is on `main` and deployed: the greenhouse-manager spec, its gaps, the root-zone limits (#40), the owner's UI requests (#41: floating header, language menu, folding, MathML formulas, Commons photos with zoom, offline use, a new-version notice, walk-through fixes, Energy → Solar power), and a drain EC limit per crop with the Energy tools taking their prices from the site (#43, §5), and a notice when SerraCalc in another tab holds the database (#45, §5). Nothing is in progress; §6 has the next steps.** The plan is §7; the decisions are [ADR-0029](../adr/0029-serracalc-greenhouse-manager.md) and its addendum.
 
 ## 0. Resume in five minutes
 
 1. **Get the branch:**
 
    ```bash
-   git fetch origin && git switch claude/serracalc-db-blocked
+   git fetch origin && git switch main
    ```
 
    It was built in the worktree `.claude/worktrees/studylm-learning-merge-8ffa5f` (the folder name is historical). Check `git worktree list` first: one agent per checkout.
@@ -75,7 +75,7 @@ It is **not** the Greenhouse Labor Planner (`product-greenhouse*`, ADR-0026). Ke
 
 **Verified** (2026-11-25, two EC limits and site prices, PR #43): lint, 116 domain and 49 feature tests (new: tomato's drain limit of 6 doesn't warn at the sample's 4.8 drain while lettuce's 3 does; results saved before the limit compare with the flush ceiling, `{ec: 4.8, max: 4.5}`; the tariff mapping), builds, stylelint, `nx format:check`, the SerraCalc e2e **17 of 17** with `CI=1`. In the browser: Supply → Fertigation shows the 6 limit and no drain warning on the sample; Live data's limit reads 6 for tomato; a site electricity tariff of 0.42 reached Energy's solar grid price on a fresh load, and "Take the site's tariffs" re-applied it. Fixed there: site records load from IndexedDB after the screen opens, so Energy now waits for them.
 
-**Verified** (2026-11-26, another tab holding the database, `claude/serracalc-db-blocked`):
+**Verified** (2026-11-26, another tab holding the database, PR #45):
 
 - Lint, 116 domain and 51 feature tests, builds, stylelint, `nx format:check`, the zoneless check.
 - New unit tests in `serra-db.service.spec.ts`, which fail on the code before this branch:
@@ -204,7 +204,15 @@ Written before any change on `feat/serracalc-parity`; the last column says what 
 
 ## 6. Next step: a real phone, then the owner's pick
 
-PR #43 is merged (`c264e3f`) and deployed (CI run 45747755662; every job green, including Deploy to Cloudflare). PR #41 before it: `b2662e7`, CI run 45676992891.
+PR #45 is merged (`49d8698`) and deployed (CI run 45759231692; every job green, including Deploy to Cloudflare). Before it: #44 (`f60d330`, docs), #43 (`c264e3f`, CI run 45747755662), #41 (`b2662e7`, CI run 45676992891).
+
+**Checked live on 2026-11-26 (PR #45, standalone, in a clean Playwright Chromium):**
+
+- A page of the same origin holding the database at version 1 brings up "SerraCalc is open in another tab on an older version". Once it closes, the notice goes and the samples load.
+- An upgrade to version 3 from that page isn't blocked, and the app shows "A newer SerraCalc opened in another tab" with Reload.
+- The page fills the screen (`min-block-size` equal to the viewport).
+
+**Not covered, found live:** the desktop app's browser pane still opens empty. Its database stays at version 1, and an open at version 2 gets no event at all in 5 seconds: no `blocked`, no `upgradeneeded`, no error. The request waits in a queue behind something that never finishes, and the browser doesn't report that. Only a timeout can tell (item 1).
 
 **Checked live on 2026-11-26 (PR #43, standalone, in a clean Playwright Chromium):**
 
@@ -212,7 +220,7 @@ PR #43 is merged (`c264e3f`) and deployed (CI run 45747755662; every job green, 
 - While the site has no tariffs, Energy keeps its defaults (grid 0.3, export 0.18) and shows no "Take the site's tariffs" button.
 - Once "Oasis block 3" has tariffs (written to the `sites` store; the database upgraded to version 2), a fresh load gives solar 0.42 and 0.21, the CHP's gas 0.55 and power 0.42, and cooling 0.42. A grid price edited to 0.1 goes back to 0.42 with the button.
 
-**Found live:** in the desktop app's browser pane, whose profile still had the database at version 1, the upgrade to version 2 never finished, so the app showed no projects and no message. Something still held the old database open; reloading the pane's other SerraCalc tab didn't release it, and what holds it wasn't found. `serra-db.service.ts` handles neither `blocked` nor `versionchange`. So a SerraCalc tab left open on an old version would do the same to a user at the next database version. Handled on `claude/serracalc-db-blocked` (item 1, §5).
+**Found live:** in the desktop app's browser pane, whose profile still had the database at version 1, the upgrade to version 2 never finished, so the app showed no projects and no message. Something still held the old database open; reloading the pane's other SerraCalc tab didn't release it, and what holds it wasn't found. `serra-db.service.ts` handles neither `blocked` nor `versionchange`. So a SerraCalc tab left open on an old version would do the same to a user at the next database version. PR #45 handles that case (§5); the pane itself is a different one (above).
 
 **Checked live on 2026-11-25 (PR #41):**
 
@@ -221,7 +229,9 @@ PR #43 is merged (`c264e3f`) and deployed (CI run 45747755662; every job green, 
 
 **Not checked live:** the service worker and opening offline (the desktop app's browser pane can't register one; use Playwright or a phone); the "new version" banner (#43's deploy is the first chance: a phone that opened the app before 2026-11-26 should offer Reload).
 
-1. Open the pull request for `claude/serracalc-db-blocked`, merge it when CI passes, and check live: the desktop app's browser pane (its database still at version 1, held by something) should now say another tab holds the projects instead of opening empty.
+1. A database that never answers. In `serra-db.service.ts`, if the open neither succeeds, fails nor reports `blocked` within a few seconds, set a third state and show a general notice: close SerraCalc's other tabs and windows, and if that doesn't help, restart the browser. Clear it if the open succeeds later.
+   - Test it with a fake `indexedDB.open` whose request never fires, and fake timers.
+   - Check it live in the desktop app's browser pane, which still has this problem.
 2. A real phone (Android Chrome): drag handles with a finger, the plant cards, a backup shared to Drive, the language menu, folding, photo zoom, MathML fonts, installing and opening offline.
 3. Photos still missing (Commons had none free): hot-water pipes, pad cooling, fogging, a heat buffer, grow lights, CO₂ dosing, a PAR sensor, a lab analysis, a climate computer. The owner's own photos could fill them, with no farm or company names in view.
 
