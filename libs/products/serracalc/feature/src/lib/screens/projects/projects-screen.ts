@@ -8,7 +8,6 @@ import {
 import { RouterLink } from '@angular/router';
 import { AhButton, AhEmptyState, AhModal } from '@ah/ui';
 import {
-  type CalcKind,
   CLIMATES,
   climateById,
   COVER_IDS,
@@ -20,6 +19,7 @@ import {
   type GreenhouseShape,
   type SavedCalculation,
   SCREEN_IDS,
+  OPENS_IN,
 } from '@ah/products/serracalc/domain';
 import { TourService } from '@ah/platform/tour';
 import { SerraI18n } from '../../i18n/serra-i18n';
@@ -32,28 +32,6 @@ import { GREENHOUSE_FIELDS } from '../fields';
 import { Panel } from '../../ui/panel/panel';
 
 /** Where each kind of saved result opens. */
-const OPENS_IN: Record<CalcKind, { screen: string; tab: string }> = {
-  heatPeak: { screen: 'heating', tab: 'peak' },
-  heatYear: { screen: 'heating', tab: 'year' },
-  hotWater: { screen: 'heating', tab: 'pipes' },
-  ventilation: { screen: 'cooling', tab: 'ventilation' },
-  padFan: { screen: 'cooling', tab: 'padFan' },
-  cropWater: { screen: 'water', tab: 'crop' },
-  rainwater: { screen: 'water', tab: 'rain' },
-  light: { screen: 'air', tab: 'light' },
-  co2: { screen: 'air', tab: 'co2' },
-  humidity: { screen: 'air', tab: 'humidity' },
-  vpd: { screen: 'air', tab: 'vpd' },
-  fog: { screen: 'cooling', tab: 'fog' },
-  calendar: { screen: 'calendar', tab: 'plan' },
-  ro: { screen: 'supply', tab: 'ro' },
-  fertigation: { screen: 'supply', tab: 'fertigation' },
-  energy: { screen: 'energy', tab: 'chp' },
-  heatReuse: { screen: 'energy', tab: 'reuse' },
-  coolingYear: { screen: 'energy', tab: 'cooling' },
-  solarPv: { screen: 'energy', tab: 'solar' },
-  economics: { screen: 'site', tab: 'economics' },
-};
 
 const SHAPES: readonly GreenhouseShape[] = ['gable', 'venlo', 'tunnel'];
 const CURRENCIES: readonly Currency[] = ['TND', 'EUR', 'USD'];

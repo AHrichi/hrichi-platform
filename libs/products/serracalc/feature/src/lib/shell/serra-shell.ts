@@ -25,7 +25,7 @@ import { filter, map } from 'rxjs';
 import { AhScrollHint } from '@ah/ui';
 import { APP_MODE } from '@ah/platform/app-mode';
 import { PreferencesStore } from '@ah/shared/state';
-import { isoWeek } from '@ah/products/serracalc/domain';
+import { isoWeek, type SerraScreen } from '@ah/products/serracalc/domain';
 import { SerraI18n } from '../i18n/serra-i18n';
 import { SerraDbService } from '../services/serra-db.service';
 import { SerraUpdates } from '../services/serra-updates';
@@ -34,23 +34,7 @@ import { Icon, type IconName } from '../ui/icon/icon';
 import { LangMenu } from '../ui/lang-menu/lang-menu';
 import { SERRA_TOUR, serraTourText } from '../tour/serra-tour';
 
-export type SerraScreen =
-  | 'projects'
-  | 'site'
-  | 'energy'
-  | 'calendar'
-  | 'greenhouse'
-  | 'heating'
-  | 'cooling'
-  | 'water'
-  | 'supply'
-  | 'air'
-  | 'operations'
-  | 'data'
-  | 'climate'
-  | 'science'
-  | 'report'
-  | 'guide';
+export type { SerraScreen };
 
 /** Sections of the side rail, in order. */
 export type NavGroup = 'plan' | 'climate' | 'water' | 'operate' | 'reference';

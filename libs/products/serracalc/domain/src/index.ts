@@ -29,3 +29,6 @@ export * from './lib/calculations/saved';
 export * from './lib/utils/physics';
 export * from './lib/utils/weeks';
 export * from './lib/utils/backup';
+
+export * from './lib/assistant/navigation';
+export * from './lib/assistant/serra-assistant';
