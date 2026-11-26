@@ -15,6 +15,10 @@ export const FR: SerraCopy = {
         'Cette copie de SerraCalc ne peut pas se mettre à jour. Rechargez pour la récupérer à neuf ; vos projets restent sur cet appareil.',
       reload: 'Recharger',
       later: 'Plus tard',
+      dbBlocked:
+        'SerraCalc est ouvert dans un autre onglet, dans une version plus ancienne : vos projets ne peuvent pas encore s’ouvrir ici. Fermez ou rechargez cet onglet.',
+      dbReplaced:
+        'Une version plus récente de SerraCalc s’est ouverte dans un autre onglet et a repris vos projets. Rechargez celui-ci : d’ici là, les modifications faites ici ne sont pas enregistrées.',
     },
     offline: 'Fonctionne hors ligne',
     offlineHint:

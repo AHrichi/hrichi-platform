@@ -25,6 +25,7 @@ import { APP_MODE } from '@ah/platform/app-mode';
 import { PreferencesStore } from '@ah/shared/state';
 import { isoWeek } from '@ah/products/serracalc/domain';
 import { SerraI18n } from '../i18n/serra-i18n';
+import { SerraDbService } from '../services/serra-db.service';
 import { SerraUpdates } from '../services/serra-updates';
 import { SerraStore } from '../store/serra.store';
 import { Icon, type IconName } from '../ui/icon/icon';
@@ -121,6 +122,8 @@ export class SerraShell {
   protected readonly secondary = NAV.slice(4);
   /** A new version, downloaded by the service worker (standalone). */
   protected readonly updates = inject(SerraUpdates);
+  /** Whether the projects' database is in reach, or held by another tab. */
+  protected readonly db = inject(SerraDbService);
   protected readonly week = isoWeek(new Date());
   protected readonly moreOpen = signal(false);
   private readonly moreSheet = viewChild<ElementRef<HTMLElement>>('moreSheet');

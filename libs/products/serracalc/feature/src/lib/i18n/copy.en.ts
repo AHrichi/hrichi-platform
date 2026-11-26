@@ -15,6 +15,10 @@ export const EN = {
         'This saved copy of SerraCalc can’t update itself. Reload to fetch it fresh; your projects stay on this device.',
       reload: 'Reload',
       later: 'Later',
+      dbBlocked:
+        'SerraCalc is open in another tab on an older version, so your projects can’t open here yet. Close or reload that tab.',
+      dbReplaced:
+        'A newer SerraCalc opened in another tab and took over your projects. Reload this one: until then, changes here aren’t saved.',
     },
     offline: 'Works offline',
     offlineHint: 'Projects are saved on this device; no connection needed.',
