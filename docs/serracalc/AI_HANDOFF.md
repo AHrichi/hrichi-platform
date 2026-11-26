@@ -2,14 +2,14 @@
 
 A briefing for whichever AI agent or IDE picks up SerraCalc, the greenhouse heat, water and climate engineering app. It assumes no memory of earlier sessions. Read it top to bottom before touching code; [AGENTS.md](../../AGENTS.md) has the protocol, [ADR-0027](../adr/0027-serracalc.md) the decisions.
 
-Last updated 2026-11-25: **Everything through PR #41 is on `main` and deployed: the greenhouse-manager spec, its gaps, the root-zone limits (#40), and the owner's UI requests (#41: floating header, language menu, folding, MathML formulas, Commons photos with zoom, offline use, a new-version notice, walk-through fixes, Energy → Solar power). Then, on `claude/serracalc-drain-ec-limit`: the drain got its own EC limit from the crop, and the Energy tools take their prices from the site (§5, §6).**Energy → Solar power** for the site (§5, §6).** The plan is §7; the decisions are [ADR-0029](../adr/0029-serracalc-greenhouse-manager.md) and its addendum.
+Last updated 2026-11-26: **Everything through PR #43 is on `main` and deployed: the greenhouse-manager spec, its gaps, the root-zone limits (#40), the owner's UI requests (#41: floating header, language menu, folding, MathML formulas, Commons photos with zoom, offline use, a new-version notice, walk-through fixes, Energy → Solar power), and a drain EC limit per crop with the Energy tools taking their prices from the site (#43, §5). Nothing is in progress; §6 has the next steps.** The plan is §7; the decisions are [ADR-0029](../adr/0029-serracalc-greenhouse-manager.md) and its addendum.
 
 ## 0. Resume in five minutes
 
 1. **Get the branch:**
 
    ```bash
-   git fetch origin && git switch claude/serracalc-drain-ec-limit
+   git fetch origin && git switch main
    ```
 
    It was built in the worktree `.claude/worktrees/studylm-learning-merge-8ffa5f` (the folder name is historical). Check `git worktree list` first: one agent per checkout.
@@ -22,7 +22,7 @@ Last updated 2026-11-25: **Everything through PR #41 is on `main` and deployed: 
    pnpm exec stylelint "libs/products/serracalc/**/*.scss" "apps/products/serracalc/**/*.scss"
    ```
 
-   That's 3 projects and 139 tests (105 domain, 34 feature).
+   That's 3 projects and 165 tests (116 domain, 49 feature).
 
 4. **See it:** `pnpm nx run product-serracalc:build:development`, then `node tools/scripts/serve-static.mjs dist/apps/products/serracalc/web/browser 4314` and open `http://localhost:4314`. Inside the portfolio it is `/apps/serracalc`.
 
@@ -73,7 +73,9 @@ It is **not** the Greenhouse Labor Planner (`product-greenhouse*`, ADR-0026). Ke
 - The "new version" notice: four unit tests with a fake service worker. It hasn't been seen on screen (it needs two deployed versions).
 - The walk-through, all 16 screens at 375 px in English, Arabic spot checks, and 1280, 1024 and 768 px: the header is one row at every width; the calendar reads at phone size and opens at today.
 
-**Not verified yet (greenhouse manager):** the photos inside the portfolio (they need the remote's origin in `img-src`, which the e2e's headers have); MathML on a real Android phone (Chrome draws it, but fonts vary); a real phone; the Italian, German and Arabic wording by native speakers; every formula against a published worked example beyond the spec's benchmarks; "acidified refill" is our reading of the Hydrotool strategy (the paper wasn't read). The EC ceiling (4.5) is still compared with the feed in the loop, but with the drain EC in Live data and in the "drain EC high" note; at the sample's 30 % drain the drain is already 4.8 (§6).
+**Verified** (2026-11-25, two EC limits and site prices, PR #43): lint, 116 domain and 49 feature tests (new: tomato's drain limit of 6 doesn't warn at the sample's 4.8 drain while lettuce's 3 does; results saved before the limit compare with the flush ceiling, `{ec: 4.8, max: 4.5}`; the tariff mapping), builds, stylelint, `nx format:check`, the SerraCalc e2e **17 of 17** with `CI=1`. In the browser: Supply → Fertigation shows the 6 limit and no drain warning on the sample; Live data's limit reads 6 for tomato; a site electricity tariff of 0.42 reached Energy's solar grid price on a fresh load, and "Take the site's tariffs" re-applied it. Fixed there: site records load from IndexedDB after the screen opens, so Energy now waits for them.
+
+**Not verified yet (greenhouse manager):** the photos inside the portfolio (they need the remote's origin in `img-src`, which the e2e's headers have); MathML on a real Android phone (Chrome draws it, but fonts vary); a real phone; the Italian, German and Arabic wording by native speakers; every formula against a published worked example beyond the spec's benchmarks; "acidified refill" is our reading of the Hydrotool strategy (the paper wasn't read). The drain EC limits per crop (`CROPS[crop].drainEcMaxDsM`: tomato 6, cucumber and pepper 4.5, melon 5, rose 3.5, strawberry and lettuce 3) are indicative, not a grower's figures.
 
 ### Parity audit (2026-11-25, against LuxPath and the other apps)
 
@@ -189,16 +191,27 @@ Written before any change on `feat/serracalc-parity`; the last column says what 
 
 ## 6. Next step: a real phone, then the owner's pick
 
-PR #41 is merged (`b2662e7`) and deployed (CI run 45676992891; every job green, including Deploy to Cloudflare).
+PR #43 is merged (`c264e3f`) and deployed (CI run 45747755662; every job green, including Deploy to Cloudflare). PR #41 before it: `b2662e7`, CI run 45676992891.
 
-**Checked live on 2026-11-25:**
+**Checked live on 2026-11-26 (PR #43, standalone, in a clean Playwright Chromium):**
+
+- With the samples loaded, Supply → Fertigation shows the flush ceiling at 4.5 and the drain limit at 6, with no drain warning. Live data's drain limit reads 6.
+- While the site has no tariffs, Energy keeps its defaults (grid 0.3, export 0.18) and shows no "Take the site's tariffs" button.
+- Once "Oasis block 3" has tariffs (written to the `sites` store; the database upgraded to version 2), a fresh load gives solar 0.42 and 0.21, the CHP's gas 0.55 and power 0.42, and cooling 0.42. A grid price edited to 0.1 goes back to 0.42 with the button.
+
+**Found live:** in the desktop app's browser pane, whose profile still had the database at version 1, the upgrade to version 2 never finished, so the app showed no projects and no message. Something still held the old database open; reloading the pane's other SerraCalc tab didn't release it, and what holds it wasn't found. `serra-db.service.ts` handles neither `blocked` nor `versionchange`. So a SerraCalc tab left open on an old version would do the same to a user at the next database version (item 1).
+
+**Checked live on 2026-11-25 (PR #41):**
 
 - Inside the portfolio (`https://portfolio.ahmed-hrichi.workers.dev/apps/serracalc`): the Science photos load from `https://product-serracalc.ahmed-hrichi.workers.dev` under the new `img-src`; MathML formulas; folding; Energy → Solar power.
 - Standalone (`https://product-serracalc.ahmed-hrichi.workers.dev`): the language menu, the floating header (glass after a deep link to a topic, which scrolls clear of it), photos, `ngsw-worker.js` and `ngsw.json` served.
 
-**Not checked live:** the service worker and opening offline (the desktop app's browser pane can't register one; use Playwright or a phone); the "new version" banner (it needs the next deploy).
+**Not checked live:** the service worker and opening offline (the desktop app's browser pane can't register one; use Playwright or a phone); the "new version" banner (#43's deploy is the first chance: a phone that opened the app before 2026-11-26 should offer Reload).
 
-1. Open the pull request for `claude/serracalc-drain-ec-limit`, merge it when CI passes, and check live: Supply → Fertigation (the sample's 4.8 drain no longer warns for tomato), Live data's drain limit, and Energy starting from the site's tariffs.
+1. Make a blocked database upgrade visible, before the next database version. In `serra-db.service.ts`:
+   - close the connection on `versionchange`, so an old tab steps aside;
+   - on `blocked`, tell the user to close SerraCalc's other tabs instead of hanging.
+   - Test it with a fake `indexedDB`, or with two pages in the e2e.
 2. A real phone (Android Chrome): drag handles with a finger, the plant cards, a backup shared to Drive, the language menu, folding, photo zoom, MathML fonts, installing and opening offline.
 3. Photos still missing (Commons had none free): hot-water pipes, pad cooling, fogging, a heat buffer, grow lights, CO₂ dosing, a PAR sensor, a lab analysis, a climate computer. The owner's own photos could fill them, with no farm or company names in view.
 
