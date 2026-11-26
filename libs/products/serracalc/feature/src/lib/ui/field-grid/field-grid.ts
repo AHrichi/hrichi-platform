@@ -12,15 +12,18 @@ import {
   fieldInfo,
   injectScreenTopics,
 } from '../../science/screen-topics';
+import { controlFor, type FieldControl } from '../number-field/field-control';
 import { NumberField } from '../number-field/number-field';
 
-/** One number field: its key in the inputs, unit and range. */
+/** One number field: its key in the inputs, unit, range and control. */
 export interface FieldSpec<K extends string = string> {
   readonly key: K;
   readonly unit: string;
   readonly min: number;
   readonly max: number;
   readonly step: number;
+  /** Chosen from the unit and range (`controlFor`) unless set. */
+  readonly control?: FieldControl;
 }
 
 export interface FieldChange {
@@ -46,6 +49,7 @@ export interface FieldChange {
         [min]="spec.min"
         [max]="spec.max"
         [step]="spec.step"
+        [control]="controlOf(spec)"
         [value]="valueOf(spec.key)"
         [info]="infos()[spec.key]"
         (valueChange)="changed.emit({ key: spec.key, value: $event })"
@@ -78,6 +82,10 @@ export class FieldGrid {
     }
     return out;
   });
+
+  protected controlOf(spec: FieldSpec): FieldControl {
+    return controlFor(spec);
+  }
 
   protected valueOf(key: string): number {
     const value = (this.values() as Record<string, unknown>)[key];

@@ -60,6 +60,8 @@ export const DE: SerraCopy = {
   },
   common: {
     close: 'Schließen',
+    decrease: 'Verringern',
+    increase: 'Erhöhen',
     cancel: 'Abbrechen',
     edit: 'Bearbeiten',
     delete: 'Löschen',

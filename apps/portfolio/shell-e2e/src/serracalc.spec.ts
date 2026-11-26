@@ -1,5 +1,5 @@
 import AxeBuilder from '@axe-core/playwright';
-import type { Page } from '@playwright/test';
+import type { Locator, Page } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 import { expect, test } from './support/test';
 import { appIsPublic, chooseLanguage } from './support/site';
@@ -59,6 +59,13 @@ async function savePeak(page: Page): Promise<void> {
 }
 
 /** Standalone: open the globe menu and pick a language by its own name. */
+/** Where an element sits on the page; it has to be there. */
+async function boxOf(locator: Locator) {
+  const box = await locator.boundingBox();
+  if (!box) throw new Error('Not on the page');
+  return box;
+}
+
 async function pickLanguage(page: Page, nativeName: string): Promise<void> {
   await page.locator('sc-lang-menu .trigger').click();
   await page.getByRole('menuitemradio', { name: nativeName }).click();
@@ -108,6 +115,64 @@ test.describe('SerraCalc, standalone', () => {
     await expect(
       page.getByRole('spinbutton', { name: /Ridge height/ }),
     ).toHaveValue('6.4');
+  });
+
+  test('sets numbers with a stepper, a thermometer, a tape and a dial', async ({
+    page,
+  }) => {
+    await page.goto(`${STANDALONE}heating?tab=peak`);
+    const field = (label: string) =>
+      page.locator('sc-number-field').filter({
+        has: page.locator('label', { hasText: new RegExp(`^${label}$`) }),
+      });
+    const typed = (label: string) =>
+      page.getByRole('spinbutton', { name: label, exact: true });
+
+    // A wide range: + goes to the next round number.
+    const floor = typed('Floor area');
+    const area = Number(await floor.inputValue());
+    await field('Floor area').getByRole('button', { name: 'Increase' }).click();
+    await expect(floor).not.toHaveValue(String(area));
+    const next = Number(await floor.inputValue());
+    expect(next).toBeGreaterThan(area);
+    expect(next % 100).toBe(0);
+
+    // A tap near the warm end of the tube: 90 % of 0..30 °C.
+    const tube = field('Inside, at night').locator('.tube');
+    const box = await boxOf(tube);
+    const hidden = 8; // the part of the tube under the bulb
+    await page.mouse.click(
+      box.x + hidden + (box.width - hidden) * 0.9,
+      box.y + box.height / 2,
+    );
+    await expect(typed('Inside, at night')).toHaveValue('27');
+
+    // Pulling the tape left brings bigger numbers under the needle.
+    const uValue = typed('U-value of the cover');
+    const before = Number(await uValue.inputValue());
+    const tape = await boxOf(field('U-value of the cover').locator('.window'));
+    const middle = tape.y + tape.height / 2;
+    await page.mouse.move(tape.x + tape.width * 0.75, middle);
+    await page.mouse.down();
+    await page.mouse.move(tape.x + tape.width * 0.25, middle, { steps: 12 });
+    await page.mouse.up();
+    await expect
+      .poll(async () => Number(await uValue.inputValue()))
+      .toBeGreaterThan(before);
+
+    // The far end of the half moon: the top of the range.
+    const dial = await boxOf(field('Screen saving').locator('svg'));
+    await page.mouse.click(
+      dial.x + dial.width * (108 / 120),
+      dial.y + dial.height * (61 / 70),
+    );
+    await expect(typed('Screen saving')).toHaveValue('70');
+
+    // The aids stay out of the tab order and the accessibility tree.
+    const results = await new AxeBuilder({ page })
+      .include('sc-number-field')
+      .analyze();
+    expect(results.violations).toEqual([]);
   });
 
   test('saves a result and opens it again from Projects', async ({ page }) => {

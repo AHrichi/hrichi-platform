@@ -1,14 +1,21 @@
 import type { FieldSpec } from '../ui/field-grid/field-grid';
+import type { FieldControl } from '../ui/number-field/field-control';
 
-/** Number fields by calculator: unit, range and step. Labels come from copy. */
+/**
+ * Number fields by calculator: unit, range and step. Labels come from copy.
+ * The control comes from the unit and range, unless one is named here.
+ */
 function spec(
   key: string,
   unit: string,
   min: number,
   max: number,
   step: number,
+  control?: FieldControl,
 ): FieldSpec {
-  return { key, unit, min, max, step };
+  return control
+    ? { key, unit, min, max, step, control }
+    : { key, unit, min, max, step };
 }
 
 const floor = spec('floorAreaM2', 'm²', 10, 200000, 10);
@@ -180,7 +187,7 @@ export const VPD_FIELDS: readonly FieldSpec[] = [
 ];
 
 export const CALENDAR_FIELDS: readonly FieldSpec[] = [
-  spec('plantingWeek', '', 1, 52, 1),
+  spec('plantingWeek', '', 1, 52, 1, 'weeks'),
   spec('nurseryWeeks', '', 0, 12, 1),
   spec('vegetativeWeeks', '', 1, 12, 1),
   spec('floweringWeeks', '', 1, 16, 1),
@@ -238,8 +245,8 @@ export const ENERGY_FIELDS: readonly FieldSpec[] = [
   spec('chpElectricKw', 'kW', 0, 50000, 10),
   spec('chpThermalKw', 'kW', 0, 60000, 10),
   spec('chpElectricPct', '%', 25, 50, 1),
-  spec('chpStartHour', 'h', 0, 23, 1),
-  spec('chpEndHour', 'h', 1, 24, 1),
+  spec('chpStartHour', 'h', 0, 23, 1, 'hours'),
+  spec('chpEndHour', 'h', 1, 24, 1, 'hours'),
   spec('bufferM3', 'm³', 0, 50000, 1),
   spec('bufferDeltaK', 'K', 10, 60, 1),
   spec('boilerEfficiencyPct', '%', 70, 105, 1),
@@ -253,7 +260,7 @@ export const COOLING_YEAR_FIELDS: readonly FieldSpec[] = [
   spec('airflowM3hM2', 'm³/h·m²', 0, 250, 5),
   spec('fanWPerM3h', 'W·h/m³', 0.01, 0.1, 0.001),
   spec('pumpWm2', 'W/m²', 0, 5, 0.1),
-  spec('emptyFromWeek', '', 1, 52, 1),
+  spec('emptyFromWeek', '', 1, 52, 1, 'weeks'),
   spec('emptyWeeks', '', 0, 52, 1),
   spec('gridCo2KgKwh', 'kg/kWh', 0, 1.2, 0.01),
   floor,
