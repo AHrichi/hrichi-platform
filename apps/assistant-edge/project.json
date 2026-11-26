@@ -1,0 +1,36 @@
+{
+  "name": "assistant-edge",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/assistant-edge/src",
+  "projectType": "application",
+  "tags": ["scope:edge", "type:app", "runtime:agnostic"],
+  "// targets": "build type-checks and bundles (CI runs it); deploy ships it from CI. Without GROQ_API_KEY or GEMINI_API_KEY it serves the keyless Workers AI rung only (ADR-0031).",
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "outputs": ["{workspaceRoot}/dist/apps/assistant-edge"],
+      "options": {
+        "commands": [
+          "tsc -p apps/assistant-edge/tsconfig.app.json --noEmit",
+          "wrangler deploy --dry-run --outdir dist/apps/assistant-edge --config apps/assistant-edge/wrangler.jsonc"
+        ],
+        "parallel": false
+      }
+    },
+    "serve": {
+      "continuous": true,
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "wrangler dev --config apps/assistant-edge/wrangler.jsonc --port 8788"
+      }
+    },
+    "deploy": {
+      "dependsOn": ["build"],
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "wrangler deploy --config apps/assistant-edge/wrangler.jsonc"
+      }
+    }
+  }
+}

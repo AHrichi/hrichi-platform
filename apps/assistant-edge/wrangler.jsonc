@@ -1,0 +1,37 @@
+{
+  // The assistant's Worker (ADR-0031): one stateless route that runs a chat
+  // round for a product's assistant. Prompts and tools are the products'
+  // (their domain libs); the browser sends only the conversation and state.
+  // CI deploys it. Keys are optional secrets, set once:
+  //   pnpm wrangler secret put GROQ_API_KEY --config apps/assistant-edge/wrangler.jsonc
+  //   pnpm wrangler secret put GEMINI_API_KEY --config apps/assistant-edge/wrangler.jsonc
+  // Without them only the keyless Workers AI rung (read-only) answers.
+  // Locally: copy .dev.vars.example to .dev.vars (an Ollama ladder).
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "assistant-edge",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-11-01",
+  "observability": { "enabled": true },
+  "ai": { "binding": "AI" },
+  // Per IP and overall, per minute; counted per Cloudflare location, so
+  // abuse protection rather than an exact quota.
+  "ratelimits": [
+    {
+      "name": "PER_IP",
+      "namespace_id": "4101",
+      "simple": { "limit": 8, "period": 60 },
+    },
+    {
+      "name": "GLOBAL",
+      "namespace_id": "4102",
+      "simple": { "limit": 60, "period": 60 },
+    },
+  ],
+  "vars": {
+    // Pages allowed to call it (comma-separated, exact origins).
+    "ALLOWED_ORIGINS": "https://product-serracalc.ahmed-hrichi.workers.dev,https://portfolio.ahmed-hrichi.workers.dev,http://localhost:4314,http://localhost:4200",
+    // The models, tried in order (provider:model, !read-only keeps a model
+    // away from data). Changing provider or model is a change here.
+    "LADDER": "groq:openai/gpt-oss-120b,groq:openai/gpt-oss-20b,gemini:gemini-flash-latest,gemini:gemini-3.5-flash-lite,workers-ai:@cf/meta/llama-3.3-70b-instruct-fp8-fast!read-only",
+  },
+}

@@ -41,6 +41,9 @@ blob-report
 # env
 .env
 .env.*
+# Wrangler dev secrets; the example is kept.
+.dev.vars*
+!.dev.vars.example
 !.env.example
 vitest.config.*.timestamp*
 .vitest

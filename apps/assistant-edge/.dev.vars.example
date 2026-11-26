@@ -1,0 +1,6 @@
+# Copy to .dev.vars for `pnpm nx serve assistant-edge` (wrangler dev on :8788).
+# A local model through Ollama (ollama pull qwen2.5:7b); keys optional.
+LADDER=ollama:qwen2.5:7b
+OLLAMA_URL=http://127.0.0.1:11434
+# GROQ_API_KEY=
+# GEMINI_API_KEY=

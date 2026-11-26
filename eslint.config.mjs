@@ -216,6 +216,16 @@ export default [
               sourceTag: 'scope:shared',
               onlyDependOnLibsWithTags: ['scope:shared'],
             },
+            // Public edge Workers serving products (ADR-0031): like the API,
+            // they import each product's agnostic profile, named one by one.
+            {
+              sourceTag: 'scope:edge',
+              onlyDependOnLibsWithTags: [
+                'scope:edge',
+                'scope:shared',
+                'scope:product-serracalc',
+              ],
+            },
             // The API shares only contracts with the browser apps (ADR-0010).
             {
               sourceTag: 'scope:api',
