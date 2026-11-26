@@ -163,11 +163,17 @@
     @if (db.state() !== 'ok') {
       <div class="update">
         <p>
-          {{
-            db.state() === 'blocked'
-              ? t().app.update.dbBlocked
-              : t().app.update.dbReplaced
-          }}
+          @switch (db.state()) {
+            @case ('blocked') {
+              {{ t().app.update.dbBlocked }}
+            }
+            @case ('stalled') {
+              {{ t().app.update.dbStalled }}
+            }
+            @default {
+              {{ t().app.update.dbReplaced }}
+            }
+          }
         </p>
         @if (db.state() === 'replaced') {
           <div class="update-actions">

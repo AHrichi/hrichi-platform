@@ -2,17 +2,17 @@
 
 A briefing for whichever AI agent or IDE picks up SerraCalc, the greenhouse heat, water and climate engineering app. It assumes no memory of earlier sessions. Read it top to bottom before touching code; [AGENTS.md](../../AGENTS.md) has the protocol, [ADR-0027](../adr/0027-serracalc.md) the decisions.
 
-Last updated 2026-11-26: **Everything through PR #45 is on `main` and deployed: the greenhouse-manager spec, its gaps, the root-zone limits (#40), the owner's UI requests (#41: floating header, language menu, folding, MathML formulas, Commons photos with zoom, offline use, a new-version notice, walk-through fixes, Energy → Solar power), and a drain EC limit per crop with the Energy tools taking their prices from the site (#43, §5), and a notice when SerraCalc in another tab holds the database (#45, §5). In progress on `claude/serracalc-fun-inputs`: number fields that are no longer all a box and a slider, but a dial, a thermometer, a tape, a stepper, chips or a clock to suit the value, from four new `@ah/ui` controls (§2, §5). A separate branch, `claude/serracalc-db-stalled`, adds a notice for a database that never answers (§6, item 2), in another session.** The plan is §7; the decisions are [ADR-0029](../adr/0029-serracalc-greenhouse-manager.md) and its addendum.
+Last updated 2026-11-26: **Everything through PR #48 is on `main` and deployed: the greenhouse-manager spec, its gaps, the root-zone limits (#40), the owner's UI requests (#41: floating header, language menu, folding, MathML formulas, Commons photos with zoom, offline use, a new-version notice, walk-through fixes, Energy → Solar power), and a drain EC limit per crop with the Energy tools taking their prices from the site (#43, §5), a notice when SerraCalc in another tab holds the database (#45, §5), and number fields that are a dial, a thermometer, a tape, a stepper, chips or a clock to suit the value, from four new `@ah/ui` controls (#48, §2, §5). In progress on `claude/serracalc-db-stalled-notice` (PR #47): a notice when the browser never answers for the database (§5, §6).** The plan is §7; the decisions are [ADR-0029](../adr/0029-serracalc-greenhouse-manager.md) and its addendum.
 
 ## 0. Resume in five minutes
 
 1. **Get the branch:**
 
    ```bash
-   git fetch origin && git switch claude/serracalc-fun-inputs
+   git fetch origin && git switch claude/serracalc-db-stalled-notice
    ```
 
-   It was built in the worktree `.claude/worktrees/studylm-learning-merge-8ffa5f` (the folder name is historical). Check `git worktree list` first: one agent per checkout.
+   Once it is merged, resume from `main`. This branch was built in the worktree `.claude/worktrees/funny-cartwright-dcfc46`; earlier work in `.claude/worktrees/studylm-learning-merge-8ffa5f` (the folder names are historical). Check `git worktree list` first: one agent per checkout.
 
 2. **Install:** `pnpm install --frozen-lockfile` (Node 24, pnpm 10.34.9).
 3. **Check that it's green:**
@@ -22,7 +22,7 @@ Last updated 2026-11-26: **Everything through PR #45 is on `main` and deployed: 
    pnpm exec stylelint "libs/products/serracalc/**/*.scss" "apps/products/serracalc/**/*.scss"
    ```
 
-   That's 3 projects and 170 tests (116 domain, 54 feature). The new controls are in `design-system-ui` (84 tests): `pnpm nx run-many -t lint test -p design-system-ui`.
+   That's 3 projects and 173 tests (116 domain, 57 feature). The number controls are in `design-system-ui` (84 tests): `pnpm nx run-many -t lint test -p design-system-ui`.
 
 4. **See it:** `pnpm nx run product-serracalc:build:development`, then `node tools/scripts/serve-static.mjs dist/apps/products/serracalc/web/browser 4314` and open `http://localhost:4314`. Inside the portfolio it is `/apps/serracalc`.
 
@@ -47,7 +47,7 @@ It is **not** the Greenhouse Labor Planner (`product-greenhouse*`, ADR-0026). Ke
 | Science and field advice              | **Done.** `/science`: 16 phenomena (formula, assumptions, each input's method and instrument, related topics, calculators), 16 instruments. Every number field has an ⓘ popover (native `popover`, top layer) linking there; "How it's calculated" links the topics of the open tab. Data in `science.data.ts`; `science.spec.ts` checks that every field has a method.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | M2 water chain                        | **Done.** A **Water supply** screen (`/supply`): seawater RO by mass balance (feed, brine and its salinity, product EC, energy, cost, storage, coverage) and fertigation with drain recycling (drain EC from uptake, water and fertiliser saved, sodium in the loop solved exactly, flush day or level, stock per day, salinity yield loss). Both start from the crop's peak day; the loop can take the RO water. Drawings `ro-flow` and `fertigation-loop`. **Spec gaps (PR #39):** chloride and bicarbonate in the loop, flush at the first of Na, Cl and EC; a year compared under five strategies (as set, flush at the EC ceiling, acidified refill, lower refill EC, steady bleed). **Root zone:** the sodium and chloride limits are read in the drain, which holds C·A/D (owner, 2026-11-25).                                                                              |
 | M3 site, energy, economics            | **Done.** **Site** (`/site`): projects sharing a site name are compartments (`project.areaHa`, set in the table via `store.setProjectArea`), totals, the shared RO and CHP checked from the newest saved results, and an Economics tab. **Energy** (`/energy`): an hourly CHP/buffer/boiler balance for a winter design day (`energy-day`, draggable run hours) and heat in chilled water. **Spec gaps (PR #39):** Energy → Cooling over the year (saved kind `coolingYear`, checked against ~10 kWh/m²·yr); Site → Plants and tariffs (IndexedDB store `sites`, database version 2, carried in backups), checked against the peak day; Economics takes the tariffs. **Solar power (PR #41):** Energy → Solar power (saved kind `solarPv`), the array month by month from the climate against the site's day and night loads; Kebili ≈ 1,620 kWh/kWp, checked against 1,500–1,900. |
-| Number inputs                         | **On `claude/serracalc-fun-inputs`.** Every number field picks a control from its unit and range (`controlFor`, `ui/number-field/field-control.ts`): a half-moon dial for a percentage up to 100, a thermometer for °C (blue to red with the temperature), a tape to swipe for a bounded measurement, − and + for counts and for ranges too wide to swipe (those jump between round numbers), chips for up to five whole choices, a clock for the CHP hours and a year wheel for the planting and empty weeks. The typed field stays, with the label and the keyboard; the control beside it is pointer-only (`companion`). The controls are `ah-stepper`, `ah-dial`, `ah-thermometer` and `ah-ruler` in `@ah/ui`, with stories.                                                                                                                                                   |
+| Number inputs                         | **Done (PR #48).** Every number field picks a control from its unit and range (`controlFor`, `ui/number-field/field-control.ts`): a half-moon dial for a percentage up to 100, a thermometer for °C (blue to red with the temperature), a tape to swipe for a bounded measurement, − and + for counts and for ranges too wide to swipe (those jump between round numbers), chips for up to five whole choices, a clock for the CHP hours and a year wheel for the planting and empty weeks. The typed field stays, with the label and the keyboard; the control beside it is pointer-only (`companion`). The controls are `ah-stepper`, `ah-dial`, `ah-thermometer` and `ah-ruler` in `@ah/ui`, with stories.                                                                                                                                                                      |
 | M4 operations and live data           | **Done.** **Operations** (`/operations`): log (WHO Ia/Ib sprays refused), hygiene checklist, maintenance schedule (due/overdue), NWS heat index plan for workers. **Live data** (`/data`): CSV import (comma/semicolon, decimal comma, columns by name), a sample week, VPD and temperature by hour against the band, a day table, grouped alerts. `project.logs` and `project.readings` ride in backups.                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 
 **Verified** (2026-11-25, greenhouse manager, standalone dev build in the browser): the desert look in light and dark at 1280 px; the Kebili sample's advisor (26.6 % vents flagged, 12.3 % with 50 % shade, 26.7 °C with shade and fog); the calendar (heating from week 42, CO₂ in winter, shade and fog in summer, today's week); the VPD map; an ⓘ popover under its button and its link to `/science?topic=fogging`, which scrolls to and highlights the entry; lint, 102 unit tests, builds, stylelint, `nx format:check`, the zoneless check.
@@ -88,7 +88,19 @@ It is **not** the Greenhouse Labor Planner (`product-greenhouse*`, ADR-0026). Ke
   - the replaced notice at 1280 px in dark mode.
 - Fixed there: standalone, a short page (here, waiting on the database) showed white under the sand. `.serra.is-standalone` now fills the screen (`100dvh`, border-box, so long pages are unchanged).
 
-**Verified** (2026-11-26, number controls, `claude/serracalc-fun-inputs`):
+**Verified** (2026-11-26, a database that never answers, `claude/serracalc-db-stalled-notice`):
+
+- Lint, 116 domain and 54 feature tests, builds, stylelint, `nx format:check`, the zoneless check.
+- New unit tests in `serra-db.service.spec.ts`, with fake timers and an `indexedDB.open` that fires nothing until it is released:
+  - the state stays `ok` until `STALL_MS` (5 s), turns `stalled`, and goes back to `ok` once the open answers and the projects load;
+  - an open that answers in time stays `ok`;
+  - an open that reports `blocked` keeps the "another tab" notice.
+  - The first test fails with the timer taken out.
+- The SerraCalc e2e, **19 of 19** with `CI=1`. The new test uses two pages: the other holds version 1 and asks to delete the database, so this page's open waits behind the delete with no event at all. The stalled notice shows after 5 s (axe-clean, and not the "another tab" one), goes once the other page lets go, and the samples load.
+
+**Not verified yet (stalled notice):** the desktop app's browser pane, which still has the problem, until this branch is deployed (§6 item 1); the wording in French, Arabic, Italian and German by native speakers.
+
+**Verified** (2026-11-26, number controls, PR #48):
 
 - Lint, tests and builds of `design-system-ui` (84 tests; new: the range helpers and each control's keyboard contract), `product-serracalc-feature` (54; new: `controlFor`, and every kind of control is used somewhere) and `product-serracalc`; stylelint, `nx format:check`, the zoneless check.
 - The Storybook suite in the Linux Playwright image (`update-baselines`): **593 of 593**, axe on every story in both themes and screenshots. 38 new baselines for the 19 new stories; no existing baseline changed.
@@ -201,8 +213,8 @@ Written before any change on `feat/serracalc-parity`; the last column says what 
 - In `fertigation()`, `g` is the feed's factor C / C_in; the drain holds `toDrain` = A/D times it. Sodium and chloride limits divide by `toDrain`, the EC ceiling does not. `days[].naMmolL`, the levels and the notes are drain values.
 - **Two EC limits** (owner's go-ahead, 2026-11-25): `flushEcDsM` (4.5) is the recirculated feed at the dripper and flushes the loop. `drainEcMaxDsM` is the drain (root zone), from `CROPS[crop].drainEcMaxDsM` (tomato 6, cucumber and pepper 4.5, melon 5, rose 3.5, strawberry and lettuce 3; indicative). The drain limit drives the "drain EC high" note and the Live data alert. Results saved before it fall back to `flushEcDsM`, in the report and when opened (`supply-screen.ts` load).
 - **Prices live on the site:** `energyPrices(tariffs)` (`site.ts`) maps Site → Tariffs to the CHP's gas and power, the cooling year's electricity, and solar's grid and export price. Energy starts from them when they load and offers "Take the site's tariffs". A new energy tool with a price should be added to `energyPrices`.
-- **Database versions** (`serra-db.service.ts`, `VERSION`): a tab from this build on closes its connection on `versionchange` (a newer tab wants to upgrade) and the shell asks for a reload; it can't save until then. A tab of an older build doesn't, so the new tab's upgrade waits (`blocked`) and the shell says to close or reload the other tab; once it does, the upgrade finishes and the projects open. `SerraDbService.state` is `ok`, `blocked` or `replaced`; the notice shows in both modes, ahead of the new-version one. Tested in `serra-db.service.spec.ts` (fake-indexeddb) and the e2e (two pages).
-- **Number controls** (`claude/serracalc-fun-inputs`): `controlFor(spec)` picks the control (dial, thermometer, ruler, stepper, chips, hours, weeks); give `spec()` a sixth argument to choose one. A field keeps four grid rows (label, typed value, control, hint), placed by row so hints stay level beside a field with no third row. The controls themselves are documented in `libs/design-system/ui/README.md` ("Range controls"). They mirror right to left from the `dir` attribute, because the build rewrites `:dir()` into a language check.
+- **Database versions** (`serra-db.service.ts`, `VERSION`): a tab from this build on closes its connection on `versionchange` (a newer tab wants to upgrade) and the shell asks for a reload; it can't save until then. A tab of an older build doesn't, so the new tab's upgrade waits (`blocked`) and the shell says to close or reload the other tab; once it does, the upgrade finishes and the projects open. `SerraDbService.state` is `ok`, `blocked`, `replaced` or `stalled`; the notice shows in both modes, ahead of the new-version one. `stalled` means no answer at all within `STALL_MS` (5 s): a browser can keep an open waiting, with no event, behind another request that never finishes (a delete blocked by another tab does it). The shell then says to close SerraCalc's other tabs and windows, and to restart the browser if that doesn't help; the notice goes if the open answers later. A `blocked` event stops the timer, since that notice says more. Tested in `serra-db.service.spec.ts` (fake-indexeddb; fake `setTimeout` only, because fake-indexeddb runs on `setImmediate`) and the e2e (two pages; for `stalled`, the other page's blocked delete).
+- **Number controls** (PR #48): `controlFor(spec)` picks the control (dial, thermometer, ruler, stepper, chips, hours, weeks); give `spec()` a sixth argument to choose one. A field keeps four grid rows (label, typed value, control, hint), placed by row so hints stay level beside a field with no third row. The controls themselves are documented in `libs/design-system/ui/README.md` ("Range controls"). They mirror right to left from the `dir` attribute, because the build rewrites `:dir()` into a language check.
 - Icons: `node tools/scripts/generate-app-icons.mjs serracalc`.
 - **UI polish (`claude/serracalc-ui-polish`):**
   - **Floating header:** standalone only (`.top` in `serra-shell`). Its height is `--sc-top` (the rail and Science's contents stick under it) and the page's `scroll-padding`. Inside the portfolio the site header already floats, so SerraCalc's stays in the page.
@@ -216,11 +228,9 @@ Written before any change on `feat/serracalc-parity`; the last column says what 
   - **New version (standalone):** `services/serra-updates.ts` watches the service worker (when the tab comes back into view, every 30 min) and the shell shows Reload / Later. The next move to another screen reloads anyway. Inside the portfolio the site's own banner does this.
   - **Month charts:** `ui/month-bars/month-ticks.ts` sets the axis; it always reaches the tallest bar.
 
-## 6. Next step: the number controls, a real phone, then the owner's pick
+## 6. Next step: the stalled notice live, a real phone, then the owner's pick
 
-**In progress, `claude/serracalc-fun-inputs`:** the number controls (§2, §5). What's left is item 1.
-
-PR #45 is merged (`49d8698`) and deployed (CI run 45759231692; every job green, including Deploy to Cloudflare). Before it: #44 (`f60d330`, docs), #43 (`c264e3f`, CI run 45747755662), #41 (`b2662e7`, CI run 45676992891).
+PR #48 (the number controls) is merged (`3331820`) and deployed (CI run 45777236857; every job green, including the Storybook screenshots and Deploy to Cloudflare); checked live, see docs PR #49. Before it: #45 (`49d8698`, CI run 45759231692), #44 (`f60d330`, docs), #43 (`c264e3f`, CI run 45747755662), #41 (`b2662e7`, CI run 45676992891).
 
 **Checked live on 2026-11-26 (PR #45, standalone, in a clean Playwright Chromium):**
 
@@ -228,7 +238,7 @@ PR #45 is merged (`49d8698`) and deployed (CI run 45759231692; every job green, 
 - An upgrade to version 3 from that page isn't blocked, and the app shows "A newer SerraCalc opened in another tab" with Reload.
 - The page fills the screen (`min-block-size` equal to the viewport).
 
-**Not covered, found live:** the desktop app's browser pane still opens empty. Its database stays at version 1, and an open at version 2 gets no event at all in 5 seconds: no `blocked`, no `upgradeneeded`, no error. The request waits in a queue behind something that never finishes, and the browser doesn't report that. Only a timeout can tell (item 1).
+**Not covered, found live:** the desktop app's browser pane still opens empty. Its database stays at version 1, and an open at version 2 gets no event at all in 5 seconds: no `blocked`, no `upgradeneeded`, no error. The request waits in a queue behind something that never finishes, and the browser doesn't report that. Only a timeout can tell: `claude/serracalc-db-stalled-notice` adds one (§5, item 1).
 
 **Checked live on 2026-11-26 (PR #43, standalone, in a clean Playwright Chromium):**
 
@@ -245,12 +255,9 @@ PR #45 is merged (`49d8698`) and deployed (CI run 45759231692; every job green, 
 
 **Not checked live:** the service worker and opening offline (the desktop app's browser pane can't register one; use Playwright or a phone); the "new version" banner (#43's deploy is the first chance: a phone that opened the app before 2026-11-26 should offer Reload).
 
-1. Open the pull request for `claude/serracalc-fun-inputs` and merge it when CI passes. CI compares Storybook screenshots, so the new stories' baselines must be committed first (`pnpm nx run design-system-e2e:update-baselines`, Docker). Then check on a real phone: swipe a tape and flick it, hold + on a stepper, drag a dial and the clock, and see that a vertical swipe over a control still scrolls the page.
-2. A database that never answers (on `claude/serracalc-db-stalled`, in another session). In `serra-db.service.ts`, if the open neither succeeds, fails nor reports `blocked` within a few seconds, set a third state and show a general notice: close SerraCalc's other tabs and windows, and if that doesn't help, restart the browser. Clear it if the open succeeds later.
-   - Test it with a fake `indexedDB.open` whose request never fires, and fake timers.
-   - Check it live in the desktop app's browser pane, which still has this problem.
-3. A real phone (Android Chrome): drag handles with a finger, the plant cards, a backup shared to Drive, the language menu, folding, photo zoom, MathML fonts, installing and opening offline.
-4. Photos still missing (Commons had none free): hot-water pipes, pad cooling, fogging, a heat buffer, grow lights, CO₂ dosing, a PAR sensor, a lab analysis, a climate computer. The owner's own photos could fill them, with no farm or company names in view.
+1. **The stalled notice: merge, deploy, check live.** `claude/serracalc-db-stalled-notice` has it (pull request open; it also carries docs PR #46's commit `6c08b2b`). The owner asked to merge it (2026-11-26). Once deployed, open `https://product-serracalc.ahmed-hrichi.workers.dev` in the desktop app's browser pane, whose open gets no event at all: about 5 s later it should say "Your projects haven’t opened yet: the browser isn’t answering SerraCalc." What holds the pane's database is still unknown.
+2. A real phone (Android Chrome): the number controls (swipe and flick a tape, hold + on a stepper, a dial and the clocks, the buzz), drag handles with a finger, the plant cards, a backup shared to Drive, the language menu, folding, photo zoom, MathML fonts, installing and opening offline.
+3. Photos still missing (Commons had none free): hot-water pipes, pad cooling, fogging, a heat buffer, grow lights, CO₂ dosing, a PAR sensor, a lab analysis, a climate computer. The owner's own photos could fill them, with no farm or company names in view.
 
 **Suggested next features** (from the 2026-11-25 walk-through; the owner picks):
 
