@@ -90,8 +90,8 @@
             [status]="entry.status"
             [detail]="entry.detail ?? null"
             [labels]="labels()"
-            (accept)="assistant.decideAction(true)"
-            (decline)="assistant.decideAction(false)"
+            (accept)="decide(true)"
+            (decline)="decide(false)"
           />
         }
       }

@@ -87,6 +87,12 @@ export class AssistantPanel {
     this.open.set(false);
   }
 
+  /** Apply or Cancel: the card's buttons go, so focus goes to the composer. */
+  protected decide(apply: boolean): void {
+    this.assistant.decideAction(apply);
+    this.composer().focus();
+  }
+
   protected ask(text: string): void {
     void this.assistant.send(text);
   }

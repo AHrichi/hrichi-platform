@@ -144,6 +144,8 @@ describe('AssistantPanel', () => {
     (card?.querySelector('.apply') as HTMLButtonElement).click();
     await settle(fixture);
     expect(created).toEqual(['East']);
+    // The card's buttons are gone: the reader carries on writing.
+    expect(document.activeElement?.tagName).toBe('TEXTAREA');
     expect(text(dialog().querySelector('[role="log"]'))).toContain(
       'East is ready.',
     );
