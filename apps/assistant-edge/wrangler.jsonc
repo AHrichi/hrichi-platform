@@ -10,9 +10,10 @@
   "$schema": "../../node_modules/wrangler/config-schema.json",
   "name": "assistant-edge",
   "main": "src/index.ts",
-  "compatibility_date": "2026-11-01",
+  "compatibility_date": "2026-10-26",
   "observability": { "enabled": true },
-  "ai": { "binding": "AI" },
+  // Workers AI always runs on Cloudflare, also under `wrangler dev`.
+  "ai": { "binding": "AI", "remote": true },
   // Per IP and overall, per minute; counted per Cloudflare location, so
   // abuse protection rather than an exact quota.
   "ratelimits": [

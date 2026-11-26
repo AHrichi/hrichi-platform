@@ -148,4 +148,36 @@ describe('the assistant Worker', () => {
     });
     expect(JSON.stringify(body)).not.toContain('test-key');
   });
+
+  it('counts in the isolate when the rate limit binding fails', async () => {
+    const { fetchFn } = groq('Still here.');
+    const broken: RateLimit = {
+      limit: async () => {
+        throw new Error('binding down');
+      },
+    };
+    const response = await handleRequest(
+      post(CHAT),
+      env({ PER_IP: broken, GLOBAL: broken }),
+      { fetch: fetchFn, log: () => undefined },
+    );
+    expect(response.status).toBe(200);
+  });
+
+  it('answers a crash in the protocol, with CORS', async () => {
+    const lines: string[] = [];
+    // A Worker deployed without its LADDER setting.
+    const response = await handleRequest(
+      post(CHAT),
+      env({ LADDER: undefined as unknown as string }),
+      { log: (line) => lines.push(line) },
+    );
+    expect(response.status).toBe(503);
+    expect(response.headers.get('access-control-allow-origin')).toBe(ORIGIN);
+    expect(await response.json()).toMatchObject({
+      ok: false,
+      code: 'UNAVAILABLE',
+    });
+    expect(lines[0]).toContain('"error":"TypeError"');
+  });
 });

@@ -58,6 +58,23 @@ function fallbackLimit(key: string, limit: number, now: number): boolean {
   return true;
 }
 
+/** A rate limit binding's answer, or this isolate's own count if it fails. */
+async function allows(
+  binding: RateLimit | undefined,
+  key: string,
+  limit: number,
+  now: number,
+): Promise<boolean> {
+  if (binding) {
+    try {
+      return (await binding.limit({ key })).success;
+    } catch {
+      // The binding is down: count here rather than turn people away.
+    }
+  }
+  return fallbackLimit(key, limit, now);
+}
+
 export async function handleRequest(
   request: Request,
   env: Env,
@@ -129,12 +146,8 @@ export async function handleRequest(
   }
 
   const ip = request.headers.get('cf-connecting-ip') ?? 'unknown';
-  const perIp = env.PER_IP
-    ? (await env.PER_IP.limit({ key: ip })).success
-    : fallbackLimit(ip, 8, started);
-  const overall = env.GLOBAL
-    ? (await env.GLOBAL.limit({ key: 'all' })).success
-    : fallbackLimit('all', 60, started);
+  const perIp = await allows(env.PER_IP, ip, 8, started);
+  const overall = await allows(env.GLOBAL, 'all', 60, started);
   if (!perIp || !overall) {
     return failure(429, 'RATE_LIMITED', 'Too many requests', 60);
   }
@@ -148,12 +161,26 @@ export async function handleRequest(
     return failure(400, 'BAD_REQUEST', 'Send JSON');
   }
 
-  const { ladder } = buildLadder(env.LADDER, env, deps.fetch);
-  const outcome = await handleChat(body, {
-    profiles: PROFILES,
-    ladder,
-    log: (entry) => log(entry.status, entry),
-  });
+  let outcome: Awaited<ReturnType<typeof handleChat>>;
+  try {
+    const { ladder } = buildLadder(env.LADDER, env, deps.fetch);
+    outcome = await handleChat(body, {
+      profiles: PROFILES,
+      ladder,
+      log: (entry) => log(entry.status, entry),
+    });
+  } catch (error) {
+    // A crash still answers in the protocol, with CORS, so the page can
+    // say so; the log names the error, never the conversation.
+    (deps.log ?? console.error)(
+      JSON.stringify({
+        route: url.pathname,
+        status: 503,
+        error: error instanceof Error ? error.name : 'unknown',
+      }),
+    );
+    return failure(503, 'UNAVAILABLE', 'The assistant failed');
+  }
   const retry: Record<string, string> =
     outcome.body.ok === false && outcome.body.retryAfterSec !== undefined
       ? { 'retry-after': String(outcome.body.retryAfterSec) }

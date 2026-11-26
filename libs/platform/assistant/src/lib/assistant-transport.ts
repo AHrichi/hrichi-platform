@@ -10,7 +10,12 @@ export interface AssistantTransport {
 /** No answer at all: offline, the Worker unreachable, or no URL set up. */
 export const NO_ANSWER = null;
 
-const TIMEOUT_MS = 30_000;
+/**
+ * Past the server's own longest deadline (25 s for hosted models, 120 s
+ * with a local one), which answers BUSY in time: this only catches a
+ * connection that hangs.
+ */
+const TIMEOUT_MS = 130_000;
 
 /**
  * The assistant's Worker, at `assistantUrl` from site-config.json. A

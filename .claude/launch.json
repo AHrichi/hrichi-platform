@@ -120,6 +120,20 @@
         "4313"
       ],
       "port": 4313
+    },
+    {
+      "name": "assistant-edge (wrangler dev)",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": [
+        "exec",
+        "wrangler",
+        "dev",
+        "--config",
+        "apps/assistant-edge/wrangler.jsonc",
+        "--port",
+        "8788"
+      ],
+      "port": 8788
     }
   ]
 }
