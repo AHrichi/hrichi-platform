@@ -33,7 +33,7 @@ export type DialVariant = 'gauge' | 'clock';
 /** Gauge geometry, in viewBox units: a half moon over its centre line. */
 const GAUGE = { width: 120, height: 70, cx: 60, cy: 61, r: 48 } as const;
 /** Clock geometry: a ring, labels inside it, the value in the middle. */
-const CLOCK = { size: 140, c: 70, r: 56, labels: 42 } as const;
+const CLOCK = { size: 140, c: 70, r: 56, labels: 40 } as const;
 
 /**
  * A round control for one number. Drag the knob, or tap anywhere on the
