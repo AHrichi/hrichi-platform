@@ -1,0 +1,33 @@
+<div class="top">
+  <p class="progress" [id]="id + '-progress'">{{ progressText() }}</p>
+  <button
+    type="button"
+    class="close"
+    [attr.aria-label]="labels().close"
+    [title]="labels().close"
+    (click)="dismiss.emit()"
+  >
+    <svg viewBox="0 0 16 16" aria-hidden="true">
+      <path d="M4 4l8 8M12 4l-8 8" />
+    </svg>
+  </button>
+</div>
+<h2 class="heading" [id]="id + '-title'">{{ heading() }}</h2>
+<p class="body" [id]="id + '-body'">{{ body() }}</p>
+<div class="foot">
+  <span class="dots" aria-hidden="true">
+    @for (dot of dots(); track dot) {
+      <span class="dot" [class.is-current]="dot === step()"></span>
+    }
+  </span>
+  <span class="actions">
+    @if (!first()) {
+      <button type="button" ahButton="ghost" size="sm" (click)="back.emit()">
+        {{ labels().back }}
+      </button>
+    }
+    <button type="button" ahButton size="sm" (click)="next.emit()">
+      {{ last() ? labels().finish : labels().next }}
+    </button>
+  </span>
+</div>

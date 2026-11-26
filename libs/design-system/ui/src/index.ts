@@ -103,3 +103,9 @@ export * from './lib/thermometer/thermometer';
 export { Thermometer as AhThermometer } from './lib/thermometer/thermometer';
 export * from './lib/ruler/ruler';
 export { Ruler as AhRuler } from './lib/ruler/ruler';
+export * from './lib/coachmark/coachmark';
+export {
+  Coachmark as AhCoachmark,
+  type CoachmarkLabels as AhCoachmarkLabels,
+  type CoachmarkSide as AhCoachmarkSide,
+} from './lib/coachmark/coachmark';

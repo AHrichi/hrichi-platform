@@ -1,0 +1,42 @@
+<!-- Laid out left to right, so the measured boxes place things as they are;
+     the card itself reads in the page's direction. -->
+<div #layer class="layer" popover="manual" dir="ltr">
+  @if (tour.step()) {
+    @if (ring(); as box) {
+      <div
+        class="ring"
+        aria-hidden="true"
+        [class.is-placed]="placed()"
+        [style.transform]="'translate(' + box.x + 'px, ' + box.y + 'px)'"
+        [style.width.px]="box.width"
+        [style.height.px]="box.height"
+      ></div>
+    } @else {
+      <div class="veil" aria-hidden="true" [class.is-placed]="placed()"></div>
+    }
+    <!-- The slot is placed left to right; the card inside reads in the
+         page's direction (its own logical edges follow its own direction). -->
+    <div
+      class="slot"
+      [class.is-placed]="placed()"
+      [style.transform]="'translate(' + spot().x + 'px, ' + spot().y + 'px)'"
+    >
+      <ah-coachmark
+        #card
+        [attr.dir]="dir()"
+        [attr.lang]="lang()"
+        [heading]="words().title"
+        [body]="words().body"
+        [step]="index() + 1"
+        [total]="total()"
+        [progress]="copy().progress(index() + 1, total())"
+        [side]="spot().side"
+        [arrow]="spot().arrow"
+        [labels]="labels()"
+        (next)="tour.next()"
+        (back)="tour.back()"
+        (dismiss)="tour.close('skipped')"
+      />
+    </div>
+  }
+</div>
