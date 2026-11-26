@@ -25,7 +25,7 @@ import { filter, map } from 'rxjs';
 import { AhScrollHint } from '@ah/ui';
 import { APP_MODE } from '@ah/platform/app-mode';
 import { PreferencesStore } from '@ah/shared/state';
-import { isoWeek } from '@ah/products/serracalc/domain';
+import { isoWeek, type SerraScreen } from '@ah/products/serracalc/domain';
 import { SerraI18n } from '../i18n/serra-i18n';
 import { SerraDbService } from '../services/serra-db.service';
 import { SerraUpdates } from '../services/serra-updates';
@@ -33,24 +33,9 @@ import { SerraStore } from '../store/serra.store';
 import { Icon, type IconName } from '../ui/icon/icon';
 import { LangMenu } from '../ui/lang-menu/lang-menu';
 import { SERRA_TOUR, serraTourText } from '../tour/serra-tour';
+import { SerraAssistant } from '../assistant/serra-assistant';
 
-export type SerraScreen =
-  | 'projects'
-  | 'site'
-  | 'energy'
-  | 'calendar'
-  | 'greenhouse'
-  | 'heating'
-  | 'cooling'
-  | 'water'
-  | 'supply'
-  | 'air'
-  | 'operations'
-  | 'data'
-  | 'climate'
-  | 'science'
-  | 'report'
-  | 'guide';
+export type { SerraScreen };
 
 /** Sections of the side rail, in order. */
 export type NavGroup = 'plan' | 'climate' | 'water' | 'operate' | 'reference';
@@ -98,6 +83,7 @@ const GROUPS: readonly NavGroup[] = [
     RouterOutlet,
     RouterLink,
     RouterLinkActive,
+    SerraAssistant,
     TourHost,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -130,6 +116,9 @@ export class SerraShell {
   protected readonly db = inject(SerraDbService);
   protected readonly week = isoWeek(new Date());
   protected readonly moreOpen = signal(false);
+  /** The assistant's panel, and whether its code has been fetched yet. */
+  protected readonly assistantOpen = signal(false);
+  protected readonly assistantLoaded = signal(false);
   private readonly moreSheet = viewChild<ElementRef<HTMLElement>>('moreSheet');
   private openerButton: HTMLElement | null = null;
 
@@ -226,6 +215,12 @@ export class SerraShell {
   protected startTour(opener: HTMLElement): void {
     this.closeMore();
     this.tour.start(SERRA_TOUR, opener);
+  }
+
+  protected toggleAssistant(): void {
+    this.closeMore();
+    this.assistantLoaded.set(true);
+    this.assistantOpen.update((open) => !open);
   }
 
   protected toggleMore(trigger: HTMLElement): void {

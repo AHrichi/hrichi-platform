@@ -6,6 +6,9 @@
   [attr.dir]="i18n.isRtl() ? 'rtl' : 'ltr'"
   [attr.lang]="i18n.lang()"
   [style.--sc-top]="topSize() + 'px'"
+  [style.--ah-assistant-top]="
+    standalone ? topSize() + 'px' : 'var(--ah-site-top, 0px)'
+  "
 >
   <!-- Standalone, the header floats: the sentinel above it tells when the
        page has scrolled, so it can turn to glass. Inside the portfolio the
@@ -59,6 +62,18 @@
         <span class="offline" [title]="t().app.offlineHint">
           <span class="dot" aria-hidden="true"></span>{{ t().app.offline }}
         </span>
+        <button
+          type="button"
+          class="tool"
+          data-tour="tool-assistant"
+          aria-haspopup="dialog"
+          [attr.aria-expanded]="assistantOpen()"
+          [title]="t().assistant.hint"
+          (click)="toggleAssistant()"
+        >
+          <sc-icon name="assistant" />
+          <span class="tool-label">{{ t().assistant.button }}</span>
+        </button>
         <button
           #wand
           type="button"
@@ -286,6 +301,11 @@
         {{ t().tour.invite.start }}
       </button>
     </div>
+  }
+
+  <!-- The assistant: loaded on the first click of its button. -->
+  @defer (when assistantLoaded()) {
+    <sc-assistant [(open)]="assistantOpen" />
   }
 
   <!-- The guided tour: above everything, while it runs (TourService). -->

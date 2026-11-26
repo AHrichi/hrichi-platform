@@ -125,16 +125,23 @@ if (values['site-config']) {
     turnstileSiteKey = null,
     orbitApiUrl = null,
     learningEdgeUrl = null,
+    assistantUrl = null,
   } = environment;
   const n8nUrl = process.env.N8N_URL || environment.n8nUrl || null;
   if (writeFiles) {
     writeFileSync(
       join(dir, 'site-config.json'),
-      `${JSON.stringify({ apiUrl, turnstileSiteKey, orbitApiUrl, n8nUrl, learningEdgeUrl }, null, 2)}
+      `${JSON.stringify({ apiUrl, turnstileSiteKey, orbitApiUrl, n8nUrl, learningEdgeUrl, assistantUrl }, null, 2)}
 `,
     );
   }
-  for (const url of [apiUrl, orbitApiUrl, n8nUrl, learningEdgeUrl]) {
+  for (const url of [
+    apiUrl,
+    orbitApiUrl,
+    n8nUrl,
+    learningEdgeUrl,
+    assistantUrl,
+  ]) {
     if (url) {
       apiOrigins.push(new URL(url).origin);
     }
@@ -264,7 +271,7 @@ const csp = [
   // blob: is required by es-module-shims in shim mode (ADR-0006).
   `script-src 'self' ${evaluate} ${inlineScriptHashes(dir).join(' ')} blob: ${remotes} ${turnstile}`,
   "style-src 'self' 'unsafe-inline'",
-  `connect-src 'self' ${remotes} ${apiOrigins.join(' ')} ${tiles} ${geocoder} ${weather}${devConnectSources}`,
+  `connect-src 'self' ${cspSources([...remoteOrigins, ...apiOrigins]).join(' ')} ${tiles} ${geocoder} ${weather}${devConnectSources}`,
   `frame-src ${[self, turnstile].join(' ').trim() || "'none'"}`,
   // The remotes: an embedded app's own images (SerraCalc's Science photos)
   // are served from its origin.

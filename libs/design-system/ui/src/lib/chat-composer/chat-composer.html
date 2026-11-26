@@ -1,0 +1,43 @@
+<form class="row" (submit)="$event.preventDefault(); submit()">
+  <textarea
+    #field
+    class="field"
+    rows="1"
+    dir="auto"
+    [attr.aria-label]="label()"
+    [attr.aria-describedby]="hint() ? hintId : null"
+    [placeholder]="placeholder()"
+    [maxLength]="maxLength()"
+    [disabled]="disabled()"
+    (input)="draft.set(field.value)"
+    (keydown)="key($event)"
+  ></textarea>
+  @if (busy()) {
+    <button
+      type="button"
+      class="go is-stop"
+      [attr.aria-label]="stopLabel()"
+      [title]="stopLabel()"
+      (click)="stop.emit()"
+    >
+      <svg viewBox="0 0 16 16" aria-hidden="true">
+        <rect x="4" y="4" width="8" height="8" rx="1.5" />
+      </svg>
+    </button>
+  } @else {
+    <button
+      type="submit"
+      class="go"
+      [attr.aria-label]="sendLabel()"
+      [title]="sendLabel()"
+      [disabled]="!ready()"
+    >
+      <svg viewBox="0 0 16 16" aria-hidden="true">
+        <path d="M8 13V3M3.5 7.5 8 3l4.5 4.5" />
+      </svg>
+    </button>
+  }
+</form>
+@if (hint(); as hint) {
+  <p class="hint" [id]="hintId">{{ hint }}</p>
+}

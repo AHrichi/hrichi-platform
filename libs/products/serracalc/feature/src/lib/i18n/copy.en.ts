@@ -113,6 +113,46 @@ export const EN = {
     },
   },
 
+  assistant: {
+    button: 'Ask',
+    hint: 'Ask the SerraCalc assistant',
+    greeting:
+      'Hello! Ask me about SerraCalc or sizing your greenhouse. I can also create and change projects, save results and change settings: you approve every change first.',
+    suggestions: [
+      'How do I size the heating?',
+      'Create a project for a tomato house in Monastir',
+      'What do my saved results say?',
+    ],
+    privacy:
+      'To answer, your messages and a summary of your projects go to an AI service (Groq, Google or Cloudflare). Don’t share personal details.',
+    placeholder: 'Ask about SerraCalc…',
+    cards: {
+      create: (title: string) => `Create the project “${title}”`,
+      update: (title: string) => `Change the project “${title}”`,
+      save: (label: string, kind: string) => `Save “${label}” (${kind})`,
+      replace: (label: string, kind: string) => `Update “${label}” (${kind})`,
+      rename: (from: string, to: string) => `Rename “${from}” to “${to}”`,
+      deleteProject: (title: string) =>
+        `Delete “${title}” and every result saved in it`,
+      deleteResult: (label: string, title: string) =>
+        `Delete “${label}” from “${title}”`,
+      project: 'Project',
+      house: 'House',
+      others: 'Every other input stays as it is.',
+      noUndo: 'This can’t be undone.',
+    },
+    notes: {
+      opened: (screen: string) => `Opened ${screen}.`,
+      active: (title: string) => `“${title}” is the active project.`,
+      sunlightOn: 'Sunlight mode is on.',
+      sunlightOff: 'Sunlight mode is off.',
+      light: 'Light theme.',
+      dark: 'Dark theme.',
+      system: 'The theme follows the system.',
+      language: 'SerraCalc is in English.',
+      tour: 'The tour has started.',
+    },
+  },
   common: {
     close: 'Close',
     decrease: 'Decrease',

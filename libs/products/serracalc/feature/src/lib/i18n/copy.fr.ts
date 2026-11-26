@@ -114,6 +114,48 @@ export const FR: SerraCopy = {
     },
   },
 
+  assistant: {
+    button: 'Demander',
+    hint: 'Poser une question à l’assistant SerraCalc',
+    greeting:
+      'Bonjour ! Posez-moi vos questions sur SerraCalc ou le dimensionnement de votre serre. Je peux aussi créer et modifier des projets, enregistrer des résultats et changer les réglages : vous validez chaque modification.',
+    suggestions: [
+      'Comment dimensionner le chauffage ?',
+      'Crée un projet pour une serre de tomates à Monastir',
+      'Que disent mes résultats enregistrés ?',
+    ],
+    privacy:
+      'Pour répondre, vos messages et un résumé de vos projets sont envoyés à un service d’IA (Groq, Google ou Cloudflare). Ne partagez pas de données personnelles.',
+    placeholder: 'Une question sur SerraCalc…',
+    cards: {
+      create: (title: string) => `Créer le projet « ${title} »`,
+      update: (title: string) => `Modifier le projet « ${title} »`,
+      save: (label: string, kind: string) =>
+        `Enregistrer « ${label} » (${kind})`,
+      replace: (label: string, kind: string) =>
+        `Mettre à jour « ${label} » (${kind})`,
+      rename: (from: string, to: string) => `Renommer « ${from} » en « ${to} »`,
+      deleteProject: (title: string) =>
+        `Supprimer « ${title} » et tous ses résultats enregistrés`,
+      deleteResult: (label: string, title: string) =>
+        `Supprimer « ${label} » de « ${title} »`,
+      project: 'Projet',
+      house: 'Serre',
+      others: 'Les autres valeurs restent inchangées.',
+      noUndo: 'Cette action est irréversible.',
+    },
+    notes: {
+      opened: (screen: string) => `${screen} est ouvert.`,
+      active: (title: string) => `« ${title} » est le projet actif.`,
+      sunlightOn: 'Le mode plein soleil est activé.',
+      sunlightOff: 'Le mode plein soleil est désactivé.',
+      light: 'Thème clair.',
+      dark: 'Thème sombre.',
+      system: 'Le thème suit celui du système.',
+      language: 'SerraCalc est en français.',
+      tour: 'La visite guidée commence.',
+    },
+  },
   common: {
     close: 'Fermer',
     decrease: 'Diminuer',

@@ -128,8 +128,22 @@ export class App {
       FederationStore: () => getState(federation),
     };
 
+    // Panels the apps open beside the page (an assistant's side sheet) sit
+    // below the sticky header: its height, as --ah-site-top.
+    const document = inject(DOCUMENT);
+    afterNextRender(() => {
+      const header = this.header()?.nativeElement;
+      if (!header || typeof ResizeObserver === 'undefined') return;
+      new ResizeObserver(() =>
+        document.documentElement.style.setProperty(
+          '--ah-site-top',
+          `${Math.ceil(header.getBoundingClientRect().height)}px`,
+        ),
+      ).observe(header);
+    });
+
     // Prerendered HTML uses the default audience; switch only once hydrated.
-    const window = inject(DOCUMENT).defaultView;
+    const window = document.defaultView;
     afterNextRender(() => {
       preferences.restore();
       this.updates.start();

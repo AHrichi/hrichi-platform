@@ -114,6 +114,47 @@ export const DE: SerraCopy = {
     },
   },
 
+  assistant: {
+    button: 'Fragen',
+    hint: 'Den SerraCalc-Assistenten fragen',
+    greeting:
+      'Hallo! Frag mich zu SerraCalc oder zur Auslegung deines Gewächshauses. Ich kann auch Projekte anlegen und ändern, Ergebnisse speichern und Einstellungen ändern: Jede Änderung bestätigst du zuerst.',
+    suggestions: [
+      'Wie lege ich die Heizung aus?',
+      'Leg ein Projekt für ein Tomatenhaus in Monastir an',
+      'Was sagen meine gespeicherten Ergebnisse?',
+    ],
+    privacy:
+      'Für die Antwort gehen deine Nachrichten und eine Übersicht deiner Projekte an einen KI-Dienst (Groq, Google oder Cloudflare). Teile keine persönlichen Daten.',
+    placeholder: 'Frag zu SerraCalc…',
+    cards: {
+      create: (title: string) => `Projekt „${title}“ anlegen`,
+      update: (title: string) => `Projekt „${title}“ ändern`,
+      save: (label: string, kind: string) => `„${label}“ speichern (${kind})`,
+      replace: (label: string, kind: string) =>
+        `„${label}“ aktualisieren (${kind})`,
+      rename: (from: string, to: string) => `„${from}“ in „${to}“ umbenennen`,
+      deleteProject: (title: string) =>
+        `„${title}“ mit allen gespeicherten Ergebnissen löschen`,
+      deleteResult: (label: string, title: string) =>
+        `„${label}“ aus „${title}“ löschen`,
+      project: 'Projekt',
+      house: 'Gewächshaus',
+      others: 'Alle anderen Werte bleiben, wie sie sind.',
+      noUndo: 'Das lässt sich nicht rückgängig machen.',
+    },
+    notes: {
+      opened: (screen: string) => `${screen} ist geöffnet.`,
+      active: (title: string) => `„${title}“ ist das aktive Projekt.`,
+      sunlightOn: 'Der Sonnenlicht-Modus ist an.',
+      sunlightOff: 'Der Sonnenlicht-Modus ist aus.',
+      light: 'Helles Design.',
+      dark: 'Dunkles Design.',
+      system: 'Das Design folgt dem System.',
+      language: 'SerraCalc ist auf Deutsch.',
+      tour: 'Die Tour hat begonnen.',
+    },
+  },
   common: {
     close: 'Schließen',
     decrease: 'Verringern',

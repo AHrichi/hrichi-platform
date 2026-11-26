@@ -83,6 +83,7 @@
       "@ah/platform/inspector": ["./libs/platform/inspector/src/index.ts"],
       "@ah/platform/maps": ["./libs/platform/maps/src/index.ts"],
       "@ah/platform/storage": ["./libs/platform/storage/src/index.ts"],
+      "@ah/platform/assistant": ["./libs/platform/assistant/src/index.ts"],
       "@ah/platform/tour": ["./libs/platform/tour/src/index.ts"],
       "@ah/platform/web-push": ["./libs/platform/web-push/src/index.ts"],
       "@ah/design-system/tokens": ["./libs/design-system/tokens/src/index.ts"],
@@ -114,6 +115,10 @@
       "@ah/api/ai": ["./libs/api/ai/src/index.ts"],
       "@ah/shared/contracts": ["./libs/shared/contracts/src/index.ts"],
       "@ah/shared/ai-schema": ["./libs/shared/ai-schema/src/index.ts"],
+      "@ah/shared/assistant": ["./libs/shared/assistant/src/index.ts"],
+      "@ah/shared/assistant-engine": [
+        "./libs/shared/assistant-engine/src/index.ts"
+      ],
       "@ah/shared/steps": ["./libs/shared/steps/src/index.ts"],
       "@ah/learning/domain": ["./libs/learning/domain/src/index.ts"],
       "@ah/learning/data-access": ["./libs/learning/data-access/src/index.ts"],

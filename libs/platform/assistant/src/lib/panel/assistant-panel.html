@@ -1,0 +1,117 @@
+<dialog
+  #dialog
+  class="panel"
+  [attr.aria-labelledby]="id + '-title'"
+  (close)="closed()"
+>
+  <!-- Not a <header>: beside the page, that would be a second banner. -->
+  <div class="head">
+    <h2 class="title" [id]="id + '-title'">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path
+          d="M12 3l1.8 4.6L18.5 9.5l-4.7 1.9L12 16l-1.8-4.6L5.5 9.5l4.7-1.9Z"
+        />
+        <path d="M19 15l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8Z" />
+      </svg>
+      {{ copy().title }}
+    </h2>
+    <button
+      type="button"
+      class="text-button"
+      [disabled]="assistant.entries().length === 0"
+      (click)="assistant.reset()"
+    >
+      {{ copy().newChat }}
+    </button>
+    <button
+      type="button"
+      class="icon-button"
+      [attr.aria-label]="copy().close"
+      [title]="copy().close"
+      (click)="close()"
+    >
+      <svg viewBox="0 0 16 16" aria-hidden="true">
+        <path d="M4 4l8 8M12 4l-8 8" />
+      </svg>
+    </button>
+  </div>
+
+  <div #log class="log" role="log" aria-live="polite">
+    @if (assistant.entries().length === 0) {
+      @if (greeting()) {
+        <ah-chat-message from="assistant" [text]="greeting()" />
+      }
+      @if (suggestions().length > 0) {
+        <div class="chips">
+          @for (suggestion of suggestions(); track suggestion) {
+            <button
+              type="button"
+              class="chip"
+              dir="auto"
+              [disabled]="assistant.busy() || !assistant.online()"
+              (click)="ask(suggestion)"
+            >
+              {{ suggestion }}
+            </button>
+          }
+        </div>
+      }
+    }
+    @for (entry of assistant.entries(); track entry.id) {
+      @switch (entry.kind) {
+        @case ('user') {
+          <ah-chat-message from="user" [text]="entry.text" />
+        }
+        @case ('assistant') {
+          <ah-chat-message from="assistant" [text]="entry.text" />
+        }
+        @case ('notice') {
+          <div class="notice">
+            <ah-chat-message
+              from="notice"
+              [tone]="entry.tone"
+              [text]="entry.text"
+            />
+            @if (entry.undoable) {
+              <button
+                type="button"
+                class="text-button"
+                (click)="assistant.undo(entry.id)"
+              >
+                {{ copy().undo }}
+              </button>
+            }
+          </div>
+        }
+        @case ('action') {
+          <ah-action-card
+            [heading]="entry.heading"
+            [lines]="entry.lines"
+            [tone]="entry.tone"
+            [status]="entry.status"
+            [detail]="entry.detail ?? null"
+            [labels]="labels()"
+            (accept)="decide(true)"
+            (decline)="decide(false)"
+          />
+        }
+      }
+    }
+    @if (assistant.busy() && !waiting()) {
+      <ah-chat-message [typing]="true" [typingLabel]="copy().typing" />
+    }
+  </div>
+
+  <ah-chat-composer
+    class="composer"
+    [label]="copy().message"
+    [placeholder]="placeholder()"
+    [hint]="assistant.online() ? privacy() : copy().offline"
+    [busy]="assistant.busy()"
+    [disabled]="!assistant.online()"
+    [sendLabel]="copy().send"
+    [stopLabel]="copy().stop"
+    (send)="ask($event)"
+    (stop)="assistant.stop()"
+  />
+</dialog>

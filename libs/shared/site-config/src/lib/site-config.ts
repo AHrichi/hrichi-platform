@@ -12,6 +12,8 @@ export interface SiteConfig {
   n8nUrl: string | null;
   /** The Learning Engine's edge Worker, for Telegram nudges (ADR-0024). */
   learningEdgeUrl: string | null;
+  /** The assistants' edge Worker, for in-app AI assistants (ADR-0031). */
+  assistantUrl: string | null;
 }
 
 const disabled: SiteConfig = {
@@ -20,6 +22,7 @@ const disabled: SiteConfig = {
   orbitApiUrl: null,
   n8nUrl: null,
   learningEdgeUrl: null,
+  assistantUrl: null,
 };
 
 /** The URL of an n8n webhook, or null when no n8n is configured. */
@@ -52,6 +55,7 @@ export class SiteConfigService {
         orbitApiUrl: config.orbitApiUrl ?? null,
         n8nUrl: config.n8nUrl ?? null,
         learningEdgeUrl: config.learningEdgeUrl ?? null,
+        assistantUrl: config.assistantUrl ?? null,
       }))
       .catch(() => disabled);
     return this.config;
