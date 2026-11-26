@@ -334,6 +334,52 @@ test.describe('SerraCalc, standalone', () => {
     await expect(page.getByRole('button', { name: 'Reload' })).toBeVisible();
   });
 
+  test('says when the browser never answers for the projects', async ({
+    page,
+    context,
+  }) => {
+    // The other tab holds version 1 and asks to delete the database. The
+    // delete waits for it, and this page's open waits behind the delete
+    // with no event at all: no success, no error, no `blocked`.
+    const other = await context.newPage();
+    await other.goto(`${STANDALONE}manifest.webmanifest`);
+    await other.evaluate(
+      () =>
+        new Promise<void>((resolve) => {
+          const request = indexedDB.open('serracalc_db_v1', 1);
+          request.onupgradeneeded = () =>
+            request.result.createObjectStore('projects', { keyPath: 'id' });
+          request.onsuccess = () => {
+            (window as unknown as { held: IDBDatabase }).held = request.result;
+            indexedDB.deleteDatabase('serracalc_db_v1').onblocked = () =>
+              resolve();
+          };
+        }),
+    );
+
+    await page.goto(`${STANDALONE}projects`);
+    const stalled = page.getByText('Your projects haven’t opened yet');
+    // The app waits a few seconds before it says so.
+    await expect(stalled).toBeVisible({ timeout: 10_000 });
+    await expect(
+      page.getByText('SerraCalc is open in another tab on an older version'),
+    ).toBeHidden();
+    const results = await new AxeBuilder({ page })
+      .include('.update-region')
+      .analyze();
+    expect(results.violations).toEqual([]);
+
+    // Once the other tab lets go, the delete and then the open go through.
+    await other.evaluate(() =>
+      (window as unknown as { held: IDBDatabase }).held.close(),
+    );
+    await expect(stalled).toBeHidden();
+    await page.getByRole('button', { name: 'Load sample projects' }).click();
+    await expect(
+      page.getByRole('heading', { name: 'Geothermal tomato house (sample)' }),
+    ).toBeVisible();
+  });
+
   test('prints a report of the project without the app around it', async ({
     page,
   }) => {
