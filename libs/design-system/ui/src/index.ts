@@ -109,3 +109,9 @@ export {
   type CoachmarkLabels as AhCoachmarkLabels,
   type CoachmarkSide as AhCoachmarkSide,
 } from './lib/coachmark/coachmark';
+export * from './lib/chat-message/chat-message';
+export { ChatMessage as AhChatMessage } from './lib/chat-message/chat-message';
+export * from './lib/chat-composer/chat-composer';
+export { ChatComposer as AhChatComposer } from './lib/chat-composer/chat-composer';
+export * from './lib/action-card/action-card';
+export { ActionCard as AhActionCard } from './lib/action-card/action-card';
