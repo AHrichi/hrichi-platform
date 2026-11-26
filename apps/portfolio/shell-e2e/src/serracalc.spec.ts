@@ -59,8 +59,9 @@ async function savePeak(page: Page): Promise<void> {
 }
 
 /** Standalone: open the globe menu and pick a language by its own name. */
-/** Where an element sits on the page; it has to be there. */
+/** Where an element sits in the window, scrolled into view first. */
 async function boxOf(locator: Locator) {
+  await locator.scrollIntoViewIfNeeded();
   const box = await locator.boundingBox();
   if (!box) throw new Error('Not on the page');
   return box;
