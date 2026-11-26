@@ -19,6 +19,8 @@ export const FR: SerraCopy = {
         'SerraCalc est ouvert dans un autre onglet, dans une version plus ancienne : vos projets ne peuvent pas encore s’ouvrir ici. Fermez ou rechargez cet onglet.',
       dbReplaced:
         'Une version plus récente de SerraCalc s’est ouverte dans un autre onglet et a repris vos projets. Rechargez celui-ci : d’ici là, les modifications faites ici ne sont pas enregistrées.',
+      dbStalled:
+        'Vos projets ne se sont pas encore ouverts : le navigateur ne répond pas à SerraCalc. Fermez les autres onglets et fenêtres de SerraCalc. Si cela ne suffit pas, redémarrez le navigateur.',
     },
     offline: 'Fonctionne hors ligne',
     offlineHint:

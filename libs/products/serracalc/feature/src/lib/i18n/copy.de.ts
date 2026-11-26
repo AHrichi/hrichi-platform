@@ -19,6 +19,8 @@ export const DE: SerraCopy = {
         'SerraCalc ist in einem anderen Tab in einer älteren Version geöffnet, daher lassen sich Ihre Projekte hier noch nicht öffnen. Schließen Sie diesen Tab oder laden Sie ihn neu.',
       dbReplaced:
         'Eine neuere Version von SerraCalc wurde in einem anderen Tab geöffnet und hat Ihre Projekte übernommen. Laden Sie diesen Tab neu: Bis dahin werden Änderungen hier nicht gespeichert.',
+      dbStalled:
+        'Ihre Projekte haben sich noch nicht geöffnet: Der Browser antwortet SerraCalc nicht. Schließen Sie die anderen Tabs und Fenster mit SerraCalc. Hilft das nicht, starten Sie den Browser neu.',
     },
     offline: 'Funktioniert offline',
     offlineHint:
