@@ -7,7 +7,7 @@ import { ASSISTANT_LIMITS, type ChatMessage } from '@ah/shared/assistant';
  */
 export function trimHistory(
   messages: readonly ChatMessage[],
-  max = ASSISTANT_LIMITS.messages,
+  max: number = ASSISTANT_LIMITS.messages,
 ): ChatMessage[] {
   if (messages.length <= max) return [...messages];
   let start = messages.length - max;
@@ -16,7 +16,10 @@ export function trimHistory(
 }
 
 /** A tool's result as the model reads it, cut to what a round can carry. */
-export function resultText(value: unknown, max = 3000): string {
+export function resultText(
+  value: unknown,
+  max: number = ASSISTANT_LIMITS.toolResultChars,
+): string {
   const text = JSON.stringify(value ?? null) ?? 'null';
   if (text.length <= max) return text;
   return JSON.stringify({

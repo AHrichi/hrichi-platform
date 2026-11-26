@@ -93,14 +93,25 @@ export const SerraStore = signalStore(
     const db = inject(SerraDbService);
     let queue: Promise<void> = Promise.resolve();
 
-    /** Applies a change to the active project, one at a time, and saves it. */
-    function edit(
+    /**
+     * Applies a change to a project (the active one when `id` is null), one
+     * change at a time, and saves it. Resolves to what went wrong, if
+     * anything: the project is gone, or the database refused.
+     */
+    function editProject(
+      id: string | null,
       change: (project: GreenhouseProject) => GreenhouseProject,
-    ): Promise<void> {
+    ): Promise<string | null> {
+      let problem: string | null = null;
       const task = async () => {
         try {
-          const project = store.activeProject();
-          if (!project) return;
+          const project = id
+            ? store.projects().find((p) => p.id === id)
+            : store.activeProject();
+          if (!project) {
+            problem = 'project not found';
+            return;
+          }
           const saved = {
             ...change(project),
             id: project.id,
@@ -114,16 +125,24 @@ export const SerraStore = signalStore(
             error: null,
           });
         } catch (err) {
-          patchState(store, {
-            error: err instanceof Error ? err.message : String(err),
-          });
+          problem = err instanceof Error ? err.message : String(err);
+          patchState(store, { error: problem });
         }
       };
       queue = queue.then(task, task);
-      return queue;
+      return queue.then(() => problem);
+    }
+
+    /** Applies a change to the active project (see editProject). */
+    async function edit(
+      change: (project: GreenhouseProject) => GreenhouseProject,
+    ): Promise<void> {
+      await editProject(null, change);
     }
 
     return {
+      editProject,
+
       async loadProjects(): Promise<void> {
         patchState(store, { isLoading: true });
         try {

@@ -33,6 +33,7 @@ import { SerraStore } from '../store/serra.store';
 import { Icon, type IconName } from '../ui/icon/icon';
 import { LangMenu } from '../ui/lang-menu/lang-menu';
 import { SERRA_TOUR, serraTourText } from '../tour/serra-tour';
+import { SerraAssistant } from '../assistant/serra-assistant';
 
 export type { SerraScreen };
 
@@ -82,6 +83,7 @@ const GROUPS: readonly NavGroup[] = [
     RouterOutlet,
     RouterLink,
     RouterLinkActive,
+    SerraAssistant,
     TourHost,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -114,6 +116,9 @@ export class SerraShell {
   protected readonly db = inject(SerraDbService);
   protected readonly week = isoWeek(new Date());
   protected readonly moreOpen = signal(false);
+  /** The assistant's panel, and whether its code has been fetched yet. */
+  protected readonly assistantOpen = signal(false);
+  protected readonly assistantLoaded = signal(false);
   private readonly moreSheet = viewChild<ElementRef<HTMLElement>>('moreSheet');
   private openerButton: HTMLElement | null = null;
 
@@ -210,6 +215,12 @@ export class SerraShell {
   protected startTour(opener: HTMLElement): void {
     this.closeMore();
     this.tour.start(SERRA_TOUR, opener);
+  }
+
+  protected toggleAssistant(): void {
+    this.closeMore();
+    this.assistantLoaded.set(true);
+    this.assistantOpen.update((open) => !open);
   }
 
   protected toggleMore(trigger: HTMLElement): void {

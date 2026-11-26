@@ -114,6 +114,46 @@ export const IT: SerraCopy = {
     },
   },
 
+  assistant: {
+    button: 'Chiedi',
+    hint: 'Chiedi all’assistente di SerraCalc',
+    greeting:
+      'Ciao! Chiedimi di SerraCalc o del dimensionamento della tua serra. Posso anche creare e modificare progetti, salvare risultati e cambiare le impostazioni: approvi tu ogni modifica.',
+    suggestions: [
+      'Come dimensiono il riscaldamento?',
+      'Crea un progetto per una serra di pomodori a Monastir',
+      'Cosa dicono i miei risultati salvati?',
+    ],
+    privacy:
+      'Per rispondere, i tuoi messaggi e un riepilogo dei progetti vanno a un servizio di IA (Groq, Google o Cloudflare). Non condividere dati personali.',
+    placeholder: 'Chiedi di SerraCalc…',
+    cards: {
+      create: (title: string) => `Crea il progetto «${title}»`,
+      update: (title: string) => `Modifica il progetto «${title}»`,
+      save: (label: string, kind: string) => `Salva «${label}» (${kind})`,
+      replace: (label: string, kind: string) => `Aggiorna «${label}» (${kind})`,
+      rename: (from: string, to: string) => `Rinomina «${from}» in «${to}»`,
+      deleteProject: (title: string) =>
+        `Elimina «${title}» e tutti i risultati salvati`,
+      deleteResult: (label: string, title: string) =>
+        `Elimina «${label}» da «${title}»`,
+      project: 'Progetto',
+      house: 'Serra',
+      others: 'Gli altri valori restano invariati.',
+      noUndo: 'Non si può annullare.',
+    },
+    notes: {
+      opened: (screen: string) => `Aperto: ${screen}.`,
+      active: (title: string) => `«${title}» è il progetto attivo.`,
+      sunlightOn: 'Modalità pieno sole attiva.',
+      sunlightOff: 'Modalità pieno sole disattivata.',
+      light: 'Tema chiaro.',
+      dark: 'Tema scuro.',
+      system: 'Il tema segue il sistema.',
+      language: 'SerraCalc è in italiano.',
+      tour: 'Il tour guidato è iniziato.',
+    },
+  },
   common: {
     close: 'Chiudi',
     decrease: 'Diminuisci',

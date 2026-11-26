@@ -114,6 +114,46 @@ export const AR: SerraCopy = {
     },
   },
 
+  assistant: {
+    button: 'اسأل',
+    hint: 'اسأل مساعد SerraCalc',
+    greeting:
+      'مرحبًا! اسألني عن SerraCalc أو عن تصميم بيتك المحمي. يمكنني أيضًا إنشاء المشاريع وتعديلها وحفظ النتائج وتغيير الإعدادات: توافق أنت على كل تغيير أولًا.',
+    suggestions: [
+      'كيف أحسب التدفئة اللازمة؟',
+      'أنشئ مشروعًا لبيت طماطم في المنستير',
+      'ماذا تقول نتائجي المحفوظة؟',
+    ],
+    privacy:
+      'للإجابة، تُرسل رسائلك وملخص مشاريعك إلى خدمة ذكاء اصطناعي (Groq أو Google أو Cloudflare). لا تشارك بيانات شخصية.',
+    placeholder: 'اسأل عن SerraCalc…',
+    cards: {
+      create: (title: string) => `إنشاء المشروع «${title}»`,
+      update: (title: string) => `تعديل المشروع «${title}»`,
+      save: (label: string, kind: string) => `حفظ «${label}» (${kind})`,
+      replace: (label: string, kind: string) => `تحديث «${label}» (${kind})`,
+      rename: (from: string, to: string) => `إعادة تسمية «${from}» إلى «${to}»`,
+      deleteProject: (title: string) =>
+        `حذف «${title}» وكل النتائج المحفوظة فيه`,
+      deleteResult: (label: string, title: string) =>
+        `حذف «${label}» من «${title}»`,
+      project: 'المشروع',
+      house: 'البيت المحمي',
+      others: 'تبقى بقية القيم كما هي.',
+      noUndo: 'لا يمكن التراجع عن هذا.',
+    },
+    notes: {
+      opened: (screen: string) => `فُتحت صفحة ${screen}.`,
+      active: (title: string) => `«${title}» هو المشروع النشط.`,
+      sunlightOn: 'وضع ضوء الشمس مفعّل.',
+      sunlightOff: 'وضع ضوء الشمس متوقف.',
+      light: 'المظهر الفاتح.',
+      dark: 'المظهر الداكن.',
+      system: 'المظهر يتبع إعدادات النظام.',
+      language: 'SerraCalc بالعربية.',
+      tour: 'بدأت الجولة التعريفية.',
+    },
+  },
   common: {
     close: 'إغلاق',
     decrease: 'إنقاص',

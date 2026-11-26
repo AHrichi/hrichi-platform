@@ -111,9 +111,11 @@ function setup(
       },
     } as ToolExecutor<never>,
     delete_project: {
+      check: (args: { projectId: string }) =>
+        args.projectId === 'gone' ? 'No project "gone"' : null,
       describe: () => ({ heading: 'Delete it' }),
       run: () => ({ ok: false, error: 'not found' }),
-    },
+    } as ToolExecutor<never>,
   };
   const transport = new ScriptedTransport(replies);
   TestBed.configureTestingModule({
@@ -232,6 +234,18 @@ describe('AssistantService', () => {
     expect(service.entries().find((e) => e.kind === 'action')).toMatchObject({
       status: 'failed',
       detail: 'not found',
+    });
+  });
+
+  it('refuses a change that can’t run without asking the reader', async () => {
+    const { service, transport } = setup([
+      calls(call('delete_project', { projectId: 'gone' })),
+      words('It isn’t there.'),
+    ]);
+    await service.send('Delete gone');
+    expect(service.entries().some((e) => e.kind === 'action')).toBe(false);
+    expect(transport.requests[1].messages.slice(-1)[0]).toMatchObject({
+      content: '{"error":"No project \\"gone\\""}',
     });
   });
 

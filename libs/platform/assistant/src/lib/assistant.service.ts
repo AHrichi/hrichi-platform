@@ -23,6 +23,13 @@ import {
 import { ASSISTANT_TRANSPORT } from './assistant-transport';
 import { resultText, trimHistory } from './history';
 
+/** An entry before it has its id (one of the union's kinds). */
+type NewEntry = AssistantEntry extends infer E
+  ? E extends AssistantEntry
+    ? Omit<E, 'id'>
+    : never
+  : never;
+
 interface Saved {
   readonly v: 1;
   readonly history: ChatMessage[];
@@ -212,7 +219,9 @@ export class AssistantService {
         checked.tool.effect === 'write' ||
         checked.tool.effect === 'destructive'
       ) {
-        waiting.push({ call, args: checked.args, tool: checked.tool });
+        const problem = this.problem(call.name, checked.args);
+        if (problem) results.set(call.id, { error: problem });
+        else waiting.push({ call, args: checked.args, tool: checked.tool });
       } else {
         results.set(call.id, await this.execute(call.name, checked.args));
       }
@@ -298,6 +307,17 @@ export class AssistantService {
     return outcome.result ?? { ok: true };
   }
 
+  /** Why a change can't run, before the reader is asked about it. */
+  private problem(name: string, args: unknown): string | null {
+    const executor = this.setup.executors[name];
+    if (!executor) return `${name} isn't available here`;
+    try {
+      return executor.check?.(args as never) ?? null;
+    } catch (error) {
+      return error instanceof Error ? error.message : String(error);
+    }
+  }
+
   private offered(): ReadonlyMap<string, AssistantTool> {
     const omit = new Set(this.setup.omitTools?.() ?? []);
     return new Map([...this.tools].filter(([name]) => !omit.has(name)));
@@ -338,9 +358,7 @@ export class AssistantService {
     this.history.pop();
   }
 
-  private add(
-    entry: Omit<AssistantEntry, 'id'> & { kind: AssistantEntry['kind'] },
-  ): number {
+  private add(entry: NewEntry): number {
     const id = this.nextId++;
     this.list.update((all) => [...all, { ...entry, id } as AssistantEntry]);
     return id;

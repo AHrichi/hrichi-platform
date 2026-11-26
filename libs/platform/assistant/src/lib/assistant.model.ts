@@ -17,6 +17,12 @@ export type ToolOutcome =
 /** How the app runs one of its tools. */
 export interface ToolExecutor<TArgs = never> {
   /**
+   * For tools that change or delete data: what makes the call impossible
+   * (a project that isn't there, a value out of range), checked before
+   * the reader is asked, so they never approve a change that can't run.
+   */
+  check?(args: TArgs): string | null;
+  /**
    * For tools that change or delete data: what the confirmation card says,
    * in the reader's language. Written by the app, never by the model, so
    * what the reader approves is what runs.
