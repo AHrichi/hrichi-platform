@@ -1,0 +1,8 @@
+{
+  "name": "shared-sync-server",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/shared/sync-server/src",
+  "projectType": "library",
+  "tags": ["scope:shared", "type:util", "runtime:agnostic"],
+  "targets": {}
+}
