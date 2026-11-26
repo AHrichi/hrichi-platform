@@ -32,3 +32,4 @@ export * from './lib/utils/backup';
 
 export * from './lib/assistant/navigation';
 export * from './lib/assistant/serra-assistant';
+export * from './lib/sync/serra-sync';

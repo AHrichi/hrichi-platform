@@ -254,8 +254,12 @@ export class SyncService {
         continue;
       }
       const { deleted, data, ...rest } = record;
+      // One way of writing a time, so stores may compare them as text.
+      const updatedAt = new Date(record.updatedAt).toISOString();
       candidates.push(
-        deleted ? { ...rest, deleted: true, bytes } : { ...rest, data, bytes },
+        deleted
+          ? { ...rest, updatedAt, deleted: true, bytes }
+          : { ...rest, updatedAt, data, bytes },
       );
     }
 
