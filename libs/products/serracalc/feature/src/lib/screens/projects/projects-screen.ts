@@ -27,6 +27,7 @@ import { SERRA_TOUR } from '../../tour/serra-tour';
 import { Icon } from '../../ui/icon/icon';
 import { type NewProject, SerraStore } from '../../store/serra.store';
 import { BackupPanel } from '../../ui/backup-panel/backup-panel';
+import { SyncPanel } from '../../ui/sync-panel/sync-panel';
 import { FieldGrid, type FieldChange } from '../../ui/field-grid/field-grid';
 import { GREENHOUSE_FIELDS } from '../fields';
 import { Panel } from '../../ui/panel/panel';
@@ -55,6 +56,7 @@ function blankDraft(): NewProject {
     AhEmptyState,
     AhModal,
     BackupPanel,
+    SyncPanel,
     FieldGrid,
     Icon,
     RouterLink,

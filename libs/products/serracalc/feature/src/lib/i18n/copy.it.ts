@@ -1799,6 +1799,72 @@ export const IT: SerraCopy = {
     },
   },
 
+  sync: {
+    title: 'Sincronizzazione',
+    lead: 'Tieni i tuoi progetti su telefono, tablet e computer. Sono conservati su un server Cloudflare, senza account: un dispositivo si unisce con un codice da uno già collegato. Disattivala o elimina la copia online in qualsiasi momento; una copia inutilizzata per un anno viene eliminata.',
+    embedded:
+      'La sincronizzazione funziona nell’app SerraCalc, non in questa demo.',
+    deviceName: 'Nome di questo dispositivo',
+    kinds: {
+      android: 'Telefono Android',
+      iphone: 'iPhone',
+      ipad: 'iPad',
+      windows: 'Computer Windows',
+      mac: 'Mac',
+      linux: 'Computer Linux',
+      other: 'Questo dispositivo',
+    },
+    turnOn: 'Attiva la sincronizzazione',
+    haveCode: 'Ho un codice',
+    code: 'Codice dall’altro dispositivo',
+    codeHint:
+      'Su un dispositivo già collegato: Progetti → Sincronizzazione → Collega un altro dispositivo.',
+    join: 'Collega questo dispositivo',
+    cancel: 'Annulla',
+    syncing: 'Sincronizzazione…',
+    synced: (when: string) => `Sincronizzato ${when}`,
+    never: 'Non ancora sincronizzato',
+    offline: 'Offline: le modifiche partono quando torna la connessione.',
+    waiting: 'Nuovo tentativo tra poco.',
+    unavailable:
+      'La sincronizzazione non è disponibile ora. I tuoi progetti restano su questo dispositivo.',
+    removed:
+      'Questo dispositivo è stato rimosso dalla sincronizzazione. I suoi progetti restano qui.',
+    clock:
+      'L’orologio di questo dispositivo è avanti: imposta l’ora giusta, poi sincronizza.',
+    full: 'La copia online è piena: elimina progetti o risultati vecchi.',
+    tooLarge:
+      'Alcuni dati sono troppo grandi da sincronizzare (letture molto lunghe?).',
+    syncNow: 'Sincronizza ora',
+    usage: (used: string, max: string) => `${used} usati su ${max}`,
+    link: 'Collega un altro dispositivo',
+    linkLead:
+      'Sull’altro dispositivo apri SerraCalc, vai in Progetti → Sincronizzazione → Ho un codice e scrivi:',
+    validFor: (time: string) => `Vale una volta, per ${time}`,
+    expired: 'Questo codice è scaduto.',
+    copyLink: 'Copia invece un link',
+    copied: 'Link copiato',
+    devices: 'Dispositivi collegati',
+    thisDevice: 'questo dispositivo',
+    lastSeen: (date: string) => `Ultima sincronizzazione ${date}`,
+    remove: 'Rimuovi',
+    removeConfirm: (name: string) =>
+      `Rimuovere «${name}» dalla sincronizzazione? Tiene i suoi progetti ma smette di sincronizzarsi.`,
+    turnOff: 'Disattiva su questo dispositivo',
+    turnOffConfirm:
+      'Disattivare la sincronizzazione su questo dispositivo? I suoi progetti restano qui.',
+    deleteCloud: 'Elimina la copia online',
+    deleteConfirm:
+      'Eliminare la copia online dei tuoi progetti? Ogni dispositivo tiene i suoi progetti ma smette di sincronizzarsi. Non si può annullare.',
+    errors: {
+      code: 'Il codice è sbagliato, già usato o scaduto. Chiedine uno nuovo sull’altro dispositivo.',
+      network:
+        'Impossibile raggiungere il server. Controlla la connessione e riprova.',
+      unavailable: 'La sincronizzazione non è disponibile ora.',
+      busy: 'Troppi tentativi: aspetta un minuto e riprova.',
+    },
+  },
+
   report: {
     title: 'Relazione',
     lead: 'Il progetto su carta: la serra, il suo clima e ogni risultato salvato con le sue osservazioni, da stampare o conservare in PDF.',

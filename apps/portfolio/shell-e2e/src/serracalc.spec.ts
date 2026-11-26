@@ -1,11 +1,14 @@
 import AxeBuilder from '@axe-core/playwright';
-import type { Locator, Page } from '@playwright/test';
+import type { Browser, Locator, Page } from '@playwright/test';
 import { readFileSync } from 'node:fs';
+import { SERRA_SYNC } from '@ah/products/serracalc/domain';
+import { InMemorySyncRepository, SyncService } from '@ah/shared/sync-server';
 import { expect, test } from './support/test';
 import { appIsPublic, chooseLanguage } from './support/site';
 
 // SerraCalc, greenhouse heat, water and climate (ADR-0027). Local-first:
-// projects live in IndexedDB; only the assistant calls a server.
+// projects live in IndexedDB; only the assistant and opt-in sync call a
+// server.
 const STANDALONE = 'http://localhost:4314/';
 
 // The standalone build registers a service worker (offline use); a cached
@@ -501,19 +504,19 @@ test.describe('SerraCalc, standalone', () => {
       page.getByRole('heading', { name: 'Geothermal tomato house (sample)' }),
     ).toBeVisible();
 
-    // A newer version opens in the other tab: this one lets it upgrade
-    // and asks for a reload.
+    // A newer version (past this build's 3) opens in the other tab: this
+    // one lets it upgrade and asks for a reload.
     const version = await other.evaluate(
       () =>
         new Promise<number>((resolve) => {
-          const request = indexedDB.open('serracalc_db_v1', 3);
+          const request = indexedDB.open('serracalc_db_v1', 4);
           request.onsuccess = () => {
             request.result.close();
             resolve(request.result.version);
           };
         }),
     );
-    expect(version).toBe(3);
+    expect(version).toBe(4);
     await expect(
       page.getByText('A newer SerraCalc opened in another tab'),
     ).toBeVisible();
@@ -841,6 +844,201 @@ test.describe('SerraCalc, the assistant', () => {
   }
 });
 
+// Cloud sync (ADR-0032): two browser contexts are two devices; the sync
+// server is the real SyncService, in memory in this process, answering the
+// pages' requests. The pages read its address from site-config.json.
+const SYNC = 'http://localhost:8789';
+
+/** One sync server, as the Worker would be, for every page of a test. */
+function syncServer() {
+  return new SyncService({
+    repository: new InMemorySyncRepository(),
+    secret: 'e2e-sync-secret-that-is-long-enough-123',
+    specs: [SERRA_SYNC],
+  });
+}
+
+/** Answers a page's sync requests from `service`. */
+async function serveSync(page: Page, service: SyncService): Promise<void> {
+  await page.route('**/site-config.json', (route) =>
+    route.fulfill({ json: { syncUrl: SYNC } }),
+  );
+  await page.route(`${SYNC}/**`, async (route) => {
+    const request = route.request();
+    const headers = {
+      'access-control-allow-origin': request.headers()['origin'] ?? '*',
+      'access-control-allow-headers': 'content-type, authorization',
+      'access-control-allow-methods': 'GET, POST, DELETE, OPTIONS',
+    };
+    if (request.method() === 'OPTIONS') {
+      await route.fulfill({ status: 204, headers });
+      return;
+    }
+    const path = new URL(request.url()).pathname;
+    const token =
+      request.headers()['authorization']?.replace(/^Bearer /, '') ?? null;
+    const body = request.postData() ? request.postDataJSON() : undefined;
+    const device = /^\/v1\/devices\/(.+)$/.exec(path)?.[1];
+    const outcome =
+      path === '/v1/spaces'
+        ? await service.createSpace(body)
+        : path === '/v1/pairings'
+          ? await service.startPairing(token)
+          : path === '/v1/pairings/claim'
+            ? await service.claim(body)
+            : path === '/v1/devices'
+              ? await service.devices(token)
+              : device
+                ? await service.revoke(token, device)
+                : path === '/v1/spaces/current'
+                  ? await service.deleteSpace(token)
+                  : await service.sync(token, body);
+    await route.fulfill({
+      status: outcome.status,
+      headers,
+      json: outcome.body,
+    });
+  });
+}
+
+/** A device: its own browser context, in English, on this server. */
+async function syncDevice(browser: Browser, service: SyncService) {
+  const context = await browser.newContext({ serviceWorkers: 'block' });
+  const page = await context.newPage();
+  await page.addInitScript(() =>
+    localStorage.setItem('preferred_language', 'en'),
+  );
+  await serveSync(page, service);
+  // Removing a device and deleting the cloud copy ask first.
+  page.on('dialog', (dialog) => void dialog.accept());
+  return { context, page, panel: page.locator('sc-sync-panel') };
+}
+
+test.describe('SerraCalc, cloud sync', () => {
+  test('links a second device, which gets the projects and sends its own', async ({
+    browser,
+  }) => {
+    const service = syncServer();
+    const a = await syncDevice(browser, service);
+    const b = await syncDevice(browser, service);
+
+    await loadSamples(a.page);
+    await a.panel.getByRole('button', { name: 'Turn on cloud sync' }).click();
+    await expect(a.panel.getByRole('status')).toContainText('Synced');
+    await a.panel.getByRole('button', { name: 'Link another device' }).click();
+    const code = (await a.panel.locator('.code').textContent())?.trim() ?? '';
+    expect(code).toMatch(/^[0-9A-Z]{4}-[0-9A-Z]{4}$/);
+    await expect(a.panel).toContainText('Works once, for');
+
+    await b.page.goto(`${STANDALONE}projects`);
+    await expect(b.page.getByText('No project yet')).toBeVisible();
+    await b.panel.getByRole('button', { name: 'I have a code' }).click();
+    await b.panel
+      .getByRole('textbox', { name: 'Code from your other device' })
+      .fill(code.toLowerCase());
+    await b.panel.getByRole('button', { name: 'Link this device' }).click();
+    await expect(
+      b.page.getByRole('heading', { name: 'Geothermal tomato house (sample)' }),
+    ).toBeVisible();
+    await expect(b.panel.locator('.devices li')).toHaveCount(2);
+
+    // B saves a result to the geothermal house; A gets it on its next sync.
+    const saved = a.page.locator('ul.saved li');
+    const before = await saved.count();
+    await b.page
+      .locator('select')
+      .first()
+      .selectOption({ label: 'Geothermal tomato house (sample)' });
+    await savePeak(b.page);
+    await b.page.goto(`${STANDALONE}projects`);
+    await b.panel.getByRole('button', { name: 'Sync now' }).click();
+    await expect(b.panel.getByRole('status')).toContainText('Synced');
+    await a.panel.getByRole('button', { name: 'Sync now' }).click();
+    await expect(saved).toHaveCount(before + 1);
+
+    // A removes B: B stops syncing and keeps its projects.
+    await a.panel.getByRole('button', { name: 'Remove' }).click();
+    await expect(a.panel.locator('.devices li')).toHaveCount(1);
+    await b.panel.getByRole('button', { name: 'Sync now' }).click();
+    await expect(b.panel).toContainText(
+      'This device was removed from cloud sync',
+    );
+    await expect(
+      b.page.getByRole('heading', { name: 'Geothermal tomato house (sample)' }),
+    ).toBeVisible();
+    await a.context.close();
+    await b.context.close();
+  });
+
+  test('a link fills the code in and waits for the reader; a wrong code says so', async ({
+    browser,
+  }) => {
+    const service = syncServer();
+    const a = await syncDevice(browser, service);
+    const b = await syncDevice(browser, service);
+    await a.page.goto(`${STANDALONE}projects`);
+    await a.panel.getByRole('button', { name: 'Turn on cloud sync' }).click();
+    await a.panel.getByRole('button', { name: 'Link another device' }).click();
+    const code = (await a.panel.locator('.code').textContent())?.trim() ?? '';
+
+    await b.page.goto(`${STANDALONE}projects#link=${code}`);
+    const field = b.panel.getByRole('textbox', {
+      name: 'Code from your other device',
+    });
+    await expect(field).toHaveValue(code);
+    await expect(field).toBeFocused();
+    // Not linked until the reader says so.
+    await expect(
+      b.panel.getByRole('button', { name: 'Link this device' }),
+    ).toBeVisible();
+    expect(new URL(b.page.url()).hash).toBe('');
+
+    await field.fill('ZZZZ-ZZZZ');
+    await b.panel.getByRole('button', { name: 'Link this device' }).click();
+    await expect(b.panel.getByRole('alert')).toContainText(
+      'That code is wrong, used or expired',
+    );
+    await a.context.close();
+    await b.context.close();
+  });
+
+  for (const theme of ['light', 'dark'] as const) {
+    test(`the sync panel passes axe, off and on, ${theme}`, async ({
+      browser,
+    }) => {
+      const service = syncServer();
+      const a = await syncDevice(browser, service);
+      await a.page.addInitScript(
+        (chosen) => localStorage.setItem('ah.theme', chosen),
+        theme,
+      );
+      await a.page.goto(`${STANDALONE}projects`);
+      await a.panel.scrollIntoViewIfNeeded();
+      expect(
+        (
+          await new AxeBuilder({ page: a.page })
+            .include('sc-sync-panel')
+            .analyze()
+        ).violations,
+      ).toEqual([]);
+      await a.panel.getByRole('button', { name: 'Turn on cloud sync' }).click();
+      await a.panel
+        .getByRole('button', { name: 'Link another device' })
+        .click();
+      await expect(a.panel.locator('.devices li')).toHaveCount(1);
+      await settled(a.page);
+      expect(
+        (
+          await new AxeBuilder({ page: a.page })
+            .include('sc-sync-panel')
+            .analyze()
+        ).violations,
+      ).toEqual([]);
+      await a.context.close();
+    });
+  }
+});
+
 test.describe('SerraCalc, inside the portfolio', () => {
   // eslint-disable-next-line playwright/no-skipped-test
   test.skip(!appIsPublic('serracalc'), 'Hidden from the catalog.');
@@ -907,6 +1105,16 @@ test.describe('SerraCalc, inside the portfolio', () => {
     expect(box?.y ?? 0).toBeGreaterThanOrEqual(
       (header?.y ?? 0) + (header?.height ?? 0) - 1,
     );
+  });
+
+  test('cloud sync is left to the app itself', async ({ page }) => {
+    await page.goto('/apps/serracalc/projects');
+    await expect(page.locator('sc-sync-panel')).toContainText(
+      'Cloud sync works in the SerraCalc app itself',
+    );
+    await expect(
+      page.getByRole('button', { name: 'Turn on cloud sync' }),
+    ).toHaveCount(0);
   });
 
   test('the old address redirects', async ({ page }) => {

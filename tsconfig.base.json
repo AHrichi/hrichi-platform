@@ -84,6 +84,7 @@
       "@ah/platform/maps": ["./libs/platform/maps/src/index.ts"],
       "@ah/platform/storage": ["./libs/platform/storage/src/index.ts"],
       "@ah/platform/assistant": ["./libs/platform/assistant/src/index.ts"],
+      "@ah/platform/sync": ["./libs/platform/sync/src/index.ts"],
       "@ah/platform/tour": ["./libs/platform/tour/src/index.ts"],
       "@ah/platform/web-push": ["./libs/platform/web-push/src/index.ts"],
       "@ah/design-system/tokens": ["./libs/design-system/tokens/src/index.ts"],
@@ -118,6 +119,11 @@
       "@ah/shared/assistant": ["./libs/shared/assistant/src/index.ts"],
       "@ah/shared/assistant-engine": [
         "./libs/shared/assistant-engine/src/index.ts"
+      ],
+      "@ah/shared/sync": ["./libs/shared/sync/src/index.ts"],
+      "@ah/shared/sync-server": ["./libs/shared/sync-server/src/index.ts"],
+      "@ah/shared/sync-server/testing": [
+        "./libs/shared/sync-server/src/testing.ts"
       ],
       "@ah/shared/steps": ["./libs/shared/steps/src/index.ts"],
       "@ah/learning/domain": ["./libs/learning/domain/src/index.ts"],

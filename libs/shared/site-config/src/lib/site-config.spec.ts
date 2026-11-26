@@ -30,6 +30,7 @@ describe('SiteConfigService', () => {
       n8nUrl: null,
       learningEdgeUrl: null,
       assistantUrl: null,
+      syncUrl: null,
     });
     await service.load();
     expect(fetch).toHaveBeenCalledTimes(1);
@@ -48,6 +49,7 @@ describe('SiteConfigService', () => {
       n8nUrl: null,
       learningEdgeUrl: null,
       assistantUrl: null,
+      syncUrl: null,
     });
   });
 

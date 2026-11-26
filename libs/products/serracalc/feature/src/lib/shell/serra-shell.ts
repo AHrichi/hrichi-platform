@@ -8,6 +8,7 @@ import {
   effect,
   inject,
   signal,
+  untracked,
   viewChild,
 } from '@angular/core';
 import { Title } from '@angular/platform-browser';
@@ -34,6 +35,8 @@ import { Icon, type IconName } from '../ui/icon/icon';
 import { LangMenu } from '../ui/lang-menu/lang-menu';
 import { SERRA_TOUR, serraTourText } from '../tour/serra-tour';
 import { SerraAssistant } from '../assistant/serra-assistant';
+import { SyncEngine } from '@ah/platform/sync';
+import { provideSerraSync } from '../services/serra-sync';
 
 export type { SerraScreen };
 
@@ -87,6 +90,8 @@ const GROUPS: readonly NavGroup[] = [
     TourHost,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  // Cloud sync for the screens below (ADR-0032); off until turned on.
+  providers: [provideSerraSync()],
   host: { 'data-look': 'desert' },
   templateUrl: './serra-shell.html',
   styleUrl: './serra-shell.scss',
@@ -174,6 +179,11 @@ export class SerraShell {
       if (screen) {
         title.setTitle(`${this.t().nav[screen.id]} · SerraCalc`);
       }
+    });
+    // A change put in the outbox: sync it once the edits settle.
+    const sync = inject(SyncEngine);
+    effect(() => {
+      if (this.db.outboxChanged() > 0) untracked(() => sync.changed());
     });
     if (this.standalone) {
       this.floatHeader();

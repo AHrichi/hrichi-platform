@@ -1,0 +1,157 @@
+@use '../../styles/serra' as sc;
+
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.lead,
+.hint,
+.note,
+.error,
+.state,
+.pairing p:not(.code) {
+  margin: 0;
+  font-size: var(--font-size-200);
+}
+
+.hint {
+  color: var(--color-text-muted);
+}
+
+.note {
+  padding: var(--space-2) var(--space-3);
+  border-inline-start: 3px solid var(--color-accent-default);
+  background: var(--color-accent-subtle);
+}
+
+.error {
+  color: var(--color-danger-default);
+}
+
+.text {
+  @include sc.label;
+
+  max-inline-size: 24rem;
+
+  input {
+    @include sc.form-control;
+  }
+}
+
+.code-field {
+  font-family: var(--font-family-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.join {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.leave {
+  padding-block-start: var(--space-2);
+  border-block-start: 1px solid var(--color-border-default);
+}
+
+.delete {
+  color: var(--color-danger-default);
+}
+
+// Where sync stands: a dot coloured by state, its words beside it.
+.state {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-weight: var(--font-weight-medium);
+}
+
+.dot {
+  flex: none;
+  inline-size: 0.625rem;
+  block-size: 0.625rem;
+  border-radius: 50%;
+  background: var(--color-success-default);
+
+  [data-status='syncing'] & {
+    background: var(--color-accent-default);
+  }
+
+  [data-status='offline'] &,
+  [data-status='waiting'] &,
+  [data-status='unavailable'] & {
+    background: var(--color-text-muted);
+  }
+
+  [data-status='attention'] & {
+    background: var(--color-warning-default);
+  }
+}
+
+.pairing {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border: 1px dashed var(--color-border-strong);
+  border-radius: var(--radius-md);
+}
+
+// The code, large enough to read across a table.
+.code {
+  margin: 0;
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-600);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.12em;
+}
+
+.devices-title {
+  margin: 0;
+  font-size: var(--font-size-200);
+  font-weight: var(--font-weight-semibold);
+}
+
+.devices {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-1) var(--space-3);
+    padding-block: var(--space-2);
+    border-block-end: 1px solid var(--color-border-default);
+  }
+}
+
+.device-name {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  font-weight: var(--font-weight-medium);
+}
+
+.badge {
+  padding: 0 var(--space-2);
+  border-radius: var(--radius-pill);
+  background: var(--color-accent-subtle);
+  color: var(--color-accent-default);
+  font-size: var(--font-size-100);
+}

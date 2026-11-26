@@ -1,0 +1,43 @@
+{
+  // Sync spaces for the platform's apps (ADR-0032), kept in D1. CI deploys
+  // it (apps/sync-edge/deploy.mjs) once its database exists:
+  //   pnpm wrangler d1 create sync-edge --location weur
+  // then put the database_id below. It needs SYNC_TOKEN_SECRET (32+
+  // characters) to sign device tokens:
+  //   pnpm wrangler secret put SYNC_TOKEN_SECRET --config apps/sync-edge/wrangler.jsonc
+  // Until then /health says ready: false and every route answers 503.
+  // Locally: copy .dev.vars.example to .dev.vars, then
+  //   pnpm wrangler d1 migrations apply sync-edge --local --config apps/sync-edge/wrangler.jsonc
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "sync-edge",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-10-26",
+  "observability": { "enabled": true },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "sync-edge",
+      // Not created yet: the deploy skips this Worker until it is.
+      "database_id": "00000000-0000-0000-0000-000000000000",
+      "migrations_dir": "migrations",
+    },
+  ],
+  // Per IP, per minute; counted per Cloudflare location, so abuse
+  // protection rather than an exact quota.
+  "ratelimits": [
+    {
+      "name": "PER_IP",
+      "namespace_id": "4103",
+      "simple": { "limit": 60, "period": 60 },
+    },
+    {
+      "name": "JOIN",
+      "namespace_id": "4104",
+      "simple": { "limit": 6, "period": 60 },
+    },
+  ],
+  "triggers": { "crons": ["17 3 * * *"] },
+  "vars": {
+    "ALLOWED_ORIGINS": "https://product-serracalc.ahmed-hrichi.workers.dev,https://portfolio.ahmed-hrichi.workers.dev,http://localhost:4314,http://localhost:4200",
+  },
+}

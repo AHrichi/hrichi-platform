@@ -108,7 +108,7 @@ function isHouse(value: unknown): value is GreenhouseSpec {
   );
 }
 
-function isCalculation(value: unknown): value is SavedCalculation {
+export function isCalculation(value: unknown): value is SavedCalculation {
   return (
     isRecord(value) &&
     typeof value['id'] === 'string' &&
@@ -123,7 +123,7 @@ function isCalculation(value: unknown): value is SavedCalculation {
  * The project as SerraCalc stores it, or null when a field it needs is
  * missing. Results that are damaged or of an unknown kind are dropped.
  */
-function toProject(value: unknown): GreenhouseProject | null {
+export function toProject(value: unknown): GreenhouseProject | null {
   if (
     !isRecord(value) ||
     typeof value['id'] !== 'string' ||
@@ -187,7 +187,7 @@ function isPlant(value: unknown): value is SitePlant {
 }
 
 /** A site's plants and tariffs, or null when it can't be read. */
-function toSite(value: unknown): SiteRecord | null {
+export function toSite(value: unknown): SiteRecord | null {
   if (
     !isRecord(value) ||
     typeof value['name'] !== 'string' ||
