@@ -1,0 +1,90 @@
+<div
+  #face
+  class="face"
+  [attr.role]="companion() ? null : 'slider'"
+  [attr.tabindex]="companion() || disabled() ? -1 : 0"
+  [attr.aria-hidden]="companion() || null"
+  [attr.aria-label]="companion() ? null : label()"
+  [attr.aria-labelledby]="companion() ? null : labelledBy()"
+  [attr.aria-valuemin]="companion() ? null : lo()"
+  [attr.aria-valuemax]="companion() ? null : hi()"
+  [attr.aria-valuenow]="companion() ? null : value()"
+  [attr.aria-valuetext]="companion() ? null : text()"
+  [attr.aria-disabled]="disabled() || null"
+  (keydown)="key($event)"
+  (pointerdown)="down($event)"
+  (pointermove)="move($event)"
+  (pointerup)="up()"
+  (pointercancel)="up()"
+  (lostpointercapture)="up()"
+>
+  @if (variant() === 'clock') {
+    <svg
+      [attr.viewBox]="'0 0 ' + clock.size + ' ' + clock.size"
+      aria-hidden="true"
+    >
+      <circle
+        class="track"
+        [attr.cx]="clock.c"
+        [attr.cy]="clock.c"
+        [attr.r]="clock.r"
+      />
+      @if (fill()) {
+        <path class="fill" [attr.d]="fill()" />
+      }
+      @for (mark of faceMarks(); track mark.value) {
+        <line
+          class="notch"
+          [attr.x1]="mark.nx1"
+          [attr.y1]="mark.ny1"
+          [attr.x2]="mark.nx2"
+          [attr.y2]="mark.ny2"
+        />
+        <text class="mark" [attr.x]="mark.x" [attr.y]="mark.y">
+          {{ mark.label }}
+        </text>
+      }
+      @if (showValue()) {
+        <text class="value" [attr.x]="clock.c" [attr.y]="clock.c">
+          {{ text() }}
+        </text>
+      }
+      <circle class="knob" [attr.cx]="knob().x" [attr.cy]="knob().y" r="8" />
+    </svg>
+  } @else {
+    <svg
+      [attr.viewBox]="'0 0 ' + gauge.width + ' ' + gauge.height"
+      aria-hidden="true"
+    >
+      <!-- Right to left, the arc and its knob turn the other way. -->
+      <g class="arc">
+        <path class="track" [attr.d]="gaugeTrack" />
+        @if (fill()) {
+          <path class="fill" [attr.d]="fill()" />
+        }
+        @for (tick of ticks(); track $index) {
+          <line
+            class="tick"
+            [class.is-major]="tick.major"
+            [attr.x1]="tick.x1"
+            [attr.y1]="tick.y1"
+            [attr.x2]="tick.x2"
+            [attr.y2]="tick.y2"
+          />
+        }
+        <circle class="knob" [attr.cx]="knob().x" [attr.cy]="knob().y" r="8" />
+      </g>
+      @if (showValue()) {
+        <text class="value" [attr.x]="gauge.cx" [attr.y]="gauge.cy - 6">
+          {{ text() }}
+        </text>
+      }
+    </svg>
+  }
+</div>
+@if (variant() === 'gauge') {
+  <div class="ends" aria-hidden="true">
+    <span>{{ minText() }}</span>
+    <span>{{ maxText() }}</span>
+  </div>
+}

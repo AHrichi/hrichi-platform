@@ -1,5 +1,9 @@
 <div class="head">
-  <label [for]="id">{{ label() }}</label>
+  @if (control() === 'chips') {
+    <span class="label">{{ label() }}</span>
+  } @else {
+    <label [for]="id">{{ label() }}</label>
+  }
   <span class="tail">
     @if (unit()) {
       <span class="unit" dir="auto">{{ unit() }}</span>
@@ -19,30 +23,118 @@
     }
   </span>
 </div>
-<input
-  class="exact"
-  type="number"
-  inputmode="decimal"
-  [id]="id"
-  [min]="min()"
-  [max]="max()"
-  [step]="step()"
-  [value]="value()"
-  [attr.aria-describedby]="hint() ? id + '-hint' : null"
-  (input)="onInput($any($event.target).value)"
-  (blur)="clamp()"
-/>
-<input
-  class="slider"
-  type="range"
-  tabindex="-1"
-  aria-hidden="true"
-  [min]="min()"
-  [max]="max()"
-  [step]="step()"
-  [value]="value()"
-  (input)="onInput($any($event.target).value)"
-/>
+@switch (control()) {
+  @case ('stepper') {
+    <ah-stepper
+      class="control"
+      [inputId]="id"
+      [min]="min()"
+      [max]="max()"
+      [step]="step()"
+      [adaptive]="adaptive()"
+      [describedBy]="hintId()"
+      [decreaseLabel]="t().common.decrease"
+      [increaseLabel]="t().common.increase"
+      [value]="value()"
+      (valueChange)="value.set($event)"
+    />
+  }
+  @case ('chips') {
+    <ah-segmented-control
+      class="control"
+      [label]="label()"
+      [options]="chips()"
+      [value]="value().toString()"
+      (valueChange)="value.set(+$event)"
+    />
+  }
+  @default {
+    <input
+      class="exact control"
+      type="number"
+      inputmode="decimal"
+      [id]="id"
+      [min]="min()"
+      [max]="max()"
+      [step]="step()"
+      [value]="value()"
+      [attr.aria-describedby]="hintId()"
+      (input)="onInput($any($event.target).value)"
+      (blur)="clamp()"
+    />
+    <!-- Beside the typed number, a pointer-only way to set it. -->
+    <div class="visual">
+      @switch (control()) {
+        @case ('dial') {
+          <ah-dial
+            [companion]="true"
+            [showValue]="false"
+            [min]="min()"
+            [max]="max()"
+            [step]="step()"
+            [locale]="i18n.locale()"
+            [value]="value()"
+            (valueChange)="value.set($event)"
+          />
+        }
+        @case ('thermometer') {
+          <ah-thermometer
+            [companion]="true"
+            [showValue]="false"
+            [min]="min()"
+            [max]="max()"
+            [step]="step()"
+            [locale]="i18n.locale()"
+            [value]="value()"
+            (valueChange)="value.set($event)"
+          />
+        }
+        @case ('hours') {
+          <ah-dial
+            [companion]="true"
+            variant="clock"
+            [zero]="0"
+            [period]="24"
+            [marks]="hourMarks()"
+            [valueText]="hourText()"
+            [min]="min()"
+            [max]="max()"
+            [step]="step()"
+            [value]="value()"
+            (valueChange)="value.set($event)"
+          />
+        }
+        @case ('weeks') {
+          <ah-dial
+            [companion]="true"
+            variant="clock"
+            [zero]="1"
+            [period]="52"
+            [marks]="weekMarks()"
+            [valueText]="weekText()"
+            [min]="min()"
+            [max]="max()"
+            [step]="step()"
+            [value]="value()"
+            (valueChange)="value.set($event)"
+          />
+        }
+        @default {
+          <ah-ruler
+            [companion]="true"
+            [showValue]="false"
+            [min]="min()"
+            [max]="max()"
+            [step]="step()"
+            [locale]="i18n.locale()"
+            [value]="value()"
+            (valueChange)="value.set($event)"
+          />
+        }
+      }
+    </div>
+  }
+}
 @if (hint()) {
   <small class="hint" [id]="id + '-hint'">{{ hint() }}</small>
 }

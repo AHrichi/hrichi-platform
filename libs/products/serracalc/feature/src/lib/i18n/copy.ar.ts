@@ -62,6 +62,8 @@ export const AR: SerraCopy = {
   },
   common: {
     close: 'إغلاق',
+    decrease: 'إنقاص',
+    increase: 'زيادة',
     cancel: 'إلغاء',
     edit: 'تعديل',
     delete: 'حذف',
