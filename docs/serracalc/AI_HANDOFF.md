@@ -2,17 +2,17 @@
 
 A briefing for whichever AI agent or IDE picks up SerraCalc, the greenhouse heat, water and climate engineering app. It assumes no memory of earlier sessions. Read it top to bottom before touching code; [AGENTS.md](../../AGENTS.md) has the protocol, [ADR-0027](../adr/0027-serracalc.md) the decisions.
 
-Last updated 2026-11-26: **Everything through PR #45 is on `main` and deployed: the greenhouse-manager spec, its gaps, the root-zone limits (#40), the owner's UI requests (#41: floating header, language menu, folding, MathML formulas, Commons photos with zoom, offline use, a new-version notice, walk-through fixes, Energy → Solar power), and a drain EC limit per crop with the Energy tools taking their prices from the site (#43, §5), and a notice when SerraCalc in another tab holds the database (#45, §5). Nothing is in progress; §6 has the next steps.** The plan is §7; the decisions are [ADR-0029](../adr/0029-serracalc-greenhouse-manager.md) and its addendum.
+Last updated 2026-11-26: **Everything through PR #45 is on `main` and deployed: the greenhouse-manager spec, its gaps, the root-zone limits (#40), the owner's UI requests (#41: floating header, language menu, folding, MathML formulas, Commons photos with zoom, offline use, a new-version notice, walk-through fixes, Energy → Solar power), and a drain EC limit per crop with the Energy tools taking their prices from the site (#43, §5), and a notice when SerraCalc in another tab holds the database (#45, §5). In progress on `claude/serracalc-db-stalled-notice` (pull request open, not merged): a notice when the browser never answers for the database (§5, §6).** The plan is §7; the decisions are [ADR-0029](../adr/0029-serracalc-greenhouse-manager.md) and its addendum.
 
 ## 0. Resume in five minutes
 
 1. **Get the branch:**
 
    ```bash
-   git fetch origin && git switch main
+   git fetch origin && git switch claude/serracalc-db-stalled-notice
    ```
 
-   It was built in the worktree `.claude/worktrees/studylm-learning-merge-8ffa5f` (the folder name is historical). Check `git worktree list` first: one agent per checkout.
+   Once it is merged, resume from `main`. This branch was built in the worktree `.claude/worktrees/funny-cartwright-dcfc46`; earlier work in `.claude/worktrees/studylm-learning-merge-8ffa5f` (the folder names are historical). Check `git worktree list` first: one agent per checkout.
 
 2. **Install:** `pnpm install --frozen-lockfile` (Node 24, pnpm 10.34.9).
 3. **Check that it's green:**
@@ -22,7 +22,7 @@ Last updated 2026-11-26: **Everything through PR #45 is on `main` and deployed: 
    pnpm exec stylelint "libs/products/serracalc/**/*.scss" "apps/products/serracalc/**/*.scss"
    ```
 
-   That's 3 projects and 167 tests (116 domain, 51 feature).
+   That's 3 projects and 170 tests (116 domain, 54 feature).
 
 4. **See it:** `pnpm nx run product-serracalc:build:development`, then `node tools/scripts/serve-static.mjs dist/apps/products/serracalc/web/browser 4314` and open `http://localhost:4314`. Inside the portfolio it is `/apps/serracalc`.
 
@@ -86,6 +86,18 @@ It is **not** the Greenhouse Labor Planner (`product-greenhouse*`, ADR-0026). Ke
   - the blocked notice at 375 px in English and Arabic (right to left);
   - the replaced notice at 1280 px in dark mode.
 - Fixed there: standalone, a short page (here, waiting on the database) showed white under the sand. `.serra.is-standalone` now fills the screen (`100dvh`, border-box, so long pages are unchanged).
+
+**Verified** (2026-11-26, a database that never answers, `claude/serracalc-db-stalled-notice`):
+
+- Lint, 116 domain and 54 feature tests, builds, stylelint, `nx format:check`, the zoneless check.
+- New unit tests in `serra-db.service.spec.ts`, with fake timers and an `indexedDB.open` that fires nothing until it is released:
+  - the state stays `ok` until `STALL_MS` (5 s), turns `stalled`, and goes back to `ok` once the open answers and the projects load;
+  - an open that answers in time stays `ok`;
+  - an open that reports `blocked` keeps the "another tab" notice.
+  - The first test fails with the timer taken out.
+- The SerraCalc e2e, **19 of 19** with `CI=1`. The new test uses two pages: the other holds version 1 and asks to delete the database, so this page's open waits behind the delete with no event at all. The stalled notice shows after 5 s (axe-clean, and not the "another tab" one), goes once the other page lets go, and the samples load.
+
+**Not verified yet (stalled notice):** the desktop app's browser pane, which still has the problem, until this branch is deployed (§6 item 1); the wording in French, Arabic, Italian and German by native speakers.
 
 **Not verified yet (greenhouse manager):** the photos inside the portfolio (they need the remote's origin in `img-src`, which the e2e's headers have); MathML on a real Android phone (Chrome draws it, but fonts vary); a real phone; the Italian, German and Arabic wording by native speakers; every formula against a published worked example beyond the spec's benchmarks; "acidified refill" is our reading of the Hydrotool strategy (the paper wasn't read). The drain EC limits per crop (`CROPS[crop].drainEcMaxDsM`: tomato 6, cucumber and pepper 4.5, melon 5, rose 3.5, strawberry and lettuce 3) are indicative, not a grower's figures.
 
@@ -188,7 +200,7 @@ Written before any change on `feat/serracalc-parity`; the last column says what 
 - In `fertigation()`, `g` is the feed's factor C / C_in; the drain holds `toDrain` = A/D times it. Sodium and chloride limits divide by `toDrain`, the EC ceiling does not. `days[].naMmolL`, the levels and the notes are drain values.
 - **Two EC limits** (owner's go-ahead, 2026-11-25): `flushEcDsM` (4.5) is the recirculated feed at the dripper and flushes the loop. `drainEcMaxDsM` is the drain (root zone), from `CROPS[crop].drainEcMaxDsM` (tomato 6, cucumber and pepper 4.5, melon 5, rose 3.5, strawberry and lettuce 3; indicative). The drain limit drives the "drain EC high" note and the Live data alert. Results saved before it fall back to `flushEcDsM`, in the report and when opened (`supply-screen.ts` load).
 - **Prices live on the site:** `energyPrices(tariffs)` (`site.ts`) maps Site → Tariffs to the CHP's gas and power, the cooling year's electricity, and solar's grid and export price. Energy starts from them when they load and offers "Take the site's tariffs". A new energy tool with a price should be added to `energyPrices`.
-- **Database versions** (`serra-db.service.ts`, `VERSION`): a tab from this build on closes its connection on `versionchange` (a newer tab wants to upgrade) and the shell asks for a reload; it can't save until then. A tab of an older build doesn't, so the new tab's upgrade waits (`blocked`) and the shell says to close or reload the other tab; once it does, the upgrade finishes and the projects open. `SerraDbService.state` is `ok`, `blocked` or `replaced`; the notice shows in both modes, ahead of the new-version one. Tested in `serra-db.service.spec.ts` (fake-indexeddb) and the e2e (two pages).
+- **Database versions** (`serra-db.service.ts`, `VERSION`): a tab from this build on closes its connection on `versionchange` (a newer tab wants to upgrade) and the shell asks for a reload; it can't save until then. A tab of an older build doesn't, so the new tab's upgrade waits (`blocked`) and the shell says to close or reload the other tab; once it does, the upgrade finishes and the projects open. `SerraDbService.state` is `ok`, `blocked`, `replaced` or `stalled`; the notice shows in both modes, ahead of the new-version one. `stalled` means no answer at all within `STALL_MS` (5 s): a browser can keep an open waiting, with no event, behind another request that never finishes (a delete blocked by another tab does it). The shell then says to close SerraCalc's other tabs and windows, and to restart the browser if that doesn't help; the notice goes if the open answers later. A `blocked` event stops the timer, since that notice says more. Tested in `serra-db.service.spec.ts` (fake-indexeddb; fake `setTimeout` only, because fake-indexeddb runs on `setImmediate`) and the e2e (two pages; for `stalled`, the other page's blocked delete).
 - Icons: `node tools/scripts/generate-app-icons.mjs serracalc`.
 - **UI polish (`claude/serracalc-ui-polish`):**
   - **Floating header:** standalone only (`.top` in `serra-shell`). Its height is `--sc-top` (the rail and Science's contents stick under it) and the page's `scroll-padding`. Inside the portfolio the site header already floats, so SerraCalc's stays in the page.
@@ -212,7 +224,7 @@ PR #45 is merged (`49d8698`) and deployed (CI run 45759231692; every job green, 
 - An upgrade to version 3 from that page isn't blocked, and the app shows "A newer SerraCalc opened in another tab" with Reload.
 - The page fills the screen (`min-block-size` equal to the viewport).
 
-**Not covered, found live:** the desktop app's browser pane still opens empty. Its database stays at version 1, and an open at version 2 gets no event at all in 5 seconds: no `blocked`, no `upgradeneeded`, no error. The request waits in a queue behind something that never finishes, and the browser doesn't report that. Only a timeout can tell (item 1).
+**Not covered, found live:** the desktop app's browser pane still opens empty. Its database stays at version 1, and an open at version 2 gets no event at all in 5 seconds: no `blocked`, no `upgradeneeded`, no error. The request waits in a queue behind something that never finishes, and the browser doesn't report that. Only a timeout can tell: `claude/serracalc-db-stalled-notice` adds one (§5, item 1).
 
 **Checked live on 2026-11-26 (PR #43, standalone, in a clean Playwright Chromium):**
 
@@ -229,9 +241,7 @@ PR #45 is merged (`49d8698`) and deployed (CI run 45759231692; every job green, 
 
 **Not checked live:** the service worker and opening offline (the desktop app's browser pane can't register one; use Playwright or a phone); the "new version" banner (#43's deploy is the first chance: a phone that opened the app before 2026-11-26 should offer Reload).
 
-1. A database that never answers. In `serra-db.service.ts`, if the open neither succeeds, fails nor reports `blocked` within a few seconds, set a third state and show a general notice: close SerraCalc's other tabs and windows, and if that doesn't help, restart the browser. Clear it if the open succeeds later.
-   - Test it with a fake `indexedDB.open` whose request never fires, and fake timers.
-   - Check it live in the desktop app's browser pane, which still has this problem.
+1. **The stalled notice: merge, deploy, check live.** `claude/serracalc-db-stalled-notice` has it (pull request open; it also carries docs PR #46's commit `6c08b2b`). Merge it when the owner asks. Once deployed, open `https://product-serracalc.ahmed-hrichi.workers.dev` in the desktop app's browser pane, whose open gets no event at all: about 5 s later it should say "Your projects haven’t opened yet: the browser isn’t answering SerraCalc." What holds the pane's database is still unknown.
 2. A real phone (Android Chrome): drag handles with a finger, the plant cards, a backup shared to Drive, the language menu, folding, photo zoom, MathML fonts, installing and opening offline.
 3. Photos still missing (Commons had none free): hot-water pipes, pad cooling, fogging, a heat buffer, grow lights, CO₂ dosing, a PAR sensor, a lab analysis, a climate computer. The owner's own photos could fill them, with no farm or company names in view.
 
