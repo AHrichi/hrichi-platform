@@ -211,10 +211,12 @@ export class SupplyScreen {
   private load(saved: SavedCalculation): void {
     if (saved.kind === 'ro') this.roParams.set({ ...saved.inputs });
     if (saved.kind === 'fertigation') {
-      // Results saved before chloride was tracked lack its two fields.
+      // Results saved before chloride was tracked lack its two fields;
+      // before the drain had its own limit, the flush ceiling was it.
       this.fertParams.set({
         ...defaultFertigation(this.store.context()),
         ...saved.inputs,
+        drainEcMaxDsM: saved.inputs.drainEcMaxDsM ?? saved.inputs.flushEcDsM,
       });
     }
   }

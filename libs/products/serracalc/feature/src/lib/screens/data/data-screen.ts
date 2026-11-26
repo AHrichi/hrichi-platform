@@ -3,10 +3,12 @@ import {
   Component,
   computed,
   inject,
+  linkedSignal,
   signal,
 } from '@angular/core';
 import { AhMetricCard } from '@ah/ui';
 import {
+  CROPS,
   analyseReadings,
   type AlertCode,
   climateById,
@@ -45,7 +47,10 @@ export class DataScreen {
   protected readonly pasted = signal('');
   protected readonly message = signal<string | null>(null);
   protected readonly stage = signal<CropStage>('harvest');
-  protected readonly flushEc = signal(4.5);
+  /** The crop's drain EC limit, until the user sets their own. */
+  protected readonly drainEcMax = linkedSignal(
+    () => CROPS[this.store.context().crop].drainEcMaxDsM,
+  );
   protected readonly drainPlan = signal(30);
 
   protected readonly readings = computed(
@@ -55,7 +60,7 @@ export class DataScreen {
     analyseReadings(this.readings(), {
       crop: this.store.context().crop,
       stage: this.stage(),
-      flushEcDsM: this.flushEc(),
+      drainEcMaxDsM: this.drainEcMax(),
       drainPct: this.drainPlan(),
     }),
   );

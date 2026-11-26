@@ -2,14 +2,14 @@
 
 A briefing for whichever AI agent or IDE picks up SerraCalc, the greenhouse heat, water and climate engineering app. It assumes no memory of earlier sessions. Read it top to bottom before touching code; [AGENTS.md](../../AGENTS.md) has the protocol, [ADR-0027](../adr/0027-serracalc.md) the decisions.
 
-Last updated 2026-11-25: **Everything through PR #41 is on `main` and deployed: the greenhouse-manager spec, its gaps, the root-zone limits (#40), and the owner's UI requests (#41: floating header, language menu, folding, MathML formulas, Commons photos with zoom, offline use, a new-version notice, walk-through fixes, Energy → Solar power). Nothing is in progress; §6 has the next steps.**Energy → Solar power** for the site (§5, §6).** The plan is §7; the decisions are [ADR-0029](../adr/0029-serracalc-greenhouse-manager.md) and its addendum.
+Last updated 2026-11-25: **Everything through PR #41 is on `main` and deployed: the greenhouse-manager spec, its gaps, the root-zone limits (#40), and the owner's UI requests (#41: floating header, language menu, folding, MathML formulas, Commons photos with zoom, offline use, a new-version notice, walk-through fixes, Energy → Solar power). Then, on `claude/serracalc-drain-ec-limit`: the drain got its own EC limit from the crop, and the Energy tools take their prices from the site (§5, §6).**Energy → Solar power** for the site (§5, §6).** The plan is §7; the decisions are [ADR-0029](../adr/0029-serracalc-greenhouse-manager.md) and its addendum.
 
 ## 0. Resume in five minutes
 
 1. **Get the branch:**
 
    ```bash
-   git fetch origin && git switch main
+   git fetch origin && git switch claude/serracalc-drain-ec-limit
    ```
 
    It was built in the worktree `.claude/worktrees/studylm-learning-merge-8ffa5f` (the folder name is historical). Check `git worktree list` first: one agent per checkout.
@@ -172,6 +172,8 @@ Written before any change on `feat/serracalc-parity`; the last column says what 
 - The database is version 2 since PR #39 (a `sites` store). A new store needs a version bump in `serra-db.service.ts` and an `onupgradeneeded` branch that only creates what is missing.
 - Fertigation inputs added later (`sourceClMmolL`, `sourceHco3MmolL`, `clLimitMmolL`) are optional, so results saved before them still open; the Supply screen fills them from defaults when editing. Since the root-zone change, saved fertigation results recompute with the limits read in the drain, so their flush days come sooner.
 - In `fertigation()`, `g` is the feed's factor C / C_in; the drain holds `toDrain` = A/D times it. Sodium and chloride limits divide by `toDrain`, the EC ceiling does not. `days[].naMmolL`, the levels and the notes are drain values.
+- **Two EC limits** (owner's go-ahead, 2026-11-25): `flushEcDsM` (4.5) is the recirculated feed at the dripper and flushes the loop. `drainEcMaxDsM` is the drain (root zone), from `CROPS[crop].drainEcMaxDsM` (tomato 6, cucumber and pepper 4.5, melon 5, rose 3.5, strawberry and lettuce 3; indicative). The drain limit drives the "drain EC high" note and the Live data alert. Results saved before it fall back to `flushEcDsM`, in the report and when opened (`supply-screen.ts` load).
+- **Prices live on the site:** `energyPrices(tariffs)` (`site.ts`) maps Site → Tariffs to the CHP's gas and power, the cooling year's electricity, and solar's grid and export price. Energy starts from them when they load and offers "Take the site's tariffs". A new energy tool with a price should be added to `energyPrices`.
 - Icons: `node tools/scripts/generate-app-icons.mjs serracalc`.
 - **UI polish (`claude/serracalc-ui-polish`):**
   - **Floating header:** standalone only (`.top` in `serra-shell`). Its height is `--sc-top` (the rail and Science's contents stick under it) and the page's `scroll-padding`. Inside the portfolio the site header already floats, so SerraCalc's stays in the page.
@@ -196,7 +198,7 @@ PR #41 is merged (`b2662e7`) and deployed (CI run 45676992891; every job green, 
 
 **Not checked live:** the service worker and opening offline (the desktop app's browser pane can't register one; use Playwright or a phone); the "new version" banner (it needs the next deploy).
 
-1. Ask the owner about the EC ceiling: the loop compares 4.5 dS/m with the feed (Hydrotool's example), but Live data and the "drain EC high" note compare it with the drain, which is 4.8 at the sample's 30 % drain. Either give the drain its own limit (a new optional input) or read the ceiling in the drain with a higher default.
+1. Open the pull request for `claude/serracalc-drain-ec-limit`, merge it when CI passes, and check live: Supply → Fertigation (the sample's 4.8 drain no longer warns for tomato), Live data's drain limit, and Energy starting from the site's tariffs.
 2. A real phone (Android Chrome): drag handles with a finger, the plant cards, a backup shared to Drive, the language menu, folding, photo zoom, MathML fonts, installing and opening offline.
 3. Photos still missing (Commons had none free): hot-water pipes, pad cooling, fogging, a heat buffer, grow lights, CO₂ dosing, a PAR sensor, a lab analysis, a climate computer. The owner's own photos could fill them, with no farm or company names in view.
 

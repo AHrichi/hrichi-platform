@@ -205,6 +205,7 @@ export const EN = {
     targetEcDsM: 'EC at the dripper',
     uptakeEcDsM: 'EC the crop takes up',
     flushEcDsM: 'Flush above EC',
+    drainEcMaxDsM: 'Drain EC limit',
     naLimitMmolL: 'Flush above sodium',
     systemM3: 'Water in the loop',
     dilution: 'Stock dilution',
@@ -340,7 +341,9 @@ export const EN = {
     storageDays: 'One to three days covers a cleaning stop',
     recyclePct: 'Desert sites reuse 30–50 % of their water',
     targetEcDsM: 'Tomato refill: about 2.7',
-    flushEcDsM: 'A common ceiling: 4.5',
+    flushEcDsM: 'At the dripper, recirculated; a common ceiling: 4.5',
+    drainEcMaxDsM:
+      'From the crop (tomato 6, cucumber 4.5); more drain or a flush above it',
     naLimitMmolL: 'Tomato: about 8 mmol/L in the drain',
     systemM3: 'Slabs, pipes and tanks: about 4 L per m²',
     yieldSlopePct: 'Indicative: 7.3 % from one trial; set your own',
@@ -1529,7 +1532,7 @@ export const EN = {
       vpdHigh: 'VPD over 1.5 kPa by day',
       heatStress: 'Heat stress for the workers',
       heatDanger: 'Heat danger for the workers',
-      drainEcHigh: 'Drain EC at the flush ceiling',
+      drainEcHigh: 'Drain EC at its limit',
       tempLow: 'Too cold for the stage',
       tempHigh: 'Too hot for the stage',
       phOut: 'pH outside 5.2–6.8',
@@ -1899,7 +1902,7 @@ export const EN = {
     'fert.water': (v) =>
       `${v['reused']} m³ of drain reused a day: ${v['pct']} % of the water given.`,
     'fert.drainHigh': (v) =>
-      `Drain EC ${v['ec']} dS/m is at or above the ${v['max']} ceiling: give more drain or flush.`,
+      `Drain EC ${v['ec']} dS/m is at or above the ${v['max']} drain limit: give more drain or flush.`,
     'fert.yield': (v) =>
       `A root-zone EC of ${v['ec']} dS/m costs about ${v['pct']} % of the yield (indicative).`,
     'fert.flush': (v) =>

@@ -205,6 +205,7 @@ export const AR: SerraCopy = {
     targetEcDsM: 'EC عند النقاطة',
     uptakeEcDsM: 'EC الذي تمتصه الزراعة',
     flushEcDsM: 'التفريغ فوق EC',
+    drainEcMaxDsM: 'حد EC للصرف',
     naLimitMmolL: 'التفريغ فوق الصوديوم',
     systemM3: 'الماء في الدورة',
     dilution: 'تخفيف المحاليل الأم',
@@ -342,7 +343,8 @@ export const AR: SerraCopy = {
     storageDays: 'يوم إلى ثلاثة أيام تغطي توقف التنظيف',
     recyclePct: 'المواقع الصحراوية تعيد استعمال 30–50 % من مائها',
     targetEcDsM: 'الطماطم، محلول التعويض: نحو 2.7',
-    flushEcDsM: 'سقف شائع: 4.5',
+    flushEcDsM: 'عند المنقّط في الدورة؛ سقف شائع: 4.5',
+    drainEcMaxDsM: 'حسب المحصول (الطماطم 6، الخيار 4.5)؛ فوقه زد الصرف أو فرّغ',
     naLimitMmolL: 'الطماطم: نحو 8 مليمول/ل في الصرف',
     systemM3: 'الألواح والأنابيب والخزانات: نحو 4 ل لكل م²',
     yieldSlopePct: 'إرشادي: 7.3 % من تجربة واحدة؛ ضع قيمتك',
@@ -1520,7 +1522,7 @@ export const AR: SerraCopy = {
       vpdHigh: 'عجز ضغط البخار فوق 1.5 kPa نهارًا',
       heatStress: 'إجهاد حراري للعمال',
       heatDanger: 'خطر حراري على العمال',
-      drainEcHigh: 'EC الصرف عند سقف التفريغ',
+      drainEcHigh: 'EC الصرف عند حده',
       tempLow: 'بارد جدًا للمرحلة',
       tempHigh: 'حار جدًا للمرحلة',
       phOut: 'pH خارج 5.2–6.8',
@@ -1890,7 +1892,7 @@ export const AR: SerraCopy = {
     'fert.water': (v) =>
       `${v['reused']} م³ من الصرف مُعادة في اليوم: ${v['pct']} % من الماء المعطى.`,
     'fert.drainHigh': (v) =>
-      `EC الصرف ${v['ec']} dS/m عند سقف ${v['max']} أو فوقه: زد الصرف أو فرّغ.`,
+      `EC الصرف ${v['ec']} dS/m عند حد ${v['max']} أو فوقه: زد الصرف أو فرّغ.`,
     'fert.yield': (v) =>
       `EC بقيمة ${v['ec']} dS/m في منطقة الجذور يكلف نحو ${v['pct']} % من المردود (إرشادي).`,
     'fert.flush': (v) =>

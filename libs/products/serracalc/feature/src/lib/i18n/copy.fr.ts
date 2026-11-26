@@ -205,6 +205,7 @@ export const FR: SerraCopy = {
     targetEcDsM: 'EC au goutteur',
     uptakeEcDsM: 'EC absorbée par la culture',
     flushEcDsM: 'Vidange au-dessus de l’EC',
+    drainEcMaxDsM: 'Limite d’EC du drainage',
     naLimitMmolL: 'Vidange au-dessus du sodium',
     systemM3: 'Eau dans la boucle',
     dilution: 'Dilution des solutions mères',
@@ -348,7 +349,9 @@ export const FR: SerraCopy = {
     storageDays: 'Un à trois jours couvrent un arrêt de nettoyage',
     recyclePct: 'Les sites du désert réutilisent 30–50 % de leur eau',
     targetEcDsM: 'Tomate, solution de recharge : environ 2,7',
-    flushEcDsM: 'Un plafond courant : 4,5',
+    flushEcDsM: 'Au goutteur, en recirculation ; un plafond courant : 4,5',
+    drainEcMaxDsM:
+      'Selon la culture (tomate 6, concombre 4,5) ; au-dessus, drainez plus ou vidangez',
     naLimitMmolL: 'Tomate : environ 8 mmol/L dans le drainage',
     systemM3: 'Pains, tuyaux et bacs : environ 4 L par m²',
     yieldSlopePct: 'Indicatif : 7,3 % d’un essai ; mettez le vôtre',
@@ -1560,7 +1563,7 @@ export const FR: SerraCopy = {
       vpdHigh: 'VPD au-dessus de 1,5 kPa le jour',
       heatStress: 'Stress thermique pour le personnel',
       heatDanger: 'Danger thermique pour le personnel',
-      drainEcHigh: 'EC du drainage au plafond de vidange',
+      drainEcHigh: 'EC du drainage à sa limite',
       tempLow: 'Trop froid pour le stade',
       tempHigh: 'Trop chaud pour le stade',
       phOut: 'pH hors de 5,2–6,8',
@@ -1940,7 +1943,7 @@ export const FR: SerraCopy = {
     'fert.water': (v) =>
       `${v['reused']} m³ de drainage réutilisés par jour : ${v['pct']} % de l’eau apportée.`,
     'fert.drainHigh': (v) =>
-      `EC du drainage ${v['ec']} dS/m, au plafond de ${v['max']} ou au-dessus : drainez davantage ou vidangez.`,
+      `EC du drainage ${v['ec']} dS/m, à la limite de ${v['max']} ou au-dessus : drainez davantage ou vidangez.`,
     'fert.yield': (v) =>
       `Une EC racinaire de ${v['ec']} dS/m coûte environ ${v['pct']} % du rendement (indicatif).`,
     'fert.flush': (v) =>

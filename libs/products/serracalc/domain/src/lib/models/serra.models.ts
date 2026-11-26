@@ -129,6 +129,11 @@ export interface CropProfile {
   plantsPerM2: number;
   /** Share of the radiation inside used to transpire, full canopy. */
   transpirationCoef: number;
+  /**
+   * Highest EC the drain (the root zone) should reach before more drain or
+   * a flush, dS/m (indicative; set your own).
+   */
+  drainEcMaxDsM: number;
 }
 
 export type FuelType =
@@ -848,8 +853,13 @@ export interface FertigationParams {
   targetEcDsM: number;
   /** EC the crop takes up with its water, dS/m (tomato about 1.5–2). */
   uptakeEcDsM: number;
-  /** Flush the recirculating water when its EC reaches this, dS/m. */
+  /** Flush the recirculating water when its EC at the dripper reaches this, dS/m. */
   flushEcDsM: number;
+  /**
+   * Give more drain or flush when the drain's EC (the root zone) reaches
+   * this, dS/m. Missing (results saved before it): the flush ceiling.
+   */
+  drainEcMaxDsM?: number;
   /** ...or when its sodium reaches this, mmol/L. */
   naLimitMmolL: number;
   /** ...or when its chloride reaches this, mmol/L (missing: no limit). */

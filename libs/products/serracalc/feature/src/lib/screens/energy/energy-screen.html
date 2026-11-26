@@ -91,6 +91,13 @@
         scPanel="energy-inputs"
         [heading]="t().calc.inputs"
       >
+        @if (siteTariffs(); as tariffs) {
+          <div class="actions">
+            <button type="button" class="chip" (click)="useTariffs(tariffs)">
+              {{ t().site.takeTariffs }}
+            </button>
+          </div>
+        }
         @if (tab() === 'chp') {
           <sc-field-grid
             [specs]="hubFields()"

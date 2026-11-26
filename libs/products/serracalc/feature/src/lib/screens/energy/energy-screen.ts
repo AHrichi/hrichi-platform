@@ -27,6 +27,8 @@ import {
   heatReuse,
   type HeatReuseParams,
   type SavedCalculation,
+  energyPrices,
+  type SiteTariffs,
   solarPv,
   type SolarPvParams,
 } from '@ah/products/serracalc/domain';
@@ -147,6 +149,11 @@ export class EnergyScreen {
   );
 
   protected readonly currency = computed(() => this.store.context().currency);
+  /** The project's site tariffs, if its site has them recorded. */
+  protected readonly siteTariffs = computed<SiteTariffs | null>(() => {
+    const name = this.store.activeProject()?.site;
+    return this.store.sites().find((s) => s.name === name)?.tariffs ?? null;
+  });
   protected readonly hubFields = computed(() => [
     ...ENERGY_FIELDS,
     priceField('gasPrice', `${this.currency()}/m³`),
@@ -277,19 +284,45 @@ export class EnergyScreen {
   });
 
   constructor() {
+    // The site's tariffs load from storage just after the screen opens:
+    // start again from them when they arrive (unless editing a saved result).
     effect(() => {
       const ctx = this.store.context();
+      const tariffs = this.siteTariffs();
       untracked(() => {
-        if (!this.editor.editing()) this.reset(ctx);
+        if (!this.editor.editing()) this.reset(ctx, tariffs);
       });
     });
   }
 
-  protected reset(ctx: CalcContext = this.store.context()): void {
+  protected reset(
+    ctx: CalcContext = this.store.context(),
+    tariffs: SiteTariffs | null = this.siteTariffs(),
+  ): void {
     this.hubParams.set(defaultEnergyHub(ctx));
     this.reuseParams.set(defaultHeatReuse(ctx));
     this.coolParams.set(defaultCoolingYear(ctx));
     this.solarParams.set(defaultSolarPv(ctx));
+    if (tariffs) this.useTariffs(tariffs);
+  }
+
+  /** Prices from the site's tariffs, on every tab: one place to set them. */
+  protected useTariffs(t: SiteTariffs): void {
+    const p = energyPrices(t);
+    this.hubParams.update((h) => ({
+      ...h,
+      gasPrice: p.gasPrice,
+      powerPrice: p.powerPrice,
+    }));
+    this.coolParams.update((c) => ({
+      ...c,
+      electricityPrice: p.electricityPrice,
+    }));
+    this.solarParams.update((s) => ({
+      ...s,
+      buyPrice: p.buyPrice,
+      exportPrice: p.exportPrice,
+    }));
   }
 
   private load(saved: SavedCalculation): void {

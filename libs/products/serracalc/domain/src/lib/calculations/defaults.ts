@@ -362,7 +362,8 @@ export function defaultRo(ctx: CalcContext): RoParams {
 /**
  * A recirculating tomato crop: 30 % drain with 40 % of it reused (desert
  * sites report reusing 30–50 % of their water), RO water, refill EC 2.7 and
- * a flush ceiling of 4.5 dS/m (Hydrotool's example), about 4 L of solution
+ * a flush ceiling of 4.5 dS/m at the dripper (Hydrotool's example), the
+ * crop's own drain EC limit, about 4 L of solution
  * in the loop per m² of floor.
  */
 export function defaultFertigation(ctx: CalcContext): FertigationParams {
@@ -378,6 +379,7 @@ export function defaultFertigation(ctx: CalcContext): FertigationParams {
     targetEcDsM: 2.7,
     uptakeEcDsM: 1.8,
     flushEcDsM: 4.5,
+    drainEcMaxDsM: CROPS[ctx.crop].drainEcMaxDsM,
     naLimitMmolL: 8,
     clLimitMmolL: 10,
     systemM3: Math.max(1, Math.round((g.floorAreaM2 * 4) / 1000)),

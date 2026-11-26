@@ -206,6 +206,27 @@ export function defaultTariffs(ctx: CalcContext): SiteTariffs {
   };
 }
 
+/**
+ * The site's tariffs as the prices each energy tool asks for: the CHP's gas
+ * and power, the cooling year's electricity, solar's grid and export price.
+ * One place to set them, every tool starting from them.
+ */
+export function energyPrices(t: SiteTariffs): {
+  gasPrice: number;
+  powerPrice: number;
+  electricityPrice: number;
+  buyPrice: number;
+  exportPrice: number;
+} {
+  return {
+    gasPrice: t.gasPerM3,
+    powerPrice: t.electricityPerKwh,
+    electricityPrice: t.electricityPerKwh,
+    buyPrice: t.electricityPerKwh,
+    exportPrice: t.exportPerKwh,
+  };
+}
+
 /** A site with nothing recorded yet. */
 export function emptySite(name: string, ctx: CalcContext): SiteRecord {
   return {
