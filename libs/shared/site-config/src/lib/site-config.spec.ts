@@ -29,6 +29,7 @@ describe('SiteConfigService', () => {
       orbitApiUrl: 'https://orbit.example',
       n8nUrl: null,
       learningEdgeUrl: null,
+      assistantUrl: null,
     });
     await service.load();
     expect(fetch).toHaveBeenCalledTimes(1);
@@ -46,6 +47,7 @@ describe('SiteConfigService', () => {
       orbitApiUrl: null,
       n8nUrl: null,
       learningEdgeUrl: null,
+      assistantUrl: null,
     });
   });
 
