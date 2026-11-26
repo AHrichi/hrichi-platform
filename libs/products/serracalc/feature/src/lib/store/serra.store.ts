@@ -166,6 +166,26 @@ export const SerraStore = signalStore(
         }
       },
 
+      /**
+       * Reloads what another device or tab saved, quietly (no loading
+       * state): the open project stays open if it's still there.
+       */
+      async refresh(): Promise<void> {
+        try {
+          const projects = await db.getAllProjects();
+          const active = store.activeProjectId();
+          patchState(store, {
+            projects,
+            activeProjectId: projects.some((p) => p.id === active)
+              ? active
+              : (projects[0]?.id ?? null),
+          });
+          patchState(store, { sites: await db.getAllSites() });
+        } catch {
+          // The database is out of reach: the shell already says so.
+        }
+      },
+
       /** Records a site's plants and tariffs (kept in memory if refused). */
       async saveSite(site: SiteRecord): Promise<void> {
         const saved = { ...site, updatedAt: new Date().toISOString() };

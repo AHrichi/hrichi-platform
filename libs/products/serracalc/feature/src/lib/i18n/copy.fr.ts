@@ -1799,6 +1799,73 @@ export const FR: SerraCopy = {
     },
   },
 
+  sync: {
+    title: 'Synchronisation',
+    lead: 'Retrouvez vos projets sur votre téléphone, votre tablette et votre ordinateur. Ils sont conservés sur un serveur Cloudflare, sans compte : un appareil rejoint avec un code donné par un appareil déjà relié. Désactivez-la ou supprimez la copie en ligne à tout moment ; une copie inutilisée pendant un an est supprimée.',
+    embedded:
+      'La synchronisation fonctionne dans l’application SerraCalc, pas dans cette démo.',
+    deviceName: 'Nom de cet appareil',
+    kinds: {
+      android: 'Téléphone Android',
+      iphone: 'iPhone',
+      ipad: 'iPad',
+      windows: 'Ordinateur Windows',
+      mac: 'Mac',
+      linux: 'Ordinateur Linux',
+      other: 'Cet appareil',
+    },
+    turnOn: 'Activer la synchronisation',
+    haveCode: 'J’ai un code',
+    code: 'Code de votre autre appareil',
+    codeHint:
+      'Sur un appareil déjà relié : Projets → Synchronisation → Relier un autre appareil.',
+    join: 'Relier cet appareil',
+    cancel: 'Annuler',
+    syncing: 'Synchronisation…',
+    synced: (when: string) => `Synchronisé ${when}`,
+    never: 'Pas encore synchronisé',
+    offline:
+      'Hors ligne : vos modifications partiront dès le retour de la connexion.',
+    waiting: 'Nouvel essai dans un instant.',
+    unavailable:
+      'La synchronisation n’est pas disponible pour le moment. Vos projets restent sur cet appareil.',
+    removed:
+      'Cet appareil a été retiré de la synchronisation. Ses projets restent ici.',
+    clock:
+      'L’horloge de cet appareil est en avance : réglez l’heure, puis synchronisez.',
+    full: 'La copie en ligne est pleine : supprimez d’anciens projets ou résultats.',
+    tooLarge:
+      'Certaines données sont trop volumineuses (relevés très longs ?).',
+    syncNow: 'Synchroniser',
+    usage: (used: string, max: string) => `${used} utilisés sur ${max}`,
+    link: 'Relier un autre appareil',
+    linkLead:
+      'Sur l’autre appareil, ouvrez SerraCalc, allez dans Projets → Synchronisation → J’ai un code, et saisissez :',
+    validFor: (time: string) => `Valable une fois, pendant ${time}`,
+    expired: 'Ce code a expiré.',
+    copyLink: 'Copier plutôt un lien',
+    copied: 'Lien copié',
+    devices: 'Appareils reliés',
+    thisDevice: 'cet appareil',
+    lastSeen: (date: string) => `Dernière synchronisation ${date}`,
+    remove: 'Retirer',
+    removeConfirm: (name: string) =>
+      `Retirer « ${name} » de la synchronisation ? Il garde ses projets mais ne se synchronise plus.`,
+    turnOff: 'Désactiver sur cet appareil',
+    turnOffConfirm:
+      'Désactiver la synchronisation sur cet appareil ? Ses projets restent ici.',
+    deleteCloud: 'Supprimer la copie en ligne',
+    deleteConfirm:
+      'Supprimer la copie en ligne de vos projets ? Chaque appareil garde ses projets mais ne se synchronise plus. Cette action est irréversible.',
+    errors: {
+      code: 'Ce code est faux, déjà utilisé ou expiré. Demandez-en un nouveau sur l’autre appareil.',
+      network:
+        'Impossible de joindre le serveur. Vérifiez la connexion et réessayez.',
+      unavailable: 'La synchronisation n’est pas disponible pour le moment.',
+      busy: 'Trop d’essais : attendez une minute et réessayez.',
+    },
+  },
+
   report: {
     title: 'Rapport',
     lead: 'Le projet sur papier : la serre, son climat et chaque résultat enregistré avec ses constats, à imprimer ou garder en PDF.',

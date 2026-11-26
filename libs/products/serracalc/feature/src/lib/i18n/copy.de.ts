@@ -1787,6 +1787,73 @@ export const DE: SerraCopy = {
     },
   },
 
+  sync: {
+    title: 'Cloud-Synchronisierung',
+    lead: 'Hab deine Projekte auf Handy, Tablet und Computer. Sie liegen auf einem Cloudflare-Server, ohne Konto: Ein Gerät tritt mit einem Code von einem bereits verbundenen bei. Du kannst sie jederzeit ausschalten oder die Cloud-Kopie löschen; eine Kopie, die ein Jahr lang nicht genutzt wird, wird gelöscht.',
+    embedded:
+      'Die Cloud-Synchronisierung funktioniert in der SerraCalc-App selbst, nicht in dieser Demo.',
+    deviceName: 'Name dieses Geräts',
+    kinds: {
+      android: 'Android-Handy',
+      iphone: 'iPhone',
+      ipad: 'iPad',
+      windows: 'Windows-Computer',
+      mac: 'Mac',
+      linux: 'Linux-Computer',
+      other: 'Dieses Gerät',
+    },
+    turnOn: 'Cloud-Synchronisierung einschalten',
+    haveCode: 'Ich habe einen Code',
+    code: 'Code von deinem anderen Gerät',
+    codeHint:
+      'Auf einem schon verbundenen Gerät: Projekte → Cloud-Synchronisierung → Weiteres Gerät verbinden.',
+    join: 'Dieses Gerät verbinden',
+    cancel: 'Abbrechen',
+    syncing: 'Synchronisiert…',
+    synced: (when: string) => `Synchronisiert ${when}`,
+    never: 'Noch nicht synchronisiert',
+    offline:
+      'Offline: Deine Änderungen werden synchronisiert, sobald du wieder online bist.',
+    waiting: 'Gleich ein neuer Versuch.',
+    unavailable:
+      'Die Cloud-Synchronisierung ist gerade nicht verfügbar. Deine Projekte sind auf diesem Gerät sicher.',
+    removed:
+      'Dieses Gerät wurde aus der Synchronisierung entfernt. Seine Projekte bleiben hier.',
+    clock:
+      'Die Uhr dieses Geräts geht vor: Stell die richtige Zeit ein und synchronisiere erneut.',
+    full: 'Die Cloud-Kopie ist voll: Lösche alte Projekte oder Ergebnisse.',
+    tooLarge:
+      'Manche Daten sind zu groß zum Synchronisieren (sehr lange Messreihen?).',
+    syncNow: 'Jetzt synchronisieren',
+    usage: (used: string, max: string) => `${used} von ${max} belegt`,
+    link: 'Weiteres Gerät verbinden',
+    linkLead:
+      'Öffne auf dem anderen Gerät SerraCalc, geh zu Projekte → Cloud-Synchronisierung → Ich habe einen Code und gib ein:',
+    validFor: (time: string) => `Gilt einmal, noch ${time}`,
+    expired: 'Dieser Code ist abgelaufen.',
+    copyLink: 'Stattdessen einen Link kopieren',
+    copied: 'Link kopiert',
+    devices: 'Verbundene Geräte',
+    thisDevice: 'dieses Gerät',
+    lastSeen: (date: string) => `Zuletzt synchronisiert ${date}`,
+    remove: 'Entfernen',
+    removeConfirm: (name: string) =>
+      `„${name}“ aus der Synchronisierung entfernen? Es behält seine Projekte, synchronisiert aber nicht mehr.`,
+    turnOff: 'Auf diesem Gerät ausschalten',
+    turnOffConfirm:
+      'Cloud-Synchronisierung auf diesem Gerät ausschalten? Seine Projekte bleiben hier.',
+    deleteCloud: 'Cloud-Kopie löschen',
+    deleteConfirm:
+      'Die Cloud-Kopie deiner Projekte löschen? Jedes Gerät behält seine Projekte, synchronisiert aber nicht mehr. Das lässt sich nicht rückgängig machen.',
+    errors: {
+      code: 'Der Code ist falsch, schon benutzt oder abgelaufen. Hol dir einen neuen auf dem anderen Gerät.',
+      network:
+        'Die Cloud ist nicht erreichbar. Prüf die Verbindung und versuch es noch einmal.',
+      unavailable: 'Die Cloud-Synchronisierung ist gerade nicht verfügbar.',
+      busy: 'Zu viele Versuche: Warte eine Minute und versuch es noch einmal.',
+    },
+  },
+
   report: {
     title: 'Bericht',
     lead: 'Das Projekt auf Papier: das Haus, sein Klima und jedes gespeicherte Ergebnis mit seinen Befunden, zum Drucken oder als PDF.',

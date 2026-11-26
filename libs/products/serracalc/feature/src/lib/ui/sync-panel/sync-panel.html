@@ -1,0 +1,147 @@
+@if (!standalone) {
+  <p class="lead">{{ t().sync.embedded }}</p>
+} @else if (!sync.on()) {
+  <p class="lead">{{ t().sync.lead }}</p>
+  @if (sync.status() === 'removed') {
+    <p class="note" role="status">{{ t().sync.removed }}</p>
+  }
+  <label class="text">
+    <span>{{ t().sync.deviceName }}</span>
+    <input
+      #nameInput
+      type="text"
+      maxlength="60"
+      autocomplete="off"
+      dir="auto"
+      [value]="name()"
+      (input)="name.set(nameInput.value)"
+    />
+  </label>
+  @if (joining()) {
+    <form class="join" (submit)="$event.preventDefault(); join()">
+      <label class="text">
+        <span>{{ t().sync.code }}</span>
+        <input
+          #codeInput
+          type="text"
+          class="code-field"
+          dir="ltr"
+          maxlength="12"
+          autocomplete="one-time-code"
+          autocapitalize="characters"
+          spellcheck="false"
+          placeholder="XXXX-XXXX"
+          aria-describedby="sc-sync-code-hint"
+          [value]="code()"
+          (input)="code.set(codeInput.value)"
+        />
+      </label>
+      <p class="hint" id="sc-sync-code-hint">{{ t().sync.codeHint }}</p>
+      <div class="actions">
+        <button
+          ahButton
+          type="submit"
+          [disabled]="busy() || code().replace('-', '').trim().length < 8"
+        >
+          {{ t().sync.join }}
+        </button>
+        <button ahButton="ghost" type="button" (click)="joining.set(false)">
+          {{ t().sync.cancel }}
+        </button>
+      </div>
+    </form>
+  } @else {
+    <div class="actions">
+      <button ahButton type="button" [disabled]="busy()" (click)="turnOn()">
+        <span aria-hidden="true">☁️</span> {{ t().sync.turnOn }}
+      </button>
+      <button ahButton="secondary" type="button" (click)="startJoin()">
+        {{ t().sync.haveCode }}
+      </button>
+    </div>
+  }
+} @else {
+  <p class="state" role="status" [attr.data-status]="sync.status()">
+    <span class="dot" aria-hidden="true"></span>
+    {{ statusText() }}
+  </p>
+  @if (usageText(); as usage) {
+    <p class="hint">{{ usage }}</p>
+  }
+  <div class="actions">
+    <button
+      ahButton
+      type="button"
+      [disabled]="sync.status() === 'syncing'"
+      (click)="syncNow()"
+    >
+      {{ t().sync.syncNow }}
+    </button>
+    <button ahButton="secondary" type="button" (click)="link()">
+      {{ t().sync.link }}
+    </button>
+  </div>
+
+  @if (pairing(); as pairing) {
+    <div class="pairing">
+      <p>{{ t().sync.linkLead }}</p>
+      @if (remaining() > 0) {
+        <p class="code" dir="ltr" [attr.aria-label]="spelled(pairing.code)">
+          {{ pairing.code }}
+        </p>
+        <p class="hint">{{ t().sync.validFor(remainingText()) }}</p>
+        <button ahButton="ghost" type="button" (click)="copyLink()">
+          {{ copied() ? t().sync.copied : t().sync.copyLink }}
+        </button>
+      } @else {
+        <p class="hint">{{ t().sync.expired }}</p>
+      }
+    </div>
+  }
+
+  @if (devices(); as devices) {
+    <h4 class="devices-title">{{ t().sync.devices }}</h4>
+    <ul class="devices">
+      @for (device of devices; track device.id) {
+        <li>
+          <span class="device-name">
+            <span dir="auto">{{ device.name }}</span>
+            @if (device.current) {
+              <span class="badge">{{ t().sync.thisDevice }}</span>
+            }
+          </span>
+          <small class="hint">{{
+            t().sync.lastSeen(when(device.lastSeenAt))
+          }}</small>
+          @if (!device.current) {
+            <button
+              ahButton="ghost"
+              size="sm"
+              type="button"
+              (click)="remove(device)"
+            >
+              {{ t().sync.remove }}
+            </button>
+          }
+        </li>
+      }
+    </ul>
+  }
+
+  <div class="actions leave">
+    <button ahButton="ghost" type="button" (click)="turnOff()">
+      {{ t().sync.turnOff }}
+    </button>
+    <button
+      ahButton="ghost"
+      type="button"
+      class="delete"
+      (click)="deleteCloud()"
+    >
+      {{ t().sync.deleteCloud }}
+    </button>
+  </div>
+}
+@if (error(); as error) {
+  <p class="error" role="alert">{{ error }}</p>
+}

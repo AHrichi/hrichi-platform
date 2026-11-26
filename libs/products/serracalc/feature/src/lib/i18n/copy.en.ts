@@ -1761,6 +1761,67 @@ export const EN = {
     },
   },
 
+  sync: {
+    title: 'Cloud sync',
+    lead: 'Keep your projects on your phone, tablet and computer. They are kept on a Cloudflare server with no account: a device joins with a code from one already linked. Turn it off, or delete the cloud copy, at any time; a copy unused for a year is deleted.',
+    embedded: 'Cloud sync works in the SerraCalc app itself, not in this demo.',
+    deviceName: 'This device’s name',
+    kinds: {
+      android: 'Android phone',
+      iphone: 'iPhone',
+      ipad: 'iPad',
+      windows: 'Windows computer',
+      mac: 'Mac',
+      linux: 'Linux computer',
+      other: 'This device',
+    },
+    turnOn: 'Turn on cloud sync',
+    haveCode: 'I have a code',
+    code: 'Code from your other device',
+    codeHint:
+      'On a device already linked: Projects → Cloud sync → Link another device.',
+    join: 'Link this device',
+    cancel: 'Cancel',
+    syncing: 'Syncing…',
+    synced: (when: string) => `Synced ${when}`,
+    never: 'Not synced yet',
+    offline: 'Offline: your changes sync when you’re back online.',
+    waiting: 'Sync will try again shortly.',
+    unavailable:
+      'Cloud sync isn’t available right now. Your projects are safe on this device.',
+    removed: 'This device was removed from cloud sync. Its projects stay here.',
+    clock: 'This device’s clock is ahead: set the right time, then sync again.',
+    full: 'The cloud copy is full: delete old projects or results.',
+    tooLarge: 'Some data is too large to sync (very long readings?).',
+    syncNow: 'Sync now',
+    usage: (used: string, max: string) => `${used} of ${max} used`,
+    link: 'Link another device',
+    linkLead:
+      'On the other device, open SerraCalc, go to Projects → Cloud sync → I have a code, and type:',
+    validFor: (time: string) => `Works once, for ${time}`,
+    expired: 'This code has expired.',
+    copyLink: 'Copy a link instead',
+    copied: 'Link copied',
+    devices: 'Linked devices',
+    thisDevice: 'this device',
+    lastSeen: (date: string) => `Last synced ${date}`,
+    remove: 'Remove',
+    removeConfirm: (name: string) =>
+      `Remove “${name}” from cloud sync? It keeps its projects but stops syncing.`,
+    turnOff: 'Turn off on this device',
+    turnOffConfirm:
+      'Turn off cloud sync on this device? Its projects stay here.',
+    deleteCloud: 'Delete the cloud copy',
+    deleteConfirm:
+      'Delete the cloud copy of your projects? Every device keeps its own projects but stops syncing. This can’t be undone.',
+    errors: {
+      code: 'That code is wrong, used or expired. Ask for a new one on the other device.',
+      network: 'Couldn’t reach the cloud. Check the connection and try again.',
+      unavailable: 'Cloud sync isn’t available right now.',
+      busy: 'Too many tries: wait a minute and try again.',
+    },
+  },
+
   report: {
     title: 'Report',
     lead: 'The project on paper: the house, its climate and every saved result with its findings, to print or keep as a PDF.',
