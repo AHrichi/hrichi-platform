@@ -14,6 +14,8 @@ export interface SiteConfig {
   learningEdgeUrl: string | null;
   /** The assistants' edge Worker, for in-app AI assistants (ADR-0031). */
   assistantUrl: string | null;
+  /** The sync Worker, for apps' opt-in cloud sync (ADR-0032). */
+  syncUrl: string | null;
 }
 
 const disabled: SiteConfig = {
@@ -23,6 +25,7 @@ const disabled: SiteConfig = {
   n8nUrl: null,
   learningEdgeUrl: null,
   assistantUrl: null,
+  syncUrl: null,
 };
 
 /** The URL of an n8n webhook, or null when no n8n is configured. */
@@ -56,6 +59,7 @@ export class SiteConfigService {
         n8nUrl: config.n8nUrl ?? null,
         learningEdgeUrl: config.learningEdgeUrl ?? null,
         assistantUrl: config.assistantUrl ?? null,
+        syncUrl: config.syncUrl ?? null,
       }))
       .catch(() => disabled);
     return this.config;
