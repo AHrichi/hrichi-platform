@@ -283,19 +283,12 @@ Written before any change on `feat/serracalc-parity`; the last column says what 
 
 ## 6. Next step: the owner's steps for cloud sync, then merge it
 
-**Open:** the cloud sync PR (`claude/serracalc-sync`). It can merge before the steps below: until the database exists, CI's deploy skips `sync-edge` (`apps/sync-edge/deploy.mjs` says so in the log) and the app's panel says sync isn't available.
+**Open:** the cloud sync PR (`claude/serracalc-sync`). The database exists now, so merging deploys `sync-edge`: give CI's token D1 access first (step 2). Until `SYNC_TOKEN_SECRET` is set (step 3), the Worker answers 503 and the app's panel says sync isn't available.
 
 **The owner's one-time steps** (never an agent's: they change the Cloudflare account):
 
-1. Create the database, in western Europe:
-
-   ```bash
-   pnpm wrangler d1 create sync-edge --location weur
-   ```
-
-   Put the `database_id` it prints in `apps/sync-edge/wrangler.jsonc` (an agent can commit it: it isn't a secret).
-
-2. Let CI's Cloudflare API token edit D1 (Cloudflare dashboard → My Profile → API Tokens → the token CI uses → add Account · D1 · Edit). The deploy applies the migrations with it.
+1. ~~Create the database~~: done 2026-11-26 (`8a98c476-6dd5-4227-bec2-49976c3c3ed4`, western Europe), its id in `apps/sync-edge/wrangler.jsonc`.
+2. Let CI's Cloudflare API token edit D1 (Cloudflare dashboard → My Profile → API Tokens → the token CI uses → add Account · D1 · Edit). The deploy applies the migrations with it: **do this before merging**, or main's deploy job fails at the migration (and says why).
 3. Set the secret that signs device tokens (any 32+ random characters, kept nowhere else):
 
    ```bash
