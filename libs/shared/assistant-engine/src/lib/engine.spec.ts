@@ -247,6 +247,35 @@ describe('the Workers AI model', () => {
     expect(own.capability).toBe('read-only');
   });
 
+  it('takes back a call it wrote out as text, copying its history', async () => {
+    const echo = (response: string) =>
+      new WorkersAiModel(run({ response }), '@cf/meta/llama').complete(
+        REQUEST,
+        new AbortController().signal,
+      );
+    expect(
+      await echo('Called open_screen with {"screen":"cooling"}.'),
+    ).toMatchObject({
+      content: null,
+      toolCalls: [{ name: 'open_screen', arguments: { screen: 'cooling' } }],
+    });
+    expect(
+      await echo(
+        'Opening it. Called open_screen with {"screen":"air","tab":"vpd"}.',
+      ),
+    ).toMatchObject({
+      content: 'Opening it.',
+      toolCalls: [
+        { name: 'open_screen', arguments: { screen: 'air', tab: 'vpd' } },
+      ],
+    });
+    // Words about a call stay words.
+    expect(await echo('I called it with care.')).toEqual({
+      content: 'I called it with care.',
+      toolCalls: [],
+    });
+  });
+
   it('says when the daily allowance is used, and until when', async () => {
     const now = new Date('2026-11-26T22:00:00Z');
     const model = new WorkersAiModel(
