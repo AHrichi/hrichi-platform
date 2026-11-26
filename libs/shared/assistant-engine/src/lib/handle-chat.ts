@@ -10,7 +10,7 @@ import {
   jsonBytes,
 } from '@ah/shared/assistant';
 import * as v from 'valibot';
-import { type ChatLadder, LadderExhausted } from './ladder';
+import { type AttemptLog, type ChatLadder, LadderExhausted } from './ladder';
 
 export interface ChatDeps {
   /** The apps this host serves, by id, compiled once. */
@@ -26,6 +26,13 @@ export interface ChatLog {
   readonly provider?: string;
   readonly attempts?: number;
   readonly toolCalls?: number;
+  /** The models that failed before an answer (or all of them), and why. */
+  readonly failed?: readonly string[];
+}
+
+/** A failed attempt as one log line: the model, the kind, the reason. */
+function failedLine(attempt: AttemptLog): string {
+  return `${attempt.model} ${attempt.outcome}: ${attempt.detail}`.slice(0, 300);
 }
 
 export interface ChatOutcome {
@@ -69,8 +76,9 @@ export async function handleChat(
     message: string,
     app: string | null = null,
     retryAfterSec?: number,
+    failed?: readonly string[],
   ): ChatOutcome => {
-    deps.log?.({ app, status });
+    deps.log?.({ app, status, ...(failed?.length ? { failed } : {}) });
     return {
       status,
       body: {
@@ -129,6 +137,9 @@ export async function handleChat(
       provider: result.provider,
       attempts: result.attempts.length + 1,
       toolCalls: result.reply.toolCalls.length,
+      ...(result.attempts.length
+        ? { failed: result.attempts.map(failedLine) }
+        : {}),
     });
     return {
       status: 200,
@@ -147,6 +158,7 @@ export async function handleChat(
         'Every model is busy',
         request.app,
         error.retryAfterSec ?? 30,
+        error.attempts.map(failedLine),
       );
     }
     throw error;
