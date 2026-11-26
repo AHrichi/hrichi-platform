@@ -788,17 +788,35 @@
     display: none;
   }
 
-  a {
+  a,
+  .more-tour {
     display: flex;
     align-items: center;
     gap: var(--space-2);
     min-block-size: 3rem;
     padding: var(--space-2) var(--space-3);
+    border: 0;
     border-radius: var(--radius-md);
     background: var(--color-bg-surface);
     color: var(--color-text-default);
+    font: inherit;
+    text-align: start;
     text-decoration: none;
+    cursor: pointer;
 
+    &:focus-visible {
+      outline: 2px solid var(--color-focus-ring);
+    }
+  }
+
+  .more-tour {
+    grid-column: 1 / -1;
+    background: var(--color-accent-subtle);
+    color: var(--color-accent-default);
+    font-weight: var(--font-weight-semibold);
+  }
+
+  a {
     &.is-active {
       color: var(--color-accent-default);
       outline: 1px solid var(--color-accent-default);

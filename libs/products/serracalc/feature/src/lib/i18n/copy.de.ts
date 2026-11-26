@@ -60,6 +60,101 @@ export const DE: SerraCopy = {
     water: 'Wasser',
     reference: 'Nachschlagen',
   },
+  tour: {
+    button: 'Tour',
+    hint: 'Eine geführte Tour durch SerraCalc',
+    again: 'Tour noch einmal',
+    invite: {
+      title: 'Neu hier?',
+      body: 'Eine Tour in zwei Minuten: Projekte, die Werkzeuge, Ergebnisse speichern und offline arbeiten.',
+      start: 'Tour starten',
+      later: 'Nicht jetzt',
+    },
+    steps: {
+      welcome: {
+        title: 'Willkommen bei SerraCalc',
+        body: 'Legen Sie Heizung, Kühlung und Wasser eines Gewächshauses aus und sehen Sie jede Formel mit ihren Zahlen. Zwei Minuten, um sich zurechtzufinden.',
+      },
+      projects: {
+        title: 'Beginnen Sie mit einem Projekt',
+        body: 'Ein Projekt ist ein Gewächshaus: Bau, Klima und Kultur. Legen Sie Ihres hier an, oder laden Sie die Beispiele zum Erkunden.',
+      },
+      active: {
+        title: 'Das Projekt, an dem Sie arbeiten',
+        body: 'Jedes Werkzeug nutzt Bau und Klima des aktiven Projekts. Öffnen Sie es hier, um das Projekt zu wechseln.',
+      },
+      navigation: {
+        title: 'Die Werkzeuge',
+        body: 'Heizung, Kühlung, Wasser, Klima und Energie, gruppiert nach dem, was Sie planen. Auf dem Telefon finden Sie den Rest unter Mehr.',
+      },
+      field: {
+        title: 'Jede Zahl, wie Sie möchten',
+        body: 'Tippen Sie einen genauen Wert ein, oder ziehen Sie das Rad, das Thermometer oder das Maßband daneben. Die Ergebnisse folgen sofort.',
+      },
+      info: {
+        title: 'Wie Sie jede Zahl bekommen',
+        body: 'Das i sagt, wie Sie den Wert messen oder finden, mit welchem Instrument, und welche Physik dahintersteckt.',
+      },
+      save: {
+        title: 'Ergebnisse im Projekt speichern',
+        body: 'Speichern Sie ein Ergebnis, um es beim Projekt zu behalten, später wieder zu öffnen und in den Bericht zu übernehmen.',
+      },
+      sunlight: {
+        title: 'Draußen unterwegs?',
+        body: 'Der Sonnenlicht-Modus erhöht den Kontrast, damit Sie den Bildschirm in praller Sonne lesen können.',
+      },
+      backups: {
+        title: 'Ihre Daten bleiben auf diesem Gerät',
+        body: 'SerraCalc funktioniert offline und speichert Ihre Projekte auf diesem Gerät. Sichern Sie sie in einer Datei, um eine Kopie zu behalten oder sie umzuziehen.',
+      },
+      again: {
+        title: 'Tour noch einmal',
+        body: 'Der Zauberstab startet diese Tour, wann immer Sie möchten. Viel Erfolg mit SerraCalc!',
+      },
+    },
+  },
+
+  assistant: {
+    button: 'Fragen',
+    hint: 'Den SerraCalc-Assistenten fragen',
+    greeting:
+      'Hallo! Frag mich zu SerraCalc oder zur Auslegung deines Gewächshauses. Ich kann auch Projekte anlegen und ändern, Ergebnisse speichern und Einstellungen ändern: Jede Änderung bestätigst du zuerst.',
+    suggestions: [
+      'Wie lege ich die Heizung aus?',
+      'Leg ein Projekt für ein Tomatenhaus in Monastir an',
+      'Was sagen meine gespeicherten Ergebnisse?',
+    ],
+    privacy:
+      'Für die Antwort gehen deine Nachrichten und eine Übersicht deiner Projekte an einen KI-Dienst (Groq, Google oder Cloudflare). Teile keine persönlichen Daten.',
+    placeholder: 'Frag zu SerraCalc…',
+    cards: {
+      create: (title: string) => `Projekt „${title}“ anlegen`,
+      update: (title: string) => `Projekt „${title}“ ändern`,
+      save: (label: string, kind: string) => `„${label}“ speichern (${kind})`,
+      replace: (label: string, kind: string) =>
+        `„${label}“ aktualisieren (${kind})`,
+      rename: (from: string, to: string) => `„${from}“ in „${to}“ umbenennen`,
+      deleteProject: (title: string) =>
+        `„${title}“ mit allen gespeicherten Ergebnissen löschen`,
+      deleteResult: (label: string, title: string) =>
+        `„${label}“ aus „${title}“ löschen`,
+      project: 'Projekt',
+      house: 'Gewächshaus',
+      others: 'Alle anderen Werte bleiben, wie sie sind.',
+      noUndo: 'Das lässt sich nicht rückgängig machen.',
+    },
+    notes: {
+      opened: (screen: string) => `${screen} ist geöffnet.`,
+      active: (title: string) => `„${title}“ ist das aktive Projekt.`,
+      sunlightOn: 'Der Sonnenlicht-Modus ist an.',
+      sunlightOff: 'Der Sonnenlicht-Modus ist aus.',
+      light: 'Helles Design.',
+      dark: 'Dunkles Design.',
+      system: 'Das Design folgt dem System.',
+      language: 'SerraCalc ist auf Deutsch.',
+      tour: 'Die Tour hat begonnen.',
+    },
+  },
   common: {
     close: 'Schließen',
     decrease: 'Verringern',

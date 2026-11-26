@@ -1,0 +1,46 @@
+<p class="heading" [id]="id">
+  <svg class="mark" viewBox="0 0 16 16" aria-hidden="true">
+    @if (tone() === 'danger') {
+      <path d="M8 2.5 14 13H2L8 2.5ZM8 6.5v3M8 11.2v.1" />
+    } @else {
+      <path d="M3 8.5 6.5 12 13 4.5" />
+    }
+  </svg>
+  <span dir="auto">{{ heading() }}</span>
+</p>
+@if (lines().length > 0) {
+  <ul class="lines">
+    @for (line of lines(); track $index) {
+      <li dir="auto">{{ line }}</li>
+    }
+  </ul>
+}
+<div class="foot" aria-live="polite">
+  @switch (status()) {
+    @case ('pending') {
+      <button
+        type="button"
+        ahButton
+        size="sm"
+        class="apply"
+        (click)="accept.emit()"
+      >
+        {{ labels().apply }}
+      </button>
+      <button type="button" ahButton="ghost" size="sm" (click)="decline.emit()">
+        {{ labels().cancel }}
+      </button>
+    }
+    @case ('applied') {
+      <span class="outcome">{{ labels().applied }}</span>
+    }
+    @case ('cancelled') {
+      <span class="outcome">{{ labels().cancelled }}</span>
+    }
+    @case ('failed') {
+      <span class="outcome is-failed" dir="auto">
+        {{ labels().failed }}{{ detail() ? ': ' + detail() : '' }}
+      </span>
+    }
+  }
+</div>

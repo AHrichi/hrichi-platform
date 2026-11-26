@@ -1,10 +1,14 @@
 <div
+  #serraRoot
   class="serra"
   [class.is-standalone]="standalone"
   [class.is-sunlight]="store.isHighContrast()"
   [attr.dir]="i18n.isRtl() ? 'rtl' : 'ltr'"
   [attr.lang]="i18n.lang()"
   [style.--sc-top]="topSize() + 'px'"
+  [style.--ah-assistant-top]="
+    standalone ? topSize() + 'px' : 'var(--ah-site-top, 0px)'
+  "
 >
   <!-- Standalone, the header floats: the sentinel above it tells when the
        page has scrolled, so it can turn to glass. Inside the portfolio the
@@ -17,7 +21,7 @@
     [class.is-stuck]="stuck()"
   >
     <header class="bar">
-      <a class="brand" routerLink="projects">
+      <a class="brand" routerLink="projects" data-tour="brand">
         <svg class="logo" viewBox="0 0 40 40" aria-hidden="true">
           <defs>
             <linearGradient id="sc-logo-sky" x1="0" y1="0" x2="0" y2="1">
@@ -38,7 +42,12 @@
       </a>
 
       @if (store.activeProject(); as project) {
-        <a class="project-chip" routerLink="projects" [title]="project.title">
+        <a
+          class="project-chip"
+          routerLink="projects"
+          data-tour="project-chip"
+          [title]="project.title"
+        >
           <span class="pulse" aria-hidden="true"></span>
           <span class="ah-visually-hidden">{{ t().app.activeProject }}:</span>
           {{ project.title }}
@@ -56,6 +65,30 @@
         <button
           type="button"
           class="tool"
+          data-tour="tool-assistant"
+          aria-haspopup="dialog"
+          [attr.aria-expanded]="assistantOpen()"
+          [title]="t().assistant.hint"
+          (click)="toggleAssistant()"
+        >
+          <sc-icon name="assistant" />
+          <span class="tool-label">{{ t().assistant.button }}</span>
+        </button>
+        <button
+          #wand
+          type="button"
+          class="tool"
+          data-tour="tool-tour"
+          [title]="t().tour.hint"
+          (click)="startTour(wand)"
+        >
+          <sc-icon name="wand" />
+          <span class="tool-label">{{ t().tour.button }}</span>
+        </button>
+        <button
+          type="button"
+          class="tool"
+          data-tour="tool-sunlight"
           [attr.aria-pressed]="store.isHighContrast()"
           [title]="t().app.sunlightHint"
           (click)="store.toggleHighContrast()"
@@ -79,7 +112,12 @@
       </div>
     </header>
 
-    <nav class="tabs" ahScrollHint [attr.aria-label]="t().app.sections">
+    <nav
+      class="tabs"
+      ahScrollHint
+      data-tour="nav-tabs"
+      [attr.aria-label]="t().app.sections"
+    >
       @for (item of nav; track item.id) {
         <a
           [routerLink]="item.id"
@@ -117,7 +155,7 @@
   </svg>
 
   <div class="frame">
-    <nav class="rail" [attr.aria-label]="t().app.sections">
+    <nav class="rail" data-tour="nav-rail" [attr.aria-label]="t().app.sections">
       @for (group of groups; track group.id) {
         <div class="rail-group">
           <span class="rail-title">{{ t().navGroups[group.id] }}</span>
@@ -208,7 +246,12 @@
     }
   </div>
 
-  <nav class="bottom" [attr.aria-label]="t().app.sections">
+  <nav
+    #bottomNav
+    class="bottom"
+    data-tour="nav-bottom"
+    [attr.aria-label]="t().app.sections"
+  >
     @for (item of primary; track item.id) {
       <a
         [routerLink]="item.id"
@@ -253,6 +296,25 @@
           {{ t().nav[item.id] }}
         </a>
       }
+      <button type="button" class="more-tour" (click)="startTour(moreBtn)">
+        <sc-icon name="wand" />
+        {{ t().tour.invite.start }}
+      </button>
     </div>
   }
+
+  <!-- The assistant: loaded on the first click of its button. -->
+  @defer (when assistantLoaded()) {
+    <sc-assistant [(open)]="assistantOpen" />
+  }
+
+  <!-- The guided tour: above everything, while it runs (TourService). -->
+  <ah-tour-host
+    [text]="tourText()"
+    [lang]="i18n.lang()"
+    [dir]="i18n.isRtl() ? 'rtl' : 'ltr'"
+    [root]="serraRoot"
+    [insets]="tourInsets"
+    [navigate]="tourNavigate"
+  />
 </div>

@@ -12,42 +12,30 @@ import {
 } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import {
+  ActivatedRoute,
   NavigationEnd,
   Router,
   RouterLink,
   RouterLinkActive,
   RouterOutlet,
 } from '@angular/router';
+import { TourHost, type TourRoute, TourService } from '@ah/platform/tour';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { filter, map } from 'rxjs';
 import { AhScrollHint } from '@ah/ui';
 import { APP_MODE } from '@ah/platform/app-mode';
 import { PreferencesStore } from '@ah/shared/state';
-import { isoWeek } from '@ah/products/serracalc/domain';
+import { isoWeek, type SerraScreen } from '@ah/products/serracalc/domain';
 import { SerraI18n } from '../i18n/serra-i18n';
 import { SerraDbService } from '../services/serra-db.service';
 import { SerraUpdates } from '../services/serra-updates';
 import { SerraStore } from '../store/serra.store';
 import { Icon, type IconName } from '../ui/icon/icon';
 import { LangMenu } from '../ui/lang-menu/lang-menu';
+import { SERRA_TOUR, serraTourText } from '../tour/serra-tour';
+import { SerraAssistant } from '../assistant/serra-assistant';
 
-export type SerraScreen =
-  | 'projects'
-  | 'site'
-  | 'energy'
-  | 'calendar'
-  | 'greenhouse'
-  | 'heating'
-  | 'cooling'
-  | 'water'
-  | 'supply'
-  | 'air'
-  | 'operations'
-  | 'data'
-  | 'climate'
-  | 'science'
-  | 'report'
-  | 'guide';
+export type { SerraScreen };
 
 /** Sections of the side rail, in order. */
 export type NavGroup = 'plan' | 'climate' | 'water' | 'operate' | 'reference';
@@ -95,6 +83,8 @@ const GROUPS: readonly NavGroup[] = [
     RouterOutlet,
     RouterLink,
     RouterLinkActive,
+    SerraAssistant,
+    TourHost,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { 'data-look': 'desert' },
@@ -126,6 +116,9 @@ export class SerraShell {
   protected readonly db = inject(SerraDbService);
   protected readonly week = isoWeek(new Date());
   protected readonly moreOpen = signal(false);
+  /** The assistant's panel, and whether its code has been fetched yet. */
+  protected readonly assistantOpen = signal(false);
+  protected readonly assistantLoaded = signal(false);
   private readonly moreSheet = viewChild<ElementRef<HTMLElement>>('moreSheet');
   private openerButton: HTMLElement | null = null;
 
@@ -137,8 +130,30 @@ export class SerraShell {
   private readonly sentinel =
     viewChild.required<ElementRef<HTMLElement>>('sentinel');
 
+  private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
+  private readonly tour = inject(TourService);
+  private readonly bottomNav =
+    viewChild.required<ElementRef<HTMLElement>>('bottomNav');
+
+  /** The tour's words, in the reader's language. */
+  protected readonly tourText = computed(() => serraTourText(this.t()));
+
+  /** Opens a step's screen, inside the app (also under the portfolio). */
+  protected readonly tourNavigate = (route: TourRoute) =>
+    this.router.navigate([route.path], {
+      relativeTo: this.route,
+      queryParams: route.query,
+    });
+
+  /** Bands the tour's card keeps clear of: the floating header, the phone bar. */
+  protected readonly tourInsets = () => ({
+    top: this.standalone ? this.topSize() : 0,
+    bottom: this.bottomNav().nativeElement.offsetHeight,
+  });
+
   private readonly url = toSignal(
-    inject(Router).events.pipe(
+    this.router.events.pipe(
       filter((event) => event instanceof NavigationEnd),
       map((event) => event.urlAfterRedirects),
     ),
@@ -194,6 +209,18 @@ export class SerraShell {
         root.style.removeProperty('scroll-padding-block-start');
       });
     });
+  }
+
+  /** Starts the tour; focus comes back to `opener` when it ends. */
+  protected startTour(opener: HTMLElement): void {
+    this.closeMore();
+    this.tour.start(SERRA_TOUR, opener);
+  }
+
+  protected toggleAssistant(): void {
+    this.closeMore();
+    this.assistantLoaded.set(true);
+    this.assistantOpen.update((open) => !open);
   }
 
   protected toggleMore(trigger: HTMLElement): void {

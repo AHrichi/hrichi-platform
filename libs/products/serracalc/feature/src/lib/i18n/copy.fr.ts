@@ -60,6 +60,102 @@ export const FR: SerraCopy = {
     water: 'Eau',
     reference: 'Références',
   },
+  tour: {
+    button: 'Visite',
+    hint: 'Faire la visite guidée de SerraCalc',
+    again: 'Refaire la visite',
+    invite: {
+      title: 'Nouveau ici ?',
+      body: 'Une visite de deux minutes : les projets, les outils, l’enregistrement des résultats et le travail hors ligne.',
+      start: 'Faire la visite',
+      later: 'Plus tard',
+    },
+    steps: {
+      welcome: {
+        title: 'Bienvenue dans SerraCalc',
+        body: 'Dimensionnez le chauffage, le refroidissement et l’eau d’une serre, avec chaque formule et ses valeurs. Deux minutes pour vous repérer.',
+      },
+      projects: {
+        title: 'Commencez par un projet',
+        body: 'Un projet, c’est une serre : sa structure, son climat et sa culture. Créez le vôtre ici, ou chargez les exemples pour explorer.',
+      },
+      active: {
+        title: 'Le projet en cours',
+        body: 'Chaque outil utilise la serre et le climat du projet actif. Ouvrez-le ici pour changer de projet.',
+      },
+      navigation: {
+        title: 'Les outils',
+        body: 'Chauffage, refroidissement, eau, climat et énergie, regroupés selon ce que vous planifiez. Sur téléphone, les autres sont sous Plus.',
+      },
+      field: {
+        title: 'Réglez chaque valeur à votre façon',
+        body: 'Saisissez une valeur exacte, ou faites glisser le cadran, le thermomètre ou le ruban à côté. Les résultats suivent au fur et à mesure.',
+      },
+      info: {
+        title: 'Comment obtenir chaque valeur',
+        body: 'Le i explique comment mesurer ou trouver la valeur, avec quel instrument, et la science derrière.',
+      },
+      save: {
+        title: 'Enregistrez les résultats dans le projet',
+        body: 'Enregistrez un résultat pour le garder avec le projet, le rouvrir plus tard et le mettre dans le rapport.',
+      },
+      sunlight: {
+        title: 'Vous travaillez dehors ?',
+        body: 'Le mode Plein soleil augmente le contraste pour lire l’écran en plein soleil.',
+      },
+      backups: {
+        title: 'Vos données restent sur cet appareil',
+        body: 'SerraCalc fonctionne hors ligne et garde vos projets sur cet appareil. Sauvegardez-les dans un fichier pour en garder une copie ou les déplacer.',
+      },
+      again: {
+        title: 'Refaire la visite',
+        body: 'La baguette relance cette visite quand vous voulez. Bon travail avec SerraCalc !',
+      },
+    },
+  },
+
+  assistant: {
+    button: 'Demander',
+    hint: 'Poser une question à l’assistant SerraCalc',
+    greeting:
+      'Bonjour ! Posez-moi vos questions sur SerraCalc ou le dimensionnement de votre serre. Je peux aussi créer et modifier des projets, enregistrer des résultats et changer les réglages : vous validez chaque modification.',
+    suggestions: [
+      'Comment dimensionner le chauffage ?',
+      'Crée un projet pour une serre de tomates à Monastir',
+      'Que disent mes résultats enregistrés ?',
+    ],
+    privacy:
+      'Pour répondre, vos messages et un résumé de vos projets sont envoyés à un service d’IA (Groq, Google ou Cloudflare). Ne partagez pas de données personnelles.',
+    placeholder: 'Une question sur SerraCalc…',
+    cards: {
+      create: (title: string) => `Créer le projet « ${title} »`,
+      update: (title: string) => `Modifier le projet « ${title} »`,
+      save: (label: string, kind: string) =>
+        `Enregistrer « ${label} » (${kind})`,
+      replace: (label: string, kind: string) =>
+        `Mettre à jour « ${label} » (${kind})`,
+      rename: (from: string, to: string) => `Renommer « ${from} » en « ${to} »`,
+      deleteProject: (title: string) =>
+        `Supprimer « ${title} » et tous ses résultats enregistrés`,
+      deleteResult: (label: string, title: string) =>
+        `Supprimer « ${label} » de « ${title} »`,
+      project: 'Projet',
+      house: 'Serre',
+      others: 'Les autres valeurs restent inchangées.',
+      noUndo: 'Cette action est irréversible.',
+    },
+    notes: {
+      opened: (screen: string) => `${screen} est ouvert.`,
+      active: (title: string) => `« ${title} » est le projet actif.`,
+      sunlightOn: 'Le mode plein soleil est activé.',
+      sunlightOff: 'Le mode plein soleil est désactivé.',
+      light: 'Thème clair.',
+      dark: 'Thème sombre.',
+      system: 'Le thème suit celui du système.',
+      language: 'SerraCalc est en français.',
+      tour: 'La visite guidée commence.',
+    },
+  },
   common: {
     close: 'Fermer',
     decrease: 'Diminuer',

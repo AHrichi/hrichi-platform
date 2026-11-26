@@ -1,0 +1,8 @@
+{
+  "name": "shared-assistant-engine",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/shared/assistant-engine/src",
+  "projectType": "library",
+  "tags": ["scope:shared", "type:util", "runtime:agnostic"],
+  "targets": {}
+}

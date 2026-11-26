@@ -103,3 +103,15 @@ export * from './lib/thermometer/thermometer';
 export { Thermometer as AhThermometer } from './lib/thermometer/thermometer';
 export * from './lib/ruler/ruler';
 export { Ruler as AhRuler } from './lib/ruler/ruler';
+export * from './lib/coachmark/coachmark';
+export {
+  Coachmark as AhCoachmark,
+  type CoachmarkLabels as AhCoachmarkLabels,
+  type CoachmarkSide as AhCoachmarkSide,
+} from './lib/coachmark/coachmark';
+export * from './lib/chat-message/chat-message';
+export { ChatMessage as AhChatMessage } from './lib/chat-message/chat-message';
+export * from './lib/chat-composer/chat-composer';
+export { ChatComposer as AhChatComposer } from './lib/chat-composer/chat-composer';
+export * from './lib/action-card/action-card';
+export { ActionCard as AhActionCard } from './lib/action-card/action-card';

@@ -128,7 +128,7 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "node tools/scripts/prepare-hosting.mjs dist/apps/products/serracalc/web/browser --env production --app product-serracalc --cors",
+          "node tools/scripts/prepare-hosting.mjs dist/apps/products/serracalc/web/browser --env production --app product-serracalc --cors --site-config",
           "wrangler deploy --config apps/products/serracalc/web/wrangler.jsonc"
         ],
         "parallel": false

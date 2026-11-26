@@ -1,0 +1,72 @@
+:host {
+  display: contents;
+}
+
+// The whole window, in the top layer, letting every click through to the
+// page; only the card takes them.
+.layer {
+  position: fixed;
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
+  max-inline-size: none;
+  max-block-size: none;
+  margin: 0;
+  padding: 0;
+  overflow: visible;
+  border: 0;
+  background: transparent;
+  color: var(--color-text-default);
+  pointer-events: none;
+
+  &:not(:popover-open) {
+    display: none;
+  }
+}
+
+.ring,
+.veil,
+.slot {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  opacity: 0;
+
+  &.is-placed {
+    opacity: 1;
+  }
+}
+
+// A ring round the target, and everything else dimmed by its shadow. The
+// ring is an outline, so forced-colours mode keeps it.
+.ring {
+  border-radius: var(--radius-md);
+  outline: 3px solid var(--color-accent-default);
+  box-shadow: 0 0 0 100vmax var(--color-overlay-scrim);
+  transition:
+    transform var(--motion-duration-base) var(--motion-easing-standard),
+    width var(--motion-duration-base) var(--motion-easing-standard),
+    height var(--motion-duration-base) var(--motion-easing-standard),
+    opacity var(--motion-duration-fast) var(--motion-easing-standard);
+}
+
+// No target: the whole screen dims behind the card.
+.veil {
+  inline-size: 100%;
+  block-size: 100%;
+  background: var(--color-overlay-scrim);
+  transition: opacity var(--motion-duration-fast) var(--motion-easing-standard);
+}
+
+.slot {
+  pointer-events: auto;
+  transition:
+    transform var(--motion-duration-base) var(--motion-easing-standard),
+    opacity var(--motion-duration-fast) var(--motion-easing-standard);
+}
+
+@media print {
+  .layer {
+    display: none;
+  }
+}

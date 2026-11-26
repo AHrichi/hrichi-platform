@@ -50,7 +50,7 @@ const SEASON_WEEKS = [1, 14, 27, 40];
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './number-field.html',
   styleUrl: './number-field.scss',
-  host: { '(window:scroll)': 'closeTip()' },
+  host: { 'data-tour': 'field', '(window:scroll)': 'closeTip()' },
 })
 export class NumberField {
   readonly label = input.required<string>();

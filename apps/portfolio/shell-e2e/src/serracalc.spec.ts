@@ -5,7 +5,7 @@ import { expect, test } from './support/test';
 import { appIsPublic, chooseLanguage } from './support/site';
 
 // SerraCalc, greenhouse heat, water and climate (ADR-0027). Local-first:
-// projects live in IndexedDB, nothing calls a server.
+// projects live in IndexedDB; only the assistant calls a server.
 const STANDALONE = 'http://localhost:4314/';
 
 // The standalone build registers a service worker (offline use); a cached
@@ -59,6 +59,21 @@ async function savePeak(page: Page): Promise<void> {
 }
 
 /** Standalone: open the globe menu and pick a language by its own name. */
+/**
+ * Waits for running transitions and animations to end (a tour card fades
+ * in), so axe reads colours as they settle, not half-faded.
+ */
+async function settled(page: Page): Promise<void> {
+  await page.evaluate(() =>
+    Promise.all(
+      document
+        .getAnimations()
+        .filter((a) => a.effect?.getTiming().iterations !== Infinity)
+        .map((a) => a.finished.catch(() => undefined)),
+    ),
+  );
+}
+
 /** Where an element sits in the window, scrolled into view first. */
 async function boxOf(locator: Locator) {
   await locator.scrollIntoViewIfNeeded();
@@ -117,6 +132,111 @@ test.describe('SerraCalc, standalone', () => {
       page.getByRole('spinbutton', { name: /Ridge height/ }),
     ).toHaveValue('6.4');
   });
+
+  for (const [width, height] of [
+    [375, 812],
+    [800, 900],
+    [1280, 900],
+  ] as const) {
+    test(`a new user's tour points at something on every step, ${width} px wide`, async ({
+      page,
+    }) => {
+      test.setTimeout(90_000);
+      await page.setViewportSize({ width, height });
+      await page.goto(`${STANDALONE}projects`);
+      await page.getByRole('button', { name: 'Take the tour' }).click();
+
+      for (let step = 1; step <= 10; step++) {
+        const card = page.getByRole('dialog', {
+          name: new RegExp(`Step ${step} of 10$`),
+        });
+        await expect(card).toBeVisible();
+        await expect(card).toBeFocused();
+        // The welcome has no target; every other step has a ring round one.
+        await expect(page.locator('ah-tour-host .ring')).toHaveCount(
+          Math.min(step - 1, 1),
+        );
+        const box = await boxOf(card);
+        expect(box.x).toBeGreaterThanOrEqual(0);
+        expect(box.x + box.width).toBeLessThanOrEqual(width);
+        expect(box.y + box.height).toBeLessThanOrEqual(height);
+        await card.getByRole('button', { name: /^(Next|Finish)$/ }).click();
+      }
+
+      await expect(page.getByRole('dialog')).toHaveCount(0);
+      // Focus goes to the wand that replays it, and the invitation is gone.
+      await expect(page.locator('[data-tour~="tool-tour"]')).toBeFocused();
+      await expect(page.getByText('New here?')).toBeHidden();
+      await page.reload();
+      await expect(
+        page.getByRole('heading', { name: 'Projects', level: 2 }),
+      ).toBeVisible();
+      await expect(page.getByText('New here?')).toBeHidden();
+    });
+  }
+
+  test('the tour closes with Escape, and Not now keeps it away', async ({
+    page,
+  }) => {
+    await page.goto(`${STANDALONE}projects`);
+    await page.locator('[data-tour~="tool-tour"]').click();
+    const card = page.getByRole('dialog', { name: /Step 1 of 10$/ });
+    await expect(card).toBeFocused();
+    await page.keyboard.press('Escape');
+    await expect(card).toBeHidden();
+    await expect(page.locator('[data-tour~="tool-tour"]')).toBeFocused();
+    // Skipped counts as seen: no invitation after a reload.
+    await page.reload();
+    await expect(
+      page.getByRole('heading', { name: 'Projects', level: 2 }),
+    ).toBeVisible();
+    await expect(page.getByText('New here?')).toBeHidden();
+  });
+
+  test('declining the invitation keeps it away', async ({ page }) => {
+    await page.goto(`${STANDALONE}projects`);
+    await page.getByRole('button', { name: 'Not now' }).click();
+    await expect(page.getByText('New here?')).toBeHidden();
+    await page.reload();
+    await expect(
+      page.getByRole('heading', { name: 'Projects', level: 2 }),
+    ).toBeVisible();
+    await expect(page.getByText('New here?')).toBeHidden();
+  });
+
+  for (const theme of ['light', 'dark'] as const) {
+    test(`a tour step passes axe, ${theme}, and reads right to left in Arabic`, async ({
+      page,
+    }) => {
+      await page.addInitScript(
+        (chosen) => localStorage.setItem('ah.theme', chosen),
+        theme,
+      );
+      await page.goto(`${STANDALONE}projects`);
+      await page.locator('[data-tour~="tool-tour"]').click();
+      await page
+        .getByRole('dialog', { name: /Step 1 of 10$/ })
+        .getByRole('button', { name: 'Next' })
+        .click();
+      await expect(
+        page.getByRole('dialog', { name: /Step 2 of 10$/ }),
+      ).toBeFocused();
+      await settled(page);
+      const english = await new AxeBuilder({ page }).analyze();
+      expect(english.violations).toEqual([]);
+      await page.keyboard.press('Escape');
+
+      await pickLanguage(page, 'العربية');
+      await page.locator('[data-tour~="tool-tour"]').click();
+      const card = page.getByRole('dialog', { name: /الخطوة 1 من 10$/ });
+      await expect(card).toBeVisible();
+      await expect(card).toHaveAttribute('dir', 'rtl');
+      await expect(card).toBeFocused();
+      await settled(page);
+      const arabic = await new AxeBuilder({ page }).analyze();
+      expect(arabic.violations).toEqual([]);
+    });
+  }
 
   test('sets numbers with a stepper, a thermometer, a tape and a dial', async ({
     page,
@@ -486,6 +606,241 @@ test.describe('SerraCalc, standalone', () => {
   });
 });
 
+// The assistant (ADR-0031): its Worker answered from a script, so these run
+// without a model or a network. The page reads the Worker's address from
+// site-config.json, which the e2e servers leave out, so it comes from here.
+const ASSISTANT = 'http://localhost:8788';
+
+type Reply = Record<string, unknown>;
+interface ChatBody {
+  context: {
+    mode: string;
+    projects: { id: string; title: string }[];
+  };
+  omitTools: string[];
+  messages: { role: string; content: string | null }[];
+}
+
+const say = (content: string): Reply => ({
+  v: 1,
+  ok: true,
+  provider: 'script',
+  message: { content, toolCalls: [] },
+});
+const call = (name: string, args: Record<string, unknown>): Reply => ({
+  v: 1,
+  ok: true,
+  provider: 'script',
+  message: {
+    content: null,
+    toolCalls: [{ id: `call_${name}`, name, arguments: args }],
+  },
+});
+
+/**
+ * Answers the assistant's requests in turn; a reply can be worked out from
+ * the request (to name a project the page made). Returns what was sent.
+ * Call it before the first visit: the page reads its config once.
+ */
+async function scriptAssistant(
+  page: Page,
+  replies: (Reply | ((body: ChatBody) => Reply))[],
+): Promise<ChatBody[]> {
+  const sent: ChatBody[] = [];
+  await page.route('**/site-config.json', (route) =>
+    route.fulfill({ json: { assistantUrl: ASSISTANT } }),
+  );
+  await page.route(`${ASSISTANT}/v1/chat`, async (route) => {
+    const headers = {
+      'access-control-allow-origin': route.request().headers()['origin'] ?? '*',
+      'access-control-allow-headers': 'content-type',
+      'access-control-allow-methods': 'POST, OPTIONS',
+    };
+    if (route.request().method() === 'OPTIONS') {
+      await route.fulfill({ status: 204, headers });
+      return;
+    }
+    const body = route.request().postDataJSON() as ChatBody;
+    sent.push(body);
+    const next = replies.shift() ?? say('That is all.');
+    await route.fulfill({
+      headers,
+      json: typeof next === 'function' ? next(body) : next,
+    });
+  });
+  return sent;
+}
+
+const askButton = (page: Page) => page.locator('[data-tour~="tool-assistant"]');
+
+/** Opens the assistant and sends a message. */
+async function ask(page: Page, text: string, title = 'Assistant') {
+  await askButton(page).click();
+  const panel = page.getByRole('dialog', { name: title });
+  await expect(panel).toBeVisible();
+  const box = panel.getByRole('textbox');
+  await expect(box).toBeFocused();
+  await box.fill(text);
+  await box.press('Enter');
+  return panel;
+}
+
+test.describe('SerraCalc, the assistant', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.addInitScript(() =>
+      localStorage.setItem('preferred_language', 'en'),
+    );
+  });
+
+  test('creates a project only once the reader applies it', async ({
+    page,
+  }) => {
+    const sent = await scriptAssistant(page, [
+      call('create_project', {
+        title: 'East block',
+        crop: 'cucumber',
+        climateId: 'monastir',
+      }),
+      say('East block is ready.'),
+    ]);
+    await page.goto(`${STANDALONE}projects`);
+    await expect(page.getByText('No project yet')).toBeVisible();
+    const panel = await ask(page, 'Make me a cucumber house in Monastir');
+
+    const card = panel.locator('ah-action-card');
+    await expect(card).toContainText('Create the project “East block”');
+    await expect(card).toContainText('Crop: Cucumber');
+    // Nothing changes until Apply.
+    await expect(page.getByText('No project yet')).toBeVisible();
+
+    await card.getByRole('button', { name: 'Apply' }).click();
+    await expect(panel.getByText('East block is ready.')).toBeVisible();
+    await expect(card).toContainText('Done');
+    await expect(panel.getByRole('textbox')).toBeFocused();
+    await expect(
+      page.getByRole('heading', { name: 'East block' }),
+    ).toBeVisible();
+    // The model was told what happened, and got the app's state each time.
+    expect(sent[0].context.projects).toEqual([]);
+    expect(sent[1].messages.at(-1)?.content).toContain('"title":"East block"');
+    expect(sent[1].context.projects.map((p) => p.title)).toEqual([
+      'East block',
+    ]);
+  });
+
+  test('a cancelled deletion changes nothing, and the model hears so', async ({
+    page,
+  }) => {
+    const sent = await scriptAssistant(page, [
+      (body) =>
+        call('delete_project', { projectId: body.context.projects[0].id }),
+      say('I left it alone.'),
+    ]);
+    await loadSamples(page);
+    const panel = await ask(page, 'Delete the first project');
+    const card = panel.locator('ah-action-card');
+    await expect(card).toContainText('every result saved in it');
+    await expect(card).toContainText('This can’t be undone.');
+    await card.getByRole('button', { name: 'Cancel' }).click();
+    await expect(card).toContainText('Cancelled');
+    await expect(panel.getByText('I left it alone.')).toBeVisible();
+    expect(sent[1].messages.at(-1)?.content).toBe(
+      '{"status":"cancelled_by_user"}',
+    );
+
+    await page.keyboard.press('Escape');
+    await expect(panel).toBeHidden();
+    await expect(askButton(page)).toBeFocused();
+    await expect(
+      page.getByRole('heading', { name: 'Geothermal tomato house (sample)' }),
+    ).toBeVisible();
+  });
+
+  test('saves a result and opens it in its calculator', async ({ page }) => {
+    await scriptAssistant(page, [
+      call('save_calculation', {
+        kind: 'heatPeak',
+        label: 'Cold night',
+        inputs: [{ key: 'insideC', value: '20' }],
+      }),
+      say('Saved and opened.'),
+    ]);
+    await loadSamples(page);
+    const panel = await ask(page, 'Save a peak load at 20 °C inside');
+    const card = panel.locator('ah-action-card');
+    await expect(card).toContainText('Save “Cold night” (Peak heating load)');
+    await card.getByRole('button', { name: 'Apply' }).click();
+    await expect(page).toHaveURL(/\/heating\?tab=peak&edit=calc_/);
+    await expect(panel.getByText('Saved and opened.')).toBeVisible();
+    await expect(page.getByText('Editing', { exact: true })).toBeVisible();
+  });
+
+  test('says when the assistant is busy, and when it is unreachable', async ({
+    page,
+  }) => {
+    await scriptAssistant(page, [
+      { v: 1, ok: false, code: 'BUSY', message: 'busy', retryAfterSec: 20 },
+    ]);
+    await page.goto(`${STANDALONE}projects`);
+    const panel = await ask(page, 'Hello');
+    await expect(
+      panel.getByText('The assistant is busy. Try again in 20 seconds.'),
+    ).toBeVisible();
+
+    await page.unroute(`${ASSISTANT}/v1/chat`);
+    await page.route(`${ASSISTANT}/v1/chat`, (route) => route.abort());
+    const box = panel.getByRole('textbox');
+    await box.fill('Hello again');
+    await box.press('Enter');
+    await expect(
+      panel.getByText('The assistant isn’t available right now.'),
+    ).toBeVisible();
+  });
+
+  for (const [width, height, theme] of [
+    [1280, 900, 'light'],
+    [375, 812, 'dark'],
+  ] as const) {
+    test(`the panel passes axe, ${width} px wide, ${theme}, and in Arabic`, async ({
+      page,
+    }) => {
+      await page.setViewportSize({ width, height });
+      await page.addInitScript(
+        (chosen) => localStorage.setItem('ah.theme', chosen),
+        theme,
+      );
+      await scriptAssistant(page, [
+        (body) =>
+          call('update_project', {
+            projectId: body.context.projects[0].id,
+            title: 'Renamed house',
+          }),
+      ]);
+      await loadSamples(page);
+      const panel = await ask(page, 'Rename my project');
+      await expect(panel.locator('ah-action-card')).toBeVisible();
+      // A phone gets the whole screen, a wide window a side sheet.
+      const sheet = await panel.boundingBox();
+      expect(sheet?.width).toBe(width < 768 ? width : 416);
+      await settled(page);
+      const english = await new AxeBuilder({ page }).analyze();
+      expect(english.violations).toEqual([]);
+      await panel.getByRole('button', { name: 'Cancel' }).click();
+      await page.keyboard.press('Escape');
+
+      // The panel follows the app's language, the conversation kept.
+      await pickLanguage(page, 'العربية');
+      await askButton(page).click();
+      const arabic = page.getByRole('dialog', { name: 'المساعد' });
+      await expect(arabic).toBeVisible();
+      await expect(arabic.locator('ah-action-card')).toContainText('أُلغي');
+      await settled(page);
+      const rtl = await new AxeBuilder({ page }).analyze();
+      expect(rtl.violations).toEqual([]);
+    });
+  }
+});
+
 test.describe('SerraCalc, inside the portfolio', () => {
   // eslint-disable-next-line playwright/no-skipped-test
   test.skip(!appIsPublic('serracalc'), 'Hidden from the catalog.');
@@ -535,6 +890,23 @@ test.describe('SerraCalc, inside the portfolio', () => {
     await page.locator('.theme-toggle').click();
     await expect(html).not.toHaveAttribute('data-theme', before ?? '');
     await expect.poll(text).not.toBe(textBefore);
+  });
+
+  test('the assistant leaves the site’s settings to the site', async ({
+    page,
+  }) => {
+    const sent = await scriptAssistant(page, [say('Hello from the demo.')]);
+    await page.goto('/apps/serracalc/projects');
+    const panel = await ask(page, 'Hello');
+    await expect(panel.getByText('Hello from the demo.')).toBeVisible();
+    expect(sent[0].context.mode).toBe('embedded-demo');
+    expect(sent[0].omitTools).toEqual(['set_theme', 'set_language']);
+    // Below the site's sticky header, not under it.
+    const header = await page.locator('.site-header').boundingBox();
+    const box = await panel.boundingBox();
+    expect(box?.y ?? 0).toBeGreaterThanOrEqual(
+      (header?.y ?? 0) + (header?.height ?? 0) - 1,
+    );
   });
 
   test('the old address redirects', async ({ page }) => {
