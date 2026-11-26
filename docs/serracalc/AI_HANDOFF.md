@@ -2,14 +2,14 @@
 
 A briefing for whichever AI agent or IDE picks up SerraCalc, the greenhouse heat, water and climate engineering app. It assumes no memory of earlier sessions. Read it top to bottom before touching code; [AGENTS.md](../../AGENTS.md) has the protocol, [ADR-0027](../adr/0027-serracalc.md) the decisions.
 
-Last updated 2026-11-26: **Everything through PR #43 is on `main` and deployed: the greenhouse-manager spec, its gaps, the root-zone limits (#40), the owner's UI requests (#41: floating header, language menu, folding, MathML formulas, Commons photos with zoom, offline use, a new-version notice, walk-through fixes, Energy → Solar power), and a drain EC limit per crop with the Energy tools taking their prices from the site (#43, §5). Nothing is in progress; §6 has the next steps.** The plan is §7; the decisions are [ADR-0029](../adr/0029-serracalc-greenhouse-manager.md) and its addendum.
+Last updated 2026-11-26: **Everything through PR #43 is on `main` and deployed: the greenhouse-manager spec, its gaps, the root-zone limits (#40), the owner's UI requests (#41: floating header, language menu, folding, MathML formulas, Commons photos with zoom, offline use, a new-version notice, walk-through fixes, Energy → Solar power), and a drain EC limit per crop with the Energy tools taking their prices from the site (#43, §5). Then, on `claude/serracalc-db-blocked`: SerraCalc says when another tab holds its database, instead of opening empty (§5, §6).** The plan is §7; the decisions are [ADR-0029](../adr/0029-serracalc-greenhouse-manager.md) and its addendum.
 
 ## 0. Resume in five minutes
 
 1. **Get the branch:**
 
    ```bash
-   git fetch origin && git switch main
+   git fetch origin && git switch claude/serracalc-db-blocked
    ```
 
    It was built in the worktree `.claude/worktrees/studylm-learning-merge-8ffa5f` (the folder name is historical). Check `git worktree list` first: one agent per checkout.
@@ -22,7 +22,7 @@ Last updated 2026-11-26: **Everything through PR #43 is on `main` and deployed: 
    pnpm exec stylelint "libs/products/serracalc/**/*.scss" "apps/products/serracalc/**/*.scss"
    ```
 
-   That's 3 projects and 165 tests (116 domain, 49 feature).
+   That's 3 projects and 167 tests (116 domain, 51 feature).
 
 4. **See it:** `pnpm nx run product-serracalc:build:development`, then `node tools/scripts/serve-static.mjs dist/apps/products/serracalc/web/browser 4314` and open `http://localhost:4314`. Inside the portfolio it is `/apps/serracalc`.
 
@@ -74,6 +74,18 @@ It is **not** the Greenhouse Labor Planner (`product-greenhouse*`, ADR-0026). Ke
 - The walk-through, all 16 screens at 375 px in English, Arabic spot checks, and 1280, 1024 and 768 px: the header is one row at every width; the calendar reads at phone size and opens at today.
 
 **Verified** (2026-11-25, two EC limits and site prices, PR #43): lint, 116 domain and 49 feature tests (new: tomato's drain limit of 6 doesn't warn at the sample's 4.8 drain while lettuce's 3 does; results saved before the limit compare with the flush ceiling, `{ec: 4.8, max: 4.5}`; the tariff mapping), builds, stylelint, `nx format:check`, the SerraCalc e2e **17 of 17** with `CI=1`. In the browser: Supply → Fertigation shows the 6 limit and no drain warning on the sample; Live data's limit reads 6 for tomato; a site electricity tariff of 0.42 reached Energy's solar grid price on a fresh load, and "Take the site's tariffs" re-applied it. Fixed there: site records load from IndexedDB after the screen opens, so Energy now waits for them.
+
+**Verified** (2026-11-26, another tab holding the database, `claude/serracalc-db-blocked`):
+
+- Lint, 116 domain and 51 feature tests, builds, stylelint, `nx format:check`, the zoneless check.
+- New unit tests in `serra-db.service.spec.ts`, which fail on the code before this branch:
+  - an older tab holding version 1 makes the state `blocked`, then the projects open once it closes;
+  - a newer tab's upgrade to version 3 isn't blocked, the state becomes `replaced`, and a save is refused.
+- The SerraCalc e2e, **18 of 18** with `CI=1`. The new test uses two pages: the blocked notice (axe-clean), the projects opening once the other page lets go, then Reload offered after an upgrade.
+- Screenshots on the production build in a fresh Chromium:
+  - the blocked notice at 375 px in English and Arabic (right to left);
+  - the replaced notice at 1280 px in dark mode.
+- Fixed there: standalone, a short page (here, waiting on the database) showed white under the sand. `.serra.is-standalone` now fills the screen (`100dvh`, border-box, so long pages are unchanged).
 
 **Not verified yet (greenhouse manager):** the photos inside the portfolio (they need the remote's origin in `img-src`, which the e2e's headers have); MathML on a real Android phone (Chrome draws it, but fonts vary); a real phone; the Italian, German and Arabic wording by native speakers; every formula against a published worked example beyond the spec's benchmarks; "acidified refill" is our reading of the Hydrotool strategy (the paper wasn't read). The drain EC limits per crop (`CROPS[crop].drainEcMaxDsM`: tomato 6, cucumber and pepper 4.5, melon 5, rose 3.5, strawberry and lettuce 3) are indicative, not a grower's figures.
 
@@ -176,6 +188,7 @@ Written before any change on `feat/serracalc-parity`; the last column says what 
 - In `fertigation()`, `g` is the feed's factor C / C_in; the drain holds `toDrain` = A/D times it. Sodium and chloride limits divide by `toDrain`, the EC ceiling does not. `days[].naMmolL`, the levels and the notes are drain values.
 - **Two EC limits** (owner's go-ahead, 2026-11-25): `flushEcDsM` (4.5) is the recirculated feed at the dripper and flushes the loop. `drainEcMaxDsM` is the drain (root zone), from `CROPS[crop].drainEcMaxDsM` (tomato 6, cucumber and pepper 4.5, melon 5, rose 3.5, strawberry and lettuce 3; indicative). The drain limit drives the "drain EC high" note and the Live data alert. Results saved before it fall back to `flushEcDsM`, in the report and when opened (`supply-screen.ts` load).
 - **Prices live on the site:** `energyPrices(tariffs)` (`site.ts`) maps Site → Tariffs to the CHP's gas and power, the cooling year's electricity, and solar's grid and export price. Energy starts from them when they load and offers "Take the site's tariffs". A new energy tool with a price should be added to `energyPrices`.
+- **Database versions** (`serra-db.service.ts`, `VERSION`): a tab from this build on closes its connection on `versionchange` (a newer tab wants to upgrade) and the shell asks for a reload; it can't save until then. A tab of an older build doesn't, so the new tab's upgrade waits (`blocked`) and the shell says to close or reload the other tab; once it does, the upgrade finishes and the projects open. `SerraDbService.state` is `ok`, `blocked` or `replaced`; the notice shows in both modes, ahead of the new-version one. Tested in `serra-db.service.spec.ts` (fake-indexeddb) and the e2e (two pages).
 - Icons: `node tools/scripts/generate-app-icons.mjs serracalc`.
 - **UI polish (`claude/serracalc-ui-polish`):**
   - **Floating header:** standalone only (`.top` in `serra-shell`). Its height is `--sc-top` (the rail and Science's contents stick under it) and the page's `scroll-padding`. Inside the portfolio the site header already floats, so SerraCalc's stays in the page.
@@ -199,7 +212,7 @@ PR #43 is merged (`c264e3f`) and deployed (CI run 45747755662; every job green, 
 - While the site has no tariffs, Energy keeps its defaults (grid 0.3, export 0.18) and shows no "Take the site's tariffs" button.
 - Once "Oasis block 3" has tariffs (written to the `sites` store; the database upgraded to version 2), a fresh load gives solar 0.42 and 0.21, the CHP's gas 0.55 and power 0.42, and cooling 0.42. A grid price edited to 0.1 goes back to 0.42 with the button.
 
-**Found live:** in the desktop app's browser pane, whose profile still had the database at version 1, the upgrade to version 2 never finished, so the app showed no projects and no message. Something still held the old database open; reloading the pane's other SerraCalc tab didn't release it, and what holds it wasn't found. `serra-db.service.ts` handles neither `blocked` nor `versionchange`. So a SerraCalc tab left open on an old version would do the same to a user at the next database version (item 1).
+**Found live:** in the desktop app's browser pane, whose profile still had the database at version 1, the upgrade to version 2 never finished, so the app showed no projects and no message. Something still held the old database open; reloading the pane's other SerraCalc tab didn't release it, and what holds it wasn't found. `serra-db.service.ts` handles neither `blocked` nor `versionchange`. So a SerraCalc tab left open on an old version would do the same to a user at the next database version. Handled on `claude/serracalc-db-blocked` (item 1, §5).
 
 **Checked live on 2026-11-25 (PR #41):**
 
@@ -208,10 +221,7 @@ PR #43 is merged (`c264e3f`) and deployed (CI run 45747755662; every job green, 
 
 **Not checked live:** the service worker and opening offline (the desktop app's browser pane can't register one; use Playwright or a phone); the "new version" banner (#43's deploy is the first chance: a phone that opened the app before 2026-11-26 should offer Reload).
 
-1. Make a blocked database upgrade visible, before the next database version. In `serra-db.service.ts`:
-   - close the connection on `versionchange`, so an old tab steps aside;
-   - on `blocked`, tell the user to close SerraCalc's other tabs instead of hanging.
-   - Test it with a fake `indexedDB`, or with two pages in the e2e.
+1. Open the pull request for `claude/serracalc-db-blocked`, merge it when CI passes, and check live: the desktop app's browser pane (its database still at version 1, held by something) should now say another tab holds the projects instead of opening empty.
 2. A real phone (Android Chrome): drag handles with a finger, the plant cards, a backup shared to Drive, the language menu, folding, photo zoom, MathML fonts, installing and opening offline.
 3. Photos still missing (Commons had none free): hot-water pipes, pad cooling, fogging, a heat buffer, grow lights, CO₂ dosing, a PAR sensor, a lab analysis, a climate computer. The owner's own photos could fill them, with no farm or company names in view.
 
