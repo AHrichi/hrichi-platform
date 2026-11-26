@@ -4,7 +4,8 @@
   [attr.aria-labelledby]="id + '-title'"
   (close)="closed()"
 >
-  <header class="head">
+  <!-- Not a <header>: beside the page, that would be a second banner. -->
+  <div class="head">
     <h2 class="title" [id]="id + '-title'">
       <svg viewBox="0 0 24 24" aria-hidden="true">
         <path
@@ -33,7 +34,7 @@
         <path d="M4 4l8 8M12 4l-8 8" />
       </svg>
     </button>
-  </header>
+  </div>
 
   <div #log class="log" role="log" aria-live="polite">
     @if (assistant.entries().length === 0) {
