@@ -1,6 +1,26 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  input,
+} from '@angular/core';
 
 /** Who a message is from: the reader, the assistant, or the app itself. */
+const LRI = String.fromCharCode(0x2066);
+const PDI = String.fromCharCode(0x2069);
+
+/**
+ * Keeps a temperature's unit whole in right-to-left text: without an
+ * isolate, Arabic shows "0 °C" as "C° 0". A model doesn't add one, so the
+ * message does; in left-to-right text the isolate changes nothing.
+ */
+export function isolateUnits(text: string): string {
+  return text.replace(
+    /°\s?[CFK](?![A-Za-z])/g,
+    (unit) => `${LRI}${unit}${PDI}`,
+  );
+}
+
 export type ChatMessageFrom = 'user' | 'assistant' | 'notice';
 
 /**
@@ -21,7 +41,7 @@ export type ChatMessageFrom = 'user' | 'assistant' | 'notice';
           <i></i><i></i><i></i>
         </span>
       } @else {
-        <p class="text" dir="auto">{{ text() }}</p>
+        <p class="text" dir="auto">{{ shown() }}</p>
       }
       @if (meta(); as meta) {
         <small class="meta" dir="auto">{{ meta }}</small>
@@ -43,4 +63,6 @@ export class ChatMessage {
   readonly tone = input<'default' | 'error'>('default');
   readonly typing = input(false);
   readonly typingLabel = input('Writing…');
+
+  protected readonly shown = computed(() => isolateUnits(this.text()));
 }
