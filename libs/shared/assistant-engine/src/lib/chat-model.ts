@@ -39,10 +39,11 @@ export class ModelError extends Error {
   constructor(
     readonly model: string,
     readonly kind: ModelErrorKind,
-    message: string,
+    /** The reason alone, without the model's name. */
+    readonly detail: string,
     readonly retryAfterSec: number | null = null,
   ) {
-    super(`${model}: ${message}`);
+    super(`${model}: ${detail}`);
   }
 }
 

@@ -183,6 +183,40 @@ describe('the OpenAI-compatible model', () => {
   });
 });
 
+describe('a refused request', () => {
+  it('keeps the provider’s reason for the logs', async () => {
+    const { fetchFn } = fakeFetch(
+      json(
+        {
+          error: {
+            message: 'Invalid API Key',
+            type: 'invalid_request_error',
+            code: 'invalid_api_key',
+          },
+        },
+        401,
+      ),
+      // Gemini's OpenAI endpoint answers with a list.
+      json([{ error: { code: 400, message: 'Invalid JSON payload' } }], 400),
+      new Response('<html>Bad gateway</html>', { status: 502 }),
+    );
+    const model = groq(fetchFn);
+    const details: string[] = [];
+    for (let i = 0; i < 3; i++) {
+      try {
+        await model.complete(REQUEST, new AbortController().signal);
+      } catch (error) {
+        details.push((error as ModelError).message);
+      }
+    }
+    expect(details).toEqual([
+      expect.stringContaining('HTTP 401 invalid_api_key: Invalid API Key'),
+      expect.stringContaining('HTTP 400 : Invalid JSON payload'),
+      expect.stringMatching(/HTTP 502$/),
+    ]);
+  });
+});
+
 describe('the Workers AI model', () => {
   const run = (output: unknown) => ({ run: async () => output });
 
@@ -211,6 +245,35 @@ describe('the Workers AI model', () => {
       toolCalls: [],
     });
     expect(own.capability).toBe('read-only');
+  });
+
+  it('takes back a call it wrote out as text, copying its history', async () => {
+    const echo = (response: string) =>
+      new WorkersAiModel(run({ response }), '@cf/meta/llama').complete(
+        REQUEST,
+        new AbortController().signal,
+      );
+    expect(
+      await echo('Called open_screen with {"screen":"cooling"}.'),
+    ).toMatchObject({
+      content: null,
+      toolCalls: [{ name: 'open_screen', arguments: { screen: 'cooling' } }],
+    });
+    expect(
+      await echo(
+        'Opening it. Called open_screen with {"screen":"air","tab":"vpd"}.',
+      ),
+    ).toMatchObject({
+      content: 'Opening it.',
+      toolCalls: [
+        { name: 'open_screen', arguments: { screen: 'air', tab: 'vpd' } },
+      ],
+    });
+    // Words about a call stay words.
+    expect(await echo('I called it with care.')).toEqual({
+      content: 'I called it with care.',
+      toolCalls: [],
+    });
   });
 
   it('says when the daily allowance is used, and until when', async () => {
@@ -266,7 +329,7 @@ describe('the ladder', () => {
     const result = await new ChatLadder([busy, ok]).run(RUN);
     expect(result.provider).toBe('B');
     expect(result.attempts).toEqual([
-      { model: 'A', outcome: 'rate_limited', detail: 'A: busy' },
+      { model: 'A', outcome: 'rate_limited', detail: 'busy' },
     ]);
   });
 
@@ -457,6 +520,42 @@ describe('handleChat', () => {
       code: 'BUSY',
       retryAfterSec: 20,
     });
+  });
+
+  it('logs why each model failed, never what was said', async () => {
+    const lines: unknown[] = [];
+    const refused = new FakeModel(
+      'A',
+      new ModelError('A', 'unavailable', 'HTTP 401 invalid_api_key: Bad key'),
+    );
+    const answers = new FakeModel('B', { content: 'Deux.', toolCalls: [] });
+    await handleChat(request, {
+      profiles,
+      ladder: new ChatLadder([refused, answers]),
+      log: (entry) => lines.push(entry),
+    });
+    expect(lines).toEqual([
+      expect.objectContaining({
+        status: 200,
+        provider: 'B',
+        attempts: 2,
+        failed: ['A unavailable: HTTP 401 invalid_api_key: Bad key'],
+      }),
+    ]);
+    expect(JSON.stringify(lines)).not.toContain('Quels projets');
+
+    lines.length = 0;
+    await handleChat(request, {
+      profiles,
+      ladder: new ChatLadder([refused]),
+      log: (entry) => lines.push(entry),
+    });
+    expect(lines).toEqual([
+      expect.objectContaining({
+        status: 503,
+        failed: ['A unavailable: HTTP 401 invalid_api_key: Bad key'],
+      }),
+    ]);
   });
 
   it('keeps the user’s data inside its tags', () => {

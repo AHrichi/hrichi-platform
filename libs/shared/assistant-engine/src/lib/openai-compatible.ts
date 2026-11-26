@@ -153,7 +153,33 @@ export class OpenAiCompatibleModel implements ChatModel {
     if (status === 400 && text.includes('tool_use_failed')) {
       return new ModelError(this.label, 'bad_output', 'tool_use_failed');
     }
-    return new ModelError(this.label, 'unavailable', `HTTP ${status}`);
+    return new ModelError(
+      this.label,
+      'unavailable',
+      `HTTP ${status}${providerError(text)}`,
+    );
+  }
+}
+
+/**
+ * The provider's own word on a refused request (`invalid_api_key`,
+ * `model_not_found`, a schema it won't take), for the logs: its code and
+ * the start of its message. Never the request: a provider's error doesn't
+ * repeat the conversation, and Groq's generation-failed body (which does)
+ * is handled before this.
+ */
+function providerError(text: string): string {
+  try {
+    const parsed = JSON.parse(text) as unknown;
+    const error = (Array.isArray(parsed) ? parsed[0] : parsed) as {
+      error?: { code?: unknown; type?: unknown; message?: unknown };
+    };
+    const { code, type, message } = error?.error ?? {};
+    const label = [code, type].find((v) => typeof v === 'string' && v);
+    const said = typeof message === 'string' ? message.slice(0, 200) : '';
+    return label || said ? ` ${label ?? ''}${said ? `: ${said}` : ''}` : '';
+  } catch {
+    return '';
   }
 }
 

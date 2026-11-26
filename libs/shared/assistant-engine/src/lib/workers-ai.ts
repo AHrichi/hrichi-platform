@@ -98,6 +98,19 @@ export class WorkersAiModel implements ChatModel {
         ? data.response
         : null;
     const calls = openAi?.tool_calls ?? data.tool_calls ?? [];
+    if (calls.length === 0 && content) {
+      // It copies how earlier calls read in its history (asText) instead
+      // of calling: take those sentences back as the calls they mean.
+      const echoed = echoedCalls(content);
+      if (echoed.calls.length > 0) {
+        return {
+          content: cleanText(echoed.rest),
+          toolCalls: echoed.calls.map((call, index) =>
+            this.toolCall(call, index),
+          ),
+        };
+      }
+    }
     return {
       content: cleanText(content),
       toolCalls: calls.map((call, index) => this.toolCall(call, index)),
@@ -132,6 +145,23 @@ export class WorkersAiModel implements ChatModel {
       arguments: args as Record<string, unknown>,
     };
   }
+}
+
+/** "Called open_screen with {...}." as asText writes a call into history. */
+const ECHOED_CALL = /Called ([a-z_][a-z0-9_]*) with (\{.*?\})\.?(?=\s|$)/gs;
+
+/** The calls a reply wrote out as asText's sentences, and the other text. */
+function echoedCalls(text: string): { calls: LooseCall[]; rest: string } {
+  const calls: LooseCall[] = [];
+  const rest = text.replace(ECHOED_CALL, (sentence, name: string, json) => {
+    try {
+      calls.push({ name, arguments: JSON.parse(json) as unknown });
+      return '';
+    } catch {
+      return sentence;
+    }
+  });
+  return { calls, rest: rest.trim() };
 }
 
 function asText(message: ChatMessage): { role: string; content: string } {

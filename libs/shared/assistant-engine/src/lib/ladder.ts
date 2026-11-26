@@ -117,7 +117,7 @@ export class ChatLadder {
         attempts.push({
           model: model.label,
           outcome: failure.kind,
-          detail: failure.message,
+          detail: failure.detail,
         });
         if (failure.retryAfterSec !== null) {
           soonest = Math.min(soonest ?? Infinity, failure.retryAfterSec);
