@@ -134,6 +134,20 @@
         "8788"
       ],
       "port": 8788
+    },
+    {
+      "name": "sync-edge (wrangler dev)",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": [
+        "exec",
+        "wrangler",
+        "dev",
+        "--config",
+        "apps/sync-edge/wrangler.jsonc",
+        "--port",
+        "8789"
+      ],
+      "port": 8789
     }
   ]
 }

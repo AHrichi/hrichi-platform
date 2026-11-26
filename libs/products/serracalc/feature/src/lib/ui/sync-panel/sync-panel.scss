@@ -11,7 +11,7 @@
 .note,
 .error,
 .state,
-.pairing p {
+.pairing p:not(.code) {
   margin: 0;
   font-size: var(--font-size-200);
 }
@@ -109,6 +109,7 @@
 
 // The code, large enough to read across a table.
 .code {
+  margin: 0;
   font-family: var(--font-family-mono);
   font-size: var(--font-size-600);
   font-weight: var(--font-weight-semibold);
