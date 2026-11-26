@@ -1,0 +1,200 @@
+// A pill with a round key at each end and the number rolling in between.
+:host {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  inline-size: 100%;
+  min-inline-size: 0;
+  min-block-size: 2.75rem;
+  padding: var(--space-1);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-pill);
+  background: var(--color-bg-canvas);
+  color: var(--color-text-default);
+
+  &:focus-within {
+    outline: 2px solid var(--color-focus-ring);
+    outline-offset: 1px;
+  }
+
+  // Pushed past an end: a short knock towards it.
+  &[data-wall$='-0'] {
+    animation: ah-stepper-knock-a var(--motion-duration-fast)
+      var(--motion-easing-standard);
+  }
+
+  &[data-wall$='-1'] {
+    animation: ah-stepper-knock-b var(--motion-duration-fast)
+      var(--motion-easing-standard);
+  }
+
+  &[data-wall^='start'] {
+    --ah-knock: -3px;
+  }
+
+  &[data-wall^='end'] {
+    --ah-knock: 3px;
+  }
+}
+
+:host(.is-disabled) {
+  opacity: 0.6;
+}
+
+.nudge {
+  display: grid;
+  flex: none;
+  place-items: center;
+  inline-size: 2.25rem;
+  block-size: 2.25rem;
+  padding: 0;
+  // Transparent, so forced-colours mode still draws the key's edge.
+  border: 1px solid transparent;
+  border-radius: 50%;
+  background: var(--color-accent-subtle);
+  color: var(--color-accent-default);
+  cursor: pointer;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    background-color var(--motion-duration-fast) var(--motion-easing-standard),
+    transform var(--motion-duration-fast) var(--motion-easing-standard);
+
+  svg {
+    inline-size: 1rem;
+    block-size: 1rem;
+    fill: none;
+    stroke: currentcolor;
+    stroke-width: 2;
+    stroke-linecap: round;
+  }
+
+  &:hover,
+  &.is-holding {
+    background: var(--color-accent-solid);
+    color: var(--color-accent-on-solid);
+  }
+
+  &:active {
+    transform: scale(0.9);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-focus-ring);
+    outline-offset: 2px;
+  }
+
+  &[aria-disabled='true'] {
+    background: var(--color-bg-surface);
+    color: var(--color-text-muted);
+    cursor: default;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+}
+
+// The window the number rolls through.
+.box {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  min-inline-size: 0;
+  overflow: hidden;
+}
+
+.field {
+  inline-size: 100%;
+  min-inline-size: 0;
+  padding: var(--space-1) 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-weight: var(--font-weight-semibold);
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+  appearance: textfield;
+
+  // The pill draws the focus ring, around the keys too.
+  &:focus {
+    outline: none;
+  }
+
+  &::-webkit-inner-spin-button,
+  &::-webkit-outer-spin-button {
+    margin: 0;
+    appearance: none;
+  }
+
+  // Up rolls the new number in from below, down from above, like a counter.
+  &[data-pulse='up-0'] {
+    animation: ah-stepper-up-a var(--motion-duration-base)
+      var(--motion-easing-enter);
+  }
+
+  &[data-pulse='up-1'] {
+    animation: ah-stepper-up-b var(--motion-duration-base)
+      var(--motion-easing-enter);
+  }
+
+  &[data-pulse='down-0'] {
+    animation: ah-stepper-down-a var(--motion-duration-base)
+      var(--motion-easing-enter);
+  }
+
+  &[data-pulse='down-1'] {
+    animation: ah-stepper-down-b var(--motion-duration-base)
+      var(--motion-easing-enter);
+  }
+}
+
+.unit {
+  flex: none;
+  padding-inline-end: var(--space-2);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-100);
+}
+
+// Two copies of each, so switching between them restarts the animation.
+@keyframes ah-stepper-up-a {
+  from {
+    opacity: 0.2;
+    transform: translateY(0.7em);
+  }
+}
+
+@keyframes ah-stepper-up-b {
+  from {
+    opacity: 0.2;
+    transform: translateY(0.7em);
+  }
+}
+
+@keyframes ah-stepper-down-a {
+  from {
+    opacity: 0.2;
+    transform: translateY(-0.7em);
+  }
+}
+
+@keyframes ah-stepper-down-b {
+  from {
+    opacity: 0.2;
+    transform: translateY(-0.7em);
+  }
+}
+
+@keyframes ah-stepper-knock-a {
+  50% {
+    transform: translateX(var(--ah-knock));
+  }
+}
+
+@keyframes ah-stepper-knock-b {
+  50% {
+    transform: translateX(var(--ah-knock));
+  }
+}

@@ -1,0 +1,44 @@
+@if (showValue()) {
+  <span class="readout" dir="auto" aria-hidden="true">{{ text() }}</span>
+}
+<div
+  #scale
+  class="scale"
+  [attr.role]="companion() ? null : 'slider'"
+  [attr.tabindex]="companion() || disabled() ? -1 : 0"
+  [attr.aria-hidden]="companion() || null"
+  [attr.aria-label]="companion() ? null : label()"
+  [attr.aria-labelledby]="companion() ? null : labelledBy()"
+  [attr.aria-valuemin]="companion() ? null : lo()"
+  [attr.aria-valuemax]="companion() ? null : hi()"
+  [attr.aria-valuenow]="companion() ? null : value()"
+  [attr.aria-valuetext]="companion() ? null : text()"
+  [attr.aria-disabled]="disabled() || null"
+  [style.--ah-fill]="fraction()"
+  [style.--ah-mercury]="mercury()"
+  [style.--ah-glow]="glow()"
+  (keydown)="key($event)"
+  (pointerdown)="down($event)"
+  (pointermove)="move($event)"
+  (pointerup)="up()"
+  (pointercancel)="up()"
+  (lostpointercapture)="up()"
+>
+  <span class="bulb"></span>
+  <span #tube class="tube">
+    <span class="mercury"></span>
+    @if (zero() !== null) {
+      <span class="zero" [style.--ah-at]="zero()"></span>
+    }
+    <span class="thumb"></span>
+  </span>
+</div>
+<div class="ends" aria-hidden="true">
+  <span>{{ minText() }}</span>
+  @if (zeroLabel() !== null) {
+    <span class="zero-label" [style.--ah-at]="zeroLabel()">{{
+      zeroText()
+    }}</span>
+  }
+  <span>{{ maxText() }}</span>
+</div>

@@ -1,0 +1,61 @@
+<button
+  type="button"
+  class="nudge"
+  tabindex="-1"
+  [class.is-holding]="holding() === -1"
+  [attr.aria-label]="decreaseLabel()"
+  [attr.aria-controls]="inputId()"
+  [attr.aria-disabled]="atMin() || null"
+  [disabled]="disabled()"
+  (pointerdown)="press($event, -1)"
+  (pointerup)="release()"
+  (pointercancel)="release()"
+  (lostpointercapture)="release()"
+  (contextmenu)="$event.preventDefault()"
+  (click)="clicked(-1)"
+>
+  <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8h9" /></svg>
+</button>
+<span class="box">
+  <input
+    #field
+    class="field"
+    type="number"
+    inputmode="decimal"
+    [id]="inputId()"
+    [attr.aria-label]="label()"
+    [attr.aria-describedby]="describedBy()"
+    [min]="lo()"
+    [max]="hi()"
+    [step]="step()"
+    [value]="value()"
+    [disabled]="disabled()"
+    [attr.data-pulse]="pulse()"
+    (input)="typed(field.value)"
+    (keydown)="key($event)"
+    (blur)="settle(field)"
+  />
+  @if (unit()) {
+    <span class="unit" dir="auto" aria-hidden="true">{{ unit() }}</span>
+  }
+</span>
+<button
+  type="button"
+  class="nudge"
+  tabindex="-1"
+  [class.is-holding]="holding() === 1"
+  [attr.aria-label]="increaseLabel()"
+  [attr.aria-controls]="inputId()"
+  [attr.aria-disabled]="atMax() || null"
+  [disabled]="disabled()"
+  (pointerdown)="press($event, 1)"
+  (pointerup)="release()"
+  (pointercancel)="release()"
+  (lostpointercapture)="release()"
+  (contextmenu)="$event.preventDefault()"
+  (click)="clicked(1)"
+>
+  <svg viewBox="0 0 16 16" aria-hidden="true">
+    <path d="M3.5 8h9M8 3.5v9" />
+  </svg>
+</button>

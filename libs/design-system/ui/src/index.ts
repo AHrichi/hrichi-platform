@@ -90,3 +90,16 @@ export {
 
 export * from './lib/step-timeline';
 export * from './lib/reduced-motion';
+
+export * from './lib/stepper/stepper';
+export { Stepper as AhStepper } from './lib/stepper/stepper';
+export * from './lib/dial/dial';
+export {
+  Dial as AhDial,
+  type DialMark as AhDialMark,
+  type DialVariant as AhDialVariant,
+} from './lib/dial/dial';
+export * from './lib/thermometer/thermometer';
+export { Thermometer as AhThermometer } from './lib/thermometer/thermometer';
+export * from './lib/ruler/ruler';
+export { Ruler as AhRuler } from './lib/ruler/ruler';
