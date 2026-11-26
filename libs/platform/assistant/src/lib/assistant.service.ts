@@ -30,6 +30,29 @@ type NewEntry = AssistantEntry extends infer E
     : never
   : never;
 
+const ACTION_TIMEOUT_MS = 20_000;
+
+/** An action the chat stopped waiting for: too slow, or the reader's Stop. */
+class Late extends Error {
+  constructor(
+    readonly reason: 'timeout' | 'stopped',
+    limitMs: number,
+  ) {
+    // What the model reads: it may still happen, so no blind retry.
+    super(
+      reason === 'timeout'
+        ? `didn't finish within ${Math.round(limitMs / 1000)} s; it may still complete, so check before trying again`
+        : 'stopped by the user before it finished; it may still complete',
+    );
+  }
+}
+
+interface Executed {
+  /** What the model reads back. */
+  readonly result: unknown;
+  readonly late?: Late['reason'];
+}
+
 interface Saved {
   readonly v: 1;
   readonly history: ChatMessage[];
@@ -223,7 +246,8 @@ export class AssistantService {
         if (problem) results.set(call.id, { error: problem });
         else waiting.push({ call, args: checked.args, tool: checked.tool });
       } else {
-        results.set(call.id, await this.execute(call.name, checked.args));
+        const { result } = await this.execute(call.name, checked.args, signal);
+        results.set(call.id, result);
       }
     }
 
@@ -258,10 +282,23 @@ export class AssistantService {
       } else {
         let failure: string | null = null;
         for (const { call, args } of waiting) {
-          const result = await this.execute(call.name, args, false);
+          // After Stop, the rest of the card doesn't run.
+          if (signal.aborted) {
+            results.set(call.id, { status: 'cancelled_by_user' });
+            continue;
+          }
+          const { result, late } = await this.execute(
+            call.name,
+            args,
+            signal,
+            false,
+          );
           results.set(call.id, result);
-          if (
-            !failure &&
+          if (failure) continue;
+          if (late) {
+            failure =
+              late === 'timeout' ? this.copy().tooSlow : this.copy().stopped;
+          } else if (
             typeof result === 'object' &&
             result !== null &&
             'error' in result
@@ -285,26 +322,71 @@ export class AssistantService {
     }));
   }
 
-  /** Runs one tool; a note (and Undo) shows for settings and moves. */
+  /**
+   * Runs one tool, within the time limit and until Stop; a note (and
+   * Undo) shows for settings and moves.
+   */
   private async execute(
     name: string,
     args: unknown,
+    signal: AbortSignal,
     showNote = true,
-  ): Promise<unknown> {
+  ): Promise<Executed> {
     const executor = this.setup.executors[name];
-    if (!executor) return { error: `${name} isn't available here` };
+    if (!executor) return { result: { error: `${name} isn't available here` } };
     let outcome: ToolOutcome;
     try {
-      outcome = await executor.run(args as never);
+      outcome = await this.inTime(() => executor.run(args as never), signal);
     } catch (error) {
-      return { error: error instanceof Error ? error.message : String(error) };
+      if (error instanceof Late) {
+        return { result: { error: error.message }, late: error.reason };
+      }
+      return {
+        result: {
+          error: error instanceof Error ? error.message : String(error),
+        },
+      };
     }
-    if (!outcome.ok) return { error: outcome.error };
+    if (!outcome.ok) return { result: { error: outcome.error } };
     if (showNote && outcome.note) {
       const entry = this.notice(outcome.note, 'default', Boolean(outcome.undo));
       if (outcome.undo) this.undos.set(entry, outcome.undo);
     }
-    return outcome.result ?? { ok: true };
+    return { result: outcome.result ?? { ok: true } };
+  }
+
+  /** An action's outcome, unless it outlasts the time limit or Stop. */
+  private inTime<T>(
+    run: () => T | Promise<T>,
+    signal: AbortSignal,
+  ): Promise<T> {
+    const limit = this.setup.actionTimeoutMs ?? ACTION_TIMEOUT_MS;
+    return new Promise<T>((resolve, reject) => {
+      let settled = false;
+      const settle = (finish: () => void) => {
+        if (settled) return;
+        settled = true;
+        clearTimeout(timer);
+        signal.removeEventListener('abort', onStop);
+        finish();
+      };
+      const onStop = () => settle(() => reject(new Late('stopped', limit)));
+      const timer = setTimeout(
+        () => settle(() => reject(new Late('timeout', limit))),
+        limit,
+      );
+      if (signal.aborted) {
+        onStop();
+        return;
+      }
+      signal.addEventListener('abort', onStop, { once: true });
+      Promise.resolve()
+        .then(run)
+        .then(
+          (value) => settle(() => resolve(value)),
+          (error: unknown) => settle(() => reject(error)),
+        );
+    });
   }
 
   /** Why a change can't run, before the reader is asked about it. */

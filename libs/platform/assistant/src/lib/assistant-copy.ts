@@ -22,6 +22,8 @@ export interface AssistantCopy {
   readonly broken: string;
   readonly tooManySteps: string;
   readonly stopped: string;
+  /** An action the chat stopped waiting for: it may still go through. */
+  readonly tooSlow: string;
 }
 
 export const ASSISTANT_COPY: Readonly<Record<AssistantLocale, AssistantCopy>> =
@@ -51,6 +53,8 @@ export const ASSISTANT_COPY: Readonly<Record<AssistantLocale, AssistantCopy>> =
       tooManySteps:
         'That took too many steps, so I stopped. Try asking in smaller parts.',
       stopped: 'Stopped.',
+      tooSlow:
+        'It didn’t finish in time. It may still go through: check before trying again.',
     },
     fr: {
       title: 'Assistant',
@@ -78,6 +82,8 @@ export const ASSISTANT_COPY: Readonly<Record<AssistantLocale, AssistantCopy>> =
       tooManySteps:
         'Il a fallu trop d’étapes, je me suis arrêté. Posez la question en plusieurs fois.',
       stopped: 'Arrêté.',
+      tooSlow:
+        'Ça n’a pas abouti à temps. Ça peut encore se faire : vérifiez avant de réessayer.',
     },
     ar: {
       title: 'المساعد',
@@ -100,6 +106,8 @@ export const ASSISTANT_COPY: Readonly<Record<AssistantLocale, AssistantCopy>> =
       broken: 'حدث خطأ في هذه المحادثة. ابدأ محادثة جديدة.',
       tooManySteps: 'تطلّب ذلك خطوات كثيرة فتوقفت. اسأل على أجزاء أصغر.',
       stopped: 'توقّف.',
+      tooSlow:
+        'لم يكتمل في الوقت المحدد. قد يكتمل لاحقًا، فتحقّق قبل المحاولة مجددًا.',
     },
     it: {
       title: 'Assistente',
@@ -125,6 +133,8 @@ export const ASSISTANT_COPY: Readonly<Record<AssistantLocale, AssistantCopy>> =
       tooManySteps:
         'Servivano troppi passaggi, mi sono fermato. Chiedi un pezzo alla volta.',
       stopped: 'Fermato.',
+      tooSlow:
+        'Non è finito in tempo. Potrebbe ancora andare a buon fine: controlla prima di riprovare.',
     },
     de: {
       title: 'Assistent',
@@ -153,6 +163,8 @@ export const ASSISTANT_COPY: Readonly<Record<AssistantLocale, AssistantCopy>> =
       tooManySteps:
         'Das hätte zu viele Schritte gebraucht, daher habe ich aufgehört. Fragen Sie in kleineren Teilen.',
       stopped: 'Gestoppt.',
+      tooSlow:
+        'Das wurde nicht rechtzeitig fertig. Es kann noch durchgehen: Prüf es, bevor du es noch einmal versuchst.',
     },
   };
 

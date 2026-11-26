@@ -271,6 +271,59 @@ describe('AssistantService', () => {
     expect(transport.requests[0].omitTools).toEqual(['set_sunlight']);
   });
 
+  it('stops waiting for an action that never finishes, and says so', async () => {
+    const hangs = {
+      describe: () => ({ heading: 'Create “East”' }),
+      run: () => new Promise<never>(() => undefined),
+    };
+    const { service, transport } = setup(
+      [calls(call('create_project', { title: 'East' })), words('Check it.')],
+      { executors: { create_project: hangs }, actionTimeoutMs: 30 },
+    );
+    const sending = service.send('Create East');
+    await untilCard(service);
+    service.decideAction(true);
+    await sending;
+    expect(service.busy()).toBe(false);
+    expect(service.entries().find((e) => e.kind === 'action')).toMatchObject({
+      status: 'failed',
+      detail:
+        'It didn’t finish in time. It may still go through: check before trying again.',
+    });
+    expect(transport.requests[1].messages.slice(-1)[0]).toMatchObject({
+      content: expect.stringContaining('it may still complete'),
+    });
+  });
+
+  it('lets Stop end an action that is taking its time', async () => {
+    const hangs = {
+      describe: () => ({ heading: 'Create “East”' }),
+      run: () => new Promise<never>(() => undefined),
+    };
+    const { service, transport } = setup(
+      [calls(call('create_project', { title: 'East' }))],
+      { executors: { create_project: hangs } },
+    );
+    const sending = service.send('Create East');
+    await untilCard(service);
+    service.decideAction(true);
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    expect(service.busy()).toBe(true);
+    service.stop();
+    await sending;
+    expect(service.busy()).toBe(false);
+    expect(service.entries().find((e) => e.kind === 'action')).toMatchObject({
+      status: 'failed',
+      detail: 'Stopped.',
+    });
+    expect(service.entries().slice(-1)[0]).toMatchObject({
+      kind: 'notice',
+      text: 'Stopped.',
+    });
+    // The model isn't asked again after Stop.
+    expect(transport.requests).toHaveLength(1);
+  });
+
   it('notes a setting with Undo', async () => {
     const state = setup([
       calls(call('set_sunlight', { on: true })),
