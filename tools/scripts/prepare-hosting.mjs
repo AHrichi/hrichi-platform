@@ -135,7 +135,13 @@ if (values['site-config']) {
 `,
     );
   }
-  for (const url of [apiUrl, orbitApiUrl, n8nUrl, learningEdgeUrl, assistantUrl]) {
+  for (const url of [
+    apiUrl,
+    orbitApiUrl,
+    n8nUrl,
+    learningEdgeUrl,
+    assistantUrl,
+  ]) {
     if (url) {
       apiOrigins.push(new URL(url).origin);
     }

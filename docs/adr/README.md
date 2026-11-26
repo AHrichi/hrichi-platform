@@ -36,6 +36,7 @@ Each ADR records one decision, why it was made, and what a spike proved. New ADR
 | [0028](0028-energy-engineering-track.md)       | Energy engineering page and a second CV from one typed source, printed to its own PDF                              |
 | [0029](0029-serracalc-greenhouse-manager.md)   | SerraCalc as a greenhouse manager: desert look, Science page, RO, fertigation, site, energy, operations, live data |
 | [0030](0030-guided-tours.md)                   | Guided tours: one engine for every app, a step card in the design system, SerraCalc first                          |
+| [0031](0031-assistant.md)                      | An in-app assistant that can act: the model proposes, the app runs its tools after Apply, on a free Worker         |
 
 ## Proposed (written when the area is built)
 
