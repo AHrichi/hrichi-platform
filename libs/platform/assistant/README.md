@@ -97,6 +97,8 @@ The server side is `apps/assistant-edge` (a Cloudflare Worker) over `@ah/shared/
 
    The shell: `@defer (when loaded()) { <my-assistant [(open)]="open" /> }`. The panel's own words (Apply, New chat, the error messages…) come with it in five languages.
 
+   One action may take `actionTimeoutMs` (20 s by default). After that, or after Stop, the chat stops waiting: the card says the change may still go through, and the model is told not to retry blindly.
+
 5. **Point the app at the Worker:** `assistantUrl` in `tools/hosting/environments.json` is written into `site-config.json` by `prepare-hosting.mjs --site-config`.
 
 SerraCalc is the full example: `libs/products/serracalc/domain/src/lib/assistant/` and `libs/products/serracalc/feature/src/lib/assistant/`.

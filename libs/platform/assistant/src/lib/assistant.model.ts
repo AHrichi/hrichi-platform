@@ -44,6 +44,13 @@ export interface AssistantSetup {
   readonly executors: Readonly<Record<string, ToolExecutor<any>>>;
   /** Where the conversation is kept for this tab (sessionStorage). */
   readonly storageKey?: string;
+  /**
+   * How long one action may take before the chat stops waiting for it
+   * (20 s unless set): a database that never answers mustn't leave the
+   * conversation stuck. The action may still finish; the reader is told
+   * to check.
+   */
+  readonly actionTimeoutMs?: number;
 }
 
 export const ASSISTANT_SETUP = new InjectionToken<AssistantSetup>(
