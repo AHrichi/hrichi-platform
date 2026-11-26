@@ -14,6 +14,10 @@ export interface LadderEnv {
   readonly AI?: WorkersAiBinding;
 }
 
+/** How long a whole climb may take: hosted models, or a local one. */
+const HOSTED_DEADLINE_MS = 25_000;
+const LOCAL_DEADLINE_MS = 120_000;
+
 const BASE_URLS = {
   groq: 'https://api.groq.com/openai/v1',
   gemini: 'https://generativelanguage.googleapis.com/v1beta/openai',
@@ -82,7 +86,7 @@ export function buildLadder(
             apiKey: null,
             fetch: fetchFn,
             capability,
-            timeoutMs: 60_000,
+            timeoutMs: LOCAL_DEADLINE_MS,
           }),
         );
         break;
@@ -97,5 +101,13 @@ export function buildLadder(
         skipped.push(`${entry} (unknown provider)`);
     }
   }
-  return { ladder: new ChatLadder(models), skipped };
+  // A local model on a laptop's CPU needs far longer than a hosted one.
+  const local = models.some((model) => model.label.startsWith('Ollama'));
+  return {
+    ladder: new ChatLadder(
+      models,
+      local ? LOCAL_DEADLINE_MS : HOSTED_DEADLINE_MS,
+    ),
+    skipped,
+  };
 }
