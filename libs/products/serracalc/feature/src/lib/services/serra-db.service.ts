@@ -17,9 +17,17 @@ const SUNLIGHT_KEY = 'serracalc.sunlight';
 /**
  * `blocked`: an older SerraCalc open in another tab holds the database, so
  * this one can't upgrade it yet. `replaced`: a newer one in another tab
- * needed it, so this tab let go and can no longer save.
+ * needed it, so this tab let go and can no longer save. `stalled`: the
+ * browser hasn't answered at all yet (see `STALL_MS`).
  */
-export type SerraDbState = 'ok' | 'blocked' | 'replaced';
+export type SerraDbState = 'ok' | 'blocked' | 'replaced' | 'stalled';
+
+/**
+ * How long an open may go without any answer before the shell says so. A
+ * browser can leave it waiting with no event at all: no success, no error and
+ * no `blocked`, behind another request that never finishes.
+ */
+export const STALL_MS = 5000;
 
 /**
  * Projects live in IndexedDB, so SerraCalc works offline in the field. The
@@ -37,7 +45,12 @@ export class SerraDbService {
   readonly state = signal<SerraDbState>('ok');
 
   private open(): Promise<IDBDatabase> {
-    this.database ??= databaseName(
+    if (this.database) {
+      return this.database;
+    }
+    const stall = setTimeout(() => this.state.set('stalled'), STALL_MS);
+    const answered = () => clearTimeout(stall);
+    this.database = databaseName(
       this.mode,
       'serracalc',
       'serracalc_db_v1',
@@ -57,7 +70,10 @@ export class SerraDbService {
           };
           // Another tab still has the old version open. The upgrade waits
           // for it to close (or reload), and succeeds then.
-          request.onblocked = () => this.state.set('blocked');
+          request.onblocked = () => {
+            answered();
+            this.state.set('blocked');
+          };
           request.onsuccess = () => {
             const db = request.result;
             // A newer SerraCalc wants to upgrade: let go, so it isn't
@@ -72,6 +88,8 @@ export class SerraDbService {
           request.onerror = () => reject(request.error);
         }),
     );
+    // Success clears a `stalled` notice too: the open was only slow.
+    this.database.then(answered, answered);
     return this.database;
   }
 

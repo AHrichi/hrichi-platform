@@ -19,6 +19,8 @@ export const IT: SerraCopy = {
         'SerraCalc è aperto in un’altra scheda in una versione più vecchia, quindi i tuoi progetti non possono ancora aprirsi qui. Chiudi o ricarica quella scheda.',
       dbReplaced:
         'Una versione più recente di SerraCalc si è aperta in un’altra scheda e ha preso i tuoi progetti. Ricarica questa: fino ad allora le modifiche fatte qui non vengono salvate.',
+      dbStalled:
+        'I tuoi progetti non si sono ancora aperti: il browser non risponde a SerraCalc. Chiudi le altre schede e finestre di SerraCalc. Se non basta, riavvia il browser.',
     },
     offline: 'Funziona offline',
     offlineHint:

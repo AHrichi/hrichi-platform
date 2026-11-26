@@ -19,6 +19,8 @@ export const EN = {
         'SerraCalc is open in another tab on an older version, so your projects can’t open here yet. Close or reload that tab.',
       dbReplaced:
         'A newer SerraCalc opened in another tab and took over your projects. Reload this one: until then, changes here aren’t saved.',
+      dbStalled:
+        'Your projects haven’t opened yet: the browser isn’t answering SerraCalc. Close SerraCalc’s other tabs and windows. If that doesn’t help, restart the browser.',
     },
     offline: 'Works offline',
     offlineHint: 'Projects are saved on this device; no connection needed.',
