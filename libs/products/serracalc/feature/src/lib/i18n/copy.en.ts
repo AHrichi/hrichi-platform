@@ -59,6 +59,8 @@ export const EN = {
   },
   common: {
     close: 'Close',
+    decrease: 'Decrease',
+    increase: 'Increase',
     cancel: 'Cancel',
     edit: 'Edit',
     delete: 'Delete',

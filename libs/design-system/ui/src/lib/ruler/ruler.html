@@ -1,0 +1,41 @@
+@if (showValue()) {
+  <span class="readout" dir="auto" aria-hidden="true">{{ text() }}</span>
+}
+<div
+  #window
+  class="window"
+  [attr.role]="companion() ? null : 'slider'"
+  [attr.tabindex]="companion() || disabled() ? -1 : 0"
+  [attr.aria-hidden]="companion() || null"
+  [attr.aria-label]="companion() ? null : label()"
+  [attr.aria-labelledby]="companion() ? null : labelledBy()"
+  [attr.aria-valuemin]="companion() ? null : lo()"
+  [attr.aria-valuemax]="companion() ? null : hi()"
+  [attr.aria-valuenow]="companion() ? null : value()"
+  [attr.aria-valuetext]="companion() ? null : text()"
+  [attr.aria-disabled]="disabled() || null"
+  (keydown)="key($event)"
+  (pointerdown)="down($event)"
+  (pointermove)="move($event)"
+  (pointerup)="up($event)"
+  (pointercancel)="cancel()"
+>
+  <div class="fade">
+    <div
+      class="tape"
+      [class.is-gliding]="gliding()"
+      [style.inline-size]="length() + 'px'"
+      [style.--ah-offset]="offset() + 'px'"
+      [style.--ah-tick]="spacing() + 'px'"
+      [style.--ah-label-gap]="labelGap() + 'px'"
+      [style.--ah-first]="firstMark() + 'px'"
+    >
+      @for (mark of marks(); track mark.value) {
+        <span class="label" [style.inset-inline-start]="mark.at + 'px'">{{
+          mark.text
+        }}</span>
+      }
+    </div>
+  </div>
+  <span class="needle"></span>
+</div>

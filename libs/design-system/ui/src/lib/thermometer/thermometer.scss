@@ -1,0 +1,150 @@
+// The bulb's width; the scale starts at its edge.
+$bulb: 1.75rem;
+// How far the tube runs under the bulb.
+$under: 0.5rem;
+$thumb: 1.25rem;
+
+:host {
+  display: grid;
+  gap: var(--space-1);
+  inline-size: 100%;
+  min-inline-size: 0;
+  color: var(--color-text-default);
+}
+
+:host(.is-disabled) {
+  opacity: 0.6;
+}
+
+.readout {
+  justify-self: end;
+  font-size: var(--font-size-200);
+  font-weight: var(--font-weight-semibold);
+  font-variant-numeric: tabular-nums;
+}
+
+.scale {
+  display: flex;
+  align-items: center;
+  block-size: 2rem;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  // A vertical swipe still scrolls the page; a sideways drag moves the column.
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+
+  &:focus-visible {
+    outline: 2px solid var(--color-focus-ring);
+    outline-offset: 2px;
+  }
+}
+
+:host(.is-disabled) .scale {
+  cursor: not-allowed;
+}
+
+.bulb {
+  position: relative;
+  z-index: 1;
+  flex: none;
+  inline-size: $bulb;
+  block-size: $bulb;
+  border: 3px solid var(--color-bg-raised);
+  border-radius: 50%;
+  background: var(--ah-mercury);
+  // A halo at either extreme: frost when cold, heat when hot.
+  box-shadow:
+    0 0 0 1px var(--color-border-strong),
+    0 0 0 calc(1px + var(--ah-glow) * 5px)
+      color-mix(in oklab, var(--ah-mercury) 35%, transparent);
+  transition:
+    background-color var(--motion-duration-base) var(--motion-easing-standard),
+    box-shadow var(--motion-duration-base) var(--motion-easing-standard);
+}
+
+.tube {
+  position: relative;
+  flex: 1;
+  block-size: 0.75rem;
+  margin-inline-start: -$under;
+  padding-inline-start: $under;
+  border-radius: var(--radius-pill);
+  background: var(--color-bg-surface);
+  box-shadow: inset 0 0 0 1px var(--color-border-strong);
+}
+
+// Measured from under the bulb, so the column always leaves the bulb.
+.mercury {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  inline-size: calc($under + var(--ah-fill) * (100% - #{$under}));
+  border-radius: inherit;
+  background: var(--ah-mercury);
+  transition:
+    inline-size var(--motion-duration-base) var(--motion-easing-standard),
+    background-color var(--motion-duration-base) var(--motion-easing-standard);
+}
+
+.zero {
+  position: absolute;
+  inset-block: -0.25rem;
+  inset-inline-start: calc($under + var(--ah-at) * (100% - #{$under}));
+  inline-size: 2px;
+  margin-inline-start: -1px;
+  border-radius: 1px;
+  background: var(--color-text-muted);
+}
+
+.thumb {
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: calc($under + var(--ah-fill) * (100% - #{$under}));
+  inline-size: $thumb;
+  block-size: $thumb;
+  margin-block-start: calc($thumb / -2);
+  margin-inline-start: calc($thumb / -2);
+  border: 3px solid var(--ah-mercury);
+  border-radius: 50%;
+  background: var(--color-bg-raised);
+  box-shadow: var(--shadow-raised);
+  transition:
+    inset-inline-start var(--motion-duration-base) var(--motion-easing-standard),
+    border-color var(--motion-duration-base) var(--motion-easing-standard),
+    transform var(--motion-duration-fast) var(--motion-easing-standard);
+}
+
+// Following the finger: no easing behind it, and the knob lifts a little.
+:host(.is-dragging) {
+  .mercury,
+  .thumb,
+  .bulb {
+    transition: none;
+  }
+
+  .thumb {
+    transform: scale(1.15);
+  }
+}
+
+.ends {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  padding-inline-start: $bulb;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-100);
+  font-variant-numeric: tabular-nums;
+}
+
+.zero-label {
+  position: absolute;
+  inset-inline-start: calc($bulb + var(--ah-at) * (100% - #{$bulb}));
+  transform: translateX(-50%);
+}
+
+// The build turns :dir() into a language check, so the dir attribute it is.
+:host-context([dir='rtl']) .zero-label {
+  transform: translateX(50%);
+}

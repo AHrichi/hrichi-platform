@@ -1,0 +1,134 @@
+:host {
+  display: grid;
+  justify-items: center;
+  inline-size: 100%;
+  max-inline-size: 10rem;
+  color: var(--color-text-default);
+}
+
+:host(.is-clock) {
+  max-inline-size: 9rem;
+}
+
+:host(.is-disabled) {
+  opacity: 0.6;
+}
+
+.face {
+  inline-size: 100%;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  // A vertical swipe still scrolls the page; any other drag turns the dial.
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+
+  &:focus-visible {
+    outline: 2px solid var(--color-focus-ring);
+    outline-offset: 2px;
+  }
+}
+
+:host(.is-dragging) .face {
+  cursor: grabbing;
+}
+
+:host(.is-disabled) .face {
+  cursor: not-allowed;
+}
+
+svg {
+  display: block;
+  inline-size: 100%;
+  block-size: auto;
+  overflow: visible;
+}
+
+.arc {
+  transform-box: view-box;
+  transform-origin: 60px 0;
+}
+
+// The build turns :dir() into a language check, so this reads the dir
+// attribute instead.
+:host-context([dir='rtl']) .arc {
+  transform: scaleX(-1);
+}
+
+.track,
+.fill {
+  fill: none;
+  stroke-width: 10;
+  stroke-linecap: round;
+}
+
+.track {
+  stroke: var(--color-border-default);
+}
+
+.fill {
+  stroke: var(--color-accent-default);
+}
+
+.tick {
+  stroke: var(--color-text-muted);
+  stroke-width: 1;
+  stroke-linecap: round;
+}
+
+// Notches cut the ring where a mark sits: quarters of a day or a year.
+.notch {
+  stroke: var(--color-bg-canvas);
+  stroke-width: 2;
+}
+
+.tick.is-major {
+  stroke: var(--color-text-default);
+  stroke-width: 1.5;
+}
+
+// The knob grabs on its own: a drag from it never scrolls.
+.knob {
+  fill: var(--color-bg-raised);
+  stroke: var(--color-accent-default);
+  stroke-width: 3;
+  cursor: grab;
+  touch-action: none;
+  transition: r var(--motion-duration-fast) var(--motion-easing-standard);
+}
+
+:host(.is-dragging) .knob {
+  r: 9.5px;
+}
+
+.value,
+.mark {
+  text-anchor: middle;
+  dominant-baseline: central;
+  font-variant-numeric: tabular-nums;
+}
+
+.value {
+  fill: var(--color-text-default);
+  font-size: 15px;
+  font-weight: var(--font-weight-semibold);
+}
+
+:host(.is-clock) .value {
+  font-size: 12.5px;
+}
+
+.mark {
+  fill: var(--color-text-muted);
+  font-size: 10px;
+}
+
+.ends {
+  display: flex;
+  justify-content: space-between;
+  inline-size: 100%;
+  padding-inline: 3%;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-100);
+  font-variant-numeric: tabular-nums;
+}

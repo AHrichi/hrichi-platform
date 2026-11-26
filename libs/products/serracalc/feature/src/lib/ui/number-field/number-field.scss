@@ -8,9 +8,14 @@
   min-inline-size: 0;
 }
 
-// Bottom of its row: in a field grid (sc.fields) a one-line label then sits
-// right above its input when a neighbour's label takes two lines.
+// Four rows, shared with the neighbours in a field grid (sc.fields): the
+// label, the typed value, the dial, thermometer or tape, and the hint. Placed
+// by row, so a field without a third row still keeps its hint level.
+//
+// Bottom of its row: a one-line label then sits right above its input when
+// a neighbour's label takes two lines.
 .head {
+  grid-row: 1;
   align-self: end;
   display: flex;
   align-items: end;
@@ -61,18 +66,44 @@
   }
 }
 
+.label {
+  overflow-wrap: anywhere;
+}
+
+.control {
+  grid-row: 2;
+  align-self: start;
+}
+
 .exact {
   @include sc.form-control;
   font-variant-numeric: tabular-nums;
 }
 
-.slider {
-  inline-size: 100%;
-  margin: 0;
-  accent-color: var(--color-accent-default);
+// Neighbours may be taller (a dial beside a tape): stay centred in the row.
+.visual {
+  grid-row: 3;
+  display: grid;
+  align-items: center;
+  justify-items: center;
+  min-inline-size: 0;
+
+  ah-ruler,
+  ah-thermometer {
+    inline-size: 100%;
+  }
+
+  ah-dial {
+    max-inline-size: 9rem;
+  }
+
+  ah-dial.is-clock {
+    max-inline-size: 8rem;
+  }
 }
 
 .hint {
+  grid-row: 4;
   color: var(--color-text-muted);
   font-size: var(--font-size-100);
 }
