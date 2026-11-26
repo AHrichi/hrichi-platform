@@ -60,6 +60,60 @@ export const DE: SerraCopy = {
     water: 'Wasser',
     reference: 'Nachschlagen',
   },
+  tour: {
+    button: 'Tour',
+    hint: 'Eine geführte Tour durch SerraCalc',
+    again: 'Tour noch einmal',
+    invite: {
+      title: 'Neu hier?',
+      body: 'Eine Tour in zwei Minuten: Projekte, die Werkzeuge, Ergebnisse speichern und offline arbeiten.',
+      start: 'Tour starten',
+      later: 'Nicht jetzt',
+    },
+    steps: {
+      welcome: {
+        title: 'Willkommen bei SerraCalc',
+        body: 'Legen Sie Heizung, Kühlung und Wasser eines Gewächshauses aus und sehen Sie jede Formel mit ihren Zahlen. Zwei Minuten, um sich zurechtzufinden.',
+      },
+      projects: {
+        title: 'Beginnen Sie mit einem Projekt',
+        body: 'Ein Projekt ist ein Gewächshaus: Bau, Klima und Kultur. Legen Sie Ihres hier an, oder laden Sie die Beispiele zum Erkunden.',
+      },
+      active: {
+        title: 'Das Projekt, an dem Sie arbeiten',
+        body: 'Jedes Werkzeug nutzt Bau und Klima des aktiven Projekts. Öffnen Sie es hier, um das Projekt zu wechseln.',
+      },
+      navigation: {
+        title: 'Die Werkzeuge',
+        body: 'Heizung, Kühlung, Wasser, Klima und Energie, gruppiert nach dem, was Sie planen. Auf dem Telefon finden Sie den Rest unter Mehr.',
+      },
+      field: {
+        title: 'Jede Zahl, wie Sie möchten',
+        body: 'Tippen Sie einen genauen Wert ein, oder ziehen Sie das Rad, das Thermometer oder das Maßband daneben. Die Ergebnisse folgen sofort.',
+      },
+      info: {
+        title: 'Wie Sie jede Zahl bekommen',
+        body: 'Das i sagt, wie Sie den Wert messen oder finden, mit welchem Instrument, und welche Physik dahintersteckt.',
+      },
+      save: {
+        title: 'Ergebnisse im Projekt speichern',
+        body: 'Speichern Sie ein Ergebnis, um es beim Projekt zu behalten, später wieder zu öffnen und in den Bericht zu übernehmen.',
+      },
+      sunlight: {
+        title: 'Draußen unterwegs?',
+        body: 'Der Sonnenlicht-Modus erhöht den Kontrast, damit Sie den Bildschirm in praller Sonne lesen können.',
+      },
+      backups: {
+        title: 'Ihre Daten bleiben auf diesem Gerät',
+        body: 'SerraCalc funktioniert offline und speichert Ihre Projekte auf diesem Gerät. Sichern Sie sie in einer Datei, um eine Kopie zu behalten oder sie umzuziehen.',
+      },
+      again: {
+        title: 'Tour noch einmal',
+        body: 'Der Zauberstab startet diese Tour, wann immer Sie möchten. Viel Erfolg mit SerraCalc!',
+      },
+    },
+  },
+
   common: {
     close: 'Schließen',
     decrease: 'Verringern',

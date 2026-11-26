@@ -12,12 +12,14 @@ import {
 } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import {
+  ActivatedRoute,
   NavigationEnd,
   Router,
   RouterLink,
   RouterLinkActive,
   RouterOutlet,
 } from '@angular/router';
+import { TourHost, type TourRoute, TourService } from '@ah/platform/tour';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { filter, map } from 'rxjs';
 import { AhScrollHint } from '@ah/ui';
@@ -30,6 +32,7 @@ import { SerraUpdates } from '../services/serra-updates';
 import { SerraStore } from '../store/serra.store';
 import { Icon, type IconName } from '../ui/icon/icon';
 import { LangMenu } from '../ui/lang-menu/lang-menu';
+import { SERRA_TOUR, serraTourText } from '../tour/serra-tour';
 
 export type SerraScreen =
   | 'projects'
@@ -95,6 +98,7 @@ const GROUPS: readonly NavGroup[] = [
     RouterOutlet,
     RouterLink,
     RouterLinkActive,
+    TourHost,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { 'data-look': 'desert' },
@@ -137,8 +141,30 @@ export class SerraShell {
   private readonly sentinel =
     viewChild.required<ElementRef<HTMLElement>>('sentinel');
 
+  private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
+  private readonly tour = inject(TourService);
+  private readonly bottomNav =
+    viewChild.required<ElementRef<HTMLElement>>('bottomNav');
+
+  /** The tour's words, in the reader's language. */
+  protected readonly tourText = computed(() => serraTourText(this.t()));
+
+  /** Opens a step's screen, inside the app (also under the portfolio). */
+  protected readonly tourNavigate = (route: TourRoute) =>
+    this.router.navigate([route.path], {
+      relativeTo: this.route,
+      queryParams: route.query,
+    });
+
+  /** Bands the tour's card keeps clear of: the floating header, the phone bar. */
+  protected readonly tourInsets = () => ({
+    top: this.standalone ? this.topSize() : 0,
+    bottom: this.bottomNav().nativeElement.offsetHeight,
+  });
+
   private readonly url = toSignal(
-    inject(Router).events.pipe(
+    this.router.events.pipe(
       filter((event) => event instanceof NavigationEnd),
       map((event) => event.urlAfterRedirects),
     ),
@@ -194,6 +220,12 @@ export class SerraShell {
         root.style.removeProperty('scroll-padding-block-start');
       });
     });
+  }
+
+  /** Starts the tour; focus comes back to `opener` when it ends. */
+  protected startTour(opener: HTMLElement): void {
+    this.closeMore();
+    this.tour.start(SERRA_TOUR, opener);
   }
 
   protected toggleMore(trigger: HTMLElement): void {

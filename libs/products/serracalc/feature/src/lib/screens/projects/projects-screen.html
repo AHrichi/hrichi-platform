@@ -5,7 +5,12 @@
       <p>{{ t().projects.lead }}</p>
     </div>
     <div class="actions">
-      <button ahButton type="button" (click)="newProject()">
+      <button
+        ahButton
+        type="button"
+        data-tour="new-project"
+        (click)="newProject()"
+      >
         + {{ t().projects.new }}
       </button>
       @if (!store.hasSamples()) {
@@ -19,6 +24,28 @@
       }
     </div>
   </header>
+
+  @if (!store.isLoading() && !tour.active() && tour.isNew(serraTour)) {
+    <aside class="invite" aria-labelledby="sc-tour-invite">
+      <sc-icon class="invite-icon" name="wand" />
+      <div class="invite-text">
+        <h3 id="sc-tour-invite">{{ t().tour.invite.title }}</h3>
+        <p>{{ t().tour.invite.body }}</p>
+      </div>
+      <div class="invite-actions">
+        <button ahButton type="button" (click)="tour.start(serraTour)">
+          {{ t().tour.invite.start }}
+        </button>
+        <button
+          ahButton="ghost"
+          type="button"
+          (click)="tour.dismiss(serraTour)"
+        >
+          {{ t().tour.invite.later }}
+        </button>
+      </div>
+    </aside>
+  }
 
   @if (store.isLoading()) {
     <p class="muted" role="status">{{ t().projects.loading }}</p>
@@ -171,7 +198,12 @@
   }
 
   @if (!store.isLoading()) {
-    <section class="panel" scPanel="backup-title" [heading]="t().backup.title">
+    <section
+      class="panel"
+      scPanel="backup-title"
+      data-tour="backups"
+      [heading]="t().backup.title"
+    >
       <sc-backup-panel />
     </section>
   }

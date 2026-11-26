@@ -59,6 +59,21 @@ async function savePeak(page: Page): Promise<void> {
 }
 
 /** Standalone: open the globe menu and pick a language by its own name. */
+/**
+ * Waits for running transitions and animations to end (a tour card fades
+ * in), so axe reads colours as they settle, not half-faded.
+ */
+async function settled(page: Page): Promise<void> {
+  await page.evaluate(() =>
+    Promise.all(
+      document
+        .getAnimations()
+        .filter((a) => a.effect?.getTiming().iterations !== Infinity)
+        .map((a) => a.finished.catch(() => undefined)),
+    ),
+  );
+}
+
 /** Where an element sits in the window, scrolled into view first. */
 async function boxOf(locator: Locator) {
   await locator.scrollIntoViewIfNeeded();
@@ -117,6 +132,111 @@ test.describe('SerraCalc, standalone', () => {
       page.getByRole('spinbutton', { name: /Ridge height/ }),
     ).toHaveValue('6.4');
   });
+
+  for (const [width, height] of [
+    [375, 812],
+    [800, 900],
+    [1280, 900],
+  ] as const) {
+    test(`a new user's tour points at something on every step, ${width} px wide`, async ({
+      page,
+    }) => {
+      test.setTimeout(90_000);
+      await page.setViewportSize({ width, height });
+      await page.goto(`${STANDALONE}projects`);
+      await page.getByRole('button', { name: 'Take the tour' }).click();
+
+      for (let step = 1; step <= 10; step++) {
+        const card = page.getByRole('dialog', {
+          name: new RegExp(`Step ${step} of 10$`),
+        });
+        await expect(card).toBeVisible();
+        await expect(card).toBeFocused();
+        // The welcome has no target; every other step has a ring round one.
+        await expect(page.locator('ah-tour-host .ring')).toHaveCount(
+          Math.min(step - 1, 1),
+        );
+        const box = await boxOf(card);
+        expect(box.x).toBeGreaterThanOrEqual(0);
+        expect(box.x + box.width).toBeLessThanOrEqual(width);
+        expect(box.y + box.height).toBeLessThanOrEqual(height);
+        await card.getByRole('button', { name: /^(Next|Finish)$/ }).click();
+      }
+
+      await expect(page.getByRole('dialog')).toHaveCount(0);
+      // Focus goes to the wand that replays it, and the invitation is gone.
+      await expect(page.locator('[data-tour~="tool-tour"]')).toBeFocused();
+      await expect(page.getByText('New here?')).toBeHidden();
+      await page.reload();
+      await expect(
+        page.getByRole('heading', { name: 'Projects', level: 2 }),
+      ).toBeVisible();
+      await expect(page.getByText('New here?')).toBeHidden();
+    });
+  }
+
+  test('the tour closes with Escape, and Not now keeps it away', async ({
+    page,
+  }) => {
+    await page.goto(`${STANDALONE}projects`);
+    await page.locator('[data-tour~="tool-tour"]').click();
+    const card = page.getByRole('dialog', { name: /Step 1 of 10$/ });
+    await expect(card).toBeFocused();
+    await page.keyboard.press('Escape');
+    await expect(card).toBeHidden();
+    await expect(page.locator('[data-tour~="tool-tour"]')).toBeFocused();
+    // Skipped counts as seen: no invitation after a reload.
+    await page.reload();
+    await expect(
+      page.getByRole('heading', { name: 'Projects', level: 2 }),
+    ).toBeVisible();
+    await expect(page.getByText('New here?')).toBeHidden();
+  });
+
+  test('declining the invitation keeps it away', async ({ page }) => {
+    await page.goto(`${STANDALONE}projects`);
+    await page.getByRole('button', { name: 'Not now' }).click();
+    await expect(page.getByText('New here?')).toBeHidden();
+    await page.reload();
+    await expect(
+      page.getByRole('heading', { name: 'Projects', level: 2 }),
+    ).toBeVisible();
+    await expect(page.getByText('New here?')).toBeHidden();
+  });
+
+  for (const theme of ['light', 'dark'] as const) {
+    test(`a tour step passes axe, ${theme}, and reads right to left in Arabic`, async ({
+      page,
+    }) => {
+      await page.addInitScript(
+        (chosen) => localStorage.setItem('ah.theme', chosen),
+        theme,
+      );
+      await page.goto(`${STANDALONE}projects`);
+      await page.locator('[data-tour~="tool-tour"]').click();
+      await page
+        .getByRole('dialog', { name: /Step 1 of 10$/ })
+        .getByRole('button', { name: 'Next' })
+        .click();
+      await expect(
+        page.getByRole('dialog', { name: /Step 2 of 10$/ }),
+      ).toBeFocused();
+      await settled(page);
+      const english = await new AxeBuilder({ page }).analyze();
+      expect(english.violations).toEqual([]);
+      await page.keyboard.press('Escape');
+
+      await pickLanguage(page, 'العربية');
+      await page.locator('[data-tour~="tool-tour"]').click();
+      const card = page.getByRole('dialog', { name: /الخطوة 1 من 10$/ });
+      await expect(card).toBeVisible();
+      await expect(card).toHaveAttribute('dir', 'rtl');
+      await expect(card).toBeFocused();
+      await settled(page);
+      const arabic = await new AxeBuilder({ page }).analyze();
+      expect(arabic.violations).toEqual([]);
+    });
+  }
 
   test('sets numbers with a stepper, a thermometer, a tape and a dial', async ({
     page,

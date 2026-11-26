@@ -1,11 +1,15 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { TourService } from '@ah/platform/tour';
+import { AhButton } from '@ah/ui';
+import { SERRA_TOUR } from '../../tour/serra-tour';
+import { Icon } from '../../ui/icon/icon';
 import { SerraI18n } from '../../i18n/serra-i18n';
 
 /** What each tool does, what it assumes, and where its numbers come from. */
 @Component({
   selector: 'sc-guide-screen',
-  imports: [RouterLink],
+  imports: [AhButton, Icon, RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <section class="screen" aria-labelledby="sc-guide-title">
@@ -14,6 +18,16 @@ import { SerraI18n } from '../../i18n/serra-i18n';
           <h2 id="sc-guide-title">{{ t().guide.title }}</h2>
           <p>{{ t().guide.lead }}</p>
         </div>
+        <button
+          #again
+          ahButton="secondary"
+          type="button"
+          class="again"
+          (click)="tour.start(serraTour, again)"
+        >
+          <sc-icon name="wand" />
+          {{ t().tour.again }}
+        </button>
       </header>
       <div class="tools">
         @for (tool of t().guide.tools; track tool.id) {
@@ -48,6 +62,8 @@ import { SerraI18n } from '../../i18n/serra-i18n';
 })
 export class GuideScreen {
   protected readonly t = inject(SerraI18n).t;
+  protected readonly tour = inject(TourService);
+  protected readonly serraTour = SERRA_TOUR;
 
   /** Guide entries that open a tab of another screen. */
   protected linkOf(id: string): {

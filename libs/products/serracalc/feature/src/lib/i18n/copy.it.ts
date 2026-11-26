@@ -60,6 +60,60 @@ export const IT: SerraCopy = {
     water: 'Acqua',
     reference: 'Riferimenti',
   },
+  tour: {
+    button: 'Tour',
+    hint: 'Fai il tour guidato di SerraCalc',
+    again: 'Rifai il tour',
+    invite: {
+      title: 'Sei nuovo qui?',
+      body: 'Un tour di due minuti: i progetti, gli strumenti, il salvataggio dei risultati e il lavoro offline.',
+      start: 'Fai il tour',
+      later: 'Non ora',
+    },
+    steps: {
+      welcome: {
+        title: 'Benvenuto in SerraCalc',
+        body: 'Dimensiona riscaldamento, raffrescamento e acqua di una serra, con ogni formula e i suoi numeri. Due minuti per orientarti.',
+      },
+      projects: {
+        title: 'Inizia da un progetto',
+        body: 'Un progetto è una serra: la struttura, il clima e la coltura. Crea il tuo qui, o carica gli esempi per esplorare.',
+      },
+      active: {
+        title: 'Il progetto su cui lavori',
+        body: 'Ogni strumento usa la serra e il clima del progetto attivo. Aprilo qui per cambiare progetto.',
+      },
+      navigation: {
+        title: 'Gli strumenti',
+        body: 'Riscaldamento, raffrescamento, acqua, clima ed energia, raggruppati per ciò che pianifichi. Sul telefono, gli altri sono in Altro.',
+      },
+      field: {
+        title: 'Imposta ogni numero a modo tuo',
+        body: 'Scrivi un valore esatto, o trascina il quadrante, il termometro o il nastro accanto. I risultati seguono man mano.',
+      },
+      info: {
+        title: 'Come ottenere ogni numero',
+        body: 'La i spiega come misurare o trovare il valore, con quale strumento, e la scienza che c’è dietro.',
+      },
+      save: {
+        title: 'Salva i risultati nel progetto',
+        body: 'Salva un risultato per tenerlo nel progetto, riaprirlo più tardi e metterlo nel rapporto.',
+      },
+      sunlight: {
+        title: 'Lavori all’aperto?',
+        body: 'La modalità Pieno sole alza il contrasto per leggere lo schermo in pieno sole.',
+      },
+      backups: {
+        title: 'I tuoi dati restano su questo dispositivo',
+        body: 'SerraCalc funziona offline e tiene i tuoi progetti su questo dispositivo. Fanne il backup in un file per tenerne una copia o spostarli.',
+      },
+      again: {
+        title: 'Rifai il tour',
+        body: 'La bacchetta fa ripartire questo tour quando vuoi. Buon lavoro con SerraCalc!',
+      },
+    },
+  },
+
   common: {
     close: 'Chiudi',
     decrease: 'Diminuisci',

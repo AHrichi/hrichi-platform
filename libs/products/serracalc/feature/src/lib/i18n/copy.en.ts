@@ -59,6 +59,60 @@ export const EN = {
     water: 'Water',
     reference: 'Reference',
   },
+  tour: {
+    button: 'Tour',
+    hint: 'Take a guided tour of SerraCalc',
+    again: 'Take the tour again',
+    invite: {
+      title: 'New here?',
+      body: 'Take a two-minute tour: projects, the tools, saving results and working offline.',
+      start: 'Take the tour',
+      later: 'Not now',
+    },
+    steps: {
+      welcome: {
+        title: 'Welcome to SerraCalc',
+        body: 'Size a greenhouse’s heating, cooling and water, and see every formula with its numbers. Two minutes to find your way around.',
+      },
+      projects: {
+        title: 'Start with a project',
+        body: 'A project is one greenhouse: its house, climate and crop. Create yours here, or load the samples to explore.',
+      },
+      active: {
+        title: 'The project you’re working on',
+        body: 'Every tool uses the active project’s house and climate. Open it here to switch projects.',
+      },
+      navigation: {
+        title: 'The tools',
+        body: 'Heating, cooling, water, climate and energy, grouped by what you’re planning. On a phone, the rest are under More.',
+      },
+      field: {
+        title: 'Set each number your way',
+        body: 'Type an exact value, or drag the dial, thermometer or tape beside it. The results follow as you go.',
+      },
+      info: {
+        title: 'How to get each number',
+        body: 'The i says how to measure or find the value, which instrument to use, and the science behind it.',
+      },
+      save: {
+        title: 'Save results to the project',
+        body: 'Save a result to keep it with the project, open it again later and put it in the report.',
+      },
+      sunlight: {
+        title: 'Working outdoors?',
+        body: 'Sunlight mode raises the contrast so the screen reads in bright sun.',
+      },
+      backups: {
+        title: 'Your data stays on this device',
+        body: 'SerraCalc works offline and keeps your projects on this device. Back them up to a file to keep a copy or move them.',
+      },
+      again: {
+        title: 'Take the tour again',
+        body: 'The wand starts this tour whenever you like. Enjoy SerraCalc!',
+      },
+    },
+  },
+
   common: {
     close: 'Close',
     decrease: 'Decrease',

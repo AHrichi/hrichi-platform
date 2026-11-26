@@ -27,6 +27,7 @@ let nextId = 0;
  */
 @Component({
   selector: 'sc-save-bar',
+  host: { 'data-tour': 'save-bar' },
   imports: [AhButton, RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './save-bar.html',

@@ -21,7 +21,10 @@ import {
   type SavedCalculation,
   SCREEN_IDS,
 } from '@ah/products/serracalc/domain';
+import { TourService } from '@ah/platform/tour';
 import { SerraI18n } from '../../i18n/serra-i18n';
+import { SERRA_TOUR } from '../../tour/serra-tour';
+import { Icon } from '../../ui/icon/icon';
 import { type NewProject, SerraStore } from '../../store/serra.store';
 import { BackupPanel } from '../../ui/backup-panel/backup-panel';
 import { FieldGrid, type FieldChange } from '../../ui/field-grid/field-grid';
@@ -75,6 +78,7 @@ function blankDraft(): NewProject {
     AhModal,
     BackupPanel,
     FieldGrid,
+    Icon,
     RouterLink,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -83,6 +87,8 @@ function blankDraft(): NewProject {
 })
 export class ProjectsScreen {
   protected readonly store = inject(SerraStore);
+  protected readonly tour = inject(TourService);
+  protected readonly serraTour = SERRA_TOUR;
   protected readonly i18n = inject(SerraI18n);
   protected readonly t = this.i18n.t;
 
