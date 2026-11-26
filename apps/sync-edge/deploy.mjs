@@ -17,5 +17,12 @@ const wrangler = (...args) =>
     stdio: 'inherit',
     shell: process.platform === 'win32',
   });
-wrangler('d1', 'migrations', 'apply', 'sync-edge', '--remote');
+try {
+  wrangler('d1', 'migrations', 'apply', 'sync-edge', '--remote');
+} catch {
+  console.error(
+    "sync-edge: applying the D1 migrations failed. Can CI's Cloudflare API token edit D1 (Account · D1 · Edit)? See docs/serracalc/AI_HANDOFF.md, §6.",
+  );
+  process.exit(1);
+}
 wrangler('deploy');
