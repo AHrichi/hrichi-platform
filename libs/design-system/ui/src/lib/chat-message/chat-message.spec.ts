@@ -73,4 +73,28 @@ describe('ChatMessage', () => {
     expect(status?.getAttribute('aria-label')).toBe('Writing…');
     expect(message.querySelector('.text')).toBeNull();
   });
+
+  it('formats a model’s answer when asked, and keeps the reader’s as typed', async () => {
+    TestBed.configureTestingModule({
+      providers: [provideZonelessChangeDetection()],
+    });
+    const fixture = TestBed.createComponent(ChatMessage);
+    const message = fixture.nativeElement as HTMLElement;
+    fixture.componentRef.setInput(
+      'text',
+      ['**Fog** cools the air:', '', '- fast', '- cheap'].join('\n'),
+    );
+    fixture.componentRef.setInput('format', 'rich');
+    await fixture.whenStable();
+    expect(message.querySelector('ah-rich-text strong')?.textContent).toBe(
+      'Fog',
+    );
+    expect(message.querySelectorAll('ul li')).toHaveLength(2);
+    expect(message.textContent).not.toContain('**');
+
+    fixture.componentRef.setInput('format', 'plain');
+    await fixture.whenStable();
+    expect(message.querySelector('strong')).toBeNull();
+    expect(message.textContent).toContain('**Fog**');
+  });
 });

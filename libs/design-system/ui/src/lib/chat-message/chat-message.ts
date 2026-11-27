@@ -4,6 +4,7 @@ import {
   computed,
   input,
 } from '@angular/core';
+import { RichText } from '../rich-text/rich-text';
 
 /** Who a message is from: the reader, the assistant, or the app itself. */
 const LRI = String.fromCharCode(0x2066);
@@ -29,10 +30,12 @@ export type ChatMessageFrom = 'user' | 'assistant' | 'notice';
  * reading end, the assistant's on the start; a notice (an error, a
  * change made) spans the column. `typing` shows three dots, announced
  * once as `typingLabel`. Text in another script than the page reads in
- * its own direction (`dir="auto"`).
+ * its own direction (`dir="auto"`). A model's answer can be `rich`: light
+ * formatting drawn by `<ah-rich-text>`, still never HTML.
  */
 @Component({
   selector: 'ah-chat-message',
+  imports: [RichText],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="bubble">
@@ -41,7 +44,11 @@ export type ChatMessageFrom = 'user' | 'assistant' | 'notice';
           <i></i><i></i><i></i>
         </span>
       } @else {
-        <p class="text" dir="auto">{{ shown() }}</p>
+        @if (format() === 'rich') {
+          <ah-rich-text class="rich" [text]="text()" [transform]="isolate" />
+        } @else {
+          <p class="text" dir="auto">{{ shown() }}</p>
+        }
       }
       @if (meta(); as meta) {
         <small class="meta" dir="auto">{{ meta }}</small>
@@ -63,6 +70,13 @@ export class ChatMessage {
   readonly tone = input<'default' | 'error'>('default');
   readonly typing = input(false);
   readonly typingLabel = input('Writing…');
+  /**
+   * `rich`: light formatting (paragraphs, lists, **bold**, *italic*,
+   * `code`), for a model's answers. `plain`: as typed, for the reader's.
+   */
+  readonly format = input<'plain' | 'rich'>('plain');
+
+  protected readonly isolate = isolateUnits;
 
   protected readonly shown = computed(() => isolateUnits(this.text()));
 }
