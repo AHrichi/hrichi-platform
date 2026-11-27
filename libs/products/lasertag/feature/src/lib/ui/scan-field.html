@@ -1,0 +1,43 @@
+<div class="field">
+  <label [for]="id">{{ label() }}</label>
+  <div class="row">
+    <input
+      [id]="id"
+      class="input"
+      dir="ltr"
+      autocomplete="off"
+      autocapitalize="off"
+      spellcheck="false"
+      [value]="value()"
+      (input)="value.set($any($event.target).value)"
+      (keydown.enter)="onEnter($event)"
+      [attr.aria-describedby]="hint() ? id + '-hint' : null"
+    />
+    @if (canScan) {
+      @if (scanning()) {
+        <button type="button" class="camera" (click)="stop()">
+          {{ i18n.t().scanner.stop }}
+        </button>
+      } @else {
+        <button type="button" class="camera" (click)="start()">
+          {{ i18n.t().scanner.start }}
+        </button>
+      }
+    }
+  </div>
+  @if (hint()) {
+    <p class="hint" [id]="id + '-hint'">{{ hint() }}</p>
+  }
+  @if (cameraProblem(); as problem) {
+    <p class="hint" role="status">{{ i18n.t().scanner[problem] }}</p>
+  }
+  @if (scanning()) {
+    <video
+      #video
+      class="video"
+      muted
+      playsinline
+      [attr.aria-label]="i18n.t().scanner.view"
+    ></video>
+  }
+</div>

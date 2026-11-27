@@ -1,0 +1,108 @@
+@let t = i18n.t();
+<div class="screen">
+  <h1>{{ t.join.title }}</h1>
+
+  <form class="card" [formRoot]="join" novalidate>
+    <div class="field">
+      <label for="join-handle">{{ t.join.handle }}</label>
+      <input
+        id="join-handle"
+        class="input"
+        dir="auto"
+        autocomplete="username"
+        autocapitalize="off"
+        spellcheck="false"
+        [formField]="join.handle"
+        [attr.aria-invalid]="join.handle().touched() && join.handle().invalid()"
+        aria-describedby="join-handle-hint join-handle-error"
+      />
+      <p class="hint" id="join-handle-hint">{{ t.join.handleHint }}</p>
+      <p class="error" id="join-handle-error">
+        @if (join.handle().touched() && join.handle().invalid()) {
+          {{ message(join.handle().errors()) }}
+        }
+      </p>
+    </div>
+
+    <div class="field">
+      <label for="join-name">{{ t.join.displayName }}</label>
+      <input
+        id="join-name"
+        class="input"
+        dir="auto"
+        autocomplete="nickname"
+        [formField]="join.displayName"
+        [attr.aria-invalid]="
+          join.displayName().touched() && join.displayName().invalid()
+        "
+        aria-describedby="join-name-hint join-name-error"
+      />
+      <p class="hint" id="join-name-hint">{{ t.join.displayNameHint }}</p>
+      <p class="error" id="join-name-error">
+        @if (join.displayName().touched() && join.displayName().invalid()) {
+          {{ message(join.displayName().errors()) }}
+        }
+      </p>
+    </div>
+
+    <div class="field">
+      <label for="join-year">{{ t.join.birthYear }}</label>
+      <input
+        id="join-year"
+        class="input"
+        inputmode="numeric"
+        autocomplete="bday-year"
+        dir="ltr"
+        [formField]="join.birthYear"
+        [attr.aria-invalid]="
+          join.birthYear().touched() && join.birthYear().invalid()
+        "
+        aria-describedby="join-year-hint join-year-error join-year-age"
+      />
+      <p class="hint" id="join-year-hint">{{ t.join.birthYearHint }}</p>
+      <p class="error" id="join-year-error">
+        @if (join.birthYear().touched() && join.birthYear().invalid()) {
+          {{ message(join.birthYear().errors()) }}
+        }
+      </p>
+      <div id="join-year-age" aria-live="polite">
+        @if (age() === 'guardian-required') {
+          <ah-alert variant="warning">{{ t.join.guardian }}</ah-alert>
+        } @else if (age() === 'minor') {
+          <p class="hint">{{ t.join.minor }}</p>
+        }
+      </div>
+    </div>
+
+    <div class="field">
+      <span id="join-lang">{{ t.join.language }}</span>
+      <ah-segmented-control
+        [options]="languages()"
+        [value]="language()"
+        (valueChange)="setLanguage($event)"
+        [label]="t.join.language"
+      />
+    </div>
+
+    @if (problem(); as message) {
+      <ah-alert variant="danger">{{ message }}</ah-alert>
+    }
+
+    <div class="actions">
+      <button
+        ahButton
+        type="submit"
+        [disabled]="busy() || age() === 'guardian-required'"
+      >
+        {{ busy() ? t.join.creating : t.join.submit }}
+      </button>
+    </div>
+    <p class="hint">{{ t.welcome.passkeyNote }}</p>
+  </form>
+
+  <ul class="links">
+    <li>
+      <a routerLink="/">{{ t.join.haveOne }}</a>
+    </li>
+  </ul>
+</div>

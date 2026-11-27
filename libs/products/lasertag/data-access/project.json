@@ -1,0 +1,8 @@
+{
+  "name": "product-lasertag-data-access",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/products/lasertag/data-access/src",
+  "projectType": "library",
+  "tags": ["scope:product-lasertag", "type:data-access", "runtime:browser"],
+  "targets": {}
+}

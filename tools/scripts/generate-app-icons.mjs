@@ -34,6 +34,17 @@ const APPS = {
     theme: '#f59e0b',
     glyph: `<path d="M22 54 V24 a10 10 0 0 1 10-10 h6"/><path d="M34 14 h12 l-3 6 h-6 z" fill="currentColor"/><path d="M40 26 v5 M34 25 l-2.5 4 M46 25 l2.5 4"/><path d="M15 54 h14"/>`,
   },
+  lasertag: {
+    dir: 'apps/products/lasertag/web',
+    name: 'BARQ · Laser tag',
+    shortName: 'BARQ',
+    description:
+      'Your laser tag badge: check in with a QR, keep every game on your profile.',
+    bg: '#0b1020',
+    fg: '#facc15',
+    theme: '#0b1020',
+    glyph: `<path d="M36 6 L14 36 H29 L24 58 L50 26 H34 Z" fill="currentColor" stroke-linejoin="round"/>`,
+  },
   serracalc: {
     dir: 'apps/products/serracalc/web',
     name: 'SerraCalc · Greenhouse heat, water & climate',

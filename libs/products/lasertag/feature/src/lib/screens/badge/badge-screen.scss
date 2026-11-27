@@ -1,0 +1,51 @@
+.badge {
+  display: grid;
+  gap: var(--space-3);
+  justify-items: center;
+  padding: var(--space-5);
+  border: 1px solid var(--color-stage-border);
+  border-radius: var(--radius-lg);
+  background:
+    linear-gradient(
+      160deg,
+      color-mix(in srgb, var(--color-accent-default) 30%, transparent),
+      transparent 60%
+    ),
+    var(--color-stage-bg);
+  color: var(--color-stage-text);
+  text-align: center;
+}
+
+.handle {
+  margin: 0;
+  font-size: var(--font-size-500);
+  font-weight: var(--font-weight-bold);
+}
+
+.name {
+  margin: 0;
+  color: var(--color-stage-muted);
+}
+
+.qr-frame {
+  inline-size: min(100%, 18rem);
+  aspect-ratio: 1;
+}
+
+.countdown {
+  margin: 0;
+  color: var(--color-stage-muted);
+  font-size: var(--font-size-200);
+}
+
+.badge .hint {
+  color: var(--color-stage-muted);
+}
+
+.tips {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  padding-inline-start: var(--space-5);
+  color: var(--color-text-muted);
+}

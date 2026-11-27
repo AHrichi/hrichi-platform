@@ -1,0 +1,45 @@
+@let t = i18n.t();
+<div class="screen">
+  <section class="hero" aria-labelledby="welcome-title">
+    <lt-bolt-mark class="mark" />
+    @if (session.player(); as player) {
+      <h1 id="welcome-title">{{ t.welcome.hello(player.displayName) }}</h1>
+      <div class="actions">
+        <a ahButton routerLink="/badge">{{ t.welcome.toBadge }}</a>
+        @if (isStaff()) {
+          <a ahButton="secondary" routerLink="/staff">{{ t.app.staff }}</a>
+        }
+      </div>
+    } @else {
+      <h1 id="welcome-title">{{ t.welcome.title }}</h1>
+      <p class="lead">{{ t.welcome.lead }}</p>
+      <div class="actions">
+        <a ahButton routerLink="/join">{{ t.welcome.create }}</a>
+        <button
+          ahButton="secondary"
+          type="button"
+          [disabled]="busy()"
+          (click)="signIn()"
+        >
+          {{ busy() ? t.welcome.signingIn : t.welcome.signIn }}
+        </button>
+      </div>
+      <p class="hint">{{ t.welcome.passkeyNote }}</p>
+    }
+  </section>
+
+  @if (problem(); as message) {
+    <ah-alert variant="danger">{{ message }}</ah-alert>
+  }
+
+  <ul class="links">
+    <li>
+      <a routerLink="/claim">{{ t.welcome.guest }}</a>
+    </li>
+    @if (!session.player()) {
+      <li>
+        <a routerLink="/recover">{{ t.welcome.lost }}</a>
+      </li>
+    }
+  </ul>
+</div>

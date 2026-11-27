@@ -1,0 +1,45 @@
+@let t = i18n.t();
+<a class="skip" href="#barq-main">{{ t.app.skip }}</a>
+<header class="header">
+  <a class="brand" routerLink="/" [attr.aria-label]="t.app.home">
+    <lt-bolt-mark class="bolt" />
+    <span class="wordmark">BARQ</span>
+    <span class="wordmark-ar" lang="ar">برق</span>
+  </a>
+  <nav class="nav" [attr.aria-label]="t.app.nav">
+    <a
+      routerLink="/"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
+    >
+      {{ t.app.home }}
+    </a>
+    @if (session.player()) {
+      <a routerLink="/badge" routerLinkActive="active">{{ t.app.badge }}</a>
+    }
+    <a routerLink="/claim" routerLinkActive="active">{{ t.app.claim }}</a>
+    @if (isStaff()) {
+      <a routerLink="/staff" routerLinkActive="active">{{ t.app.staff }}</a>
+    }
+    @if (session.player()) {
+      <button type="button" class="sign-out" (click)="signOut()">
+        {{ t.app.signOut }}
+      </button>
+    }
+  </nav>
+  <ah-segmented-control
+    class="langs"
+    [options]="languages"
+    [value]="i18n.lang()"
+    (valueChange)="setLanguage($event)"
+    [label]="t.app.language"
+  />
+</header>
+
+@if (!session.serviceOn()) {
+  <p class="banner" role="status">{{ t.app.unavailable }}</p>
+}
+
+<main id="barq-main" class="main" tabindex="-1">
+  <router-outlet />
+</main>

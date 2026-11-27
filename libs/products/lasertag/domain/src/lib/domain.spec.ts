@@ -2,11 +2,14 @@ import * as v from 'valibot';
 import { AGE_POLICIES, signupAge, youngestAge } from './age';
 import {
   BADGE_STEP_SECONDS,
+  badgeCode,
   badgeStep,
   badgeToken,
   parseBadge,
+  parseTypedBadge,
   secondsUntilNextBadge,
   verifyBadge,
+  verifyBadgeCode,
 } from './badge';
 import { type CheckIn, checkInProblem, type PlaySession } from './checkin';
 import { formatCode, hashCode, newCode, normalizeCode } from './codes';
@@ -131,6 +134,28 @@ describe('badges', () => {
     expect(await verifyBadge(someoneElse, key, NOW)).toBe(false);
     expect(parseBadge('hello')).toBeNull();
     expect(parseBadge(gearQr(newId()))).toBeNull();
+  });
+
+  it('gives a six-digit code that follows the badge', async () => {
+    const code = await badgeCode(key, playerId, NOW);
+    expect(code).toMatch(/^[0-9]{6}$/);
+    expect(await verifyBadgeCode(code, key, playerId, NOW)).toBe(true);
+    expect(
+      await verifyBadgeCode(
+        code,
+        key,
+        playerId,
+        new Date(NOW.getTime() + 90_000),
+      ),
+    ).toBe(false);
+    expect(
+      await verifyBadgeCode(code, toBase64Url(randomBytes(32)), playerId, NOW),
+    ).toBe(false);
+    expect(parseTypedBadge('@nour_7 482 193')).toEqual({
+      handle: 'nour_7',
+      code: '482193',
+    });
+    expect(parseTypedBadge('nour_7 4821')).toBeNull();
   });
 
   it('says how long the badge on screen has left', () => {

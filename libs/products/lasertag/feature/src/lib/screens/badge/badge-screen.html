@@ -1,0 +1,39 @@
+@let t = i18n.t();
+<div class="screen">
+  @if (session.player(); as player) {
+    <h1>{{ t.badge.title }}</h1>
+    <section class="badge" aria-labelledby="badge-handle">
+      <p class="handle" id="badge-handle" dir="ltr">&#64;{{ player.handle }}</p>
+      <p class="name" dir="auto">{{ player.displayName }}</p>
+      <div class="qr-frame">
+        @if (token(); as token) {
+          <lt-qr-code [text]="token" [label]="t.badge.qrLabel(player.handle)" />
+        }
+      </div>
+      <p class="countdown" aria-hidden="true">
+        {{ t.badge.changesIn(secondsLeft()) }}
+      </p>
+      <p class="hint">{{ t.badge.code }}</p>
+      <p class="big-code" dir="ltr" data-testid="badge-code">{{ code() }}</p>
+    </section>
+    <p class="lead">{{ t.badge.show }}</p>
+    <ul class="tips">
+      <li>{{ t.badge.brightness }}</li>
+      <li>{{ t.badge.offline }}</li>
+      @if (player.minor) {
+        <li>{{ t.badge.private }}</li>
+      }
+    </ul>
+  } @else {
+    <h1>{{ t.badge.title }}</h1>
+    <p class="lead">{{ t.claim.signInFirst }}</p>
+    <ul class="links">
+      <li>
+        <a routerLink="/join">{{ t.welcome.create }}</a>
+      </li>
+      <li>
+        <a routerLink="/">{{ t.welcome.signIn }}</a>
+      </li>
+    </ul>
+  }
+</div>

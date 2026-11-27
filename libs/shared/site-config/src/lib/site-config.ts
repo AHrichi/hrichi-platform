@@ -16,6 +16,8 @@ export interface SiteConfig {
   assistantUrl: string | null;
   /** The sync Worker, for apps' opt-in cloud sync (ADR-0032). */
   syncUrl: string | null;
+  /** BARQ's Worker: players, venues and check-ins (ADR-0033). */
+  lasertagUrl: string | null;
 }
 
 const disabled: SiteConfig = {
@@ -26,6 +28,7 @@ const disabled: SiteConfig = {
   learningEdgeUrl: null,
   assistantUrl: null,
   syncUrl: null,
+  lasertagUrl: null,
 };
 
 /** The URL of an n8n webhook, or null when no n8n is configured. */
@@ -60,6 +63,7 @@ export class SiteConfigService {
         learningEdgeUrl: config.learningEdgeUrl ?? null,
         assistantUrl: config.assistantUrl ?? null,
         syncUrl: config.syncUrl ?? null,
+        lasertagUrl: config.lasertagUrl ?? null,
       }))
       .catch(() => disabled);
     return this.config;

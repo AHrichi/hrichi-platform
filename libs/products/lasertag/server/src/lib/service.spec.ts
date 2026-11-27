@@ -1,4 +1,5 @@
 import {
+  badgeCode,
   badgeToken,
   FIRST_VENUE_SLUG,
   gearQr,
@@ -371,6 +372,28 @@ describe('sessions and check-in', () => {
         }),
       ),
     ).toBe('GEAR_UNKNOWN');
+  });
+
+  it('checks in by handle and six-digit code when there is no camera', async () => {
+    const { service, boss, sessionId, signUp, now } = await ready();
+    const nour = await signUp();
+    const code = await badgeCode(nour.badgeKey, nour.player.id, now());
+    expect(
+      await refusal(
+        service.checkIn(boss.token, sessionId, {
+          badge: '@nour_7 000000'.replace(
+            '000000',
+            code === '000000' ? '111111' : '000000',
+          ),
+          gear: 'V-05',
+        }),
+      ),
+    ).toBe('BADGE_INVALID');
+    const view = await service.checkIn(boss.token, sessionId, {
+      badge: `@Nour_7 ${code.slice(0, 3)} ${code.slice(3)}`,
+      gear: 'V-05',
+    });
+    expect(view.roster[0]).toMatchObject({ name: '@nour_7', vest: 'V-05' });
   });
 
   it('releases gear, and closing a session releases everyone', async () => {

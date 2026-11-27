@@ -32,6 +32,7 @@ import {
   normalizeCode,
   parseBadge,
   parseGearScan,
+  parseTypedBadge,
   type PlaySession,
   type PlayerView,
   randomBytes,
@@ -50,6 +51,7 @@ import {
   toBase64Url,
   type VenueView,
   verifyBadge,
+  verifyBadgeCode,
   verifySession,
   type Wearer,
 } from '@ah/products/lasertag/domain';
@@ -249,6 +251,21 @@ export function createService(deps: ServiceDeps) {
     body: CheckInBody,
     venueId: string,
   ): Promise<Wearer> {
+    const typed = body.badge ? parseTypedBadge(body.badge) : null;
+    if (typed) {
+      const player = await repo.playerByHandleKey(handleKey(typed.handle));
+      if (
+        !player ||
+        !(await verifyBadgeCode(typed.code, player.badgeKey, player.id, now()))
+      ) {
+        fail(
+          'BADGE_INVALID',
+          422,
+          'This code isn’t valid: ask for the current one',
+        );
+      }
+      return { kind: 'player', id: player.id };
+    }
     if (body.badge) {
       const badge = parseBadge(body.badge);
       const player = badge ? await repo.playerById(badge.playerId) : null;

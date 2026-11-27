@@ -1,0 +1,114 @@
+:host {
+  display: block;
+  min-block-size: 100dvh;
+  background: var(--color-bg-canvas);
+  color: var(--color-text-default);
+}
+
+.skip {
+  position: absolute;
+  inset-inline-start: var(--space-3);
+  inset-block-start: -10rem;
+  z-index: var(--z-sticky);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-raised);
+  color: var(--color-text-default);
+}
+
+.skip:focus {
+  inset-block-start: var(--space-3);
+}
+
+.header {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: var(--z-sticky);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3) var(--space-5);
+  align-items: center;
+  padding-block: var(--space-3);
+  padding-inline: var(--space-4);
+  border-block-end: 1px solid var(--color-stage-border);
+  background: var(--color-stage-bg);
+  color: var(--color-stage-text);
+}
+
+.brand {
+  display: inline-flex;
+  gap: var(--space-2);
+  align-items: center;
+  color: inherit;
+  text-decoration: none;
+}
+
+.bolt {
+  inline-size: 1.75rem;
+}
+
+.wordmark {
+  font-size: var(--font-size-500);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.12em;
+}
+
+.wordmark-ar {
+  color: var(--color-stage-muted);
+  font-size: var(--font-size-400);
+  font-weight: var(--font-weight-semibold);
+}
+
+.nav {
+  display: flex;
+  flex: 1 1 auto;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-3);
+  align-items: center;
+}
+
+.nav a,
+.sign-out {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: 2.75rem;
+  padding-inline: var(--space-2);
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: none;
+  color: var(--color-stage-muted);
+  font: inherit;
+  font-weight: var(--font-weight-medium);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.nav a.active {
+  color: var(--color-stage-text);
+  box-shadow: inset 0 -2px 0 var(--color-accent-default);
+}
+
+.nav a:hover,
+.sign-out:hover {
+  color: var(--color-stage-text);
+}
+
+.nav a:focus-visible,
+.sign-out:focus-visible,
+.brand:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+.banner {
+  margin: 0;
+  padding-block: var(--space-2);
+  padding-inline: var(--space-4);
+  background: var(--color-warning-subtle);
+  color: var(--color-text-default);
+  text-align: center;
+}
+
+.main:focus {
+  outline: none;
+}

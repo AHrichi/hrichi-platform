@@ -1,0 +1,63 @@
+{
+  "$schema": "../../../../node_modules/@angular/service-worker/config/schema.json",
+  "index": "/index.html",
+  "assetGroups": [
+    {
+      "name": "app",
+      "installMode": "prefetch",
+      "resources": {
+        "files": [
+          "/favicon.ico",
+          "/favicon.svg",
+          "/index.html",
+          "/manifest.webmanifest",
+          "/*.css",
+          "/main-*.js",
+          "/polyfills-*.js",
+          "/_angular_*.js",
+          "/_ah_*.js",
+          "/rxjs.*.js",
+          "/rxjs_*.js"
+        ]
+      }
+    },
+    {
+      "name": "routes",
+      "installMode": "prefetch",
+      "updateMode": "prefetch",
+      "resources": {
+        "files": [
+          "/*.js"
+        ]
+      }
+    },
+    {
+      "name": "assets",
+      "installMode": "lazy",
+      "updateMode": "prefetch",
+      "resources": {
+        "files": [
+          "/icons/**",
+          "/**/*.(svg|cur|jpg|jpeg|png|apng|webp|avif|gif|otf|ttf|woff|woff2)"
+        ]
+      }
+    }
+  ],
+  "dataGroups": [
+    {
+      "name": "federation-metadata",
+      "urls": [
+        "/federation.manifest.json",
+        "/remoteEntry.json",
+        "/importmap.json"
+      ],
+      "cacheConfig": {
+        "strategy": "freshness",
+        "maxSize": 10,
+        "maxAge": "7d",
+        "timeout": "3s"
+      }
+    }
+  ],
+  "navigationRequestStrategy": "freshness"
+}

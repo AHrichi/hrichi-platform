@@ -1,0 +1,9 @@
+{
+  "name": "product-lasertag-feature",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/products/lasertag/feature/src",
+  "prefix": "lt",
+  "projectType": "library",
+  "tags": ["scope:product-lasertag", "type:feature", "runtime:browser"],
+  "targets": {}
+}

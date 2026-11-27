@@ -1,0 +1,18 @@
+:host {
+  display: inline-block;
+  inline-size: 2rem;
+  aspect-ratio: 1;
+}
+
+svg {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+}
+
+.bolt {
+  fill: var(--color-warning-default);
+  stroke: var(--color-accent-default);
+  stroke-width: 2;
+  stroke-linejoin: round;
+}

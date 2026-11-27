@@ -1,0 +1,143 @@
+{
+  "name": "product-lasertag",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "prefix": "ah",
+  "sourceRoot": "apps/products/lasertag/web/src",
+  "tags": ["scope:product-lasertag", "type:app", "runtime:browser"],
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build-federation"],
+      "outputs": ["{workspaceRoot}/dist/apps/products/lasertag/web"],
+      "defaultConfiguration": "production",
+      "options": {
+        "command": "ngsw-config dist/apps/products/lasertag/web/browser apps/products/lasertag/web/ngsw-config.json /"
+      },
+      "configurations": {
+        "production": {},
+        "development": {
+          "command": "echo Service worker is disabled in development builds"
+        }
+      }
+    },
+    "build-federation": {
+      "executor": "@angular-architects/native-federation:build",
+      "defaultConfiguration": "production",
+      "options": {
+        "cacheExternalArtifacts": true,
+        "tsConfig": "apps/products/lasertag/web/tsconfig.federation.json"
+      },
+      "configurations": {
+        "production": {
+          "target": "product-lasertag:esbuild:production"
+        },
+        "development": {
+          "target": "product-lasertag:esbuild:development",
+          "dev": true
+        }
+      }
+    },
+    "serve": {
+      "executor": "@angular-architects/native-federation:build",
+      "options": {
+        "target": "product-lasertag:serve-original:development",
+        "tsConfig": "apps/products/lasertag/web/tsconfig.federation.json",
+        "rebuildDelay": 500,
+        "cacheExternalArtifacts": true,
+        "dev": true,
+        "devServer": true,
+        "port": 0
+      }
+    },
+    "serve-static": {
+      "continuous": true,
+      "readyWhen": {
+        "signal": true
+      },
+      "dependsOn": ["build"],
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node tools/scripts/prepare-hosting.mjs dist/apps/products/lasertag/web/browser --env development --cors --site-config && node tools/scripts/serve-static.mjs dist/apps/products/lasertag/web/browser 4315"
+      }
+    },
+    "esbuild": {
+      "executor": "@angular/build:application",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "outputPath": "dist/apps/products/lasertag/web",
+        "browser": "apps/products/lasertag/web/src/main.ts",
+        "tsConfig": "apps/products/lasertag/web/tsconfig.app.json",
+        "inlineStyleLanguage": "scss",
+        "assets": [
+          {
+            "glob": "**/*",
+            "input": "apps/products/lasertag/web/public"
+          }
+        ],
+        "styles": [
+          "node_modules/@fontsource-variable/inter/index.css",
+          "libs/design-system/tokens/src/generated/tokens.css",
+          "libs/design-system/ui/src/styles/index.scss",
+          "apps/products/lasertag/web/src/styles.scss"
+        ],
+        "polyfills": ["es-module-shims"]
+      },
+      "configurations": {
+        "production": {
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "1mb",
+              "maximumError": "2mb"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "35kb",
+              "maximumError": "50kb"
+            }
+          ],
+          "outputHashing": "all",
+          "serviceWorker": "apps/products/lasertag/web/ngsw-config.json"
+        },
+        "development": {
+          "optimization": false,
+          "extractLicenses": false,
+          "sourceMap": true
+        }
+      }
+    },
+    "serve-original": {
+      "executor": "@angular/build:dev-server",
+      "configurations": {
+        "production": {
+          "buildTarget": "product-lasertag:esbuild:production"
+        },
+        "development": {
+          "buildTarget": "product-lasertag:esbuild:development"
+        }
+      },
+      "defaultConfiguration": "development",
+      "options": {
+        "port": 4315
+      }
+    },
+    "deploy": {
+      "dependsOn": ["build"],
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "node tools/scripts/prepare-hosting.mjs dist/apps/products/lasertag/web/browser --env production --app product-lasertag --cors --site-config",
+          "wrangler deploy --config apps/products/lasertag/web/wrangler.jsonc"
+        ],
+        "parallel": false
+      },
+      "inputs": [
+        "production",
+        "^production",
+        "{workspaceRoot}/tools/scripts/prepare-hosting.mjs"
+      ]
+    }
+  }
+}

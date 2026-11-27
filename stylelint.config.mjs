@@ -24,6 +24,8 @@ const STRICT = [
   'apps/products/greenhouse/**/*.scss',
   'libs/products/serracalc/**/*.scss',
   'apps/products/serracalc/**/*.scss',
+  'libs/products/lasertag/**/*.scss',
+  'apps/products/lasertag/**/*.scss',
 ];
 
 const COLOR_PROPS = [

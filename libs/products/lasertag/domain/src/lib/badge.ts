@@ -86,3 +86,54 @@ export async function verifyBadge(
   for (let i = 0; i < MAC_BYTES; i++) difference |= expected[i] ^ badge.mac[i];
   return difference === 0;
 }
+
+/**
+ * Six digits from the same key and step, shown under the QR: staff type
+ * `@handle 482193` when the counter's camera can't scan. Like a one-time
+ * password: it changes with the QR, and only the player's devices can make
+ * it.
+ */
+export async function badgeCode(
+  badgeKey: string,
+  playerId: string,
+  now: Date,
+): Promise<string> {
+  return codeForStep(badgeKey, playerId, badgeStep(now));
+}
+
+async function codeForStep(
+  badgeKey: string,
+  playerId: string,
+  step: number,
+): Promise<string> {
+  const mac = await hmac(
+    keyBytes(badgeKey),
+    `${BADGE_VERSION}C.${playerId}.${step}`,
+  );
+  const value =
+    ((mac[0] << 24) | (mac[1] << 16) | (mac[2] << 8) | mac[3]) >>> 0;
+  return String(value % 1_000_000).padStart(6, '0');
+}
+
+/** `@nour_7 482 193` → its handle and code; null if it isn't one. */
+export function parseTypedBadge(
+  text: string,
+): { readonly handle: string; readonly code: string } | null {
+  const match = /^@?(\S{3,20})\s+(\d{3})\s?(\d{3})$/u.exec(text.trim());
+  return match ? { handle: match[1], code: `${match[2]}${match[3]}` } : null;
+}
+
+export async function verifyBadgeCode(
+  code: string,
+  badgeKey: string,
+  playerId: string,
+  now: Date,
+): Promise<boolean> {
+  const step = badgeStep(now);
+  let ok = false;
+  for (let d = -BADGE_TOLERANCE_STEPS; d <= BADGE_TOLERANCE_STEPS; d++) {
+    // Every step is checked, so the time taken doesn't say which matched.
+    if ((await codeForStep(badgeKey, playerId, step + d)) === code) ok = true;
+  }
+  return ok;
+}

@@ -31,6 +31,7 @@ describe('SiteConfigService', () => {
       learningEdgeUrl: null,
       assistantUrl: null,
       syncUrl: null,
+      lasertagUrl: null,
     });
     await service.load();
     expect(fetch).toHaveBeenCalledTimes(1);
@@ -50,6 +51,7 @@ describe('SiteConfigService', () => {
       learningEdgeUrl: null,
       assistantUrl: null,
       syncUrl: null,
+      lasertagUrl: null,
     });
   });
 

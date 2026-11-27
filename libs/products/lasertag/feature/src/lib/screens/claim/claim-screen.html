@@ -1,0 +1,48 @@
+@let t = i18n.t();
+<div class="screen">
+  <h1>{{ t.claim.title }}</h1>
+  <p class="lead">{{ t.claim.lead }}</p>
+
+  @if (session.player()) {
+    <form class="card" (submit)="claim($event)" novalidate>
+      <div class="field">
+        <label for="claim-code">{{ t.claim.code }}</label>
+        <input
+          id="claim-code"
+          class="input code-input"
+          dir="ltr"
+          autocomplete="one-time-code"
+          autocapitalize="characters"
+          spellcheck="false"
+          [value]="code()"
+          (input)="code.set($any($event.target).value)"
+          aria-describedby="claim-code-hint"
+        />
+        <p class="hint" id="claim-code-hint">{{ t.claim.codeHint }}</p>
+      </div>
+      @if (problem(); as message) {
+        <ah-alert variant="danger">{{ message }}</ah-alert>
+      }
+      <div class="actions">
+        <button ahButton type="submit" [disabled]="busy()">
+          {{ t.claim.submit }}
+        </button>
+      </div>
+    </form>
+    <div aria-live="polite">
+      @if (done(); as nickname) {
+        <p class="status">{{ t.claim.done(nickname) }}</p>
+      }
+    </div>
+  } @else {
+    <ah-alert variant="info">{{ t.claim.signInFirst }}</ah-alert>
+    <ul class="links">
+      <li>
+        <a routerLink="/join">{{ t.welcome.create }}</a>
+      </li>
+      <li>
+        <a routerLink="/">{{ t.welcome.signIn }}</a>
+      </li>
+    </ul>
+  }
+</div>

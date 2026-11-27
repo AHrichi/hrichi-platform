@@ -1,0 +1,178 @@
+/**
+ * BARQ's words in English. French and Arabic follow this shape exactly
+ * (`BarqCopy`), so a missing string fails the build; `copy.spec.ts` checks
+ * that every function takes the same arguments.
+ */
+export const EN = {
+  app: {
+    name: 'BARQ',
+    tagline: 'Strike like lightning',
+    skip: 'Skip to content',
+    nav: 'Main',
+    home: 'Home',
+    badge: 'My badge',
+    claim: 'Claim stats',
+    staff: 'Venue',
+    signOut: 'Sign out',
+    language: 'Language',
+    unavailable:
+      'BARQ’s service can’t be reached right now. Your badge still works without a connection.',
+  },
+  welcome: {
+    title: 'One badge for every game',
+    lead: 'Make your badge in a minute. Show it at the counter when you take your gear, and every shot, tag and win counts for you.',
+    create: 'Create my badge',
+    signIn: 'Sign in with a passkey',
+    signingIn: 'Waiting for your passkey…',
+    lost: 'Lost your phone?',
+    guest: 'Played as a guest? Claim your stats',
+    passkeyNote:
+      'No password: your phone unlocks your badge with your fingerprint, face or PIN.',
+    hello: (name: string) => `Welcome back, ${name}`,
+    toBadge: 'Show my badge',
+  },
+  join: {
+    title: 'Create your badge',
+    handle: 'Handle',
+    handleHint:
+      '3 to 20 letters, digits or _, starting with a letter. Latin or Arabic, not both. Shown on leaderboards.',
+    displayName: 'Your name',
+    displayNameHint: 'How your friends know you.',
+    birthYear: 'Birth year',
+    birthYearHint: 'Only the year, so the rules for young players apply.',
+    language: 'Language of the app',
+    submit: 'Create with a passkey',
+    creating: 'Waiting for your passkey…',
+    guardian:
+      'Under 13, a parent or guardian creates the account. Until then, play as a guest: the staff gives you a code to keep your stats.',
+    minor:
+      'Under 18, your profile stays private and only your handle shows on leaderboards.',
+    haveOne: 'Already have a badge? Sign in',
+  },
+  problems: {
+    required: 'Fill this in.',
+    'too-short': 'Too short.',
+    'too-long': 'Too long.',
+    characters:
+      'Use letters, digits and _ only, start with a letter, and one alphabet.',
+    reserved: 'This name is reserved.',
+    year: 'Check the year.',
+  },
+  errors: {
+    HANDLE_TAKEN: 'This handle is taken: try another.',
+    HANDLE_INVALID: 'This handle can’t be used.',
+    NAME_INVALID: 'Check the name.',
+    AGE_INVALID: 'Check the birth year.',
+    GUARDIAN_REQUIRED: 'A parent or guardian must create this account.',
+    CHALLENGE_EXPIRED: 'That took too long. Try again.',
+    PASSKEY_FAILED: 'The passkey wasn’t accepted. Try again.',
+    CODE_INVALID: 'This code isn’t valid, or it was already used.',
+    BADGE_INVALID: 'This badge isn’t valid. Ask the player to show it again.',
+    GEAR_UNKNOWN: 'No vest or blaster with this label here.',
+    CHECKIN_REFUSED: 'Check-in refused.',
+    UNAUTHORIZED: 'Sign in again.',
+    FORBIDDEN: 'Only the venue’s staff can do this.',
+    NOT_FOUND: 'Not found.',
+    RATE_LIMITED: 'Too many tries. Wait a minute.',
+    OFFLINE: 'No connection. Try again when you’re online.',
+    UNAVAILABLE: 'BARQ’s service isn’t available right now.',
+    cancelled: 'Cancelled. Nothing was changed.',
+    unsupported:
+      'This browser can’t use passkeys. Try Chrome, Safari or Samsung Internet on your phone.',
+    failed: 'The passkey didn’t work. Try again.',
+    generic: 'Something went wrong. Try again.',
+  },
+  badge: {
+    title: 'My badge',
+    show: 'Show this at the counter when you take your gear.',
+    qrLabel: (handle: string) => `Badge QR code of @${handle}`,
+    changesIn: (seconds: number) => `Changes in ${seconds} s`,
+    code: 'No camera at the counter? Read out this code with your handle:',
+    brightness: 'Turn your screen brightness up for a fast scan.',
+    private: 'Private profile: only your handle shows on leaderboards.',
+    offline: 'Works without a connection.',
+  },
+  claim: {
+    title: 'Claim your guest stats',
+    lead: 'Type the code the staff gave you, and the games you played as a guest join your profile.',
+    code: 'Claim code',
+    codeHint: '10 characters, like 4K7Q9-XMD2B',
+    submit: 'Claim',
+    done: (nickname: string) =>
+      `Done: the games of “${nickname}” are on your profile now.`,
+    signInFirst: 'Create your badge or sign in first, then claim.',
+  },
+  recover: {
+    title: 'Get back in',
+    lead: 'Lost your phone or your passkey? Ask the staff at the counter for a recovery code, then make a new passkey here.',
+    code: 'Recovery code',
+    submit: 'Make a new passkey',
+    working: 'Waiting for your passkey…',
+  },
+  staff: {
+    title: 'Venue',
+    notStaff: 'This page is for the venue’s staff. Ask a manager to add you.',
+    claimTitle: 'Set up this venue',
+    claimLead: 'The first manager types the set-up code once.',
+    claimCode: 'Set-up code',
+    claimSubmit: 'Become manager',
+    map: 'Map',
+    indoor: 'Indoor',
+    mapSize: (width: string, length: string) => `${width} × ${length} m`,
+    unmeasured: 'Size not measured yet',
+    vestsReady: (ready: number, all: number) =>
+      `${ready} of ${all} vests ready`,
+    sessions: 'Open sessions',
+    none: 'No session is open.',
+    open: 'Open a session',
+    opened: (time: string) => `Opened at ${time}`,
+    players: (count: number, capacity: number) =>
+      `${count} of ${capacity} players`,
+    close: 'Close session',
+    closeConfirm: 'Close this session? Everyone’s gear is released.',
+    roster: 'Checked in',
+    empty: 'Nobody checked in yet.',
+    release: 'Release gear',
+    releaseOf: (name: string) => `Release the gear of ${name}`,
+    checkIn: 'Check in',
+    who: 'Who plays?',
+    whoPlayer: 'A player with a badge',
+    whoGuest: 'A guest',
+    badgeInput: 'Badge',
+    badgeHint:
+      'Scan the player’s badge, or type their @handle and the 6 digits under it.',
+    nickname: 'Guest’s nickname',
+    createGuest: 'Create guest',
+    guestCode: 'Give this code to the guest',
+    guestCodeHint:
+      'After the game they create a badge and type it, to keep their stats. It works for 30 days.',
+    guestFor: (nickname: string) => `Guest: ${nickname}`,
+    gear: 'Vest or blaster',
+    gearHint: 'Scan its sticker or type its label, like V-07.',
+    checkedIn: (name: string, vest: string) => `${name} has ${vest}.`,
+    refused: {
+      'session-closed': 'This session is closed.',
+      'session-full': 'The session is full.',
+      'already-checked-in': 'Already checked in.',
+      'not-a-vest': 'That isn’t a vest.',
+      'gear-not-ready': 'This vest is charging or in repair.',
+      'vest-in-use': 'This vest is taken.',
+    },
+    recovery: 'Recovery code for a player',
+    recoveryLead:
+      'For a player who lost every device. Check who they are before you make a code.',
+    recoveryHandle: 'Player’s handle',
+    recoveryIssue: 'Make a code',
+    recoveryIssued: (code: string, until: string) =>
+      `Code ${code}, valid until ${until}.`,
+  },
+  scanner: {
+    start: 'Scan with the camera',
+    stop: 'Stop the camera',
+    view: 'Camera view',
+    unsupported: 'This browser can’t scan codes: type instead.',
+    denied: 'The camera is blocked: allow it, or type instead.',
+  },
+};
+
+export type BarqCopy = typeof EN;

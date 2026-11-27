@@ -7,9 +7,9 @@
       "scope": "api",
       "layer": "app",
       "runtime": "node",
-      "x": -0.221,
-      "y": 0.764,
-      "z": 0.495
+      "x": -0.306,
+      "y": 0.79,
+      "z": 0.391
     },
     {
       "id": "api-ai",
@@ -17,9 +17,9 @@
       "scope": "api",
       "layer": "util",
       "runtime": "node",
-      "x": 0.328,
-      "y": 0.689,
-      "z": 0.606
+      "x": -0.195,
+      "y": 0.943,
+      "z": 0.215
     },
     {
       "id": "api-dispatch",
@@ -27,9 +27,9 @@
       "scope": "api",
       "layer": "feature",
       "runtime": "node",
-      "x": -0.672,
-      "y": 0.639,
-      "z": 0.306
+      "x": 0.099,
+      "y": 0.822,
+      "z": 0.524
     },
     {
       "id": "api-leads",
@@ -37,9 +37,9 @@
       "scope": "api",
       "layer": "feature",
       "runtime": "node",
-      "x": -0.047,
-      "y": 0.969,
-      "z": 0.127
+      "x": 0.158,
+      "y": 0.954,
+      "z": 0.119
     },
     {
       "id": "api-learning",
@@ -47,9 +47,9 @@
       "scope": "api",
       "layer": "feature",
       "runtime": "node",
-      "x": -0.023,
-      "y": 0.676,
-      "z": 0.703
+      "x": -0.229,
+      "y": 0.725,
+      "z": 0.608
     },
     {
       "id": "api-studylm",
@@ -57,9 +57,9 @@
       "scope": "api",
       "layer": "feature",
       "runtime": "node",
-      "x": 0.066,
-      "y": 0.833,
-      "z": 0.479
+      "x": -0.565,
+      "y": 0.762,
+      "z": 0.316
     },
     {
       "id": "assistant-edge",
@@ -67,9 +67,9 @@
       "scope": "edge",
       "layer": "app",
       "runtime": "agnostic",
-      "x": -0.949,
-      "y": 0.091,
-      "z": -0.104
+      "x": -0.011,
+      "y": 0.592,
+      "z": -0.781
     },
     {
       "id": "design-system",
@@ -77,9 +77,9 @@
       "scope": "design-system",
       "layer": "app",
       "runtime": "browser",
-      "x": -0.627,
-      "y": 0.353,
-      "z": -0.067
+      "x": -0.657,
+      "y": 0.286,
+      "z": 0.006
     },
     {
       "id": "design-system-e2e",
@@ -87,9 +87,9 @@
       "scope": "test",
       "layer": "e2e",
       "runtime": "node",
-      "x": -0.786,
-      "y": 0.472,
-      "z": -0.35
+      "x": -0.946,
+      "y": 0.172,
+      "z": 0.217
     },
     {
       "id": "design-system-tokens",
@@ -97,9 +97,9 @@
       "scope": "design-system",
       "layer": "tokens",
       "runtime": "agnostic",
-      "x": -0.524,
-      "y": 0.683,
-      "z": -0.161
+      "x": -0.42,
+      "y": 0.72,
+      "z": -0.195
     },
     {
       "id": "design-system-ui",
@@ -107,9 +107,9 @@
       "scope": "design-system",
       "layer": "ui",
       "runtime": "browser",
-      "x": 0.059,
-      "y": -0.037,
-      "z": -0.056
+      "x": -0.029,
+      "y": -0.151,
+      "z": 0.014
     },
     {
       "id": "lab-ngrx",
@@ -117,9 +117,9 @@
       "scope": "lab-ngrx",
       "layer": "app",
       "runtime": "browser",
-      "x": 0.902,
-      "y": 0.133,
-      "z": -0.119
+      "x": 0.886,
+      "y": -0.291,
+      "z": -0.06
     },
     {
       "id": "lab-ngrx-feature",
@@ -127,9 +127,9 @@
       "scope": "lab-ngrx",
       "layer": "feature",
       "runtime": "browser",
-      "x": 0.744,
-      "y": 0.407,
-      "z": -0.001
+      "x": 0.827,
+      "y": 0.043,
+      "z": 0.127
     },
     {
       "id": "lab-rxjs",
@@ -137,9 +137,9 @@
       "scope": "lab-rxjs",
       "layer": "app",
       "runtime": "browser",
-      "x": 0.776,
-      "y": 0.285,
-      "z": -0.39
+      "x": 0.881,
+      "y": -0.065,
+      "z": -0.189
     },
     {
       "id": "lab-rxjs-feature",
@@ -147,9 +147,9 @@
       "scope": "lab-rxjs",
       "layer": "feature",
       "runtime": "browser",
-      "x": 0.404,
-      "y": 0.586,
-      "z": -0.461
+      "x": 0.758,
+      "y": 0.247,
+      "z": -0.214
     },
     {
       "id": "lab-sky",
@@ -157,9 +157,9 @@
       "scope": "lab-sky",
       "layer": "app",
       "runtime": "browser",
-      "x": 0.828,
-      "y": -0.049,
-      "z": -0.317
+      "x": 0.802,
+      "y": -0.22,
+      "z": -0.363
     },
     {
       "id": "lab-sky-domain",
@@ -167,9 +167,9 @@
       "scope": "lab-sky",
       "layer": "domain",
       "runtime": "agnostic",
-      "x": 0.695,
-      "y": 0.628,
-      "z": 0.151
+      "x": 0.83,
+      "y": 0.379,
+      "z": 0.119
     },
     {
       "id": "lab-sky-feature",
@@ -177,9 +177,19 @@
       "scope": "lab-sky",
       "layer": "feature",
       "runtime": "browser",
-      "x": 0.35,
-      "y": 0.594,
-      "z": -0.083
+      "x": 0.447,
+      "y": 0.486,
+      "z": -0.255
+    },
+    {
+      "id": "lasertag-edge",
+      "kind": "app",
+      "scope": "edge",
+      "layer": "app",
+      "runtime": "agnostic",
+      "x": 0.416,
+      "y": 0.843,
+      "z": 0.283
     },
     {
       "id": "learning-client",
@@ -187,9 +197,9 @@
       "scope": "learning-client",
       "layer": "client",
       "runtime": "browser",
-      "x": -0.208,
-      "y": -0.556,
-      "z": 0.438
+      "x": -0.597,
+      "y": -0.418,
+      "z": 0.293
     },
     {
       "id": "learning-contracts",
@@ -197,9 +207,9 @@
       "scope": "learning",
       "layer": "contracts",
       "runtime": "agnostic",
-      "x": -0.241,
-      "y": 0.266,
-      "z": 0.831
+      "x": -0.577,
+      "y": 0.308,
+      "z": 0.642
     },
     {
       "id": "learning-data-access",
@@ -207,9 +217,9 @@
       "scope": "learning",
       "layer": "data-access",
       "runtime": "browser",
-      "x": -0.528,
-      "y": 0.312,
-      "z": 0.769
+      "x": -0.422,
+      "y": 0.243,
+      "z": 0.85
     },
     {
       "id": "learning-domain",
@@ -217,9 +227,9 @@
       "scope": "learning",
       "layer": "domain",
       "runtime": "agnostic",
-      "x": -0.322,
-      "y": 0.563,
-      "z": 0.678
+      "x": -0.527,
+      "y": 0.53,
+      "z": 0.572
     },
     {
       "id": "learning-edge",
@@ -227,9 +237,9 @@
       "scope": "learning",
       "layer": "app",
       "runtime": "agnostic",
-      "x": -0.454,
-      "y": 0.816,
-      "z": 0.328
+      "x": -0.199,
+      "y": 0.536,
+      "z": 0.811
     },
     {
       "id": "learning-feature",
@@ -237,9 +247,9 @@
       "scope": "learning",
       "layer": "feature",
       "runtime": "browser",
-      "x": -0.17,
-      "y": -0.091,
-      "z": 0.677
+      "x": -0.516,
+      "y": -0.147,
+      "z": 0.495
     },
     {
       "id": "learning-ui",
@@ -247,9 +257,9 @@
       "scope": "learning",
       "layer": "ui",
       "runtime": "browser",
-      "x": -0.576,
-      "y": 0.391,
-      "z": 0.445
+      "x": -0.726,
+      "y": 0.201,
+      "z": 0.461
     },
     {
       "id": "orbit-api",
@@ -257,9 +267,9 @@
       "scope": "orbit",
       "layer": "app",
       "runtime": "jvm",
-      "x": 0.467,
-      "y": 0.824,
-      "z": 0.279
+      "x": 0.637,
+      "y": 0.764,
+      "z": 0.056
     },
     {
       "id": "platform-app-mode",
@@ -267,9 +277,9 @@
       "scope": "platform",
       "layer": "platform",
       "runtime": "browser",
-      "x": 0.185,
-      "y": -0.579,
-      "z": -0.077
+      "x": -0.064,
+      "y": -0.652,
+      "z": 0.053
     },
     {
       "id": "platform-assistant",
@@ -277,9 +287,9 @@
       "scope": "platform",
       "layer": "platform",
       "runtime": "browser",
-      "x": -0.63,
-      "y": -0.311,
-      "z": 0.447
+      "x": -0.607,
+      "y": 0.175,
+      "z": -0.505
     },
     {
       "id": "platform-federation",
@@ -287,9 +297,9 @@
       "scope": "platform",
       "layer": "platform",
       "runtime": "browser",
-      "x": 0.612,
-      "y": -0.388,
-      "z": -0.104
+      "x": 0.503,
+      "y": -0.563,
+      "z": 0.028
     },
     {
       "id": "platform-inspector",
@@ -297,9 +307,9 @@
       "scope": "platform",
       "layer": "platform",
       "runtime": "browser",
-      "x": 0.93,
-      "y": -0.093,
-      "z": 0.051
+      "x": 0.863,
+      "y": -0.288,
+      "z": 0.207
     },
     {
       "id": "platform-maps",
@@ -307,9 +317,9 @@
       "scope": "platform",
       "layer": "ui",
       "runtime": "browser",
-      "x": 0.518,
-      "y": 0.213,
-      "z": 0.616
+      "x": -0.151,
+      "y": -0.441,
+      "z": 0.74
     },
     {
       "id": "platform-storage",
@@ -317,9 +327,9 @@
       "scope": "platform",
       "layer": "platform",
       "runtime": "browser",
-      "x": -0.025,
-      "y": -0.662,
-      "z": 0.311
+      "x": -0.501,
+      "y": -0.608,
+      "z": 0.162
     },
     {
       "id": "platform-sync",
@@ -327,9 +337,9 @@
       "scope": "platform",
       "layer": "platform",
       "runtime": "browser",
-      "x": -0.539,
-      "y": -0.612,
-      "z": 0.496
+      "x": -0.437,
+      "y": 0.1,
+      "z": -0.757
     },
     {
       "id": "platform-tour",
@@ -337,9 +347,9 @@
       "scope": "platform",
       "layer": "platform",
       "runtime": "browser",
-      "x": -0.311,
-      "y": -0.814,
-      "z": -0.145
+      "x": -0.7,
+      "y": -0.532,
+      "z": -0.082
     },
     {
       "id": "platform-web-push",
@@ -347,9 +357,9 @@
       "scope": "platform",
       "layer": "platform",
       "runtime": "browser",
-      "x": -0.013,
-      "y": -0.229,
-      "z": 0.878
+      "x": -0.856,
+      "y": -0.132,
+      "z": 0.24
     },
     {
       "id": "portfolio-feature-apps",
@@ -357,9 +367,9 @@
       "scope": "portfolio",
       "layer": "feature",
       "runtime": "browser",
-      "x": 0.604,
-      "y": 0.213,
-      "z": -0.586
+      "x": 0.581,
+      "y": -0.296,
+      "z": -0.619
     },
     {
       "id": "portfolio-feature-cv",
@@ -367,9 +377,9 @@
       "scope": "portfolio",
       "layer": "feature",
       "runtime": "browser",
-      "x": 0.585,
-      "y": -0.014,
-      "z": -0.695
+      "x": 0.37,
+      "y": -0.178,
+      "z": -0.723
     },
     {
       "id": "portfolio-feature-experience",
@@ -377,9 +387,9 @@
       "scope": "portfolio",
       "layer": "feature",
       "runtime": "browser",
-      "x": 0.315,
-      "y": 0.153,
-      "z": -0.758
+      "x": 0.347,
+      "y": -0.389,
+      "z": -0.693
     },
     {
       "id": "portfolio-feature-home",
@@ -387,9 +397,9 @@
       "scope": "portfolio",
       "layer": "feature",
       "runtime": "browser",
-      "x": 0.12,
-      "y": 0.423,
-      "z": -0.63
+      "x": 0.3,
+      "y": 0.305,
+      "z": -0.588
     },
     {
       "id": "portfolio-feature-services",
@@ -397,9 +407,9 @@
       "scope": "portfolio",
       "layer": "feature",
       "runtime": "browser",
-      "x": 0.562,
-      "y": 0.336,
-      "z": -0.257
+      "x": 0.538,
+      "y": 0.164,
+      "z": -0.466
     },
     {
       "id": "portfolio-feature-work",
@@ -407,9 +417,9 @@
       "scope": "portfolio",
       "layer": "feature",
       "runtime": "browser",
-      "x": 0.374,
-      "y": -0.048,
-      "z": -0.788
+      "x": 0.686,
+      "y": -0.054,
+      "z": -0.503
     },
     {
       "id": "portfolio-util-seo",
@@ -417,9 +427,9 @@
       "scope": "portfolio",
       "layer": "util",
       "runtime": "browser",
-      "x": 0.449,
-      "y": 0.423,
-      "z": -0.73
+      "x": 0.555,
+      "y": 0.082,
+      "z": -0.78
     },
     {
       "id": "product-alarm-engine",
@@ -427,9 +437,9 @@
       "scope": "product-alarm-engine",
       "layer": "app",
       "runtime": "browser",
-      "x": 0.848,
-      "y": 0,
-      "z": 0.445
+      "x": 0.709,
+      "y": -0.16,
+      "z": 0.632
     },
     {
       "id": "product-alarm-engine-domain",
@@ -437,9 +447,9 @@
       "scope": "product-alarm-engine",
       "layer": "domain",
       "runtime": "agnostic",
-      "x": 0.65,
-      "y": 0.029,
-      "z": 0.726
+      "x": 0.455,
+      "y": 0.116,
+      "z": 0.862
     },
     {
       "id": "product-alarm-engine-feature",
@@ -447,9 +457,9 @@
       "scope": "product-alarm-engine",
       "layer": "feature",
       "runtime": "browser",
-      "x": 0.715,
-      "y": -0.286,
-      "z": 0.261
+      "x": 0.444,
+      "y": -0.335,
+      "z": 0.553
     },
     {
       "id": "product-autosphere-domain",
@@ -457,9 +467,9 @@
       "scope": "product-autosphere",
       "layer": "domain",
       "runtime": "agnostic",
-      "x": -0.551,
-      "y": 0.301,
-      "z": -0.72
+      "x": -0.921,
+      "y": -0.282,
+      "z": -0.17
     },
     {
       "id": "product-autosphere-feature",
@@ -467,9 +477,9 @@
       "scope": "product-autosphere",
       "layer": "feature",
       "runtime": "browser",
-      "x": -0.029,
-      "y": -0.087,
-      "z": -0.748
+      "x": -0.399,
+      "y": -0.693,
+      "z": -0.174
     },
     {
       "id": "product-basecamp",
@@ -477,9 +487,9 @@
       "scope": "product-basecamp",
       "layer": "app",
       "runtime": "browser",
-      "x": 0.791,
-      "y": -0.457,
-      "z": -0.183
+      "x": 0.646,
+      "y": -0.668,
+      "z": -0.113
     },
     {
       "id": "product-basecamp-domain",
@@ -487,9 +497,9 @@
       "scope": "product-basecamp",
       "layer": "domain",
       "runtime": "agnostic",
-      "x": 0.759,
-      "y": 0.421,
-      "z": 0.417
+      "x": 0.85,
+      "y": 0.104,
+      "z": 0.465
     },
     {
       "id": "product-basecamp-feature",
@@ -497,9 +507,9 @@
       "scope": "product-basecamp",
       "layer": "feature",
       "runtime": "browser",
-      "x": 0.675,
-      "y": -0.045,
-      "z": 0.238
+      "x": 0.449,
+      "y": -0.4,
+      "z": 0.352
     },
     {
       "id": "product-dispatch",
@@ -507,9 +517,9 @@
       "scope": "product-dispatch",
       "layer": "app",
       "runtime": "browser",
-      "x": 0.347,
-      "y": -0.618,
-      "z": 0.484
+      "x": 0.367,
+      "y": -0.589,
+      "z": 0.553
     },
     {
       "id": "product-dispatch-domain",
@@ -517,9 +527,9 @@
       "scope": "product-dispatch",
       "layer": "domain",
       "runtime": "agnostic",
-      "x": -0.777,
-      "y": 0.172,
-      "z": 0.524
+      "x": 0.165,
+      "y": 0.509,
+      "z": 0.791
     },
     {
       "id": "product-dispatch-feature",
@@ -527,9 +537,9 @@
       "scope": "product-dispatch",
       "layer": "feature",
       "runtime": "browser",
-      "x": -0.297,
-      "y": -0.366,
-      "z": 0.625
+      "x": 0.205,
+      "y": -0.042,
+      "z": 0.686
     },
     {
       "id": "product-greenhouse",
@@ -537,9 +547,9 @@
       "scope": "product-greenhouse",
       "layer": "app",
       "runtime": "browser",
-      "x": 0.134,
-      "y": -0.545,
-      "z": -0.628
+      "x": 0.012,
+      "y": -0.624,
+      "z": -0.564
     },
     {
       "id": "product-greenhouse-data-access",
@@ -547,9 +557,9 @@
       "scope": "product-greenhouse",
       "layer": "data-access",
       "runtime": "browser",
-      "x": -0.336,
-      "y": -0.392,
-      "z": -0.835
+      "x": -0.42,
+      "y": -0.397,
+      "z": -0.793
     },
     {
       "id": "product-greenhouse-domain",
@@ -557,9 +567,9 @@
       "scope": "product-greenhouse",
       "layer": "domain",
       "runtime": "agnostic",
-      "x": -0.4,
-      "y": -0.04,
-      "z": -0.858
+      "x": -0.633,
+      "y": -0.101,
+      "z": -0.713
     },
     {
       "id": "product-greenhouse-feature-dashboard",
@@ -567,9 +577,9 @@
       "scope": "product-greenhouse",
       "layer": "feature",
       "runtime": "browser",
-      "x": -0.096,
-      "y": -0.339,
-      "z": -0.734
+      "x": -0.209,
+      "y": -0.464,
+      "z": -0.643
     },
     {
       "id": "product-greenhouse-feature-field",
@@ -577,9 +587,9 @@
       "scope": "product-greenhouse",
       "layer": "feature",
       "runtime": "browser",
-      "x": -0.316,
-      "y": -0.616,
-      "z": -0.485
+      "x": -0.551,
+      "y": -0.563,
+      "z": -0.388
     },
     {
       "id": "product-greenhouse-field",
@@ -587,9 +597,9 @@
       "scope": "product-greenhouse",
       "layer": "app",
       "runtime": "browser",
-      "x": -0.136,
-      "y": -0.629,
-      "z": -0.651
+      "x": -0.324,
+      "y": -0.69,
+      "z": -0.516
     },
     {
       "id": "product-greenhouse-supabase",
@@ -597,9 +607,9 @@
       "scope": "product-greenhouse",
       "layer": "schema",
       "runtime": "node",
-      "x": -0.331,
-      "y": 0.406,
-      "z": -0.829
+      "x": -0.589,
+      "y": 0.418,
+      "z": -0.676
     },
     {
       "id": "product-greenhouse-ui",
@@ -607,9 +617,59 @@
       "scope": "product-greenhouse",
       "layer": "ui",
       "runtime": "browser",
-      "x": -0.502,
-      "y": -0.287,
-      "z": -0.654
+      "x": -0.654,
+      "y": -0.307,
+      "z": -0.534
+    },
+    {
+      "id": "product-lasertag",
+      "kind": "app",
+      "scope": "product-lasertag",
+      "layer": "app",
+      "runtime": "browser",
+      "x": 0.685,
+      "y": -0.441,
+      "z": 0.35
+    },
+    {
+      "id": "product-lasertag-data-access",
+      "kind": "lib",
+      "scope": "product-lasertag",
+      "layer": "data-access",
+      "runtime": "browser",
+      "x": 0.591,
+      "y": 0.411,
+      "z": 0.677
+    },
+    {
+      "id": "product-lasertag-domain",
+      "kind": "lib",
+      "scope": "product-lasertag",
+      "layer": "domain",
+      "runtime": "agnostic",
+      "x": 0.674,
+      "y": 0.58,
+      "z": 0.399
+    },
+    {
+      "id": "product-lasertag-feature",
+      "kind": "lib",
+      "scope": "product-lasertag",
+      "layer": "feature",
+      "runtime": "browser",
+      "x": 0.566,
+      "y": 0.163,
+      "z": 0.421
+    },
+    {
+      "id": "product-lasertag-server",
+      "kind": "lib",
+      "scope": "product-lasertag",
+      "layer": "data-access",
+      "runtime": "agnostic",
+      "x": 0.446,
+      "y": 0.635,
+      "z": 0.569
     },
     {
       "id": "product-learning",
@@ -617,9 +677,9 @@
       "scope": "learning",
       "layer": "app",
       "runtime": "browser",
-      "x": 0.505,
-      "y": -0.556,
-      "z": 0.255
+      "x": 0.126,
+      "y": -0.77,
+      "z": 0.244
     },
     {
       "id": "product-lighting",
@@ -627,9 +687,9 @@
       "scope": "product-lighting",
       "layer": "app",
       "runtime": "browser",
-      "x": 0.664,
-      "y": -0.617,
-      "z": 0.07
+      "x": 0.099,
+      "y": -0.896,
+      "z": 0.005
     },
     {
       "id": "product-lighting-domain",
@@ -637,9 +697,9 @@
       "scope": "product-lighting",
       "layer": "domain",
       "runtime": "agnostic",
-      "x": 0.42,
-      "y": -0.132,
-      "z": 0.873
+      "x": -0.751,
+      "y": -0.305,
+      "z": 0.572
     },
     {
       "id": "product-lighting-feature",
@@ -647,9 +707,9 @@
       "scope": "product-lighting",
       "layer": "feature",
       "runtime": "browser",
-      "x": 0.513,
-      "y": -0.366,
-      "z": 0.482
+      "x": -0.301,
+      "y": -0.684,
+      "z": 0.404
     },
     {
       "id": "product-serracalc",
@@ -657,9 +717,9 @@
       "scope": "product-serracalc",
       "layer": "app",
       "runtime": "browser",
-      "x": 0.081,
-      "y": -0.84,
-      "z": -0.217
+      "x": 0.15,
+      "y": -0.777,
+      "z": -0.416
     },
     {
       "id": "product-serracalc-domain",
@@ -667,9 +727,9 @@
       "scope": "product-serracalc",
       "layer": "domain",
       "runtime": "agnostic",
-      "x": -0.725,
-      "y": -0.462,
-      "z": -0.044
+      "x": 0.064,
+      "y": 0.04,
+      "z": -0.882
     },
     {
       "id": "product-serracalc-feature",
@@ -677,9 +737,9 @@
       "scope": "product-serracalc",
       "layer": "feature",
       "runtime": "browser",
-      "x": -0.346,
-      "y": -0.684,
-      "z": 0.11
+      "x": -0.334,
+      "y": -0.35,
+      "z": -0.518
     },
     {
       "id": "product-strategy",
@@ -687,9 +747,9 @@
       "scope": "product-strategy",
       "layer": "app",
       "runtime": "browser",
-      "x": 0.546,
-      "y": -0.529,
-      "z": -0.569
+      "x": 0.363,
+      "y": -0.781,
+      "z": 0.377
     },
     {
       "id": "product-studylm",
@@ -697,9 +757,9 @@
       "scope": "product-studylm",
       "layer": "app",
       "runtime": "browser",
-      "x": 0.321,
-      "y": -0.728,
-      "z": 0.286
+      "x": -0.159,
+      "y": -0.73,
+      "z": -0.219
     },
     {
       "id": "product-studylm-domain",
@@ -707,9 +767,9 @@
       "scope": "product-studylm",
       "layer": "domain",
       "runtime": "agnostic",
-      "x": 0.237,
-      "y": 0.447,
-      "z": 0.749
+      "x": -0.769,
+      "y": 0.486,
+      "z": 0.196
     },
     {
       "id": "product-studylm-feature",
@@ -717,9 +777,9 @@
       "scope": "product-studylm",
       "layer": "feature",
       "runtime": "browser",
-      "x": 0.23,
-      "y": -0.271,
-      "z": 0.562
+      "x": -0.593,
+      "y": -0.247,
+      "z": -0.1
     },
     {
       "id": "product-studylm-learn",
@@ -727,9 +787,9 @@
       "scope": "product-studylm",
       "layer": "ui",
       "runtime": "browser",
-      "x": -0.424,
-      "y": 0.017,
-      "z": 0.778
+      "x": -0.907,
+      "y": 0.122,
+      "z": -0.278
     },
     {
       "id": "product-studylm-lessons",
@@ -737,9 +797,9 @@
       "scope": "product-studylm",
       "layer": "domain",
       "runtime": "agnostic",
-      "x": 0.025,
-      "y": 0.049,
-      "z": 0.959
+      "x": -0.881,
+      "y": 0.36,
+      "z": -0.128
     },
     {
       "id": "product-studylm-tracer",
@@ -747,9 +807,9 @@
       "scope": "product-studylm",
       "layer": "engine",
       "runtime": "agnostic",
-      "x": -0.709,
-      "y": -0.102,
-      "z": 0.693
+      "x": -0.751,
+      "y": 0.521,
+      "z": -0.379
     },
     {
       "id": "product-system-design",
@@ -757,9 +817,9 @@
       "scope": "product-system-design",
       "layer": "app",
       "runtime": "browser",
-      "x": 0.241,
-      "y": -0.71,
-      "z": -0.477
+      "x": 0.39,
+      "y": -0.823,
+      "z": 0.057
     },
     {
       "id": "product-system-design-data-access",
@@ -767,9 +827,9 @@
       "scope": "product-system-design",
       "layer": "data-access",
       "runtime": "browser",
-      "x": -0.72,
-      "y": -0.067,
-      "z": -0.625
+      "x": 0.223,
+      "y": -0.293,
+      "z": 0.9
     },
     {
       "id": "product-system-design-domain",
@@ -777,9 +837,9 @@
       "scope": "product-system-design",
       "layer": "domain",
       "runtime": "agnostic",
-      "x": -0.831,
-      "y": -0.227,
-      "z": -0.408
+      "x": -0.026,
+      "y": -0.073,
+      "z": 0.936
     },
     {
       "id": "product-system-design-feature",
@@ -787,9 +847,9 @@
       "scope": "product-system-design",
       "layer": "feature",
       "runtime": "browser",
-      "x": -0.314,
-      "y": -0.487,
-      "z": -0.311
+      "x": -0.037,
+      "y": -0.529,
+      "z": 0.46
     },
     {
       "id": "product-system-design-ui",
@@ -797,9 +857,9 @@
       "scope": "product-system-design",
       "layer": "ui",
       "runtime": "browser",
-      "x": -0.735,
-      "y": 0.078,
-      "z": -0.383
+      "x": -0.398,
+      "y": -0.064,
+      "z": 0.713
     },
     {
       "id": "product-whatsapp",
@@ -807,9 +867,9 @@
       "scope": "product-whatsapp",
       "layer": "app",
       "runtime": "browser",
-      "x": 0.516,
-      "y": -0.771,
-      "z": -0.135
+      "x": 0.203,
+      "y": -0.877,
+      "z": -0.174
     },
     {
       "id": "product-whatsapp-domain",
@@ -817,9 +877,9 @@
       "scope": "product-whatsapp",
       "layer": "domain",
       "runtime": "agnostic",
-      "x": -0.03,
-      "y": -0.771,
-      "z": 0.626
+      "x": -0.558,
+      "y": -0.587,
+      "z": 0.572
     },
     {
       "id": "product-whatsapp-feature",
@@ -827,9 +887,9 @@
       "scope": "product-whatsapp",
       "layer": "feature",
       "runtime": "browser",
-      "x": 0.123,
-      "y": -0.825,
-      "z": 0.171
+      "x": -0.288,
+      "y": -0.771,
+      "z": 0.139
     },
     {
       "id": "shared-ai-schema",
@@ -837,9 +897,9 @@
       "scope": "shared",
       "layer": "util",
       "runtime": "agnostic",
-      "x": 0.025,
-      "y": 0.418,
-      "z": 0.873
+      "x": -0.61,
+      "y": 0.736,
+      "z": 0.066
     },
     {
       "id": "shared-api-client",
@@ -847,9 +907,9 @@
       "scope": "shared",
       "layer": "contracts",
       "runtime": "agnostic",
-      "x": 0.267,
-      "y": 0.926,
-      "z": 0.052
+      "x": 0.736,
+      "y": 0.62,
+      "z": -0.246
     },
     {
       "id": "shared-assistant",
@@ -857,9 +917,9 @@
       "scope": "shared",
       "layer": "util",
       "runtime": "agnostic",
-      "x": -0.923,
-      "y": -0.063,
-      "z": 0.23
+      "x": -0.241,
+      "y": 0.433,
+      "z": -0.796
     },
     {
       "id": "shared-assistant-engine",
@@ -867,9 +927,9 @@
       "scope": "shared",
       "layer": "util",
       "runtime": "agnostic",
-      "x": -0.925,
-      "y": 0.311,
-      "z": 0.14
+      "x": 0.268,
+      "y": 0.587,
+      "z": -0.74
     },
     {
       "id": "shared-content",
@@ -877,9 +937,9 @@
       "scope": "shared",
       "layer": "content",
       "runtime": "agnostic",
-      "x": 0.532,
-      "y": -0.053,
-      "z": -0.442
+      "x": 0.504,
+      "y": -0.284,
+      "z": -0.39
     },
     {
       "id": "shared-contracts",
@@ -887,9 +947,9 @@
       "scope": "shared",
       "layer": "contracts",
       "runtime": "agnostic",
-      "x": 0.26,
-      "y": 0.872,
-      "z": -0.267
+      "x": 0.462,
+      "y": 0.779,
+      "z": -0.299
     },
     {
       "id": "shared-site-config",
@@ -897,9 +957,9 @@
       "scope": "shared",
       "layer": "data-access",
       "runtime": "browser",
-      "x": 0.017,
-      "y": -0.381,
-      "z": 0.58
+      "x": -0.168,
+      "y": 0.012,
+      "z": -0.119
     },
     {
       "id": "shared-state",
@@ -907,9 +967,9 @@
       "scope": "shared",
       "layer": "data-access",
       "runtime": "browser",
-      "x": 0.308,
-      "y": -0.271,
-      "z": -0.261
+      "x": 0.227,
+      "y": -0.408,
+      "z": -0.127
     },
     {
       "id": "shared-steps",
@@ -917,9 +977,9 @@
       "scope": "shared",
       "layer": "util",
       "runtime": "agnostic",
-      "x": -0.791,
-      "y": -0.499,
-      "z": -0.314
+      "x": 0.046,
+      "y": 0.268,
+      "z": 0.93
     },
     {
       "id": "shared-sync",
@@ -927,9 +987,9 @@
       "scope": "shared",
       "layer": "util",
       "runtime": "agnostic",
-      "x": -0.776,
-      "y": -0.52,
-      "z": 0.26
+      "x": -0.235,
+      "y": 0.016,
+      "z": -0.928
     },
     {
       "id": "shared-sync-server",
@@ -937,9 +997,9 @@
       "scope": "shared",
       "layer": "util",
       "runtime": "agnostic",
-      "x": -0.577,
-      "y": -0.727,
-      "z": 0.072
+      "x": 0.01,
+      "y": -0.195,
+      "z": -0.92
     },
     {
       "id": "shell",
@@ -947,9 +1007,9 @@
       "scope": "portfolio",
       "layer": "app",
       "runtime": "browser",
-      "x": 0.538,
-      "y": -0.292,
-      "z": -0.325
+      "x": 0.435,
+      "y": -0.492,
+      "z": -0.207
     },
     {
       "id": "shell-e2e",
@@ -957,9 +1017,9 @@
       "scope": "test",
       "layer": "e2e",
       "runtime": "node",
-      "x": 0.295,
-      "y": -0.678,
-      "z": -0.214
+      "x": 0.343,
+      "y": -0.633,
+      "z": -0.456
     },
     {
       "id": "strategy-domain",
@@ -967,9 +1027,9 @@
       "scope": "product-strategy",
       "layer": "domain",
       "runtime": "browser",
-      "x": -0.012,
-      "y": 0.198,
-      "z": -0.954
+      "x": -0.238,
+      "y": -0.246,
+      "z": 0.93
     },
     {
       "id": "strategy-feature",
@@ -977,9 +1037,9 @@
       "scope": "product-strategy",
       "layer": "feature",
       "runtime": "browser",
-      "x": 0.252,
-      "y": -0.307,
-      "z": -0.757
+      "x": 0.044,
+      "y": -0.615,
+      "z": 0.617
     },
     {
       "id": "sync-edge",
@@ -987,9 +1047,9 @@
       "scope": "edge",
       "layer": "app",
       "runtime": "agnostic",
-      "x": -0.918,
-      "y": -0.266,
-      "z": 0.024
+      "x": 0.041,
+      "y": 0.303,
+      "z": -0.936
     },
     {
       "id": "three-angular",
@@ -997,9 +1057,9 @@
       "scope": "platform",
       "layer": "ui",
       "runtime": "browser",
-      "x": -0.201,
-      "y": 0.791,
-      "z": -0.356
+      "x": -0.085,
+      "y": 0.779,
+      "z": -0.323
     },
     {
       "id": "three-constellation",
@@ -1007,9 +1067,9 @@
       "scope": "platform",
       "layer": "engine",
       "runtime": "browser",
-      "x": -0.142,
-      "y": 0.726,
-      "z": -0.638
+      "x": 0.146,
+      "y": 0.808,
+      "z": -0.51
     },
     {
       "id": "three-engine",
@@ -1017,9 +1077,9 @@
       "scope": "platform",
       "layer": "engine",
       "runtime": "browser",
-      "x": -0.446,
-      "y": 0.885,
-      "z": -0.131
+      "x": -0.249,
+      "y": 0.957,
+      "z": -0.145
     },
     {
       "id": "three-scene-constellation",
@@ -1027,9 +1087,9 @@
       "scope": "platform",
       "layer": "engine",
       "runtime": "browser",
-      "x": -0.436,
-      "y": 0.691,
-      "z": -0.5
+      "x": -0.235,
+      "y": 0.769,
+      "z": -0.515
     },
     {
       "id": "three-scene-sky",
@@ -1037,9 +1097,9 @@
       "scope": "platform",
       "layer": "engine",
       "runtime": "browser",
-      "x": -0.084,
-      "y": 0.913,
-      "z": -0.141
+      "x": 0.126,
+      "y": 0.902,
+      "z": -0.169
     }
   ],
   "edges": [
@@ -1065,32 +1125,32 @@
     ],
     [
       0,
-      19,
+      20,
       "static"
     ],
     [
       0,
-      21,
+      22,
       "static"
     ],
     [
       0,
-      70,
+      76,
       "static"
     ],
     [
       1,
-      83,
+      89,
       "static"
     ],
     [
       2,
-      51,
+      52,
       "static"
     ],
     [
       3,
-      88,
+      94,
       "static"
     ],
     [
@@ -1100,37 +1160,37 @@
     ],
     [
       4,
-      19,
+      20,
       "static"
     ],
     [
       4,
-      21,
+      22,
       "static"
     ],
     [
       5,
-      21,
+      22,
       "static"
     ],
     [
       5,
-      70,
+      76,
       "static"
     ],
     [
       6,
-      66,
+      72,
       "static"
     ],
     [
       6,
-      85,
+      91,
       "static"
     ],
     [
       6,
-      86,
+      92,
       "static"
     ],
     [
@@ -1150,27 +1210,27 @@
     ],
     [
       7,
-      24,
+      25,
       "implicit"
     ],
     [
       7,
-      60,
+      61,
       "static"
     ],
     [
       7,
-      72,
+      78,
       "implicit"
     ],
     [
       7,
-      79,
+      85,
       "implicit"
     ],
     [
       7,
-      99,
+      105,
       "implicit"
     ],
     [
@@ -1190,262 +1250,262 @@
     ],
     [
       11,
-      28,
+      29,
       "static"
     ],
     [
       11,
-      87,
-      "static"
-    ],
-    [
-      12,
-      10,
-      "static"
-    ],
-    [
-      12,
-      90,
-      "static"
-    ],
-    [
-      13,
-      14,
-      "dynamic"
-    ],
-    [
-      13,
-      28,
-      "static"
-    ],
-    [
-      13,
-      87,
-      "static"
-    ],
-    [
-      14,
-      10,
-      "static"
-    ],
-    [
-      14,
-      90,
-      "static"
-    ],
-    [
-      15,
-      17,
-      "dynamic"
-    ],
-    [
-      15,
-      28,
-      "static"
-    ],
-    [
-      15,
-      87,
-      "static"
-    ],
-    [
-      17,
-      10,
-      "static"
-    ],
-    [
-      17,
-      16,
-      "static"
-    ],
-    [
-      17,
-      84,
-      "static"
-    ],
-    [
-      17,
-      89,
-      "static"
-    ],
-    [
-      17,
-      90,
-      "static"
-    ],
-    [
-      17,
-      99,
-      "static"
-    ],
-    [
-      17,
-      103,
-      "static"
-    ],
-    [
-      17,
-      103,
-      "dynamic"
-    ],
-    [
-      18,
-      10,
-      "static"
-    ],
-    [
-      18,
-      19,
-      "static"
-    ],
-    [
-      18,
-      26,
-      "static"
-    ],
-    [
-      20,
-      19,
-      "static"
-    ],
-    [
-      20,
-      21,
-      "static"
-    ],
-    [
-      21,
-      83,
-      "static"
-    ],
-    [
-      22,
-      21,
-      "static"
-    ],
-    [
-      23,
-      10,
-      "static"
-    ],
-    [
-      23,
-      19,
-      "static"
-    ],
-    [
-      23,
-      20,
-      "static"
-    ],
-    [
-      23,
-      21,
-      "static"
-    ],
-    [
-      23,
-      24,
-      "static"
-    ],
-    [
-      23,
-      26,
-      "static"
-    ],
-    [
-      23,
-      31,
-      "static"
-    ],
-    [
-      23,
-      34,
-      "static"
-    ],
-    [
-      23,
-      89,
-      "static"
-    ],
-    [
-      24,
-      10,
-      "static"
-    ],
-    [
-      24,
-      21,
-      "static"
-    ],
-    [
-      27,
-      10,
-      "static"
-    ],
-    [
-      27,
-      85,
-      "static"
-    ],
-    [
-      27,
-      89,
-      "static"
-    ],
-    [
-      28,
-      10,
-      "static"
-    ],
-    [
-      28,
-      87,
-      "static"
-    ],
-    [
-      28,
-      90,
-      "static"
-    ],
-    [
-      29,
-      28,
-      "static"
-    ],
-    [
-      30,
-      10,
-      "static"
-    ],
-    [
-      31,
-      26,
-      "static"
-    ],
-    [
-      32,
-      89,
-      "static"
-    ],
-    [
-      32,
-      92,
-      "static"
-    ],
-    [
-      32,
       93,
       "static"
     ],
     [
-      33,
+      12,
       10,
       "static"
     ],
     [
+      12,
+      96,
+      "static"
+    ],
+    [
+      13,
+      14,
+      "dynamic"
+    ],
+    [
+      13,
+      29,
+      "static"
+    ],
+    [
+      13,
+      93,
+      "static"
+    ],
+    [
+      14,
+      10,
+      "static"
+    ],
+    [
+      14,
+      96,
+      "static"
+    ],
+    [
+      15,
+      17,
+      "dynamic"
+    ],
+    [
+      15,
+      29,
+      "static"
+    ],
+    [
+      15,
+      93,
+      "static"
+    ],
+    [
+      17,
+      10,
+      "static"
+    ],
+    [
+      17,
+      16,
+      "static"
+    ],
+    [
+      17,
+      90,
+      "static"
+    ],
+    [
+      17,
+      95,
+      "static"
+    ],
+    [
+      17,
+      96,
+      "static"
+    ],
+    [
+      17,
+      105,
+      "static"
+    ],
+    [
+      17,
+      109,
+      "static"
+    ],
+    [
+      17,
+      109,
+      "dynamic"
+    ],
+    [
+      18,
+      64,
+      "static"
+    ],
+    [
+      18,
+      66,
+      "static"
+    ],
+    [
+      19,
+      10,
+      "static"
+    ],
+    [
+      19,
+      20,
+      "static"
+    ],
+    [
+      19,
+      27,
+      "static"
+    ],
+    [
+      21,
+      20,
+      "static"
+    ],
+    [
+      21,
+      22,
+      "static"
+    ],
+    [
+      22,
+      89,
+      "static"
+    ],
+    [
+      23,
+      22,
+      "static"
+    ],
+    [
+      24,
+      10,
+      "static"
+    ],
+    [
+      24,
+      20,
+      "static"
+    ],
+    [
+      24,
+      21,
+      "static"
+    ],
+    [
+      24,
+      22,
+      "static"
+    ],
+    [
+      24,
+      25,
+      "static"
+    ],
+    [
+      24,
+      27,
+      "static"
+    ],
+    [
+      24,
+      32,
+      "static"
+    ],
+    [
+      24,
+      35,
+      "static"
+    ],
+    [
+      24,
+      95,
+      "static"
+    ],
+    [
+      25,
+      10,
+      "static"
+    ],
+    [
+      25,
+      22,
+      "static"
+    ],
+    [
+      28,
+      10,
+      "static"
+    ],
+    [
+      28,
+      91,
+      "static"
+    ],
+    [
+      28,
+      95,
+      "static"
+    ],
+    [
+      29,
+      10,
+      "static"
+    ],
+    [
+      29,
+      93,
+      "static"
+    ],
+    [
+      29,
+      96,
+      "static"
+    ],
+    [
+      30,
+      29,
+      "static"
+    ],
+    [
+      31,
+      10,
+      "static"
+    ],
+    [
+      32,
+      27,
+      "static"
+    ],
+    [
       33,
-      26,
+      95,
+      "static"
+    ],
+    [
+      33,
+      98,
+      "static"
+    ],
+    [
+      33,
+      99,
       "static"
     ],
     [
@@ -1454,23 +1514,13 @@
       "static"
     ],
     [
+      34,
+      27,
+      "static"
+    ],
+    [
       35,
       10,
-      "static"
-    ],
-    [
-      35,
-      41,
-      "static"
-    ],
-    [
-      35,
-      87,
-      "static"
-    ],
-    [
-      35,
-      90,
       "static"
     ],
     [
@@ -1480,17 +1530,17 @@
     ],
     [
       36,
-      41,
+      42,
       "static"
     ],
     [
       36,
-      87,
+      93,
       "static"
     ],
     [
       36,
-      90,
+      96,
       "static"
     ],
     [
@@ -1500,17 +1550,17 @@
     ],
     [
       37,
-      41,
+      42,
       "static"
     ],
     [
       37,
-      87,
+      93,
       "static"
     ],
     [
       37,
-      90,
+      96,
       "static"
     ],
     [
@@ -1520,307 +1570,292 @@
     ],
     [
       38,
-      41,
+      42,
       "static"
     ],
     [
       38,
-      87,
+      93,
       "static"
     ],
     [
       38,
-      90,
+      96,
       "static"
     ],
     [
-      38,
-      99,
+      39,
+      10,
       "static"
     ],
     [
-      38,
-      100,
+      39,
+      42,
       "static"
     ],
     [
-      38,
-      102,
+      39,
+      93,
+      "static"
+    ],
+    [
+      39,
+      96,
+      "static"
+    ],
+    [
+      39,
+      105,
+      "static"
+    ],
+    [
+      39,
+      106,
+      "static"
+    ],
+    [
+      39,
+      108,
       "dynamic"
     ],
     [
-      39,
-      10,
-      "static"
-    ],
-    [
-      39,
-      41,
-      "static"
-    ],
-    [
-      39,
-      87,
-      "static"
-    ],
-    [
-      39,
-      88,
-      "static"
-    ],
-    [
-      39,
-      89,
-      "static"
-    ],
-    [
-      39,
-      90,
-      "static"
-    ],
-    [
       40,
       10,
       "static"
     ],
     [
       40,
-      41,
+      42,
       "static"
     ],
     [
       40,
-      87,
+      93,
       "static"
     ],
     [
       40,
-      90,
+      94,
+      "static"
+    ],
+    [
+      40,
+      95,
+      "static"
+    ],
+    [
+      40,
+      96,
       "static"
     ],
     [
       41,
-      87,
+      10,
+      "static"
+    ],
+    [
+      41,
+      42,
+      "static"
+    ],
+    [
+      41,
+      93,
+      "static"
+    ],
+    [
+      41,
+      96,
       "static"
     ],
     [
       42,
-      28,
+      93,
       "static"
     ],
     [
-      42,
-      44,
-      "dynamic"
-    ],
-    [
-      44,
-      10,
-      "static"
-    ],
-    [
-      44,
-      26,
-      "static"
-    ],
-    [
-      44,
       43,
+      29,
       "static"
     ],
     [
-      44,
-      90,
-      "static"
-    ],
-    [
-      46,
-      10,
-      "static"
-    ],
-    [
-      46,
-      26,
-      "static"
-    ],
-    [
-      46,
+      43,
       45,
-      "static"
-    ],
-    [
-      46,
-      90,
-      "static"
-    ],
-    [
-      47,
-      26,
-      "static"
-    ],
-    [
-      47,
-      28,
-      "static"
-    ],
-    [
-      47,
-      49,
       "dynamic"
     ],
     [
-      47,
-      90,
-      "static"
-    ],
-    [
-      49,
+      45,
       10,
       "static"
     ],
     [
-      49,
+      45,
+      27,
+      "static"
+    ],
+    [
+      45,
+      44,
+      "static"
+    ],
+    [
+      45,
+      96,
+      "static"
+    ],
+    [
+      47,
+      10,
+      "static"
+    ],
+    [
+      47,
+      27,
+      "static"
+    ],
+    [
+      47,
+      46,
+      "static"
+    ],
+    [
+      47,
+      96,
+      "static"
+    ],
+    [
+      48,
+      27,
+      "static"
+    ],
+    [
+      48,
+      29,
+      "static"
+    ],
+    [
+      48,
+      50,
+      "dynamic"
+    ],
+    [
+      48,
+      96,
+      "static"
+    ],
+    [
+      50,
+      10,
+      "static"
+    ],
+    [
+      50,
       16,
       "static"
     ],
     [
-      49,
-      26,
+      50,
+      27,
       "static"
     ],
     [
-      49,
-      30,
-      "static"
-    ],
-    [
-      49,
+      50,
       31,
       "static"
     ],
     [
+      50,
+      32,
+      "static"
+    ],
+    [
+      50,
       49,
-      48,
-      "static"
-    ],
-    [
-      49,
-      90,
       "static"
     ],
     [
       50,
-      26,
+      96,
       "static"
     ],
     [
-      50,
-      28,
-      "static"
-    ],
-    [
-      50,
-      52,
-      "dynamic"
-    ],
-    [
-      52,
-      10,
-      "static"
-    ],
-    [
-      52,
       51,
+      27,
       "static"
     ],
     [
-      52,
-      89,
+      51,
+      29,
       "static"
     ],
     [
-      52,
-      90,
-      "static"
-    ],
-    [
+      51,
       53,
-      26,
-      "static"
-    ],
-    [
-      53,
-      28,
-      "static"
-    ],
-    [
-      53,
-      54,
-      "static"
-    ],
-    [
-      53,
-      56,
       "dynamic"
     ],
     [
       53,
-      60,
-      "static"
-    ],
-    [
-      53,
-      90,
-      "static"
-    ],
-    [
-      54,
-      55,
-      "static"
-    ],
-    [
-      56,
       10,
       "static"
     ],
     [
-      56,
-      26,
+      53,
+      52,
       "static"
     ],
     [
-      56,
+      53,
+      95,
+      "static"
+    ],
+    [
+      53,
+      96,
+      "static"
+    ],
+    [
       54,
+      27,
       "static"
     ],
     [
-      56,
+      54,
+      29,
+      "static"
+    ],
+    [
+      54,
       55,
       "static"
     ],
     [
-      56,
-      60,
-      "static"
-    ],
-    [
-      56,
-      90,
-      "static"
-    ],
-    [
-      57,
-      26,
-      "static"
-    ],
-    [
-      57,
-      31,
-      "static"
-    ],
-    [
-      57,
       54,
+      57,
+      "dynamic"
+    ],
+    [
+      54,
+      61,
+      "static"
+    ],
+    [
+      54,
+      96,
+      "static"
+    ],
+    [
+      55,
+      56,
+      "static"
+    ],
+    [
+      57,
+      10,
+      "static"
+    ],
+    [
+      57,
+      27,
       "static"
     ],
     [
@@ -1830,37 +1865,52 @@
     ],
     [
       57,
-      60,
+      56,
       "static"
     ],
     [
       57,
-      90,
+      61,
       "static"
     ],
     [
-      58,
-      26,
-      "static"
-    ],
-    [
-      58,
-      54,
-      "static"
-    ],
-    [
-      58,
       57,
+      96,
       "static"
     ],
     [
       58,
-      60,
+      27,
       "static"
     ],
     [
       58,
-      90,
+      32,
+      "static"
+    ],
+    [
+      58,
+      55,
+      "static"
+    ],
+    [
+      58,
+      56,
+      "static"
+    ],
+    [
+      58,
+      61,
+      "static"
+    ],
+    [
+      58,
+      96,
+      "static"
+    ],
+    [
+      59,
+      27,
       "static"
     ],
     [
@@ -1869,114 +1919,89 @@
       "static"
     ],
     [
+      59,
+      58,
+      "static"
+    ],
+    [
+      59,
       61,
-      23,
+      "static"
+    ],
+    [
+      59,
+      96,
+      "static"
+    ],
+    [
+      60,
+      56,
+      "static"
+    ],
+    [
+      62,
+      27,
+      "static"
+    ],
+    [
+      62,
+      29,
+      "static"
+    ],
+    [
+      62,
+      65,
       "dynamic"
     ],
     [
-      61,
-      26,
-      "static"
-    ],
-    [
-      61,
-      28,
-      "static"
-    ],
-    [
-      61,
-      90,
-      "static"
-    ],
-    [
       62,
-      26,
+      96,
       "static"
     ],
     [
-      62,
-      28,
-      "static"
-    ],
-    [
-      62,
+      63,
       64,
-      "dynamic"
-    ],
-    [
-      62,
-      90,
       "static"
     ],
     [
-      64,
+      65,
       10,
       "static"
     ],
     [
-      64,
-      26,
-      "static"
-    ],
-    [
-      64,
-      30,
-      "static"
-    ],
-    [
-      64,
-      31,
-      "static"
-    ],
-    [
-      64,
+      65,
       63,
       "static"
     ],
     [
+      65,
       64,
-      90,
       "static"
     ],
     [
       65,
-      26,
+      66,
       "static"
     ],
     [
       65,
-      28,
+      95,
       "static"
     ],
     [
       65,
+      96,
+      "static"
+    ],
+    [
+      66,
+      64,
+      "static"
+    ],
+    [
       67,
+      24,
       "dynamic"
-    ],
-    [
-      65,
-      90,
-      "static"
-    ],
-    [
-      66,
-      85,
-      "static"
-    ],
-    [
-      66,
-      92,
-      "static"
-    ],
-    [
-      67,
-      10,
-      "static"
-    ],
-    [
-      67,
-      26,
-      "static"
     ],
     [
       67,
@@ -1985,572 +2010,677 @@
     ],
     [
       67,
-      31,
-      "static"
-    ],
-    [
-      67,
-      32,
-      "static"
-    ],
-    [
-      67,
-      33,
-      "static"
-    ],
-    [
-      67,
-      66,
-      "static"
-    ],
-    [
-      67,
-      90,
-      "static"
-    ],
-    [
-      67,
-      92,
-      "static"
-    ],
-    [
-      68,
-      26,
-      "static"
-    ],
-    [
-      68,
-      28,
-      "static"
-    ],
-    [
-      68,
-      97,
-      "dynamic"
-    ],
-    [
-      69,
-      18,
-      "static"
-    ],
-    [
-      69,
-      26,
-      "static"
-    ],
-    [
-      69,
-      28,
-      "static"
-    ],
-    [
-      69,
-      71,
-      "dynamic"
-    ],
-    [
-      69,
-      89,
-      "static"
-    ],
-    [
-      71,
-      10,
-      "static"
-    ],
-    [
-      71,
-      18,
-      "static"
-    ],
-    [
-      71,
-      26,
-      "static"
-    ],
-    [
-      71,
-      31,
-      "static"
-    ],
-    [
-      71,
-      34,
-      "static"
-    ],
-    [
-      71,
-      70,
-      "static"
-    ],
-    [
-      71,
-      72,
-      "static"
-    ],
-    [
-      71,
-      73,
-      "static"
-    ],
-    [
-      71,
-      87,
-      "static"
-    ],
-    [
-      71,
-      89,
-      "static"
-    ],
-    [
-      71,
-      90,
-      "static"
-    ],
-    [
-      72,
-      73,
-      "static"
-    ],
-    [
-      72,
-      74,
-      "static"
-    ],
-    [
-      73,
-      83,
-      "static"
-    ],
-    [
-      75,
-      26,
-      "static"
-    ],
-    [
-      75,
-      28,
-      "static"
-    ],
-    [
-      75,
-      78,
-      "dynamic"
-    ],
-    [
-      75,
-      90,
-      "static"
-    ],
-    [
-      76,
-      77,
-      "static"
-    ],
-    [
-      77,
-      91,
-      "static"
-    ],
-    [
-      78,
-      10,
-      "static"
-    ],
-    [
-      78,
-      18,
-      "static"
-    ],
-    [
-      78,
-      26,
-      "static"
-    ],
-    [
-      78,
-      31,
-      "static"
-    ],
-    [
-      78,
-      76,
-      "static"
-    ],
-    [
-      78,
-      77,
-      "static"
-    ],
-    [
-      78,
-      79,
-      "static"
-    ],
-    [
-      78,
-      87,
-      "static"
-    ],
-    [
-      78,
-      90,
-      "static"
-    ],
-    [
-      79,
-      10,
-      "static"
-    ],
-    [
-      79,
-      77,
-      "static"
-    ],
-    [
-      80,
-      26,
-      "static"
-    ],
-    [
-      80,
-      28,
-      "static"
-    ],
-    [
-      80,
-      82,
-      "dynamic"
-    ],
-    [
-      80,
-      90,
-      "static"
-    ],
-    [
-      82,
-      10,
-      "static"
-    ],
-    [
-      82,
-      26,
-      "static"
-    ],
-    [
-      82,
-      31,
-      "static"
-    ],
-    [
-      82,
-      81,
-      "static"
-    ],
-    [
-      82,
-      89,
-      "static"
-    ],
-    [
-      82,
-      90,
-      "static"
-    ],
-    [
-      84,
-      25,
-      "implicit"
-    ],
-    [
-      86,
-      85,
-      "static"
-    ],
-    [
-      90,
-      87,
-      "static"
-    ],
-    [
-      93,
-      92,
-      "static"
-    ],
-    [
-      94,
-      10,
-      "static"
-    ],
-    [
-      94,
-      11,
-      "federated"
-    ],
-    [
-      94,
-      13,
-      "federated"
-    ],
-    [
-      94,
-      15,
-      "federated"
-    ],
-    [
-      94,
-      26,
-      "static"
-    ],
-    [
-      94,
-      28,
-      "static"
-    ],
-    [
-      94,
       29,
       "static"
     ],
     [
-      94,
-      35,
-      "dynamic"
-    ],
-    [
-      94,
-      36,
-      "dynamic"
-    ],
-    [
-      94,
-      37,
-      "dynamic"
-    ],
-    [
-      94,
-      38,
-      "dynamic"
-    ],
-    [
-      94,
-      39,
-      "dynamic"
-    ],
-    [
-      94,
-      40,
-      "dynamic"
-    ],
-    [
-      94,
-      44,
-      "dynamic"
-    ],
-    [
-      94,
-      46,
-      "dynamic"
-    ],
-    [
-      94,
-      47,
-      "federated"
-    ],
-    [
-      94,
-      50,
-      "federated"
-    ],
-    [
-      94,
-      53,
-      "federated"
-    ],
-    [
-      94,
-      61,
-      "federated"
-    ],
-    [
-      94,
-      62,
-      "federated"
-    ],
-    [
-      94,
-      65,
-      "federated"
-    ],
-    [
-      94,
-      68,
-      "federated"
-    ],
-    [
-      94,
-      69,
-      "federated"
-    ],
-    [
-      94,
-      75,
-      "federated"
-    ],
-    [
-      94,
-      80,
-      "federated"
-    ],
-    [
-      94,
-      87,
-      "static"
-    ],
-    [
-      94,
-      90,
-      "static"
-    ],
-    [
-      95,
-      15,
-      "implicit"
-    ],
-    [
-      95,
-      47,
-      "implicit"
-    ],
-    [
-      95,
-      53,
-      "implicit"
-    ],
-    [
-      95,
-      61,
-      "implicit"
-    ],
-    [
-      95,
-      62,
-      "implicit"
-    ],
-    [
-      95,
-      65,
-      "implicit"
-    ],
-    [
-      95,
-      66,
-      "static"
-    ],
-    [
-      95,
-      69,
-      "implicit"
-    ],
-    [
-      95,
-      75,
-      "implicit"
-    ],
-    [
-      95,
-      80,
-      "implicit"
-    ],
-    [
-      95,
-      87,
-      "static"
-    ],
-    [
-      95,
-      93,
-      "static"
-    ],
-    [
-      95,
-      94,
-      "implicit"
-    ],
-    [
-      97,
-      10,
-      "static"
-    ],
-    [
-      97,
-      26,
-      "static"
-    ],
-    [
-      97,
-      90,
-      "static"
-    ],
-    [
-      97,
+      67,
       96,
       "static"
     ],
     [
-      98,
-      66,
+      68,
+      27,
       "static"
     ],
     [
+      68,
+      29,
+      "static"
+    ],
+    [
+      68,
+      70,
+      "dynamic"
+    ],
+    [
+      68,
+      96,
+      "static"
+    ],
+    [
+      70,
+      10,
+      "static"
+    ],
+    [
+      70,
+      27,
+      "static"
+    ],
+    [
+      70,
+      31,
+      "static"
+    ],
+    [
+      70,
+      32,
+      "static"
+    ],
+    [
+      70,
+      69,
+      "static"
+    ],
+    [
+      70,
+      96,
+      "static"
+    ],
+    [
+      71,
+      27,
+      "static"
+    ],
+    [
+      71,
+      29,
+      "static"
+    ],
+    [
+      71,
+      73,
+      "dynamic"
+    ],
+    [
+      71,
+      96,
+      "static"
+    ],
+    [
+      72,
+      91,
+      "static"
+    ],
+    [
+      72,
       98,
+      "static"
+    ],
+    [
+      73,
+      10,
+      "static"
+    ],
+    [
+      73,
+      27,
+      "static"
+    ],
+    [
+      73,
+      28,
+      "static"
+    ],
+    [
+      73,
+      32,
+      "static"
+    ],
+    [
+      73,
+      33,
+      "static"
+    ],
+    [
+      73,
+      34,
+      "static"
+    ],
+    [
+      73,
+      72,
+      "static"
+    ],
+    [
+      73,
+      96,
+      "static"
+    ],
+    [
+      73,
+      98,
+      "static"
+    ],
+    [
+      74,
+      27,
+      "static"
+    ],
+    [
+      74,
+      29,
+      "static"
+    ],
+    [
+      74,
+      103,
+      "dynamic"
+    ],
+    [
+      75,
+      19,
+      "static"
+    ],
+    [
+      75,
+      27,
+      "static"
+    ],
+    [
+      75,
+      29,
+      "static"
+    ],
+    [
+      75,
+      77,
+      "dynamic"
+    ],
+    [
+      75,
+      95,
+      "static"
+    ],
+    [
+      77,
+      10,
+      "static"
+    ],
+    [
+      77,
+      19,
+      "static"
+    ],
+    [
+      77,
+      27,
+      "static"
+    ],
+    [
+      77,
+      32,
+      "static"
+    ],
+    [
+      77,
+      35,
+      "static"
+    ],
+    [
+      77,
+      76,
+      "static"
+    ],
+    [
+      77,
+      78,
+      "static"
+    ],
+    [
+      77,
+      79,
+      "static"
+    ],
+    [
+      77,
+      93,
+      "static"
+    ],
+    [
+      77,
+      95,
+      "static"
+    ],
+    [
+      77,
+      96,
+      "static"
+    ],
+    [
+      78,
+      79,
+      "static"
+    ],
+    [
+      78,
+      80,
+      "static"
+    ],
+    [
+      79,
+      89,
+      "static"
+    ],
+    [
+      81,
+      27,
+      "static"
+    ],
+    [
+      81,
+      29,
+      "static"
+    ],
+    [
+      81,
+      84,
+      "dynamic"
+    ],
+    [
+      81,
+      96,
+      "static"
+    ],
+    [
+      82,
+      83,
+      "static"
+    ],
+    [
+      83,
+      97,
+      "static"
+    ],
+    [
+      84,
+      10,
+      "static"
+    ],
+    [
+      84,
+      19,
+      "static"
+    ],
+    [
+      84,
+      27,
+      "static"
+    ],
+    [
+      84,
+      32,
+      "static"
+    ],
+    [
+      84,
+      82,
+      "static"
+    ],
+    [
+      84,
+      83,
+      "static"
+    ],
+    [
+      84,
+      85,
+      "static"
+    ],
+    [
+      84,
+      93,
+      "static"
+    ],
+    [
+      84,
+      96,
+      "static"
+    ],
+    [
+      85,
+      10,
+      "static"
+    ],
+    [
+      85,
+      83,
+      "static"
+    ],
+    [
+      86,
+      27,
+      "static"
+    ],
+    [
+      86,
+      29,
+      "static"
+    ],
+    [
+      86,
+      88,
+      "dynamic"
+    ],
+    [
+      86,
+      96,
+      "static"
+    ],
+    [
+      88,
+      10,
+      "static"
+    ],
+    [
+      88,
+      27,
+      "static"
+    ],
+    [
+      88,
+      32,
+      "static"
+    ],
+    [
+      88,
+      87,
+      "static"
+    ],
+    [
+      88,
+      95,
+      "static"
+    ],
+    [
+      88,
+      96,
+      "static"
+    ],
+    [
+      90,
+      26,
+      "implicit"
+    ],
+    [
       92,
+      91,
       "static"
     ],
     [
-      98,
+      96,
       93,
       "static"
     ],
     [
       99,
+      98,
+      "static"
+    ],
+    [
       100,
+      10,
       "static"
     ],
     [
-      99,
-      101,
+      100,
+      11,
+      "federated"
+    ],
+    [
+      100,
+      13,
+      "federated"
+    ],
+    [
+      100,
+      15,
+      "federated"
+    ],
+    [
+      100,
+      27,
       "static"
     ],
     [
-      99,
-      102,
+      100,
+      29,
+      "static"
+    ],
+    [
+      100,
+      30,
+      "static"
+    ],
+    [
+      100,
+      36,
       "dynamic"
     ],
     [
-      102,
-      9,
-      "static"
-    ],
-    [
-      102,
       100,
+      37,
+      "dynamic"
+    ],
+    [
+      100,
+      38,
+      "dynamic"
+    ],
+    [
+      100,
+      39,
+      "dynamic"
+    ],
+    [
+      100,
+      40,
+      "dynamic"
+    ],
+    [
+      100,
+      41,
+      "dynamic"
+    ],
+    [
+      100,
+      45,
+      "dynamic"
+    ],
+    [
+      100,
+      47,
+      "dynamic"
+    ],
+    [
+      100,
+      48,
+      "federated"
+    ],
+    [
+      100,
+      51,
+      "federated"
+    ],
+    [
+      100,
+      54,
+      "federated"
+    ],
+    [
+      100,
+      67,
+      "federated"
+    ],
+    [
+      100,
+      68,
+      "federated"
+    ],
+    [
+      100,
+      71,
+      "federated"
+    ],
+    [
+      100,
+      74,
+      "federated"
+    ],
+    [
+      100,
+      75,
+      "federated"
+    ],
+    [
+      100,
+      81,
+      "federated"
+    ],
+    [
+      100,
+      86,
+      "federated"
+    ],
+    [
+      100,
+      93,
       "static"
     ],
     [
-      102,
+      100,
+      96,
+      "static"
+    ],
+    [
       101,
+      15,
+      "implicit"
+    ],
+    [
+      101,
+      48,
+      "implicit"
+    ],
+    [
+      101,
+      54,
+      "implicit"
+    ],
+    [
+      101,
+      67,
+      "implicit"
+    ],
+    [
+      101,
+      68,
+      "implicit"
+    ],
+    [
+      101,
+      71,
+      "implicit"
+    ],
+    [
+      101,
+      72,
+      "static"
+    ],
+    [
+      101,
+      75,
+      "implicit"
+    ],
+    [
+      101,
+      81,
+      "implicit"
+    ],
+    [
+      101,
+      86,
+      "implicit"
+    ],
+    [
+      101,
+      93,
+      "static"
+    ],
+    [
+      101,
+      99,
+      "static"
+    ],
+    [
+      101,
+      100,
+      "implicit"
+    ],
+    [
+      103,
+      10,
       "static"
     ],
     [
       103,
+      27,
+      "static"
+    ],
+    [
+      103,
+      96,
+      "static"
+    ],
+    [
+      103,
+      102,
+      "static"
+    ],
+    [
+      104,
+      72,
+      "static"
+    ],
+    [
+      104,
+      98,
+      "static"
+    ],
+    [
+      104,
+      99,
+      "static"
+    ],
+    [
+      105,
+      106,
+      "static"
+    ],
+    [
+      105,
+      107,
+      "static"
+    ],
+    [
+      105,
+      108,
+      "dynamic"
+    ],
+    [
+      108,
       9,
       "static"
     ],
     [
-      103,
-      101,
+      108,
+      106,
+      "static"
+    ],
+    [
+      108,
+      107,
+      "static"
+    ],
+    [
+      109,
+      9,
+      "static"
+    ],
+    [
+      109,
+      107,
       "static"
     ]
   ]

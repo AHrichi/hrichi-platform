@@ -1,0 +1,28 @@
+@let t = i18n.t();
+<div class="screen">
+  <h1>{{ t.recover.title }}</h1>
+  <p class="lead">{{ t.recover.lead }}</p>
+  <form class="card" (submit)="recover($event)" novalidate>
+    <div class="field">
+      <label for="recover-code">{{ t.recover.code }}</label>
+      <input
+        id="recover-code"
+        class="input code-input"
+        dir="ltr"
+        autocomplete="one-time-code"
+        autocapitalize="characters"
+        spellcheck="false"
+        [value]="code()"
+        (input)="code.set($any($event.target).value)"
+      />
+    </div>
+    @if (problem(); as message) {
+      <ah-alert variant="danger">{{ message }}</ah-alert>
+    }
+    <div class="actions">
+      <button ahButton type="submit" [disabled]="busy()">
+        {{ busy() ? t.recover.working : t.recover.submit }}
+      </button>
+    </div>
+  </form>
+</div>

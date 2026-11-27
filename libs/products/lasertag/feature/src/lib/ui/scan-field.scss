@@ -1,0 +1,64 @@
+:host {
+  display: block;
+}
+
+.field {
+  display: grid;
+  gap: var(--space-2);
+}
+
+label {
+  font-weight: var(--font-weight-semibold);
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.input {
+  flex: 1 1 14rem;
+  min-block-size: 2.75rem;
+  padding-block: var(--space-2);
+  padding-inline: var(--space-3);
+  border: 1px solid var(--color-border-control);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-surface);
+  color: var(--color-text-default);
+  font: inherit;
+  font-family: var(--font-family-mono);
+}
+
+.input:focus-visible,
+.camera:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+.camera {
+  min-block-size: 2.75rem;
+  padding-inline: var(--space-4);
+  border: 1px solid var(--color-accent-default);
+  border-radius: var(--radius-pill);
+  background: var(--color-accent-subtle);
+  color: var(--color-text-default);
+  font: inherit;
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+}
+
+.hint {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-200);
+}
+
+.video {
+  inline-size: 100%;
+  max-inline-size: 24rem;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: var(--radius-lg);
+  background: var(--color-stage-bg);
+}

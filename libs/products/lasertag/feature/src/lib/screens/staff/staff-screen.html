@@ -1,0 +1,258 @@
+@let t = i18n.t();
+<div class="screen wide">
+  <h1>{{ t.staff.title }}</h1>
+
+  @switch (desk.state()) {
+    @case ('loading') {
+      <p class="hint" role="status">…</p>
+    }
+    @case ('signed-out') {
+      <ah-alert variant="info">{{ t.claim.signInFirst }}</ah-alert>
+      <ul class="links">
+        <li>
+          <a routerLink="/">{{ t.welcome.signIn }}</a>
+        </li>
+      </ul>
+    }
+    @case ('not-staff') {
+      <p class="lead">{{ t.staff.notStaff }}</p>
+      <form class="card" (submit)="claim($event)" novalidate>
+        <h2>{{ t.staff.claimTitle }}</h2>
+        <p class="hint">{{ t.staff.claimLead }}</p>
+        <div class="field">
+          <label for="staff-claim">{{ t.staff.claimCode }}</label>
+          <input
+            id="staff-claim"
+            class="input"
+            type="password"
+            autocomplete="off"
+            [value]="claimCode()"
+            (input)="claimCode.set($any($event.target).value)"
+          />
+        </div>
+        @if (problemText(); as message) {
+          <ah-alert variant="danger">{{ message }}</ah-alert>
+        }
+        <div class="actions">
+          <button ahButton type="submit" [disabled]="desk.busy()">
+            {{ t.staff.claimSubmit }}
+          </button>
+        </div>
+      </form>
+    }
+    @case ('ready') {
+      @if (desk.venue(); as venue) {
+        <section class="card venue" aria-labelledby="venue-name">
+          <h2 id="venue-name">{{ venue.venue.name }}</h2>
+          <dl class="facts">
+            @if (map(); as map) {
+              <div>
+                <dt>{{ t.staff.map }}</dt>
+                <dd>
+                  {{ map.name }} · {{ map.indoor ? t.staff.indoor : '' }}
+                  @if (size(); as size) {
+                    ·
+                    {{
+                      size.measured
+                        ? t.staff.mapSize(
+                            i18n.num(size.widthM),
+                            i18n.num(size.lengthM)
+                          )
+                        : t.staff.unmeasured
+                    }}
+                  }
+                </dd>
+              </div>
+            }
+            <div>
+              <dt>{{ t.staff.roster }}</dt>
+              <dd>
+                {{ t.staff.vestsReady(desk.readyVests(), desk.allVests()) }}
+              </dd>
+            </div>
+          </dl>
+        </section>
+      }
+
+      @if (problemText(); as message) {
+        <ah-alert variant="danger">{{ message }}</ah-alert>
+      }
+
+      <section class="card" aria-labelledby="sessions-title">
+        <div class="row">
+          <h2 id="sessions-title">{{ t.staff.sessions }}</h2>
+          <button
+            ahButton="secondary"
+            size="sm"
+            type="button"
+            [disabled]="desk.busy()"
+            (click)="desk.openSession()"
+          >
+            {{ t.staff.open }}
+          </button>
+        </div>
+
+        @if (desk.current(); as current) {
+          <p class="hint">
+            {{ t.staff.opened(i18n.time(current.session.openedAt)) }} ·
+            {{
+              t.staff.players(current.roster.length, current.session.capacity)
+            }}
+          </p>
+
+          <form
+            class="checkin"
+            (submit)="$event.preventDefault(); checkIn(current.session.id)"
+            novalidate
+          >
+            <h3>{{ t.staff.checkIn }}</h3>
+            <div class="field">
+              <span>{{ t.staff.who }}</span>
+              <ah-segmented-control
+                [options]="whoOptions()"
+                [value]="who()"
+                (valueChange)="setWho($event)"
+                [label]="t.staff.who"
+              />
+            </div>
+
+            @if (who() === 'player') {
+              <lt-scan-field
+                [label]="t.staff.badgeInput"
+                [hint]="t.staff.badgeHint"
+                [(value)]="badge"
+              />
+            } @else if (guest(); as created) {
+              <div class="guest-card" aria-live="polite">
+                <p class="guest-name" dir="auto">
+                  {{ t.staff.guestFor(created.guest.nickname) }}
+                </p>
+                <p>{{ t.staff.guestCode }}</p>
+                <p class="big-code" dir="ltr" data-testid="guest-code">
+                  {{ created.claimCode }}
+                </p>
+                <div class="guest-qr">
+                  <lt-qr-code
+                    [text]="guestLink()"
+                    [label]="t.staff.guestCode"
+                  />
+                </div>
+                <p class="hint">{{ t.staff.guestCodeHint }}</p>
+              </div>
+            } @else {
+              <div class="field">
+                <label for="guest-nickname">{{ t.staff.nickname }}</label>
+                <div class="row">
+                  <input
+                    id="guest-nickname"
+                    class="input"
+                    dir="auto"
+                    autocomplete="off"
+                    [value]="nickname()"
+                    (input)="nickname.set($any($event.target).value)"
+                  />
+                  <button
+                    ahButton="secondary"
+                    type="button"
+                    [disabled]="desk.busy() || !nickname().trim()"
+                    (click)="makeGuest($event)"
+                  >
+                    {{ t.staff.createGuest }}
+                  </button>
+                </div>
+              </div>
+            }
+
+            <lt-scan-field
+              [label]="t.staff.gear"
+              [hint]="t.staff.gearHint"
+              [(value)]="gear"
+              (submitted)="checkIn(current.session.id)"
+            />
+
+            <div class="actions">
+              <button ahButton type="submit" [disabled]="desk.busy()">
+                {{ t.staff.checkIn }}
+              </button>
+            </div>
+            <div aria-live="polite">
+              @if (lastCheckIn(); as done) {
+                <p class="status">{{ done }}</p>
+              }
+            </div>
+          </form>
+
+          <h3>{{ t.staff.roster }}</h3>
+          @if (current.roster.length === 0) {
+            <p class="hint">{{ t.staff.empty }}</p>
+          } @else {
+            <ul class="roster">
+              @for (entry of current.roster; track entry.checkInId) {
+                <li>
+                  <span class="who" dir="auto">{{ entry.name }}</span>
+                  <span class="gear-label" dir="ltr">
+                    {{ entry.vest
+                    }}{{ entry.blaster ? ' · ' + entry.blaster : '' }}
+                  </span>
+                  <button
+                    ahButton="ghost"
+                    size="sm"
+                    type="button"
+                    [attr.aria-label]="t.staff.releaseOf(entry.name)"
+                    (click)="desk.release(entry.checkInId)"
+                  >
+                    {{ t.staff.release }}
+                  </button>
+                </li>
+              }
+            </ul>
+          }
+          <div class="actions">
+            <button
+              ahButton="ghost"
+              type="button"
+              (click)="close(current.session.id)"
+            >
+              {{ t.staff.close }}
+            </button>
+          </div>
+        } @else {
+          <p class="hint">{{ t.staff.none }}</p>
+        }
+      </section>
+
+      <form class="card" (submit)="issueRecovery($event)" novalidate>
+        <h2>{{ t.staff.recovery }}</h2>
+        <p class="hint">{{ t.staff.recoveryLead }}</p>
+        <div class="field">
+          <label for="recovery-handle">{{ t.staff.recoveryHandle }}</label>
+          <input
+            id="recovery-handle"
+            class="input"
+            dir="auto"
+            autocomplete="off"
+            [value]="recoveryHandle()"
+            (input)="recoveryHandle.set($any($event.target).value)"
+          />
+        </div>
+        <div class="actions">
+          <button ahButton="secondary" type="submit" [disabled]="desk.busy()">
+            {{ t.staff.recoveryIssue }}
+          </button>
+        </div>
+        <div aria-live="polite">
+          @if (recovery(); as issued) {
+            <p class="status">
+              {{
+                t.staff.recoveryIssued(
+                  i18n.ltr(issued.code),
+                  i18n.dateTime(issued.expiresAt)
+                )
+              }}
+            </p>
+          }
+        </div>
+      </form>
+    }
+  }
+</div>
