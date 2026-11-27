@@ -1,0 +1,9 @@
+# Copy to .dev.vars for `pnpm nx serve lasertag-edge` (wrangler dev on :8790).
+# Any 32+ characters; never the production secret.
+LASERTAG_TOKEN_SECRET=local-development-secret-not-for-production-use
+# Claims the first venue once, from the app's staff page. Local only.
+LASERTAG_BOOTSTRAP_CODE=local-warehouse-claim
+# The app runs on localhost:4315 locally, so passkeys belong to localhost.
+ALLOWED_ORIGINS=http://localhost:4315
+RP_ID=localhost
+RP_NAME=BARQ (local)

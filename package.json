@@ -122,6 +122,8 @@
     "@ngrx/operators": "22.0.1",
     "@ngrx/signals": "22.0.1",
     "@ngrx/store": "22.0.1",
+    "@simplewebauthn/browser": "14.0.0",
+    "@simplewebauthn/server": "14.1.0",
     "@supabase/supabase-js": "2.119.0",
     "@valibot/to-json-schema": "1.8.0",
     "acorn": "8.15.0",

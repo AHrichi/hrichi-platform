@@ -54,6 +54,21 @@
       "@ah/products/basecamp/feature": [
         "./libs/products/basecamp/feature/src/index.ts"
       ],
+      "@ah/products/lasertag/domain": [
+        "./libs/products/lasertag/domain/src/index.ts"
+      ],
+      "@ah/products/lasertag/server": [
+        "./libs/products/lasertag/server/src/index.ts"
+      ],
+      "@ah/products/lasertag/server/testing": [
+        "./libs/products/lasertag/server/src/testing.ts"
+      ],
+      "@ah/products/lasertag/data-access": [
+        "./libs/products/lasertag/data-access/src/index.ts"
+      ],
+      "@ah/products/lasertag/feature": [
+        "./libs/products/lasertag/feature/src/index.ts"
+      ],
       "@ah/products/lighting/domain": [
         "./libs/products/lighting/domain/src/index.ts"
       ],

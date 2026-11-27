@@ -1,0 +1,36 @@
+{
+  "name": "lasertag-edge",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/lasertag-edge/src",
+  "projectType": "application",
+  "tags": ["scope:edge", "type:app", "runtime:agnostic"],
+  "// targets": "build type-checks and bundles (CI runs it); deploy ships it from CI once its D1 database exists (deploy.mjs). Without LASERTAG_TOKEN_SECRET every route answers 503 (ADR-0033).",
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "outputs": ["{workspaceRoot}/dist/apps/lasertag-edge"],
+      "options": {
+        "commands": [
+          "tsc -p apps/lasertag-edge/tsconfig.app.json --noEmit",
+          "wrangler deploy --dry-run --outdir dist/apps/lasertag-edge --config apps/lasertag-edge/wrangler.jsonc"
+        ],
+        "parallel": false
+      }
+    },
+    "serve": {
+      "continuous": true,
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "wrangler d1 migrations apply lasertag-edge --local --config apps/lasertag-edge/wrangler.jsonc && wrangler dev --config apps/lasertag-edge/wrangler.jsonc --port 8790"
+      }
+    },
+    "deploy": {
+      "dependsOn": ["build"],
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node apps/lasertag-edge/deploy.mjs"
+      }
+    }
+  }
+}

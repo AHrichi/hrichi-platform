@@ -184,6 +184,16 @@ export default [
                 'scope:design-system',
               ],
             },
+            // BARQ, the laser tag player app (ADR-0033).
+            {
+              sourceTag: 'scope:product-lasertag',
+              onlyDependOnLibsWithTags: [
+                'scope:product-lasertag',
+                'scope:shared',
+                'scope:platform',
+                'scope:design-system',
+              ],
+            },
             // The Learning Engine (ADR-0024): its own scope, like a product.
             {
               sourceTag: 'scope:learning',
@@ -230,6 +240,7 @@ export default [
                 'scope:edge',
                 'scope:shared',
                 'scope:product-serracalc',
+                'scope:product-lasertag',
               ],
             },
             // The API shares only contracts with the browser apps (ADR-0010).

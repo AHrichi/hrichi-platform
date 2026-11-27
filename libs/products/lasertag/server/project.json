@@ -1,0 +1,9 @@
+{
+  "name": "product-lasertag-server",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/products/lasertag/server/src",
+  "projectType": "library",
+  "// tags": "The service behind lasertag-edge: plain functions over a repository port, so another host or database is one adapter (ADR-0033, as ADR-0032).",
+  "tags": ["scope:product-lasertag", "type:data-access", "runtime:agnostic"],
+  "targets": {}
+}

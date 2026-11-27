@@ -1,0 +1,48 @@
+{
+  // BARQ's shared data (ADR-0033): players, passkeys, venues, gear, guests,
+  // sessions and check-ins, in D1. CI deploys it (apps/lasertag-edge/deploy.mjs)
+  // once its database exists:
+  //   pnpm wrangler d1 create lasertag-edge --location weur
+  // then put the database_id below. It needs LASERTAG_TOKEN_SECRET (32+
+  // characters) to sign sessions, and LASERTAG_BOOTSTRAP_CODE (12+) so the
+  // owner can claim the first venue once:
+  //   pnpm wrangler secret put LASERTAG_TOKEN_SECRET --config apps/lasertag-edge/wrangler.jsonc
+  //   pnpm wrangler secret put LASERTAG_BOOTSTRAP_CODE --config apps/lasertag-edge/wrangler.jsonc
+  // Until then /health says ready: false and every route answers 503.
+  // Locally: copy .dev.vars.example to .dev.vars, then `pnpm nx serve lasertag-edge`.
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "lasertag-edge",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-10-26",
+  "observability": { "enabled": true },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "lasertag-edge",
+      // Not created yet: deploy.mjs skips the Worker while this is all zeros.
+      "database_id": "00000000-0000-0000-0000-000000000000",
+      "migrations_dir": "migrations",
+    },
+  ],
+  // Per IP, per minute; counted per Cloudflare location, so abuse
+  // protection rather than an exact quota.
+  "ratelimits": [
+    {
+      "name": "PER_IP",
+      "namespace_id": "4105",
+      "simple": { "limit": 120, "period": 60 },
+    },
+    {
+      "name": "AUTH",
+      "namespace_id": "4106",
+      "simple": { "limit": 20, "period": 60 },
+    },
+  ],
+  "triggers": { "crons": ["41 2 * * *"] },
+  "vars": {
+    "ALLOWED_ORIGINS": "https://product-lasertag.ahmed-hrichi.workers.dev,http://localhost:4315",
+    // Passkeys belong to this domain. .dev.vars sets localhost for wrangler dev.
+    "RP_ID": "product-lasertag.ahmed-hrichi.workers.dev",
+    "RP_NAME": "BARQ",
+  },
+}
