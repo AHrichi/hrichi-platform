@@ -17,8 +17,8 @@
     {
       "binding": "DB",
       "database_name": "sync-edge",
-      // Not created yet: the deploy skips this Worker until it is.
-      "database_id": "00000000-0000-0000-0000-000000000000",
+      // Created 2026-11-26 in western Europe (not a secret).
+      "database_id": "8a98c476-6dd5-4227-bec2-49976c3c3ed4",
       "migrations_dir": "migrations",
     },
   ],
