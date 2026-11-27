@@ -58,3 +58,6 @@ vitest.config.*.timestamp*
 .gradle
 apps/orbit-api/build
 apps/orbit-api/bin
+
+# Private business material for the laser tag project (costs, funding, pricing): kept on the owner's machine only.
+docs/laser-tag/private/
