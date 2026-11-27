@@ -34,6 +34,20 @@ export const FromTheReader: Story = {
   },
 };
 
+/** A model's answer with light formatting: lists, bold, italic, code. */
+export const FormattedAnswer: Story = {
+  args: {
+    format: 'rich',
+    text: [
+      'Water does four jobs in a greenhouse:',
+      '',
+      '1. **Crop irrigation**: drip lines, sized on what the crop *transpires*.',
+      '2. **Fertigation**: nutrients with the water; keep the drain EC under `6`.',
+      '3. **Cooling** and **humidity**: fog or wet pads on hot days.',
+    ].join('\n'),
+  },
+};
+
 /** Something the app did or couldn't do. */
 export const Notice: Story = {
   args: { from: 'notice', text: 'Sunlight mode is on.', meta: null },

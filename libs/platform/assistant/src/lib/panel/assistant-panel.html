@@ -63,7 +63,7 @@
           <ah-chat-message from="user" [text]="entry.text" />
         }
         @case ('assistant') {
-          <ah-chat-message from="assistant" [text]="entry.text" />
+          <ah-chat-message from="assistant" format="rich" [text]="entry.text" />
         }
         @case ('notice') {
           <div class="notice">

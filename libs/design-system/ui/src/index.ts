@@ -109,6 +109,9 @@ export {
   type CoachmarkLabels as AhCoachmarkLabels,
   type CoachmarkSide as AhCoachmarkSide,
 } from './lib/coachmark/coachmark';
+export * from './lib/rich-text/rich-text.parse';
+export * from './lib/rich-text/rich-text';
+export { RichText as AhRichText } from './lib/rich-text/rich-text';
 export * from './lib/chat-message/chat-message';
 export { ChatMessage as AhChatMessage } from './lib/chat-message/chat-message';
 export * from './lib/chat-composer/chat-composer';

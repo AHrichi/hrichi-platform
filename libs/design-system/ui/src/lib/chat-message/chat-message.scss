@@ -55,6 +55,10 @@
   overflow-wrap: anywhere;
 }
 
+.rich {
+  font-size: var(--font-size-200);
+}
+
 .meta {
   color: var(--color-text-muted);
   font-size: var(--font-size-100);

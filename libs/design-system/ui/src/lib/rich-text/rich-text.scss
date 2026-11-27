@@ -1,0 +1,48 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  font-size: var(--font-size-200);
+  line-height: var(--font-line-height-normal);
+  overflow-wrap: anywhere;
+}
+
+p,
+ol,
+ul {
+  margin: 0;
+}
+
+// A line break inside a paragraph or an item stays a line break.
+p,
+li {
+  white-space: pre-line;
+}
+
+.heading {
+  font-weight: var(--font-weight-semibold);
+}
+
+ol,
+ul {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding-inline-start: var(--space-5);
+}
+
+li::marker {
+  color: var(--color-text-muted);
+}
+
+strong {
+  font-weight: var(--font-weight-semibold);
+}
+
+code {
+  padding: 0 0.3em;
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-canvas);
+  font-family: var(--font-family-mono);
+  font-size: 0.9em;
+}
