@@ -26,9 +26,7 @@
       "installMode": "prefetch",
       "updateMode": "prefetch",
       "resources": {
-        "files": [
-          "/*.js"
-        ]
+        "files": ["/*.js"]
       }
     },
     {
