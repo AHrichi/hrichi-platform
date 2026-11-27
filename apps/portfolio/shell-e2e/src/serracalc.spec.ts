@@ -704,7 +704,9 @@ test.describe('SerraCalc, the assistant', () => {
         crop: 'cucumber',
         climateId: 'monastir',
       }),
-      say('East block is ready.'),
+      say(
+        '**East block** is ready:\n\n1. Climate: *Monastir*\n2. Crop: cucumber',
+      ),
     ]);
     await page.goto(`${STANDALONE}projects`);
     await expect(page.getByText('No project yet')).toBeVisible();
@@ -717,7 +719,12 @@ test.describe('SerraCalc, the assistant', () => {
     await expect(page.getByText('No project yet')).toBeVisible();
 
     await card.getByRole('button', { name: 'Apply' }).click();
-    await expect(panel.getByText('East block is ready.')).toBeVisible();
+    // The model's answer is formatted, its marks gone.
+    const answer = panel.locator('ah-chat-message ah-rich-text').last();
+    await expect(answer.locator('strong')).toHaveText('East block');
+    await expect(answer.locator('ol li')).toHaveCount(2);
+    await expect(answer.locator('em')).toHaveText('Monastir');
+    await expect(answer).not.toContainText('**');
     await expect(card).toContainText('Done');
     await expect(panel.getByRole('textbox')).toBeFocused();
     await expect(
