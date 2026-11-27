@@ -65,6 +65,8 @@ export const FR: BarqCopy = {
     CHALLENGE_EXPIRED: 'C’était trop long. Réessayez.',
     PASSKEY_FAILED: 'La clé d’accès n’a pas été acceptée. Réessayez.',
     CODE_INVALID: 'Ce code n’est pas valable, ou il a déjà servi.',
+    GUEST_PLAYING:
+      'Cet invité est encore enregistré. Récupérez les stats après la partie.',
     BADGE_INVALID:
       'Ce badge n’est pas valable. Demandez au joueur de le montrer à nouveau.',
     GEAR_UNKNOWN: 'Aucun gilet ni blaster avec ce numéro ici.',

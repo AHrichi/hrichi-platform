@@ -290,6 +290,34 @@ export function runRepositoryContract(
       ).toBe('ok');
     });
 
+    it('knows who still wears gear', async () => {
+      const repo = await make();
+      const sessionId = newId();
+      await repo.insertSession({
+        id: sessionId,
+        venueId: FIRST_VENUE.id,
+        mapId: FIRST_MAP.id,
+        openedAt: '2026-11-27T10:00:00.000Z',
+        closedAt: null,
+        capacity: 12,
+      });
+      const wearer = { kind: 'guest' as const, id: newId() };
+      const id = newId();
+      expect(await repo.hasActiveCheckIn(wearer)).toBe(false);
+      await repo.insertCheckIn({
+        id,
+        sessionId,
+        wearer,
+        vestId: FIRST_GEAR[0].id,
+        blasterId: null,
+        at: '2026-11-27T10:01:00.000Z',
+        releasedAt: null,
+      });
+      expect(await repo.hasActiveCheckIn(wearer)).toBe(true);
+      await repo.releaseCheckIn(id, '2026-11-27T10:30:00.000Z');
+      expect(await repo.hasActiveCheckIn(wearer)).toBe(false);
+    });
+
     it('closes a session and releases what is still checked in', async () => {
       const repo = await make();
       const sessionId = newId();

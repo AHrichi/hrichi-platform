@@ -268,6 +268,32 @@ describe('guests', () => {
     ).toBe('CODE_INVALID');
   });
 
+  it('waits until the guest has played before a claim', async () => {
+    const { service, signUp, manager } = setup();
+    const boss = await manager();
+    const opened = await service.openSession(boss.token, FIRST_VENUE_SLUG, {
+      mapId: FIRST_MAP.id,
+    });
+    const created = await service.createGuest(boss.token, FIRST_VENUE_SLUG, {
+      nickname: 'Rayen',
+    });
+    const view = await service.checkIn(boss.token, opened.session.id, {
+      guestId: created.guest.id,
+      gear: 'V-01',
+    });
+    const player = await signUp();
+    expect(
+      await refusal(
+        service.claimGuest(player.token, { code: created.claimCode }),
+      ),
+    ).toBe('GUEST_PLAYING');
+    await service.release(boss.token, view.roster[0].checkInId);
+    const claimed = await service.claimGuest(player.token, {
+      code: created.claimCode,
+    });
+    expect(claimed.claimedBy).toBe(player.player.id);
+  });
+
   it('refuses odd nicknames and expired codes', async () => {
     const { service, signUp, manager, advance } = setup();
     const boss = await manager();

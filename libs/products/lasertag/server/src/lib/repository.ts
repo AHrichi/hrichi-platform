@@ -140,6 +140,8 @@ export interface LasertagRepository {
   /** 'conflict' when the vest or the wearer is already checked in. */
   insertCheckIn(row: CheckIn): Promise<'ok' | 'conflict'>;
   releaseCheckIn(id: string, at: string): Promise<boolean>;
+  /** True while the wearer has gear in any session. */
+  hasActiveCheckIn(wearer: CheckIn['wearer']): Promise<boolean>;
 
   audit(row: AuditRow): Promise<void>;
 }

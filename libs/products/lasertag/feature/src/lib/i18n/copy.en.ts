@@ -67,6 +67,8 @@ export const EN = {
     CHALLENGE_EXPIRED: 'That took too long. Try again.',
     PASSKEY_FAILED: 'The passkey wasn’t accepted. Try again.',
     CODE_INVALID: 'This code isn’t valid, or it was already used.',
+    GUEST_PLAYING:
+      'This guest is still checked in. Claim the stats after the game.',
     BADGE_INVALID: 'This badge isn’t valid. Ask the player to show it again.',
     GEAR_UNKNOWN: 'No vest or blaster with this label here.',
     CHECKIN_REFUSED: 'Check-in refused.',

@@ -238,6 +238,15 @@ export class MemoryRepository implements LasertagRepository {
     return true;
   }
 
+  async hasActiveCheckIn(wearer: CheckIn['wearer']) {
+    return this.checkIns.some(
+      (c) =>
+        !c.releasedAt &&
+        c.wearer.kind === wearer.kind &&
+        c.wearer.id === wearer.id,
+    );
+  }
+
   async audit(row: AuditRow) {
     this.audits.push(row);
   }

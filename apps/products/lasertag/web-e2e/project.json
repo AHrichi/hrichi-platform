@@ -1,0 +1,8 @@
+{
+  "name": "product-lasertag-e2e",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "apps/products/lasertag/web-e2e/src",
+  "implicitDependencies": ["product-lasertag", "lasertag-edge"],
+  "targets": {}
+}

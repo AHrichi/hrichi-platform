@@ -502,6 +502,11 @@ export function createService(deps: ServiceDeps) {
       if (!guest || guest.claimedBy || guest.expiresAt <= now().toISOString()) {
         fail('CODE_INVALID', 422, 'This code isn’t valid');
       }
+      // Stats are claimed after the game: while the guest wears gear, the
+      // check-in can't move to a player who may be playing too.
+      if (await repo.hasActiveCheckIn({ kind: 'guest', id: guest.id })) {
+        fail('GUEST_PLAYING', 409, 'Claim after the game');
+      }
       if (!(await repo.claimGuest(guest.id, player.id))) {
         fail('CODE_INVALID', 422, 'This code was already used');
       }

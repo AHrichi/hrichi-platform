@@ -436,21 +436,29 @@ export class D1LasertagRepository implements LasertagRepository {
     return r ? guest(r) : null;
   }
   async claimGuest(guestId: string, playerId: string) {
-    const [claimed] = await this.db.batch([
-      this.db
-        .prepare(
-          'UPDATE guests SET claimed_by = ? WHERE id = ? AND claimed_by IS NULL',
-        )
-        .bind(playerId, guestId),
-      // Only moves anything if the first statement claimed the guest: once
-      // claimed, the guest's check-ins already name a player.
-      this.db
-        .prepare(
-          `UPDATE checkins SET wearer_kind = 'player', wearer_id = ?
+    let claimed: D1Result;
+    try {
+      [claimed] = await this.db.batch([
+        this.db
+          .prepare(
+            'UPDATE guests SET claimed_by = ? WHERE id = ? AND claimed_by IS NULL',
+          )
+          .bind(playerId, guestId),
+        // Only moves anything if the first statement claimed the guest: once
+        // claimed, the guest's check-ins already name a player.
+        this.db
+          .prepare(
+            `UPDATE checkins SET wearer_kind = 'player', wearer_id = ?
            WHERE wearer_kind = 'guest' AND wearer_id = ?`,
-        )
-        .bind(playerId, guestId),
-    ]);
+          )
+          .bind(playerId, guestId),
+      ]);
+    } catch (error) {
+      // The player wears gear in a session the guest is still in: the
+      // service refuses that first, so this is a race lost, not a crash.
+      if (isUnique(error)) return false;
+      throw error;
+    }
     return (claimed.meta?.changes ?? 0) > 0;
   }
   async deleteExpiredGuests(at: string) {
@@ -585,6 +593,16 @@ export class D1LasertagRepository implements LasertagRepository {
         id,
       )) === 1
     );
+  }
+
+  async hasActiveCheckIn(wearer: CheckIn['wearer']) {
+    const r = await this.first<{ n: number }>(
+      `SELECT COUNT(*) AS n FROM checkins
+       WHERE wearer_kind = ? AND wearer_id = ? AND released_at IS NULL`,
+      wearer.kind,
+      wearer.id,
+    );
+    return (r?.n ?? 0) > 0;
   }
 
   async audit(row: AuditRow) {

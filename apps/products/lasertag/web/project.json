@@ -5,6 +5,7 @@
   "prefix": "ah",
   "sourceRoot": "apps/products/lasertag/web/src",
   "tags": ["scope:product-lasertag", "type:app", "runtime:browser"],
+  "// targets": "No deploy target until the owner wants BARQ public (ADR-0033); serracalc/web/project.json has the shape to copy back.",
   "targets": {
     "build": {
       "executor": "nx:run-commands",
@@ -122,22 +123,6 @@
       "options": {
         "port": 4315
       }
-    },
-    "deploy": {
-      "dependsOn": ["build"],
-      "executor": "nx:run-commands",
-      "options": {
-        "commands": [
-          "node tools/scripts/prepare-hosting.mjs dist/apps/products/lasertag/web/browser --env production --app product-lasertag --cors --site-config",
-          "wrangler deploy --config apps/products/lasertag/web/wrangler.jsonc"
-        ],
-        "parallel": false
-      },
-      "inputs": [
-        "production",
-        "^production",
-        "{workspaceRoot}/tools/scripts/prepare-hosting.mjs"
-      ]
     }
   }
 }

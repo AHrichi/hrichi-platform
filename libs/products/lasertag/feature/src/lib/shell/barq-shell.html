@@ -1,7 +1,8 @@
 @let t = i18n.t();
 <a class="skip" href="#barq-main">{{ t.app.skip }}</a>
 <header class="header">
-  <a class="brand" routerLink="/" [attr.aria-label]="t.app.home">
+  <!-- Named by its visible text (WCAG 2.5.3); the nav has its own Home. -->
+  <a class="brand" routerLink="/">
     <lt-bolt-mark class="bolt" />
     <span class="wordmark">BARQ</span>
     <span class="wordmark-ar" lang="ar">برق</span>

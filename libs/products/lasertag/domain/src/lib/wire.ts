@@ -70,6 +70,7 @@ export type ErrorCode =
   | 'PASSKEY_FAILED'
   | 'BADGE_INVALID'
   | 'CODE_INVALID'
+  | 'GUEST_PLAYING'
   | 'GEAR_UNKNOWN'
   | 'CHECKIN_REFUSED';
 
